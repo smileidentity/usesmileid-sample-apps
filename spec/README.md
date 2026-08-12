@@ -24,6 +24,7 @@ Rules:
 | `launch-args.json` | Canonical automation argument names, and how each platform accepts them | scaffold: Android/iOS mechanisms settled, cross-platform entry point to confirm |
 | `result-card.schema.json` | The result card's fields and types | scaffold: field set settled |
 | `test-ids.json` | The `sample_*` accessibility IDs flows assert on | scaffold: grows with each screen |
+| `app-identity.json` | Application ids, display names and URL schemes per platform, plus the ids reserved by the SDK repos' development samples | settled |
 | `screens.json` | Screen inventory, each with its design source and `designVersion` | **empty — filled from the design file (phase F0)** |
 | `design-tokens.json` | SDK token references plus this app's additions | **empty — filled from the design file (phase F1)** |
 

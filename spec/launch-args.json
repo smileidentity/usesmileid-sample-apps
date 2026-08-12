@@ -17,7 +17,10 @@
     {
       "name": "route",
       "type": "enum",
-      "values": ["fullscreen", "shell"],
+      "values": [
+        "fullscreen",
+        "shell"
+      ],
       "default": "fullscreen",
       "description": "Which entry route hosts the SDK flow. The in-shell route is the one that exposes host-chrome and inset defects; the fullscreen route cannot."
     },
@@ -31,7 +34,10 @@
     {
       "name": "sandbox",
       "type": "boolean",
-      "values": [true, false],
+      "values": [
+        true,
+        false
+      ],
       "default": true,
       "description": "Environment selection. Automation must never run with sandbox=false — see AGENTS.md."
     },
@@ -57,7 +63,7 @@
     "expo": "TBD in F2 — must accept the same canonical names."
   },
   "openDecisions": [
-    "Preferred: one cross-platform entry point via a deep link (usesmileidsample://run?scenario=…&route=…), drivable from adb, simctl and a device flow on all four platforms, with the native mechanisms above kept as the platform-specific alternate. Confirm when the first two apps land, then delete this note.",
+    "Preferred: one cross-platform entry point via a deep link, drivable from adb, simctl and a device flow on all four platforms, with the native mechanisms above kept as the platform-specific alternate. The scheme is per app and already assigned in app-identity.json (e.g. usesmileid-sample-android://run?scenario=…&route=…) because two apps sharing a scheme break automation. Confirm the query-parameter shape when the first two apps land, then delete this note.",
     "Credentials are seeded as arguments, never typed: keyboard input drops characters from long API keys."
   ]
 }

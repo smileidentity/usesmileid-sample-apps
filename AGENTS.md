@@ -60,6 +60,14 @@ Two consequences that must shape what you commit *now*, not at flip time:
   insets/safe areas, the system back affordance, presentation style (sheet vs dialog vs pushed) and
   keyboard avoidance stay platform-native. A hand-rolled back button that ignores the iOS back
   swipe is the classic way a pixel-perfect port ships a defect.
+- **`sample-ui` is identity-agnostic.** The same library runs under eight application identities —
+  the four apps here and the four development samples in the SDK repos — so nothing in it may read
+  or hard-code an application id, bundle id, URL scheme or app-level resource. Identity lives in the
+  shells and in `spec/app-identity.json`; branching on it inside the shared UI breaks one of the
+  eight silently.
+- **Never claim an id or URL scheme reserved by an SDK repo's sample.** `spec/app-identity.json`
+  lists them. Two apps sharing an application id cannot be installed side by side, and two apps
+  sharing a URL scheme break automation — a chooser prompt on Android, last-installed-wins on iOS.
 - **No changelog in this repo.** Nothing here is published to a registry, so release notes belong
   to the SDK repos. Describe user-visible changes in the PR instead.
 

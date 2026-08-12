@@ -199,6 +199,10 @@ anything committed here once this block is removed.
 2. **One cross-platform automation entry point** — a deep link would work identically on all four
    platforms; native launch arguments are already proven on two. Decide when the second app lands
    (see `spec/launch-args.json`).
-3. **App display name and the four bundle/application IDs** — cheaper to settle once, before the
-   first shell, because they land in store metadata, launcher labels and test fixtures.
+3. ~~App display name and the four bundle/application IDs~~ — **settled**, see
+   `spec/app-identity.json`: display-name family `UseSmileID Sample`, id root
+   `com.usesmileid.sampleapps`, one id and one URL scheme per platform. A separate root rather than
+   a suffix under `com.usesmileid.sample`, because that space is fully taken by the SDK repos'
+   development samples, an id nested under another app's id means "app extension" on iOS, and
+   renaming those samples would break four repos' E2E workflows that hard-code them.
 4. **Licence** — required before the repository can go public.
