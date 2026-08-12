@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "designVersion": null,
+  "description": "Design tokens for the four apps. Extracted once from the design file (phase F1) and generated into each platform's theme source — never hand-copied into four codebases.",
+  "rules": [
+    "The apps are Smile ID branded and dark mode follows the SDK's own colour schemes, so shared colours are RESOLVED FROM the SDK's public theming API at runtime and referenced here by name, not duplicated as literals. A duplicated palette looks correct on day one and drifts silently in four codebases the first time the SDK's scheme changes.",
+    "Only genuine additions — values the design introduces that the SDK does not expose — carry literals here.",
+    "If the design needs a colour the SDK's public surface does not expose, that gap is a finding to file against the SDK, not a reason to copy the value."
+  ],
+  "sdkTokenRefs": {
+    "comment": "name -> the SDK public theme token it resolves from. Filled in F1 alongside the per-platform generator.",
+    "tokens": {}
+  },
+  "additions": {
+    "comment": "Sample-app-only tokens with literal values, light and dark. Filled in F1.",
+    "color": {},
+    "typography": {},
+    "spacing": {},
+    "radius": {}
+  },
+  "generated": {
+    "comment": "Where the generator writes. Paths land with the platform.",
+    "android": null,
+    "ios": null,
+    "flutter": null,
+    "expo": null
+  }
+}

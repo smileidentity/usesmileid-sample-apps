@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/smileidentity/usesmileid-sample-apps/spec/result-card.schema.json",
+  "title": "Sample app result card",
+  "description": "The on-screen card that publishes SDK outcome into the accessibility tree. It is the evidence channel every flow asserts on, because reading structured state beats interpreting a screenshot, and on a release device it is often the only channel available. Every field is rendered as text and exposed with its test id from test-ids.json.",
+  "type": "object",
+  "required": [
+    "activeScenario",
+    "activeTheme",
+    "route",
+    "jobStatus",
+    "resultCallbackCount",
+    "refreshCallbackCount"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "activeScenario": {
+      "type": "string",
+      "description": "Flow scenario id currently in effect. Shown so a run can prove which scenario it actually got, rather than which one it asked for."
+    },
+    "activeTheme": {
+      "type": "string",
+      "description": "Theme scenario id currently in effect."
+    },
+    "route": {
+      "type": "string",
+      "enum": ["fullscreen", "shell"],
+      "description": "Entry route hosting the flow."
+    },
+    "jobId": {
+      "type": ["string", "null"],
+      "description": "Job id as returned by the SDK. Null before a submission completes."
+    },
+    "userId": {
+      "type": ["string", "null"],
+      "description": "User id as read back from the server response — never a locally generated placeholder. A placeholder here silently invalidates every authentication test that follows."
+    },
+    "jobStatus": {
+      "type": "string",
+      "description": "Current status, including the terminal distinction between cancelled and failed."
+    },
+    "resultCallbackCount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Times the host result callback fired. 'Fires exactly once' is only provable by counting."
+    },
+    "refreshCallbackCount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Times the token refresh callback fired. Single-flight refresh is a count assertion, not an observation."
+    },
+    "lastError": {
+      "type": ["string", "null"],
+      "description": "Last error surfaced to the host, code and message."
+    },
+    "sdkVersion": {
+      "type": ["string", "null"],
+      "description": "SDK version resolved at runtime. Proves which published artifact the run exercised."
+    }
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "description": "Every scenario the sample apps offer. One build, N scenarios: the drawer switches at runtime so a matrix that used to need N rebuilds needs N taps. All four apps must implement every id.",
+  "scenarios": [
+    {
+      "id": "normal",
+      "kind": "flow",
+      "label": "Normal",
+      "description": "Happy path with valid sandbox credentials.",
+      "forces": null,
+      "observe": ["jobId", "jobStatus", "resultCallbackCount"]
+    },
+    {
+      "id": "expiredToken",
+      "kind": "flow",
+      "label": "Expired token",
+      "description": "Auth token is structurally valid but already expired, so the SDK must refresh before it can submit.",
+      "forces": "A well-formed JWT whose exp is in the past. Structural validity matters: a garbage string tests parsing, not refresh.",
+      "observe": ["refreshCallbackCount", "jobStatus"]
+    },
+    {
+      "id": "badRefresh",
+      "kind": "flow",
+      "label": "Refresh fails",
+      "description": "The refresh callback returns an unusable token, so the failure path must surface rather than retry forever.",
+      "forces": "Refresh callback resolves with an expired or malformed token.",
+      "observe": ["refreshCallbackCount", "lastError"]
+    },
+    {
+      "id": "noCallback",
+      "kind": "flow",
+      "label": "No result callback",
+      "description": "Host provides no result callback. The SDK must not crash or hang.",
+      "forces": "Callback intentionally omitted.",
+      "observe": ["jobStatus"]
+    },
+    {
+      "id": "throwingCallback",
+      "kind": "flow",
+      "label": "Throwing callback",
+      "description": "Host callback throws. The exception must not corrupt SDK state or take the app down.",
+      "forces": "Callback raises immediately.",
+      "observe": ["lastError", "jobStatus"]
+    },
+    {
+      "id": "offlineRetry",
+      "kind": "flow",
+      "label": "Offline then retry",
+      "description": "Submission starts with no connectivity, then connectivity returns.",
+      "forces": "Airplane mode or a blocked host during submission; restored afterwards.",
+      "observe": ["jobStatus", "resultCallbackCount"]
+    },
+    {
+      "id": "brandDefault",
+      "kind": "theme",
+      "label": "Brand default",
+      "description": "Ship state: Smile ID branding, dark mode following the SDK's own colour schemes.",
+      "forces": null,
+      "observe": []
+    },
+    {
+      "id": "clashingHost",
+      "kind": "theme",
+      "label": "Clashing host",
+      "description": "A deliberately distant host theme — different seed colour, corner radius and typeface — applied through the SDK's public theme override. Exposes host-versus-SDK styling collisions that a brand-matched default hides.",
+      "forces": "Theme override with values far from the SDK defaults.",
+      "observe": []
+    },
+    {
+      "id": "partnerOverride",
+      "kind": "theme",
+      "label": "Partner override",
+      "description": "A plausible partner palette through the same public override, asserting which tokens follow the override and which stay SDK-owned.",
+      "forces": "Theme override with a realistic partner palette.",
+      "observe": []
+    }
+  ],
+  "notes": [
+    "flow scenarios are selectable together with an entry route (see launch-args.json 'route'); theme scenarios apply on top of any flow scenario.",
+    "Every scenario must be reachable from the drawer AND from a launch argument, because automation cannot rely on tapping through a drawer reliably on every platform.",
+    "'forces' documents the mechanism so the four implementations force the same condition the same way; keep it factual, not prescriptive about code."
+  ]
+}

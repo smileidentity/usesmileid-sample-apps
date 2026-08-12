@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "description": "Accessibility ids this repo owns. Device flows and golden tests key off them, so they are a contract: stable forever, identical on all four platforms, and asserted by each app's spec-validation test. SDK ids (si_*) are NOT defined here — reference them from the SDK.",
+  "prefix": "sample_",
+  "ids": {
+    "shell": [
+      { "id": "sample_home_start_fullscreen", "description": "Starts the flow as a full-screen presentation." },
+      { "id": "sample_home_start_shell", "description": "Starts the flow nested inside the app's navigation shell." },
+      { "id": "sample_scenario_drawer", "description": "Opens the scenario drawer." },
+      { "id": "sample_scenario_item", "description": "One drawer row; suffixed with the scenario id, e.g. sample_scenario_item_expiredToken." },
+      { "id": "sample_theme_item", "description": "One theme row; suffixed with the theme scenario id." }
+    ],
+    "resultCard": [
+      { "id": "sample_result_card", "description": "The card container." },
+      { "id": "sample_result_active_scenario", "description": "activeScenario field." },
+      { "id": "sample_result_active_theme", "description": "activeTheme field." },
+      { "id": "sample_result_route", "description": "route field." },
+      { "id": "sample_result_job_id", "description": "jobId field." },
+      { "id": "sample_result_user_id", "description": "userId field." },
+      { "id": "sample_result_job_status", "description": "jobStatus field." },
+      { "id": "sample_result_result_count", "description": "resultCallbackCount field." },
+      { "id": "sample_result_refresh_count", "description": "refreshCallbackCount field." },
+      { "id": "sample_result_last_error", "description": "lastError field." },
+      { "id": "sample_result_sdk_version", "description": "sdkVersion field." }
+    ]
+  },
+  "rules": [
+    "One id per assertable element. If a flow needs to read it, it has an id.",
+    "Suffixed ids (sample_scenario_item_<id>) derive from scenarios.json, so adding a scenario adds its ids automatically — no separate entry needed here.",
+    "Never reuse an id for a different element, and never localise an id.",
+    "Counters are exposed as their numeric value in text form, so a flow can assert equality rather than parse prose."
+  ]
+}

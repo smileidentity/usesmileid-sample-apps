@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "designVersion": null,
+  "designFile": null,
+  "description": "Screen inventory. Filled once from the design file (phase F0) so every engineer and agent resolves the same design source per screen, and so a design change lands as a reviewable diff. Entry shape and the designVersion rule are documented in spec/README.md.",
+  "screens": []
+}
