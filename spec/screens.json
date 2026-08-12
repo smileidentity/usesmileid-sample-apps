@@ -556,5 +556,25 @@
       "question": "The ABOUT section links 'docs.usesmileid.com'. Confirm that domain is live, or point it at the current documentation host.",
       "blocks": "settings ABOUT rows"
     }
-  ]
+  ],
+  "verification": {
+    "date": "2026-08-12",
+    "verifiedHow": [
+      "Every board read with get_metadata: 8 sections, 39 frames, layer names, component instances and hotspot rectangles.",
+      "Two frames rendered and inspected visually (products grid 5206-4037, token-linked list 5206-2323), which corrected five component specs.",
+      "Navigation model inferred from named hotspot rectangles: every tab screen carries hotspot/tab-* to the other two tabs plus hotspot/token; verifications and the processing detail carry hotspot/pull-refresh; select mode hides the nav bar AND its hotspots and shows a selection bar instead."
+    ],
+    "notVerified": {
+      "reason": "Prototype reactions (the exact trigger→destination wiring) could not be read. The Plugin API route is blocked on this account — MCP edit tools require a Full Figma seat — and a prototype cannot be played from here.",
+      "edges": [
+        "product card → next screen. No hotspot rectangle exists for the cards, so the destination may be a reaction on the card itself. The flow recorded in scenarios.json (products → [userDetails] → [KYC/ID form] → SDK flow) comes from the OWNER'S RULING of 2026-08-12, not from the prototype.",
+        "JobRow → verificationDetails (highly likely, unconfirmed).",
+        "Settings PROFILE row → profiles / profileConfig (highly likely, unconfirmed).",
+        "scanToken entry point: which screens can reach it besides the token nav button.",
+        "Sheet dismissal behaviour (tap-scrim vs drag) for the four sheets."
+      ],
+      "howToClose": "Either grant a Full seat so the reaction graph can be read directly, or have someone play the prototype once and confirm the five edges above."
+    },
+    "finding": "Board 01b — the CHOSEN products layout — carries no hotspot rectangles at all, while boards 01, 02, 06 and 07 do. The prototype therefore runs on the SUPERSEDED list layout, so playing it would demonstrate a screen we are not building. Worth telling the design team, and it means a play-through would not have validated the chosen products screen anyway."
+  }
 }

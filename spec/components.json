@@ -332,10 +332,10 @@
       "tier": "composite",
       "owner": "sample",
       "tokens": [
+        "color.feedback.warning.fill",
         "color.surface-alt",
-        "color.text.body",
         "radius.chip",
-        "avatar.*"
+        "text-style.caption"
       ],
       "variants": [
         "sandbox",
@@ -344,19 +344,18 @@
       "usedBy": [
         "products"
       ],
-      "notes": "Header chip: avatar initials + environment. The production variant is wider — do not fix its width."
+      "notes": "VERIFIED against a render 2026-08-12. It is an ENVIRONMENT pill — a status dot plus the environment name ('Sandbox') on a pale fill. There is no avatar in it; the profile avatar lives in Settings. The production variant is wider, so do not fix its width."
     },
     {
       "name": "ProductCard",
       "tier": "composite",
       "owner": "sample",
       "tokens": [
-        "card.background",
-        "card.border",
-        "card.radius",
-        "card.title-font",
         "color.decorative.*",
-        "color.primary"
+        "color.text.inverse",
+        "radius.surface",
+        "card.radius",
+        "text-style.title"
       ],
       "states": [
         "default",
@@ -366,7 +365,7 @@
       "usedBy": [
         "products"
       ],
-      "notes": "The expressive card: decorative ghost glyph bleeding off the top-right, an icon tile, a title that may wrap to two lines, and a circular go affordance. 174×148 in a 2-up grid with a 12 gap. Each product gets its own decorative colour from color.decorative.*, which is what makes the grid read as expressive rather than uniform."
+      "notes": "VERIFIED against a render 2026-08-12. The WHOLE CARD is filled with a decorative colour (green, indigo, amber, near-black, indigo across the five products) with inverse text — not a white card with a coloured accent. Anatomy: white rounded icon tile top-left, a same-hue ghost glyph watermark bleeding off the top-right, title bottom-left in inverse text (may wrap to two lines), and a circular outlined arrow bottom-right. 174x148 in a 2-up grid, 12 gap."
     },
     {
       "name": "ProductGrid",
@@ -599,14 +598,14 @@
         "verifications",
         "settings"
       ],
-      "notes": "Four destinations; the token item is a distinct affordance that carries the countdown ring. Hidden during select mode."
+      "notes": "VERIFIED against a render 2026-08-12. A floating white pill holding three tabs (Products, Verifications, Settings) with the active label in primary, PLUS a visually detached circular Token button to its right that carries the countdown ring. Model the token affordance separately from the three tabs. Hidden during select mode."
     },
     {
       "name": "TokenRing",
       "tier": "composite",
       "owner": "sample",
       "tokens": [
-        "color.primary",
+        "color.feedback.success.fill",
         "color.border",
         "motion.progress"
       ],
@@ -619,23 +618,23 @@
       "usedBy": [
         "products"
       ],
-      "notes": "68 ring around the token nav item, animating a session countdown. Drive it from remaining time, not from a fixed animation duration."
+      "notes": "VERIFIED against a render 2026-08-12. A GREEN progress ring drawn around the detached circular token button in the nav bar (not primary blue). Drive it from remaining session time, not a fixed animation duration."
     },
     {
       "name": "SessionCard",
       "tier": "composite",
       "owner": "sample",
       "tokens": [
-        "color.surface-alt",
-        "color.text.title",
-        "color.text.muted",
+        "color.feedback.success.fill",
+        "color.text.inverse",
         "radius.surface",
-        "text-style.overline"
+        "text-style.overline",
+        "text-style.title"
       ],
       "usedBy": [
         "products"
       ],
-      "notes": "ACTIVE TOKEN SESSION / Linked to session 9f3a / m:ss countdown. The countdown is the same clock as TokenRing — one source."
+      "notes": "VERIFIED against a render 2026-08-12. A FILLED GREEN card with inverse text: 'ACTIVE TOKEN SESSION' overline, 'Linked to session <id>' title, and a large m:ss countdown right-aligned. Not a muted surface card. The countdown shares one clock with TokenRing."
     },
     {
       "name": "SessionEndedBanner",
@@ -792,5 +791,20 @@
     "5. Screens, in this order — settings, products, verifications, verificationDetails, userDetails, kycIdForm, pickers, profiles/profileConfig/newProfile, scanToken. Settings first because it drives every other screen's configuration, and products second because it is the entry point every flow starts from.",
     "6. ResultCard and the automation affordances (launch arguments, deep link) once screens exist."
   ],
-  "partsRule": "A `parts` entry is a sub-element of its parent component, not a separate component. Screens reference the parent; parts exist so nothing in the design is left unaccounted for."
+  "partsRule": "A `parts` entry is a sub-element of its parent component, not a separate component. Screens reference the parent; parts exist so nothing in the design is left unaccounted for.",
+  "verification": {
+    "date": "2026-08-12",
+    "method": "Structure from get_metadata on all 8 boards; visual confirmation from two rendered frames (5206-4037 products grid, 5206-2323 token-linked list).",
+    "corrected": [
+      "ProductCard fill treatment",
+      "ProfileEnvChip content",
+      "SessionCard fill treatment",
+      "TokenRing colour",
+      "NavBar token affordance"
+    ],
+    "unverified": [
+      "SessionEndedBanner treatment (not rendered)",
+      "per-product decorative hue assignment is observed from one render, not documented in the design system — see design-tokens.json additions"
+    ]
+  }
 }
