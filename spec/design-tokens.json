@@ -1,28 +1,89 @@
 {
-  "version": 1,
-  "designVersion": null,
-  "description": "Design tokens for the four apps. Extracted once from the design file (phase F1) and generated into each platform's theme source — never hand-copied into four codebases.",
-  "rules": [
-    "The apps are Smile ID branded and dark mode follows the SDK's own colour schemes, so shared colours are RESOLVED FROM the SDK's public theming API at runtime and referenced here by name, not duplicated as literals. A duplicated palette looks correct on day one and drifts silently in four codebases the first time the SDK's scheme changes.",
-    "Only genuine additions — values the design introduces that the SDK does not expose — carry literals here.",
-    "If the design needs a colour the SDK's public surface does not expose, that gap is a finding to file against the SDK, not a reason to copy the value."
+  "version": 2,
+  "designVersion": "2026-08-12",
+  "description": "Design tokens for the four apps. The Smile ID design system is the single source; this file records where it lives, how each platform consumes it, and the deltas found when the design file was checked against it on 2026-08-12.",
+  "source": {
+    "name": "smile-design-system",
+    "shape": "three-tier DTCG JSON — primitive → semantic → component — with pre-generated per-platform outputs",
+    "rule": "Reference the highest tier that fits: component tokens when building that named component, semantic tokens otherwise. Never reference a primitive from app code, and never hardcode a hex.",
+    "why": "The SDK's theme and these apps resolve from the same generated source, so the sample matches the SDK's branding without importing SDK components or copying values."
+  },
+  "verification": {
+    "date": "2026-08-12",
+    "method": "Figma variable definitions on the products board (node 5206-4037) compared against the design system's resolved light values.",
+    "result": "Aligned. Every colour, the radius scale and the type family match exactly.",
+    "matches": [
+      { "figma": "color/primary", "value": "#151f72", "token": "color.primary" },
+      { "figma": "color/surface", "value": "#ffffff", "token": "color.surface" },
+      { "figma": "color/title", "value": "#21232c", "token": "color.text.title" },
+      { "figma": "color/muted", "value": "#848282", "token": "color.text.muted" },
+      { "figma": "color/border", "value": "#eaecf0", "token": "color.border" },
+      { "figma": "Main BG", "value": "#f9fafb", "token": "color.background" },
+      { "figma": "radius/control", "value": "999 (pill)", "token": "radius.control" },
+      { "figma": "Type/*", "value": "DM Sans 12–26", "token": "text-style.* (font-family.body)" }
+    ]
+  },
+  "deltas": [
+    {
+      "id": "warnPair",
+      "severity": "blocks the StatusBadge warning treatment",
+      "figma": { "color/warn-bg": "#fff0d9", "color/warn-fg": "#7a4a00" },
+      "designSystem": { "badge.warning.background": "#ff9b00", "badge.warning.text": "#2d2b2a" },
+      "finding": "The design file uses a soft amber pair for the Attention badge; the design system's warning badge is saturated brand orange. They are not the same treatment, and success/error in the system are saturated too — so a soft warning would also be inconsistent inside the system.",
+      "recommendation": "Ask the design team to choose one: either add a soft-fill badge variant to the design system (which the Verifications chips arguably want for all four statuses), or accept the saturated pair and update the Figma file. Do not resolve this by hardcoding the Figma hexes."
+    },
+    {
+      "id": "darkBorder",
+      "severity": "dark-mode defect in the token source",
+      "designSystem": { "color.border light": "#eaecf0", "color.border dark": "#eaecf0" },
+      "finding": "color.border does not change between light and dark. A #EAECF0 border on the dark background (#1A1C23) is near-maximum contrast and will read as a bright outline around every card and row.",
+      "recommendation": "Flag to the design system owners; the sample apps are the first surface to consume dark mode from these tokens, so this would surface as a visible bug on day one. Do not patch it locally — fix it in the token source."
+    },
+    {
+      "id": "darkMuted",
+      "severity": "worth checking",
+      "designSystem": { "color.text.muted light": "#848282", "color.text.muted dark": "#848282" },
+      "finding": "Muted text is the same grey in both modes. On the dark background that lands near the 4.5:1 threshold for small text, and muted text is used for supporting lines and the date group headers.",
+      "recommendation": "Ask for a lighter muted grey in dark mode, or verify the contrast ratio and accept it explicitly."
+    },
+    {
+      "id": "pillRadius",
+      "severity": "cosmetic",
+      "figma": { "radius/control": "999" },
+      "designSystem": { "radius.control → radiusPill": "32dp" },
+      "finding": "Fully-rounded in Figma versus a fixed 32 in the generated output. Identical on a 48-tall button (anything ≥ 24 renders as a pill) but different on taller surfaces.",
+      "recommendation": "No action for buttons. If a taller pill appears, treat 999 as the intent."
+    }
   ],
-  "sdkTokenRefs": {
-    "comment": "name -> the SDK public theme token it resolves from. Filled in F1 alongside the per-platform generator.",
-    "tokens": {}
+  "perPlatform": {
+    "android": {
+      "consume": "SmileTokens.kt — SmileColorLight / SmileColorDark / SmileDimens / SmileType",
+      "wiring": "Feed the token objects into the app's Compose theme and select by isSystemInDarkTheme(); do not replace the SDK's own theme, which resolves the same tokens internally."
+    },
+    "ios": {
+      "consume": "SmileTokens.swift — SmileColorLight / SmileColorDark / SmileSpacing",
+      "wiring": "Select by colorScheme and expose through the app's environment."
+    },
+    "expo": {
+      "consume": "tokens.ts",
+      "wiring": "A typed token module the sample-ui package imports; no native code involved."
+    },
+    "flutter": {
+      "consume": "NOT AVAILABLE — the design system has no Dart output",
+      "wiring": "Generate a Dart token source from dist/json/tokens.flat.json as part of this repo's tooling, and open a request for a first-class Dart target in the design system so all four platforms consume generated output rather than three generated and one derived.",
+      "gap": true
+    }
   },
+  "rules": [
+    "Tokens are generated, never hand-copied. A hex in app code is a review failure.",
+    "Light and dark both come from the token source; no app-side colour arithmetic.",
+    "Where the design file and the design system disagree, the design system wins and the disagreement is recorded in `deltas` above until the design team rules.",
+    "Fonts: DM Sans for UI, the display family for headlines. Ship DM Sans with the apps rather than relying on a system fallback."
+  ],
   "additions": {
-    "comment": "Sample-app-only tokens with literal values, light and dark. Filled in F1.",
-    "color": {},
-    "typography": {},
-    "spacing": {},
-    "radius": {}
-  },
-  "generated": {
-    "comment": "Where the generator writes. Paths land with the platform.",
-    "android": null,
-    "ios": null,
-    "flutter": null,
-    "expo": null
+    "comment": "Tokens this design needs that the system does not expose. Empty is the goal; each entry is a request to the design system, not a local override.",
+    "candidates": [
+      { "need": "per-product decorative colour assignment for the ProductCard glyph and icon tile", "current": "color.decorative.* exists (9 hues) but the design does not say which product gets which", "ask": "a documented product→hue mapping so all four platforms colour the grid identically" }
+    ]
   }
 }

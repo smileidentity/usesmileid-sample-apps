@@ -25,14 +25,16 @@ Rules:
 | `result-card.schema.json` | The result card's fields and types | scaffold: field set settled |
 | `test-ids.json` | The `sample_*` accessibility IDs flows assert on | scaffold: grows with each screen |
 | `app-identity.json` | Application ids, display names and URL schemes per platform, plus the ids reserved by the SDK repos' development samples | settled |
-| `screens.json` | Screen inventory, each with its design source and `designVersion` | **empty — filled from the design file (phase F0)** |
-| `design-tokens.json` | SDK token references plus this app's additions | **empty — filled from the design file (phase F1)** |
+| `screens.json` | 14 screens, 38 states, each linked to its design node; plus who owns each screen (sample vs SDK) and the open questions the design set raised | **filled 2026-08-12** |
+| `components.json` | All 34 components with owner, design-system contract, tokens, states, reuse, and the build order | **filled 2026-08-12** |
+| `design-tokens.json` | The design-system source, per-platform consumption, and the verified deltas between the design file and the token source | **filled 2026-08-12** |
 
 ## `screens.json` entry shape
 
-`screens.json` starts empty on purpose: it is filled once from the design file so that every
-engineer and agent resolves the same design source for a screen, and so a design change shows up as
-a reviewable diff. One entry per screen:
+One entry per screen, with its states listed separately — most design frames are *states* of a
+screen, not screens, and modelling them that way is what keeps four implementations aligned. Each
+state carries its design node so every engineer and agent resolves the same source, and a design
+change shows up as a reviewable diff:
 
 ```json
 {
@@ -48,6 +50,12 @@ a reviewable diff. One entry per screen:
 
 Top level carries `designVersion` — bump it whenever the design file changes, because that bump is
 the checklist telling you which four app PRs are now owed.
+
+## Where UI work starts
+
+`docs/plan/ui-work-plan.md` sequences the build (tokens → primitives → composites → screens, Android
+first as the reference for the other three) and carries the flags the design set raised. Read it
+before opening a UI PR.
 
 ## Consuming `spec/` from an app
 

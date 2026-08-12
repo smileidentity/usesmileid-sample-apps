@@ -1,7 +1,560 @@
 {
-  "version": 1,
-  "designVersion": null,
-  "designFile": null,
-  "description": "Screen inventory. Filled once from the design file (phase F0) so every engineer and agent resolves the same design source per screen, and so a design change lands as a reviewable diff. Entry shape and the designVersion rule are documented in spec/README.md.",
-  "screens": []
+  "version": 2,
+  "designVersion": "2026-08-12",
+  "designFile": {
+    "name": "Product Enhancements",
+    "fileKey": "CT3oeBfk8uuyvRmGkRJ71D",
+    "url": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements",
+    "boards": {
+      "01": {
+        "node": "5206-2304",
+        "name": "Products & Profile switch",
+        "screenCount": 4
+      },
+      "01b": {
+        "node": "5206-4036",
+        "name": "Products",
+        "screenCount": 1
+      },
+      "02": {
+        "node": "5206-2409",
+        "name": "Verifications",
+        "screenCount": 6
+      },
+      "03": {
+        "node": "5206-2638",
+        "name": "Verification details",
+        "screenCount": 4
+      },
+      "04": {
+        "node": "5206-3776",
+        "name": "Consent & user details",
+        "screenCount": 5
+      },
+      "05": {
+        "node": "5206-2796",
+        "name": "Consent & KYC",
+        "screenCount": 4
+      },
+      "06": {
+        "node": "5206-2897",
+        "name": "Settings & Profiles",
+        "screenCount": 11
+      },
+      "07": {
+        "node": "5206-3667",
+        "name": "Token session",
+        "screenCount": 4
+      }
+    }
+  },
+  "description": "Canonical screens, each with its design states. 39 board frames collapse to 14 screens: most frames are STATES of one screen, and modelling them that way is what keeps four implementations aligned. `owner` decides who builds it — `sample` means this repo's sample-ui; `sdk` means the SDK renders it inside its own flow and we must not rebuild it.",
+  "urlTemplate": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id={node}",
+  "screens": [
+    {
+      "id": "products",
+      "title": "Products",
+      "owner": "sample",
+      "board": "01b",
+      "route": "tab",
+      "canonicalLayout": "5206-4037",
+      "states": [
+        {
+          "state": "default",
+          "node": "5206-4037",
+          "note": "Sandbox. THE canonical layout: expressive 2-up card grid."
+        },
+        {
+          "state": "tokenLinked",
+          "node": "5206-3704",
+          "note": "Session card + countdown + token ring. Drawn on the superseded list layout — see openQuestions.transposeStates."
+        },
+        {
+          "state": "tokenLinkedLate",
+          "node": "5206-3728",
+          "note": "Countdown at 1:40; same layout caveat."
+        },
+        {
+          "state": "tokenExpired",
+          "node": "5206-3752",
+          "note": "Session-ended banner with Scan action; same layout caveat."
+        },
+        {
+          "state": "production",
+          "node": "5206-2391",
+          "note": "Production environment chip; same layout caveat."
+        },
+        {
+          "state": "supersededListLayout",
+          "node": "5206-2305",
+          "note": "Original ActionTile list layout. Superseded by 5206-4037 per owner ruling 2026-08-12 — kept only so nobody re-implements it by accident."
+        }
+      ],
+      "components": [
+        "ProfileEnvChip",
+        "SectionHeader",
+        "ProductCard",
+        "ProductGrid",
+        "SessionCard",
+        "SessionEndedBanner",
+        "NavBar",
+        "TokenRing"
+      ],
+      "testIds": [
+        "sample_products_screen",
+        "sample_product_card",
+        "sample_session_card",
+        "sample_env_chip"
+      ]
+    },
+    {
+      "id": "profileSwitchSheet",
+      "title": "Switch profile",
+      "owner": "sample",
+      "board": "01",
+      "route": "modalSheet",
+      "states": [
+        {
+          "state": "default",
+          "node": "5206-2348"
+        }
+      ],
+      "components": [
+        "BottomSheet",
+        "ProfileRow",
+        "Avatar"
+      ],
+      "testIds": [
+        "sample_profile_switch_sheet",
+        "sample_profile_row"
+      ]
+    },
+    {
+      "id": "verifications",
+      "title": "Verifications",
+      "owner": "sample",
+      "board": "02",
+      "route": "tab",
+      "states": [
+        {
+          "state": "default",
+          "node": "5206-2410"
+        },
+        {
+          "state": "selectMode",
+          "node": "5206-2441",
+          "note": "NavBar hidden, selection bar replaces it."
+        },
+        {
+          "state": "itemsSelected",
+          "node": "5206-2491"
+        },
+        {
+          "state": "afterDelete",
+          "node": "5206-2545",
+          "note": "Toast with undo; counts drop 11→9."
+        },
+        {
+          "state": "swipeToDelete",
+          "node": "5206-2576"
+        },
+        {
+          "state": "refreshing",
+          "node": "5206-2608"
+        }
+      ],
+      "components": [
+        "FilterChip",
+        "DateGroupHeader",
+        "JobRow",
+        "StatusBadge",
+        "SelectionCheckbox",
+        "SelectionBar",
+        "Toast",
+        "SwipeAction",
+        "NavBar"
+      ],
+      "testIds": [
+        "sample_verifications_screen",
+        "sample_filter_chip",
+        "sample_job_row",
+        "sample_selection_bar",
+        "sample_toast",
+        "sample_toast_undo"
+      ]
+    },
+    {
+      "id": "verificationDetails",
+      "title": "Verification details",
+      "owner": "sample",
+      "board": "03",
+      "route": "push",
+      "states": [
+        {
+          "state": "attention",
+          "node": "5206-2639",
+          "note": "Provisional — needs review; 200 OK."
+        },
+        {
+          "state": "clear",
+          "node": "5206-2678"
+        },
+        {
+          "state": "blocked",
+          "node": "5206-2717"
+        },
+        {
+          "state": "processing",
+          "node": "5206-2756",
+          "note": "202 Accepted, pull-to-refresh present."
+        }
+      ],
+      "components": [
+        "TopAppBar",
+        "StatusBadge",
+        "SectionLabel",
+        "DataFieldRow"
+      ],
+      "testIds": [
+        "sample_verification_details_screen",
+        "sample_detail_field",
+        "sample_detail_copy",
+        "sample_status_badge"
+      ]
+    },
+    {
+      "id": "userDetails",
+      "title": "User details",
+      "owner": "sample",
+      "board": "04",
+      "route": "push",
+      "flowPosition": "BEFORE the SDK flow starts",
+      "states": [
+        {
+          "state": "empty",
+          "node": "5206-3804",
+          "note": "Placeholders; 'First and last name are required.'"
+        },
+        {
+          "state": "editing",
+          "node": "5206-3828",
+          "note": "Focused row with caret; inline edit, not a separate form screen."
+        },
+        {
+          "state": "complete",
+          "node": "5206-3777",
+          "note": "Values filled; 'Tap any field to edit.' + remember-details switch."
+        }
+      ],
+      "components": [
+        "TopAppBar",
+        "SectionLabel",
+        "KeyValueEditRow",
+        "SettingRow",
+        "Switch",
+        "Button"
+      ],
+      "testIds": [
+        "sample_user_details_screen",
+        "sample_user_details_field",
+        "sample_remember_details_switch",
+        "sample_user_details_continue"
+      ]
+    },
+    {
+      "id": "consent",
+      "title": "Consent",
+      "owner": "sdk",
+      "board": "04",
+      "route": "sdkFlowStep",
+      "states": [
+        {
+          "state": "notAgreed",
+          "node": "5206-3946"
+        },
+        {
+          "state": "agreed",
+          "node": "5206-3856"
+        }
+      ],
+      "sdkSurface": "The SDK's own consent step, composed by including consent() in the flow builder. Do NOT rebuild it in sample-ui; the sample only decides whether the step is present (Settings toggle) and passes configuration.",
+      "components": [],
+      "testIds": [
+        "si_consent_allow_button"
+      ]
+    },
+    {
+      "id": "kycIdForm",
+      "title": "KYC / ID details",
+      "owner": "sample",
+      "board": "05",
+      "route": "push",
+      "states": [
+        {
+          "state": "empty",
+          "node": "5206-2797"
+        },
+        {
+          "state": "selected",
+          "node": "5206-2816"
+        }
+      ],
+      "components": [
+        "TopAppBar",
+        "SectionLabel",
+        "SelectTrigger",
+        "TextInput",
+        "Button",
+        "FloatingTokenButton"
+      ],
+      "testIds": [
+        "sample_kyc_form_screen",
+        "sample_country_trigger",
+        "sample_idtype_trigger",
+        "sample_idnumber_input",
+        "sample_kyc_continue"
+      ]
+    },
+    {
+      "id": "countryPickerSheet",
+      "title": "Country picker",
+      "owner": "sample",
+      "board": "05",
+      "route": "fullSheet",
+      "states": [
+        {
+          "state": "default",
+          "node": "5206-2835"
+        }
+      ],
+      "components": [
+        "BottomSheet",
+        "SearchField",
+        "OptionRow"
+      ],
+      "testIds": [
+        "sample_country_sheet",
+        "sample_country_search",
+        "sample_country_option"
+      ]
+    },
+    {
+      "id": "idTypePickerSheet",
+      "title": "ID type picker",
+      "owner": "sample",
+      "board": "05",
+      "route": "fullSheet",
+      "states": [
+        {
+          "state": "default",
+          "node": "5206-2877"
+        }
+      ],
+      "components": [
+        "BottomSheet",
+        "SearchField",
+        "OptionRow"
+      ],
+      "testIds": [
+        "sample_idtype_sheet",
+        "sample_idtype_search",
+        "sample_idtype_option"
+      ]
+    },
+    {
+      "id": "settings",
+      "title": "Settings",
+      "owner": "sample",
+      "board": "06",
+      "route": "tab",
+      "states": [
+        {
+          "state": "default",
+          "node": "5206-2898"
+        },
+        {
+          "state": "altProfile",
+          "node": "5206-3018"
+        },
+        {
+          "state": "production",
+          "node": "5206-3138"
+        },
+        {
+          "state": "newlyCreatedProfile",
+          "node": "5206-3547"
+        }
+      ],
+      "sections": [
+        "PROFILE",
+        "CAPTURE",
+        "APPEARANCE",
+        "SDK SCREENS — SHOW OR SKIP FLOW STEPS",
+        "ABOUT",
+        "LEGAL",
+        "sign out",
+        "version"
+      ],
+      "components": [
+        "SectionLabel",
+        "ProfileRow",
+        "Avatar",
+        "SettingRow",
+        "Switch",
+        "NavBar"
+      ],
+      "testIds": [
+        "sample_settings_screen",
+        "sample_setting_agent_mode",
+        "sample_setting_dark_mode",
+        "sample_setting_consent_step",
+        "sample_setting_instructions_step",
+        "sample_setting_preview_step",
+        "sample_sign_out"
+      ]
+    },
+    {
+      "id": "profiles",
+      "title": "Profiles",
+      "owner": "sample",
+      "board": "06",
+      "route": "push",
+      "states": [
+        {
+          "state": "default",
+          "node": "5206-3258"
+        },
+        {
+          "state": "created",
+          "node": "5206-3477",
+          "note": "Fourth profile present + toast."
+        }
+      ],
+      "components": [
+        "ProfileRow",
+        "Avatar",
+        "Toast"
+      ],
+      "testIds": [
+        "sample_profiles_screen",
+        "sample_profile_row",
+        "sample_create_profile"
+      ]
+    },
+    {
+      "id": "profileConfig",
+      "title": "Profile configuration",
+      "owner": "sample",
+      "board": "06",
+      "route": "push",
+      "states": [
+        {
+          "state": "profileA",
+          "node": "5206-3295"
+        },
+        {
+          "state": "profileB",
+          "node": "5206-3317"
+        },
+        {
+          "state": "profileC",
+          "node": "5206-3525"
+        }
+      ],
+      "note": "USER DETAILS — ATTACHED TO EVERY JOB. This is the per-profile default that seeds the userDetails screen.",
+      "components": [
+        "SectionLabel",
+        "KeyValueEditRow",
+        "Button"
+      ],
+      "testIds": [
+        "sample_profile_config_screen",
+        "sample_profile_config_field",
+        "sample_profile_config_save"
+      ]
+    },
+    {
+      "id": "newProfileSheet",
+      "title": "New profile",
+      "owner": "sample",
+      "board": "06",
+      "route": "modalSheet",
+      "states": [
+        {
+          "state": "empty",
+          "node": "5206-3339"
+        },
+        {
+          "state": "filled",
+          "node": "5206-3408"
+        }
+      ],
+      "components": [
+        "BottomSheet",
+        "TextInput",
+        "SectionLabel",
+        "Button"
+      ],
+      "testIds": [
+        "sample_new_profile_sheet",
+        "sample_new_profile_name",
+        "sample_new_profile_save"
+      ]
+    },
+    {
+      "id": "scanToken",
+      "title": "Scan token",
+      "owner": "sample",
+      "board": "07",
+      "route": "push",
+      "states": [
+        {
+          "state": "default",
+          "node": "5206-3668"
+        }
+      ],
+      "note": "Camera QR scan for linking a token session. The reticle frame is hidden in the design in favour of the scan glyph; a manual-entry row with Paste and a 'Simulate a successful scan' affordance are both present — the simulate row is what makes this screen testable without a QR source.",
+      "components": [
+        "TopAppBar",
+        "ScanGlyph",
+        "ScanSheet"
+      ],
+      "testIds": [
+        "sample_scan_token_screen",
+        "sample_token_manual_entry",
+        "sample_token_paste",
+        "sample_token_simulate"
+      ]
+    }
+  ],
+  "openQuestions": [
+    {
+      "id": "transposeStates",
+      "question": "The chosen products layout (board 01b, expressive grid) has ONE state. The token-session, token-expired and production states exist only on the superseded list layout (boards 01 and 07). Should those states be re-drawn on the grid layout, or may engineering transpose the session card / env chip / token ring onto it?",
+      "blocks": "products screen states beyond default",
+      "recommendation": "Engineering transposes; the header, session card and nav bar are unchanged between the two layouts, so only the card grid differs. Confirm rather than assume, since it changes vertical space above the grid."
+    },
+    {
+      "id": "productCoverage",
+      "question": "The products grid shows 5 job types (SmartSelfie Enrollment, SmartSelfie Auth, Document Verification, Enhanced Doc Verification, Biometric KYC) plus one empty slot. The SDK's JobType enum has 7: EnhancedKyc(5) and BVN(7) are absent. Are those intentionally out of scope for the sample, or does the empty slot belong to one of them?",
+      "blocks": "final product list; consumption lanes can only exercise what the sample exposes",
+      "recommendation": "Decide explicitly. Both missing types are form/API-shaped rather than capture-shaped, so leaving them out is defensible — but then the sample never exercises them and no CI lane can."
+    },
+    {
+      "id": "boardNaming",
+      "question": "Board 05 is titled 'Consent & KYC' but contains no consent screen — the consent frames live in board 04 ('Consent & user details'). Rename 05 to 'KYC / ID details' to avoid a wrong-board lookup?",
+      "blocks": "nothing; documentation hygiene"
+    },
+    {
+      "id": "appNameCopy",
+      "question": "The Settings footer reads 'Smile ID Sample App · 1.0.0' while the agreed app identity is 'UseSmileID Sample' (spec/app-identity.json). Which string ships?",
+      "blocks": "settings screen copy, store metadata",
+      "recommendation": "Use the agreed display name in the footer so the app matches its launcher label."
+    },
+    {
+      "id": "docsDomain",
+      "question": "The ABOUT section links 'docs.usesmileid.com'. Confirm that domain is live, or point it at the current documentation host.",
+      "blocks": "settings ABOUT rows"
+    }
+  ]
 }
