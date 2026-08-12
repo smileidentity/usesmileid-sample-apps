@@ -38,15 +38,24 @@ change shows up as a reviewable diff:
 
 ```json
 {
-  "id": "home",
-  "title": "Home",
-  "designUrl": "https://www.figma.com/design/<fileKey>/<name>?node-id=<nodeId>",
-  "states": ["default", "loading", "error"],
-  "entryRoutes": ["fullscreen", "shell"],
-  "testIds": ["sample_home_start_button"],
-  "notes": null
+  "id": "verifications",
+  "title": "Verifications",
+  "owner": "sample",
+  "board": "02",
+  "route": "tab",
+  "states": [
+    { "state": "default", "node": "5206-2410" },
+    { "state": "selectMode", "node": "5206-2441", "note": "NavBar hidden, selection bar replaces it." }
+  ],
+  "components": ["FilterChip", "JobRow", "StatusBadge", "SelectionBar"],
+  "testIds": ["sample_verifications_screen", "sample_job_row"]
 }
 ```
+
+Resolve a node to its design URL with the top-level `urlTemplate`. `owner` is load-bearing:
+`sample` means this repo builds it, `sdk` means the SDK renders it inside its own flow and we must
+not rebuild it. `components` must name entries that exist in `components.json` — a sub-element goes
+in that component's `parts`, not here.
 
 Top level carries `designVersion` — bump it whenever the design file changes, because that bump is
 the checklist telling you which four app PRs are now owed.
