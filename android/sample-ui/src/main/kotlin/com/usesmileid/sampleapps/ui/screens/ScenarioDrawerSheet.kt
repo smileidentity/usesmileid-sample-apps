@@ -2,13 +2,10 @@ package com.usesmileid.sampleapps.ui.screens
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.usesmileid.sampleapps.ui.SampleTestIds
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 
-/**
- * The debug scenario drawer. A shipped affordance, not test-only scaffolding: it and the launch
- * arguments are the two ways automation puts the app into a known state.
- */
+/** The debug scenario drawer: a shipped affordance, not test-only scaffolding. */
 @Composable
 fun ScenarioDrawerSheet(modifier: Modifier = Modifier) {
-    PlaceholderScreen(SampleTestIds.SCENARIO_DRAWER, "Scenarios", modifier = modifier)
+    PlaceholderScreen(UseSmileIDSampleTestIds.SCENARIO_DRAWER, "Scenarios", modifier = modifier)
 }

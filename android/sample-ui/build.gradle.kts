@@ -8,8 +8,7 @@ plugins {
 }
 
 android {
-    // Fixed by spec/app-identity.json → sharedLibraryIdentity.androidNamespace. This library
-    // runs under eight application identities, so it must never read one.
+    // Fixed by spec/app-identity.json; this library carries no application identity.
     namespace = "com.usesmileid.sampleapps.ui"
     compileSdk = 37
 
@@ -42,9 +41,7 @@ dependencies {
     testImplementation(libs.junit)
 }
 
-// The `sample_*` ids are a cross-app contract, so the unit test asserts this module's constants
-// against spec/test-ids.json rather than trusting them. Anchored on projectDir, not rootProject:
-// an SDK repo consumes this module from its own build, where the root is somewhere else entirely.
+// Anchored on projectDir, not rootProject: an SDK repo consumes this module from its own build.
 tasks.withType<Test>().configureEach {
     systemProperty("sampleapps.spec.dir", layout.projectDirectory.dir("../../spec").asFile.absolutePath)
 }

@@ -1,15 +1,11 @@
 package com.usesmileid.sampleapps.ui
 
 /**
- * The `sample_*` accessibility ids this module attaches, from `spec/test-ids.json`.
- *
- * They are a cross-app contract — device flows and golden tests key off them — so
- * `SampleTestIdsSpecTest` asserts every constant here against the spec file rather than trusting
- * that it was transcribed correctly. Ids are stable forever: deprecate, never rename.
- *
- * Only the ids for surfaces that exist are listed. The rest arrive with their screens.
+ * The `sample_*` accessibility ids this module attaches, from `spec/test-ids.json`, which owns
+ * them. `UseSmileIDSampleTestIdsSpecTest` asserts every constant here against that file. Ids are stable
+ * forever: deprecate, never rename. Ids for surfaces that do not exist yet arrive with them.
  */
-object SampleTestIds {
+object UseSmileIDSampleTestIds {
     const val NAV_PRODUCTS = "sample_nav_products"
     const val NAV_VERIFICATIONS = "sample_nav_verifications"
     const val NAV_SETTINGS = "sample_nav_settings"
@@ -30,7 +26,6 @@ object SampleTestIds {
     const val SCAN_TOKEN_SCREEN = "sample_scan_token_screen"
     const val SCENARIO_DRAWER = "sample_scenario_drawer"
 
-    /** Every id above, so the spec test can check the whole set in one pass. */
     val all = listOf(
         NAV_PRODUCTS,
         NAV_VERIFICATIONS,

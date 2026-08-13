@@ -8,13 +8,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.UseSmileIDSample">
 
-        <!--
-          Orientation is deliberately NOT locked and configChanges is deliberately NOT declared:
-          rotation has to recreate the activity, because surviving recreation is a requirement of
-          the navigation contract, not something to design around.
-        -->
+        <!-- Orientation is unlocked and configChanges undeclared so rotation really recreates. -->
         <activity
-            android:name=".MainActivity"
+            android:name=".UseSmileIDSampleActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize">
@@ -24,11 +20,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!--
-              One filter for the whole scheme; the route table in spec/routes.json decides which
-              destination a given URI reaches. The scheme is per app (spec/app-identity.json) —
-              two apps claiming one scheme raise a disambiguation prompt that breaks automation.
-            -->
+            <!-- One filter for the whole scheme; spec/routes.json decides the destination. -->
             <intent-filter android:autoVerify="false">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

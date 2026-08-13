@@ -27,20 +27,17 @@ import com.ramcosta.composedestinations.utils.contains
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import com.ramcosta.composedestinations.utils.rememberDestinationsNavigator
 import com.ramcosta.composedestinations.utils.startDestination
-import com.usesmileid.sampleapps.ui.components.SampleNavBar
-import com.usesmileid.sampleapps.ui.components.SampleNavItem
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavBar
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavItem
 
 /**
  * The navigation shell: three tabs with preserved per-tab back stacks, plus the detached token
- * affordance.
- *
- * The nav bar is shown only for destinations inside one of the three tab graphs, which is also
- * what decides the selected tab — so a pushed detail screen, a form or the SDK flow covers it
- * without any screen having to declare that it does.
+ * affordance. The nav bar shows only inside a tab graph, so a pushed screen or the SDK flow
+ * covers it without any screen having to declare that it does.
  */
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SampleAppShell() {
+fun UseSmileIDSampleShell() {
     val engine = rememberNavHostEngine()
     val navController = engine.rememberNavController()
     val navigator = navController.rememberDestinationsNavigator()
@@ -50,25 +47,20 @@ fun SampleAppShell() {
     ForwardNewIntentsTo(navController)
 
     Scaffold(
-        // Compose test tags are invisible to UI automation unless they are published as resource
-        // ids. Device flows assert on sample_* ids, so this line is load-bearing.
+        // Device flows assert on sample_* ids, which UI automation only sees as resource ids.
         modifier = Modifier.semantics { testTagsAsResourceId = true },
         bottomBar = {
             if (selectedTab != null) {
-                SampleNavBar(
+                UseSmileIDSampleNavBar(
                     selected = selectedTab,
                     onSelect = { item ->
                         navigator.navigate(item.graph) {
-                            // The multi-back-stack recipe: pop to the root's start destination
-                            // saving each tab's stack, then restore the target tab's.
                             popUpTo(NavGraphs.root.startDestination) { saveState = true }
                             launchSingleTop = true
                             restoreState = true
                         }
                     },
                     onTokenClick = {
-                        // Single top: the affordance is reachable from all three tabs, and
-                        // tapping it twice should not stack two scan screens.
                         navigator.navigate(ScanTokenScreenDestination) { launchSingleTop = true }
                     },
                 )
@@ -83,12 +75,7 @@ fun SampleAppShell() {
     }
 }
 
-/**
- * The launch intent is handled by the NavController when the graph is created, which covers cold
- * start. A warm start does not go through that path: the activity is `singleTop`, so a second
- * deep link arrives as a new intent and is silently dropped unless it is forwarded — the app
- * stays exactly where it was while looking like the link worked.
- */
+/** Cold start is handled when the graph is created; a warm deep link arrives as a new intent. */
 @Composable
 private fun ForwardNewIntentsTo(navController: NavHostController) {
     val activity = LocalActivity.current as? ComponentActivity ?: return
@@ -100,16 +87,16 @@ private fun ForwardNewIntentsTo(navController: NavHostController) {
 }
 
 /** The tab a destination belongs to, or null when it is not inside the shell. */
-private fun DestinationSpec.tab(): SampleNavItem? = when {
-    ProductsNavGraph.contains(this) -> SampleNavItem.Products
-    VerificationsNavGraph.contains(this) -> SampleNavItem.Verifications
-    SettingsNavGraph.contains(this) -> SampleNavItem.Settings
+private fun DestinationSpec.tab(): UseSmileIDSampleNavItem? = when {
+    ProductsNavGraph.contains(this) -> UseSmileIDSampleNavItem.Products
+    VerificationsNavGraph.contains(this) -> UseSmileIDSampleNavItem.Verifications
+    SettingsNavGraph.contains(this) -> UseSmileIDSampleNavItem.Settings
     else -> null
 }
 
-private val SampleNavItem.graph: Direction
+private val UseSmileIDSampleNavItem.graph: Direction
     get() = when (this) {
-        SampleNavItem.Products -> ProductsNavGraph
-        SampleNavItem.Verifications -> VerificationsNavGraph
-        SampleNavItem.Settings -> SettingsNavGraph
+        UseSmileIDSampleNavItem.Products -> ProductsNavGraph
+        UseSmileIDSampleNavItem.Verifications -> VerificationsNavGraph
+        UseSmileIDSampleNavItem.Settings -> SettingsNavGraph
     }

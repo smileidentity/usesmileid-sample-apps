@@ -5,10 +5,7 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 
 /**
  * One nested graph per tab, so each tab owns a back stack that survives switching away and back.
- *
- * Everything else — the pre-flow forms, the SDK flow route, the profile screens, the sheets —
- * sits directly in [RootGraph], above the shell, because those surfaces are not part of any tab's
- * history and must be able to cover the nav bar.
+ * Everything else sits directly in [RootGraph], above the shell, so it can cover the nav bar.
  */
 @NavGraph<RootGraph>(start = true)
 annotation class ProductsGraph

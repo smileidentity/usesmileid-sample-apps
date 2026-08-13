@@ -7,14 +7,12 @@ import com.smileid.designsystem.SmileColorDark
 import com.smileid.designsystem.SmileColorLight
 
 /**
- * The design system's **semantic** colour tier, resolved for one mode.
- *
- * Only semantic tokens live here. Component tokens (`badge.*`, `input.*`, …) are read straight
- * from [SmileColorLight] / [SmileColorDark] by the component that owns them, and primitives are
- * never referenced from app code. See `spec/design-tokens.json`.
+ * The design system's semantic colour tier, resolved for one mode. Component tokens are read
+ * straight from [SmileColorLight] / [SmileColorDark] by the component that owns them; primitives
+ * are never referenced from app code.
  */
 @Immutable
-data class SampleColors(
+data class UseSmileIDSampleColors(
     val background: Color,
     val surface: Color,
     val surfaceAlt: Color,
@@ -41,7 +39,7 @@ data class SampleColors(
     val onInfo: Color,
 )
 
-internal val sampleLightColors = SampleColors(
+internal val lightColors = UseSmileIDSampleColors(
     background = SmileColorLight.colorBackground,
     surface = SmileColorLight.colorSurface,
     surfaceAlt = SmileColorLight.colorSurfaceAlt,
@@ -68,7 +66,7 @@ internal val sampleLightColors = SampleColors(
     onInfo = SmileColorLight.colorFeedbackInfoOn,
 )
 
-internal val sampleDarkColors = SampleColors(
+internal val darkColors = UseSmileIDSampleColors(
     background = SmileColorDark.colorBackground,
     surface = SmileColorDark.colorSurface,
     surfaceAlt = SmileColorDark.colorSurfaceAlt,
@@ -95,4 +93,4 @@ internal val sampleDarkColors = SampleColors(
     onInfo = SmileColorDark.colorFeedbackInfoOn,
 )
 
-internal val LocalSampleColors = staticCompositionLocalOf { sampleLightColors }
+internal val LocalUseSmileIDSampleColors = staticCompositionLocalOf { lightColors }

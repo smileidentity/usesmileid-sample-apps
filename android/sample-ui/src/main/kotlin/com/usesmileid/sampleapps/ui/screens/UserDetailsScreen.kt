@@ -2,16 +2,13 @@ package com.usesmileid.sampleapps.ui.screens
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.usesmileid.sampleapps.ui.SampleTestIds
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 
-/**
- * The Consent Details Form — sample-owned, shown before the SDK flow starts for every product.
- * Not to be confused with the SDK's own consent step, which stays inside the flow.
- */
+/** The Consent Details Form — sample-owned, shown before the SDK flow's own consent step. */
 @Composable
 fun UserDetailsScreen(productId: String, modifier: Modifier = Modifier) {
     PlaceholderScreen(
-        testId = SampleTestIds.USER_DETAILS_SCREEN,
+        testId = UseSmileIDSampleTestIds.USER_DETAILS_SCREEN,
         title = "Consent details",
         args = "productId = $productId",
         modifier = modifier,

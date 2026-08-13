@@ -23,37 +23,31 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import com.smileid.designsystem.SmileDimens
-import com.usesmileid.sampleapps.ui.SampleTestIds
-import com.usesmileid.sampleapps.ui.theme.SampleTheme
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
+import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** The three destinations the nav bar switches between. The token affordance is not one of them. */
-enum class SampleNavItem(val testId: String, val label: String) {
-    Products(SampleTestIds.NAV_PRODUCTS, "Products"),
-    Verifications(SampleTestIds.NAV_VERIFICATIONS, "Verifications"),
-    Settings(SampleTestIds.NAV_SETTINGS, "Settings"),
+enum class UseSmileIDSampleNavItem(val testId: String, val label: String) {
+    Products(UseSmileIDSampleTestIds.NAV_PRODUCTS, "Products"),
+    Verifications(UseSmileIDSampleTestIds.NAV_VERIFICATIONS, "Verifications"),
+    Settings(UseSmileIDSampleTestIds.NAV_SETTINGS, "Settings"),
 }
 
 /**
- * A floating pill holding the three tabs, plus a **visually detached** circular token button.
- *
- * The token affordance is modelled separately from the tabs on purpose: it navigates rather than
- * switching tab, and it is what carries the session countdown ring (`TokenRing`, U2).
- *
- * Icons, the countdown ring, elevation and the select-mode hidden state land with the composites
- * (U2); this is the shell's walking skeleton, so it is labels and behaviour only.
+ * A floating pill holding the three tabs, plus a visually detached circular token button. The
+ * token affordance is modelled separately because it navigates rather than switching tab, and it
+ * is what carries the session countdown ring (U2). Icons and the ring land with the composites.
  */
 @Composable
-fun SampleNavBar(
-    selected: SampleNavItem,
-    onSelect: (SampleNavItem) -> Unit,
+fun UseSmileIDSampleNavBar(
+    selected: UseSmileIDSampleNavItem,
+    onSelect: (UseSmileIDSampleNavItem) -> Unit,
     onTokenClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
-        // The app draws edge to edge, so the bar owns its own bottom inset. Without it the bar
-        // sits under the system navigation bar: half-hidden, untappable, and — because the
-        // accessibility tree clips to the content view — reported to UI automation with zero
-        // bounds, so a flow cannot see it at all. Neither a unit test nor a golden catches that.
+        // The app draws edge to edge, so the bar owns its bottom inset. Without it the bar sits
+        // under the system navigation bar and reports zero bounds to UI automation.
         modifier = modifier
             .windowInsetsPadding(WindowInsets.navigationBars)
             .padding(SmileDimens.spacingSm),
@@ -62,11 +56,11 @@ fun SampleNavBar(
     ) {
         Surface(
             shape = RoundedCornerShape(SmileDimens.radiusPill),
-            color = SampleTheme.colors.surface,
-            border = BorderStroke(SmileDimens.borderWidthHairline, SampleTheme.colors.border),
+            color = UseSmileIDSampleTheme.colors.surface,
+            border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.border),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                SampleNavItem.entries.forEach { item ->
+                UseSmileIDSampleNavItem.entries.forEach { item ->
                     NavBarTab(item = item, selected = item == selected, onClick = { onSelect(item) })
                 }
             }
@@ -74,12 +68,12 @@ fun SampleNavBar(
         Surface(
             modifier = Modifier.size(SmileDimens.sizeControlMd),
             shape = CircleShape,
-            color = SampleTheme.colors.primary,
-            contentColor = SampleTheme.colors.onPrimary,
+            color = UseSmileIDSampleTheme.colors.primary,
+            contentColor = UseSmileIDSampleTheme.colors.onPrimary,
         ) {
             Box(
                 modifier = Modifier
-                    .testTag(SampleTestIds.NAV_TOKEN)
+                    .testTag(UseSmileIDSampleTestIds.NAV_TOKEN)
                     .clickable(onClick = onTokenClick),
                 contentAlignment = Alignment.Center,
             ) {
@@ -90,11 +84,11 @@ fun SampleNavBar(
 }
 
 @Composable
-private fun NavBarTab(item: SampleNavItem, selected: Boolean, onClick: () -> Unit) {
+private fun NavBarTab(item: UseSmileIDSampleNavItem, selected: Boolean, onClick: () -> Unit) {
     Text(
         text = item.label,
         style = MaterialTheme.typography.labelLarge,
-        color = if (selected) SampleTheme.colors.primary else SampleTheme.colors.textMuted,
+        color = if (selected) UseSmileIDSampleTheme.colors.primary else UseSmileIDSampleTheme.colors.textMuted,
         textAlign = TextAlign.Center,
         modifier = Modifier
             .testTag(item.testId)

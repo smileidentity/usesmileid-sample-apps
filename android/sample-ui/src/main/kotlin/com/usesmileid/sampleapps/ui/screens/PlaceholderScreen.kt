@@ -12,15 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.smileid.designsystem.SmileDimens
-import com.usesmileid.sampleapps.ui.theme.SampleTheme
+import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /**
- * The walking skeleton's screen body: the screen's root `sample_*` id, its title, and — for a
- * screen with navigation arguments — the arguments it was actually given.
- *
- * Every screen in `spec/screens.json` gets one so its route, deep link and id are reachable and
- * assertable before any fidelity work exists, and so a deep link's argument parsing is visible on
- * screen rather than only in a log. U1–U3 replace the bodies one screen at a time; the ids stay.
+ * The walking skeleton's screen body: the screen's root `sample_*` id, its title, and the
+ * arguments it was given, so a deep link's parsing is assertable on screen rather than in a log.
+ * U1–U3 replace the bodies one screen at a time; the ids stay.
  */
 @Composable
 internal fun PlaceholderScreen(
@@ -40,14 +37,14 @@ internal fun PlaceholderScreen(
         Text(
             text = title,
             style = MaterialTheme.typography.headlineSmall,
-            color = SampleTheme.colors.textTitle,
+            color = UseSmileIDSampleTheme.colors.textTitle,
             textAlign = TextAlign.Center,
         )
         if (args != null) {
             Text(
                 text = args,
                 style = MaterialTheme.typography.bodySmall,
-                color = SampleTheme.colors.textMuted,
+                color = UseSmileIDSampleTheme.colors.textMuted,
                 textAlign = TextAlign.Center,
             )
         }

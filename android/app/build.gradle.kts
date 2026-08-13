@@ -13,8 +13,7 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        // Fixed by spec/app-identity.json. Never reuse an id or scheme an SDK repo's own sample
-        // has reserved — two apps sharing either cannot be told apart by automation.
+        // Fixed by spec/app-identity.json.
         applicationId = "com.usesmileid.sampleapps.android"
         minSdk = 24
         targetSdk = 37
@@ -27,15 +26,11 @@ android {
             applicationIdSuffix = ".debug"
         }
         release {
-            // Release is first-class here: minification and resource shrinking are where a
-            // consumption defect in the published SDK actually surfaces, and there are
-            // deliberately NO app-side keep rules — the SDK's own consumer rules have to be
-            // enough, or that is a finding against the SDK.
+            // No app-side keep rules: the SDK's own consumer rules have to be enough.
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
-            // Debug-signed so the minified build can be installed and driven on a device
-            // without a keystore in the tree. Nothing is published from this repo.
+            // Debug-signed so the minified build is installable without a keystore in the tree.
             signingConfig = signingConfigs.getByName("debug")
         }
     }
@@ -59,8 +54,6 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 dependencies {
     implementation(projects.sampleUi)
 
-    // Registry only. The BOM pins every com.usesmileid artifact to one version, which is what
-    // makes a version bump a one-line PR and every bump a free consumption test.
     implementation(platform(libs.usesmileid.bom))
     implementation(libs.usesmileid)
     implementation(libs.usesmileid.mlkit.face)
@@ -71,8 +64,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.core.ktx)
-    // Declared explicitly to pin the androidx.navigation version Compose Destinations runs over,
-    // rather than inheriting whatever it happens to resolve to.
+    // Pins the androidx.navigation version Compose Destinations runs over.
     implementation(libs.androidx.navigation.compose)
 
     implementation(libs.destinations)

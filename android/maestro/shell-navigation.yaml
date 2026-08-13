@@ -1,25 +1,18 @@
 # N1 — the navigation shell: tabs, preserved per-tab back stacks, the detached token affordance.
 #
-# Asserts on sample_* ids from spec/test-ids.json and on the arguments a route parsed, never on
-# screenshots or coordinates.
-#
-# APP_ID must be passed, and deliberately has no default: a flow-level `env:` default WINS over
-# `-e` in Maestro 2.8, so a default here would silently pin every run to one variant while the
-# command line said otherwise. Without it the flow fails rather than testing the wrong app.
-#
+# APP_ID has no default on purpose: a flow-level `env:` default WINS over `-e` in Maestro 2.8, so
+# one here would silently pin every run to a single variant.
 #   maestro --device <serial> test -e APP_ID=com.usesmileid.sampleapps.android.debug android/maestro
 #   maestro --device <serial> test -e APP_ID=com.usesmileid.sampleapps.android       android/maestro
 appId: ${APP_ID}
 ---
-# stopApp + launchApp rather than `clearState`: there is no persisted state to clear yet, and
-# `pm clear` is refused from the shell on some OEM builds (ColorOS), so this stays portable.
+# `pm clear` is refused from the shell on some OEM builds, and there is no persisted state yet.
 - stopApp
 - launchApp
 
 - assertVisible:
     id: "sample_products_screen"
 
-# Tabs navigate.
 - tapOn:
     id: "sample_nav_verifications"
 - assertVisible:

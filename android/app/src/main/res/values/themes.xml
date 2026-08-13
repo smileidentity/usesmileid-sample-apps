@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--
-      Window chrome only — every colour the user sees comes from the design tokens through
-      SampleTheme. This exists so the window before Compose draws is not an action-bar shell,
-      and values-night gives it the right ground colour in dark mode.
-    -->
+    <!-- Window chrome only; every colour the user sees comes from the tokens via UseSmileIDSampleTheme. -->
     <style name="Theme.UseSmileIDSample" parent="android:Theme.DeviceDefault.Light.NoActionBar" />
 </resources>

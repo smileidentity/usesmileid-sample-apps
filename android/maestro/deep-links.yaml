@@ -1,9 +1,5 @@
 # Every route in spec/routes.json opens COLD, on the right destination, with its arguments parsed.
-#
-# Cold start is the case that matters: it is where argument parsing and state restoration break,
-# and warm start passes by accident. Each step stops the app first, so nothing is inherited from
-# the step before it.
-#
+# Warm start passes by accident; cold start is where argument parsing and restoration break.
 # APP_ID must be passed — see the note in shell-navigation.yaml for why it has no default.
 appId: ${APP_ID}
 ---
@@ -49,8 +45,7 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_idtype_sheet"
 
-# One route, two presentations: the enum argument is typed, and the SDK's own pre-flight check
-# runs on entry so an invalid configuration never reaches the flow.
+# One route, two presentations, and the SDK's own pre-flight runs on entry.
 - stopApp
 - openLink: "usesmileid-sample-android://flow/docV/run"
 - assertVisible: ".*route = fullscreen.*"

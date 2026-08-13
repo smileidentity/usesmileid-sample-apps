@@ -1,11 +1,7 @@
 [versions]
-# The Smile ID SDK, resolved from Maven Central only (see AGENTS.md). The BOM pins every
-# com.usesmileid artifact, so the individual modules are declared without a version.
+# The BOM pins every com.usesmileid artifact, so the modules carry no version of their own.
 usesmileid = "12.0.1"
 
-# Kept deliberately in step with the SDK's own toolchain where it costs nothing: the app
-# resolves the SDK as a binary, so only the Compose compiler and KSP have to agree with the
-# Kotlin version used HERE.
 android-gradle-plugin = "9.3.1"
 kotlin = "2.4.10"
 ksp = "2.3.11"
@@ -15,8 +11,7 @@ androidx-compose-bom = "2026.06.01"
 androidx-core = "1.16.0"
 androidx-navigation = "2.9.8"
 
-# Same navigation library and version the SDK uses, so its KSP-generated destinations and
-# the shell's behave identically.
+# Same navigation library and version the SDK uses.
 destinations = "2.3.0"
 
 junit = "4.13.2"

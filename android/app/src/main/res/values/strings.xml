@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Fixed by spec/app-identity.json. "Sample" marks this as the registry-consuming app. -->
+    <!-- Fixed by spec/app-identity.json. -->
     <string name="app_name">UseSmileID Sample</string>
 </resources>
