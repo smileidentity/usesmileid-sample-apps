@@ -191,14 +191,76 @@ Two milestones worth naming separately, because they are where the defects live:
   transition (R4), cancellation semantics (R5), and recreation survival (R6). This is the riskiest
   part of the whole app and it deserves device verification on every platform, not just CI.
 
-## 7. Open questions
+## 7. Result handling — settled from the SDK source (2026-08-13)
 
-1. **Result-callback threading** — each SDK's result callback needs to marshal to the main thread
-   before navigating. Confirm per platform rather than assuming; a background-thread navigation is
-   the classic intermittent crash.
-2. **Cancelled versus failed** — the SDK distinguishes them, and the destination differs: cancel
-   should return to the originating tab with no job, failure should land on details with the error.
-   Confirm the intended behaviour before implementing R4.
-3. **Deep-linking into a flow mid-journey** — should `…/run` be openable directly, or only after its
-   forms? Directly is better for automation; it needs a rule for what happens when required form data
-   is missing (recommendation: open the form instead, preserving the intended destination).
+All three previously-open questions were answered by reading the four SDKs rather than guessing.
+
+### 7.1 Threading — no marshalling needed on any platform
+
+| SDK | Delivery | Evidence |
+|---|---|---|
+| Android | Main thread | `FlowNavigationManager` is a ViewModel; results are delivered from `viewModelScope.launch` (main dispatcher) and from `onCleared()`. `Dispatchers.IO` is used only for metadata and file sizing |
+| iOS | Main actor | `FlowNavigationManager` is annotated **`@MainActor`**, so `configuration.onResult(result)` is already main-isolated |
+| Flutter | Main isolate | flow logic is Dart-side (`flow_navigation_manager.dart`); no platform-channel hop on the result path |
+| Expo | JS thread | flow logic is TypeScript-side (`flow_navigation_context.tsx`) |
+
+So navigate directly from the callback. Do **not** add a `runOnUiThread` / `DispatchQueue.main.async`
+wrapper — on iOS that would introduce a needless frame of delay in a `@MainActor` context.
+
+### 7.2 Cancelled versus failed — three outcomes, and the SDK never conflates them
+
+Every SDK exposes the same three-case result, so the host can branch on it directly:
+
+| SDK | Type |
+|---|---|
+| Android | `UseSmileIDResult`: `Success<T>(value)` · `Failure(Throwable)` · `Cancelled` (data object) |
+| iOS | `UseSmileIDResult<Success>`: `.success` · `.failure(Error)` · `.cancelled` (+ `isCancelled`, `onCancelled`) |
+| Flutter | `UseSmileIDSuccess<T>` · `UseSmileIDFailure<T>(Exception)` · `UseSmileIDCancelled<T>` |
+| Expo | `{status:"success",value}` · `{status:"failure",error}` · `{status:"cancelled"}` |
+
+**Host behaviour (this settles R4):**
+
+- `Success` → pop the flow and both forms, push `verificationDetails(jobId)` in its processing state.
+- `Failure` → same destination, showing the error. iOS makes the intent explicit: closing a failed
+  processing screen calls `exitFailedProcessing()`, which delivers the **pending failure rather than a
+  synthesized cancellation**, so a failure must never be reported as a cancel.
+- `Cancelled` → return to the originating tab. Create no job and no details entry.
+
+Three delivery guarantees the host must respect rather than reimplement:
+
+1. **Exactly-once.** Android guards with an `AtomicBoolean terminalDelivered`; iOS routes every path
+   through `completeFlow(with:)` behind `guard !isFlowComplete`. Never synthesize a second result.
+2. **Teardown already delivers `Cancelled`.** Android's `onCleared()` → `deliverTerminalOnTeardown()`
+   emits `Cancelled` exactly once if nothing was buffered, and iOS exposes `cancelFlow()` for backing
+   out. So popping the flow route *is* the cancel — the host must not also fire its own. Because the
+   exactly-once flag is already set after a success, popping post-success produces no spurious cancel.
+3. **A result can be buffered across recreation, and dropped if the host never comes back.** Android
+   buffers into `pendingResult` when no composition is live and replays it on the next
+   `updateDeliveryCallbacks`; if no further composition arrives, the result is **dropped with a
+   warning log**. That is the hard requirement behind R6: if the host's flow-destination key changes
+   on recreation, a *new* ViewModel is created, the old buffer is never replayed, and the job result
+   is lost silently. Use a saveable key.
+
+### 7.3 Deep-linking into `…/run` — allowed, gated by the SDK's own validator
+
+Every SDK ships a **non-throwing** pre-flight check, so the route can guard itself instead of
+trusting the caller:
+
+- iOS `UseSmileIDFlowBuilder.validate() -> ValidationState`; Flutter
+  `ValidationState validate()`; Expo `validate(): ValidationState`.
+- Android exposes per-parameter validators instead of a single entry point —
+  `validateConsent`, `validateUserDetails`, `validateBiometricKYCParams`,
+  `validateDocumentVerificationParams`, `validateEnhancedKYCParams`, each returning `ValidationState`.
+  Call the one matching the product. **Worth raising as a parity gap**: three platforms have
+  `validate()` and Android does not.
+
+**Rule:** `…/run` is directly deep-linkable. On entry, validate; if the configuration is invalid for
+want of user or ID details, redirect to the corresponding form route and keep the intended
+destination so the form's Continue resumes the journey. Do not let an invalid configuration reach the
+flow — submission-time validation throws, and a thrown builder error surfaces as
+`Failure`, which is indistinguishable to a test from a real submission failure.
+
+**Incidental finding worth carrying to the products question:** iOS `buildJobRequest()` documents that
+**the BVN job type is not supported and throws**. That strengthens the case for leaving `BVN` out of
+the products grid (`spec/screens.json` → `openQuestions.productCoverage`) rather than filling the
+empty slot with it.

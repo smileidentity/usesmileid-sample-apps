@@ -557,7 +557,8 @@
       "id": "productCoverage",
       "question": "The products grid shows 5 job types (SmartSelfie Enrollment, SmartSelfie Auth, Document Verification, Enhanced Doc Verification, Biometric KYC) plus one empty slot. The SDK's JobType enum has 7: EnhancedKyc(5) and BVN(7) are absent. Are those intentionally out of scope for the sample, or does the empty slot belong to one of them?",
       "blocks": "final product list; consumption lanes can only exercise what the sample exposes",
-      "recommendation": "Decide explicitly. Both missing types are form/API-shaped rather than capture-shaped, so leaving them out is defensible — but then the sample never exercises them and no CI lane can."
+      "recommendation": "Decide explicitly. Both missing types are form/API-shaped rather than capture-shaped, so leaving them out is defensible — but then the sample never exercises them and no CI lane can.",
+      "sdkEvidence": "iOS `buildJobRequest()` states the BVN job type is NOT SUPPORTED and throws. Leaving BVN out of the grid is therefore the defensible default; EnhancedKyc remains a genuine product decision."
     },
     {
       "id": "boardNaming",
