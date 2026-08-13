@@ -32,7 +32,7 @@ object UseSmileIDSampleTheme {
 
     val dimens = SmileDimens
 
-    /** The full 29-style ramp, for the styles Material has no slot for. */
+    /** The full ramp, for the styles Material has no slot for. */
     val type = smileTypeStyles
 }
 

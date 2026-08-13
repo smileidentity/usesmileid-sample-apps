@@ -5,12 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * The all-caps group heading above a section — AUTHENTICATION, DETAILS, YOUR DETAILS.
- *
- * The caller passes the text already cased. Upper-casing here would go through the device locale,
- * and Turkish would turn a dotted i into a dotless one in a heading nobody reviewed.
- */
+/** The all-caps group heading above a section. Callers pass the text already cased, so no locale upper-casing. */
 @Composable
 fun UseSmileIDSampleSectionLabel(
     text: String,

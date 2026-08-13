@@ -2,11 +2,9 @@
 // Smile ID Design System — GENERATED. Do not edit by hand.
 //
 // Regenerate with: scripts/sync_design_tokens.py --all
-// Source: the design system's dist/json/tokens.flat.json (fully resolved light + dark).
 //
-// The upstream Compose emitter writes these styles as COMMENTS ONLY, so MaterialTheme.typography
-// would otherwise be stock. Naming mirrors the Dart emitter's SmileType so the two are diffable.
-// Delete this file once upstream emits real TextStyles; see spec/design-tokens.json -> deltas.
+// A stopgap: the upstream Compose emitter writes these as comments. Names mirror the Dart emitter's
+// SmileType. Delete this file once upstream emits real TextStyles.
 
 package com.smileid.designsystem
 

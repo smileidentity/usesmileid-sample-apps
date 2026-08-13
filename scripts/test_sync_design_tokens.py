@@ -161,8 +161,6 @@ class TestTypography(unittest.TestCase):
 
 
 class TestComposeTypography(unittest.TestCase):
-    """The Compose type emitter, which exists only because upstream emits comments."""
-
     def style(self, **overrides):
         base = {
             "fontFamily": ["DM Sans", "sans-serif"],
@@ -175,8 +173,7 @@ class TestComposeTypography(unittest.TestCase):
         return {"text-style": {"title": base}}
 
     def test_line_height_stays_absolute(self):
-        # The inverse of the Dart emitter: Compose takes an absolute lineHeight, so dividing
-        # it into a ratio the way `height:` needs would render every style near-solid.
+        # The inverse of the Dart emitter, which divides it into a ratio for `height:`.
         out = gen.emit_kotlin_type(self.style())
         self.assertIn("lineHeight = 24.sp,", out)
         self.assertIn("fontSize = 16.sp,", out)
@@ -186,7 +183,7 @@ class TestComposeTypography(unittest.TestCase):
         self.assertIn("lineHeight = 22.4.sp,", gen.emit_kotlin_type(self.style(lineHeight=1.4)))
 
     def test_negative_tracking_is_parenthesised(self):
-        # `letterSpacing = -0.4.sp` does not parse; the sign has to be wrapped.
+        # `letterSpacing = -0.4.sp` does not parse.
         out = gen.emit_kotlin_type(self.style(letterSpacing="-0.4px"))
         self.assertIn("letterSpacing = (-0.4).sp,", out)
 
@@ -197,7 +194,6 @@ class TestComposeTypography(unittest.TestCase):
         self.assertIn("fontFamily = display,", display)
 
     def test_names_match_the_dart_emitter(self):
-        # The two outputs are diffed against each other by hand, so the names must agree.
         tokens = {"text-style": {"display-lg": self.style()["text-style"]["title"]}}
         self.assertIn("val textStyleDisplayLg = TextStyle(", gen.emit_kotlin_type(tokens))
         self.assertIn("TextStyle textStyleDisplayLg = TextStyle(", gen.emit_type(tokens))

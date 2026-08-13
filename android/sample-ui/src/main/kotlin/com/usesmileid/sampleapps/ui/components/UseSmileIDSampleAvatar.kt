@@ -15,19 +15,7 @@ import androidx.compose.ui.unit.Dp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * Initials in a circle, falling back to a neutral placeholder when there are none.
- *
- * [containerColor] exists because the background is per-profile rather than one avatar colour; the
- * designer still owes the profile→hue list, so the avatar token is the default until it lands.
- *
- * `avatar.size-md` and `avatar.radius` have no dimension token in the Compose output — the upstream
- * emitter drops component dimensions — so the nearest scale token stands in.
- *
- * The diameter is multiplied by the font scale rather than left to wrap its content. A wrapping
- * circle grows only as wide as the initials need and turns into an ellipse, which is plainly visible
- * at the largest font scale; scaling it keeps the shape square and the initials proportionate.
- */
+/** Initials in a circle, or a placeholder when there are none. The diameter scales with the font scale, because wrapping the initials instead renders an ellipse at 2x. */
 @Composable
 fun UseSmileIDSampleAvatar(
     initials: String,

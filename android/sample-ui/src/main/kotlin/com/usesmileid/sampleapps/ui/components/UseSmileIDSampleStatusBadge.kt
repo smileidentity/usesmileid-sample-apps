@@ -18,15 +18,7 @@ enum class UseSmileIDSampleStatus(val label: String) {
     Processing("PROCESSING"),
 }
 
-/**
- * A status pill.
- *
- * The design calls for SOFT tinted fills for all four statuses, and soft variants are being added to
- * the design system for exactly that. Until they land the token source only ships the saturated
- * `badge.<role>.background` / `.text` pairs, so those are what resolve here — the values are pending,
- * not the treatment. When `badge.<role>.soft-*` arrives this is one substitution per role and no
- * call site changes. Hardcoding the Figma hexes instead would bypass the token source.
- */
+/** A status pill. The design wants soft tinted fills; only the saturated `badge.<role>.*` pairs have landed, so the values are pending, not the treatment (spec/design-tokens.json → softBadgeFills). */
 @Composable
 fun UseSmileIDSampleStatusBadge(
     status: UseSmileIDSampleStatus,

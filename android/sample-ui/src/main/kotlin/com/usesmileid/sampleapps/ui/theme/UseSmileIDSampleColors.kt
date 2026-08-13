@@ -50,14 +50,7 @@ data class BadgeTokens(
     val infoText: Color,
 )
 
-/**
- * The design system's semantic colour tier, resolved for one mode, plus the component tiers the
- * primitives consume.
- *
- * Component tokens are grouped here rather than read straight from [SmileColorLight] /
- * [SmileColorDark] because those are two unrelated generated objects with no common supertype, so
- * a component cannot select between them by mode on its own.
- */
+/** The semantic tier for one mode, plus the component tiers. Grouped here because [SmileColorLight] and [SmileColorDark] share no supertype, so a component cannot select between them by mode. */
 @Immutable
 data class UseSmileIDSampleColors(
     val background: Color,

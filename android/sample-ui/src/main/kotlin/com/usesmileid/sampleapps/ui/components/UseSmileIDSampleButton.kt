@@ -17,13 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * The full-width primary action. Pill radius, and a minimum height rather than a fixed one so the
- * label wraps instead of clipping at large font scales.
- *
- * Loading is a distinct state from disabled: the button stops accepting taps but keeps its enabled
- * colours, because a form that greys out mid-submission reads as having rejected the input.
- */
+/** The full-width primary action. A minimum height so the label wraps rather than clips, and loading refuses taps while keeping the enabled colours. */
 @Composable
 fun UseSmileIDSampleButton(
     text: String,

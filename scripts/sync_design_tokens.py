@@ -20,16 +20,10 @@ Dart has no upstream target, so it is GENERATED here from the platform-neutral
 dist/json/tokens.flat.json, mirroring the Compose emitter's naming (camelCase from the
 token path, SmileColorLight / SmileColorDark / SmileDimens / SmileType).
 
-One deliberate difference from Compose: that emitter omits shadows entirely, and Dart can
-express them directly, so SmileShadows emits real BoxShadows.
-
-Compose's TYPE STYLES are also generated here, for a different reason: the upstream emitter
-writes all 29 of them as comments, so MaterialTheme.typography would otherwise be stock. A
-TextStyle needs no FontFamily to exist, so this is an emitter gap rather than a platform
-limit — recorded in spec/design-tokens.json -> deltas -> composeTypeStylesAreComments, and
-this generator is the stopgap until upstream emits them. Names mirror the Dart emitter's, so
-the two stay diffable. The DM Sans faces the styles resolve against are vendored alongside
-them, because the token source says to ship the font rather than fall back to a system face.
+Compose's type styles and the DM Sans faces they resolve against are generated here too, because
+the upstream emitter writes all 29 styles as comments. That is an emitter gap rather than a
+platform limit — see spec/design-tokens.json -> deltas -> composeTypeStylesAreComments — so this
+is a stopgap until upstream emits them. Compose also omits shadows, which Dart emits directly.
 
 Every token leaf must classify into a known kind. An unrecognised value FAILS the run
 rather than being skipped, because silent skipping is how this generator first diverged
@@ -72,8 +66,7 @@ DART_OUT = "flutter/sample_ui/lib/src/tokens/smile_tokens.dart"
 ANDROID_UI = "android/sample-ui"
 KOTLIN_TYPE_OUT = f"{ANDROID_UI}/src/main/kotlin/com/usesmileid/sampleapps/ui/tokens/SmileTypeStyles.kt"
 
-# The five DM Sans weights the type ramp uses (400/500/600/700/800), vendored as Android font
-# resources. Android resource names must be lowercase with underscores.
+# The five DM Sans weights the ramp uses (400–800). Android resource names must be lowercase.
 FONT_COPIES = [
     (f"assets/fonts/DMSans-{upstream}.ttf", f"{ANDROID_UI}/src/main/res/font/dm_sans_{local}.ttf")
     for upstream, local in [
@@ -125,11 +118,9 @@ KOTLIN_HEADER = """@file:Suppress("MagicNumber")
 // Smile ID Design System — GENERATED. Do not edit by hand.
 //
 // Regenerate with: scripts/sync_design_tokens.py --all
-// Source: the design system's dist/json/tokens.flat.json (fully resolved light + dark).
 //
-// The upstream Compose emitter writes these styles as COMMENTS ONLY, so MaterialTheme.typography
-// would otherwise be stock. Naming mirrors the Dart emitter's SmileType so the two are diffable.
-// Delete this file once upstream emits real TextStyles; see spec/design-tokens.json -> deltas.
+// A stopgap: the upstream Compose emitter writes these as comments. Names mirror the Dart emitter's
+// SmileType. Delete this file once upstream emits real TextStyles.
 
 package com.smileid.designsystem
 
@@ -385,11 +376,7 @@ def kotlin_sp(value: float) -> str:
 
 
 def emit_kotlin_type(tokens: dict) -> str:
-    """Real Compose TextStyles, resolved against the two families the app supplies.
-
-    Compose wants an ABSOLUTE lineHeight, where Dart's `height` is a multiplier — so a unitless
-    ratio has to be multiplied back out here rather than divided as the Dart emitter does.
-    """
+    """Compose wants an ABSOLUTE lineHeight, so a unitless ratio is multiplied out, not divided."""
     lines = [
         "/** The token source's type ramp, bound to the font families the app supplies. */",
         "class SmileTypeStyles(display: FontFamily, body: FontFamily) {",
@@ -428,7 +415,7 @@ def generate_kotlin_type(ds: str) -> str:
 
 
 def write_binary(rel_path: str, payload: bytes, check: bool) -> bool:
-    """Byte-identical comparison, so `--check` catches a font swapped upstream."""
+    """Byte comparison, so `--check` catches a font swapped upstream."""
     target = os.path.join(REPO, rel_path)
     existing = None
     if os.path.isfile(target):
@@ -619,7 +606,6 @@ def main(argv=None) -> int:
 
     if args.all:
         ok = copy_upstream(ds, args.check) and ok
-        # The Compose type ramp and its font faces only apply once the Android app exists.
         if os.path.isdir(os.path.join(REPO, ANDROID_UI)):
             ok = write(KOTLIN_TYPE_OUT, generate_kotlin_type(ds), args.check) and ok
             ok = copy_fonts(ds, args.check) and ok

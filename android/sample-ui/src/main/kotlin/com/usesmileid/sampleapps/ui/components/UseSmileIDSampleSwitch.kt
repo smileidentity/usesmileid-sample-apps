@@ -6,15 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * The platform switch, styled from semantic tokens.
- *
- * The design system has NO switch contract, so this deliberately does not draw one: Material's
- * control brings the right touch target, drag behaviour, state description and accessibility
- * semantics for free, and a hand-drawn track would lose all of it. Colours come from the semantic
- * tier — `color.primary` for the on track, `color.border` for off, `color.surface` for the thumb —
- * so it still moves with the token source. See spec/components.json → Switch.
- */
+/** The platform switch styled from semantic tokens — deliberately not hand-drawn, since the design system has no switch contract (spec/components.json → Switch). */
 @Composable
 fun UseSmileIDSampleSwitch(
     checked: Boolean,

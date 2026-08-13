@@ -78,9 +78,9 @@ fun UseSmileIDSampleShell() {
 /**
  * Cold start is handled when the graph is created; a warm deep link arrives as a new intent.
  *
- * A singleTop launcher relaunch also lands here as a data-less `ACTION_MAIN`, so only URI intents
- * are forwarded. That is the set the manifest's VIEW filter admits, and it excludes the
- * extras-based intents `NavDeepLinkBuilder` produces — add those to the guard if one is ever wired.
+ * A singleTop launcher relaunch lands here too, as a data-less `ACTION_MAIN`, so only the URI intents
+ * the manifest's VIEW filter admits are forwarded — widen this for a `NavDeepLinkBuilder` intent, which
+ * carries extras rather than data.
  */
 @Composable
 private fun ForwardNewIntentsTo(navController: NavHostController) {

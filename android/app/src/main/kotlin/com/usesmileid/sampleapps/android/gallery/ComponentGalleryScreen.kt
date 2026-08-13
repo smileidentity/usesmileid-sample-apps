@@ -34,17 +34,11 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTextInput
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleToast
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * Every primitive in every state, on one scrolling surface.
- *
- * A dev-only surface, so it lives in the shell rather than in `sample-ui`, and it is deliberately
- * not an entry in `spec/routes.json` — it is not part of the journey the four apps share. Its ids
- * are `dev_*` rather than `sample_*` for the same reason: the `sample_*` namespace is the spec's.
- */
+/** Every primitive in every state. Dev-only, so it belongs to the shell and is deliberately not a `spec/routes.json` entry; `dev_*` ids keep the `sample_*` namespace the spec's. */
 const val COMPONENT_GALLERY_TAG = "dev_component_gallery"
 const val COMPONENT_GALLERY_FONT_SCALE_TAG = "dev_gallery_font_scale"
 
-/** Android's largest accessibility font scale, which is the one the no-clipping predicate means. */
+/** Android's largest accessibility font scale — the one the no-clipping predicate means. */
 private const val MAX_FONT_SCALE = 2f
 
 @Composable
@@ -69,9 +63,8 @@ fun ComponentGalleryScreen() {
             color = UseSmileIDSampleTheme.colors.textTitle,
         )
 
-        // The scale is overridden here rather than in system settings because some OEM builds refuse
-        // `settings put system font_scale` from the shell, which leaves the max-font-scale predicate
-        // unverifiable on the device. The control sits outside the override so it does not grow too.
+        // Overridden here because some OEM builds refuse `settings put system font_scale` from the
+        // shell. Outside the override below so the control itself does not grow.
         Row(
             horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
             verticalAlignment = Alignment.CenterVertically,
@@ -114,8 +107,8 @@ fun ComponentGalleryScreen() {
                 }
 
                 GallerySection("AVATAR") {
-                    // FlowRow, not Row: at the largest font scale four avatars no longer fit on one
-                    // line, and a Row squeezes the last one out of round instead of wrapping it.
+                    // FlowRow, not Row: at 2x these no longer fit a line, and a Row squeezes the last
+                    // one out of round instead of wrapping it.
                     FlowRow(
                         horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
                         verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),

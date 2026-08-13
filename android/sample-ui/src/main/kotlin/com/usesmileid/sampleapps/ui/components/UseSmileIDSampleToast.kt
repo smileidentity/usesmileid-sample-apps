@@ -18,15 +18,7 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * A message, optionally with an action. The action is part of the contract rather than decoration —
- * it is the undo on the delete flow, and the flow asserts on it.
- *
- * Both ids are attached here rather than by the caller, because the spec assigns them to the toast
- * itself. The `elevation.floating` shadow token the contract names has no Compose equivalent in the
- * generated output — that emitter omits shadows entirely — so the pill is separated from the content
- * behind it by a hairline border instead.
- */
+/** A message with an optional action. Both ids are attached here because the spec assigns them to the toast itself; `elevation.floating` has no Compose equivalent, so a hairline border separates the pill. */
 @Composable
 fun UseSmileIDSampleToast(
     message: String,
@@ -42,8 +34,7 @@ fun UseSmileIDSampleToast(
         color = UseSmileIDSampleTheme.colors.surfaceAlt,
         border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.border),
     ) {
-        // A FlowRow rather than a Row so a cramped action moves onto its own line whole. In a Row the
-        // action is squeezed instead, and at the largest font scale "Undo" breaks across two lines.
+        // FlowRow so a cramped action moves onto its own line whole; a Row breaks "Undo" in half.
         FlowRow(
             modifier = Modifier.padding(
                 horizontal = SmileDimens.spacingMd,

@@ -29,12 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * The sheet search field: a magnifier, then the query. `search.gap` sits between the two.
- *
- * The glyph is drawn rather than imported — `material-icons` is not on this module's classpath and
- * a whole icon dependency for one magnifier is not worth it.
- */
+/** The sheet search field. The glyph is drawn because `material-icons` is not on this classpath. */
 @Composable
 fun UseSmileIDSampleSearchField(
     query: String,

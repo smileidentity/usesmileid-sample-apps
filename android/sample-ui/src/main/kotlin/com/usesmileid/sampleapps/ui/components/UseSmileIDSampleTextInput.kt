@@ -22,17 +22,7 @@ import androidx.compose.ui.graphics.SolidColor
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * A single-line text field drawn from the input tokens.
- *
- * [BasicTextField] rather than Material's `OutlinedTextField`, because that brings its own
- * container, label and indicator chrome which would have to be fought back to these tokens.
- *
- * The four contract states are all visible here: empty shows the placeholder, filled shows the
- * value, focused swaps the border for `input.border-focus`, and error swaps it for
- * `input.border-error` and reveals the message. Error outranks focus — a field that hides its error
- * as soon as the user taps back into it is how a form becomes unfixable.
- */
+/** A single-line field on the input tokens. [BasicTextField] avoids `OutlinedTextField`'s competing chrome, and error outranks focus so tapping back in does not hide the message. */
 @Composable
 fun UseSmileIDSampleTextInput(
     value: String,
