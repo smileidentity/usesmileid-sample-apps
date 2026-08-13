@@ -1,5 +1,4 @@
 [versions]
-# The BOM pins every com.usesmileid artifact, so the modules carry no version of their own.
 usesmileid = "12.0.1"
 
 android-gradle-plugin = "9.3.1"
@@ -10,8 +9,6 @@ androidx-activity = "1.13.0"
 androidx-compose-bom = "2026.06.01"
 androidx-core = "1.16.0"
 androidx-navigation = "2.9.8"
-
-# Same navigation library and version the SDK uses.
 destinations = "2.3.0"
 
 junit = "4.13.2"

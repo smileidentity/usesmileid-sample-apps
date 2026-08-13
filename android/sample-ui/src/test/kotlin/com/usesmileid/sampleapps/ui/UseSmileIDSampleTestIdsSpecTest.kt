@@ -5,9 +5,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-// Ids are extracted with a pattern rather than parsed: org.json is only a stub on the unit test
-// classpath, and a JSON library is a dependency that needs an explicit ask. A shape change that
-// broke the extraction fails spec_file_is_readable rather than passing the rest vacuously.
+// Extracted with a pattern rather than parsed: org.json is only a stub on the unit test
+// classpath. A shape change fails spec_file_is_readable rather than passing the rest vacuously.
 class UseSmileIDSampleTestIdsSpecTest {
 
     private val specIds: Set<String> by lazy {

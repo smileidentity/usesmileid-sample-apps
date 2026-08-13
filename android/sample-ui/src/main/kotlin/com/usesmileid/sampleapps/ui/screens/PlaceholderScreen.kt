@@ -15,9 +15,8 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /**
- * The walking skeleton's screen body: the screen's root `sample_*` id, its title, and the
- * arguments it was given, so a deep link's parsing is assertable on screen rather than in a log.
- * U1–U3 replace the bodies one screen at a time; the ids stay.
+ * The walking skeleton's screen body: root id, title, and the arguments the route was given, so a
+ * deep link's parsing is assertable on screen rather than in a log. Replaced screen by screen.
  */
 @Composable
 internal fun PlaceholderScreen(

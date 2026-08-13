@@ -12,9 +12,8 @@ import androidx.compose.runtime.ReadOnlyComposable
 import com.smileid.designsystem.SmileDimens
 
 /**
- * The Compose theme, built entirely from the vendored design-system tokens — `SmileTokens.kt` is
- * copied verbatim by `scripts/sync_design_tokens.py`, hence its upstream package. Typography waits
- * for U1: the Compose token output emits type styles as comments until font resources are wired.
+ * The Compose theme, built entirely from the vendored design-system tokens. Typography is not
+ * mapped yet: the generated Compose output emits type styles as comments until fonts are wired.
  */
 @Composable
 fun UseSmileIDSampleTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {

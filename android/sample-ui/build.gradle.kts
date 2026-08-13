@@ -1,14 +1,12 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
-// AGP 9 brings Kotlin support built in, so there is no `kotlin-android` plugin to apply.
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
 }
 
 android {
-    // Fixed by spec/app-identity.json; this library carries no application identity.
     namespace = "com.usesmileid.sampleapps.ui"
     compileSdk = 37
 
@@ -41,7 +39,6 @@ dependencies {
     testImplementation(libs.junit)
 }
 
-// Anchored on projectDir, not rootProject: an SDK repo consumes this module from its own build.
 tasks.withType<Test>().configureEach {
     systemProperty("sampleapps.spec.dir", layout.projectDirectory.dir("../../spec").asFile.absolutePath)
 }

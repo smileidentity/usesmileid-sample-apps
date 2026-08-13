@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Window chrome only; every colour the user sees comes from the tokens via UseSmileIDSampleTheme. -->
     <style name="Theme.UseSmileIDSample" parent="android:Theme.DeviceDefault.Light.NoActionBar" />
 </resources>

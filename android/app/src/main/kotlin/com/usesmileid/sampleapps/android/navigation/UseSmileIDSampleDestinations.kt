@@ -20,9 +20,8 @@ import com.usesmileid.sampleapps.ui.screens.VerificationDetailsScreen as Verific
 import com.usesmileid.sampleapps.ui.screens.VerificationsScreen as VerificationsContent
 
 /**
- * The Android binding of `spec/routes.json`, in the order the route table lists it. Function names
- * are load-bearing — KSP names each generated object after the function, which is what the table's
- * `platform.android` column refers to — and `sample-ui` screens are aliased because the same
+ * Every route the app owns. Function names are load-bearing: KSP names each generated
+ * `…Destination` object after the function. Screens are imported under aliases because the same
  * simple name here would recurse instead of delegating.
  */
 
@@ -38,7 +37,7 @@ fun VerificationsScreen() = VerificationsContent()
 @Composable
 fun SettingsScreen() = SettingsContent()
 
-/** Also the post-submission landing route: on a result the flow and both forms are replaced by it. */
+/** Also the post-submission landing route: on a result the flow and both forms are replaced. */
 @Destination<VerificationsGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.VERIFICATION_DETAILS)])
 @Composable
 fun VerificationDetailsScreen(jobId: String) = VerificationDetailsContent(jobId = jobId)
@@ -48,7 +47,7 @@ fun VerificationDetailsScreen(jobId: String) = VerificationDetailsContent(jobId 
 @Composable
 fun ConsentDetailsFormScreen(productId: String) = UserDetailsContent(productId = productId)
 
-/** Only for products whose spec entry sets `needsIdDetails`. */
+/** Only for products that need ID details. */
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.ID_DETAILS_FORM)])
 @Composable
 fun IdDetailsFormScreen(productId: String) = KycIdFormContent(productId = productId)

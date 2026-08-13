@@ -36,7 +36,7 @@ enum class UseSmileIDSampleNavItem(val testId: String, val label: String) {
 /**
  * A floating pill holding the three tabs, plus a visually detached circular token button. The
  * token affordance is modelled separately because it navigates rather than switching tab, and it
- * is what carries the session countdown ring (U2). Icons and the ring land with the composites.
+ * is what will carry the session countdown ring.
  */
 @Composable
 fun UseSmileIDSampleNavBar(

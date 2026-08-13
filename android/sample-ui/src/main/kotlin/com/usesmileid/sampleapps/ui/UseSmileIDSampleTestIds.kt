@@ -1,10 +1,6 @@
 package com.usesmileid.sampleapps.ui
 
-/**
- * The `sample_*` accessibility ids this module attaches, from `spec/test-ids.json`, which owns
- * them. `UseSmileIDSampleTestIdsSpecTest` asserts every constant here against that file. Ids are stable
- * forever: deprecate, never rename. Ids for surfaces that do not exist yet arrive with them.
- */
+/** The accessibility ids this module attaches. Stable forever: deprecate, never rename. */
 object UseSmileIDSampleTestIds {
     const val NAV_PRODUCTS = "sample_nav_products"
     const val NAV_VERIFICATIONS = "sample_nav_verifications"

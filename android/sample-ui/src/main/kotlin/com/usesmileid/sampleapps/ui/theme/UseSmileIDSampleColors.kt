@@ -8,8 +8,7 @@ import com.smileid.designsystem.SmileColorLight
 
 /**
  * The design system's semantic colour tier, resolved for one mode. Component tokens are read
- * straight from [SmileColorLight] / [SmileColorDark] by the component that owns them; primitives
- * are never referenced from app code.
+ * straight from [SmileColorLight] / [SmileColorDark] by the component that owns them.
  */
 @Immutable
 data class UseSmileIDSampleColors(

@@ -1,7 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
-// AGP 9 brings Kotlin support built in, so there is no `kotlin-android` plugin to apply.
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -13,7 +12,6 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        // Fixed by spec/app-identity.json.
         applicationId = "com.usesmileid.sampleapps.android"
         minSdk = 24
         targetSdk = 37
@@ -26,11 +24,9 @@ android {
             applicationIdSuffix = ".debug"
         }
         release {
-            // No app-side keep rules: the SDK's own consumer rules have to be enough.
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
-            // Debug-signed so the minified build is installable without a keystore in the tree.
             signingConfig = signingConfigs.getByName("debug")
         }
     }
@@ -64,7 +60,6 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.core.ktx)
-    // Pins the androidx.navigation version Compose Destinations runs over.
     implementation(libs.androidx.navigation.compose)
 
     implementation(libs.destinations)

@@ -1,8 +1,8 @@
 package com.usesmileid.sampleapps.android.navigation
 
 /**
- * The deep-link URI for every route in `spec/routes.json`. Paths are shared across the four apps;
- * the scheme is per app, which is why these live in the shell and never in `sample-ui`.
+ * The deep-link URI for every route. Paths are shared across the four sample apps; the scheme is
+ * per app, which is why these live in the shell and never in the shared UI module.
  */
 internal object UseSmileIDSampleDeepLinks {
     const val SCHEME = "usesmileid-sample-android"
@@ -19,8 +19,7 @@ internal object UseSmileIDSampleDeepLinks {
     const val SDK_FLOW = "$SCHEME://flow/{productId}/run?route={route}"
 
     const val PROFILES = "$SCHEME://profiles"
-    // androidx ranks argument-free deep links first, so these beat /profiles/{profileId}
-    // regardless of declaration order.
+    // androidx ranks argument-free deep links first, so these beat /profiles/{profileId}.
     const val PROFILE_SWITCH = "$SCHEME://profiles/switch"
     const val NEW_PROFILE = "$SCHEME://profiles/new"
     const val PROFILE_CONFIG = "$SCHEME://profiles/{profileId}"

@@ -1,6 +1,5 @@
-# Every route in spec/routes.json opens COLD, on the right destination, with its arguments parsed.
-# Warm start passes by accident; cold start is where argument parsing and restoration break.
-# APP_ID must be passed — see the note in shell-navigation.yaml for why it has no default.
+# Every route opens COLD, on the right destination, with its arguments parsed. Warm start passes
+# by accident. APP_ID must be passed — see shell-navigation.yaml for why it has no default.
 appId: ${APP_ID}
 ---
 - stopApp

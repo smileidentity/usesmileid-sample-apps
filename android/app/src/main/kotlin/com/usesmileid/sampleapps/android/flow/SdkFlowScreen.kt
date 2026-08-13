@@ -27,9 +27,9 @@ enum class FlowPresentation { Fullscreen, Shell }
  * The single route that hosts the SDK flow; the SDK owns everything inside it, so consent,
  * instructions, capture, preview and processing are never routes of this app's own.
  *
- * Still a placeholder. It parses its arguments and runs the SDK's public non-throwing pre-flight,
- * so an invalid configuration is reported here rather than arriving as a `Failure` no test can
- * tell from a real submission failure. Hosting `UseSmileIDBuilder` is N2.
+ * Still a placeholder: it parses its arguments and runs the SDK's non-throwing pre-flight, so an
+ * invalid configuration is reported here rather than arriving as a `Failure` no test can tell
+ * from a real submission failure.
  */
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SDK_FLOW)])
 @Composable

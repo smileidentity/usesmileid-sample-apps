@@ -31,9 +31,9 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavItem
 
 /**
- * The navigation shell: three tabs with preserved per-tab back stacks, plus the detached token
- * affordance. The nav bar shows only inside a tab graph, so a pushed screen or the SDK flow
- * covers it without any screen having to declare that it does.
+ * Three tabs with preserved per-tab back stacks, plus the detached token affordance. The nav bar
+ * shows only inside a tab graph, so a pushed screen or the SDK flow covers it without any screen
+ * having to declare that it does.
  */
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -47,7 +47,7 @@ fun UseSmileIDSampleShell() {
     ForwardNewIntentsTo(navController)
 
     Scaffold(
-        // Device flows assert on sample_* ids, which UI automation only sees as resource ids.
+        // UI automation only sees Compose test tags once they are published as resource ids.
         modifier = Modifier.semantics { testTagsAsResourceId = true },
         bottomBar = {
             if (selectedTab != null) {
