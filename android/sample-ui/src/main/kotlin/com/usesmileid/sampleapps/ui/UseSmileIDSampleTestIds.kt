@@ -29,6 +29,15 @@ object UseSmileIDSampleTestIds {
     const val SELECTION_COUNT = "sample_selection_count"
     const val SELECTION_REMOVE = "sample_selection_remove"
     const val JOB_ROW_STATUS = "sample_job_row_status"
+    const val SESSION_CARD = "sample_session_card"
+    const val SESSION_COUNTDOWN = "sample_session_countdown"
+    const val SESSION_ENDED_BANNER = "sample_session_ended_banner"
+    const val ENV_CHIP = "sample_env_chip"
+    const val PROFILE_AVATAR_BUTTON = "sample_profile_avatar_button"
+    const val TOKEN_FLOAT = "sample_token_float"
+    const val TOKEN_MANUAL_ENTRY = "sample_token_manual_entry"
+    const val TOKEN_PASTE = "sample_token_paste"
+    const val TOKEN_SIMULATE = "sample_token_simulate"
 
     val all = listOf(
         NAV_PRODUCTS,
@@ -55,5 +64,14 @@ object UseSmileIDSampleTestIds {
         SELECTION_COUNT,
         SELECTION_REMOVE,
         JOB_ROW_STATUS,
+        SESSION_CARD,
+        SESSION_COUNTDOWN,
+        SESSION_ENDED_BANNER,
+        ENV_CHIP,
+        PROFILE_AVATAR_BUTTON,
+        TOKEN_FLOAT,
+        TOKEN_MANUAL_ENTRY,
+        TOKEN_PASTE,
+        TOKEN_SIMULATE,
     )
 }
