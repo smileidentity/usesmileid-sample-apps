@@ -68,10 +68,15 @@ is configured.
 
 ### U0 — token pipeline (blocks everything)
 
-Generate the platform token source from the design system and wire light/dark. Android, iOS and
-Expo consume pre-generated output; **Flutter has no Dart target**, so generate one from the design
-system's flat JSON and request a first-class Dart output so all four consume generated code rather
-than three generated and one derived.
+Vendor the token source and wire light/dark. The design system ships as an agent skill rather than a
+package, so every platform vendors its generated file — `scripts/sync_design_tokens.py --all` does all
+four in one command, and `--check` fails a stale file in CI.
+
+Android, iOS and Expo copy upstream output verbatim. **Dart had no upstream target, so the script
+generates it** (`flutter/sample_ui/lib/src/tokens/smile_tokens.dart`, committed 2026-08-13: 152
+colours per mode, 42 dimensions, 29 TextStyles, 6 BoxShadows, 6 Durations). Its colour membership is
+asserted against the Compose output on every run, which is how two generator bugs were caught
+immediately — dropped `rgba()` values and shadow composites leaking into the colour classes.
 
 Done when: a screen can be built with no hex literal anywhere, and flipping dark mode changes every
 colour through tokens alone.

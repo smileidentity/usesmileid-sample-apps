@@ -135,6 +135,9 @@ No app exists yet. As each platform lands it must expose one script that is the 
 for that platform, mirroring the per-PR CI gate:
 
 ```bash
+scripts/sync_design_tokens.py --all    # vendor design tokens for all four platforms
+scripts/sync_design_tokens.py --check  # CI: fail if any vendored token file is stale
+
 android/verify.sh     # lint + unit tests + spec validation + release assemble
 ios/verify.sh         # swiftformat/swiftlint + tests + release build
 flutter/verify.sh     # format + analyze + test + release build

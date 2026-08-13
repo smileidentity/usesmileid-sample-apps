@@ -109,20 +109,27 @@
   "perPlatform": {
     "android": {
       "consume": "SmileTokens.kt — SmileColorLight / SmileColorDark / SmileDimens / SmileType",
-      "wiring": "Feed the token objects into the app's Compose theme and select by isSystemInDarkTheme(); do not replace the SDK's own theme, which resolves the same tokens internally."
+      "wiring": "Feed the token objects into the app's Compose theme and select by isSystemInDarkTheme(); do not replace the SDK's own theme, which resolves the same tokens internally.",
+      "vendoredTo": "android/sample-ui/.../tokens/SmileTokens.kt (copied verbatim from dist/android)"
     },
     "ios": {
       "consume": "SmileTokens.swift — SmileColorLight / SmileColorDark / SmileSpacing",
-      "wiring": "Select by colorScheme and expose through the app's environment."
+      "wiring": "Select by colorScheme and expose through the app's environment.",
+      "vendoredTo": "ios/SampleUI/Sources/SampleUI/Tokens/SmileTokens.swift (copied verbatim from dist/ios)"
     },
     "expo": {
       "consume": "tokens.ts",
-      "wiring": "A typed token module the sample-ui package imports; no native code involved."
+      "wiring": "A typed token module the sample-ui package imports; no native code involved.",
+      "vendoredTo": "expo/sample-ui/src/tokens.ts (copied verbatim from dist/ts)"
     },
     "flutter": {
-      "consume": "NOT AVAILABLE — the design system has no Dart output",
-      "wiring": "Generate a Dart token source from dist/json/tokens.flat.json as part of this repo's tooling, and open a request for a first-class Dart target in the design system so all four platforms consume generated output rather than three generated and one derived.",
-      "gap": true
+      "consume": "flutter/sample_ui/lib/src/tokens/smile_tokens.dart — GENERATED (committed 2026-08-13)",
+      "generatedBy": "scripts/sync_design_tokens.py, from the design system's platform-neutral dist/json/tokens.flat.json",
+      "wiring": "Feed SmileColorLight / SmileColorDark into the app's ThemeData, selected by platform brightness.",
+      "shape": "SmileColorLight (152) · SmileColorDark (152) · SmileDimens (42) · SmileType (29 TextStyles) · SmileShadows (6 BoxShadows) · SmileMotion (6 Durations)",
+      "deliberateAdditions": "Compose leaves typography as comments because it needs font resources wired first, and omits shadows entirely. Dart can express both directly, so SmileType emits real TextStyles and SmileShadows emits real BoxShadows. Naming otherwise mirrors Compose so the two are diffable.",
+      "verified": "dart format canonical, generator idempotent, `dart analyze` clean in a Flutter package context, and colour membership identical to the Compose output.",
+      "gap": false
     }
   },
   "rules": [
@@ -140,5 +147,11 @@
         "shape": "productHues: {productId: color.decorative.*}, profileHues: {profileId: color.decorative.*}"
       }
     ]
+  },
+  "consumptionModel": {
+    "decision": "OWNER DECISION 2026-08-13: vendor the tokens into this repo; do not change the design system.",
+    "why": "The design system is distributed as an agent skill, not as a Maven / SPM / npm / pub package, so there is no dependency to declare. Vendoring its generated output is the only way to consume it on any platform.",
+    "howToRefresh": "scripts/sync_design_tokens.py --all  (or --dart for Flutter only). Run --check in CI to fail when a vendored file is stale.",
+    "parityGuard": "The script asserts that the generated Dart colour classes have the SAME MEMBERSHIP as the upstream Compose output, and prints the difference when they diverge. That guard caught two real bugs on first run: rgba() values silently dropped, and composite shadow colours wrongly emitted as standalone colours."
   }
 }
