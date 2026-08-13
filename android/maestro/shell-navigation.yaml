@@ -1,0 +1,70 @@
+# N1 — the navigation shell: tabs, preserved per-tab back stacks, the detached token affordance.
+#
+# Asserts on sample_* ids from spec/test-ids.json and on the arguments a route parsed, never on
+# screenshots or coordinates.
+#
+# APP_ID must be passed, and deliberately has no default: a flow-level `env:` default WINS over
+# `-e` in Maestro 2.8, so a default here would silently pin every run to one variant while the
+# command line said otherwise. Without it the flow fails rather than testing the wrong app.
+#
+#   maestro --device <serial> test -e APP_ID=com.usesmileid.sampleapps.android.debug android/maestro
+#   maestro --device <serial> test -e APP_ID=com.usesmileid.sampleapps.android       android/maestro
+appId: ${APP_ID}
+---
+# stopApp + launchApp rather than `clearState`: there is no persisted state to clear yet, and
+# `pm clear` is refused from the shell on some OEM builds (ColorOS), so this stays portable.
+- stopApp
+- launchApp
+
+- assertVisible:
+    id: "sample_products_screen"
+
+# Tabs navigate.
+- tapOn:
+    id: "sample_nav_verifications"
+- assertVisible:
+    id: "sample_verifications_screen"
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+- tapOn:
+    id: "sample_nav_products"
+- assertVisible:
+    id: "sample_products_screen"
+
+# Push a detail screen inside the verifications tab, switch away, and come back to it.
+- tapOn:
+    id: "sample_nav_verifications"
+- openLink: "usesmileid-sample-android://verifications/job-42"
+- assertVisible:
+    id: "sample_verification_details_screen"
+- assertVisible: ".*jobId = job-42.*"
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+- tapOn:
+    id: "sample_nav_verifications"
+- assertVisible:
+    id: "sample_verification_details_screen"
+- assertVisible: ".*jobId = job-42.*"
+
+# Back walks the restored stack, then leaves the tab for the start destination.
+- back
+- assertVisible:
+    id: "sample_verifications_screen"
+- back
+- assertVisible:
+    id: "sample_products_screen"
+
+# The token affordance is not a tab: it navigates, and the nav bar goes with it.
+- tapOn:
+    id: "sample_nav_token"
+- assertVisible:
+    id: "sample_scan_token_screen"
+- assertNotVisible:
+    id: "sample_nav_token"
+- back
+- assertVisible:
+    id: "sample_products_screen"

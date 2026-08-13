@@ -1,0 +1,46 @@
+[versions]
+# The Smile ID SDK, resolved from Maven Central only (see AGENTS.md). The BOM pins every
+# com.usesmileid artifact, so the individual modules are declared without a version.
+usesmileid = "12.0.1"
+
+# Kept deliberately in step with the SDK's own toolchain where it costs nothing: the app
+# resolves the SDK as a binary, so only the Compose compiler and KSP have to agree with the
+# Kotlin version used HERE.
+android-gradle-plugin = "9.3.1"
+kotlin = "2.4.10"
+ksp = "2.3.11"
+
+androidx-activity = "1.13.0"
+androidx-compose-bom = "2026.06.01"
+androidx-core = "1.16.0"
+androidx-navigation = "2.9.8"
+
+# Same navigation library and version the SDK uses, so its KSP-generated destinations and
+# the shell's behave identically.
+destinations = "2.3.0"
+
+junit = "4.13.2"
+
+[libraries]
+usesmileid-bom = { module = "com.usesmileid:usesmileid-bom", version.ref = "usesmileid" }
+usesmileid = { module = "com.usesmileid:usesmileid" }
+usesmileid-mlkit-face = { module = "com.usesmileid:mlkit-face" }
+usesmileid-mlkit-document = { module = "com.usesmileid:mlkit-document" }
+
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
+
+destinations = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "destinations" }
+destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "destinations" }
+
+junit = { module = "junit:junit", version.ref = "junit" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
+android-library = { id = "com.android.library", version.ref = "android-gradle-plugin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

@@ -1,0 +1,93 @@
+# Every route in spec/routes.json opens COLD, on the right destination, with its arguments parsed.
+#
+# Cold start is the case that matters: it is where argument parsing and state restoration break,
+# and warm start passes by accident. Each step stops the app first, so nothing is inherited from
+# the step before it.
+#
+# APP_ID must be passed — see the note in shell-navigation.yaml for why it has no default.
+appId: ${APP_ID}
+---
+- stopApp
+- openLink: "usesmileid-sample-android://products"
+- assertVisible:
+    id: "sample_products_screen"
+
+- stopApp
+- openLink: "usesmileid-sample-android://verifications"
+- assertVisible:
+    id: "sample_verifications_screen"
+
+- stopApp
+- openLink: "usesmileid-sample-android://settings"
+- assertVisible:
+    id: "sample_settings_screen"
+
+- stopApp
+- openLink: "usesmileid-sample-android://verifications/job-7"
+- assertVisible:
+    id: "sample_verification_details_screen"
+- assertVisible: ".*jobId = job-7.*"
+
+- stopApp
+- openLink: "usesmileid-sample-android://flow/biometricKyc/details"
+- assertVisible:
+    id: "sample_user_details_screen"
+- assertVisible: ".*productId = biometricKyc.*"
+
+- stopApp
+- openLink: "usesmileid-sample-android://flow/biometricKyc/id-details"
+- assertVisible:
+    id: "sample_kyc_form_screen"
+
+- stopApp
+- openLink: "usesmileid-sample-android://flow/biometricKyc/id-details/country"
+- assertVisible:
+    id: "sample_country_sheet"
+
+- stopApp
+- openLink: "usesmileid-sample-android://flow/biometricKyc/id-details/id-type"
+- assertVisible:
+    id: "sample_idtype_sheet"
+
+# One route, two presentations: the enum argument is typed, and the SDK's own pre-flight check
+# runs on entry so an invalid configuration never reaches the flow.
+- stopApp
+- openLink: "usesmileid-sample-android://flow/docV/run"
+- assertVisible: ".*route = fullscreen.*"
+- assertVisible: ".*pre-flight:.*"
+
+- stopApp
+- openLink: "usesmileid-sample-android://flow/docV/run?route=shell"
+- assertVisible: ".*route = shell.*"
+
+- stopApp
+- openLink: "usesmileid-sample-android://profiles"
+- assertVisible:
+    id: "sample_profiles_screen"
+
+# /profiles/switch and /profiles/new must not be swallowed as a profile id.
+- stopApp
+- openLink: "usesmileid-sample-android://profiles/switch"
+- assertVisible:
+    id: "sample_profile_switch_sheet"
+
+- stopApp
+- openLink: "usesmileid-sample-android://profiles/new"
+- assertVisible:
+    id: "sample_new_profile_sheet"
+
+- stopApp
+- openLink: "usesmileid-sample-android://profiles/p-1"
+- assertVisible:
+    id: "sample_profile_config_screen"
+- assertVisible: ".*profileId = p-1.*"
+
+- stopApp
+- openLink: "usesmileid-sample-android://token/scan"
+- assertVisible:
+    id: "sample_scan_token_screen"
+
+- stopApp
+- openLink: "usesmileid-sample-android://debug/scenarios"
+- assertVisible:
+    id: "sample_scenario_drawer"
