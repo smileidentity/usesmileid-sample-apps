@@ -78,7 +78,7 @@
         "color.border light": "#eaecf0",
         "color.border dark": "#eaecf0"
       },
-      "finding": "color.border does not change between light and dark. A #EAECF0 border on the dark background (#1A1C23) is near-maximum contrast and will read as a bright outline around every card and row.",
+      "finding": "color.border does not change between light and dark. A #EAECF0 border on the dark background (#1A1C23) is near-maximum contrast and will read as a bright outline around every card and row. CONFIRMED ON A DEVICE 2026-08-13, the first time anything rendered these tokens in dark mode: the Android shell's nav-bar pill draws a bright near-white outline on #1A1C23, exactly as predicted.",
       "recommendation": "Flag to the design system owners; the sample apps are the first surface to consume dark mode from these tokens, so this would surface as a visible bug on day one. Do not patch it locally — fix it in the token source.",
       "status": "OWNER DECISION 2026-08-13 — RESOLVED: fix in the design system, not locally. Suggested values: color.border dark → a subtle dark-grey (e.g. #333846); color.text.muted dark → a lighter grey clearing 4.5:1 (e.g. #9BA1AC). Raise before U0 wires dark mode."
     },

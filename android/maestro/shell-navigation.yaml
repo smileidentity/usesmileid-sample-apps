@@ -1,0 +1,61 @@
+# N1 — the navigation shell: tabs, preserved per-tab back stacks, the detached token affordance.
+#
+# APP_ID has no default on purpose: a flow-level `env:` default WINS over `-e` in Maestro 2.8, so
+# one here would silently pin every run to a single variant.
+#   maestro --device <serial> test -e APP_ID=com.usesmileid.sampleapps.android.debug android/maestro
+#   maestro --device <serial> test -e APP_ID=com.usesmileid.sampleapps.android       android/maestro
+appId: ${APP_ID}
+---
+# `pm clear` is refused from the shell on some OEM builds, and there is no persisted state yet.
+- stopApp
+- launchApp
+
+- assertVisible:
+    id: "sample_products_screen"
+
+- tapOn:
+    id: "sample_nav_verifications"
+- assertVisible:
+    id: "sample_verifications_screen"
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+- tapOn:
+    id: "sample_nav_products"
+- assertVisible:
+    id: "sample_products_screen"
+
+- tapOn:
+    id: "sample_nav_verifications"
+- openLink: "usesmileid-sample-android://verifications/job-42"
+- assertVisible:
+    id: "sample_verification_details_screen"
+- assertVisible: ".*jobId = job-42.*"
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+- tapOn:
+    id: "sample_nav_verifications"
+- assertVisible:
+    id: "sample_verification_details_screen"
+- assertVisible: ".*jobId = job-42.*"
+
+- back
+- assertVisible:
+    id: "sample_verifications_screen"
+- back
+- assertVisible:
+    id: "sample_products_screen"
+
+# The token affordance is not a tab: it navigates, and the nav bar goes with it.
+- tapOn:
+    id: "sample_nav_token"
+- assertVisible:
+    id: "sample_scan_token_screen"
+- assertNotVisible:
+    id: "sample_nav_token"
+- back
+- assertVisible:
+    id: "sample_products_screen"

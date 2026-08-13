@@ -11,12 +11,29 @@ coverage the SDK repos structurally cannot provide from their own in-repo sample
 
 ## Status
 
-**Scaffolding in progress.** No app exists yet. The repository is deliberately internal while the
-foundations land, and is intended to go public once the four apps are complete.
+**In progress.** The Android app is a running navigation shell — three tabs with preserved
+back stacks, every route in the contract reachable by deep link, and the design tokens driving
+light and dark. Its screens are still placeholders. The other three platforms have not started.
 
 - Repo conventions and rules for humans and AI agents: [`AGENTS.md`](AGENTS.md)
 - The plan, the architecture and the phased build order: [`docs/plan/`](docs/plan/)
 - The cross-app contract each app validates against: [`spec/`](spec/)
+
+## Running the Android app
+
+Needs a JDK 21 or newer (Android Gradle Plugin 9 requires it) and an Android SDK with API 37.
+
+```bash
+cd android
+./gradlew installDebug                      # or assembleRelease for the minified lane
+./verify.sh                                 # the definition of done: tokens, lint, tests, release
+
+adb shell am start -a android.intent.action.VIEW \
+  -d "usesmileid-sample-android://products"  # every route in spec/routes.json opens like this
+
+# the device flows; APP_ID picks the variant and has no default on purpose
+maestro --device <serial> test -e APP_ID=com.usesmileid.sampleapps.android.debug maestro
+```
 
 ## Layout
 

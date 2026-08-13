@@ -1,0 +1,38 @@
+[versions]
+usesmileid = "12.0.1"
+
+android-gradle-plugin = "9.3.1"
+kotlin = "2.4.10"
+ksp = "2.3.11"
+
+androidx-activity = "1.13.0"
+androidx-compose-bom = "2026.06.01"
+androidx-core = "1.16.0"
+androidx-navigation = "2.9.8"
+destinations = "2.3.0"
+
+junit = "4.13.2"
+
+[libraries]
+usesmileid-bom = { module = "com.usesmileid:usesmileid-bom", version.ref = "usesmileid" }
+usesmileid = { module = "com.usesmileid:usesmileid" }
+usesmileid-mlkit-face = { module = "com.usesmileid:mlkit-face" }
+usesmileid-mlkit-document = { module = "com.usesmileid:mlkit-document" }
+
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
+
+destinations = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "destinations" }
+destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "destinations" }
+
+junit = { module = "junit:junit", version.ref = "junit" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
+android-library = { id = "com.android.library", version.ref = "android-gradle-plugin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

@@ -211,7 +211,8 @@ dark-mode defects in the token source itself:
 
 11. **`color.border` does not change in dark mode** (`#eaecf0` in both). A near-white border on the
     dark background will read as a bright outline around every card. Fix in the token source, not
-    locally. Still unverified visually — the recording never turned dark mode on.
+    locally. **Confirmed on a device 2026-08-13**, the first time these tokens rendered in dark
+    mode: the Android shell's nav-bar pill draws a bright near-white outline on `#1a1c23`.
 12. **`color.text.muted` is the same grey in both modes**, landing near the small-text contrast
     threshold on dark. Verify or lighten.
 
