@@ -102,7 +102,8 @@ get those right before anything else, because a late change to them touches ever
 1. **settings** — first, because it drives every other screen's configuration
 2. **products** — second, because every flow starts here
 3. **verifications** → **verificationDetails**
-4. **userDetails** → **kycIdForm** → **countryPickerSheet** / **idTypePickerSheet**
+4. **userDetails** (the Consent Details Form) → **kycIdForm** → **countryPickerSheet** /
+   **idTypePickerSheet**
 5. **profiles** → **profileConfig** → **newProfileSheet**
 6. **scanToken**
 7. **ResultCard** and the automation affordances (launch arguments, deep link)
@@ -151,36 +152,45 @@ plus a torch on Scan token, the simulate primary button, and the selected-row fi
 `spec/screens.json` → `verification.recording`.
 
 **Design set:**
-1. ~~The chosen products layout has only the sandbox state~~ — **resolved 2026-08-13**: build the
-   expressive grid (`5206-4037`); the prototype runs the old list layout and will not be updated, so
-   engineering transposes the session card, environment chip and token ring onto the grid.
-1b. **Unresolved from the recording:** which SDK field "Smile to capture" sets; whether the design
-   system gains soft badge variants; what the ID-details form looks like for the two document
-   products; the product→hue and profile→hue mappings; whether the label is "SmartSelfie Auth" or
-   "SmartSelfie Authentication"; and which element opens the Switch profile sheet.
-2. The grid shows 5 of the SDK's 7 job types; `EnhancedKyc` and `BVN` are absent and there is exactly
-   one empty slot. Intentional?
-3. Board 05 is titled "Consent & KYC" but holds no consent screen — the consent frames are in board
-   04. Worth renaming to avoid a wrong-board lookup.
-4. The Settings footer reads "Smile ID Sample App · 1.0.0" while the agreed display name is
-   "UseSmileID Sample" (`spec/app-identity.json`). Which string ships?
-5. The ABOUT section links `docs.usesmileid.com` — confirm that host.
-6. `ResultCard` is required by `spec/result-card.schema.json` but is not in the design. Needs a
-   placement decision; the honest default is a collapsible panel on verification details plus a
-   compact line on products while a job is in flight.
+**Resolved (no longer blocking):**
+
+- **Which products layout to build** — the expressive grid (`5206-4037`). The prototype runs the old
+  list layout and will not be updated, so engineering transposes the session card, environment chip
+  and token ring onto the grid.
+- **Where the pre-flow form sits** — `product → Consent Details Form → SDK flow`, for every product.
+  The prototype's consent-first order is stale wiring.
+- **Where the result card goes** — verification details, which the recording showed is the
+  post-submission destination.
+
+**Open — needs a design or SDK answer:**
+
+1. **"Smile to capture"** — which SDK field does the second CAPTURE switch set? Agent mode is
+   `allowAgentMode`; `SelfieCaptureConfig` also exposes `enableEnhancedLiveness`. Do not infer.
+2. **Soft badge variants** — the design uses soft tinted pills for all four statuses; the design
+   system's `badge.*` tokens are saturated. Add soft variants to the system, or change the design.
+3. **ID-details form for the two document products** — it is only drawn for Biometric KYC. Country
+   plus document type, without an ID number?
+4. **Product→hue and profile→hue mappings** — five product cards and three profile avatars each use a
+   different colour, with no documented rule. Needed or the four platforms will disagree.
+5. **Label copy** — "SmartSelfie Auth" (grid) versus "SmartSelfie Authentication" (list frames).
+6. **Switch profile trigger** — which element on the products screen opens the sheet.
+7. **Job-type coverage** — the grid shows 5 of the SDK's 7 types; `EnhancedKyc` and `BVN` are absent
+   and there is exactly one empty slot. Intentional?
+8. **Board 05 title** — "Consent & KYC" holds no consent screen (those are in board 04).
+9. **App name** — the Settings footer reads "Smile ID Sample App · 1.0.0" while the agreed display
+   name is "UseSmileID Sample" (`spec/app-identity.json`).
+10. **`docs.usesmileid.com`** — confirm the host.
 
 **Token source** (`spec/design-tokens.json` → `deltas`) — the good news first: the design file's
 variables match the design system **exactly** (`#151f72` primary, `#21232c` title, `#848282` muted,
-`#eaecf0` border, `#f9fafb` background, pill radius, DM Sans). Three real deltas:
+`#eaecf0` border, `#f9fafb` background, pill radius, DM Sans). Beyond the badge question above, two
+dark-mode defects in the token source itself:
 
-7. **Attention badge:** the design uses a soft amber pair (`#fff0d9` / `#7a4a00`); the design system's
-   warning badge is saturated brand orange. Pick one — a soft-fill badge variant in the system is
-   arguably what all four status chips want.
-8. **`color.border` does not change in dark mode** (`#eaecf0` in both). A near-white border on the
-   dark background will read as a bright outline around every card. Fix in the token source, not
-   locally.
-9. **`color.text.muted` is the same grey in both modes**, landing near the small-text contrast
-   threshold on dark. Verify or lighten.
+11. **`color.border` does not change in dark mode** (`#eaecf0` in both). A near-white border on the
+    dark background will read as a bright outline around every card. Fix in the token source, not
+    locally. Still unverified visually — the recording never turned dark mode on.
+12. **`color.text.muted` is the same grey in both modes**, landing near the small-text contrast
+    threshold on dark. Verify or lighten.
 
 Plus: the design system has **no `Switch` contract** and **no Dart output** — both are requests to
 the design system rather than things to solve locally.
