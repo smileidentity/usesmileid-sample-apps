@@ -115,7 +115,12 @@ abstract class GoldenTest {
 
     private companion object {
         const val GOLDEN_ROOT = "golden_root"
-        val GOLDEN_WIDTH = 411.dp
+
+        /**
+         * The width of the phone these are verified on, not a wider reference device. A 411dp
+         * viewport left the nav bar's token affordance fitting here and clipped on the device.
+         */
+        val GOLDEN_WIDTH = 393.dp
 
         /** Android's largest accessibility font scale — the one the no-clipping predicate means. */
         const val MAX_FONT_SCALE = 2f
