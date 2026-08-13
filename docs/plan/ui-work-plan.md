@@ -20,18 +20,35 @@ The sample collects everything the SDK needs **before** handing off, then lets t
 flow untouched:
 
 ```
-sample-ui                                          SDK (unchanged)
-──────────                                         ───────────────
-products → [userDetails] → [KYC / ID details] →    consent → instructions → capture
-                                                     → preview → processing
-                                                                    │
-verifications ← verificationDetails ←───────────────── result callback
+sample-ui                                            SDK (unchanged)
+──────────                                           ───────────────
+products
+  └─ tap a product
+       └─ Consent Details Form  (every product)
+            └─ ID details form  (document + KYC products only)
+                 └─────────────────────────────────→ consent → instructions → capture
+                                                       → preview → processing
+                                                                      │
+     verificationDetails (processing, 202) ←──────────── result ───────┘
+            └─ back → verifications
 ```
 
-`userDetails` and the KYC/ID form are **sample-owned screens shown before the flow starts**. That is
-deliberate: it means no SDK change is needed to collect them, and the SDK's own consent step stays
-exactly where it is. Never re-implement an SDK flow screen — the sample decides only whether a step
-is present and how it is configured.
+The **Consent Details Form** (first name, last name, email, phone) and the ID-details form are
+**sample-owned screens shown before the flow starts**. Every product shows the Consent Details Form —
+the design labels those fields "USER DETAILS — ATTACHED TO EVERY JOB" — seeded from the active
+profile's configuration. That ordering is deliberate: it means no SDK change is needed to collect
+them, and the SDK's own consent step stays exactly where it is.
+
+Two things to know before reading the prototype:
+
+- **The prototype shows the SDK consent screen *before* the Consent Details Form.** That wiring is
+  stale and is not being updated. Implement `product → Consent Details Form → SDK flow`.
+- **On submission the app lands on verification details in the processing state** (observed as
+  `202 Accepted` straight after the ID form's Continue). The details screen doubles as the result
+  screen, which is where the result card belongs.
+
+Never re-implement an SDK flow screen — the sample decides only whether a step is present and how it
+is configured.
 
 **How the Settings toggles reach the SDK** (three of these look like booleans and are not — see
 `spec/components.json` → `settingsToSdkMapping`):
@@ -43,6 +60,7 @@ is present and how it is configured.
 | Consent screen | include or omit `consent()` in the flow builder |
 | Instruction screen | include or omit `instructions()` |
 | Preview screen | include or omit `preview()` |
+| Smile to capture | **unresolved** — a second CAPTURE row; needs an SDK answer before implementing (see flags) |
 
 ---
 
@@ -125,10 +143,21 @@ it looks pixel-identical — that is precisely the host-interaction class these 
 
 Recorded in the spec so they survive this document. None of them block starting U0–U2.
 
+**Verified against a prototype recording (2026-08-12).** A 139-second walkthrough, decomposed into
+84 distinct states, confirmed the navigation graph and corrected twelve component specs — soft status
+badges, the JobRow secondary line, circular selection checkboxes, a neutral session-ended banner, the
+second CAPTURE row, the ID-type dependency, per-profile avatar hues, filled circular app-bar controls
+plus a torch on Scan token, the simulate primary button, and the selected-row fill. Details in
+`spec/screens.json` → `verification.recording`.
+
 **Design set:**
-1. The chosen products layout (board 01b) has only the sandbox state. Token-session, expired and
-   production states exist only on the superseded list layout — re-draw, or let engineering
-   transpose? (`spec/screens.json` → `openQuestions.transposeStates`)
+1. ~~The chosen products layout has only the sandbox state~~ — **resolved 2026-08-13**: build the
+   expressive grid (`5206-4037`); the prototype runs the old list layout and will not be updated, so
+   engineering transposes the session card, environment chip and token ring onto the grid.
+1b. **Unresolved from the recording:** which SDK field "Smile to capture" sets; whether the design
+   system gains soft badge variants; what the ID-details form looks like for the two document
+   products; the product→hue and profile→hue mappings; whether the label is "SmartSelfie Auth" or
+   "SmartSelfie Authentication"; and which element opens the Switch profile sheet.
 2. The grid shows 5 of the SDK's 7 job types; `EnhancedKyc` and `BVN` are absent and there is exactly
    one empty slot. Intentional?
 3. Board 05 is titled "Consent & KYC" but holds no consent screen — the consent frames are in board

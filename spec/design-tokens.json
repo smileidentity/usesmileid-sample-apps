@@ -11,46 +11,94 @@
   "verification": {
     "date": "2026-08-12",
     "method": "Figma variable definitions on the products board (node 5206-4037) compared against the design system's resolved light values.",
-    "result": "Aligned. Every colour, the radius scale and the type family match exactly.",
+    "result": "Aligned. Every colour, the radius scale and the type family match exactly. The badge treatment was later resolved against the prototype recording — see the softBadgeFills delta.",
     "matches": [
-      { "figma": "color/primary", "value": "#151f72", "token": "color.primary" },
-      { "figma": "color/surface", "value": "#ffffff", "token": "color.surface" },
-      { "figma": "color/title", "value": "#21232c", "token": "color.text.title" },
-      { "figma": "color/muted", "value": "#848282", "token": "color.text.muted" },
-      { "figma": "color/border", "value": "#eaecf0", "token": "color.border" },
-      { "figma": "Main BG", "value": "#f9fafb", "token": "color.background" },
-      { "figma": "radius/control", "value": "999 (pill)", "token": "radius.control" },
-      { "figma": "Type/*", "value": "DM Sans 12–26", "token": "text-style.* (font-family.body)" }
+      {
+        "figma": "color/primary",
+        "value": "#151f72",
+        "token": "color.primary"
+      },
+      {
+        "figma": "color/surface",
+        "value": "#ffffff",
+        "token": "color.surface"
+      },
+      {
+        "figma": "color/title",
+        "value": "#21232c",
+        "token": "color.text.title"
+      },
+      {
+        "figma": "color/muted",
+        "value": "#848282",
+        "token": "color.text.muted"
+      },
+      {
+        "figma": "color/border",
+        "value": "#eaecf0",
+        "token": "color.border"
+      },
+      {
+        "figma": "Main BG",
+        "value": "#f9fafb",
+        "token": "color.background"
+      },
+      {
+        "figma": "radius/control",
+        "value": "999 (pill)",
+        "token": "radius.control"
+      },
+      {
+        "figma": "Type/*",
+        "value": "DM Sans 12–26",
+        "token": "text-style.* (font-family.body)"
+      }
     ]
   },
   "deltas": [
     {
-      "id": "warnPair",
-      "severity": "blocks the StatusBadge warning treatment",
-      "figma": { "color/warn-bg": "#fff0d9", "color/warn-fg": "#7a4a00" },
-      "designSystem": { "badge.warning.background": "#ff9b00", "badge.warning.text": "#2d2b2a" },
-      "finding": "The design file uses a soft amber pair for the Attention badge; the design system's warning badge is saturated brand orange. They are not the same treatment, and success/error in the system are saturated too — so a soft warning would also be inconsistent inside the system.",
-      "recommendation": "Ask the design team to choose one: either add a soft-fill badge variant to the design system (which the Verifications chips arguably want for all four statuses), or accept the saturated pair and update the Figma file. Do not resolve this by hardcoding the Figma hexes."
+      "id": "softBadgeFills",
+      "severity": "blocks StatusBadge on all four statuses",
+      "figma": {
+        "color/warn-bg": "#fff0d9",
+        "color/warn-fg": "#7a4a00"
+      },
+      "designSystem": {
+        "badge.warning.background": "#ff9b00",
+        "badge.warning.text": "#2d2b2a"
+      },
+      "finding": "CONFIRMED from the prototype recording 2026-08-12: the design uses SOFT tinted pills for ALL FOUR statuses (pale green Clear, pale amber Attention, pale red Blocked, pale blue Processing). The design system's badge.* tokens are saturated fills with inverse text, so no current token pair produces the intended treatment.",
+      "recommendation": "Add soft badge variants to the design system (background + text per role). This is now a system gap rather than a per-status judgement call: the design applies soft fills consistently, and hardcoding the Figma hexes would bypass the token source."
     },
     {
       "id": "darkBorder",
       "severity": "dark-mode defect in the token source",
-      "designSystem": { "color.border light": "#eaecf0", "color.border dark": "#eaecf0" },
+      "designSystem": {
+        "color.border light": "#eaecf0",
+        "color.border dark": "#eaecf0"
+      },
       "finding": "color.border does not change between light and dark. A #EAECF0 border on the dark background (#1A1C23) is near-maximum contrast and will read as a bright outline around every card and row.",
       "recommendation": "Flag to the design system owners; the sample apps are the first surface to consume dark mode from these tokens, so this would surface as a visible bug on day one. Do not patch it locally — fix it in the token source."
     },
     {
       "id": "darkMuted",
       "severity": "worth checking",
-      "designSystem": { "color.text.muted light": "#848282", "color.text.muted dark": "#848282" },
+      "designSystem": {
+        "color.text.muted light": "#848282",
+        "color.text.muted dark": "#848282"
+      },
       "finding": "Muted text is the same grey in both modes. On the dark background that lands near the 4.5:1 threshold for small text, and muted text is used for supporting lines and the date group headers.",
       "recommendation": "Ask for a lighter muted grey in dark mode, or verify the contrast ratio and accept it explicitly."
     },
     {
       "id": "pillRadius",
       "severity": "cosmetic",
-      "figma": { "radius/control": "999" },
-      "designSystem": { "radius.control → radiusPill": "32dp" },
+      "figma": {
+        "radius/control": "999"
+      },
+      "designSystem": {
+        "radius.control → radiusPill": "32dp"
+      },
       "finding": "Fully-rounded in Figma versus a fixed 32 in the generated output. Identical on a 48-tall button (anything ≥ 24 renders as a pill) but different on taller surfaces.",
       "recommendation": "No action for buttons. If a taller pill appears, treat 999 as the intent."
     }
@@ -83,7 +131,16 @@
   "additions": {
     "comment": "Tokens this design needs that the system does not expose. Empty is the goal; each entry is a request to the design system, not a local override.",
     "candidates": [
-      { "need": "per-product decorative colour assignment for the ProductCard glyph and icon tile", "current": "color.decorative.* exists (9 hues) but the design does not say which product gets which", "ask": "a documented product→hue mapping so all four platforms colour the grid identically" }
+      {
+        "need": "per-product decorative colour assignment for the ProductCard glyph and icon tile",
+        "current": "color.decorative.* exists (9 hues) but the design does not say which product gets which",
+        "ask": "a documented product→hue mapping so all four platforms colour the grid identically"
+      },
+      {
+        "need": "per-profile avatar colour",
+        "current": "profile avatars render in three different hues in the design (navy / green / amber) with no documented rule",
+        "ask": "a documented profile→hue rule, or a deterministic derivation (e.g. hash of profile id into color.decorative.*) specified once here so four platforms agree"
+      }
     ]
   }
 }

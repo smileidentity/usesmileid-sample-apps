@@ -115,7 +115,7 @@
             "label": "SmartSelfie Enrollment",
             "jobType": "SmartSelfieEnrollment",
             "capture": true,
-            "needsUserDetails": false,
+            "needsUserDetails": true,
             "needsIdDetails": false
           },
           {
@@ -123,7 +123,7 @@
             "label": "SmartSelfie Auth",
             "jobType": "SmartSelfieAuthentication",
             "capture": true,
-            "needsUserDetails": false,
+            "needsUserDetails": true,
             "needsIdDetails": false
           }
         ]
@@ -136,7 +136,7 @@
             "label": "Document Verification",
             "jobType": "DocumentVerification",
             "capture": true,
-            "needsUserDetails": false,
+            "needsUserDetails": true,
             "needsIdDetails": true
           },
           {
@@ -165,6 +165,8 @@
         "BVN"
       ]
     },
-    "flowOrder": "userDetails (sample-owned, only when needsUserDetails) → idDetails/KYC form (sample-owned, only when needsIdDetails) → SDK flow [consent → instructions → capture → preview → processing]. User details and ID details are collected BEFORE the SDK flow starts so no SDK change is needed."
+    "flowOrder": "product tapped → Consent Details Form (sample-owned user details, seeded from the active profile — the design labels these fields 'ATTACHED TO EVERY JOB', so every product shows it) → ID details form (sample-owned, only when needsIdDetails) → SDK flow [consent → instructions → capture → preview → processing] → verification details in the processing state. Everything before the SDK flow is sample-owned, which is why no SDK change is needed.",
+    "flowOrderRuling": "OWNER RULING 2026-08-13: e.g. SmartSelfie Enrollment → Consent Details Form → SDK flow. The Figma prototype still shows the SDK consent screen first; that wiring is stale and is not being updated.",
+    "needsUserDetailsNote": "Set true for every product on the evidence of the design's own label 'USER DETAILS — ATTACHED TO EVERY JOB' (board 06 profile config) plus the owner's SmartSelfie Enrollment example."
   }
 }

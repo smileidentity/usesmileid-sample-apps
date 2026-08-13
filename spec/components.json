@@ -38,7 +38,9 @@
         "profiles",
         "settings"
       ],
-      "notes": "Initials only in this design (KA, AD, TO). No photo variant needed yet."
+      "notes": "CORRECTED 2026-08-12: the background colour varies PER PROFILE rather than being one avatar.bg. Needs a documented profile→hue rule so all four platforms colour the same profile identically (same gap as the product→hue mapping).",
+      "colouring": "per-profile hue (observed navy / green / amber across the three profiles), white initials",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2348"
     },
     {
       "name": "Button",
@@ -163,7 +165,9 @@
         "verifications",
         "verificationDetails"
       ],
-      "notes": "Design vocabulary maps to token roles: Clear→success, Attention→warning, Blocked→error, Processing→info. See the warnFill delta in spec/design-tokens.json before picking the warning treatment."
+      "notes": "CORRECTED 2026-08-12 from the prototype recording. The design uses soft tinted pills, not the design system's saturated badge fills. Do not resolve this with the current badge.* tokens — see the softBadgeVariant delta in design-tokens.json. Vocabulary maps to roles: Clear→success, Attention→warning, Blocked→error, Processing→info.",
+      "fillTreatment": "SOFT — a pale tinted fill with a dark same-hue label, for ALL FOUR statuses (pale green Clear, pale amber Attention, pale red Blocked, pale blue Processing).",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2410"
     },
     {
       "name": "SectionLabel",
@@ -217,7 +221,8 @@
       "variants": [
         "backOnly",
         "backWithAction",
-        "backWithDelete"
+        "backWithDelete",
+        "backWithTorch"
       ],
       "usedBy": [
         "verificationDetails",
@@ -225,7 +230,8 @@
         "kycIdForm",
         "scanToken"
       ],
-      "notes": "40dp/pt touch targets for back and trailing action. Must use the platform-native back affordance (iOS back swipe, Android predictive back) even though the visual is identical."
+      "notes": "CORRECTED 2026-08-12: on flow screens the back control is a DARK-FILLED CIRCULAR button; trailing actions are light circular buttons (delete on verification details) except Scan token, whose trailing control is a dark circular TORCH/FLASH toggle. 40 targets. Platform-native back gesture regardless of the visual.",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-3668"
     },
     {
       "name": "DataFieldRow",
@@ -294,13 +300,14 @@
       "usedBy": [
         "settings"
       ],
-      "notes": "Title + supporting line + trailing control. The switch variant covers Agent mode, Dark mode and the three SDK-step toggles; navigation covers ABOUT/LEGAL rows; destructive covers Sign out.",
+      "notes": "CORRECTED 2026-08-12: the CAPTURE section has TWO switch rows — 'Smile to capture / Passive capture — smile detection' ABOVE 'Agent mode / Operator captures for the applicant'. The first is the CaptureModeRow component instance, which is why a metadata-only read missed its text. Switch rows also cover Dark mode and the three SDK-step toggles; navigation covers ABOUT/LEGAL; destructive covers Sign out.",
       "parts": [
         "NavRow — the ABOUT/LEGAL navigation variant with a chevron",
         "SignOutRow — the destructive variant",
         "VersionLabel — the footer line beneath the last section",
         "RememberDetailsRow — switch variant used on userDetails"
-      ]
+      ],
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2898"
     },
     {
       "name": "ProfileRow",
@@ -321,11 +328,12 @@
         "profileSwitchSheet",
         "profiles"
       ],
-      "notes": "Avatar + organisation + person, with a check on the active profile.",
+      "notes": "Avatar + organisation + person, with a check on the active profile. CORRECTED 2026-08-12: the selected row takes a pale-blue fill as well as the check.",
       "parts": [
         "ProfileSummaryRow — the settings-header variant showing the active profile with 'Tap to configure'",
         "CreateProfileRow — the trailing add-a-profile variant"
-      ]
+      ],
+      "selectedTreatment": "pale-blue FILLED row highlight + trailing check (not check-only)"
     },
     {
       "name": "ProfileEnvChip",
@@ -414,7 +422,14 @@
       "usedBy": [
         "verifications"
       ],
-      "notes": "68 tall. Carries a StatusBadge. In select mode it shifts right to make room for a checkbox; in swipe mode it reveals a Remove action."
+      "notes": "CORRECTED 2026-08-12: the row carries a SECONDARY LINE with the truncated job id and time (e.g. '7d2f01aa… · 13:03:41') — not title-plus-badge only. 68 tall. In select mode it shifts right for a checkbox; in swipe mode it reveals Remove.",
+      "anatomy": [
+        "leading icon tile (product hue, soft tint)",
+        "title (product name, truncates)",
+        "secondary line: truncated job id + HH:MM:SS",
+        "trailing StatusBadge"
+      ],
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2410"
     },
     {
       "name": "FilterChip",
@@ -455,8 +470,7 @@
       "owner": "sample",
       "tokens": [
         "color.primary",
-        "color.border",
-        "radius.field"
+        "color.border"
       ],
       "states": [
         "unchecked",
@@ -464,7 +478,10 @@
       ],
       "usedBy": [
         "verifications"
-      ]
+      ],
+      "shape": "circle (radio-style)",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2441",
+      "notes": "CORRECTED 2026-08-12: circular, not a rounded square."
     },
     {
       "name": "SelectionBar",
@@ -513,12 +530,15 @@
       ],
       "states": [
         "empty",
-        "selected"
+        "selected",
+        "disabled"
       ],
       "usedBy": [
         "kycIdForm"
       ],
-      "notes": "Looks like an input, behaves like a button: opens a picker sheet."
+      "notes": "CORRECTED 2026-08-12: looks like an input, behaves like a button, and has a disabled state — the ID-type trigger stays greyed until a country is chosen. Each trigger carries a leading icon.",
+      "dependency": "ID TYPE is DISABLED until a country is selected.",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2797"
     },
     {
       "name": "OptionRow",
@@ -542,7 +562,8 @@
         "countryPickerSheet",
         "idTypePickerSheet"
       ],
-      "notes": "Country rows lead with a flag; ID-type rows do not. Selected rows carry a check."
+      "notes": "Country rows lead with a flag; ID-type rows do not. Selected rows carry a check. CORRECTED 2026-08-12: the selected row takes a pale-blue fill as well as the check.",
+      "selectedTreatment": "pale-blue FILLED row highlight + trailing check (not check-only)"
     },
     {
       "name": "BottomSheet",
@@ -642,16 +663,17 @@
       "owner": "sample",
       "dsContract": "components/banner.md",
       "tokens": [
-        "banner.bg",
-        "banner.border",
-        "banner.title",
-        "banner.text",
-        "banner.warning-accent"
+        "color.surface-muted",
+        "color.text.title",
+        "color.text.muted",
+        "color.primary",
+        "radius.surface"
       ],
       "usedBy": [
         "products"
       ],
-      "notes": "TOKEN SESSION ENDED with a Scan action; replaces SessionCard in the expired state."
+      "notes": "CORRECTED 2026-08-12: a NEUTRAL grey card ('TOKEN SESSION ENDED' / 'Scan a token to relink' + a Scan text action), not a warning-accented banner. It replaces SessionCard in the expired state.",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-3752"
     },
     {
       "name": "FloatingTokenButton",
@@ -695,17 +717,18 @@
         "color.primary"
       ],
       "rows": [
-        "manualEntryWithPaste",
-        "simulateSuccessfulScan"
+        "manualEntryWithPaste"
       ],
       "usedBy": [
         "scanToken"
       ],
-      "notes": "The simulate row is what makes token-session flows testable with no QR source — treat it as a first-class affordance, not debug scaffolding.",
+      "notes": "CORRECTED 2026-08-12: the manual-entry row ('Or enter token manually' + Paste) sits ABOVE a primary button. The simulate button is what makes token-session flows testable with no QR source — first-class, not debug scaffolding.",
       "parts": [
         "ManualEntryRow — 'Or enter token manually' + Paste",
         "SimulateRow — 'Simulate a successful scan'"
-      ]
+      ],
+      "primaryAction": "'Simulate a successful scan' — a full-width PRIMARY BUTTON, not a row",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-3668"
     },
     {
       "name": "ResultCard",
@@ -781,7 +804,8 @@
     "Dark mode": "app-level theme selection; the SDK follows the host's light/dark resolution",
     "Consent screen": "include or omit consent() in the flow builder — there is NO showConsent boolean",
     "Instruction screen": "include or omit instructions() in the flow builder",
-    "Preview screen": "include or omit preview() in the flow builder (allowRetake configures it once present)"
+    "Preview screen": "include or omit preview() in the flow builder (allowRetake configures it once present)",
+    "Smile to capture": "UNRESOLVED — a second CAPTURE row found in the recording. SelfieCaptureConfig exposes allowAgentMode and enableEnhancedLiveness, so this plausibly toggles enhanced-vs-passive liveness (inverted), but that is a guess. Needs an SDK answer before implementing; see screens.json openQuestions.smileToCaptureMapping."
   },
   "buildOrder": [
     "1. Tokens: generate the platform token source and wire light/dark (nothing else can start).",
@@ -794,13 +818,23 @@
   "partsRule": "A `parts` entry is a sub-element of its parent component, not a separate component. Screens reference the parent; parts exist so nothing in the design is left unaccounted for.",
   "verification": {
     "date": "2026-08-12",
-    "method": "Structure from get_metadata on all 8 boards; visual confirmation from two rendered frames (5206-4037 products grid, 5206-2323 token-linked list).",
+    "method": "Structure from get_metadata on all 8 boards; visual confirmation from two rendered frames (5206-4037 products grid, 5206-2323 token-linked list). Then a 139s prototype screen recording decomposed into 84 distinct states (2026-08-12), which corrected ten further specs and established the navigation graph.",
     "corrected": [
       "ProductCard fill treatment",
       "ProfileEnvChip content",
       "SessionCard fill treatment",
       "TokenRing colour",
-      "NavBar token affordance"
+      "NavBar token affordance",
+      "StatusBadge soft fills",
+      "JobRow secondary line",
+      "SelectionCheckbox circular",
+      "SessionEndedBanner neutral",
+      "SettingRow second CAPTURE row",
+      "SelectTrigger disabled dependency",
+      "Avatar per-profile hue",
+      "TopAppBar filled circular controls + torch",
+      "ScanSheet primary button",
+      "OptionRow/ProfileRow selected fill"
     ],
     "unverified": [
       "SessionEndedBanner treatment (not rendered)",

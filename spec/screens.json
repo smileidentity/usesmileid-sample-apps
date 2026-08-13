@@ -67,27 +67,32 @@
         {
           "state": "tokenLinked",
           "node": "5206-3704",
-          "note": "Session card + countdown + token ring. Drawn on the superseded list layout — see openQuestions.transposeStates."
+          "note": "Session card + countdown + token ring. Drawn on the superseded list layout — see openQuestions.transposeStates.",
+          "layout": "drawn on the superseded list layout — restate on the grid"
         },
         {
           "state": "tokenLinkedLate",
           "node": "5206-3728",
-          "note": "Countdown at 1:40; same layout caveat."
+          "note": "Countdown at 1:40; same layout caveat.",
+          "layout": "drawn on the superseded list layout — restate on the grid"
         },
         {
           "state": "tokenExpired",
           "node": "5206-3752",
-          "note": "Session-ended banner with Scan action; same layout caveat."
+          "note": "Session-ended banner with Scan action; same layout caveat.",
+          "layout": "drawn on the superseded list layout — restate on the grid"
         },
         {
           "state": "production",
           "node": "5206-2391",
-          "note": "Production environment chip; same layout caveat."
+          "note": "Production environment chip; same layout caveat.",
+          "layout": "drawn on the superseded list layout — restate on the grid"
         },
         {
           "state": "supersededListLayout",
           "node": "5206-2305",
-          "note": "Original ActionTile list layout. Superseded by 5206-4037 per owner ruling 2026-08-12 — kept only so nobody re-implements it by accident."
+          "note": "Original ActionTile list layout. Superseded by 5206-4037 per owner ruling 2026-08-12 — kept only so nobody re-implements it by accident.",
+          "layout": "drawn on the superseded list layout — restate on the grid"
         }
       ],
       "components": [
@@ -105,7 +110,9 @@
         "sample_product_card",
         "sample_session_card",
         "sample_env_chip"
-      ]
+      ],
+      "canonicalLayoutUrl": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-4037",
+      "ruling": "OWNER RULING 2026-08-13: build the EXPRESSIVE GRID (5206-4037). The prototype runs the old list layout throughout and is not being updated, so the grid is authoritative for layout and the list frames are reference-only for the states drawn on them."
     },
     {
       "id": "profileSwitchSheet",
@@ -220,7 +227,12 @@
         "sample_detail_field",
         "sample_detail_copy",
         "sample_status_badge"
-      ]
+      ],
+      "entryPoints": [
+        "push from the verifications list",
+        "POST-SUBMISSION: the app lands here in the processing state once a job is submitted (observed 202 Accepted straight after the ID form's Continue)"
+      ],
+      "note": "The details screen doubles as the result screen, which is why the result card belongs here rather than needing a new home."
     },
     {
       "id": "userDetails",
@@ -228,7 +240,7 @@
       "owner": "sample",
       "board": "04",
       "route": "push",
-      "flowPosition": "BEFORE the SDK flow starts",
+      "flowPosition": "Immediately after a product is tapped and BEFORE the SDK flow starts.",
       "states": [
         {
           "state": "empty",
@@ -259,7 +271,10 @@
         "sample_user_details_field",
         "sample_remember_details_switch",
         "sample_user_details_continue"
-      ]
+      ],
+      "aka": "Consent Details Form (the owner's term)",
+      "prefilledFrom": "profileConfig — the design labels those fields 'USER DETAILS — ATTACHED TO EVERY JOB', so every product shows this form seeded from the active profile.",
+      "note": "OWNER RULING 2026-08-13 (restated): product → Consent Details Form → SDK flow. The prototype shows the SDK consent screen BEFORE this form; that wiring is stale and is not being updated, so do not implement the prototype's order."
     },
     {
       "id": "consent",
@@ -313,7 +328,10 @@
         "sample_idtype_trigger",
         "sample_idnumber_input",
         "sample_kyc_continue"
-      ]
+      ],
+      "appliesTo": "products whose spec entry sets needsIdDetails (document verification, enhanced document verification, biometric KYC)",
+      "fieldDependency": "ID TYPE is disabled until COUNTRY is selected; Continue enables only once country, ID type and ID number are all set.",
+      "flowPosition": "After the Consent Details Form, still BEFORE the SDK flow."
     },
     {
       "id": "countryPickerSheet",
@@ -387,7 +405,7 @@
       ],
       "sections": [
         "PROFILE",
-        "CAPTURE",
+        "CAPTURE (two rows: Smile to capture, Agent mode)",
         "APPEARANCE",
         "SDK SCREENS — SHOW OR SKIP FLOW STEPS",
         "ABOUT",
@@ -532,7 +550,8 @@
       "id": "transposeStates",
       "question": "The chosen products layout (board 01b, expressive grid) has ONE state. The token-session, token-expired and production states exist only on the superseded list layout (boards 01 and 07). Should those states be re-drawn on the grid layout, or may engineering transpose the session card / env chip / token ring onto it?",
       "blocks": "products screen states beyond default",
-      "recommendation": "Engineering transposes; the header, session card and nav bar are unchanged between the two layouts, so only the card grid differs. Confirm rather than assume, since it changes vertical space above the grid."
+      "recommendation": "Engineering transposes; the header, session card and nav bar are unchanged between the two layouts, so only the card grid differs. Confirm rather than assume, since it changes vertical space above the grid.",
+      "status": "RESOLVED 2026-08-13 — owner ruled the grid is the build target and the prototype will not be updated, so engineering transposes the session card, environment chip and token ring onto the grid. Design may re-draw the states later."
     },
     {
       "id": "productCoverage",
@@ -555,6 +574,44 @@
       "id": "docsDomain",
       "question": "The ABOUT section links 'docs.usesmileid.com'. Confirm that domain is live, or point it at the current documentation host.",
       "blocks": "settings ABOUT rows"
+    },
+    {
+      "id": "smileToCaptureMapping",
+      "question": "Settings CAPTURE has two rows: 'Smile to capture / Passive capture — smile detection' and 'Agent mode'. Agent mode is SelfieCaptureConfig.allowAgentMode. What does 'Smile to capture' set? enableEnhancedLiveness inverted, or something else?",
+      "blocks": "the CAPTURE section and any flow it configures",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2898",
+      "recommendation": "Get an SDK answer rather than inferring; the two switches must not silently set the same field."
+    },
+    {
+      "id": "softBadgeVariant",
+      "question": "The design uses soft tinted status pills for all four statuses; the design system's badge tokens are saturated. Add soft variants to the design system, or change the design?",
+      "blocks": "StatusBadge",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2410",
+      "recommendation": "Add soft variants to the system — the design applies them consistently across all four roles, so this is a system gap rather than a one-off."
+    },
+    {
+      "id": "docvIdFormVariant",
+      "question": "The ID-details form is only drawn for Biometric KYC (country / ID type / ID number). What does it look like for Document Verification and Enhanced Document Verification — country plus document type, no ID number?",
+      "blocks": "kycIdForm for two of the five products",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2797"
+    },
+    {
+      "id": "profileAndProductHues",
+      "question": "Product cards and profile avatars both use per-item colours (5 product hues, 3 profile hues observed). Which decorative token does each product and each profile get?",
+      "blocks": "ProductCard and Avatar rendering identically across four platforms",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-4037"
+    },
+    {
+      "id": "labelCopy",
+      "question": "The products list shows 'SmartSelfie Authentication' in some frames and 'SmartSelfie Auth' in others (the grid uses 'SmartSelfie Auth'). Which string ships?",
+      "blocks": "product labels and their derived test ids",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-4037"
+    },
+    {
+      "id": "switchProfileTrigger",
+      "question": "Which element on the products screen opens the Switch profile sheet — the environment chip, or something else? The recording shows the sheet but not the trigger.",
+      "blocks": "products screen wiring",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2348"
     }
   ],
   "verification": {
@@ -575,6 +632,27 @@
       ],
       "howToClose": "Either grant a Full seat so the reaction graph can be read directly, or have someone play the prototype once and confirm the five edges above."
     },
-    "finding": "Board 01b — the CHOSEN products layout — carries no hotspot rectangles at all, while boards 01, 02, 06 and 07 do. The prototype therefore runs on the SUPERSEDED list layout, so playing it would demonstrate a screen we are not building. Worth telling the design team, and it means a play-through would not have validated the chosen products screen anyway."
+    "finding": "Board 01b — the CHOSEN products layout — carries no hotspot rectangles at all, while boards 01, 02, 06 and 07 do. The prototype therefore runs on the SUPERSEDED list layout, so playing it would demonstrate a screen we are not building. Worth telling the design team, and it means a play-through would not have validated the chosen products screen anyway.",
+    "recording": {
+      "date": "2026-08-12",
+      "source": "139s prototype screen recording supplied by the owner; decomposed into 84 distinct states at 2fps with signature-based dedupe (scene detection cannot fire — consecutive screens share the header, nav bar and background).",
+      "flowGraphObserved": [
+        "products(list) → tap product → [SDK consent] → allow → userDetails(empty→filled) → Continue → kycIdForm(country→idType→idNumber) → Continue → verificationDetails(processing, 202 Accepted) → back → verifications",
+        "any tab → token button → scanToken → 'Simulate a successful scan' → products(tokenLinked: green session card 5:00 + green ring)",
+        "verifications → row → verificationDetails → back",
+        "verifications → Select → selectMode → delete → counts 11→9 + toast('2 verifications removed', Undo)",
+        "products → header chip → profileSwitchSheet over a scrim"
+      ],
+      "correctionsApplied": 12,
+      "supersededByOwner": "The recording's product → consent → userDetails order. Owner ruling 2026-08-13 keeps product → Consent Details Form → SDK flow (consent stays inside the SDK).",
+      "notExercised": [
+        "dark mode (the switch stayed off throughout)",
+        "the expressive products grid (prototype uses the list layout)",
+        "profiles / profileConfig / newProfileSheet",
+        "swipe-to-delete",
+        "pull-to-refresh",
+        "the production environment variant"
+      ]
+    }
   }
 }
