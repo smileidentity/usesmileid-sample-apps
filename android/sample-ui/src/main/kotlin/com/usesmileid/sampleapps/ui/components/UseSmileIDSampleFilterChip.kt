@@ -17,12 +17,7 @@ import androidx.compose.ui.semantics.Role
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * A status filter with its live count.
- *
- * The count carries its own id because "the count dropped after a delete" is the assertion that
- * proves a delete — the toast is not evidence, so the two texts stay separate nodes.
- */
+/** A status filter with its live count. The count is a separate node, because it is what a delete is asserted on. */
 @Composable
 fun UseSmileIDSampleFilterChip(
     label: String,

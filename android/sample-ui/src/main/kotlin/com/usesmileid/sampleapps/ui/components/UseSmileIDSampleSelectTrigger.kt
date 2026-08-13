@@ -21,12 +21,7 @@ import androidx.compose.ui.semantics.semantics
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * Looks like an input, behaves like a button: tapping it opens a picker sheet rather than a keyboard.
- *
- * Disabled is load-bearing rather than decorative — the ID-type trigger stays greyed until a country
- * is chosen, which is the dependency the ID form is built around.
- */
+/** Looks like an input, behaves like a button. Disabled is load-bearing: ID type stays greyed until a country is chosen. */
 @Composable
 fun UseSmileIDSampleSelectTrigger(
     value: String?,

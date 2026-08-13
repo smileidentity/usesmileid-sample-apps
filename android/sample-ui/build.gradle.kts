@@ -27,7 +27,7 @@ android {
     }
 
     testOptions {
-        // Robolectric inflates real resources, so the golden tests need them on the test classpath.
+        // Robolectric inflates real resources.
         unitTests.isIncludeAndroidResources = true
     }
 }
@@ -49,16 +49,14 @@ dependencies {
     testImplementation(libs.robolectric)
     testImplementation(libs.roborazzi)
     testImplementation(libs.roborazzi.compose)
-    // Supplies the ComponentActivity the compose test rule hosts; unit tests run the debug variant.
+    // Supplies the ComponentActivity the compose test hosts.
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
 
 tasks.withType<Test>().configureEach {
     systemProperty("sampleapps.spec.dir", layout.projectDirectory.dir("../../spec").asFile.absolutePath)
 
-    // Roborazzi compares against the committed goldens from inside this task, so Gradle has to be
-    // told they are an input. Without this the task stays up-to-date when a golden changes and
-    // verifyRoborazziDebug passes on a stale result — gating nothing.
+    // Declared so a changed golden invalidates the task; without it verify passes on a stale result.
     inputs.dir(layout.projectDirectory.dir("src/test/screenshots"))
         .withPropertyName("goldenScreenshots")
         .withPathSensitivity(PathSensitivity.RELATIVE)

@@ -16,14 +16,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import com.smileid.designsystem.SmileDimens
 
-/**
- * The glyphs the composites need, drawn rather than imported: `material-icons` is not on this
- * classpath and adding it for eight outlines would be a dependency for nothing. Each one is stroked
- * on a square canvas so it stays crisp at any size and takes its colour from a token.
- *
- * Public because the slot APIs ask for them — a caller filling `UseSmileIDSampleTopAppBar`'s action
- * or `UseSmileIDSampleSettingRow`'s leading slot needs a glyph to put in it.
- */
+/** Drawn rather than imported, because `material-icons` is not on this classpath. Public because the slot APIs take one. */
 @Composable
 fun BackArrowGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
     val s = stroke()

@@ -24,13 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * The partial sheet: a grab handle over a scrim, sized to its content.
- *
- * Built on the platform sheet so drag-to-dismiss, the scrim tap and inset handling are the ones the
- * OS provides rather than ones we reimplement. Presence is the caller's — these are destinations in
- * `spec/routes.json`, so dismissal pops the back stack instead of flipping a remembered boolean.
- */
+/** The partial sheet: a grab handle over a scrim, sized to its content. Presence is the caller's route, not a remembered boolean. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UseSmileIDSampleBottomSheet(
@@ -69,10 +63,7 @@ fun UseSmileIDSampleBottomSheet(
     }
 }
 
-/**
- * The full-height sheet: a back header instead of a handle, for the country and ID-type pickers
- * where the list is long enough that a partial sheet would fight the keyboard.
- */
+/** The full-height sheet: a back header instead of a handle, for the long picker lists. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UseSmileIDSampleFullHeightBottomSheet(

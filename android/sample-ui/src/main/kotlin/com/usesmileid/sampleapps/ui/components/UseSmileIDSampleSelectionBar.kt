@@ -27,11 +27,7 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * Replaces the nav bar in select mode: the running count, a hint that changes with it, and Remove.
- *
- * The count is exposed as its own text node so a flow asserts equality rather than parsing prose.
- */
+/** Replaces the nav bar in select mode. The count is its own node, so a flow asserts equality rather than parsing prose. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UseSmileIDSampleSelectionBar(
@@ -74,12 +70,7 @@ fun UseSmileIDSampleSelectionBar(
     }
 }
 
-/**
- * The design fills this pill with a soft red and keeps the label red. Those soft variants are the
- * ones still pending in the design system, and the saturated `badge.error.*` pair draws red on red —
- * an invisible label. So it takes the saturated fill with its own on-colour, the same stopgap
- * [UseSmileIDSampleStatusBadge] ships, until the soft variants land.
- */
+/** Saturated fill with its on-colour until the soft red lands: the `badge.error.*` pair draws red on red. */
 @Composable
 private fun RemoveAction(enabled: Boolean, onRemove: () -> Unit) {
     val colors = UseSmileIDSampleTheme.colors

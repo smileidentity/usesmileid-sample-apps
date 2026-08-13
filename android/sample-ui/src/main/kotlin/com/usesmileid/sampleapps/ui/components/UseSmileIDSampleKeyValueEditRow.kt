@@ -17,12 +17,7 @@ import androidx.compose.ui.graphics.SolidColor
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * A label and a value that edits in place, for the Consent Details Form and the profile defaults.
- *
- * Tapping the value edits it with a caret rather than pushing a form, so the row owns a text field
- * and not a click target. Empty shows the placeholder in muted; filled takes the title colour.
- */
+/** A label and a value that edits in place with a caret, rather than pushing a form. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UseSmileIDSampleKeyValueEditRow(
@@ -59,8 +54,7 @@ fun UseSmileIDSampleKeyValueEditRow(
             singleLine = true,
             keyboardOptions = keyboardOptions,
             textStyle = UseSmileIDSampleTheme.type.textStyleBodySm.copy(
-                // Muted when disabled, so a row that cannot be edited does not look identical to
-                // one that can — the same treatment SelectTrigger gives its disabled state.
+                // Muted when disabled, so a row that cannot be edited does not look editable.
                 color = if (enabled) colors.textTitle else colors.textMuted,
             ),
             cursorBrush = SolidColor(colors.primary),

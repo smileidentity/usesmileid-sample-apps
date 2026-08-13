@@ -24,18 +24,9 @@ import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /**
- * One verification in the list: a tinted product tile, the product name, a secondary line carrying
- * the truncated job id and time, and the status badge.
+ * One verification: a product tile, its name, a secondary line of job id and time, and the status badge.
  *
- * The secondary line is the design's own correction — a row is not title-plus-badge, and the job id
- * is what a flow reads to identify the row.
- *
- * A [FlowRow] holds the text block and the badge so the badge drops below the title at 2x rather
- * than squeezing the product name into an ellipsis.
- *
- * Select mode's checkbox is deliberately not a slot here: the design puts it *beside* the card and
- * narrows the card to suit, so the screen composes a row of checkbox plus this. Holding it inside
- * cost the title enough width to wrap at default scale on a 393dp screen.
+ * Select mode's checkbox is not a slot — the design puts it beside the card, and inside it cost the title width.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -48,8 +39,7 @@ fun UseSmileIDSampleJobRow(
     onClick: (() -> Unit)? = null,
     tileColor: Color = UseSmileIDSampleTheme.colors.surfaceAlt,
     testId: String? = null,
-    // Defaulted rather than attached outright: the badge sits inside a repeated row, so a list
-    // screen overrides it with the row's suffix instead of tagging every badge the same.
+    // Defaulted, not attached: a list screen overrides it with the row's suffix.
     statusTestId: String? = UseSmileIDSampleTestIds.JOB_ROW_STATUS,
 ) {
     val colors = UseSmileIDSampleTheme.colors
@@ -62,6 +52,7 @@ fun UseSmileIDSampleJobRow(
         color = colors.card.background,
         border = BorderStroke(SmileDimens.borderWidthHairline, colors.card.border),
     ) {
+        // FlowRow so the badge drops below the title at 2x rather than ellipsising the name.
         FlowRow(
             modifier = Modifier
                 .defaultMinSize(minHeight = SmileDimens.space64)
@@ -83,8 +74,7 @@ fun UseSmileIDSampleJobRow(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs),
             ) {
-                // Neither line caps its line count: the caller already elides the job id, and a row
-                // that ellipsises the product name at 2x is the clipping the predicate forbids.
+                // No line cap: the caller already elides the job id.
                 Text(
                     text = product,
                     style = UseSmileIDSampleTheme.type.textStyleBodyStrong,

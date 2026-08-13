@@ -22,13 +22,7 @@ import androidx.compose.ui.semantics.semantics
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * The pushed-screen app bar: a dark-filled circular back control, a title, and an optional trailing
- * circular action.
- *
- * The visual back control is in addition to the platform gesture, never instead of it — the caller
- * still lets system back pop the destination.
- */
+/** The pushed-screen app bar: a dark-filled circular back control, a title, and an optional trailing action. */
 @Composable
 fun UseSmileIDSampleTopAppBar(
     title: String,
@@ -58,14 +52,11 @@ fun UseSmileIDSampleTopAppBar(
             text = title,
             style = UseSmileIDSampleTheme.type.textStyleTitle,
             color = UseSmileIDSampleTheme.colors.textTitle,
-            // The title yields to the two controls rather than pushing the trailing one off-screen,
-            // and wraps instead of capping: a long product name needs more than two lines at 2x, and
-            // ellipsising a screen title is the clipping the font-scale predicate forbids.
+            // Wraps rather than caps: ellipsising a title is the clipping the predicate forbids.
             modifier = Modifier.weight(1f),
         )
 
-        // Holds the trailing control's width even when there is none, so the title sits identically
-        // on a bar with an action and one without.
+        // Holds the action's width even with no action, so the title sits identically either way.
         if (action != null) action() else Box(Modifier.size(SmileDimens.space40))
     }
 }
@@ -73,7 +64,7 @@ fun UseSmileIDSampleTopAppBar(
 /** Filled is the dark control used for back and the Scan token torch; Tonal is the light trailing action. */
 enum class UseSmileIDSampleTopAppBarEmphasis { Filled, Tonal }
 
-/** One circular 40dp app-bar control. The glyph is handed the tint its emphasis resolves to. */
+/** One circular 40dp app-bar control; Material expands the touch target around it. */
 @Composable
 fun UseSmileIDSampleTopAppBarButton(
     contentDescription: String,
@@ -90,7 +81,6 @@ fun UseSmileIDSampleTopAppBarButton(
     }
     Surface(
         onClick = onClick,
-        // 40dp by design; Material still expands the touch target to the platform minimum around it.
         modifier = modifier
             .size(SmileDimens.space40)
             .semantics { this.contentDescription = contentDescription }

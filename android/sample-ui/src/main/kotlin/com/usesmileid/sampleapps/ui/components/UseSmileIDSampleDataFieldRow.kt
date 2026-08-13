@@ -20,12 +20,7 @@ import androidx.compose.ui.semantics.semantics
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * A label/value pair on the verification-details card, optionally with a copy control.
- *
- * A [FlowRow] rather than a weighted [Row]: at 2x font scale a timestamp value cannot share a line
- * with its label, and wrapping it below is right where squeezing it into an ellipsis is not.
- */
+/** A label/value pair on the verification-details card, optionally with a copy control. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UseSmileIDSampleDataFieldRow(
@@ -45,6 +40,7 @@ fun UseSmileIDSampleDataFieldRow(
         horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        // FlowRow: at 2x a timestamp value cannot share a line with its label.
         FlowRow(
             modifier = Modifier.weight(1f),
             horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
@@ -71,7 +67,6 @@ fun UseSmileIDSampleDataFieldRow(
 private fun CopyButton(label: String, onCopy: () -> Unit, testId: String?) {
     Surface(
         onClick = onCopy,
-        // 24dp glyph; Material expands the touch target around it to the platform minimum.
         modifier = Modifier
             .size(SmileDimens.sizeIconLg)
             .semantics { contentDescription = "Copy $label" }

@@ -101,7 +101,7 @@ fun ComponentGalleryScreen() {
             )
         }
 
-        // Anchors, so 35 components stay navigable without a long scroll to reach the last one.
+        // Anchors, so the last of 27 sections is reachable without a long scroll.
         LazyRow(
             modifier = Modifier.padding(bottom = SmileDimens.spacingXs),
             contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = SmileDimens.spacingMd),
@@ -419,8 +419,6 @@ private fun gallerySections(): List<GallerySectionSpec> {
                 status = UseSmileIDSampleStatus.Blocked,
                 onClick = {},
             )
-            // Select mode: the checkbox sits beside the card and the card narrows, as the design
-            // has it — holding it inside the card cost the title enough width to wrap.
             Row(
                 horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
                 verticalAlignment = Alignment.CenterVertically,

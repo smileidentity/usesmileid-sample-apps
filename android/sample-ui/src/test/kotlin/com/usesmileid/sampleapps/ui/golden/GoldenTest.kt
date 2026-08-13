@@ -30,23 +30,13 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
-/**
- * The golden and structural-predicate harness every composite test extends.
- *
- * Goldens exist because 24 of the 27 composites have no design-system contract, so once the pending
- * token fixes land there is nothing else that can tell us a composite still looks right. Recorded
- * with `./gradlew recordRoborazziDebug`, checked by `verifyRoborazziDebug` in `verify.sh`.
- *
- * Each capture runs its own [runComposeUiTest], because a compose test rule accepts `setContent`
- * once and every composite owes both a light and a dark golden.
- */
+/** Records with `recordRoborazziDebug` and checks with `verifyRoborazziDebug`. One [runComposeUiTest] per capture, because a rule takes `setContent` once. */
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [ROBOLECTRIC_SDK], qualifiers = "w411dp-h891dp-xhdpi")
 @OptIn(ExperimentalTestApi::class)
 abstract class GoldenTest {
 
-    /** Both modes, since every composite owes a light and a dark golden. */
     protected fun goldens(name: String, content: @Composable () -> Unit) {
         capture("${name}_light", dark = false, content = content)
         capture("${name}_dark", dark = true, content = content)
@@ -57,15 +47,7 @@ abstract class GoldenTest {
         onNodeWithTag(GOLDEN_ROOT).captureRoboImage("src/test/screenshots/$name.png")
     }
 
-    /**
-     * The font-scale predicate from the Definition of Done, as an assertion rather than an eyeball.
-     *
-     * Truncation is read from `didExceedMaxLines` and `didOverflowHeight`, not `hasVisualOverflow`:
-     * the latter also reports true for centred text that fits, because `TextAlign.Center` widens the
-     * paragraph to the incoming constraint while the node shrinks to its intrinsic width. Also fails
-     * a composite that grows wider than the viewport, because a row of
-     * label-plus-value-plus-trailing-control is the shape that does that at 2x.
-     */
+    /** Fails on truncated text or a composite wider than the viewport. Not `hasVisualOverflow`, which is also true for centred text that fits. */
     protected fun assertSurvivesMaxFontScale(
         fontScale: Float = MAX_FONT_SCALE,
         checkWidth: Boolean = true,
@@ -108,18 +90,14 @@ abstract class GoldenTest {
                 }
             }
         }
-        // The v2 dispatcher queues rather than running composition immediately, so the tree has to
-        // be settled before anything reads or captures it.
+        // The v2 dispatcher queues composition, so settle before reading or capturing.
         waitForIdle()
     }
 
     private companion object {
         const val GOLDEN_ROOT = "golden_root"
 
-        /**
-         * The width of the phone these are verified on, not a wider reference device. A 411dp
-         * viewport left the nav bar's token affordance fitting here and clipped on the device.
-         */
+        /** The width of the phone these are verified on: 411dp hid a nav-bar clip that the device showed. */
         val GOLDEN_WIDTH = 393.dp
 
         /** Android's largest accessibility font scale — the one the no-clipping predicate means. */

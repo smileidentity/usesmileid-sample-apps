@@ -32,13 +32,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarEmphasis
 import org.junit.Test
 
-/**
- * Every U2 general composite, in every state, light and dark, plus the max-font-scale predicate.
- *
- * `BottomSheet` is absent on purpose: `ModalBottomSheet` renders into its own window, so there is no
- * node inside the golden root to capture. Its chrome — handle, scrim, drag-to-dismiss, insets — is
- * platform behaviour and is verified on a device instead.
- */
+/** `BottomSheet` is absent on purpose: `ModalBottomSheet` renders into its own window, so it is verified on a device. */
 class CompositeGoldenTest : GoldenTest() {
 
     @Test
@@ -278,7 +272,6 @@ private fun JobRows() = Column(verticalArrangement = stack) {
         status = UseSmileIDSampleStatus.Blocked,
         onClick = {},
     )
-    // Select mode: the checkbox sits beside the card and the card narrows, as the design has it.
     Row(
         horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
         verticalAlignment = Alignment.CenterVertically,

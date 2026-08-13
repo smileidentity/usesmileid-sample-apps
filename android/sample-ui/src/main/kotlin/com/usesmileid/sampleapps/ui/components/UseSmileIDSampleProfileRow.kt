@@ -20,15 +20,7 @@ import androidx.compose.ui.semantics.Role
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * An organisation and the person signed in to it, with the active profile filled and checked.
- *
- * The selected treatment is a pale fill *and* a check, not a check alone — the design's own
- * correction, and the reason this is not just a list item.
- *
- * The avatar hue is a parameter because it varies per profile; the designer's profile→hue list is
- * still outstanding, so callers pass the token default until it lands.
- */
+/** An organisation and its person, the active one taking a pale fill as well as a check. Hue varies per profile, so the caller passes it. */
 @Composable
 fun UseSmileIDSampleProfileRow(
     organisation: String,

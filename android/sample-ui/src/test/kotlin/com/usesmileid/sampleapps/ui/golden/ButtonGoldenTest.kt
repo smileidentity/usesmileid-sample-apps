@@ -8,13 +8,9 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleButton
 import org.junit.Test
 
 /**
- * The U1 primitive the composites reuse most, covered here so the harness is proven against
- * something already device-verified rather than only against new code. The loading state is left to
- * the gallery and the device pass: its progress indicator animates, and frame zero of an animation
- * is a golden that changes for reasons unrelated to this app.
+ * Proves the harness against an already device-verified primitive. Loading is left out: frame zero of an animation is a fragile golden.
  *
- * The dark golden shows the disabled button as a near-white slab. That is the recorded
- * `buttonDisabledBypassesSemanticTier` defect in the token source, not something to patch here.
+ * The near-white disabled slab in dark is the recorded `buttonDisabledBypassesSemanticTier` defect, not something to patch here.
  */
 class ButtonGoldenTest : GoldenTest() {
 

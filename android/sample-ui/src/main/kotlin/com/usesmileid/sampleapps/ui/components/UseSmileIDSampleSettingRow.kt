@@ -22,14 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * A settings row: a tinted glyph tile, a title with an optional supporting line, and a trailing
- * control.
- *
- * The three variants are the trailing control — a switch, a chevron, or nothing for the destructive
- * row. The text column takes the remaining width so it wraps at 2x instead of pushing the control
- * off the row.
- */
+/** A settings row: a glyph tile, a title with an optional supporting line, and a trailing control. */
 @Composable
 fun UseSmileIDSampleSettingRow(
     title: String,
@@ -81,12 +74,12 @@ fun UseSmileIDSampleSettingRow(
     }
 }
 
-/** The ABOUT and LEGAL rows: the trailing chevron that says the row pushes a screen. */
+/** The trailing chevron that says the row pushes a screen. */
 @Composable
 fun UseSmileIDSampleSettingRowChevron() =
     ChevronRightGlyph(tint = UseSmileIDSampleTheme.colors.textMuted)
 
-/** Sign out — full width, centred, error-coloured, and with no leading tile. */
+/** Sign out: full width, centred, error-coloured. */
 @Composable
 fun UseSmileIDSampleDestructiveRow(
     text: String,

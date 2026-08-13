@@ -18,11 +18,7 @@ import androidx.compose.ui.semantics.Role
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * One row in the country or ID-type picker. Country rows lead with a flag; ID-type rows do not.
- *
- * Selected takes a pale fill as well as the check, matching [UseSmileIDSampleProfileRow].
- */
+/** One row in the country or ID-type picker; country rows lead with a flag. Selected takes a pale fill as well as a check. */
 @Composable
 fun UseSmileIDSampleOptionRow(
     label: String,
