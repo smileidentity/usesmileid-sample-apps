@@ -52,10 +52,14 @@ Two consequences that must shape what you commit *now*, not at flip time:
 - **Probe affordances are product features here.** The scenario drawer, the on-screen result card
   and the callback counters are how both a human and an automated flow observe what the SDK did.
   They stay in the shipped app; they are honest debug surfaces, not test-only scaffolding.
-- **Design tokens reference the SDK's theme, never copy it.** The apps are Smile ID branded and
-  dark mode follows the SDK's own colour schemes. Duplicating hex values would look identical on
-  day one and drift silently in four codebases; resolve tokens from the SDK's public theming API
-  and keep only genuine additions in `spec/design-tokens.json`.
+- **Design tokens come from the Smile ID design system, generated — never hand-copied.** The apps are
+  Smile ID branded and dark mode follows the same colour schemes the SDK uses, because both resolve
+  from one token source (three-tier DTCG with pre-generated per-platform output). Consume semantic
+  tokens by default and component tokens when building that named component; never a primitive, never
+  a raw hex. A hex literal in app code is a review failure. `spec/design-tokens.json` records the
+  source, the per-platform consumption and any deltas. Separately, the SDK's public
+  `ThemeConfiguration` override is what the theme *scenarios* drive — that is theming behaviour, not
+  where token values come from.
 - **Uniform visuals, native behaviour.** The design is the same on all four platforms, but
   insets/safe areas, the system back affordance, presentation style (sheet vs dialog vs pushed) and
   keyboard avoidance stay platform-native. A hand-rolled back button that ignores the iOS back
@@ -116,7 +120,10 @@ compiles this UI against SDK HEAD), and merge to `main` only after the SDK relea
 | `result-card.schema.json` | The result card's fields and types |
 | `test-ids.json` | The `sample_*` accessibility IDs flows assert on |
 | `screens.json` | Screen inventory, each with its design source and `designVersion` |
-| `design-tokens.json` | SDK token references + this app's additions |
+| `components.json` | Every component with its owner, tokens, states and the build order |
+| `routes.json` | The route table — ids, deep-link paths, typed args, per-platform binding |
+| `app-identity.json` | Application ids, display names and URL schemes; plus the ids the SDK repos reserve |
+| `design-tokens.json` | The design-system source, per-platform consumption, and recorded deltas |
 
 Two hard rules: **`si_*` IDs belong to the SDK** — reference them, never redefine them here; and
 every `spec/` change lands with the four app-side updates, or with an explicit note in the PR
