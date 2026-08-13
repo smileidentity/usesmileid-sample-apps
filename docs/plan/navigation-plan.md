@@ -13,7 +13,7 @@ document explains the architecture and the traps.
 |---|---|---|---|
 | Android | **Compose Destinations 2.3.0** (`io.github.raamcosta.compose-destinations`) over androidx.navigation 2.9.8 | ViewModel + `SavedStateHandle` | The SDK itself uses it (`@Destination<RootGraph>`, `DestinationsNavHost`), so the sample and the SDK share one mental model and one dependency set |
 | iOS | **NavigationStack + a typed path router** | `@Observable` router + `@SceneStorage` | The SDK does not nest a `NavigationStack`, so a host stack is safe (see §3) |
-| Flutter | **go_router ^17** | **flutter_riverpod ^3** | Both proven in the kobo Flutter probe; `StatefulShellRoute` gives per-tab back stacks for free |
+| Flutter | **go_router ^17** | **flutter_riverpod ^3** | `StatefulShellRoute` gives per-tab back stacks for free; Riverpod's `ProviderScope` overrides turn launch arguments into deterministic test state with no test-only build (§4) |
 | Expo | **expo-router** (already in the sample) | **zustand ^5** | Matches the kobo Expo probe; file routes map 1:1 to the route table |
 
 ---
@@ -112,21 +112,50 @@ does not have to match the SDK's Kotlin version, only supply its own.
 
 ## 4. Flutter — go_router + Riverpod
 
-Both were used in the kobo Flutter probe, and `StatefulShellRoute` is the specific reason to keep
-go_router: it gives per-tab navigators with preserved stacks, which is R7 without hand-rolling.
+`StatefulShellRoute` gives per-tab navigators with preserved stacks, which is R7 without
+hand-rolling. **Riverpod is chosen for a reason specific to this repo, not by popularity:**
+`ProviderScope` overrides turn the launch arguments in `spec/launch-args.json` — scenario, theme,
+sandbox, appLocale — into provider overrides applied once at app start. Automation gets deterministic
+state with **no test-only build, no debug-only branch in shipped code**, and widget tests reuse the
+same mechanism. It is also testable with no widget tree, which the spec-validation tests need, and its
+store-plus-observers shape matches the ViewModel / observable-router / zustand choices on the other
+three platforms, so the four apps stay structurally comparable.
+
+Considered and rejected: **BLoC/Cubit** — excellent testability, but an event-driven paradigm would
+make the Flutter app read differently from its three siblings for no gain at this size (revisit only
+if the team later standardises on it); **vanilla `ChangeNotifier`** — matches the SDK's own internals
+and adds no dependency, but a library avoids state dependencies because it must not impose a paradigm
+on hosts, and an app has no such constraint; the repo's job is a *realistic* integration;
+**signals_flutter** — smallest ecosystem, fewest partners would recognise it; **GetX** — service-locator
+globals and poor testability.
 
 - **Router shape.** `StatefulShellRoute.indexedStack` for the three tabs, each branch owning its
   routes; flow and profile routes above the shell so they cover the tab bar when full-screen.
-- **Typed routes.** Prefer `go_router_builder` so arguments are compile-checked rather than parsed
-  out of `state.pathParameters`.
+- **No `build_runner` in this app** — neither `riverpod_generator` nor `go_router_builder`. A
+  reference app should read without generated files standing between the partner and the wiring, and
+  `flutter/verify.sh` stays a single step. The Flutter SDK repo's Pigeon churn is the cautionary
+  precedent for generated-file drift.
+- **Typed routes without codegen.** Hand-write one route-helper per route (`SampleRoutes.idDetails(productId)`)
+  returning the path from `spec/routes.json`, and parse `state.pathParameters` into a typed args
+  object in exactly one place — the route's builder. Call sites stay compile-safe, parsing happens
+  once, and the "no stringly-typed arguments" rule in `spec/routes.json` still holds.
+- **State shape.** `Notifier` / `AsyncNotifier` (the Riverpod 3 unified API), not the legacy
+  `StateNotifier`/`StateProvider`. One notifier per concern: settings, active profile, the two forms,
+  the session, the job list. `family` providers take route arguments so a screen's state is keyed by
+  its route.
+- **Persistence** through `shared_preferences`, which the SDK already brings transitively, behind a
+  small repository the notifiers read. That is what makes "settings survive a restart" real rather
+  than aspirational.
+- **Session as an absolute deadline** in the provider, with the ticking done in the widget layer
+  (R6). Never store a counting-down value.
+- **Navigation side effects via `ref.listen`**, never from `build`. A `build` that navigates fires
+  again on every rebuild.
 - **Sheets as routes** via a `pageBuilder` returning a modal page, so R8 holds and deep links reach
   them.
 - **SDK flow.** A normal widget on its own route. Wrap it in `PopScope` and let the SDK handle the
   pop first (R2) rather than intercepting back at the route level.
-- **State.** Riverpod providers for form state, settings and the active scenario. Keep the session
-  **deadline** in a provider and derive the countdown from it (R6). Persist settings so toggles
-  survive restart.
-- **Restoration.** Set `restorationScopeId` and rebuild providers from persisted state.
+- **Restoration.** Set `restorationScopeId`, and rebuild notifiers from persisted state so a cold
+  start and a restored start converge on the same tree (R9).
 
 ## 5. Expo — expo-router + zustand
 
