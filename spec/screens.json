@@ -1,0 +1,716 @@
+{
+  "version": 2,
+  "designVersion": "2026-08-12",
+  "designFile": {
+    "name": "Product Enhancements",
+    "fileKey": "CT3oeBfk8uuyvRmGkRJ71D",
+    "url": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements",
+    "boards": {
+      "01": {
+        "node": "5206-2304",
+        "name": "Products & Profile switch",
+        "screenCount": 4
+      },
+      "01b": {
+        "node": "5206-4036",
+        "name": "Products",
+        "screenCount": 1
+      },
+      "02": {
+        "node": "5206-2409",
+        "name": "Verifications",
+        "screenCount": 6
+      },
+      "03": {
+        "node": "5206-2638",
+        "name": "Verification details",
+        "screenCount": 4
+      },
+      "04": {
+        "node": "5206-3776",
+        "name": "Consent & user details",
+        "screenCount": 5
+      },
+      "05": {
+        "node": "5206-2796",
+        "name": "Consent & KYC",
+        "screenCount": 4
+      },
+      "06": {
+        "node": "5206-2897",
+        "name": "Settings & Profiles",
+        "screenCount": 11
+      },
+      "07": {
+        "node": "5206-3667",
+        "name": "Token session",
+        "screenCount": 4
+      }
+    }
+  },
+  "description": "Canonical screens, each with its design states. 39 board frames collapse to 14 screens: most frames are STATES of one screen, and modelling them that way is what keeps four implementations aligned. `owner` decides who builds it — `sample` means this repo's sample-ui; `sdk` means the SDK renders it inside its own flow and we must not rebuild it.",
+  "urlTemplate": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id={node}",
+  "screens": [
+    {
+      "id": "products",
+      "title": "Products",
+      "owner": "sample",
+      "board": "01b",
+      "route": "tab",
+      "canonicalLayout": "5206-4037",
+      "states": [
+        {
+          "state": "default",
+          "node": "5206-4037",
+          "note": "Sandbox. THE canonical layout: expressive 2-up card grid."
+        },
+        {
+          "state": "tokenLinked",
+          "node": "5206-3704",
+          "note": "Session card + countdown + token ring. Drawn on the superseded list layout — see openQuestions.transposeStates.",
+          "layout": "drawn on the superseded list layout — restate on the grid"
+        },
+        {
+          "state": "tokenLinkedLate",
+          "node": "5206-3728",
+          "note": "Countdown at 1:40; same layout caveat.",
+          "layout": "drawn on the superseded list layout — restate on the grid"
+        },
+        {
+          "state": "tokenExpired",
+          "node": "5206-3752",
+          "note": "Session-ended banner with Scan action; same layout caveat.",
+          "layout": "drawn on the superseded list layout — restate on the grid"
+        },
+        {
+          "state": "production",
+          "node": "5206-2391",
+          "note": "Production environment chip; same layout caveat.",
+          "layout": "drawn on the superseded list layout — restate on the grid"
+        },
+        {
+          "state": "supersededListLayout",
+          "node": "5206-2305",
+          "note": "Original ActionTile list layout. Superseded by 5206-4037 per owner ruling 2026-08-12 — kept only so nobody re-implements it by accident.",
+          "layout": "drawn on the superseded list layout — restate on the grid"
+        }
+      ],
+      "components": [
+        "ProfileEnvChip",
+        "Avatar",
+        "SectionHeader",
+        "ProductCard",
+        "ProductGrid",
+        "SessionCard",
+        "SessionEndedBanner",
+        "NavBar",
+        "TokenRing"
+      ],
+      "testIds": [
+        "sample_products_screen",
+        "sample_env_chip",
+        "sample_profile_avatar_button",
+        "sample_product_card",
+        "sample_session_card",
+        "sample_session_countdown",
+        "sample_session_ended_banner"
+      ],
+      "canonicalLayoutUrl": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-4037",
+      "ruling": "OWNER RULING 2026-08-13: build the EXPRESSIVE GRID (5206-4037). The prototype runs the old list layout throughout and is not being updated, so the grid is authoritative for layout and the list frames are reference-only for the states drawn on them.",
+      "designAsks": [
+        "a 6th product card for Enhanced KYC (icon + hue)",
+        "a header avatar button next to the environment chip, which opens the profile-switch sheet"
+      ]
+    },
+    {
+      "id": "profileSwitchSheet",
+      "title": "Switch profile",
+      "owner": "sample",
+      "board": "01",
+      "route": "modalSheet",
+      "states": [
+        {
+          "state": "default",
+          "node": "5206-2348"
+        }
+      ],
+      "components": [
+        "BottomSheet",
+        "ProfileRow",
+        "Avatar"
+      ],
+      "testIds": [
+        "sample_profile_switch_sheet",
+        "sample_profile_row"
+      ]
+    },
+    {
+      "id": "verifications",
+      "title": "Verifications",
+      "owner": "sample",
+      "board": "02",
+      "route": "tab",
+      "states": [
+        {
+          "state": "default",
+          "node": "5206-2410"
+        },
+        {
+          "state": "selectMode",
+          "node": "5206-2441",
+          "note": "NavBar hidden, selection bar replaces it."
+        },
+        {
+          "state": "itemsSelected",
+          "node": "5206-2491"
+        },
+        {
+          "state": "afterDelete",
+          "node": "5206-2545",
+          "note": "Toast with undo; counts drop 11→9."
+        },
+        {
+          "state": "swipeToDelete",
+          "node": "5206-2576"
+        },
+        {
+          "state": "refreshing",
+          "node": "5206-2608"
+        }
+      ],
+      "components": [
+        "FilterChip",
+        "DateGroupHeader",
+        "JobRow",
+        "StatusBadge",
+        "SelectionCheckbox",
+        "SelectionBar",
+        "Toast",
+        "SwipeAction",
+        "NavBar"
+      ],
+      "testIds": [
+        "sample_verifications_screen",
+        "sample_filter_chip",
+        "sample_job_row",
+        "sample_selection_bar",
+        "sample_toast",
+        "sample_toast_undo"
+      ]
+    },
+    {
+      "id": "verificationDetails",
+      "title": "Verification details",
+      "owner": "sample",
+      "board": "03",
+      "route": "push",
+      "states": [
+        {
+          "state": "attention",
+          "node": "5206-2639",
+          "note": "Provisional — needs review; 200 OK."
+        },
+        {
+          "state": "clear",
+          "node": "5206-2678"
+        },
+        {
+          "state": "blocked",
+          "node": "5206-2717"
+        },
+        {
+          "state": "processing",
+          "node": "5206-2756",
+          "note": "202 Accepted, pull-to-refresh present."
+        }
+      ],
+      "components": [
+        "TopAppBar",
+        "StatusBadge",
+        "SectionLabel",
+        "DataFieldRow"
+      ],
+      "testIds": [
+        "sample_verification_details_screen",
+        "sample_detail_field",
+        "sample_detail_copy",
+        "sample_status_badge"
+      ],
+      "entryPoints": [
+        "push from the verifications list",
+        "POST-SUBMISSION: the app lands here in the processing state once a job is submitted (observed 202 Accepted straight after the ID form's Continue)"
+      ],
+      "note": "The details screen doubles as the result screen, which is why the result card belongs here rather than needing a new home."
+    },
+    {
+      "id": "userDetails",
+      "title": "User details",
+      "owner": "sample",
+      "board": "04",
+      "route": "push",
+      "flowPosition": "Immediately after a product is tapped and BEFORE the SDK flow starts.",
+      "states": [
+        {
+          "state": "empty",
+          "node": "5206-3804",
+          "note": "Placeholders; 'First and last name are required.'"
+        },
+        {
+          "state": "editing",
+          "node": "5206-3828",
+          "note": "Focused row with caret; inline edit, not a separate form screen."
+        },
+        {
+          "state": "complete",
+          "node": "5206-3777",
+          "note": "Values filled; 'Tap any field to edit.' + remember-details switch."
+        }
+      ],
+      "components": [
+        "TopAppBar",
+        "SectionLabel",
+        "KeyValueEditRow",
+        "SettingRow",
+        "Switch",
+        "Button"
+      ],
+      "testIds": [
+        "sample_user_details_screen",
+        "sample_user_details_field",
+        "sample_remember_details_switch",
+        "sample_user_details_continue"
+      ],
+      "aka": "Consent Details Form (the owner's term)",
+      "prefilledFrom": "profileConfig — the design labels those fields 'USER DETAILS — ATTACHED TO EVERY JOB', so every product shows this form seeded from the active profile.",
+      "note": "OWNER RULING 2026-08-13 (restated): product → Consent Details Form → SDK flow. The prototype shows the SDK consent screen BEFORE this form; that wiring is stale and is not being updated, so do not implement the prototype's order."
+    },
+    {
+      "id": "consent",
+      "title": "Consent",
+      "owner": "sdk",
+      "board": "04",
+      "route": "sdkFlowStep",
+      "states": [
+        {
+          "state": "notAgreed",
+          "node": "5206-3946"
+        },
+        {
+          "state": "agreed",
+          "node": "5206-3856"
+        }
+      ],
+      "sdkSurface": "The SDK's own consent step, composed by including consent() in the flow builder. Do NOT rebuild it in sample-ui; the sample only decides whether the step is present (Settings toggle) and passes configuration.",
+      "components": [],
+      "testIds": [
+        "si_consent_allow_button"
+      ]
+    },
+    {
+      "id": "kycIdForm",
+      "title": "KYC / ID details",
+      "owner": "sample",
+      "board": "05",
+      "route": "push",
+      "states": [
+        {
+          "state": "empty",
+          "node": "5206-2797"
+        },
+        {
+          "state": "selected",
+          "node": "5206-2816"
+        }
+      ],
+      "components": [
+        "TopAppBar",
+        "SectionLabel",
+        "SelectTrigger",
+        "TextInput",
+        "Button",
+        "FloatingTokenButton"
+      ],
+      "testIds": [
+        "sample_kyc_form_screen",
+        "sample_country_trigger",
+        "sample_idtype_trigger",
+        "sample_idnumber_input",
+        "sample_kyc_continue"
+      ],
+      "appliesTo": "every product needing details — documentVerification, enhancedDocumentVerification, biometricKyc and enhancedKyc — with the same three fields (Country, ID type, ID number)",
+      "fieldDependency": "ID TYPE is disabled until COUNTRY is selected; Continue enables only once country, ID type and ID number are all set.",
+      "flowPosition": "After the Consent Details Form, still BEFORE the SDK flow."
+    },
+    {
+      "id": "countryPickerSheet",
+      "title": "Country picker",
+      "owner": "sample",
+      "board": "05",
+      "route": "fullSheet",
+      "states": [
+        {
+          "state": "default",
+          "node": "5206-2835"
+        }
+      ],
+      "components": [
+        "BottomSheet",
+        "SearchField",
+        "OptionRow"
+      ],
+      "testIds": [
+        "sample_country_sheet",
+        "sample_country_search",
+        "sample_country_option"
+      ]
+    },
+    {
+      "id": "idTypePickerSheet",
+      "title": "ID type picker",
+      "owner": "sample",
+      "board": "05",
+      "route": "fullSheet",
+      "states": [
+        {
+          "state": "default",
+          "node": "5206-2877"
+        }
+      ],
+      "components": [
+        "BottomSheet",
+        "SearchField",
+        "OptionRow"
+      ],
+      "testIds": [
+        "sample_idtype_sheet",
+        "sample_idtype_search",
+        "sample_idtype_option"
+      ]
+    },
+    {
+      "id": "settings",
+      "title": "Settings",
+      "owner": "sample",
+      "board": "06",
+      "route": "tab",
+      "states": [
+        {
+          "state": "default",
+          "node": "5206-2898"
+        },
+        {
+          "state": "altProfile",
+          "node": "5206-3018"
+        },
+        {
+          "state": "production",
+          "node": "5206-3138"
+        },
+        {
+          "state": "newlyCreatedProfile",
+          "node": "5206-3547"
+        }
+      ],
+      "sections": [
+        "PROFILE",
+        "CAPTURE (two rows: Smile to capture, Agent mode)",
+        "APPEARANCE",
+        "SDK SCREENS — SHOW OR SKIP FLOW STEPS",
+        "ABOUT",
+        "LEGAL",
+        "sign out",
+        "version"
+      ],
+      "components": [
+        "SectionLabel",
+        "ProfileRow",
+        "Avatar",
+        "SettingRow",
+        "Switch",
+        "NavBar"
+      ],
+      "testIds": [
+        "sample_settings_screen",
+        "sample_setting_agent_mode",
+        "sample_setting_dark_mode",
+        "sample_setting_consent_step",
+        "sample_setting_instructions_step",
+        "sample_setting_preview_step",
+        "sample_sign_out"
+      ],
+      "copy": {
+        "footer": "UseSmileID Sample · 1.0.0",
+        "aboutDocs": "docs.smileidentity.com"
+      }
+    },
+    {
+      "id": "profiles",
+      "title": "Profiles",
+      "owner": "sample",
+      "board": "06",
+      "route": "push",
+      "states": [
+        {
+          "state": "default",
+          "node": "5206-3258"
+        },
+        {
+          "state": "created",
+          "node": "5206-3477",
+          "note": "Fourth profile present + toast."
+        }
+      ],
+      "components": [
+        "ProfileRow",
+        "Avatar",
+        "Toast"
+      ],
+      "testIds": [
+        "sample_profiles_screen",
+        "sample_profile_row",
+        "sample_create_profile"
+      ]
+    },
+    {
+      "id": "profileConfig",
+      "title": "Profile configuration",
+      "owner": "sample",
+      "board": "06",
+      "route": "push",
+      "states": [
+        {
+          "state": "profileA",
+          "node": "5206-3295"
+        },
+        {
+          "state": "profileB",
+          "node": "5206-3317"
+        },
+        {
+          "state": "profileC",
+          "node": "5206-3525"
+        }
+      ],
+      "note": "USER DETAILS — ATTACHED TO EVERY JOB. This is the per-profile default that seeds the userDetails screen.",
+      "components": [
+        "SectionLabel",
+        "KeyValueEditRow",
+        "Button"
+      ],
+      "testIds": [
+        "sample_profile_config_screen",
+        "sample_profile_config_field",
+        "sample_profile_config_save"
+      ]
+    },
+    {
+      "id": "newProfileSheet",
+      "title": "New profile",
+      "owner": "sample",
+      "board": "06",
+      "route": "modalSheet",
+      "states": [
+        {
+          "state": "empty",
+          "node": "5206-3339"
+        },
+        {
+          "state": "filled",
+          "node": "5206-3408"
+        }
+      ],
+      "components": [
+        "BottomSheet",
+        "TextInput",
+        "SectionLabel",
+        "Button"
+      ],
+      "testIds": [
+        "sample_new_profile_sheet",
+        "sample_new_profile_name",
+        "sample_new_profile_save"
+      ]
+    },
+    {
+      "id": "scanToken",
+      "title": "Scan token",
+      "owner": "sample",
+      "board": "07",
+      "route": "push",
+      "states": [
+        {
+          "state": "default",
+          "node": "5206-3668"
+        }
+      ],
+      "note": "Camera QR scan for linking a token session. The reticle frame is hidden in the design in favour of the scan glyph; a manual-entry row with Paste and a 'Simulate a successful scan' affordance are both present — the simulate row is what makes this screen testable without a QR source.",
+      "components": [
+        "TopAppBar",
+        "ScanGlyph",
+        "ScanSheet"
+      ],
+      "testIds": [
+        "sample_scan_token_screen",
+        "sample_token_manual_entry",
+        "sample_token_paste",
+        "sample_token_simulate"
+      ]
+    },
+    {
+      "id": "scenarioDrawer",
+      "title": "Scenario drawer",
+      "owner": "sample",
+      "notInDesign": true,
+      "board": null,
+      "route": "modalSheet",
+      "states": [
+        {
+          "state": "flowScenarios",
+          "node": null
+        },
+        {
+          "state": "themeScenarios",
+          "node": null
+        }
+      ],
+      "components": [
+        "BottomSheet",
+        "SectionLabel",
+        "ScenarioDrawer"
+      ],
+      "testIds": [
+        "sample_scenario_drawer",
+        "sample_scenario_item",
+        "sample_theme_item"
+      ],
+      "note": "A debug affordance, not a designed screen. AGENTS.md mandates it; the design does not cover it."
+    }
+  ],
+  "openQuestions": [
+    {
+      "id": "transposeStates",
+      "question": "The chosen products layout (board 01b, expressive grid) has ONE state. The token-session, token-expired and production states exist only on the superseded list layout (boards 01 and 07). Should those states be re-drawn on the grid layout, or may engineering transpose the session card / env chip / token ring onto it?",
+      "blocks": "products screen states beyond default",
+      "recommendation": "Engineering transposes; the header, session card and nav bar are unchanged between the two layouts, so only the card grid differs. Confirm rather than assume, since it changes vertical space above the grid.",
+      "status": "RESOLVED 2026-08-13 — owner ruled the grid is the build target and the prototype will not be updated, so engineering transposes the session card, environment chip and token ring onto the grid. Design may re-draw the states later."
+    },
+    {
+      "id": "productCoverage",
+      "question": "The products grid shows 5 job types (SmartSelfie Enrollment, SmartSelfie Auth, Document Verification, Enhanced Doc Verification, Biometric KYC) plus one empty slot. The SDK's JobType enum has 7: EnhancedKyc(5) and BVN(7) are absent. Are those intentionally out of scope for the sample, or does the empty slot belong to one of them?",
+      "blocks": "final product list; consumption lanes can only exercise what the sample exposes",
+      "recommendation": "Decide explicitly. Both missing types are form/API-shaped rather than capture-shaped, so leaving them out is defensible — but then the sample never exercises them and no CI lane can.",
+      "sdkEvidence": "iOS `buildJobRequest()` states the BVN job type is NOT SUPPORTED and throws. Leaving BVN out of the grid is therefore the defensible default; EnhancedKyc remains a genuine product decision.",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: ADD Enhanced KYC (6 products, slot filled). BVN stays out — iOS throws on it. Design ask: one more product card (icon + hue)."
+    },
+    {
+      "id": "boardNaming",
+      "question": "Board 05 is titled 'Consent & KYC' but contains no consent screen — the consent frames live in board 04 ('Consent & user details'). Rename 05 to 'KYC / ID details' to avoid a wrong-board lookup?",
+      "blocks": "nothing; documentation hygiene",
+      "status": "OWNER DECISION 2026-08-13 — housekeeping only; ask design to rename board 05 to 'KYC / ID details' when convenient."
+    },
+    {
+      "id": "appNameCopy",
+      "question": "The Settings footer reads 'Smile ID Sample App · 1.0.0' while the agreed app identity is 'UseSmileID Sample' (spec/app-identity.json). Which string ships?",
+      "blocks": "settings screen copy, store metadata",
+      "recommendation": "Use the agreed display name in the footer so the app matches its launcher label.",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: 'UseSmileID Sample' everywhere, so the Settings footer matches the launcher label and store listing. Footer becomes 'UseSmileID Sample · 1.0.0'."
+    },
+    {
+      "id": "docsDomain",
+      "question": "The ABOUT section links 'docs.usesmileid.com'. Confirm that domain is live, or point it at the current documentation host.",
+      "blocks": "settings ABOUT rows",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: link to docs.smileidentity.com, the host the documentation publishes to today."
+    },
+    {
+      "id": "smileToCaptureMapping",
+      "question": "Settings CAPTURE has two rows: 'Smile to capture / Passive capture — smile detection' and 'Agent mode'. Agent mode is SelfieCaptureConfig.allowAgentMode. What does 'Smile to capture' set? enableEnhancedLiveness inverted, or something else?",
+      "blocks": "the CAPTURE section and any flow it configures",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2898",
+      "recommendation": "Get an SDK answer rather than inferring; the two switches must not silently set the same field.",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: ON → enableEnhancedLiveness = false. See components.json settingsToSdkMapping."
+    },
+    {
+      "id": "softBadgeVariant",
+      "question": "The design uses soft tinted status pills for all four statuses; the design system's badge tokens are saturated. Add soft variants to the design system, or change the design?",
+      "blocks": "StatusBadge",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2410",
+      "recommendation": "Add soft variants to the system — the design applies them consistently across all four roles, so this is a system gap rather than a one-off.",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: keep the design's soft pills; add soft variants to the design system."
+    },
+    {
+      "id": "docvIdFormVariant",
+      "question": "The ID-details form is only drawn for Biometric KYC (country / ID type / ID number). What does it look like for Document Verification and Enhanced Document Verification — country plus document type, no ID number?",
+      "blocks": "kycIdForm for the document products and Enhanced KYC",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2797",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: one identical form for every product needing details — Country, ID type, ID number — including both document products and Enhanced KYC. Simplest to build and test."
+    },
+    {
+      "id": "profileAndProductHues",
+      "question": "Product cards and profile avatars both use per-item colours (5 product hues, 3 profile hues observed). Which decorative token does each product and each profile get?",
+      "blocks": "ProductCard and Avatar rendering identically across four platforms",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-4037",
+      "status": "OWNER DECISION 2026-08-13 — DECIDED: the designer supplies the mapping list once; stored in design-tokens.json. Still awaiting the list."
+    },
+    {
+      "id": "labelCopy",
+      "question": "The products list shows 'SmartSelfie Authentication' in some frames and 'SmartSelfie Auth' in others (the grid uses 'SmartSelfie Auth'). Which string ships?",
+      "blocks": "product labels and their derived test ids",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-4037",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: 'SmartSelfie Authentication' everywhere, matching the SDK's job-type name. Note it wraps to two lines on the grid card."
+    },
+    {
+      "id": "switchProfileTrigger",
+      "question": "Which element on the products screen opens the Switch profile sheet — the environment chip, or something else? The recording shows the sheet but not the trigger.",
+      "blocks": "products screen wiring",
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2348",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: add a header AVATAR BUTTON next to the environment chip; it opens the sheet. The chip becomes display-only. Small design addition needed."
+    },
+    {
+      "id": "drawerPresentation",
+      "question": "The scenario drawer is required by AGENTS.md and has test ids, but the design set has no frame for it. How should it present, and what opens it — a long-press on the header, a hidden gesture, or a row at the bottom of Settings?",
+      "blocks": "the drawer's build only; every scenario is already reachable by launch argument",
+      "recommendation": "A bottom sheet opened by a long-press on the environment chip, so it stays out of a partner's way while remaining reachable on a release build."
+    }
+  ],
+  "verification": {
+    "date": "2026-08-12",
+    "verifiedHow": [
+      "Every board read with get_metadata: 8 sections, 39 frames, layer names, component instances and hotspot rectangles.",
+      "Two frames rendered and inspected visually (products grid 5206-4037, token-linked list 5206-2323), which corrected five component specs.",
+      "Navigation model inferred from named hotspot rectangles: every tab screen carries hotspot/tab-* to the other two tabs plus hotspot/token; verifications and the processing detail carry hotspot/pull-refresh; select mode hides the nav bar AND its hotspots and shows a selection bar instead."
+    ],
+    "notVerified": {
+      "reason": "Prototype reactions (the exact trigger→destination wiring) could not be read. The Plugin API route is blocked on this account — MCP edit tools require a Full Figma seat — and a prototype cannot be played from here.",
+      "edges": [
+        "product card → next screen. No hotspot rectangle exists for the cards, so the destination may be a reaction on the card itself. The flow recorded in scenarios.json (products → [userDetails] → [KYC/ID form] → SDK flow) comes from the OWNER'S RULING of 2026-08-12, not from the prototype.",
+        "JobRow → verificationDetails (highly likely, unconfirmed).",
+        "Settings PROFILE row → profiles / profileConfig (highly likely, unconfirmed).",
+        "scanToken entry point: which screens can reach it besides the token nav button.",
+        "Sheet dismissal behaviour (tap-scrim vs drag) for the four sheets."
+      ],
+      "howToClose": "Either grant a Full seat so the reaction graph can be read directly, or have someone play the prototype once and confirm the five edges above."
+    },
+    "finding": "Board 01b — the CHOSEN products layout — carries no hotspot rectangles at all, while boards 01, 02, 06 and 07 do. The prototype therefore runs on the SUPERSEDED list layout, so playing it would demonstrate a screen we are not building. Worth telling the design team, and it means a play-through would not have validated the chosen products screen anyway.",
+    "recording": {
+      "date": "2026-08-12",
+      "source": "139s prototype screen recording supplied by the owner; decomposed into 84 distinct states at 2fps with signature-based dedupe (scene detection cannot fire — consecutive screens share the header, nav bar and background).",
+      "flowGraphObserved": [
+        "products(list) → tap product → [SDK consent] → allow → userDetails(empty→filled) → Continue → kycIdForm(country→idType→idNumber) → Continue → verificationDetails(processing, 202 Accepted) → back → verifications",
+        "any tab → token button → scanToken → 'Simulate a successful scan' → products(tokenLinked: green session card 5:00 + green ring)",
+        "verifications → row → verificationDetails → back",
+        "verifications → Select → selectMode → delete → counts 11→9 + toast('2 verifications removed', Undo)",
+        "products → header chip → profileSwitchSheet over a scrim"
+      ],
+      "correctionsApplied": 12,
+      "supersededByOwner": "The recording's product → consent → userDetails order. Owner ruling 2026-08-13 keeps product → Consent Details Form → SDK flow (consent stays inside the SDK).",
+      "notExercised": [
+        "dark mode (the switch stayed off throughout)",
+        "the expressive products grid (prototype uses the list layout)",
+        "profiles / profileConfig / newProfileSheet",
+        "swipe-to-delete",
+        "pull-to-refresh",
+        "the production environment variant"
+      ]
+    }
+  }
+}

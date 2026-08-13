@@ -1,0 +1,47 @@
+# --- secrets: never commit (see AGENTS.md → Security & Credentials) ---
+*.jks
+*.keystore
+*.p12
+*.mobileprovision
+.env
+.env.*
+secrets.*
+!secrets.example.*
+local.properties
+
+# --- Android / Gradle ---
+.gradle/
+build/
+captures/
+.cxx/
+*.iml
+
+# --- iOS / Xcode ---
+xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+.swiftpm/
+Pods/
+*.xcarchive
+
+# --- Flutter / Dart ---
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+*.lock.bak
+pubspec_overrides.yaml
+
+# --- Node / Expo / React Native ---
+node_modules/
+.expo/
+dist/
+*.tsbuildinfo
+npm-debug.log*
+yarn-error.log*
+
+# --- editors / OS ---
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

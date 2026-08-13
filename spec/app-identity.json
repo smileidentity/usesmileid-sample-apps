@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "description": "Application identity per platform. This is spec data, not documentation, because automation needs it: a device flow must verify which app is in the foreground before it concludes anything, and force-stop the right package before relaunching with new arguments.",
+  "displayNameFamily": "UseSmileID Sample",
+  "idRoot": "com.usesmileid.sampleapps",
+  "apps": [
+    {
+      "platform": "android",
+      "applicationId": "com.usesmileid.sampleapps.android",
+      "debugSuffix": ".debug",
+      "displayName": "UseSmileID Sample",
+      "urlScheme": "usesmileid-sample-android"
+    },
+    {
+      "platform": "ios",
+      "bundleIdentifier": "com.usesmileid.sampleapps.ios",
+      "displayName": "UseSmileID Sample",
+      "urlScheme": "usesmileid-sample-ios"
+    },
+    {
+      "platform": "flutter",
+      "applicationId": "com.usesmileid.sampleapps.flutter",
+      "bundleIdentifier": "com.usesmileid.sampleapps.flutter",
+      "debugSuffix": ".debug",
+      "displayName": "UseSmileID Sample (F)",
+      "urlScheme": "usesmileid-sample-flutter"
+    },
+    {
+      "platform": "expo",
+      "applicationId": "com.usesmileid.sampleapps.expo",
+      "bundleIdentifier": "com.usesmileid.sampleapps.expo",
+      "debugSuffix": ".debug",
+      "displayName": "UseSmileID Sample (Expo)",
+      "urlScheme": "usesmileid-sample-expo"
+    }
+  ],
+  "sharedLibraryIdentity": {
+    "comment": "sample-ui is a library, so it never carries an application identity. It must also never READ one: the same library runs under eight different identities (these four, plus the four development samples in the SDK repos).",
+    "androidNamespace": "com.usesmileid.sampleapps.ui",
+    "swiftModule": "SampleUI",
+    "dartPackage": "sample_ui",
+    "npmPackage": "@smileid/sample-ui"
+  },
+  "reserved": {
+    "comment": "Already in use by the development samples inside the SDK repos. Do not claim, reuse, or nest under any of these.",
+    "com.usesmileid.sample": "android SDK repo sample (+.debug) and iOS SDK repo sample; referenced by both repos' E2E workflows",
+    "com.usesmileid.sample.flutter": "flutter SDK repo sample, both platforms; referenced by its E2E workflow",
+    "com.usesmileid.sample.expo": "react-native-expo SDK repo Expo sample, both platforms",
+    "com.usesmileid.sample.react": "react-native-expo SDK repo bare-RN sample (iOS side reads com.usesmileid.sample.rn)",
+    "usesmileid-sample": "URL scheme claimed by the Expo development sample"
+  },
+  "rationale": [
+    "A separate id root, rather than a suffix under com.usesmileid.sample, for three reasons. (1) The com.usesmileid.sample.* space is already fully occupied by the development samples, including the bare id on two platforms. (2) On iOS, a bundle id nested under another app's id is the convention for app extensions, so com.usesmileid.sample.ios would read as an extension of the development sample and confuse provisioning. (3) Renaming the development samples instead would touch four repos whose E2E workflows hard-code those ids to grant permissions and verify the foreground app — real breakage for a cosmetic gain.",
+    "Every id is distinct per platform because a single device can host three of these four apps at once, plus their development counterparts. Ids that collide cannot be installed side by side, which is exactly the comparison these apps exist to enable.",
+    "URL schemes are per app for the same reason: two apps claiming one scheme means a disambiguation prompt on Android and last-installed-wins on iOS, both of which break automation silently.",
+    "On a device, the word 'Sample' in the label means the registry-consuming app from this repository; a label without it is a development harness from an SDK repo."
+  ]
+}

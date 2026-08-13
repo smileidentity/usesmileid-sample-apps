@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "description": "Canonical argument names for driving a sample app from automation. Names are identical on all four platforms; only the delivery mechanism differs. A drawer is for humans, launch arguments are for machines — ship both.",
+  "args": [
+    {
+      "name": "scenario",
+      "type": "string",
+      "values": "any flow scenario id from scenarios.json",
+      "default": "normal"
+    },
+    {
+      "name": "theme",
+      "type": "string",
+      "values": "any theme scenario id from scenarios.json",
+      "default": "brandDefault"
+    },
+    {
+      "name": "route",
+      "type": "enum",
+      "values": [
+        "fullscreen",
+        "shell"
+      ],
+      "default": "fullscreen",
+      "description": "Which entry route hosts the SDK flow. The in-shell route is the one that exposes host-chrome and inset defects; the fullscreen route cannot."
+    },
+    {
+      "name": "autostart",
+      "type": "string",
+      "values": "a job type id, or null to stay on the home screen",
+      "default": null,
+      "description": "Starts a flow immediately on launch, so a flow does not have to tap its way in."
+    },
+    {
+      "name": "sandbox",
+      "type": "boolean",
+      "values": [
+        true,
+        false
+      ],
+      "default": true,
+      "description": "Environment selection. Automation must never run with sandbox=false — see AGENTS.md."
+    },
+    {
+      "name": "appLocale",
+      "type": "string",
+      "values": "BCP 47 tag, e.g. fr-FR",
+      "default": null,
+      "description": "In-app locale override. Needed because changing the device locale is not reliably scriptable on every OEM."
+    },
+    {
+      "name": "holdCamera",
+      "type": "string",
+      "values": "milliseconds, or 'keep'",
+      "default": null,
+      "description": "Host acquires the camera before handing off, to test contention. Verify the host actually acquired it before concluding anything — a probe that never acquired the camera passes vacuously."
+    }
+  ],
+  "mechanisms": {
+    "android": "Intent extras: adb shell am start -e scenario expiredToken -e route shell. Force-stop the app first — starting an already-live task silently ignores new extras and the run proceeds with the previous scenario while looking valid.",
+    "ios": "Launch arguments read through UserDefaults: app.launchArguments = [\"-scenario\", \"expiredToken\"]. XCUITest sets them directly.",
+    "flutter": "TBD in F2 — must accept the same canonical names.",
+    "expo": "TBD in F2 — must accept the same canonical names."
+  },
+  "openDecisions": [
+    "Preferred: one cross-platform entry point via a deep link, drivable from adb, simctl and a device flow on all four platforms, with the native mechanisms above kept as the platform-specific alternate. The scheme is per app and already assigned in app-identity.json (e.g. usesmileid-sample-android://run?scenario=…&route=…) because two apps sharing a scheme break automation. Confirm the query-parameter shape when the first two apps land, then delete this note.",
+    "Credentials are seeded as arguments, never typed: keyboard input drops characters from long API keys."
+  ]
+}

@@ -1,0 +1,181 @@
+{
+  "version": 1,
+  "description": "Every scenario the sample apps offer. One build, N scenarios: the drawer switches at runtime so a matrix that used to need N rebuilds needs N taps. All four apps must implement every id.",
+  "scenarios": [
+    {
+      "id": "normal",
+      "kind": "flow",
+      "label": "Normal",
+      "description": "Happy path with valid sandbox credentials.",
+      "forces": null,
+      "observe": [
+        "jobId",
+        "jobStatus",
+        "resultCallbackCount"
+      ]
+    },
+    {
+      "id": "expiredToken",
+      "kind": "flow",
+      "label": "Expired token",
+      "description": "Auth token is structurally valid but already expired, so the SDK must refresh before it can submit.",
+      "forces": "A well-formed JWT whose exp is in the past. Structural validity matters: a garbage string tests parsing, not refresh.",
+      "observe": [
+        "refreshCallbackCount",
+        "jobStatus"
+      ]
+    },
+    {
+      "id": "badRefresh",
+      "kind": "flow",
+      "label": "Refresh fails",
+      "description": "The refresh callback returns an unusable token, so the failure path must surface rather than retry forever.",
+      "forces": "Refresh callback resolves with an expired or malformed token.",
+      "observe": [
+        "refreshCallbackCount",
+        "lastError"
+      ]
+    },
+    {
+      "id": "noCallback",
+      "kind": "flow",
+      "label": "No result callback",
+      "description": "Host provides no result callback. The SDK must not crash or hang.",
+      "forces": "Callback intentionally omitted.",
+      "observe": [
+        "jobStatus"
+      ]
+    },
+    {
+      "id": "throwingCallback",
+      "kind": "flow",
+      "label": "Throwing callback",
+      "description": "Host callback throws. The exception must not corrupt SDK state or take the app down.",
+      "forces": "Callback raises immediately.",
+      "observe": [
+        "lastError",
+        "jobStatus"
+      ]
+    },
+    {
+      "id": "offlineRetry",
+      "kind": "flow",
+      "label": "Offline then retry",
+      "description": "Submission starts with no connectivity, then connectivity returns.",
+      "forces": "Airplane mode or a blocked host during submission; restored afterwards.",
+      "observe": [
+        "jobStatus",
+        "resultCallbackCount"
+      ]
+    },
+    {
+      "id": "brandDefault",
+      "kind": "theme",
+      "label": "Brand default",
+      "description": "Ship state: Smile ID branding, light or dark per the Settings APPEARANCE switch.",
+      "forces": null,
+      "observe": [],
+      "surface": "Settings › APPEARANCE (Dark mode)"
+    },
+    {
+      "id": "clashingHost",
+      "kind": "theme",
+      "label": "Clashing host",
+      "description": "A deliberately distant host theme — different seed colour, corner radius and typeface — applied through the SDK's public theme override. Exposes host-versus-SDK styling collisions that a brand-matched default hides.",
+      "forces": "Theme override with values far from the SDK defaults.",
+      "observe": [],
+      "surface": "launch argument / debug drawer only — NOT a Settings row, because the design has no such control"
+    },
+    {
+      "id": "partnerOverride",
+      "kind": "theme",
+      "label": "Partner override",
+      "description": "A plausible partner palette through the same public override, asserting which tokens follow the override and which stay SDK-owned.",
+      "forces": "Theme override with a realistic partner palette.",
+      "observe": [],
+      "surface": "launch argument / debug drawer only — NOT a Settings row, because the design has no such control"
+    }
+  ],
+  "notes": [
+    "flow scenarios are selectable together with an entry route (see launch-args.json 'route'); theme scenarios apply on top of any flow scenario.",
+    "Every scenario must be reachable from the drawer AND from a launch argument, because automation cannot rely on tapping through a drawer reliably on every platform.",
+    "'forces' documents the mechanism so the four implementations force the same condition the same way; keep it factual, not prescriptive about code.",
+    "Theme scenarios reconciled with the design 2026-08-12: the design's Settings screen exposes only a Dark mode switch, so brandDefault is the shipped control and clashingHost/partnerOverride stay automation-only (launch arg or debug drawer). If they should become visible controls later, they become Settings rows under APPEARANCE — that is the customization surface the design already implies.",
+    "Flow scenarios compose with products: `scenario` says how the environment misbehaves, `autostart` says which product to launch. Every flow scenario must be reachable for every capture product."
+  ],
+  "designVersion": "2026-08-12",
+  "products": {
+    "comment": "What the products grid offers, in design order. `jobType` is the SDK enum name; test ids derive from `id`.",
+    "sections": [
+      {
+        "section": "Authentication",
+        "items": [
+          {
+            "id": "smartSelfieEnrollment",
+            "label": "SmartSelfie Enrollment",
+            "jobType": "SmartSelfieEnrollment",
+            "capture": true,
+            "needsUserDetails": true,
+            "needsIdDetails": false
+          },
+          {
+            "id": "smartSelfieAuth",
+            "label": "SmartSelfie Authentication",
+            "jobType": "SmartSelfieAuthentication",
+            "capture": true,
+            "needsUserDetails": true,
+            "needsIdDetails": false
+          }
+        ]
+      },
+      {
+        "section": "Verifications",
+        "items": [
+          {
+            "id": "documentVerification",
+            "label": "Document Verification",
+            "jobType": "DocumentVerification",
+            "capture": true,
+            "needsUserDetails": true,
+            "needsIdDetails": true
+          },
+          {
+            "id": "enhancedDocumentVerification",
+            "label": "Enhanced Doc Verification",
+            "jobType": "EnhancedDocumentVerification",
+            "capture": true,
+            "needsUserDetails": true,
+            "needsIdDetails": true
+          },
+          {
+            "id": "biometricKyc",
+            "label": "Biometric KYC",
+            "jobType": "BiometricKyc",
+            "capture": true,
+            "needsUserDetails": true,
+            "needsIdDetails": true
+          },
+          {
+            "id": "enhancedKyc",
+            "label": "Enhanced KYC",
+            "jobType": "EnhancedKyc",
+            "capture": false,
+            "needsUserDetails": true,
+            "needsIdDetails": true,
+            "note": "OWNER DECISION 2026-08-13: added to fill the grid's empty slot. No camera step — the SDK flow composes consent() + processing() only, which needs no SDK change and makes this the one journey proving the flow works without capture(). Needs a 6th product card designed (icon + hue)."
+          }
+        ]
+      }
+    ],
+    "notInDesign": {
+      "comment": "BVN is the only SDK job type left out. iOS `buildJobRequest()` documents it as NOT SUPPORTED and throws, so excluding it is correct rather than a gap.",
+      "jobTypes": [
+        "BVN"
+      ]
+    },
+    "flowOrder": "product tapped → Consent Details Form (sample-owned user details, seeded from the active profile — the design labels these fields 'ATTACHED TO EVERY JOB', so every product shows it) → ID details form (sample-owned, only when needsIdDetails) → SDK flow [consent → instructions → capture → preview → processing] → verification details in the processing state. Everything before the SDK flow is sample-owned, which is why no SDK change is needed.",
+    "flowOrderRuling": "OWNER RULING 2026-08-13: e.g. SmartSelfie Enrollment → Consent Details Form → SDK flow. The Figma prototype still shows the SDK consent screen first; that wiring is stale and is not being updated.",
+    "needsUserDetailsNote": "Set true for every product on the evidence of the design's own label 'USER DETAILS — ATTACHED TO EVERY JOB' (board 06 profile config) plus the owner's SmartSelfie Enrollment example.",
+    "captureless": "Products with capture=false (enhancedKyc) compose the SDK flow WITHOUT capture() or preview(): consent() + processing(). Everything before the SDK flow is unchanged."
+  }
+}
