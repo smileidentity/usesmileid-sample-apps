@@ -6,7 +6,8 @@
     "Deep-link paths are identical across platforms. The scheme is per app (see app-identity.json) — usesmileid-sample-android://products, usesmileid-sample-ios://products, and so on.",
     "Sheets are ROUTES, not local booleans, so a deep link can open one and a flow can assert it.",
     "The SDK flow is ONE route with TWO presentations. Same destination, different container.",
-    "Arguments are typed on every platform. A stringly-typed argument that only fails at runtime is a defect."
+    "Arguments are typed on every platform. A stringly-typed argument that only fails at runtime is a defect.",
+    "Dev-only shell surfaces are NOT routes in this table, deliberately. A component gallery or API scratchpad belongs to one shell, is not part of the journey the four apps share, and must not oblige the other three to build a counterpart. They still get a deep link under their app's own scheme, because reaching one cold is the only way a flow can drive it, and their ids use a dev_ prefix so the sample_ namespace stays the spec's. Android has one today: usesmileid-sample-android://debug/components."
   ],
   "routes": [
     {

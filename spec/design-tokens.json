@@ -78,8 +78,10 @@
         "color.border light": "#eaecf0",
         "color.border dark": "#eaecf0"
       },
-      "finding": "color.border does not change between light and dark. A #EAECF0 border on the dark background (#1A1C23) is near-maximum contrast and will read as a bright outline around every card and row. CONFIRMED ON A DEVICE 2026-08-13, the first time anything rendered these tokens in dark mode: the Android shell's nav-bar pill draws a bright near-white outline on #1A1C23, exactly as predicted.",
-      "recommendation": "Flag to the design system owners; the sample apps are the first surface to consume dark mode from these tokens, so this would surface as a visible bug on day one. Do not patch it locally — fix it in the token source.",
+      "finding": "color.border does not change between light and dark. A #EAECF0 border on the dark background (#1A1C23) is near-maximum contrast and will read as a bright outline around every card and row. CONFIRMED ON A DEVICE 2026-08-13, the first time anything rendered these tokens in dark mode: the Android shell's nav-bar pill draws a bright near-white outline on #1A1C23, exactly as predicted. RE-CONFIRMED 2026-08-13 across the U1 primitives: every TextInput, SearchField and Toast outline, and every off/disabled Switch track, draws bright white on dark.",
+      "rootCause": "semantic/dark/color.json DOES define border — it points at the same {color.grey.200} as light, and its own $description says 'SDK keeps stroke light at low opacity on dark; consumers may apply ~15% opacity'. So the intent is a translucent stroke, but the instruction is delegated to consumers: the generated per-platform output emits a fully opaque #EAECF0 and carries no opacity, and this repo's own rule forbids app-side colour arithmetic, so a consumer cannot legitimately apply it. The same is true of color.text.muted (see darkMuted).",
+      "propagation": "12 tokens resolve through color.border and so inherit the defect — border, banner.border, card.border, filter.trigger-border, filter.popover-border, filter.chip-border, input.border, search.border, skeleton.highlight, table.border, table.row-border, tab.border — and 11 more through color.text.muted. They reference the semantic role correctly, so fixing the two semantic tokens fixes all 23. That makes this a high-leverage one-line fix, not 23 fixes.",
+      "recommendation": "Resolve the dark value to the translucent colour the $description describes (e.g. rgba(234,236,240,0.15)) rather than delegating opacity to consumers — the generators already emit rgba() correctly. Do not patch it locally.",
       "status": "OWNER DECISION 2026-08-13 — RESOLVED: fix in the design system, not locally. Suggested values: color.border dark → a subtle dark-grey (e.g. #333846); color.text.muted dark → a lighter grey clearing 4.5:1 (e.g. #9BA1AC). Raise before U0 wires dark mode."
     },
     {
@@ -104,13 +106,38 @@
       },
       "finding": "Fully-rounded in Figma versus a fixed 32 in the generated output. Identical on a 48-tall button (anything ≥ 24 renders as a pill) but different on taller surfaces.",
       "recommendation": "No action for buttons. If a taller pill appears, treat 999 as the intent."
+    },
+    {
+      "id": "composeTypeStylesAreComments",
+      "severity": "emitter asymmetry — blocked U1 typography",
+      "finding": "The Compose emitter writes all 29 type styles as COMMENTS, so MaterialTheme.typography is stock unless the app maps them itself. The Dart emitter produces 29 real TextStyles from the same resolved tokens.flat.json, and the SwiftUI emitter omits type entirely. This is an emitter asymmetry, not a platform limit: a Compose TextStyle needs no FontFamily to exist, and the emitter already holds every field it would need — build.mjs emitCompose() formats fontSize/fontWeight/lineHeight into a comment string and DROPS fontFamily and letterSpacing while doing it, so the comment is lossy as well as unusable.",
+      "recommendation": "Ask upstream to make the Compose emitter emit real TextStyles, parameterised on font families the app supplies (the shape this repo generates is a working proposal). Until then scripts/sync_design_tokens.py generates them here, which keeps them generated rather than hand-copied and lets --check fail on staleness. Delete the generated file when upstream lands.",
+      "status": "STOPGAP IN THIS REPO 2026-08-13 — android/sample-ui/.../tokens/SmileTypeStyles.kt is generated from the same source and mirrors the Dart emitter's names so the two stay diffable."
+    },
+    {
+      "id": "composeDropsComponentDimensions",
+      "severity": "affects every component's metrics",
+      "finding": "emitCompose() and emitSwift() both filter dimensions to the top-level groups {spacing, radius, size, space, border-width}, so every COMPONENT dimension is dropped: button.height (52), button.padding-x/y, input.height (44), input.radius, search.height/gap, badge.radius/padding-x/padding-y, avatar.radius/size-sm/md/lg, card.radius/padding/gap. components.json names several of these as the tokens a primitive must use, and none of them exist in the Compose output.",
+      "recommendation": "Ask upstream to emit component dimensions alongside component colours. Meanwhile the primitives reference the semantic scale token that carries the identical value (button.height → size.control-lg 52, input/search.height → size.control-md 44, input/search.radius → radius.field 12, button.radius → radius.control 32, badge.radius → radius.chip 999, avatar.radius → radius.full 999). avatar.size-md (40) has NO scale equivalent and falls back to space.40.",
+      "note": "components.json describes Button as 48dp tall; the token source says button.height = 52px. The design system wins per the rules in this file, so the primitives use 52."
+    },
+    {
+      "id": "buttonDisabledBypassesSemanticTier",
+      "severity": "dark-mode defect in the token source",
+      "designSystem": {
+        "button.disabled.background": "{color.grey.200} — a PRIMITIVE reference",
+        "button.disabled.text": "{color.text.muted}"
+      },
+      "finding": "tokens/component/button.json references the primitive {color.grey.200} for the disabled background instead of a semantic role, so it cannot re-resolve per mode — contradicting that file's own _comment, which states component tokens 'reference SEMANTIC roles only, so they re-resolve per light/dark automatically'. CONFIRMED ON A DEVICE 2026-08-13: the disabled Button draws a near-white #EAECF0 slab on the dark background. Distinct from darkBorder, and NOT fixed by fixing color.border.",
+      "recommendation": "Point button.disabled.background at a semantic role that has a dark value. Do not patch locally."
     }
   ],
   "perPlatform": {
     "android": {
-      "consume": "SmileTokens.kt — SmileColorLight / SmileColorDark / SmileDimens / SmileType",
-      "wiring": "Feed the token objects into the app's Compose theme and select by isSystemInDarkTheme(); do not replace the SDK's own theme, which resolves the same tokens internally.",
-      "vendoredTo": "android/sample-ui/.../tokens/SmileTokens.kt (copied verbatim from dist/android)"
+      "consume": "SmileTokens.kt — SmileColorLight / SmileColorDark / SmileDimens (SmileType is comments only); plus the generated SmileTypeStyles.kt for the type ramp",
+      "wiring": "Feed the token objects into the app's Compose theme and select by isSystemInDarkTheme(); do not replace the SDK's own theme, which resolves the same tokens internally. Component tokens are grouped into the app's own mode-selected holder because SmileColorLight and SmileColorDark are two unrelated generated objects with no common supertype, so a component cannot choose between them itself.",
+      "vendoredTo": "android/sample-ui/.../tokens/SmileTokens.kt (copied verbatim from dist/android)",
+      "generatedHere": "android/sample-ui/.../tokens/SmileTypeStyles.kt — 29 real TextStyles, and the five DM Sans OFL faces in sample-ui/src/main/res/font/. Both come from scripts/sync_design_tokens.py --all and are covered by --check. The font is bundled rather than fetched through a downloadable-font provider: this file's rules say to ship it, and a provider would make text depend on Play Services and goldens depend on the network."
     },
     "ios": {
       "consume": "SmileTokens.swift — SmileColorLight / SmileColorDark / SmileSpacing",
@@ -127,7 +154,7 @@
       "generatedBy": "scripts/sync_design_tokens.py, from the design system's platform-neutral dist/json/tokens.flat.json",
       "wiring": "Feed SmileColorLight / SmileColorDark into the app's ThemeData, selected by platform brightness.",
       "shape": "SmileColorLight (152) · SmileColorDark (152) · SmileDimens (42) · SmileType (29 TextStyles) · SmileShadows (6 BoxShadows) · SmileMotion (6 Durations)",
-      "deliberateAdditions": "Compose leaves typography as comments because it needs font resources wired first, and omits shadows entirely. Dart can express both directly, so SmileType emits real TextStyles and SmileShadows emits real BoxShadows. Naming otherwise mirrors Compose so the two are diffable.",
+      "deliberateAdditions": "The upstream Compose emitter leaves typography as comments and omits shadows entirely. Dart expresses both directly, so SmileType emits real TextStyles and SmileShadows emits real BoxShadows. Naming otherwise mirrors Compose so the two are diffable. NOTE 2026-08-13: the typography half is an emitter gap rather than a Compose limitation — see deltas → composeTypeStylesAreComments. The shadow half is a genuine platform difference: Compose has no equivalent of an arbitrary offset/blur/colour shadow value.",
       "verified": "dart format canonical, generator idempotent, `dart analyze` clean in a Flutter package context, and colour membership identical to the Compose output.",
       "gap": false
     }

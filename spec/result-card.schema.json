@@ -55,7 +55,9 @@
     },
     "sdkVersion": {
       "type": ["string", "null"],
-      "description": "SDK version resolved at runtime. Proves which published artifact the run exercised."
+      "description": "SDK version resolved at runtime. Proves which published artifact the run exercised.",
+      "blocked": "BLOCKS U3 on Android. The published SDK exposes no way to read its own version. Verified against usesmileid-12.0.1.aar on 2026-08-13: UseSmileIDMetadataFactory carries no @UseSmileIDPublicAPI annotation, and per that annotation's own contract unannotated declarations are obfuscated or repackaged — the class ships as com/usesmileid/metadata/a.class, and the string 12.0.1 appears in no class constant pool in any of the four artifacts (usesmileid, bridge, mlkit-face, mlkit-document). SmileExifTag's KDoc nonetheless tells native Android callers to source the version from UseSmileIDMetadataFactory.SDK_VERSION, which a registry consumer cannot do. This is exactly the published-artifact defect class this repo exists to catch: the SDK's own path-resolved sample compiles against it fine.",
+      "ask": "An @UseSmileIDPublicAPI accessor for the resolved SDK version. It must be a runtime read, not a Kotlin `const val` — a const is inlined at compile time, so it would report the version the app was BUILT against rather than the one running, which is the one thing this field exists to prove. Until it exists, leave the field null on Android rather than substituting the BOM version the app was compiled with."
     }
   }
 }
