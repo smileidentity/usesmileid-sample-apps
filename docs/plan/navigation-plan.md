@@ -246,13 +246,18 @@ Three delivery guarantees the host must respect rather than reimplement:
 Every SDK ships a **non-throwing** pre-flight check, so the route can guard itself instead of
 trusting the caller:
 
-- iOS `UseSmileIDFlowBuilder.validate() -> ValidationState`; Flutter
-  `ValidationState validate()`; Expo `validate(): ValidationState`.
-- Android exposes per-parameter validators instead of a single entry point —
+- `validate(): ValidationState` exists on **all four** — Android `UseSmileIDBuilder.kt:297`
+  (`FlowValidator.validateBuilder(...)`), iOS `UseSmileIDFlowBuilder.swift:160`
+  (`FlowValidator.shared.validateBuilder(screens:)`), Flutter
+  `use_smile_id_flow_builder.dart:141`, Expo `use_smile_id_flow_builder.ts:214`. Parity holds; call
+  it on route entry.
+- Android and iOS additionally expose per-payload validators for dynamically-sourced input —
   `validateConsent`, `validateUserDetails`, `validateBiometricKYCParams`,
-  `validateDocumentVerificationParams`, `validateEnhancedKYCParams`, each returning `ValidationState`.
-  Call the one matching the product. **Worth raising as a parity gap**: three platforms have
-  `validate()` and Android does not.
+  `validateDocumentVerificationParams`, `validateEnhancedDocumentVerificationParams`,
+  `validateEnhancedKYCParams`. Use these when the form's values come from the profile store rather
+  than the builder, which is exactly this app's case.
+- `build()` is **internal** on both Android and iOS, so `validate()` is the intended partner-facing
+  pre-flight check — not building and inspecting `FlowBuildResult`.
 
 **Rule:** `…/run` is directly deep-linkable. On entry, validate; if the configuration is invalid for
 want of user or ID details, redirect to the corresponding form route and keep the intended
