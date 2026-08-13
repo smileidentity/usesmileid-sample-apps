@@ -38,6 +38,8 @@ android {
 
     buildFeatures {
         compose = true
+        // The settings footer names the host application and its version.
+        buildConfig = true
     }
 }
 

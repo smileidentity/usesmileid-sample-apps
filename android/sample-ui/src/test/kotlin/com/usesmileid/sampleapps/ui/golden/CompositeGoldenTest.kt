@@ -196,14 +196,14 @@ private fun SettingRows() = Column(verticalArrangement = stack) {
 private fun ProfileRows() = Column(verticalArrangement = stack) {
     UseSmileIDSampleProfileRow(
         organisation = "UpTech Finance",
-        person = "Kwame Asante",
+        supportingText = "Kwame Asante",
         initials = "KA",
         selected = true,
         onClick = {},
     )
     UseSmileIDSampleProfileRow(
         organisation = "Kazi Microlending",
-        person = "Amina Diallo",
+        supportingText = "Amina Diallo",
         initials = "AD",
         selected = false,
         onClick = {},

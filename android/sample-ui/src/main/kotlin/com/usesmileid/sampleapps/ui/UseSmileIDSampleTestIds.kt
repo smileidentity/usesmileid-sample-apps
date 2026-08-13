@@ -20,7 +20,21 @@ object UseSmileIDSampleTestIds {
     const val PROFILE_CONFIG_SCREEN = "sample_profile_config_screen"
     const val NEW_PROFILE_SHEET = "sample_new_profile_sheet"
     const val SCAN_TOKEN_SCREEN = "sample_scan_token_screen"
+
+    // The drawer's own root, matching every other sheet. The control that opens it is a separate id,
+    // matching every other opener.
     const val SCENARIO_DRAWER = "sample_scenario_drawer"
+    const val SCENARIO_DRAWER_BUTTON = "sample_scenario_drawer_button"
+
+    const val PROFILE_SUMMARY = "sample_profile_summary"
+    const val SETTING_SMILE_TO_CAPTURE = "sample_setting_smile_to_capture"
+    const val SETTING_AGENT_MODE = "sample_setting_agent_mode"
+    const val SETTING_DARK_MODE = "sample_setting_dark_mode"
+    const val SETTING_CONSENT_STEP = "sample_setting_consent_step"
+    const val SETTING_INSTRUCTIONS_STEP = "sample_setting_instructions_step"
+    const val SETTING_PREVIEW_STEP = "sample_setting_preview_step"
+    const val SIGN_OUT = "sample_sign_out"
+    const val VERSION_LABEL = "sample_version_label"
 
     // Attached by the component itself: the spec assigns these to it, not to a screen.
     const val TOAST = "sample_toast"
@@ -73,5 +87,24 @@ object UseSmileIDSampleTestIds {
         TOKEN_MANUAL_ENTRY,
         TOKEN_PASTE,
         TOKEN_SIMULATE,
+        SCENARIO_DRAWER_BUTTON,
+        PROFILE_SUMMARY,
+        SETTING_SMILE_TO_CAPTURE,
+        SETTING_AGENT_MODE,
+        SETTING_DARK_MODE,
+        SETTING_CONSENT_STEP,
+        SETTING_INSTRUCTIONS_STEP,
+        SETTING_PREVIEW_STEP,
+        SIGN_OUT,
+        VERSION_LABEL,
     )
+
+    /** Suffixed ids derive from other spec files, so they are built rather than listed. */
+    fun productCard(productId: String) = "sample_product_card_$productId"
+
+    fun settingNav(rowId: String) = "sample_setting_nav_$rowId"
+
+    fun scenarioItem(scenarioId: String) = "sample_scenario_item_$scenarioId"
+
+    fun themeItem(themeId: String) = "sample_theme_item_$themeId"
 }

@@ -18,7 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.semantics.Role
+import kotlin.math.abs
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -34,7 +36,12 @@ fun UseSmileIDSampleProductCard(
     icon: @Composable ((Color) -> Unit)? = null,
 ) {
     val colors = UseSmileIDSampleTheme.colors
-    val content = if (enabled) colors.textInverse else colors.textMuted
+    // Whichever text token contrasts better with this card's fill. `textInverse` alone is right in
+    // light mode and wrong in dark, where it flips dark and the decorative fills do not.
+    val onFill = listOf(colors.textInverse, colors.textTitle).maxBy {
+        abs(it.luminance() - containerColor.luminance())
+    }
+    val content = if (enabled) onFill else colors.textMuted
     Surface(
         onClick = onClick,
         enabled = enabled,

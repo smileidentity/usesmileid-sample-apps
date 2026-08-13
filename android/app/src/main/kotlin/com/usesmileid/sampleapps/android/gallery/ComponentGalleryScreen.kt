@@ -180,14 +180,14 @@ private fun gallerySections(): List<GallerySectionSpec> {
         UseSmileIDSampleBottomSheet(onDismissRequest = { sheet = GallerySheet.None }, title = "Switch profile") {
             UseSmileIDSampleProfileRow(
                 organisation = "UpTech Finance",
-                person = "Kwame Asante",
+                supportingText = "Kwame Asante",
                 initials = "KA",
                 selected = true,
                 onClick = {},
             )
             UseSmileIDSampleProfileRow(
                 organisation = "Kazi Microlending",
-                person = "Amina Diallo",
+                supportingText = "Amina Diallo",
                 initials = "AD",
                 selected = false,
                 onClick = {},
@@ -367,7 +367,7 @@ private fun gallerySections(): List<GallerySectionSpec> {
             PROFILES.forEachIndexed { index, (org, person, initials) ->
                 UseSmileIDSampleProfileRow(
                     organisation = org,
-                    person = person,
+                    supportingText = person,
                     initials = initials,
                     selected = index == selectedProfile,
                     onClick = { selectedProfile = index },
