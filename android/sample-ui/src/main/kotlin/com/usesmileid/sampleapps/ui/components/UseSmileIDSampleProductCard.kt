@@ -75,11 +75,13 @@ fun UseSmileIDSampleProductCard(
                     horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
                     verticalAlignment = Alignment.Bottom,
                 ) {
-                    // No line cap: 'SmartSelfie Authentication' already wraps to two lines at default
-                    // scale on a 174-wide card, and needs more at 2x.
+                    // Subtitle, not body-strong: the design's card foot is 122 wide with a 20 line
+                    // height, and at 16px 'Authentication' does not fit that line, so it broke
+                    // mid-word rather than wrapping. No line cap either — the title already needs
+                    // two lines at default scale on a 174-wide card, and more at 2x.
                     Text(
                         text = title,
-                        style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
+                        style = UseSmileIDSampleTheme.type.textStyleSubtitle,
                         color = content,
                         modifier = Modifier.weight(1f),
                     )
