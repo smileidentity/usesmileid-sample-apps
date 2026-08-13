@@ -6,9 +6,57 @@ import androidx.compose.ui.graphics.Color
 import com.smileid.designsystem.SmileColorDark
 import com.smileid.designsystem.SmileColorLight
 
+/** One component's tokens, resolved for the active mode. */
+@Immutable
+data class AvatarTokens(val background: Color, val text: Color, val placeholderBackground: Color, val placeholderIcon: Color)
+
+@Immutable
+data class ButtonTokens(
+    val primaryBackground: Color,
+    val primaryText: Color,
+    val disabledBackground: Color,
+    val disabledText: Color,
+)
+
+@Immutable
+data class InputTokens(
+    val background: Color,
+    val text: Color,
+    val placeholder: Color,
+    val border: Color,
+    val borderFocus: Color,
+    val borderError: Color,
+)
+
+@Immutable
+data class SearchTokens(
+    val background: Color,
+    val text: Color,
+    val placeholder: Color,
+    val icon: Color,
+    val border: Color,
+    val borderFocus: Color,
+)
+
+@Immutable
+data class BadgeTokens(
+    val successBackground: Color,
+    val successText: Color,
+    val warningBackground: Color,
+    val warningText: Color,
+    val errorBackground: Color,
+    val errorText: Color,
+    val infoBackground: Color,
+    val infoText: Color,
+)
+
 /**
- * The design system's semantic colour tier, resolved for one mode. Component tokens are read
- * straight from [SmileColorLight] / [SmileColorDark] by the component that owns them.
+ * The design system's semantic colour tier, resolved for one mode, plus the component tiers the
+ * primitives consume.
+ *
+ * Component tokens are grouped here rather than read straight from [SmileColorLight] /
+ * [SmileColorDark] because those are two unrelated generated objects with no common supertype, so
+ * a component cannot select between them by mode on its own.
  */
 @Immutable
 data class UseSmileIDSampleColors(
@@ -36,6 +84,11 @@ data class UseSmileIDSampleColors(
     val onError: Color,
     val infoFill: Color,
     val onInfo: Color,
+    val avatar: AvatarTokens,
+    val button: ButtonTokens,
+    val input: InputTokens,
+    val search: SearchTokens,
+    val badge: BadgeTokens,
 )
 
 internal val lightColors = UseSmileIDSampleColors(
@@ -63,6 +116,44 @@ internal val lightColors = UseSmileIDSampleColors(
     onError = SmileColorLight.colorFeedbackErrorOn,
     infoFill = SmileColorLight.colorFeedbackInfoFill,
     onInfo = SmileColorLight.colorFeedbackInfoOn,
+    avatar = AvatarTokens(
+        background = SmileColorLight.avatarBg,
+        text = SmileColorLight.avatarText,
+        placeholderBackground = SmileColorLight.avatarPlaceholderBg,
+        placeholderIcon = SmileColorLight.avatarPlaceholderIcon,
+    ),
+    button = ButtonTokens(
+        primaryBackground = SmileColorLight.buttonPrimaryBackground,
+        primaryText = SmileColorLight.buttonPrimaryText,
+        disabledBackground = SmileColorLight.buttonDisabledBackground,
+        disabledText = SmileColorLight.buttonDisabledText,
+    ),
+    input = InputTokens(
+        background = SmileColorLight.inputBackground,
+        text = SmileColorLight.inputText,
+        placeholder = SmileColorLight.inputPlaceholder,
+        border = SmileColorLight.inputBorder,
+        borderFocus = SmileColorLight.inputBorderFocus,
+        borderError = SmileColorLight.inputBorderError,
+    ),
+    search = SearchTokens(
+        background = SmileColorLight.searchBackground,
+        text = SmileColorLight.searchText,
+        placeholder = SmileColorLight.searchPlaceholder,
+        icon = SmileColorLight.searchIcon,
+        border = SmileColorLight.searchBorder,
+        borderFocus = SmileColorLight.searchBorderFocus,
+    ),
+    badge = BadgeTokens(
+        successBackground = SmileColorLight.badgeSuccessBackground,
+        successText = SmileColorLight.badgeSuccessText,
+        warningBackground = SmileColorLight.badgeWarningBackground,
+        warningText = SmileColorLight.badgeWarningText,
+        errorBackground = SmileColorLight.badgeErrorBackground,
+        errorText = SmileColorLight.badgeErrorText,
+        infoBackground = SmileColorLight.badgeInfoBackground,
+        infoText = SmileColorLight.badgeInfoText,
+    ),
 )
 
 internal val darkColors = UseSmileIDSampleColors(
@@ -90,6 +181,44 @@ internal val darkColors = UseSmileIDSampleColors(
     onError = SmileColorDark.colorFeedbackErrorOn,
     infoFill = SmileColorDark.colorFeedbackInfoFill,
     onInfo = SmileColorDark.colorFeedbackInfoOn,
+    avatar = AvatarTokens(
+        background = SmileColorDark.avatarBg,
+        text = SmileColorDark.avatarText,
+        placeholderBackground = SmileColorDark.avatarPlaceholderBg,
+        placeholderIcon = SmileColorDark.avatarPlaceholderIcon,
+    ),
+    button = ButtonTokens(
+        primaryBackground = SmileColorDark.buttonPrimaryBackground,
+        primaryText = SmileColorDark.buttonPrimaryText,
+        disabledBackground = SmileColorDark.buttonDisabledBackground,
+        disabledText = SmileColorDark.buttonDisabledText,
+    ),
+    input = InputTokens(
+        background = SmileColorDark.inputBackground,
+        text = SmileColorDark.inputText,
+        placeholder = SmileColorDark.inputPlaceholder,
+        border = SmileColorDark.inputBorder,
+        borderFocus = SmileColorDark.inputBorderFocus,
+        borderError = SmileColorDark.inputBorderError,
+    ),
+    search = SearchTokens(
+        background = SmileColorDark.searchBackground,
+        text = SmileColorDark.searchText,
+        placeholder = SmileColorDark.searchPlaceholder,
+        icon = SmileColorDark.searchIcon,
+        border = SmileColorDark.searchBorder,
+        borderFocus = SmileColorDark.searchBorderFocus,
+    ),
+    badge = BadgeTokens(
+        successBackground = SmileColorDark.badgeSuccessBackground,
+        successText = SmileColorDark.badgeSuccessText,
+        warningBackground = SmileColorDark.badgeWarningBackground,
+        warningText = SmileColorDark.badgeWarningText,
+        errorBackground = SmileColorDark.badgeErrorBackground,
+        errorText = SmileColorDark.badgeErrorText,
+        infoBackground = SmileColorDark.badgeInfoBackground,
+        infoText = SmileColorDark.badgeInfoText,
+    ),
 )
 
 internal val LocalUseSmileIDSampleColors = staticCompositionLocalOf { lightColors }

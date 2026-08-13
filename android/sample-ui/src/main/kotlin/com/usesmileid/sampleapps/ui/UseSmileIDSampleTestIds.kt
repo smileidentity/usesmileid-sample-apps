@@ -22,6 +22,11 @@ object UseSmileIDSampleTestIds {
     const val SCAN_TOKEN_SCREEN = "sample_scan_token_screen"
     const val SCENARIO_DRAWER = "sample_scenario_drawer"
 
+    // Attached by the primitive itself, because the spec assigns them to the toast rather than to a
+    // screen. Every other primitive takes its id from the screen that places it.
+    const val TOAST = "sample_toast"
+    const val TOAST_UNDO = "sample_toast_undo"
+
     val all = listOf(
         NAV_PRODUCTS,
         NAV_VERIFICATIONS,
@@ -41,5 +46,7 @@ object UseSmileIDSampleTestIds {
         NEW_PROFILE_SHEET,
         SCAN_TOKEN_SCREEN,
         SCENARIO_DRAWER,
+        TOAST,
+        TOAST_UNDO,
     )
 }
