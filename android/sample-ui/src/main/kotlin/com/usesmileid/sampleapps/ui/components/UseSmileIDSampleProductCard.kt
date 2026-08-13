@@ -22,15 +22,7 @@ import androidx.compose.ui.semantics.Role
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * A product tile on the products grid.
- *
- * The whole card is filled with a decorative colour and the text is inverse — verified against a
- * render, and not the white-card-with-an-accent it reads as in a metadata dump.
- *
- * [containerColor] has no default worth guessing: the product→hue mapping is the designer's list and
- * is still outstanding, so the caller passes one and the grid currently repeats the token default.
- */
+/** A product tile: the whole card takes a decorative fill with inverse text. The product→hue list is outstanding, so the caller passes the hue. */
 @Composable
 fun UseSmileIDSampleProductCard(
     title: String,
@@ -53,7 +45,7 @@ fun UseSmileIDSampleProductCard(
         shape = RoundedCornerShape(SmileDimens.radiusSurface),
         color = if (enabled) containerColor else colors.surfaceMuted,
     ) {
-        // The ghost glyph bleeds off the top-right corner, so the card clips it rather than growing.
+        // The ghost glyph bleeds off the corner, so the card clips rather than grows.
         Box(modifier = Modifier.clipToBounds()) {
             Column(
                 modifier = Modifier
@@ -75,10 +67,7 @@ fun UseSmileIDSampleProductCard(
                     horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
                     verticalAlignment = Alignment.Bottom,
                 ) {
-                    // Subtitle, not body-strong: the design's card foot is 122 wide with a 20 line
-                    // height, and at 16px 'Authentication' does not fit that line, so it broke
-                    // mid-word rather than wrapping. No line cap either — the title already needs
-                    // two lines at default scale on a 174-wide card, and more at 2x.
+                    // Subtitle, not body-strong: at 16px 'Authentication' broke mid-word on a 174-wide card.
                     Text(
                         text = title,
                         style = UseSmileIDSampleTheme.type.textStyleSubtitle,
@@ -106,14 +95,14 @@ private fun GoAffordance(tint: Color) {
     }
 }
 
-/** 148 in the design; space64 twice over is the nearest the scale reaches, and the card grows past it with the title. */
+/** 148 in the design; space64 twice over is the nearest the scale reaches. */
 private val CARD_MIN_HEIGHT = SmileDimens.space64 * 2
 
-/** The empty slot an odd-numbered section leaves. A layout affordance, not a placeholder card. */
+/** The empty slot an odd count leaves: a layout affordance, not a placeholder card. */
 @Composable
 fun UseSmileIDSampleProductSlot(modifier: Modifier = Modifier) = Box(modifier = modifier.fillMaxWidth())
 
-/** Sentence-case headings on the products board, distinct from the all-caps [UseSmileIDSampleSectionLabel]. */
+/** Sentence-case headings, distinct from the all-caps [UseSmileIDSampleSectionLabel]. */
 @Composable
 fun UseSmileIDSampleSectionHeader(
     text: String,

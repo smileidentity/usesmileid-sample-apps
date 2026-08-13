@@ -13,12 +13,7 @@ import androidx.compose.ui.unit.Dp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * The decorative corner-bracket mark on the Scan token screen, shown where a live reticle would be.
- *
- * The design hides the reticle frame rather than deleting it, so [sweep] keeps that state reachable
- * for when a live camera preview lands behind it.
- */
+/** The corner-bracket mark on the Scan token screen. [sweep] keeps the design's hidden reticle reachable for a live camera. */
 @Composable
 fun UseSmileIDSampleScanGlyph(
     modifier: Modifier = Modifier,

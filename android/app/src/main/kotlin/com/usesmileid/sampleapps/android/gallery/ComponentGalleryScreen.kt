@@ -463,8 +463,7 @@ private fun gallerySections(): List<GallerySectionSpec> {
             UseSmileIDSampleButton(text = "Select one more", onClick = { selectedCount++ })
         },
         GallerySectionSpec("PRODUCT GRID") {
-            // Five cards, so the last row carries the empty slot an odd count leaves. The hues are
-            // the decorative palette in order, not a product mapping — that list is outstanding.
+            // Hues are the palette in order, not a product mapping: that list is outstanding.
             val hues = UseSmileIDSampleTheme.colors.decorative.all
             UseSmileIDSampleSectionHeader(text = "Authentication")
             UseSmileIDSampleProductGrid(itemCount = PRODUCTS.size) { index ->

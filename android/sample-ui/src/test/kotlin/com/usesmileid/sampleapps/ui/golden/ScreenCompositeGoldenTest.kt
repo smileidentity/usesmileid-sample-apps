@@ -30,13 +30,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTokenRing
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import org.junit.Test
 
-/**
- * The twelve screen-specific U2 composites, light and dark, plus the max-font-scale predicate.
- *
- * Product and profile hues are the designer's outstanding list, so every card here takes the same
- * token rather than a guessed mapping — a golden of an invented palette would only have to be
- * re-recorded when the real one lands.
- */
+/** Hues come from the token palette in order, not a guessed product mapping: that list is still outstanding. */
 class ScreenCompositeGoldenTest : GoldenTest() {
 
     @Test
@@ -135,7 +129,6 @@ private fun ProductGrid() {
         "Enhanced Document Verification",
         "Biometric KYC",
     )
-    // Five cards, so the last row carries the empty slot the design leaves on an odd count.
     UseSmileIDSampleProductGrid(itemCount = titles.size) { index ->
         UseSmileIDSampleProductCard(
             title = titles[index],

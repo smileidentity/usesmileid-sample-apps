@@ -23,13 +23,7 @@ import androidx.compose.ui.Modifier
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * Wraps a row in the platform swipe gesture, revealing Remove behind it.
- *
- * The design only fixes the revealed treatment, so the gesture itself is Material's: velocity,
- * threshold and the settle animation stay the ones the platform ships, which is what keeps this
- * feeling native rather than reproducing Android's swipe on iOS or the reverse.
- */
+/** Wraps a row in the platform swipe gesture. The design fixes only the revealed treatment, so velocity, threshold and settle stay Material's. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UseSmileIDSampleSwipeAction(
@@ -39,10 +33,7 @@ fun UseSmileIDSampleSwipeAction(
 ) {
     val state = rememberSwipeToDismissBoxState()
 
-    // Reads the settled value rather than firing from a composition, so a recomposition mid-gesture
-    // cannot remove the row twice. The callback is read through rememberUpdatedState because the
-    // effect outlives recomposition: in a list each row's onRemove closes over its own item, and
-    // capturing the first one would remove whichever item the row held when the effect started.
+    // Settled value, so a recomposition mid-gesture cannot remove twice; updated state, so a list row cannot remove a stale item.
     val currentOnRemove by rememberUpdatedState(onRemove)
     LaunchedEffect(state) {
         snapshotFlow { state.currentValue }
