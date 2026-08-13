@@ -34,6 +34,9 @@ object UseSmileIDSampleTestIds {
     const val SETTING_PREVIEW_STEP = "sample_setting_preview_step"
     const val SIGN_OUT = "sample_sign_out"
     const val VERSION_LABEL = "sample_version_label"
+    const val SELECT_TOGGLE = "sample_select_toggle"
+    const val STATUS_BADGE = "sample_status_badge"
+    const val DETAILS_DELETE = "sample_details_delete"
 
     // Attached by the component itself: the spec assigns these to it, not to a screen.
     const val TOAST = "sample_toast"
@@ -96,6 +99,9 @@ object UseSmileIDSampleTestIds {
         SETTING_PREVIEW_STEP,
         SIGN_OUT,
         VERSION_LABEL,
+        SELECT_TOGGLE,
+        STATUS_BADGE,
+        DETAILS_DELETE,
     )
 
     /** Suffixed ids derive from other spec files, so they are built rather than listed. */
@@ -106,4 +112,16 @@ object UseSmileIDSampleTestIds {
     fun scenarioItem(scenarioId: String) = "sample_scenario_item_$scenarioId"
 
     fun themeItem(themeId: String) = "sample_theme_item_$themeId"
+
+    fun filterChip(status: String) = "sample_filter_chip_$status"
+
+    fun filterCount(status: String) = "sample_filter_count_$status"
+
+    fun jobRow(index: Int) = "sample_job_row_$index"
+
+    fun selectionCheckbox(index: Int) = "sample_selection_checkbox_$index"
+
+    fun detailField(field: String) = "sample_detail_field_$field"
+
+    fun detailCopy(field: String) = "sample_detail_copy_$field"
 }

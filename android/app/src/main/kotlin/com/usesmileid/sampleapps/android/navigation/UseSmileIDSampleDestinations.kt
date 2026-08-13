@@ -1,11 +1,19 @@
 package com.usesmileid.sampleapps.android.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.annotation.parameters.DeepLink
@@ -14,10 +22,16 @@ import com.ramcosta.composedestinations.generated.destinations.ProfileConfigScre
 import com.ramcosta.composedestinations.generated.destinations.ProfileSwitchSheetDestination
 import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ScenarioDrawerSheetDestination
+import com.ramcosta.composedestinations.generated.destinations.VerificationDetailsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleToast
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
+import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleProductsState
@@ -69,7 +83,58 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
 
 @Destination<VerificationsGraph>(start = true, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.VERIFICATIONS)])
 @Composable
-fun VerificationsScreen() = VerificationsContent()
+fun VerificationsScreen(navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    var filter by rememberSaveable { mutableStateOf(UseSmileIDSampleJobFilter.All) }
+    var selectMode by rememberSaveable { mutableStateOf(false) }
+    var selected by rememberSaveable { mutableStateOf(emptySet<String>()) }
+    var removedCount by rememberSaveable { mutableIntStateOf(0) }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        VerificationsContent(
+            state = UseSmileIDSampleVerificationsState(
+                jobs = app.jobs.all,
+                counts = UseSmileIDSampleJobFilter.entries.associateWith(app.jobs::count),
+                filter = filter,
+                selectMode = selectMode,
+                selected = selected,
+                nowMillis = app.nowMillis,
+            ),
+            onFilterChange = { filter = it },
+            onSelectModeChange = { selectMode = it; if (!it) selected = emptySet() },
+            onSelectionChange = { id, checked -> selected = if (checked) selected + id else selected - id },
+            onJobClick = { navigator.navigate(VerificationDetailsScreenDestination(jobId = it.id)) },
+            onRemove = { ids ->
+                app.jobs.remove(ids)
+                removedCount = ids.size
+                selected = emptySet()
+                selectMode = false
+            },
+        )
+        if (selectMode) {
+            UseSmileIDSampleSelectionBar(
+                selectedCount = selected.size,
+                onRemove = {
+                    app.jobs.remove(selected)
+                    removedCount = selected.size
+                    selected = emptySet()
+                    selectMode = false
+                },
+                modifier = Modifier.align(Alignment.BottomCenter),
+            )
+        }
+        if (removedCount > 0) {
+            UseSmileIDSampleToast(
+                message = if (removedCount == 1) "Verification removed" else "$removedCount verifications removed",
+                actionLabel = "Undo",
+                onAction = { app.jobs.undoRemove(); removedCount = 0 },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(SmileDimens.spacingMd),
+            )
+        }
+    }
+}
 
 @Destination<SettingsGraph>(start = true, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SETTINGS)])
 @Composable
@@ -91,7 +156,17 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
 /** Also the post-submission landing route: on a result the flow and both forms are replaced. */
 @Destination<VerificationsGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.VERIFICATION_DETAILS)])
 @Composable
-fun VerificationDetailsScreen(jobId: String) = VerificationDetailsContent(jobId = jobId)
+fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    val clipboard = LocalClipboardManager.current
+    VerificationDetailsContent(
+        jobId = jobId,
+        job = app.jobs.all.firstOrNull { it.id == jobId },
+        onBack = { navigator.navigateUp() },
+        onDelete = { app.jobs.remove(setOf(jobId)); navigator.navigateUp() },
+        onCopy = { clipboard.setText(AnnotatedString(it)) },
+    )
+}
 
 /** The Consent Details Form. Shown for every product, before the SDK flow starts. */
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.CONSENT_DETAILS_FORM)])

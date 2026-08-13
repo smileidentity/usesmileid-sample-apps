@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleStore
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
@@ -23,6 +24,7 @@ class UseSmileIDSampleAppState(
     val storeScope: CoroutineScope,
     val settings: UseSmileIDSampleSettings,
     val session: UseSmileIDSampleTokenSession?,
+    val jobs: UseSmileIDSampleJobs,
     val nowMillis: Long,
 ) {
     val sessionExpired: Boolean get() = session != null && session.hasExpired(nowMillis)
@@ -37,6 +39,8 @@ fun rememberUseSmileIDSampleAppState(): UseSmileIDSampleAppState {
     val settings by store.settings.collectAsStateWithLifecycle(initialValue = UseSmileIDSampleSettings())
     val session by store.tokenSession.collectAsStateWithLifecycle(initialValue = null)
     var nowMillis by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    // Seeded sample data until jobs arrive from the SDK; in memory, so it resets on process death.
+    val jobs = remember { UseSmileIDSampleJobs.seeded(System.currentTimeMillis()) }
 
     // Stops at the deadline: the session object does not change on expiry, so the key alone never ends this.
     LaunchedEffect(session) {
@@ -52,6 +56,7 @@ fun rememberUseSmileIDSampleAppState(): UseSmileIDSampleAppState {
         storeScope = rememberCoroutineScope(),
         settings = settings,
         session = session,
+        jobs = jobs,
         nowMillis = nowMillis,
     )
 }
