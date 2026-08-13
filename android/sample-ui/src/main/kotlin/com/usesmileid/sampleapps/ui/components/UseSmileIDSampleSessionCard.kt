@@ -89,8 +89,10 @@ fun UseSmileIDSampleSessionEndedBanner(
     Surface(
         modifier = modifier.fillMaxWidth().testTag(UseSmileIDSampleTestIds.SESSION_ENDED_BANNER),
         shape = RoundedCornerShape(SmileDimens.radiusSurface),
-        color = colors.banner.background,
-        border = BorderStroke(SmileDimens.borderWidthHairline, colors.banner.border),
+        // surface-muted, per this component's token list, rather than the banner contract: the
+        // design corrected this to a neutral card and the banner fill is a warm sand.
+        color = colors.surfaceMuted,
+        border = BorderStroke(SmileDimens.borderWidthHairline, colors.border),
     ) {
         FlowRow(
             modifier = Modifier
