@@ -25,6 +25,7 @@ Rules:
 | `result-card.schema.json` | The result card's fields and types | scaffold: field set settled |
 | `test-ids.json` | The `sample_*` accessibility IDs flows assert on | scaffold: grows with each screen |
 | `app-identity.json` | Application ids, display names and URL schemes per platform, plus the ids reserved by the SDK repos' development samples | settled |
+| `routes.json` | The shared route table — ids, deep-link paths, typed arguments and the per-platform binding | **added 2026-08-13** |
 | `screens.json` | 14 screens, 38 states, each linked to its design node; plus who owns each screen (sample vs SDK) and the open questions the design set raised | **filled 2026-08-12** |
 | `components.json` | All 34 components with owner, design-system contract, tokens, states, reuse, and the build order | **filled 2026-08-12** |
 | `design-tokens.json` | The design-system source, per-platform consumption, and the verified deltas between the design file and the token source | **filled 2026-08-12** |
@@ -63,8 +64,9 @@ the checklist telling you which four app PRs are now owed.
 ## Where UI work starts
 
 `docs/plan/ui-work-plan.md` sequences the build (tokens → primitives → composites → screens, Android
-first as the reference for the other three) and carries the flags the design set raised. Read it
-before opening a UI PR.
+first as the reference for the other three) and carries the flags the design set raised.
+`docs/plan/navigation-plan.md` covers routing and state per platform and shares the same unit of
+work — a screen and its route land in one PR. Read both before opening a UI PR.
 
 ## Consuming `spec/` from an app
 

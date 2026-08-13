@@ -1,0 +1,175 @@
+# Navigation plan — per platform, one route table
+
+**Status:** ready to start, and it runs alongside the UI work rather than after it. Screens without
+navigation are previews; navigation without screens is untestable. Build them together, per screen.
+
+**The shared contract is `spec/routes.json`** — route ids, deep-link paths and typed arguments,
+identical on all four platforms, with the platform binding named per route. Read it first; this
+document explains the architecture and the traps.
+
+**Library choices, and why each one:**
+
+| Platform | Navigation | State | Why |
+|---|---|---|---|
+| Android | **Compose Destinations 2.3.0** (`io.github.raamcosta.compose-destinations`) over androidx.navigation 2.9.8 | ViewModel + `SavedStateHandle` | The SDK itself uses it (`@Destination<RootGraph>`, `DestinationsNavHost`), so the sample and the SDK share one mental model and one dependency set |
+| iOS | **NavigationStack + a typed path router** | `@Observable` router + `@SceneStorage` | The SDK does not nest a `NavigationStack`, so a host stack is safe (see §3) |
+| Flutter | **go_router ^17** | **flutter_riverpod ^3** | Both proven in the kobo Flutter probe; `StatefulShellRoute` gives per-tab back stacks for free |
+| Expo | **expo-router** (already in the sample) | **zustand ^5** | Matches the kobo Expo probe; file routes map 1:1 to the route table |
+
+---
+
+## 1. Nine rules that apply to every platform
+
+These are what keep four navigation implementations behaving the same. Most of them exist because a
+specific defect was found on a device, not because they read well.
+
+**R1 — Routes are data.** Every route in `spec/routes.json` exists on every platform with the same
+id, path and arguments. A route added to one app without the table and the other three is a bug.
+
+**R2 — The SDK flow is one opaque destination.** The SDK owns its own internal navigation: on
+Android `UseSmileIDBuilder` hosts a nested `DestinationsNavHost` with its own `NavController`; on
+iOS `UseSmileIDBuilder` renders a `FlowNavigationView` driven by its own `FlowNavigationManager`.
+The host must never model consent, instructions, capture, preview or processing as its own routes,
+never try to drive the SDK's back stack, and must let the SDK consume a back gesture **first**.
+
+**R3 — That destination has two presentations.** Full-screen and nested in the navigation shell, from
+the same route with a `route=fullscreen|shell` argument. This is not a nicety: the in-shell
+presentation is the one that exposes host-chrome and inset defects, and the full-screen one is what
+partners copy. Both must exist, and both must be reachable by deep link.
+
+**R4 — After the result, replace rather than stack.** When the SDK returns, pop the flow *and* both
+pre-flow forms, then land on `verificationDetails` in its processing state. Back from there goes to
+the originating tab — never back into capture. Getting this wrong is how a user swipes back from a
+result into a live camera.
+
+**R5 — Hiding is not cancelling.** iOS makes this explicit: `FlowTeardownSentinel` delivers
+cancellation on `deinit` only, because a `@StateObject` outlives mere hiding. So a flow parked in an
+inactive tab, or retained by a sheet that stays in memory, is still running and still holding the
+camera. To cancel, remove it from the hierarchy. Android's equivalent is leaving the destination so
+the composition and its ViewModel are disposed. Never host the flow in a container that retains it.
+
+**R6 — Anything the user typed survives recreation.** The Consent Details Form and ID-details form
+values, the active scenario and theme, the selected tab, and each tab's back stack must survive
+rotation, process death and the system killing the app behind the camera. Two specifics:
+
+- Store the token session as an **absolute deadline**, never a ticking counter. A counter restarts at
+  the wrong value after restoration; a deadline is correct by construction.
+- Any identity key the host generates for the flow destination must be **saveable**. On Android this
+  exact bug has already been found on a device: a key created with `remember { UUID.randomUUID() }`
+  is regenerated on recreation, so the ViewModel behind it is never the one that was saved. Use
+  `rememberSaveable`, or derive the key from the route arguments.
+
+**R7 — Per-tab back stacks are preserved.** Switching tabs and returning keeps the stack. Deep links
+into a tab's detail route build a sensible parent stack so back works.
+
+**R8 — Sheets are routes, not booleans.** All four sheets (profile switch, new profile, country, ID
+type) are destinations, so a deep link can open one and a flow can assert it. They keep the
+platform's native sheet behaviour — drag-to-dismiss, scrim tap, inset handling.
+
+**R9 — Cold start is the test that matters.** Every route must open with the process not already
+running. Cold-start deep links are where argument parsing, state restoration and "the tab bar isn't
+built yet" break. Warm-start works by accident; cold start works by design.
+
+---
+
+## 2. Android — Compose Destinations 2.3.0
+
+Same library and version as the SDK, so KSP-generated typed destinations behave identically in both.
+Build requirement: the sample app module needs the KSP plugin; it resolves the SDK from Maven, so it
+does not have to match the SDK's Kotlin version, only supply its own.
+
+- **Graph shape.** One `RootGraph`, one nested graph per tab, `DestinationsNavHost` at the app shell.
+  Bottom-nav switching uses the standard `popUpTo(startDestination) { saveState = true }` +
+  `restoreState = true` pattern, which is what satisfies R7.
+- **Typed arguments.** Declare navigation arguments as the destination composable's parameters and
+  let KSP generate the typed `…Destination(productId = …)` call. No manual string routes.
+- **Deep links.** `@Destination(deepLinks = [DeepLink(uriPattern = "…")])` per route, with the scheme
+  from `spec/app-identity.json`. Verify cold start, not just warm.
+- **Hosting the SDK flow.** A single destination whose content is `UseSmileIDBuilder { … }`. Because
+  that nests a `NavHost` inside a `NavHost`: give the inner controller the back gesture first (do
+  not add a host-level `BackHandler` that swallows it), keep predictive-back enabled so the inner
+  stack animates correctly, and never place this destination inside a tab that stays composed.
+- **State.** Form state in a ViewModel with `SavedStateHandle`; transient UI state in
+  `rememberSaveable`. Settings persist to `DataStore` so the SDK-step toggles survive restart.
+- **Sheets.** The library's sheet destinations (or a `dialog`/sheet destination in androidx nav) so
+  R8 holds.
+
+## 3. iOS — NavigationStack with a typed path
+
+- **Router.** An `@Observable` router holding `path: [Route]` where `Route: Hashable & Codable`, and
+  `NavigationStack(path:)` with `navigationDestination(for: Route.self)`. Sheets are separate
+  optional enum properties driven through `.sheet(item:)` / `.fullScreenCover(item:)`, which gives R3
+  and R8 for free.
+- **Safe to wrap.** The SDK does **not** create a `NavigationStack` — it swaps views through its own
+  `FlowNavigationManager` — so hosting it inside the app's stack does not produce the nested-stack
+  problems (broken toolbars, double back buttons) that wrapping a stack-owning view would.
+- **Teardown.** R5 matters most here. To cancel a flow, dismiss the cover or pop the path so the view
+  deinits; hiding it is not enough, and holding a reference keeps the camera alive.
+- **Restoration.** `@SceneStorage` for the selected tab and the encoded path. Because `Route` is
+  `Codable`, restoration is a decode rather than bespoke logic.
+- **Deep links.** `.onOpenURL` parses to `[Route]` and assigns the whole path at once, so a detail
+  link restores its parent stack in one assignment.
+
+## 4. Flutter — go_router + Riverpod
+
+Both were used in the kobo Flutter probe, and `StatefulShellRoute` is the specific reason to keep
+go_router: it gives per-tab navigators with preserved stacks, which is R7 without hand-rolling.
+
+- **Router shape.** `StatefulShellRoute.indexedStack` for the three tabs, each branch owning its
+  routes; flow and profile routes above the shell so they cover the tab bar when full-screen.
+- **Typed routes.** Prefer `go_router_builder` so arguments are compile-checked rather than parsed
+  out of `state.pathParameters`.
+- **Sheets as routes** via a `pageBuilder` returning a modal page, so R8 holds and deep links reach
+  them.
+- **SDK flow.** A normal widget on its own route. Wrap it in `PopScope` and let the SDK handle the
+  pop first (R2) rather than intercepting back at the route level.
+- **State.** Riverpod providers for form state, settings and the active scenario. Keep the session
+  **deadline** in a provider and derive the countdown from it (R6). Persist settings so toggles
+  survive restart.
+- **Restoration.** Set `restorationScopeId` and rebuild providers from persisted state.
+
+## 5. Expo — expo-router + zustand
+
+The sample already has expo-router; kobo's Expo probe paired it with zustand, which is the
+recommendation here too. File routes map 1:1 to the `expo` column of the route table.
+
+- **Layout.** `app/(tabs)/_layout.tsx` for the three tabs; flow and profile routes outside the group
+  so they present full-screen; `presentation: 'modal'` for sheet routes.
+- **Route shadowing is a known trap here.** The sweep already lost a test to two routes resolving to
+  the same name in different groups — the failure is silent. So route file names come from the route
+  table, stay distinct, and the spec-validation test asserts every path in `spec/routes.json` resolves
+  to exactly one screen.
+- **SDK flow.** One screen rendering the SDK component, with `headerShown: false` for the
+  full-screen presentation and the in-shell variant nested under `(tabs)`.
+- **State.** A zustand store per concern (forms, settings, session), with the persist middleware over
+  AsyncStorage for anything that must outlive a restart. Keep the session deadline, not a ticker.
+- **Deep links.** The scheme comes from `app.json` and must match `spec/app-identity.json` — one
+  scheme per app, because two apps sharing a scheme break automation silently.
+
+---
+
+## 6. How this lands alongside the UI work
+
+Per screen, in the same PR as the screen: add its route to `spec/routes.json` if missing, wire the
+route, wire the deep link, and add the `sample_*` ids the flow needs. A screen merged without its
+route is a screen no test can reach.
+
+Two milestones worth naming separately, because they are where the defects live:
+
+- **N1 — the shell.** Tabs, per-tab stacks, deep-link parsing, cold-start restoration. Do this with
+  the walking skeleton, before fidelity work.
+- **N2 — the flow handoff.** Both presentations of the SDK route, the replace-don't-stack result
+  transition (R4), cancellation semantics (R5), and recreation survival (R6). This is the riskiest
+  part of the whole app and it deserves device verification on every platform, not just CI.
+
+## 7. Open questions
+
+1. **Result-callback threading** — each SDK's result callback needs to marshal to the main thread
+   before navigating. Confirm per platform rather than assuming; a background-thread navigation is
+   the classic intermittent crash.
+2. **Cancelled versus failed** — the SDK distinguishes them, and the destination differs: cancel
+   should return to the originating tab with no job, failure should land on details with the error.
+   Confirm the intended behaviour before implementing R4.
+3. **Deep-linking into a flow mid-journey** — should `…/run` be openable directly, or only after its
+   forms? Directly is better for automation; it needs a rule for what happens when required form data
+   is missing (recommendation: open the form instead, preserving the intended destination).

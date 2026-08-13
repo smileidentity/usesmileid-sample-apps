@@ -108,6 +108,15 @@ get those right before anything else, because a late change to them touches ever
 6. **scanToken**
 7. **ResultCard** and the automation affordances (launch arguments, deep link)
 
+### U3b — routes, alongside the screens
+
+Navigation is not a later phase. Each screen lands with its route, its deep link and its ids in the
+same PR — see `docs/plan/navigation-plan.md` for the per-platform architecture and the nine shared
+rules. Two navigation milestones are worth tracking separately: **N1** the shell (tabs, per-tab
+stacks, deep-link parsing, cold-start restoration) belongs with the walking skeleton; **N2** the flow
+handoff (both presentations, replace-don't-stack on result, cancellation, recreation survival) is the
+riskiest part of the app and needs device verification per platform.
+
 ### U4 — states and goldens
 
 Every state in `spec/screens.json` becomes a preview and a golden test, light and dark. That is 38
