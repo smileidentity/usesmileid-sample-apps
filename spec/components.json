@@ -225,6 +225,13 @@
         "text-style.title",
         "spacing.md"
       ],
+      "metrics": {
+        "barHeight": "48 minimum (design draws 48 on verificationDetails/userDetails and 44 on scanToken; the larger is used, and it grows with the title)",
+        "control": "40 circular, back filled dark and trailing action tonal; Scan token's torch is filled",
+        "horizontalPadding": 16,
+        "titleTruncation": "none — the title wraps; capping it ellipsised 'Enhanced Document Verification' at 2x",
+        "token": "space40 for the control, space48 for the bar, spacing.md for padding"
+      },
       "variants": [
         "backOnly",
         "backWithAction",
@@ -253,6 +260,12 @@
         "text-style.body",
         "radius.field"
       ],
+      "metrics": {
+        "rowHeight": "43 plain, 50 with a copy control; built content-driven from a 40 minimum",
+        "horizontalPadding": "15 in the design, spacing.md (16) here — no token carries 15",
+        "copyTarget": "24 glyph, expanded to the platform 48 touch target",
+        "wrapping": "label and value are a FlowRow, so the value drops below the label at 2x instead of ellipsising"
+      },
       "variants": [
         "plain",
         "withCopy",
@@ -277,6 +290,11 @@
         "color.text.title",
         "color.primary"
       ],
+      "metrics": {
+        "rowHeight": "46 in the design, size.control-md (44) here — no token carries 46",
+        "horizontalPadding": "15 in the design, spacing.md (16) here",
+        "requiredMarker": "an asterisk appended to the label"
+      },
       "states": [
         "empty",
         "filled",
@@ -299,6 +317,12 @@
         "text-style.body-strong",
         "text-style.body-sm"
       ],
+      "metrics": {
+        "rowHeight": "65 with a supporting line, 64 without; space64 minimum, content-driven",
+        "leadingTile": "38 in the design, space40 here — no token carries 38 — at radius.sm",
+        "gapTileToText": "13 in the design, spacing.sm (12) here",
+        "trailing": "switch 46x28, or a chevron at size.icon-md"
+      },
       "variants": [
         "withSwitch",
         "navigation",
@@ -328,6 +352,12 @@
         "color.primary",
         "radius.surface"
       ],
+      "metrics": {
+        "rowHeight": "66 in the design, space64 minimum here, content-driven",
+        "avatar": "44 (size.control-md)",
+        "gapAvatarToText": "13 in the design, spacing.sm (12) here",
+        "selectedTreatment": "color.surface-alt fill at radius.field plus a size.icon-md check in color.primary"
+      },
       "states": [
         "default",
         "selected"
@@ -422,6 +452,14 @@
         "color.text.muted",
         "radius.surface"
       ],
+      "metrics": {
+        "rowHeight": "68 in the design; space64 minimum here, content-driven",
+        "iconTile": "36 in the design, space40 here — no token carries 36 — at radius.sm",
+        "gap": "12 (spacing.sm)",
+        "secondaryLine": "'<truncated job id> · HH:MM:SS'",
+        "wrapping": "the tile, text block and badge are a FlowRow, so the badge drops below the title at 2x",
+        "truncation": "none — the caller already elides the job id"
+      },
       "states": [
         "default",
         "pressed",
@@ -452,6 +490,13 @@
         "filter.trigger-text",
         "radius.chip"
       ],
+      "metrics": {
+        "height": "34 in the design; space32 minimum here, expanded to the platform 48 touch target",
+        "horizontalPadding": "14 in the design, spacing.sm (12) here",
+        "gapLabelToCount": "6 in the design, spacing.xxs (4) here",
+        "gapBetweenChips": 8,
+        "activeTreatment": "color.primary fill with on-primary label and count"
+      },
       "states": [
         "default",
         "active"
@@ -469,6 +514,10 @@
         "text-style.overline",
         "color.text.muted"
       ],
+      "metrics": {
+        "height": 13,
+        "format": "'<relative> · <absolute>', both passed in already formatted so the component holds no date string"
+      },
       "usedBy": [
         "verifications"
       ],
@@ -482,6 +531,11 @@
         "color.primary",
         "color.border"
       ],
+      "metrics": {
+        "size": "24 (size.icon-lg), circular",
+        "touchTarget": "expanded to the platform 48 minimum",
+        "gapToRow": 10
+      },
       "states": [
         "unchecked",
         "checked"
@@ -504,6 +558,12 @@
         "color.feedback.error.fill",
         "radius.control"
       ],
+      "metrics": {
+        "height": "84 including the navigation-bar inset; content-driven here",
+        "removeControl": "107x40 in the design; space40 minimum at radius.control",
+        "removeTreatment": "saturated color.feedback.error.fill with its on-colour — the design's soft red is one of the pending soft variants, and the saturated badge.error pair drew red on red",
+        "countNode": "'<n> selected' is its own text node so a flow asserts equality rather than parsing prose"
+      },
       "states": [
         "noneSelected",
         "someSelected"
@@ -538,6 +598,11 @@
         "color.text.title",
         "color.text.muted"
       ],
+      "metrics": {
+        "height": "46 in the design; size.control-md (44) here, matching the shipped TextInput rather than the design's 48 input",
+        "radius": "radius.field with a hairline input border",
+        "disabled": "surface-muted fill and muted content — the ID-type trigger until a country is chosen"
+      },
       "states": [
         "empty",
         "selected",
@@ -560,6 +625,11 @@
         "color.primary",
         "radius.field"
       ],
+      "metrics": {
+        "rowHeight": "42 in the design, size.control-md (44) here",
+        "leading": "the flag is text, not an asset, so it needs no icon set",
+        "selectedTreatment": "same as ProfileRow — surface-alt fill plus a primary check"
+      },
       "variants": [
         "withLeadingFlag",
         "plain"
@@ -585,6 +655,12 @@
         "color.overlay-scrim",
         "elevation.floating"
       ],
+      "metrics": {
+        "partial": "grab handle 44x5 (size.control-md by space4) at radius.chip, sheet at radius.sheet",
+        "fullHeight": "no handle; a 40 filled circular back control and the title, gap spacing.xs",
+        "horizontalPadding": "20 in the design, spacing.md (16) here",
+        "platform": "Material 3 ModalBottomSheet — drag-to-dismiss, scrim tap and insets are the platform's"
+      },
       "variants": [
         "partialWithHandle",
         "fullWithHeader"
@@ -876,6 +952,14 @@
     "unverified": [
       "SessionEndedBanner treatment (not rendered)",
       "per-product decorative hue assignment is observed from one render, not documented in the design system — see design-tokens.json additions"
-    ]
+    ],
+    "androidU2": "The thirteen general composites were built on Android 2026-08-13 against the design nodes named in `designRef`, or against the screen node in screens.json where a component has none. Metrics under each `metrics` key were read off those nodes, not estimated. Goldens (light and dark) and a max-font-scale predicate cover every one; see android/sample-ui/src/test/screenshots.",
+    "componentMetricGap": {
+      "id": "componentMetricsHaveNoTokens",
+      "found": "2026-08-13, while building U2 on Android.",
+      "detail": "The design's component metrics land between the generated scale steps: icon tiles at 36 and 38, rows at 42/43/46/50/65/66/68, chips at 34, and 14/15/13/10/6 paddings and gaps. The Compose emitter drops component dimensions (composeDropsComponentDimensions), so none of these exist as tokens. Every one was mapped to the nearest scale token and the substitution recorded per component under `metrics`, because a raw dp literal is the dimension equivalent of the hex literal the review rules ban.",
+      "consequence": "Rows are built from a `defaultMinSize` plus padding rather than a fixed height, so they match the design at default font scale and grow rather than clip at 2x. The three ports should copy the token choice, not the design's raw number.",
+      "ask": "Emit component dimensions, or add scale steps at 36 and 68 so tiles and rows stop rounding."
+    }
   }
 }

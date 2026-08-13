@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import com.smileid.designsystem.SmileDimens
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /**
@@ -43,7 +44,9 @@ fun UseSmileIDSampleJobRow(
     onClick: (() -> Unit)? = null,
     tileColor: Color = UseSmileIDSampleTheme.colors.surfaceAlt,
     testId: String? = null,
-    statusTestId: String? = null,
+    // Defaulted rather than attached outright: the badge sits inside a repeated row, so a list
+    // screen overrides it with the row's suffix instead of tagging every badge the same.
+    statusTestId: String? = UseSmileIDSampleTestIds.JOB_ROW_STATUS,
     leading: @Composable (() -> Unit)? = null,
 ) {
     val colors = UseSmileIDSampleTheme.colors

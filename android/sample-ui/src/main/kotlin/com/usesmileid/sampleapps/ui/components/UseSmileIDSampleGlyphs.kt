@@ -20,9 +20,12 @@ import com.smileid.designsystem.SmileDimens
  * The glyphs the composites need, drawn rather than imported: `material-icons` is not on this
  * classpath and adding it for eight outlines would be a dependency for nothing. Each one is stroked
  * on a square canvas so it stays crisp at any size and takes its colour from a token.
+ *
+ * Public because the slot APIs ask for them — a caller filling `UseSmileIDSampleTopAppBar`'s action
+ * or `UseSmileIDSampleSettingRow`'s leading slot needs a glyph to put in it.
  */
 @Composable
-internal fun BackArrowGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
+fun BackArrowGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
     val s = stroke()
     val inset = s.width
     val midY = this.size.height / 2f
@@ -39,7 +42,7 @@ internal fun BackArrowGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Ca
 }
 
 @Composable
-internal fun ChevronRightGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
+fun ChevronRightGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
     val s = stroke()
     drawPath(
         path = Path().apply {
@@ -53,7 +56,7 @@ internal fun ChevronRightGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) =
 }
 
 @Composable
-internal fun CheckGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
+fun CheckGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
     val s = stroke()
     drawPath(
         path = Path().apply {
@@ -67,7 +70,7 @@ internal fun CheckGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas
 }
 
 @Composable
-internal fun TrashGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
+fun TrashGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
     val s = stroke()
     val w = this.size.width
     val h = this.size.height
@@ -88,7 +91,7 @@ internal fun TrashGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas
 
 /** The Scan token app bar's trailing control — a bolt, because the design labels it torch/flash. */
 @Composable
-internal fun TorchGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
+fun TorchGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
     val w = this.size.width
     val h = this.size.height
     drawPath(
@@ -107,7 +110,7 @@ internal fun TorchGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas
 }
 
 @Composable
-internal fun CopyGlyph(tint: Color, size: Dp = SmileDimens.sizeIconSm) = Canvas(Modifier.size(size)) {
+fun CopyGlyph(tint: Color, size: Dp = SmileDimens.sizeIconSm) = Canvas(Modifier.size(size)) {
     val s = stroke()
     val w = this.size.width
     val h = this.size.height
@@ -131,7 +134,7 @@ internal fun CopyGlyph(tint: Color, size: Dp = SmileDimens.sizeIconSm) = Canvas(
 }
 
 @Composable
-internal fun PlusGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
+fun PlusGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
     val s = stroke()
     val w = this.size.width
     val h = this.size.height
@@ -141,7 +144,7 @@ internal fun PlusGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(
 
 /** A rounded square, standing in for the per-product mark until the icon set is supplied. */
 @Composable
-internal fun ProductMarkGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
+fun ProductMarkGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
     val s = stroke()
     val w = this.size.width
     val corner = w * 0.22f

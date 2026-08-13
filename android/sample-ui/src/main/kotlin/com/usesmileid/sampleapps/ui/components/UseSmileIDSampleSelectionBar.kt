@@ -19,10 +19,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import com.smileid.designsystem.SmileDimens
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /**
@@ -36,13 +38,10 @@ fun UseSmileIDSampleSelectionBar(
     selectedCount: Int,
     onRemove: () -> Unit,
     modifier: Modifier = Modifier,
-    testId: String? = null,
-    countTestId: String? = null,
-    removeTestId: String? = null,
 ) {
     val colors = UseSmileIDSampleTheme.colors
     Surface(
-        modifier = modifier.fillMaxWidth().tagged(testId),
+        modifier = modifier.fillMaxWidth().testTag(UseSmileIDSampleTestIds.SELECTION_BAR),
         color = colors.surface,
     ) {
         FlowRow(
@@ -62,7 +61,7 @@ fun UseSmileIDSampleSelectionBar(
                     text = "$selectedCount selected",
                     style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
                     color = colors.textTitle,
-                    modifier = Modifier.tagged(countTestId),
+                    modifier = Modifier.testTag(UseSmileIDSampleTestIds.SELECTION_COUNT),
                 )
                 Text(
                     text = if (selectedCount == 0) "Tap rows to select" else "Tap Remove to confirm",
@@ -70,11 +69,7 @@ fun UseSmileIDSampleSelectionBar(
                     color = colors.textMuted,
                 )
             }
-            RemoveAction(
-                enabled = selectedCount > 0,
-                onRemove = onRemove,
-                testId = removeTestId,
-            )
+            RemoveAction(enabled = selectedCount > 0, onRemove = onRemove)
         }
     }
 }
@@ -86,7 +81,7 @@ fun UseSmileIDSampleSelectionBar(
  * [UseSmileIDSampleStatusBadge] ships, until the soft variants land.
  */
 @Composable
-private fun RemoveAction(enabled: Boolean, onRemove: () -> Unit, testId: String?) {
+private fun RemoveAction(enabled: Boolean, onRemove: () -> Unit) {
     val colors = UseSmileIDSampleTheme.colors
     val tint = if (enabled) colors.onError else colors.textMuted
     Surface(
@@ -94,7 +89,7 @@ private fun RemoveAction(enabled: Boolean, onRemove: () -> Unit, testId: String?
         enabled = enabled,
         modifier = Modifier
             .semantics { role = Role.Button }
-            .tagged(testId),
+            .testTag(UseSmileIDSampleTestIds.SELECTION_REMOVE),
         shape = RoundedCornerShape(SmileDimens.radiusControl),
         color = if (enabled) colors.errorFill else colors.surfaceMuted,
     ) {

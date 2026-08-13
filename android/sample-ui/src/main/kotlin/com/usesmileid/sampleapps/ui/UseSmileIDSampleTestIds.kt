@@ -22,9 +22,14 @@ object UseSmileIDSampleTestIds {
     const val SCAN_TOKEN_SCREEN = "sample_scan_token_screen"
     const val SCENARIO_DRAWER = "sample_scenario_drawer"
 
-    // Attached by the toast itself; the spec assigns these to the component rather than to a screen.
+    // Attached by the component itself; the spec assigns these to the component rather than to a
+    // screen, because they carry no per-row suffix.
     const val TOAST = "sample_toast"
     const val TOAST_UNDO = "sample_toast_undo"
+    const val SELECTION_BAR = "sample_selection_bar"
+    const val SELECTION_COUNT = "sample_selection_count"
+    const val SELECTION_REMOVE = "sample_selection_remove"
+    const val JOB_ROW_STATUS = "sample_job_row_status"
 
     val all = listOf(
         NAV_PRODUCTS,
@@ -47,5 +52,9 @@ object UseSmileIDSampleTestIds {
         SCENARIO_DRAWER,
         TOAST,
         TOAST_UNDO,
+        SELECTION_BAR,
+        SELECTION_COUNT,
+        SELECTION_REMOVE,
+        JOB_ROW_STATUS,
     )
 }

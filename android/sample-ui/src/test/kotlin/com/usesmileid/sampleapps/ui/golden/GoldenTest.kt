@@ -17,7 +17,7 @@ import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.runComposeUiTest
+import androidx.compose.ui.test.v2.runComposeUiTest
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -89,28 +89,6 @@ abstract class GoldenTest {
         }
     }
 
-    /** Dumps every text node's layout, for working out whether an overflow is real. */
-    protected fun describeTextLayout(fontScale: Float = MAX_FONT_SCALE, content: @Composable () -> Unit): String {
-        var report = ""
-        runComposeUiTest {
-            host(dark = false, fontScale = fontScale, content = content)
-            val root = onNodeWithTag(GOLDEN_ROOT).fetchSemanticsNode()
-            report = mutableListOf<SemanticsNode>().also { it.collectFrom(root) }
-                .flatMap { node -> node.textLayoutResults().map { node to it } }
-                .joinToString("\n") { (node, layout) ->
-                    "%-34s node=%s layout=%dx%d lines=%d truncated=%b".format(
-                        node.textOrEmpty(),
-                        node.size,
-                        layout.size.width,
-                        layout.size.height,
-                        layout.lineCount,
-                        layout.isTruncated(),
-                    )
-                }
-        }
-        return report
-    }
-
     private fun ComposeUiTest.host(dark: Boolean, fontScale: Float, content: @Composable () -> Unit) {
         setContent {
             UseSmileIDSampleTheme(darkTheme = dark) {
@@ -130,6 +108,9 @@ abstract class GoldenTest {
                 }
             }
         }
+        // The v2 dispatcher queues rather than running composition immediately, so the tree has to
+        // be settled before anything reads or captures it.
+        waitForIdle()
     }
 
     private companion object {
