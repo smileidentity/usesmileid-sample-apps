@@ -1,9 +1,11 @@
+import org.gradle.api.tasks.PathSensitivity
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.roborazzi)
 }
 
 android {
@@ -23,6 +25,11 @@ android {
         compose = true
         buildConfig = false
     }
+
+    testOptions {
+        // Robolectric inflates real resources, so the golden tests need them on the test classpath.
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
@@ -37,8 +44,22 @@ dependencies {
     implementation(libs.androidx.compose.ui)
 
     testImplementation(libs.junit)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.compose)
+    // Supplies the ComponentActivity the compose test rule hosts; unit tests run the debug variant.
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
 
 tasks.withType<Test>().configureEach {
     systemProperty("sampleapps.spec.dir", layout.projectDirectory.dir("../../spec").asFile.absolutePath)
+
+    // Roborazzi compares against the committed goldens from inside this task, so Gradle has to be
+    // told they are an input. Without this the task stays up-to-date when a golden changes and
+    // verifyRoborazziDebug passes on a stale result — gating nothing.
+    inputs.dir(layout.projectDirectory.dir("src/test/screenshots"))
+        .withPropertyName("goldenScreenshots")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
 }
