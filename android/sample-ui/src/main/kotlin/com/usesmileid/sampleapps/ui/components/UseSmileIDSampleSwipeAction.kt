@@ -15,6 +15,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,10 +40,13 @@ fun UseSmileIDSampleSwipeAction(
     val state = rememberSwipeToDismissBoxState()
 
     // Reads the settled value rather than firing from a composition, so a recomposition mid-gesture
-    // cannot remove the row twice.
+    // cannot remove the row twice. The callback is read through rememberUpdatedState because the
+    // effect outlives recomposition: in a list each row's onRemove closes over its own item, and
+    // capturing the first one would remove whichever item the row held when the effect started.
+    val currentOnRemove by rememberUpdatedState(onRemove)
     LaunchedEffect(state) {
         snapshotFlow { state.currentValue }
-            .collect { if (it == SwipeToDismissBoxValue.EndToStart) onRemove() }
+            .collect { if (it == SwipeToDismissBoxValue.EndToStart) currentOnRemove() }
     }
 
     SwipeToDismissBox(
