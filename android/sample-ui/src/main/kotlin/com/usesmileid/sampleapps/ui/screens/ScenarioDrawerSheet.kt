@@ -10,13 +10,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 
-/**
- * The scenario drawer: a shipped affordance, not test-only scaffolding, because it is how a human
- * and a flow both observe what the SDK did.
- *
- * Theme scenarios apply on top of whichever flow scenario is active, so the two lists are separate
- * selections rather than one.
- */
+/** A shipped affordance, not scaffolding. Theme scenarios apply on top of the flow scenario, so the two are separate selections. */
 @Composable
 fun ScenarioDrawerSheet(
     activeScenario: UseSmileIDSampleScenario,

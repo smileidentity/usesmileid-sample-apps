@@ -1,12 +1,6 @@
 package com.usesmileid.sampleapps.ui.model
 
-/**
- * The products grid, in the design's order. Mirrors `spec/scenarios.json` → products, which is the
- * contract all four apps implement; a unit test asserts this list against it.
- *
- * `capture = false` is not a gap: Enhanced KYC composes the SDK flow without `capture()`, which is
- * the one journey proving the flow works without it.
- */
+/** The products grid in design order, asserted against `spec/scenarios.json` by a unit test. `capture = false` is Enhanced KYC, the one journey without `capture()`. */
 enum class UseSmileIDSampleProduct(
     val id: String,
     val label: String,

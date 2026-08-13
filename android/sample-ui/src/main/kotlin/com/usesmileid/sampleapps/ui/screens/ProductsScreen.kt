@@ -140,8 +140,7 @@ fun ProductsScreen(
             }
         }
 
-        // Trailing space, so the last card clears the floating nav bar and does not report clipped
-        // bounds to automation.
+        // Trailing space, so the last card clears the floating nav bar.
         item { Spacer(modifier = Modifier.height(SmileDimens.space64 * 2)) }
     }
 }

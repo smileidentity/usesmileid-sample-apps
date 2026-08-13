@@ -5,10 +5,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
-/**
- * A linked token session, held as an absolute deadline rather than a counter: a counter restarts at
- * the wrong value after process death, where a deadline is correct by construction.
- */
+/** A linked session, held as an absolute deadline: a counter restarts at the wrong value after process death. */
 @Immutable
 data class UseSmileIDSampleTokenSession(val id: String, val expiresAtMillis: Long) {
 

@@ -25,12 +25,7 @@ class UseSmileIDSampleAppState(
     val sessionActive: Boolean get() = session != null && !session.hasExpired(nowMillis)
 }
 
-/**
- * Collects the persisted state and ticks a clock once a second while a session is live.
- *
- * The clock is state rather than a stored counter: the deadline is absolute, so a restored session
- * shows the right remaining time without anything having to be recomputed on the way in.
- */
+/** Ticks once a second while a session is live. The deadline is absolute, so a restored session needs no recomputing. */
 @Composable
 fun rememberUseSmileIDSampleAppState(): UseSmileIDSampleAppState {
     val context = LocalContext.current

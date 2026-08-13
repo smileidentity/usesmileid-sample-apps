@@ -20,11 +20,7 @@ import androidx.compose.ui.semantics.Role
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * An organisation and a supporting line, the active one taking a pale fill as well as a check. Hue varies per profile, so the caller passes it.
- *
- * The supporting line is the person on the switch sheet and "Tap to configure" in settings, which is the design's own ProfileSummaryRow part.
- */
+/** An organisation and a supporting line — the person on the switch sheet, "Tap to configure" in settings. Hue varies per profile, so the caller passes it. */
 @Composable
 fun UseSmileIDSampleProfileRow(
     organisation: String,

@@ -24,10 +24,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarEmphasis
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * Scan token. The camera is deliberately absent: this repository never ships capture tooling, and
- * simulate is what makes every token-session state reachable without a QR code.
- */
+/** Scan token. No camera by design; simulate is what makes the session states reachable without a QR code. */
 @Composable
 fun ScanTokenScreen(
     onBack: () -> Unit,
@@ -50,8 +47,7 @@ fun ScanTokenScreen(
             ) { tint -> TorchGlyph(tint = tint) }
         }
         Column(
-            // Scrolls because the glyph is a fixed size: at 2x the copy beneath it no longer fits
-            // between the app bar and the sheet, and clipping it is what the predicate forbids.
+            // Scrolls because the glyph is fixed: at 2x its copy no longer fits above the sheet.
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()

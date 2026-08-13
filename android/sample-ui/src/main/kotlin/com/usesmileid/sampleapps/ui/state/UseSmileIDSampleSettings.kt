@@ -2,10 +2,7 @@ package com.usesmileid.sampleapps.ui.state
 
 import androidx.compose.runtime.Immutable
 
-/**
- * The Settings screen's state. Three of these look like booleans and are not: they decide whether a
- * step is composed into the SDK flow at all, rather than toggling anything at runtime.
- */
+/** The Settings state. Three of these decide whether a step is composed into the flow at all, rather than toggling anything. */
 @Immutable
 data class UseSmileIDSampleSettings(
     val smileToCapture: Boolean = true,

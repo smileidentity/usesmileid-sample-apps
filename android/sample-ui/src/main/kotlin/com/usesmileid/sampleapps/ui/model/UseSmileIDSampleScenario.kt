@@ -1,9 +1,6 @@
 package com.usesmileid.sampleapps.ui.model
 
-/**
- * The flow scenarios the drawer offers. Mirrors `spec/scenarios.json`, which all four apps
- * implement, and a unit test asserts this list against it.
- */
+/** The flow scenarios the drawer offers, asserted against `spec/scenarios.json` by a unit test. */
 enum class UseSmileIDSampleScenario(val id: String, val label: String, val description: String) {
     Normal("normal", "Normal", "Happy path with valid sandbox credentials."),
     ExpiredToken("expiredToken", "Expired token", "Token is valid but expired, so the SDK must refresh before it can submit."),

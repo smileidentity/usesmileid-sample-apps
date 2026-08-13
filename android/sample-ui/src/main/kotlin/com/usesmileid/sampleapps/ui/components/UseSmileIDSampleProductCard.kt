@@ -36,8 +36,7 @@ fun UseSmileIDSampleProductCard(
     icon: @Composable ((Color) -> Unit)? = null,
 ) {
     val colors = UseSmileIDSampleTheme.colors
-    // Whichever text token contrasts better with this card's fill. `textInverse` alone is right in
-    // light mode and wrong in dark, where it flips dark and the decorative fills do not.
+    // Whichever text token contrasts better: `textInverse` flips dark in dark mode, the fills do not.
     val onFill = listOf(colors.textInverse, colors.textTitle).maxBy {
         abs(it.luminance() - containerColor.luminance())
     }

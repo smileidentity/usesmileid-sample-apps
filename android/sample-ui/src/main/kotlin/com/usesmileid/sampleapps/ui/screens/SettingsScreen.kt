@@ -34,12 +34,7 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 /** One ABOUT or LEGAL row: an id, a title, and the line beneath it. */
 data class UseSmileIDSampleNavRow(val id: String, val title: String, val supportingText: String? = null)
 
-/**
- * Settings, the screen every other screen's configuration comes from.
- *
- * [versionLabel] is passed in because it names the host application, and this module runs under
- * eight identities.
- */
+/** Settings, which every other screen's configuration comes from. [versionLabel] is passed in because it names the host, and this module runs under eight. */
 @Composable
 fun SettingsScreen(
     settings: UseSmileIDSampleSettings,
@@ -83,8 +78,7 @@ fun SettingsScreen(
             )
         }
 
-        // Two switch rows, not one: 'Smile to capture' sits above agent mode and is the inverse of
-        // enhanced liveness, so the two write different fields.
+        // Two rows: 'Smile to capture' is the inverse of enhanced liveness, so it and agent mode differ.
         section("CAPTURE") {
             SwitchRow(
                 title = "Smile to capture",
@@ -142,8 +136,7 @@ fun SettingsScreen(
             )
         }
 
-        // The drawer is a shipped probe affordance, so it needs a real way in. The design draws no
-        // control for it, so this placement is ours and is worth confirming.
+        // The design draws no control for the drawer, so this placement is ours and worth confirming.
         section("DEBUG") {
             UseSmileIDSampleSettingRow(
                 title = "Scenarios",
