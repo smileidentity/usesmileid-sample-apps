@@ -26,4 +26,7 @@ internal object UseSmileIDSampleDeepLinks {
 
     const val SCAN_TOKEN = "$SCHEME://token/scan"
     const val SCENARIO_DRAWER = "$SCHEME://debug/scenarios"
+
+    // Dev-only, so not in spec/routes.json; still linkable because reaching it cold is how a flow drives it.
+    const val COMPONENT_GALLERY = "$SCHEME://debug/components"
 }

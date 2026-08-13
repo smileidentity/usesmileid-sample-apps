@@ -75,12 +75,22 @@ fun UseSmileIDSampleShell() {
     }
 }
 
-/** Cold start is handled when the graph is created; a warm deep link arrives as a new intent. */
+/**
+ * Cold start is handled when the graph is created; a warm deep link arrives as a new intent.
+ *
+ * A singleTop launcher relaunch lands here too, as a data-less `ACTION_MAIN`, so only the URI intents
+ * the manifest's VIEW filter admits are forwarded — widen this for a `NavDeepLinkBuilder` intent, which
+ * carries extras rather than data.
+ */
 @Composable
 private fun ForwardNewIntentsTo(navController: NavHostController) {
     val activity = LocalActivity.current as? ComponentActivity ?: return
     DisposableEffect(activity, navController) {
-        val listener = Consumer<Intent> { intent -> navController.handleDeepLink(intent) }
+        val listener = Consumer<Intent> { intent ->
+            if (intent.action == Intent.ACTION_VIEW && intent.data != null) {
+                navController.handleDeepLink(intent)
+            }
+        }
         activity.addOnNewIntentListener(listener)
         onDispose { activity.removeOnNewIntentListener(listener) }
     }

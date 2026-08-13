@@ -11,10 +11,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import com.smileid.designsystem.SmileDimens
 
-/**
- * The Compose theme, built entirely from the vendored design-system tokens. Typography is not
- * mapped yet: the generated Compose output emits type styles as comments until fonts are wired.
- */
+/** The Compose theme, built entirely from the vendored design-system tokens. */
 @Composable
 fun UseSmileIDSampleTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     val colors = if (darkTheme) darkColors else lightColors
@@ -22,6 +19,7 @@ fun UseSmileIDSampleTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @
         MaterialTheme(
             colorScheme = colors.toMaterialColorScheme(darkTheme),
             shapes = shapes,
+            typography = typography,
             content = content,
         )
     }
@@ -33,6 +31,9 @@ object UseSmileIDSampleTheme {
         @Composable @ReadOnlyComposable get() = LocalUseSmileIDSampleColors.current
 
     val dimens = SmileDimens
+
+    /** The full ramp, for the styles Material has no slot for. */
+    val type = smileTypeStyles
 }
 
 /** The SDK maps the same tokens onto the same slots, keeping host chrome and flow continuous. */

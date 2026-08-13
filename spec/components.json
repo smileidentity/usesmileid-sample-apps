@@ -140,7 +140,11 @@
         "settings",
         "userDetails"
       ],
-      "notes": "No design-system contract exists for a switch. Use the platform's native switch styled with semantic tokens rather than drawing one — native gives correct accessibility and touch behaviour for free. Flag to the design team that this component is missing from the contracts."
+      "notes": "No design-system contract exists for a switch. Use the platform's native switch styled with semantic tokens rather than drawing one — native gives correct accessibility and touch behaviour for free. Flag to the design team that this component is missing from the contracts.",
+      "contractGapReaffirmed": "STILL MISSING, reaffirmed 2026-08-13 after building against it. Nothing in tokens/component/ covers a switch, so there is no track, thumb, size or travel to reference — the three tokens listed above are semantic, chosen here rather than specified.",
+      "androidImplementation": "Material 3 Switch via SwitchDefaults.colors: checked track and border → color.primary, unchecked track and border → color.border, thumb → color.surface in both, disabled-checked track → color.text.muted, disabled-unchecked thumb → color.surface-muted. Nothing drawn by hand, so the touch target, drag behaviour and state description stay native.",
+      "askDesign": "A switch contract naming track-on / track-off / thumb / disabled variants, so the four platforms stop each picking their own semantic stand-ins. Until then expect the control to be the least visually consistent primitive across the four apps.",
+      "deviceNote": "The off and disabled tracks resolve to color.border, so on dark they render bright white — the darkBorder defect in design-tokens.json, not a switch-specific problem."
     },
     {
       "name": "StatusBadge",

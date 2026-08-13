@@ -219,6 +219,33 @@ dark-mode defects in the token source itself:
 Plus: the design system has **no `Switch` contract** and **no Dart output** — both are requests to
 the design system rather than things to solve locally.
 
+**Emitter gaps found while wiring U1 typography (2026-08-13).** Full detail in
+`spec/design-tokens.json` → `deltas`; the short version, because these are requests upstream rather
+than local work:
+
+13. **The Compose emitter writes all 29 type styles as comments** while the Dart emitter produces 29
+    real `TextStyle`s from the same resolved source. Not a platform limit — a `TextStyle` needs no
+    `FontFamily` to exist, and the emitter already holds every field, dropping `fontFamily` and
+    `letterSpacing` as it formats the comment. `scripts/sync_design_tokens.py` generates them here as
+    a stopgap so U1 was not blocked; delete that output when upstream emits them
+    (`composeTypeStylesAreComments`).
+14. **The Compose and SwiftUI emitters drop every component dimension** — `button.height`,
+    `input.height`, `badge.radius`, `avatar.size-*` and the rest — so the metrics `components.json`
+    names for each primitive do not exist in the generated output. The primitives reference the
+    semantic scale token carrying the identical value; only `avatar.size-md` has no equivalent
+    (`composeDropsComponentDimensions`).
+15. **`button.disabled.background` references the primitive `{color.grey.200}`** rather than a
+    semantic role, so it cannot re-resolve for dark and the disabled Button draws a near-white slab
+    on the dark background. Device-confirmed, and distinct from the `color.border` defect
+    (`buttonDisabledBypassesSemanticTier`).
+
+**Housekeeping still open:**
+
+16. **The app has no launcher icon.** `MissingApplicationIcon` is the one lint warning worth closing
+    of the five the app reports — the others are a min-API attribute note, two dependency-upgrade
+    nags and a deprecated-`allowBackup` note. Needs the Smile ID mark at adaptive-icon densities, so
+    it is a design asset request rather than code.
+
 ---
 
 ## 6. Effort

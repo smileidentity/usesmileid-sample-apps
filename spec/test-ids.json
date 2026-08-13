@@ -30,7 +30,9 @@
       },
       {
         "id": "sample_scenario_drawer",
-        "description": "Opens the debug scenario drawer (automation-facing; see scenarios.json)."
+        "description": "Opens the debug scenario drawer (automation-facing; see scenarios.json).",
+        "ambiguity": "UNRESOLVED 2026-08-13. This entry describes the control that OPENS the drawer, but screens.json lists the same id among the scenarioDrawer screen's own testIds, and Android currently attaches it to the sheet ROOT (android/maestro/deep-links.yaml asserts it that way after a cold deep link). One id cannot be both, and a flow that taps the opener and then asserts the root would pass on either meaning while testing neither.",
+        "resolution": "Decide before U3 wires the drawer: keep this id for the sheet root (matching screens.json and the shipped Android behaviour) and add a separate opener id, or keep it for the opener and give the root its own. Whichever way, the other three apps follow. The ids are a forever contract, so this is a rename that must not happen twice."
       },
       {
         "id": "sample_scenario_item",

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.annotation.parameters.DeepLink
+import com.usesmileid.sampleapps.android.gallery.ComponentGalleryScreen as ComponentGalleryContent
 import com.usesmileid.sampleapps.ui.screens.CountryPickerSheet as CountryPickerContent
 import com.usesmileid.sampleapps.ui.screens.IdTypePickerSheet as IdTypePickerContent
 import com.usesmileid.sampleapps.ui.screens.KycIdFormScreen as KycIdFormContent
@@ -83,3 +84,8 @@ fun ScanTokenScreen() = ScanTokenContent()
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SCENARIO_DRAWER)])
 @Composable
 fun ScenarioDrawerSheet() = ScenarioDrawerContent()
+
+/** Dev-only, and a shell route by design: `sample-ui` never holds a gallery or a scratchpad. */
+@Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.COMPONENT_GALLERY)])
+@Composable
+fun ComponentGalleryScreen() = ComponentGalleryContent()

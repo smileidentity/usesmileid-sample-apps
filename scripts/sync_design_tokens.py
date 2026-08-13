@@ -20,9 +20,10 @@ Dart has no upstream target, so it is GENERATED here from the platform-neutral
 dist/json/tokens.flat.json, mirroring the Compose emitter's naming (camelCase from the
 token path, SmileColorLight / SmileColorDark / SmileDimens / SmileType).
 
-Two deliberate differences from Compose: that emitter leaves typography as comments
-because Compose needs font resources wired first, and omits shadows entirely. Dart can
-express both directly, so text styles and shadows are emitted as real values.
+Compose's type styles and the DM Sans faces they resolve against are generated here too, because
+the upstream emitter writes all 29 styles as comments. That is an emitter gap rather than a
+platform limit — see spec/design-tokens.json -> deltas -> composeTypeStylesAreComments — so this
+is a stopgap until upstream emits them. Compose also omits shadows, which Dart emits directly.
 
 Every token leaf must classify into a known kind. An unrecognised value FAILS the run
 rather than being skipped, because silent skipping is how this generator first diverged
@@ -31,7 +32,7 @@ from the Compose output: rgba() colours vanished and nothing complained.
 Usage:
     scripts/sync_design_tokens.py                          # generate Dart (default)
     scripts/sync_design_tokens.py --dart                   # the same, stated explicitly
-    scripts/sync_design_tokens.py --all                    # Dart + copy the other three
+    scripts/sync_design_tokens.py --all                    # Dart + Compose type + fonts + copies
     scripts/sync_design_tokens.py --design-system <path>   # override autodetection
     scripts/sync_design_tokens.py --check                  # fail if output is stale
 
@@ -61,6 +62,21 @@ DEFAULT_DS_PATHS = [
 ]
 
 DART_OUT = "flutter/sample_ui/lib/src/tokens/smile_tokens.dart"
+
+ANDROID_UI = "android/sample-ui"
+KOTLIN_TYPE_OUT = f"{ANDROID_UI}/src/main/kotlin/com/usesmileid/sampleapps/ui/tokens/SmileTypeStyles.kt"
+
+# The five DM Sans weights the ramp uses (400–800). Android resource names must be lowercase.
+FONT_COPIES = [
+    (f"assets/fonts/DMSans-{upstream}.ttf", f"{ANDROID_UI}/src/main/res/font/dm_sans_{local}.ttf")
+    for upstream, local in [
+        ("Regular", "regular"),
+        ("Medium", "medium"),
+        ("SemiBold", "semibold"),
+        ("Bold", "bold"),
+        ("ExtraBold", "extrabold"),
+    ]
+]
 
 # (upstream file, destination, the app directory that must exist for the copy to apply)
 COPIES = [
@@ -96,6 +112,22 @@ HEADER = """// Smile ID Design System — GENERATED. Do not edit by hand.
 // Requires Dart 3 — the token holders use `abstract final class`.
 
 import 'package:flutter/material.dart';
+"""
+
+KOTLIN_HEADER = """@file:Suppress("MagicNumber")
+// Smile ID Design System — GENERATED. Do not edit by hand.
+//
+// Regenerate with: scripts/sync_design_tokens.py --all
+//
+// A stopgap: the upstream Compose emitter writes these as comments. Names mirror the Dart emitter's
+// SmileType. Delete this file once upstream emits real TextStyles.
+
+package com.smileid.designsystem
+
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 """
 
 RGBA = re.compile(r"rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:,\s*([\d.]+)\s*)?\)")
@@ -337,6 +369,84 @@ def emit_type(tokens: dict) -> str:
     return "\n".join(lines)
 
 
+def kotlin_sp(value: float) -> str:
+    """A Compose `.sp` literal. Negatives need parentheses: `-0.4.sp` does not parse."""
+    text = f"{value:g}"
+    return f"({text}).sp" if value < 0 else f"{text}.sp"
+
+
+def emit_kotlin_type(tokens: dict) -> str:
+    """Compose wants an ABSOLUTE lineHeight, so a unitless ratio is multiplied out, not divided."""
+    lines = [
+        "/** The token source's type ramp, bound to the font families the app supplies. */",
+        "class SmileTypeStyles(display: FontFamily, body: FontFamily) {",
+    ]
+    for path, value in walk(tokens):
+        if not is_type_leaf(value):
+            continue
+        family = value.get("fontFamily") or []
+        primary = family[0] if isinstance(family, list) and family else str(family or "DM Sans")
+        slot = "body" if primary.strip().lower() == "dm sans" else "display"
+        size = float(number(value["fontSize"]))
+        raw_line_height = value.get("lineHeight", value["fontSize"])
+        if is_unitless(raw_line_height):
+            line_height = float(number(raw_line_height)) * size
+        else:
+            line_height = float(number(raw_line_height))
+        tracking = float(number(value.get("letterSpacing", 0)))
+        lines += [
+            f"    val {camel(path)} = TextStyle(",
+            f"        fontFamily = {slot},",
+            f"        fontWeight = FontWeight({int(float(value['fontWeight']))}),",
+            f"        fontSize = {kotlin_sp(size)},",
+            f"        lineHeight = {kotlin_sp(line_height)},",
+            f"        letterSpacing = {kotlin_sp(tracking)},",
+            "    )",
+        ]
+    lines.append("}")
+    return "\n".join(lines)
+
+
+def generate_kotlin_type(ds: str) -> str:
+    tokens_path = os.path.join(ds, "dist", "json", "tokens.flat.json")
+    with io.open(tokens_path, encoding="utf-8") as handle:
+        data = json.load(handle)
+    return KOTLIN_HEADER + "\n" + emit_kotlin_type(data["light"]) + "\n"
+
+
+def write_binary(rel_path: str, payload: bytes, check: bool) -> bool:
+    """Byte comparison, so `--check` catches a font swapped upstream."""
+    target = os.path.join(REPO, rel_path)
+    existing = None
+    if os.path.isfile(target):
+        with open(target, "rb") as handle:
+            existing = handle.read()
+    if existing == payload:
+        print(f"  unchanged  {rel_path}")
+        return True
+    if check:
+        print(f"  STALE      {rel_path}")
+        return False
+    os.makedirs(os.path.dirname(target), exist_ok=True)
+    with open(target, "wb") as handle:
+        handle.write(payload)
+    print(f"  {'updated' if existing else 'created'}    {rel_path}")
+    return True
+
+
+def copy_fonts(ds: str, check: bool) -> bool:
+    ok = True
+    for source, dest in FONT_COPIES:
+        source_path = os.path.join(ds, source)
+        if not os.path.isfile(source_path):
+            print(f"  MISSING    {source} (the design system does not ship this face)")
+            ok = False
+            continue
+        with open(source_path, "rb") as handle:
+            ok = write_binary(dest, handle.read(), check) and ok
+    return ok
+
+
 def dart_formatted(content: str) -> str:
     """Run `dart format` over the generated source when the SDK is available.
 
@@ -496,6 +606,11 @@ def main(argv=None) -> int:
 
     if args.all:
         ok = copy_upstream(ds, args.check) and ok
+        if os.path.isdir(os.path.join(REPO, ANDROID_UI)):
+            ok = write(KOTLIN_TYPE_OUT, generate_kotlin_type(ds), args.check) and ok
+            ok = copy_fonts(ds, args.check) and ok
+        else:
+            print(f"  skipped    {KOTLIN_TYPE_OUT} ({ANDROID_UI} does not exist yet)")
 
     if not ok:
         message = (

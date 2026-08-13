@@ -160,6 +160,45 @@ class TestTypography(unittest.TestCase):
         self.assertIn("letterSpacing: -1,", gen.emit_type(self.style(letterSpacing="-1px")))
 
 
+class TestComposeTypography(unittest.TestCase):
+    def style(self, **overrides):
+        base = {
+            "fontFamily": ["DM Sans", "sans-serif"],
+            "fontWeight": 700,
+            "fontSize": "16px",
+            "lineHeight": "24px",
+            "letterSpacing": "0px",
+        }
+        base.update(overrides)
+        return {"text-style": {"title": base}}
+
+    def test_line_height_stays_absolute(self):
+        # The inverse of the Dart emitter, which divides it into a ratio for `height:`.
+        out = gen.emit_kotlin_type(self.style())
+        self.assertIn("lineHeight = 24.sp,", out)
+        self.assertIn("fontSize = 16.sp,", out)
+        self.assertIn("FontWeight(700)", out)
+
+    def test_unitless_line_height_is_multiplied_out(self):
+        self.assertIn("lineHeight = 22.4.sp,", gen.emit_kotlin_type(self.style(lineHeight=1.4)))
+
+    def test_negative_tracking_is_parenthesised(self):
+        # `letterSpacing = -0.4.sp` does not parse.
+        out = gen.emit_kotlin_type(self.style(letterSpacing="-0.4px"))
+        self.assertIn("letterSpacing = (-0.4).sp,", out)
+
+    def test_family_is_chosen_per_token_not_hardcoded(self):
+        body = gen.emit_kotlin_type(self.style())
+        display = gen.emit_kotlin_type(self.style(fontFamily=["Epilogue", "DM Sans"]))
+        self.assertIn("fontFamily = body,", body)
+        self.assertIn("fontFamily = display,", display)
+
+    def test_names_match_the_dart_emitter(self):
+        tokens = {"text-style": {"display-lg": self.style()["text-style"]["title"]}}
+        self.assertIn("val textStyleDisplayLg = TextStyle(", gen.emit_kotlin_type(tokens))
+        self.assertIn("TextStyle textStyleDisplayLg = TextStyle(", gen.emit_type(tokens))
+
+
 class TestNaming(unittest.TestCase):
     def test_camel_matches_the_compose_emitter(self):
         self.assertEqual(gen.camel(["color", "text", "title"]), "colorTextTitle")
