@@ -13,10 +13,7 @@ import com.smileid.designsystem.SmileDimens
 /**
  * Two columns of product cards, with an empty slot where a section has an odd count.
  *
- * Built from rows rather than a lazy grid because a section is at most three cards and the screen
- * that hosts it already scrolls — nesting a lazy grid in a scroll is the shape that breaks.
- * Each row takes its tallest card's height so a two-line title next to a one-line title still
- * produces two cards of equal height.
+ * Rows rather than a lazy grid, because the host screen already scrolls. Each row takes its tallest card's height.
  */
 @Composable
 fun UseSmileIDSampleProductGrid(

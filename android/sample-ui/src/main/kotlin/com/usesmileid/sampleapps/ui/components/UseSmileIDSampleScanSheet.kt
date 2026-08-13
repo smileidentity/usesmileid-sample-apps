@@ -28,13 +28,7 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * The sheet under the scanner: a manual-entry row with Paste, above a primary simulate button.
- *
- * Simulate is a product feature, not debug scaffolding — it is what makes every token-session flow
- * testable with no QR code to point a camera at, which is the whole reason automation can reach the
- * session states at all.
- */
+/** The sheet under the scanner. Simulate is a product feature, not scaffolding: it is how a flow reaches the session states with no QR source. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UseSmileIDSampleScanSheet(

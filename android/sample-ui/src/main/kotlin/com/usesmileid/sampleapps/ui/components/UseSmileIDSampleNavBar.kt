@@ -42,13 +42,9 @@ enum class UseSmileIDSampleNavItem(val testId: String, val label: String) {
 }
 
 /**
- * A floating pill holding the three tabs, plus a visually detached circular token button. The
- * token affordance is modelled separately because it navigates rather than switching tab, and it
- * carries the session countdown ring.
+ * A floating pill of three tabs, plus a detached token button that navigates rather than switching tab.
  *
- * [sessionProgress] drives that ring: 1f is a fresh session and 0f an expired one, derived from the
- * remaining time against an absolute deadline rather than from an animation duration, so it is
- * correct after the process is killed and restored.
+ * [sessionProgress] drives its ring, 1f fresh to 0f expired, from the session's deadline rather than an animation.
  */
 @Composable
 fun UseSmileIDSampleNavBar(
@@ -84,13 +80,7 @@ fun UseSmileIDSampleNavBar(
     }
 }
 
-/**
- * The detached token button, with the countdown ring drawn around it.
- *
- * The ring is painted outside the button's bounds rather than laid out around it: a 64dp ring in the
- * layout made the row wider than a 393dp screen, which pushed this whole affordance off the edge and
- * wrapped a tab label. It bleeds into the bar's own padding instead, which is what the design does.
- */
+/** The ring is painted outside the button's bounds, not laid out around it: at 64dp in the layout it pushed this off a 393dp screen. */
 @Composable
 private fun TokenAffordance(progress: Float?, onClick: () -> Unit) {
     val colors = UseSmileIDSampleTheme.colors
@@ -124,12 +114,7 @@ private fun TokenAffordance(progress: Float?, onClick: () -> Unit) {
     }
 }
 
-/**
- * The countdown ring around the token button.
- *
- * Green rather than primary blue, and drawn from the session's remaining time — a fixed animation
- * duration would drift from the deadline the session actually holds.
- */
+/** The countdown ring: green rather than primary, and driven by remaining time rather than a fixed duration. */
 @Composable
 fun UseSmileIDSampleTokenRing(
     progress: Float,
@@ -169,8 +154,7 @@ private fun DrawScope.drawTokenRing(progress: Float, track: Color, fill: Color, 
 private fun NavBarTab(item: UseSmileIDSampleNavItem, selected: Boolean, onClick: () -> Unit) {
     Text(
         text = item.label,
-        // tabFont, not Material's labelLarge: that slot carries the 16px bold button style here, and
-        // three tabs at button size do not fit a 393dp screen alongside the token affordance.
+        // tabFont, not labelLarge: that slot is the 16px bold button style, which overflows a 393dp screen.
         style = UseSmileIDSampleTheme.type.tabFont,
         color = if (selected) UseSmileIDSampleTheme.colors.primary else UseSmileIDSampleTheme.colors.textMuted,
         textAlign = TextAlign.Center,

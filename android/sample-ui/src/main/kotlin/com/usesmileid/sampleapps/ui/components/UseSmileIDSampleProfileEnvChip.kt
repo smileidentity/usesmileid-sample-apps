@@ -18,18 +18,13 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/** Sandbox or production. There is no third case, and the app must never silently run against the wrong one. */
+/** Sandbox or production; there is no third case. */
 enum class UseSmileIDSampleEnvironment(val label: String) {
     Sandbox("Sandbox"),
     Production("Production"),
 }
 
-/**
- * A status dot and the environment name on a pale fill.
- *
- * Display-only: the profile-switch trigger is the header avatar button, per the 2026-08-13 decision.
- * Its width is not fixed, because "Production" is wider than "Sandbox".
- */
+/** A status dot and the environment name on a pale fill. Display-only, and not fixed-width, because Production is wider than Sandbox. */
 @Composable
 fun UseSmileIDSampleProfileEnvChip(
     environment: UseSmileIDSampleEnvironment,

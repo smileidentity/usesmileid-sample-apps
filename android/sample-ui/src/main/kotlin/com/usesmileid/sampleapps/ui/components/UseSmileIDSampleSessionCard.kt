@@ -22,13 +22,7 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * The active token session: a filled green card with inverse text and a large m:ss countdown.
- *
- * [remaining] is passed in already formatted, because the session is stored as an absolute deadline
- * and the ticking belongs to the screen — a counting-down value restarts at the wrong number after
- * process death.
- */
+/** The active token session: a filled green card with a m:ss countdown. [remaining] arrives formatted, because the deadline is absolute and the ticking is the screen's. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UseSmileIDSampleSessionCard(
@@ -75,10 +69,7 @@ fun UseSmileIDSampleSessionCard(
     }
 }
 
-/**
- * Replaces [UseSmileIDSampleSessionCard] once the session expires: a neutral grey card, not a
- * warning-accented one, with a text action back to the scanner.
- */
+/** Replaces [UseSmileIDSampleSessionCard] on expiry: a neutral card, not a warning-accented one. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UseSmileIDSampleSessionEndedBanner(
@@ -89,8 +80,7 @@ fun UseSmileIDSampleSessionEndedBanner(
     Surface(
         modifier = modifier.fillMaxWidth().testTag(UseSmileIDSampleTestIds.SESSION_ENDED_BANNER),
         shape = RoundedCornerShape(SmileDimens.radiusSurface),
-        // surface-muted, per this component's token list, rather than the banner contract: the
-        // design corrected this to a neutral card and the banner fill is a warm sand.
+        // surface-muted per this component's token list; the banner contract's fill is a warm sand.
         color = colors.surfaceMuted,
         border = BorderStroke(SmileDimens.borderWidthHairline, colors.border),
     ) {
@@ -122,8 +112,7 @@ fun UseSmileIDSampleSessionEndedBanner(
                 style = UseSmileIDSampleTheme.type.linkFont,
                 color = colors.primary,
                 softWrap = false,
-                // clickable before the sizing modifiers, so the tap target is the padded box rather
-                // than the line box the link text would otherwise occupy.
+                // clickable before the sizing modifiers, so the tap target is the padded box.
                 modifier = Modifier
                     .clickable(role = Role.Button, onClick = onScan)
                     .minimumInteractiveComponentSize()
