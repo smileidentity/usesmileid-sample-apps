@@ -20,9 +20,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
@@ -65,6 +68,8 @@ fun UseSmileIDSampleNavBar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Surface(
+            // The pill yields width to the token affordance rather than pushing it off the row.
+            modifier = Modifier.weight(1f, fill = false),
             shape = RoundedCornerShape(SmileDimens.radiusPill),
             color = UseSmileIDSampleTheme.colors.surface,
             border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.border),
@@ -82,16 +87,25 @@ fun UseSmileIDSampleNavBar(
 /**
  * The detached token button, with the countdown ring drawn around it.
  *
- * The ring sits outside the button rather than inside it, so the button keeps its full 44dp and the
- * ring cannot eat the tap target.
+ * The ring is painted outside the button's bounds rather than laid out around it: a 64dp ring in the
+ * layout made the row wider than a 393dp screen, which pushed this whole affordance off the edge and
+ * wrapped a tab label. It bleeds into the bar's own padding instead, which is what the design does.
  */
 @Composable
 private fun TokenAffordance(progress: Float?, onClick: () -> Unit) {
     val colors = UseSmileIDSampleTheme.colors
-    Box(contentAlignment = Alignment.Center) {
-        if (progress != null) {
-            UseSmileIDSampleTokenRing(progress = progress, modifier = Modifier.size(RING_DIAMETER))
-        }
+    val track = colors.border
+    val fill = colors.successFill
+    Box(
+        modifier = Modifier
+            .size(SmileDimens.sizeControlMd)
+            .drawBehind {
+                if (progress != null) {
+                    drawTokenRing(progress = progress, track = track, fill = fill, inflate = RING_BLEED.toPx())
+                }
+            },
+        contentAlignment = Alignment.Center,
+    ) {
         Surface(
             modifier = Modifier.size(SmileDimens.sizeControlMd),
             shape = CircleShape,
@@ -123,36 +137,41 @@ fun UseSmileIDSampleTokenRing(
 ) {
     val track = UseSmileIDSampleTheme.colors.border
     val fill = UseSmileIDSampleTheme.colors.successFill
-    Canvas(modifier = modifier) {
-        val stroke = Stroke(width = SmileDimens.borderWidthThick.toPx(), cap = StrokeCap.Round)
-        val inset = stroke.width / 2f
-        val diameter = size.minDimension - stroke.width
-        drawArc(
-            color = track,
-            startAngle = 0f,
-            sweepAngle = FULL_TURN,
-            useCenter = false,
-            topLeft = Offset(inset, inset),
-            size = Size(diameter, diameter),
-            style = stroke,
-        )
-        drawArc(
-            color = fill,
-            startAngle = QUARTER_TURN_UP,
-            sweepAngle = FULL_TURN * progress.coerceIn(0f, 1f),
-            useCenter = false,
-            topLeft = Offset(inset, inset),
-            size = Size(diameter, diameter),
-            style = stroke,
-        )
-    }
+    Canvas(modifier = modifier) { drawTokenRing(progress = progress, track = track, fill = fill, inflate = 0f) }
+}
+
+/** [inflate] pushes the ring outside the bounds it is drawn in, so it can circle a smaller button. */
+private fun DrawScope.drawTokenRing(progress: Float, track: Color, fill: Color, inflate: Float) {
+    val stroke = Stroke(width = SmileDimens.borderWidthThick.toPx(), cap = StrokeCap.Round)
+    val topLeft = stroke.width / 2f - inflate
+    val diameter = size.minDimension - stroke.width + inflate * 2f
+    drawArc(
+        color = track,
+        startAngle = 0f,
+        sweepAngle = FULL_TURN,
+        useCenter = false,
+        topLeft = Offset(topLeft, topLeft),
+        size = Size(diameter, diameter),
+        style = stroke,
+    )
+    drawArc(
+        color = fill,
+        startAngle = QUARTER_TURN_UP,
+        sweepAngle = FULL_TURN * progress.coerceIn(0f, 1f),
+        useCenter = false,
+        topLeft = Offset(topLeft, topLeft),
+        size = Size(diameter, diameter),
+        style = stroke,
+    )
 }
 
 @Composable
 private fun NavBarTab(item: UseSmileIDSampleNavItem, selected: Boolean, onClick: () -> Unit) {
     Text(
         text = item.label,
-        style = MaterialTheme.typography.labelLarge,
+        // tabFont, not Material's labelLarge: that slot carries the 16px bold button style here, and
+        // three tabs at button size do not fit a 393dp screen alongside the token affordance.
+        style = UseSmileIDSampleTheme.type.tabFont,
         color = if (selected) UseSmileIDSampleTheme.colors.primary else UseSmileIDSampleTheme.colors.textMuted,
         textAlign = TextAlign.Center,
         modifier = Modifier
@@ -162,7 +181,7 @@ private fun NavBarTab(item: UseSmileIDSampleNavItem, selected: Boolean, onClick:
     )
 }
 
-/** 68 in the design, around a 44 button; space64 is the nearest the scale reaches. */
-private val RING_DIAMETER = SmileDimens.space64
+/** The ring is 68 around a 44 button, so it bleeds spacing.sm past the button on every side. */
+private val RING_BLEED = SmileDimens.spacingSm
 private const val FULL_TURN = 360f
 private const val QUARTER_TURN_UP = -90f
