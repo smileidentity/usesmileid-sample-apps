@@ -68,7 +68,8 @@
         "badge.warning.text": "#2d2b2a"
       },
       "finding": "CONFIRMED from the prototype recording 2026-08-12: the design uses SOFT tinted pills for ALL FOUR statuses (pale green Clear, pale amber Attention, pale red Blocked, pale blue Processing). The design system's badge.* tokens are saturated fills with inverse text, so no current token pair produces the intended treatment.",
-      "recommendation": "Add soft badge variants to the design system (background + text per role). This is now a system gap rather than a per-status judgement call: the design applies soft fills consistently, and hardcoding the Figma hexes would bypass the token source."
+      "recommendation": "Add soft badge variants to the design system (background + text per role). This is now a system gap rather than a per-status judgement call: the design applies soft fills consistently, and hardcoding the Figma hexes would bypass the token source.",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: keep the design's soft treatment and ADD soft badge variants to the design system (background + text per role for success/warning/error/info). Do not hardcode locally; the existing saturated pairs stay for surfaces that want them."
     },
     {
       "id": "darkBorder",
@@ -78,7 +79,8 @@
         "color.border dark": "#eaecf0"
       },
       "finding": "color.border does not change between light and dark. A #EAECF0 border on the dark background (#1A1C23) is near-maximum contrast and will read as a bright outline around every card and row.",
-      "recommendation": "Flag to the design system owners; the sample apps are the first surface to consume dark mode from these tokens, so this would surface as a visible bug on day one. Do not patch it locally — fix it in the token source."
+      "recommendation": "Flag to the design system owners; the sample apps are the first surface to consume dark mode from these tokens, so this would surface as a visible bug on day one. Do not patch it locally — fix it in the token source.",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: fix in the design system, not locally. Suggested values: color.border dark → a subtle dark-grey (e.g. #333846); color.text.muted dark → a lighter grey clearing 4.5:1 (e.g. #9BA1AC). Raise before U0 wires dark mode."
     },
     {
       "id": "darkMuted",
@@ -88,7 +90,8 @@
         "color.text.muted dark": "#848282"
       },
       "finding": "Muted text is the same grey in both modes. On the dark background that lands near the 4.5:1 threshold for small text, and muted text is used for supporting lines and the date group headers.",
-      "recommendation": "Ask for a lighter muted grey in dark mode, or verify the contrast ratio and accept it explicitly."
+      "recommendation": "Ask for a lighter muted grey in dark mode, or verify the contrast ratio and accept it explicitly.",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: fix in the design system, not locally. Suggested values: color.border dark → a subtle dark-grey (e.g. #333846); color.text.muted dark → a lighter grey clearing 4.5:1 (e.g. #9BA1AC). Raise before U0 wires dark mode."
     },
     {
       "id": "pillRadius",
@@ -132,14 +135,9 @@
     "comment": "Tokens this design needs that the system does not expose. Empty is the goal; each entry is a request to the design system, not a local override.",
     "candidates": [
       {
-        "need": "per-product decorative colour assignment for the ProductCard glyph and icon tile",
-        "current": "color.decorative.* exists (9 hues) but the design does not say which product gets which",
-        "ask": "a documented product→hue mapping so all four platforms colour the grid identically"
-      },
-      {
-        "need": "per-profile avatar colour",
-        "current": "profile avatars render in three different hues in the design (navy / green / amber) with no documented rule",
-        "ask": "a documented profile→hue rule, or a deterministic derivation (e.g. hash of profile id into color.decorative.*) specified once here so four platforms agree"
+        "need": "product → hue and profile → hue mapping",
+        "status": "OWNER DECISION 2026-08-13 — the DESIGNER supplies the list once (5 product hues now 6 with Enhanced KYC, plus the profile hues). Blocks final ProductCard and Avatar colours only; primitives and layout can proceed.",
+        "shape": "productHues: {productId: color.decorative.*}, profileHues: {profileId: color.decorative.*}"
       }
     ]
   }

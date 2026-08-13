@@ -120,7 +120,7 @@
           },
           {
             "id": "smartSelfieAuth",
-            "label": "SmartSelfie Auth",
+            "label": "SmartSelfie Authentication",
             "jobType": "SmartSelfieAuthentication",
             "capture": true,
             "needsUserDetails": true,
@@ -154,19 +154,28 @@
             "capture": true,
             "needsUserDetails": true,
             "needsIdDetails": true
+          },
+          {
+            "id": "enhancedKyc",
+            "label": "Enhanced KYC",
+            "jobType": "EnhancedKyc",
+            "capture": false,
+            "needsUserDetails": true,
+            "needsIdDetails": true,
+            "note": "OWNER DECISION 2026-08-13: added to fill the grid's empty slot. No camera step — the SDK flow composes consent() + processing() only, which needs no SDK change and makes this the one journey proving the flow works without capture(). Needs a 6th product card designed (icon + hue)."
           }
         ]
       }
     ],
     "notInDesign": {
-      "comment": "Present in the SDK's JobType enum but absent from the products grid, which has exactly one empty slot. Both are form/API-shaped rather than capture-shaped. See screens.json openQuestions.productCoverage.",
+      "comment": "BVN is the only SDK job type left out. iOS `buildJobRequest()` documents it as NOT SUPPORTED and throws, so excluding it is correct rather than a gap.",
       "jobTypes": [
-        "EnhancedKyc",
         "BVN"
       ]
     },
     "flowOrder": "product tapped → Consent Details Form (sample-owned user details, seeded from the active profile — the design labels these fields 'ATTACHED TO EVERY JOB', so every product shows it) → ID details form (sample-owned, only when needsIdDetails) → SDK flow [consent → instructions → capture → preview → processing] → verification details in the processing state. Everything before the SDK flow is sample-owned, which is why no SDK change is needed.",
     "flowOrderRuling": "OWNER RULING 2026-08-13: e.g. SmartSelfie Enrollment → Consent Details Form → SDK flow. The Figma prototype still shows the SDK consent screen first; that wiring is stale and is not being updated.",
-    "needsUserDetailsNote": "Set true for every product on the evidence of the design's own label 'USER DETAILS — ATTACHED TO EVERY JOB' (board 06 profile config) plus the owner's SmartSelfie Enrollment example."
+    "needsUserDetailsNote": "Set true for every product on the evidence of the design's own label 'USER DETAILS — ATTACHED TO EVERY JOB' (board 06 profile config) plus the owner's SmartSelfie Enrollment example.",
+    "captureless": "Products with capture=false (enhancedKyc) compose the SDK flow WITHOUT capture() or preview(): consent() + processing(). Everything before the SDK flow is unchanged."
   }
 }

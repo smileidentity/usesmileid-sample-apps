@@ -215,7 +215,8 @@ the never-commit list above; no marker can unpublish history.
       in **any** commit (`git log --all --stat` for suspicious paths, plus a secret scan). If one
       does, the flip waits on a history rewrite or a fresh-history re-publish
 - [ ] all four apps build from the registry with no override, in debug **and** release
-- [ ] `LICENSE` chosen and added, and third-party asset licences confirmed as redistributable
+- [x] `LICENSE` chosen and added — **MIT**, matching all five sibling repos (2026-08-13). Third-party
+      asset licences still to be confirmed as redistributable
 - [ ] every credential in CI is sandbox-scoped, and no workflow exposes a secret to a fork PR
 - [ ] README, `docs/plan/` and `AGENTS.md` read correctly to an outside partner engineer — no
       unexplained internal shorthand

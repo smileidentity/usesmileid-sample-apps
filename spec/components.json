@@ -34,13 +34,15 @@
         "initials"
       ],
       "usedBy": [
+        "products",
         "profileSwitchSheet",
         "profiles",
         "settings"
       ],
       "notes": "CORRECTED 2026-08-12: the background colour varies PER PROFILE rather than being one avatar.bg. Needs a documented profile→hue rule so all four platforms colour the same profile identically (same gap as the product→hue mapping).",
       "colouring": "per-profile hue (observed navy / green / amber across the three profiles), white initials",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2348"
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2348",
+      "decision": "OWNER DECISION 2026-08-13: a header avatar BUTTON is added next to the environment chip on products, and it is what opens the profile-switch sheet. Small design addition. Per-profile hues come from the designer's list."
     },
     {
       "name": "Button",
@@ -167,7 +169,8 @@
       ],
       "notes": "CORRECTED 2026-08-12 from the prototype recording. The design uses soft tinted pills, not the design system's saturated badge fills. Do not resolve this with the current badge.* tokens — see the softBadgeVariant delta in design-tokens.json. Vocabulary maps to roles: Clear→success, Attention→warning, Blocked→error, Processing→info.",
       "fillTreatment": "SOFT — a pale tinted fill with a dark same-hue label, for ALL FOUR statuses (pale green Clear, pale amber Attention, pale red Blocked, pale blue Processing).",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2410"
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2410",
+      "decision": "OWNER DECISION 2026-08-13: ship the design's SOFT tinted pills for all four statuses. Implemented by adding soft variants to the design system (never by hardcoding the Figma hexes), so it stays token-driven."
     },
     {
       "name": "SectionLabel",
@@ -307,7 +310,8 @@
         "VersionLabel — the footer line beneath the last section",
         "RememberDetailsRow — switch variant used on userDetails"
       ],
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2898"
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2898",
+      "decision": "OWNER DECISION 2026-08-13: 'Smile to capture' ON means enhanced liveness OFF (see settingsToSdkMapping)."
     },
     {
       "name": "ProfileRow",
@@ -352,7 +356,8 @@
       "usedBy": [
         "products"
       ],
-      "notes": "VERIFIED against a render 2026-08-12. It is an ENVIRONMENT pill — a status dot plus the environment name ('Sandbox') on a pale fill. There is no avatar in it; the profile avatar lives in Settings. The production variant is wider, so do not fix its width."
+      "notes": "VERIFIED against a render 2026-08-12. It is an ENVIRONMENT pill — a status dot plus the environment name ('Sandbox') on a pale fill. There is no avatar in it; the profile avatar lives in Settings. The production variant is wider, so do not fix its width.",
+      "decision": "OWNER DECISION 2026-08-13: the chip DISPLAYS environment only and is no longer the profile-switch trigger — the new header avatar button owns that."
     },
     {
       "name": "ProductCard",
@@ -373,7 +378,8 @@
       "usedBy": [
         "products"
       ],
-      "notes": "VERIFIED against a render 2026-08-12. The WHOLE CARD is filled with a decorative colour (green, indigo, amber, near-black, indigo across the five products) with inverse text — not a white card with a coloured accent. Anatomy: white rounded icon tile top-left, a same-hue ghost glyph watermark bleeding off the top-right, title bottom-left in inverse text (may wrap to two lines), and a circular outlined arrow bottom-right. 174x148 in a 2-up grid, 12 gap."
+      "notes": "VERIFIED against a render 2026-08-12. The WHOLE CARD is filled with a decorative colour (green, indigo, amber, near-black, indigo across the five products) with inverse text — not a white card with a coloured accent. Anatomy: white rounded icon tile top-left, a same-hue ghost glyph watermark bleeding off the top-right, title bottom-left in inverse text (may wrap to two lines), and a circular outlined arrow bottom-right. 174x148 in a 2-up grid, 12 gap.",
+      "decision": "OWNER DECISION 2026-08-13: six products now (Enhanced KYC fills the empty slot). The label is 'SmartSelfie Authentication' in full, which WRAPS TO TWO LINES on a 174-wide card — verify the card's two-line footer still fits at large font scales, and raise it with design if it clips."
     },
     {
       "name": "ProductGrid",
@@ -805,7 +811,7 @@
     "Consent screen": "include or omit consent() in the flow builder — there is NO showConsent boolean",
     "Instruction screen": "include or omit instructions() in the flow builder",
     "Preview screen": "include or omit preview() in the flow builder (allowRetake configures it once present)",
-    "Smile to capture": "UNRESOLVED — a second CAPTURE row found in the recording. SelfieCaptureConfig exposes allowAgentMode and enableEnhancedLiveness, so this plausibly toggles enhanced-vs-passive liveness (inverted), but that is a guess. Needs an SDK answer before implementing; see screens.json openQuestions.smileToCaptureMapping."
+    "Smile to capture": "OWNER DECISION 2026-08-13: ON → `SelfieCaptureConfig.enableEnhancedLiveness = false` (passive smile capture); OFF → `enableEnhancedLiveness = true` (head-turn capture). It is the inverse of enhanced liveness, NOT a separate field — so it and Agent mode write different fields and cannot fight."
   },
   "buildOrder": [
     "1. Tokens: generate the platform token source and wire light/dark (nothing else can start).",

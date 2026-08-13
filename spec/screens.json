@@ -97,6 +97,7 @@
       ],
       "components": [
         "ProfileEnvChip",
+        "Avatar",
         "SectionHeader",
         "ProductCard",
         "ProductGrid",
@@ -112,7 +113,11 @@
         "sample_env_chip"
       ],
       "canonicalLayoutUrl": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-4037",
-      "ruling": "OWNER RULING 2026-08-13: build the EXPRESSIVE GRID (5206-4037). The prototype runs the old list layout throughout and is not being updated, so the grid is authoritative for layout and the list frames are reference-only for the states drawn on them."
+      "ruling": "OWNER RULING 2026-08-13: build the EXPRESSIVE GRID (5206-4037). The prototype runs the old list layout throughout and is not being updated, so the grid is authoritative for layout and the list frames are reference-only for the states drawn on them.",
+      "designAsks": [
+        "a 6th product card for Enhanced KYC (icon + hue)",
+        "a header avatar button next to the environment chip, which opens the profile-switch sheet"
+      ]
     },
     {
       "id": "profileSwitchSheet",
@@ -329,7 +334,7 @@
         "sample_idnumber_input",
         "sample_kyc_continue"
       ],
-      "appliesTo": "products whose spec entry sets needsIdDetails (document verification, enhanced document verification, biometric KYC)",
+      "appliesTo": "every product needing details — documentVerification, enhancedDocumentVerification, biometricKyc and enhancedKyc — with the same three fields (Country, ID type, ID number)",
       "fieldDependency": "ID TYPE is disabled until COUNTRY is selected; Continue enables only once country, ID type and ID number are all set.",
       "flowPosition": "After the Consent Details Form, still BEFORE the SDK flow."
     },
@@ -429,7 +434,11 @@
         "sample_setting_instructions_step",
         "sample_setting_preview_step",
         "sample_sign_out"
-      ]
+      ],
+      "copy": {
+        "footer": "UseSmileID Sample · 1.0.0",
+        "aboutDocs": "docs.smileidentity.com"
+      }
     },
     {
       "id": "profiles",
@@ -558,61 +567,71 @@
       "question": "The products grid shows 5 job types (SmartSelfie Enrollment, SmartSelfie Auth, Document Verification, Enhanced Doc Verification, Biometric KYC) plus one empty slot. The SDK's JobType enum has 7: EnhancedKyc(5) and BVN(7) are absent. Are those intentionally out of scope for the sample, or does the empty slot belong to one of them?",
       "blocks": "final product list; consumption lanes can only exercise what the sample exposes",
       "recommendation": "Decide explicitly. Both missing types are form/API-shaped rather than capture-shaped, so leaving them out is defensible — but then the sample never exercises them and no CI lane can.",
-      "sdkEvidence": "iOS `buildJobRequest()` states the BVN job type is NOT SUPPORTED and throws. Leaving BVN out of the grid is therefore the defensible default; EnhancedKyc remains a genuine product decision."
+      "sdkEvidence": "iOS `buildJobRequest()` states the BVN job type is NOT SUPPORTED and throws. Leaving BVN out of the grid is therefore the defensible default; EnhancedKyc remains a genuine product decision.",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: ADD Enhanced KYC (6 products, slot filled). BVN stays out — iOS throws on it. Design ask: one more product card (icon + hue)."
     },
     {
       "id": "boardNaming",
       "question": "Board 05 is titled 'Consent & KYC' but contains no consent screen — the consent frames live in board 04 ('Consent & user details'). Rename 05 to 'KYC / ID details' to avoid a wrong-board lookup?",
-      "blocks": "nothing; documentation hygiene"
+      "blocks": "nothing; documentation hygiene",
+      "status": "OWNER DECISION 2026-08-13 — housekeeping only; ask design to rename board 05 to 'KYC / ID details' when convenient."
     },
     {
       "id": "appNameCopy",
       "question": "The Settings footer reads 'Smile ID Sample App · 1.0.0' while the agreed app identity is 'UseSmileID Sample' (spec/app-identity.json). Which string ships?",
       "blocks": "settings screen copy, store metadata",
-      "recommendation": "Use the agreed display name in the footer so the app matches its launcher label."
+      "recommendation": "Use the agreed display name in the footer so the app matches its launcher label.",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: 'UseSmileID Sample' everywhere, so the Settings footer matches the launcher label and store listing. Footer becomes 'UseSmileID Sample · 1.0.0'."
     },
     {
       "id": "docsDomain",
       "question": "The ABOUT section links 'docs.usesmileid.com'. Confirm that domain is live, or point it at the current documentation host.",
-      "blocks": "settings ABOUT rows"
+      "blocks": "settings ABOUT rows",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: link to docs.smileidentity.com, the host the documentation publishes to today."
     },
     {
       "id": "smileToCaptureMapping",
       "question": "Settings CAPTURE has two rows: 'Smile to capture / Passive capture — smile detection' and 'Agent mode'. Agent mode is SelfieCaptureConfig.allowAgentMode. What does 'Smile to capture' set? enableEnhancedLiveness inverted, or something else?",
       "blocks": "the CAPTURE section and any flow it configures",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2898",
-      "recommendation": "Get an SDK answer rather than inferring; the two switches must not silently set the same field."
+      "recommendation": "Get an SDK answer rather than inferring; the two switches must not silently set the same field.",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: ON → enableEnhancedLiveness = false. See components.json settingsToSdkMapping."
     },
     {
       "id": "softBadgeVariant",
       "question": "The design uses soft tinted status pills for all four statuses; the design system's badge tokens are saturated. Add soft variants to the design system, or change the design?",
       "blocks": "StatusBadge",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2410",
-      "recommendation": "Add soft variants to the system — the design applies them consistently across all four roles, so this is a system gap rather than a one-off."
+      "recommendation": "Add soft variants to the system — the design applies them consistently across all four roles, so this is a system gap rather than a one-off.",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: keep the design's soft pills; add soft variants to the design system."
     },
     {
       "id": "docvIdFormVariant",
       "question": "The ID-details form is only drawn for Biometric KYC (country / ID type / ID number). What does it look like for Document Verification and Enhanced Document Verification — country plus document type, no ID number?",
       "blocks": "kycIdForm for two of the five products",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2797"
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2797",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: one identical form for every product needing details — Country, ID type, ID number — including both document products and Enhanced KYC. Simplest to build and test."
     },
     {
       "id": "profileAndProductHues",
       "question": "Product cards and profile avatars both use per-item colours (5 product hues, 3 profile hues observed). Which decorative token does each product and each profile get?",
       "blocks": "ProductCard and Avatar rendering identically across four platforms",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-4037"
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-4037",
+      "status": "OWNER DECISION 2026-08-13 — DECIDED: the designer supplies the mapping list once; stored in design-tokens.json. Still awaiting the list."
     },
     {
       "id": "labelCopy",
       "question": "The products list shows 'SmartSelfie Authentication' in some frames and 'SmartSelfie Auth' in others (the grid uses 'SmartSelfie Auth'). Which string ships?",
       "blocks": "product labels and their derived test ids",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-4037"
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-4037",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: 'SmartSelfie Authentication' everywhere, matching the SDK's job-type name. Note it wraps to two lines on the grid card."
     },
     {
       "id": "switchProfileTrigger",
       "question": "Which element on the products screen opens the Switch profile sheet — the environment chip, or something else? The recording shows the sheet but not the trigger.",
       "blocks": "products screen wiring",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2348"
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2348",
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: add a header AVATAR BUTTON next to the environment chip; it opens the sheet. The chip becomes display-only. Small design addition needed."
     }
   ],
   "verification": {

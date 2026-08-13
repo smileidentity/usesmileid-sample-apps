@@ -161,34 +161,43 @@ plus a torch on Scan token, the simulate primary button, and the selected-row fi
 `spec/screens.json` → `verification.recording`.
 
 **Design set:**
-**Resolved (no longer blocking):**
+**All eleven questions were closed by the owner on 2026-08-13.** What remains is design *input*,
+not decisions.
 
-- **Which products layout to build** — the expressive grid (`5206-4037`). The prototype runs the old
-  list layout and will not be updated, so engineering transposes the session card, environment chip
-  and token ring onto the grid.
-- **Where the pre-flow form sits** — `product → Consent Details Form → SDK flow`, for every product.
-  The prototype's consent-first order is stale wiring.
-- **Where the result card goes** — verification details, which the recording showed is the
-  post-submission destination.
+**Decided:**
 
-**Open — needs a design or SDK answer:**
+- **Products layout** — build the expressive grid (`5206-4037`); the prototype's list layout is stale.
+- **Pre-flow order** — `product → Consent Details Form → [ID details form] → SDK flow`, every product.
+- **Result destination** — verification details, in its processing state; that's where the result card lives.
+- **Status badges** — keep the design's soft tinted pills, delivered by adding soft variants to the
+  design system rather than hardcoding hexes.
+- **Dark-mode tokens** — the two defects get fixed in the design system, not overridden locally.
+- **"Smile to capture"** — ON means `enableEnhancedLiveness = false`. It is the inverse of enhanced
+  liveness, so it and Agent mode write different fields and cannot fight.
+- **Products** — six now: Enhanced KYC fills the empty slot. It has no camera step, so its SDK flow is
+  `consent() + processing()` — no SDK change, and it becomes the one journey that proves the flow
+  composes without `capture()`. BVN stays out (iOS throws on it).
+- **ID-details form** — one identical form (Country, ID type, ID number) for all four products that
+  need details, including Enhanced KYC.
+- **Copy** — "SmartSelfie Authentication" everywhere; the app is "UseSmileID Sample" everywhere
+  including the Settings footer; ABOUT links to docs.smileidentity.com.
+- **Profile switching** — a new header avatar button opens the sheet; the environment chip becomes
+  display-only.
+- **Licence** — MIT, added, matching the five sibling repos.
+- **Colour mapping** — the designer supplies the product→hue and profile→hue list once.
 
-1. **"Smile to capture"** — which SDK field does the second CAPTURE switch set? Agent mode is
-   `allowAgentMode`; `SelfieCaptureConfig` also exposes `enableEnhancedLiveness`. Do not infer.
-2. **Soft badge variants** — the design uses soft tinted pills for all four statuses; the design
-   system's `badge.*` tokens are saturated. Add soft variants to the system, or change the design.
-3. **ID-details form for the two document products** — it is only drawn for Biometric KYC. Country
-   plus document type, without an ID number?
-4. **Product→hue and profile→hue mappings** — five product cards and three profile avatars each use a
-   different colour, with no documented rule. Needed or the four platforms will disagree.
-5. **Label copy** — "SmartSelfie Auth" (grid) versus "SmartSelfie Authentication" (list frames).
-6. **Switch profile trigger** — which element on the products screen opens the sheet.
-7. **Job-type coverage** — the grid shows 5 of the SDK's 7 types; `EnhancedKyc` and `BVN` are absent
-   and there is exactly one empty slot. Intentional?
-8. **Board 05 title** — "Consent & KYC" holds no consent screen (those are in board 04).
-9. **App name** — the Settings footer reads "Smile ID Sample App · 1.0.0" while the agreed display
-   name is "UseSmileID Sample" (`spec/app-identity.json`).
-10. **`docs.usesmileid.com`** — confirm the host.
+**Design input still needed** (none of it blocks U0, U1, N1 or the walking skeleton):
+
+1. The product→hue and profile→hue list — 6 products, plus profiles. Blocks final `ProductCard` and
+   `Avatar` colours only.
+2. A **6th product card** for Enhanced KYC (icon + hue).
+3. A **header avatar button** on products, next to the environment chip.
+4. Soft badge variants added to the design system (background + text per role).
+5. The two dark-mode token fixes in the design system — needed before U0 finishes wiring dark mode.
+6. Watch one consequence of the copy decision: "SmartSelfie Authentication" **wraps to two lines** on a
+   174-wide card. Confirm the two-line footer holds at large font scales, and raise it with design if
+   it clips.
+7. Housekeeping: ask design to rename board 05 to "KYC / ID details" — it holds no consent screen.
 
 **Token source** (`spec/design-tokens.json` → `deltas`) — the good news first: the design file's
 variables match the design system **exactly** (`#151f72` primary, `#21232c` title, `#848282` muted,
