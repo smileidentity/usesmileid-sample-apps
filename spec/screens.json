@@ -108,9 +108,12 @@
       ],
       "testIds": [
         "sample_products_screen",
+        "sample_env_chip",
+        "sample_profile_avatar_button",
         "sample_product_card",
         "sample_session_card",
-        "sample_env_chip"
+        "sample_session_countdown",
+        "sample_session_ended_banner"
       ],
       "canonicalLayoutUrl": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-4037",
       "ruling": "OWNER RULING 2026-08-13: build the EXPRESSIVE GRID (5206-4037). The prototype runs the old list layout throughout and is not being updated, so the grid is authoritative for layout and the list frames are reference-only for the states drawn on them.",
@@ -552,6 +555,35 @@
         "sample_token_paste",
         "sample_token_simulate"
       ]
+    },
+    {
+      "id": "scenarioDrawer",
+      "title": "Scenario drawer",
+      "owner": "sample",
+      "notInDesign": true,
+      "board": null,
+      "route": "modalSheet",
+      "states": [
+        {
+          "state": "flowScenarios",
+          "node": null
+        },
+        {
+          "state": "themeScenarios",
+          "node": null
+        }
+      ],
+      "components": [
+        "BottomSheet",
+        "SectionLabel",
+        "ScenarioDrawer"
+      ],
+      "testIds": [
+        "sample_scenario_drawer",
+        "sample_scenario_item",
+        "sample_theme_item"
+      ],
+      "note": "A debug affordance, not a designed screen. AGENTS.md mandates it; the design does not cover it."
     }
   ],
   "openQuestions": [
@@ -608,7 +640,7 @@
     {
       "id": "docvIdFormVariant",
       "question": "The ID-details form is only drawn for Biometric KYC (country / ID type / ID number). What does it look like for Document Verification and Enhanced Document Verification — country plus document type, no ID number?",
-      "blocks": "kycIdForm for two of the five products",
+      "blocks": "kycIdForm for the document products and Enhanced KYC",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2797",
       "status": "OWNER DECISION 2026-08-13 — RESOLVED: one identical form for every product needing details — Country, ID type, ID number — including both document products and Enhanced KYC. Simplest to build and test."
     },
@@ -632,6 +664,12 @@
       "blocks": "products screen wiring",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2348",
       "status": "OWNER DECISION 2026-08-13 — RESOLVED: add a header AVATAR BUTTON next to the environment chip; it opens the sheet. The chip becomes display-only. Small design addition needed."
+    },
+    {
+      "id": "drawerPresentation",
+      "question": "The scenario drawer is required by AGENTS.md and has test ids, but the design set has no frame for it. How should it present, and what opens it — a long-press on the header, a hidden gesture, or a row at the bottom of Settings?",
+      "blocks": "the drawer's build only; every scenario is already reachable by launch argument",
+      "recommendation": "A bottom sheet opened by a long-press on the environment chip, so it stays out of a partner's way while remaining reachable on a release build."
     }
   ],
   "verification": {

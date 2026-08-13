@@ -135,8 +135,9 @@ No app exists yet. As each platform lands it must expose one script that is the 
 for that platform, mirroring the per-PR CI gate:
 
 ```bash
-scripts/sync_design_tokens.py --all    # vendor design tokens for all four platforms
-scripts/sync_design_tokens.py --check  # CI: fail if any vendored token file is stale
+scripts/sync_design_tokens.py --all           # vendor design tokens for every platform present
+scripts/sync_design_tokens.py --check         # fail if any vendored token file is stale
+python3 scripts/test_sync_design_tokens.py    # tests for the token generator
 
 android/verify.sh     # lint + unit tests + spec validation + release assemble
 ios/verify.sh         # swiftformat/swiftlint + tests + release build
@@ -146,6 +147,10 @@ expo/verify.sh        # eslint + tsc --noEmit + test + release build
 
 Until then, state plainly in the PR what you could and could not run. Publishing is not this
 repo's job; there is nothing here to publish.
+
+**No CI exists yet** — there is no `.github/` directory, so nothing above runs automatically. Treat
+the commands as the local contract until the workflows land, and note that `--check` needs the design
+system checked out, so CI will have to provide it.
 
 ## Conventions
 
@@ -221,6 +226,11 @@ the never-commit list above; no marker can unpublish history.
       documents the convention itself — it is the one expected match, and the section stays.
 - [ ] no reference remains to internal-only repositories, internal planning documents, or internal
       tracker items — this repo's docs must stand alone
+- [ ] **jargon sweep** — the `INTERNAL-ONLY` grep cannot catch internal shorthand nobody marked, so
+      grep explicitly for the terms that mean nothing to a partner: internal probe-app and codename
+      references, private repo names, internal tracker prefixes, and any team-only abbreviation. One
+      such leak (an internal probe codename used to justify a library choice) was caught in review
+      rather than by the marker grep, which is why this line exists
 - [ ] history audit: no secret, credential, fixture, biometric media or internal playbook appears
       in **any** commit (`git log --all --stat` for suspicious paths, plus a secret scan). If one
       does, the flip waits on a history rewrite or a fresh-history re-publish

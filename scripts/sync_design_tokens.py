@@ -13,22 +13,31 @@ design system's own naming and conventions as the single source of truth:
     dist/ios/SmileTokens.swift    -> ios/SampleUI/.../SmileTokens.swift
     dist/ts/tokens.ts             -> expo/sample-ui/src/tokens.ts
 
+A copy whose destination app does not exist yet is skipped rather than created, so this is
+safe to run at any point in the build-out.
+
 Dart has no upstream target, so it is GENERATED here from the platform-neutral
 dist/json/tokens.flat.json, mirroring the Compose emitter's naming (camelCase from the
 token path, SmileColorLight / SmileColorDark / SmileDimens / SmileType).
 
-One deliberate difference from Compose: that emitter leaves typography as comments
-because Compose needs font resources wired first. Dart can express a TextStyle directly,
-so text styles are emitted as real values.
+Two deliberate differences from Compose: that emitter leaves typography as comments
+because Compose needs font resources wired first, and omits shadows entirely. Dart can
+express both directly, so text styles and shadows are emitted as real values.
+
+Every token leaf must classify into a known kind. An unrecognised value FAILS the run
+rather than being skipped, because silent skipping is how this generator first diverged
+from the Compose output: rgba() colours vanished and nothing complained.
 
 Usage:
-    scripts/sync_design_tokens.py --dart                  # generate Dart only (default)
-    scripts/sync_design_tokens.py --all                   # Dart + copy the other three
-    scripts/sync_design_tokens.py --design-system <path>  # override autodetection
-    scripts/sync_design_tokens.py --check                  # fail if output is stale (CI)
+    scripts/sync_design_tokens.py                          # generate Dart (default)
+    scripts/sync_design_tokens.py --dart                   # the same, stated explicitly
+    scripts/sync_design_tokens.py --all                    # Dart + copy the other three
+    scripts/sync_design_tokens.py --design-system <path>   # override autodetection
+    scripts/sync_design_tokens.py --check                  # fail if output is stale
 
-Output is passed through `dart format` when the Dart SDK is on PATH, so the generator and
-the formatter cannot disagree.
+Output goes through `dart format` when the Dart SDK is on PATH, so the generator and the
+formatter cannot disagree. `--check` needs the design system present locally, so CI has to
+check it out before running the check.
 """
 
 from __future__ import annotations
@@ -38,49 +47,76 @@ import io
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Where the design system usually sits on a machine with the shared skills checked out.
+# Where the design system sits on a machine with the shared agent skills present.
 DEFAULT_DS_PATHS = [
     "~/.claude/skills/smile-design-system",
     "~/.agents/skills/smile-design-system",
-    "~/AndroidStudioProjects/SmileID/claude-skills/smile-design-system",
 ]
 
 DART_OUT = "flutter/sample_ui/lib/src/tokens/smile_tokens.dart"
+
+# (upstream file, destination, the app directory that must exist for the copy to apply)
 COPIES = [
-    ("dist/android/SmileTokens.kt", "android/sample-ui/src/main/kotlin/com/usesmileid/sampleapps/ui/tokens/SmileTokens.kt"),
-    ("dist/ios/SmileTokens.swift", "ios/SampleUI/Sources/SampleUI/Tokens/SmileTokens.swift"),
-    ("dist/ts/tokens.ts", "expo/sample-ui/src/tokens.ts"),
+    (
+        "dist/android/SmileTokens.kt",
+        "android/sample-ui/src/main/kotlin/com/usesmileid/sampleapps/ui/tokens/SmileTokens.kt",
+        "android/sample-ui",
+    ),
+    (
+        "dist/ios/SmileTokens.swift",
+        "ios/SampleUI/Sources/SampleUI/Tokens/SmileTokens.swift",
+        "ios/SampleUI",
+    ),
+    ("dist/ts/tokens.ts", "expo/sample-ui/src/tokens.ts", "expo/sample-ui"),
 ]
 
 # Token groups whose dimension values become SmileDimens entries (mirrors emitCompose).
 DIMENSION_GROUPS = {"spacing", "radius", "size", "space", "border-width"}
 
+# Kinds an emitter turns into Dart, and kinds that are recognised but deliberately not
+# emitted (they are inputs to the type styles, or plain metadata).
+EMITTED_KINDS = {"color", "dimension", "duration", "type", "shadow"}
+CARRIED_KINDS = {"number", "text", "font-stack"}
+
 HEADER = """// Smile ID Design System — GENERATED. Do not edit by hand.
 //
-// Regenerate with: scripts/sync_design_tokens.py --dart
+// Regenerate with: scripts/sync_design_tokens.py
 // Source: the design system's dist/json/tokens.flat.json (fully resolved light + dark).
 //
 // Naming mirrors the Compose output (SmileColorLight / SmileColorDark / SmileDimens /
 // SmileType) so the two platforms are diffable against each other.
+//
+// Requires Dart 3 — the token holders use `abstract final class`.
 
 import 'package:flutter/material.dart';
 """
 
+RGBA = re.compile(r"rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:,\s*([\d.]+)\s*)?\)")
+HEX = re.compile(r"#[0-9a-fA-F]{6,8}")
+NUMBER = re.compile(r"-?\d+(\.\d+)?")
+DIMENSION = re.compile(r"-?\d+(\.\d+)?(px|rem|em|%)")
+DURATION = re.compile(r"\d+(\.\d+)?m?s")
+
+
+class TokenError(RuntimeError):
+    """A token the emitters cannot handle. Fails the run rather than being skipped."""
+
 
 def find_design_system(explicit: str | None) -> str:
     candidates = [explicit] if explicit else DEFAULT_DS_PATHS
-    for c in candidates:
-        if not c:
+    for candidate in candidates:
+        if not candidate:
             continue
-        p = os.path.realpath(os.path.expanduser(c))
-        if os.path.isfile(os.path.join(p, "dist", "json", "tokens.flat.json")):
-            return p
+        path = os.path.realpath(os.path.expanduser(candidate))
+        if os.path.isfile(os.path.join(path, "dist", "json", "tokens.flat.json")):
+            return path
     sys.exit(
         "Could not find the design system. Pass --design-system <path> to the folder "
         "containing dist/json/tokens.flat.json.\nLooked in: " + ", ".join(DEFAULT_DS_PATHS)
@@ -90,9 +126,9 @@ def find_design_system(explicit: str | None) -> str:
 def camel(path: list[str]) -> str:
     """['color','text','title'] -> colorTextTitle; matches the Compose emitter."""
     parts: list[str] = []
-    for seg in path:
-        parts.extend(re.split(r"[-_ ]+", seg))
-    head, *rest = [p for p in parts if p]
+    for segment in path:
+        parts.extend(re.split(r"[-_ ]+", segment))
+    head, *rest = [part for part in parts if part]
     return head[:1].lower() + head[1:] + "".join(p[:1].upper() + p[1:] for p in rest)
 
 
@@ -124,22 +160,62 @@ def walk(node, path=None):
         yield path, node
 
 
-RGBA = re.compile(r"rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:,\s*([\d.]+)\s*)?\)")
+def classify(value) -> str | None:
+    """The kind of a token leaf, or None when nothing recognises it."""
+    if is_type_leaf(value):
+        return "type"
+    if is_shadow_leaf(value):
+        return "shadow"
+    if isinstance(value, list):
+        return "font-stack"
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, (int, float)):
+        return "number"
+    if isinstance(value, str):
+        if HEX.fullmatch(value) or RGBA.fullmatch(value):
+            return "color"
+        if DURATION.fullmatch(value):
+            return "duration"
+        if DIMENSION.fullmatch(value):
+            return "dimension"
+        if NUMBER.fullmatch(value):
+            return "number"
+        if re.fullmatch(r"[A-Za-z][A-Za-z0-9 ,._'\"-]*", value):
+            return "text"
+    return None
+
+
+def audit(tokens: dict, mode: str) -> dict[str, int]:
+    """Classify every leaf, raising on anything unrecognised. Returns per-kind counts."""
+    counts: dict[str, int] = {}
+    unknown: list[str] = []
+    for path, value in walk(tokens):
+        kind = classify(value)
+        if kind is None:
+            unknown.append(f"{'.'.join(path)} = {value!r}")
+        else:
+            counts[kind] = counts.get(kind, 0) + 1
+    if unknown:
+        raise TokenError(
+            f"{len(unknown)} token(s) in the {mode} set use a value format this generator "
+            "does not recognise. Teach `classify` about them rather than letting them be "
+            "dropped:\n  " + "\n  ".join(unknown[:20])
+        )
+    return counts
 
 
 def is_color(value) -> bool:
-    if not isinstance(value, str):
-        return False
-    return bool(re.fullmatch(r"#[0-9a-fA-F]{6,8}", value) or RGBA.fullmatch(value))
+    return classify(value) == "color"
 
 
 def dart_color(value: str) -> str:
     """#rrggbb, #rrggbbaa or rgba(r,g,b,a) -> Color(0xAARRGGBB)."""
     match = RGBA.fullmatch(value)
     if match:
-        r, g, b, a = match.groups()
-        alpha = round(float(a) * 255) if a is not None else 255
-        argb = f"{alpha:02X}{int(float(r)):02X}{int(float(g)):02X}{int(float(b)):02X}"
+        red, green, blue, alpha = match.groups()
+        opacity = round(float(alpha) * 255) if alpha is not None else 255
+        argb = f"{opacity:02X}{int(float(red)):02X}{int(float(green)):02X}{int(float(blue)):02X}"
         return f"Color(0x{argb})"
     hex_digits = value.lstrip("#")
     if len(hex_digits) == 6:
@@ -149,17 +225,19 @@ def dart_color(value: str) -> str:
     return f"Color(0x{argb.upper()})"
 
 
-def px(value: str) -> str:
-    number = float(re.sub(r"[a-z%]+$", "", str(value)) or 0)
-    return str(int(number)) if number.is_integer() else str(number)
+def number(value) -> str:
+    """'16px' / '-0.4px' / '300ms' / 1.5 -> a bare Dart numeric literal."""
+    text = re.sub(r"(px|rem|em|%|ms|s)$", "", str(value))
+    parsed = float(text or 0)
+    return str(int(parsed)) if parsed.is_integer() else str(parsed)
 
 
-def ms(value: str) -> str:
-    return px(value)
+def is_unitless(value) -> bool:
+    return isinstance(value, (int, float)) or bool(NUMBER.fullmatch(str(value)))
 
 
 def dart_font_weight(weight) -> str:
-    return f"FontWeight.w{int(weight)}"
+    return f"FontWeight.w{int(float(weight))}"
 
 
 def emit_colors(class_name: str, tokens: dict) -> str:
@@ -176,12 +254,14 @@ def emit_shadows(tokens: dict) -> str:
     lines = ["abstract final class SmileShadows {"]
     for path, spec in walk(tokens):
         if is_shadow_leaf(spec):
+            offset_x = number(spec.get("offsetX", 0))
+            offset_y = number(spec.get("offsetY", 0))
             lines += [
                 f"  static const BoxShadow {camel(path)} = BoxShadow(",
                 f"    color: {dart_color(spec['color'])},",
-                f"    offset: Offset({px(spec.get('offsetX', '0px'))}, {px(spec.get('offsetY', '0px'))}),",
-                f"    blurRadius: {px(spec.get('blur', '0px'))},",
-                f"    spreadRadius: {px(spec.get('spread', '0px'))},",
+                f"    offset: Offset({offset_x}, {offset_y}),",
+                f"    blurRadius: {number(spec.get('blur', 0))},",
+                f"    spreadRadius: {number(spec.get('spread', 0))},",
                 "  );",
             ]
     lines.append("}")
@@ -191,8 +271,8 @@ def emit_shadows(tokens: dict) -> str:
 def emit_dimens(tokens: dict) -> str:
     lines = ["abstract final class SmileDimens {"]
     for path, value in walk(tokens):
-        if path[0] in DIMENSION_GROUPS and isinstance(value, str) and value.endswith("px"):
-            lines.append(f"  static const double {camel(path)} = {px(value)};")
+        if path[0] in DIMENSION_GROUPS and classify(value) == "dimension":
+            lines.append(f"  static const double {camel(path)} = {number(value)};")
     lines.append("}")
     return "\n".join(lines)
 
@@ -200,9 +280,10 @@ def emit_dimens(tokens: dict) -> str:
 def emit_durations(tokens: dict) -> str:
     lines = ["abstract final class SmileMotion {"]
     for path, value in walk(tokens):
-        if isinstance(value, str) and value.endswith("ms"):
+        if classify(value) == "duration":
             lines.append(
-                f"  static const Duration {camel(path)} = Duration(milliseconds: {ms(value)});"
+                f"  static const Duration {camel(path)} = "
+                f"Duration(milliseconds: {number(value)});"
             )
     lines.append("}")
     return "\n".join(lines)
@@ -212,14 +293,19 @@ def emit_type(tokens: dict) -> str:
     """Real TextStyles — the Compose emitter leaves these as comments, Dart need not."""
     lines = ["abstract final class SmileType {"]
     for path, value in walk(tokens):
-        if not (isinstance(value, dict) and "fontSize" in value):
+        if not is_type_leaf(value):
             continue
         family = value.get("fontFamily") or []
-        primary = family[0] if isinstance(family, list) and family else "DM Sans"
-        size = float(px(value["fontSize"]))
-        line_height = float(px(value.get("lineHeight", value["fontSize"])))
-        tracking = float(px(value.get("letterSpacing", "0px")))
-        height = round(line_height / size, 4) if size else 1.0
+        primary = family[0] if isinstance(family, list) and family else str(family or "DM Sans")
+        size = float(number(value["fontSize"]))
+        raw_line_height = value.get("lineHeight", value["fontSize"])
+        # A line height arrives either as a length ('24px') or as a unitless ratio (1.5).
+        # Dividing a ratio by the font size would silently produce a height near 0.09.
+        if is_unitless(raw_line_height):
+            height = float(number(raw_line_height))
+        else:
+            height = round(float(number(raw_line_height)) / size, 4) if size else 1.0
+        tracking = float(number(value.get("letterSpacing", 0)))
         lines += [
             f"  static const TextStyle {camel(path)} = TextStyle(",
             f"    fontFamily: '{primary}',",
@@ -239,35 +325,33 @@ def dart_formatted(content: str) -> str:
     Without this the generator and the formatter disagree and the file oscillates between
     them, so `--check` passes or fails depending on which ran last.
     """
-    if not shutil_which("dart"):
+    if not shutil.which("dart"):
         return content
     with tempfile.TemporaryDirectory() as tmp:
         path = os.path.join(tmp, "smile_tokens.dart")
-        with io.open(path, "w", encoding="utf-8") as fh:
-            fh.write(content)
+        with io.open(path, "w", encoding="utf-8") as handle:
+            handle.write(content)
         # Format IN PLACE and read the file back. Parsing `--output=show` from stdout is a
         # trap: dart also prints a summary line there, which lands in the generated source.
         result = subprocess.run(
             ["dart", "format", path], capture_output=True, text=True, check=False
         )
         if result.returncode != 0:
-            print("  warning    dart format failed; writing unformatted output", file=sys.stderr)
-            print((result.stderr or result.stdout).strip()[:400], file=sys.stderr)
-            return content
-        with io.open(path, encoding="utf-8") as fh:
-            return fh.read()
+            raise TokenError(
+                "dart format rejected the generated source, which means the emitters "
+                "produced invalid Dart:\n" + (result.stderr or result.stdout).strip()[:800]
+            )
+        with io.open(path, encoding="utf-8") as handle:
+            return handle.read()
 
 
-def shutil_which(name: str):
-    from shutil import which
-
-    return which(name)
-
-
-def generate_dart(ds: str) -> str:
-    with io.open(os.path.join(ds, "dist", "json", "tokens.flat.json"), encoding="utf-8") as fh:
-        data = json.load(fh)
+def generate_dart(ds: str) -> tuple[str, dict[str, int]]:
+    tokens_path = os.path.join(ds, "dist", "json", "tokens.flat.json")
+    with io.open(tokens_path, encoding="utf-8") as handle:
+        data = json.load(handle)
     light, dark = data["light"], data["dark"]
+    counts = audit(light, "light")
+    audit(dark, "dark")
     blocks = [
         HEADER,
         emit_colors("SmileColorLight", light),
@@ -277,10 +361,10 @@ def generate_dart(ds: str) -> str:
         emit_shadows(light),
         emit_durations(light),
     ]
-    return dart_formatted("\n\n".join(blocks).rstrip() + "\n")
+    return dart_formatted("\n\n".join(blocks).rstrip() + "\n"), counts
 
 
-def _block(text: str, opener: str) -> str:
+def block(text: str, opener: str) -> str:
     """The text from `opener` up to the next line that closes it."""
     start = text.find(opener)
     if start < 0:
@@ -289,13 +373,56 @@ def _block(text: str, opener: str) -> str:
     return text[start : end if end > 0 else len(text)]
 
 
+def check_parity(dart: str, ds: str) -> bool:
+    """The Dart colour classes must have the same membership as the Compose output."""
+    kotlin_path = os.path.join(ds, "dist", "android", "SmileTokens.kt")
+    if not os.path.isfile(kotlin_path):
+        print("  skipped    colour parity (no upstream Compose output to compare against)")
+        return True
+    with io.open(kotlin_path, encoding="utf-8") as handle:
+        kotlin = handle.read()
+    ok = True
+    for class_name in ("SmileColorLight", "SmileColorDark"):
+        upstream = set(
+            re.findall(r"val ([A-Za-z0-9]+) = Color\(", block(kotlin, f"object {class_name} {{"))
+        )
+        ours = set(
+            re.findall(
+                r"static const Color ([A-Za-z0-9]+) =",
+                block(dart, f"abstract final class {class_name} {{"),
+            )
+        )
+        if upstream != ours:
+            print(f"  PARITY     {class_name}: dart {len(ours)} vs compose {len(upstream)}")
+            for name in sorted(upstream - ours):
+                print(f"               missing in dart: {name}")
+            for name in sorted(ours - upstream):
+                print(f"               extra in dart:   {name}")
+            ok = False
+        else:
+            print(f"  parity ok  {class_name} ({len(ours)} colours match the Compose output)")
+    return ok
+
+
+def check_counts(counts: dict[str, int]) -> bool:
+    """Every emitted kind must be non-empty — a silent shrink is the failure to catch."""
+    ok = True
+    for kind in sorted(EMITTED_KINDS):
+        if counts.get(kind, 0) == 0:
+            print(f"  EMPTY      no {kind} tokens classified; that emitter would output nothing")
+            ok = False
+    summary = " · ".join(f"{k} {counts.get(k, 0)}" for k in sorted(EMITTED_KINDS | CARRIED_KINDS))
+    print(f"  classified {summary}")
+    return ok
+
+
 def write(rel_path: str, content: str, check: bool) -> bool:
     """Returns True when the file on disk already matches."""
     target = os.path.join(REPO, rel_path)
     existing = None
     if os.path.isfile(target):
-        with io.open(target, encoding="utf-8") as fh:
-            existing = fh.read()
+        with io.open(target, encoding="utf-8") as handle:
+            existing = handle.read()
     if existing == content:
         print(f"  unchanged  {rel_path}")
         return True
@@ -303,58 +430,62 @@ def write(rel_path: str, content: str, check: bool) -> bool:
         print(f"  STALE      {rel_path}")
         return False
     os.makedirs(os.path.dirname(target), exist_ok=True)
-    with io.open(target, "w", encoding="utf-8") as fh:
-        fh.write(content)
+    with io.open(target, "w", encoding="utf-8") as handle:
+        handle.write(content)
     print(f"  {'updated' if existing else 'created'}    {rel_path}")
     return True
 
 
-def main() -> int:
+def copy_upstream(ds: str, check: bool) -> bool:
+    ok = True
+    for source, dest, app_dir in COPIES:
+        if not os.path.isdir(os.path.join(REPO, app_dir)):
+            print(f"  skipped    {dest} ({app_dir} does not exist yet)")
+            continue
+        source_path = os.path.join(ds, source)
+        if not os.path.isfile(source_path):
+            print(f"  MISSING    {source} (upstream output absent)")
+            ok = False
+            continue
+        with io.open(source_path, encoding="utf-8") as handle:
+            ok = write(dest, handle.read(), check) and ok
+    return ok
+
+
+def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--design-system", help="path to the design system folder")
     parser.add_argument("--all", action="store_true", help="also copy the three upstream outputs")
-    parser.add_argument("--dart", action="store_true", help="generate Dart only (default)")
+    parser.add_argument("--dart", action="store_true", help="generate Dart only (the default)")
     parser.add_argument("--check", action="store_true", help="fail if any output is stale")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
+
+    if args.all and args.dart:
+        parser.error("--all and --dart are mutually exclusive")
 
     ds = find_design_system(args.design_system)
     print(f"design system: {ds}")
 
-    dart = generate_dart(ds)
-    ok = write(DART_OUT, dart, args.check)
+    try:
+        dart, counts = generate_dart(ds)
+    except TokenError as error:
+        print(f"\n{error}", file=sys.stderr)
+        return 1
 
-    # Regression guard: the Dart colour classes must have the same membership as the
-    # upstream Compose ones. A generator that silently drops a value format (rgba) or
-    # over-emits nested composites is the failure mode this catches.
-    kotlin_path = os.path.join(ds, "dist", "android", "SmileTokens.kt")
-    if os.path.isfile(kotlin_path):
-        with io.open(kotlin_path, encoding="utf-8") as fh:
-            kotlin = fh.read()
-        for cls in ("SmileColorLight", "SmileColorDark"):
-            kt = set(re.findall(r"val ([A-Za-z0-9]+) = Color\(", _block(kotlin, f"object {cls} {{")))
-            dt = set(re.findall(r"static const Color ([A-Za-z0-9]+) =", _block(dart, f"abstract final class {cls} {{")))
-            if kt != dt:
-                print(f"  PARITY     {cls}: dart {len(dt)} vs compose {len(kt)}")
-                for name in sorted(kt - dt):
-                    print(f"               missing in dart: {name}")
-                for name in sorted(dt - kt):
-                    print(f"               extra in dart:   {name}")
-                ok = False
-            else:
-                print(f"  parity ok  {cls} ({len(dt)} colours match the Compose output)")
+    ok = write(DART_OUT, dart, args.check)
+    ok = check_counts(counts) and ok
+    ok = check_parity(dart, ds) and ok
 
     if args.all:
-        for src, dest in COPIES:
-            src_path = os.path.join(ds, src)
-            if not os.path.isfile(src_path):
-                print(f"  MISSING    {src} (upstream output absent)")
-                ok = False
-                continue
-            with io.open(src_path, encoding="utf-8") as fh:
-                ok = write(dest, fh.read(), args.check) and ok
+        ok = copy_upstream(ds, args.check) and ok
 
-    if args.check and not ok:
-        print("\nOutputs are stale. Run scripts/sync_design_tokens.py --all", file=sys.stderr)
+    if not ok:
+        message = (
+            "Outputs are stale. Run scripts/sync_design_tokens.py --all"
+            if args.check
+            else "Token sync failed; see the messages above."
+        )
+        print(f"\n{message}", file=sys.stderr)
         return 1
     return 0
 

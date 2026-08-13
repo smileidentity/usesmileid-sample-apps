@@ -244,6 +244,20 @@
         "flutter": "/token/scan",
         "expo": "app/token/scan.tsx"
       }
+    },
+    {
+      "id": "scenarioDrawer",
+      "screen": "scenarioDrawer",
+      "path": "/debug/scenarios",
+      "presentation": "modalSheet",
+      "args": [],
+      "platform": {
+        "android": "ScenarioDrawerSheetDestination",
+        "ios": "Sheet.scenarioDrawer",
+        "flutter": "/debug/scenarios",
+        "expo": "app/debug/scenarios.tsx"
+      },
+      "notes": "A debug affordance with no design frame. Deep-linkable so a flow can open it directly rather than reproducing a hidden gesture."
     }
   ],
   "automationEntry": {

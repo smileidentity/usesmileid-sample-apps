@@ -4,108 +4,364 @@
   "prefix": "sample_",
   "ids": {
     "shell": [
-      { "id": "sample_nav_products", "description": "Bottom nav destination: products." },
-      { "id": "sample_nav_verifications", "description": "Bottom nav destination: verifications." },
-      { "id": "sample_nav_settings", "description": "Bottom nav destination: settings." },
-      { "id": "sample_nav_token", "description": "Bottom nav token affordance, carries the countdown ring." },
-      { "id": "sample_home_start_fullscreen", "description": "Starts a flow as a full-screen presentation." },
-      { "id": "sample_home_start_shell", "description": "Starts a flow nested inside the navigation shell." },
-      { "id": "sample_scenario_drawer", "description": "Opens the debug scenario drawer (automation-facing; see scenarios.json)." },
-      { "id": "sample_scenario_item", "description": "One drawer row; suffixed with the scenario id, e.g. sample_scenario_item_expiredToken." },
-      { "id": "sample_theme_item", "description": "One theme row; suffixed with the theme scenario id." }
+      {
+        "id": "sample_nav_products",
+        "description": "Bottom nav destination: products."
+      },
+      {
+        "id": "sample_nav_verifications",
+        "description": "Bottom nav destination: verifications."
+      },
+      {
+        "id": "sample_nav_settings",
+        "description": "Bottom nav destination: settings."
+      },
+      {
+        "id": "sample_nav_token",
+        "description": "Bottom nav token affordance, carries the countdown ring."
+      },
+      {
+        "id": "sample_home_start_fullscreen",
+        "description": "Starts a flow as a full-screen presentation."
+      },
+      {
+        "id": "sample_home_start_shell",
+        "description": "Starts a flow nested inside the navigation shell."
+      },
+      {
+        "id": "sample_scenario_drawer",
+        "description": "Opens the debug scenario drawer (automation-facing; see scenarios.json)."
+      },
+      {
+        "id": "sample_scenario_item",
+        "description": "One drawer row; suffixed with the scenario id, e.g. sample_scenario_item_expiredToken."
+      },
+      {
+        "id": "sample_theme_item",
+        "description": "One theme row; suffixed with the theme scenario id."
+      }
     ],
     "products": [
-      { "id": "sample_products_screen", "description": "Products screen root." },
-      { "id": "sample_env_chip", "description": "Profile + environment chip in the header." },
-      { "id": "sample_product_card", "description": "One product card; suffixed with the product id, e.g. sample_product_card_smartSelfieEnrollment." },
-      { "id": "sample_session_card", "description": "Active token session card." },
-      { "id": "sample_session_countdown", "description": "Remaining session time, as m:ss text." },
-      { "id": "sample_session_ended_banner", "description": "Token session ended banner." },
-      { "id": "sample_profile_switch_sheet", "description": "Switch-profile sheet root." }
+      {
+        "id": "sample_products_screen",
+        "description": "Products screen root."
+      },
+      {
+        "id": "sample_env_chip",
+        "description": "Profile + environment chip in the header."
+      },
+      {
+        "id": "sample_profile_avatar_button",
+        "description": "Header avatar button; opens the profile-switch sheet (decision 2026-08-13)."
+      },
+      {
+        "id": "sample_product_card",
+        "description": "One product card; suffixed with the product id, e.g. sample_product_card_smartSelfieEnrollment."
+      },
+      {
+        "id": "sample_session_card",
+        "description": "Active token session card."
+      },
+      {
+        "id": "sample_session_countdown",
+        "description": "Remaining session time, as m:ss text."
+      },
+      {
+        "id": "sample_session_ended_banner",
+        "description": "Token session ended banner."
+      },
+      {
+        "id": "sample_profile_switch_sheet",
+        "description": "Switch-profile sheet root."
+      }
     ],
     "verifications": [
-      { "id": "sample_verifications_screen", "description": "Verifications list root." },
-      { "id": "sample_filter_chip", "description": "One status filter chip; suffixed with the status, e.g. sample_filter_chip_attention." },
-      { "id": "sample_filter_count", "description": "The count inside a chip; suffixed with the status. Asserted after deletes." },
-      { "id": "sample_job_row", "description": "One verification row; suffixed with index." },
-      { "id": "sample_job_row_status", "description": "Status badge inside a row." },
-      { "id": "sample_select_toggle", "description": "Select / Cancel action in the header." },
-      { "id": "sample_selection_checkbox", "description": "Row checkbox in select mode; suffixed with index." },
-      { "id": "sample_selection_bar", "description": "Selection bar shown instead of the nav bar." },
-      { "id": "sample_selection_count", "description": "'n selected' text." },
-      { "id": "sample_selection_remove", "description": "Remove action in the selection bar." },
-      { "id": "sample_toast", "description": "Toast container." },
-      { "id": "sample_toast_undo", "description": "Undo action inside a toast." }
+      {
+        "id": "sample_verifications_screen",
+        "description": "Verifications list root."
+      },
+      {
+        "id": "sample_filter_chip",
+        "description": "One status filter chip; suffixed with the status, e.g. sample_filter_chip_attention."
+      },
+      {
+        "id": "sample_filter_count",
+        "description": "The count inside a chip; suffixed with the status. Asserted after deletes."
+      },
+      {
+        "id": "sample_job_row",
+        "description": "One verification row; suffixed with index."
+      },
+      {
+        "id": "sample_job_row_status",
+        "description": "Status badge inside a row."
+      },
+      {
+        "id": "sample_select_toggle",
+        "description": "Select / Cancel action in the header."
+      },
+      {
+        "id": "sample_selection_checkbox",
+        "description": "Row checkbox in select mode; suffixed with index."
+      },
+      {
+        "id": "sample_selection_bar",
+        "description": "Selection bar shown instead of the nav bar."
+      },
+      {
+        "id": "sample_selection_count",
+        "description": "'n selected' text."
+      },
+      {
+        "id": "sample_selection_remove",
+        "description": "Remove action in the selection bar."
+      },
+      {
+        "id": "sample_toast",
+        "description": "Toast container."
+      },
+      {
+        "id": "sample_toast_undo",
+        "description": "Undo action inside a toast."
+      }
     ],
     "verificationDetails": [
-      { "id": "sample_verification_details_screen", "description": "Details screen root." },
-      { "id": "sample_status_badge", "description": "Job status badge." },
-      { "id": "sample_detail_field", "description": "One label/value row; suffixed with the field name, e.g. sample_detail_field_jobId." },
-      { "id": "sample_detail_copy", "description": "Copy button on a field; suffixed with the field name." },
-      { "id": "sample_details_delete", "description": "Delete action in the app bar." }
+      {
+        "id": "sample_verification_details_screen",
+        "description": "Details screen root."
+      },
+      {
+        "id": "sample_status_badge",
+        "description": "Job status badge."
+      },
+      {
+        "id": "sample_detail_field",
+        "description": "One label/value row; suffixed with the field name, e.g. sample_detail_field_jobId."
+      },
+      {
+        "id": "sample_detail_copy",
+        "description": "Copy button on a field; suffixed with the field name."
+      },
+      {
+        "id": "sample_details_delete",
+        "description": "Delete action in the app bar."
+      }
     ],
     "userDetails": [
-      { "id": "sample_user_details_screen", "description": "User details screen root — shown BEFORE the SDK flow starts." },
-      { "id": "sample_user_details_field", "description": "One editable row; suffixed with the field, e.g. sample_user_details_field_firstName." },
-      { "id": "sample_user_details_hint", "description": "Requirement or edit hint line." },
-      { "id": "sample_remember_details_switch", "description": "Remember-these-details switch." },
-      { "id": "sample_user_details_continue", "description": "Primary action that launches the SDK flow." }
+      {
+        "id": "sample_user_details_screen",
+        "description": "User details screen root — shown BEFORE the SDK flow starts."
+      },
+      {
+        "id": "sample_user_details_field",
+        "description": "One editable row; suffixed with the field, e.g. sample_user_details_field_firstName."
+      },
+      {
+        "id": "sample_user_details_hint",
+        "description": "Requirement or edit hint line."
+      },
+      {
+        "id": "sample_remember_details_switch",
+        "description": "Remember-these-details switch."
+      },
+      {
+        "id": "sample_user_details_continue",
+        "description": "Primary action that launches the SDK flow."
+      }
     ],
     "kyc": [
-      { "id": "sample_kyc_form_screen", "description": "KYC / ID details form root." },
-      { "id": "sample_country_trigger", "description": "Country select trigger." },
-      { "id": "sample_idtype_trigger", "description": "ID type select trigger." },
-      { "id": "sample_idnumber_input", "description": "ID number input." },
-      { "id": "sample_kyc_continue", "description": "Primary action." },
-      { "id": "sample_token_float", "description": "Floating token-session affordance." },
-      { "id": "sample_country_sheet", "description": "Country picker sheet root." },
-      { "id": "sample_country_search", "description": "Country search field." },
-      { "id": "sample_country_option", "description": "One country row; suffixed with ISO code." },
-      { "id": "sample_idtype_sheet", "description": "ID type picker sheet root." },
-      { "id": "sample_idtype_search", "description": "ID type search field." },
-      { "id": "sample_idtype_option", "description": "One ID type row; suffixed with the type id." }
+      {
+        "id": "sample_kyc_form_screen",
+        "description": "KYC / ID details form root."
+      },
+      {
+        "id": "sample_country_trigger",
+        "description": "Country select trigger."
+      },
+      {
+        "id": "sample_idtype_trigger",
+        "description": "ID type select trigger."
+      },
+      {
+        "id": "sample_idnumber_input",
+        "description": "ID number input."
+      },
+      {
+        "id": "sample_kyc_continue",
+        "description": "Primary action."
+      },
+      {
+        "id": "sample_token_float",
+        "description": "Floating token-session affordance."
+      },
+      {
+        "id": "sample_country_sheet",
+        "description": "Country picker sheet root."
+      },
+      {
+        "id": "sample_country_search",
+        "description": "Country search field."
+      },
+      {
+        "id": "sample_country_option",
+        "description": "One country row; suffixed with ISO code."
+      },
+      {
+        "id": "sample_idtype_sheet",
+        "description": "ID type picker sheet root."
+      },
+      {
+        "id": "sample_idtype_search",
+        "description": "ID type search field."
+      },
+      {
+        "id": "sample_idtype_option",
+        "description": "One ID type row; suffixed with the type id."
+      }
     ],
     "settings": [
-      { "id": "sample_settings_screen", "description": "Settings root." },
-      { "id": "sample_profile_summary", "description": "Profile row at the top of settings." },
-      { "id": "sample_setting_agent_mode", "description": "Agent mode switch → SelfieCaptureConfig.allowAgentMode." },
-      { "id": "sample_setting_dark_mode", "description": "Dark mode switch." },
-      { "id": "sample_setting_consent_step", "description": "Consent screen switch → include/omit consent() in the flow." },
-      { "id": "sample_setting_instructions_step", "description": "Instruction screen switch → include/omit instructions()." },
-      { "id": "sample_setting_preview_step", "description": "Preview screen switch → include/omit preview()." },
-      { "id": "sample_setting_nav", "description": "One ABOUT/LEGAL navigation row; suffixed with the row id." },
-      { "id": "sample_sign_out", "description": "Sign out row." },
-      { "id": "sample_version_label", "description": "App name and version footer." }
+      {
+        "id": "sample_settings_screen",
+        "description": "Settings root."
+      },
+      {
+        "id": "sample_profile_summary",
+        "description": "Profile row at the top of settings."
+      },
+      {
+        "id": "sample_setting_agent_mode",
+        "description": "Agent mode switch → SelfieCaptureConfig.allowAgentMode."
+      },
+      {
+        "id": "sample_setting_dark_mode",
+        "description": "Dark mode switch."
+      },
+      {
+        "id": "sample_setting_consent_step",
+        "description": "Consent screen switch → include/omit consent() in the flow."
+      },
+      {
+        "id": "sample_setting_instructions_step",
+        "description": "Instruction screen switch → include/omit instructions()."
+      },
+      {
+        "id": "sample_setting_preview_step",
+        "description": "Preview screen switch → include/omit preview()."
+      },
+      {
+        "id": "sample_setting_nav",
+        "description": "One ABOUT/LEGAL navigation row; suffixed with the row id."
+      },
+      {
+        "id": "sample_sign_out",
+        "description": "Sign out row."
+      },
+      {
+        "id": "sample_version_label",
+        "description": "App name and version footer."
+      }
     ],
     "profiles": [
-      { "id": "sample_profiles_screen", "description": "Profiles list root." },
-      { "id": "sample_profile_row", "description": "One profile row; suffixed with the profile id." },
-      { "id": "sample_create_profile", "description": "Create-profile row." },
-      { "id": "sample_new_profile_sheet", "description": "New profile sheet root." },
-      { "id": "sample_new_profile_name", "description": "Profile name input." },
-      { "id": "sample_new_profile_save", "description": "Save action." },
-      { "id": "sample_profile_config_screen", "description": "Per-profile configuration root." },
-      { "id": "sample_profile_config_field", "description": "One user-details default; suffixed with the field." },
-      { "id": "sample_profile_config_save", "description": "Save action." }
+      {
+        "id": "sample_profiles_screen",
+        "description": "Profiles list root."
+      },
+      {
+        "id": "sample_profile_row",
+        "description": "One profile row; suffixed with the profile id."
+      },
+      {
+        "id": "sample_create_profile",
+        "description": "Create-profile row."
+      },
+      {
+        "id": "sample_new_profile_sheet",
+        "description": "New profile sheet root."
+      },
+      {
+        "id": "sample_new_profile_name",
+        "description": "Profile name input."
+      },
+      {
+        "id": "sample_new_profile_save",
+        "description": "Save action."
+      },
+      {
+        "id": "sample_profile_config_screen",
+        "description": "Per-profile configuration root."
+      },
+      {
+        "id": "sample_profile_config_field",
+        "description": "One user-details default; suffixed with the field."
+      },
+      {
+        "id": "sample_profile_config_save",
+        "description": "Save action."
+      }
     ],
     "token": [
-      { "id": "sample_scan_token_screen", "description": "Scan token screen root." },
-      { "id": "sample_token_manual_entry", "description": "Manual token entry row." },
-      { "id": "sample_token_paste", "description": "Paste action." },
-      { "id": "sample_token_simulate", "description": "Simulate a successful scan — makes token flows testable with no QR source." }
+      {
+        "id": "sample_scan_token_screen",
+        "description": "Scan token screen root."
+      },
+      {
+        "id": "sample_token_manual_entry",
+        "description": "Manual token entry row."
+      },
+      {
+        "id": "sample_token_paste",
+        "description": "Paste action."
+      },
+      {
+        "id": "sample_token_simulate",
+        "description": "Simulate a successful scan — makes token flows testable with no QR source."
+      }
     ],
     "resultCard": [
-      { "id": "sample_result_card", "description": "The card container." },
-      { "id": "sample_result_active_scenario", "description": "activeScenario field." },
-      { "id": "sample_result_active_theme", "description": "activeTheme field." },
-      { "id": "sample_result_route", "description": "route field." },
-      { "id": "sample_result_job_id", "description": "jobId field." },
-      { "id": "sample_result_user_id", "description": "userId field." },
-      { "id": "sample_result_job_status", "description": "jobStatus field." },
-      { "id": "sample_result_result_count", "description": "resultCallbackCount field." },
-      { "id": "sample_result_refresh_count", "description": "refreshCallbackCount field." },
-      { "id": "sample_result_last_error", "description": "lastError field." },
-      { "id": "sample_result_sdk_version", "description": "sdkVersion field." }
+      {
+        "id": "sample_result_card",
+        "description": "The card container."
+      },
+      {
+        "id": "sample_result_active_scenario",
+        "description": "activeScenario field."
+      },
+      {
+        "id": "sample_result_active_theme",
+        "description": "activeTheme field."
+      },
+      {
+        "id": "sample_result_route",
+        "description": "route field."
+      },
+      {
+        "id": "sample_result_job_id",
+        "description": "jobId field."
+      },
+      {
+        "id": "sample_result_user_id",
+        "description": "userId field."
+      },
+      {
+        "id": "sample_result_job_status",
+        "description": "jobStatus field."
+      },
+      {
+        "id": "sample_result_result_count",
+        "description": "resultCallbackCount field."
+      },
+      {
+        "id": "sample_result_refresh_count",
+        "description": "refreshCallbackCount field."
+      },
+      {
+        "id": "sample_result_last_error",
+        "description": "lastError field."
+      },
+      {
+        "id": "sample_result_sdk_version",
+        "description": "sdkVersion field."
+      }
     ]
   },
   "rules": [

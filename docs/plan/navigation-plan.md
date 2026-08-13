@@ -14,7 +14,7 @@ document explains the architecture and the traps.
 | Android | **Compose Destinations 2.3.0** (`io.github.raamcosta.compose-destinations`) over androidx.navigation 2.9.8 | ViewModel + `SavedStateHandle` | The SDK itself uses it (`@Destination<RootGraph>`, `DestinationsNavHost`), so the sample and the SDK share one mental model and one dependency set |
 | iOS | **NavigationStack + a typed path router** | `@Observable` router + `@SceneStorage` | The SDK does not nest a `NavigationStack`, so a host stack is safe (see §3) |
 | Flutter | **go_router ^17** | **flutter_riverpod ^3** | `StatefulShellRoute` gives per-tab back stacks for free; Riverpod's `ProviderScope` overrides turn launch arguments into deterministic test state with no test-only build (§4) |
-| Expo | **expo-router** (already in the sample) | **zustand ^5** | Matches the kobo Expo probe; file routes map 1:1 to the route table |
+| Expo | **expo-router** (already in the sample) | **zustand ^5** | Proven together on an internal integration probe; file routes map 1:1 to the route table |
 
 ---
 
@@ -159,8 +159,8 @@ globals and poor testability.
 
 ## 5. Expo — expo-router + zustand
 
-The sample already has expo-router; kobo's Expo probe paired it with zustand, which is the
-recommendation here too. File routes map 1:1 to the `expo` column of the route table.
+The sample already has expo-router, and pairing it with zustand is proven on an internal
+integration probe, so that is the recommendation here too. File routes map 1:1 to the `expo` column of the route table.
 
 - **Layout.** `app/(tabs)/_layout.tsx` for the three tabs; flow and profile routes outside the group
   so they present full-screen; `presentation: 'modal'` for sheet routes.

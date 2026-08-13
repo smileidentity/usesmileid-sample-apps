@@ -378,7 +378,7 @@
       "usedBy": [
         "products"
       ],
-      "notes": "VERIFIED against a render 2026-08-12. The WHOLE CARD is filled with a decorative colour (green, indigo, amber, near-black, indigo across the five products) with inverse text — not a white card with a coloured accent. Anatomy: white rounded icon tile top-left, a same-hue ghost glyph watermark bleeding off the top-right, title bottom-left in inverse text (may wrap to two lines), and a circular outlined arrow bottom-right. 174x148 in a 2-up grid, 12 gap.",
+      "notes": "VERIFIED against a render 2026-08-12. The WHOLE CARD is filled with a decorative colour (green, indigo, amber, near-black, indigo across the products) with inverse text — not a white card with a coloured accent. Anatomy: white rounded icon tile top-left, a same-hue ghost glyph watermark bleeding off the top-right, title bottom-left in inverse text (may wrap to two lines), and a circular outlined arrow bottom-right. 174x148 in a 2-up grid, 12 gap.",
       "decision": "OWNER DECISION 2026-08-13: six products now (Enhanced KYC fills the empty slot). The label is 'SmartSelfie Authentication' in full, which WRAPS TO TWO LINES on a 174-wide card — verify the card's two-line footer still fits at large font scales, and raise it with design if it clips."
     },
     {
@@ -752,6 +752,33 @@
         "verificationDetails"
       ],
       "notes": "Required by spec/result-card.schema.json and not present in the design set. It is the evidence channel automation asserts on. Placement needs a design decision — see openItems in spec/README.md; the honest default is a collapsible panel on the verification details screen plus a compact line on products while a job is in flight."
+    },
+    {
+      "name": "ScenarioDrawer",
+      "tier": "composite",
+      "owner": "sample",
+      "notInDesign": true,
+      "tokens": [
+        "color.surface",
+        "radius.sheet",
+        "color.text.title",
+        "color.text.muted",
+        "color.primary",
+        "elevation.floating"
+      ],
+      "variants": [
+        "flowScenarios",
+        "themeScenarios"
+      ],
+      "states": [
+        "closed",
+        "open",
+        "itemSelected"
+      ],
+      "usedBy": [
+        "scenarioDrawer"
+      ],
+      "notes": "Required by AGENTS.md as a shipped probe affordance and by spec/scenarios.json, which is why it has ids in test-ids.json. NOT in the design set — the design's Settings screen covers only the controls a partner sees (dark mode, agent mode, the three SDK steps), while the flow scenarios (expiredToken, badRefresh, noCallback, throwingCallback, offlineRetry) and the two non-default theme scenarios have no other manual control. Ship it as a debug sheet reachable from a long-press or a hidden gesture, and keep launch arguments as the automation path: a drawer is for humans, arguments are for machines, and the sweep found both were needed. Placement and entry gesture need a design decision — see screens.json openQuestions.drawerPresentation."
     }
   ],
   "sdkOwnedSurfaces": [

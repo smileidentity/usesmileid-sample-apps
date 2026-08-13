@@ -1,10 +1,12 @@
 // Smile ID Design System — GENERATED. Do not edit by hand.
 //
-// Regenerate with: scripts/sync_design_tokens.py --dart
+// Regenerate with: scripts/sync_design_tokens.py
 // Source: the design system's dist/json/tokens.flat.json (fully resolved light + dark).
 //
 // Naming mirrors the Compose output (SmileColorLight / SmileColorDark / SmileDimens /
 // SmileType) so the two platforms are diffable against each other.
+//
+// Requires Dart 3 — the token holders use `abstract final class`.
 
 import 'package:flutter/material.dart';
 
