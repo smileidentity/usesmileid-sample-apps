@@ -317,6 +317,12 @@ private fun gallerySections(): List<GallerySectionSpec> {
                 onValueChange = {},
                 placeholder = "name@company.com",
             )
+            UseSmileIDSampleKeyValueEditRow(
+                label = "Country",
+                value = "Kenya",
+                onValueChange = {},
+                enabled = false,
+            )
         },
         GallerySectionSpec("SETTING ROW") {
             UseSmileIDSampleSettingRow(

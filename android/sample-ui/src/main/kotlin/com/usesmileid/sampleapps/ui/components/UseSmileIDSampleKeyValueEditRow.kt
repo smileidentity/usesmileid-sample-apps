@@ -58,7 +58,11 @@ fun UseSmileIDSampleKeyValueEditRow(
             enabled = enabled,
             singleLine = true,
             keyboardOptions = keyboardOptions,
-            textStyle = UseSmileIDSampleTheme.type.textStyleBodySm.copy(color = colors.textTitle),
+            textStyle = UseSmileIDSampleTheme.type.textStyleBodySm.copy(
+                // Muted when disabled, so a row that cannot be edited does not look identical to
+                // one that can — the same treatment SelectTrigger gives its disabled state.
+                color = if (enabled) colors.textTitle else colors.textMuted,
+            ),
             cursorBrush = SolidColor(colors.primary),
             modifier = Modifier.tagged(testId),
             decorationBox = { field ->

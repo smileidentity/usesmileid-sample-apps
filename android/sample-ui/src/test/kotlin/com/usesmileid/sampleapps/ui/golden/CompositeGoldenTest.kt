@@ -160,6 +160,12 @@ private fun KeyValueEditRows() = Column(verticalArrangement = stack) {
         placeholder = "name@company.com",
     )
     UseSmileIDSampleKeyValueEditRow(label = "Phone (optional)", value = "+254 700 000 000", onValueChange = {})
+    UseSmileIDSampleKeyValueEditRow(
+        label = "Country",
+        value = "Kenya",
+        onValueChange = {},
+        enabled = false,
+    )
 }
 
 @Composable
