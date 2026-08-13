@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.components.ChevronRightGlyph
 import com.usesmileid.sampleapps.ui.components.ProductMarkGlyph
@@ -270,13 +272,19 @@ private fun JobRows() = Column(verticalArrangement = stack) {
         status = UseSmileIDSampleStatus.Blocked,
         onClick = {},
     )
-    UseSmileIDSampleJobRow(
-        product = "Biometric KYC",
-        jobId = "c41b8a2e…",
-        time = "11:50:12",
-        status = UseSmileIDSampleStatus.Attention,
-        leading = { UseSmileIDSampleSelectionCheckbox(checked = true, onCheckedChange = {}) },
-    )
+    // Select mode: the checkbox sits beside the card and the card narrows, as the design has it.
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        UseSmileIDSampleSelectionCheckbox(checked = true, onCheckedChange = {})
+        UseSmileIDSampleJobRow(
+            product = "Biometric KYC",
+            jobId = "c41b8a2e…",
+            time = "11:50:12",
+            status = UseSmileIDSampleStatus.Attention,
+        )
+    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)

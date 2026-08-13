@@ -413,15 +413,20 @@ private fun gallerySections(): List<GallerySectionSpec> {
                 status = UseSmileIDSampleStatus.Blocked,
                 onClick = {},
             )
-            UseSmileIDSampleJobRow(
-                product = "Biometric KYC",
-                jobId = "c41b8a2e…",
-                time = "11:50:12",
-                status = UseSmileIDSampleStatus.Attention,
-                leading = {
-                    UseSmileIDSampleSelectionCheckbox(checked = checked, onCheckedChange = { checked = it })
-                },
-            )
+            // Select mode: the checkbox sits beside the card and the card narrows, as the design
+            // has it — holding it inside the card cost the title enough width to wrap.
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                UseSmileIDSampleSelectionCheckbox(checked = checked, onCheckedChange = { checked = it })
+                UseSmileIDSampleJobRow(
+                    product = "Biometric KYC",
+                    jobId = "c41b8a2e…",
+                    time = "11:50:12",
+                    status = UseSmileIDSampleStatus.Attention,
+                )
+            }
         },
         GallerySectionSpec("SELECTION CHECKBOX") {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs)) {

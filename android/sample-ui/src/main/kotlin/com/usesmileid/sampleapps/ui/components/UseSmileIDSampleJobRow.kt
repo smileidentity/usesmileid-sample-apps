@@ -32,6 +32,10 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
  *
  * A [FlowRow] holds the text block and the badge so the badge drops below the title at 2x rather
  * than squeezing the product name into an ellipsis.
+ *
+ * Select mode's checkbox is deliberately not a slot here: the design puts it *beside* the card and
+ * narrows the card to suit, so the screen composes a row of checkbox plus this. Holding it inside
+ * cost the title enough width to wrap at default scale on a 393dp screen.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -47,7 +51,6 @@ fun UseSmileIDSampleJobRow(
     // Defaulted rather than attached outright: the badge sits inside a repeated row, so a list
     // screen overrides it with the row's suffix instead of tagging every badge the same.
     statusTestId: String? = UseSmileIDSampleTestIds.JOB_ROW_STATUS,
-    leading: @Composable (() -> Unit)? = null,
 ) {
     val colors = UseSmileIDSampleTheme.colors
     Surface(
@@ -67,7 +70,6 @@ fun UseSmileIDSampleJobRow(
             verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
             itemVerticalAlignment = Alignment.CenterVertically,
         ) {
-            leading?.invoke()
             Surface(
                 modifier = Modifier.size(SmileDimens.space40),
                 shape = RoundedCornerShape(SmileDimens.radiusSm),
