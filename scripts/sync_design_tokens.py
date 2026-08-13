@@ -236,6 +236,27 @@ def is_unitless(value) -> bool:
     return isinstance(value, (int, float)) or bool(NUMBER.fullmatch(str(value)))
 
 
+def dart_duration(value) -> str:
+    """'300ms' / '0.3s' / 300 -> a Duration whose argument is always an int.
+
+    Seconds must be converted, not just stripped of their unit: `number('0.3s')` yields 0.3,
+    and `Duration(milliseconds: 0.3)` does not compile — Dart wants an int — besides meaning
+    a 0.3 ms animation rather than 300 ms. Sub-millisecond values fall back to microseconds
+    so no value is ever rounded away.
+    """
+    text = str(value).strip()
+    if text.endswith("ms"):
+        millis = float(text[:-2])
+    elif text.endswith("s"):
+        millis = float(text[:-1]) * 1000
+    else:
+        millis = float(text)
+    micros = round(millis * 1000)
+    if micros % 1000 == 0:
+        return f"Duration(milliseconds: {micros // 1000})"
+    return f"Duration(microseconds: {micros})"
+
+
 def dart_font_weight(weight) -> str:
     return f"FontWeight.w{int(float(weight))}"
 
@@ -281,10 +302,7 @@ def emit_durations(tokens: dict) -> str:
     lines = ["abstract final class SmileMotion {"]
     for path, value in walk(tokens):
         if classify(value) == "duration":
-            lines.append(
-                f"  static const Duration {camel(path)} = "
-                f"Duration(milliseconds: {number(value)});"
-            )
+            lines.append(f"  static const Duration {camel(path)} = {dart_duration(value)};")
     lines.append("}")
     return "\n".join(lines)
 

@@ -56,6 +56,29 @@ class TestNumbers(unittest.TestCase):
         self.assertEqual(gen.number(24), "24")
 
 
+class TestDurations(unittest.TestCase):
+    def test_milliseconds_pass_through_as_int(self):
+        self.assertEqual(gen.dart_duration("300ms"), "Duration(milliseconds: 300)")
+
+    def test_seconds_are_converted_not_just_stripped(self):
+        # Regression: '0.3s' stripped to 0.3 and emitted Duration(milliseconds: 0.3),
+        # which does not compile and would have meant 0.3 ms rather than 300 ms.
+        self.assertEqual(gen.dart_duration("0.3s"), "Duration(milliseconds: 300)")
+        self.assertEqual(gen.dart_duration("1s"), "Duration(milliseconds: 1000)")
+
+    def test_sub_millisecond_values_use_microseconds(self):
+        self.assertEqual(gen.dart_duration("0.5ms"), "Duration(microseconds: 500)")
+
+    def test_bare_numbers_are_milliseconds(self):
+        self.assertEqual(gen.dart_duration(250), "Duration(milliseconds: 250)")
+
+    def test_every_argument_is_an_integer(self):
+        for value in ("200ms", "0.3s", "1.25s", "0.5ms", 350):
+            emitted = gen.dart_duration(value)
+            argument = emitted.split(": ")[1].rstrip(")")
+            self.assertTrue(argument.isdigit(), f"{emitted} has a non-integer argument")
+
+
 class TestClassification(unittest.TestCase):
     def test_recognises_every_kind_in_the_current_source(self):
         cases = [
