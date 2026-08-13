@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextAlign
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
@@ -55,9 +57,14 @@ fun UseSmileIDSampleToast(
                     style = UseSmileIDSampleTheme.type.linkFont,
                     color = UseSmileIDSampleTheme.colors.textLink,
                     softWrap = false,
+                    textAlign = TextAlign.Center,
+                    // clickable before the sizing modifiers, so the tap target is the padded box and
+                    // not the ~20dp line box the link text would otherwise occupy.
                     modifier = Modifier
                         .testTag(UseSmileIDSampleTestIds.TOAST_UNDO)
-                        .clickable(role = Role.Button, onClick = onAction),
+                        .clickable(role = Role.Button, onClick = onAction)
+                        .minimumInteractiveComponentSize()
+                        .padding(horizontal = SmileDimens.spacingXs),
                 )
             }
         }
