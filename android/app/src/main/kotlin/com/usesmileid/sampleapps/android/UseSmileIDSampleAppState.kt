@@ -38,8 +38,7 @@ fun rememberUseSmileIDSampleAppState(): UseSmileIDSampleAppState {
     val session by store.tokenSession.collectAsStateWithLifecycle(initialValue = null)
     var nowMillis by remember { mutableLongStateOf(System.currentTimeMillis()) }
 
-    // Stops at the deadline: the session object does not change when it expires, so a loop keyed
-    // only on it would tick for as long as the app is open.
+    // Stops at the deadline: the session object does not change on expiry, so the key alone never ends this.
     LaunchedEffect(session) {
         val live = session ?: return@LaunchedEffect
         while (!live.hasExpired(nowMillis)) {

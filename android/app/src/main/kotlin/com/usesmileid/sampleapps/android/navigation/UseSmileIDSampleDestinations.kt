@@ -167,7 +167,7 @@ fun ScenarioDrawerSheet(navigator: DestinationsNavigator) {
 @Composable
 fun ComponentGalleryScreen() = ComponentGalleryContent()
 
-// Stand-ins until profiles land: the profile store is the next stack, not this one.
+// Stand-ins until the profile store lands.
 private const val SAMPLE_PROFILE_ID = "p-1"
 private const val SAMPLE_PROFILE_ORGANISATION = "UpTech Finance"
 private const val SAMPLE_PROFILE_INITIALS = "KA"

@@ -21,8 +21,7 @@ object UseSmileIDSampleTestIds {
     const val NEW_PROFILE_SHEET = "sample_new_profile_sheet"
     const val SCAN_TOKEN_SCREEN = "sample_scan_token_screen"
 
-    // The drawer's own root, matching every other sheet. The control that opens it is a separate id,
-    // matching every other opener.
+    // The drawer's own root; its opener is a separate id, matching every other sheet and opener.
     const val SCENARIO_DRAWER = "sample_scenario_drawer"
     const val SCENARIO_DRAWER_BUTTON = "sample_scenario_drawer_button"
 

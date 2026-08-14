@@ -136,7 +136,7 @@ fun SettingsScreen(
             )
         }
 
-        // The design draws no control for the drawer, so this placement is ours and worth confirming.
+        // The design draws no control for the drawer, so this placement is ours.
         section("DEBUG") {
             UseSmileIDSampleSettingRow(
                 title = "Scenarios",
@@ -171,8 +171,7 @@ fun SettingsScreen(
                     .padding(SmileDimens.spacingMd),
             )
         }
-        // Trailing space, so the last row is not flush with the viewport edge, where it renders fine
-        // but reports clipped bounds to automation.
+        // Flush with the viewport edge, the last row reports clipped bounds to automation.
         item { Spacer(modifier = Modifier.height(SmileDimens.space64)) }
     }
 }

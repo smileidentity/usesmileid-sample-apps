@@ -81,7 +81,7 @@ fun ProductsScreen(
                         modifier = Modifier.weight(1f),
                     )
                     UseSmileIDSampleProfileEnvChip(environment = state.environment)
-                    // The chip is display-only since 2026-08-13; this button owns profile switching.
+                    // The chip is display-only; this button owns profile switching.
                     UseSmileIDSampleAvatar(
                         initials = state.initials,
                         modifier = Modifier
