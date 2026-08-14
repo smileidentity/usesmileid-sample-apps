@@ -1,0 +1,79 @@
+name: Android
+
+# android/verify.sh is the definition of done for this platform, so CI runs exactly that script
+# rather than a second list of steps that can drift from it.
+on:
+  pull_request:
+    paths:
+      - 'android/**'
+      - 'spec/**'
+      - 'scripts/**'
+      - '.github/workflows/android.yml'
+  push:
+    branches: [main]
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The token --check compares the vendored output against the design system's own, so it needs
+      # the design system present. It lives in a private repo, and a fork PR gets no secrets — the
+      # step is skipped there and the run says so rather than reporting a check that did not happen.
+      - name: Check out the design system
+        id: design-system
+        if: env.DESIGN_SYSTEM_TOKEN != ''
+        env:
+          DESIGN_SYSTEM_TOKEN: ${{ secrets.DESIGN_SYSTEM_TOKEN }}
+        uses: actions/checkout@v4
+        with:
+          repository: smileidentity/claude-skills
+          token: ${{ secrets.DESIGN_SYSTEM_TOKEN }}
+          path: .design-system
+          sparse-checkout: smile-design-system
+          sparse-checkout-cone-mode: true
+
+      - name: Note a skipped token check
+        if: steps.design-system.outcome == 'skipped'
+        run: |
+          echo "::warning title=Design tokens not verified::No DESIGN_SYSTEM_TOKEN available, so the \
+          vendored token output was not compared against the design system. Everything else ran."
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          # AGP 9 lint calls JDK 21 APIs.
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Validate the Gradle wrapper
+        uses: gradle/actions/wrapper-validation@v4
+
+      - name: Verify
+        env:
+          JAVA_HOME: ${{ env.JAVA_HOME_21_X64 }}
+          SMILE_DESIGN_SYSTEM: ${{ steps.design-system.outcome == 'success' && format('{0}/.design-system/smile-design-system', github.workspace) || '' }}
+          SMILE_TOKENS_OPTIONAL: ${{ steps.design-system.outcome == 'skipped' && '1' || '' }}
+        run: android/verify.sh
+
+      # Goldens are pixel comparisons recorded on a developer's macOS machine. If Linux rasterises
+      # them even slightly differently this is the artifact that shows it.
+      - name: Upload golden diffs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: roborazzi-diffs
+          path: |
+            android/sample-ui/build/outputs/roborazzi/**
+            android/sample-ui/build/reports/tests/**
+          if-no-files-found: ignore
+          retention-days: 7

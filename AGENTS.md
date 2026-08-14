@@ -148,9 +148,15 @@ expo/verify.sh        # eslint + tsc --noEmit + test + release build
 Until then, state plainly in the PR what you could and could not run. Publishing is not this
 repo's job; there is nothing here to publish.
 
-**No CI exists yet** — there is no `.github/` directory, so nothing above runs automatically. Treat
-the commands as the local contract until the workflows land, and note that `--check` needs the design
-system checked out, so CI will have to provide it.
+**Android runs in CI on every PR** (`.github/workflows/android.yml`); the other three platforms are
+still local-only until their apps land. The workflow runs `android/verify.sh` itself rather than
+repeating its steps, so the local contract and the gate cannot drift apart.
+
+Two things the token step needs. `--check` compares the vendored output against the design system,
+which lives in a **private** repo, so CI checks it out with a secret and points the script at it
+through `SMILE_DESIGN_SYSTEM`. A fork PR gets no secrets: there `SMILE_TOKENS_OPTIONAL=1` downgrades
+that one step to a logged skip and the run carries a warning saying tokens went unverified. Never set
+that variable locally — a silent pass is how vendored tokens drift from their source.
 
 ## Conventions
 
