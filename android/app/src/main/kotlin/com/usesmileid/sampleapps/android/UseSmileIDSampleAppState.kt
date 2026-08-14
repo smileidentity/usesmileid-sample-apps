@@ -5,7 +5,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.CoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
@@ -17,6 +19,8 @@ import kotlinx.coroutines.delay
 /** Everything the shell hoists: persisted settings, the token session, and the clock that ticks it. */
 class UseSmileIDSampleAppState(
     val store: UseSmileIDSampleStore,
+    /** Outlives any one screen, so navigating away cannot cancel a write to the store mid-flight. */
+    val storeScope: CoroutineScope,
     val settings: UseSmileIDSampleSettings,
     val session: UseSmileIDSampleTokenSession?,
     val nowMillis: Long,
@@ -34,14 +38,23 @@ fun rememberUseSmileIDSampleAppState(): UseSmileIDSampleAppState {
     val session by store.tokenSession.collectAsStateWithLifecycle(initialValue = null)
     var nowMillis by remember { mutableLongStateOf(System.currentTimeMillis()) }
 
+    // Stops at the deadline: the session object does not change when it expires, so a loop keyed
+    // only on it would tick for as long as the app is open.
     LaunchedEffect(session) {
-        while (session != null) {
+        val live = session ?: return@LaunchedEffect
+        while (!live.hasExpired(nowMillis)) {
             nowMillis = System.currentTimeMillis()
             delay(TICK_MILLIS)
         }
     }
 
-    return UseSmileIDSampleAppState(store = store, settings = settings, session = session, nowMillis = nowMillis)
+    return UseSmileIDSampleAppState(
+        store = store,
+        storeScope = rememberCoroutineScope(),
+        settings = settings,
+        session = session,
+        nowMillis = nowMillis,
+    )
 }
 
 /** Provided once at the root, so a destination reads it without the graph threading it through. */

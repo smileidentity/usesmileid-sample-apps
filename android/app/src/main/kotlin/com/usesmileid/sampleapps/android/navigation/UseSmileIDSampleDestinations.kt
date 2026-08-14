@@ -75,10 +75,9 @@ fun VerificationsScreen() = VerificationsContent()
 @Composable
 fun SettingsScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
-    val scope = rememberCoroutineScope()
     SettingsContent(
         settings = app.settings,
-        onSettingChange = { setting, enabled -> scope.launch { app.store.setSetting(setting, enabled) } },
+        onSettingChange = { setting, enabled -> app.storeScope.launch { app.store.setSetting(setting, enabled) } },
         organisation = SAMPLE_PROFILE_ORGANISATION,
         initials = SAMPLE_PROFILE_INITIALS,
         versionLabel = "$APP_DISPLAY_NAME · ${BuildConfig.VERSION_NAME}",
@@ -132,19 +131,19 @@ fun NewProfileSheet() = NewProfileContent()
 @Composable
 fun ScanTokenScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
-    val scope = rememberCoroutineScope()
     ScanTokenContent(
         onBack = { navigator.navigateUp() },
         onPaste = {},
         onSimulate = {
-            scope.launch {
+            // On the app-level scope, so leaving this screen cannot cancel the write half-done.
+            app.storeScope.launch {
                 app.store.linkTokenSession(
                     id = SIMULATED_SESSION_ID,
                     expiresAtMillis = System.currentTimeMillis() +
                         UseSmileIDSampleTokenSession.DEFAULT_DURATION.inWholeMilliseconds,
                 )
-                navigator.navigateUp()
             }
+            navigator.navigateUp()
         },
     )
 }

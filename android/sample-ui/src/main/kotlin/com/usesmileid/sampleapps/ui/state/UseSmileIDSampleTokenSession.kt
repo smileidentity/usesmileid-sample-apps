@@ -3,7 +3,8 @@ package com.usesmileid.sampleapps.ui.state
 import androidx.compose.runtime.Immutable
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 /** A linked session, held as an absolute deadline: a counter restarts at the wrong value after process death. */
 @Immutable
@@ -30,6 +31,5 @@ fun Duration.toCountdown(): String {
 
 private const val SECONDS_PER_MINUTE = 60
 
-private val Long.milliseconds: Duration get() = (this / MILLIS_PER_SECOND.toDouble()).seconds
-
-private const val MILLIS_PER_SECOND = 1000
+/** Exact rather than divided through a Double, so the countdown and the ring agree to the millisecond. */
+private val Long.milliseconds: Duration get() = toDuration(DurationUnit.MILLISECONDS)
