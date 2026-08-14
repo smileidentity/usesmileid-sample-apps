@@ -74,6 +74,16 @@ class UseSmileIDSampleFlowResultTest {
         assertEquals(UseSmileIDSampleScenario.Normal, restored?.scenario)
     }
 
+    /** Restore runs during composition, so a count that did not round-trip must not take the app down. */
+    @Test
+    fun a_count_that_did_not_round_trip_restores_as_zero() {
+        val restored = UseSmileIDSampleFlowResult.Saver.restore(
+            listOf("normal", "brandDefault", "fullscreen", "idle", "", "", "", "", "not-a-number"),
+        )
+        assertEquals(0, restored?.resultCallbackCount)
+        assertEquals(0, restored?.refreshCallbackCount)
+    }
+
     /** What activity recreation does to it: saved to the bundle, restored from what came back. */
     private fun UseSmileIDSampleFlowResult.recreate(): UseSmileIDSampleFlowResult {
         val saved = with(UseSmileIDSampleFlowResult.Saver) { SaverScope { true }.save(this@recreate) }

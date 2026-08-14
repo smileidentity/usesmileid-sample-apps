@@ -134,8 +134,9 @@ class UseSmileIDSampleFlowResult(
             },
             restore = { saved ->
                 UseSmileIDSampleFlowResult(
-                    // Looked up rather than valueOf: this is restored after process death, where an id
-                    // this build no longer has would throw instead of falling back.
+                    // Every value is read defensively rather than parsed: this runs after process death,
+                    // where an id this build no longer has — or a count that did not round-trip — would
+                    // throw during composition and take the app down on every relaunch.
                     scenario = UseSmileIDSampleScenario.entries.firstOrNull { it.id == saved[0] }
                         ?: UseSmileIDSampleScenario.Normal,
                     theme = UseSmileIDSampleThemeScenario.entries.firstOrNull { it.id == saved[1] }
@@ -147,8 +148,8 @@ class UseSmileIDSampleFlowResult(
                     jobId = saved[4].ifEmpty { null },
                     userId = saved[5].ifEmpty { null },
                     lastError = saved[6].ifEmpty { null },
-                    resultCallbackCount = saved[7].toInt(),
-                    refreshCallbackCount = saved[8].toInt(),
+                    resultCallbackCount = saved[7].toIntOrNull() ?: 0,
+                    refreshCallbackCount = saved[8].toIntOrNull() ?: 0,
                 )
             },
         )
