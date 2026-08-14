@@ -27,7 +27,8 @@ appId: ${APP_ID}
 - openLink: "usesmileid-sample-android://flow/biometricKyc/details"
 - assertVisible:
     id: "sample_user_details_screen"
-- assertVisible: ".*productId = biometricKyc.*"
+# The screen resolves the id to its product, so its label is what proves the argument parsed.
+- assertVisible: "Biometric KYC"
 
 - stopApp
 - openLink: "usesmileid-sample-android://flow/biometricKyc/id-details"

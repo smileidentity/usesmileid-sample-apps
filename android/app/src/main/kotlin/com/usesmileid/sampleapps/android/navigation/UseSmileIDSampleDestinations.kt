@@ -19,6 +19,9 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.annotation.parameters.DeepLink
 import com.ramcosta.composedestinations.generated.destinations.ConsentDetailsFormScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.CountryPickerSheetDestination
+import com.ramcosta.composedestinations.generated.destinations.IdDetailsFormScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.IdTypePickerSheetDestination
 import com.ramcosta.composedestinations.generated.destinations.ProfileConfigScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ProfileSwitchSheetDestination
 import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
@@ -32,6 +35,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleToast
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
@@ -178,20 +182,71 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
 /** The Consent Details Form. Shown for every product, before the SDK flow starts. */
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.CONSENT_DETAILS_FORM)])
 @Composable
-fun ConsentDetailsFormScreen(productId: String) = UserDetailsContent(productId = productId)
+fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    val product = productOf(productId)
+    UserDetailsContent(
+        productLabel = product?.label ?: productId,
+        details = app.forms.userDetails,
+        rememberDetails = app.forms.rememberDetails,
+        onFieldChange = app.forms::setUserField,
+        onRememberChange = app.forms::rememberDetails,
+        onBack = { navigator.navigateUp() },
+        onContinue = {
+            if (product?.needsIdDetails == true) {
+                navigator.navigate(IdDetailsFormScreenDestination(productId = productId))
+            }
+        },
+    )
+}
 
 /** Only for products that need ID details. */
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.ID_DETAILS_FORM)])
 @Composable
-fun IdDetailsFormScreen(productId: String) = KycIdFormContent(productId = productId)
+fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    KycIdFormContent(
+        productLabel = productOf(productId)?.label ?: productId,
+        details = app.forms.idDetails,
+        onCountryClick = { navigator.navigate(CountryPickerSheetDestination(productId = productId)) },
+        onIdTypeClick = { navigator.navigate(IdTypePickerSheetDestination(productId = productId)) },
+        onIdNumberChange = app.forms::setIdNumber,
+        onBack = { navigator.navigateUp() },
+        onContinue = {},
+        onTokenClick = { navigator.navigate(ScanTokenScreenDestination) },
+    )
+}
 
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.COUNTRY_PICKER)])
 @Composable
-fun CountryPickerSheet(productId: String) = CountryPickerContent(productId = productId)
+fun CountryPickerSheet(productId: String, navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    var query by rememberSaveable { mutableStateOf("") }
+    CountryPickerContent(
+        selected = app.forms.idDetails.country,
+        query = query,
+        onQueryChange = { query = it },
+        onSelect = { app.forms.setCountry(it); navigator.navigateUp() },
+        onDismissRequest = { navigator.navigateUp() },
+    )
+}
 
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.ID_TYPE_PICKER)])
 @Composable
-fun IdTypePickerSheet(productId: String) = IdTypePickerContent(productId = productId)
+fun IdTypePickerSheet(productId: String, navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    var query by rememberSaveable { mutableStateOf("") }
+    IdTypePickerContent(
+        country = app.forms.idDetails.country,
+        selected = app.forms.idDetails.idType,
+        query = query,
+        onQueryChange = { query = it },
+        onSelect = { app.forms.setIdType(it); navigator.navigateUp() },
+        onDismissRequest = { navigator.navigateUp() },
+    )
+}
+
+private fun productOf(productId: String) = UseSmileIDSampleProduct.entries.firstOrNull { it.id == productId }
 
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.PROFILE_SWITCH)])
 @Composable
