@@ -15,6 +15,8 @@ class UseSmileIDSampleJobs(seed: List<UseSmileIDSampleJob> = emptyList()) {
     fun count(filter: UseSmileIDSampleJobFilter) = items.count(filter::matches)
 
     fun remove(ids: Set<String>) {
+        // A no-op removal must not discard an earlier batch that is still undoable.
+        if (ids.isEmpty()) return
         lastRemoved.clear()
         items.withIndex().filter { it.value.id in ids }.forEach(lastRemoved::add)
         items.removeAll { it.id in ids }

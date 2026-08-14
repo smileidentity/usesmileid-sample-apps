@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +38,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleProductsState
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import com.usesmileid.sampleapps.ui.state.toCountdown
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.usesmileid.sampleapps.android.gallery.ComponentGalleryScreen as ComponentGalleryContent
 import com.usesmileid.sampleapps.ui.screens.CountryPickerSheet as CountryPickerContent
@@ -124,6 +126,12 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
             )
         }
         if (removedCount > 0) {
+            // Undo is offered for a while, not forever: a toast left up would restore rows long
+            // after the removal it belonged to.
+            LaunchedEffect(removedCount) {
+                delay(UNDO_WINDOW_MILLIS)
+                removedCount = 0
+            }
             UseSmileIDSampleToast(
                 message = if (removedCount == 1) "Verification removed" else "$removedCount verifications removed",
                 actionLabel = "Undo",
@@ -247,4 +255,5 @@ private const val SAMPLE_PROFILE_ID = "p-1"
 private const val SAMPLE_PROFILE_ORGANISATION = "UpTech Finance"
 private const val SAMPLE_PROFILE_INITIALS = "KA"
 private const val SIMULATED_SESSION_ID = "9f3a"
+private const val UNDO_WINDOW_MILLIS = 5_000L
 private const val APP_DISPLAY_NAME = "UseSmileID Sample"
