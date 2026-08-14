@@ -1,8 +1,9 @@
 # UI work plan — Android first, then three ports
 
-**Status:** ready to start. The design is captured in `spec/screens.json` (14 screens, 38 states,
-every one linked to its design node), the component inventory in `spec/components.json` (34
-components, 13 documented sub-parts), and the token contract in `spec/design-tokens.json`.
+**Status:** Android U0–U3 is built and in review; the three ports have not started. The design is
+captured in `spec/screens.json` (14 screens, 38 states, every one linked to its design node), the
+component inventory in `spec/components.json` (34 components, 13 documented sub-parts), and the token
+contract in `spec/design-tokens.json`.
 
 **Inputs:** the *Product Enhancements* design file (boards 01, 01b, 02–07), the Smile ID design
 system (three-tier tokens with generated per-platform output), and the SDK's public flow DSL.
@@ -11,6 +12,22 @@ system (three-tier tokens with generated per-platform output), and the SDK's pub
 the other three. Not by copying code — by copying *decisions*. Every decision worth copying is
 already data in `spec/`, so a port is "assemble the same components against the same tokens with the
 same ids", not "re-derive the design".
+
+**Where a design answer comes from.** The three inputs are all references, but they answer different
+questions. Ask them in this order and stop at the first that answers:
+
+1. **The design system** — token values, component tokens, and the states a component defines. A
+   value it does not define is not one to invent.
+2. **The v12 SDK for the platform** — anything the SDK already renders or owns: the light and dark
+   colour schemes, `si_*` copy, the capture screens, and the inset, back and presentation behaviour
+   a host must not contradict. The sample must not disagree with the SDK it is hosting.
+3. **The design file** — everything the first two leave open: layout metrics, composition, this
+   app's own copy, and iconography. Read the node rather than measuring a screenshot.
+
+Where the design file and the design system disagree, the design system wins and the disagreement
+goes in `spec/design-tokens.json` under `deltas` — never patch the generated token output locally.
+Where none of the three answers, record the question in §5, implement what Android does, and say so
+in the PR.
 
 ---
 
@@ -152,6 +169,22 @@ modal), the back affordance, the switch control, swipe gestures, keyboard avoida
 A port that reproduces Android's navigation instead of using the platform's own is a defect even if
 it looks pixel-identical — that is precisely the host-interaction class these apps exist to catch.
 
+**Same order, same slices.** A port repeats U0–U4 as written, including the U3 screen order.
+`spec/components.json` `buildOrder` is one list for all four platforms, not an Android artefact. The
+order is not preference: the most reused components are built before the screens that consume them,
+and settings comes before every other screen because it drives their configuration. Taking screens
+first means building those components anyway, late, and reworking the screens around them.
+
+**Land it as a stack.** The Android U2 and U3 work landed as six stacked branches, each based on the
+one before it, each a coherent slice a reviewer can read on its own: shared composites → screen
+composites → settings and products → verifications → forms and pickers → profiles. Ports should keep
+that shape. Two reasons it is worth the rebasing: work continues while earlier slices wait for
+review, and a reviewer never gets a diff spanning six subjects.
+
+Per branch, before the next one starts: the platform's `verify.sh` is green, the goldens for that
+slice exist in light and dark, and the routes, ids and `spec/` updates that slice needs are in it.
+The device and flow pass is run on the tip of the stack, not once per branch.
+
 ---
 
 ## 5. Flags raised while reading the design (need a design or owner answer)
@@ -191,18 +224,34 @@ not decisions.
 - **Licence** — MIT, added, matching the five sibling repos.
 - **Colour mapping** — the designer supplies the product→hue and profile→hue list once.
 
-**Design input still needed** (none of it blocks U0, U1, N1 or the walking skeleton):
+**Design input still needed.** None of it blocked the Android build — each item has a stated
+stand-in, so a port should use the same one rather than inventing a second answer.
 
-1. The product→hue and profile→hue list — 6 products, plus profiles. Blocks final `ProductCard` and
-   `Avatar` colours only.
-2. A **6th product card** for Enhanced KYC (icon + hue).
-3. A **header avatar button** on products, next to the environment chip.
-4. Soft badge variants added to the design system (background + text per role).
-5. The two dark-mode token fixes in the design system — needed before U0 finishes wiring dark mode.
-6. Watch one consequence of the copy decision: "SmartSelfie Authentication" **wraps to two lines** on a
-   174-wide card. Confirm the two-line footer holds at large font scales, and raise it with design if
-   it clips.
-7. Housekeeping: ask design to rename board 05 to "KYC / ID details" — it holds no consent screen.
+*From design:*
+
+1. The product→hue and profile→hue list — 6 products, plus profiles. Stand-in: the decorative
+   palette in order, so the same product gets a different hue per platform until the list lands.
+2. An icon for the **Enhanced KYC** product card. Stand-in: the shared product mark.
+3. Rename board 05 to "KYC / ID details" — it holds no consent screen.
+
+*From the design system:*
+
+4. Soft badge variants (background + text per role), per the owner decision. Stand-in: the saturated
+   `badge.<role>.*` pairs, which is the wrong treatment on all four statuses and visibly so.
+5. Three dark-mode token fixes: `color.border` and `color.text.muted` do not change between schemes,
+   and `button.disabled.background` points at a primitive so it cannot re-resolve per mode. No
+   stand-in — the generated output is used as-is, so those surfaces stay wrong in dark until they
+   land. Fixing the two semantic tokens fixes the 23 that resolve through them.
+6. A selected-surface token. The design fills a selected row `#EAECF0`; no semantic token carries it
+   and `surface-alt` is a warm sand. Stand-in: `color.border`.
+7. Component dimensions in the Compose output, which the emitter drops. Stand-in: the nearest scale
+   token per component, each substitution recorded in `spec/components.json` under `metrics`.
+
+*Answered during the Android build, kept here so a port does not re-ask:*
+
+- The header avatar button on products is built, and the environment chip is display-only.
+- "SmartSelfie Authentication" on a 174-wide card takes the subtitle style, not body-strong; at
+  body-strong it broke mid-word. It survives 2x without clipping.
 
 **Token source** (`spec/design-tokens.json` → `deltas`) — the good news first: the design file's
 variables match the design system **exactly** (`#151f72` primary, `#21232c` title, `#848282` muted,
