@@ -40,8 +40,7 @@ fun UseSmileIDSampleDataFieldRow(
         horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // FlowRow: the value sits right of its label and drops below it at 2x, where a timestamp
-        // cannot share a line.
+        // FlowRow: at 2x a timestamp value cannot share a line with its label.
         FlowRow(
             modifier = Modifier.weight(1f),
             horizontalArrangement = Arrangement.SpaceBetween,
