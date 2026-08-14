@@ -22,6 +22,7 @@ import com.ramcosta.composedestinations.generated.destinations.ConsentDetailsFor
 import com.ramcosta.composedestinations.generated.destinations.CountryPickerSheetDestination
 import com.ramcosta.composedestinations.generated.destinations.IdDetailsFormScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.IdTypePickerSheetDestination
+import com.ramcosta.composedestinations.generated.destinations.NewProfileSheetDestination
 import com.ramcosta.composedestinations.generated.destinations.ProfileConfigScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ProfileSwitchSheetDestination
 import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
@@ -41,6 +42,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleProductsState
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 import com.usesmileid.sampleapps.ui.state.toCountdown
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -72,8 +74,8 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     ProductsContent(
         state = UseSmileIDSampleProductsState(
-            environment = UseSmileIDSampleEnvironment.Sandbox,
-            initials = SAMPLE_PROFILE_INITIALS,
+            environment = app.profiles.active.environment,
+            initials = app.profiles.active.initials,
             sessionId = app.session?.id?.takeIf { app.sessionActive },
             sessionRemaining = app.session
                 ?.takeIf { app.sessionActive }
@@ -154,10 +156,10 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
     SettingsContent(
         settings = app.settings,
         onSettingChange = { setting, enabled -> app.storeScope.launch { app.store.setSetting(setting, enabled) } },
-        organisation = SAMPLE_PROFILE_ORGANISATION,
-        initials = SAMPLE_PROFILE_INITIALS,
+        organisation = app.profiles.active.organisation,
+        initials = app.profiles.active.initials,
         versionLabel = "$APP_DISPLAY_NAME · ${BuildConfig.VERSION_NAME}",
-        onProfileClick = { navigator.navigate(ProfileConfigScreenDestination(profileId = SAMPLE_PROFILE_ID)) },
+        onProfileClick = { navigator.navigate(ProfileConfigScreenDestination(profileId = app.profiles.activeId)) },
         onNavRowClick = {},
         onOpenScenarioDrawer = { navigator.navigate(ScenarioDrawerSheetDestination) },
         onSignOut = {},
@@ -250,19 +252,61 @@ private fun productOf(productId: String) = UseSmileIDSampleProduct.entries.first
 
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.PROFILE_SWITCH)])
 @Composable
-fun ProfileSwitchSheet() = ProfileSwitchContent()
+fun ProfileSwitchSheet(navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    ProfileSwitchContent(
+        profiles = app.profiles.all,
+        activeId = app.profiles.activeId,
+        onSelect = { app.profiles.setActive(it.id); navigator.navigateUp() },
+        onDismissRequest = { navigator.navigateUp() },
+    )
+}
 
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.PROFILES)])
 @Composable
-fun ProfilesScreen() = ProfilesContent()
+fun ProfilesScreen(navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    ProfilesContent(
+        profiles = app.profiles.all,
+        activeId = app.profiles.activeId,
+        onProfileClick = { navigator.navigate(ProfileConfigScreenDestination(profileId = it.id)) },
+        onCreate = { navigator.navigate(NewProfileSheetDestination) },
+        onBack = { navigator.navigateUp() },
+    )
+}
 
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.PROFILE_CONFIG)])
 @Composable
-fun ProfileConfigScreen(profileId: String) = ProfileConfigContent(profileId = profileId)
+fun ProfileConfigScreen(profileId: String, navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    val profile = app.profiles.find(profileId)
+    var defaults by rememberSaveable(profileId, saver = UseSmileIDSampleUserDetails.Saver) {
+        mutableStateOf(profile?.defaults ?: UseSmileIDSampleUserDetails())
+    }
+    ProfileConfigContent(
+        organisation = profile?.organisation ?: profileId,
+        defaults = defaults,
+        onFieldChange = { field, value -> defaults = field.write(defaults, value) },
+        onBack = { navigator.navigateUp() },
+        onSave = {
+            app.profiles.setDefaults(profileId, defaults)
+            navigator.navigateUp()
+        },
+    )
+}
 
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.NEW_PROFILE)])
 @Composable
-fun NewProfileSheet() = NewProfileContent()
+fun NewProfileSheet(navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    var name by rememberSaveable { mutableStateOf("") }
+    NewProfileContent(
+        name = name,
+        onNameChange = { name = it },
+        onSave = { app.profiles.add(organisation = name, person = ""); navigator.navigateUp() },
+        onDismissRequest = { navigator.navigateUp() },
+    )
+}
 
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SCAN_TOKEN)])
 @Composable
@@ -304,10 +348,6 @@ fun ScenarioDrawerSheet(navigator: DestinationsNavigator) {
 @Composable
 fun ComponentGalleryScreen() = ComponentGalleryContent()
 
-// Stand-ins until the profile store lands.
-private const val SAMPLE_PROFILE_ID = "p-1"
-private const val SAMPLE_PROFILE_ORGANISATION = "UpTech Finance"
-private const val SAMPLE_PROFILE_INITIALS = "KA"
 private const val SIMULATED_SESSION_ID = "9f3a"
 private const val UNDO_WINDOW_MILLIS = 5_000L
 private const val APP_DISPLAY_NAME = "UseSmileID Sample"
