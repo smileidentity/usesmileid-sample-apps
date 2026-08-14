@@ -24,11 +24,14 @@ data class UseSmileIDSampleProfile(
             .ifEmpty { "?" }
 }
 
-/** The profiles the app can act as, and which one is active. In memory until profiles are a real account concern. */
+/**
+ * The profiles the app can act as, and which one is active. In memory until profiles are a real account concern.
+ *
+ * @param seed must not be empty; an empty list would otherwise surface far from here, as the products
+ * screen throwing on its first read of the active profile.
+ */
 class UseSmileIDSampleProfiles(seed: List<UseSmileIDSampleProfile> = defaults()) {
 
-    // Fails here rather than inside a composable, where an empty list would surface as the products
-    // screen throwing on its first read of the active profile.
     init {
         require(seed.isNotEmpty()) { "UseSmileIDSampleProfiles needs at least one profile" }
     }
@@ -49,8 +52,7 @@ class UseSmileIDSampleProfiles(seed: List<UseSmileIDSampleProfile> = defaults())
     fun find(id: String) = items.firstOrNull { it.id == id }
 
     fun add(organisation: String, person: String): UseSmileIDSampleProfile {
-        // The first free id, not one derived from the count: a duplicate key crashes the list and
-        // makes a row's test id ambiguous.
+        // First free id, not one derived from the count: duplicate keys crash the list and double a test id.
         val id = generateSequence(items.size + 1) { it + 1 }
             .map { "p-$it" }
             .first { candidate -> items.none { it.id == candidate } }
