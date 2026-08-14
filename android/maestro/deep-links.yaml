@@ -75,7 +75,8 @@ appId: ${APP_ID}
 - openLink: "usesmileid-sample-android://profiles/p-1"
 - assertVisible:
     id: "sample_profile_config_screen"
-- assertVisible: ".*profileId = p-1.*"
+# The screen resolves the id to its profile, so the organisation is what proves the argument parsed.
+- assertVisible: "UpTech Finance"
 
 - stopApp
 - openLink: "usesmileid-sample-android://token/scan"

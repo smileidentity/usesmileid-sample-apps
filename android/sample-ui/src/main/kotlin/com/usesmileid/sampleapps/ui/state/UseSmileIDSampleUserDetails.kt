@@ -1,6 +1,10 @@
 package com.usesmileid.sampleapps.ui.state
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 
 /** The fields the design labels "attached to every job", which is why every product collects them. */
 @Immutable
@@ -12,6 +16,13 @@ data class UseSmileIDSampleUserDetails(
 ) {
     /** The design's own rule: "First and last name are required." */
     val isComplete: Boolean get() = firstName.isNotBlank() && lastName.isNotBlank()
+
+    companion object {
+        val Saver: Saver<MutableState<UseSmileIDSampleUserDetails>, Any> = listSaver(
+            save = { listOf(it.value.firstName, it.value.lastName, it.value.email, it.value.phone) },
+            restore = { mutableStateOf(UseSmileIDSampleUserDetails(it[0], it[1], it[2], it[3])) },
+        )
+    }
 }
 
 /** Which user-details row changed, so the form reports one callback rather than four. */

@@ -46,6 +46,10 @@ object UseSmileIDSampleTestIds {
     const val KYC_CONTINUE = "sample_kyc_continue"
     const val COUNTRY_SEARCH = "sample_country_search"
     const val ID_TYPE_SEARCH = "sample_idtype_search"
+    const val CREATE_PROFILE = "sample_create_profile"
+    const val NEW_PROFILE_NAME = "sample_new_profile_name"
+    const val NEW_PROFILE_SAVE = "sample_new_profile_save"
+    const val PROFILE_CONFIG_SAVE = "sample_profile_config_save"
 
     // Attached by the component itself: the spec assigns these to it, not to a screen.
     const val TOAST = "sample_toast"
@@ -120,6 +124,10 @@ object UseSmileIDSampleTestIds {
         KYC_CONTINUE,
         COUNTRY_SEARCH,
         ID_TYPE_SEARCH,
+        CREATE_PROFILE,
+        NEW_PROFILE_NAME,
+        NEW_PROFILE_SAVE,
+        PROFILE_CONFIG_SAVE,
     )
 
     /** Suffixed ids derive from other spec files, so they are built rather than listed. */
@@ -148,4 +156,8 @@ object UseSmileIDSampleTestIds {
     fun countryOption(isoCode: String) = "sample_country_option_$isoCode"
 
     fun idTypeOption(typeId: String) = "sample_idtype_option_$typeId"
+
+    fun profileRow(profileId: String) = "sample_profile_row_$profileId"
+
+    fun profileConfigField(field: String) = "sample_profile_config_field_$field"
 }

@@ -35,7 +35,8 @@ fun UseSmileIDSampleOptionRow(
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
             .tagged(testId),
         shape = RoundedCornerShape(SmileDimens.radiusField),
-        color = if (selected) colors.surfaceAlt else colors.surface,
+        // color.border carries the design's selected fill; there is no selected-surface token yet.
+        color = if (selected) colors.border else colors.surface,
     ) {
         Row(
             modifier = Modifier
