@@ -130,6 +130,42 @@
       },
       "finding": "tokens/component/button.json references the primitive {color.grey.200} for the disabled background instead of a semantic role, so it cannot re-resolve per mode — contradicting that file's own _comment, which states component tokens 'reference SEMANTIC roles only, so they re-resolve per light/dark automatically'. CONFIRMED ON A DEVICE 2026-08-13: the disabled Button draws a near-white #EAECF0 slab on the dark background. Distinct from darkBorder, and NOT fixed by fixing color.border.",
       "recommendation": "Point button.disabled.background at a semantic role that has a dark value. Do not patch locally."
+    },
+    {
+      "id": "productHues",
+      "severity": "blocks ProductCard on every product; the two document products are told apart by hue alone",
+      "figma": {
+        "node": "5206-4037 (Products · expressive), read 2026-08-15",
+        "fillType": "linear-gradient at 124.169deg, stops at 13.397% and 86.603% — NOT the flat fills this spec previously assumed",
+        "smartSelfieEnrollment": {
+          "from": "#05723A",
+          "to": "#0A9B4C"
+        },
+        "smartSelfieAuth": {
+          "from": "#3A49B4",
+          "to": "#5361D6"
+        },
+        "documentVerification": {
+          "from": "#E08600",
+          "to": "#FFB53D"
+        },
+        "enhancedDocumentVerification": {
+          "from": "#2D2B2A",
+          "to": "#4A4645"
+        },
+        "biometricKyc": {
+          "from": "#151F72",
+          "to": "#2B3A9E"
+        },
+        "enhancedKyc": "ABSENT — the design node predates the owner decision that added a sixth product, and still shows slot/empty in its place",
+        "shadow": "each card carries its own hue as a tinted shadow: 0 10 18 -2 rgba(hue,0.24) + 0 2 5 0 rgba(hue,0.16)",
+        "goPill": "rgba(255,255,255,0.16) on four cards but rgba(45,43,42,0.16) on Document Verification, whose amber is too light for a white scrim",
+        "iconStroke": "the icon on the white tile is the card's start hue on three of four, but Document Verification's icon is #C46F00 rather than its #E08600 start — darkened for contrast, so the icon colour is not derivable from the gradient"
+      },
+      "designSystem": "Eight of the ten gradient stops do not exist in the token source at any tier. Only #2D2B2A (color.neutral.off-black / color.text.inverse) and #151F72 (color.primary) are present, and both are coincidences of value rather than a decorative role.",
+      "finding": "VERIFIED against the design 2026-08-15, replacing the earlier stand-in. The product hues are raw gradient fills in the design file, bound to no variable — get_variable_defs on the products node returns only type, primary, muted, surface, title, border and the page background. So there is no token to consume and no generated output to read: implementing this today means ten hex literals in app code, which the repo's own rule calls a review failure, times four platforms.",
+      "recommendation": "Add the product hues to the design system as a decorative role — a from/to pair per product, plus the sixth product the design node is missing. Until then treat this the same way as composeTypeStylesAreComments: generate the values from this spec entry rather than hand-copying them into four codebases. The mapping above is the single source all four apps read.",
+      "status": "OPEN 2026-08-15. Android still renders the stand-in (the decorative palette indexed by declaration order) pending a decision on the stopgap."
     }
   ],
   "perPlatform": {

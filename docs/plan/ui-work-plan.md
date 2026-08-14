@@ -229,9 +229,23 @@ stand-in, so a port should use the same one rather than inventing a second answe
 
 *From design:*
 
-1. The product→hue and profile→hue list — 6 products, plus profiles. Stand-in: the decorative
-   palette indexed by the product's position in the order `spec/` declares, which the spec test
-   pins, so every platform resolves the same hue for the same product until the real list lands.
+1. **Product hues answered from the design 2026-08-15; profile hues still open.** The five product
+   cards on node `5206-4037` were read directly and the full mapping is recorded in
+   `spec/design-tokens.json` → `productHues`. Three things it changed:
+
+   - The cards are **linear gradients**, not the flat fills this plan assumed, each with a shadow
+     tinted in its own hue.
+   - **Eight of the ten gradient stops exist nowhere in the token source.** Only `#2D2B2A` and
+     `#151F72` are present, and both by coincidence of value rather than as a decorative role. The
+     fills are bound to no variable in the design either, so there is nothing to generate from.
+   - **Enhanced KYC is absent** — the node predates the owner decision that added a sixth product,
+     and still shows `slot/empty` where it goes. It needs a hue and an icon.
+
+   So the list exists but is not yet consumable without hand-copying ten hexes into four codebases,
+   which is the review failure the token rule exists to prevent. Stand-in stays until that is
+   resolved: the decorative palette indexed by declaration order, which the spec test pins so all
+   four platforms resolve the same hue for the same product. The profile→hue list is untouched by
+   this and still owed.
 2. **Mostly delivered 2026-08-15.** Eight icons arrived and are imported — four product marks plus
    the three nav icons and the token scan mark — and the sources are the shared record in
    `design/icons/`. Five of the six products are covered: the two document products **share one
