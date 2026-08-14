@@ -19,6 +19,10 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.annotation.parameters.DeepLink
 import com.ramcosta.composedestinations.generated.destinations.ConsentDetailsFormScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.CountryPickerSheetDestination
+import com.ramcosta.composedestinations.generated.destinations.IdDetailsFormScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.IdTypePickerSheetDestination
+import com.ramcosta.composedestinations.generated.destinations.NewProfileSheetDestination
 import com.ramcosta.composedestinations.generated.destinations.ProfileConfigScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ProfileSwitchSheetDestination
 import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
@@ -32,11 +36,13 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleToast
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleProductsState
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 import com.usesmileid.sampleapps.ui.state.toCountdown
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -68,8 +74,8 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     ProductsContent(
         state = UseSmileIDSampleProductsState(
-            environment = UseSmileIDSampleEnvironment.Sandbox,
-            initials = SAMPLE_PROFILE_INITIALS,
+            environment = app.profiles.active.environment,
+            initials = app.profiles.active.initials,
             sessionId = app.session?.id?.takeIf { app.sessionActive },
             sessionRemaining = app.session
                 ?.takeIf { app.sessionActive }
@@ -150,10 +156,10 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
     SettingsContent(
         settings = app.settings,
         onSettingChange = { setting, enabled -> app.storeScope.launch { app.store.setSetting(setting, enabled) } },
-        organisation = SAMPLE_PROFILE_ORGANISATION,
-        initials = SAMPLE_PROFILE_INITIALS,
+        organisation = app.profiles.active.organisation,
+        initials = app.profiles.active.initials,
         versionLabel = "$APP_DISPLAY_NAME · ${BuildConfig.VERSION_NAME}",
-        onProfileClick = { navigator.navigate(ProfileConfigScreenDestination(profileId = SAMPLE_PROFILE_ID)) },
+        onProfileClick = { navigator.navigate(ProfileConfigScreenDestination(profileId = app.profiles.activeId)) },
         onNavRowClick = {},
         onOpenScenarioDrawer = { navigator.navigate(ScenarioDrawerSheetDestination) },
         onSignOut = {},
@@ -178,36 +184,129 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
 /** The Consent Details Form. Shown for every product, before the SDK flow starts. */
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.CONSENT_DETAILS_FORM)])
 @Composable
-fun ConsentDetailsFormScreen(productId: String) = UserDetailsContent(productId = productId)
+fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    val product = productOf(productId)
+    UserDetailsContent(
+        productLabel = product?.label ?: productId,
+        details = app.forms.userDetails,
+        rememberDetails = app.forms.rememberDetails,
+        onFieldChange = app.forms::setUserField,
+        onRememberChange = app.forms::rememberDetails,
+        onBack = { navigator.navigateUp() },
+        onContinue = {
+            if (product?.needsIdDetails == true) {
+                navigator.navigate(IdDetailsFormScreenDestination(productId = productId))
+            }
+        },
+    )
+}
 
 /** Only for products that need ID details. */
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.ID_DETAILS_FORM)])
 @Composable
-fun IdDetailsFormScreen(productId: String) = KycIdFormContent(productId = productId)
+fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    KycIdFormContent(
+        productLabel = productOf(productId)?.label ?: productId,
+        details = app.forms.idDetails,
+        onCountryClick = { navigator.navigate(CountryPickerSheetDestination(productId = productId)) },
+        onIdTypeClick = { navigator.navigate(IdTypePickerSheetDestination(productId = productId)) },
+        onIdNumberChange = app.forms::setIdNumber,
+        onBack = { navigator.navigateUp() },
+        onContinue = {},
+        onTokenClick = { navigator.navigate(ScanTokenScreenDestination) },
+    )
+}
 
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.COUNTRY_PICKER)])
 @Composable
-fun CountryPickerSheet(productId: String) = CountryPickerContent(productId = productId)
+fun CountryPickerSheet(productId: String, navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    var query by rememberSaveable { mutableStateOf("") }
+    CountryPickerContent(
+        selected = app.forms.idDetails.country,
+        query = query,
+        onQueryChange = { query = it },
+        onSelect = { app.forms.setCountry(it); navigator.navigateUp() },
+        onDismissRequest = { navigator.navigateUp() },
+    )
+}
 
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.ID_TYPE_PICKER)])
 @Composable
-fun IdTypePickerSheet(productId: String) = IdTypePickerContent(productId = productId)
+fun IdTypePickerSheet(productId: String, navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    var query by rememberSaveable { mutableStateOf("") }
+    IdTypePickerContent(
+        country = app.forms.idDetails.country,
+        selected = app.forms.idDetails.idType,
+        query = query,
+        onQueryChange = { query = it },
+        onSelect = { app.forms.setIdType(it); navigator.navigateUp() },
+        onDismissRequest = { navigator.navigateUp() },
+    )
+}
+
+private fun productOf(productId: String) = UseSmileIDSampleProduct.entries.firstOrNull { it.id == productId }
 
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.PROFILE_SWITCH)])
 @Composable
-fun ProfileSwitchSheet() = ProfileSwitchContent()
+fun ProfileSwitchSheet(navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    ProfileSwitchContent(
+        profiles = app.profiles.all,
+        activeId = app.profiles.activeId,
+        onSelect = { app.profiles.setActive(it.id); navigator.navigateUp() },
+        onDismissRequest = { navigator.navigateUp() },
+    )
+}
 
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.PROFILES)])
 @Composable
-fun ProfilesScreen() = ProfilesContent()
+fun ProfilesScreen(navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    ProfilesContent(
+        profiles = app.profiles.all,
+        activeId = app.profiles.activeId,
+        onProfileClick = { navigator.navigate(ProfileConfigScreenDestination(profileId = it.id)) },
+        onCreate = { navigator.navigate(NewProfileSheetDestination) },
+        onBack = { navigator.navigateUp() },
+    )
+}
 
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.PROFILE_CONFIG)])
 @Composable
-fun ProfileConfigScreen(profileId: String) = ProfileConfigContent(profileId = profileId)
+fun ProfileConfigScreen(profileId: String, navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    val profile = app.profiles.find(profileId)
+    var defaults by rememberSaveable(profileId, saver = UseSmileIDSampleUserDetails.Saver) {
+        mutableStateOf(profile?.defaults ?: UseSmileIDSampleUserDetails())
+    }
+    ProfileConfigContent(
+        organisation = profile?.organisation ?: profileId,
+        defaults = defaults,
+        onFieldChange = { field, value -> defaults = field.write(defaults, value) },
+        onBack = { navigator.navigateUp() },
+        onSave = {
+            app.profiles.setDefaults(profileId, defaults)
+            navigator.navigateUp()
+        },
+    )
+}
 
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.NEW_PROFILE)])
 @Composable
-fun NewProfileSheet() = NewProfileContent()
+fun NewProfileSheet(navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    var name by rememberSaveable { mutableStateOf("") }
+    NewProfileContent(
+        name = name,
+        onNameChange = { name = it },
+        onSave = { app.profiles.add(organisation = name, person = ""); navigator.navigateUp() },
+        onDismissRequest = { navigator.navigateUp() },
+    )
+}
 
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SCAN_TOKEN)])
 @Composable
@@ -249,10 +348,6 @@ fun ScenarioDrawerSheet(navigator: DestinationsNavigator) {
 @Composable
 fun ComponentGalleryScreen() = ComponentGalleryContent()
 
-// Stand-ins until the profile store lands.
-private const val SAMPLE_PROFILE_ID = "p-1"
-private const val SAMPLE_PROFILE_ORGANISATION = "UpTech Finance"
-private const val SAMPLE_PROFILE_INITIALS = "KA"
 private const val SIMULATED_SESSION_ID = "9f3a"
 private const val UNDO_WINDOW_MILLIS = 5_000L
 private const val APP_DISPLAY_NAME = "UseSmileID Sample"

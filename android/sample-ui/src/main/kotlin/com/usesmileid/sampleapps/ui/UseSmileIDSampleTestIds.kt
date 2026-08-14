@@ -37,6 +37,19 @@ object UseSmileIDSampleTestIds {
     const val SELECT_TOGGLE = "sample_select_toggle"
     const val STATUS_BADGE = "sample_status_badge"
     const val DETAILS_DELETE = "sample_details_delete"
+    const val USER_DETAILS_HINT = "sample_user_details_hint"
+    const val REMEMBER_DETAILS_SWITCH = "sample_remember_details_switch"
+    const val USER_DETAILS_CONTINUE = "sample_user_details_continue"
+    const val COUNTRY_TRIGGER = "sample_country_trigger"
+    const val ID_TYPE_TRIGGER = "sample_idtype_trigger"
+    const val ID_NUMBER_INPUT = "sample_idnumber_input"
+    const val KYC_CONTINUE = "sample_kyc_continue"
+    const val COUNTRY_SEARCH = "sample_country_search"
+    const val ID_TYPE_SEARCH = "sample_idtype_search"
+    const val CREATE_PROFILE = "sample_create_profile"
+    const val NEW_PROFILE_NAME = "sample_new_profile_name"
+    const val NEW_PROFILE_SAVE = "sample_new_profile_save"
+    const val PROFILE_CONFIG_SAVE = "sample_profile_config_save"
 
     // Attached by the component itself: the spec assigns these to it, not to a screen.
     const val TOAST = "sample_toast"
@@ -102,6 +115,19 @@ object UseSmileIDSampleTestIds {
         SELECT_TOGGLE,
         STATUS_BADGE,
         DETAILS_DELETE,
+        USER_DETAILS_HINT,
+        REMEMBER_DETAILS_SWITCH,
+        USER_DETAILS_CONTINUE,
+        COUNTRY_TRIGGER,
+        ID_TYPE_TRIGGER,
+        ID_NUMBER_INPUT,
+        KYC_CONTINUE,
+        COUNTRY_SEARCH,
+        ID_TYPE_SEARCH,
+        CREATE_PROFILE,
+        NEW_PROFILE_NAME,
+        NEW_PROFILE_SAVE,
+        PROFILE_CONFIG_SAVE,
     )
 
     /** Suffixed ids derive from other spec files, so they are built rather than listed. */
@@ -124,4 +150,14 @@ object UseSmileIDSampleTestIds {
     fun detailField(field: String) = "sample_detail_field_$field"
 
     fun detailCopy(field: String) = "sample_detail_copy_$field"
+
+    fun userDetailsField(field: String) = "sample_user_details_field_$field"
+
+    fun countryOption(isoCode: String) = "sample_country_option_$isoCode"
+
+    fun idTypeOption(typeId: String) = "sample_idtype_option_$typeId"
+
+    fun profileRow(profileId: String) = "sample_profile_row_$profileId"
+
+    fun profileConfigField(field: String) = "sample_profile_config_field_$field"
 }
