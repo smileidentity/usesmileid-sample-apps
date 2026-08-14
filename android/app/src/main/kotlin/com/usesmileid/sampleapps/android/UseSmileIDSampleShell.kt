@@ -51,7 +51,9 @@ fun UseSmileIDSampleShell() {
         modifier = Modifier.semantics { testTagsAsResourceId = true },
         bottomBar = {
             if (selectedTab != null) {
+                val app = LocalUseSmileIDSampleAppState.current
                 UseSmileIDSampleNavBar(
+                    sessionProgress = app.session?.takeIf { app.sessionActive }?.progress(app.nowMillis),
                     selected = selectedTab,
                     onSelect = { item ->
                         navigator.navigate(item.graph) {

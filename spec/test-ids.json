@@ -30,9 +30,12 @@
       },
       {
         "id": "sample_scenario_drawer",
-        "description": "Opens the debug scenario drawer (automation-facing; see scenarios.json).",
-        "ambiguity": "UNRESOLVED 2026-08-13. This entry describes the control that OPENS the drawer, but screens.json lists the same id among the scenarioDrawer screen's own testIds, and Android currently attaches it to the sheet ROOT (android/maestro/deep-links.yaml asserts it that way after a cold deep link). One id cannot be both, and a flow that taps the opener and then asserts the root would pass on either meaning while testing neither.",
-        "resolution": "Decide before U3 wires the drawer: keep this id for the sheet root (matching screens.json and the shipped Android behaviour) and add a separate opener id, or keep it for the opener and give the root its own. Whichever way, the other three apps follow. The ids are a forever contract, so this is a rename that must not happen twice."
+        "description": "The scenario drawer's own root, matching every other sheet.",
+        "resolved": "RESOLVED 2026-08-14. This id stays on the drawer root: screens.json already lists it among the drawer's own testIds, every other sheet names its root the same way (sample_country_sheet, sample_profile_switch_sheet), and Android already attaches it there — so nothing is renamed, which the stability rule forbids. The control that opens it takes sample_scenario_drawer_button, matching every other opener (sample_country_trigger opens sample_country_sheet). Only this description was wrong."
+      },
+      {
+        "id": "sample_scenario_drawer_button",
+        "description": "Opens the scenario drawer. Automation-facing; the drawer is also reachable by deep link."
       },
       {
         "id": "sample_scenario_item",
@@ -229,6 +232,10 @@
       {
         "id": "sample_profile_summary",
         "description": "Profile row at the top of settings."
+      },
+      {
+        "id": "sample_setting_smile_to_capture",
+        "description": "Smile to capture switch. ON means enhanced liveness OFF, so it and agent mode write different fields and cannot fight."
       },
       {
         "id": "sample_setting_agent_mode",

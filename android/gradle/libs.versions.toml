@@ -8,6 +8,7 @@ ksp = "2.3.11"
 androidx-activity = "1.13.0"
 androidx-compose-bom = "2026.06.01"
 androidx-core = "1.16.0"
+androidx-datastore = "1.2.1"
 androidx-navigation = "2.9.8"
 destinations = "2.3.0"
 
@@ -28,6 +29,8 @@ androidx-compose-ui = { module = "androidx.compose.ui:ui" }
 androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
 
 destinations = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "destinations" }

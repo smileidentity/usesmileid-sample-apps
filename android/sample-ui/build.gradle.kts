@@ -42,6 +42,9 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.datastore.preferences)
+    // Already on the runtime classpath through navigation; declared because this module uses it.
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     testImplementation(libs.junit)
     testImplementation(platform(libs.androidx.compose.bom))
