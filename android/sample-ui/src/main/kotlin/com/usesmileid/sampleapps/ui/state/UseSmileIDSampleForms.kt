@@ -64,8 +64,7 @@ class UseSmileIDSampleForms(
                         email = saved[2],
                         phone = saved[3],
                     ),
-                    // Looked up rather than valueOf: a restore after a release that renamed one of
-                    // these would otherwise throw, and this state is restored after process death.
+                    // Looked up rather than valueOf: this is restored after process death, where a rename would throw.
                     idDetails = UseSmileIDSampleIdDetails(
                         country = UseSmileIDSampleCountry.entries.firstOrNull { it.name == saved[4] },
                         idType = UseSmileIDSampleIdType.entries.firstOrNull { it.name == saved[5] },
