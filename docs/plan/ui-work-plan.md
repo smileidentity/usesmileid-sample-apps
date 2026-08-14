@@ -230,7 +230,8 @@ stand-in, so a port should use the same one rather than inventing a second answe
 *From design:*
 
 1. The product→hue and profile→hue list — 6 products, plus profiles. Stand-in: the decorative
-   palette in order, so the same product gets a different hue per platform until the list lands.
+   palette indexed by the product's position in the order `spec/` declares, which the spec test
+   pins, so every platform resolves the same hue for the same product until the real list lands.
 2. An icon for the **Enhanced KYC** product card. Stand-in: the shared product mark.
 3. Rename board 05 to "KYC / ID details" — it holds no consent screen.
 
