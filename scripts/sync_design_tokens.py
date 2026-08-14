@@ -65,6 +65,11 @@ DART_OUT = "flutter/sample_ui/lib/src/tokens/smile_tokens.dart"
 
 ANDROID_UI = "android/sample-ui"
 KOTLIN_TYPE_OUT = f"{ANDROID_UI}/src/main/kotlin/com/usesmileid/sampleapps/ui/tokens/SmileTypeStyles.kt"
+KOTLIN_HUES_OUT = f"{ANDROID_UI}/src/main/kotlin/com/usesmileid/sampleapps/ui/tokens/SmileProductHues.kt"
+
+# The product hues are read from spec/, not from the design system: they exist only in the design
+# file, bound to no variable. See the productHues delta for the whole story.
+SPEC_TOKENS = "spec/design-tokens.json"
 
 # The five DM Sans weights the ramp uses (400–800). Android resource names must be lowercase.
 FONT_COPIES = [
@@ -128,6 +133,20 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+"""
+
+KOTLIN_HUES_HEADER = """// Smile ID product hues — GENERATED. Do not edit by hand.
+//
+// Regenerate with: scripts/sync_design_tokens.py --all
+//
+// A stopgap, and not from the design system: these live only in the design file, bound to no
+// variable, so there is no upstream output to read. The source is spec/design-tokens.json →
+// productHues. Delete this file once the design system carries a decorative product role, and
+// never hand-copy these values into another codebase — a port generates from the same spec entry.
+
+package com.smileid.designsystem
+
+import androidx.compose.ui.graphics.Color
 """
 
 RGBA = re.compile(r"rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:,\s*([\d.]+)\s*)?\)")
@@ -407,6 +426,60 @@ def emit_kotlin_type(tokens: dict) -> str:
     return "\n".join(lines)
 
 
+def kotlin_color(value: str) -> str:
+    """`#RRGGBB` to a Compose `Color(0xFFRRGGBB)`. Alpha is applied at the use site, never baked in."""
+    text = value.strip().lstrip("#")
+    if len(text) != 6 or not all(c in "0123456789abcdefABCDEF" for c in text):
+        raise TokenError(f"product hue {value!r} is not a #RRGGBB colour")
+    return f"Color(0xFF{text.upper()})"
+
+
+def emit_kotlin_product_hues(hues: dict) -> str:
+    """One entry per product, keyed by the same id `spec/` uses everywhere else."""
+    if not hues:
+        raise TokenError("spec/design-tokens.json carries no productHues.hues entries")
+    lines = [
+        "/** One product card's colouring. `scrim` is applied at 16%: the go pill and the ghost glyph. */",
+        "data class SmileProductHue(",
+        "    val from: Color,",
+        "    val to: Color,",
+        "    val icon: Color,",
+        "    val scrim: Color,",
+        ")",
+        "",
+        "/** Keyed by the product id in spec/scenarios.json. A product absent here has no hue yet. */",
+        "val smileProductHues: Map<String, SmileProductHue> = mapOf(",
+    ]
+    for product, hue in hues.items():
+        missing = {"from", "to", "icon", "scrim"} - set(hue)
+        if missing:
+            raise TokenError(f"product hue {product!r} is missing {sorted(missing)}")
+        lines += [
+            f'    "{product}" to SmileProductHue(',
+            f"        from = {kotlin_color(hue['from'])},",
+            f"        to = {kotlin_color(hue['to'])},",
+            f"        icon = {kotlin_color(hue['icon'])},",
+            f"        scrim = {kotlin_color(hue['scrim'])},",
+            "    ),",
+        ]
+    lines.append(")")
+    return "\n".join(lines)
+
+
+def read_product_hues() -> dict:
+    spec_path = os.path.join(REPO, SPEC_TOKENS)
+    with io.open(spec_path, encoding="utf-8") as handle:
+        spec = json.load(handle)
+    for delta in spec.get("deltas", []):
+        if delta.get("id") == "productHues":
+            return delta.get("hues", {})
+    raise TokenError(f"{SPEC_TOKENS} has no productHues delta to generate from")
+
+
+def generate_kotlin_product_hues() -> str:
+    return KOTLIN_HUES_HEADER + "\n" + emit_kotlin_product_hues(read_product_hues()) + "\n"
+
+
 def generate_kotlin_type(ds: str) -> str:
     tokens_path = os.path.join(ds, "dist", "json", "tokens.flat.json")
     with io.open(tokens_path, encoding="utf-8") as handle:
@@ -608,6 +681,7 @@ def main(argv=None) -> int:
         ok = copy_upstream(ds, args.check) and ok
         if os.path.isdir(os.path.join(REPO, ANDROID_UI)):
             ok = write(KOTLIN_TYPE_OUT, generate_kotlin_type(ds), args.check) and ok
+            ok = write(KOTLIN_HUES_OUT, generate_kotlin_product_hues(), args.check) and ok
             ok = copy_fonts(ds, args.check) and ok
         else:
             print(f"  skipped    {KOTLIN_TYPE_OUT} ({ANDROID_UI} does not exist yet)")

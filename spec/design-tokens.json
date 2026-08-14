@@ -134,38 +134,68 @@
     {
       "id": "productHues",
       "severity": "blocks ProductCard on every product; the two document products are told apart by hue alone",
-      "figma": {
-        "node": "5206-4037 (Products · expressive), read 2026-08-15",
-        "fillType": "linear-gradient at 124.169deg, stops at 13.397% and 86.603% — NOT the flat fills this spec previously assumed",
+      "source": "Figma node 5206-4037 (Products · expressive), read 2026-08-15, including the exported card assets",
+      "shape": {
+        "fill": "linear gradient at 124.169deg, stops at 13.397% and 86.603% — NOT a flat fill",
+        "shadow": "the card's own `from` hue, twice: 0 10 18 -2 at 24% and 0 2 5 0 at 16%",
+        "content": "white on every card — title and the go arrow both",
+        "scrim": "the go pill's fill and the ghost glyph's stroke, both at 16%. White on four cards; Document Verification's amber is too light, so it goes dark instead",
+        "icon": "the mark on the white tile. The card's `from` hue on four; Document Verification darkens it for contrast, so it is not derivable from the gradient",
+        "ghostGlyph": "the product's own icon at 3.3x — 69.3 against the icon's 21, stroke 7.15 against 2.16667 — so it reuses the icon asset rather than shipping a second one"
+      },
+      "hues": {
         "smartSelfieEnrollment": {
           "from": "#05723A",
-          "to": "#0A9B4C"
+          "to": "#0A9B4C",
+          "icon": "#05723A",
+          "scrim": "#FFFFFF"
         },
         "smartSelfieAuth": {
           "from": "#3A49B4",
-          "to": "#5361D6"
+          "to": "#5361D6",
+          "icon": "#3A49B4",
+          "scrim": "#FFFFFF"
         },
         "documentVerification": {
           "from": "#E08600",
-          "to": "#FFB53D"
+          "to": "#FFB53D",
+          "icon": "#C46F00",
+          "scrim": "#2D2B2A"
         },
         "enhancedDocumentVerification": {
           "from": "#2D2B2A",
-          "to": "#4A4645"
+          "to": "#4A4645",
+          "icon": "#2D2B2A",
+          "scrim": "#FFFFFF"
         },
         "biometricKyc": {
           "from": "#151F72",
-          "to": "#2B3A9E"
+          "to": "#2B3A9E",
+          "icon": "#151F72",
+          "scrim": "#FFFFFF"
         },
-        "enhancedKyc": "ABSENT — the design node predates the owner decision that added a sixth product, and still shows slot/empty in its place",
-        "shadow": "each card carries its own hue as a tinted shadow: 0 10 18 -2 rgba(hue,0.24) + 0 2 5 0 rgba(hue,0.16)",
-        "goPill": "rgba(255,255,255,0.16) on four cards but rgba(45,43,42,0.16) on Document Verification, whose amber is too light for a white scrim",
-        "iconStroke": "the icon on the white tile is the card's start hue on three of four, but Document Verification's icon is #C46F00 rather than its #E08600 start — darkened for contrast, so the icon colour is not derivable from the gradient"
+        "enhancedKyc": {
+          "from": "#05726E",
+          "to": "#0A9B96",
+          "icon": "#05726E",
+          "scrim": "#FFFFFF",
+          "origin": "DERIVED HERE 2026-08-15, not supplied by design"
+        }
       },
-      "designSystem": "Eight of the ten gradient stops do not exist in the token source at any tier. Only #2D2B2A (color.neutral.off-black / color.text.inverse) and #151F72 (color.primary) are present, and both are coincidences of value rather than a decorative role.",
-      "finding": "VERIFIED against the design 2026-08-15, replacing the earlier stand-in. The product hues are raw gradient fills in the design file, bound to no variable — get_variable_defs on the products node returns only type, primary, muted, surface, title, border and the page background. So there is no token to consume and no generated output to read: implementing this today means ten hex literals in app code, which the repo's own rule calls a review failure, times four platforms.",
-      "recommendation": "Add the product hues to the design system as a decorative role — a from/to pair per product, plus the sixth product the design node is missing. Until then treat this the same way as composeTypeStylesAreComments: generate the values from this spec entry rather than hand-copying them into four codebases. The mapping above is the single source all four apps read.",
-      "status": "OPEN 2026-08-15. Android still renders the stand-in (the decorative palette indexed by declaration order) pending a decision on the stopgap."
+      "missing": "enhancedKyc was absent from the design node, which predates the owner decision that added a sixth product. Both its hue and its icon are derived here so the grid is complete, and both are placeholders a designer should confirm or replace. Hue: the enrolment green's exact saturation and lightness (S 91.6% / L 23.3% for `from`, S 87.9% / L 32.4% for `to`) rotated to a teal hue, so it sits in the family by construction rather than by eye, and teal is the one obvious gap next to green, indigo, amber, near-black and navy. Icon: the Biometric KYC card outline with the portrait removed and a third record line added — the same 21x21 grid and 2.16667 stroke as the rest of the set. That is also the semantic difference between the two: Biometric KYC checks a face against a record, Enhanced KYC checks the record alone.",
+      "designSystem": "Eight of the ten gradient stops exist nowhere in the token source. Only #2D2B2A (color.neutral.off-black) and #151F72 (color.primary) are present, and both by coincidence of value rather than as a decorative role.",
+      "finding": "VERIFIED against the design 2026-08-15, replacing the earlier stand-in. The hues are raw fills bound to no Figma variable — get_variable_defs on the products node returns only type, primary, muted, surface, title, border and the page background. So there is no token to consume and no upstream output to read.",
+      "recommendation": "Add these to the design system as a decorative product role, a from/to pair per product plus the icon and scrim colours, and include the sixth product. Until then this entry is the source and scripts/sync_design_tokens.py generates SmileProductHues.kt from it — the same stopgap shape as composeTypeStylesAreComments. Never hand-copy these values into a second codebase; a port generates from here too.",
+      "status": "OPEN 2026-08-15 upstream; generated as a stopgap on Android so the cards render correctly meanwhile."
+    },
+    {
+      "id": "bodyStrongSizeDiffers",
+      "severity": "affects any surface that follows the design's Body Strong; found on ProductCard",
+      "figma": "Type/Body Strong: DM Sans SemiBold 14/1.4 (node 5206-4037)",
+      "designSystem": "text-style.body-strong: 16/600. text-style.subtitle is 14/500 — so the design's 14/600 exists in neither.",
+      "finding": "The design file and the token source disagree on Body Strong's SIZE, not just its rendering. On the product card the difference is load-bearing: at 16px 'SmartSelfie Authentication' breaks mid-word on a 174-wide card, and the design avoids that only because its own card is labelled 'SmartSelfie Auth' while spec/scenarios.json mandates the full name.",
+      "recommendation": "Reconcile Body Strong between the design file and the token source. Until then a 14px surface takes text-style.subtitle and loses one weight step, because size is what decides whether the label fits.",
+      "status": "OPEN 2026-08-15"
     }
   ],
   "perPlatform": {

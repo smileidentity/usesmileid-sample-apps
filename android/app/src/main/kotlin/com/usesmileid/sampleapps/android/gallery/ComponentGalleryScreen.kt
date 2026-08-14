@@ -30,6 +30,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Density
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.smileProductHues
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.components.ChevronRightGlyph
 import com.usesmileid.sampleapps.ui.components.ProductMarkGlyph
 import com.usesmileid.sampleapps.ui.components.TorchGlyph
@@ -463,20 +465,19 @@ private fun gallerySections(): List<GallerySectionSpec> {
             UseSmileIDSampleButton(text = "Select one more", onClick = { selectedCount++ })
         },
         GallerySectionSpec("PRODUCT GRID") {
-            // Hues are the palette in order, not a product mapping: that list is outstanding.
-            val hues = UseSmileIDSampleTheme.colors.decorative.all
+            val hues = UseSmileIDSampleProduct.entries.mapNotNull { smileProductHues[it.id] }
             UseSmileIDSampleSectionHeader(text = "Authentication")
             UseSmileIDSampleProductGrid(itemCount = PRODUCTS.size) { index ->
                 UseSmileIDSampleProductCard(
                     title = PRODUCTS[index],
                     onClick = {},
-                    containerColor = hues[index % hues.size],
+                    hue = hues[index % hues.size],
                 )
             }
             UseSmileIDSampleProductCard(
                 title = "Enhanced KYC",
                 onClick = {},
-                containerColor = UseSmileIDSampleTheme.colors.decorative.sand,
+                hue = hues.last(),
                 enabled = false,
             )
         },

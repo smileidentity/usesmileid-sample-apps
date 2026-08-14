@@ -24,6 +24,8 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.SmileProductHue
+import com.smileid.designsystem.smileProductHues
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleAvatar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
@@ -145,14 +147,16 @@ fun ProductsScreen(
                     UseSmileIDSampleSectionHeader(text = section.label)
                     UseSmileIDSampleProductGrid(itemCount = products.size) { index ->
                         val product = products[index]
+                        val id = product.iconRes
                         UseSmileIDSampleProductCard(
                             title = product.label,
                             onClick = { onProductClick(product) },
-                            containerColor = product.hue(),
+                            hue = product.hue(),
                             testId = UseSmileIDSampleTestIds.productCard(product.id),
-                            // Null for the two products still without one, which keeps the shared mark.
-                            icon = product.iconRes?.let { id ->
-                                { tint -> UseSmileIDSampleIcon(id = id, tint = tint) }
+                            icon = id?.let { { tint -> UseSmileIDSampleIcon(id = it, tint = tint) } },
+                            // The same mark at 3.3x, which is how the design draws the watermark.
+                            ghost = id?.let {
+                                { tint -> UseSmileIDSampleIcon(id = it, tint = tint, size = GHOST_SIZE) }
                             },
                         )
                     }
@@ -165,9 +169,14 @@ fun ProductsScreen(
     }
 }
 
-/** A placeholder hue, not the product→hue mapping: that list is the designer's and is still outstanding. */
-@Composable
-private fun UseSmileIDSampleProduct.hue(): Color {
-    val palette = UseSmileIDSampleTheme.colors.decorative.all
-    return palette[ordinal % palette.size]
-}
+/**
+ * The product's colours, read from the design and generated into `SmileProductHues`.
+ *
+ * A product with no entry cannot render, so this fails loudly rather than substituting a neighbour's
+ * hue — silently wrong colour is the one outcome the design's own palette can't survive.
+ */
+private fun UseSmileIDSampleProduct.hue(): SmileProductHue =
+    requireNotNull(smileProductHues[id]) { "no hue for product '$id'; see spec/design-tokens.json → productHues" }
+
+/** 69.3 in the design — the icon at 3.3x, bleeding off the corner. */
+private val GHOST_SIZE = SmileDimens.space64 + SmileDimens.space4
