@@ -50,6 +50,21 @@ data class BadgeTokens(
     val infoText: Color,
 )
 
+@Immutable
+data class DataFieldTokens(val label: Color, val value: Color, val valueLink: Color)
+
+@Immutable
+data class FilterChipTokens(
+    val background: Color,
+    val border: Color,
+    val label: Color,
+    val value: Color,
+    val divider: Color,
+)
+
+@Immutable
+data class CardTokens(val background: Color, val border: Color, val title: Color, val body: Color)
+
 /** The semantic tier for one mode, plus the component tiers. Grouped here because [SmileColorLight] and [SmileColorDark] share no supertype, so a component cannot select between them by mode. */
 @Immutable
 data class UseSmileIDSampleColors(
@@ -82,6 +97,9 @@ data class UseSmileIDSampleColors(
     val input: InputTokens,
     val search: SearchTokens,
     val badge: BadgeTokens,
+    val dataField: DataFieldTokens,
+    val filterChip: FilterChipTokens,
+    val card: CardTokens,
 )
 
 internal val lightColors = UseSmileIDSampleColors(
@@ -147,6 +165,24 @@ internal val lightColors = UseSmileIDSampleColors(
         infoBackground = SmileColorLight.badgeInfoBackground,
         infoText = SmileColorLight.badgeInfoText,
     ),
+    dataField = DataFieldTokens(
+        label = SmileColorLight.dataFieldLabel,
+        value = SmileColorLight.dataFieldValue,
+        valueLink = SmileColorLight.dataFieldValueLink,
+    ),
+    filterChip = FilterChipTokens(
+        background = SmileColorLight.filterChipBg,
+        border = SmileColorLight.filterChipBorder,
+        label = SmileColorLight.filterChipLabel,
+        value = SmileColorLight.filterChipValue,
+        divider = SmileColorLight.filterChipDivider,
+    ),
+    card = CardTokens(
+        background = SmileColorLight.cardBackground,
+        border = SmileColorLight.cardBorder,
+        title = SmileColorLight.cardTitleText,
+        body = SmileColorLight.cardBodyText,
+    ),
 )
 
 internal val darkColors = UseSmileIDSampleColors(
@@ -211,6 +247,24 @@ internal val darkColors = UseSmileIDSampleColors(
         errorText = SmileColorDark.badgeErrorText,
         infoBackground = SmileColorDark.badgeInfoBackground,
         infoText = SmileColorDark.badgeInfoText,
+    ),
+    dataField = DataFieldTokens(
+        label = SmileColorDark.dataFieldLabel,
+        value = SmileColorDark.dataFieldValue,
+        valueLink = SmileColorDark.dataFieldValueLink,
+    ),
+    filterChip = FilterChipTokens(
+        background = SmileColorDark.filterChipBg,
+        border = SmileColorDark.filterChipBorder,
+        label = SmileColorDark.filterChipLabel,
+        value = SmileColorDark.filterChipValue,
+        divider = SmileColorDark.filterChipDivider,
+    ),
+    card = CardTokens(
+        background = SmileColorDark.cardBackground,
+        border = SmileColorDark.cardBorder,
+        title = SmileColorDark.cardTitleText,
+        body = SmileColorDark.cardBodyText,
     ),
 )
 

@@ -23,8 +23,11 @@ python3 "$REPO_ROOT/scripts/sync_design_tokens.py" --all --check
 echo "==> lint"
 ./gradlew lint
 
-echo "==> unit tests (includes the spec validation)"
+echo "==> unit tests (includes the spec validation and the font-scale predicates)"
 ./gradlew test
+
+echo "==> goldens, light and dark"
+./gradlew verifyRoborazziDebug
 
 echo "==> release assemble (minified, resource-shrunk, no app-side keep rules)"
 ./gradlew assembleRelease
