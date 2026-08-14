@@ -413,7 +413,7 @@
       "metrics": {
         "size": "174x148 in a 2-up grid; built as a weighted column with a space64*2 minimum so it grows with the title",
         "padding": "14 in the design, spacing.sm (12) here",
-        "iconTile": "40 (space40) at radius.sm, filled color.surface with the card's own hue as the glyph tint",
+        "iconTile": "40 (space40) at radius.sm, filled color.surface with the card's own hue as the glyph tint. The design set supplied four icons on 2026-08-15, held in design/icons/ and named by product id; Enhanced Doc Verification and Enhanced KYC are still owed and fall back to the shared product mark, which is deliberately visibly different rather than borrowing a neighbour's icon.",
         "ghostGlyph": "69.3 bleeding off the top-right; the card clips to bounds rather than growing",
         "goAffordance": "26 circular outline in the design; size.icon-lg (24) here",
         "titleTruncation": "none — 'SmartSelfie Authentication' already wraps to two lines at default scale on a 174-wide card",

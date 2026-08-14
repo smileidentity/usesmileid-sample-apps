@@ -26,6 +26,8 @@ import androidx.compose.ui.semantics.Role
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleAvatar
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
+import com.usesmileid.sampleapps.ui.components.iconRes
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProductCard
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProductGrid
@@ -148,6 +150,10 @@ fun ProductsScreen(
                             onClick = { onProductClick(product) },
                             containerColor = product.hue(),
                             testId = UseSmileIDSampleTestIds.productCard(product.id),
+                            // Null for the two products still without one, which keeps the shared mark.
+                            icon = product.iconRes?.let { id ->
+                                { tint -> UseSmileIDSampleIcon(id = id, tint = tint) }
+                            },
                         )
                     }
                 }

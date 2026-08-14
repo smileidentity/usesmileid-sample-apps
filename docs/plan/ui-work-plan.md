@@ -232,7 +232,15 @@ stand-in, so a port should use the same one rather than inventing a second answe
 1. The product→hue and profile→hue list — 6 products, plus profiles. Stand-in: the decorative
    palette indexed by the product's position in the order `spec/` declares, which the spec test
    pins, so every platform resolves the same hue for the same product until the real list lands.
-2. An icon for the **Enhanced KYC** product card. Stand-in: the shared product mark.
+2. **Partly delivered 2026-08-15.** Eight icons arrived and are imported — four product marks plus
+   the three nav icons and the token scan mark — and the sources are the shared record in
+   `design/icons/`. Two product cards are still owed one: **Enhanced KYC** and **Enhanced Doc
+   Verification**. Both keep the shared product mark, which reads as visibly generic next to the
+   four real icons rather than borrowing a neighbour's. Separately, the three nav icons
+   (`products`, `verifications`, `settings`) are imported but unused: `components.json` records the
+   nav bar as three text tabs, verified against a render, so putting icons in it is a design change
+   and not a wiring one. Their export colours — products in primary, the other two in text.muted —
+   look like the active and inactive tab treatment, so the question is worth asking.
 3. Rename board 05 to "KYC / ID details" — it holds no consent screen.
 
 *From the design system:*
