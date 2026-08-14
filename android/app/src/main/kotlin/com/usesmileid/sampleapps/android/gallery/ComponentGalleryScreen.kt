@@ -73,6 +73,11 @@ private const val MAX_FONT_SCALE = 2f
 
 private enum class GallerySheet { None, Partial, FullHeight }
 
+/**
+ * The font-scale toggle is in-app rather than a device setting because some OEM builds refuse
+ * `settings put system font_scale`. Its own row sits outside the override it applies, so the
+ * controls stay operable at 2x.
+ */
 @Composable
 fun ComponentGalleryScreen() {
     var largeText by rememberSaveable { mutableStateOf(false) }
@@ -82,13 +87,11 @@ fun ComponentGalleryScreen() {
     val sections = gallerySections()
 
     Column(modifier = Modifier.fillMaxSize().testTag(COMPONENT_GALLERY_TAG)) {
-        // Outside the font-scale override below, so the controls themselves do not grow.
         Row(
             modifier = Modifier.padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingXs),
             horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // Overridden here because some OEM builds refuse `settings put system font_scale`.
             UseSmileIDSampleSwitch(
                 checked = largeText,
                 onCheckedChange = { largeText = it },
@@ -133,8 +136,7 @@ fun ComponentGalleryScreen() {
                 itemsIndexed(sections) { _, section ->
                     GallerySection(section.label) { section.content() }
                 }
-                // Trailing space, so the last component is not flush with the viewport edge — where
-                // it renders fine but reports clipped bounds to automation.
+                // Flush with the viewport edge, the last component reports clipped bounds to automation.
                 item { Spacer(modifier = Modifier.height(SmileDimens.space64)) }
             }
         }
@@ -209,8 +211,7 @@ private fun gallerySections(): List<GallerySectionSpec> {
             )
         },
         GallerySectionSpec("AVATAR") {
-            // FlowRow, not Row: at 2x these no longer fit a line, and a Row squeezes the last one
-            // out of round instead of wrapping it.
+            // A Row squeezes the last avatar out of round at 2x instead of wrapping it.
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),

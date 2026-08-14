@@ -27,6 +27,8 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
  * One verification: a product tile, its name, a secondary line of job id and time, and the status badge.
  *
  * Select mode's checkbox is not a slot — the design puts it beside the card, and inside it cost the title width.
+ *
+ * @param statusTestId defaulted rather than attached by the caller; a list screen overrides it with the row's suffix.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -39,7 +41,6 @@ fun UseSmileIDSampleJobRow(
     onClick: (() -> Unit)? = null,
     tileColor: Color = UseSmileIDSampleTheme.colors.surfaceAlt,
     testId: String? = null,
-    // Defaulted, not attached: a list screen overrides it with the row's suffix.
     statusTestId: String? = UseSmileIDSampleTestIds.JOB_ROW_STATUS,
 ) {
     val colors = UseSmileIDSampleTheme.colors
@@ -74,7 +75,6 @@ fun UseSmileIDSampleJobRow(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs),
             ) {
-                // No line cap: the caller already elides the job id.
                 Text(
                     text = product,
                     style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
