@@ -1,0 +1,114 @@
+# Every canonical launch argument is accepted at cold start and reported on the result card. Runs
+# assert on the card rather than on the argument they passed, because those are different claims:
+# one says what was asked for, the other says what the app actually got.
+#
+# This flow taps its way to the card and never deep-links to it. A deep link delivered by `am start`
+# carries FLAG_ACTIVITY_NEW_TASK and rebuilds the Activity, which discards the launch arguments along
+# with every other in-memory hoist — see R9 in docs/plan/navigation-plan.md. Deep-linking here would
+# read defaults and look like a parsing bug.
+#
+# The screen assertions between taps are synchronisation, not decoration: Maestro will happily tap
+# through a sheet-dismiss animation and report the tap complete, and the flow then fails several
+# steps later on a screen that never changed.
+# APP_ID must be passed — see shell-navigation.yaml for why it has no default.
+appId: ${APP_ID}
+---
+- stopApp
+- launchApp:
+    arguments:
+      scenario: expiredToken
+      theme: clashingHost
+      route: shell
+- tapOn:
+    id: "sample_nav_verifications"
+- assertVisible:
+    id: "sample_verifications_screen"
+- tapOn:
+    id: "sample_job_row_0"
+- assertVisible:
+    id: "sample_result_card"
+- assertVisible:
+    id: "sample_result_active_scenario"
+    text: "expiredToken"
+- assertVisible:
+    id: "sample_result_active_theme"
+    text: "clashingHost"
+
+# Every schema field reaches the tree, including the ones with nothing in them yet: an id that is
+# missing and one that is empty are different failures, and only the card can tell them apart.
+- assertVisible:
+    id: "sample_result_job_status"
+    text: "idle"
+- assertVisible:
+    id: "sample_result_result_count"
+    text: "0"
+- assertVisible:
+    id: "sample_result_refresh_count"
+    text: "0"
+- assertVisible:
+    id: "sample_result_job_id"
+    text: "—"
+# The last row sits below the fold on a 6.4" screen, so it is scrolled to rather than assumed visible.
+# Null until the SDK publishes a runtime accessor — see sdkVersion.blocked in result-card.schema.json.
+- scrollUntilVisible:
+    element:
+      id: "sample_result_sdk_version"
+    direction: DOWN
+    visibilityPercentage: 50
+- assertVisible:
+    id: "sample_result_sdk_version"
+    text: "—"
+
+# An unrecognised value falls back to that argument's default instead of failing the launch, which
+# is only safe while the card keeps reporting the fallback.
+- stopApp
+- launchApp:
+    arguments:
+      scenario: notAScenario
+- tapOn:
+    id: "sample_nav_verifications"
+- assertVisible:
+    id: "sample_verifications_screen"
+- tapOn:
+    id: "sample_job_row_0"
+- assertVisible:
+    id: "sample_result_active_scenario"
+    text: "normal"
+
+# The card renders even when the job id resolves to nothing: a flow that failed before submission
+# has no job to show, and that is exactly when its counts are the only evidence there is.
+- stopApp
+- openLink: "usesmileid-sample-android://verifications/job-missing"
+- assertVisible:
+    id: "sample_result_card"
+
+# autostart lands the run on the flow route directly, under the route it was given.
+- stopApp
+- launchApp:
+    arguments:
+      autostart: biometricKyc
+      route: shell
+- assertVisible: ".*productId = biometricKyc.*"
+- assertVisible: ".*route = shell.*"
+
+# The drawer writes the state a launch argument seeds, so one card reports either source. Opened by
+# its own deep link rather than through the Settings row, which sits below the fold behind a scroll
+# this assertion has no interest in.
+- stopApp
+- openLink: "usesmileid-sample-android://debug/scenarios"
+- assertVisible:
+    id: "sample_scenario_drawer"
+- tapOn:
+    id: "sample_scenario_item_offlineRetry"
+- back
+- assertVisible:
+    id: "sample_products_screen"
+- tapOn:
+    id: "sample_nav_verifications"
+- assertVisible:
+    id: "sample_verifications_screen"
+- tapOn:
+    id: "sample_job_row_0"
+- assertVisible:
+    id: "sample_result_active_scenario"
+    text: "offlineRetry"

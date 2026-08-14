@@ -1,6 +1,5 @@
 package com.usesmileid.sampleapps.ui
 
-import java.io.File
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -8,19 +7,13 @@ import org.junit.Test
 /**
  * Asserts the ids this module attaches are exactly the ones `spec/test-ids.json` declares.
  *
- * The ids are extracted with a pattern rather than parsed, because `org.json` is only a stub on the
- * unit test classpath. A change to the file's shape therefore fails [spec_file_is_readable] rather
- * than passing the rest of this class vacuously.
+ * A change to the file's shape fails [spec_file_is_readable] rather than passing the rest of this
+ * class vacuously.
  */
 class UseSmileIDSampleTestIdsSpecTest {
 
     private val specIds: Set<String> by lazy {
-        val specDir = requireNotNull(System.getProperty("sampleapps.spec.dir")) {
-            "sampleapps.spec.dir is not set; see sample-ui/build.gradle.kts"
-        }
-        val spec = File(specDir, "test-ids.json")
-        assertTrue("spec/test-ids.json not found at ${spec.absolutePath}", spec.isFile)
-        ID_PATTERN.findAll(spec.readText()).map { it.groupValues[1] }.toSet()
+        ID_PATTERN.findAll(spec("test-ids.json")).map { it.groupValues[1] }.toSet()
     }
 
     @Test

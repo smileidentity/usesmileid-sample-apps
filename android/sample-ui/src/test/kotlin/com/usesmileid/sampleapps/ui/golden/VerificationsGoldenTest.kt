@@ -68,15 +68,18 @@ class VerificationsGoldenTest : GoldenTest() {
     private fun Details() = VerificationDetailsScreen(
         jobId = JOBS.all.first().id,
         job = JOBS.all.first(),
+        result = ResultFixtures.Succeeded,
         onBack = {},
         onDelete = {},
         onCopy = {},
     )
 
+    /** Paired with a failed result: a job the app never got is what a flow failing before submission looks like. */
     @Composable
     private fun UnknownDetails() = VerificationDetailsScreen(
         jobId = "job_missing",
         job = null,
+        result = ResultFixtures.Failed,
         onBack = {},
         onDelete = {},
         onCopy = {},

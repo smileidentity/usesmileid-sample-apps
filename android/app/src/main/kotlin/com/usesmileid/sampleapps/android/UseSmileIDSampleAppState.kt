@@ -12,7 +12,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.saveable.rememberSaveable
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobs
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleFlowResult
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleForms
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleLaunchArgs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleStore
@@ -30,6 +32,8 @@ class UseSmileIDSampleAppState(
     val jobs: UseSmileIDSampleJobs,
     val forms: UseSmileIDSampleForms,
     val profiles: UseSmileIDSampleProfiles,
+    val launchArgs: UseSmileIDSampleLaunchArgs,
+    val flowResult: UseSmileIDSampleFlowResult,
     val nowMillis: Long,
 ) {
     val sessionExpired: Boolean get() = session != null && session.hasExpired(nowMillis)
@@ -38,7 +42,9 @@ class UseSmileIDSampleAppState(
 
 /** Ticks once a second while a session is live. The deadline is absolute, so a restored session needs no recomputing. */
 @Composable
-fun rememberUseSmileIDSampleAppState(): UseSmileIDSampleAppState {
+fun rememberUseSmileIDSampleAppState(
+    launchArgs: UseSmileIDSampleLaunchArgs = UseSmileIDSampleLaunchArgs(),
+): UseSmileIDSampleAppState {
     val context = LocalContext.current
     val store = remember(context) { UseSmileIDSampleStore(context) }
     val settings by store.settings.collectAsStateWithLifecycle(initialValue = UseSmileIDSampleSettings())
@@ -48,6 +54,15 @@ fun rememberUseSmileIDSampleAppState(): UseSmileIDSampleAppState {
     val jobs = remember { UseSmileIDSampleJobs.seeded(System.currentTimeMillis()) }
     val forms = rememberSaveable(saver = UseSmileIDSampleForms.Saver) { UseSmileIDSampleForms() }
     val profiles = remember { UseSmileIDSampleProfiles() }
+    // Saveable, so the arguments seed the first launch only: a recreation re-reads the same intent,
+    // and re-seeding would discard whatever the drawer selected after it.
+    val flowResult = rememberSaveable(saver = UseSmileIDSampleFlowResult.Saver) {
+        UseSmileIDSampleFlowResult(
+            scenario = launchArgs.scenario,
+            theme = launchArgs.theme,
+            route = launchArgs.route,
+        )
+    }
 
     // Stops at the deadline: the session object does not change on expiry, so the key alone never ends this.
     LaunchedEffect(session) {
@@ -66,6 +81,8 @@ fun rememberUseSmileIDSampleAppState(): UseSmileIDSampleAppState {
         jobs = jobs,
         forms = forms,
         profiles = profiles,
+        launchArgs = launchArgs,
+        flowResult = flowResult,
         nowMillis = nowMillis,
     )
 }

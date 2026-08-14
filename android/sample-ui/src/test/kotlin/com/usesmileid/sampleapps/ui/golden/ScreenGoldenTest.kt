@@ -34,6 +34,9 @@ class ScreenGoldenTest : GoldenTest() {
     fun products_production() = goldens("screen_products_production") { Products(PRODUCTION) }
 
     @Test
+    fun products_flow_in_flight() = goldens("screen_products_in_flight") { Products(IN_FLIGHT) }
+
+    @Test
     fun scan_token() = goldens("screen_scan_token") { ScanToken() }
 
     @Test
@@ -47,6 +50,7 @@ class ScreenGoldenTest : GoldenTest() {
         val TOKEN_LINKED = SANDBOX.copy(sessionId = "9f3a", sessionRemaining = "3:20")
         val TOKEN_EXPIRED = SANDBOX.copy(sessionEnded = true)
         val PRODUCTION = SANDBOX.copy(environment = UseSmileIDSampleEnvironment.Production)
+        val IN_FLIGHT = SANDBOX.copy(result = ResultFixtures.Running)
     }
 }
 

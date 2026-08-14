@@ -68,7 +68,27 @@ platform's native sheet behaviour — drag-to-dismiss, scrim tap, inset handling
 
 **R9 — Cold start is the test that matters.** Every route must open with the process not already
 running. Cold-start deep links are where argument parsing, state restoration and "the tab bar isn't
-built yet" break. Warm-start works by accident; cold start works by design.
+built yet" break.
+
+The corollary "warm start works by accident" needs a caveat on Android, measured on a device
+2026-08-14 by logging the Activity identity, task id and intent across both starts.
+
+A deep link delivered by `am start` — which is what adb and Maestro's `openLink` both do — carries
+`FLAG_ACTIVITY_NEW_TASK`, and its intent does not match the root intent of the task the app is
+already running in. The system's answer is to build a **second Activity instance** as the new root
+of that same task, with `savedInstanceState` null. So every in-memory hoist goes: the launch
+arguments, the scenario the drawer selected, the token session. `launchMode` does not change this —
+it reproduces identically under `singleTop` and `singleTask`, which is why the app still declares
+the simpler `singleTop`.
+
+Two consequences worth carrying to the other three platforms:
+
+- An adb- or Maestro-delivered deep link is **always effectively a cold start**, whatever the app
+  was doing. It is not a warm-path test, and `ForwardNewIntentsTo` is not what serves it.
+- Nothing looks wrong on screen when this happens, because the replacement renders the destination
+  correctly. Only state that should have survived shows it. So a warm-start assertion has to be on
+  **surviving state** — the result card's `activeScenario` is the cheapest one — and a flow that
+  wants to observe launch arguments must reach its destination by tapping, not by deep link.
 
 ---
 
@@ -84,7 +104,8 @@ does not have to match the SDK's Kotlin version, only supply its own.
 - **Typed arguments.** Declare navigation arguments as the destination composable's parameters and
   let KSP generate the typed `…Destination(productId = …)` call. No manual string routes.
 - **Deep links.** `@Destination(deepLinks = [DeepLink(uriPattern = "…")])` per route, with the scheme
-  from `spec/app-identity.json`. Verify cold start, not just warm.
+  from `spec/app-identity.json`. Verify cold start; and note from R9 that an externally delivered
+  deep link is a cold start even when the app was already running.
 - **Hosting the SDK flow.** A single destination whose content is `UseSmileIDBuilder { … }`. Because
   that nests a `NavHost` inside a `NavHost`: give the inner controller the back gesture first (do
   not add a host-level `BackHandler` that swallows it), keep predictive-back enabled so the inner

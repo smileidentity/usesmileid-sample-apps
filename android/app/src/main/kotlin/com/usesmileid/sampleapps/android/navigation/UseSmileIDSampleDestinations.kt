@@ -38,8 +38,6 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleToast
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
-import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
-import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleProductsState
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
@@ -82,6 +80,7 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
                 ?.remaining(app.nowMillis)
                 ?.toCountdown(),
             sessionEnded = app.sessionExpired,
+            result = app.flowResult.snapshot,
         ),
         onProductClick = { navigator.navigate(ConsentDetailsFormScreenDestination(productId = it.id)) },
         onProfileClick = { navigator.navigate(ProfileSwitchSheetDestination) },
@@ -175,6 +174,7 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
     VerificationDetailsContent(
         jobId = jobId,
         job = app.jobs.all.firstOrNull { it.id == jobId },
+        result = app.flowResult.snapshot,
         onBack = { navigator.navigateUp() },
         onDelete = { app.jobs.remove(setOf(jobId)); navigator.navigateUp() },
         onCopy = { clipboard.setText(AnnotatedString(it)) },
@@ -332,13 +332,13 @@ fun ScanTokenScreen(navigator: DestinationsNavigator) {
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SCENARIO_DRAWER)])
 @Composable
 fun ScenarioDrawerSheet(navigator: DestinationsNavigator) {
-    var scenario by rememberSaveable { mutableStateOf(UseSmileIDSampleScenario.Normal) }
-    var theme by rememberSaveable { mutableStateOf(UseSmileIDSampleThemeScenario.BrandDefault) }
+    // App-level, not local to the sheet: the result card reports the same selection a launch argument seeds.
+    val app = LocalUseSmileIDSampleAppState.current
     ScenarioDrawerContent(
-        activeScenario = scenario,
-        activeTheme = theme,
-        onScenarioSelect = { scenario = it },
-        onThemeSelect = { theme = it },
+        activeScenario = app.flowResult.scenario,
+        activeTheme = app.flowResult.theme,
+        onScenarioSelect = app.flowResult::selectScenario,
+        onThemeSelect = app.flowResult::selectTheme,
         onDismissRequest = { navigator.navigateUp() },
     )
 }

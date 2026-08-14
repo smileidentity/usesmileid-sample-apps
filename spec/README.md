@@ -21,8 +21,8 @@ Rules:
 | File | Owns | Status |
 |---|---|---|
 | `scenarios.json` | Every scenario the drawer offers — flow and theme | scaffold: IDs settled, per-scenario expectations to firm up with the first app |
-| `launch-args.json` | Canonical automation argument names, and how each platform accepts them | scaffold: Android/iOS mechanisms settled, cross-platform entry point to confirm |
-| `result-card.schema.json` | The result card's fields and types | scaffold: field set settled |
+| `launch-args.json` | Canonical automation argument names, and how each platform accepts them | **implemented on Android 2026-08-14**; cross-platform entry point still to confirm |
+| `result-card.schema.json` | The result card's fields and types | **implemented on Android 2026-08-14**; `sdkVersion` blocked on the SDK, see the field's `blocked` note |
 | `test-ids.json` | The `sample_*` accessibility IDs flows assert on | scaffold: grows with each screen |
 | `app-identity.json` | Application ids, display names and URL schemes per platform, plus the ids reserved by the SDK repos' development samples | settled |
 | `routes.json` | The shared route table — ids, deep-link paths, typed arguments and the per-platform binding | **added 2026-08-13** |

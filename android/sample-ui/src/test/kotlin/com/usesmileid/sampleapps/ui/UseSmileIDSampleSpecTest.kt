@@ -3,12 +3,10 @@ package com.usesmileid.sampleapps.ui
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
-import java.io.File
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-// Extracted with a pattern rather than parsed: org.json is only a stub on the unit test classpath.
 class UseSmileIDSampleSpecTest {
 
     private val scenarios: String by lazy { spec("scenarios.json") }
@@ -40,15 +38,6 @@ class UseSmileIDSampleSpecTest {
             listOf("enhancedKyc"),
             UseSmileIDSampleProduct.entries.filterNot { it.capture }.map { it.id },
         )
-    }
-
-    private fun spec(name: String): String {
-        val dir = requireNotNull(System.getProperty("sampleapps.spec.dir")) {
-            "sampleapps.spec.dir is not set; see sample-ui/build.gradle.kts"
-        }
-        val file = File(dir, name)
-        assertTrue("spec/$name not found at ${file.absolutePath}", file.isFile)
-        return file.readText()
     }
 
     /** Scenario entries carry `"id"` then `"kind"`, so the pair is matched together rather than counted. */

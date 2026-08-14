@@ -27,9 +27,9 @@
     {
       "name": "autostart",
       "type": "string",
-      "values": "a job type id, or null to stay on the home screen",
+      "values": "a product id from scenarios.json products, or null to stay on the home screen",
       "default": null,
-      "description": "Starts a flow immediately on launch, so a flow does not have to tap its way in."
+      "description": "Starts a flow immediately on launch, so a flow does not have to tap its way in. The product `id` rather than its `jobType`, matching every other id reference in spec/; it lands directly on the flow route named by `route`, skipping the pre-flow forms."
     },
     {
       "name": "sandbox",
@@ -57,11 +57,16 @@
     }
   ],
   "mechanisms": {
-    "android": "Intent extras: adb shell am start -e scenario expiredToken -e route shell. Force-stop the app first — starting an already-live task silently ignores new extras and the run proceeds with the previous scenario while looking valid.",
+    "android": "Intent extras: adb shell am start -e scenario expiredToken -e route shell, or Maestro's launchApp `arguments`. Force-stop the app first, and then reach the screen under test by tapping rather than by deep link: an intent sent to a live task carries FLAG_ACTIVITY_NEW_TASK, which rebuilds the Activity around the new intent and resets these arguments to their defaults. Device-measured 2026-08-14; a deep link taken mid-run therefore reads as a parsing bug when it is a task-lifecycle one.",
     "ios": "Launch arguments read through UserDefaults: app.launchArguments = [\"-scenario\", \"expiredToken\"]. XCUITest sets them directly.",
     "flutter": "TBD in F2 — must accept the same canonical names.",
     "expo": "TBD in F2 — must accept the same canonical names."
   },
+  "notes": [
+    "Read from the launching intent only, and applied once: a recreation re-reads the same intent, so re-seeding would discard whatever the drawer selected after launch.",
+    "Parse all seven names even where a build cannot act on one yet, so the four apps accept the same surface. `scenario`, `theme`, `route` and `autostart` take effect on their own; `sandbox`, `appLocale` and `holdCamera` configure the handoff to the SDK and take effect where that handoff is built.",
+    "An unrecognised value falls back to that argument's default rather than failing the launch. That is only safe because the result card publishes what the run actually got — assert on sample_result_active_scenario, never on the argument you passed."
+  ],
   "openDecisions": [
     "Preferred: one cross-platform entry point via a deep link, drivable from adb, simctl and a device flow on all four platforms, with the native mechanisms above kept as the platform-specific alternate. The scheme is per app and already assigned in app-identity.json (e.g. usesmileid-sample-android://run?scenario=…&route=…) because two apps sharing a scheme break automation. Confirm the query-parameter shape when the first two apps land, then delete this note.",
     "Credentials are seeded as arguments, never typed: keyboard input drops characters from long API keys."

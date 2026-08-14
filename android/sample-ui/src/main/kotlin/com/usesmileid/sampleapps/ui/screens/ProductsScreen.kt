@@ -30,11 +30,13 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProductCard
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProductGrid
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProfileEnvChip
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleResultLine
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionHeader
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSessionCard
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSessionEndedBanner
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProductSection
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleResult
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** What the products header and session strip render, so the screen stays free of clock and store. */
@@ -44,6 +46,8 @@ data class UseSmileIDSampleProductsState(
     val sessionId: String? = null,
     val sessionRemaining: String? = null,
     val sessionEnded: Boolean = false,
+    /** Surfaced here only while a flow is in flight; the full card lives on verification details. */
+    val result: UseSmileIDSampleResult? = null,
 )
 
 /** The products grid, the entry point every flow starts from. */
@@ -98,6 +102,16 @@ fun ProductsScreen(
                     text = "Try our suite of products powered by our library",
                     style = UseSmileIDSampleTheme.type.textStyleBodySm,
                     color = UseSmileIDSampleTheme.colors.textMuted,
+                )
+            }
+        }
+
+        val result = state.result
+        if (result != null && result.inFlight) {
+            item {
+                UseSmileIDSampleResultLine(
+                    result = result,
+                    modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
                 )
             }
         }
