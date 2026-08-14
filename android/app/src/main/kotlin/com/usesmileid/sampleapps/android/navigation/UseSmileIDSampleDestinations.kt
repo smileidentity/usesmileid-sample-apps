@@ -126,8 +126,7 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
             )
         }
         if (removedCount > 0) {
-            // Undo is offered for a while, not forever: a toast left up would restore rows long
-            // after the removal it belonged to.
+            // Bounded, so a toast left up cannot restore rows long after the removal it belonged to.
             LaunchedEffect(removedCount) {
                 delay(UNDO_WINDOW_MILLIS)
                 removedCount = 0
