@@ -58,8 +58,7 @@ fun UseSmileIDSampleToast(
                     color = UseSmileIDSampleTheme.colors.textLink,
                     softWrap = false,
                     textAlign = TextAlign.Center,
-                    // clickable before the sizing modifiers, so the tap target is the padded box and
-                    // not the ~20dp line box the link text would otherwise occupy.
+                    // Clickable before the sizing modifiers, so the tap target is the padded box.
                     modifier = Modifier
                         .testTag(UseSmileIDSampleTestIds.TOAST_UNDO)
                         .clickable(role = Role.Button, onClick = onAction)
