@@ -232,11 +232,13 @@ stand-in, so a port should use the same one rather than inventing a second answe
 1. The product→hue and profile→hue list — 6 products, plus profiles. Stand-in: the decorative
    palette indexed by the product's position in the order `spec/` declares, which the spec test
    pins, so every platform resolves the same hue for the same product until the real list lands.
-2. **Partly delivered 2026-08-15.** Eight icons arrived and are imported — four product marks plus
+2. **Mostly delivered 2026-08-15.** Eight icons arrived and are imported — four product marks plus
    the three nav icons and the token scan mark — and the sources are the shared record in
-   `design/icons/`. Two product cards are still owed one: **Enhanced KYC** and **Enhanced Doc
-   Verification**. Both keep the shared product mark, which reads as visibly generic next to the
-   four real icons rather than borrowing a neighbour's. Separately, the three nav icons
+   `design/icons/`. Five of the six products are covered: the two document products **share one
+   mark** by design and are told apart by the card's hue, which is already the icon's tint, so a
+   port should reuse the drawable rather than add a near-identical second one. **Enhanced KYC** is
+   the one card still owed an icon; it keeps the shared product mark, which reads as visibly generic
+   next to five real icons rather than borrowing an unrelated one. Separately, the three nav icons
    (`products`, `verifications`, `settings`) are imported but unused: `components.json` records the
    nav bar as three text tabs, verified against a render, so putting icons in it is a design change
    and not a wiring one. Their export colours — products in primary, the other two in text.muted —

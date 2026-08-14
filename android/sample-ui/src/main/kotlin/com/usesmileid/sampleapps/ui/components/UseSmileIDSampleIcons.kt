@@ -46,9 +46,10 @@ fun ScanMarkGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) =
 /**
  * The icon the design set supplies for a product, or null where it still owes one.
  *
- * Enhanced Doc Verification and Enhanced KYC are the two gaps; a null here is what makes the card
- * fall back to the shared product mark rather than borrowing a neighbour's icon, which would read as
- * a deliberate pairing.
+ * The two document products deliberately share one mark: the design distinguishes them by the card's
+ * hue, which the card already applies as the tint, so a second near-identical drawable would only be
+ * a thing to keep in sync. Enhanced KYC is the one remaining gap, and a null here is what falls back
+ * to the shared product mark rather than borrowing an unrelated icon.
  */
 @get:DrawableRes
 val UseSmileIDSampleProduct.iconRes: Int?
@@ -56,7 +57,7 @@ val UseSmileIDSampleProduct.iconRes: Int?
         UseSmileIDSampleProduct.SmartSelfieEnrollment -> R.drawable.sample_ic_smart_selfie_enrollment
         UseSmileIDSampleProduct.SmartSelfieAuth -> R.drawable.sample_ic_smart_selfie_auth
         UseSmileIDSampleProduct.DocumentVerification -> R.drawable.sample_ic_document_verification
+        UseSmileIDSampleProduct.EnhancedDocumentVerification -> R.drawable.sample_ic_document_verification
         UseSmileIDSampleProduct.BiometricKyc -> R.drawable.sample_ic_biometric_kyc
-        UseSmileIDSampleProduct.EnhancedDocumentVerification -> null
         UseSmileIDSampleProduct.EnhancedKyc -> null
     }

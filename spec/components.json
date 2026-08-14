@@ -413,11 +413,11 @@
       "metrics": {
         "size": "174x148 in a 2-up grid; built as a weighted column with a space64*2 minimum so it grows with the title",
         "padding": "14 in the design, spacing.sm (12) here",
-        "iconTile": "40 (space40) at radius.sm, filled color.surface with the card's own hue as the glyph tint. The design set supplied four icons on 2026-08-15, held in design/icons/ and named by product id; Enhanced Doc Verification and Enhanced KYC are still owed and fall back to the shared product mark, which is deliberately visibly different rather than borrowing a neighbour's icon.",
+        "iconTile": "40 (space40) at radius.sm, filled color.surface with the card's own hue as the glyph tint. The design set supplied four icons on 2026-08-15, held in design/icons/ and named by product id. The two document products SHARE one mark by design and are told apart by the card's hue, which is already the icon's tint — do not add a second near-identical drawable. Enhanced KYC is the one product still owed an icon; it falls back to the shared product mark, which is deliberately visibly generic rather than borrowing an unrelated icon.",
         "ghostGlyph": "69.3 bleeding off the top-right; the card clips to bounds rather than growing",
         "goAffordance": "26 circular outline in the design; size.icon-lg (24) here",
         "titleTruncation": "none — 'SmartSelfie Authentication' already wraps to two lines at default scale on a 174-wide card",
-        "colouring": "the whole card takes a color.decorative.* fill with color.text.inverse text; the product→hue list is outstanding, so the caller passes the hue"
+        "colouring": "the whole card takes a color.decorative.* fill with color.text.inverse text; the product→hue list is outstanding, so the caller passes the hue. That list became load-bearing on 2026-08-15: the two document products share one icon and the hue is the ONLY thing distinguishing them, so until the real list lands they are told apart by a stand-in palette indexed by declaration order."
       },
       "states": [
         "default",
