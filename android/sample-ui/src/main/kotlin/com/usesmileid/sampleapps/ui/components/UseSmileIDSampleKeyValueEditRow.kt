@@ -38,7 +38,8 @@ fun UseSmileIDSampleKeyValueEditRow(
             .background(colors.surface)
             .defaultMinSize(minHeight = SmileDimens.sizeControlMd)
             .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingSm),
-        horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+        // The value sits at the right edge and drops below the label at 2x, matching DataFieldRow.
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs),
         itemVerticalAlignment = Alignment.CenterVertically,
     ) {

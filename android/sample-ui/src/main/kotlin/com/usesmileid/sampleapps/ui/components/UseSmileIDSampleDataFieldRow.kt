@@ -43,7 +43,7 @@ fun UseSmileIDSampleDataFieldRow(
         // FlowRow: at 2x a timestamp value cannot share a line with its label.
         FlowRow(
             modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs),
         ) {
             Text(
