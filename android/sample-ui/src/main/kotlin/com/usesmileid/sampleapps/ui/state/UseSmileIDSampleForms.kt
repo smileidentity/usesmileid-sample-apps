@@ -64,9 +64,11 @@ class UseSmileIDSampleForms(
                         email = saved[2],
                         phone = saved[3],
                     ),
+                    // Looked up rather than valueOf: a restore after a release that renamed one of
+                    // these would otherwise throw, and this state is restored after process death.
                     idDetails = UseSmileIDSampleIdDetails(
-                        country = saved[4].takeIf { it.isNotEmpty() }?.let(UseSmileIDSampleCountry::valueOf),
-                        idType = saved[5].takeIf { it.isNotEmpty() }?.let(UseSmileIDSampleIdType::valueOf),
+                        country = UseSmileIDSampleCountry.entries.firstOrNull { it.name == saved[4] },
+                        idType = UseSmileIDSampleIdType.entries.firstOrNull { it.name == saved[5] },
                         idNumber = saved[6],
                     ),
                     rememberDetails = saved[7].toBoolean(),
