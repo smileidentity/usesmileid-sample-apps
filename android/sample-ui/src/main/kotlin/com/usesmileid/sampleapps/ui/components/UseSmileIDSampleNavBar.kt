@@ -55,8 +55,7 @@ fun UseSmileIDSampleNavBar(
     sessionProgress: Float? = null,
 ) {
     Row(
-        // The app draws edge to edge, so the bar owns its bottom inset. Without it the bar sits
-        // under the system navigation bar and reports zero bounds to UI automation.
+        // Edge to edge, so without its own inset the bar sits under the system navigation bar.
         modifier = modifier
             .windowInsetsPadding(WindowInsets.navigationBars)
             .padding(SmileDimens.spacingSm),

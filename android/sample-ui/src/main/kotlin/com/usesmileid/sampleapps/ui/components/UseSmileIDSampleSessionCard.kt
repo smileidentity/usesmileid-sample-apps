@@ -80,7 +80,7 @@ fun UseSmileIDSampleSessionEndedBanner(
     Surface(
         modifier = modifier.fillMaxWidth().testTag(UseSmileIDSampleTestIds.SESSION_ENDED_BANNER),
         shape = RoundedCornerShape(SmileDimens.radiusSurface),
-        // surface-muted per this component's token list; the banner contract's fill is a warm sand.
+        // Surface-muted per this component's token list; the banner contract's fill is a warm sand.
         color = colors.surfaceMuted,
         border = BorderStroke(SmileDimens.borderWidthHairline, colors.border),
     ) {
@@ -112,7 +112,7 @@ fun UseSmileIDSampleSessionEndedBanner(
                 style = UseSmileIDSampleTheme.type.linkFont,
                 color = colors.primary,
                 softWrap = false,
-                // clickable before the sizing modifiers, so the tap target is the padded box.
+                // Clickable before the sizing modifiers, so the tap target is the padded box.
                 modifier = Modifier
                     .clickable(role = Role.Button, onClick = onScan)
                     .minimumInteractiveComponentSize()
