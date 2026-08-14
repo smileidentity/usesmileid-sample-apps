@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.android.gallery
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -39,13 +40,25 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDataFieldRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDateGroupHeader
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDestructiveRow
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleFilterChip
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleFloatingTokenButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleFullHeightBottomSheet
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleJobRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleKeyValueEditRow
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavBar
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavItem
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleOptionRow
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProductCard
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProductGrid
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProfileEnvChip
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProfileRow
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleScanGlyph
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleScanSheet
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSearchField
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionHeader
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSessionCard
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSessionEndedBanner
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectTrigger
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
@@ -54,6 +67,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowChevron
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatusBadge
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwipeAction
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwitch
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTextInput
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleToast
@@ -159,19 +173,21 @@ private fun gallerySections(): List<GallerySectionSpec> {
     var checked by rememberSaveable { mutableStateOf(false) }
     var selectedCount by rememberSaveable { mutableStateOf(0) }
     var sheet by rememberSaveable { mutableStateOf(GallerySheet.None) }
+    var sessionProgress by rememberSaveable { mutableStateOf(0.65f) }
+    var swipedAway by rememberSaveable { mutableStateOf(false) }
 
     if (sheet == GallerySheet.Partial) {
         UseSmileIDSampleBottomSheet(onDismissRequest = { sheet = GallerySheet.None }, title = "Switch profile") {
             UseSmileIDSampleProfileRow(
                 organisation = "UpTech Finance",
-                person = "Kwame Asante",
+                supportingText = "Kwame Asante",
                 initials = "KA",
                 selected = true,
                 onClick = {},
             )
             UseSmileIDSampleProfileRow(
                 organisation = "Kazi Microlending",
-                person = "Amina Diallo",
+                supportingText = "Amina Diallo",
                 initials = "AD",
                 selected = false,
                 onClick = {},
@@ -351,7 +367,7 @@ private fun gallerySections(): List<GallerySectionSpec> {
             PROFILES.forEachIndexed { index, (org, person, initials) ->
                 UseSmileIDSampleProfileRow(
                     organisation = org,
-                    person = person,
+                    supportingText = person,
                     initials = initials,
                     selected = index == selectedProfile,
                     onClick = { selectedProfile = index },
@@ -446,8 +462,81 @@ private fun gallerySections(): List<GallerySectionSpec> {
             )
             UseSmileIDSampleButton(text = "Select one more", onClick = { selectedCount++ })
         },
+        GallerySectionSpec("PRODUCT GRID") {
+            // Hues are the palette in order, not a product mapping: that list is outstanding.
+            val hues = UseSmileIDSampleTheme.colors.decorative.all
+            UseSmileIDSampleSectionHeader(text = "Authentication")
+            UseSmileIDSampleProductGrid(itemCount = PRODUCTS.size) { index ->
+                UseSmileIDSampleProductCard(
+                    title = PRODUCTS[index],
+                    onClick = {},
+                    containerColor = hues[index % hues.size],
+                )
+            }
+            UseSmileIDSampleProductCard(
+                title = "Enhanced KYC",
+                onClick = {},
+                containerColor = UseSmileIDSampleTheme.colors.decorative.sand,
+                enabled = false,
+            )
+        },
+        GallerySectionSpec("PROFILE ENV CHIP") {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs)) {
+                UseSmileIDSampleProfileEnvChip(environment = UseSmileIDSampleEnvironment.Sandbox)
+                UseSmileIDSampleProfileEnvChip(environment = UseSmileIDSampleEnvironment.Production)
+            }
+        },
+        GallerySectionSpec("NAV BAR AND TOKEN RING") {
+            UseSmileIDSampleNavBar(
+                selected = UseSmileIDSampleNavItem.Products,
+                onSelect = {},
+                onTokenClick = {},
+            )
+            UseSmileIDSampleNavBar(
+                selected = UseSmileIDSampleNavItem.Verifications,
+                onSelect = {},
+                onTokenClick = {},
+                sessionProgress = sessionProgress,
+            )
+            UseSmileIDSampleButton(
+                text = "Ring: ${(sessionProgress * 100).toInt()}%",
+                onClick = { sessionProgress = if (sessionProgress <= 0f) 1f else sessionProgress - 0.25f },
+            )
+        },
+        GallerySectionSpec("SESSION CARD") {
+            UseSmileIDSampleSessionCard(sessionId = "9f3a", remaining = "3:20")
+            UseSmileIDSampleSessionEndedBanner(onScan = {})
+        },
+        GallerySectionSpec("SCAN") {
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                UseSmileIDSampleScanGlyph()
+            }
+            UseSmileIDSampleScanSheet(onPaste = {}, onSimulate = {})
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                UseSmileIDSampleFloatingTokenButton(onClick = {})
+            }
+        },
+        GallerySectionSpec("SWIPE ACTION") {
+            UseSmileIDSampleSwipeAction(onRemove = { swipedAway = true }) {
+                UseSmileIDSampleJobRow(
+                    product = if (swipedAway) "Removed — tap Reset" else "Swipe me left",
+                    jobId = "7d2f01aa…",
+                    time = "13:03:41",
+                    status = UseSmileIDSampleStatus.Clear,
+                )
+            }
+            UseSmileIDSampleButton(text = "Reset", onClick = { swipedAway = false })
+        },
     )
 }
+
+private val PRODUCTS = listOf(
+    "SmartSelfie Enrollment",
+    "SmartSelfie Authentication",
+    "Document Verification",
+    "Enhanced Document Verification",
+    "Biometric KYC",
+)
 
 private val PROFILES = listOf(
     Triple("UpTech Finance", "Kwame Asante", "KA"),

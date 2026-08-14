@@ -20,7 +20,20 @@ object UseSmileIDSampleTestIds {
     const val PROFILE_CONFIG_SCREEN = "sample_profile_config_screen"
     const val NEW_PROFILE_SHEET = "sample_new_profile_sheet"
     const val SCAN_TOKEN_SCREEN = "sample_scan_token_screen"
+
+    // The drawer's own root; its opener is a separate id, matching every other sheet and opener.
     const val SCENARIO_DRAWER = "sample_scenario_drawer"
+    const val SCENARIO_DRAWER_BUTTON = "sample_scenario_drawer_button"
+
+    const val PROFILE_SUMMARY = "sample_profile_summary"
+    const val SETTING_SMILE_TO_CAPTURE = "sample_setting_smile_to_capture"
+    const val SETTING_AGENT_MODE = "sample_setting_agent_mode"
+    const val SETTING_DARK_MODE = "sample_setting_dark_mode"
+    const val SETTING_CONSENT_STEP = "sample_setting_consent_step"
+    const val SETTING_INSTRUCTIONS_STEP = "sample_setting_instructions_step"
+    const val SETTING_PREVIEW_STEP = "sample_setting_preview_step"
+    const val SIGN_OUT = "sample_sign_out"
+    const val VERSION_LABEL = "sample_version_label"
 
     // Attached by the component itself: the spec assigns these to it, not to a screen.
     const val TOAST = "sample_toast"
@@ -29,6 +42,15 @@ object UseSmileIDSampleTestIds {
     const val SELECTION_COUNT = "sample_selection_count"
     const val SELECTION_REMOVE = "sample_selection_remove"
     const val JOB_ROW_STATUS = "sample_job_row_status"
+    const val SESSION_CARD = "sample_session_card"
+    const val SESSION_COUNTDOWN = "sample_session_countdown"
+    const val SESSION_ENDED_BANNER = "sample_session_ended_banner"
+    const val ENV_CHIP = "sample_env_chip"
+    const val PROFILE_AVATAR_BUTTON = "sample_profile_avatar_button"
+    const val TOKEN_FLOAT = "sample_token_float"
+    const val TOKEN_MANUAL_ENTRY = "sample_token_manual_entry"
+    const val TOKEN_PASTE = "sample_token_paste"
+    const val TOKEN_SIMULATE = "sample_token_simulate"
 
     val all = listOf(
         NAV_PRODUCTS,
@@ -55,5 +77,33 @@ object UseSmileIDSampleTestIds {
         SELECTION_COUNT,
         SELECTION_REMOVE,
         JOB_ROW_STATUS,
+        SESSION_CARD,
+        SESSION_COUNTDOWN,
+        SESSION_ENDED_BANNER,
+        ENV_CHIP,
+        PROFILE_AVATAR_BUTTON,
+        TOKEN_FLOAT,
+        TOKEN_MANUAL_ENTRY,
+        TOKEN_PASTE,
+        TOKEN_SIMULATE,
+        SCENARIO_DRAWER_BUTTON,
+        PROFILE_SUMMARY,
+        SETTING_SMILE_TO_CAPTURE,
+        SETTING_AGENT_MODE,
+        SETTING_DARK_MODE,
+        SETTING_CONSENT_STEP,
+        SETTING_INSTRUCTIONS_STEP,
+        SETTING_PREVIEW_STEP,
+        SIGN_OUT,
+        VERSION_LABEL,
     )
+
+    /** Suffixed ids derive from other spec files, so they are built rather than listed. */
+    fun productCard(productId: String) = "sample_product_card_$productId"
+
+    fun settingNav(rowId: String) = "sample_setting_nav_$rowId"
+
+    fun scenarioItem(scenarioId: String) = "sample_scenario_item_$scenarioId"
+
+    fun themeItem(themeId: String) = "sample_theme_item_$themeId"
 }

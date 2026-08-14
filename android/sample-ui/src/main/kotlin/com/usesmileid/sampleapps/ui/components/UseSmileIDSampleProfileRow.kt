@@ -20,17 +20,18 @@ import androidx.compose.ui.semantics.Role
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/** An organisation and its person, the active one taking a pale fill as well as a check. Hue varies per profile, so the caller passes it. */
+/** An organisation and a supporting line — the person on the switch sheet, "Tap to configure" in settings. Hue varies per profile, so the caller passes it. */
 @Composable
 fun UseSmileIDSampleProfileRow(
     organisation: String,
-    person: String,
+    supportingText: String,
     initials: String,
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     avatarColor: Color = UseSmileIDSampleTheme.colors.avatar.background,
     testId: String? = null,
+    trailing: @Composable (() -> Unit)? = null,
 ) {
     val colors = UseSmileIDSampleTheme.colors
     Surface(
@@ -63,12 +64,14 @@ fun UseSmileIDSampleProfileRow(
                     color = colors.textTitle,
                 )
                 Text(
-                    text = person,
+                    text = supportingText,
                     style = UseSmileIDSampleTheme.type.textStyleBodySm,
                     color = colors.textMuted,
                 )
             }
-            if (selected) {
+            if (trailing != null) {
+                trailing()
+            } else if (selected) {
                 Box(modifier = Modifier.size(SmileDimens.sizeIconMd), contentAlignment = Alignment.Center) {
                     CheckGlyph(tint = colors.primary)
                 }

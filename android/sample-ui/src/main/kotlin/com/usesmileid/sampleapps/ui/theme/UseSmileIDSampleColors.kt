@@ -65,6 +65,25 @@ data class FilterChipTokens(
 @Immutable
 data class CardTokens(val background: Color, val border: Color, val title: Color, val body: Color)
 
+@Immutable
+data class BannerTokens(val background: Color, val border: Color, val title: Color, val text: Color)
+
+/** The product and profile fills. Which hue belongs to which product is the designer's list, still outstanding, so callers pass one explicitly rather than this deciding. */
+@Immutable
+data class DecorativeTokens(
+    val yellow: Color,
+    val green: Color,
+    val orange: Color,
+    val bloodOrange: Color,
+    val sky: Color,
+    val pink: Color,
+    val sand: Color,
+    val darkGreen: Color,
+    val deepRed: Color,
+) {
+    val all: List<Color> get() = listOf(yellow, green, orange, bloodOrange, sky, pink, sand, darkGreen, deepRed)
+}
+
 /** The semantic tier for one mode, plus the component tiers. Grouped here because [SmileColorLight] and [SmileColorDark] share no supertype, so a component cannot select between them by mode. */
 @Immutable
 data class UseSmileIDSampleColors(
@@ -100,6 +119,8 @@ data class UseSmileIDSampleColors(
     val dataField: DataFieldTokens,
     val filterChip: FilterChipTokens,
     val card: CardTokens,
+    val banner: BannerTokens,
+    val decorative: DecorativeTokens,
 )
 
 internal val lightColors = UseSmileIDSampleColors(
@@ -183,6 +204,23 @@ internal val lightColors = UseSmileIDSampleColors(
         title = SmileColorLight.cardTitleText,
         body = SmileColorLight.cardBodyText,
     ),
+    banner = BannerTokens(
+        background = SmileColorLight.bannerBg,
+        border = SmileColorLight.bannerBorder,
+        title = SmileColorLight.bannerTitle,
+        text = SmileColorLight.bannerText,
+    ),
+    decorative = DecorativeTokens(
+        yellow = SmileColorLight.colorDecorativeYellow,
+        green = SmileColorLight.colorDecorativeGreen,
+        orange = SmileColorLight.colorDecorativeOrange,
+        bloodOrange = SmileColorLight.colorDecorativeBloodOrange,
+        sky = SmileColorLight.colorDecorativeSky,
+        pink = SmileColorLight.colorDecorativePink,
+        sand = SmileColorLight.colorDecorativeSand,
+        darkGreen = SmileColorLight.colorDecorativeDarkGreen,
+        deepRed = SmileColorLight.colorDecorativeDeepRed,
+    ),
 )
 
 internal val darkColors = UseSmileIDSampleColors(
@@ -265,6 +303,23 @@ internal val darkColors = UseSmileIDSampleColors(
         border = SmileColorDark.cardBorder,
         title = SmileColorDark.cardTitleText,
         body = SmileColorDark.cardBodyText,
+    ),
+    banner = BannerTokens(
+        background = SmileColorDark.bannerBg,
+        border = SmileColorDark.bannerBorder,
+        title = SmileColorDark.bannerTitle,
+        text = SmileColorDark.bannerText,
+    ),
+    decorative = DecorativeTokens(
+        yellow = SmileColorDark.colorDecorativeYellow,
+        green = SmileColorDark.colorDecorativeGreen,
+        orange = SmileColorDark.colorDecorativeOrange,
+        bloodOrange = SmileColorDark.colorDecorativeBloodOrange,
+        sky = SmileColorDark.colorDecorativeSky,
+        pink = SmileColorDark.colorDecorativePink,
+        sand = SmileColorDark.colorDecorativeSand,
+        darkGreen = SmileColorDark.colorDecorativeDarkGreen,
+        deepRed = SmileColorDark.colorDecorativeDeepRed,
     ),
 )
 

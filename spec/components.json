@@ -383,6 +383,12 @@
         "radius.chip",
         "text-style.caption"
       ],
+      "metrics": {
+        "size": "92x32 for Sandbox; width is not fixed because Production is wider",
+        "dot": "a spacing.xs circle in feedback.warning.fill for sandbox, feedback.success.fill for production",
+        "fill": "color.surface-alt at radius.chip",
+        "role": "display-only since 2026-08-13 — the header avatar button owns profile switching"
+      },
       "variants": [
         "sandbox",
         "production"
@@ -404,6 +410,15 @@
         "card.radius",
         "text-style.title"
       ],
+      "metrics": {
+        "size": "174x148 in a 2-up grid; built as a weighted column with a space64*2 minimum so it grows with the title",
+        "padding": "14 in the design, spacing.sm (12) here",
+        "iconTile": "40 (space40) at radius.sm, filled color.surface with the card's own hue as the glyph tint",
+        "ghostGlyph": "69.3 bleeding off the top-right; the card clips to bounds rather than growing",
+        "goAffordance": "26 circular outline in the design; size.icon-lg (24) here",
+        "titleTruncation": "none — 'SmartSelfie Authentication' already wraps to two lines at default scale on a 174-wide card",
+        "colouring": "the whole card takes a color.decorative.* fill with color.text.inverse text; the product→hue list is outstanding, so the caller passes the hue"
+      },
       "states": [
         "default",
         "pressed",
@@ -423,6 +438,13 @@
         "spacing.sm",
         "spacing.md"
       ],
+      "metrics": {
+        "columns": 2,
+        "gap": "12 both ways (spacing.sm)",
+        "rowHeight": "each row takes IntrinsicSize.Min, so a two-line title beside a one-line title still yields two equal cards",
+        "emptySlot": "an odd count leaves a blank slot, which is a layout affordance and not a placeholder card",
+        "why": "rows rather than a lazy grid — a section is at most three cards and the host screen already scrolls"
+      },
       "usedBy": [
         "products"
       ],
@@ -436,6 +458,10 @@
         "text-style.heading-section",
         "color.text.title"
       ],
+      "metrics": {
+        "height": "25, text 19",
+        "style": "text-style.heading-section, sentence case — distinct from the all-caps SectionLabel overline"
+      },
       "usedBy": [
         "products"
       ],
@@ -581,6 +607,11 @@
         "color.feedback.error.fill",
         "color.text.inverse"
       ],
+      "metrics": {
+        "revealWidth": "80 in the design; space64 plus spacing.md here",
+        "gesture": "Material's SwipeToDismissBox — velocity, threshold and settle stay the platform's, so the port uses its own platform gesture rather than reproducing Android's",
+        "delivery": "fires on the settled value, so a recomposition mid-gesture cannot remove the row twice"
+      },
       "usedBy": [
         "verifications"
       ],
@@ -690,6 +721,11 @@
         "radius.surface",
         "elevation.card"
       ],
+      "metrics": {
+        "size": "361x58, a floating pill plus a detached circular token button",
+        "tokenButton": "44 (size.control-md)",
+        "extends": "the PR #2 component rather than a rebuild; only the token affordance and its ring were added"
+      },
       "items": [
         "products",
         "verifications",
@@ -716,6 +752,12 @@
         "color.border",
         "motion.progress"
       ],
+      "metrics": {
+        "diameter": "68 around a 44 button in the design; space64 here, leaving a 10 annulus",
+        "colour": "feedback.success.fill on a color.border track — green, not primary blue",
+        "geometry": "starts at 12 o'clock and sweeps clockwise; 1f is a fresh session, 0f expired",
+        "driver": "remaining time against an absolute deadline, never an animation duration — a ticking value restarts wrong after process death"
+      },
       "states": [
         "idle",
         "counting",
@@ -738,6 +780,11 @@
         "text-style.overline",
         "text-style.title"
       ],
+      "metrics": {
+        "size": "361x64; space64 minimum, content-driven",
+        "fill": "feedback.success.fill with on-success text — a filled green card, not a muted surface",
+        "countdown": "right-aligned at text-style.heading-card, formatted m:ss by the caller"
+      },
       "usedBy": [
         "products"
       ],
@@ -755,6 +802,11 @@
         "color.primary",
         "radius.surface"
       ],
+      "metrics": {
+        "size": "361x64, matching SessionCard so the two swap without the layout moving",
+        "fill": "the banner.* contract — neutral, not warning-accented",
+        "action": "'Scan' as a text action, expanded to the platform touch target"
+      },
       "usedBy": [
         "products"
       ],
@@ -771,6 +823,10 @@
         "radius.control",
         "elevation.floating"
       ],
+      "metrics": {
+        "size": "46 in the design; space48 here, which is also the platform touch-target minimum",
+        "fill": "color.primary with on-primary glyph, circular"
+      },
       "usedBy": [
         "kycIdForm"
       ],
@@ -784,6 +840,10 @@
         "color.primary",
         "color.text.muted"
       ],
+      "metrics": {
+        "size": "279x280 in the design; space64*4 here",
+        "treatment": "four corner brackets in color.primary; the sweep line is the hidden reticle state, kept for a live camera"
+      },
       "usedBy": [
         "scanToken"
       ],
@@ -802,6 +862,11 @@
         "color.text.title",
         "color.primary"
       ],
+      "metrics": {
+        "size": "393x160, full-bleed at the bottom with radius.sheet top corners",
+        "manualEntryRow": "353x46; size.control-md minimum, radius.field, surface-alt fill",
+        "simulateButton": "353x48 full-width primary — a first-class feature, not debug scaffolding: it is what makes token-session flows testable with no QR source"
+      },
       "rows": [
         "manualEntryWithPaste"
       ],
@@ -960,6 +1025,7 @@
       "detail": "The design's component metrics land between the generated scale steps: icon tiles at 36 and 38, rows at 42/43/46/50/65/66/68, chips at 34, and 14/15/13/10/6 paddings and gaps. The Compose emitter drops component dimensions (composeDropsComponentDimensions), so none of these exist as tokens. Every one was mapped to the nearest scale token and the substitution recorded per component under `metrics`, because a raw dp literal is the dimension equivalent of the hex literal the review rules ban.",
       "consequence": "Rows are built from a `defaultMinSize` plus padding rather than a fixed height, so they match the design at default font scale and grow rather than clip at 2x. The three ports should copy the token choice, not the design's raw number.",
       "ask": "Emit component dimensions, or add scale steps at 36 and 68 so tiles and rows stop rounding."
-    }
+    },
+    "androidU2ScreenSpecific": "The twelve screen-specific composites were built on Android 2026-08-13 against the products, token-session and Scan token nodes. NavBar extends the component PR #2 landed rather than replacing it, and TokenRing is the ring it now carries. Product and profile hues stay on the token palette in order until the designer's hue list lands; Enhanced KYC has no icon yet and uses the shared product mark."
   }
 }

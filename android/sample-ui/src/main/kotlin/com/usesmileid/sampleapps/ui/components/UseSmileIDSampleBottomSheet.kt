@@ -19,7 +19,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.style.TextOverflow
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
@@ -36,7 +39,7 @@ fun UseSmileIDSampleBottomSheet(
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
-        modifier = modifier.tagged(testId),
+        modifier = modifier.publishTestTags().tagged(testId),
         sheetState = rememberModalBottomSheetState(),
         shape = RoundedCornerShape(topStart = SmileDimens.radiusSheet, topEnd = SmileDimens.radiusSheet),
         containerColor = UseSmileIDSampleTheme.colors.surface,
@@ -75,7 +78,7 @@ fun UseSmileIDSampleFullHeightBottomSheet(
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
-        modifier = modifier.fillMaxHeight().tagged(testId),
+        modifier = modifier.fillMaxHeight().publishTestTags().tagged(testId),
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         shape = RoundedCornerShape(topStart = SmileDimens.radiusSheet, topEnd = SmileDimens.radiusSheet),
         containerColor = UseSmileIDSampleTheme.colors.surface,
@@ -116,6 +119,10 @@ fun UseSmileIDSampleFullHeightBottomSheet(
         }
     }
 }
+
+/** A sheet is its own window, outside where the shell publishes tags, so without this no sheet id reaches automation. */
+@OptIn(ExperimentalComposeUiApi::class)
+private fun Modifier.publishTestTags(): Modifier = semantics { testTagsAsResourceId = true }
 
 /** The 44x5 pill the design puts on partial sheets. */
 @Composable
