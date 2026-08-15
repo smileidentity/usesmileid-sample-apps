@@ -8,13 +8,7 @@ enum class UseSmileIDSampleFlowRoute(val id: String) {
     Shell("shell"),
 }
 
-/**
- * How far a flow got.
- *
- * [Cancelled] and [Failed] stay separate because that is the distinction the schema asks for: a user
- * backing out and a submission failing are indistinguishable in a screenshot, and conflating them
- * lets a flow that never ran pass as one that ran and failed.
- */
+/** Cancelled and Failed stay separate: a screenshot cannot tell a user backing out from a failure. */
 enum class UseSmileIDSampleFlowStatus(val id: String) {
     Idle("idle"),
     Running("running"),
@@ -35,11 +29,7 @@ data class UseSmileIDSampleResult(
     val jobId: String? = null,
     val userId: String? = null,
     val lastError: String? = null,
-    /**
-     * Always null on Android. The published artifact exposes no runtime accessor for its own version,
-     * and the schema is explicit that the compiled-against BOM version must not be substituted —
-     * reporting the wrong version is worse than reporting none. See `sdkVersion.blocked` in the schema.
-     */
+    /** Always null on Android: no runtime accessor exists, and the BOM version must not stand in. */
     val sdkVersion: String? = null,
 ) {
     val inFlight: Boolean get() = jobStatus == UseSmileIDSampleFlowStatus.Running

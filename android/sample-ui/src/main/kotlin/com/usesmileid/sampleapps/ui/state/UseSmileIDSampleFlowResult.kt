@@ -12,13 +12,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleResult
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 
-/**
- * What the result card reads and the SDK flow writes.
- *
- * Saveable, because a count that resets on activity recreation proves nothing: "fires exactly once"
- * is a count assertion, and a rotation mid-flow would otherwise swallow the second call it exists to
- * catch.
- */
+/** Saveable, because a count that resets on recreation would swallow the second call it exists to catch. */
 class UseSmileIDSampleFlowResult(
     scenario: UseSmileIDSampleScenario = UseSmileIDSampleScenario.Normal,
     theme: UseSmileIDSampleThemeScenario = UseSmileIDSampleThemeScenario.BrandDefault,
@@ -78,7 +72,7 @@ class UseSmileIDSampleFlowResult(
         theme = value
     }
 
-    /** Which presentation is hosting the flow. Navigation decides this, so it is set on arrival, not on handoff. */
+    /** Navigation decides this, so it is set on arrival rather than on handoff. */
     fun enterRoute(value: UseSmileIDSampleFlowRoute) {
         route = value
     }
@@ -93,13 +87,7 @@ class UseSmileIDSampleFlowResult(
         refreshCallbackCount = 0
     }
 
-    /**
-     * One call per host result callback, counted before anything is read from it: a callback that
-     * arrives with an unusable payload still fired, and the count is what proves it.
-     *
-     * [userId] must be the value the server returned. A locally generated placeholder here silently
-     * invalidates every authentication run that follows it.
-     */
+    /** [userId] must be what the server returned; a local placeholder invalidates every run after it. */
     fun recordResultCallback(
         status: UseSmileIDSampleFlowStatus,
         jobId: String? = null,
@@ -134,9 +122,7 @@ class UseSmileIDSampleFlowResult(
             },
             restore = { saved ->
                 UseSmileIDSampleFlowResult(
-                    // Every value is read defensively rather than parsed: this runs after process death,
-                    // where an id this build no longer has — or a count that did not round-trip — would
-                    // throw during composition and take the app down on every relaunch.
+                    // Read defensively: this runs after process death, where a throw takes the app down.
                     scenario = UseSmileIDSampleScenario.entries.firstOrNull { it.id == saved[0] }
                         ?: UseSmileIDSampleScenario.Normal,
                     theme = UseSmileIDSampleThemeScenario.entries.firstOrNull { it.id == saved[1] }

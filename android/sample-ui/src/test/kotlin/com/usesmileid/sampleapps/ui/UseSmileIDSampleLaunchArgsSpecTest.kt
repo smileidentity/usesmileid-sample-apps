@@ -10,11 +10,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/**
- * Asserts this app accepts exactly the launch arguments `spec/launch-args.json` declares, under the
- * same names and with the same defaults. The names are what keeps one automation flow driving four
- * apps, so they are checked against the contract rather than agreed by review.
- */
+/** The argument names are what keeps one flow driving four apps, so they are checked against the spec. */
 class UseSmileIDSampleLaunchArgsSpecTest {
 
     private val specArgs: List<Pair<String, String?>> by lazy {
@@ -88,7 +84,6 @@ class UseSmileIDSampleLaunchArgsSpecTest {
         assertNull(UseSmileIDSampleLaunchArgs.from(mapOf("holdCamera" to "soon")).holdCamera)
     }
 
-    /** The card reports what the run actually got, which is what makes a silent fallback safe. */
     @Test
     fun an_unrecognised_value_falls_back_to_its_default() {
         val args = UseSmileIDSampleLaunchArgs.from(mapOf("scenario" to "typo", "route" to "sheet"))

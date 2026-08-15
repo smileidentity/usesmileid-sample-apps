@@ -115,8 +115,7 @@ fun VerificationDetailsScreen(
                     }
                 }
             }
-            // Rendered whether or not the job resolved: a flow that failed before submission has no job
-            // to show, and that is exactly when its error and counts are the only evidence there is.
+            // Rendered even with no job: a flow that failed before submission has nothing else to show.
             item {
                 UseSmileIDSampleResultCard(
                     result = result,

@@ -29,11 +29,9 @@ import com.smileid.designsystem.SmileProductHue
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /**
- * A product tile: a gradient fill in the product's own hue, with that hue repeated as the shadow and
- * an oversized watermark of the product's icon bleeding off the top-right corner.
+ * A product tile: a gradient in the product's hue, that hue again as the shadow, and its icon as a watermark.
  *
- * [hue] carries all four colours the design varies per product. Content stays white on every card;
- * `scrim` is what changes, because Document Verification's amber is too light to carry a white one.
+ * Content is white on every card; `scrim` is what varies, because Document Verification's amber is too light.
  */
 @Composable
 fun UseSmileIDSampleProductCard(
@@ -47,8 +45,7 @@ fun UseSmileIDSampleProductCard(
     ghost: @Composable ((Color) -> Unit)? = null,
 ) {
     val colors = UseSmileIDSampleTheme.colors
-    // A product hue is the same in both schemes, so anything drawn ON it resolves from the light one.
-    // Reading these through the theme flips them dark and the titles vanish into the fill.
+    // A hue is the same in both schemes, so anything drawn on it resolves from the light one.
     val content = if (enabled) SmileColorLight.colorTextInverse else colors.textMuted
     val tile = if (enabled) SmileColorLight.colorSurface else colors.surface
     Surface(
@@ -98,16 +95,13 @@ fun UseSmileIDSampleProductCard(
                         if (icon != null) icon(hue.icon) else ProductMarkGlyph(tint = hue.icon)
                     }
                 }
-                // No gap: the design gives the title every pixel up to the go button, and
-                // "Authentication" breaks mid-word on a 174-wide card without them.
+                // No gap: without those pixels "Authentication" breaks mid-word on a 174-wide card.
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Bottom,
                 ) {
-                    // The design's title is 14px/600, which is in neither token: bodyStrong is
-                    // 16px/600 and subtitle is 14px/500. Size decides whether "SmartSelfie
-                    // Authentication" fits a 174-wide card, so subtitle wins and the weight gives.
+                    // The design's 14px/600 is in neither token; size decides whether the label fits, so it wins.
                     Text(
                         text = title,
                         style = UseSmileIDSampleTheme.type.textStyleSubtitle,
@@ -121,7 +115,7 @@ fun UseSmileIDSampleProductCard(
     }
 }
 
-/** The design's two stops sit inboard of the corners, which is what keeps the fill from banding. */
+/** The stops sit inboard of the corners, which is what keeps the fill from banding. */
 private fun SmileProductHue.brush() = Brush.linearGradient(
     colorStops = arrayOf(GRADIENT_START to from, GRADIENT_END to to),
     start = Offset.Zero,

@@ -74,7 +74,6 @@ class VerificationsGoldenTest : GoldenTest() {
         onCopy = {},
     )
 
-    /** Paired with a failed result: a job the app never got is what a flow failing before submission looks like. */
     @Composable
     private fun UnknownDetails() = VerificationDetailsScreen(
         jobId = "job_missing",

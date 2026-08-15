@@ -154,7 +154,6 @@ fun ProductsScreen(
                             hue = product.hue(),
                             testId = UseSmileIDSampleTestIds.productCard(product.id),
                             icon = id?.let { { tint -> UseSmileIDSampleIcon(id = it, tint = tint) } },
-                            // The same mark at 3.3x, which is how the design draws the watermark.
                             ghost = id?.let {
                                 { tint -> UseSmileIDSampleIcon(id = it, tint = tint, size = GHOST_SIZE) }
                             },
@@ -169,12 +168,7 @@ fun ProductsScreen(
     }
 }
 
-/**
- * The product's colours, read from the design and generated into `SmileProductHues`.
- *
- * A product with no entry cannot render, so this fails loudly rather than substituting a neighbour's
- * hue — silently wrong colour is the one outcome the design's own palette can't survive.
- */
+/** Fails loudly rather than substituting a neighbour's hue, which would look deliberate. */
 private fun UseSmileIDSampleProduct.hue(): SmileProductHue =
     requireNotNull(smileProductHues[id]) { "no hue for product '$id'; see spec/design-tokens.json → productHues" }
 

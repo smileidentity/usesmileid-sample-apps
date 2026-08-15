@@ -54,8 +54,7 @@ fun rememberUseSmileIDSampleAppState(
     val jobs = remember { UseSmileIDSampleJobs.seeded(System.currentTimeMillis()) }
     val forms = rememberSaveable(saver = UseSmileIDSampleForms.Saver) { UseSmileIDSampleForms() }
     val profiles = remember { UseSmileIDSampleProfiles() }
-    // Saveable, so the arguments seed the first launch only: a recreation re-reads the same intent,
-    // and re-seeding would discard whatever the drawer selected after it.
+    // Saveable, so the arguments seed the first launch only and a recreation keeps the drawer's choice.
     val flowResult = rememberSaveable(saver = UseSmileIDSampleFlowResult.Saver) {
         UseSmileIDSampleFlowResult(
             scenario = launchArgs.scenario,

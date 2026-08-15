@@ -4,12 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/**
- * Asserts the ids this module attaches are exactly the ones `spec/test-ids.json` declares.
- *
- * A change to the file's shape fails [spec_file_is_readable] rather than passing the rest of this
- * class vacuously.
- */
+/** A change to the spec's shape fails [spec_file_is_readable] rather than passing the rest vacuously. */
 class UseSmileIDSampleTestIdsSpecTest {
 
     private val specIds: Set<String> by lazy {

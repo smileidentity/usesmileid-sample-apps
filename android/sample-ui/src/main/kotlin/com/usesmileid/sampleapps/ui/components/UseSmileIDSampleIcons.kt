@@ -13,17 +13,7 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.R
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 
-/**
- * The design set's own icons, imported from its SVG export as vector drawables.
- *
- * They keep the same `(tint, size)` shape as the hand-drawn glyphs in `UseSmileIDSampleGlyphs.kt`,
- * so a call site swaps one for the other without changing. The drawables carry an opaque base colour
- * because the format demands one; no screen ever sees it, because every path here tints.
- *
- * Names are derived from the ids `spec/` already uses — a product's drawable is its
- * [UseSmileIDSampleProduct.id] in resource casing — so the mapping is mechanical rather than a
- * lookup table someone has to maintain.
- */
+/** The design set's icons, imported from its SVG export. Named after the ids in `spec/`. */
 @Composable
 fun UseSmileIDSampleIcon(
     @DrawableRes id: Int,
@@ -32,7 +22,7 @@ fun UseSmileIDSampleIcon(
     size: Dp = SmileDimens.sizeIconMd,
 ) = Image(
     painter = painterResource(id),
-    // Decorative: every caller pairs it with its own label or content description.
+    // Decorative: every caller pairs it with its own label.
     contentDescription = null,
     modifier = modifier.size(size),
     colorFilter = ColorFilter.tint(tint),
@@ -43,14 +33,7 @@ fun UseSmileIDSampleIcon(
 fun ScanMarkGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) =
     UseSmileIDSampleIcon(id = R.drawable.sample_ic_token_scan, tint = tint, size = size)
 
-/**
- * The icon the design set supplies for a product, or null where it still owes one.
- *
- * The two document products deliberately share one mark: the design distinguishes them by the card's
- * hue, which the card already applies as the tint, so a second near-identical drawable would only be
- * a thing to keep in sync. Enhanced KYC is the one remaining gap, and a null here is what falls back
- * to the shared product mark rather than borrowing an unrelated icon.
- */
+/** Both document products share one mark by design; the card's hue is what tells them apart. */
 @get:DrawableRes
 val UseSmileIDSampleProduct.iconRes: Int?
     get() = when (this) {

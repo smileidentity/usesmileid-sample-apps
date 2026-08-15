@@ -5,16 +5,10 @@ import android.os.Bundle
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleLaunchArgs
 
 /**
- * Android's delivery mechanism for the canonical launch arguments: intent extras.
+ * Intent extras: `adb shell am start -e scenario expiredToken -e route shell`.
  *
- * ```
- * adb shell am start -e scenario expiredToken -e route shell -e autostart biometricKyc
- * ```
- *
- * Force-stop the app first, and reach the screen you want to assert on by tapping. An intent sent to
- * a live task carries `FLAG_ACTIVITY_NEW_TASK`, which rebuilds the Activity around the new intent —
- * so a deep link sent mid-run silently resets these to their defaults rather than keeping them.
- * Measured on a device; the reasoning is under R9 in `docs/plan/navigation-plan.md`.
+ * Force-stop first, and reach the screen you assert on by tapping — an intent sent to a live task
+ * rebuilds the Activity and resets these. See R9 in `docs/plan/navigation-plan.md`.
  */
 internal fun Intent?.useSmileIDSampleLaunchArgs(): UseSmileIDSampleLaunchArgs {
     val extras = this?.extras ?: return UseSmileIDSampleLaunchArgs()

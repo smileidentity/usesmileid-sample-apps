@@ -85,12 +85,10 @@ fun UseSmileIDSampleShell() {
 }
 
 /**
- * The `autostart` launch argument lands the run on the flow route directly, so a flow never has to
- * tap its way in.
+ * `autostart` lands the run on the flow route directly, so a flow never taps its way in.
  *
- * Guarded by saveable state rather than keyed on the argument: the launching intent is re-read on
- * every activity recreation, and navigating again would drag a rotated device back out of wherever
- * the run had reached.
+ * Saveable rather than keyed on the argument: the intent is re-read on recreation, and navigating
+ * again would drag a rotated device back out of wherever the run had reached.
  */
 @Composable
 private fun AutostartFlowOnce(navigator: DestinationsNavigator) {

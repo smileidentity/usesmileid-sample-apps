@@ -8,18 +8,12 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 
 /** How long the host holds the camera before handing off, so the SDK meets a contended device. */
 sealed interface UseSmileIDSampleHoldCamera {
-    /** Held for the whole run, so the contention is still in place when the SDK asks for the camera. */
     data object Keep : UseSmileIDSampleHoldCamera
 
     data class Millis(val value: Long) : UseSmileIDSampleHoldCamera
 }
 
-/**
- * The canonical automation arguments from `spec/launch-args.json`.
- *
- * The names are identical on all four platforms and only the delivery mechanism differs, so parsing
- * lives here and reading an `Intent` stays the shell's job.
- */
+/** The canonical arguments from `spec/launch-args.json`. Parsing lives here; reading an Intent is the shell's job. */
 @Immutable
 data class UseSmileIDSampleLaunchArgs(
     val scenario: UseSmileIDSampleScenario = UseSmileIDSampleScenario.Normal,
@@ -44,12 +38,7 @@ data class UseSmileIDSampleLaunchArgs(
 
         private const val HOLD_CAMERA_KEEP = "keep"
 
-        /**
-         * Values arrive as whatever the host's mechanism produced, so each is read leniently and an
-         * unrecognised one falls back to its default rather than failing the launch. That is safe
-         * only because the result card publishes what the run actually got: a flow asserting on
-         * `sample_result_active_scenario` catches the typo that a silent default would hide.
-         */
+        /** An unrecognised value falls back to its default, which is safe only because the card reports it. */
         fun from(raw: Map<String, Any?>): UseSmileIDSampleLaunchArgs {
             val defaults = UseSmileIDSampleLaunchArgs()
             return UseSmileIDSampleLaunchArgs(

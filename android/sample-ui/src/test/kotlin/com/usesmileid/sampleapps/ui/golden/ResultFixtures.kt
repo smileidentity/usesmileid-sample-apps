@@ -35,7 +35,6 @@ internal object ResultFixtures {
         resultCallbackCount = 1,
     )
 
-    /** A long error on purpose: the value that overflows first is the one the font-scale predicate needs. */
     val Failed = Idle.copy(
         activeScenario = UseSmileIDSampleScenario.BadRefresh,
         jobStatus = UseSmileIDSampleFlowStatus.Failed,

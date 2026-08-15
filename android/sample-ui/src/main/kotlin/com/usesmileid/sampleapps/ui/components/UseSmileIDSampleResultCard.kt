@@ -26,14 +26,9 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleResult
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /**
- * What the SDK did, published into the accessibility tree.
+ * Every field in `spec/result-card.schema.json`, published into the accessibility tree under its own id.
  *
- * A shipped affordance rather than test scaffolding: on a release device this is the only channel
- * that reports a job id, a callback count or an error, and reading it beats interpreting a
- * screenshot. Every field in `spec/result-card.schema.json` is rendered as text under its own id.
- *
- * Expanded by default, because collapsed fields are absent from the accessibility tree and every
- * flow would have to tap the card open before it could assert on anything.
+ * Expanded by default: a collapsed field is absent from that tree, so a flow would have to tap it open first.
  */
 @Composable
 fun UseSmileIDSampleResultCard(
@@ -97,10 +92,7 @@ fun UseSmileIDSampleResultCard(
     }
 }
 
-/**
- * The same evidence in one line, for a screen that a full card would swamp. Carries the three fields
- * that say whether a run is live and what it is running as; the rest stay on the card.
- */
+/** The three fields that say whether a run is live and what it is running as; the rest stay on the card. */
 @Composable
 fun UseSmileIDSampleResultLine(
     result: UseSmileIDSampleResult,

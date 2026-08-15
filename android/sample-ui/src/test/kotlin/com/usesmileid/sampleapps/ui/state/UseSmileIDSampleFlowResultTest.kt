@@ -9,7 +9,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-/** The counters are the whole point of the card: "fires exactly once" is only ever a count assertion. */
+/** "Fires exactly once" is only ever a count assertion. */
 class UseSmileIDSampleFlowResultTest {
 
     @Test
@@ -74,7 +74,6 @@ class UseSmileIDSampleFlowResultTest {
         assertEquals(UseSmileIDSampleScenario.Normal, restored?.scenario)
     }
 
-    /** Restore runs during composition, so a count that did not round-trip must not take the app down. */
     @Test
     fun a_count_that_did_not_round_trip_restores_as_zero() {
         val restored = UseSmileIDSampleFlowResult.Saver.restore(
@@ -84,7 +83,6 @@ class UseSmileIDSampleFlowResultTest {
         assertEquals(0, restored?.refreshCallbackCount)
     }
 
-    /** What activity recreation does to it: saved to the bundle, restored from what came back. */
     private fun UseSmileIDSampleFlowResult.recreate(): UseSmileIDSampleFlowResult {
         val saved = with(UseSmileIDSampleFlowResult.Saver) { SaverScope { true }.save(this@recreate) }
         assertNotNull("the saver produced nothing to restore from", saved)

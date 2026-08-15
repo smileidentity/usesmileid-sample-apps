@@ -9,12 +9,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/**
- * Asserts the result card carries exactly the fields `spec/result-card.schema.json` declares.
- *
- * The card is what four apps and every device flow read, so its field set is checked against the
- * contract rather than reviewed: a field added to one app and not the spec is the drift this catches.
- */
+/** The card's field set, checked against the schema rather than reviewed. */
 class UseSmileIDSampleResultSpecTest {
 
     private val schema: String by lazy { spec("result-card.schema.json") }
@@ -55,16 +50,11 @@ class UseSmileIDSampleResultSpecTest {
         assertEquals(enum, UseSmileIDSampleFlowRoute.entries.map { it.id })
     }
 
-    /**
-     * The published artifact exposes no runtime accessor for its own version, and the schema forbids
-     * substituting the compiled-against one. This fails the moment something starts reporting a value.
-     */
     @Test
     fun the_sdk_version_stays_null_on_android() {
         assertNull(UseSmileIDSampleFlowResult().snapshot.sdkVersion)
     }
 
-    /** Property values are scalars, so an object opening inside `properties` is always a property name. */
     private fun schemaProperties(): List<String> =
         PROPERTY.findAll(schema.substringAfter("\"properties\"")).map { it.groupValues[1] }.toList()
 
