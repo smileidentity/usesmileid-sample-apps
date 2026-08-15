@@ -191,18 +191,14 @@ deterministic.
 - **Structural UI predicates**, which need no design reference to be checkable: no clipping or
   ellipsis at maximum font scale, and status-bar contrast asserted in **both** presentations (modal
   and pushed — one proves nothing about the other, and the result can invert per platform).
-- **Registry & companion builds** (candidate lane, not yet implemented) — each app builds with its
-  SDK consumed from the public registry only, alongside the companion dependencies real partner apps
-  bring: on iOS a host-initialised Sentry at the versions partners commonly pin, and whatever the
-  Flutter graph carries transitively (`sentry_flutter`). One shared native dependency resolving to
-  conflicting versions fails a partner build before anything compiles, and a missing embedded
-  framework or duplicate-class collision only fails at launch — so this lane must end by launching
-  the app, not by linking it.
-- **Launch integrity and exactly-once results** — every device flow starts with launch → product
-  list → SDK-mount assertions, so packaging and dyld failures fail the flow conclusively instead of
-  reading as an unrelated timeout. After any cancel/deny exit, the result card must report exactly
-  one terminal result — asserted also for re-entry via rapid taps, which can double-mount a flow in
-  a host app.
+- **Registry & companion builds** (candidate lane, not yet implemented) — each app builds with
+  its SDK consumed from the public registry only, alongside the companions real partner apps
+  bring (a host-initialised Sentry on iOS; whatever the Flutter graph carries transitively).
+  Conflicting shared-dependency versions fail before compiling and dyld defects only fail at
+  launch, so the lane must end by launching the app, not linking it.
+- **Launch integrity and exactly-once results** — every device flow opens with launch → product
+  list → SDK-mount assertions so packaging failures fail conclusively, and after any cancel/deny
+  exit the result card must report exactly one terminal result, including re-entry via rapid taps.
 
 ## Security & Credentials
 
