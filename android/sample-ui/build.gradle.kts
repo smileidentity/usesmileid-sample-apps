@@ -59,6 +59,13 @@ dependencies {
 tasks.withType<Test>().configureEach {
     systemProperty("sampleapps.spec.dir", layout.projectDirectory.dir("../../spec").asFile.absolutePath)
 
+    // Goldens render clock times and dates, so the machine's own zone and locale would otherwise bake
+    // themselves into the recording. CI found this: every verifications golden differed by exactly the
+    // recorder's offset from UTC, and nothing else on the screen moved.
+    systemProperty("user.timezone", "UTC")
+    systemProperty("user.language", "en")
+    systemProperty("user.country", "US")
+
     // Declared so a changed golden invalidates the task; without it verify passes on a stale result.
     inputs.dir(layout.projectDirectory.dir("src/test/screenshots"))
         .withPropertyName("goldenScreenshots")
