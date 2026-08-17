@@ -200,7 +200,7 @@ private fun ScanSheets() = UseSmileIDSampleScanSheet(onPaste = {}, onSimulate = 
 @Composable
 private fun SwipeActions() = UseSmileIDSampleSwipeAction(onRemove = {}) {
     UseSmileIDSampleJobRow(
-        product = "SmartSelfie Enrollment",
+        product = UseSmileIDSampleProduct.SmartSelfieEnrollment,
         jobId = "7d2f01aa…",
         time = "13:03:41",
         status = UseSmileIDSampleStatus.Clear,

@@ -17,10 +17,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /**
@@ -33,13 +33,12 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UseSmileIDSampleJobRow(
-    product: String,
+    product: UseSmileIDSampleProduct,
     jobId: String,
     time: String,
     status: UseSmileIDSampleStatus,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
-    tileColor: Color = UseSmileIDSampleTheme.colors.surfaceAlt,
     testId: String? = null,
     statusTestId: String? = UseSmileIDSampleTestIds.JOB_ROW_STATUS,
 ) {
@@ -62,13 +61,19 @@ fun UseSmileIDSampleJobRow(
             verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
             itemVerticalAlignment = Alignment.CenterVertically,
         ) {
+            val hue = product.hue
             Surface(
                 modifier = Modifier.size(SmileDimens.space40),
                 shape = RoundedCornerShape(SmileDimens.radiusSm),
-                color = tileColor,
+                color = hue.from.copy(alpha = TILE_TINT_ALPHA),
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    ProductMarkGlyph(tint = colors.textTitle)
+                    val icon = product.iconRes
+                    if (icon != null) {
+                        UseSmileIDSampleIcon(id = icon, tint = hue.icon)
+                    } else {
+                        ProductMarkGlyph(tint = hue.icon)
+                    }
                 }
             }
             Column(
@@ -76,7 +81,7 @@ fun UseSmileIDSampleJobRow(
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs),
             ) {
                 Text(
-                    text = product,
+                    text = product.label,
                     style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
                     color = colors.card.title,
                 )
@@ -90,3 +95,5 @@ fun UseSmileIDSampleJobRow(
         }
     }
 }
+
+private const val TILE_TINT_ALPHA = 0.16f

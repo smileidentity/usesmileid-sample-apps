@@ -30,6 +30,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwitch
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarEmphasis
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import org.junit.Test
 
 /** `BottomSheet` is absent on purpose: `ModalBottomSheet` renders into its own window, so it is verified on a device. */
@@ -252,21 +253,21 @@ private fun DateGroupHeaders() = Column(verticalArrangement = stack) {
 @Composable
 private fun JobRows() = Column(verticalArrangement = stack) {
     UseSmileIDSampleJobRow(
-        product = "SmartSelfie Enrollment",
+        product = UseSmileIDSampleProduct.SmartSelfieEnrollment,
         jobId = "7d2f01aa…",
         time = "13:03:41",
         status = UseSmileIDSampleStatus.Clear,
         onClick = {},
     )
     UseSmileIDSampleJobRow(
-        product = "SmartSelfie Authentication",
+        product = UseSmileIDSampleProduct.SmartSelfieAuth,
         jobId = "8f3b912c…",
         time = "13:00:07",
         status = UseSmileIDSampleStatus.Processing,
         onClick = {},
     )
     UseSmileIDSampleJobRow(
-        product = "Enhanced Document Verification",
+        product = UseSmileIDSampleProduct.EnhancedDocumentVerification,
         jobId = "b6e4d90f…",
         time = "12:36:59",
         status = UseSmileIDSampleStatus.Blocked,
@@ -278,7 +279,7 @@ private fun JobRows() = Column(verticalArrangement = stack) {
     ) {
         UseSmileIDSampleSelectionCheckbox(checked = true, onCheckedChange = {})
         UseSmileIDSampleJobRow(
-            product = "Biometric KYC",
+            product = UseSmileIDSampleProduct.BiometricKyc,
             jobId = "c41b8a2e…",
             time = "11:50:12",
             status = UseSmileIDSampleStatus.Attention,

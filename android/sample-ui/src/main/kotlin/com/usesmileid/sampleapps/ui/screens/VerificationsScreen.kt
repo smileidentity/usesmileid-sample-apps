@@ -176,7 +176,7 @@ private fun JobListRow(
         Box(modifier = Modifier.weight(1f)) {
             val rowContent = @Composable {
                 UseSmileIDSampleJobRow(
-                    product = job.product.label,
+                    product = job.product,
                     jobId = job.shortId,
                     time = job.timeLabel(),
                     status = job.status,

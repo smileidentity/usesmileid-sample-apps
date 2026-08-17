@@ -425,14 +425,14 @@ private fun gallerySections(): List<GallerySectionSpec> {
         },
         GallerySectionSpec("JOB ROW") {
             UseSmileIDSampleJobRow(
-                product = "SmartSelfie Enrollment",
+                product = UseSmileIDSampleProduct.SmartSelfieEnrollment,
                 jobId = "7d2f01aa…",
                 time = "13:03:41",
                 status = UseSmileIDSampleStatus.Clear,
                 onClick = {},
             )
             UseSmileIDSampleJobRow(
-                product = "Enhanced Document Verification",
+                product = UseSmileIDSampleProduct.EnhancedDocumentVerification,
                 jobId = "b6e4d90f…",
                 time = "12:36:59",
                 status = UseSmileIDSampleStatus.Blocked,
@@ -444,7 +444,7 @@ private fun gallerySections(): List<GallerySectionSpec> {
             ) {
                 UseSmileIDSampleSelectionCheckbox(checked = checked, onCheckedChange = { checked = it })
                 UseSmileIDSampleJobRow(
-                    product = "Biometric KYC",
+                    product = UseSmileIDSampleProduct.BiometricKyc,
                     jobId = "c41b8a2e…",
                     time = "11:50:12",
                     status = UseSmileIDSampleStatus.Attention,
@@ -520,8 +520,8 @@ private fun gallerySections(): List<GallerySectionSpec> {
         GallerySectionSpec("SWIPE ACTION") {
             UseSmileIDSampleSwipeAction(onRemove = { swipedAway = true }) {
                 UseSmileIDSampleJobRow(
-                    product = if (swipedAway) "Removed — tap Reset" else "Swipe me left",
-                    jobId = "7d2f01aa…",
+                    product = UseSmileIDSampleProduct.DocumentVerification,
+                    jobId = if (swipedAway) "Removed — tap Reset" else "Swipe me left",
                     time = "13:03:41",
                     status = UseSmileIDSampleStatus.Clear,
                 )

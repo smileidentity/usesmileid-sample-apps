@@ -24,11 +24,10 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import com.smileid.designsystem.SmileDimens
-import com.smileid.designsystem.SmileProductHue
-import com.smileid.designsystem.smileProductHues
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleAvatar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
+import com.usesmileid.sampleapps.ui.components.hue
 import com.usesmileid.sampleapps.ui.components.iconRes
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProductCard
@@ -151,7 +150,7 @@ fun ProductsScreen(
                         UseSmileIDSampleProductCard(
                             title = product.label,
                             onClick = { onProductClick(product) },
-                            hue = product.hue(),
+                            hue = product.hue,
                             testId = UseSmileIDSampleTestIds.productCard(product.id),
                             icon = id?.let { { tint -> UseSmileIDSampleIcon(id = it, tint = tint) } },
                             ghost = id?.let {
@@ -167,8 +166,5 @@ fun ProductsScreen(
         item { Spacer(modifier = Modifier.height(SmileDimens.space64 * 2)) }
     }
 }
-
-private fun UseSmileIDSampleProduct.hue(): SmileProductHue =
-    requireNotNull(smileProductHues[id]) { "no hue for product '$id'; see spec/design-tokens.json → productHues" }
 
 private val GHOST_SIZE = SmileDimens.space64 + SmileDimens.space4

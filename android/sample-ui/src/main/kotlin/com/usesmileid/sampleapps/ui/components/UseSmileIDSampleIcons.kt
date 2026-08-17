@@ -10,6 +10,8 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.SmileProductHue
+import com.smileid.designsystem.smileProductHues
 import com.usesmileid.sampleapps.ui.R
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 
@@ -31,6 +33,9 @@ fun UseSmileIDSampleIcon(
 @Composable
 fun ScanMarkGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) =
     UseSmileIDSampleIcon(id = R.drawable.sample_ic_token_scan, tint = tint, size = size)
+
+internal val UseSmileIDSampleProduct.hue: SmileProductHue
+    get() = requireNotNull(smileProductHues[id]) { "no hue for product '$id'; see spec/design-tokens.json → productHues" }
 
 /** Both document products share one mark by design; the card's hue is what tells them apart. */
 @get:DrawableRes
