@@ -514,19 +514,37 @@ def read_soft_badge_fills() -> dict:
     return read_spec_delta("softBadgeFills", "fills")
 
 
-def emit_kotlin_border_strong(value) -> str:
-    """The control-ring border the design uses and the design system has no semantic role for."""
+def emit_kotlin_spec_color(name: str, delta_id: str, doc: str, value) -> str:
+    """A colour the design uses that the design system carries no semantic role for."""
     if not isinstance(value, str) or not value:
-        raise TokenError("spec/design-tokens.json borderStrong carries no value")
-    return "\n".join([
-        "",
-        "/** The design's `color/border-strong`, for a control ring that `color.border` is too pale to draw. */",
-        f"val smileBorderStrong: Color = {kotlin_color(value)}",
-    ])
+        raise TokenError(f"spec/design-tokens.json {delta_id} carries no value")
+    return "\n".join(["", f"/** {doc} */", f"val {name}: Color = {kotlin_color(value)}"])
+
+
+def emit_kotlin_border_strong(value) -> str:
+    return emit_kotlin_spec_color(
+        "smileBorderStrong",
+        "borderStrong",
+        "The design's `color/border-strong`, for a control ring that `color.border` is too pale to draw.",
+        value,
+    )
+
+
+def emit_kotlin_surface2(value) -> str:
+    return emit_kotlin_spec_color(
+        "smileSurface2",
+        "surface2",
+        "The design's `color/surface-2`, a cool grey subtle fill — `color.surface-alt` is a warm cream.",
+        value,
+    )
 
 
 def read_border_strong() -> str:
     return read_spec_delta("borderStrong", "value")
+
+
+def read_surface2() -> str:
+    return read_spec_delta("surface2", "value")
 
 
 def generate_kotlin_product_hues() -> str:
@@ -538,6 +556,8 @@ def generate_kotlin_product_hues() -> str:
         + emit_kotlin_soft_badge_fills(read_soft_badge_fills())
         + "\n"
         + emit_kotlin_border_strong(read_border_strong())
+        + "\n"
+        + emit_kotlin_surface2(read_surface2())
         + "\n"
     )
 

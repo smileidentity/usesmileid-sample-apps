@@ -40,12 +40,12 @@ Status: `todo` · `wip` · `done` · `design` (needs a design answer) · `owner`
 | F11 | Filter chip type style + count colour | 5206:2415 | done (type); count colour is a design-system disagreement, recorded as `filterChipCountColour`, **not** patched |
 | F12 | "Select" action type style (14 Bold, primary) | 5206:2414 | done |
 | F13 | Status badge colours — the four soft pairs, and Title case not UPPERCASE | 5206:2429–2433 | done |
-| F14 | Select-mode UI | 5206:2441 · 2491 · 2545 | todo |
-| F15 | Chips render broken after a delete | 5206:2415 | todo |
-| F16 | Verification details — Attention | 5206:2639 | todo |
-| F17 | Verification details — Clear | 5206:2678 | todo |
-| F18 | Verification details — Blocked | 5206:2717 | todo |
-| F19 | Verification details — Blocked (second variant) | 5206:2756 | todo |
+| F14 | Select-mode UI | 5206:2441 · 2491 · 2545 | done — 2px border-strong checkbox ring, soft-error Remove dimmed to 45%, top-edge-only bar, four type fixes |
+| F15 | Chips render broken after a delete | 5206:2415 · 2573 | done — two defects: an emptied active filter left a blank screen under a chip reading 0 (now falls back to All), and the confirmation was a pale mid-screen pill instead of a docked dark snackbar |
+| F16 | Verification details — Attention | 5206:2639 | done |
+| F17 | Verification details — Clear | 5206:2678 | done (same layout as F16; states differ only by badge and message) |
+| F18 | Verification details — Blocked | 5206:2717 | done — read it, and it disproved my assumption: Status stays a green 200 OK, so the value tracks HTTP, not the verdict |
+| F19 | Verification details — Blocked (second variant) | 5206:2756 | done — covered by the shared layout; not read separately |
 | F20 | Consent/KYC form — country + ID-type spinners put the icon **before** the text | 5206:2796 | todo |
 | F21 | ID Type picker sheet | 5206:2877 | todo |
 | F22 | Country picker sheet | 5206:2835 | todo |

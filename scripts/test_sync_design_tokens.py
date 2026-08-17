@@ -267,6 +267,12 @@ class TestProductHues(unittest.TestCase):
         with self.assertRaises(gen.TokenError):
             gen.emit_kotlin_border_strong("")
 
+    def test_surface2_emits_an_opaque_colour(self):
+        self.assertIn("val smileSurface2: Color = Color(0xFF", gen.emit_kotlin_surface2(gen.read_surface2()))
+
+    def test_surface2_is_not_the_warm_surface_alt(self):
+        self.assertNotEqual(gen.read_surface2().upper(), "#F9F0E7")
+
     def test_border_strong_is_not_the_pale_semantic_border(self):
         self.assertNotEqual(gen.read_border_strong().upper(), "#EAECF0")
 

@@ -15,6 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.ui.graphics.Color
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.TrashGlyph
@@ -24,6 +26,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatusBadge
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarButton
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarEmphasis
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleResult
 import com.usesmileid.sampleapps.ui.model.timeLabel
@@ -55,6 +58,7 @@ fun VerificationDetailsScreen(
                 UseSmileIDSampleTopAppBarButton(
                     contentDescription = "Delete verification",
                     onClick = onDelete,
+                    emphasis = UseSmileIDSampleTopAppBarEmphasis.Destructive,
                     testId = UseSmileIDSampleTestIds.DETAILS_DELETE,
                 ) { tint -> TrashGlyph(tint = tint) }
             }
@@ -82,8 +86,9 @@ fun VerificationDetailsScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
+                            // 16/700 in the design — the title style, not the 18/600 section heading.
                             text = job.product.label,
-                            style = UseSmileIDSampleTheme.type.textStyleHeadingSection,
+                            style = UseSmileIDSampleTheme.type.textStyleTitle,
                             color = UseSmileIDSampleTheme.colors.textTitle,
                             modifier = Modifier.weight(1f),
                         )
@@ -103,12 +108,15 @@ fun VerificationDetailsScreen(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(SmileDimens.radiusSurface),
                             color = UseSmileIDSampleTheme.colors.surface,
+                            border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.card.border),
                         ) {
                             Column {
                                 DetailRow("createdAt", "Created_at", job.createdAtLabel())
                                 DetailRow("jobId", "Job_id", job.shortId, onCopy = { onCopy(job.id) })
                                 DetailRow("message", "Message", job.message)
-                                DetailRow("status", "Status", job.httpStatus)
+                                // The design colours this by the HTTP outcome, not the job verdict: a
+                                // blocked job still shows a green 200, because the call did succeed.
+                                DetailRow("status", "Status", job.httpStatus, valueColor = job.httpStatusColor())
                                 DetailRow("userId", "User_id", job.shortUserId, onCopy = { onCopy(job.userId) })
                             }
                         }
@@ -127,14 +135,28 @@ fun VerificationDetailsScreen(
 }
 
 @Composable
-private fun DetailRow(field: String, label: String, value: String, onCopy: (() -> Unit)? = null) {
+private fun DetailRow(
+    field: String,
+    label: String,
+    value: String,
+    onCopy: (() -> Unit)? = null,
+    valueColor: Color? = null,
+) {
     UseSmileIDSampleDataFieldRow(
         label = label,
         value = value,
         testId = UseSmileIDSampleTestIds.detailField(field),
         onCopy = onCopy,
         copyTestId = UseSmileIDSampleTestIds.detailCopy(field),
+        valueColor = valueColor,
     )
+}
+
+/** Green while the call itself succeeded, red once it did not — the design only draws the 2xx case. */
+@Composable
+private fun UseSmileIDSampleJob.httpStatusColor(): Color {
+    val badge = UseSmileIDSampleTheme.colors.badge
+    return if (httpStatus.trimStart().startsWith("2")) badge.successText else badge.errorText
 }
 
 /** ISO-8601 in UTC, matching the design's row: a machine-readable value, not a display date. */

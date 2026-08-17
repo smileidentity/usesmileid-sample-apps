@@ -229,6 +229,16 @@
       "finding": "The design draws an unselected selection checkbox as a 2px ring in color/border-strong. The design system carries exactly one semantic border, color.border #EAECF0, which is far too light for a 2px control ring — which is why the app's checkbox read as barely-there against the design. The value exists upstream only as color.grey.400, and consuming a primitive is a review failure by AGENTS.md.",
       "recommendation": "Add a semantic border-strong (or control-border) role to the design system. Generated from here meanwhile, exactly as softBadgeFills is, so no component references a primitive.",
       "status": "OPEN 2026-08-17 — generated stopgap in place; delete the generated value once the design system carries the role"
+    },
+    {
+      "id": "surface2",
+      "severity": "every subtle-fill surface on four apps — copy buttons, icon tiles, inset rows",
+      "figma": { "color/surface-2": "#EAECF0" },
+      "designSystem": { "semantic": "absent — color.surface-alt is #F9F0E7, a warm cream, not this cool grey" },
+      "value": "#EAECF0",
+      "finding": "The design's second surface is a cool grey; the design system's nearest semantic, color.surface-alt, is a warm brand cream. Android reached for surface-alt everywhere the design wanted surface-2, which is why copy buttons and icon tiles across the app rendered peach where the design is grey. The value coincides with color.border, but a border role is not a fill role and using it as one hides the gap.",
+      "recommendation": "Add a second surface role to the design system. Generated from here meanwhile, as softBadgeFills and borderStrong are.",
+      "status": "OPEN 2026-08-17 — generated stopgap in place; delete the generated value once the design system carries the role"
     }
   ],
   "perPlatform": {

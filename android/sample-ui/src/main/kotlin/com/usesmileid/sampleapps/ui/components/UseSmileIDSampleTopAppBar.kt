@@ -19,6 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
+import com.smileid.designsystem.smileSurface2
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -50,8 +53,10 @@ fun UseSmileIDSampleTopAppBar(
 
         Text(
             text = title,
-            style = UseSmileIDSampleTheme.type.textStyleTitle,
+            // 15/700 in the design, where textStyleTitle is 16 — and centred between the two controls.
+            style = UseSmileIDSampleTheme.type.textStyleTitle.copy(fontSize = TITLE_SIZE),
             color = UseSmileIDSampleTheme.colors.textTitle,
+            textAlign = TextAlign.Center,
             // Wraps rather than caps: ellipsising a title is the clipping the predicate forbids.
             modifier = Modifier.weight(1f),
         )
@@ -61,8 +66,8 @@ fun UseSmileIDSampleTopAppBar(
     }
 }
 
-/** Filled is the dark control used for back and the Scan token torch; Tonal is the light trailing action. */
-enum class UseSmileIDSampleTopAppBarEmphasis { Filled, Tonal }
+/** Filled is the dark control used for back and the Scan token torch; Tonal is the light trailing action; Destructive is the soft-red delete. */
+enum class UseSmileIDSampleTopAppBarEmphasis { Filled, Tonal, Destructive }
 
 /** One circular 40dp app-bar control; Material expands the touch target around it. */
 @Composable
@@ -77,7 +82,8 @@ fun UseSmileIDSampleTopAppBarButton(
     val colors = UseSmileIDSampleTheme.colors
     val (container, tint) = when (emphasis) {
         UseSmileIDSampleTopAppBarEmphasis.Filled -> colors.textTitle to colors.textInverse
-        UseSmileIDSampleTopAppBarEmphasis.Tonal -> colors.surfaceAlt to colors.textTitle
+        UseSmileIDSampleTopAppBarEmphasis.Tonal -> smileSurface2 to colors.textTitle
+        UseSmileIDSampleTopAppBarEmphasis.Destructive -> colors.badge.errorBackground to colors.badge.errorText
     }
     Surface(
         onClick = onClick,
@@ -91,3 +97,6 @@ fun UseSmileIDSampleTopAppBarButton(
         Box(contentAlignment = Alignment.Center) { glyph(tint) }
     }
 }
+
+/** 15 in the design; textStyleTitle is 16. */
+private val TITLE_SIZE = 15.sp

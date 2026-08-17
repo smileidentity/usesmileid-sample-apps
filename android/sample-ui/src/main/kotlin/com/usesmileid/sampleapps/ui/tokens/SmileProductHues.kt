@@ -91,3 +91,6 @@ val smileSoftBadgeFills: Map<String, SmileSoftBadgeFill> = mapOf(
 
 /** The design's `color/border-strong`, for a control ring that `color.border` is too pale to draw. */
 val smileBorderStrong: Color = Color(0xFFC2C5CB)
+
+/** The design's `color/surface-2`, a cool grey subtle fill — `color.surface-alt` is a warm cream. */
+val smileSurface2: Color = Color(0xFFEAECF0)
