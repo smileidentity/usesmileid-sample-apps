@@ -1,11 +1,8 @@
 // Smile ID product hues — GENERATED. Do not edit by hand.
-//
 // Regenerate with: scripts/sync_design_tokens.py --all
 //
-// A stopgap, and not from the design system: these live only in the design file, bound to no
-// variable, so there is no upstream output to read. The source is spec/design-tokens.json →
-// productHues. Delete this file once the design system carries a decorative product role, and
-// never hand-copy these values into another codebase — a port generates from the same spec entry.
+// A stopgap: the source is spec/design-tokens.json → productHues, not the design system. Delete this
+// file once the design system carries a decorative product role; a port generates from the same entry.
 
 package com.smileid.designsystem
 

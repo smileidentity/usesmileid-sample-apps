@@ -135,7 +135,7 @@ fun PlusGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.
     drawLine(tint, Offset(w * 0.2f, h * 0.5f), Offset(w * 0.8f, h * 0.5f), s.width, StrokeCap.Round)
 }
 
-/** Still a stand-in: Enhanced KYC, the one product without an icon of its own, falls back to this. */
+/** Stand-in: Enhanced KYC has no icon of its own yet. */
 @Composable
 fun ProductMarkGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
     val s = stroke()

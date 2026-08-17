@@ -1,7 +1,6 @@
 name: Android
 
-# android/verify.sh is the definition of done for this platform, so CI runs exactly that script
-# rather than a second list of steps that can drift from it.
+# CI runs android/verify.sh itself, so the local contract and the gate cannot drift apart.
 on:
   pull_request:
     paths:
@@ -25,9 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # The token --check compares the vendored output against the design system's own, so it needs
-      # the design system present. It lives in a private repo, and a fork PR gets no secrets — the
-      # step is skipped there and the run says so rather than reporting a check that did not happen.
+      # --check needs the design system, which is private; a fork PR gets no secret, so this skips and says so.
       - name: Check out the design system
         id: design-system
         if: env.DESIGN_SYSTEM_TOKEN != ''
@@ -65,8 +62,7 @@ jobs:
           SMILE_TOKENS_OPTIONAL: ${{ steps.design-system.outcome == 'skipped' && '1' || '' }}
         run: android/verify.sh
 
-      # Goldens are pixel comparisons recorded on a developer's macOS machine. If Linux rasterises
-      # them even slightly differently this is the artifact that shows it.
+      # Goldens are recorded on macOS; this artifact is what shows a Linux rasterisation difference.
       - name: Upload golden diffs
         if: failure()
         uses: actions/upload-artifact@v4

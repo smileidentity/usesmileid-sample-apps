@@ -9,7 +9,6 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** The card's field set, checked against the schema rather than reviewed. */
 class UseSmileIDSampleResultSpecTest {
 
     private val schema: String by lazy { spec("result-card.schema.json") }

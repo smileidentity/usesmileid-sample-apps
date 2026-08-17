@@ -10,7 +10,6 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** The argument names are what keeps one flow driving four apps, so they are checked against the spec. */
 class UseSmileIDSampleLaunchArgsSpecTest {
 
     private val specArgs: List<Pair<String, String?>> by lazy {
@@ -68,7 +67,6 @@ class UseSmileIDSampleLaunchArgsSpecTest {
         assertEquals(UseSmileIDSampleHoldCamera.Keep, args.holdCamera)
     }
 
-    /** `am start` sends `--ez` as a Boolean and `-e` as a String, and automation reaches for both. */
     @Test
     fun the_sandbox_flag_reads_either_extra_type() {
         assertEquals(false, UseSmileIDSampleLaunchArgs.from(mapOf("sandbox" to false)).sandbox)

@@ -13,7 +13,7 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.R
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 
-/** The design set's icons, imported from its SVG export. Named after the ids in `spec/`. */
+/** The design set's icons, named after the ids in `spec/`. */
 @Composable
 fun UseSmileIDSampleIcon(
     @DrawableRes id: Int,
@@ -28,7 +28,6 @@ fun UseSmileIDSampleIcon(
     colorFilter = ColorFilter.tint(tint),
 )
 
-/** The scan mark, on the nav token button, the floating token button and the scan sheet. */
 @Composable
 fun ScanMarkGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) =
     UseSmileIDSampleIcon(id = R.drawable.sample_ic_token_scan, tint = tint, size = size)

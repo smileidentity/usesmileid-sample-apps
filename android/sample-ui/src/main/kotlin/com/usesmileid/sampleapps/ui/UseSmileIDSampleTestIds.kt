@@ -68,7 +68,6 @@ object UseSmileIDSampleTestIds {
     const val TOKEN_PASTE = "sample_token_paste"
     const val TOKEN_SIMULATE = "sample_token_simulate"
 
-    // The result card's own ids, one per field in spec/result-card.schema.json.
     const val RESULT_CARD = "sample_result_card"
     const val RESULT_ACTIVE_SCENARIO = "sample_result_active_scenario"
     const val RESULT_ACTIVE_THEME = "sample_result_active_theme"

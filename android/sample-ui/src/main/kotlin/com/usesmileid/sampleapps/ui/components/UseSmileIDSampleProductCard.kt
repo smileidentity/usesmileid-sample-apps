@@ -28,11 +28,7 @@ import com.smileid.designsystem.SmileDimens
 import com.smileid.designsystem.SmileProductHue
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * A product tile: a gradient in the product's hue, that hue again as the shadow, and its icon as a watermark.
- *
- * Content is white on every card; `scrim` is what varies, because Document Verification's amber is too light.
- */
+/** A product tile: a gradient in the product's hue, that hue again as the shadow, its icon as a watermark. */
 @Composable
 fun UseSmileIDSampleProductCard(
     title: String,
@@ -68,7 +64,6 @@ fun UseSmileIDSampleProductCard(
         Box(
             modifier = Modifier
                 .background(if (enabled) hue.brush() else Brush.linearGradient(flat(colors.surfaceMuted)))
-                // The watermark bleeds past the corner, so the card clips rather than grows.
                 .clipToBounds(),
         ) {
             if (ghost != null) {
@@ -95,13 +90,11 @@ fun UseSmileIDSampleProductCard(
                         if (icon != null) icon(hue.icon) else ProductMarkGlyph(tint = hue.icon)
                     }
                 }
-                // No gap: without those pixels "Authentication" breaks mid-word on a 174-wide card.
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Bottom,
                 ) {
-                    // The design's 14px/600 is in neither token; size decides whether the label fits, so it wins.
                     Text(
                         text = title,
                         style = UseSmileIDSampleTheme.type.textStyleSubtitle,
@@ -115,7 +108,6 @@ fun UseSmileIDSampleProductCard(
     }
 }
 
-/** The stops sit inboard of the corners, which is what keeps the fill from banding. */
 private fun SmileProductHue.brush() = Brush.linearGradient(
     colorStops = arrayOf(GRADIENT_START to from, GRADIENT_END to to),
     start = Offset.Zero,
@@ -137,13 +129,10 @@ private fun GoAffordance(tint: Color, scrim: Color) {
     }
 }
 
-/** 148 in the design; the scale reaches it as space64 twice plus space20. */
 private val CARD_MIN_HEIGHT = SmileDimens.space64 * 2 + SmileDimens.space20
 
-/** 22 in the design; radius.xl is the nearest the scale carries. */
 private val CARD_RADIUS = SmileDimens.radiusXl
 
-/** The design layers two shadows; Compose draws one, so this is the larger of the pair. */
 private val CARD_ELEVATION = 10.dp
 
 private const val SCRIM_ALPHA = 0.16f

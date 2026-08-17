@@ -6,7 +6,6 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleResult
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 
-/** Every state the card has to render: nothing run yet, a run in flight, and all three terminal outcomes. */
 internal object ResultFixtures {
 
     val Idle = UseSmileIDSampleResult(

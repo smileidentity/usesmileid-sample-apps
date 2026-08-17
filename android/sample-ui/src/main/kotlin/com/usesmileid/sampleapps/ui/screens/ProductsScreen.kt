@@ -168,9 +168,7 @@ fun ProductsScreen(
     }
 }
 
-/** Fails loudly rather than substituting a neighbour's hue, which would look deliberate. */
 private fun UseSmileIDSampleProduct.hue(): SmileProductHue =
     requireNotNull(smileProductHues[id]) { "no hue for product '$id'; see spec/design-tokens.json → productHues" }
 
-/** 69.3 in the design — the icon at 3.3x, bleeding off the corner. */
 private val GHOST_SIZE = SmileDimens.space64 + SmileDimens.space4

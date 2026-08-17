@@ -59,9 +59,7 @@ dependencies {
 tasks.withType<Test>().configureEach {
     systemProperty("sampleapps.spec.dir", layout.projectDirectory.dir("../../spec").asFile.absolutePath)
 
-    // Goldens render clock times and dates, so the machine's own zone and locale would otherwise bake
-    // themselves into the recording. CI found this: every verifications golden differed by exactly the
-    // recorder's offset from UTC, and nothing else on the screen moved.
+    // Goldens render clock times, so the recorder's own zone and locale would otherwise bake into them.
     systemProperty("user.timezone", "UTC")
     systemProperty("user.language", "en")
     systemProperty("user.country", "US")

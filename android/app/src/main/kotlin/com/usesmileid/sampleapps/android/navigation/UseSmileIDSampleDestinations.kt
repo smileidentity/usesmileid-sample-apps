@@ -332,7 +332,7 @@ fun ScanTokenScreen(navigator: DestinationsNavigator) {
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SCENARIO_DRAWER)])
 @Composable
 fun ScenarioDrawerSheet(navigator: DestinationsNavigator) {
-    // App-level, not local to the sheet: the result card reports the same selection a launch argument seeds.
+    // App-level, not sheet-local: the result card reports the same selection.
     val app = LocalUseSmileIDSampleAppState.current
     ScenarioDrawerContent(
         activeScenario = app.flowResult.scenario,

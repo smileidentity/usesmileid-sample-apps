@@ -72,7 +72,6 @@ class UseSmileIDSampleFlowResult(
         theme = value
     }
 
-    /** Navigation decides this, so it is set on arrival rather than on handoff. */
     fun enterRoute(value: UseSmileIDSampleFlowRoute) {
         route = value
     }

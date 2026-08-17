@@ -9,7 +9,6 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-/** "Fires exactly once" is only ever a count assertion. */
 class UseSmileIDSampleFlowResultTest {
 
     @Test

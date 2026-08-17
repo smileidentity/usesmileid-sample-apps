@@ -2,7 +2,7 @@ package com.usesmileid.sampleapps.ui.model
 
 import androidx.compose.runtime.Immutable
 
-/** Which container hosts the SDK flow. One route, two presentations. */
+/** One route, two presentations. */
 enum class UseSmileIDSampleFlowRoute(val id: String) {
     Fullscreen("fullscreen"),
     Shell("shell"),

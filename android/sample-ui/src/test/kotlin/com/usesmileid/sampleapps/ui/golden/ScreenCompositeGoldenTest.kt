@@ -121,7 +121,6 @@ private fun ProductCards() = Column(verticalArrangement = stack) {
     )
 }
 
-/** Every product, so a hue missing from the generated map fails here rather than on the screen. */
 @Composable
 private fun ProductGrid() {
     val products = UseSmileIDSampleProduct.entries

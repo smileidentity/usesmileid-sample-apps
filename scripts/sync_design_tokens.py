@@ -67,8 +67,7 @@ ANDROID_UI = "android/sample-ui"
 KOTLIN_TYPE_OUT = f"{ANDROID_UI}/src/main/kotlin/com/usesmileid/sampleapps/ui/tokens/SmileTypeStyles.kt"
 KOTLIN_HUES_OUT = f"{ANDROID_UI}/src/main/kotlin/com/usesmileid/sampleapps/ui/tokens/SmileProductHues.kt"
 
-# The product hues are read from spec/, not from the design system: they exist only in the design
-# file, bound to no variable. See the productHues delta for the whole story.
+# Product hues come from spec/, not the design system: they are bound to no variable upstream.
 SPEC_TOKENS = "spec/design-tokens.json"
 
 # The five DM Sans weights the ramp uses (400–800). Android resource names must be lowercase.
@@ -136,13 +135,10 @@ import androidx.compose.ui.unit.sp
 """
 
 KOTLIN_HUES_HEADER = """// Smile ID product hues — GENERATED. Do not edit by hand.
-//
 // Regenerate with: scripts/sync_design_tokens.py --all
 //
-// A stopgap, and not from the design system: these live only in the design file, bound to no
-// variable, so there is no upstream output to read. The source is spec/design-tokens.json →
-// productHues. Delete this file once the design system carries a decorative product role, and
-// never hand-copy these values into another codebase — a port generates from the same spec entry.
+// A stopgap: the source is spec/design-tokens.json → productHues, not the design system. Delete this
+// file once the design system carries a decorative product role; a port generates from the same entry.
 
 package com.smileid.designsystem
 

@@ -13,7 +13,7 @@ sealed interface UseSmileIDSampleHoldCamera {
     data class Millis(val value: Long) : UseSmileIDSampleHoldCamera
 }
 
-/** The canonical arguments from `spec/launch-args.json`. Parsing lives here; reading an Intent is the shell's job. */
+/** The canonical arguments from `spec/launch-args.json`; reading an Intent is the shell's job. */
 @Immutable
 data class UseSmileIDSampleLaunchArgs(
     val scenario: UseSmileIDSampleScenario = UseSmileIDSampleScenario.Normal,
@@ -33,7 +33,6 @@ data class UseSmileIDSampleLaunchArgs(
         const val APP_LOCALE = "appLocale"
         const val HOLD_CAMERA = "holdCamera"
 
-        /** Asserted against `spec/launch-args.json` by a unit test. */
         val names = listOf(SCENARIO, THEME, ROUTE, AUTOSTART, SANDBOX, APP_LOCALE, HOLD_CAMERA)
 
         private const val HOLD_CAMERA_KEEP = "keep"

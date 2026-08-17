@@ -225,7 +225,6 @@ class TestProductHues(unittest.TestCase):
         self.assertEqual(gen.kotlin_color("#e08600"), "Color(0xFFE08600)")
 
     def test_alpha_is_never_baked_in(self):
-        # The scrim renders at 16%, but that is the card's job — a colour here is always opaque.
         self.assertEqual(gen.kotlin_color("#2D2B2A"), "Color(0xFF2D2B2A)")
 
     def test_a_non_hex_value_is_rejected_rather_than_emitted(self):
@@ -243,7 +242,6 @@ class TestProductHues(unittest.TestCase):
             self.assertIn(f"{role} = Color(0xFF", out)
 
     def test_a_hue_missing_a_role_fails_loudly(self):
-        # Silently emitting four products where the spec has five is the failure mode that matters.
         with self.assertRaises(gen.TokenError):
             gen.emit_kotlin_product_hues({"biometricKyc": {"from": "#151F72", "to": "#2B3A9E"}})
 
@@ -265,7 +263,6 @@ class TestProductHues(unittest.TestCase):
         )
 
     def test_a_derived_hue_says_so(self):
-        # enhancedKyc is ours, not the designer's. Losing that marker is how a placeholder ships as final.
         self.assertIn("DERIVED HERE", gen.read_product_hues()["enhancedKyc"]["origin"])
 
     def test_annotations_are_not_emitted_as_colours(self):

@@ -10,7 +10,6 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import org.junit.Test
 
-/** The imported icon set, one capture. A drawable that fails to parse or tint is visible here and nowhere else. */
 class IconGoldenTest : GoldenTest() {
 
     @Test

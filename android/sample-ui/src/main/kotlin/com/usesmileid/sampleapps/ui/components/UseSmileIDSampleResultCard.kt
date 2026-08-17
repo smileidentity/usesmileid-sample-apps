@@ -25,11 +25,7 @@ import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleResult
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * Every field in `spec/result-card.schema.json`, published into the accessibility tree under its own id.
- *
- * Expanded by default: a collapsed field is absent from that tree, so a flow would have to tap it open first.
- */
+/** Every field in `spec/result-card.schema.json` under its own id, expanded by default because a collapsed field is absent from the accessibility tree. */
 @Composable
 fun UseSmileIDSampleResultCard(
     result: UseSmileIDSampleResult,
@@ -92,7 +88,6 @@ fun UseSmileIDSampleResultCard(
     }
 }
 
-/** The three fields that say whether a run is live and what it is running as; the rest stay on the card. */
 @Composable
 fun UseSmileIDSampleResultLine(
     result: UseSmileIDSampleResult,
@@ -157,5 +152,5 @@ private fun ResultValue(value: String?, testId: String, modifier: Modifier = Mod
     )
 }
 
-/** The rendering of a null field. Stable, because flows assert on it to prove a value was absent. */
+/** Stable: flows assert on it to prove a value was absent. */
 private const val NULL_VALUE = "—"

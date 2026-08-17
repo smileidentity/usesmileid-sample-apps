@@ -4,7 +4,6 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleResultCard
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleResultLine
 import org.junit.Test
 
-/** The card renders every schema field in every terminal state, because a flow asserts on all of them. */
 class ResultCardGoldenTest : GoldenTest() {
 
     @Test

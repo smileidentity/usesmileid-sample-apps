@@ -23,15 +23,7 @@ import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleDeepLinks
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * The single route that hosts the SDK flow; the SDK owns everything inside it, so consent,
- * instructions, capture, preview and processing are never routes of this app's own.
- *
- * Still a placeholder: it parses its arguments and runs the SDK's non-throwing pre-flight, so an
- * invalid configuration is reported here rather than arriving as a `Failure` no test can tell
- * from a real submission failure. It records the hosting route but never a running status — nothing
- * is handed to the SDK yet, and a status claiming otherwise would report a run that never happened.
- */
+/** The single route hosting the SDK flow; a placeholder that runs the pre-flight but sets no running status, because nothing is handed to the SDK yet. */
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SDK_FLOW)])
 @Composable
 fun SdkFlowScreen(
