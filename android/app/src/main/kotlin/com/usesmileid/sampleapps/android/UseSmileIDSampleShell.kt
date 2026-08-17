@@ -5,6 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -16,6 +23,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.compose.ui.unit.IntOffset
 import androidx.core.util.Consumer
 import androidx.navigation.NavHostController
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -33,6 +41,7 @@ import com.ramcosta.composedestinations.utils.contains
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import com.ramcosta.composedestinations.utils.rememberDestinationsNavigator
 import com.ramcosta.composedestinations.utils.startDestination
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleNavTransitions
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavItem
 
@@ -49,6 +58,9 @@ fun UseSmileIDSampleShell() {
     val navigator = navController.rememberDestinationsNavigator()
     val destination by navController.currentDestinationAsState()
     val selectedTab = destination?.tab()
+    // The bar animating away still needs a selected tab to draw.
+    var lastTab by remember { mutableStateOf(UseSmileIDSampleNavItem.Products) }
+    if (selectedTab != null) lastTab = selectedTab
 
     ForwardNewIntentsTo(navController)
     AutostartFlowOnce(navigator)
@@ -57,11 +69,17 @@ fun UseSmileIDSampleShell() {
         // UI automation only sees Compose test tags once they are published as resource ids.
         modifier = Modifier.semantics { testTagsAsResourceId = true },
         bottomBar = {
-            if (selectedTab != null) {
+            // Slides out with the screen that covered it rather than vanishing on the same frame,
+            // and keeps the last tab so the bar it animates away is the one you were looking at.
+            AnimatedVisibility(
+                visible = selectedTab != null,
+                enter = slideInVertically(NAV_BAR_SPEC) { it } + fadeIn(),
+                exit = slideOutVertically(NAV_BAR_SPEC) { it } + fadeOut(),
+            ) {
                 val app = LocalUseSmileIDSampleAppState.current
                 UseSmileIDSampleNavBar(
                     sessionProgress = app.session?.takeIf { app.sessionActive }?.progress(app.nowMillis),
-                    selected = selectedTab,
+                    selected = lastTab,
                     onSelect = { item ->
                         navigator.navigate(item.graph) {
                             popUpTo(NavGraphs.root.startDestination) { saveState = true }
@@ -79,6 +97,7 @@ fun UseSmileIDSampleShell() {
         DestinationsNavHost(
             navGraph = NavGraphs.root,
             navController = navController,
+            defaultTransitions = UseSmileIDSampleNavTransitions,
             modifier = Modifier.padding(contentPadding),
         )
     }
@@ -134,3 +153,6 @@ private val UseSmileIDSampleNavItem.graph: Direction
         UseSmileIDSampleNavItem.Verifications -> VerificationsNavGraph
         UseSmileIDSampleNavItem.Settings -> SettingsNavGraph
     }
+
+/** Matches the route transition, so the bar and the screen move together. */
+private val NAV_BAR_SPEC = tween<IntOffset>(durationMillis = 280)
