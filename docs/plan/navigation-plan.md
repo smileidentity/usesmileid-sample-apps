@@ -18,7 +18,7 @@ document explains the architecture and the traps.
 
 ---
 
-## 1. Ten rules that apply to every platform
+## 1. Eleven rules that apply to every platform
 
 These are what keep four navigation implementations behaving the same. Most of them exist because a
 specific defect was found on a device, not because they read well.
@@ -108,6 +108,32 @@ The profile flow this settles, end to end: settings PROFILE row → `/profiles` 
 active profile's page) → a row → `/profiles/:id`, titled with the profile's name, whose CTA both
 saves the defaults and activates → or "Create new profile" → `/profiles/new` → back to `/profiles`
 with the confirmation.
+
+**R11 — Motion says what the route table says.** Settled 2026-08-18 on Android and owed by the other
+three. The route table has two relationships and each gets its own motion, so the animation is never
+decoration:
+
+| Relationship | Motion |
+|---|---|
+| Push / pop a deeper route | Slide 280ms `FastOutSlowIn` toward the start, reversed on pop, with a 180ms fade |
+| Switch between the three tab roots | Fade **through**: the outgoing screen clears in 90ms, then the incoming one fades and scales up from 0.94 over 210ms |
+| A route that draws its own presentation (every sheet) | **None** — the sheet animates itself, and animating the destination too slides the scrim in before the sheet exists |
+| The SDK flow | Fade only. It owns its own navigation (R2), so the host must not imply a direction |
+| A bar arriving over a screen (snackbar, selection bar) | Rise 220ms with a 160ms fade, and the caller **holds** what the bar reads so it still has something to draw on the way out |
+
+Three traps, each found on a device:
+
+- **"Different parent graph" is not "tab switch".** A pushed route lives in the root graph, so
+  comparing parents classified Settings → Profiles as a tab switch and cross-faded a push. Compare
+  against the three tab **start routes** instead.
+- **Cross-fading two dense screens reads as a rendering fault** — both are legible at once, at half
+  opacity. Fade through instead: clear, then arrive.
+- **The nav bar must animate out with the screen that covers it**, and something must hold the last
+  selected tab, or the bar redraws with no selection on its way off screen.
+
+Known gap, not yet fixed on any platform: a sheet route replaces the destination underneath it, so
+nothing renders behind the sheet's scrim where the design shows the screen it covers. Fixing it means
+presenting sheet routes over the current destination rather than in place of it.
 
 ---
 

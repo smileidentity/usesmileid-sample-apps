@@ -86,4 +86,22 @@ Status: `todo` · `wip` · `done` · `design` (needs a design answer) · `owner`
 | F42 | The nav bar's tabs pill was outlined and flat; the design floats both halves on a shadow and outlines only the token | 5206:3663 | done |
 | F43 | The design's settings footer reads "Smile ID Sample App · 1.0.0" and its docs row "docs.usesmileid.com" | 5206:3547 | **not changed** — `spec/app-identity.json` owns the display name, and `docs.smileidentity.com` is the domain that exists; flagged for the owner rather than followed |
 
+### Fifth round — 2026-08-18 (self-directed: comments, titles, motion)
+
+| ID | Item | Status |
+|---|---|---|
+| F44 | Comment trim across the branch | done — 89 comment blocks: every "N in the design" restatement dropped (the values live in `spec/design-tokens.json`), multi-line rationale reduced to one line, nothing load-bearing removed |
+| F45 | Titles pass against Figma | done — all six pushed titles, three page headings, five sheet titles and every section label match; product labels come from one enum, so the grid and the list cannot drift |
+| F46 | Screen-to-screen motion | done — the app had **no** transitions at all (`NoTransitions` is the library default), so every navigation was a cut; see navigation-plan R11 |
+| F47 | Snackbar and selection bar appeared between frames | done — both now rise into place, and the caller holds what they read so they still draw on the way out |
+
+### Found by this round, not reported
+
+| ID | Item | Status |
+|---|---|---|
+| F48 | Comparing parent graphs called Settings → Profiles a tab switch, cross-fading a push | done — compare against the three tab start routes |
+| F49 | Cross-fading two dense screens leaves both legible at once and reads as a rendering fault | done — fade through: clear in 90ms, then arrive |
+| F50 | Nothing renders behind a sheet's scrim, where the design shows the screen it covers | **OPEN** — a sheet route replaces the destination under it. The fix is to present sheet routes over the current destination; deferred rather than attempted late, because it touches all five sheets, their goldens and their flows |
+| F51 | The verifications list has a pull-to-refresh hotspot and a `refreshing` state in the design | **OPEN** — not implemented on any platform; needs a ruling on what "refresh" means for an in-memory list before it is built |
+
 <!-- INTERNAL-ONLY:END -->
