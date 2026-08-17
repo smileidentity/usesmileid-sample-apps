@@ -19,11 +19,13 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.TrashGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDataFieldRow
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleResultCard
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatusBadge
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarButton
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleResult
 import com.usesmileid.sampleapps.ui.model.timeLabel
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import java.text.SimpleDateFormat
@@ -36,6 +38,7 @@ import java.util.TimeZone
 fun VerificationDetailsScreen(
     jobId: String,
     job: UseSmileIDSampleJob?,
+    result: UseSmileIDSampleResult,
     onBack: () -> Unit,
     onDelete: () -> Unit,
     onCopy: (String) -> Unit,
@@ -56,60 +59,68 @@ fun VerificationDetailsScreen(
                 ) { tint -> TrashGlyph(tint = tint) }
             }
         }
-        if (job == null) {
-            Text(
-                text = "No verification for jobId = $jobId",
-                style = UseSmileIDSampleTheme.type.textStyleBody,
-                color = UseSmileIDSampleTheme.colors.textMuted,
-                modifier = Modifier.padding(SmileDimens.spacingMd),
-            )
-            return@Column
-        }
-
         LazyColumn(
             contentPadding = contentPadding,
             verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
         ) {
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingXs),
-                    horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
+            if (job == null) {
+                item {
                     Text(
-                        text = job.product.label,
-                        style = UseSmileIDSampleTheme.type.textStyleHeadingSection,
-                        color = UseSmileIDSampleTheme.colors.textTitle,
-                        modifier = Modifier.weight(1f),
-                    )
-                    UseSmileIDSampleStatusBadge(
-                        status = job.status,
-                        testId = UseSmileIDSampleTestIds.STATUS_BADGE,
+                        text = "No verification for jobId = $jobId",
+                        style = UseSmileIDSampleTheme.type.textStyleBody,
+                        color = UseSmileIDSampleTheme.colors.textMuted,
+                        modifier = Modifier.padding(SmileDimens.spacingMd),
                     )
                 }
-            }
-            item {
-                Column(
-                    modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
-                    verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
-                ) {
-                    UseSmileIDSampleSectionLabel(text = "DETAILS")
-                    Surface(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(SmileDimens.radiusSurface),
-                        color = UseSmileIDSampleTheme.colors.surface,
+            } else {
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingXs),
+                        horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Column {
-                            DetailRow("createdAt", "Created_at", job.createdAtLabel())
-                            DetailRow("jobId", "Job_id", job.shortId, onCopy = { onCopy(job.id) })
-                            DetailRow("message", "Message", job.message)
-                            DetailRow("status", "Status", job.httpStatus)
-                            DetailRow("userId", "User_id", job.shortUserId, onCopy = { onCopy(job.userId) })
+                        Text(
+                            text = job.product.label,
+                            style = UseSmileIDSampleTheme.type.textStyleHeadingSection,
+                            color = UseSmileIDSampleTheme.colors.textTitle,
+                            modifier = Modifier.weight(1f),
+                        )
+                        UseSmileIDSampleStatusBadge(
+                            status = job.status,
+                            testId = UseSmileIDSampleTestIds.STATUS_BADGE,
+                        )
+                    }
+                }
+                item {
+                    Column(
+                        modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
+                        verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+                    ) {
+                        UseSmileIDSampleSectionLabel(text = "DETAILS")
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(SmileDimens.radiusSurface),
+                            color = UseSmileIDSampleTheme.colors.surface,
+                        ) {
+                            Column {
+                                DetailRow("createdAt", "Created_at", job.createdAtLabel())
+                                DetailRow("jobId", "Job_id", job.shortId, onCopy = { onCopy(job.id) })
+                                DetailRow("message", "Message", job.message)
+                                DetailRow("status", "Status", job.httpStatus)
+                                DetailRow("userId", "User_id", job.shortUserId, onCopy = { onCopy(job.userId) })
+                            }
                         }
                     }
                 }
+            }
+            // Rendered even with no job: a flow that failed before submission has nothing else to show.
+            item {
+                UseSmileIDSampleResultCard(
+                    result = result,
+                    modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
+                )
             }
         }
     }

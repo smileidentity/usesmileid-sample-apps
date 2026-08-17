@@ -229,10 +229,34 @@ stand-in, so a port should use the same one rather than inventing a second answe
 
 *From design:*
 
-1. The product→hue and profile→hue list — 6 products, plus profiles. Stand-in: the decorative
-   palette indexed by the product's position in the order `spec/` declares, which the spec test
-   pins, so every platform resolves the same hue for the same product until the real list lands.
-2. An icon for the **Enhanced KYC** product card. Stand-in: the shared product mark.
+1. **Product hues answered from the design 2026-08-15; profile hues still open.** The five product
+   cards on node `5206-4037` were read directly and the full mapping is recorded in
+   `spec/design-tokens.json` → `productHues`. Three things it changed:
+
+   - The cards are **linear gradients**, not the flat fills this plan assumed, each with a shadow
+     tinted in its own hue.
+   - **Eight of the ten gradient stops exist nowhere in the token source.** Only `#2D2B2A` and
+     `#151F72` are present, and both by coincidence of value rather than as a decorative role. The
+     fills are bound to no variable in the design either, so there is nothing to generate from.
+   - **Enhanced KYC is absent** — the node predates the owner decision that added a sixth product,
+     and still shows `slot/empty` where it goes. It needs a hue and an icon.
+
+   So the list exists but is not yet consumable without hand-copying ten hexes into four codebases,
+   which is the review failure the token rule exists to prevent. Stand-in stays until that is
+   resolved: the decorative palette indexed by declaration order, which the spec test pins so all
+   four platforms resolve the same hue for the same product. The profile→hue list is untouched by
+   this and still owed.
+2. **Mostly delivered 2026-08-15.** Eight icons arrived and are imported — four product marks plus
+   the three nav icons and the token scan mark — and the sources are the shared record in
+   `design/icons/`. Five of the six products are covered: the two document products **share one
+   mark** by design and are told apart by the card's hue, which is already the icon's tint, so a
+   port should reuse the drawable rather than add a near-identical second one. **Enhanced KYC** is
+   the one card still owed an icon; it keeps the shared product mark, which reads as visibly generic
+   next to five real icons rather than borrowing an unrelated one. Separately, the three nav icons
+   (`products`, `verifications`, `settings`) are imported but unused: `components.json` records the
+   nav bar as three text tabs, verified against a render, so putting icons in it is a design change
+   and not a wiring one. Their export colours — products in primary, the other two in text.muted —
+   look like the active and inactive tab treatment, so the question is worth asking.
 3. Rename board 05 to "KYC / ID details" — it holds no consent screen.
 
 *From the design system:*

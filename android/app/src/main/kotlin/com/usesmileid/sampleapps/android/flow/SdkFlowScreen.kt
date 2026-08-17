@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,24 +18,21 @@ import com.ramcosta.composedestinations.annotation.parameters.DeepLink
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.presentation.flow.validation.ValidationState
+import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleDeepLinks
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/** Which container hosts the SDK flow. One route, two presentations. */
-enum class FlowPresentation { Fullscreen, Shell }
-
-/**
- * The single route that hosts the SDK flow; the SDK owns everything inside it, so consent,
- * instructions, capture, preview and processing are never routes of this app's own.
- *
- * Still a placeholder: it parses its arguments and runs the SDK's non-throwing pre-flight, so an
- * invalid configuration is reported here rather than arriving as a `Failure` no test can tell
- * from a real submission failure.
- */
+/** The single route hosting the SDK flow; a placeholder that runs the pre-flight but sets no running status, because nothing is handed to the SDK yet. */
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SDK_FLOW)])
 @Composable
-fun SdkFlowScreen(productId: String, route: FlowPresentation = FlowPresentation.Fullscreen) {
+fun SdkFlowScreen(
+    productId: String,
+    route: UseSmileIDSampleFlowRoute = UseSmileIDSampleFlowRoute.Fullscreen,
+) {
+    val app = LocalUseSmileIDSampleAppState.current
     val validation = remember { UseSmileIDFlowBuilder().validate() }
+    LaunchedEffect(route) { app.flowResult.enterRoute(route) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -49,7 +47,7 @@ fun SdkFlowScreen(productId: String, route: FlowPresentation = FlowPresentation.
             textAlign = TextAlign.Center,
         )
         Text(
-            text = "productId = $productId · route = ${route.name.lowercase()}",
+            text = "productId = $productId · route = ${route.id}",
             style = MaterialTheme.typography.bodySmall,
             color = UseSmileIDSampleTheme.colors.textMuted,
             textAlign = TextAlign.Center,

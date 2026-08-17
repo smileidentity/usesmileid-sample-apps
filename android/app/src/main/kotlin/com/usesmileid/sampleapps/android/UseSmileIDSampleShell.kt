@@ -7,7 +7,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
@@ -17,9 +21,11 @@ import androidx.navigation.NavHostController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.SdkFlowScreenDestination
 import com.ramcosta.composedestinations.generated.navgraphs.ProductsNavGraph
 import com.ramcosta.composedestinations.generated.navgraphs.SettingsNavGraph
 import com.ramcosta.composedestinations.generated.navgraphs.VerificationsNavGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.Direction
@@ -45,6 +51,7 @@ fun UseSmileIDSampleShell() {
     val selectedTab = destination?.tab()
 
     ForwardNewIntentsTo(navController)
+    AutostartFlowOnce(navigator)
 
     Scaffold(
         // UI automation only sees Compose test tags once they are published as resource ids.
@@ -73,6 +80,21 @@ fun UseSmileIDSampleShell() {
             navGraph = NavGraphs.root,
             navController = navController,
             modifier = Modifier.padding(contentPadding),
+        )
+    }
+}
+
+/** Saveable rather than keyed on the argument: the intent is re-read on recreation, and navigating again would drag a rotated device out of where the run had reached. */
+@Composable
+private fun AutostartFlowOnce(navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    var started by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        val product = app.launchArgs.autostart
+        if (started || product == null) return@LaunchedEffect
+        started = true
+        navigator.navigate(
+            SdkFlowScreenDestination(productId = product.id, route = app.launchArgs.route),
         )
     }
 }

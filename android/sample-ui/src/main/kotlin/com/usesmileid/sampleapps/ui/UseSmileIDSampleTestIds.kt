@@ -68,6 +68,18 @@ object UseSmileIDSampleTestIds {
     const val TOKEN_PASTE = "sample_token_paste"
     const val TOKEN_SIMULATE = "sample_token_simulate"
 
+    const val RESULT_CARD = "sample_result_card"
+    const val RESULT_ACTIVE_SCENARIO = "sample_result_active_scenario"
+    const val RESULT_ACTIVE_THEME = "sample_result_active_theme"
+    const val RESULT_ROUTE = "sample_result_route"
+    const val RESULT_JOB_ID = "sample_result_job_id"
+    const val RESULT_USER_ID = "sample_result_user_id"
+    const val RESULT_JOB_STATUS = "sample_result_job_status"
+    const val RESULT_RESULT_COUNT = "sample_result_result_count"
+    const val RESULT_REFRESH_COUNT = "sample_result_refresh_count"
+    const val RESULT_LAST_ERROR = "sample_result_last_error"
+    const val RESULT_SDK_VERSION = "sample_result_sdk_version"
+
     val all = listOf(
         NAV_PRODUCTS,
         NAV_VERIFICATIONS,
@@ -128,6 +140,17 @@ object UseSmileIDSampleTestIds {
         NEW_PROFILE_NAME,
         NEW_PROFILE_SAVE,
         PROFILE_CONFIG_SAVE,
+        RESULT_CARD,
+        RESULT_ACTIVE_SCENARIO,
+        RESULT_ACTIVE_THEME,
+        RESULT_ROUTE,
+        RESULT_JOB_ID,
+        RESULT_USER_ID,
+        RESULT_JOB_STATUS,
+        RESULT_RESULT_COUNT,
+        RESULT_REFRESH_COUNT,
+        RESULT_LAST_ERROR,
+        RESULT_SDK_VERSION,
     )
 
     /** Suffixed ids derive from other spec files, so they are built rather than listed. */

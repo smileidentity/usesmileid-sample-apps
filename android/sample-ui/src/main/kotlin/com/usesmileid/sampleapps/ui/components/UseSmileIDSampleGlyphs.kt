@@ -135,33 +135,7 @@ fun PlusGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.
     drawLine(tint, Offset(w * 0.2f, h * 0.5f), Offset(w * 0.8f, h * 0.5f), s.width, StrokeCap.Round)
 }
 
-/** Four corner brackets — the scan mark, at control size. */
-@Composable
-fun ScanMarkGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
-    val s = stroke()
-    val w = this.size.width
-    val arm = w * 0.24f
-    val inset = w * 0.16f
-    val far = w - inset
-    listOf(
-        Triple(Offset(inset, inset + arm), Offset(inset, inset), Offset(inset + arm, inset)),
-        Triple(Offset(far - arm, inset), Offset(far, inset), Offset(far, inset + arm)),
-        Triple(Offset(far, far - arm), Offset(far, far), Offset(far - arm, far)),
-        Triple(Offset(inset + arm, far), Offset(inset, far), Offset(inset, far - arm)),
-    ).forEach { (from, corner, to) ->
-        drawPath(
-            path = Path().apply {
-                moveTo(from.x, from.y)
-                lineTo(corner.x, corner.y)
-                lineTo(to.x, to.y)
-            },
-            color = tint,
-            style = s,
-        )
-    }
-}
-
-/** A rounded square, standing in for the per-product mark until the icon set is supplied. */
+/** Stand-in: Enhanced KYC has no icon of its own yet. */
 @Composable
 fun ProductMarkGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
     val s = stroke()

@@ -68,6 +68,7 @@ class VerificationsGoldenTest : GoldenTest() {
     private fun Details() = VerificationDetailsScreen(
         jobId = JOBS.all.first().id,
         job = JOBS.all.first(),
+        result = ResultFixtures.Succeeded,
         onBack = {},
         onDelete = {},
         onCopy = {},
@@ -77,6 +78,7 @@ class VerificationsGoldenTest : GoldenTest() {
     private fun UnknownDetails() = VerificationDetailsScreen(
         jobId = "job_missing",
         job = null,
+        result = ResultFixtures.Failed,
         onBack = {},
         onDelete = {},
         onCopy = {},

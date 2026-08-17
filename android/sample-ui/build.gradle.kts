@@ -59,6 +59,11 @@ dependencies {
 tasks.withType<Test>().configureEach {
     systemProperty("sampleapps.spec.dir", layout.projectDirectory.dir("../../spec").asFile.absolutePath)
 
+    // Goldens render clock times, so the recorder's own zone and locale would otherwise bake into them.
+    systemProperty("user.timezone", "UTC")
+    systemProperty("user.language", "en")
+    systemProperty("user.country", "US")
+
     // Declared so a changed golden invalidates the task; without it verify passes on a stale result.
     inputs.dir(layout.projectDirectory.dir("src/test/screenshots"))
         .withPropertyName("goldenScreenshots")

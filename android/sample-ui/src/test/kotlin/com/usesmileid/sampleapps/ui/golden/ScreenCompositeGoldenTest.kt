@@ -27,7 +27,9 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSessionEndedBanne
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwipeAction
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTokenRing
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
+import com.smileid.designsystem.smileProductHues
 import org.junit.Test
 
 /** Hues come from the token palette in order, not a guessed product mapping: that list is still outstanding. */
@@ -104,39 +106,35 @@ private fun ProductCards() = Column(verticalArrangement = stack) {
     UseSmileIDSampleProductCard(
         title = "SmartSelfie Enrollment",
         onClick = {},
-        containerColor = UseSmileIDSampleTheme.colors.decorative.darkGreen,
+        hue = hueOf(UseSmileIDSampleProduct.SmartSelfieEnrollment),
     )
     UseSmileIDSampleProductCard(
         title = "SmartSelfie Authentication",
         onClick = {},
-        containerColor = UseSmileIDSampleTheme.colors.decorative.sky,
+        hue = hueOf(UseSmileIDSampleProduct.SmartSelfieAuth),
     )
     UseSmileIDSampleProductCard(
         title = "Enhanced KYC",
         onClick = {},
-        containerColor = UseSmileIDSampleTheme.colors.decorative.orange,
+        hue = hueOf(UseSmileIDSampleProduct.EnhancedKyc),
         enabled = false,
     )
 }
 
 @Composable
 private fun ProductGrid() {
-    val hues = UseSmileIDSampleTheme.colors.decorative.all
-    val titles = listOf(
-        "SmartSelfie Enrollment",
-        "SmartSelfie Authentication",
-        "Document Verification",
-        "Enhanced Document Verification",
-        "Biometric KYC",
-    )
-    UseSmileIDSampleProductGrid(itemCount = titles.size) { index ->
+    val products = UseSmileIDSampleProduct.entries
+    UseSmileIDSampleProductGrid(itemCount = products.size) { index ->
+        val product = products[index]
         UseSmileIDSampleProductCard(
-            title = titles[index],
+            title = product.label,
             onClick = {},
-            containerColor = hues[index % hues.size],
+            hue = hueOf(product),
         )
     }
 }
+
+private fun hueOf(product: UseSmileIDSampleProduct) = requireNotNull(smileProductHues[product.id])
 
 @Composable
 private fun SectionHeaders() = Column(verticalArrangement = stack) {

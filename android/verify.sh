@@ -17,8 +17,18 @@ if [ -z "${JAVA_HOME:-}" ] || ! "${JAVA_HOME}/bin/java" -version 2>&1 | grep -qE
 fi
 
 echo "==> design tokens are current"
-# --check needs the design system checked out locally.
-python3 "$REPO_ROOT/scripts/sync_design_tokens.py" --all --check
+# SMILE_DESIGN_SYSTEM points --check at a checkout outside the default skill paths, which is how CI
+# supplies its own. SMILE_TOKENS_OPTIONAL downgrades a missing one to a loud skip, for fork PRs that
+# get no secret — never set it locally, or vendored tokens drift from their source unnoticed.
+if [ -n "${SMILE_TOKENS_OPTIONAL:-}" ] && [ -z "${SMILE_DESIGN_SYSTEM:-}" ]; then
+  echo "    SKIPPED — no design system available, so the vendored token output is unverified."
+else
+  TOKEN_ARGS=(--all --check)
+  if [ -n "${SMILE_DESIGN_SYSTEM:-}" ]; then
+    TOKEN_ARGS+=(--design-system "$SMILE_DESIGN_SYSTEM")
+  fi
+  python3 "$REPO_ROOT/scripts/sync_design_tokens.py" "${TOKEN_ARGS[@]}"
+fi
 
 echo "==> lint"
 ./gradlew lint

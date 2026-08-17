@@ -24,17 +24,23 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.SmileProductHue
+import com.smileid.designsystem.smileProductHues
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleAvatar
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
+import com.usesmileid.sampleapps.ui.components.iconRes
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProductCard
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProductGrid
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProfileEnvChip
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleResultLine
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionHeader
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSessionCard
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSessionEndedBanner
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProductSection
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleResult
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** What the products header and session strip render, so the screen stays free of clock and store. */
@@ -44,6 +50,8 @@ data class UseSmileIDSampleProductsState(
     val sessionId: String? = null,
     val sessionRemaining: String? = null,
     val sessionEnded: Boolean = false,
+    /** Surfaced here only while a flow is in flight; the full card lives on verification details. */
+    val result: UseSmileIDSampleResult? = null,
 )
 
 /** The products grid, the entry point every flow starts from. */
@@ -102,6 +110,16 @@ fun ProductsScreen(
             }
         }
 
+        val result = state.result
+        if (result != null && result.inFlight) {
+            item {
+                UseSmileIDSampleResultLine(
+                    result = result,
+                    modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
+                )
+            }
+        }
+
         if (state.sessionEnded) {
             item {
                 UseSmileIDSampleSessionEndedBanner(
@@ -129,11 +147,16 @@ fun ProductsScreen(
                     UseSmileIDSampleSectionHeader(text = section.label)
                     UseSmileIDSampleProductGrid(itemCount = products.size) { index ->
                         val product = products[index]
+                        val id = product.iconRes
                         UseSmileIDSampleProductCard(
                             title = product.label,
                             onClick = { onProductClick(product) },
-                            containerColor = product.hue(),
+                            hue = product.hue(),
                             testId = UseSmileIDSampleTestIds.productCard(product.id),
+                            icon = id?.let { { tint -> UseSmileIDSampleIcon(id = it, tint = tint) } },
+                            ghost = id?.let {
+                                { tint -> UseSmileIDSampleIcon(id = it, tint = tint, size = GHOST_SIZE) }
+                            },
                         )
                     }
                 }
@@ -145,9 +168,7 @@ fun ProductsScreen(
     }
 }
 
-/** A placeholder hue, not the product→hue mapping: that list is the designer's and is still outstanding. */
-@Composable
-private fun UseSmileIDSampleProduct.hue(): Color {
-    val palette = UseSmileIDSampleTheme.colors.decorative.all
-    return palette[ordinal % palette.size]
-}
+private fun UseSmileIDSampleProduct.hue(): SmileProductHue =
+    requireNotNull(smileProductHues[id]) { "no hue for product '$id'; see spec/design-tokens.json → productHues" }
+
+private val GHOST_SIZE = SmileDimens.space64 + SmileDimens.space4

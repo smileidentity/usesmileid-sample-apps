@@ -218,5 +218,57 @@ class TestDimens(unittest.TestCase):
         self.assertNotIn("fontSize16", out)
 
 
+class TestProductHues(unittest.TestCase):
+    HUE = {"from": "#05723A", "to": "#0A9B4C", "icon": "#05723A", "scrim": "#FFFFFF"}
+
+    def test_hex_becomes_an_opaque_compose_colour(self):
+        self.assertEqual(gen.kotlin_color("#e08600"), "Color(0xFFE08600)")
+
+    def test_alpha_is_never_baked_in(self):
+        self.assertEqual(gen.kotlin_color("#2D2B2A"), "Color(0xFF2D2B2A)")
+
+    def test_a_non_hex_value_is_rejected_rather_than_emitted(self):
+        with self.assertRaises(gen.TokenError):
+            gen.kotlin_color("rgba(5, 114, 58, 0.24)")
+
+    def test_a_short_hex_is_rejected(self):
+        with self.assertRaises(gen.TokenError):
+            gen.kotlin_color("#fff")
+
+    def test_every_product_emits_all_four_roles(self):
+        out = gen.emit_kotlin_product_hues({"smartSelfieEnrollment": self.HUE})
+        self.assertIn('"smartSelfieEnrollment" to SmileProductHue(', out)
+        for role in ("from", "to", "icon", "scrim"):
+            self.assertIn(f"{role} = Color(0xFF", out)
+
+    def test_a_hue_missing_a_role_fails_loudly(self):
+        with self.assertRaises(gen.TokenError):
+            gen.emit_kotlin_product_hues({"biometricKyc": {"from": "#151F72", "to": "#2B3A9E"}})
+
+    def test_an_empty_spec_entry_fails_rather_than_emitting_an_empty_map(self):
+        with self.assertRaises(gen.TokenError):
+            gen.emit_kotlin_product_hues({})
+
+    def test_the_spec_entry_covers_every_product_in_the_grid(self):
+        self.assertEqual(
+            [
+                "smartSelfieEnrollment",
+                "smartSelfieAuth",
+                "documentVerification",
+                "enhancedDocumentVerification",
+                "biometricKyc",
+                "enhancedKyc",
+            ],
+            list(gen.read_product_hues()),
+        )
+
+    def test_a_derived_hue_says_so(self):
+        self.assertIn("DERIVED HERE", gen.read_product_hues()["enhancedKyc"]["origin"])
+
+    def test_annotations_are_not_emitted_as_colours(self):
+        out = gen.emit_kotlin_product_hues({"enhancedKyc": gen.read_product_hues()["enhancedKyc"]})
+        self.assertNotIn("origin", out)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

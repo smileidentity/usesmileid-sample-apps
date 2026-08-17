@@ -1,12 +1,13 @@
 package com.usesmileid.sampleapps.ui.components
 
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -17,42 +18,63 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.semantics.Role
-import kotlin.math.abs
+import androidx.compose.ui.unit.dp
+import com.smileid.designsystem.SmileColorLight
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.SmileProductHue
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/** A product tile: the whole card takes a decorative fill with inverse text. The product→hue list is outstanding, so the caller passes the hue. */
+/** A product tile: a gradient in the product's hue, that hue again as the shadow, its icon as a watermark. */
 @Composable
 fun UseSmileIDSampleProductCard(
     title: String,
     onClick: () -> Unit,
-    containerColor: Color,
+    hue: SmileProductHue,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     testId: String? = null,
     icon: @Composable ((Color) -> Unit)? = null,
+    ghost: @Composable ((Color) -> Unit)? = null,
 ) {
     val colors = UseSmileIDSampleTheme.colors
-    // Whichever text token contrasts better: `textInverse` flips dark in dark mode, the fills do not.
-    val onFill = listOf(colors.textInverse, colors.textTitle).maxBy {
-        abs(it.luminance() - containerColor.luminance())
-    }
-    val content = if (enabled) onFill else colors.textMuted
+    // A hue is the same in both schemes, so anything drawn on it resolves from the light one.
+    val content = if (enabled) SmileColorLight.colorTextInverse else colors.textMuted
+    val tile = if (enabled) SmileColorLight.colorSurface else colors.surface
     Surface(
         onClick = onClick,
         enabled = enabled,
         modifier = modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = CARD_MIN_HEIGHT)
+            // Coloured shadows need API 28; below that this degrades to the platform's grey.
+            .shadow(
+                elevation = CARD_ELEVATION,
+                shape = RoundedCornerShape(CARD_RADIUS),
+                ambientColor = hue.from,
+                spotColor = hue.from,
+            )
             .tagged(testId),
-        shape = RoundedCornerShape(SmileDimens.radiusSurface),
-        color = if (enabled) containerColor else colors.surfaceMuted,
+        shape = RoundedCornerShape(CARD_RADIUS),
+        color = Color.Transparent,
     ) {
-        // The ghost glyph bleeds off the corner, so the card clips rather than grows.
-        Box(modifier = Modifier.clipToBounds()) {
+        Box(
+            modifier = Modifier
+                .background(if (enabled) hue.brush() else Brush.linearGradient(flat(colors.surfaceMuted)))
+                .clipToBounds(),
+        ) {
+            if (ghost != null) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = SmileDimens.spacingMd, y = -SmileDimens.spacingXs),
+                ) {
+                    ghost(hue.scrim.copy(alpha = SCRIM_ALPHA))
+                }
+            }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -61,39 +83,45 @@ fun UseSmileIDSampleProductCard(
             ) {
                 Surface(
                     modifier = Modifier.size(SmileDimens.space40),
-                    shape = RoundedCornerShape(SmileDimens.radiusSm),
-                    color = colors.surface,
+                    shape = RoundedCornerShape(SmileDimens.radiusMd),
+                    color = tile,
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        if (icon != null) icon(containerColor) else ProductMarkGlyph(tint = containerColor)
+                        if (icon != null) icon(hue.icon) else ProductMarkGlyph(tint = hue.icon)
                     }
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Bottom,
                 ) {
-                    // Subtitle, not body-strong: at 16px 'Authentication' broke mid-word on a 174-wide card.
                     Text(
                         text = title,
                         style = UseSmileIDSampleTheme.type.textStyleSubtitle,
                         color = content,
                         modifier = Modifier.weight(1f),
                     )
-                    GoAffordance(tint = content)
+                    GoAffordance(tint = content, scrim = hue.scrim)
                 }
             }
         }
     }
 }
 
+private fun SmileProductHue.brush() = Brush.linearGradient(
+    colorStops = arrayOf(GRADIENT_START to from, GRADIENT_END to to),
+    start = Offset.Zero,
+    end = Offset.Infinite,
+)
+
+private fun flat(color: Color) = listOf(color, color)
+
 @Composable
-private fun GoAffordance(tint: Color) {
+private fun GoAffordance(tint: Color, scrim: Color) {
     Surface(
         modifier = Modifier.size(SmileDimens.sizeIconLg),
         shape = CircleShape,
-        color = Color.Transparent,
-        border = BorderStroke(SmileDimens.borderWidthHairline, tint),
+        color = scrim.copy(alpha = SCRIM_ALPHA),
     ) {
         Box(contentAlignment = Alignment.Center) {
             ChevronRightGlyph(tint = tint, size = SmileDimens.sizeIconSm)
@@ -101,8 +129,15 @@ private fun GoAffordance(tint: Color) {
     }
 }
 
-/** 148 in the design; space64 twice over is the nearest the scale reaches. */
-private val CARD_MIN_HEIGHT = SmileDimens.space64 * 2
+private val CARD_MIN_HEIGHT = SmileDimens.space64 * 2 + SmileDimens.space20
+
+private val CARD_RADIUS = SmileDimens.radiusXl
+
+private val CARD_ELEVATION = 10.dp
+
+private const val SCRIM_ALPHA = 0.16f
+private const val GRADIENT_START = 0.134f
+private const val GRADIENT_END = 0.866f
 
 /** The empty slot an odd count leaves: a layout affordance, not a placeholder card. */
 @Composable

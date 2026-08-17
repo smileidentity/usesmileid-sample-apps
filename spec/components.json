@@ -413,11 +413,11 @@
       "metrics": {
         "size": "174x148 in a 2-up grid; built as a weighted column with a space64*2 minimum so it grows with the title",
         "padding": "14 in the design, spacing.sm (12) here",
-        "iconTile": "40 (space40) at radius.sm, filled color.surface with the card's own hue as the glyph tint",
+        "iconTile": "40 (space40) at radius.sm, filled color.surface with the card's own hue as the glyph tint. The design set supplied four icons on 2026-08-15, held in design/icons/ and named by product id. The two document products SHARE one mark by design and are told apart by the card's hue, which is already the icon's tint — do not add a second near-identical drawable. Enhanced KYC is the one product still owed an icon; it falls back to the shared product mark, which is deliberately visibly generic rather than borrowing an unrelated icon.",
         "ghostGlyph": "69.3 bleeding off the top-right; the card clips to bounds rather than growing",
         "goAffordance": "26 circular outline in the design; size.icon-lg (24) here",
         "titleTruncation": "none — 'SmartSelfie Authentication' already wraps to two lines at default scale on a 174-wide card",
-        "colouring": "the whole card takes a color.decorative.* fill with color.text.inverse text; the product→hue list is outstanding, so the caller passes the hue"
+        "colouring": "the whole card takes a color.decorative.* fill with color.text.inverse text; the product→hue list is outstanding, so the caller passes the hue. That list became load-bearing on 2026-08-15: the two document products share one icon and the hue is the ONLY thing distinguishing them, so until the real list lands they are told apart by a stand-in palette indexed by declaration order."
       },
       "states": [
         "default",
@@ -889,14 +889,30 @@
       "tokens": [
         "color.surface-alt",
         "color.text.body",
+        "color.text.muted",
+        "color.text.link",
         "text-style.caption",
+        "text-style.overline",
         "radius.surface"
+      ],
+      "parts": [
+        {
+          "name": "ResultLine",
+          "notes": "The compact form on products. Carries jobStatus, activeScenario and route under the same ids as the card; the remaining fields stay on the card."
+        }
       ],
       "usedBy": [
         "products",
         "verificationDetails"
       ],
-      "notes": "Required by spec/result-card.schema.json and not present in the design set. It is the evidence channel automation asserts on. Placement needs a design decision — see openItems in spec/README.md; the honest default is a collapsible panel on the verification details screen plus a compact line on products while a job is in flight."
+      "states": [
+        "idle",
+        "running",
+        "succeeded",
+        "cancelled",
+        "failed"
+      ],
+      "notes": "Required by spec/result-card.schema.json and not present in the design set. It is the evidence channel automation asserts on. Placement still needs a design decision — see openItems in spec/README.md; built on the honest default, which Android implemented on 2026-08-14: a collapsible panel on verification details, plus a compact line on products while a job is in flight. Two decisions a port must copy rather than re-take. It defaults to expanded, because a collapsed field is absent from the accessibility tree and every flow would otherwise have to tap the card open before asserting on anything. And it renders on verification details whether or not the job resolved, because a flow that failed before submission has no job to show and that is exactly when its error and counts are the only evidence there is. A null field renders as an em dash, which flows assert on to prove a value was absent."
     },
     {
       "name": "ScenarioDrawer",
