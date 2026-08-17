@@ -100,7 +100,7 @@ fun UseSmileIDSampleFullHeightBottomSheet(
                     contentDescription = "Close $title",
                     onClick = onDismissRequest,
                     emphasis = UseSmileIDSampleTopAppBarEmphasis.Filled,
-                ) { tint -> BackArrowGlyph(tint = tint) }
+                ) { tint -> ArrowBackGlyph(tint = tint) }
                 Text(
                     text = title,
                     style = UseSmileIDSampleTheme.type.textStyleHeadingSection,

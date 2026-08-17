@@ -141,7 +141,7 @@
           },
           {
             "id": "enhancedDocumentVerification",
-            "label": "Enhanced Doc Verification",
+            "label": "Enhanced Document Verification",
             "jobType": "EnhancedDocumentVerification",
             "capture": true,
             "needsUserDetails": true,

@@ -16,24 +16,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import com.smileid.designsystem.SmileDimens
 
-/** Drawn rather than imported, because `material-icons` is not on this classpath. Public because the slot APIs take one. */
-@Composable
-fun BackArrowGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
-    val s = stroke()
-    val inset = s.width
-    val midY = this.size.height / 2f
-    drawLine(tint, Offset(this.size.width - inset, midY), Offset(inset, midY), s.width, StrokeCap.Round)
-    drawPath(
-        path = Path().apply {
-            moveTo(inset + this@Canvas.size.width * 0.3f, midY - this@Canvas.size.height * 0.28f)
-            lineTo(inset, midY)
-            lineTo(inset + this@Canvas.size.width * 0.3f, midY + this@Canvas.size.height * 0.28f)
-        },
-        color = tint,
-        style = s,
-    )
-}
-
 @Composable
 fun ChevronRightGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) = Canvas(Modifier.size(size)) {
     val s = stroke()

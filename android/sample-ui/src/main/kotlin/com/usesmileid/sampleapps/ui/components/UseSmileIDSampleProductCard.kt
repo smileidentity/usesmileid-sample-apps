@@ -124,7 +124,7 @@ private fun GoAffordance(tint: Color, scrim: Color) {
         color = scrim.copy(alpha = SCRIM_ALPHA),
     ) {
         Box(contentAlignment = Alignment.Center) {
-            ChevronRightGlyph(tint = tint, size = SmileDimens.sizeIconSm)
+            ArrowForwardGlyph(tint = tint)
         }
     }
 }

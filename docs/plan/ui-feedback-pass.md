@@ -29,7 +29,7 @@ Status: `todo` · `wip` · `done` · `design` (needs a design answer) · `owner`
 |---|---|---|---|
 | F01 | Tab bar shows text only — design is icon **above** label, all three tabs plus Token | 5206:2436 | done |
 | F02 | Material Symbols for the icons the **designer did not supply** — the 8 hand-drawn glyphs and the settings/form rows. Answered: yes, vendored as vector drawables (Outlined 400, Apache-2.0, no new dependency). The designer's own icons stay as exported, because they are stroke/Lucide-style and swapping them would break four-platform uniformity | — | todo |
-| F03 | Products card trailing affordance is a chevron; design is an arrow (`→`) | 5206:2410 | todo |
+| F03 | Products card trailing affordance is a chevron; design is an arrow (`→`) | 5206:2410 | done — designer supplied `arrow.svg` + `back_arrow.svg` 2026-08-17; both ported, and the hand-drawn `BackArrowGlyph` deleted |
 | F04 | Token button is navy; design is **white**, 58px, 1.5px border, icon **+ "Token" label** | 5206:2436 | done |
 | F05 | Switch-profile avatar is a circle with one colour; design is a rounded square, colour per initials | — | todo |
 | F06 | Consent Details Entry — empty state | 5206:3804 | todo |
@@ -49,7 +49,7 @@ Status: `todo` · `wip` · `done` · `design` (needs a design answer) · `owner`
 | F20 | Consent/KYC form — country + ID-type spinners put the icon **before** the text | 5206:2796 | todo |
 | F21 | ID Type picker sheet | 5206:2877 | todo |
 | F22 | Country picker sheet | 5206:2835 | todo |
-| F23 | Form-filled state — **link duplicates F22**, need the right node | (link needed) | design |
+| F23 | Form-filled state — answered 2026-08-17: it is the form node itself, 5206:2796 | 5206:2796 | todo |
 
 ### Found by this pass, not in the original list
 
@@ -58,7 +58,7 @@ Status: `todo` · `wip` · `done` · `design` (needs a design answer) · `owner`
 | F24 | JobRow title **wraps to two lines**; design is one line, ellipsised | 5206:2429 | done |
 | F25 | JobRow icon tile is 36px at radius 10 with a per-product tint hex; app used 40px at radius.sm and a 16% alpha of the hue | 5206:2429 | done |
 | F26 | The four soft badge pairs exist as design variables with real hexes — closes the `ui-work-plan.md` §5 item 4 stand-in | 5206:2429–2433 | done |
-| F27 | Design calls the product "Enhanced **Document** Verification" on JobRow; the enum label is "Enhanced Doc Verification" | 5206:2431 | design |
+| F27 | Design calls the product "Enhanced **Document** Verification" on JobRow; the enum label was "Enhanced Doc Verification" | 5206:2431 | done — owner ruled 2026-08-17 the long form is correct everywhere; changed in the enum **and** `spec/scenarios.json`, which is what the ports read |
 | F28 | Date header separator is `·` with **two** spaces either side | 5206:2428 | done |
 
 <!-- INTERNAL-ONLY:END -->

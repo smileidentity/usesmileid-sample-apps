@@ -46,7 +46,7 @@ fun UseSmileIDSampleTopAppBar(
             contentDescription = backContentDescription,
             onClick = onBack,
             emphasis = UseSmileIDSampleTopAppBarEmphasis.Filled,
-        ) { tint -> BackArrowGlyph(tint = tint) }
+        ) { tint -> ArrowBackGlyph(tint = tint) }
 
         Text(
             text = title,
