@@ -60,7 +60,8 @@ fun UseSmileIDSampleAvatar(
 private fun avatarColorFor(initials: String): Color {
     val palette = UseSmileIDSampleTheme.colors.decorative.all
     if (initials.isBlank()) return UseSmileIDSampleTheme.colors.avatar.background
-    val index = initials.uppercase().sumOf { it.code } % palette.size
+    // Position-weighted, so "KA" and "AK" do not land on the same colour.
+    val index = initials.uppercase().foldIndexed(0) { i, acc, c -> acc + c.code * (i + 1) } % palette.size
     return palette[index]
 }
 

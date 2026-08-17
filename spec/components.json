@@ -39,7 +39,7 @@
         "profiles",
         "settings"
       ],
-      "notes": "CORRECTED 2026-08-12: the background colour varies PER PROFILE rather than being one avatar.bg. Needs a documented profile→hue rule so all four platforms colour the same profile identically (same gap as the product→hue mapping).",
+      "notes": "CORRECTED 2026-08-12: the background colour varies PER PROFILE rather than being one avatar.bg. Needs a documented profile→hue rule so all four platforms colour the same profile identically (same gap as the product→hue mapping). CORRECTED 2026-08-17: a ROUNDED SQUARE at radius 12, not a circle (node 5206:2904). The fill differs per set of initials; the design shows distinct fills but names no mapping, so each platform derives one from the decorative palette by a stable, position-weighted hash of the initials — an unweighted sum collides on anagrams.",
       "colouring": "per-profile hue (observed navy / green / amber across the three profiles), white initials",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2348",
       "decision": "OWNER DECISION 2026-08-13: a header avatar BUTTON is added next to the environment chip on products, and it is what opens the profile-switch sheet. Small design addition. Per-profile hues come from the designer's list."
@@ -304,7 +304,7 @@
         "userDetails",
         "profileConfig"
       ],
-      "notes": "Inline-editable label/value row — tapping edits in place with a caret rather than pushing a form. Placeholder text is muted; a filled value takes title colour. Required fields carry an asterisk."
+      "notes": "Inline-editable label/value row — tapping edits in place with a caret rather than pushing a form. Placeholder text is muted; a filled value takes title colour. Required fields carry an asterisk. CORRECTED 2026-08-17 against nodes 5206:3804 and 5206:3777. The field NAME is title-coloured and only the PLACEHOLDER is muted — Android had that inverted. Name, value and placeholder are all 13.5. Rows sit in one bordered card separated by rules."
     },
     {
       "name": "SettingRow",
@@ -331,7 +331,7 @@
       "usedBy": [
         "settings"
       ],
-      "notes": "CORRECTED 2026-08-12: the CAPTURE section has TWO switch rows — 'Smile to capture / Passive capture — smile detection' ABOVE 'Agent mode / Operator captures for the applicant'. The first is the CaptureModeRow component instance, which is why a metadata-only read missed its text. Switch rows also cover Dark mode and the three SDK-step toggles; navigation covers ABOUT/LEGAL; destructive covers Sign out.",
+      "notes": "CORRECTED 2026-08-12: the CAPTURE section has TWO switch rows — 'Smile to capture / Passive capture — smile detection' ABOVE 'Agent mode / Operator captures for the applicant'. The first is the CaptureModeRow component instance, which is why a metadata-only read missed its text. Switch rows also cover Dark mode and the three SDK-step toggles; navigation covers ABOUT/LEGAL; destructive covers Sign out. TYPE + TILE CORRECTED 2026-08-17 against node 5206:2898. The leading tile is 38 at radius 11 over SURFACE-2 (a cool grey), not surface-alt (a warm cream) — Android shipped peach tiles across the whole app from that one mistake. Supporting text is Caption 12/500, the trailing chevron is 14, and rows inside one section card are separated by a RULE, not by spacing. Each row carries its OWN icon: the design gives every row a distinct glyph and none of them are product marks.",
       "parts": [
         "NavRow — the ABOUT/LEGAL navigation variant with a chevron",
         "SignOutRow — the destructive variant",
@@ -642,7 +642,7 @@
       "usedBy": [
         "kycIdForm"
       ],
-      "notes": "CORRECTED 2026-08-12: looks like an input, behaves like a button, and has a disabled state — the ID-type trigger stays greyed until a country is chosen. Each trigger carries a leading icon.",
+      "notes": "CORRECTED 2026-08-12: looks like an input, behaves like a button, and has a disabled state — the ID-type trigger stays greyed until a country is chosen. Each trigger carries a leading icon. CORRECTED 2026-08-17 against node 5206:2797. Leads with an EMOJI before the label — the chosen country's flag, or a globe as placeholder — then the label at 15/600, then a DOWN chevron at 12 (the list chevron points right). An actionable trigger is outlined in PRIMARY at 1.5; a disabled one takes the button-disabled pair, not surface-muted with muted text, which does not read as disabled. A leading slot must take a MINIMUM size, not a fixed one: an emoji grows with font scale and clips in a fixed box.",
       "dependency": "ID TYPE is DISABLED until a country is selected.",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2797"
     },
@@ -673,7 +673,7 @@
         "countryPickerSheet",
         "idTypePickerSheet"
       ],
-      "notes": "Country rows lead with a flag; ID-type rows do not. Selected rows carry a check. CORRECTED 2026-08-12: the selected row takes a pale-blue fill as well as the check.",
+      "notes": "Country rows lead with a flag; ID-type rows do not. Selected rows carry a check. CORRECTED 2026-08-12: the selected row takes a pale-blue fill as well as the check. CORRECTED 2026-08-17 against node 5206:2835. The selected row takes SURFACE-2 as its fill plus a 20 check; an UNSELECTED row is TRANSPARENT, not white — this is the selected-surface treatment that ui-work-plan.md §5 recorded as having no token. Label is Body Strong at its real 14; a country row leads with a 19 flag emoji.",
       "selectedTreatment": "pale-blue FILLED row highlight + trailing check (not check-only)"
     },
     {
@@ -1046,5 +1046,8 @@
       "ask": "Emit component dimensions, or add scale steps at 36 and 68 so tiles and rows stop rounding."
     },
     "androidU2ScreenSpecific": "The twelve screen-specific composites were built on Android 2026-08-13 against the products, token-session and Scan token nodes. NavBar extends the component PR #2 landed rather than replacing it, and TokenRing is the ring it now carries. Product and profile hues stay on the token palette in order until the designer's hue list lands; Enhanced KYC has no icon yet and uses the shared product mark."
+  },
+  "conventions": {
+    "iconFamilies": "TWO icon families, deliberately not interchangeable (2026-08-17). The designer's own exports in design/icons/ are STROKE-based (Lucide/Feather, ~1.83 stroke, round caps) and cover the product marks, the three tab marks, the token scan mark and the two arrows. Everywhere the design supplies no icon — the settings and form rows, chevrons, check, trash, torch, copy, plus — use MATERIAL SYMBOLS OUTLINED 400, vendored per platform (Apache-2.0, no dependency). Mixing the families inside one row reads as a mistake. Do not substitute Material Symbols for a designer-supplied mark, and do not hand-draw either: a Canvas approximation drifts from the glyph and cannot be reviewed. Emoji are a third case: the design uses them for flags and the two picker leads, but anything above Emoji 12 is unsafe below Android 13 at minSdk 26 — 🪪 renders as tofu, so it is substituted with the design set's ID mark."
   }
 }

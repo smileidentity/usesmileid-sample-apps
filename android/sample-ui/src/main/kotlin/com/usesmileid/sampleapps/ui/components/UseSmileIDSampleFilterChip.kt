@@ -58,7 +58,7 @@ fun UseSmileIDSampleFilterChip(
             )
             Text(
                 text = count.toString(),
-                style = UseSmileIDSampleTheme.type.textStyleOverline,
+                style = UseSmileIDSampleTheme.type.textStyleOverline.copy(fontSize = CHIP_COUNT_SIZE),
                 color = if (selected) colors.onPrimary else colors.filterChip.value,
                 modifier = Modifier.tagged(countTestId),
             )
@@ -66,5 +66,6 @@ fun UseSmileIDSampleFilterChip(
     }
 }
 
-/** 12.5 in the design; no type token carries it. */
+/** 12.5 and 11 in the design; no type token carries either. */
 private val CHIP_LABEL_SIZE = 12.5.sp
+private val CHIP_COUNT_SIZE = 11.sp

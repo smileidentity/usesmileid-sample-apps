@@ -152,11 +152,16 @@ private fun DetailRow(
     )
 }
 
-/** Green while the call itself succeeded, red once it did not — the design only draws the 2xx case. */
+/**
+ * Green while the call itself succeeded, red once it did not — the design only draws the 2xx case.
+ * A blank status is neither, and colouring it red would invent a failure.
+ */
 @Composable
-private fun UseSmileIDSampleJob.httpStatusColor(): Color {
+private fun UseSmileIDSampleJob.httpStatusColor(): Color? {
+    val code = httpStatus.trimStart()
+    if (code.isEmpty()) return null
     val badge = UseSmileIDSampleTheme.colors.badge
-    return if (httpStatus.trimStart().startsWith("2")) badge.successText else badge.errorText
+    return if (code.startsWith("2")) badge.successText else badge.errorText
 }
 
 /** ISO-8601 in UTC, matching the design's row: a machine-readable value, not a display date. */
