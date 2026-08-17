@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
@@ -65,23 +66,34 @@ fun UseSmileIDSampleNavBar(
     sessionProgress: Float? = null,
 ) {
     Row(
-        // Edge to edge, so without its own inset the bar sits under the system navigation bar.
+        // Spans the width between its margins, as the design pins it left-16 to right-16. Edge to
+        // edge, so without its own inset the bar sits under the system navigation bar.
         modifier = modifier
+            .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.navigationBars)
-            .padding(SmileDimens.spacingSm),
+            .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingSm),
         horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Surface(
-            // The pill yields width to the token affordance rather than pushing it off the row.
-            modifier = Modifier.weight(1f, fill = false),
+            // Takes every remaining pixel; the token keeps its fixed width beside it.
+            modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(SmileDimens.radiusPill),
             color = UseSmileIDSampleTheme.colors.surface,
             border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.border),
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.padding(horizontal = SmileDimens.spacingXs, vertical = SmileDimens.spacingXxs),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 UseSmileIDSampleNavItem.entries.forEach { item ->
-                    NavBarTab(item = item, selected = item == selected, onClick = { onSelect(item) })
+                    // Equal thirds, so the three labels centre under their icons at any width.
+                    NavBarTab(
+                        item = item,
+                        selected = item == selected,
+                        onClick = { onSelect(item) },
+                        modifier = Modifier.weight(1f),
+                    )
                 }
             }
         }
@@ -165,10 +177,15 @@ private fun DrawScope.drawTokenRing(progress: Float, track: Color, fill: Color, 
 }
 
 @Composable
-private fun NavBarTab(item: UseSmileIDSampleNavItem, selected: Boolean, onClick: () -> Unit) {
+private fun NavBarTab(
+    item: UseSmileIDSampleNavItem,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val tint = if (selected) UseSmileIDSampleTheme.colors.primary else UseSmileIDSampleTheme.colors.textMuted
     Column(
-        modifier = Modifier
+        modifier = modifier
             .testTag(item.testId)
             .selectable(selected = selected, role = Role.Tab, onClick = onClick)
             .padding(horizontal = SmileDimens.spacingXs, vertical = SmileDimens.spacingXs),

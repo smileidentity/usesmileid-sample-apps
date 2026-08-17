@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Material Symbols Outlined 400 (Apache-2.0); the design set supplies no icon here. Tinted at the use site. -->
+<!-- Generated from the design set's SVG export; tinted at the use site. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="960"
-    android:viewportHeight="960">
-    <group android:translateY="960">
-        <path
-            android:pathData="M480-80q-139-35-229.5-159.5T160-516v-244l320-120 320 120v244q0 152-90.5 276.5T480-80Zm0-84q104-33 172-132t68-220v-189l-240-90-240 90v189q0 121 68 220t172 132Zm0-316Z"
-            android:fillColor="#FF000000" />
-    </group>
+    android:width="19dp"
+    android:height="19dp"
+    android:viewportWidth="19"
+    android:viewportHeight="19">
+    <path
+        android:pathData="M9.5 2.375L15.0417 4.75V9.5C15.0417 12.6667 12.6667 15.0417 9.5 16.625C6.33333 15.0417 3.95833 12.6667 3.95833 9.5V4.75L9.5 2.375Z"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.58333"
+        android:fillColor="#00000000" />
 </vector>
