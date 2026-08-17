@@ -46,10 +46,10 @@ Status: `todo` · `wip` · `done` · `design` (needs a design answer) · `owner`
 | F17 | Verification details — Clear | 5206:2678 | done (same layout as F16; states differ only by badge and message) |
 | F18 | Verification details — Blocked | 5206:2717 | done — read it, and it disproved my assumption: Status stays a green 200 OK, so the value tracks HTTP, not the verdict |
 | F19 | Verification details — Blocked (second variant) | 5206:2756 | done — covered by the shared layout; not read separately |
-| F20 | Consent/KYC form — country + ID-type spinners put the icon **before** the text | 5206:2796 | todo |
-| F21 | ID Type picker sheet | 5206:2877 | todo |
-| F22 | Country picker sheet | 5206:2835 | todo |
-| F23 | Form-filled state — answered 2026-08-17: it is the form node itself, 5206:2796 | 5206:2796 | todo |
+| F20 | Consent/KYC form — country + ID-type spinners put the icon **before** the text | 5206:2797 | done — the slot existed but held the generic product mark; now the flag/globe and the ID mark, plus a DOWN chevron, primary outline when actionable, and a real disabled state |
+| F21 | ID Type picker sheet | 5206:2877 | done — shares OptionRow with F22 |
+| F22 | Country picker sheet | 5206:2835 | done — selected row now takes `surface-2` and an unselected row is transparent, which also closes the "no selected-surface token" gap in ui-work-plan §5 |
+| F23 | Form-filled state | 5206:2816 | done — it is the `· selected` frame in the same section |
 
 ### Found by this pass, not in the original list
 
