@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
+import com.smileid.designsystem.smileProfileHues
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleAvatar
@@ -46,6 +47,8 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 data class UseSmileIDSampleProductsState(
     val environment: UseSmileIDSampleEnvironment,
     val initials: String,
+    /** The active profile's avatar hue, so the header, the settings summary and the list agree. */
+    val avatarColor: Color = smileProfileHues.first(),
     val sessionId: String? = null,
     val sessionRemaining: String? = null,
     val sessionEnded: Boolean = false,
@@ -91,6 +94,7 @@ fun ProductsScreen(
                     // The chip is display-only; this button owns profile switching.
                     UseSmileIDSampleAvatar(
                         initials = state.initials,
+                        containerColor = state.avatarColor,
                         modifier = Modifier
                             .testTag(UseSmileIDSampleTestIds.PROFILE_AVATAR_BUTTON)
                             .minimumInteractiveComponentSize()

@@ -37,9 +37,10 @@
         "products",
         "profileSwitchSheet",
         "profiles",
+        "profileConfig",
         "settings"
       ],
-      "notes": "CORRECTED 2026-08-12: the background colour varies PER PROFILE rather than being one avatar.bg. Needs a documented profile→hue rule so all four platforms colour the same profile identically (same gap as the product→hue mapping). CORRECTED 2026-08-17: a ROUNDED SQUARE at radius 12, not a circle (node 5206:2904). The fill differs per set of initials; the design shows distinct fills but names no mapping, so each platform derives one from the decorative palette by a stable, position-weighted hash of the initials — an unweighted sum collides on anagrams.",
+      "notes": "CORRECTED 2026-08-12: the background colour varies PER PROFILE rather than being one avatar.bg. Needs a documented profile→hue rule so all four platforms colour the same profile identically (same gap as the product→hue mapping). CORRECTED 2026-08-17: a ROUNDED SQUARE at radius 12, not a circle (node 5206:2904). RESOLVED 2026-08-18: the profile→hue rule is settled — design-tokens.json profileHues lists the four fills the design draws and every platform indexes it by the profile's POSITION in the list, cycling beyond four. Hashing the initials is wrong: it gives a different colour per platform and per profile name. One default for the whole app, so the settings summary, the products header, the profiles list and the switch sheet cannot disagree about one profile.",
       "colouring": "per-profile hue (observed navy / green / amber across the three profiles), white initials",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2348",
       "decision": "OWNER DECISION 2026-08-13: a header avatar BUTTON is added next to the environment chip on products, and it is what opens the profile-switch sheet. Small design addition. Per-profile hues come from the designer's list."
@@ -101,7 +102,12 @@
       "usedBy": [
         "kycIdForm",
         "newProfileSheet"
-      ]
+      ],
+      "metrics": {
+        "leading": "an optional 17 leading icon, gap 10, inside a 1.5 border at radius 12",
+        "padding": "15 horizontal, 13 vertical"
+      },
+      "notes": "The leading icon slot is what the new-profile sheet's five fields use; the KYC form's inputs leave it empty."
     },
     {
       "name": "SearchField",
@@ -213,7 +219,7 @@
         "verifications",
         "profiles"
       ],
-      "notes": "Carries an undo action in the delete flow — the action is part of the contract, not decoration. CORRECTED 2026-08-17 against node 5206:2573: it is a SNACKBAR treatment, not a pale pill — background color.title with color.bg text at 13/600, an underlined 13/700 action, radius 14 and a 0 10 30 rgba(0,0,0,.25) shadow, spanning the width between 16 margins. The node is named 'toast' and keeps the sample_toast* ids, so do not rename. ANCHOR: one small gap above the floating nav bar, NOT above the screen edge — on Android the destination container is already inset past the bar, so applying the navigation-bars inset again lifts it into the middle of the list, which is how it first shipped."
+      "notes": "Carries an undo action in the delete flow — the action is part of the contract, not decoration. CORRECTED 2026-08-17 against node 5206:2573: it is a SNACKBAR treatment, not a pale pill — background color.title with color.bg text at 13/600, an underlined 13/700 action, radius 14 and a 0 10 30 rgba(0,0,0,.25) shadow, spanning the width between 16 margins. The node is named 'toast' and keeps the sample_toast* ids, so do not rename. ANCHOR: one small gap above the floating nav bar, NOT above the screen edge — on Android the destination container is already inset past the bar, so applying the navigation-bars inset again lifts it into the middle of the list, which is how it first shipped. The profiles screen reuses it for the created confirmation — \"<organisation> created\" with a \"Make active\" action. ANCHOR on a PUSHED route: 24 above the safe area with no extra system-bar inset, because the host has already inset the container."
     },
     {
       "name": "TopAppBar",
@@ -226,11 +232,13 @@
         "spacing.md"
       ],
       "metrics": {
-        "barHeight": "48 minimum (design draws 48 on verificationDetails/userDetails and 44 on scanToken; the larger is used, and it grows with the title)",
+        "barHeight": "a PINNED 40 row above an 8 gap, scaled by the font scale — the same on every pushed screen. A minimum height instead let a longer title grow the bar, and the header then sat lower on some screens than others",
         "control": "40 circular, back filled dark and trailing action tonal; Scan token's torch is filled",
         "horizontalPadding": 16,
         "titleTruncation": "none — the title wraps; capping it ellipsised 'Enhanced Document Verification' at 2x",
-        "token": "space40 for the control, space48 for the bar, spacing.md for padding"
+        "token": "space40 for the control, space48 for the bar, spacing.md for padding",
+        "trailingSlot": "a 40 box is reserved even with no action, so the centred title sits identically whether or not the screen has a trailing control",
+        "title": "15/700, centred between the two 40 slots"
       },
       "variants": [
         "backOnly",
@@ -364,9 +372,10 @@
       ],
       "usedBy": [
         "profileSwitchSheet",
-        "profiles"
+        "profiles",
+        "settings"
       ],
-      "notes": "Avatar + organisation + person, with a check on the active profile. CORRECTED 2026-08-12: the selected row takes a pale-blue fill as well as the check.",
+      "notes": "Avatar + organisation + person, with a check on the active profile. CORRECTED 2026-08-12: the selected row takes a pale-blue fill as well as the check. CORRECTED 2026-08-18: the avatar fill is the CALLER'S to pass (profileHues by list position) and its default must be the same value the Avatar defaults to — two different defaults drew the same profile navy in the list and blue in the settings summary.",
       "parts": [
         "ProfileSummaryRow — the settings-header variant showing the active profile with 'Tap to configure'",
         "CreateProfileRow — the trailing add-a-profile variant"
@@ -690,7 +699,9 @@
         "partial": "grab handle 44x5 (size.control-md by space4) at radius.chip, sheet at radius.sheet",
         "fullHeight": "no handle; a 40 filled circular back control and the title, gap spacing.xs",
         "horizontalPadding": "20 in the design, spacing.md (16) here",
-        "platform": "Material 3 ModalBottomSheet — drag-to-dismiss, scrim tap and insets are the platform's"
+        "platform": "Material 3 ModalBottomSheet — drag-to-dismiss, scrim tap and insets are the platform's",
+        "openHeight": "content height, NOT the platform's half-screen partial state: the five-field new-profile sheet clipped its last field and put its CTA below the fold at half height",
+        "overflow": "the content scrolls rather than clips, so enlarged type cannot strand a CTA"
       },
       "variants": [
         "partialWithHandle",
@@ -702,7 +713,7 @@
         "countryPickerSheet",
         "idTypePickerSheet"
       ],
-      "notes": "Two shapes: a partial sheet with a grab handle over a scrim (profile switch, new profile), and a full-height sheet with a back header (country, ID type). Use the platform-native sheet so drag-to-dismiss and inset handling are correct.",
+      "notes": "Two shapes: a partial sheet with a grab handle over a scrim (profile switch, new profile), and a full-height sheet with a back header (country, ID type). Use the platform-native sheet so drag-to-dismiss and inset handling are correct. CORRECTED 2026-08-18: margins are 20 (not spacing.md), the partial sheet's title is 18/700 and the full-height header's is 16/700, and a partial sheet opens at its content height with scrollable content.",
       "parts": [
         "Scrim — dimmed backdrop for partial sheets",
         "SheetHeader — back + title for full-height sheets",
@@ -728,7 +739,8 @@
         "tabLabel": "10/700, the overline style — not a 14 tab style",
         "tokenLabel": "8.5/700 muted, under a 16 icon",
         "extends": "the PR #2 component rather than a rebuild; only the token affordance and its ring were added",
-        "width": "spans the full width between 16 margins; the tabs pill takes all space the 58 token button leaves, and the three tabs are EQUAL thirds of it. A content-sized row leaves dead space to the right of the token — that is how Android first shipped it."
+        "width": "spans the full width between 16 margins; the tabs pill takes all space the 58 token button leaves, and the three tabs are EQUAL thirds of it. A content-sized row leaves dead space to the right of the token — that is how Android first shipped it.",
+        "elevation": "both halves float on the design's 0 8 24 rgba(0,0,0,.12) shadow; the tabs pill has NO outline and only the token button is stroked"
       },
       "items": [
         "products",

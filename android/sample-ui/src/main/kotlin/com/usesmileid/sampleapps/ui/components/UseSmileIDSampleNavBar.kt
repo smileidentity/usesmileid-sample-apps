@@ -36,6 +36,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.smileid.designsystem.SMILE_TOKEN_RING_TRACK_OPACITY
+import com.smileid.designsystem.smileTokenRing
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.R
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
@@ -80,7 +82,8 @@ fun UseSmileIDSampleNavBar(
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(SmileDimens.radiusPill),
             color = UseSmileIDSampleTheme.colors.surface,
-            border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.border),
+            // The design floats the tabs on a shadow with no outline; only the token is outlined.
+            shadowElevation = BAR_ELEVATION,
         ) {
             Row(
                 modifier = Modifier.padding(horizontal = SmileDimens.spacingXs, vertical = SmileDimens.spacingXxs),
@@ -105,8 +108,8 @@ fun UseSmileIDSampleNavBar(
 @Composable
 private fun TokenAffordance(progress: Float?, onClick: () -> Unit) {
     val colors = UseSmileIDSampleTheme.colors
-    val track = colors.border
-    val fill = colors.successFill
+    val track = smileTokenRing.copy(alpha = SMILE_TOKEN_RING_TRACK_OPACITY)
+    val fill = smileTokenRing
     Box(
         // Wraps the button rather than fixing a size, so enlarged type grows it instead of clipping the label.
         modifier = Modifier.drawBehind {
@@ -121,6 +124,7 @@ private fun TokenAffordance(progress: Float?, onClick: () -> Unit) {
             shape = CircleShape,
             color = colors.surface,
             border = BorderStroke(SmileDimens.borderWidthThick, colors.border),
+            shadowElevation = BAR_ELEVATION,
         ) {
             Column(
                 modifier = Modifier
@@ -146,14 +150,14 @@ fun UseSmileIDSampleTokenRing(
     progress: Float,
     modifier: Modifier = Modifier,
 ) {
-    val track = UseSmileIDSampleTheme.colors.border
-    val fill = UseSmileIDSampleTheme.colors.successFill
+    val track = smileTokenRing.copy(alpha = SMILE_TOKEN_RING_TRACK_OPACITY)
+    val fill = smileTokenRing
     Canvas(modifier = modifier) { drawTokenRing(progress = progress, track = track, fill = fill, inflate = 0f) }
 }
 
 /** [inflate] pushes the ring outside the bounds it is drawn in, so it can circle a smaller button. */
 private fun DrawScope.drawTokenRing(progress: Float, track: Color, fill: Color, inflate: Float) {
-    val stroke = Stroke(width = SmileDimens.borderWidthThick.toPx(), cap = StrokeCap.Round)
+    val stroke = Stroke(width = RING_THICKNESS.toPx(), cap = StrokeCap.Round)
     val topLeft = stroke.width / 2f - inflate
     val diameter = size.minDimension - stroke.width + inflate * 2f
     drawArc(
@@ -203,8 +207,12 @@ private fun NavBarTab(
     }
 }
 
-/** The ring sits just outside the button, so it bleeds a little past it on every side. */
-private val RING_BLEED = SmileDimens.space4
+/** The design floats both halves of the bar on an 8-blur shadow. */
+private val BAR_ELEVATION = SmileDimens.space8
+
+/** 68 outer around a 58 button means 5 of bleed a side, and the ring is 4.08 thick. */
+private val RING_BLEED = 5.dp
+private val RING_THICKNESS = 4.dp
 
 /** 21, 58 and 8.5 in the design; no token carries any of them — see spec/design-tokens.json → deltas. */
 private val TAB_ICON_SIZE = 21.dp

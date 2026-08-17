@@ -24,7 +24,9 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowDivider
 import androidx.annotation.DrawableRes
 import com.usesmileid.sampleapps.ui.R
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
+import androidx.compose.ui.graphics.Color
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.smileProfileHues
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDestructiveRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProfileRow
@@ -57,6 +59,7 @@ fun SettingsScreen(
     onOpenScenarioDrawer: () -> Unit,
     onSignOut: () -> Unit,
     modifier: Modifier = Modifier,
+    avatarColor: Color = smileProfileHues.first(),
     contentPadding: PaddingValues = PaddingValues(),
 ) {
     LazyColumn(
@@ -83,6 +86,7 @@ fun SettingsScreen(
                 initials = initials,
                 selected = false,
                 onClick = onProfileClick,
+                avatarColor = avatarColor,
                 trailing = { UseSmileIDSampleSettingRowChevron() },
                 testId = UseSmileIDSampleTestIds.PROFILE_SUMMARY,
             )

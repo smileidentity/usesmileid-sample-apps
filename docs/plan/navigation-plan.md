@@ -18,7 +18,7 @@ document explains the architecture and the traps.
 
 ---
 
-## 1. Nine rules that apply to every platform
+## 1. Ten rules that apply to every platform
 
 These are what keep four navigation implementations behaving the same. Most of them exist because a
 specific defect was found on a device, not because they read well.
@@ -89,6 +89,25 @@ Two consequences worth carrying to the other three platforms:
   correctly. Only state that should have survived shows it. So a warm-start assertion has to be on
   **surviving state** — the result card's `activeScenario` is the cheapest one — and a flow that
   wants to observe launch arguments must reach its destination by tapping, not by deep link.
+
+**R10 — A confirmation belongs to the screen the action returns to, not to the screen that fired it.**
+Settled 2026-08-18 on the profile flow, where the design puts the "created" confirmation on the
+profiles list rather than on the sheet that created the profile. Three consequences the other three
+platforms inherit:
+
+- The sheet cannot own it. It is dismissing, so anything anchored inside it dies with it. The
+  creating call records the new id on the profiles store and the list reads it, which also survives
+  the recreation R6 covers.
+- The confirmation carries the follow-up action the design offers ("Make active"), because creating
+  a profile deliberately does **not** activate it.
+- A deep link straight to the sheet returns to the graph's start destination, not to the list, so no
+  confirmation appears. That is acceptable — deep links are automation affordances — but a flow that
+  asserts the confirmation has to reach the sheet by tapping.
+
+The profile flow this settles, end to end: settings PROFILE row → `/profiles` (the LIST, not the
+active profile's page) → a row → `/profiles/:id`, titled with the profile's name, whose CTA both
+saves the defaults and activates → or "Create new profile" → `/profiles/new` → back to `/profiles`
+with the confirmation.
 
 ---
 

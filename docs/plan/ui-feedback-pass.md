@@ -61,4 +61,29 @@ Status: `todo` · `wip` · `done` · `design` (needs a design answer) · `owner`
 | F27 | Design calls the product "Enhanced **Document** Verification" on JobRow; the enum label was "Enhanced Doc Verification" | 5206:2431 | done — owner ruled 2026-08-17 the long form is correct everywhere; changed in the enum **and** `spec/scenarios.json`, which is what the ports read |
 | F28 | Date header separator is `·` with **two** spaces either side | 5206:2428 | done |
 
+### Fourth round — 2026-08-18
+
+| ID | Item | Design node | Status |
+|---|---|---|---|
+| F29 | Token session green + progress indicator do not match | 5206:3704 | done — the card is a horizontal `#1A7840 → #299E57` gradient, not a flat success fill, and the ring is one green (`#06A850` solid over the same green at 18%) rather than a grey track under a `#00C853` arc; recorded as `tokenSessionGreens` |
+| F30 | Settings gear does not match | 5206:2898 | done — the committed export was an 18px single path missing the gear's inner circle; re-downloaded all four nav icons, and `token_scan`/`verifications` were incomplete the same way |
+| F31 | Scan token screen does not match | 5206:3668 | done — the hand-drawn reticle is now the design's 279px asset |
+| F32 | Profiles list | 5206:3258 | done — no section label, per-position avatar hues, "· active" in the supporting line, chevrons, and the Create-new-profile row |
+| F33 | Profile config | 5206:3317 · 3525 | done — bordered card with rules, titled with the PROFILE'S NAME, CTA "Make this profile active" |
+| F34 | New profile sheet, empty and filled | 5206:3339 · 3408 | done — five fields each with a 17 leading icon, USER DETAILS label, CTA gated on name + first + last |
+| F35 | Profile created | 5206:3477 | done — the confirmation is a snackbar "&lt;name&gt; created" with a "Make active" action on the LIST, and creating deliberately does not activate |
+| F36 | Toolbar title/back/top-right placement inconsistent between screens | all pushed screens | done — the header row is a pinned 40 above an 8 gap, and a 40 box is reserved when a screen has no trailing action so the centred title never shifts |
+
+### Found by this round, not reported
+
+| ID | Item | Design node | Status |
+|---|---|---|---|
+| F37 | The design supplies a **fourth** profile hue (`#2D2B2A`), which the three-hue list would have cycled back to navy | 5206:3477 · 3547 | done — `profileHues` now carries four, and a test pins their order because position is the index |
+| F38 | The settings summary drew the active profile in a different colour from the profiles list — two components with two different avatar defaults | 5206:3547 | done — one default for both, and the caller passes the hue; the products header now takes it too |
+| F39 | The settings PROFILE row opened the active profile's config; the design opens the LIST | 5206:3258 | done — `spec/routes.json` and navigation-plan R10 record the flow |
+| F40 | The five-field sheet clipped its last field and put its CTA below the fold | 5206:3408 | done — the partial sheet opens at content height instead of the platform's half-screen state, and its content scrolls |
+| F41 | The new-profile sheet collected email and phone and then discarded them | 5206:3525 | done — all four seed the profile's defaults, which is what the config screen shows |
+| F42 | The nav bar's tabs pill was outlined and flat; the design floats both halves on a shadow and outlines only the token | 5206:3663 | done |
+| F43 | The design's settings footer reads "Smile ID Sample App · 1.0.0" and its docs row "docs.usesmileid.com" | 5206:3547 | **not changed** — `spec/app-identity.json` owns the display name, and `docs.smileidentity.com` is the domain that exists; flagged for the owner rather than followed |
+
 <!-- INTERNAL-ONLY:END -->

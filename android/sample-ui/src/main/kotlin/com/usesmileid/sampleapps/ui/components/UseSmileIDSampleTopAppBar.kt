@@ -22,6 +22,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.smileSurface2
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -36,11 +38,15 @@ fun UseSmileIDSampleTopAppBar(
     action: @Composable (() -> Unit)? = null,
 ) {
     Row(
+        // A FIXED row height at the design's scale, so the title, the back control and any trailing
+        // action land on the same line on every screen. A minimum height instead lets a longer title
+        // grow the bar, and the header then sits lower on some screens than others.
         modifier = modifier
             .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.statusBars)
             .padding(horizontal = SmileDimens.spacingMd)
-            .defaultMinSize(minHeight = SmileDimens.space48)
+            .defaultMinSize(minHeight = HEADER_ROW_HEIGHT * LocalDensity.current.fontScale.coerceAtLeast(1f))
+            .padding(bottom = SmileDimens.spacingXs)
             .tagged(testId),
         horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
         verticalAlignment = Alignment.CenterVertically,
@@ -100,3 +106,6 @@ fun UseSmileIDSampleTopAppBarButton(
 
 /** 15 in the design; textStyleTitle is 16. */
 private val TITLE_SIZE = 15.sp
+
+/** The design's header row is 40 tall above an 8 gap, on every pushed screen. */
+private val HEADER_ROW_HEIGHT = 40.dp

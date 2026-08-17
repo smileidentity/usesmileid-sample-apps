@@ -64,10 +64,22 @@
         "color/warn-fg": "#7a4a00"
       },
       "fills": {
-        "success": { "background": "#DBF5E4", "text": "#04713A" },
-        "info": { "background": "#E5EDFF", "text": "#151F72" },
-        "warning": { "background": "#FFF0D9", "text": "#7A4A00" },
-        "error": { "background": "#FDE4E1", "text": "#A11209" }
+        "success": {
+          "background": "#DBF5E4",
+          "text": "#04713A"
+        },
+        "info": {
+          "background": "#E5EDFF",
+          "text": "#151F72"
+        },
+        "warning": {
+          "background": "#FFF0D9",
+          "text": "#7A4A00"
+        },
+        "error": {
+          "background": "#FDE4E1",
+          "text": "#A11209"
+        }
       },
       "fillsSource": "Read off the four JobRow badge instances on the Verifications board 2026-08-17 (nodes 5206:2429, 2430, 2432, 2433), where each pair is bound to a design variable — color/ok-bg + color/ok-fg, color/info-*, color/warn-*, color/err-*. These are the values the earlier prototype recording could only describe as 'pale'.",
       "labelCase": "Title case, not UPPERCASE. The design sets 'Clear' / 'Processing' / 'Attention' / 'Blocked' at 11/700 with 0.88 tracking — the Label type style at label size, but not upper-cased. Date and section headers DO upper-case the same style, which is why the app upper-cased this one too.",
@@ -214,8 +226,12 @@
     {
       "id": "filterChipCountColour",
       "severity": "cosmetic, one element on the verifications filter row",
-      "figma": { "unselected count": "color/muted #848282" },
-      "designSystem": { "filter-chip.value": "#4D88FF light, #7BA3FF dark" },
+      "figma": {
+        "unselected count": "color/muted #848282"
+      },
+      "designSystem": {
+        "filter-chip.value": "#4D88FF light, #7BA3FF dark"
+      },
       "finding": "The design file paints an unselected chip's count in muted grey; the design system's filter-chip.value is a mid blue. Both agree the selected chip's count is primary-ink. Reported in review 2026-08-17 as part of 'the chip text style doesn't match' — the type style was a real mismatch and is fixed; this colour is a genuine source disagreement, so it is recorded rather than patched.",
       "recommendation": "Owner ruling. The design system wins by the precedence rule, so the blue ships until someone says otherwise — but the design file is what a reviewer compares against, so this will be re-reported until one side moves.",
       "status": "OPEN 2026-08-17 — needs an owner ruling; NOT locally patched"
@@ -223,8 +239,12 @@
     {
       "id": "borderStrong",
       "severity": "blocks the selection checkbox's unselected ring on all four apps",
-      "figma": { "color/border-strong": "#C2C5CB" },
-      "designSystem": { "semantic": "absent — the value exists only as the primitive color.grey.400" },
+      "figma": {
+        "color/border-strong": "#C2C5CB"
+      },
+      "designSystem": {
+        "semantic": "absent — the value exists only as the primitive color.grey.400"
+      },
       "value": "#C2C5CB",
       "finding": "The design draws an unselected selection checkbox as a 2px ring in color/border-strong. The design system carries exactly one semantic border, color.border #EAECF0, which is far too light for a 2px control ring — which is why the app's checkbox read as barely-there against the design. The value exists upstream only as color.grey.400, and consuming a primitive is a review failure by AGENTS.md.",
       "recommendation": "Add a semantic border-strong (or control-border) role to the design system. Generated from here meanwhile, exactly as softBadgeFills is, so no component references a primitive.",
@@ -233,8 +253,14 @@
     {
       "id": "disabledPair",
       "severity": "cosmetic, but it decides whether a disabled control reads as disabled",
-      "figma": { "color/disabled-bg": "#E5E7EB", "color/disabled-fg": "#9AA0A6" },
-      "designSystem": { "button.disabled.background": "#EAECF0", "button.disabled.text": "#848282" },
+      "figma": {
+        "color/disabled-bg": "#E5E7EB",
+        "color/disabled-fg": "#9AA0A6"
+      },
+      "designSystem": {
+        "button.disabled.background": "#EAECF0",
+        "button.disabled.text": "#848282"
+      },
       "finding": "The design file's disabled pair is slightly darker than the design system's. Recorded rather than patched, because the design system wins by the precedence rule and the difference is small. The real defect found alongside it WAS fixed: the select trigger used color.surface-muted (#F9FAFB, almost white) with text.muted for its disabled state, so a disabled ID-type picker looked enabled. It now uses the button.disabled pair.",
       "recommendation": "Reconcile the two, or accept the design system's values as canonical and update the design file.",
       "status": "OPEN 2026-08-17 — NOT locally patched; the wrong-token bug beside it is fixed"
@@ -242,12 +268,60 @@
     {
       "id": "surface2",
       "severity": "every subtle-fill surface on four apps — copy buttons, icon tiles, inset rows",
-      "figma": { "color/surface-2": "#EAECF0" },
-      "designSystem": { "semantic": "absent — color.surface-alt is #F9F0E7, a warm cream, not this cool grey" },
+      "figma": {
+        "color/surface-2": "#EAECF0"
+      },
+      "designSystem": {
+        "semantic": "absent — color.surface-alt is #F9F0E7, a warm cream, not this cool grey"
+      },
       "value": "#EAECF0",
       "finding": "The design's second surface is a cool grey; the design system's nearest semantic, color.surface-alt, is a warm brand cream. Android reached for surface-alt everywhere the design wanted surface-2, which is why copy buttons and icon tiles across the app rendered peach where the design is grey. The value coincides with color.border, but a border role is not a fill role and using it as one hides the gap.",
       "recommendation": "Add a second surface role to the design system. Generated from here meanwhile, as softBadgeFills and borderStrong are.",
       "status": "OPEN 2026-08-17 — generated stopgap in place; delete the generated value once the design system carries the role"
+    },
+    {
+      "id": "profileHues",
+      "severity": "the avatar on four screens: settings summary, profiles list, profile config, switch sheet",
+      "figma": {
+        "profile 1": "#151F72",
+        "profile 2": "#05723A",
+        "profile 3": "#B36500",
+        "profile 4": "#2D2B2A"
+      },
+      "designSystem": {
+        "semantic": "absent — avatar.bg is a single colour for every profile"
+      },
+      "hues": [
+        "#151F72",
+        "#05723A",
+        "#B36500",
+        "#2D2B2A"
+      ],
+      "finding": "The design gives each profile its own avatar fill and shows four: primary navy, a deep green, a deep amber, then a near-black. The fourth comes from the created-profile states, which is also where the list resolves the question of what a new profile gets. Indexed by the profile's position in the list and cycled beyond four, which is the same rule productHues uses so all four platforms colour the same profile identically. Android first derived a colour by hashing the initials; that gave different colours from the design.",
+      "recommendation": "Confirm the cycle rule beyond the four the design supplies, and add the role to the design system so it stops being generated from here.",
+      "status": "OPEN 2026-08-18 — generated stopgap in place; the four values are the design's, the cycling rule is ours"
+    },
+    {
+      "id": "tokenSessionGreens",
+      "severity": "the session card and the countdown ring, on every platform",
+      "figma": {
+        "card gradient": "#1A7840 → #299E57 horizontal",
+        "ring progress": "#06A850",
+        "ring track": "#06A850 at 18%",
+        "ring": "68 outer, 4.08 thick"
+      },
+      "designSystem": {
+        "feedback.success.fill": "#00C853 light / #00E676 dark"
+      },
+      "cardGradient": [
+        "#1A7840",
+        "#299E57"
+      ],
+      "ring": "#06A850",
+      "ringTrackOpacity": 0.18,
+      "finding": "The token session's green is its own thing and none of it is feedback.success.fill. The card is a HORIZONTAL GRADIENT #1A7840 to #299E57 with white text; the countdown ring is #06A850 solid for progress over the SAME green at 18% for the track. Android had a flat success fill on the card and, worse, a grey color.border track with a #00C853 progress arc — two different greens and a grey, none of them the design's. #06A850 exists upstream only as the primitive color.decorative.green, so it cannot be consumed directly.",
+      "recommendation": "Give the token session a named role — a gradient pair plus a ring colour — or promote the decorative green to a semantic. Generated from here meanwhile.",
+      "status": "OPEN 2026-08-18 — generated stopgap in place"
     }
   ],
   "perPlatform": {

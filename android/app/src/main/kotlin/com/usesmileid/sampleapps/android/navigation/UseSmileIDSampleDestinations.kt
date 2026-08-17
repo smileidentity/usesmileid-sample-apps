@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -25,6 +26,7 @@ import com.ramcosta.composedestinations.generated.destinations.IdTypePickerSheet
 import com.ramcosta.composedestinations.generated.destinations.NewProfileSheetDestination
 import com.ramcosta.composedestinations.generated.destinations.ProfileConfigScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ProfileSwitchSheetDestination
+import com.ramcosta.composedestinations.generated.destinations.ProfilesScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ScenarioDrawerSheetDestination
 import com.ramcosta.composedestinations.generated.destinations.VerificationDetailsScreenDestination
@@ -35,6 +37,7 @@ import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleToast
+import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
@@ -74,6 +77,7 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
         state = UseSmileIDSampleProductsState(
             environment = app.profiles.active.environment,
             initials = app.profiles.active.initials,
+            avatarColor = avatarColorForProfile(app.profiles.activeIndex),
             sessionId = app.session?.id?.takeIf { app.sessionActive },
             sessionRemaining = app.session
                 ?.takeIf { app.sessionActive }
@@ -134,7 +138,7 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
         if (removedCount > 0) {
             // Bounded, so a toast left up cannot restore rows long after the removal it belonged to.
             LaunchedEffect(removedCount) {
-                delay(UNDO_WINDOW_MILLIS)
+                delay(SNACKBAR_WINDOW_MILLIS)
                 removedCount = 0
             }
             UseSmileIDSampleToast(
@@ -160,8 +164,11 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
         onSettingChange = { setting, enabled -> app.storeScope.launch { app.store.setSetting(setting, enabled) } },
         organisation = app.profiles.active.organisation,
         initials = app.profiles.active.initials,
+        avatarColor = avatarColorForProfile(app.profiles.activeIndex),
         versionLabel = "$APP_DISPLAY_NAME · ${BuildConfig.VERSION_NAME}",
-        onProfileClick = { navigator.navigate(ProfileConfigScreenDestination(profileId = app.profiles.activeId)) },
+        // The design's row opens the list, not the active profile's own page: configuring any
+        // profile and creating one are both reached from there.
+        onProfileClick = { navigator.navigate(ProfilesScreenDestination) },
         onNavRowClick = {},
         onOpenScenarioDrawer = { navigator.navigate(ScenarioDrawerSheetDestination) },
         onSignOut = {},
@@ -269,13 +276,40 @@ fun ProfileSwitchSheet(navigator: DestinationsNavigator) {
 @Composable
 fun ProfilesScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
-    ProfilesContent(
-        profiles = app.profiles.all,
-        activeId = app.profiles.activeId,
-        onProfileClick = { navigator.navigate(ProfileConfigScreenDestination(profileId = it.id)) },
-        onCreate = { navigator.navigate(NewProfileSheetDestination) },
-        onBack = { navigator.navigateUp() },
-    )
+    // Consumed on sight rather than after the window, so leaving and returning cannot re-show a
+    // confirmation for a profile created minutes ago.
+    var confirmedId by remember { mutableStateOf<String?>(null) }
+    val pendingId = app.profiles.lastCreatedId
+    LaunchedEffect(pendingId) {
+        if (pendingId == null) return@LaunchedEffect
+        app.profiles.clearLastCreated()
+        confirmedId = pendingId
+        delay(SNACKBAR_WINDOW_MILLIS)
+        confirmedId = null
+    }
+    val created = confirmedId?.let(app.profiles::find)
+    Box(modifier = Modifier.fillMaxSize()) {
+        ProfilesContent(
+            profiles = app.profiles.all,
+            activeId = app.profiles.activeId,
+            onProfileClick = { navigator.navigate(ProfileConfigScreenDestination(profileId = it.id)) },
+            onCreate = { navigator.navigate(NewProfileSheetDestination) },
+            onBack = { navigator.navigateUp() },
+        )
+        if (created != null) {
+            // A new profile is not made active by creating it, so the confirmation carries the offer.
+            UseSmileIDSampleToast(
+                message = "${created.organisation} created",
+                actionLabel = "Make active",
+                onAction = { app.profiles.setActive(created.id); confirmedId = null },
+                // The design's 24 above the safe area. The host already inset this container past the
+                // system bar, so adding that inset again would lift the toast into the list.
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingLg),
+            )
+        }
+    }
 }
 
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.PROFILE_CONFIG)])
@@ -303,10 +337,36 @@ fun ProfileConfigScreen(profileId: String, navigator: DestinationsNavigator) {
 fun NewProfileSheet(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     var name by rememberSaveable { mutableStateOf("") }
+    var firstName by rememberSaveable { mutableStateOf("") }
+    var lastName by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
+    var phone by rememberSaveable { mutableStateOf("") }
     NewProfileContent(
         name = name,
+        firstName = firstName,
+        lastName = lastName,
+        email = email,
+        phone = phone,
         onNameChange = { name = it },
-        onSave = { app.profiles.add(organisation = name, person = ""); navigator.navigateUp() },
+        onFirstNameChange = { firstName = it },
+        onLastNameChange = { lastName = it },
+        onEmailChange = { email = it },
+        onPhoneChange = { phone = it },
+        onSave = {
+            // The profile's person is the two required names, which is what its row and avatar read;
+            // all four seed the details every job under it starts from.
+            app.profiles.add(
+                organisation = name,
+                person = "$firstName $lastName".trim(),
+                defaults = UseSmileIDSampleUserDetails(
+                    firstName = firstName,
+                    lastName = lastName,
+                    email = email,
+                    phone = phone,
+                ),
+            )
+            navigator.navigateUp()
+        },
         onDismissRequest = { navigator.navigateUp() },
     )
 }
@@ -352,5 +412,6 @@ fun ScenarioDrawerSheet(navigator: DestinationsNavigator) {
 fun ComponentGalleryScreen() = ComponentGalleryContent()
 
 private const val SIMULATED_SESSION_ID = "9f3a"
-private const val UNDO_WINDOW_MILLIS = 5_000L
+/** How long a snackbar with an action stays up: long enough to undo, short enough not to outlive its cause. */
+private const val SNACKBAR_WINDOW_MILLIS = 5_000L
 private const val APP_DISPLAY_NAME = "UseSmileID Sample"

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generated from the design set's SVG export; tinted at the use site. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="18dp"
-    android:height="18dp"
-    android:viewportWidth="18"
-    android:viewportHeight="18">
+    android:width="21dp"
+    android:height="21dp"
+    android:viewportWidth="21"
+    android:viewportHeight="21">
     <path
-        android:pathData="M0.916748 7.04163L8.79175 0.916626L16.6667 7.04163V14.9166C16.6667 15.3808 16.4824 15.8259 16.1542 16.1541C15.826 16.4823 15.3809 16.6666 14.9167 16.6666H11.4167V11.4166H6.16675V16.6666H2.66675C2.20262 16.6666 1.7575 16.4823 1.42931 16.1541C1.10112 15.8259 0.916748 15.3808 0.916748 14.9166V7.04163Z"
+        android:pathData="M2.625 8.75L10.5 2.625L18.375 8.75V16.625C18.375 17.0891 18.1906 17.5342 17.8624 17.8624C17.5342 18.1906 17.0891 18.375 16.625 18.375H13.125V13.125H7.875V18.375H4.375C3.91087 18.375 3.46575 18.1906 3.13756 17.8624C2.80937 17.5342 2.625 17.0891 2.625 16.625V8.75Z"
         android:strokeColor="#FF000000"
         android:strokeWidth="1.83333"
-        android:strokeLineJoin="round" />
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
 </vector>

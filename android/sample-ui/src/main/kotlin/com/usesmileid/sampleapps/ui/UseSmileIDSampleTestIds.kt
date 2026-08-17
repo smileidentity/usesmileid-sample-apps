@@ -48,6 +48,10 @@ object UseSmileIDSampleTestIds {
     const val ID_TYPE_SEARCH = "sample_idtype_search"
     const val CREATE_PROFILE = "sample_create_profile"
     const val NEW_PROFILE_NAME = "sample_new_profile_name"
+    const val NEW_PROFILE_FIRST_NAME = "sample_new_profile_first_name"
+    const val NEW_PROFILE_LAST_NAME = "sample_new_profile_last_name"
+    const val NEW_PROFILE_EMAIL = "sample_new_profile_email"
+    const val NEW_PROFILE_PHONE = "sample_new_profile_phone"
     const val NEW_PROFILE_SAVE = "sample_new_profile_save"
     const val PROFILE_CONFIG_SAVE = "sample_profile_config_save"
 
@@ -138,6 +142,10 @@ object UseSmileIDSampleTestIds {
         ID_TYPE_SEARCH,
         CREATE_PROFILE,
         NEW_PROFILE_NAME,
+        NEW_PROFILE_FIRST_NAME,
+        NEW_PROFILE_LAST_NAME,
+        NEW_PROFILE_EMAIL,
+        NEW_PROFILE_PHONE,
         NEW_PROFILE_SAVE,
         PROFILE_CONFIG_SAVE,
         RESULT_CARD,

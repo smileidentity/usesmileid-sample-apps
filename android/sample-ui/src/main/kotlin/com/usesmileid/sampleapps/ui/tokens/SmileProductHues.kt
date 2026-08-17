@@ -94,3 +94,18 @@ val smileBorderStrong: Color = Color(0xFFC2C5CB)
 
 /** The design's `color/surface-2`, a cool grey subtle fill — `color.surface-alt` is a warm cream. */
 val smileSurface2: Color = Color(0xFFEAECF0)
+
+/** Avatar fills, one per profile, taken in list order and cycled beyond the list. */
+val smileProfileHues: List<Color> = listOf(
+    Color(0xFF151F72),
+    Color(0xFF05723A),
+    Color(0xFFB36500),
+    Color(0xFF2D2B2A),
+)
+
+/** The session card's horizontal gradient: the token session's own green, not feedback.success. */
+val smileTokenSessionGradient: List<Color> = listOf(Color(0xFF1A7840), Color(0xFF299E57))
+
+/** The countdown ring: this colour solid for progress, and the same colour faded for the track. */
+val smileTokenRing: Color = Color(0xFF06A850)
+const val SMILE_TOKEN_RING_TRACK_OPACITY = 0.18f

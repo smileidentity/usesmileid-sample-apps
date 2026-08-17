@@ -547,6 +547,54 @@ def read_surface2() -> str:
     return read_spec_delta("surface2", "value")
 
 
+def read_profile_hues() -> list:
+    return read_spec_delta("profileHues", "hues")
+
+
+def read_token_session() -> dict:
+    for key in ("cardGradient", "ring", "ringTrackOpacity"):
+        pass
+    spec_path = os.path.join(REPO, SPEC_TOKENS)
+    with io.open(spec_path, encoding="utf-8") as handle:
+        spec = json.load(handle)
+    for delta in spec.get("deltas", []):
+        if delta.get("id") == "tokenSessionGreens":
+            return delta
+    raise TokenError(f"{SPEC_TOKENS} has no tokenSessionGreens delta to generate from")
+
+
+def emit_kotlin_token_session(delta: dict) -> str:
+    """The session card's gradient and the countdown ring, which no semantic role covers."""
+    grad = delta.get("cardGradient") or []
+    ring = delta.get("ring")
+    opacity = delta.get("ringTrackOpacity")
+    if len(grad) != 2 or not ring or opacity is None:
+        raise TokenError("tokenSessionGreens needs a two-stop cardGradient, a ring and a ringTrackOpacity")
+    return "\n".join([
+        "",
+        "/** The session card's horizontal gradient: the token session's own green, not feedback.success. */",
+        "val smileTokenSessionGradient: List<Color> = listOf(%s, %s)" % (kotlin_color(grad[0]), kotlin_color(grad[1])),
+        "",
+        "/** The countdown ring: this colour solid for progress, and the same colour faded for the track. */",
+        "val smileTokenRing: Color = %s" % kotlin_color(ring),
+        "const val SMILE_TOKEN_RING_TRACK_OPACITY = %sf" % opacity,
+    ])
+
+
+def emit_kotlin_profile_hues(hues) -> str:
+    """One avatar fill per profile, cycled by list position."""
+    if not hues:
+        raise TokenError("spec/design-tokens.json profileHues carries no hues")
+    lines = [
+        "",
+        "/** Avatar fills, one per profile, taken in list order and cycled beyond the list. */",
+        "val smileProfileHues: List<Color> = listOf(",
+    ]
+    lines += ["    %s," % kotlin_color(h) for h in hues]
+    lines.append(")")
+    return "\n".join(lines)
+
+
 def generate_kotlin_product_hues() -> str:
     return (
         KOTLIN_HUES_HEADER
@@ -558,6 +606,10 @@ def generate_kotlin_product_hues() -> str:
         + emit_kotlin_border_strong(read_border_strong())
         + "\n"
         + emit_kotlin_surface2(read_surface2())
+        + "\n"
+        + emit_kotlin_profile_hues(read_profile_hues())
+        + "\n"
+        + emit_kotlin_token_session(read_token_session())
         + "\n"
     )
 

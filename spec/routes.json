@@ -198,7 +198,8 @@
         "ios": "Route.profiles",
         "flutter": "/profiles",
         "expo": "app/profiles/index.tsx"
-      }
+      },
+      "notes": "Reached from the settings PROFILE row — that row opens this list, not the active profile's own page. Owns the created confirmation, so a create that returns anywhere else loses it; a deep link straight to /profiles/new therefore shows no confirmation."
     },
     {
       "id": "profileConfig",
@@ -217,7 +218,8 @@
         "ios": "Route.profileConfig(profileId:)",
         "flutter": "/profiles/:profileId",
         "expo": "app/profiles/[profileId].tsx"
-      }
+      },
+      "notes": "Titled with the profile's name. Its CTA activates the profile as well as saving the defaults, so this is also how a newly created profile becomes the active one."
     },
     {
       "id": "newProfile",
@@ -231,7 +233,7 @@
         "flutter": "/profiles/new",
         "expo": "app/profiles/new.tsx"
       },
-      "notes": "Declared before /profiles/:profileId so 'new' is not swallowed as a profile id."
+      "notes": "Declared before /profiles/:profileId so 'new' is not swallowed as a profile id. Pops back to /profiles, which is where the created confirmation appears."
     },
     {
       "id": "scanToken",

@@ -270,6 +270,36 @@ class TestProductHues(unittest.TestCase):
     def test_surface2_emits_an_opaque_colour(self):
         self.assertIn("val smileSurface2: Color = Color(0xFF", gen.emit_kotlin_surface2(gen.read_surface2()))
 
+    def test_profile_hues_emit_every_fill_the_design_supplies(self):
+        hues = gen.read_profile_hues()
+        out = gen.emit_kotlin_profile_hues(hues)
+        self.assertIn("val smileProfileHues: List<Color> = listOf(", out)
+        self.assertEqual(out.count("Color(0xFF"), len(hues))
+
+    def test_profile_hues_keep_the_designs_order(self):
+        # Position is the index, so reordering these recolours every profile in every app.
+        self.assertEqual(
+            [hue.upper() for hue in gen.read_profile_hues()],
+            ["#151F72", "#05723A", "#B36500", "#2D2B2A"],
+        )
+
+    def test_token_session_emits_a_gradient_a_ring_and_a_track_opacity(self):
+        out = gen.emit_kotlin_token_session(gen.read_token_session())
+        self.assertIn("val smileTokenSessionGradient: List<Color> = listOf(", out)
+        self.assertIn("val smileTokenRing: Color = Color(0xFF", out)
+        self.assertIn("SMILE_TOKEN_RING_TRACK_OPACITY", out)
+
+    def test_token_session_ring_is_not_the_feedback_success_fill(self):
+        self.assertNotEqual(gen.read_token_session()["ring"].upper(), "#00C853")
+
+    def test_a_one_stop_gradient_fails_loudly(self):
+        with self.assertRaises(gen.TokenError):
+            gen.emit_kotlin_token_session({"cardGradient": ["#1A7840"], "ring": "#06A850", "ringTrackOpacity": 0.18})
+
+    def test_no_profile_hue_fails_loudly(self):
+        with self.assertRaises(gen.TokenError):
+            gen.emit_kotlin_profile_hues([])
+
     def test_surface2_is_not_the_warm_surface_alt(self):
         self.assertNotEqual(gen.read_surface2().upper(), "#F9F0E7")
 

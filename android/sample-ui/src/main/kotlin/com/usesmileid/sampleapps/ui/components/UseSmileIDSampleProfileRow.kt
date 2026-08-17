@@ -17,6 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.smileid.designsystem.smileProfileHues
+import com.smileid.designsystem.smileSurface2
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -29,7 +34,9 @@ fun UseSmileIDSampleProfileRow(
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    avatarColor: Color = UseSmileIDSampleTheme.colors.avatar.background,
+    // The same default the avatar itself has: a second one made the settings summary and the
+    // profiles list draw the same profile in two different colours.
+    avatarColor: Color = smileProfileHues.first(),
     testId: String? = null,
     trailing: @Composable (() -> Unit)? = null,
 ) {
@@ -39,14 +46,14 @@ fun UseSmileIDSampleProfileRow(
             .fillMaxWidth()
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
             .tagged(testId),
-        shape = RoundedCornerShape(SmileDimens.radiusField),
-        // color.border carries the design's selected fill; there is no selected-surface token yet.
-        color = if (selected) colors.border else colors.surface,
+        shape = RoundedCornerShape(SmileDimens.radiusSurface),
+        color = if (selected) smileSurface2 else colors.surface,
+        border = BorderStroke(SmileDimens.borderWidthHairline, colors.card.border),
     ) {
         Row(
             modifier = Modifier
                 .defaultMinSize(minHeight = SmileDimens.space64)
-                .padding(horizontal = SmileDimens.spacingSm, vertical = SmileDimens.spacingSm),
+                .padding(horizontal = ROW_PADDING_X, vertical = SmileDimens.spacingSm),
             horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -60,13 +67,14 @@ fun UseSmileIDSampleProfileRow(
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs),
             ) {
                 Text(
+                    // 14.5/600 in the design, where Body Strong is 16.
                     text = organisation,
-                    style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
+                    style = UseSmileIDSampleTheme.type.textStyleBodyStrong.copy(fontSize = ROW_TITLE_SIZE),
                     color = colors.textTitle,
                 )
                 Text(
                     text = supportingText,
-                    style = UseSmileIDSampleTheme.type.textStyleBodySm,
+                    style = UseSmileIDSampleTheme.type.textStyleCaption,
                     color = colors.textMuted,
                 )
             }
@@ -80,3 +88,7 @@ fun UseSmileIDSampleProfileRow(
         }
     }
 }
+
+/** 14 and 14.5 in the design; no token carries either. */
+private val ROW_PADDING_X = 14.dp
+private val ROW_TITLE_SIZE = 14.5.sp

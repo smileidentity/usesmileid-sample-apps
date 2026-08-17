@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.smileProfileHues
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /**
@@ -27,7 +28,7 @@ fun UseSmileIDSampleAvatar(
     initials: String,
     modifier: Modifier = Modifier,
     size: Dp = SmileDimens.space40,
-    containerColor: Color = avatarColorFor(initials),
+    containerColor: Color = smileProfileHues.first(),
 ) {
     val hasInitials = initials.isNotBlank()
     val diameter = size * LocalDensity.current.fontScale
@@ -53,17 +54,12 @@ fun UseSmileIDSampleAvatar(
 }
 
 /**
- * One decorative colour per set of initials, chosen by a stable hash so a profile keeps its colour
- * across launches. Derived here: the design shows distinct fills but names no mapping.
+ * The design's avatar fill for a profile at [profileIndex] in the list, cycled beyond the three it
+ * supplies. Position, not a hash of the initials: the design colours the FIRST profile navy, the
+ * second green and the third amber, which no hash reproduces.
  */
-@Composable
-private fun avatarColorFor(initials: String): Color {
-    val palette = UseSmileIDSampleTheme.colors.decorative.all
-    if (initials.isBlank()) return UseSmileIDSampleTheme.colors.avatar.background
-    // Position-weighted, so "KA" and "AK" do not land on the same colour.
-    val index = initials.uppercase().foldIndexed(0) { i, acc, c -> acc + c.code * (i + 1) } % palette.size
-    return palette[index]
-}
+fun avatarColorForProfile(profileIndex: Int): Color =
+    smileProfileHues[profileIndex.coerceAtLeast(0) % smileProfileHues.size]
 
 /** 12 in the design. */
 private val AVATAR_RADIUS = 12.dp
