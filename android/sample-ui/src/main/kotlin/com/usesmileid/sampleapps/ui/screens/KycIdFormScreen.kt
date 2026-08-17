@@ -73,8 +73,7 @@ fun KycIdFormScreen(
                     onClick = onIdTypeClick,
                     enabled = details.country != null,
                     testId = UseSmileIDSampleTestIds.ID_TYPE_TRIGGER,
-                    // The design uses 🪪, which is Emoji 14 and renders as tofu below Android 13 —
-                    // minSdk here is 26. The design set's own ID mark carries the same meaning at every level.
+                    // Not the design's 🪪: Emoji 14 renders as tofu below Android 13, and minSdk here is 26.
                     leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_biometric_kyc, tint = tint) },
                 )
                 UseSmileIDSampleSectionLabel(text = "ID NUMBER")
@@ -105,5 +104,5 @@ fun KycIdFormScreen(
     }
 }
 
-/** The design's own leading emoji for the country picker. */
+/** The leading emoji for the country picker. */
 private const val GLOBE_EMOJI = "\ud83c\udf0d"

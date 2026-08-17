@@ -85,7 +85,6 @@ fun VerificationsScreen(
                 )
                 Text(
                     text = if (state.selectMode) "Cancel" else "Select",
-                    // The design's action is 14/700; linkFont is 14/400 — spec/design-tokens.json → deltas.
                     style = UseSmileIDSampleTheme.type.linkFont.copy(fontWeight = FontWeight.Bold),
                     color = UseSmileIDSampleTheme.colors.primary,
                     softWrap = false,

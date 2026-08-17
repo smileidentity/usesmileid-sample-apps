@@ -7,10 +7,7 @@ import androidx.compose.ui.unit.dp
 import com.usesmileid.sampleapps.ui.R
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * The scan target on the Scan token screen: the design's own 279x280 export, not a drawn reticle.
- * The four corner brackets and the sweep line are one asset, so their proportions cannot drift.
- */
+/** The scan target: one exported asset rather than a drawn reticle, so its proportions cannot drift. */
 @Composable
 fun UseSmileIDSampleScanGlyph(
     modifier: Modifier = Modifier,
@@ -22,5 +19,4 @@ fun UseSmileIDSampleScanGlyph(
     size = size,
 )
 
-/** 279 in the design. */
 private val SCAN_GLYPH_SIZE = 279.dp

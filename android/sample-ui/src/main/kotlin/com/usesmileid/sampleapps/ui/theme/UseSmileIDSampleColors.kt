@@ -306,11 +306,7 @@ internal val darkColors = UseSmileIDSampleColors(
     ),
 )
 
-/**
- * The design's status pills are soft tints, which no design-system `badge.*` pair carries — those are
- * saturated. Values come from `spec/design-tokens.json` → softBadgeFills, generated per platform so all
- * four apps agree; the pills read the same in both schemes, as the design draws them.
- */
+/** Soft status tints, which no design-system `badge.*` pair carries. Generated from `spec/design-tokens.json` → softBadgeFills, and the same in both schemes. */
 private fun softBadgeTokens(): BadgeTokens {
     fun fill(role: String) = requireNotNull(smileSoftBadgeFills[role]) {
         "no soft badge fill for '$role'; see spec/design-tokens.json → softBadgeFills"

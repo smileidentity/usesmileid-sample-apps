@@ -63,8 +63,7 @@ fun UseSmileIDSampleSelectTrigger(
             modifier = Modifier
                 .defaultMinSize(minHeight = SmileDimens.sizeControlMd)
                 .border(
-                    // The design outlines an actionable trigger in primary and a disabled one in border.
-                    width = SmileDimens.borderWidthThin,
+                            width = SmileDimens.borderWidthThin,
                     color = if (enabled) colors.primary else colors.input.border,
                     shape = RoundedCornerShape(SmileDimens.radiusField),
                 )
@@ -82,7 +81,6 @@ fun UseSmileIDSampleSelectTrigger(
                 }
             }
             Text(
-                // 15/600 in the design, where inputFont is 14/400.
                 text = value ?: placeholder,
                 style = UseSmileIDSampleTheme.type.inputFont.copy(
                     fontSize = TRIGGER_TEXT_SIZE,
@@ -96,7 +94,6 @@ fun UseSmileIDSampleSelectTrigger(
     }
 }
 
-/** 15, 18 and 12 in the design; no token carries them. */
 private val TRIGGER_TEXT_SIZE = 15.sp
 private val TRIGGER_EMOJI_SIZE = 18.sp
 private val CHEVRON_SIZE = 12.dp

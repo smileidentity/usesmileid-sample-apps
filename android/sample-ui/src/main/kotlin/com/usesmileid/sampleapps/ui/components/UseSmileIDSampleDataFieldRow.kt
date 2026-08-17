@@ -53,7 +53,6 @@ fun UseSmileIDSampleDataFieldRow(
             verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs),
         ) {
             Text(
-                // Both are 13 in the design, where the generated pair is 12 and 14.
                 text = label,
                 style = UseSmileIDSampleTheme.type.dataFieldLabelFont.copy(fontSize = FIELD_TEXT_SIZE),
                 color = UseSmileIDSampleTheme.colors.dataField.label,
@@ -90,5 +89,4 @@ private fun CopyButton(label: String, onCopy: () -> Unit, testId: String?) {
     }
 }
 
-/** 13 in the design for both the label and the value. */
 private val FIELD_TEXT_SIZE = 13.sp

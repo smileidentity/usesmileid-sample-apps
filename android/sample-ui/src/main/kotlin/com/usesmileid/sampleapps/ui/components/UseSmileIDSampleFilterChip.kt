@@ -48,8 +48,7 @@ fun UseSmileIDSampleFilterChip(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                // The design's chip label is 12.5/700; filterChipFont is 14/400 — see spec/design-tokens.json → deltas.
-                text = label,
+                    text = label,
                 style = UseSmileIDSampleTheme.type.filterChipFont.copy(
                     fontSize = CHIP_LABEL_SIZE,
                     fontWeight = FontWeight.Bold,
@@ -66,6 +65,5 @@ fun UseSmileIDSampleFilterChip(
     }
 }
 
-/** 12.5 and 11 in the design; no type token carries either. */
 private val CHIP_LABEL_SIZE = 12.5.sp
 private val CHIP_COUNT_SIZE = 11.sp

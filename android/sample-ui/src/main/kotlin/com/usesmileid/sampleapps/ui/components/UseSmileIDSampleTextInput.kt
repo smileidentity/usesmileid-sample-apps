@@ -38,7 +38,7 @@ fun UseSmileIDSampleTextInput(
     errorMessage: String? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     testId: String? = null,
-    /** The design leads each new-profile field with a 17 glyph. */
+    /** The leading glyph the new-profile fields carry. */
     leading: @Composable ((Color) -> Unit)? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -125,5 +125,4 @@ fun UseSmileIDSampleTextInput(
     }
 }
 
-/** 17 in the design. */
 private val LEADING_SIZE = 17.dp

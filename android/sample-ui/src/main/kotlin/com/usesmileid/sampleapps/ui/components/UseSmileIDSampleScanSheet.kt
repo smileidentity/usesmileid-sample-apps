@@ -55,8 +55,7 @@ fun UseSmileIDSampleScanSheet(
             Surface(
                 modifier = Modifier.fillMaxWidth().testTag(UseSmileIDSampleTestIds.TOKEN_MANUAL_ENTRY),
                 shape = RoundedCornerShape(SmileDimens.radiusField),
-                // surface-2 in the design; surface-alt is the warm cream.
-                color = smileSurface2,
+                    color = smileSurface2,
                 border = BorderStroke(SmileDimens.borderWidthHairline, colors.border),
             ) {
                 FlowRow(
@@ -101,6 +100,5 @@ fun UseSmileIDSampleScanSheet(
     }
 }
 
-/** 13.5 and 13 in the design. */
 private val SHEET_TEXT_SIZE = 13.5.sp
 private val SHEET_ACTION_SIZE = 13.sp

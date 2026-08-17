@@ -60,7 +60,6 @@ fun ProfilesScreen(
                 UseSmileIDSampleProfileRow(
                     avatarColor = avatarColorForProfile(profiles.indexOf(profile)),
                     organisation = profile.organisation,
-                    // The design marks the active profile in its supporting line, not with a check.
                     supportingText = if (profile.id == activeId) profile.person + ACTIVE_SUFFIX else profile.person,
                     initials = profile.initials,
                     selected = false,
@@ -115,10 +114,7 @@ private fun androidx.compose.foundation.lazy.LazyListScope.items(
     row: @Composable (UseSmileIDSampleProfile) -> Unit,
 ) = profiles.forEach { profile -> item(key = profile.id) { row(profile) } }
 
-/**
- * The last row of the list: no card and no border, a pale primary tile with a plus. `primary-soft` has
- * no token of its own and resolves to the same value as the generated soft info ground.
- */
+/** The last row: no card and no border, a pale primary tile with a plus. */
 @Composable
 private fun CreateProfileRow(onClick: () -> Unit, modifier: Modifier = Modifier) {
     val colors = UseSmileIDSampleTheme.colors
@@ -155,10 +151,9 @@ private fun CreateProfileRow(onClick: () -> Unit, modifier: Modifier = Modifier)
     }
 }
 
-/** The design appends this to the active profile's supporting line. */
+/** Appended to the active profile's supporting line. */
 private const val ACTIVE_SUFFIX = " \u00b7 active"
 
-/** 14, 12 and 14.5 in the design; no token carries them. */
 private val CREATE_PADDING_X = 14.dp
 private val CREATE_TILE_RADIUS = 12.dp
 private val CREATE_TITLE_SIZE = 14.5.sp

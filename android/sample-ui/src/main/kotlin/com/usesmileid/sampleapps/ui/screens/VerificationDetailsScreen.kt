@@ -86,8 +86,7 @@ fun VerificationDetailsScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            // 16/700 in the design — the title style, not the 18/600 section heading.
-                            text = job.product.label,
+                                    text = job.product.label,
                             style = UseSmileIDSampleTheme.type.textStyleTitle,
                             color = UseSmileIDSampleTheme.colors.textTitle,
                             modifier = Modifier.weight(1f),
@@ -114,8 +113,7 @@ fun VerificationDetailsScreen(
                                 DetailRow("createdAt", "Created_at", job.createdAtLabel())
                                 DetailRow("jobId", "Job_id", job.shortId, onCopy = { onCopy(job.id) })
                                 DetailRow("message", "Message", job.message)
-                                // The design colours this by the HTTP outcome, not the job verdict: a
-                                // blocked job still shows a green 200, because the call did succeed.
+                                // Coloured by the HTTP outcome, not the verdict: a blocked job still shows a green 200.
                                 DetailRow("status", "Status", job.httpStatus, valueColor = job.httpStatusColor())
                                 DetailRow("userId", "User_id", job.shortUserId, onCopy = { onCopy(job.userId) })
                             }
@@ -152,10 +150,7 @@ private fun DetailRow(
     )
 }
 
-/**
- * Green while the call itself succeeded, red once it did not — the design only draws the 2xx case.
- * A blank status is neither, and colouring it red would invent a failure.
- */
+/** Green while the call succeeded, red once it did not. A blank status is neither: colouring it red would invent a failure. */
 @Composable
 private fun UseSmileIDSampleJob.httpStatusColor(): Color? {
     val code = httpStatus.trimStart()

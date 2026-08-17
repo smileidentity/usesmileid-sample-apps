@@ -67,8 +67,7 @@ fun UseSmileIDSampleSelectionBar(
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs),
             ) {
                 Text(
-                    // 14/700 in the design; textStyleBodyStrong is 16/600.
-                    text = "$selectedCount selected",
+                        text = "$selectedCount selected",
                     style = UseSmileIDSampleTheme.type.textStyleBodyStrong.copy(
                         fontSize = COUNT_SIZE,
                         fontWeight = FontWeight.Bold,
@@ -87,10 +86,7 @@ fun UseSmileIDSampleSelectionBar(
     }
 }
 
-/**
- * The soft error pair, dimmed rather than recoloured when disabled — the design keeps the same fill
- * and drops it to 45%, so a disabled Remove still reads as the destructive action.
- */
+/** The soft error pair, dimmed rather than recoloured when disabled, so a disabled Remove still reads as destructive. */
 @Composable
 private fun RemoveAction(enabled: Boolean, onRemove: () -> Unit) {
     val colors = UseSmileIDSampleTheme.colors
@@ -126,7 +122,6 @@ private fun RemoveAction(enabled: Boolean, onRemove: () -> Unit) {
     }
 }
 
-/** 14, 11.5, 13.5 and 45% in the design; no token carries any of them. */
 private val COUNT_SIZE = 14.sp
 private val HINT_SIZE = 11.5.sp
 private val REMOVE_SIZE = 13.5.sp

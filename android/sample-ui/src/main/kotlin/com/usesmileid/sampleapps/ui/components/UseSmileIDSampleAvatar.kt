@@ -17,12 +17,7 @@ import com.smileid.designsystem.SmileDimens
 import com.smileid.designsystem.smileProfileHues
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * Initials in a rounded square, or a placeholder when there are none. The size scales with the font
- * scale, because wrapping the initials instead renders an ellipse at 2x.
- *
- * The fill defaults to one drawn from the initials, so two profiles never look alike.
- */
+/** Initials in a rounded square, or a placeholder without them. The size scales with the font scale, because wrapping the initials renders an ellipse at 2x. */
 @Composable
 fun UseSmileIDSampleAvatar(
     initials: String,
@@ -34,7 +29,6 @@ fun UseSmileIDSampleAvatar(
     val diameter = size * LocalDensity.current.fontScale
     Surface(
         modifier = modifier.size(diameter),
-        // A rounded square, which is what the design draws — not a circle.
         shape = RoundedCornerShape(AVATAR_RADIUS),
         color = if (hasInitials) containerColor else UseSmileIDSampleTheme.colors.avatar.placeholderBackground,
     ) {
@@ -53,13 +47,8 @@ fun UseSmileIDSampleAvatar(
     }
 }
 
-/**
- * The design's avatar fill for a profile at [profileIndex] in the list, cycled beyond the three it
- * supplies. Position, not a hash of the initials: the design colours the FIRST profile navy, the
- * second green and the third amber, which no hash reproduces.
- */
+/** The avatar fill for a profile at [profileIndex], cycled. Position, not a hash of the initials, which reproduces no design order. */
 fun avatarColorForProfile(profileIndex: Int): Color =
     smileProfileHues[profileIndex.coerceAtLeast(0) % smileProfileHues.size]
 
-/** 12 in the design. */
 private val AVATAR_RADIUS = 12.dp

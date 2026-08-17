@@ -49,11 +49,9 @@ fun UseSmileIDSampleOptionRow(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (leadingText != null) {
-                // 19 in the design — a flag emoji, deliberately larger than the label beside it.
                 Text(text = leadingText, style = UseSmileIDSampleTheme.type.textStyleBody.copy(fontSize = FLAG_SIZE))
             }
             Text(
-                // Body Strong in the design, at its real 14 rather than the token source's 16.
                 text = label,
                 style = UseSmileIDSampleTheme.type.textStyleBodyStrong.copy(fontSize = OPTION_LABEL_SIZE),
                 color = colors.textTitle,
@@ -68,6 +66,5 @@ fun UseSmileIDSampleOptionRow(
     }
 }
 
-/** 19 and 14 in the design; no token carries either. */
 private val FLAG_SIZE = 19.sp
 private val OPTION_LABEL_SIZE = 14.sp

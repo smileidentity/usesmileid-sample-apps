@@ -78,7 +78,6 @@ fun ProfileConfigScreen(
             }
         }
         UseSmileIDSampleButton(
-            // The design's CTA on a profile that is not the active one.
             text = "Make this profile active",
             onClick = onSave,
             modifier = Modifier.padding(SmileDimens.spacingMd),
@@ -87,10 +86,7 @@ fun ProfileConfigScreen(
     }
 }
 
-/**
- * The new-profile sheet: a profile name, then the four user details that will live under it. Create
- * stays disabled until the name and both required names are present.
- */
+/** A profile name, then the four user details that will live under it. Create needs the name and both required names. */
 @Composable
 fun NewProfileSheet(
     name: String,

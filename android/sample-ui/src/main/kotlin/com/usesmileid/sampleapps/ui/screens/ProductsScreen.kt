@@ -47,7 +47,7 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 data class UseSmileIDSampleProductsState(
     val environment: UseSmileIDSampleEnvironment,
     val initials: String,
-    /** The active profile's avatar hue, so the header, the settings summary and the list agree. */
+    /** The active profile's avatar hue, so every screen showing it agrees. */
     val avatarColor: Color = smileProfileHues.first(),
     val sessionId: String? = null,
     val sessionRemaining: String? = null,

@@ -87,8 +87,7 @@ fun UseSmileIDSampleJobRow(
                     text = product.label,
                     style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
                     color = colors.card.title,
-                    // The design elides a long name onto one line, but only at the scale it was drawn
-                    // at: enlarged type wraps instead, because hiding it would fail the no-clipping rule.
+                    // One line at the design's scale; enlarged type wraps, because eliding it would clip.
                     maxLines = if (LocalDensity.current.fontScale > 1f) Int.MAX_VALUE else 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -103,7 +102,6 @@ fun UseSmileIDSampleJobRow(
     }
 }
 
-/** 36, 10 and 18 in the design; no token carries them — see spec/design-tokens.json → deltas. */
 private val TILE_SIZE = 36.dp
 private val TILE_RADIUS = 10.dp
 private val TILE_ICON_SIZE = 18.dp

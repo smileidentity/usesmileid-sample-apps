@@ -51,5 +51,4 @@ fun UseSmileIDSampleSelectionCheckbox(
     }
 }
 
-/** 11 in the design; no icon-size token carries it. */
 private val CHECK_SIZE = 11.dp

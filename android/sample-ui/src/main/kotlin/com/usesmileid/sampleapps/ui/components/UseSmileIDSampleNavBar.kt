@@ -68,8 +68,7 @@ fun UseSmileIDSampleNavBar(
     sessionProgress: Float? = null,
 ) {
     Row(
-        // Spans the width between its margins, as the design pins it left-16 to right-16. Edge to
-        // edge, so without its own inset the bar sits under the system navigation bar.
+        // Edge to edge, so without its own inset the bar sits under the system navigation bar.
         modifier = modifier
             .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.navigationBars)
@@ -78,11 +77,10 @@ fun UseSmileIDSampleNavBar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Surface(
-            // Takes every remaining pixel; the token keeps its fixed width beside it.
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(SmileDimens.radiusPill),
             color = UseSmileIDSampleTheme.colors.surface,
-            // The design floats the tabs on a shadow with no outline; only the token is outlined.
+            // A shadow with no outline; only the token is outlined.
             shadowElevation = BAR_ELEVATION,
         ) {
             Row(
@@ -90,7 +88,6 @@ fun UseSmileIDSampleNavBar(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 UseSmileIDSampleNavItem.entries.forEach { item ->
-                    // Equal thirds, so the three labels centre under their icons at any width.
                     NavBarTab(
                         item = item,
                         selected = item == selected,
@@ -198,7 +195,6 @@ private fun NavBarTab(
     ) {
         UseSmileIDSampleIcon(id = item.icon, tint = tint, size = TAB_ICON_SIZE)
         Text(
-            // textStyleOverline, not tabFont: the design's tab label is 10/700, which is the overline style.
             text = item.label,
             style = UseSmileIDSampleTheme.type.textStyleOverline,
             color = tint,
@@ -207,14 +203,11 @@ private fun NavBarTab(
     }
 }
 
-/** The design floats both halves of the bar on an 8-blur shadow. */
 private val BAR_ELEVATION = SmileDimens.space8
 
-/** 68 outer around a 58 button means 5 of bleed a side, and the ring is 4.08 thick. */
 private val RING_BLEED = 5.dp
 private val RING_THICKNESS = 4.dp
 
-/** 21, 58 and 8.5 in the design; no token carries any of them — see spec/design-tokens.json → deltas. */
 private val TAB_ICON_SIZE = 21.dp
 private val TOKEN_SIZE = 58.dp
 private val TOKEN_LABEL_SIZE = 8.5.sp

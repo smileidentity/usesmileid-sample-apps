@@ -44,8 +44,7 @@ fun UseSmileIDSampleBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = modifier.publishTestTags().tagged(testId),
-        // Opens at its content's height rather than half the screen: the partially-expanded state
-        // truncated the five-field new-profile sheet and left its CTA below the fold.
+        // Content height, not half the screen: at half, the five-field sheet left its CTA below the fold.
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         shape = RoundedCornerShape(topStart = SmileDimens.radiusSheet, topEnd = SmileDimens.radiusSheet),
         containerColor = UseSmileIDSampleTheme.colors.surface,
@@ -64,7 +63,6 @@ fun UseSmileIDSampleBottomSheet(
         ) {
             if (title != null) {
                 Text(
-                    // 18/700 in the design; the section-heading style is 18/600.
                     text = title,
                     style = UseSmileIDSampleTheme.type.textStyleHeadingSection.copy(fontWeight = FontWeight.Bold),
                     color = UseSmileIDSampleTheme.colors.textTitle,
@@ -100,9 +98,7 @@ fun UseSmileIDSampleFullHeightBottomSheet(
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
-                // A sheet header is its own pattern: 20 margins and a LEFT-aligned 16/700 title beside
-                // the back control, where a pushed screen uses 16 margins and centres a 15/700 title.
-                // Both are pinned so a title never shifts as you move between screens.
+                // A sheet header is its own pattern: wider margins, and the title left of the back control.
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = SHEET_MARGIN, vertical = SmileDimens.spacingXs),
@@ -157,6 +153,5 @@ private fun GrabHandle() {
     }
 }
 
-/** 20 and 10 in the design; no token carries either. */
 private val SHEET_MARGIN = 20.dp
 private val SHEET_HEADER_GAP = 10.dp

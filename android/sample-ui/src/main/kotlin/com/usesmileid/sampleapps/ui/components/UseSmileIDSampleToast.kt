@@ -28,8 +28,7 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 /**
  * A snackbar: a dark bar with a message and an underlined action, spanning the width it is given.
  *
- * Keeps the `sample_toast*` ids the spec assigns, because the design node is named "toast" even
- * though it is drawn as a snackbar — renaming would churn the spec, the flows and four apps.
+ * Keeps the `sample_toast*` ids: the design node is named "toast", and renaming would churn four apps.
  */
 @Composable
 fun UseSmileIDSampleToast(
@@ -44,7 +43,6 @@ fun UseSmileIDSampleToast(
             .defaultMinSize(minHeight = SmileDimens.sizeControlMd)
             .testTag(UseSmileIDSampleTestIds.TOAST),
         shape = RoundedCornerShape(SNACKBAR_RADIUS),
-        // Inverted: the design draws this on the title colour with background-coloured text.
         color = UseSmileIDSampleTheme.colors.textTitle,
         shadowElevation = SNACKBAR_ELEVATION,
     ) {
@@ -90,7 +88,6 @@ fun UseSmileIDSampleToast(
     }
 }
 
-/** 14, 13 and the drop shadow in the design; no token carries them. */
 private val SNACKBAR_RADIUS = 14.dp
 private val SNACKBAR_TEXT_SIZE = 13.sp
 private val SNACKBAR_ELEVATION = 10.dp

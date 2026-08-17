@@ -38,9 +38,7 @@ fun UseSmileIDSampleTopAppBar(
     action: @Composable (() -> Unit)? = null,
 ) {
     Row(
-        // A FIXED row height at the design's scale, so the title, the back control and any trailing
-        // action land on the same line on every screen. A minimum height instead lets a longer title
-        // grow the bar, and the header then sits lower on some screens than others.
+        // A fixed row height, so a longer title cannot grow the bar and drop the header on one screen.
         modifier = modifier
             .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.statusBars)
@@ -59,7 +57,6 @@ fun UseSmileIDSampleTopAppBar(
 
         Text(
             text = title,
-            // 15/700 in the design, where textStyleTitle is 16 — and centred between the two controls.
             style = UseSmileIDSampleTheme.type.textStyleTitle.copy(fontSize = TITLE_SIZE),
             color = UseSmileIDSampleTheme.colors.textTitle,
             textAlign = TextAlign.Center,
@@ -104,8 +101,6 @@ fun UseSmileIDSampleTopAppBarButton(
     }
 }
 
-/** 15 in the design; textStyleTitle is 16. */
 private val TITLE_SIZE = 15.sp
 
-/** The design's header row is 40 tall above an 8 gap, on every pushed screen. */
 private val HEADER_ROW_HEIGHT = 40.dp

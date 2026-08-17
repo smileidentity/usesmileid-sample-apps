@@ -69,8 +69,7 @@ fun UserDetailsScreen(
                     ) {
                         Column {
                             UseSmileIDSampleUserField.entries.forEachIndexed { index, field ->
-                                // The design separates the rows with a rule rather than spacing them apart.
-                                if (index > 0) {
+                                                    if (index > 0) {
                                     HorizontalDivider(
                                         thickness = SmileDimens.borderWidthHairline,
                                         color = UseSmileIDSampleTheme.colors.card.border,
@@ -92,7 +91,6 @@ fun UserDetailsScreen(
             item {
                 Text(
                     text = if (details.isComplete) "Tap any field to edit." else "First and last name are required.",
-                    // Caption in the design (12/500), not the 14/400 small-body style.
                     style = UseSmileIDSampleTheme.type.textStyleCaption,
                     color = UseSmileIDSampleTheme.colors.textMuted,
                     modifier = Modifier
@@ -111,8 +109,7 @@ fun UserDetailsScreen(
                         color = UseSmileIDSampleTheme.colors.surface,
                         border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.card.border),
                     ) {
-                        // One line of body text beside the switch — the design gives this row no icon
-                        // and no supporting line, so it is not a SettingRow.
+                        // One line of body text beside the switch: no icon and no supporting line, so not a SettingRow.
                         Row(
                             modifier = Modifier.padding(
                                 start = SmileDimens.spacingMd,
@@ -150,5 +147,4 @@ fun UserDetailsScreen(
     }
 }
 
-/** 13.5 in the design. */
 private val REMEMBER_TEXT_SIZE = 13.5.sp

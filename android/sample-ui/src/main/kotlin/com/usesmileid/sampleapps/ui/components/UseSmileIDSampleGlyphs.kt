@@ -6,13 +6,7 @@ import androidx.compose.ui.unit.Dp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.R
 
-/**
- * The icons the design set does not supply, taken from Material Symbols Outlined 400 rather than
- * drawn by hand: a `Canvas` approximation drifts from the real glyph and cannot be reviewed.
- *
- * The design's own exports live in [UseSmileIDSampleIcons] and are not interchangeable with these —
- * they are stroke-based, so mixing the two families in one row reads as a mistake.
- */
+/** The icons the design supplies nowhere, from Material Symbols Outlined 400. Not interchangeable with the design's stroke-based set in [UseSmileIDSampleIcons]. */
 @Composable
 fun ChevronRightGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) =
     UseSmileIDSampleIcon(id = R.drawable.sample_ic_chevron_right, tint = tint, size = size)

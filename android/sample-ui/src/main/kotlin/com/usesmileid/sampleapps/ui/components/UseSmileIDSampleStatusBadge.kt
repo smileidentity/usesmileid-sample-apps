@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/** The four job statuses, in the design's vocabulary — Title case, as the design sets them. */
+/** The four job statuses, Title case as the design sets them. */
 enum class UseSmileIDSampleStatus(val label: String) {
     Clear("Clear"),
     Attention("Attention"),
@@ -45,7 +45,6 @@ private fun StatusPill(
     testId: String?,
 ) {
     Text(
-        // The design's badge text is the 11/700 label style, not badgeFont's 10/700 — spec/design-tokens.json → deltas.
         text = label,
         style = UseSmileIDSampleTheme.type.textStyleOverline.copy(fontSize = BADGE_TEXT_SIZE),
         color = foreground,
@@ -56,5 +55,4 @@ private fun StatusPill(
     )
 }
 
-/** 11 in the design; no type token carries it. */
 private val BADGE_TEXT_SIZE = 11.sp

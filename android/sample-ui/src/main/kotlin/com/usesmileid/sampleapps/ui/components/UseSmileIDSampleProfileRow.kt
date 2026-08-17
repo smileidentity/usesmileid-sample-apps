@@ -34,8 +34,7 @@ fun UseSmileIDSampleProfileRow(
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    // The same default the avatar itself has: a second one made the settings summary and the
-    // profiles list draw the same profile in two different colours.
+    // The same default the avatar has: a second one drew one profile in two colours.
     avatarColor: Color = smileProfileHues.first(),
     testId: String? = null,
     trailing: @Composable (() -> Unit)? = null,
@@ -67,7 +66,6 @@ fun UseSmileIDSampleProfileRow(
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs),
             ) {
                 Text(
-                    // 14.5/600 in the design, where Body Strong is 16.
                     text = organisation,
                     style = UseSmileIDSampleTheme.type.textStyleBodyStrong.copy(fontSize = ROW_TITLE_SIZE),
                     color = colors.textTitle,
@@ -89,6 +87,5 @@ fun UseSmileIDSampleProfileRow(
     }
 }
 
-/** 14 and 14.5 in the design; no token carries either. */
 private val ROW_PADDING_X = 14.dp
 private val ROW_TITLE_SIZE = 14.5.sp

@@ -45,7 +45,6 @@ fun UseSmileIDSampleKeyValueEditRow(
         itemVerticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            // The design puts the field name in the title colour; only the placeholder is muted.
             text = if (required) "$label *" else label,
             style = UseSmileIDSampleTheme.type.textStyleBody.copy(fontSize = ROW_TEXT_SIZE),
             color = colors.textTitle,
@@ -77,5 +76,4 @@ fun UseSmileIDSampleKeyValueEditRow(
     }
 }
 
-/** 13.5 in the design for the field name, its value and its placeholder alike. */
 private val ROW_TEXT_SIZE = 13.5.sp

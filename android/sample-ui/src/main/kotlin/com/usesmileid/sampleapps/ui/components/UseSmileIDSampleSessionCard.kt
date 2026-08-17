@@ -40,7 +40,7 @@ fun UseSmileIDSampleSessionCard(
     Surface(
         modifier = modifier.fillMaxWidth().testTag(UseSmileIDSampleTestIds.SESSION_CARD),
         shape = RoundedCornerShape(SmileDimens.radiusSurface),
-        // A horizontal gradient in the token session's own green — not the flat feedback-success fill.
+        // The token session's own green, not the flat feedback-success fill.
         color = Color.Transparent,
     ) {
         Box(modifier = Modifier.background(Brush.horizontalGradient(smileTokenSessionGradient))) {
@@ -57,7 +57,6 @@ fun UseSmileIDSampleSessionCard(
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs),
             ) {
                 Text(
-                    // 10/700 at 1.0 tracking in the design.
                     text = "ACTIVE TOKEN SESSION",
                     style = UseSmileIDSampleTheme.type.textStyleOverline.copy(letterSpacing = LABEL_TRACKING),
                     color = colors.surface,
@@ -70,7 +69,6 @@ fun UseSmileIDSampleSessionCard(
             }
             Text(
                 text = remaining,
-                // 24/700, the design's numeric style.
                 style = UseSmileIDSampleTheme.type.textStyleHeadingCard.copy(fontSize = COUNTDOWN_SIZE),
                 color = colors.surface,
                 modifier = Modifier.testTag(UseSmileIDSampleTestIds.SESSION_COUNTDOWN),
@@ -133,7 +131,6 @@ fun UseSmileIDSampleSessionEndedBanner(
     }
 }
 
-/** 1.0 tracking, 15 and 24 in the design; no token carries them. */
 private val LABEL_TRACKING = 1.sp
 private val SESSION_TITLE_SIZE = 15.sp
 private val COUNTDOWN_SIZE = 24.sp

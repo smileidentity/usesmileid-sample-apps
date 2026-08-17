@@ -50,8 +50,7 @@ fun UseSmileIDSampleSettingRow(
     ) {
         if (leading != null) {
             Surface(
-                // 38 at radius 11 over surface-2 in the design — surface-alt is a warm cream, not this grey.
-                modifier = Modifier.size(TILE_SIZE),
+                    modifier = Modifier.size(TILE_SIZE),
                 shape = RoundedCornerShape(TILE_RADIUS),
                 color = smileSurface2,
             ) {
@@ -69,7 +68,6 @@ fun UseSmileIDSampleSettingRow(
             )
             if (supportingText != null) {
                 Text(
-                    // Caption (12/500) in the design, not the 14/400 small-body style.
                     text = supportingText,
                     style = UseSmileIDSampleTheme.type.textStyleCaption,
                     color = colors.textMuted,
@@ -80,12 +78,12 @@ fun UseSmileIDSampleSettingRow(
     }
 }
 
-/** The trailing chevron that says the row pushes a screen; 14 in the design. */
+/** The trailing chevron that says the row pushes a screen. */
 @Composable
 fun UseSmileIDSampleSettingRowChevron() =
     ChevronRightGlyph(tint = UseSmileIDSampleTheme.colors.textMuted, size = CHEVRON_SIZE)
 
-/** The rule the design draws between rows inside one section card. */
+/** The rule between rows inside one section card. */
 @Composable
 fun UseSmileIDSampleSettingRowDivider() = HorizontalDivider(
     thickness = SmileDimens.borderWidthHairline,
@@ -125,7 +123,6 @@ fun UseSmileIDSampleDestructiveRow(
     }
 }
 
-/** 38, 11 and 14 in the design; no token carries them. */
 private val TILE_SIZE = 38.dp
 private val TILE_RADIUS = 11.dp
 private val CHEVRON_SIZE = 14.dp
