@@ -88,3 +88,6 @@ val smileSoftBadgeFills: Map<String, SmileSoftBadgeFill> = mapOf(
         text = Color(0xFFA11209),
     ),
 )
+
+/** The design's `color/border-strong`, for a control ring that `color.border` is too pale to draw. */
+val smileBorderStrong: Color = Color(0xFFC2C5CB)

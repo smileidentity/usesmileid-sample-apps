@@ -23,6 +23,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
@@ -36,8 +41,16 @@ fun UseSmileIDSampleSelectionBar(
     modifier: Modifier = Modifier,
 ) {
     val colors = UseSmileIDSampleTheme.colors
+    val edge = colors.border
     Surface(
-        modifier = modifier.fillMaxWidth().testTag(UseSmileIDSampleTestIds.SELECTION_BAR),
+        modifier = modifier
+            .fillMaxWidth()
+            .testTag(UseSmileIDSampleTestIds.SELECTION_BAR)
+            // A top edge only, so a Surface border is wrong — that would outline all four sides.
+            .drawBehind {
+                val stroke = EDGE_WIDTH.toPx()
+                drawLine(edge, Offset(0f, stroke / 2f), Offset(size.width, stroke / 2f), stroke)
+            },
         color = colors.surface,
     ) {
         FlowRow(
@@ -54,14 +67,18 @@ fun UseSmileIDSampleSelectionBar(
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs),
             ) {
                 Text(
+                    // 14/700 in the design; textStyleBodyStrong is 16/600.
                     text = "$selectedCount selected",
-                    style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
+                    style = UseSmileIDSampleTheme.type.textStyleBodyStrong.copy(
+                        fontSize = COUNT_SIZE,
+                        fontWeight = FontWeight.Bold,
+                    ),
                     color = colors.textTitle,
                     modifier = Modifier.testTag(UseSmileIDSampleTestIds.SELECTION_COUNT),
                 )
                 Text(
                     text = if (selectedCount == 0) "Tap rows to select" else "Tap Remove to confirm",
-                    style = UseSmileIDSampleTheme.type.textStyleBodySm,
+                    style = UseSmileIDSampleTheme.type.textStyleBodySm.copy(fontSize = HINT_SIZE),
                     color = colors.textMuted,
                 )
             }
@@ -70,19 +87,22 @@ fun UseSmileIDSampleSelectionBar(
     }
 }
 
-/** Saturated fill with its on-colour until the soft red lands: the `badge.error.*` pair draws red on red. */
+/**
+ * The soft error pair, dimmed rather than recoloured when disabled — the design keeps the same fill
+ * and drops it to 45%, so a disabled Remove still reads as the destructive action.
+ */
 @Composable
 private fun RemoveAction(enabled: Boolean, onRemove: () -> Unit) {
     val colors = UseSmileIDSampleTheme.colors
-    val tint = if (enabled) colors.onError else colors.textMuted
     Surface(
         onClick = onRemove,
         enabled = enabled,
         modifier = Modifier
             .semantics { role = Role.Button }
-            .testTag(UseSmileIDSampleTestIds.SELECTION_REMOVE),
+            .testTag(UseSmileIDSampleTestIds.SELECTION_REMOVE)
+            .alpha(if (enabled) 1f else DISABLED_ALPHA),
         shape = RoundedCornerShape(SmileDimens.radiusControl),
-        color = if (enabled) colors.errorFill else colors.surfaceMuted,
+        color = colors.badge.errorBackground,
     ) {
         Row(
             modifier = Modifier
@@ -91,14 +111,24 @@ private fun RemoveAction(enabled: Boolean, onRemove: () -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(modifier = Modifier.size(SmileDimens.sizeIconMd), contentAlignment = Alignment.Center) {
-                TrashGlyph(tint = tint)
+            Box(modifier = Modifier.size(SmileDimens.sizeIconSm), contentAlignment = Alignment.Center) {
+                TrashGlyph(tint = colors.badge.errorText)
             }
             Text(
                 text = "Remove",
-                style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
-                color = tint,
+                style = UseSmileIDSampleTheme.type.textStyleBodyStrong.copy(
+                    fontSize = REMOVE_SIZE,
+                    fontWeight = FontWeight.Bold,
+                ),
+                color = colors.badge.errorText,
             )
         }
     }
 }
+
+/** 14, 11.5, 13.5 and 45% in the design; no token carries any of them. */
+private val COUNT_SIZE = 14.sp
+private val HINT_SIZE = 11.5.sp
+private val REMOVE_SIZE = 13.5.sp
+private val EDGE_WIDTH = SmileDimens.borderWidthHairline
+private const val DISABLED_ALPHA = 0.45f

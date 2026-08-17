@@ -260,6 +260,16 @@ class TestProductHues(unittest.TestCase):
         with self.assertRaises(gen.TokenError):
             gen.emit_kotlin_soft_badge_fills(fills)
 
+    def test_border_strong_emits_an_opaque_colour(self):
+        self.assertIn("val smileBorderStrong: Color = Color(0xFF", gen.emit_kotlin_border_strong(gen.read_border_strong()))
+
+    def test_border_strong_without_a_value_fails_loudly(self):
+        with self.assertRaises(gen.TokenError):
+            gen.emit_kotlin_border_strong("")
+
+    def test_border_strong_is_not_the_pale_semantic_border(self):
+        self.assertNotEqual(gen.read_border_strong().upper(), "#EAECF0")
+
     def test_the_soft_fills_are_not_the_saturated_design_system_pairs(self):
         fills = gen.read_soft_badge_fills()
         self.assertNotEqual(fills["warning"]["background"].upper(), "#FF9B00")

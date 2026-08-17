@@ -219,6 +219,16 @@
       "finding": "The design file paints an unselected chip's count in muted grey; the design system's filter-chip.value is a mid blue. Both agree the selected chip's count is primary-ink. Reported in review 2026-08-17 as part of 'the chip text style doesn't match' — the type style was a real mismatch and is fixed; this colour is a genuine source disagreement, so it is recorded rather than patched.",
       "recommendation": "Owner ruling. The design system wins by the precedence rule, so the blue ships until someone says otherwise — but the design file is what a reviewer compares against, so this will be re-reported until one side moves.",
       "status": "OPEN 2026-08-17 — needs an owner ruling; NOT locally patched"
+    },
+    {
+      "id": "borderStrong",
+      "severity": "blocks the selection checkbox's unselected ring on all four apps",
+      "figma": { "color/border-strong": "#C2C5CB" },
+      "designSystem": { "semantic": "absent — the value exists only as the primitive color.grey.400" },
+      "value": "#C2C5CB",
+      "finding": "The design draws an unselected selection checkbox as a 2px ring in color/border-strong. The design system carries exactly one semantic border, color.border #EAECF0, which is far too light for a 2px control ring — which is why the app's checkbox read as barely-there against the design. The value exists upstream only as color.grey.400, and consuming a primitive is a review failure by AGENTS.md.",
+      "recommendation": "Add a semantic border-strong (or control-border) role to the design system. Generated from here meanwhile, exactly as softBadgeFills is, so no component references a primitive.",
+      "status": "OPEN 2026-08-17 — generated stopgap in place; delete the generated value once the design system carries the role"
     }
   ],
   "perPlatform": {

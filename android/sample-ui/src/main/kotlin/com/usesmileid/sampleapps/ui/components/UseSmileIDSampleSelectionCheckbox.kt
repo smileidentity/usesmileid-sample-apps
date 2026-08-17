@@ -11,7 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.smileBorderStrong
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** The select-mode checkbox. Circular rather than a rounded square, which is the design's correction. */
@@ -34,16 +36,20 @@ fun UseSmileIDSampleSelectionCheckbox(
             modifier = Modifier
                 .size(SmileDimens.sizeIconLg)
                 .border(
-                    width = SmileDimens.borderWidthThin,
-                    color = if (checked) colors.primary else colors.border,
+                    // A 2px ring in border-strong: color.border is far too pale to read as a control.
+                    width = SmileDimens.borderWidthThick,
+                    color = if (checked) colors.primary else smileBorderStrong,
                     shape = CircleShape,
                 ),
             shape = CircleShape,
             color = if (checked) colors.primary else colors.surface,
         ) {
             Box(contentAlignment = Alignment.Center) {
-                if (checked) CheckGlyph(tint = colors.onPrimary, size = SmileDimens.sizeIconSm)
+                if (checked) CheckGlyph(tint = colors.onPrimary, size = CHECK_SIZE)
             }
         }
     }
 }
+
+/** 11 in the design; no icon-size token carries it. */
+private val CHECK_SIZE = 11.dp
