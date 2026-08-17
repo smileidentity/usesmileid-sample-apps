@@ -58,9 +58,10 @@ fun UseSmileIDSampleShell() {
     val navigator = navController.rememberDestinationsNavigator()
     val destination by navController.currentDestinationAsState()
     val selectedTab = destination?.tab()
-    // The bar animating away still needs a selected tab to draw.
+    // The bar animating away still needs a selected tab to draw, and it is only ever written with a
+    // real one — writing state straight from the composition body is what makes a value get skipped.
     var lastTab by remember { mutableStateOf(UseSmileIDSampleNavItem.Products) }
-    if (selectedTab != null) lastTab = selectedTab
+    LaunchedEffect(selectedTab) { lastTab = selectedTab ?: lastTab }
 
     ForwardNewIntentsTo(navController)
     AutostartFlowOnce(navigator)

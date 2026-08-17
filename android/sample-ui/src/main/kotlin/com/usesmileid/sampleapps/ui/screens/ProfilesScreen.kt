@@ -29,6 +29,7 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.PlusGlyph
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleBottomSheet
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProfileRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRow
@@ -56,9 +57,9 @@ fun ProfilesScreen(
             contentPadding = contentPadding,
             verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
         ) {
-            items(profiles) { profile ->
+            items(profiles) { index, profile ->
                 UseSmileIDSampleProfileRow(
-                    avatarColor = avatarColorForProfile(profiles.indexOf(profile)),
+                    avatarColor = avatarColorForProfile(index),
                     organisation = profile.organisation,
                     supportingText = if (profile.id == activeId) profile.person + ACTIVE_SUFFIX else profile.person,
                     initials = profile.initials,
@@ -95,9 +96,9 @@ fun ProfileSwitchSheet(
         title = "Switch profile",
         testId = UseSmileIDSampleTestIds.PROFILE_SWITCH_SHEET,
     ) {
-        profiles.forEach { profile ->
+        profiles.forEachIndexed { index, profile ->
             UseSmileIDSampleProfileRow(
-                avatarColor = avatarColorForProfile(profiles.indexOf(profile)),
+                avatarColor = avatarColorForProfile(index),
                 organisation = profile.organisation,
                 supportingText = profile.person,
                 initials = profile.initials,
@@ -111,8 +112,8 @@ fun ProfileSwitchSheet(
 
 private fun androidx.compose.foundation.lazy.LazyListScope.items(
     profiles: List<UseSmileIDSampleProfile>,
-    row: @Composable (UseSmileIDSampleProfile) -> Unit,
-) = profiles.forEach { profile -> item(key = profile.id) { row(profile) } }
+    row: @Composable (Int, UseSmileIDSampleProfile) -> Unit,
+) = profiles.forEachIndexed { index, profile -> item(key = profile.id) { row(index, profile) } }
 
 /** The last row: no card and no border, a pale primary tile with a plus. */
 @Composable

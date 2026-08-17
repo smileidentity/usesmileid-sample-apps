@@ -104,4 +104,14 @@ Status: `todo` · `wip` · `done` · `design` (needs a design answer) · `owner`
 | F50 | Nothing renders behind a sheet's scrim, where the design shows the screen it covers | **OPEN** — a sheet route replaces the destination under it. The fix is to present sheet routes over the current destination; deferred rather than attempted late, because it touches all five sheets, their goldens and their flows |
 | F51 | The verifications list has a pull-to-refresh hotspot and a `refreshing` state in the design | **OPEN** — not implemented on any platform; needs a ruling on what "refresh" means for an in-memory list before it is built |
 
+### Review feedback on the PR — 2026-08-18
+
+| ID | Item | Status |
+|---|---|---|
+| F52 | Consuming the store's created signal cancelled the timer that clears the confirmation, so it stayed up for the life of the screen | done — the window is its own effect, keyed on the captured id rather than on the store field the first effect clears |
+| F53 | Two removals of the same size did not restart the undo window, so Undo could restore the wrong batch | done — a token increments per removal and keys the window |
+| F54 | Held display values were written straight from the composition body, which Compose may skip or reorder | done — the count and the tab now outlive their trigger instead of being copied, and the one remaining copy runs in an effect |
+| F55 | The profiles list resolved each row's hue with an O(n) equality scan | done — the list helper hands each row its position |
+| F56 | The profile config CTA reads "Make this profile active" but only saved the defaults | done — found while writing the check for F52; it now activates as well, and the flow asserts the settings summary follows |
+
 <!-- INTERNAL-ONLY:END -->

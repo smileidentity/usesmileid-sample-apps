@@ -50,10 +50,11 @@ appId: ${APP_ID}
 - assertVisible: "Karibu Pay created"
 - assertVisible: "Kwame Asante · active"
 
-- tapOn:
-    id: "sample_toast_undo"
-- assertVisible: "Njeri Wanjiku · active"
-- assertNotVisible: "Karibu Pay created"
+# The window has to actually expire. Consuming the store's signal used to cancel the timer that
+# clears it, so the confirmation stayed up for the life of the screen.
+- extendedWaitUntil:
+    notVisible: "Karibu Pay created"
+    timeout: 10000
 
 # The new profile's config is titled with its name and carries what the sheet collected.
 - tapOn:
@@ -63,12 +64,15 @@ appId: ${APP_ID}
 - assertVisible: "Karibu Pay"
 - assertVisible: "Njeri"
 - assertVisible: "Wanjiku"
-- assertVisible:
+
+# The CTA says "Make this profile active", so it has to activate as well as save.
+- tapOn:
     id: "sample_profile_config_save"
+- assertVisible:
+    id: "sample_profiles_screen"
+- assertVisible: "Njeri Wanjiku · active"
 
 - back
 - assertVisible:
-    id: "sample_profiles_screen"
-- back
-- assertVisible:
     id: "sample_settings_screen"
+- assertVisible: "Karibu Pay"

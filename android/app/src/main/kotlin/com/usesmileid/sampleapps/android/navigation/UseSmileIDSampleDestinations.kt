@@ -100,13 +100,16 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
     var filter by rememberSaveable { mutableStateOf(UseSmileIDSampleJobFilter.All) }
     var selectMode by rememberSaveable { mutableStateOf(false) }
     var selected by rememberSaveable { mutableStateOf(emptySet<String>()) }
+    // The count outlives the toast so it still reads correctly while the toast slides away; the
+    // token restarts the window even when two removals in a row are the same size.
     var removedCount by rememberSaveable { mutableIntStateOf(0) }
+    var removalToken by rememberSaveable { mutableIntStateOf(0) }
 
     // One path for both removals — the swipe and the selection bar — so they cannot drift apart.
     val removeJobs: (Set<String>) -> Unit = { ids ->
         app.jobs.remove(ids)
         removedCount = ids.size
-        selected = emptySet()
+        removalToken += 1
         selectMode = false
         // Emptying a filter otherwise leaves a blank screen under a chip reading 0.
         if (app.jobs.count(filter) == 0) filter = UseSmileIDSampleJobFilter.All
@@ -123,40 +126,37 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
                 nowMillis = app.nowMillis,
             ),
             onFilterChange = { filter = it },
-            onSelectModeChange = { selectMode = it; if (!it) selected = emptySet() },
+            // Cleared on the way IN, so the bar still shows its count while it slides away.
+            onSelectModeChange = { selectMode = it; if (it) selected = emptySet() },
             onSelectionChange = { id, checked -> selected = if (checked) selected + id else selected - id },
             onJobClick = { navigator.navigate(VerificationDetailsScreenDestination(jobId = it.id)) },
             onRemove = removeJobs,
         )
-        // The count is held so the bar sliding away still reads the selection it acted on.
-        var lastSelectedCount by remember { mutableIntStateOf(0) }
-        if (selectMode) lastSelectedCount = selected.size
         UseSmileIDSampleOverlay(visible = selectMode, modifier = Modifier.align(Alignment.BottomCenter)) {
             UseSmileIDSampleSelectionBar(
-                selectedCount = lastSelectedCount,
+                selectedCount = selected.size,
                 onRemove = { removeJobs(selected) },
             )
         }
-        var lastRemovedCount by remember { mutableIntStateOf(0) }
-        if (removedCount > 0) {
-            lastRemovedCount = removedCount
-            // Bounded, so a toast left up cannot restore rows long after the removal it belonged to.
-            LaunchedEffect(removedCount) {
-                delay(SNACKBAR_WINDOW_MILLIS)
-                removedCount = 0
-            }
+        // Bounded, so a toast left up cannot restore rows long after the removal it belonged to.
+        var removalShown by remember { mutableStateOf(false) }
+        LaunchedEffect(removalToken) {
+            if (removalToken == 0) return@LaunchedEffect
+            removalShown = true
+            delay(SNACKBAR_WINDOW_MILLIS)
+            removalShown = false
         }
         UseSmileIDSampleOverlay(
-            visible = removedCount > 0,
+            visible = removalShown,
             // The shell already inset this past the floating nav bar; insetting again lifts it into the list.
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingXxs),
         ) {
             UseSmileIDSampleToast(
-                message = if (lastRemovedCount == 1) "Verification removed" else "$lastRemovedCount verifications removed",
+                message = if (removedCount == 1) "Verification removed" else "$removedCount verifications removed",
                 actionLabel = "Undo",
-                onAction = { app.jobs.undoRemove(); removedCount = 0 },
+                onAction = { app.jobs.undoRemove(); removalShown = false },
             )
         }
     }
@@ -282,20 +282,24 @@ fun ProfileSwitchSheet(navigator: DestinationsNavigator) {
 @Composable
 fun ProfilesScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
-    // Consumed on sight, so leaving and returning cannot re-show an old confirmation.
+    // Consumed on sight, so leaving and returning cannot re-show an old confirmation. The window is
+    // a second effect: clearing the store flips the first one's key, which would cancel its delay
+    // before it ever reset, leaving the confirmation up for good.
     var confirmedId by remember { mutableStateOf<String?>(null) }
+    var confirmationShown by remember { mutableStateOf(false) }
     val pendingId = app.profiles.lastCreatedId
     LaunchedEffect(pendingId) {
-        if (pendingId == null) return@LaunchedEffect
+        val id = pendingId ?: return@LaunchedEffect
         app.profiles.clearLastCreated()
-        confirmedId = pendingId
+        confirmedId = id
+        confirmationShown = true
+    }
+    LaunchedEffect(confirmedId) {
+        if (confirmedId == null) return@LaunchedEffect
         delay(SNACKBAR_WINDOW_MILLIS)
-        confirmedId = null
+        confirmationShown = false
     }
     val created = confirmedId?.let(app.profiles::find)
-    // Held, so the toast still has a name to show while it slides away.
-    var lastConfirmed by remember { mutableStateOf(created) }
-    if (created != null) lastConfirmed = created
     Box(modifier = Modifier.fillMaxSize()) {
         ProfilesContent(
             profiles = app.profiles.all,
@@ -306,16 +310,16 @@ fun ProfilesScreen(navigator: DestinationsNavigator) {
         )
         // A new profile is not made active by creating it, so the confirmation carries the offer.
         UseSmileIDSampleOverlay(
-            visible = created != null,
+            visible = confirmationShown && created != null,
             // The host already inset this past the system bar; insetting again lifts it into the list.
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingLg),
         ) {
             UseSmileIDSampleToast(
-                message = "${lastConfirmed?.organisation.orEmpty()} created",
+                message = "${created?.organisation.orEmpty()} created",
                 actionLabel = "Make active",
-                onAction = { lastConfirmed?.let { app.profiles.setActive(it.id) }; confirmedId = null },
+                onAction = { created?.let { app.profiles.setActive(it.id) }; confirmationShown = false },
             )
         }
     }
@@ -335,7 +339,9 @@ fun ProfileConfigScreen(profileId: String, navigator: DestinationsNavigator) {
         onFieldChange = { field, value -> defaults = field.write(defaults, value) },
         onBack = { navigator.navigateUp() },
         onSave = {
+            // The CTA reads "Make this profile active", so it has to do both.
             app.profiles.setDefaults(profileId, defaults)
+            app.profiles.setActive(profileId)
             navigator.navigateUp()
         },
     )
