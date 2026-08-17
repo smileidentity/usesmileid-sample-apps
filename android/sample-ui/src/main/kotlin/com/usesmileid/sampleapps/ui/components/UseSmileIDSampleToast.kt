@@ -16,11 +16,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/** A message with an optional action. Both ids are attached here because the spec assigns them to the toast itself; `elevation.floating` has no Compose equivalent, so a hairline border separates the pill. */
+/**
+ * A snackbar: a dark bar with a message and an underlined action, spanning the width it is given.
+ *
+ * Keeps the `sample_toast*` ids the spec assigns, because the design node is named "toast" even
+ * though it is drawn as a snackbar — renaming would churn the spec, the flows and four apps.
+ */
 @Composable
 fun UseSmileIDSampleToast(
     message: String,
@@ -30,11 +40,13 @@ fun UseSmileIDSampleToast(
 ) {
     Surface(
         modifier = modifier
+            .fillMaxWidth()
             .defaultMinSize(minHeight = SmileDimens.sizeControlMd)
             .testTag(UseSmileIDSampleTestIds.TOAST),
-        shape = RoundedCornerShape(SmileDimens.radiusControl),
-        color = UseSmileIDSampleTheme.colors.surfaceAlt,
-        border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.border),
+        shape = RoundedCornerShape(SNACKBAR_RADIUS),
+        // Inverted: the design draws this on the title colour with background-coloured text.
+        color = UseSmileIDSampleTheme.colors.textTitle,
+        shadowElevation = SNACKBAR_ELEVATION,
     ) {
         // FlowRow so a cramped action moves onto its own line whole; a Row breaks "Undo" in half.
         FlowRow(
@@ -48,14 +60,22 @@ fun UseSmileIDSampleToast(
         ) {
             Text(
                 text = message,
-                style = UseSmileIDSampleTheme.type.bannerTextFont,
-                color = UseSmileIDSampleTheme.colors.textBody,
+                style = UseSmileIDSampleTheme.type.bannerTextFont.copy(
+                    fontSize = SNACKBAR_TEXT_SIZE,
+                    fontWeight = FontWeight.SemiBold,
+                ),
+                color = UseSmileIDSampleTheme.colors.background,
+                modifier = Modifier.weight(1f),
             )
             if (actionLabel != null && onAction != null) {
                 Text(
                     text = actionLabel,
-                    style = UseSmileIDSampleTheme.type.linkFont,
-                    color = UseSmileIDSampleTheme.colors.textLink,
+                    style = UseSmileIDSampleTheme.type.linkFont.copy(
+                        fontSize = SNACKBAR_TEXT_SIZE,
+                        fontWeight = FontWeight.Bold,
+                        textDecoration = TextDecoration.Underline,
+                    ),
+                    color = UseSmileIDSampleTheme.colors.background,
                     softWrap = false,
                     textAlign = TextAlign.Center,
                     // Clickable before the sizing modifiers, so the tap target is the padded box.
@@ -69,3 +89,8 @@ fun UseSmileIDSampleToast(
         }
     }
 }
+
+/** 14, 13 and the drop shadow in the design; no token carries them. */
+private val SNACKBAR_RADIUS = 14.dp
+private val SNACKBAR_TEXT_SIZE = 13.sp
+private val SNACKBAR_ELEVATION = 10.dp

@@ -167,7 +167,7 @@
         {
           "state": "afterDelete",
           "node": "5206-2545",
-          "note": "Toast with undo; counts drop 11→9."
+          "note": "Snackbar with undo; counts drop 11→9. TWO RULES ADDED 2026-08-17 after review. (1) Removing the last row of the ACTIVE filter must fall back to All — otherwise the screen is blank under a chip reading 0 with nothing to explain why, which is what Android shipped. The design has no frame for this because its delete happens from the All filter. (2) Both removal paths, the swipe and the selection bar, must run one shared handler; Android had two copies of the reset and only one would have been fixed."
         },
         {
           "state": "swipeToDelete",

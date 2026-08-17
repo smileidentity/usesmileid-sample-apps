@@ -97,6 +97,17 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
     var selected by rememberSaveable { mutableStateOf(emptySet<String>()) }
     var removedCount by rememberSaveable { mutableIntStateOf(0) }
 
+    // One path for both removals — the swipe and the selection bar — so they cannot drift apart.
+    val removeJobs: (Set<String>) -> Unit = { ids ->
+        app.jobs.remove(ids)
+        removedCount = ids.size
+        selected = emptySet()
+        selectMode = false
+        // Removing a filter's last row otherwise leaves an empty screen under a chip reading 0,
+        // with nothing to say why, so fall back to the filter that always has something to show.
+        if (app.jobs.count(filter) == 0) filter = UseSmileIDSampleJobFilter.All
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         VerificationsContent(
             state = UseSmileIDSampleVerificationsState(
@@ -111,22 +122,12 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
             onSelectModeChange = { selectMode = it; if (!it) selected = emptySet() },
             onSelectionChange = { id, checked -> selected = if (checked) selected + id else selected - id },
             onJobClick = { navigator.navigate(VerificationDetailsScreenDestination(jobId = it.id)) },
-            onRemove = { ids ->
-                app.jobs.remove(ids)
-                removedCount = ids.size
-                selected = emptySet()
-                selectMode = false
-            },
+            onRemove = removeJobs,
         )
         if (selectMode) {
             UseSmileIDSampleSelectionBar(
                 selectedCount = selected.size,
-                onRemove = {
-                    app.jobs.remove(selected)
-                    removedCount = selected.size
-                    selected = emptySet()
-                    selectMode = false
-                },
+                onRemove = { removeJobs(selected) },
                 modifier = Modifier.align(Alignment.BottomCenter),
             )
         }
@@ -140,9 +141,11 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
                 message = if (removedCount == 1) "Verification removed" else "$removedCount verifications removed",
                 actionLabel = "Undo",
                 onAction = { app.jobs.undoRemove(); removedCount = 0 },
+                // One gap above the container's bottom, which the shell has already inset past the
+                // floating nav bar — adding the navigationBars inset again lifts it into the list.
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(SmileDimens.spacingMd),
+                    .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingXxs),
             )
         }
     }

@@ -199,8 +199,8 @@
       "tier": "primitive",
       "owner": "sample",
       "tokens": [
-        "color.surface-alt",
-        "color.text.body",
+        "color.title",
+        "color.bg",
         "color.text.link",
         "radius.control",
         "elevation.floating"
@@ -213,7 +213,7 @@
         "verifications",
         "profiles"
       ],
-      "notes": "Carries an undo action in the delete flow — the action is part of the contract, not decoration."
+      "notes": "Carries an undo action in the delete flow — the action is part of the contract, not decoration. CORRECTED 2026-08-17 against node 5206:2573: it is a SNACKBAR treatment, not a pale pill — background color.title with color.bg text at 13/600, an underlined 13/700 action, radius 14 and a 0 10 30 rgba(0,0,0,.25) shadow, spanning the width between 16 margins. The node is named 'toast' and keeps the sample_toast* ids, so do not rename. ANCHOR: one small gap above the floating nav bar, NOT above the screen edge — on Android the destination container is already inset past the bar, so applying the navigation-bars inset again lifts it into the middle of the list, which is how it first shipped."
     },
     {
       "name": "TopAppBar",
