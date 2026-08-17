@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDateGroupHeader
@@ -84,7 +85,8 @@ fun VerificationsScreen(
                 )
                 Text(
                     text = if (state.selectMode) "Cancel" else "Select",
-                    style = UseSmileIDSampleTheme.type.linkFont,
+                    // The design's action is 14/700; linkFont is 14/400 — spec/design-tokens.json → deltas.
+                    style = UseSmileIDSampleTheme.type.linkFont.copy(fontWeight = FontWeight.Bold),
                     color = UseSmileIDSampleTheme.colors.primary,
                     softWrap = false,
                     modifier = Modifier

@@ -28,7 +28,7 @@ Status: `todo` · `wip` · `done` · `design` (needs a design answer) · `owner`
 | ID | Item | Design node | Status |
 |---|---|---|---|
 | F01 | Tab bar shows text only — design is icon **above** label, all three tabs plus Token | 5206:2436 | done |
-| F02 | All Android icons to be Material Symbols (replace the 8 hand-drawn glyphs) | — | wip |
+| F02 | Material Symbols for the icons the **designer did not supply** — the 8 hand-drawn glyphs and the settings/form rows. Answered: yes, vendored as vector drawables (Outlined 400, Apache-2.0, no new dependency). The designer's own icons stay as exported, because they are stroke/Lucide-style and swapping them would break four-platform uniformity | — | todo |
 | F03 | Products card trailing affordance is a chevron; design is an arrow (`→`) | 5206:2410 | todo |
 | F04 | Token button is navy; design is **white**, 58px, 1.5px border, icon **+ "Token" label** | 5206:2436 | done |
 | F05 | Switch-profile avatar is a circle with one colour; design is a rounded square, colour per initials | — | todo |
@@ -37,7 +37,7 @@ Status: `todo` · `wip` · `done` · `design` (needs a design answer) · `owner`
 | F08 | Consent Details Entry — complete state | 5206:3777 | todo |
 | F09 | Settings screen — full pass | 5206:2898 | todo |
 | F10 | Token session flow — full pass | 5206:3667 | todo |
-| F11 | Filter chip type style + count colour | 5206:2415 | done |
+| F11 | Filter chip type style + count colour | 5206:2415 | done (type); count colour is a design-system disagreement, recorded as `filterChipCountColour`, **not** patched |
 | F12 | "Select" action type style (14 Bold, primary) | 5206:2414 | done |
 | F13 | Status badge colours — the four soft pairs, and Title case not UPPERCASE | 5206:2429–2433 | done |
 | F14 | Select-mode UI | 5206:2441 · 2491 · 2545 | todo |

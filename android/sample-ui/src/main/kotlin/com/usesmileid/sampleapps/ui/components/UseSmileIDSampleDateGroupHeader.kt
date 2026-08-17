@@ -17,7 +17,8 @@ fun UseSmileIDSampleDateGroupHeader(
     testId: String? = null,
 ) {
     Text(
-        text = "$relative · $absolute",
+        // Two spaces either side of the dot, as the design sets it.
+        text = "$relative  ·  $absolute",
         style = UseSmileIDSampleTheme.type.textStyleOverline,
         color = UseSmileIDSampleTheme.colors.textMuted,
         modifier = modifier
