@@ -28,15 +28,15 @@ Status: `todo` · `wip` · `done` · `design` (needs a design answer) · `owner`
 | ID | Item | Design node | Status |
 |---|---|---|---|
 | F01 | Tab bar shows text only — design is icon **above** label, all three tabs plus Token | 5206:2436 | done |
-| F02 | Material Symbols for the icons the **designer did not supply** — the 8 hand-drawn glyphs and the settings/form rows. Answered: yes, vendored as vector drawables (Outlined 400, Apache-2.0, no new dependency). The designer's own icons stay as exported, because they are stroke/Lucide-style and swapping them would break four-platform uniformity | — | todo |
+| F02 | Material Symbols for the icons the designer did not supply | — | done — 19 Outlined-400 drawables vendored (Apache-2.0, no new dependency): the 7 hand-drawn `Canvas` glyphs replaced, plus a distinct symbol per settings row. The designer's own stroke-based exports are untouched and the two families are documented as non-interchangeable |
 | F03 | Products card trailing affordance is a chevron; design is an arrow (`→`) | 5206:2410 | done — designer supplied `arrow.svg` + `back_arrow.svg` 2026-08-17; both ported, and the hand-drawn `BackArrowGlyph` deleted |
 | F04 | Token button is navy; design is **white**, 58px, 1.5px border, icon **+ "Token" label** | 5206:2436 | done |
-| F05 | Switch-profile avatar is a circle with one colour; design is a rounded square, colour per initials | — | todo |
-| F06 | Consent Details Entry — empty state | 5206:3804 | todo |
-| F07 | Consent Details Entry — editing / remember-details state | 5206:3828 | todo |
-| F08 | Consent Details Entry — complete state | 5206:3777 | todo |
-| F09 | Settings screen — full pass | 5206:2898 | todo |
-| F10 | Token session flow — full pass | 5206:3667 | todo |
+| F05 | Switch-profile avatar is a circle with one colour; design is a rounded square, colour per initials | 5206:2904 | done — rounded square at radius 12, fill picked from the decorative palette by a stable hash of the initials. The mapping is DERIVED: the design shows distinct fills but names none |
+| F06 | Consent Details Entry — empty state | 5206:3804 | done |
+| F07 | Consent Details Entry — editing / remember-details state | 5206:3828 | done — the remember row is its own component, not a SettingRow: one line of body text and a switch, no icon |
+| F08 | Consent Details Entry — complete state | 5206:3777 | done — proved the row LABEL is title-coloured and only the placeholder is muted; the app had it inverted |
+| F09 | Settings screen — full pass | 5206:2898 | done — bordered section cards, rules between rows, 38/11 grey tiles, 14 chevrons, caption supporting text, bordered Sign out in soft-error, centred version |
+| F10 | Token session flow — full pass | 5206:3668 · 3704 · 3752 | done — scan copy to 12.5/500 centred, manual-entry row to surface-2 with muted 13.5 copy and a bold 13 Paste; ring bleed confirmed against the 68px ellipse over a 60px button |
 | F11 | Filter chip type style + count colour | 5206:2415 | done (type); count colour is a design-system disagreement, recorded as `filterChipCountColour`, **not** patched |
 | F12 | "Select" action type style (14 Bold, primary) | 5206:2414 | done |
 | F13 | Status badge colours — the four soft pairs, and Title case not UPPERCASE | 5206:2429–2433 | done |

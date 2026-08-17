@@ -24,6 +24,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import com.smileid.designsystem.smileSurface2
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
@@ -52,7 +55,8 @@ fun UseSmileIDSampleScanSheet(
             Surface(
                 modifier = Modifier.fillMaxWidth().testTag(UseSmileIDSampleTestIds.TOKEN_MANUAL_ENTRY),
                 shape = RoundedCornerShape(SmileDimens.radiusField),
-                color = colors.surfaceAlt,
+                // surface-2 in the design; surface-alt is the warm cream.
+                color = smileSurface2,
                 border = BorderStroke(SmileDimens.borderWidthHairline, colors.border),
             ) {
                 FlowRow(
@@ -68,13 +72,16 @@ fun UseSmileIDSampleScanSheet(
                     }
                     Text(
                         text = "Or enter token manually",
-                        style = UseSmileIDSampleTheme.type.textStyleBody,
-                        color = colors.textTitle,
+                        style = UseSmileIDSampleTheme.type.textStyleBody.copy(fontSize = SHEET_TEXT_SIZE),
+                        color = colors.textMuted,
                         modifier = Modifier.weight(1f),
                     )
                     Text(
                         text = "Paste",
-                        style = UseSmileIDSampleTheme.type.linkFont,
+                        style = UseSmileIDSampleTheme.type.linkFont.copy(
+                            fontSize = SHEET_ACTION_SIZE,
+                            fontWeight = FontWeight.Bold,
+                        ),
                         color = colors.primary,
                         softWrap = false,
                         modifier = Modifier
@@ -93,3 +100,7 @@ fun UseSmileIDSampleScanSheet(
         }
     }
 }
+
+/** 13.5 and 13 in the design. */
+private val SHEET_TEXT_SIZE = 13.5.sp
+private val SHEET_ACTION_SIZE = 13.sp

@@ -2,7 +2,6 @@ package com.usesmileid.sampleapps.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -12,22 +11,30 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/** Initials in a circle, or a placeholder when there are none. The diameter scales with the font scale, because wrapping the initials instead renders an ellipse at 2x. */
+/**
+ * Initials in a rounded square, or a placeholder when there are none. The size scales with the font
+ * scale, because wrapping the initials instead renders an ellipse at 2x.
+ *
+ * The fill defaults to one drawn from the initials, so two profiles never look alike.
+ */
 @Composable
 fun UseSmileIDSampleAvatar(
     initials: String,
     modifier: Modifier = Modifier,
     size: Dp = SmileDimens.space40,
-    containerColor: Color = UseSmileIDSampleTheme.colors.avatar.background,
+    containerColor: Color = avatarColorFor(initials),
 ) {
     val hasInitials = initials.isNotBlank()
     val diameter = size * LocalDensity.current.fontScale
     Surface(
         modifier = modifier.size(diameter),
-        shape = CircleShape,
+        // A rounded square, which is what the design draws — not a circle.
+        shape = RoundedCornerShape(AVATAR_RADIUS),
         color = if (hasInitials) containerColor else UseSmileIDSampleTheme.colors.avatar.placeholderBackground,
     ) {
         Box(contentAlignment = Alignment.Center) {
@@ -44,3 +51,18 @@ fun UseSmileIDSampleAvatar(
         }
     }
 }
+
+/**
+ * One decorative colour per set of initials, chosen by a stable hash so a profile keeps its colour
+ * across launches. Derived here: the design shows distinct fills but names no mapping.
+ */
+@Composable
+private fun avatarColorFor(initials: String): Color {
+    val palette = UseSmileIDSampleTheme.colors.decorative.all
+    if (initials.isBlank()) return UseSmileIDSampleTheme.colors.avatar.background
+    val index = initials.uppercase().sumOf { it.code } % palette.size
+    return palette[index]
+}
+
+/** 12 in the design. */
+private val AVATAR_RADIUS = 12.dp

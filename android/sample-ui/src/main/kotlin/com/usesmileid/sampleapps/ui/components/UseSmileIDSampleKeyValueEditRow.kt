@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -44,9 +45,10 @@ fun UseSmileIDSampleKeyValueEditRow(
         itemVerticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
+            // The design puts the field name in the title colour; only the placeholder is muted.
             text = if (required) "$label *" else label,
-            style = UseSmileIDSampleTheme.type.textStyleBodySm,
-            color = colors.textMuted,
+            style = UseSmileIDSampleTheme.type.textStyleBody.copy(fontSize = ROW_TEXT_SIZE),
+            color = colors.textTitle,
         )
         BasicTextField(
             value = value,
@@ -54,7 +56,8 @@ fun UseSmileIDSampleKeyValueEditRow(
             enabled = enabled,
             singleLine = true,
             keyboardOptions = keyboardOptions,
-            textStyle = UseSmileIDSampleTheme.type.textStyleBodySm.copy(
+            textStyle = UseSmileIDSampleTheme.type.textStyleBody.copy(
+                fontSize = ROW_TEXT_SIZE,
                 // Muted when disabled, so a row that cannot be edited does not look editable.
                 color = if (enabled) colors.textTitle else colors.textMuted,
             ),
@@ -64,7 +67,7 @@ fun UseSmileIDSampleKeyValueEditRow(
                 if (value.isEmpty()) {
                     Text(
                         text = placeholder,
-                        style = UseSmileIDSampleTheme.type.textStyleBodySm,
+                        style = UseSmileIDSampleTheme.type.textStyleBody.copy(fontSize = ROW_TEXT_SIZE),
                         color = colors.textMuted,
                     )
                 }
@@ -73,3 +76,6 @@ fun UseSmileIDSampleKeyValueEditRow(
         )
     }
 }
+
+/** 13.5 in the design for the field name, its value and its placeholder alike. */
+private val ROW_TEXT_SIZE = 13.5.sp
