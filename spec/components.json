@@ -171,7 +171,7 @@
         "verifications",
         "verificationDetails"
       ],
-      "notes": "CORRECTED 2026-08-12 from the prototype recording. The design uses soft tinted pills, not the design system's saturated badge fills. Do not resolve this with the current badge.* tokens — see the softBadgeVariant delta in design-tokens.json. Vocabulary maps to roles: Clear→success, Attention→warning, Blocked→error, Processing→info.",
+      "notes": "CORRECTED 2026-08-12 from the prototype recording, RESOLVED 2026-08-17 against nodes 5206:2429–2433. The design uses soft tinted pills, not the design system's saturated badge fills, and the four exact pairs now live in design-tokens.json → softBadgeFills.fills, generated per platform. Do not reach for the current badge.* tokens. Vocabulary maps to roles: Clear→success, Attention→warning, Blocked→error, Processing→info. TWO THINGS A PORT GETS WRONG: the label is Title case, NOT upper-cased (the same 11/700 label style IS upper-cased for date and section headers, which is how Android came to upper-case this too); and the pill takes radius.control, not radius.chip.",
       "fillTreatment": "SOFT — a pale tinted fill with a dark same-hue label, for ALL FOUR statuses (pale green Clear, pale amber Attention, pale red Blocked, pale blue Processing).",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2410",
       "decision": "OWNER DECISION 2026-08-13: ship the design's SOFT tinted pills for all four statuses. Implemented by adding soft variants to the design system (never by hardcoding the Figma hexes), so it stays token-driven."
@@ -530,7 +530,7 @@
       "usedBy": [
         "verifications"
       ],
-      "notes": "Label plus a count (All 11, Clear 6, Attention 2, Blocked 2). Counts are live and must update after a delete — that is the assertion the delete flow keys off."
+      "notes": "Label plus a count (All 11, Clear 6, Attention 2, Blocked 2). Counts are live and must update after a delete — that is the assertion the delete flow keys off. TYPE CORRECTED 2026-08-17 against node 5206:2415: the label is 12.5/700 and the count is 11/700 with 0.88 tracking. The generated filter-chip font is 14/400, which is neither, so do not reach for it unchanged. The unselected count's COLOUR is an open disagreement — see the filterChipCountColour delta."
     },
     {
       "name": "DateGroupHeader",
@@ -723,7 +723,10 @@
       ],
       "metrics": {
         "size": "361x58, a floating pill plus a detached circular token button",
-        "tokenButton": "44 (size.control-md)",
+        "tokenButton": "58 — NOT size.control-md's 44",
+        "tabIcon": "21, above the label with a 4 gap",
+        "tabLabel": "10/700, the overline style — not a 14 tab style",
+        "tokenLabel": "8.5/700 muted, under a 16 icon",
         "extends": "the PR #2 component rather than a rebuild; only the token affordance and its ring were added"
       },
       "items": [
@@ -741,7 +744,7 @@
         "verifications",
         "settings"
       ],
-      "notes": "VERIFIED against a render 2026-08-12. A floating white pill holding three tabs (Products, Verifications, Settings) with the active label in primary, PLUS a visually detached circular Token button to its right that carries the countdown ring. Model the token affordance separately from the three tabs. Hidden during select mode."
+      "notes": "CORRECTED 2026-08-17 against node 5206:2436, after review found the bar shipping text-only. Each tab is an ICON ABOVE ITS LABEL, both taking primary when active and muted otherwise — the three icons were imported in PR #3 and then sat unused, which is the trap for a port. The detached Token button is WHITE (color.surface) with a 1.5 border and carries an icon PLUS the word 'Token'; it is not a primary-filled FAB. The tabs pill takes a shadow, not a border. Model the token affordance separately from the three tabs. Hidden during select mode. The token button must grow with font scale rather than clip — a fixed 58 box ellipsises 'Token' at 2x and fails the no-clipping predicate."
     },
     {
       "name": "TokenRing",

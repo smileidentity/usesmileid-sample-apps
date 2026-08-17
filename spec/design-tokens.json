@@ -63,13 +63,21 @@
         "color/warn-bg": "#fff0d9",
         "color/warn-fg": "#7a4a00"
       },
+      "fills": {
+        "success": { "background": "#DBF5E4", "text": "#04713A" },
+        "info": { "background": "#E5EDFF", "text": "#151F72" },
+        "warning": { "background": "#FFF0D9", "text": "#7A4A00" },
+        "error": { "background": "#FDE4E1", "text": "#A11209" }
+      },
+      "fillsSource": "Read off the four JobRow badge instances on the Verifications board 2026-08-17 (nodes 5206:2429, 2430, 2432, 2433), where each pair is bound to a design variable — color/ok-bg + color/ok-fg, color/info-*, color/warn-*, color/err-*. These are the values the earlier prototype recording could only describe as 'pale'.",
+      "labelCase": "Title case, not UPPERCASE. The design sets 'Clear' / 'Processing' / 'Attention' / 'Blocked' at 11/700 with 0.88 tracking — the Label type style at label size, but not upper-cased. Date and section headers DO upper-case the same style, which is why the app upper-cased this one too.",
       "designSystem": {
         "badge.warning.background": "#ff9b00",
         "badge.warning.text": "#2d2b2a"
       },
       "finding": "CONFIRMED from the prototype recording 2026-08-12: the design uses SOFT tinted pills for ALL FOUR statuses (pale green Clear, pale amber Attention, pale red Blocked, pale blue Processing). The design system's badge.* tokens are saturated fills with inverse text, so no current token pair produces the intended treatment.",
       "recommendation": "Add soft badge variants to the design system (background + text per role). This is now a system gap rather than a per-status judgement call: the design applies soft fills consistently, and hardcoding the Figma hexes would bypass the token source.",
-      "status": "OWNER DECISION 2026-08-13 — RESOLVED: keep the design's soft treatment and ADD soft badge variants to the design system (background + text per role for success/warning/error/info). Do not hardcode locally; the existing saturated pairs stay for surfaces that want them."
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: keep the design's soft treatment and ADD soft badge variants to the design system (background + text per role for success/warning/error/info). Do not hardcode locally; the existing saturated pairs stay for surfaces that want them. INTERIM 2026-08-17: review found the badges still shipping saturated, because 'do not hardcode locally' left them with no source at all. `fills` above is now generated into each platform exactly as productHues is — one source in spec/, no hex in component code — so all four apps agree while the design system catches up. Delete the generated file, not the delta, once the design system carries the soft roles."
     },
     {
       "id": "darkBorder",
@@ -148,38 +156,44 @@
           "from": "#05723A",
           "to": "#0A9B4C",
           "icon": "#05723A",
-          "scrim": "#FFFFFF"
+          "scrim": "#FFFFFF",
+          "tile": "#E4F2EA"
         },
         "smartSelfieAuth": {
           "from": "#3A49B4",
           "to": "#5361D6",
           "icon": "#3A49B4",
-          "scrim": "#FFFFFF"
+          "scrim": "#FFFFFF",
+          "tile": "#E9EBFA"
         },
         "documentVerification": {
           "from": "#E08600",
           "to": "#FFB53D",
           "icon": "#C46F00",
-          "scrim": "#2D2B2A"
+          "scrim": "#2D2B2A",
+          "tile": "#FBEEDA"
         },
         "enhancedDocumentVerification": {
           "from": "#2D2B2A",
           "to": "#4A4645",
           "icon": "#2D2B2A",
-          "scrim": "#FFFFFF"
+          "scrim": "#FFFFFF",
+          "tile": "#EDEBEA"
         },
         "biometricKyc": {
           "from": "#151F72",
           "to": "#2B3A9E",
           "icon": "#151F72",
-          "scrim": "#FFFFFF"
+          "scrim": "#FFFFFF",
+          "tile": "#E5EDFF"
         },
         "enhancedKyc": {
           "from": "#05726E",
           "to": "#0A9B96",
           "icon": "#05726E",
           "scrim": "#FFFFFF",
-          "origin": "DERIVED HERE 2026-08-15, not supplied by design"
+          "tile": "#E4F1F0",
+          "origin": "DERIVED HERE 2026-08-15, not supplied by design; `tile` likewise DERIVED 2026-08-17 at the same lightness as the five the design does supply"
         }
       },
       "missing": "enhancedKyc was absent from the design node, which predates the owner decision that added a sixth product. Both its hue and its icon are derived here so the grid is complete, and both are placeholders a designer should confirm or replace. Hue: the enrolment green's exact saturation and lightness (S 91.6% / L 23.3% for `from`, S 87.9% / L 32.4% for `to`) rotated to a teal hue, so it sits in the family by construction rather than by eye, and teal is the one obvious gap next to green, indigo, amber, near-black and navy. Icon: the Biometric KYC card outline with the portrait removed and a third record line added — the same 21x21 grid and 2.16667 stroke as the rest of the set. That is also the semantic difference between the two: Biometric KYC checks a face against a record, Enhanced KYC checks the record alone.",
@@ -196,6 +210,15 @@
       "finding": "The design file and the token source disagree on Body Strong's SIZE, not just its rendering. On the product card the difference is load-bearing: at 16px 'SmartSelfie Authentication' breaks mid-word on a 174-wide card, and the design avoids that only because its own card is labelled 'SmartSelfie Auth' while spec/scenarios.json mandates the full name.",
       "recommendation": "Reconcile Body Strong between the design file and the token source. Until then a 14px surface takes text-style.subtitle and loses one weight step, because size is what decides whether the label fits.",
       "status": "OPEN 2026-08-15"
+    },
+    {
+      "id": "filterChipCountColour",
+      "severity": "cosmetic, one element on the verifications filter row",
+      "figma": { "unselected count": "color/muted #848282" },
+      "designSystem": { "filter-chip.value": "#4D88FF light, #7BA3FF dark" },
+      "finding": "The design file paints an unselected chip's count in muted grey; the design system's filter-chip.value is a mid blue. Both agree the selected chip's count is primary-ink. Reported in review 2026-08-17 as part of 'the chip text style doesn't match' — the type style was a real mismatch and is fixed; this colour is a genuine source disagreement, so it is recorded rather than patched.",
+      "recommendation": "Owner ruling. The design system wins by the precedence rule, so the blue ships until someone says otherwise — but the design file is what a reviewer compares against, so this will be re-reported until one side moves.",
+      "status": "OPEN 2026-08-17 — needs an owner ruling; NOT locally patched"
     }
   ],
   "perPlatform": {

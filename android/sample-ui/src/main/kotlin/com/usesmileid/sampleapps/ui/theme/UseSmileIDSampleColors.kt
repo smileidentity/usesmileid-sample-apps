@@ -5,6 +5,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import com.smileid.designsystem.SmileColorDark
 import com.smileid.designsystem.SmileColorLight
+import com.smileid.designsystem.smileSoftBadgeFills
 
 /** One component's tokens, resolved for the active mode. */
 @Immutable
@@ -176,16 +177,7 @@ internal val lightColors = UseSmileIDSampleColors(
         border = SmileColorLight.searchBorder,
         borderFocus = SmileColorLight.searchBorderFocus,
     ),
-    badge = BadgeTokens(
-        successBackground = SmileColorLight.badgeSuccessBackground,
-        successText = SmileColorLight.badgeSuccessText,
-        warningBackground = SmileColorLight.badgeWarningBackground,
-        warningText = SmileColorLight.badgeWarningText,
-        errorBackground = SmileColorLight.badgeErrorBackground,
-        errorText = SmileColorLight.badgeErrorText,
-        infoBackground = SmileColorLight.badgeInfoBackground,
-        infoText = SmileColorLight.badgeInfoText,
-    ),
+    badge = softBadgeTokens(),
     dataField = DataFieldTokens(
         label = SmileColorLight.dataFieldLabel,
         value = SmileColorLight.dataFieldValue,
@@ -276,16 +268,7 @@ internal val darkColors = UseSmileIDSampleColors(
         border = SmileColorDark.searchBorder,
         borderFocus = SmileColorDark.searchBorderFocus,
     ),
-    badge = BadgeTokens(
-        successBackground = SmileColorDark.badgeSuccessBackground,
-        successText = SmileColorDark.badgeSuccessText,
-        warningBackground = SmileColorDark.badgeWarningBackground,
-        warningText = SmileColorDark.badgeWarningText,
-        errorBackground = SmileColorDark.badgeErrorBackground,
-        errorText = SmileColorDark.badgeErrorText,
-        infoBackground = SmileColorDark.badgeInfoBackground,
-        infoText = SmileColorDark.badgeInfoText,
-    ),
+    badge = softBadgeTokens(),
     dataField = DataFieldTokens(
         label = SmileColorDark.dataFieldLabel,
         value = SmileColorDark.dataFieldValue,
@@ -322,5 +305,26 @@ internal val darkColors = UseSmileIDSampleColors(
         deepRed = SmileColorDark.colorDecorativeDeepRed,
     ),
 )
+
+/**
+ * The design's status pills are soft tints, which no design-system `badge.*` pair carries — those are
+ * saturated. Values come from `spec/design-tokens.json` → softBadgeFills, generated per platform so all
+ * four apps agree; the pills read the same in both schemes, as the design draws them.
+ */
+private fun softBadgeTokens(): BadgeTokens {
+    fun fill(role: String) = requireNotNull(smileSoftBadgeFills[role]) {
+        "no soft badge fill for '$role'; see spec/design-tokens.json → softBadgeFills"
+    }
+    return BadgeTokens(
+        successBackground = fill("success").background,
+        successText = fill("success").text,
+        warningBackground = fill("warning").background,
+        warningText = fill("warning").text,
+        errorBackground = fill("error").background,
+        errorText = fill("error").text,
+        infoBackground = fill("info").background,
+        infoText = fill("info").text,
+    )
+}
 
 internal val LocalUseSmileIDSampleColors = staticCompositionLocalOf { lightColors }

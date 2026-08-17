@@ -17,7 +17,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
@@ -52,7 +55,7 @@ fun UseSmileIDSampleJobRow(
         color = colors.card.background,
         border = BorderStroke(SmileDimens.borderWidthHairline, colors.card.border),
     ) {
-        // FlowRow so the badge drops below the title at 2x rather than ellipsising the name.
+        // FlowRow so the badge drops below the title at 2x rather than squeezing it to nothing.
         FlowRow(
             modifier = Modifier
                 .defaultMinSize(minHeight = SmileDimens.space64)
@@ -63,14 +66,14 @@ fun UseSmileIDSampleJobRow(
         ) {
             val hue = product.hue
             Surface(
-                modifier = Modifier.size(SmileDimens.space40),
-                shape = RoundedCornerShape(SmileDimens.radiusSm),
-                color = hue.from.copy(alpha = TILE_TINT_ALPHA),
+                modifier = Modifier.size(TILE_SIZE),
+                shape = RoundedCornerShape(TILE_RADIUS),
+                color = hue.tile,
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     val icon = product.iconRes
                     if (icon != null) {
-                        UseSmileIDSampleIcon(id = icon, tint = hue.icon)
+                        UseSmileIDSampleIcon(id = icon, tint = hue.icon, size = TILE_ICON_SIZE)
                     } else {
                         ProductMarkGlyph(tint = hue.icon)
                     }
@@ -84,6 +87,10 @@ fun UseSmileIDSampleJobRow(
                     text = product.label,
                     style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
                     color = colors.card.title,
+                    // The design elides a long name onto one line, but only at the scale it was drawn
+                    // at: enlarged type wraps instead, because hiding it would fail the no-clipping rule.
+                    maxLines = if (LocalDensity.current.fontScale > 1f) Int.MAX_VALUE else 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
                 Text(
                     text = "$jobId · $time",
@@ -96,4 +103,7 @@ fun UseSmileIDSampleJobRow(
     }
 }
 
-private const val TILE_TINT_ALPHA = 0.16f
+/** 36, 10 and 18 in the design; no token carries them — see spec/design-tokens.json → deltas. */
+private val TILE_SIZE = 36.dp
+private val TILE_RADIUS = 10.dp
+private val TILE_ICON_SIZE = 18.dp

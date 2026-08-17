@@ -435,19 +435,20 @@ def emit_kotlin_product_hues(hues: dict) -> str:
     if not hues:
         raise TokenError("spec/design-tokens.json carries no productHues.hues entries")
     lines = [
-        "/** One product card's colouring. `scrim` is applied at 16%: the go pill and the ghost glyph. */",
+        "/** One product card's colouring. `scrim` is applied at 16%: the go pill and the ghost glyph. `tile` is the soft icon-tile fill a list row uses. */",
         "data class SmileProductHue(",
         "    val from: Color,",
         "    val to: Color,",
         "    val icon: Color,",
         "    val scrim: Color,",
+        "    val tile: Color,",
         ")",
         "",
         "/** Keyed by the product id in spec/scenarios.json. A product absent here has no hue yet. */",
         "val smileProductHues: Map<String, SmileProductHue> = mapOf(",
     ]
     for product, hue in hues.items():
-        missing = {"from", "to", "icon", "scrim"} - set(hue)
+        missing = {"from", "to", "icon", "scrim", "tile"} - set(hue)
         if missing:
             raise TokenError(f"product hue {product!r} is missing {sorted(missing)}")
         lines += [
@@ -456,24 +457,72 @@ def emit_kotlin_product_hues(hues: dict) -> str:
             f"        to = {kotlin_color(hue['to'])},",
             f"        icon = {kotlin_color(hue['icon'])},",
             f"        scrim = {kotlin_color(hue['scrim'])},",
+            f"        tile = {kotlin_color(hue['tile'])},",
             "    ),",
         ]
     lines.append(")")
     return "\n".join(lines)
 
 
-def read_product_hues() -> dict:
+def emit_kotlin_soft_badge_fills(fills: dict) -> str:
+    """The soft status pills, keyed by the feedback role the four job statuses map onto."""
+    roles = ["success", "info", "warning", "error"]
+    missing = [role for role in roles if role not in fills]
+    if missing:
+        raise TokenError(f"spec/design-tokens.json softBadgeFills.fills is missing {missing}")
+    lines = [
+        "",
+        "/** One status pill's soft fill: a pale background with text that clears contrast on it. */",
+        "data class SmileSoftBadgeFill(",
+        "    val background: Color,",
+        "    val text: Color,",
+        ")",
+        "",
+        "/** Keyed by feedback role. The design system's own badge.* pairs are saturated, which is a different treatment. */",
+        "val smileSoftBadgeFills: Map<String, SmileSoftBadgeFill> = mapOf(",
+    ]
+    for role in roles:
+        pair = fills[role]
+        for key in ("background", "text"):
+            if key not in pair:
+                raise TokenError(f"soft badge fill {role!r} is missing {key!r}")
+        lines += [
+            f'    "{role}" to SmileSoftBadgeFill(',
+            f"        background = {kotlin_color(pair['background'])},",
+            f"        text = {kotlin_color(pair['text'])},",
+            "    ),",
+        ]
+    lines.append(")")
+    return "\n".join(lines)
+
+
+def read_spec_delta(delta_id: str, key: str) -> dict:
     spec_path = os.path.join(REPO, SPEC_TOKENS)
     with io.open(spec_path, encoding="utf-8") as handle:
         spec = json.load(handle)
     for delta in spec.get("deltas", []):
-        if delta.get("id") == "productHues":
-            return delta.get("hues", {})
-    raise TokenError(f"{SPEC_TOKENS} has no productHues delta to generate from")
+        if delta.get("id") == delta_id:
+            return delta.get(key, {})
+    raise TokenError(f"{SPEC_TOKENS} has no {delta_id} delta to generate from")
+
+
+def read_product_hues() -> dict:
+    return read_spec_delta("productHues", "hues")
+
+
+def read_soft_badge_fills() -> dict:
+    return read_spec_delta("softBadgeFills", "fills")
 
 
 def generate_kotlin_product_hues() -> str:
-    return KOTLIN_HUES_HEADER + "\n" + emit_kotlin_product_hues(read_product_hues()) + "\n"
+    return (
+        KOTLIN_HUES_HEADER
+        + "\n"
+        + emit_kotlin_product_hues(read_product_hues())
+        + "\n"
+        + emit_kotlin_soft_badge_fills(read_soft_badge_fills())
+        + "\n"
+    )
 
 
 def generate_kotlin_type(ds: str) -> str:

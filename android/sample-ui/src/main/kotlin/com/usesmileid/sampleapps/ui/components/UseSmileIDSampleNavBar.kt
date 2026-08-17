@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
@@ -9,6 +10,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.selection.selectable
@@ -30,15 +33,22 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
+import com.usesmileid.sampleapps.ui.R
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** The three destinations the nav bar switches between. The token affordance is not one of them. */
-enum class UseSmileIDSampleNavItem(val testId: String, val label: String) {
-    Products(UseSmileIDSampleTestIds.NAV_PRODUCTS, "Products"),
-    Verifications(UseSmileIDSampleTestIds.NAV_VERIFICATIONS, "Verifications"),
-    Settings(UseSmileIDSampleTestIds.NAV_SETTINGS, "Settings"),
+enum class UseSmileIDSampleNavItem(
+    val testId: String,
+    val label: String,
+    @DrawableRes val icon: Int,
+) {
+    Products(UseSmileIDSampleTestIds.NAV_PRODUCTS, "Products", R.drawable.sample_ic_products),
+    Verifications(UseSmileIDSampleTestIds.NAV_VERIFICATIONS, "Verifications", R.drawable.sample_ic_verifications),
+    Settings(UseSmileIDSampleTestIds.NAV_SETTINGS, "Settings", R.drawable.sample_ic_settings),
 }
 
 /**
@@ -86,28 +96,33 @@ private fun TokenAffordance(progress: Float?, onClick: () -> Unit) {
     val track = colors.border
     val fill = colors.successFill
     Box(
-        modifier = Modifier
-            .size(SmileDimens.sizeControlMd)
-            .drawBehind {
-                if (progress != null) {
-                    drawTokenRing(progress = progress, track = track, fill = fill, inflate = RING_BLEED.toPx())
-                }
-            },
+        // Wraps the button rather than fixing a size, so enlarged type grows it instead of clipping the label.
+        modifier = Modifier.drawBehind {
+            if (progress != null) {
+                drawTokenRing(progress = progress, track = track, fill = fill, inflate = RING_BLEED.toPx())
+            }
+        },
         contentAlignment = Alignment.Center,
     ) {
         Surface(
-            modifier = Modifier.size(SmileDimens.sizeControlMd),
+            modifier = Modifier.defaultMinSize(minWidth = TOKEN_SIZE, minHeight = TOKEN_SIZE),
             shape = CircleShape,
-            color = colors.primary,
-            contentColor = colors.onPrimary,
+            color = colors.surface,
+            border = BorderStroke(SmileDimens.borderWidthThick, colors.border),
         ) {
-            Box(
+            Column(
                 modifier = Modifier
                     .testTag(UseSmileIDSampleTestIds.NAV_TOKEN)
                     .clickable(onClick = onClick),
-                contentAlignment = Alignment.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
             ) {
-                ScanMarkGlyph(tint = colors.onPrimary)
+                UseSmileIDSampleIcon(id = R.drawable.sample_ic_token_scan, tint = colors.textTitle, size = SmileDimens.sizeIconSm)
+                Text(
+                    text = "Token",
+                    style = UseSmileIDSampleTheme.type.textStyleOverline.copy(fontSize = TOKEN_LABEL_SIZE),
+                    color = colors.textMuted,
+                )
             }
         }
     }
@@ -151,20 +166,32 @@ private fun DrawScope.drawTokenRing(progress: Float, track: Color, fill: Color, 
 
 @Composable
 private fun NavBarTab(item: UseSmileIDSampleNavItem, selected: Boolean, onClick: () -> Unit) {
-    Text(
-        text = item.label,
-        // tabFont, not labelLarge: that slot is the 16px bold button style, which overflows a 393dp screen.
-        style = UseSmileIDSampleTheme.type.tabFont,
-        color = if (selected) UseSmileIDSampleTheme.colors.primary else UseSmileIDSampleTheme.colors.textMuted,
-        textAlign = TextAlign.Center,
+    val tint = if (selected) UseSmileIDSampleTheme.colors.primary else UseSmileIDSampleTheme.colors.textMuted
+    Column(
         modifier = Modifier
             .testTag(item.testId)
             .selectable(selected = selected, role = Role.Tab, onClick = onClick)
-            .padding(horizontal = SmileDimens.spacingSm, vertical = SmileDimens.spacingSm),
-    )
+            .padding(horizontal = SmileDimens.spacingXs, vertical = SmileDimens.spacingXs),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs),
+    ) {
+        UseSmileIDSampleIcon(id = item.icon, tint = tint, size = TAB_ICON_SIZE)
+        Text(
+            // textStyleOverline, not tabFont: the design's tab label is 10/700, which is the overline style.
+            text = item.label,
+            style = UseSmileIDSampleTheme.type.textStyleOverline,
+            color = tint,
+            textAlign = TextAlign.Center,
+        )
+    }
 }
 
-/** The ring is 68 around a 44 button, so it bleeds spacing.sm past the button on every side. */
-private val RING_BLEED = SmileDimens.spacingSm
+/** The ring sits just outside the button, so it bleeds a little past it on every side. */
+private val RING_BLEED = SmileDimens.space4
+
+/** 21, 58 and 8.5 in the design; no token carries any of them — see spec/design-tokens.json → deltas. */
+private val TAB_ICON_SIZE = 21.dp
+private val TOKEN_SIZE = 58.dp
+private val TOKEN_LABEL_SIZE = 8.5.sp
 private const val FULL_TURN = 360f
 private const val QUARTER_TURN_UP = -90f

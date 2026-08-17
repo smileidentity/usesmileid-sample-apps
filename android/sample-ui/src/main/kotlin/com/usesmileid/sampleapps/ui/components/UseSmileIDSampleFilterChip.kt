@@ -14,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -46,16 +48,23 @@ fun UseSmileIDSampleFilterChip(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
+                // The design's chip label is 12.5/700; filterChipFont is 14/400 — see spec/design-tokens.json → deltas.
                 text = label,
-                style = UseSmileIDSampleTheme.type.filterChipFont,
+                style = UseSmileIDSampleTheme.type.filterChipFont.copy(
+                    fontSize = CHIP_LABEL_SIZE,
+                    fontWeight = FontWeight.Bold,
+                ),
                 color = if (selected) colors.onPrimary else colors.filterChip.label,
             )
             Text(
                 text = count.toString(),
-                style = UseSmileIDSampleTheme.type.textStyleCaption,
+                style = UseSmileIDSampleTheme.type.textStyleOverline,
                 color = if (selected) colors.onPrimary else colors.filterChip.value,
                 modifier = Modifier.tagged(countTestId),
             )
         }
     }
 }
+
+/** 12.5 in the design; no type token carries it. */
+private val CHIP_LABEL_SIZE = 12.5.sp

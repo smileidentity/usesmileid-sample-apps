@@ -219,7 +219,7 @@ class TestDimens(unittest.TestCase):
 
 
 class TestProductHues(unittest.TestCase):
-    HUE = {"from": "#05723A", "to": "#0A9B4C", "icon": "#05723A", "scrim": "#FFFFFF"}
+    HUE = {"from": "#05723A", "to": "#0A9B4C", "icon": "#05723A", "scrim": "#FFFFFF", "tile": "#E4F2EA"}
 
     def test_hex_becomes_an_opaque_compose_colour(self):
         self.assertEqual(gen.kotlin_color("#e08600"), "Color(0xFFE08600)")
@@ -235,15 +235,34 @@ class TestProductHues(unittest.TestCase):
         with self.assertRaises(gen.TokenError):
             gen.kotlin_color("#fff")
 
-    def test_every_product_emits_all_four_roles(self):
+    def test_every_product_emits_all_five_roles(self):
         out = gen.emit_kotlin_product_hues({"smartSelfieEnrollment": self.HUE})
         self.assertIn('"smartSelfieEnrollment" to SmileProductHue(', out)
-        for role in ("from", "to", "icon", "scrim"):
+        for role in ("from", "to", "icon", "scrim", "tile"):
             self.assertIn(f"{role} = Color(0xFF", out)
 
     def test_a_hue_missing_a_role_fails_loudly(self):
         with self.assertRaises(gen.TokenError):
             gen.emit_kotlin_product_hues({"biometricKyc": {"from": "#151F72", "to": "#2B3A9E"}})
+
+    def test_soft_badge_fills_emit_every_feedback_role(self):
+        out = gen.emit_kotlin_soft_badge_fills(gen.read_soft_badge_fills())
+        for role in ("success", "info", "warning", "error"):
+            self.assertIn(f'"{role}" to SmileSoftBadgeFill(', out)
+
+    def test_a_soft_badge_role_missing_from_the_spec_fails_loudly(self):
+        with self.assertRaises(gen.TokenError):
+            gen.emit_kotlin_soft_badge_fills({"success": {"background": "#DBF5E4", "text": "#04713A"}})
+
+    def test_a_soft_badge_fill_missing_its_text_colour_fails_loudly(self):
+        fills = {role: {"background": "#DBF5E4", "text": "#04713A"} for role in ("success", "info", "warning", "error")}
+        del fills["error"]["text"]
+        with self.assertRaises(gen.TokenError):
+            gen.emit_kotlin_soft_badge_fills(fills)
+
+    def test_the_soft_fills_are_not_the_saturated_design_system_pairs(self):
+        fills = gen.read_soft_badge_fills()
+        self.assertNotEqual(fills["warning"]["background"].upper(), "#FF9B00")
 
     def test_an_empty_spec_entry_fails_rather_than_emitting_an_empty_map(self):
         with self.assertRaises(gen.TokenError):
