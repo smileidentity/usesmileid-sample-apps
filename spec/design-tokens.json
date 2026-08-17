@@ -231,6 +231,15 @@
       "status": "OPEN 2026-08-17 — generated stopgap in place; delete the generated value once the design system carries the role"
     },
     {
+      "id": "disabledPair",
+      "severity": "cosmetic, but it decides whether a disabled control reads as disabled",
+      "figma": { "color/disabled-bg": "#E5E7EB", "color/disabled-fg": "#9AA0A6" },
+      "designSystem": { "button.disabled.background": "#EAECF0", "button.disabled.text": "#848282" },
+      "finding": "The design file's disabled pair is slightly darker than the design system's. Recorded rather than patched, because the design system wins by the precedence rule and the difference is small. The real defect found alongside it WAS fixed: the select trigger used color.surface-muted (#F9FAFB, almost white) with text.muted for its disabled state, so a disabled ID-type picker looked enabled. It now uses the button.disabled pair.",
+      "recommendation": "Reconcile the two, or accept the design system's values as canonical and update the design file.",
+      "status": "OPEN 2026-08-17 — NOT locally patched; the wrong-token bug beside it is fixed"
+    },
+    {
       "id": "surface2",
       "severity": "every subtle-fill surface on four apps — copy buttons, icon tiles, inset rows",
       "figma": { "color/surface-2": "#EAECF0" },

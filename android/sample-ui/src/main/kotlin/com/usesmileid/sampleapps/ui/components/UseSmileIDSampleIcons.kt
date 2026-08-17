@@ -43,6 +43,11 @@ fun ArrowForwardGlyph(tint: Color, size: Dp = SmileDimens.sizeIconSm) =
 fun ArrowBackGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) =
     UseSmileIDSampleIcon(id = R.drawable.sample_ic_arrow_back, tint = tint, size = size)
 
+/** The select trigger's chevron, which points DOWN — the list one points right. */
+@Composable
+fun ChevronDownGlyph(tint: Color, size: Dp = SmileDimens.sizeIconSm) =
+    UseSmileIDSampleIcon(id = R.drawable.sample_ic_chevron_down, tint = tint, size = size)
+
 internal val UseSmileIDSampleProduct.hue: SmileProductHue
     get() = requireNotNull(smileProductHues[id]) { "no hue for product '$id'; see spec/design-tokens.json → productHues" }
 
