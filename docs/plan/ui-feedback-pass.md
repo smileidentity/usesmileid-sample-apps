@@ -148,4 +148,11 @@ Status: `todo` · `wip` · `done` · `design` (needs a design answer) · `owner`
 | F69 | The removal confirmation would have sat behind the floating pill, having previously relied on the slot's inset | done — the bar publishes its measured height and the toast clears it; nothing assumes a hard-coded bar height |
 | F70 | `shell-navigation.yaml` switched tabs from the details screen, which a bar-less pushed screen makes impossible | done — the flow now asserts the pushed screen has no bar, goes back, and switches tabs from the list. The consequence for R7 is written down rather than left as a surprise |
 
+### Owed, to review later
+
+| ID | Item | Status |
+|---|---|---|
+| F71 | The nav bar's absence on a pushed screen is asserted on the **deep-link** arrival only; the tap path is uncovered | **OPEN** — `verifications.yaml` already taps `sample_job_row_0` into the details screen, so the assertion is two lines there. Worth doing because the property belongs to the destination, not the route in: a regression could hide behind whichever arrival the flow does not exercise |
+| F72 | The pre-fix behaviour was never observed on the tap path | **OPEN, low value** — the predicate was a pure function of the current destination, so the tap path could not have differed; confirming it by eye needs the parent commit rebuilt. Recorded so the gap is not mistaken for evidence that it was deep-link-only |
+
 <!-- INTERNAL-ONLY:END -->

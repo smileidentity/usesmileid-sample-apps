@@ -154,6 +154,12 @@ the workaround that fakes it with a dialog destination costs the native sheet be
   that tab: verification details sits in the verifications graph, and testing graph *membership* put a
   nav bar on a pushed screen that the design draws without one. Match the graph's **start
   destination**. Every pushed screen in the design is bar-less.
+
+  Whether a screen carries a bar is a property of the **destination**, not of how you reached it — the
+  predicate takes the current destination and nothing else. So it was never a deep-link-only fault, and
+  a check that covers one arrival route covers neither: **the device flow currently asserts the absent
+  bar on the deep-link path only, and the tap path is still owed.** Verifying the pre-fix behaviour on
+  the tap path was also never done, because the fix had already landed by the time it was asked.
 - **It floats over the content, not beside it.** The design draws a pill on a shadow with the list
   continuing underneath. Putting it in a bottom-bar slot insets the content instead, which drew a
   visible seam across the screen with the last row clipped against it — the bar read as its own
