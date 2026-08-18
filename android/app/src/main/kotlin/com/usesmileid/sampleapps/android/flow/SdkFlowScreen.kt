@@ -13,19 +13,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.annotation.parameters.DeepLink
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.presentation.flow.validation.ValidationState
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
+import com.usesmileid.sampleapps.android.navigation.FlowGraph
 import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleDeepLinks
 import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleFlowTransitions
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** The single route hosting the SDK flow; a placeholder that runs the pre-flight but sets no running status, because nothing is handed to the SDK yet. */
-@Destination<RootGraph>(style = UseSmileIDSampleFlowTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SDK_FLOW)])
+@Destination<FlowGraph>(style = UseSmileIDSampleFlowTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SDK_FLOW)])
 @Composable
 fun SdkFlowScreen(
     productId: String,
