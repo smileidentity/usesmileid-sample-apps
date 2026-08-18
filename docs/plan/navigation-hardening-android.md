@@ -1,8 +1,10 @@
 # Navigation hardening — Android, audited against Compose Destinations 2.x
 
-**Status:** planned, not started. Source: a 2026-08-18 audit of `android/app`'s navigation against
-the Compose Destinations 2.x documentation (https://composedestinations.rafaelcosta.xyz/v2/), read
-page by page against the code as merged on `main`.
+**Status:** NAV-A1, NAV-A2 and NAV-A4 landed 2026-08-18 (`chore/android-nav-hardening`);
+NAV-A3's remaining code items land with the N2 flow-handoff work by design; NAV-A5/A6 are
+decision records. Source: a 2026-08-18 audit of `android/app`'s navigation against the Compose
+Destinations 2.x documentation (https://composedestinations.rafaelcosta.xyz/v2/), read page by
+page against the code as merged on `main`.
 
 **Audit verdict first, so nobody re-litigates the healthy parts:** the implementation is current
 (2.3.0 is the latest release on Maven Central) and uses the 2.x idioms the docs recommend —
@@ -171,6 +173,15 @@ navigator.navigate(VerificationDetailsScreenDestination(jobId = jobId)) {
 - **Transitions** — per-destination styles stay on the destinations. If the whole wizard should
   share the flow fade, `@NavGraph(defaultTransitions = …)` exists, but R11 gives the forms the
   push motion and only the flow the fade, so per-destination remains correct here.
+
+**What does change, deliberately: the cold deep link's synthetic back stack.** androidx places
+each parent graph's start destination on the stack it synthesizes for an implicit deep link, with
+the intermediate destination's arguments filled from the URI. So a cold link to
+`…/flow/{productId}/run` now puts `ConsentDetailsFormScreen(productId)` beneath the flow, and
+back from a cold-linked flow lands on the consent form instead of leaving the app. That is the
+wizard journey the §7.3 validator redirect implies anyway — a cold entry with empty stores was
+always going to route through the form — but any device flow asserting back-from-deep-linked-flow
+behaviour must expect the form, not an exit.
 
 **Considered and rejected: graph-level `navArgs` carrying `productId`.** Compose Destinations
 supports arguments on the graph itself, which would stop the pickers re-declaring a `productId`
