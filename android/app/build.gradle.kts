@@ -49,6 +49,16 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     }
 }
 
+tasks.withType<Test>().configureEach {
+    val specDir = layout.projectDirectory.dir("../../spec")
+    systemProperty("sampleapps.spec.dir", specDir.asFile.absolutePath)
+    // Declared so an edited spec or manifest re-runs the task; without them verify passes on a stale contract.
+    inputs.dir(specDir).withPropertyName("specContract").withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.file(layout.projectDirectory.file("src/main/AndroidManifest.xml"))
+        .withPropertyName("manifestScheme")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+}
+
 dependencies {
     implementation(projects.sampleUi)
 
@@ -66,4 +76,6 @@ dependencies {
 
     implementation(libs.destinations)
     ksp(libs.destinations.ksp)
+
+    testImplementation(libs.junit)
 }

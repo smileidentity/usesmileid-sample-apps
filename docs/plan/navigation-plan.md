@@ -290,6 +290,7 @@ Two milestones worth naming separately, because they are where the defects live:
 - **N2 — the flow handoff.** Both presentations of the SDK route, the replace-don't-stack result
   transition (R4), cancellation semantics (R5), and recreation survival (R6). This is the riskiest
   part of the whole app and it deserves device verification on every platform, not just CI.
+  What the flow route receives, and how — the argument contract N2 builds on — is §8.
 
 ## 7. Result handling — settled from the SDK source (2026-08-13)
 
@@ -369,3 +370,207 @@ flow — submission-time validation throws, and a thrown builder error surfaces 
 **the BVN job type is not supported and throws**. That strengthens the case for leaving `BVN` out of
 the products grid (`spec/screens.json` → `openQuestions.productCoverage`) rather than filling the
 empty slot with it.
+
+---
+
+## 8. Parameters into the flow route — the contract N2 builds on
+
+The question N2 forces on every platform: when the host navigates to `…/run`, how does the flow
+destination receive what it needs? The answer is one rule with two halves, and it is the same rule
+on all four platforms:
+
+> **The route carries identity. The stores carry payload. The SDK's validator gates entry.**
+
+Identity is the two arguments `spec/routes.json` already declares for `sdkFlow` — `productId`
+(which journey) and `route` (`fullscreen|shell`, R3). Payload is everything the user typed or
+chose — the Consent Details Form values, the ID details, the active scenario and theme. Payload
+travels through the persisted stores (R6) and is **snapshotted once at flow entry**; it never
+appears in a URI or a navigation argument.
+
+Three reasons, each already earned elsewhere in this document:
+
+1. **R9 makes the route the only reliable carrier.** An externally delivered deep link is
+   effectively a cold start — a second Activity instance with `savedInstanceState` null — so
+   in-memory hoists are gone whatever the app was doing. On Android the two form stores are
+   `rememberSaveable`-backed: they survive rotation and process death, **not** the R9
+   replacement. Route arguments and disk-persisted state are what's left standing, which is
+   exactly the split this rule makes.
+2. **Payload is PII, and URIs leak.** Deep links transit `adb` command lines, Maestro flow files,
+   logcat and system intent logs. The Security section's "no PII in logs" rule decides this
+   without further debate: names, emails, phone numbers and ID numbers never become URI or route
+   arguments.
+3. **The spec stays small and stable.** `sdkFlow`'s two arguments are a four-platform contract.
+   Every argument added to the route table must be implemented and tested four times; payload
+   fields would multiply that for no reachability gain, since a cold link with empty stores is
+   already handled by the §7.3 validator gate.
+
+**The cold-link corollary (§7.3, restated as behaviour):** a link straight to
+`…/flow/biometricKyc/run` with empty stores must not reach the SDK. On entry the route calls the
+SDK's non-throwing `validate()`; when it reports missing user or ID details, redirect to the
+form route for the same `productId` — and the journey resumes through the wizard's own linear
+Continue chain (details → id-details → run), so no "return-to" token is needed in any route's
+arguments. The wizard being linear per product is what keeps the route table free of
+continuation state.
+
+### 8.1 Android — Compose Destinations, concretely
+
+**The args holder.** N2's flow host needs its arguments in a ViewModel (the buffered-result
+replay in §7.2 requires the host's identity to be derivable from the route, R6). KSP already
+generates a typed holder from the composable's parameters — verified in the generated output,
+`SdkFlowScreenDestinationNavArgs(productId, route = Fullscreen)` exists today — and the generated
+destination exposes `argsFrom(savedStateHandle)`, so the ViewModel needs no string keys and the
+annotation needs no change:
+
+```kotlin
+@Destination<FlowGraph>(
+    style = UseSmileIDSampleFlowTransitions::class,
+    deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SDK_FLOW)],
+)
+@Composable
+fun SdkFlowScreen(navigator: DestinationsNavigator, viewModel: SdkFlowViewModel) { /* … */ }
+
+class SdkFlowViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
+    private val args = SdkFlowScreenDestination.argsFrom(savedStateHandle)
+    // args.productId / args.route — same values on tap-navigation, cold deep link and recreation
+}
+```
+
+Until the ViewModel exists (the placeholder screen today), the composable-parameter form the app
+already uses generates the identical route. A hand-declared `navArgs = …::class` class is the
+documented alternative for when arguments outgrow a parameter list — a style choice, not a
+prerequisite.
+
+**Call sites stay typed.** KSP generates an invoke per destination, so every hop of the wizard
+passes identity forward without a string route anywhere:
+
+```kotlin
+// Products grid → wizard (UseSmileIDSampleDestinations.kt)
+onProductClick = { navigator.navigate(ConsentDetailsFormScreenDestination(productId = it.id)) }
+
+// Consent form → ID details, only when the product needs them
+navigator.navigate(IdDetailsFormScreenDestination(productId = productId))
+
+// ID form's Continue → the flow itself; route defaults to Fullscreen
+navigator.navigate(SdkFlowScreenDestination(productId = productId))
+
+// Automation autostart (UseSmileIDSampleShell.kt) — both arguments explicit
+navigator.navigate(SdkFlowScreenDestination(productId = product.id, route = app.launchArgs.route))
+```
+
+**The enum binding — works today, but by a coincidence a test must pin.** The spec declares
+`route: enum(fullscreen,shell)`; the Kotlin constants are `Fullscreen("fullscreen")` /
+`Shell("shell")`. Compose Destinations parses enum arguments **case-insensitively** — verified in
+the generated KSP output, where the route argument binds through the library's
+`DestinationsEnumNavType` and its `valueOfIgnoreCase` parse path — so the spec URI
+`…/run?route=shell` reaches `Shell` because, and only because, every constant's name equals its
+`id` up to case. That is a naming coincidence, not a contract, and the serialize side emits the
+constant name (`SdkFlowScreenDestination(…, route = Shell).route` ends in `?route=Shell`), which
+any case-*sensitive* consumer of the shared paths would reject. Two consequences:
+
+- The Android spec test asserts the invariant `name.lowercase() == id` for every constant, plus
+  the spec's exact value list — `navigation-hardening-android.md` NAV-A1 item 4 has the
+  assertions. No production code changes; the test is what makes the coincidence safe.
+- If the invariant ever has to break, the boundary fix is `route: String = "fullscreen"` on the
+  destination, mapped to the enum on the next line — one stringly-typed edge beats changing a URI
+  value four platforms and the Maestro flows already encode.
+
+**Entry snapshot — where payload joins identity.** Exactly one function assembles what the SDK
+gets, so there is exactly one place to validate, log-safely, what the flow launched with:
+
+```kotlin
+/** Read once when the flow route enters; never re-read while the flow runs (R2 — the SDK owns it now). */
+data class FlowLaunchSnapshot(
+    val product: UseSmileIDSampleProduct,
+    val route: UseSmileIDSampleFlowRoute,
+    val userDetails: UseSmileIDSampleUserDetails,   // forms store — survives rotation, R6
+    val idDetails: UseSmileIDSampleIdDetails,       // country / idType / idNumber, if product.needsIdDetails
+    val scenario: UseSmileIDSampleScenario,         // drawer store — drives the run
+    val theme: UseSmileIDSampleThemeScenario,
+)
+
+fun buildSnapshot(args: SdkFlowScreenDestinationNavArgs, app: UseSmileIDSampleAppState): FlowLaunchSnapshot? {
+    val product = UseSmileIDSampleProduct.entries.firstOrNull { it.id == args.productId } ?: return null
+    return FlowLaunchSnapshot(
+        product = product,
+        route = args.route,
+        userDetails = app.forms.userDetails,
+        idDetails = app.forms.idDetails,
+        scenario = app.flowResult.scenario,
+        theme = app.flowResult.theme,
+    )
+}
+```
+
+`null` product — a mistyped deep link — lands on the same redirect path as failed validation:
+back to the products tab, never a crash and never the SDK. Then the gate and the handoff:
+
+```kotlin
+val snapshot = buildSnapshot(args, app) ?: return redirectToProducts()
+// `applying` is the snapshot→builder mapping N2 introduces (host-side extension, not SDK API):
+// product journey + userDetails + idDetails + theme onto the public UseSmileIDFlowBuilder DSL.
+val validation = UseSmileIDFlowBuilder()
+    .applying(snapshot)
+    .validate()                  // non-throwing, §7.3 — the partner-facing pre-flight
+when (validation) {
+    is ValidationState.Valid -> { /* host the flow; deliver results per §7.2 */ }
+    is ValidationState.Invalid -> navigator.navigate(
+        ConsentDetailsFormScreenDestination(productId = args.productId),
+    ) {
+        // The graph, not just the flow: a deep link synthesizes a consent form beneath the
+        // flow, and popping only the flow would stack the redirect's form on top of it.
+        popUpTo(FlowNavGraph) { inclusive = true }
+    } // the wizard resumes forward from here
+}
+```
+
+**Identity keys the survival machinery.** §7.2's third guarantee — a buffered result is replayed
+only to the *same* host — plus R6's device-found bug (`remember { UUID.randomUUID() }` keys a new
+ViewModel every recreation) reduce to: derive the flow host's key from the arguments, nothing
+else.
+
+```kotlin
+// Saveable by construction: same route arguments → same key → same restored host.
+val flowKey = "${args.productId}/${args.route.id}"
+```
+
+**The exit carries identity too (R4).** The result's `jobId` is the only thing the landing route
+needs, and the pop target is the wizard's graph, not a screen:
+
+```kotlin
+navigator.navigate(VerificationDetailsScreenDestination(jobId = jobId)) {
+    popUpTo(FlowNavGraph) { inclusive = true }  // flow + both forms, however the wizard grows
+}
+```
+
+### 8.2 The same rule on the other three platforms
+
+One line each, because the mechanics differ but the contract must not:
+
+| Platform | Identity travels as | Payload read from | The §7.3 gate runs |
+|---|---|---|---|
+| iOS | `case sdkFlow(productId: String, route: FlowRoute)` in the `Codable` `Route` enum — typed, `@SceneStorage`-restorable | the observable stores at view construction | in the route's view `onAppear`, before the builder renders |
+| Flutter | path param `:productId` + query `route`, parsed **once** in the route's builder into a typed args object (§4's no-codegen rule) | Riverpod providers, `family`-keyed by `productId` | in the route builder's redirect, go_router's native mechanism for it |
+| Expo | `useLocalSearchParams()` in the `…/run` screen, validated at the top of the component | zustand stores | before rendering the SDK component; `router.replace` to the form on failure |
+
+Parity checks the spec tests own on every platform: the two argument names, the lowercase enum
+values `fullscreen|shell`, and the default (`fullscreen` when absent). Carry §8.1's lesson to the
+siblings with one asymmetry in mind: Android *parses* case-insensitively but *serializes* the
+constant name, while the hand-written parsers on Flutter and Expo and the `Codable` decode on iOS
+are case-sensitive unless written otherwise. So every platform's parser must accept the spec's
+lowercase values, every spec test asserts with the *spec's* values rather than the platform's,
+and nothing that emits a URI may rely on Android's case-forgiveness — normalise to the lowercase
+id at every emit site.
+
+### 8.3 What must never become a route argument
+
+Recorded as a list because each one will be proposed eventually, and the answer is already no:
+
+- **User details, ID number, consent** — PII in URIs (reason 2), and the §7.3 gate makes them
+  unnecessary for reachability.
+- **Scenario / theme** — they are launch arguments and drawer state with their own contract
+  (`spec/launch-args.json`), and R9 already defines how automation delivers them. A second path
+  through the route would let the two disagree.
+- **A "return-to" continuation** — the wizard is linear per product; the Continue chain *is* the
+  resume path.
+- **The token session** — R6: it is an absolute deadline in the persisted store; a route argument
+  would be a stale copy the moment it was written.

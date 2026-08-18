@@ -204,7 +204,7 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
 }
 
 /** The Consent Details Form. Shown for every product, before the SDK flow starts. */
-@Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.CONSENT_DETAILS_FORM)])
+@Destination<FlowGraph>(start = true, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.CONSENT_DETAILS_FORM)])
 @Composable
 fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
@@ -225,7 +225,7 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
 }
 
 /** Only for products that need ID details. */
-@Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.ID_DETAILS_FORM)])
+@Destination<FlowGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.ID_DETAILS_FORM)])
 @Composable
 fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
@@ -241,7 +241,7 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     )
 }
 
-@Destination<RootGraph>(style = UseSmileIDSampleSheetTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.COUNTRY_PICKER)])
+@Destination<FlowGraph>(style = UseSmileIDSampleSheetTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.COUNTRY_PICKER)])
 @Composable
 fun CountryPickerSheet(productId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
@@ -255,7 +255,7 @@ fun CountryPickerSheet(productId: String, navigator: DestinationsNavigator) {
     )
 }
 
-@Destination<RootGraph>(style = UseSmileIDSampleSheetTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.ID_TYPE_PICKER)])
+@Destination<FlowGraph>(style = UseSmileIDSampleSheetTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.ID_TYPE_PICKER)])
 @Composable
 fun IdTypePickerSheet(productId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
