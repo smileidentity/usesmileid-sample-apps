@@ -233,8 +233,8 @@
         "filter-chip.value": "#4D88FF light, #7BA3FF dark"
       },
       "finding": "The design file paints an unselected chip's count in muted grey; the design system's filter-chip.value is a mid blue. Both agree the selected chip's count is primary-ink. Reported in review 2026-08-17 as part of 'the chip text style doesn't match' — the type style was a real mismatch and is fixed; this colour is a genuine source disagreement, so it is recorded rather than patched.",
-      "recommendation": "Owner ruling. The design system wins by the precedence rule, so the blue ships until someone says otherwise — but the design file is what a reviewer compares against, so this will be re-reported until one side moves.",
-      "status": "OPEN 2026-08-17 — needs an owner ruling; NOT locally patched"
+      "recommendation": "Settled: the design file wins for this one element. Every platform paints an unselected chip's count in the muted text role, and a selected chip's in primary-ink. filter-chip.value is left unused here.",
+      "status": "RESOLVED 2026-08-18 by owner ruling — the design file's muted grey ships. Patched via the semantic muted text role, so no hex is copied and nothing is generated for it."
     },
     {
       "id": "borderStrong",

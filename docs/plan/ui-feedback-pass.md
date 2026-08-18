@@ -37,7 +37,7 @@ Status: `todo` · `wip` · `done` · `design` (needs a design answer) · `owner`
 | F08 | Consent Details Entry — complete state | 5206:3777 | done — proved the row LABEL is title-coloured and only the placeholder is muted; the app had it inverted |
 | F09 | Settings screen — full pass | 5206:2898 | done — bordered section cards, rules between rows, 38/11 grey tiles, 14 chevrons, caption supporting text, bordered Sign out in soft-error, centred version |
 | F10 | Token session flow — full pass | 5206:3668 · 3704 · 3752 | done — scan copy to 12.5/500 centred, manual-entry row to surface-2 with muted 13.5 copy and a bold 13 Paste; ring bleed confirmed against the 68px ellipse over a 60px button |
-| F11 | Filter chip type style + count colour | 5206:2415 | done (type); count colour is a design-system disagreement, recorded as `filterChipCountColour`, **not** patched |
+| F11 | Filter chip type style + count colour | 5206:2415 | done — type style fixed at the time; the count colour was a design-system disagreement, **settled by owner ruling 2026-08-18** in favour of the design file's muted grey and now patched via the semantic muted text role |
 | F12 | "Select" action type style (14 Bold, primary) | 5206:2414 | done |
 | F13 | Status badge colours — the four soft pairs, and Title case not UPPERCASE | 5206:2429–2433 | done |
 | F14 | Select-mode UI | 5206:2441 · 2491 · 2545 | done — 2px border-strong checkbox ring, soft-error Remove dimmed to 45%, top-edge-only bar, four type fixes |
