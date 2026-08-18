@@ -12,6 +12,11 @@ class UseSmileIDSampleJobs(seed: List<UseSmileIDSampleJob> = emptyList()) {
 
     val all: List<UseSmileIDSampleJob> get() = items
 
+    /** Newest first, matching the seed's ordering. */
+    fun add(job: UseSmileIDSampleJob) {
+        items.add(0, job)
+    }
+
     fun count(filter: UseSmileIDSampleJobFilter) = items.count(filter::matches)
 
     fun remove(ids: Set<String>) {
