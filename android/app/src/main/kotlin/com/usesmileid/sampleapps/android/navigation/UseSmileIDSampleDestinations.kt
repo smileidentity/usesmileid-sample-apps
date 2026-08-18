@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -36,7 +37,6 @@ import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleOverlay
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleToast
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
@@ -101,9 +101,11 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
     var selectMode by rememberSaveable { mutableStateOf(false) }
     var selected by rememberSaveable { mutableStateOf(emptySet<String>()) }
     // The count outlives the toast so it still reads correctly while the toast slides away; the
-    // token restarts the window even when two removals in a row are the same size.
-    var removedCount by rememberSaveable { mutableIntStateOf(0) }
-    var removalToken by rememberSaveable { mutableIntStateOf(0) }
+    // token restarts the window even when two removals in a row are the same size. Both are
+    // deliberately NOT saveable: a saved token replays the confirmation every time you come back to
+    // this screen, so opening a verification and pressing back re-showed a removal from minutes ago.
+    var removedCount by remember { mutableIntStateOf(0) }
+    var removalToken by remember { mutableIntStateOf(0) }
 
     // One path for both removals — the swipe and the selection bar — so they cannot drift apart.
     val removeJobs: (Set<String>) -> Unit = { ids ->
@@ -114,6 +116,17 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
         // Emptying a filter otherwise leaves a blank screen under a chip reading 0.
         if (app.jobs.count(filter) == 0) filter = UseSmileIDSampleJobFilter.All
     }
+
+    // Published to the shell rather than drawn here: the design replaces the nav bar with it.
+    val chrome = LocalUseSmileIDSampleChrome.current
+    LaunchedEffect(selectMode, selected) {
+        chrome.selection = if (selectMode) {
+            UseSmileIDSampleSelectionChrome(count = selected.size, onRemove = { removeJobs(selected) })
+        } else {
+            null
+        }
+    }
+    DisposableEffect(Unit) { onDispose { chrome.selection = null } }
 
     Box(modifier = Modifier.fillMaxSize()) {
         VerificationsContent(
@@ -132,12 +145,6 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
             onJobClick = { navigator.navigate(VerificationDetailsScreenDestination(jobId = it.id)) },
             onRemove = removeJobs,
         )
-        UseSmileIDSampleOverlay(visible = selectMode, modifier = Modifier.align(Alignment.BottomCenter)) {
-            UseSmileIDSampleSelectionBar(
-                selectedCount = selected.size,
-                onRemove = { removeJobs(selected) },
-            )
-        }
         // Bounded, so a toast left up cannot restore rows long after the removal it belonged to.
         var removalShown by remember { mutableStateOf(false) }
         LaunchedEffect(removalToken) {
@@ -335,6 +342,7 @@ fun ProfileConfigScreen(profileId: String, navigator: DestinationsNavigator) {
     }
     ProfileConfigContent(
         organisation = profile?.organisation ?: profileId,
+        isActive = profileId == app.profiles.activeId,
         defaults = defaults,
         onFieldChange = { field, value -> defaults = field.write(defaults, value) },
         onBack = { navigator.navigateUp() },

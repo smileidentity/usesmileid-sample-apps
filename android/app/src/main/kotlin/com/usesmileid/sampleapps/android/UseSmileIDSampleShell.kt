@@ -42,6 +42,10 @@ import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import com.ramcosta.composedestinations.utils.rememberDestinationsNavigator
 import com.ramcosta.composedestinations.utils.startDestination
 import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleNavTransitions
+import androidx.compose.runtime.CompositionLocalProvider
+import com.usesmileid.sampleapps.android.navigation.LocalUseSmileIDSampleChrome
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleChromeState
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavItem
 
@@ -62,6 +66,7 @@ fun UseSmileIDSampleShell() {
     // real one — writing state straight from the composition body is what makes a value get skipped.
     var lastTab by remember { mutableStateOf(UseSmileIDSampleNavItem.Products) }
     LaunchedEffect(selectedTab) { lastTab = selectedTab ?: lastTab }
+    val chrome = remember { UseSmileIDSampleChromeState() }
 
     ForwardNewIntentsTo(navController)
     AutostartFlowOnce(navigator)
@@ -70,6 +75,16 @@ fun UseSmileIDSampleShell() {
         // UI automation only sees Compose test tags once they are published as resource ids.
         modifier = Modifier.semantics { testTagsAsResourceId = true },
         bottomBar = {
+            val selection = chrome.selection
+            if (selection != null) {
+                // Select mode replaces the bottom chrome rather than floating over it, so the nav
+                // bar cannot show through and the list keeps the same inset either way.
+                UseSmileIDSampleSelectionBar(
+                    selectedCount = selection.count,
+                    onRemove = selection.onRemove,
+                )
+                return@Scaffold
+            }
             // Slides out with the screen that covered it rather than vanishing on the same frame,
             // and keeps the last tab so the bar it animates away is the one you were looking at.
             AnimatedVisibility(
@@ -95,12 +110,14 @@ fun UseSmileIDSampleShell() {
             }
         },
     ) { contentPadding ->
-        DestinationsNavHost(
-            navGraph = NavGraphs.root,
-            navController = navController,
-            defaultTransitions = UseSmileIDSampleNavTransitions,
-            modifier = Modifier.padding(contentPadding),
-        )
+        CompositionLocalProvider(LocalUseSmileIDSampleChrome provides chrome) {
+            DestinationsNavHost(
+                navGraph = NavGraphs.root,
+                navController = navController,
+                defaultTransitions = UseSmileIDSampleNavTransitions,
+                modifier = Modifier.padding(contentPadding),
+            )
+        }
     }
 }
 
