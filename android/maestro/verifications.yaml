@@ -9,10 +9,7 @@ appId: ${APP_ID}
 - stopApp
 - launchApp
 
-- extendedWaitUntil:
-    visible:
-      id: "sample_nav_verifications"
-    timeout: 120000
+- runFlow: subflows/warm-start.yaml
 - tapOn:
     id: "sample_nav_verifications"
 - assertVisible:
