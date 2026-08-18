@@ -57,7 +57,10 @@ dependencies {
 }
 
 tasks.withType<Test>().configureEach {
-    systemProperty("sampleapps.spec.dir", layout.projectDirectory.dir("../../spec").asFile.absolutePath)
+    val specDir = layout.projectDirectory.dir("../../spec")
+    systemProperty("sampleapps.spec.dir", specDir.asFile.absolutePath)
+    // Declared so an edited spec re-runs the task; without it verify passes on a stale contract.
+    inputs.dir(specDir).withPropertyName("specContract").withPathSensitivity(PathSensitivity.RELATIVE)
 
     // Goldens render clock times, so the recorder's own zone and locale would otherwise bake into them.
     systemProperty("user.timezone", "UTC")
