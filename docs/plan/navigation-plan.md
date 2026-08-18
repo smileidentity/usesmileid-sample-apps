@@ -515,7 +515,11 @@ when (validation) {
     is ValidationState.Valid -> { /* host the flow; deliver results per §7.2 */ }
     is ValidationState.Invalid -> navigator.navigate(
         ConsentDetailsFormScreenDestination(productId = args.productId),
-    ) { popUpTo(SdkFlowScreenDestination) { inclusive = true } } // the wizard resumes forward from here
+    ) {
+        // The graph, not just the flow: a deep link synthesizes a consent form beneath the
+        // flow, and popping only the flow would stack the redirect's form on top of it.
+        popUpTo(FlowNavGraph) { inclusive = true }
+    } // the wizard resumes forward from here
 }
 ```
 

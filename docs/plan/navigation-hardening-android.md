@@ -174,14 +174,15 @@ navigator.navigate(VerificationDetailsScreenDestination(jobId = jobId)) {
   share the flow fade, `@NavGraph(defaultTransitions = …)` exists, but R11 gives the forms the
   push motion and only the flow the fade, so per-destination remains correct here.
 
-**What does change, deliberately: the cold deep link's synthetic back stack.** androidx places
-each parent graph's start destination on the stack it synthesizes for an implicit deep link, with
-the intermediate destination's arguments filled from the URI. So a cold link to
-`…/flow/{productId}/run` now puts `ConsentDetailsFormScreen(productId)` beneath the flow, and
-back from a cold-linked flow lands on the consent form instead of leaving the app. That is the
-wizard journey the §7.3 validator redirect implies anyway — a cold entry with empty stores was
-always going to route through the form — but any device flow asserting back-from-deep-linked-flow
-behaviour must expect the form, not an exit.
+**What does change, deliberately: the deep link's synthesized back stack.** androidx places each
+parent graph's start destination on the stack it synthesizes for a URI deep link — cold, and
+equally warm through `ForwardNewIntentsTo`'s `handleDeepLink` — with the intermediate
+destination's arguments filled from the URI. So a link to `…/flow/{productId}/run` now puts
+`ConsentDetailsFormScreen(productId)` beneath the flow: back from a deep-linked flow previously
+landed on Products (the root's start destination) and now lands on the consent form. That is the
+wizard journey the §7.3 validator redirect implies anyway — an entry with empty stores was always
+going to route through the form — but any device flow asserting back-from-deep-linked-flow
+behaviour must expect the form, not Products.
 
 **Considered and rejected: graph-level `navArgs` carrying `productId`.** Compose Destinations
 supports arguments on the graph itself, which would stop the pickers re-declaring a `productId`
@@ -190,9 +191,10 @@ placeholder must match a destination argument for a cold link straight to a pick
 because four platforms share those paths, the per-route declaration is the parity-preserving
 shape. The unused-looking parameter is load-bearing; the annotation comment should say so.
 
-**Verification:** `android/verify.sh`; the `shell-navigation` Maestro flow (deep link to each
-wizard route still lands); after N2 wires the real pop, a device pass proving back from
-`verificationDetails` reaches the originating tab, never capture (R4's actual point).
+**Verification:** `android/verify.sh`; the `deep-links` Maestro flow (a cold deep link to each
+wizard route still lands) plus `shell-navigation` for the warm path; after N2 wires the real pop,
+a device pass proving back from `verificationDetails` reaches the originating tab, never capture
+(R4's actual point).
 
 ---
 
@@ -218,7 +220,7 @@ inherit the same rule; this item is the Android work list:
    starts so in-memory form state is gone anyway; spec stability); the entry gate for a cold link
    is the SDK's own `validate()` (§7.3), not a fatter URI.
 
-**Verification:** NAV-A1's assertions green; `shell-navigation` flow drives `…/run?route=shell`
+**Verification:** NAV-A1's assertions green; the `deep-links` flow drives `…/run?route=shell`
 cold and asserts the in-shell presentation via the result card's `route` field.
 
 ---
