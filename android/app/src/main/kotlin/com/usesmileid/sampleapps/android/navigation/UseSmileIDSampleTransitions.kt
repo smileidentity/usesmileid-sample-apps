@@ -8,7 +8,6 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
 import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavBackStackEntry
 import com.ramcosta.composedestinations.animations.NavHostAnimatedDestinationStyle
@@ -19,27 +18,28 @@ import com.ramcosta.composedestinations.spec.DestinationStyle
 import com.ramcosta.composedestinations.utils.startDestination
 
 /**
- * How every route enters and leaves. Two motions, because the route table has two relationships:
- * a push moves sideways to say "deeper", and a tab switch fades through because tabs are siblings.
+ * How every route enters and leaves. The aim is that you feel the direction without watching an
+ * animation: the outgoing screen has gone before the incoming one is legible, so the two are never
+ * both readable, and the travel is a fraction of the width rather than all of it.
  *
  * The library's default is no animation at all, which reads as a series of cuts.
  */
 object UseSmileIDSampleNavTransitions : NavHostAnimatedDestinationStyle() {
 
     override val enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-        if (switchesTab()) fadeThroughIn() else slideIntoContainer(SlideDirection.Start, SLIDE) + fadeIn(FADE)
+        if (switchesTab()) arrive() else arrive(SlideDirection.Start)
     }
 
     override val exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-        if (switchesTab()) fadeOut(FADE_OUT) else slideOutOfContainer(SlideDirection.Start, SLIDE) + fadeOut(FADE)
+        if (switchesTab()) leave() else leave(SlideDirection.Start)
     }
 
     override val popEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-        if (switchesTab()) fadeThroughIn() else slideIntoContainer(SlideDirection.End, SLIDE) + fadeIn(FADE)
+        if (switchesTab()) arrive() else arrive(SlideDirection.End)
     }
 
     override val popExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-        if (switchesTab()) fadeOut(FADE_OUT) else slideOutOfContainer(SlideDirection.End, SLIDE) + fadeOut(FADE)
+        if (switchesTab()) leave() else leave(SlideDirection.End)
     }
 }
 
@@ -52,18 +52,31 @@ object UseSmileIDSampleSheetTransitions : DestinationStyle.Animated() {
     override val exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition? = { ExitTransition.None }
 }
 
-/** The SDK flow owns its own navigation, so the host only fades it in rather than sliding it. */
+/** The SDK flow owns its own navigation, so the host only fades it in rather than implying a direction. */
 object UseSmileIDSampleFlowTransitions : DestinationStyle.Animated() {
-    override val enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? = { fadeThroughIn() }
-    override val exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition? = { fadeOut(FADE_OUT) }
+    override val enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? = { fadeIn(ARRIVE) }
+    override val exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition? = { fadeOut(LEAVE) }
 }
 
 /**
- * The outgoing screen clears before the incoming one arrives. Overlapping the two instead leaves
- * both legible at once, and two dense screens on top of each other read as a rendering fault.
+ * Arriving: fade in once the outgoing screen has cleared, travelling a short distance if there is a
+ * direction to imply.
+ *
+ * The delay is what stops both screens being legible at once. Overlapping them shows the previous
+ * screen's text through the new one, which reads as a rendering fault rather than a transition.
  */
-private fun fadeThroughIn(): EnterTransition =
-    fadeIn(FADE_IN_DELAYED) + scaleIn(FADE_IN_DELAYED, initialScale = FADE_THROUGH_SCALE)
+private fun AnimatedContentTransitionScope<NavBackStackEntry>.arrive(
+    towards: SlideDirection? = null,
+): EnterTransition = fadeIn(ARRIVE).let { fade ->
+    if (towards == null) fade else fade + slideIntoContainer(towards, TRAVEL) { full -> full / SLIDE_FRACTION }
+}
+
+/** Leaving: fade out quickly, travelling the same short distance so the motion is symmetrical. */
+private fun AnimatedContentTransitionScope<NavBackStackEntry>.leave(
+    towards: SlideDirection? = null,
+): ExitTransition = fadeOut(LEAVE).let { fade ->
+    if (towards == null) fade else fade + slideOutOfContainer(towards, TRAVEL) { full -> full / SLIDE_FRACTION }
+}
 
 /**
  * Only between the three tab roots. Comparing parent graphs instead calls Settings → Profiles a tab
@@ -78,9 +91,9 @@ private val TAB_ROOTS: Set<String> = setOf(
     SettingsNavGraph.startDestination.route,
 )
 
-private const val FADE_OUT_MILLIS = 90
-private val SLIDE = tween<IntOffset>(durationMillis = 280, easing = FastOutSlowInEasing)
-private val FADE = tween<Float>(durationMillis = 180, easing = FastOutSlowInEasing)
-private val FADE_OUT = tween<Float>(durationMillis = FADE_OUT_MILLIS, easing = FastOutSlowInEasing)
-private val FADE_IN_DELAYED = tween<Float>(durationMillis = 210, delayMillis = FADE_OUT_MILLIS, easing = FastOutSlowInEasing)
-private const val FADE_THROUGH_SCALE = 0.94f
+/** An eighth of the width: enough to read as direction, not far enough to watch. */
+private const val SLIDE_FRACTION = 8
+private const val LEAVE_MILLIS = 100
+private val LEAVE = tween<Float>(durationMillis = LEAVE_MILLIS, easing = FastOutSlowInEasing)
+private val ARRIVE = tween<Float>(durationMillis = 160, delayMillis = LEAVE_MILLIS, easing = FastOutSlowInEasing)
+private val TRAVEL = tween<IntOffset>(durationMillis = 200, easing = FastOutSlowInEasing)
