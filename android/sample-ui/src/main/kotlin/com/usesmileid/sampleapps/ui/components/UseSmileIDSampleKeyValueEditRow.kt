@@ -14,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -37,7 +39,7 @@ fun UseSmileIDSampleKeyValueEditRow(
             .fillMaxWidth()
             .background(colors.surface)
             .defaultMinSize(minHeight = SmileDimens.sizeControlMd)
-            .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingSm),
+            .padding(horizontal = ROW_PADDING_X, vertical = ROW_PADDING_Y),
         // The value sits at the right edge and drops below the label at 2x, matching DataFieldRow.
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs),
@@ -45,8 +47,8 @@ fun UseSmileIDSampleKeyValueEditRow(
     ) {
         Text(
             text = if (required) "$label *" else label,
-            style = UseSmileIDSampleTheme.type.textStyleBodySm,
-            color = colors.textMuted,
+            style = UseSmileIDSampleTheme.type.textStyleSubtitle.copy(fontSize = ROW_TEXT_SIZE),
+            color = colors.textTitle,
         )
         BasicTextField(
             value = value,
@@ -54,7 +56,8 @@ fun UseSmileIDSampleKeyValueEditRow(
             enabled = enabled,
             singleLine = true,
             keyboardOptions = keyboardOptions,
-            textStyle = UseSmileIDSampleTheme.type.textStyleBodySm.copy(
+            textStyle = UseSmileIDSampleTheme.type.textStyleSubtitle.copy(
+                fontSize = ROW_TEXT_SIZE,
                 // Muted when disabled, so a row that cannot be edited does not look editable.
                 color = if (enabled) colors.textTitle else colors.textMuted,
             ),
@@ -64,7 +67,7 @@ fun UseSmileIDSampleKeyValueEditRow(
                 if (value.isEmpty()) {
                     Text(
                         text = placeholder,
-                        style = UseSmileIDSampleTheme.type.textStyleBodySm,
+                        style = UseSmileIDSampleTheme.type.textStyleSubtitle.copy(fontSize = ROW_TEXT_SIZE),
                         color = colors.textMuted,
                     )
                 }
@@ -73,3 +76,7 @@ fun UseSmileIDSampleKeyValueEditRow(
         )
     }
 }
+
+private val ROW_TEXT_SIZE = 13.5.sp
+private val ROW_PADDING_X = 15.dp
+private val ROW_PADDING_Y = 14.dp

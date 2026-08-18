@@ -7,15 +7,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.smileLabelTracking
+import com.smileid.designsystem.smileLabelSize
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/** The four job statuses, in the design's vocabulary. Each maps to one feedback role. */
+/** The four job statuses, Title case as the design sets them. */
 enum class UseSmileIDSampleStatus(val label: String) {
-    Clear("CLEAR"),
-    Attention("ATTENTION"),
-    Blocked("BLOCKED"),
-    Processing("PROCESSING"),
+    Clear("Clear"),
+    Attention("Attention"),
+    Blocked("Blocked"),
+    Processing("Processing"),
 }
 
 /** A status pill. The design wants soft tinted fills; only the saturated `badge.<role>.*` pairs have landed, so the values are pending, not the treatment (spec/design-tokens.json → softBadgeFills). */
@@ -45,11 +48,15 @@ private fun StatusPill(
 ) {
     Text(
         text = label,
-        style = UseSmileIDSampleTheme.type.badgeFont,
+        style = UseSmileIDSampleTheme.type.textStyleOverline.copy(
+            fontSize = smileLabelSize,
+            letterSpacing = smileLabelTracking,
+        ),
         color = foreground,
         modifier = modifier
             .tagged(testId)
-            .background(color = background, shape = RoundedCornerShape(SmileDimens.radiusChip))
+            .background(color = background, shape = RoundedCornerShape(SmileDimens.radiusControl))
             .padding(horizontal = SmileDimens.spacingXs, vertical = SmileDimens.space4),
     )
 }
+

@@ -5,6 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -13,9 +20,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.compose.ui.unit.IntOffset
 import androidx.core.util.Consumer
 import androidx.navigation.NavHostController
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -29,10 +42,14 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.Direction
-import com.ramcosta.composedestinations.utils.contains
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import com.ramcosta.composedestinations.utils.rememberDestinationsNavigator
 import com.ramcosta.composedestinations.utils.startDestination
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleNavTransitions
+import androidx.compose.runtime.CompositionLocalProvider
+import com.usesmileid.sampleapps.android.navigation.LocalUseSmileIDSampleChrome
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleChromeState
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavItem
 
@@ -49,6 +66,10 @@ fun UseSmileIDSampleShell() {
     val navigator = navController.rememberDestinationsNavigator()
     val destination by navController.currentDestinationAsState()
     val selectedTab = destination?.tab()
+    // Only ever written with a real tab: writing state from the composition body gets it skipped.
+    var lastTab by remember { mutableStateOf(UseSmileIDSampleNavItem.Products) }
+    LaunchedEffect(selectedTab) { lastTab = selectedTab ?: lastTab }
+    val chrome = remember { UseSmileIDSampleChromeState() }
 
     ForwardNewIntentsTo(navController)
     AutostartFlowOnce(navigator)
@@ -57,11 +78,36 @@ fun UseSmileIDSampleShell() {
         // UI automation only sees Compose test tags once they are published as resource ids.
         modifier = Modifier.semantics { testTagsAsResourceId = true },
         bottomBar = {
-            if (selectedTab != null) {
+            // Only select mode gets the slot: the slot insets the content, and the nav bar must not.
+            chrome.selection?.let { selection ->
+                UseSmileIDSampleSelectionBar(
+                    selectedCount = selection.count,
+                    onRemove = selection.onRemove,
+                )
+            }
+        },
+    ) { contentPadding ->
+        val density = LocalDensity.current
+        Box(modifier = Modifier.fillMaxSize()) {
+            CompositionLocalProvider(LocalUseSmileIDSampleChrome provides chrome) {
+                DestinationsNavHost(
+                    navGraph = NavGraphs.root,
+                    navController = navController,
+                    defaultTransitions = UseSmileIDSampleNavTransitions,
+                    modifier = Modifier.padding(contentPadding),
+                )
+            }
+            // Over the content: reserving a row drew a seam with the last row clipped against it.
+            AnimatedVisibility(
+                visible = selectedTab != null,
+                modifier = Modifier.align(Alignment.BottomCenter),
+                enter = slideInVertically(NAV_BAR_SPEC) { it } + fadeIn(),
+                exit = slideOutVertically(NAV_BAR_SPEC) { it } + fadeOut(),
+            ) {
                 val app = LocalUseSmileIDSampleAppState.current
                 UseSmileIDSampleNavBar(
                     sessionProgress = app.session?.takeIf { app.sessionActive }?.progress(app.nowMillis),
-                    selected = selectedTab,
+                    selected = lastTab,
                     onSelect = { item ->
                         navigator.navigate(item.graph) {
                             popUpTo(NavGraphs.root.startDestination) { saveState = true }
@@ -72,15 +118,13 @@ fun UseSmileIDSampleShell() {
                     onTokenClick = {
                         navigator.navigate(ScanTokenScreenDestination) { launchSingleTop = true }
                     },
+                    // Published so a screen can clear a bar it is not inset by.
+                    modifier = Modifier.onSizeChanged {
+                        chrome.navBarHeight = with(density) { it.height.toDp() }
+                    },
                 )
             }
-        },
-    ) { contentPadding ->
-        DestinationsNavHost(
-            navGraph = NavGraphs.root,
-            navController = navController,
-            modifier = Modifier.padding(contentPadding),
-        )
+        }
     }
 }
 
@@ -120,11 +164,11 @@ private fun ForwardNewIntentsTo(navController: NavHostController) {
     }
 }
 
-/** The tab a destination belongs to, or null when it is not inside the shell. */
-private fun DestinationSpec.tab(): UseSmileIDSampleNavItem? = when {
-    ProductsNavGraph.contains(this) -> UseSmileIDSampleNavItem.Products
-    VerificationsNavGraph.contains(this) -> UseSmileIDSampleNavItem.Verifications
-    SettingsNavGraph.contains(this) -> UseSmileIDSampleNavItem.Settings
+/** The tab a destination IS — its graph's START destination. Membership put a bar on a pushed detail screen. */
+private fun DestinationSpec.tab(): UseSmileIDSampleNavItem? = when (this) {
+    ProductsNavGraph.startDestination -> UseSmileIDSampleNavItem.Products
+    VerificationsNavGraph.startDestination -> UseSmileIDSampleNavItem.Verifications
+    SettingsNavGraph.startDestination -> UseSmileIDSampleNavItem.Settings
     else -> null
 }
 
@@ -134,3 +178,6 @@ private val UseSmileIDSampleNavItem.graph: Direction
         UseSmileIDSampleNavItem.Verifications -> VerificationsNavGraph
         UseSmileIDSampleNavItem.Settings -> SettingsNavGraph
     }
+
+/** Matches the route transition, so the bar and the screen move together. */
+private val NAV_BAR_SPEC = tween<IntOffset>(durationMillis = 280)

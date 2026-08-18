@@ -11,7 +11,7 @@ enum class UseSmileIDSampleProduct(
     SmartSelfieEnrollment("smartSelfieEnrollment", "SmartSelfie Enrollment", UseSmileIDSampleProductSection.Authentication),
     SmartSelfieAuth("smartSelfieAuth", "SmartSelfie Authentication", UseSmileIDSampleProductSection.Authentication),
     DocumentVerification("documentVerification", "Document Verification", UseSmileIDSampleProductSection.Verifications, needsIdDetails = true),
-    EnhancedDocumentVerification("enhancedDocumentVerification", "Enhanced Doc Verification", UseSmileIDSampleProductSection.Verifications, needsIdDetails = true),
+    EnhancedDocumentVerification("enhancedDocumentVerification", "Enhanced Document Verification", UseSmileIDSampleProductSection.Verifications, needsIdDetails = true),
     BiometricKyc("biometricKyc", "Biometric KYC", UseSmileIDSampleProductSection.Verifications, needsIdDetails = true),
     EnhancedKyc("enhancedKyc", "Enhanced KYC", UseSmileIDSampleProductSection.Verifications, capture = false, needsIdDetails = true),
     ;

@@ -123,11 +123,11 @@
       },
       {
         "id": "sample_toast",
-        "description": "Toast container."
+        "description": "Toast container. Used by verifications (removal + undo) and by profiles (the created confirmation)."
       },
       {
         "id": "sample_toast_undo",
-        "description": "Undo action inside a toast."
+        "description": "The action inside a toast, whatever it is labelled: \"Undo\" on a removal, \"Make active\" on a created profile. The id is the contract, the label is not."
       }
     ],
     "verificationDetails": [
@@ -231,7 +231,7 @@
       },
       {
         "id": "sample_profile_summary",
-        "description": "Profile row at the top of settings."
+        "description": "Profile row at the top of settings; opens the profiles LIST, not the active profile's page."
       },
       {
         "id": "sample_setting_smile_to_capture",
@@ -281,7 +281,7 @@
       },
       {
         "id": "sample_create_profile",
-        "description": "Create-profile row."
+        "description": "Create-profile row; opens the new-profile sheet, which returns to the list with the confirmation."
       },
       {
         "id": "sample_new_profile_sheet",
@@ -292,8 +292,24 @@
         "description": "Profile name input."
       },
       {
+        "id": "sample_new_profile_first_name",
+        "description": "First name input; required before Create profile enables."
+      },
+      {
+        "id": "sample_new_profile_last_name",
+        "description": "Last name input; required before Create profile enables."
+      },
+      {
+        "id": "sample_new_profile_email",
+        "description": "Email input, optional."
+      },
+      {
+        "id": "sample_new_profile_phone",
+        "description": "Phone input, optional."
+      },
+      {
         "id": "sample_new_profile_save",
-        "description": "Save action."
+        "description": "Create profile action."
       },
       {
         "id": "sample_profile_config_screen",
@@ -305,7 +321,7 @@
       },
       {
         "id": "sample_profile_config_save",
-        "description": "Save action."
+        "description": "Saves the defaults AND makes the profile active — the design labels it \"Make this profile active\"."
       }
     ],
     "token": [

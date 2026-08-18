@@ -4,10 +4,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -25,6 +27,7 @@ import com.ramcosta.composedestinations.generated.destinations.IdTypePickerSheet
 import com.ramcosta.composedestinations.generated.destinations.NewProfileSheetDestination
 import com.ramcosta.composedestinations.generated.destinations.ProfileConfigScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ProfileSwitchSheetDestination
+import com.ramcosta.composedestinations.generated.destinations.ProfilesScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ScenarioDrawerSheetDestination
 import com.ramcosta.composedestinations.generated.destinations.VerificationDetailsScreenDestination
@@ -33,8 +36,9 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleOverlay
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleToast
+import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
@@ -74,6 +78,7 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
         state = UseSmileIDSampleProductsState(
             environment = app.profiles.active.environment,
             initials = app.profiles.active.initials,
+            avatarColor = avatarColorForProfile(app.profiles.activeIndex),
             sessionId = app.session?.id?.takeIf { app.sessionActive },
             sessionRemaining = app.session
                 ?.takeIf { app.sessionActive }
@@ -95,7 +100,31 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
     var filter by rememberSaveable { mutableStateOf(UseSmileIDSampleJobFilter.All) }
     var selectMode by rememberSaveable { mutableStateOf(false) }
     var selected by rememberSaveable { mutableStateOf(emptySet<String>()) }
-    var removedCount by rememberSaveable { mutableIntStateOf(0) }
+    // The count outlives the toast, and the token restarts the window when two removals match in size.
+    // Neither is saveable: a saved token replayed the confirmation on every return to this screen.
+    var removedCount by remember { mutableIntStateOf(0) }
+    var removalToken by remember { mutableIntStateOf(0) }
+
+    // One path for both removals — the swipe and the selection bar — so they cannot drift apart.
+    val removeJobs: (Set<String>) -> Unit = { ids ->
+        app.jobs.remove(ids)
+        removedCount = ids.size
+        removalToken += 1
+        selectMode = false
+        // Emptying a filter otherwise leaves a blank screen under a chip reading 0.
+        if (app.jobs.count(filter) == 0) filter = UseSmileIDSampleJobFilter.All
+    }
+
+    // Published to the shell rather than drawn here: the design replaces the nav bar with it.
+    val chrome = LocalUseSmileIDSampleChrome.current
+    LaunchedEffect(selectMode, selected) {
+        chrome.selection = if (selectMode) {
+            UseSmileIDSampleSelectionChrome(count = selected.size, onRemove = { removeJobs(selected) })
+        } else {
+            null
+        }
+    }
+    DisposableEffect(Unit) { onDispose { chrome.selection = null } }
 
     Box(modifier = Modifier.fillMaxSize()) {
         VerificationsContent(
@@ -108,41 +137,32 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
                 nowMillis = app.nowMillis,
             ),
             onFilterChange = { filter = it },
-            onSelectModeChange = { selectMode = it; if (!it) selected = emptySet() },
+            // Cleared on the way IN, so the bar still shows its count while it slides away.
+            onSelectModeChange = { selectMode = it; if (it) selected = emptySet() },
             onSelectionChange = { id, checked -> selected = if (checked) selected + id else selected - id },
             onJobClick = { navigator.navigate(VerificationDetailsScreenDestination(jobId = it.id)) },
-            onRemove = { ids ->
-                app.jobs.remove(ids)
-                removedCount = ids.size
-                selected = emptySet()
-                selectMode = false
-            },
+            onRemove = removeJobs,
         )
-        if (selectMode) {
-            UseSmileIDSampleSelectionBar(
-                selectedCount = selected.size,
-                onRemove = {
-                    app.jobs.remove(selected)
-                    removedCount = selected.size
-                    selected = emptySet()
-                    selectMode = false
-                },
-                modifier = Modifier.align(Alignment.BottomCenter),
-            )
+        // Bounded, so a toast left up cannot restore rows long after the removal it belonged to.
+        var removalShown by remember { mutableStateOf(false) }
+        LaunchedEffect(removalToken) {
+            if (removalToken == 0) return@LaunchedEffect
+            removalShown = true
+            delay(SNACKBAR_WINDOW_MILLIS)
+            removalShown = false
         }
-        if (removedCount > 0) {
-            // Bounded, so a toast left up cannot restore rows long after the removal it belonged to.
-            LaunchedEffect(removedCount) {
-                delay(UNDO_WINDOW_MILLIS)
-                removedCount = 0
-            }
+        UseSmileIDSampleOverlay(
+            visible = removalShown,
+            // Clears the floating bar itself, which draws over this container rather than insetting it.
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = chrome.navBarHeight)
+                .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingXxs),
+        ) {
             UseSmileIDSampleToast(
                 message = if (removedCount == 1) "Verification removed" else "$removedCount verifications removed",
                 actionLabel = "Undo",
-                onAction = { app.jobs.undoRemove(); removedCount = 0 },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(SmileDimens.spacingMd),
+                onAction = { app.jobs.undoRemove(); removalShown = false },
             )
         }
     }
@@ -157,8 +177,10 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
         onSettingChange = { setting, enabled -> app.storeScope.launch { app.store.setSetting(setting, enabled) } },
         organisation = app.profiles.active.organisation,
         initials = app.profiles.active.initials,
+        avatarColor = avatarColorForProfile(app.profiles.activeIndex),
         versionLabel = "$APP_DISPLAY_NAME · ${BuildConfig.VERSION_NAME}",
-        onProfileClick = { navigator.navigate(ProfileConfigScreenDestination(profileId = app.profiles.activeId)) },
+        // The row opens the list: configuring any profile and creating one are both reached from there.
+        onProfileClick = { navigator.navigate(ProfilesScreenDestination) },
         onNavRowClick = {},
         onOpenScenarioDrawer = { navigator.navigate(ScenarioDrawerSheetDestination) },
         onSignOut = {},
@@ -219,7 +241,7 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     )
 }
 
-@Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.COUNTRY_PICKER)])
+@Destination<RootGraph>(style = UseSmileIDSampleSheetTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.COUNTRY_PICKER)])
 @Composable
 fun CountryPickerSheet(productId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
@@ -233,7 +255,7 @@ fun CountryPickerSheet(productId: String, navigator: DestinationsNavigator) {
     )
 }
 
-@Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.ID_TYPE_PICKER)])
+@Destination<RootGraph>(style = UseSmileIDSampleSheetTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.ID_TYPE_PICKER)])
 @Composable
 fun IdTypePickerSheet(productId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
@@ -250,7 +272,7 @@ fun IdTypePickerSheet(productId: String, navigator: DestinationsNavigator) {
 
 private fun productOf(productId: String) = UseSmileIDSampleProduct.entries.firstOrNull { it.id == productId }
 
-@Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.PROFILE_SWITCH)])
+@Destination<RootGraph>(style = UseSmileIDSampleSheetTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.PROFILE_SWITCH)])
 @Composable
 fun ProfileSwitchSheet(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
@@ -266,13 +288,46 @@ fun ProfileSwitchSheet(navigator: DestinationsNavigator) {
 @Composable
 fun ProfilesScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
-    ProfilesContent(
-        profiles = app.profiles.all,
-        activeId = app.profiles.activeId,
-        onProfileClick = { navigator.navigate(ProfileConfigScreenDestination(profileId = it.id)) },
-        onCreate = { navigator.navigate(NewProfileSheetDestination) },
-        onBack = { navigator.navigateUp() },
-    )
+    // Consumed on sight, so returning cannot re-show it. The window is a second effect because
+    // clearing the store flips the first one's key and would cancel its delay before it reset.
+    var confirmedId by remember { mutableStateOf<String?>(null) }
+    var confirmationShown by remember { mutableStateOf(false) }
+    val pendingId = app.profiles.lastCreatedId
+    LaunchedEffect(pendingId) {
+        val id = pendingId ?: return@LaunchedEffect
+        app.profiles.clearLastCreated()
+        confirmedId = id
+        confirmationShown = true
+    }
+    LaunchedEffect(confirmedId) {
+        if (confirmedId == null) return@LaunchedEffect
+        delay(SNACKBAR_WINDOW_MILLIS)
+        confirmationShown = false
+    }
+    val created = confirmedId?.let(app.profiles::find)
+    Box(modifier = Modifier.fillMaxSize()) {
+        ProfilesContent(
+            profiles = app.profiles.all,
+            activeId = app.profiles.activeId,
+            onProfileClick = { navigator.navigate(ProfileConfigScreenDestination(profileId = it.id)) },
+            onCreate = { navigator.navigate(NewProfileSheetDestination) },
+            onBack = { navigator.navigateUp() },
+        )
+        // A new profile is not made active by creating it, so the confirmation carries the offer.
+        UseSmileIDSampleOverlay(
+            visible = confirmationShown && created != null,
+            // The host already inset this past the system bar; insetting again lifts it into the list.
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingLg),
+        ) {
+            UseSmileIDSampleToast(
+                message = "${created?.organisation.orEmpty()} created",
+                actionLabel = "Make active",
+                onAction = { created?.let { app.profiles.setActive(it.id) }; confirmationShown = false },
+            )
+        }
+    }
 }
 
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.PROFILE_CONFIG)])
@@ -285,25 +340,53 @@ fun ProfileConfigScreen(profileId: String, navigator: DestinationsNavigator) {
     }
     ProfileConfigContent(
         organisation = profile?.organisation ?: profileId,
+        isActive = profileId == app.profiles.activeId,
         defaults = defaults,
         onFieldChange = { field, value -> defaults = field.write(defaults, value) },
         onBack = { navigator.navigateUp() },
         onSave = {
+            // The CTA reads "Make this profile active", so it has to do both.
             app.profiles.setDefaults(profileId, defaults)
+            app.profiles.setActive(profileId)
             navigator.navigateUp()
         },
     )
 }
 
-@Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.NEW_PROFILE)])
+@Destination<RootGraph>(style = UseSmileIDSampleSheetTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.NEW_PROFILE)])
 @Composable
 fun NewProfileSheet(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     var name by rememberSaveable { mutableStateOf("") }
+    var firstName by rememberSaveable { mutableStateOf("") }
+    var lastName by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
+    var phone by rememberSaveable { mutableStateOf("") }
     NewProfileContent(
         name = name,
+        firstName = firstName,
+        lastName = lastName,
+        email = email,
+        phone = phone,
         onNameChange = { name = it },
-        onSave = { app.profiles.add(organisation = name, person = ""); navigator.navigateUp() },
+        onFirstNameChange = { firstName = it },
+        onLastNameChange = { lastName = it },
+        onEmailChange = { email = it },
+        onPhoneChange = { phone = it },
+        onSave = {
+            // The person is the two required names; all four seed the details its jobs start from.
+            app.profiles.add(
+                organisation = name,
+                person = "$firstName $lastName".trim(),
+                defaults = UseSmileIDSampleUserDetails(
+                    firstName = firstName,
+                    lastName = lastName,
+                    email = email,
+                    phone = phone,
+                ),
+            )
+            navigator.navigateUp()
+        },
         onDismissRequest = { navigator.navigateUp() },
     )
 }
@@ -329,7 +412,7 @@ fun ScanTokenScreen(navigator: DestinationsNavigator) {
     )
 }
 
-@Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SCENARIO_DRAWER)])
+@Destination<RootGraph>(style = UseSmileIDSampleSheetTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SCENARIO_DRAWER)])
 @Composable
 fun ScenarioDrawerSheet(navigator: DestinationsNavigator) {
     // App-level, not sheet-local: the result card reports the same selection.
@@ -349,5 +432,6 @@ fun ScenarioDrawerSheet(navigator: DestinationsNavigator) {
 fun ComponentGalleryScreen() = ComponentGalleryContent()
 
 private const val SIMULATED_SESSION_ID = "9f3a"
-private const val UNDO_WINDOW_MILLIS = 5_000L
+/** How long a snackbar with an action stays up: long enough to undo, short enough not to outlive its cause. */
+private const val SNACKBAR_WINDOW_MILLIS = 5_000L
 private const val APP_DISPLAY_NAME = "UseSmileID Sample"

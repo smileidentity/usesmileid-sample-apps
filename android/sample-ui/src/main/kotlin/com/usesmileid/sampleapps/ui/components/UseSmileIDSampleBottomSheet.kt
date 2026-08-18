@@ -1,6 +1,8 @@
 package com.usesmileid.sampleapps.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -40,7 +44,8 @@ fun UseSmileIDSampleBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = modifier.publishTestTags().tagged(testId),
-        sheetState = rememberModalBottomSheetState(),
+        // Content height, not half the screen: at half, the five-field sheet left its CTA below the fold.
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         shape = RoundedCornerShape(topStart = SmileDimens.radiusSheet, topEnd = SmileDimens.radiusSheet),
         containerColor = UseSmileIDSampleTheme.colors.surface,
         contentColor = UseSmileIDSampleTheme.colors.textTitle,
@@ -50,15 +55,18 @@ fun UseSmileIDSampleBottomSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = SmileDimens.spacingMd)
+                // Scrolls rather than clips, so enlarged type cannot push a CTA out of reach.
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = SHEET_MARGIN)
                 .padding(bottom = SmileDimens.spacingLg),
             verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
         ) {
             if (title != null) {
                 Text(
                     text = title,
-                    style = UseSmileIDSampleTheme.type.textStyleHeadingSection,
+                    style = UseSmileIDSampleTheme.type.textStyleHeadingSection.copy(fontWeight = FontWeight.Bold),
                     color = UseSmileIDSampleTheme.colors.textTitle,
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
             content()
@@ -90,20 +98,21 @@ fun UseSmileIDSampleFullHeightBottomSheet(
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
+                // A sheet header is its own pattern: wider margins, and the title left of the back control.
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingXs),
-                horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+                    .padding(horizontal = SHEET_MARGIN, vertical = SmileDimens.spacingXs),
+                horizontalArrangement = Arrangement.spacedBy(SHEET_HEADER_GAP),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 UseSmileIDSampleTopAppBarButton(
                     contentDescription = "Close $title",
                     onClick = onDismissRequest,
                     emphasis = UseSmileIDSampleTopAppBarEmphasis.Filled,
-                ) { tint -> BackArrowGlyph(tint = tint) }
+                ) { tint -> ArrowBackGlyph(tint = tint) }
                 Text(
                     text = title,
-                    style = UseSmileIDSampleTheme.type.textStyleHeadingSection,
+                    style = UseSmileIDSampleTheme.type.textStyleTitle,
                     color = UseSmileIDSampleTheme.colors.textTitle,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -112,7 +121,7 @@ fun UseSmileIDSampleFullHeightBottomSheet(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = SmileDimens.spacingMd),
+                    .padding(horizontal = SHEET_MARGIN),
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
                 content = content,
             )
@@ -143,3 +152,6 @@ private fun GrabHandle() {
         )
     }
 }
+
+private val SHEET_MARGIN = 20.dp
+private val SHEET_HEADER_GAP = 10.dp

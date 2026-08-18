@@ -1,0 +1,78 @@
+# The profile flow, end to end. Every assertion here stands for a defect found by hand on a device.
+#
+# APP_ID has no default on purpose: a flow-level `env:` default WINS over `-e` in Maestro 2.8, so
+# one here would silently pin every run to a single variant.
+#   maestro --device <serial> test -e APP_ID=com.usesmileid.sampleapps.android android/maestro
+appId: ${APP_ID}
+---
+- stopApp
+- launchApp
+
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+
+# The PROFILE row opens the LIST, not the active profile's own page.
+- tapOn:
+    id: "sample_profile_summary"
+- assertVisible:
+    id: "sample_profiles_screen"
+- assertVisible: "Create new profile"
+
+- tapOn:
+    id: "sample_create_profile"
+- assertVisible:
+    id: "sample_new_profile_sheet"
+# The CTA has to be on screen without dragging: at the platform's half-height partial state the
+# fifth field clipped and this sat below the fold.
+- assertVisible:
+    id: "sample_new_profile_save"
+- assertVisible:
+    id: "sample_new_profile_phone"
+
+- tapOn:
+    id: "sample_new_profile_name"
+- inputText: "Karibu Pay"
+- tapOn:
+    id: "sample_new_profile_first_name"
+- inputText: "Njeri"
+- tapOn:
+    id: "sample_new_profile_last_name"
+- inputText: "Wanjiku"
+- hideKeyboard
+- tapOn:
+    id: "sample_new_profile_save"
+
+# The confirmation belongs to the list the sheet returns to, and creating does not activate.
+- assertVisible:
+    id: "sample_profiles_screen"
+- assertVisible: "Karibu Pay created"
+- assertVisible: "Kwame Asante · active"
+
+# The window has to actually expire. Consuming the store's signal used to cancel the timer that
+# clears it, so the confirmation stayed up for the life of the screen.
+- extendedWaitUntil:
+    notVisible: "Karibu Pay created"
+    timeout: 10000
+
+# The new profile's config is titled with its name and carries what the sheet collected.
+- tapOn:
+    id: "sample_profile_row_p-4"
+- assertVisible:
+    id: "sample_profile_config_screen"
+- assertVisible: "Karibu Pay"
+- assertVisible: "Njeri"
+- assertVisible: "Wanjiku"
+
+# The CTA says "Make this profile active", so it has to activate as well as save.
+- tapOn:
+    id: "sample_profile_config_save"
+- assertVisible:
+    id: "sample_profiles_screen"
+- assertVisible: "Njeri Wanjiku · active"
+
+- back
+- assertVisible:
+    id: "sample_settings_screen"
+- assertVisible: "Karibu Pay"

@@ -19,6 +19,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -34,6 +38,8 @@ fun UseSmileIDSampleTextInput(
     errorMessage: String? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     testId: String? = null,
+    /** The leading glyph the new-profile fields carry. */
+    leading: @Composable ((Color) -> Unit)? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
@@ -79,6 +85,19 @@ fun UseSmileIDSampleTextInput(
                         ),
                     contentAlignment = Alignment.CenterStart,
                 ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        if (leading != null) {
+                            Box(
+                                modifier = Modifier.defaultMinSize(minWidth = LEADING_SIZE, minHeight = LEADING_SIZE),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                leading(colors.input.placeholder)
+                            }
+                        }
+                        Box(contentAlignment = Alignment.CenterStart) {
                     if (value.isEmpty()) {
                         Text(
                             text = placeholder,
@@ -87,6 +106,8 @@ fun UseSmileIDSampleTextInput(
                         )
                     }
                     field()
+                        }
+                    }
                 }
             },
         )
@@ -103,3 +124,5 @@ fun UseSmileIDSampleTextInput(
         }
     }
 }
+
+private val LEADING_SIZE = 17.dp

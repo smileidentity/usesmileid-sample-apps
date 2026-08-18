@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
@@ -8,7 +9,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.selection.selectable
@@ -30,15 +34,24 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.smileid.designsystem.SMILE_TOKEN_RING_TRACK_OPACITY
+import com.smileid.designsystem.smileTokenRing
 import com.smileid.designsystem.SmileDimens
+import com.usesmileid.sampleapps.ui.R
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** The three destinations the nav bar switches between. The token affordance is not one of them. */
-enum class UseSmileIDSampleNavItem(val testId: String, val label: String) {
-    Products(UseSmileIDSampleTestIds.NAV_PRODUCTS, "Products"),
-    Verifications(UseSmileIDSampleTestIds.NAV_VERIFICATIONS, "Verifications"),
-    Settings(UseSmileIDSampleTestIds.NAV_SETTINGS, "Settings"),
+enum class UseSmileIDSampleNavItem(
+    val testId: String,
+    val label: String,
+    @DrawableRes val icon: Int,
+) {
+    Products(UseSmileIDSampleTestIds.NAV_PRODUCTS, "Products", R.drawable.sample_ic_products),
+    Verifications(UseSmileIDSampleTestIds.NAV_VERIFICATIONS, "Verifications", R.drawable.sample_ic_verifications),
+    Settings(UseSmileIDSampleTestIds.NAV_SETTINGS, "Settings", R.drawable.sample_ic_settings),
 }
 
 /**
@@ -57,21 +70,29 @@ fun UseSmileIDSampleNavBar(
     Row(
         // Edge to edge, so without its own inset the bar sits under the system navigation bar.
         modifier = modifier
+            .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.navigationBars)
-            .padding(SmileDimens.spacingSm),
+            .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingSm),
         horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Surface(
-            // The pill yields width to the token affordance rather than pushing it off the row.
-            modifier = Modifier.weight(1f, fill = false),
+            modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(SmileDimens.radiusPill),
             color = UseSmileIDSampleTheme.colors.surface,
-            border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.border),
+            shadowElevation = BAR_ELEVATION,
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.padding(horizontal = SmileDimens.spacingXs, vertical = SmileDimens.spacingXxs),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 UseSmileIDSampleNavItem.entries.forEach { item ->
-                    NavBarTab(item = item, selected = item == selected, onClick = { onSelect(item) })
+                    NavBarTab(
+                        item = item,
+                        selected = item == selected,
+                        onClick = { onSelect(item) },
+                        modifier = Modifier.weight(1f),
+                    )
                 }
             }
         }
@@ -83,31 +104,37 @@ fun UseSmileIDSampleNavBar(
 @Composable
 private fun TokenAffordance(progress: Float?, onClick: () -> Unit) {
     val colors = UseSmileIDSampleTheme.colors
-    val track = colors.border
-    val fill = colors.successFill
+    val track = smileTokenRing.copy(alpha = SMILE_TOKEN_RING_TRACK_OPACITY)
+    val fill = smileTokenRing
     Box(
-        modifier = Modifier
-            .size(SmileDimens.sizeControlMd)
-            .drawBehind {
-                if (progress != null) {
-                    drawTokenRing(progress = progress, track = track, fill = fill, inflate = RING_BLEED.toPx())
-                }
-            },
+        // Wraps the button rather than fixing a size, so enlarged type grows it instead of clipping the label.
+        modifier = Modifier.drawBehind {
+            if (progress != null) {
+                drawTokenRing(progress = progress, track = track, fill = fill, inflate = RING_BLEED.toPx())
+            }
+        },
         contentAlignment = Alignment.Center,
     ) {
         Surface(
-            modifier = Modifier.size(SmileDimens.sizeControlMd),
+            modifier = Modifier.defaultMinSize(minWidth = TOKEN_SIZE, minHeight = TOKEN_SIZE),
             shape = CircleShape,
-            color = colors.primary,
-            contentColor = colors.onPrimary,
+            color = colors.surface,
+            border = BorderStroke(SmileDimens.borderWidthThick, colors.border),
+            shadowElevation = BAR_ELEVATION,
         ) {
-            Box(
+            Column(
                 modifier = Modifier
                     .testTag(UseSmileIDSampleTestIds.NAV_TOKEN)
                     .clickable(onClick = onClick),
-                contentAlignment = Alignment.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
             ) {
-                ScanMarkGlyph(tint = colors.onPrimary)
+                UseSmileIDSampleIcon(id = R.drawable.sample_ic_token_scan, tint = colors.textTitle, size = SmileDimens.sizeIconSm)
+                Text(
+                    text = "Token",
+                    style = UseSmileIDSampleTheme.type.textStyleOverline.copy(fontSize = TOKEN_LABEL_SIZE),
+                    color = colors.textMuted,
+                )
             }
         }
     }
@@ -119,14 +146,14 @@ fun UseSmileIDSampleTokenRing(
     progress: Float,
     modifier: Modifier = Modifier,
 ) {
-    val track = UseSmileIDSampleTheme.colors.border
-    val fill = UseSmileIDSampleTheme.colors.successFill
+    val track = smileTokenRing.copy(alpha = SMILE_TOKEN_RING_TRACK_OPACITY)
+    val fill = smileTokenRing
     Canvas(modifier = modifier) { drawTokenRing(progress = progress, track = track, fill = fill, inflate = 0f) }
 }
 
 /** [inflate] pushes the ring outside the bounds it is drawn in, so it can circle a smaller button. */
 private fun DrawScope.drawTokenRing(progress: Float, track: Color, fill: Color, inflate: Float) {
-    val stroke = Stroke(width = SmileDimens.borderWidthThick.toPx(), cap = StrokeCap.Round)
+    val stroke = Stroke(width = RING_THICKNESS.toPx(), cap = StrokeCap.Round)
     val topLeft = stroke.width / 2f - inflate
     val diameter = size.minDimension - stroke.width + inflate * 2f
     drawArc(
@@ -150,21 +177,38 @@ private fun DrawScope.drawTokenRing(progress: Float, track: Color, fill: Color, 
 }
 
 @Composable
-private fun NavBarTab(item: UseSmileIDSampleNavItem, selected: Boolean, onClick: () -> Unit) {
-    Text(
-        text = item.label,
-        // tabFont, not labelLarge: that slot is the 16px bold button style, which overflows a 393dp screen.
-        style = UseSmileIDSampleTheme.type.tabFont,
-        color = if (selected) UseSmileIDSampleTheme.colors.primary else UseSmileIDSampleTheme.colors.textMuted,
-        textAlign = TextAlign.Center,
-        modifier = Modifier
+private fun NavBarTab(
+    item: UseSmileIDSampleNavItem,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val tint = if (selected) UseSmileIDSampleTheme.colors.primary else UseSmileIDSampleTheme.colors.textMuted
+    Column(
+        modifier = modifier
             .testTag(item.testId)
             .selectable(selected = selected, role = Role.Tab, onClick = onClick)
-            .padding(horizontal = SmileDimens.spacingSm, vertical = SmileDimens.spacingSm),
-    )
+            .padding(horizontal = SmileDimens.spacingXs, vertical = SmileDimens.spacingXs),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs),
+    ) {
+        UseSmileIDSampleIcon(id = item.icon, tint = tint, size = TAB_ICON_SIZE)
+        Text(
+            text = item.label,
+            style = UseSmileIDSampleTheme.type.textStyleOverline,
+            color = tint,
+            textAlign = TextAlign.Center,
+        )
+    }
 }
 
-/** The ring is 68 around a 44 button, so it bleeds spacing.sm past the button on every side. */
-private val RING_BLEED = SmileDimens.spacingSm
+private val BAR_ELEVATION = SmileDimens.space8
+
+private val RING_BLEED = 5.dp
+private val RING_THICKNESS = 4.dp
+
+private val TAB_ICON_SIZE = 21.dp
+private val TOKEN_SIZE = 58.dp
+private val TOKEN_LABEL_SIZE = 8.5.sp
 private const val FULL_TURN = 360f
 private const val QUARTER_TURN_UP = -90f

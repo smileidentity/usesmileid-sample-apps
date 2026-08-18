@@ -37,9 +37,10 @@
         "products",
         "profileSwitchSheet",
         "profiles",
+        "profileConfig",
         "settings"
       ],
-      "notes": "CORRECTED 2026-08-12: the background colour varies PER PROFILE rather than being one avatar.bg. Needs a documented profile→hue rule so all four platforms colour the same profile identically (same gap as the product→hue mapping).",
+      "notes": "CORRECTED 2026-08-12: the background colour varies PER PROFILE rather than being one avatar.bg. Needs a documented profile→hue rule so all four platforms colour the same profile identically (same gap as the product→hue mapping). CORRECTED 2026-08-17: a ROUNDED SQUARE at radius 12, not a circle (node 5206:2904). RESOLVED 2026-08-18: the profile→hue rule is settled — design-tokens.json profileHues lists the four fills the design draws and every platform indexes it by the profile's POSITION in the list, cycling beyond four. Hashing the initials is wrong: it gives a different colour per platform and per profile name. One default for the whole app, so the settings summary, the products header, the profiles list and the switch sheet cannot disagree about one profile.",
       "colouring": "per-profile hue (observed navy / green / amber across the three profiles), white initials",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2348",
       "decision": "OWNER DECISION 2026-08-13: a header avatar BUTTON is added next to the environment chip on products, and it is what opens the profile-switch sheet. Small design addition. Per-profile hues come from the designer's list."
@@ -101,7 +102,12 @@
       "usedBy": [
         "kycIdForm",
         "newProfileSheet"
-      ]
+      ],
+      "metrics": {
+        "leading": "an optional 17 leading icon, gap 10, inside a 1.5 border at radius 12",
+        "padding": "15 horizontal, 13 vertical"
+      },
+      "notes": "The leading icon slot is what the new-profile sheet's five fields use; the KYC form's inputs leave it empty."
     },
     {
       "name": "SearchField",
@@ -171,7 +177,7 @@
         "verifications",
         "verificationDetails"
       ],
-      "notes": "CORRECTED 2026-08-12 from the prototype recording. The design uses soft tinted pills, not the design system's saturated badge fills. Do not resolve this with the current badge.* tokens — see the softBadgeVariant delta in design-tokens.json. Vocabulary maps to roles: Clear→success, Attention→warning, Blocked→error, Processing→info.",
+      "notes": "CORRECTED 2026-08-12 from the prototype recording, RESOLVED 2026-08-17 against nodes 5206:2429–2433. The design uses soft tinted pills, not the design system's saturated badge fills, and the four exact pairs now live in design-tokens.json → softBadgeFills.fills, generated per platform. Do not reach for the current badge.* tokens. Vocabulary maps to roles: Clear→success, Attention→warning, Blocked→error, Processing→info. TWO THINGS A PORT GETS WRONG: the label is Title case, NOT upper-cased (the same 11/700 label style IS upper-cased for date and section headers, which is how Android came to upper-case this too); and the pill takes radius.control, not radius.chip.",
       "fillTreatment": "SOFT — a pale tinted fill with a dark same-hue label, for ALL FOUR statuses (pale green Clear, pale amber Attention, pale red Blocked, pale blue Processing).",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2410",
       "decision": "OWNER DECISION 2026-08-13: ship the design's SOFT tinted pills for all four statuses. Implemented by adding soft variants to the design system (never by hardcoding the Figma hexes), so it stays token-driven."
@@ -192,15 +198,18 @@
         "settings",
         "profileConfig"
       ],
-      "notes": "The all-caps group heading (AUTHENTICATION, DETAILS, PROFILE, YOUR DETAILS…). One component, used everywhere."
+      "notes": "The all-caps group heading (AUTHENTICATION, DETAILS, PROFILE, YOUR DETAILS…). One component, used everywhere. CORRECTED 2026-08-18: the size and tracking are generated, and the status badges, the filter-chip counts and the date group headers read the same pair — every place the design uses Type/Label.",
+      "metrics": {
+        "type": "the design's Type/Label — 11/700 with 0.88 tracking, from design-tokens.json labelTypeStyle. text-style.overline is 10 and set solid, which is a point small and reads as plain caps"
+      }
     },
     {
       "name": "Toast",
       "tier": "primitive",
       "owner": "sample",
       "tokens": [
-        "color.surface-alt",
-        "color.text.body",
+        "color.title",
+        "color.bg",
         "color.text.link",
         "radius.control",
         "elevation.floating"
@@ -213,7 +222,13 @@
         "verifications",
         "profiles"
       ],
-      "notes": "Carries an undo action in the delete flow — the action is part of the contract, not decoration."
+      "notes": "Carries an undo action in the delete flow — the action is part of the contract, not decoration. CORRECTED 2026-08-17 against node 5206:2573: it is a SNACKBAR treatment, not a pale pill — background color.title with color.bg text at 13/600, an underlined 13/700 action, radius 14 and a 0 10 30 rgba(0,0,0,.25) shadow, spanning the width between 16 margins. The node is named 'toast' and keeps the sample_toast* ids, so do not rename. ANCHOR: one small gap above the floating nav bar, NOT above the screen edge — on Android the destination container is already inset past the bar, so applying the navigation-bars inset again lifts it into the middle of the list, which is how it first shipped. The profiles screen reuses it for the created confirmation — \"<organisation> created\" with a \"Make active\" action. ANCHOR on a PUSHED route: 24 above the safe area with no extra system-bar inset, because the host has already inset the container. Presence is transient state: never saved across navigation, or returning to the screen replays a confirmation that has already been acted on.",
+      "metrics": {
+        "height": "46 — an action sized to the 48 interactive minimum inflates the bar to 72, so the action is widened instead and the bar's own height is the vertical target",
+        "padding": "16 horizontal, 13 vertical",
+        "radius": 12,
+        "type": "message 13.5/500, action 14/600 underlined"
+      }
     },
     {
       "name": "TopAppBar",
@@ -226,11 +241,13 @@
         "spacing.md"
       ],
       "metrics": {
-        "barHeight": "48 minimum (design draws 48 on verificationDetails/userDetails and 44 on scanToken; the larger is used, and it grows with the title)",
+        "barHeight": "a PINNED 40 row above an 8 gap, scaled by the font scale — the same on every pushed screen. A minimum height instead let a longer title grow the bar, and the header then sat lower on some screens than others",
         "control": "40 circular, back filled dark and trailing action tonal; Scan token's torch is filled",
         "horizontalPadding": 16,
         "titleTruncation": "none — the title wraps; capping it ellipsised 'Enhanced Document Verification' at 2x",
-        "token": "space40 for the control, space48 for the bar, spacing.md for padding"
+        "token": "space40 for the control, space48 for the bar, spacing.md for padding",
+        "trailingSlot": "a 40 box is reserved even with no action, so the centred title sits identically whether or not the screen has a trailing control",
+        "title": "15/700, centred between the two 40 slots"
       },
       "variants": [
         "backOnly",
@@ -293,7 +310,10 @@
       "metrics": {
         "rowHeight": "46 in the design, size.control-md (44) here — no token carries 46",
         "horizontalPadding": "15 in the design, spacing.md (16) here",
-        "requiredMarker": "an asterisk appended to the label"
+        "requiredMarker": "an asterisk appended to the label",
+        "padding": "15 horizontal, 14 vertical",
+        "type": "13.5 at weight 500 for the label, the value and the placeholder alike — NOT text-style.body, which is weight 400",
+        "colours": "label and a filled value take the title colour; only a placeholder is muted"
       },
       "states": [
         "empty",
@@ -304,7 +324,7 @@
         "userDetails",
         "profileConfig"
       ],
-      "notes": "Inline-editable label/value row — tapping edits in place with a caret rather than pushing a form. Placeholder text is muted; a filled value takes title colour. Required fields carry an asterisk."
+      "notes": "Inline-editable label/value row — tapping edits in place with a caret rather than pushing a form. Placeholder text is muted; a filled value takes title colour. Required fields carry an asterisk. CORRECTED 2026-08-17 against nodes 5206:3804 and 5206:3777. The field NAME is title-coloured and only the PLACEHOLDER is muted — Android had that inverted. Name, value and placeholder are all 13.5. Rows sit in one bordered card separated by rules."
     },
     {
       "name": "SettingRow",
@@ -331,7 +351,7 @@
       "usedBy": [
         "settings"
       ],
-      "notes": "CORRECTED 2026-08-12: the CAPTURE section has TWO switch rows — 'Smile to capture / Passive capture — smile detection' ABOVE 'Agent mode / Operator captures for the applicant'. The first is the CaptureModeRow component instance, which is why a metadata-only read missed its text. Switch rows also cover Dark mode and the three SDK-step toggles; navigation covers ABOUT/LEGAL; destructive covers Sign out.",
+      "notes": "CORRECTED 2026-08-12: the CAPTURE section has TWO switch rows — 'Smile to capture / Passive capture — smile detection' ABOVE 'Agent mode / Operator captures for the applicant'. The first is the CaptureModeRow component instance, which is why a metadata-only read missed its text. Switch rows also cover Dark mode and the three SDK-step toggles; navigation covers ABOUT/LEGAL; destructive covers Sign out. TYPE + TILE CORRECTED 2026-08-17 against node 5206:2898. The leading tile is 38 at radius 11 over SURFACE-2 (a cool grey), not surface-alt (a warm cream) — Android shipped peach tiles across the whole app from that one mistake. Supporting text is Caption 12/500, the trailing chevron is 14, and rows inside one section card are separated by a RULE, not by spacing. Each row carries its OWN icon, and the design SUPPLIES all eleven as stroke-based 19px exports — take them from design/icons/, do not substitute a Material Symbol.",
       "parts": [
         "NavRow — the ABOUT/LEGAL navigation variant with a chevron",
         "SignOutRow — the destructive variant",
@@ -364,9 +384,10 @@
       ],
       "usedBy": [
         "profileSwitchSheet",
-        "profiles"
+        "profiles",
+        "settings"
       ],
-      "notes": "Avatar + organisation + person, with a check on the active profile. CORRECTED 2026-08-12: the selected row takes a pale-blue fill as well as the check.",
+      "notes": "Avatar + organisation + person, with a check on the active profile. CORRECTED 2026-08-12: the selected row takes a pale-blue fill as well as the check. CORRECTED 2026-08-18: the avatar fill is the CALLER'S to pass (profileHues by list position) and its default must be the same value the Avatar defaults to — two different defaults drew the same profile navy in the list and blue in the settings summary.",
       "parts": [
         "ProfileSummaryRow — the settings-header variant showing the active profile with 'Tap to configure'",
         "CreateProfileRow — the trailing add-a-profile variant"
@@ -484,7 +505,8 @@
         "gap": "12 (spacing.sm)",
         "secondaryLine": "'<truncated job id> · HH:MM:SS'",
         "wrapping": "the tile, text block and badge are a FlowRow, so the badge drops below the title at 2x",
-        "truncation": "none — the caller already elides the job id"
+        "truncation": "none — the caller already elides the job id",
+        "layout": "a Row at the design's scale, so the badge stays on the title's line and both text lines ellipsise; a FlowRow above it, so the badge drops rather than being squeezed. One layout cannot serve both: a weight inside a FlowRow claims the whole line, which pushed the badge onto its own row on any screen narrower than the 393 the design is drawn at"
       },
       "states": [
         "default",
@@ -530,7 +552,7 @@
       "usedBy": [
         "verifications"
       ],
-      "notes": "Label plus a count (All 11, Clear 6, Attention 2, Blocked 2). Counts are live and must update after a delete — that is the assertion the delete flow keys off."
+      "notes": "Label plus a count (All 11, Clear 6, Attention 2, Blocked 2). Counts are live and must update after a delete — that is the assertion the delete flow keys off. TYPE CORRECTED 2026-08-17 against node 5206:2415: the label is 12.5/700 and the count is 11/700 with 0.88 tracking. The generated filter-chip font is 14/400, which is neither, so do not reach for it unchanged. The unselected count's COLOUR is an open disagreement — see the filterChipCountColour delta."
     },
     {
       "name": "DateGroupHeader",
@@ -588,7 +610,9 @@
         "height": "84 including the navigation-bar inset; content-driven here",
         "removeControl": "107x40 in the design; space40 minimum at radius.control",
         "removeTreatment": "saturated color.feedback.error.fill with its on-colour — the design's soft red is one of the pending soft variants, and the saturated badge.error pair drew red on red",
-        "countNode": "'<n> selected' is its own text node so a flow asserts equality rather than parsing prose"
+        "countNode": "'<n> selected' is its own text node so a flow asserts equality rather than parsing prose",
+        "placement": "full-bleed at the bottom of the window, 84 tall, top border only — it REPLACES the nav bar rather than floating over it",
+        "owner": "the screen owns the state, the shell owns the slot"
       },
       "states": [
         "noneSelected",
@@ -642,7 +666,7 @@
       "usedBy": [
         "kycIdForm"
       ],
-      "notes": "CORRECTED 2026-08-12: looks like an input, behaves like a button, and has a disabled state — the ID-type trigger stays greyed until a country is chosen. Each trigger carries a leading icon.",
+      "notes": "CORRECTED 2026-08-12: looks like an input, behaves like a button, and has a disabled state — the ID-type trigger stays greyed until a country is chosen. Each trigger carries a leading icon. CORRECTED 2026-08-17 against node 5206:2797. Leads with an EMOJI before the label — the chosen country's flag, or a globe as placeholder — then the label at 15/600, then a DOWN chevron at 12 (the list chevron points right). An actionable trigger is outlined in PRIMARY at 1.5; a disabled one takes the button-disabled pair, not surface-muted with muted text, which does not read as disabled. A leading slot must take a MINIMUM size, not a fixed one: an emoji grows with font scale and clips in a fixed box.",
       "dependency": "ID TYPE is DISABLED until a country is selected.",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2797"
     },
@@ -673,7 +697,7 @@
         "countryPickerSheet",
         "idTypePickerSheet"
       ],
-      "notes": "Country rows lead with a flag; ID-type rows do not. Selected rows carry a check. CORRECTED 2026-08-12: the selected row takes a pale-blue fill as well as the check.",
+      "notes": "Country rows lead with a flag; ID-type rows do not. Selected rows carry a check. CORRECTED 2026-08-12: the selected row takes a pale-blue fill as well as the check. CORRECTED 2026-08-17 against node 5206:2835. The selected row takes SURFACE-2 as its fill plus a 20 check; an UNSELECTED row is TRANSPARENT, not white — this is the selected-surface treatment that ui-work-plan.md §5 recorded as having no token. Label is Body Strong at its real 14; a country row leads with a 19 flag emoji.",
       "selectedTreatment": "pale-blue FILLED row highlight + trailing check (not check-only)"
     },
     {
@@ -690,7 +714,9 @@
         "partial": "grab handle 44x5 (size.control-md by space4) at radius.chip, sheet at radius.sheet",
         "fullHeight": "no handle; a 40 filled circular back control and the title, gap spacing.xs",
         "horizontalPadding": "20 in the design, spacing.md (16) here",
-        "platform": "Material 3 ModalBottomSheet — drag-to-dismiss, scrim tap and insets are the platform's"
+        "platform": "Material 3 ModalBottomSheet — drag-to-dismiss, scrim tap and insets are the platform's",
+        "openHeight": "content height, NOT the platform's half-screen partial state: the five-field new-profile sheet clipped its last field and put its CTA below the fold at half height",
+        "overflow": "the content scrolls rather than clips, so enlarged type cannot strand a CTA"
       },
       "variants": [
         "partialWithHandle",
@@ -702,7 +728,7 @@
         "countryPickerSheet",
         "idTypePickerSheet"
       ],
-      "notes": "Two shapes: a partial sheet with a grab handle over a scrim (profile switch, new profile), and a full-height sheet with a back header (country, ID type). Use the platform-native sheet so drag-to-dismiss and inset handling are correct.",
+      "notes": "Two shapes: a partial sheet with a grab handle over a scrim (profile switch, new profile), and a full-height sheet with a back header (country, ID type). Use the platform-native sheet so drag-to-dismiss and inset handling are correct. CORRECTED 2026-08-18: margins are 20 (not spacing.md), the partial sheet's title is 18/700 and the full-height header's is 16/700, and a partial sheet opens at its content height with scrollable content.",
       "parts": [
         "Scrim — dimmed backdrop for partial sheets",
         "SheetHeader — back + title for full-height sheets",
@@ -723,8 +749,16 @@
       ],
       "metrics": {
         "size": "361x58, a floating pill plus a detached circular token button",
-        "tokenButton": "44 (size.control-md)",
-        "extends": "the PR #2 component rather than a rebuild; only the token affordance and its ring were added"
+        "tokenButton": "58 — NOT size.control-md's 44",
+        "tabIcon": "21, above the label with a 4 gap",
+        "tabLabel": "10/700, the overline style — not a 14 tab style",
+        "tokenLabel": "8.5/700 muted, under a 16 icon",
+        "extends": "the PR #2 component rather than a rebuild; only the token affordance and its ring were added",
+        "width": "spans the full width between 16 margins; the tabs pill takes all space the 58 token button leaves, and the three tabs are EQUAL thirds of it. A content-sized row leaves dead space to the right of the token — that is how Android first shipped it.",
+        "elevation": "both halves float on the design's 0 8 24 rgba(0,0,0,.12) shadow; the tabs pill has NO outline and only the token button is stroked",
+        "placement": "FLOATS over the content — the list scrolls underneath it and the background is continuous. Reserving a row for it instead insets the content and draws a visible seam across the screen with the last row clipped against it",
+        "clearance": "the screen's own trailing spacer is what lets the last row scroll clear; anything else anchored to the bottom of a screen must clear the bar itself, because the content is not inset by it",
+        "shownOn": "the three tab ROOTS only. A pushed screen has no nav bar even when it lives inside a tab's graph — verification details is in the verifications graph and the design draws it without one"
       },
       "items": [
         "products",
@@ -741,7 +775,7 @@
         "verifications",
         "settings"
       ],
-      "notes": "VERIFIED against a render 2026-08-12. A floating white pill holding three tabs (Products, Verifications, Settings) with the active label in primary, PLUS a visually detached circular Token button to its right that carries the countdown ring. Model the token affordance separately from the three tabs. Hidden during select mode."
+      "notes": "CORRECTED 2026-08-17 against node 5206:2436, after review found the bar shipping text-only. Each tab is an ICON ABOVE ITS LABEL, both taking primary when active and muted otherwise — the three icons were imported in PR #3 and then sat unused, which is the trap for a port. The detached Token button is WHITE (color.surface) with a 1.5 border and carries an icon PLUS the word 'Token'; it is not a primary-filled FAB. The tabs pill takes a shadow, not a border. Model the token affordance separately from the three tabs. Hidden during select mode. The token button must grow with font scale rather than clip — a fixed 58 box ellipsises 'Token' at 2x and fails the no-clipping predicate."
     },
     {
       "name": "TokenRing",
@@ -1043,5 +1077,8 @@
       "ask": "Emit component dimensions, or add scale steps at 36 and 68 so tiles and rows stop rounding."
     },
     "androidU2ScreenSpecific": "The twelve screen-specific composites were built on Android 2026-08-13 against the products, token-session and Scan token nodes. NavBar extends the component PR #2 landed rather than replacing it, and TokenRing is the ring it now carries. Product and profile hues stay on the token palette in order until the designer's hue list lands; Enhanced KYC has no icon yet and uses the shared product mark."
+  },
+  "conventions": {
+    "iconFamilies": "TWO icon families, deliberately not interchangeable. (1) THE DESIGN'S OWN, stroke-based (Lucide/Feather; 1.583 stroke at 19px, 1.167 at 14px, round caps): the six product marks, the three tab marks, the token scan mark, the two arrows, the down chevron, the right chevron, and ALL ELEVEN settings-row icons. Sources live in design/icons/ as SVG and every platform converts from those files — never re-export per platform, never hand-draw. (2) MATERIAL SYMBOLS OUTLINED 400 (Apache-2.0, sources in design/icons/material-symbols/) for the seven glyphs the design supplies nowhere: check, trash, torch, copy, plus, the Enhanced-KYC product stand-in, and the scenario-drawer row (a debug affordance the design has no frame for). CORRECTION 2026-08-17/18: Android first substituted Material Symbols for the settings rows on the assumption that the design named no icons. It does — get_design_context lists an exported asset per row, and download_assets retrieves them. Read the node's assets before concluding an icon is missing. The designer's choices are not always the obvious ones: his APPEARANCE icon is a SUN, not a moon. Emoji are a third case: the design uses them for country flags and the two picker leads, but anything above Emoji 12 is unsafe at minSdk 26 — 🪪 is Emoji 14 and renders as tofu below Android 13, so it is replaced with the design's own ID mark."
   }
 }

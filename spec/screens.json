@@ -167,7 +167,7 @@
         {
           "state": "afterDelete",
           "node": "5206-2545",
-          "note": "Toast with undo; counts drop 11→9."
+          "note": "Snackbar with undo; counts drop 11→9. TWO RULES ADDED 2026-08-17 after review. (1) Removing the last row of the ACTIVE filter must fall back to All — otherwise the screen is blank under a chip reading 0 with nothing to explain why, which is what Android shipped. The design has no frame for this because its delete happens from the All filter. (2) Both removal paths, the swipe and the selection bar, must run one shared handler; Android had two copies of the reset and only one would have been fixed."
         },
         {
           "state": "swipeToDelete",
@@ -195,8 +195,11 @@
         "sample_job_row",
         "sample_selection_bar",
         "sample_toast",
-        "sample_toast_undo"
-      ]
+        "sample_toast_undo",
+        "sample_selection_count",
+        "sample_selection_remove"
+      ],
+      "note": "SELECT MODE REPLACES THE BOTTOM CHROME: the selection bar is full-bleed at the bottom with a top border, and the nav bar is NOT behind it (node 5206:2491). The header's trailing action becomes \"Cancel\". The bar is the screen's state but the shell's slot, so the content inset does not change when one bar replaces the other. The removal confirmation is transient — never saved across navigation, or opening a verification and coming back replays a confirmation you already spent."
     },
     {
       "id": "verificationDetails",
@@ -240,7 +243,7 @@
         "push from the verifications list",
         "POST-SUBMISSION: the app lands here in the processing state once a job is submitted (observed 202 Accepted straight after the ID form's Continue)"
       ],
-      "note": "The details screen doubles as the result screen, which is why the result card belongs here rather than needing a new home."
+      "note": "The details screen doubles as the result screen, which is why the result card belongs here rather than needing a new home. NO NAV BAR: it is a pushed screen, even though its route lives in the verifications graph. You leave it by going back, not by switching tab."
     },
     {
       "id": "userDetails",
@@ -441,7 +444,8 @@
       "copy": {
         "footer": "UseSmileID Sample · 1.0.0",
         "aboutDocs": "docs.smileidentity.com"
-      }
+      },
+      "note": "The PROFILE row opens the profiles LIST, not the active profile's own page — configuring any profile and creating one are both reached from there. Its avatar takes the ACTIVE profile's hue from design-tokens.json profileHues, indexed by list position, so the summary, the list and the products header never draw the same profile in three colours."
     },
     {
       "id": "profiles",
@@ -468,8 +472,11 @@
       "testIds": [
         "sample_profiles_screen",
         "sample_profile_row",
-        "sample_create_profile"
-      ]
+        "sample_create_profile",
+        "sample_toast",
+        "sample_toast_undo"
+      ],
+      "note": "Creating a profile does NOT make it active: the confirmation carries the offer. The created state shows a toast reading \"<organisation> created\" with action \"Make active\", placed 24 above the safe area — the host already insets a pushed route past the system bar, so adding that inset again lifts the toast into the list. Each row's avatar hue is its position in the list, cycled."
     },
     {
       "id": "profileConfig",
@@ -479,19 +486,20 @@
       "route": "push",
       "states": [
         {
-          "state": "profileA",
-          "node": "5206-3295"
+          "state": "activeProfile",
+          "node": "5206-3295",
+          "note": "CTA disabled and reading \"Active profile\"."
         },
         {
-          "state": "profileB",
+          "state": "otherProfile",
           "node": "5206-3317"
         },
         {
-          "state": "profileC",
+          "state": "newlyCreated",
           "node": "5206-3525"
         }
       ],
-      "note": "USER DETAILS — ATTACHED TO EVERY JOB. This is the per-profile default that seeds the userDetails screen.",
+      "note": "USER DETAILS — ATTACHED TO EVERY JOB. This is the per-profile default that seeds the userDetails screen. The app bar title is the PROFILE'S NAME. The CTA has two states: on any other profile it reads \"Make this profile active\" and both saves and activates; on the profile that is already active it is DISABLED and reads \"Active profile\". Screen spacing is 14 between the header, the section label, the card and the CTA — not the 8 used inside a card.",
       "components": [
         "SectionLabel",
         "KeyValueEditRow",
@@ -528,8 +536,13 @@
       "testIds": [
         "sample_new_profile_sheet",
         "sample_new_profile_name",
+        "sample_new_profile_first_name",
+        "sample_new_profile_last_name",
+        "sample_new_profile_email",
+        "sample_new_profile_phone",
         "sample_new_profile_save"
-      ]
+      ],
+      "note": "A profile name, then the four user details that will live under it, each field carrying a 17 leading icon; the CTA \"Create profile\" stays disabled until name, first name and last name are present, and all four details are stored as the new profile's defaults. The sheet must open at its CONTENT height rather than the platform's half-height partial state: at half height the fifth field clips and the CTA sits below the fold."
     },
     {
       "id": "scanToken",

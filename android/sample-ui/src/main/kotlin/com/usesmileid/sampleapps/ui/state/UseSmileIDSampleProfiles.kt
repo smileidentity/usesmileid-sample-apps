@@ -41,17 +41,32 @@ class UseSmileIDSampleProfiles(seed: List<UseSmileIDSampleProfile> = defaults())
     var activeId by mutableStateOf(seed.first().id)
         private set
 
+    /** The last profile [add] created, until whoever confirmed it calls [clearLastCreated]. */
+    var lastCreatedId: String? by mutableStateOf(null)
+        private set
+
     val all: List<UseSmileIDSampleProfile> get() = items
 
     val active: UseSmileIDSampleProfile get() = items.firstOrNull { it.id == activeId } ?: items.first()
+
+    /** Position in the list, which is what picks a profile's avatar hue. */
+    val activeIndex: Int get() = items.indexOfFirst { it.id == activeId }.coerceAtLeast(0)
 
     fun setActive(id: String) {
         if (items.any { it.id == id }) activeId = id
     }
 
+    fun clearLastCreated() {
+        lastCreatedId = null
+    }
+
     fun find(id: String) = items.firstOrNull { it.id == id }
 
-    fun add(organisation: String, person: String): UseSmileIDSampleProfile {
+    fun add(
+        organisation: String,
+        person: String,
+        defaults: UseSmileIDSampleUserDetails = UseSmileIDSampleUserDetails(),
+    ): UseSmileIDSampleProfile {
         // First free id, not one derived from the count: duplicate keys crash the list and double a test id.
         val id = generateSequence(items.size + 1) { it + 1 }
             .map { "p-$it" }
@@ -61,8 +76,10 @@ class UseSmileIDSampleProfiles(seed: List<UseSmileIDSampleProfile> = defaults())
             organisation = organisation,
             person = person,
             environment = UseSmileIDSampleEnvironment.Sandbox,
+            defaults = defaults,
         )
         items.add(profile)
+        lastCreatedId = id
         return profile
     }
 

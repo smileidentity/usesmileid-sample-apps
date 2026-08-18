@@ -19,6 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.ui.unit.dp
+import com.smileid.designsystem.smileSurface2
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -46,9 +50,9 @@ fun UseSmileIDSampleSettingRow(
     ) {
         if (leading != null) {
             Surface(
-                modifier = Modifier.size(SmileDimens.space40),
-                shape = RoundedCornerShape(SmileDimens.radiusSm),
-                color = colors.surfaceAlt,
+                    modifier = Modifier.size(TILE_SIZE),
+                shape = RoundedCornerShape(TILE_RADIUS),
+                color = smileSurface2,
             ) {
                 Box(contentAlignment = Alignment.Center) { leading(colors.textTitle) }
             }
@@ -65,7 +69,7 @@ fun UseSmileIDSampleSettingRow(
             if (supportingText != null) {
                 Text(
                     text = supportingText,
-                    style = UseSmileIDSampleTheme.type.textStyleBodySm,
+                    style = UseSmileIDSampleTheme.type.textStyleCaption,
                     color = colors.textMuted,
                 )
             }
@@ -77,7 +81,14 @@ fun UseSmileIDSampleSettingRow(
 /** The trailing chevron that says the row pushes a screen. */
 @Composable
 fun UseSmileIDSampleSettingRowChevron() =
-    ChevronRightGlyph(tint = UseSmileIDSampleTheme.colors.textMuted)
+    ChevronRightGlyph(tint = UseSmileIDSampleTheme.colors.textMuted, size = CHEVRON_SIZE)
+
+/** The rule between rows inside one section card. */
+@Composable
+fun UseSmileIDSampleSettingRowDivider() = HorizontalDivider(
+    thickness = SmileDimens.borderWidthHairline,
+    color = UseSmileIDSampleTheme.colors.card.border,
+)
 
 /** Sign out: full width, centred, error-coloured. */
 @Composable
@@ -93,19 +104,25 @@ fun UseSmileIDSampleDestructiveRow(
             .fillMaxWidth()
             .minimumInteractiveComponentSize()
             .tagged(testId),
-        shape = RoundedCornerShape(SmileDimens.radiusField),
+        shape = RoundedCornerShape(SmileDimens.radiusSurface),
         color = UseSmileIDSampleTheme.colors.surface,
+        border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.card.border),
     ) {
         Box(
             modifier = Modifier.padding(SmileDimens.spacingSm),
             contentAlignment = Alignment.Center,
         ) {
             Text(
+                // The soft error text, at the button size — errorFill is the saturated pill colour.
                 text = text,
-                style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
-                color = UseSmileIDSampleTheme.colors.errorFill,
+                style = UseSmileIDSampleTheme.type.textStyleButton,
+                color = UseSmileIDSampleTheme.colors.badge.errorText,
                 textAlign = TextAlign.Center,
             )
         }
     }
 }
+
+private val TILE_SIZE = 38.dp
+private val TILE_RADIUS = 11.dp
+private val CHEVRON_SIZE = 14.dp

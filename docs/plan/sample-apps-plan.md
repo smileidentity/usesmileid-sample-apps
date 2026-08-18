@@ -241,7 +241,66 @@ capture-completion lanes on top of these apps is a separate, internal-only home 
 anything committed here once this block is removed.
 <!-- INTERNAL-ONLY:END -->
 
-## 8. Open decisions
+## 8. Deferred work, with the shape it should take
+
+Both of these are design-conformance gaps found on Android and owed by all four platforms. Neither is
+a bug in what ships; each needs a decision the code cannot make on its own.
+
+### 8.1 Pull to refresh on the verifications list
+
+The design draws a pull-to-refresh affordance on the verifications list and a `refreshing` state for
+it (`spec/screens.json` → `verifications`), and no platform implements either.
+
+It is deferred on purpose rather than forgotten: the list is seeded in memory, so "refresh" has
+nothing to fetch, and a spinner that waits a fabricated interval and then re-renders the same rows
+teaches a partner the wrong thing about the SDK. **Build it with the first real API call**, which is
+when the gesture starts meaning something. When that lands:
+
+- The gesture belongs to the list, and the refresh belongs to whatever owns the jobs — the store, not
+  the screen. The screen renders `refreshing` and calls a suspend function; it does not own a timer.
+- A refresh must be idempotent and cancellable: leaving the tab mid-refresh has to cancel it, or the
+  result arrives against a disposed screen.
+- Failure is a state, not a silent no-op. The design has no error frame for it yet, so ask for one
+  rather than inventing a toast.
+- The `refreshing` frame is already in `spec/screens.json`; add the platform binding and the test id
+  in the same change, and assert it in a device flow — a refresh that never ends is the classic
+  regression here and only a flow catches it.
+
+### 8.2 Rendering the screen behind a sheet's scrim
+
+**The defect.** Every sheet route (`profileSwitch`, `newProfile`, `countryPicker`, `idTypePicker`,
+`scenarioDrawer`) replaces the destination underneath it, so nothing is composed behind the sheet.
+The scrim therefore covers a bare window instead of the screen it belongs to, where the design shows
+that screen dimmed through it. Confirmed on a device by reaching the sheet by tapping, so it is not
+an artefact of deep-linking straight to one.
+
+**Why it happens.** A sheet is modelled as a route, and a route swap is a replacement: navigation
+composes the target and disposes the previous entry once the transition ends. A `ModalBottomSheet`
+then paints its own scrim over whatever the window happens to show, which is nothing.
+
+**What well-built apps do.** Every one of them treats a sheet as a layer over the current screen
+rather than a screen of its own:
+
+| Approach | Who works this way | What it costs |
+|---|---|---|
+| The sheet is UI state owned by the screen beneath it — the screen stays composed and renders its own sheet | The common answer in production Compose apps, and what Material's own catalog does | Gives up the sheet being a route: no deep link to a sheet, and a flow cannot open one directly |
+| The sheet is a route, but the navigator draws it as an **overlay** above the current destination rather than in place of it | UIKit and SwiftUI natively (`.sheet` presents over the presenter); Navigation 3 on Android models this explicitly as an overlay scene | Needs a navigator that has the concept. Compose Destinations 2.x does not; androidx Navigation 3 does |
+| Keep the route, wrap the whole host in one sheet container, and let the route only choose the container's content | How the older Accompanist `navigation-material` bottom-sheet navigator worked, and what Compose Destinations 1.x wrapped | One sheet container for the whole app: every sheet shares one state, and nesting or stacking two is awkward |
+| Present the route as a dialog destination, which keeps the destination underneath composed | Available today in Compose Destinations 2.x (`DestinationStyle.Dialog`) | Two stacked windows — the platform dialog plus the sheet's own — which brings a second dim to suppress and makes IME and inset behaviour unreliable. The new-profile sheet has five text fields, so this is the riskiest option, not the cheapest |
+
+**Recommendation.** Take the second row, and take it once for all four platforms: a sheet is a route
+whose presentation is an **overlay over the current destination**, never a replacement. Concretely on
+Android that means adopting the overlay/scene support in androidx Navigation 3 when this repo moves to
+it, rather than bending Compose Destinations 2.x into it now — the dialog-destination workaround buys
+the correct backdrop at the price of the exact behaviour (keyboard, insets, dismissal) that
+`spec/components.json` → BottomSheet promises is the platform's. iOS, Flutter and React Native already
+present sheets over the current screen, so they should be checked rather than changed; the fix is
+Android's alone, and the rule belongs in the navigation plan so nobody re-derives it.
+
+**Do not** work around it by painting the window background to look intentional. That hides the
+symptom, and a reviewer comparing against the design would report it again.
+
+## 9. Open decisions
 
 1. **iOS `SampleUI` dependency switching** — environment-switched package manifest versus aligning
    the local package identity with the published one. Spike before wiring the iOS SDK repo; the

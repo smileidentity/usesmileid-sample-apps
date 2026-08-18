@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDateGroupHeader
@@ -84,7 +85,7 @@ fun VerificationsScreen(
                 )
                 Text(
                     text = if (state.selectMode) "Cancel" else "Select",
-                    style = UseSmileIDSampleTheme.type.linkFont,
+                    style = UseSmileIDSampleTheme.type.linkFont.copy(fontWeight = FontWeight.Bold),
                     color = UseSmileIDSampleTheme.colors.primary,
                     softWrap = false,
                     modifier = Modifier
@@ -176,7 +177,7 @@ private fun JobListRow(
         Box(modifier = Modifier.weight(1f)) {
             val rowContent = @Composable {
                 UseSmileIDSampleJobRow(
-                    product = job.product.label,
+                    product = job.product,
                     jobId = job.shortId,
                     time = job.timeLabel(),
                     status = job.status,

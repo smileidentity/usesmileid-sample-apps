@@ -14,7 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.smileLabelTracking
+import com.smileid.designsystem.smileLabelSize
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** A status filter with its live count. The count is a separate node, because it is what a delete is asserted on. */
@@ -46,16 +50,25 @@ fun UseSmileIDSampleFilterChip(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = label,
-                style = UseSmileIDSampleTheme.type.filterChipFont,
+                    text = label,
+                style = UseSmileIDSampleTheme.type.filterChipFont.copy(
+                    fontSize = CHIP_LABEL_SIZE,
+                    fontWeight = FontWeight.Bold,
+                ),
                 color = if (selected) colors.onPrimary else colors.filterChip.label,
             )
             Text(
                 text = count.toString(),
-                style = UseSmileIDSampleTheme.type.textStyleCaption,
-                color = if (selected) colors.onPrimary else colors.filterChip.value,
+                style = UseSmileIDSampleTheme.type.textStyleOverline.copy(
+                    fontSize = smileLabelSize,
+                    letterSpacing = smileLabelTracking,
+                ),
+                // Owner ruling 2026-08-18: the design file's muted grey, not filter-chip.value's blue.
+                color = if (selected) colors.onPrimary else colors.textMuted,
                 modifier = Modifier.tagged(countTestId),
             )
         }
     }
 }
+
+private val CHIP_LABEL_SIZE = 12.5.sp

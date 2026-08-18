@@ -15,6 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
+import com.smileid.designsystem.smileSurface2
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -35,8 +38,8 @@ fun UseSmileIDSampleOptionRow(
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
             .tagged(testId),
         shape = RoundedCornerShape(SmileDimens.radiusField),
-        // color.border carries the design's selected fill; there is no selected-surface token yet.
-        color = if (selected) colors.border else colors.surface,
+        // An unselected row is transparent over the sheet; only the selected one takes a fill.
+        color = if (selected) smileSurface2 else Color.Transparent,
     ) {
         Row(
             modifier = Modifier
@@ -46,11 +49,11 @@ fun UseSmileIDSampleOptionRow(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (leadingText != null) {
-                Text(text = leadingText, style = UseSmileIDSampleTheme.type.textStyleBody)
+                Text(text = leadingText, style = UseSmileIDSampleTheme.type.textStyleBody.copy(fontSize = FLAG_SIZE))
             }
             Text(
                 text = label,
-                style = UseSmileIDSampleTheme.type.textStyleBody,
+                style = UseSmileIDSampleTheme.type.textStyleBodyStrong.copy(fontSize = OPTION_LABEL_SIZE),
                 color = colors.textTitle,
                 modifier = Modifier.weight(1f),
             )
@@ -62,3 +65,6 @@ fun UseSmileIDSampleOptionRow(
         }
     }
 }
+
+private val FLAG_SIZE = 19.sp
+private val OPTION_LABEL_SIZE = 14.sp

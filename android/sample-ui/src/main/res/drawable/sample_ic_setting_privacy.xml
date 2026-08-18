@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated from the design set's SVG export; tinted at the use site. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="19dp"
+    android:height="19dp"
+    android:viewportWidth="19"
+    android:viewportHeight="19">
+    <path
+        android:pathData="M9.5 2.375L15.0417 4.75V9.5C15.0417 12.6667 12.6667 15.0417 9.5 16.625C6.33333 15.0417 3.95833 12.6667 3.95833 9.5V4.75L9.5 2.375Z"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.58333"
+        android:fillColor="#00000000" />
+</vector>

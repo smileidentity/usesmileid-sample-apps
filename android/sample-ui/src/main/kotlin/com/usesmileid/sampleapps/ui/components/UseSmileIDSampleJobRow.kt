@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,10 +18,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /**
@@ -33,13 +37,12 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UseSmileIDSampleJobRow(
-    product: String,
+    product: UseSmileIDSampleProduct,
     jobId: String,
     time: String,
     status: UseSmileIDSampleStatus,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
-    tileColor: Color = UseSmileIDSampleTheme.colors.surfaceAlt,
     testId: String? = null,
     statusTestId: String? = UseSmileIDSampleTestIds.JOB_ROW_STATUS,
 ) {
@@ -53,40 +56,91 @@ fun UseSmileIDSampleJobRow(
         color = colors.card.background,
         border = BorderStroke(SmileDimens.borderWidthHairline, colors.card.border),
     ) {
-        // FlowRow so the badge drops below the title at 2x rather than ellipsising the name.
-        FlowRow(
-            modifier = Modifier
-                .defaultMinSize(minHeight = SmileDimens.space64)
-                .padding(SmileDimens.spacingSm),
-            horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
-            verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
-            itemVerticalAlignment = Alignment.CenterVertically,
-        ) {
-            Surface(
-                modifier = Modifier.size(SmileDimens.space40),
-                shape = RoundedCornerShape(SmileDimens.radiusSm),
-                color = tileColor,
+        // A Row at the design's scale keeps the badge inline; a FlowRow above it lets the badge drop.
+        // One layout cannot do both: weight() inside a FlowRow claims the whole line.
+        val stacks = LocalDensity.current.fontScale > 1f
+        val padding = Modifier
+            .defaultMinSize(minHeight = SmileDimens.space64)
+            .padding(SmileDimens.spacingSm)
+        if (stacks) {
+            FlowRow(
+                modifier = padding,
+                horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
+                verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+                itemVerticalAlignment = Alignment.CenterVertically,
             ) {
-                Box(contentAlignment = Alignment.Center) {
-                    ProductMarkGlyph(tint = colors.textTitle)
-                }
+                JobRowTile(product = product)
+                JobRowText(product = product, jobId = jobId, time = time, stacks = true)
+                UseSmileIDSampleStatusBadge(status = status, testId = statusTestId)
             }
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs),
+        } else {
+            Row(
+                modifier = padding,
+                horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    text = product,
-                    style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
-                    color = colors.card.title,
+                JobRowTile(product = product)
+                JobRowText(
+                    product = product,
+                    jobId = jobId,
+                    time = time,
+                    stacks = false,
+                    modifier = Modifier.weight(1f),
                 )
-                Text(
-                    text = "$jobId · $time",
-                    style = UseSmileIDSampleTheme.type.textStyleBodySm,
-                    color = colors.textMuted,
-                )
+                UseSmileIDSampleStatusBadge(status = status, testId = statusTestId)
             }
-            UseSmileIDSampleStatusBadge(status = status, testId = statusTestId)
         }
     }
 }
+
+@Composable
+private fun JobRowTile(product: UseSmileIDSampleProduct) {
+    val hue = product.hue
+    Surface(
+        modifier = Modifier.size(TILE_SIZE),
+        shape = RoundedCornerShape(TILE_RADIUS),
+        color = hue.tile,
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            val icon = product.iconRes
+            if (icon != null) {
+                UseSmileIDSampleIcon(id = icon, tint = hue.icon, size = TILE_ICON_SIZE)
+            } else {
+                ProductMarkGlyph(tint = hue.icon)
+            }
+        }
+    }
+}
+
+@Composable
+private fun JobRowText(
+    product: UseSmileIDSampleProduct,
+    jobId: String,
+    time: String,
+    stacks: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val colors = UseSmileIDSampleTheme.colors
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs)) {
+        Text(
+            text = product.label,
+            style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
+            color = colors.card.title,
+            // One line at the design's scale; enlarged type wraps, because eliding it would clip.
+            maxLines = if (stacks) Int.MAX_VALUE else 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = "$jobId · $time",
+            style = UseSmileIDSampleTheme.type.textStyleBodySm,
+            color = colors.textMuted,
+            // Ellipsised like the title, so every row is the same height at the design's scale.
+            maxLines = if (stacks) Int.MAX_VALUE else 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+private val TILE_SIZE = 36.dp
+private val TILE_RADIUS = 10.dp
+private val TILE_ICON_SIZE = 18.dp

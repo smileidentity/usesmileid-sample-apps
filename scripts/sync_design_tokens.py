@@ -143,6 +143,7 @@ KOTLIN_HUES_HEADER = """// Smile ID product hues — GENERATED. Do not edit by h
 package com.smileid.designsystem
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 """
 
 RGBA = re.compile(r"rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:,\s*([\d.]+)\s*)?\)")
@@ -435,19 +436,20 @@ def emit_kotlin_product_hues(hues: dict) -> str:
     if not hues:
         raise TokenError("spec/design-tokens.json carries no productHues.hues entries")
     lines = [
-        "/** One product card's colouring. `scrim` is applied at 16%: the go pill and the ghost glyph. */",
+        "/** One product card's colouring. `scrim` is applied at 16%: the go pill and the ghost glyph. `tile` is the soft icon-tile fill a list row uses. */",
         "data class SmileProductHue(",
         "    val from: Color,",
         "    val to: Color,",
         "    val icon: Color,",
         "    val scrim: Color,",
+        "    val tile: Color,",
         ")",
         "",
         "/** Keyed by the product id in spec/scenarios.json. A product absent here has no hue yet. */",
         "val smileProductHues: Map<String, SmileProductHue> = mapOf(",
     ]
     for product, hue in hues.items():
-        missing = {"from", "to", "icon", "scrim"} - set(hue)
+        missing = {"from", "to", "icon", "scrim", "tile"} - set(hue)
         if missing:
             raise TokenError(f"product hue {product!r} is missing {sorted(missing)}")
         lines += [
@@ -456,24 +458,186 @@ def emit_kotlin_product_hues(hues: dict) -> str:
             f"        to = {kotlin_color(hue['to'])},",
             f"        icon = {kotlin_color(hue['icon'])},",
             f"        scrim = {kotlin_color(hue['scrim'])},",
+            f"        tile = {kotlin_color(hue['tile'])},",
             "    ),",
         ]
     lines.append(")")
     return "\n".join(lines)
 
 
-def read_product_hues() -> dict:
+def emit_kotlin_soft_badge_fills(fills: dict) -> str:
+    """The soft status pills, keyed by the feedback role the four job statuses map onto."""
+    roles = ["success", "info", "warning", "error"]
+    missing = [role for role in roles if role not in fills]
+    if missing:
+        raise TokenError(f"spec/design-tokens.json softBadgeFills.fills is missing {missing}")
+    lines = [
+        "",
+        "/** One status pill's soft fill: a pale background with text that clears contrast on it. */",
+        "data class SmileSoftBadgeFill(",
+        "    val background: Color,",
+        "    val text: Color,",
+        ")",
+        "",
+        "/** Keyed by feedback role. The design system's own badge.* pairs are saturated, which is a different treatment. */",
+        "val smileSoftBadgeFills: Map<String, SmileSoftBadgeFill> = mapOf(",
+    ]
+    for role in roles:
+        pair = fills[role]
+        for key in ("background", "text"):
+            if key not in pair:
+                raise TokenError(f"soft badge fill {role!r} is missing {key!r}")
+        lines += [
+            f'    "{role}" to SmileSoftBadgeFill(',
+            f"        background = {kotlin_color(pair['background'])},",
+            f"        text = {kotlin_color(pair['text'])},",
+            "    ),",
+        ]
+    lines.append(")")
+    return "\n".join(lines)
+
+
+def read_spec_delta(delta_id: str, key: str) -> dict:
     spec_path = os.path.join(REPO, SPEC_TOKENS)
     with io.open(spec_path, encoding="utf-8") as handle:
         spec = json.load(handle)
     for delta in spec.get("deltas", []):
-        if delta.get("id") == "productHues":
-            return delta.get("hues", {})
-    raise TokenError(f"{SPEC_TOKENS} has no productHues delta to generate from")
+        if delta.get("id") == delta_id:
+            return delta.get(key, {})
+    raise TokenError(f"{SPEC_TOKENS} has no {delta_id} delta to generate from")
+
+
+def read_product_hues() -> dict:
+    return read_spec_delta("productHues", "hues")
+
+
+def read_soft_badge_fills() -> dict:
+    return read_spec_delta("softBadgeFills", "fills")
+
+
+def emit_kotlin_spec_color(name: str, delta_id: str, doc: str, value) -> str:
+    """A colour the design uses that the design system carries no semantic role for."""
+    if not isinstance(value, str) or not value:
+        raise TokenError(f"spec/design-tokens.json {delta_id} carries no value")
+    return "\n".join(["", f"/** {doc} */", f"val {name}: Color = {kotlin_color(value)}"])
+
+
+def emit_kotlin_border_strong(value) -> str:
+    return emit_kotlin_spec_color(
+        "smileBorderStrong",
+        "borderStrong",
+        "The design's `color/border-strong`, for a control ring that `color.border` is too pale to draw.",
+        value,
+    )
+
+
+def emit_kotlin_surface2(value) -> str:
+    return emit_kotlin_spec_color(
+        "smileSurface2",
+        "surface2",
+        "The design's `color/surface-2`, a cool grey subtle fill — `color.surface-alt` is a warm cream.",
+        value,
+    )
+
+
+def read_border_strong() -> str:
+    return read_spec_delta("borderStrong", "value")
+
+
+def read_surface2() -> str:
+    return read_spec_delta("surface2", "value")
+
+
+def read_profile_hues() -> list:
+    return read_spec_delta("profileHues", "hues")
+
+
+def read_token_session() -> dict:
+    for key in ("cardGradient", "ring", "ringTrackOpacity"):
+        pass
+    spec_path = os.path.join(REPO, SPEC_TOKENS)
+    with io.open(spec_path, encoding="utf-8") as handle:
+        spec = json.load(handle)
+    for delta in spec.get("deltas", []):
+        if delta.get("id") == "tokenSessionGreens":
+            return delta
+    raise TokenError(f"{SPEC_TOKENS} has no tokenSessionGreens delta to generate from")
+
+
+def emit_kotlin_token_session(delta: dict) -> str:
+    """The session card's gradient and the countdown ring, which no semantic role covers."""
+    grad = delta.get("cardGradient") or []
+    ring = delta.get("ring")
+    opacity = delta.get("ringTrackOpacity")
+    if len(grad) != 2 or not ring or opacity is None:
+        raise TokenError("tokenSessionGreens needs a two-stop cardGradient, a ring and a ringTrackOpacity")
+    return "\n".join([
+        "",
+        "/** The session card's horizontal gradient: the token session's own green, not feedback.success. */",
+        "val smileTokenSessionGradient: List<Color> = listOf(%s, %s)" % (kotlin_color(grad[0]), kotlin_color(grad[1])),
+        "",
+        "/** The countdown ring: this colour solid for progress, and the same colour faded for the track. */",
+        "val smileTokenRing: Color = %s" % kotlin_color(ring),
+        "const val SMILE_TOKEN_RING_TRACK_OPACITY = %sf" % opacity,
+    ])
+
+
+def read_label_type_style() -> dict:
+    spec_path = os.path.join(REPO, SPEC_TOKENS)
+    with io.open(spec_path, encoding="utf-8") as handle:
+        spec = json.load(handle)
+    for delta in spec.get("deltas", []):
+        if delta.get("id") == "labelTypeStyle":
+            return delta
+    raise TokenError(f"{SPEC_TOKENS} has no labelTypeStyle delta to generate from")
+
+
+def emit_kotlin_label_type_style(delta: dict) -> str:
+    """The all-caps label size and tracking, which text-style.overline sets a point small and solid."""
+    size = delta.get("size")
+    tracking = delta.get("tracking")
+    if not size or tracking is None:
+        raise TokenError("labelTypeStyle needs a size and a tracking")
+    return "\n".join([
+        "",
+        "/** The design's Type/Label: a point larger than text-style.overline, and spaced. */",
+        "val smileLabelSize = %s.sp" % size,
+        "val smileLabelTracking = %s.sp" % tracking,
+    ])
+
+
+def emit_kotlin_profile_hues(hues) -> str:
+    """One avatar fill per profile, cycled by list position."""
+    if not hues:
+        raise TokenError("spec/design-tokens.json profileHues carries no hues")
+    lines = [
+        "",
+        "/** Avatar fills, one per profile, taken in list order and cycled beyond the list. */",
+        "val smileProfileHues: List<Color> = listOf(",
+    ]
+    lines += ["    %s," % kotlin_color(h) for h in hues]
+    lines.append(")")
+    return "\n".join(lines)
 
 
 def generate_kotlin_product_hues() -> str:
-    return KOTLIN_HUES_HEADER + "\n" + emit_kotlin_product_hues(read_product_hues()) + "\n"
+    return (
+        KOTLIN_HUES_HEADER
+        + "\n"
+        + emit_kotlin_product_hues(read_product_hues())
+        + "\n"
+        + emit_kotlin_soft_badge_fills(read_soft_badge_fills())
+        + "\n"
+        + emit_kotlin_border_strong(read_border_strong())
+        + "\n"
+        + emit_kotlin_surface2(read_surface2())
+        + "\n"
+        + emit_kotlin_profile_hues(read_profile_hues())
+        + "\n"
+        + emit_kotlin_token_session(read_token_session())
+        + emit_kotlin_label_type_style(read_label_type_style())
+        + "\n"
+    )
 
 
 def generate_kotlin_type(ds: str) -> str:

@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.foundation.BorderStroke
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
@@ -27,11 +28,13 @@ fun UseSmileIDSampleFloatingTokenButton(
             .semantics { contentDescription = "Token session" }
             .testTag(UseSmileIDSampleTestIds.TOKEN_FLOAT),
         shape = CircleShape,
-        color = UseSmileIDSampleTheme.colors.primary,
+        // White with a border, like the nav bar's token control — not a primary-filled FAB.
+        color = UseSmileIDSampleTheme.colors.surface,
+        border = BorderStroke(SmileDimens.borderWidthThin, UseSmileIDSampleTheme.colors.border),
         shadowElevation = SmileDimens.space4,
     ) {
         Box(contentAlignment = Alignment.Center) {
-            ScanMarkGlyph(tint = UseSmileIDSampleTheme.colors.onPrimary)
+            ScanMarkGlyph(tint = UseSmileIDSampleTheme.colors.textTitle)
         }
     }
 }

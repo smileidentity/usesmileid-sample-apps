@@ -18,6 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
+import com.smileid.designsystem.smileTokenSessionGradient
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
@@ -34,8 +40,10 @@ fun UseSmileIDSampleSessionCard(
     Surface(
         modifier = modifier.fillMaxWidth().testTag(UseSmileIDSampleTestIds.SESSION_CARD),
         shape = RoundedCornerShape(SmileDimens.radiusSurface),
-        color = colors.successFill,
+        // The token session's own green, not the flat feedback-success fill.
+        color = Color.Transparent,
     ) {
+        Box(modifier = Modifier.background(Brush.horizontalGradient(smileTokenSessionGradient))) {
         FlowRow(
             modifier = Modifier
                 .defaultMinSize(minHeight = SmileDimens.space64)
@@ -50,21 +58,22 @@ fun UseSmileIDSampleSessionCard(
             ) {
                 Text(
                     text = "ACTIVE TOKEN SESSION",
-                    style = UseSmileIDSampleTheme.type.textStyleOverline,
-                    color = colors.onSuccess,
+                    style = UseSmileIDSampleTheme.type.textStyleOverline.copy(letterSpacing = LABEL_TRACKING),
+                    color = colors.surface,
                 )
                 Text(
                     text = "Linked to session $sessionId",
-                    style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
-                    color = colors.onSuccess,
+                    style = UseSmileIDSampleTheme.type.textStyleTitle.copy(fontSize = SESSION_TITLE_SIZE),
+                    color = colors.surface,
                 )
             }
             Text(
                 text = remaining,
-                style = UseSmileIDSampleTheme.type.textStyleHeadingCard,
-                color = colors.onSuccess,
+                style = UseSmileIDSampleTheme.type.textStyleHeadingCard.copy(fontSize = COUNTDOWN_SIZE),
+                color = colors.surface,
                 modifier = Modifier.testTag(UseSmileIDSampleTestIds.SESSION_COUNTDOWN),
             )
+            }
         }
     }
 }
@@ -121,3 +130,7 @@ fun UseSmileIDSampleSessionEndedBanner(
         }
     }
 }
+
+private val LABEL_TRACKING = 1.sp
+private val SESSION_TITLE_SIZE = 15.sp
+private val COUNTDOWN_SIZE = 24.sp

@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.TorchGlyph
@@ -65,7 +66,7 @@ fun ScanTokenScreen(
             )
             Text(
                 text = "Line up the code inside the frame to link this device to a verification session.",
-                style = UseSmileIDSampleTheme.type.textStyleBodySm,
+                    style = UseSmileIDSampleTheme.type.textStyleCaption.copy(fontSize = SCAN_BODY_SIZE),
                 color = UseSmileIDSampleTheme.colors.textMuted,
                 textAlign = TextAlign.Center,
             )
@@ -73,3 +74,5 @@ fun ScanTokenScreen(
         UseSmileIDSampleScanSheet(onPaste = onPaste, onSimulate = onSimulate)
     }
 }
+
+private val SCAN_BODY_SIZE = 12.5.sp

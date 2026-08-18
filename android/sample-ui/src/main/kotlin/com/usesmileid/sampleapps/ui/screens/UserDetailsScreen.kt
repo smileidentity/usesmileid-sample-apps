@@ -13,15 +13,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
-import com.usesmileid.sampleapps.ui.components.ProductMarkGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleKeyValueEditRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwitch
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBar
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
@@ -62,9 +65,16 @@ fun UserDetailsScreen(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(SmileDimens.radiusSurface),
                         color = UseSmileIDSampleTheme.colors.surface,
+                        border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.card.border),
                     ) {
                         Column {
-                            UseSmileIDSampleUserField.entries.forEach { field ->
+                            UseSmileIDSampleUserField.entries.forEachIndexed { index, field ->
+                                                    if (index > 0) {
+                                    HorizontalDivider(
+                                        thickness = SmileDimens.borderWidthHairline,
+                                        color = UseSmileIDSampleTheme.colors.card.border,
+                                    )
+                                }
                                 UseSmileIDSampleKeyValueEditRow(
                                     label = field.label,
                                     value = field.read(details),
@@ -81,7 +91,7 @@ fun UserDetailsScreen(
             item {
                 Text(
                     text = if (details.isComplete) "Tap any field to edit." else "First and last name are required.",
-                    style = UseSmileIDSampleTheme.type.textStyleBodySm,
+                    style = UseSmileIDSampleTheme.type.textStyleCaption,
                     color = UseSmileIDSampleTheme.colors.textMuted,
                     modifier = Modifier
                         .testTag(UseSmileIDSampleTestIds.USER_DETAILS_HINT)
@@ -97,19 +107,31 @@ fun UserDetailsScreen(
                             .padding(horizontal = SmileDimens.spacingMd),
                         shape = RoundedCornerShape(SmileDimens.radiusSurface),
                         color = UseSmileIDSampleTheme.colors.surface,
+                        border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.card.border),
                     ) {
-                        UseSmileIDSampleSettingRow(
-                            title = "Remember these details",
-                            supportingText = "Reuse them on the next job",
-                            leading = { tint -> ProductMarkGlyph(tint = tint) },
-                            trailing = {
-                                UseSmileIDSampleSwitch(
-                                    checked = rememberDetails,
-                                    onCheckedChange = onRememberChange,
-                                    testId = UseSmileIDSampleTestIds.REMEMBER_DETAILS_SWITCH,
-                                )
-                            },
-                        )
+                        // One line of body text beside the switch: no icon and no supporting line, so not a SettingRow.
+                        Row(
+                            modifier = Modifier.padding(
+                                start = SmileDimens.spacingMd,
+                                end = SmileDimens.spacingSm,
+                                top = SmileDimens.spacingSm,
+                                bottom = SmileDimens.spacingSm,
+                            ),
+                            horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = "Remember these details for next time",
+                                style = UseSmileIDSampleTheme.type.textStyleSubtitle.copy(fontSize = REMEMBER_TEXT_SIZE),
+                                color = UseSmileIDSampleTheme.colors.textBody,
+                                modifier = Modifier.weight(1f),
+                            )
+                            UseSmileIDSampleSwitch(
+                                checked = rememberDetails,
+                                onCheckedChange = onRememberChange,
+                                testId = UseSmileIDSampleTestIds.REMEMBER_DETAILS_SWITCH,
+                            )
+                        }
                     }
                 }
             }
@@ -124,3 +146,5 @@ fun UserDetailsScreen(
         )
     }
 }
+
+private val REMEMBER_TEXT_SIZE = 13.5.sp

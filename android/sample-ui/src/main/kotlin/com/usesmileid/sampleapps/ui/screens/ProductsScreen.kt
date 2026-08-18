@@ -23,12 +23,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
+import com.smileid.designsystem.smileProfileHues
 import com.smileid.designsystem.SmileDimens
-import com.smileid.designsystem.SmileProductHue
-import com.smileid.designsystem.smileProductHues
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleAvatar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
+import com.usesmileid.sampleapps.ui.components.hue
 import com.usesmileid.sampleapps.ui.components.iconRes
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProductCard
@@ -47,6 +47,8 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 data class UseSmileIDSampleProductsState(
     val environment: UseSmileIDSampleEnvironment,
     val initials: String,
+    /** The active profile's avatar hue, so every screen showing it agrees. */
+    val avatarColor: Color = smileProfileHues.first(),
     val sessionId: String? = null,
     val sessionRemaining: String? = null,
     val sessionEnded: Boolean = false,
@@ -92,6 +94,7 @@ fun ProductsScreen(
                     // The chip is display-only; this button owns profile switching.
                     UseSmileIDSampleAvatar(
                         initials = state.initials,
+                        containerColor = state.avatarColor,
                         modifier = Modifier
                             .testTag(UseSmileIDSampleTestIds.PROFILE_AVATAR_BUTTON)
                             .minimumInteractiveComponentSize()
@@ -151,7 +154,7 @@ fun ProductsScreen(
                         UseSmileIDSampleProductCard(
                             title = product.label,
                             onClick = { onProductClick(product) },
-                            hue = product.hue(),
+                            hue = product.hue,
                             testId = UseSmileIDSampleTestIds.productCard(product.id),
                             icon = id?.let { { tint -> UseSmileIDSampleIcon(id = it, tint = tint) } },
                             ghost = id?.let {
@@ -167,8 +170,5 @@ fun ProductsScreen(
         item { Spacer(modifier = Modifier.height(SmileDimens.space64 * 2)) }
     }
 }
-
-private fun UseSmileIDSampleProduct.hue(): SmileProductHue =
-    requireNotNull(smileProductHues[id]) { "no hue for product '$id'; see spec/design-tokens.json → productHues" }
 
 private val GHOST_SIZE = SmileDimens.space64 + SmileDimens.space4

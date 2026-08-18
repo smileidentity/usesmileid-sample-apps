@@ -16,12 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import com.smileid.designsystem.SmileDimens
+import com.usesmileid.sampleapps.ui.R
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
-import com.usesmileid.sampleapps.ui.components.ProductMarkGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleFloatingTokenButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectTrigger
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTriggerEmoji
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTextInput
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBar
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
@@ -61,7 +63,8 @@ fun KycIdFormScreen(
                     placeholder = "Select country",
                     onClick = onCountryClick,
                     testId = UseSmileIDSampleTestIds.COUNTRY_TRIGGER,
-                    leading = { tint -> ProductMarkGlyph(tint = tint) },
+                    // The design leads with the chosen country's flag, falling back to a globe.
+                    leading = { UseSmileIDSampleTriggerEmoji(details.country?.flag ?: GLOBE_EMOJI) },
                 )
                 UseSmileIDSampleSectionLabel(text = "ID TYPE")
                 UseSmileIDSampleSelectTrigger(
@@ -70,7 +73,8 @@ fun KycIdFormScreen(
                     onClick = onIdTypeClick,
                     enabled = details.country != null,
                     testId = UseSmileIDSampleTestIds.ID_TYPE_TRIGGER,
-                    leading = { tint -> ProductMarkGlyph(tint = tint) },
+                    // Not the design's 🪪: Emoji 14 renders as tofu below Android 13, and minSdk here is 26.
+                    leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_biometric_kyc, tint = tint) },
                 )
                 UseSmileIDSampleSectionLabel(text = "ID NUMBER")
                 UseSmileIDSampleTextInput(
@@ -99,3 +103,6 @@ fun KycIdFormScreen(
         )
     }
 }
+
+/** The leading emoji for the country picker. */
+private const val GLOBE_EMOJI = "\ud83c\udf0d"

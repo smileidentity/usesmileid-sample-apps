@@ -17,6 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import com.smileid.designsystem.smileSurface2
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -30,6 +34,8 @@ fun UseSmileIDSampleDataFieldRow(
     testId: String? = null,
     onCopy: (() -> Unit)? = null,
     copyTestId: String? = null,
+    /** Set only where the design colours the value, as the Status row's HTTP code is. */
+    valueColor: Color? = null,
 ) {
     Row(
         modifier = modifier
@@ -48,13 +54,16 @@ fun UseSmileIDSampleDataFieldRow(
         ) {
             Text(
                 text = label,
-                style = UseSmileIDSampleTheme.type.dataFieldLabelFont,
+                style = UseSmileIDSampleTheme.type.dataFieldLabelFont.copy(fontSize = FIELD_TEXT_SIZE),
                 color = UseSmileIDSampleTheme.colors.dataField.label,
             )
             Text(
                 text = value,
-                style = UseSmileIDSampleTheme.type.dataFieldValueFont,
-                color = UseSmileIDSampleTheme.colors.dataField.value,
+                style = UseSmileIDSampleTheme.type.dataFieldValueFont.copy(
+                    fontSize = FIELD_TEXT_SIZE,
+                    fontWeight = if (valueColor == null) FontWeight.SemiBold else FontWeight.Bold,
+                ),
+                color = valueColor ?: UseSmileIDSampleTheme.colors.dataField.value,
             )
         }
         if (onCopy != null) {
@@ -72,10 +81,12 @@ private fun CopyButton(label: String, onCopy: () -> Unit, testId: String?) {
             .semantics { contentDescription = "Copy $label" }
             .tagged(testId),
         shape = RoundedCornerShape(SmileDimens.radiusSm),
-        color = UseSmileIDSampleTheme.colors.surfaceAlt,
+        color = smileSurface2,
     ) {
         Box(contentAlignment = Alignment.Center) {
             CopyGlyph(tint = UseSmileIDSampleTheme.colors.textMuted)
         }
     }
 }
+
+private val FIELD_TEXT_SIZE = 13.sp

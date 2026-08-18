@@ -219,7 +219,7 @@ class TestDimens(unittest.TestCase):
 
 
 class TestProductHues(unittest.TestCase):
-    HUE = {"from": "#05723A", "to": "#0A9B4C", "icon": "#05723A", "scrim": "#FFFFFF"}
+    HUE = {"from": "#05723A", "to": "#0A9B4C", "icon": "#05723A", "scrim": "#FFFFFF", "tile": "#E4F2EA"}
 
     def test_hex_becomes_an_opaque_compose_colour(self):
         self.assertEqual(gen.kotlin_color("#e08600"), "Color(0xFFE08600)")
@@ -235,15 +235,95 @@ class TestProductHues(unittest.TestCase):
         with self.assertRaises(gen.TokenError):
             gen.kotlin_color("#fff")
 
-    def test_every_product_emits_all_four_roles(self):
+    def test_every_product_emits_all_five_roles(self):
         out = gen.emit_kotlin_product_hues({"smartSelfieEnrollment": self.HUE})
         self.assertIn('"smartSelfieEnrollment" to SmileProductHue(', out)
-        for role in ("from", "to", "icon", "scrim"):
+        for role in ("from", "to", "icon", "scrim", "tile"):
             self.assertIn(f"{role} = Color(0xFF", out)
 
     def test_a_hue_missing_a_role_fails_loudly(self):
         with self.assertRaises(gen.TokenError):
             gen.emit_kotlin_product_hues({"biometricKyc": {"from": "#151F72", "to": "#2B3A9E"}})
+
+    def test_soft_badge_fills_emit_every_feedback_role(self):
+        out = gen.emit_kotlin_soft_badge_fills(gen.read_soft_badge_fills())
+        for role in ("success", "info", "warning", "error"):
+            self.assertIn(f'"{role}" to SmileSoftBadgeFill(', out)
+
+    def test_a_soft_badge_role_missing_from_the_spec_fails_loudly(self):
+        with self.assertRaises(gen.TokenError):
+            gen.emit_kotlin_soft_badge_fills({"success": {"background": "#DBF5E4", "text": "#04713A"}})
+
+    def test_a_soft_badge_fill_missing_its_text_colour_fails_loudly(self):
+        fills = {role: {"background": "#DBF5E4", "text": "#04713A"} for role in ("success", "info", "warning", "error")}
+        del fills["error"]["text"]
+        with self.assertRaises(gen.TokenError):
+            gen.emit_kotlin_soft_badge_fills(fills)
+
+    def test_border_strong_emits_an_opaque_colour(self):
+        self.assertIn("val smileBorderStrong: Color = Color(0xFF", gen.emit_kotlin_border_strong(gen.read_border_strong()))
+
+    def test_border_strong_without_a_value_fails_loudly(self):
+        with self.assertRaises(gen.TokenError):
+            gen.emit_kotlin_border_strong("")
+
+    def test_surface2_emits_an_opaque_colour(self):
+        self.assertIn("val smileSurface2: Color = Color(0xFF", gen.emit_kotlin_surface2(gen.read_surface2()))
+
+    def test_profile_hues_emit_every_fill_the_design_supplies(self):
+        hues = gen.read_profile_hues()
+        out = gen.emit_kotlin_profile_hues(hues)
+        self.assertIn("val smileProfileHues: List<Color> = listOf(", out)
+        self.assertEqual(out.count("Color(0xFF"), len(hues))
+
+    def test_profile_hues_keep_the_designs_order(self):
+        # Position is the index, so reordering these recolours every profile in every app.
+        self.assertEqual(
+            [hue.upper() for hue in gen.read_profile_hues()],
+            ["#151F72", "#05723A", "#B36500", "#2D2B2A"],
+        )
+
+    def test_token_session_emits_a_gradient_a_ring_and_a_track_opacity(self):
+        out = gen.emit_kotlin_token_session(gen.read_token_session())
+        self.assertIn("val smileTokenSessionGradient: List<Color> = listOf(", out)
+        self.assertIn("val smileTokenRing: Color = Color(0xFF", out)
+        self.assertIn("SMILE_TOKEN_RING_TRACK_OPACITY", out)
+
+    def test_token_session_ring_is_not_the_feedback_success_fill(self):
+        self.assertNotEqual(gen.read_token_session()["ring"].upper(), "#00C853")
+
+    def test_a_one_stop_gradient_fails_loudly(self):
+        with self.assertRaises(gen.TokenError):
+            gen.emit_kotlin_token_session({"cardGradient": ["#1A7840"], "ring": "#06A850", "ringTrackOpacity": 0.18})
+
+    def test_label_type_style_emits_a_size_and_a_tracking(self):
+        out = gen.emit_kotlin_label_type_style(gen.read_label_type_style())
+        self.assertIn("val smileLabelSize = 11.sp", out)
+        self.assertIn("val smileLabelTracking = 0.88.sp", out)
+
+    def test_label_type_style_is_bigger_than_the_overline_it_replaces(self):
+        # The whole point of the delta: text-style.overline is 10 and set solid.
+        delta = gen.read_label_type_style()
+        self.assertGreater(delta["size"], 10)
+        self.assertGreater(delta["tracking"], 0)
+
+    def test_a_label_style_without_tracking_fails_loudly(self):
+        with self.assertRaises(gen.TokenError):
+            gen.emit_kotlin_label_type_style({"size": 11})
+
+    def test_no_profile_hue_fails_loudly(self):
+        with self.assertRaises(gen.TokenError):
+            gen.emit_kotlin_profile_hues([])
+
+    def test_surface2_is_not_the_warm_surface_alt(self):
+        self.assertNotEqual(gen.read_surface2().upper(), "#F9F0E7")
+
+    def test_border_strong_is_not_the_pale_semantic_border(self):
+        self.assertNotEqual(gen.read_border_strong().upper(), "#EAECF0")
+
+    def test_the_soft_fills_are_not_the_saturated_design_system_pairs(self):
+        fills = gen.read_soft_badge_fills()
+        self.assertNotEqual(fills["warning"]["background"].upper(), "#FF9B00")
 
     def test_an_empty_spec_entry_fails_rather_than_emitting_an_empty_map(self):
         with self.assertRaises(gen.TokenError):

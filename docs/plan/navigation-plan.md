@@ -18,7 +18,7 @@ document explains the architecture and the traps.
 
 ---
 
-## 1. Nine rules that apply to every platform
+## 1. Thirteen rules that apply to every platform
 
 These are what keep four navigation implementations behaving the same. Most of them exist because a
 specific defect was found on a device, not because they read well.
@@ -62,6 +62,10 @@ rotation, process death and the system killing the app behind the camera. Two sp
 **R7 — Per-tab back stacks are preserved.** Switching tabs and returning keeps the stack. Deep links
 into a tab's detail route build a sensible parent stack so back works.
 
+A caveat that came out of R13: because a pushed screen carries no nav bar, you cannot switch tab from
+one — you go back first. So the preserved stack is in practice the tab's root, and a flow cannot test
+preservation by switching tabs from a detail screen the way the Android flow used to.
+
 **R8 — Sheets are routes, not booleans.** All four sheets (profile switch, new profile, country, ID
 type) are destinations, so a deep link can open one and a flow can assert it. They keep the
 platform's native sheet behaviour — drag-to-dismiss, scrim tap, inset handling.
@@ -89,6 +93,81 @@ Two consequences worth carrying to the other three platforms:
   correctly. Only state that should have survived shows it. So a warm-start assertion has to be on
   **surviving state** — the result card's `activeScenario` is the cheapest one — and a flow that
   wants to observe launch arguments must reach its destination by tapping, not by deep link.
+
+**R10 — A confirmation belongs to the screen the action returns to, not to the screen that fired it.**
+Settled 2026-08-18 on the profile flow, where the design puts the "created" confirmation on the
+profiles list rather than on the sheet that created the profile. Three consequences the other three
+platforms inherit:
+
+- The sheet cannot own it. It is dismissing, so anything anchored inside it dies with it. The
+  creating call records the new id on the profiles store and the list reads it, which also survives
+  the recreation R6 covers.
+- The confirmation carries the follow-up action the design offers ("Make active"), because creating
+  a profile deliberately does **not** activate it.
+- A deep link straight to the sheet returns to the graph's start destination, not to the list, so no
+  confirmation appears. That is acceptable — deep links are automation affordances — but a flow that
+  asserts the confirmation has to reach the sheet by tapping.
+
+The profile flow this settles, end to end: settings PROFILE row → `/profiles` (the LIST, not the
+active profile's page) → a row → `/profiles/:id`, titled with the profile's name, whose CTA both
+saves the defaults and activates → or "Create new profile" → `/profiles/new` → back to `/profiles`
+with the confirmation.
+
+**R11 — Motion says what the route table says.** Settled 2026-08-18 on Android and owed by the other
+three. The route table has two relationships and each gets its own motion, so the animation is never
+decoration:
+
+| Relationship | Motion |
+|---|---|
+| Push / pop a deeper route | Fade **through** — out in 100ms, in over 160ms after it — plus a travel of **one eighth** of the width toward the start, reversed on pop |
+| Switch between the three tab roots | The same fade through, with no travel: siblings have no direction |
+| A route that draws its own presentation (every sheet) | **None** — the sheet animates itself, and animating the destination too slides the scrim in before the sheet exists |
+| The SDK flow | Fade only. It owns its own navigation (R2), so the host must not imply a direction |
+| A bar arriving over a screen (snackbar, selection bar) | Rise 220ms with a 160ms fade, and the caller **holds** what the bar reads so it still has something to draw on the way out |
+
+Three traps, each found on a device:
+
+- **"Different parent graph" is not "tab switch".** A pushed route lives in the root graph, so
+  comparing parents classified Settings → Profiles as a tab switch and cross-faded a push. Compare
+  against the three tab **start routes** instead.
+- **Cross-fading two dense screens reads as a rendering fault** — both are legible at once, at half
+  opacity, so the old screen's text shows through the new one. Fade through instead: clear, then
+  arrive. This is why the fade in carries a delay equal to the fade out.
+- **A full-width slide is too much.** Reviewed on a device 2026-08-18: it announces the navigation
+  instead of serving it. The apps people compare this against move a *fraction* of the width, fast,
+  and the eye reads direction without following anything across the screen. An eighth of the width
+  over 200ms, with the fade through on top, is the setting that survived review.
+- **The nav bar must animate out with the screen that covers it**, and something must hold the last
+  selected tab, or the bar redraws with no selection on its way off screen.
+
+**R12 — A sheet route is a layer over the current destination, never a replacement.** A sheet that
+replaces the destination beneath it has nothing behind its scrim, where the design shows the screen it
+covers. This is currently broken on Android and correct on the other three by construction, because
+their platforms present sheets over the presenter. The evaluated options and the recommendation are in
+`sample-apps-plan.md` §8.2; the short version is that the presentation belongs to the navigator, and
+the workaround that fakes it with a dialog destination costs the native sheet behaviour R8 requires.
+
+**R13 — The nav bar belongs to the tab roots, and it floats.** Two halves, both found on a device
+2026-08-18:
+
+- **Shown on the three tab roots only.** A route living inside a tab's graph is not the same as being
+  that tab: verification details sits in the verifications graph, and testing graph *membership* put a
+  nav bar on a pushed screen that the design draws without one. Match the graph's **start
+  destination**. Every pushed screen in the design is bar-less.
+
+  Whether a screen carries a bar is a property of the **destination**, not of how you reached it — the
+  predicate takes the current destination and nothing else, so it was never a deep-link-only fault. The
+  device flows assert the absent bar on **both** arrival routes for that reason: `shell-navigation`
+  covers the deep link and `verifications` covers the tap.
+- **It floats over the content, not beside it.** The design draws a pill on a shadow with the list
+  continuing underneath. Putting it in a bottom-bar slot insets the content instead, which drew a
+  visible seam across the screen with the last row clipped against it — the bar read as its own
+  section rather than as something over the page. The consequence to carry: the content is *not* inset
+  by the bar, so a screen's own trailing spacer is what lets its last row scroll clear, and anything
+  else anchored to the bottom of a screen has to clear the bar itself.
+
+Select mode is the exception that proves the rule: its bar is opaque with a top edge, so it *replaces*
+the bottom chrome and content does stop above it.
 
 ---
 

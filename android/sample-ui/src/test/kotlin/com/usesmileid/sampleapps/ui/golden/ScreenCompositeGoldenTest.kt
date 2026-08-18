@@ -189,10 +189,7 @@ private fun SessionEndedBanners() = UseSmileIDSampleSessionEndedBanner(onScan = 
 private fun FloatingTokenButtons() = UseSmileIDSampleFloatingTokenButton(onClick = {})
 
 @Composable
-private fun ScanGlyphs() = Column(verticalArrangement = stack) {
-    UseSmileIDSampleScanGlyph()
-    UseSmileIDSampleScanGlyph(sweep = true)
-}
+private fun ScanGlyphs() = UseSmileIDSampleScanGlyph()
 
 @Composable
 private fun ScanSheets() = UseSmileIDSampleScanSheet(onPaste = {}, onSimulate = {})
@@ -200,7 +197,7 @@ private fun ScanSheets() = UseSmileIDSampleScanSheet(onPaste = {}, onSimulate = 
 @Composable
 private fun SwipeActions() = UseSmileIDSampleSwipeAction(onRemove = {}) {
     UseSmileIDSampleJobRow(
-        product = "SmartSelfie Enrollment",
+        product = UseSmileIDSampleProduct.SmartSelfieEnrollment,
         jobId = "7d2f01aa…",
         time = "13:03:41",
         status = UseSmileIDSampleStatus.Clear,

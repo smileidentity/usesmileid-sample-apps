@@ -18,9 +18,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.ui.text.style.TextAlign
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowDivider
+import androidx.annotation.DrawableRes
+import com.usesmileid.sampleapps.ui.R
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
+import androidx.compose.ui.graphics.Color
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.smileProfileHues
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
-import com.usesmileid.sampleapps.ui.components.ProductMarkGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDestructiveRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProfileRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
@@ -32,7 +39,12 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** One ABOUT or LEGAL row: an id, a title, and the line beneath it. */
-data class UseSmileIDSampleNavRow(val id: String, val title: String, val supportingText: String? = null)
+data class UseSmileIDSampleNavRow(
+    val id: String,
+    val title: String,
+    val supportingText: String? = null,
+    @DrawableRes val icon: Int = R.drawable.sample_ic_product_mark,
+)
 
 /** Settings, which every other screen's configuration comes from. [versionLabel] is passed in because it names the host, and this module runs under eight. */
 @Composable
@@ -47,6 +59,7 @@ fun SettingsScreen(
     onOpenScenarioDrawer: () -> Unit,
     onSignOut: () -> Unit,
     modifier: Modifier = Modifier,
+    avatarColor: Color = smileProfileHues.first(),
     contentPadding: PaddingValues = PaddingValues(),
 ) {
     LazyColumn(
@@ -73,6 +86,7 @@ fun SettingsScreen(
                 initials = initials,
                 selected = false,
                 onClick = onProfileClick,
+                avatarColor = avatarColor,
                 trailing = { UseSmileIDSampleSettingRowChevron() },
                 testId = UseSmileIDSampleTestIds.PROFILE_SUMMARY,
             )
@@ -82,14 +96,17 @@ fun SettingsScreen(
         section("CAPTURE") {
             SwitchRow(
                 title = "Smile to capture",
+                icon = R.drawable.sample_ic_setting_smile,
                 supportingText = "Passive capture — smile detection",
                 checked = settings.smileToCapture,
                 setting = UseSmileIDSampleSetting.SmileToCapture,
                 testId = UseSmileIDSampleTestIds.SETTING_SMILE_TO_CAPTURE,
                 onSettingChange = onSettingChange,
             )
+            UseSmileIDSampleSettingRowDivider()
             SwitchRow(
                 title = "Agent mode",
+                icon = R.drawable.sample_ic_setting_agent,
                 supportingText = "Operator captures for the applicant",
                 checked = settings.agentMode,
                 setting = UseSmileIDSampleSetting.AgentMode,
@@ -101,6 +118,7 @@ fun SettingsScreen(
         section("APPEARANCE") {
             SwitchRow(
                 title = "Dark mode",
+                icon = R.drawable.sample_ic_setting_dark_mode,
                 supportingText = "Switch appearance",
                 checked = settings.darkMode,
                 setting = UseSmileIDSampleSetting.DarkMode,
@@ -112,22 +130,27 @@ fun SettingsScreen(
         section("SDK SCREENS — SHOW OR SKIP FLOW STEPS") {
             SwitchRow(
                 title = "Consent screen",
+                icon = R.drawable.sample_ic_setting_consent,
                 supportingText = "Ask permission before KYC checks",
                 checked = settings.consentStep,
                 setting = UseSmileIDSampleSetting.ConsentStep,
                 testId = UseSmileIDSampleTestIds.SETTING_CONSENT_STEP,
                 onSettingChange = onSettingChange,
             )
+            UseSmileIDSampleSettingRowDivider()
             SwitchRow(
                 title = "Instruction screen",
+                icon = R.drawable.sample_ic_setting_instructions,
                 supportingText = "Prep tips before capture",
                 checked = settings.instructionsStep,
                 setting = UseSmileIDSampleSetting.InstructionsStep,
                 testId = UseSmileIDSampleTestIds.SETTING_INSTRUCTIONS_STEP,
                 onSettingChange = onSettingChange,
             )
+            UseSmileIDSampleSettingRowDivider()
             SwitchRow(
                 title = "Preview screen",
+                icon = R.drawable.sample_ic_setting_preview,
                 supportingText = "Confirm or retake after capture",
                 checked = settings.previewStep,
                 setting = UseSmileIDSampleSetting.PreviewStep,
@@ -142,15 +165,25 @@ fun SettingsScreen(
                 title = "Scenarios",
                 supportingText = "Choose how the environment misbehaves",
                 onClick = onOpenScenarioDrawer,
-                leading = { tint -> ProductMarkGlyph(tint = tint) },
+                leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_setting_scenarios, tint = tint) },
                 trailing = { UseSmileIDSampleSettingRowChevron() },
                 testId = UseSmileIDSampleTestIds.SCENARIO_DRAWER_BUTTON,
             )
         }
 
-        section("ABOUT") { ABOUT_ROWS.forEach { NavRow(row = it, onClick = onNavRowClick) } }
+        section("ABOUT") {
+            ABOUT_ROWS.forEachIndexed { index, row ->
+                if (index > 0) UseSmileIDSampleSettingRowDivider()
+                NavRow(row = row, onClick = onNavRowClick)
+            }
+        }
 
-        section("LEGAL") { LEGAL_ROWS.forEach { NavRow(row = it, onClick = onNavRowClick) } }
+        section("LEGAL") {
+            LEGAL_ROWS.forEachIndexed { index, row ->
+                if (index > 0) UseSmileIDSampleSettingRowDivider()
+                NavRow(row = row, onClick = onNavRowClick)
+            }
+        }
 
         item {
             UseSmileIDSampleDestructiveRow(
@@ -163,7 +196,8 @@ fun SettingsScreen(
         item {
             Text(
                 text = versionLabel,
-                style = UseSmileIDSampleTheme.type.textStyleBodySm,
+                style = UseSmileIDSampleTheme.type.textStyleCaption,
+                textAlign = TextAlign.Center,
                 color = UseSmileIDSampleTheme.colors.textMuted,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -190,6 +224,7 @@ private fun androidx.compose.foundation.lazy.LazyListScope.section(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(SmileDimens.radiusSurface),
             color = UseSmileIDSampleTheme.colors.surface,
+            border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.card.border),
         ) {
             Column { content() }
         }
@@ -204,11 +239,12 @@ private fun SwitchRow(
     setting: UseSmileIDSampleSetting,
     testId: String,
     onSettingChange: (UseSmileIDSampleSetting, Boolean) -> Unit,
+    @DrawableRes icon: Int,
 ) {
     UseSmileIDSampleSettingRow(
         title = title,
         supportingText = supportingText,
-        leading = { tint -> ProductMarkGlyph(tint = tint) },
+        leading = { tint -> UseSmileIDSampleIcon(id = icon, tint = tint) },
         trailing = {
             UseSmileIDSampleSwitch(
                 checked = checked,
@@ -225,19 +261,19 @@ private fun NavRow(row: UseSmileIDSampleNavRow, onClick: (UseSmileIDSampleNavRow
         title = row.title,
         supportingText = row.supportingText,
         onClick = { onClick(row) },
-        leading = { tint -> ProductMarkGlyph(tint = tint) },
+        leading = { tint -> UseSmileIDSampleIcon(id = row.icon, tint = tint) },
         trailing = { UseSmileIDSampleSettingRowChevron() },
         testId = UseSmileIDSampleTestIds.settingNav(row.id),
     )
 }
 
 private val ABOUT_ROWS = listOf(
-    UseSmileIDSampleNavRow("documentation", "Documentation", "docs.smileidentity.com"),
-    UseSmileIDSampleNavRow("support", "Support", "Contact the Smile team"),
+    UseSmileIDSampleNavRow("documentation", "Documentation", "docs.smileidentity.com", R.drawable.sample_ic_setting_docs),
+    UseSmileIDSampleNavRow("support", "Support", "Contact the Smile team", R.drawable.sample_ic_setting_support),
 )
 
 private val LEGAL_ROWS = listOf(
-    UseSmileIDSampleNavRow("terms", "Terms of Service"),
-    UseSmileIDSampleNavRow("privacy", "Privacy Policy"),
-    UseSmileIDSampleNavRow("licenses", "Open-source licenses"),
+    UseSmileIDSampleNavRow("terms", "Terms of Service", icon = R.drawable.sample_ic_setting_terms),
+    UseSmileIDSampleNavRow("privacy", "Privacy Policy", icon = R.drawable.sample_ic_setting_privacy),
+    UseSmileIDSampleNavRow("licenses", "Open-source licenses", icon = R.drawable.sample_ic_setting_licenses),
 )

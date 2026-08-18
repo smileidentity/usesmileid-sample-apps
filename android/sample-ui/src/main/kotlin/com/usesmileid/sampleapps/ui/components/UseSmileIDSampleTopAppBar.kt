@@ -19,6 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
+import com.smileid.designsystem.smileSurface2
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -33,11 +38,13 @@ fun UseSmileIDSampleTopAppBar(
     action: @Composable (() -> Unit)? = null,
 ) {
     Row(
+        // A fixed row height, so a longer title cannot grow the bar and drop the header on one screen.
         modifier = modifier
             .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.statusBars)
             .padding(horizontal = SmileDimens.spacingMd)
-            .defaultMinSize(minHeight = SmileDimens.space48)
+            .defaultMinSize(minHeight = HEADER_ROW_HEIGHT * LocalDensity.current.fontScale.coerceAtLeast(1f))
+            .padding(bottom = SmileDimens.spacingXs)
             .tagged(testId),
         horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
         verticalAlignment = Alignment.CenterVertically,
@@ -46,12 +53,13 @@ fun UseSmileIDSampleTopAppBar(
             contentDescription = backContentDescription,
             onClick = onBack,
             emphasis = UseSmileIDSampleTopAppBarEmphasis.Filled,
-        ) { tint -> BackArrowGlyph(tint = tint) }
+        ) { tint -> ArrowBackGlyph(tint = tint) }
 
         Text(
             text = title,
-            style = UseSmileIDSampleTheme.type.textStyleTitle,
+            style = UseSmileIDSampleTheme.type.textStyleTitle.copy(fontSize = TITLE_SIZE),
             color = UseSmileIDSampleTheme.colors.textTitle,
+            textAlign = TextAlign.Center,
             // Wraps rather than caps: ellipsising a title is the clipping the predicate forbids.
             modifier = Modifier.weight(1f),
         )
@@ -61,8 +69,8 @@ fun UseSmileIDSampleTopAppBar(
     }
 }
 
-/** Filled is the dark control used for back and the Scan token torch; Tonal is the light trailing action. */
-enum class UseSmileIDSampleTopAppBarEmphasis { Filled, Tonal }
+/** Filled is the dark control used for back and the Scan token torch; Tonal is the light trailing action; Destructive is the soft-red delete. */
+enum class UseSmileIDSampleTopAppBarEmphasis { Filled, Tonal, Destructive }
 
 /** One circular 40dp app-bar control; Material expands the touch target around it. */
 @Composable
@@ -77,7 +85,8 @@ fun UseSmileIDSampleTopAppBarButton(
     val colors = UseSmileIDSampleTheme.colors
     val (container, tint) = when (emphasis) {
         UseSmileIDSampleTopAppBarEmphasis.Filled -> colors.textTitle to colors.textInverse
-        UseSmileIDSampleTopAppBarEmphasis.Tonal -> colors.surfaceAlt to colors.textTitle
+        UseSmileIDSampleTopAppBarEmphasis.Tonal -> smileSurface2 to colors.textTitle
+        UseSmileIDSampleTopAppBarEmphasis.Destructive -> colors.badge.errorBackground to colors.badge.errorText
     }
     Surface(
         onClick = onClick,
@@ -91,3 +100,7 @@ fun UseSmileIDSampleTopAppBarButton(
         Box(contentAlignment = Alignment.Center) { glyph(tint) }
     }
 }
+
+private val TITLE_SIZE = 15.sp
+
+private val HEADER_ROW_HEIGHT = 40.dp
