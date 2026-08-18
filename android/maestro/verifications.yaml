@@ -59,6 +59,12 @@ appId: ${APP_ID}
     id: "sample_job_row_0"
 - assertVisible:
     id: "sample_verification_details_screen"
+# Reached by TAPPING, not by deep link. Whether a screen carries a bar is a property of the
+# destination, so a check that covers one arrival route would let the other hide a regression.
+- assertNotVisible:
+    id: "sample_nav_products"
+- assertNotVisible:
+    id: "sample_nav_token"
 - back
 - assertVisible:
     id: "sample_verifications_screen"
