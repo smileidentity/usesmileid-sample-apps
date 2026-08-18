@@ -56,9 +56,8 @@ fun UseSmileIDSampleJobRow(
         color = colors.card.background,
         border = BorderStroke(SmileDimens.borderWidthHairline, colors.card.border),
     ) {
-        // A Row at the design's scale, so the badge stays on the title's line and a long name
-        // ellipsises; a FlowRow above it, so the badge drops instead of being squeezed to nothing.
-        // One layout cannot do both: weight() inside a FlowRow claims the whole line every time.
+        // A Row at the design's scale keeps the badge inline; a FlowRow above it lets the badge drop.
+        // One layout cannot do both: weight() inside a FlowRow claims the whole line.
         val stacks = LocalDensity.current.fontScale > 1f
         val padding = Modifier
             .defaultMinSize(minHeight = SmileDimens.space64)

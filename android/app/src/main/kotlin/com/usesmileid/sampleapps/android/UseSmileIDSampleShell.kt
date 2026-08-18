@@ -66,8 +66,7 @@ fun UseSmileIDSampleShell() {
     val navigator = navController.rememberDestinationsNavigator()
     val destination by navController.currentDestinationAsState()
     val selectedTab = destination?.tab()
-    // The bar animating away still needs a selected tab to draw, and it is only ever written with a
-    // real one — writing state straight from the composition body is what makes a value get skipped.
+    // Only ever written with a real tab: writing state from the composition body gets it skipped.
     var lastTab by remember { mutableStateOf(UseSmileIDSampleNavItem.Products) }
     LaunchedEffect(selectedTab) { lastTab = selectedTab ?: lastTab }
     val chrome = remember { UseSmileIDSampleChromeState() }
@@ -79,9 +78,7 @@ fun UseSmileIDSampleShell() {
         // UI automation only sees Compose test tags once they are published as resource ids.
         modifier = Modifier.semantics { testTagsAsResourceId = true },
         bottomBar = {
-            // Only select mode gets the bar slot. It is an opaque bar with a top edge, so content
-            // must stop above it; the nav bar is a floating pill and content scrolls UNDER it, which
-            // it cannot do from in here — the slot insets the content by whatever it puts in it.
+            // Only select mode gets the slot: the slot insets the content, and the nav bar must not.
             chrome.selection?.let { selection ->
                 UseSmileIDSampleSelectionBar(
                     selectedCount = selection.count,
@@ -100,20 +97,16 @@ fun UseSmileIDSampleShell() {
                     modifier = Modifier.padding(contentPadding),
                 )
             }
-            // Over the content, not beside it: the design floats the pill on a shadow with the list
-            // continuing underneath, and reserving a row for it instead drew a visible seam across
-            // the screen with the last row clipped against it.
+            // Over the content: reserving a row drew a seam with the last row clipped against it.
             AnimatedVisibility(
                 visible = selectedTab != null,
                 modifier = Modifier.align(Alignment.BottomCenter),
-                // Slides out with the screen that covered it rather than vanishing on the same frame.
                 enter = slideInVertically(NAV_BAR_SPEC) { it } + fadeIn(),
                 exit = slideOutVertically(NAV_BAR_SPEC) { it } + fadeOut(),
             ) {
                 val app = LocalUseSmileIDSampleAppState.current
                 UseSmileIDSampleNavBar(
                     sessionProgress = app.session?.takeIf { app.sessionActive }?.progress(app.nowMillis),
-                    // Keeps the last tab, so the bar it animates away is the one you were looking at.
                     selected = lastTab,
                     onSelect = { item ->
                         navigator.navigate(item.graph) {
@@ -171,13 +164,7 @@ private fun ForwardNewIntentsTo(navController: NavHostController) {
     }
 }
 
-/**
- * The tab a destination IS, or null for anything else.
- *
- * Its graph's start destination, not merely a member of that graph: verification details lives in the
- * verifications graph, and testing membership showed the nav bar on a pushed detail screen that the
- * design draws without one.
- */
+/** The tab a destination IS — its graph's START destination. Membership put a bar on a pushed detail screen. */
 private fun DestinationSpec.tab(): UseSmileIDSampleNavItem? = when (this) {
     ProductsNavGraph.startDestination -> UseSmileIDSampleNavItem.Products
     VerificationsNavGraph.startDestination -> UseSmileIDSampleNavItem.Verifications

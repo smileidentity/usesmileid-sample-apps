@@ -73,8 +73,7 @@ fun UseSmileIDSampleToast(
                     softWrap = false,
                     textAlign = TextAlign.Center,
                     // Clickable before the sizing modifiers, so the tap target is the padded box.
-                    // Widened rather than squared off: a 48-high action inflates the bar to 72,
-                    // where the design draws 46. The bar's own height is the vertical target.
+                    // Widened, not squared off: a 48-high action inflates the 46 bar to 72.
                     modifier = Modifier
                         .testTag(UseSmileIDSampleTestIds.TOAST_UNDO)
                         .clickable(role = Role.Button, onClick = onAction)

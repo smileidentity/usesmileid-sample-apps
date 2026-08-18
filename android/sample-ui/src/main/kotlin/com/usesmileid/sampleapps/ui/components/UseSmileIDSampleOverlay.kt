@@ -11,11 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 
-/**
- * A bar that arrives over the screen — a snackbar, the selection bar — rising into place instead of
- * appearing between frames. The caller holds whatever the bar reads, so it still has something to
- * draw on the way out.
- */
+/** A bar that rises into place rather than appearing between frames. The caller holds what it reads. */
 @Composable
 fun UseSmileIDSampleOverlay(
     visible: Boolean,

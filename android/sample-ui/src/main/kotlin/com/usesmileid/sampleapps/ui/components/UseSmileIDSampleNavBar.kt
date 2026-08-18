@@ -80,7 +80,6 @@ fun UseSmileIDSampleNavBar(
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(SmileDimens.radiusPill),
             color = UseSmileIDSampleTheme.colors.surface,
-            // A shadow with no outline; only the token is outlined.
             shadowElevation = BAR_ELEVATION,
         ) {
             Row(

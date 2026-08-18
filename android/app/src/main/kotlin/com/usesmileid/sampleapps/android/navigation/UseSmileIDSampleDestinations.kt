@@ -100,10 +100,8 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
     var filter by rememberSaveable { mutableStateOf(UseSmileIDSampleJobFilter.All) }
     var selectMode by rememberSaveable { mutableStateOf(false) }
     var selected by rememberSaveable { mutableStateOf(emptySet<String>()) }
-    // The count outlives the toast so it still reads correctly while the toast slides away; the
-    // token restarts the window even when two removals in a row are the same size. Both are
-    // deliberately NOT saveable: a saved token replays the confirmation every time you come back to
-    // this screen, so opening a verification and pressing back re-showed a removal from minutes ago.
+    // The count outlives the toast, and the token restarts the window when two removals match in size.
+    // Neither is saveable: a saved token replayed the confirmation on every return to this screen.
     var removedCount by remember { mutableIntStateOf(0) }
     var removalToken by remember { mutableIntStateOf(0) }
 
@@ -155,8 +153,7 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
         }
         UseSmileIDSampleOverlay(
             visible = removalShown,
-            // Clears the floating nav bar itself: the bar draws OVER this container rather than
-            // insetting it, so the toast would otherwise sit behind the pill.
+            // Clears the floating bar itself, which draws over this container rather than insetting it.
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = chrome.navBarHeight)
@@ -291,9 +288,8 @@ fun ProfileSwitchSheet(navigator: DestinationsNavigator) {
 @Composable
 fun ProfilesScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
-    // Consumed on sight, so leaving and returning cannot re-show an old confirmation. The window is
-    // a second effect: clearing the store flips the first one's key, which would cancel its delay
-    // before it ever reset, leaving the confirmation up for good.
+    // Consumed on sight, so returning cannot re-show it. The window is a second effect because
+    // clearing the store flips the first one's key and would cancel its delay before it reset.
     var confirmedId by remember { mutableStateOf<String?>(null) }
     var confirmationShown by remember { mutableStateOf(false) }
     val pendingId = app.profiles.lastCreatedId

@@ -18,11 +18,8 @@ import com.ramcosta.composedestinations.spec.DestinationStyle
 import com.ramcosta.composedestinations.utils.startDestination
 
 /**
- * How every route enters and leaves. The aim is that you feel the direction without watching an
- * animation: the outgoing screen has gone before the incoming one is legible, so the two are never
- * both readable, and the travel is a fraction of the width rather than all of it.
- *
- * The library's default is no animation at all, which reads as a series of cuts.
+ * How every route enters and leaves: the outgoing screen has gone before the incoming one is legible,
+ * and the travel is a fraction of the width. The library's default is no animation at all.
  */
 object UseSmileIDSampleNavTransitions : NavHostAnimatedDestinationStyle() {
 
@@ -43,10 +40,7 @@ object UseSmileIDSampleNavTransitions : NavHostAnimatedDestinationStyle() {
     }
 }
 
-/**
- * For a route that draws its own presentation: a sheet animates itself, and animating the
- * destination as well slides the scrim in from the side before the sheet has appeared.
- */
+/** A sheet animates itself; animating the destination too slides the scrim in before the sheet appears. */
 object UseSmileIDSampleSheetTransitions : DestinationStyle.Animated() {
     override val enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? = { EnterTransition.None }
     override val exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition? = { ExitTransition.None }
@@ -58,13 +52,7 @@ object UseSmileIDSampleFlowTransitions : DestinationStyle.Animated() {
     override val exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition? = { fadeOut(LEAVE) }
 }
 
-/**
- * Arriving: fade in once the outgoing screen has cleared, travelling a short distance if there is a
- * direction to imply.
- *
- * The delay is what stops both screens being legible at once. Overlapping them shows the previous
- * screen's text through the new one, which reads as a rendering fault rather than a transition.
- */
+/** Fade in once the outgoing screen has cleared: overlapping them shows its text through the new screen. */
 private fun AnimatedContentTransitionScope<NavBackStackEntry>.arrive(
     towards: SlideDirection? = null,
 ): EnterTransition = fadeIn(ARRIVE).let { fade ->
@@ -78,10 +66,7 @@ private fun AnimatedContentTransitionScope<NavBackStackEntry>.leave(
     if (towards == null) fade else fade + slideOutOfContainer(towards, TRAVEL) { full -> full / SLIDE_FRACTION }
 }
 
-/**
- * Only between the three tab roots. Comparing parent graphs instead calls Settings → Profiles a tab
- * switch, because a pushed route lives in the root graph, and the push then loses its direction.
- */
+/** Only between the tab roots: comparing parent graphs calls Settings → Profiles a tab switch. */
 private fun AnimatedContentTransitionScope<NavBackStackEntry>.switchesTab(): Boolean =
     initialState.destination.route in TAB_ROOTS && targetState.destination.route in TAB_ROOTS
 

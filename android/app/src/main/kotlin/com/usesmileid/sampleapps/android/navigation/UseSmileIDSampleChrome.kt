@@ -12,22 +12,11 @@ import androidx.compose.ui.unit.dp
 @Immutable
 data class UseSmileIDSampleSelectionChrome(val count: Int, val onRemove: () -> Unit)
 
-/**
- * What the bottom of the window shows. The nav bar is the default; a screen that takes the bottom
- * over — select mode is the only one — publishes its own bar here instead.
- *
- * The screen owns the state and the shell owns the slot, so the two bars cannot both be on screen
- * and the content inset does not change when one replaces the other.
- */
+/** What the bottom of the window shows. The screen owns the state, the shell owns the slot, so two bars cannot both appear. */
 class UseSmileIDSampleChromeState {
     var selection: UseSmileIDSampleSelectionChrome? by mutableStateOf(null)
 
-    /**
-     * How tall the floating nav bar is, measured rather than assumed.
-     *
-     * The bar floats **over** the content so a list scrolls under it, which means the content is not
-     * inset by it and anything anchored to the bottom of a screen has to clear it itself.
-     */
+    /** Measured, not assumed: the bar floats over the content, so a screen must clear it itself. */
     var navBarHeight: Dp by mutableStateOf(0.dp)
 }
 
