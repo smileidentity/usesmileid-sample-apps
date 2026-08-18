@@ -134,4 +134,18 @@ Status: `todo` · `wip` · `done` · `design` (needs a design answer) · `owner`
 | F65 | The JobRow badge dropped onto its own line on any screen narrower than the 393 the design is drawn at, making rows uneven | done — a `weight` inside a `FlowRow` claims the whole line. A Row at the design's scale, a FlowRow only above it; both text lines ellipsise at scale 1.0 |
 | F66 | Pull to refresh and the sheet backdrop needed somewhere to live rather than a PR bullet | done — `sample-apps-plan.md` §8 now carries both with the shape they should take, and the sheet backdrop is navigation-plan **R12** with the options evaluated |
 
+### Seventh round — 2026-08-18 (bottom bar)
+
+| ID | Item | Status |
+|---|---|---|
+| F67 | The nav bar read as its own section with the list cut off against it, instead of the list drawing underneath | done — it was in the Scaffold's bottom-bar slot, which insets the content. It now floats over the content, so the background is continuous and the list scrolls under the pill as the design draws it. The screens' existing trailing spacers already let the last row scroll clear |
+| F68 | The nav bar showed on verification details and other non-top-level destinations | done — the shell tested graph *membership*, and verification details lives in the verifications graph. It now matches the graph's start destination, so only the three tab roots carry a bar |
+
+### Found while fixing this round
+
+| ID | Item | Status |
+|---|---|---|
+| F69 | The removal confirmation would have sat behind the floating pill, having previously relied on the slot's inset | done — the bar publishes its measured height and the toast clears it; nothing assumes a hard-coded bar height |
+| F70 | `shell-navigation.yaml` switched tabs from the details screen, which a bar-less pushed screen makes impossible | done — the flow now asserts the pushed screen has no bar, goes back, and switches tabs from the list. The consequence for R7 is written down rather than left as a surprise |
+
 <!-- INTERNAL-ONLY:END -->

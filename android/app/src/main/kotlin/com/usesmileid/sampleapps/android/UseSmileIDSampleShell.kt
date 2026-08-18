@@ -20,6 +20,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
@@ -37,7 +42,6 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.Direction
-import com.ramcosta.composedestinations.utils.contains
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import com.ramcosta.composedestinations.utils.rememberDestinationsNavigator
 import com.ramcosta.composedestinations.utils.startDestination
@@ -75,26 +79,41 @@ fun UseSmileIDSampleShell() {
         // UI automation only sees Compose test tags once they are published as resource ids.
         modifier = Modifier.semantics { testTagsAsResourceId = true },
         bottomBar = {
-            val selection = chrome.selection
-            if (selection != null) {
-                // Select mode replaces the bottom chrome rather than floating over it, so the nav
-                // bar cannot show through and the list keeps the same inset either way.
+            // Only select mode gets the bar slot. It is an opaque bar with a top edge, so content
+            // must stop above it; the nav bar is a floating pill and content scrolls UNDER it, which
+            // it cannot do from in here — the slot insets the content by whatever it puts in it.
+            chrome.selection?.let { selection ->
                 UseSmileIDSampleSelectionBar(
                     selectedCount = selection.count,
                     onRemove = selection.onRemove,
                 )
-                return@Scaffold
             }
-            // Slides out with the screen that covered it rather than vanishing on the same frame,
-            // and keeps the last tab so the bar it animates away is the one you were looking at.
+        },
+    ) { contentPadding ->
+        val density = LocalDensity.current
+        Box(modifier = Modifier.fillMaxSize()) {
+            CompositionLocalProvider(LocalUseSmileIDSampleChrome provides chrome) {
+                DestinationsNavHost(
+                    navGraph = NavGraphs.root,
+                    navController = navController,
+                    defaultTransitions = UseSmileIDSampleNavTransitions,
+                    modifier = Modifier.padding(contentPadding),
+                )
+            }
+            // Over the content, not beside it: the design floats the pill on a shadow with the list
+            // continuing underneath, and reserving a row for it instead drew a visible seam across
+            // the screen with the last row clipped against it.
             AnimatedVisibility(
                 visible = selectedTab != null,
+                modifier = Modifier.align(Alignment.BottomCenter),
+                // Slides out with the screen that covered it rather than vanishing on the same frame.
                 enter = slideInVertically(NAV_BAR_SPEC) { it } + fadeIn(),
                 exit = slideOutVertically(NAV_BAR_SPEC) { it } + fadeOut(),
             ) {
                 val app = LocalUseSmileIDSampleAppState.current
                 UseSmileIDSampleNavBar(
                     sessionProgress = app.session?.takeIf { app.sessionActive }?.progress(app.nowMillis),
+                    // Keeps the last tab, so the bar it animates away is the one you were looking at.
                     selected = lastTab,
                     onSelect = { item ->
                         navigator.navigate(item.graph) {
@@ -106,17 +125,12 @@ fun UseSmileIDSampleShell() {
                     onTokenClick = {
                         navigator.navigate(ScanTokenScreenDestination) { launchSingleTop = true }
                     },
+                    // Published so a screen can clear a bar it is not inset by.
+                    modifier = Modifier.onSizeChanged {
+                        chrome.navBarHeight = with(density) { it.height.toDp() }
+                    },
                 )
             }
-        },
-    ) { contentPadding ->
-        CompositionLocalProvider(LocalUseSmileIDSampleChrome provides chrome) {
-            DestinationsNavHost(
-                navGraph = NavGraphs.root,
-                navController = navController,
-                defaultTransitions = UseSmileIDSampleNavTransitions,
-                modifier = Modifier.padding(contentPadding),
-            )
         }
     }
 }
@@ -157,11 +171,17 @@ private fun ForwardNewIntentsTo(navController: NavHostController) {
     }
 }
 
-/** The tab a destination belongs to, or null when it is not inside the shell. */
-private fun DestinationSpec.tab(): UseSmileIDSampleNavItem? = when {
-    ProductsNavGraph.contains(this) -> UseSmileIDSampleNavItem.Products
-    VerificationsNavGraph.contains(this) -> UseSmileIDSampleNavItem.Verifications
-    SettingsNavGraph.contains(this) -> UseSmileIDSampleNavItem.Settings
+/**
+ * The tab a destination IS, or null for anything else.
+ *
+ * Its graph's start destination, not merely a member of that graph: verification details lives in the
+ * verifications graph, and testing membership showed the nav bar on a pushed detail screen that the
+ * design draws without one.
+ */
+private fun DestinationSpec.tab(): UseSmileIDSampleNavItem? = when (this) {
+    ProductsNavGraph.startDestination -> UseSmileIDSampleNavItem.Products
+    VerificationsNavGraph.startDestination -> UseSmileIDSampleNavItem.Verifications
+    SettingsNavGraph.startDestination -> UseSmileIDSampleNavItem.Settings
     else -> null
 }
 

@@ -5,6 +5,8 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 /** A selection the bottom chrome is acting on: the count it reports and the action it offers. */
 @Immutable
@@ -19,6 +21,14 @@ data class UseSmileIDSampleSelectionChrome(val count: Int, val onRemove: () -> U
  */
 class UseSmileIDSampleChromeState {
     var selection: UseSmileIDSampleSelectionChrome? by mutableStateOf(null)
+
+    /**
+     * How tall the floating nav bar is, measured rather than assumed.
+     *
+     * The bar floats **over** the content so a list scrolls under it, which means the content is not
+     * inset by it and anything anchored to the bottom of a screen has to clear it itself.
+     */
+    var navBarHeight: Dp by mutableStateOf(0.dp)
 }
 
 val LocalUseSmileIDSampleChrome = compositionLocalOf { UseSmileIDSampleChromeState() }

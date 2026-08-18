@@ -155,9 +155,11 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
         }
         UseSmileIDSampleOverlay(
             visible = removalShown,
-            // The shell already inset this past the floating nav bar; insetting again lifts it into the list.
+            // Clears the floating nav bar itself: the bar draws OVER this container rather than
+            // insetting it, so the toast would otherwise sit behind the pill.
             modifier = Modifier
                 .align(Alignment.BottomCenter)
+                .padding(bottom = chrome.navBarHeight)
                 .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingXxs),
         ) {
             UseSmileIDSampleToast(

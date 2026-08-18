@@ -18,7 +18,7 @@ document explains the architecture and the traps.
 
 ---
 
-## 1. Twelve rules that apply to every platform
+## 1. Thirteen rules that apply to every platform
 
 These are what keep four navigation implementations behaving the same. Most of them exist because a
 specific defect was found on a device, not because they read well.
@@ -61,6 +61,10 @@ rotation, process death and the system killing the app behind the camera. Two sp
 
 **R7 — Per-tab back stacks are preserved.** Switching tabs and returning keeps the stack. Deep links
 into a tab's detail route build a sensible parent stack so back works.
+
+A caveat that came out of R13: because a pushed screen carries no nav bar, you cannot switch tab from
+one — you go back first. So the preserved stack is in practice the tab's root, and a flow cannot test
+preservation by switching tabs from a detail screen the way the Android flow used to.
 
 **R8 — Sheets are routes, not booleans.** All four sheets (profile switch, new profile, country, ID
 type) are destinations, so a deep link can open one and a flow can assert it. They keep the
@@ -142,6 +146,23 @@ covers. This is currently broken on Android and correct on the other three by co
 their platforms present sheets over the presenter. The evaluated options and the recommendation are in
 `sample-apps-plan.md` §8.2; the short version is that the presentation belongs to the navigator, and
 the workaround that fakes it with a dialog destination costs the native sheet behaviour R8 requires.
+
+**R13 — The nav bar belongs to the tab roots, and it floats.** Two halves, both found on a device
+2026-08-18:
+
+- **Shown on the three tab roots only.** A route living inside a tab's graph is not the same as being
+  that tab: verification details sits in the verifications graph, and testing graph *membership* put a
+  nav bar on a pushed screen that the design draws without one. Match the graph's **start
+  destination**. Every pushed screen in the design is bar-less.
+- **It floats over the content, not beside it.** The design draws a pill on a shadow with the list
+  continuing underneath. Putting it in a bottom-bar slot insets the content instead, which drew a
+  visible seam across the screen with the last row clipped against it — the bar read as its own
+  section rather than as something over the page. The consequence to carry: the content is *not* inset
+  by the bar, so a screen's own trailing spacer is what lets its last row scroll clear, and anything
+  else anchored to the bottom of a screen has to clear the bar itself.
+
+Select mode is the exception that proves the rule: its bar is opaque with a top edge, so it *replaces*
+the bottom chrome and content does stop above it.
 
 ---
 

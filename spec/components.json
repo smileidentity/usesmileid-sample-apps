@@ -755,7 +755,10 @@
         "tokenLabel": "8.5/700 muted, under a 16 icon",
         "extends": "the PR #2 component rather than a rebuild; only the token affordance and its ring were added",
         "width": "spans the full width between 16 margins; the tabs pill takes all space the 58 token button leaves, and the three tabs are EQUAL thirds of it. A content-sized row leaves dead space to the right of the token — that is how Android first shipped it.",
-        "elevation": "both halves float on the design's 0 8 24 rgba(0,0,0,.12) shadow; the tabs pill has NO outline and only the token button is stroked"
+        "elevation": "both halves float on the design's 0 8 24 rgba(0,0,0,.12) shadow; the tabs pill has NO outline and only the token button is stroked",
+        "placement": "FLOATS over the content — the list scrolls underneath it and the background is continuous. Reserving a row for it instead insets the content and draws a visible seam across the screen with the last row clipped against it",
+        "clearance": "the screen's own trailing spacer is what lets the last row scroll clear; anything else anchored to the bottom of a screen must clear the bar itself, because the content is not inset by it",
+        "shownOn": "the three tab ROOTS only. A pushed screen has no nav bar even when it lives inside a tab's graph — verification details is in the verifications graph and the design draws it without one"
       },
       "items": [
         "products",

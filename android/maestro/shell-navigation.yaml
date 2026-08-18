@@ -32,6 +32,21 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_verification_details_screen"
 - assertVisible: ".*jobId = job-42.*"
+
+# A pushed screen carries no nav bar, even though it lives inside a tab's graph: the design draws
+# every pushed screen without one, and you leave it by going back rather than by switching tab.
+- assertNotVisible:
+    id: "sample_nav_products"
+- assertNotVisible:
+    id: "sample_nav_token"
+
+- back
+- assertVisible:
+    id: "sample_verifications_screen"
+- assertVisible:
+    id: "sample_nav_products"
+
+# Switching away and back restores the tab, not the detail that had already been popped.
 - tapOn:
     id: "sample_nav_settings"
 - assertVisible:
@@ -39,12 +54,8 @@ appId: ${APP_ID}
 - tapOn:
     id: "sample_nav_verifications"
 - assertVisible:
-    id: "sample_verification_details_screen"
-- assertVisible: ".*jobId = job-42.*"
-
-- back
-- assertVisible:
     id: "sample_verifications_screen"
+
 - back
 - assertVisible:
     id: "sample_products_screen"

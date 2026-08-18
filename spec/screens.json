@@ -243,7 +243,7 @@
         "push from the verifications list",
         "POST-SUBMISSION: the app lands here in the processing state once a job is submitted (observed 202 Accepted straight after the ID form's Continue)"
       ],
-      "note": "The details screen doubles as the result screen, which is why the result card belongs here rather than needing a new home."
+      "note": "The details screen doubles as the result screen, which is why the result card belongs here rather than needing a new home. NO NAV BAR: it is a pushed screen, even though its route lives in the verifications graph. You leave it by going back, not by switching tab."
     },
     {
       "id": "userDetails",
