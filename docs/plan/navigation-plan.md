@@ -18,7 +18,7 @@ document explains the architecture and the traps.
 
 ---
 
-## 1. Eleven rules that apply to every platform
+## 1. Twelve rules that apply to every platform
 
 These are what keep four navigation implementations behaving the same. Most of them exist because a
 specific defect was found on a device, not because they read well.
@@ -115,8 +115,8 @@ decoration:
 
 | Relationship | Motion |
 |---|---|
-| Push / pop a deeper route | Slide 280ms `FastOutSlowIn` toward the start, reversed on pop, with a 180ms fade |
-| Switch between the three tab roots | Fade **through**: the outgoing screen clears in 90ms, then the incoming one fades and scales up from 0.94 over 210ms |
+| Push / pop a deeper route | Fade **through** — out in 100ms, in over 160ms after it — plus a travel of **one eighth** of the width toward the start, reversed on pop |
+| Switch between the three tab roots | The same fade through, with no travel: siblings have no direction |
 | A route that draws its own presentation (every sheet) | **None** — the sheet animates itself, and animating the destination too slides the scrim in before the sheet exists |
 | The SDK flow | Fade only. It owns its own navigation (R2), so the host must not imply a direction |
 | A bar arriving over a screen (snackbar, selection bar) | Rise 220ms with a 160ms fade, and the caller **holds** what the bar reads so it still has something to draw on the way out |
@@ -127,13 +127,21 @@ Three traps, each found on a device:
   comparing parents classified Settings → Profiles as a tab switch and cross-faded a push. Compare
   against the three tab **start routes** instead.
 - **Cross-fading two dense screens reads as a rendering fault** — both are legible at once, at half
-  opacity. Fade through instead: clear, then arrive.
+  opacity, so the old screen's text shows through the new one. Fade through instead: clear, then
+  arrive. This is why the fade in carries a delay equal to the fade out.
+- **A full-width slide is too much.** Reviewed on a device 2026-08-18: it announces the navigation
+  instead of serving it. The apps people compare this against move a *fraction* of the width, fast,
+  and the eye reads direction without following anything across the screen. An eighth of the width
+  over 200ms, with the fade through on top, is the setting that survived review.
 - **The nav bar must animate out with the screen that covers it**, and something must hold the last
   selected tab, or the bar redraws with no selection on its way off screen.
 
-Known gap, not yet fixed on any platform: a sheet route replaces the destination underneath it, so
-nothing renders behind the sheet's scrim where the design shows the screen it covers. Fixing it means
-presenting sheet routes over the current destination rather than in place of it.
+**R12 — A sheet route is a layer over the current destination, never a replacement.** A sheet that
+replaces the destination beneath it has nothing behind its scrim, where the design shows the screen it
+covers. This is currently broken on Android and correct on the other three by construction, because
+their platforms present sheets over the presenter. The evaluated options and the recommendation are in
+`sample-apps-plan.md` §8.2; the short version is that the presentation belongs to the navigator, and
+the workaround that fakes it with a dialog destination costs the native sheet behaviour R8 requires.
 
 ---
 

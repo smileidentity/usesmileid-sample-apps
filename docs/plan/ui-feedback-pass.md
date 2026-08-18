@@ -114,4 +114,24 @@ Status: `todo` · `wip` · `done` · `design` (needs a design answer) · `owner`
 | F55 | The profiles list resolved each row's hue with an O(n) equality scan | done — the list helper hands each row its position |
 | F56 | The profile config CTA reads "Make this profile active" but only saved the defaults | done — found while writing the check for F52; it now activates as well, and the flow asserts the settings summary follows |
 
+### Sixth round — 2026-08-18 (review of the PR on a device)
+
+| ID | Item | Design node | Status |
+|---|---|---|---|
+| F57 | Select mode showed the bottom tab bar; the design has no nav bar behind the selection bar | 5206:2491 | done — the selection bar is now the shell's bottom chrome rather than a bar floating over the list, so the two can never both be on screen and the content inset does not change when one replaces the other |
+| F58 | The snackbar was taller than the design | 5206:2573 · 3522 | done — 72 → 46. An action sized to the 48 interactive minimum was inflating the bar; it is widened instead, and the bar's own height is the vertical target. Radius 14 → 12, message 13/600 → 13.5/500, action 13/700 → 14/600 |
+| F59 | The removal confirmation came back with you: delete, open a verification, press back, and it reappeared | — | done — the trigger was `rememberSaveable`, so it was restored and re-fired on every return. A transient confirmation is transient state |
+| F60 | "USER DETAILS — ATTACHED TO EVERY JOB" padding and text styling did not match | 5206:3295 | done — and the cause was systemic, see F61. Screen spacing is 14 between header, label, card and CTA, not 8; rows are 15/14, not 16/12 |
+| F61 | **Every** all-caps label in the app was a point small and set solid | 5206:3295 and others | done — the design's Type/Label is 11/700 with 0.88 tracking; the generated `text-style.overline` is 10/700/0. Recorded as the `labelTypeStyle` delta and generated, so the eleven section labels, the four status badges, the filter-chip counts and the date group headers all read one pair |
+| F62 | 13.5 body text was set at weight 400 | 5206:3295 | done — the design's 13.5 is Medium. Three components were building it on `text-style.body` (400) instead of a 500 base |
+| F63 | Screen transitions were too intrusive | — | done — a full-width slide announces the navigation. Now a fade through with an eighth of the width of travel: the outgoing screen has cleared before the incoming one is legible, so no previous-screen content shows through, and the eye reads direction without following anything across the screen |
+
+### Found while fixing this round
+
+| ID | Item | Status |
+|---|---|---|
+| F64 | The profile config CTA had no disabled state; the design disables it on the profile that is already active and reads "Active profile" | done — and it closes half of the `disabledPair` delta: the design file's own USE of the pair is now implemented, while the two hexes stay a recorded disagreement |
+| F65 | The JobRow badge dropped onto its own line on any screen narrower than the 393 the design is drawn at, making rows uneven | done — a `weight` inside a `FlowRow` claims the whole line. A Row at the design's scale, a FlowRow only above it; both text lines ellipsise at scale 1.0 |
+| F66 | Pull to refresh and the sheet backdrop needed somewhere to live rather than a PR bullet | done — `sample-apps-plan.md` §8 now carries both with the shape they should take, and the sheet backdrop is navigation-plan **R12** with the options evaluated |
+
 <!-- INTERNAL-ONLY:END -->

@@ -195,8 +195,11 @@
         "sample_job_row",
         "sample_selection_bar",
         "sample_toast",
-        "sample_toast_undo"
-      ]
+        "sample_toast_undo",
+        "sample_selection_count",
+        "sample_selection_remove"
+      ],
+      "note": "SELECT MODE REPLACES THE BOTTOM CHROME: the selection bar is full-bleed at the bottom with a top border, and the nav bar is NOT behind it (node 5206:2491). The header's trailing action becomes \"Cancel\". The bar is the screen's state but the shell's slot, so the content inset does not change when one bar replaces the other. The removal confirmation is transient — never saved across navigation, or opening a verification and coming back replays a confirmation you already spent."
     },
     {
       "id": "verificationDetails",
@@ -483,19 +486,20 @@
       "route": "push",
       "states": [
         {
-          "state": "profileA",
-          "node": "5206-3295"
+          "state": "activeProfile",
+          "node": "5206-3295",
+          "note": "CTA disabled and reading \"Active profile\"."
         },
         {
-          "state": "profileB",
+          "state": "otherProfile",
           "node": "5206-3317"
         },
         {
-          "state": "profileC",
+          "state": "newlyCreated",
           "node": "5206-3525"
         }
       ],
-      "note": "USER DETAILS — ATTACHED TO EVERY JOB. This is the per-profile default that seeds the userDetails screen. The app bar title is the PROFILE'S NAME, not a generic one, and the CTA reads \"Make this profile active\" — the screen both edits the defaults and activates.",
+      "note": "USER DETAILS — ATTACHED TO EVERY JOB. This is the per-profile default that seeds the userDetails screen. The app bar title is the PROFILE'S NAME. The CTA has two states: on any other profile it reads \"Make this profile active\" and both saves and activates; on the profile that is already active it is DISABLED and reads \"Active profile\". Screen spacing is 14 between the header, the section label, the card and the CTA — not the 8 used inside a card.",
       "components": [
         "SectionLabel",
         "KeyValueEditRow",

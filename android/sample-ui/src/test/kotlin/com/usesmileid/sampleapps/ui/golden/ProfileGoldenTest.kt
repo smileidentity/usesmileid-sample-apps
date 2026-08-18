@@ -21,6 +21,9 @@ class ProfileGoldenTest : GoldenTest() {
     @Test
     fun profile_config_max_font_scale() = assertSurvivesMaxFontScale { Config() }
 
+    @Test
+    fun profile_config_active() = goldens("screen_profile_config_active") { Config(isActive = true) }
+
     private companion object {
         val PROFILES = UseSmileIDSampleProfiles()
     }
@@ -35,11 +38,12 @@ class ProfileGoldenTest : GoldenTest() {
     )
 
     @Composable
-    private fun Config() = ProfileConfigScreen(
+    private fun Config(isActive: Boolean = false) = ProfileConfigScreen(
         organisation = PROFILES.active.organisation,
         defaults = PROFILES.active.defaults,
         onFieldChange = { _, _ -> },
         onBack = {},
         onSave = {},
+        isActive = isActive,
     )
 }

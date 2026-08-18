@@ -198,7 +198,10 @@
         "settings",
         "profileConfig"
       ],
-      "notes": "The all-caps group heading (AUTHENTICATION, DETAILS, PROFILE, YOUR DETAILS…). One component, used everywhere."
+      "notes": "The all-caps group heading (AUTHENTICATION, DETAILS, PROFILE, YOUR DETAILS…). One component, used everywhere. CORRECTED 2026-08-18: the size and tracking are generated, and the status badges, the filter-chip counts and the date group headers read the same pair — every place the design uses Type/Label.",
+      "metrics": {
+        "type": "the design's Type/Label — 11/700 with 0.88 tracking, from design-tokens.json labelTypeStyle. text-style.overline is 10 and set solid, which is a point small and reads as plain caps"
+      }
     },
     {
       "name": "Toast",
@@ -219,7 +222,13 @@
         "verifications",
         "profiles"
       ],
-      "notes": "Carries an undo action in the delete flow — the action is part of the contract, not decoration. CORRECTED 2026-08-17 against node 5206:2573: it is a SNACKBAR treatment, not a pale pill — background color.title with color.bg text at 13/600, an underlined 13/700 action, radius 14 and a 0 10 30 rgba(0,0,0,.25) shadow, spanning the width between 16 margins. The node is named 'toast' and keeps the sample_toast* ids, so do not rename. ANCHOR: one small gap above the floating nav bar, NOT above the screen edge — on Android the destination container is already inset past the bar, so applying the navigation-bars inset again lifts it into the middle of the list, which is how it first shipped. The profiles screen reuses it for the created confirmation — \"<organisation> created\" with a \"Make active\" action. ANCHOR on a PUSHED route: 24 above the safe area with no extra system-bar inset, because the host has already inset the container."
+      "notes": "Carries an undo action in the delete flow — the action is part of the contract, not decoration. CORRECTED 2026-08-17 against node 5206:2573: it is a SNACKBAR treatment, not a pale pill — background color.title with color.bg text at 13/600, an underlined 13/700 action, radius 14 and a 0 10 30 rgba(0,0,0,.25) shadow, spanning the width between 16 margins. The node is named 'toast' and keeps the sample_toast* ids, so do not rename. ANCHOR: one small gap above the floating nav bar, NOT above the screen edge — on Android the destination container is already inset past the bar, so applying the navigation-bars inset again lifts it into the middle of the list, which is how it first shipped. The profiles screen reuses it for the created confirmation — \"<organisation> created\" with a \"Make active\" action. ANCHOR on a PUSHED route: 24 above the safe area with no extra system-bar inset, because the host has already inset the container. Presence is transient state: never saved across navigation, or returning to the screen replays a confirmation that has already been acted on.",
+      "metrics": {
+        "height": "46 — an action sized to the 48 interactive minimum inflates the bar to 72, so the action is widened instead and the bar's own height is the vertical target",
+        "padding": "16 horizontal, 13 vertical",
+        "radius": 12,
+        "type": "message 13.5/500, action 14/600 underlined"
+      }
     },
     {
       "name": "TopAppBar",
@@ -301,7 +310,10 @@
       "metrics": {
         "rowHeight": "46 in the design, size.control-md (44) here — no token carries 46",
         "horizontalPadding": "15 in the design, spacing.md (16) here",
-        "requiredMarker": "an asterisk appended to the label"
+        "requiredMarker": "an asterisk appended to the label",
+        "padding": "15 horizontal, 14 vertical",
+        "type": "13.5 at weight 500 for the label, the value and the placeholder alike — NOT text-style.body, which is weight 400",
+        "colours": "label and a filled value take the title colour; only a placeholder is muted"
       },
       "states": [
         "empty",
@@ -493,7 +505,8 @@
         "gap": "12 (spacing.sm)",
         "secondaryLine": "'<truncated job id> · HH:MM:SS'",
         "wrapping": "the tile, text block and badge are a FlowRow, so the badge drops below the title at 2x",
-        "truncation": "none — the caller already elides the job id"
+        "truncation": "none — the caller already elides the job id",
+        "layout": "a Row at the design's scale, so the badge stays on the title's line and both text lines ellipsise; a FlowRow above it, so the badge drops rather than being squeezed. One layout cannot serve both: a weight inside a FlowRow claims the whole line, which pushed the badge onto its own row on any screen narrower than the 393 the design is drawn at"
       },
       "states": [
         "default",
@@ -597,7 +610,9 @@
         "height": "84 including the navigation-bar inset; content-driven here",
         "removeControl": "107x40 in the design; space40 minimum at radius.control",
         "removeTreatment": "saturated color.feedback.error.fill with its on-colour — the design's soft red is one of the pending soft variants, and the saturated badge.error pair drew red on red",
-        "countNode": "'<n> selected' is its own text node so a flow asserts equality rather than parsing prose"
+        "countNode": "'<n> selected' is its own text node so a flow asserts equality rather than parsing prose",
+        "placement": "full-bleed at the bottom of the window, 84 tall, top border only — it REPLACES the nav bar rather than floating over it",
+        "owner": "the screen owns the state, the shell owns the slot"
       },
       "states": [
         "noneSelected",
