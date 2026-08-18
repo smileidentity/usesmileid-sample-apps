@@ -1,8 +1,10 @@
 # Navigation hardening — Android, audited against Compose Destinations 2.x
 
 **Status:** NAV-A1, NAV-A2 and NAV-A4 landed 2026-08-18 (`chore/android-nav-hardening`);
-NAV-A3's remaining code items land with the N2 flow-handoff work by design; NAV-A5/A6 are
-decision records. Source: a 2026-08-18 audit of `android/app`'s navigation against the Compose
+NAV-A3's remaining code items landed 2026-08-18 with the N2 flow-handoff work
+(`feat/android-n2-flow-handoff`: the flow-host ViewModel reads `argsFrom(savedStateHandle)`,
+payload stays out of the route, and the `deep-links` flow drives `…/run?route=shell` cold);
+NAV-A5/A6 are decision records. Source: a 2026-08-18 audit of `android/app`'s navigation against the Compose
 Destinations 2.x documentation (https://composedestinations.rafaelcosta.xyz/v2/), read page by
 page against the code as merged on `main`.
 

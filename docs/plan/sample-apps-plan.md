@@ -183,8 +183,8 @@ is quota-limited upstream, which is why it is release-plus-weekly rather than pe
 | Android walking skeleton and screens (F2–F3) | done — shell, 8 primitives, 25 composites, all 14 screens |
 | Android result card, callback counters, launch arguments | done |
 | Android per-PR CI lane | done |
-| Android SDK flow handoff (N2) | **next** |
-| iOS, Flutter and Expo | not started; blocked on N2 so the ports copy a finished shape |
+| Android SDK flow handoff (N2) | done — both presentations, the §7.3 entry gate, exactly-once results on the card; `sandbox` consumed, `appLocale`/`holdCamera` still owe a consumer |
+| iOS, Flutter and Expo | **next** — N2 gives the ports a finished shape to copy |
 
 <!-- INTERNAL-ONLY:START reason=roadmap-dates-and-work-in-progress -->
 
@@ -200,13 +200,12 @@ evidence surface", but it is four subjects for one reviewer.
 
 **Pick up here, in this order:**
 
-1. **N2 — the SDK flow handoff.** The riskiest unbuilt piece and the reason this repo exists. Both
-   presentations, replace-don't-stack on result, cancellation, surviving activity recreation. See
-   `navigation-plan.md`, and R9 there before writing any deep-link test. Step 6 left it three things
-   to wire: `flowResult.startFlow()` when the SDK is actually invoked (`SdkFlowScreen` records only
-   the route today, deliberately), `recordResultCallback` / `recordRefreshCallback` from the SDK's
-   real callbacks, and the three launch arguments that have no consumer yet — `sandbox`, `appLocale`
-   and `holdCamera`. Needs a real device pass, debug **and** release.
+1. **N2 — the SDK flow handoff: DONE 2026-08-18** (`feat/android-n2-flow-handoff`). Both
+   presentations, replace-don't-stack on result, cancellation, recreation survival, the §7.3 entry
+   gate, `startFlow()` / `recordResultCallback` / `recordRefreshCallback` wired, and `sandbox`
+   consumed by the network handoff. Still owed from step 6's list: consumers for `appLocale` and
+   `holdCamera` — each is its own mechanism (in-app locale override; a camera-contention probe) and
+   neither blocks the ports.
 2. **Port to iOS, Flutter and Expo**, in the same order Android went. `ui-work-plan.md` §4 has the
    port rules; the decisions a port must copy rather than re-take are recorded in `spec/`, not here.
 3. **The tail Android still owes**: no launcher icon (§5 item 16 of `ui-work-plan.md`), and the
