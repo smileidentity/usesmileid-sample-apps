@@ -17,6 +17,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.smileLabelTracking
+import com.smileid.designsystem.smileLabelSize
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** A status filter with its live count. The count is a separate node, because it is what a delete is asserted on. */
@@ -57,7 +59,10 @@ fun UseSmileIDSampleFilterChip(
             )
             Text(
                 text = count.toString(),
-                style = UseSmileIDSampleTheme.type.textStyleOverline.copy(fontSize = CHIP_COUNT_SIZE),
+                style = UseSmileIDSampleTheme.type.textStyleOverline.copy(
+                    fontSize = smileLabelSize,
+                    letterSpacing = smileLabelTracking,
+                ),
                 color = if (selected) colors.onPrimary else colors.filterChip.value,
                 modifier = Modifier.tagged(countTestId),
             )
@@ -66,4 +71,3 @@ fun UseSmileIDSampleFilterChip(
 }
 
 private val CHIP_LABEL_SIZE = 12.5.sp
-private val CHIP_COUNT_SIZE = 11.sp

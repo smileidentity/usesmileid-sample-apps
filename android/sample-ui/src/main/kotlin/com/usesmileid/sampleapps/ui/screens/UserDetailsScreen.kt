@@ -122,7 +122,7 @@ fun UserDetailsScreen(
                         ) {
                             Text(
                                 text = "Remember these details for next time",
-                                style = UseSmileIDSampleTheme.type.textStyleBody.copy(fontSize = REMEMBER_TEXT_SIZE),
+                                style = UseSmileIDSampleTheme.type.textStyleSubtitle.copy(fontSize = REMEMBER_TEXT_SIZE),
                                 color = UseSmileIDSampleTheme.colors.textBody,
                                 modifier = Modifier.weight(1f),
                             )

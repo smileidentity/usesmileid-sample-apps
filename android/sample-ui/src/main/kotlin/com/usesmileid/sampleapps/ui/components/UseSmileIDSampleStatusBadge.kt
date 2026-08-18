@@ -9,6 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.smileLabelTracking
+import com.smileid.designsystem.smileLabelSize
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** The four job statuses, Title case as the design sets them. */
@@ -46,7 +48,10 @@ private fun StatusPill(
 ) {
     Text(
         text = label,
-        style = UseSmileIDSampleTheme.type.textStyleOverline.copy(fontSize = BADGE_TEXT_SIZE),
+        style = UseSmileIDSampleTheme.type.textStyleOverline.copy(
+            fontSize = smileLabelSize,
+            letterSpacing = smileLabelTracking,
+        ),
         color = foreground,
         modifier = modifier
             .tagged(testId)
@@ -55,4 +60,3 @@ private fun StatusPill(
     )
 }
 
-private val BADGE_TEXT_SIZE = 11.sp

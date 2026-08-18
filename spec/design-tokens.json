@@ -263,7 +263,7 @@
       },
       "finding": "The design file's disabled pair is slightly darker than the design system's. Recorded rather than patched, because the design system wins by the precedence rule and the difference is small. The real defect found alongside it WAS fixed: the select trigger used color.surface-muted (#F9FAFB, almost white) with text.muted for its disabled state, so a disabled ID-type picker looked enabled. It now uses the button.disabled pair.",
       "recommendation": "Reconcile the two, or accept the design system's values as canonical and update the design file.",
-      "status": "OPEN 2026-08-17 — NOT locally patched; the wrong-token bug beside it is fixed"
+      "status": "OPEN 2026-08-18 — still NOT patched: the design system wins on the two hexes. The design file's own use of the pair IS now implemented, on the profile config CTA for a profile that is already active."
     },
     {
       "id": "surface2",
@@ -322,6 +322,21 @@
       "finding": "The token session's green is its own thing and none of it is feedback.success.fill. The card is a HORIZONTAL GRADIENT #1A7840 to #299E57 with white text; the countdown ring is #06A850 solid for progress over the SAME green at 18% for the track. Android had a flat success fill on the card and, worse, a grey color.border track with a #00C853 progress arc — two different greens and a grey, none of them the design's. #06A850 exists upstream only as the primitive color.decorative.green, so it cannot be consumed directly.",
       "recommendation": "Give the token session a named role — a gradient pair plus a ring colour — or promote the decorative green to a semantic. Generated from here meanwhile.",
       "status": "OPEN 2026-08-18 — generated stopgap in place"
+    },
+    {
+      "id": "labelTypeStyle",
+      "severity": "every all-caps group label in both apps, plus the status badges, the filter-chip counts and the date headers",
+      "figma": {
+        "Type/Label": "DM Sans Bold, 11, tracking 0.88 (8% of the size)"
+      },
+      "designSystem": {
+        "text-style.overline": "10 / 700 / letterSpacing 0"
+      },
+      "size": 11,
+      "tracking": 0.88,
+      "finding": "The design file's Type/Label is 11 with 0.88 of tracking; the generated text-style.overline is 10 with none. Every place the design uses Type/Label was therefore a point small and set solid, which is what makes a spaced-out caps label read as a caps label. Found by review 2026-08-18 on the profile screens and confirmed to apply to eleven section labels, the four status badges, the filter-chip counts and the date group headers.",
+      "recommendation": "Add the label role to the design system at 11/700/0.88 so this stops being generated from here; until then every platform reads these two values from this entry.",
+      "status": "OPEN 2026-08-18 — generated stopgap in place; both values are the design file's"
     }
   ],
   "perPlatform": {

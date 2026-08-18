@@ -7,6 +7,7 @@
 package com.smileid.designsystem
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 
 /** One product card's colouring. `scrim` is applied at 16%: the go pill and the ghost glyph. `tile` is the soft icon-tile fill a list row uses. */
 data class SmileProductHue(
@@ -109,3 +110,6 @@ val smileTokenSessionGradient: List<Color> = listOf(Color(0xFF1A7840), Color(0xF
 /** The countdown ring: this colour solid for progress, and the same colour faded for the track. */
 val smileTokenRing: Color = Color(0xFF06A850)
 const val SMILE_TOKEN_RING_TRACK_OPACITY = 0.18f
+/** The design's Type/Label: a point larger than text-style.overline, and spaced. */
+val smileLabelSize = 11.sp
+val smileLabelTracking = 0.88.sp

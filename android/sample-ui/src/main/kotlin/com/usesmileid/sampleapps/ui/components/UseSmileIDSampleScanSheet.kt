@@ -71,7 +71,7 @@ fun UseSmileIDSampleScanSheet(
                     }
                     Text(
                         text = "Or enter token manually",
-                        style = UseSmileIDSampleTheme.type.textStyleBody.copy(fontSize = SHEET_TEXT_SIZE),
+                        style = UseSmileIDSampleTheme.type.textStyleSubtitle.copy(fontSize = SHEET_TEXT_SIZE),
                         color = colors.textMuted,
                         modifier = Modifier.weight(1f),
                     )

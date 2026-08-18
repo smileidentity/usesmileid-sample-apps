@@ -143,6 +143,7 @@ KOTLIN_HUES_HEADER = """// Smile ID product hues — GENERATED. Do not edit by h
 package com.smileid.designsystem
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 """
 
 RGBA = re.compile(r"rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:,\s*([\d.]+)\s*)?\)")
@@ -581,6 +582,30 @@ def emit_kotlin_token_session(delta: dict) -> str:
     ])
 
 
+def read_label_type_style() -> dict:
+    spec_path = os.path.join(REPO, SPEC_TOKENS)
+    with io.open(spec_path, encoding="utf-8") as handle:
+        spec = json.load(handle)
+    for delta in spec.get("deltas", []):
+        if delta.get("id") == "labelTypeStyle":
+            return delta
+    raise TokenError(f"{SPEC_TOKENS} has no labelTypeStyle delta to generate from")
+
+
+def emit_kotlin_label_type_style(delta: dict) -> str:
+    """The all-caps label size and tracking, which text-style.overline sets a point small and solid."""
+    size = delta.get("size")
+    tracking = delta.get("tracking")
+    if not size or tracking is None:
+        raise TokenError("labelTypeStyle needs a size and a tracking")
+    return "\n".join([
+        "",
+        "/** The design's Type/Label: a point larger than text-style.overline, and spaced. */",
+        "val smileLabelSize = %s.sp" % size,
+        "val smileLabelTracking = %s.sp" % tracking,
+    ])
+
+
 def emit_kotlin_profile_hues(hues) -> str:
     """One avatar fill per profile, cycled by list position."""
     if not hues:
@@ -610,6 +635,7 @@ def generate_kotlin_product_hues() -> str:
         + emit_kotlin_profile_hues(read_profile_hues())
         + "\n"
         + emit_kotlin_token_session(read_token_session())
+        + emit_kotlin_label_type_style(read_label_type_style())
         + "\n"
     )
 

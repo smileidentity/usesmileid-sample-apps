@@ -18,6 +18,7 @@ import androidx.compose.foundation.BorderStroke
 import com.usesmileid.sampleapps.ui.R
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowDivider
+import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleBottomSheet
@@ -39,6 +40,7 @@ fun ProfileConfigScreen(
     onBack: () -> Unit,
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
+    isActive: Boolean = false,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
     Column(
@@ -53,7 +55,7 @@ fun ProfileConfigScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(contentPadding)
                 .padding(horizontal = SmileDimens.spacingMd),
-            verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+            verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
         ) {
             UseSmileIDSampleSectionLabel(text = "USER DETAILS — ATTACHED TO EVERY JOB")
             Surface(
@@ -78,8 +80,10 @@ fun ProfileConfigScreen(
             }
         }
         UseSmileIDSampleButton(
-            text = "Make this profile active",
+            // The design disables it on the profile that is already active, and says so.
+            text = if (isActive) "Active profile" else "Make this profile active",
             onClick = onSave,
+            enabled = !isActive,
             modifier = Modifier.padding(SmileDimens.spacingMd),
             testId = UseSmileIDSampleTestIds.PROFILE_CONFIG_SAVE,
         )
@@ -154,3 +158,5 @@ fun NewProfileSheet(
     }
 }
 
+/** The design's gap between the header, the label, the card and the CTA. */
+private val SECTION_GAP = 14.dp

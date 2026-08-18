@@ -296,6 +296,21 @@ class TestProductHues(unittest.TestCase):
         with self.assertRaises(gen.TokenError):
             gen.emit_kotlin_token_session({"cardGradient": ["#1A7840"], "ring": "#06A850", "ringTrackOpacity": 0.18})
 
+    def test_label_type_style_emits_a_size_and_a_tracking(self):
+        out = gen.emit_kotlin_label_type_style(gen.read_label_type_style())
+        self.assertIn("val smileLabelSize = 11.sp", out)
+        self.assertIn("val smileLabelTracking = 0.88.sp", out)
+
+    def test_label_type_style_is_bigger_than_the_overline_it_replaces(self):
+        # The whole point of the delta: text-style.overline is 10 and set solid.
+        delta = gen.read_label_type_style()
+        self.assertGreater(delta["size"], 10)
+        self.assertGreater(delta["tracking"], 0)
+
+    def test_a_label_style_without_tracking_fails_loudly(self):
+        with self.assertRaises(gen.TokenError):
+            gen.emit_kotlin_label_type_style({"size": 11})
+
     def test_no_profile_hue_fails_loudly(self):
         with self.assertRaises(gen.TokenError):
             gen.emit_kotlin_profile_hues([])
