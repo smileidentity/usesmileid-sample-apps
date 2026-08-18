@@ -31,7 +31,7 @@ import java.net.URL
 import java.util.UUID
 import com.usesmileid.sampleapps.ui.R as SampleUiR
 
-/** Read once when the flow route enters; never re-read while the flow runs (R2 — the SDK owns it now). */
+/** Read once at flow entry; never re-read while the flow runs (R2). */
 data class FlowLaunchSnapshot(
     val product: UseSmileIDSampleProduct,
     val route: UseSmileIDSampleFlowRoute,
@@ -45,7 +45,6 @@ data class FlowLaunchSnapshot(
     val partnerName: String,
 )
 
-/** `null` product — a mistyped deep link — lands on the redirect path, never a crash and never the SDK (§8.1). */
 fun buildSnapshot(
     args: SdkFlowScreenDestinationNavArgs,
     app: UseSmileIDSampleAppState,
@@ -66,7 +65,7 @@ fun buildSnapshot(
     )
 }
 
-/** The snapshot→builder mapping N2 introduces (§8.1): the one place that decides what the SDK is handed. */
+/** The one place that decides what the SDK is handed (§8.1). */
 fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshed: () -> Unit = {}) {
     userDetails = UserDetails(
         givenNames = snapshot.userDetails.firstName,
@@ -114,7 +113,7 @@ fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshe
         }
     }
     if (snapshot.theme == UseSmileIDSampleThemeScenario.PartnerOverride) {
-        // A plausible partner palette with no raw hex: Material3's baseline scheme is exactly that.
+        // Baseline Material3, because a hex literal in app code is a review failure.
         theme {
             val light = lightColorScheme()
             val dark = darkColorScheme()
@@ -127,12 +126,10 @@ fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshe
     }
 }
 
-/** §7.3's entry gate: the non-throwing builder pre-flight plus the per-payload validators for store-fed input. */
+/** §7.3's entry gate: the SDK's non-throwing pre-flight plus its per-payload validators. */
 fun preflight(snapshot: FlowLaunchSnapshot): FlowPreflight {
     val builder = UseSmileIDFlowBuilder().apply { applying(snapshot) }
-    // Split deliberately, because the two kinds of invalid have different answers: what the user
-    // typed, a form can fix; how the host assembled the flow, no form can. §7.3 scopes the redirect
-    // to the first — sending a misconfiguration to the form would bounce it straight back here.
+    // A form can fix what the user typed but not how the host built the flow, and §7.3 redirects only the first.
     val payloadChecks = buildList {
         builder.userDetails?.let { add(builder.validateUserDetails(it)) }
         builder.biometricKYCParams?.let { add(builder.validateBiometricKYCParams(it)) }
@@ -148,14 +145,14 @@ fun preflight(snapshot: FlowLaunchSnapshot): FlowPreflight {
     }
 }
 
-/** What the §7.3 gate decided, and therefore where the journey goes instead of the SDK. */
+/** What the gate decided, and so where the journey goes instead of the SDK. */
 sealed interface FlowPreflight {
     data object Ready : FlowPreflight
 
-    /** The stores are missing something the user supplies, so the wizard's forms can resolve it. */
+    /** The forms can resolve it. */
     data class NeedsDetails(val issues: List<UseSmileIDValidationException>) : FlowPreflight
 
-    /** The host built an invalid flow. No form fixes that, and it must still never reach the SDK. */
+    /** No form can resolve it, and it must still never reach the SDK. */
     data class Misconfigured(val issues: List<UseSmileIDValidationException>) : FlowPreflight
 }
 
@@ -188,8 +185,7 @@ private fun UseSmileIDFlowBuilder.applyIdParams(snapshot: FlowLaunchSnapshot) {
 private fun ScreensBuilder.journeyFor(snapshot: FlowLaunchSnapshot) {
     consent {
         partnerName = snapshot.partnerName
-        // Required by the consent config — omitting it fails the build, and that class of error
-        // bypasses the public validate() (it lands in pendingBuildErrors, checked only in build()).
+        // Omitting it fails build() while validate() still reports Valid.
         partnerIcon = SampleUiR.drawable.sample_ic_product_mark
         partnerPrivacyPolicyUrl = PRIVACY_POLICY_URL
     }

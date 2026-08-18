@@ -3,9 +3,8 @@ package com.usesmileid.sampleapps.android.flow
 import kotlin.io.encoding.Base64
 
 /**
- * Structurally valid, unsigned sandbox JWTs — fixtures the scenarios demand (`spec/scenarios.json`:
- * "a well-formed JWT whose exp is in the past"), never credentials. Flows stop at the capture
- * screen, so these are parsed by the SDK's pre-flight and refresh logic but never submitted.
+ * Structurally valid unsigned JWTs — fixtures the scenarios demand ("a well-formed JWT whose exp is
+ * in the past"), never credentials.
  */
 object UseSmileIDSampleFlowTokens {
 

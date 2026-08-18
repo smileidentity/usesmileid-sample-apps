@@ -77,9 +77,7 @@ fun UseSmileIDSampleShell() {
     ForwardNewIntentsTo(navController)
     AutostartFlowOnce(navigator)
 
-    // R3's fullscreen presentation: the host contributes zero chrome, so the SDK gets the window
-    // edge-to-edge and handles its own insets. Every other destination keeps the shell's insets —
-    // sample-ui screens carry their own status-bar padding, so the switch never shifts them.
+    // The fullscreen flow handles its own insets, so the host contributes none (R3).
     val backStackEntry by navController.currentBackStackEntryAsState()
     val fullscreenFlow = backStackEntry?.let { entry ->
         entry.destination.route == SdkFlowScreenDestination.route &&

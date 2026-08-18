@@ -277,10 +277,8 @@ fun IdTypePickerSheet(productId: String, navigator: DestinationsNavigator) {
 private fun productOf(productId: String) = UseSmileIDSampleProduct.entries.firstOrNull { it.id == productId }
 
 /**
- * The wizard's last hop, carrying the presentation the run was launched under (R3). Without this the
- * in-shell presentation is unreachable with a payload: the only other carriers of `route` are a deep
- * link and autostart, and R9 makes both effectively cold starts, so the forms are always empty there
- * and the §7.3 gate turns them straight back. `launchSingleTop` so a double-tap starts one run.
+ * The wizard's last hop, carrying the launched presentation (R3). Without it the in-shell route is
+ * unreachable with a payload: its other carriers are cold starts, where the forms are always empty.
  */
 private fun UseSmileIDSampleAppState.sdkFlow(productId: String) =
     SdkFlowScreenDestination(productId = productId, route = launchArgs.route)

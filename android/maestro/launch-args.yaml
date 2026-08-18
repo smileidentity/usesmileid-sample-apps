@@ -83,9 +83,8 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_result_card"
 
-# autostart lands the run on the flow route directly, under the route it was given; with nothing in
-# the stores the SDK's pre-flight redirects the journey to that product's consent form (§7.3), and
-# the card keeps the route it recorded on entry.
+# autostart lands on the flow route under the route it was given. With empty stores the pre-flight
+# redirects to that product's form (§7.3), and the card keeps the route it recorded on entry.
 - stopApp
 - launchApp:
     arguments:

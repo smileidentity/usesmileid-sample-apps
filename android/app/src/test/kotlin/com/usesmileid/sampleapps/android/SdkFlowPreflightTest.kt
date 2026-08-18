@@ -15,15 +15,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/**
- * What the route's entry gate decides, for every product, without a device.
- *
- * Scope worth knowing, because it is narrower than "the SDK will accept this flow": on 12.0.2 the
- * public `validate()` does not report errors raised inside `screens { }` — a consent block missing
- * its icon returns Valid here and fails only in the SDK's internal `build()`. So these tests pin the
- * payload contract and the gate's routing, not the screen composition; the icon defect was found on
- * a device and no test written against this API could have caught it.
- */
+/** Narrower than "the SDK accepts this flow": `validate()` reports no error raised inside `screens { }`. */
 class SdkFlowPreflightTest {
 
     @Test
@@ -45,7 +37,6 @@ class SdkFlowPreflightTest {
         }
     }
 
-    /** Guards the per-product ID mapping: a product whose params stop being populated fails here. */
     @Test
     fun `products needing ID details route to the forms without them`() {
         UseSmileIDSampleProduct.entries.filter { it.needsIdDetails }.forEach { product ->
@@ -54,7 +45,6 @@ class SdkFlowPreflightTest {
         }
     }
 
-    /** The design's form treats both contact fields as optional; the SDK requires one of them. */
     @Test
     fun `names without a contact field still need details`() {
         val namesOnly = UseSmileIDSampleUserDetails(firstName = "Ada", lastName = "Okafor")

@@ -35,14 +35,9 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleFlowResult
 
 /**
- * The single route hosting the SDK flow, in both presentations (R3). The SDK owns everything
- * inside it (R2): no host BackHandler, no host chrome, results delivered through [applying]'s
- * callbacks exactly once (§7.2).
- *
- * Both parameters are load-bearing even though the body reads [productId] only through the
- * ViewModel: KSP generates the route's arguments and the deep link's placeholders from this
- * parameter list, and the ViewModel reads the same values back out of the `SavedStateHandle`, so
- * every arrival path resolves to one host (R6).
+ * The single route hosting the SDK flow, in both presentations (R3). The SDK owns everything inside
+ * it (R2): no host BackHandler, no host chrome. [productId] looks unused because KSP reads this
+ * parameter list to generate the route's arguments, which the ViewModel then reads back.
  */
 @Destination<FlowGraph>(style = UseSmileIDSampleFlowTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SDK_FLOW)])
 @Composable
@@ -56,8 +51,7 @@ fun SdkFlowScreen(
     LaunchedEffect(route) { app.flowResult.enterRoute(route) }
 
     val snapshot = viewModel.snapshot
-        // A prior enrollment's server-returned id when the card holds one, so Smart Selfie
-        // Authentication authenticates against something that was actually enrolled.
+        // A prior enrollment's id when the card holds one, so authentication has something enrolled.
         ?: buildSnapshot(viewModel.args, app, viewModel.runUserId(app.flowResult.userId))
             ?.also { viewModel.snapshot = it }
     if (snapshot == null) {
@@ -69,15 +63,13 @@ fun SdkFlowScreen(
         is FlowPreflight.NeedsDetails -> {
             LaunchedEffect(Unit) {
                 navigator.navigate(ConsentDetailsFormScreenDestination(productId = snapshot.product.id)) {
-                    // The graph, not the screen: a deep link synthesizes a consent form beneath the
-                    // flow, and popping only the flow would stack the redirect's form on top of it (§8.1).
+                    // The graph, not the screen: a deep link synthesizes a form beneath the flow (§8.1).
                     popUpTo(FlowNavGraph) { inclusive = true }
                 }
             }
             return
         }
-        // Nothing the user can type fixes this, so it leaves the wizard entirely — the same exit a
-        // mistyped product id takes, and still never the SDK.
+        // No form fixes this, so it takes the same exit as a mistyped product id.
         is FlowPreflight.Misconfigured -> {
             LaunchedEffect(Unit) { navigator.popBackStack(FlowNavGraph, inclusive = true) }
             return
@@ -85,15 +77,13 @@ fun SdkFlowScreen(
         FlowPreflight.Ready -> Unit
     }
 
-    // Effects run *after* the SDK's first composition, and an invalid configuration delivers its
-    // Failure during that composition — so the entry reset must not clobber a result that beat it.
-    // Once per host besides, so a recreation keeps the counters the run has already earned.
+    // Effects run after the SDK's first composition, which is early enough to deliver a Failure.
     LaunchedEffect(Unit) {
         if (viewModel.markRunStarted() && !viewModel.resultDelivered) app.flowResult.startFlow()
     }
 
-    // Distinguishes the SDK's in-flow cancel (navigate back to the tab) from the teardown-delivered
-    // one after the user already popped the route, where navigating again would act on the wrong stack.
+    // A teardown-delivered cancel arrives after the route is gone, where navigating again would act
+    // on whatever replaced it.
     val composed = remember { mutableStateOf(true) }
     DisposableEffect(Unit) { onDispose { composed.value = false } }
 
@@ -117,8 +107,7 @@ fun SdkFlowScreen(
                             app.jobs.add(processingJob(snapshot.product, result.value))
                             navigator.navigate(VerificationDetailsScreenDestination(jobId = result.value.jobId)) {
                                 popUpTo(FlowNavGraph) { inclusive = true }
-                                // A repeated delivery must not stack a second landing screen. The
-                                // counters still count every one — observing the SDK is their job.
+                                // A repeated delivery must not stack a second landing screen.
                                 launchSingleTop = true
                             }
                         }
@@ -161,6 +150,6 @@ private fun processingJob(product: UseSmileIDSampleProduct, response: JobSubmiss
     httpStatus = HTTP_ACCEPTED,
 )
 
-/** A failed run has no server-issued job id, so the landing route carries a stable non-id (§7.2's failure case). */
+/** A failed run has no server-issued job id, so the landing route carries a stable non-id. */
 private const val UNSUBMITTED_JOB_ID = "unsubmitted"
 private const val HTTP_ACCEPTED = "202 Accepted"

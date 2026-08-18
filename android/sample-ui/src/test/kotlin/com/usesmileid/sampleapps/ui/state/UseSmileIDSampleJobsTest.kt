@@ -9,7 +9,6 @@ import org.junit.Test
 
 class UseSmileIDSampleJobsTest {
 
-    /** The list keys rows by job id, so a repeated result must not be able to add a second one. */
     @Test
     fun `adding the same job twice keeps one row`() {
         val jobs = UseSmileIDSampleJobs()

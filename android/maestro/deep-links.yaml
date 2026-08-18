@@ -44,17 +44,16 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_idtype_sheet"
 
-# One route, two presentations. A cold link arrives with empty stores, so the SDK's own pre-flight
-# must redirect the journey to the consent form for the same product — never reach the SDK (§7.3).
+# A cold link arrives with empty stores, so the SDK's pre-flight redirects to that product's
+# consent form and never reaches the SDK (§7.3).
 - stopApp
 - openLink: "usesmileid-sample-android://flow/smartSelfieEnrollment/run"
 - assertVisible:
     id: "sample_user_details_screen"
 - assertVisible: "SmartSelfie Enrollment"
 
-# The route argument is recorded on the card before the redirect, which is what proves ?route=shell
-# parsed — see navigation-hardening-android.md NAV-A3. The details card is where it is readable:
-# the products line renders only while a run is in flight.
+# The card records the route before the redirect, which is what proves ?route=shell parsed. Read on
+# the details card, because the products line renders only while a run is in flight.
 - stopApp
 - openLink: "usesmileid-sample-android://flow/smartSelfieEnrollment/run?route=shell"
 - assertVisible:
