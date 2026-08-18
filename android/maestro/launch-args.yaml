@@ -83,14 +83,29 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_result_card"
 
-# autostart lands the run on the flow route directly, under the route it was given.
+# autostart lands the run on the flow route directly, under the route it was given; with nothing in
+# the stores the SDK's pre-flight redirects the journey to that product's consent form (§7.3), and
+# the card keeps the route it recorded on entry.
 - stopApp
 - launchApp:
     arguments:
       autostart: biometricKyc
       route: shell
-- assertVisible: ".*productId = biometricKyc.*"
-- assertVisible: ".*route = shell.*"
+- assertVisible:
+    id: "sample_user_details_screen"
+- assertVisible: "Biometric KYC"
+- back
+- assertVisible:
+    id: "sample_products_screen"
+- tapOn:
+    id: "sample_nav_verifications"
+- assertVisible:
+    id: "sample_verifications_screen"
+- tapOn:
+    id: "sample_job_row_0"
+- assertVisible:
+    id: "sample_result_route"
+    text: "shell"
 
 # The drawer writes the state a launch argument seeds, so one card reports either source. Opened by
 # its own deep link rather than through the Settings row, which sits below the fold behind a scroll

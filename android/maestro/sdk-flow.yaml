@@ -1,0 +1,195 @@
+# The SDK flow handoff (N2): launch → products → SDK-mount, then the exactly-once result contract
+# on both terminal exits this repo can drive — Deny (a typed Failure by SDK design, landing on
+# verification details) and the system back gesture (Cancelled on teardown) — including immediate
+# re-entry, where a fresh run must reset the counters and still report exactly one result.
+# Card assertions live on the verification-details card: the products line renders only while a
+# run is in flight, so it cannot report a terminal result.
+# Flows stop at the capture screen: completing a capture needs frame injection, which is
+# deliberately not part of this repository (docs/plan/sample-apps-plan.md §6).
+# APP_ID must be passed — see shell-navigation.yaml for why it has no default.
+appId: ${APP_ID}
+---
+- stopApp
+- launchApp
+- runFlow: subflows/warm-start.yaml
+
+# The wizard, by tapping: product → consent details form → the flow route. The SDK's consent
+# screen appearing is the SDK-mount assertion packaging failures fail on, conclusively.
+- tapOn:
+    id: "sample_product_card_smartSelfieEnrollment"
+- assertVisible:
+    id: "sample_user_details_screen"
+- tapOn:
+    id: "sample_user_details_field_firstName"
+- inputText: "Ada"
+- tapOn:
+    id: "sample_user_details_field_lastName"
+- inputText: "Okafor"
+# The SDK's validator wants at least one contact field even though the form labels both optional,
+# so the gate would bounce a names-only entry straight back to this form.
+- tapOn:
+    id: "sample_user_details_field_email"
+- inputText: "ada.okafor@example.com"
+- hideKeyboard
+- tapOn:
+    id: "sample_user_details_continue"
+- assertVisible:
+    id: "si_consent_screen"
+
+# Deny delivers a typed Failure (ConsentDeniedException) while the flow is composed: exactly ONE
+# result, replacing the wizard with verification details (R4) — no job row, the card is the evidence.
+- tapOn: "Deny"
+- assertVisible:
+    id: "sample_verification_details_screen"
+- assertVisible:
+    id: "sample_result_job_status"
+    text: "failed"
+- assertVisible:
+    id: "sample_result_result_count"
+    text: "1"
+- assertVisible:
+    id: "sample_result_last_error"
+    text: "User denied consent"
+# Back from the landing route goes to the originating tab — never back into the flow (R4).
+- back
+- assertVisible:
+    id: "sample_products_screen"
+
+# Immediate re-entry, and Continue tapped three times fast: singleTop means one flow, not three
+# stacked runs, so the new run still resets the counters and reports exactly one result.
+# The form keeps its values — the stores survive the wizard being replaced (R6).
+- tapOn:
+    id: "sample_product_card_smartSelfieEnrollment"
+- assertVisible:
+    id: "sample_user_details_screen"
+- tapOn:
+    id: "sample_user_details_continue"
+    repeat: 3
+    delay: 60
+- assertVisible:
+    id: "si_consent_screen"
+- tapOn: "Deny"
+- assertVisible:
+    id: "sample_verification_details_screen"
+- assertVisible:
+    id: "sample_result_result_count"
+    text: "1"
+- back
+- assertVisible:
+    id: "sample_products_screen"
+
+# The back gesture is the true Cancelled path: the SDK consumes it first — even on its first
+# screen, where it delivers Cancelled while still composed — so the host returns the journey to
+# the originating tab (§7.2). Exactly one result either way.
+- tapOn:
+    id: "sample_product_card_smartSelfieEnrollment"
+- assertVisible:
+    id: "sample_user_details_screen"
+- tapOn:
+    id: "sample_user_details_continue"
+- assertVisible:
+    id: "si_consent_screen"
+- back
+- assertVisible:
+    id: "sample_products_screen"
+- tapOn:
+    id: "sample_nav_verifications"
+- assertVisible:
+    id: "sample_verifications_screen"
+- tapOn:
+    id: "sample_job_row_0"
+- assertVisible:
+    id: "sample_result_job_status"
+    text: "cancelled"
+- assertVisible:
+    id: "sample_result_result_count"
+    text: "1"
+- back
+- assertVisible:
+    id: "sample_verifications_screen"
+- tapOn:
+    id: "sample_nav_products"
+- assertVisible:
+    id: "sample_products_screen"
+
+# The in-shell presentation (R3), which is the one that exposes host-chrome and inset defects. It is
+# reached by TAPPING under `route: shell`: a deep link or autostart carrying the argument is
+# effectively a cold start (R9), so the forms would be empty and the gate would turn it back.
+- stopApp
+- launchApp:
+    arguments:
+      route: shell
+- runFlow: subflows/warm-start.yaml
+- tapOn:
+    id: "sample_product_card_smartSelfieEnrollment"
+- assertVisible:
+    id: "sample_user_details_screen"
+- tapOn:
+    id: "sample_user_details_field_firstName"
+- inputText: "Ada"
+- tapOn:
+    id: "sample_user_details_field_lastName"
+- inputText: "Okafor"
+- tapOn:
+    id: "sample_user_details_field_email"
+- inputText: "ada.okafor@example.com"
+- hideKeyboard
+- tapOn:
+    id: "sample_user_details_continue"
+- assertVisible:
+    id: "si_consent_screen"
+# The flow is not a tab root, so the host's nav bar must not be drawn over the SDK in either
+# presentation — the defect R13 is about.
+- assertNotVisible:
+    id: "sample_nav_products"
+- tapOn: "Deny"
+- assertVisible:
+    id: "sample_verification_details_screen"
+- assertVisible:
+    id: "sample_result_route"
+    text: "shell"
+- assertVisible:
+    id: "sample_result_result_count"
+    text: "1"
+
+# Allow continues into the SDK's own navigation; instructions is the boundary this flow drives to.
+# The details are re-entered because this section relaunches: the forms survive recreation, not
+# process death, so a fresh start meets the gate with empty stores.
+- stopApp
+- launchApp
+- runFlow: subflows/warm-start.yaml
+- tapOn:
+    id: "sample_product_card_smartSelfieEnrollment"
+- assertVisible:
+    id: "sample_user_details_screen"
+- tapOn:
+    id: "sample_user_details_field_firstName"
+- inputText: "Ada"
+- tapOn:
+    id: "sample_user_details_field_lastName"
+- inputText: "Okafor"
+- tapOn:
+    id: "sample_user_details_field_email"
+- inputText: "ada.okafor@example.com"
+- hideKeyboard
+- tapOn:
+    id: "sample_user_details_continue"
+- assertVisible:
+    id: "si_consent_screen"
+- assertNotVisible:
+    id: "sample_nav_products"
+- tapOn: "Allow"
+# The SDK asks for camera permission on the way out of consent. Granted conditionally, because the
+# grant survives `stopApp` and outlives the install: an unconditional tap passes once and fails
+# every re-run after it. ColorOS refuses `pm grant` from the shell, so the prompt is answered on
+# screen rather than pre-granted at launch.
+- runFlow:
+    when:
+      visible:
+        id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+    commands:
+      - tapOn:
+          id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+- assertVisible:
+    id: "si_instructions_screen"
+- stopApp

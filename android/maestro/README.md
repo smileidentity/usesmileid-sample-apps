@@ -51,3 +51,20 @@ adb shell cmd uimode night yes|no   # dark mode, and it drives activity recreati
 
 For font scale, use the component gallery's own override
 (`usesmileid-sample-android://debug/components`) rather than system settings — that is why it exists.
+
+**The camera permission prompt is part of the SDK journey, and it cannot be pre-granted here.**
+`sdk-flow` drives past the SDK's consent screen, and the SDK asks for camera permission on the way
+to instructions. ColorOS refuses `pm grant` (`SecurityException: Neither user 2000 nor current
+process has GRANT_RUNTIME_PERMISSIONS`), so Maestro's `launchApp: permissions:` cannot help and the
+prompt is answered on screen. Two consequences:
+
+- The tap is wrapped in `runFlow: when: visible:` because the grant **outlives both `stopApp` and
+  the install**. An unconditional tap passes on a fresh install and fails every run after it.
+- **A run aborted at the prompt leaves the dialog up, and it survives `stopApp`** — the dialog
+  belongs to `com.android.permissioncontroller`, not to the app. The next run then fails on its
+  *opening* assertion, which reads like a regression in the app and is not. Clear it first:
+
+```bash
+adb -s <serial> shell input keyevent KEYCODE_BACK   # dismisses without granting
+adb -s <serial> shell dumpsys activity activities | grep mResumedActivity
+```
