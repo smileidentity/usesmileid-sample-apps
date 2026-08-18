@@ -19,6 +19,10 @@ appId: ${APP_ID}
       scenario: expiredToken
       theme: clashingHost
       route: shell
+- extendedWaitUntil:
+    visible:
+      id: "sample_nav_verifications"
+    timeout: 120000
 - tapOn:
     id: "sample_nav_verifications"
 - assertVisible:

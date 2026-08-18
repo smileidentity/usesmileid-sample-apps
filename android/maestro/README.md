@@ -10,6 +10,11 @@ with no app-side keep rules, which is where a consumption defect in the publishe
 
 ## Traps
 
+**The first cold start after `adb install` outlives Maestro's default timeout.** ART warms the
+minified release APK on its very first launch, and every flow failed spuriously on its opening
+assertion until a warm relaunch. Each flow therefore opens with a 120 s `extendedWaitUntil` on its
+first element; later assertions keep the default timeout, so a missing screen still fails fast.
+
 **`APP_ID` has no default, deliberately.** In Maestro 2.8 a flow-level `env:` default WINS over `-e`
 on the command line, so declaring one here would silently pin every run to a single variant and the
 release lane would quietly test the debug build.
