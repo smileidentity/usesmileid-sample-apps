@@ -31,6 +31,7 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.IntOffset
 import androidx.core.util.Consumer
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
@@ -39,7 +40,6 @@ import com.ramcosta.composedestinations.generated.navgraphs.ProductsNavGraph
 import com.ramcosta.composedestinations.generated.navgraphs.SettingsNavGraph
 import com.ramcosta.composedestinations.generated.navgraphs.VerificationsNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.ramcosta.composedestinations.spec.DestinationSpec
 import com.ramcosta.composedestinations.spec.Direction
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
@@ -61,8 +61,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavItem
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun UseSmileIDSampleShell() {
-    val engine = rememberNavHostEngine()
-    val navController = engine.rememberNavController()
+    val navController = rememberNavController()
     val navigator = navController.rememberDestinationsNavigator()
     val destination by navController.currentDestinationAsState()
     val selectedTab = destination?.tab()
