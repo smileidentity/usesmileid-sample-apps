@@ -10,6 +10,13 @@ with no app-side keep rules, which is where a consumption defect in the publishe
 
 ## Traps
 
+**The first cold start after `adb install` outlives Maestro's default timeout.** ART warms the
+minified release APK on its very first launch, and every flow failed spuriously on its opening
+assertion until a warm relaunch. Each flow therefore opens with `runFlow: subflows/warm-start.yaml`
+— a 120 s wait on the products root, defined once so a new flow cannot forget it; later assertions
+keep the default timeout, so a missing screen still fails fast. `subflows/` is a subdirectory
+deliberately: folder runs are non-recursive, so it never executes as a flow of its own.
+
 **`APP_ID` has no default, deliberately.** In Maestro 2.8 a flow-level `env:` default WINS over `-e`
 on the command line, so declaring one here would silently pin every run to a single variant and the
 release lane would quietly test the debug build.

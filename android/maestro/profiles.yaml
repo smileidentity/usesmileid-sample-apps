@@ -8,6 +8,7 @@ appId: ${APP_ID}
 - stopApp
 - launchApp
 
+- runFlow: subflows/warm-start.yaml
 - tapOn:
     id: "sample_nav_settings"
 - assertVisible:

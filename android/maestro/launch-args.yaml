@@ -19,6 +19,7 @@ appId: ${APP_ID}
       scenario: expiredToken
       theme: clashingHost
       route: shell
+- runFlow: subflows/warm-start.yaml
 - tapOn:
     id: "sample_nav_verifications"
 - assertVisible:

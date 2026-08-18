@@ -1,0 +1,9 @@
+# Shared opening tolerance: the first start after `adb install` outlives the default timeout
+# while ART warms the minified APK — see ../README.md "Traps". Every flow starts at the products
+# root, so waiting on it here keeps later assertions on the default timeout.
+appId: ${APP_ID}
+---
+- extendedWaitUntil:
+    visible:
+      id: "sample_products_screen"
+    timeout: 120000
