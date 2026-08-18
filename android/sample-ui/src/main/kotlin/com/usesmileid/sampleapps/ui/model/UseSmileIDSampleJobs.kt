@@ -12,8 +12,13 @@ class UseSmileIDSampleJobs(seed: List<UseSmileIDSampleJob> = emptyList()) {
 
     val all: List<UseSmileIDSampleJob> get() = items
 
-    /** Newest first, matching the seed's ordering. */
+    /**
+     * Newest first, matching the seed's ordering. Adding an id the list already holds is a no-op:
+     * the SDK can deliver one terminal result more than once, and the list keys its rows by job id,
+     * so a duplicate would take the screen down rather than merely repeat a row.
+     */
     fun add(job: UseSmileIDSampleJob) {
+        if (items.any { it.id == job.id }) return
         items.add(0, job)
     }
 
