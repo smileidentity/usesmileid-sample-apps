@@ -49,6 +49,10 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     }
 }
 
+tasks.withType<Test>().configureEach {
+    systemProperty("sampleapps.spec.dir", layout.projectDirectory.dir("../../spec").asFile.absolutePath)
+}
+
 dependencies {
     implementation(projects.sampleUi)
 
@@ -66,4 +70,6 @@ dependencies {
 
     implementation(libs.destinations)
     ksp(libs.destinations.ksp)
+
+    testImplementation(libs.junit)
 }
