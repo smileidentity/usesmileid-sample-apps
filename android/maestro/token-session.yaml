@@ -160,7 +160,9 @@ appId: ${APP_ID}
 - inputText: "not-a-jwt"
 - hideKeyboard
 - tapOn: "Link token"
-- assertVisible: "three dot-separated base64url segments"
+# Wildcarded because Maestro matches the whole text, not a substring. Asserting the reason and not
+# just "an error appeared" is the point: a rejection has to say what is wrong with the token.
+- assertVisible: ".*three dot-separated base64url segments.*"
 - assertVisible:
     id: "sample_scan_token_screen"
 - back
