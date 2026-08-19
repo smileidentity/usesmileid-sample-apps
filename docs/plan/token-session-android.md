@@ -56,6 +56,45 @@ properties of that claim decide most of this plan:
 3. **Consent is all-or-nothing.** The object is optional, but a partial one is a validation failure
    rather than a partial relaxation.
 
+### 2.1 What a real Portal token actually contains, read off two of them
+
+Decoded from two tokens minted from the Portal and scanned on device (2026-08-19) — an 8h and a 1h —
+with values withheld throughout. Both had **identical claim sets**:
+
+| Where | Claims |
+|---|---|
+| top level | `aud`, `exp`, `iat`, `iss`, `key_id`, `nbf`, `partner_id`, `payload` |
+| `payload` | `country`, `email`, `given_names`, `id_number`, `id_type`, `last_name`, `phone_number` |
+
+Six things follow, each of which had been a guess until now:
+
+1. **There is no environment claim.** Nothing named `env`, `is_sandbox`, `environment`, `mode`, or
+   anything else matching an environment word; no claim *value* mentioning sandbox or production; no
+   booleans anywhere. `aud` and `iss` are the constants `smileid-api` and `smileid-auth`, identical in
+   both tokens, so they do not encode it either. The environment is implied by the API key that minted
+   the token (`key_id`) and resolved server-side. **Owner decision 2026-08-19 was "the token wins and
+   drives `useSandbox`" — which cannot be built until the Portal adds the claim.** Until then the
+   active profile is the only source of environment, and a mismatch surfaces as an auth failure on the
+   result card. **Portal ask: add an environment claim.** One decode rule and its tests land the moment
+   it exists.
+2. **No `jti`.** So TOK-A3's fallback is the normal path, not the exception: the session handle a
+   partner sees is the short digest, and the `jti` branch is exercised by unit test only.
+3. **`iat` is present**, which is what makes TOK-A6's `exp - iat` span honest. Requiring it was a real
+   risk — a Portal that minted only `exp` would have had every token rejected — and it is now settled.
+4. **`nbf` is present and equals `iat`.** The decoder ignores it, so a not-yet-valid token would link.
+   Latent rather than broken; if it is ever checked it needs clock-skew leeway, because a strict
+   comparison against a slow device clock rejects good tokens. **Owed decision.**
+5. **Neither token binds consent.** So the §3 consent-drop defect is not reproducible from the Portal
+   as it mints today — reproducing it needs consent bound server-side. The fixture path in
+   `UseSmileIDSampleFlowTokens` remains the only way to exercise it.
+6. **Both bind the required user details** (`given_names`, `last_name`, `email`), so
+   `bindsRequiredUserDetails` is true for a real token and the host's details form is skipped in
+   practice, not just in theory. They also bind `id_number`, `country` and `id_type` — which the SDK
+   never relaxes, so the ID form still runs, and TOK-A10's prefill has real data to read.
+
+Every PII value was exactly 30 characters across name, email and ID number, which is what opaque vault
+references look like and confirms §2's "presence, never content" empirically.
+
 ## 3. What the SDK does with it
 
 Read from `TokenPayload`, `FlowValidator`, `JobTypeValidator` and `FlowNavigationManager` at 12.0.2:
