@@ -30,6 +30,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -42,6 +43,8 @@ import java.util.concurrent.atomic.AtomicReference
  * - **The camera is released when the screen leaves composition.** Navigating scan → flow otherwise
  *   hands the SDK a camera the host still holds, which is one of the host-interaction defects this
  *   repo exists to catch.
+ * - **Frames are only read while [enabled].** The screen pauses the scanner while it shows what it
+ *   found, so nothing is decoded behind a result the person has not seen yet.
  * - **A given code is reported once, but a different one still gets through.** The analyser sees the
  *   same QR in many consecutive frames, so reporting every frame would link a session repeatedly. A
  *   one-shot latch would be worse: point the camera at a QR that is not a token and the rejection is
@@ -55,6 +58,8 @@ import java.util.concurrent.atomic.AtomicReference
 fun UseSmileIDSampleQrScanner(
     onCode: (String) -> Unit,
     torchOn: Boolean,
+    /** False while the screen is showing what it just found, so frames are not read behind the result. */
+    enabled: Boolean = true,
     modifier: Modifier = Modifier,
     onPermissionDenied: () -> Unit = {},
 ) {
@@ -74,8 +79,9 @@ fun UseSmileIDSampleQrScanner(
     if (!granted) return
 
     var surfaceRequest by remember { mutableStateOf<SurfaceRequest?>(null) }
-    // Written from the analyser thread, so atomic rather than a plain var.
+    // Both written from the analyser thread, so atomic rather than plain vars.
     val lastReported = remember { AtomicReference<String?>(null) }
+    val scanning = remember { AtomicBoolean(enabled) }
     val analysisExecutor = remember { Executors.newSingleThreadExecutor() }
     val scanner = remember {
         BarcodeScanning.getClient(
@@ -94,6 +100,10 @@ fun UseSmileIDSampleQrScanner(
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
         analysis.setAnalyzer(analysisExecutor) { proxy ->
+            if (!scanning.get()) {
+                proxy.close()
+                return@setAnalyzer
+            }
             scanner.readQrCode(proxy) { value ->
                 if (lastReported.getAndSet(value) != value) onCode(value)
             }
@@ -119,7 +129,17 @@ fun UseSmileIDSampleQrScanner(
 
     LaunchedEffect(camera, torchOn) { camera?.cameraControl?.enableTorch(torchOn) }
 
-    DisposableEffect(provider) {
+    // Re-enabling forgets the last code, so a retry can read the very same QR the screen just refused.
+    LaunchedEffect(enabled) {
+        scanning.set(enabled)
+        if (enabled) lastReported.set(null)
+    }
+
+    // Keyed on Unit, never on `provider`: keying it on the provider made binding the camera change the
+    // key, so this effect disposed and released the camera it had just acquired — the preview opened
+    // and closed in the same breath. `onDispose` reads the current provider through the state holder,
+    // which is what makes the constant key correct rather than merely convenient.
+    DisposableEffect(Unit) {
         onDispose {
             // Order matters: stop the frames, then hand the camera back, then close the detector.
             analysisExecutor.shutdown()
