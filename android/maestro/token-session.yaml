@@ -40,6 +40,8 @@ appId: ${APP_ID}
     id: "sample_nav_token"
 - assertVisible:
     id: "sample_scan_token_screen"
+# The mint controls are collapsed by default now — the viewfinder gets the height instead.
+- tapOn: "SIMULATED SCAN"
 - tapOn: "8h"
 - tapOn: "Binds consent"
 - tapOn:
@@ -124,6 +126,7 @@ appId: ${APP_ID}
 # than to the SDK — even with the details the previous run left filled in.
 - tapOn:
     id: "sample_nav_token"
+- tapOn: "SIMULATED SCAN"
 - tapOn: "Expired"
 - tapOn:
     id: "sample_token_simulate"
@@ -165,6 +168,7 @@ appId: ${APP_ID}
 # is safe: an unbound token behaves exactly like the no-token path, which sdk-flow.yaml asserts.
 - tapOn:
     id: "sample_nav_token"
+- tapOn: "SIMULATED SCAN"
 - tapOn: "8h"
 - tapOn:
     id: "sample_token_simulate"
