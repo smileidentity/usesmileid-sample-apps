@@ -1,8 +1,8 @@
 package com.usesmileid.sampleapps.ui.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,16 +21,19 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
-import com.usesmileid.sampleapps.ui.components.TorchGlyph
+import com.usesmileid.sampleapps.ui.components.FlashGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleScanGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleScanSheet
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleScanSheetState
@@ -132,12 +136,12 @@ fun ScanTokenScreen(
     ) {
         UseSmileIDSampleTopAppBar(title = "Scan token", onBack = onBack) {
             UseSmileIDSampleTopAppBarButton(
-                contentDescription = if (torchOn) "Turn torch off" else "Turn torch on",
+                contentDescription = if (torchOn) "Turn flash off" else "Turn flash on",
                 onClick = onTorchToggle,
                 emphasis = UseSmileIDSampleTopAppBarEmphasis.Filled,
-            ) { tint -> TorchGlyph(tint = tint) }
+            ) { tint -> FlashGlyph(tint = tint) }
         }
-        Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+        BoxWithConstraints(modifier = Modifier.weight(1f).fillMaxWidth()) {
             if (viewfinder == null) {
                 Column(
                     // Scrolls because the glyph is fixed: at 2x its copy no longer fits above the sheet.
@@ -149,32 +153,43 @@ fun ScanTokenScreen(
                     verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm, Alignment.CenterVertically),
                 ) {
                     Box(contentAlignment = Alignment.Center) { UseSmileIDSampleScanGlyph() }
-                    ScanCopy(text = SCAN_TITLE, style = titleStyle, color = titleColor, scrimmed = false)
-                    ScanCopy(text = SCAN_CAPTION, style = captionStyle, color = captionColor, scrimmed = false)
+                    ScanCopy(text = SCAN_TITLE, style = titleStyle, color = titleColor)
+                    ScanCopy(text = SCAN_CAPTION, style = captionStyle, color = captionColor)
                 }
             } else {
-                // Over a live camera the glyph is the framing reticle, so it stays centred and the
-                // status moves to the bottom edge — where a sheet this tall would otherwise push it off
-                // screen entirely.
                 viewfinder(Modifier.matchParentSize(), scan is UseSmileIDSampleScanState.Searching) {
                     judge(it, false)
                 }
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    UseSmileIDSampleScanGlyph(tint = scan.reticleTint())
+                val searching = scan is UseSmileIDSampleScanState.Searching
+                // Sized to the space, not the design's fixed 279dp: the sheet takes the lower half here.
+                val reticleSize = min(maxWidth * RETICLE_WIDTH_FRACTION, maxHeight * RETICLE_HEIGHT_FRACTION)
+                // 45% at rest, firming to full strength the moment the scanner has something.
+                val reticleAlpha by animateFloatAsState(if (searching) RETICLE_IDLE_ALPHA else 1f)
+                Column(
+                    modifier = Modifier.fillMaxSize().padding(SmileDimens.spacingMd),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingMd, Alignment.CenterVertically),
+                ) {
+                    UseSmileIDSampleScanGlyph(
+                        tint = scan.reticleTint(),
+                        modifier = Modifier.alpha(reticleAlpha),
+                        size = reticleSize,
+                    )
+                    // Straight on the camera: a container here was a white slab over the preview.
+                    if (searching) {
+                        ScanCopy(text = SCAN_TITLE, style = titleStyle.overCamera(), color = UseSmileIDSampleTheme.colors.textInverse)
+                        ScanCopy(text = SCAN_CAPTION, style = captionStyle.overCamera(), color = UseSmileIDSampleTheme.colors.textInverse)
+                    } else {
+                        UseSmileIDSampleScanStatus(
+                            state = scan,
+                            onRetry = {
+                                // Re-enables the scanner, clearing its last-seen code so the same QR reads.
+                                rejection = null
+                                scan = UseSmileIDSampleScanState.Searching
+                            },
+                        )
+                    }
                 }
-                UseSmileIDSampleScanStatus(
-                    state = scan,
-                    onRetry = {
-                        // Back to searching re-enables the scanner, which clears its last-seen code so
-                        // the very same QR can be read again — a retry that cannot read the code it just
-                        // refused would be a button that does nothing.
-                        rejection = null
-                        scan = UseSmileIDSampleScanState.Searching
-                    },
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(SmileDimens.spacingMd),
-                )
             }
         }
         UseSmileIDSampleScanSheet(
@@ -212,26 +227,26 @@ fun ScanTokenScreen(
     }
 }
 
-/** Over a live camera the design's copy needs a ground of its own to stay legible. */
 @Composable
-private fun ScanCopy(text: String, style: TextStyle, color: Color, scrimmed: Boolean) {
+private fun ScanCopy(text: String, style: TextStyle, color: Color) {
     Text(
         text = text,
         style = style,
         color = color,
         textAlign = TextAlign.Center,
-        modifier = if (!scrimmed) {
-            Modifier
-        } else {
-            Modifier
-                .background(
-                    color = UseSmileIDSampleTheme.colors.surface.copy(alpha = SCRIM_ALPHA),
-                    shape = RoundedCornerShape(SmileDimens.radiusField),
-                )
-                .padding(horizontal = SmileDimens.spacingSm, vertical = SmileDimens.spacingXxs)
-        },
+        // Explicit, because centred copy that is not width-bound clips at both edges instead of wrapping.
+        modifier = Modifier.fillMaxWidth(),
     )
 }
+
+/** Legible on whatever the camera is pointed at, without putting a slab between the two. */
+@Composable
+private fun TextStyle.overCamera(): TextStyle = copy(
+    shadow = Shadow(
+        color = UseSmileIDSampleTheme.colors.textTitle,
+        blurRadius = COPY_SHADOW_BLUR,
+    ),
+)
 
 /** The reticle answers with colour before anyone reads the words. */
 @Composable
@@ -249,4 +264,8 @@ private val SCAN_BODY_SIZE = 12.5.sp
 
 /** Long enough to read "Session linked" and its handle, short enough not to feel like a wait. */
 private const val LINKED_DWELL_MILLIS = 900L
-private const val SCRIM_ALPHA = 0.85f
+/** The design's own reticle opacity, which is what keeps it from competing with the preview. */
+private const val RETICLE_IDLE_ALPHA = 0.45f
+private const val RETICLE_WIDTH_FRACTION = 0.72f
+private const val RETICLE_HEIGHT_FRACTION = 0.52f
+private const val COPY_SHADOW_BLUR = 8f
