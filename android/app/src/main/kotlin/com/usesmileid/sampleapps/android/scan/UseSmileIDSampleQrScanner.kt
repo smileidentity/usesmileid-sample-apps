@@ -91,6 +91,8 @@ fun UseSmileIDSampleQrScanner(
     var camera by remember { mutableStateOf<Camera?>(null) }
     // Held so release does not have to block the main thread re-fetching the provider.
     var provider by remember { mutableStateOf<ProcessCameraProvider?>(null) }
+    // The provider future can resolve after this composable is gone; see the bind callback below.
+    val disposed = remember { AtomicBoolean(false) }
 
     LaunchedEffect(lifecycleOwner) {
         val preview = Preview.Builder().build().apply {
@@ -114,14 +116,18 @@ fun UseSmileIDSampleQrScanner(
         pending.addListener(
             {
                 val cameraProvider = pending.get()
-                cameraProvider.unbindAll()
-                provider = cameraProvider
-                camera = cameraProvider.bindToLifecycle(
-                    lifecycleOwner,
-                    CameraSelector.DEFAULT_BACK_CAMERA,
-                    preview,
-                    analysis,
-                )
+                // Binding after disposal would hand the SDK a camera nothing is left to release: the
+                // dispose block has already run its unbind, and it will not run again.
+                if (!disposed.get()) {
+                    cameraProvider.unbindAll()
+                    provider = cameraProvider
+                    camera = cameraProvider.bindToLifecycle(
+                        lifecycleOwner,
+                        CameraSelector.DEFAULT_BACK_CAMERA,
+                        preview,
+                        analysis,
+                    )
+                }
             },
             ContextCompat.getMainExecutor(context),
         )
@@ -141,6 +147,7 @@ fun UseSmileIDSampleQrScanner(
     // which is what makes the constant key correct rather than merely convenient.
     DisposableEffect(Unit) {
         onDispose {
+            disposed.set(true)
             // Order matters: stop the frames, then hand the camera back, then close the detector.
             analysisExecutor.shutdown()
             provider?.unbindAll()
