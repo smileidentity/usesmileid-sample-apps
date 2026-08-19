@@ -33,10 +33,12 @@ import com.ramcosta.composedestinations.generated.destinations.ScenarioDrawerShe
 import com.ramcosta.composedestinations.generated.destinations.SdkFlowScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.VerificationDetailsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.spec.Direction
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleFlowTokens
+import com.usesmileid.sampleapps.android.flow.tokenBindsUserDetails
 import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleQrScanner
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
@@ -92,7 +94,7 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
             sessionEnded = app.sessionExpired,
             result = app.flowResult.snapshot,
         ),
-        onProductClick = { navigator.navigate(ConsentDetailsFormScreenDestination(productId = it.id)) },
+        onProductClick = { navigator.navigate(app.firstStepFor(it)) },
         onProfileClick = { navigator.navigate(ProfileSwitchSheetDestination) },
         onScanClick = { navigator.navigate(ScanTokenScreenDestination) },
     )
@@ -229,6 +231,17 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
             }
         },
     )
+}
+
+/**
+ * Where a product's journey starts. A token binding the required user details relaxes the SDK's own
+ * requirement, so the details form has nothing left to collect and is skipped. The ID form is not
+ * skipped with it: the token never relaxes ID params, whatever else it carries.
+ */
+private fun UseSmileIDSampleAppState.firstStepFor(product: UseSmileIDSampleProduct): Direction = when {
+    !tokenBindsUserDetails -> ConsentDetailsFormScreenDestination(productId = product.id)
+    product.needsIdDetails -> IdDetailsFormScreenDestination(productId = product.id)
+    else -> sdkFlow(product.id)
 }
 
 /** Only for products that need ID details. */
@@ -435,8 +448,13 @@ fun ScanTokenScreen(navigator: DestinationsNavigator) {
         onTorchToggle = { torchOn = !torchOn },
         // The camera lives in the shell: `sample-ui` runs under eight identities, and only this one
         // owns a scanner. It unbinds on leaving composition, so the SDK gets the camera back (§7.1).
-        viewfinder = { modifier, onCandidate ->
-            UseSmileIDSampleQrScanner(onCode = onCandidate, torchOn = torchOn, modifier = modifier)
+        viewfinder = { modifier, enabled, onCandidate ->
+            UseSmileIDSampleQrScanner(
+                onCode = onCandidate,
+                torchOn = torchOn,
+                enabled = enabled,
+                modifier = modifier,
+            )
         },
     )
 }

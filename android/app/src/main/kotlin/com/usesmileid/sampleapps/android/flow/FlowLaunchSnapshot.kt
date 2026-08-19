@@ -284,7 +284,19 @@ private val UseSmileIDSampleProduct.needsDocumentCapture: Boolean
 private val FlowLaunchSnapshot.liveSession: UseSmileIDSampleTokenSession?
     get() = session?.takeUnless { scenario.startsExpired }
 
-private val UseSmileIDSampleScenario.startsExpired: Boolean
+/**
+ * Whether the token this run will submit under binds the user details the SDK requires — both names
+ * plus one contact field. When it does the SDK asks nothing more of `userDetails`, so the host's own
+ * form has nothing left to collect and the journey may start past it. Read through the same
+ * live-session rule the gate uses, so a skipped form can never be followed by a redirect back to it.
+ */
+val UseSmileIDSampleAppState.tokenBindsUserDetails: Boolean
+    get() = session
+        ?.takeIf { sessionActive && !flowResult.scenario.startsExpired }
+        ?.bindings
+        ?.bindsRequiredUserDetails == true
+
+internal val UseSmileIDSampleScenario.startsExpired: Boolean
     get() = this == UseSmileIDSampleScenario.ExpiredToken || this == UseSmileIDSampleScenario.BadRefresh
 
 private val PRIVACY_POLICY_URL = URL("https://usesmileid.com/privacy-policy")
