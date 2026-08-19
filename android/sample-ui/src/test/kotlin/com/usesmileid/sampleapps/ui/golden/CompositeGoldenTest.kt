@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.components.ChevronRightGlyph
 import com.usesmileid.sampleapps.ui.components.ProductMarkGlyph
-import com.usesmileid.sampleapps.ui.components.TorchGlyph
+import com.usesmileid.sampleapps.ui.components.FlashGlyph
 import com.usesmileid.sampleapps.ui.components.TrashGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDataFieldRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDateGroupHeader
@@ -124,7 +124,7 @@ private fun TopAppBars() = Column(verticalArrangement = stack) {
             contentDescription = "Torch",
             onClick = {},
             emphasis = UseSmileIDSampleTopAppBarEmphasis.Filled,
-        ) { tint -> TorchGlyph(tint = tint) }
+        ) { tint -> FlashGlyph(tint = tint) }
     }
     UseSmileIDSampleTopAppBar(title = "Enhanced Document Verification", onBack = {})
 }

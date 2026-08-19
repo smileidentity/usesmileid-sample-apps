@@ -34,7 +34,7 @@ import com.smileid.designsystem.smileProductHues
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.components.ChevronRightGlyph
 import com.usesmileid.sampleapps.ui.components.ProductMarkGlyph
-import com.usesmileid.sampleapps.ui.components.TorchGlyph
+import com.usesmileid.sampleapps.ui.components.FlashGlyph
 import com.usesmileid.sampleapps.ui.components.TrashGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleAvatar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleBottomSheet
@@ -303,7 +303,7 @@ private fun gallerySections(): List<GallerySectionSpec> {
                     contentDescription = "Torch",
                     onClick = {},
                     emphasis = UseSmileIDSampleTopAppBarEmphasis.Filled,
-                ) { tint -> TorchGlyph(tint = tint) }
+                ) { tint -> FlashGlyph(tint = tint) }
             }
             UseSmileIDSampleTopAppBar(title = "Enhanced Document Verification", onBack = {})
         },
