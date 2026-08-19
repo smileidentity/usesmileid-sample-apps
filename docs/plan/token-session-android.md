@@ -66,7 +66,8 @@ Read from `TokenPayload`, `FlowValidator`, `JobTypeValidator` and `FlowNavigatio
   stripped from the `user_details` part; the server injects the real value.
 - **A complete consent binding drops the consent screen at runtime** (`FlowNavigationManager`: the
   screen is removed from the flow the navigation runs). An *incomplete* binding is a build error that
-  names the missing subfields.
+  names the missing subfields. **This is what the source says and it is not what the device does —
+  see the defect below.**
 - **Offline mode skips decoding entirely**, so an offline run keeps the strict legacy rules and loses
   every relaxation above. That matters the moment we save jobs offline (§6).
 - **ID params are not relaxed by the token.** `validateBiometricKYCParams` and friends take no token
@@ -81,6 +82,20 @@ Three consequences worth stating plainly, because each one is a place a reasonab
   decode them ourselves, but never skipped, and `id_number` can never be prefilled.
 - A token-bound run **has no consent screen**, so every device flow that asserts `si_consent_screen`
   is asserting the no-token path. Token-bound coverage starts at `si_instructions_screen` (TOK-A8).
+
+**An SDK defect, found on device and not inferable from the source (2026-08-19, `12.0.2`):** a token
+whose `payload.consent` binding is complete makes the flow deliver `UseSmileIDResult.Cancelled`
+**immediately, with no user action**, so the host lands back where it started and the run never begins.
+The same token with the consent binding removed runs normally through to the consent screen, which is
+what isolates the binding as the trigger — bisected on a quiet handset, release build, twice.
+`FlowNavigationManager` does filter the Consent screen out of `flowStructure` exactly as §3 describes,
+and `navigationPath` seeds from `screens.firstOrNull()`, so a start at instructions is what the code
+reads like; the cancellation arrives from `deliverTerminalOnTeardown()`, which fires when the
+`FlowNavigationManager` ViewModel is cleared. Root-causing beyond that is the SDK repo's to do, and it
+should be filed there with this repro. Two consequences here: the consent-screen drop — the thing §7.2
+calls the most valuable client-side behaviour a fixture token can exercise — **cannot be asserted on
+device yet**, and `token-session.yaml` therefore covers the unbound path and records why rather than
+encoding the defect as expected behaviour.
 
 **An SDK gap to file, not work around:** `UseSmileIDJwtDecoder` and `DecodedToken` are public, but
 `DecodedToken.tokenPayload` is `internal`, so a host cannot reach the parsed payload through the
@@ -358,6 +373,11 @@ client-side: the decode rules, the binding flags, the countdown and the ring at 
 expiry gate, the builder handoff — and, most valuably, **the consent-screen drop**. Mint a token
 carrying a complete consent binding and the SDK removes its consent screen, so the journey that §8
 described as hand-driven becomes a deterministic device assertion.
+
+**Correction from the build:** every one of those holds on device *except* the consent-screen drop,
+which cannot be asserted at all on `12.0.2` — a complete consent binding cancels the run outright (§3).
+Minting it is still worth doing, because it is what produced the repro; asserting the resulting journey
+waits on the SDK.
 
 What it cannot exercise, and what still needs a real Portal token by hand: a server actually
 accepting the token, and the QR itself. That boundary is worth stating in the PR rather than letting
