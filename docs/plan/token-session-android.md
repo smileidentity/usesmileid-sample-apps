@@ -257,6 +257,44 @@ which is cheaper and more certain than watching a device for eight hours.
 
 ---
 
+## 4.1 Three things a real token exposed that the fixtures could not
+
+Found while driving Enhanced KYC on device against Portal-minted tokens (2026-08-19). None is caused by
+the token session; all three are the sample's own, and each one makes a real run fail in a way that
+reads as a defect in the SDK.
+
+1. **The partner id was the sample's fixture, not the token's.** `applying()` sent
+   `partnerConfig { partnerId = profiles.active.id }` — literally `"p-1"` — alongside a real signed
+   token whose own `partner_id` claim is the true one. The server answered **HTTP 401** and the SDK
+   showed its "Submission Failed" screen, which is easily mistaken for a crash. **Fixed:** a live
+   session's `partner_id` now wins over the local profile, on the same principle as the environment
+   decision — the token is the authority for its own identity. The claim is decoded but never logged;
+   a partner id is on this repo's never-commit list.
+
+2. **The environment has two sources of truth that can disagree.** The chip reads
+   `profiles.active.environment`; `useSandbox` reads the `sandbox` launch argument (default `true`).
+   Profile `p-3` is Production, so selecting it displays Production while the builder still submits to
+   sandbox. **Owed decision** — the fix is to resolve both from one source and let the launch argument
+   override only when present, which makes `sandbox` nullable and needs a `spec/launch-args.json` note.
+
+3. **Sandbox only accepts predefined test identities, and this repo documents none.** The ID-details
+   form accepts any value, so a run typed with an arbitrary ID number cannot succeed whatever the
+   credentials — and neither can a device flow. **Owed, as its own PR** (owner call 2026-08-19): seed
+   the form with a valid sandbox identity and use it in `token-session.yaml`, or document the list.
+   Until then no automated sandbox run can reach a successful submission, which is worth knowing
+   before reading a red flow as a regression.
+
+**A fourth thing, and the reason the other three were findable:** the sample now sets
+`config { logging { enabled = BuildConfig.DEBUG; level = HEADERS } }`, and the SDK's own logging is
+what turned "it crashes" into an exact answer. It reaches logcat under the tag `OkHttp`, and its
+redaction holds — `smileid-token`, `smileid-partner-id` and `smileid-device-nonce` all print as `██`,
+with no raw JWT anywhere in the output. `HEADERS` rather than `BODY` deliberately: a logged body
+carries the `user_details` this repo forbids in logs, and one word raises it locally when a response
+body is what you need. Debug builds only, so a release never logs traffic.
+
+It also settles the environment question empirically: the request goes to `testapi.smileidentity.com`,
+so `useSandbox = true` really is in effect regardless of which profile the chip shows.
+
 ## 5. Where each piece of state belongs
 
 The rule this table applies: **Room when it is many rows that get queried, DataStore when it is one
