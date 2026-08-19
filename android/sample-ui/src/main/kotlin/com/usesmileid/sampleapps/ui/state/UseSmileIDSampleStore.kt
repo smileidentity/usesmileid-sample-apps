@@ -5,7 +5,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -28,29 +27,29 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
         )
     }
 
+    /**
+     * The token is the whole record: the handle, the deadline and the bindings all decode from it, so
+     * storing them alongside it would only create copies that can disagree with it. A stored token
+     * that no longer decodes reads as no session rather than a degraded one.
+     *
+     * Unencrypted, deliberately: the token is short-lived and sandbox-scoped, and losing the session
+     * on every process death the camera can cause would make the feature unusable.
+     */
     val tokenSession: Flow<UseSmileIDSampleTokenSession?> = store.data.map { prefs ->
-        val id = prefs[SESSION_ID]
-        val expiresAt = prefs[SESSION_EXPIRES_AT]
-        if (id == null || expiresAt == null) null else UseSmileIDSampleTokenSession(id, expiresAt)
+        prefs[SESSION_TOKEN]?.let(UseSmileIDSampleTokenDecoder::session)
     }
 
     suspend fun setSetting(setting: UseSmileIDSampleSetting, enabled: Boolean) {
         store.edit { prefs -> prefs[setting.key()] = enabled }
     }
 
-    /** Stores the deadline the caller computed, so restoration never re-derives a shorter session. */
-    suspend fun linkTokenSession(id: String, expiresAtMillis: Long) {
-        store.edit { prefs ->
-            prefs[SESSION_ID] = id
-            prefs[SESSION_EXPIRES_AT] = expiresAtMillis
-        }
+    /** Takes the session rather than the raw token, so only a decoded one can ever be linked. */
+    suspend fun linkTokenSession(session: UseSmileIDSampleTokenSession) {
+        store.edit { prefs -> prefs[SESSION_TOKEN] = session.token }
     }
 
     suspend fun clearTokenSession() {
-        store.edit { prefs ->
-            prefs.remove(SESSION_ID)
-            prefs.remove(SESSION_EXPIRES_AT)
-        }
+        store.edit { prefs -> prefs.remove(SESSION_TOKEN) }
     }
 
     private fun UseSmileIDSampleSetting.key(): Preferences.Key<Boolean> = when (this) {
@@ -69,8 +68,7 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
         val CONSENT_STEP = booleanPreferencesKey("consent_step")
         val INSTRUCTIONS_STEP = booleanPreferencesKey("instructions_step")
         val PREVIEW_STEP = booleanPreferencesKey("preview_step")
-        val SESSION_ID = stringPreferencesKey("token_session_id")
-        val SESSION_EXPIRES_AT = longPreferencesKey("token_session_expires_at")
+        val SESSION_TOKEN = stringPreferencesKey("token_session_token")
     }
 }
 
