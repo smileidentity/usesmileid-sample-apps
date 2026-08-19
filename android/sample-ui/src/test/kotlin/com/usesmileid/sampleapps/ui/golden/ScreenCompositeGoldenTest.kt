@@ -22,6 +22,8 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProfileEnvChip
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleScanGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleScanSheet
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleScanSheetState
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleScanStatus
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScanState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionHeader
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSessionCard
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSessionEndedBanner
@@ -35,6 +37,10 @@ import org.junit.Test
 
 /** Hues come from the token palette in order, not a guessed product mapping: that list is still outstanding. */
 class ScreenCompositeGoldenTest : GoldenTest() {
+
+    private companion object {
+        const val REJECTION = "A token is three dot-separated base64url segments; this is not."
+    }
 
     @Test
     fun product_card() = goldens("product_card") { ProductCards() }
@@ -92,6 +98,29 @@ class ScreenCompositeGoldenTest : GoldenTest() {
 
     @Test
     fun scan_sheet_max_font_scale() = assertSurvivesMaxFontScale { ScanSheets() }
+
+    // The scanner's four states, which a device screenshot cannot pin: three of them last under a
+    // second before the screen moves on.
+    @Test
+    fun scan_status_searching() = goldens("scan_status_searching") { ScanStatus(UseSmileIDSampleScanState.Searching) }
+
+    @Test
+    fun scan_status_found() = goldens("scan_status_found") { ScanStatus(UseSmileIDSampleScanState.Found) }
+
+    @Test
+    fun scan_status_linked() = goldens("scan_status_linked") {
+        ScanStatus(UseSmileIDSampleScanState.Linked(handle = "924fa5e4", remaining = "7:59:12"))
+    }
+
+    @Test
+    fun scan_status_rejected() = goldens("scan_status_rejected") {
+        ScanStatus(UseSmileIDSampleScanState.Rejected(reason = REJECTION))
+    }
+
+    @Test
+    fun scan_status_rejected_max_font_scale() = assertSurvivesMaxFontScale {
+        ScanStatus(UseSmileIDSampleScanState.Rejected(reason = REJECTION))
+    }
 
     @Test
     fun swipe_action() = goldens("swipe_action") { SwipeActions() }
@@ -193,11 +222,16 @@ private fun FloatingTokenButtons() = UseSmileIDSampleFloatingTokenButton(onClick
 private fun ScanGlyphs() = UseSmileIDSampleScanGlyph()
 
 @Composable
+private fun ScanStatus(state: UseSmileIDSampleScanState) =
+    UseSmileIDSampleScanStatus(state = state, onRetry = {})
+
+@Composable
 private fun ScanSheets() = UseSmileIDSampleScanSheet(
     state = UseSmileIDSampleScanSheetState(),
     onTokenChange = {},
     onPaste = {},
     onLink = {},
+    onExpandToggle = {},
     onSpanSelect = {},
     onBindingsChange = {},
     onSimulate = {},

@@ -518,6 +518,7 @@ private fun gallerySections(): List<GallerySectionSpec> {
                 onTokenChange = {},
                 onPaste = {},
                 onLink = {},
+                onExpandToggle = {},
                 onSpanSelect = {},
                 onBindingsChange = {},
                 onSimulate = {},

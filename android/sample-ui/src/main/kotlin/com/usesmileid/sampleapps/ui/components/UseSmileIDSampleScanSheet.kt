@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -41,6 +42,8 @@ data class UseSmileIDSampleScanSheetState(
     val rejection: String? = null,
     val span: UseSmileIDSampleSimulatedSpan = UseSmileIDSampleSimulatedSpan.FifteenMinutes,
     val bindings: UseSmileIDSampleSimulatedBindings = UseSmileIDSampleSimulatedBindings(),
+    /** The mint controls start closed so the viewfinder keeps its height. */
+    val expanded: Boolean = false,
 )
 
 /**
@@ -55,6 +58,7 @@ fun UseSmileIDSampleScanSheet(
     onTokenChange: (String) -> Unit,
     onPaste: () -> Unit,
     onLink: () -> Unit,
+    onExpandToggle: () -> Unit,
     onSpanSelect: (UseSmileIDSampleSimulatedSpan) -> Unit,
     onBindingsChange: (UseSmileIDSampleSimulatedBindings) -> Unit,
     onSimulate: () -> Unit,
@@ -109,7 +113,26 @@ fun UseSmileIDSampleScanSheet(
             if (state.token.isNotBlank()) {
                 UseSmileIDSampleButton(text = "Link token", onClick = onLink)
             }
-            UseSmileIDSampleSectionLabel(text = "SIMULATED SCAN")
+            // Collapsed by default, and that is the point: this is a scanner, and the mint controls are a
+            // probe affordance. Expanded they took enough height to leave the viewfinder a letterbox.
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(role = Role.Button) { onExpandToggle() }
+                    .padding(vertical = SmileDimens.spacingXxs),
+                horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                UseSmileIDSampleSectionLabel(text = "SIMULATED SCAN", modifier = Modifier.weight(1f))
+                Box(modifier = Modifier.size(SmileDimens.sizeIconMd), contentAlignment = Alignment.Center) {
+                    if (state.expanded) {
+                        ChevronDownGlyph(tint = colors.textMuted)
+                    } else {
+                        ChevronRightGlyph(tint = colors.textMuted)
+                    }
+                }
+            }
+            if (state.expanded) {
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
@@ -141,6 +164,7 @@ fun UseSmileIDSampleScanSheet(
                     role = Role.Checkbox,
                     onClick = { onBindingsChange(state.bindings.copy(userDetails = !state.bindings.userDetails)) },
                 )
+            }
             }
             UseSmileIDSampleButton(
                 text = "Simulate a successful scan",
