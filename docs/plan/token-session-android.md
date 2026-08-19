@@ -2,7 +2,7 @@
 
 **Status:** TOK-A1–A6 and TOK-A9 built on Android — manual entry, Simulate minting, decode, session
 model, builder handoff, honest countdown, and the CameraX QR scanner with the bundled ML Kit barcode
-model. A9 was planned as its own PR and folded into the same one on the owner's call (2026-08-19), so
+model. Both host forms are now skipped when the token already carries what they would collect (§4.2). A9 was planned as its own PR and folded into the same one on the owner's call (2026-08-19), so
 the token flow lands complete rather than scannerless. TOK-A7 (Room) is next as its own PR;
 `holdCamera`, TOK-A8's remaining goldens and TOK-A10 follow it.
 
@@ -117,10 +117,28 @@ Three consequences worth stating plainly, because each one is a place a reasonab
 
 - The Consent Details Form cannot be skipped just because a token exists. It can be **relaxed**, and
   only for the four fields the SDK models.
-- The ID-details form can be **prefilled** from the token's plaintext `country` / `id_type` if we
-  decode them ourselves, but never skipped, and `id_number` can never be prefilled.
+- The ID-details form **can be skipped outright**, which is a correction to what this section said
+  first. The reasoning that ruled it out was that `id_number` had no local value to supply — but the
+  token carries one: the vault reference. The SDK's validators ask only that these three be non-blank,
+  and the server overwrites all three from the token's own claims before the job is created, so passing
+  the reference through is the honest value and not a placeholder. See §4.2.
 - A token-bound run **has no consent screen**, so every device flow that asserts `si_consent_screen`
   is asserting the no-token path. Token-bound coverage starts at `si_instructions_screen` (TOK-A8).
+
+**Verified against the published artifact, not the source (2026-08-19):** `FlowValidator` exposes
+`validateUserDetails(userDetails, tokenPayload)` — a real per-field union — and `TokenPayload` has a
+public constructor, so a host could hand the SDK its own decode and let the SDK do the deciding. **Not
+at 12.0.2:** in `usesmileid-12.0.2.aar` `FlowValidator` is minified to `a.class` and `TokenPayload` is
+absent from `com/usesmileid/data/model/`, so neither is reachable. That API is on the SDK's `main`, and
+this is the trap this repo exists to catch — reading the sibling checkout is not reading what partners
+consume. Until it ships, the union is mirrored host-side (§4.3) and `InvalidFieldValueException`, which
+*is* public at 12.0.2, carries the issues so the messages still name fields the SDK's way.
+
+**An SDK gap this leaves with the host:** because `TokenPayload` models none of `country`, `id_type` or
+`id_number`, every relaxation for them is the host's to implement — the SDK will keep asking its
+validators for values it could have read from the token it already decoded. Worth filing alongside the
+accessor ask below: a `TokenPayload` that modelled these three would let the SDK relax them itself, and
+every host would stop reimplementing this.
 
 **An SDK defect, found on device and not inferable from the source (2026-08-19, `12.0.2`):** a token
 whose `payload.consent` binding is complete makes the flow deliver `UseSmileIDResult.Cancelled`
@@ -294,6 +312,58 @@ body is what you need. Debug builds only, so a release never logs traffic.
 
 It also settles the environment question empirically: the request goes to `testapi.smileidentity.com`,
 so `useSandbox = true` really is in effect regardless of which profile the chip shows.
+
+### 4.2 Why the ID form is skipped, and where the skip stops
+
+Decided 2026-08-19 on the owner's call, after a real Portal token reached the KYC form with three empty
+fields it already had the answers to.
+
+The rule is per field, and it is the server's rule: **the token beats the form.** `injectTokenPayload`
+overwrites `country`, `id_type` and `id_number` from the token's claims, so a form the user fills and
+the server then discards is worse than no form — it invites someone to believe they chose something.
+`applyIdParams` therefore reads the token first and the form only as a fallback, and the navigation
+gate skips the form entirely when the token covers everything that form would collect.
+
+`id_number` is the field that makes this work. A token session never has the number — it has the vault
+reference standing in for it, which is non-blank (so the SDK's validator passes) and identical to what
+the server substitutes anyway (so nothing is lost). It is held as `idNumberReference` precisely so no
+one renders it as a number.
+
+Three boundaries, each deliberate:
+
+- **All or nothing per product.** A partial binding still shows the form, and the bound fields are
+  overridden afterwards. Splitting a form into some-fields-asked and some-not is a bigger UI change
+  than this earns, and the Portal mints identity fields together.
+- **Document Verification is treated more strictly than the SDK treats it.** Its validator accepts a
+  null `idType`, so a token binding country alone would build — but the form is where the document type
+  is chosen, and skipping on a partial binding would quietly submit without one instead of failing. So
+  both must be bound.
+- **A skipped form has to be visible as a skip.** The session card names the field groups the token
+  covers — `Supplies name, contact, ID` — in field names and never values, because device flows dump
+  that screen's hierarchy on failure. A form that vanishes with no explanation is indistinguishable
+  from a form the app lost.
+
+### 4.3 Partial bindings, which the Portal does not prevent
+
+The QR generator does not validate which user-detail fields it embeds, so a token may bind some and not
+others. The SDK's rule is both names plus one contact, applied per field — so three cases exist and all
+three were wrong before this:
+
+- **Both names, no contact.** The form's own rule was "first and last name", so it called itself
+  complete, enabled Continue, and the SDK then refused the build for a missing contact. A loop with no
+  exit, and it was reachable without a token at all — the form labelled both contact rows optional while
+  the SDK required one of them.
+- **Some names bound.** The form asked for the bound ones again, and what the user typed was discarded:
+  the server overwrites them from the token.
+- **Contact bound only.** Both names still needed, which the form got right by accident.
+
+One model now answers all three: `userDetailsRequirement()` subtracts the bindings from the SDK's rule,
+and everything reads from it — which rows render as `Provided by token` (never prefilled: the value is
+vaulted and the host does not have it), whether a contact row still claims to be optional, the sentence
+under the form, whether Continue is enabled, and whether the gate routes here at all. The contact rule
+stays "one of two", so a bound email does not grey out the phone row — only the requirement lifts.
+
+---
 
 ## 5. Where each piece of state belongs
 
@@ -502,3 +572,9 @@ stored (Keychain on iOS is the obvious better home than its Android counterpart,
 is fine and worth recording), how the QR is scanned, and the persistence library. The decode rules
 must be unit-tested against the same fixtures on all four so a platform cannot quietly disagree about
 what "bound" means.
+
+The form-skipping rule in §4.2 is part of that contract, not an Android choice: token beats form per
+field, both host forms are skipped only when the token covers everything they would collect, the ID
+number travels as its vault reference, Document Verification requires country *and* ID type before its
+form is skipped, and the session surface names the field groups the token supplies. A port that skips on
+a partial binding, or that renders the reference as a number, has diverged.
