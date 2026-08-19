@@ -303,6 +303,17 @@ which is the signal the decision is for.
   variant. The bundled model works with no Play services, which keeps the reference sample usable on
   the GMS-free devices this org already ships an ML variant for. It costs APK size; the
   consumer-measured size lane is what should quantify that rather than a guess in this document.
+
+  **Now measured, because this document asked for a measurement:** the minified, resource-shrunk
+  release APK goes from **51.6 MB to 72.9 MB — plus 21.3 MB, a 41% increase**. The bundled model ships
+  as a native library per ABI and this app packages four (`arm64-v8a`, `armeabi-v7a`, `x86`, `x86_64`),
+  so barcode entries alone account for 44.4 MB uncompressed and the two x86 slices no phone will run
+  are about half the native payload. That is a real cost on a sample partners are asked to read, and it
+  deserves an owner ruling rather than silent acceptance. Three levers, none taken here because each
+  trades against something already settled: ABI splits or an app bundle (packaging only, no behaviour
+  change, would recover most of it); the play-services barcode variant (downloads the model, but
+  reintroduces the GMS dependency this choice exists to avoid); or accept it, on the grounds that a
+  reference sample's fidelity matters more than its size.
   **One correction to that reasoning, read off the graph:** this app consumes `mlkit-face`, which
   pulls `com.google.android.gms:play-services-mlkit-face-detection`, so *this* app already requires
   Play services regardless. The GMS-free argument therefore justifies the variant choice for a
