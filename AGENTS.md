@@ -166,6 +166,9 @@ that variable locally — a silent pass is how vendored tokens drift from their 
 - **PR titles lead with an emoji and describe the outcome**, matching the SDK repos:
   `<emoji> <scope>: <what changed — why it matters>`. Vary the emoji per change (🧰 tooling,
   📝 docs, 🐛 fix, 🎨 UI, 🔌 wiring, 📦 packaging, ♿ accessibility, 🔒 hardening).
+- **Agents: open and update PRs through the `create-pr` skill, never by hand.** It runs the pre-PR
+  review, takes the description's rationale from the author rather than the diff, and keeps internal
+  context out of what reviewers read.
 - **A PR is not finished when it is opened.** Pull its review comments, fix what is real, reply
   saying what changed and how you verified it, then resolve the thread. Say so plainly when a
   comment is wrong, with the reasoning — silence reads as unaddressed.

@@ -3,8 +3,12 @@ package com.usesmileid.sampleapps.android
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -73,9 +77,17 @@ fun UseSmileIDSampleShell() {
     ForwardNewIntentsTo(navController)
     AutostartFlowOnce(navigator)
 
+    // The fullscreen flow handles its own insets, so the host contributes none (R3).
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val fullscreenFlow = backStackEntry?.let { entry ->
+        entry.destination.route == SdkFlowScreenDestination.route &&
+            SdkFlowScreenDestination.argsFrom(entry).route == UseSmileIDSampleFlowRoute.Fullscreen
+    } == true
+
     Scaffold(
         // UI automation only sees Compose test tags once they are published as resource ids.
         modifier = Modifier.semantics { testTagsAsResourceId = true },
+        contentWindowInsets = if (fullscreenFlow) WindowInsets(0) else ScaffoldDefaults.contentWindowInsets,
         bottomBar = {
             // Only select mode gets the slot: the slot insets the content, and the nav bar must not.
             chrome.selection?.let { selection ->

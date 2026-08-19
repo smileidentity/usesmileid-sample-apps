@@ -30,11 +30,13 @@ import com.ramcosta.composedestinations.generated.destinations.ProfileSwitchShee
 import com.ramcosta.composedestinations.generated.destinations.ProfilesScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ScenarioDrawerSheetDestination
+import com.ramcosta.composedestinations.generated.destinations.SdkFlowScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.VerificationDetailsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
+import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleOverlay
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleToast
@@ -219,6 +221,8 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
         onContinue = {
             if (product?.needsIdDetails == true) {
                 navigator.navigate(IdDetailsFormScreenDestination(productId = productId))
+            } else {
+                navigator.navigate(app.sdkFlow(productId)) { launchSingleTop = true }
             }
         },
     )
@@ -236,7 +240,7 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
         onIdTypeClick = { navigator.navigate(IdTypePickerSheetDestination(productId = productId)) },
         onIdNumberChange = app.forms::setIdNumber,
         onBack = { navigator.navigateUp() },
-        onContinue = {},
+        onContinue = { navigator.navigate(app.sdkFlow(productId)) { launchSingleTop = true } },
         onTokenClick = { navigator.navigate(ScanTokenScreenDestination) },
     )
 }
@@ -271,6 +275,13 @@ fun IdTypePickerSheet(productId: String, navigator: DestinationsNavigator) {
 }
 
 private fun productOf(productId: String) = UseSmileIDSampleProduct.entries.firstOrNull { it.id == productId }
+
+/**
+ * The wizard's last hop, carrying the launched presentation (R3). Without it the in-shell route is
+ * unreachable with a payload: its other carriers are cold starts, where the forms are always empty.
+ */
+private fun UseSmileIDSampleAppState.sdkFlow(productId: String) =
+    SdkFlowScreenDestination(productId = productId, route = launchArgs.route)
 
 @Destination<RootGraph>(style = UseSmileIDSampleSheetTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.PROFILE_SWITCH)])
 @Composable

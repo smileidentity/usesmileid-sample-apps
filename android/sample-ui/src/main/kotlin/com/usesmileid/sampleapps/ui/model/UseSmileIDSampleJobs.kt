@@ -12,6 +12,12 @@ class UseSmileIDSampleJobs(seed: List<UseSmileIDSampleJob> = emptyList()) {
 
     val all: List<UseSmileIDSampleJob> get() = items
 
+    /** Newest first. An id already held is a no-op: the list keys rows by job id, so a duplicate throws. */
+    fun add(job: UseSmileIDSampleJob) {
+        if (items.any { it.id == job.id }) return
+        items.add(0, job)
+    }
+
     fun count(filter: UseSmileIDSampleJobFilter) = items.count(filter::matches)
 
     fun remove(ids: Set<String>) {

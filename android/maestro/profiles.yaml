@@ -46,9 +46,12 @@ appId: ${APP_ID}
     id: "sample_new_profile_save"
 
 # The confirmation belongs to the list the sheet returns to, and creating does not activate.
+# Asserted FIRST because it is the only transient thing here: it lives 5 s from arrival, and an
+# assertion ahead of it spends part of that window on a hierarchy dump — slow enough on a minified
+# build to miss a confirmation that did render. It only draws over the list, so it synchronises too.
+- assertVisible: "Karibu Pay created"
 - assertVisible:
     id: "sample_profiles_screen"
-- assertVisible: "Karibu Pay created"
 - assertVisible: "Kwame Asante · active"
 
 # The window has to actually expire. Consuming the store's signal used to cancel the timer that
