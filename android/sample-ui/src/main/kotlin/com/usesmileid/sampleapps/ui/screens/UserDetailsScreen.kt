@@ -28,6 +28,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwitch
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBar
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetailsRequirement
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserField
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -43,6 +44,8 @@ fun UserDetailsScreen(
     onContinue: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
+    /** What is still outstanding once the token's own bindings are taken off the SDK's rule. */
+    requirement: UseSmileIDSampleUserDetailsRequirement = UseSmileIDSampleUserDetailsRequirement(),
 ) {
     Column(
         modifier = modifier
@@ -75,12 +78,16 @@ fun UserDetailsScreen(
                                         color = UseSmileIDSampleTheme.colors.card.border,
                                     )
                                 }
+                                // Shown as provided, not asked again — the value is vaulted, so it
+                                // cannot be prefilled either.
+                                val supplied = requirement.supplies(field)
                                 UseSmileIDSampleKeyValueEditRow(
-                                    label = field.label,
-                                    value = field.read(details),
+                                    label = requirement.labelFor(field),
+                                    value = if (supplied) "" else field.read(details),
                                     onValueChange = { onFieldChange(field, it) },
-                                    placeholder = field.placeholder,
-                                    required = field.required,
+                                    placeholder = if (supplied) "Provided by token" else field.placeholder,
+                                    required = false,
+                                    enabled = !supplied,
                                     testId = UseSmileIDSampleTestIds.userDetailsField(field.id),
                                 )
                             }
@@ -90,7 +97,7 @@ fun UserDetailsScreen(
             }
             item {
                 Text(
-                    text = if (details.isComplete) "Tap any field to edit." else "First and last name are required.",
+                    text = if (details.satisfies(requirement)) "Tap any field to edit." else requirement.prompt,
                     style = UseSmileIDSampleTheme.type.textStyleCaption,
                     color = UseSmileIDSampleTheme.colors.textMuted,
                     modifier = Modifier
@@ -99,7 +106,7 @@ fun UserDetailsScreen(
                 )
             }
             // Only once the details are worth remembering, which is how the design shows it.
-            if (details.isComplete) {
+            if (details.satisfies(requirement)) {
                 item {
                     Surface(
                         modifier = Modifier
@@ -140,7 +147,7 @@ fun UserDetailsScreen(
         UseSmileIDSampleButton(
             text = "Continue",
             onClick = onContinue,
-            enabled = details.isComplete,
+            enabled = details.satisfies(requirement),
             modifier = Modifier.padding(SmileDimens.spacingMd),
             testId = UseSmileIDSampleTestIds.USER_DETAILS_CONTINUE,
         )

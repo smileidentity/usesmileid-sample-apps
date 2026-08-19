@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.ui.state
 
 import androidx.compose.runtime.Immutable
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import java.security.MessageDigest
 import kotlin.io.encoding.Base64
 
@@ -18,7 +19,15 @@ data class UseSmileIDSampleTokenBindings(
     val consent: UseSmileIDSampleTokenConsent? = null,
     val country: String? = null,
     val idType: String? = null,
-)
+    /** The vault reference standing in for the ID number, which is the only form a token carries it in. */
+    val idNumberReference: String? = null,
+) {
+    /** Redacted like the session's: every one of these is a claim value, and one is a vault reference. */
+    override fun toString(): String = "UseSmileIDSampleTokenBindings(" +
+        "givenNames=$givenNames, lastName=$lastName, email=$email, phoneNumber=$phoneNumber, " +
+        "consent=${consent != null}, country=${country != null}, idType=${idType != null}, " +
+        "idNumberReference=${idNumberReference != null})"
+}
 
 /**
  * The consent record bound into the token. `granted` is `true` or absent by construction, mirroring
@@ -44,7 +53,19 @@ data class UseSmileIDSampleTokenConsent(
  * SDK's own `bindsRequiredUserDetails`, which is `internal`; the unit tests pin both to its rules.
  */
 val UseSmileIDSampleTokenBindings.bindsRequiredUserDetails: Boolean
-    get() = givenNames && lastName && (email || phoneNumber)
+    get() = userDetailsRequirement().isSatisfied
+
+/**
+ * Whether the token carries every ID parameter [product] submits. Stricter than Document Verification's
+ * validator, which accepts a null `idType`: the form is where the document type is chosen (§4.2).
+ */
+fun UseSmileIDSampleTokenBindings.bindsIdDetails(product: UseSmileIDSampleProduct): Boolean = when (product) {
+    UseSmileIDSampleProduct.EnhancedKyc, UseSmileIDSampleProduct.BiometricKyc ->
+        !country.isNullOrBlank() && !idType.isNullOrBlank() && !idNumberReference.isNullOrBlank()
+    UseSmileIDSampleProduct.DocumentVerification, UseSmileIDSampleProduct.EnhancedDocumentVerification ->
+        !country.isNullOrBlank() && !idType.isNullOrBlank()
+    else -> true
+}
 
 /** Either the session a token describes, or why it is not one. */
 sealed interface UseSmileIDSampleTokenDecode {
@@ -109,8 +130,10 @@ object UseSmileIDSampleTokenDecoder {
         email = binds("email"),
         phoneNumber = binds("phone_number"),
         consent = obj("consent")?.consent(),
-        country = string("country")?.takeIf { it.isNotEmpty() },
-        idType = string("id_type")?.takeIf { it.isNotEmpty() },
+        // isNotBlank, unlike the presence flags: these are read as values, and a blank one would win.
+        country = string("country")?.takeIf { it.isNotBlank() },
+        idType = string("id_type")?.takeIf { it.isNotBlank() },
+        idNumberReference = string("id_number")?.takeIf { it.isNotBlank() },
     )
 
     /** An empty consent object is no consent, and a non-boolean `granted` never counts toward one. */

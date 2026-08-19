@@ -18,7 +18,8 @@ enum class UseSmileIDSampleSimulatedSpan(val label: String, val span: Duration, 
 
 /**
  * What a simulated scan's token binds. Both default to off, so a simulated session never silently
- * changes the SDK's screen set: a bound consent removes the SDK's consent screen at runtime.
+ * changes the screen set: a bound consent removes the SDK's consent screen at runtime, and bound
+ * details carry the ID parameters too, which removes the host's own ID form.
  */
 @Immutable
 data class UseSmileIDSampleSimulatedBindings(val consent: Boolean = false, val userDetails: Boolean = false) {

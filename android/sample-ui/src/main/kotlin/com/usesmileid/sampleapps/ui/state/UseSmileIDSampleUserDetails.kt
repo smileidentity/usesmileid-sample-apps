@@ -17,6 +17,12 @@ data class UseSmileIDSampleUserDetails(
     /** The design's own rule: "First and last name are required." */
     val isComplete: Boolean get() = firstName.isNotBlank() && lastName.isNotBlank()
 
+    /** Whether the form has collected what [requirement] still asks of it. */
+    fun satisfies(requirement: UseSmileIDSampleUserDetailsRequirement): Boolean =
+        (!requirement.firstName || firstName.isNotBlank()) &&
+            (!requirement.lastName || lastName.isNotBlank()) &&
+            (!requirement.contact || email.isNotBlank() || phone.isNotBlank())
+
     companion object {
         val Saver: Saver<MutableState<UseSmileIDSampleUserDetails>, Any> = listSaver(
             save = { listOf(it.value.firstName, it.value.lastName, it.value.email, it.value.phone) },
@@ -24,6 +30,64 @@ data class UseSmileIDSampleUserDetails(
         )
     }
 }
+
+/**
+ * What the form must still collect: the SDK's rule minus what the token binds. The static `required` flags
+ * below cannot express either half of that.
+ */
+@Immutable
+data class UseSmileIDSampleUserDetailsRequirement(
+    val firstName: Boolean = true,
+    val lastName: Boolean = true,
+    val contact: Boolean = true,
+) {
+    /** Nothing left to ask, so the form has no reason to appear. */
+    val isSatisfied: Boolean get() = !firstName && !lastName && !contact
+
+    /** No relevant binding at all, which is the one case the SDK's own validator can still decide. */
+    val bindsNothing: Boolean get() = firstName && lastName && contact
+
+    /** Whether [field] is one the token already supplied, which is why it renders as provided. */
+    fun supplies(field: UseSmileIDSampleUserField): Boolean = when (field) {
+        UseSmileIDSampleUserField.FirstName -> !firstName
+        UseSmileIDSampleUserField.LastName -> !lastName
+        // Neither contact row is individually supplied: the rule is "one of", so a bound email leaves
+        // phone askable and vice versa. Only the requirement itself lifts.
+        UseSmileIDSampleUserField.Email, UseSmileIDSampleUserField.Phone -> false
+    }
+
+    /** A contact row stops saying "optional" the moment one of the two is actually required. */
+    fun labelFor(field: UseSmileIDSampleUserField): String = when {
+        !contact -> field.label
+        field == UseSmileIDSampleUserField.Email -> "Email"
+        field == UseSmileIDSampleUserField.Phone -> "Phone"
+        else -> field.label
+    }
+
+    /** The sentence under the form, which has to name what is actually outstanding. */
+    val prompt: String
+        get() = buildList {
+            if (firstName) add("first name")
+            if (lastName) add("last name")
+            if (contact) add("an email or phone number")
+        }.let { outstanding ->
+            when {
+                outstanding.isEmpty() -> "Tap any field to edit."
+                outstanding.size == 1 -> "${outstanding.single().replaceFirstChar(Char::titlecase)} is required."
+                else -> "Required: ${outstanding.joinToString(", ")}."
+            }
+        }
+}
+
+/**
+ * The requirement a token leaves behind. Mirrors the SDK's union rule field for field, and the unit
+ * tests pin it to `FlowValidator.validateUserDetails`, which is the authority.
+ */
+fun UseSmileIDSampleTokenBindings?.userDetailsRequirement() = UseSmileIDSampleUserDetailsRequirement(
+    firstName = this?.givenNames != true,
+    lastName = this?.lastName != true,
+    contact = !(this?.email == true || this?.phoneNumber == true),
+)
 
 /** Which user-details row changed, so the form reports one callback rather than four. */
 enum class UseSmileIDSampleUserField(val id: String, val label: String, val placeholder: String, val required: Boolean) {

@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.state
 
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import java.util.Base64
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -106,10 +107,59 @@ class UseSmileIDSampleTokenDecoderTest {
     }
 
     @Test
-    fun `country and id_type are the two the token carries in plaintext`() {
-        val bindings = bindings(""""country":"KE","id_type":"NATIONAL_ID","id_number":"vault_id_number"""")
+    fun `the two plaintext claims and the ID number's vault reference are all read`() {
+        val bindings = bindings(""""country":"KE","id_type":"NATIONAL_ID","id_number":"pii_fixture01"""")
         assertEquals("KE", bindings.country)
         assertEquals("NATIONAL_ID", bindings.idType)
+        assertEquals("pii_fixture01", bindings.idNumberReference)
+    }
+
+    @Test
+    fun `a blank value claim reads as absent, unlike the presence flags`() {
+        val bindings = bindings(""""country":" ","id_type":"","id_number":"  """")
+        assertNull(bindings.country)
+        assertNull(bindings.idType)
+        assertNull(bindings.idNumberReference)
+    }
+
+    @Test
+    fun `the KYC products need country, ID type and the ID number reference before their form is skipped`() {
+        val bound = UseSmileIDSampleTokenBindings(country = "KE", idType = "NATIONAL_ID", idNumberReference = "pii_1")
+        listOf(UseSmileIDSampleProduct.EnhancedKyc, UseSmileIDSampleProduct.BiometricKyc).forEach { product ->
+            assertTrue(bound.bindsIdDetails(product))
+            assertFalse(bound.copy(idNumberReference = null).bindsIdDetails(product))
+            assertFalse(bound.copy(idType = null).bindsIdDetails(product))
+            assertFalse(bound.copy(country = null).bindsIdDetails(product))
+        }
+    }
+
+    @Test
+    fun `both document products need country and ID type, and neither needs an ID number`() {
+        val bound = UseSmileIDSampleTokenBindings(country = "KE", idType = "NATIONAL_ID")
+        listOf(
+            UseSmileIDSampleProduct.DocumentVerification,
+            UseSmileIDSampleProduct.EnhancedDocumentVerification,
+        ).forEach { product ->
+            assertTrue(bound.bindsIdDetails(product))
+            // Document Verification's own validator accepts a null idType, but the form is where the
+            // document type is chosen — so a partial binding must still go through it.
+            assertFalse(bound.copy(idType = null).bindsIdDetails(product))
+            assertFalse(bound.copy(country = null).bindsIdDetails(product))
+        }
+    }
+
+    @Test
+    fun `a product that submits no ID parameters is never sent to the form`() {
+        listOf(UseSmileIDSampleProduct.SmartSelfieEnrollment, UseSmileIDSampleProduct.SmartSelfieAuth)
+            .forEach { assertTrue(UseSmileIDSampleTokenBindings().bindsIdDetails(it)) }
+    }
+
+    @Test
+    fun `the bindings toString reports presence, because a vault reference is still a claim value`() {
+        val text = bindings(""""country":"KE","id_type":"NATIONAL_ID","id_number":"pii_fixture01"""").toString()
+        listOf("KE", "NATIONAL_ID", "pii_fixture01").forEach {
+            assertFalse("toString must not carry $it", text.contains(it))
+        }
     }
 
     @Test

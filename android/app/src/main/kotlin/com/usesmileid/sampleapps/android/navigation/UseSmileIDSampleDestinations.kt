@@ -38,6 +38,8 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleFlowTokens
+import com.usesmileid.sampleapps.android.flow.tokenBindsIdDetails
+import com.usesmileid.sampleapps.android.flow.tokenUserDetailsRequirement
 import com.usesmileid.sampleapps.android.flow.tokenBindsUserDetails
 import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleQrScanner
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
@@ -224,12 +226,10 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
         onRememberChange = app.forms::rememberDetails,
         onBack = { navigator.navigateUp() },
         onContinue = {
-            if (product?.needsIdDetails == true) {
-                navigator.navigate(IdDetailsFormScreenDestination(productId = productId))
-            } else {
-                navigator.navigate(app.sdkFlow(productId)) { launchSingleTop = true }
-            }
+            val next = product?.let(app::stepAfterUserDetails) ?: app.sdkFlow(productId)
+            navigator.navigate(next) { launchSingleTop = true }
         },
+        requirement = app.tokenUserDetailsRequirement,
     )
 }
 
@@ -238,11 +238,21 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
  * requirement, so the details form has nothing left to collect and is skipped. The ID form is not
  * skipped with it: the token never relaxes ID params, whatever else it carries.
  */
-private fun UseSmileIDSampleAppState.firstStepFor(product: UseSmileIDSampleProduct): Direction = when {
-    !tokenBindsUserDetails -> ConsentDetailsFormScreenDestination(productId = product.id)
-    product.needsIdDetails -> IdDetailsFormScreenDestination(productId = product.id)
-    else -> sdkFlow(product.id)
-}
+/** Where a product starts: a form is skipped only when the token already carries all of it. */
+private fun UseSmileIDSampleAppState.firstStepFor(product: UseSmileIDSampleProduct): Direction =
+    if (!tokenBindsUserDetails) {
+        ConsentDetailsFormScreenDestination(productId = product.id)
+    } else {
+        stepAfterUserDetails(product)
+    }
+
+/** What follows user details, shared with that form's own Continue so the two routes cannot drift. */
+private fun UseSmileIDSampleAppState.stepAfterUserDetails(product: UseSmileIDSampleProduct): Direction =
+    if (product.needsIdDetails && !tokenBindsIdDetails(product)) {
+        IdDetailsFormScreenDestination(productId = product.id)
+    } else {
+        sdkFlow(product.id)
+    }
 
 /** Only for products that need ID details. */
 @Destination<FlowGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.ID_DETAILS_FORM)])

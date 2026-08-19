@@ -122,6 +122,41 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_products_screen"
 
+# A token carrying the identity skips both host forms. Consent stays unbound to avoid the defect above.
+- tapOn:
+    id: "sample_nav_token"
+- assertVisible:
+    id: "sample_scan_token_screen"
+- tapOn: "SIMULATED SCAN"
+- tapOn: "Binds details"
+- tapOn:
+    id: "sample_token_simulate"
+- assertVisible:
+    id: "sample_session_card"
+# Not a bottom-row product: the nav bar floats over the content, so the last row's centre sits under it
+# and a centre-of-element tap lands on the nav — which `visibilityPercentage` cannot see.
+- tapOn:
+    id: "sample_product_card_documentVerification"
+# Reaching the SDK's consent screen proves the ID form was not interposed. Waited on, not asserted flat:
+# this product mounts camera and ML first, and asserting absence would pass while nav was in flight.
+- extendedWaitUntil:
+    visible:
+      id: "si_consent_screen"
+    timeout: 20000
+- tapOn: "Allow"
+- runFlow:
+    when:
+      visible:
+        id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+    commands:
+      - tapOn:
+          id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+- assertVisible:
+    id: "si_instructions_screen"
+- back
+- assertVisible:
+    id: "sample_products_screen"
+
 # An expired session is the one outcome no form can fix, so the gate routes to the scanner rather
 # than to the SDK — even with the details the previous run left filled in.
 - tapOn:
