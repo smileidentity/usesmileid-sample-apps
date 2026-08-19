@@ -25,6 +25,8 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
+import com.usesmileid.sampleapps.ui.state.bindsRequiredUserDetails
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdType
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 import java.net.URL
@@ -43,6 +45,10 @@ data class FlowLaunchSnapshot(
     val userId: String,
     val partnerId: String,
     val partnerName: String,
+    /** Live at entry only: a session that has run out is the gate's business, never the builder's. */
+    val session: UseSmileIDSampleTokenSession? = null,
+    /** A session existed and had run out — the one thing that routes back to the scanner (TOK-A5). */
+    val sessionExpired: Boolean = false,
 )
 
 fun buildSnapshot(
@@ -51,6 +57,11 @@ fun buildSnapshot(
     userId: String,
 ): FlowLaunchSnapshot? {
     val product = UseSmileIDSampleProduct.entries.firstOrNull { it.id == args.productId } ?: return null
+    // The clock is read here rather than through the app state's ticking value: the snapshot is taken
+    // once at entry (R2), and subscribing the flow host to a once-a-second tick would recompose it —
+    // which the SDK answers by re-running `build()` and tearing the run down.
+    val entryMillis = System.currentTimeMillis()
+    val session = app.session
     return FlowLaunchSnapshot(
         product = product,
         route = args.route,
@@ -62,6 +73,8 @@ fun buildSnapshot(
         userId = userId,
         partnerId = app.profiles.active.id,
         partnerName = app.profiles.active.organisation,
+        session = session?.takeUnless { it.hasExpired(entryMillis) },
+        sessionExpired = session != null && session.hasExpired(entryMillis),
     )
 }
 
@@ -94,14 +107,18 @@ fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshe
     network {
         config {
             jobType = snapshot.product.jobType
-            token = UseSmileIDSampleFlowTokens.token(
+            val scanned = snapshot.liveSession
+            token = scanned?.token ?: UseSmileIDSampleFlowTokens.token(
                 expired = snapshot.scenario.startsExpired,
                 nowMillis = System.currentTimeMillis(),
             )
-            onTokenExpired = { _ ->
+            onTokenExpired = { previous ->
                 onTokenRefreshed()
-                when (snapshot.scenario) {
-                    UseSmileIDSampleScenario.BadRefresh -> UseSmileIDSampleFlowTokens.malformed()
+                when {
+                    // The Portal mints by hand and there is no endpoint this sample may call, so the
+                    // auth failure has to surface rather than be papered over with an invented token.
+                    scanned != null -> previous
+                    snapshot.scenario == UseSmileIDSampleScenario.BadRefresh -> UseSmileIDSampleFlowTokens.malformed()
                     else -> UseSmileIDSampleFlowTokens.token(expired = false, nowMillis = System.currentTimeMillis())
                 }
             }
@@ -128,10 +145,17 @@ fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshe
 
 /** §7.3's entry gate: the SDK's non-throwing pre-flight plus its per-payload validators. */
 fun preflight(snapshot: FlowLaunchSnapshot): FlowPreflight {
+    // Ahead of the payloads, because no form fixes a session that has run out (TOK-A5).
+    if (snapshot.sessionExpired) return FlowPreflight.NeedsSession
     val builder = UseSmileIDFlowBuilder().apply { applying(snapshot) }
     // A form can fix what the user typed but not how the host built the flow, and §7.3 redirects only the first.
     val payloadChecks = buildList {
-        builder.userDetails?.let { add(builder.validateUserDetails(it)) }
+        // The SDK relaxes token-bound user details inside build(), but its host-facing
+        // validateUserDetails takes no token payload — so checking it under a binding would redirect
+        // to a form the SDK does not need.
+        if (snapshot.liveSession?.bindings?.bindsRequiredUserDetails != true) {
+            builder.userDetails?.let { add(builder.validateUserDetails(it)) }
+        }
         builder.biometricKYCParams?.let { add(builder.validateBiometricKYCParams(it)) }
         builder.enhancedKYCParams?.let { add(builder.validateEnhancedKYCParams(it)) }
         builder.documentVerificationParams?.let { add(builder.validateDocumentVerificationParams(it)) }
@@ -151,6 +175,9 @@ sealed interface FlowPreflight {
 
     /** The forms can resolve it. */
     data class NeedsDetails(val issues: List<UseSmileIDValidationException>) : FlowPreflight
+
+    /** Only a new token resolves it, so the journey goes back to the scanner rather than to a form. */
+    data object NeedsSession : FlowPreflight
 
     /** No form can resolve it, and it must still never reach the SDK. */
     data class Misconfigured(val issues: List<UseSmileIDValidationException>) : FlowPreflight
@@ -249,6 +276,13 @@ private val UseSmileIDSampleProduct.jobType: JobType
 private val UseSmileIDSampleProduct.needsDocumentCapture: Boolean
     get() = this == UseSmileIDSampleProduct.DocumentVerification ||
         this == UseSmileIDSampleProduct.EnhancedDocumentVerification
+
+/**
+ * The session a run actually submits under. Absent for the two scenarios that are *about* refresh:
+ * a scanned token has no refresh journey, and the fixtures are what keep those scenarios meaningful.
+ */
+private val FlowLaunchSnapshot.liveSession: UseSmileIDSampleTokenSession?
+    get() = session?.takeUnless { scenario.startsExpired }
 
 private val UseSmileIDSampleScenario.startsExpired: Boolean
     get() = this == UseSmileIDSampleScenario.ExpiredToken || this == UseSmileIDSampleScenario.BadRefresh

@@ -14,6 +14,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.parameters.DeepLink
 import com.ramcosta.composedestinations.generated.destinations.ConsentDetailsFormScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.VerificationDetailsScreenDestination
 import com.ramcosta.composedestinations.generated.navgraphs.FlowNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -64,6 +65,15 @@ fun SdkFlowScreen(
             LaunchedEffect(Unit) {
                 navigator.navigate(ConsentDetailsFormScreenDestination(productId = snapshot.product.id)) {
                     // The graph, not the screen: a deep link synthesizes a form beneath the flow (§8.1).
+                    popUpTo(FlowNavGraph) { inclusive = true }
+                }
+            }
+            return
+        }
+        // Back to the scanner, not to a form: the run needs a token, and no form holds one.
+        FlowPreflight.NeedsSession -> {
+            LaunchedEffect(Unit) {
+                navigator.navigate(ScanTokenScreenDestination) {
                     popUpTo(FlowNavGraph) { inclusive = true }
                 }
             }
