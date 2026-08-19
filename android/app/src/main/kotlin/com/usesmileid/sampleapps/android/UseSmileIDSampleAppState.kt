@@ -2,11 +2,11 @@ package com.usesmileid.sampleapps.android
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -34,8 +34,16 @@ class UseSmileIDSampleAppState(
     val profiles: UseSmileIDSampleProfiles,
     val launchArgs: UseSmileIDSampleLaunchArgs,
     val flowResult: UseSmileIDSampleFlowResult,
-    val nowMillis: Long,
+    /**
+     * Read through [State] rather than held as a value, so the once-a-second tick recomposes only
+     * what reads the clock. Held as a value it changed this object's identity every second, and
+     * because it is provided through a `staticCompositionLocalOf` that invalidated the whole tree —
+     * the hosted SDK flow included, where the SDK re-runs `build()` on every recomposition.
+     */
+    private val now: State<Long>,
 ) {
+    val nowMillis: Long get() = now.value
+
     val sessionExpired: Boolean get() = session != null && session.hasExpired(nowMillis)
     val sessionActive: Boolean get() = session != null && !session.hasExpired(nowMillis)
 }
@@ -49,7 +57,7 @@ fun rememberUseSmileIDSampleAppState(
     val store = remember(context) { UseSmileIDSampleStore(context) }
     val settings by store.settings.collectAsStateWithLifecycle(initialValue = UseSmileIDSampleSettings())
     val session by store.tokenSession.collectAsStateWithLifecycle(initialValue = null)
-    var nowMillis by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    val now = remember { mutableLongStateOf(System.currentTimeMillis()) }
     // Seeded sample data until jobs arrive from the SDK; in memory, so it resets on process death.
     val jobs = remember { UseSmileIDSampleJobs.seeded(System.currentTimeMillis()) }
     val forms = rememberSaveable(saver = UseSmileIDSampleForms.Saver) { UseSmileIDSampleForms() }
@@ -66,8 +74,8 @@ fun rememberUseSmileIDSampleAppState(
     // Stops at the deadline: the session object does not change on expiry, so the key alone never ends this.
     LaunchedEffect(session) {
         val live = session ?: return@LaunchedEffect
-        while (!live.hasExpired(nowMillis)) {
-            nowMillis = System.currentTimeMillis()
+        while (!live.hasExpired(now.longValue)) {
+            now.longValue = System.currentTimeMillis()
             delay(TICK_MILLIS)
         }
     }
@@ -82,7 +90,7 @@ fun rememberUseSmileIDSampleAppState(
         profiles = profiles,
         launchArgs = launchArgs,
         flowResult = flowResult,
-        nowMillis = nowMillis,
+        now = now,
     )
 }
 
