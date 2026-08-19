@@ -18,6 +18,12 @@ data class UseSmileIDSampleTokenSession(
     val issuedAtMillis: Long,
     val expiresAtMillis: Long,
     val bindings: UseSmileIDSampleTokenBindings,
+    /**
+     * The partner the token was minted for, from its own `partner_id` claim. The authority for a
+     * submission's identity: sending a locally configured id alongside a real token is how a signed
+     * request gets a 401. Never logged — a partner id is on this repo's never-commit list.
+     */
+    val partnerId: String? = null,
 ) {
 
     fun remaining(nowMillis: Long): Duration = (expiresAtMillis - nowMillis).coerceAtLeast(0L).milliseconds

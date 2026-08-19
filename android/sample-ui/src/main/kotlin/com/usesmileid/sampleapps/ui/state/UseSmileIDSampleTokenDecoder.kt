@@ -85,6 +85,7 @@ object UseSmileIDSampleTokenDecoder {
                 issuedAtMillis = issuedAt * MILLIS_PER_SECOND,
                 expiresAtMillis = expires * MILLIS_PER_SECOND,
                 bindings = json.obj("payload")?.bindings() ?: UseSmileIDSampleTokenBindings(),
+                partnerId = json.string("partner_id")?.takeIf { it.isNotBlank() },
             ),
         )
     }

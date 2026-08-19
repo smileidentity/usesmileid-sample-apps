@@ -10,6 +10,7 @@ import com.usesmileid.bridge.mlkit.face.FaceDetectorAnalyzer
 import com.usesmileid.bridge.model.CaptureType
 import com.usesmileid.core.exception.UseSmileIDValidationException
 import com.usesmileid.core.models.JobType
+import com.usesmileid.data.dsl.config.NetworkConfiguration
 import com.usesmileid.data.model.UserDetails
 import com.usesmileid.presentation.flow.config.BiometricKYCParams
 import com.usesmileid.presentation.flow.config.DocumentType
@@ -19,6 +20,7 @@ import com.usesmileid.presentation.flow.config.EnhancedKYCParams
 import com.usesmileid.presentation.flow.dsl.ScreensBuilder
 import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.presentation.flow.validation.ValidationState
+import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
@@ -122,8 +124,20 @@ fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshe
                     else -> UseSmileIDSampleFlowTokens.token(expired = false, nowMillis = System.currentTimeMillis())
                 }
             }
+            // Debug builds only: a sample that shows a partner what the SDK put on the wire is a real
+            // probe affordance, but release must never log traffic. The SDK redacts the credential
+            // headers itself before any list we pass, which is why BODY level is safe here.
+            logging {
+                enabled = BuildConfig.DEBUG
+                // HEADERS, not BODY: a logged body carries the user details this repo forbids in logs.
+                // One word to raise it locally when a response body is what you need.
+                level = NetworkConfiguration.LogLevel.HEADERS
+            }
             partnerConfig {
-                partnerId = snapshot.partnerId
+                // The token wins over the local profile: it was minted for one partner, and a signed
+                // token submitted under a different id comes back 401. Verified on device with a real
+                // Portal token, where the sample's fixture profile id produced exactly that.
+                partnerId = scanned?.partnerId ?: snapshot.partnerId
                 callbackUrl = CALLBACK_URL
                 useSandbox = snapshot.sandbox
             }
