@@ -109,7 +109,7 @@ class ScreenCompositeGoldenTest : GoldenTest() {
 
     @Test
     fun scan_status_linked() = goldens("scan_status_linked") {
-        ScanStatus(UseSmileIDSampleScanState.Linked(handle = "924fa5e4", remaining = "7:59:12"))
+        ScanStatus(UseSmileIDSampleScanState.Linked(handle = "a1b2c3d4", remaining = "7:59:12"))
     }
 
     @Test
