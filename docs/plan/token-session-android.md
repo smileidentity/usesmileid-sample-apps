@@ -195,6 +195,14 @@ per-field union of "the token binds it or the builder supplies it". A host runni
 under a binding would therefore redirect to a form the SDK does not need, so the gate skips that one
 check when the session's bindings satisfy the SDK's own `bindsRequiredUserDetails` rule.
 
+**A gap the device suite exposed, and an owed product decision:** an expired session persists (R6) and
+the gate turns *every* product run into a trip to the scanner, so a partner who lets a session lapse
+cannot start any run until they scan again — and the app offers no way to unlink one. `clearTokenSession()`
+exists in the store and nothing calls it. The ended banner's only action is Scan, so adding an unlink
+affordance is a design question rather than something to invent here. It also makes device flows
+order-dependent: a flow that leaves an expired session behind fails whichever flow runs next, which is
+why `token-session.yaml` ends by relinking a live span rather than leaving the ended state on disk.
+
 Mid-flow expiry is deliberately *not* interrupted. The SDK owns the flow once it starts (R2), and
 tearing it down from the host would both violate that and destroy the failure we want a partner to
 see. The countdown is the warning; the auth failure is the outcome.
