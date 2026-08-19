@@ -89,7 +89,7 @@ then our copy is a documented duplicate, and the unit test in TOK-A2 pins it to 
 
 | Id | What | Priority | Depends on |
 |---|---|---|---|
-| TOK-A1 | Manual token entry: paste/typed token → a real session | **P1** | — |
+| TOK-A1 | Manual entry, plus Simulate minting a fixture token (duration + bindings) | **P1** | — |
 | TOK-A2 | Token decode: `exp`, `iat`, binding flags, plaintext `country`/`id_type` | **P1** | — |
 | TOK-A3 | Session model carries the token, its issue time and its bindings | **P1** | A2 |
 | TOK-A4 | Feed the token to the builder; session beats scenario fixture | **P1** | A3 |
@@ -252,10 +252,13 @@ than assumed:
    rejected: it would have put a Google-provided sheet over a screen the design owns, needed Play
    services on a device (the `huawei-face` variant says GMS-free devices matter to this org), and
    tested nothing about camera contention. See §7.1 for what the decision commits us to.
-2. **`spec/launch-args.json` gains `token`.** Automation cannot type a JWT reliably, and this is the
-   canonical way the four apps take input. Four platforms then owe it.
+2. **`spec/launch-args.json` gains `token`** — **deliberately left owed until Android lands**
+   (settled 2026-08-19). A four-platform contract is cheaper to get right after one implementation
+   than before it, and §7.2 turns out to remove the urgency entirely: automation does not need this
+   argument to drive the feature.
 3. **`spec/test-ids.json` gains the ids for manual entry, the decoded-binding summary and the expiry
-   state.** Same ripple.
+   state.** Same deferral, same reason — the Android build is what will say which of these are real
+   affordances worth four implementations and which were guesses.
 4. Room itself is a new dependency; it is the user's stated direction, so it is recorded here as
    settled rather than open.
 
@@ -288,6 +291,33 @@ which is the signal the decision is for.
   consumer, and it cannot be honoured without a host-owned camera — the argument's own note in
   `spec/launch-args.json` warns that a probe which never acquired the camera passes vacuously. Worth
   folding in while the camera code is fresh, as its own item rather than inside TOK-A9.
+
+### 7.2 Automation needs no new argument, because Simulate can mint the token
+
+Deferring the `token` launch argument raised the obvious question — how does a device flow get a
+900-character JWT into a text field, when `spec/launch-args.json` itself says credentials are seeded
+as arguments "because keyboard input drops characters from long API keys"? The answer was already in
+the design: the scan sheet has a **Simulate** affordance and `spec/test-ids.json` already carries
+`sample_token_simulate`. Today it fabricates a session with a hard-coded id and no token. It should
+instead **mint a fixture token locally** — the same unsigned, structurally valid JWT the scenarios
+already rely on (`UseSmileIDSampleFlowTokens`), with a chosen duration and a chosen set of bindings.
+
+That makes the whole feature automatable with **no spec change at all**, and it is not a test-only
+branch in shipped code: Simulate is an existing, shipped probe affordance, in the same family as the
+scenario drawer and the result card.
+
+What a fixture token can exercise, because the SDK **decodes but never verifies** a token
+client-side: the decode rules, the binding flags, the countdown and the ring at any duration, the
+expiry gate, the builder handoff — and, most valuably, **the consent-screen drop**. Mint a token
+carrying a complete consent binding and the SDK removes its consent screen, so the journey that §8
+described as hand-driven becomes a deterministic device assertion.
+
+What it cannot exercise, and what still needs a real Portal token by hand: a server actually
+accepting the token, and the QR itself. That boundary is worth stating in the PR rather than letting
+a green suite imply more than it proves.
+
+Two consequences for the work list: TOK-A1 grows the Simulate minting (duration + bindings) alongside
+manual entry, and TOK-A8's device coverage no longer waits on anything owed.
 
 ---
 
