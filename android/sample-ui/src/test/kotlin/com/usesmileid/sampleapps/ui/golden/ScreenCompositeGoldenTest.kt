@@ -21,6 +21,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProductGrid
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProfileEnvChip
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleScanGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleScanSheet
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleScanSheetState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionHeader
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSessionCard
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSessionEndedBanner
@@ -192,7 +193,15 @@ private fun FloatingTokenButtons() = UseSmileIDSampleFloatingTokenButton(onClick
 private fun ScanGlyphs() = UseSmileIDSampleScanGlyph()
 
 @Composable
-private fun ScanSheets() = UseSmileIDSampleScanSheet(onPaste = {}, onSimulate = {})
+private fun ScanSheets() = UseSmileIDSampleScanSheet(
+    state = UseSmileIDSampleScanSheetState(),
+    onTokenChange = {},
+    onPaste = {},
+    onLink = {},
+    onSpanSelect = {},
+    onBindingsChange = {},
+    onSimulate = {},
+)
 
 @Composable
 private fun SwipeActions() = UseSmileIDSampleSwipeAction(onRemove = {}) {

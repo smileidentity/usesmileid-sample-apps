@@ -76,4 +76,9 @@ private fun Products(state: UseSmileIDSampleProductsState) = ProductsScreen(
 )
 
 @Composable
-private fun ScanToken() = ScanTokenScreen(onBack = {}, onSimulate = {}, onPaste = {})
+private fun ScanToken() = ScanTokenScreen(
+    onBack = {},
+    onLink = {},
+    onSimulate = { _, _ -> },
+    onPaste = { null },
+)

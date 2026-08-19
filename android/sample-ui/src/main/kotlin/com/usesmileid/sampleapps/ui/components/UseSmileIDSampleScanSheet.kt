@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,29 +14,49 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.smileid.designsystem.smileSurface2
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleSimulatedBindings
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleSimulatedSpan
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/** The sheet under the scanner. Simulate is a product feature, not scaffolding: it is how a flow reaches the session states with no QR source. */
+/** What the sheet renders, so the screen owns the entry state and the sheet stays stateless. */
+@Immutable
+data class UseSmileIDSampleScanSheetState(
+    val token: String = "",
+    /** Why the entered token is not a session — shown under the field, never the token itself. */
+    val rejection: String? = null,
+    val span: UseSmileIDSampleSimulatedSpan = UseSmileIDSampleSimulatedSpan.FifteenMinutes,
+    val bindings: UseSmileIDSampleSimulatedBindings = UseSmileIDSampleSimulatedBindings(),
+)
+
+/**
+ * The sheet under the scanner: manual entry, and a simulated scan that mints its own fixture token.
+ * Simulate is a product feature, not scaffolding — it is how a flow reaches the session states with
+ * no QR source, and what it mints is chosen here rather than hard-coded.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UseSmileIDSampleScanSheet(
+    state: UseSmileIDSampleScanSheetState,
+    onTokenChange: (String) -> Unit,
     onPaste: () -> Unit,
+    onLink: () -> Unit,
+    onSpanSelect: (UseSmileIDSampleSimulatedSpan) -> Unit,
+    onBindingsChange: (UseSmileIDSampleSimulatedBindings) -> Unit,
     onSimulate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -52,29 +73,22 @@ fun UseSmileIDSampleScanSheet(
                 .padding(SmileDimens.spacingMd),
             verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
         ) {
-            Surface(
-                modifier = Modifier.fillMaxWidth().testTag(UseSmileIDSampleTestIds.TOKEN_MANUAL_ENTRY),
-                shape = RoundedCornerShape(SmileDimens.radiusField),
-                    color = smileSurface2,
-                border = BorderStroke(SmileDimens.borderWidthHairline, colors.border),
-            ) {
-                FlowRow(
-                    modifier = Modifier
-                        .defaultMinSize(minHeight = SmileDimens.sizeControlMd)
-                        .padding(horizontal = SmileDimens.spacingSm, vertical = SmileDimens.spacingXs),
-                    horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
-                    verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
-                    itemVerticalAlignment = Alignment.CenterVertically,
-                ) {
+            UseSmileIDSampleTextInput(
+                value = state.token,
+                onValueChange = onTokenChange,
+                placeholder = "Or enter token manually",
+                isError = state.rejection != null,
+                errorMessage = state.rejection,
+                // The token is a bearer credential and 900 characters long: nobody proofreads it, and
+                // masked it stays out of screenshots and out of a failed run's hierarchy dump.
+                masked = true,
+                testId = UseSmileIDSampleTestIds.TOKEN_MANUAL_ENTRY,
+                leading = { tint ->
                     Box(modifier = Modifier.size(SmileDimens.sizeIconMd), contentAlignment = Alignment.Center) {
-                        ScanMarkGlyph(tint = colors.textMuted)
+                        ScanMarkGlyph(tint = tint)
                     }
-                    Text(
-                        text = "Or enter token manually",
-                        style = UseSmileIDSampleTheme.type.textStyleSubtitle.copy(fontSize = SHEET_TEXT_SIZE),
-                        color = colors.textMuted,
-                        modifier = Modifier.weight(1f),
-                    )
+                },
+                trailing = {
                     Text(
                         text = "Paste",
                         style = UseSmileIDSampleTheme.type.linkFont.copy(
@@ -85,11 +99,48 @@ fun UseSmileIDSampleScanSheet(
                         softWrap = false,
                         modifier = Modifier
                             .testTag(UseSmileIDSampleTestIds.TOKEN_PASTE)
-                            .semantics { role = Role.Button }
+                            .clickable(role = Role.Button, onClick = onPaste)
                             .minimumInteractiveComponentSize()
                             .padding(horizontal = SmileDimens.spacingXs),
                     )
+                },
+            )
+            // Only once there is something to link, so the default sheet keeps the design's two rows.
+            if (state.token.isNotBlank()) {
+                UseSmileIDSampleButton(text = "Link token", onClick = onLink)
+            }
+            UseSmileIDSampleSectionLabel(text = "SIMULATED SCAN")
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+                verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+            ) {
+                UseSmileIDSampleSimulatedSpan.entries.forEach { span ->
+                    ScanSheetChip(
+                        label = span.label,
+                        selected = state.span == span,
+                        role = Role.RadioButton,
+                        onClick = { onSpanSelect(span) },
+                    )
                 }
+            }
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+                verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+            ) {
+                ScanSheetChip(
+                    label = "Binds consent",
+                    selected = state.bindings.consent,
+                    role = Role.Checkbox,
+                    onClick = { onBindingsChange(state.bindings.copy(consent = !state.bindings.consent)) },
+                )
+                ScanSheetChip(
+                    label = "Binds details",
+                    selected = state.bindings.userDetails,
+                    role = Role.Checkbox,
+                    onClick = { onBindingsChange(state.bindings.copy(userDetails = !state.bindings.userDetails)) },
+                )
             }
             UseSmileIDSampleButton(
                 text = "Simulate a successful scan",
@@ -100,5 +151,30 @@ fun UseSmileIDSampleScanSheet(
     }
 }
 
-private val SHEET_TEXT_SIZE = 13.5.sp
+/** The filter chip's shape without its count, because what a simulated scan mints has no count. */
+@Composable
+private fun ScanSheetChip(label: String, selected: Boolean, role: Role, onClick: () -> Unit) {
+    val colors = UseSmileIDSampleTheme.colors
+    Surface(
+        modifier = Modifier
+            .minimumInteractiveComponentSize()
+            .selectable(selected = selected, role = role, onClick = onClick),
+        shape = RoundedCornerShape(SmileDimens.radiusChip),
+        color = if (selected) colors.primary else colors.filterChip.background,
+        border = if (selected) null else BorderStroke(SmileDimens.borderWidthHairline, colors.filterChip.border),
+    ) {
+        Text(
+            text = label,
+            style = UseSmileIDSampleTheme.type.filterChipFont.copy(
+                fontSize = SHEET_ACTION_SIZE,
+                fontWeight = FontWeight.Bold,
+            ),
+            color = if (selected) colors.onPrimary else colors.filterChip.label,
+            modifier = Modifier
+                .defaultMinSize(minHeight = SmileDimens.space32)
+                .padding(horizontal = SmileDimens.spacingSm, vertical = SmileDimens.spacingXs),
+        )
+    }
+}
+
 private val SHEET_ACTION_SIZE = 13.sp

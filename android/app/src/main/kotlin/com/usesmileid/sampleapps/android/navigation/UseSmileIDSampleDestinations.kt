@@ -36,6 +36,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
+import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleFlowTokens
+import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleQrScanner
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleOverlay
@@ -45,6 +47,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleProductsState
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenDecoder
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 import com.usesmileid.sampleapps.ui.state.toCountdown
@@ -406,19 +409,34 @@ fun NewProfileSheet(navigator: DestinationsNavigator) {
 @Composable
 fun ScanTokenScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
+    val clipboard = LocalClipboardManager.current
+    var torchOn by rememberSaveable { mutableStateOf(false) }
+    // One path for both entry routes — typed, pasted or simulated, a session is linked the same way.
+    val link: (UseSmileIDSampleTokenSession) -> Unit = { session ->
+        // On the app-level scope, so leaving this screen cannot cancel the write half-done.
+        app.storeScope.launch { app.store.linkTokenSession(session) }
+        navigator.navigateUp()
+    }
     ScanTokenContent(
         onBack = { navigator.navigateUp() },
-        onPaste = {},
-        onSimulate = {
-            // On the app-level scope, so leaving this screen cannot cancel the write half-done.
-            app.storeScope.launch {
-                app.store.linkTokenSession(
-                    id = SIMULATED_SESSION_ID,
-                    expiresAtMillis = System.currentTimeMillis() +
-                        UseSmileIDSampleTokenSession.DEFAULT_DURATION.inWholeMilliseconds,
-                )
-            }
-            navigator.navigateUp()
+        onLink = link,
+        onPaste = { clipboard.getText()?.text },
+        onSimulate = { span, bindings ->
+            val minted = UseSmileIDSampleFlowTokens.session(
+                span = span,
+                bindings = bindings,
+                nowMillis = System.currentTimeMillis(),
+            )
+            // The minter and the decoder have to agree, and a fixture that no longer decodes is a defect
+            // rather than something to paper over with a fabricated session.
+            UseSmileIDSampleTokenDecoder.session(minted)?.let(link)
+        },
+        torchOn = torchOn,
+        onTorchToggle = { torchOn = !torchOn },
+        // The camera lives in the shell: `sample-ui` runs under eight identities, and only this one
+        // owns a scanner. It unbinds on leaving composition, so the SDK gets the camera back (§7.1).
+        viewfinder = { modifier, onCandidate ->
+            UseSmileIDSampleQrScanner(onCode = onCandidate, torchOn = torchOn, modifier = modifier)
         },
     )
 }
@@ -442,7 +460,6 @@ fun ScenarioDrawerSheet(navigator: DestinationsNavigator) {
 @Composable
 fun ComponentGalleryScreen() = ComponentGalleryContent()
 
-private const val SIMULATED_SESSION_ID = "9f3a"
 /** How long a snackbar with an action stays up: long enough to undo, short enough not to outlive its cause. */
 private const val SNACKBAR_WINDOW_MILLIS = 5_000L
 private const val APP_DISPLAY_NAME = "UseSmileID Sample"

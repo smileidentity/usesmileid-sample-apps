@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,9 +40,14 @@ fun UseSmileIDSampleTextInput(
     isError: Boolean = false,
     errorMessage: String? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    /** Masks the value and marks the field a password, keeping a credential out of screenshots and
+     *  out of the view hierarchy an automated run dumps on failure. */
+    masked: Boolean = false,
     testId: String? = null,
     /** The leading glyph the new-profile fields carry. */
     leading: @Composable ((Color) -> Unit)? = null,
+    /** An action inside the field's border, which is where the design draws the scan sheet's Paste. */
+    trailing: @Composable ((Color) -> Unit)? = null,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
@@ -56,7 +64,12 @@ fun UseSmileIDSampleTextInput(
             onValueChange = onValueChange,
             enabled = enabled,
             singleLine = true,
-            keyboardOptions = keyboardOptions,
+            keyboardOptions = if (masked) {
+                keyboardOptions.copy(keyboardType = KeyboardType.Password, autoCorrectEnabled = false)
+            } else {
+                keyboardOptions
+            },
+            visualTransformation = if (masked) PasswordVisualTransformation() else VisualTransformation.None,
             interactionSource = interactionSource,
             textStyle = UseSmileIDSampleTheme.type.inputFont.copy(
                 color = if (enabled) colors.input.text else colors.textMuted,
@@ -86,6 +99,7 @@ fun UseSmileIDSampleTextInput(
                     contentAlignment = Alignment.CenterStart,
                 ) {
                     Row(
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -97,7 +111,8 @@ fun UseSmileIDSampleTextInput(
                                 leading(colors.input.placeholder)
                             }
                         }
-                        Box(contentAlignment = Alignment.CenterStart) {
+                        // Weighted so a trailing action keeps its width; with no trailing the field still fills.
+                        Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
                     if (value.isEmpty()) {
                         Text(
                             text = placeholder,
@@ -107,6 +122,7 @@ fun UseSmileIDSampleTextInput(
                     }
                     field()
                         }
+                        trailing?.invoke(colors.input.placeholder)
                     }
                 }
             },

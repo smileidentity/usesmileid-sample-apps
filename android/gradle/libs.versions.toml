@@ -11,6 +11,13 @@ androidx-core = "1.16.0"
 androidx-datastore = "1.2.1"
 androidx-navigation = "2.9.8"
 destinations = "2.3.0"
+# Pinned to what com.usesmileid:usesmileid already resolves at runtime, verified on the release
+# graph. A divergence between this and the SDK's own CameraX is a finding, not something to let
+# Gradle reconcile upward in silence.
+camerax = "1.6.1"
+# The bundled barcode model, never the play-services variant: it works with no Play services, which
+# keeps this reference sample usable on the GMS-free devices the SDK ships an ML variant for.
+mlkit-barcode = "17.3.0"
 
 junit = "4.13.2"
 robolectric = "4.16.1"
@@ -32,6 +39,12 @@ androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
+
+androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax" }
+androidx-camera-compose = { module = "androidx.camera:camera-compose", version.ref = "camerax" }
+androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "camerax" }
+androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax" }
+mlkit-barcode-scanning = { module = "com.google.mlkit:barcode-scanning", version.ref = "mlkit-barcode" }
 
 destinations = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "destinations" }
 destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "destinations" }
