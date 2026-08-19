@@ -1,0 +1,20 @@
+# The HOST's camera prompt, not the SDK's. The scan screen asks for CAMERA on mount, so every flow
+# that opens it meets this dialog on a fresh install — and a dialog covers the screen, so an assertion
+# on `sample_scan_token_screen` fails until it is answered. Run this straight after opening the scan
+# screen, before asserting anything about it.
+#
+# The settle is load-bearing: the request goes out on mount and the dialog animates in a beat later, so
+# an immediate `when: visible:` check reads SKIPPED and the dialog then swallows the next tap.
+# Conditional because the grant outlives both `stopApp` and the install, and ColorOS refuses
+# `pm grant`, so it cannot be pre-granted. Defined once so a new flow cannot forget it.
+appId: ${APP_ID}
+---
+- waitForAnimationToEnd:
+    timeout: 5000
+- runFlow:
+    when:
+      visible:
+        id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+    commands:
+      - tapOn:
+          id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"

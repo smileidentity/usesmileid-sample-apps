@@ -96,6 +96,7 @@ appId: ${APP_ID}
 
 - stopApp
 - openLink: "usesmileid-sample-android://token/scan"
+- runFlow: subflows/grant-camera.yaml
 - assertVisible:
     id: "sample_scan_token_screen"
 
