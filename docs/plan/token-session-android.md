@@ -1,7 +1,12 @@
 # Token session — Android, from a scanned QR to a submitted job
 
-**Status:** proposed, not started. Android first; the token contract is shared, so §9 records what the
-other three inherit. Written against the Portal as merged (`portal#3274`, `portal#3274`'s follow-up
+**Status:** TOK-A1–A6 and TOK-A9 built on Android — manual entry, Simulate minting, decode, session
+model, builder handoff, honest countdown, and the CameraX QR scanner with the bundled ML Kit barcode
+model. A9 was planned as its own PR and folded into the same one on the owner's call (2026-08-19), so
+the token flow lands complete rather than scannerless. TOK-A7 (Room) is next as its own PR;
+`holdCamera`, TOK-A8's remaining goldens and TOK-A10 follow it.
+
+Android first; the token contract is shared, so §9 records what the other three inherit. Written against the Portal as merged (`portal#3274`, `portal#3274`'s follow-up
 `portal#3306`) and the SDK as published (`com.usesmileid:usesmileid:12.0.2`), read rather than assumed.
 
 Companion reading: `navigation-plan.md` §7.3 (the entry gate this extends) and R6 (why a session is an
@@ -165,6 +170,16 @@ Extend the §7.3 gate: a session that has expired, or a token that fails to deco
 `scanToken` rather than the forms, because no form fixes it. A run started with no session at all
 keeps working on the fixture path, so the no-token journey is unaffected.
 
+**Built with one case, not two:** a session is constructible only from a token that decodes, so an
+undecodable one is rejected at entry (TOK-A2's own rule) and cannot reach the gate. `NeedsSession` is
+checked ahead of the payload validators, because a form cannot fix a token.
+
+One SDK asymmetry the gate has to know about, found the same way as the accessor gap in §3:
+`validateUserDetails` is host-facing but takes **no** token payload, while `build()` applies a
+per-field union of "the token binds it or the builder supplies it". A host running the pre-flight
+under a binding would therefore redirect to a form the SDK does not need, so the gate skips that one
+check when the session's bindings satisfy the SDK's own `bindsRequiredUserDetails` rule.
+
 Mid-flow expiry is deliberately *not* interrupted. The SDK owns the flow once it starts (R2), and
 tearing it down from the host would both violate that and destroy the failure we want a partner to
 see. The countdown is the warning; the auth failure is the outcome.
@@ -191,7 +206,7 @@ places.
 | Submitted jobs | **Room** | Many rows, filtered by status, counted per filter, grouped by date, removed with undo. That is a query surface, and re-deriving it from a serialised blob on every read is the thing Room exists to avoid |
 | Per-job token binding (what the token supplied) | **Room**, column on the job | Belongs to the row it describes; the evidence for "the server injected these" is per submission |
 | Settings (6 booleans) | **DataStore** — already | Small, single-valued, read as a Flow |
-| Token session: token, `iat`, `exp`, `id`, bindings | **DataStore** | One record, replaced wholesale, read as a Flow. Not relational, and a table of one row is a table for no reason |
+| Token session: the raw token | **DataStore** | One record, replaced wholesale, read as a Flow. Not relational, and a table of one row is a table for no reason. **Built: the token is the whole record** — `id`, `iat`, `exp` and the bindings all decode from it, so storing them beside it would only create copies that can disagree with it |
 | Jobs-seeded flag | **DataStore** | One boolean. Prevents the eleven fixtures being re-seeded over a partner's real rows every launch |
 | Active profile id | **DataStore** | A scalar |
 | Profiles themselves | **in memory for now** | Room-shaped, but not needed by "jobs offline" and it would widen this PR. Named here so the next person does not have to re-derive it |
@@ -258,7 +273,14 @@ than assumed:
    argument to drive the feature.
 3. **`spec/test-ids.json` gains the ids for manual entry, the decoded-binding summary and the expiry
    state.** Same deferral, same reason — the Android build is what will say which of these are real
-   affordances worth four implementations and which were guesses.
+   affordances worth four implementations and which were guesses. **What it says:** none of the three
+   were needed. The four existing ids carried the whole feature — `sample_token_manual_entry` moved
+   from the row to the field it always described, `sample_token_paste` and `sample_token_simulate`
+   stayed put, and the expiry state was already `sample_session_ended_banner`. The two genuinely new
+   affordances are the simulated scan's duration and binding chips and the manual-entry `Link token`
+   button, which the device flow drives by their labels; the decoded-binding summary was a guess and
+   no screen needed it. So the owed spec change is smaller than it looked: ids for those three
+   controls if the other platforms want them, and nothing else.
 4. Room itself is a new dependency; it is the user's stated direction, so it is recorded here as
    settled rather than open.
 
@@ -273,11 +295,19 @@ the version the SDK already resolves, not a version of our own choosing. That is
 which is the signal the decision is for.
 
 - **Pin to 1.6.1 through the catalog**, and treat a divergence between what we declare and what the
-  SDK resolves as a finding rather than something Gradle quietly reconciles upward.
+  SDK resolves as a finding rather than something Gradle quietly reconciles upward. **Built and
+  verified:** the release runtime graph resolves `camera-core`, `camera-camera2`, `camera-compose`,
+  `camera-lifecycle`, `camera-view` and `viewfinder-compose` all at 1.6.1, so the catalog pin matches
+  what the SDK already brings. The compile-classpath cost really is the whole cost.
 - **ML Kit barcode: take the bundled `com.google.mlkit:barcode-scanning`**, not the Play-services
   variant. The bundled model works with no Play services, which keeps the reference sample usable on
   the GMS-free devices this org already ships an ML variant for. It costs APK size; the
   consumer-measured size lane is what should quantify that rather than a guess in this document.
+  **One correction to that reasoning, read off the graph:** this app consumes `mlkit-face`, which
+  pulls `com.google.android.gms:play-services-mlkit-face-detection`, so *this* app already requires
+  Play services regardless. The GMS-free argument therefore justifies the variant choice for a
+  partner building against `huawei-face` — it does not describe this sample as configured, and the
+  document should not imply it does.
 - **`CAMERA` permission moves into the host manifest**, and the scan screen must request it. The SDK
   asks for its own between consent and instructions; two requesters in one app is realistic partner
   behaviour and is now something this sample demonstrates.
@@ -286,11 +316,17 @@ which is the signal the decision is for.
   still holds. `sample-apps-plan.md` §1 lists "a camera not released after navigating away" as a
   host-interaction defect class this repo exists to catch, and this decision is what finally creates
   it here. A device check that runs scan → flow back to back is therefore part of TOK-A9, not a
-  nice-to-have.
-- **`holdCamera` becomes implementable.** It is one of the two launch arguments still without a
-  consumer, and it cannot be honoured without a host-owned camera — the argument's own note in
-  `spec/launch-args.json` warns that a probe which never acquired the camera passes vacuously. Worth
-  folding in while the camera code is fresh, as its own item rather than inside TOK-A9.
+  nice-to-have. **Built, with a coverage limit worth stating:** `token-session.yaml` binds the camera
+  on the scan screen, leaves it, and drives the SDK past instructions into capture — which proves the
+  host handed the camera back. It cannot prove the preview *renders*: the SDK's capture screen carries
+  no `si_*` id and this repo's flows may not assert on pixels, so "the preview is right" stays
+  hand-verified. That is the same lane gap the RN preview work hit, and the check plausibly belongs in
+  the SDK repos, which can render their own screens.
+- **`holdCamera` becomes implementable, and is still owed.** It is one of the two launch arguments
+  without a consumer, and it cannot be honoured without a host-owned camera — the argument's own note
+  in `spec/launch-args.json` warns that a probe which never acquired the camera passes vacuously. Kept
+  out of this PR deliberately even though the camera code is now here: it is a launch-argument
+  consumer rather than part of the token journey, and it would hand one reviewer a second subject.
 
 ### 7.2 Automation needs no new argument, because Simulate can mint the token
 
