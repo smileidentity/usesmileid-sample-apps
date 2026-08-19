@@ -61,16 +61,20 @@ fun UseSmileIDSampleSessionCard(
                     style = UseSmileIDSampleTheme.type.textStyleOverline.copy(letterSpacing = LABEL_TRACKING),
                     color = colors.surface,
                 )
+                // The overline already says this is a linked session; those words were the width an 8h
+                // countdown needed beside it.
                 Text(
-                    text = "Linked to session $sessionId",
+                    text = "Session $sessionId",
                     style = UseSmileIDSampleTheme.type.textStyleTitle.copy(fontSize = SESSION_TITLE_SIZE),
                     color = colors.surface,
                 )
             }
+            // The one value on this card that must stay whole, so the handle beside it yields instead.
             Text(
                 text = remaining,
                 style = UseSmileIDSampleTheme.type.textStyleHeadingCard.copy(fontSize = COUNTDOWN_SIZE),
                 color = colors.surface,
+                softWrap = false,
                 modifier = Modifier.testTag(UseSmileIDSampleTestIds.SESSION_COUNTDOWN),
             )
             }

@@ -210,6 +210,8 @@ private fun TokenRings() = Row(
 private fun SessionCards() = Column(verticalArrangement = stack) {
     UseSmileIDSampleSessionCard(sessionId = "9f3a", remaining = "3:20")
     UseSmileIDSampleSessionCard(sessionId = "9f3a", remaining = "0:09")
+    // An 8h token's countdown, which is what squeezes the handle beside it.
+    UseSmileIDSampleSessionCard(sessionId = "9f3a2c71", remaining = "7:59:12")
 }
 
 @Composable
