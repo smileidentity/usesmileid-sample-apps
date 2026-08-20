@@ -2,6 +2,7 @@ package com.usesmileid.sampleapps.ui.golden
 
 import androidx.compose.runtime.Composable
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleJobStore
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
@@ -28,6 +29,18 @@ class VerificationsGoldenTest : GoldenTest() {
     @Test
     fun verifications_filtered() =
         goldens("screen_verifications_filtered") { Verifications(filter = UseSmileIDSampleJobFilter.Attention) }
+
+    @Test
+    fun verifications_nothing_stored() =
+        goldens("screen_verifications_empty") { Verifications(jobs = emptyList()) }
+
+    @Test
+    fun verifications_nothing_matching_filter() = goldens("screen_verifications_filter_empty") {
+        Verifications(
+            filter = UseSmileIDSampleJobFilter.Blocked,
+            jobs = JOBS.filter { it.status == UseSmileIDSampleStatus.Clear },
+        )
+    }
 
     @Test
     fun verification_details() = goldens("screen_verification_details") { Details() }
@@ -61,13 +74,14 @@ class VerificationsGoldenTest : GoldenTest() {
         filter: UseSmileIDSampleJobFilter = UseSmileIDSampleJobFilter.All,
         selectMode: Boolean = false,
         selectFirst: Boolean = false,
+        jobs: List<UseSmileIDSampleJob> = JOBS,
     ) = VerificationsScreen(
         state = UseSmileIDSampleVerificationsState(
-            jobs = JOBS,
-            counts = UseSmileIDSampleJobFilter.entries.associateWith { f -> JOBS.count(f::matches) },
+            jobs = jobs,
+            counts = UseSmileIDSampleJobFilter.entries.associateWith { f -> jobs.count(f::matches) },
             filter = filter,
             selectMode = selectMode,
-            selected = if (selectFirst) JOBS.take(2).map { it.id }.toSet() else emptySet(),
+            selected = if (selectFirst) jobs.take(2).map { it.id }.toSet() else emptySet(),
             nowMillis = FIXED_NOW,
         ),
         onFilterChange = {},
