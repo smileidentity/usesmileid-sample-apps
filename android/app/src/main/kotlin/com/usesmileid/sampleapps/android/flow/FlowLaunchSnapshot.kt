@@ -76,7 +76,7 @@ fun buildSnapshot(
         idDetails = app.forms.idDetails,
         scenario = app.flowResult.scenario,
         theme = app.flowResult.theme,
-        sandbox = app.launchArgs.sandbox,
+        sandbox = app.useSandbox,
         userId = userId,
         partnerId = app.profiles.active.id,
         partnerName = app.profiles.active.organisation,

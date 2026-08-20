@@ -289,11 +289,12 @@ reads as a defect in the SDK.
    decision — the token is the authority for its own identity. The claim is decoded but never logged;
    a partner id is on this repo's never-commit list.
 
-2. **The environment has two sources of truth that can disagree.** The chip reads
-   `profiles.active.environment`; `useSandbox` reads the `sandbox` launch argument (default `true`).
-   Profile `p-3` is Production, so selecting it displays Production while the builder still submits to
-   sandbox. **Owed decision** — the fix is to resolve both from one source and let the launch argument
-   override only when present, which makes `sandbox` nullable and needs a `spec/launch-args.json` note.
+2. **The environment had two sources of truth that could disagree.** The chip read
+   `profiles.active.environment`; `useSandbox` read the `sandbox` launch argument (default `true`), so
+   selecting the Production profile displayed Production while the builder still submitted to sandbox.
+   **Fixed:** one resolution on the app state, `launchArgs.sandbox ?: settings.useSandbox`, feeding both
+   the chip and the builder. A Settings row owns the choice, `sandbox` is nullable so an argument
+   overrides only where it was passed, and the profile no longer carries an environment at all.
 
 3. **Sandbox only accepts predefined test identities, and this repo documents none.** The ID-details
    form accepts any value, so a run typed with an arbitrary ID number cannot succeed whatever the

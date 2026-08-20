@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.saveable.rememberSaveable
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleFlowResult
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleForms
@@ -46,6 +47,19 @@ class UseSmileIDSampleAppState(
 
     val sessionExpired: Boolean get() = session != null && session.hasExpired(nowMillis)
     val sessionActive: Boolean get() = session != null && !session.hasExpired(nowMillis)
+
+    /**
+     * The only place the environment is decided, so the chip and the builder cannot disagree. The
+     * launch argument wins where it was passed — automation must be able to hold a run to sandbox
+     * whatever is stored — and Settings decides the rest of the time.
+     */
+    val useSandbox: Boolean get() = launchArgs.sandbox ?: settings.useSandbox
+
+    /** True while the launch argument owns the choice, which is why Settings shows the row read-only. */
+    val environmentPinned: Boolean get() = launchArgs.sandbox != null
+
+    val environment: UseSmileIDSampleEnvironment
+        get() = if (useSandbox) UseSmileIDSampleEnvironment.Sandbox else UseSmileIDSampleEnvironment.Production
 }
 
 /** Ticks once a second while a session is live. The deadline is absolute, so a restored session needs no recomputing. */

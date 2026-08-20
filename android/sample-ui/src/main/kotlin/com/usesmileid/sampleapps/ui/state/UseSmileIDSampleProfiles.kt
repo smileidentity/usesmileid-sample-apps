@@ -5,15 +5,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 
-/** One partner profile: who is signed in, which environment, and the defaults their jobs are seeded from. */
+/** One partner profile: who is signed in, and the defaults their jobs are seeded from. */
 @Immutable
 data class UseSmileIDSampleProfile(
     val id: String,
     val organisation: String,
     val person: String,
-    val environment: UseSmileIDSampleEnvironment,
     val defaults: UseSmileIDSampleUserDetails = UseSmileIDSampleUserDetails(),
 ) {
     /** The person's initials, as the design has them, falling back to the organisation for a new profile. */
@@ -75,7 +73,6 @@ class UseSmileIDSampleProfiles(seed: List<UseSmileIDSampleProfile> = defaults())
             id = id,
             organisation = organisation,
             person = person,
-            environment = UseSmileIDSampleEnvironment.Sandbox,
             defaults = defaults,
         )
         items.add(profile)
@@ -89,27 +86,24 @@ class UseSmileIDSampleProfiles(seed: List<UseSmileIDSampleProfile> = defaults())
     }
 
     companion object {
-        /** The three the design's sheet shows, one in production so the environment chip has a real source. */
+        /** The three the design's sheet shows. */
         fun defaults() = listOf(
             UseSmileIDSampleProfile(
                 id = "p-1",
                 organisation = "UpTech Finance",
                 person = "Kwame Asante",
-                environment = UseSmileIDSampleEnvironment.Sandbox,
                 defaults = UseSmileIDSampleUserDetails(firstName = "Kwame", lastName = "Asante"),
             ),
             UseSmileIDSampleProfile(
                 id = "p-2",
                 organisation = "Kazi Microlending",
                 person = "Amina Diallo",
-                environment = UseSmileIDSampleEnvironment.Sandbox,
                 defaults = UseSmileIDSampleUserDetails(firstName = "Amina", lastName = "Diallo"),
             ),
             UseSmileIDSampleProfile(
                 id = "p-3",
                 organisation = "PesaLink",
                 person = "Tunde Okafor",
-                environment = UseSmileIDSampleEnvironment.Production,
                 defaults = UseSmileIDSampleUserDetails(firstName = "Tunde", lastName = "Okafor"),
             ),
         )

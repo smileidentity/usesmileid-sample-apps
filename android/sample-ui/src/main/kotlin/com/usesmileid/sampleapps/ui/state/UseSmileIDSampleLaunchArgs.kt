@@ -20,7 +20,8 @@ data class UseSmileIDSampleLaunchArgs(
     val theme: UseSmileIDSampleThemeScenario = UseSmileIDSampleThemeScenario.BrandDefault,
     val route: UseSmileIDSampleFlowRoute = UseSmileIDSampleFlowRoute.Fullscreen,
     val autostart: UseSmileIDSampleProduct? = null,
-    val sandbox: Boolean = true,
+    /** Unset leaves the environment to the Settings toggle; passing it pins the run, which is how automation stays on sandbox. */
+    val sandbox: Boolean? = null,
     val appLocale: String? = null,
     val holdCamera: UseSmileIDSampleHoldCamera? = null,
 ) {
@@ -48,7 +49,7 @@ data class UseSmileIDSampleLaunchArgs(
                 route = UseSmileIDSampleFlowRoute.entries.firstOrNull { it.id == raw.string(ROUTE) }
                     ?: defaults.route,
                 autostart = UseSmileIDSampleProduct.entries.firstOrNull { it.id == raw.string(AUTOSTART) },
-                sandbox = raw.boolean(SANDBOX) ?: defaults.sandbox,
+                sandbox = raw.boolean(SANDBOX),
                 appLocale = raw.string(APP_LOCALE),
                 holdCamera = raw.holdCamera(),
             )

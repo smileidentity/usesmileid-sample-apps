@@ -234,6 +234,10 @@
         "description": "Profile row at the top of settings; opens the profiles LIST, not the active profile's page."
       },
       {
+        "id": "sample_setting_production",
+        "description": "Environment switch. ON is production; OFF is sandbox, which is the default. Read-only while the sandbox launch argument pins the run, so automation asserts the chip rather than driving this."
+      },
+      {
         "id": "sample_setting_smile_to_capture",
         "description": "Smile to capture switch. ON means enhanced liveness OFF, so it and agent mode write different fields and cannot fight."
       },

@@ -416,6 +416,7 @@
       ],
       "sections": [
         "PROFILE",
+        "ENVIRONMENT (one row: Production — not in the design, added because the sandbox launch argument is an override rather than a source)",
         "CAPTURE (two rows: Smile to capture, Agent mode)",
         "APPEARANCE",
         "SDK SCREENS — SHOW OR SKIP FLOW STEPS",
@@ -434,6 +435,7 @@
       ],
       "testIds": [
         "sample_settings_screen",
+        "sample_setting_production",
         "sample_setting_agent_mode",
         "sample_setting_dark_mode",
         "sample_setting_consent_step",

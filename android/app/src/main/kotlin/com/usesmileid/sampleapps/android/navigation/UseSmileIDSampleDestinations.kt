@@ -85,7 +85,7 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     ProductsContent(
         state = UseSmileIDSampleProductsState(
-            environment = app.profiles.active.environment,
+            environment = app.environment,
             initials = app.profiles.active.initials,
             avatarColor = avatarColorForProfile(app.profiles.activeIndex),
             sessionId = app.session?.id?.takeIf { app.sessionActive },
@@ -184,6 +184,8 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
     SettingsContent(
         settings = app.settings,
         onSettingChange = { setting, enabled -> app.storeScope.launch { app.store.setSetting(setting, enabled) } },
+        environment = app.environment,
+        environmentPinned = app.environmentPinned,
         organisation = app.profiles.active.organisation,
         initials = app.profiles.active.initials,
         avatarColor = avatarColorForProfile(app.profiles.activeIndex),

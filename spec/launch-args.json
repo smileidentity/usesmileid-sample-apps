@@ -38,8 +38,8 @@
         true,
         false
       ],
-      "default": true,
-      "description": "Environment selection. Automation must never run with sandbox=false — see AGENTS.md."
+      "default": null,
+      "description": "Environment selection, and the override rather than the source: unset leaves the choice to the app's own environment control, which defaults to sandbox, while passing it pins the whole run. Automation must never run with sandbox=false — see AGENTS.md."
     },
     {
       "name": "appLocale",
