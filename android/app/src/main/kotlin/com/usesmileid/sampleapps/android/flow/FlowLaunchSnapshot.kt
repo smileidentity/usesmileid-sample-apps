@@ -89,6 +89,9 @@ fun buildSnapshot(
 fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshed: () -> Unit = {}) {
     // Omitted entirely when the token already binds what the SDK requires: the forms were skipped,
     // so these would be blanks, and a blank is not the same claim as "the token supplies it".
+    // Omitted when the token binds what the SDK requires. Not what unblocked the consent-bound run
+    // (measured: the consent screen alone was the cause) — but the forms were skipped, so these would
+    // be empty strings standing in for fields the token supplies, and the SDK strips them anyway.
     userDetails = if (snapshot.liveSession?.bindings?.bindsRequiredUserDetails == true) {
         null
     } else {
