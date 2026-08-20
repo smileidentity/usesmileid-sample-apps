@@ -133,13 +133,6 @@ fun VerificationDetailsScreen(
                                 // Coloured by the HTTP outcome, not the verdict: a blocked job still shows a green 200.
                                 DetailRow("status", "Status", job.httpStatus, valueColor = job.httpStatusColor())
                                 DetailRow("userId", "User_id", job.shortUserId, onCopy = { onCopy("User ID", job.userId) })
-                                // Which partner submitted it, and against which environment. Both are
-                                // carried on the row rather than read from the active profile: by the
-                                // time anyone opens this screen either may have moved on.
-                                if (job.profileOrganisation.isNotBlank()) {
-                                    DetailRow("partner", "Partner", job.profileOrganisation)
-                                }
-                                DetailRow("environment", "Environment", if (job.sandbox) "Sandbox" else "Production")
                             }
                         }
                     }
