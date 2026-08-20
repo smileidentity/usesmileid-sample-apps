@@ -94,14 +94,9 @@ data class UseSmileIDSampleColors(
     val surfaceAlt: Color,
     val surfaceMuted: Color,
     /**
-     * The subtle fill behind an icon tile or a selected row — the design's `color/surface-2`.
-     *
-     * A pair, declared here, because the generated output carries `surface-2` as a single light value
-     * (`smileSurface2`) with no dark counterpart, and neither mode's fill can be borrowed from another
-     * semantic token: `surfaceMuted` is too close to `surface` to read as a container in light, and
-     * `border` is emitted with the same value in both modes. Recorded as a delta in
-     * `spec/design-tokens.json`; when the design system emits a dark `surface-2`, both sides come from
-     * it and this comment goes.
+     * The design's `color/surface-2`, paired here because the generated output carries it as a single
+     * light value and no other semantic token works in both modes — see the `surface2` delta in
+     * `spec/design-tokens.json`.
      */
     val surfaceTile: Color,
     val border: Color,
@@ -141,7 +136,6 @@ internal val lightColors = UseSmileIDSampleColors(
     surface = SmileColorLight.colorSurface,
     surfaceAlt = SmileColorLight.colorSurfaceAlt,
     surfaceMuted = SmileColorLight.colorSurfaceMuted,
-    // The design's own surface-2 value, which is what light mode always drew.
     surfaceTile = smileSurface2,
     border = SmileColorLight.colorBorder,
     overlayScrim = SmileColorLight.colorOverlayScrim,
@@ -234,8 +228,7 @@ internal val darkColors = UseSmileIDSampleColors(
     surface = SmileColorDark.colorSurface,
     surfaceAlt = SmileColorDark.colorSurfaceAlt,
     surfaceMuted = SmileColorDark.colorSurfaceMuted,
-    // Recessed against the dark card the way surface-2 is against a white one, and dark enough that
-    // the near-white glyph on top of it stays legible.
+    // Recessed against the dark card the way surface-2 is against a white one.
     surfaceTile = SmileColorDark.colorSurfaceMuted,
     border = SmileColorDark.colorBorder,
     overlayScrim = SmileColorDark.colorOverlayScrim,

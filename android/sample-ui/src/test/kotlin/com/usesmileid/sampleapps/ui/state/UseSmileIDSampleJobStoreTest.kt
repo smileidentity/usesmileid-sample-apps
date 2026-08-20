@@ -13,10 +13,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/**
- * The store's own semantics, over a fake DAO. Room's SQL — the ordering, the conflict strategies —
- * needs the real database and belongs with the rest of the parked test batch.
- */
+/** The store's own semantics over a fake DAO; Room's own SQL needs the real database. */
 class UseSmileIDSampleJobStoreTest {
 
     @Test
@@ -46,7 +43,6 @@ class UseSmileIDSampleJobStoreTest {
         assertEquals(listOf("job-2", "job-1"), store.jobs.first().map { it.id })
     }
 
-    /** The reason [UseSmileIDSampleJobStore.remove] returns early: an empty set must not clear the batch. */
     @Test
     fun `an empty removal keeps the previous batch undoable`() = runTest {
         val store = UseSmileIDSampleJobStore(FakeJobDao())
@@ -75,7 +71,6 @@ class UseSmileIDSampleJobStoreTest {
         assertNull(store.find("job-absent"))
     }
 
-    /** The session the run submitted under is what decides whether a status refresh has anything to ask. */
     @Test
     fun `the environment and session survive a round trip`() = runTest {
         val store = UseSmileIDSampleJobStore(FakeJobDao())
@@ -85,7 +80,6 @@ class UseSmileIDSampleJobStoreTest {
         assertEquals("4d33b7ba", stored?.sessionId)
     }
 
-    /** The app seeds nothing, so an untouched install has an empty list rather than eleven claims. */
     @Test
     fun `a fresh store is empty`() = runTest {
         assertEquals(emptyList<UseSmileIDSampleJob>(), UseSmileIDSampleJobStore(FakeJobDao()).jobs.first())
@@ -102,7 +96,7 @@ class UseSmileIDSampleJobStoreTest {
     )
 }
 
-/** Ordering and the two conflict strategies mirrored in Kotlin, which is all the store's logic reads. */
+/** Ordering and the two conflict strategies, which is all the store's logic reads. */
 private class FakeJobDao : UseSmileIDSampleJobDao {
 
     private val rows = MutableStateFlow<Map<String, UseSmileIDSampleJobEntity>>(emptyMap())

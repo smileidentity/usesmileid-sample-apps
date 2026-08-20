@@ -13,13 +13,9 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /**
- * What a list says when it has nothing to show. The design draws no empty frame for any of them, so
- * this is the app's own convention — defined once so four surfaces cannot each invent their own,
- * which is what they were doing.
- *
- * Muted, centred, and quiet: an empty list is a normal state, not a failure, and a loud frame in the
- * middle of a working screen reads as one. [supportingText] is for the surfaces where the reader can
- * do something about it; a search that matched nothing needs no advice.
+ * What a list says when it has nothing to show. Not in the design — the app's own convention, defined
+ * once so four surfaces stop inventing their own. [supportingText] is only for surfaces where the
+ * reader can act on it; a search that matched nothing needs no advice.
  */
 @Composable
 fun UseSmileIDSampleEmptyState(

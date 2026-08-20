@@ -16,7 +16,7 @@ data class UseSmileIDSampleSettings(
     /** 'Smile to capture' is the inverse of enhanced liveness, so it and agent mode write different fields. */
     val enableEnhancedLiveness: Boolean get() = !smileToCapture
 
-    /** What a flow submits against unless a launch argument pins it. Sandbox by default: a mistap must not bill a live job. */
+    /** What a flow submits against unless a launch argument pins it. Sandbox by default. */
     val useSandbox: Boolean get() = !production
 }
 

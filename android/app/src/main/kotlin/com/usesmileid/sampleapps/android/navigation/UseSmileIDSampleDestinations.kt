@@ -116,15 +116,13 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
     var filter by rememberSaveable { mutableStateOf(UseSmileIDSampleJobFilter.All) }
     var selectMode by rememberSaveable { mutableStateOf(false) }
     var selected by rememberSaveable { mutableStateOf(emptySet<String>()) }
-    // What the confirmation is about. Sourced from the store rather than set here, so a removal made
-    // on the details screen — which navigates away before it could draw anything — is confirmed too.
+    // Sourced from the store, so a removal made on the details screen is confirmed here too.
     var removedCount by remember { mutableIntStateOf(0) }
 
     val removeJobs: (Set<String>) -> Unit = { ids ->
         app.storeScope.launch { app.jobStore.remove(ids) }
         selectMode = false
-        // Emptying a filter otherwise leaves a blank screen under a chip reading 0. Computed against
-        // the list minus the ids going away: the delete is a suspend call and has not landed yet.
+        // Against the list minus the ids going away: the delete is suspend and has not landed yet.
         if (app.jobs.none { it.id !in ids && filter.matches(it) }) filter = UseSmileIDSampleJobFilter.All
     }
 
@@ -159,9 +157,7 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
         )
         // Bounded, so a toast left up cannot restore rows long after the removal it belonged to.
         var removalShown by remember { mutableStateOf(false) }
-        // Keyed on a token that moves only on a removal, so an unrelated job write cannot restart this
-        // mid-window and strand the toast; and the notice is consumed on read, so returning here later
-        // cannot replay a confirmation already spent.
+        // Keyed on a removal-only token so an unrelated write cannot strand the toast; the notice is consumed on read.
         LaunchedEffect(app.jobStore.removalToken) {
             val count = app.jobStore.takeRemovalNotice() ?: return@LaunchedEffect
             removedCount = count
@@ -230,8 +226,7 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
             onCopy = { label, value ->
                 scope.launch {
                     clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(label, value)))
-                    // Android 13 shows its own copy confirmation, so a second one is noise. Below it
-                    // there is none, and a copy control that acknowledges nothing reads as broken.
+                    // Android 13 shows its own confirmation; below it there is none.
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) outcome = "$label copied"
                 }
             },
@@ -244,15 +239,13 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
             },
             refreshing = refreshing,
         )
-    // Only a processing row can change, so that is the only one worth a request on entry. Keyed on
-    // the id, not the job: re-running on every row rewrite would refresh in a loop off its own write.
+    // Only a processing row can change. Keyed on the id, not the job: keying on the row would loop off its own write.
     LaunchedEffect(jobId) {
         if (app.jobs.firstOrNull { it.id == jobId }?.status != UseSmileIDSampleStatus.Processing) {
             return@LaunchedEffect
         }
         refreshing = true
-        // Silent unless something happened: an automatic check that toasts "still processing" on every
-        // visit is noise, while a change or a failure is the reason the check ran at all.
+        // Silent unless something happened: "still processing" on every visit is noise.
         val result = refreshStatus(
             jobId = jobId,
             rowSessionId = app.jobs.firstOrNull { it.id == jobId }?.sessionId,
@@ -282,10 +275,7 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
     }
 }
 
-/**
- * The screen's own scope, not storeScope: leaving mid-refresh must cancel the call rather than land a
- * result against a disposed screen.
- */
+/** Called on the screen's own scope, so leaving mid-refresh cancels the call. */
 private suspend fun refresh(
     app: UseSmileIDSampleAppState,
     jobId: String,
@@ -299,7 +289,7 @@ private suspend fun refresh(
     nowMillis = System.currentTimeMillis(),
 ).label()
 
-/** One line per outcome, because a refresh that changed nothing must say so rather than look broken. */
+/** One line per outcome: a refresh that changed nothing still has to say so. */
 private fun UseSmileIDSampleStatusRefresh.label(): String = when (this) {
     is UseSmileIDSampleStatusRefresh.Updated -> "${status.label} — $message"
     UseSmileIDSampleStatusRefresh.StillProcessing -> "Still processing"

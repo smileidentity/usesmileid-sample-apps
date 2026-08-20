@@ -12,19 +12,15 @@ import retrofit2.http.Header
 import retrofit2.http.Path
 
 /**
- * `GET /v3/status/{jobId}` — the partner's own call, not the SDK's. The SDK owns capture and
- * submission and stops at the 202 that creates the job; asking what became of it afterwards is the
- * host's job, which is exactly what this sample is here to show.
- *
- * The HTTP code carries the same information as the body's `status`, so both are read: **200** is a
- * terminal state, **202** is still processing, **404** is a job this token cannot see.
+ * `GET /v3/status/{jobId}` — the partner's own call: the SDK stops at the 202 that creates the job.
+ * The HTTP code carries the same information as `status`, so both are read: 200 terminal, 202 processing, 404 unseen.
  */
 interface UseSmileIDSampleStatusApi {
 
     @GET("v3/status/{jobId}")
     suspend fun status(
         @Path("jobId") jobId: String,
-        /** The session's own JWT, minted by `POST /v3/token`. Never logged. */
+        /** The session's own JWT from `POST /v3/token`. Never logged. */
         @Header("SmileID-Token") token: String,
     ): Response<UseSmileIDSampleStatusResponse>
 
@@ -33,11 +29,7 @@ interface UseSmileIDSampleStatusApi {
         private const val SANDBOX_URL = "https://testapi.smileidentity.com/"
         private const val PRODUCTION_URL = "https://api.smileidentity.com/"
 
-        /**
-         * One instance per environment, built once. Retrofit creates its own OkHttp client when it is
-         * not given one, so building per request allocated a connection pool and a dispatcher thread
-         * pool every time anyone pulled to refresh.
-         */
+        /** One per environment, built once: Retrofit makes its own OkHttp client, so per-request was a pool per pull. */
         fun of(sandbox: Boolean): UseSmileIDSampleStatusApi = if (sandbox) sandboxApi else productionApi
 
         private val sandboxApi: UseSmileIDSampleStatusApi by lazy { build(SANDBOX_URL) }

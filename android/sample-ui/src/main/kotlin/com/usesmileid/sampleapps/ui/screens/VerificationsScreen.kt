@@ -117,9 +117,7 @@ fun VerificationsScreen(
             }
         }
 
-        // The design draws no empty frame, and the app no longer seeds any rows, so a first launch
-        // would otherwise be a blank tab under the filter chips. Two messages, because "nothing yet"
-        // and "nothing matching this filter" are different things to be told.
+        // Two messages: "nothing yet" and "nothing matching this filter" are different things to be told.
         if (visible.isEmpty()) {
             item {
                 if (state.jobs.isEmpty()) {

@@ -13,18 +13,18 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface UseSmileIDSampleJobDao {
 
-    /** Newest first, which is the order the list and its date groups both read in. */
+    /** Newest first, which is how the list and its date groups read. */
     @Query("SELECT * FROM jobs ORDER BY createdAtMillis DESC")
     fun all(): Flow<List<UseSmileIDSampleJobEntity>>
 
     @Query("SELECT * FROM jobs WHERE id = :id")
     suspend fun find(id: String): UseSmileIDSampleJobEntity?
 
-    /** IGNORE, not REPLACE: a repeated delivery of the same job id must not overwrite the row it already wrote. */
+    /** IGNORE, not REPLACE: a repeated delivery must not overwrite the row it already wrote. */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(jobs: List<UseSmileIDSampleJobEntity>)
 
-    /** REPLACE, for the one caller that means it: a status refresh rewrites the row it just read. */
+    /** REPLACE, for the one caller that means it: a status refresh. */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(job: UseSmileIDSampleJobEntity)
 
@@ -42,15 +42,9 @@ abstract class UseSmileIDSampleJobDatabase : RoomDatabase() {
 
     companion object {
         /**
-         * No destructive fallback, deliberately. Version 1 is the first schema anyone will have, so
-         * there is nothing in the wild to migrate from yet — and once this ships, a partner's rows are
-         * their own submitted verifications. Losing them because a column moved is not something a
-         * reference integration should demonstrate.
-         *
-         * `exportSchema` writes `schemas/…/1.json`, which is committed: it is what a future
-         * `Migration` is validated against. The next schema change adds a migration here and bumps the
-         * version; without a fallback, forgetting one fails loudly at open time instead of silently
-         * emptying the list.
+         * No destructive fallback, deliberately: a partner's rows are their own submitted verifications.
+         * The committed `schemas/…/1.json` is what a future `Migration` validates against, and without a
+         * fallback a forgotten one fails at open time instead of silently emptying the list.
          */
         fun open(context: Context): UseSmileIDSampleJobDatabase =
             Room.databaseBuilder(

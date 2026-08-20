@@ -13,9 +13,9 @@ data class UseSmileIDSampleJob(
     val createdAtMillis: Long,
     val message: String,
     val httpStatus: String,
-    /** The environment at submission time. A row outlives the toggle that produced it. */
+    /** The environment at submission time: a row outlives the toggle that produced it. */
     val sandbox: Boolean = true,
-    /** The session handle the run submitted under; null for a run on the local fixture token, which no status call can ask about. */
+    /** The session the run submitted under; null on a fixture token. */
     val sessionId: String? = null,
 ) {
     /** The design truncates the job id in the list and on the details row; the full one is still copyable. */

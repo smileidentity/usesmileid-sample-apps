@@ -8,18 +8,8 @@ import kotlin.math.min
 import kotlin.math.pow
 
 /**
- * Structural predicate over the two colour schemes: every fill the app draws must keep the thing
- * drawn on top of it legible, in **both** modes.
- *
- * This exists because the golden lane cannot catch this class of bug. Dark mode was rendering
- * near-white glyphs on a pale `#EAECF0` tile — the fill had no dark counterpart, so it stayed light
- * while the glyph followed the theme — and the dark golden recorded that faithfully for weeks. A
- * screenshot only fails when it *changes*; nothing was asserting that the result was readable.
- *
- * The reverse mistake is checked too, and was made while fixing the first: swapping the fill for
- * `surfaceMuted` made the glyph legible and the container invisible, because `#F9FAFB` on `#FFFFFF`
- * is a 1.03:1 difference. A container has to be distinguishable from what it sits on, or it is not a
- * container.
+ * Every fill must keep what is drawn on it legible, in both modes — which the golden lane cannot
+ * assert, because a screenshot only fails when it changes.
  */
 class UseSmileIDSampleContrastTest {
 
@@ -28,7 +18,6 @@ class UseSmileIDSampleContrastTest {
         assertContrast("$name: glyph on icon tile", colors.textTitle, colors.surfaceTile, TEXT_MINIMUM)
     }
 
-    /** The tile is a container, so it must be visible as one against the card it sits on. */
     @Test
     fun `an icon tile is distinguishable from the surface behind it`() = eachScheme { name, colors ->
         assertContrast("$name: icon tile against card", colors.surfaceTile, colors.surface, CONTAINER_MINIMUM)
@@ -43,7 +32,6 @@ class UseSmileIDSampleContrastTest {
             }
     }
 
-    /** Muted text is deliberately quieter, so it is held to the large-text bar rather than the body one. */
     @Test
     fun `muted text stays above the large-text bar`() = eachScheme { name, colors ->
         assertContrast("$name: muted on surface", colors.textMuted, colors.surface, LARGE_TEXT_MINIMUM)
@@ -69,13 +57,9 @@ class UseSmileIDSampleContrastTest {
         /** WCAG AA for large text and UI components. */
         const val LARGE_TEXT_MINIMUM = 3.0
 
-        /**
-         * Not a WCAG figure — a container only has to be *seen*, not read. Set from what the design's
-         * own `surface-2` on white achieves (1.13:1); the regression it rejects measured 1.03:1.
-         */
+        /** Not WCAG: a container only has to be seen. The design's surface-2 on white is 1.13:1. */
         const val CONTAINER_MINIMUM = 1.08
 
-        /** WCAG 2.1 relative luminance and contrast ratio, on opaque colours. */
         fun contrastRatio(a: Color, b: Color): Double {
             val la = relativeLuminance(a)
             val lb = relativeLuminance(b)

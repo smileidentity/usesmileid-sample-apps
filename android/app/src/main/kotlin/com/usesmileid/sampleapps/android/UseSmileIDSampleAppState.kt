@@ -32,11 +32,9 @@ class UseSmileIDSampleAppState(
     val settings: UseSmileIDSampleSettings,
     val session: UseSmileIDSampleTokenSession?,
     /**
-     * Read from Room, so a submitted job is still here after the process that submitted it is gone.
-     * Held as [State] for the same reason as [now]: a value would change this object's identity on
-     * every write, and a `staticCompositionLocalOf` invalidates its whole subtree when the value
-     * changes — including a composed SDK flow, which re-runs `build()` when it recomposes. A job is
-     * written at the moment a run succeeds, while that flow is still on screen.
+     * Read from Room, and held as [State] for the same reason as [now]: a value changes this object's
+     * identity on every write, which invalidates the whole subtree — including a composed SDK flow,
+     * which re-runs `build()`. A job is written at the moment a run succeeds, while that flow is up.
      */
     private val jobsState: State<List<UseSmileIDSampleJob>>,
     val jobStore: UseSmileIDSampleJobStore,
@@ -59,14 +57,10 @@ class UseSmileIDSampleAppState(
     val sessionExpired: Boolean get() = session != null && session.hasExpired(nowMillis)
     val sessionActive: Boolean get() = session != null && !session.hasExpired(nowMillis)
 
-    /**
-     * The only place the environment is decided, so the chip and the builder cannot disagree. The
-     * launch argument wins where it was passed — automation must be able to hold a run to sandbox
-     * whatever is stored — and Settings decides the rest of the time.
-     */
+    /** The only place the environment is decided, so the chip and the builder cannot disagree. */
     val useSandbox: Boolean get() = launchArgs.sandbox ?: settings.useSandbox
 
-    /** True while the launch argument owns the choice, which is why Settings shows the row read-only. */
+    /** True while the launch argument owns the choice, so Settings shows the row read-only. */
     val environmentPinned: Boolean get() = launchArgs.sandbox != null
 
     val environment: UseSmileIDSampleEnvironment
@@ -85,8 +79,7 @@ fun rememberUseSmileIDSampleAppState(
     val now = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val jobStore = remember(context) { UseSmileIDSampleJobStore(context) }
     val jobsState = jobStore.jobs.collectAsStateWithLifecycle(initialValue = emptyList())
-    // Automation precondition, never an ordinary launch. Idempotent, so a recreation re-running this
-    // inserts nothing; keyed on the argument rather than Unit so that stays true after a rotation.
+    // Automation precondition, never an ordinary launch. Idempotent, so a recreation inserts nothing.
     LaunchedEffect(launchArgs.seedJobs) {
         if (launchArgs.seedJobs) jobStore.seedFixtures(System.currentTimeMillis())
     }

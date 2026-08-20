@@ -6,30 +6,23 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import java.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
 
-/** What a refresh did, so the screen can say so rather than silently re-render the same row. */
+/** What a refresh did, so the screen can say so. */
 sealed interface UseSmileIDSampleStatusRefresh {
     data class Updated(val status: UseSmileIDSampleStatus, val message: String) : UseSmileIDSampleStatusRefresh
 
-    /** 202: the verification is real and still running. The row already says Processing. */
+    /** 202 — still running; the row already says Processing. */
     data object StillProcessing : UseSmileIDSampleStatusRefresh
 
-    /** No live scanned session, so there is no credential to ask with. Not an error — a precondition. */
+    /** No live session, so no credential to ask with. A precondition, not an error. */
     data object NoSession : UseSmileIDSampleStatusRefresh
 
-    /** The row was never submitted under a scanned session, so no server-side job exists to ask about. */
+    /** Never submitted under a scanned session, so there is no server-side job. */
     data object NoServerJob : UseSmileIDSampleStatusRefresh
 
     data class Failed(val reason: String) : UseSmileIDSampleStatusRefresh
 }
 
-/**
- * Asks the server what became of one job and writes the answer to its row.
- *
- * Gated on the **currently scanned session**: the call needs a real `SmileID-Token`, and the only one
- * the sample holds is the token a scan linked. The caller also checks the row's own `sessionId` — a
- * job that was never submitted under a real session has nothing server-side to ask about, and asking
- * anyway spends a request to be told 404.
- */
+/** Asks the server what became of one job and writes the answer to its row. Needs a live scanned session. */
 suspend fun refreshStatus(
     jobId: String,
     /** The session the row itself was submitted under; null means there is nothing server-side. */
@@ -44,14 +37,12 @@ suspend fun refreshStatus(
     val response = try {
         UseSmileIDSampleStatusApi.of(sandbox).status(jobId, live.token)
     } catch (e: IOException) {
-        // The offline case is the one a partner will actually hit, and it is a state, not a no-op.
         return UseSmileIDSampleStatusRefresh.Failed(e.message ?: "Network unavailable")
     } catch (e: CancellationException) {
-        // Leaving the screen mid-refresh must stay a cancellation, not become a reported failure.
+        // Leaving mid-refresh stays a cancellation, not a reported failure.
         throw e
     } catch (e: Exception) {
-        // A body the decoder cannot read throws SerializationException, not IOException, and this runs
-        // in the screen's own scope — uncaught, it took the app down rather than reporting anything.
+        // An undecodable body throws SerializationException, not IOException, and this runs in the screen's scope.
         return UseSmileIDSampleStatusRefresh.Failed(e.message ?: e::class.simpleName.orEmpty())
     }
     val body = response.body()
@@ -70,11 +61,7 @@ suspend fun refreshStatus(
     return UseSmileIDSampleStatusRefresh.Updated(status, body.message)
 }
 
-/**
- * The API's five terminal states onto the four the design draws. `error` has no badge of its own, so
- * it lands on Blocked and relies on the server's own message to say why — a fifth badge is a design
- * question, not something to invent here.
- */
+/** Five API states onto the four badges the design draws: `error` lands on Blocked and leans on the server's message. */
 private fun String.toSampleStatus(): UseSmileIDSampleStatus? = when (this) {
     "clear" -> UseSmileIDSampleStatus.Clear
     "attention" -> UseSmileIDSampleStatus.Attention

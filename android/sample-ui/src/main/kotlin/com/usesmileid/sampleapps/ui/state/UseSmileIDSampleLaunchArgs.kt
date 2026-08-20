@@ -20,9 +20,9 @@ data class UseSmileIDSampleLaunchArgs(
     val theme: UseSmileIDSampleThemeScenario = UseSmileIDSampleThemeScenario.BrandDefault,
     val route: UseSmileIDSampleFlowRoute = UseSmileIDSampleFlowRoute.Fullscreen,
     val autostart: UseSmileIDSampleProduct? = null,
-    /** Unset leaves the environment to the Settings toggle; passing it pins the run, which is how automation stays on sandbox. */
+    /** Unset leaves the environment to the Settings toggle; passing it pins the run. */
     val sandbox: Boolean? = null,
-    /** Automation precondition only — the app never seeds on its own. See `spec/launch-args.json`. */
+    /** Automation precondition only — see `spec/launch-args.json`. */
     val seedJobs: Boolean = false,
     val appLocale: String? = null,
     val holdCamera: UseSmileIDSampleHoldCamera? = null,

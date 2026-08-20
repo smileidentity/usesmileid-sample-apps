@@ -87,11 +87,7 @@ fun buildSnapshot(
 
 /** The one place that decides what the SDK is handed (§8.1). */
 fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshed: () -> Unit = {}) {
-    // Omitted entirely when the token already binds what the SDK requires: the forms were skipped,
-    // so these would be blanks, and a blank is not the same claim as "the token supplies it".
-    // Omitted when the token binds what the SDK requires. Not what unblocked the consent-bound run
-    // (measured: the consent screen alone was the cause) — but the forms were skipped, so these would
-    // be empty strings standing in for fields the token supplies, and the SDK strips them anyway.
+    // Omitted when the token binds what the SDK requires: the forms were skipped, so these would be blanks.
     userDetails = if (snapshot.liveSession?.bindings?.bindsRequiredUserDetails == true) {
         null
     } else {
@@ -243,10 +239,9 @@ private fun UseSmileIDFlowBuilder.applyIdParams(snapshot: FlowLaunchSnapshot) {
 }
 
 private fun ScreensBuilder.journeyFor(snapshot: FlowLaunchSnapshot) {
-    // A token carrying complete consent removes the SDK's requirement for a consent screen
-    // (JobTypeValidator.appendConsentRule returns early), and declaring one anyway is not harmless:
-    // FlowNavigationManager filters it back out of the flow it runs, and the run then ends before it
-    // starts. So the binding decides whether the screen exists at all, not just what it collects.
+    // A complete consent binding lifts the SDK's requirement for the screen (appendConsentRule returns
+    // early), and declaring one anyway is not harmless: FlowNavigationManager filters it back out and
+    // the run ends before it starts. The binding decides whether the screen exists at all.
     if (snapshot.liveSession?.bindings?.consent == null) {
         consent {
             partnerName = snapshot.partnerName

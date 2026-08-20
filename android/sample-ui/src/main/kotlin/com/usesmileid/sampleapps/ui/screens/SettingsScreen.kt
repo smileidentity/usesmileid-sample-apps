@@ -95,8 +95,7 @@ fun SettingsScreen(
             )
         }
 
-        // The design draws no environment row, so this placement is ours. Read-only while a launch
-        // argument owns the choice: a switch that moves without changing the run is worse than none.
+        // Not in the design. Read-only while a launch argument owns the choice.
         section("ENVIRONMENT") {
             SwitchRow(
                 title = "Production",

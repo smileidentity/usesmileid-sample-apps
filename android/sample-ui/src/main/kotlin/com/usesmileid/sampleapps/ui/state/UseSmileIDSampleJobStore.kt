@@ -11,11 +11,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-/**
- * The submitted verifications, on disk. A job survives the process because the SDK's result arrives
- * once and there is nowhere else to get it from — a re-read of the server would need a status call
- * per row, and a cancelled run leaves nothing to re-read at all.
- */
+/** The submitted verifications, on disk: the SDK delivers a result once, and there is nowhere else to get it from. */
 class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
 
     constructor(context: Context) : this(UseSmileIDSampleJobDatabase.open(context).jobs())
@@ -23,22 +19,10 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
     /** What the last [remove] took, so undo re-inserts rather than clearing a soft-delete column. */
     private var lastRemoved: List<UseSmileIDSampleJobEntity> = emptyList()
 
-    /**
-     * How many rows the last removal took, for whoever shows the confirmation. Held here rather than
-     * on the screen that removed them, because three paths remove — the swipe, the selection bar, and
-     * the details screen's own delete — and the third navigates away before a confirmation could be
-     * drawn. The list reads it on arrival instead.
-     *
-     * Consumed once by [takeRemovalNotice]: a value that merely persisted would replay the toast on
-     * every later return to the list.
-     */
+    /** Held here, not on the removing screen: the details screen navigates away before it could draw a confirmation. */
     private var removalNotice: Int? by mutableStateOf(null)
 
-    /**
-     * Moves only when a removal happens, so a screen can key an effect on it. Keying on the job list
-     * instead meant any unrelated write — a status refresh, say — restarted the effect mid-window,
-     * found the notice already consumed, and left the confirmation on screen for good.
-     */
+    /** Moves only on a removal, so keying an effect on it cannot be restarted by an unrelated write. */
     var removalToken: Int by mutableIntStateOf(0)
         private set
 
@@ -90,17 +74,11 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
 
     suspend fun find(jobId: String): UseSmileIDSampleJob? = dao.find(jobId)?.toJob()
 
-    /**
-     * Inserts the fixture rows. Reached only by the `seedJobs` launch argument, never on an ordinary
-     * launch: a stored row claims a verification was submitted, and these never were. It exists because
-     * no UI path creates a row without a successful submission, so a device flow covering the list has
-     * no other way to arrive at one. Idempotent — the rows are keyed by job id and insert ignores
-     * conflicts, so a repeated seed changes nothing.
-     */
+    /** Reached only by the `seedJobs` launch argument — see `spec/launch-args.json`. Idempotent. */
     suspend fun seedFixtures(nowMillis: Long) = dao.insert(fixtures(nowMillis).map { it.toEntity() })
 
     companion object {
-        /** The eleven the design's counts describe, offset from a caller-supplied now so a golden groups the same way tomorrow. */
+        /** The eleven the design's counts describe, offset from a caller-supplied now. */
         fun fixtures(nowMillis: Long): List<UseSmileIDSampleJob> {
             val statuses = listOf(
                 UseSmileIDSampleStatus.Clear,

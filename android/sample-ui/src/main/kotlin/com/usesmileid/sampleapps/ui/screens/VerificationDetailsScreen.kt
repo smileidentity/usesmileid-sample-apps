@@ -47,11 +47,7 @@ fun VerificationDetailsScreen(
     onBack: () -> Unit,
     onDelete: () -> Unit,
     onCopy: (label: String, value: String) -> Unit,
-    /**
-     * Pull-to-refresh, which the design draws on this screen's processing state. Always wired rather
-     * than hidden when a refresh cannot succeed: a gesture that silently does nothing reads as a bug,
-     * so the outcome says why instead.
-     */
+    /** Pull-to-refresh, which the design draws in the processing state. Always wired: the outcome says why when it cannot succeed. */
     onRefresh: () -> Unit = {},
     refreshing: Boolean = false,
     modifier: Modifier = Modifier,
@@ -85,8 +81,7 @@ fun VerificationDetailsScreen(
             ) {
             if (job == null) {
                 item {
-                    // The id is kept in the supporting line: a deep link can name a job this build
-                    // never had, and which id was asked for is the whole diagnostic.
+                    // The id stays in the supporting line: which one was asked for is the whole diagnostic.
                     UseSmileIDSampleEmptyState(
                         text = "No verification here",
                         supportingText = "Nothing stored for jobId = $jobId",

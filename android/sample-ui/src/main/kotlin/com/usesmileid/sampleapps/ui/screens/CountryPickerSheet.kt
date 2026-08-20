@@ -108,7 +108,6 @@ private fun PickerList(
     content: @Composable () -> Unit,
 ) {
     if (empty) {
-        // No supporting line: the reader typed the query, so they already know what to do about it.
         UseSmileIDSampleEmptyState(text = emptyLabel, testId = emptyTestId)
         return
     }

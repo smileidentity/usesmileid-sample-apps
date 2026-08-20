@@ -83,9 +83,8 @@ fun SdkFlowScreen(
             }
             return
         }
-        // No form fixes this, so it takes the same exit as a mistyped product id — but it says why
-        // on the result card first. A silent return to the product list is indistinguishable from a
-        // dead tap, which is exactly how this looked on device.
+        // No form fixes this, so it exits like a mistyped product id — but says why first: a silent
+        // return to the product list is indistinguishable from a dead tap.
         is FlowPreflight.Misconfigured -> {
             val issues = preflight.issues
             LaunchedEffect(Unit) {
@@ -115,14 +114,9 @@ fun SdkFlowScreen(
     } else {
         MaterialTheme.colorScheme
     }
-    // The SDK's theme takes `darkMode` from `isSystemInDarkTheme()` and the flow-hosting path
-    // (UseSmileIDBuilder -> RenderFlow) never passes it, so the flow follows the OS. This app's dark
-    // mode is its own setting, so the two disagreed: the host went dark and the SDK stayed light.
-    //
-    // `isSystemInDarkTheme()` reads LocalConfiguration.uiMode, so handing the subtree a copy of the
-    // real configuration with only that bit rewritten makes the SDK's own default resolve to what the
-    // app chose. Nothing else about the configuration changes, and no SDK internals are touched — but
-    // it is a workaround for a missing knob, not the shape this should keep: see the ask in
+    // UseSmileIDBuilder never forwards `darkMode`, so the flow follows the OS rather than this app's own
+    // setting. isSystemInDarkTheme() reads LocalConfiguration.uiMode, so rewriting just that bit for the
+    // subtree makes the SDK resolve what the app chose. A workaround for a missing knob — see
     // docs/plan/token-session-android.md.
     val configuration = LocalConfiguration.current
     val flowConfiguration = remember(configuration, app.settings.darkMode) {
@@ -194,8 +188,7 @@ private fun processingJob(snapshot: FlowLaunchSnapshot, response: JobSubmissionR
     createdAtMillis = System.currentTimeMillis(),
     message = response.message,
     httpStatus = HTTP_ACCEPTED,
-    // Taken from the snapshot, not re-read: the row records the run that produced it, and by the
-    // time a result lands the toggle may already have moved on.
+    // From the snapshot, not re-read: by the time a result lands the toggle may have moved on.
     sandbox = snapshot.sandbox,
     sessionId = snapshot.liveSession?.id,
 )
