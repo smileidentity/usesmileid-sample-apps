@@ -3,7 +3,10 @@ package com.usesmileid.sampleapps.android.flow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
+import android.content.res.Configuration
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -112,6 +115,23 @@ fun SdkFlowScreen(
     } else {
         MaterialTheme.colorScheme
     }
+    // The SDK's theme takes `darkMode` from `isSystemInDarkTheme()` and the flow-hosting path
+    // (UseSmileIDBuilder -> RenderFlow) never passes it, so the flow follows the OS. This app's dark
+    // mode is its own setting, so the two disagreed: the host went dark and the SDK stayed light.
+    //
+    // `isSystemInDarkTheme()` reads LocalConfiguration.uiMode, so handing the subtree a copy of the
+    // real configuration with only that bit rewritten makes the SDK's own default resolve to what the
+    // app chose. Nothing else about the configuration changes, and no SDK internals are touched — but
+    // it is a workaround for a missing knob, not the shape this should keep: see the ask in
+    // docs/plan/token-session-android.md.
+    val configuration = LocalConfiguration.current
+    val flowConfiguration = remember(configuration, app.settings.darkMode) {
+        Configuration(configuration).apply {
+            uiMode = (uiMode and Configuration.UI_MODE_NIGHT_MASK.inv()) or
+                if (app.settings.darkMode) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO
+        }
+    }
+    CompositionLocalProvider(LocalConfiguration provides flowConfiguration) {
     MaterialTheme(colorScheme = hostScheme) {
         UseSmileIDBuilder(modifier = Modifier.fillMaxSize()) {
             applying(snapshot, onTokenRefreshed = app.flowResult::recordRefreshCallback)
@@ -147,6 +167,7 @@ fun SdkFlowScreen(
                 }
             }
         }
+    }
     }
 }
 

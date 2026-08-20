@@ -161,6 +161,21 @@ The wrong conclusion held for a day because the bisect established the right fac
 trigger — and then reached for the wrong owner. Nothing in the SDK source was read as far as
 `appendConsentRule`, whose early return is the whole story.
 
+**An SDK gap the host currently papers over (found 2026-08-20, `12.0.2`):** the flow does not follow the
+host's dark mode. `UseSmileIDTheme` takes `darkMode: Boolean = isSystemInDarkTheme()` and is public, but
+the flow-hosting path — `UseSmileIDBuilder` → `RenderFlow` — calls it as
+`UseSmileIDTheme(themeConfig = ...)` and never passes `darkMode`, so a hosted flow always resolves the
+mode from the OS. Any app whose appearance is its own setting rather than the system's therefore shows a
+light SDK inside a dark host, which is what this sample did: system light, app dark, SDK light.
+Verified both ways on device after the workaround — app dark gives an SDK background of `#1A1C23`, app
+light gives `#F9FAFB`, with the system in light mode throughout.
+**Worked around** in `SdkFlowScreen` by providing the flow subtree a copy of `LocalConfiguration` with
+only `UI_MODE_NIGHT_*` rewritten, which is what `isSystemInDarkTheme()` reads. It touches no SDK
+internals, but it is a host reaching around a missing parameter. **The ask:** expose `darkMode` on the
+flow DSL's `theme { }` block, or forward it from `UseSmileIDBuilder`; then the override goes away. Worth
+filing with the accessor asks below, since it is the same shape of gap — a value the SDK already models
+that a host cannot reach.
+
 **An SDK gap to file, not work around:** `UseSmileIDJwtDecoder` and `DecodedToken` are public, but
 `DecodedToken.tokenPayload` is `internal`, so a host cannot reach the parsed payload through the
 SDK's own decoder — and `bindsRequiredUserDetails` is internal too. We therefore decode the claim
