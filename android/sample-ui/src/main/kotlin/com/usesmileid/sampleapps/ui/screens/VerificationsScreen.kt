@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import com.smileid.designsystem.SmileDimens
@@ -113,6 +114,28 @@ fun VerificationsScreen(
                         countTestId = UseSmileIDSampleTestIds.filterCount(filter.id),
                     )
                 }
+            }
+        }
+
+        // The design draws no empty frame, and the app no longer seeds any rows, so a first launch
+        // would otherwise be a blank tab under the filter chips. Two messages, because "nothing yet"
+        // and "nothing matching this filter" are different things to be told.
+        if (visible.isEmpty()) {
+            item {
+                Text(
+                    text = if (state.jobs.isEmpty()) {
+                        "No verifications yet. Submitted jobs appear here."
+                    } else {
+                        "No ${state.filter.label.lowercase()} verifications."
+                    },
+                    style = UseSmileIDSampleTheme.type.textStyleBody,
+                    color = UseSmileIDSampleTheme.colors.textMuted,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(UseSmileIDSampleTestIds.VERIFICATIONS_EMPTY)
+                        .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.space32),
+                )
             }
         }
 

@@ -9,6 +9,7 @@ object UseSmileIDSampleTestIds {
 
     const val PRODUCTS_SCREEN = "sample_products_screen"
     const val VERIFICATIONS_SCREEN = "sample_verifications_screen"
+    const val VERIFICATIONS_EMPTY = "sample_verifications_empty"
     const val VERIFICATION_DETAILS_SCREEN = "sample_verification_details_screen"
     const val SETTINGS_SCREEN = "sample_settings_screen"
     const val USER_DETAILS_SCREEN = "sample_user_details_screen"
@@ -93,6 +94,7 @@ object UseSmileIDSampleTestIds {
         NAV_TOKEN,
         PRODUCTS_SCREEN,
         VERIFICATIONS_SCREEN,
+        VERIFICATIONS_EMPTY,
         VERIFICATION_DETAILS_SCREEN,
         SETTINGS_SCREEN,
         USER_DETAILS_SCREEN,

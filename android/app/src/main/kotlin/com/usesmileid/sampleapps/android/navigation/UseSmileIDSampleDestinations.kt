@@ -212,17 +212,21 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
     // Not saveable: a saved message replayed the toast on every return to this screen.
     var outcome by remember { mutableStateOf<String?>(null) }
 
+    val job = app.jobs.firstOrNull { it.id == jobId }
+
     Box(modifier = Modifier.fillMaxSize()) {
         VerificationDetailsContent(
             jobId = jobId,
-            job = app.jobs.firstOrNull { it.id == jobId },
+            job = job,
             result = app.flowResult.snapshot,
             onBack = { navigator.navigateUp() },
             onDelete = { app.storeScope.launch { app.jobStore.remove(setOf(jobId)) }; navigator.navigateUp() },
             onCopy = { clipboard.setText(AnnotatedString(it)) },
-            // Offered only under a live scanned session, which is the only real credential the
-            // sample holds — a fixture-token run has no server-side job to ask about.
-            onCheckStatus = if (app.sessionActive) {
+            // Two conditions, and both are about there being something real to ask: the ROW must
+            // have been submitted under a scanned session, or no such job exists server-side (the
+            // seeded fixtures are the case that proves it), and a session must be live NOW, because
+            // its token is the only real credential the sample holds to ask with.
+            onCheckStatus = if (job?.sessionId != null && app.sessionActive) {
                 {
                     // The screen's own scope, not storeScope: leaving the screen mid-refresh must
                     // cancel it rather than land a result against a disposed one.

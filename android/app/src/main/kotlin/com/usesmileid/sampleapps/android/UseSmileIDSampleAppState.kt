@@ -77,7 +77,6 @@ fun rememberUseSmileIDSampleAppState(
     val now = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val jobStore = remember(context) { UseSmileIDSampleJobStore(context) }
     val jobs by jobStore.jobs.collectAsStateWithLifecycle(initialValue = emptyList())
-    val jobsSeeded by store.jobsSeeded.collectAsStateWithLifecycle(initialValue = null)
     val forms = rememberSaveable(saver = UseSmileIDSampleForms.Saver) { UseSmileIDSampleForms() }
     val profiles = remember { UseSmileIDSampleProfiles() }
     // Saveable, so the arguments seed the first launch only and a recreation keeps the drawer's choice.
@@ -87,14 +86,6 @@ fun rememberUseSmileIDSampleAppState(
             theme = launchArgs.theme,
             route = launchArgs.route,
         )
-    }
-
-    val storeScope = rememberCoroutineScope()
-    LaunchedEffect(jobsSeeded) {
-        val seeded = jobsSeeded ?: return@LaunchedEffect
-        if (seeded) return@LaunchedEffect
-        jobStore.seedOnce(alreadySeeded = false, nowMillis = System.currentTimeMillis(), profile = profiles.active)
-        store.markJobsSeeded()
     }
 
     // Stops at the deadline: the session object does not change on expiry, so the key alone never ends this.
@@ -108,7 +99,7 @@ fun rememberUseSmileIDSampleAppState(
 
     return UseSmileIDSampleAppState(
         store = store,
-        storeScope = storeScope,
+        storeScope = rememberCoroutineScope(),
         settings = settings,
         session = session,
         jobs = jobs,

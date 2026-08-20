@@ -3,8 +3,6 @@ package com.usesmileid.sampleapps.ui.golden
 import androidx.compose.runtime.Composable
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleJobStore
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
 import com.usesmileid.sampleapps.ui.screens.VerificationDetailsScreen
 import com.usesmileid.sampleapps.ui.screens.VerificationsScreen
@@ -48,7 +46,7 @@ class VerificationsGoldenTest : GoldenTest() {
     private companion object {
         /** 2026-07-16T11:50:12Z, the instant the design's rows are dated from. */
         const val FIXED_NOW = 1_784_202_612_000L
-        val JOBS = UseSmileIDSampleJobStore.fixtures(FIXED_NOW, UseSmileIDSampleProfiles.defaults().first())
+        val JOBS = JobFixtures.jobs(FIXED_NOW)
 
         /** What a real 202 looks like: a message long enough to need a second line of its own column. */
         val QUEUED = JOBS.first().copy(

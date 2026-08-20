@@ -94,6 +94,10 @@
         "description": "The count inside a chip; suffixed with the status. Asserted after deletes."
       },
       {
+        "id": "sample_verifications_empty",
+        "description": "Empty-list message on the verifications tab. Two texts behind one id: nothing submitted yet, versus nothing matching the active filter. Not in the design — added because the app seeds no rows, so a first launch would render a blank tab."
+      },
+      {
         "id": "sample_job_row",
         "description": "One verification row; suffixed with index."
       },
@@ -153,7 +157,7 @@
       },
       {
         "id": "sample_details_check_status",
-        "description": "Fetches GET /v3/status/{jobId} and rewrites the row. Present only while a live scanned session is linked — that token is the only real SmileID-Token the sample holds, so a fixture-token run has no server-side job to ask about. Stands in for the design's pull-to-refresh on this screen until the gesture lands (sample-apps-plan.md 8.1)."
+        "description": "Fetches GET /v3/status/{jobId} and rewrites the row. Present only when the row was submitted under a scanned session AND one is live now: the first because a job submitted on a fixture token — every seeded row included — does not exist server-side, the second because that token is the only real SmileID-Token the sample holds. Stands in for the design's pull-to-refresh on this screen until the gesture lands (sample-apps-plan.md 8.1)."
       }
     ],
     "userDetails": [

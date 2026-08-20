@@ -197,7 +197,11 @@
         "sample_toast",
         "sample_toast_undo",
         "sample_selection_count",
-        "sample_selection_remove"
+        "sample_selection_remove",
+        "sample_verifications_empty"
+      ],
+      "additions": [
+        "An empty-list message, which the design does not draw. The app seeds no verification rows — a persisted row claims a job was submitted, and the eleven fixtures never were — so a first launch shows the chips over nothing until a real submission lands. Two texts behind one id: nothing yet, versus nothing matching the active filter."
       ],
       "note": "SELECT MODE REPLACES THE BOTTOM CHROME: the selection bar is full-bleed at the bottom with a top border, and the nav bar is NOT behind it (node 5206:2491). The header's trailing action becomes \"Cancel\". The bar is the screen's state but the shell's slot, so the content inset does not change when one bar replaces the other. The removal confirmation is transient — never saved across navigation, or opening a verification and coming back replays a confirmation you already spent."
     },

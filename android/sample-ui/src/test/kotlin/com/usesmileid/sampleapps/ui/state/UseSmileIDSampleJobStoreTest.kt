@@ -86,11 +86,10 @@ class UseSmileIDSampleJobStoreTest {
         assertEquals(false, stored?.sandbox)
     }
 
+    /** The app seeds nothing, so an untouched install has an empty list rather than eleven claims. */
     @Test
-    fun `seeding is skipped once the flag is set`() = runTest {
-        val store = UseSmileIDSampleJobStore(FakeJobDao())
-        store.seedOnce(alreadySeeded = true, nowMillis = 0L, profile = UseSmileIDSampleProfiles.defaults().first())
-        assertEquals(emptyList<UseSmileIDSampleJob>(), store.jobs.first())
+    fun `a fresh store is empty`() = runTest {
+        assertEquals(emptyList<UseSmileIDSampleJob>(), UseSmileIDSampleJobStore(FakeJobDao()).jobs.first())
     }
 
     private fun job(id: String, createdAtMillis: Long = 0L) = UseSmileIDSampleJob(

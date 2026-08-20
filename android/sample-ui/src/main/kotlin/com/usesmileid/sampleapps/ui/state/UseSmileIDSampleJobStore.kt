@@ -3,7 +3,6 @@ package com.usesmileid.sampleapps.ui.state
 import android.content.Context
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
-import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -62,57 +61,4 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
 
     suspend fun find(jobId: String): UseSmileIDSampleJob? = dao.find(jobId)?.toJob()
 
-    /**
-     * Seeds the design's eleven fixtures once, on the flag rather than on an empty table: a partner
-     * who removes every row must not have them handed back on the next launch.
-     */
-    suspend fun seedOnce(alreadySeeded: Boolean, nowMillis: Long, profile: UseSmileIDSampleProfile) {
-        if (alreadySeeded) return
-        dao.insert(fixtures(nowMillis, profile).map { it.toEntity() })
-    }
-
-    companion object {
-        /** The eleven the design's counts describe, offset from a caller-supplied now so a golden groups the same way tomorrow. */
-        fun fixtures(nowMillis: Long, profile: UseSmileIDSampleProfile): List<UseSmileIDSampleJob> {
-            val statuses = listOf(
-                UseSmileIDSampleStatus.Clear,
-                UseSmileIDSampleStatus.Processing,
-                UseSmileIDSampleStatus.Clear,
-                UseSmileIDSampleStatus.Attention,
-                UseSmileIDSampleStatus.Blocked,
-                UseSmileIDSampleStatus.Clear,
-                UseSmileIDSampleStatus.Clear,
-                UseSmileIDSampleStatus.Attention,
-                UseSmileIDSampleStatus.Blocked,
-                UseSmileIDSampleStatus.Clear,
-                UseSmileIDSampleStatus.Clear,
-            )
-            val products = UseSmileIDSampleProduct.entries
-            return statuses.mapIndexed { index, status ->
-                UseSmileIDSampleJob(
-                    id = "job_%02dky31za%02d".format(index, index * 7 % 100),
-                    userId = "user_%02dky31za%02d".format(index, index * 3 % 100),
-                    product = products[index % products.size],
-                    status = status,
-                    createdAtMillis = nowMillis - index * HOURS_APART * MILLIS_PER_HOUR,
-                    message = status.message(),
-                    httpStatus = if (status == UseSmileIDSampleStatus.Processing) HTTP_ACCEPTED else HTTP_OK,
-                    profileId = profile.id,
-                    profileOrganisation = profile.organisation,
-                )
-            }
-        }
-
-        private fun UseSmileIDSampleStatus.message() = when (this) {
-            UseSmileIDSampleStatus.Clear -> "Approved"
-            UseSmileIDSampleStatus.Attention -> "Provisional — needs review"
-            UseSmileIDSampleStatus.Blocked -> "Rejected"
-            UseSmileIDSampleStatus.Processing -> "Submitted, awaiting result"
-        }
-
-        private const val HOURS_APART = 5L
-        private const val MILLIS_PER_HOUR = 60L * 60L * 1000L
-        private const val HTTP_OK = "200 OK"
-        private const val HTTP_ACCEPTED = "202 Accepted"
-    }
 }

@@ -22,9 +22,9 @@ sealed interface UseSmileIDSampleStatusRefresh {
  * Asks the server what became of one job and writes the answer to its row.
  *
  * Gated on the **currently scanned session**: the call needs a real `SmileID-Token`, and the only one
- * the sample holds is the token a scan linked. A run submitted under the local fixture token has no
- * server-side job to ask about, and asking with a fixture would 401 — so the affordance is offered
- * only while a live session is linked, rather than offered and then explained away.
+ * the sample holds is the token a scan linked. The caller also checks the row's own `sessionId` — a
+ * job that was never submitted under a real session has nothing server-side to ask about, and asking
+ * anyway spends a request to be told 404.
  */
 suspend fun refreshStatus(
     jobId: String,
