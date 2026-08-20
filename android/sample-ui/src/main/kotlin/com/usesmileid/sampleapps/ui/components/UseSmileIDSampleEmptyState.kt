@@ -12,11 +12,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/**
- * What a list says when it has nothing to show. Not in the design — the app's own convention, defined
- * once so four surfaces stop inventing their own. [supportingText] is only for surfaces where the
- * reader can act on it; a search that matched nothing needs no advice.
- */
+/** What a list says when it has nothing to show. Not in the design; [supportingText] only where the reader can act. */
 @Composable
 fun UseSmileIDSampleEmptyState(
     text: String,

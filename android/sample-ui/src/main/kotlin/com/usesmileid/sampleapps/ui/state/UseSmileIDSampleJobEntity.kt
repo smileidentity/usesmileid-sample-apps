@@ -7,10 +7,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 
-/**
- * One submitted verification on disk, keyed by the server's job id so a repeated result is idempotent here too.
- * Enums are stored as their stable string ids: an ordinal silently re-points every row when an enum is reordered.
- */
+/** One submitted verification on disk, keyed by job id. Enums stored as string ids, never ordinals. */
 @Entity(tableName = "jobs")
 data class UseSmileIDSampleJobEntity(
     @PrimaryKey val id: String,

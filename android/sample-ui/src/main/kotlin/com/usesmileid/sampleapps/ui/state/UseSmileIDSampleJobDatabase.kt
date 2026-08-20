@@ -44,11 +44,7 @@ abstract class UseSmileIDSampleJobDatabase : RoomDatabase() {
     abstract fun jobs(): UseSmileIDSampleJobDao
 
     companion object {
-        /**
-         * No destructive fallback, deliberately: a partner's rows are their own submitted verifications.
-         * The committed `schemas/…/1.json` is what a future `Migration` validates against, and without a
-         * fallback a forgotten one fails at open time instead of silently emptying the list.
-         */
+        /** No destructive fallback: a forgotten migration must fail at open time, not empty a partner's rows. */
         fun open(context: Context): UseSmileIDSampleJobDatabase =
             Room.databaseBuilder(
                 context.applicationContext,

@@ -37,18 +37,17 @@ suspend fun refreshStatus(
     val response = try {
         UseSmileIDSampleStatusApi.of(sandbox).status(jobId, live.token)
     } catch (e: IOException) {
-        return UseSmileIDSampleStatusRefresh.Failed(e.message ?: "Network unavailable")
+        return UseSmileIDSampleStatusRefresh.Failed("Could not reach the server")
     } catch (e: CancellationException) {
         // Leaving mid-refresh stays a cancellation, not a reported failure.
         throw e
     } catch (e: Exception) {
-        // An undecodable body throws SerializationException, not IOException, and this runs in the screen's scope.
-        return UseSmileIDSampleStatusRefresh.Failed(e.message ?: e::class.simpleName.orEmpty())
+        // The type, never the message: this text goes on screen and a client exception carries the request URL.
+        return UseSmileIDSampleStatusRefresh.Failed("Unexpected error: ${e::class.simpleName}")
     }
     val outcome = statusOutcome(response.code(), response.body())
     if (outcome !is UseSmileIDSampleStatusRefresh.Updated) return outcome
-    // A row deleted while the request was in flight has nothing to write to, and reporting a change
-    // that was never stored would be a lie the list immediately contradicts.
+    // A row deleted mid-request has nothing to write to, and the list would contradict the claim.
     val written = jobStore.applyStatus(
         jobId = jobId,
         status = outcome.status,
@@ -58,10 +57,7 @@ suspend fun refreshStatus(
     return if (written) outcome else UseSmileIDSampleStatusRefresh.Failed("The verification is no longer stored")
 }
 
-/**
- * The HTTP code and body onto an outcome. Pure, so the branch table is unit-testable: 200 with a
- * terminal state, 202 still running, anything else a reported failure.
- */
+/** The HTTP code and body onto an outcome. Pure, so the branch table is unit-testable. */
 internal fun statusOutcome(code: Int, body: UseSmileIDSampleStatusResponse?): UseSmileIDSampleStatusRefresh = when {
     body == null || code !in HTTP_SUCCESS -> UseSmileIDSampleStatusRefresh.Failed("HTTP $code")
     body.status == PROCESSING -> UseSmileIDSampleStatusRefresh.StillProcessing

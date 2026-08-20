@@ -11,10 +11,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
 
-/**
- * `GET /v3/status/{jobId}` — the partner's own call: the SDK stops at the 202 that creates the job.
- * The HTTP code carries the same information as `status`, so both are read: 200 terminal, 202 processing, 404 unseen.
- */
+/** `GET /v3/status/{jobId}` — the partner's own call: the SDK stops at the 202 that creates the job. */
 interface UseSmileIDSampleStatusApi {
 
     @GET("v3/status/{jobId}")

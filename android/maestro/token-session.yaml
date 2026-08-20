@@ -55,10 +55,8 @@ appId: ${APP_ID}
     id: "sample_session_countdown"
     text: "[78]:[0-9]{2}:[0-9]{2}"
 
-# The scanned token drives a real SDK run, with no bindings — the baseline where the host collects
-# everything itself. The consent-bound journey is a separate case and is covered further down; it used
-# to be avoided here as an "SDK defect", which was wrong: the host was declaring a consent screen the
-# token had already satisfied. See docs/plan/token-session-android.md §3.
+# The scanned token drives a real SDK run with no bindings — the baseline where the host collects it all.
+# The consent-bound case is covered below; see docs/plan/token-session-android.md §3 for why it once was not.
 - tapOn:
     id: "sample_nav_token"
 - assertVisible:

@@ -100,10 +100,7 @@ class UseSmileIDSampleFlowResult(
         lastError = error
     }
 
-    /**
-     * The gate refused the run, so the SDK was never mounted. Deliberately not counted as a result
-     * callback: the exactly-once claim is about what the SDK delivered.
-     */
+    /** The gate refused the run, so the SDK never mounted. Not counted as a result callback. */
     fun recordBlocked(reason: String) {
         status = UseSmileIDSampleFlowStatus.Failed
         jobId = null

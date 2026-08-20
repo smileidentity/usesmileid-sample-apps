@@ -79,10 +79,7 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
         @Volatile
         private var instance: UseSmileIDSampleJobStore? = null
 
-        /**
-         * One per process. Activity recreation rebuilds the composition, so a remembered store would
-         * open a second Room connection pool and leak the first — and would drop the rows undo needs.
-         */
+        /** One per process: a remembered store would open a second Room pool on every recreation and leak the first. */
         fun of(context: Context): UseSmileIDSampleJobStore =
             instance ?: synchronized(this) {
                 instance ?: UseSmileIDSampleJobStore(UseSmileIDSampleJobDatabase.open(context).jobs())

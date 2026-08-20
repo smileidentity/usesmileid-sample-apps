@@ -114,10 +114,8 @@ fun SdkFlowScreen(
     } else {
         MaterialTheme.colorScheme
     }
-    // UseSmileIDBuilder never forwards `darkMode`, so the flow follows the OS rather than this app's own
-    // setting. isSystemInDarkTheme() reads LocalConfiguration.uiMode, so rewriting just that bit for the
-    // subtree makes the SDK resolve what the app chose. A workaround for a missing knob — see
-    // docs/plan/token-session-android.md.
+    // UseSmileIDBuilder never forwards `darkMode`, so rewriting uiMode for the subtree is what makes the
+    // SDK resolve the app's own setting. A workaround for a missing knob — see docs/plan/token-session-android.md.
     val configuration = LocalConfiguration.current
     val flowConfiguration = remember(configuration, app.settings.darkMode) {
         Configuration(configuration).apply {

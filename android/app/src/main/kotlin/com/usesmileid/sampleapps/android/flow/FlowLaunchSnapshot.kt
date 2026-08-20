@@ -239,9 +239,8 @@ private fun UseSmileIDFlowBuilder.applyIdParams(snapshot: FlowLaunchSnapshot) {
 }
 
 private fun ScreensBuilder.journeyFor(snapshot: FlowLaunchSnapshot) {
-    // A complete consent binding lifts the SDK's requirement for the screen (appendConsentRule returns
-    // early), and declaring one anyway is not harmless: FlowNavigationManager filters it back out and
-    // the run ends before it starts. The binding decides whether the screen exists at all.
+    // A complete consent binding lifts the SDK's requirement, and declaring one anyway is filtered back
+    // out and ends the run before it starts. The binding decides whether the screen exists at all.
     if (snapshot.liveSession?.bindings?.consent == null) {
         consent {
             partnerName = snapshot.partnerName

@@ -108,9 +108,7 @@ appId: ${APP_ID}
     id: "sample_result_route"
     text: "shell"
 
-# `sandbox` is the override rather than the source (spec/launch-args.json). Passed, it pins the run:
-# the chip reports it and the Settings row goes read-only, which is how automation holds a run to
-# sandbox whatever the toggle was last left on.
+# `sandbox` is the override, not the source: passed, it pins the run and the Settings row goes read-only.
 - stopApp
 - launchApp:
     arguments:
@@ -125,10 +123,8 @@ appId: ${APP_ID}
     id: "sample_settings_screen"
 - assertVisible: "Pinned by the sandbox launch argument"
 
-# Absent, the Settings toggle owns the choice and sandbox is where it starts. The row's supporting
-# line is asserted before each tap, because the setting persists: a blind tap would encode this
-# flow's assumption about the stored value rather than the app's contract. Toggled back at the end
-# for the same reason — left on, it would hand every later flow a different environment.
+# Absent, the Settings toggle owns the choice. Asserted before each tap and toggled back at the end,
+# because the setting persists and would otherwise hand every later flow a different environment.
 - stopApp
 - launchApp
 - runFlow: subflows/warm-start.yaml

@@ -93,11 +93,7 @@ data class UseSmileIDSampleColors(
     val surface: Color,
     val surfaceAlt: Color,
     val surfaceMuted: Color,
-    /**
-     * The design's `color/surface-2`, paired here because the generated output carries it as a single
-     * light value and no other semantic token works in both modes — see the `surface2` delta in
-     * `spec/design-tokens.json`.
-     */
+    /** The design's `color/surface-2`, paired here because it is generated light-only — see the `surface2` delta in `spec/design-tokens.json`. */
     val surfaceTile: Color,
     val border: Color,
     val overlayScrim: Color,

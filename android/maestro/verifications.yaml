@@ -75,15 +75,12 @@ appId: ${APP_ID}
 - assertNotVisible:
     id: "sample_toast"
 
-# Pull-to-refresh on a verification. A seeded row was never submitted under a scanned session, so the
-# refresh has nothing to ask about and says so — which is the deterministic outcome to assert, and it
-# proves the gesture reached the handler without needing a network or a real token.
+# Pull-to-refresh. A seeded row has no scanned session, so the outcome is deterministic and needs no network.
 - tapOn:
     id: "sample_job_row_0"
 - assertVisible:
     id: "sample_details_refresh"
-# An explicit long, slow drag: a short DOWN swipe does not cross the refresh threshold and the list
-# just settles back, which passes the swipe and fails the assertion after it.
+# An explicit long, slow drag: a short DOWN swipe does not cross the refresh threshold.
 - swipe:
     start: 50%, 30%
     end: 50%, 79%

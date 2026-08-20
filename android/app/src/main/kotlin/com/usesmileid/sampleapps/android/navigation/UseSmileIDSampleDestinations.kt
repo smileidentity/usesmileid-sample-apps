@@ -232,8 +232,7 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
             },
             onRefresh = {
                 scope.launch {
-                    // The automatic check on entry sets the same flag; without this a pull during it
-                    // sends a second identical request and the first to finish hides the indicator.
+                    // The check on entry sets the same flag; without this a pull during it duplicates the request.
                     if (refreshing) return@launch
                     refreshing = true
                     outcome = refresh(app, jobId, job?.sessionId)

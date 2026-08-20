@@ -31,11 +31,7 @@ class UseSmileIDSampleAppState(
     val storeScope: CoroutineScope,
     private val settingsState: State<UseSmileIDSampleSettings>,
     private val sessionState: State<UseSmileIDSampleTokenSession?>,
-    /**
-     * Read from Room, and held as [State] for the same reason as [now]: a value changes this object's
-     * identity on every write, which invalidates the whole subtree — including a composed SDK flow,
-     * which re-runs `build()`. A job is written at the moment a run succeeds, while that flow is up.
-     */
+    /** From Room, behind [State] for the same reason as [now]: a value would invalidate the whole subtree on every write. */
     private val jobsState: State<List<UseSmileIDSampleJob>>,
     val jobStore: UseSmileIDSampleJobStore,
     val forms: UseSmileIDSampleForms,

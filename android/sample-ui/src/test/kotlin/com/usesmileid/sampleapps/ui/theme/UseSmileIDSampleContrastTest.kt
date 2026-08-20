@@ -7,10 +7,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
 
-/**
- * Every fill must keep what is drawn on it legible, in both modes — which the golden lane cannot
- * assert, because a screenshot only fails when it changes.
- */
+/** Every fill keeps its foreground legible in both modes — which a golden cannot assert, because it only fails when it changes. */
 class UseSmileIDSampleContrastTest {
 
     @Test
