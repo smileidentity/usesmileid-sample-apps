@@ -112,19 +112,16 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
     var filter by rememberSaveable { mutableStateOf(UseSmileIDSampleJobFilter.All) }
     var selectMode by rememberSaveable { mutableStateOf(false) }
     var selected by rememberSaveable { mutableStateOf(emptySet<String>()) }
-    // The count outlives the toast, and the token restarts the window when two removals match in size.
-    // Neither is saveable: a saved token replayed the confirmation on every return to this screen.
+    // What the confirmation is about. Sourced from the store rather than set here, so a removal made
+    // on the details screen — which navigates away before it could draw anything — is confirmed too.
     var removedCount by remember { mutableIntStateOf(0) }
-    var removalToken by remember { mutableIntStateOf(0) }
 
-    // One path for both removals — the swipe and the selection bar — so they cannot drift apart.
     val removeJobs: (Set<String>) -> Unit = { ids ->
         app.storeScope.launch { app.jobStore.remove(ids) }
-        removedCount = ids.size
-        removalToken += 1
         selectMode = false
-        // Emptying a filter otherwise leaves a blank screen under a chip reading 0.
-        if (app.jobs.count(filter::matches) == 0) filter = UseSmileIDSampleJobFilter.All
+        // Emptying a filter otherwise leaves a blank screen under a chip reading 0. Computed against
+        // the list minus the ids going away: the delete is a suspend call and has not landed yet.
+        if (app.jobs.none { it.id !in ids && filter.matches(it) }) filter = UseSmileIDSampleJobFilter.All
     }
 
     // Published to the shell rather than drawn here: the design replaces the nav bar with it.
@@ -158,8 +155,11 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
         )
         // Bounded, so a toast left up cannot restore rows long after the removal it belonged to.
         var removalShown by remember { mutableStateOf(false) }
-        LaunchedEffect(removalToken) {
-            if (removalToken == 0) return@LaunchedEffect
+        // Keyed on the list: a removal from any of the three paths changes it, and the notice is
+        // consumed on read so returning here later cannot replay a confirmation already spent.
+        LaunchedEffect(app.jobs) {
+            val count = app.jobStore.takeRemovalNotice() ?: return@LaunchedEffect
+            removedCount = count
             removalShown = true
             delay(SNACKBAR_WINDOW_MILLIS)
             removalShown = false
