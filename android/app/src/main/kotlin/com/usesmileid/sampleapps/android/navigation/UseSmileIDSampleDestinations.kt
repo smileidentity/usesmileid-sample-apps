@@ -33,9 +33,15 @@ import com.ramcosta.composedestinations.generated.destinations.ScenarioDrawerShe
 import com.ramcosta.composedestinations.generated.destinations.SdkFlowScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.VerificationDetailsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.spec.Direction
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
+import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleFlowTokens
+import com.usesmileid.sampleapps.android.flow.tokenBindsIdDetails
+import com.usesmileid.sampleapps.android.flow.tokenUserDetailsRequirement
+import com.usesmileid.sampleapps.android.flow.tokenBindsUserDetails
+import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleQrScanner
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleOverlay
@@ -45,6 +51,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleProductsState
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenDecoder
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 import com.usesmileid.sampleapps.ui.state.toCountdown
@@ -89,7 +96,7 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
             sessionEnded = app.sessionExpired,
             result = app.flowResult.snapshot,
         ),
-        onProductClick = { navigator.navigate(ConsentDetailsFormScreenDestination(productId = it.id)) },
+        onProductClick = { navigator.navigate(app.firstStepFor(it)) },
         onProfileClick = { navigator.navigate(ProfileSwitchSheetDestination) },
         onScanClick = { navigator.navigate(ScanTokenScreenDestination) },
     )
@@ -219,14 +226,33 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
         onRememberChange = app.forms::rememberDetails,
         onBack = { navigator.navigateUp() },
         onContinue = {
-            if (product?.needsIdDetails == true) {
-                navigator.navigate(IdDetailsFormScreenDestination(productId = productId))
-            } else {
-                navigator.navigate(app.sdkFlow(productId)) { launchSingleTop = true }
-            }
+            val next = product?.let(app::stepAfterUserDetails) ?: app.sdkFlow(productId)
+            navigator.navigate(next) { launchSingleTop = true }
         },
+        requirement = app.tokenUserDetailsRequirement,
     )
 }
+
+/**
+ * Where a product's journey starts. A token binding the required user details relaxes the SDK's own
+ * requirement, so the details form has nothing left to collect and is skipped. The ID form is not
+ * skipped with it: the token never relaxes ID params, whatever else it carries.
+ */
+/** Where a product starts: a form is skipped only when the token already carries all of it. */
+private fun UseSmileIDSampleAppState.firstStepFor(product: UseSmileIDSampleProduct): Direction =
+    if (!tokenBindsUserDetails) {
+        ConsentDetailsFormScreenDestination(productId = product.id)
+    } else {
+        stepAfterUserDetails(product)
+    }
+
+/** What follows user details, shared with that form's own Continue so the two routes cannot drift. */
+private fun UseSmileIDSampleAppState.stepAfterUserDetails(product: UseSmileIDSampleProduct): Direction =
+    if (product.needsIdDetails && !tokenBindsIdDetails(product)) {
+        IdDetailsFormScreenDestination(productId = product.id)
+    } else {
+        sdkFlow(product.id)
+    }
 
 /** Only for products that need ID details. */
 @Destination<FlowGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.ID_DETAILS_FORM)])
@@ -406,19 +432,39 @@ fun NewProfileSheet(navigator: DestinationsNavigator) {
 @Composable
 fun ScanTokenScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
+    val clipboard = LocalClipboardManager.current
+    var torchOn by rememberSaveable { mutableStateOf(false) }
+    // One path for both entry routes — typed, pasted or simulated, a session is linked the same way.
+    val link: (UseSmileIDSampleTokenSession) -> Unit = { session ->
+        // On the app-level scope, so leaving this screen cannot cancel the write half-done.
+        app.storeScope.launch { app.store.linkTokenSession(session) }
+        navigator.navigateUp()
+    }
     ScanTokenContent(
         onBack = { navigator.navigateUp() },
-        onPaste = {},
-        onSimulate = {
-            // On the app-level scope, so leaving this screen cannot cancel the write half-done.
-            app.storeScope.launch {
-                app.store.linkTokenSession(
-                    id = SIMULATED_SESSION_ID,
-                    expiresAtMillis = System.currentTimeMillis() +
-                        UseSmileIDSampleTokenSession.DEFAULT_DURATION.inWholeMilliseconds,
-                )
-            }
-            navigator.navigateUp()
+        onLink = link,
+        onPaste = { clipboard.getText()?.text },
+        onSimulate = { span, bindings ->
+            val minted = UseSmileIDSampleFlowTokens.session(
+                span = span,
+                bindings = bindings,
+                nowMillis = System.currentTimeMillis(),
+            )
+            // The minter and the decoder have to agree, and a fixture that no longer decodes is a defect
+            // rather than something to paper over with a fabricated session.
+            UseSmileIDSampleTokenDecoder.session(minted)?.let(link)
+        },
+        torchOn = torchOn,
+        onTorchToggle = { torchOn = !torchOn },
+        // The camera lives in the shell: `sample-ui` runs under eight identities, and only this one
+        // owns a scanner. It unbinds on leaving composition, so the SDK gets the camera back (§7.1).
+        viewfinder = { modifier, enabled, onCandidate ->
+            UseSmileIDSampleQrScanner(
+                onCode = onCandidate,
+                torchOn = torchOn,
+                enabled = enabled,
+                modifier = modifier,
+            )
         },
     )
 }
@@ -442,7 +488,6 @@ fun ScenarioDrawerSheet(navigator: DestinationsNavigator) {
 @Composable
 fun ComponentGalleryScreen() = ComponentGalleryContent()
 
-private const val SIMULATED_SESSION_ID = "9f3a"
 /** How long a snackbar with an action stays up: long enough to undo, short enough not to outlive its cause. */
 private const val SNACKBAR_WINDOW_MILLIS = 5_000L
 private const val APP_DISPLAY_NAME = "UseSmileID Sample"

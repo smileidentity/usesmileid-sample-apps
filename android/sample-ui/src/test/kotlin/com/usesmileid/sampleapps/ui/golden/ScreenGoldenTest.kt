@@ -27,6 +27,10 @@ class ScreenGoldenTest : GoldenTest() {
     @Test
     fun products_token_linked() = goldens("screen_products_token_linked") { Products(TOKEN_LINKED) }
 
+    // A long handle next to an 8h countdown is where this card's row ran out of width.
+    @Test
+    fun products_token_linked_max_font_scale() = assertSurvivesMaxFontScale { Products(TOKEN_LINKED) }
+
     @Test
     fun products_token_expired() = goldens("screen_products_token_expired") { Products(TOKEN_EXPIRED) }
 
@@ -47,7 +51,7 @@ class ScreenGoldenTest : GoldenTest() {
             environment = UseSmileIDSampleEnvironment.Sandbox,
             initials = "KA",
         )
-        val TOKEN_LINKED = SANDBOX.copy(sessionId = "9f3a", sessionRemaining = "3:20")
+        val TOKEN_LINKED = SANDBOX.copy(sessionId = "9f3a2c71", sessionRemaining = "7:59:12")
         val TOKEN_EXPIRED = SANDBOX.copy(sessionEnded = true)
         val PRODUCTION = SANDBOX.copy(environment = UseSmileIDSampleEnvironment.Production)
         val IN_FLIGHT = SANDBOX.copy(result = ResultFixtures.Running)
@@ -76,4 +80,9 @@ private fun Products(state: UseSmileIDSampleProductsState) = ProductsScreen(
 )
 
 @Composable
-private fun ScanToken() = ScanTokenScreen(onBack = {}, onSimulate = {}, onPaste = {})
+private fun ScanToken() = ScanTokenScreen(
+    onBack = {},
+    onLink = {},
+    onSimulate = { _, _ -> },
+    onPaste = { null },
+)

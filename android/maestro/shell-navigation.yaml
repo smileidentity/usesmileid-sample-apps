@@ -62,6 +62,7 @@ appId: ${APP_ID}
 # The token affordance is not a tab: it navigates, and the nav bar goes with it.
 - tapOn:
     id: "sample_nav_token"
+- runFlow: subflows/grant-camera.yaml
 - assertVisible:
     id: "sample_scan_token_screen"
 - assertNotVisible:

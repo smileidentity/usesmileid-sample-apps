@@ -1,0 +1,212 @@
+# The token session, end to end on a locally minted fixture token: a simulated scan links it, the
+# countdown reads the token's own span, a scanned token drives a real SDK flow, an expired session
+# turns the journey back at the gate, and manual entry rejects something that is not a token.
+#
+# What a fixture token cannot prove, and what still needs a Portal token by hand: a server accepting
+# it, and reading the QR itself off a screen.
+#
+# The token is never asserted on — Maestro dumps the view hierarchy on failure, so it reaches no
+# `testTag`ged node and no assertion here. The scan screen's field is masked for the same reason.
+# APP_ID must be passed — see shell-navigation.yaml for why it has no default.
+appId: ${APP_ID}
+---
+- stopApp
+- launchApp
+- runFlow: subflows/warm-start.yaml
+
+# A 15m simulated scan: the countdown is the decoded span, which a hard-coded five minutes could not
+# produce. The duration and the bindings are chosen on the sheet, so the mint is not a fixed fixture.
+- tapOn:
+    id: "sample_nav_token"
+# The host owns a camera now, so the FIRST permission prompt in this app is ours, not the SDK's —
+# two requesters in one app, which is what §7.1 wanted this sample to demonstrate. Answered before any
+# assertion, because the dialog covers the screen it is asking on behalf of.
+- runFlow: subflows/grant-camera.yaml
+- assertVisible:
+    id: "sample_scan_token_screen"
+- tapOn:
+    id: "sample_token_simulate"
+- assertVisible:
+    id: "sample_products_screen"
+- assertVisible:
+    id: "sample_session_card"
+- assertVisible:
+    id: "sample_session_countdown"
+    text: "1[45]:[0-9]{2}"
+
+# An 8h token, which is where the old m:ss countdown overflowed. Nothing is run under this one — see
+# the note below on why a consent-bound token cannot reach the SDK on 12.0.2.
+- tapOn:
+    id: "sample_nav_token"
+- assertVisible:
+    id: "sample_scan_token_screen"
+# The mint controls are collapsed by default now — the viewfinder gets the height instead.
+- tapOn: "SIMULATED SCAN"
+- tapOn: "8h"
+- tapOn: "Binds consent"
+- tapOn:
+    id: "sample_token_simulate"
+- assertVisible:
+    id: "sample_products_screen"
+- assertVisible:
+    id: "sample_session_countdown"
+    text: "[78]:[0-9]{2}:[0-9]{2}"
+
+# The scanned token drives a real SDK run. Bindings deliberately off, and that is not a preference:
+#
+#   On 12.0.2 a token whose `payload.consent` is complete makes FlowNavigationManager drop its consent
+#   screen — and the flow then delivers UseSmileIDResult.Cancelled immediately, with no user action,
+#   putting the host back on the products list. The same token without the consent binding runs
+#   normally, so the binding is the trigger. Asserting the consent-bound journey here would encode that
+#   defect as expected behaviour, so this covers the path that works and the consent-screen drop waits
+#   on the SDK fix.
+- tapOn:
+    id: "sample_nav_token"
+- assertVisible:
+    id: "sample_scan_token_screen"
+- tapOn:
+    id: "sample_token_simulate"
+- assertVisible:
+    id: "sample_session_card"
+- tapOn:
+    id: "sample_product_card_smartSelfieEnrollment"
+- assertVisible:
+    id: "sample_user_details_screen"
+- tapOn:
+    id: "sample_user_details_field_firstName"
+- inputText: "Ada"
+- tapOn:
+    id: "sample_user_details_field_lastName"
+- inputText: "Okafor"
+# The SDK requires a contact field even though the form labels both optional.
+- tapOn:
+    id: "sample_user_details_field_email"
+- inputText: "ada.okafor@example.com"
+- hideKeyboard
+# `hideKeyboard` presses Back on Android, so when the IME is already down the Back reaches the app and
+# pops the form. Observed once in a folder run, where it surfaced two commands later as a missing
+# Continue button; this makes it fail where it happens instead.
+- assertVisible:
+    id: "sample_user_details_screen"
+- tapOn:
+    id: "sample_user_details_continue"
+- assertVisible:
+    id: "si_consent_screen"
+- tapOn: "Allow"
+# Conditional because the grant outlives the install, and ColorOS refuses `pm grant` — see README.
+- runFlow:
+    when:
+      visible:
+        id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+    commands:
+      - tapOn:
+          id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+# Release-on-leave: the scan screen had the camera bound moments ago, so the SDK reaching its own
+# camera journey is the host having handed it back. It proves the handoff, not that the preview
+# renders — the SDK's capture screen carries no si_* id, so a live-preview assertion has no home here.
+- assertVisible:
+    id: "si_instructions_screen"
+- back
+- assertVisible:
+    id: "sample_products_screen"
+- tapOn:
+    id: "sample_nav_verifications"
+- tapOn:
+    id: "sample_job_row_0"
+- assertVisible:
+    id: "sample_result_result_count"
+    text: "1"
+- back
+- tapOn:
+    id: "sample_nav_products"
+- assertVisible:
+    id: "sample_products_screen"
+
+# A token carrying the identity skips both host forms. Consent stays unbound to avoid the defect above.
+- tapOn:
+    id: "sample_nav_token"
+- assertVisible:
+    id: "sample_scan_token_screen"
+- tapOn: "SIMULATED SCAN"
+- tapOn: "Binds details"
+- tapOn:
+    id: "sample_token_simulate"
+- assertVisible:
+    id: "sample_session_card"
+# Not a bottom-row product: the nav bar floats over the content, so the last row's centre sits under it
+# and a centre-of-element tap lands on the nav — which `visibilityPercentage` cannot see.
+- tapOn:
+    id: "sample_product_card_documentVerification"
+# Reaching the SDK's consent screen proves the ID form was not interposed. Waited on, not asserted flat:
+# this product mounts camera and ML first, and asserting absence would pass while nav was in flight.
+- extendedWaitUntil:
+    visible:
+      id: "si_consent_screen"
+    timeout: 20000
+- tapOn: "Allow"
+- runFlow:
+    when:
+      visible:
+        id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+    commands:
+      - tapOn:
+          id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+- assertVisible:
+    id: "si_instructions_screen"
+- back
+- assertVisible:
+    id: "sample_products_screen"
+
+# An expired session is the one outcome no form can fix, so the gate routes to the scanner rather
+# than to the SDK — even with the details the previous run left filled in.
+- tapOn:
+    id: "sample_nav_token"
+- tapOn: "SIMULATED SCAN"
+- tapOn: "Expired"
+- tapOn:
+    id: "sample_token_simulate"
+- assertVisible:
+    id: "sample_products_screen"
+- assertVisible:
+    id: "sample_session_ended_banner"
+- tapOn:
+    id: "sample_product_card_smartSelfieEnrollment"
+- assertVisible:
+    id: "sample_user_details_screen"
+- tapOn:
+    id: "sample_user_details_continue"
+- assertVisible:
+    id: "sample_scan_token_screen"
+- assertNotVisible:
+    id: "si_instructions_screen"
+
+# Manual entry: a rejection carries its reason and links nothing, so the expired session still stands.
+- tapOn:
+    id: "sample_token_manual_entry"
+- inputText: "not-a-jwt"
+- hideKeyboard
+- tapOn: "Link token"
+# Wildcarded because Maestro matches the whole text, not a substring. Asserting the reason and not
+# just "an error appeared" is the point: a rejection has to say what is wrong with the token.
+- assertVisible: ".*three dot-separated base64url segments.*"
+- assertVisible:
+    id: "sample_scan_token_screen"
+- back
+- assertVisible:
+    id: "sample_products_screen"
+- assertVisible:
+    id: "sample_session_ended_banner"
+
+# Leave no expired session behind. It persists in DataStore across stopApp by design (R6), `pm clear`
+# is unusable on ColorOS, and the gate turns every product run into a trip to the scanner — so an
+# expired session left here would fail whichever flow ran next, depending only on timing. A live span
+# is safe: an unbound token behaves exactly like the no-token path, which sdk-flow.yaml asserts.
+- tapOn:
+    id: "sample_nav_token"
+- tapOn: "SIMULATED SCAN"
+- tapOn: "8h"
+- tapOn:
+    id: "sample_token_simulate"
+- assertVisible:
+    id: "sample_session_card"
+- stopApp

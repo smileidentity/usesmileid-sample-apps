@@ -8,8 +8,10 @@ import com.usesmileid.bridge.dsl.builder.FaceDetectorMode
 import com.usesmileid.bridge.mlkit.document.DocumentDetectorAnalyzer
 import com.usesmileid.bridge.mlkit.face.FaceDetectorAnalyzer
 import com.usesmileid.bridge.model.CaptureType
+import com.usesmileid.core.exception.InvalidFieldValueException
 import com.usesmileid.core.exception.UseSmileIDValidationException
 import com.usesmileid.core.models.JobType
+import com.usesmileid.data.dsl.config.NetworkConfiguration
 import com.usesmileid.data.model.UserDetails
 import com.usesmileid.presentation.flow.config.BiometricKYCParams
 import com.usesmileid.presentation.flow.config.DocumentType
@@ -19,14 +21,21 @@ import com.usesmileid.presentation.flow.config.EnhancedKYCParams
 import com.usesmileid.presentation.flow.dsl.ScreensBuilder
 import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.presentation.flow.validation.ValidationState
+import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenBindings
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
+import com.usesmileid.sampleapps.ui.state.bindsIdDetails
+import com.usesmileid.sampleapps.ui.state.bindsRequiredUserDetails
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdType
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetailsRequirement
+import com.usesmileid.sampleapps.ui.state.userDetailsRequirement
 import java.net.URL
 import java.util.UUID
 import com.usesmileid.sampleapps.ui.R as SampleUiR
@@ -43,6 +52,10 @@ data class FlowLaunchSnapshot(
     val userId: String,
     val partnerId: String,
     val partnerName: String,
+    /** Live at entry only: a session that has run out is the gate's business, never the builder's. */
+    val session: UseSmileIDSampleTokenSession? = null,
+    /** A session existed and had run out — the one thing that routes back to the scanner (TOK-A5). */
+    val sessionExpired: Boolean = false,
 )
 
 fun buildSnapshot(
@@ -51,6 +64,11 @@ fun buildSnapshot(
     userId: String,
 ): FlowLaunchSnapshot? {
     val product = UseSmileIDSampleProduct.entries.firstOrNull { it.id == args.productId } ?: return null
+    // The clock is read here rather than through the app state's ticking value: the snapshot is taken
+    // once at entry (R2), and subscribing the flow host to a once-a-second tick would recompose it —
+    // which the SDK answers by re-running `build()` and tearing the run down.
+    val entryMillis = System.currentTimeMillis()
+    val session = app.session
     return FlowLaunchSnapshot(
         product = product,
         route = args.route,
@@ -62,6 +80,8 @@ fun buildSnapshot(
         userId = userId,
         partnerId = app.profiles.active.id,
         partnerName = app.profiles.active.organisation,
+        session = session?.takeUnless { it.hasExpired(entryMillis) },
+        sessionExpired = session != null && session.hasExpired(entryMillis),
     )
 }
 
@@ -94,19 +114,35 @@ fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshe
     network {
         config {
             jobType = snapshot.product.jobType
-            token = UseSmileIDSampleFlowTokens.token(
+            val scanned = snapshot.liveSession
+            token = scanned?.token ?: UseSmileIDSampleFlowTokens.token(
                 expired = snapshot.scenario.startsExpired,
                 nowMillis = System.currentTimeMillis(),
             )
-            onTokenExpired = { _ ->
+            onTokenExpired = { previous ->
                 onTokenRefreshed()
-                when (snapshot.scenario) {
-                    UseSmileIDSampleScenario.BadRefresh -> UseSmileIDSampleFlowTokens.malformed()
+                when {
+                    // The Portal mints by hand and there is no endpoint this sample may call, so the
+                    // auth failure has to surface rather than be papered over with an invented token.
+                    scanned != null -> previous
+                    snapshot.scenario == UseSmileIDSampleScenario.BadRefresh -> UseSmileIDSampleFlowTokens.malformed()
                     else -> UseSmileIDSampleFlowTokens.token(expired = false, nowMillis = System.currentTimeMillis())
                 }
             }
+            // Debug builds only: a sample that shows a partner what the SDK put on the wire is a real
+            // probe affordance, but release must never log traffic. The SDK redacts the credential
+            // headers itself before any list we pass, which is why BODY level is safe here.
+            logging {
+                enabled = BuildConfig.DEBUG
+                // HEADERS, not BODY: a logged body carries the user details this repo forbids in logs.
+                // One word to raise it locally when a response body is what you need.
+                level = NetworkConfiguration.LogLevel.HEADERS
+            }
             partnerConfig {
-                partnerId = snapshot.partnerId
+                // The token wins over the local profile: it was minted for one partner, and a signed
+                // token submitted under a different id comes back 401. Verified on device with a real
+                // Portal token, where the sample's fixture profile id produced exactly that.
+                partnerId = scanned?.partnerId ?: snapshot.partnerId
                 callbackUrl = CALLBACK_URL
                 useSandbox = snapshot.sandbox
             }
@@ -128,10 +164,15 @@ fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshe
 
 /** §7.3's entry gate: the SDK's non-throwing pre-flight plus its per-payload validators. */
 fun preflight(snapshot: FlowLaunchSnapshot): FlowPreflight {
+    // Ahead of the payloads, because no form fixes a session that has run out (TOK-A5).
+    if (snapshot.sessionExpired) return FlowPreflight.NeedsSession
     val builder = UseSmileIDFlowBuilder().apply { applying(snapshot) }
     // A form can fix what the user typed but not how the host built the flow, and §7.3 redirects only the first.
+    val requirement = snapshot.liveSession?.bindings.userDetailsRequirement()
     val payloadChecks = buildList {
-        builder.userDetails?.let { add(builder.validateUserDetails(it)) }
+        // The SDK still does the validating — its overload that takes a token payload is not public API
+        // at 12.0.2, so the bindings are subtracted from what it reports instead.
+        builder.userDetails?.let { add(builder.validateUserDetails(it).minus(requirement)) }
         builder.biometricKYCParams?.let { add(builder.validateBiometricKYCParams(it)) }
         builder.enhancedKYCParams?.let { add(builder.validateEnhancedKYCParams(it)) }
         builder.documentVerificationParams?.let { add(builder.validateDocumentVerificationParams(it)) }
@@ -152,31 +193,41 @@ sealed interface FlowPreflight {
     /** The forms can resolve it. */
     data class NeedsDetails(val issues: List<UseSmileIDValidationException>) : FlowPreflight
 
+    /** Only a new token resolves it, so the journey goes back to the scanner rather than to a form. */
+    data object NeedsSession : FlowPreflight
+
     /** No form can resolve it, and it must still never reach the SDK. */
     data class Misconfigured(val issues: List<UseSmileIDValidationException>) : FlowPreflight
 }
 
 private fun UseSmileIDFlowBuilder.applyIdParams(snapshot: FlowLaunchSnapshot) {
     val details = snapshot.idDetails
+    // Per field, the token beats the form — the server overwrites these from its claims regardless.
+    val bound = snapshot.liveSession?.bindings
+    val country = bound?.country ?: details.country?.code.orEmpty()
+    val idType = bound?.idType ?: details.idType?.id.orEmpty()
+    // The SDK asks only that this be non-blank, and the server substitutes the same claim anyway.
+    val idNumber = bound?.idNumberReference ?: details.idNumber
     when (snapshot.product) {
         UseSmileIDSampleProduct.BiometricKyc -> biometricKYCParams = BiometricKYCParams(
-            idType = details.idType?.id.orEmpty(),
-            idNumber = details.idNumber,
-            country = details.country?.code.orEmpty(),
+            idType = idType,
+            idNumber = idNumber,
+            country = country,
         )
         UseSmileIDSampleProduct.EnhancedKyc -> enhancedKYCParams = EnhancedKYCParams(
-            idType = details.idType?.id.orEmpty(),
-            idNumber = details.idNumber,
-            country = details.country?.code.orEmpty(),
+            idType = idType,
+            idNumber = idNumber,
+            country = country,
         )
+        // Nullable here: an unbound, unselected type stays absent rather than becoming a rejected "".
         UseSmileIDSampleProduct.DocumentVerification -> documentVerificationParams = DocumentVerificationParams(
-            country = details.country?.code.orEmpty(),
-            idType = details.idType?.id,
+            country = country,
+            idType = bound?.idType ?: details.idType?.id,
         )
         UseSmileIDSampleProduct.EnhancedDocumentVerification -> enhancedDocumentVerificationParams =
             EnhancedDocumentVerificationParams(
-                country = details.country?.code.orEmpty(),
-                idType = details.idType?.id.orEmpty(),
+                country = country,
+                idType = idType,
             )
         else -> Unit
     }
@@ -250,7 +301,58 @@ private val UseSmileIDSampleProduct.needsDocumentCapture: Boolean
     get() = this == UseSmileIDSampleProduct.DocumentVerification ||
         this == UseSmileIDSampleProduct.EnhancedDocumentVerification
 
-private val UseSmileIDSampleScenario.startsExpired: Boolean
+/**
+ * The session a run actually submits under. Absent for the two scenarios that are *about* refresh:
+ * a scanned token has no refresh journey, and the fixtures are what keep those scenarios meaningful.
+ */
+private val FlowLaunchSnapshot.liveSession: UseSmileIDSampleTokenSession?
+    get() = session?.takeUnless { scenario.startsExpired }
+
+/**
+ * Whether the token this run will submit under binds the user details the SDK requires — both names
+ * plus one contact field. When it does the SDK asks nothing more of `userDetails`, so the host's own
+ * form has nothing left to collect and the journey may start past it. Read through the same
+ * live-session rule the gate uses, so a skipped form can never be followed by a redirect back to it.
+ */
+val UseSmileIDSampleAppState.tokenBindsUserDetails: Boolean
+    get() = session
+        ?.takeIf { sessionActive && !flowResult.scenario.startsExpired }
+        ?.bindings
+        ?.bindsRequiredUserDetails == true
+
+/** Drops the issues the token already answers; every other rule the SDK applies still stands. */
+private fun ValidationState.minus(requirement: UseSmileIDSampleUserDetailsRequirement): ValidationState {
+    if (this !is ValidationState.Invalid) return this
+    val outstanding = issues.filterNot(requirement::covers)
+    return if (outstanding.isEmpty()) ValidationState.Valid else ValidationState.Invalid(outstanding)
+}
+
+private fun UseSmileIDSampleUserDetailsRequirement.covers(issue: UseSmileIDValidationException): Boolean {
+    val field = (issue as? InvalidFieldValueException) ?: return false
+    return when (field.fieldName) {
+        "userDetails.givenNames" -> !firstName
+        "userDetails.lastName" -> !lastName
+        // The contact rule is reported against the object rather than a field, so the reason is what
+        // identifies it — anything else raised at that level is not ours to drop.
+        "userDetails" -> !contact && field.reason.contains("email", ignoreCase = true)
+        else -> false
+    }
+}
+
+/** What the form must still collect, read through the same live-session rule as the gate. */
+val UseSmileIDSampleAppState.tokenUserDetailsRequirement: UseSmileIDSampleUserDetailsRequirement
+    get() = session
+        ?.takeIf { sessionActive && !flowResult.scenario.startsExpired }
+        ?.bindings
+        .userDetailsRequirement()
+
+/** [tokenBindsUserDetails] for the ID form, read through the same live-session rule. */
+fun UseSmileIDSampleAppState.tokenBindsIdDetails(product: UseSmileIDSampleProduct): Boolean = session
+    ?.takeIf { sessionActive && !flowResult.scenario.startsExpired }
+    ?.bindings
+    ?.bindsIdDetails(product) == true
+
+internal val UseSmileIDSampleScenario.startsExpired: Boolean
     get() = this == UseSmileIDSampleScenario.ExpiredToken || this == UseSmileIDSampleScenario.BadRefresh
 
 private val PRIVACY_POLICY_URL = URL("https://usesmileid.com/privacy-policy")

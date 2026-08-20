@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.ui.golden
 
 import androidx.compose.runtime.Composable
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobs
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
@@ -37,10 +38,22 @@ class VerificationsGoldenTest : GoldenTest() {
     @Test
     fun verification_details_unknown_job() = goldens("screen_verification_details_unknown") { UnknownDetails() }
 
+    @Test
+    fun verification_details_queued() = goldens("screen_verification_details_queued") { Details(QUEUED) }
+
+    @Test
+    fun verification_details_queued_max_font_scale() = assertSurvivesMaxFontScale { Details(QUEUED) }
+
     private companion object {
         /** 2026-07-16T11:50:12Z, the instant the design's rows are dated from. */
         const val FIXED_NOW = 1_784_202_612_000L
         val JOBS = UseSmileIDSampleJobs.seeded(FIXED_NOW)
+
+        /** What a real 202 looks like: a message long enough to need a second line of its own column. */
+        val QUEUED = JOBS.all.first().copy(
+            message = "Request accepted and queued for processing.",
+            httpStatus = "202 Accepted",
+        )
     }
 
     @Composable
@@ -65,9 +78,9 @@ class VerificationsGoldenTest : GoldenTest() {
     )
 
     @Composable
-    private fun Details() = VerificationDetailsScreen(
-        jobId = JOBS.all.first().id,
-        job = JOBS.all.first(),
+    private fun Details(job: UseSmileIDSampleJob = JOBS.all.first()) = VerificationDetailsScreen(
+        jobId = job.id,
+        job = job,
         result = ResultFixtures.Succeeded,
         onBack = {},
         onDelete = {},

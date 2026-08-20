@@ -34,7 +34,7 @@ import com.smileid.designsystem.smileProductHues
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.components.ChevronRightGlyph
 import com.usesmileid.sampleapps.ui.components.ProductMarkGlyph
-import com.usesmileid.sampleapps.ui.components.TorchGlyph
+import com.usesmileid.sampleapps.ui.components.FlashGlyph
 import com.usesmileid.sampleapps.ui.components.TrashGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleAvatar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleBottomSheet
@@ -57,6 +57,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProfileEnvChip
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProfileRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleScanGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleScanSheet
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleScanSheetState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSearchField
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionHeader
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSessionCard
@@ -302,7 +303,7 @@ private fun gallerySections(): List<GallerySectionSpec> {
                     contentDescription = "Torch",
                     onClick = {},
                     emphasis = UseSmileIDSampleTopAppBarEmphasis.Filled,
-                ) { tint -> TorchGlyph(tint = tint) }
+                ) { tint -> FlashGlyph(tint = tint) }
             }
             UseSmileIDSampleTopAppBar(title = "Enhanced Document Verification", onBack = {})
         },
@@ -512,7 +513,16 @@ private fun gallerySections(): List<GallerySectionSpec> {
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 UseSmileIDSampleScanGlyph()
             }
-            UseSmileIDSampleScanSheet(onPaste = {}, onSimulate = {})
+            UseSmileIDSampleScanSheet(
+                state = UseSmileIDSampleScanSheetState(),
+                onTokenChange = {},
+                onPaste = {},
+                onLink = {},
+                onExpandToggle = {},
+                onSpanSelect = {},
+                onBindingsChange = {},
+                onSimulate = {},
+            )
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                 UseSmileIDSampleFloatingTokenButton(onClick = {})
             }

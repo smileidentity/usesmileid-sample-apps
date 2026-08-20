@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!--
+      Declared by the host, not inherited from the SDK: this app scans the token QR itself, so it is a
+      second camera requester alongside the SDK's own. That is realistic partner behaviour, and this
+      sample is where the two-requester case gets exercised.
+    -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Scanning degrades to manual token entry rather than failing, so a camera is not required. -->
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="false" />
+
     <application
         android:allowBackup="false"
         android:enableOnBackInvokedCallback="true"
