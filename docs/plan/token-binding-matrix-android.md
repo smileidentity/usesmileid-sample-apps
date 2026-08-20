@@ -1,6 +1,8 @@
 # Token bindings → what the host collects, and what it declares to the SDK
 
-**Status:** planning only. No implementation until the open questions in §8 are answered.
+**Status:** planning only. The three open questions in §8 were raised with the owner on 2026-08-20 and
+**deferred by decision** — they are resolved at the start of implementation, not discovered during it.
+Nothing in §3–§7 depends on their answers; §8 says exactly what each one blocks.
 
 Scope: Android. The token contract is shared, so §9 records what the other three inherit.
 
@@ -177,7 +179,7 @@ main affordance that makes these cases legible instead of mysterious.
 | E3 | Enhanced KYC + bound consent | `screens { processing { } }` alone must run | Narrowest legal flow; the one that broke |
 | E4 | Session expires between form and SDK entry | Existing gate: route to the scanner, not a form | No form holds a token |
 | E5 | 401 refresh drops a binding | Out of the host's control; document it | Body was reduced against the *original* token, so the retry submits a gap and the server 400s |
-| E6 | Settings "Consent screen" off, token unbound | Must supply `consentInformation` instead of omitting both | §2.1 requires one or the other; omitting both fails the build |
+| E6 | Settings "Consent screen" off, token unbound | Must supply `consentInformation` instead of omitting both — **blocked on §8 Q2** | §2.1 requires one or the other; omitting both fails the build |
 | E7 | ID number is a vault reference | Passes the non-blank check; never display or log it as an ID number | It is credential-adjacent |
 | E8 | Token minted for another partner | `partnerId` from the token wins over the active profile | Already fixed; a mismatched id 401s |
 | E9 | SmartSelfie products | No ID form ever; `bindsIdDetails` returns true | `needsIdDetails` is false |
@@ -208,16 +210,19 @@ consent-bound journey was previously avoided here as an "SDK defect"; that const
 **What none of these prove.** A locally minted token is not server-issued, so every device case ends at
 a 401 rather than a verdict. Confirming a real submission still needs a Portal token and a manual run.
 
-## 8. Open questions for the owner
+## 8. Open questions — raised 2026-08-20, deferred to implementation
 
-1. **Case 1 lands straight on the SDK's processing screen for Enhanced KYC.** Correct, but abrupt —
-   the person taps a product and the next thing they see is a submission in flight. Do we want a host
-   confirmation step, or is abrupt the honest depiction of a fully-bound token?
-2. **E6 needs a decision before the Settings toggles are wired.** When "Consent screen" is off and the
-   token is unbound, the host must supply `consentInformation`. Where does that content come from —
-   a fixture in the sample, or is the toggle simply disabled for unbound tokens?
-3. **Should the sample warn on E11?** A token binding consent while the partner also shows their own
-   consent UI is a misconfiguration the SDK accepts silently. A sample is the natural place to say so.
+Each one is a product decision the code cannot make. Recorded here rather than guessed at, with what
+it blocks, so implementation opens by answering them instead of tripping over them.
+
+| Q | Question | Blocks | Default if unanswered |
+|---|---|---|---|
+| Q1 | **Case 1 lands straight on the SDK's processing screen for Enhanced KYC.** The person taps a product and the next thing they see is a submission in flight. Host confirmation step, or is abrupt the honest depiction of a fully-bound token? | Case 1 only, and only for the two non-capture job types | Ship abrupt — it is what the token asked for |
+| Q2 | **When "Consent screen" is off and the token is unbound, where does `consentInformation` come from?** A fixture in the sample, or is the toggle disabled for unbound tokens? | Wiring the five dead Settings toggles (E6) — the consent one cannot land without this | Disable the toggle when the token is unbound; it is honest and needs no invented content |
+| Q3 | **Should the sample warn on E11** — a token binding consent while the partner also shows their own consent UI? The SDK accepts it silently. | Nothing; additive | No warning, and note it in the docs instead |
+
+The defaults are what I would ship if the answer never comes, not recommendations that pre-empt the
+decision. None of them are hard to reverse later.
 
 ## 9. Parity
 
