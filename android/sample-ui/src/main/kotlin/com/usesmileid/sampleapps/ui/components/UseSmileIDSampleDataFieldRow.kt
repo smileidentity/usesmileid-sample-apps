@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import com.smileid.designsystem.smileSurface2
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -75,7 +74,7 @@ private fun CopyButton(label: String, onCopy: () -> Unit, testId: String?) {
             .semantics { contentDescription = "Copy $label" }
             .tagged(testId),
         shape = RoundedCornerShape(SmileDimens.radiusSm),
-        color = smileSurface2,
+        color = UseSmileIDSampleTheme.colors.surfaceMuted,
     ) {
         Box(contentAlignment = Alignment.Center) {
             CopyGlyph(tint = UseSmileIDSampleTheme.colors.textMuted)
