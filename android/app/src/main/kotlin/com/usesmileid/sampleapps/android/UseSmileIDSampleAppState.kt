@@ -77,6 +77,11 @@ fun rememberUseSmileIDSampleAppState(
     val now = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val jobStore = remember(context) { UseSmileIDSampleJobStore(context) }
     val jobs by jobStore.jobs.collectAsStateWithLifecycle(initialValue = emptyList())
+    // Automation precondition, never an ordinary launch. Idempotent, so a recreation re-running this
+    // inserts nothing; keyed on the argument rather than Unit so that stays true after a rotation.
+    LaunchedEffect(launchArgs.seedJobs) {
+        if (launchArgs.seedJobs) jobStore.seedFixtures(System.currentTimeMillis())
+    }
     val forms = rememberSaveable(saver = UseSmileIDSampleForms.Saver) { UseSmileIDSampleForms() }
     val profiles = remember { UseSmileIDSampleProfiles() }
     // Saveable, so the arguments seed the first launch only and a recreation keeps the drawer's choice.

@@ -35,26 +35,28 @@ interface UseSmileIDSampleJobDao {
     suspend fun count(): Int
 }
 
-// v2 dropped the per-job profile columns: a row is a job this device did, and the job id is the handle
-// for looking anything else up. Destructive migration, so the bump costs a partner their local rows.
-@Database(entities = [UseSmileIDSampleJobEntity::class], version = 2, exportSchema = false)
+@Database(entities = [UseSmileIDSampleJobEntity::class], version = 1, exportSchema = true)
 abstract class UseSmileIDSampleJobDatabase : RoomDatabase() {
 
     abstract fun jobs(): UseSmileIDSampleJobDao
 
     companion object {
         /**
-         * Destructive migration, chosen rather than defaulted into: this is a sample whose rows are
-         * the partner's own test submissions, and shipping hand-written migrations for them would be
-         * teaching the wrong lesson at the cost of real work. A schema change drops the table.
+         * No destructive fallback, deliberately. Version 1 is the first schema anyone will have, so
+         * there is nothing in the wild to migrate from yet — and once this ships, a partner's rows are
+         * their own submitted verifications. Losing them because a column moved is not something a
+         * reference integration should demonstrate.
+         *
+         * `exportSchema` writes `schemas/…/1.json`, which is committed: it is what a future
+         * `Migration` is validated against. The next schema change adds a migration here and bumps the
+         * version; without a fallback, forgetting one fails loudly at open time instead of silently
+         * emptying the list.
          */
         fun open(context: Context): UseSmileIDSampleJobDatabase =
             Room.databaseBuilder(
                 context.applicationContext,
                 UseSmileIDSampleJobDatabase::class.java,
                 "usesmileid_sample_jobs",
-            )
-                .fallbackToDestructiveMigration(dropAllTables = true)
-                .build()
+            ).build()
     }
 }

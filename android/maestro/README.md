@@ -17,6 +17,14 @@ assertion until a warm relaunch. Each flow therefore opens with `runFlow: subflo
 keep the default timeout, so a missing screen still fails fast. `subflows/` is a subdirectory
 deliberately: folder runs are non-recursive, so it never executes as a flow of its own.
 
+**A populated verifications list is a precondition you have to ask for.** The app seeds no rows — a
+stored row claims a verification was submitted, and the eleven design fixtures never were — and no UI
+path creates one without a successful submission, which needs a real token and a valid sandbox
+identity. So a flow that taps `sample_job_row_0`, or covers the filters, select mode or removal, opens
+with `launchApp: arguments: seedJobs: true`. Seed once per file: the rows are in Room, so they survive
+the `stopApp`s that follow, and re-seeding is a no-op because the rows are keyed by job id. `deep-links`
+has no `launchApp` of its own, so it takes a seeded launch first and then starts deep-linking.
+
 **`APP_ID` has no default, deliberately.** In Maestro 2.8 a flow-level `env:` default WINS over `-e`
 on the command line, so declaring one here would silently pin every run to a single variant and the
 release lane would quietly test the debug build.

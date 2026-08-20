@@ -22,6 +22,8 @@ data class UseSmileIDSampleLaunchArgs(
     val autostart: UseSmileIDSampleProduct? = null,
     /** Unset leaves the environment to the Settings toggle; passing it pins the run, which is how automation stays on sandbox. */
     val sandbox: Boolean? = null,
+    /** Automation precondition only — the app never seeds on its own. See `spec/launch-args.json`. */
+    val seedJobs: Boolean = false,
     val appLocale: String? = null,
     val holdCamera: UseSmileIDSampleHoldCamera? = null,
 ) {
@@ -31,10 +33,11 @@ data class UseSmileIDSampleLaunchArgs(
         const val ROUTE = "route"
         const val AUTOSTART = "autostart"
         const val SANDBOX = "sandbox"
+        const val SEED_JOBS = "seedJobs"
         const val APP_LOCALE = "appLocale"
         const val HOLD_CAMERA = "holdCamera"
 
-        val names = listOf(SCENARIO, THEME, ROUTE, AUTOSTART, SANDBOX, APP_LOCALE, HOLD_CAMERA)
+        val names = listOf(SCENARIO, THEME, ROUTE, AUTOSTART, SANDBOX, SEED_JOBS, APP_LOCALE, HOLD_CAMERA)
 
         private const val HOLD_CAMERA_KEEP = "keep"
 
@@ -50,6 +53,7 @@ data class UseSmileIDSampleLaunchArgs(
                     ?: defaults.route,
                 autostart = UseSmileIDSampleProduct.entries.firstOrNull { it.id == raw.string(AUTOSTART) },
                 sandbox = raw.boolean(SANDBOX),
+                seedJobs = raw.boolean(SEED_JOBS) ?: defaults.seedJobs,
                 appLocale = raw.string(APP_LOCALE),
                 holdCamera = raw.holdCamera(),
             )

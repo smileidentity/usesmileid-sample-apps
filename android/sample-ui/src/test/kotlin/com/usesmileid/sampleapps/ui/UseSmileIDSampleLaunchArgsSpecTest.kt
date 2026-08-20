@@ -35,6 +35,7 @@ class UseSmileIDSampleLaunchArgsSpecTest {
                 UseSmileIDSampleLaunchArgs.ROUTE to defaults.route.id,
                 UseSmileIDSampleLaunchArgs.AUTOSTART to defaults.autostart?.id,
                 UseSmileIDSampleLaunchArgs.SANDBOX to defaults.sandbox?.toString(),
+                UseSmileIDSampleLaunchArgs.SEED_JOBS to defaults.seedJobs.toString(),
                 UseSmileIDSampleLaunchArgs.APP_LOCALE to defaults.appLocale,
                 UseSmileIDSampleLaunchArgs.HOLD_CAMERA to defaults.holdCamera?.toString(),
             ),

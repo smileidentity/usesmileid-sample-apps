@@ -39,6 +39,11 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     }
 }
 
+// Where Room writes the schema JSON that future migrations are validated against. Committed.
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)

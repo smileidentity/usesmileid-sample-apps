@@ -5,8 +5,13 @@
 # APP_ID must be passed — see shell-navigation.yaml for why it has no default.
 appId: ${APP_ID}
 ---
+# Rows are a precondition here, not the subject. The app seeds none — a stored row claims a
+# verification was submitted — so a flow that needs a populated list asks for one. Seeded once: the
+# rows are in Room now, so they outlive the stopApp below and every later step in this file.
 - stopApp
-- launchApp
+- launchApp:
+    arguments:
+      seedJobs: true
 - runFlow: subflows/warm-start.yaml
 
 # The SDK's consent screen appearing is what a packaging failure fails on, conclusively.
