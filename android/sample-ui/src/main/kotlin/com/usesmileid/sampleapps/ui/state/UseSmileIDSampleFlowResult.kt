@@ -100,6 +100,19 @@ class UseSmileIDSampleFlowResult(
         lastError = error
     }
 
+    /**
+     * The gate refused the run, so the SDK was never mounted. Deliberately NOT counted as a result
+     * callback — the exactly-once claim is about what the SDK delivered, and inflating it here would
+     * make a blocked run indistinguishable from a delivered one. Recorded because the alternative,
+     * which is what shipped, is a tap that returns to the product list saying nothing at all.
+     */
+    fun recordBlocked(reason: String) {
+        status = UseSmileIDSampleFlowStatus.Failed
+        jobId = null
+        userId = null
+        lastError = reason
+    }
+
     fun recordRefreshCallback() {
         refreshCallbackCount++
     }

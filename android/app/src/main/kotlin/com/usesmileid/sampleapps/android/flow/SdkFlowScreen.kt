@@ -61,7 +61,7 @@ fun SdkFlowScreen(
         return
     }
 
-    when (remember(snapshot) { preflight(snapshot) }) {
+    when (val preflight = remember(snapshot) { preflight(snapshot) }) {
         is FlowPreflight.NeedsDetails -> {
             LaunchedEffect(Unit) {
                 navigator.navigate(ConsentDetailsFormScreenDestination(productId = snapshot.product.id)) {
@@ -80,9 +80,18 @@ fun SdkFlowScreen(
             }
             return
         }
-        // No form fixes this, so it takes the same exit as a mistyped product id.
+        // No form fixes this, so it takes the same exit as a mistyped product id — but it says why
+        // on the result card first. A silent return to the product list is indistinguishable from a
+        // dead tap, which is exactly how this looked on device.
         is FlowPreflight.Misconfigured -> {
-            LaunchedEffect(Unit) { navigator.popBackStack(FlowNavGraph, inclusive = true) }
+            val issues = preflight.issues
+            LaunchedEffect(Unit) {
+                app.flowResult.recordBlocked(
+                    issues.joinToString("; ") { it.message ?: it::class.simpleName.orEmpty() }
+                        .ifBlank { "The flow did not validate" },
+                )
+                navigator.popBackStack(FlowNavGraph, inclusive = true)
+            }
             return
         }
         FlowPreflight.Ready -> Unit
