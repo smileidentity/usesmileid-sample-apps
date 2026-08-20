@@ -15,6 +15,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import android.content.ClipData
+import android.os.Build
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import com.ramcosta.composedestinations.annotation.Destination
@@ -207,7 +211,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
 @Composable
 fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
-    val clipboard = LocalClipboardManager.current
+    val clipboard = LocalClipboard.current
     val scope = rememberCoroutineScope()
     var refreshing by remember { mutableStateOf(false) }
     // Not saveable: a saved message replayed the toast on every return to this screen.
@@ -222,7 +226,14 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
             result = app.flowResult.snapshot,
             onBack = { navigator.navigateUp() },
             onDelete = { app.storeScope.launch { app.jobStore.remove(setOf(jobId)) }; navigator.navigateUp() },
-            onCopy = { clipboard.setText(AnnotatedString(it)) },
+            onCopy = { label, value ->
+                scope.launch {
+                    clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(label, value)))
+                    // Android 13 shows its own copy confirmation, so a second one is noise. Below it
+                    // there is none, and a copy control that acknowledges nothing reads as broken.
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) outcome = "$label copied"
+                }
+            },
             onRefresh = { scope.launch { refresh(app, jobId, job?.sessionId) { outcome = it } } },
             refreshing = refreshing,
         )

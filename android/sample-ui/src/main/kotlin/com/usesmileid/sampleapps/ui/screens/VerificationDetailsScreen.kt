@@ -46,7 +46,7 @@ fun VerificationDetailsScreen(
     result: UseSmileIDSampleResult,
     onBack: () -> Unit,
     onDelete: () -> Unit,
-    onCopy: (String) -> Unit,
+    onCopy: (label: String, value: String) -> Unit,
     /**
      * Pull-to-refresh, which the design draws on this screen's processing state. Always wired rather
      * than hidden when a refresh cannot succeed: a gesture that silently does nothing reads as a bug,
@@ -128,11 +128,11 @@ fun VerificationDetailsScreen(
                         ) {
                             Column {
                                 DetailRow("createdAt", "Created_at", job.createdAtLabel())
-                                DetailRow("jobId", "Job_id", job.shortId, onCopy = { onCopy(job.id) })
+                                DetailRow("jobId", "Job_id", job.shortId, onCopy = { onCopy("Job ID", job.id) })
                                 DetailRow("message", "Message", job.message)
                                 // Coloured by the HTTP outcome, not the verdict: a blocked job still shows a green 200.
                                 DetailRow("status", "Status", job.httpStatus, valueColor = job.httpStatusColor())
-                                DetailRow("userId", "User_id", job.shortUserId, onCopy = { onCopy(job.userId) })
+                                DetailRow("userId", "User_id", job.shortUserId, onCopy = { onCopy("User ID", job.userId) })
                                 // Which partner submitted it, and against which environment. Both are
                                 // carried on the row rather than read from the active profile: by the
                                 // time anyone opens this screen either may have moved on.

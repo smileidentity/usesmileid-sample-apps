@@ -83,7 +83,7 @@ class VerificationsGoldenTest : GoldenTest() {
         result = ResultFixtures.Succeeded,
         onBack = {},
         onDelete = {},
-        onCopy = {},
+        onCopy = { _, _ -> },
     )
 
     @Composable
@@ -93,6 +93,6 @@ class VerificationsGoldenTest : GoldenTest() {
         result = ResultFixtures.Failed,
         onBack = {},
         onDelete = {},
-        onCopy = {},
+        onCopy = { _, _ -> },
     )
 }
