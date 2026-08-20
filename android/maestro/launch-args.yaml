@@ -106,6 +106,58 @@ appId: ${APP_ID}
     id: "sample_result_route"
     text: "shell"
 
+# `sandbox` is the override rather than the source (spec/launch-args.json). Passed, it pins the run:
+# the chip reports it and the Settings row goes read-only, which is how automation holds a run to
+# sandbox whatever the toggle was last left on.
+- stopApp
+- launchApp:
+    arguments:
+      sandbox: false
+- runFlow: subflows/warm-start.yaml
+- assertVisible:
+    id: "sample_env_chip"
+- assertVisible: "Production"
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+- assertVisible: "Pinned by the sandbox launch argument"
+
+# Absent, the Settings toggle owns the choice and sandbox is where it starts. The row's supporting
+# line is asserted before each tap, because the setting persists: a blind tap would encode this
+# flow's assumption about the stored value rather than the app's contract. Toggled back at the end
+# for the same reason — left on, it would hand every later flow a different environment.
+- stopApp
+- launchApp
+- runFlow: subflows/warm-start.yaml
+- assertVisible:
+    id: "sample_env_chip"
+- assertVisible: "Sandbox"
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+- assertVisible: "Jobs submit to sandbox"
+- tapOn:
+    id: "sample_setting_production"
+- assertVisible: "Jobs submit to the live environment"
+- tapOn:
+    id: "sample_nav_products"
+- assertVisible:
+    id: "sample_env_chip"
+- assertVisible: "Production"
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+- assertVisible: "Jobs submit to the live environment"
+- tapOn:
+    id: "sample_setting_production"
+- assertVisible: "Jobs submit to sandbox"
+- tapOn:
+    id: "sample_nav_products"
+- assertVisible: "Sandbox"
+
 # The drawer writes the state a launch argument seeds, so one card reports either source. Opened by
 # its own deep link rather than through the Settings row, which sits below the fold behind a scroll
 # this assertion has no interest in.
