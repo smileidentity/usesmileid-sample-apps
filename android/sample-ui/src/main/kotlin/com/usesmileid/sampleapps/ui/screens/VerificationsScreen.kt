@@ -23,12 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDateGroupHeader
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEmptyState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleFilterChip
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleJobRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionCheckbox
@@ -122,20 +122,19 @@ fun VerificationsScreen(
         // and "nothing matching this filter" are different things to be told.
         if (visible.isEmpty()) {
             item {
-                Text(
-                    text = if (state.jobs.isEmpty()) {
-                        "No verifications yet. Submitted jobs appear here."
-                    } else {
-                        "No ${state.filter.label.lowercase()} verifications."
-                    },
-                    style = UseSmileIDSampleTheme.type.textStyleBody,
-                    color = UseSmileIDSampleTheme.colors.textMuted,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag(UseSmileIDSampleTestIds.VERIFICATIONS_EMPTY)
-                        .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.space32),
-                )
+                if (state.jobs.isEmpty()) {
+                    UseSmileIDSampleEmptyState(
+                        text = "No verifications yet",
+                        supportingText = "Start a product above and the job lands here.",
+                        testId = UseSmileIDSampleTestIds.VERIFICATIONS_EMPTY,
+                    )
+                } else {
+                    UseSmileIDSampleEmptyState(
+                        text = "Nothing ${state.filter.label.lowercase()}",
+                        supportingText = "Other filters still have verifications.",
+                        testId = UseSmileIDSampleTestIds.VERIFICATIONS_EMPTY,
+                    )
+                }
             }
         }
 

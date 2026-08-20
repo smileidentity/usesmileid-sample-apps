@@ -98,6 +98,14 @@
         "description": "Empty-list message on the verifications tab. Two texts behind one id: nothing submitted yet, versus nothing matching the active filter. Not in the design — added because the app seeds no rows, so a first launch would render a blank tab."
       },
       {
+        "id": "sample_country_empty",
+        "description": "Country search matched nothing. No supporting line: the reader typed the query."
+      },
+      {
+        "id": "sample_idtype_empty",
+        "description": "ID-type list is empty — either the country has no types, or the search matched none of them; the text says which."
+      },
+      {
         "id": "sample_job_row",
         "description": "One verification row; suffixed with index."
       },
@@ -154,6 +162,10 @@
       {
         "id": "sample_details_delete",
         "description": "Delete action in the app bar."
+      },
+      {
+        "id": "sample_details_empty",
+        "description": "Shown when the route names a job this build has no row for, which a deep link can do. The jobId asked for is in the supporting line, because that is the whole diagnostic."
       },
       {
         "id": "sample_details_check_status",

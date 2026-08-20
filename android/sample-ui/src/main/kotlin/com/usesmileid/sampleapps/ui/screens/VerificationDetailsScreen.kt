@@ -22,6 +22,7 @@ import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.TrashGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDataFieldRow
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEmptyState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleResultCard
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatusBadge
@@ -73,11 +74,12 @@ fun VerificationDetailsScreen(
         ) {
             if (job == null) {
                 item {
-                    Text(
-                        text = "No verification for jobId = $jobId",
-                        style = UseSmileIDSampleTheme.type.textStyleBody,
-                        color = UseSmileIDSampleTheme.colors.textMuted,
-                        modifier = Modifier.padding(SmileDimens.spacingMd),
+                    // The id is kept in the supporting line: a deep link can name a job this build
+                    // never had, and which id was asked for is the whole diagnostic.
+                    UseSmileIDSampleEmptyState(
+                        text = "No verification here",
+                        supportingText = "Nothing stored for jobId = $jobId",
+                        testId = UseSmileIDSampleTestIds.DETAILS_EMPTY,
                     )
                 }
             } else {
