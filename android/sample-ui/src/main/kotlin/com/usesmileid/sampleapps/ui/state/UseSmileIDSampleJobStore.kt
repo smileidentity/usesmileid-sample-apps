@@ -14,8 +14,6 @@ import kotlinx.coroutines.flow.map
 /** The submitted verifications, on disk: the SDK delivers a result once, and there is nowhere else to get it from. */
 class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
 
-    constructor(context: Context) : this(UseSmileIDSampleJobDatabase.open(context).jobs())
-
     /** What the last [remove] took, so undo re-inserts rather than clearing a soft-delete column. */
     private var lastRemoved: List<UseSmileIDSampleJobEntity> = emptyList()
 
@@ -46,7 +44,7 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
     suspend fun remove(ids: Set<String>) {
         // A no-op removal must not discard an earlier batch that is still undoable.
         if (ids.isEmpty()) return
-        lastRemoved = ids.mapNotNull { dao.find(it) }
+        lastRemoved = dao.findAll(ids)
         dao.delete(ids)
         removalNotice = lastRemoved.size.takeIf { it > 0 }
         if (removalNotice != null) removalToken++
@@ -78,6 +76,19 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
     suspend fun seedFixtures(nowMillis: Long) = dao.insert(fixtures(nowMillis).map { it.toEntity() })
 
     companion object {
+        @Volatile
+        private var instance: UseSmileIDSampleJobStore? = null
+
+        /**
+         * One per process. Activity recreation rebuilds the composition, so a remembered store would
+         * open a second Room connection pool and leak the first — and would drop the rows undo needs.
+         */
+        fun of(context: Context): UseSmileIDSampleJobStore =
+            instance ?: synchronized(this) {
+                instance ?: UseSmileIDSampleJobStore(UseSmileIDSampleJobDatabase.open(context).jobs())
+                    .also { instance = it }
+            }
+
         /** The eleven the design's counts describe, offset from a caller-supplied now. */
         fun fixtures(nowMillis: Long): List<UseSmileIDSampleJob> {
             val statuses = listOf(

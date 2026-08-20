@@ -45,20 +45,28 @@ suspend fun refreshStatus(
         // An undecodable body throws SerializationException, not IOException, and this runs in the screen's scope.
         return UseSmileIDSampleStatusRefresh.Failed(e.message ?: e::class.simpleName.orEmpty())
     }
-    val body = response.body()
-    if (!response.isSuccessful || body == null) {
-        return UseSmileIDSampleStatusRefresh.Failed("HTTP ${response.code()}")
-    }
-    if (body.status == PROCESSING) return UseSmileIDSampleStatusRefresh.StillProcessing
-    val status = body.status.toSampleStatus()
-        ?: return UseSmileIDSampleStatusRefresh.Failed("Unrecognised status '${body.status}'")
-    jobStore.applyStatus(
+    val outcome = statusOutcome(response.code(), response.body())
+    if (outcome !is UseSmileIDSampleStatusRefresh.Updated) return outcome
+    // A row deleted while the request was in flight has nothing to write to, and reporting a change
+    // that was never stored would be a lie the list immediately contradicts.
+    val written = jobStore.applyStatus(
         jobId = jobId,
-        status = status,
-        message = body.message,
-        httpStatus = "${response.code()} ${status.httpReason()}",
+        status = outcome.status,
+        message = outcome.message,
+        httpStatus = "${response.code()} ${outcome.status.httpReason()}",
     )
-    return UseSmileIDSampleStatusRefresh.Updated(status, body.message)
+    return if (written) outcome else UseSmileIDSampleStatusRefresh.Failed("The verification is no longer stored")
+}
+
+/**
+ * The HTTP code and body onto an outcome. Pure, so the branch table is unit-testable: 200 with a
+ * terminal state, 202 still running, anything else a reported failure.
+ */
+internal fun statusOutcome(code: Int, body: UseSmileIDSampleStatusResponse?): UseSmileIDSampleStatusRefresh = when {
+    body == null || code !in HTTP_SUCCESS -> UseSmileIDSampleStatusRefresh.Failed("HTTP $code")
+    body.status == PROCESSING -> UseSmileIDSampleStatusRefresh.StillProcessing
+    else -> body.status.toSampleStatus()?.let { UseSmileIDSampleStatusRefresh.Updated(it, body.message) }
+        ?: UseSmileIDSampleStatusRefresh.Failed("Unrecognised status '${body.status}'")
 }
 
 /** Five API states onto the four badges the design draws: `error` lands on Blocked and leans on the server's message. */
@@ -72,3 +80,4 @@ private fun String.toSampleStatus(): UseSmileIDSampleStatus? = when (this) {
 private fun UseSmileIDSampleStatus.httpReason() = if (this == UseSmileIDSampleStatus.Processing) "Accepted" else "OK"
 
 private const val PROCESSING = "processing"
+private val HTTP_SUCCESS = 200..299

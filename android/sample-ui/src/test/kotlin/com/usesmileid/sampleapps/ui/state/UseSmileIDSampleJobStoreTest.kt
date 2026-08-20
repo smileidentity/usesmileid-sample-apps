@@ -106,6 +106,8 @@ private class FakeJobDao : UseSmileIDSampleJobDao {
 
     override suspend fun find(id: String) = rows.value[id]
 
+    override suspend fun findAll(ids: Set<String>) = rows.value.filterKeys { it in ids }.values.toList()
+
     override suspend fun insert(jobs: List<UseSmileIDSampleJobEntity>) {
         rows.value = rows.value + jobs.filterNot { it.id in rows.value }.associateBy { it.id }
     }

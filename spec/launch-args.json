@@ -49,7 +49,7 @@
         false
       ],
       "default": false,
-      "description": "Seeds the design's eleven fixture verifications, as a precondition for flows that need a populated list. The app seeds nothing on its own: a stored row claims a verification was submitted, and eleven that never were would sit among a partner's real ones for good. But no UI path creates a row without a successful submission — which needs a real token and a valid sandbox identity — so a device flow covering the list, its filters, select mode or removal has no other way to arrive at one. Idempotent: the rows are keyed by job id and re-seeding is a no-op, and because they persist, one seeded launch covers every later step in the same flow."
+      "description": "Seeds the design's eleven fixture verifications, as a precondition for flows that need a populated list. The app seeds nothing on its own: a stored row claims a verification was submitted, and eleven that never were would sit among a partner's real ones for good. But no UI path creates a row without a successful submission — which needs a real token and a valid sandbox identity — so a device flow covering the list, its filters, select mode or removal has no other way to arrive at one. Idempotent: the rows are keyed by job id and re-seeding is a no-op, and because they persist, one seeded launch covers every later step in the same flow. Present in release builds too, deliberately: the device suite has to pass on the minified, resource-shrunk variant as well as debug, and that run needs the same precondition. It seeds nothing unless asked, so a partner build behaves exactly as it would without the argument."
     },
     {
       "name": "appLocale",

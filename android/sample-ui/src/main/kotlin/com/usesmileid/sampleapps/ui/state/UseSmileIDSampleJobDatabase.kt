@@ -20,6 +20,9 @@ interface UseSmileIDSampleJobDao {
     @Query("SELECT * FROM jobs WHERE id = :id")
     suspend fun find(id: String): UseSmileIDSampleJobEntity?
 
+    @Query("SELECT * FROM jobs WHERE id IN (:ids)")
+    suspend fun findAll(ids: Set<String>): List<UseSmileIDSampleJobEntity>
+
     /** IGNORE, not REPLACE: a repeated delivery must not overwrite the row it already wrote. */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(jobs: List<UseSmileIDSampleJobEntity>)

@@ -29,8 +29,8 @@ class UseSmileIDSampleAppState(
     val store: UseSmileIDSampleStore,
     /** Outlives any one screen, so navigating away cannot cancel a write to the store mid-flight. */
     val storeScope: CoroutineScope,
-    val settings: UseSmileIDSampleSettings,
-    val session: UseSmileIDSampleTokenSession?,
+    private val settingsState: State<UseSmileIDSampleSettings>,
+    private val sessionState: State<UseSmileIDSampleTokenSession?>,
     /**
      * Read from Room, and held as [State] for the same reason as [now]: a value changes this object's
      * identity on every write, which invalidates the whole subtree — including a composed SDK flow,
@@ -50,12 +50,14 @@ class UseSmileIDSampleAppState(
      */
     private val now: State<Long>,
 ) {
+    val settings: UseSmileIDSampleSettings get() = settingsState.value
+    val session: UseSmileIDSampleTokenSession? get() = sessionState.value
     val jobs: List<UseSmileIDSampleJob> get() = jobsState.value
 
     val nowMillis: Long get() = now.value
 
-    val sessionExpired: Boolean get() = session != null && session.hasExpired(nowMillis)
-    val sessionActive: Boolean get() = session != null && !session.hasExpired(nowMillis)
+    val sessionExpired: Boolean get() = session?.hasExpired(nowMillis) == true
+    val sessionActive: Boolean get() = session?.hasExpired(nowMillis) == false
 
     /** The only place the environment is decided, so the chip and the builder cannot disagree. */
     val useSandbox: Boolean get() = launchArgs.sandbox ?: settings.useSandbox
@@ -74,10 +76,10 @@ fun rememberUseSmileIDSampleAppState(
 ): UseSmileIDSampleAppState {
     val context = LocalContext.current
     val store = remember(context) { UseSmileIDSampleStore(context) }
-    val settings by store.settings.collectAsStateWithLifecycle(initialValue = UseSmileIDSampleSettings())
-    val session by store.tokenSession.collectAsStateWithLifecycle(initialValue = null)
+    val settingsState = store.settings.collectAsStateWithLifecycle(initialValue = UseSmileIDSampleSettings())
+    val sessionState = store.tokenSession.collectAsStateWithLifecycle(initialValue = null)
     val now = remember { mutableLongStateOf(System.currentTimeMillis()) }
-    val jobStore = remember(context) { UseSmileIDSampleJobStore(context) }
+    val jobStore = remember(context) { UseSmileIDSampleJobStore.of(context) }
     val jobsState = jobStore.jobs.collectAsStateWithLifecycle(initialValue = emptyList())
     // Automation precondition, never an ordinary launch. Idempotent, so a recreation inserts nothing.
     LaunchedEffect(launchArgs.seedJobs) {
@@ -95,8 +97,8 @@ fun rememberUseSmileIDSampleAppState(
     }
 
     // Stops at the deadline: the session object does not change on expiry, so the key alone never ends this.
-    LaunchedEffect(session) {
-        val live = session ?: return@LaunchedEffect
+    LaunchedEffect(sessionState.value) {
+        val live = sessionState.value ?: return@LaunchedEffect
         while (!live.hasExpired(now.longValue)) {
             now.longValue = System.currentTimeMillis()
             delay(TICK_MILLIS)
@@ -106,8 +108,8 @@ fun rememberUseSmileIDSampleAppState(
     return UseSmileIDSampleAppState(
         store = store,
         storeScope = rememberCoroutineScope(),
-        settings = settings,
-        session = session,
+        settingsState = settingsState,
+        sessionState = sessionState,
         jobsState = jobsState,
         jobStore = jobStore,
         forms = forms,
