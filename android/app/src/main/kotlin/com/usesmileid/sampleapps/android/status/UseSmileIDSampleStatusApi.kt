@@ -33,8 +33,18 @@ interface UseSmileIDSampleStatusApi {
         private const val SANDBOX_URL = "https://testapi.smileidentity.com/"
         private const val PRODUCTION_URL = "https://api.smileidentity.com/"
 
-        fun of(sandbox: Boolean): UseSmileIDSampleStatusApi = Retrofit.Builder()
-            .baseUrl(if (sandbox) SANDBOX_URL else PRODUCTION_URL)
+        /**
+         * One instance per environment, built once. Retrofit creates its own OkHttp client when it is
+         * not given one, so building per request allocated a connection pool and a dispatcher thread
+         * pool every time anyone pulled to refresh.
+         */
+        fun of(sandbox: Boolean): UseSmileIDSampleStatusApi = if (sandbox) sandboxApi else productionApi
+
+        private val sandboxApi: UseSmileIDSampleStatusApi by lazy { build(SANDBOX_URL) }
+        private val productionApi: UseSmileIDSampleStatusApi by lazy { build(PRODUCTION_URL) }
+
+        private fun build(baseUrl: String): UseSmileIDSampleStatusApi = Retrofit.Builder()
+            .baseUrl(baseUrl)
             // Unknown keys ignored: a field added server-side must not turn a good response into a crash.
             .addConverterFactory(Json { ignoreUnknownKeys = true }.asConverterFactory(JSON_MEDIA_TYPE))
             .build()

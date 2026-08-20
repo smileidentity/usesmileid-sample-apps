@@ -159,9 +159,10 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
         )
         // Bounded, so a toast left up cannot restore rows long after the removal it belonged to.
         var removalShown by remember { mutableStateOf(false) }
-        // Keyed on the list: a removal from any of the three paths changes it, and the notice is
-        // consumed on read so returning here later cannot replay a confirmation already spent.
-        LaunchedEffect(app.jobs) {
+        // Keyed on a token that moves only on a removal, so an unrelated job write cannot restart this
+        // mid-window and strand the toast; and the notice is consumed on read, so returning here later
+        // cannot replay a confirmation already spent.
+        LaunchedEffect(app.jobStore.removalToken) {
             val count = app.jobStore.takeRemovalNotice() ?: return@LaunchedEffect
             removedCount = count
             removalShown = true
@@ -234,7 +235,13 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) outcome = "$label copied"
                 }
             },
-            onRefresh = { scope.launch { refresh(app, jobId, job?.sessionId) { outcome = it } } },
+            onRefresh = {
+                scope.launch {
+                    refreshing = true
+                    outcome = refresh(app, jobId, job?.sessionId)
+                    refreshing = false
+                }
+            },
             refreshing = refreshing,
         )
     // Only a processing row can change, so that is the only one worth a request on entry. Keyed on
@@ -256,6 +263,7 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
         )
         refreshing = false
         if (result !is UseSmileIDSampleStatusRefresh.StillProcessing) outcome = result.label()
+        Unit
     }
 
         LaunchedEffect(outcome) {
@@ -282,19 +290,14 @@ private suspend fun refresh(
     app: UseSmileIDSampleAppState,
     jobId: String,
     rowSessionId: String?,
-    report: (String) -> Unit,
-) {
-    report(
-        refreshStatus(
-            jobId = jobId,
-            rowSessionId = rowSessionId,
-            session = app.session,
-            sandbox = app.useSandbox,
-            jobStore = app.jobStore,
-            nowMillis = System.currentTimeMillis(),
-        ).label(),
-    )
-}
+): String = refreshStatus(
+    jobId = jobId,
+    rowSessionId = rowSessionId,
+    session = app.session,
+    sandbox = app.useSandbox,
+    jobStore = app.jobStore,
+    nowMillis = System.currentTimeMillis(),
+).label()
 
 /** One line per outcome, because a refresh that changed nothing must say so rather than look broken. */
 private fun UseSmileIDSampleStatusRefresh.label(): String = when (this) {

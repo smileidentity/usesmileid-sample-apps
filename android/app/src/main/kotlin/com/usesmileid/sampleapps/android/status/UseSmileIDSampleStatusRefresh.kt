@@ -4,6 +4,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleJobStore
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import java.io.IOException
+import kotlin.coroutines.cancellation.CancellationException
 
 /** What a refresh did, so the screen can say so rather than silently re-render the same row. */
 sealed interface UseSmileIDSampleStatusRefresh {
@@ -45,6 +46,13 @@ suspend fun refreshStatus(
     } catch (e: IOException) {
         // The offline case is the one a partner will actually hit, and it is a state, not a no-op.
         return UseSmileIDSampleStatusRefresh.Failed(e.message ?: "Network unavailable")
+    } catch (e: CancellationException) {
+        // Leaving the screen mid-refresh must stay a cancellation, not become a reported failure.
+        throw e
+    } catch (e: Exception) {
+        // A body the decoder cannot read throws SerializationException, not IOException, and this runs
+        // in the screen's own scope — uncaught, it took the app down rather than reporting anything.
+        return UseSmileIDSampleStatusRefresh.Failed(e.message ?: e::class.simpleName.orEmpty())
     }
     val body = response.body()
     if (!response.isSuccessful || body == null) {

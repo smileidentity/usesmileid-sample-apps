@@ -31,8 +31,14 @@ class UseSmileIDSampleAppState(
     val storeScope: CoroutineScope,
     val settings: UseSmileIDSampleSettings,
     val session: UseSmileIDSampleTokenSession?,
-    /** Read from Room, so a submitted job is still here after the process that submitted it is gone. */
-    val jobs: List<UseSmileIDSampleJob>,
+    /**
+     * Read from Room, so a submitted job is still here after the process that submitted it is gone.
+     * Held as [State] for the same reason as [now]: a value would change this object's identity on
+     * every write, and a `staticCompositionLocalOf` invalidates its whole subtree when the value
+     * changes — including a composed SDK flow, which re-runs `build()` when it recomposes. A job is
+     * written at the moment a run succeeds, while that flow is still on screen.
+     */
+    private val jobsState: State<List<UseSmileIDSampleJob>>,
     val jobStore: UseSmileIDSampleJobStore,
     val forms: UseSmileIDSampleForms,
     val profiles: UseSmileIDSampleProfiles,
@@ -46,6 +52,8 @@ class UseSmileIDSampleAppState(
      */
     private val now: State<Long>,
 ) {
+    val jobs: List<UseSmileIDSampleJob> get() = jobsState.value
+
     val nowMillis: Long get() = now.value
 
     val sessionExpired: Boolean get() = session != null && session.hasExpired(nowMillis)
@@ -76,7 +84,7 @@ fun rememberUseSmileIDSampleAppState(
     val session by store.tokenSession.collectAsStateWithLifecycle(initialValue = null)
     val now = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val jobStore = remember(context) { UseSmileIDSampleJobStore(context) }
-    val jobs by jobStore.jobs.collectAsStateWithLifecycle(initialValue = emptyList())
+    val jobsState = jobStore.jobs.collectAsStateWithLifecycle(initialValue = emptyList())
     // Automation precondition, never an ordinary launch. Idempotent, so a recreation re-running this
     // inserts nothing; keyed on the argument rather than Unit so that stays true after a rotation.
     LaunchedEffect(launchArgs.seedJobs) {
@@ -107,7 +115,7 @@ fun rememberUseSmileIDSampleAppState(
         storeScope = rememberCoroutineScope(),
         settings = settings,
         session = session,
-        jobs = jobs,
+        jobsState = jobsState,
         jobStore = jobStore,
         forms = forms,
         profiles = profiles,

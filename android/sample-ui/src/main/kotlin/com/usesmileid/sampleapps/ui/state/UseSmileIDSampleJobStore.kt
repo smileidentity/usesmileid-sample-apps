@@ -2,6 +2,7 @@ package com.usesmileid.sampleapps.ui.state
 
 import android.content.Context
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
@@ -33,6 +34,14 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
      */
     private var removalNotice: Int? by mutableStateOf(null)
 
+    /**
+     * Moves only when a removal happens, so a screen can key an effect on it. Keying on the job list
+     * instead meant any unrelated write — a status refresh, say — restarted the effect mid-window,
+     * found the notice already consumed, and left the confirmation on screen for good.
+     */
+    var removalToken: Int by mutableIntStateOf(0)
+        private set
+
     fun takeRemovalNotice(): Int? = removalNotice?.also { removalNotice = null }
 
     val jobs: Flow<List<UseSmileIDSampleJob>> = dao.all().map { rows -> rows.map { it.toJob() } }
@@ -56,6 +65,7 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
         lastRemoved = ids.mapNotNull { dao.find(it) }
         dao.delete(ids)
         removalNotice = lastRemoved.size.takeIf { it > 0 }
+        if (removalNotice != null) removalToken++
     }
 
     /** Order restores itself: the list is ordered by the rows' own timestamps, not by insertion. */
