@@ -23,13 +23,6 @@ data class UseSmileIDSampleJobEntity(
     val createdAtMillis: Long,
     val message: String,
     val httpStatus: String,
-    /**
-     * Which profile submitted it. The organisation is stored beside the id, not looked up: profiles
-     * live in memory, so after a restart the id resolves to nothing and a row would lose the partner
-     * it belongs to — the one thing this column exists to show.
-     */
-    val profileId: String,
-    val profileOrganisation: String,
     /** Sandbox or production at submission time. A row outlives the toggle that produced it. */
     val sandbox: Boolean,
     /**
@@ -58,8 +51,6 @@ fun UseSmileIDSampleJobEntity.toJob() = UseSmileIDSampleJob(
     createdAtMillis = createdAtMillis,
     message = message,
     httpStatus = httpStatus,
-    profileId = profileId,
-    profileOrganisation = profileOrganisation,
     sandbox = sandbox,
     sessionId = sessionId,
 )
@@ -76,8 +67,6 @@ fun UseSmileIDSampleJob.toEntity(
     createdAtMillis = createdAtMillis,
     message = message,
     httpStatus = httpStatus,
-    profileId = profileId,
-    profileOrganisation = profileOrganisation,
     sandbox = sandbox,
     sessionId = sessionId,
     boundUserDetails = boundUserDetails,

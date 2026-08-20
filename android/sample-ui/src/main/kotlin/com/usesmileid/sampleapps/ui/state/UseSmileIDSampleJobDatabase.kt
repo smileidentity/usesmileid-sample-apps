@@ -35,7 +35,9 @@ interface UseSmileIDSampleJobDao {
     suspend fun count(): Int
 }
 
-@Database(entities = [UseSmileIDSampleJobEntity::class], version = 1, exportSchema = false)
+// v2 dropped the per-job profile columns: a row is a job this device did, and the job id is the handle
+// for looking anything else up. Destructive migration, so the bump costs a partner their local rows.
+@Database(entities = [UseSmileIDSampleJobEntity::class], version = 2, exportSchema = false)
 abstract class UseSmileIDSampleJobDatabase : RoomDatabase() {
 
     abstract fun jobs(): UseSmileIDSampleJobDao

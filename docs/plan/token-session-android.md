@@ -398,6 +398,7 @@ places.
 |---|---|---|
 | Submitted jobs | **Room** | Many rows, filtered by status, counted per filter, grouped by date, removed with undo. That is a query surface, and re-deriving it from a serialised blob on every read is the thing Room exists to avoid |
 | Per-job token binding (what the token supplied) | **Room**, column on the job | Belongs to the row it describes; the evidence for "the server injected these" is per submission |
+| Which profile submitted a job | **nowhere — owner decision 2026-08-20** | The list is every job this device did. The job id is the handle for looking anything else up afterwards, so the row does not need to carry who ran it. Columns were added and then removed; a status refresh needs the session, not the partner |
 | Settings (6 booleans) | **DataStore** — already | Small, single-valued, read as a Flow |
 | Token session: the raw token | **DataStore** | One record, replaced wholesale, read as a Flow. Not relational, and a table of one row is a table for no reason. **Built: the token is the whole record** — `id`, `iat`, `exp` and the bindings all decode from it, so storing them beside it would only create copies that can disagree with it |
 | Jobs-seeded flag | **DataStore** | One boolean. Prevents the eleven fixtures being re-seeded over a partner's real rows every launch |

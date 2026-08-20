@@ -75,15 +75,14 @@ class UseSmileIDSampleJobStoreTest {
         assertNull(store.find("job-absent"))
     }
 
-    /** The profile is carried on the row, so a row still names its partner once the id stops resolving. */
+    /** The session the run submitted under is what decides whether a status refresh has anything to ask. */
     @Test
-    fun `the submitting profile survives a round trip`() = runTest {
+    fun `the environment and session survive a round trip`() = runTest {
         val store = UseSmileIDSampleJobStore(FakeJobDao())
-        store.add(job("job-1").copy(profileId = "p-3", profileOrganisation = "PesaLink", sandbox = false))
+        store.add(job("job-1").copy(sandbox = false, sessionId = "4d33b7ba"))
         val stored = store.find("job-1")
-        assertEquals("p-3", stored?.profileId)
-        assertEquals("PesaLink", stored?.profileOrganisation)
         assertEquals(false, stored?.sandbox)
+        assertEquals("4d33b7ba", stored?.sessionId)
     }
 
     /** The app seeds nothing, so an untouched install has an empty list rather than eleven claims. */

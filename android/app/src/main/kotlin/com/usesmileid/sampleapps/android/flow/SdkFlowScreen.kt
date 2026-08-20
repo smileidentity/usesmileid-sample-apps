@@ -195,9 +195,7 @@ private fun processingJob(snapshot: FlowLaunchSnapshot, response: JobSubmissionR
     message = response.message,
     httpStatus = HTTP_ACCEPTED,
     // Taken from the snapshot, not re-read: the row records the run that produced it, and by the
-    // time a result lands the active profile or the toggle may already have moved on.
-    profileId = snapshot.partnerId,
-    profileOrganisation = snapshot.partnerName,
+    // time a result lands the toggle may already have moved on.
     sandbox = snapshot.sandbox,
     sessionId = snapshot.liveSession?.id,
 )

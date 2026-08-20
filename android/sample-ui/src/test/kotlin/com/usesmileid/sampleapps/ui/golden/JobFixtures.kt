@@ -12,7 +12,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 object JobFixtures {
 
     /** Offset from a caller-supplied now, so a golden groups the same way tomorrow. */
-    fun jobs(nowMillis: Long, organisation: String = "UpTech Finance", profileId: String = "p-1"): List<UseSmileIDSampleJob> {
+    fun jobs(nowMillis: Long): List<UseSmileIDSampleJob> {
         val statuses = listOf(
             UseSmileIDSampleStatus.Clear,
             UseSmileIDSampleStatus.Processing,
@@ -36,8 +36,6 @@ object JobFixtures {
                 createdAtMillis = nowMillis - index * HOURS_APART * MILLIS_PER_HOUR,
                 message = status.message(),
                 httpStatus = if (status == UseSmileIDSampleStatus.Processing) "202 Accepted" else "200 OK",
-                profileId = profileId,
-                profileOrganisation = organisation,
             )
         }
     }
