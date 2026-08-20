@@ -87,12 +87,18 @@ fun buildSnapshot(
 
 /** The one place that decides what the SDK is handed (§8.1). */
 fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshed: () -> Unit = {}) {
-    userDetails = UserDetails(
-        givenNames = snapshot.userDetails.firstName,
-        lastName = snapshot.userDetails.lastName,
-        email = snapshot.userDetails.email.takeIf { it.isNotBlank() },
-        phoneNumber = snapshot.userDetails.phone.takeIf { it.isNotBlank() },
-    )
+    // Omitted entirely when the token already binds what the SDK requires: the forms were skipped,
+    // so these would be blanks, and a blank is not the same claim as "the token supplies it".
+    userDetails = if (snapshot.liveSession?.bindings?.bindsRequiredUserDetails == true) {
+        null
+    } else {
+        UserDetails(
+            givenNames = snapshot.userDetails.firstName,
+            lastName = snapshot.userDetails.lastName,
+            email = snapshot.userDetails.email.takeIf { it.isNotBlank() },
+            phoneNumber = snapshot.userDetails.phone.takeIf { it.isNotBlank() },
+        )
+    }
     if (snapshot.product == UseSmileIDSampleProduct.SmartSelfieAuth) userId = snapshot.userId
     applyIdParams(snapshot)
     screens { journeyFor(snapshot) }
@@ -234,11 +240,17 @@ private fun UseSmileIDFlowBuilder.applyIdParams(snapshot: FlowLaunchSnapshot) {
 }
 
 private fun ScreensBuilder.journeyFor(snapshot: FlowLaunchSnapshot) {
-    consent {
-        partnerName = snapshot.partnerName
-        // Omitting it fails build() while validate() still reports Valid.
-        partnerIcon = SampleUiR.drawable.sample_ic_product_mark
-        partnerPrivacyPolicyUrl = PRIVACY_POLICY_URL
+    // A token carrying complete consent removes the SDK's requirement for a consent screen
+    // (JobTypeValidator.appendConsentRule returns early), and declaring one anyway is not harmless:
+    // FlowNavigationManager filters it back out of the flow it runs, and the run then ends before it
+    // starts. So the binding decides whether the screen exists at all, not just what it collects.
+    if (snapshot.liveSession?.bindings?.consent == null) {
+        consent {
+            partnerName = snapshot.partnerName
+            // Omitting it fails build() while validate() still reports Valid.
+            partnerIcon = SampleUiR.drawable.sample_ic_product_mark
+            partnerPrivacyPolicyUrl = PRIVACY_POLICY_URL
+        }
     }
     // Enhanced KYC is the one journey without capture: consent and processing only, per its validator.
     if (!snapshot.product.capture) {

@@ -142,19 +142,24 @@ validators for values it could have read from the token it already decoded. Wort
 accessor ask below: a `TokenPayload` that modelled these three would let the SDK relax them itself, and
 every host would stop reimplementing this.
 
-**An SDK defect, found on device and not inferable from the source (2026-08-19, `12.0.2`):** a token
-whose `payload.consent` binding is complete makes the flow deliver `UseSmileIDResult.Cancelled`
-**immediately, with no user action**, so the host lands back where it started and the run never begins.
-The same token with the consent binding removed runs normally through to the consent screen, which is
-what isolates the binding as the trigger — bisected on a quiet handset, release build, twice.
-`FlowNavigationManager` does filter the Consent screen out of `flowStructure` exactly as §3 describes,
-and `navigationPath` seeds from `screens.firstOrNull()`, so a start at instructions is what the code
-reads like; the cancellation arrives from `deliverTerminalOnTeardown()`, which fires when the
-`FlowNavigationManager` ViewModel is cleared. Root-causing beyond that is the SDK repo's to do, and it
-should be filed there with this repro. Two consequences here: the consent-screen drop — the thing §7.2
-calls the most valuable client-side behaviour a fixture token can exercise — **cannot be asserted on
-device yet**, and `token-session.yaml` therefore covers the unbound path and records why rather than
-encoding the defect as expected behaviour.
+**A host bug this document previously blamed on the SDK — corrected 2026-08-20.** A token whose
+`payload.consent` binding is complete made the flow deliver `UseSmileIDResult.Cancelled` immediately,
+with no user action, and this was written up here as an SDK defect awaiting a fix. It is not. The SDK
+is consistent: `JobTypeValidator.appendConsentRule` returns early when the token carries consent, so
+the requirement to declare a consent screen is **lifted** — its own `suggestedFix` says to bind all
+four fields at mint time *or* bind none and collect consent in the app. A host that declares
+`consent { }` anyway is declaring a screen the token has already satisfied, and
+`FlowNavigationManager` filters it back out of the flow it runs; for Enhanced KYC, whose validator
+permits only consent and processing, that leaves nothing to start on.
+`journeyFor` declared it unconditionally, which is what stranded the run.
+**Fixed:** the binding decides whether the screen is declared at all. Verified on device with a
+consent-bound fixture token — Enhanced KYC now reaches `si_processing_screen` and submits (HTTP 401,
+which is what a locally minted token deserves). The consent-screen drop is therefore assertable on
+device after all, and `token-session.yaml` no longer has to avoid it.
+
+The wrong conclusion held for a day because the bisect established the right fact — the binding is the
+trigger — and then reached for the wrong owner. Nothing in the SDK source was read as far as
+`appendConsentRule`, whose early return is the whole story.
 
 **An SDK gap to file, not work around:** `UseSmileIDJwtDecoder` and `DecodedToken` are public, but
 `DecodedToken.tokenPayload` is `internal`, so a host cannot reach the parsed payload through the
