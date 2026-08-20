@@ -1,0 +1,73 @@
+package com.usesmileid.sampleapps.android.status
+
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleJobStore
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
+import java.io.IOException
+
+/** What a refresh did, so the screen can say so rather than silently re-render the same row. */
+sealed interface UseSmileIDSampleStatusRefresh {
+    data class Updated(val status: UseSmileIDSampleStatus, val message: String) : UseSmileIDSampleStatusRefresh
+
+    /** 202: the verification is real and still running. The row already says Processing. */
+    data object StillProcessing : UseSmileIDSampleStatusRefresh
+
+    /** No live scanned session, so there is no credential to ask with. Not an error — a precondition. */
+    data object NoSession : UseSmileIDSampleStatusRefresh
+
+    data class Failed(val reason: String) : UseSmileIDSampleStatusRefresh
+}
+
+/**
+ * Asks the server what became of one job and writes the answer to its row.
+ *
+ * Gated on the **currently scanned session**: the call needs a real `SmileID-Token`, and the only one
+ * the sample holds is the token a scan linked. A run submitted under the local fixture token has no
+ * server-side job to ask about, and asking with a fixture would 401 — so the affordance is offered
+ * only while a live session is linked, rather than offered and then explained away.
+ */
+suspend fun refreshStatus(
+    jobId: String,
+    session: UseSmileIDSampleTokenSession?,
+    sandbox: Boolean,
+    jobStore: UseSmileIDSampleJobStore,
+    nowMillis: Long,
+): UseSmileIDSampleStatusRefresh {
+    val live = session?.takeUnless { it.hasExpired(nowMillis) } ?: return UseSmileIDSampleStatusRefresh.NoSession
+    val response = try {
+        UseSmileIDSampleStatusApi.of(sandbox).status(jobId, live.token)
+    } catch (e: IOException) {
+        // The offline case is the one a partner will actually hit, and it is a state, not a no-op.
+        return UseSmileIDSampleStatusRefresh.Failed(e.message ?: "Network unavailable")
+    }
+    val body = response.body()
+    if (!response.isSuccessful || body == null) {
+        return UseSmileIDSampleStatusRefresh.Failed("HTTP ${response.code()}")
+    }
+    if (body.status == PROCESSING) return UseSmileIDSampleStatusRefresh.StillProcessing
+    val status = body.status.toSampleStatus()
+        ?: return UseSmileIDSampleStatusRefresh.Failed("Unrecognised status '${body.status}'")
+    jobStore.applyStatus(
+        jobId = jobId,
+        status = status,
+        message = body.message,
+        httpStatus = "${response.code()} ${status.httpReason()}",
+    )
+    return UseSmileIDSampleStatusRefresh.Updated(status, body.message)
+}
+
+/**
+ * The API's five terminal states onto the four the design draws. `error` has no badge of its own, so
+ * it lands on Blocked and relies on the server's own message to say why — a fifth badge is a design
+ * question, not something to invent here.
+ */
+private fun String.toSampleStatus(): UseSmileIDSampleStatus? = when (this) {
+    "clear" -> UseSmileIDSampleStatus.Clear
+    "attention" -> UseSmileIDSampleStatus.Attention
+    "block", "error" -> UseSmileIDSampleStatus.Blocked
+    else -> null
+}
+
+private fun UseSmileIDSampleStatus.httpReason() = if (this == UseSmileIDSampleStatus.Processing) "Accepted" else "OK"
+
+private const val PROCESSING = "processing"

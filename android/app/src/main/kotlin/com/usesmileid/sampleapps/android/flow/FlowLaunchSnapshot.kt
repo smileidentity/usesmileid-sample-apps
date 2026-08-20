@@ -305,7 +305,7 @@ private val UseSmileIDSampleProduct.needsDocumentCapture: Boolean
  * The session a run actually submits under. Absent for the two scenarios that are *about* refresh:
  * a scanned token has no refresh journey, and the fixtures are what keep those scenarios meaningful.
  */
-private val FlowLaunchSnapshot.liveSession: UseSmileIDSampleTokenSession?
+internal val FlowLaunchSnapshot.liveSession: UseSmileIDSampleTokenSession?
     get() = session?.takeUnless { scenario.startsExpired }
 
 /**

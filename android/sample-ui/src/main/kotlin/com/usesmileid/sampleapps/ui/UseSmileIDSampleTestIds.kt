@@ -37,6 +37,7 @@ object UseSmileIDSampleTestIds {
     const val VERSION_LABEL = "sample_version_label"
     const val SELECT_TOGGLE = "sample_select_toggle"
     const val STATUS_BADGE = "sample_status_badge"
+    const val DETAILS_CHECK_STATUS = "sample_details_check_status"
     const val DETAILS_DELETE = "sample_details_delete"
     const val USER_DETAILS_HINT = "sample_user_details_hint"
     const val REMEMBER_DETAILS_SWITCH = "sample_remember_details_switch"
@@ -132,6 +133,7 @@ object UseSmileIDSampleTestIds {
         VERSION_LABEL,
         SELECT_TOGGLE,
         STATUS_BADGE,
+        DETAILS_CHECK_STATUS,
         DETAILS_DELETE,
         USER_DETAILS_HINT,
         REMEMBER_DETAILS_SWITCH,

@@ -3,8 +3,10 @@
 **Status:** TOK-A1–A6 and TOK-A9 built on Android — manual entry, Simulate minting, decode, session
 model, builder handoff, honest countdown, and the CameraX QR scanner with the bundled ML Kit barcode
 model. Both host forms are now skipped when the token already carries what they would collect (§4.2). A9 was planned as its own PR and folded into the same one on the owner's call (2026-08-19), so
-the token flow lands complete rather than scannerless. TOK-A7 (Room) is next as its own PR;
-`holdCamera`, TOK-A8's remaining goldens and TOK-A10 follow it.
+the token flow lands complete rather than scannerless. TOK-A7 (Room) is built: jobs persist, carrying the
+profile that submitted them and the environment they went to, and the verification-details screen
+fetches `GET /v3/status/{jobId}` under a live scanned session. `holdCamera`, TOK-A8's remaining
+goldens and TOK-A10 follow it.
 
 Android first; the token contract is shared, so §9 records what the other three inherit. Written against the Portal as merged (`portal#3274`, `portal#3274`'s follow-up
 `portal#3306`) and the SDK as published (`com.usesmileid:usesmileid:12.0.2`), read rather than assumed.

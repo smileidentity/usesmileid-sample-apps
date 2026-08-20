@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -85,6 +86,13 @@ dependencies {
 
     implementation(libs.destinations)
     ksp(libs.destinations.ksp)
+
+    // The verification-status call is the partner's own — the SDK owns capture and submission, and
+    // stops at the 202. Same story as CameraX above: already on the runtime classpath through the
+    // SDK, declared here to put it on the compile one.
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.kotlinx.serialization)
 
     testImplementation(libs.junit)
 }

@@ -13,6 +13,13 @@ data class UseSmileIDSampleJob(
     val createdAtMillis: Long,
     val message: String,
     val httpStatus: String,
+    /** Which profile submitted it, carried on the row: profiles are in memory, so the id alone stops resolving after a restart. */
+    val profileId: String = "",
+    val profileOrganisation: String = "",
+    /** The environment at submission time. A row outlives the toggle that produced it. */
+    val sandbox: Boolean = true,
+    /** The session handle the run submitted under; null for a run on the local fixture token, which no status call can ask about. */
+    val sessionId: String? = null,
 ) {
     /** The design truncates the job id in the list and on the details row; the full one is still copyable. */
     val shortId: String get() = if (id.length <= SHORT_ID_LENGTH) id else id.take(SHORT_ID_LENGTH) + "…"

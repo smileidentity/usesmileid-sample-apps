@@ -3,7 +3,8 @@ package com.usesmileid.sampleapps.ui.golden
 import androidx.compose.runtime.Composable
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
-import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobs
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleJobStore
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
 import com.usesmileid.sampleapps.ui.screens.VerificationDetailsScreen
 import com.usesmileid.sampleapps.ui.screens.VerificationsScreen
@@ -47,10 +48,10 @@ class VerificationsGoldenTest : GoldenTest() {
     private companion object {
         /** 2026-07-16T11:50:12Z, the instant the design's rows are dated from. */
         const val FIXED_NOW = 1_784_202_612_000L
-        val JOBS = UseSmileIDSampleJobs.seeded(FIXED_NOW)
+        val JOBS = UseSmileIDSampleJobStore.fixtures(FIXED_NOW, UseSmileIDSampleProfiles.defaults().first())
 
         /** What a real 202 looks like: a message long enough to need a second line of its own column. */
-        val QUEUED = JOBS.all.first().copy(
+        val QUEUED = JOBS.first().copy(
             message = "Request accepted and queued for processing.",
             httpStatus = "202 Accepted",
         )
@@ -63,11 +64,11 @@ class VerificationsGoldenTest : GoldenTest() {
         selectFirst: Boolean = false,
     ) = VerificationsScreen(
         state = UseSmileIDSampleVerificationsState(
-            jobs = JOBS.all,
-            counts = UseSmileIDSampleJobFilter.entries.associateWith(JOBS::count),
+            jobs = JOBS,
+            counts = UseSmileIDSampleJobFilter.entries.associateWith { f -> JOBS.count(f::matches) },
             filter = filter,
             selectMode = selectMode,
-            selected = if (selectFirst) JOBS.all.take(2).map { it.id }.toSet() else emptySet(),
+            selected = if (selectFirst) JOBS.take(2).map { it.id }.toSet() else emptySet(),
             nowMillis = FIXED_NOW,
         ),
         onFilterChange = {},
@@ -78,7 +79,7 @@ class VerificationsGoldenTest : GoldenTest() {
     )
 
     @Composable
-    private fun Details(job: UseSmileIDSampleJob = JOBS.all.first()) = VerificationDetailsScreen(
+    private fun Details(job: UseSmileIDSampleJob = JOBS.first()) = VerificationDetailsScreen(
         jobId = job.id,
         job = job,
         result = ResultFixtures.Succeeded,

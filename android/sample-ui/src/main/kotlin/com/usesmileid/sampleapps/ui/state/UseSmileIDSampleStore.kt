@@ -28,6 +28,13 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
         )
     }
 
+    /** One boolean, so the eleven fixtures are never re-seeded over a partner's own rows. */
+    val jobsSeeded: Flow<Boolean> = store.data.map { prefs -> prefs[JOBS_SEEDED] ?: false }
+
+    suspend fun markJobsSeeded() {
+        store.edit { prefs -> prefs[JOBS_SEEDED] = true }
+    }
+
     /**
      * The token is the whole record: the handle, the deadline and the bindings all decode from it, so
      * storing them alongside it would only create copies that can disagree with it. A stored token
@@ -71,6 +78,7 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
         val CONSENT_STEP = booleanPreferencesKey("consent_step")
         val INSTRUCTIONS_STEP = booleanPreferencesKey("instructions_step")
         val PREVIEW_STEP = booleanPreferencesKey("preview_step")
+        val JOBS_SEEDED = booleanPreferencesKey("jobs_seeded")
         val SESSION_TOKEN = stringPreferencesKey("token_session_token")
     }
 }

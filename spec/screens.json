@@ -231,17 +231,23 @@
         "TopAppBar",
         "StatusBadge",
         "SectionLabel",
-        "DataFieldRow"
+        "DataFieldRow",
+        "Button"
       ],
       "testIds": [
         "sample_verification_details_screen",
         "sample_detail_field",
         "sample_detail_copy",
-        "sample_status_badge"
+        "sample_status_badge",
+        "sample_details_check_status"
       ],
       "entryPoints": [
         "push from the verifications list",
         "POST-SUBMISSION: the app lands here in the processing state once a job is submitted (observed 202 Accepted straight after the ID form's Continue)"
+      ],
+      "additions": [
+        "DETAILS carries two rows the design does not draw — Partner and Environment — because a job row now records which profile submitted it and against which environment, and neither can be re-derived later: profiles live in memory and the environment toggle moves.",
+        "A 'Check status' button stands in for the pull-to-refresh the design draws in the processing state. The gesture itself is deferred with the rest of pull-to-refresh (docs/plan/sample-apps-plan.md 8.1); the button is what makes the real GET /v3/status call reachable in the meantime."
       ],
       "note": "The details screen doubles as the result screen, which is why the result card belongs here rather than needing a new home. NO NAV BAR: it is a pushed screen, even though its route lives in the verifications graph. You leave it by going back, not by switching tab."
     },

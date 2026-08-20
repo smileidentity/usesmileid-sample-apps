@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.TrashGlyph
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDataFieldRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleResultCard
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
@@ -45,6 +46,9 @@ fun VerificationDetailsScreen(
     onBack: () -> Unit,
     onDelete: () -> Unit,
     onCopy: (String) -> Unit,
+    /** Null when no live scanned session is linked: the status call has no credential to ask with. */
+    onCheckStatus: (() -> Unit)? = null,
+    checkingStatus: Boolean = false,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -116,7 +120,25 @@ fun VerificationDetailsScreen(
                                 // Coloured by the HTTP outcome, not the verdict: a blocked job still shows a green 200.
                                 DetailRow("status", "Status", job.httpStatus, valueColor = job.httpStatusColor())
                                 DetailRow("userId", "User_id", job.shortUserId, onCopy = { onCopy(job.userId) })
+                                // Which partner submitted it, and against which environment. Both are
+                                // carried on the row rather than read from the active profile: by the
+                                // time anyone opens this screen either may have moved on.
+                                if (job.profileOrganisation.isNotBlank()) {
+                                    DetailRow("partner", "Partner", job.profileOrganisation)
+                                }
+                                DetailRow("environment", "Environment", if (job.sandbox) "Sandbox" else "Production")
                             }
+                        }
+                        // The design draws pull-to-refresh in this screen's processing state
+                        // (spec/screens.json). The gesture is deferred with the rest of pull-to-refresh,
+                        // so a button stands in — what matters is that the real status call is reachable.
+                        if (onCheckStatus != null) {
+                            UseSmileIDSampleButton(
+                                text = "Check status",
+                                onClick = onCheckStatus,
+                                loading = checkingStatus,
+                                testId = UseSmileIDSampleTestIds.DETAILS_CHECK_STATUS,
+                            )
                         }
                     }
                 }

@@ -150,6 +150,10 @@
       {
         "id": "sample_details_delete",
         "description": "Delete action in the app bar."
+      },
+      {
+        "id": "sample_details_check_status",
+        "description": "Fetches GET /v3/status/{jobId} and rewrites the row. Present only while a live scanned session is linked — that token is the only real SmileID-Token the sample holds, so a fixture-token run has no server-side job to ask about. Stands in for the design's pull-to-refresh on this screen until the gesture lands (sample-apps-plan.md 8.1)."
       }
     ],
     "userDetails": [

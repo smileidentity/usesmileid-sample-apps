@@ -42,6 +42,8 @@ import com.usesmileid.sampleapps.android.flow.tokenBindsIdDetails
 import com.usesmileid.sampleapps.android.flow.tokenUserDetailsRequirement
 import com.usesmileid.sampleapps.android.flow.tokenBindsUserDetails
 import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleQrScanner
+import com.usesmileid.sampleapps.android.status.UseSmileIDSampleStatusRefresh
+import com.usesmileid.sampleapps.android.status.refreshStatus
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleOverlay
@@ -116,12 +118,12 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
 
     // One path for both removals — the swipe and the selection bar — so they cannot drift apart.
     val removeJobs: (Set<String>) -> Unit = { ids ->
-        app.jobs.remove(ids)
+        app.storeScope.launch { app.jobStore.remove(ids) }
         removedCount = ids.size
         removalToken += 1
         selectMode = false
         // Emptying a filter otherwise leaves a blank screen under a chip reading 0.
-        if (app.jobs.count(filter) == 0) filter = UseSmileIDSampleJobFilter.All
+        if (app.jobs.count(filter::matches) == 0) filter = UseSmileIDSampleJobFilter.All
     }
 
     // Published to the shell rather than drawn here: the design replaces the nav bar with it.
@@ -138,8 +140,9 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
     Box(modifier = Modifier.fillMaxSize()) {
         VerificationsContent(
             state = UseSmileIDSampleVerificationsState(
-                jobs = app.jobs.all,
-                counts = UseSmileIDSampleJobFilter.entries.associateWith(app.jobs::count),
+                jobs = app.jobs,
+                // Counted off the same list the rows render from, so a count can never disagree with what is on screen.
+                counts = UseSmileIDSampleJobFilter.entries.associateWith { f -> app.jobs.count(f::matches) },
                 filter = filter,
                 selectMode = selectMode,
                 selected = selected,
@@ -171,7 +174,7 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
             UseSmileIDSampleToast(
                 message = if (removedCount == 1) "Verification removed" else "$removedCount verifications removed",
                 actionLabel = "Undo",
-                onAction = { app.jobs.undoRemove(); removalShown = false },
+                onAction = { app.storeScope.launch { app.jobStore.undoRemove() }; removalShown = false },
             )
         }
     }
@@ -204,14 +207,64 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
 fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     val clipboard = LocalClipboardManager.current
-    VerificationDetailsContent(
-        jobId = jobId,
-        job = app.jobs.all.firstOrNull { it.id == jobId },
-        result = app.flowResult.snapshot,
-        onBack = { navigator.navigateUp() },
-        onDelete = { app.jobs.remove(setOf(jobId)); navigator.navigateUp() },
-        onCopy = { clipboard.setText(AnnotatedString(it)) },
-    )
+    val scope = rememberCoroutineScope()
+    var checking by remember { mutableStateOf(false) }
+    // Not saveable: a saved message replayed the toast on every return to this screen.
+    var outcome by remember { mutableStateOf<String?>(null) }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        VerificationDetailsContent(
+            jobId = jobId,
+            job = app.jobs.firstOrNull { it.id == jobId },
+            result = app.flowResult.snapshot,
+            onBack = { navigator.navigateUp() },
+            onDelete = { app.storeScope.launch { app.jobStore.remove(setOf(jobId)) }; navigator.navigateUp() },
+            onCopy = { clipboard.setText(AnnotatedString(it)) },
+            // Offered only under a live scanned session, which is the only real credential the
+            // sample holds — a fixture-token run has no server-side job to ask about.
+            onCheckStatus = if (app.sessionActive) {
+                {
+                    // The screen's own scope, not storeScope: leaving the screen mid-refresh must
+                    // cancel it rather than land a result against a disposed one.
+                    scope.launch {
+                        checking = true
+                        outcome = refreshStatus(
+                            jobId = jobId,
+                            session = app.session,
+                            sandbox = app.useSandbox,
+                            jobStore = app.jobStore,
+                            nowMillis = System.currentTimeMillis(),
+                        ).label()
+                        checking = false
+                    }
+                }
+            } else {
+                null
+            },
+            checkingStatus = checking,
+        )
+        LaunchedEffect(outcome) {
+            if (outcome == null) return@LaunchedEffect
+            delay(SNACKBAR_WINDOW_MILLIS)
+            outcome = null
+        }
+        UseSmileIDSampleOverlay(
+            visible = outcome != null,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingMd),
+        ) {
+            UseSmileIDSampleToast(message = outcome.orEmpty())
+        }
+    }
+}
+
+/** One line per outcome, because a refresh that changed nothing must say so rather than look broken. */
+private fun UseSmileIDSampleStatusRefresh.label(): String = when (this) {
+    is UseSmileIDSampleStatusRefresh.Updated -> "${status.label} — $message"
+    UseSmileIDSampleStatusRefresh.StillProcessing -> "Still processing"
+    UseSmileIDSampleStatusRefresh.NoSession -> "Scan a token first"
+    is UseSmileIDSampleStatusRefresh.Failed -> "Could not check status: $reason"
 }
 
 /** The Consent Details Form. Shown for every product, before the SDK flow starts. */

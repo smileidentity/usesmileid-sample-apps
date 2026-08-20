@@ -31,6 +31,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
+import kotlinx.coroutines.launch
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleFlowResult
@@ -114,7 +115,12 @@ fun SdkFlowScreen(
                     }
                     when (result) {
                         is UseSmileIDResult.Success -> {
-                            app.jobs.add(processingJob(snapshot.product, result.value))
+                            app.storeScope.launch {
+                                app.jobStore.add(
+                                    processingJob(snapshot, result.value),
+                                    snapshot.liveSession?.bindings,
+                                )
+                            }
                             navigator.navigate(VerificationDetailsScreenDestination(jobId = result.value.jobId)) {
                                 popUpTo(FlowNavGraph) { inclusive = true }
                                 // A repeated delivery must not stack a second landing screen.
@@ -150,14 +156,20 @@ private fun recordResult(flowResult: UseSmileIDSampleFlowResult, result: UseSmil
     }
 }
 
-private fun processingJob(product: UseSmileIDSampleProduct, response: JobSubmissionResponse) = UseSmileIDSampleJob(
+private fun processingJob(snapshot: FlowLaunchSnapshot, response: JobSubmissionResponse) = UseSmileIDSampleJob(
     id = response.jobId,
     userId = response.userId,
-    product = product,
+    product = snapshot.product,
     status = UseSmileIDSampleStatus.Processing,
     createdAtMillis = System.currentTimeMillis(),
     message = response.message,
     httpStatus = HTTP_ACCEPTED,
+    // Taken from the snapshot, not re-read: the row records the run that produced it, and by the
+    // time a result lands the active profile or the toggle may already have moved on.
+    profileId = snapshot.partnerId,
+    profileOrganisation = snapshot.partnerName,
+    sandbox = snapshot.sandbox,
+    sessionId = snapshot.liveSession?.id,
 )
 
 /** A failed run has no server-issued job id, so the landing route carries a stable non-id. */
