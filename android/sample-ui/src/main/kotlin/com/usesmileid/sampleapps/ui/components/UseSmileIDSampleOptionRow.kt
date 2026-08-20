@@ -38,7 +38,7 @@ fun UseSmileIDSampleOptionRow(
             .tagged(testId),
         shape = RoundedCornerShape(SmileDimens.radiusField),
         // An unselected row is transparent over the sheet; only the selected one takes a fill.
-        color = if (selected) UseSmileIDSampleTheme.colors.surfaceMuted else Color.Transparent,
+        color = if (selected) UseSmileIDSampleTheme.colors.surfaceTile else Color.Transparent,
     ) {
         Row(
             modifier = Modifier

@@ -51,7 +51,7 @@ fun UseSmileIDSampleSettingRow(
             Surface(
                     modifier = Modifier.size(TILE_SIZE),
                 shape = RoundedCornerShape(TILE_RADIUS),
-                color = colors.surfaceMuted,
+                color = colors.surfaceTile,
             ) {
                 Box(contentAlignment = Alignment.Center) { leading(colors.textTitle) }
             }

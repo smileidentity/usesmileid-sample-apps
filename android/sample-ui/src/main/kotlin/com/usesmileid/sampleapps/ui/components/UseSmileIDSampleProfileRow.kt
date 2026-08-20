@@ -45,7 +45,7 @@ fun UseSmileIDSampleProfileRow(
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
             .tagged(testId),
         shape = RoundedCornerShape(SmileDimens.radiusSurface),
-        color = if (selected) colors.surfaceMuted else colors.surface,
+        color = if (selected) colors.surfaceTile else colors.surface,
         border = BorderStroke(SmileDimens.borderWidthHairline, colors.card.border),
     ) {
         Row(

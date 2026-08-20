@@ -84,7 +84,7 @@ fun UseSmileIDSampleTopAppBarButton(
     val colors = UseSmileIDSampleTheme.colors
     val (container, tint) = when (emphasis) {
         UseSmileIDSampleTopAppBarEmphasis.Filled -> colors.textTitle to colors.textInverse
-        UseSmileIDSampleTopAppBarEmphasis.Tonal -> colors.surfaceMuted to colors.textTitle
+        UseSmileIDSampleTopAppBarEmphasis.Tonal -> colors.surfaceTile to colors.textTitle
         UseSmileIDSampleTopAppBarEmphasis.Destructive -> colors.badge.errorBackground to colors.badge.errorText
     }
     Surface(

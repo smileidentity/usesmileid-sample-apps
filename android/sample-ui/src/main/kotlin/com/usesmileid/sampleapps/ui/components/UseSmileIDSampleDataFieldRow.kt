@@ -74,7 +74,7 @@ private fun CopyButton(label: String, onCopy: () -> Unit, testId: String?) {
             .semantics { contentDescription = "Copy $label" }
             .tagged(testId),
         shape = RoundedCornerShape(SmileDimens.radiusSm),
-        color = UseSmileIDSampleTheme.colors.surfaceMuted,
+        color = UseSmileIDSampleTheme.colors.surfaceTile,
     ) {
         Box(contentAlignment = Alignment.Center) {
             CopyGlyph(tint = UseSmileIDSampleTheme.colors.textMuted)
