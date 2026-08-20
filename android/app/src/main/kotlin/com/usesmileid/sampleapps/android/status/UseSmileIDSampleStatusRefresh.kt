@@ -15,6 +15,9 @@ sealed interface UseSmileIDSampleStatusRefresh {
     /** No live scanned session, so there is no credential to ask with. Not an error — a precondition. */
     data object NoSession : UseSmileIDSampleStatusRefresh
 
+    /** The row was never submitted under a scanned session, so no server-side job exists to ask about. */
+    data object NoServerJob : UseSmileIDSampleStatusRefresh
+
     data class Failed(val reason: String) : UseSmileIDSampleStatusRefresh
 }
 
@@ -28,11 +31,14 @@ sealed interface UseSmileIDSampleStatusRefresh {
  */
 suspend fun refreshStatus(
     jobId: String,
+    /** The session the row itself was submitted under; null means there is nothing server-side. */
+    rowSessionId: String?,
     session: UseSmileIDSampleTokenSession?,
     sandbox: Boolean,
     jobStore: UseSmileIDSampleJobStore,
     nowMillis: Long,
 ): UseSmileIDSampleStatusRefresh {
+    if (rowSessionId == null) return UseSmileIDSampleStatusRefresh.NoServerJob
     val live = session?.takeUnless { it.hasExpired(nowMillis) } ?: return UseSmileIDSampleStatusRefresh.NoSession
     val response = try {
         UseSmileIDSampleStatusApi.of(sandbox).status(jobId, live.token)

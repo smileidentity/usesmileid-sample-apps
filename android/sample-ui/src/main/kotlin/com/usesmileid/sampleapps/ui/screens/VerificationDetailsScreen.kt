@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,7 +21,6 @@ import androidx.compose.ui.graphics.Color
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.TrashGlyph
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDataFieldRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEmptyState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleResultCard
@@ -47,9 +47,13 @@ fun VerificationDetailsScreen(
     onBack: () -> Unit,
     onDelete: () -> Unit,
     onCopy: (String) -> Unit,
-    /** Null when no live scanned session is linked: the status call has no credential to ask with. */
-    onCheckStatus: (() -> Unit)? = null,
-    checkingStatus: Boolean = false,
+    /**
+     * Pull-to-refresh, which the design draws on this screen's processing state. Always wired rather
+     * than hidden when a refresh cannot succeed: a gesture that silently does nothing reads as a bug,
+     * so the outcome says why instead.
+     */
+    onRefresh: () -> Unit = {},
+    refreshing: Boolean = false,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -68,10 +72,17 @@ fun VerificationDetailsScreen(
                 ) { tint -> TrashGlyph(tint = tint) }
             }
         }
-        LazyColumn(
-            contentPadding = contentPadding,
-            verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
+        PullToRefreshBox(
+            isRefreshing = refreshing,
+            onRefresh = onRefresh,
+            modifier = Modifier
+                .weight(1f)
+                .testTag(UseSmileIDSampleTestIds.DETAILS_REFRESH),
         ) {
+            LazyColumn(
+                contentPadding = contentPadding,
+                verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
+            ) {
             if (job == null) {
                 item {
                     // The id is kept in the supporting line: a deep link can name a job this build
@@ -131,17 +142,6 @@ fun VerificationDetailsScreen(
                                 DetailRow("environment", "Environment", if (job.sandbox) "Sandbox" else "Production")
                             }
                         }
-                        // The design draws pull-to-refresh in this screen's processing state
-                        // (spec/screens.json). The gesture is deferred with the rest of pull-to-refresh,
-                        // so a button stands in — what matters is that the real status call is reachable.
-                        if (onCheckStatus != null) {
-                            UseSmileIDSampleButton(
-                                text = "Check status",
-                                onClick = onCheckStatus,
-                                loading = checkingStatus,
-                                testId = UseSmileIDSampleTestIds.DETAILS_CHECK_STATUS,
-                            )
-                        }
                     }
                 }
             }
@@ -151,6 +151,7 @@ fun VerificationDetailsScreen(
                     result = result,
                     modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
                 )
+                }
             }
         }
     }

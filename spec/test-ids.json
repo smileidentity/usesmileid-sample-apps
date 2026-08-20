@@ -168,8 +168,8 @@
         "description": "Shown when the route names a job this build has no row for, which a deep link can do. The jobId asked for is in the supporting line, because that is the whole diagnostic."
       },
       {
-        "id": "sample_details_check_status",
-        "description": "Fetches GET /v3/status/{jobId} and rewrites the row. Present only when the row was submitted under a scanned session AND one is live now: the first because a job submitted on a fixture token — every seeded row included — does not exist server-side, the second because that token is the only real SmileID-Token the sample holds. Stands in for the design's pull-to-refresh on this screen until the gesture lands (sample-apps-plan.md 8.1)."
+        "id": "sample_details_refresh",
+        "description": "Pull-to-refresh container on the verification details screen, which is what the design draws in the processing state. Fetches GET /v3/status/{jobId} and rewrites the row. Always present, never conditionally hidden: a gesture that silently does nothing reads as a defect, so a refresh that cannot succeed reports why instead — no live scanned session, or a row never submitted under one (every fixture-token run). A row still processing is also refreshed automatically on entry, since that is the only status that can change."
       }
     ],
     "userDetails": [

@@ -47,6 +47,7 @@ import com.usesmileid.sampleapps.android.status.refreshStatus
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleOverlay
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleToast
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
@@ -208,7 +209,7 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     val clipboard = LocalClipboardManager.current
     val scope = rememberCoroutineScope()
-    var checking by remember { mutableStateOf(false) }
+    var refreshing by remember { mutableStateOf(false) }
     // Not saveable: a saved message replayed the toast on every return to this screen.
     var outcome by remember { mutableStateOf<String?>(null) }
 
@@ -222,31 +223,30 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
             onBack = { navigator.navigateUp() },
             onDelete = { app.storeScope.launch { app.jobStore.remove(setOf(jobId)) }; navigator.navigateUp() },
             onCopy = { clipboard.setText(AnnotatedString(it)) },
-            // Two conditions, and both are about there being something real to ask: the ROW must
-            // have been submitted under a scanned session, or no such job exists server-side (the
-            // seeded fixtures are the case that proves it), and a session must be live NOW, because
-            // its token is the only real credential the sample holds to ask with.
-            onCheckStatus = if (job?.sessionId != null && app.sessionActive) {
-                {
-                    // The screen's own scope, not storeScope: leaving the screen mid-refresh must
-                    // cancel it rather than land a result against a disposed one.
-                    scope.launch {
-                        checking = true
-                        outcome = refreshStatus(
-                            jobId = jobId,
-                            session = app.session,
-                            sandbox = app.useSandbox,
-                            jobStore = app.jobStore,
-                            nowMillis = System.currentTimeMillis(),
-                        ).label()
-                        checking = false
-                    }
-                }
-            } else {
-                null
-            },
-            checkingStatus = checking,
+            onRefresh = { scope.launch { refresh(app, jobId, job?.sessionId) { outcome = it } } },
+            refreshing = refreshing,
         )
+    // Only a processing row can change, so that is the only one worth a request on entry. Keyed on
+    // the id, not the job: re-running on every row rewrite would refresh in a loop off its own write.
+    LaunchedEffect(jobId) {
+        if (app.jobs.firstOrNull { it.id == jobId }?.status != UseSmileIDSampleStatus.Processing) {
+            return@LaunchedEffect
+        }
+        refreshing = true
+        // Silent unless something happened: an automatic check that toasts "still processing" on every
+        // visit is noise, while a change or a failure is the reason the check ran at all.
+        val result = refreshStatus(
+            jobId = jobId,
+            rowSessionId = app.jobs.firstOrNull { it.id == jobId }?.sessionId,
+            session = app.session,
+            sandbox = app.useSandbox,
+            jobStore = app.jobStore,
+            nowMillis = System.currentTimeMillis(),
+        )
+        refreshing = false
+        if (result !is UseSmileIDSampleStatusRefresh.StillProcessing) outcome = result.label()
+    }
+
         LaunchedEffect(outcome) {
             if (outcome == null) return@LaunchedEffect
             delay(SNACKBAR_WINDOW_MILLIS)
@@ -263,11 +263,34 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
     }
 }
 
+/**
+ * The screen's own scope, not storeScope: leaving mid-refresh must cancel the call rather than land a
+ * result against a disposed screen.
+ */
+private suspend fun refresh(
+    app: UseSmileIDSampleAppState,
+    jobId: String,
+    rowSessionId: String?,
+    report: (String) -> Unit,
+) {
+    report(
+        refreshStatus(
+            jobId = jobId,
+            rowSessionId = rowSessionId,
+            session = app.session,
+            sandbox = app.useSandbox,
+            jobStore = app.jobStore,
+            nowMillis = System.currentTimeMillis(),
+        ).label(),
+    )
+}
+
 /** One line per outcome, because a refresh that changed nothing must say so rather than look broken. */
 private fun UseSmileIDSampleStatusRefresh.label(): String = when (this) {
     is UseSmileIDSampleStatusRefresh.Updated -> "${status.label} — $message"
     UseSmileIDSampleStatusRefresh.StillProcessing -> "Still processing"
     UseSmileIDSampleStatusRefresh.NoSession -> "Scan a token first"
+    UseSmileIDSampleStatusRefresh.NoServerJob -> "Not submitted under a scanned token"
     is UseSmileIDSampleStatusRefresh.Failed -> "Could not check status: $reason"
 }
 
