@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -85,6 +86,25 @@ class UseSmileIDSampleJobStoreTest {
         val stored = store.find("job-1")
         assertEquals(false, stored?.sandbox)
         assertEquals("4d33b7ba", stored?.sessionId)
+    }
+
+    /** The confirmation is an event, so it fires once for the batch and an undo is not another one. */
+    @Test
+    fun `a removal emits its batch size once`() = runTest {
+        val store = UseSmileIDSampleJobStore(FakeJobDao(), NoStatusSource)
+        store.add(job("job-1"))
+        store.add(job("job-2"))
+        store.remove(setOf("job-1", "job-2"))
+        assertEquals(2, withTimeout(5_000) { store.removals.first() })
+        store.undoRemove()
+        assertNull(withTimeoutOrNull(100) { store.removals.first() })
+    }
+
+    @Test
+    fun `an empty removal emits nothing`() = runTest {
+        val store = UseSmileIDSampleJobStore(FakeJobDao(), NoStatusSource)
+        store.remove(emptySet())
+        assertNull(withTimeoutOrNull(100) { store.removals.first() })
     }
 
     @Test

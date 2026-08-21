@@ -1,10 +1,6 @@
 package com.usesmileid.sampleapps.ui.data
 
 import android.content.Context
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
@@ -15,8 +11,10 @@ import com.usesmileid.sampleapps.ui.state.bindsRequiredUserDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.IOException
@@ -35,14 +33,11 @@ class UseSmileIDSampleJobStore(
     private val inFlight = mutableSetOf<String>()
     private val inFlightLock = Mutex()
 
-    /** Held here, not on the removing screen: the details screen navigates away before it could draw a confirmation. */
-    private var removalNotice: Int? by mutableStateOf(null)
+    /** Buffered until the list screen collects: the details screen navigates away before it could draw a confirmation. */
+    private val removalNotices = Channel<Int>(Channel.BUFFERED)
 
-    /** Moves only on a removal, so keying an effect on it cannot be restarted by an unrelated write. */
-    var removalToken: Int by mutableIntStateOf(0)
-        private set
-
-    fun takeRemovalNotice(): Int? = removalNotice?.also { removalNotice = null }
+    /** Batch sizes of removals, consumed exactly once by whoever renders the confirmation. */
+    val removals: Flow<Int> = removalNotices.receiveAsFlow()
 
     val jobs: Flow<List<UseSmileIDSampleJob>> = dao.all().map { rows -> rows.map { it.toJob() } }
 
@@ -64,8 +59,7 @@ class UseSmileIDSampleJobStore(
         if (ids.isEmpty()) return
         lastRemoved = dao.findAll(ids)
         dao.delete(ids)
-        removalNotice = lastRemoved.size.takeIf { it > 0 }
-        if (removalNotice != null) removalToken++
+        lastRemoved.size.takeIf { it > 0 }?.let { removalNotices.trySend(it) }
     }
 
     /** Order restores itself: the list is ordered by the rows' own timestamps, not by insertion. */
@@ -73,7 +67,6 @@ class UseSmileIDSampleJobStore(
         if (lastRemoved.isEmpty()) return
         dao.insert(lastRemoved)
         lastRemoved = emptyList()
-        removalNotice = null
     }
 
     /** The one write that overwrites: a status refresh rewrites its row in one atomic update. */

@@ -63,6 +63,7 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 import com.usesmileid.sampleapps.ui.state.toCountdown
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import com.usesmileid.sampleapps.android.gallery.ComponentGalleryScreen as ComponentGalleryContent
@@ -158,13 +159,14 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
         )
         // Bounded, so a toast left up cannot restore rows long after the removal it belonged to.
         var removalShown by remember { mutableStateOf(false) }
-        // Keyed on a removal-only token so an unrelated write cannot strand the toast; the notice is consumed on read.
-        LaunchedEffect(app.jobStore.removalToken) {
-            val count = app.jobStore.takeRemovalNotice() ?: return@LaunchedEffect
-            removedCount = count
-            removalShown = true
-            delay(SNACKBAR_WINDOW_MILLIS)
-            removalShown = false
+        // Collected, not polled: the store emits each removal batch exactly once.
+        LaunchedEffect(Unit) {
+            app.jobStore.removals.collectLatest { count ->
+                removedCount = count
+                removalShown = true
+                delay(SNACKBAR_WINDOW_MILLIS)
+                removalShown = false
+            }
         }
         UseSmileIDSampleOverlay(
             visible = removalShown,
