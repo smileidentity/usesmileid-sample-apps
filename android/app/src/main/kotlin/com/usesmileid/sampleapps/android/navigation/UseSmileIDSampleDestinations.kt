@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -50,9 +49,9 @@ import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleQrScanner
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStatusRefresh
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleOverlay
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTransientNoticeHost
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleToast
+import com.usesmileid.sampleapps.ui.components.rememberTransientNotice
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
@@ -62,8 +61,6 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenDecoder
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 import com.usesmileid.sampleapps.ui.state.toCountdown
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import com.usesmileid.sampleapps.android.gallery.ComponentGalleryScreen as ComponentGalleryContent
@@ -118,8 +115,7 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
     var filter by rememberSaveable { mutableStateOf(UseSmileIDSampleJobFilter.All) }
     var selectMode by rememberSaveable { mutableStateOf(false) }
     var selected by rememberSaveable { mutableStateOf(emptySet<String>()) }
-    // Sourced from the store, so a removal made on the details screen is confirmed here too.
-    var removedCount by remember { mutableIntStateOf(0) }
+    val notice = rememberTransientNotice()
 
     val removeJobs: (Set<String>) -> Unit = { ids ->
         app.storeScope.launch { app.jobStore.remove(ids) }
@@ -157,31 +153,25 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
             onJobClick = { navigator.navigate(VerificationDetailsScreenDestination(jobId = it.id)) },
             onRemove = removeJobs,
         )
-        // Bounded, so a toast left up cannot restore rows long after the removal it belonged to.
-        var removalShown by remember { mutableStateOf(false) }
-        // Collected, not polled: the store emits each removal batch exactly once.
+        // Collected, not polled: the store emits each removal batch exactly once, so a removal made
+        // on the details screen is confirmed here too.
         LaunchedEffect(Unit) {
-            app.jobStore.removals.collectLatest { count ->
-                removedCount = count
-                removalShown = true
-                delay(SNACKBAR_WINDOW_MILLIS)
-                removalShown = false
+            app.jobStore.removals.collect { count ->
+                notice.show(
+                    message = if (count == 1) "Verification removed" else "$count verifications removed",
+                    actionLabel = "Undo",
+                    onAction = { app.storeScope.launch { app.jobStore.undoRemove() } },
+                )
             }
         }
-        UseSmileIDSampleOverlay(
-            visible = removalShown,
+        UseSmileIDSampleTransientNoticeHost(
+            state = notice,
             // Clears the floating bar itself, which draws over this container rather than insetting it.
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = chrome.navBarHeight)
                 .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingXxs),
-        ) {
-            UseSmileIDSampleToast(
-                message = if (removedCount == 1) "Verification removed" else "$removedCount verifications removed",
-                actionLabel = "Undo",
-                onAction = { app.storeScope.launch { app.jobStore.undoRemove() }; removalShown = false },
-            )
-        }
+        )
     }
 }
 
@@ -214,8 +204,7 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
     val clipboard = LocalClipboard.current
     val scope = rememberCoroutineScope()
     var refreshing by remember { mutableStateOf(false) }
-    // Not saveable: a saved message replayed the toast on every return to this screen.
-    var outcome by remember { mutableStateOf<String?>(null) }
+    val notice = rememberTransientNotice()
 
     val job = app.jobs?.firstOrNull { it.id == jobId }
 
@@ -230,7 +219,7 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
                 scope.launch {
                     clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(label, value)))
                     // Android 13 shows its own confirmation; below it there is none.
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) outcome = "$label copied"
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) notice.show("$label copied")
                 }
             },
             onRefresh = {
@@ -238,7 +227,7 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
                     refreshing = true
                     val result = app.jobStore.refresh(jobId, app.session, System.currentTimeMillis())
                     refreshing = false
-                    if (result != null) outcome = result.label()
+                    if (result != null) notice.show(result.label())
                 }
             },
             refreshing = refreshing,
@@ -254,22 +243,15 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
             // Silent unless something happened: "still processing" on every visit is noise.
             val result = app.jobStore.refresh(jobId, app.session, System.currentTimeMillis())
             refreshing = false
-            if (result != null && result !is UseSmileIDSampleStatusRefresh.StillProcessing) outcome = result.label()
+            if (result != null && result !is UseSmileIDSampleStatusRefresh.StillProcessing) notice.show(result.label())
         }
 
-        LaunchedEffect(outcome) {
-            if (outcome == null) return@LaunchedEffect
-            delay(SNACKBAR_WINDOW_MILLIS)
-            outcome = null
-        }
-        UseSmileIDSampleOverlay(
-            visible = outcome != null,
+        UseSmileIDSampleTransientNoticeHost(
+            state = notice,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingMd),
-        ) {
-            UseSmileIDSampleToast(message = outcome.orEmpty())
-        }
+        )
     }
 }
 
@@ -396,23 +378,20 @@ fun ProfileSwitchSheet(navigator: DestinationsNavigator) {
 @Composable
 fun ProfilesScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
-    // Consumed on sight, so returning cannot re-show it. The window is a second effect because
-    // clearing the store flips the first one's key and would cancel its delay before it reset.
-    var confirmedId by remember { mutableStateOf<String?>(null) }
-    var confirmationShown by remember { mutableStateOf(false) }
+    val notice = rememberTransientNotice()
     val pendingId = app.profiles.lastCreatedId
+    // Consumed on sight, so returning cannot re-show it.
     LaunchedEffect(pendingId) {
         val id = pendingId ?: return@LaunchedEffect
         app.profiles.clearLastCreated()
-        confirmedId = id
-        confirmationShown = true
+        val created = app.profiles.find(id) ?: return@LaunchedEffect
+        // A new profile is not made active by creating it, so the confirmation carries the offer.
+        notice.show(
+            message = "${created.organisation} created",
+            actionLabel = "Make active",
+            onAction = { app.profiles.setActive(created.id) },
+        )
     }
-    LaunchedEffect(confirmedId) {
-        if (confirmedId == null) return@LaunchedEffect
-        delay(SNACKBAR_WINDOW_MILLIS)
-        confirmationShown = false
-    }
-    val created = confirmedId?.let(app.profiles::find)
     Box(modifier = Modifier.fillMaxSize()) {
         ProfilesContent(
             profiles = app.profiles.all,
@@ -421,20 +400,13 @@ fun ProfilesScreen(navigator: DestinationsNavigator) {
             onCreate = { navigator.navigate(NewProfileSheetDestination) },
             onBack = { navigator.navigateUp() },
         )
-        // A new profile is not made active by creating it, so the confirmation carries the offer.
-        UseSmileIDSampleOverlay(
-            visible = confirmationShown && created != null,
+        UseSmileIDSampleTransientNoticeHost(
+            state = notice,
             // The host already inset this past the system bar; insetting again lifts it into the list.
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingLg),
-        ) {
-            UseSmileIDSampleToast(
-                message = "${created?.organisation.orEmpty()} created",
-                actionLabel = "Make active",
-                onAction = { created?.let { app.profiles.setActive(it.id) }; confirmationShown = false },
-            )
-        }
+        )
     }
 }
 
@@ -559,6 +531,4 @@ fun ScenarioDrawerSheet(navigator: DestinationsNavigator) {
 @Composable
 fun ComponentGalleryScreen() = ComponentGalleryContent()
 
-/** How long a snackbar with an action stays up: long enough to undo, short enough not to outlive its cause. */
-private const val SNACKBAR_WINDOW_MILLIS = 5_000L
 private const val APP_DISPLAY_NAME = "UseSmileID Sample"
