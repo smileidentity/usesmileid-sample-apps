@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 /** A day of jobs under one header, which is the shape the verifications list renders. */
 data class UseSmileIDSampleJobDay(val relative: String, val absolute: String, val jobs: List<UseSmileIDSampleJob>)
@@ -30,9 +31,22 @@ fun List<UseSmileIDSampleJob>.groupByDay(
         }
 }
 
-/** m:ss is the countdown's format; the list shows a wall-clock time instead. */
-fun UseSmileIDSampleJob.timeLabel(locale: Locale = Locale.getDefault()): String =
-    SimpleDateFormat("HH:mm:ss", locale).format(Date(createdAtMillis))
+/** Midnight of the day [nowMillis] falls in, so a consumer can read the clock coarsely. Idempotent. */
+fun startOfDayMillis(nowMillis: Long): Long = nowMillis.startOfDay()
+
+/** m:ss is the countdown's format; the list shows a wall-clock time instead. One formatter for the whole list. */
+fun List<UseSmileIDSampleJob>.timeLabels(locale: Locale = Locale.getDefault()): Map<String, String> {
+    val format = SimpleDateFormat("HH:mm:ss", locale)
+    return associate { it.id to format.format(Date(it.createdAtMillis)) }
+}
+
+/** ISO-8601 in UTC, matching the design's row: a machine-readable value, not a display date. */
+fun UseSmileIDSampleJob.createdAtLabel(): String = utcIsoFormat.format(Date(createdAtMillis))
+
+// Main-thread only, like every composable read.
+private val utcIsoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).apply {
+    timeZone = TimeZone.getTimeZone("UTC")
+}
 
 private fun Long.startOfDay(): Long = Calendar.getInstance().apply {
     timeInMillis = this@startOfDay

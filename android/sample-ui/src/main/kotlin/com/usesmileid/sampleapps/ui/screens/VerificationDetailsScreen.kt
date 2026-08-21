@@ -28,12 +28,8 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarEmphasis
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleResult
-import com.usesmileid.sampleapps.ui.model.timeLabel
+import com.usesmileid.sampleapps.ui.model.createdAtLabel
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
 
 /** One verification, and where the flow lands after submission. A missing job is a real state: a deep link can name one this build never had. */
 @Composable
@@ -165,9 +161,3 @@ private fun UseSmileIDSampleJob.httpStatusColor(): Color? {
     val badge = UseSmileIDSampleTheme.colors.badge
     return if (code in 200..299) badge.successText else badge.errorText
 }
-
-/** ISO-8601 in UTC, matching the design's row: a machine-readable value, not a display date. */
-private fun UseSmileIDSampleJob.createdAtLabel(): String =
-    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
-        .apply { timeZone = TimeZone.getTimeZone("UTC") }
-        .format(Date(createdAtMillis))

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +31,7 @@ import com.usesmileid.sampleapps.ui.components.rememberTransientNotice
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStatusRefresh
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
+import com.usesmileid.sampleapps.ui.model.startOfDayMillis
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
 import com.usesmileid.sampleapps.ui.screens.rememberVerificationsScreenState
 import kotlinx.coroutines.flow.first
@@ -45,6 +47,13 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     val screen = rememberVerificationsScreenState()
     val notice = rememberTransientNotice()
+
+    // None of the list derivations read the clock; recompute on data change, not on the session tick.
+    val jobs = app.jobs
+    // Counted off the same list the rows render from, so a count can never disagree with what is on screen.
+    val counts = remember(jobs) { UseSmileIDSampleJobFilter.entries.associateWith { f -> jobs.orEmpty().count(f::matches) } }
+    // The grouping only cares which day it is, so per-second ticks must not invalidate it.
+    val todayStart by remember { derivedStateOf { startOfDayMillis(app.nowMillis) } }
 
     val removeJobs: (Set<String>) -> Unit = { ids ->
         app.storeScope.launch { app.jobStore.remove(ids) }
@@ -71,13 +80,12 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
             // The selection bar insets via the Scaffold slot; only the floating nav bar needs clearing here.
             contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
             state = UseSmileIDSampleVerificationsState(
-                jobs = app.jobs,
-                // Counted off the same list the rows render from, so a count can never disagree with what is on screen.
-                counts = UseSmileIDSampleJobFilter.entries.associateWith { f -> app.jobs.orEmpty().count(f::matches) },
+                jobs = jobs,
+                counts = counts,
                 filter = screen.filter,
                 selectMode = screen.selectMode,
                 selected = screen.selected,
-                nowMillis = app.nowMillis,
+                todayStartMillis = todayStart,
             ),
             onFilterChange = { screen.filter = it },
             onSelectModeChange = screen::changeSelectMode,

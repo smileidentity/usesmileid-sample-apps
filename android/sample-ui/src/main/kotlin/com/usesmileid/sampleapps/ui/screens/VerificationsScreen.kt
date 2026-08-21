@@ -15,12 +15,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -41,7 +43,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwipeAction
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.model.groupByDay
-import com.usesmileid.sampleapps.ui.model.timeLabel
+import com.usesmileid.sampleapps.ui.model.timeLabels
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /**
@@ -104,7 +106,8 @@ data class UseSmileIDSampleVerificationsState(
     val filter: UseSmileIDSampleJobFilter = UseSmileIDSampleJobFilter.All,
     val selectMode: Boolean = false,
     val selected: Set<String> = emptySet(),
-    val nowMillis: Long,
+    /** Midnight, not the current instant: only the TODAY/YESTERDAY bucket reads the clock. */
+    val todayStartMillis: Long,
 )
 
 /** The verifications, grouped by day. Counts come from the whole list, because the count dropping is what proves a delete. */
@@ -120,7 +123,11 @@ fun VerificationsScreen(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
-    val visible = state.jobs.orEmpty().filter(state.filter::matches)
+    val visible = remember(state.jobs, state.filter) { state.jobs.orEmpty().filter(state.filter::matches) }
+    val days = remember(visible, state.todayStartMillis) { visible.groupByDay(state.todayStartMillis) }
+    // Row ids carry the index in the whole visible list, not the one within the day group.
+    val rowIndex = remember(visible) { visible.withIndex().associate { it.value.id to it.index } }
+    val timeLabels = remember(visible) { visible.timeLabels() }
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -194,7 +201,7 @@ fun VerificationsScreen(
             }
         }
 
-        visible.groupByDay(state.nowMillis).forEach { day ->
+        days.forEach { day ->
             item {
                 UseSmileIDSampleDateGroupHeader(
                     relative = day.relative,
@@ -202,10 +209,11 @@ fun VerificationsScreen(
                     modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
                 )
             }
-            itemsIndexedByJob(day.jobs, visible) { index, job ->
+            items(day.jobs, key = { it.id }) { job ->
                 JobListRow(
                     job = job,
-                    index = index,
+                    index = rowIndex.getValue(job.id),
+                    timeLabel = timeLabels.getValue(job.id),
                     selectMode = state.selectMode,
                     checked = job.id in state.selected,
                     onCheckedChange = { onSelectionChange(job.id, it) },
@@ -217,17 +225,11 @@ fun VerificationsScreen(
     }
 }
 
-/** Row ids are suffixed with the index in the whole visible list, not within the day group. */
-private fun androidx.compose.foundation.lazy.LazyListScope.itemsIndexedByJob(
-    jobs: List<UseSmileIDSampleJob>,
-    visible: List<UseSmileIDSampleJob>,
-    row: @Composable (Int, UseSmileIDSampleJob) -> Unit,
-) = jobs.forEach { job -> item(key = job.id) { row(visible.indexOf(job), job) } }
-
 @Composable
 private fun JobListRow(
     job: UseSmileIDSampleJob,
     index: Int,
+    timeLabel: String,
     selectMode: Boolean,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
@@ -254,7 +256,7 @@ private fun JobListRow(
                 UseSmileIDSampleJobRow(
                     product = job.product,
                     jobId = job.shortId,
-                    time = job.timeLabel(),
+                    time = timeLabel,
                     status = job.status,
                     onClick = if (selectMode) null else onClick,
                     testId = UseSmileIDSampleTestIds.jobRow(index),
