@@ -6,7 +6,10 @@ import androidx.compose.ui.unit.Dp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.R
 
-/** The icons the design supplies nowhere, from Material Symbols Outlined 400. Not interchangeable with the design's stroke-based set in [UseSmileIDSampleIcons]. */
+/**
+ * The icons the design supplies nowhere, from Material Symbols Outlined 400. Not interchangeable with the design's stroke-based set in [UseSmileIDSampleIcons].
+ * All decorative: none carries a contentDescription — the enclosing control supplies the label.
+ */
 @Composable
 fun ChevronRightGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) =
     UseSmileIDSampleIcon(id = R.drawable.sample_ic_chevron_right, tint = tint, size = size)

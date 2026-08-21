@@ -69,6 +69,7 @@ fun UseSmileIDSampleTokenBindings.bindsIdDetails(product: UseSmileIDSampleProduc
 
 /** Either the session a token describes, or why it is not one. */
 sealed interface UseSmileIDSampleTokenDecode {
+    /** The session the claims describe — decoded only, never verified: the sample holds no signing key. */
     data class Decoded(val session: UseSmileIDSampleTokenSession) : UseSmileIDSampleTokenDecode
 
     /** Names the claim or the structure that failed, never a value — the Portal's own redaction rule. */
@@ -87,6 +88,7 @@ sealed interface UseSmileIDSampleTokenDecode {
  */
 object UseSmileIDSampleTokenDecoder {
 
+    /** Decoded when all three segments and the iat/exp pair read; otherwise Rejected, naming the first failure. */
     fun decode(token: String): UseSmileIDSampleTokenDecode {
         val segments = token.trim().split(".")
         if (segments.size != SEGMENTS || segments.any { !it.matches(BASE64_URL) }) {

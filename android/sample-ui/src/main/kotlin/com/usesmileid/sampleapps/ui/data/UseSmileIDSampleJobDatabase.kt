@@ -12,6 +12,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.flow.Flow
 
+/** The verification rows: inserts IGNORE so a repeated delivery cannot overwrite one; only a status refresh UPDATEs. */
 @Dao
 interface UseSmileIDSampleJobDao {
 
@@ -40,6 +41,7 @@ interface UseSmileIDSampleJobDao {
     suspend fun count(): Int
 }
 
+/** The verification store's one database; its schema is exported and committed, so migrations are checkable. */
 @Database(entities = [UseSmileIDSampleJobEntity::class], version = 2, exportSchema = true)
 abstract class UseSmileIDSampleJobDatabase : RoomDatabase() {
 

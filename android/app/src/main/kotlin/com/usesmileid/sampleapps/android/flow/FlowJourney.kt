@@ -7,11 +7,6 @@ import com.ramcosta.composedestinations.spec.Direction
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 
-/**
- * Where a product's journey starts. A token binding the required user details relaxes the SDK's own
- * requirement, so the details form has nothing left to collect and is skipped. The ID form is not
- * skipped with it: the token never relaxes ID params, whatever else it carries.
- */
 /** Where a product starts: a form is skipped only when the token already carries all of it. */
 internal fun UseSmileIDSampleAppState.firstStepFor(product: UseSmileIDSampleProduct): Direction =
     if (!tokenBindsUserDetails) {

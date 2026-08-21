@@ -30,7 +30,11 @@ internal fun TokenJson.Obj.boolean(key: String): Boolean? = (members[key] as? To
 internal fun TokenJson.Obj.seconds(key: String): Long? =
     (members[key] as? TokenJson.Num)?.literal?.toDoubleOrNull()?.takeIf { it.isFinite() }?.toLong()
 
-/** Null on anything malformed or trailing; the caller turns that into a rejection with a reason. */
+/**
+ * Null on anything malformed or trailing; the caller turns that into a rejection with a reason.
+ * A token arrives from a clipboard or a QR code, so its nesting is untrusted: without a cap a deeply
+ * nested payload takes the app down with a StackOverflowError.
+ */
 internal fun parseTokenJson(text: String): TokenJson? = TokenJsonReader(text).parse()
 
 private class TokenJsonReader(private val text: String) {
@@ -43,8 +47,7 @@ private class TokenJsonReader(private val text: String) {
     }
 
     private fun value(depth: Int): TokenJson? {
-        // A token arrives from a clipboard or a QR code, so its nesting is untrusted: without a cap a
-        // deeply nested payload takes the app down with a StackOverflowError.
+        // Untrusted nesting: capped, see parseTokenJson.
         if (depth > MAX_DEPTH) return null
         skipWhitespace()
         return when (text.getOrNull(at) ?: return null) {
