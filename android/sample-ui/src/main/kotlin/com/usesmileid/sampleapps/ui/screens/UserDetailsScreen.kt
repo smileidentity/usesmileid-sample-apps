@@ -18,13 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleKeyValueEditRow
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionSurface
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowDivider
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwitch
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBar
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
@@ -59,39 +59,24 @@ fun UserDetailsScreen(
             verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
         ) {
             item {
-                Column(
+                UseSmileIDSampleSectionSurface(
                     modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
-                    verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+                    label = "YOUR DETAILS",
                 ) {
-                    UseSmileIDSampleSectionLabel(text = "YOUR DETAILS")
-                    Surface(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(SmileDimens.radiusSurface),
-                        color = UseSmileIDSampleTheme.colors.surface,
-                        border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.card.border),
-                    ) {
-                        Column {
-                            UseSmileIDSampleUserField.entries.forEachIndexed { index, field ->
-                                                    if (index > 0) {
-                                    HorizontalDivider(
-                                        thickness = SmileDimens.borderWidthHairline,
-                                        color = UseSmileIDSampleTheme.colors.card.border,
-                                    )
-                                }
-                                // Shown as provided, not asked again — the value is vaulted, so it
-                                // cannot be prefilled either.
-                                val supplied = requirement.supplies(field)
-                                UseSmileIDSampleKeyValueEditRow(
-                                    label = requirement.labelFor(field),
-                                    value = if (supplied) "" else field.read(details),
-                                    onValueChange = { onFieldChange(field, it) },
-                                    placeholder = if (supplied) "Provided by token" else field.placeholder,
-                                    required = false,
-                                    enabled = !supplied,
-                                    testId = UseSmileIDSampleTestIds.userDetailsField(field.id),
-                                )
-                            }
-                        }
+                    UseSmileIDSampleUserField.entries.forEachIndexed { index, field ->
+                        if (index > 0) UseSmileIDSampleSettingRowDivider()
+                        // Shown as provided, not asked again — the value is vaulted, so it
+                        // cannot be prefilled either.
+                        val supplied = requirement.supplies(field)
+                        UseSmileIDSampleKeyValueEditRow(
+                            label = requirement.labelFor(field),
+                            value = if (supplied) "" else field.read(details),
+                            onValueChange = { onFieldChange(field, it) },
+                            placeholder = if (supplied) "Provided by token" else field.placeholder,
+                            required = false,
+                            enabled = !supplied,
+                            testId = UseSmileIDSampleTestIds.userDetailsField(field.id),
+                        )
                     }
                 }
             }

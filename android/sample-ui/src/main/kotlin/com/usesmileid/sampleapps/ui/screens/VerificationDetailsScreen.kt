@@ -8,15 +8,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.ui.graphics.Color
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
@@ -24,7 +21,7 @@ import com.usesmileid.sampleapps.ui.components.TrashGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDataFieldRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEmptyState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleResultCard
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionSurface
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatusBadge
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarButton
@@ -110,26 +107,16 @@ fun VerificationDetailsScreen(
                     }
                 }
                 item {
-                    Column(
+                    UseSmileIDSampleSectionSurface(
                         modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
-                        verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+                        label = "DETAILS",
                     ) {
-                        UseSmileIDSampleSectionLabel(text = "DETAILS")
-                        Surface(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(SmileDimens.radiusSurface),
-                            color = UseSmileIDSampleTheme.colors.surface,
-                            border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.card.border),
-                        ) {
-                            Column {
-                                DetailRow("createdAt", "Created_at", job.createdAtLabel())
-                                DetailRow("jobId", "Job_id", job.shortId, onCopy = { onCopy("Job ID", job.id) })
-                                DetailRow("message", "Message", job.message)
-                                // Coloured by the HTTP outcome, not the verdict: a blocked job still shows a green 200.
-                                DetailRow("status", "Status", job.httpStatusLabel(), valueColor = job.httpStatusColor())
-                                DetailRow("userId", "User_id", job.shortUserId, onCopy = { onCopy("User ID", job.userId) })
-                            }
-                        }
+                        DetailRow("createdAt", "Created_at", job.createdAtLabel())
+                        DetailRow("jobId", "Job_id", job.shortId, onCopy = { onCopy("Job ID", job.id) })
+                        DetailRow("message", "Message", job.message)
+                        // Coloured by the HTTP outcome, not the verdict: a blocked job still shows a green 200.
+                        DetailRow("status", "Status", job.httpStatusLabel(), valueColor = job.httpStatusColor())
+                        DetailRow("userId", "User_id", job.shortUserId, onCopy = { onCopy("User ID", job.userId) })
                     }
                 }
             }

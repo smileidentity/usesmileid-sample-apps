@@ -1,7 +1,6 @@
 package com.usesmileid.sampleapps.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -12,13 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.ui.text.style.TextAlign
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowDivider
 import androidx.annotation.DrawableRes
@@ -31,7 +27,7 @@ import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDestructiveRow
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProfileRow
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionSurface
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowChevron
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwitch
@@ -242,19 +238,11 @@ private fun androidx.compose.foundation.lazy.LazyListScope.section(
     label: String,
     content: @Composable () -> Unit,
 ) = item {
-    Column(
+    UseSmileIDSampleSectionSurface(
         modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
-        verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+        label = label,
     ) {
-        UseSmileIDSampleSectionLabel(text = label)
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(SmileDimens.radiusSurface),
-            color = UseSmileIDSampleTheme.colors.surface,
-            border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.card.border),
-        ) {
-            Column { content() }
-        }
+        content()
     }
 }
 
