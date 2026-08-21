@@ -6,7 +6,9 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenBindings
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -138,6 +140,28 @@ class UseSmileIDSampleJobStoreRefreshTest {
         gate.send(Unit)
         assertEquals(updated(), first.await())
         assertEquals(1, source.calls.size)
+    }
+
+    /** Leaving mid-refresh must not make the row unrefreshable for the rest of the process. */
+    @Test
+    fun `a cancelled refresh releases the in-flight guard`() = runTest {
+        val entered = Channel<Unit>(Channel.RENDEZVOUS)
+        val gate = Channel<Unit>(Channel.RENDEZVOUS)
+        val source = FakeStatusSource { _, _, _ ->
+            entered.send(Unit)
+            gate.receive()
+            updated()
+        }
+        val store = store(source)
+        store.add(job("job-1", sessionId = "s-1"))
+
+        val leaving = launch { store.refresh("job-1", session(id = "s-1"), NOW) }
+        entered.receive()
+        leaving.cancelAndJoin()
+
+        // Ungated, so a still-held guard shows up as a null return rather than as a hang.
+        source.answer = { _, _, _ -> updated() }
+        assertEquals(updated(), store.refresh("job-1", session(id = "s-1"), NOW))
     }
 
     @Test

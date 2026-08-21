@@ -10,6 +10,7 @@ import com.usesmileid.sampleapps.ui.state.bindsIdDetails
 import com.usesmileid.sampleapps.ui.state.bindsRequiredUserDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -116,7 +118,8 @@ class UseSmileIDSampleJobStore(
             )
             return if (written) outcome else UseSmileIDSampleStatusRefresh.Failed("The verification is no longer stored")
         } finally {
-            inFlightLock.withLock { inFlight.remove(jobId) }
+            // The guard must release even on a cancelled caller, or the row is silently unrefreshable for the rest of the process.
+            withContext(NonCancellable) { inFlightLock.withLock { inFlight.remove(jobId) } }
         }
     }
 
