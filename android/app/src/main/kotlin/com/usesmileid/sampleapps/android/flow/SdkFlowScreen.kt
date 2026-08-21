@@ -55,10 +55,13 @@ fun SdkFlowScreen(
     val app = LocalUseSmileIDSampleAppState.current
     LaunchedEffect(route) { app.flowResult.enterRoute(route) }
 
-    val snapshot = viewModel.snapshot
-        // A prior enrollment's id when the card holds one, so authentication has something enrolled.
-        ?: buildSnapshot(viewModel.args, app, viewModel.runUserId(app.flowResult.userId))
-            ?.also { viewModel.snapshot = it }
+    // Once per entry: the ViewModel and its args are scoped to this back-stack entry, so no key can change.
+    val snapshot = remember {
+        viewModel.snapshot
+            // A prior enrollment's id when the card holds one, so authentication has something enrolled.
+            ?: buildSnapshot(viewModel.args, app, viewModel.runUserId(app.flowResult.userId))
+                ?.also { viewModel.snapshot = it }
+    }
     if (snapshot == null) {
         LaunchedEffect(Unit) { navigator.popBackStack(FlowNavGraph, inclusive = true) }
         return
@@ -124,42 +127,42 @@ fun SdkFlowScreen(
         }
     }
     CompositionLocalProvider(LocalConfiguration provides flowConfiguration) {
-    MaterialTheme(colorScheme = hostScheme) {
-        UseSmileIDBuilder(modifier = Modifier.fillMaxSize()) {
-            applying(snapshot, onTokenRefreshed = app.flowResult::recordRefreshCallback)
-            if (snapshot.scenario != UseSmileIDSampleScenario.NoCallback) {
-                onResult = { result ->
-                    viewModel.markResultDelivered()
-                    recordResult(app.flowResult, result)
-                    if (snapshot.scenario == UseSmileIDSampleScenario.ThrowingCallback) {
-                        throw IllegalStateException("throwingCallback scenario: the host result callback throws")
-                    }
-                    when (result) {
-                        is UseSmileIDResult.Success -> {
-                            app.storeScope.launch {
-                                app.jobStore.add(
-                                    processingJob(snapshot, result.value),
-                                    snapshot.liveSession?.bindings,
-                                )
-                            }
-                            navigator.navigate(VerificationDetailsScreenDestination(jobId = result.value.jobId)) {
-                                popUpTo(FlowNavGraph) { inclusive = true }
-                                // A repeated delivery must not stack a second landing screen.
-                                launchSingleTop = true
-                            }
+        MaterialTheme(colorScheme = hostScheme) {
+            UseSmileIDBuilder(modifier = Modifier.fillMaxSize()) {
+                applying(snapshot, onTokenRefreshed = app.flowResult::recordRefreshCallback)
+                if (snapshot.scenario != UseSmileIDSampleScenario.NoCallback) {
+                    onResult = { result ->
+                        viewModel.markResultDelivered()
+                        recordResult(app.flowResult, result)
+                        if (snapshot.scenario == UseSmileIDSampleScenario.ThrowingCallback) {
+                            throw IllegalStateException("throwingCallback scenario: the host result callback throws")
                         }
-                        is UseSmileIDResult.Failure ->
-                            navigator.navigate(VerificationDetailsScreenDestination(jobId = UNSUBMITTED_JOB_ID)) {
-                                popUpTo(FlowNavGraph) { inclusive = true }
-                                launchSingleTop = true
+                        when (result) {
+                            is UseSmileIDResult.Success -> {
+                                app.storeScope.launch {
+                                    app.jobStore.add(
+                                        processingJob(snapshot, result.value),
+                                        snapshot.liveSession?.bindings,
+                                    )
+                                }
+                                navigator.navigate(VerificationDetailsScreenDestination(jobId = result.value.jobId)) {
+                                    popUpTo(FlowNavGraph) { inclusive = true }
+                                    // A repeated delivery must not stack a second landing screen.
+                                    launchSingleTop = true
+                                }
                             }
-                        UseSmileIDResult.Cancelled ->
-                            if (composed.value) navigator.popBackStack(FlowNavGraph, inclusive = true)
+                            is UseSmileIDResult.Failure ->
+                                navigator.navigate(VerificationDetailsScreenDestination(jobId = UNSUBMITTED_JOB_ID)) {
+                                    popUpTo(FlowNavGraph) { inclusive = true }
+                                    launchSingleTop = true
+                                }
+                            UseSmileIDResult.Cancelled ->
+                                if (composed.value) navigator.popBackStack(FlowNavGraph, inclusive = true)
+                        }
                     }
                 }
             }
         }
-    }
     }
 }
 
