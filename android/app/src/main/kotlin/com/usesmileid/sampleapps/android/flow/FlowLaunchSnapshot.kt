@@ -76,7 +76,7 @@ fun buildSnapshot(
         idDetails = app.forms.idDetails,
         scenario = app.flowResult.scenario,
         theme = app.flowResult.theme,
-        sandbox = app.launchArgs.sandbox,
+        sandbox = app.useSandbox,
         userId = userId,
         partnerId = app.profiles.active.id,
         partnerName = app.profiles.active.organisation,
@@ -87,12 +87,17 @@ fun buildSnapshot(
 
 /** The one place that decides what the SDK is handed (§8.1). */
 fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshed: () -> Unit = {}) {
-    userDetails = UserDetails(
-        givenNames = snapshot.userDetails.firstName,
-        lastName = snapshot.userDetails.lastName,
-        email = snapshot.userDetails.email.takeIf { it.isNotBlank() },
-        phoneNumber = snapshot.userDetails.phone.takeIf { it.isNotBlank() },
-    )
+    // Omitted when the token binds what the SDK requires: the forms were skipped, so these would be blanks.
+    userDetails = if (snapshot.liveSession?.bindings?.bindsRequiredUserDetails == true) {
+        null
+    } else {
+        UserDetails(
+            givenNames = snapshot.userDetails.firstName,
+            lastName = snapshot.userDetails.lastName,
+            email = snapshot.userDetails.email.takeIf { it.isNotBlank() },
+            phoneNumber = snapshot.userDetails.phone.takeIf { it.isNotBlank() },
+        )
+    }
     if (snapshot.product == UseSmileIDSampleProduct.SmartSelfieAuth) userId = snapshot.userId
     applyIdParams(snapshot)
     screens { journeyFor(snapshot) }
@@ -234,11 +239,15 @@ private fun UseSmileIDFlowBuilder.applyIdParams(snapshot: FlowLaunchSnapshot) {
 }
 
 private fun ScreensBuilder.journeyFor(snapshot: FlowLaunchSnapshot) {
-    consent {
-        partnerName = snapshot.partnerName
-        // Omitting it fails build() while validate() still reports Valid.
-        partnerIcon = SampleUiR.drawable.sample_ic_product_mark
-        partnerPrivacyPolicyUrl = PRIVACY_POLICY_URL
+    // A complete consent binding lifts the SDK's requirement, and declaring one anyway is filtered back
+    // out and ends the run before it starts. The binding decides whether the screen exists at all.
+    if (snapshot.liveSession?.bindings?.consent == null) {
+        consent {
+            partnerName = snapshot.partnerName
+            // Omitting it fails build() while validate() still reports Valid.
+            partnerIcon = SampleUiR.drawable.sample_ic_product_mark
+            partnerPrivacyPolicyUrl = PRIVACY_POLICY_URL
+        }
     }
     // Enhanced KYC is the one journey without capture: consent and processing only, per its validator.
     if (!snapshot.product.capture) {
@@ -305,7 +314,7 @@ private val UseSmileIDSampleProduct.needsDocumentCapture: Boolean
  * The session a run actually submits under. Absent for the two scenarios that are *about* refresh:
  * a scanned token has no refresh journey, and the fixtures are what keep those scenarios meaningful.
  */
-private val FlowLaunchSnapshot.liveSession: UseSmileIDSampleTokenSession?
+internal val FlowLaunchSnapshot.liveSession: UseSmileIDSampleTokenSession?
     get() = session?.takeUnless { scenario.startsExpired }
 
 /**

@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDateGroupHeader
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEmptyState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleFilterChip
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleJobRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionCheckbox
@@ -111,6 +112,25 @@ fun VerificationsScreen(
                         onClick = { onFilterChange(filter) },
                         testId = UseSmileIDSampleTestIds.filterChip(filter.id),
                         countTestId = UseSmileIDSampleTestIds.filterCount(filter.id),
+                    )
+                }
+            }
+        }
+
+        // Two messages: "nothing yet" and "nothing matching this filter" are different things to be told.
+        if (visible.isEmpty()) {
+            item {
+                if (state.jobs.isEmpty()) {
+                    UseSmileIDSampleEmptyState(
+                        text = "No verifications yet",
+                        supportingText = "Start a product above and the job lands here.",
+                        testId = UseSmileIDSampleTestIds.VERIFICATIONS_EMPTY,
+                    )
+                } else {
+                    UseSmileIDSampleEmptyState(
+                        text = "Nothing ${state.filter.label.lowercase()}",
+                        supportingText = "Other filters still have verifications.",
+                        testId = UseSmileIDSampleTestIds.VERIFICATIONS_EMPTY,
                     )
                 }
             }

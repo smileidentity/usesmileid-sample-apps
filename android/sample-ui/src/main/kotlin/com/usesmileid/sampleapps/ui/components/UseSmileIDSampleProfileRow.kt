@@ -21,7 +21,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.smileProfileHues
-import com.smileid.designsystem.smileSurface2
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -46,7 +45,7 @@ fun UseSmileIDSampleProfileRow(
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
             .tagged(testId),
         shape = RoundedCornerShape(SmileDimens.radiusSurface),
-        color = if (selected) smileSurface2 else colors.surface,
+        color = if (selected) colors.surfaceTile else colors.surface,
         border = BorderStroke(SmileDimens.borderWidthHairline, colors.card.border),
     ) {
         Row(

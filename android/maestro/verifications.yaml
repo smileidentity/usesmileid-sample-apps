@@ -6,8 +6,11 @@
 #   maestro --device <serial> test -e APP_ID=com.usesmileid.sampleapps.android android/maestro
 appId: ${APP_ID}
 ---
+# Rows are a precondition, not the subject: the app seeds none. Seeded once — they persist in Room.
 - stopApp
-- launchApp
+- launchApp:
+    arguments:
+      seedJobs: true
 
 - runFlow: subflows/warm-start.yaml
 - tapOn:
@@ -71,3 +74,17 @@ appId: ${APP_ID}
     id: "sample_verifications_screen"
 - assertNotVisible:
     id: "sample_toast"
+
+# Pull-to-refresh. A seeded row has no scanned session, so the outcome is deterministic and needs no network.
+- tapOn:
+    id: "sample_job_row_0"
+- assertVisible:
+    id: "sample_details_refresh"
+# An explicit long, slow drag: a short DOWN swipe does not cross the refresh threshold.
+- swipe:
+    start: 50%, 30%
+    end: 50%, 79%
+    duration: 600
+- assertVisible:
+    id: "sample_toast"
+- assertVisible: "Not submitted under a scanned token"

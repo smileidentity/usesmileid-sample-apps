@@ -3,7 +3,10 @@ package com.usesmileid.sampleapps.android.flow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
+import android.content.res.Configuration
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +34,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
+import kotlinx.coroutines.launch
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleFlowResult
@@ -60,7 +64,7 @@ fun SdkFlowScreen(
         return
     }
 
-    when (remember(snapshot) { preflight(snapshot) }) {
+    when (val preflight = remember(snapshot) { preflight(snapshot) }) {
         is FlowPreflight.NeedsDetails -> {
             LaunchedEffect(Unit) {
                 navigator.navigate(ConsentDetailsFormScreenDestination(productId = snapshot.product.id)) {
@@ -79,9 +83,17 @@ fun SdkFlowScreen(
             }
             return
         }
-        // No form fixes this, so it takes the same exit as a mistyped product id.
+        // No form fixes this, so it exits like a mistyped product id — but says why first: a silent
+        // return to the product list is indistinguishable from a dead tap.
         is FlowPreflight.Misconfigured -> {
-            LaunchedEffect(Unit) { navigator.popBackStack(FlowNavGraph, inclusive = true) }
+            val issues = preflight.issues
+            LaunchedEffect(Unit) {
+                app.flowResult.recordBlocked(
+                    issues.joinToString("; ") { it.message ?: it::class.simpleName.orEmpty() }
+                        .ifBlank { "The flow did not validate" },
+                )
+                navigator.popBackStack(FlowNavGraph, inclusive = true)
+            }
             return
         }
         FlowPreflight.Ready -> Unit
@@ -102,6 +114,16 @@ fun SdkFlowScreen(
     } else {
         MaterialTheme.colorScheme
     }
+    // UseSmileIDBuilder never forwards `darkMode`, so rewriting uiMode for the subtree is what makes the
+    // SDK resolve the app's own setting. A workaround for a missing knob — see docs/plan/token-session-android.md.
+    val configuration = LocalConfiguration.current
+    val flowConfiguration = remember(configuration, app.settings.darkMode) {
+        Configuration(configuration).apply {
+            uiMode = (uiMode and Configuration.UI_MODE_NIGHT_MASK.inv()) or
+                if (app.settings.darkMode) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO
+        }
+    }
+    CompositionLocalProvider(LocalConfiguration provides flowConfiguration) {
     MaterialTheme(colorScheme = hostScheme) {
         UseSmileIDBuilder(modifier = Modifier.fillMaxSize()) {
             applying(snapshot, onTokenRefreshed = app.flowResult::recordRefreshCallback)
@@ -114,7 +136,12 @@ fun SdkFlowScreen(
                     }
                     when (result) {
                         is UseSmileIDResult.Success -> {
-                            app.jobs.add(processingJob(snapshot.product, result.value))
+                            app.storeScope.launch {
+                                app.jobStore.add(
+                                    processingJob(snapshot, result.value),
+                                    snapshot.liveSession?.bindings,
+                                )
+                            }
                             navigator.navigate(VerificationDetailsScreenDestination(jobId = result.value.jobId)) {
                                 popUpTo(FlowNavGraph) { inclusive = true }
                                 // A repeated delivery must not stack a second landing screen.
@@ -133,6 +160,7 @@ fun SdkFlowScreen(
             }
         }
     }
+    }
 }
 
 private fun recordResult(flowResult: UseSmileIDSampleFlowResult, result: UseSmileIDResult<JobSubmissionResponse>) {
@@ -150,14 +178,17 @@ private fun recordResult(flowResult: UseSmileIDSampleFlowResult, result: UseSmil
     }
 }
 
-private fun processingJob(product: UseSmileIDSampleProduct, response: JobSubmissionResponse) = UseSmileIDSampleJob(
+private fun processingJob(snapshot: FlowLaunchSnapshot, response: JobSubmissionResponse) = UseSmileIDSampleJob(
     id = response.jobId,
     userId = response.userId,
-    product = product,
+    product = snapshot.product,
     status = UseSmileIDSampleStatus.Processing,
     createdAtMillis = System.currentTimeMillis(),
     message = response.message,
     httpStatus = HTTP_ACCEPTED,
+    // From the snapshot, not re-read: by the time a result lands the toggle may have moved on.
+    sandbox = snapshot.sandbox,
+    sessionId = snapshot.liveSession?.id,
 )
 
 /** A failed run has no server-issued job id, so the landing route carries a stable non-id. */

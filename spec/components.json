@@ -555,6 +555,28 @@
       "notes": "Label plus a count (All 11, Clear 6, Attention 2, Blocked 2). Counts are live and must update after a delete — that is the assertion the delete flow keys off. TYPE CORRECTED 2026-08-17 against node 5206:2415: the label is 12.5/700 and the count is 11/700 with 0.88 tracking. The generated filter-chip font is 14/400, which is neither, so do not reach for it unchanged. The unselected count's COLOUR is an open disagreement — see the filterChipCountColour delta."
     },
     {
+      "name": "EmptyState",
+      "tier": "primitive",
+      "owner": "sample",
+      "tokens": [
+        "text-style.body-strong",
+        "text-style.caption",
+        "color.text.body",
+        "color.text.muted"
+      ],
+      "variants": [
+        "text",
+        "textWithSupporting"
+      ],
+      "usedBy": [
+        "verifications",
+        "verificationDetails",
+        "countryPicker",
+        "idTypePicker"
+      ],
+      "notes": "NOT IN THE DESIGN \u2014 the app's own convention, added 2026-08-20 because four surfaces can render nothing and each had invented its own treatment. Muted and centred, never a loud frame: an empty list is a normal state, not a failure. The supporting line is only for surfaces where the reader can act on it \u2014 a search that matched nothing needs no advice, so the pickers pass text alone."
+    },
+    {
       "name": "DateGroupHeader",
       "tier": "composite",
       "owner": "sample",

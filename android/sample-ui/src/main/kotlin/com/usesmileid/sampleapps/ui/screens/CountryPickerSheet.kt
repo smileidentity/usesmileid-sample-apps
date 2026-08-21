@@ -5,11 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEmptyState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleFullHeightBottomSheet
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleOptionRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSearchField
@@ -40,7 +40,11 @@ fun CountryPickerSheet(
             placeholder = "Search country",
             testId = UseSmileIDSampleTestIds.COUNTRY_SEARCH,
         )
-        PickerList(empty = matches.isEmpty(), emptyLabel = "No country matches \"$query\"") {
+        PickerList(
+            empty = matches.isEmpty(),
+            emptyLabel = "No country matches \u201c$query\u201d",
+            emptyTestId = UseSmileIDSampleTestIds.COUNTRY_EMPTY,
+        ) {
             matches.forEach { country ->
                 UseSmileIDSampleOptionRow(
                     label = country.label,
@@ -78,7 +82,11 @@ fun IdTypePickerSheet(
             placeholder = "Search ID type",
             testId = UseSmileIDSampleTestIds.ID_TYPE_SEARCH,
         )
-        PickerList(empty = matches.isEmpty(), emptyLabel = "No ID type for this country") {
+        PickerList(
+            empty = matches.isEmpty(),
+            emptyLabel = if (query.isBlank()) "No ID type for this country" else "No ID type matches \u201c$query\u201d",
+            emptyTestId = UseSmileIDSampleTestIds.ID_TYPE_EMPTY,
+        ) {
             matches.forEach { idType ->
                 UseSmileIDSampleOptionRow(
                     label = idType.label,
@@ -93,14 +101,14 @@ fun IdTypePickerSheet(
 
 /** An empty result is a state a search must have, or a typo looks like a broken sheet. */
 @Composable
-private fun PickerList(empty: Boolean, emptyLabel: String, content: @Composable () -> Unit) {
+private fun PickerList(
+    empty: Boolean,
+    emptyLabel: String,
+    emptyTestId: String,
+    content: @Composable () -> Unit,
+) {
     if (empty) {
-        Text(
-            text = emptyLabel,
-            style = UseSmileIDSampleTheme.type.textStyleBodySm,
-            color = UseSmileIDSampleTheme.colors.textMuted,
-            modifier = Modifier.padding(vertical = SmileDimens.spacingSm),
-        )
+        UseSmileIDSampleEmptyState(text = emptyLabel, testId = emptyTestId)
         return
     }
     Column(

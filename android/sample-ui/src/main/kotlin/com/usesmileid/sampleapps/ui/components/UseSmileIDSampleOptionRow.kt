@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
-import com.smileid.designsystem.smileSurface2
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -39,7 +38,7 @@ fun UseSmileIDSampleOptionRow(
             .tagged(testId),
         shape = RoundedCornerShape(SmileDimens.radiusField),
         // An unselected row is transparent over the sheet; only the selected one takes a fill.
-        color = if (selected) smileSurface2 else Color.Transparent,
+        color = if (selected) UseSmileIDSampleTheme.colors.surfaceTile else Color.Transparent,
     ) {
         Row(
             modifier = Modifier

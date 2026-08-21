@@ -38,8 +38,18 @@
         true,
         false
       ],
-      "default": true,
-      "description": "Environment selection. Automation must never run with sandbox=false — see AGENTS.md."
+      "default": null,
+      "description": "Environment selection, and the override rather than the source: unset leaves the choice to the app's own environment control, which defaults to sandbox, while passing it pins the whole run. Automation must never run with sandbox=false — see AGENTS.md."
+    },
+    {
+      "name": "seedJobs",
+      "type": "boolean",
+      "values": [
+        true,
+        false
+      ],
+      "default": false,
+      "description": "Seeds the design's eleven fixture verifications, as a precondition for flows that need a populated list. The app seeds nothing on its own: a stored row claims a verification was submitted, and eleven that never were would sit among a partner's real ones for good. But no UI path creates a row without a successful submission — which needs a real token and a valid sandbox identity — so a device flow covering the list, its filters, select mode or removal has no other way to arrive at one. Idempotent: the rows are keyed by job id and re-seeding is a no-op, and because they persist, one seeded launch covers every later step in the same flow. Present in release builds too, deliberately: the device suite has to pass on the minified, resource-shrunk variant as well as debug, and that run needs the same precondition. It seeds nothing unless asked, so a partner build behaves exactly as it would without the argument."
     },
     {
       "name": "appLocale",
@@ -64,7 +74,7 @@
   },
   "notes": [
     "Read from the launching intent only, and applied once: a recreation re-reads the same intent, so re-seeding would discard whatever the drawer selected after launch.",
-    "Parse all seven names even where a build cannot act on one yet, so the four apps accept the same surface. `scenario`, `theme`, `route` and `autostart` take effect on their own; `sandbox`, `appLocale` and `holdCamera` configure the handoff to the SDK and take effect where that handoff is built.",
+    "Parse all eight names even where a build cannot act on one yet, so the four apps accept the same surface. `scenario`, `theme`, `route`, `autostart` and `seedJobs` take effect on their own; `sandbox`, `appLocale` and `holdCamera` configure the handoff to the SDK and take effect where that handoff is built.",
     "An unrecognised value falls back to that argument's default rather than failing the launch. That is only safe because the result card publishes what the run actually got — assert on sample_result_active_scenario, never on the argument you passed."
   ],
   "openDecisions": [

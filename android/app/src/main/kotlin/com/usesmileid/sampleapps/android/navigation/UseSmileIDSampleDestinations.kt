@@ -15,6 +15,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import android.content.ClipData
+import android.os.Build
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import com.ramcosta.composedestinations.annotation.Destination
@@ -42,9 +46,12 @@ import com.usesmileid.sampleapps.android.flow.tokenBindsIdDetails
 import com.usesmileid.sampleapps.android.flow.tokenUserDetailsRequirement
 import com.usesmileid.sampleapps.android.flow.tokenBindsUserDetails
 import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleQrScanner
+import com.usesmileid.sampleapps.android.status.UseSmileIDSampleStatusRefresh
+import com.usesmileid.sampleapps.android.status.refreshStatus
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleOverlay
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleToast
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
@@ -85,7 +92,7 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     ProductsContent(
         state = UseSmileIDSampleProductsState(
-            environment = app.profiles.active.environment,
+            environment = app.environment,
             initials = app.profiles.active.initials,
             avatarColor = avatarColorForProfile(app.profiles.activeIndex),
             sessionId = app.session?.id?.takeIf { app.sessionActive },
@@ -109,19 +116,14 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
     var filter by rememberSaveable { mutableStateOf(UseSmileIDSampleJobFilter.All) }
     var selectMode by rememberSaveable { mutableStateOf(false) }
     var selected by rememberSaveable { mutableStateOf(emptySet<String>()) }
-    // The count outlives the toast, and the token restarts the window when two removals match in size.
-    // Neither is saveable: a saved token replayed the confirmation on every return to this screen.
+    // Sourced from the store, so a removal made on the details screen is confirmed here too.
     var removedCount by remember { mutableIntStateOf(0) }
-    var removalToken by remember { mutableIntStateOf(0) }
 
-    // One path for both removals — the swipe and the selection bar — so they cannot drift apart.
     val removeJobs: (Set<String>) -> Unit = { ids ->
-        app.jobs.remove(ids)
-        removedCount = ids.size
-        removalToken += 1
+        app.storeScope.launch { app.jobStore.remove(ids) }
         selectMode = false
-        // Emptying a filter otherwise leaves a blank screen under a chip reading 0.
-        if (app.jobs.count(filter) == 0) filter = UseSmileIDSampleJobFilter.All
+        // Against the list minus the ids going away: the delete is suspend and has not landed yet.
+        if (app.jobs.none { it.id !in ids && filter.matches(it) }) filter = UseSmileIDSampleJobFilter.All
     }
 
     // Published to the shell rather than drawn here: the design replaces the nav bar with it.
@@ -138,8 +140,9 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
     Box(modifier = Modifier.fillMaxSize()) {
         VerificationsContent(
             state = UseSmileIDSampleVerificationsState(
-                jobs = app.jobs.all,
-                counts = UseSmileIDSampleJobFilter.entries.associateWith(app.jobs::count),
+                jobs = app.jobs,
+                // Counted off the same list the rows render from, so a count can never disagree with what is on screen.
+                counts = UseSmileIDSampleJobFilter.entries.associateWith { f -> app.jobs.count(f::matches) },
                 filter = filter,
                 selectMode = selectMode,
                 selected = selected,
@@ -154,8 +157,10 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
         )
         // Bounded, so a toast left up cannot restore rows long after the removal it belonged to.
         var removalShown by remember { mutableStateOf(false) }
-        LaunchedEffect(removalToken) {
-            if (removalToken == 0) return@LaunchedEffect
+        // Keyed on a removal-only token so an unrelated write cannot strand the toast; the notice is consumed on read.
+        LaunchedEffect(app.jobStore.removalToken) {
+            val count = app.jobStore.takeRemovalNotice() ?: return@LaunchedEffect
+            removedCount = count
             removalShown = true
             delay(SNACKBAR_WINDOW_MILLIS)
             removalShown = false
@@ -171,7 +176,7 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
             UseSmileIDSampleToast(
                 message = if (removedCount == 1) "Verification removed" else "$removedCount verifications removed",
                 actionLabel = "Undo",
-                onAction = { app.jobs.undoRemove(); removalShown = false },
+                onAction = { app.storeScope.launch { app.jobStore.undoRemove() }; removalShown = false },
             )
         }
     }
@@ -184,6 +189,8 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
     SettingsContent(
         settings = app.settings,
         onSettingChange = { setting, enabled -> app.storeScope.launch { app.store.setSetting(setting, enabled) } },
+        environment = app.environment,
+        environmentPinned = app.environmentPinned,
         organisation = app.profiles.active.organisation,
         initials = app.profiles.active.initials,
         avatarColor = avatarColorForProfile(app.profiles.activeIndex),
@@ -201,15 +208,96 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
 @Composable
 fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
-    val clipboard = LocalClipboardManager.current
-    VerificationDetailsContent(
-        jobId = jobId,
-        job = app.jobs.all.firstOrNull { it.id == jobId },
-        result = app.flowResult.snapshot,
-        onBack = { navigator.navigateUp() },
-        onDelete = { app.jobs.remove(setOf(jobId)); navigator.navigateUp() },
-        onCopy = { clipboard.setText(AnnotatedString(it)) },
-    )
+    val clipboard = LocalClipboard.current
+    val scope = rememberCoroutineScope()
+    var refreshing by remember { mutableStateOf(false) }
+    // Not saveable: a saved message replayed the toast on every return to this screen.
+    var outcome by remember { mutableStateOf<String?>(null) }
+
+    val job = app.jobs.firstOrNull { it.id == jobId }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        VerificationDetailsContent(
+            jobId = jobId,
+            job = job,
+            result = app.flowResult.snapshot,
+            onBack = { navigator.navigateUp() },
+            onDelete = { app.storeScope.launch { app.jobStore.remove(setOf(jobId)) }; navigator.navigateUp() },
+            onCopy = { label, value ->
+                scope.launch {
+                    clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(label, value)))
+                    // Android 13 shows its own confirmation; below it there is none.
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) outcome = "$label copied"
+                }
+            },
+            onRefresh = {
+                scope.launch {
+                    // The check on entry sets the same flag; without this a pull during it duplicates the request.
+                    if (refreshing) return@launch
+                    refreshing = true
+                    outcome = refresh(app, jobId, job?.sessionId)
+                    refreshing = false
+                }
+            },
+            refreshing = refreshing,
+        )
+    // Only a processing row can change. Keyed on the id, not the job: keying on the row would loop off its own write.
+    LaunchedEffect(jobId) {
+        if (app.jobs.firstOrNull { it.id == jobId }?.status != UseSmileIDSampleStatus.Processing) {
+            return@LaunchedEffect
+        }
+        refreshing = true
+        // Silent unless something happened: "still processing" on every visit is noise.
+        val result = refreshStatus(
+            jobId = jobId,
+            rowSessionId = app.jobs.firstOrNull { it.id == jobId }?.sessionId,
+            session = app.session,
+            sandbox = app.useSandbox,
+            jobStore = app.jobStore,
+            nowMillis = System.currentTimeMillis(),
+        )
+        refreshing = false
+        if (result !is UseSmileIDSampleStatusRefresh.StillProcessing) outcome = result.label()
+        Unit
+    }
+
+        LaunchedEffect(outcome) {
+            if (outcome == null) return@LaunchedEffect
+            delay(SNACKBAR_WINDOW_MILLIS)
+            outcome = null
+        }
+        UseSmileIDSampleOverlay(
+            visible = outcome != null,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingMd),
+        ) {
+            UseSmileIDSampleToast(message = outcome.orEmpty())
+        }
+    }
+}
+
+/** Called on the screen's own scope, so leaving mid-refresh cancels the call. */
+private suspend fun refresh(
+    app: UseSmileIDSampleAppState,
+    jobId: String,
+    rowSessionId: String?,
+): String = refreshStatus(
+    jobId = jobId,
+    rowSessionId = rowSessionId,
+    session = app.session,
+    sandbox = app.useSandbox,
+    jobStore = app.jobStore,
+    nowMillis = System.currentTimeMillis(),
+).label()
+
+/** One line per outcome: a refresh that changed nothing still has to say so. */
+private fun UseSmileIDSampleStatusRefresh.label(): String = when (this) {
+    is UseSmileIDSampleStatusRefresh.Updated -> "${status.label} — $message"
+    UseSmileIDSampleStatusRefresh.StillProcessing -> "Still processing"
+    UseSmileIDSampleStatusRefresh.NoSession -> "Scan a token first"
+    UseSmileIDSampleStatusRefresh.NoServerJob -> "Not submitted under a scanned token"
+    is UseSmileIDSampleStatusRefresh.Failed -> "Could not check status: $reason"
 }
 
 /** The Consent Details Form. Shown for every product, before the SDK flow starts. */

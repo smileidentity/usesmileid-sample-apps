@@ -2,6 +2,13 @@
 # by accident. APP_ID must be passed — see shell-navigation.yaml for why it has no default.
 appId: ${APP_ID}
 ---
+# Rows are a precondition, not the subject: the app seeds none, and a deep link carries no arguments.
+- stopApp
+- launchApp:
+    arguments:
+      seedJobs: true
+- runFlow: subflows/warm-start.yaml
+
 - stopApp
 - openLink: "usesmileid-sample-android://products"
 - runFlow: subflows/warm-start.yaml

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,6 +22,7 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.TrashGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDataFieldRow
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEmptyState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleResultCard
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatusBadge
@@ -44,7 +46,10 @@ fun VerificationDetailsScreen(
     result: UseSmileIDSampleResult,
     onBack: () -> Unit,
     onDelete: () -> Unit,
-    onCopy: (String) -> Unit,
+    onCopy: (label: String, value: String) -> Unit,
+    /** Pull-to-refresh, which the design draws in the processing state. Always wired: the outcome says why when it cannot succeed. */
+    onRefresh: () -> Unit = {},
+    refreshing: Boolean = false,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -63,17 +68,24 @@ fun VerificationDetailsScreen(
                 ) { tint -> TrashGlyph(tint = tint) }
             }
         }
-        LazyColumn(
-            contentPadding = contentPadding,
-            verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
+        PullToRefreshBox(
+            isRefreshing = refreshing,
+            onRefresh = onRefresh,
+            modifier = Modifier
+                .weight(1f)
+                .testTag(UseSmileIDSampleTestIds.DETAILS_REFRESH),
         ) {
+            LazyColumn(
+                contentPadding = contentPadding,
+                verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
+            ) {
             if (job == null) {
                 item {
-                    Text(
-                        text = "No verification for jobId = $jobId",
-                        style = UseSmileIDSampleTheme.type.textStyleBody,
-                        color = UseSmileIDSampleTheme.colors.textMuted,
-                        modifier = Modifier.padding(SmileDimens.spacingMd),
+                    // The id stays in the supporting line: which one was asked for is the whole diagnostic.
+                    UseSmileIDSampleEmptyState(
+                        text = "No verification here",
+                        supportingText = "Nothing stored for jobId = $jobId",
+                        testId = UseSmileIDSampleTestIds.DETAILS_EMPTY,
                     )
                 }
             } else {
@@ -111,11 +123,11 @@ fun VerificationDetailsScreen(
                         ) {
                             Column {
                                 DetailRow("createdAt", "Created_at", job.createdAtLabel())
-                                DetailRow("jobId", "Job_id", job.shortId, onCopy = { onCopy(job.id) })
+                                DetailRow("jobId", "Job_id", job.shortId, onCopy = { onCopy("Job ID", job.id) })
                                 DetailRow("message", "Message", job.message)
                                 // Coloured by the HTTP outcome, not the verdict: a blocked job still shows a green 200.
                                 DetailRow("status", "Status", job.httpStatus, valueColor = job.httpStatusColor())
-                                DetailRow("userId", "User_id", job.shortUserId, onCopy = { onCopy(job.userId) })
+                                DetailRow("userId", "User_id", job.shortUserId, onCopy = { onCopy("User ID", job.userId) })
                             }
                         }
                     }
@@ -127,6 +139,7 @@ fun VerificationDetailsScreen(
                     result = result,
                     modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
                 )
+                }
             }
         }
     }

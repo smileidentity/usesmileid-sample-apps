@@ -197,7 +197,11 @@
         "sample_toast",
         "sample_toast_undo",
         "sample_selection_count",
-        "sample_selection_remove"
+        "sample_selection_remove",
+        "sample_verifications_empty"
+      ],
+      "additions": [
+        "An empty-list message, which the design does not draw. The app seeds no verification rows — a persisted row claims a job was submitted, and the eleven fixtures never were — so a first launch shows the chips over nothing until a real submission lands. Two texts behind one id: nothing yet, versus nothing matching the active filter."
       ],
       "note": "SELECT MODE REPLACES THE BOTTOM CHROME: the selection bar is full-bleed at the bottom with a top border, and the nav bar is NOT behind it (node 5206:2491). The header's trailing action becomes \"Cancel\". The bar is the screen's state but the shell's slot, so the content inset does not change when one bar replaces the other. The removal confirmation is transient — never saved across navigation, or opening a verification and coming back replays a confirmation you already spent."
     },
@@ -231,17 +235,22 @@
         "TopAppBar",
         "StatusBadge",
         "SectionLabel",
-        "DataFieldRow"
+        "DataFieldRow",
+        "Button"
       ],
       "testIds": [
         "sample_verification_details_screen",
         "sample_detail_field",
         "sample_detail_copy",
-        "sample_status_badge"
+        "sample_status_badge",
+        "sample_details_check_status"
       ],
       "entryPoints": [
         "push from the verifications list",
         "POST-SUBMISSION: the app lands here in the processing state once a job is submitted (observed 202 Accepted straight after the ID form's Continue)"
+      ],
+      "additions": [
+        "A 'Check status' button stands in for the pull-to-refresh the design draws in the processing state. The gesture itself is deferred with the rest of pull-to-refresh (docs/plan/sample-apps-plan.md 8.1); the button is what makes the real GET /v3/status call reachable in the meantime."
       ],
       "note": "The details screen doubles as the result screen, which is why the result card belongs here rather than needing a new home. NO NAV BAR: it is a pushed screen, even though its route lives in the verifications graph. You leave it by going back, not by switching tab."
     },
@@ -416,6 +425,7 @@
       ],
       "sections": [
         "PROFILE",
+        "ENVIRONMENT (one row: Production — not in the design, added because the sandbox launch argument is an override rather than a source)",
         "CAPTURE (two rows: Smile to capture, Agent mode)",
         "APPEARANCE",
         "SDK SCREENS — SHOW OR SKIP FLOW STEPS",
@@ -434,6 +444,7 @@
       ],
       "testIds": [
         "sample_settings_screen",
+        "sample_setting_production",
         "sample_setting_agent_mode",
         "sample_setting_dark_mode",
         "sample_setting_consent_step",

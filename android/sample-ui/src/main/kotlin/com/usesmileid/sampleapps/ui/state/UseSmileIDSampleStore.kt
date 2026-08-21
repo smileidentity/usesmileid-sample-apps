@@ -18,6 +18,7 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
     val settings: Flow<UseSmileIDSampleSettings> = store.data.map { prefs ->
         val defaults = UseSmileIDSampleSettings()
         UseSmileIDSampleSettings(
+            production = prefs[PRODUCTION] ?: defaults.production,
             smileToCapture = prefs[SMILE_TO_CAPTURE] ?: defaults.smileToCapture,
             agentMode = prefs[AGENT_MODE] ?: defaults.agentMode,
             darkMode = prefs[DARK_MODE] ?: defaults.darkMode,
@@ -53,6 +54,7 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
     }
 
     private fun UseSmileIDSampleSetting.key(): Preferences.Key<Boolean> = when (this) {
+        UseSmileIDSampleSetting.Production -> PRODUCTION
         UseSmileIDSampleSetting.SmileToCapture -> SMILE_TO_CAPTURE
         UseSmileIDSampleSetting.AgentMode -> AGENT_MODE
         UseSmileIDSampleSetting.DarkMode -> DARK_MODE
@@ -62,6 +64,7 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
     }
 
     private companion object {
+        val PRODUCTION = booleanPreferencesKey("production")
         val SMILE_TO_CAPTURE = booleanPreferencesKey("smile_to_capture")
         val AGENT_MODE = booleanPreferencesKey("agent_mode")
         val DARK_MODE = booleanPreferencesKey("dark_mode")

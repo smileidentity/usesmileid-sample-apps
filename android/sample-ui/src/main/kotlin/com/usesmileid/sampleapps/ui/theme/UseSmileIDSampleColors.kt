@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Color
 import com.smileid.designsystem.SmileColorDark
 import com.smileid.designsystem.SmileColorLight
 import com.smileid.designsystem.smileSoftBadgeFills
+import com.smileid.designsystem.smileSurface2
 
 /** One component's tokens, resolved for the active mode. */
 @Immutable
@@ -92,6 +93,8 @@ data class UseSmileIDSampleColors(
     val surface: Color,
     val surfaceAlt: Color,
     val surfaceMuted: Color,
+    /** The design's `color/surface-2`, paired here because it is generated light-only — see the `surface2` delta in `spec/design-tokens.json`. */
+    val surfaceTile: Color,
     val border: Color,
     val overlayScrim: Color,
     val textTitle: Color,
@@ -129,6 +132,7 @@ internal val lightColors = UseSmileIDSampleColors(
     surface = SmileColorLight.colorSurface,
     surfaceAlt = SmileColorLight.colorSurfaceAlt,
     surfaceMuted = SmileColorLight.colorSurfaceMuted,
+    surfaceTile = smileSurface2,
     border = SmileColorLight.colorBorder,
     overlayScrim = SmileColorLight.colorOverlayScrim,
     textTitle = SmileColorLight.colorTextTitle,
@@ -220,6 +224,8 @@ internal val darkColors = UseSmileIDSampleColors(
     surface = SmileColorDark.colorSurface,
     surfaceAlt = SmileColorDark.colorSurfaceAlt,
     surfaceMuted = SmileColorDark.colorSurfaceMuted,
+    // Recessed against the dark card the way surface-2 is against a white one.
+    surfaceTile = SmileColorDark.colorSurfaceMuted,
     border = SmileColorDark.colorBorder,
     overlayScrim = SmileColorDark.colorOverlayScrim,
     textTitle = SmileColorDark.colorTextTitle,

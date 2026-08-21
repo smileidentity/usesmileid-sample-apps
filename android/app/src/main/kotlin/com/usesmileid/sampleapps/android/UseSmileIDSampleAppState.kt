@@ -11,9 +11,11 @@ import kotlinx.coroutines.CoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.saveable.rememberSaveable
-import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobs
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleFlowResult
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleForms
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleJobStore
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleLaunchArgs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
@@ -27,9 +29,11 @@ class UseSmileIDSampleAppState(
     val store: UseSmileIDSampleStore,
     /** Outlives any one screen, so navigating away cannot cancel a write to the store mid-flight. */
     val storeScope: CoroutineScope,
-    val settings: UseSmileIDSampleSettings,
-    val session: UseSmileIDSampleTokenSession?,
-    val jobs: UseSmileIDSampleJobs,
+    private val settingsState: State<UseSmileIDSampleSettings>,
+    private val sessionState: State<UseSmileIDSampleTokenSession?>,
+    /** From Room, behind [State] for the same reason as [now]: a value would invalidate the whole subtree on every write. */
+    private val jobsState: State<List<UseSmileIDSampleJob>>,
+    val jobStore: UseSmileIDSampleJobStore,
     val forms: UseSmileIDSampleForms,
     val profiles: UseSmileIDSampleProfiles,
     val launchArgs: UseSmileIDSampleLaunchArgs,
@@ -42,10 +46,23 @@ class UseSmileIDSampleAppState(
      */
     private val now: State<Long>,
 ) {
+    val settings: UseSmileIDSampleSettings get() = settingsState.value
+    val session: UseSmileIDSampleTokenSession? get() = sessionState.value
+    val jobs: List<UseSmileIDSampleJob> get() = jobsState.value
+
     val nowMillis: Long get() = now.value
 
-    val sessionExpired: Boolean get() = session != null && session.hasExpired(nowMillis)
-    val sessionActive: Boolean get() = session != null && !session.hasExpired(nowMillis)
+    val sessionExpired: Boolean get() = session?.hasExpired(nowMillis) == true
+    val sessionActive: Boolean get() = session?.hasExpired(nowMillis) == false
+
+    /** The only place the environment is decided, so the chip and the builder cannot disagree. */
+    val useSandbox: Boolean get() = launchArgs.sandbox ?: settings.useSandbox
+
+    /** True while the launch argument owns the choice, so Settings shows the row read-only. */
+    val environmentPinned: Boolean get() = launchArgs.sandbox != null
+
+    val environment: UseSmileIDSampleEnvironment
+        get() = if (useSandbox) UseSmileIDSampleEnvironment.Sandbox else UseSmileIDSampleEnvironment.Production
 }
 
 /** Ticks once a second while a session is live. The deadline is absolute, so a restored session needs no recomputing. */
@@ -55,11 +72,15 @@ fun rememberUseSmileIDSampleAppState(
 ): UseSmileIDSampleAppState {
     val context = LocalContext.current
     val store = remember(context) { UseSmileIDSampleStore(context) }
-    val settings by store.settings.collectAsStateWithLifecycle(initialValue = UseSmileIDSampleSettings())
-    val session by store.tokenSession.collectAsStateWithLifecycle(initialValue = null)
+    val settingsState = store.settings.collectAsStateWithLifecycle(initialValue = UseSmileIDSampleSettings())
+    val sessionState = store.tokenSession.collectAsStateWithLifecycle(initialValue = null)
     val now = remember { mutableLongStateOf(System.currentTimeMillis()) }
-    // Seeded sample data until jobs arrive from the SDK; in memory, so it resets on process death.
-    val jobs = remember { UseSmileIDSampleJobs.seeded(System.currentTimeMillis()) }
+    val jobStore = remember(context) { UseSmileIDSampleJobStore.of(context) }
+    val jobsState = jobStore.jobs.collectAsStateWithLifecycle(initialValue = emptyList())
+    // Automation precondition, never an ordinary launch. Idempotent, so a recreation inserts nothing.
+    LaunchedEffect(launchArgs.seedJobs) {
+        if (launchArgs.seedJobs) jobStore.seedFixtures(System.currentTimeMillis())
+    }
     val forms = rememberSaveable(saver = UseSmileIDSampleForms.Saver) { UseSmileIDSampleForms() }
     val profiles = remember { UseSmileIDSampleProfiles() }
     // Saveable, so the arguments seed the first launch only and a recreation keeps the drawer's choice.
@@ -72,8 +93,8 @@ fun rememberUseSmileIDSampleAppState(
     }
 
     // Stops at the deadline: the session object does not change on expiry, so the key alone never ends this.
-    LaunchedEffect(session) {
-        val live = session ?: return@LaunchedEffect
+    LaunchedEffect(sessionState.value) {
+        val live = sessionState.value ?: return@LaunchedEffect
         while (!live.hasExpired(now.longValue)) {
             now.longValue = System.currentTimeMillis()
             delay(TICK_MILLIS)
@@ -83,9 +104,10 @@ fun rememberUseSmileIDSampleAppState(
     return UseSmileIDSampleAppState(
         store = store,
         storeScope = rememberCoroutineScope(),
-        settings = settings,
-        session = session,
-        jobs = jobs,
+        settingsState = settingsState,
+        sessionState = sessionState,
+        jobsState = jobsState,
+        jobStore = jobStore,
         forms = forms,
         profiles = profiles,
         launchArgs = launchArgs,

@@ -20,7 +20,10 @@ data class UseSmileIDSampleLaunchArgs(
     val theme: UseSmileIDSampleThemeScenario = UseSmileIDSampleThemeScenario.BrandDefault,
     val route: UseSmileIDSampleFlowRoute = UseSmileIDSampleFlowRoute.Fullscreen,
     val autostart: UseSmileIDSampleProduct? = null,
-    val sandbox: Boolean = true,
+    /** Unset leaves the environment to the Settings toggle; passing it pins the run. */
+    val sandbox: Boolean? = null,
+    /** Automation precondition only — see `spec/launch-args.json`. */
+    val seedJobs: Boolean = false,
     val appLocale: String? = null,
     val holdCamera: UseSmileIDSampleHoldCamera? = null,
 ) {
@@ -30,10 +33,11 @@ data class UseSmileIDSampleLaunchArgs(
         const val ROUTE = "route"
         const val AUTOSTART = "autostart"
         const val SANDBOX = "sandbox"
+        const val SEED_JOBS = "seedJobs"
         const val APP_LOCALE = "appLocale"
         const val HOLD_CAMERA = "holdCamera"
 
-        val names = listOf(SCENARIO, THEME, ROUTE, AUTOSTART, SANDBOX, APP_LOCALE, HOLD_CAMERA)
+        val names = listOf(SCENARIO, THEME, ROUTE, AUTOSTART, SANDBOX, SEED_JOBS, APP_LOCALE, HOLD_CAMERA)
 
         private const val HOLD_CAMERA_KEEP = "keep"
 
@@ -48,7 +52,8 @@ data class UseSmileIDSampleLaunchArgs(
                 route = UseSmileIDSampleFlowRoute.entries.firstOrNull { it.id == raw.string(ROUTE) }
                     ?: defaults.route,
                 autostart = UseSmileIDSampleProduct.entries.firstOrNull { it.id == raw.string(AUTOSTART) },
-                sandbox = raw.boolean(SANDBOX) ?: defaults.sandbox,
+                sandbox = raw.boolean(SANDBOX),
+                seedJobs = raw.boolean(SEED_JOBS) ?: defaults.seedJobs,
                 appLocale = raw.string(APP_LOCALE),
                 holdCamera = raw.holdCamera(),
             )

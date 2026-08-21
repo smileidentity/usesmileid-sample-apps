@@ -276,8 +276,11 @@
       },
       "value": "#EAECF0",
       "finding": "The design's second surface is a cool grey; the design system's nearest semantic, color.surface-alt, is a warm brand cream. Android reached for surface-alt everywhere the design wanted surface-2, which is why copy buttons and icon tiles across the app rendered peach where the design is grey. The value coincides with color.border, but a border role is not a fill role and using it as one hides the gap.",
-      "recommendation": "Add a second surface role to the design system. Generated from here meanwhile, as softBadgeFills and borderStrong are.",
-      "status": "OPEN 2026-08-17 — generated stopgap in place; delete the generated value once the design system carries the role"
+      "recommendation": "Add a second surface role to the design system. Generated from here meanwhile, as softBadgeFills and borderStrong are. When it lands it must be a light/dark pair, not a single value.",
+      "status": "OPEN 2026-08-20 — generated stopgap in place and now paired locally for dark mode; delete both once the design system carries the role in both modes",
+      "darkModeConsequence": "The generated stopgap is a SINGLE value, so it does not resolve per mode — while every foreground drawn on it does. In dark mode a near-white glyph landed on the pale #EAECF0 fill and disappeared. Five components consumed it: SettingRow (icon tiles), DataFieldRow (copy buttons), ProfileRow and OptionRow (selected states), TopAppBar (tonal button). Reported from the device 2026-08-20; the dark goldens had been recording it since dark mode landed, because a screenshot only fails when it changes.",
+      "workaround": "UseSmileIDSampleColors now declares a surfaceTile PAIR: light from the generated smileSurface2 (#EAECF0, the design's own value), dark from colorSurfaceMuted (#1A1C23), which sits recessed against the dark card the way surface-2 does against a white one. Neither side is a hex literal. Note that no other semantic token works for both: surfaceMuted is 1.03:1 against surface in light, so the tile stops reading as a container, and border carries the same value in both modes (see darkBorder).",
+      "guardedBy": "UseSmileIDSampleContrastTest — asserts every fill keeps its foreground legible in BOTH schemes, and that a container stays distinguishable from the surface behind it. Verified to fail on both mistakes made here: the light fill in dark mode, and the invisible container in light."
     },
     {
       "id": "profileHues",

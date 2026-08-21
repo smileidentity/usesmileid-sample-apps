@@ -100,6 +100,14 @@ class UseSmileIDSampleFlowResult(
         lastError = error
     }
 
+    /** The gate refused the run, so the SDK never mounted. Not counted as a result callback. */
+    fun recordBlocked(reason: String) {
+        status = UseSmileIDSampleFlowStatus.Failed
+        jobId = null
+        userId = null
+        lastError = reason
+    }
+
     fun recordRefreshCallback() {
         refreshCallbackCount++
     }

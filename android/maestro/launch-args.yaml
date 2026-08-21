@@ -14,11 +14,13 @@
 appId: ${APP_ID}
 ---
 - stopApp
+# Rows are a precondition, not the subject: the app seeds none. Seeded once — they persist in Room.
 - launchApp:
     arguments:
       scenario: expiredToken
       theme: clashingHost
       route: shell
+      seedJobs: true
 - runFlow: subflows/warm-start.yaml
 - tapOn:
     id: "sample_nav_verifications"
@@ -105,6 +107,54 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_result_route"
     text: "shell"
+
+# `sandbox` is the override, not the source: passed, it pins the run and the Settings row goes read-only.
+- stopApp
+- launchApp:
+    arguments:
+      sandbox: false
+- runFlow: subflows/warm-start.yaml
+- assertVisible:
+    id: "sample_env_chip"
+- assertVisible: "Production"
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+- assertVisible: "Pinned by the sandbox launch argument"
+
+# Absent, the Settings toggle owns the choice. Asserted before each tap and toggled back at the end,
+# because the setting persists and would otherwise hand every later flow a different environment.
+- stopApp
+- launchApp
+- runFlow: subflows/warm-start.yaml
+- assertVisible:
+    id: "sample_env_chip"
+- assertVisible: "Sandbox"
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+- assertVisible: "Jobs submit to sandbox"
+- tapOn:
+    id: "sample_setting_production"
+- assertVisible: "Jobs submit to the live environment"
+- tapOn:
+    id: "sample_nav_products"
+- assertVisible:
+    id: "sample_env_chip"
+- assertVisible: "Production"
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+- assertVisible: "Jobs submit to the live environment"
+- tapOn:
+    id: "sample_setting_production"
+- assertVisible: "Jobs submit to sandbox"
+- tapOn:
+    id: "sample_nav_products"
+- assertVisible: "Sandbox"
 
 # The drawer writes the state a launch argument seeds, so one card reports either source. Opened by
 # its own deep link rather than through the Settings row, which sits below the fold behind a scroll

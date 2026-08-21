@@ -62,6 +62,8 @@ class ScreenGoldenTest : GoldenTest() {
 private fun Settings() = SettingsScreen(
     settings = UseSmileIDSampleSettings(),
     onSettingChange = { _, _ -> },
+    environment = UseSmileIDSampleEnvironment.Sandbox,
+    environmentPinned = false,
     organisation = "UpTech Finance",
     initials = "KA",
     versionLabel = "UseSmileID Sample · 1.0.0",

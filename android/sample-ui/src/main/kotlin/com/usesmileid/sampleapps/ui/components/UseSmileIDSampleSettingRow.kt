@@ -22,7 +22,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.ui.unit.dp
-import com.smileid.designsystem.smileSurface2
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -52,7 +51,7 @@ fun UseSmileIDSampleSettingRow(
             Surface(
                     modifier = Modifier.size(TILE_SIZE),
                 shape = RoundedCornerShape(TILE_RADIUS),
-                color = smileSurface2,
+                color = colors.surfaceTile,
             ) {
                 Box(contentAlignment = Alignment.Center) { leading(colors.textTitle) }
             }

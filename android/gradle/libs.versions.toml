@@ -10,6 +10,7 @@ androidx-compose-bom = "2026.06.01"
 androidx-core = "1.16.0"
 androidx-datastore = "1.2.1"
 androidx-navigation = "2.9.8"
+androidx-room = "2.8.4"
 destinations = "2.3.0"
 # Pinned to what com.usesmileid:usesmileid already resolves at runtime, verified on the release
 # graph. A divergence between this and the SDK's own CameraX is a finding, not something to let
@@ -18,8 +19,14 @@ camerax = "1.6.1"
 # The bundled barcode model, never the play-services variant: it works with no Play services, which
 # keeps this reference sample usable on the GMS-free devices the SDK ships an ML variant for.
 mlkit-barcode = "17.3.0"
+# Pinned to what com.usesmileid:usesmileid already resolves on the release graph, verified with
+# :app:dependencies. The status call is the partner's own, not the SDK's — but sharing the SDK's
+# client version keeps one Retrofit and one OkHttp in the APK rather than letting Gradle reconcile.
+retrofit = "3.0.0"
+kotlinx-serialization = "1.11.0"
 
 junit = "4.13.2"
+kotlinx-coroutines = "1.11.0"
 robolectric = "4.16.1"
 roborazzi = "1.72.0"
 
@@ -38,6 +45,10 @@ androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-mani
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "androidx-room" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit-converter-kotlinx-serialization = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "retrofit" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
 
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax" }
@@ -50,6 +61,8 @@ destinations = { module = "io.github.raamcosta.compose-destinations:core", versi
 destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "destinations" }
 
 junit = { module = "junit:junit", version.ref = "junit" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 roborazzi = { module = "io.github.takahirom.roborazzi:roborazzi", version.ref = "roborazzi" }
 roborazzi-compose = { module = "io.github.takahirom.roborazzi:roborazzi-compose", version.ref = "roborazzi" }
@@ -58,5 +71,6 @@ roborazzi-compose = { module = "io.github.takahirom.roborazzi:roborazzi-compose"
 android-application = { id = "com.android.application", version.ref = "android-gradle-plugin" }
 android-library = { id = "com.android.library", version.ref = "android-gradle-plugin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }

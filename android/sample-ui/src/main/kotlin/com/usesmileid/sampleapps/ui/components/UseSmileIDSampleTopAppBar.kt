@@ -21,7 +21,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import com.smileid.designsystem.smileSurface2
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
@@ -85,7 +84,7 @@ fun UseSmileIDSampleTopAppBarButton(
     val colors = UseSmileIDSampleTheme.colors
     val (container, tint) = when (emphasis) {
         UseSmileIDSampleTopAppBarEmphasis.Filled -> colors.textTitle to colors.textInverse
-        UseSmileIDSampleTopAppBarEmphasis.Tonal -> smileSurface2 to colors.textTitle
+        UseSmileIDSampleTopAppBarEmphasis.Tonal -> colors.surfaceTile to colors.textTitle
         UseSmileIDSampleTopAppBarEmphasis.Destructive -> colors.badge.errorBackground to colors.badge.errorText
     }
     Surface(

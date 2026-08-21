@@ -34,7 +34,8 @@ class UseSmileIDSampleLaunchArgsSpecTest {
                 UseSmileIDSampleLaunchArgs.THEME to defaults.theme.id,
                 UseSmileIDSampleLaunchArgs.ROUTE to defaults.route.id,
                 UseSmileIDSampleLaunchArgs.AUTOSTART to defaults.autostart?.id,
-                UseSmileIDSampleLaunchArgs.SANDBOX to defaults.sandbox.toString(),
+                UseSmileIDSampleLaunchArgs.SANDBOX to defaults.sandbox?.toString(),
+                UseSmileIDSampleLaunchArgs.SEED_JOBS to defaults.seedJobs.toString(),
                 UseSmileIDSampleLaunchArgs.APP_LOCALE to defaults.appLocale,
                 UseSmileIDSampleLaunchArgs.HOLD_CAMERA to defaults.holdCamera?.toString(),
             ),
@@ -65,6 +66,12 @@ class UseSmileIDSampleLaunchArgsSpecTest {
         assertEquals(false, args.sandbox)
         assertEquals("fr-FR", args.appLocale)
         assertEquals(UseSmileIDSampleHoldCamera.Keep, args.holdCamera)
+    }
+
+    /** Unset, not `true`: the Settings toggle owns the environment where no argument was passed. */
+    @Test
+    fun an_absent_sandbox_argument_stays_unset() {
+        assertNull(UseSmileIDSampleLaunchArgs.from(emptyMap()).sandbox)
     }
 
     @Test

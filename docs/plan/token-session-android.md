@@ -3,8 +3,10 @@
 **Status:** TOK-A1–A6 and TOK-A9 built on Android — manual entry, Simulate minting, decode, session
 model, builder handoff, honest countdown, and the CameraX QR scanner with the bundled ML Kit barcode
 model. Both host forms are now skipped when the token already carries what they would collect (§4.2). A9 was planned as its own PR and folded into the same one on the owner's call (2026-08-19), so
-the token flow lands complete rather than scannerless. TOK-A7 (Room) is next as its own PR;
-`holdCamera`, TOK-A8's remaining goldens and TOK-A10 follow it.
+the token flow lands complete rather than scannerless. TOK-A7 (Room) is built: jobs persist, carrying the
+profile that submitted them and the environment they went to, and the verification-details screen
+fetches `GET /v3/status/{jobId}` under a live scanned session. `holdCamera`, TOK-A8's remaining
+goldens and TOK-A10 follow it.
 
 Android first; the token contract is shared, so §9 records what the other three inherit. Written against the Portal as merged (`portal#3274`, `portal#3274`'s follow-up
 `portal#3306`) and the SDK as published (`com.usesmileid:usesmileid:12.0.2`), read rather than assumed.
@@ -140,19 +142,39 @@ validators for values it could have read from the token it already decoded. Wort
 accessor ask below: a `TokenPayload` that modelled these three would let the SDK relax them itself, and
 every host would stop reimplementing this.
 
-**An SDK defect, found on device and not inferable from the source (2026-08-19, `12.0.2`):** a token
-whose `payload.consent` binding is complete makes the flow deliver `UseSmileIDResult.Cancelled`
-**immediately, with no user action**, so the host lands back where it started and the run never begins.
-The same token with the consent binding removed runs normally through to the consent screen, which is
-what isolates the binding as the trigger — bisected on a quiet handset, release build, twice.
-`FlowNavigationManager` does filter the Consent screen out of `flowStructure` exactly as §3 describes,
-and `navigationPath` seeds from `screens.firstOrNull()`, so a start at instructions is what the code
-reads like; the cancellation arrives from `deliverTerminalOnTeardown()`, which fires when the
-`FlowNavigationManager` ViewModel is cleared. Root-causing beyond that is the SDK repo's to do, and it
-should be filed there with this repro. Two consequences here: the consent-screen drop — the thing §7.2
-calls the most valuable client-side behaviour a fixture token can exercise — **cannot be asserted on
-device yet**, and `token-session.yaml` therefore covers the unbound path and records why rather than
-encoding the defect as expected behaviour.
+**A host bug this document previously blamed on the SDK — corrected 2026-08-20.** A token whose
+`payload.consent` binding is complete made the flow deliver `UseSmileIDResult.Cancelled` immediately,
+with no user action, and this was written up here as an SDK defect awaiting a fix. It is not. The SDK
+is consistent: `JobTypeValidator.appendConsentRule` returns early when the token carries consent, so
+the requirement to declare a consent screen is **lifted** — its own `suggestedFix` says to bind all
+four fields at mint time *or* bind none and collect consent in the app. A host that declares
+`consent { }` anyway is declaring a screen the token has already satisfied, and
+`FlowNavigationManager` filters it back out of the flow it runs; for Enhanced KYC, whose validator
+permits only consent and processing, that leaves nothing to start on.
+`journeyFor` declared it unconditionally, which is what stranded the run.
+**Fixed:** the binding decides whether the screen is declared at all. Verified on device with a
+consent-bound fixture token — Enhanced KYC now reaches `si_processing_screen` and submits (HTTP 401,
+which is what a locally minted token deserves). The consent-screen drop is therefore assertable on
+device after all, and `token-session.yaml` no longer has to avoid it.
+
+The wrong conclusion held for a day because the bisect established the right fact — the binding is the
+trigger — and then reached for the wrong owner. Nothing in the SDK source was read as far as
+`appendConsentRule`, whose early return is the whole story.
+
+**An SDK gap the host currently papers over (found 2026-08-20, `12.0.2`):** the flow does not follow the
+host's dark mode. `UseSmileIDTheme` takes `darkMode: Boolean = isSystemInDarkTheme()` and is public, but
+the flow-hosting path — `UseSmileIDBuilder` → `RenderFlow` — calls it as
+`UseSmileIDTheme(themeConfig = ...)` and never passes `darkMode`, so a hosted flow always resolves the
+mode from the OS. Any app whose appearance is its own setting rather than the system's therefore shows a
+light SDK inside a dark host, which is what this sample did: system light, app dark, SDK light.
+Verified both ways on device after the workaround — app dark gives an SDK background of `#1A1C23`, app
+light gives `#F9FAFB`, with the system in light mode throughout.
+**Worked around** in `SdkFlowScreen` by providing the flow subtree a copy of `LocalConfiguration` with
+only `UI_MODE_NIGHT_*` rewritten, which is what `isSystemInDarkTheme()` reads. It touches no SDK
+internals, but it is a host reaching around a missing parameter. **The ask:** expose `darkMode` on the
+flow DSL's `theme { }` block, or forward it from `UseSmileIDBuilder`; then the override goes away. Worth
+filing with the accessor asks below, since it is the same shape of gap — a value the SDK already models
+that a host cannot reach.
 
 **An SDK gap to file, not work around:** `UseSmileIDJwtDecoder` and `DecodedToken` are public, but
 `DecodedToken.tokenPayload` is `internal`, so a host cannot reach the parsed payload through the
@@ -289,11 +311,12 @@ reads as a defect in the SDK.
    decision — the token is the authority for its own identity. The claim is decoded but never logged;
    a partner id is on this repo's never-commit list.
 
-2. **The environment has two sources of truth that can disagree.** The chip reads
-   `profiles.active.environment`; `useSandbox` reads the `sandbox` launch argument (default `true`).
-   Profile `p-3` is Production, so selecting it displays Production while the builder still submits to
-   sandbox. **Owed decision** — the fix is to resolve both from one source and let the launch argument
-   override only when present, which makes `sandbox` nullable and needs a `spec/launch-args.json` note.
+2. **The environment had two sources of truth that could disagree.** The chip read
+   `profiles.active.environment`; `useSandbox` read the `sandbox` launch argument (default `true`), so
+   selecting the Production profile displayed Production while the builder still submitted to sandbox.
+   **Fixed:** one resolution on the app state, `launchArgs.sandbox ?: settings.useSandbox`, feeding both
+   the chip and the builder. A Settings row owns the choice, `sandbox` is nullable so an argument
+   overrides only where it was passed, and the profile no longer carries an environment at all.
 
 3. **Sandbox only accepts predefined test identities, and this repo documents none.** The ID-details
    form accepts any value, so a run typed with an arbitrary ID number cannot succeed whatever the
@@ -375,6 +398,7 @@ places.
 |---|---|---|
 | Submitted jobs | **Room** | Many rows, filtered by status, counted per filter, grouped by date, removed with undo. That is a query surface, and re-deriving it from a serialised blob on every read is the thing Room exists to avoid |
 | Per-job token binding (what the token supplied) | **Room**, column on the job | Belongs to the row it describes; the evidence for "the server injected these" is per submission |
+| Which profile submitted a job | **nowhere — owner decision 2026-08-20** | The list is every job this device did. The job id is the handle for looking anything else up afterwards, so the row does not need to carry who ran it. Columns were added and then removed; a status refresh needs the session, not the partner |
 | Settings (6 booleans) | **DataStore** — already | Small, single-valued, read as a Flow |
 | Token session: the raw token | **DataStore** | One record, replaced wholesale, read as a Flow. Not relational, and a table of one row is a table for no reason. **Built: the token is the whole record** — `id`, `iat`, `exp` and the bindings all decode from it, so storing them beside it would only create copies that can disagree with it |
 | Jobs-seeded flag | **DataStore** | One boolean. Prevents the eleven fixtures being re-seeded over a partner's real rows every launch |

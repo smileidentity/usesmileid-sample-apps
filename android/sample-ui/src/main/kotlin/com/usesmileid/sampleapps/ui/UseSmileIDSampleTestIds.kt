@@ -9,6 +9,10 @@ object UseSmileIDSampleTestIds {
 
     const val PRODUCTS_SCREEN = "sample_products_screen"
     const val VERIFICATIONS_SCREEN = "sample_verifications_screen"
+    const val VERIFICATIONS_EMPTY = "sample_verifications_empty"
+    const val DETAILS_EMPTY = "sample_details_empty"
+    const val COUNTRY_EMPTY = "sample_country_empty"
+    const val ID_TYPE_EMPTY = "sample_idtype_empty"
     const val VERIFICATION_DETAILS_SCREEN = "sample_verification_details_screen"
     const val SETTINGS_SCREEN = "sample_settings_screen"
     const val USER_DETAILS_SCREEN = "sample_user_details_screen"
@@ -26,6 +30,7 @@ object UseSmileIDSampleTestIds {
     const val SCENARIO_DRAWER_BUTTON = "sample_scenario_drawer_button"
 
     const val PROFILE_SUMMARY = "sample_profile_summary"
+    const val SETTING_PRODUCTION = "sample_setting_production"
     const val SETTING_SMILE_TO_CAPTURE = "sample_setting_smile_to_capture"
     const val SETTING_AGENT_MODE = "sample_setting_agent_mode"
     const val SETTING_DARK_MODE = "sample_setting_dark_mode"
@@ -36,6 +41,7 @@ object UseSmileIDSampleTestIds {
     const val VERSION_LABEL = "sample_version_label"
     const val SELECT_TOGGLE = "sample_select_toggle"
     const val STATUS_BADGE = "sample_status_badge"
+    const val DETAILS_REFRESH = "sample_details_refresh"
     const val DETAILS_DELETE = "sample_details_delete"
     const val USER_DETAILS_HINT = "sample_user_details_hint"
     const val REMEMBER_DETAILS_SWITCH = "sample_remember_details_switch"
@@ -91,6 +97,10 @@ object UseSmileIDSampleTestIds {
         NAV_TOKEN,
         PRODUCTS_SCREEN,
         VERIFICATIONS_SCREEN,
+        VERIFICATIONS_EMPTY,
+        DETAILS_EMPTY,
+        COUNTRY_EMPTY,
+        ID_TYPE_EMPTY,
         VERIFICATION_DETAILS_SCREEN,
         SETTINGS_SCREEN,
         USER_DETAILS_SCREEN,
@@ -120,6 +130,7 @@ object UseSmileIDSampleTestIds {
         TOKEN_SIMULATE,
         SCENARIO_DRAWER_BUTTON,
         PROFILE_SUMMARY,
+        SETTING_PRODUCTION,
         SETTING_SMILE_TO_CAPTURE,
         SETTING_AGENT_MODE,
         SETTING_DARK_MODE,
@@ -130,6 +141,7 @@ object UseSmileIDSampleTestIds {
         VERSION_LABEL,
         SELECT_TOGGLE,
         STATUS_BADGE,
+        DETAILS_REFRESH,
         DETAILS_DELETE,
         USER_DETAILS_HINT,
         REMEMBER_DETAILS_SWITCH,
