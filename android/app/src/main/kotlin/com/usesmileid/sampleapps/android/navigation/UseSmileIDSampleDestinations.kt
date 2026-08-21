@@ -46,8 +46,8 @@ import com.usesmileid.sampleapps.android.flow.tokenBindsIdDetails
 import com.usesmileid.sampleapps.android.flow.tokenUserDetailsRequirement
 import com.usesmileid.sampleapps.android.flow.tokenBindsUserDetails
 import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleQrScanner
-import com.usesmileid.sampleapps.android.status.UseSmileIDSampleStatusRefresh
 import com.usesmileid.sampleapps.android.status.refreshStatus
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStatusRefresh
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleOverlay

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleJobStore
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleJobStore
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
 import com.usesmileid.sampleapps.ui.screens.VerificationDetailsScreen
 import com.usesmileid.sampleapps.ui.screens.VerificationsScreen

@@ -1,4 +1,4 @@
-package com.usesmileid.sampleapps.ui.state
+package com.usesmileid.sampleapps.ui.data
 
 import android.content.Context
 import androidx.room.Dao

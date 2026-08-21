@@ -14,11 +14,11 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleFlowResult
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleForms
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleJobStore
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleJobStore
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleLaunchArgs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleStore
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStore
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import androidx.compose.runtime.staticCompositionLocalOf
 import kotlinx.coroutines.delay

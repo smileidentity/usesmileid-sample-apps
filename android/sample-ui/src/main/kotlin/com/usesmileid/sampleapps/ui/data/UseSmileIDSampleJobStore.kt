@@ -1,4 +1,4 @@
-package com.usesmileid.sampleapps.ui.state
+package com.usesmileid.sampleapps.ui.data
 
 import android.content.Context
 import androidx.compose.runtime.getValue
@@ -8,6 +8,9 @@ import androidx.compose.runtime.setValue
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenBindings
+import com.usesmileid.sampleapps.ui.state.bindsIdDetails
+import com.usesmileid.sampleapps.ui.state.bindsRequiredUserDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

@@ -1,4 +1,4 @@
-package com.usesmileid.sampleapps.ui.state
+package com.usesmileid.sampleapps.ui.data
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider

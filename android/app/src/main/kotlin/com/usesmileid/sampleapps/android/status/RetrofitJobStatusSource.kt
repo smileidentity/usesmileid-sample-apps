@@ -1,25 +1,20 @@
 package com.usesmileid.sampleapps.android.status
 
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleJobStore
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleJobStatusSource
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleJobStore
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStatusRefresh
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import java.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
 
-/** What a refresh did, so the screen can say so. */
-sealed interface UseSmileIDSampleStatusRefresh {
-    data class Updated(val status: UseSmileIDSampleStatus, val message: String) : UseSmileIDSampleStatusRefresh
+/** Retrofit stays in the shell: the library defines the seam, this adapter fills it. */
+class RetrofitJobStatusSource : UseSmileIDSampleJobStatusSource {
 
-    /** 202 — still running; the row already says Processing. */
-    data object StillProcessing : UseSmileIDSampleStatusRefresh
-
-    /** No live session, so no credential to ask with. A precondition, not an error. */
-    data object NoSession : UseSmileIDSampleStatusRefresh
-
-    /** Never submitted under a scanned session, so there is no server-side job. */
-    data object NoServerJob : UseSmileIDSampleStatusRefresh
-
-    data class Failed(val reason: String) : UseSmileIDSampleStatusRefresh
+    override suspend fun check(jobId: String, token: String, sandbox: Boolean): UseSmileIDSampleStatusRefresh {
+        val response = UseSmileIDSampleStatusApi.of(sandbox).status(jobId, token)
+        return statusOutcome(response.code(), response.body())
+    }
 }
 
 /** Asks the server what became of one job and writes the answer to its row. Needs a live scanned session. */
@@ -34,8 +29,8 @@ suspend fun refreshStatus(
 ): UseSmileIDSampleStatusRefresh {
     if (rowSessionId == null) return UseSmileIDSampleStatusRefresh.NoServerJob
     val live = session?.takeUnless { it.hasExpired(nowMillis) } ?: return UseSmileIDSampleStatusRefresh.NoSession
-    val response = try {
-        UseSmileIDSampleStatusApi.of(sandbox).status(jobId, live.token)
+    val outcome = try {
+        RetrofitJobStatusSource().check(jobId, live.token, sandbox)
     } catch (e: IOException) {
         return UseSmileIDSampleStatusRefresh.Failed("Could not reach the server")
     } catch (e: CancellationException) {
@@ -45,14 +40,13 @@ suspend fun refreshStatus(
         // The type, never the message: this text goes on screen and a client exception carries the request URL.
         return UseSmileIDSampleStatusRefresh.Failed("Unexpected error: ${e::class.simpleName}")
     }
-    val outcome = statusOutcome(response.code(), response.body())
     if (outcome !is UseSmileIDSampleStatusRefresh.Updated) return outcome
     // A row deleted mid-request has nothing to write to, and the list would contradict the claim.
     val written = jobStore.applyStatus(
         jobId = jobId,
         status = outcome.status,
         message = outcome.message,
-        httpStatus = "${response.code()} ${outcome.status.httpReason()}",
+        httpStatus = "${outcome.httpCode} ${outcome.status.httpReason()}",
     )
     return if (written) outcome else UseSmileIDSampleStatusRefresh.Failed("The verification is no longer stored")
 }
@@ -61,7 +55,7 @@ suspend fun refreshStatus(
 internal fun statusOutcome(code: Int, body: UseSmileIDSampleStatusResponse?): UseSmileIDSampleStatusRefresh = when {
     body == null || code !in HTTP_SUCCESS -> UseSmileIDSampleStatusRefresh.Failed("HTTP $code")
     body.status == PROCESSING -> UseSmileIDSampleStatusRefresh.StillProcessing
-    else -> body.status.toSampleStatus()?.let { UseSmileIDSampleStatusRefresh.Updated(it, body.message) }
+    else -> body.status.toSampleStatus()?.let { UseSmileIDSampleStatusRefresh.Updated(it, body.message, code) }
         ?: UseSmileIDSampleStatusRefresh.Failed("Unrecognised status '${body.status}'")
 }
 
