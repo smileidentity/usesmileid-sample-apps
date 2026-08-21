@@ -73,15 +73,19 @@ class UseSmileIDSampleVerificationsScreenState(
     }
 
     companion object {
-        /** listSaver keeps the three fields; the set flattens to a list and back. */
+        /**
+         * listSaver keeps the three fields; the set flattens to a list and back.
+         * An unknown saved filter name falls back to All rather than throwing.
+         */
         val Saver: Saver<UseSmileIDSampleVerificationsScreenState, Any> = listSaver(
             save = { listOf(it.filter.name, it.selectMode, it.selected.toList()) },
-            restore = {
+            restore = { saved ->
                 @Suppress("UNCHECKED_CAST")
                 UseSmileIDSampleVerificationsScreenState(
-                    filter = UseSmileIDSampleJobFilter.valueOf(it[0] as String),
-                    selectMode = it[1] as Boolean,
-                    selected = (it[2] as List<String>).toSet(),
+                    filter = UseSmileIDSampleJobFilter.entries.firstOrNull { f -> f.name == saved[0] }
+                        ?: UseSmileIDSampleJobFilter.All,
+                    selectMode = saved[1] as Boolean,
+                    selected = (saved[2] as List<String>).toSet(),
                 )
             },
         )
