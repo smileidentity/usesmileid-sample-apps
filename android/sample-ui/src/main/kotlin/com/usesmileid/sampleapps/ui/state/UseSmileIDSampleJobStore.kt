@@ -8,6 +8,9 @@ import androidx.compose.runtime.setValue
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -81,6 +84,9 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
                 instance ?: UseSmileIDSampleJobStore(UseSmileIDSampleJobDatabase.open(context).jobs())
                     .also { instance = it }
             }
+
+        /** One per process, like the store: a write must outlive whatever screen or recreation launched it. */
+        val writeScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
         /** The eleven the design's counts describe, offset from a caller-supplied now. */
         fun fixtures(nowMillis: Long): List<UseSmileIDSampleJob> {
