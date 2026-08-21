@@ -42,7 +42,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDataFieldRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDateGroupHeader
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDestructiveRow
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleFilterChip
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleFloatingTokenButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleFullHeightBottomSheet
@@ -68,7 +68,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionCheckbox
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowChevron
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatusBadge
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwipeAction
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwitch

@@ -2,7 +2,7 @@ package com.usesmileid.sampleapps.ui.data
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.golden.ROBOLECTRIC_SDK
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct

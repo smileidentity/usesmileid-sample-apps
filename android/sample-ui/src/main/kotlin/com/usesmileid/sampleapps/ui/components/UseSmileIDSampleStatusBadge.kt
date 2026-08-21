@@ -11,15 +11,8 @@ import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
 import com.smileid.designsystem.smileLabelTracking
 import com.smileid.designsystem.smileLabelSize
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
-
-/** The four job statuses, Title case as the design sets them. */
-enum class UseSmileIDSampleStatus(val label: String) {
-    Clear("Clear"),
-    Attention("Attention"),
-    Blocked("Blocked"),
-    Processing("Processing"),
-}
 
 /** A status pill. The design wants soft tinted fills; only the saturated `badge.<role>.*` pairs have landed, so the values are pending, not the treatment (spec/design-tokens.json → softBadgeFills). */
 @Composable

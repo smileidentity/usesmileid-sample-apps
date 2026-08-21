@@ -1,7 +1,7 @@
 package com.usesmileid.sampleapps.ui.golden
 
 import androidx.compose.runtime.Composable
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.screens.ProductsScreen
 import com.usesmileid.sampleapps.ui.screens.ScanTokenScreen
 import com.usesmileid.sampleapps.ui.screens.SettingsScreen

@@ -1,7 +1,7 @@
 package com.usesmileid.sampleapps.ui.data
 
 import android.content.Context
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenBindings

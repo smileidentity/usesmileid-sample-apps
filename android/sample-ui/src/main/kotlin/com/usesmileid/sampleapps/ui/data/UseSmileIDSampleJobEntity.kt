@@ -3,7 +3,7 @@ package com.usesmileid.sampleapps.ui.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 

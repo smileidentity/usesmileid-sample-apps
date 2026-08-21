@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.smileid.designsystem.SmileDimens
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleFloatingTokenButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleJobRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavBar
@@ -27,7 +27,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScanState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionHeader
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSessionCard
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSessionEndedBanner
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwipeAction
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTokenRing
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct

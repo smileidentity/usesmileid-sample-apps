@@ -30,7 +30,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleAvatar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
 import com.usesmileid.sampleapps.ui.components.hue
 import com.usesmileid.sampleapps.ui.components.iconRes
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProductCard
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProductGrid
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProfileEnvChip

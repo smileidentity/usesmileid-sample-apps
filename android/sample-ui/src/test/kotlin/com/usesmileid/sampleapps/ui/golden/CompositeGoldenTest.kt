@@ -25,7 +25,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionCheckbox
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowChevron
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwitch
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarButton
