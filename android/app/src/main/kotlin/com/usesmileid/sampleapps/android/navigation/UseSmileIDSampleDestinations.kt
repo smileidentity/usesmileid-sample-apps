@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import android.content.ClipData
@@ -46,7 +47,6 @@ import com.usesmileid.sampleapps.android.flow.tokenBindsIdDetails
 import com.usesmileid.sampleapps.android.flow.tokenUserDetailsRequirement
 import com.usesmileid.sampleapps.android.flow.tokenBindsUserDetails
 import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleQrScanner
-import com.usesmileid.sampleapps.android.status.refreshStatus
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStatusRefresh
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
@@ -63,6 +63,7 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 import com.usesmileid.sampleapps.ui.state.toCountdown
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import com.usesmileid.sampleapps.android.gallery.ComponentGalleryScreen as ComponentGalleryContent
 import com.usesmileid.sampleapps.ui.screens.CountryPickerSheet as CountryPickerContent
@@ -123,7 +124,7 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
         app.storeScope.launch { app.jobStore.remove(ids) }
         selectMode = false
         // Against the list minus the ids going away: the delete is suspend and has not landed yet.
-        if (app.jobs.none { it.id !in ids && filter.matches(it) }) filter = UseSmileIDSampleJobFilter.All
+        if (app.jobs.orEmpty().none { it.id !in ids && filter.matches(it) }) filter = UseSmileIDSampleJobFilter.All
     }
 
     // Published to the shell rather than drawn here: the design replaces the nav bar with it.
@@ -142,7 +143,7 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
             state = UseSmileIDSampleVerificationsState(
                 jobs = app.jobs,
                 // Counted off the same list the rows render from, so a count can never disagree with what is on screen.
-                counts = UseSmileIDSampleJobFilter.entries.associateWith { f -> app.jobs.count(f::matches) },
+                counts = UseSmileIDSampleJobFilter.entries.associateWith { f -> app.jobs.orEmpty().count(f::matches) },
                 filter = filter,
                 selectMode = selectMode,
                 selected = selected,
@@ -214,7 +215,7 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
     // Not saveable: a saved message replayed the toast on every return to this screen.
     var outcome by remember { mutableStateOf<String?>(null) }
 
-    val job = app.jobs.firstOrNull { it.id == jobId }
+    val job = app.jobs?.firstOrNull { it.id == jobId }
 
     Box(modifier = Modifier.fillMaxSize()) {
         VerificationDetailsContent(
@@ -232,34 +233,27 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
             },
             onRefresh = {
                 scope.launch {
-                    // The check on entry sets the same flag; without this a pull during it duplicates the request.
-                    if (refreshing) return@launch
                     refreshing = true
-                    outcome = refresh(app, jobId, job?.sessionId)
+                    val result = app.jobStore.refresh(jobId, app.session, System.currentTimeMillis())
                     refreshing = false
+                    if (result != null) outcome = result.label()
                 }
             },
             refreshing = refreshing,
         )
-    // Only a processing row can change. Keyed on the id, not the job: keying on the row would loop off its own write.
-    LaunchedEffect(jobId) {
-        if (app.jobs.firstOrNull { it.id == jobId }?.status != UseSmileIDSampleStatus.Processing) {
-            return@LaunchedEffect
+        // Only a processing row can change. Keyed on the id, not the job: keying on the row would loop off its own write.
+        // Waits for Room's first emission, so a cold-start deep link cannot read an empty list and skip.
+        LaunchedEffect(jobId) {
+            val jobs = snapshotFlow { app.jobs }.first { it != null } ?: return@LaunchedEffect
+            if (jobs.firstOrNull { it.id == jobId }?.status != UseSmileIDSampleStatus.Processing) {
+                return@LaunchedEffect
+            }
+            refreshing = true
+            // Silent unless something happened: "still processing" on every visit is noise.
+            val result = app.jobStore.refresh(jobId, app.session, System.currentTimeMillis())
+            refreshing = false
+            if (result != null && result !is UseSmileIDSampleStatusRefresh.StillProcessing) outcome = result.label()
         }
-        refreshing = true
-        // Silent unless something happened: "still processing" on every visit is noise.
-        val result = refreshStatus(
-            jobId = jobId,
-            rowSessionId = app.jobs.firstOrNull { it.id == jobId }?.sessionId,
-            session = app.session,
-            sandbox = app.useSandbox,
-            jobStore = app.jobStore,
-            nowMillis = System.currentTimeMillis(),
-        )
-        refreshing = false
-        if (result !is UseSmileIDSampleStatusRefresh.StillProcessing) outcome = result.label()
-        Unit
-    }
 
         LaunchedEffect(outcome) {
             if (outcome == null) return@LaunchedEffect
@@ -277,26 +271,13 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
     }
 }
 
-/** Called on the screen's own scope, so leaving mid-refresh cancels the call. */
-private suspend fun refresh(
-    app: UseSmileIDSampleAppState,
-    jobId: String,
-    rowSessionId: String?,
-): String = refreshStatus(
-    jobId = jobId,
-    rowSessionId = rowSessionId,
-    session = app.session,
-    sandbox = app.useSandbox,
-    jobStore = app.jobStore,
-    nowMillis = System.currentTimeMillis(),
-).label()
-
 /** One line per outcome: a refresh that changed nothing still has to say so. */
 private fun UseSmileIDSampleStatusRefresh.label(): String = when (this) {
     is UseSmileIDSampleStatusRefresh.Updated -> "${status.label} — $message"
     UseSmileIDSampleStatusRefresh.StillProcessing -> "Still processing"
     UseSmileIDSampleStatusRefresh.NoSession -> "Scan a token first"
     UseSmileIDSampleStatusRefresh.NoServerJob -> "Not submitted under a scanned token"
+    UseSmileIDSampleStatusRefresh.SessionMismatch -> "Submitted under a different token session"
     is UseSmileIDSampleStatusRefresh.Failed -> "Could not check status: $reason"
 }
 

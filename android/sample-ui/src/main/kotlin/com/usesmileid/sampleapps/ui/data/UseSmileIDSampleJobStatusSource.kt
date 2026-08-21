@@ -30,5 +30,8 @@ sealed interface UseSmileIDSampleStatusRefresh {
     /** Never submitted under a scanned session, so there is no server-side job. */
     data object NoServerJob : UseSmileIDSampleStatusRefresh
 
+    /** Submitted under a different token session, so this session's credential cannot ask about it. */
+    data object SessionMismatch : UseSmileIDSampleStatusRefresh
+
     data class Failed(val reason: String) : UseSmileIDSampleStatusRefresh
 }

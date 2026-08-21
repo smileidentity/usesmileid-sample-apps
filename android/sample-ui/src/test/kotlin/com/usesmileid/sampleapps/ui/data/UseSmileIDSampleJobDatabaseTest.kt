@@ -104,7 +104,7 @@ class UseSmileIDSampleJobDatabaseTest {
     /** The store re-inserts what it removed, which only restores order because the query does the ordering. */
     @Test
     fun `re-inserting a removed row restores its place in the order`() = runTest {
-        val store = UseSmileIDSampleJobStore(dao)
+        val store = UseSmileIDSampleJobStore(dao, NoStatusSource)
         store.add(job("job-1", createdAtMillis = 1L))
         store.add(job("job-2", createdAtMillis = 2L))
         store.add(job("job-3", createdAtMillis = 3L))
@@ -117,7 +117,7 @@ class UseSmileIDSampleJobDatabaseTest {
     @Test
     fun `a delete landing mid-refresh does not resurrect the row`() = runTest {
         dao.insert(listOf(entity("job-1")))
-        val store = UseSmileIDSampleJobStore(DeleteBeforeWriteDao(dao))
+        val store = UseSmileIDSampleJobStore(DeleteBeforeWriteDao(dao), NoStatusSource)
         val written = store.applyStatus("job-1", UseSmileIDSampleStatus.Clear, "Approved", "200 OK")
         assertEquals(false, written)
         assertNull(dao.find("job-1"))

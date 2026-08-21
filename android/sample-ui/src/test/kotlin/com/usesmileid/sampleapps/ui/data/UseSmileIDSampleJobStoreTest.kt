@@ -25,7 +25,7 @@ class UseSmileIDSampleJobStoreTest {
 
     @Test
     fun `adding the same job twice keeps one row`() = runTest {
-        val store = UseSmileIDSampleJobStore(FakeJobDao())
+        val store = UseSmileIDSampleJobStore(FakeJobDao(), NoStatusSource)
         store.add(job("job-1"))
         store.add(job("job-1"))
         assertEquals(listOf("job-1"), store.jobs.first().map { it.id })
@@ -33,7 +33,7 @@ class UseSmileIDSampleJobStoreTest {
 
     @Test
     fun `a new job lands first`() = runTest {
-        val store = UseSmileIDSampleJobStore(FakeJobDao())
+        val store = UseSmileIDSampleJobStore(FakeJobDao(), NoStatusSource)
         store.add(job("job-1", createdAtMillis = 1L))
         store.add(job("job-2", createdAtMillis = 2L))
         assertEquals(listOf("job-2", "job-1"), store.jobs.first().map { it.id })
@@ -41,7 +41,7 @@ class UseSmileIDSampleJobStoreTest {
 
     @Test
     fun `undo re-inserts what the last removal took`() = runTest {
-        val store = UseSmileIDSampleJobStore(FakeJobDao())
+        val store = UseSmileIDSampleJobStore(FakeJobDao(), NoStatusSource)
         store.add(job("job-1", createdAtMillis = 1L))
         store.add(job("job-2", createdAtMillis = 2L))
         store.remove(setOf("job-1"))
@@ -52,7 +52,7 @@ class UseSmileIDSampleJobStoreTest {
 
     @Test
     fun `an empty removal keeps the previous batch undoable`() = runTest {
-        val store = UseSmileIDSampleJobStore(FakeJobDao())
+        val store = UseSmileIDSampleJobStore(FakeJobDao(), NoStatusSource)
         store.add(job("job-1"))
         store.remove(setOf("job-1"))
         store.remove(emptySet())
@@ -62,7 +62,7 @@ class UseSmileIDSampleJobStoreTest {
 
     @Test
     fun `a status refresh rewrites the row it read`() = runTest {
-        val store = UseSmileIDSampleJobStore(FakeJobDao())
+        val store = UseSmileIDSampleJobStore(FakeJobDao(), NoStatusSource)
         store.add(job("job-1"))
         assertTrue(store.applyStatus("job-1", UseSmileIDSampleStatus.Clear, "Approved", "200 OK"))
         val stored = store.find("job-1")
@@ -73,14 +73,14 @@ class UseSmileIDSampleJobStoreTest {
 
     @Test
     fun `a status refresh for an unknown job changes nothing`() = runTest {
-        val store = UseSmileIDSampleJobStore(FakeJobDao())
+        val store = UseSmileIDSampleJobStore(FakeJobDao(), NoStatusSource)
         assertEquals(false, store.applyStatus("job-absent", UseSmileIDSampleStatus.Clear, "Approved", "200 OK"))
         assertNull(store.find("job-absent"))
     }
 
     @Test
     fun `the environment and session survive a round trip`() = runTest {
-        val store = UseSmileIDSampleJobStore(FakeJobDao())
+        val store = UseSmileIDSampleJobStore(FakeJobDao(), NoStatusSource)
         store.add(job("job-1").copy(sandbox = false, sessionId = "4d33b7ba"))
         val stored = store.find("job-1")
         assertEquals(false, stored?.sandbox)
@@ -89,7 +89,7 @@ class UseSmileIDSampleJobStoreTest {
 
     @Test
     fun `a fresh store is empty`() = runTest {
-        assertEquals(emptyList<UseSmileIDSampleJob>(), UseSmileIDSampleJobStore(FakeJobDao()).jobs.first())
+        assertEquals(emptyList<UseSmileIDSampleJob>(), UseSmileIDSampleJobStore(FakeJobDao(), NoStatusSource).jobs.first())
     }
 
     /** The write scope's whole contract: cancelling the screen that launched a write must not cancel the write. */
@@ -97,7 +97,7 @@ class UseSmileIDSampleJobStoreTest {
     fun `a write on the process scope survives cancellation of the scope that launched it`() {
         runBlocking {
             val dao = GatedDao()
-            val store = UseSmileIDSampleJobStore(dao)
+            val store = UseSmileIDSampleJobStore(dao, NoStatusSource)
             val screenScope = CoroutineScope(Job())
             screenScope.launch {
                 UseSmileIDSampleJobStore.writeScope.launch { store.add(job("job-1")) }
@@ -123,7 +123,7 @@ class UseSmileIDSampleJobStoreTest {
 }
 
 /** Ordering and the two conflict strategies, which is all the store's logic reads. */
-private class FakeJobDao : UseSmileIDSampleJobDao {
+internal class FakeJobDao : UseSmileIDSampleJobDao {
 
     private val rows = MutableStateFlow<Map<String, UseSmileIDSampleJobEntity>>(emptyMap())
 
@@ -168,4 +168,9 @@ private class GatedDao : UseSmileIDSampleJobDao {
         delegate.updateStatus(id, statusId, message, httpStatus)
     override suspend fun delete(ids: Set<String>) = delegate.delete(ids)
     override suspend fun count() = delegate.count()
+}
+
+/** For the tests that never refresh: reaching the network from one of them is the failure, not a fixture. */
+internal object NoStatusSource : UseSmileIDSampleJobStatusSource {
+    override suspend fun check(jobId: String, token: String, sandbox: Boolean) = error("no network in this test")
 }

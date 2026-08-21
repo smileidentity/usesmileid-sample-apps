@@ -9,6 +9,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenBindings
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import com.usesmileid.sampleapps.ui.state.bindsIdDetails
 import com.usesmileid.sampleapps.ui.state.bindsRequiredUserDetails
 import kotlinx.coroutines.CoroutineScope
@@ -16,12 +17,23 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import java.io.IOException
+import kotlin.coroutines.cancellation.CancellationException
 
 /** The submitted verifications, on disk: the SDK delivers a result once, and there is nowhere else to get it from. */
-class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
+class UseSmileIDSampleJobStore(
+    private val dao: UseSmileIDSampleJobDao,
+    private val source: UseSmileIDSampleJobStatusSource,
+) {
 
     /** What the last [remove] took, so undo re-inserts rather than clearing a soft-delete column. */
     private var lastRemoved: List<UseSmileIDSampleJobEntity> = emptyList()
+
+    /** In flight per job id, so the entry refresh and a pull cannot double-request the same row. */
+    private val inFlight = mutableSetOf<String>()
+    private val inFlightLock = Mutex()
 
     /** Held here, not on the removing screen: the details screen navigates away before it could draw a confirmation. */
     private var removalNotice: Int? by mutableStateOf(null)
@@ -72,6 +84,49 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
         httpStatus: String,
     ): Boolean = dao.updateStatus(jobId, status.name, message, httpStatus) > 0
 
+    /**
+     * The whole refresh sequence, owned by what owns the rows: read the row, take the environment
+     * and session FROM THE ROW, ask the source, write back atomically. Returns null when a refresh
+     * for this job is already in flight — the second request is skipped, mirroring the screen
+     * affordance it replaces.
+     */
+    suspend fun refresh(
+        jobId: String,
+        live: UseSmileIDSampleTokenSession?,
+        nowMillis: Long,
+    ): UseSmileIDSampleStatusRefresh? {
+        inFlightLock.withLock { if (!inFlight.add(jobId)) return null }
+        try {
+            val row = dao.find(jobId)
+                ?: return UseSmileIDSampleStatusRefresh.Failed("The verification is no longer stored")
+            val rowSessionId = row.sessionId ?: return UseSmileIDSampleStatusRefresh.NoServerJob
+            val session = live?.takeUnless { it.hasExpired(nowMillis) }
+                ?: return UseSmileIDSampleStatusRefresh.NoSession
+            if (session.id != rowSessionId) return UseSmileIDSampleStatusRefresh.SessionMismatch
+            val outcome = try {
+                // The row's environment, never the toggle: a row outlives the toggle that produced it.
+                source.check(jobId, session.token, sandbox = row.sandbox)
+            } catch (e: IOException) {
+                return UseSmileIDSampleStatusRefresh.Failed("Could not reach the server")
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                // The type, never the message: this text goes on screen and a client exception carries the request URL.
+                return UseSmileIDSampleStatusRefresh.Failed("Unexpected error: ${e::class.simpleName}")
+            }
+            if (outcome !is UseSmileIDSampleStatusRefresh.Updated) return outcome
+            val written = applyStatus(
+                jobId = jobId,
+                status = outcome.status,
+                message = outcome.message,
+                httpStatus = "${outcome.httpCode} ${if (outcome.status == UseSmileIDSampleStatus.Processing) "Accepted" else "OK"}",
+            )
+            return if (written) outcome else UseSmileIDSampleStatusRefresh.Failed("The verification is no longer stored")
+        } finally {
+            inFlightLock.withLock { inFlight.remove(jobId) }
+        }
+    }
+
     suspend fun find(jobId: String): UseSmileIDSampleJob? = dao.find(jobId)?.toJob()
 
     /** Reached only by the `seedJobs` launch argument — see `spec/launch-args.json`. Idempotent. */
@@ -82,9 +137,9 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
         private var instance: UseSmileIDSampleJobStore? = null
 
         /** One per process: a remembered store would open a second Room pool on every recreation and leak the first. */
-        fun of(context: Context): UseSmileIDSampleJobStore =
+        fun of(context: Context, source: UseSmileIDSampleJobStatusSource): UseSmileIDSampleJobStore =
             instance ?: synchronized(this) {
-                instance ?: UseSmileIDSampleJobStore(UseSmileIDSampleJobDatabase.open(context).jobs())
+                instance ?: UseSmileIDSampleJobStore(UseSmileIDSampleJobDatabase.open(context).jobs(), source)
                     .also { instance = it }
             }
 
