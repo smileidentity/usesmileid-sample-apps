@@ -12,16 +12,11 @@ androidx-datastore = "1.2.1"
 androidx-navigation = "2.9.8"
 androidx-room = "2.8.4"
 destinations = "2.3.0"
-# Pinned to what com.usesmileid:usesmileid already resolves at runtime, verified on the release
-# graph. A divergence between this and the SDK's own CameraX is a finding, not something to let
-# Gradle reconcile upward in silence.
+# Pinned to what the SDK resolves at runtime; a divergence is a finding, never something Gradle reconciles in silence.
 camerax = "1.6.1"
-# The bundled barcode model, never the play-services variant: it works with no Play services, which
-# keeps this reference sample usable on the GMS-free devices the SDK ships an ML variant for.
+# The bundled model, never the play-services variant: the sample must run on GMS-free devices.
 mlkit-barcode = "17.3.0"
-# Pinned to what com.usesmileid:usesmileid already resolves on the release graph, verified with
-# :app:dependencies. The status call is the partner's own, not the SDK's — but sharing the SDK's
-# client version keeps one Retrofit and one OkHttp in the APK rather than letting Gradle reconcile.
+# Pinned to the SDK's own client version so the APK carries one Retrofit and one OkHttp.
 retrofit = "3.0.0"
 kotlinx-serialization = "1.11.0"
 
