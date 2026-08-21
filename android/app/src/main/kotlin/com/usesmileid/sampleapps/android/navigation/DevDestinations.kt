@@ -1,10 +1,12 @@
 package com.usesmileid.sampleapps.android.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.annotation.parameters.DeepLink
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.android.gallery.ComponentGalleryScreen as ComponentGalleryContent
 import com.usesmileid.sampleapps.ui.screens.ScenarioDrawerSheet as ScenarioDrawerContent
@@ -28,4 +30,9 @@ fun ScenarioDrawerSheet(navigator: DestinationsNavigator) {
 /** Dev-only, and a shell route by design: `sample-ui` never holds a gallery or a scratchpad. */
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.COMPONENT_GALLERY)])
 @Composable
-fun ComponentGalleryScreen() = ComponentGalleryContent()
+fun ComponentGalleryScreen() {
+    val chrome = LocalUseSmileIDSampleChrome.current
+    ComponentGalleryContent(
+        contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
+    )
+}

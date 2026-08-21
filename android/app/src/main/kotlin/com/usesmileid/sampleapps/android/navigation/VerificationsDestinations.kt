@@ -3,6 +3,7 @@ package com.usesmileid.sampleapps.android.navigation
 import android.content.ClipData
 import android.os.Build
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -67,6 +68,8 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
 
     Box(modifier = Modifier.fillMaxSize()) {
         VerificationsContent(
+            // The selection bar insets via the Scaffold slot; only the floating nav bar needs clearing here.
+            contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
             state = UseSmileIDSampleVerificationsState(
                 jobs = app.jobs,
                 // Counted off the same list the rows render from, so a count can never disagree with what is on screen.

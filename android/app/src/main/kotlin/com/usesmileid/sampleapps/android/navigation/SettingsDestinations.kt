@@ -1,11 +1,13 @@
 package com.usesmileid.sampleapps.android.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.parameters.DeepLink
 import com.ramcosta.composedestinations.generated.destinations.ProfilesScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ScenarioDrawerSheetDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
@@ -19,7 +21,9 @@ import com.usesmileid.sampleapps.ui.screens.SettingsScreen as SettingsContent
 @Composable
 fun SettingsScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
+    val chrome = LocalUseSmileIDSampleChrome.current
     SettingsContent(
+        contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
         state = UseSmileIDSampleSettingsState(
             settings = app.settings,
             environment = app.environment,

@@ -2,11 +2,9 @@ package com.usesmileid.sampleapps.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -216,6 +214,8 @@ fun SettingsScreen(
                 testId = UseSmileIDSampleTestIds.SIGN_OUT,
             )
         }
+        // The last row: flush with the viewport edge it reports clipped bounds to automation, so the
+        // caller's [contentPadding] has to clear whatever draws over the list.
         item {
             Text(
                 text = state.versionLabel,
@@ -228,8 +228,6 @@ fun SettingsScreen(
                     .padding(SmileDimens.spacingMd),
             )
         }
-        // Flush with the viewport edge, the last row reports clipped bounds to automation.
-        item { Spacer(modifier = Modifier.height(SmileDimens.space64)) }
     }
 }
 
