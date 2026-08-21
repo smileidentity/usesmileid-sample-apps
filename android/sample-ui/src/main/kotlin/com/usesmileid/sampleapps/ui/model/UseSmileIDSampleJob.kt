@@ -12,7 +12,8 @@ data class UseSmileIDSampleJob(
     val status: UseSmileIDSampleStatus,
     val createdAtMillis: Long,
     val message: String,
-    val httpStatus: String,
+    /** The response code, not its display text: the reason phrase is composed where the row is drawn. */
+    val httpStatus: Int?,
     /** The environment at submission time: a row outlives the toggle that produced it. */
     val sandbox: Boolean = true,
     /** The session the run submitted under; null on a fixture token. */

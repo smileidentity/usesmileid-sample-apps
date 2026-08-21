@@ -74,7 +74,7 @@ class UseSmileIDSampleJobStore(
         jobId: String,
         status: UseSmileIDSampleStatus,
         message: String,
-        httpStatus: String,
+        httpStatus: Int,
     ): Boolean = dao.updateStatus(jobId, status.name, message, httpStatus) > 0
 
     /**
@@ -112,7 +112,7 @@ class UseSmileIDSampleJobStore(
                 jobId = jobId,
                 status = outcome.status,
                 message = outcome.message,
-                httpStatus = "${outcome.httpCode} ${if (outcome.status == UseSmileIDSampleStatus.Processing) "Accepted" else "OK"}",
+                httpStatus = outcome.httpCode,
             )
             return if (written) outcome else UseSmileIDSampleStatusRefresh.Failed("The verification is no longer stored")
         } finally {
@@ -177,7 +177,7 @@ class UseSmileIDSampleJobStore(
 
         private const val HOURS_APART = 5L
         private const val MILLIS_PER_HOUR = 60L * 60L * 1000L
-        private const val HTTP_OK = "200 OK"
-        private const val HTTP_ACCEPTED = "202 Accepted"
+        private const val HTTP_OK = 200
+        private const val HTTP_ACCEPTED = 202
     }
 }

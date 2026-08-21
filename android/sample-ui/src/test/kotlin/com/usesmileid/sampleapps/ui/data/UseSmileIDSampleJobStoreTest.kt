@@ -65,17 +65,17 @@ class UseSmileIDSampleJobStoreTest {
     fun `a status refresh rewrites the row it read`() = runTest {
         val store = UseSmileIDSampleJobStore(FakeJobDao(), NoStatusSource)
         store.add(job("job-1"))
-        assertTrue(store.applyStatus("job-1", UseSmileIDSampleStatus.Clear, "Approved", "200 OK"))
+        assertTrue(store.applyStatus("job-1", UseSmileIDSampleStatus.Clear, "Approved", 200))
         val stored = store.find("job-1")
         assertEquals(UseSmileIDSampleStatus.Clear, stored?.status)
         assertEquals("Approved", stored?.message)
-        assertEquals("200 OK", stored?.httpStatus)
+        assertEquals(200, stored?.httpStatus)
     }
 
     @Test
     fun `a status refresh for an unknown job changes nothing`() = runTest {
         val store = UseSmileIDSampleJobStore(FakeJobDao(), NoStatusSource)
-        assertEquals(false, store.applyStatus("job-absent", UseSmileIDSampleStatus.Clear, "Approved", "200 OK"))
+        assertEquals(false, store.applyStatus("job-absent", UseSmileIDSampleStatus.Clear, "Approved", 200))
         assertNull(store.find("job-absent"))
     }
 
@@ -138,7 +138,7 @@ class UseSmileIDSampleJobStoreTest {
         status = UseSmileIDSampleStatus.Processing,
         createdAtMillis = createdAtMillis,
         message = "Submitted",
-        httpStatus = "202 Accepted",
+        httpStatus = 202,
     )
 }
 
@@ -158,7 +158,7 @@ internal class FakeJobDao : UseSmileIDSampleJobDao {
         rows.value = rows.value + jobs.filterNot { it.id in rows.value }.associateBy { it.id }
     }
 
-    override suspend fun updateStatus(id: String, statusId: String, message: String, httpStatus: String): Int {
+    override suspend fun updateStatus(id: String, statusId: String, message: String, httpStatus: Int): Int {
         val row = rows.value[id] ?: return 0
         rows.value = rows.value + (id to row.copy(statusId = statusId, message = message, httpStatus = httpStatus))
         return 1
@@ -184,7 +184,7 @@ private class GatedDao : UseSmileIDSampleJobDao {
     override fun all() = delegate.all()
     override suspend fun find(id: String) = delegate.find(id)
     override suspend fun findAll(ids: Set<String>) = delegate.findAll(ids)
-    override suspend fun updateStatus(id: String, statusId: String, message: String, httpStatus: String) =
+    override suspend fun updateStatus(id: String, statusId: String, message: String, httpStatus: Int) =
         delegate.updateStatus(id, statusId, message, httpStatus)
     override suspend fun delete(ids: Set<String>) = delegate.delete(ids)
     override suspend fun count() = delegate.count()

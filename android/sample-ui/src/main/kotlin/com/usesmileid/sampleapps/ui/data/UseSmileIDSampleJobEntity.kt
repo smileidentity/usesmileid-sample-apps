@@ -16,7 +16,8 @@ data class UseSmileIDSampleJobEntity(
     val statusId: String,
     val createdAtMillis: Long,
     val message: String,
-    val httpStatus: String,
+    /** The response code the row was last written from; null when nothing has answered for it yet. */
+    val httpStatus: Int?,
     /** Sandbox or production at submission time. A row outlives the toggle that produced it. */
     val sandbox: Boolean,
     /** The session the run submitted under; null on a fixture token, which has no status to ask for. */

@@ -65,7 +65,7 @@ class VerificationsGoldenTest : GoldenTest() {
         /** What a real 202 looks like: a message long enough to need a second line of its own column. */
         val QUEUED = JOBS.first().copy(
             message = "Request accepted and queued for processing.",
-            httpStatus = "202 Accepted",
+            httpStatus = 202,
         )
     }
 

@@ -149,7 +149,7 @@ class UseSmileIDSampleJobStoreRefreshTest {
         val stored = store.find("job-1")
         assertEquals(UseSmileIDSampleStatus.Clear, stored?.status)
         assertEquals("Approved", stored?.message)
-        assertEquals("200 OK", stored?.httpStatus)
+        assertEquals(200, stored?.httpStatus)
     }
 
     private fun store(source: UseSmileIDSampleJobStatusSource) = UseSmileIDSampleJobStore(FakeJobDao(), source)
@@ -171,7 +171,7 @@ class UseSmileIDSampleJobStoreRefreshTest {
         status = UseSmileIDSampleStatus.Processing,
         createdAtMillis = 0L,
         message = "Submitted",
-        httpStatus = "202 Accepted",
+        httpStatus = 202,
         sandbox = sandbox,
         sessionId = sessionId,
     )

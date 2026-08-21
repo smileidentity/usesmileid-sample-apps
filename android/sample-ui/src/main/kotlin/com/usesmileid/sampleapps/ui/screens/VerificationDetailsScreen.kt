@@ -126,7 +126,7 @@ fun VerificationDetailsScreen(
                                 DetailRow("jobId", "Job_id", job.shortId, onCopy = { onCopy("Job ID", job.id) })
                                 DetailRow("message", "Message", job.message)
                                 // Coloured by the HTTP outcome, not the verdict: a blocked job still shows a green 200.
-                                DetailRow("status", "Status", job.httpStatus, valueColor = job.httpStatusColor())
+                                DetailRow("status", "Status", job.httpStatusLabel(), valueColor = job.httpStatusColor())
                                 DetailRow("userId", "User_id", job.shortUserId, onCopy = { onCopy("User ID", job.userId) })
                             }
                         }
@@ -163,13 +163,20 @@ private fun DetailRow(
     )
 }
 
-/** Green while the call succeeded, red once it did not. A blank status is neither: colouring it red would invent a failure. */
+/** The design's row shows "200 OK"; only the codes the app actually writes get a reason phrase. */
+private fun UseSmileIDSampleJob.httpStatusLabel(): String = when (httpStatus) {
+    null -> ""
+    200 -> "200 OK"
+    202 -> "202 Accepted"
+    else -> httpStatus.toString()
+}
+
+/** Green while the call succeeded, red once it did not. No status is neither: colouring it red would invent a failure. */
 @Composable
 private fun UseSmileIDSampleJob.httpStatusColor(): Color? {
-    val code = httpStatus.trimStart()
-    if (code.isEmpty()) return null
+    val code = httpStatus ?: return null
     val badge = UseSmileIDSampleTheme.colors.badge
-    return if (code.startsWith("2")) badge.successText else badge.errorText
+    return if (code in 200..299) badge.successText else badge.errorText
 }
 
 /** ISO-8601 in UTC, matching the design's row: a machine-readable value, not a display date. */
