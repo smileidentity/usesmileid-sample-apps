@@ -27,9 +27,9 @@ interface UseSmileIDSampleJobDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(jobs: List<UseSmileIDSampleJobEntity>)
 
-    /** REPLACE, for the one caller that means it: a status refresh. */
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(job: UseSmileIDSampleJobEntity)
+    /** One atomic write for the one caller that overwrites: a status refresh. Returns affected rows, so a deleted row reports 0. */
+    @Query("UPDATE jobs SET statusId = :statusId, message = :message, httpStatus = :httpStatus WHERE id = :id")
+    suspend fun updateStatus(id: String, statusId: String, message: String, httpStatus: String): Int
 
     @Query("DELETE FROM jobs WHERE id IN (:ids)")
     suspend fun delete(ids: Set<String>)

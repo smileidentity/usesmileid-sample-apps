@@ -58,17 +58,13 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
         removalNotice = null
     }
 
-    /** The one write that overwrites: a status refresh rewrites the row it was read from. */
+    /** The one write that overwrites: a status refresh rewrites its row in one atomic update. */
     suspend fun applyStatus(
         jobId: String,
         status: UseSmileIDSampleStatus,
         message: String,
         httpStatus: String,
-    ): Boolean {
-        val row = dao.find(jobId) ?: return false
-        dao.upsert(row.copy(statusId = status.name, message = message, httpStatus = httpStatus))
-        return true
-    }
+    ): Boolean = dao.updateStatus(jobId, status.name, message, httpStatus) > 0
 
     suspend fun find(jobId: String): UseSmileIDSampleJob? = dao.find(jobId)?.toJob()
 

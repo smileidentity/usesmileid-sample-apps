@@ -112,8 +112,10 @@ private class FakeJobDao : UseSmileIDSampleJobDao {
         rows.value = rows.value + jobs.filterNot { it.id in rows.value }.associateBy { it.id }
     }
 
-    override suspend fun upsert(job: UseSmileIDSampleJobEntity) {
-        rows.value = rows.value + (job.id to job)
+    override suspend fun updateStatus(id: String, statusId: String, message: String, httpStatus: String): Int {
+        val row = rows.value[id] ?: return 0
+        rows.value = rows.value + (id to row.copy(statusId = statusId, message = message, httpStatus = httpStatus))
+        return 1
     }
 
     override suspend fun delete(ids: Set<String>) {
