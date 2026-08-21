@@ -20,6 +20,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -38,6 +45,58 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.model.groupByDay
 import com.usesmileid.sampleapps.ui.model.timeLabel
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
+
+/**
+ * The list's own UI state. Saveable policy, per field: [filter], [selectMode] and [selected]
+ * survive recreation (a rotated device keeps its selection); nothing here survives process death.
+ */
+@Stable
+class UseSmileIDSampleVerificationsScreenState(
+    filter: UseSmileIDSampleJobFilter,
+    selectMode: Boolean,
+    selected: Set<String>,
+) {
+    var filter by mutableStateOf(filter)
+    var selectMode by mutableStateOf(selectMode)
+        private set
+    var selected by mutableStateOf(selected)
+        private set
+
+    /** Cleared on the way IN, so the bar still shows its count while it slides away. */
+    fun changeSelectMode(on: Boolean) {
+        selectMode = on
+        if (on) selected = emptySet()
+    }
+
+    fun setSelection(id: String, checked: Boolean) {
+        selected = if (checked) selected + id else selected - id
+    }
+
+    companion object {
+        /** listSaver keeps the three fields; the set flattens to a list and back. */
+        val Saver: Saver<UseSmileIDSampleVerificationsScreenState, Any> = listSaver(
+            save = { listOf(it.filter.name, it.selectMode, it.selected.toList()) },
+            restore = {
+                @Suppress("UNCHECKED_CAST")
+                UseSmileIDSampleVerificationsScreenState(
+                    filter = UseSmileIDSampleJobFilter.valueOf(it[0] as String),
+                    selectMode = it[1] as Boolean,
+                    selected = (it[2] as List<String>).toSet(),
+                )
+            },
+        )
+    }
+}
+
+@Composable
+fun rememberVerificationsScreenState(): UseSmileIDSampleVerificationsScreenState =
+    rememberSaveable(saver = UseSmileIDSampleVerificationsScreenState.Saver) {
+        UseSmileIDSampleVerificationsScreenState(
+            filter = UseSmileIDSampleJobFilter.All,
+            selectMode = false,
+            selected = emptySet(),
+        )
+    }
 
 /** Everything the list renders, so the screen owns no clock, store or selection of its own. */
 data class UseSmileIDSampleVerificationsState(
