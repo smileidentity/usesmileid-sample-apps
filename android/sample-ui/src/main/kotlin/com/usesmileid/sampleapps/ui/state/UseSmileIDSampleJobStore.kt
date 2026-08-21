@@ -8,6 +8,9 @@ import androidx.compose.runtime.setValue
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -58,17 +61,13 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
         removalNotice = null
     }
 
-    /** The one write that overwrites: a status refresh rewrites the row it was read from. */
+    /** The one write that overwrites: a status refresh rewrites its row in one atomic update. */
     suspend fun applyStatus(
         jobId: String,
         status: UseSmileIDSampleStatus,
         message: String,
         httpStatus: String,
-    ): Boolean {
-        val row = dao.find(jobId) ?: return false
-        dao.upsert(row.copy(statusId = status.name, message = message, httpStatus = httpStatus))
-        return true
-    }
+    ): Boolean = dao.updateStatus(jobId, status.name, message, httpStatus) > 0
 
     suspend fun find(jobId: String): UseSmileIDSampleJob? = dao.find(jobId)?.toJob()
 
@@ -85,6 +84,9 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
                 instance ?: UseSmileIDSampleJobStore(UseSmileIDSampleJobDatabase.open(context).jobs())
                     .also { instance = it }
             }
+
+        /** One per process, like the store: a write must outlive whatever screen or recreation launched it. */
+        val writeScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
         /** The eleven the design's counts describe, offset from a caller-supplied now. */
         fun fixtures(nowMillis: Long): List<UseSmileIDSampleJob> {

@@ -6,7 +6,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.CoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -27,7 +26,7 @@ import kotlinx.coroutines.delay
 /** Everything the shell hoists: persisted settings, the token session, and the clock that ticks it. */
 class UseSmileIDSampleAppState(
     val store: UseSmileIDSampleStore,
-    /** Outlives any one screen, so navigating away cannot cancel a write to the store mid-flight. */
+    /** Process-lifetime: neither navigation nor activity recreation can cancel a write mid-flight. */
     val storeScope: CoroutineScope,
     private val settingsState: State<UseSmileIDSampleSettings>,
     private val sessionState: State<UseSmileIDSampleTokenSession?>,
@@ -103,7 +102,7 @@ fun rememberUseSmileIDSampleAppState(
 
     return UseSmileIDSampleAppState(
         store = store,
-        storeScope = rememberCoroutineScope(),
+        storeScope = UseSmileIDSampleJobStore.writeScope,
         settingsState = settingsState,
         sessionState = sessionState,
         jobsState = jobsState,

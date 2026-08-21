@@ -52,13 +52,18 @@ class UseSmileIDSampleJobDatabaseTest {
         assertEquals("first", dao.find("job-1")?.message)
     }
 
-    /** The one write that must overwrite, or a status refresh could never change a row. */
+    /** The one write that must change a row, or a status refresh could never land. */
     @Test
-    fun `upsert replaces the row it names`() = runTest {
-        dao.insert(listOf(entity("job-1", message = "first")))
-        dao.upsert(entity("job-1", message = "second"))
-        assertEquals(1, dao.count())
+    fun `updateStatus rewrites exactly the row it names`() = runTest {
+        dao.insert(listOf(entity("job-1", message = "first"), entity("job-2", message = "other")))
+        assertEquals(1, dao.updateStatus("job-1", UseSmileIDSampleStatus.Clear.name, "second", "200 OK"))
         assertEquals("second", dao.find("job-1")?.message)
+        assertEquals("other", dao.find("job-2")?.message)
+    }
+
+    @Test
+    fun `updateStatus on an absent id affects no rows`() = runTest {
+        assertEquals(0, dao.updateStatus("job-absent", UseSmileIDSampleStatus.Clear.name, "x", "200 OK"))
     }
 
     @Test
@@ -108,6 +113,16 @@ class UseSmileIDSampleJobDatabaseTest {
         assertEquals(listOf("job-3", "job-2", "job-1"), store.jobs.first().map { it.id })
     }
 
+    /** A delete landing mid-refresh must win: the row stays deleted and the write reports failure. */
+    @Test
+    fun `a delete landing mid-refresh does not resurrect the row`() = runTest {
+        dao.insert(listOf(entity("job-1")))
+        val store = UseSmileIDSampleJobStore(DeleteBeforeWriteDao(dao))
+        val written = store.applyStatus("job-1", UseSmileIDSampleStatus.Clear, "Approved", "200 OK")
+        assertEquals(false, written)
+        assertNull(dao.find("job-1"))
+    }
+
     private fun job(id: String, createdAtMillis: Long = 0L) = UseSmileIDSampleJob(
         id = id,
         userId = "user-$id",
@@ -120,4 +135,13 @@ class UseSmileIDSampleJobDatabaseTest {
 
     private fun entity(id: String, createdAtMillis: Long = 0L, message: String = "Submitted") =
         job(id, createdAtMillis).copy(message = message).toEntity()
+
+    /** Injects a delete immediately before the status write, the interleaving the details screen can produce. */
+    private class DeleteBeforeWriteDao(private val delegate: UseSmileIDSampleJobDao) :
+        UseSmileIDSampleJobDao by delegate {
+        override suspend fun updateStatus(id: String, statusId: String, message: String, httpStatus: String): Int {
+            delegate.delete(setOf(id))
+            return delegate.updateStatus(id, statusId, message, httpStatus)
+        }
+    }
 }
