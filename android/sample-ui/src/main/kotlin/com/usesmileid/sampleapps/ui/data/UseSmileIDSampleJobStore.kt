@@ -1,33 +1,45 @@
-package com.usesmileid.sampleapps.ui.state
+package com.usesmileid.sampleapps.ui.data
 
 import android.content.Context
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenBindings
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
+import com.usesmileid.sampleapps.ui.state.bindsIdDetails
+import com.usesmileid.sampleapps.ui.state.bindsRequiredUserDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
+import java.io.IOException
+import kotlin.coroutines.cancellation.CancellationException
 
 /** The submitted verifications, on disk: the SDK delivers a result once, and there is nowhere else to get it from. */
-class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
+class UseSmileIDSampleJobStore(
+    private val dao: UseSmileIDSampleJobDao,
+    private val source: UseSmileIDSampleJobStatusSource,
+) {
 
     /** What the last [remove] took, so undo re-inserts rather than clearing a soft-delete column. */
     private var lastRemoved: List<UseSmileIDSampleJobEntity> = emptyList()
 
-    /** Held here, not on the removing screen: the details screen navigates away before it could draw a confirmation. */
-    private var removalNotice: Int? by mutableStateOf(null)
+    /** In flight per job id, so the entry refresh and a pull cannot double-request the same row. */
+    private val inFlight = mutableSetOf<String>()
+    private val inFlightLock = Mutex()
 
-    /** Moves only on a removal, so keying an effect on it cannot be restarted by an unrelated write. */
-    var removalToken: Int by mutableIntStateOf(0)
-        private set
+    /** Buffered until the list screen collects: the details screen navigates away before it could draw a confirmation. */
+    private val removalNotices = Channel<Int>(Channel.BUFFERED)
 
-    fun takeRemovalNotice(): Int? = removalNotice?.also { removalNotice = null }
+    /** Batch sizes of removals, consumed exactly once by whoever renders the confirmation. */
+    val removals: Flow<Int> = removalNotices.receiveAsFlow()
 
     val jobs: Flow<List<UseSmileIDSampleJob>> = dao.all().map { rows -> rows.map { it.toJob() } }
 
@@ -49,8 +61,7 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
         if (ids.isEmpty()) return
         lastRemoved = dao.findAll(ids)
         dao.delete(ids)
-        removalNotice = lastRemoved.size.takeIf { it > 0 }
-        if (removalNotice != null) removalToken++
+        lastRemoved.size.takeIf { it > 0 }?.let { removalNotices.trySend(it) }
     }
 
     /** Order restores itself: the list is ordered by the rows' own timestamps, not by insertion. */
@@ -58,7 +69,6 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
         if (lastRemoved.isEmpty()) return
         dao.insert(lastRemoved)
         lastRemoved = emptyList()
-        removalNotice = null
     }
 
     /** The one write that overwrites: a status refresh rewrites its row in one atomic update. */
@@ -66,8 +76,52 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
         jobId: String,
         status: UseSmileIDSampleStatus,
         message: String,
-        httpStatus: String,
+        httpStatus: Int,
     ): Boolean = dao.updateStatus(jobId, status.name, message, httpStatus) > 0
+
+    /**
+     * The whole refresh sequence, owned by what owns the rows: read the row, take the environment
+     * and session FROM THE ROW, ask the source, write back atomically. Returns null when a refresh
+     * for this job is already in flight — the second request is skipped, mirroring the screen
+     * affordance it replaces.
+     */
+    suspend fun refresh(
+        jobId: String,
+        live: UseSmileIDSampleTokenSession?,
+        nowMillis: Long,
+    ): UseSmileIDSampleStatusRefresh? {
+        inFlightLock.withLock { if (!inFlight.add(jobId)) return null }
+        try {
+            val row = dao.find(jobId)
+                ?: return UseSmileIDSampleStatusRefresh.Failed("The verification is no longer stored")
+            val rowSessionId = row.sessionId ?: return UseSmileIDSampleStatusRefresh.NoServerJob
+            val session = live?.takeUnless { it.hasExpired(nowMillis) }
+                ?: return UseSmileIDSampleStatusRefresh.NoSession
+            if (session.id != rowSessionId) return UseSmileIDSampleStatusRefresh.SessionMismatch
+            val outcome = try {
+                // The row's environment, never the toggle: a row outlives the toggle that produced it.
+                source.check(jobId, session.token, sandbox = row.sandbox)
+            } catch (e: IOException) {
+                return UseSmileIDSampleStatusRefresh.Failed("Could not reach the server")
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                // The type, never the message: this text goes on screen and a client exception carries the request URL.
+                return UseSmileIDSampleStatusRefresh.Failed("Unexpected error: ${e::class.simpleName}")
+            }
+            if (outcome !is UseSmileIDSampleStatusRefresh.Updated) return outcome
+            val written = applyStatus(
+                jobId = jobId,
+                status = outcome.status,
+                message = outcome.message,
+                httpStatus = outcome.httpCode,
+            )
+            return if (written) outcome else UseSmileIDSampleStatusRefresh.Failed("The verification is no longer stored")
+        } finally {
+            // The guard must release even on a cancelled caller, or the row is silently unrefreshable for the rest of the process.
+            withContext(NonCancellable) { inFlightLock.withLock { inFlight.remove(jobId) } }
+        }
+    }
 
     suspend fun find(jobId: String): UseSmileIDSampleJob? = dao.find(jobId)?.toJob()
 
@@ -79,9 +133,9 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
         private var instance: UseSmileIDSampleJobStore? = null
 
         /** One per process: a remembered store would open a second Room pool on every recreation and leak the first. */
-        fun of(context: Context): UseSmileIDSampleJobStore =
+        fun of(context: Context, source: UseSmileIDSampleJobStatusSource): UseSmileIDSampleJobStore =
             instance ?: synchronized(this) {
-                instance ?: UseSmileIDSampleJobStore(UseSmileIDSampleJobDatabase.open(context).jobs())
+                instance ?: UseSmileIDSampleJobStore(UseSmileIDSampleJobDatabase.open(context).jobs(), source)
                     .also { instance = it }
             }
 
@@ -126,7 +180,7 @@ class UseSmileIDSampleJobStore(private val dao: UseSmileIDSampleJobDao) {
 
         private const val HOURS_APART = 5L
         private const val MILLIS_PER_HOUR = 60L * 60L * 1000L
-        private const val HTTP_OK = "200 OK"
-        private const val HTTP_ACCEPTED = "202 Accepted"
+        private const val HTTP_OK = 200
+        private const val HTTP_ACCEPTED = 202
     }
 }

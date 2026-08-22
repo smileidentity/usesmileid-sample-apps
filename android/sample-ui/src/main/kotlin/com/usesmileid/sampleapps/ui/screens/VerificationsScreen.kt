@@ -41,7 +41,8 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** Everything the list renders, so the screen owns no clock, store or selection of its own. */
 data class UseSmileIDSampleVerificationsState(
-    val jobs: List<UseSmileIDSampleJob>,
+    /** Null until the rows have loaded, so an empty state cannot be drawn over a list that is coming. */
+    val jobs: List<UseSmileIDSampleJob>?,
     val counts: Map<UseSmileIDSampleJobFilter, Int>,
     val filter: UseSmileIDSampleJobFilter = UseSmileIDSampleJobFilter.All,
     val selectMode: Boolean = false,
@@ -62,7 +63,7 @@ fun VerificationsScreen(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
-    val visible = state.jobs.filter(state.filter::matches)
+    val visible = state.jobs.orEmpty().filter(state.filter::matches)
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -118,7 +119,7 @@ fun VerificationsScreen(
         }
 
         // Two messages: "nothing yet" and "nothing matching this filter" are different things to be told.
-        if (visible.isEmpty()) {
+        if (state.jobs != null && visible.isEmpty()) {
             item {
                 if (state.jobs.isEmpty()) {
                     UseSmileIDSampleEmptyState(

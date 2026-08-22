@@ -188,7 +188,7 @@ private fun processingJob(snapshot: FlowLaunchSnapshot, response: JobSubmissionR
     status = UseSmileIDSampleStatus.Processing,
     createdAtMillis = System.currentTimeMillis(),
     message = response.message,
-    httpStatus = HTTP_ACCEPTED,
+    httpStatus = 202,
     // From the snapshot, not re-read: by the time a result lands the toggle may have moved on.
     sandbox = snapshot.sandbox,
     sessionId = snapshot.liveSession?.id,
@@ -196,4 +196,3 @@ private fun processingJob(snapshot: FlowLaunchSnapshot, response: JobSubmissionR
 
 /** A failed run has no server-issued job id, so the landing route carries a stable non-id. */
 private const val UNSUBMITTED_JOB_ID = "unsubmitted"
-private const val HTTP_ACCEPTED = "202 Accepted"

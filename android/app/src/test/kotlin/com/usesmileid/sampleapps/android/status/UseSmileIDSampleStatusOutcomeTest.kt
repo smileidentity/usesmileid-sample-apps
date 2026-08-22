@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.android.status
 
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStatusRefresh
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -15,7 +16,7 @@ class UseSmileIDSampleStatusOutcomeTest {
             "block" to UseSmileIDSampleStatus.Blocked,
         ).forEach { (apiStatus, expected) ->
             assertEquals(
-                UseSmileIDSampleStatusRefresh.Updated(expected, "Decided"),
+                UseSmileIDSampleStatusRefresh.Updated(expected, "Decided", 200),
                 statusOutcome(200, response(apiStatus, "Decided")),
             )
         }
@@ -25,7 +26,7 @@ class UseSmileIDSampleStatusOutcomeTest {
     @Test
     fun `error lands on blocked rather than inventing a badge`() {
         assertEquals(
-            UseSmileIDSampleStatusRefresh.Updated(UseSmileIDSampleStatus.Blocked, "Upstream failed"),
+            UseSmileIDSampleStatusRefresh.Updated(UseSmileIDSampleStatus.Blocked, "Upstream failed", 200),
             statusOutcome(200, response("error", "Upstream failed")),
         )
     }

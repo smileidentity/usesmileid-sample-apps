@@ -10,15 +10,16 @@ import kotlinx.coroutines.CoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.saveable.rememberSaveable
+import com.usesmileid.sampleapps.android.status.RetrofitJobStatusSource
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleFlowResult
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleForms
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleJobStore
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleJobStore
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleLaunchArgs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleStore
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStore
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import androidx.compose.runtime.staticCompositionLocalOf
 import kotlinx.coroutines.delay
@@ -30,8 +31,8 @@ class UseSmileIDSampleAppState(
     val storeScope: CoroutineScope,
     private val settingsState: State<UseSmileIDSampleSettings>,
     private val sessionState: State<UseSmileIDSampleTokenSession?>,
-    /** From Room, behind [State] for the same reason as [now]: a value would invalidate the whole subtree on every write. */
-    private val jobsState: State<List<UseSmileIDSampleJob>>,
+    /** Null until Room's first emission, so "not loaded yet" is not read as "no verifications". */
+    private val jobsState: State<List<UseSmileIDSampleJob>?>,
     val jobStore: UseSmileIDSampleJobStore,
     val forms: UseSmileIDSampleForms,
     val profiles: UseSmileIDSampleProfiles,
@@ -47,7 +48,7 @@ class UseSmileIDSampleAppState(
 ) {
     val settings: UseSmileIDSampleSettings get() = settingsState.value
     val session: UseSmileIDSampleTokenSession? get() = sessionState.value
-    val jobs: List<UseSmileIDSampleJob> get() = jobsState.value
+    val jobs: List<UseSmileIDSampleJob>? get() = jobsState.value
 
     val nowMillis: Long get() = now.value
 
@@ -74,8 +75,8 @@ fun rememberUseSmileIDSampleAppState(
     val settingsState = store.settings.collectAsStateWithLifecycle(initialValue = UseSmileIDSampleSettings())
     val sessionState = store.tokenSession.collectAsStateWithLifecycle(initialValue = null)
     val now = remember { mutableLongStateOf(System.currentTimeMillis()) }
-    val jobStore = remember(context) { UseSmileIDSampleJobStore.of(context) }
-    val jobsState = jobStore.jobs.collectAsStateWithLifecycle(initialValue = emptyList())
+    val jobStore = remember(context) { UseSmileIDSampleJobStore.of(context, RetrofitJobStatusSource()) }
+    val jobsState = jobStore.jobs.collectAsStateWithLifecycle<List<UseSmileIDSampleJob>?>(initialValue = null)
     // Automation precondition, never an ordinary launch. Idempotent, so a recreation inserts nothing.
     LaunchedEffect(launchArgs.seedJobs) {
         if (launchArgs.seedJobs) jobStore.seedFixtures(System.currentTimeMillis())

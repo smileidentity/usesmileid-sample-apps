@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleJobStore
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleJobStore
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
 import com.usesmileid.sampleapps.ui.screens.VerificationDetailsScreen
 import com.usesmileid.sampleapps.ui.screens.VerificationsScreen
@@ -65,7 +65,7 @@ class VerificationsGoldenTest : GoldenTest() {
         /** What a real 202 looks like: a message long enough to need a second line of its own column. */
         val QUEUED = JOBS.first().copy(
             message = "Request accepted and queued for processing.",
-            httpStatus = "202 Accepted",
+            httpStatus = 202,
         )
     }
 

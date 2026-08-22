@@ -1,4 +1,4 @@
-package com.usesmileid.sampleapps.ui.state
+package com.usesmileid.sampleapps.ui.data
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -56,14 +56,14 @@ class UseSmileIDSampleJobDatabaseTest {
     @Test
     fun `updateStatus rewrites exactly the row it names`() = runTest {
         dao.insert(listOf(entity("job-1", message = "first"), entity("job-2", message = "other")))
-        assertEquals(1, dao.updateStatus("job-1", UseSmileIDSampleStatus.Clear.name, "second", "200 OK"))
+        assertEquals(1, dao.updateStatus("job-1", UseSmileIDSampleStatus.Clear.name, "second", 200))
         assertEquals("second", dao.find("job-1")?.message)
         assertEquals("other", dao.find("job-2")?.message)
     }
 
     @Test
     fun `updateStatus on an absent id affects no rows`() = runTest {
-        assertEquals(0, dao.updateStatus("job-absent", UseSmileIDSampleStatus.Clear.name, "x", "200 OK"))
+        assertEquals(0, dao.updateStatus("job-absent", UseSmileIDSampleStatus.Clear.name, "x", 200))
     }
 
     @Test
@@ -88,7 +88,7 @@ class UseSmileIDSampleJobDatabaseTest {
             status = UseSmileIDSampleStatus.Attention,
             createdAtMillis = 42L,
             message = "Provisional",
-            httpStatus = "200 OK",
+            httpStatus = 200,
             sandbox = false,
             sessionId = "4d33b7ba",
         )
@@ -104,7 +104,7 @@ class UseSmileIDSampleJobDatabaseTest {
     /** The store re-inserts what it removed, which only restores order because the query does the ordering. */
     @Test
     fun `re-inserting a removed row restores its place in the order`() = runTest {
-        val store = UseSmileIDSampleJobStore(dao)
+        val store = UseSmileIDSampleJobStore(dao, NoStatusSource)
         store.add(job("job-1", createdAtMillis = 1L))
         store.add(job("job-2", createdAtMillis = 2L))
         store.add(job("job-3", createdAtMillis = 3L))
@@ -117,8 +117,8 @@ class UseSmileIDSampleJobDatabaseTest {
     @Test
     fun `a delete landing mid-refresh does not resurrect the row`() = runTest {
         dao.insert(listOf(entity("job-1")))
-        val store = UseSmileIDSampleJobStore(DeleteBeforeWriteDao(dao))
-        val written = store.applyStatus("job-1", UseSmileIDSampleStatus.Clear, "Approved", "200 OK")
+        val store = UseSmileIDSampleJobStore(DeleteBeforeWriteDao(dao), NoStatusSource)
+        val written = store.applyStatus("job-1", UseSmileIDSampleStatus.Clear, "Approved", 200)
         assertEquals(false, written)
         assertNull(dao.find("job-1"))
     }
@@ -130,7 +130,7 @@ class UseSmileIDSampleJobDatabaseTest {
         status = UseSmileIDSampleStatus.Processing,
         createdAtMillis = createdAtMillis,
         message = "Submitted",
-        httpStatus = "202 Accepted",
+        httpStatus = 202,
     )
 
     private fun entity(id: String, createdAtMillis: Long = 0L, message: String = "Submitted") =
@@ -139,7 +139,7 @@ class UseSmileIDSampleJobDatabaseTest {
     /** Injects a delete immediately before the status write, the interleaving the details screen can produce. */
     private class DeleteBeforeWriteDao(private val delegate: UseSmileIDSampleJobDao) :
         UseSmileIDSampleJobDao by delegate {
-        override suspend fun updateStatus(id: String, statusId: String, message: String, httpStatus: String): Int {
+        override suspend fun updateStatus(id: String, statusId: String, message: String, httpStatus: Int): Int {
             delegate.delete(setOf(id))
             return delegate.updateStatus(id, statusId, message, httpStatus)
         }
