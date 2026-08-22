@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.android.navigation
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -45,6 +46,7 @@ fun ProfileSwitchSheet(navigator: DestinationsNavigator) {
 @Composable
 fun ProfilesScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
+    val chrome = LocalUseSmileIDSampleChrome.current
     val notice = rememberTransientNotice()
     val pendingId = app.profiles.lastCreatedId
     // Consumed on sight, so returning cannot re-show it.
@@ -61,6 +63,7 @@ fun ProfilesScreen(navigator: DestinationsNavigator) {
     }
     Box(modifier = Modifier.fillMaxSize()) {
         ProfilesContent(
+            contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
             profiles = app.profiles.all,
             activeId = app.profiles.activeId,
             onProfileClick = { navigator.navigate(ProfileConfigScreenDestination(profileId = it.id)) },

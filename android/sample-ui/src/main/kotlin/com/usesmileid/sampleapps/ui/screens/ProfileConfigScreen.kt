@@ -4,17 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.foundation.BorderStroke
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowDivider
 import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
@@ -22,10 +18,10 @@ import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleKeyValueEditRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionSurface
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBar
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserField
-import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** A profile's user-details defaults, which is what seeds the Consent Details Form for its jobs. */
 @Composable
@@ -53,25 +49,19 @@ fun ProfileConfigScreen(
                 .padding(horizontal = SmileDimens.spacingMd),
             verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
         ) {
+            // The label stays here: SECTION_GAP, not the component's own spacing, separates it from the card.
             UseSmileIDSampleSectionLabel(text = "USER DETAILS — ATTACHED TO EVERY JOB")
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(SmileDimens.radiusSurface),
-                color = UseSmileIDSampleTheme.colors.surface,
-                border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.card.border),
-            ) {
-                Column {
-                    UseSmileIDSampleUserField.entries.forEachIndexed { index, field ->
-                        if (index > 0) UseSmileIDSampleSettingRowDivider()
-                        UseSmileIDSampleKeyValueEditRow(
-                            label = field.label,
-                            value = field.read(defaults),
-                            onValueChange = { onFieldChange(field, it) },
-                            placeholder = field.placeholder,
-                            required = field.required,
-                            testId = UseSmileIDSampleTestIds.profileConfigField(field.id),
-                        )
-                    }
+            UseSmileIDSampleSectionSurface {
+                UseSmileIDSampleUserField.entries.forEachIndexed { index, field ->
+                    if (index > 0) UseSmileIDSampleSettingRowDivider()
+                    UseSmileIDSampleKeyValueEditRow(
+                        label = field.label,
+                        value = field.read(defaults),
+                        onValueChange = { onFieldChange(field, it) },
+                        placeholder = field.placeholder,
+                        required = field.required,
+                        testId = UseSmileIDSampleTestIds.profileConfigField(field.id),
+                    )
                 }
             }
         }

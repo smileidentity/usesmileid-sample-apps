@@ -1,11 +1,13 @@
 package com.usesmileid.sampleapps.android.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.parameters.DeepLink
 import com.ramcosta.composedestinations.generated.destinations.ProfileSwitchSheetDestination
 import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.android.flow.firstStepFor
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
@@ -19,7 +21,9 @@ import com.usesmileid.sampleapps.ui.screens.ProductsScreen as ProductsContent
 @Composable
 fun ProductsScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
+    val chrome = LocalUseSmileIDSampleChrome.current
     ProductsContent(
+        contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
         state = UseSmileIDSampleProductsState(
             environment = app.environment,
             initials = app.profiles.active.initials,

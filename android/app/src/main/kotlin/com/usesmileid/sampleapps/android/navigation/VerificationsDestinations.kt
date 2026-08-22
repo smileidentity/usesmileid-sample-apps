@@ -3,16 +3,17 @@ package com.usesmileid.sampleapps.android.navigation
 import android.content.ClipData
 import android.os.Build
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -30,7 +31,9 @@ import com.usesmileid.sampleapps.ui.components.rememberTransientNotice
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStatusRefresh
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
+import com.usesmileid.sampleapps.ui.model.startOfDayMillis
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
+import com.usesmileid.sampleapps.ui.screens.rememberVerificationsScreenState
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import com.usesmileid.sampleapps.ui.screens.VerificationDetailsScreen as VerificationDetailsContent
@@ -42,23 +45,30 @@ import com.usesmileid.sampleapps.ui.screens.VerificationsScreen as Verifications
 @Composable
 fun VerificationsScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
-    var filter by rememberSaveable { mutableStateOf(UseSmileIDSampleJobFilter.All) }
-    var selectMode by rememberSaveable { mutableStateOf(false) }
-    var selected by rememberSaveable { mutableStateOf(emptySet<String>()) }
+    val screen = rememberVerificationsScreenState()
     val notice = rememberTransientNotice()
+
+    // None of the list derivations read the clock; recompute on data change, not on the session tick.
+    val jobs = app.jobs
+    // Counted off the same list the rows render from, so a count can never disagree with what is on screen.
+    val counts = remember(jobs) { UseSmileIDSampleJobFilter.entries.associateWith { f -> jobs.orEmpty().count(f::matches) } }
+    // The grouping only cares which day it is, so per-second ticks must not invalidate it.
+    val todayStart by remember { derivedStateOf { startOfDayMillis(app.nowMillis) } }
 
     val removeJobs: (Set<String>) -> Unit = { ids ->
         app.storeScope.launch { app.jobStore.remove(ids) }
-        selectMode = false
+        screen.changeSelectMode(false)
         // Against the list minus the ids going away: the delete is suspend and has not landed yet.
-        if (app.jobs.orEmpty().none { it.id !in ids && filter.matches(it) }) filter = UseSmileIDSampleJobFilter.All
+        if (app.jobs.orEmpty().none { it.id !in ids && screen.filter.matches(it) }) {
+            screen.filter = UseSmileIDSampleJobFilter.All
+        }
     }
 
     // Published to the shell rather than drawn here: the design replaces the nav bar with it.
     val chrome = LocalUseSmileIDSampleChrome.current
-    LaunchedEffect(selectMode, selected) {
-        chrome.selection = if (selectMode) {
-            UseSmileIDSampleSelectionChrome(count = selected.size, onRemove = { removeJobs(selected) })
+    LaunchedEffect(screen.selectMode, screen.selected) {
+        chrome.selection = if (screen.selectMode) {
+            UseSmileIDSampleSelectionChrome(count = screen.selected.size, onRemove = { removeJobs(screen.selected) })
         } else {
             null
         }
@@ -67,19 +77,19 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
 
     Box(modifier = Modifier.fillMaxSize()) {
         VerificationsContent(
+            // The selection bar insets via the Scaffold slot; only the floating nav bar needs clearing here.
+            contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
             state = UseSmileIDSampleVerificationsState(
-                jobs = app.jobs,
-                // Counted off the same list the rows render from, so a count can never disagree with what is on screen.
-                counts = UseSmileIDSampleJobFilter.entries.associateWith { f -> app.jobs.orEmpty().count(f::matches) },
-                filter = filter,
-                selectMode = selectMode,
-                selected = selected,
-                nowMillis = app.nowMillis,
+                jobs = jobs,
+                counts = counts,
+                filter = screen.filter,
+                selectMode = screen.selectMode,
+                selected = screen.selected,
+                todayStartMillis = todayStart,
             ),
-            onFilterChange = { filter = it },
-            // Cleared on the way IN, so the bar still shows its count while it slides away.
-            onSelectModeChange = { selectMode = it; if (it) selected = emptySet() },
-            onSelectionChange = { id, checked -> selected = if (checked) selected + id else selected - id },
+            onFilterChange = { screen.filter = it },
+            onSelectModeChange = screen::changeSelectMode,
+            onSelectionChange = screen::setSelection,
             onJobClick = { navigator.navigate(VerificationDetailsScreenDestination(jobId = it.id)) },
             onRemove = removeJobs,
         )

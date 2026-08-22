@@ -3,12 +3,11 @@ package com.usesmileid.sampleapps.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -56,7 +55,7 @@ fun ProfilesScreen(
             contentPadding = contentPadding,
             verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
         ) {
-            items(profiles) { index, profile ->
+            itemsIndexed(profiles, key = { _, profile -> profile.id }) { index, profile ->
                 UseSmileIDSampleProfileRow(
                     avatarColor = avatarColorForProfile(index),
                     organisation = profile.organisation,
@@ -75,15 +74,9 @@ fun ProfilesScreen(
                     modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
                 )
             }
-            item { Spacer(modifier = Modifier.height(SmileDimens.space64)) }
         }
     }
 }
-
-private fun androidx.compose.foundation.lazy.LazyListScope.items(
-    profiles: List<UseSmileIDSampleProfile>,
-    row: @Composable (Int, UseSmileIDSampleProfile) -> Unit,
-) = profiles.forEachIndexed { index, profile -> item(key = profile.id) { row(index, profile) } }
 
 /** The last row: no card and no border, a pale primary tile with a plus. */
 @Composable

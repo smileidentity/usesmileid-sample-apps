@@ -5,6 +5,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleJobStore
+import com.usesmileid.sampleapps.ui.model.startOfDayMillis
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
 import com.usesmileid.sampleapps.ui.screens.VerificationDetailsScreen
 import com.usesmileid.sampleapps.ui.screens.VerificationsScreen
@@ -82,7 +83,7 @@ class VerificationsGoldenTest : GoldenTest() {
             filter = filter,
             selectMode = selectMode,
             selected = if (selectFirst) jobs.take(2).map { it.id }.toSet() else emptySet(),
-            nowMillis = FIXED_NOW,
+            todayStartMillis = startOfDayMillis(FIXED_NOW),
         ),
         onFilterChange = {},
         onSelectModeChange = {},

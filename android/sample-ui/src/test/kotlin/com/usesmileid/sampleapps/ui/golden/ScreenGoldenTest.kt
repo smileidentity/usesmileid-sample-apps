@@ -6,6 +6,7 @@ import com.usesmileid.sampleapps.ui.screens.ProductsScreen
 import com.usesmileid.sampleapps.ui.screens.ScanTokenScreen
 import com.usesmileid.sampleapps.ui.screens.SettingsScreen
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleProductsState
+import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleSettingsState
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
 import org.junit.Test
 
@@ -60,13 +61,15 @@ class ScreenGoldenTest : GoldenTest() {
 
 @Composable
 private fun Settings() = SettingsScreen(
-    settings = UseSmileIDSampleSettings(),
+    state = UseSmileIDSampleSettingsState(
+        settings = UseSmileIDSampleSettings(),
+        environment = UseSmileIDSampleEnvironment.Sandbox,
+        environmentPinned = false,
+        organisation = "UpTech Finance",
+        initials = "KA",
+        versionLabel = "UseSmileID Sample · 1.0.0",
+    ),
     onSettingChange = { _, _ -> },
-    environment = UseSmileIDSampleEnvironment.Sandbox,
-    environmentPinned = false,
-    organisation = "UpTech Finance",
-    initials = "KA",
-    versionLabel = "UseSmileID Sample · 1.0.0",
     onProfileClick = {},
     onNavRowClick = {},
     onOpenScenarioDrawer = {},

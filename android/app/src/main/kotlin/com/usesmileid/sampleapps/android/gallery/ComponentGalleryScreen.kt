@@ -5,11 +5,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -96,7 +95,7 @@ private enum class GallerySheet { None, Partial, FullHeight }
  * controls stay operable at 2x.
  */
 @Composable
-fun ComponentGalleryScreen() {
+fun ComponentGalleryScreen(contentPadding: PaddingValues = PaddingValues()) {
     var largeText by rememberSaveable { mutableStateOf(false) }
     val density = LocalDensity.current
     val listState = rememberLazyListState()
@@ -124,7 +123,7 @@ fun ComponentGalleryScreen() {
         // Anchors, so the last of 27 sections is reachable without a long scroll.
         LazyRow(
             modifier = Modifier.padding(bottom = SmileDimens.spacingXs),
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = SmileDimens.spacingMd),
+            contentPadding = PaddingValues(horizontal = SmileDimens.spacingMd),
             horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
         ) {
             itemsIndexed(sections) { index, section ->
@@ -147,14 +146,19 @@ fun ComponentGalleryScreen() {
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(SmileDimens.spacingMd),
+                // The caller's clearance adds to the gallery's own inset; flush with the viewport
+                // edge, the last component reports clipped bounds to automation.
+                contentPadding = PaddingValues(
+                    start = SmileDimens.spacingMd,
+                    top = SmileDimens.spacingMd,
+                    end = SmileDimens.spacingMd,
+                    bottom = SmileDimens.spacingMd + contentPadding.calculateBottomPadding(),
+                ),
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
             ) {
                 itemsIndexed(sections) { _, section ->
                     GallerySection(section.label) { section.content() }
                 }
-                // Flush with the viewport edge, the last component reports clipped bounds to automation.
-                item { Spacer(modifier = Modifier.height(SmileDimens.space64)) }
             }
         }
     }

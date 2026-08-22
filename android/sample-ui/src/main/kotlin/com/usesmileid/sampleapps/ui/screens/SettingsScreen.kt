@@ -1,24 +1,18 @@
 package com.usesmileid.sampleapps.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.ui.text.style.TextAlign
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowDivider
 import androidx.annotation.DrawableRes
@@ -31,7 +25,7 @@ import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDestructiveRow
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProfileRow
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionSurface
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowChevron
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwitch
@@ -47,22 +41,28 @@ data class UseSmileIDSampleNavRow(
     @DrawableRes val icon: Int = R.drawable.sample_ic_product_mark,
 )
 
-/** Settings, which every other screen's configuration comes from. [versionLabel] is passed in because it names the host, and this module runs under eight. */
+/** Everything the settings list renders; callbacks stay parameters, like every screen. */
+data class UseSmileIDSampleSettingsState(
+    val settings: UseSmileIDSampleSettings,
+    val environment: UseSmileIDSampleEnvironment,
+    val environmentPinned: Boolean,
+    val organisation: String,
+    val initials: String,
+    /** Passed in because it names the host, and this module runs under eight. */
+    val versionLabel: String,
+    val avatarColor: Color = smileProfileHues.first(),
+)
+
+/** Settings, which every other screen's configuration comes from. */
 @Composable
 fun SettingsScreen(
-    settings: UseSmileIDSampleSettings,
+    state: UseSmileIDSampleSettingsState,
     onSettingChange: (UseSmileIDSampleSetting, Boolean) -> Unit,
-    environment: UseSmileIDSampleEnvironment,
-    environmentPinned: Boolean,
-    organisation: String,
-    initials: String,
-    versionLabel: String,
     onProfileClick: () -> Unit,
     onNavRowClick: (UseSmileIDSampleNavRow) -> Unit,
     onOpenScenarioDrawer: () -> Unit,
     onSignOut: () -> Unit,
     modifier: Modifier = Modifier,
-    avatarColor: Color = smileProfileHues.first(),
     contentPadding: PaddingValues = PaddingValues(),
 ) {
     LazyColumn(
@@ -84,12 +84,12 @@ fun SettingsScreen(
 
         section("PROFILE") {
             UseSmileIDSampleProfileRow(
-                organisation = organisation,
+                organisation = state.organisation,
                 supportingText = "Tap to configure",
-                initials = initials,
+                initials = state.initials,
                 selected = false,
                 onClick = onProfileClick,
-                avatarColor = avatarColor,
+                avatarColor = state.avatarColor,
                 trailing = { UseSmileIDSampleSettingRowChevron() },
                 testId = UseSmileIDSampleTestIds.PROFILE_SUMMARY,
             )
@@ -101,15 +101,15 @@ fun SettingsScreen(
                 title = "Production",
                 icon = R.drawable.sample_ic_settings,
                 supportingText = when {
-                    environmentPinned -> "Pinned by the sandbox launch argument"
-                    environment == UseSmileIDSampleEnvironment.Production -> "Jobs submit to the live environment"
+                    state.environmentPinned -> "Pinned by the sandbox launch argument"
+                    state.environment == UseSmileIDSampleEnvironment.Production -> "Jobs submit to the live environment"
                     else -> "Jobs submit to sandbox"
                 },
-                checked = environment == UseSmileIDSampleEnvironment.Production,
+                checked = state.environment == UseSmileIDSampleEnvironment.Production,
                 setting = UseSmileIDSampleSetting.Production,
                 testId = UseSmileIDSampleTestIds.SETTING_PRODUCTION,
                 onSettingChange = onSettingChange,
-                enabled = !environmentPinned,
+                enabled = !state.environmentPinned,
             )
         }
 
@@ -119,7 +119,7 @@ fun SettingsScreen(
                 title = "Smile to capture",
                 icon = R.drawable.sample_ic_setting_smile,
                 supportingText = "Passive capture — smile detection",
-                checked = settings.smileToCapture,
+                checked = state.settings.smileToCapture,
                 setting = UseSmileIDSampleSetting.SmileToCapture,
                 testId = UseSmileIDSampleTestIds.SETTING_SMILE_TO_CAPTURE,
                 onSettingChange = onSettingChange,
@@ -129,7 +129,7 @@ fun SettingsScreen(
                 title = "Agent mode",
                 icon = R.drawable.sample_ic_setting_agent,
                 supportingText = "Operator captures for the applicant",
-                checked = settings.agentMode,
+                checked = state.settings.agentMode,
                 setting = UseSmileIDSampleSetting.AgentMode,
                 testId = UseSmileIDSampleTestIds.SETTING_AGENT_MODE,
                 onSettingChange = onSettingChange,
@@ -141,7 +141,7 @@ fun SettingsScreen(
                 title = "Dark mode",
                 icon = R.drawable.sample_ic_setting_dark_mode,
                 supportingText = "Switch appearance",
-                checked = settings.darkMode,
+                checked = state.settings.darkMode,
                 setting = UseSmileIDSampleSetting.DarkMode,
                 testId = UseSmileIDSampleTestIds.SETTING_DARK_MODE,
                 onSettingChange = onSettingChange,
@@ -153,7 +153,7 @@ fun SettingsScreen(
                 title = "Consent screen",
                 icon = R.drawable.sample_ic_setting_consent,
                 supportingText = "Ask permission before KYC checks",
-                checked = settings.consentStep,
+                checked = state.settings.consentStep,
                 setting = UseSmileIDSampleSetting.ConsentStep,
                 testId = UseSmileIDSampleTestIds.SETTING_CONSENT_STEP,
                 onSettingChange = onSettingChange,
@@ -163,7 +163,7 @@ fun SettingsScreen(
                 title = "Instruction screen",
                 icon = R.drawable.sample_ic_setting_instructions,
                 supportingText = "Prep tips before capture",
-                checked = settings.instructionsStep,
+                checked = state.settings.instructionsStep,
                 setting = UseSmileIDSampleSetting.InstructionsStep,
                 testId = UseSmileIDSampleTestIds.SETTING_INSTRUCTIONS_STEP,
                 onSettingChange = onSettingChange,
@@ -173,7 +173,7 @@ fun SettingsScreen(
                 title = "Preview screen",
                 icon = R.drawable.sample_ic_setting_preview,
                 supportingText = "Confirm or retake after capture",
-                checked = settings.previewStep,
+                checked = state.settings.previewStep,
                 setting = UseSmileIDSampleSetting.PreviewStep,
                 testId = UseSmileIDSampleTestIds.SETTING_PREVIEW_STEP,
                 onSettingChange = onSettingChange,
@@ -214,9 +214,11 @@ fun SettingsScreen(
                 testId = UseSmileIDSampleTestIds.SIGN_OUT,
             )
         }
+        // The last row: flush with the viewport edge it reports clipped bounds to automation, so the
+        // caller's [contentPadding] has to clear whatever draws over the list.
         item {
             Text(
-                text = versionLabel,
+                text = state.versionLabel,
                 style = UseSmileIDSampleTheme.type.textStyleCaption,
                 textAlign = TextAlign.Center,
                 color = UseSmileIDSampleTheme.colors.textMuted,
@@ -226,8 +228,6 @@ fun SettingsScreen(
                     .padding(SmileDimens.spacingMd),
             )
         }
-        // Flush with the viewport edge, the last row reports clipped bounds to automation.
-        item { Spacer(modifier = Modifier.height(SmileDimens.space64)) }
     }
 }
 
@@ -236,19 +236,11 @@ private fun androidx.compose.foundation.lazy.LazyListScope.section(
     label: String,
     content: @Composable () -> Unit,
 ) = item {
-    Column(
+    UseSmileIDSampleSectionSurface(
         modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
-        verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+        label = label,
     ) {
-        UseSmileIDSampleSectionLabel(text = label)
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(SmileDimens.radiusSurface),
-            color = UseSmileIDSampleTheme.colors.surface,
-            border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.card.border),
-        ) {
-            Column { content() }
-        }
+        content()
     }
 }
 
