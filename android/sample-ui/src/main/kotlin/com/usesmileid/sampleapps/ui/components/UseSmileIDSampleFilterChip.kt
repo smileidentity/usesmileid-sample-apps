@@ -63,7 +63,7 @@ fun UseSmileIDSampleFilterChip(
                     fontSize = smileLabelSize,
                     letterSpacing = smileLabelTracking,
                 ),
-                // Owner ruling 2026-08-18: the design file's muted grey, not filter-chip.value's blue.
+                // The design file's muted grey, deliberately not filter-chip.value's blue.
                 color = if (selected) colors.onPrimary else colors.textMuted,
                 modifier = Modifier.tagged(countTestId),
             )

@@ -51,7 +51,6 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
-    // Already on the runtime classpath through navigation; declared because this module uses it.
     implementation(libs.androidx.lifecycle.runtime.compose)
 
     testImplementation(libs.junit)
@@ -61,7 +60,6 @@ dependencies {
     testImplementation(libs.robolectric)
     testImplementation(libs.roborazzi)
     testImplementation(libs.roborazzi.compose)
-    // Supplies the ComponentActivity the compose test hosts.
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
 

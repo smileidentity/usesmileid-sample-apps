@@ -95,7 +95,7 @@ fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshe
         }
     }
     if (snapshot.theme == UseSmileIDSampleThemeScenario.PartnerOverride) {
-        // Baseline Material3, because a hex literal in app code is a review failure.
+        // Baseline Material3: the partner-override scenario needs stable non-brand colours, and no raw hex exists here.
         theme {
             val light = lightColorScheme()
             val dark = darkColorScheme()

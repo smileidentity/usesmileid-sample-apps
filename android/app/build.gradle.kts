@@ -76,8 +76,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.navigation.compose)
 
-    // The host owns a camera for the token QR (docs/plan/token-session-android.md §7.1). These are
-    // already on the runtime classpath through the SDK; declaring them puts them on the compile one.
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.compose)
     implementation(libs.androidx.camera.core)
@@ -87,9 +85,6 @@ dependencies {
     implementation(libs.destinations)
     ksp(libs.destinations.ksp)
 
-    // The verification-status call is the partner's own — the SDK owns capture and submission, and
-    // stops at the 202. Same story as CameraX above: already on the runtime classpath through the
-    // SDK, declared here to put it on the compile one.
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.kotlinx.serialization)

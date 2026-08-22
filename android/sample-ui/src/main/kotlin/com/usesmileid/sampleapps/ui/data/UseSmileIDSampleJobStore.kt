@@ -56,6 +56,7 @@ class UseSmileIDSampleJobStore(
         )
     }
 
+    /** Retains the deleted rows for [undoRemove]; only the most recent batch stays undoable. */
     suspend fun remove(ids: Set<String>) {
         // A no-op removal must not discard an earlier batch that is still undoable.
         if (ids.isEmpty()) return
@@ -64,7 +65,10 @@ class UseSmileIDSampleJobStore(
         lastRemoved.size.takeIf { it > 0 }?.let { removalNotices.trySend(it) }
     }
 
-    /** Order restores itself: the list is ordered by the rows' own timestamps, not by insertion. */
+    /**
+     * Re-inserts the batch the last [remove] took, and is a no-op with nothing pending.
+     * Order restores itself: the list is ordered by the rows' own timestamps, not by insertion.
+     */
     suspend fun undoRemove() {
         if (lastRemoved.isEmpty()) return
         dao.insert(lastRemoved)

@@ -12,6 +12,7 @@ import com.smileid.designsystem.smileSurface2
 @Immutable
 data class AvatarTokens(val background: Color, val text: Color, val placeholderBackground: Color, val placeholderIcon: Color)
 
+/** Colours the buttons draw: one background/text pair per enabled state. */
 @Immutable
 data class ButtonTokens(
     val primaryBackground: Color,
@@ -20,6 +21,7 @@ data class ButtonTokens(
     val disabledText: Color,
 )
 
+/** Colours the text fields draw, including the focus and error borders. */
 @Immutable
 data class InputTokens(
     val background: Color,
@@ -30,6 +32,7 @@ data class InputTokens(
     val borderError: Color,
 )
 
+/** Colours the search field draws — its own set, because the icon is part of the control. */
 @Immutable
 data class SearchTokens(
     val background: Color,
@@ -40,6 +43,7 @@ data class SearchTokens(
     val borderFocus: Color,
 )
 
+/** Colours the status badges draw: one background/text pair per role. */
 @Immutable
 data class BadgeTokens(
     val successBackground: Color,
@@ -52,9 +56,11 @@ data class BadgeTokens(
     val infoText: Color,
 )
 
+/** Colours the label/value rows draw, with a distinct fill for a value that is a link. */
 @Immutable
 data class DataFieldTokens(val label: Color, val value: Color, val valueLink: Color)
 
+/** Colours the filter chips draw, counted value and divider included. */
 @Immutable
 data class FilterChipTokens(
     val background: Color,
@@ -64,9 +70,11 @@ data class FilterChipTokens(
     val divider: Color,
 )
 
+/** Colours the cards draw, the section surfaces among them. */
 @Immutable
 data class CardTokens(val background: Color, val border: Color, val title: Color, val body: Color)
 
+/** Colours the inline banners draw, the notices and callouts among them. */
 @Immutable
 data class BannerTokens(val background: Color, val border: Color, val title: Color, val text: Color)
 
