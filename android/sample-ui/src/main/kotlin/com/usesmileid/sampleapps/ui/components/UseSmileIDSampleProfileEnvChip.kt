@@ -16,13 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
-
-/** Sandbox or production; there is no third case. */
-enum class UseSmileIDSampleEnvironment(val label: String) {
-    Sandbox("Sandbox"),
-    Production("Production"),
-}
 
 /** A status dot and the environment name on a pale fill. Display-only, and not fixed-width, because Production is wider than Sandbox. */
 @Composable

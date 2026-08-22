@@ -49,9 +49,9 @@ import com.usesmileid.sampleapps.android.flow.tokenBindsUserDetails
 import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleQrScanner
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStatusRefresh
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEnvironment
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleOverlay
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleToast
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter

@@ -1,7 +1,6 @@
 package com.usesmileid.sampleapps.ui.model
 
 import androidx.compose.runtime.Immutable
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
 
 /** One submitted verification. `createdAtMillis` is absolute, so grouping never depends on when it is read. */
 @Immutable

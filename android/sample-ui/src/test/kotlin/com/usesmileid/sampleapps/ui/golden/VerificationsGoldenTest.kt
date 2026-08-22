@@ -2,7 +2,7 @@ package com.usesmileid.sampleapps.ui.golden
 
 import androidx.compose.runtime.Composable
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleJobStore
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState

@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /**

@@ -1,6 +1,6 @@
 package com.usesmileid.sampleapps.android.status
 
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStatusRefresh
 import org.junit.Assert.assertEquals
 import org.junit.Test

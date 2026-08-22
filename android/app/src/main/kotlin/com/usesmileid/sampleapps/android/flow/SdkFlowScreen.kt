@@ -29,7 +29,7 @@ import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.android.navigation.FlowGraph
 import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleDeepLinks
 import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleFlowTransitions
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob

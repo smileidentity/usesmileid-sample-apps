@@ -1,6 +1,6 @@
 package com.usesmileid.sampleapps.ui.data
 
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatus
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 
 /** The one network call the app owns, behind a seam so the refresh orchestration tests off-device. */
 interface UseSmileIDSampleJobStatusSource {
