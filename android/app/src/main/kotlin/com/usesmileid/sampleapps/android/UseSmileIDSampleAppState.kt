@@ -15,6 +15,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleFlowResult
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleForms
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleInterruptedRun
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleJobStore
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleLaunchArgs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
@@ -38,6 +39,7 @@ class UseSmileIDSampleAppState(
     val profiles: UseSmileIDSampleProfiles,
     val launchArgs: UseSmileIDSampleLaunchArgs,
     val flowResult: UseSmileIDSampleFlowResult,
+    val interruptedRun: UseSmileIDSampleInterruptedRun,
     /**
      * Read through [State] rather than held as a value, so the once-a-second tick recomposes only
      * what reads the clock. Held as a value it changed this object's identity every second, and
@@ -83,6 +85,9 @@ fun rememberUseSmileIDSampleAppState(
     }
     val forms = rememberSaveable(saver = UseSmileIDSampleForms.Saver) { UseSmileIDSampleForms() }
     val profiles = remember { UseSmileIDSampleProfiles() }
+    // Not saveable: the gate hands this straight to the scanner, and the scanner claims it into its
+    // own saveable state on arrival, which is what has to survive a rotation mid-scan.
+    val interruptedRun = remember { UseSmileIDSampleInterruptedRun() }
     // Saveable, so the arguments seed the first launch only and a recreation keeps the drawer's choice.
     val flowResult = rememberSaveable(saver = UseSmileIDSampleFlowResult.Saver) {
         UseSmileIDSampleFlowResult(
@@ -112,6 +117,7 @@ fun rememberUseSmileIDSampleAppState(
         profiles = profiles,
         launchArgs = launchArgs,
         flowResult = flowResult,
+        interruptedRun = interruptedRun,
         now = now,
     )
 }

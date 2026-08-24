@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleFlowResult
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleRunIntent
 
 /**
  * The single route hosting the SDK flow, in both presentations (R3). The SDK owns everything inside
@@ -80,6 +81,10 @@ fun SdkFlowScreen(
         // Back to the scanner, not to a form: the run needs a token, and no form holds one.
         FlowPreflight.NeedsSession -> {
             LaunchedEffect(Unit) {
+                // Handed over before navigating, so the scanner it lands on can re-enter this run.
+                app.interruptedRun.send(
+                    UseSmileIDSampleRunIntent(productId = snapshot.product.id, route = snapshot.route),
+                )
                 navigator.navigate(ScanTokenScreenDestination) {
                     popUpTo(FlowNavGraph) { inclusive = true }
                 }

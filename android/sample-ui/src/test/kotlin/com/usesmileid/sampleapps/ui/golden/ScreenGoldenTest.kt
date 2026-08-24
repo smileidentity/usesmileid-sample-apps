@@ -47,6 +47,13 @@ class ScreenGoldenTest : GoldenTest() {
     @Test
     fun scan_token_max_font_scale() = assertSurvivesMaxFontScale { ScanToken() }
 
+    @Test
+    fun scan_token_redirected() = goldens("screen_scan_token_redirected") { ScanToken(REDIRECT_REASON) }
+
+    // The redirect's sentence is longer than the caption it replaces, so it is the one to clamp against.
+    @Test
+    fun scan_token_redirected_max_font_scale() = assertSurvivesMaxFontScale { ScanToken(REDIRECT_REASON) }
+
     private companion object {
         val SANDBOX = UseSmileIDSampleProductsState(
             environment = UseSmileIDSampleEnvironment.Sandbox,
@@ -54,6 +61,7 @@ class ScreenGoldenTest : GoldenTest() {
         )
         val TOKEN_LINKED = SANDBOX.copy(sessionId = "9f3a2c71", sessionRemaining = "7:59:12")
         val TOKEN_EXPIRED = SANDBOX.copy(sessionEnded = true)
+        const val REDIRECT_REASON = "Token session ended. Scan to continue where you left off."
         val PRODUCTION = SANDBOX.copy(environment = UseSmileIDSampleEnvironment.Production)
         val IN_FLIGHT = SANDBOX.copy(result = ResultFixtures.Running)
     }
@@ -85,9 +93,10 @@ private fun Products(state: UseSmileIDSampleProductsState) = ProductsScreen(
 )
 
 @Composable
-private fun ScanToken() = ScanTokenScreen(
+private fun ScanToken(reason: String? = null) = ScanTokenScreen(
     onBack = {},
     onLink = {},
     onSimulate = { _, _ -> },
     onPaste = { null },
+    reason = reason,
 )
