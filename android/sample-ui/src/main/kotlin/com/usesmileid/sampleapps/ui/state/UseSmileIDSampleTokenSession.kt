@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.ui.state
 
 import androidx.compose.runtime.Immutable
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
@@ -24,6 +25,8 @@ data class UseSmileIDSampleTokenSession(
      * request gets a 401. Never logged — a partner id is on this repo's never-commit list.
      */
     val partnerId: String? = null,
+    /** The environment the token was minted for, from its own `api_url` claim, and the only thing deciding where a run submits. Never null on a linked session: the decoder refuses a token it cannot place. */
+    val environment: UseSmileIDSampleEnvironment? = null,
 ) {
 
     fun remaining(nowMillis: Long): Duration = (expiresAtMillis - nowMillis).coerceAtLeast(0L).milliseconds
@@ -42,7 +45,8 @@ data class UseSmileIDSampleTokenSession(
     }
 
     /** Redacted: the generated `toString` is how a bearer credential reaches a log or a crash report. */
-    override fun toString(): String = "UseSmileIDSampleTokenSession(id=$id, expiresAtMillis=$expiresAtMillis)"
+    override fun toString(): String =
+        "UseSmileIDSampleTokenSession(id=$id, environment=$environment, expiresAtMillis=$expiresAtMillis)"
 }
 
 /** `m:ss`, growing an hours part when the span needs one — an 8h token reads 7:59:12, not 479:12. */

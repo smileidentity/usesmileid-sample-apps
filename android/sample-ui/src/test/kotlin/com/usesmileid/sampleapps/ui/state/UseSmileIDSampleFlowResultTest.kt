@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.ui.state
 
 import androidx.compose.runtime.saveable.SaverScope
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
@@ -46,9 +47,10 @@ class UseSmileIDSampleFlowResultTest {
         flow.recordRefreshCallback()
         flow.recordResultCallback(UseSmileIDSampleFlowStatus.Failed, error = "2213: authentication failed")
 
-        flow.startFlow()
+        flow.startFlow(UseSmileIDSampleEnvironment.Production)
 
         assertEquals(UseSmileIDSampleFlowStatus.Running, flow.status)
+        assertEquals("the run's own environment, from its snapshot", UseSmileIDSampleEnvironment.Production, flow.environment)
         assertEquals(0, flow.resultCallbackCount)
         assertEquals(0, flow.refreshCallbackCount)
         assertNull(flow.lastError)
@@ -68,15 +70,23 @@ class UseSmileIDSampleFlowResultTest {
     @Test
     fun a_scenario_this_build_no_longer_has_restores_as_the_default() {
         val restored = UseSmileIDSampleFlowResult.Saver.restore(
-            listOf("retiredScenario", "brandDefault", "fullscreen", "idle", "", "", "", "0", "0"),
+            listOf("retiredScenario", "brandDefault", "fullscreen", "sandbox", "idle", "", "", "", "0", "0"),
         )
         assertEquals(UseSmileIDSampleScenario.Normal, restored?.scenario)
     }
 
     @Test
+    fun an_unreadable_environment_restores_as_sandbox_rather_than_taking_the_app_down() {
+        val restored = UseSmileIDSampleFlowResult.Saver.restore(
+            listOf("normal", "brandDefault", "fullscreen", "somewhere-else", "idle", "", "", "", "0", "0"),
+        )
+        assertEquals(UseSmileIDSampleEnvironment.Sandbox, restored?.environment)
+    }
+
+    @Test
     fun a_count_that_did_not_round_trip_restores_as_zero() {
         val restored = UseSmileIDSampleFlowResult.Saver.restore(
-            listOf("normal", "brandDefault", "fullscreen", "idle", "", "", "", "", "not-a-number"),
+            listOf("normal", "brandDefault", "fullscreen", "production", "idle", "", "", "", "", "not-a-number"),
         )
         assertEquals(0, restored?.resultCallbackCount)
         assertEquals(0, restored?.refreshCallbackCount)

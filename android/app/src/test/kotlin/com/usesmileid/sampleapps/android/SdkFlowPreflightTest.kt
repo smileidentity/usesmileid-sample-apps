@@ -10,6 +10,7 @@ import com.usesmileid.sampleapps.android.flow.applying
 import com.usesmileid.sampleapps.android.flow.preflight
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleSimulatedBindings
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleSimulatedSpan
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
@@ -230,7 +231,8 @@ class SdkFlowPreflightTest {
 
     /** A session whose token binds exactly [payloadFields] — the minter only does all or nothing. */
     private fun boundSession(payloadFields: String): UseSmileIDSampleTokenSession {
-        val claims = """{"iat":${NOW_MILLIS / 1000},"exp":${NOW_MILLIS / 1000 + 900},"payload":{$payloadFields}}"""
+        val claims = """{"iat":${NOW_MILLIS / 1000},"exp":${NOW_MILLIS / 1000 + 900},""" +
+            """"api_url":"https://testapi.smileidentity.com/v3","payload":{$payloadFields}}"""
         val token = listOf("""{"alg":"none","typ":"JWT"}""", claims, "sample-signature")
             .joinToString(".") { Base64.getUrlEncoder().withoutPadding().encodeToString(it.toByteArray()) }
         return requireNotNull(UseSmileIDSampleTokenDecoder.session(token))
@@ -241,6 +243,7 @@ class SdkFlowPreflightTest {
             UseSmileIDSampleFlowTokens.session(
                 span = UseSmileIDSampleSimulatedSpan.FifteenMinutes,
                 bindings = bindings,
+                environment = UseSmileIDSampleEnvironment.Sandbox,
                 nowMillis = NOW_MILLIS,
             ),
         ),

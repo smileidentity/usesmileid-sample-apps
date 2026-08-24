@@ -392,6 +392,9 @@ reads as a defect in the SDK.
    **Fixed:** one resolution on the app state, `launchArgs.sandbox ?: settings.useSandbox`, feeding both
    the chip and the builder. A Settings row owns the choice, `sandbox` is nullable so an argument
    overrides only where it was passed, and the profile no longer carries an environment at all.
+   **Superseded 2026-08-24, mechanism only:** the single-resolution property is what mattered and it
+   still holds, but its inputs are gone — the token's `api_url` claim now decides, so there is no
+   Settings row, no `sandbox` argument and no chip. See `environment-from-token-android.md`.
 
 3. **Sandbox only accepts predefined test identities, and this repo documents none.** The ID-details
    form accepts any value, so a run typed with an arbitrary ID number cannot succeed whatever the

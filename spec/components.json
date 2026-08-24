@@ -408,17 +408,15 @@
         "size": "92x32 for Sandbox; width is not fixed because Production is wider",
         "dot": "a spacing.xs circle in feedback.warning.fill for sandbox, feedback.success.fill for production",
         "fill": "color.surface-alt at radius.chip",
-        "role": "display-only since 2026-08-13 — the header avatar button owns profile switching"
+        "role": "display-only since 2026-08-13 — the header avatar button owns profile switching; not rendered by any shipped screen since 2026-08-24"
       },
       "variants": [
         "sandbox",
         "production"
       ],
-      "usedBy": [
-        "products"
-      ],
+      "usedBy": [],
       "notes": "VERIFIED against a render 2026-08-12. It is an ENVIRONMENT pill — a status dot plus the environment name ('Sandbox') on a pale fill. There is no avatar in it; the profile avatar lives in Settings. The production variant is wider, so do not fix its width.",
-      "decision": "OWNER DECISION 2026-08-13: the chip DISPLAYS environment only and is no longer the profile-switch trigger — the new header avatar button owns that."
+      "decision": "OWNER DECISION 2026-08-13: the chip DISPLAYS environment only and is no longer the profile-switch trigger — the new header avatar button owns that. OWNER RULING 2026-08-24: HIDDEN, not deleted \u2014 node 5447:1705 keeps the instance in the products frame with hidden=true. The component, its tokens, its sample_env_chip id and its composite golden all survive; usedBy is empty because no shipped screen renders it. The environment stopped being an app-level property \u2014 a token's api_url claim decides it \u2014 so a header chip reading 'this app submits here' would no longer be true, and sample_result_environment on the result card publishes it instead. Read this before reporting the component missing; reinstating it needs a design change."
     },
     {
       "name": "ProductCard",
@@ -968,7 +966,7 @@
         "cancelled",
         "failed"
       ],
-      "notes": "Required by spec/result-card.schema.json and not present in the design set. It is the evidence channel automation asserts on. Placement still needs a design decision — see openItems in spec/README.md; built on the honest default, which Android implemented on 2026-08-14: a collapsible panel on verification details, plus a compact line on products while a job is in flight. Two decisions a port must copy rather than re-take. It defaults to expanded, because a collapsed field is absent from the accessibility tree and every flow would otherwise have to tap the card open before asserting on anything. And it renders on verification details whether or not the job resolved, because a flow that failed before submission has no job to show and that is exactly when its error and counts are the only evidence there is. A null field renders as an em dash, which flows assert on to prove a value was absent."
+      "notes": "Required by spec/result-card.schema.json and not present in the design set. It is the evidence channel automation asserts on. Placement still needs a design decision — see openItems in spec/README.md; built on the honest default, which Android implemented on 2026-08-14: a collapsible panel on verification details, plus a compact line on products while a job is in flight. Two decisions a port must copy rather than re-take. It defaults to expanded, because a collapsed field is absent from the accessibility tree and every flow would otherwise have to tap the card open before asserting on anything. And it renders on verification details whether or not the job resolved, because a flow that failed before submission has no job to show and that is exactly when its error and counts are the only evidence there is. A null field renders as an em dash, which flows assert on to prove a value was absent. It gained a required `environment` field on 2026-08-24: with the chip hidden and the Settings row gone, it is the only surface saying where a run submitted."
     },
     {
       "name": "ScenarioDrawer",

@@ -32,16 +32,6 @@
       "description": "Starts a flow immediately on launch, so a flow does not have to tap its way in. The product `id` rather than its `jobType`, matching every other id reference in spec/; it lands directly on the flow route named by `route`, skipping the pre-flow forms."
     },
     {
-      "name": "sandbox",
-      "type": "boolean",
-      "values": [
-        true,
-        false
-      ],
-      "default": null,
-      "description": "Environment selection, and the override rather than the source: unset leaves the choice to the app's own environment control, which defaults to sandbox, while passing it pins the whole run. Automation must never run with sandbox=false — see AGENTS.md."
-    },
-    {
       "name": "seedJobs",
       "type": "boolean",
       "values": [
@@ -74,7 +64,8 @@
   },
   "notes": [
     "Read from the launching intent only, and applied once: a recreation re-reads the same intent, so re-seeding would discard whatever the drawer selected after launch.",
-    "Parse all eight names even where a build cannot act on one yet, so the four apps accept the same surface. `scenario`, `theme`, `route`, `autostart` and `seedJobs` take effect on their own; `sandbox`, `appLocale` and `holdCamera` configure the handoff to the SDK and take effect where that handoff is built.",
+    "Parse all seven names even where a build cannot act on one yet, so the four apps accept the same surface. `scenario`, `theme`, `route`, `autostart` and `seedJobs` take effect on their own; `appLocale` and `holdCamera` configure the handoff to the SDK and take effect where that handoff is built.",
+    "There is no `sandbox` argument, and adding one back would be a regression. Removed 2026-08-24 with the app's environment control: the session token's `api_url` claim decides the environment, so nothing can override it and no app has a toggle to pin. The rule it replaces — automation must never run with sandbox=false — now holds by construction rather than by discipline, because automation mints its own unsigned fixture tokens and one naming the production host still submits nothing. A run proves where it went on `sample_result_environment`.",
     "An unrecognised value falls back to that argument's default rather than failing the launch. That is only safe because the result card publishes what the run actually got — assert on sample_result_active_scenario, never on the argument you passed."
   ],
   "openDecisions": [

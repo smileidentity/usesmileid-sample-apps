@@ -23,6 +23,8 @@ data class UseSmileIDSampleResult(
     val activeScenario: UseSmileIDSampleScenario,
     val activeTheme: UseSmileIDSampleThemeScenario,
     val route: UseSmileIDSampleFlowRoute,
+    /** Where the run submitted, from its token. With the chip gone this is the only surface that proves it. */
+    val environment: UseSmileIDSampleEnvironment,
     val jobStatus: UseSmileIDSampleFlowStatus,
     val resultCallbackCount: Int,
     val refreshCallbackCount: Int,

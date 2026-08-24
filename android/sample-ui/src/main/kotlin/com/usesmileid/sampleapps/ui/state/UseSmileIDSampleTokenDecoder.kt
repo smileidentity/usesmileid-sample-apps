@@ -2,6 +2,8 @@ package com.usesmileid.sampleapps.ui.state
 
 import androidx.compose.runtime.Immutable
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
+import com.usesmileid.sampleapps.ui.model.apiUrlHost
+import com.usesmileid.sampleapps.ui.model.environmentFor
 import java.security.MessageDigest
 import kotlin.io.encoding.Base64
 
@@ -72,7 +74,7 @@ sealed interface UseSmileIDSampleTokenDecode {
     /** The session the claims describe — decoded only, never verified: the sample holds no signing key. */
     data class Decoded(val session: UseSmileIDSampleTokenSession) : UseSmileIDSampleTokenDecode
 
-    /** Names the claim or the structure that failed, never a value — the Portal's own redaction rule. */
+    /** Names the claim or the structure that failed. Never a value, bar the `api_url` host, which is a public API host. */
     data class Rejected(val reason: String) : UseSmileIDSampleTokenDecode
 }
 
@@ -88,7 +90,7 @@ sealed interface UseSmileIDSampleTokenDecode {
  */
 object UseSmileIDSampleTokenDecoder {
 
-    /** Decoded when all three segments and the iat/exp pair read; otherwise Rejected, naming the first failure. */
+    /** Decoded when the segments, the iat/exp pair and the api_url all read; otherwise Rejected, naming the first failure. */
     fun decode(token: String): UseSmileIDSampleTokenDecode {
         val segments = token.trim().split(".")
         if (segments.size != SEGMENTS || segments.any { !it.matches(BASE64_URL) }) {
@@ -101,6 +103,15 @@ object UseSmileIDSampleTokenDecoder {
         val issuedAt = json.seconds("iat") ?: return reject("The token carries no numeric iat claim.")
         val expires = json.seconds("exp") ?: return reject("The token carries no numeric exp claim.")
         if (expires <= issuedAt) return reject("The token's exp claim is not after its iat claim.")
+        // Refused rather than defaulted: a silent sandbox fallback sends a production token to the
+        // wrong host and comes back as a 401 that reads like a bad token.
+        val apiUrl = json.string("api_url")?.takeIf { it.isNotBlank() }
+            ?: return reject("The token carries no api_url claim, so nothing says which environment it was minted for.")
+        val environment = environmentFor(apiUrl) ?: return reject(
+            apiUrlHost(apiUrl)
+                ?.let { "The token's api_url names $it, which is not a Smile ID environment." }
+                ?: "The token's api_url is not a URL, so it names no environment.",
+        )
         return UseSmileIDSampleTokenDecode.Decoded(
             UseSmileIDSampleTokenSession(
                 id = handle(token, json.string("jti")),
@@ -109,6 +120,7 @@ object UseSmileIDSampleTokenDecoder {
                 expiresAtMillis = expires * MILLIS_PER_SECOND,
                 bindings = json.obj("payload")?.bindings() ?: UseSmileIDSampleTokenBindings(),
                 partnerId = json.string("partner_id")?.takeIf { it.isNotBlank() },
+                environment = environment,
             ),
         )
     }

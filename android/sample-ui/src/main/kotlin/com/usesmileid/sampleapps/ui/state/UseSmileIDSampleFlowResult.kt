@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.setValue
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleResult
@@ -17,6 +18,7 @@ class UseSmileIDSampleFlowResult(
     scenario: UseSmileIDSampleScenario = UseSmileIDSampleScenario.Normal,
     theme: UseSmileIDSampleThemeScenario = UseSmileIDSampleThemeScenario.BrandDefault,
     route: UseSmileIDSampleFlowRoute = UseSmileIDSampleFlowRoute.Fullscreen,
+    environment: UseSmileIDSampleEnvironment = UseSmileIDSampleEnvironment.Sandbox,
     status: UseSmileIDSampleFlowStatus = UseSmileIDSampleFlowStatus.Idle,
     jobId: String? = null,
     userId: String? = null,
@@ -31,6 +33,10 @@ class UseSmileIDSampleFlowResult(
         private set
 
     var route by mutableStateOf(route)
+        private set
+
+    /** Recorded from the run's own snapshot, never re-read: sandbox until a run has said otherwise. */
+    var environment by mutableStateOf(environment)
         private set
 
     var status by mutableStateOf(status)
@@ -56,6 +62,7 @@ class UseSmileIDSampleFlowResult(
             activeScenario = scenario,
             activeTheme = theme,
             route = route,
+            environment = environment,
             jobStatus = status,
             resultCallbackCount = resultCallbackCount,
             refreshCallbackCount = refreshCallbackCount,
@@ -77,7 +84,8 @@ class UseSmileIDSampleFlowResult(
     }
 
     /** Both counts reset here, so "exactly once" is asserted per run rather than per app launch. */
-    fun startFlow() {
+    fun startFlow(environment: UseSmileIDSampleEnvironment) {
+        this.environment = environment
         status = UseSmileIDSampleFlowStatus.Running
         jobId = null
         userId = null
@@ -101,7 +109,8 @@ class UseSmileIDSampleFlowResult(
     }
 
     /** The gate refused the run, so the SDK never mounted. Not counted as a result callback. */
-    fun recordBlocked(reason: String) {
+    fun recordBlocked(reason: String, environment: UseSmileIDSampleEnvironment) {
+        this.environment = environment
         status = UseSmileIDSampleFlowStatus.Failed
         jobId = null
         userId = null
@@ -119,6 +128,7 @@ class UseSmileIDSampleFlowResult(
                     it.scenario.id,
                     it.theme.id,
                     it.route.id,
+                    it.environment.id,
                     it.status.id,
                     it.jobId.orEmpty(),
                     it.userId.orEmpty(),
@@ -136,13 +146,15 @@ class UseSmileIDSampleFlowResult(
                         ?: UseSmileIDSampleThemeScenario.BrandDefault,
                     route = UseSmileIDSampleFlowRoute.entries.firstOrNull { it.id == saved[2] }
                         ?: UseSmileIDSampleFlowRoute.Fullscreen,
-                    status = UseSmileIDSampleFlowStatus.entries.firstOrNull { it.id == saved[3] }
+                    environment = UseSmileIDSampleEnvironment.entries.firstOrNull { it.id == saved[3] }
+                        ?: UseSmileIDSampleEnvironment.Sandbox,
+                    status = UseSmileIDSampleFlowStatus.entries.firstOrNull { it.id == saved[4] }
                         ?: UseSmileIDSampleFlowStatus.Idle,
-                    jobId = saved[4].ifEmpty { null },
-                    userId = saved[5].ifEmpty { null },
-                    lastError = saved[6].ifEmpty { null },
-                    resultCallbackCount = saved[7].toIntOrNull() ?: 0,
-                    refreshCallbackCount = saved[8].toIntOrNull() ?: 0,
+                    jobId = saved[5].ifEmpty { null },
+                    userId = saved[6].ifEmpty { null },
+                    lastError = saved[7].ifEmpty { null },
+                    resultCallbackCount = saved[8].toIntOrNull() ?: 0,
+                    refreshCallbackCount = saved[9].toIntOrNull() ?: 0,
                 )
             },
         )

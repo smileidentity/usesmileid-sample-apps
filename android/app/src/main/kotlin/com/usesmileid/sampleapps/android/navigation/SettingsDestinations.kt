@@ -26,8 +26,6 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
         contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
         state = UseSmileIDSampleSettingsState(
             settings = app.settings,
-            environment = app.environment,
-            environmentPinned = app.environmentPinned,
             organisation = app.profiles.active.organisation,
             initials = app.profiles.active.initials,
             avatarColor = avatarColorForProfile(app.profiles.activeIndex),

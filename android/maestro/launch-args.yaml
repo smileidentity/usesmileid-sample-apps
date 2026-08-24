@@ -108,53 +108,106 @@ appId: ${APP_ID}
     id: "sample_result_route"
     text: "shell"
 
-# `sandbox` is the override, not the source: passed, it pins the run and the Settings row goes read-only.
+# There is no `sandbox` argument any more: the token decides the environment, so a run picks one by
+# minting rather than by argument. Both hosts are minted locally — the fixture is unsigned and no flow
+# here completes a capture, so naming the production host exercises the decode and submits nothing.
+#
+# The run has to reach the SDK, because the card records the environment from the entry snapshot and a
+# journey that never starts has none to show. Production is minted first and sandbox last: a linked
+# session outlives `stopApp` (R6), so the last host minted here is what later flows inherit.
 - stopApp
 - launchApp:
     arguments:
-      sandbox: false
+      seedJobs: true
 - runFlow: subflows/warm-start.yaml
-- assertVisible:
-    id: "sample_env_chip"
-- assertVisible: "Production"
-- tapOn:
-    id: "sample_nav_settings"
-- assertVisible:
-    id: "sample_settings_screen"
-- assertVisible: "Pinned by the sandbox launch argument"
 
-# Absent, the Settings toggle owns the choice. Asserted before each tap and toggled back at the end,
-# because the setting persists and would otherwise hand every later flow a different environment.
-- stopApp
-- launchApp
-- runFlow: subflows/warm-start.yaml
-- assertVisible:
-    id: "sample_env_chip"
-- assertVisible: "Sandbox"
 - tapOn:
-    id: "sample_nav_settings"
+    id: "sample_nav_token"
+- runFlow: subflows/grant-camera.yaml
 - assertVisible:
-    id: "sample_settings_screen"
-- assertVisible: "Jobs submit to sandbox"
+    id: "sample_scan_token_screen"
+- tapOn: "SIMULATED SCAN"
+- tapOn: "Production"
+# Both bindings, so the run reaches the SDK's instructions screen with no host form in between.
+- tapOn: "Binds consent"
+- tapOn: "Binds details"
 - tapOn:
-    id: "sample_setting_production"
-- assertVisible: "Jobs submit to the live environment"
+    id: "sample_token_simulate"
+- assertVisible:
+    id: "sample_session_card"
+- tapOn:
+    id: "sample_product_card_smartSelfieEnrollment"
+- extendedWaitUntil:
+    visible:
+      id: "si_instructions_screen"
+    timeout: 20000
+- back
+- assertVisible:
+    id: "sample_products_screen"
+- tapOn:
+    id: "sample_nav_verifications"
+- tapOn:
+    id: "sample_job_row_0"
+- assertVisible:
+    id: "sample_result_environment"
+    text: "production"
+- back
 - tapOn:
     id: "sample_nav_products"
 - assertVisible:
-    id: "sample_env_chip"
-- assertVisible: "Production"
+    id: "sample_products_screen"
+
+# The same door, the other host: only the token changed, which is what the pair exists to prove.
 - tapOn:
-    id: "sample_nav_settings"
+    id: "sample_nav_token"
 - assertVisible:
-    id: "sample_settings_screen"
-- assertVisible: "Jobs submit to the live environment"
+    id: "sample_scan_token_screen"
+- tapOn: "SIMULATED SCAN"
+- tapOn: "Sandbox"
+- tapOn: "Binds consent"
+- tapOn: "Binds details"
 - tapOn:
-    id: "sample_setting_production"
-- assertVisible: "Jobs submit to sandbox"
+    id: "sample_token_simulate"
+- assertVisible:
+    id: "sample_session_card"
+- tapOn:
+    id: "sample_product_card_smartSelfieEnrollment"
+- extendedWaitUntil:
+    visible:
+      id: "si_instructions_screen"
+    timeout: 20000
+- back
+- assertVisible:
+    id: "sample_products_screen"
+- tapOn:
+    id: "sample_nav_verifications"
+- tapOn:
+    id: "sample_job_row_0"
+- assertVisible:
+    id: "sample_result_environment"
+    text: "sandbox"
+- back
 - tapOn:
     id: "sample_nav_products"
-- assertVisible: "Sandbox"
+- assertVisible:
+    id: "sample_products_screen"
+
+# Leave an UNBOUND 8h sandbox session behind. Unbound because a bound one removes the host's details
+# form and the SDK's consent screen, which is what the next flow in a folder run asserts on; 8h because
+# the default 15m ran out before that flow reached the SDK on a slow device, and an expired session is
+# worse than none — it sends the next journey to the scanner.
+- tapOn:
+    id: "sample_nav_token"
+- assertVisible:
+    id: "sample_scan_token_screen"
+- tapOn: "SIMULATED SCAN"
+- tapOn: "8h"
+- tapOn:
+    id: "sample_token_simulate"
+- assertVisible:
+    id: "sample_products_screen"
+- assertVisible:
+    id: "sample_session_card"
 
 # The drawer writes the state a launch argument seeds, so one card reports either source. Opened by
 # its own deep link rather than through the Settings row, which sits below the fold behind a scroll

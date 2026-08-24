@@ -30,7 +30,6 @@ object UseSmileIDSampleTestIds {
     const val SCENARIO_DRAWER_BUTTON = "sample_scenario_drawer_button"
 
     const val PROFILE_SUMMARY = "sample_profile_summary"
-    const val SETTING_PRODUCTION = "sample_setting_production"
     const val SETTING_SMILE_TO_CAPTURE = "sample_setting_smile_to_capture"
     const val SETTING_AGENT_MODE = "sample_setting_agent_mode"
     const val SETTING_DARK_MODE = "sample_setting_dark_mode"
@@ -82,6 +81,7 @@ object UseSmileIDSampleTestIds {
     const val RESULT_ACTIVE_SCENARIO = "sample_result_active_scenario"
     const val RESULT_ACTIVE_THEME = "sample_result_active_theme"
     const val RESULT_ROUTE = "sample_result_route"
+    const val RESULT_ENVIRONMENT = "sample_result_environment"
     const val RESULT_JOB_ID = "sample_result_job_id"
     const val RESULT_USER_ID = "sample_result_user_id"
     const val RESULT_JOB_STATUS = "sample_result_job_status"
@@ -130,7 +130,6 @@ object UseSmileIDSampleTestIds {
         TOKEN_SIMULATE,
         SCENARIO_DRAWER_BUTTON,
         PROFILE_SUMMARY,
-        SETTING_PRODUCTION,
         SETTING_SMILE_TO_CAPTURE,
         SETTING_AGENT_MODE,
         SETTING_DARK_MODE,
@@ -164,6 +163,7 @@ object UseSmileIDSampleTestIds {
         RESULT_ACTIVE_SCENARIO,
         RESULT_ACTIVE_THEME,
         RESULT_ROUTE,
+        RESULT_ENVIRONMENT,
         RESULT_JOB_ID,
         RESULT_USER_ID,
         RESULT_JOB_STATUS,

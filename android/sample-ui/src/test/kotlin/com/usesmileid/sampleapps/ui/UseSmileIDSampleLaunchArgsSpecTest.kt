@@ -6,6 +6,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleHoldCamera
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleLaunchArgs
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -34,7 +35,6 @@ class UseSmileIDSampleLaunchArgsSpecTest {
                 UseSmileIDSampleLaunchArgs.THEME to defaults.theme.id,
                 UseSmileIDSampleLaunchArgs.ROUTE to defaults.route.id,
                 UseSmileIDSampleLaunchArgs.AUTOSTART to defaults.autostart?.id,
-                UseSmileIDSampleLaunchArgs.SANDBOX to defaults.sandbox?.toString(),
                 UseSmileIDSampleLaunchArgs.SEED_JOBS to defaults.seedJobs.toString(),
                 UseSmileIDSampleLaunchArgs.APP_LOCALE to defaults.appLocale,
                 UseSmileIDSampleLaunchArgs.HOLD_CAMERA to defaults.holdCamera?.toString(),
@@ -55,7 +55,6 @@ class UseSmileIDSampleLaunchArgsSpecTest {
                 UseSmileIDSampleLaunchArgs.THEME to "clashingHost",
                 UseSmileIDSampleLaunchArgs.ROUTE to "shell",
                 UseSmileIDSampleLaunchArgs.AUTOSTART to "biometricKyc",
-                UseSmileIDSampleLaunchArgs.SANDBOX to "false",
                 UseSmileIDSampleLaunchArgs.APP_LOCALE to "fr-FR",
                 UseSmileIDSampleLaunchArgs.HOLD_CAMERA to "keep",
             ),
@@ -63,21 +62,23 @@ class UseSmileIDSampleLaunchArgsSpecTest {
         assertEquals(UseSmileIDSampleScenario.ExpiredToken, args.scenario)
         assertEquals(UseSmileIDSampleFlowRoute.Shell, args.route)
         assertEquals(UseSmileIDSampleProduct.BiometricKyc, args.autostart)
-        assertEquals(false, args.sandbox)
         assertEquals("fr-FR", args.appLocale)
         assertEquals(UseSmileIDSampleHoldCamera.Keep, args.holdCamera)
     }
 
-    /** Unset, not `true`: the Settings toggle owns the environment where no argument was passed. */
     @Test
-    fun an_absent_sandbox_argument_stays_unset() {
-        assertNull(UseSmileIDSampleLaunchArgs.from(emptyMap()).sandbox)
+    fun the_retired_sandbox_argument_is_neither_declared_nor_read() {
+        assertFalse("sandbox" in UseSmileIDSampleLaunchArgs.names)
+        assertEquals(
+            UseSmileIDSampleLaunchArgs(),
+            UseSmileIDSampleLaunchArgs.from(mapOf("sandbox" to false)),
+        )
     }
 
     @Test
-    fun the_sandbox_flag_reads_either_extra_type() {
-        assertEquals(false, UseSmileIDSampleLaunchArgs.from(mapOf("sandbox" to false)).sandbox)
-        assertEquals(false, UseSmileIDSampleLaunchArgs.from(mapOf("sandbox" to "FALSE")).sandbox)
+    fun the_boolean_arguments_read_either_extra_type() {
+        assertTrue(UseSmileIDSampleLaunchArgs.from(mapOf("seedJobs" to true)).seedJobs)
+        assertTrue(UseSmileIDSampleLaunchArgs.from(mapOf("seedJobs" to "TRUE")).seedJobs)
     }
 
     @Test

@@ -53,7 +53,7 @@
       },
       {
         "id": "sample_env_chip",
-        "description": "Profile + environment chip in the header."
+        "description": "Environment chip. HIDDEN on the products header since 2026-08-24 (node 5447:1705 sets hidden=true) — the component survives and keeps this id, but no shipped screen renders it. Assert environment on sample_result_environment instead."
       },
       {
         "id": "sample_profile_avatar_button",
@@ -254,12 +254,8 @@
         "description": "Profile row at the top of settings; opens the profiles LIST, not the active profile's page."
       },
       {
-        "id": "sample_setting_production",
-        "description": "Environment switch. ON is production; OFF is sandbox, which is the default. Read-only while the sandbox launch argument pins the run, so automation asserts the chip rather than driving this."
-      },
-      {
         "id": "sample_setting_smile_to_capture",
-        "description": "Smile to capture switch. ON means enhanced liveness OFF, so it and agent mode write different fields and cannot fight."
+        "description": "Smile to capture switch. ON means enhanced liveness OFF. It and agent mode write different fields but they CAN fight: FlowValidator.validateSelfie() raises AgentModeWithEnhancedLivenessException (BUILDER_AGENT_MODE_WITH_ENHANCED_LIVENESS) at ERROR severity when both are set, which blocks the build. Corrected 2026-08-24, read from 12.0.2 source; the earlier 'cannot fight' rationale was wrong and a port that trusts it ships a flow that cannot build."
       },
       {
         "id": "sample_setting_agent_mode",
@@ -382,6 +378,10 @@
       {
         "id": "sample_result_route",
         "description": "route field."
+      },
+      {
+        "id": "sample_result_environment",
+        "description": "environment field. The only surface that publishes which environment a run submitted to, now that the token's api_url decides it and neither a setting nor a chip shows it."
       },
       {
         "id": "sample_result_job_id",

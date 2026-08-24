@@ -75,10 +75,11 @@ fun ScanTokenScreen(navigator: DestinationsNavigator) {
         onBack = { navigator.navigateUp() },
         onLink = link,
         onPaste = { clipboard.getText()?.text },
-        onSimulate = { span, bindings ->
+        onSimulate = { span, bindings, environment ->
             val minted = UseSmileIDSampleFlowTokens.session(
                 span = span,
                 bindings = bindings,
+                environment = environment,
                 nowMillis = System.currentTimeMillis(),
             )
             // The minter and the decoder have to agree, and a fixture that no longer decodes is a defect

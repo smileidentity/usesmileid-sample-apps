@@ -99,6 +99,7 @@ fun SdkFlowScreen(
                 app.flowResult.recordBlocked(
                     issues.joinToString("; ") { it.message ?: it::class.simpleName.orEmpty() }
                         .ifBlank { "The flow did not validate" },
+                    snapshot.environment,
                 )
                 navigator.popBackStack(FlowNavGraph, inclusive = true)
             }
@@ -112,7 +113,7 @@ fun SdkFlowScreen(
 
     // Effects run after the SDK's first composition, which is early enough to deliver a Failure.
     LaunchedEffect(Unit) {
-        if (viewModel.markRunStarted() && !viewModel.resultDelivered) app.flowResult.startFlow()
+        if (viewModel.markRunStarted() && !viewModel.resultDelivered) app.flowResult.startFlow(snapshot.environment)
     }
 
     // A teardown-delivered cancel arrives after the route is gone, where navigating again would act

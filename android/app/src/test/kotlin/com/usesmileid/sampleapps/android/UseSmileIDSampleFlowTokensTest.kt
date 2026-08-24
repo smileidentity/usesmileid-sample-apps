@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.android
 
 import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleFlowTokens
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleSimulatedBindings
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleSimulatedSpan
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCountry
@@ -85,13 +86,31 @@ class UseSmileIDSampleFlowTokensTest {
         }
     }
 
+    @Test
+    fun `a simulated scan mints either host, in the shape a real claim carries`() {
+        UseSmileIDSampleEnvironment.entries.forEach { environment ->
+            val minted = mint(SPAN, environment = environment)
+            assertTrue(
+                "the fixture should carry the /v3 path a real token does",
+                decode(minted.split(".")[1]).contains(""""api_url":"https://${environment.host}/v3""""),
+            )
+            assertEquals(environment, UseSmileIDSampleTokenDecoder.session(minted)?.environment)
+        }
+    }
+
     private fun bindingsOf(bindings: UseSmileIDSampleSimulatedBindings) =
         requireNotNull(UseSmileIDSampleTokenDecoder.session(mint(SPAN, bindings))).bindings
 
     private fun mint(
         span: UseSmileIDSampleSimulatedSpan,
         bindings: UseSmileIDSampleSimulatedBindings = UseSmileIDSampleSimulatedBindings(),
-    ) = UseSmileIDSampleFlowTokens.session(span = span, bindings = bindings, nowMillis = NOW_MILLIS)
+        environment: UseSmileIDSampleEnvironment = UseSmileIDSampleEnvironment.Sandbox,
+    ) = UseSmileIDSampleFlowTokens.session(
+        span = span,
+        bindings = bindings,
+        environment = environment,
+        nowMillis = NOW_MILLIS,
+    )
 
     private fun decode(segment: String) = String(Base64.getUrlDecoder().decode(segment), Charsets.UTF_8)
 

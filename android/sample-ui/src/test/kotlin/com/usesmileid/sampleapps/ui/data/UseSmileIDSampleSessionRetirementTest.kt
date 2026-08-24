@@ -111,7 +111,8 @@ class UseSmileIDSampleSessionRetirementTest {
         /** Synthetic and unsigned: the decoder parses a token, never verifies one. */
         val TOKEN = listOf(
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
-            "eyJpYXQiOjE3NjAwMDAwMDAsImV4cCI6MTc2MDAwMDkwMH0",
+            // {"iat":1760000000,"exp":1760000900,"api_url":"https://testapi.smileidentity.com/v3"}
+            "eyJpYXQiOjE3NjAwMDAwMDAsImV4cCI6MTc2MDAwMDkwMCwiYXBpX3VybCI6Imh0dHBzOi8vdGVzdGFwaS5zbWlsZWlkZW50aXR5LmNvbS92MyJ9",
             "not-a-signature",
         ).joinToString(".")
     }

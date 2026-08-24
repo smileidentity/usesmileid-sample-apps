@@ -524,6 +524,7 @@ private fun gallerySections(): List<GallerySectionSpec> {
                 onLink = {},
                 onExpandToggle = {},
                 onSpanSelect = {},
+                onEnvironmentSelect = {},
                 onBindingsChange = {},
                 onSimulate = {},
             )

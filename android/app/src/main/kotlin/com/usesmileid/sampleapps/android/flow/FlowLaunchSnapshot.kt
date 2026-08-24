@@ -2,6 +2,7 @@ package com.usesmileid.sampleapps.android.flow
 
 import com.ramcosta.composedestinations.generated.destinations.SdkFlowScreenDestinationNavArgs
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
@@ -26,7 +27,11 @@ data class FlowLaunchSnapshot(
     val session: UseSmileIDSampleTokenSession? = null,
     /** Run out — the one thing that routes back to the scanner (TOK-A5). Usually true with no [session]. */
     val sessionExpired: Boolean = false,
-)
+) {
+    /** [sandbox] named for the result card, which is what publishes where a run went. */
+    val environment: UseSmileIDSampleEnvironment
+        get() = if (sandbox) UseSmileIDSampleEnvironment.Sandbox else UseSmileIDSampleEnvironment.Production
+}
 
 fun buildSnapshot(
     args: SdkFlowScreenDestinationNavArgs,
