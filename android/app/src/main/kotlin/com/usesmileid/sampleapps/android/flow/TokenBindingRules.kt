@@ -6,6 +6,7 @@ import com.usesmileid.presentation.flow.validation.ValidationState
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenBindings
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetailsRequirement
 import com.usesmileid.sampleapps.ui.state.bindsIdDetails
@@ -62,6 +63,16 @@ fun UseSmileIDSampleAppState.tokenBindsIdDetails(product: UseSmileIDSampleProduc
     ?.takeIf { sessionActive && !flowResult.scenario.startsExpired }
     ?.bindings
     ?.bindsIdDetails(product) == true
+
+/**
+ * The bindings a run may read, or null when no live token backs it. The single place the
+ * live-session rule is spelled out for readers of the token's *values* rather than its presence
+ * flags, so a prefill cannot outlive the session that justified it.
+ */
+val UseSmileIDSampleAppState.liveBindings: UseSmileIDSampleTokenBindings?
+    get() = session
+        ?.takeIf { sessionActive && !flowResult.scenario.startsExpired }
+        ?.bindings
 
 internal val UseSmileIDSampleScenario.startsExpired: Boolean
     get() = this == UseSmileIDSampleScenario.ExpiredToken || this == UseSmileIDSampleScenario.BadRefresh

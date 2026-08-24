@@ -37,6 +37,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import kotlinx.coroutines.launch
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
+import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleCameraHold
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleFlowResult
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleRunIntent
 
@@ -106,6 +107,10 @@ fun SdkFlowScreen(
         }
         FlowPreflight.Ready -> Unit
     }
+
+    // Mounted with the run rather than before it: the argument asks for a camera the host still holds
+    // as the SDK starts, which is only true if the hold overlaps this composition.
+    UseSmileIDSampleCameraHold(app.launchArgs.holdCamera)
 
     // Effects run after the SDK's first composition, which is early enough to deliver a Failure.
     LaunchedEffect(Unit) {

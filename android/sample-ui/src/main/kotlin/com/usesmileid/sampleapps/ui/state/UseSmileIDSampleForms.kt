@@ -42,6 +42,17 @@ class UseSmileIDSampleForms(
         idDetails = idDetails.copy(idNumber = value)
     }
 
+    /**
+     * Seeds the ID form from a token's plaintext claims. Only ever fills an untouched form: a
+     * re-entry after the user chose a country themselves must not have that choice overwritten, and
+     * the ID number is never seeded because the token carries a vault reference rather than a value.
+     */
+    fun prefillIdDetails(country: UseSmileIDSampleCountry?, idType: UseSmileIDSampleIdType?) {
+        if (idDetails.country != null || idDetails.idType != null) return
+        val seeded = country ?: return
+        idDetails = idDetails.copy(country = seeded, idType = idType?.takeIf { seeded in it.countries })
+    }
+
     companion object {
         val Saver: Saver<UseSmileIDSampleForms, Any> = listSaver(
             save = {

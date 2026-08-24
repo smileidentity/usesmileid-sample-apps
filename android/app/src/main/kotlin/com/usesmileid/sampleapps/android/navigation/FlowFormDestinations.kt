@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.android.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -12,9 +13,12 @@ import com.ramcosta.composedestinations.generated.destinations.IdTypePickerSheet
 import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
+import com.usesmileid.sampleapps.android.flow.liveBindings
 import com.usesmileid.sampleapps.android.flow.sdkFlow
 import com.usesmileid.sampleapps.android.flow.stepAfterUserDetails
 import com.usesmileid.sampleapps.android.flow.tokenUserDetailsRequirement
+import com.usesmileid.sampleapps.ui.state.prefilledCountry
+import com.usesmileid.sampleapps.ui.state.prefilledIdType
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.screens.CountryPickerSheet as CountryPickerContent
 import com.usesmileid.sampleapps.ui.screens.IdTypePickerSheet as IdTypePickerContent
@@ -49,6 +53,12 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
 @Composable
 fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
+    // Seeded once on entry, not per recomposition: only `country` and `id_type` arrive in plaintext,
+    // so this saves two taps and never claims to know a vaulted ID number (TOK-A10).
+    val bindings = app.liveBindings
+    LaunchedEffect(bindings) {
+        app.forms.prefillIdDetails(bindings?.prefilledCountry, bindings?.prefilledIdType)
+    }
     KycIdFormContent(
         productLabel = productOf(productId)?.label ?: productId,
         details = app.forms.idDetails,

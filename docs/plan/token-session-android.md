@@ -5,9 +5,13 @@ model, builder handoff, honest countdown, and the CameraX QR scanner with the bu
 model. Both host forms are now skipped when the token already carries what they would collect (§4.2). A9 was planned as its own PR and folded into the same one on the owner's call (2026-08-19), so
 the token flow lands complete rather than scannerless. TOK-A7 (Room) is built: jobs persist, carrying the
 profile that submitted them and the environment they went to, and the verification-details screen
-fetches `GET /v3/status/{jobId}` under a live scanned session. `holdCamera`, TOK-A8's remaining
-goldens, TOK-A10 and TOK-A11 follow it. TOK-A11 was added 2026-08-24 after a device run mistook the
-expiry redirect for a glitch — the gate is right, but it says nothing and resumes nothing (§TOK-A5).
+fetches `GET /v3/status/{jobId}` under a live scanned session. **TOK-A10, TOK-A11 and the `holdCamera`
+consumer are built (2026-08-24)**, which closes the item list; TOK-A11 was added the same day after a
+device run mistook the expiry redirect for a glitch — the gate was right, but it said nothing and
+resumed nothing (§TOK-A5). TOK-A8's goldens listed in §8 were already covered by the session card, the
+ended banner, and the `nav_bar`/`TokenRings` ring pair, so what remains of A8 is its **device** pass,
+not more goldens. The one deliberate scope call: `holdCamera` was to be a separate PR (§7.1) and was
+folded in on the owner's instruction that the token work land as one review.
 
 Android first; the token contract is shared, so §9 records what the other three inherit. Written against the Portal as merged (`portal#3274`, `portal#3274`'s follow-up
 `portal#3306`) and the SDK as published (`com.usesmileid:usesmileid:12.0.2`), read rather than assumed.
@@ -199,6 +203,7 @@ then our copy is a documented duplicate, and the unit test in TOK-A2 pins it to 
 | TOK-A8 | Device + unit coverage, including the no-consent-screen path | P2 | A4–A7 |
 | TOK-A9 | QR scanning for real (CameraX + bundled ML Kit barcode), release-on-leave, scan reliability | P2 | A1–A3 |
 | TOK-A10 | Prefill the ID-details form from the token's plaintext fields | P3 | A2 |
+| TOK-A12 | `holdCamera` gets its consumer, proven by frames rather than by a bind returning | P3 | A9 |
 | TOK-A11 | Say why the expiry gate redirected, and let a fresh scan resume the run it interrupted | P2 | A5, A9 |
 
 **Landing order, and why A9 is not first.** The camera is the only part of this that needs a new
@@ -319,6 +324,20 @@ would show a full ring for 55 minutes and then a cliff. Progress becomes
 `toCountdown()` is `m:ss` and overflows past an hour — an 8h token must read `7:59:12`, so the
 format grows an hours part when the span needs one. Both are asserted by unit test at 15m, 1h and 8h,
 which is cheaper and more certain than watching a device for eight hours.
+
+### TOK-A10 — the prefill, and the two-field ceiling §2 puts on it
+
+Seeds the ID form's country and ID type from the token's plaintext claims and stops there: every other
+field is a vault reference, so §2's "presence, never content" makes prefilling a name or an ID number
+impossible rather than merely unimplemented. Three rules the tests pin, each of which was a way to get
+this wrong. A claim resolves only to something **the picker could have offered** — matched on the wire
+id, the enum name or the display label, so the Portal's spelling need not be the app's, and anything
+unrecognised resolves to nothing rather than to a plausible neighbour. An ID type is dropped unless the
+resolved country actually offers it, because seeding a combination the picker filters out would leave a
+form the person cannot re-derive. And the seed touches an **untouched form only**: re-entering after
+choosing a country keeps that choice, which matters because the expiry redirect (TOK-A11) can now
+return a partner to this form mid-journey. Read through the same live-session rule as the gate, so a
+prefill cannot outlive the token that justified it.
 
 ---
 
@@ -552,11 +571,18 @@ which is the signal the decision is for.
   no `si_*` id and this repo's flows may not assert on pixels, so "the preview is right" stays
   hand-verified. That is the same lane gap the RN preview work hit, and the check plausibly belongs in
   the SDK repos, which can render their own screens.
-- **`holdCamera` becomes implementable, and is still owed.** It is one of the two launch arguments
-  without a consumer, and it cannot be honoured without a host-owned camera — the argument's own note
-  in `spec/launch-args.json` warns that a probe which never acquired the camera passes vacuously. Kept
-  out of this PR deliberately even though the camera code is now here: it is a launch-argument
-  consumer rather than part of the token journey, and it would hand one reviewer a second subject.
+- **`holdCamera` is built (2026-08-24).** It was one of the two launch arguments without a consumer,
+  and it could not be honoured without a host-owned camera — the argument's own note in
+  `spec/launch-args.json` warns that a probe which never acquired the camera passes vacuously. It now
+  binds an `ImageAnalysis` use case alongside the starting run and **counts delivered frames**, since
+  a bind returning is not evidence the camera opened; it unbinds only its own use case, because
+  `unbindAll` would take the camera off the SDK it is supposed to be contending with. Two limits worth
+  knowing: a missing camera permission is reported rather than requested, because a permission dialog
+  over a starting flow changes the hand-off being measured; and the frame count goes to **logcat**
+  under one tag, which is the weak part — a `sample_*` node would be assertable, but adding one is a
+  four-platform `spec/test-ids.json` change and this argument is the only thing that would want it.
+  That id is the obvious follow-up if the argument earns a device lane. This was originally deferred
+  to its own PR to keep one reviewer to one subject; folded in on the owner's instruction.
 
 ### 7.2 Automation needs no new argument, because Simulate can mint the token
 
