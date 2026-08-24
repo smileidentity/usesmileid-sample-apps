@@ -22,13 +22,8 @@ data class UseSmileIDSampleRunIntent(
 }
 
 /**
- * The hand-off from the expiry gate to the scanner, so relinking re-enters the run instead of
- * stranding the partner on the product list. Held here rather than in a route argument: the
- * wizard's linear Continue chain is what keeps continuation state out of the four-platform route
- * table, and the scanner sits outside that chain.
- *
- * Deliberately not Compose state. It is written once and read once, imperatively, and nothing
- * renders it — holding it as state only subscribed the scanner to a value it never draws.
+ * The expiry gate's hand-off to the scanner, so relinking re-enters the run. Held here rather than in
+ * a route argument, which is what keeps continuation state out of the four-platform route table.
  */
 class UseSmileIDSampleInterruptedRun {
     var pending: UseSmileIDSampleRunIntent? = null
@@ -38,10 +33,7 @@ class UseSmileIDSampleInterruptedRun {
         pending = intent
     }
 
-    /**
-     * Forgets the run. Called from an effect rather than from a `remember` calculation: a composition
-     * that is abandoned mid-flight must not swallow the intent, so reading and clearing are separate.
-     */
+    /** Called from an effect, not a `remember`: an abandoned composition must not swallow the intent. */
     fun clear() {
         pending = null
     }

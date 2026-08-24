@@ -20,11 +20,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-/**
- * Retiring a session is the one place a token is deleted, and the security property worth pinning is
- * asymmetric: the credential must go, and the fact of the session must stay. A store that dropped
- * both would silently take the expiry banner and the scanner redirect with it.
- */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [ROBOLECTRIC_SDK])
 class UseSmileIDSampleSessionRetirementTest {
@@ -82,7 +77,6 @@ class UseSmileIDSampleSessionRetirementTest {
 
     @Test
     fun `the live half and the ended half always come from the same write`() = runTest {
-        // The pair is what the UI reads; one flow is what stops the two halves disagreeing.
         store.linkTokenSession(session())
         store.session.first().let { record ->
             assertNotNull(record.live)
@@ -104,7 +98,6 @@ class UseSmileIDSampleSessionRetirementTest {
 
     private fun session() = UseSmileIDSampleTokenSession(
         id = HANDLE,
-        // Three dot-separated segments, so the decoder reads it back as a session.
         token = TOKEN,
         issuedAtMillis = EXPIRES_AT - 900_000,
         expiresAtMillis = EXPIRES_AT,
@@ -115,7 +108,7 @@ class UseSmileIDSampleSessionRetirementTest {
         const val HANDLE = "9f3a2c71"
         const val EXPIRES_AT = 1_760_000_900_000L
 
-        /** Synthetic and unsigned: the decoder parses a token, it never verifies one. */
+        /** Synthetic and unsigned: the decoder parses a token, never verifies one. */
         val TOKEN = listOf(
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
             "eyJpYXQiOjE3NjAwMDAwMDAsImV4cCI6MTc2MDAwMDkwMH0",

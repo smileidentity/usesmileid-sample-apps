@@ -61,11 +61,7 @@ class UseSmileIDSampleAppState(
     /** The session that ran out, once its token has been deleted. Carries no credential. */
     val endedSession: UseSmileIDSampleEndedSession? get() = sessionState.value.ended
 
-    /**
-     * True from the deadline onwards. Reads the ended marker as well as the live session because the
-     * token is deleted at expiry: the marker is what remains, and the brief window before the delete
-     * lands is what the second half covers.
-     */
+    /** True from the deadline on. Reads the marker too, since the token is deleted at expiry. */
     val sessionExpired: Boolean
         get() = endedSession != null || session?.hasExpired(nowMillis) == true
 
@@ -99,8 +95,7 @@ fun rememberUseSmileIDSampleAppState(
     }
     val forms = rememberSaveable(saver = UseSmileIDSampleForms.Saver) { UseSmileIDSampleForms() }
     val profiles = remember { UseSmileIDSampleProfiles() }
-    // Not saveable: the gate hands this straight to the scanner, and the scanner claims it into its
-    // own saveable state on arrival, which is what has to survive a rotation mid-scan.
+    // Not saveable: the scanner claims it into its own saveable state, which survives a rotation.
     val interruptedRun = remember { UseSmileIDSampleInterruptedRun() }
     // Saveable, so the arguments seed the first launch only and a recreation keeps the drawer's choice.
     val flowResult = rememberSaveable(saver = UseSmileIDSampleFlowResult.Saver) {
@@ -118,9 +113,8 @@ fun rememberUseSmileIDSampleAppState(
             now.longValue = System.currentTimeMillis()
             delay(TICK_MILLIS)
         }
-        // Past the deadline the token is useless, so it is deleted and only the fact of the session
-        // is kept. Written on the app scope: a lapse noticed as this screen goes away must still land.
-        // A cold start after expiry takes the same path, because the loop above exits immediately.
+        // Past the deadline the token is useless. On the app scope so a lapse still lands as this
+        // screen goes away; a cold start after expiry takes the same path, the loop exiting at once.
         UseSmileIDSampleJobStore.writeScope.launch { store.retireTokenSession(live) }
     }
 

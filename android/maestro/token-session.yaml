@@ -176,8 +176,7 @@ appId: ${APP_ID}
     id: "sample_scan_token_screen"
 - assertNotVisible:
     id: "si_instructions_screen"
-# The redirect has to say why it moved you. Asserted on the shipped sentence, because a scanner the
-# person did not ask for is the same dead tap the misconfigured branch already refuses to be.
+# The redirect has to say why it moved you, asserted on the shipped sentence.
 - assertVisible: ".*Token session ended.*"
 
 # Manual entry: a rejection carries its reason and links nothing, so the expired session still stands.
@@ -197,10 +196,8 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_session_ended_banner"
 
-# Relinking resumes the run the gate interrupted, rather than stranding the person on the product
-# list with the run forgotten. Re-enter the redirect first, then link a live span from that same
-# visit: the scanner should hand us straight to the SDK, not back to the list. This also leaves a
-# live session behind, which is the cleanup the next block used to do on its own.
+# Relinking resumes the interrupted run rather than stranding the person on the product list. Also
+# leaves the live session the block below relies on.
 - tapOn:
     id: "sample_product_card_smartSelfieEnrollment"
 - assertVisible:
@@ -214,10 +211,8 @@ appId: ${APP_ID}
 - tapOn: "8h"
 - tapOn:
     id: "sample_token_simulate"
-# The SDK's consent screen, not its instructions: this span binds nothing, so the run takes the
-# no-token journey that sdk-flow.yaml describes. Reaching any SDK screen is the point — it means the
-# scan re-entered the interrupted run instead of returning to the list. Waited on rather than
-# asserted flat, because the resume holds until the linked session reaches app state.
+# Consent, not instructions: this span binds nothing, so the run takes sdk-flow.yaml's no-token
+# journey. Waited on, because the resume holds until the linked session reaches app state.
 - extendedWaitUntil:
     visible:
       id: "si_consent_screen"
@@ -227,10 +222,8 @@ appId: ${APP_ID}
 - back
 - assertVisible:
     id: "sample_products_screen"
-# The live span the resume linked is what makes this flow safe to leave behind. It persists in
-# DataStore across stopApp by design (R6), `pm clear` is unusable on ColorOS, and an expired session
-# left here would send whichever flow ran next to the scanner, depending only on timing. A live
-# unbound token behaves exactly like the no-token path, which sdk-flow.yaml asserts.
+# A live span is what makes this flow safe to leave behind: it persists across stopApp by design
+# (R6), `pm clear` is unusable on ColorOS, and an expired one would send the next flow to the scanner.
 - assertVisible:
     id: "sample_session_card"
 

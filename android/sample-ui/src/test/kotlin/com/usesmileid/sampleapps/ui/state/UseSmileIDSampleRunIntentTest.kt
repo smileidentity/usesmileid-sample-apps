@@ -5,10 +5,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-/**
- * The gate-to-scanner hand-off. Claiming is what keeps a forgotten run from being resurrected by a
- * later unrelated scan, and the saver is what survives a rotation held over a QR code.
- */
 class UseSmileIDSampleRunIntentTest {
 
     @Test

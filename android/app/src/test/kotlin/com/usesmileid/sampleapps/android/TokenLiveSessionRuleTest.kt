@@ -8,12 +8,6 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-/**
- * The live-session rule is the only thing standing between an expired token and a screen that reads
- * its claim *values* rather than its presence flags. Every reader — the two form-skip decisions, the
- * requirement summary and the ID prefill — resolves through this one predicate, so it is pinned here
- * directly rather than only through whichever flow happens to call it.
- */
 class TokenLiveSessionRuleTest {
 
     @Test

@@ -40,16 +40,9 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
      *
      * Unencrypted, deliberately: the token is short-lived and sandbox-scoped, and losing the session
      * on every process death the camera can cause would make the feature unusable.
-     */
-    /**
-     * The live session and the ended marker together, from **one** emission.
      *
-     * They were two flows once, and that was a defect found on a device: two collectors over
-     * `store.data` update independently, so the UI could hold the token from one write and the
-     * marker from the next. Retiring a session and linking a new one in quick succession then
-     * produced "no token and no marker" — a pair that cannot exist on disk — and the products screen
-     * showed neither the active card nor the ended banner until the next write or a relaunch. One
-     * flow makes the pair atomic by construction, so the two halves can never disagree.
+     * Both halves come from one emission: two collectors let the UI hold the token from one write and
+     * the marker from the next, a pair impossible on disk.
      */
     val session: Flow<UseSmileIDSampleSessionRecord> = store.data.map { prefs ->
         UseSmileIDSampleSessionRecord(
@@ -68,18 +61,13 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
     suspend fun linkTokenSession(session: UseSmileIDSampleTokenSession) {
         store.edit { prefs ->
             prefs[SESSION_TOKEN] = session.token
-            // A new session is not an ended one: clearing the marker is what stops the products
-            // screen showing "ended" over a token that has just been linked.
+            // A new session is not an ended one.
             prefs.remove(ENDED_SESSION_ID)
             prefs.remove(ENDED_SESSION_AT)
         }
     }
 
-    /**
-     * Deletes the credential at its deadline and remembers only that the session ended. The single
-     * writer for a lapsed session: nothing else removes [SESSION_TOKEN], so a token can never be
-     * dropped without the app still being able to say a session ended.
-     */
+    /** Deletes the credential at its deadline, keeping only that the session ended. The one remover of [SESSION_TOKEN]. */
     suspend fun retireTokenSession(session: UseSmileIDSampleTokenSession) {
         store.edit { prefs ->
             prefs.remove(SESSION_TOKEN)
@@ -115,10 +103,7 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
 /** A session that has run out, remembered without its credential. */
 data class UseSmileIDSampleEndedSession(val id: String, val endedAtMillis: Long)
 
-/**
- * What the store knows about the token session at one instant. At most one half is ever set: a live
- * token has no marker, and retiring one replaces the token with its marker in a single write.
- */
+/** At most one half is ever set: retiring replaces the token with its marker in a single write. */
 data class UseSmileIDSampleSessionRecord(
     val live: UseSmileIDSampleTokenSession? = null,
     val ended: UseSmileIDSampleEndedSession? = null,

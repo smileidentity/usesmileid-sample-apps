@@ -20,12 +20,7 @@ import com.usesmileid.sampleapps.ui.state.userDetailsRequirement
 internal val FlowLaunchSnapshot.liveSession: UseSmileIDSampleTokenSession?
     get() = session?.takeUnless { scenario.startsExpired }
 
-/**
- * The live-session rule itself, in one place. Everything that reads a token — the form-skip
- * decisions, the requirement summary and the prefill — goes through this, so they cannot disagree
- * about whether the same token is live. [nowMillis] is passed rather than read so a caller can avoid
- * subscribing its composition to the once-a-second clock.
- */
+/** The live-session rule, in one place, so nothing disagrees about whether a token is live. */
 internal fun UseSmileIDSampleTokenSession?.liveAt(
     scenario: UseSmileIDSampleScenario,
     nowMillis: Long,

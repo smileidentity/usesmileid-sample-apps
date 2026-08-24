@@ -32,16 +32,13 @@ fun ScanTokenScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     val clipboard = LocalClipboardManager.current
     var torchOn by rememberSaveable { mutableStateOf(false) }
-    // Read here but cleared in the effect below: a composition that is abandoned mid-flight must not
-    // swallow the run, and claiming it in a `remember` calculation would do exactly that.
+    // Read here, cleared in the effect below: an abandoned composition must not swallow the run.
     val claimed = rememberSaveable { app.interruptedRun.pending?.saved() ?: emptyList() }
     val resuming = remember(claimed) { UseSmileIDSampleRunIntent.of(claimed) }
-    // Owned by this visit once it has really composed, so leaving by any route drops it with the
-    // screen and a later unrelated scan cannot resurrect a run the partner has forgotten about.
+    // Owned by this visit, so leaving by any route drops it and a later scan cannot resurrect it.
     LaunchedEffect(Unit) { app.interruptedRun.clear() }
 
-    // Which session was already on disk when this screen opened. The resume waits for a *different*
-    // one, which is what separates "the expired token that sent me here" from "the one I just linked".
+    // The resume waits for a different session, separating the token that sent us here from the new one.
     val arrivedWith = rememberSaveable { app.session?.id.orEmpty() }
     var resumeHandled by rememberSaveable { mutableStateOf(false) }
 
@@ -49,29 +46,25 @@ fun ScanTokenScreen(navigator: DestinationsNavigator) {
     val link: (UseSmileIDSampleTokenSession) -> Unit = { session ->
         // On the app-level scope, so leaving this screen cannot cancel the write half-done.
         app.storeScope.launch { app.store.linkTokenSession(session) }
-        // A resumed run leaves on the effect below instead, once the linked session reaches app state.
+        // A resumed run leaves on the effect below instead.
         if (resuming == null) navigator.navigateUp()
     }
 
-    // Waits for the store's write to reach the session state rather than navigating on the link:
-    // re-entering the flow against the expired session would fail the gate and bounce straight back.
-    // Keyed on the session rather than on `sessionActive`, whose clock read would recompose this
-    // screen — and rebind its camera — once a second for as long as a session is live.
+    // Waits for the write to reach app state: re-entering against the expired session would bounce
+    // straight back. Keyed on the session, not `sessionActive`, whose clock read would rebind the camera.
     val current = app.session
     LaunchedEffect(resuming, current, resumeHandled) {
         if (resuming == null || resumeHandled) return@LaunchedEffect
         val linked = current?.takeIf { it.id != arrivedWith } ?: return@LaunchedEffect
         resumeHandled = true
         if (linked.hasExpired(System.currentTimeMillis())) {
-            // Relinking a span that is already expired cannot start the run, and the pill has no retry
-            // of its own — so leave rather than freeze on a screen saying "linked" that goes nowhere.
-            // The product list explains the state through the ended banner it already has.
+            // An already-expired relink cannot start the run, and the pill offers no retry — so leave
+            // rather than freeze on a screen saying "linked".
             navigator.navigateUp()
         } else {
             navigator.navigate(SdkFlowScreenDestination(productId = resuming.productId, route = resuming.route)) {
                 popUpTo(ScanTokenScreenDestination) { inclusive = true }
-                // Two quick Simulate taps mint two different tokens, so two writes land; without this
-                // the second navigate stacks a duplicate run behind the first.
+                // Two quick taps mint two tokens; without this the second navigate stacks a duplicate run.
                 launchSingleTop = true
             }
         }

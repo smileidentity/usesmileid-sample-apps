@@ -82,7 +82,6 @@ fun SdkFlowScreen(
         // Back to the scanner, not to a form: the run needs a token, and no form holds one.
         FlowPreflight.NeedsSession -> {
             LaunchedEffect(Unit) {
-                // Handed over before navigating, so the scanner it lands on can re-enter this run.
                 app.interruptedRun.send(
                     UseSmileIDSampleRunIntent(productId = snapshot.product.id, route = snapshot.route),
                 )
@@ -108,8 +107,7 @@ fun SdkFlowScreen(
         FlowPreflight.Ready -> Unit
     }
 
-    // Mounted with the run rather than before it: the argument asks for a camera the host still holds
-    // as the SDK starts, which is only true if the hold overlaps this composition.
+    // Mounted with the run: the hold has to overlap this composition to contend with it.
     UseSmileIDSampleCameraHold(app.launchArgs.holdCamera, snapshot.product)
 
     // Effects run after the SDK's first composition, which is early enough to deliver a Failure.

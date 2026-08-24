@@ -13,7 +13,7 @@ sealed interface UseSmileIDSampleHoldCamera {
     data class Millis(val value: Long) : UseSmileIDSampleHoldCamera
 }
 
-/** Renders the mode in the argument's own vocabulary, so a report cannot drift from what the parser accepts. */
+/** Rendered in the argument's own vocabulary, so a report cannot drift from what the parser accepts. */
 fun UseSmileIDSampleHoldCamera.describe(): String = when (this) {
     UseSmileIDSampleHoldCamera.Keep -> "holdCamera=${UseSmileIDSampleLaunchArgs.HOLD_CAMERA_KEEP}"
     is UseSmileIDSampleHoldCamera.Millis -> "holdCamera=${value}ms"

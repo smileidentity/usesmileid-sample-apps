@@ -22,23 +22,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 /**
- * Honours the `holdCamera` launch argument: the host takes a camera and keeps it while the SDK
- * starts, so a run can be observed meeting a device that is already contended.
- *
- * The argument's note in `spec/launch-args.json` is the hard part — "a probe that never acquired the
- * camera passes vacuously" — so this counts delivered frames rather than trusting that the bind
- * returned, and reports both the count and how long ago the last frame arrived. A hold that was
- * evicted early otherwise reports identically to one that lasted, and eviction is real: the provider
- * is a process singleton and an `unbindAll` anywhere drops this use case.
- *
- * It holds the lens [product] will use, because holding the back camera against a selfie flow
- * contends with nothing while still logging a successful acquisition — the vacuous pass again, only
- * harder to spot. Nothing here may fail the run it observes, so every camera call is guarded: a
- * probe that crashed the flow would be reported as an SDK defect.
- *
- * The report goes to logcat, which is a deliberate and limited choice: a `sample_*` node would be
- * assertable, but adding one is a four-platform `spec/test-ids.json` change and this argument has no
- * other consumer to justify it yet. Nothing here touches the token, so nothing logged is a credential.
+ * Honours `holdCamera`: the host keeps [product]'s own lens while the SDK starts, so a run can be
+ * observed on a contended device. Frames are counted because `spec/launch-args.json` warns that a
+ * probe which never acquired the camera passes vacuously.
  */
 @Composable
 fun UseSmileIDSampleCameraHold(hold: UseSmileIDSampleHoldCamera?, product: UseSmileIDSampleProduct) {
@@ -47,8 +33,7 @@ fun UseSmileIDSampleCameraHold(hold: UseSmileIDSampleHoldCamera?, product: UseSm
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(hold, product) {
-        // Checked, never requested: a permission dialog over a starting flow would change the very
-        // hand-off this argument exists to measure.
+        // Checked, never requested: a dialog over a starting flow would change the hand-off measured.
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) !=
             PackageManager.PERMISSION_GRANTED
         ) {
@@ -58,8 +43,7 @@ fun UseSmileIDSampleCameraHold(hold: UseSmileIDSampleHoldCamera?, product: UseSm
         val provider = runCatching {
             suspendCancellableCoroutine { continuation ->
                 val pending = ProcessCameraProvider.getInstance(context)
-                // resumeWith(runCatching { … }) so a failed future becomes a coroutine result rather
-                // than an uncaught throw on the main executor's thread.
+                // runCatching so a failed future resumes the coroutine instead of throwing on the executor.
                 pending.addListener(
                     { continuation.resumeWith(runCatching { pending.get() }) },
                     ContextCompat.getMainExecutor(context),
@@ -83,8 +67,7 @@ fun UseSmileIDSampleCameraHold(hold: UseSmileIDSampleHoldCamera?, product: UseSm
                 lastFrameAt.set(System.currentTimeMillis())
                 proxy.close()
             }
-            // Only this use case is ever unbound again: `unbindAll` here would take the camera off
-            // the SDK, which is the opposite of holding it against them.
+            // Only this use case is unbound again: `unbindAll` would take the camera off the SDK.
             runCatching { provider.bindToLifecycle(lifecycleOwner, lens.selector, analysis) }
                 .onFailure { failure ->
                     Log.w(TAG, "${hold.describe()} could not bind the ${lens.label} camera (${failure.javaClass.simpleName}), so the hand-off was uncontended")
@@ -107,13 +90,12 @@ private fun report(hold: UseSmileIDSampleHoldCamera, lens: HoldLens, frames: Int
         Log.w(TAG, "${hold.describe()} released the ${lens.label} camera without a single frame — treat the run as uncontended")
         return
     }
-    // Frames stopping long before release means something else took the camera, which reads the same
-    // as a hold that lasted unless the gap is reported.
+    // Frames stopping early means something else took the camera; without the gap it reads as a hold that lasted.
     val quietFor = System.currentTimeMillis() - lastFrameAt
     Log.i(TAG, "${hold.describe()} released the ${lens.label} camera after $frames frames, last one ${quietFor}ms before release")
 }
 
-/** The lens a product's capture actually uses, so the hold contends with the run rather than beside it. */
+/** The lens the product captures with, so the hold contends with the run rather than beside it. */
 private fun UseSmileIDSampleProduct.holdLens(): HoldLens = when (this) {
     UseSmileIDSampleProduct.SmartSelfieEnrollment,
     UseSmileIDSampleProduct.SmartSelfieAuth,

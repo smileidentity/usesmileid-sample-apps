@@ -104,10 +104,8 @@ fun UseSmileIDSampleQrScanner(
         }
         val analysis = ImageAnalysis.Builder()
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-            // Pinned, because CameraX defaults ImageAnalysis to 640x480 and a v3 token QR is far too
-            // dense to resolve at that size: on device it only decoded once the code overflowed the
-            // reticle, which is the opposite of what this screen tells the person to do. The analyser
-            // reads the whole frame, so what matters is modules-per-pixel, not where the code sits.
+            // CameraX defaults this to 640x480, at which a v3 token QR only decodes once it overflows
+            // the reticle. The analyser reads the whole frame, so modules-per-pixel is what matters.
             .setResolutionSelector(
                 ResolutionSelector.Builder()
                     .setAspectRatioStrategy(AspectRatioStrategy.RATIO_16_9_FALLBACK_AUTO_STRATEGY)
@@ -196,9 +194,5 @@ private fun BarcodeScanner.readQrCode(proxy: ImageProxy, onValue: (String) -> Un
         .addOnCompleteListener { proxy.close() }
 }
 
-/**
- * Enough pixels for a dense token QR. ML Kit needs the code's modules to survive downscaling, and the
- * Portal's own PR flags this payload as denser than the legacy sample QR; the Android SDK's camera
- * system pins its analysis stream for the same reason. Falls back to the closest available size.
- */
+/** Enough pixels for a dense token QR; the SDK's own camera system pins its analysis stream too. */
 private val ANALYSIS_SIZE = Size(1920, 1080)
