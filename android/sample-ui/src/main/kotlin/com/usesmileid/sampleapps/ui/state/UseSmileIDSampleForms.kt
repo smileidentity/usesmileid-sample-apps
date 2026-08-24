@@ -11,7 +11,6 @@ class UseSmileIDSampleForms(
     userDetails: UseSmileIDSampleUserDetails = UseSmileIDSampleUserDetails(),
     idDetails: UseSmileIDSampleIdDetails = UseSmileIDSampleIdDetails(),
     rememberDetails: Boolean = false,
-    seededFrom: String? = null,
 ) {
     var userDetails by mutableStateOf(userDetails)
         private set
@@ -20,10 +19,6 @@ class UseSmileIDSampleForms(
         private set
 
     var rememberDetails by mutableStateOf(rememberDetails)
-        private set
-
-    /** The session handle whose claims seeded [idDetails], or null when the person owns those values. */
-    var seededFrom: String? = seededFrom
         private set
 
     fun setUserField(field: UseSmileIDSampleUserField, value: String) {
@@ -36,49 +31,15 @@ class UseSmileIDSampleForms(
 
     /** Choosing a country clears the ID type, because the types it offered may not apply to the new one. */
     fun setCountry(country: UseSmileIDSampleCountry) {
-        seededFrom = null
         idDetails = idDetails.copy(country = country, idType = null)
     }
 
     fun setIdType(idType: UseSmileIDSampleIdType) {
-        seededFrom = null
         idDetails = idDetails.copy(idType = idType)
     }
 
     fun setIdNumber(value: String) {
         idDetails = idDetails.copy(idNumber = value)
-    }
-
-    /**
-     * Seeds the ID form from a live token's plaintext claims, and never seeds the ID number, because
-     * the token carries a vault reference rather than a value.
-     *
-     * [sessionId] is which session's claims these are — the session's display handle, never the
-     * credential — and tracking it is what makes the seed correctable. Without it a seed from the
-     * first token would block a relinked second token from fixing the form, so the screen would show
-     * one country while the run submitted under another. Three rules follow, in order: a value the
-     * person chose themselves outranks every token; a seed from a different session is replaced; and
-     * a run with no live session clears a seed rather than letting it outlive its token.
-     */
-    fun prefillIdDetails(
-        sessionId: String?,
-        country: UseSmileIDSampleCountry?,
-        idType: UseSmileIDSampleIdType?,
-    ) {
-        val seeded = seededFrom
-        if (seeded == null && (idDetails.country != null || idDetails.idType != null)) return
-        if (sessionId == null || country == null) {
-            if (seeded != null) clearSeed()
-            return
-        }
-        if (seeded == sessionId) return
-        idDetails = idDetails.copy(country = country, idType = idType?.takeIf { country in it.countries })
-        seededFrom = sessionId
-    }
-
-    private fun clearSeed() {
-        seededFrom = null
-        idDetails = idDetails.copy(country = null, idType = null)
     }
 
     companion object {
@@ -93,7 +54,6 @@ class UseSmileIDSampleForms(
                     it.idDetails.idType?.name.orEmpty(),
                     it.idDetails.idNumber,
                     it.rememberDetails.toString(),
-                    it.seededFrom.orEmpty(),
                 )
             },
             restore = { saved ->
@@ -111,8 +71,6 @@ class UseSmileIDSampleForms(
                         idNumber = saved[6],
                     ),
                     rememberDetails = saved[7].toBoolean(),
-                    // Restored so a rotation does not turn a seeded value into one the person owns.
-                    seededFrom = saved.getOrNull(8)?.takeIf { it.isNotEmpty() },
                 )
             },
         )

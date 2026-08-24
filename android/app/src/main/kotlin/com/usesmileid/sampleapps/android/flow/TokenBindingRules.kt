@@ -78,13 +78,5 @@ fun UseSmileIDSampleAppState.tokenBindsIdDetails(product: UseSmileIDSampleProduc
 val UseSmileIDSampleAppState.liveBindings: UseSmileIDSampleTokenBindings?
     get() = liveSession?.bindings
 
-/**
- * [liveBindings] without the clock read, for a caller inside an effect. A prefill reads token
- * *values* rather than presence flags, so it needs the same liveness rule — but it needs a
- * point-in-time answer, not a subscription that recomposes the form every second.
- */
-internal fun UseSmileIDSampleAppState.liveBindingsAt(nowMillis: Long): UseSmileIDSampleTokenBindings? =
-    liveSessionAt(nowMillis)?.bindings
-
 internal val UseSmileIDSampleScenario.startsExpired: Boolean
     get() = this == UseSmileIDSampleScenario.ExpiredToken || this == UseSmileIDSampleScenario.BadRefresh

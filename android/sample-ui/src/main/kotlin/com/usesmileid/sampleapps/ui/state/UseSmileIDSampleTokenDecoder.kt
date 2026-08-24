@@ -67,31 +67,6 @@ fun UseSmileIDSampleTokenBindings.bindsIdDetails(product: UseSmileIDSampleProduc
     else -> true
 }
 
-/**
- * The country the token names, matched to one the picker offers. The Portal's claim is plaintext but
- * its spelling is not the app's, so a code, an enum name and the display label all resolve; anything
- * outside the picker's list resolves to null rather than to a country the form could not have shown.
- */
-val UseSmileIDSampleTokenBindings.prefilledCountry: UseSmileIDSampleCountry?
-    get() = country?.trim()?.takeIf { it.isNotEmpty() }?.let { claim ->
-        UseSmileIDSampleCountry.entries.firstOrNull {
-            claim.equals(it.code, ignoreCase = true) ||
-                claim.equals(it.name, ignoreCase = true) ||
-                claim.equals(it.label, ignoreCase = true)
-        }
-    }
-
-/**
- * The ID type the token names, unfiltered. Whether the resolved country offers it is
- * [UseSmileIDSampleForms.prefillIdDetails]'s single decision, so the rule has one owner.
- */
-val UseSmileIDSampleTokenBindings.prefilledIdType: UseSmileIDSampleIdType?
-    get() = idType?.trim()?.takeIf { it.isNotEmpty() }?.let { claim ->
-        UseSmileIDSampleIdType.entries.firstOrNull {
-            claim.equals(it.id, ignoreCase = true) || claim.equals(it.name, ignoreCase = true)
-        }
-    }
-
 /** Either the session a token describes, or why it is not one. */
 sealed interface UseSmileIDSampleTokenDecode {
     /** The session the claims describe — decoded only, never verified: the sample holds no signing key. */

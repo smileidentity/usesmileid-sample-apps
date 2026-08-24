@@ -5,8 +5,8 @@ model, builder handoff, honest countdown, and the CameraX QR scanner with the bu
 model. Both host forms are now skipped when the token already carries what they would collect (§4.2). A9 was planned as its own PR and folded into the same one on the owner's call (2026-08-19), so
 the token flow lands complete rather than scannerless. TOK-A7 (Room) is built: jobs persist, carrying the
 profile that submitted them and the environment they went to, and the verification-details screen
-fetches `GET /v3/status/{jobId}` under a live scanned session. **TOK-A10, TOK-A11 and the `holdCamera`
-consumer are built (2026-08-24)**, which closes the item list; TOK-A11 was added the same day after a
+fetches `GET /v3/status/{jobId}` under a live scanned session. **TOK-A11 and the `holdCamera` consumer
+are built (2026-08-24)**, which closes the item list; TOK-A11 was added the same day after a
 device run mistook the expiry redirect for a glitch — the gate was right, but it said nothing and
 resumed nothing (§TOK-A5). TOK-A8's goldens listed in §8 were already covered by the session card, the
 ended banner, and the `nav_bar`/`TokenRings` ring pair, so what remains of A8 is its **device** pass,
@@ -18,7 +18,11 @@ expiry redirect stating its reason, a relink re-entering the interrupted run, an
 visit explaining nothing. `holdCamera` verified on both lenses — front for SmartSelfie (85 frames in
 4s), back for Document Verification (136 frames in 6s), each reporting its last frame tens of
 milliseconds before release, so the hold demonstrably lasted rather than being evicted early. One real
-finding, in §TOK-A10: the ID-form prefill cannot fire on any token this app can obtain.
+finding, which **removed TOK-A10 rather than shipping it**: the ID-form prefill could only ever seed
+`country` and `id_type`, and the host already skips the ID form whenever those two are present, so no
+journey could reach it. Confirmed on the device, not inferred — Biometric KYC showed no ID form under
+a details-binding token. The code and its tests are deleted; §2's "prefilling a name or an ID number
+is impossible" was always the ceiling, and it turns out the reachable ceiling is lower still.
 
 **Real Portal token, end to end, same day.** A scanned Portal QR ran Enhanced KYC to a real sandbox
 submission: `200 OK` / "Job completed", exactly one result callback, no error. Three things only a
@@ -115,7 +119,8 @@ Six things follow, each of which had been a guess until now:
 6. **Both bind the required user details** (`given_names`, `last_name`, `email`), so
    `bindsRequiredUserDetails` is true for a real token and the host's details form is skipped in
    practice, not just in theory. They also bind `id_number`, `country` and `id_type` — which the SDK
-   never relaxes, so the ID form still runs, and TOK-A10's prefill has real data to read.
+   never relaxes — though the *host* skips its own ID form once all three are bound, which is why the
+   prefill this once implied was removed on 2026-08-24 as unreachable.
 
 Every PII value was exactly 30 characters across name, email and ID number, which is what opaque vault
 references look like and confirms §2's "presence, never content" empirically.
@@ -220,7 +225,6 @@ then our copy is a documented duplicate, and the unit test in TOK-A2 pins it to 
 | TOK-A7 | Room for jobs; a submitted job survives the process | P2 | A4 |
 | TOK-A8 | Device + unit coverage, including the no-consent-screen path | P2 | A4–A7 |
 | TOK-A9 | QR scanning for real (CameraX + bundled ML Kit barcode), release-on-leave, scan reliability | P2 | A1–A3 |
-| TOK-A10 | Prefill the ID-details form from the token's plaintext fields | P3 | A2 |
 | TOK-A12 | `holdCamera` gets its consumer, proven by frames rather than by a bind returning | P3 | A9 |
 | TOK-A11 | Say why the expiry gate redirected, and let a fresh scan resume the run it interrupted | P2 | A5, A9 |
 
@@ -342,41 +346,6 @@ would show a full ring for 55 minutes and then a cliff. Progress becomes
 `toCountdown()` is `m:ss` and overflows past an hour — an 8h token must read `7:59:12`, so the
 format grows an hours part when the span needs one. Both are asserted by unit test at 15m, 1h and 8h,
 which is cheaper and more certain than watching a device for eight hours.
-
-### TOK-A10 — the prefill, and the two-field ceiling §2 puts on it
-
-Seeds the ID form's country and ID type from the token's plaintext claims and stops there: every other
-field is a vault reference, so §2's "presence, never content" makes prefilling a name or an ID number
-impossible rather than merely unimplemented. Three rules the tests pin, each of which was a way to get
-this wrong. A claim resolves only to something **the picker could have offered** — matched on the wire
-id, the enum name or the display label, so the Portal's spelling need not be the app's, and anything
-unrecognised resolves to nothing rather than to a plausible neighbour. An ID type is dropped unless the
-resolved country actually offers it, because seeding a combination the picker filters out would leave a
-form the person cannot re-derive; that rule has exactly one owner, in the form, so the decoder returns
-the match unfiltered.
-
-**Device pass 2026-08-24 found this cannot fire, and the reason is structural.** The prefill can only
-seed `country` and `id_type` — but the host skips the ID form whenever those two are present:
-Document Verification skips on country plus ID type, and Biometric/Enhanced KYC skip on those plus
-the ID-number reference (§4.2). The Simulate fixture's vaulted field list includes `id_number`, so
-"Binds details" always mints all three and the form is skipped; the only other fixture state binds
-nothing at all, so there is nothing to seed. Confirmed on an Oppo CPH2113: Biometric KYC showed no ID
-form under a details-binding token, and Document Verification went straight to the SDK. §2.1's read of
-two real Portal tokens says they bind all three as well, so a real token behaves the same. The code
-below is correct and unit-tested; it is simply unreachable on every token this app can obtain. **Owner
-decision owed:** either Simulate gains a shape that binds country and ID type *without* an ID number —
-which would make the prefill reachable and is worth having anyway, since the Portal could mint one —
-or TOK-A10 is dropped and this section goes with it. It is not worth shipping a form-seeding path that
-no journey reaches.
-
-The third rule below is the one review caught, and it is the reason the form tracks **which session
-seeded it**. "Only fill an untouched form" is not enough once TOK-A11 exists: the redirect can relink a
-*different* token and return the partner to this form, and a seed with no owner would then block the
-new token from correcting it — the form showing one country while the run submitted under another,
-with no provenance the person could see. So a value the person chose outranks every token, a seed
-from a different session is replaced, and a run with no live session clears a seed rather than
-letting it outlive its token. The last of those is what makes "a prefill cannot outlive the session
-that justified it" true of the write and not merely of the read.
 
 ---
 
