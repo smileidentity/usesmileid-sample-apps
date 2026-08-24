@@ -61,6 +61,8 @@ fun UseSmileIDSampleCameraHold(hold: UseSmileIDSampleHoldCamera?, product: UseSm
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
         val lens = product.holdLens()
+        // Read in `finally`, so a hold that never bound is not also reported as one that released.
+        var bound = false
         try {
             analysis.setAnalyzer(executor) { proxy ->
                 if (frames.getAndIncrement() == 0) Log.i(TAG, "${hold.describe()} acquired the ${lens.label} camera")
@@ -73,6 +75,7 @@ fun UseSmileIDSampleCameraHold(hold: UseSmileIDSampleHoldCamera?, product: UseSm
                     Log.w(TAG, "${hold.describe()} could not bind the ${lens.label} camera (${failure.javaClass.simpleName}), so the hand-off was uncontended")
                     return@LaunchedEffect
                 }
+            bound = true
             when (hold) {
                 UseSmileIDSampleHoldCamera.Keep -> awaitCancellation()
                 is UseSmileIDSampleHoldCamera.Millis -> delay(hold.value)
@@ -80,7 +83,7 @@ fun UseSmileIDSampleCameraHold(hold: UseSmileIDSampleHoldCamera?, product: UseSm
         } finally {
             runCatching { provider.unbind(analysis) }
             executor.shutdown()
-            report(hold, lens, frames.get(), lastFrameAt.get())
+            if (bound) report(hold, lens, frames.get(), lastFrameAt.get())
         }
     }
 }
