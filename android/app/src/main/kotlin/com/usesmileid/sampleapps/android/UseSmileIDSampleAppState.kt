@@ -22,6 +22,7 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStore
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleEndedSession
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleSessionRecord
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import androidx.compose.runtime.staticCompositionLocalOf
 import kotlinx.coroutines.delay
@@ -33,8 +34,8 @@ class UseSmileIDSampleAppState(
     /** Process-lifetime: neither navigation nor activity recreation can cancel a write mid-flight. */
     val storeScope: CoroutineScope,
     private val settingsState: State<UseSmileIDSampleSettings>,
-    private val sessionState: State<UseSmileIDSampleTokenSession?>,
-    private val endedSessionState: State<UseSmileIDSampleEndedSession?>,
+    /** One value, so the live session and the ended marker can never come from different writes. */
+    private val sessionState: State<UseSmileIDSampleSessionRecord>,
     /** Null until Room's first emission, so "not loaded yet" is not read as "no verifications". */
     private val jobsState: State<List<UseSmileIDSampleJob>?>,
     val jobStore: UseSmileIDSampleJobStore,
@@ -52,13 +53,13 @@ class UseSmileIDSampleAppState(
     private val now: State<Long>,
 ) {
     val settings: UseSmileIDSampleSettings get() = settingsState.value
-    val session: UseSmileIDSampleTokenSession? get() = sessionState.value
+    val session: UseSmileIDSampleTokenSession? get() = sessionState.value.live
     val jobs: List<UseSmileIDSampleJob>? get() = jobsState.value
 
     val nowMillis: Long get() = now.value
 
     /** The session that ran out, once its token has been deleted. Carries no credential. */
-    val endedSession: UseSmileIDSampleEndedSession? get() = endedSessionState.value
+    val endedSession: UseSmileIDSampleEndedSession? get() = sessionState.value.ended
 
     /**
      * True from the deadline onwards. Reads the ended marker as well as the live session because the
@@ -88,8 +89,7 @@ fun rememberUseSmileIDSampleAppState(
     val context = LocalContext.current
     val store = remember(context) { UseSmileIDSampleStore(context) }
     val settingsState = store.settings.collectAsStateWithLifecycle(initialValue = UseSmileIDSampleSettings())
-    val sessionState = store.tokenSession.collectAsStateWithLifecycle(initialValue = null)
-    val endedSessionState = store.endedSession.collectAsStateWithLifecycle(initialValue = null)
+    val sessionState = store.session.collectAsStateWithLifecycle(initialValue = UseSmileIDSampleSessionRecord())
     val now = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val jobStore = remember(context) { UseSmileIDSampleJobStore.of(context, RetrofitJobStatusSource()) }
     val jobsState = jobStore.jobs.collectAsStateWithLifecycle<List<UseSmileIDSampleJob>?>(initialValue = null)
@@ -112,8 +112,8 @@ fun rememberUseSmileIDSampleAppState(
     }
 
     // Stops at the deadline: the session object does not change on expiry, so the key alone never ends this.
-    LaunchedEffect(sessionState.value) {
-        val live = sessionState.value ?: return@LaunchedEffect
+    LaunchedEffect(sessionState.value.live) {
+        val live = sessionState.value.live ?: return@LaunchedEffect
         while (!live.hasExpired(now.longValue)) {
             now.longValue = System.currentTimeMillis()
             delay(TICK_MILLIS)
@@ -129,7 +129,6 @@ fun rememberUseSmileIDSampleAppState(
         storeScope = UseSmileIDSampleJobStore.writeScope,
         settingsState = settingsState,
         sessionState = sessionState,
-        endedSessionState = endedSessionState,
         jobsState = jobsState,
         jobStore = jobStore,
         forms = forms,

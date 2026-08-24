@@ -41,19 +41,23 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
      * Unencrypted, deliberately: the token is short-lived and sandbox-scoped, and losing the session
      * on every process death the camera can cause would make the feature unusable.
      */
-    val tokenSession: Flow<UseSmileIDSampleTokenSession?> = store.data.map { prefs ->
-        prefs[SESSION_TOKEN]?.let(UseSmileIDSampleTokenDecoder::session)
-    }
-
     /**
-     * What outlives a session: that it ended, and which one. Neither field is a credential — the
-     * handle is the token's `jti` or a digest of it, never a prefix of the token itself — which is
-     * the whole point. A lapsed token has no use left, so it is deleted at its deadline, while the
-     * app still needs to know a session ended in order to say so and to route a run to the scanner.
+     * The live session and the ended marker together, from **one** emission.
+     *
+     * They were two flows once, and that was a defect found on a device: two collectors over
+     * `store.data` update independently, so the UI could hold the token from one write and the
+     * marker from the next. Retiring a session and linking a new one in quick succession then
+     * produced "no token and no marker" — a pair that cannot exist on disk — and the products screen
+     * showed neither the active card nor the ended banner until the next write or a relaunch. One
+     * flow makes the pair atomic by construction, so the two halves can never disagree.
      */
-    val endedSession: Flow<UseSmileIDSampleEndedSession?> = store.data.map { prefs ->
-        val id = prefs[ENDED_SESSION_ID] ?: return@map null
-        UseSmileIDSampleEndedSession(id = id, endedAtMillis = prefs[ENDED_SESSION_AT] ?: 0L)
+    val session: Flow<UseSmileIDSampleSessionRecord> = store.data.map { prefs ->
+        UseSmileIDSampleSessionRecord(
+            live = prefs[SESSION_TOKEN]?.let(UseSmileIDSampleTokenDecoder::session),
+            ended = prefs[ENDED_SESSION_ID]?.let { id ->
+                UseSmileIDSampleEndedSession(id = id, endedAtMillis = prefs[ENDED_SESSION_AT] ?: 0L)
+            },
+        )
     }
 
     suspend fun setSetting(setting: UseSmileIDSampleSetting, enabled: Boolean) {
@@ -110,6 +114,15 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
 
 /** A session that has run out, remembered without its credential. */
 data class UseSmileIDSampleEndedSession(val id: String, val endedAtMillis: Long)
+
+/**
+ * What the store knows about the token session at one instant. At most one half is ever set: a live
+ * token has no marker, and retiring one replaces the token with its marker in a single write.
+ */
+data class UseSmileIDSampleSessionRecord(
+    val live: UseSmileIDSampleTokenSession? = null,
+    val ended: UseSmileIDSampleEndedSession? = null,
+)
 
 // Not an application id, so it stays identity-agnostic and the same across all eight hosts.
 private val Context.sampleStore by preferencesDataStore(name = "usesmileid_sample")

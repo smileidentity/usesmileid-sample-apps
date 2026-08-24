@@ -48,13 +48,13 @@ class UseSmileIDSampleSessionRetirementTest {
     @Test
     fun `retiring deletes the token and keeps only the handle and the deadline`() = runTest {
         store.linkTokenSession(session())
-        assertNotNull("linking must store the token", store.tokenSession.first())
-        assertNull("a fresh session is not an ended one", store.endedSession.first())
+        assertNotNull("linking must store the token", store.session.first().live)
+        assertNull("a fresh session is not an ended one", store.session.first().ended)
 
         store.retireTokenSession(session())
 
-        assertNull("the credential must be gone", store.tokenSession.first())
-        val ended = store.endedSession.first()
+        assertNull("the credential must be gone", store.session.first().live)
+        val ended = store.session.first().ended
         assertEquals(HANDLE, ended?.id)
         assertEquals(EXPIRES_AT, ended?.endedAtMillis)
     }
@@ -62,12 +62,12 @@ class UseSmileIDSampleSessionRetirementTest {
     @Test
     fun `linking again clears the ended marker, so a live token is never shown as ended`() = runTest {
         store.retireTokenSession(session())
-        assertNotNull(store.endedSession.first())
+        assertNotNull(store.session.first().ended)
 
         store.linkTokenSession(session())
 
-        assertNull("relinking must retire the marker too", store.endedSession.first())
-        assertNotNull(store.tokenSession.first())
+        assertNull("relinking must retire the marker too", store.session.first().ended)
+        assertNotNull(store.session.first().live)
     }
 
     @Test
@@ -76,14 +76,30 @@ class UseSmileIDSampleSessionRetirementTest {
         store.retireTokenSession(session())
         store.retireTokenSession(session())
 
-        assertNull(store.tokenSession.first())
-        assertEquals(HANDLE, store.endedSession.first()?.id)
+        assertNull(store.session.first().live)
+        assertEquals(HANDLE, store.session.first().ended?.id)
+    }
+
+    @Test
+    fun `the live half and the ended half always come from the same write`() = runTest {
+        // The pair is what the UI reads; one flow is what stops the two halves disagreeing.
+        store.linkTokenSession(session())
+        store.session.first().let { record ->
+            assertNotNull(record.live)
+            assertNull("a live token and an ended marker must never both be set", record.ended)
+        }
+
+        store.retireTokenSession(session())
+        store.session.first().let { record ->
+            assertNull(record.live)
+            assertNotNull("retiring must leave exactly the marker", record.ended)
+        }
     }
 
     @Test
     fun `nothing stored reads as neither live nor ended`() = runTest {
-        assertNull(store.tokenSession.first())
-        assertNull(store.endedSession.first())
+        assertNull(store.session.first().live)
+        assertNull(store.session.first().ended)
     }
 
     private fun session() = UseSmileIDSampleTokenSession(
