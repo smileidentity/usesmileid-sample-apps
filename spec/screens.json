@@ -565,6 +565,10 @@
         {
           "state": "default",
           "node": "5206-3668"
+        },
+        {
+          "state": "redirected",
+          "note": "No design node: the expiry gate can send a partner here mid-journey, and the caption is replaced by why they were moved so a scanner nobody asked for is not a dead tap. The sentence belongs to the shared UI rather than a host, so the four apps cannot word it differently."
         }
       ],
       "note": "Camera QR scan for linking a token session. The reticle frame is hidden in the design in favour of the scan glyph; a manual-entry row with Paste and a 'Simulate a successful scan' affordance are both present — the simulate row is what makes this screen testable without a QR source.",

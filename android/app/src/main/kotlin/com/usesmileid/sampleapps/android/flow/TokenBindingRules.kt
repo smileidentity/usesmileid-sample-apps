@@ -21,16 +21,31 @@ internal val FlowLaunchSnapshot.liveSession: UseSmileIDSampleTokenSession?
     get() = session?.takeUnless { scenario.startsExpired }
 
 /**
+ * The live-session rule itself, in one place. Everything that reads a token — the form-skip
+ * decisions, the requirement summary and the prefill — goes through this, so they cannot disagree
+ * about whether the same token is live. [nowMillis] is passed rather than read so a caller can avoid
+ * subscribing its composition to the once-a-second clock.
+ */
+internal fun UseSmileIDSampleTokenSession?.liveAt(
+    scenario: UseSmileIDSampleScenario,
+    nowMillis: Long,
+): UseSmileIDSampleTokenSession? = this?.takeIf { !it.hasExpired(nowMillis) && !scenario.startsExpired }
+
+internal fun UseSmileIDSampleAppState.liveSessionAt(nowMillis: Long): UseSmileIDSampleTokenSession? =
+    session.liveAt(flowResult.scenario, nowMillis)
+
+/** The ticking read, for callers already recomposing on the clock. */
+private val UseSmileIDSampleAppState.liveSession: UseSmileIDSampleTokenSession?
+    get() = liveSessionAt(nowMillis)
+
+/**
  * Whether the token this run will submit under binds the user details the SDK requires — both names
  * plus one contact field. When it does the SDK asks nothing more of `userDetails`, so the host's own
  * form has nothing left to collect and the journey may start past it. Read through the same
  * live-session rule the gate uses, so a skipped form can never be followed by a redirect back to it.
  */
 val UseSmileIDSampleAppState.tokenBindsUserDetails: Boolean
-    get() = session
-        ?.takeIf { sessionActive && !flowResult.scenario.startsExpired }
-        ?.bindings
-        ?.bindsRequiredUserDetails == true
+    get() = liveBindings?.bindsRequiredUserDetails == true
 
 /** Drops the issues the token already answers; every other rule the SDK applies still stands. */
 internal fun ValidationState.minus(requirement: UseSmileIDSampleUserDetailsRequirement): ValidationState {
@@ -53,26 +68,23 @@ private fun UseSmileIDSampleUserDetailsRequirement.covers(issue: UseSmileIDValid
 
 /** What the form must still collect, read through the same live-session rule as the gate. */
 val UseSmileIDSampleAppState.tokenUserDetailsRequirement: UseSmileIDSampleUserDetailsRequirement
-    get() = session
-        ?.takeIf { sessionActive && !flowResult.scenario.startsExpired }
-        ?.bindings
-        .userDetailsRequirement()
+    get() = liveBindings.userDetailsRequirement()
 
 /** [tokenBindsUserDetails] for the ID form, read through the same live-session rule. */
-fun UseSmileIDSampleAppState.tokenBindsIdDetails(product: UseSmileIDSampleProduct): Boolean = session
-    ?.takeIf { sessionActive && !flowResult.scenario.startsExpired }
-    ?.bindings
-    ?.bindsIdDetails(product) == true
+fun UseSmileIDSampleAppState.tokenBindsIdDetails(product: UseSmileIDSampleProduct): Boolean =
+    liveBindings?.bindsIdDetails(product) == true
+
+/** The bindings a run may read, or null when no live token backs it. */
+val UseSmileIDSampleAppState.liveBindings: UseSmileIDSampleTokenBindings?
+    get() = liveSession?.bindings
 
 /**
- * The bindings a run may read, or null when no live token backs it. The single place the
- * live-session rule is spelled out for readers of the token's *values* rather than its presence
- * flags, so a prefill cannot outlive the session that justified it.
+ * [liveBindings] without the clock read, for a caller inside an effect. A prefill reads token
+ * *values* rather than presence flags, so it needs the same liveness rule — but it needs a
+ * point-in-time answer, not a subscription that recomposes the form every second.
  */
-val UseSmileIDSampleAppState.liveBindings: UseSmileIDSampleTokenBindings?
-    get() = session
-        ?.takeIf { sessionActive && !flowResult.scenario.startsExpired }
-        ?.bindings
+internal fun UseSmileIDSampleAppState.liveBindingsAt(nowMillis: Long): UseSmileIDSampleTokenBindings? =
+    liveSessionAt(nowMillis)?.bindings
 
 internal val UseSmileIDSampleScenario.startsExpired: Boolean
     get() = this == UseSmileIDSampleScenario.ExpiredToken || this == UseSmileIDSampleScenario.BadRefresh

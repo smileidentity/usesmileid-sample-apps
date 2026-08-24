@@ -334,10 +334,17 @@ this wrong. A claim resolves only to something **the picker could have offered**
 id, the enum name or the display label, so the Portal's spelling need not be the app's, and anything
 unrecognised resolves to nothing rather than to a plausible neighbour. An ID type is dropped unless the
 resolved country actually offers it, because seeding a combination the picker filters out would leave a
-form the person cannot re-derive. And the seed touches an **untouched form only**: re-entering after
-choosing a country keeps that choice, which matters because the expiry redirect (TOK-A11) can now
-return a partner to this form mid-journey. Read through the same live-session rule as the gate, so a
-prefill cannot outlive the token that justified it.
+form the person cannot re-derive; that rule has exactly one owner, in the form, so the decoder returns
+the match unfiltered.
+
+The third rule is the one review caught, and it is the reason the form tracks **which session seeded
+it**. "Only fill an untouched form" is not enough once TOK-A11 exists: the redirect can relink a
+*different* token and return the partner to this form, and a seed with no owner would then block the
+new token from correcting it — the form showing one country while the run submitted under another,
+with no provenance the person could see. So a value the person chose outranks every token, a seed
+from a different session is replaced, and a run with no live session clears a seed rather than
+letting it outlive its token. The last of those is what makes "a prefill cannot outlive the session
+that justified it" true of the write and not merely of the read.
 
 ---
 
@@ -576,9 +583,15 @@ which is the signal the decision is for.
   `spec/launch-args.json` warns that a probe which never acquired the camera passes vacuously. It now
   binds an `ImageAnalysis` use case alongside the starting run and **counts delivered frames**, since
   a bind returning is not evidence the camera opened; it unbinds only its own use case, because
-  `unbindAll` would take the camera off the SDK it is supposed to be contending with. Two limits worth
-  knowing: a missing camera permission is reported rather than requested, because a permission dialog
-  over a starting flow changes the hand-off being measured; and the frame count goes to **logcat**
+  `unbindAll` would take the camera off the SDK it is supposed to be contending with. It holds **the
+  lens the product will use** — review caught that a hard-coded back camera contends with nothing on a
+  selfie flow while still logging a successful acquisition, which is the vacuous pass again wearing
+  the evidence's clothes. Every camera call is guarded, because an unguarded `bindToLifecycle` throw
+  inside a `LaunchedEffect` kills the process, and a probe that crashes the run it observes gets
+  reported as an SDK defect. The release line names the lens and how long before release the last
+  frame arrived, so a hold evicted early by someone else's `unbindAll` cannot read as one that lasted.
+  Two limits worth knowing: a missing camera permission is reported rather than requested, because a
+  permission dialog over a starting flow changes the hand-off being measured; and the report goes to **logcat**
   under one tag, which is the weak part — a `sample_*` node would be assertable, but adding one is a
   four-platform `spec/test-ids.json` change and this argument is the only thing that would want it.
   That id is the obvious follow-up if the argument earns a device lane. This was originally deferred

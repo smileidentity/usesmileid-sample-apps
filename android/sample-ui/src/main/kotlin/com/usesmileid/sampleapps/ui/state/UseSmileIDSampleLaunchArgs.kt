@@ -13,6 +13,12 @@ sealed interface UseSmileIDSampleHoldCamera {
     data class Millis(val value: Long) : UseSmileIDSampleHoldCamera
 }
 
+/** Renders the mode in the argument's own vocabulary, so a report cannot drift from what the parser accepts. */
+fun UseSmileIDSampleHoldCamera.describe(): String = when (this) {
+    UseSmileIDSampleHoldCamera.Keep -> "holdCamera=${UseSmileIDSampleLaunchArgs.HOLD_CAMERA_KEEP}"
+    is UseSmileIDSampleHoldCamera.Millis -> "holdCamera=${value}ms"
+}
+
 /** The canonical arguments from `spec/launch-args.json`; reading an Intent is the shell's job. */
 @Immutable
 data class UseSmileIDSampleLaunchArgs(
@@ -39,7 +45,7 @@ data class UseSmileIDSampleLaunchArgs(
 
         val names = listOf(SCENARIO, THEME, ROUTE, AUTOSTART, SANDBOX, SEED_JOBS, APP_LOCALE, HOLD_CAMERA)
 
-        private const val HOLD_CAMERA_KEEP = "keep"
+        internal const val HOLD_CAMERA_KEEP = "keep"
 
         /** An unrecognised value falls back to its default, which is safe only because the card reports it. */
         fun from(raw: Map<String, Any?>): UseSmileIDSampleLaunchArgs {

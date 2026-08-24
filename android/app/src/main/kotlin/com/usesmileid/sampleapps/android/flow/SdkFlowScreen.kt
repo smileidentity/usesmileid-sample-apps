@@ -110,7 +110,7 @@ fun SdkFlowScreen(
 
     // Mounted with the run rather than before it: the argument asks for a camera the host still holds
     // as the SDK starts, which is only true if the hold overlaps this composition.
-    UseSmileIDSampleCameraHold(app.launchArgs.holdCamera)
+    UseSmileIDSampleCameraHold(app.launchArgs.holdCamera, snapshot.product)
 
     // Effects run after the SDK's first composition, which is early enough to deliver a Failure.
     LaunchedEffect(Unit) {

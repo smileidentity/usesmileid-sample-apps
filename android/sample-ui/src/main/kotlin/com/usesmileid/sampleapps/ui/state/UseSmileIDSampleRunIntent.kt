@@ -1,10 +1,6 @@
 package com.usesmileid.sampleapps.ui.state
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 
 /** A run the expiry gate sent away, carrying the presentation it was launched in (R3). */
@@ -30,16 +26,23 @@ data class UseSmileIDSampleRunIntent(
  * stranding the partner on the product list. Held here rather than in a route argument: the
  * wizard's linear Continue chain is what keeps continuation state out of the four-platform route
  * table, and the scanner sits outside that chain.
+ *
+ * Deliberately not Compose state. It is written once and read once, imperatively, and nothing
+ * renders it — holding it as state only subscribed the scanner to a value it never draws.
  */
-@Stable
 class UseSmileIDSampleInterruptedRun {
-    var pending: UseSmileIDSampleRunIntent? by mutableStateOf(null)
+    var pending: UseSmileIDSampleRunIntent? = null
         private set
 
     fun send(intent: UseSmileIDSampleRunIntent) {
         pending = intent
     }
 
-    /** Reads and clears, so the visit that claims it owns it and backing out cannot leave it for a later scan. */
-    fun claim(): UseSmileIDSampleRunIntent? = pending.also { pending = null }
+    /**
+     * Forgets the run. Called from an effect rather than from a `remember` calculation: a composition
+     * that is abandoned mid-flight must not swallow the intent, so reading and clearing are separate.
+     */
+    fun clear() {
+        pending = null
+    }
 }

@@ -81,15 +81,15 @@ val UseSmileIDSampleTokenBindings.prefilledCountry: UseSmileIDSampleCountry?
         }
     }
 
-/** The ID type the token names, dropped unless it is one this country actually offers. */
+/**
+ * The ID type the token names, unfiltered. Whether the resolved country offers it is
+ * [UseSmileIDSampleForms.prefillIdDetails]'s single decision, so the rule has one owner.
+ */
 val UseSmileIDSampleTokenBindings.prefilledIdType: UseSmileIDSampleIdType?
-    get() {
-        val resolved = idType?.trim()?.takeIf { it.isNotEmpty() }?.let { claim ->
-            UseSmileIDSampleIdType.entries.firstOrNull {
-                claim.equals(it.id, ignoreCase = true) || claim.equals(it.name, ignoreCase = true)
-            }
-        } ?: return null
-        return resolved.takeIf { prefilledCountry in it.countries }
+    get() = idType?.trim()?.takeIf { it.isNotEmpty() }?.let { claim ->
+        UseSmileIDSampleIdType.entries.firstOrNull {
+            claim.equals(it.id, ignoreCase = true) || claim.equals(it.name, ignoreCase = true)
+        }
     }
 
 /** Either the session a token describes, or why it is not one. */

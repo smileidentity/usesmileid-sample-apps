@@ -13,7 +13,7 @@ import com.ramcosta.composedestinations.generated.destinations.IdTypePickerSheet
 import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
-import com.usesmileid.sampleapps.android.flow.liveBindings
+import com.usesmileid.sampleapps.android.flow.liveBindingsAt
 import com.usesmileid.sampleapps.android.flow.sdkFlow
 import com.usesmileid.sampleapps.android.flow.stepAfterUserDetails
 import com.usesmileid.sampleapps.android.flow.tokenUserDetailsRequirement
@@ -53,11 +53,17 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
 @Composable
 fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
-    // Seeded once on entry, not per recomposition: only `country` and `id_type` arrive in plaintext,
-    // so this saves two taps and never claims to know a vaulted ID number (TOK-A10).
-    val bindings = app.liveBindings
-    LaunchedEffect(bindings) {
-        app.forms.prefillIdDetails(bindings?.prefilledCountry, bindings?.prefilledIdType)
+    // Only `country` and `id_type` arrive in plaintext, so this saves two taps and never claims to
+    // know a vaulted ID number (TOK-A10). Keyed on the session, and the liveness read happens inside
+    // the effect: reading it in the body would subscribe this form to the once-a-second clock.
+    val session = app.session
+    LaunchedEffect(session, app.flowResult.scenario) {
+        val bindings = app.liveBindingsAt(System.currentTimeMillis())
+        app.forms.prefillIdDetails(
+            sessionId = bindings?.let { session?.id },
+            country = bindings?.prefilledCountry,
+            idType = bindings?.prefilledIdType,
+        )
     }
     KycIdFormContent(
         productLabel = productOf(productId)?.label ?: productId,

@@ -56,7 +56,9 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
  * route links a session only after the token decodes.
  *
  * @param reason why the screen opened when something sent the user here, shown in place of the
- *   generic caption. Null when the scanner was opened deliberately, which needs no explaining.
+ *   generic caption. Null when the scanner was opened deliberately, which needs no explaining. Typed
+ *   rather than a caller-supplied string, so the eight hosts consuming this library cannot each word
+ *   the same redirect differently.
  * @param onPaste the host's clipboard, because reading it is platform-owned; null when it holds no text.
  * @param viewfinder the host's camera preview, given the same candidate handler the sheet uses so a
  *   scanned code, a pasted one and a typed one are all judged by one decode. Absent — in a golden, or
@@ -69,7 +71,7 @@ fun ScanTokenScreen(
     onSimulate: (UseSmileIDSampleSimulatedSpan, UseSmileIDSampleSimulatedBindings) -> Unit,
     onPaste: () -> String?,
     modifier: Modifier = Modifier,
-    reason: String? = null,
+    reason: UseSmileIDSampleScanReason? = null,
     torchOn: Boolean = false,
     onTorchToggle: () -> Unit = {},
     viewfinder: (@Composable (Modifier, enabled: Boolean, onCandidate: (String) -> Unit) -> Unit)? = null,
@@ -128,7 +130,7 @@ fun ScanTokenScreen(
     }
 
     // The redirect's own words when there is one, so the screen explains itself rather than the caller.
-    val caption = reason ?: SCAN_CAPTION
+    val caption = reason?.caption ?: SCAN_CAPTION
     val titleStyle = UseSmileIDSampleTheme.type.textStyleTitle
     val titleColor = UseSmileIDSampleTheme.colors.textTitle
     val captionStyle = UseSmileIDSampleTheme.type.textStyleCaption.copy(fontSize = SCAN_BODY_SIZE)
@@ -260,6 +262,15 @@ private fun UseSmileIDSampleScanState.reticleTint(): Color = when (this) {
     UseSmileIDSampleScanState.Found -> UseSmileIDSampleTheme.colors.infoFill
     is UseSmileIDSampleScanState.Linked -> UseSmileIDSampleTheme.colors.successFill
     is UseSmileIDSampleScanState.Rejected -> UseSmileIDSampleTheme.colors.errorFill
+}
+
+/**
+ * Why the scanner opened, when the person did not open it themselves. The copy lives beside the
+ * screen's other copy rather than in a host, so the golden pins the sentence the app ships and the
+ * four platforms cannot drift apart on the wording.
+ */
+enum class UseSmileIDSampleScanReason(val caption: String) {
+    SessionEnded("Token session ended. Scan to continue where you left off."),
 }
 
 private const val SCAN_TITLE = "Point at a Smile token QR"

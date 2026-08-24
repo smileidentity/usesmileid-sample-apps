@@ -12,20 +12,21 @@ import org.junit.Test
 class UseSmileIDSampleRunIntentTest {
 
     @Test
-    fun `claiming reads the run once and leaves nothing behind`() {
+    fun `reading does not consume, so an abandoned composition cannot swallow the run`() {
         val interrupted = UseSmileIDSampleInterruptedRun()
-        interrupted.send(UseSmileIDSampleRunIntent("biometricKyc", UseSmileIDSampleFlowRoute.Shell))
+        val sent = UseSmileIDSampleRunIntent("biometricKyc", UseSmileIDSampleFlowRoute.Shell)
+        interrupted.send(sent)
 
-        assertEquals(
-            UseSmileIDSampleRunIntent("biometricKyc", UseSmileIDSampleFlowRoute.Shell),
-            interrupted.claim(),
-        )
-        assertNull("a second claim must not resume the same run again", interrupted.claim())
+        assertEquals(sent, interrupted.pending)
+        assertEquals("reading twice must still find it", sent, interrupted.pending)
+
+        interrupted.clear()
+        assertNull("clearing is what ends the hand-off", interrupted.pending)
     }
 
     @Test
-    fun `nothing to claim when no gate sent anything`() {
-        assertNull(UseSmileIDSampleInterruptedRun().claim())
+    fun `nothing pending when no gate sent anything`() {
+        assertNull(UseSmileIDSampleInterruptedRun().pending)
     }
 
     @Test
@@ -34,7 +35,7 @@ class UseSmileIDSampleRunIntentTest {
         interrupted.send(UseSmileIDSampleRunIntent("documentVerification", UseSmileIDSampleFlowRoute.Fullscreen))
         interrupted.send(UseSmileIDSampleRunIntent("biometricKyc", UseSmileIDSampleFlowRoute.Shell))
 
-        assertEquals("biometricKyc", interrupted.claim()?.productId)
+        assertEquals("biometricKyc", interrupted.pending?.productId)
     }
 
     @Test
