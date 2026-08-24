@@ -13,6 +13,15 @@ ended banner, and the `nav_bar`/`TokenRings` ring pair, so what remains of A8 is
 not more goldens. The one deliberate scope call: `holdCamera` was to be a separate PR (§7.1) and was
 folded in on the owner's instruction that the token work land as one review.
 
+**Device pass 2026-08-24 (Oppo CPH2113, debug):** `token-session.yaml` green end to end, including the
+expiry redirect stating its reason, a relink re-entering the interrupted run, and a deliberate scanner
+visit explaining nothing. `holdCamera` verified on both lenses — front for SmartSelfie (85 frames in
+4s), back for Document Verification (136 frames in 6s), each reporting its last frame tens of
+milliseconds before release, so the hold demonstrably lasted rather than being evicted early. One real
+finding, in §TOK-A10: the ID-form prefill cannot fire on any token this app can obtain. Still owed:
+scan reliability against a real Portal QR at the density §8 describes, which needs the Portal rather
+than a fixture.
+
 Android first; the token contract is shared, so §9 records what the other three inherit. Written against the Portal as merged (`portal#3274`, `portal#3274`'s follow-up
 `portal#3306`) and the SDK as published (`com.usesmileid:usesmileid:12.0.2`), read rather than assumed.
 
@@ -337,8 +346,22 @@ resolved country actually offers it, because seeding a combination the picker fi
 form the person cannot re-derive; that rule has exactly one owner, in the form, so the decoder returns
 the match unfiltered.
 
-The third rule is the one review caught, and it is the reason the form tracks **which session seeded
-it**. "Only fill an untouched form" is not enough once TOK-A11 exists: the redirect can relink a
+**Device pass 2026-08-24 found this cannot fire, and the reason is structural.** The prefill can only
+seed `country` and `id_type` — but the host skips the ID form whenever those two are present:
+Document Verification skips on country plus ID type, and Biometric/Enhanced KYC skip on those plus
+the ID-number reference (§4.2). The Simulate fixture's vaulted field list includes `id_number`, so
+"Binds details" always mints all three and the form is skipped; the only other fixture state binds
+nothing at all, so there is nothing to seed. Confirmed on an Oppo CPH2113: Biometric KYC showed no ID
+form under a details-binding token, and Document Verification went straight to the SDK. §2.1's read of
+two real Portal tokens says they bind all three as well, so a real token behaves the same. The code
+below is correct and unit-tested; it is simply unreachable on every token this app can obtain. **Owner
+decision owed:** either Simulate gains a shape that binds country and ID type *without* an ID number —
+which would make the prefill reachable and is worth having anyway, since the Portal could mint one —
+or TOK-A10 is dropped and this section goes with it. It is not worth shipping a form-seeding path that
+no journey reaches.
+
+The third rule below is the one review caught, and it is the reason the form tracks **which session
+seeded it**. "Only fill an untouched form" is not enough once TOK-A11 exists: the redirect can relink a
 *different* token and return the partner to this form, and a seed with no owner would then block the
 new token from correcting it — the form showing one country while the run submitted under another,
 with no provenance the person could see. So a value the person chose outranks every token, a seed
