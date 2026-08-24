@@ -24,6 +24,10 @@ journey could reach it. Confirmed on the device, not inferred — Biometric KYC 
 a details-binding token. The code and its tests are deleted; §2's "prefilling a name or an ID number
 is impossible" was always the ceiling, and it turns out the reachable ceiling is lower still.
 
+**Scan reliability, the last gate, closed the same day.** The dense Portal QR read poorly until the
+analyser's resolution was pinned — §8 has the mechanism — and now reads at a comfortable distance.
+That was the one item fixtures could never settle.
+
 **Real Portal token, end to end, same day.** A scanned Portal QR ran Enhanced KYC to a real sandbox
 submission: `200 OK` / "Job completed", exactly one result callback, no error. Three things only a
 real token could confirm. The countdown read **`7:57:13`** on an 8h span, so TOK-A6's hours part is
@@ -660,10 +664,21 @@ manual entry, and TOK-A8's device coverage no longer waits on anything owed.
   the token and reaches `si_instructions_screen` **without** a consent screen, an expired session
   routing to `scanToken` instead of the SDK, and jobs surviving `stopApp`. Assert on `si_*` and
   `sample_*` ids only, and never on the token.
-- **Scan reliability (TOK-A9), on the Oppo:** the densest QR the Portal can mint — 8h with all seven
-  user-detail fields and consent — at the readable size the Portal renders, plus the same at 15m with
-  no payload. The Portal's own PR flags this as unconfirmed; a sample app that cannot scan the QR is
-  the whole feature failing, so this is a gate, not a nice-to-have.
+- **Scan reliability (TOK-A9), on the Oppo — GATE PASSED 2026-08-24, after a fix.** The densest QR the
+  Portal mints (8h, all seven user-detail fields, consent) at the size the Portal renders. The Portal's
+  own PR flagged this as unconfirmed and it turned out to be a real defect, in this app rather than in
+  the QR: `ImageAnalysis` was built with no `ResolutionSelector`, so CameraX applied its **640x480**
+  default, and a v3 token QR is far too dense to survive that downscale. It decoded only when held
+  close enough for the code to *overflow* the reticle — the opposite of what the screen's own caption
+  asks for. Pinned to **1920x1080** 16:9 and confirmed in the camera's negotiated stream spec; the
+  owner then read the same QR "way smoother and quicker even at a distance".
+
+  Two things this leaves. The analyser reads the **whole frame** while the screen draws a reticle at
+  72% of width and says "line up the code inside the frame", so the glyph still implies a targeting
+  behaviour nothing implements — either crop the analysis to the reticle or reword the caption, and
+  that is a design call. And there is no automated check: proving this needs a real dense QR in front
+  of a real camera. The cheap approximation, if it is ever worth it, is to assert the negotiated
+  analysis resolution rather than the decode, since the resolution is what regressed.
 
 ---
 
