@@ -18,9 +18,18 @@ expiry redirect stating its reason, a relink re-entering the interrupted run, an
 visit explaining nothing. `holdCamera` verified on both lenses — front for SmartSelfie (85 frames in
 4s), back for Document Verification (136 frames in 6s), each reporting its last frame tens of
 milliseconds before release, so the hold demonstrably lasted rather than being evicted early. One real
-finding, in §TOK-A10: the ID-form prefill cannot fire on any token this app can obtain. Still owed:
-scan reliability against a real Portal QR at the density §8 describes, which needs the Portal rather
-than a fixture.
+finding, in §TOK-A10: the ID-form prefill cannot fire on any token this app can obtain.
+
+**Real Portal token, end to end, same day.** A scanned Portal QR ran Enhanced KYC to a real sandbox
+submission: `200 OK` / "Job completed", exactly one result callback, no error. Three things only a
+real token could confirm. The countdown read **`7:57:13`** on an 8h span, so TOK-A6's hours part is
+right against a real `exp - iat` rather than a fixture's. **Both host forms were skipped**, so the
+Portal's bindings are honoured in practice and not just in the decode tests — which is also the
+regression check on this branch's refactor, since the two skip decisions now delegate to
+`liveBindings`. And the verdict badge read **Blocked against a green 200**, which is the intended
+split between "the request worked" and "the verification said no" (`RetrofitJobStatusSource` maps
+`block`/`error`; the details screen documents the colouring). Enhanced KYC is what made this reachable
+without frame injection — it is the one product with `capture = false`.
 
 Android first; the token contract is shared, so §9 records what the other three inherit. Written against the Portal as merged (`portal#3274`, `portal#3274`'s follow-up
 `portal#3306`) and the SDK as published (`com.usesmileid:usesmileid:12.0.2`), read rather than assumed.
