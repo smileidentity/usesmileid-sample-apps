@@ -6,7 +6,8 @@ model. Both host forms are now skipped when the token already carries what they 
 the token flow lands complete rather than scannerless. TOK-A7 (Room) is built: jobs persist, carrying the
 profile that submitted them and the environment they went to, and the verification-details screen
 fetches `GET /v3/status/{jobId}` under a live scanned session. `holdCamera`, TOK-A8's remaining
-goldens and TOK-A10 follow it.
+goldens, TOK-A10 and TOK-A11 follow it. TOK-A11 was added 2026-08-24 after a device run mistook the
+expiry redirect for a glitch — the gate is right, but it says nothing and resumes nothing (§TOK-A5).
 
 Android first; the token contract is shared, so §9 records what the other three inherit. Written against the Portal as merged (`portal#3274`, `portal#3274`'s follow-up
 `portal#3306`) and the SDK as published (`com.usesmileid:usesmileid:12.0.2`), read rather than assumed.
@@ -198,6 +199,7 @@ then our copy is a documented duplicate, and the unit test in TOK-A2 pins it to 
 | TOK-A8 | Device + unit coverage, including the no-consent-screen path | P2 | A4–A7 |
 | TOK-A9 | QR scanning for real (CameraX + bundled ML Kit barcode), release-on-leave, scan reliability | P2 | A1–A3 |
 | TOK-A10 | Prefill the ID-details form from the token's plaintext fields | P3 | A2 |
+| TOK-A11 | Say why the expiry gate redirected, and let a fresh scan resume the run it interrupted | P2 | A5, A9 |
 
 **Landing order, and why A9 is not first.** The camera is the only part of this that needs a new
 dependency and an owner decision (§7), and everything else is testable without it. Manual entry is a
@@ -281,6 +283,29 @@ exists in the store and nothing calls it. The ended banner's only action is Scan
 affordance is a design question rather than something to invent here. It also makes device flows
 order-dependent: a flow that leaves an expired session behind fails whichever flow runs next, which is
 why `token-session.yaml` ends by relinking a live span rather than leaving the ended state on disk.
+
+**What the redirect leaves behind, and the recommendation (TOK-A11).** Two halves, and only the
+second needs design. The redirect is *silent*: `NeedsSession` navigates and returns, while
+`Misconfigured` three lines below deliberately records a reason first, on the argument that a silent
+exit "is indistinguishable from a dead tap". Landing on a scanner nobody asked for earns the same
+courtesy, and per R10 the message belongs to the screen the redirect arrives at rather than the one
+it fired from. Nothing typed is lost when it happens — `forms` is shell-level saveable state, which
+is R6 — so the cost is orientation, not data.
+
+The redirect also does not resume. `NeedsDetails` gets resumption for free because the form it lands
+on *is* a wizard step, so §8's cold-link corollary carries the journey forward down the Continue
+chain with no continuation state in the route table. The scanner is a `RootGraph` route rather than a
+step in that chain, and the bounce has already popped `FlowGraph` inclusive, so linking a fresh
+session strands the partner on the product list with the run they asked for forgotten. Recommend
+closing both halves together: the notice, and a pending-run intent the scanner's link consumes so a
+successful scan re-enters the flow it was sent away from. Keep that intent on app state, never as a
+route argument — the corollary's "no return-to token in any route's arguments" is what keeps the
+four-platform route table small, and this must not be the exception that reopens it. **Open
+decision:** backing out of the scanner without linking should drop the pending run rather than
+remember it, so a later unrelated scan cannot resurrect a forgotten flow — cheap to reverse if the
+owner prefers otherwise. Neither half adds an affordance, so neither waits on the unlink ruling
+above; the design file's expired state (`5206-3752`, read 2026-08-24) confirms only a Scan action is
+drawn, so unlink stays a design question and these two do not.
 
 Mid-flow expiry is deliberately *not* interrupted. The SDK owns the flow once it starts (R2), and
 tearing it down from the host would both violate that and destroy the failure we want a partner to
