@@ -2,6 +2,7 @@ package com.usesmileid.sampleapps.android.scan
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.util.Size
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.compose.CameraXViewfinder
@@ -12,6 +13,9 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceRequest
+import androidx.camera.core.resolutionselector.AspectRatioStrategy
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -100,6 +104,16 @@ fun UseSmileIDSampleQrScanner(
         }
         val analysis = ImageAnalysis.Builder()
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            // CameraX defaults this to 640x480, at which a v3 token QR only decodes once it overflows
+            // the reticle. The analyser reads the whole frame, so modules-per-pixel is what matters.
+            .setResolutionSelector(
+                ResolutionSelector.Builder()
+                    .setAspectRatioStrategy(AspectRatioStrategy.RATIO_16_9_FALLBACK_AUTO_STRATEGY)
+                    .setResolutionStrategy(
+                        ResolutionStrategy(ANALYSIS_SIZE, ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER),
+                    )
+                    .build(),
+            )
             .build()
         analysis.setAnalyzer(analysisExecutor) { proxy ->
             if (!scanning.get()) {
@@ -179,3 +193,6 @@ private fun BarcodeScanner.readQrCode(proxy: ImageProxy, onValue: (String) -> Un
         }
         .addOnCompleteListener { proxy.close() }
 }
+
+/** Enough pixels for a dense token QR; the SDK's own camera system pins its analysis stream too. */
+private val ANALYSIS_SIZE = Size(1920, 1080)

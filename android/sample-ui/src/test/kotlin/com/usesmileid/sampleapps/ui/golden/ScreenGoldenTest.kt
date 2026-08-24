@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.screens.ProductsScreen
 import com.usesmileid.sampleapps.ui.screens.ScanTokenScreen
+import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleScanReason
 import com.usesmileid.sampleapps.ui.screens.SettingsScreen
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleProductsState
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleSettingsState
@@ -47,6 +48,12 @@ class ScreenGoldenTest : GoldenTest() {
     @Test
     fun scan_token_max_font_scale() = assertSurvivesMaxFontScale { ScanToken() }
 
+    @Test
+    fun scan_token_redirected() = goldens("screen_scan_token_redirected") { ScanToken(SESSION_ENDED) }
+
+    @Test
+    fun scan_token_redirected_max_font_scale() = assertSurvivesMaxFontScale { ScanToken(SESSION_ENDED) }
+
     private companion object {
         val SANDBOX = UseSmileIDSampleProductsState(
             environment = UseSmileIDSampleEnvironment.Sandbox,
@@ -54,6 +61,8 @@ class ScreenGoldenTest : GoldenTest() {
         )
         val TOKEN_LINKED = SANDBOX.copy(sessionId = "9f3a2c71", sessionRemaining = "7:59:12")
         val TOKEN_EXPIRED = SANDBOX.copy(sessionEnded = true)
+
+        val SESSION_ENDED = UseSmileIDSampleScanReason.SessionEnded
         val PRODUCTION = SANDBOX.copy(environment = UseSmileIDSampleEnvironment.Production)
         val IN_FLIGHT = SANDBOX.copy(result = ResultFixtures.Running)
     }
@@ -85,9 +94,10 @@ private fun Products(state: UseSmileIDSampleProductsState) = ProductsScreen(
 )
 
 @Composable
-private fun ScanToken() = ScanTokenScreen(
+private fun ScanToken(reason: UseSmileIDSampleScanReason? = null) = ScanTokenScreen(
     onBack = {},
     onLink = {},
     onSimulate = { _, _ -> },
     onPaste = { null },
+    reason = reason,
 )

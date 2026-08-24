@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSetting
@@ -39,9 +40,17 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
      *
      * Unencrypted, deliberately: the token is short-lived and sandbox-scoped, and losing the session
      * on every process death the camera can cause would make the feature unusable.
+     *
+     * Both halves come from one emission: two collectors let the UI hold the token from one write and
+     * the marker from the next, a pair impossible on disk.
      */
-    val tokenSession: Flow<UseSmileIDSampleTokenSession?> = store.data.map { prefs ->
-        prefs[SESSION_TOKEN]?.let(UseSmileIDSampleTokenDecoder::session)
+    val session: Flow<UseSmileIDSampleSessionRecord> = store.data.map { prefs ->
+        UseSmileIDSampleSessionRecord(
+            live = prefs[SESSION_TOKEN]?.let(UseSmileIDSampleTokenDecoder::session),
+            ended = prefs[ENDED_SESSION_ID]?.let { id ->
+                UseSmileIDSampleEndedSession(id = id, endedAtMillis = prefs[ENDED_SESSION_AT] ?: 0L)
+            },
+        )
     }
 
     suspend fun setSetting(setting: UseSmileIDSampleSetting, enabled: Boolean) {
@@ -50,11 +59,21 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
 
     /** Takes the session rather than the raw token, so only a decoded one can ever be linked. */
     suspend fun linkTokenSession(session: UseSmileIDSampleTokenSession) {
-        store.edit { prefs -> prefs[SESSION_TOKEN] = session.token }
+        store.edit { prefs ->
+            prefs[SESSION_TOKEN] = session.token
+            // A new session is not an ended one.
+            prefs.remove(ENDED_SESSION_ID)
+            prefs.remove(ENDED_SESSION_AT)
+        }
     }
 
-    suspend fun clearTokenSession() {
-        store.edit { prefs -> prefs.remove(SESSION_TOKEN) }
+    /** Deletes the credential at its deadline, keeping only that the session ended. The one remover of [SESSION_TOKEN]. */
+    suspend fun retireTokenSession(session: UseSmileIDSampleTokenSession) {
+        store.edit { prefs ->
+            prefs.remove(SESSION_TOKEN)
+            prefs[ENDED_SESSION_ID] = session.id
+            prefs[ENDED_SESSION_AT] = session.expiresAtMillis
+        }
     }
 
     private fun UseSmileIDSampleSetting.key(): Preferences.Key<Boolean> = when (this) {
@@ -76,8 +95,19 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
         val INSTRUCTIONS_STEP = booleanPreferencesKey("instructions_step")
         val PREVIEW_STEP = booleanPreferencesKey("preview_step")
         val SESSION_TOKEN = stringPreferencesKey("token_session_token")
+        val ENDED_SESSION_ID = stringPreferencesKey("ended_session_id")
+        val ENDED_SESSION_AT = longPreferencesKey("ended_session_at")
     }
 }
+
+/** A session that has run out, remembered without its credential. */
+data class UseSmileIDSampleEndedSession(val id: String, val endedAtMillis: Long)
+
+/** At most one half is ever set: retiring replaces the token with its marker in a single write. */
+data class UseSmileIDSampleSessionRecord(
+    val live: UseSmileIDSampleTokenSession? = null,
+    val ended: UseSmileIDSampleEndedSession? = null,
+)
 
 // Not an application id, so it stays identity-agnostic and the same across all eight hosts.
 private val Context.sampleStore by preferencesDataStore(name = "usesmileid_sample")

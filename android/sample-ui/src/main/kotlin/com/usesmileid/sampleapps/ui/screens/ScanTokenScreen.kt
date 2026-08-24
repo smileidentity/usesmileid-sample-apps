@@ -55,6 +55,8 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
  * Scan token. A token arrives from the host's camera, by hand, or from a simulated scan, and every
  * route links a session only after the token decodes.
  *
+ * @param reason why the screen opened when something sent the user here, in place of the generic
+ *   caption; null when it was opened deliberately. Typed so the eight hosts cannot word it differently.
  * @param onPaste the host's clipboard, because reading it is platform-owned; null when it holds no text.
  * @param viewfinder the host's camera preview, given the same candidate handler the sheet uses so a
  *   scanned code, a pasted one and a typed one are all judged by one decode. Absent — in a golden, or
@@ -67,6 +69,7 @@ fun ScanTokenScreen(
     onSimulate: (UseSmileIDSampleSimulatedSpan, UseSmileIDSampleSimulatedBindings) -> Unit,
     onPaste: () -> String?,
     modifier: Modifier = Modifier,
+    reason: UseSmileIDSampleScanReason? = null,
     torchOn: Boolean = false,
     onTorchToggle: () -> Unit = {},
     viewfinder: (@Composable (Modifier, enabled: Boolean, onCandidate: (String) -> Unit) -> Unit)? = null,
@@ -124,6 +127,7 @@ fun ScanTokenScreen(
         }
     }
 
+    val caption = reason?.caption ?: SCAN_CAPTION
     val titleStyle = UseSmileIDSampleTheme.type.textStyleTitle
     val titleColor = UseSmileIDSampleTheme.colors.textTitle
     val captionStyle = UseSmileIDSampleTheme.type.textStyleCaption.copy(fontSize = SCAN_BODY_SIZE)
@@ -154,7 +158,7 @@ fun ScanTokenScreen(
                 ) {
                     Box(contentAlignment = Alignment.Center) { UseSmileIDSampleScanGlyph() }
                     ScanCopy(text = SCAN_TITLE, style = titleStyle, color = titleColor)
-                    ScanCopy(text = SCAN_CAPTION, style = captionStyle, color = captionColor)
+                    ScanCopy(text = caption, style = captionStyle, color = captionColor)
                 }
             } else {
                 viewfinder(Modifier.matchParentSize(), scan is UseSmileIDSampleScanState.Searching) {
@@ -178,7 +182,7 @@ fun ScanTokenScreen(
                     // Straight on the camera: a container here was a white slab over the preview.
                     if (searching) {
                         ScanCopy(text = SCAN_TITLE, style = titleStyle.overCamera(), color = UseSmileIDSampleTheme.colors.textInverse)
-                        ScanCopy(text = SCAN_CAPTION, style = captionStyle.overCamera(), color = UseSmileIDSampleTheme.colors.textInverse)
+                        ScanCopy(text = caption, style = captionStyle.overCamera(), color = UseSmileIDSampleTheme.colors.textInverse)
                     } else {
                         UseSmileIDSampleScanStatus(
                             state = scan,
@@ -255,6 +259,11 @@ private fun UseSmileIDSampleScanState.reticleTint(): Color = when (this) {
     UseSmileIDSampleScanState.Found -> UseSmileIDSampleTheme.colors.infoFill
     is UseSmileIDSampleScanState.Linked -> UseSmileIDSampleTheme.colors.successFill
     is UseSmileIDSampleScanState.Rejected -> UseSmileIDSampleTheme.colors.errorFill
+}
+
+/** Why the scanner opened. The copy lives here so the golden pins the sentence the app ships. */
+enum class UseSmileIDSampleScanReason(val caption: String) {
+    SessionEnded("Token session ended. Scan to continue where you left off."),
 }
 
 private const val SCAN_TITLE = "Point at a Smile token QR"

@@ -37,7 +37,9 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import kotlinx.coroutines.launch
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
+import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleCameraHold
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleFlowResult
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleRunIntent
 
 /**
  * The single route hosting the SDK flow, in both presentations (R3). The SDK owns everything inside
@@ -80,6 +82,9 @@ fun SdkFlowScreen(
         // Back to the scanner, not to a form: the run needs a token, and no form holds one.
         FlowPreflight.NeedsSession -> {
             LaunchedEffect(Unit) {
+                app.interruptedRun.send(
+                    UseSmileIDSampleRunIntent(productId = snapshot.product.id, route = snapshot.route),
+                )
                 navigator.navigate(ScanTokenScreenDestination) {
                     popUpTo(FlowNavGraph) { inclusive = true }
                 }
@@ -101,6 +106,9 @@ fun SdkFlowScreen(
         }
         FlowPreflight.Ready -> Unit
     }
+
+    // Mounted with the run: the hold has to overlap this composition to contend with it.
+    UseSmileIDSampleCameraHold(app.launchArgs.holdCamera, snapshot.product)
 
     // Effects run after the SDK's first composition, which is early enough to deliver a Failure.
     LaunchedEffect(Unit) {

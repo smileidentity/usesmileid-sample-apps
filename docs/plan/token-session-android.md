@@ -5,8 +5,39 @@ model, builder handoff, honest countdown, and the CameraX QR scanner with the bu
 model. Both host forms are now skipped when the token already carries what they would collect (§4.2). A9 was planned as its own PR and folded into the same one on the owner's call (2026-08-19), so
 the token flow lands complete rather than scannerless. TOK-A7 (Room) is built: jobs persist, carrying the
 profile that submitted them and the environment they went to, and the verification-details screen
-fetches `GET /v3/status/{jobId}` under a live scanned session. `holdCamera`, TOK-A8's remaining
-goldens and TOK-A10 follow it.
+fetches `GET /v3/status/{jobId}` under a live scanned session. **TOK-A11 and the `holdCamera` consumer
+are built (2026-08-24)**, which closes the item list; TOK-A11 was added the same day after a
+device run mistook the expiry redirect for a glitch — the gate was right, but it said nothing and
+resumed nothing (§TOK-A5). TOK-A8's goldens listed in §8 were already covered by the session card, the
+ended banner, and the `nav_bar`/`TokenRings` ring pair, so what remains of A8 is its **device** pass,
+not more goldens. The one deliberate scope call: `holdCamera` was to be a separate PR (§7.1) and was
+folded in on the owner's instruction that the token work land as one review.
+
+**Device pass 2026-08-24 (Oppo CPH2113, debug):** `token-session.yaml` green end to end, including the
+expiry redirect stating its reason, a relink re-entering the interrupted run, and a deliberate scanner
+visit explaining nothing. `holdCamera` verified on both lenses — front for SmartSelfie (85 frames in
+4s), back for Document Verification (136 frames in 6s), each reporting its last frame tens of
+milliseconds before release, so the hold demonstrably lasted rather than being evicted early. One real
+finding, which **removed TOK-A10 rather than shipping it**: the ID-form prefill could only ever seed
+`country` and `id_type`, and the host already skips the ID form whenever those two are present, so no
+journey could reach it. Confirmed on the device, not inferred — Biometric KYC showed no ID form under
+a details-binding token. The code and its tests are deleted; §2's "prefilling a name or an ID number
+is impossible" was always the ceiling, and it turns out the reachable ceiling is lower still.
+
+**Scan reliability, the last gate, closed the same day.** The dense Portal QR read poorly until the
+analyser's resolution was pinned — §8 has the mechanism — and now reads at a comfortable distance.
+That was the one item fixtures could never settle.
+
+**Real Portal token, end to end, same day.** A scanned Portal QR ran Enhanced KYC to a real sandbox
+submission: `200 OK` / "Job completed", exactly one result callback, no error. Three things only a
+real token could confirm. The countdown read **`7:57:13`** on an 8h span, so TOK-A6's hours part is
+right against a real `exp - iat` rather than a fixture's. **Both host forms were skipped**, so the
+Portal's bindings are honoured in practice and not just in the decode tests — which is also the
+regression check on this branch's refactor, since the two skip decisions now delegate to
+`liveBindings`. And the verdict badge read **Blocked against a green 200**, which is the intended
+split between "the request worked" and "the verification said no" (`RetrofitJobStatusSource` maps
+`block`/`error`; the details screen documents the colouring). Enhanced KYC is what made this reachable
+without frame injection — it is the one product with `capture = false`.
 
 Android first; the token contract is shared, so §9 records what the other three inherit. Written against the Portal as merged (`portal#3274`, `portal#3274`'s follow-up
 `portal#3306`) and the SDK as published (`com.usesmileid:usesmileid:12.0.2`), read rather than assumed.
@@ -92,7 +123,8 @@ Six things follow, each of which had been a guess until now:
 6. **Both bind the required user details** (`given_names`, `last_name`, `email`), so
    `bindsRequiredUserDetails` is true for a real token and the host's details form is skipped in
    practice, not just in theory. They also bind `id_number`, `country` and `id_type` — which the SDK
-   never relaxes, so the ID form still runs, and TOK-A10's prefill has real data to read.
+   never relaxes — though the *host* skips its own ID form once all three are bound, which is why the
+   prefill this once implied was removed on 2026-08-24 as unreachable.
 
 Every PII value was exactly 30 characters across name, email and ID number, which is what opaque vault
 references look like and confirms §2's "presence, never content" empirically.
@@ -197,7 +229,8 @@ then our copy is a documented duplicate, and the unit test in TOK-A2 pins it to 
 | TOK-A7 | Room for jobs; a submitted job survives the process | P2 | A4 |
 | TOK-A8 | Device + unit coverage, including the no-consent-screen path | P2 | A4–A7 |
 | TOK-A9 | QR scanning for real (CameraX + bundled ML Kit barcode), release-on-leave, scan reliability | P2 | A1–A3 |
-| TOK-A10 | Prefill the ID-details form from the token's plaintext fields | P3 | A2 |
+| TOK-A12 | `holdCamera` gets its consumer, proven by frames rather than by a bind returning | P3 | A9 |
+| TOK-A11 | Say why the expiry gate redirected, and let a fresh scan resume the run it interrupted | P2 | A5, A9 |
 
 **Landing order, and why A9 is not first.** The camera is the only part of this that needs a new
 dependency and an owner decision (§7), and everything else is testable without it. Manual entry is a
@@ -274,13 +307,51 @@ per-field union of "the token binds it or the builder supplies it". A host runni
 under a binding would therefore redirect to a form the SDK does not need, so the gate skips that one
 check when the session's bindings satisfy the SDK's own `bindsRequiredUserDetails` rule.
 
-**A gap the device suite exposed, and an owed product decision:** an expired session persists (R6) and
-the gate turns *every* product run into a trip to the scanner, so a partner who lets a session lapse
-cannot start any run until they scan again — and the app offers no way to unlink one. `clearTokenSession()`
-exists in the store and nothing calls it. The ended banner's only action is Scan, so adding an unlink
-affordance is a design question rather than something to invent here. It also makes device flows
-order-dependent: a flow that leaves an expired session behind fails whichever flow runs next, which is
-why `token-session.yaml` ends by relinking a live span rather than leaving the ended state on disk.
+**Settled 2026-08-24 — the token is deleted at its deadline, the fact of the session is not.** The
+original gap was that an expired session persisted whole (R6): the gate turned *every* product run
+into a trip to the scanner, the app offered no way to unlink one, and `clearTokenSession()` sat in the
+store with no callers. The owner's ruling was to delete expired tokens outright, since the deadline is
+already known. Taken literally that would also have deleted the ended banner, this gate, and TOK-A11's
+redirect and resume — all of which key off "a session expired" — and worse, a run started after expiry
+would have fallen through to the no-token path and submitted **untokenised** without saying so.
+
+So the split is asymmetric: `retireTokenSession` removes the credential and writes a marker holding
+only the session's **handle and deadline**, neither of which is a credential (the handle is the `jti`
+or a digest, never a prefix of the token). Everything that needs to know a session ended still does;
+nothing holds a dead bearer token. That is a straight improvement on §6's stored-unencrypted trade,
+which only ever justified holding a *live* token. Retirement fires from the countdown effect the
+moment the deadline passes, and a cold start after expiry takes the same path because that effect's
+loop exits immediately. `clearTokenSession()` is gone: retirement is the only way a token leaves.
+
+An unlink affordance is still not built, and is still a design question — the ended banner's only
+action is Scan and the design file draws no second one. What has changed is that it is no longer the
+*only* escape: TOK-A11 means a lapse now explains itself and a relink resumes the interrupted run.
+
+One consequence for device flows remains: a flow that leaves an ended marker behind sends whichever
+flow runs next to the scanner, which is why `token-session.yaml` ends by relinking a live span.
+
+**What the redirect leaves behind, and the recommendation (TOK-A11).** Two halves, and only the
+second needs design. The redirect is *silent*: `NeedsSession` navigates and returns, while
+`Misconfigured` three lines below deliberately records a reason first, on the argument that a silent
+exit "is indistinguishable from a dead tap". Landing on a scanner nobody asked for earns the same
+courtesy, and per R10 the message belongs to the screen the redirect arrives at rather than the one
+it fired from. Nothing typed is lost when it happens — `forms` is shell-level saveable state, which
+is R6 — so the cost is orientation, not data.
+
+The redirect also does not resume. `NeedsDetails` gets resumption for free because the form it lands
+on *is* a wizard step, so §8's cold-link corollary carries the journey forward down the Continue
+chain with no continuation state in the route table. The scanner is a `RootGraph` route rather than a
+step in that chain, and the bounce has already popped `FlowGraph` inclusive, so linking a fresh
+session strands the partner on the product list with the run they asked for forgotten. Recommend
+closing both halves together: the notice, and a pending-run intent the scanner's link consumes so a
+successful scan re-enters the flow it was sent away from. Keep that intent on app state, never as a
+route argument — the corollary's "no return-to token in any route's arguments" is what keeps the
+four-platform route table small, and this must not be the exception that reopens it. **Open
+decision:** backing out of the scanner without linking should drop the pending run rather than
+remember it, so a later unrelated scan cannot resurrect a forgotten flow — cheap to reverse if the
+owner prefers otherwise. Neither half adds an affordance, so neither waits on the unlink ruling
+above; the design file's expired state (`5206-3752`, read 2026-08-24) confirms only a Scan action is
+drawn, so unlink stays a design question and these two do not.
 
 Mid-flow expiry is deliberately *not* interrupted. The SDK owns the flow once it starts (R2), and
 tearing it down from the host would both violate that and destroy the failure we want a partner to
@@ -527,11 +598,24 @@ which is the signal the decision is for.
   no `si_*` id and this repo's flows may not assert on pixels, so "the preview is right" stays
   hand-verified. That is the same lane gap the RN preview work hit, and the check plausibly belongs in
   the SDK repos, which can render their own screens.
-- **`holdCamera` becomes implementable, and is still owed.** It is one of the two launch arguments
-  without a consumer, and it cannot be honoured without a host-owned camera — the argument's own note
-  in `spec/launch-args.json` warns that a probe which never acquired the camera passes vacuously. Kept
-  out of this PR deliberately even though the camera code is now here: it is a launch-argument
-  consumer rather than part of the token journey, and it would hand one reviewer a second subject.
+- **`holdCamera` is built (2026-08-24).** It was one of the two launch arguments without a consumer,
+  and it could not be honoured without a host-owned camera — the argument's own note in
+  `spec/launch-args.json` warns that a probe which never acquired the camera passes vacuously. It now
+  binds an `ImageAnalysis` use case alongside the starting run and **counts delivered frames**, since
+  a bind returning is not evidence the camera opened; it unbinds only its own use case, because
+  `unbindAll` would take the camera off the SDK it is supposed to be contending with. It holds **the
+  lens the product will use** — review caught that a hard-coded back camera contends with nothing on a
+  selfie flow while still logging a successful acquisition, which is the vacuous pass again wearing
+  the evidence's clothes. Every camera call is guarded, because an unguarded `bindToLifecycle` throw
+  inside a `LaunchedEffect` kills the process, and a probe that crashes the run it observes gets
+  reported as an SDK defect. The release line names the lens and how long before release the last
+  frame arrived, so a hold evicted early by someone else's `unbindAll` cannot read as one that lasted.
+  Two limits worth knowing: a missing camera permission is reported rather than requested, because a
+  permission dialog over a starting flow changes the hand-off being measured; and the report goes to **logcat**
+  under one tag, which is the weak part — a `sample_*` node would be assertable, but adding one is a
+  four-platform `spec/test-ids.json` change and this argument is the only thing that would want it.
+  That id is the obvious follow-up if the argument earns a device lane. This was originally deferred
+  to its own PR to keep one reviewer to one subject; folded in on the owner's instruction.
 
 ### 7.2 Automation needs no new argument, because Simulate can mint the token
 
@@ -580,10 +664,21 @@ manual entry, and TOK-A8's device coverage no longer waits on anything owed.
   the token and reaches `si_instructions_screen` **without** a consent screen, an expired session
   routing to `scanToken` instead of the SDK, and jobs surviving `stopApp`. Assert on `si_*` and
   `sample_*` ids only, and never on the token.
-- **Scan reliability (TOK-A9), on the Oppo:** the densest QR the Portal can mint — 8h with all seven
-  user-detail fields and consent — at the readable size the Portal renders, plus the same at 15m with
-  no payload. The Portal's own PR flags this as unconfirmed; a sample app that cannot scan the QR is
-  the whole feature failing, so this is a gate, not a nice-to-have.
+- **Scan reliability (TOK-A9), on the Oppo — GATE PASSED 2026-08-24, after a fix.** The densest QR the
+  Portal mints (8h, all seven user-detail fields, consent) at the size the Portal renders. The Portal's
+  own PR flagged this as unconfirmed and it turned out to be a real defect, in this app rather than in
+  the QR: `ImageAnalysis` was built with no `ResolutionSelector`, so CameraX applied its **640x480**
+  default, and a v3 token QR is far too dense to survive that downscale. It decoded only when held
+  close enough for the code to *overflow* the reticle — the opposite of what the screen's own caption
+  asks for. Pinned to **1920x1080** 16:9 and confirmed in the camera's negotiated stream spec; the
+  owner then read the same QR "way smoother and quicker even at a distance".
+
+  Two things this leaves. The analyser reads the **whole frame** while the screen draws a reticle at
+  72% of width and says "line up the code inside the frame", so the glyph still implies a targeting
+  behaviour nothing implements — either crop the analysis to the reticle or reword the caption, and
+  that is a design call. And there is no automated check: proving this needs a real dense QR in front
+  of a real camera. The cheap approximation, if it is ever worth it, is to assert the negotiated
+  analysis resolution rather than the decode, since the resolution is what regressed.
 
 ---
 

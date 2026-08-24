@@ -176,6 +176,8 @@ appId: ${APP_ID}
     id: "sample_scan_token_screen"
 - assertNotVisible:
     id: "si_instructions_screen"
+# The redirect has to say why it moved you, asserted on the shipped sentence.
+- assertVisible: ".*Token session ended.*"
 
 # Manual entry: a rejection carries its reason and links nothing, so the expired session still stands.
 - tapOn:
@@ -194,16 +196,44 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_session_ended_banner"
 
-# Leave no expired session behind. It persists in DataStore across stopApp by design (R6), `pm clear`
-# is unusable on ColorOS, and the gate turns every product run into a trip to the scanner — so an
-# expired session left here would fail whichever flow ran next, depending only on timing. A live span
-# is safe: an unbound token behaves exactly like the no-token path, which sdk-flow.yaml asserts.
+# Relinking resumes the interrupted run rather than stranding the person on the product list. Also
+# leaves the live session the block below relies on.
 - tapOn:
-    id: "sample_nav_token"
+    id: "sample_product_card_smartSelfieEnrollment"
+- assertVisible:
+    id: "sample_user_details_screen"
+- tapOn:
+    id: "sample_user_details_continue"
+- assertVisible:
+    id: "sample_scan_token_screen"
+- assertVisible: ".*Token session ended.*"
 - tapOn: "SIMULATED SCAN"
 - tapOn: "8h"
 - tapOn:
     id: "sample_token_simulate"
+# Consent, not instructions: this span binds nothing, so the run takes sdk-flow.yaml's no-token
+# journey. Waited on, because the resume holds until the linked session reaches app state.
+- extendedWaitUntil:
+    visible:
+      id: "si_consent_screen"
+    timeout: 20000
+- assertNotVisible:
+    id: "sample_scan_token_screen"
+- back
+- assertVisible:
+    id: "sample_products_screen"
+# A live span is what makes this flow safe to leave behind: it persists across stopApp by design
+# (R6), `pm clear` is unusable on ColorOS, and an expired one would send the next flow to the scanner.
 - assertVisible:
     id: "sample_session_card"
+
+# Opening the scanner deliberately explains nothing, because nothing sent you there.
+- tapOn:
+    id: "sample_nav_token"
+- assertVisible:
+    id: "sample_scan_token_screen"
+- assertNotVisible: ".*Token session ended.*"
+- back
+- assertVisible:
+    id: "sample_products_screen"
 - stopApp
