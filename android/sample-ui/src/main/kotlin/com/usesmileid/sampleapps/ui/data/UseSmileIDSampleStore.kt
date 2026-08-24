@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSetting
@@ -44,17 +45,43 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
         prefs[SESSION_TOKEN]?.let(UseSmileIDSampleTokenDecoder::session)
     }
 
+    /**
+     * What outlives a session: that it ended, and which one. Neither field is a credential — the
+     * handle is the token's `jti` or a digest of it, never a prefix of the token itself — which is
+     * the whole point. A lapsed token has no use left, so it is deleted at its deadline, while the
+     * app still needs to know a session ended in order to say so and to route a run to the scanner.
+     */
+    val endedSession: Flow<UseSmileIDSampleEndedSession?> = store.data.map { prefs ->
+        val id = prefs[ENDED_SESSION_ID] ?: return@map null
+        UseSmileIDSampleEndedSession(id = id, endedAtMillis = prefs[ENDED_SESSION_AT] ?: 0L)
+    }
+
     suspend fun setSetting(setting: UseSmileIDSampleSetting, enabled: Boolean) {
         store.edit { prefs -> prefs[setting.key()] = enabled }
     }
 
     /** Takes the session rather than the raw token, so only a decoded one can ever be linked. */
     suspend fun linkTokenSession(session: UseSmileIDSampleTokenSession) {
-        store.edit { prefs -> prefs[SESSION_TOKEN] = session.token }
+        store.edit { prefs ->
+            prefs[SESSION_TOKEN] = session.token
+            // A new session is not an ended one: clearing the marker is what stops the products
+            // screen showing "ended" over a token that has just been linked.
+            prefs.remove(ENDED_SESSION_ID)
+            prefs.remove(ENDED_SESSION_AT)
+        }
     }
 
-    suspend fun clearTokenSession() {
-        store.edit { prefs -> prefs.remove(SESSION_TOKEN) }
+    /**
+     * Deletes the credential at its deadline and remembers only that the session ended. The single
+     * writer for a lapsed session: nothing else removes [SESSION_TOKEN], so a token can never be
+     * dropped without the app still being able to say a session ended.
+     */
+    suspend fun retireTokenSession(session: UseSmileIDSampleTokenSession) {
+        store.edit { prefs ->
+            prefs.remove(SESSION_TOKEN)
+            prefs[ENDED_SESSION_ID] = session.id
+            prefs[ENDED_SESSION_AT] = session.expiresAtMillis
+        }
     }
 
     private fun UseSmileIDSampleSetting.key(): Preferences.Key<Boolean> = when (this) {
@@ -76,8 +103,13 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
         val INSTRUCTIONS_STEP = booleanPreferencesKey("instructions_step")
         val PREVIEW_STEP = booleanPreferencesKey("preview_step")
         val SESSION_TOKEN = stringPreferencesKey("token_session_token")
+        val ENDED_SESSION_ID = stringPreferencesKey("ended_session_id")
+        val ENDED_SESSION_AT = longPreferencesKey("ended_session_at")
     }
 }
+
+/** A session that has run out, remembered without its credential. */
+data class UseSmileIDSampleEndedSession(val id: String, val endedAtMillis: Long)
 
 // Not an application id, so it stays identity-agnostic and the same across all eight hosts.
 private val Context.sampleStore by preferencesDataStore(name = "usesmileid_sample")

@@ -24,7 +24,11 @@ data class FlowLaunchSnapshot(
     val partnerName: String,
     /** Live at entry only: a session that has run out is the gate's business, never the builder's. */
     val session: UseSmileIDSampleTokenSession? = null,
-    /** A session existed and had run out — the one thing that routes back to the scanner (TOK-A5). */
+    /**
+     * A session existed and has run out — the one thing that routes back to the scanner (TOK-A5).
+     * Usually true with no [session] at all, because the token is deleted at its deadline and only a
+     * marker survives; the two are independent for the window before that delete lands.
+     */
     val sessionExpired: Boolean = false,
 )
 
@@ -51,6 +55,7 @@ fun buildSnapshot(
         partnerId = app.profiles.active.id,
         partnerName = app.profiles.active.organisation,
         session = session?.takeUnless { it.hasExpired(entryMillis) },
-        sessionExpired = session != null && session.hasExpired(entryMillis),
+        // The marker outlives the token it came from, so it is the durable half of this answer.
+        sessionExpired = app.endedSession != null || (session != null && session.hasExpired(entryMillis)),
     )
 }

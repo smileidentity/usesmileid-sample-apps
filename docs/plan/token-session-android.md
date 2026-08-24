@@ -303,13 +303,28 @@ per-field union of "the token binds it or the builder supplies it". A host runni
 under a binding would therefore redirect to a form the SDK does not need, so the gate skips that one
 check when the session's bindings satisfy the SDK's own `bindsRequiredUserDetails` rule.
 
-**A gap the device suite exposed, and an owed product decision:** an expired session persists (R6) and
-the gate turns *every* product run into a trip to the scanner, so a partner who lets a session lapse
-cannot start any run until they scan again — and the app offers no way to unlink one. `clearTokenSession()`
-exists in the store and nothing calls it. The ended banner's only action is Scan, so adding an unlink
-affordance is a design question rather than something to invent here. It also makes device flows
-order-dependent: a flow that leaves an expired session behind fails whichever flow runs next, which is
-why `token-session.yaml` ends by relinking a live span rather than leaving the ended state on disk.
+**Settled 2026-08-24 — the token is deleted at its deadline, the fact of the session is not.** The
+original gap was that an expired session persisted whole (R6): the gate turned *every* product run
+into a trip to the scanner, the app offered no way to unlink one, and `clearTokenSession()` sat in the
+store with no callers. The owner's ruling was to delete expired tokens outright, since the deadline is
+already known. Taken literally that would also have deleted the ended banner, this gate, and TOK-A11's
+redirect and resume — all of which key off "a session expired" — and worse, a run started after expiry
+would have fallen through to the no-token path and submitted **untokenised** without saying so.
+
+So the split is asymmetric: `retireTokenSession` removes the credential and writes a marker holding
+only the session's **handle and deadline**, neither of which is a credential (the handle is the `jti`
+or a digest, never a prefix of the token). Everything that needs to know a session ended still does;
+nothing holds a dead bearer token. That is a straight improvement on §6's stored-unencrypted trade,
+which only ever justified holding a *live* token. Retirement fires from the countdown effect the
+moment the deadline passes, and a cold start after expiry takes the same path because that effect's
+loop exits immediately. `clearTokenSession()` is gone: retirement is the only way a token leaves.
+
+An unlink affordance is still not built, and is still a design question — the ended banner's only
+action is Scan and the design file draws no second one. What has changed is that it is no longer the
+*only* escape: TOK-A11 means a lapse now explains itself and a relink resumes the interrupted run.
+
+One consequence for device flows remains: a flow that leaves an ended marker behind sends whichever
+flow runs next to the scanner, which is why `token-session.yaml` ends by relinking a live span.
 
 **What the redirect leaves behind, and the recommendation (TOK-A11).** Two halves, and only the
 second needs design. The redirect is *silent*: `NeedsSession` navigates and returns, while

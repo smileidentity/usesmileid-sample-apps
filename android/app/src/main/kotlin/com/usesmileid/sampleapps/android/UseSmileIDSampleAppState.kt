@@ -21,9 +21,11 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleLaunchArgs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStore
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleEndedSession
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import androidx.compose.runtime.staticCompositionLocalOf
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /** Everything the shell hoists: persisted settings, the token session, and the clock that ticks it. */
 class UseSmileIDSampleAppState(
@@ -32,6 +34,7 @@ class UseSmileIDSampleAppState(
     val storeScope: CoroutineScope,
     private val settingsState: State<UseSmileIDSampleSettings>,
     private val sessionState: State<UseSmileIDSampleTokenSession?>,
+    private val endedSessionState: State<UseSmileIDSampleEndedSession?>,
     /** Null until Room's first emission, so "not loaded yet" is not read as "no verifications". */
     private val jobsState: State<List<UseSmileIDSampleJob>?>,
     val jobStore: UseSmileIDSampleJobStore,
@@ -54,7 +57,17 @@ class UseSmileIDSampleAppState(
 
     val nowMillis: Long get() = now.value
 
-    val sessionExpired: Boolean get() = session?.hasExpired(nowMillis) == true
+    /** The session that ran out, once its token has been deleted. Carries no credential. */
+    val endedSession: UseSmileIDSampleEndedSession? get() = endedSessionState.value
+
+    /**
+     * True from the deadline onwards. Reads the ended marker as well as the live session because the
+     * token is deleted at expiry: the marker is what remains, and the brief window before the delete
+     * lands is what the second half covers.
+     */
+    val sessionExpired: Boolean
+        get() = endedSession != null || session?.hasExpired(nowMillis) == true
+
     val sessionActive: Boolean get() = session?.hasExpired(nowMillis) == false
 
     /** The only place the environment is decided, so the chip and the builder cannot disagree. */
@@ -76,6 +89,7 @@ fun rememberUseSmileIDSampleAppState(
     val store = remember(context) { UseSmileIDSampleStore(context) }
     val settingsState = store.settings.collectAsStateWithLifecycle(initialValue = UseSmileIDSampleSettings())
     val sessionState = store.tokenSession.collectAsStateWithLifecycle(initialValue = null)
+    val endedSessionState = store.endedSession.collectAsStateWithLifecycle(initialValue = null)
     val now = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val jobStore = remember(context) { UseSmileIDSampleJobStore.of(context, RetrofitJobStatusSource()) }
     val jobsState = jobStore.jobs.collectAsStateWithLifecycle<List<UseSmileIDSampleJob>?>(initialValue = null)
@@ -104,6 +118,10 @@ fun rememberUseSmileIDSampleAppState(
             now.longValue = System.currentTimeMillis()
             delay(TICK_MILLIS)
         }
+        // Past the deadline the token is useless, so it is deleted and only the fact of the session
+        // is kept. Written on the app scope: a lapse noticed as this screen goes away must still land.
+        // A cold start after expiry takes the same path, because the loop above exits immediately.
+        UseSmileIDSampleJobStore.writeScope.launch { store.retireTokenSession(live) }
     }
 
     return UseSmileIDSampleAppState(
@@ -111,6 +129,7 @@ fun rememberUseSmileIDSampleAppState(
         storeScope = UseSmileIDSampleJobStore.writeScope,
         settingsState = settingsState,
         sessionState = sessionState,
+        endedSessionState = endedSessionState,
         jobsState = jobsState,
         jobStore = jobStore,
         forms = forms,
