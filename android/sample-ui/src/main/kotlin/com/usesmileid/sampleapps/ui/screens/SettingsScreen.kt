@@ -32,13 +32,18 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSetting
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/** One ABOUT or LEGAL row: an id, a title, and the line beneath it. */
+/** One ABOUT or LEGAL row: an id, a title, the line beneath it, and where it goes. */
 data class UseSmileIDSampleNavRow(
     val id: String,
     val title: String,
     val supportingText: String? = null,
     @DrawableRes val icon: Int = R.drawable.sample_ic_product_mark,
+    /** Opened externally. Null means the app handles the row itself, which only the licences row does. */
+    val url: String? = null,
 )
+
+/** The rows in the order the design draws them, so a caller can assert the set rather than the screen. */
+val useSmileIDSampleNavRows: List<UseSmileIDSampleNavRow> get() = ABOUT_ROWS + LEGAL_ROWS
 
 /** Everything the settings list renders; callbacks stay parameters, like every screen. */
 data class UseSmileIDSampleSettingsState(
@@ -276,13 +281,41 @@ private fun NavRow(row: UseSmileIDSampleNavRow, onClick: (UseSmileIDSampleNavRow
 // The design marks the trademark here and nowhere else on this screen (node 5206:2898).
 private const val ENHANCED_SMART_SELFIE_TITLE = "Enhanced SmartSelfie\u2122"
 
+// The URLs the design's own copy names, each recorded in spec/screens.json and asserted against it.
 private val ABOUT_ROWS = listOf(
-    UseSmileIDSampleNavRow("documentation", "Documentation", "docs.smileidentity.com", R.drawable.sample_ic_setting_docs),
-    UseSmileIDSampleNavRow("support", "Support", "Contact the Smile team", R.drawable.sample_ic_setting_support),
+    UseSmileIDSampleNavRow(
+        id = "documentation",
+        title = "Documentation",
+        supportingText = "docs.usesmileid.com",
+        icon = R.drawable.sample_ic_setting_docs,
+        url = "https://docs.usesmileid.com/",
+    ),
+    UseSmileIDSampleNavRow(
+        id = "support",
+        title = "Support",
+        supportingText = "Contact the Smile team",
+        icon = R.drawable.sample_ic_setting_support,
+        url = "https://smile.id/contact-us",
+    ),
 )
 
 private val LEGAL_ROWS = listOf(
-    UseSmileIDSampleNavRow("terms", "Terms of Service", icon = R.drawable.sample_ic_setting_terms),
-    UseSmileIDSampleNavRow("privacy", "Privacy Policy", icon = R.drawable.sample_ic_setting_privacy),
-    UseSmileIDSampleNavRow("licenses", "Open-source licenses", icon = R.drawable.sample_ic_setting_licenses),
+    UseSmileIDSampleNavRow(
+        id = "terms",
+        title = "Terms of Service",
+        icon = R.drawable.sample_ic_setting_terms,
+        url = "https://smile.id/terms-and-conditions",
+    ),
+    UseSmileIDSampleNavRow(
+        id = "privacy",
+        title = "Privacy Policy",
+        icon = R.drawable.sample_ic_setting_privacy,
+        url = "https://smile.id/privacy-policy",
+    ),
+    // No url: Apache-2.0 §4 asks the notice to travel with the distribution, so it is a screen here.
+    UseSmileIDSampleNavRow(
+        id = "licenses",
+        title = "Open-source licenses",
+        icon = R.drawable.sample_ic_setting_licenses,
+    ),
 )

@@ -66,7 +66,7 @@ private fun Settings() = SettingsScreen(
         settings = UseSmileIDSampleSettings(),
         organisation = "UpTech Finance",
         initials = "KA",
-        versionLabel = "UseSmileID Sample · 1.0.0",
+        versionLabel = "Smile ID Sample App · 1.0.0",
     ),
     onSettingChange = { _, _ -> },
     onProfileClick = {},

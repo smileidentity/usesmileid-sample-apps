@@ -234,6 +234,7 @@ private val UseSmileIDSampleProduct.needsDocumentCapture: Boolean
     get() = this == UseSmileIDSampleProduct.DocumentVerification ||
         this == UseSmileIDSampleProduct.EnhancedDocumentVerification
 
-private val PRIVACY_POLICY_URL = URL("https://usesmileid.com/privacy-policy")
+// The same host the Settings privacy row opens: two policies for one partner is a defect, not a detail.
+private val PRIVACY_POLICY_URL = URL("https://smile.id/privacy-policy")
 private const val CALLBACK_URL = "https://your-callback-url.com"
 private val PARTNER_BUTTON_RADIUS = 4.dp

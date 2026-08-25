@@ -42,6 +42,13 @@ class UseSmileIDSampleForms(
         idDetails = idDetails.copy(idNumber = value)
     }
 
+    /** Sign out: what a partner would expect gone, including the choice to keep it. */
+    fun clear() {
+        userDetails = UseSmileIDSampleUserDetails()
+        idDetails = UseSmileIDSampleIdDetails()
+        rememberDetails = false
+    }
+
     companion object {
         val Saver: Saver<UseSmileIDSampleForms, Any> = listSaver(
             save = {

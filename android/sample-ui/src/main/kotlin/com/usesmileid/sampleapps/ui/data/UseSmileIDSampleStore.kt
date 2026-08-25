@@ -65,7 +65,19 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
         }
     }
 
-    /** Deletes the credential at its deadline, keeping only that the session ended. The one remover of [SESSION_TOKEN]. */
+    /**
+     * Sign out: the session goes without leaving the ended marker behind, because a marker sends the
+     * next run to the scanner — which is the right answer for a lapse and the wrong one for signing out.
+     */
+    suspend fun clearTokenSession() {
+        store.edit { prefs ->
+            prefs.remove(SESSION_TOKEN)
+            prefs.remove(ENDED_SESSION_ID)
+            prefs.remove(ENDED_SESSION_AT)
+        }
+    }
+
+    /** Deletes the credential at its deadline, keeping only that the session ended. */
     suspend fun retireTokenSession(session: UseSmileIDSampleTokenSession) {
         store.edit { prefs ->
             prefs.remove(SESSION_TOKEN)

@@ -441,8 +441,15 @@
         "sample_sign_out"
       ],
       "copy": {
-        "footer": "UseSmileID Sample · 1.0.0",
-        "aboutDocs": "docs.smileidentity.com"
+        "footer": "Smile ID Sample App · 1.0.0",
+        "aboutDocs": "docs.usesmileid.com"
+      },
+      "links": {
+        "documentation": "https://docs.usesmileid.com/",
+        "support": "https://smile.id/contact-us",
+        "terms": "https://smile.id/terms-and-conditions",
+        "privacy": "https://smile.id/privacy-policy",
+        "licenses": "in-app, the licenses screen — not a URL"
       },
       "note": "The PROFILE row opens the profiles LIST, not the active profile's own page — configuring any profile and creating one are both reached from there. Its avatar takes the ACTIVE profile's hue from design-tokens.json profileHues, indexed by list position, so the summary, the list and the products header never draw the same profile in three colours. The ENVIRONMENT section was removed on 2026-08-24: it was never in the design, and it existed only because the sandbox launch argument was an override rather than a source. Both are gone — the token's api_url decides the environment, and a run reports it on sample_result_environment. The three SDK-step switches include or omit their screen (see components.json settingsToSdkMapping), and the CONSENT row carries one overridden supporting line: when the linked token binds consent it reads 'The token grants consent, so the screen is skipped', because a switch reading ON while the token has taken the decision away is a lie the screen tells. The switch stays live — it still decides the next run made without a bound token."
     },
@@ -630,13 +637,13 @@
       "question": "The Settings footer reads 'Smile ID Sample App · 1.0.0' while the agreed app identity is 'UseSmileID Sample' (spec/app-identity.json). Which string ships?",
       "blocks": "settings screen copy, store metadata",
       "recommendation": "Use the agreed display name in the footer so the app matches its launcher label.",
-      "status": "OWNER DECISION 2026-08-13 — RESOLVED: 'UseSmileID Sample' everywhere, so the Settings footer matches the launcher label and store listing. Footer becomes 'UseSmileID Sample · 1.0.0'."
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: 'UseSmileID Sample' everywhere. SUPERSEDED 2026-08-25 (ruled 2026-08-24, 'go with the design'): the footer follows node 5206:2898 and reads 'Smile ID Sample App · 1.0.0'. This does NOT change app-identity.json, whose 'UseSmileID Sample' is the launcher label and store identity, settled against the ids the SDK repos reserve. The footer is brand copy and the launcher label is identity; after this change they legitimately differ, so do not 'fix' one to match the other. sample-ui takes versionLabel as a parameter precisely because the module runs under eight identities."
     },
     {
       "id": "docsDomain",
       "question": "The ABOUT section links 'docs.usesmileid.com'. Confirm that domain is live, or point it at the current documentation host.",
       "blocks": "settings ABOUT rows",
-      "status": "OWNER DECISION 2026-08-13 — RESOLVED: link to docs.smileidentity.com, the host the documentation publishes to today."
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: link to docs.smileidentity.com. CORRECTED 2026-08-25: both hosts are CNAMEs to the same GitBook site and https://docs.smileidentity.com/ answers 307 → https://docs.usesmileid.com/, so the design's own copy is the current one and the spec was carrying the legacy host. The row's supporting line and its URL are both docs.usesmileid.com. The apex domains agree the same way: smileidentity.com 301s to usesmileid.com."
     },
     {
       "id": "smileToCaptureMapping",
