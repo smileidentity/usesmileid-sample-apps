@@ -1,6 +1,6 @@
 # Products visual refresh — Android, read off node 5447:1701
 
-**Status:** Planned, nothing built. Source: **`Products · expressive -update`** (node `5447:1701`), read
+**Status:** BUILT 2026-08-25 except PVR-A7's pill fill (needs a ruling, §3.4) and PVR-A13 (audited, §7A). Source: **`Products · expressive -update`** (node `5447:1701`), read
 2026-08-24 with `get_metadata`, `get_variable_defs` and `get_design_context` on the frame, the header,
 the session card, one product card and the nav bar. Every number below is quoted from the design, not
 measured off a screenshot.
@@ -99,8 +99,11 @@ kind** — the nav bar reaches for `SmileDimens.space8`, a *spacing* token, to g
 **Four of the five map cleanly**, which is the good news: this refresh is mostly *re-pointing at tokens
 the repo already vendors*, not importing a new palette.
 
-**`Off_black` is the one real divergence, and it is load-bearing.** It paints the page title, the page
-subtitle, the product-card stroke and the unselected nav labels. The design's pair is **warm**
+**`Off_black` is the one real divergence, and it is load-bearing.** ~~It paints the page title, the page
+subtitle, the product-card stroke and the unselected nav labels.~~ **Seven roles, not four (2026-08-25):**
+page title, page subtitle, **both section headers**, the product-card stroke, **the session-card stroke**,
+the unselected nav labels and **the token button's label**. The three in bold were found on the light
+frame; the dark read missed them. The design's pair is **warm**
 (`#2D2B2A` ↔ `#F9F0E7`); the repo's nearest semantic pair, `colorTextTitle`, is **cool**
 (`#21232C` ↔ `#F2F2F2`). Implementing `Off_black` as `textTitle` ships a visibly different, cooler
 screen in both modes. Both design values *do* exist in the vendored primitives — `#F9F0E7` is
@@ -547,8 +550,9 @@ Adopt the design's warm pair as a **new semantic token**, not the repo's cooler 
 |---|---|---|
 | `Off_black` | `#2D2B2A` | `#F9F0E7` |
 
-Figma models it as **one** variable across four roles — page title, page subtitle, card stroke,
-unselected nav label — so PVR-A1 adds one token and uses it in all four. The design-system repo is
+Figma models it as **one** variable across seven roles — page title, page subtitle, both section
+headers, the card stroke, the session-card stroke, the unselected nav label and the token button's
+label — so PVR-A1 adds one token and uses it in all seven. The design-system repo is
 where it should be named; this repo vendors it. Until it lands there, `spec/design-tokens.json`
 records it under `deltas` with the node id, which is exactly what that section is for.
 
