@@ -1,0 +1,65 @@
+# Puts every switch back where the app ships it, tapping only what has moved. Run at BOTH ends of
+# settings.yaml: a flow that turns the consent screen off and then fails takes `si_consent_screen`
+# away from every flow after it, which is what happened on the first device pass.
+appId: ${APP_ID}
+---
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+# Enhanced first: the mutex turns Agent mode off on its way, so the pair needs one tap, not two.
+- runFlow:
+    when:
+      visible:
+        id: "sample_setting_enhanced_smart_selfie"
+        checked: false
+    commands:
+      - tapOn:
+          id: "sample_setting_enhanced_smart_selfie"
+- runFlow:
+    when:
+      visible:
+        id: "sample_setting_agent_mode"
+        checked: true
+    commands:
+      - tapOn:
+          id: "sample_setting_agent_mode"
+- runFlow:
+    when:
+      visible:
+        id: "sample_setting_consent_step"
+        checked: false
+    commands:
+      - tapOn:
+          id: "sample_setting_consent_step"
+- runFlow:
+    when:
+      visible:
+        id: "sample_setting_instructions_step"
+        checked: false
+    commands:
+      - tapOn:
+          id: "sample_setting_instructions_step"
+- runFlow:
+    when:
+      visible:
+        id: "sample_setting_preview_step"
+        checked: false
+    commands:
+      - tapOn:
+          id: "sample_setting_preview_step"
+- assertVisible:
+    id: "sample_setting_enhanced_smart_selfie"
+    checked: true
+- assertVisible:
+    id: "sample_setting_agent_mode"
+    checked: false
+- assertVisible:
+    id: "sample_setting_consent_step"
+    checked: true
+- assertVisible:
+    id: "sample_setting_instructions_step"
+    checked: true
+- assertVisible:
+    id: "sample_setting_preview_step"
+    checked: true

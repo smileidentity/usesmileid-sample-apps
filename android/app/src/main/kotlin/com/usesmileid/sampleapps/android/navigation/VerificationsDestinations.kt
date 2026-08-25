@@ -25,6 +25,7 @@ import com.ramcosta.composedestinations.annotation.parameters.DeepLink
 import com.ramcosta.composedestinations.generated.destinations.VerificationDetailsScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.smileid.designsystem.SmileDimens
+import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTransientNoticeHost
 import com.usesmileid.sampleapps.ui.components.rememberTransientNotice
@@ -150,6 +151,8 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
                 }
             },
             refreshing = refreshing,
+            // Computed here: `sample-ui` reads no host's BuildConfig.
+            showProbes = BuildConfig.DEBUG || app.launchArgs.probes,
         )
         // Only a processing row can change. Keyed on the id, not the job: keying on the row would loop off its own write.
         // Waits for Room's first emission, so a cold-start deep link cannot read an empty list and skip.

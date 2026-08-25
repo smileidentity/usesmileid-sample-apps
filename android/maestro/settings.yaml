@@ -1,0 +1,332 @@
+# Every Settings switch, proved by where the run lands rather than by reading the switch back.
+#
+# The switches persist, so this flow opens AND closes with `subflows/settings-defaults.yaml`.
+# Device-measured 2026-08-25: a mid-flow failure with the consent screen off took `si_consent_screen`
+# away from two later flows, which read as two regressions and was one flow not cleaning up.
+# APP_ID must be passed — see shell-navigation.yaml for why it has no default.
+appId: ${APP_ID}
+---
+- stopApp
+- launchApp:
+    arguments:
+      probes: true
+- runFlow: subflows/warm-start.yaml
+- runFlow: subflows/settings-defaults.yaml
+
+# --- sign out ------------------------------------------------------------------------------------
+# Clears the local session and the saved form details. In a folder run there IS a session to clear —
+# launch-args.yaml leaves one — and clearing it is what makes the consent section below deterministic:
+# a token that bound consent would compose the screen this flow expects to be missing.
+- scrollUntilVisible:
+    element:
+      id: "sample_sign_out"
+    direction: DOWN
+    visibilityPercentage: 80
+    # 20s is the default and this list is long enough to outrun it on a warm device.
+    timeout: 45000
+- tapOn:
+    id: "sample_sign_out"
+- assertVisible:
+    id: "sample_products_screen"
+- assertNotVisible:
+    id: "sample_session_card"
+
+# Relaunched: the tab keeps its scroll position, and the section above scrolled to the bottom.
+- stopApp
+- launchApp:
+    arguments:
+      probes: true
+- runFlow: subflows/warm-start.yaml
+
+# --- the capture mutex, driven from the UI -------------------------------------------------------
+# One tap on Agent mode would otherwise set both fields, and the SDK refuses that pair at ERROR
+# severity. Both switches are read: each row's supporting line describes the OTHER row's state.
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+# Settled before touching a row: the tab restores its scroll position while animating in,
+# and a row tap measured mid-restore lands on whichever row moved into that spot.
+- waitForAnimationToEnd:
+    timeout: 3000
+- assertVisible: "Enhanced SmartSelfie™"
+- assertVisible:
+    id: "sample_setting_enhanced_smart_selfie"
+    checked: true
+- assertVisible:
+    id: "sample_setting_agent_mode"
+    checked: false
+- assertVisible: "Face capture uses head-turns"
+- assertVisible: "Turns Enhanced SmartSelfie™ off"
+
+# One tap, and both rows move.
+- tapOn:
+    id: "sample_setting_agent_mode"
+- assertVisible:
+    id: "sample_setting_agent_mode"
+    checked: true
+- assertVisible:
+    id: "sample_setting_enhanced_smart_selfie"
+    checked: false
+- assertVisible: "Turns Agent mode off"
+- assertVisible: "Operator captures for the applicant"
+
+# And back the other way, which also restores the default for everything below.
+- tapOn:
+    id: "sample_setting_enhanced_smart_selfie"
+- assertVisible:
+    id: "sample_setting_enhanced_smart_selfie"
+    checked: true
+- assertVisible:
+    id: "sample_setting_agent_mode"
+    checked: false
+- assertVisible: "Face capture uses head-turns"
+
+# --- the capture flip, and the instructions switch -----------------------------------------------
+# Enhanced SmartSelfie™ defaulting ON changes what five of the six products do on camera, and
+# `si_ess_all_directions_demo` renders only when `enableEnhancedLiveness` is set. A builder assertion
+# would prove the field was set; this proves the SDK did the other thing.
+#
+# Measured 2026-08-25: the head-turn COPY is the wrong discriminator — both paths open on "press Start
+# Capture to proceed", and the ESS instruction only replaces it once capture starts.
+#
+# The default state, which also proves the instructions switch while it is on.
+- tapOn:
+    id: "sample_nav_products"
+- runFlow: subflows/consent-to-capture.yaml
+- assertVisible:
+    id: "si_instructions_screen"
+- tapOn: "Next"
+- extendedWaitUntil:
+    visible:
+      id: "si_ess_all_directions_demo"
+    timeout: 20000
+- runFlow: subflows/leave-sdk-flow.yaml
+
+# Instructions off: the same taps skip the screen and open capture, still on the head-turn path.
+- stopApp
+- launchApp:
+    arguments:
+      probes: true
+- runFlow: subflows/warm-start.yaml
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+# Settled before touching a row: the tab restores its scroll position while animating in,
+# and a row tap measured mid-restore lands on whichever row moved into that spot.
+- waitForAnimationToEnd:
+    timeout: 3000
+- tapOn:
+    id: "sample_setting_instructions_step"
+- assertVisible:
+    id: "sample_setting_instructions_step"
+    checked: false
+- tapOn:
+    id: "sample_nav_products"
+- runFlow: subflows/consent-to-capture.yaml
+- extendedWaitUntil:
+    visible:
+      id: "si_ess_all_directions_demo"
+    timeout: 20000
+- assertNotVisible:
+    id: "si_instructions_screen"
+- runFlow: subflows/leave-sdk-flow.yaml
+
+# Enhanced off: passive capture, which is what the row's default used to mean and no longer does.
+- stopApp
+- launchApp:
+    arguments:
+      probes: true
+- runFlow: subflows/warm-start.yaml
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+# Settled before touching a row: the tab restores its scroll position while animating in,
+# and a row tap measured mid-restore lands on whichever row moved into that spot.
+- waitForAnimationToEnd:
+    timeout: 3000
+- tapOn:
+    id: "sample_setting_instructions_step"
+- assertVisible: "Prep tips before capture"
+- tapOn:
+    id: "sample_setting_enhanced_smart_selfie"
+- assertVisible:
+    id: "sample_setting_enhanced_smart_selfie"
+    checked: false
+- tapOn:
+    id: "sample_nav_products"
+- runFlow: subflows/consent-to-capture.yaml
+- assertVisible:
+    id: "si_instructions_screen"
+- tapOn: "Next"
+# The shared start button first, so the absence below is a real one rather than a screen that had
+# not arrived: both paths draw it, and only the head-turn path draws the demo loop.
+- extendedWaitUntil:
+    visible: "Start Capture"
+    timeout: 20000
+- assertNotVisible:
+    id: "si_ess_all_directions_demo"
+- runFlow: subflows/leave-sdk-flow.yaml
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+# Settled before touching a row: the tab restores its scroll position while animating in,
+# and a row tap measured mid-restore lands on whichever row moved into that spot.
+- waitForAnimationToEnd:
+    timeout: 3000
+- tapOn:
+    id: "sample_setting_enhanced_smart_selfie"
+- assertVisible:
+    id: "sample_setting_enhanced_smart_selfie"
+    checked: true
+
+# --- the consent switch, and the validation failure it is meant to demonstrate -------------------
+# No consent screen and no bound consent: the SDK's builder refuses the flow and delivers a typed
+# Failure, and the card is where the message lands. The host's own pre-flight cannot see this one.
+- tapOn:
+    id: "sample_setting_consent_step"
+- assertVisible:
+    id: "sample_setting_consent_step"
+    checked: false
+- tapOn:
+    id: "sample_nav_products"
+- runFlow: subflows/details-continue.yaml
+- extendedWaitUntil:
+    visible:
+      id: "sample_verification_details_screen"
+    timeout: 20000
+- assertVisible:
+    id: "sample_result_job_status"
+    text: "failed"
+- assertVisible:
+    id: "sample_result_last_error"
+- back
+- assertVisible:
+    id: "sample_products_screen"
+
+# Back on, and the consent screen returns — the pair is what proves the switch, not either half.
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+# Settled before touching a row: the tab restores its scroll position while animating in,
+# and a row tap measured mid-restore lands on whichever row moved into that spot.
+- waitForAnimationToEnd:
+    timeout: 3000
+- tapOn:
+    id: "sample_setting_consent_step"
+- assertVisible: "Ask permission before KYC checks"
+- tapOn:
+    id: "sample_nav_products"
+- runFlow: subflows/details-continue.yaml
+- assertVisible:
+    id: "si_consent_screen"
+- back
+- assertVisible:
+    id: "sample_products_screen"
+
+# --- ABOUT, LEGAL and the notices screen ---------------------------------------------------------
+# The four external rows open a Custom Tab, which covers this app's own screen and returns on back —
+# so one of them is assertable without leaving the task. The page itself belongs to the browser, so
+# the assertion is that our screen went and came back, which is what proves the row is not a dead tap.
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+# Settled before touching a row: the tab restores its scroll position while animating in,
+# and a row tap measured mid-restore lands on whichever row moved into that spot.
+- waitForAnimationToEnd:
+    timeout: 3000
+# Scrolled to, not assumed: ABOUT sits below the fold on a 6.5" screen, and the tab restores
+# whatever scroll position the section before this one left behind.
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_nav_documentation"
+    direction: DOWN
+    visibilityPercentage: 80
+    # 20s is the default and this list is long enough to outrun it on a warm device.
+    timeout: 45000
+- tapOn:
+    id: "sample_setting_nav_documentation"
+- waitForAnimationToEnd:
+    timeout: 5000
+- assertNotVisible:
+    id: "sample_settings_screen"
+- back
+- assertVisible:
+    id: "sample_settings_screen"
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_nav_licenses"
+    direction: DOWN
+    visibilityPercentage: 80
+    # 20s is the default and this list is long enough to outrun it on a warm device.
+    timeout: 45000
+- tapOn:
+    id: "sample_setting_nav_licenses"
+- assertVisible:
+    id: "sample_licenses_screen"
+# The asset ships in the binary, so a named component is stable on both variants.
+- assertVisible:
+    id: "sample_license_row_androidx_core_core_ktx"
+- tapOn:
+    id: "sample_license_row_androidx_core_core_ktx"
+- assertVisible:
+    id: "sample_license_text_androidx_core_core_ktx"
+- back
+- assertVisible:
+    id: "sample_settings_screen"
+
+# --- the probe surfaces on release ---------------------------------------------------------------
+# Release only: debug always shows the card, so this is the one configuration that proves the flag.
+- runFlow:
+    when:
+      true: ${APP_ID === "com.usesmileid.sampleapps.android"}
+    commands:
+      - stopApp
+      - launchApp:
+          arguments:
+            seedJobs: true
+      - runFlow: subflows/warm-start.yaml
+      - tapOn:
+          id: "sample_nav_verifications"
+      - tapOn:
+          id: "sample_job_row_0"
+      - assertVisible:
+          id: "sample_verification_details_screen"
+      - assertNotVisible:
+          id: "sample_result_card"
+      # The same row with the argument, which is what the rest of the suite runs with.
+      - stopApp
+      - launchApp:
+          arguments:
+            probes: true
+      - runFlow: subflows/warm-start.yaml
+      - tapOn:
+          id: "sample_nav_verifications"
+      - tapOn:
+          id: "sample_job_row_0"
+      - assertVisible:
+          id: "sample_result_card"
+      # And the Scenarios row, which no argument reveals: flows reach the drawer by deep link.
+      - tapOn:
+          id: "sample_nav_settings"
+      - assertVisible:
+          id: "sample_settings_screen"
+      - assertNotVisible:
+          id: "sample_scenario_drawer_button"
+      - openLink: "usesmileid-sample-android://debug/scenarios"
+      - assertVisible:
+          id: "sample_scenario_drawer"
+      - back
+
+# --- leave the suite as it was found -------------------------------------------------------------
+- stopApp
+- launchApp:
+    arguments:
+      probes: true
+- runFlow: subflows/warm-start.yaml
+- runFlow: subflows/settings-defaults.yaml

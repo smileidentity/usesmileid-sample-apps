@@ -36,6 +36,7 @@ class UseSmileIDSampleLaunchArgsSpecTest {
                 UseSmileIDSampleLaunchArgs.ROUTE to defaults.route.id,
                 UseSmileIDSampleLaunchArgs.AUTOSTART to defaults.autostart?.id,
                 UseSmileIDSampleLaunchArgs.SEED_JOBS to defaults.seedJobs.toString(),
+                UseSmileIDSampleLaunchArgs.PROBES to defaults.probes.toString(),
                 UseSmileIDSampleLaunchArgs.APP_LOCALE to defaults.appLocale,
                 UseSmileIDSampleLaunchArgs.HOLD_CAMERA to defaults.holdCamera?.toString(),
             ),
@@ -55,10 +56,12 @@ class UseSmileIDSampleLaunchArgsSpecTest {
                 UseSmileIDSampleLaunchArgs.THEME to "clashingHost",
                 UseSmileIDSampleLaunchArgs.ROUTE to "shell",
                 UseSmileIDSampleLaunchArgs.AUTOSTART to "biometricKyc",
+                UseSmileIDSampleLaunchArgs.PROBES to true,
                 UseSmileIDSampleLaunchArgs.APP_LOCALE to "fr-FR",
                 UseSmileIDSampleLaunchArgs.HOLD_CAMERA to "keep",
             ),
         )
+        assertTrue(args.probes)
         assertEquals(UseSmileIDSampleScenario.ExpiredToken, args.scenario)
         assertEquals(UseSmileIDSampleFlowRoute.Shell, args.route)
         assertEquals(UseSmileIDSampleProduct.BiometricKyc, args.autostart)
@@ -79,6 +82,10 @@ class UseSmileIDSampleLaunchArgsSpecTest {
     fun the_boolean_arguments_read_either_extra_type() {
         assertTrue(UseSmileIDSampleLaunchArgs.from(mapOf("seedJobs" to true)).seedJobs)
         assertTrue(UseSmileIDSampleLaunchArgs.from(mapOf("seedJobs" to "TRUE")).seedJobs)
+        // A deep link's query parameter arrives as a String, which is the only form that path has.
+        assertTrue(UseSmileIDSampleLaunchArgs.from(mapOf("probes" to "true")).probes)
+        assertTrue(UseSmileIDSampleLaunchArgs.from(mapOf("probes" to true)).probes)
+        assertFalse(UseSmileIDSampleLaunchArgs.from(mapOf("probes" to "yes")).probes)
     }
 
     @Test

@@ -1,0 +1,17 @@
+# The details form through the SDK's consent screen and the camera prompt.
+appId: ${APP_ID}
+---
+- runFlow: details-continue.yaml
+- assertVisible:
+    id: "si_consent_screen"
+- tapOn: "Allow"
+# Conditional because the camera grant outlives both `stopApp` and the install.
+- waitForAnimationToEnd:
+    timeout: 5000
+- runFlow:
+    when:
+      visible:
+        id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+    commands:
+      - tapOn:
+          id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# The definition of done for the Android app: tokens, lint, unit tests, release assemble.
+# The definition of done for the Android app: tokens, notices, lint, unit tests, release assemble.
 #
 # Device flows need a device and are not run here:
 #   maestro --device <serial> test -e APP_ID=com.usesmileid.sampleapps.android.debug android/maestro
@@ -29,6 +29,11 @@ else
   fi
   python3 "$REPO_ROOT/scripts/sync_design_tokens.py" "${TOKEN_ARGS[@]}"
 fi
+
+echo "==> third-party notices are current"
+# Committed into sample-ui's assets, so a dependency change nobody regenerated fails here.
+python3 "$REPO_ROOT/scripts/test_generate_licenses.py" >/dev/null
+./gradlew :app:checkLicenses
 
 echo "==> lint"
 ./gradlew lint

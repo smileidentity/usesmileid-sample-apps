@@ -359,7 +359,7 @@
         "RememberDetailsRow — switch variant used on userDetails"
       ],
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2898",
-      "decision": "OWNER DECISION 2026-08-13: 'Smile to capture' ON means enhanced liveness OFF (see settingsToSdkMapping)."
+      "decision": "SUPERSEDED 2026-08-25 by node 5206:2898 (re-read 2026-08-24). The 2026-08-13 owner decision read: 'Smile to capture' ON means enhanced liveness OFF. That frame renames the row to 'Enhanced SmartSelfie™ / Face capture uses head-turns' and draws it ON, so the polarity is now DIRECT — ON means enableEnhancedLiveness = true — and the app's default capture behaviour is the head-turn challenge rather than passive smile capture. See settingsToSdkMapping for the field and test-ids.json for the renamed id."
     },
     {
       "name": "ProfileRow",
@@ -1053,7 +1053,7 @@
     "Consent screen": "include or omit consent() in the flow builder — there is NO showConsent boolean",
     "Instruction screen": "include or omit instructions() in the flow builder",
     "Preview screen": "include or omit preview() in the flow builder (allowRetake configures it once present)",
-    "Smile to capture": "OWNER DECISION 2026-08-13: ON → `SelfieCaptureConfig.enableEnhancedLiveness = false` (passive smile capture); OFF → `enableEnhancedLiveness = true` (head-turn capture). It is the inverse of enhanced liveness, NOT a separate field — so it and Agent mode write different fields and cannot fight."
+    "Enhanced SmartSelfie™": "ON → `SelfieCaptureConfig.enableEnhancedLiveness = true` (the head-turn challenge); OFF → `false` (passive smile capture). Direct, not inverted, and ON by default for every product. SUPERSEDED the 2026-08-13 owner decision on 2026-08-25: that named the row 'Smile to capture' and had ON mean `enableEnhancedLiveness = false`, and node 5206:2898 renamed the row and drew it ON, which inverted both the label and the meaning. It and Agent mode write different fields and they CAN fight — the SDK refuses the pair with BUILDER_AGENT_MODE_WITH_ENHANCED_LIVENESS at ERROR severity — so each platform holds a mutex where it persists settings: turning either on turns the other off. The screen is the wrong place for it, because both persistence paths have to inherit the same rule."
   },
   "buildOrder": [
     "1. Tokens: generate the platform token source and wire light/dark (nothing else can start).",

@@ -32,13 +32,24 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSetting
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/** One ABOUT or LEGAL row: an id, a title, and the line beneath it. */
+/** One ABOUT or LEGAL row: an id, a title, the line beneath it, and where it goes. */
 data class UseSmileIDSampleNavRow(
     val id: String,
     val title: String,
     val supportingText: String? = null,
     @DrawableRes val icon: Int = R.drawable.sample_ic_product_mark,
+    /** Opened externally. Null means the app handles the row itself, which only the licences row does. */
+    val url: String? = null,
+    /**
+     * False for a destination the in-app browser cannot render. Both legal pages wrap their document
+     * in an embedded PDF, which mobile browsers show as a stub rather than the document — measured
+     * 2026-08-25 — so those two hand off to the browser instead of being framed by this app.
+     */
+    val opensInApp: Boolean = true,
 )
+
+/** The rows in the order the design draws them, so a caller can assert the set rather than the screen. */
+val useSmileIDSampleNavRows: List<UseSmileIDSampleNavRow> get() = ABOUT_ROWS + LEGAL_ROWS
 
 /** Everything the settings list renders; callbacks stay parameters, like every screen. */
 data class UseSmileIDSampleSettingsState(
@@ -47,6 +58,8 @@ data class UseSmileIDSampleSettingsState(
     val initials: String,
     /** Passed in because it names the host, and this module runs under eight. */
     val versionLabel: String,
+    /** The token has taken the consent decision away, so the switch stops claiming to own it. */
+    val consentBoundByToken: Boolean = false,
     val avatarColor: Color = smileProfileHues.first(),
 )
 
@@ -57,7 +70,8 @@ fun SettingsScreen(
     onSettingChange: (UseSmileIDSampleSetting, Boolean) -> Unit,
     onProfileClick: () -> Unit,
     onNavRowClick: (UseSmileIDSampleNavRow) -> Unit,
-    onOpenScenarioDrawer: () -> Unit,
+    /** Null hides the DEBUG section: `sample-ui` may not read a host's BuildConfig. */
+    onOpenScenarioDrawer: (() -> Unit)?,
     onSignOut: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -92,22 +106,30 @@ fun SettingsScreen(
             )
         }
 
-        // Two rows: 'Smile to capture' is the inverse of enhanced liveness, so it and agent mode differ.
+        // Mutually exclusive, so each row says what turning it on does to the other.
         section("CAPTURE") {
             SwitchRow(
-                title = "Smile to capture",
+                title = ENHANCED_SMART_SELFIE_TITLE,
                 icon = R.drawable.sample_ic_setting_smile,
-                supportingText = "Passive capture — smile detection",
-                checked = state.settings.smileToCapture,
-                setting = UseSmileIDSampleSetting.SmileToCapture,
-                testId = UseSmileIDSampleTestIds.SETTING_SMILE_TO_CAPTURE,
+                supportingText = if (state.settings.agentMode) {
+                    "Turns Agent mode off"
+                } else {
+                    "Face capture uses head-turns"
+                },
+                checked = state.settings.enhancedSmartSelfie,
+                setting = UseSmileIDSampleSetting.EnhancedSmartSelfie,
+                testId = UseSmileIDSampleTestIds.SETTING_ENHANCED_SMART_SELFIE,
                 onSettingChange = onSettingChange,
             )
             UseSmileIDSampleSettingRowDivider()
             SwitchRow(
                 title = "Agent mode",
                 icon = R.drawable.sample_ic_setting_agent,
-                supportingText = "Operator captures for the applicant",
+                supportingText = if (state.settings.enhancedSmartSelfie) {
+                    "Turns $ENHANCED_SMART_SELFIE_TITLE off"
+                } else {
+                    "Operator captures for the applicant"
+                },
                 checked = state.settings.agentMode,
                 setting = UseSmileIDSampleSetting.AgentMode,
                 testId = UseSmileIDSampleTestIds.SETTING_AGENT_MODE,
@@ -131,7 +153,11 @@ fun SettingsScreen(
             SwitchRow(
                 title = "Consent screen",
                 icon = R.drawable.sample_ic_setting_consent,
-                supportingText = "Ask permission before KYC checks",
+                supportingText = if (state.consentBoundByToken) {
+                    "The token grants consent, so the screen is skipped"
+                } else {
+                    "Ask permission before KYC checks"
+                },
                 checked = state.settings.consentStep,
                 setting = UseSmileIDSampleSetting.ConsentStep,
                 testId = UseSmileIDSampleTestIds.SETTING_CONSENT_STEP,
@@ -159,16 +185,18 @@ fun SettingsScreen(
             )
         }
 
-        // The design draws no control for the drawer, so this placement is ours.
-        section("DEBUG") {
-            UseSmileIDSampleSettingRow(
-                title = "Scenarios",
-                supportingText = "Choose how the environment misbehaves",
-                onClick = onOpenScenarioDrawer,
-                leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_setting_scenarios, tint = tint) },
-                trailing = { UseSmileIDSampleSettingRowChevron() },
-                testId = UseSmileIDSampleTestIds.SCENARIO_DRAWER_BUTTON,
-            )
+        // The design draws no control for the drawer, so this placement is ours, and debug-only.
+        if (onOpenScenarioDrawer != null) {
+            section("DEBUG") {
+                UseSmileIDSampleSettingRow(
+                    title = "Scenarios",
+                    supportingText = "Choose how the environment misbehaves",
+                    onClick = onOpenScenarioDrawer,
+                    leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_setting_scenarios, tint = tint) },
+                    trailing = { UseSmileIDSampleSettingRowChevron() },
+                    testId = UseSmileIDSampleTestIds.SCENARIO_DRAWER_BUTTON,
+                )
+            }
         }
 
         section("ABOUT") {
@@ -259,13 +287,47 @@ private fun NavRow(row: UseSmileIDSampleNavRow, onClick: (UseSmileIDSampleNavRow
     )
 }
 
+// The design marks the trademark here and nowhere else on this screen (node 5206:2898).
+private const val ENHANCED_SMART_SELFIE_TITLE = "Enhanced SmartSelfie\u2122"
+
+// Each URL is recorded in spec/screens.json and asserted against it.
 private val ABOUT_ROWS = listOf(
-    UseSmileIDSampleNavRow("documentation", "Documentation", "docs.smileidentity.com", R.drawable.sample_ic_setting_docs),
-    UseSmileIDSampleNavRow("support", "Support", "Contact the Smile team", R.drawable.sample_ic_setting_support),
+    UseSmileIDSampleNavRow(
+        id = "documentation",
+        title = "Documentation",
+        supportingText = "docs.usesmileid.com",
+        icon = R.drawable.sample_ic_setting_docs,
+        url = "https://docs.usesmileid.com/",
+    ),
+    UseSmileIDSampleNavRow(
+        id = "support",
+        title = "Support",
+        supportingText = "Contact the Smile team",
+        icon = R.drawable.sample_ic_setting_support,
+        url = "https://smile.id/contact-us",
+    ),
 )
 
 private val LEGAL_ROWS = listOf(
-    UseSmileIDSampleNavRow("terms", "Terms of Service", icon = R.drawable.sample_ic_setting_terms),
-    UseSmileIDSampleNavRow("privacy", "Privacy Policy", icon = R.drawable.sample_ic_setting_privacy),
-    UseSmileIDSampleNavRow("licenses", "Open-source licenses", icon = R.drawable.sample_ic_setting_licenses),
+    // Both of these serve their document as an embedded PDF, so they leave the app (see opensInApp).
+    UseSmileIDSampleNavRow(
+        id = "terms",
+        title = "Terms of Service",
+        icon = R.drawable.sample_ic_setting_terms,
+        url = "https://smile.id/terms-and-conditions",
+        opensInApp = false,
+    ),
+    UseSmileIDSampleNavRow(
+        id = "privacy",
+        title = "Privacy Policy",
+        icon = R.drawable.sample_ic_setting_privacy,
+        url = "https://smile.id/privacy-policy",
+        opensInApp = false,
+    ),
+    // No url: Apache-2.0 §4 asks the notice to travel with the distribution, so it is a screen here.
+    UseSmileIDSampleNavRow(
+        id = "licenses",
+        title = "Open-source licenses",
+        icon = R.drawable.sample_ic_setting_licenses,
+    ),
 )

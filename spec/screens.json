@@ -245,7 +245,7 @@
       "additions": [
         "A 'Check status' button stands in for the pull-to-refresh the design draws in the processing state. The gesture itself is deferred with the rest of pull-to-refresh (docs/plan/sample-apps-plan.md 8.1); the button is what makes the real GET /v3/status call reachable in the meantime."
       ],
-      "note": "The details screen doubles as the result screen, which is why the result card belongs here rather than needing a new home. NO NAV BAR: it is a pushed screen, even though its route lives in the verifications graph. You leave it by going back, not by switching tab."
+      "note": "The details screen doubles as the result screen, which is why the result card belongs here rather than needing a new home. NO NAV BAR: it is a pushed screen, even though its route lives in the verifications graph. You leave it by going back, not by switching tab. The RESULT CARD and its callback counters are hidden on a release build unless the `probes` launch argument asks for them, and always shown in debug (2026-08-25): the affordance still ships on the release classpath, minified and shrunk, because that is where consumption defects surface — compiling it out with a debug-only source set would also make the argument impossible. The rest of the screen is unchanged either way, so a partner sees the design's screen and automation sees the card."
     },
     {
       "id": "userDetails",
@@ -414,7 +414,7 @@
       ],
       "sections": [
         "PROFILE",
-        "CAPTURE (two rows: Smile to capture, Agent mode)",
+        "CAPTURE (two rows: Enhanced SmartSelfie™, Agent mode — mutually exclusive)",
         "APPEARANCE",
         "SDK SCREENS — SHOW OR SKIP FLOW STEPS",
         "ABOUT",
@@ -432,6 +432,7 @@
       ],
       "testIds": [
         "sample_settings_screen",
+        "sample_setting_enhanced_smart_selfie",
         "sample_setting_agent_mode",
         "sample_setting_dark_mode",
         "sample_setting_consent_step",
@@ -440,10 +441,18 @@
         "sample_sign_out"
       ],
       "copy": {
-        "footer": "UseSmileID Sample · 1.0.0",
-        "aboutDocs": "docs.smileidentity.com"
+        "footer": "Smile ID Sample App · 1.0.0",
+        "aboutDocs": "docs.usesmileid.com"
       },
-      "note": "The PROFILE row opens the profiles LIST, not the active profile's own page — configuring any profile and creating one are both reached from there. Its avatar takes the ACTIVE profile's hue from design-tokens.json profileHues, indexed by list position, so the summary, the list and the products header never draw the same profile in three colours. The ENVIRONMENT section was removed on 2026-08-24: it was never in the design, and it existed only because the sandbox launch argument was an override rather than a source. Both are gone — the token's api_url decides the environment, and a run reports it on sample_result_environment."
+      "links": {
+        "documentation": "https://docs.usesmileid.com/",
+        "support": "https://smile.id/contact-us",
+        "terms": "https://smile.id/terms-and-conditions",
+        "privacy": "https://smile.id/privacy-policy",
+        "licenses": "in-app, the licenses screen — not a URL"
+      },
+      "linkPresentation": "Per row, and split on what the destination can render (measured 2026-08-25). ABOUT — Documentation and Support open IN-APP: Custom Tabs on Android (androidx.browser), SFSafariViewController on iOS, url_launcher inAppBrowserView on Flutter, expo-web-browser on React Native. A WebView is deliberately NOT the pattern on any platform: the page would lose the user's session, autofill and password manager, and this is code partners copy. LEGAL — Terms of Service and Privacy Policy EJECT to the system browser, because both pages serve their document as an embedded PDF (a Webflow CDN asset, hash in the filename) and a mobile browser renders an embedded PDF as a stub with an Open button rather than the document; framing that inside the app makes the app look like it failed. The canonical page URLs stay as they are — linking the CDN asset directly would show the document but hard-codes a path that changes on every re-upload, and the same canonical URL is what the SDK consent screen uses. The in-app toolbar takes a colour PER SCHEME from the design tokens (primary in light, surface in dark); one shared colour left a white bar on a white page. Android warms the browser while Settings is open but does NOT pre-fetch: speculatively downloading a 649 KB docs page on a partner's mobile data is the wrong trade.",
+      "note": "The PROFILE row opens the profiles LIST, not the active profile's own page — configuring any profile and creating one are both reached from there. Its avatar takes the ACTIVE profile's hue from design-tokens.json profileHues, indexed by list position, so the summary, the list and the products header never draw the same profile in three colours. The ENVIRONMENT section was removed on 2026-08-24: it was never in the design, and it existed only because the sandbox launch argument was an override rather than a source. Both are gone — the token's api_url decides the environment, and a run reports it on sample_result_environment. The three SDK-step switches include or omit their screen (see components.json settingsToSdkMapping), and the CONSENT row carries one overridden supporting line: when the linked token binds consent it reads 'The token grants consent, so the screen is skipped', because a switch reading ON while the token has taken the decision away is a lie the screen tells. The switch stays live — it still decides the next run made without a bound token. The DEBUG section holding the Scenarios row renders on debug builds only (see drawerPresentation): the screen takes it as a nullable slot the host fills, because sample-ui runs under eight identities and may not read a host's BuildConfig."
     },
     {
       "id": "profiles",
@@ -573,6 +582,36 @@
       ]
     },
     {
+      "id": "licenses",
+      "title": "Open-source licenses",
+      "owner": "sample",
+      "board": "none",
+      "route": "push",
+      "states": [
+        {
+          "state": "default",
+          "note": "NO DESIGN FRAME: the design set has a LEGAL row called 'Open-source licenses' and no destination for it. Built from components this app already has — TopAppBar, SectionLabel, SettingRow — so it cannot look bolted on, and deliberately as a flat list rather than the rounded section cards the other screens use: two hundred rows inside one card compose all of them at once."
+        },
+        {
+          "state": "empty",
+          "note": "The notices are generated into the binary at build time, so an empty list means the asset did not ship. It says that rather than showing nothing."
+        }
+      ],
+      "note": "Two sections, because not every dependency is open source: 'OPEN-SOURCE COMPONENTS' lists each artifact with its declared licence and expands to the full licence text, and 'UNDER GOOGLE'S OWN TERMS' lists the ML Kit, Play Integrity and Android SDK artifacts, which declare terms-of-service pages rather than a licence — there is no text to ship for those, so the row opens the page. Content comes from scripts/generate_licenses.py, which resolves the RELEASE runtime classpath (the SDK's transitive set plus the app's own, which is what a partner ships), walks parent POMs, keeps more than one licence per artifact, and FAILS the build rather than emitting 'Unknown'. The first-party SDK is excluded: a partner licenses it from Smile ID, so its terms are not a third-party notice. Every platform generates its own file — the classpath differs per platform — and no port hand-maintains a list.",
+      "components": [
+        "TopAppBar",
+        "SectionLabel",
+        "SettingRow"
+      ],
+      "testIds": [
+        "sample_licenses_screen",
+        "sample_licenses_empty",
+        "sample_license_row",
+        "sample_license_text",
+        "sample_license_link"
+      ]
+    },
+    {
       "id": "scenarioDrawer",
       "title": "Scenario drawer",
       "owner": "sample",
@@ -629,13 +668,13 @@
       "question": "The Settings footer reads 'Smile ID Sample App · 1.0.0' while the agreed app identity is 'UseSmileID Sample' (spec/app-identity.json). Which string ships?",
       "blocks": "settings screen copy, store metadata",
       "recommendation": "Use the agreed display name in the footer so the app matches its launcher label.",
-      "status": "OWNER DECISION 2026-08-13 — RESOLVED: 'UseSmileID Sample' everywhere, so the Settings footer matches the launcher label and store listing. Footer becomes 'UseSmileID Sample · 1.0.0'."
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: 'UseSmileID Sample' everywhere. SUPERSEDED 2026-08-25 (ruled 2026-08-24, 'go with the design'): the footer follows node 5206:2898 and reads 'Smile ID Sample App · 1.0.0'. This does NOT change app-identity.json, whose 'UseSmileID Sample' is the launcher label and store identity, settled against the ids the SDK repos reserve. The footer is brand copy and the launcher label is identity; after this change they legitimately differ, so do not 'fix' one to match the other. sample-ui takes versionLabel as a parameter precisely because the module runs under eight identities."
     },
     {
       "id": "docsDomain",
       "question": "The ABOUT section links 'docs.usesmileid.com'. Confirm that domain is live, or point it at the current documentation host.",
       "blocks": "settings ABOUT rows",
-      "status": "OWNER DECISION 2026-08-13 — RESOLVED: link to docs.smileidentity.com, the host the documentation publishes to today."
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: link to docs.smileidentity.com. CORRECTED 2026-08-25: both hosts are CNAMEs to the same GitBook site and https://docs.smileidentity.com/ answers 307 → https://docs.usesmileid.com/, so the design's own copy is the current one and the spec was carrying the legacy host. The row's supporting line and its URL are both docs.usesmileid.com. The apex domains agree the same way: smileidentity.com 301s to usesmileid.com."
     },
     {
       "id": "smileToCaptureMapping",
@@ -643,7 +682,7 @@
       "blocks": "the CAPTURE section and any flow it configures",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2898",
       "recommendation": "Get an SDK answer rather than inferring; the two switches must not silently set the same field.",
-      "status": "OWNER DECISION 2026-08-13 — RESOLVED: ON → enableEnhancedLiveness = false. See components.json settingsToSdkMapping."
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: ON → enableEnhancedLiveness = false. SUPERSEDED 2026-08-25: node 5206:2898 renames the row to 'Enhanced SmartSelfie™ / Face capture uses head-turns' and draws it ON, so the mapping is direct rather than inverted and the default capture behaviour is the head-turn challenge. The question is answered and closed; the current mapping lives in components.json settingsToSdkMapping and the renamed id in test-ids.json."
     },
     {
       "id": "softBadgeVariant",
@@ -685,7 +724,8 @@
       "id": "drawerPresentation",
       "question": "The scenario drawer is required by AGENTS.md and has test ids, but the design set has no frame for it. How should it present, and what opens it — a long-press on the header, a hidden gesture, or a row at the bottom of Settings?",
       "blocks": "the drawer's build only; every scenario is already reachable by launch argument",
-      "recommendation": "A bottom sheet opened by a long-press on the environment chip, so it stays out of a partner's way while remaining reachable on a release build."
+      "recommendation": "A bottom sheet opened by a long-press on the environment chip, so it stays out of a partner's way while remaining reachable on a release build.",
+      "status": "OWNER DECISION 2026-08-24 — RESOLVED: a 'Scenarios' row in a DEBUG section at the bottom of Settings, presented as a modal sheet, and the section is DEBUG-ONLY on every platform. Recorded as a deliberate addition: the design draws no DEBUG section, and this is the one place the app adds one. The earlier recommendation is withdrawn — the environment chip it hung off is now hidden (a token's api_url decides the environment), and a hidden long-press is undiscoverable to a partner reading the app. No launch argument reveals the row, deliberately: every device flow reaches the drawer by deep link (usesmileid-sample-android://debug/scenarios), so hiding it on release costs nothing testable, and a partner should never find a scenario picker in Settings on any build. This closes the last OPEN question in screens.json."
     }
   ],
   "verification": {

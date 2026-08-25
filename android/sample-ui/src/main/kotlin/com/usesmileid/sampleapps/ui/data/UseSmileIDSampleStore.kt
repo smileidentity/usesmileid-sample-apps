@@ -1,7 +1,6 @@
 package com.usesmileid.sampleapps.ui.data
 
 import android.content.Context
-import androidx.datastore.core.DataMigration
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -21,17 +20,7 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
 
     constructor(context: Context) : this(context.applicationContext.sampleStore)
 
-    val settings: Flow<UseSmileIDSampleSettings> = store.data.map { prefs ->
-        val defaults = UseSmileIDSampleSettings()
-        UseSmileIDSampleSettings(
-            smileToCapture = prefs[SMILE_TO_CAPTURE] ?: defaults.smileToCapture,
-            agentMode = prefs[AGENT_MODE] ?: defaults.agentMode,
-            darkMode = prefs[DARK_MODE] ?: defaults.darkMode,
-            consentStep = prefs[CONSENT_STEP] ?: defaults.consentStep,
-            instructionsStep = prefs[INSTRUCTIONS_STEP] ?: defaults.instructionsStep,
-            previewStep = prefs[PREVIEW_STEP] ?: defaults.previewStep,
-        )
-    }
+    val settings: Flow<UseSmileIDSampleSettings> = store.data.map(::settingsIn)
 
     /**
      * The token is the whole record: the handle, the deadline and the bindings all decode from it, so
@@ -53,8 +42,16 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
         )
     }
 
+    /** Writes through the settings model, so the capture mutex can move the other row in the same edit. */
     suspend fun setSetting(setting: UseSmileIDSampleSetting, enabled: Boolean) {
-        store.edit { prefs -> prefs[setting.key()] = enabled }
+        store.edit { prefs ->
+            val current = settingsIn(prefs)
+            val updated = current.withSetting(setting, enabled)
+            // Only what moved: writing all six would freeze today's defaults onto the device.
+            UseSmileIDSampleSetting.entries
+                .filter { updated[it] != current[it] }
+                .forEach { prefs[it.key()] = updated[it] }
+        }
     }
 
     /** Takes the session rather than the raw token, so only a decoded one can ever be linked. */
@@ -67,7 +64,16 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
         }
     }
 
-    /** Deletes the credential at its deadline, keeping only that the session ended. The one remover of [SESSION_TOKEN]. */
+    /** Sign out: no ended marker, which would send the next run to the scanner. */
+    suspend fun clearTokenSession() {
+        store.edit { prefs ->
+            prefs.remove(SESSION_TOKEN)
+            prefs.remove(ENDED_SESSION_ID)
+            prefs.remove(ENDED_SESSION_AT)
+        }
+    }
+
+    /** Deletes the credential at its deadline, keeping only that the session ended. */
     suspend fun retireTokenSession(session: UseSmileIDSampleTokenSession) {
         store.edit { prefs ->
             prefs.remove(SESSION_TOKEN)
@@ -76,8 +82,20 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
         }
     }
 
+    private fun settingsIn(prefs: Preferences): UseSmileIDSampleSettings {
+        val defaults = UseSmileIDSampleSettings()
+        return UseSmileIDSampleSettings(
+            enhancedSmartSelfie = prefs[ENHANCED_SMART_SELFIE] ?: defaults.enhancedSmartSelfie,
+            agentMode = prefs[AGENT_MODE] ?: defaults.agentMode,
+            darkMode = prefs[DARK_MODE] ?: defaults.darkMode,
+            consentStep = prefs[CONSENT_STEP] ?: defaults.consentStep,
+            instructionsStep = prefs[INSTRUCTIONS_STEP] ?: defaults.instructionsStep,
+            previewStep = prefs[PREVIEW_STEP] ?: defaults.previewStep,
+        )
+    }
+
     private fun UseSmileIDSampleSetting.key(): Preferences.Key<Boolean> = when (this) {
-        UseSmileIDSampleSetting.SmileToCapture -> SMILE_TO_CAPTURE
+        UseSmileIDSampleSetting.EnhancedSmartSelfie -> ENHANCED_SMART_SELFIE
         UseSmileIDSampleSetting.AgentMode -> AGENT_MODE
         UseSmileIDSampleSetting.DarkMode -> DARK_MODE
         UseSmileIDSampleSetting.ConsentStep -> CONSENT_STEP
@@ -86,7 +104,8 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
     }
 
     private companion object {
-        val SMILE_TO_CAPTURE = booleanPreferencesKey("smile_to_capture")
+        // A new key, never the old one reused: `smile_to_capture = true` meant the opposite.
+        val ENHANCED_SMART_SELFIE = booleanPreferencesKey("enhanced_smart_selfie")
         val AGENT_MODE = booleanPreferencesKey("agent_mode")
         val DARK_MODE = booleanPreferencesKey("dark_mode")
         val CONSENT_STEP = booleanPreferencesKey("consent_step")
@@ -107,24 +126,5 @@ data class UseSmileIDSampleSessionRecord(
     val ended: UseSmileIDSampleEndedSession? = null,
 )
 
-/**
- * Drops a settings key whose control has gone: a device left on Production would keep submitting live
- * with no UI to clear it. Self-terminating, so it needs no version counter.
- */
-internal object UseSmileIDSampleRetiredSettingKeys : DataMigration<Preferences> {
-
-    private val RETIRED = listOf(booleanPreferencesKey("production"))
-
-    override suspend fun shouldMigrate(currentData: Preferences): Boolean = RETIRED.any { it in currentData }
-
-    override suspend fun migrate(currentData: Preferences): Preferences =
-        currentData.toMutablePreferences().apply { RETIRED.forEach { remove(it) } }
-
-    override suspend fun cleanUp() = Unit
-}
-
 // Not an application id, so it stays identity-agnostic and the same across all eight hosts.
-private val Context.sampleStore by preferencesDataStore(
-    name = "usesmileid_sample",
-    produceMigrations = { listOf(UseSmileIDSampleRetiredSettingKeys) },
-)
+private val Context.sampleStore by preferencesDataStore(name = "usesmileid_sample")

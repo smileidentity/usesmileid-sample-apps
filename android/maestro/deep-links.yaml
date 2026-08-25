@@ -6,6 +6,7 @@ appId: ${APP_ID}
 - stopApp
 - launchApp:
     arguments:
+      probes: true
       seedJobs: true
 - runFlow: subflows/warm-start.yaml
 
@@ -62,7 +63,7 @@ appId: ${APP_ID}
 # The card records the route before the redirect, which is what proves ?route=shell parsed. Read on
 # the details card, because the products line renders only while a run is in flight.
 - stopApp
-- openLink: "usesmileid-sample-android://flow/smartSelfieEnrollment/run?route=shell"
+- openLink: "usesmileid-sample-android://flow/smartSelfieEnrollment/run?route=shell&probes=true"
 - assertVisible:
     id: "sample_user_details_screen"
 - back

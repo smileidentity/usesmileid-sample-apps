@@ -253,7 +253,16 @@ it (`spec/screens.json` → `verifications`), and no platform implements either.
 It is deferred on purpose rather than forgotten: the list is seeded in memory, so "refresh" has
 nothing to fetch, and a spinner that waits a fabricated interval and then re-renders the same rows
 teaches a partner the wrong thing about the SDK. **Build it with the first real API call**, which is
-when the gesture starts meaning something. When that lands:
+when the gesture starts meaning something.
+
+**That trigger has now fired, and it is still not ready — for a different reason (2026-08-25).**
+`GET /v3/status/{jobId}` landed through `RetrofitJobStatusSource`, so the original blocker is gone.
+But `UseSmileIDSampleJobStore.refresh` returns `SessionMismatch` for any row not submitted under the
+*current* token session, so a list-wide pull would refresh only that session's rows and report a
+mismatch for the rest — a gesture that visibly does nothing for most of the list, which is worse than
+one that is absent. The shape this needs first is a decision about whether a refresh spans sessions at
+all, and that is a token question rather than a list one. Written here so the next reader does not
+unblock it on the strength of the API call existing. When that lands:
 
 - The gesture belongs to the list, and the refresh belongs to whatever owns the jobs — the store, not
   the screen. The screen renders `refreshing` and calls a suspend function; it does not own a timer.

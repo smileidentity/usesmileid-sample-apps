@@ -601,10 +601,12 @@ label shape that is about to change.
 ## 10. Landing order
 
 **This plan is phase three.** Owner-set sequence 2026-08-24: the token/environment chain lands first,
-then the Settings work, then this. Do not start it before
-`environment-from-token-android.md`'s PR 1 has merged — ENV-A3 removes the environment surfaces this
-plan's header changes sit on top of, and doing them in the other order re-records the same goldens
-twice.
+then the Settings work, then this. **Its first blocker is clear:**
+`environment-from-token-android.md`'s PR 1 merged as **PR #27 on 2026-08-25**, so ENV-A3 has already
+removed the environment surfaces this plan's header changes sit on top of — the ordering that would
+have re-recorded the same goldens twice is no longer possible. What remains ahead of it is the
+Settings PR, which re-records `screen_settings` and the result card, and ENV-A13 is now part of this
+plan rather than of that one (§5.6, and ENV-A13 in the other document).
 
 1. **§7 answered first, and §7.2 and §7.5 are the two that actually block.** Without gradients there is
    no light mode; without a profile trigger the screen ships a dead end.

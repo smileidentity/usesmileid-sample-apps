@@ -1,9 +1,24 @@
 # Environment from the token, and Settings finished — Android
 
-**Status:** Planned, nothing built. Written against the app as merged on `main` after PR #26 (token
-session complete), the SDK as published (`com.usesmileid:usesmileid:12.0.2`, read from source rather
-than assumed), and `spec/` at version 1. Six of the items below are ask-first under `AGENTS.md` and
-are gathered in §6 rather than decided here.
+**Status:** Phases one and two shipped; only the visual refresh is left. PR #27 merged **2026-08-25**
+with the environment chain — ENV-A1 → A6 and ENV-A12 — so a token's `api_url` decides the environment
+and no Settings row can. Phase two, **2026-08-25**, closes Settings: ENV-A7, A8, A9, A14, A15 and A16
+shipped as one PR, and **ENV-A11 was cut** (§4 and §4.1 row 6 carry the reason). Phase three is
+`products-visual-refresh-android.md`, which ENV-A13 has moved into. §4's table carries the per-item
+status, and §1 is annotated where phase one changed what it describes.
+
+**Two things phase two found that this plan had wrong**, both corrected in place rather than only
+here: §8's preflight bullet asked for a test the SDK cannot support (`validate()` is
+`validateBuilder`, which sees neither the capture rule nor the consent rule), and §ENV-A8 and §6.6
+named `FlowPreflight.Misconfigured` as the path an invalid flow takes when it is really
+`onResult(Failure(BuilderValidationException))`. The behaviour is unchanged and arguably better — the
+SDK's own message lands on the result card — but a port implementing the paragraph as written would
+have looked for a gate that cannot exist.
+
+Written against the app as merged on `main` after PR #26 (token session complete), the SDK as
+published (`com.usesmileid:usesmileid:12.0.2`, read from source rather than assumed), and `spec/` at
+version 1. Six of the items below are ask-first under `AGENTS.md` and are gathered in §6 rather than
+decided here.
 
 **The correction this plan carries.** `token-session-android.md` §2.1 recorded, from two tokens
 decoded on 2026-08-19, that a Portal token carries **no environment claim**, and logged a Portal ask
@@ -43,13 +58,16 @@ session state belongs), `navigation-plan.md` §7.3 (the entry gate ENV-A2 change
 
 ## 1. What exists today, verified
 
+The five rows phase one changed say so, so this table can still be read as the starting state
+without misreporting the tree.
+
 | Piece | State |
 |---|---|
-| `UseSmileIDSampleAppState.useSandbox` | `launchArgs.sandbox ?: settings.useSandbox`. **The only place environment is decided** |
-| `environmentPinned` | `launchArgs.sandbox != null`; Settings renders the row read-only and says why |
-| `UseSmileIDSampleSettings.production` | persisted `Boolean`, DataStore key `production`, default `false`; `useSandbox` is its inverse |
-| Production row (Settings) | a switch in an `ENVIRONMENT` section marked in code and in `spec/screens.json` as **not in the design** |
-| `ProfileEnvChip` (Products header) | **is** in the design — `spec/components.json` composite, Figma nodes 5206-2391 (products) / 5206-3138 (settings) |
+| `UseSmileIDSampleAppState.useSandbox` | was `launchArgs.sandbox ?: settings.useSandbox`. **PR #27:** now `session?.environment != Production`, and still the only place environment is decided |
+| `environmentPinned` | was `launchArgs.sandbox != null`, with Settings rendering the row read-only. **PR #27: deleted** — with no user control there is nothing to pin |
+| `UseSmileIDSampleSettings.production` | was a persisted `Boolean` under DataStore key `production`. **PR #27: deleted**; the key is inert because nothing reads it (see the migration note in §ENV-A7) |
+| Production row (Settings) | was a switch in an `ENVIRONMENT` section marked **not in the design**. **PR #27: deleted** with its section |
+| `ProfileEnvChip` (Products header) | **is** in the design — `spec/components.json` composite, Figma nodes 5206-2391 (products) / 5206-3138 (settings). **PR #27: hidden, not deleted** — the component, its tokens, its `sample_env_chip` id and its golden all survive; no shipped screen renders it (§6.5) |
 | Environment → SDK | `FlowLaunchSnapshot.sandbox` → `partnerConfig { useSandbox = … }`. Snapshot taken **once at entry** (R2) |
 | Environment → jobs | every Room row stores its own `sandbox`; `refresh` reads `row.sandbox`, never the current setting |
 | `smileToCapture`, `agentMode`, `consentStep`, `instructionsStep`, `previewStep` | **persisted, rendered, and read by nothing.** No consumer outside the store and the screen |
@@ -143,24 +161,24 @@ Two more SDK facts the Settings work turns on:
 
 ## 4. The work items
 
-| Id | What | Priority | Depends on |
-|---|---|---|---|
-| ENV-A1 | Decode `api_url`; two-host helper → environment; session carries it | **P1** | §6.1 *(answered)* |
-| ENV-A2 | Environment resolves from the session; `production` **and** `environmentPinned` deleted, one-time clear | **P1** | A1 *(§6.2–6.4 answered)* |
-| ENV-A3 | Delete the Settings `ENVIRONMENT` section; hide the Products chip; re-record goldens | **P1** | A2 *(§6.5 answered)* |
-| ENV-A4 | `spec/` follows in the same PR — five files; `sandbox` **out**, `probes` **in** | **P1** | A2, A3 |
-| ENV-A5 | Environment onto the result card — now the **only** way a run proves its environment | **P1** | A4 |
-| ENV-A6 | Repair `launch-args.yaml`; Simulate mints either host so automation picks environment | **P1** | A3, A5 |
-| ENV-A7 | **Enhanced SmartSelfie™**: rename, default ON, both capture switches reach the SDK, mutex enforced | **P1** | §6.9 *(polarity answered)* |
-| ENV-A8 | Step switches reach the SDK; consent is include-or-omit, token wins | **P1** | §6.6 *(answered)* |
-| ENV-A9 | ABOUT / LEGAL rows open their (now settled) URLs; Sign out stops being a dead tap | P2 | §6.8 *(URLs answered)* |
-| ENV-A10 | Coverage: unit, golden and device, for everything above | P2 | A3, A6–A9, A13–A15 |
-| ENV-A11 | `appLocale` gets its consumer | P3 — rider | A6 |
-| ENV-A12 | Correct `token-session-android.md` §2.1 | P1 | — |
-| ENV-A13 | One reusable **SmartSelfie™** mark; lands in `cardFamily` | **P1** | §6.10, **PVR-A3 first** |
-| ENV-A14 | Third-party notices: generated, shipped **in-app**, mirrored to `docs-v3` | P2 | §6.11 *(approved)* |
-| ENV-A15 | The functional-completeness gate — nothing shipped is a no-op | **P1** | §4.1 |
-| ENV-A16 | Probe surfaces: Scenarios row debug-only; result card behind the new `probes` argument | **P1** | §6.13, §6.14 *(approved)* |
+| Id | What | Priority | Depends on | Status |
+|---|---|---|---|---|
+| ENV-A1 | Decode `api_url`; two-host helper → environment; session carries it | **P1** | §6.1 *(answered)* | **Shipped** PR #27 |
+| ENV-A2 | Environment resolves from the session; `production` **and** `environmentPinned` deleted, one-time clear | **P1** | A1 *(§6.2–6.4 answered)* | **Shipped** PR #27 |
+| ENV-A3 | Delete the Settings `ENVIRONMENT` section; hide the Products chip; re-record goldens | **P1** | A2 *(§6.5 answered)* | **Shipped** PR #27 — twelve goldens named, twenty-six moved |
+| ENV-A4 | `spec/` follows in the same PR — five files; `sandbox` **out**, `probes` **in** | **P1** | A2, A3 | **Shipped** PR #27 for the environment half; the `probes` entry and the ENV-A7 renames follow with phase two |
+| ENV-A5 | Environment onto the result card — now the **only** way a run proves its environment | **P1** | A4 | **Shipped** PR #27 |
+| ENV-A6 | Repair `launch-args.yaml`; Simulate mints either host so automation picks environment | **P1** | A3, A5 | **Shipped** PR #27 |
+| ENV-A7 | **Enhanced SmartSelfie™**: rename, default ON, both capture switches reach the SDK, mutex enforced | **P1** | §6.9 *(polarity answered)* | **Shipped** — new DataStore key (no migration, ruled 2026-08-25), mutex in `UseSmileIDSampleSettings` |
+| ENV-A8 | Step switches reach the SDK; consent is include-or-omit, token wins | **P1** | §6.6 *(answered)* | **Shipped** — the journey is a named step list, so the composition is testable |
+| ENV-A9 | ABOUT / LEGAL rows open their (now settled) URLs; Sign out stops being a dead tap | P2 | §6.8 *(URLs answered)* | **Shipped** — a view intent rather than a Custom Tab, which would need a dependency |
+| ENV-A10 | Coverage: unit, golden and device, for everything above | P2 | A3, A6–A9, A13–A15 | **Shipped** for the Settings half — `settings.yaml`, four new golden states, and the generator's failure path; A13's coverage goes with phase three |
+| ENV-A11 | `appLocale` gets its consumer | P3 — rider | A6 | **CUT 2026-08-25**, said out loud rather than dropped. Two reasons: applying a locale below API 33 needs `androidx.appcompat` (an ask-first dependency) or a Compose configuration override, and `sample-ui` has **no string resources at all**, so the only thing an override could change today is the SDK's own strings. It belongs with the localisation work §10 already defers, which starts by extracting those strings |
+| ENV-A12 | Correct `token-session-android.md` §2.1 | P1 | — | **Shipped** PR #27 |
+| ENV-A13 | One reusable **SmartSelfie™** mark; lands in `cardFamily` | **P1** | §6.10, **PVR-A3 first** | **Phase three** — moved into `products-visual-refresh-android.md`, which creates `cardFamily` |
+| ENV-A14 | Third-party notices: generated, shipped **in-app**, mirrored to `docs-v3` | P2 | §6.11 *(approved)* | **Shipped** — `:app:generateLicenses` / `:app:checkLicenses`, 205 open-source components and 17 under Google's terms; the `docs-v3` page stays that repo's own PR |
+| ENV-A15 | The functional-completeness gate — nothing shipped is a no-op | **P1** | §4.1 | **Shipped** — §4.1 re-walked, rows 1–4, 8 and 11 empty, the rest dated |
+| ENV-A16 | Probe surfaces: Scenarios row debug-only; result card behind the new `probes` argument | **P1** | §6.13, §6.14 *(approved)* | **Shipped**; `probes` also reads off a deep link's query, because a VIEW intent carries no extras |
 
 ### ENV-A1 — decode `api_url` into the session
 
@@ -218,7 +236,9 @@ What the item covers:
   the store's `PRODUCTION` key and its branch in `key()` all go.
 - **`environmentPinned` goes** — §6.3 removed the launch-argument override, so the property, its
   Settings copy and `spec/launch-args.json`'s `sandbox` entry all go together.
-- **The one-time clear.** `production = true` is persisted, and with the row gone there is no UI left
+- **The one-time clear — superseded 2026-08-25, see §ENV-A7: no migration ships, because the app is
+  unreleased and the key is unread either way.** As originally written: `production = true` is
+  persisted, and with the row gone there is no UI left
   to clear it — a device that has it set would submit to the live environment with no way back. The
   mechanism is a `DataMigration<Preferences>` passed to `preferencesDataStore(produceMigrations = …)`
   whose `shouldMigrate` is "the key is present" and whose `migrate` removes it; it is self-terminating
@@ -341,10 +361,18 @@ someone wrote it down first.
 **Three traps, in the order they will bite.**
 
 1. **The stored value must not be reinterpreted.** `smile_to_capture = true` meant *enhanced OFF*;
-   `enhanced_smart_selfie = true` means *enhanced ON*. Reusing the DataStore key hands every existing
-   device the exact opposite of what it chose. Use a **new key** (`enhanced_smart_selfie`) and drop
-   the old one in the same `DataMigration<Preferences>` that ENV-A2 already needs for `production` —
-   one migration, two dead keys, and the same self-terminating `shouldMigrate`.
+   `enhanced_smart_selfie = true` means *enhanced ON*. Reusing the DataStore key would hand every
+   existing device the exact opposite of what it chose. Use a **new key**
+   (`enhanced_smart_selfie`), which is the whole fix: nothing reads the old one, so its value is inert.
+
+   **Owner ruling 2026-08-25: no migration.** This plan asked for a `DataMigration<Preferences>`
+   dropping both dead keys, and `UseSmileIDSampleRetiredSettingKeys` was written for `production` in
+   PR #27. It is **deleted**, and this item does not add to it: the app is unreleased, so no partner
+   device carries either key, and a compatibility shim for state nobody has is exactly what an
+   unreleased app should not ship. Behaviour is identical either way — both keys are unread, so they
+   sit in the file doing nothing rather than being tidied away on the next launch. The ports inherit
+   the same rule: **rename the key, do not migrate it.** If this app is ever released and a stored key
+   has to be retired after that, the mechanism comes back with a reason.
 2. **The mutex stops being optional.** Enhanced liveness now defaults **on**, so a single tap on Agent
    mode sets both and `FlowValidator.validateSelfie()` raises `AgentModeWithEnhancedLivenessException`
    at ERROR severity — a blocked run from the app's own default state plus one tap. Before this
@@ -389,10 +417,14 @@ both. The third case is already implemented and currently **invisible** — `jou
 has taken the decision away is a lie the screen tells, so the row needs an overridden supporting line,
 which is the one part of the deleted Production row's treatment worth keeping.
 
-**When OFF produces an invalid flow, let it.** No token consent plus no consent screen is an ERROR from
-`appendConsentRule`; the pre-flight returns `Misconfigured` and the app shows the SDK's own message and
-suggested fix. Per §6.6 that is the intended demonstration, not a case to defend against — the only
-requirement is that the screen says why, which `recordBlocked` already does.
+**When OFF produces an invalid flow, let it — but not by the route this paragraph first claimed.**
+No token consent plus no consent screen is an ERROR from `appendConsentRule`, and per §6.6 that is the
+intended demonstration. **Corrected 2026-08-25:** the host pre-flight cannot see it (see §8), so
+`FlowPreflight.Misconfigured` and `recordBlocked` are *not* the path. The SDK refuses the flow itself:
+`build()` returns `Invalid`, the SDK calls `onResult(Failure(BuilderValidationException))` carrying its
+own message and suggested fix, and the app records a Failed result and lands on the details screen —
+so the message reaches `sample_result_last_error`, which is the evidence channel a device flow reads
+anyway. The requirement is unchanged and still met: the app says why.
 
 ### ENV-A9 — ABOUT, LEGAL and Sign out
 
@@ -567,29 +599,33 @@ simulate, torch and back; the scenario drawer; the nav bar. Empty-lambda hits in
 
 **Dead or missing** — the entire list:
 
-| # | Surface | State | Item |
-|---|---|---|---|
-| 1 | Settings → ABOUT: Documentation, Support | `onNavRowClick = {}` — two dead rows | ENV-A9 |
-| 2 | Settings → LEGAL: Terms, Privacy, Open-source licenses | same callback — three dead rows | ENV-A9, ENV-A14 |
-| 3 | Settings → Sign out | `onSignOut = {}` — a dead destructive row | ENV-A9 |
-| 4 | Settings → 5 of 7 switches | persisted, rendered, read by nothing | ENV-A7, ENV-A8 |
-| 5 | Verifications list → pull-to-refresh | design draws it and a `refreshing` state; not implemented | §10 — stays deferred, new reason |
-| 6 | `appLocale` | parsed, spec-tested, no consumer | ENV-A11 |
-| 7 | Launcher icon | no `android:icon`, no `mipmap/` — the app wears the system default | §10 — excluded, own PR |
-| 8 | `PlaceholderScreen.kt` | `internal`, **zero references anywhere** — dead code | ENV-A15, delete it |
-| 9 | Every sheet | nothing renders behind the scrim (F50) | §10 — ruling asked, not built |
-| 10 | Scenario drawer presentation | the one `spec/screens.json` open question still **OPEN** | §6.12 — **closed**: Settings row, debug-only |
-| 11 | Probe surfaces on release | Scenarios row and result card ship to partners today | ENV-A16 |
-| 12 | Localisation and RTL | `sample-ui` has **no `strings.xml` at all** — every string is a Kotlin literal | §10 — deferred, post-port |
+Re-walked **2026-08-25** at the end of phase two; the Closed column is what that walk found.
+
+| # | Surface | State | Item | Closed |
+|---|---|---|---|---|
+| 1 | Settings → ABOUT: Documentation, Support | `onNavRowClick = {}` — two dead rows | ENV-A9 | **Empty** — both open their settled URL through a view intent |
+| 2 | Settings → LEGAL: Terms, Privacy, Open-source licenses | same callback — three dead rows | ENV-A9, ENV-A14 | **Empty** — two open URLs, and Open-source licenses opens the notices screen |
+| 3 | Settings → Sign out | `onSignOut = {}` — a dead destructive row | ENV-A9 | **Empty** — clears the session and the saved form details, then returns to Products |
+| 4 | Settings → 5 of 7 switches | persisted, rendered, read by nothing | ENV-A7, ENV-A8 | **Empty** — all five reach the SDK, and the device flow proves each by where the run lands |
+| 5 | Verifications list → pull-to-refresh | design draws it and a `refreshing` state; not implemented | §10 — stays deferred, new reason | **Dated decision 2026-08-25**, now written into `sample-apps-plan.md` §8.1 rather than only here: `refresh` returns `SessionMismatch` for any row not submitted under the current session, so a list-wide pull would visibly do nothing for most of the list. The shape it needs first is whether a refresh spans sessions at all |
+| 6 | `appLocale` | parsed, spec-tested, no consumer | ENV-A11 | **Dated decision 2026-08-25 — cut**, with the reason in §4: it needs a dependency this repo must ask before adding, and there are no strings to localise until §10's extraction lands |
+| 7 | Launcher icon | no `android:icon`, no `mipmap/` — the app wears the system default | §10 — excluded, own PR | **Dated decision** — §10, app-identity work |
+| 8 | `PlaceholderScreen.kt` | `internal`, **zero references anywhere** — dead code | ENV-A15, delete it | **Empty** — deleted 2026-08-25 |
+| 9 | Every sheet | nothing renders behind the scrim (F50) | §10 — ruling asked, not built | **Dated decision 2026-08-24**, now written into `navigation-plan.md` R12 so the ports read a rule: M3's `ModalBottomSheet`, owned by the screen beneath, and the five sheet routes resolve to their parent screen with the sheet open |
+| 10 | Scenario drawer presentation | the one `spec/screens.json` open question still **OPEN** | §6.12 — closed: Settings row, debug-only | **Empty** — recorded in `spec/screens.json` as a deliberate addition, which closes the last OPEN question in the spec |
+| 11 | Probe surfaces on release | Scenarios row and result card ship to partners today | ENV-A16 | **Empty** — the row is debug-only, the card is behind `probes`, and the release device run passes it |
+| 12 | Localisation and RTL | `sample-ui` has **no `strings.xml` at all** — every string is a Kotlin literal | §10 — deferred, post-port | **Dated decision** — §10, after the ports |
 
 **Not gaps, and not to be "fixed":** the result card's `sdkVersion` em dash is instructed by
 `spec/result-card.schema.json`'s `blocked` note; the scan reticle being decorative while the analyser
 reads the whole frame is a recorded open design question, not a bug.
 
-**The acceptance criterion for ENV-A15**, and the thing to hand the ports: rows 1–4, 6, 8 and 11 are
-empty at merge, and rows 5, 7, 9, 10 and 12 each carry a written decision — a dated ruling or an item in another
-PR — rather than silence. A port reading this document should be able to tell, for every affordance in
-the app, whether it works or whether somebody decided it does not yet.
+**The acceptance criterion for ENV-A15**, and the thing to hand the ports: rows 1–4, 8, 10 and 11 are
+empty at merge, and rows 5, 6, 7, 9 and 12 each carry a written decision — a dated ruling or an item in
+another PR — rather than silence. A port reading this document should be able to tell, for every
+affordance in the app, whether it works or whether somebody decided it does not yet. **Met on
+2026-08-25**, with one change from the list as written: row 6 moved from empty to dated, because
+`appLocale` was cut, and row 10 moved the other way.
 
 ---
 
@@ -763,11 +799,14 @@ next design-conformance pass reports it as missing.
 
 **What happens when OFF makes the flow invalid is the point, not a bug.** With no token consent and no
 consent screen, `appendConsentRule` raises an ERROR (*"must include either a Consent screen or a
-pre-supplied consentInformation"*), the pre-flight returns `FlowPreflight.Misconfigured`, and the app
-shows the SDK's own reason. Per the ruling: **the SDK's builder validation handles that.** For a sample
-whose job is to show partners what the SDK does, a switch that demonstrates a real validation failure
-with a real message is a legitimate probe affordance — it just has to say why, which the
-`Misconfigured` path already does.
+pre-supplied consentInformation"*), and the app shows the SDK's own reason. Per the ruling: **the SDK's
+builder validation handles that** — literally, as it turns out. **Corrected 2026-08-25:** this said the
+host pre-flight returns `FlowPreflight.Misconfigured`; it cannot, because the rule runs inside the SDK's
+own `build()` and no public entry point exposes it (§8). The demonstration arrives as
+`onResult(Failure(BuilderValidationException))` instead, so the SDK's message and suggested fix land on
+the result card. For a sample whose job is to show partners what the SDK does, a switch that
+demonstrates a real validation failure with a real message is a legitimate probe affordance — it just
+has to say why, which the result card does.
 
 **Two things this simplifies.** `spec/test-ids.json`'s description for `sample_setting_consent_step`
 — *"include/omit `consent()` in the flow"* — is **already correct** and needs no edit, so ENV-A4 gets
@@ -1111,7 +1150,7 @@ Traced, not estimated. `spec/` first because it is the ask-first surface.
 | File | Why |
 |---|---|
 | `state/UseSmileIDSampleSettings.kt` | `production` and `useSandbox` deleted; the agent-mode mutex added |
-| `data/UseSmileIDSampleStore.kt` | `PRODUCTION` key, its `key()` branch, and the one-time migration |
+| `data/UseSmileIDSampleStore.kt` | `PRODUCTION` key and its `key()` branch |
 | `state/UseSmileIDSampleTokenSession.kt` / `UseSmileIDSampleTokenDecoder.kt` | the `api_url` claim and the field |
 | `screens/SettingsScreen.kt` | the `ENVIRONMENT` section; the mutex and overridden-consent supporting lines |
 | `screens/ProductsScreen.kt` | stops rendering the env chip; the component file itself is **unchanged** (§6.5) |
@@ -1144,16 +1183,29 @@ gallery.
 - **Unit, in `sample-ui`.** `api_url` decode: each known host, case and trailing-slash variants, a
   scheme-only difference, an unrecognised host, a malformed URL, and the claim absent — each asserting
   the §6.1 behaviour rather than "does not crash". The agent-mode mutex, driven from
-  `UseSmileIDSampleSettings` so both orders of flipping are covered. The DataStore migration:
-  key present → removed and `shouldMigrate` false afterwards; key absent → untouched.
+  `UseSmileIDSampleSettings` so both orders of flipping are covered. ~~The DataStore migration.~~
+  Dropped with the migration itself (§ENV-A7): there is nothing left to test but that the new key
+  reads its default, which the settings tests already assert.
 - **Unit, in `app`.** `buildSnapshot` resolves environment from the session, and from the launch
   argument per §6.3. `journeyFor` composes exactly the screens the four toggle combinations imply, and
   the consent triple of §ENV-A8 — the third row (token-bound) is the regression guard for behaviour
   that already exists and is currently untested.
-- **Preflight.** Every settings combination that reaches the SDK must produce `Ready` or a named
-  `Misconfigured`, never a build that throws. Agent mode plus enhanced liveness is the case with a
-  known SDK error code (`BUILDER_AGENT_MODE_WITH_ENHANCED_LIVENESS`); assert the code, so a UI mutex
-  that regresses is caught by a test rather than by a device.
+- **Preflight — and this bullet was wrong, corrected 2026-08-25 against 12.0.2.** Every settings
+  combination the UI can persist must still reach the SDK as `Ready`, which is testable and tested.
+  What is **not** possible is the second half: no host can pre-flight the composed flow.
+  `UseSmileIDFlowBuilder.validate()` is `FlowValidator.validateBuilder(screens, mlConfigResult,
+  networkConfigResult)` — ML/network configuration failure and an empty `screens` block, nothing else.
+  Both rules this plan leans on, `validateSelfie()` (the agent-mode/enhanced-liveness pair) and
+  `appendConsentRule`, run inside `FlowValidator.validate(configuration, …)`, which only the SDK's
+  `internal fun build()` calls; `FlowConfiguration` is public but its `screens` can come from nowhere
+  but the builder's private list. So the pair cannot be asserted as a named `Misconfigured`, and that
+  test is deliberately not written. **What guards it instead:** the mutex is unit-tested in
+  `UseSmileIDSampleSettings`, both tap orders and all four combinations, and the SDK's own refusal is
+  proved on a device — `build()` returns `Invalid`, the SDK calls
+  `onResult(Failure(BuilderValidationException))`, and the message lands on
+  `sample_result_last_error`. Uniform on both variants, because that path forks on the builder's
+  `enableDebugMode`, which defaults false and this app never sets. Ruled 2026-08-25: record it here,
+  prove it on the card, file nothing against the SDK.
 - **Two behaviours the plan specifies with no test named, both cheap to add.** The five ABOUT/LEGAL
   URLs (ENV-A9) should be asserted against `spec/screens.json` in a unit test rather than eyeballed —
   a wrong URL is invisible until a partner taps it. And the `cardTitle` / `cardFamily` pair
@@ -1185,10 +1237,12 @@ gallery.
 - **The mutex, driven from the UI.** Tap Agent mode from the default state and assert Enhanced
   SmartSelfie™ went OFF, then the reverse. This is the one test that stops the app shipping a
   one-tap blocked run.
-- **The migration, on a real device with real prior state.** Install the current build, set the
-  Production toggle and Smile to capture, install the new build over it (`adb install -r`, never a
-  fresh install — a fresh install proves nothing because `allowBackup="false"` wipes the store), and
-  assert the environment is sandbox and Enhanced SmartSelfie™ is ON. Both dead keys, one run.
+- **The rename, on a real device with real prior state.** Install the current build, set Smile to
+  capture, install the new build over it (`adb install -r`, never a fresh install — a fresh install
+  proves nothing because `allowBackup="false"` wipes the store), and assert Enhanced SmartSelfie™ is
+  ON while a key the rename does not touch, like Dark mode, keeps its value. **Run 2026-08-25 and it
+  passes**, which is what makes the migration unnecessary rather than merely unimportant: the old
+  value is not read under the new name whether or not anything deletes it.
 - **The notices generator has a test, and it is the failure path.** Feed it Guava (licence only in the
   parent POM), Bouncy Castle (licence in no POM at all) and `camera-core` (two licences) and assert it
   resolves the first, uses the override for the second, keeps both for the third — and **fails** on a
@@ -1223,26 +1277,40 @@ one that compiles it out cannot run half its suite on the configuration that mat
 silent, which is why the rule belongs in `spec/launch-args.json` rather than in four heads. The
 Scenarios row is simpler and also shared: strictly debug-only everywhere, no argument.
 
-**Per-platform, and fine to differ.** How an external URL opens (Custom Tab, `SFSafariViewController`,
-`url_launcher`, `Linking`), how the one-time clear is expressed in each platform's persistence layer,
-and how the locale override is applied. The *effect* must match: the key is gone after one launch, and
-no UI can restore it.
+**Per-platform, and fine to differ — but the presentation is not.** Ruled 2026-08-25: the four
+external Settings rows open **in-app** on every platform, and the mechanism is each platform's own —
+Custom Tabs on Android (`androidx.browser`, the one dependency this phase added), `SFSafariViewController`
+on iOS, `url_launcher`'s `inAppBrowserView` on Flutter, `expo-web-browser` on React Native. Not a
+WebView on any of them: the page keeps the user's session, autofill and password manager, and this is
+code partners copy. Also per-platform: how the locale override is applied. The *effect* must match: no UI can
+restore a retired setting. There is no one-time clear to express — see §ENV-A7.
 
 **Three things to fix in the spec before the ports read it.**
 
-1. `spec/test-ids.json` tells all four platforms that Smile to capture and Agent mode "cannot fight".
-   They can (§3), and Enhanced SmartSelfie™ defaulting ON makes it reachable in one tap. Ported as
-   written, that is four apps that can build an unbuildable flow from their default state.
-2. `spec/components.json` still carries the superseded 2026-08-13 polarity in two places. A port that
-   reads the spec rather than this document builds the inverted setting.
-3. `spec/screens.json` records the legacy documentation domain and a footer string that contradicts
-   `spec/app-identity.json` (§6.8).
+1. ~~`spec/test-ids.json` tells all four platforms that Smile to capture and Agent mode "cannot
+   fight".~~ **Done in PR #27**: the description now records that they *can* fight, with the SDK's
+   error code and the date it was read. The id itself still says `smile_to_capture` — renaming it is
+   ENV-A7's, in phase two.
+2. ~~`spec/components.json` still carries the superseded 2026-08-13 polarity in two places.~~
+   **Done 2026-08-25**: both the `SettingRow` `decision` field and `settingsToSdkMapping` are
+   rewritten, each saying it was superseded by node 5206:2898 rather than being silently replaced, and
+   the test id is renamed to `sample_setting_enhanced_smart_selfie`.
+3. ~~`spec/screens.json` records the legacy documentation domain and a footer string that contradicts
+   `spec/app-identity.json`.~~ **Done 2026-08-25**: the footer is the design's
+   `Smile ID Sample App · 1.0.0`, `copy.aboutDocs` and the row's URL are `docs.usesmileid.com`, and
+   both decisions carry the evidence that superseded them. `spec/app-identity.json` is deliberately
+   unchanged — the launcher label and the footer are allowed to differ, and the spec now says so.
 
 **What the ports get for free, and must not re-derive.** The mark is one constant, not eight string
 literals (ENV-A13) — the ruling in §6.10 travels with it, and so does the accessibility rule that the
-spoken label drops the mark. The third-party notices are **one page for all four apps** (ENV-A14), so
-no port writes a licences screen; each just links the same URL. And §4.1's ledger is the completeness
-contract: a port is done when its own ledger has the same shape, not when its screens look right.
+spoken label drops the mark. The third-party notices are **generated once and rendered twice**
+(ENV-A14): one `licenses.json`, produced by the build from the release runtime classpath, rendering
+both the in-app screen and the `docs-v3` page. Corrected 2026-08-25 — this paragraph previously said
+each port would just link one shared URL, which was the recommendation §6.11 reversed: Apache-2.0 §4
+asks the notice to travel with the distribution, so every port ships the screen and the generator, and
+each port's list is its own because each resolves its own classpath. And §4.1's ledger is the
+completeness contract: a port is done when its own ledger has the same shape, not when its screens
+look right.
 
 ---
 
@@ -1342,16 +1410,32 @@ open design question (`token-session-android.md` §8), not a bug to close here.
 **Owner-set sequence 2026-08-24: token/environment first, then Settings, then the visual refresh.**
 `products-visual-refresh-android.md` is therefore the last of the three, not interleaved.
 
-**PR 1 — the environment chain.** ENV-A12 first as its own commit (one paragraph, no code: a
-superseded fact in `docs/` outranks the code that contradicts it). Then **ENV-A1 → A2 → A3 → A4 → A5 →
-A6 as one PR** — they are one behaviour change, and splitting them leaves `main` with a spec and an app
-that disagree, or a device suite asserting on a chip that has gone.
+**PR 1 — the environment chain. Shipped: PR #27, merged 2026-08-25.** ENV-A12 first as its own commit
+(one paragraph, no code: a superseded fact in `docs/` outranks the code that contradicts it). Then
+**ENV-A1 → A2 → A3 → A4 → A5 → A6 as one PR** — they are one behaviour change, and splitting them
+leaves `main` with a spec and an app that disagree, or a device suite asserting on a chip that has
+gone. Two places where this plan was wrong turned up in the building of it, both recorded where they
+were wrong rather than only here: §7 put a helper in a module that could not host it, and ENV-A1's own
+snippet specified a nullable session field that §6.1's later ruling made unsafe.
 
-**PR 2 onward — Settings.** ENV-A7 and ENV-A8 together (the capture and step switches, the design
-rename, the DataStore migration). Then ENV-A9 with ENV-A16, since both touch the Settings screen and
-the details screen once each. Then ENV-A14. ENV-A11 rides with whichever lands second, or is dropped.
-ENV-A15 last, as the gate rather than the work — re-walk §4.1 and merge only when every row is either
-empty or carries a dated decision.
+**PR 2 — Settings, and it is one PR, not several. Owner ruling 2026-08-25:** the whole of Settings
+lands as a single PR that closes it. The dependency order below is still the order to *build* in — it
+just no longer means separate reviews. One PR also means `screen_settings` is re-recorded once at the
+end instead of four times, and the spec lands as one coherent contract change instead of four partial
+ones.
+
+Build order inside it: ENV-A7 and ENV-A8 first (the capture and step switches, the design rename). Then ENV-A9 with ENV-A16, since both touch the Settings screen and the details
+screen once each. Then ENV-A14. ENV-A11 rides along, and is the first thing to cut if the PR grows —
+said in the PR, not dropped in silence. ENV-A15 last, as the gate rather than the work — re-walk §4.1
+and merge only when every row is either empty or carries a dated decision. The device pass comes after
+all of it, once, rather than interleaved: half these items change the same screen and the same flows,
+so an early run only has to be redone.
+
+**Done 2026-08-25.** Settings is closed. What landed that this section did not predict: the journey
+became a named step list so the composition could be asserted at all (the SDK exposes no built screen
+list), `probes` had to be readable off a deep link's query as well as an intent extra (a VIEW intent
+carries no extras, and four flows reach the card that way), and the notices generator excludes both
+first-party artifacts and BOMs — a partner licenses the SDK from us, and a BOM ships no code.
 
 **PR 3 onward — the visual refresh.** All of `products-visual-refresh-android.md`, in its own §10
 order. PVR-A3 still has to precede ENV-A13, so **ENV-A13 moves into this phase** rather than shipping

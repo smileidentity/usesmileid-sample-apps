@@ -1,0 +1,21 @@
+# Products → the details form, filled and submitted. Every `stopApp` kills the form state and sign out
+# clears it, so the details are typed every time rather than assumed.
+appId: ${APP_ID}
+---
+- tapOn:
+    id: "sample_product_card_smartSelfieEnrollment"
+- assertVisible:
+    id: "sample_user_details_screen"
+- tapOn:
+    id: "sample_user_details_field_firstName"
+- inputText: "Ada"
+- tapOn:
+    id: "sample_user_details_field_lastName"
+- inputText: "Okafor"
+# The SDK requires a contact field even though the form labels both optional.
+- tapOn:
+    id: "sample_user_details_field_email"
+- inputText: "ada.okafor@example.com"
+- hideKeyboard
+- tapOn:
+    id: "sample_user_details_continue"

@@ -43,6 +43,8 @@ fun VerificationDetailsScreen(
     /** Pull-to-refresh, which the design draws in the processing state. Always wired: the outcome says why when it cannot succeed. */
     onRefresh: () -> Unit = {},
     refreshing: Boolean = false,
+    /** The card and its counters, still on the release classpath rather than compiled out. */
+    showProbes: Boolean = true,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -117,12 +119,14 @@ fun VerificationDetailsScreen(
                 }
             }
             // Rendered even with no job: a flow that failed before submission has nothing else to show.
-            item {
-                UseSmileIDSampleResultCard(
-                    result = result,
-                    modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
-                )
+            if (showProbes) {
+                item {
+                    UseSmileIDSampleResultCard(
+                        result = result,
+                        modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
+                    )
                 }
+            }
             }
         }
     }

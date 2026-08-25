@@ -42,6 +42,16 @@
       "description": "Seeds the design's eleven fixture verifications, as a precondition for flows that need a populated list. The app seeds nothing on its own: a stored row claims a verification was submitted, and eleven that never were would sit among a partner's real ones for good. But no UI path creates a row without a successful submission — which needs a real token and a valid sandbox identity — so a device flow covering the list, its filters, select mode or removal has no other way to arrive at one. Idempotent: the rows are keyed by job id and re-seeding is a no-op, and because they persist, one seeded launch covers every later step in the same flow. Present in release builds too, deliberately: the device suite has to pass on the minified, resource-shrunk variant as well as debug, and that run needs the same precondition. It seeds nothing unless asked, so a partner build behaves exactly as it would without the argument."
     },
     {
+      "name": "probes",
+      "type": "boolean",
+      "values": [
+        true,
+        false
+      ],
+      "default": false,
+      "description": "Reveals the on-screen probe affordances — the result card and its callback counters — on a release build. Always on in debug, so the argument is only ever needed by a release run. It exists because the affordances are how a flow observes what the SDK did, and the release variant is the one where consumption defects surface: hiding them from release outright would mean half the device suite could only run on the configuration that proves the least. A partner opening the app sees nothing; the code still ships, minified and shrunk, on the release classpath — never compiled out with a debug-only source set, which would also make this argument impossible. It does NOT reveal the Settings DEBUG section (the Scenarios row): that is strictly debug-only on every platform, because no flow needs it — they deep-link to the drawer — and a partner should never find a scenario picker in Settings on any build."
+    },
+    {
       "name": "appLocale",
       "type": "string",
       "values": "BCP 47 tag, e.g. fr-FR",
@@ -64,7 +74,8 @@
   },
   "notes": [
     "Read from the launching intent only, and applied once: a recreation re-reads the same intent, so re-seeding would discard whatever the drawer selected after launch.",
-    "Parse all seven names even where a build cannot act on one yet, so the four apps accept the same surface. `scenario`, `theme`, `route`, `autostart` and `seedJobs` take effect on their own; `appLocale` and `holdCamera` configure the handoff to the SDK and take effect where that handoff is built.",
+    "Parse all eight names even where a build cannot act on one yet, so the four apps accept the same surface. `scenario`, `theme`, `route`, `autostart`, `seedJobs` and `probes` take effect on their own; `appLocale` and `holdCamera` configure the handoff to the SDK and take effect where that handoff is built.",
+    "`probes` has one platform-specific addition, and it is not optional: on Android it is read from the launching URI's query string as well as from the intent extras. A deep link arrives as an ACTION_VIEW intent that carries no extras, and four of the eight flows reach the result card that way — so on release the card would be hidden and those runs could only ever pass on debug. Only this argument is read from the link; letting a link seed the others would contradict the rule above that a deep link resets them. Appending `?probes=true` to a route whose pattern declares no query is safe on androidx.navigation: a non-parameterised deep-link pattern terminates its path regex with `($|(\\?(.)*)|(#(.)*))`, and a parameterised one matches only the names its own pattern declares. Each platform needs its own answer to the same problem — a link is how automation arrives.",
     "There is no `sandbox` argument, and adding one back would be a regression. Removed 2026-08-24 with the app's environment control: the session token's `api_url` claim decides the environment, so nothing can override it and no app has a toggle to pin. The rule it replaces — automation must never run with sandbox=false — now holds by construction rather than by discipline, because automation mints its own unsigned fixture tokens and one naming the production host still submits nothing. A run proves where it went on `sample_result_environment`.",
     "An unrecognised value falls back to that argument's default rather than failing the launch. That is only safe because the result card publishes what the run actually got — assert on sample_result_active_scenario, never on the argument you passed."
   ],

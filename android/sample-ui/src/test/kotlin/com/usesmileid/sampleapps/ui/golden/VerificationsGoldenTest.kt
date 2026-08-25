@@ -53,6 +53,10 @@ class VerificationsGoldenTest : GoldenTest() {
     fun verification_details_unknown_job() = goldens("screen_verification_details_unknown") { UnknownDetails() }
 
     @Test
+    fun verification_details_without_probes() =
+        goldens("screen_verification_details_no_probes") { Details(showProbes = false) }
+
+    @Test
     fun verification_details_queued() = goldens("screen_verification_details_queued") { Details(QUEUED) }
 
     @Test
@@ -93,13 +97,17 @@ class VerificationsGoldenTest : GoldenTest() {
     )
 
     @Composable
-    private fun Details(job: UseSmileIDSampleJob = JOBS.first()) = VerificationDetailsScreen(
+    private fun Details(
+        job: UseSmileIDSampleJob = JOBS.first(),
+        showProbes: Boolean = true,
+    ) = VerificationDetailsScreen(
         jobId = job.id,
         job = job,
         result = ResultFixtures.Succeeded,
         onBack = {},
         onDelete = {},
         onCopy = { _, _ -> },
+        showProbes = showProbes,
     )
 
     @Composable

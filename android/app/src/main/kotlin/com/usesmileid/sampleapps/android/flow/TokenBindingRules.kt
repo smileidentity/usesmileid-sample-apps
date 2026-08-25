@@ -69,6 +69,10 @@ val UseSmileIDSampleAppState.tokenUserDetailsRequirement: UseSmileIDSampleUserDe
 fun UseSmileIDSampleAppState.tokenBindsIdDetails(product: UseSmileIDSampleProduct): Boolean =
     liveBindings?.bindsIdDetails(product) == true
 
+/** Whether the token has taken the consent decision away. Clock-free: Settings must not recompose on the tick. */
+internal val UseSmileIDSampleAppState.tokenBindsConsent: Boolean
+    get() = session?.takeUnless { flowResult.scenario.startsExpired }?.bindings?.consent != null
+
 /** The bindings a run may read, or null when no live token backs it. */
 val UseSmileIDSampleAppState.liveBindings: UseSmileIDSampleTokenBindings?
     get() = liveSession?.bindings
