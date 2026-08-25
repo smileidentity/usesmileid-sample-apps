@@ -22,6 +22,8 @@ appId: ${APP_ID}
       id: "sample_sign_out"
     direction: DOWN
     visibilityPercentage: 80
+    # 20s is the default and this list is long enough to outrun it on a warm device.
+    timeout: 45000
 - tapOn:
     id: "sample_sign_out"
 - assertVisible:
@@ -43,6 +45,10 @@ appId: ${APP_ID}
     id: "sample_nav_settings"
 - assertVisible:
     id: "sample_settings_screen"
+# Settled before touching a row: the tab restores its scroll position while animating in,
+# and a row tap measured mid-restore lands on whichever row moved into that spot.
+- waitForAnimationToEnd:
+    timeout: 3000
 - assertVisible: "Enhanced SmartSelfie™"
 - assertVisible:
     id: "sample_setting_enhanced_smart_selfie"
@@ -95,9 +101,7 @@ appId: ${APP_ID}
     visible:
       id: "si_ess_all_directions_demo"
     timeout: 20000
-- back
-- assertVisible:
-    id: "sample_products_screen"
+- runFlow: subflows/leave-sdk-flow.yaml
 
 # Instructions off: the same taps skip the screen and open capture, still on the head-turn path.
 - stopApp
@@ -107,6 +111,12 @@ appId: ${APP_ID}
 - runFlow: subflows/warm-start.yaml
 - tapOn:
     id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+# Settled before touching a row: the tab restores its scroll position while animating in,
+# and a row tap measured mid-restore lands on whichever row moved into that spot.
+- waitForAnimationToEnd:
+    timeout: 3000
 - tapOn:
     id: "sample_setting_instructions_step"
 - assertVisible:
@@ -121,9 +131,7 @@ appId: ${APP_ID}
     timeout: 20000
 - assertNotVisible:
     id: "si_instructions_screen"
-- back
-- assertVisible:
-    id: "sample_products_screen"
+- runFlow: subflows/leave-sdk-flow.yaml
 
 # Enhanced off: passive capture, which is what the row's default used to mean and no longer does.
 - stopApp
@@ -133,6 +141,12 @@ appId: ${APP_ID}
 - runFlow: subflows/warm-start.yaml
 - tapOn:
     id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+# Settled before touching a row: the tab restores its scroll position while animating in,
+# and a row tap measured mid-restore lands on whichever row moved into that spot.
+- waitForAnimationToEnd:
+    timeout: 3000
 - tapOn:
     id: "sample_setting_instructions_step"
 - assertVisible: "Prep tips before capture"
@@ -154,11 +168,15 @@ appId: ${APP_ID}
     timeout: 20000
 - assertNotVisible:
     id: "si_ess_all_directions_demo"
-- back
-- assertVisible:
-    id: "sample_products_screen"
+- runFlow: subflows/leave-sdk-flow.yaml
 - tapOn:
     id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+# Settled before touching a row: the tab restores its scroll position while animating in,
+# and a row tap measured mid-restore lands on whichever row moved into that spot.
+- waitForAnimationToEnd:
+    timeout: 3000
 - tapOn:
     id: "sample_setting_enhanced_smart_selfie"
 - assertVisible:
@@ -192,6 +210,12 @@ appId: ${APP_ID}
 # Back on, and the consent screen returns — the pair is what proves the switch, not either half.
 - tapOn:
     id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+# Settled before touching a row: the tab restores its scroll position while animating in,
+# and a row tap measured mid-restore lands on whichever row moved into that spot.
+- waitForAnimationToEnd:
+    timeout: 3000
 - tapOn:
     id: "sample_setting_consent_step"
 - assertVisible: "Ask permission before KYC checks"
@@ -212,6 +236,19 @@ appId: ${APP_ID}
     id: "sample_nav_settings"
 - assertVisible:
     id: "sample_settings_screen"
+# Settled before touching a row: the tab restores its scroll position while animating in,
+# and a row tap measured mid-restore lands on whichever row moved into that spot.
+- waitForAnimationToEnd:
+    timeout: 3000
+# Scrolled to, not assumed: ABOUT sits below the fold on a 6.5" screen, and the tab restores
+# whatever scroll position the section before this one left behind.
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_nav_documentation"
+    direction: DOWN
+    visibilityPercentage: 80
+    # 20s is the default and this list is long enough to outrun it on a warm device.
+    timeout: 45000
 - tapOn:
     id: "sample_setting_nav_documentation"
 - waitForAnimationToEnd:
@@ -226,6 +263,8 @@ appId: ${APP_ID}
       id: "sample_setting_nav_licenses"
     direction: DOWN
     visibilityPercentage: 80
+    # 20s is the default and this list is long enough to outrun it on a warm device.
+    timeout: 45000
 - tapOn:
     id: "sample_setting_nav_licenses"
 - assertVisible:

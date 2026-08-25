@@ -40,6 +40,12 @@ data class UseSmileIDSampleNavRow(
     @DrawableRes val icon: Int = R.drawable.sample_ic_product_mark,
     /** Opened externally. Null means the app handles the row itself, which only the licences row does. */
     val url: String? = null,
+    /**
+     * False for a destination the in-app browser cannot render. Both legal pages wrap their document
+     * in an embedded PDF, which mobile browsers show as a stub rather than the document — measured
+     * 2026-08-25 — so those two hand off to the browser instead of being framed by this app.
+     */
+    val opensInApp: Boolean = true,
 )
 
 /** The rows in the order the design draws them, so a caller can assert the set rather than the screen. */
@@ -303,17 +309,20 @@ private val ABOUT_ROWS = listOf(
 )
 
 private val LEGAL_ROWS = listOf(
+    // Both of these serve their document as an embedded PDF, so they leave the app (see opensInApp).
     UseSmileIDSampleNavRow(
         id = "terms",
         title = "Terms of Service",
         icon = R.drawable.sample_ic_setting_terms,
         url = "https://smile.id/terms-and-conditions",
+        opensInApp = false,
     ),
     UseSmileIDSampleNavRow(
         id = "privacy",
         title = "Privacy Policy",
         icon = R.drawable.sample_ic_setting_privacy,
         url = "https://smile.id/privacy-policy",
+        opensInApp = false,
     ),
     // No url: Apache-2.0 §4 asks the notice to travel with the distribution, so it is a screen here.
     UseSmileIDSampleNavRow(
