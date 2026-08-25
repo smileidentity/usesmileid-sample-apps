@@ -1277,8 +1277,12 @@ one that compiles it out cannot run half its suite on the configuration that mat
 silent, which is why the rule belongs in `spec/launch-args.json` rather than in four heads. The
 Scenarios row is simpler and also shared: strictly debug-only everywhere, no argument.
 
-**Per-platform, and fine to differ.** How an external URL opens (Custom Tab, `SFSafariViewController`,
-`url_launcher`, `Linking`) and how the locale override is applied. The *effect* must match: no UI can
+**Per-platform, and fine to differ — but the presentation is not.** Ruled 2026-08-25: the four
+external Settings rows open **in-app** on every platform, and the mechanism is each platform's own —
+Custom Tabs on Android (`androidx.browser`, the one dependency this phase added), `SFSafariViewController`
+on iOS, `url_launcher`'s `inAppBrowserView` on Flutter, `expo-web-browser` on React Native. Not a
+WebView on any of them: the page keeps the user's session, autofill and password manager, and this is
+code partners copy. Also per-platform: how the locale override is applied. The *effect* must match: no UI can
 restore a retired setting. There is no one-time clear to express — see §ENV-A7.
 
 **Three things to fix in the spec before the ports read it.**

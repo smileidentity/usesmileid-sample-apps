@@ -204,10 +204,23 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_products_screen"
 
-# --- the notices screen -------------------------------------------------------------------------
-# The other four rows open a browser a flow would have to escape; this one stays inside the app.
+# --- ABOUT, LEGAL and the notices screen ---------------------------------------------------------
+# The four external rows open a Custom Tab, which covers this app's own screen and returns on back —
+# so one of them is assertable without leaving the task. The page itself belongs to the browser, so
+# the assertion is that our screen went and came back, which is what proves the row is not a dead tap.
 - tapOn:
     id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+- tapOn:
+    id: "sample_setting_nav_documentation"
+- waitForAnimationToEnd:
+    timeout: 5000
+- assertNotVisible:
+    id: "sample_settings_screen"
+- back
+- assertVisible:
+    id: "sample_settings_screen"
 - scrollUntilVisible:
     element:
       id: "sample_setting_nav_licenses"

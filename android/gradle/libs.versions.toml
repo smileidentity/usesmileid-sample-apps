@@ -6,6 +6,8 @@ kotlin = "2.4.10"
 ksp = "2.3.11"
 
 androidx-activity = "1.13.0"
+# Custom Tabs for the Settings links: the page keeps the user's own browser rather than a WebView.
+androidx-browser = "1.9.0"
 androidx-compose-bom = "2026.06.01"
 androidx-core = "1.16.0"
 androidx-datastore = "1.2.1"
@@ -32,6 +34,7 @@ usesmileid-mlkit-face = { module = "com.usesmileid:mlkit-face" }
 usesmileid-mlkit-document = { module = "com.usesmileid:mlkit-document" }
 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+androidx-browser = { module = "androidx.browser:browser", version.ref = "androidx-browser" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui" }

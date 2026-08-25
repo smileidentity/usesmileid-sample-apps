@@ -1,14 +1,15 @@
 package com.usesmileid.sampleapps.android.navigation
 
 import android.content.ActivityNotFoundException
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.util.Log
+import androidx.browser.customtabs.CustomTabColorSchemeParams
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.net.toUri
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.parameters.DeepLink
@@ -26,8 +27,8 @@ import com.usesmileid.sampleapps.android.flow.tokenBindsConsent
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleLicenses
 import com.usesmileid.sampleapps.ui.model.parseUseSmileIDSampleLicenses
-import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleNavRow
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleSettingsState
+import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -41,7 +42,7 @@ import com.usesmileid.sampleapps.ui.screens.SettingsScreen as SettingsContent
 fun SettingsScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     val chrome = LocalUseSmileIDSampleChrome.current
-    val context = LocalContext.current
+    val openUrl = rememberUrlOpener()
     SettingsContent(
         contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
         state = UseSmileIDSampleSettingsState(
@@ -57,7 +58,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
         onProfileClick = { navigator.navigate(ProfilesScreenDestination) },
         // Every row but Open-source licenses opens externally; that one is a screen in this app.
         onNavRowClick = { row ->
-            row.url?.let { context.openExternally(it, row) } ?: navigator.navigate(LicensesScreenDestination)
+            row.url?.let { openUrl(it, row.id) } ?: navigator.navigate(LicensesScreenDestination)
         },
         // Debug builds only, and no launch argument reveals it: every flow reaches the drawer by deep link.
         onOpenScenarioDrawer = if (BuildConfig.DEBUG) {
@@ -85,6 +86,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
 fun LicensesScreen(navigator: DestinationsNavigator) {
     val context = LocalContext.current
     val chrome = LocalUseSmileIDSampleChrome.current
+    val openUrl = rememberUrlOpener()
     // Off the main thread: the asset is the Apache-2.0 text plus two hundred entries.
     val licenses by produceState(UseSmileIDSampleLicenses(), context) {
         value = withContext(Dispatchers.IO) {
@@ -97,17 +99,33 @@ fun LicensesScreen(navigator: DestinationsNavigator) {
         licenses = licenses,
         contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
         onBack = { navigator.navigateUp() },
-        onOpenUrl = { url -> context.openExternally(url, licenseRow) },
+        onOpenUrl = { url -> openUrl(url, "licenses") },
     )
 }
 
-/** A plain view intent, not a Custom Tab: that needs `androidx.browser`, and this repo asks before adding one. */
-private fun Context.openExternally(url: String, row: UseSmileIDSampleNavRow) {
-    try {
-        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-    } catch (e: ActivityNotFoundException) {
-        // A device with no browser is a real configuration; a crash is a worse answer than a log.
-        Log.w("UseSmileIDSample", "No activity could open the ${row.id} row", e)
+/**
+ * A Custom Tab rather than a WebView: the page opens over the app but stays in the user's own browser,
+ * with their session, autofill and password manager. `launchUrl` is an ACTION_VIEW intent carrying
+ * extras, so a browser with no Custom Tabs service opens the page normally — nothing to fall back to.
+ */
+@Composable
+private fun rememberUrlOpener(): (url: String, label: String) -> Unit {
+    val context = LocalContext.current
+    // Follows the app's own dark-mode setting, because the theme it reads already does.
+    val toolbar = UseSmileIDSampleTheme.colors.surface.toArgb()
+    return { url, label ->
+        val tab = CustomTabsIntent.Builder()
+            .setDefaultColorSchemeParams(
+                CustomTabColorSchemeParams.Builder().setToolbarColor(toolbar).build(),
+            )
+            .setShowTitle(true)
+            .build()
+        try {
+            tab.launchUrl(context, url.toUri())
+        } catch (e: ActivityNotFoundException) {
+            // A device with no browser at all is a real configuration; a crash is worse than a log.
+            Log.w("UseSmileIDSample", "No activity could open $label", e)
+        }
     }
 }
 
@@ -115,6 +133,3 @@ private fun Context.openExternally(url: String, row: UseSmileIDSampleNavRow) {
 private const val APP_DISPLAY_NAME = "Smile ID Sample App"
 
 private const val LICENSES_ASSET = "licenses.json"
-
-// Names the surface a failed open came from, the way the settings rows do.
-private val licenseRow = UseSmileIDSampleNavRow(id = "licenses", title = "Open-source licenses")
