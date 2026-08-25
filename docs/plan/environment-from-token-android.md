@@ -1,9 +1,15 @@
 # Environment from the token, and Settings finished — Android
 
-**Status:** Planned, nothing built. Written against the app as merged on `main` after PR #26 (token
-session complete), the SDK as published (`com.usesmileid:usesmileid:12.0.2`, read from source rather
-than assumed), and `spec/` at version 1. Six of the items below are ask-first under `AGENTS.md` and
-are gathered in §6 rather than decided here.
+**Status:** Phase one shipped; Settings in progress. PR #27 merged **2026-08-25** with the whole
+environment chain — ENV-A1 → A6 and ENV-A12 — so a token's `api_url` decides the environment and no
+Settings row can. Phase two is the rest of Settings (ENV-A7, A8, A9, A11, A14, A15, A16) as a single
+PR; phase three is `products-visual-refresh-android.md`, which ENV-A13 has moved into. §4's table
+carries the per-item status, and §1 is annotated where phase one changed what it describes.
+
+Written against the app as merged on `main` after PR #26 (token session complete), the SDK as
+published (`com.usesmileid:usesmileid:12.0.2`, read from source rather than assumed), and `spec/` at
+version 1. Six of the items below are ask-first under `AGENTS.md` and are gathered in §6 rather than
+decided here.
 
 **The correction this plan carries.** `token-session-android.md` §2.1 recorded, from two tokens
 decoded on 2026-08-19, that a Portal token carries **no environment claim**, and logged a Portal ask
@@ -43,13 +49,16 @@ session state belongs), `navigation-plan.md` §7.3 (the entry gate ENV-A2 change
 
 ## 1. What exists today, verified
 
+The five rows phase one changed say so, so this table can still be read as the starting state
+without misreporting the tree.
+
 | Piece | State |
 |---|---|
-| `UseSmileIDSampleAppState.useSandbox` | `launchArgs.sandbox ?: settings.useSandbox`. **The only place environment is decided** |
-| `environmentPinned` | `launchArgs.sandbox != null`; Settings renders the row read-only and says why |
-| `UseSmileIDSampleSettings.production` | persisted `Boolean`, DataStore key `production`, default `false`; `useSandbox` is its inverse |
-| Production row (Settings) | a switch in an `ENVIRONMENT` section marked in code and in `spec/screens.json` as **not in the design** |
-| `ProfileEnvChip` (Products header) | **is** in the design — `spec/components.json` composite, Figma nodes 5206-2391 (products) / 5206-3138 (settings) |
+| `UseSmileIDSampleAppState.useSandbox` | was `launchArgs.sandbox ?: settings.useSandbox`. **PR #27:** now `session?.environment != Production`, and still the only place environment is decided |
+| `environmentPinned` | was `launchArgs.sandbox != null`, with Settings rendering the row read-only. **PR #27: deleted** — with no user control there is nothing to pin |
+| `UseSmileIDSampleSettings.production` | was a persisted `Boolean` under DataStore key `production`. **PR #27: deleted**, and the key is cleared once by `UseSmileIDSampleRetiredSettingKeys` |
+| Production row (Settings) | was a switch in an `ENVIRONMENT` section marked **not in the design**. **PR #27: deleted** with its section |
+| `ProfileEnvChip` (Products header) | **is** in the design — `spec/components.json` composite, Figma nodes 5206-2391 (products) / 5206-3138 (settings). **PR #27: hidden, not deleted** — the component, its tokens, its `sample_env_chip` id and its golden all survive; no shipped screen renders it (§6.5) |
 | Environment → SDK | `FlowLaunchSnapshot.sandbox` → `partnerConfig { useSandbox = … }`. Snapshot taken **once at entry** (R2) |
 | Environment → jobs | every Room row stores its own `sandbox`; `refresh` reads `row.sandbox`, never the current setting |
 | `smileToCapture`, `agentMode`, `consentStep`, `instructionsStep`, `previewStep` | **persisted, rendered, and read by nothing.** No consumer outside the store and the screen |
@@ -143,24 +152,24 @@ Two more SDK facts the Settings work turns on:
 
 ## 4. The work items
 
-| Id | What | Priority | Depends on |
-|---|---|---|---|
-| ENV-A1 | Decode `api_url`; two-host helper → environment; session carries it | **P1** | §6.1 *(answered)* |
-| ENV-A2 | Environment resolves from the session; `production` **and** `environmentPinned` deleted, one-time clear | **P1** | A1 *(§6.2–6.4 answered)* |
-| ENV-A3 | Delete the Settings `ENVIRONMENT` section; hide the Products chip; re-record goldens | **P1** | A2 *(§6.5 answered)* |
-| ENV-A4 | `spec/` follows in the same PR — five files; `sandbox` **out**, `probes` **in** | **P1** | A2, A3 |
-| ENV-A5 | Environment onto the result card — now the **only** way a run proves its environment | **P1** | A4 |
-| ENV-A6 | Repair `launch-args.yaml`; Simulate mints either host so automation picks environment | **P1** | A3, A5 |
-| ENV-A7 | **Enhanced SmartSelfie™**: rename, default ON, both capture switches reach the SDK, mutex enforced | **P1** | §6.9 *(polarity answered)* |
-| ENV-A8 | Step switches reach the SDK; consent is include-or-omit, token wins | **P1** | §6.6 *(answered)* |
-| ENV-A9 | ABOUT / LEGAL rows open their (now settled) URLs; Sign out stops being a dead tap | P2 | §6.8 *(URLs answered)* |
-| ENV-A10 | Coverage: unit, golden and device, for everything above | P2 | A3, A6–A9, A13–A15 |
-| ENV-A11 | `appLocale` gets its consumer | P3 — rider | A6 |
-| ENV-A12 | Correct `token-session-android.md` §2.1 | P1 | — |
-| ENV-A13 | One reusable **SmartSelfie™** mark; lands in `cardFamily` | **P1** | §6.10, **PVR-A3 first** |
-| ENV-A14 | Third-party notices: generated, shipped **in-app**, mirrored to `docs-v3` | P2 | §6.11 *(approved)* |
-| ENV-A15 | The functional-completeness gate — nothing shipped is a no-op | **P1** | §4.1 |
-| ENV-A16 | Probe surfaces: Scenarios row debug-only; result card behind the new `probes` argument | **P1** | §6.13, §6.14 *(approved)* |
+| Id | What | Priority | Depends on | Status |
+|---|---|---|---|---|
+| ENV-A1 | Decode `api_url`; two-host helper → environment; session carries it | **P1** | §6.1 *(answered)* | **Shipped** PR #27 |
+| ENV-A2 | Environment resolves from the session; `production` **and** `environmentPinned` deleted, one-time clear | **P1** | A1 *(§6.2–6.4 answered)* | **Shipped** PR #27 |
+| ENV-A3 | Delete the Settings `ENVIRONMENT` section; hide the Products chip; re-record goldens | **P1** | A2 *(§6.5 answered)* | **Shipped** PR #27 — twelve goldens named, twenty-six moved |
+| ENV-A4 | `spec/` follows in the same PR — five files; `sandbox` **out**, `probes` **in** | **P1** | A2, A3 | **Shipped** PR #27 for the environment half; the `probes` entry and the ENV-A7 renames follow with phase two |
+| ENV-A5 | Environment onto the result card — now the **only** way a run proves its environment | **P1** | A4 | **Shipped** PR #27 |
+| ENV-A6 | Repair `launch-args.yaml`; Simulate mints either host so automation picks environment | **P1** | A3, A5 | **Shipped** PR #27 |
+| ENV-A7 | **Enhanced SmartSelfie™**: rename, default ON, both capture switches reach the SDK, mutex enforced | **P1** | §6.9 *(polarity answered)* | Phase two |
+| ENV-A8 | Step switches reach the SDK; consent is include-or-omit, token wins | **P1** | §6.6 *(answered)* | Phase two |
+| ENV-A9 | ABOUT / LEGAL rows open their (now settled) URLs; Sign out stops being a dead tap | P2 | §6.8 *(URLs answered)* | Phase two |
+| ENV-A10 | Coverage: unit, golden and device, for everything above | P2 | A3, A6–A9, A13–A15 | Phase two for the Settings half; A13's coverage goes with phase three |
+| ENV-A11 | `appLocale` gets its consumer | P3 — rider | A6 | Phase two |
+| ENV-A12 | Correct `token-session-android.md` §2.1 | P1 | — | **Shipped** PR #27 |
+| ENV-A13 | One reusable **SmartSelfie™** mark; lands in `cardFamily` | **P1** | §6.10, **PVR-A3 first** | **Phase three** — moved into `products-visual-refresh-android.md`, which creates `cardFamily` |
+| ENV-A14 | Third-party notices: generated, shipped **in-app**, mirrored to `docs-v3` | P2 | §6.11 *(approved)* | Phase two; the `docs-v3` page stays that repo's own PR |
+| ENV-A15 | The functional-completeness gate — nothing shipped is a no-op | **P1** | §4.1 | Phase two |
+| ENV-A16 | Probe surfaces: Scenarios row debug-only; result card behind the new `probes` argument | **P1** | §6.13, §6.14 *(approved)* | Phase two |
 
 ### ENV-A1 — decode `api_url` into the session
 
@@ -1230,19 +1239,26 @@ no UI can restore it.
 
 **Three things to fix in the spec before the ports read it.**
 
-1. `spec/test-ids.json` tells all four platforms that Smile to capture and Agent mode "cannot fight".
-   They can (§3), and Enhanced SmartSelfie™ defaulting ON makes it reachable in one tap. Ported as
-   written, that is four apps that can build an unbuildable flow from their default state.
-2. `spec/components.json` still carries the superseded 2026-08-13 polarity in two places. A port that
-   reads the spec rather than this document builds the inverted setting.
+1. ~~`spec/test-ids.json` tells all four platforms that Smile to capture and Agent mode "cannot
+   fight".~~ **Done in PR #27**: the description now records that they *can* fight, with the SDK's
+   error code and the date it was read. The id itself still says `smile_to_capture` — renaming it is
+   ENV-A7's, in phase two.
+2. `spec/components.json` still carries the superseded 2026-08-13 polarity in two places — the
+   `SettingRow` `decision` field and `settingsToSdkMapping`. A port that reads the spec rather than
+   this document builds the inverted setting. **Owed by phase two** (ENV-A7).
 3. `spec/screens.json` records the legacy documentation domain and a footer string that contradicts
-   `spec/app-identity.json` (§6.8).
+   `spec/app-identity.json` (§6.8). **Owed by phase two** (ENV-A9).
 
 **What the ports get for free, and must not re-derive.** The mark is one constant, not eight string
 literals (ENV-A13) — the ruling in §6.10 travels with it, and so does the accessibility rule that the
-spoken label drops the mark. The third-party notices are **one page for all four apps** (ENV-A14), so
-no port writes a licences screen; each just links the same URL. And §4.1's ledger is the completeness
-contract: a port is done when its own ledger has the same shape, not when its screens look right.
+spoken label drops the mark. The third-party notices are **generated once and rendered twice**
+(ENV-A14): one `licenses.json`, produced by the build from the release runtime classpath, rendering
+both the in-app screen and the `docs-v3` page. Corrected 2026-08-25 — this paragraph previously said
+each port would just link one shared URL, which was the recommendation §6.11 reversed: Apache-2.0 §4
+asks the notice to travel with the distribution, so every port ships the screen and the generator, and
+each port's list is its own because each resolves its own classpath. And §4.1's ledger is the
+completeness contract: a port is done when its own ledger has the same shape, not when its screens
+look right.
 
 ---
 
@@ -1342,16 +1358,27 @@ open design question (`token-session-android.md` §8), not a bug to close here.
 **Owner-set sequence 2026-08-24: token/environment first, then Settings, then the visual refresh.**
 `products-visual-refresh-android.md` is therefore the last of the three, not interleaved.
 
-**PR 1 — the environment chain.** ENV-A12 first as its own commit (one paragraph, no code: a
-superseded fact in `docs/` outranks the code that contradicts it). Then **ENV-A1 → A2 → A3 → A4 → A5 →
-A6 as one PR** — they are one behaviour change, and splitting them leaves `main` with a spec and an app
-that disagree, or a device suite asserting on a chip that has gone.
+**PR 1 — the environment chain. Shipped: PR #27, merged 2026-08-25.** ENV-A12 first as its own commit
+(one paragraph, no code: a superseded fact in `docs/` outranks the code that contradicts it). Then
+**ENV-A1 → A2 → A3 → A4 → A5 → A6 as one PR** — they are one behaviour change, and splitting them
+leaves `main` with a spec and an app that disagree, or a device suite asserting on a chip that has
+gone. Two places where this plan was wrong turned up in the building of it, both recorded where they
+were wrong rather than only here: §7 put a helper in a module that could not host it, and ENV-A1's own
+snippet specified a nullable session field that §6.1's later ruling made unsafe.
 
-**PR 2 onward — Settings.** ENV-A7 and ENV-A8 together (the capture and step switches, the design
-rename, the DataStore migration). Then ENV-A9 with ENV-A16, since both touch the Settings screen and
-the details screen once each. Then ENV-A14. ENV-A11 rides with whichever lands second, or is dropped.
-ENV-A15 last, as the gate rather than the work — re-walk §4.1 and merge only when every row is either
-empty or carries a dated decision.
+**PR 2 — Settings, and it is one PR, not several. Owner ruling 2026-08-25:** the whole of Settings
+lands as a single PR that closes it. The dependency order below is still the order to *build* in — it
+just no longer means separate reviews. One PR also means `screen_settings` is re-recorded once at the
+end instead of four times, and the spec lands as one coherent contract change instead of four partial
+ones.
+
+Build order inside it: ENV-A7 and ENV-A8 first (the capture and step switches, the design rename, the
+DataStore migration). Then ENV-A9 with ENV-A16, since both touch the Settings screen and the details
+screen once each. Then ENV-A14. ENV-A11 rides along, and is the first thing to cut if the PR grows —
+said in the PR, not dropped in silence. ENV-A15 last, as the gate rather than the work — re-walk §4.1
+and merge only when every row is either empty or carries a dated decision. The device pass comes after
+all of it, once, rather than interleaved: half these items change the same screen and the same flows,
+so an early run only has to be redone.
 
 **PR 3 onward — the visual refresh.** All of `products-visual-refresh-android.md`, in its own §10
 order. PVR-A3 still has to precede ENV-A13, so **ENV-A13 moves into this phase** rather than shipping
