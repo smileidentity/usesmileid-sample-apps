@@ -147,6 +147,21 @@ their platforms present sheets over the presenter. The evaluated options and the
 `sample-apps-plan.md` §8.2; the short version is that the presentation belongs to the navigator, and
 the workaround that fakes it with a dialog destination costs the native sheet behaviour R8 requires.
 
+**Ruled 2026-08-24, and it is a rule rather than a recommendation: use Material 3's own practice.**
+`androidx.compose.material3.ModalBottomSheet`, owned by the screen beneath it. The screen stays
+composed by construction, so the scrim covers the right thing, and it needs no new dependency.
+Destinations' `bottom-sheet` artifact would also fix it and was rejected: it depends on
+`androidx.compose.material:material-navigation`, which ships a second Material library and themes the
+sheets from M2 rather than the app's M3 (NAV-A6 rejected it on the same grounds).
+
+The one cost is that M3's pattern gives up sheet-as-route, and `spec/routes.json` declares five sheet
+routes with deep links. Keep the contract by making each sheet route resolve to **its parent screen
+with the sheet open** — `/profiles/switch` navigates to Products with the switch sheet showing —
+rather than to a destination of its own. The five paths keep working, the deep links keep working, and
+the sheet becomes state on the screen that owns it. NAV-A5's revisit trigger does not fire: the sheets
+still commit to the shared stores, so nothing moves into screen-local state. iOS, Flutter and React
+Native already present sheets over the current screen and should be checked, not changed.
+
 **R13 — The nav bar belongs to the tab roots, and it floats.** Two halves, both found on a device
 2026-08-18:
 

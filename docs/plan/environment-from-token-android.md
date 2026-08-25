@@ -1,10 +1,19 @@
 # Environment from the token, and Settings finished — Android
 
-**Status:** Phase one shipped; Settings in progress. PR #27 merged **2026-08-25** with the whole
-environment chain — ENV-A1 → A6 and ENV-A12 — so a token's `api_url` decides the environment and no
-Settings row can. Phase two is the rest of Settings (ENV-A7, A8, A9, A11, A14, A15, A16) as a single
-PR; phase three is `products-visual-refresh-android.md`, which ENV-A13 has moved into. §4's table
-carries the per-item status, and §1 is annotated where phase one changed what it describes.
+**Status:** Phases one and two shipped; only the visual refresh is left. PR #27 merged **2026-08-25**
+with the environment chain — ENV-A1 → A6 and ENV-A12 — so a token's `api_url` decides the environment
+and no Settings row can. Phase two, **2026-08-25**, closes Settings: ENV-A7, A8, A9, A14, A15 and A16
+shipped as one PR, and **ENV-A11 was cut** (§4 and §4.1 row 6 carry the reason). Phase three is
+`products-visual-refresh-android.md`, which ENV-A13 has moved into. §4's table carries the per-item
+status, and §1 is annotated where phase one changed what it describes.
+
+**Two things phase two found that this plan had wrong**, both corrected in place rather than only
+here: §8's preflight bullet asked for a test the SDK cannot support (`validate()` is
+`validateBuilder`, which sees neither the capture rule nor the consent rule), and §ENV-A8 and §6.6
+named `FlowPreflight.Misconfigured` as the path an invalid flow takes when it is really
+`onResult(Failure(BuilderValidationException))`. The behaviour is unchanged and arguably better — the
+SDK's own message lands on the result card — but a port implementing the paragraph as written would
+have looked for a gate that cannot exist.
 
 Written against the app as merged on `main` after PR #26 (token session complete), the SDK as
 published (`com.usesmileid:usesmileid:12.0.2`, read from source rather than assumed), and `spec/` at
@@ -160,16 +169,16 @@ Two more SDK facts the Settings work turns on:
 | ENV-A4 | `spec/` follows in the same PR — five files; `sandbox` **out**, `probes` **in** | **P1** | A2, A3 | **Shipped** PR #27 for the environment half; the `probes` entry and the ENV-A7 renames follow with phase two |
 | ENV-A5 | Environment onto the result card — now the **only** way a run proves its environment | **P1** | A4 | **Shipped** PR #27 |
 | ENV-A6 | Repair `launch-args.yaml`; Simulate mints either host so automation picks environment | **P1** | A3, A5 | **Shipped** PR #27 |
-| ENV-A7 | **Enhanced SmartSelfie™**: rename, default ON, both capture switches reach the SDK, mutex enforced | **P1** | §6.9 *(polarity answered)* | Phase two |
-| ENV-A8 | Step switches reach the SDK; consent is include-or-omit, token wins | **P1** | §6.6 *(answered)* | Phase two |
-| ENV-A9 | ABOUT / LEGAL rows open their (now settled) URLs; Sign out stops being a dead tap | P2 | §6.8 *(URLs answered)* | Phase two |
-| ENV-A10 | Coverage: unit, golden and device, for everything above | P2 | A3, A6–A9, A13–A15 | Phase two for the Settings half; A13's coverage goes with phase three |
-| ENV-A11 | `appLocale` gets its consumer | P3 — rider | A6 | Phase two |
+| ENV-A7 | **Enhanced SmartSelfie™**: rename, default ON, both capture switches reach the SDK, mutex enforced | **P1** | §6.9 *(polarity answered)* | **Shipped** — new DataStore key, old one retired, mutex in `UseSmileIDSampleSettings` |
+| ENV-A8 | Step switches reach the SDK; consent is include-or-omit, token wins | **P1** | §6.6 *(answered)* | **Shipped** — the journey is a named step list, so the composition is testable |
+| ENV-A9 | ABOUT / LEGAL rows open their (now settled) URLs; Sign out stops being a dead tap | P2 | §6.8 *(URLs answered)* | **Shipped** — a view intent rather than a Custom Tab, which would need a dependency |
+| ENV-A10 | Coverage: unit, golden and device, for everything above | P2 | A3, A6–A9, A13–A15 | **Shipped** for the Settings half — `settings.yaml`, four new golden states, and the generator's failure path; A13's coverage goes with phase three |
+| ENV-A11 | `appLocale` gets its consumer | P3 — rider | A6 | **CUT 2026-08-25**, said out loud rather than dropped. Two reasons: applying a locale below API 33 needs `androidx.appcompat` (an ask-first dependency) or a Compose configuration override, and `sample-ui` has **no string resources at all**, so the only thing an override could change today is the SDK's own strings. It belongs with the localisation work §10 already defers, which starts by extracting those strings |
 | ENV-A12 | Correct `token-session-android.md` §2.1 | P1 | — | **Shipped** PR #27 |
 | ENV-A13 | One reusable **SmartSelfie™** mark; lands in `cardFamily` | **P1** | §6.10, **PVR-A3 first** | **Phase three** — moved into `products-visual-refresh-android.md`, which creates `cardFamily` |
-| ENV-A14 | Third-party notices: generated, shipped **in-app**, mirrored to `docs-v3` | P2 | §6.11 *(approved)* | Phase two; the `docs-v3` page stays that repo's own PR |
-| ENV-A15 | The functional-completeness gate — nothing shipped is a no-op | **P1** | §4.1 | Phase two |
-| ENV-A16 | Probe surfaces: Scenarios row debug-only; result card behind the new `probes` argument | **P1** | §6.13, §6.14 *(approved)* | Phase two |
+| ENV-A14 | Third-party notices: generated, shipped **in-app**, mirrored to `docs-v3` | P2 | §6.11 *(approved)* | **Shipped** — `:app:generateLicenses` / `:app:checkLicenses`, 205 open-source components and 17 under Google's terms; the `docs-v3` page stays that repo's own PR |
+| ENV-A15 | The functional-completeness gate — nothing shipped is a no-op | **P1** | §4.1 | **Shipped** — §4.1 re-walked, rows 1–4, 8 and 11 empty, the rest dated |
+| ENV-A16 | Probe surfaces: Scenarios row debug-only; result card behind the new `probes` argument | **P1** | §6.13, §6.14 *(approved)* | **Shipped**; `probes` also reads off a deep link's query, because a VIEW intent carries no extras |
 
 ### ENV-A1 — decode `api_url` into the session
 
@@ -580,29 +589,33 @@ simulate, torch and back; the scenario drawer; the nav bar. Empty-lambda hits in
 
 **Dead or missing** — the entire list:
 
-| # | Surface | State | Item |
-|---|---|---|---|
-| 1 | Settings → ABOUT: Documentation, Support | `onNavRowClick = {}` — two dead rows | ENV-A9 |
-| 2 | Settings → LEGAL: Terms, Privacy, Open-source licenses | same callback — three dead rows | ENV-A9, ENV-A14 |
-| 3 | Settings → Sign out | `onSignOut = {}` — a dead destructive row | ENV-A9 |
-| 4 | Settings → 5 of 7 switches | persisted, rendered, read by nothing | ENV-A7, ENV-A8 |
-| 5 | Verifications list → pull-to-refresh | design draws it and a `refreshing` state; not implemented | §10 — stays deferred, new reason |
-| 6 | `appLocale` | parsed, spec-tested, no consumer | ENV-A11 |
-| 7 | Launcher icon | no `android:icon`, no `mipmap/` — the app wears the system default | §10 — excluded, own PR |
-| 8 | `PlaceholderScreen.kt` | `internal`, **zero references anywhere** — dead code | ENV-A15, delete it |
-| 9 | Every sheet | nothing renders behind the scrim (F50) | §10 — ruling asked, not built |
-| 10 | Scenario drawer presentation | the one `spec/screens.json` open question still **OPEN** | §6.12 — **closed**: Settings row, debug-only |
-| 11 | Probe surfaces on release | Scenarios row and result card ship to partners today | ENV-A16 |
-| 12 | Localisation and RTL | `sample-ui` has **no `strings.xml` at all** — every string is a Kotlin literal | §10 — deferred, post-port |
+Re-walked **2026-08-25** at the end of phase two; the Closed column is what that walk found.
+
+| # | Surface | State | Item | Closed |
+|---|---|---|---|---|
+| 1 | Settings → ABOUT: Documentation, Support | `onNavRowClick = {}` — two dead rows | ENV-A9 | **Empty** — both open their settled URL through a view intent |
+| 2 | Settings → LEGAL: Terms, Privacy, Open-source licenses | same callback — three dead rows | ENV-A9, ENV-A14 | **Empty** — two open URLs, and Open-source licenses opens the notices screen |
+| 3 | Settings → Sign out | `onSignOut = {}` — a dead destructive row | ENV-A9 | **Empty** — clears the session and the saved form details, then returns to Products |
+| 4 | Settings → 5 of 7 switches | persisted, rendered, read by nothing | ENV-A7, ENV-A8 | **Empty** — all five reach the SDK, and the device flow proves each by where the run lands |
+| 5 | Verifications list → pull-to-refresh | design draws it and a `refreshing` state; not implemented | §10 — stays deferred, new reason | **Dated decision 2026-08-25**, now written into `sample-apps-plan.md` §8.1 rather than only here: `refresh` returns `SessionMismatch` for any row not submitted under the current session, so a list-wide pull would visibly do nothing for most of the list. The shape it needs first is whether a refresh spans sessions at all |
+| 6 | `appLocale` | parsed, spec-tested, no consumer | ENV-A11 | **Dated decision 2026-08-25 — cut**, with the reason in §4: it needs a dependency this repo must ask before adding, and there are no strings to localise until §10's extraction lands |
+| 7 | Launcher icon | no `android:icon`, no `mipmap/` — the app wears the system default | §10 — excluded, own PR | **Dated decision** — §10, app-identity work |
+| 8 | `PlaceholderScreen.kt` | `internal`, **zero references anywhere** — dead code | ENV-A15, delete it | **Empty** — deleted 2026-08-25 |
+| 9 | Every sheet | nothing renders behind the scrim (F50) | §10 — ruling asked, not built | **Dated decision 2026-08-24**, now written into `navigation-plan.md` R12 so the ports read a rule: M3's `ModalBottomSheet`, owned by the screen beneath, and the five sheet routes resolve to their parent screen with the sheet open |
+| 10 | Scenario drawer presentation | the one `spec/screens.json` open question still **OPEN** | §6.12 — closed: Settings row, debug-only | **Empty** — recorded in `spec/screens.json` as a deliberate addition, which closes the last OPEN question in the spec |
+| 11 | Probe surfaces on release | Scenarios row and result card ship to partners today | ENV-A16 | **Empty** — the row is debug-only, the card is behind `probes`, and the release device run passes it |
+| 12 | Localisation and RTL | `sample-ui` has **no `strings.xml` at all** — every string is a Kotlin literal | §10 — deferred, post-port | **Dated decision** — §10, after the ports |
 
 **Not gaps, and not to be "fixed":** the result card's `sdkVersion` em dash is instructed by
 `spec/result-card.schema.json`'s `blocked` note; the scan reticle being decorative while the analyser
 reads the whole frame is a recorded open design question, not a bug.
 
-**The acceptance criterion for ENV-A15**, and the thing to hand the ports: rows 1–4, 6, 8 and 11 are
-empty at merge, and rows 5, 7, 9, 10 and 12 each carry a written decision — a dated ruling or an item in another
-PR — rather than silence. A port reading this document should be able to tell, for every affordance in
-the app, whether it works or whether somebody decided it does not yet.
+**The acceptance criterion for ENV-A15**, and the thing to hand the ports: rows 1–4, 8, 10 and 11 are
+empty at merge, and rows 5, 6, 7, 9 and 12 each carry a written decision — a dated ruling or an item in
+another PR — rather than silence. A port reading this document should be able to tell, for every
+affordance in the app, whether it works or whether somebody decided it does not yet. **Met on
+2026-08-25**, with one change from the list as written: row 6 moved from empty to dated, because
+`appLocale` was cut, and row 10 moved the other way.
 
 ---
 
@@ -1262,11 +1275,15 @@ no UI can restore it.
    fight".~~ **Done in PR #27**: the description now records that they *can* fight, with the SDK's
    error code and the date it was read. The id itself still says `smile_to_capture` — renaming it is
    ENV-A7's, in phase two.
-2. `spec/components.json` still carries the superseded 2026-08-13 polarity in two places — the
-   `SettingRow` `decision` field and `settingsToSdkMapping`. A port that reads the spec rather than
-   this document builds the inverted setting. **Owed by phase two** (ENV-A7).
-3. `spec/screens.json` records the legacy documentation domain and a footer string that contradicts
-   `spec/app-identity.json` (§6.8). **Owed by phase two** (ENV-A9).
+2. ~~`spec/components.json` still carries the superseded 2026-08-13 polarity in two places.~~
+   **Done 2026-08-25**: both the `SettingRow` `decision` field and `settingsToSdkMapping` are
+   rewritten, each saying it was superseded by node 5206:2898 rather than being silently replaced, and
+   the test id is renamed to `sample_setting_enhanced_smart_selfie`.
+3. ~~`spec/screens.json` records the legacy documentation domain and a footer string that contradicts
+   `spec/app-identity.json`.~~ **Done 2026-08-25**: the footer is the design's
+   `Smile ID Sample App · 1.0.0`, `copy.aboutDocs` and the row's URL are `docs.usesmileid.com`, and
+   both decisions carry the evidence that superseded them. `spec/app-identity.json` is deliberately
+   unchanged — the launcher label and the footer are allowed to differ, and the spec now says so.
 
 **What the ports get for free, and must not re-derive.** The mark is one constant, not eight string
 literals (ENV-A13) — the ruling in §6.10 travels with it, and so does the accessibility rule that the
@@ -1398,6 +1415,12 @@ said in the PR, not dropped in silence. ENV-A15 last, as the gate rather than th
 and merge only when every row is either empty or carries a dated decision. The device pass comes after
 all of it, once, rather than interleaved: half these items change the same screen and the same flows,
 so an early run only has to be redone.
+
+**Done 2026-08-25.** Settings is closed. What landed that this section did not predict: the journey
+became a named step list so the composition could be asserted at all (the SDK exposes no built screen
+list), `probes` had to be readable off a deep link's query as well as an intent extra (a VIEW intent
+carries no extras, and four flows reach the card that way), and the notices generator excludes both
+first-party artifacts and BOMs — a partner licenses the SDK from us, and a BOM ships no code.
 
 **PR 3 onward — the visual refresh.** All of `products-visual-refresh-android.md`, in its own §10
 order. PVR-A3 still has to precede ENV-A13, so **ENV-A13 moves into this phase** rather than shipping
