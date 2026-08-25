@@ -18,10 +18,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import com.smileid.designsystem.SmileDimens
-import com.usesmileid.sampleapps.ui.R
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEmptyState
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowDivider
@@ -106,11 +104,12 @@ private fun NoticeRow(
 ) {
     Surface(color = UseSmileIDSampleTheme.colors.surface) {
         Column {
+            // No leading tile: the coordinate is the content, and one repeated glyph two hundred
+            // times is noise. Tapping expands the licence, which is why there is no chevron either.
             UseSmileIDSampleSettingRow(
                 title = notice.artifact,
                 supportingText = "${notice.version} · ${notice.licenses.joinToString(", ") { it.name }}",
                 onClick = onClick,
-                leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_setting_licenses, tint = tint) },
                 testId = UseSmileIDSampleTestIds.licenseRow(notice.artifact),
             )
             if (expanded) {
