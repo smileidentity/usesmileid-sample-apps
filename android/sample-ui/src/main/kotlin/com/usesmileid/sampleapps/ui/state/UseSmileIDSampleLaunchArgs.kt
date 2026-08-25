@@ -28,6 +28,8 @@ data class UseSmileIDSampleLaunchArgs(
     val autostart: UseSmileIDSampleProduct? = null,
     /** Automation precondition only — see `spec/launch-args.json`. */
     val seedJobs: Boolean = false,
+    /** Reveals the result card on a release build. Always on in debug, so only a release run needs it. */
+    val probes: Boolean = false,
     val appLocale: String? = null,
     val holdCamera: UseSmileIDSampleHoldCamera? = null,
 ) {
@@ -37,10 +39,11 @@ data class UseSmileIDSampleLaunchArgs(
         const val ROUTE = "route"
         const val AUTOSTART = "autostart"
         const val SEED_JOBS = "seedJobs"
+        const val PROBES = "probes"
         const val APP_LOCALE = "appLocale"
         const val HOLD_CAMERA = "holdCamera"
 
-        val names = listOf(SCENARIO, THEME, ROUTE, AUTOSTART, SEED_JOBS, APP_LOCALE, HOLD_CAMERA)
+        val names = listOf(SCENARIO, THEME, ROUTE, AUTOSTART, SEED_JOBS, PROBES, APP_LOCALE, HOLD_CAMERA)
 
         internal const val HOLD_CAMERA_KEEP = "keep"
 
@@ -56,6 +59,7 @@ data class UseSmileIDSampleLaunchArgs(
                     ?: defaults.route,
                 autostart = UseSmileIDSampleProduct.entries.firstOrNull { it.id == raw.string(AUTOSTART) },
                 seedJobs = raw.boolean(SEED_JOBS) ?: defaults.seedJobs,
+                probes = raw.boolean(PROBES) ?: defaults.probes,
                 appLocale = raw.string(APP_LOCALE),
                 holdCamera = raw.holdCamera(),
             )

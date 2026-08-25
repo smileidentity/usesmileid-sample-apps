@@ -43,6 +43,12 @@ fun VerificationDetailsScreen(
     /** Pull-to-refresh, which the design draws in the processing state. Always wired: the outcome says why when it cannot succeed. */
     onRefresh: () -> Unit = {},
     refreshing: Boolean = false,
+    /**
+     * The result card and its counters. The host passes `BuildConfig.DEBUG || launchArgs.probes`, so
+     * the code still ships on the release classpath — minified and shrunk — rather than being
+     * compiled out, which is the configuration a consumption defect shows up in.
+     */
+    showProbes: Boolean = true,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -117,12 +123,14 @@ fun VerificationDetailsScreen(
                 }
             }
             // Rendered even with no job: a flow that failed before submission has nothing else to show.
-            item {
-                UseSmileIDSampleResultCard(
-                    result = result,
-                    modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
-                )
+            if (showProbes) {
+                item {
+                    UseSmileIDSampleResultCard(
+                        result = result,
+                        modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
+                    )
                 }
+            }
             }
         }
     }

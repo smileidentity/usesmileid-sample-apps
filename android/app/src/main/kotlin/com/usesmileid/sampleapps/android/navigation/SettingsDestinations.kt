@@ -49,7 +49,12 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
         onProfileClick = { navigator.navigate(ProfilesScreenDestination) },
         // Every row but Open-source licenses opens externally; that one is a screen in this app.
         onNavRowClick = { row -> row.url?.let { context.openExternally(it, row) } },
-        onOpenScenarioDrawer = { navigator.navigate(ScenarioDrawerSheetDestination) },
+        // Debug builds only, and no launch argument reveals it: every flow reaches the drawer by deep link.
+        onOpenScenarioDrawer = if (BuildConfig.DEBUG) {
+            { navigator.navigate(ScenarioDrawerSheetDestination) }
+        } else {
+            null
+        },
         // There is no auth to leave, so signing out is the local state a partner would expect gone.
         onSignOut = {
             app.storeScope.launch { app.store.clearTokenSession() }

@@ -13,11 +13,29 @@ import org.junit.Test
 /** The screens U3 builds first, in the states `spec/screens.json` names for each. */
 class ScreenGoldenTest : GoldenTest() {
 
+    /** The partner's screen: no DEBUG section, which is also the only state the design draws. */
     @Test
     fun settings() = goldens("screen_settings") { Settings() }
 
     @Test
     fun settings_max_font_scale() = assertSurvivesMaxFontScale { Settings() }
+
+    @Test
+    fun settings_debug_build() = goldens("screen_settings_debug") { Settings(debug = true) }
+
+    @Test
+    fun settings_debug_build_max_font_scale() = assertSurvivesMaxFontScale { Settings(debug = true) }
+
+    /** Agent mode on, so the mutex's two overridden supporting lines are recorded rather than described. */
+    @Test
+    fun settings_agent_mode() = goldens("screen_settings_agent_mode") {
+        Settings(settings = UseSmileIDSampleSettings(enhancedSmartSelfie = false, agentMode = true))
+    }
+
+    @Test
+    fun settings_consent_bound_by_token() = goldens("screen_settings_consent_bound") {
+        Settings(consentBoundByToken = true)
+    }
 
     @Test
     fun products() = goldens("screen_products") { Products(DEFAULT) }
@@ -61,17 +79,22 @@ class ScreenGoldenTest : GoldenTest() {
 }
 
 @Composable
-private fun Settings() = SettingsScreen(
+private fun Settings(
+    settings: UseSmileIDSampleSettings = UseSmileIDSampleSettings(),
+    consentBoundByToken: Boolean = false,
+    debug: Boolean = false,
+) = SettingsScreen(
     state = UseSmileIDSampleSettingsState(
-        settings = UseSmileIDSampleSettings(),
+        settings = settings,
         organisation = "UpTech Finance",
         initials = "KA",
         versionLabel = "Smile ID Sample App · 1.0.0",
+        consentBoundByToken = consentBoundByToken,
     ),
     onSettingChange = { _, _ -> },
     onProfileClick = {},
     onNavRowClick = {},
-    onOpenScenarioDrawer = {},
+    onOpenScenarioDrawer = if (debug) ({ }) else null,
     onSignOut = {},
 )
 

@@ -9,6 +9,7 @@ appId: ${APP_ID}
 - stopApp
 - launchApp:
     arguments:
+      probes: true
       seedJobs: true
 - runFlow: subflows/warm-start.yaml
 
@@ -111,6 +112,7 @@ appId: ${APP_ID}
 - stopApp
 - launchApp:
     arguments:
+      probes: true
       route: shell
 - runFlow: subflows/warm-start.yaml
 - tapOn:
@@ -147,7 +149,9 @@ appId: ${APP_ID}
 # Allow continues into the SDK's own navigation. The details are re-entered because this section
 # relaunches, and the forms survive recreation but not process death.
 - stopApp
-- launchApp
+- launchApp:
+    arguments:
+      probes: true
 - runFlow: subflows/warm-start.yaml
 - tapOn:
     id: "sample_product_card_smartSelfieEnrollment"

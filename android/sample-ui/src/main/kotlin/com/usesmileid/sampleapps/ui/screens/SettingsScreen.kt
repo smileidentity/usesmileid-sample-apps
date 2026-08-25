@@ -64,7 +64,8 @@ fun SettingsScreen(
     onSettingChange: (UseSmileIDSampleSetting, Boolean) -> Unit,
     onProfileClick: () -> Unit,
     onNavRowClick: (UseSmileIDSampleNavRow) -> Unit,
-    onOpenScenarioDrawer: () -> Unit,
+    /** Null hides the DEBUG section: only a debug host offers it, and this module may not read a BuildConfig. */
+    onOpenScenarioDrawer: (() -> Unit)?,
     onSignOut: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -178,16 +179,19 @@ fun SettingsScreen(
             )
         }
 
-        // The design draws no control for the drawer, so this placement is ours.
-        section("DEBUG") {
-            UseSmileIDSampleSettingRow(
-                title = "Scenarios",
-                supportingText = "Choose how the environment misbehaves",
-                onClick = onOpenScenarioDrawer,
-                leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_setting_scenarios, tint = tint) },
-                trailing = { UseSmileIDSampleSettingRowChevron() },
-                testId = UseSmileIDSampleTestIds.SCENARIO_DRAWER_BUTTON,
-            )
+        // The design draws no control for the drawer, so this placement is ours — and it is debug-only,
+        // because a partner should never find a scenario picker in Settings.
+        if (onOpenScenarioDrawer != null) {
+            section("DEBUG") {
+                UseSmileIDSampleSettingRow(
+                    title = "Scenarios",
+                    supportingText = "Choose how the environment misbehaves",
+                    onClick = onOpenScenarioDrawer,
+                    leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_setting_scenarios, tint = tint) },
+                    trailing = { UseSmileIDSampleSettingRowChevron() },
+                    testId = UseSmileIDSampleTestIds.SCENARIO_DRAWER_BUTTON,
+                )
+            }
         }
 
         section("ABOUT") {

@@ -17,6 +17,7 @@ appId: ${APP_ID}
 # Rows are a precondition, not the subject: the app seeds none. Seeded once — they persist in Room.
 - launchApp:
     arguments:
+      probes: true
       scenario: expiredToken
       theme: clashingHost
       route: shell
@@ -67,6 +68,7 @@ appId: ${APP_ID}
 - stopApp
 - launchApp:
     arguments:
+      probes: true
       scenario: notAScenario
 - tapOn:
     id: "sample_nav_verifications"
@@ -80,8 +82,11 @@ appId: ${APP_ID}
 
 # The card renders even when the job id resolves to nothing: a flow that failed before submission
 # has no job to show, and that is exactly when its counts are the only evidence there is.
+#
+# `probes` rides the link's query string: a deep link arrives as a VIEW intent with no extras, so the
+# release build would hide the card and this assertion could only ever pass on debug.
 - stopApp
-- openLink: "usesmileid-sample-android://verifications/job-missing"
+- openLink: "usesmileid-sample-android://verifications/job-missing?probes=true"
 - assertVisible:
     id: "sample_result_card"
 
@@ -90,6 +95,7 @@ appId: ${APP_ID}
 - stopApp
 - launchApp:
     arguments:
+      probes: true
       autostart: biometricKyc
       route: shell
 - assertVisible:
@@ -118,6 +124,7 @@ appId: ${APP_ID}
 - stopApp
 - launchApp:
     arguments:
+      probes: true
       seedJobs: true
 - runFlow: subflows/warm-start.yaml
 
