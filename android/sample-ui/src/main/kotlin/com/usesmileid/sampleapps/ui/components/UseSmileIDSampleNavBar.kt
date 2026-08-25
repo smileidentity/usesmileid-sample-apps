@@ -57,9 +57,8 @@ enum class UseSmileIDSampleNavItem(
  *
  * [sessionProgress] drives its ring, 1f fresh to 0f expired, from the session's deadline rather than an animation.
  *
- * The pill keeps `surface` against the page's `background`. Node 5487:1351 binds those two variables the
- * other way round — page `Card BG`, pill `Main BG` — the same one-step separation inverted, and the
- * products frame cannot settle it for the two tabs it does not draw. See the plan's §3.4.
+ * The pill has its own fill: the design recesses it below the page, which this app's page colour
+ * cannot express without hiding the bar. See the `navBarFill` delta.
  */
 @Composable
 fun UseSmileIDSampleNavBar(

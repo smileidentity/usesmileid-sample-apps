@@ -33,11 +33,7 @@ class UseSmileIDSampleContrastTest {
             }
     }
 
-    /**
-     * The design recesses the bar below the page in dark, where it must be seen without its shadow —
-     * at the page's own colour it vanishes. In light both the design and this app put near-white on
-     * near-white and let the shadow carry it, so only "not the same colour" is assertable there.
-     */
+    /** Dark must read without the shadow; light is near-white on near-white and rides on it. */
     @Test
     fun `the nav bar stays distinguishable from the page it floats over`() {
         assertContrast("light: nav bar against page", lightColors.navBar, lightColors.background, DISTINCT)
@@ -51,8 +47,8 @@ class UseSmileIDSampleContrastTest {
 
     /**
      * The gradient-backed cards, which no token pair above describes — which is how the session card
-     * shipped near-black ink on its own fill in dark. Held to [DESIGN_INK_FLOOR], not [TEXT_MINIMUM]:
-     * 14 of these 28 stops are below AA and the frame is final as drawn.
+     * shipped near-black ink on its own fill in dark. Held to [DESIGN_INK_FLOOR] because 14 of these
+     * 28 stops are below AA and the frame is final as drawn.
      */
     @Test
     fun `product card text is legible on every hue in both modes`() = eachScheme { name, colors ->

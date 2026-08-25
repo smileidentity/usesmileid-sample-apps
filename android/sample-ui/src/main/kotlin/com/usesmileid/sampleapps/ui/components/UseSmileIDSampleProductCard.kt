@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -62,6 +63,12 @@ fun UseSmileIDSampleProductCard(
     // A hue is the same in both schemes, so anything drawn on it resolves from the light one.
     val content = if (enabled) SmileColorLight.colorTextInverse else colors.textMuted
     val tile = if (enabled) SmileColorLight.colorSurface else colors.surface
+    // Six of these scroll; neither the fill nor the ink depends on anything that changes per frame.
+    val fill = remember(hue, enabled, colors.surfaceMuted) {
+        if (enabled) hue.brush() else Brush.linearGradient(flat(colors.surfaceMuted))
+    }
+    val ghostInk = remember(hue) { hue.from.inkOn() }
+    val goScrim = remember(hue) { hue.gradientEnd().inkOn() }
     Surface(
         onClick = onClick,
         enabled = enabled,
@@ -76,7 +83,7 @@ fun UseSmileIDSampleProductCard(
     ) {
         Box(
             modifier = Modifier
-                .background(if (enabled) hue.brush() else Brush.linearGradient(flat(colors.surfaceMuted)))
+                .background(fill)
                 .clipToBounds(),
         ) {
             if (ghost != null) {
@@ -85,7 +92,7 @@ fun UseSmileIDSampleProductCard(
                         .align(Alignment.TopEnd)
                         .offset(x = SmileDimens.spacingMd, y = -SmileDimens.spacingXs),
                 ) {
-                    ghost(hue.from.inkOn().copy(alpha = GHOST_ALPHA))
+                    ghost(ghostInk.copy(alpha = GHOST_ALPHA))
                 }
             }
             Column(
@@ -109,7 +116,7 @@ fun UseSmileIDSampleProductCard(
                     verticalAlignment = Alignment.Bottom,
                 ) {
                     CardLabel(title = title, family = family, color = content, modifier = Modifier.weight(1f))
-                    GoAffordance(tint = content, scrim = hue.gradientEnd().inkOn())
+                    GoAffordance(tint = content, scrim = goScrim)
                 }
             }
         }
@@ -119,13 +126,9 @@ fun UseSmileIDSampleProductCard(
 /**
  * One text node with two runs, not two stacked [Text]s, which drift apart at large font scales.
  *
- * The frame is drawn at a 393dp viewport, where "Enhanced Doc." fits its 114.5dp column at 16sp. A
- * 360dp phone leaves ~102dp and it would wrap, so the title steps down until both lines fit — the
- * family is sized in `em` so it follows. Every other title is well clear and never scales.
- *
- * Only at the default font scale. Above it the reader has asked for bigger text, so the label wraps
- * as far as it needs to rather than shrinking back — which is also what the max-font-scale
- * predicate requires, since a capped line count there clips instead of growing.
+ * The frame is drawn at 393dp, where "Enhanced Doc." fits its column at 16sp; a 360dp phone would
+ * wrap it, so the title steps down until both lines fit and the `em`-sized family follows. Only at
+ * the default font scale — above it the label wraps instead, because a capped line count clips.
  */
 @Composable
 private fun CardLabel(title: String, family: String, color: Color, modifier: Modifier = Modifier) {
@@ -134,8 +137,8 @@ private fun CardLabel(title: String, family: String, color: Color, modifier: Mod
     val familyStyle = type.textStyleCaption
     val familyEm = (familyStyle.fontSize.value / titleStyle.fontSize.value).em
     val fitsOneLine = LocalDensity.current.fontScale <= 1f
-    BasicText(
-        text = buildAnnotatedString {
+    val label = remember(title, family, familyEm, titleStyle, familyStyle) {
+        buildAnnotatedString {
             // Two paragraphs, not a newline: one paragraph would apply a single line height to both.
             withStyle(ParagraphStyle(lineHeight = titleStyle.lineHeight)) { append(title) }
             withStyle(ParagraphStyle(lineHeight = familyStyle.lineHeight)) {
@@ -143,7 +146,10 @@ private fun CardLabel(title: String, family: String, color: Color, modifier: Mod
                     append(family)
                 }
             }
-        },
+        }
+    }
+    BasicText(
+        text = label,
         modifier = modifier,
         style = titleStyle.copy(color = color, letterSpacing = smileCardTitleTracking),
         maxLines = if (fitsOneLine) 2 else Int.MAX_VALUE,
@@ -171,11 +177,7 @@ private fun SmileProductHue.gradientEnd(): Color {
     return if (stopEnd > 1f) lerp(start, end, (1f - stopStart) / (stopEnd - stopStart)) else end
 }
 
-/**
- * The ink that contrasts with this fill. The design draws one scrim across six cards running from
- * `#FFB53D` to `#151F72`, which leaves the go pill invisible on the darkest and the ghost glyph
- * invisible on the lightest; each mark takes the colour it can be seen against instead.
- */
+/** The ink that contrasts with this fill: one scrim across six cards this different leaves marks invisible at both ends. */
 private fun Color.inkOn() =
     if (luminance() > INK_CROSSOVER) smileOffBlackLight else SmileColorLight.colorTextInverse
 

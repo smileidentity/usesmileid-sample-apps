@@ -35,7 +35,6 @@ object UseSmileIDSampleTheme {
     /** The full ramp, for the styles Material has no slot for. */
     val type = smileTypeStyles
 
-    /** Named shapes, so a corner is chosen once here rather than rebuilt at each call site. */
     val shapes = UseSmileIDSampleShapes
 }
 

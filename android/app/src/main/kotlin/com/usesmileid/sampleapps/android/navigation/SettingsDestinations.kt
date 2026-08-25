@@ -122,7 +122,6 @@ typealias UseSmileIDSampleUrlOpener = (url: String, label: String, inApp: Boolea
 val LocalUseSmileIDSampleUrlOpener: ProvidableCompositionLocal<UseSmileIDSampleUrlOpener> =
     compositionLocalOf { error("No UseSmileIDSampleUrlOpener provided") }
 
-/** Provides [LocalUseSmileIDSampleUrlOpener] for [content]. */
 @Composable
 fun ProvideUseSmileIDSampleUrlOpener(content: @Composable () -> Unit) =
     CompositionLocalProvider(LocalUseSmileIDSampleUrlOpener provides rememberUrlOpener(), content = content)
