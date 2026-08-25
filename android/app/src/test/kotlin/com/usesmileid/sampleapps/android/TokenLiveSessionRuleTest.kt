@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.android
 
 import com.usesmileid.sampleapps.android.flow.liveAt
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenBindings
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
@@ -50,6 +51,7 @@ class TokenLiveSessionRuleTest {
         issuedAtMillis = NOW - 1_000,
         expiresAtMillis = NOW + expiresInMillis,
         bindings = UseSmileIDSampleTokenBindings(country = "KE", idType = "NATIONAL_ID"),
+        environment = UseSmileIDSampleEnvironment.Sandbox,
     )
 
     private companion object {

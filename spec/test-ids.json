@@ -358,6 +358,10 @@
         "description": "Paste action."
       },
       {
+        "id": "sample_token_environment",
+        "description": "One environment chip in the simulated-scan controls; suffixed with the environment id, e.g. sample_token_environment_sandbox. Which host the minted token's api_url names, so a flow picks an environment by minting rather than by tapping the words."
+      },
+      {
         "id": "sample_token_simulate",
         "description": "Simulate a successful scan — makes token flows testable with no QR source."
       }

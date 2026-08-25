@@ -176,6 +176,8 @@ object UseSmileIDSampleTestIds {
     /** Suffixed ids derive from other spec files, so they are built rather than listed. */
     fun productCard(productId: String) = "sample_product_card_$productId"
 
+    fun tokenEnvironment(environmentId: String) = "sample_token_environment_$environmentId"
+
     fun settingNav(rowId: String) = "sample_setting_nav_$rowId"
 
     fun scenarioItem(scenarioId: String) = "sample_scenario_item_$scenarioId"

@@ -568,7 +568,8 @@
         "sample_scan_token_screen",
         "sample_token_manual_entry",
         "sample_token_paste",
-        "sample_token_simulate"
+        "sample_token_simulate",
+        "sample_token_environment"
       ]
     },
     {

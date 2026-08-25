@@ -163,6 +163,7 @@ fun UseSmileIDSampleScanSheet(
                         selected = state.environment == environment,
                         role = Role.RadioButton,
                         onClick = { onEnvironmentSelect(environment) },
+                        testId = UseSmileIDSampleTestIds.tokenEnvironment(environment.id),
                     )
                 }
             }
@@ -196,10 +197,17 @@ fun UseSmileIDSampleScanSheet(
 
 /** The filter chip's shape without its count, because what a simulated scan mints has no count. */
 @Composable
-private fun ScanSheetChip(label: String, selected: Boolean, role: Role, onClick: () -> Unit) {
+private fun ScanSheetChip(
+    label: String,
+    selected: Boolean,
+    role: Role,
+    onClick: () -> Unit,
+    testId: String? = null,
+) {
     val colors = UseSmileIDSampleTheme.colors
     Surface(
         modifier = Modifier
+            .tagged(testId)
             .minimumInteractiveComponentSize()
             .selectable(selected = selected, role = role, onClick = onClick),
         shape = RoundedCornerShape(SmileDimens.radiusChip),

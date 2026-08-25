@@ -25,8 +25,8 @@ data class UseSmileIDSampleTokenSession(
      * request gets a 401. Never logged — a partner id is on this repo's never-commit list.
      */
     val partnerId: String? = null,
-    /** From the token's own `api_url` claim. Never null on a linked session: the decoder refuses a token it cannot place. */
-    val environment: UseSmileIDSampleEnvironment? = null,
+    /** From the token's own `api_url` claim. Non-null by construction: the decoder refuses a token it cannot place. */
+    val environment: UseSmileIDSampleEnvironment,
 ) {
 
     fun remaining(nowMillis: Long): Duration = (expiresAtMillis - nowMillis).coerceAtLeast(0L).milliseconds

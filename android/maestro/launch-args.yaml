@@ -127,7 +127,8 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_scan_token_screen"
 - tapOn: "SIMULATED SCAN"
-- tapOn: "Production"
+- tapOn:
+    id: "sample_token_environment_production"
 # Both bindings, so the run reaches the SDK's instructions screen with no host form in between.
 - tapOn: "Binds consent"
 - tapOn: "Binds details"
@@ -163,7 +164,8 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_scan_token_screen"
 - tapOn: "SIMULATED SCAN"
-- tapOn: "Sandbox"
+- tapOn:
+    id: "sample_token_environment_sandbox"
 - tapOn: "Binds consent"
 - tapOn: "Binds details"
 - tapOn:

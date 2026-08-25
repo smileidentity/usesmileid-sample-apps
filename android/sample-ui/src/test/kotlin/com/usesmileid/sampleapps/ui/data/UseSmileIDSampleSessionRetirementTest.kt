@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.test.core.app.ApplicationProvider
 import com.usesmileid.sampleapps.ui.golden.ROBOLECTRIC_SDK
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenBindings
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import java.io.File
@@ -102,6 +103,7 @@ class UseSmileIDSampleSessionRetirementTest {
         issuedAtMillis = EXPIRES_AT - 900_000,
         expiresAtMillis = EXPIRES_AT,
         bindings = UseSmileIDSampleTokenBindings(),
+        environment = UseSmileIDSampleEnvironment.Sandbox,
     )
 
     private companion object {
