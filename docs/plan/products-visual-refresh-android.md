@@ -319,20 +319,20 @@ which is what makes the authentication row 136 tall and the verification rows 13
 
 | Id | What | Priority | Depends on |
 |---|---|---|---|
-| PVR-A1 | `Off_black` gets a semantic token; the map in §2 lands in `spec/design-tokens.json` | **P1** | §7.3 |
-| PVR-A2 | Product card: radius, padding, stroke, shadow removal, icon tile, go affordance | **P1** | A1, §7.6 |
-| PVR-A3 | Two-line card label as one `AnnotatedString`; `cardTitle` + `cardFamily` join `spec/scenarios.json` | **P1** | §7.4 |
-| PVR-A4 | The sixth card, the section rename, the page subtitle; retire `UseSmileIDSampleProductSlot` | **P1** | A3 |
-| PVR-A5 | Card gradients: four replaced hue pairs, three new palette colours | **P1** | §7.2 |
-| PVR-A6 | Session card: gradient, stroke, radius, padding, three type styles | P2 | A1, §7.2 |
-| PVR-A7 | Nav bar: ~~pill fill~~, unselected + token label, drop the token border. **Pill fill and shadow are both out** — §3.4, 2026-08-25 | P2 | A1 |
-| PVR-A8 | Header: type, tracking, colours | P2 | A1 |
-| PVR-A9 | Icons re-exported at 21 and 16, stroke weight per the frame | P2 | §7.7 |
+| PVR-A1 | `Off_black` gets a semantic token; the map in §2 lands in `spec/design-tokens.json` | **DONE** | §7.3 |
+| PVR-A2 | Product card: radius, padding, stroke, shadow removal, icon tile, go affordance | **DONE** | A1, §7.6 |
+| PVR-A3 | Two-line card label as one `AnnotatedString`; `cardTitle` + `cardFamily` join `spec/scenarios.json` | **DONE** | §7.4 |
+| PVR-A4 | The sixth card, the section rename, the page subtitle; retire `UseSmileIDSampleProductSlot` | **DONE** — the sixth card already existed | A3 |
+| PVR-A5 | Card gradients: four replaced hue pairs, three new palette colours, **three changed icon tints** | **DONE** | §7.2 |
+| PVR-A6 | Session card: gradient, stroke, radius, padding, three type styles | **DONE** | A1, §7.2 |
+| PVR-A7 | Nav bar: ~~pill fill~~, unselected + token label, drop the token border. **Pill fill and shadow are both out** — §3.4, 2026-08-25 | **PART DONE**, pill fill needs a ruling | A1 |
+| PVR-A8 | Header: type, tracking, colours | **DONE** | A1 |
+| PVR-A9 | Icons re-exported at 21 and 16, stroke weight per the frame | **NO ANDROID WORK** — already shipped that way; §7.7 is a design-file task | §7.7 |
 | PVR-A10 | ~~The header's missing profile trigger~~ — **closed, no work**: the avatar button stays | — | §7.5 |
-| PVR-A11 | `spec/` follows: `screens.json`, `components.json`, `design-tokens.json`, `scenarios.json` | **P1** | A1–A9 |
+| PVR-A11 | `spec/` follows: `screens.json`, `components.json`, `design-tokens.json`, `scenarios.json` | **DONE** | A1–A9 |
 | PVR-A12 | Goldens and the structural predicates re-recorded | P2 | A2–A9 |
-| PVR-A13 | Scale migration: 16 across the board, sheets included; rules on `Shapes.extraLarge` | P2 | §7.8 |
-| PVR-A14 | Ghost glyph to 10 %; split `SCRIM_ALPHA` from the go pill's 16 % | P3 | §7.9 |
+| PVR-A13 | Scale migration: 16 across the board, sheets included; rules on `Shapes.extraLarge` | **AUDITED, not done** — §7A | §7.8 |
+| PVR-A14 | Ghost glyph to 10 %; split `SCRIM_ALPHA` from the go pill's 16 % | **DONE** — folded into A2, since it is the same two lines and the design proved both marks uniform | §7.9 |
 
 ### 5.6 Where this collides with the environment plan
 
@@ -374,9 +374,16 @@ the page subtitle), `components.json` (`ProductCard`, `SessionCard`, `NavBar`, `
 
 **Assets** — `design/icons/`, re-exported per §7.7 at one 21 × 21 box plus the 16 token glyph.
 
-**Tests and flows** — the twelve golden images in §8, the `ScreenGoldenTest` /
-`ScreenCompositeGoldenTest` fixtures, and `android/maestro/deep-links.yaml`, which asserts the literal
-text `"SmartSelfie Enrollment"` that PVR-A3 removes from the card.
+**Tests and flows** — the twelve golden images in §8 and the `ScreenGoldenTest` /
+`ScreenCompositeGoldenTest` fixtures.
+
+~~and `android/maestro/deep-links.yaml`, which asserts the literal text `"SmartSelfie Enrollment"` that
+PVR-A3 removes from the card.~~ **Wrong, checked 2026-08-25.** Three flows assert a product name as
+text — `deep-links.yaml` twice and `launch-args.yaml` once — and **all three assert on the user-details
+screen, not the card.** That screen's top bar renders `label`, the full job-type name, which the
+2026-08-13 ruling keeps and PVR-A3 does not touch (`FlowFormDestinations.kt` passes `product.label`).
+The same is true of the KYC form's top bar, the verifications row and the result card. Nothing had to
+move onto `sample_*` ids, and no flow needed editing for the rename.
 
 **One shared token to leave alone.** The card's label currently uses
 `UseSmileIDSampleTheme.type.textStyleSubtitle`, which has **three other consumers** —
@@ -682,6 +689,51 @@ conformance pass knows the difference between "engineering chose this" and "desi
 *If a frame does exist for either state on the new layout, point at it and this becomes a straight
 implementation instead — the recommendation is only the fallback for two states nothing draws.*
 
+
+---
+
+## 7A. PVR-A13 — the scale migration, audited 2026-08-25
+
+**Written rather than done, per §10.8: it touches files 5487:1351 does not draw, so it wants its own
+reviewer.** Counted against `sample-ui/src/main` after PVR-A2 landed, so these are the numbers a
+migration would actually face rather than the ones the pre-refresh audit in §6 projected.
+
+| Token | Value | Call sites now | Was (§6) |
+|---|---|---|---|
+| `radiusSurface` | 16 | **11** | 10 |
+| `radiusField` | 12 | 7 | 7 |
+| `radiusSheet` | 20 | **3 components** | "6" |
+| `radiusChip` | 999 | 4 | 4 |
+| `radiusSm` / `radiusControl` | 8 / 32 | 3 each | 3 each |
+| `radiusLg` | 16 | **2** | — |
+| `radiusXl` | **20** | **1** | 2 |
+| `radiusMd` | 12 | **1** | 2 |
+
+**Three corrections to §6, and one of them removes the reason PVR-A13 was thought risky.**
+
+1. **`radiusSheet` is three components, not six uses.** `UseSmileIDSampleBottomSheet` (two overloads)
+   and `UseSmileIDSampleScanSheet`. The six was a count of *occurrences* — each site names the token
+   twice, for `topStart` and `topEnd`. Three surfaces to look at on a device, not six.
+2. **`Shapes.extraLarge` currently reaches nothing.** §6 held the scale back because moving it "silently
+   re-shapes any M3 component relying on the default". Grepped for every M3 component that resolves a
+   corner from the scale — `AlertDialog`, `Card`, `ModalBottomSheet`, the pickers, `DropdownMenu`,
+   `SearchBar` — and the app uses exactly two, both `ModalBottomSheet`, and **both pass an explicit
+   `shape`**. So the blast radius of moving `extraLarge` to 16 today is **zero rendered pixels**. It is
+   a consistency change for whatever takes the default next, not a visual one.
+3. **`radiusXl` was never deletable, so §6's "do not delete it" was answering a question nobody could
+   ask.** It is declared in `tokens/SmileTokens.kt`, which is *generated* from the design system and
+   carries "Do not edit by hand". The real question was only ever whether app code still *references*
+   it — and after PVR-A2 exactly one line does, `UseSmileIDSampleTheme.kt:81`.
+
+**Recommendation, for the reviewer this item is owed.** Move `Shapes.extraLarge` to `radiusSurface` and
+migrate the three sheets, in one small PR of its own: the first half is provably invisible today, and
+the second is the only part that needs eyes. Take the device look §7.8 asks for on the sheets alone —
+a sheet's corner is part of its native silhouette and 16 is squarer than Android users see elsewhere,
+which is the one judgement in this migration that a golden cannot settle.
+
+**Not migrated, and not by omission.** Verifications, the forms, the details screen and the pickers were
+drawn against boards 5447:1701 does not supersede. "Uniform" means one radius value where a radius is
+chosen, not redrawing screens this frame never covered.
 
 ---
 
