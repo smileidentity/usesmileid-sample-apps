@@ -1,0 +1,39 @@
+# Products → the SDK, past consent and the camera prompt, so a flow can assert what comes next.
+# Defined once because three sections of settings.yaml need the same six taps to reach the point
+# where a step switch is observable.
+#
+# The details are typed every time: the forms survive recreation but not the process death each
+# `stopApp` causes, and sign out clears them deliberately.
+appId: ${APP_ID}
+---
+- tapOn:
+    id: "sample_product_card_smartSelfieEnrollment"
+- assertVisible:
+    id: "sample_user_details_screen"
+- tapOn:
+    id: "sample_user_details_field_firstName"
+- inputText: "Ada"
+- tapOn:
+    id: "sample_user_details_field_lastName"
+- inputText: "Okafor"
+# The SDK requires a contact field even though the form labels both optional.
+- tapOn:
+    id: "sample_user_details_field_email"
+- inputText: "ada.okafor@example.com"
+- hideKeyboard
+- tapOn:
+    id: "sample_user_details_continue"
+- assertVisible:
+    id: "si_consent_screen"
+- tapOn: "Allow"
+# The SDK asks for camera permission on the way out of consent. Conditional because the grant
+# outlives both `stopApp` and the install, so an unconditional tap passes once and fails after.
+- waitForAnimationToEnd:
+    timeout: 5000
+- runFlow:
+    when:
+      visible:
+        id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+    commands:
+      - tapOn:
+          id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"

@@ -1,0 +1,222 @@
+# Every Settings switch, proved by where the run lands rather than by reading the switch back. A
+# builder assertion says the field was set; only the flow says the SDK did the other thing.
+#
+# Order matters inside this file: each section leaves the toggles as it found them, so a failure
+# halfway through cannot change what the next flow in a folder run starts from.
+# APP_ID must be passed — see shell-navigation.yaml for why it has no default.
+appId: ${APP_ID}
+---
+- stopApp
+- launchApp:
+    arguments:
+      probes: true
+- runFlow: subflows/warm-start.yaml
+
+# --- sign out, first, so everything below starts from a known session state ----------------------
+# There is no auth to leave, so what it clears is the local session and the saved form details. In a
+# folder run there IS a session to clear — launch-args.yaml deliberately leaves one — and clearing it
+# is what makes the consent section below deterministic: a token that bound consent would compose the
+# screen this flow expects to be missing. Run alone, the assertion is weak rather than wrong.
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+- scrollUntilVisible:
+    element:
+      id: "sample_sign_out"
+    direction: DOWN
+    visibilityPercentage: 80
+- tapOn:
+    id: "sample_sign_out"
+- assertVisible:
+    id: "sample_products_screen"
+- assertNotVisible:
+    id: "sample_session_card"
+
+# Relaunched deliberately: the tab keeps its scroll position across a switch, and the section above
+# scrolled to the bottom of Settings. Process death is the cheapest way back to the top.
+- stopApp
+- launchApp:
+    arguments:
+      probes: true
+- runFlow: subflows/warm-start.yaml
+
+# --- the capture mutex, driven from the UI -------------------------------------------------------
+# One tap on Agent mode from the default state would otherwise set both fields, and the SDK refuses
+# that pair at ERROR severity. The supporting lines are the state: each row says what turning it on
+# does to the other, so they flip together.
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+- assertVisible: "Enhanced SmartSelfie™"
+- assertVisible: "Face capture uses head-turns"
+- assertVisible: "Turns Enhanced SmartSelfie™ off"
+
+- tapOn:
+    id: "sample_setting_agent_mode"
+- assertVisible: "Turns Agent mode off"
+- assertVisible: "Operator captures for the applicant"
+
+# And back the other way, which also restores the default for everything below.
+- tapOn:
+    id: "sample_setting_enhanced_smart_selfie"
+- assertVisible: "Face capture uses head-turns"
+- assertVisible: "Turns Enhanced SmartSelfie™ off"
+
+# --- the instructions switch, proved by where the journey lands ----------------------------------
+# ON first, so the negative assertion below cannot pass vacuously: the same taps reach the screen
+# here, and skip past it there.
+- tapOn:
+    id: "sample_nav_products"
+- runFlow: subflows/consent-to-capture.yaml
+- assertVisible:
+    id: "si_instructions_screen"
+- stopApp
+- launchApp:
+    arguments:
+      probes: true
+- runFlow: subflows/warm-start.yaml
+
+- tapOn:
+    id: "sample_nav_settings"
+- tapOn:
+    id: "sample_setting_instructions_step"
+- tapOn:
+    id: "sample_nav_products"
+- runFlow: subflows/consent-to-capture.yaml
+# Past consent with no instructions screen composed, the SDK goes straight to capture. Settled
+# first, so this is a real absence rather than a screen that had not arrived yet.
+- waitForAnimationToEnd:
+    timeout: 5000
+- assertNotVisible:
+    id: "si_instructions_screen"
+- stopApp
+- launchApp:
+    arguments:
+      probes: true
+- runFlow: subflows/warm-start.yaml
+- tapOn:
+    id: "sample_nav_settings"
+- tapOn:
+    id: "sample_setting_instructions_step"
+- assertVisible: "Prep tips before capture"
+
+# --- the consent switch, and the validation failure it is meant to demonstrate -------------------
+# With no consent screen and a token that binds no consent, the SDK's own builder refuses the flow
+# and delivers a typed Failure. The card is where that message lands, which is the demonstration.
+- tapOn:
+    id: "sample_setting_consent_step"
+- tapOn:
+    id: "sample_nav_products"
+- tapOn:
+    id: "sample_product_card_smartSelfieEnrollment"
+- assertVisible:
+    id: "sample_user_details_screen"
+- tapOn:
+    id: "sample_user_details_continue"
+- assertVisible:
+    id: "sample_verification_details_screen"
+- assertVisible:
+    id: "sample_result_job_status"
+    text: "failed"
+- assertVisible:
+    id: "sample_result_last_error"
+- back
+- assertVisible:
+    id: "sample_products_screen"
+
+# Back on, and the consent screen returns — the pair is what proves the switch, not either half.
+- tapOn:
+    id: "sample_nav_settings"
+- tapOn:
+    id: "sample_setting_consent_step"
+- assertVisible: "Ask permission before KYC checks"
+- tapOn:
+    id: "sample_nav_products"
+- tapOn:
+    id: "sample_product_card_smartSelfieEnrollment"
+- tapOn:
+    id: "sample_user_details_continue"
+- assertVisible:
+    id: "si_consent_screen"
+- back
+- assertVisible:
+    id: "sample_products_screen"
+
+# --- ABOUT and LEGAL, and the notices screen ----------------------------------------------------
+# The rows open externally, which leaves this app; only the licences row stays inside it, so that is
+# the one a flow can follow without landing in a browser it then has to escape.
+- tapOn:
+    id: "sample_nav_settings"
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_nav_licenses"
+    direction: DOWN
+    visibilityPercentage: 80
+- tapOn:
+    id: "sample_setting_nav_licenses"
+- assertVisible:
+    id: "sample_licenses_screen"
+# The generated asset ships in the binary, so a named component is a stable assertion on both
+# variants — and its absence is a packaging failure rather than a missing dependency.
+- assertVisible:
+    id: "sample_license_row_androidx_core_core_ktx"
+- tapOn:
+    id: "sample_license_row_androidx_core_core_ktx"
+- assertVisible:
+    id: "sample_license_text_androidx_core_core_ktx"
+- assertVisible: ".*TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION.*"
+- back
+- assertVisible:
+    id: "sample_settings_screen"
+
+# --- the probe surfaces on release ---------------------------------------------------------------
+# Release only, because debug always shows the card: this is the one configuration that can prove
+# the flag works. `${APP_ID}` is how the run knows which variant it is on.
+- runFlow:
+    when:
+      true: ${APP_ID === "com.usesmileid.sampleapps.android"}
+    commands:
+      - stopApp
+      - launchApp:
+          arguments:
+            seedJobs: true
+      - runFlow: subflows/warm-start.yaml
+      - tapOn:
+          id: "sample_nav_verifications"
+      - tapOn:
+          id: "sample_job_row_0"
+      - assertVisible:
+          id: "sample_verification_details_screen"
+      - assertNotVisible:
+          id: "sample_result_card"
+      # The same row with the argument, which is what the rest of the suite runs with.
+      - stopApp
+      - launchApp:
+          arguments:
+            probes: true
+      - runFlow: subflows/warm-start.yaml
+      - tapOn:
+          id: "sample_nav_verifications"
+      - tapOn:
+          id: "sample_job_row_0"
+      - assertVisible:
+          id: "sample_result_card"
+
+# The Scenarios row is debug-only, and no argument reveals it — every flow reaches the drawer by
+# deep link instead.
+- runFlow:
+    when:
+      true: ${APP_ID === "com.usesmileid.sampleapps.android"}
+    commands:
+      - tapOn:
+          id: "sample_nav_settings"
+      - assertVisible:
+          id: "sample_settings_screen"
+      - assertNotVisible:
+          id: "sample_scenario_drawer_button"
+      - openLink: "usesmileid-sample-android://debug/scenarios"
+      - assertVisible:
+          id: "sample_scenario_drawer"
+      - back
