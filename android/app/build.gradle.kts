@@ -140,6 +140,9 @@ androidComponents {
 
         tasks.register<LicenseNotices>("generateLicenses") {
             description = "Regenerates sample-ui's third-party notices from the release runtime classpath."
+            // The asset it writes cannot be declared an output here — the check task takes it as input.
+            // Never skipped, so an edited or deleted asset is rewritten rather than called up to date.
+            outputs.upToDateWhen { false }
             coordinates.set(modules)
             check.set(false)
             generator.set(script)

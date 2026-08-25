@@ -217,5 +217,7 @@ object UseSmileIDSampleTestIds {
 
     fun profileConfigField(field: String) = "sample_profile_config_field_$field"
 
-    private fun String.idSafe() = replace(Regex("[^A-Za-z0-9]"), "_")
+    private fun String.idSafe() = replace(ID_UNSAFE, "_")
+
+    private val ID_UNSAFE = Regex("[^A-Za-z0-9]")
 }
