@@ -1,6 +1,6 @@
 # Products visual refresh — Android, read off node 5447:1701
 
-**Status:** BUILT 2026-08-25 except PVR-A7's pill fill (needs a ruling, §3.4) and PVR-A13 (audited, §7A). Source: **`Products · expressive -update`** (node `5447:1701`), read
+**Status:** BUILT 2026-08-25/26; PVR-A13 audited rather than done (§7B). Re-read of the frame on 2026-08-26 in §7A. Source: **`Products · expressive -update`** (node `5447:1701`), read
 2026-08-24 with `get_metadata`, `get_variable_defs` and `get_design_context` on the frame, the header,
 the session card, one product card and the nav bar. Every number below is quoted from the design, not
 measured off a screenshot.
@@ -328,13 +328,13 @@ which is what makes the authentication row 136 tall and the verification rows 13
 | PVR-A4 | The sixth card, the section rename, the page subtitle; retire `UseSmileIDSampleProductSlot` | **DONE** — the sixth card already existed | A3 |
 | PVR-A5 | Card gradients: four replaced hue pairs, three new palette colours, **three changed icon tints** | **DONE** | §7.2 |
 | PVR-A6 | Session card: gradient, stroke, radius, padding, three type styles | **DONE** | A1, §7.2 |
-| PVR-A7 | Nav bar: ~~pill fill~~, unselected + token label, drop the token border. **Pill fill and shadow are both out** — §3.4, 2026-08-25 | **PART DONE**, pill fill needs a ruling | A1 |
+| PVR-A7 | Nav bar: pill fill, unselected + token label, drop the token border | **DONE 2026-08-26** — the pill has its own token; §7A.2 | A1 |
 | PVR-A8 | Header: type, tracking, colours | **DONE** | A1 |
-| PVR-A9 | Icons re-exported at 21 and 16, stroke weight per the frame | **NO ANDROID WORK** — already shipped that way; §7.7 is a design-file task | §7.7 |
+| PVR-A9 | Icons re-exported at 21 and 16, stroke weight per the frame | **DONE 2026-08-26** — the frame was re-exported and all six card glyphs changed; §7A.1 | §7.7 |
 | PVR-A10 | ~~The header's missing profile trigger~~ — **closed, no work**: the avatar button stays | — | §7.5 |
 | PVR-A11 | `spec/` follows: `screens.json`, `components.json`, `design-tokens.json`, `scenarios.json` | **DONE** | A1–A9 |
 | PVR-A12 | Goldens and the structural predicates re-recorded | P2 | A2–A9 |
-| PVR-A13 | Scale migration: 16 across the board, sheets included; rules on `Shapes.extraLarge` | **AUDITED, not done** — §7A | §7.8 |
+| PVR-A13 | Scale migration: 16 across the board, sheets included; rules on `Shapes.extraLarge` | **AUDITED, not done** — §7B | §7.8 |
 | PVR-A14 | Ghost glyph to 10 %; split `SCRIM_ALPHA` from the go pill's 16 % | **DONE** — folded into A2, since it is the same two lines and the design proved both marks uniform | §7.9 |
 
 ### 5.6 Where this collides with the environment plan
@@ -696,7 +696,67 @@ implementation instead — the recommendation is only the fallback for two state
 
 ---
 
-## 7A. PVR-A13 — the scale migration, audited 2026-08-25
+## 7A. Read again 2026-08-26 — three things the 2026-08-25 read could not know
+
+### 7A.1 The card icons changed, and PVR-A9 was not a no-op after all
+
+The 2026-08-25 read concluded Android already shipped the frame's icons, because the committed
+drawables were already 21 × 21 with the frame's stroke widths. **The frame was re-exported since**, and
+re-reading it returns entirely new asset URLs. All six card glyphs changed — geometry *and* stroke:
+
+| Product | Was | Now |
+|---|---|---|
+| Registration | 2.16667 | 1.5 + 2.16667, a new face-with-antenna mark |
+| Auth | 2.16667 | 1.5 + 2.16667, a face with a tick |
+| Document | 2.16667 | **1.2**, and a different glyph — an ID card with a portrait, not a lined page |
+| Enhanced Doc. | 2.16667 | **1.5**, the lined page the Document card used to carry |
+| Biometric | 2.16667 | 1.5 + 2, a magnifier over a portrait |
+| Enhanced KYC | *(no icon; fell back to the shared mark)* | **1.5**, three rules |
+
+Two consequences beyond the redraw. **The two document products no longer share a mark** — the README's
+rule that "the design tells them apart by the card's hue" is superseded, and each now has its own
+drawable. And **Enhanced KYC finally has an icon**, so the `ProductMarkGlyph` fallback no longer renders
+on the products grid.
+
+The nav and token glyphs did **not** change (21 and 16, stroke 1.83333). Biometric still exports at
+`15.1909 × 14.1368` rather than 21 × 21, so §7.7's ask stands — Android centres it into the shared box
+with a group translate rather than rescaling it.
+
+### 7A.2 The nav pill needs its own colour, and the page cannot give it one
+
+§3.4 left the pill fill open because the frame recesses it below the page and this app's page is the
+darker of its two tokens. Settled 2026-08-26, and the middle option turned out to be the only one:
+
+- **Taking the frame's value alone** — pill `Main BG` on a `Main BG` page — was built and re-recorded.
+  It is the invisible bar §3.4 predicted; the dark golden shows the pill and the page at one colour with
+  only a 12 % shadow between them.
+- **Taking both halves** — page to `Card BG` as well — cannot ship. Verifications and Settings draw
+  their rows in `color.surface`, which *is* `Card BG`; moving the page there makes every row on those two
+  tabs disappear into it. The frame's pairing works only on a screen whose cards are all gradients.
+- **So the bar gets its own fill**, recorded as the `navBarFill` delta: one step darker than the page in
+  dark and one step lighter in light. There is exactly one vendored dark value between the page and
+  `surface`, and it is a primitive, so it is generated from `spec/` the way `borderStrong` is.
+
+### 7A.3 The frame is drawn at 393dp, and one title does not fit at 360
+
+`Enhanced Doc.` measures 109.7dp at 16sp with the design's −0.4 tracking. The frame gives it a 114.5dp
+column at a 393dp viewport, so it fits there. A 360dp phone — the device this app is verified on — leaves
+about 102dp, and the design's own geometry would wrap it too. The card therefore steps the title down
+until both runs fit, with the family sized in `em` so it follows, **and only at the default font scale**:
+above it a capped line count clips instead of growing, which is what `assertSurvivesMaxFontScale`
+exists to catch. It caught it.
+
+### 7A.4 One scrim across six cards leaves two marks invisible
+
+The design draws the go pill at a fixed `rgba(45,43,42,0.16)` and the ghost glyph white on all six cards.
+Across fills running from `#FFB53D` to `#151F72` that leaves the go pill invisible on the darkest card
+and the ghost invisible on the lightest — both reported from the device. Each mark now takes the ink it
+contrasts with, at the standard white-or-dark crossover. The label stays white on every card per the
+frame; its contrast is the separate, larger question in the `cardInkContrast` delta.
+
+---
+
+## 7B. PVR-A13 — the scale migration, audited 2026-08-25
 
 **Written rather than done, per §10.8: it touches files 5487:1351 does not draw, so it wants its own
 reviewer.** Counted against `sample-ui/src/main` after PVR-A2 landed, so these are the numbers a
@@ -830,8 +890,8 @@ plan rather than of that one (§5.6, and ENV-A13 in the other document).
    is a useful intermediate state; a card with invented gradients is not.
 6. **PVR-A6 + A7 + A8** — session card, nav bar, header. Cheap once A1 exists.
 7. **PVR-A11 + A12** with whichever PR touches the surface they describe, never as a catch-up.
-8. **PVR-A13** last and on its own, as a written audit — it changes files this frame does not cover,
-   so it needs its own reviewer.
+8. **PVR-A13** last and on its own, as a written audit (§7B) — it changes files this frame does not
+   cover, so it needs its own reviewer.
 
 One PR per repo, single conventional-commit subject lines, no changelog. And every claim about colour
 verified in **both** schemes on a device, because this is the first change in this app where the two
