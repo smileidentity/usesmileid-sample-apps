@@ -11,9 +11,10 @@ import androidx.compose.ui.Modifier
 import com.smileid.designsystem.SmileDimens
 
 /**
- * Two columns of product cards, with an empty slot where a section has an odd count.
+ * Two columns of product cards. Rows rather than a lazy grid, because the host screen already
+ * scrolls; each row takes its tallest card's height.
  *
- * Rows rather than a lazy grid, because the host screen already scrolls. Each row takes its tallest card's height.
+ * An odd count leaves its last cell empty rather than stretching the card across both columns.
  */
 @Composable
 fun UseSmileIDSampleProductGrid(
@@ -33,7 +34,7 @@ fun UseSmileIDSampleProductGrid(
                 for (column in 0 until COLUMNS) {
                     val index = rowStart + column
                     Column(modifier = Modifier.weight(1f)) {
-                        if (index < itemCount) item(index) else UseSmileIDSampleProductSlot()
+                        if (index < itemCount) item(index)
                     }
                 }
             }

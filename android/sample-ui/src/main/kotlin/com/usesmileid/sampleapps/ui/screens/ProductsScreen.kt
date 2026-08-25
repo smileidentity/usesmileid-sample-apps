@@ -82,7 +82,7 @@ fun ProductsScreen(
                     Text(
                         text = "Smile ID",
                         style = UseSmileIDSampleTheme.type.textStyleHeadingPage,
-                        color = UseSmileIDSampleTheme.colors.textTitle,
+                        color = UseSmileIDSampleTheme.colors.foreground,
                         modifier = Modifier.weight(1f),
                     )
                     // The environment chip is hidden here (node 5447:1705); the result card publishes it.
@@ -100,9 +100,9 @@ fun ProductsScreen(
                     )
                 }
                 Text(
-                    text = "Try our suite of products powered by our library",
+                    text = "Try our suite of products powered by our Anti-Fraud SDKs",
                     style = UseSmileIDSampleTheme.type.textStyleBodySm,
-                    color = UseSmileIDSampleTheme.colors.textMuted,
+                    color = UseSmileIDSampleTheme.colors.foreground,
                 )
             }
         }
@@ -146,7 +146,8 @@ fun ProductsScreen(
                         val product = products[index]
                         val id = product.iconRes
                         UseSmileIDSampleProductCard(
-                            title = product.label,
+                            title = product.cardTitle,
+                            family = product.cardFamily,
                             onClick = { onProductClick(product) },
                             hue = product.hue,
                             testId = UseSmileIDSampleTestIds.productCard(product.id),

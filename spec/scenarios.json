@@ -105,14 +105,16 @@
   ],
   "designVersion": "2026-08-12",
   "products": {
-    "comment": "What the products grid offers, in design order. `jobType` is the SDK enum name; test ids derive from `id`.",
+    "comment": "What the products grid offers, in design order. `jobType` is the SDK enum name; test ids derive from `id`. `label` is the SDK's job-type name in full and is what the verifications row and the result card read. `cardTitle` + `cardFamily` are the product CARD's two runs, added 2026-08-25 from node 5487:1351 — the card shortens the title to fit a 114.5dp text column and puts the family on a second line. They are specified here rather than derived because four platforms must abbreviate identically: 'Enhanced Doc.' and 'Enh. Doc' are both reasonable and only one is right. The 2026-08-13 ruling that `label` is the job-type name in full still holds.",
     "sections": [
       {
-        "section": "Authentication",
+        "section": "Biometric Authentication",
         "items": [
           {
             "id": "smartSelfieEnrollment",
             "label": "SmartSelfie Enrollment",
+            "cardTitle": "Registration",
+            "cardFamily": "SmartSelfie™",
             "jobType": "SmartSelfieEnrollment",
             "capture": true,
             "needsUserDetails": true,
@@ -121,6 +123,8 @@
           {
             "id": "smartSelfieAuth",
             "label": "SmartSelfie Authentication",
+            "cardTitle": "Auth",
+            "cardFamily": "SmartSelfie™",
             "jobType": "SmartSelfieAuthentication",
             "capture": true,
             "needsUserDetails": true,
@@ -134,6 +138,8 @@
           {
             "id": "documentVerification",
             "label": "Document Verification",
+            "cardTitle": "Document",
+            "cardFamily": "Verification",
             "jobType": "DocumentVerification",
             "capture": true,
             "needsUserDetails": true,
@@ -142,6 +148,8 @@
           {
             "id": "enhancedDocumentVerification",
             "label": "Enhanced Document Verification",
+            "cardTitle": "Enhanced Doc.",
+            "cardFamily": "Verification",
             "jobType": "EnhancedDocumentVerification",
             "capture": true,
             "needsUserDetails": true,
@@ -150,6 +158,8 @@
           {
             "id": "biometricKyc",
             "label": "Biometric KYC",
+            "cardTitle": "Biometric",
+            "cardFamily": "KYC",
             "jobType": "BiometricKyc",
             "capture": true,
             "needsUserDetails": true,
@@ -158,6 +168,8 @@
           {
             "id": "enhancedKyc",
             "label": "Enhanced KYC",
+            "cardTitle": "Enhanced",
+            "cardFamily": "KYC",
             "jobType": "EnhancedKyc",
             "capture": false,
             "needsUserDetails": true,
@@ -176,6 +188,7 @@
     "flowOrder": "product tapped → Consent Details Form (sample-owned user details, seeded from the active profile — the design labels these fields 'ATTACHED TO EVERY JOB', so every product shows it) → ID details form (sample-owned, only when needsIdDetails) → SDK flow [consent → instructions → capture → preview → processing] → verification details in the processing state. Everything before the SDK flow is sample-owned, which is why no SDK change is needed.",
     "flowOrderRuling": "OWNER RULING 2026-08-13: e.g. SmartSelfie Enrollment → Consent Details Form → SDK flow. The Figma prototype still shows the SDK consent screen first; that wiring is stale and is not being updated.",
     "needsUserDetailsNote": "Set true for every product on the evidence of the design's own label 'USER DETAILS — ATTACHED TO EVERY JOB' (board 06 profile config) plus the owner's SmartSelfie Enrollment example.",
-    "captureless": "Products with capture=false (enhancedKyc) compose the SDK flow WITHOUT capture() or preview(): consent() + processing(). Everything before the SDK flow is unchanged."
+    "captureless": "Products with capture=false (enhancedKyc) compose the SDK flow WITHOUT capture() or preview(): consent() + processing(). Everything before the SDK flow is unchanged.",
+    "sectionRename": "'Authentication' -> 'Biometric Authentication' 2026-08-25, per node 5487:1364. The section KEY in each app's enum is unchanged; only the displayed label moved."
   }
 }

@@ -32,6 +32,25 @@ class UseSmileIDSampleSpecTest {
         assertEquals(expected, UseSmileIDSampleProduct.entries.map { it.id })
     }
 
+    /** Four platforms must abbreviate identically: "Enhanced Doc." and "Enh. Doc" are both reasonable. */
+    @Test
+    fun card_titles_and_families_match_the_spec() {
+        val expected = CARD_RUNS.findAll(scenarios).map { it.groupValues[1] to it.groupValues[2] }.toList()
+        assertTrue("extracted no card runs", expected.isNotEmpty())
+        assertEquals(expected, UseSmileIDSampleProduct.entries.map { it.cardTitle to it.cardFamily })
+    }
+
+    /** The mark is one constant, so a card that stops carrying it fails here rather than on a device. */
+    @Test
+    fun the_smart_selfie_products_carry_the_mark() {
+        assertEquals(
+            listOf("smartSelfieEnrollment", "smartSelfieAuth"),
+            UseSmileIDSampleProduct.entries
+                .filter { it.cardFamily == UseSmileIDSampleMarks.SMART_SELFIE }
+                .map { it.id },
+        )
+    }
+
     @Test
     fun the_captureless_product_is_the_one_the_spec_names() {
         assertEquals(
@@ -51,5 +70,7 @@ class UseSmileIDSampleSpecTest {
         val SCENARIO_ID_AND_KIND =
             Regex("\"id\"\\s*:\\s*\"([A-Za-z]+)\"\\s*,\\s*\"kind\"\\s*:\\s*\"(flow|theme)\"")
         val PRODUCT_ID = Regex("\"id\"\\s*:\\s*\"([A-Za-z]+)\"\\s*,\\s*\"label\"\\s*:")
+        val CARD_RUNS =
+            Regex("\"cardTitle\"\\s*:\\s*\"([^\"]+)\"\\s*,\\s*\"cardFamily\"\\s*:\\s*\"([^\"]+)\"")
     }
 }

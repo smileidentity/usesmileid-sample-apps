@@ -1,7 +1,6 @@
 package com.usesmileid.sampleapps.ui.components
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -58,6 +57,10 @@ enum class UseSmileIDSampleNavItem(
  * A floating pill of three tabs, plus a detached token button that navigates rather than switching tab.
  *
  * [sessionProgress] drives its ring, 1f fresh to 0f expired, from the session's deadline rather than an animation.
+ *
+ * The pill keeps `surface` against the page's `background`. Node 5487:1351 binds those two variables the
+ * other way round — page `Card BG`, pill `Main BG` — the same one-step separation inverted, and the
+ * products frame cannot settle it for the two tabs it does not draw. See the plan's §3.4.
  */
 @Composable
 fun UseSmileIDSampleNavBar(
@@ -119,7 +122,6 @@ private fun TokenAffordance(progress: Float?, onClick: () -> Unit) {
             modifier = Modifier.defaultMinSize(minWidth = TOKEN_SIZE, minHeight = TOKEN_SIZE),
             shape = CircleShape,
             color = colors.surface,
-            border = BorderStroke(SmileDimens.borderWidthThick, colors.border),
             shadowElevation = BAR_ELEVATION,
         ) {
             Column(
@@ -129,11 +131,11 @@ private fun TokenAffordance(progress: Float?, onClick: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
-                UseSmileIDSampleIcon(id = R.drawable.sample_ic_token_scan, tint = colors.textTitle, size = SmileDimens.sizeIconSm)
+                UseSmileIDSampleIcon(id = R.drawable.sample_ic_token_scan, tint = colors.foreground, size = SmileDimens.sizeIconSm)
                 Text(
                     text = "Token",
                     style = UseSmileIDSampleTheme.type.textStyleOverline.copy(fontSize = TOKEN_LABEL_SIZE),
-                    color = colors.textMuted,
+                    color = colors.foreground,
                 )
             }
         }
@@ -183,7 +185,7 @@ private fun NavBarTab(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val tint = if (selected) UseSmileIDSampleTheme.colors.primary else UseSmileIDSampleTheme.colors.textMuted
+    val tint = if (selected) UseSmileIDSampleTheme.colors.primary else UseSmileIDSampleTheme.colors.foreground
     Column(
         modifier = modifier
             .testTag(item.testId)

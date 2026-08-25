@@ -140,18 +140,20 @@ private val stack: Arrangement.Vertical = Arrangement.spacedBy(SmileDimens.spaci
 
 @Composable
 private fun ProductCards() = Column(verticalArrangement = stack) {
+    listOf(
+        UseSmileIDSampleProduct.SmartSelfieEnrollment,
+        UseSmileIDSampleProduct.SmartSelfieAuth,
+    ).forEach { product ->
+        UseSmileIDSampleProductCard(
+            title = product.cardTitle,
+            family = product.cardFamily,
+            onClick = {},
+            hue = hueOf(product),
+        )
+    }
     UseSmileIDSampleProductCard(
-        title = "SmartSelfie Enrollment",
-        onClick = {},
-        hue = hueOf(UseSmileIDSampleProduct.SmartSelfieEnrollment),
-    )
-    UseSmileIDSampleProductCard(
-        title = "SmartSelfie Authentication",
-        onClick = {},
-        hue = hueOf(UseSmileIDSampleProduct.SmartSelfieAuth),
-    )
-    UseSmileIDSampleProductCard(
-        title = "Enhanced KYC",
+        title = UseSmileIDSampleProduct.EnhancedKyc.cardTitle,
+        family = UseSmileIDSampleProduct.EnhancedKyc.cardFamily,
         onClick = {},
         hue = hueOf(UseSmileIDSampleProduct.EnhancedKyc),
         enabled = false,
@@ -164,7 +166,8 @@ private fun ProductGrid() {
     UseSmileIDSampleProductGrid(itemCount = products.size) { index ->
         val product = products[index]
         UseSmileIDSampleProductCard(
-            title = product.label,
+            title = product.cardTitle,
+            family = product.cardFamily,
             onClick = {},
             hue = hueOf(product),
         )

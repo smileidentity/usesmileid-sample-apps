@@ -22,13 +22,23 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.smileid.designsystem.SMILE_CARD_FAMILY_WEIGHT
+import com.smileid.designsystem.smileCardStroke
 import com.smileid.designsystem.smileTokenSessionGradient
+import com.smileid.designsystem.smileTokenSessionGradientAlpha
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/** The active token session: a filled green card with a m:ss countdown. [remaining] arrives formatted, because the deadline is absolute and the ticking is the screen's. */
+/**
+ * The active token session and its m:ss countdown. [remaining] arrives formatted, because the deadline
+ * is absolute and the ticking is the screen's.
+ *
+ * Both gradient stops are translucent, so this card composites against the page and reads differently
+ * in the two schemes by design — see the `tokenSessionGreens` delta.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UseSmileIDSampleSessionCard(
@@ -40,14 +50,14 @@ fun UseSmileIDSampleSessionCard(
     Surface(
         modifier = modifier.fillMaxWidth().testTag(UseSmileIDSampleTestIds.SESSION_CARD),
         shape = RoundedCornerShape(SmileDimens.radiusSurface),
-        // The token session's own green, not the flat feedback-success fill.
         color = Color.Transparent,
+        border = BorderStroke(smileCardStroke, colors.foreground),
     ) {
-        Box(modifier = Modifier.background(Brush.horizontalGradient(smileTokenSessionGradient))) {
+        Box(modifier = Modifier.background(Brush.horizontalGradient(sessionGradient()))) {
         FlowRow(
             modifier = Modifier
                 .defaultMinSize(minHeight = SmileDimens.space64)
-                .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingSm),
+                .padding(SmileDimens.spacingMd),
             horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
             verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
             itemVerticalAlignment = Alignment.CenterVertically,
@@ -61,11 +71,12 @@ fun UseSmileIDSampleSessionCard(
                     style = UseSmileIDSampleTheme.type.textStyleOverline.copy(letterSpacing = LABEL_TRACKING),
                     color = colors.surface,
                 )
-                // The overline already says this is a linked session; those words were the width an 8h
-                // countdown needed beside it.
+                // The design's full wording fits again now the run is 12sp rather than 15sp; it had been
+                // shortened to "Session x" for the width an 8h countdown needed beside it.
                 Text(
-                    text = "Session $sessionId",
-                    style = UseSmileIDSampleTheme.type.textStyleTitle.copy(fontSize = SESSION_TITLE_SIZE),
+                    text = "Linked to session $sessionId",
+                    style = UseSmileIDSampleTheme.type.textStyleCaption
+                        .copy(fontWeight = FontWeight(SMILE_CARD_FAMILY_WEIGHT)),
                     color = colors.surface,
                 )
             }
@@ -135,6 +146,9 @@ fun UseSmileIDSampleSessionEndedBanner(
     }
 }
 
+/** The stops are opaque tokens and their alphas are recorded beside them, never baked into the hex. */
+private fun sessionGradient() = smileTokenSessionGradient
+    .mapIndexed { index, color -> color.copy(alpha = smileTokenSessionGradientAlpha[index]) }
+
 private val LABEL_TRACKING = 1.sp
-private val SESSION_TITLE_SIZE = 15.sp
 private val COUNTDOWN_SIZE = 24.sp

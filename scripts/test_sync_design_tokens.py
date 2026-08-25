@@ -219,7 +219,10 @@ class TestDimens(unittest.TestCase):
 
 
 class TestProductHues(unittest.TestCase):
-    HUE = {"from": "#05723A", "to": "#0A9B4C", "icon": "#05723A", "scrim": "#FFFFFF", "tile": "#E4F2EA"}
+    HUE = {
+        "from": "#05723A", "to": "#0A9B4C", "cardIcon": "#05723A", "icon": "#05723A", "tile": "#E4F2EA",
+        "stopStart": 0.13, "stopEnd": 0.87, "fromAlpha": 1.0, "toAlpha": 1.0,
+    }
 
     def test_hex_becomes_an_opaque_compose_colour(self):
         self.assertEqual(gen.kotlin_color("#e08600"), "Color(0xFFE08600)")
@@ -238,7 +241,7 @@ class TestProductHues(unittest.TestCase):
     def test_every_product_emits_all_five_roles(self):
         out = gen.emit_kotlin_product_hues({"smartSelfieEnrollment": self.HUE})
         self.assertIn('"smartSelfieEnrollment" to SmileProductHue(', out)
-        for role in ("from", "to", "icon", "scrim", "tile"):
+        for role in ("from", "to", "cardIcon", "icon", "tile"):
             self.assertIn(f"{role} = Color(0xFF", out)
 
     def test_a_hue_missing_a_role_fails_loudly(self):
