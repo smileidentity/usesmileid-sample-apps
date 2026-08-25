@@ -20,9 +20,12 @@ data class FlowLaunchSnapshot(
     val scenario: UseSmileIDSampleScenario,
     val theme: UseSmileIDSampleThemeScenario,
     val sandbox: Boolean,
-    /** The two capture fields, not the settings object: the snapshot is read once at entry (R2). */
+    /** The five settings fields, not the settings object: the snapshot is read once at entry (R2). */
     val allowAgentMode: Boolean,
     val enableEnhancedLiveness: Boolean,
+    val consentStep: Boolean,
+    val instructionsStep: Boolean,
+    val previewStep: Boolean,
     val userId: String,
     val partnerId: String,
     val partnerName: String,
@@ -56,6 +59,9 @@ fun buildSnapshot(
         sandbox = app.useSandbox,
         allowAgentMode = app.settings.agentMode,
         enableEnhancedLiveness = app.settings.enhancedSmartSelfie,
+        consentStep = app.settings.consentStep,
+        instructionsStep = app.settings.instructionsStep,
+        previewStep = app.settings.previewStep,
         userId = userId,
         partnerId = app.profiles.active.id,
         partnerName = app.profiles.active.organisation,

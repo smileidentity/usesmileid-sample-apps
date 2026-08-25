@@ -142,61 +142,76 @@ private fun UseSmileIDFlowBuilder.applyIdParams(snapshot: FlowLaunchSnapshot) {
 }
 
 private fun ScreensBuilder.journeyFor(snapshot: FlowLaunchSnapshot) {
-    // A complete consent binding lifts the SDK's requirement, and declaring one anyway is filtered back
-    // out and ends the run before it starts. The binding decides whether the screen exists at all.
-    if (snapshot.liveSession?.bindings?.consent == null) {
-        consent {
-            partnerName = snapshot.partnerName
-            // Omitting it fails build() while validate() still reports Valid.
-            partnerIcon = SampleUiR.drawable.sample_ic_product_mark
-            partnerPrivacyPolicyUrl = PRIVACY_POLICY_URL
+    journeyStepsFor(snapshot).forEach { step ->
+        when (step) {
+            FlowJourneyStep.Consent -> consent {
+                partnerName = snapshot.partnerName
+                // Omitting it fails build() while validate() still reports Valid.
+                partnerIcon = SampleUiR.drawable.sample_ic_product_mark
+                partnerPrivacyPolicyUrl = PRIVACY_POLICY_URL
+            }
+            FlowJourneyStep.Instructions -> instructions { }
+            FlowJourneyStep.SelfieCapture -> capture {
+                captureType = CaptureType.SELFIE
+                selfie {
+                    allowAgentMode = snapshot.allowAgentMode
+                    enableEnhancedLiveness = snapshot.enableEnhancedLiveness
+                }
+            }
+            FlowJourneyStep.DocumentCapture -> capture {
+                captureType = CaptureType.DOCUMENT
+                document {
+                    documentType = snapshot.idDetails.idType.toDocumentType()
+                    captureBothSides = true
+                    allowSkipBack = true
+                }
+            }
+            FlowJourneyStep.Preview -> preview { }
+            FlowJourneyStep.Processing -> processing { }
         }
     }
-    // Enhanced KYC is the one journey without capture: consent and processing only, per its validator.
-    if (!snapshot.product.capture) {
-        processing { }
-        return
-    }
-    instructions { }
-    when (snapshot.product) {
-        UseSmileIDSampleProduct.DocumentVerification -> {
-            documentCapture(snapshot.idDetails.idType)
-            selfieCapture(snapshot)
-        }
-        UseSmileIDSampleProduct.EnhancedDocumentVerification -> {
-            selfieCapture(snapshot)
-            documentCapture(snapshot.idDetails.idType)
-        }
-        else -> selfieCapture(snapshot)
-    }
-    processing { }
 }
+
+/** One SDK screen the host composes. Named so the journey can be asserted: the builder's own list is private. */
+internal enum class FlowJourneyStep { Consent, Instructions, SelfieCapture, DocumentCapture, Preview, Processing }
 
 /**
- * Both fields come from Settings, enrollment included — it hard-coded the head-turn challenge before,
- * which made the setting a no-op there and could pair enhanced liveness with agent mode.
+ * The journey, as the three Settings step switches and the token's bindings decide it. Consent is
+ * include-or-omit and the token always wins: a complete binding lifts the SDK's requirement, and
+ * declaring the screen anyway is filtered back out and ends the run before it starts. With neither
+ * a binding nor the screen the flow is invalid, which is the demonstration rather than a bug (§6.6).
  */
-private fun ScreensBuilder.selfieCapture(snapshot: FlowLaunchSnapshot) {
-    capture {
-        captureType = CaptureType.SELFIE
-        selfie {
-            allowAgentMode = snapshot.allowAgentMode
-            enableEnhancedLiveness = snapshot.enableEnhancedLiveness
-        }
+internal fun journeyStepsFor(snapshot: FlowLaunchSnapshot): List<FlowJourneyStep> = buildList {
+    if (snapshot.liveSession?.bindings?.consent == null && snapshot.consentStep) add(FlowJourneyStep.Consent)
+    // Enhanced KYC is the one journey without capture: consent and processing only, per its validator.
+    if (!snapshot.product.capture) {
+        add(FlowJourneyStep.Processing)
+        return@buildList
     }
-    preview { }
+    if (snapshot.instructionsStep) add(FlowJourneyStep.Instructions)
+    when (snapshot.product) {
+        UseSmileIDSampleProduct.DocumentVerification -> {
+            documentCapture(snapshot.previewStep)
+            selfieCapture(snapshot.previewStep)
+        }
+        UseSmileIDSampleProduct.EnhancedDocumentVerification -> {
+            selfieCapture(snapshot.previewStep)
+            documentCapture(snapshot.previewStep)
+        }
+        else -> selfieCapture(snapshot.previewStep)
+    }
+    add(FlowJourneyStep.Processing)
 }
 
-private fun ScreensBuilder.documentCapture(idType: UseSmileIDSampleIdType?) {
-    capture {
-        captureType = CaptureType.DOCUMENT
-        document {
-            documentType = idType.toDocumentType()
-            captureBothSides = true
-            allowSkipBack = true
-        }
-    }
-    preview { }
+/** A preview follows its capture, and the document products' two previews go together or not at all. */
+private fun MutableList<FlowJourneyStep>.selfieCapture(preview: Boolean) {
+    add(FlowJourneyStep.SelfieCapture)
+    if (preview) add(FlowJourneyStep.Preview)
+}
+
+private fun MutableList<FlowJourneyStep>.documentCapture(preview: Boolean) {
+    add(FlowJourneyStep.DocumentCapture)
+    if (preview) add(FlowJourneyStep.Preview)
 }
 
 private fun UseSmileIDSampleIdType?.toDocumentType(): DocumentType = when (this) {

@@ -47,6 +47,8 @@ data class UseSmileIDSampleSettingsState(
     val initials: String,
     /** Passed in because it names the host, and this module runs under eight. */
     val versionLabel: String,
+    /** The token has taken the consent decision away, so the switch must stop claiming to own it. */
+    val consentBoundByToken: Boolean = false,
     val avatarColor: Color = smileProfileHues.first(),
 )
 
@@ -139,7 +141,11 @@ fun SettingsScreen(
             SwitchRow(
                 title = "Consent screen",
                 icon = R.drawable.sample_ic_setting_consent,
-                supportingText = "Ask permission before KYC checks",
+                supportingText = if (state.consentBoundByToken) {
+                    "The token grants consent, so the screen is skipped"
+                } else {
+                    "Ask permission before KYC checks"
+                },
                 checked = state.settings.consentStep,
                 setting = UseSmileIDSampleSetting.ConsentStep,
                 testId = UseSmileIDSampleTestIds.SETTING_CONSENT_STEP,

@@ -10,6 +10,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
+import com.usesmileid.sampleapps.android.flow.tokenBindsConsent
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleSettingsState
 import kotlinx.coroutines.launch
@@ -30,6 +31,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
             initials = app.profiles.active.initials,
             avatarColor = avatarColorForProfile(app.profiles.activeIndex),
             versionLabel = "$APP_DISPLAY_NAME · ${BuildConfig.VERSION_NAME}",
+            consentBoundByToken = app.tokenBindsConsent,
         ),
         onSettingChange = { setting, enabled -> app.storeScope.launch { app.store.setSetting(setting, enabled) } },
         // The row opens the list: configuring any profile and creating one are both reached from there.
