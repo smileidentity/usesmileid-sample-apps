@@ -69,7 +69,7 @@ class UseSmileIDSampleSettingsPersistenceTest {
         assertNull(prefs.data.first()[PREVIEW_STEP])
     }
 
-    /** Preferences predate the mutex, so a stored pair the SDK refuses has to be corrected on read. */
+    /** Preferences predate the mutex, so a stored pair has to be corrected on read. */
     @Test
     fun `a stored pair the SDK refuses is normalised on read`() = runTest {
         prefs.edit {

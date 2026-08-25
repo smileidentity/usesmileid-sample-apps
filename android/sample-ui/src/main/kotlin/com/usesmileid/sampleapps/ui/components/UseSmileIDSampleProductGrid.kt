@@ -11,10 +11,8 @@ import androidx.compose.ui.Modifier
 import com.smileid.designsystem.SmileDimens
 
 /**
- * Two columns of product cards. Rows rather than a lazy grid, because the host screen already
- * scrolls; each row takes its tallest card's height.
- *
- * An odd count leaves its last cell empty rather than stretching the card across both columns.
+ * Two columns of product cards, an odd count leaving its last cell empty. Rows rather than a lazy
+ * grid, because the host screen already scrolls; each row takes its tallest card's height.
  */
 @Composable
 fun UseSmileIDSampleProductGrid(

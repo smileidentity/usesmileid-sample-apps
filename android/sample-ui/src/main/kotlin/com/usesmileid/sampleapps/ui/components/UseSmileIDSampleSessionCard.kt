@@ -35,10 +35,8 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /**
  * The active token session and its m:ss countdown. [remaining] arrives formatted, because the deadline
- * is absolute and the ticking is the screen's.
- *
- * Both gradient stops are translucent, so this card composites against the page and reads differently
- * in the two schemes by design — see the `tokenSessionGreens` delta.
+ * is absolute and the ticking is the screen's. Both gradient stops are translucent, so the card
+ * composites against the page and reads differently per scheme by design.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -48,8 +46,7 @@ fun UseSmileIDSampleSessionCard(
     modifier: Modifier = Modifier,
 ) {
     val colors = UseSmileIDSampleTheme.colors
-    // The gradient is the same in both schemes, so its ink is too: colors.surface is #272A35 in dark,
-    // which put near-black text on the card. Same reasoning as the product card's content colour.
+    // The gradient is scheme-independent, so its ink is too: colors.surface is #272A35 in dark.
     val ink = SmileColorLight.colorTextInverse
     Surface(
         modifier = modifier.fillMaxWidth().testTag(UseSmileIDSampleTestIds.SESSION_CARD),
@@ -75,8 +72,7 @@ fun UseSmileIDSampleSessionCard(
                     style = UseSmileIDSampleTheme.type.textStyleOverline.copy(letterSpacing = LABEL_TRACKING),
                     color = ink,
                 )
-                // The design's full wording fits again now the run is 12sp rather than 15sp; it had been
-                // shortened to "Session x" for the width an 8h countdown needed beside it.
+                // The design's wording fits again at 12sp; it was shortened for an 8h countdown at 15sp.
                 Text(
                     text = "Linked to session $sessionId",
                     style = UseSmileIDSampleTheme.type.textStyleCaption
@@ -151,7 +147,7 @@ fun UseSmileIDSampleSessionEndedBanner(
     }
 }
 
-/** The stops are opaque tokens and their alphas are recorded beside them, never baked into the hex. */
+/** Alpha is applied here, never baked into the token's hex. */
 private fun sessionGradient() = smileTokenSessionGradient
     .mapIndexed { index, color -> color.copy(alpha = smileTokenSessionGradientAlpha[index]) }
 

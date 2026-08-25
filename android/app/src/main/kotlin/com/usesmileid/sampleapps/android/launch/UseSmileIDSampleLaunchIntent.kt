@@ -16,11 +16,8 @@ internal fun Intent?.useSmileIDSampleLaunchArgs(): UseSmileIDSampleLaunchArgs {
  * `probes` alone is also read off the launching URI: a deep link carries no extras, and half the flows
  * that assert on the card arrive that way. Only this one — letting a link seed the others contradicts R9.
  *
- * UNTESTED, and deliberately recorded as such: this needs a real `Intent` and `Uri`, `:app` has no
- * Robolectric, and adding one is a dependency change AGENTS.md asks about first. `sample-ui` covers the
- * value parsing itself in `UseSmileIDSampleLaunchArgsSpecTest`; what has no unit test is the step above
- * it — that a hierarchical link's query reaches those args at all, and that an opaque URI is skipped.
- * `android/maestro/deep-links.yaml` is the only thing exercising it today.
+ * No unit test: it needs a real `Intent` and `Uri`, and `:app` has no Robolectric. `deep-links.yaml`
+ * is the only thing exercising it.
  */
 private fun Intent.probesFromLink(): Map<String, Any?> {
     val value = data?.takeIf { it.isHierarchical }?.getQueryParameter(UseSmileIDSampleLaunchArgs.PROBES)

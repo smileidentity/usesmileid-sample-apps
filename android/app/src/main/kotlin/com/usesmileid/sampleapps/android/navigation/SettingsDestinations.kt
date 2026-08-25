@@ -118,10 +118,7 @@ fun LicensesScreen(navigator: DestinationsNavigator) {
 /** Opens a settings link: `(url, label, inApp)`. */
 typealias UseSmileIDSampleUrlOpener = (url: String, label: String, inApp: Boolean) -> Unit
 
-/**
- * Provided once by the shell. Settings and the notices screen both open links, and a `remember` in
- * each bound a second Custom Tabs service for the length of every transition between them.
- */
+/** Provided once by the shell: a `remember` in each screen bound a second Custom Tabs service. */
 val LocalUseSmileIDSampleUrlOpener: ProvidableCompositionLocal<UseSmileIDSampleUrlOpener> =
     compositionLocalOf { error("No UseSmileIDSampleUrlOpener provided") }
 

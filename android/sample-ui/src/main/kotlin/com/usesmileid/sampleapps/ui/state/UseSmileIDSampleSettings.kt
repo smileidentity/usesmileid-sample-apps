@@ -3,13 +3,10 @@ package com.usesmileid.sampleapps.ui.state
 import androidx.compose.runtime.Immutable
 
 /**
- * The Settings state. Three of these decide whether a step is composed into the flow at all, rather
- * than toggling anything.
+ * The Settings state. Three of these decide whether a step is composed into the flow at all.
  *
- * The capture mutex lives in [withSetting] and [normalised], NOT in this constructor: persisted
- * preferences predate the rule, so rejecting the pair here would crash on a device that already has
- * both stored. Construction therefore admits a pair the SDK refuses — read a stored state through
- * [normalised] rather than trusting it.
+ * The capture mutex is in [withSetting] and [normalised], not this constructor: stored preferences
+ * predate the rule, so rejecting the pair here would crash a device that already has both.
  */
 @Immutable
 data class UseSmileIDSampleSettings(

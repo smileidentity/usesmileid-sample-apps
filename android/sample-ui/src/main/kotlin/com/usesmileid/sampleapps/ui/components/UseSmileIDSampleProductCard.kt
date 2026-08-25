@@ -118,8 +118,7 @@ private fun cardLabel(title: String, family: String) = buildAnnotatedString {
     val type = UseSmileIDSampleTheme.type
     val titleStyle = type.textStyleBodyStrong
     val familyStyle = type.textStyleCaption.copy(fontWeight = FontWeight(SMILE_CARD_FAMILY_WEIGHT))
-    // Two paragraphs, not one with a newline: each run carries its own line height, and a single
-    // paragraph would apply one of them to both lines.
+    // Two paragraphs, not a newline: one paragraph would apply a single line height to both runs.
     withStyle(ParagraphStyle(lineHeight = titleStyle.lineHeight)) {
         withStyle(titleStyle.toSpanStyle().copy(letterSpacing = smileCardTitleTracking)) { append(title) }
     }

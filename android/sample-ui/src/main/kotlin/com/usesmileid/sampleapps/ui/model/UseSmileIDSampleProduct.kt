@@ -6,8 +6,8 @@ import com.usesmileid.sampleapps.ui.UseSmileIDSampleMarks
  * The products grid in design order, asserted against `spec/scenarios.json` by a unit test.
  * `capture = false` is Enhanced KYC, the one journey without `capture()`.
  *
- * [label] is the SDK's job-type name in full and is what the verifications row and the result card
- * read; [cardTitle] and [cardFamily] are the card's two runs, shortened to fit its text column.
+ * [label] is the SDK's job-type name in full, which the verifications row and the result card read;
+ * [cardTitle] and [cardFamily] are the card's two runs, shortened to fit its text column.
  */
 enum class UseSmileIDSampleProduct(
     val id: String,
