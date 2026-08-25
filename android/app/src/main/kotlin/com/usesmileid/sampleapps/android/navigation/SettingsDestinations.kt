@@ -112,29 +112,33 @@ fun LicensesScreen(navigator: DestinationsNavigator) {
     )
 }
 
-/**
- * A Custom Tab for pages that render in one, and the browser for pages that do not. Never a WebView:
- * either way the page keeps the user's own session, autofill and password manager.
- */
+/** A Custom Tab where the page renders in one, the browser where it does not. Never a WebView. */
 @Composable
 private fun rememberUrlOpener(): (url: String, label: String, inApp: Boolean) -> Unit {
     val context = LocalContext.current
     val session = rememberWarmCustomTabsSession()
-    // A toolbar per scheme, so it reads as this app's chrome either way. One shared colour left a
-    // white bar on a white page in light mode and a hard seam in dark.
+    // Per scheme: one shared colour left a white bar on a white page in light mode.
     val light = UseSmileIDSampleTheme.colors.primary.toArgb()
     val dark = UseSmileIDSampleTheme.colors.surface.toArgb()
     return { url, label, inApp ->
         try {
             if (inApp) {
-                CustomTabsIntent.Builder(session)
+                val tab = CustomTabsIntent.Builder(session)
                     .setColorSchemeParams(CustomTabsIntent.COLOR_SCHEME_LIGHT, toolbar(light))
                     .setColorSchemeParams(CustomTabsIntent.COLOR_SCHEME_DARK, toolbar(dark))
                     .setShowTitle(true)
                     .build()
-                    .launchUrl(context, url.toUri())
+                // Browsers only: an implicit view intent is open to any app claiming the domain.
+                tab.intent.addCategory(Intent.CATEGORY_BROWSABLE)
+                tab.launchUrl(context, url.toUri())
             } else {
-                context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+                context.startActivity(
+                    Intent(Intent.ACTION_VIEW, url.toUri()).apply {
+                        addCategory(Intent.CATEGORY_BROWSABLE)
+                        // Its own task: ejecting means the page is not part of this app's history.
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    },
+                )
             }
         } catch (e: ActivityNotFoundException) {
             // A device with no browser at all is a real configuration; a crash is worse than a log.
@@ -146,9 +150,8 @@ private fun rememberUrlOpener(): (url: String, label: String, inApp: Boolean) ->
 private fun toolbar(color: Int) = CustomTabColorSchemeParams.Builder().setToolbarColor(color).build()
 
 /**
- * Warms the browser while Settings is open, so the first tab paints instead of appearing empty under
- * our own toolbar. `warmup()` only, deliberately: pre-fetching the page would spend a partner's
- * mobile data on a link they may never tap, and the docs page is 649 KB.
+ * Warms the browser while Settings is open, so the first tab paints rather than appearing empty.
+ * `warmup()` only: pre-fetching would spend a partner's data on a link they may never tap.
  */
 @Composable
 private fun rememberWarmCustomTabsSession(): CustomTabsSession? {

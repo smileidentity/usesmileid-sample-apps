@@ -70,13 +70,10 @@ tasks.withType<Test>().configureEach {
         .withPathSensitivity(PathSensitivity.RELATIVE)
 }
 
-/**
- * Third-party notices, from the RELEASE runtime classpath because that is what a partner ships.
- * Gradle resolves the POMs; the rules live in `scripts/generate_licenses.py`, where they are tested.
- */
+/** Third-party notices from the RELEASE runtime classpath, which is what a partner ships. */
 abstract class LicenseNotices : DefaultTask() {
 
-    /** `coordinate<TAB>pom path`, empty path where Gradle could resolve no POM. */
+    /** `coordinate<TAB>pom path`, empty where Gradle resolved none. */
     @get:Input
     abstract val pomLines: ListProperty<String>
 
@@ -123,10 +120,9 @@ abstract class LicenseNotices : DefaultTask() {
 }
 
 /**
- * Resolves every module's POM and each parent up its chain. Gradle has to do the resolving: a POM
- * reaches the local cache only when something asks for it, and a module published with Gradle Module
- * Metadata resolves from its `.module` with the `.pom` never fetched — so reading the cache directly
- * passed on this machine and failed on a clean runner.
+ * Resolves every module's POM and each parent up its chain. Gradle must do it: a module published with
+ * Gradle Module Metadata resolves from its `.module` and never fetches the `.pom`, so reading the
+ * cache directly passed here and failed on a clean runner.
  */
 fun resolvePomIndex(coordinates: List<String>): List<String> {
     val index = linkedMapOf<String, String>()
@@ -155,7 +151,7 @@ fun resolvePomIndex(coordinates: List<String>): List<String> {
     return index.map { "${it.key}\t${it.value}" }
 }
 
-/** The parent coordinate only. The authoritative POM read is the generator's, with a real XML parser. */
+/** The parent coordinate only; the authoritative POM read is the generator's. */
 fun pomParents(pom: File): List<String> {
     // Namespace-unaware by default, which is what keeps the tag names unprefixed.
     val document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(pom)
@@ -195,8 +191,7 @@ androidComponents {
 
         tasks.register<LicenseNotices>("generateLicenses") {
             description = "Regenerates sample-ui's third-party notices from the release runtime classpath."
-            // The asset it writes cannot be declared an output here — the check task takes it as input.
-            // Never skipped, so an edited or deleted asset is rewritten rather than called up to date.
+            // Never skipped: the asset is no output here, because the check task takes it as input.
             outputs.upToDateWhen { false }
             pomLines.set(poms)
             check.set(false)
@@ -204,13 +199,11 @@ androidComponents {
             licenseTexts.set(texts)
             notices.set(asset)
             pomIndex.set(layout.buildDirectory.file("licenses/poms.tsv"))
-            // Resolving artifacts is not something the configuration cache can record.
             notCompatibleWithConfigurationCache("resolves POM artifacts for the licence scan")
         }
 
         tasks.register<LicenseNotices>("checkLicenses") {
             description = "Fails when the committed third-party notices no longer match the release classpath."
-            // The asset is this task's input and the other's output, so it cannot be declared here.
             // Never skipped: an edited asset with an unchanged classpath would pass on staleness.
             outputs.upToDateWhen { false }
             pomLines.set(poms)
