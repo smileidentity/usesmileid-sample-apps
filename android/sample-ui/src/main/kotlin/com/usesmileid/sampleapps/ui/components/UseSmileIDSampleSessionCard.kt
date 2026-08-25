@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SMILE_CARD_FAMILY_WEIGHT
+import com.smileid.designsystem.SmileColorLight
 import com.smileid.designsystem.smileCardStroke
 import com.smileid.designsystem.smileTokenSessionGradient
 import com.smileid.designsystem.smileTokenSessionGradientAlpha
@@ -47,6 +48,9 @@ fun UseSmileIDSampleSessionCard(
     modifier: Modifier = Modifier,
 ) {
     val colors = UseSmileIDSampleTheme.colors
+    // The gradient is the same in both schemes, so its ink is too: colors.surface is #272A35 in dark,
+    // which put near-black text on the card. Same reasoning as the product card's content colour.
+    val ink = SmileColorLight.colorTextInverse
     Surface(
         modifier = modifier.fillMaxWidth().testTag(UseSmileIDSampleTestIds.SESSION_CARD),
         shape = RoundedCornerShape(SmileDimens.radiusSurface),
@@ -69,7 +73,7 @@ fun UseSmileIDSampleSessionCard(
                 Text(
                     text = "ACTIVE TOKEN SESSION",
                     style = UseSmileIDSampleTheme.type.textStyleOverline.copy(letterSpacing = LABEL_TRACKING),
-                    color = colors.surface,
+                    color = ink,
                 )
                 // The design's full wording fits again now the run is 12sp rather than 15sp; it had been
                 // shortened to "Session x" for the width an 8h countdown needed beside it.
@@ -77,14 +81,14 @@ fun UseSmileIDSampleSessionCard(
                     text = "Linked to session $sessionId",
                     style = UseSmileIDSampleTheme.type.textStyleCaption
                         .copy(fontWeight = FontWeight(SMILE_CARD_FAMILY_WEIGHT)),
-                    color = colors.surface,
+                    color = ink,
                 )
             }
             // The one value on this card that must stay whole, so the handle beside it yields instead.
             Text(
                 text = remaining,
                 style = UseSmileIDSampleTheme.type.textStyleHeadingCard.copy(fontSize = COUNTDOWN_SIZE),
-                color = colors.surface,
+                color = ink,
                 softWrap = false,
                 modifier = Modifier.testTag(UseSmileIDSampleTestIds.SESSION_COUNTDOWN),
             )
@@ -106,12 +110,13 @@ fun UseSmileIDSampleSessionEndedBanner(
         shape = RoundedCornerShape(SmileDimens.radiusSurface),
         // Surface-muted per this component's token list; the banner contract's fill is a warm sand.
         color = colors.surfaceMuted,
-        border = BorderStroke(SmileDimens.borderWidthHairline, colors.border),
+        // The session card's stroke, per §7.10: color.border carries one light value in BOTH schemes.
+        border = BorderStroke(smileCardStroke, colors.foreground),
     ) {
         FlowRow(
             modifier = Modifier
                 .defaultMinSize(minHeight = SmileDimens.space64)
-                .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingSm),
+                .padding(SmileDimens.spacingMd),
             horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
             verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
             itemVerticalAlignment = Alignment.CenterVertically,

@@ -501,6 +501,20 @@
       "recommendation": "Ask design for the card's two runs as proper semantic styles rather than primitive compositions, and for the ramp to carry a 400-weight caption. Generated from here meanwhile, exactly as labelTypeStyle is.",
       "status": "OPEN 2026-08-25 — generated stopgap in place; delete once the design file promotes both runs to composite styles.",
       "strokeWidth": 0.2
+    },
+    {
+      "id": "cardInkContrast",
+      "severity": "the products screen's card labels and the session card's text, on all four apps",
+      "figma": {
+        "ink": "white on every product card and on the session card",
+        "readFrom": "5487:1351 and 5447:1701, measured 2026-08-25"
+      },
+      "finding": "White ink on the new fills clears WCAG AA on only 14 of the 28 gradient stops (6 cards x 2 stops x 2 schemes, plus the session card's 2 stops x 2). The worst is the Registration card's opaque amber #FFB53D at 1.76:1 — fully opaque, so it fails identically in BOTH schemes and is not a compositing artefact. On that fill dark ink would be markedly better than white, so the card is not merely below the bar, it is using the wrong end of the ramp. Next worst: #A78BFA at 0.79 over the light page (2.18:1, the session card AND Registration's outer stop), #0EA5E9 at 0.79 (2.28:1), #00AA99 at 0.79 (2.37:1) and #2CC05C (2.39:1).",
+      "measuredWorst": 1.76,
+      "belowAa": "14 of 28 stops",
+      "recommendation": "Design question, not a local nudge: either darken the light fills or give the card an ink that varies with its hue. Not fixed here because the owner ruled the frame final as drawn on 2026-08-24, and inventing a per-card ink would put four platforms on four different answers.",
+      "guardedBy": "UseSmileIDSampleContrastTest holds these surfaces to DESIGN_INK_FLOOR (1.75), the design's own worst case, so a REGRESSION fails while today's values pass. It is a floor, not a certification — raise it as design raises the values. The same test now covers gradient-backed surfaces at all, which is how the session card shipped near-black ink on its own fill in dark mode for as long as dark mode has existed: no token pair described it.",
+      "status": "OPEN 2026-08-25 — raised with design; implemented as drawn meanwhile"
     }
   ],
   "perPlatform": {

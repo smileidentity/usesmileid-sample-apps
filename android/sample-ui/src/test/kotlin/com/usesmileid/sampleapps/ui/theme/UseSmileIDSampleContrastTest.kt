@@ -1,6 +1,10 @@
 package com.usesmileid.sampleapps.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import com.smileid.designsystem.SmileColorLight
+import com.smileid.designsystem.smileProductHues
+import com.smileid.designsystem.smileTokenSessionGradient
+import com.smileid.designsystem.smileTokenSessionGradientAlpha
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.math.max
@@ -34,6 +38,42 @@ class UseSmileIDSampleContrastTest {
         assertContrast("$name: muted on surface", colors.textMuted, colors.surface, LARGE_TEXT_MINIMUM)
     }
 
+    /**
+     * The gradient-backed cards, which no token pair above describes — which is how the session card
+     * shipped `colors.surface` ink, black on its own fill in dark, for as long as dark mode has existed.
+     * Translucent stops composite against the page, so each is checked over the scheme's background.
+     *
+     * Held to [DESIGN_INK_FLOOR], not [TEXT_MINIMUM]: 14 of these 28 stops are below AA and the frame is
+     * final as drawn, so this guards against getting WORSE rather than certifying the values. See the
+     * `cardInkContrast` delta for the measured table and the ask.
+     */
+    @Test
+    fun `product card text is legible on every hue in both modes`() = eachScheme { name, colors ->
+        smileProductHues.forEach { (product, hue) ->
+            listOf("from" to hue.from.copy(alpha = hue.fromAlpha), "to" to hue.to.copy(alpha = hue.toAlpha))
+                .forEach { (stop, fill) ->
+                    assertContrast(
+                        "$name: card text on $product's $stop stop",
+                        SmileColorLight.colorTextInverse,
+                        fill.over(colors.background),
+                        DESIGN_INK_FLOOR,
+                    )
+                }
+        }
+    }
+
+    @Test
+    fun `session card text is legible on its gradient in both modes`() = eachScheme { name, colors ->
+        smileTokenSessionGradient.forEachIndexed { index, stop ->
+            assertContrast(
+                "$name: session text on stop $index",
+                SmileColorLight.colorTextInverse,
+                stop.copy(alpha = smileTokenSessionGradientAlpha[index]).over(colors.background),
+                DESIGN_INK_FLOOR,
+            )
+        }
+    }
+
     private fun eachScheme(check: (String, UseSmileIDSampleColors) -> Unit) {
         check("light", lightColors)
         check("dark", darkColors)
@@ -56,6 +96,19 @@ class UseSmileIDSampleContrastTest {
 
         /** Not WCAG: a container only has to be seen. The design's surface-2 on white is 1.13:1. */
         const val CONTAINER_MINIMUM = 1.08
+
+        /**
+         * Not WCAG either: the design's own worst case, the opaque amber Registration card at 1.76:1.
+         * A regression floor, not a standard — raise it as design raises the values.
+         */
+        const val DESIGN_INK_FLOOR = 1.75
+
+        /** Source-over: a translucent card stop shows the page through it. */
+        fun Color.over(background: Color): Color = Color(
+            red = red * alpha + background.red * (1f - alpha),
+            green = green * alpha + background.green * (1f - alpha),
+            blue = blue * alpha + background.blue * (1f - alpha),
+        )
 
         fun contrastRatio(a: Color, b: Color): Double {
             val la = relativeLuminance(a)

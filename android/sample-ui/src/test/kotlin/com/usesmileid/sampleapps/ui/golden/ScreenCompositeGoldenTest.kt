@@ -31,6 +31,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwipeAction
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTokenRing
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProductSection
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import com.smileid.designsystem.smileProductHues
 import org.junit.Test
@@ -178,8 +179,7 @@ private fun hueOf(product: UseSmileIDSampleProduct) = requireNotNull(smileProduc
 
 @Composable
 private fun SectionHeaders() = Column(verticalArrangement = stack) {
-    UseSmileIDSampleSectionHeader(text = "Authentication")
-    UseSmileIDSampleSectionHeader(text = "Verifications")
+    UseSmileIDSampleProductSection.entries.forEach { UseSmileIDSampleSectionHeader(text = it.label) }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
