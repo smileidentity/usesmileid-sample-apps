@@ -53,6 +53,46 @@
         "value": "DM Sans 12–26",
         "token": "text-style.* (font-family.body)"
       }
+    ],
+    "later": [
+      {
+        "date": "2026-08-25",
+        "node": "5487:1351 (light) and 5447:1701 (dark) — Products · expressive -update",
+        "method": "get_variable_defs resolves a frame in its OWN mode, so the light frame returns the light column and the dark frame the dark one; get_design_context's var(--token, fallback) carries the default-mode value as a cross-check. Both were run on both frames.",
+        "result": "The five variables below match the vendored tokens exactly in both modes. Two gaps have no token at all and are recorded as the offBlack and floatingElevation deltas. Which variable PAINTS which surface is not recorded here — see docs/plan/products-visual-refresh-android.md §3.4, where the two frames bind Main BG and Card BG opposite to their names.",
+        "matches": [
+          {
+            "figma": "Main BG",
+            "light": "#f9fafb",
+            "dark": "#1a1c23",
+            "token": "color.background"
+          },
+          {
+            "figma": "Card BG",
+            "light": "#ffffff",
+            "dark": "#272a35",
+            "token": "color.surface"
+          },
+          {
+            "figma": "CTA Button",
+            "light": "#151f72",
+            "dark": "#4d88ff",
+            "token": "color.primary"
+          },
+          {
+            "figma": "color/surface",
+            "light": "#ffffff",
+            "dark": "#ffffff",
+            "token": "color.surface (light) — mode-invariant in the design, and the session card's text colour"
+          },
+          {
+            "figma": "Off_black",
+            "light": "#2d2b2a",
+            "dark": "#f9f0e7",
+            "token": "none — see the offBlack delta"
+          }
+        ]
+      }
     ]
   },
   "deltas": [
@@ -340,6 +380,59 @@
       "finding": "The design file's Type/Label is 11 with 0.88 of tracking; the generated text-style.overline is 10 with none. Every place the design uses Type/Label was therefore a point small and set solid, which is what makes a spaced-out caps label read as a caps label. Found by review 2026-08-18 on the profile screens and confirmed to apply to eleven section labels, the four status badges, the filter-chip counts and the date group headers.",
       "recommendation": "Add the label role to the design system at 11/700/0.88 so this stops being generated from here; until then every platform reads these two values from this entry.",
       "status": "OPEN 2026-08-18 — generated stopgap in place; both values are the design file's"
+    },
+    {
+      "id": "offBlack",
+      "severity": "the products screen's entire foreground on all four apps — page title, page subtitle, both section headers, every card stroke, the session-card stroke, the unselected nav labels and the token button's label",
+      "figma": {
+        "Off_black": {
+          "light": "#2D2B2A",
+          "dark": "#F9F0E7"
+        },
+        "readFrom": "light 5487:1351 and dark 5447:1701, both read 2026-08-25; get_variable_defs resolves each frame in its own mode, so both columns are read values"
+      },
+      "designSystem": {
+        "semantic": "absent — the nearest pair, color.text.title, is COOL (#21232C / #F2F2F2) where the design's is WARM",
+        "primitivesOnly": "#F9F0E7 exists as color.neutral.off-white (and light color.surface-alt); #2D2B2A exists as light color.feedback.warning-on and dark color.text.inverse. Reaching for either is consuming a primitive."
+      },
+      "values": {
+        "light": "#2D2B2A",
+        "dark": "#F9F0E7"
+      },
+      "roles": [
+        "page title",
+        "page subtitle",
+        "section headers",
+        "product-card stroke",
+        "session-card stroke",
+        "unselected nav-tab label",
+        "token-button label"
+      ],
+      "finding": "Figma models one variable across all seven roles above, and it is a warm pair. Implementing it as color.text.title ships a visibly cooler screen in both schemes; implementing it from a primitive is a review failure by AGENTS.md. The plan's §7.3 counted four roles from the dark frame — section headers, the session-card stroke and the token label were found on the light frame 2026-08-25 and are the same variable.",
+      "recommendation": "Add a warm strong-foreground role to the design system, as a light/dark PAIR. Generated from here meanwhile, exactly as softBadgeFills, borderStrong and surface2 are, so no component references a primitive or a hex.",
+      "status": "OPEN 2026-08-25 — generated stopgap in place as a pair from the outset, on the surface2 precedent below, which shipped a single value and produced a dark-mode defect. Delete the generated values once the design system carries the role in both modes."
+    },
+    {
+      "id": "floatingElevation",
+      "severity": "the nav bar's tabs pill and its token button — the only two elevated surfaces the products design draws",
+      "figma": {
+        "shadow": "0px 8px 24px rgba(0, 0, 0, 0.12)",
+        "nodes": [
+          "I5487:1357;6:5 (tabs pill)",
+          "I5487:1357;6:26 (token button)",
+          "I5447:1707;6:5",
+          "I5447:1707;6:26"
+        ],
+        "readFrom": "identical in the light and dark frames, read 2026-08-25 — the shadow does not vary by scheme"
+      },
+      "designSystem": {
+        "semantic": "absent — SmileDimens carries no elevation token of any kind, in any platform's generated output",
+        "consumedInsteadBy": "UseSmileIDSampleNavBar's BAR_ELEVATION = SmileDimens.space8 — a SPACING token standing in for an elevation"
+      },
+      "value": "0px 8px 24px rgba(0, 0, 0, 0.12)",
+      "finding": "spec/components.json references elevation.floating in five places and nothing defines it. The design's value is a CSS offset/blur/colour triple, which Compose cannot express: Modifier.shadow takes an elevation and derives offset and blur from the platform light model, and its ambientColor/spotColor tint the two shadow passes rather than setting the drawn rgba — and both are ignored below API 28. So the 8dp the app already ships matches the frame's 8px y-offset, and the blur and alpha are not reproducible without abandoning the token for two magic colours.",
+      "recommendation": "Add a floating elevation role to the design system as a per-platform value — a dp elevation for Compose, the offset/blur/colour triple for CSS and SwiftUI — rather than one shape that only one platform can consume. Until then the nav bar keeps shadowElevation and this entry is where the design's value lives, so the number is recorded rather than pasted.",
+      "status": "OPEN 2026-08-25 — no generated stopgap, because Compose cannot consume the value as drawn and the current 8dp is already correct. Recorded so spec/components.json's elevation.floating reference resolves to something."
     }
   ],
   "perPlatform": {

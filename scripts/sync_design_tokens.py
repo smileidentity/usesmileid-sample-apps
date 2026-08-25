@@ -540,6 +540,23 @@ def emit_kotlin_surface2(value) -> str:
     )
 
 
+def emit_kotlin_off_black(values) -> str:
+    """A pair, not a single value: every role it paints is drawn in both schemes."""
+    missing = [mode for mode in ("light", "dark") if not values.get(mode)]
+    if missing:
+        raise TokenError(f"spec/design-tokens.json offBlack is missing {missing}")
+    return "\n".join([
+        "",
+        "/** The design's `Off_black`: the warm strong foreground. Seven roles, one variable — see the `offBlack` delta. */",
+        f"val smileOffBlackLight: Color = {kotlin_color(values['light'])}",
+        f"val smileOffBlackDark: Color = {kotlin_color(values['dark'])}",
+    ])
+
+
+def read_off_black() -> dict:
+    return read_spec_delta("offBlack", "values")
+
+
 def read_border_strong() -> str:
     return read_spec_delta("borderStrong", "value")
 
@@ -631,6 +648,8 @@ def generate_kotlin_product_hues() -> str:
         + emit_kotlin_border_strong(read_border_strong())
         + "\n"
         + emit_kotlin_surface2(read_surface2())
+        + "\n"
+        + emit_kotlin_off_black(read_off_black())
         + "\n"
         + emit_kotlin_profile_hues(read_profile_hues())
         + "\n"

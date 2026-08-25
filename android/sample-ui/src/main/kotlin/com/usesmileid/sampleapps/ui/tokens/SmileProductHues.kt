@@ -96,6 +96,10 @@ val smileBorderStrong: Color = Color(0xFFC2C5CB)
 /** The design's `color/surface-2`, a cool grey subtle fill — `color.surface-alt` is a warm cream. */
 val smileSurface2: Color = Color(0xFFEAECF0)
 
+/** The design's `Off_black`: the warm strong foreground. Seven roles, one variable — see the `offBlack` delta. */
+val smileOffBlackLight: Color = Color(0xFF2D2B2A)
+val smileOffBlackDark: Color = Color(0xFFF9F0E7)
+
 /** Avatar fills, one per profile, taken in list order and cycled beyond the list. */
 val smileProfileHues: List<Color> = listOf(
     Color(0xFF151F72),
