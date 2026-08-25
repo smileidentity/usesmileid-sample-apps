@@ -33,6 +33,8 @@ class FlowLaunchSnapshotEnvironmentTest {
         scenario = UseSmileIDSampleScenario.Normal,
         theme = UseSmileIDSampleThemeScenario.BrandDefault,
         sandbox = sandbox,
+        allowAgentMode = false,
+        enableEnhancedLiveness = true,
         userId = "sample-user",
         partnerId = "p-1",
         partnerName = "UpTech Finance",

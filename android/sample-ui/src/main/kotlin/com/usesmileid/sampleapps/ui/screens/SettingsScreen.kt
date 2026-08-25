@@ -92,22 +92,30 @@ fun SettingsScreen(
             )
         }
 
-        // Two rows: 'Smile to capture' is the inverse of enhanced liveness, so it and agent mode differ.
+        // The two rows are mutually exclusive, so each says what turning it on will do to the other.
         section("CAPTURE") {
             SwitchRow(
-                title = "Smile to capture",
+                title = ENHANCED_SMART_SELFIE_TITLE,
                 icon = R.drawable.sample_ic_setting_smile,
-                supportingText = "Passive capture — smile detection",
-                checked = state.settings.smileToCapture,
-                setting = UseSmileIDSampleSetting.SmileToCapture,
-                testId = UseSmileIDSampleTestIds.SETTING_SMILE_TO_CAPTURE,
+                supportingText = if (state.settings.agentMode) {
+                    "Turns Agent mode off"
+                } else {
+                    "Face capture uses head-turns"
+                },
+                checked = state.settings.enhancedSmartSelfie,
+                setting = UseSmileIDSampleSetting.EnhancedSmartSelfie,
+                testId = UseSmileIDSampleTestIds.SETTING_ENHANCED_SMART_SELFIE,
                 onSettingChange = onSettingChange,
             )
             UseSmileIDSampleSettingRowDivider()
             SwitchRow(
                 title = "Agent mode",
                 icon = R.drawable.sample_ic_setting_agent,
-                supportingText = "Operator captures for the applicant",
+                supportingText = if (state.settings.enhancedSmartSelfie) {
+                    "Turns $ENHANCED_SMART_SELFIE_TITLE off"
+                } else {
+                    "Operator captures for the applicant"
+                },
                 checked = state.settings.agentMode,
                 setting = UseSmileIDSampleSetting.AgentMode,
                 testId = UseSmileIDSampleTestIds.SETTING_AGENT_MODE,
@@ -258,6 +266,9 @@ private fun NavRow(row: UseSmileIDSampleNavRow, onClick: (UseSmileIDSampleNavRow
         testId = UseSmileIDSampleTestIds.settingNav(row.id),
     )
 }
+
+// The design marks the trademark here and nowhere else on this screen (node 5206:2898).
+private const val ENHANCED_SMART_SELFIE_TITLE = "Enhanced SmartSelfie\u2122"
 
 private val ABOUT_ROWS = listOf(
     UseSmileIDSampleNavRow("documentation", "Documentation", "docs.smileidentity.com", R.drawable.sample_ic_setting_docs),

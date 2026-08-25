@@ -254,8 +254,8 @@
         "description": "Profile row at the top of settings; opens the profiles LIST, not the active profile's page."
       },
       {
-        "id": "sample_setting_smile_to_capture",
-        "description": "Smile to capture switch. ON means enhanced liveness OFF. It and agent mode write different fields but they CAN fight: FlowValidator.validateSelfie() raises AgentModeWithEnhancedLivenessException (BUILDER_AGENT_MODE_WITH_ENHANCED_LIVENESS) at ERROR severity when both are set, which blocks the build. Corrected 2026-08-24, read from 12.0.2 source; the earlier 'cannot fight' rationale was wrong and a port that trusts it ships a flow that cannot build."
+        "id": "sample_setting_enhanced_smart_selfie",
+        "description": "Enhanced SmartSelfie™ switch → SelfieCaptureConfig.enableEnhancedLiveness, directly and not inverted: ON is the head-turn challenge, and it is ON by default for every product. RENAMED 2026-08-25 from sample_setting_smile_to_capture, whose label, polarity and default were all superseded by node 5206:2898 — a port still driving the old id is driving a row that no longer exists. It and agent mode write different fields but they CAN fight: FlowValidator.validateSelfie() raises AgentModeWithEnhancedLivenessException (BUILDER_AGENT_MODE_WITH_ENHANCED_LIVENESS) at ERROR severity when both are set, which blocks the build. With enhanced liveness now defaulting ON that pair is one tap away, so the host must hold a mutex: turning either row on turns the other off, enforced where settings are persisted rather than in the screen."
       },
       {
         "id": "sample_setting_agent_mode",

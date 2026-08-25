@@ -161,22 +161,28 @@ private fun ScreensBuilder.journeyFor(snapshot: FlowLaunchSnapshot) {
     when (snapshot.product) {
         UseSmileIDSampleProduct.DocumentVerification -> {
             documentCapture(snapshot.idDetails.idType)
-            selfieCapture()
+            selfieCapture(snapshot)
         }
         UseSmileIDSampleProduct.EnhancedDocumentVerification -> {
-            selfieCapture()
+            selfieCapture(snapshot)
             documentCapture(snapshot.idDetails.idType)
         }
-        UseSmileIDSampleProduct.SmartSelfieEnrollment -> selfieCapture(enhancedLiveness = true)
-        else -> selfieCapture()
+        else -> selfieCapture(snapshot)
     }
     processing { }
 }
 
-private fun ScreensBuilder.selfieCapture(enhancedLiveness: Boolean = false) {
+/**
+ * Both fields come from Settings, enrollment included — it hard-coded the head-turn challenge before,
+ * which made the setting a no-op there and could pair enhanced liveness with agent mode.
+ */
+private fun ScreensBuilder.selfieCapture(snapshot: FlowLaunchSnapshot) {
     capture {
         captureType = CaptureType.SELFIE
-        selfie { enableEnhancedLiveness = enhancedLiveness }
+        selfie {
+            allowAgentMode = snapshot.allowAgentMode
+            enableEnhancedLiveness = snapshot.enableEnhancedLiveness
+        }
     }
     preview { }
 }

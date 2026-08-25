@@ -225,6 +225,30 @@ class SdkFlowPreflightTest {
         )
     }
 
+    /**
+     * The pair the mutex forbids is absent because no host can catch it: `validate()` is
+     * `validateBuilder`, which sees only ML/network failure and empty screens, and the rule that
+     * refuses the pair runs inside the SDK's own `build()`. The mutex is tested in `sample-ui`, and
+     * the SDK's refusal lands on the result card.
+     */
+    @Test
+    fun `every capture combination the UI can persist reaches the SDK`() {
+        val allowed = listOf(false to true, true to false, false to false)
+        UseSmileIDSampleProduct.entries.forEach { product ->
+            allowed.forEach { (agentMode, enhanced) ->
+                val snapshot = snapshotFor(product).copy(
+                    allowAgentMode = agentMode,
+                    enableEnhancedLiveness = enhanced,
+                )
+                assertEquals(
+                    "$product with agentMode=$agentMode enhanced=$enhanced",
+                    FlowPreflight.Ready,
+                    preflight(snapshot),
+                )
+            }
+        }
+    }
+
     /** The list is typed to the base exception, which carries no field name; the subtype does. */
     private fun List<UseSmileIDValidationException>.fieldNames() =
         filterIsInstance<InvalidFieldValueException>().map { it.fieldName }
@@ -265,6 +289,8 @@ class SdkFlowPreflightTest {
         scenario = UseSmileIDSampleScenario.Normal,
         theme = UseSmileIDSampleThemeScenario.BrandDefault,
         sandbox = true,
+        allowAgentMode = false,
+        enableEnhancedLiveness = true,
         userId = "sample-user",
         partnerId = "p-1",
         partnerName = "UpTech Finance",

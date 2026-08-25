@@ -398,10 +398,14 @@ both. The third case is already implemented and currently **invisible** — `jou
 has taken the decision away is a lie the screen tells, so the row needs an overridden supporting line,
 which is the one part of the deleted Production row's treatment worth keeping.
 
-**When OFF produces an invalid flow, let it.** No token consent plus no consent screen is an ERROR from
-`appendConsentRule`; the pre-flight returns `Misconfigured` and the app shows the SDK's own message and
-suggested fix. Per §6.6 that is the intended demonstration, not a case to defend against — the only
-requirement is that the screen says why, which `recordBlocked` already does.
+**When OFF produces an invalid flow, let it — but not by the route this paragraph first claimed.**
+No token consent plus no consent screen is an ERROR from `appendConsentRule`, and per §6.6 that is the
+intended demonstration. **Corrected 2026-08-25:** the host pre-flight cannot see it (see §8), so
+`FlowPreflight.Misconfigured` and `recordBlocked` are *not* the path. The SDK refuses the flow itself:
+`build()` returns `Invalid`, the SDK calls `onResult(Failure(BuilderValidationException))` carrying its
+own message and suggested fix, and the app records a Failed result and lands on the details screen —
+so the message reaches `sample_result_last_error`, which is the evidence channel a device flow reads
+anyway. The requirement is unchanged and still met: the app says why.
 
 ### ENV-A9 — ABOUT, LEGAL and Sign out
 
@@ -772,11 +776,14 @@ next design-conformance pass reports it as missing.
 
 **What happens when OFF makes the flow invalid is the point, not a bug.** With no token consent and no
 consent screen, `appendConsentRule` raises an ERROR (*"must include either a Consent screen or a
-pre-supplied consentInformation"*), the pre-flight returns `FlowPreflight.Misconfigured`, and the app
-shows the SDK's own reason. Per the ruling: **the SDK's builder validation handles that.** For a sample
-whose job is to show partners what the SDK does, a switch that demonstrates a real validation failure
-with a real message is a legitimate probe affordance — it just has to say why, which the
-`Misconfigured` path already does.
+pre-supplied consentInformation"*), and the app shows the SDK's own reason. Per the ruling: **the SDK's
+builder validation handles that** — literally, as it turns out. **Corrected 2026-08-25:** this said the
+host pre-flight returns `FlowPreflight.Misconfigured`; it cannot, because the rule runs inside the SDK's
+own `build()` and no public entry point exposes it (§8). The demonstration arrives as
+`onResult(Failure(BuilderValidationException))` instead, so the SDK's message and suggested fix land on
+the result card. For a sample whose job is to show partners what the SDK does, a switch that
+demonstrates a real validation failure with a real message is a legitimate probe affordance — it just
+has to say why, which the result card does.
 
 **Two things this simplifies.** `spec/test-ids.json`'s description for `sample_setting_consent_step`
 — *"include/omit `consent()` in the flow"* — is **already correct** and needs no edit, so ENV-A4 gets
@@ -1159,10 +1166,22 @@ gallery.
   argument per §6.3. `journeyFor` composes exactly the screens the four toggle combinations imply, and
   the consent triple of §ENV-A8 — the third row (token-bound) is the regression guard for behaviour
   that already exists and is currently untested.
-- **Preflight.** Every settings combination that reaches the SDK must produce `Ready` or a named
-  `Misconfigured`, never a build that throws. Agent mode plus enhanced liveness is the case with a
-  known SDK error code (`BUILDER_AGENT_MODE_WITH_ENHANCED_LIVENESS`); assert the code, so a UI mutex
-  that regresses is caught by a test rather than by a device.
+- **Preflight — and this bullet was wrong, corrected 2026-08-25 against 12.0.2.** Every settings
+  combination the UI can persist must still reach the SDK as `Ready`, which is testable and tested.
+  What is **not** possible is the second half: no host can pre-flight the composed flow.
+  `UseSmileIDFlowBuilder.validate()` is `FlowValidator.validateBuilder(screens, mlConfigResult,
+  networkConfigResult)` — ML/network configuration failure and an empty `screens` block, nothing else.
+  Both rules this plan leans on, `validateSelfie()` (the agent-mode/enhanced-liveness pair) and
+  `appendConsentRule`, run inside `FlowValidator.validate(configuration, …)`, which only the SDK's
+  `internal fun build()` calls; `FlowConfiguration` is public but its `screens` can come from nowhere
+  but the builder's private list. So the pair cannot be asserted as a named `Misconfigured`, and that
+  test is deliberately not written. **What guards it instead:** the mutex is unit-tested in
+  `UseSmileIDSampleSettings`, both tap orders and all four combinations, and the SDK's own refusal is
+  proved on a device — `build()` returns `Invalid`, the SDK calls
+  `onResult(Failure(BuilderValidationException))`, and the message lands on
+  `sample_result_last_error`. Uniform on both variants, because that path forks on the builder's
+  `enableDebugMode`, which defaults false and this app never sets. Ruled 2026-08-25: record it here,
+  prove it on the card, file nothing against the SDK.
 - **Two behaviours the plan specifies with no test named, both cheap to add.** The five ABOUT/LEGAL
   URLs (ENV-A9) should be asserted against `spec/screens.json` in a unit test rather than eyeballed —
   a wrong URL is invisible until a partner taps it. And the `cardTitle` / `cardFamily` pair

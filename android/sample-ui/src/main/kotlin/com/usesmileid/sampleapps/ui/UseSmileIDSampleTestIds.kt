@@ -30,7 +30,7 @@ object UseSmileIDSampleTestIds {
     const val SCENARIO_DRAWER_BUTTON = "sample_scenario_drawer_button"
 
     const val PROFILE_SUMMARY = "sample_profile_summary"
-    const val SETTING_SMILE_TO_CAPTURE = "sample_setting_smile_to_capture"
+    const val SETTING_ENHANCED_SMART_SELFIE = "sample_setting_enhanced_smart_selfie"
     const val SETTING_AGENT_MODE = "sample_setting_agent_mode"
     const val SETTING_DARK_MODE = "sample_setting_dark_mode"
     const val SETTING_CONSENT_STEP = "sample_setting_consent_step"
@@ -130,7 +130,7 @@ object UseSmileIDSampleTestIds {
         TOKEN_SIMULATE,
         SCENARIO_DRAWER_BUTTON,
         PROFILE_SUMMARY,
-        SETTING_SMILE_TO_CAPTURE,
+        SETTING_ENHANCED_SMART_SELFIE,
         SETTING_AGENT_MODE,
         SETTING_DARK_MODE,
         SETTING_CONSENT_STEP,

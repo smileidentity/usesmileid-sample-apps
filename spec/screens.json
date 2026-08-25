@@ -414,7 +414,7 @@
       ],
       "sections": [
         "PROFILE",
-        "CAPTURE (two rows: Smile to capture, Agent mode)",
+        "CAPTURE (two rows: Enhanced SmartSelfie™, Agent mode — mutually exclusive)",
         "APPEARANCE",
         "SDK SCREENS — SHOW OR SKIP FLOW STEPS",
         "ABOUT",
@@ -432,6 +432,7 @@
       ],
       "testIds": [
         "sample_settings_screen",
+        "sample_setting_enhanced_smart_selfie",
         "sample_setting_agent_mode",
         "sample_setting_dark_mode",
         "sample_setting_consent_step",
@@ -643,7 +644,7 @@
       "blocks": "the CAPTURE section and any flow it configures",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2898",
       "recommendation": "Get an SDK answer rather than inferring; the two switches must not silently set the same field.",
-      "status": "OWNER DECISION 2026-08-13 — RESOLVED: ON → enableEnhancedLiveness = false. See components.json settingsToSdkMapping."
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: ON → enableEnhancedLiveness = false. SUPERSEDED 2026-08-25: node 5206:2898 renames the row to 'Enhanced SmartSelfie™ / Face capture uses head-turns' and draws it ON, so the mapping is direct rather than inverted and the default capture behaviour is the head-turn challenge. The question is answered and closed; the current mapping lives in components.json settingsToSdkMapping and the renamed id in test-ids.json."
     },
     {
       "id": "softBadgeVariant",
