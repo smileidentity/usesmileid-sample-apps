@@ -2,7 +2,15 @@ package com.usesmileid.sampleapps.ui.state
 
 import androidx.compose.runtime.Immutable
 
-/** The Settings state. Three of these decide whether a step is composed into the flow at all, rather than toggling anything. */
+/**
+ * The Settings state. Three of these decide whether a step is composed into the flow at all, rather
+ * than toggling anything.
+ *
+ * The capture mutex lives in [withSetting] and [normalised], NOT in this constructor: persisted
+ * preferences predate the rule, so rejecting the pair here would crash on a device that already has
+ * both stored. Construction therefore admits a pair the SDK refuses — read a stored state through
+ * [normalised] rather than trusting it.
+ */
 @Immutable
 data class UseSmileIDSampleSettings(
     /** ON is the head-turn challenge, which is the default the design draws. */
@@ -22,6 +30,10 @@ data class UseSmileIDSampleSettings(
         UseSmileIDSampleSetting.InstructionsStep -> instructionsStep
         UseSmileIDSampleSetting.PreviewStep -> previewStep
     }
+
+    /** Drops enhanced liveness where a stored state carries both, so the SDK is never handed the pair it refuses. */
+    fun normalised(): UseSmileIDSampleSettings =
+        if (agentMode && enhancedSmartSelfie) copy(enhancedSmartSelfie = false) else this
 
     /** The capture mutex: the SDK refuses agent mode with enhanced liveness, so turning either on turns the other off. */
     fun withSetting(setting: UseSmileIDSampleSetting, enabled: Boolean): UseSmileIDSampleSettings =

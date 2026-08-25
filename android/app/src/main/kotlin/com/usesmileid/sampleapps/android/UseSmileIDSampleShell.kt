@@ -52,6 +52,7 @@ import com.ramcosta.composedestinations.utils.startDestination
 import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleNavTransitions
 import androidx.compose.runtime.CompositionLocalProvider
 import com.usesmileid.sampleapps.android.navigation.LocalUseSmileIDSampleChrome
+import com.usesmileid.sampleapps.android.navigation.ProvideUseSmileIDSampleUrlOpener
 import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleChromeState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavBar
@@ -101,12 +102,14 @@ fun UseSmileIDSampleShell() {
         val density = LocalDensity.current
         Box(modifier = Modifier.fillMaxSize()) {
             CompositionLocalProvider(LocalUseSmileIDSampleChrome provides chrome) {
-                DestinationsNavHost(
-                    navGraph = NavGraphs.root,
-                    navController = navController,
-                    defaultTransitions = UseSmileIDSampleNavTransitions,
-                    modifier = Modifier.padding(contentPadding),
-                )
+                ProvideUseSmileIDSampleUrlOpener {
+                    DestinationsNavHost(
+                        navGraph = NavGraphs.root,
+                        navController = navController,
+                        defaultTransitions = UseSmileIDSampleNavTransitions,
+                        modifier = Modifier.padding(contentPadding),
+                    )
+                }
             }
             // Over the content: reserving a row drew a seam with the last row clipped against it.
             AnimatedVisibility(

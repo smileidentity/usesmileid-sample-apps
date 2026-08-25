@@ -15,6 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -51,7 +54,7 @@ import com.usesmileid.sampleapps.ui.screens.SettingsScreen as SettingsContent
 fun SettingsScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     val chrome = LocalUseSmileIDSampleChrome.current
-    val openUrl = rememberUrlOpener()
+    val openUrl = LocalUseSmileIDSampleUrlOpener.current
     SettingsContent(
         contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
         state = UseSmileIDSampleSettingsState(
@@ -95,7 +98,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
 fun LicensesScreen(navigator: DestinationsNavigator) {
     val context = LocalContext.current
     val chrome = LocalUseSmileIDSampleChrome.current
-    val openUrl = rememberUrlOpener()
+    val openUrl = LocalUseSmileIDSampleUrlOpener.current
     // Off the main thread: the asset is the Apache-2.0 text plus two hundred entries.
     val licenses by produceState(UseSmileIDSampleLicenses(), context) {
         value = withContext(Dispatchers.IO) {
@@ -112,9 +115,24 @@ fun LicensesScreen(navigator: DestinationsNavigator) {
     )
 }
 
+/** Opens a settings link: `(url, label, inApp)`. */
+typealias UseSmileIDSampleUrlOpener = (url: String, label: String, inApp: Boolean) -> Unit
+
+/**
+ * Provided once by the shell. Settings and the notices screen both open links, and a `remember` in
+ * each bound a second Custom Tabs service for the length of every transition between them.
+ */
+val LocalUseSmileIDSampleUrlOpener: ProvidableCompositionLocal<UseSmileIDSampleUrlOpener> =
+    compositionLocalOf { error("No UseSmileIDSampleUrlOpener provided") }
+
+/** Provides [LocalUseSmileIDSampleUrlOpener] for [content]. */
+@Composable
+fun ProvideUseSmileIDSampleUrlOpener(content: @Composable () -> Unit) =
+    CompositionLocalProvider(LocalUseSmileIDSampleUrlOpener provides rememberUrlOpener(), content = content)
+
 /** A Custom Tab where the page renders in one, the browser where it does not. Never a WebView. */
 @Composable
-private fun rememberUrlOpener(): (url: String, label: String, inApp: Boolean) -> Unit {
+private fun rememberUrlOpener(): UseSmileIDSampleUrlOpener {
     val context = LocalContext.current
     val session = rememberWarmCustomTabsSession()
     // Per scheme: one shared colour left a white bar on a white page in light mode.
@@ -150,8 +168,8 @@ private fun rememberUrlOpener(): (url: String, label: String, inApp: Boolean) ->
 private fun toolbar(color: Int) = CustomTabColorSchemeParams.Builder().setToolbarColor(color).build()
 
 /**
- * Warms the browser while Settings is open, so the first tab paints rather than appearing empty.
- * `warmup()` only: pre-fetching would spend a partner's data on a link they may never tap.
+ * Warms the browser so the first tab paints rather than appearing empty. `warmup()` only:
+ * pre-fetching would spend a partner's data on a link they may never tap.
  */
 @Composable
 private fun rememberWarmCustomTabsSession(): CustomTabsSession? {

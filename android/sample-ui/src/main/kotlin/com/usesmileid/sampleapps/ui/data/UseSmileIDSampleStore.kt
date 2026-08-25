@@ -91,7 +91,7 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
             consentStep = prefs[CONSENT_STEP] ?: defaults.consentStep,
             instructionsStep = prefs[INSTRUCTIONS_STEP] ?: defaults.instructionsStep,
             previewStep = prefs[PREVIEW_STEP] ?: defaults.previewStep,
-        )
+        ).normalised()
     }
 
     private fun UseSmileIDSampleSetting.key(): Preferences.Key<Boolean> = when (this) {
