@@ -57,36 +57,36 @@
       "owner": "sample",
       "board": "01b",
       "route": "tab",
-      "canonicalLayout": "5206-4037",
+      "canonicalLayout": "5447-1701",
       "states": [
         {
           "state": "default",
-          "node": "5206-4037",
-          "note": "Sandbox. THE canonical layout: expressive 2-up card grid."
+          "node": "5447-1701",
+          "lightNode": "5487-1351",
+          "note": "THE canonical layout: expressive 2-up grid, six cards. Two frames, one per scheme, drawn identically apart from the variables they resolve."
         },
         {
           "state": "tokenLinked",
-          "node": "5206-3704",
-          "note": "Session card + countdown + token ring. Drawn on the superseded list layout — see openQuestions.transposeStates.",
-          "layout": "drawn on the superseded list layout — restate on the grid"
+          "node": "5447-1701",
+          "lightNode": "5487-1351",
+          "note": "The session card at 5:00 is drawn on the new frame itself (5487:1358), so this state no longer needs transposing."
         },
         {
           "state": "tokenLinkedLate",
           "node": "5206-3728",
-          "note": "Countdown at 1:40; same layout caveat.",
-          "layout": "drawn on the superseded list layout — restate on the grid"
+          "note": "Countdown at 1:40. Not drawn on the new layout.",
+          "layout": "TRANSPOSED by engineering per the 2026-08-13 transposeStates ruling: the same session card with a different number, taking the new card's radius, stroke and padding from 5487:1358."
         },
         {
           "state": "tokenExpired",
           "node": "5206-3752",
-          "note": "Session-ended banner with Scan action; same layout caveat.",
-          "layout": "drawn on the superseded list layout — restate on the grid"
+          "note": "Session-ended banner with Scan action. Not drawn on the new layout.",
+          "layout": "TRANSPOSED by engineering per the 2026-08-13 transposeStates ruling: UseSmileIDSampleSessionEndedBanner inherits the new card's radius, stroke and padding."
         },
         {
           "state": "supersededListLayout",
           "node": "5206-2305",
-          "note": "Original ActionTile list layout. Superseded by 5206-4037 per owner ruling 2026-08-12 — kept only so nobody re-implements it by accident.",
-          "layout": "drawn on the superseded list layout — restate on the grid"
+          "note": "Original ActionTile list layout. Superseded by 5206-4037 on 2026-08-12 and that in turn by 5447-1701 on 2026-08-24 — kept only so nobody re-implements it by accident."
         }
       ],
       "components": [
@@ -107,12 +107,21 @@
         "sample_session_countdown",
         "sample_session_ended_banner"
       ],
-      "canonicalLayoutUrl": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-4037",
-      "ruling": "OWNER RULING 2026-08-13: build the EXPRESSIVE GRID (5206-4037). The prototype runs the old list layout throughout and is not being updated, so the grid is authoritative for layout and the list frames are reference-only for the states drawn on them. OWNER RULING 2026-08-24: the header no longer renders the environment chip — node 5447:1705 keeps the profile-env instance in the frame with hidden=true. The component and its sample_env_chip id survive in components.json and test-ids.json; the environment is a property of the session token now, and the result card is what publishes it. The `production` screen state goes with it: no production state is reachable from the app.",
+      "canonicalLayoutUrl": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5447-1701",
+      "ruling": "OWNER RULING 2026-08-13: build the EXPRESSIVE GRID (5206-4037). SUPERSEDED 2026-08-24 by 'use Figma as truth' — the canonical layout is now 5447-1701, with 5487-1351 its light twin. The 2026-08-13 ruling is kept rather than deleted because it is why the app was built on 5206-4037 at all. OWNER RULING 2026-08-24: the header no longer renders the environment chip — node 5447:1705 keeps the profile-env instance in the frame with hidden=true. The component and its sample_env_chip id survive in components.json and test-ids.json; the environment is a property of the session token now, and the result card is what publishes it. The `production` screen state goes with it: no production state is reachable from the app.",
       "designAsks": [
-        "a 6th product card for Enhanced KYC (icon + hue)",
-        "a header avatar button next to the environment chip, which opens the profile-switch sheet"
-      ]
+        "normalise the card glyph boxes in Figma: five export at 21x21 and Biometric at 13.44x12.95 inside the same 40dp tile (Android already ships all six at 21x21, so this is a design-file task)",
+        "promote the product card's two label runs to composite type styles — both are composed from primitives today (see the cardLabelRuns delta)",
+        "a semantic role for Off_black, as a light/dark pair (see the offBlack delta)",
+        "a floating elevation role; spec/components.json references elevation.floating and no token defines it (see the floatingElevation delta)",
+        "re-read the Verifications board's job rows: three products' card tints moved and the row's icon/tile pair still describes the old colour (see productHues.rowPairStale)"
+      ],
+      "canonicalLayoutLight": "5487-1351",
+      "canonicalLayoutLightUrl": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5487-1351",
+      "designVersion": "2026-08-25",
+      "frameOmitsTheAvatar": "Neither frame draws the header avatar button and the app KEEPS it (plan §7.5): its absence is a drawing omission, not a removal, and without it the screen has no profile switch at all. sample_profile_avatar_button keeps its target and profiles.yaml keeps working. Recorded here so the next conformance pass does not report it as an extra.",
+      "pageBackgroundOpenQuestion": "OPEN 2026-08-25. Both frames paint the PAGE with `Card BG` and the nav pill with `Main BG` — the opposite of what those two variables are named for, and the opposite of what the app ships (page color.background, pill color.surface). The separation is the same one step either way, just inverted. The pill cannot move on its own: with the page left as it is, pill and page become the same colour and the bar loses its edge on every tab. Moving the page instead repaints Verifications and Settings, which this frame does not draw. Needs an owner ruling; until then the app keeps its current mapping and PVR-A7 ships without the pill-fill change. See docs/plan/products-visual-refresh-android.md §3.4.",
+      "sectionRename": "'Authentication' -> 'Biometric Authentication' (node 5487:1364), and the page subtitle to '...powered by our Anti-Fraud SDKs' (5487:1356)."
     },
     {
       "id": "profileSwitchSheet",
