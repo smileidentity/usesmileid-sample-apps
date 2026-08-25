@@ -21,6 +21,28 @@ two schemes by construction (§7.2), which changes how PVR-A12 reads a light-vs-
 **The one-line goal:** the products screen matches 5447:1701 in both colour schemes, and the values it
 introduces are tokens rather than a second set of magic numbers.
 
+> ## Light-frame cross-check — 2026-08-25
+>
+> A **light** frame exists: `Products · expressive -update`, node **`5487:1351`**, read 2026-08-25 with
+> `get_design_context` and `get_variable_defs`. Everything above and below was written from the dark
+> frame alone, and §1's fallback trick was the substitute for a light frame nobody had. The light frame
+> confirms most of the plan and **falsifies one thing**, recorded here and marked superseded in place:
+>
+> - **§2's light column is exact.** `get_variable_defs` on 5487:1351 resolves in light mode and returns
+>   `Main BG #f9fafb`, `Card BG #ffffff`, `CTA Button #151f72`, `color/surface #ffffff`,
+>   `Off_black #2d2b2a` — every value §1's `var()`-fallback trick predicted. The technique is sound and
+>   §9 can keep recommending it.
+> - **§3.4's premise is wrong, and it is the one finding that changes the build.** Both frames paint the
+>   *page* with `Card BG`, not `Main BG` — see §3.4, rewritten.
+> - **Shadows are confirmed and unchanged between the schemes** — §3.4 and §4.4.
+> - **Gradients are confirmed byte-identical between the schemes**, and the alpha prediction holds with
+>   one correction to the compositing ground plus **a fifth alpha surface the plan missed** — §7.2.
+> - **The card stroke does not vanish in light; the worry inverts** — §7.6.
+> - **The go pill's scrim does not flip with the scheme, and the icon tile is white in both** — §3.1.
+>
+> §1's closing sentence — *"§7.2 records the two fills that still need a look"* — is **discharged**: both
+> the card fills and the session-card fill were looked at on this frame and are recorded in §7.2.
+
 ---
 
 ## 1. Light mode — yes, and here is how
@@ -56,6 +78,23 @@ blocks light mode. §7.2 records the two fills that still need a look.
 | `color/surface` | `#FFFFFF` | `#FFFFFF` | `colorSurface` (light) | matches |
 | `Off_black` | `#2D2B2A` | `#F9F0E7` | — | **no match. See below** |
 | card + session gradients | *(mode-invariant)* | raw CSS | `smileProductHues` | **already vendored** — §7.2 |
+
+**Confirmed 2026-08-25 on the light frame.** `get_variable_defs` on 5487:1351 resolves in *light* mode
+and returns exactly the light column above. Both columns are now read values rather than one read
+column and one inferred one.
+
+**What the light column does *not* say, and §3.4 assumed it did: which variable paints the page.** The
+table maps variables to tokens; it does not record where each is applied. Both frames apply `Card BG`
+to the screen frame itself and `Main BG` to the nav pill — the opposite of the roles their names imply
+and the opposite of what this app ships. That is §3.4's rewritten finding, and it is the reason the
+`Off_black` row below is the only *token* divergence while the biggest *behavioural* one is not in this
+table at all.
+
+**One token this refresh needs and the vendored set does not carry: an elevation.** `spec/components.json`
+already references `elevation.floating` in five places, but `SmileDimens` has **no elevation token of any
+kind** — the nav bar reaches for `SmileDimens.space8`, a *spacing* token, to get its 8dp. So the frame's
+`0 8 24 rgba(0,0,0,0.12)` has no source to come from. PVR-A1 records it in `spec/design-tokens.json` →
+`deltas` with its node id, exactly as `Off_black` is recorded.
 
 **Four of the five map cleanly**, which is the good news: this refresh is mostly *re-pointing at tokens
 the repo already vendors*, not importing a new palette.
@@ -106,7 +145,18 @@ Everything in this section is quoted from `get_design_context`. Current values a
 Two structural notes. The label is **one text node with two styled runs**, so it is an
 `AnnotatedString`, not two stacked `Text`s — stacking them gets the baseline gap wrong at large font
 scales. And the design's strings carry **trailing spaces** (`"Registration "`, `"SmartSelfie™ "`);
-those are a Figma artefact, not content.
+those are a Figma artefact, not content. On the light frame some carry *runs* of them (`"Auth   "`,
+`"Biometric       "`, `"Enhanced      "`) — same artefact, and the same answer: trim.
+
+**Two things in this table are mode-invariant, confirmed on both frames 2026-08-25.** Each is a place a
+port would reasonably infer a scheme-aware token and be wrong in dark:
+
+- **The go pill is a fixed `rgba(45,43,42,0.16)`, not `Off_black` at 16 %.** `Off_black` flips to
+  `#F9F0E7` in dark; the go pill does not — it is the same near-black scrim in both frames. Implementing
+  it as "the stroke colour at 16 %" gives a *white* pill in dark.
+- **The icon tile is `#FFFFFF` in both schemes** — the frames set a raw white, not a variable. The app
+  already does this deliberately (`tile = SmileColorLight.colorSurface`), so PVR-A2 changes the tile's
+  **radius only** and must not "fix" the fill onto `colors.surface`.
 
 ### 3.2 Names, and a sixth card
 
@@ -130,7 +180,10 @@ verifications row and the result card — and today they all read one `label`. �
 
 ### 3.3 Session card
 
-- Gradient **left → right**, `rgba(12,65,178,0.78)` → `rgba(167,139,250,0.79)`
+- Gradient **left → right**, `rgba(12,65,178,0.78)` → `rgba(167,139,250,0.79)` — **both stops carry
+  alpha**, so this card composites against the page in the same way the four alpha cards do. Identical
+  on both frames. §7.2 has it as the fifth alpha surface; the original §7.2 table listed only the six
+  product cards and so counted four.
 - Stroke **0.5px** `Off_black` as drawn → **build 0.2dp**, §7.6
 - Radius **16**; padding as drawn is **top 14, bottom 16, sides 15** → **build 16 on all four**, §7.8
 - `ACTIVE TOKEN SESSION` — DM Sans **Bold 10, tracking +1**
@@ -144,19 +197,73 @@ The current `UseSmileIDSampleNavBar` already ships **21dp** tab icons, a **58dp*
 
 | Property | Now | Design |
 |---|---|---|
-| Pill fill | `colors.surface` | **`Main BG`** — the page background |
+| Pill fill | `colors.surface` | ~~**`Main BG`** — the page background~~ **not the page background; deferred, see below** |
 | Unselected label | `colors.textMuted` (`#848282`) | **`Off_black`** |
 | Selected label | `colors.primary` | `CTA Button` — **already correct** |
 | Label size | — | **10 Bold** |
-| Shadow | `shadowElevation` = 8dp | **`0 8 24 rgba(0,0,0,0.12)`** |
+| Shadow | `shadowElevation` = 8dp | `0 8 24 rgba(0,0,0,0.12)` — **already correct at 8dp**, see below |
 | Token button border | `borderWidthThick` (2) in `colors.border` | **none** |
+| Token button label | `colors.textMuted` | **`Off_black`**, same as an unselected tab |
 
-**The finding worth acting on:** the pill moves from `surface` to `Main BG`, which is *the same colour
-as the page*. In light that is fine — `#FFFFFF` on `#F9FAFB` was barely a step anyway, and the shadow
-carries the edge. In dark the pill becomes `#1A1C23` on `#1A1C23`, separated only by a **12 % black**
-shadow, which is close to invisible on a near-black ground. The bar may lose its edge entirely.
-Verify on a device in dark before accepting it, and if it disappears the fix is design's, not a
-local nudge.
+> **~~The finding worth acting on:~~ SUPERSEDED 2026-08-25 by the light frame.** The paragraph below
+> claimed the new pill fill is *the same colour as the page*, and everything it concluded — that light
+> is fine because the shadow carries the edge, that dark may lose its edge, that a device look in dark
+> is the deciding test — followed from that. **The premise is false in both frames.** It was never read
+> off a frame: it came from assuming the page is `Main BG`, which is what *this app* paints, not what
+> the design draws.
+>
+> ~~the pill moves from `surface` to `Main BG`, which is the same colour as the page. In light that is
+> fine — `#FFFFFF` on `#F9FAFB` was barely a step anyway, and the shadow carries the edge. In dark the
+> pill becomes `#1A1C23` on `#1A1C23`, separated only by a 12 % black shadow, which is close to
+> invisible on a near-black ground. The bar may lose its edge entirely.~~
+
+**What both frames actually draw — read 2026-08-25, the same in each:**
+
+| | Page (the frame's own fill) | Nav pill + token button |
+|---|---|---|
+| Light `5487:1351` | `Card BG` → `#FFFFFF` | `Main BG` → `#F9FAFB` |
+| Dark `5447:1701` | `Card BG` → `#272A35` | `Main BG` → `#1A1C23` |
+
+So the pill is **never** the same colour as the page, in either scheme, and the bar never depends on its
+shadow alone. What the design does is put the pill one step *recessed* from the page.
+
+**This app ships the exact inverse.** `UseSmileIDSampleShell`'s `Scaffold` takes the Material default,
+`colorScheme.background` = `colorBackground` = `Main BG`; `UseSmileIDSampleNavBar` paints the pill
+`colors.surface` = `Card BG`. Page and pill are the same two values as the frame, **swapped** — pill one
+step *raised*, which is also what a drop shadow conventionally reads as.
+
+**The consequence for PVR-A7: the pill fill and the page fill are one change, not two.** Taking §3.4's
+pill row on its own — pill → `Main BG` while the Scaffold stays `Main BG` — produces *precisely* the
+invisible bar the superseded paragraph feared, on both schemes. The plan reached the right worry from
+the wrong premise and then proposed the one edit that would cause it.
+
+**Why this is not simply "flip both".** The Scaffold paints one background for all three tabs, and
+5487:1351 draws only Products. Flipping the page to `colorSurface` repaints Verifications and Settings,
+which this frame does not cover; *not* flipping it while flipping the pill breaks the bar on every tab.
+Neither half is safe alone.
+
+**Recommendation, and the reason to prefer it: the binding looks swapped in Figma, not in the app.**
+`Main BG` is named for the main background and is bound to a 58dp pill; `Card BG` is named for cards and
+is bound to the whole screen. The app's mapping is the one that matches the token *names*, and it
+preserves the same tonal step — only in the other direction. The light frame was built from the dark
+one, so a swapped binding would have been copied across, which is consistent with both frames agreeing.
+
+**So PVR-A7 drops the pill-fill row** and keeps the rest. This needs an owner ruling before it can be
+built either way, and it is the one item in this plan where "Figma is truth" (§7.3) and "a hex literal
+in app code is a review failure" pull in opposite directions — the frame is self-consistent, and it is
+also self-consistently at odds with the names of the two variables it uses.
+
+**The shadow row is a no-op, confirmed.** Both frames carry `0px 8px 24px rgba(0,0,0,0.12)` on the pill
+*and* the token button, identical between the schemes. The app's `BAR_ELEVATION = SmileDimens.space8` is
+8dp, matching the frame's 8px y-offset, so the bar already floats at the right height.
+
+**The conversion, recorded because the plan asked for it and the answer is "do not".** A CSS
+`offset/blur/colour` triple does not map onto Compose one-for-one: `Modifier.shadow(elevation, shape,
+ambientColor, spotColor)` still takes an *elevation*, and the platform derives offset and blur from it
+through its own light model — the two colour parameters tint the ambient and spot passes, they do not
+set `rgba(0,0,0,0.12)` as drawn, and both are ignored below API 28. Matching `0 8 24` exactly is
+therefore not expressible, and chasing it would trade a token for two magic colours. Keep
+`shadowElevation`, and record the design's value as a `deltas` entry (§2) so the number has a home.
 
 ### 3.5 Header
 
@@ -185,7 +292,12 @@ more:
 3. **A sixth product card exists** — Enhanced KYC is drawn. The old frame had five and an empty slot,
    which is why `UseSmileIDSampleProductSlot` exists. With six cards the slot has no job.
 4. **The card shadow is removed**, not restyled — the 10dp coloured shadow goes and a 0.2px stroke
-   replaces it. The shadows that remain are on the nav bar and the token button.
+   replaces it. The shadows that remain are on the nav bar and the token button. **Confirmed on the
+   light frame 2026-08-25:** the only two shadows anywhere in 5487:1351 are the tabs pill's and the
+   token button's, both `0px 8px 24px rgba(0,0,0,0.12)` and both identical to their dark twins. Product
+   cards, the session card and the icon tiles carry none in either scheme. **Sheets are not drawn on
+   this frame**, so their elevation is still unsettled and stays with PVR-A13 — this frame cannot close
+   it.
 5. **Stroke widths disagree with each other — and it is card-vs-card, not card-vs-session.** Five card
    nodes are `0.2px`; **Biometric (5448:2062) is `0.5px`**, as is the session card. §7.6 rules 0.2dp
    everywhere and records the two outliers to normalise in Figma.
@@ -213,7 +325,7 @@ which is what makes the authentication row 136 tall and the verification rows 13
 | PVR-A4 | The sixth card, the section rename, the page subtitle; retire `UseSmileIDSampleProductSlot` | **P1** | A3 |
 | PVR-A5 | Card gradients: four replaced hue pairs, three new palette colours | **P1** | §7.2 |
 | PVR-A6 | Session card: gradient, stroke, radius, padding, three type styles | P2 | A1, §7.2 |
-| PVR-A7 | Nav bar: pill fill, unselected label, shadow, drop the token border | P2 | A1 |
+| PVR-A7 | Nav bar: ~~pill fill~~, unselected + token label, drop the token border. **Pill fill and shadow are both out** — §3.4, 2026-08-25 | P2 | A1 |
 | PVR-A8 | Header: type, tracking, colours | P2 | A1 |
 | PVR-A9 | Icons re-exported at 21 and 16, stroke weight per the frame | P2 | §7.7 |
 | PVR-A10 | ~~The header's missing profile trigger~~ — **closed, no work**: the avatar button stays | — | §7.5 |
@@ -392,8 +504,32 @@ and immune.
 That is very likely the intent — a translucent card over the page is a real effect and it is why the
 stops run past 100 %. The consequence to plan around is testing: a light-mode golden that differs from
 its dark twin by more than text colour is **correct** here, and PVR-A12 must not treat the divergence
-as a defect. Worth one confirming look at the four on a light background before the goldens are
-recorded, because that combination has only ever been seen on dark.
+as a defect. ~~Worth one confirming look at the four on a light background before the goldens are
+recorded, because that combination has only ever been seen on dark.~~
+
+**The confirming look happened — 2026-08-25, node 5487:1351. Three results.**
+
+1. **The six gradient definitions are byte-identical between the two frames** — same angle to ten
+   decimal places, same stops, same alphas. "Mode-invariant" is confirmed as a read fact rather than an
+   owner ruling, and the four replaced hues in the table above are the values for *both* schemes.
+2. **The alpha prediction holds, and the compositing ground was wrong.** The four cards do render
+   differently per scheme. But they composite against the **page**, and §3.4 now establishes the page is
+   `Card BG` — `#FFFFFF` light and `#272A35` dark — not `Main BG`. The divergence is therefore *wider*
+   in light than the plan estimated (white is further from every hue than `#F9FAFB` is), and Enhanced
+   KYC remains the largest because its alpha is on the first stop. **PVR-A12's ruling stands unchanged:
+   a light-vs-dark diff bigger than typography is correct on those cards.** Auth and Biometric are fully
+   opaque and must still match across schemes.
+3. **There is a fifth alpha surface, and the plan missed it: the session card.** Its gradient is
+   `rgba(12,65,178,0.78)` → `rgba(167,139,250,0.79)` — **both** stops translucent, identical on both
+   frames. So it composites against the page exactly as the four cards do, and its light and dark
+   goldens will legitimately differ by more than text colour too. §8 lists `session_card` among the
+   composite goldens already; what changes is that its diff must be read the same way as the cards',
+   not as a regression. If PVR-A6 gives `UseSmileIDSampleSessionEndedBanner` the same treatment per
+   §7.10, that becomes a sixth.
+
+**And one thing the light frame settles for §1.** Both the card fills and the session-card fill have now
+been seen in both schemes, which is what §1 deferred to this section. Neither has a light-mode variant
+in Figma, and neither needs one.
 
 ### 7.3 `Off_black` — **Figma is truth**
 
@@ -449,6 +585,16 @@ Ruled: **0.2dp**, not snapped to `borderWidthHairline`. Applied to every card an
 is `0.5px`**, as is the session card. Since 0.2 is the ruling and the frame is final, the
 implementation uses 0.2 everywhere and those two nodes are the odd ones out — worth normalising in
 Figma next time the file is touched, so a future reader does not "correct" the code back to 0.5.
+
+**Confirmed on the light frame 2026-08-25, including the outliers.** Five cards `0.2px`, Biometric
+(now `5487:1433`) `0.5px`, session card `0.5px` — the same five-and-two split as dark, so the two odd
+nodes are a property of the components, not of the dark frame.
+
+**And the "does it survive light?" worry inverts.** The concern was that a stroke tuned for near-black
+would disappear on `#F9FAFB`. It cannot: the stroke is `Off_black`, which *flips* with the scheme, so it
+is `#2D2B2A` on the light page and `#F9F0E7` on the dark one — near-black on white, warm-white on
+near-black. Light is the **higher**-contrast of the two, and it is dark mode that is the one worth a
+device look. Nothing to change; the token was already doing the work.
 
 **It renders, and it is density-dependent.** Compose anti-aliases a fractional-dp border rather than
 rounding it away, so 0.2dp is a faint sub-pixel line — roughly 0.6px on a 3x device, 0.8px on 4x. It
@@ -556,7 +702,10 @@ implementation instead — the recommendation is only the fallback for two state
   render differently in light and dark. A light-vs-dark golden diff bigger than typography is
   **correct** here. Do not "fix" it, and do not let a reviewer treat it as a regression — say so in the
   PR. Auth and Biometric are fully opaque and should match across schemes; if they do not, that *is* a
-  bug.
+  bug. **Updated 2026-08-25:** add `session_card` to the list that may legitimately differ — both its
+  gradient stops carry alpha (§7.2), which the original count missed. And expect the light divergence to
+  be the *larger* of the two, because the page those stops composite against is `Card BG` (`#FFFFFF`),
+  not `Main BG`.
 - **The structural predicates are the real gate here, not the goldens.** The card label goes from one
   line to two runs in a fixed 138dp card at a fixed 172.5dp width. `assertSurvivesMaxFontScale` on the
   product grid is the test that matters, and `Enhanced Doc. Verification` in a 114.5dp text column is
@@ -567,9 +716,12 @@ implementation instead — the recommendation is only the fallback for two state
   `Off_black` stroke on a mid-tone gradient, and a nav pill the same colour as the page. Run
   `UseSmileIDSampleContrastTest` over the new values and treat a fail as a design question, not a
   local nudge.
-- **On a device, in dark, specifically for §3.4.** Whether the nav bar still reads as a bar when its
+- ~~**On a device, in dark, specifically for §3.4.** Whether the nav bar still reads as a bar when its
   fill matches the page is not answerable from a golden — the shadow is 12 % black and goldens render
-  it faithfully at a size nobody looks at.
+  it faithfully at a size nobody looks at.~~ **Moot 2026-08-25:** the pill fill never matches the page
+  in either frame, and PVR-A7 no longer changes it (§3.4). The bar keeps the fill and the elevation it
+  ships today, so there is nothing here a device run can fail. What *does* still want a dark device look
+  is the 0.2dp stroke (§7.6), which is the faint one in dark rather than in light.
 - **Device flows.** `profiles.yaml` breaks if §7.5 removes the avatar trigger, and any flow asserting
   product names by text breaks on the rename — `deep-links.yaml` asserts the literal
   `"SmartSelfie Enrollment"`, which no longer exists on this screen. Move those onto `sample_*` ids in
@@ -608,6 +760,9 @@ have re-recorded the same goldens twice is no longer possible. What remains ahea
 Settings PR, which re-records `screen_settings` and the result card, and ENV-A13 is now part of this
 plan rather than of that one (§5.6, and ENV-A13 in the other document).
 
+0. **The light frame, before any of it** — done 2026-08-25, node `5487:1351`. It confirmed §2, §7.2,
+   §7.6 and the shadow inventory, and falsified §3.4's premise. A port starting here should read the
+   correction block at the top of this document before the sections it corrects.
 1. **§7 answered first, and §7.2 and §7.5 are the two that actually block.** Without gradients there is
    no light mode; without a profile trigger the screen ships a dead end.
 2. **PVR-A1 alone** — the token map into `spec/design-tokens.json`, plus whatever `Off_black` becomes.
