@@ -1,8 +1,13 @@
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.maven.MavenModule
+import org.gradle.maven.MavenPomArtifact
 import org.gradle.process.ExecOperations
+import org.w3c.dom.Element
 import javax.inject.Inject
+import javax.xml.parsers.DocumentBuilderFactory
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
@@ -67,12 +72,13 @@ tasks.withType<Test>().configureEach {
 
 /**
  * Third-party notices, from the RELEASE runtime classpath because that is what a partner ships.
- * Gradle resolves; the rules live in `scripts/generate_licenses.py`, where they are tested.
+ * Gradle resolves the POMs; the rules live in `scripts/generate_licenses.py`, where they are tested.
  */
 abstract class LicenseNotices : DefaultTask() {
 
+    /** `coordinate<TAB>pom path`, empty path where Gradle could resolve no POM. */
     @get:Input
-    abstract val coordinates: ListProperty<String>
+    abstract val pomLines: ListProperty<String>
 
     @get:Input
     abstract val check: Property<Boolean>
@@ -88,23 +94,23 @@ abstract class LicenseNotices : DefaultTask() {
     abstract val notices: RegularFileProperty
 
     @get:OutputFile
-    abstract val coordinateList: RegularFileProperty
+    abstract val pomIndex: RegularFileProperty
 
     @get:Inject
     abstract val exec: ExecOperations
 
     @TaskAction
     fun run() {
-        val list = coordinateList.get().asFile
-        list.parentFile.mkdirs()
-        list.writeText(coordinates.get().joinToString("\n", postfix = "\n"))
+        val file = pomIndex.get().asFile
+        file.parentFile.mkdirs()
+        file.writeText(pomLines.get().joinToString("\n", postfix = "\n"))
         exec.exec {
             commandLine(
                 buildList {
                     add("python3")
                     add(generator.get().asFile.absolutePath)
-                    add("--coordinates")
-                    add(list.absolutePath)
+                    add("--poms")
+                    add(file.absolutePath)
                     add("--texts")
                     add(licenseTexts.get().asFile.absolutePath)
                     add("--out")
@@ -115,6 +121,53 @@ abstract class LicenseNotices : DefaultTask() {
         }
     }
 }
+
+/**
+ * Resolves every module's POM and each parent up its chain. Gradle has to do the resolving: a POM
+ * reaches the local cache only when something asks for it, and a module published with Gradle Module
+ * Metadata resolves from its `.module` with the `.pom` never fetched — so reading the cache directly
+ * passed on this machine and failed on a clean runner.
+ */
+fun resolvePomIndex(coordinates: List<String>): List<String> {
+    val index = linkedMapOf<String, String>()
+    var wanted = coordinates.toSet()
+    // Parents are separate modules, so each round can reveal the next one up the chain.
+    repeat(POM_PARENT_ROUNDS) {
+        val missing = wanted.filterNot(index::containsKey)
+        if (missing.isEmpty()) return@repeat
+        val resolved = missing.mapNotNull { coordinate ->
+            val (group, name, version) = coordinate.split(":")
+            dependencies.createArtifactResolutionQuery()
+                .forModule(group, name, version)
+                .withArtifacts(MavenModule::class.java, MavenPomArtifact::class.java)
+                .execute()
+                .resolvedComponents
+                .flatMap { it.getArtifacts(MavenPomArtifact::class.java) }
+                .filterIsInstance<ResolvedArtifactResult>()
+                .firstOrNull()
+                ?.let { coordinate to it.file }
+        }.toMap()
+        index.putAll(resolved.mapValues { it.value.absolutePath })
+        // Recorded rather than dropped, so the generator can name what it could not read.
+        missing.filterNot(resolved::containsKey).forEach { index[it] = "" }
+        wanted = resolved.values.flatMap(::pomParents).toSet()
+    }
+    return index.map { "${it.key}\t${it.value}" }
+}
+
+/** The parent coordinate only. The authoritative POM read is the generator's, with a real XML parser. */
+fun pomParents(pom: File): List<String> {
+    // Namespace-unaware by default, which is what keeps the tag names unprefixed.
+    val document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(pom)
+    val parent = document.getElementsByTagName("parent").item(0) as? Element ?: return emptyList()
+    val coordinate = listOf("groupId", "artifactId", "version").map { field ->
+        parent.getElementsByTagName(field).item(0)?.textContent?.trim().orEmpty()
+    }
+    return if (coordinate.any(String::isEmpty)) emptyList() else listOf(coordinate.joinToString(":"))
+}
+
+/** A POM chain deeper than this is a broken publication, not something to keep querying for. */
+val POM_PARENT_ROUNDS = 8
 
 // Through the variant API: the release runtime classpath does not exist until AGP creates the variant.
 androidComponents {
@@ -134,6 +187,8 @@ androidComponents {
             walk(root)
             seen.sorted()
         }
+        // Resolved when the task reads it, not while configuring: every build would pay otherwise.
+        val poms = provider { resolvePomIndex(modules.get()) }
         val asset = layout.projectDirectory.file("../sample-ui/src/main/assets/licenses.json")
         val script = layout.projectDirectory.file("../../scripts/generate_licenses.py")
         val texts = layout.projectDirectory.dir("../../scripts/license-texts")
@@ -143,12 +198,14 @@ androidComponents {
             // The asset it writes cannot be declared an output here — the check task takes it as input.
             // Never skipped, so an edited or deleted asset is rewritten rather than called up to date.
             outputs.upToDateWhen { false }
-            coordinates.set(modules)
+            pomLines.set(poms)
             check.set(false)
             generator.set(script)
             licenseTexts.set(texts)
             notices.set(asset)
-            coordinateList.set(layout.buildDirectory.file("licenses/coordinates.txt"))
+            pomIndex.set(layout.buildDirectory.file("licenses/poms.tsv"))
+            // Resolving artifacts is not something the configuration cache can record.
+            notCompatibleWithConfigurationCache("resolves POM artifacts for the licence scan")
         }
 
         tasks.register<LicenseNotices>("checkLicenses") {
@@ -156,12 +213,13 @@ androidComponents {
             // The asset is this task's input and the other's output, so it cannot be declared here.
             // Never skipped: an edited asset with an unchanged classpath would pass on staleness.
             outputs.upToDateWhen { false }
-            coordinates.set(modules)
+            pomLines.set(poms)
             check.set(true)
             generator.set(script)
             licenseTexts.set(texts)
             notices.set(asset)
-            coordinateList.set(layout.buildDirectory.file("licenses/checked-coordinates.txt"))
+            pomIndex.set(layout.buildDirectory.file("licenses/checked-poms.tsv"))
+            notCompatibleWithConfigurationCache("resolves POM artifacts for the licence scan")
         }
     }
 }

@@ -49,25 +49,24 @@ def parent_of(group: str, artifact: str, version: str) -> str:
 class GeneratorCase(unittest.TestCase):
     def setUp(self) -> None:
         self.home = tempfile.mkdtemp()
-        os.environ["GRADLE_USER_HOME"] = self.home
         self.texts = os.path.join(self.home, "texts")
         os.makedirs(self.texts)
         for name in ("apache-2.0.txt", "mit.txt", "bsd-3-clause.txt"):
             with open(os.path.join(self.texts, name), "w", encoding="utf-8") as handle:
                 handle.write(f"text of {name}\n")
+        # The index Gradle hands over, which is the generator's only route to a POM.
+        gen.POM_INDEX = {}
 
     def tearDown(self) -> None:
         shutil.rmtree(self.home, ignore_errors=True)
-        os.environ.pop("GRADLE_USER_HOME", None)
+        gen.POM_INDEX = {}
 
     def write_pom(self, coordinate: str, body: str) -> None:
         group, artifact, version = coordinate.split(":")
-        directory = os.path.join(
-            self.home, "caches", "modules-2", "files-2.1", group, artifact, version, "abc123",
-        )
-        os.makedirs(directory, exist_ok=True)
-        with open(os.path.join(directory, f"{artifact}-{version}.pom"), "w", encoding="utf-8") as handle:
+        path = os.path.join(self.home, f"{group}-{artifact}-{version}.pom")
+        with open(path, "w", encoding="utf-8") as handle:
             handle.write(body)
+        gen.POM_INDEX[coordinate] = path
 
 
 class TestParentWalk(GeneratorCase):
@@ -133,6 +132,20 @@ class TestFailurePath(GeneratorCase):
             gen.build(["com.example:one:1.0", "com.example:two:1.0"], self.texts)
         self.assertIn("com.example:one", str(raised.exception))
         self.assertIn("com.example:two", str(raised.exception))
+
+
+class TestPomIndex(GeneratorCase):
+    def test_an_artifact_with_no_resolved_pom_says_so(self):
+        gen.POM_INDEX["com.example:unresolved:1.0"] = ""
+        with self.assertRaises(gen.Unidentified) as raised:
+            gen.build(["com.example:unresolved:1.0"], self.texts)
+        self.assertIn("no POM in the index", str(raised.exception))
+
+    def test_the_index_is_read_as_gradle_writes_it(self):
+        path = os.path.join(self.home, "poms.tsv")
+        with open(path, "w", encoding="utf-8") as handle:
+            handle.write("a:b:1\t/tmp/b.pom\nc:d:2\t\n\n")
+        self.assertEqual({"a:b:1": "/tmp/b.pom", "c:d:2": ""}, gen.load_pom_index(path))
 
 
 class TestSections(GeneratorCase):

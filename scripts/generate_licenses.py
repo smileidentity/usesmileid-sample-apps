@@ -12,7 +12,6 @@ reviewed override table, keep every licence an artifact declares, and fail rathe
 from __future__ import annotations
 
 import argparse
-import glob
 import json
 import os
 import re
@@ -98,16 +97,15 @@ class Unidentified(Exception):
     """An artifact whose licence could not be established. Never emitted as data."""
 
 
-def gradle_cache() -> str:
-    home = os.environ.get("GRADLE_USER_HOME") or os.path.join(os.path.expanduser("~"), ".gradle")
-    return os.path.join(home, "caches", "modules-2", "files-2.1")
+# Coordinate -> POM path, from the index Gradle writes. Empty path means Gradle could not resolve one.
+# Never read the Gradle cache directly: a module published with Gradle Module Metadata resolves from
+# its `.module` and the `.pom` is never fetched, so a cache read passes on a warm machine and fails
+# on a clean one — which is exactly how this got past a local run and broke CI.
+POM_INDEX: dict[str, str] = {}
 
 
 def pom_path(group: str, artifact: str, version: str) -> str | None:
-    """The POM Gradle already downloaded. Its own resolution is what puts it here."""
-    pattern = os.path.join(gradle_cache(), group, artifact, version, "*", f"{artifact}-{version}.pom")
-    found = sorted(glob.glob(pattern))
-    return found[0] if found else None
+    return POM_INDEX.get(f"{group}:{artifact}:{version}") or None
 
 
 def read_pom(group: str, artifact: str, version: str) -> ET.Element | None:
@@ -116,8 +114,19 @@ def read_pom(group: str, artifact: str, version: str) -> ET.Element | None:
         return None
     try:
         return ET.parse(path).getroot()
-    except ET.ParseError as error:
+    except (ET.ParseError, OSError) as error:
         raise Unidentified(f"{group}:{artifact}:{version} has an unreadable POM: {error}") from error
+
+
+def load_pom_index(path: str) -> dict[str, str]:
+    index = {}
+    with open(path, encoding="utf-8") as handle:
+        for line in handle:
+            if not line.strip():
+                continue
+            coordinate, _, pom = line.rstrip("\n").partition("\t")
+            index[coordinate] = pom
+    return index
 
 
 def is_platform(root: ET.Element) -> bool:
@@ -164,6 +173,11 @@ def licences_for(group: str, artifact: str, version: str) -> list[dict[str, str]
     override = OVERRIDES.get(module)
     if override:
         return [dict(entry) for entry in override]
+    if pom_path(group, artifact, version) is None:
+        raise Unidentified(
+            f"{module}:{version} has no POM in the index Gradle produced, so its licence could not be "
+            "read at all. That is a resolution problem rather than a missing declaration.",
+        )
     raise Unidentified(
         f"{module}:{version} declares no licence in its POM or any parent, and has no override. "
         "Read the artifact, then add a reviewed entry to OVERRIDES — never emit an unknown licence.",
@@ -242,14 +256,15 @@ def build(coordinates: list[str], texts_dir: str) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--coordinates", required=True, help="file of group:artifact:version lines")
+    parser.add_argument("--poms", required=True, help="TSV of group:artifact:version and its POM path")
     parser.add_argument("--texts", required=True, help="directory holding the vendored licence texts")
     parser.add_argument("--out", required=True, help="the generated notices asset")
     parser.add_argument("--check", action="store_true", help="compare instead of writing")
     args = parser.parse_args()
 
-    with open(args.coordinates, encoding="utf-8") as handle:
-        coordinates = [line.strip() for line in handle if line.strip()]
+    global POM_INDEX
+    POM_INDEX = load_pom_index(args.poms)
+    coordinates = list(POM_INDEX)
     if not coordinates:
         print("no coordinates resolved, so the notices would be empty", file=sys.stderr)
         return 1
