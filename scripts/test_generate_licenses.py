@@ -3,10 +3,8 @@
 
 Run: python3 scripts/test_generate_licenses.py
 
-Every case is an artifact this app actually resolves, and the failure path is the point: a notice
-that says "Unknown" has reached a partner, which is worse than a red build. The POMs are written
-into a fake Gradle cache rather than read from the real one, so the rules are tested without the
-test depending on what happens to be downloaded.
+Every case is an artifact this app resolves, and the failure path is the point. The POMs are written
+into a fake Gradle cache, so the rules are tested without depending on what happens to be downloaded.
 """
 
 from __future__ import annotations
@@ -49,8 +47,6 @@ def parent_of(group: str, artifact: str, version: str) -> str:
 
 
 class GeneratorCase(unittest.TestCase):
-    """Each test writes the POMs it needs into a cache the generator is pointed at."""
-
     def setUp(self) -> None:
         self.home = tempfile.mkdtemp()
         os.environ["GRADLE_USER_HOME"] = self.home
@@ -75,8 +71,6 @@ class GeneratorCase(unittest.TestCase):
 
 
 class TestParentWalk(GeneratorCase):
-    """Guava: its own POM declares no licence, and `guava-parent` declares Apache-2.0."""
-
     def test_a_licence_only_in_the_parent_is_found(self):
         self.write_pom(
             "com.google.guava:guava:33.6.0-android",
@@ -93,8 +87,6 @@ class TestParentWalk(GeneratorCase):
 
 
 class TestOverrides(GeneratorCase):
-    """Bouncy Castle declares nothing in any POM — the licence ships inside the jar."""
-
     def test_the_override_answers_when_no_pom_does(self):
         self.write_pom("org.bouncycastle:bcprov-jdk18on:1.83", pom())
         found = gen.licences_for("org.bouncycastle", "bcprov-jdk18on", "1.83")
@@ -106,8 +98,6 @@ class TestOverrides(GeneratorCase):
 
 
 class TestMultipleLicences(GeneratorCase):
-    """camera-core declares Apache-2.0 and BSD-3-Clause, and both have to survive."""
-
     def test_both_declared_licences_are_kept(self):
         bsd = "<name>BSD-3-Clause</name><url>https://opensource.org/license/bsd-3-clause</url>"
         self.write_pom("androidx.camera:camera-core:1.6.1", pom(licences(APACHE, bsd)))

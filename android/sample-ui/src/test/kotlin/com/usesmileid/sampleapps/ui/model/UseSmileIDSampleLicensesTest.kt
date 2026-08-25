@@ -7,7 +7,6 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Reads the committed asset, so a generator change that the screen cannot render fails here. */
 class UseSmileIDSampleLicensesTest {
 
     private val notices by lazy { parseUseSmileIDSampleLicenses(asset()) }
@@ -34,7 +33,6 @@ class UseSmileIDSampleLicensesTest {
         assertFalse("unknown", named.any { it.contains("unknown") || it.isBlank() })
     }
 
-    /** The whole point of shipping rather than linking: the text is in the binary. */
     @Test
     fun the_apache_text_ships_with_the_app() {
         val apache = requireNotNull(notices.texts["Apache-2.0"]) { "no Apache-2.0 text bundled" }
@@ -50,7 +48,6 @@ class UseSmileIDSampleLicensesTest {
         assertEquals(emptyList<String>(), stranded.map { it.artifact })
     }
 
-    /** Google's terms are a page, not a licence, so they must not claim a bundled text. */
     @Test
     fun the_google_artifacts_are_listed_separately_and_carry_no_text() {
         assertTrue("expected the ML Kit and Play artifacts", notices.googleServices.isNotEmpty())
@@ -61,7 +58,6 @@ class UseSmileIDSampleLicensesTest {
         assertFalse(open.any { it.startsWith("com.google.mlkit") })
     }
 
-    /** A partner licenses the SDK from Smile ID; its own terms are not a third-party notice. */
     @Test
     fun the_sdk_itself_is_absent() {
         val all = (notices.openSource + notices.googleServices).map { it.artifact }
@@ -78,8 +74,7 @@ class UseSmileIDSampleLicensesTest {
         licenses.firstNotNullOfOrNull { notices.texts[it.id] }
 
     private fun asset(): String {
-        // Read from the module rather than through AssetManager: the file is the contract, and a
-        // plain JVM test keeps this out of the Robolectric-bound suite.
+        // Read from the module rather than through AssetManager, which would need Robolectric.
         val file = File("src/main/assets/licenses.json")
         assertTrue("generated notices missing at ${file.absolutePath}", file.isFile)
         return file.readText()

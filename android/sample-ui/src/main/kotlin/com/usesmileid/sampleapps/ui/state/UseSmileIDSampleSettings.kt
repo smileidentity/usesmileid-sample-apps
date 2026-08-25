@@ -23,12 +23,7 @@ data class UseSmileIDSampleSettings(
         UseSmileIDSampleSetting.PreviewStep -> previewStep
     }
 
-    /**
-     * The one owner of the capture mutex: `FlowValidator.validateSelfie()` refuses agent mode
-     * together with enhanced liveness at ERROR severity, and enhanced liveness is now the default —
-     * so a single tap on Agent mode would otherwise block the run. Turning either on turns the other
-     * off here, rather than in the screen, so every persistence path and every port inherits one rule.
-     */
+    /** The capture mutex: the SDK refuses agent mode with enhanced liveness, so turning either on turns the other off. */
     fun withSetting(setting: UseSmileIDSampleSetting, enabled: Boolean): UseSmileIDSampleSettings =
         when (setting) {
             UseSmileIDSampleSetting.EnhancedSmartSelfie ->

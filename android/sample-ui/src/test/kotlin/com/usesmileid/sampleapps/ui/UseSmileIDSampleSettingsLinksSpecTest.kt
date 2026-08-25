@@ -6,7 +6,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** A wrong URL is invisible until a partner taps it, so the rows are asserted against the spec. */
+/** A wrong URL is invisible until a partner taps it. */
 class UseSmileIDSampleSettingsLinksSpecTest {
 
     private val specLinks: Map<String, String> by lazy {
@@ -30,7 +30,6 @@ class UseSmileIDSampleSettingsLinksSpecTest {
         assertEquals(specLinks.keys, useSmileIDSampleNavRows.map { it.id }.toSet())
     }
 
-    /** Its notice ships in the binary, so it is the one row with nowhere external to go. */
     @Test
     fun the_licences_row_is_not_a_link() {
         assertNull(useSmileIDSampleNavRows.first { it.id == "licenses" }.url)

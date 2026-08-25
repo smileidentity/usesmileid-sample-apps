@@ -65,7 +65,7 @@ without misreporting the tree.
 |---|---|
 | `UseSmileIDSampleAppState.useSandbox` | was `launchArgs.sandbox ?: settings.useSandbox`. **PR #27:** now `session?.environment != Production`, and still the only place environment is decided |
 | `environmentPinned` | was `launchArgs.sandbox != null`, with Settings rendering the row read-only. **PR #27: deleted** — with no user control there is nothing to pin |
-| `UseSmileIDSampleSettings.production` | was a persisted `Boolean` under DataStore key `production`. **PR #27: deleted**, and the key is cleared once by `UseSmileIDSampleRetiredSettingKeys` |
+| `UseSmileIDSampleSettings.production` | was a persisted `Boolean` under DataStore key `production`. **PR #27: deleted**; the key is inert because nothing reads it (see the migration note in §ENV-A7) |
 | Production row (Settings) | was a switch in an `ENVIRONMENT` section marked **not in the design**. **PR #27: deleted** with its section |
 | `ProfileEnvChip` (Products header) | **is** in the design — `spec/components.json` composite, Figma nodes 5206-2391 (products) / 5206-3138 (settings). **PR #27: hidden, not deleted** — the component, its tokens, its `sample_env_chip` id and its golden all survive; no shipped screen renders it (§6.5) |
 | Environment → SDK | `FlowLaunchSnapshot.sandbox` → `partnerConfig { useSandbox = … }`. Snapshot taken **once at entry** (R2) |
@@ -169,7 +169,7 @@ Two more SDK facts the Settings work turns on:
 | ENV-A4 | `spec/` follows in the same PR — five files; `sandbox` **out**, `probes` **in** | **P1** | A2, A3 | **Shipped** PR #27 for the environment half; the `probes` entry and the ENV-A7 renames follow with phase two |
 | ENV-A5 | Environment onto the result card — now the **only** way a run proves its environment | **P1** | A4 | **Shipped** PR #27 |
 | ENV-A6 | Repair `launch-args.yaml`; Simulate mints either host so automation picks environment | **P1** | A3, A5 | **Shipped** PR #27 |
-| ENV-A7 | **Enhanced SmartSelfie™**: rename, default ON, both capture switches reach the SDK, mutex enforced | **P1** | §6.9 *(polarity answered)* | **Shipped** — new DataStore key, old one retired, mutex in `UseSmileIDSampleSettings` |
+| ENV-A7 | **Enhanced SmartSelfie™**: rename, default ON, both capture switches reach the SDK, mutex enforced | **P1** | §6.9 *(polarity answered)* | **Shipped** — new DataStore key (no migration, ruled 2026-08-25), mutex in `UseSmileIDSampleSettings` |
 | ENV-A8 | Step switches reach the SDK; consent is include-or-omit, token wins | **P1** | §6.6 *(answered)* | **Shipped** — the journey is a named step list, so the composition is testable |
 | ENV-A9 | ABOUT / LEGAL rows open their (now settled) URLs; Sign out stops being a dead tap | P2 | §6.8 *(URLs answered)* | **Shipped** — a view intent rather than a Custom Tab, which would need a dependency |
 | ENV-A10 | Coverage: unit, golden and device, for everything above | P2 | A3, A6–A9, A13–A15 | **Shipped** for the Settings half — `settings.yaml`, four new golden states, and the generator's failure path; A13's coverage goes with phase three |
@@ -236,7 +236,9 @@ What the item covers:
   the store's `PRODUCTION` key and its branch in `key()` all go.
 - **`environmentPinned` goes** — §6.3 removed the launch-argument override, so the property, its
   Settings copy and `spec/launch-args.json`'s `sandbox` entry all go together.
-- **The one-time clear.** `production = true` is persisted, and with the row gone there is no UI left
+- **The one-time clear — superseded 2026-08-25, see §ENV-A7: no migration ships, because the app is
+  unreleased and the key is unread either way.** As originally written: `production = true` is
+  persisted, and with the row gone there is no UI left
   to clear it — a device that has it set would submit to the live environment with no way back. The
   mechanism is a `DataMigration<Preferences>` passed to `preferencesDataStore(produceMigrations = …)`
   whose `shouldMigrate` is "the key is present" and whose `migrate` removes it; it is self-terminating
@@ -359,10 +361,18 @@ someone wrote it down first.
 **Three traps, in the order they will bite.**
 
 1. **The stored value must not be reinterpreted.** `smile_to_capture = true` meant *enhanced OFF*;
-   `enhanced_smart_selfie = true` means *enhanced ON*. Reusing the DataStore key hands every existing
-   device the exact opposite of what it chose. Use a **new key** (`enhanced_smart_selfie`) and drop
-   the old one in the same `DataMigration<Preferences>` that ENV-A2 already needs for `production` —
-   one migration, two dead keys, and the same self-terminating `shouldMigrate`.
+   `enhanced_smart_selfie = true` means *enhanced ON*. Reusing the DataStore key would hand every
+   existing device the exact opposite of what it chose. Use a **new key**
+   (`enhanced_smart_selfie`), which is the whole fix: nothing reads the old one, so its value is inert.
+
+   **Owner ruling 2026-08-25: no migration.** This plan asked for a `DataMigration<Preferences>`
+   dropping both dead keys, and `UseSmileIDSampleRetiredSettingKeys` was written for `production` in
+   PR #27. It is **deleted**, and this item does not add to it: the app is unreleased, so no partner
+   device carries either key, and a compatibility shim for state nobody has is exactly what an
+   unreleased app should not ship. Behaviour is identical either way — both keys are unread, so they
+   sit in the file doing nothing rather than being tidied away on the next launch. The ports inherit
+   the same rule: **rename the key, do not migrate it.** If this app is ever released and a stored key
+   has to be retired after that, the mechanism comes back with a reason.
 2. **The mutex stops being optional.** Enhanced liveness now defaults **on**, so a single tap on Agent
    mode sets both and `FlowValidator.validateSelfie()` raises `AgentModeWithEnhancedLivenessException`
    at ERROR severity — a blocked run from the app's own default state plus one tap. Before this
@@ -1140,7 +1150,7 @@ Traced, not estimated. `spec/` first because it is the ask-first surface.
 | File | Why |
 |---|---|
 | `state/UseSmileIDSampleSettings.kt` | `production` and `useSandbox` deleted; the agent-mode mutex added |
-| `data/UseSmileIDSampleStore.kt` | `PRODUCTION` key, its `key()` branch, and the one-time migration |
+| `data/UseSmileIDSampleStore.kt` | `PRODUCTION` key and its `key()` branch |
 | `state/UseSmileIDSampleTokenSession.kt` / `UseSmileIDSampleTokenDecoder.kt` | the `api_url` claim and the field |
 | `screens/SettingsScreen.kt` | the `ENVIRONMENT` section; the mutex and overridden-consent supporting lines |
 | `screens/ProductsScreen.kt` | stops rendering the env chip; the component file itself is **unchanged** (§6.5) |
@@ -1173,8 +1183,9 @@ gallery.
 - **Unit, in `sample-ui`.** `api_url` decode: each known host, case and trailing-slash variants, a
   scheme-only difference, an unrecognised host, a malformed URL, and the claim absent — each asserting
   the §6.1 behaviour rather than "does not crash". The agent-mode mutex, driven from
-  `UseSmileIDSampleSettings` so both orders of flipping are covered. The DataStore migration:
-  key present → removed and `shouldMigrate` false afterwards; key absent → untouched.
+  `UseSmileIDSampleSettings` so both orders of flipping are covered. ~~The DataStore migration.~~
+  Dropped with the migration itself (§ENV-A7): there is nothing left to test but that the new key
+  reads its default, which the settings tests already assert.
 - **Unit, in `app`.** `buildSnapshot` resolves environment from the session, and from the launch
   argument per §6.3. `journeyFor` composes exactly the screens the four toggle combinations imply, and
   the consent triple of §ENV-A8 — the third row (token-bound) is the regression guard for behaviour
@@ -1226,10 +1237,12 @@ gallery.
 - **The mutex, driven from the UI.** Tap Agent mode from the default state and assert Enhanced
   SmartSelfie™ went OFF, then the reverse. This is the one test that stops the app shipping a
   one-tap blocked run.
-- **The migration, on a real device with real prior state.** Install the current build, set the
-  Production toggle and Smile to capture, install the new build over it (`adb install -r`, never a
-  fresh install — a fresh install proves nothing because `allowBackup="false"` wipes the store), and
-  assert the environment is sandbox and Enhanced SmartSelfie™ is ON. Both dead keys, one run.
+- **The rename, on a real device with real prior state.** Install the current build, set Smile to
+  capture, install the new build over it (`adb install -r`, never a fresh install — a fresh install
+  proves nothing because `allowBackup="false"` wipes the store), and assert Enhanced SmartSelfie™ is
+  ON while a key the rename does not touch, like Dark mode, keeps its value. **Run 2026-08-25 and it
+  passes**, which is what makes the migration unnecessary rather than merely unimportant: the old
+  value is not read under the new name whether or not anything deletes it.
 - **The notices generator has a test, and it is the failure path.** Feed it Guava (licence only in the
   parent POM), Bouncy Castle (licence in no POM at all) and `camera-core` (two licences) and assert it
   resolves the first, uses the override for the second, keeps both for the third — and **fails** on a
@@ -1265,9 +1278,8 @@ silent, which is why the rule belongs in `spec/launch-args.json` rather than in 
 Scenarios row is simpler and also shared: strictly debug-only everywhere, no argument.
 
 **Per-platform, and fine to differ.** How an external URL opens (Custom Tab, `SFSafariViewController`,
-`url_launcher`, `Linking`), how the one-time clear is expressed in each platform's persistence layer,
-and how the locale override is applied. The *effect* must match: the key is gone after one launch, and
-no UI can restore it.
+`url_launcher`, `Linking`) and how the locale override is applied. The *effect* must match: no UI can
+restore a retired setting. There is no one-time clear to express — see §ENV-A7.
 
 **Three things to fix in the spec before the ports read it.**
 
@@ -1408,8 +1420,7 @@ just no longer means separate reviews. One PR also means `screen_settings` is re
 end instead of four times, and the spec lands as one coherent contract change instead of four partial
 ones.
 
-Build order inside it: ENV-A7 and ENV-A8 first (the capture and step switches, the design rename, the
-DataStore migration). Then ENV-A9 with ENV-A16, since both touch the Settings screen and the details
+Build order inside it: ENV-A7 and ENV-A8 first (the capture and step switches, the design rename). Then ENV-A9 with ENV-A16, since both touch the Settings screen and the details
 screen once each. Then ENV-A14. ENV-A11 rides along, and is the first thing to cut if the PR grows —
 said in the PR, not dropped in silence. ENV-A15 last, as the gate rather than the work — re-walk §4.1
 and merge only when every row is either empty or carries a dated decision. The device pass comes after

@@ -17,7 +17,7 @@ import org.junit.Test
 /** The screens U3 builds first, in the states `spec/screens.json` names for each. */
 class ScreenGoldenTest : GoldenTest() {
 
-    /** The partner's screen: no DEBUG section, which is also the only state the design draws. */
+    /** The partner's screen: no DEBUG section, which is the only state the design draws. */
     @Test
     fun settings() = goldens("screen_settings") { Settings() }
 
@@ -30,7 +30,7 @@ class ScreenGoldenTest : GoldenTest() {
     @Test
     fun settings_debug_build_max_font_scale() = assertSurvivesMaxFontScale { Settings(debug = true) }
 
-    /** Agent mode on, so the mutex's two overridden supporting lines are recorded rather than described. */
+    /** Agent mode on, so the mutex's two supporting lines are recorded rather than described. */
     @Test
     fun settings_agent_mode() = goldens("screen_settings_agent_mode") {
         Settings(settings = UseSmileIDSampleSettings(enhancedSmartSelfie = false, agentMode = true))
@@ -66,7 +66,6 @@ class ScreenGoldenTest : GoldenTest() {
     @Test
     fun licenses_max_font_scale() = assertSurvivesMaxFontScale { Licenses(LICENCE_FIXTURE) }
 
-    /** Generated at build time, so an absent asset is a packaging failure the screen must name. */
     @Test
     fun licenses_missing_asset() = goldens("screen_licenses_empty") { Licenses(UseSmileIDSampleLicenses()) }
 
@@ -169,11 +168,7 @@ private fun Settings(
     onSignOut = {},
 )
 
-/**
- * A fixture rather than the shipped asset: two hundred rows is not a golden, and the states worth
- * recording are one of each kind — a bundled text, a linked one, and a terms page. Expanding a row
- * is an interaction, so the device flow covers it rather than a screenshot.
- */
+/** A fixture, not the shipped asset: one row of each kind. Expanding one is the device flow's job. */
 @Composable
 private fun Licenses(licenses: UseSmileIDSampleLicenses) =
     LicensesScreen(licenses = licenses, onBack = {}, onOpenUrl = {})

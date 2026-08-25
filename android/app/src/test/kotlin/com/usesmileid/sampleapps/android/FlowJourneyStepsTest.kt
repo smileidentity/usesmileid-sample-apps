@@ -19,7 +19,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** What the three step switches and the token's consent binding compose, which no SDK API exposes. */
 class FlowJourneyStepsTest {
 
     @Test
@@ -59,7 +58,6 @@ class FlowJourneyStepsTest {
         )
     }
 
-    /** Both document previews go together: a half-applied toggle would divide the two document products. */
     @Test
     fun `the document products keep both previews or neither`() {
         listOf(
@@ -89,7 +87,6 @@ class FlowJourneyStepsTest {
         }
     }
 
-    /** The consent triple of ENV-A8: on, off, and the token binding that outranks both. */
     @Test
     fun `the token's consent binding beats the switch either way`() {
         val bound = snapshot().copy(session = boundSession)
@@ -107,10 +104,7 @@ class FlowJourneyStepsTest {
         )
     }
 
-    /**
-     * The two refresh scenarios submit under the fixture token rather than the scanned one, so its
-     * bindings must not remove a screen the run then has no consent for.
-     */
+    // The refresh scenarios submit under the fixture token, so a scanned binding must not apply.
     @Test
     fun `the refresh scenarios ignore a bound token, so the screen stays`() {
         listOf(UseSmileIDSampleScenario.ExpiredToken, UseSmileIDSampleScenario.BadRefresh).forEach { scenario ->

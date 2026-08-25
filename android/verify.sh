@@ -31,9 +31,7 @@ else
 fi
 
 echo "==> third-party notices are current"
-# The notices are generated from the RELEASE runtime classpath and committed into sample-ui's
-# assets, so a dependency change that nobody regenerated fails here rather than shipping a wrong
-# list. The generator's own rules are tested separately, because its failure path is the point.
+# Committed into sample-ui's assets, so a dependency change nobody regenerated fails here.
 python3 "$REPO_ROOT/scripts/test_generate_licenses.py" >/dev/null
 ./gradlew :app:checkLicenses
 

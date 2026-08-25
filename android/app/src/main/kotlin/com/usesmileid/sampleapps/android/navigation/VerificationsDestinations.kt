@@ -151,7 +151,7 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
                 }
             },
             refreshing = refreshing,
-            // Computed here because `sample-ui` runs under eight identities and reads no host's BuildConfig.
+            // Computed here: `sample-ui` reads no host's BuildConfig.
             showProbes = BuildConfig.DEBUG || app.launchArgs.probes,
         )
         // Only a processing row can change. Keyed on the id, not the job: keying on the row would loop off its own write.

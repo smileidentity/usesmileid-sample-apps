@@ -1,7 +1,6 @@
 package com.usesmileid.sampleapps.ui.data
 
 import android.content.Context
-import androidx.datastore.core.DataMigration
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -65,10 +64,7 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
         }
     }
 
-    /**
-     * Sign out: the session goes without leaving the ended marker behind, because a marker sends the
-     * next run to the scanner — which is the right answer for a lapse and the wrong one for signing out.
-     */
+    /** Sign out: no ended marker, which would send the next run to the scanner. */
     suspend fun clearTokenSession() {
         store.edit { prefs ->
             prefs.remove(SESSION_TOKEN)
@@ -108,8 +104,7 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
     }
 
     private companion object {
-        // A new key, not the old one reused: `smile_to_capture = true` meant enhanced liveness OFF,
-        // so reading it as `enhanced_smart_selfie` would flip capture behaviour under every existing user.
+        // A new key, never the old one reused: `smile_to_capture = true` meant the opposite.
         val ENHANCED_SMART_SELFIE = booleanPreferencesKey("enhanced_smart_selfie")
         val AGENT_MODE = booleanPreferencesKey("agent_mode")
         val DARK_MODE = booleanPreferencesKey("dark_mode")
@@ -131,28 +126,5 @@ data class UseSmileIDSampleSessionRecord(
     val ended: UseSmileIDSampleEndedSession? = null,
 )
 
-/**
- * Drops settings keys whose control has gone: a device left on Production would keep submitting live
- * with no UI to clear it, and a stored `smile_to_capture` now means the opposite of what it says.
- * Self-terminating, so it needs no version counter.
- */
-internal object UseSmileIDSampleRetiredSettingKeys : DataMigration<Preferences> {
-
-    private val RETIRED = listOf(
-        booleanPreferencesKey("production"),
-        booleanPreferencesKey("smile_to_capture"),
-    )
-
-    override suspend fun shouldMigrate(currentData: Preferences): Boolean = RETIRED.any { it in currentData }
-
-    override suspend fun migrate(currentData: Preferences): Preferences =
-        currentData.toMutablePreferences().apply { RETIRED.forEach { remove(it) } }
-
-    override suspend fun cleanUp() = Unit
-}
-
 // Not an application id, so it stays identity-agnostic and the same across all eight hosts.
-private val Context.sampleStore by preferencesDataStore(
-    name = "usesmileid_sample",
-    produceMigrations = { listOf(UseSmileIDSampleRetiredSettingKeys) },
-)
+private val Context.sampleStore by preferencesDataStore(name = "usesmileid_sample")

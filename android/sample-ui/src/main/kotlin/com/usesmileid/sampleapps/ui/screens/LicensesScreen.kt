@@ -29,12 +29,9 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleNotice
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /**
- * The notices the app ships rather than links to: Apache-2.0 §4 asks that they travel with the
- * distribution. Two sections because some of the dependencies are not open source at all — they
- * declare Google's own terms, and listing those under an open-source heading would be wrong.
- *
- * A flat list rather than the rounded section cards every other screen uses: this one has no design
- * frame, and two hundred rows inside one card would compose all of them at once.
+ * The notices the app ships rather than links to (Apache-2.0 §4). Two sections, because the Google
+ * artifacts declare terms of service rather than a licence. A flat list, not the rounded section
+ * cards: this screen has no design frame, and two hundred rows in one card compose all at once.
  */
 @Composable
 fun LicensesScreen(
@@ -44,7 +41,7 @@ fun LicensesScreen(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
-    // One at a time: two copies of the Apache text open at once is a screen nobody can read.
+    // One at a time: two copies of the Apache text at once is a screen nobody can read.
     var expanded by remember { mutableStateOf<String?>(null) }
 
     Column(
@@ -104,8 +101,7 @@ private fun NoticeRow(
 ) {
     Surface(color = UseSmileIDSampleTheme.colors.surface) {
         Column {
-            // No leading tile: the coordinate is the content, and one repeated glyph two hundred
-            // times is noise. Tapping expands the licence, which is why there is no chevron either.
+            // No leading tile and no chevron: the coordinate is the content, and the row expands.
             UseSmileIDSampleSettingRow(
                 title = notice.artifact,
                 supportingText = "${notice.version} · ${notice.licenses.joinToString(", ") { it.name }}",
@@ -123,11 +119,9 @@ private fun NoticeRow(
 /** The licence text where it ships with us, and the page that carries it where it does not. */
 @Composable
 private fun ExpandedLicence(notice: UseSmileIDSampleNotice, text: String?, onOpenUrl: (String) -> Unit) {
-    val body = text ?: notice.licenses.firstOrNull { it.url.isNotBlank() }?.let { licence ->
-        "The text ships with the component itself. Tap to open ${licence.url}"
-    }
+    val licence = notice.licenses.firstOrNull { it.url.isNotBlank() }
     Text(
-        text = body ?: "No licence text was recorded for this component.",
+        text = text ?: "The text ships with the component itself, at ${licence?.url}",
         style = UseSmileIDSampleTheme.type.textStyleCaption,
         color = UseSmileIDSampleTheme.colors.textMuted,
         modifier = Modifier
@@ -136,14 +130,12 @@ private fun ExpandedLicence(notice: UseSmileIDSampleNotice, text: String?, onOpe
             .padding(bottom = SmileDimens.spacingSm)
             .testTag(UseSmileIDSampleTestIds.licenseText(notice.artifact)),
     )
-    if (text != null) return
-    notice.licenses.firstOrNull { it.url.isNotBlank() }?.let { licence ->
-        UseSmileIDSampleSettingRow(
-            title = "Open ${licence.name}",
-            onClick = { onOpenUrl(licence.url) },
-            testId = UseSmileIDSampleTestIds.licenseLink(notice.artifact),
-        )
-    }
+    if (text != null || licence == null) return
+    UseSmileIDSampleSettingRow(
+        title = "Open ${licence.name}",
+        onClick = { onOpenUrl(licence.url) },
+        testId = UseSmileIDSampleTestIds.licenseLink(notice.artifact),
+    )
 }
 
 private fun LazyListScope.label(text: String) = item {

@@ -225,12 +225,8 @@ class SdkFlowPreflightTest {
         )
     }
 
-    /**
-     * The pair the mutex forbids is absent because no host can catch it: `validate()` is
-     * `validateBuilder`, which sees only ML/network failure and empty screens, and the rule that
-     * refuses the pair runs inside the SDK's own `build()`. The mutex is tested in `sample-ui`, and
-     * the SDK's refusal lands on the result card.
-     */
+    // The forbidden pair is absent because no host can catch it: `validate()` is `validateBuilder`,
+    // and the rule runs inside the SDK's `build()`. The mutex is tested in `sample-ui`.
     @Test
     fun `every capture combination the UI can persist reaches the SDK`() {
         val allowed = listOf(false to true, true to false, false to false)

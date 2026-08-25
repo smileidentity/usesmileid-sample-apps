@@ -28,10 +28,7 @@ data class UseSmileIDSampleNotice(
 @Immutable
 data class UseSmileIDSampleLicenseRef(val id: String?, val name: String, val url: String)
 
-/**
- * Reads `scripts/generate_licenses.py`'s output. Hand-parsed, like the token claims: `sample-ui`
- * carries no JSON dependency, and a notices screen is not a reason to add one.
- */
+/** Reads `scripts/generate_licenses.py`'s output. Hand-parsed: `sample-ui` carries no JSON dependency. */
 fun parseUseSmileIDSampleLicenses(json: String): UseSmileIDSampleLicenses {
     val root = parseTokenJson(json) as? TokenJson.Obj ?: return UseSmileIDSampleLicenses()
     return UseSmileIDSampleLicenses(

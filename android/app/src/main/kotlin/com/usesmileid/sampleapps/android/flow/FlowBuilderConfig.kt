@@ -176,10 +176,8 @@ private fun ScreensBuilder.journeyFor(snapshot: FlowLaunchSnapshot) {
 internal enum class FlowJourneyStep { Consent, Instructions, SelfieCapture, DocumentCapture, Preview, Processing }
 
 /**
- * The journey, as the three Settings step switches and the token's bindings decide it. Consent is
- * include-or-omit and the token always wins: a complete binding lifts the SDK's requirement, and
- * declaring the screen anyway is filtered back out and ends the run before it starts. With neither
- * a binding nor the screen the flow is invalid, which is the demonstration rather than a bug (§6.6).
+ * The journey, as the three step switches and the token's bindings decide it. A consent binding lifts
+ * the SDK's requirement, and declaring the screen anyway ends the run before it starts.
  */
 internal fun journeyStepsFor(snapshot: FlowLaunchSnapshot): List<FlowJourneyStep> = buildList {
     if (snapshot.liveSession?.bindings?.consent == null && snapshot.consentStep) add(FlowJourneyStep.Consent)
@@ -234,7 +232,7 @@ private val UseSmileIDSampleProduct.needsDocumentCapture: Boolean
     get() = this == UseSmileIDSampleProduct.DocumentVerification ||
         this == UseSmileIDSampleProduct.EnhancedDocumentVerification
 
-// The same host the Settings privacy row opens: two policies for one partner is a defect, not a detail.
+// The same host the Settings privacy row opens.
 private val PRIVACY_POLICY_URL = URL("https://smile.id/privacy-policy")
 private const val CALLBACK_URL = "https://your-callback-url.com"
 private val PARTNER_BUTTON_RADIUS = 4.dp

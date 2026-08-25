@@ -52,7 +52,6 @@ class VerificationsGoldenTest : GoldenTest() {
     @Test
     fun verification_details_unknown_job() = goldens("screen_verification_details_unknown") { UnknownDetails() }
 
-    /** What a partner sees on release without `probes`: the same screen with no result card. */
     @Test
     fun verification_details_without_probes() =
         goldens("screen_verification_details_no_probes") { Details(showProbes = false) }

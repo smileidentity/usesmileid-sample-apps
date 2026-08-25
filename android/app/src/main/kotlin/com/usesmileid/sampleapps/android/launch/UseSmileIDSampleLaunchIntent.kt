@@ -13,10 +13,8 @@ internal fun Intent?.useSmileIDSampleLaunchArgs(): UseSmileIDSampleLaunchArgs {
 }
 
 /**
- * `probes` alone is also read off the launching URI. A deep link arrives as an ACTION_VIEW intent
- * with no extras, and half the flows that assert on the result card arrive that way — on release the
- * card would be hidden and those runs could only ever pass on debug. Only this argument: letting a
- * link seed the others would contradict R9, which is that a deep link resets them.
+ * `probes` alone is also read off the launching URI: a deep link carries no extras, and half the flows
+ * that assert on the card arrive that way. Only this one — letting a link seed the others contradicts R9.
  */
 private fun Intent.probesFromLink(): Map<String, Any?> {
     val value = data?.takeIf { it.isHierarchical }?.getQueryParameter(UseSmileIDSampleLaunchArgs.PROBES)

@@ -1,15 +1,9 @@
 #!/usr/bin/env python3
 """Generates the third-party notices the Android sample app ships in its binary.
 
-Gradle resolves the release runtime classpath and hands us the coordinates; this applies the rules:
-
-* walk parent POMs, because a POM that declares no licence often has a parent that does
-* consult a small reviewed override table, for artifacts that declare a licence in no POM at all
-* keep every licence an artifact declares, because some declare two
-* fail on anything it cannot identify, because an "Unknown" that reaches a partner is worse than
-  a red build
-
-Run through Gradle, which knows the classpath:
+Gradle hands over the release runtime classpath; the rules here are: walk parent POMs, consult a
+reviewed override table, keep every licence an artifact declares, and fail rather than emit
+"Unknown" — one that reaches a partner is worse than a red build.
 
     ./gradlew :app:generateLicenses      # rewrite the committed asset
     ./gradlew :app:checkLicenses         # fail if the committed asset is stale
@@ -63,8 +57,7 @@ KNOWN_LICENCES = {
     },
 }
 
-# Not open source: these declare Google's own terms. Reviewed by hand, because the page they point
-# at is the licence — there is no text to ship, and they must not sit under an open-source heading.
+# Not open source: these declare Google's own terms, and the page they point at IS the licence.
 GOOGLE_TERMS = {
     "play integrity api terms of service",
     "ml kit terms of service",
@@ -78,11 +71,9 @@ GOOGLE_TERMS = {
 # not a third-party notice, and listing them under an open-source heading would be wrong.
 FIRST_PARTY_GROUPS = ("com.usesmileid",)
 
-# Artifacts that declare a licence in no POM in their parent chain. Each entry is a reviewed fact
-# about where the licence actually is, so nothing here is a guess.
+# Artifacts that declare a licence in no POM in their chain. Each entry is a reviewed fact.
 OVERRIDES = {
-    # JSR-330's reference implementation. Its POM carries no <licenses> block at all; the JSR and
-    # its source repository publish it under Apache-2.0.
+    # JSR-330's reference implementation: no <licenses> block in its POM; published Apache-2.0.
     "javax.inject:javax.inject": [
         {
             "id": "Apache-2.0",
@@ -90,7 +81,7 @@ OVERRIDES = {
             "url": "https://www.apache.org/licenses/LICENSE-2.0.txt",
         },
     ],
-    # Ships the Bouncy Castle Licence inside the jar, at org/bouncycastle/LICENSE.class.
+    # Ships its licence inside the jar, at org/bouncycastle/LICENSE.class.
     "org.bouncycastle:bcprov-jdk18on": [
         {"id": "Bouncy Castle Licence", "name": "Bouncy Castle Licence", "url": "https://www.bouncycastle.org/licence.html"},
     ],

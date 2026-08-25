@@ -52,7 +52,7 @@ data class UseSmileIDSampleSettingsState(
     val initials: String,
     /** Passed in because it names the host, and this module runs under eight. */
     val versionLabel: String,
-    /** The token has taken the consent decision away, so the switch must stop claiming to own it. */
+    /** The token has taken the consent decision away, so the switch stops claiming to own it. */
     val consentBoundByToken: Boolean = false,
     val avatarColor: Color = smileProfileHues.first(),
 )
@@ -64,7 +64,7 @@ fun SettingsScreen(
     onSettingChange: (UseSmileIDSampleSetting, Boolean) -> Unit,
     onProfileClick: () -> Unit,
     onNavRowClick: (UseSmileIDSampleNavRow) -> Unit,
-    /** Null hides the DEBUG section: only a debug host offers it, and this module may not read a BuildConfig. */
+    /** Null hides the DEBUG section: `sample-ui` may not read a host's BuildConfig. */
     onOpenScenarioDrawer: (() -> Unit)?,
     onSignOut: () -> Unit,
     modifier: Modifier = Modifier,
@@ -100,7 +100,7 @@ fun SettingsScreen(
             )
         }
 
-        // The two rows are mutually exclusive, so each says what turning it on will do to the other.
+        // Mutually exclusive, so each row says what turning it on does to the other.
         section("CAPTURE") {
             SwitchRow(
                 title = ENHANCED_SMART_SELFIE_TITLE,
@@ -179,8 +179,7 @@ fun SettingsScreen(
             )
         }
 
-        // The design draws no control for the drawer, so this placement is ours — and it is debug-only,
-        // because a partner should never find a scenario picker in Settings.
+        // The design draws no control for the drawer, so this placement is ours, and debug-only.
         if (onOpenScenarioDrawer != null) {
             section("DEBUG") {
                 UseSmileIDSampleSettingRow(
@@ -285,7 +284,7 @@ private fun NavRow(row: UseSmileIDSampleNavRow, onClick: (UseSmileIDSampleNavRow
 // The design marks the trademark here and nowhere else on this screen (node 5206:2898).
 private const val ENHANCED_SMART_SELFIE_TITLE = "Enhanced SmartSelfie\u2122"
 
-// The URLs the design's own copy names, each recorded in spec/screens.json and asserted against it.
+// Each URL is recorded in spec/screens.json and asserted against it.
 private val ABOUT_ROWS = listOf(
     UseSmileIDSampleNavRow(
         id = "documentation",
