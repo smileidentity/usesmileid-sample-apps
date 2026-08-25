@@ -26,8 +26,6 @@ interface UseSmileIDSampleStatusApi {
         /** One per environment, built once: Retrofit makes its own OkHttp client, so per-request was a pool per pull. */
         fun of(sandbox: Boolean): UseSmileIDSampleStatusApi = if (sandbox) sandboxApi else productionApi
 
-        // Hosts from the environment enum, which a token's api_url is matched against: one copy, so a
-        // status pull and a decode cannot disagree about which host is which.
         private val sandboxApi: UseSmileIDSampleStatusApi by lazy {
             build(UseSmileIDSampleEnvironment.Sandbox.baseUrl)
         }

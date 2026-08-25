@@ -99,8 +99,7 @@ class ScreenCompositeGoldenTest : GoldenTest() {
     @Test
     fun scan_sheet_max_font_scale() = assertSurvivesMaxFontScale { ScanSheets() }
 
-    // Expanded, because the mint controls are collapsed by default and the environment a run submits
-    // under is chosen there — nothing else in the app picks one.
+    // Expanded: the mint controls are collapsed by default, and nothing else picks an environment.
     @Test
     fun scan_sheet_expanded() = goldens("scan_sheet_expanded") { ScanSheets(expanded = true) }
 

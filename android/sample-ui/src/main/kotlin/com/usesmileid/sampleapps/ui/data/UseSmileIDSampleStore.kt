@@ -108,13 +108,11 @@ data class UseSmileIDSampleSessionRecord(
 )
 
 /**
- * Drops a settings key whose control has gone, so a persisted value cannot outlive it — otherwise a
- * device left on Production keeps submitting live with no UI to clear it. Self-terminating, so it
- * needs no version counter: once the key is gone [shouldMigrate] is false forever.
+ * Drops a settings key whose control has gone: a device left on Production would keep submitting live
+ * with no UI to clear it. Self-terminating, so it needs no version counter.
  */
 internal object UseSmileIDSampleRetiredSettingKeys : DataMigration<Preferences> {
 
-    /** `production` retired with the Settings environment row — the token decides the environment now. */
     private val RETIRED = listOf(booleanPreferencesKey("production"))
 
     override suspend fun shouldMigrate(currentData: Preferences): Boolean = RETIRED.any { it in currentData }

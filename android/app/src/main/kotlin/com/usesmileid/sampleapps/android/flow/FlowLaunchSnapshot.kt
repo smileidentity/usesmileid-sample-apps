@@ -28,7 +28,6 @@ data class FlowLaunchSnapshot(
     /** Run out — the one thing that routes back to the scanner (TOK-A5). Usually true with no [session]. */
     val sessionExpired: Boolean = false,
 ) {
-    /** [sandbox] named for the result card, which is what publishes where a run went. */
     val environment: UseSmileIDSampleEnvironment
         get() = if (sandbox) UseSmileIDSampleEnvironment.Sandbox else UseSmileIDSampleEnvironment.Production
 }

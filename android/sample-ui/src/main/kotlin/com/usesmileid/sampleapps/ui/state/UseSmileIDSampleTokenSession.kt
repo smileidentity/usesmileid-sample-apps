@@ -25,7 +25,7 @@ data class UseSmileIDSampleTokenSession(
      * request gets a 401. Never logged — a partner id is on this repo's never-commit list.
      */
     val partnerId: String? = null,
-    /** The environment the token was minted for, from its own `api_url` claim, and the only thing deciding where a run submits. Never null on a linked session: the decoder refuses a token it cannot place. */
+    /** From the token's own `api_url` claim. Never null on a linked session: the decoder refuses a token it cannot place. */
     val environment: UseSmileIDSampleEnvironment? = null,
 ) {
 

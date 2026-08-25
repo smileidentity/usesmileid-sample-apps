@@ -42,7 +42,7 @@ data class UseSmileIDSampleScanSheetState(
     /** Why the entered token is not a session — shown under the field, never the token itself. */
     val rejection: String? = null,
     val span: UseSmileIDSampleSimulatedSpan = UseSmileIDSampleSimulatedSpan.FifteenMinutes,
-    /** Which host the minted token's `api_url` names, which is the whole of how a run picks its environment. */
+    /** Which host the minted token's `api_url` will name. */
     val environment: UseSmileIDSampleEnvironment = UseSmileIDSampleEnvironment.Sandbox,
     val bindings: UseSmileIDSampleSimulatedBindings = UseSmileIDSampleSimulatedBindings(),
     /** The mint controls start closed so the viewfinder keeps its height. */

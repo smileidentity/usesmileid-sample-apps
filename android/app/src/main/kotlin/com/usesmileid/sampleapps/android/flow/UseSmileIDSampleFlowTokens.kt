@@ -44,7 +44,7 @@ object UseSmileIDSampleFlowTokens {
         val claims = buildList {
             add(""""iat":$issuedAt""")
             add(""""exp":${issuedAt + span.span.inWholeSeconds}""")
-            // Path and all, as a real claim carries it, so the fixture meets the host match honestly.
+            // With the path a real claim carries, so the fixture exercises the host match.
             add(""""api_url":"${environment.baseUrl}$API_PATH"""")
             if (bindings.binds) add(payloadClaim(bindings, issuedAt))
         }

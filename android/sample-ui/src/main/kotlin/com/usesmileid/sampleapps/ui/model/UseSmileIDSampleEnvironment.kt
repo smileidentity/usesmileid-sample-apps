@@ -8,7 +8,7 @@ enum class UseSmileIDSampleEnvironment(val id: String, val label: String, val ho
     Production("production", "Production", "api.smileidentity.com"),
     ;
 
-    /** The base URL that host serves, in the trailing-slash form Retrofit and the SDK's constants both take. */
+    /** Trailing slash, which is the form Retrofit and the SDK's own constants both take. */
     val baseUrl: String get() = "https://$host/"
 }
 

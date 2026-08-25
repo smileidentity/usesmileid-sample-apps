@@ -312,7 +312,6 @@ class UseSmileIDSampleTokenDecoderTest {
         const val GRANTED_AT = "2026-08-18T09:00:00Z"
         const val HEADER = """{"alg":"none","typ":"JWT"}"""
 
-        /** The real shape a Portal token carries: a `/v3` path and no trailing slash. */
         const val SANDBOX_URL = """"api_url":"https://testapi.smileidentity.com/v3""""
         val CONSENT = """"consent":{"granted":true,"granted_at":"$GRANTED_AT",""" +
             """"notice_language":"en","notice_privacy_policy_url":"https://usesmileid.com/privacy-policy"}"""
