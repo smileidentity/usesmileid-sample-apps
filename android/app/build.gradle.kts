@@ -1,3 +1,8 @@
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.process.ExecOperations
+import javax.inject.Inject
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
@@ -58,6 +63,105 @@ tasks.withType<Test>().configureEach {
     inputs.file(layout.projectDirectory.file("src/main/AndroidManifest.xml"))
         .withPropertyName("manifestScheme")
         .withPathSensitivity(PathSensitivity.RELATIVE)
+}
+
+/**
+ * Third-party notices. The list is the RELEASE runtime classpath, because that is what a partner
+ * ships: the SDK's transitive set plus this app's own. Resolution happens here because only Gradle
+ * knows it; the rules — parent-POM walk, the reviewed override table, more than one licence per
+ * artifact, and failing rather than emitting "Unknown" — live in the generator, where they are tested.
+ */
+abstract class LicenseNotices : DefaultTask() {
+
+    @get:Input
+    abstract val coordinates: ListProperty<String>
+
+    @get:Input
+    abstract val check: Property<Boolean>
+
+    @get:InputFile
+    abstract val generator: RegularFileProperty
+
+    @get:InputDirectory
+    abstract val licenseTexts: DirectoryProperty
+
+    /** The committed asset: an output when generating, and the thing compared against when checking. */
+    @get:Internal
+    abstract val notices: RegularFileProperty
+
+    @get:OutputFile
+    abstract val coordinateList: RegularFileProperty
+
+    @get:Inject
+    abstract val exec: ExecOperations
+
+    @TaskAction
+    fun run() {
+        val list = coordinateList.get().asFile
+        list.parentFile.mkdirs()
+        list.writeText(coordinates.get().joinToString("\n", postfix = "\n"))
+        exec.exec {
+            commandLine(
+                buildList {
+                    add("python3")
+                    add(generator.get().asFile.absolutePath)
+                    add("--coordinates")
+                    add(list.absolutePath)
+                    add("--texts")
+                    add(licenseTexts.get().asFile.absolutePath)
+                    add("--out")
+                    add(notices.get().asFile.absolutePath)
+                    if (check.get()) add("--check")
+                },
+            )
+        }
+    }
+}
+
+// Through the variant API, because the release runtime classpath does not exist until AGP creates
+// the variant; `resolvedArtifacts` is a lazy provider, which is what keeps the tasks cacheable.
+androidComponents {
+    onVariants(selector().withBuildType("release")) { variant ->
+        // The dependency GRAPH, not the artifacts: asking for files here makes Gradle match variant
+        // attributes it has no reason to, and a licence needs the coordinate rather than the jar.
+        val modules = variant.runtimeConfiguration.incoming.resolutionResult.rootComponent.map { root ->
+            val seen = linkedSetOf<String>()
+            val walked = mutableSetOf<ResolvedComponentResult>()
+            fun walk(component: ResolvedComponentResult) {
+                if (!walked.add(component)) return
+                (component.id as? ModuleComponentIdentifier)?.let {
+                    seen += "${it.group}:${it.module}:${it.version}"
+                }
+                component.dependencies.filterIsInstance<ResolvedDependencyResult>()
+                    .forEach { walk(it.selected) }
+            }
+            walk(root)
+            seen.sorted()
+        }
+        val asset = layout.projectDirectory.file("../sample-ui/src/main/assets/licenses.json")
+        val script = layout.projectDirectory.file("../../scripts/generate_licenses.py")
+        val texts = layout.projectDirectory.dir("../../scripts/license-texts")
+
+        tasks.register<LicenseNotices>("generateLicenses") {
+            description = "Regenerates sample-ui's third-party notices from the release runtime classpath."
+            coordinates.set(modules)
+            check.set(false)
+            generator.set(script)
+            licenseTexts.set(texts)
+            notices.set(asset)
+            coordinateList.set(layout.buildDirectory.file("licenses/coordinates.txt"))
+        }
+
+        tasks.register<LicenseNotices>("checkLicenses") {
+            description = "Fails when the committed third-party notices no longer match the release classpath."
+            coordinates.set(modules)
+            check.set(true)
+            generator.set(script)
+            licenseTexts.set(texts)
+            notices.set(asset)
+            coordinateList.set(layout.buildDirectory.file("licenses/checked-coordinates.txt"))
+        }
+    }
 }
 
 dependencies {

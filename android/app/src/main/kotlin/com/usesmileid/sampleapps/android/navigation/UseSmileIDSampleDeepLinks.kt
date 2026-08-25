@@ -24,6 +24,8 @@ internal object UseSmileIDSampleDeepLinks {
     const val NEW_PROFILE = "$SCHEME://profiles/new"
     const val PROFILE_CONFIG = "$SCHEME://profiles/{profileId}"
 
+    const val LICENSES = "$SCHEME://settings/licenses"
+
     const val SCAN_TOKEN = "$SCHEME://token/scan"
     const val SCENARIO_DRAWER = "$SCHEME://debug/scenarios"
 

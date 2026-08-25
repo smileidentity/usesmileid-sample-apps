@@ -581,6 +581,36 @@
       ]
     },
     {
+      "id": "licenses",
+      "title": "Open-source licenses",
+      "owner": "sample",
+      "board": "none",
+      "route": "push",
+      "states": [
+        {
+          "state": "default",
+          "note": "NO DESIGN FRAME: the design set has a LEGAL row called 'Open-source licenses' and no destination for it. Built from components this app already has — TopAppBar, SectionLabel, SettingRow — so it cannot look bolted on, and deliberately as a flat list rather than the rounded section cards the other screens use: two hundred rows inside one card compose all of them at once."
+        },
+        {
+          "state": "empty",
+          "note": "The notices are generated into the binary at build time, so an empty list means the asset did not ship. It says that rather than showing nothing."
+        }
+      ],
+      "note": "Two sections, because not every dependency is open source: 'OPEN-SOURCE COMPONENTS' lists each artifact with its declared licence and expands to the full licence text, and 'UNDER GOOGLE'S OWN TERMS' lists the ML Kit, Play Integrity and Android SDK artifacts, which declare terms-of-service pages rather than a licence — there is no text to ship for those, so the row opens the page. Content comes from scripts/generate_licenses.py, which resolves the RELEASE runtime classpath (the SDK's transitive set plus the app's own, which is what a partner ships), walks parent POMs, keeps more than one licence per artifact, and FAILS the build rather than emitting 'Unknown'. The first-party SDK is excluded: a partner licenses it from Smile ID, so its terms are not a third-party notice. Every platform generates its own file — the classpath differs per platform — and no port hand-maintains a list.",
+      "components": [
+        "TopAppBar",
+        "SectionLabel",
+        "SettingRow"
+      ],
+      "testIds": [
+        "sample_licenses_screen",
+        "sample_licenses_empty",
+        "sample_license_row",
+        "sample_license_text",
+        "sample_license_link"
+      ]
+    },
+    {
       "id": "scenarioDrawer",
       "title": "Scenario drawer",
       "owner": "sample",

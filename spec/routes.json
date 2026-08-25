@@ -50,6 +50,20 @@
       }
     },
     {
+      "id": "licenses",
+      "screen": "licenses",
+      "path": "/settings/licenses",
+      "presentation": "push",
+      "args": [],
+      "platform": {
+        "android": "LicensesScreenDestination",
+        "ios": "Route.licenses",
+        "flutter": "/settings/licenses",
+        "expo": "app/(tabs)/settings/licenses.tsx"
+      },
+      "notes": "The third-party notices, shipped in the binary rather than linked: Apache-2.0 §4 asks the notice to travel with the distribution, so every platform renders its own generated licenses.json instead of opening a URL. Reachable by deep link like every other route, which is also how a device flow gets to it without scrolling Settings."
+    },
+    {
       "id": "verificationDetails",
       "screen": "verificationDetails",
       "path": "/verifications/:jobId",

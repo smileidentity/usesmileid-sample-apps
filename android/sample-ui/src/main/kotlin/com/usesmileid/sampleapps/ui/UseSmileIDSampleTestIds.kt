@@ -24,6 +24,8 @@ object UseSmileIDSampleTestIds {
     const val PROFILE_CONFIG_SCREEN = "sample_profile_config_screen"
     const val NEW_PROFILE_SHEET = "sample_new_profile_sheet"
     const val SCAN_TOKEN_SCREEN = "sample_scan_token_screen"
+    const val LICENSES_SCREEN = "sample_licenses_screen"
+    const val LICENSES_EMPTY = "sample_licenses_empty"
 
     // The drawer's own root; its opener is a separate id, matching every other sheet and opener.
     const val SCENARIO_DRAWER = "sample_scenario_drawer"
@@ -112,6 +114,8 @@ object UseSmileIDSampleTestIds {
         PROFILE_CONFIG_SCREEN,
         NEW_PROFILE_SHEET,
         SCAN_TOKEN_SCREEN,
+        LICENSES_SCREEN,
+        LICENSES_EMPTY,
         SCENARIO_DRAWER,
         TOAST,
         TOAST_UNDO,
@@ -180,6 +184,13 @@ object UseSmileIDSampleTestIds {
 
     fun settingNav(rowId: String) = "sample_setting_nav_$rowId"
 
+    /** Coordinates carry dots and colons, which no id may: they become underscores. */
+    fun licenseRow(artifact: String) = "sample_license_row_${artifact.idSafe()}"
+
+    fun licenseText(artifact: String) = "sample_license_text_${artifact.idSafe()}"
+
+    fun licenseLink(artifact: String) = "sample_license_link_${artifact.idSafe()}"
+
     fun scenarioItem(scenarioId: String) = "sample_scenario_item_$scenarioId"
 
     fun themeItem(themeId: String) = "sample_theme_item_$themeId"
@@ -205,4 +216,6 @@ object UseSmileIDSampleTestIds {
     fun profileRow(profileId: String) = "sample_profile_row_$profileId"
 
     fun profileConfigField(field: String) = "sample_profile_config_field_$field"
+
+    private fun String.idSafe() = replace(Regex("[^A-Za-z0-9]"), "_")
 }

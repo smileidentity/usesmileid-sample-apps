@@ -282,6 +282,26 @@
         "description": "One ABOUT/LEGAL navigation row; suffixed with the row id."
       },
       {
+        "id": "sample_licenses_screen",
+        "description": "The third-party notices screen, opened by the LEGAL 'Open-source licenses' row."
+      },
+      {
+        "id": "sample_licenses_empty",
+        "description": "Shown when the generated notices asset did not ship with the build, which is the only way the list is empty."
+      },
+      {
+        "id": "sample_license_row",
+        "description": "One component's notice; suffixed with its artifact coordinate, with every non-alphanumeric character replaced by an underscore (a coordinate carries dots and colons, which an id may not)."
+      },
+      {
+        "id": "sample_license_text",
+        "description": "The expanded licence text for one component; same suffix as its row."
+      },
+      {
+        "id": "sample_license_link",
+        "description": "The row that opens a licence whose text ships inside the component rather than with the app; same suffix as its row."
+      },
+      {
         "id": "sample_sign_out",
         "description": "Sign out row."
       },
