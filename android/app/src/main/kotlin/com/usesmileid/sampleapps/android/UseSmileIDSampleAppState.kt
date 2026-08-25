@@ -67,14 +67,8 @@ class UseSmileIDSampleAppState(
 
     val sessionActive: Boolean get() = session?.hasExpired(nowMillis) == false
 
-    /** The only place the environment is decided, so the chip and the builder cannot disagree. */
-    val useSandbox: Boolean get() = launchArgs.sandbox ?: settings.useSandbox
-
-    /** True while the launch argument owns the choice, so Settings shows the row read-only. */
-    val environmentPinned: Boolean get() = launchArgs.sandbox != null
-
-    val environment: UseSmileIDSampleEnvironment
-        get() = if (useSandbox) UseSmileIDSampleEnvironment.Sandbox else UseSmileIDSampleEnvironment.Production
+    /** The only place the environment is decided. The linked session owns it; no session is sandbox, which is every automation run. */
+    val useSandbox: Boolean get() = session?.environment != UseSmileIDSampleEnvironment.Production
 }
 
 /** Ticks once a second while a session is live. The deadline is absolute, so a restored session needs no recomputing. */

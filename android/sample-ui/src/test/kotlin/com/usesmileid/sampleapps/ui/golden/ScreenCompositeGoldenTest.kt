@@ -99,6 +99,13 @@ class ScreenCompositeGoldenTest : GoldenTest() {
     @Test
     fun scan_sheet_max_font_scale() = assertSurvivesMaxFontScale { ScanSheets() }
 
+    // Expanded: the mint controls are collapsed by default, and nothing else picks an environment.
+    @Test
+    fun scan_sheet_expanded() = goldens("scan_sheet_expanded") { ScanSheets(expanded = true) }
+
+    @Test
+    fun scan_sheet_expanded_max_font_scale() = assertSurvivesMaxFontScale { ScanSheets(expanded = true) }
+
     // The scanner's four states, which a device screenshot cannot pin: three of them last under a
     // second before the screen moves on.
     @Test
@@ -228,13 +235,14 @@ private fun ScanStatus(state: UseSmileIDSampleScanState) =
     UseSmileIDSampleScanStatus(state = state, onRetry = {})
 
 @Composable
-private fun ScanSheets() = UseSmileIDSampleScanSheet(
-    state = UseSmileIDSampleScanSheetState(),
+private fun ScanSheets(expanded: Boolean = false) = UseSmileIDSampleScanSheet(
+    state = UseSmileIDSampleScanSheetState(expanded = expanded),
     onTokenChange = {},
     onPaste = {},
     onLink = {},
     onExpandToggle = {},
     onSpanSelect = {},
+    onEnvironmentSelect = {},
     onBindingsChange = {},
     onSimulate = {},
 )

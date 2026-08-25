@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.ui.data
 
 import android.content.Context
+import androidx.datastore.core.DataMigration
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -23,7 +24,6 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
     val settings: Flow<UseSmileIDSampleSettings> = store.data.map { prefs ->
         val defaults = UseSmileIDSampleSettings()
         UseSmileIDSampleSettings(
-            production = prefs[PRODUCTION] ?: defaults.production,
             smileToCapture = prefs[SMILE_TO_CAPTURE] ?: defaults.smileToCapture,
             agentMode = prefs[AGENT_MODE] ?: defaults.agentMode,
             darkMode = prefs[DARK_MODE] ?: defaults.darkMode,
@@ -77,7 +77,6 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
     }
 
     private fun UseSmileIDSampleSetting.key(): Preferences.Key<Boolean> = when (this) {
-        UseSmileIDSampleSetting.Production -> PRODUCTION
         UseSmileIDSampleSetting.SmileToCapture -> SMILE_TO_CAPTURE
         UseSmileIDSampleSetting.AgentMode -> AGENT_MODE
         UseSmileIDSampleSetting.DarkMode -> DARK_MODE
@@ -87,7 +86,6 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
     }
 
     private companion object {
-        val PRODUCTION = booleanPreferencesKey("production")
         val SMILE_TO_CAPTURE = booleanPreferencesKey("smile_to_capture")
         val AGENT_MODE = booleanPreferencesKey("agent_mode")
         val DARK_MODE = booleanPreferencesKey("dark_mode")
@@ -109,5 +107,24 @@ data class UseSmileIDSampleSessionRecord(
     val ended: UseSmileIDSampleEndedSession? = null,
 )
 
+/**
+ * Drops a settings key whose control has gone: a device left on Production would keep submitting live
+ * with no UI to clear it. Self-terminating, so it needs no version counter.
+ */
+internal object UseSmileIDSampleRetiredSettingKeys : DataMigration<Preferences> {
+
+    private val RETIRED = listOf(booleanPreferencesKey("production"))
+
+    override suspend fun shouldMigrate(currentData: Preferences): Boolean = RETIRED.any { it in currentData }
+
+    override suspend fun migrate(currentData: Preferences): Preferences =
+        currentData.toMutablePreferences().apply { RETIRED.forEach { remove(it) } }
+
+    override suspend fun cleanUp() = Unit
+}
+
 // Not an application id, so it stays identity-agnostic and the same across all eight hosts.
-private val Context.sampleStore by preferencesDataStore(name = "usesmileid_sample")
+private val Context.sampleStore by preferencesDataStore(
+    name = "usesmileid_sample",
+    produceMigrations = { listOf(UseSmileIDSampleRetiredSettingKeys) },
+)

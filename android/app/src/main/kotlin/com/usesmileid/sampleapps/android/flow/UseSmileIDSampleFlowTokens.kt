@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.android.flow
 
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleSimulatedBindings
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleSimulatedSpan
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCountry
@@ -34,6 +35,7 @@ object UseSmileIDSampleFlowTokens {
     fun session(
         span: UseSmileIDSampleSimulatedSpan,
         bindings: UseSmileIDSampleSimulatedBindings,
+        environment: UseSmileIDSampleEnvironment,
         nowMillis: Long,
     ): String {
         val nowSeconds = nowMillis / MILLIS_PER_SECOND
@@ -42,6 +44,8 @@ object UseSmileIDSampleFlowTokens {
         val claims = buildList {
             add(""""iat":$issuedAt""")
             add(""""exp":${issuedAt + span.span.inWholeSeconds}""")
+            // With the path a real claim carries, so the fixture exercises the host match.
+            add(""""api_url":"${environment.baseUrl}$API_PATH"""")
             if (bindings.binds) add(payloadClaim(bindings, issuedAt))
         }
         return listOf(HEADER, claims.joinToString(",", prefix = "{", postfix = "}"), SIGNATURE)
@@ -78,6 +82,7 @@ object UseSmileIDSampleFlowTokens {
     private const val MILLIS_PER_SECOND = 1000L
     private const val VALIDITY_SECONDS = 3600L
     private const val ENDED_LAG_SECONDS = 60L
+    private const val API_PATH = "v3"
     private const val GRANTED_AT_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'"
     private const val PRIVACY_POLICY_URL = "https://usesmileid.com/privacy-policy"
     private val VAULTED_FIELDS = listOf("given_names", "last_name", "email", "phone_number", "id_number")

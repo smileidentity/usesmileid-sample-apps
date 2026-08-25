@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.state
 
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.milliseconds
@@ -92,6 +93,7 @@ class UseSmileIDSampleTokenSessionTest {
         issuedAtMillis = NOW,
         expiresAtMillis = NOW + span.inWholeMilliseconds,
         bindings = UseSmileIDSampleTokenBindings(),
+        environment = UseSmileIDSampleEnvironment.Sandbox,
     )
 
     private companion object {

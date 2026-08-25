@@ -28,10 +28,8 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleAvatar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
 import com.usesmileid.sampleapps.ui.components.hue
 import com.usesmileid.sampleapps.ui.components.iconRes
-import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProductCard
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProductGrid
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProfileEnvChip
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleResultLine
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionHeader
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSessionCard
@@ -43,7 +41,6 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** What the products header and session strip render, so the screen stays free of clock and store. */
 data class UseSmileIDSampleProductsState(
-    val environment: UseSmileIDSampleEnvironment,
     val initials: String,
     /** The active profile's avatar hue, so every screen showing it agrees. */
     val avatarColor: Color = smileProfileHues.first(),
@@ -88,8 +85,7 @@ fun ProductsScreen(
                         color = UseSmileIDSampleTheme.colors.textTitle,
                         modifier = Modifier.weight(1f),
                     )
-                    UseSmileIDSampleProfileEnvChip(environment = state.environment)
-                    // The chip is display-only; this button owns profile switching.
+                    // The environment chip is hidden here (node 5447:1705); the result card publishes it.
                     UseSmileIDSampleAvatar(
                         initials = state.initials,
                         containerColor = state.avatarColor,

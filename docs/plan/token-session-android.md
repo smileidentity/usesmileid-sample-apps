@@ -92,24 +92,28 @@ properties of that claim decide most of this plan:
 ### 2.1 What a real Portal token actually contains, read off two of them
 
 Decoded from two tokens minted from the Portal and scanned on device (2026-08-19) — an 8h and a 1h —
-with values withheld throughout. Both had **identical claim sets**:
+with values withheld throughout. Both had **identical claim sets**. **Finding 1 was superseded on
+2026-08-24** by a third token, an 8h one decoded the same way, which carries the environment claim the
+first two lacked; that finding and the table are restated here, and the other five stand as read.
 
 | Where | Claims |
 |---|---|
-| top level | `aud`, `exp`, `iat`, `iss`, `key_id`, `nbf`, `partner_id`, `payload` |
+| top level | `api_url` (2026-08-24 token only), `aud`, `exp`, `iat`, `iss`, `key_id`, `nbf`, `partner_id`, `payload` |
 | `payload` | `country`, `email`, `given_names`, `id_number`, `id_type`, `last_name`, `phone_number` |
 
 Six things follow, each of which had been a guess until now:
 
-1. **There is no environment claim.** Nothing named `env`, `is_sandbox`, `environment`, `mode`, or
-   anything else matching an environment word; no claim *value* mentioning sandbox or production; no
-   booleans anywhere. `aud` and `iss` are the constants `smileid-api` and `smileid-auth`, identical in
-   both tokens, so they do not encode it either. The environment is implied by the API key that minted
-   the token (`key_id`) and resolved server-side. **Owner decision 2026-08-19 was "the token wins and
-   drives `useSandbox`" — which cannot be built until the Portal adds the claim.** Until then the
-   active profile is the only source of environment, and a mismatch surfaces as an auth failure on the
-   result card. **Portal ask: add an environment claim.** One decode rule and its tests land the moment
-   it exists.
+1. **The environment arrives as a top-level `api_url` claim.** Neither of the two tokens read on
+   2026-08-19 carried one — nothing named `env`, `is_sandbox`, `environment` or `mode`, no claim
+   *value* mentioning sandbox or production, and `aud` and `iss` are the constants `smileid-api` and
+   `smileid-auth` in every token seen since. The 2026-08-24 token settles it: `api_url` sits at the top
+   level beside `partner_id` and `key_id`, and its value on that token was
+   `https://api.smileidentity.com/v3` — a **production** host, carrying a `/v3` path and no trailing
+   slash. Two things follow. **Owner decision 2026-08-19, "the token wins and drives `useSandbox`", is
+   buildable**, so the active profile is no longer the source of environment. And the claim is a URL
+   rather than a boolean, so the host maps its **parsed host** onto an environment — a whole-string
+   comparison fails on a real token, and fails silently. The Portal ask is **closed**;
+   `environment-from-token-android.md` §2 and §6.1 carry the mapping and the rulings that follow.
 2. **No `jti`.** So TOK-A3's fallback is the normal path, not the exception: the session handle a
    partner sees is the short digest, and the `jti` branch is exercised by unit test only.
 3. **`iat` is present**, which is what makes TOK-A6's `exp - iat` span honest. Requiring it was a real
@@ -388,6 +392,9 @@ reads as a defect in the SDK.
    **Fixed:** one resolution on the app state, `launchArgs.sandbox ?: settings.useSandbox`, feeding both
    the chip and the builder. A Settings row owns the choice, `sandbox` is nullable so an argument
    overrides only where it was passed, and the profile no longer carries an environment at all.
+   **Superseded 2026-08-24, mechanism only:** the single-resolution property is what mattered and it
+   still holds, but its inputs are gone — the token's `api_url` claim now decides, so there is no
+   Settings row, no `sandbox` argument and no chip. See `environment-from-token-android.md`.
 
 3. **Sandbox only accepts predefined test identities, and this repo documents none.** The ID-details
    form accepts any value, so a run typed with an arbitrary ID number cannot succeed whatever the

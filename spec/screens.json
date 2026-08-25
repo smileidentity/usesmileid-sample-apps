@@ -83,12 +83,6 @@
           "layout": "drawn on the superseded list layout — restate on the grid"
         },
         {
-          "state": "production",
-          "node": "5206-2391",
-          "note": "Production environment chip; same layout caveat.",
-          "layout": "drawn on the superseded list layout — restate on the grid"
-        },
-        {
           "state": "supersededListLayout",
           "node": "5206-2305",
           "note": "Original ActionTile list layout. Superseded by 5206-4037 per owner ruling 2026-08-12 — kept only so nobody re-implements it by accident.",
@@ -96,7 +90,6 @@
         }
       ],
       "components": [
-        "ProfileEnvChip",
         "Avatar",
         "SectionHeader",
         "ProductCard",
@@ -108,7 +101,6 @@
       ],
       "testIds": [
         "sample_products_screen",
-        "sample_env_chip",
         "sample_profile_avatar_button",
         "sample_product_card",
         "sample_session_card",
@@ -116,7 +108,7 @@
         "sample_session_ended_banner"
       ],
       "canonicalLayoutUrl": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-4037",
-      "ruling": "OWNER RULING 2026-08-13: build the EXPRESSIVE GRID (5206-4037). The prototype runs the old list layout throughout and is not being updated, so the grid is authoritative for layout and the list frames are reference-only for the states drawn on them.",
+      "ruling": "OWNER RULING 2026-08-13: build the EXPRESSIVE GRID (5206-4037). The prototype runs the old list layout throughout and is not being updated, so the grid is authoritative for layout and the list frames are reference-only for the states drawn on them. OWNER RULING 2026-08-24: the header no longer renders the environment chip — node 5447:1705 keeps the profile-env instance in the frame with hidden=true. The component and its sample_env_chip id survive in components.json and test-ids.json; the environment is a property of the session token now, and the result card is what publishes it. The `production` screen state goes with it: no production state is reachable from the app.",
       "designAsks": [
         "a 6th product card for Enhanced KYC (icon + hue)",
         "a header avatar button next to the environment chip, which opens the profile-switch sheet"
@@ -243,7 +235,8 @@
         "sample_detail_field",
         "sample_detail_copy",
         "sample_status_badge",
-        "sample_details_check_status"
+        "sample_details_check_status",
+        "sample_result_environment"
       ],
       "entryPoints": [
         "push from the verifications list",
@@ -415,17 +408,12 @@
           "node": "5206-3018"
         },
         {
-          "state": "production",
-          "node": "5206-3138"
-        },
-        {
           "state": "newlyCreatedProfile",
           "node": "5206-3547"
         }
       ],
       "sections": [
         "PROFILE",
-        "ENVIRONMENT (one row: Production — not in the design, added because the sandbox launch argument is an override rather than a source)",
         "CAPTURE (two rows: Smile to capture, Agent mode)",
         "APPEARANCE",
         "SDK SCREENS — SHOW OR SKIP FLOW STEPS",
@@ -444,7 +432,6 @@
       ],
       "testIds": [
         "sample_settings_screen",
-        "sample_setting_production",
         "sample_setting_agent_mode",
         "sample_setting_dark_mode",
         "sample_setting_consent_step",
@@ -456,7 +443,7 @@
         "footer": "UseSmileID Sample · 1.0.0",
         "aboutDocs": "docs.smileidentity.com"
       },
-      "note": "The PROFILE row opens the profiles LIST, not the active profile's own page — configuring any profile and creating one are both reached from there. Its avatar takes the ACTIVE profile's hue from design-tokens.json profileHues, indexed by list position, so the summary, the list and the products header never draw the same profile in three colours."
+      "note": "The PROFILE row opens the profiles LIST, not the active profile's own page — configuring any profile and creating one are both reached from there. Its avatar takes the ACTIVE profile's hue from design-tokens.json profileHues, indexed by list position, so the summary, the list and the products header never draw the same profile in three colours. The ENVIRONMENT section was removed on 2026-08-24: it was never in the design, and it existed only because the sandbox launch argument was an override rather than a source. Both are gone — the token's api_url decides the environment, and a run reports it on sample_result_environment."
     },
     {
       "id": "profiles",
@@ -581,7 +568,8 @@
         "sample_scan_token_screen",
         "sample_token_manual_entry",
         "sample_token_paste",
-        "sample_token_simulate"
+        "sample_token_simulate",
+        "sample_token_environment"
       ]
     },
     {

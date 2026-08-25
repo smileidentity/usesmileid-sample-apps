@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.golden
 
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleResult
@@ -12,6 +13,7 @@ internal object ResultFixtures {
         activeScenario = UseSmileIDSampleScenario.Normal,
         activeTheme = UseSmileIDSampleThemeScenario.BrandDefault,
         route = UseSmileIDSampleFlowRoute.Fullscreen,
+        environment = UseSmileIDSampleEnvironment.Sandbox,
         jobStatus = UseSmileIDSampleFlowStatus.Idle,
         resultCallbackCount = 0,
         refreshCallbackCount = 0,

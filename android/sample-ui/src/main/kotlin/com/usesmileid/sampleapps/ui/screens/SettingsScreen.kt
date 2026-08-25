@@ -23,7 +23,6 @@ import com.smileid.designsystem.SmileDimens
 import com.smileid.designsystem.smileProfileHues
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDestructiveRow
-import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProfileRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionSurface
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRow
@@ -44,8 +43,6 @@ data class UseSmileIDSampleNavRow(
 /** Everything the settings list renders; callbacks stay parameters, like every screen. */
 data class UseSmileIDSampleSettingsState(
     val settings: UseSmileIDSampleSettings,
-    val environment: UseSmileIDSampleEnvironment,
-    val environmentPinned: Boolean,
     val organisation: String,
     val initials: String,
     /** Passed in because it names the host, and this module runs under eight. */
@@ -92,24 +89,6 @@ fun SettingsScreen(
                 avatarColor = state.avatarColor,
                 trailing = { UseSmileIDSampleSettingRowChevron() },
                 testId = UseSmileIDSampleTestIds.PROFILE_SUMMARY,
-            )
-        }
-
-        // Not in the design. Read-only while a launch argument owns the choice.
-        section("ENVIRONMENT") {
-            SwitchRow(
-                title = "Production",
-                icon = R.drawable.sample_ic_settings,
-                supportingText = when {
-                    state.environmentPinned -> "Pinned by the sandbox launch argument"
-                    state.environment == UseSmileIDSampleEnvironment.Production -> "Jobs submit to the live environment"
-                    else -> "Jobs submit to sandbox"
-                },
-                checked = state.environment == UseSmileIDSampleEnvironment.Production,
-                setting = UseSmileIDSampleSetting.Production,
-                testId = UseSmileIDSampleTestIds.SETTING_PRODUCTION,
-                onSettingChange = onSettingChange,
-                enabled = !state.environmentPinned,
             )
         }
 
@@ -253,7 +232,6 @@ private fun SwitchRow(
     testId: String,
     onSettingChange: (UseSmileIDSampleSetting, Boolean) -> Unit,
     @DrawableRes icon: Int,
-    enabled: Boolean = true,
 ) {
     UseSmileIDSampleSettingRow(
         title = title,
@@ -263,7 +241,6 @@ private fun SwitchRow(
             UseSmileIDSampleSwitch(
                 checked = checked,
                 onCheckedChange = { onSettingChange(setting, it) },
-                enabled = enabled,
                 testId = testId,
             )
         },

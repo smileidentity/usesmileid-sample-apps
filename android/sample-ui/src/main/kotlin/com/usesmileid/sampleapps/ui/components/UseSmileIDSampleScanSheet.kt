@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleSimulatedBindings
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleSimulatedSpan
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
@@ -41,6 +42,8 @@ data class UseSmileIDSampleScanSheetState(
     /** Why the entered token is not a session — shown under the field, never the token itself. */
     val rejection: String? = null,
     val span: UseSmileIDSampleSimulatedSpan = UseSmileIDSampleSimulatedSpan.FifteenMinutes,
+    /** Which host the minted token's `api_url` will name. */
+    val environment: UseSmileIDSampleEnvironment = UseSmileIDSampleEnvironment.Sandbox,
     val bindings: UseSmileIDSampleSimulatedBindings = UseSmileIDSampleSimulatedBindings(),
     /** The mint controls start closed so the viewfinder keeps its height. */
     val expanded: Boolean = false,
@@ -60,6 +63,7 @@ fun UseSmileIDSampleScanSheet(
     onLink: () -> Unit,
     onExpandToggle: () -> Unit,
     onSpanSelect: (UseSmileIDSampleSimulatedSpan) -> Unit,
+    onEnvironmentSelect: (UseSmileIDSampleEnvironment) -> Unit,
     onBindingsChange: (UseSmileIDSampleSimulatedBindings) -> Unit,
     onSimulate: () -> Unit,
     modifier: Modifier = Modifier,
@@ -147,6 +151,22 @@ fun UseSmileIDSampleScanSheet(
                     )
                 }
             }
+            // Minting is where a run picks an environment, because there is no app-side control left.
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+                verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+            ) {
+                UseSmileIDSampleEnvironment.entries.forEach { environment ->
+                    ScanSheetChip(
+                        label = environment.label,
+                        selected = state.environment == environment,
+                        role = Role.RadioButton,
+                        onClick = { onEnvironmentSelect(environment) },
+                        testId = UseSmileIDSampleTestIds.tokenEnvironment(environment.id),
+                    )
+                }
+            }
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
@@ -177,10 +197,17 @@ fun UseSmileIDSampleScanSheet(
 
 /** The filter chip's shape without its count, because what a simulated scan mints has no count. */
 @Composable
-private fun ScanSheetChip(label: String, selected: Boolean, role: Role, onClick: () -> Unit) {
+private fun ScanSheetChip(
+    label: String,
+    selected: Boolean,
+    role: Role,
+    onClick: () -> Unit,
+    testId: String? = null,
+) {
     val colors = UseSmileIDSampleTheme.colors
     Surface(
         modifier = Modifier
+            .tagged(testId)
             .minimumInteractiveComponentSize()
             .selectable(selected = selected, role = role, onClick = onClick),
         shape = RoundedCornerShape(SmileDimens.radiusChip),

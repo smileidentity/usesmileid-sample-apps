@@ -8,6 +8,7 @@
     "activeScenario",
     "activeTheme",
     "route",
+    "environment",
     "jobStatus",
     "resultCallbackCount",
     "refreshCallbackCount"
@@ -26,6 +27,12 @@
       "type": "string",
       "enum": ["fullscreen", "shell"],
       "description": "Entry route hosting the flow."
+    },
+    "environment": {
+      "type": "string",
+      "enum": ["sandbox", "production"],
+      "description": "Which environment the run submitted to, recorded from its entry snapshot. Required, not optional: a card that omits the field when it does not know is indistinguishable from one whose field never reached the tree. It is the ONLY surface that publishes the environment — the token's `api_url` claim decides it, and neither a user control nor a launch argument can override it. A tokenless run reads `sandbox`, which is also every automated run.",
+      "added": "2026-08-24, with the removal of the Production setting and the Products environment chip."
     },
     "jobId": {
       "type": ["string", "null"],

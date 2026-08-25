@@ -41,6 +41,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleScanStatus
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarEmphasis
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScanState
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleSimulatedBindings
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleSimulatedSpan
@@ -66,7 +67,7 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 fun ScanTokenScreen(
     onBack: () -> Unit,
     onLink: (UseSmileIDSampleTokenSession) -> Unit,
-    onSimulate: (UseSmileIDSampleSimulatedSpan, UseSmileIDSampleSimulatedBindings) -> Unit,
+    onSimulate: (UseSmileIDSampleSimulatedSpan, UseSmileIDSampleSimulatedBindings, UseSmileIDSampleEnvironment) -> Unit,
     onPaste: () -> String?,
     modifier: Modifier = Modifier,
     reason: UseSmileIDSampleScanReason? = null,
@@ -78,6 +79,7 @@ fun ScanTokenScreen(
     var token by rememberSaveable { mutableStateOf("") }
     var rejection by rememberSaveable { mutableStateOf<String?>(null) }
     var span by rememberSaveable { mutableStateOf(UseSmileIDSampleSimulatedSpan.FifteenMinutes) }
+    var environment by rememberSaveable { mutableStateOf(UseSmileIDSampleEnvironment.Sandbox) }
     var bindsConsent by rememberSaveable { mutableStateOf(false) }
     var bindsDetails by rememberSaveable { mutableStateOf(false) }
     var mintExpanded by rememberSaveable { mutableStateOf(false) }
@@ -201,6 +203,7 @@ fun ScanTokenScreen(
                 token = token,
                 rejection = rejection,
                 span = span,
+                environment = environment,
                 bindings = UseSmileIDSampleSimulatedBindings(consent = bindsConsent, userDetails = bindsDetails),
                 expanded = mintExpanded,
             ),
@@ -220,12 +223,17 @@ fun ScanTokenScreen(
             onLink = { judge(token, true) },
             onExpandToggle = { mintExpanded = !mintExpanded },
             onSpanSelect = { span = it },
+            onEnvironmentSelect = { environment = it },
             onBindingsChange = {
                 bindsConsent = it.consent
                 bindsDetails = it.userDetails
             },
             onSimulate = {
-                onSimulate(span, UseSmileIDSampleSimulatedBindings(consent = bindsConsent, userDetails = bindsDetails))
+                onSimulate(
+                    span,
+                    UseSmileIDSampleSimulatedBindings(consent = bindsConsent, userDetails = bindsDetails),
+                    environment,
+                )
             },
         )
     }

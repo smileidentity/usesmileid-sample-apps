@@ -25,7 +25,6 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
     ProductsContent(
         contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
         state = UseSmileIDSampleProductsState(
-            environment = app.environment,
             initials = app.profiles.active.initials,
             avatarColor = avatarColorForProfile(app.profiles.activeIndex),
             sessionId = app.session?.id?.takeIf { app.sessionActive },

@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.ui.data
 
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenBindings
@@ -186,6 +187,7 @@ class UseSmileIDSampleJobStoreRefreshTest {
         issuedAtMillis = NOW - 60_000L,
         expiresAtMillis = expiresAtMillis,
         bindings = UseSmileIDSampleTokenBindings(),
+        environment = UseSmileIDSampleEnvironment.Sandbox,
     )
 
     private fun job(id: String, sessionId: String?, sandbox: Boolean = true) = UseSmileIDSampleJob(

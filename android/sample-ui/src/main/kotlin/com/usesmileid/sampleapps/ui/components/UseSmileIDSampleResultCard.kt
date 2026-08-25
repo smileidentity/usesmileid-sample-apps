@@ -68,6 +68,7 @@ fun UseSmileIDSampleResultCard(
                 ResultField("Scenario", result.activeScenario.id, UseSmileIDSampleTestIds.RESULT_ACTIVE_SCENARIO)
                 ResultField("Theme", result.activeTheme.id, UseSmileIDSampleTestIds.RESULT_ACTIVE_THEME)
                 ResultField("Route", result.route.id, UseSmileIDSampleTestIds.RESULT_ROUTE)
+                ResultField("Environment", result.environment.id, UseSmileIDSampleTestIds.RESULT_ENVIRONMENT)
                 ResultField("Job id", result.jobId, UseSmileIDSampleTestIds.RESULT_JOB_ID)
                 ResultField("User id", result.userId, UseSmileIDSampleTestIds.RESULT_USER_ID)
                 ResultField("Job status", result.jobStatus.id, UseSmileIDSampleTestIds.RESULT_JOB_STATUS)

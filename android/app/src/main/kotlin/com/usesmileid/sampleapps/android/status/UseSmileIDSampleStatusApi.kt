@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.android.status
 
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -22,15 +23,15 @@ interface UseSmileIDSampleStatusApi {
     ): Response<UseSmileIDSampleStatusResponse>
 
     companion object {
-        /** Sandbox and production, as `spec/` and the SDK both name them. */
-        private const val SANDBOX_URL = "https://testapi.smileidentity.com/"
-        private const val PRODUCTION_URL = "https://api.smileidentity.com/"
-
         /** One per environment, built once: Retrofit makes its own OkHttp client, so per-request was a pool per pull. */
         fun of(sandbox: Boolean): UseSmileIDSampleStatusApi = if (sandbox) sandboxApi else productionApi
 
-        private val sandboxApi: UseSmileIDSampleStatusApi by lazy { build(SANDBOX_URL) }
-        private val productionApi: UseSmileIDSampleStatusApi by lazy { build(PRODUCTION_URL) }
+        private val sandboxApi: UseSmileIDSampleStatusApi by lazy {
+            build(UseSmileIDSampleEnvironment.Sandbox.baseUrl)
+        }
+        private val productionApi: UseSmileIDSampleStatusApi by lazy {
+            build(UseSmileIDSampleEnvironment.Production.baseUrl)
+        }
 
         private fun build(baseUrl: String): UseSmileIDSampleStatusApi = Retrofit.Builder()
             .baseUrl(baseUrl)
