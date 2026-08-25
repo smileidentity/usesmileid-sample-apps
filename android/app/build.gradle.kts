@@ -30,6 +30,10 @@ android {
         versionName = "1.0.0"
     }
 
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
@@ -248,4 +252,6 @@ dependencies {
     implementation(libs.retrofit.converter.kotlinx.serialization)
 
     testImplementation(libs.junit)
+    // The launch-intent parser needs a real Intent and Uri, which is the only reason this is here.
+    testImplementation(libs.robolectric)
 }

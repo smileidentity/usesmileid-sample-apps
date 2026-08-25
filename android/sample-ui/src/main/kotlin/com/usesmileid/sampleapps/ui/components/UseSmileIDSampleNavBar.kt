@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -81,8 +80,8 @@ fun UseSmileIDSampleNavBar(
     ) {
         Surface(
             modifier = Modifier.weight(1f),
-            shape = RoundedCornerShape(SmileDimens.radiusPill),
-            color = UseSmileIDSampleTheme.colors.surface,
+            shape = UseSmileIDSampleTheme.shapes.pill,
+            color = UseSmileIDSampleTheme.colors.navBar,
             shadowElevation = BAR_ELEVATION,
         ) {
             Row(
@@ -121,7 +120,7 @@ private fun TokenAffordance(progress: Float?, onClick: () -> Unit) {
         Surface(
             modifier = Modifier.defaultMinSize(minWidth = TOKEN_SIZE, minHeight = TOKEN_SIZE),
             shape = CircleShape,
-            color = colors.surface,
+            color = colors.navBar,
             shadowElevation = BAR_ELEVATION,
         ) {
             Column(

@@ -567,6 +567,23 @@ def read_off_black() -> dict:
     return read_spec_delta("offBlack", "values")
 
 
+def emit_kotlin_nav_bar_fill(values) -> str:
+    """The bar's own fill: the page's own colour leaves it invisible in dark."""
+    missing = [mode for mode in ("light", "dark") if not values.get(mode)]
+    if missing:
+        raise TokenError(f"spec/design-tokens.json navBarFill is missing {missing}")
+    return "\n".join([
+        "",
+        "/** The floating nav bar's fill — see the `navBarFill` delta. */",
+        f"val smileNavBarLight: Color = {kotlin_color(values['light'])}",
+        f"val smileNavBarDark: Color = {kotlin_color(values['dark'])}",
+    ])
+
+
+def read_nav_bar_fill() -> dict:
+    return read_spec_delta("navBarFill", "values")
+
+
 def read_border_strong() -> str:
     return read_spec_delta("borderStrong", "value")
 
@@ -661,6 +678,36 @@ def emit_kotlin_card_label_runs(delta: dict) -> str:
     ])
 
 
+def read_products_type() -> dict:
+    spec_path = os.path.join(REPO, SPEC_TOKENS)
+    with io.open(spec_path, encoding="utf-8") as handle:
+        spec = json.load(handle)
+    for delta in spec.get("deltas", []):
+        if delta.get("id") == "productsScreenType":
+            return delta
+    raise TokenError(f"{SPEC_TOKENS} has no productsScreenType delta to generate from")
+
+
+def emit_kotlin_products_type(delta: dict) -> str:
+    """The frame's Type/Heading and Type/Title, which the vendored ramp does not match."""
+    keys = ("headingSize", "headingLineHeight", "headingTracking", "headingWeight",
+            "sectionSize", "sectionLineHeight", "sectionWeight")
+    missing = [k for k in keys if delta.get(k) is None]
+    if missing:
+        raise TokenError(f"productsScreenType is missing {missing}")
+    return "\n".join([
+        "",
+        "/** The products header and section headers, which text-style.* does not match — see the `productsScreenType` delta. */",
+        "val smileHeadingPageSize = %s.sp" % delta["headingSize"],
+        "val smileHeadingPageLineHeight = %s.sp" % delta["headingLineHeight"],
+        "val smileHeadingPageTracking = %s.sp" % delta["headingTracking"],
+        "const val SMILE_HEADING_PAGE_WEIGHT = %s" % delta["headingWeight"],
+        "val smileSectionHeaderSize = %s.sp" % delta["sectionSize"],
+        "val smileSectionHeaderLineHeight = %s.sp" % delta["sectionLineHeight"],
+        "const val SMILE_SECTION_HEADER_WEIGHT = %s" % delta["sectionWeight"],
+    ])
+
+
 def emit_kotlin_profile_hues(hues) -> str:
     """One avatar fill per profile, cycled by list position."""
     if not hues:
@@ -688,12 +735,14 @@ def generate_kotlin_product_hues() -> str:
         + emit_kotlin_surface2(read_surface2())
         + "\n"
         + emit_kotlin_off_black(read_off_black())
+        + emit_kotlin_nav_bar_fill(read_nav_bar_fill())
         + "\n"
         + emit_kotlin_profile_hues(read_profile_hues())
         + "\n"
         + emit_kotlin_token_session(read_token_session())
         + emit_kotlin_label_type_style(read_label_type_style())
         + emit_kotlin_card_label_runs(read_card_label_runs())
+        + emit_kotlin_products_type(read_products_type())
         + "\n"
     )
 

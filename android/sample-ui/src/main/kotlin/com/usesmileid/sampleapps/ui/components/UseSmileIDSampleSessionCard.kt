@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -50,7 +49,7 @@ fun UseSmileIDSampleSessionCard(
     val ink = SmileColorLight.colorTextInverse
     Surface(
         modifier = modifier.fillMaxWidth().testTag(UseSmileIDSampleTestIds.SESSION_CARD),
-        shape = RoundedCornerShape(SmileDimens.radiusSurface),
+        shape = UseSmileIDSampleTheme.shapes.card,
         color = Color.Transparent,
         border = BorderStroke(smileCardStroke, colors.foreground),
     ) {
@@ -103,7 +102,7 @@ fun UseSmileIDSampleSessionEndedBanner(
     val colors = UseSmileIDSampleTheme.colors
     Surface(
         modifier = modifier.fillMaxWidth().testTag(UseSmileIDSampleTestIds.SESSION_ENDED_BANNER),
-        shape = RoundedCornerShape(SmileDimens.radiusSurface),
+        shape = UseSmileIDSampleTheme.shapes.card,
         // Surface-muted per this component's token list; the banner contract's fill is a warm sand.
         color = colors.surfaceMuted,
         // The session card's stroke, per §7.10: color.border carries one light value in BOTH schemes.

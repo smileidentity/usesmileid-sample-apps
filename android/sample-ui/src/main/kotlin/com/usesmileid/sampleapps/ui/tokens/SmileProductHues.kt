@@ -129,6 +129,9 @@ val smileSurface2: Color = Color(0xFFEAECF0)
 /** The design's `Off_black`: the warm strong foreground. Seven roles, one variable — see the `offBlack` delta. */
 val smileOffBlackLight: Color = Color(0xFF2D2B2A)
 val smileOffBlackDark: Color = Color(0xFFF9F0E7)
+/** The floating nav bar's fill — see the `navBarFill` delta. */
+val smileNavBarLight: Color = Color(0xFFFFFFFF)
+val smileNavBarDark: Color = Color(0xFF21232C)
 
 /** Avatar fills, one per profile, taken in list order and cycled beyond the list. */
 val smileProfileHues: List<Color> = listOf(
@@ -152,3 +155,11 @@ val smileLabelTracking = 0.88.sp
 val smileCardTitleTracking = -0.4.sp
 const val SMILE_CARD_FAMILY_WEIGHT = 400
 val smileCardStroke = 0.2.dp
+/** The products header and section headers, which text-style.* does not match — see the `productsScreenType` delta. */
+val smileHeadingPageSize = 26.sp
+val smileHeadingPageLineHeight = 31.2.sp
+val smileHeadingPageTracking = -0.26.sp
+const val SMILE_HEADING_PAGE_WEIGHT = 700
+val smileSectionHeaderSize = 15.sp
+val smileSectionHeaderLineHeight = 19.5.sp
+const val SMILE_SECTION_HEADER_WEIGHT = 700

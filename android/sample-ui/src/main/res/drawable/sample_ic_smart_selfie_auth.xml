@@ -8,7 +8,7 @@
     <path
         android:pathData="M9.625 16.1875C13.2494 16.1875 16.1875 13.2494 16.1875 9.625C16.1875 6.00063 13.2494 3.0625 9.625 3.0625C6.00063 3.0625 3.0625 6.00063 3.0625 9.625C3.0625 13.2494 6.00063 16.1875 9.625 16.1875Z"
         android:strokeColor="#FF000000"
-        android:strokeWidth="2.16667" />
+        android:strokeWidth="1.5" />
 
     <path
         android:pathData="M7 9.625H7.00875M12.25 9.625H12.2588M7 12.25C8.4 13.475 10.85 13.475 12.25 12.25"
@@ -18,7 +18,7 @@
     <path
         android:pathData="M14.4375 14.875L16.1875 16.625L19.25 13.5625"
         android:strokeColor="#FF000000"
-        android:strokeWidth="2.16667"
+        android:strokeWidth="1.5"
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
 </vector>

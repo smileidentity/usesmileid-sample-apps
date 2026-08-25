@@ -21,6 +21,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
+import com.smileid.designsystem.SMILE_HEADING_PAGE_WEIGHT
+import com.smileid.designsystem.smileHeadingPageLineHeight
+import com.smileid.designsystem.smileHeadingPageSize
+import com.smileid.designsystem.smileHeadingPageTracking
 import com.smileid.designsystem.smileProfileHues
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
@@ -81,7 +86,12 @@ fun ProductsScreen(
                 ) {
                     Text(
                         text = "Smile ID",
-                        style = UseSmileIDSampleTheme.type.textStyleHeadingPage,
+                        style = UseSmileIDSampleTheme.type.textStyleHeadingPage.copy(
+                            fontSize = smileHeadingPageSize,
+                            lineHeight = smileHeadingPageLineHeight,
+                            letterSpacing = smileHeadingPageTracking,
+                            fontWeight = FontWeight(SMILE_HEADING_PAGE_WEIGHT),
+                        ),
                         color = UseSmileIDSampleTheme.colors.foreground,
                         modifier = Modifier.weight(1f),
                     )
@@ -101,7 +111,7 @@ fun ProductsScreen(
                 }
                 Text(
                     text = "Try our suite of products powered by our Anti-Fraud SDKs",
-                    style = UseSmileIDSampleTheme.type.textStyleBodySm,
+                    style = UseSmileIDSampleTheme.type.textStyleCaption,
                     color = UseSmileIDSampleTheme.colors.foreground,
                 )
             }

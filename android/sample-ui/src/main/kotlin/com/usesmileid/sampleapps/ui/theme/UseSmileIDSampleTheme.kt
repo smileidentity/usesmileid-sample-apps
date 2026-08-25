@@ -34,6 +34,19 @@ object UseSmileIDSampleTheme {
 
     /** The full ramp, for the styles Material has no slot for. */
     val type = smileTypeStyles
+
+    /** Named shapes, so a corner is chosen once here rather than rebuilt at each call site. */
+    val shapes = UseSmileIDSampleShapes
+}
+
+/** One shape per named surface. The radius still comes from [SmileDimens]; this fixes where it is applied. */
+object UseSmileIDSampleShapes {
+    val card = RoundedCornerShape(SmileDimens.radiusSurface)
+    val tile = RoundedCornerShape(SmileDimens.radiusLg)
+    val field = RoundedCornerShape(SmileDimens.radiusField)
+    val pill = RoundedCornerShape(SmileDimens.radiusPill)
+    val chip = RoundedCornerShape(SmileDimens.radiusChip)
+    val sheet = RoundedCornerShape(topStart = SmileDimens.radiusSheet, topEnd = SmileDimens.radiusSheet)
 }
 
 /** The SDK maps the same tokens onto the same slots, keeping host chrome and flow continuous. */

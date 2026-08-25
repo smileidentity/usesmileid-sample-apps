@@ -15,9 +15,6 @@ internal fun Intent?.useSmileIDSampleLaunchArgs(): UseSmileIDSampleLaunchArgs {
 /**
  * `probes` alone is also read off the launching URI: a deep link carries no extras, and half the flows
  * that assert on the card arrive that way. Only this one — letting a link seed the others contradicts R9.
- *
- * No unit test: it needs a real `Intent` and `Uri`, and `:app` has no Robolectric. `deep-links.yaml`
- * is the only thing exercising it.
  */
 private fun Intent.probesFromLink(): Map<String, Any?> {
     val value = data?.takeIf { it.isHierarchical }?.getQueryParameter(UseSmileIDSampleLaunchArgs.PROBES)

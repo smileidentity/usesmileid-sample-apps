@@ -2,6 +2,8 @@ package com.usesmileid.sampleapps.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +14,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,15 +24,23 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.ParagraphStyle
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SMILE_CARD_FAMILY_WEIGHT
 import com.smileid.designsystem.SmileColorLight
 import com.smileid.designsystem.SmileDimens
 import com.smileid.designsystem.SmileProductHue
+import com.smileid.designsystem.SMILE_SECTION_HEADER_WEIGHT
 import com.smileid.designsystem.smileCardStroke
+import com.smileid.designsystem.smileSectionHeaderLineHeight
+import com.smileid.designsystem.smileSectionHeaderSize
 import com.smileid.designsystem.smileCardTitleTracking
 import com.smileid.designsystem.smileOffBlackLight
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
@@ -60,7 +69,7 @@ fun UseSmileIDSampleProductCard(
             .fillMaxWidth()
             .defaultMinSize(minHeight = CARD_MIN_HEIGHT)
             .tagged(testId),
-        shape = RoundedCornerShape(CARD_RADIUS),
+        shape = UseSmileIDSampleTheme.shapes.card,
         color = Color.Transparent,
         // Fractional and anti-aliased rather than rounded away, so it reads as a hairline at any density.
         border = BorderStroke(smileCardStroke, colors.foreground),
@@ -76,8 +85,7 @@ fun UseSmileIDSampleProductCard(
                         .align(Alignment.TopEnd)
                         .offset(x = SmileDimens.spacingMd, y = -SmileDimens.spacingXs),
                 ) {
-                    // The label's own ink, faint — not the go pill's scrim, which is the other colour.
-                    ghost(content.copy(alpha = GHOST_ALPHA))
+                    ghost(hue.from.inkOn().copy(alpha = GHOST_ALPHA))
                 }
             }
             Column(
@@ -88,7 +96,7 @@ fun UseSmileIDSampleProductCard(
             ) {
                 Surface(
                     modifier = Modifier.size(SmileDimens.space40),
-                    shape = RoundedCornerShape(TILE_RADIUS),
+                    shape = UseSmileIDSampleTheme.shapes.tile,
                     color = tile,
                 ) {
                     Box(contentAlignment = Alignment.Center) {
@@ -100,57 +108,85 @@ fun UseSmileIDSampleProductCard(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Bottom,
                 ) {
-                    Text(
-                        text = cardLabel(title, family),
-                        color = content,
-                        modifier = Modifier.weight(1f),
-                    )
-                    GoAffordance(tint = content)
+                    CardLabel(title = title, family = family, color = content, modifier = Modifier.weight(1f))
+                    GoAffordance(tint = content, scrim = hue.gradientEnd().inkOn())
                 }
             }
         }
     }
 }
 
-/** One text node with two runs, not two stacked [Text]s, which drift apart at large font scales. */
+/**
+ * One text node with two runs, not two stacked [Text]s, which drift apart at large font scales.
+ *
+ * The frame is drawn at a 393dp viewport, where "Enhanced Doc." fits its 114.5dp column at 16sp. A
+ * 360dp phone leaves ~102dp and it would wrap, so the title steps down until both lines fit — the
+ * family is sized in `em` so it follows. Every other title is well clear and never scales.
+ *
+ * Only at the default font scale. Above it the reader has asked for bigger text, so the label wraps
+ * as far as it needs to rather than shrinking back — which is also what the max-font-scale
+ * predicate requires, since a capped line count there clips instead of growing.
+ */
 @Composable
-private fun cardLabel(title: String, family: String) = buildAnnotatedString {
+private fun CardLabel(title: String, family: String, color: Color, modifier: Modifier = Modifier) {
     val type = UseSmileIDSampleTheme.type
     val titleStyle = type.textStyleBodyStrong
-    val familyStyle = type.textStyleCaption.copy(fontWeight = FontWeight(SMILE_CARD_FAMILY_WEIGHT))
-    // Two paragraphs, not a newline: one paragraph would apply a single line height to both runs.
-    withStyle(ParagraphStyle(lineHeight = titleStyle.lineHeight)) {
-        withStyle(titleStyle.toSpanStyle().copy(letterSpacing = smileCardTitleTracking)) { append(title) }
-    }
-    withStyle(ParagraphStyle(lineHeight = familyStyle.lineHeight)) {
-        withStyle(familyStyle.toSpanStyle()) { append(family) }
-    }
+    val familyStyle = type.textStyleCaption
+    val familyEm = (familyStyle.fontSize.value / titleStyle.fontSize.value).em
+    val fitsOneLine = LocalDensity.current.fontScale <= 1f
+    BasicText(
+        text = buildAnnotatedString {
+            // Two paragraphs, not a newline: one paragraph would apply a single line height to both.
+            withStyle(ParagraphStyle(lineHeight = titleStyle.lineHeight)) { append(title) }
+            withStyle(ParagraphStyle(lineHeight = familyStyle.lineHeight)) {
+                withStyle(SpanStyle(fontSize = familyEm, fontWeight = FontWeight(SMILE_CARD_FAMILY_WEIGHT))) {
+                    append(family)
+                }
+            }
+        },
+        modifier = modifier,
+        style = titleStyle.copy(color = color, letterSpacing = smileCardTitleTracking),
+        maxLines = if (fitsOneLine) 2 else Int.MAX_VALUE,
+        autoSize = if (fitsOneLine) {
+            TextAutoSize.StepBased(minFontSize = CARD_LABEL_MIN, maxFontSize = titleStyle.fontSize)
+        } else {
+            null
+        },
+    )
 }
 
 /**
  * The design runs the outer stop past the card's edge, and Compose stops must land inside 0..1 — so the
  * last stop is the colour the gradient has actually reached by the edge, not the one it never gets to.
  */
-private fun SmileProductHue.brush(): Brush {
+private fun SmileProductHue.brush() = Brush.linearGradient(
+    colorStops = arrayOf(stopStart to from.copy(alpha = fromAlpha), minOf(stopEnd, 1f) to gradientEnd()),
+    start = Offset.Zero,
+    end = Offset.Infinite,
+)
+
+private fun SmileProductHue.gradientEnd(): Color {
     val start = from.copy(alpha = fromAlpha)
     val end = to.copy(alpha = toAlpha)
-    val reached = if (stopEnd > 1f) lerp(start, end, (1f - stopStart) / (stopEnd - stopStart)) else end
-    return Brush.linearGradient(
-        colorStops = arrayOf(stopStart to start, minOf(stopEnd, 1f) to reached),
-        start = Offset.Zero,
-        end = Offset.Infinite,
-    )
+    return if (stopEnd > 1f) lerp(start, end, (1f - stopStart) / (stopEnd - stopStart)) else end
 }
+
+/**
+ * The ink that contrasts with this fill. The design draws one scrim across six cards running from
+ * `#FFB53D` to `#151F72`, which leaves the go pill invisible on the darkest and the ghost glyph
+ * invisible on the lightest; each mark takes the colour it can be seen against instead.
+ */
+private fun Color.inkOn() =
+    if (luminance() > INK_CROSSOVER) smileOffBlackLight else SmileColorLight.colorTextInverse
 
 private fun flat(color: Color) = listOf(color, color)
 
-/** The design draws one scrim here on all six cards, so it is not the hue's to vary. */
 @Composable
-private fun GoAffordance(tint: Color) {
+private fun GoAffordance(tint: Color, scrim: Color) {
     Surface(
         modifier = Modifier.size(SmileDimens.sizeIconLg),
         shape = CircleShape,
-        color = smileOffBlackLight.copy(alpha = SCRIM_ALPHA),
+        color = scrim.copy(alpha = SCRIM_ALPHA),
     ) {
         Box(contentAlignment = Alignment.Center) {
             ArrowForwardGlyph(tint = tint)
@@ -160,12 +196,14 @@ private fun GoAffordance(tint: Color) {
 
 private val CARD_MIN_HEIGHT = SmileDimens.space64 * 2 + SmileDimens.space20
 
-private val CARD_RADIUS = SmileDimens.radiusSurface
-
-private val TILE_RADIUS = SmileDimens.radiusLg
-
 private const val SCRIM_ALPHA = 0.16f
 private const val GHOST_ALPHA = 0.10f
+
+/** The standard white-or-dark crossover: above it a fill carries dark ink, below it light. */
+private const val INK_CROSSOVER = 0.179f
+
+/** The floor the card title steps down to before it is allowed to wrap. */
+private val CARD_LABEL_MIN = 13.sp
 
 /** Sentence-case headings, distinct from the all-caps [UseSmileIDSampleSectionLabel]. */
 @Composable
@@ -176,7 +214,11 @@ fun UseSmileIDSampleSectionHeader(
 ) {
     Text(
         text = text,
-        style = UseSmileIDSampleTheme.type.textStyleHeadingSection,
+        style = UseSmileIDSampleTheme.type.textStyleHeadingSection.copy(
+            fontSize = smileSectionHeaderSize,
+            lineHeight = smileSectionHeaderLineHeight,
+            fontWeight = FontWeight(SMILE_SECTION_HEADER_WEIGHT),
+        ),
         color = UseSmileIDSampleTheme.colors.foreground,
         modifier = modifier
             .fillMaxWidth()

@@ -33,6 +33,17 @@ class UseSmileIDSampleContrastTest {
             }
     }
 
+    /**
+     * The design recesses the bar below the page in dark, where it must be seen without its shadow —
+     * at the page's own colour it vanishes. In light both the design and this app put near-white on
+     * near-white and let the shadow carry it, so only "not the same colour" is assertable there.
+     */
+    @Test
+    fun `the nav bar stays distinguishable from the page it floats over`() {
+        assertContrast("light: nav bar against page", lightColors.navBar, lightColors.background, DISTINCT)
+        assertContrast("dark: nav bar against page", darkColors.navBar, darkColors.background, CONTAINER_MINIMUM)
+    }
+
     @Test
     fun `muted text stays above the large-text bar`() = eachScheme { name, colors ->
         assertContrast("$name: muted on surface", colors.textMuted, colors.surface, LARGE_TEXT_MINIMUM)
@@ -92,6 +103,9 @@ class UseSmileIDSampleContrastTest {
 
         /** Not WCAG: a container only has to be seen. The design's surface-2 on white is 1.13:1. */
         const val CONTAINER_MINIMUM = 1.08
+
+        /** Not the same colour. Light's bar is near-white on near-white and rides on its shadow. */
+        const val DISTINCT = 1.02
 
         /** Not WCAG either: the design's own worst case, the amber Registration card at 1.76:1. */
         const val DESIGN_INK_FLOOR = 1.75
