@@ -10,6 +10,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.smileCardStrokeColor
+import com.smileid.designsystem.smileCardStrokeWidth
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** The labelled rounded-hairline section card every detail/settings screen draws its rows on. */
@@ -28,7 +30,7 @@ fun UseSmileIDSampleSectionSurface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(SmileDimens.radiusSurface),
             color = UseSmileIDSampleTheme.colors.surface,
-            border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.card.border),
+            border = BorderStroke(smileCardStrokeWidth, smileCardStrokeColor),
         ) {
             Column { content() }
         }

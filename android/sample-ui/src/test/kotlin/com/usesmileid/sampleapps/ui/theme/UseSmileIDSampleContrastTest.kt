@@ -2,6 +2,7 @@ package com.usesmileid.sampleapps.ui.theme
 
 import androidx.compose.ui.graphics.Color
 import com.smileid.designsystem.SmileColorLight
+import com.smileid.designsystem.smileCardStrokeColor
 import com.smileid.designsystem.smileProductHues
 import com.smileid.designsystem.smileTokenSessionGradient
 import com.smileid.designsystem.smileTokenSessionGradientAlpha
@@ -61,6 +62,20 @@ class UseSmileIDSampleContrastTest {
         }
     }
 
+    /**
+     * The only CEILING in this file, because here too much contrast was the defect: one mode-invariant
+     * near-white outline was 1.18:1 on the light card and 12.09:1 on the dark one. A stroke has to be
+     * seen and no more, and the same value has to read the same in both schemes.
+     */
+    @Test
+    fun `the card stroke stays subtle in both modes`() = eachScheme { name, colors ->
+        val ratio = contrastRatio(smileCardStrokeColor, colors.card.background)
+        assertTrue(
+            "$name: card stroke on its card is ${"%.2f".format(ratio)}:1, outside $STROKE_FLOOR..$STROKE_CEILING",
+            ratio in STROKE_FLOOR..STROKE_CEILING,
+        )
+    }
+
     /** Mode-invariant, unlike the pair above it: both halves are fixed hexes the Verifications board draws. */
     @Test
     fun `a verifications row glyph is legible on its own tile`() {
@@ -109,6 +124,10 @@ class UseSmileIDSampleContrastTest {
 
         /** Not WCAG either: the design's own worst case, the amber Registration card at 1.76:1. */
         const val DESIGN_INK_FLOOR = 1.75
+
+        /** Seen but not shouted. The band, not a floor, is the point — see the `cardStroke` delta. */
+        const val STROKE_FLOOR = 2.0
+        const val STROKE_CEILING = 5.5
 
         /** Source-over: a translucent card stop shows the page through it. */
         fun Color.over(background: Color): Color = Color(

@@ -499,8 +499,28 @@
       "familyWeight": 400,
       "finding": "Each run is one property away from a semantic style the ramp already carries, so neither needs a new style — but the two properties have no token, and pasting them into the component would put a magic number on the surface four platforms copy from. Figma composes both runs from primitives, which AGENTS.md forbids consuming, so the values are recorded here and generated instead. The 0.2dp stroke has the same problem and lives here for the same reason: border-width.hairline is 1dp and the ruling is explicitly not to snap to it.",
       "recommendation": "Ask design for the card's two runs as proper semantic styles rather than primitive compositions, and for the ramp to carry a 400-weight caption. Generated from here meanwhile, exactly as labelTypeStyle is.",
-      "status": "OPEN 2026-08-25 — generated stopgap in place; delete once the design file promotes both runs to composite styles.",
+      "status": "OPEN 2026-08-26 — generated stopgap in place for the two type runs; delete once the design file promotes both to composite styles. Its `strokeWidth` is no longer generated: the 0.2 it records is what the frame draws, and the shipped stroke is now the uniform one in `cardStroke`.",
       "strokeWidth": 0.2
+    },
+    {
+      "id": "cardStroke",
+      "severity": "every card and row outline in all four apps — product cards, the session card, verification rows, settings rows, profile rows, the form's section surfaces",
+      "figma": {
+        "productCards": "0.2px Off_black on 5487:1351; the session card and 5448:2062 draw 0.5",
+        "note": "The design draws no stroke at all on the verifications or settings lists, so those two were implemented from border-width.hairline and color.border by default rather than by drawing."
+      },
+      "designSystem": {
+        "colour": "color.border and card.border are the SAME near-white #EAECF0 in BOTH modes — the generated light and dark outputs carry identical values, so there is no dark pair at all",
+        "width": "border-width.hairline is 1dp; there is no 0.5 step, and no fractional border-width token of any kind"
+      },
+      "values": {
+        "colour": "#797C85",
+        "width": 0.5
+      },
+      "finding": "A mode-invariant near-white outline is not one treatment, it is two. Against the card surface #EAECF0 is 1.18:1 in light — the intended near-invisible hairline — and 12.09:1 in dark, where the same value becomes the loudest edge on the screen. That 10.90 spread is the defect, and it is why the dark verifications and settings lists read as outlined boxes while their light twins read as plain cards. #797C85 is 4.17:1 light and 3.43:1 dark, a 0.74 spread: one value that reads the same in both schemes, which is what a single mode-invariant token has to be to be correct. The 0.5 width halves the weight the higher contrast adds in light.",
+      "recommendation": "Give color.border a real light/dark PAIR upstream, or add a subtle-outline role with one mid value that works in both. Also add a 0.5 border-width step: the design already draws 0.2 and 0.5 and the scale starts at 1. Generated from here meanwhile, exactly as offBlack and borderStrong are, so no component carries a hex or a raw dp.",
+      "status": "OWNER RULING 2026-08-26 — one stroke everywhere: #797C85 at 0.5dp. This SUPERSEDES the 0.2 the products frame draws (recorded in cardLabelRuns) and the 1dp hairline the two lists inherited; uniform and subtle beat per-surface fidelity, because the frame never drew the lists at all.",
+      "guardedBy": "UseSmileIDSampleContrastTest holds the stroke to a MAXIMUM as well as a minimum in both schemes — the only ceiling in that test, because here too much contrast was the defect."
     },
     {
       "id": "cardInkContrast",

@@ -17,6 +17,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.smileCardStrokeColor
+import com.smileid.designsystem.smileCardStrokeWidth
 import com.smileid.designsystem.smileLabelTracking
 import com.smileid.designsystem.smileLabelSize
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
@@ -40,7 +42,7 @@ fun UseSmileIDSampleFilterChip(
             .tagged(testId),
         shape = RoundedCornerShape(SmileDimens.radiusChip),
         color = if (selected) colors.primary else colors.filterChip.background,
-        border = if (selected) null else BorderStroke(SmileDimens.borderWidthHairline, colors.filterChip.border),
+        border = if (selected) null else BorderStroke(smileCardStrokeWidth, smileCardStrokeColor),
     ) {
         Row(
             modifier = Modifier

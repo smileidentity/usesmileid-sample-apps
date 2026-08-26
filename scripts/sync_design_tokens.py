@@ -666,15 +666,31 @@ def emit_kotlin_card_label_runs(delta: dict) -> str:
     """The one property each card-label run needs that its nearest semantic style does not carry."""
     tracking = delta.get("tracking")
     weight = delta.get("familyWeight")
-    stroke = delta.get("strokeWidth")
-    if tracking is None or not weight or stroke is None:
-        raise TokenError("cardLabelRuns needs a tracking, a familyWeight and a strokeWidth")
+    if tracking is None or not weight:
+        raise TokenError("cardLabelRuns needs a tracking and a familyWeight")
     return "\n".join([
         "",
-        "/** The card's two label runs and its stroke, each one property off a token — see the `cardLabelRuns` delta. */",
+        "/** The card's two label runs, each one property off a token — see the `cardLabelRuns` delta. */",
         "val smileCardTitleTracking = %s.sp" % tracking,
         "const val SMILE_CARD_FAMILY_WEIGHT = %s" % weight,
-        "val smileCardStroke = %s.dp" % stroke,
+    ])
+
+
+def read_card_stroke() -> dict:
+    return read_spec_delta("cardStroke", "values")
+
+
+def emit_kotlin_card_stroke(values: dict) -> str:
+    """One outline for every card and row: the token source carries neither a mid-grey border nor a 0.5 width."""
+    colour = values.get("colour")
+    width = values.get("width")
+    if not colour or width is None:
+        raise TokenError("cardStroke needs a values.colour and a values.width")
+    return "\n".join([
+        "",
+        "/** One outline everywhere, mode-invariant by design — see the `cardStroke` delta. */",
+        "val smileCardStrokeColor = %s" % kotlin_color(colour),
+        "val smileCardStrokeWidth = %s.dp" % width,
     ])
 
 
@@ -742,6 +758,7 @@ def generate_kotlin_product_hues() -> str:
         + emit_kotlin_token_session(read_token_session())
         + emit_kotlin_label_type_style(read_label_type_style())
         + emit_kotlin_card_label_runs(read_card_label_runs())
+        + emit_kotlin_card_stroke(read_card_stroke())
         + emit_kotlin_products_type(read_products_type())
         + "\n"
     )

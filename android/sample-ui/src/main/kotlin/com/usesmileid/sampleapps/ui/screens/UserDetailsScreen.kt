@@ -20,6 +20,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Row
 import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.smileCardStrokeColor
+import com.smileid.designsystem.smileCardStrokeWidth
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleKeyValueEditRow
@@ -99,7 +101,7 @@ fun UserDetailsScreen(
                             .padding(horizontal = SmileDimens.spacingMd),
                         shape = RoundedCornerShape(SmileDimens.radiusSurface),
                         color = UseSmileIDSampleTheme.colors.surface,
-                        border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.card.border),
+                        border = BorderStroke(smileCardStrokeWidth, smileCardStrokeColor),
                     ) {
                         // One line of body text beside the switch: no icon and no supporting line, so not a SettingRow.
                         Row(

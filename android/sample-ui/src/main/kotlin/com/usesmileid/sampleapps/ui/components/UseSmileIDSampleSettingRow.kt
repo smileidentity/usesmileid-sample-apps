@@ -23,6 +23,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.smileCardStrokeColor
+import com.smileid.designsystem.smileCardStrokeWidth
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** A settings row: a glyph tile, a title with an optional supporting line, and a trailing control. */
@@ -85,7 +87,7 @@ fun UseSmileIDSampleSettingRowChevron() =
 /** The rule between rows inside one section card. */
 @Composable
 fun UseSmileIDSampleSettingRowDivider() = HorizontalDivider(
-    thickness = SmileDimens.borderWidthHairline,
+    thickness = smileCardStrokeWidth,
     color = UseSmileIDSampleTheme.colors.card.border,
 )
 
@@ -105,7 +107,7 @@ fun UseSmileIDSampleDestructiveRow(
             .tagged(testId),
         shape = RoundedCornerShape(SmileDimens.radiusSurface),
         color = UseSmileIDSampleTheme.colors.surface,
-        border = BorderStroke(SmileDimens.borderWidthHairline, UseSmileIDSampleTheme.colors.card.border),
+        border = BorderStroke(smileCardStrokeWidth, smileCardStrokeColor),
     ) {
         Box(
             modifier = Modifier.padding(SmileDimens.spacingSm),
