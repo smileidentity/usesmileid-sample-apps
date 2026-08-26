@@ -53,7 +53,11 @@ import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleNavTransitio
 import androidx.compose.runtime.CompositionLocalProvider
 import com.usesmileid.sampleapps.android.navigation.LocalUseSmileIDSampleChrome
 import com.usesmileid.sampleapps.android.navigation.ProvideUseSmileIDSampleUrlOpener
+import com.usesmileid.sampleapps.android.navigation.LocalUseSmileIDSampleSheetRequests
 import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleChromeState
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleSheetLinks
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleSheetRequests
+import com.usesmileid.sampleapps.android.navigation.openUseSmileIDSampleSheet
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavItem
@@ -75,8 +79,11 @@ fun UseSmileIDSampleShell() {
     LaunchedEffect(selectedTab) { lastTab = selectedTab ?: lastTab }
     val chrome = remember { UseSmileIDSampleChromeState() }
 
-    ForwardNewIntentsTo(navController)
+    val sheetRequests = remember { UseSmileIDSampleSheetRequests() }
+
+    ForwardNewIntentsTo(navController, sheetRequests)
     AutostartFlowOnce(navigator)
+    OpenSheetLinkOnce(navController, sheetRequests)
 
     // The fullscreen flow handles its own insets, so the host contributes none (R3).
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -101,7 +108,10 @@ fun UseSmileIDSampleShell() {
     ) { contentPadding ->
         val density = LocalDensity.current
         Box(modifier = Modifier.fillMaxSize()) {
-            CompositionLocalProvider(LocalUseSmileIDSampleChrome provides chrome) {
+            CompositionLocalProvider(
+                LocalUseSmileIDSampleChrome provides chrome,
+                LocalUseSmileIDSampleSheetRequests provides sheetRequests,
+            ) {
                 ProvideUseSmileIDSampleUrlOpener {
                     DestinationsNavHost(
                         navGraph = NavGraphs.root,
@@ -165,16 +175,37 @@ private fun AutostartFlowOnce(navigator: DestinationsNavigator) {
  * carries extras rather than data.
  */
 @Composable
-private fun ForwardNewIntentsTo(navController: NavHostController) {
+private fun ForwardNewIntentsTo(navController: NavHostController, sheetRequests: UseSmileIDSampleSheetRequests) {
     val activity = LocalActivity.current as? ComponentActivity ?: return
     DisposableEffect(activity, navController) {
         val listener = Consumer<Intent> { intent ->
-            if (intent.action == Intent.ACTION_VIEW && intent.data != null) {
-                navController.handleDeepLink(intent)
+            val uri = intent.data?.toString()
+            val sheet = uri?.let(UseSmileIDSampleSheetLinks::resolve)
+            when {
+                intent.action != Intent.ACTION_VIEW || uri == null -> Unit
+                sheet != null -> navController.openUseSmileIDSampleSheet(sheet, sheetRequests)
+                else -> navController.handleDeepLink(intent)
             }
         }
         activity.addOnNewIntentListener(listener)
         onDispose { activity.removeOnNewIntentListener(listener) }
+    }
+}
+
+/**
+ * The graph no longer claims the five sheet paths, so androidx's own cold handling passes them over
+ * and this picks them up. Saveable like [AutostartFlowOnce]: the intent is re-read on recreation, and
+ * re-following it would drag a rotated device back to the owner with the sheet reopened.
+ */
+@Composable
+private fun OpenSheetLinkOnce(navController: NavHostController, sheetRequests: UseSmileIDSampleSheetRequests) {
+    val activity = LocalActivity.current ?: return
+    var followed by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        if (followed) return@LaunchedEffect
+        followed = true
+        val link = activity.intent?.data?.toString()?.let(UseSmileIDSampleSheetLinks::resolve)
+        if (link != null) navController.openUseSmileIDSampleSheet(link, sheetRequests)
     }
 }
 

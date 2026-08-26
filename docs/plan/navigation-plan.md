@@ -142,8 +142,8 @@ Three traps, each found on a device:
 
 **R12 — A sheet route is a layer over the current destination, never a replacement.** A sheet that
 replaces the destination beneath it has nothing behind its scrim, where the design shows the screen it
-covers. This is currently broken on Android and correct on the other three by construction, because
-their platforms present sheets over the presenter. The evaluated options and the recommendation are in
+covers. This was broken on Android and correct on the other three by construction, because their
+platforms present sheets over the presenter. The evaluated options and the recommendation are in
 `sample-apps-plan.md` §8.2; the short version is that the presentation belongs to the navigator, and
 the workaround that fakes it with a dialog destination costs the native sheet behaviour R8 requires.
 
@@ -161,6 +161,36 @@ rather than to a destination of its own. The five paths keep working, the deep l
 the sheet becomes state on the screen that owns it. NAV-A5's revisit trigger does not fire: the sheets
 still commit to the shared stores, so nothing moves into screen-local state. iOS, Flutter and React
 Native already present sheets over the current screen and should be checked, not changed.
+
+**BUILT 2026-08-26.** The five sheets are plain composables their owning screen renders behind an
+`if`, and `UseSmileIDSampleSheetLinks` is where a sheet path becomes an owner plus a sheet:
+
+| Path | Owner | Sheet |
+|---|---|---|
+| `/profiles/switch` | Products | `ProfileSwitch` |
+| `/profiles/new` | Profiles | `NewProfile` |
+| `/debug/scenarios` | Settings | `ScenarioDrawer` |
+| `/flow/:productId/id-details/country` | ID details form | `CountryPicker` |
+| `/flow/:productId/id-details/id-type` | ID details form | `IdTypePicker` |
+
+Three decisions the mechanism turned on, none of them obvious before building it:
+
+1. **The link is handed to the owner's own deep link**, not to a hand-built direction, so a sheet path
+   lands on exactly the back stack its owner's path would — `/flow/x/id-details/country` behaves as
+   `/flow/x/id-details` plus an open sheet, rather than inventing a stack of its own. When the owner is
+   already the current destination, which is every cold link to a tab root, it is not re-handled: doing
+   so would replace the very screen the sheet has to layer over.
+2. **The request is held above the graph and consumed on sight.** The owner is not composed when the
+   link arrives, so the sheet cannot be opened directly; the owner picks the request up keyed on its
+   value rather than once, so arrival order does not matter, and consuming it stops a later return to
+   the owner replaying the sheet.
+3. **The sheet's own open/closed flag is saveable**, because a sheet destination survived rotation and a
+   plain boolean would not have. That is the one behaviour the old shape got right for free.
+4. **The query is dropped when a sheet path is rewritten.** `probes` is read off the launching intent
+   as a launch argument, not off the route, so `/debug/scenarios?probes=true` still seeds the card.
+
+The scenario drawer keeps one asymmetry worth stating: its Settings row is debug-only, but the layer is
+not, because `/debug/scenarios` is how every device flow reaches it on a release build too.
 
 **R13 — The nav bar belongs to the tab roots, and it floats.** Two halves, both found on a device
 2026-08-18:

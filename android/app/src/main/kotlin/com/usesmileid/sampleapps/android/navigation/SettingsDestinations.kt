@@ -28,7 +28,6 @@ import com.ramcosta.composedestinations.annotation.parameters.DeepLink
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.generated.destinations.LicensesScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ProfilesScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.ScenarioDrawerSheetDestination
 import com.ramcosta.composedestinations.generated.navgraphs.ProductsNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.utils.startDestination
@@ -55,6 +54,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     val chrome = LocalUseSmileIDSampleChrome.current
     val openUrl = LocalUseSmileIDSampleUrlOpener.current
+    var showScenarios by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.ScenarioDrawer)
     SettingsContent(
         contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
         state = UseSmileIDSampleSettingsState(
@@ -74,7 +74,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
         },
         // Debug builds only, and no launch argument reveals it: every flow reaches the drawer by deep link.
         onOpenScenarioDrawer = if (BuildConfig.DEBUG) {
-            { navigator.navigate(ScenarioDrawerSheetDestination) }
+            { showScenarios = true }
         } else {
             null
         },
@@ -90,6 +90,8 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
             }
         },
     )
+    // A layer over Settings, so the drawer's scrim covers the screen it was opened from (R12).
+    if (showScenarios) ScenarioDrawerSheet(onDismissRequest = { showScenarios = false })
 }
 
 /** The notices screen. Its asset is read here and handed in, so the screen stays a function of its arguments. */

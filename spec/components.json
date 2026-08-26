@@ -746,6 +746,7 @@
         "fullHeight": "no handle; a 40 filled circular back control and the title, gap spacing.xs",
         "horizontalPadding": "20 in the design, spacing.md (16) here",
         "platform": "Material 3 ModalBottomSheet — drag-to-dismiss, scrim tap and insets are the platform's",
+        "ownership": "The screen beneath owns the sheet — a boolean it holds — and the sheet is REMOVED FROM COMPOSITION when hidden, which is M3's own guidance. Never a route of its own: a sheet destination replaces the screen it should be covering, so the scrim covers nothing. spec/routes.json keeps the sheet paths and resolves each to its owner plus the sheet it opens.",
         "openHeight": "content height, NOT the platform's half-screen partial state: the five-field new-profile sheet clipped its last field and put its CTA below the fold at half height",
         "overflow": "the content scrolls rather than clips, so enlarged type cannot strand a CTA",
         "radius": "radius.surface (16) on the top corners. Was radius.sheet (20); PVR-A13 rules one radius value wherever a radius is chosen. A slightly squarer sheet than Android users see elsewhere, which is why §7.8 asks for a device look rather than a golden diff."
@@ -1015,7 +1016,7 @@
       "usedBy": [
         "scenarioDrawer"
       ],
-      "notes": "Required by AGENTS.md as a shipped probe affordance and by spec/scenarios.json, which is why it has ids in test-ids.json. NOT in the design set — the design's Settings screen covers only the controls a partner sees (dark mode, agent mode, the three SDK steps), while the flow scenarios (expiredToken, badRefresh, noCallback, throwingCallback, offlineRetry) and the two non-default theme scenarios have no other manual control. Ship it as a debug sheet reachable from a long-press or a hidden gesture, and keep launch arguments as the automation path: a drawer is for humans, arguments are for machines, and the sweep found both were needed. Placement and entry gesture need a design decision — see screens.json openQuestions.drawerPresentation."
+      "notes": "Owned by Settings, like every other sheet — see BottomSheet.metrics.ownership. Required by AGENTS.md as a shipped probe affordance and by spec/scenarios.json, which is why it has ids in test-ids.json. NOT in the design set — the design's Settings screen covers only the controls a partner sees (dark mode, agent mode, the three SDK steps), while the flow scenarios (expiredToken, badRefresh, noCallback, throwingCallback, offlineRetry) and the two non-default theme scenarios have no other manual control. Ship it as a debug sheet reachable from a long-press or a hidden gesture, and keep launch arguments as the automation path: a drawer is for humans, arguments are for machines, and the sweep found both were needed. Placement and entry gesture need a design decision — see screens.json openQuestions.drawerPresentation."
     }
   ],
   "sdkOwnedSurfaces": [
