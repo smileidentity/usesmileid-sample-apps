@@ -527,7 +527,7 @@
       "usedBy": [
         "verifications"
       ],
-      "notes": "CORRECTED 2026-08-12: the row carries a SECONDARY LINE with the truncated job id and time (e.g. '7d2f01aa… · 13:03:41') — not title-plus-badge only. 68 tall. In select mode it shifts right for a checkbox; in swipe mode it reveals Remove. OPEN 2026-08-26: the secondary line is text-style.body-sm (14/20/400) where the board draws Type/Caption (12/16/500). Android is the only implementation, so a port should take the board and Android should follow — a row-height change with its own goldens, which is why it did not ride along with the tint correction.",
+      "notes": "CORRECTED 2026-08-12: the row carries a SECONDARY LINE with the truncated job id and time (e.g. '7d2f01aa… · 13:03:41') — not title-plus-badge only. 68 tall. In select mode it shifts right for a checkbox; in swipe mode it reveals Hide. OPEN 2026-08-26: the secondary line is text-style.body-sm (14/20/400) where the board draws Type/Caption (12/16/500). Android is the only implementation, so a port should take the board and Android should follow — a row-height change with its own goldens, which is why it did not ride along with the tint correction.",
       "anatomy": [
         "leading icon tile (product hue, soft tint)",
         "title (product name, truncates)",
@@ -652,7 +652,7 @@
       "usedBy": [
         "verifications"
       ],
-      "notes": "Replaces the NavBar in select mode. Copy changes with count: 'Tap rows to select' → 'Tap Remove to confirm'."
+      "notes": "Replaces the NavBar in select mode. Copy changes with count: 'Tap rows to select' → 'Tap `Hide from List` to confirm'. The action reads Hide from List, never Remove or Delete: it hides the row from this app's list and nothing is deleted at the API, and the confirmation says so."
     },
     {
       "name": "SwipeAction",
@@ -670,7 +670,7 @@
       "usedBy": [
         "verifications"
       ],
-      "notes": "Platform-native swipe gesture; the design only fixes the revealed Remove treatment."
+      "notes": "Platform-native swipe gesture; the design only fixes the revealed action's treatment. Labelled Hide, matching the selection bar — both paths hide from the app's list rather than deleting anything."
     },
     {
       "name": "SelectTrigger",

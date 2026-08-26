@@ -67,7 +67,7 @@ private fun RemoveBackdrop() {
                 TrashGlyph(tint = colors.errorFill)
             }
             Text(
-                text = "Remove",
+                text = "Hide",
                 style = UseSmileIDSampleTheme.type.textStyleCaption,
                 color = colors.errorFill,
             )

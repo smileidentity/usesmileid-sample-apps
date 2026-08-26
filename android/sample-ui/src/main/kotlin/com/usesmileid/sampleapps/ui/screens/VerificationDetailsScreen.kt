@@ -56,7 +56,7 @@ fun VerificationDetailsScreen(
         UseSmileIDSampleTopAppBar(title = "Verification details", onBack = onBack) {
             if (job != null) {
                 UseSmileIDSampleTopAppBarButton(
-                    contentDescription = "Delete verification",
+                    contentDescription = "Hide verification from the app list",
                     onClick = onDelete,
                     emphasis = UseSmileIDSampleTopAppBarEmphasis.Destructive,
                     testId = UseSmileIDSampleTestIds.DETAILS_DELETE,
