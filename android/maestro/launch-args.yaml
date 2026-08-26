@@ -230,9 +230,11 @@ appId: ${APP_ID}
     id: "sample_scenario_drawer"
 - tapOn:
     id: "sample_scenario_item_offlineRetry"
+# Back dismisses the drawer onto SETTINGS, which owns it: a sheet link resolves to its owner's route
+# with the sheet open, so there is a screen behind the scrim rather than the void a destination left.
 - back
 - assertVisible:
-    id: "sample_products_screen"
+    id: "sample_settings_screen"
 - tapOn:
     id: "sample_nav_verifications"
 - assertVisible:
