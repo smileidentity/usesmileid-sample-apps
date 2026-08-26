@@ -53,7 +53,7 @@ fun UseSmileIDSampleSessionCard(
         color = Color.Transparent,
         border = BorderStroke(smileCardStroke, colors.foreground),
     ) {
-        Box(modifier = Modifier.background(Brush.horizontalGradient(sessionGradient()))) {
+        Box(modifier = Modifier.background(Brush.horizontalGradient(sessionGradient))) {
         FlowRow(
             modifier = Modifier
                 .defaultMinSize(minHeight = SmileDimens.space64)
@@ -146,9 +146,9 @@ fun UseSmileIDSampleSessionEndedBanner(
     }
 }
 
-/** Alpha is applied here, never baked into the token's hex. */
-private fun sessionGradient() = smileTokenSessionGradient
-    .mapIndexed { index, color -> color.copy(alpha = smileTokenSessionGradientAlpha[index]) }
+/** Alpha is applied here, never baked into the token's hex. Held once: the countdown ticks every second. */
+private val sessionGradient: List<Color> = smileTokenSessionGradient
+    .zip(smileTokenSessionGradientAlpha) { color, alpha -> color.copy(alpha = alpha) }
 
 private val LABEL_TRACKING = 1.sp
 private val COUNTDOWN_SIZE = 24.sp
