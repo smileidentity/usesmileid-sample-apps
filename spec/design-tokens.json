@@ -596,17 +596,20 @@
       "consume": "SmileTokens.kt — SmileColorLight / SmileColorDark / SmileDimens (SmileType is comments only); plus the generated SmileTypeStyles.kt for the type ramp",
       "wiring": "Feed the token objects into the app's Compose theme and select by isSystemInDarkTheme(); do not replace the SDK's own theme, which resolves the same tokens internally. Component tokens are grouped into the app's own mode-selected holder because SmileColorLight and SmileColorDark are two unrelated generated objects with no common supertype, so a component cannot choose between them itself.",
       "vendoredTo": "android/sample-ui/.../tokens/SmileTokens.kt (copied verbatim from dist/android)",
-      "generatedHere": "android/sample-ui/.../tokens/SmileTypeStyles.kt — 29 real TextStyles, and the five DM Sans OFL faces in sample-ui/src/main/res/font/. Both come from scripts/sync_design_tokens.py --all and are covered by --check. The font is bundled rather than fetched through a downloadable-font provider: this file's rules say to ship it, and a provider would make text depend on Play Services and goldens depend on the network."
+      "generatedHere": "android/sample-ui/.../tokens/SmileTypeStyles.kt — 29 real TextStyles, and the five DM Sans OFL faces in sample-ui/src/main/res/font/. Both come from scripts/sync_design_tokens.py --all and are covered by --check. The font is bundled rather than fetched through a downloadable-font provider: this file's rules say to ship it, and a provider would make text depend on Play Services and goldens depend on the network.",
+      "generatedStopgaps": "android/sample-ui/.../tokens/SmileProductHues.kt — the SECOND generated file, and the one a port is most likely to miss. Everything the design system does not carry lives here: productHues and profileHues, the offBlack / navBarFill / cardStroke light-dark PAIRS, borderStrong, surface2, softBadgeFills, the token-session gradient and ring, labelTypeStyle, cardLabelRuns and productsScreenType. All of it is generated from the `deltas` in this file by scripts/sync_design_tokens.py --all and covered by --check; none of it may be hand-edited or hand-copied into a second codebase. A port that vendors only SmileTokens.kt and the type ramp has no product hues, no warm foreground and no card stroke."
     },
     "ios": {
       "consume": "SmileTokens.swift — SmileColorLight / SmileColorDark / SmileSpacing",
       "wiring": "Select by colorScheme and expose through the app's environment.",
-      "vendoredTo": "ios/SampleUI/Sources/SampleUI/Tokens/SmileTokens.swift (copied verbatim from dist/ios)"
+      "vendoredTo": "ios/SampleUI/Sources/SampleUI/Tokens/SmileTokens.swift (copied verbatim from dist/ios)",
+      "generatedStopgaps": "NOT YET EMITTED. The Android equivalent is SmileProductHues.kt; the generator has no ios emitter for the `deltas` in this file yet, so when this platform's app lands it needs one writing into ios/SampleUI/Sources/SampleUI/Tokens/. Consuming the design system's own output alone is not enough — see the android entry for the list of values that exist only here."
     },
     "expo": {
       "consume": "tokens.ts",
       "wiring": "A typed token module the sample-ui package imports; no native code involved.",
-      "vendoredTo": "expo/sample-ui/src/tokens.ts (copied verbatim from dist/ts)"
+      "vendoredTo": "expo/sample-ui/src/tokens.ts (copied verbatim from dist/ts)",
+      "generatedStopgaps": "NOT YET EMITTED. The Android equivalent is SmileProductHues.kt; the generator has no expo emitter for the `deltas` in this file yet, so when this platform's app lands it needs one writing into expo/sample-ui/src/. Consuming the design system's own output alone is not enough — see the android entry for the list of values that exist only here."
     },
     "flutter": {
       "consume": "flutter/sample_ui/lib/src/tokens/smile_tokens.dart — GENERATED (committed 2026-08-13)",
@@ -615,7 +618,8 @@
       "shape": "SmileColorLight (152) · SmileColorDark (152) · SmileDimens (42) · SmileType (29 TextStyles) · SmileShadows (6 BoxShadows) · SmileMotion (6 Durations)",
       "deliberateAdditions": "The upstream Compose emitter leaves typography as comments and omits shadows entirely. Dart expresses both directly, so SmileType emits real TextStyles and SmileShadows emits real BoxShadows. Naming otherwise mirrors Compose so the two are diffable. NOTE 2026-08-13: the typography half is an emitter gap rather than a Compose limitation — see deltas → composeTypeStylesAreComments. The shadow half is a genuine platform difference: Compose has no equivalent of an arbitrary offset/blur/colour shadow value.",
       "verified": "dart format canonical, generator idempotent, `dart analyze` clean in a Flutter package context, and colour membership identical to the Compose output.",
-      "gap": false
+      "gap": false,
+      "generatedStopgaps": "NOT YET EMITTED. The Android equivalent is SmileProductHues.kt; the generator has no flutter emitter for the `deltas` in this file yet, so when this platform's app lands it needs one writing into flutter/sample_ui/lib/src/tokens/. Consuming the design system's own output alone is not enough — see the android entry for the list of values that exist only here."
     }
   },
   "rules": [

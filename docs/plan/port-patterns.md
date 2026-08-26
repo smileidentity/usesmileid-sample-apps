@@ -13,10 +13,11 @@ or fixed.
 File names are the unit ports mirror, so the current Android inventory is the contract:
 
 - Every spec screen has its own file, including the sheets (`NewProfileSheet`,
-  `ProfileSwitchSheet`, `IdTypePickerSheet`).
+  `ProfileSwitchSheet`, `IdTypePickerSheet`) — but a sheet file is a **layer**, not a route. See
+  §2's sheet row before wiring one.
 - Routes live in per-area destination files (Products / Verifications / Settings / FlowForm /
   Profile / Token / Dev), and the flow-journey policy (`FlowJourney`) is a separate unit from
-  nav plumbing.
+  nav plumbing. The five sheet paths in `spec/routes.json` are **not** among those destinations.
 - The flow-launch logic is four units: the snapshot, the builder config ("the one place that
   decides what the SDK is handed"), the preflight gate, and the token-binding rules.
 - Domain enums live in `model/`, never inside component files; the persistence layer lives in
@@ -35,9 +36,20 @@ File names are the unit ports mirror, so the current Android inventory is the co
 | "Not loaded yet" is not "empty" | nullable list, null until the first store emission | `Optional` | nullable | `T[] \| null` |
 | Bottom-chrome clearance | measured chrome height via `contentPadding` | real safe-area/chrome insets | ditto | ditto |
 | List derivations recompute on data change, never on a clock tick | `remember(keys)` + one coarse `derivedStateOf` day-bucket | computed + `onChange` | `select` | `useMemo` |
+| **A sheet is a layer over the screen that owns it, never a destination** (R12) | boolean the owner holds + `ModalBottomSheet`, removed from composition when hidden | `.sheet(isPresented:)` on the owning view | `showModalBottomSheet` from the owning route | owner-held state + the platform sheet |
+| **A sheet's deep link resolves to its OWNER's link plus a sheet request** | `UseSmileIDSampleSheetLinks` maps path → owner URI + enum; owner consumes it | same mapping, presenting view consumes | ditto | ditto |
 
 Insets and presentation stay platform-native (AGENTS.md) — the clearance rule translates as
 "derive from the platform's measured chrome", not as copying any constant.
+
+**The two sheet rows are the one place a literal mirror of the tree gives the wrong answer.**
+Android shipped every sheet as a `@Destination`, so the navigation host replaced the screen
+underneath and the sheet's scrim covered a flat grey void; it was fixed on 2026-08-26. iOS,
+Flutter and React Native present sheets over the presenter by construction, so they should be
+**checked, not changed** — the risk is a port copying Android's old file layout and re-creating a
+routed sheet where the platform already does the right thing. One caution for whoever checks:
+a device flow cannot assert what is behind a modal, because Android drops the windows below one
+from the accessibility tree. A screenshot is the only evidence.
 
 ## 3. Semantic rules the idioms must preserve
 
@@ -73,6 +85,13 @@ Insets and presentation stay platform-native (AGENTS.md) — the clearance rule 
   pubspec, package.json) are kept, one line each — deleting them silently unpins.
 - The public state machinery a partner copies (token decoding, the persistence layer, the
   stores' remove/undo contract) ships documented in the platform's doc-comment idiom.
+
+**Copy and API deliberately disagree here.** The store methods are `remove`/`undoRemove` and the
+test ids are `sample_selection_remove`/`sample_details_delete`, but every user-facing label says
+**Hide** — "Hide from List", "Hide", and "N verifications hidden from App list". The rows are
+hidden from this app's list and nothing is deleted at the API, so the copy says so. Port the copy
+and the ids exactly as they are: renaming either half breaks a four-platform contract or re-tells
+the lie.
 - After each port lands, re-run a correctness/security/perf/tests pass against it: the bug
   classes the template's audit caught — concurrency seams around new persistence — are exactly
   what a fresh port re-introduces.
