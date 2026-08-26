@@ -600,12 +600,91 @@
     "Fonts: DM Sans for UI, the display family for headlines. Ship DM Sans with the apps rather than relying on a system fallback."
   ],
   "additions": {
-    "comment": "Tokens this design needs that the system does not expose. Empty is the goal; each entry is a request to the design system, not a local override.",
+    "comment": "Requests to the design system, not local overrides. Empty is the goal. Every entry below is a value the products and verifications work needed and the token source does not carry, so it ships as a generated stopgap recorded in `deltas` — and every one of them is a value the iOS, Flutter and React Native ports will each vendor separately until design resolves it. `deltas` stays the implementation record; this is the ask.",
+    "readAgainst": "Products, light 5487:1351 and dark 5447:1701, read 2026-08-25/26. Verifications, node 5206-2410, read 2026-08-26. File CT3oeBfk8uuyvRmGkRJ71D.",
     "candidates": [
       {
-        "need": "product → hue and profile → hue mapping",
-        "status": "OWNER DECISION 2026-08-13 — the DESIGNER supplies the list once (5 product hues now 6 with Enhanced KYC, plus the profile hues). Blocks final ProductCard and Avatar colours only; primitives and layout can proceed.",
-        "shape": "productHues: {productId: color.decorative.*}, profileHues: {profileId: color.decorative.*}"
+        "id": "cardInkContrast",
+        "priority": "P1 — accessibility, and the only entry here that is a defect rather than a naming gap",
+        "need": "Darken the four light `from` stops, or drop their alpha. That is the only fix that keeps white ink AND clears WCAG AA, because it moves the fill rather than the ink.",
+        "why": "The card label and its go arrow are WHITE on all six cards by owner ruling 2026-08-26, taken after seeing the alternative on a device: a luminance-picked label cleared AA everywhere at worst 5.90:1 and was rejected because it darkened three of the six cards and read as inconsistent. So the ink is settled and the fill is the only remaining variable. A per-card ink is also the wrong shape for a four-platform contract — it would put four implementations on four answers.",
+        "measured": "White on the light fills, worst first: Registration's opaque amber #FFB53D at 1.76:1 — fully opaque, so it fails identically in both schemes — then #A78BFA 2.18, #0EA5E9 2.28, #00AA99 2.37, #2CC05C 2.39. 14 of 28 card stops are below AA. The session card's right-hand stop is the same 2.18:1 and needs the same fix; its gradient spans dark blue to light violet, so no single ink can serve both ends.",
+        "nearest": "None. No token describes a gradient-backed surface's ink at all, which is how the session card shipped near-black ink on its own fill in dark mode.",
+        "readFrom": "5487:1351 and 5447:1701",
+        "guardedBy": "UseSmileIDSampleContrastTest holds these surfaces to 1.75, the design's own worst case, so a regression fails while today's values pass. Raise the floor as design raises the fills.",
+        "delta": "cardInkContrast"
+      },
+      {
+        "id": "offBlack",
+        "need": "A warm strong-foreground semantic role, as a light/dark PAIR: #2D2B2A / #F9F0E7.",
+        "why": "Figma models one variable across seven roles — page title, page subtitle, both section headers, the product-card stroke, the session-card stroke, the unselected nav label and the token-button label. It is the products screen's entire foreground.",
+        "nearest": "color.text.title is COOL (#21232C / #F2F2F2) where the design's pair is WARM, so using it ships a visibly cooler screen in both schemes. Both values exist upstream only as primitives in unrelated roles, and AGENTS.md forbids consuming a primitive.",
+        "readFrom": "5487:1351 and 5447:1701",
+        "delta": "offBlack"
+      },
+      {
+        "id": "productsScreenType",
+        "need": "Reconcile the text-style.* ramp with the design file's Type/* composites, or promote Type/* into the ramp.",
+        "why": "The two disagree on the products screen's three largest runs: Type/Heading is 26/31.2/700 at -0.26 tracking against heading-page's 24/32/800 at -0.4; Type/Title is 15/19.5/700 against heading-section's 18/24/600. Only Type/Caption already matches.",
+        "nearest": "text-style.heading-page and text-style.heading-section, each wrong on size, weight and tracking at once — close enough to look intentional and far enough to be visibly a different screen.",
+        "readFrom": "5487:1354, 5487:1356, 5487:1364, 5487:1403",
+        "delta": "productsScreenType"
+      },
+      {
+        "id": "cardLabelRuns",
+        "need": "The product card's two label runs as proper semantic styles, a 400-weight caption in the ramp, and a fractional border-width token for the 0.2 stroke.",
+        "why": "Figma composes BOTH runs from primitives — the title binds letter-spacing/-0_4 and a weight, the family run binds four separate primitives — which AGENTS.md forbids consuming, so the values are generated from `deltas` instead of referenced.",
+        "nearest": "text-style.body-strong matches the title run on family, weight, size and line height and lacks only the -0.4 tracking; text-style.caption matches the family run but is weight 500 where the design is 400; border-width.hairline is 1dp, five times the design's 0.2, and there is no fractional step.",
+        "readFrom": "5487:1381 and its five siblings",
+        "delta": "cardLabelRuns"
+      },
+      {
+        "id": "navBarFill",
+        "need": "A nav-bar surface role as a light/dark pair, or reconcile the products page fill with the other two tabs.",
+        "why": "The design recesses the pill BELOW the page — page Card BG, pill Main BG. This app cannot take that pairing: its page is color.background, and moving it to color.surface would repaint Verifications and Settings, whose rows ARE color.surface and would disappear into it. Taking only the pill half puts #1A1C23 on a #1A1C23 page, which is an invisible bar — verified on the re-recorded dark golden.",
+        "nearest": "color.surface, which is LIGHTER than the page in dark. #21232C exists upstream only as color.grey.800, a primitive.",
+        "readFrom": "I5487:1357;6:5 and I5447:1707;6:5",
+        "delta": "navBarFill"
+      },
+      {
+        "id": "floatingElevation",
+        "need": "A floating elevation role, expressed PER PLATFORM — a dp elevation for Compose, the offset/blur/colour triple for CSS and SwiftUI.",
+        "why": "spec/components.json references elevation.floating in five places and nothing defines it. The design's value is 0px 8px 24px rgba(0,0,0,0.12), which Compose cannot express as drawn: Modifier.shadow takes an elevation and derives offset and blur from the platform light model, and ambientColor/spotColor tint the two passes rather than setting the drawn rgba — and both are ignored below API 28. One shape only one platform can consume is not a token.",
+        "nearest": "Nothing. SmileDimens carries no elevation token of any kind in any platform's generated output, so the nav bar stands a SPACING token in for an elevation.",
+        "readFrom": "I5487:1357;6:5, I5487:1357;6:26, I5447:1707;6:5, I5447:1707;6:26",
+        "delta": "floatingElevation"
+      },
+      {
+        "id": "sheetElevation",
+        "need": "Draw the sheets, or rule that they carry no elevation.",
+        "why": "The products frame does not draw a sheet at all, so sheet elevation is unsourced rather than decided. Their radius was settled by ruling; their elevation was left open, and four platforms will each guess it.",
+        "nearest": "elevation.floating, which is the nav bar's value and is itself unresolved above — borrowing it would make one unsourced number the source of a second.",
+        "readFrom": "absent from 5487:1351 and 5447:1701",
+        "delta": "floatingElevation"
+      },
+      {
+        "id": "mainBgVsCardBg",
+        "need": "Rename or rebind Main BG and Card BG — they are bound to the opposite of what they are named for.",
+        "why": "In BOTH frames Main BG is bound to a 58dp pill and Card BG to the whole page. Anyone reading the variable names and implementing them literally gets the page and the pill swapped, which is exactly the invisible nav bar above. It is a naming defect in the file rather than a missing token, and it is the cheapest of these to fix.",
+        "nearest": "Not applicable — both variables exist; they are attached to the wrong surfaces.",
+        "readFrom": "5487:1351 and 5447:1701",
+        "delta": "navBarFill"
+      },
+      {
+        "id": "productRowVsCardHue",
+        "need": "Rule which colour a product is. Document Verification and Enhanced Document Verification are each drawn in two different colours on two boards.",
+        "why": "The products frame draws their cards green #06A850 and dark green #04713A. The Verifications board draws their list rows amber #B36500 on #FBEEDA and near-black #2D2B2A on #EDEBEA. Both boards were read at the node in the last two days, so neither is stale — they disagree. Engineering cannot settle it without inventing a value one board or the other does not carry, so both are shipped as drawn and the same product is two colours on two surfaces.",
+        "nearest": "Not applicable — there is no token for a product hue at all. This is the identity question underneath that gap.",
+        "readFrom": "cards 5487:1351; rows 5206-2410, tints read off the exported row glyphs' stroke",
+        "delta": "productHues"
+      },
+      {
+        "id": "enhancedKycRowPair",
+        "need": "A list-row glyph tint and tile fill for Enhanced KYC, the sixth product.",
+        "why": "The Verifications board predates the owner decision that added a sixth product, so it draws no Enhanced KYC row. Its row pair is DERIVED here — the teal was built at the same lightness as the five the design does supply — and a derived value in the token file is a placeholder, not an answer.",
+        "nearest": "Not applicable. The five supplied pairs were each chosen against their own glyph, so none of them generalises to a sixth.",
+        "readFrom": "absent from 5206-2410",
+        "delta": "productHues"
       }
     ]
   },
