@@ -100,10 +100,8 @@ class UseSmileIDSampleContrastTest {
         const val INK_CROSSOVER = 0.179f
 
         /**
-         * Fills that sit so near the crossover that NEITHER ink clears AA — 3.55:1 is the best
-         * available on Enhanced KYC's sky blue at 79 % over the dark page, so this is a property of
-         * the fill and only design can move it. One entry, and it should stay one: see the
-         * `cardInkContrast` delta.
+         * Fills so near the crossover that NEITHER ink clears AA — 3.55:1 is the best available on
+         * Enhanced KYC's sky blue over the dark page, so only design can move it. Should stay one entry.
          */
         val MID_TONE_FILLS = setOf("enhancedKyc")
 
