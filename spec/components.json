@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "designVersion": "2026-08-12",
+  "designVersion": "2026-08-25",
   "description": "Every UI component the four sample apps need, with who owns it and which tokens it consumes. Build in the order given: primitives, then composites, then screens. A screen is then assembly, not invention.",
   "ownership": {
     "rule": "sample-ui owns all app chrome. The SDK owns everything inside its flow. Visual consistency between them comes from SHARED TOKENS, not from importing each other's components.",
@@ -416,7 +416,7 @@
       ],
       "usedBy": [],
       "notes": "VERIFIED against a render 2026-08-12. It is an ENVIRONMENT pill — a status dot plus the environment name ('Sandbox') on a pale fill. There is no avatar in it; the profile avatar lives in Settings. The production variant is wider, so do not fix its width.",
-      "decision": "OWNER DECISION 2026-08-13: the chip DISPLAYS environment only and is no longer the profile-switch trigger — the new header avatar button owns that. OWNER RULING 2026-08-24: HIDDEN, not deleted \u2014 node 5447:1705 keeps the instance in the products frame with hidden=true. The component, its tokens, its sample_env_chip id and its composite golden all survive; usedBy is empty because no shipped screen renders it. The environment stopped being an app-level property \u2014 a token's api_url claim decides it \u2014 so a header chip reading 'this app submits here' would no longer be true, and sample_result_environment on the result card publishes it instead. Read this before reporting the component missing; reinstating it needs a design change."
+      "decision": "OWNER DECISION 2026-08-13: the chip DISPLAYS environment only and is no longer the profile-switch trigger — the new header avatar button owns that. OWNER RULING 2026-08-24: HIDDEN, not deleted — node 5447:1705 keeps the instance in the products frame with hidden=true. The component, its tokens, its sample_env_chip id and its composite golden all survive; usedBy is empty because no shipped screen renders it. The environment stopped being an app-level property — a token's api_url claim decides it — so a header chip reading 'this app submits here' would no longer be true, and sample_result_environment on the result card publishes it instead. Read this before reporting the component missing; reinstating it needs a design change."
     },
     {
       "name": "ProductCard",
@@ -426,17 +426,26 @@
         "color.decorative.*",
         "color.text.inverse",
         "radius.surface",
-        "card.radius",
-        "text-style.title"
+        "radius.lg",
+        "spacing.md",
+        "text-style.body-strong",
+        "text-style.caption",
+        "offBlack (delta)",
+        "cardLabelRuns (delta)"
       ],
       "metrics": {
         "size": "174x148 in a 2-up grid; built as a weighted column with a space64*2 minimum so it grows with the title",
-        "padding": "14 in the design, spacing.sm (12) here",
-        "iconTile": "40 (space40) at radius.sm, filled color.surface with the card's own hue as the glyph tint. The design set supplied four icons on 2026-08-15, held in design/icons/ and named by product id. The two document products SHARE one mark by design and are told apart by the card's hue, which is already the icon's tint — do not add a second near-identical drawable. Enhanced KYC is the one product still owed an icon; it falls back to the shared product mark, which is deliberately visibly generic rather than borrowing an unrelated icon.",
-        "ghostGlyph": "69.3 bleeding off the top-right; the card clips to bounds rather than growing",
-        "goAffordance": "26 circular outline in the design; size.icon-lg (24) here",
-        "titleTruncation": "none — 'SmartSelfie Authentication' already wraps to two lines at default scale on a 174-wide card",
-        "colouring": "the whole card takes a color.decorative.* fill with color.text.inverse text; the product→hue list is outstanding, so the caller passes the hue. That list became load-bearing on 2026-08-15: the two document products share one icon and the hue is the ONLY thing distinguishing them, so until the real list lands they are told apart by a stand-in palette indexed by declaration order."
+        "padding": "spacing.md (16) — the design draws 14 and §7.8 rules it onto the 16 scale",
+        "iconTile": "40 (space40) at radius.lg (16) — the design draws 14 and §7.8 rules it to 16. Filled a mode-invariant WHITE in both schemes (the frames set a raw white, not a variable), tinted with the hue's cardIcon. The two document products SHARE one mark and are told apart by the card's hue. All six card glyphs ship at 21x21 on Android; Biometric's Figma node exports at 13.44x12.95, which is a design-file outlier rather than an app one.",
+        "ghostGlyph": "69.3 bleeding off the top-right; the card clips to bounds rather than growing. WHITE at 10% on all six — the label's own ink, faint. Not the go pill's colour and not per-hue: the two marks came from one constant and the design draws them in two different colours at two different alphas.",
+        "goAffordance": "size.icon-lg (24); the design draws 26 and §7.8 snaps it to the icon scale. Its fill is a FIXED rgba(45,43,42,0.16) on all six cards — Off_black's LIGHT value at 16%, which does NOT flip with the scheme. Implementing it as 'the stroke colour at 16%' gives a white pill in dark.",
+        "titleTruncation": "none. The new titles are shorter than the old full labels, but the subtitle adds a line the old card did not have, so 'Enhanced Doc. / Verification' in a 114.5dp column is the worst case for the max-font-scale predicate.",
+        "colouring": "the whole card takes a color.decorative.* fill with color.text.inverse text; the product→hue list is outstanding, so the caller passes the hue. That list became load-bearing on 2026-08-15: the two document products share one icon and the hue is the ONLY thing distinguishing them, so until the real list lands they are told apart by a stand-in palette indexed by declaration order.",
+        "radius": "radius.surface (16). Was radius.xl (20); radius.xl SURVIVES as the Material 3 Shapes.extraLarge scale, so it must not be deleted.",
+        "stroke": "0.2dp in Off_black, replacing the 10dp coloured shadow entirely. Off_black flips with the scheme, so the stroke is near-black on the light page and warm-white on the dark one — it reads in BOTH, and light is the higher-contrast of the two. Five card nodes draw 0.2px and Biometric draws 0.5px; §7.6 rules 0.2 everywhere.",
+        "shadow": "NONE. The only shadows the products design draws are the nav bar's and the token button's.",
+        "label": "TWO RUNS IN ONE TEXT NODE, not two stacked labels: title (body-strong 16/24, tracking -0.4) then family (caption 12/16 at weight 400). Built as an AnnotatedString with a ParagraphStyle per run, because each run carries its own line height and a single paragraph would apply one of them to both lines. The design's strings carry trailing spaces — a Figma artefact used to force the wrap, not content.",
+        "gradient": "Two stops from the hue. FOUR of the six carry a 0.79 alpha and the card's only background is its gradient, so those four composite against the page and render differently per scheme BY DESIGN — a light/dark golden diff bigger than typography is correct on them. Auth and Biometric are fully opaque and must match across schemes. The outer stop is drawn past the card's edge (129.78%, and 110.51% on Biometric), which Compose cannot express — colour stops must land inside 0..1 — so the card interpolates the colour the gradient has actually reached by the edge and uses that."
       },
       "states": [
         "default",
@@ -447,7 +456,8 @@
         "products"
       ],
       "notes": "VERIFIED against a render 2026-08-12. The WHOLE CARD is filled with a decorative colour (green, indigo, amber, near-black, indigo across the products) with inverse text — not a white card with a coloured accent. Anatomy: white rounded icon tile top-left, a same-hue ghost glyph watermark bleeding off the top-right, title bottom-left in inverse text (may wrap to two lines), and a circular outlined arrow bottom-right. 174x148 in a 2-up grid, 12 gap.",
-      "decision": "OWNER DECISION 2026-08-13: six products now (Enhanced KYC fills the empty slot). The label is 'SmartSelfie Authentication' in full, which WRAPS TO TWO LINES on a 174-wide card — verify the card's two-line footer still fits at large font scales, and raise it with design if it clips."
+      "decision": "OWNER DECISION 2026-08-13: six products now (Enhanced KYC fills the empty slot). The label is 'SmartSelfie Authentication' in full, which WRAPS TO TWO LINES on a 174-wide card — verify the card's two-line footer still fits at large font scales, and raise it with design if it clips.",
+      "designRef": "Re-read 2026-08-25 off node 5487:1351 (light) and 5447:1701 (dark), which are identical apart from the variables they resolve."
     },
     {
       "name": "ProductGrid",
@@ -572,7 +582,7 @@
         "countryPicker",
         "idTypePicker"
       ],
-      "notes": "NOT IN THE DESIGN \u2014 the app's own convention, added 2026-08-20 because four surfaces can render nothing and each had invented its own treatment. Muted and centred, never a loud frame: an empty list is a normal state, not a failure. The supporting line is only for surfaces where the reader can act on it \u2014 a search that matched nothing needs no advice, so the pickers pass text alone."
+      "notes": "NOT IN THE DESIGN — the app's own convention, added 2026-08-20 because four surfaces can render nothing and each had invented its own treatment. Muted and centred, never a loud frame: an empty list is a normal state, not a failure. The supporting line is only for surfaces where the reader can act on it — a search that matched nothing needs no advice, so the pickers pass text alone."
     },
     {
       "name": "DateGroupHeader",
@@ -736,7 +746,8 @@
         "horizontalPadding": "20 in the design, spacing.md (16) here",
         "platform": "Material 3 ModalBottomSheet — drag-to-dismiss, scrim tap and insets are the platform's",
         "openHeight": "content height, NOT the platform's half-screen partial state: the five-field new-profile sheet clipped its last field and put its CTA below the fold at half height",
-        "overflow": "the content scrolls rather than clips, so enlarged type cannot strand a CTA"
+        "overflow": "the content scrolls rather than clips, so enlarged type cannot strand a CTA",
+        "radius": "radius.surface (16) on the top corners. Was radius.sheet (20); PVR-A13 rules one radius value wherever a radius is chosen. A slightly squarer sheet than Android users see elsewhere, which is why §7.8 asks for a device look rather than a golden diff."
       },
       "variants": [
         "partialWithHandle",
@@ -753,7 +764,8 @@
         "Scrim — dimmed backdrop for partial sheets",
         "SheetHeader — back + title for full-height sheets",
         "GrabHandle — 44x5 pill on partial sheets"
-      ]
+      ],
+      "designRef": "Scale ruled 2026-08-24, migrated 2026-08-26 (PVR-A13)."
     },
     {
       "name": "NavBar",
@@ -761,24 +773,24 @@
       "owner": "sample",
       "tokens": [
         "color.surface",
-        "color.border",
         "color.primary",
-        "color.text.muted",
-        "radius.surface",
-        "elevation.card"
+        "offBlack (delta)",
+        "radius.control",
+        "floatingElevation (delta)"
       ],
       "metrics": {
         "size": "361x58, a floating pill plus a detached circular token button",
         "tokenButton": "58 — NOT size.control-md's 44",
         "tabIcon": "21, above the label with a 4 gap",
-        "tabLabel": "10/700, the overline style — not a 14 tab style",
-        "tokenLabel": "8.5/700 muted, under a 16 icon",
+        "tabLabel": "10/700, the overline style. Unselected takes Off_black, not color.text.muted; selected takes color.primary.",
+        "tokenLabel": "8.5/700 in Off_black, under a 16 icon",
         "extends": "the PR #2 component rather than a rebuild; only the token affordance and its ring were added",
         "width": "spans the full width between 16 margins; the tabs pill takes all space the 58 token button leaves, and the three tabs are EQUAL thirds of it. A content-sized row leaves dead space to the right of the token — that is how Android first shipped it.",
-        "elevation": "both halves float on the design's 0 8 24 rgba(0,0,0,.12) shadow; the tabs pill has NO outline and only the token button is stroked",
+        "elevation": "both halves float on the design's 0 8 24 rgba(0,0,0,.12). Compose cannot express a CSS offset/blur/colour triple — Modifier.shadow takes an elevation and derives offset and blur from the platform light model — so Android ships shadowElevation 8dp, which matches the design's 8px y-offset. NEITHER half is stroked: the token button's 2dp border is dropped, and color.border is a light hairline in BOTH schemes anyway.",
         "placement": "FLOATS over the content — the list scrolls underneath it and the background is continuous. Reserving a row for it instead insets the content and draws a visible seam across the screen with the last row clipped against it",
         "clearance": "the screen's own trailing spacer is what lets the last row scroll clear; anything else anchored to the bottom of a screen must clear the bar itself, because the content is not inset by it",
-        "shownOn": "the three tab ROOTS only. A pushed screen has no nav bar even when it lives inside a tab's graph — verification details is in the verifications graph and the design draws it without one"
+        "shownOn": "the three tab ROOTS only. A pushed screen has no nav bar even when it lives inside a tab's graph — verification details is in the verifications graph and the design draws it without one",
+        "fill": "color.surface against the page's color.background. Both frames bind these the OTHER WAY ROUND — page Card BG, pill Main BG — which is the same one-step separation inverted. The pill cannot move alone: with the page unchanged the two become the same colour and the bar loses its edge on every tab, and moving the page repaints two screens this frame does not draw. OPEN, see screens.json products.pageBackgroundOpenQuestion."
       },
       "items": [
         "products",
@@ -795,7 +807,8 @@
         "verifications",
         "settings"
       ],
-      "notes": "CORRECTED 2026-08-17 against node 5206:2436, after review found the bar shipping text-only. Each tab is an ICON ABOVE ITS LABEL, both taking primary when active and muted otherwise — the three icons were imported in PR #3 and then sat unused, which is the trap for a port. The detached Token button is WHITE (color.surface) with a 1.5 border and carries an icon PLUS the word 'Token'; it is not a primary-filled FAB. The tabs pill takes a shadow, not a border. Model the token affordance separately from the three tabs. Hidden during select mode. The token button must grow with font scale rather than clip — a fixed 58 box ellipsises 'Token' at 2x and fails the no-clipping predicate."
+      "notes": "CORRECTED 2026-08-17 against node 5206:2436, after review found the bar shipping text-only. Each tab is an ICON ABOVE ITS LABEL, both taking primary when active and muted otherwise — the three icons were imported in PR #3 and then sat unused, which is the trap for a port. The detached Token button is WHITE (color.surface) with a 1.5 border and carries an icon PLUS the word 'Token'; it is not a primary-filled FAB. The tabs pill takes a shadow, not a border. Model the token affordance separately from the three tabs. Hidden during select mode. The token button must grow with font scale rather than clip — a fixed 58 box ellipsises 'Token' at 2x and fails the no-clipping predicate.",
+      "designRef": "Re-read 2026-08-25 off node 5487:1351 (light) and 5447:1701 (dark), which are identical apart from the variables they resolve."
     },
     {
       "name": "TokenRing",
@@ -828,21 +841,28 @@
       "tier": "composite",
       "owner": "sample",
       "tokens": [
-        "color.feedback.success.fill",
-        "color.text.inverse",
+        "tokenSessionGreens (delta)",
+        "color.surface",
         "radius.surface",
+        "spacing.md",
         "text-style.overline",
-        "text-style.title"
+        "text-style.caption",
+        "offBlack (delta)",
+        "cardLabelRuns (delta)"
       ],
       "metrics": {
-        "size": "361x64; space64 minimum, content-driven",
-        "fill": "feedback.success.fill with on-success text — a filled green card, not a muted surface",
-        "countdown": "right-aligned at text-style.heading-card, formatted m:ss by the caller"
+        "radius": "radius.surface (16)",
+        "padding": "spacing.md (16) on all four sides — the design draws 14/15/16 and §7.8 rules it onto the scale",
+        "stroke": "0.2dp in Off_black, matching the product cards. The node draws 0.5px; §7.6 rules 0.2.",
+        "gradient": "HORIZONTAL rgba(12,65,178,0.78) -> rgba(167,139,250,0.79). BOTH stops are translucent, so this card composites against the page and renders differently per scheme exactly as the four translucent product cards do.",
+        "type": "'ACTIVE TOKEN SESSION' overline 10/700 at +1 tracking; 'Linked to session x' caption 12/16 at weight 400; the countdown at 24.",
+        "text": "color.surface — mode-invariant white, because the card's fill is."
       },
       "usedBy": [
         "products"
       ],
-      "notes": "VERIFIED against a render 2026-08-12. A FILLED GREEN card with inverse text: 'ACTIVE TOKEN SESSION' overline, 'Linked to session <id>' title, and a large m:ss countdown right-aligned. Not a muted surface card. The countdown shares one clock with TokenRing."
+      "notes": "VERIFIED against a render 2026-08-12. A FILLED GREEN card with inverse text: 'ACTIVE TOKEN SESSION' overline, 'Linked to session <id>' title, and a large m:ss countdown right-aligned. Not a muted surface card. The countdown shares one clock with TokenRing.",
+      "designRef": "Re-read 2026-08-25 off node 5487:1351 (light) and 5447:1701 (dark), which are identical apart from the variables they resolve."
     },
     {
       "name": "SessionEndedBanner",
@@ -919,7 +939,8 @@
       "metrics": {
         "size": "393x160, full-bleed at the bottom with radius.sheet top corners",
         "manualEntryRow": "353x46; size.control-md minimum, radius.field, surface-alt fill",
-        "simulateButton": "353x48 full-width primary — a first-class feature, not debug scaffolding: it is what makes token-session flows testable with no QR source"
+        "simulateButton": "353x48 full-width primary — a first-class feature, not debug scaffolding: it is what makes token-session flows testable with no QR source",
+        "radius": "radius.surface (16) on the top corners. Was radius.sheet (20); PVR-A13 rules one radius value wherever a radius is chosen. A slightly squarer sheet than Android users see elsewhere, which is why §7.8 asks for a device look rather than a golden diff."
       },
       "rows": [
         "manualEntryWithPaste"
@@ -933,7 +954,7 @@
         "SimulateRow — 'Simulate a successful scan'"
       ],
       "primaryAction": "'Simulate a successful scan' — a full-width PRIMARY BUTTON, not a row",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-3668"
+      "designRef": "Scale ruled 2026-08-24, migrated 2026-08-26 (PVR-A13)."
     },
     {
       "name": "ResultCard",

@@ -15,6 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -51,7 +54,7 @@ import com.usesmileid.sampleapps.ui.screens.SettingsScreen as SettingsContent
 fun SettingsScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     val chrome = LocalUseSmileIDSampleChrome.current
-    val openUrl = rememberUrlOpener()
+    val openUrl = LocalUseSmileIDSampleUrlOpener.current
     SettingsContent(
         contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
         state = UseSmileIDSampleSettingsState(
@@ -95,7 +98,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
 fun LicensesScreen(navigator: DestinationsNavigator) {
     val context = LocalContext.current
     val chrome = LocalUseSmileIDSampleChrome.current
-    val openUrl = rememberUrlOpener()
+    val openUrl = LocalUseSmileIDSampleUrlOpener.current
     // Off the main thread: the asset is the Apache-2.0 text plus two hundred entries.
     val licenses by produceState(UseSmileIDSampleLicenses(), context) {
         value = withContext(Dispatchers.IO) {
@@ -112,29 +115,44 @@ fun LicensesScreen(navigator: DestinationsNavigator) {
     )
 }
 
-/**
- * A Custom Tab for pages that render in one, and the browser for pages that do not. Never a WebView:
- * either way the page keeps the user's own session, autofill and password manager.
- */
+/** Opens a settings link: `(url, label, inApp)`. */
+typealias UseSmileIDSampleUrlOpener = (url: String, label: String, inApp: Boolean) -> Unit
+
+/** Provided once by the shell: a `remember` in each screen bound a second Custom Tabs service. */
+val LocalUseSmileIDSampleUrlOpener: ProvidableCompositionLocal<UseSmileIDSampleUrlOpener> =
+    compositionLocalOf { error("No UseSmileIDSampleUrlOpener provided") }
+
 @Composable
-private fun rememberUrlOpener(): (url: String, label: String, inApp: Boolean) -> Unit {
+fun ProvideUseSmileIDSampleUrlOpener(content: @Composable () -> Unit) =
+    CompositionLocalProvider(LocalUseSmileIDSampleUrlOpener provides rememberUrlOpener(), content = content)
+
+/** A Custom Tab where the page renders in one, the browser where it does not. Never a WebView. */
+@Composable
+private fun rememberUrlOpener(): UseSmileIDSampleUrlOpener {
     val context = LocalContext.current
     val session = rememberWarmCustomTabsSession()
-    // A toolbar per scheme, so it reads as this app's chrome either way. One shared colour left a
-    // white bar on a white page in light mode and a hard seam in dark.
+    // Per scheme: one shared colour left a white bar on a white page in light mode.
     val light = UseSmileIDSampleTheme.colors.primary.toArgb()
     val dark = UseSmileIDSampleTheme.colors.surface.toArgb()
     return { url, label, inApp ->
         try {
             if (inApp) {
-                CustomTabsIntent.Builder(session)
+                val tab = CustomTabsIntent.Builder(session)
                     .setColorSchemeParams(CustomTabsIntent.COLOR_SCHEME_LIGHT, toolbar(light))
                     .setColorSchemeParams(CustomTabsIntent.COLOR_SCHEME_DARK, toolbar(dark))
                     .setShowTitle(true)
                     .build()
-                    .launchUrl(context, url.toUri())
+                // Browsers only: an implicit view intent is open to any app claiming the domain.
+                tab.intent.addCategory(Intent.CATEGORY_BROWSABLE)
+                tab.launchUrl(context, url.toUri())
             } else {
-                context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+                context.startActivity(
+                    Intent(Intent.ACTION_VIEW, url.toUri()).apply {
+                        addCategory(Intent.CATEGORY_BROWSABLE)
+                        // Its own task: ejecting means the page is not part of this app's history.
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    },
+                )
             }
         } catch (e: ActivityNotFoundException) {
             // A device with no browser at all is a real configuration; a crash is worse than a log.
@@ -146,9 +164,8 @@ private fun rememberUrlOpener(): (url: String, label: String, inApp: Boolean) ->
 private fun toolbar(color: Int) = CustomTabColorSchemeParams.Builder().setToolbarColor(color).build()
 
 /**
- * Warms the browser while Settings is open, so the first tab paints instead of appearing empty under
- * our own toolbar. `warmup()` only, deliberately: pre-fetching the page would spend a partner's
- * mobile data on a link they may never tap, and the docs page is 649 KB.
+ * Warms the browser so the first tab paints rather than appearing empty. `warmup()` only:
+ * pre-fetching would spend a partner's data on a link they may never tap.
  */
 @Composable
 private fun rememberWarmCustomTabsSession(): CustomTabsSession? {

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -46,7 +45,7 @@ fun UseSmileIDSampleBottomSheet(
         modifier = modifier.publishTestTags().tagged(testId),
         // Content height, not half the screen: at half, the five-field sheet left its CTA below the fold.
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-        shape = RoundedCornerShape(topStart = SmileDimens.radiusSheet, topEnd = SmileDimens.radiusSheet),
+        shape = UseSmileIDSampleTheme.shapes.sheet,
         containerColor = UseSmileIDSampleTheme.colors.surface,
         contentColor = UseSmileIDSampleTheme.colors.textTitle,
         scrimColor = UseSmileIDSampleTheme.colors.overlayScrim,
@@ -88,7 +87,7 @@ fun UseSmileIDSampleFullHeightBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = modifier.fillMaxHeight().publishTestTags().tagged(testId),
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-        shape = RoundedCornerShape(topStart = SmileDimens.radiusSheet, topEnd = SmileDimens.radiusSheet),
+        shape = UseSmileIDSampleTheme.shapes.sheet,
         containerColor = UseSmileIDSampleTheme.colors.surface,
         contentColor = UseSmileIDSampleTheme.colors.textTitle,
         scrimColor = UseSmileIDSampleTheme.colors.overlayScrim,
@@ -147,7 +146,7 @@ private fun GrabHandle() {
                 .size(width = SmileDimens.sizeControlMd, height = SmileDimens.space4)
                 .background(
                     color = UseSmileIDSampleTheme.colors.border,
-                    shape = RoundedCornerShape(SmileDimens.radiusChip),
+                    shape = UseSmileIDSampleTheme.shapes.chip,
                 ),
         )
     }

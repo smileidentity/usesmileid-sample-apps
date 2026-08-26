@@ -143,6 +143,7 @@ KOTLIN_HUES_HEADER = """// Smile ID product hues — GENERATED. Do not edit by h
 package com.smileid.designsystem
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 """
 
@@ -436,31 +437,40 @@ def emit_kotlin_product_hues(hues: dict) -> str:
     if not hues:
         raise TokenError("spec/design-tokens.json carries no productHues.hues entries")
     lines = [
-        "/** One product card's colouring. `scrim` is applied at 16%: the go pill and the ghost glyph. `tile` is the soft icon-tile fill a list row uses. */",
+        "/** One product's colouring. `cardIcon` tints the card's glyph; `icon` and `tile` are the list row's pair, which the products frame does not govern. */",
         "data class SmileProductHue(",
         "    val from: Color,",
         "    val to: Color,",
+        "    val cardIcon: Color,",
         "    val icon: Color,",
-        "    val scrim: Color,",
         "    val tile: Color,",
+        "    /** Stop positions as fractions. `stopEnd` may exceed 1: the design runs it past the card's edge. */",
+        "    val stopStart: Float,",
+        "    val stopEnd: Float,",
+        "    val fromAlpha: Float,",
+        "    val toAlpha: Float,",
         ")",
         "",
         "/** Keyed by the product id in spec/scenarios.json. A product absent here has no hue yet. */",
         "val smileProductHues: Map<String, SmileProductHue> = mapOf(",
     ]
     for product, hue in hues.items():
-        missing = {"from", "to", "icon", "scrim", "tile"} - set(hue)
+        missing = {"from", "to", "cardIcon", "icon", "tile"} - set(hue)
         if missing:
             raise TokenError(f"product hue {product!r} is missing {sorted(missing)}")
         lines += [
             f'    "{product}" to SmileProductHue(',
             f"        from = {kotlin_color(hue['from'])},",
             f"        to = {kotlin_color(hue['to'])},",
+            f"        cardIcon = {kotlin_color(hue['cardIcon'])},",
             f"        icon = {kotlin_color(hue['icon'])},",
-            f"        scrim = {kotlin_color(hue['scrim'])},",
             f"        tile = {kotlin_color(hue['tile'])},",
-            "    ),",
         ]
+        for role in ("stopStart", "stopEnd", "fromAlpha", "toAlpha"):
+            if hue.get(role) is None:
+                raise TokenError(f"product hue {product!r} is missing {role}")
+            lines.append(f"        {role} = {hue[role]}f,")
+        lines.append("    ),")
     lines.append(")")
     return "\n".join(lines)
 
@@ -540,6 +550,40 @@ def emit_kotlin_surface2(value) -> str:
     )
 
 
+def emit_kotlin_off_black(values) -> str:
+    """A pair, not a single value: every role it paints is drawn in both schemes."""
+    missing = [mode for mode in ("light", "dark") if not values.get(mode)]
+    if missing:
+        raise TokenError(f"spec/design-tokens.json offBlack is missing {missing}")
+    return "\n".join([
+        "",
+        "/** The design's `Off_black`: the warm strong foreground. Seven roles, one variable — see the `offBlack` delta. */",
+        f"val smileOffBlackLight: Color = {kotlin_color(values['light'])}",
+        f"val smileOffBlackDark: Color = {kotlin_color(values['dark'])}",
+    ])
+
+
+def read_off_black() -> dict:
+    return read_spec_delta("offBlack", "values")
+
+
+def emit_kotlin_nav_bar_fill(values) -> str:
+    """The bar's own fill: the page's own colour leaves it invisible in dark."""
+    missing = [mode for mode in ("light", "dark") if not values.get(mode)]
+    if missing:
+        raise TokenError(f"spec/design-tokens.json navBarFill is missing {missing}")
+    return "\n".join([
+        "",
+        "/** The floating nav bar's fill — see the `navBarFill` delta. */",
+        f"val smileNavBarLight: Color = {kotlin_color(values['light'])}",
+        f"val smileNavBarDark: Color = {kotlin_color(values['dark'])}",
+    ])
+
+
+def read_nav_bar_fill() -> dict:
+    return read_spec_delta("navBarFill", "values")
+
+
 def read_border_strong() -> str:
     return read_spec_delta("borderStrong", "value")
 
@@ -567,14 +611,16 @@ def read_token_session() -> dict:
 def emit_kotlin_token_session(delta: dict) -> str:
     """The session card's gradient and the countdown ring, which no semantic role covers."""
     grad = delta.get("cardGradient") or []
+    alpha = delta.get("cardGradientAlpha") or []
     ring = delta.get("ring")
     opacity = delta.get("ringTrackOpacity")
-    if len(grad) != 2 or not ring or opacity is None:
-        raise TokenError("tokenSessionGreens needs a two-stop cardGradient, a ring and a ringTrackOpacity")
+    if len(grad) != 2 or len(alpha) != 2 or not ring or opacity is None:
+        raise TokenError("tokenSessionGreens needs a two-stop cardGradient with its alphas, a ring and a ringTrackOpacity")
     return "\n".join([
         "",
-        "/** The session card's horizontal gradient: the token session's own green, not feedback.success. */",
+        "/** The session card's horizontal gradient. Both stops are translucent, so the card composites against the page. */",
         "val smileTokenSessionGradient: List<Color> = listOf(%s, %s)" % (kotlin_color(grad[0]), kotlin_color(grad[1])),
+        "val smileTokenSessionGradientAlpha: List<Float> = listOf(%sf, %sf)" % (alpha[0], alpha[1]),
         "",
         "/** The countdown ring: this colour solid for progress, and the same colour faded for the track. */",
         "val smileTokenRing: Color = %s" % kotlin_color(ring),
@@ -606,6 +652,62 @@ def emit_kotlin_label_type_style(delta: dict) -> str:
     ])
 
 
+def read_card_label_runs() -> dict:
+    spec_path = os.path.join(REPO, SPEC_TOKENS)
+    with io.open(spec_path, encoding="utf-8") as handle:
+        spec = json.load(handle)
+    for delta in spec.get("deltas", []):
+        if delta.get("id") == "cardLabelRuns":
+            return delta
+    raise TokenError(f"{SPEC_TOKENS} has no cardLabelRuns delta to generate from")
+
+
+def emit_kotlin_card_label_runs(delta: dict) -> str:
+    """The one property each card-label run needs that its nearest semantic style does not carry."""
+    tracking = delta.get("tracking")
+    weight = delta.get("familyWeight")
+    stroke = delta.get("strokeWidth")
+    if tracking is None or not weight or stroke is None:
+        raise TokenError("cardLabelRuns needs a tracking, a familyWeight and a strokeWidth")
+    return "\n".join([
+        "",
+        "/** The card's two label runs and its stroke, each one property off a token — see the `cardLabelRuns` delta. */",
+        "val smileCardTitleTracking = %s.sp" % tracking,
+        "const val SMILE_CARD_FAMILY_WEIGHT = %s" % weight,
+        "val smileCardStroke = %s.dp" % stroke,
+    ])
+
+
+def read_products_type() -> dict:
+    spec_path = os.path.join(REPO, SPEC_TOKENS)
+    with io.open(spec_path, encoding="utf-8") as handle:
+        spec = json.load(handle)
+    for delta in spec.get("deltas", []):
+        if delta.get("id") == "productsScreenType":
+            return delta
+    raise TokenError(f"{SPEC_TOKENS} has no productsScreenType delta to generate from")
+
+
+def emit_kotlin_products_type(delta: dict) -> str:
+    """The frame's Type/Heading and Type/Title, which the vendored ramp does not match."""
+    keys = ("headingSize", "headingLineHeight", "headingTracking", "headingWeight",
+            "sectionSize", "sectionLineHeight", "sectionWeight")
+    missing = [k for k in keys if delta.get(k) is None]
+    if missing:
+        raise TokenError(f"productsScreenType is missing {missing}")
+    return "\n".join([
+        "",
+        "/** The products header and section headers, which text-style.* does not match — see the `productsScreenType` delta. */",
+        "val smileHeadingPageSize = %s.sp" % delta["headingSize"],
+        "val smileHeadingPageLineHeight = %s.sp" % delta["headingLineHeight"],
+        "val smileHeadingPageTracking = %s.sp" % delta["headingTracking"],
+        "const val SMILE_HEADING_PAGE_WEIGHT = %s" % delta["headingWeight"],
+        "val smileSectionHeaderSize = %s.sp" % delta["sectionSize"],
+        "val smileSectionHeaderLineHeight = %s.sp" % delta["sectionLineHeight"],
+        "const val SMILE_SECTION_HEADER_WEIGHT = %s" % delta["sectionWeight"],
+    ])
+
+
 def emit_kotlin_profile_hues(hues) -> str:
     """One avatar fill per profile, cycled by list position."""
     if not hues:
@@ -632,10 +734,15 @@ def generate_kotlin_product_hues() -> str:
         + "\n"
         + emit_kotlin_surface2(read_surface2())
         + "\n"
+        + emit_kotlin_off_black(read_off_black())
+        + emit_kotlin_nav_bar_fill(read_nav_bar_fill())
+        + "\n"
         + emit_kotlin_profile_hues(read_profile_hues())
         + "\n"
         + emit_kotlin_token_session(read_token_session())
         + emit_kotlin_label_type_style(read_label_type_style())
+        + emit_kotlin_card_label_runs(read_card_label_runs())
+        + emit_kotlin_products_type(read_products_type())
         + "\n"
     )
 

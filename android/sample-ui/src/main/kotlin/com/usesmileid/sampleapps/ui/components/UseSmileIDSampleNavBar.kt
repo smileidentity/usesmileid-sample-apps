@@ -1,7 +1,6 @@
 package com.usesmileid.sampleapps.ui.components
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -58,6 +56,9 @@ enum class UseSmileIDSampleNavItem(
  * A floating pill of three tabs, plus a detached token button that navigates rather than switching tab.
  *
  * [sessionProgress] drives its ring, 1f fresh to 0f expired, from the session's deadline rather than an animation.
+ *
+ * The pill has its own fill: the design recesses it below the page, which this app's page colour
+ * cannot express without hiding the bar. See the `navBarFill` delta.
  */
 @Composable
 fun UseSmileIDSampleNavBar(
@@ -78,8 +79,8 @@ fun UseSmileIDSampleNavBar(
     ) {
         Surface(
             modifier = Modifier.weight(1f),
-            shape = RoundedCornerShape(SmileDimens.radiusPill),
-            color = UseSmileIDSampleTheme.colors.surface,
+            shape = UseSmileIDSampleTheme.shapes.pill,
+            color = UseSmileIDSampleTheme.colors.navBar,
             shadowElevation = BAR_ELEVATION,
         ) {
             Row(
@@ -118,8 +119,7 @@ private fun TokenAffordance(progress: Float?, onClick: () -> Unit) {
         Surface(
             modifier = Modifier.defaultMinSize(minWidth = TOKEN_SIZE, minHeight = TOKEN_SIZE),
             shape = CircleShape,
-            color = colors.surface,
-            border = BorderStroke(SmileDimens.borderWidthThick, colors.border),
+            color = colors.navBar,
             shadowElevation = BAR_ELEVATION,
         ) {
             Column(
@@ -129,11 +129,11 @@ private fun TokenAffordance(progress: Float?, onClick: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
-                UseSmileIDSampleIcon(id = R.drawable.sample_ic_token_scan, tint = colors.textTitle, size = SmileDimens.sizeIconSm)
+                UseSmileIDSampleIcon(id = R.drawable.sample_ic_token_scan, tint = colors.foreground, size = SmileDimens.sizeIconSm)
                 Text(
                     text = "Token",
                     style = UseSmileIDSampleTheme.type.textStyleOverline.copy(fontSize = TOKEN_LABEL_SIZE),
-                    color = colors.textMuted,
+                    color = colors.foreground,
                 )
             }
         }
@@ -183,7 +183,7 @@ private fun NavBarTab(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val tint = if (selected) UseSmileIDSampleTheme.colors.primary else UseSmileIDSampleTheme.colors.textMuted
+    val tint = if (selected) UseSmileIDSampleTheme.colors.primary else UseSmileIDSampleTheme.colors.foreground
     Column(
         modifier = modifier
             .testTag(item.testId)

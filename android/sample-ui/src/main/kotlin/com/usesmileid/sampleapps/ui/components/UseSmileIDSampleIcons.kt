@@ -51,14 +51,14 @@ fun ChevronDownGlyph(tint: Color, size: Dp = SmileDimens.sizeIconSm) =
 internal val UseSmileIDSampleProduct.hue: SmileProductHue
     get() = requireNotNull(smileProductHues[id]) { "no hue for product '$id'; see spec/design-tokens.json → productHues" }
 
-/** Both document products share one mark by design; the card's hue is what tells them apart. */
+/** Every product has its own mark: the 2026-08-26 re-export split the two document products apart. */
 @get:DrawableRes
 val UseSmileIDSampleProduct.iconRes: Int?
     get() = when (this) {
         UseSmileIDSampleProduct.SmartSelfieEnrollment -> R.drawable.sample_ic_smart_selfie_enrollment
         UseSmileIDSampleProduct.SmartSelfieAuth -> R.drawable.sample_ic_smart_selfie_auth
         UseSmileIDSampleProduct.DocumentVerification -> R.drawable.sample_ic_document_verification
-        UseSmileIDSampleProduct.EnhancedDocumentVerification -> R.drawable.sample_ic_document_verification
+        UseSmileIDSampleProduct.EnhancedDocumentVerification -> R.drawable.sample_ic_enhanced_document_verification
         UseSmileIDSampleProduct.BiometricKyc -> R.drawable.sample_ic_biometric_kyc
-        UseSmileIDSampleProduct.EnhancedKyc -> null
+        UseSmileIDSampleProduct.EnhancedKyc -> R.drawable.sample_ic_enhanced_kyc
     }

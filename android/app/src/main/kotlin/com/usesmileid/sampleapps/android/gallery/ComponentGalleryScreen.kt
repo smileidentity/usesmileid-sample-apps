@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.Density
 import com.smileid.designsystem.SmileDimens
 import com.smileid.designsystem.smileProductHues
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProductSection
 import com.usesmileid.sampleapps.ui.components.ChevronRightGlyph
 import com.usesmileid.sampleapps.ui.components.ProductMarkGlyph
 import com.usesmileid.sampleapps.ui.components.FlashGlyph
@@ -470,17 +471,20 @@ private fun gallerySections(): List<GallerySectionSpec> {
             UseSmileIDSampleButton(text = "Select one more", onClick = { selectedCount++ })
         },
         GallerySectionSpec("PRODUCT GRID") {
-            val hues = UseSmileIDSampleProduct.entries.mapNotNull { smileProductHues[it.id] }
-            UseSmileIDSampleSectionHeader(text = "Authentication")
-            UseSmileIDSampleProductGrid(itemCount = PRODUCTS.size) { index ->
+            val products = UseSmileIDSampleProduct.entries
+            val hues = products.mapNotNull { smileProductHues[it.id] }
+            UseSmileIDSampleSectionHeader(text = UseSmileIDSampleProductSection.Authentication.label)
+            UseSmileIDSampleProductGrid(itemCount = products.size) { index ->
                 UseSmileIDSampleProductCard(
-                    title = PRODUCTS[index],
+                    title = products[index].cardTitle,
+                    family = products[index].cardFamily,
                     onClick = {},
                     hue = hues[index % hues.size],
                 )
             }
             UseSmileIDSampleProductCard(
-                title = "Enhanced KYC",
+                title = UseSmileIDSampleProduct.EnhancedKyc.cardTitle,
+                family = UseSmileIDSampleProduct.EnhancedKyc.cardFamily,
                 onClick = {},
                 hue = hues.last(),
                 enabled = false,
@@ -545,14 +549,6 @@ private fun gallerySections(): List<GallerySectionSpec> {
         },
     )
 }
-
-private val PRODUCTS = listOf(
-    "SmartSelfie Enrollment",
-    "SmartSelfie Authentication",
-    "Document Verification",
-    "Enhanced Document Verification",
-    "Biometric KYC",
-)
 
 private val PROFILES = listOf(
     Triple("UpTech Finance", "Kwame Asante", "KA"),

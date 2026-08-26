@@ -269,13 +269,14 @@ appId: ${APP_ID}
     id: "sample_setting_nav_licenses"
 - assertVisible:
     id: "sample_licenses_screen"
-# The asset ships in the binary, so a named component is stable on both variants.
+# The first of the 206 rows, so it needs no scroll: the list renders in the asset's order and this
+# step has no scroll budget. Device-measured 2026-08-25: core-ktx sorts 63 deep and never appeared.
 - assertVisible:
-    id: "sample_license_row_androidx_core_core_ktx"
+    id: "sample_license_row_androidx_activity_activity_compose"
 - tapOn:
-    id: "sample_license_row_androidx_core_core_ktx"
+    id: "sample_license_row_androidx_activity_activity_compose"
 - assertVisible:
-    id: "sample_license_text_androidx_core_core_ktx"
+    id: "sample_license_text_androidx_activity_activity_compose"
 - back
 - assertVisible:
     id: "sample_settings_screen"
@@ -311,6 +312,11 @@ appId: ${APP_ID}
           id: "sample_job_row_0"
       - assertVisible:
           id: "sample_result_card"
+      # Back to the tab root first: verification details is a PUSHED screen and draws no nav bar,
+      # so the tab this taps does not exist while it is open.
+      - back
+      - assertVisible:
+          id: "sample_verifications_screen"
       # And the Scenarios row, which no argument reveals: flows reach the drawer by deep link.
       - tapOn:
           id: "sample_nav_settings"

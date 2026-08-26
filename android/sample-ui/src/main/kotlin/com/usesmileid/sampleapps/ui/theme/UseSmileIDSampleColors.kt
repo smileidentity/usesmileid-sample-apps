@@ -5,6 +5,10 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import com.smileid.designsystem.SmileColorDark
 import com.smileid.designsystem.SmileColorLight
+import com.smileid.designsystem.smileNavBarDark
+import com.smileid.designsystem.smileNavBarLight
+import com.smileid.designsystem.smileOffBlackDark
+import com.smileid.designsystem.smileOffBlackLight
 import com.smileid.designsystem.smileSoftBadgeFills
 import com.smileid.designsystem.smileSurface2
 
@@ -103,6 +107,10 @@ data class UseSmileIDSampleColors(
     val surfaceMuted: Color,
     /** The design's `color/surface-2`, paired here because it is generated light-only — see the `surface2` delta in `spec/design-tokens.json`. */
     val surfaceTile: Color,
+    /** The design's warm `Off_black`, its strong foreground — not the cooler [textTitle]. See the `offBlack` delta in `spec/design-tokens.json`. */
+    val foreground: Color,
+    /** The floating nav bar's own fill: the design recesses it from the page in dark and raises it in light. */
+    val navBar: Color,
     val border: Color,
     val overlayScrim: Color,
     val textTitle: Color,
@@ -141,6 +149,8 @@ internal val lightColors = UseSmileIDSampleColors(
     surfaceAlt = SmileColorLight.colorSurfaceAlt,
     surfaceMuted = SmileColorLight.colorSurfaceMuted,
     surfaceTile = smileSurface2,
+    foreground = smileOffBlackLight,
+    navBar = smileNavBarLight,
     border = SmileColorLight.colorBorder,
     overlayScrim = SmileColorLight.colorOverlayScrim,
     textTitle = SmileColorLight.colorTextTitle,
@@ -234,6 +244,9 @@ internal val darkColors = UseSmileIDSampleColors(
     surfaceMuted = SmileColorDark.colorSurfaceMuted,
     // Recessed against the dark card the way surface-2 is against a white one.
     surfaceTile = SmileColorDark.colorSurfaceMuted,
+    foreground = smileOffBlackDark,
+    // Recessed below the page, per node 5447:1701 — the pill is the darker of the two in dark mode.
+    navBar = smileNavBarDark,
     border = SmileColorDark.colorBorder,
     overlayScrim = SmileColorDark.colorOverlayScrim,
     textTitle = SmileColorDark.colorTextTitle,

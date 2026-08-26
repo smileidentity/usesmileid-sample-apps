@@ -53,6 +53,46 @@
         "value": "DM Sans 12–26",
         "token": "text-style.* (font-family.body)"
       }
+    ],
+    "later": [
+      {
+        "date": "2026-08-25",
+        "node": "5487:1351 (light) and 5447:1701 (dark) — Products · expressive -update",
+        "method": "get_variable_defs resolves a frame in its OWN mode, so the light frame returns the light column and the dark frame the dark one; get_design_context's var(--token, fallback) carries the default-mode value as a cross-check. Both were run on both frames.",
+        "result": "The five variables below match the vendored tokens exactly in both modes. Two gaps have no token at all and are recorded as the offBlack and floatingElevation deltas. Which variable PAINTS which surface is not recorded here — see docs/plan/products-visual-refresh-android.md §3.4, where the two frames bind Main BG and Card BG opposite to their names.",
+        "matches": [
+          {
+            "figma": "Main BG",
+            "light": "#f9fafb",
+            "dark": "#1a1c23",
+            "token": "color.background"
+          },
+          {
+            "figma": "Card BG",
+            "light": "#ffffff",
+            "dark": "#272a35",
+            "token": "color.surface"
+          },
+          {
+            "figma": "CTA Button",
+            "light": "#151f72",
+            "dark": "#4d88ff",
+            "token": "color.primary"
+          },
+          {
+            "figma": "color/surface",
+            "light": "#ffffff",
+            "dark": "#ffffff",
+            "token": "color.surface (light) — mode-invariant in the design, and the session card's text colour"
+          },
+          {
+            "figma": "Off_black",
+            "light": "#2d2b2a",
+            "dark": "#f9f0e7",
+            "token": "none — see the offBlack delta"
+          }
+        ]
+      }
     ]
   },
   "deltas": [
@@ -154,65 +194,105 @@
     {
       "id": "productHues",
       "severity": "blocks ProductCard on every product; the two document products are told apart by hue alone",
-      "source": "Figma node 5206-4037 (Products · expressive), read 2026-08-15, including the exported card assets",
-      "shape": {
-        "fill": "linear gradient at 124.169deg, stops at 13.397% and 86.603% — NOT a flat fill",
-        "shadow": "the card's own `from` hue, twice: 0 10 18 -2 at 24% and 0 2 5 0 at 16%",
-        "content": "white on every card — title and the go arrow both",
-        "scrim": "the go pill's fill and the ghost glyph's stroke, both at 16%. White on four cards; Document Verification's amber is too light, so it goes dark instead",
-        "icon": "the mark on the white tile. The card's `from` hue on four; Document Verification darkens it for contrast, so it is not derivable from the gradient",
-        "ghostGlyph": "the product's own icon at 3.3x — 69.3 against the icon's 21, stroke 7.15 against 2.16667 — so it reuses the icon asset rather than shipping a second one"
-      },
+      "source": "Re-read node by node off BOTH frames 2026-08-25 — light 5487:1351 and dark 5447:1701, which carry byte-identical gradients. Endpoints from get_design_context's linear-gradient; icon tints from the exported glyph SVGs, which is the only place they are readable (get_variable_defs does not expose them).",
+      "shape": "from/to are the gradient endpoints and fromAlpha/toAlpha the alpha each stop carries — kept beside the colour rather than baked into it, because kotlin_color applies alpha at the use site by design. stopStart/stopEnd are the stop positions as fractions and MAY EXCEED 1: the design runs the outer stop past the card's edge. angle is the CSS gradient angle, recorded for the ports and not consumed on Android. cardIcon tints the card's glyph; icon and tile are the list row's pair, which the products frame does not govern.",
       "hues": {
         "smartSelfieEnrollment": {
-          "from": "#05723A",
-          "to": "#0A9B4C",
+          "from": "#FFB53D",
+          "to": "#A78BFA",
           "icon": "#05723A",
-          "scrim": "#FFFFFF",
-          "tile": "#E4F2EA"
+          "tile": "#E4F2EA",
+          "cardIcon": "#05723A",
+          "stopStart": 0.66627,
+          "stopEnd": 1.2978,
+          "fromAlpha": 1.0,
+          "toAlpha": 0.79,
+          "angle": 135.81
         },
         "smartSelfieAuth": {
           "from": "#3A49B4",
           "to": "#5361D6",
           "icon": "#3A49B4",
-          "scrim": "#FFFFFF",
-          "tile": "#E9EBFA"
+          "tile": "#E9EBFA",
+          "cardIcon": "#3A49B4",
+          "stopStart": 0.06451,
+          "stopEnd": 0.91913,
+          "fromAlpha": 1.0,
+          "toAlpha": 1.0,
+          "angle": 136.52
         },
         "documentVerification": {
-          "from": "#E08600",
-          "to": "#FFB53D",
+          "from": "#2CC05C",
+          "to": "#00AA99",
           "icon": "#C46F00",
-          "scrim": "#2D2B2A",
-          "tile": "#FBEEDA"
+          "tile": "#FBEEDA",
+          "cardIcon": "#06A850",
+          "stopStart": 0.66627,
+          "stopEnd": 1.2978,
+          "fromAlpha": 1.0,
+          "toAlpha": 0.79,
+          "angle": 135.4
         },
         "enhancedDocumentVerification": {
-          "from": "#2D2B2A",
-          "to": "#4A4645",
+          "from": "#04713A",
+          "to": "#00AA99",
           "icon": "#2D2B2A",
-          "scrim": "#FFFFFF",
-          "tile": "#EDEBEA"
+          "tile": "#EDEBEA",
+          "cardIcon": "#04713A",
+          "stopStart": 0.66627,
+          "stopEnd": 1.2978,
+          "fromAlpha": 1.0,
+          "toAlpha": 0.79,
+          "angle": 135.4
         },
         "biometricKyc": {
           "from": "#151F72",
           "to": "#2B3A9E",
           "icon": "#151F72",
-          "scrim": "#FFFFFF",
-          "tile": "#E5EDFF"
+          "tile": "#E5EDFF",
+          "cardIcon": "#151F72",
+          "stopStart": 0.56022,
+          "stopEnd": 1.1051,
+          "fromAlpha": 1.0,
+          "toAlpha": 1.0,
+          "angle": 141.8
         },
         "enhancedKyc": {
-          "from": "#05726E",
-          "to": "#0A9B96",
+          "from": "#0EA5E9",
+          "to": "#151F72",
           "icon": "#05726E",
-          "scrim": "#FFFFFF",
           "tile": "#E4F1F0",
-          "origin": "DERIVED HERE 2026-08-15, not supplied by design; `tile` likewise DERIVED 2026-08-17 at the same lightness as the five the design does supply"
+          "origin": "DERIVED HERE 2026-08-15, not supplied by design; `tile` likewise DERIVED 2026-08-17 at the same lightness as the five the design does supply",
+          "cardIcon": "#0EA5E9",
+          "stopStart": 0.66627,
+          "stopEnd": 1.2978,
+          "fromAlpha": 0.79,
+          "toAlpha": 1.0,
+          "angle": 135.4
         }
       },
       "missing": "enhancedKyc was absent from the design node, which predates the owner decision that added a sixth product. Both its hue and its icon are derived here so the grid is complete, and both are placeholders a designer should confirm or replace. Hue: the enrolment green's exact saturation and lightness (S 91.6% / L 23.3% for `from`, S 87.9% / L 32.4% for `to`) rotated to a teal hue, so it sits in the family by construction rather than by eye, and teal is the one obvious gap next to green, indigo, amber, near-black and navy. Icon: the Biometric KYC card outline with the portrait removed and a third record line added — the same 21x21 grid and 2.16667 stroke as the rest of the set. That is also the semantic difference between the two: Biometric KYC checks a face against a record, Enhanced KYC checks the record alone.",
       "designSystem": "Eight of the ten gradient stops exist nowhere in the token source. Only #2D2B2A (color.neutral.off-black) and #151F72 (color.primary) are present, and both by coincidence of value rather than as a decorative role.",
       "finding": "VERIFIED against the design 2026-08-15, replacing the earlier stand-in. The hues are raw fills bound to no Figma variable — get_variable_defs on the products node returns only type, primary, muted, surface, title, border and the page background. So there is no token to consume and no upstream output to read.",
       "recommendation": "Add these to the design system as a decorative product role, a from/to pair per product plus the icon and scrim colours, and include the sixth product. Until then this entry is the source and scripts/sync_design_tokens.py generates SmileProductHues.kt from it — the same stopgap shape as composeTypeStylesAreComments. Never hand-copy these values into a second codebase; a port generates from here too.",
-      "status": "OPEN 2026-08-15 upstream; generated as a stopgap on Android so the cards render correctly meanwhile."
+      "status": "OWNER RULING 2026-08-24 the frame is final; values re-read and corrected 2026-08-25 against the light frame. Still a stopgap: delete the generated file once the design system carries a decorative product role. #A78BFA, #00AA99 and #0EA5E9 are new to the palette and must land upstream rather than staying here.",
+      "gradientNodes": {
+        "smartSelfieEnrollment": "5487:1366 / 5448:1999 — 135.81deg, stops 66.63 / 129.78",
+        "smartSelfieAuth": "5487:1384 / 5448:1809 — 136.52deg, stops 6.45 / 91.91, fully opaque",
+        "documentVerification": "5487:1405 / 5448:1887 — 135.40deg, stops 66.63 / 129.78",
+        "enhancedDocumentVerification": "5487:1420 / 5448:2026 — 135.40deg, stops 66.63 / 129.78",
+        "biometricKyc": "5487:1433 / 5448:2062 — 141.80deg, stops 56.02 / 110.51, fully opaque",
+        "enhancedKyc": "5487:1451 / 5448:2080 — 135.40deg, stops 66.63 / 129.78, alpha on the FIRST stop"
+      },
+      "iconTintsChanged": "The card's tint moved on three of the six and none of them follows the gradient: documentVerification -> #06A850, enhancedDocumentVerification -> #04713A, enhancedKyc -> #0EA5E9. smartSelfieEnrollment KEEPS its green #05723A although its card is now amber, which is why 'cardIcon = from' is not the rule.",
+      "newToThePalette": [
+        "#A78BFA",
+        "#00AA99",
+        "#0EA5E9"
+      ],
+      "scrimIsNotPerHue": "REMOVED 2026-08-25. `scrim` was per-product and fed two different marks; both frames draw them uniform across all six cards, in two DIFFERENT colours: the go pill is rgba(45,43,42,0.16) — Off_black's light value at 16% — and the ghost glyph is WHITE at 10%. A per-hue field cannot express one value shared by six products, and the app had five white go pills where the design draws six dark ones. The card now takes the go pill from the offBlack token pinned light, and the ghost from the same colour-inverse ink its label already uses.",
+      "rowPairStale": "OPEN 2026-08-25 — the list row's `icon`/`tile` pair is unchanged and still coherent (each pale tile was chosen against its icon), but for those same three products it now describes the OLD product colour while the card describes the new one. Applying the card's tint to the row would have put a green glyph on a pale amber tile; inventing three new pale tints would have put un-sourced hexes in the token file. Neither is acceptable, so the row keeps its own pair until the Verifications board is re-read — node 5206-4037's job rows are not superseded by 5487:1351. This is the one place in the refresh where two surfaces knowingly disagree.",
+      "stopsRunPastTheEdge": "Four cards stop at 129.78% and biometricKyc at 110.51%, so the end colour is never fully reached on screen. Compose colour stops must land inside 0..1, so the card interpolates the colour the gradient has actually arrived at by the edge and uses THAT as its last stop — exact, and no custom shader. Clamping to 1.0 instead would over-saturate every card's far corner."
     },
     {
       "id": "bodyStrongSizeDiffers",
@@ -308,7 +388,7 @@
       "id": "tokenSessionGreens",
       "severity": "the session card and the countdown ring, on every platform",
       "figma": {
-        "card gradient": "#1A7840 → #299E57 horizontal",
+        "card gradient": "rgba(12,65,178,0.78) → rgba(167,139,250,0.79) horizontal — REPLACED 2026-08-25 from nodes 5487:1358 (light) and 5448:2288 (dark), which are identical",
         "ring progress": "#06A850",
         "ring track": "#06A850 at 18%",
         "ring": "68 outer, 4.08 thick"
@@ -317,14 +397,20 @@
         "feedback.success.fill": "#00C853 light / #00E676 dark"
       },
       "cardGradient": [
-        "#1A7840",
-        "#299E57"
+        "#0C41B2",
+        "#A78BFA"
       ],
       "ring": "#06A850",
       "ringTrackOpacity": 0.18,
       "finding": "The token session's green is its own thing and none of it is feedback.success.fill. The card is a HORIZONTAL GRADIENT #1A7840 to #299E57 with white text; the countdown ring is #06A850 solid for progress over the SAME green at 18% for the track. Android had a flat success fill on the card and, worse, a grey color.border track with a #00C853 progress arc — two different greens and a grey, none of them the design's. #06A850 exists upstream only as the primitive color.decorative.green, so it cannot be consumed directly.",
       "recommendation": "Give the token session a named role — a gradient pair plus a ring colour — or promote the decorative green to a semantic. Generated from here meanwhile.",
-      "status": "OPEN 2026-08-18 — generated stopgap in place"
+      "status": "OPEN 2026-08-18 — generated stopgap in place; card gradient replaced 2026-08-25 off node 5487:1358",
+      "cardGradientAlpha": [
+        0.78,
+        0.79
+      ],
+      "cardIsTranslucentToo": "BOTH stops carry alpha, so the session card composites against the page exactly as the four translucent product cards do and renders differently in the two schemes. The plan's §7.2 counted four such surfaces and missed this one; its light and dark goldens will legitimately differ by more than text colour.",
+      "nameIsStale": "The id still reads 'greens' because the RING is still #06A850 — only the card moved off green. Kept rather than renamed so the generator lookup and every port reading this entry stay put; rename when the design system takes the role over."
     },
     {
       "id": "labelTypeStyle",
@@ -340,6 +426,144 @@
       "finding": "The design file's Type/Label is 11 with 0.88 of tracking; the generated text-style.overline is 10 with none. Every place the design uses Type/Label was therefore a point small and set solid, which is what makes a spaced-out caps label read as a caps label. Found by review 2026-08-18 on the profile screens and confirmed to apply to eleven section labels, the four status badges, the filter-chip counts and the date group headers.",
       "recommendation": "Add the label role to the design system at 11/700/0.88 so this stops being generated from here; until then every platform reads these two values from this entry.",
       "status": "OPEN 2026-08-18 — generated stopgap in place; both values are the design file's"
+    },
+    {
+      "id": "offBlack",
+      "severity": "the products screen's entire foreground on all four apps — page title, page subtitle, both section headers, every card stroke, the session-card stroke, the unselected nav labels and the token button's label",
+      "figma": {
+        "Off_black": {
+          "light": "#2D2B2A",
+          "dark": "#F9F0E7"
+        },
+        "readFrom": "light 5487:1351 and dark 5447:1701, both read 2026-08-25; get_variable_defs resolves each frame in its own mode, so both columns are read values"
+      },
+      "designSystem": {
+        "semantic": "absent — the nearest pair, color.text.title, is COOL (#21232C / #F2F2F2) where the design's is WARM",
+        "primitivesOnly": "#F9F0E7 exists as color.neutral.off-white (and light color.surface-alt); #2D2B2A exists as light color.feedback.warning-on and dark color.text.inverse. Reaching for either is consuming a primitive."
+      },
+      "values": {
+        "light": "#2D2B2A",
+        "dark": "#F9F0E7"
+      },
+      "roles": [
+        "page title",
+        "page subtitle",
+        "section headers",
+        "product-card stroke",
+        "session-card stroke",
+        "unselected nav-tab label",
+        "token-button label"
+      ],
+      "finding": "Figma models one variable across all seven roles above, and it is a warm pair. Implementing it as color.text.title ships a visibly cooler screen in both schemes; implementing it from a primitive is a review failure by AGENTS.md. The plan's §7.3 counted four roles from the dark frame — section headers, the session-card stroke and the token label were found on the light frame 2026-08-25 and are the same variable.",
+      "recommendation": "Add a warm strong-foreground role to the design system, as a light/dark PAIR. Generated from here meanwhile, exactly as softBadgeFills, borderStrong and surface2 are, so no component references a primitive or a hex.",
+      "status": "OPEN 2026-08-25 — generated stopgap in place as a pair from the outset, on the surface2 precedent below, which shipped a single value and produced a dark-mode defect. Delete the generated values once the design system carries the role in both modes."
+    },
+    {
+      "id": "floatingElevation",
+      "severity": "the nav bar's tabs pill and its token button — the only two elevated surfaces the products design draws",
+      "figma": {
+        "shadow": "0px 8px 24px rgba(0, 0, 0, 0.12)",
+        "nodes": [
+          "I5487:1357;6:5 (tabs pill)",
+          "I5487:1357;6:26 (token button)",
+          "I5447:1707;6:5",
+          "I5447:1707;6:26"
+        ],
+        "readFrom": "identical in the light and dark frames, read 2026-08-25 — the shadow does not vary by scheme"
+      },
+      "designSystem": {
+        "semantic": "absent — SmileDimens carries no elevation token of any kind, in any platform's generated output",
+        "consumedInsteadBy": "UseSmileIDSampleNavBar's BAR_ELEVATION = SmileDimens.space8 — a SPACING token standing in for an elevation"
+      },
+      "value": "0px 8px 24px rgba(0, 0, 0, 0.12)",
+      "finding": "spec/components.json references elevation.floating in five places and nothing defines it. The design's value is a CSS offset/blur/colour triple, which Compose cannot express: Modifier.shadow takes an elevation and derives offset and blur from the platform light model, and its ambientColor/spotColor tint the two shadow passes rather than setting the drawn rgba — and both are ignored below API 28. So the 8dp the app already ships matches the frame's 8px y-offset, and the blur and alpha are not reproducible without abandoning the token for two magic colours.",
+      "recommendation": "Add a floating elevation role to the design system as a per-platform value — a dp elevation for Compose, the offset/blur/colour triple for CSS and SwiftUI — rather than one shape that only one platform can consume. Until then the nav bar keeps shadowElevation and this entry is where the design's value lives, so the number is recorded rather than pasted.",
+      "status": "OPEN 2026-08-25 — no generated stopgap, because Compose cannot consume the value as drawn and the current 8dp is already correct. Recorded so spec/components.json's elevation.floating reference resolves to something."
+    },
+    {
+      "id": "cardLabelRuns",
+      "severity": "the product card's label on all four apps — the one text node that carries both the product title and its family",
+      "figma": {
+        "titleRun": "DM Sans SemiBold 16 / 24, tracking -0.4px",
+        "familyRun": "Card-Subtitle — DM Sans Regular 12 / 16",
+        "readFrom": "5487:1381 and its five siblings, light frame, 2026-08-25",
+        "composedFromPrimitives": "BOTH runs, not just the subtitle: the title run binds letter-spacing/-0_4 and font-weight/400 (falling back to 600) while the family run binds font-family/Font 2, font-size/12, font-weight/400 and line-height/16. The plan's §4.7 recorded only Card-Subtitle.",
+        "stroke": "0.2px Off_black on the product cards and the session card (5487:1433 and the session card draw 0.5px — the two outliers §7.6 rules down to 0.2)"
+      },
+      "designSystem": {
+        "titleRun": "text-style.body-strong matches on family, weight, size and line height; only the -0.4 tracking is absent",
+        "familyRun": "text-style.caption matches on family, size and line height; it is weight 500 where the design is 400",
+        "stroke": "border-width.hairline is 1dp, five times the design's; there is no fractional border-width token"
+      },
+      "tracking": -0.4,
+      "familyWeight": 400,
+      "finding": "Each run is one property away from a semantic style the ramp already carries, so neither needs a new style — but the two properties have no token, and pasting them into the component would put a magic number on the surface four platforms copy from. Figma composes both runs from primitives, which AGENTS.md forbids consuming, so the values are recorded here and generated instead. The 0.2dp stroke has the same problem and lives here for the same reason: border-width.hairline is 1dp and the ruling is explicitly not to snap to it.",
+      "recommendation": "Ask design for the card's two runs as proper semantic styles rather than primitive compositions, and for the ramp to carry a 400-weight caption. Generated from here meanwhile, exactly as labelTypeStyle is.",
+      "status": "OPEN 2026-08-25 — generated stopgap in place; delete once the design file promotes both runs to composite styles.",
+      "strokeWidth": 0.2
+    },
+    {
+      "id": "cardInkContrast",
+      "severity": "the products screen's card labels and the session card's text, on all four apps",
+      "figma": {
+        "ink": "white on every product card and on the session card",
+        "readFrom": "5487:1351 and 5447:1701, measured 2026-08-25"
+      },
+      "finding": "White ink on the new fills clears WCAG AA on only 14 of the 28 gradient stops (6 cards x 2 stops x 2 schemes, plus the session card's 2 stops x 2). The worst is the Registration card's opaque amber #FFB53D at 1.76:1 — fully opaque, so it fails identically in BOTH schemes and is not a compositing artefact. On that fill dark ink would be markedly better than white, so the card is not merely below the bar, it is using the wrong end of the ramp. Next worst: #A78BFA at 0.79 over the light page (2.18:1, the session card AND Registration's outer stop), #0EA5E9 at 0.79 (2.28:1), #00AA99 at 0.79 (2.37:1) and #2CC05C (2.39:1).",
+      "measuredWorst": 1.76,
+      "belowAa": "14 of 28 stops",
+      "recommendation": "Design question, not a local nudge: either darken the light fills or give the card an ink that varies with its hue. Not fixed here because the owner ruled the frame final as drawn on 2026-08-24, and inventing a per-card ink would put four platforms on four different answers.",
+      "guardedBy": "UseSmileIDSampleContrastTest holds these surfaces to DESIGN_INK_FLOOR (1.75), the design's own worst case, so a REGRESSION fails while today's values pass. It is a floor, not a certification — raise it as design raises the values. The same test now covers gradient-backed surfaces at all, which is how the session card shipped near-black ink on its own fill in dark mode for as long as dark mode has existed: no token pair described it.",
+      "status": "OPEN 2026-08-26 — white ink ruled and shipped; the fill change is the outstanding design ask",
+      "resolution": "OWNER RULING 2026-08-26, after seeing it on a device: the label and the go arrow stay WHITE on all six cards. Consistency across the grid beats per-card contrast, and the frame's uniform white-on-saturated is the most deliberate thing about the design. A luminance-picked label was built and rejected — it cleared AA everywhere (worst 5.90:1) but darkened three of the six cards, which read as inconsistent.",
+      "sessionCardResidual": "The session card keeps white ink. Its gradient runs dark blue to light violet and the text spans both, so a single ink cannot serve both ends: the luminance rule would fix the countdown on the right and break the two runs on the left. Its right-hand stop is 2.18:1 over the light page — the same ask to design as the residual above, and the same fix (darken the stop).",
+      "whatStillAdapts": "Only the two marks the design draws at a fixed value and which disappear at one end of the range: the go pill's scrim and the ghost glyph. One fixed value leaves the pill invisible on the darkest card and the ghost invisible on the lightest, both reported from the device. Neither is text.",
+      "theAskToDesign": "Darken the four light `from` stops, or drop their alpha. That is the only fix that keeps white ink AND clears AA, because it moves the fill rather than the ink. Worst today is the amber Registration card at 1.76:1, then #A78BFA at 2.18:1, #0EA5E9 at 2.28:1, #00AA99 at 2.37:1 and #2CC05C at 2.39:1."
+    },
+    {
+      "id": "productsScreenType",
+      "severity": "the products header and both section headers, on all four apps",
+      "figma": {
+        "Type/Heading": "DM Sans Bold 26, lineHeight 1.2, letterSpacing -1% (renders -0.26px at 26)",
+        "Type/Title": "DM Sans Bold 15, lineHeight 1.3",
+        "Type/Caption": "DM Sans Medium 12, lineHeight 1.4",
+        "readFrom": "5487:1354, 5487:1356, 5487:1364 and 5487:1403, read 2026-08-26"
+      },
+      "designSystem": {
+        "text-style.heading-page": "24 / 32 at weight 800, tracking -0.4 — two points small, a weight heavy and four times the tracking",
+        "text-style.heading-section": "18 / 24 at weight 600 — three points large and a weight light",
+        "text-style.caption": "12 / 16 at weight 500 — MATCHES Type/Caption; the page subtitle was on body-sm (14/20/400) instead"
+      },
+      "headingSize": 26,
+      "headingLineHeight": 31.2,
+      "headingTracking": -0.26,
+      "headingWeight": 700,
+      "sectionSize": 15,
+      "sectionLineHeight": 19.5,
+      "sectionWeight": 700,
+      "finding": "The frame's Type/* composites and the design system's text-style.* ramp disagree on the products screen's three largest runs. The units trap matters here: Type/Heading reports letterSpacing -1, but that is -1% of 26px and the node renders -0.26px — implementing -1.sp is four times too tight.",
+      "recommendation": "Reconcile the ramp with the design file's Type/* composites upstream. Generated from here meanwhile, so no component carries a raw sp.",
+      "status": "OPEN 2026-08-26 — generated stopgap in place"
+    },
+    {
+      "id": "navBarFill",
+      "severity": "the floating nav bar on every screen of all four apps",
+      "figma": {
+        "tabs pill": "Main BG — #F9FAFB light, #1A1C23 dark (nodes I5487:1357;6:5 and I5447:1707;6:5)",
+        "page": "Card BG — #FFFFFF light, #272A35 dark"
+      },
+      "designSystem": {
+        "semantic": "absent — there is no nav-bar role; the app used color.surface, which is LIGHTER than the page in dark",
+        "primitiveOnly": "#21232C exists upstream only as color.grey.800"
+      },
+      "values": {
+        "light": "#FFFFFF",
+        "dark": "#21232C"
+      },
+      "finding": "The design recesses the pill BELOW the page: page Card BG, pill Main BG. This app cannot take that pairing, because its page is color.background and moving it to color.surface would repaint Verifications and Settings, whose rows ARE color.surface and would disappear into it. Taking only the pill half puts #1A1C23 on a #1A1C23 page, which is the invisible bar the plan predicted — verified on the re-recorded dark golden. So the bar needs its own fill: one step darker than the page in dark (#21232C, contrast 1.09:1 plus its shadow) and one step lighter in light (#FFFFFF on #F9FAFB), which is the design's relationship at the lightness this app's page allows.",
+      "recommendation": "Ask design for a nav-bar role, or for the products page fill to be reconciled with the other two tabs. Generated from here meanwhile, exactly as borderStrong is, so no component references color.grey.800.",
+      "guardedBy": "UseSmileIDSampleContrastTest asserts the pill stays distinguishable from the page in BOTH schemes.",
+      "status": "OPEN 2026-08-26 — generated stopgap in place"
     }
   ],
   "perPlatform": {

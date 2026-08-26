@@ -56,7 +56,7 @@ KNOWN_LICENCES = {
     },
 }
 
-# Not open source: these declare Google's own terms, and the page they point at IS the licence.
+# Not open source: the page these point at IS the licence.
 GOOGLE_TERMS = {
     "play integrity api terms of service",
     "ml kit terms of service",
@@ -97,10 +97,9 @@ class Unidentified(Exception):
     """An artifact whose licence could not be established. Never emitted as data."""
 
 
-# Coordinate -> POM path, from the index Gradle writes. Empty path means Gradle could not resolve one.
-# Never read the Gradle cache directly: a module published with Gradle Module Metadata resolves from
-# its `.module` and the `.pom` is never fetched, so a cache read passes on a warm machine and fails
-# on a clean one — which is exactly how this got past a local run and broke CI.
+# Coordinate -> POM path, from the index Gradle writes; empty means it resolved none. Never read the
+# Gradle cache directly: a Gradle-Module-Metadata module never fetches its `.pom`, so a cache read
+# passes on a warm machine and fails on a clean one.
 POM_INDEX: dict[str, str] = {}
 
 

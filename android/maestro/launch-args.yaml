@@ -222,7 +222,10 @@ appId: ${APP_ID}
 # its own deep link rather than through the Settings row, which sits below the fold behind a scroll
 # this assertion has no interest in.
 - stopApp
-- openLink: "usesmileid-sample-android://debug/scenarios"
+# `probes` on the link, not just as an extra: a deep link carries no extras, and on release the
+# result card this block reads is hidden without it. Debug shows the card either way, which is why
+# this only ever failed here.
+- openLink: "usesmileid-sample-android://debug/scenarios?probes=true"
 - assertVisible:
     id: "sample_scenario_drawer"
 - tapOn:

@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -71,7 +70,7 @@ fun UseSmileIDSampleScanSheet(
     val colors = UseSmileIDSampleTheme.colors
     Surface(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(topStart = SmileDimens.radiusSheet, topEnd = SmileDimens.radiusSheet),
+        shape = UseSmileIDSampleTheme.shapes.sheet,
         color = colors.surface,
     ) {
         Column(
@@ -210,7 +209,7 @@ private fun ScanSheetChip(
             .tagged(testId)
             .minimumInteractiveComponentSize()
             .selectable(selected = selected, role = role, onClick = onClick),
-        shape = RoundedCornerShape(SmileDimens.radiusChip),
+        shape = UseSmileIDSampleTheme.shapes.chip,
         color = if (selected) colors.primary else colors.filterChip.background,
         border = if (selected) null else BorderStroke(SmileDimens.borderWidthHairline, colors.filterChip.border),
     ) {
