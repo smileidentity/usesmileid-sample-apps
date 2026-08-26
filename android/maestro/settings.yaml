@@ -312,6 +312,11 @@ appId: ${APP_ID}
           id: "sample_job_row_0"
       - assertVisible:
           id: "sample_result_card"
+      # Back to the tab root first: verification details is a PUSHED screen and draws no nav bar,
+      # so the tab this taps does not exist while it is open.
+      - back
+      - assertVisible:
+          id: "sample_verifications_screen"
       # And the Scenarios row, which no argument reveals: flows reach the drawer by deep link.
       - tapOn:
           id: "sample_nav_settings"
