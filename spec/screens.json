@@ -121,7 +121,7 @@
       "designVersion": "2026-08-25",
       "frameOmitsTheAvatar": "Neither frame draws the header avatar button and the app KEEPS it (plan §7.5): its absence is a drawing omission, not a removal, and without it the screen has no profile switch at all. sample_profile_avatar_button keeps its target and profiles.yaml keeps working. Recorded here so the next conformance pass does not report it as an extra.",
       "pageBackgroundOpenQuestion": "OPEN 2026-08-25. Both frames paint the PAGE with `Card BG` and the nav pill with `Main BG` — the opposite of what those two variables are named for, and the opposite of what the app ships (page color.background, pill color.surface). The separation is the same one step either way, just inverted. The pill cannot move on its own: with the page left as it is, pill and page become the same colour and the bar loses its edge on every tab. Moving the page instead repaints Verifications and Settings, which this frame does not draw. Needs an owner ruling; until then the app keeps its current mapping and PVR-A7 ships without the pill-fill change. See docs/plan/products-visual-refresh-android.md §3.4.",
-      "sectionRename": "'Authentication' -> 'Biometric Authentication' (node 5487:1364), and the page subtitle to '...powered by our Anti-Fraud SDKs' (5487:1356)."
+      "sectionRename": "Now 'Authentication' and 'Onboarding' by owner ruling 2026-08-26, superseding the 'Biometric Authentication' the frame draws at node 5487:1364; the page subtitle is unchanged at '...powered by our Anti-Fraud SDKs' (5487:1356). A products section and the Verifications tab shared one name before."
     },
     {
       "id": "profileSwitchSheet",
@@ -763,7 +763,7 @@
         "products(list) → tap product → [SDK consent] → allow → userDetails(empty→filled) → Continue → kycIdForm(country→idType→idNumber) → Continue → verificationDetails(processing, 202 Accepted) → back → verifications",
         "any tab → token button → scanToken → 'Simulate a successful scan' → products(tokenLinked: green session card 5:00 + green ring)",
         "verifications → row → verificationDetails → back",
-        "verifications → Select → selectMode → delete → counts 11→9 + toast('2 verifications removed', Undo)",
+        "verifications → Select → selectMode → hide → counts 11→9 + toast('2 verifications hidden from App list', Undo)",
         "products → header chip → profileSwitchSheet over a scrim"
       ],
       "correctionsApplied": 12,
