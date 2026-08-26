@@ -150,7 +150,7 @@
       "contractGapReaffirmed": "STILL MISSING, reaffirmed 2026-08-13 after building against it. Nothing in tokens/component/ covers a switch, so there is no track, thumb, size or travel to reference — the three tokens listed above are semantic, chosen here rather than specified.",
       "androidImplementation": "Material 3 Switch via SwitchDefaults.colors: checked track and border → color.primary, unchecked track and border → color.border, thumb → color.surface in both, disabled-checked track → color.text.muted, disabled-unchecked thumb → color.surface-muted. Nothing drawn by hand, so the touch target, drag behaviour and state description stay native.",
       "askDesign": "A switch contract naming track-on / track-off / thumb / disabled variants, so the four platforms stop each picking their own semantic stand-ins. Until then expect the control to be the least visually consistent primitive across the four apps.",
-      "deviceNote": "The off and disabled tracks resolve to color.border, so on dark they render bright white — the darkBorder defect in design-tokens.json, not a switch-specific problem."
+      "deviceNote": "The off and disabled tracks resolve to color.border, so on dark they render bright white — the darkBorder defect in design-tokens.json, not a switch-specific problem. STILL OPEN 2026-08-26: the card and row outlines were moved onto the cardStroke pair, so the off/disabled track is now the most conspicuous remaining instance of the darkBorder defect — a bright white pill on a screen where everything else is quiet. It stays on color.border deliberately, because the fix is upstream."
     },
     {
       "name": "StatusBadge",
@@ -335,7 +335,8 @@
         "color.text.title",
         "color.text.muted",
         "text-style.body-strong",
-        "text-style.body-sm"
+        "text-style.body-sm",
+        "cardStroke (delta)"
       ],
       "metrics": {
         "rowHeight": "65 with a supporting line, 64 without; space64 minimum, content-driven",
@@ -351,7 +352,7 @@
       "usedBy": [
         "settings"
       ],
-      "notes": "CORRECTED 2026-08-12: the CAPTURE section has TWO switch rows — 'Smile to capture / Passive capture — smile detection' ABOVE 'Agent mode / Operator captures for the applicant'. The first is the CaptureModeRow component instance, which is why a metadata-only read missed its text. Switch rows also cover Dark mode and the three SDK-step toggles; navigation covers ABOUT/LEGAL; destructive covers Sign out. TYPE + TILE CORRECTED 2026-08-17 against node 5206:2898. The leading tile is 38 at radius 11 over SURFACE-2 (a cool grey), not surface-alt (a warm cream) — Android shipped peach tiles across the whole app from that one mistake. Supporting text is Caption 12/500, the trailing chevron is 14, and rows inside one section card are separated by a RULE, not by spacing. Each row carries its OWN icon, and the design SUPPLIES all eleven as stroke-based 19px exports — take them from design/icons/, do not substitute a Material Symbol.",
+      "notes": "CORRECTED 2026-08-12: the CAPTURE section has TWO switch rows — 'Smile to capture / Passive capture — smile detection' ABOVE 'Agent mode / Operator captures for the applicant'. The first is the CaptureModeRow component instance, which is why a metadata-only read missed its text. Switch rows also cover Dark mode and the three SDK-step toggles; navigation covers ABOUT/LEGAL; destructive covers Sign out. TYPE + TILE CORRECTED 2026-08-17 against node 5206:2898. The leading tile is 38 at radius 11 over SURFACE-2 (a cool grey), not surface-alt (a warm cream) — Android shipped peach tiles across the whole app from that one mistake. Supporting text is Caption 12/500, the trailing chevron is 14, and rows inside one section card are separated by a RULE, not by spacing. Each row carries its OWN icon, and the design SUPPLIES all eleven as stroke-based 19px exports — take them from design/icons/, do not substitute a Material Symbol. The card outline AND the rule between rows inside one card both take the cardStroke pair; the divider was the last thing left on the mode-invariant color.border and became the loudest element in dark.",
       "parts": [
         "NavRow — the ABOUT/LEGAL navigation variant with a chevron",
         "SignOutRow — the destructive variant",
@@ -370,7 +371,8 @@
         "color.text.title",
         "color.text.muted",
         "color.primary",
-        "radius.surface"
+        "radius.surface",
+        "cardStroke (delta)"
       ],
       "metrics": {
         "rowHeight": "66 in the design, space64 minimum here, content-driven",
@@ -431,7 +433,8 @@
         "text-style.body-strong",
         "text-style.caption",
         "offBlack (delta)",
-        "cardLabelRuns (delta)"
+        "cardLabelRuns (delta)",
+        "cardStroke (delta)"
       ],
       "metrics": {
         "size": "174x148 in a 2-up grid; built as a weighted column with a space64*2 minimum so it grows with the title",
@@ -442,7 +445,7 @@
         "titleTruncation": "none. The new titles are shorter than the old full labels, but the subtitle adds a line the old card did not have, so 'Enhanced Doc. / Verification' in a 114.5dp column is the worst case for the max-font-scale predicate.",
         "colouring": "the whole card takes a color.decorative.* fill with color.text.inverse text; the product→hue list is outstanding, so the caller passes the hue. That list became load-bearing on 2026-08-15: the two document products share one icon and the hue is the ONLY thing distinguishing them, so until the real list lands they are told apart by a stand-in palette indexed by declaration order.",
         "radius": "radius.surface (16). Was radius.xl (20); radius.xl SURVIVES as the Material 3 Shapes.extraLarge scale, so it must not be deleted.",
-        "stroke": "0.2dp in Off_black, replacing the 10dp coloured shadow entirely. Off_black flips with the scheme, so the stroke is near-black on the light page and warm-white on the dark one — it reads in BOTH, and light is the higher-contrast of the two. Five card nodes draw 0.2px and Biometric draws 0.5px; §7.6 rules 0.2 everywhere.",
+        "stroke": "0.5dp in the cardStroke PAIR — #EAECF0 light, #2D3748 dark. Was 0.2dp in Off_black, which flipped with the scheme; the pair is mode-aware instead, so the outline reads at one weight in both. See the cardStroke delta.",
         "shadow": "NONE. The only shadows the products design draws are the nav bar's and the token button's.",
         "label": "TWO RUNS IN ONE TEXT NODE, not two stacked labels: title (body-strong 16/24, tracking -0.4) then family (caption 12/16 at weight 400). Built as an AnnotatedString with a ParagraphStyle per run, because each run carries its own line height and a single paragraph would apply one of them to both lines. The design's strings carry trailing spaces — a Figma artefact used to force the wrap, not content.",
         "gradient": "Two stops from the hue. FOUR of the six carry a 0.79 alpha and the card's only background is its gradient, so those four composite against the page and render differently per scheme BY DESIGN — a light/dark golden diff bigger than typography is correct on them. Auth and Biometric are fully opaque and must match across schemes. The outer stop is drawn past the card's edge (129.78%, and 110.51% on Biometric), which Compose cannot express — colour stops must land inside 0..1 — so the card interpolates the colour the gradient has actually reached by the edge and uses that."
@@ -502,7 +505,7 @@
       "owner": "sample",
       "tokens": [
         "color.surface",
-        "color.border",
+        "cardStroke (delta)",
         "color.text.title",
         "color.text.muted",
         "radius.surface",
@@ -543,7 +546,7 @@
       "dsContract": "components/filter.md",
       "tokens": [
         "filter.chip-bg",
-        "filter.chip-border",
+        "cardStroke (delta)",
         "filter.trigger-text",
         "radius.chip"
       ],
@@ -561,7 +564,7 @@
       "usedBy": [
         "verifications"
       ],
-      "notes": "Label plus a count (All 11, Clear 6, Attention 2, Blocked 2). Counts are live and must update after a delete — that is the assertion the delete flow keys off. TYPE CORRECTED 2026-08-17 against node 5206:2415: the label is 12.5/700 and the count is 11/700 with 0.88 tracking. The generated filter-chip font is 14/400, which is neither, so do not reach for it unchanged. The unselected count's COLOUR is an open disagreement — see the filterChipCountColour delta."
+      "notes": "Label plus a count (All 11, Clear 6, Attention 2, Blocked 2). Counts are live and must update after a delete — that is the assertion the delete flow keys off. TYPE CORRECTED 2026-08-17 against node 5206:2415: the label is 12.5/700 and the count is 11/700 with 0.88 tracking. The generated filter-chip font is 14/400, which is neither, so do not reach for it unchanged. The unselected count's COLOUR is an open disagreement — see the filterChipCountColour delta. The UNSELECTED border is the shared cardStroke pair, not filter.chip-border: on dark the chips were the loudest thing on the verifications screen once the rows quietened."
     },
     {
       "name": "EmptyState",
@@ -850,12 +853,13 @@
         "text-style.overline",
         "text-style.caption",
         "offBlack (delta)",
-        "cardLabelRuns (delta)"
+        "cardLabelRuns (delta)",
+        "cardStroke (delta)"
       ],
       "metrics": {
         "radius": "radius.surface (16)",
         "padding": "spacing.md (16) on all four sides — the design draws 14/15/16 and §7.8 rules it onto the scale",
-        "stroke": "0.2dp in Off_black, matching the product cards. The node draws 0.5px; §7.6 rules 0.2.",
+        "stroke": "0.5dp in the cardStroke PAIR — #EAECF0 light, #2D3748 dark. Was 0.2dp in Off_black, which flipped with the scheme; the pair is mode-aware instead, so the outline reads at one weight in both. See the cardStroke delta. The node draws 0.5px and §7.6 had ruled it to 0.2; the 2026-08-26 stroke ruling lands back on the node's own 0.5.",
         "gradient": "HORIZONTAL rgba(12,65,178,0.78) -> rgba(167,139,250,0.79). BOTH stops are translucent, so this card composites against the page and renders differently per scheme exactly as the four translucent product cards do.",
         "type": "'ACTIVE TOKEN SESSION' overline 10/700 at +1 tracking; 'Linked to session x' caption 12/16 at weight 400; the countdown at 24.",
         "text": "color.surface — mode-invariant white, because the card's fill is."

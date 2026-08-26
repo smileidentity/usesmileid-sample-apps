@@ -588,7 +588,16 @@ drawing omission, not a removal. `sample_profile_avatar_button` keeps its target
 keeps working. Worth one line in `spec/screens.json` saying the frame omits it and the app keeps it,
 so the next conformance pass does not report it as an extra.
 
-### 7.6 Stroke — **0.2dp, uniform**
+### 7.6 Stroke — ~~**0.2dp, uniform**~~ **SUPERSEDED 2026-08-26**
+
+> **Superseded in place.** The stroke is now **0.5dp** in a light/dark **pair** — `#EAECF0` light,
+> `#2D3748` dark — applied to every card AND to the verifications rows, settings rows, profile rows,
+> the form's section surfaces and the unselected filter chips. `Off_black` is no longer the stroke
+> colour anywhere. The reasoning is in the `cardStroke` delta in `spec/design-tokens.json`; the short
+> version is that this section's own closing paragraph, below, was right that `Off_black` flips with
+> the scheme — and wrong that flipping is what a stroke wants. A flipping stroke is *legible* in both
+> schemes, which is the opposite of subtle. Note the two "odd nodes out" recorded below draw `0.5px`,
+> so the new ruling lands on the value those nodes had all along.
 
 Ruled: **0.2dp**, not snapped to `borderWidthHairline`. Applied to every card and to the session card.
 
