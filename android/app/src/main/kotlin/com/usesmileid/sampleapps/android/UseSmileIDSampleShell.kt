@@ -179,12 +179,13 @@ private fun ForwardNewIntentsTo(navController: NavHostController, sheetRequests:
     val activity = LocalActivity.current as? ComponentActivity ?: return
     DisposableEffect(activity, navController) {
         val listener = Consumer<Intent> { intent ->
-            val uri = intent.data?.toString()
-            val sheet = uri?.let(UseSmileIDSampleSheetLinks::resolve)
-            when {
-                intent.action != Intent.ACTION_VIEW || uri == null -> Unit
-                sheet != null -> navController.openUseSmileIDSampleSheet(sheet, sheetRequests)
-                else -> navController.handleDeepLink(intent)
+            val data = intent.data
+            if (intent.action != Intent.ACTION_VIEW || data == null) return@Consumer
+            val link = UseSmileIDSampleSheetLinks.resolve(data.toString())
+            if (link == null) {
+                navController.handleDeepLink(intent)
+            } else {
+                navController.openUseSmileIDSampleSheet(link, sheetRequests)
             }
         }
         activity.addOnNewIntentListener(listener)
