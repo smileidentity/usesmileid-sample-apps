@@ -1,9 +1,7 @@
 package com.usesmileid.sampleapps.ui.theme
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import com.smileid.designsystem.SmileColorLight
-import com.smileid.designsystem.smileOffBlackLight
 import com.smileid.designsystem.smileProductHues
 import com.smileid.designsystem.smileTokenSessionGradient
 import com.smileid.designsystem.smileTokenSessionGradientAlpha
@@ -49,15 +47,17 @@ class UseSmileIDSampleContrastTest {
 
     /**
      * The gradient-backed cards, which no token pair above describes — which is how the session card
-     * shipped near-black ink on its own fill in dark. The label sits over the gradient's FIRST stop and
-     * takes the ink that contrasts with it, so this is held to real AA rather than a floor.
+     * shipped near-black ink on its own fill in dark.
+     *
+     * Held to [DESIGN_INK_FLOOR], not AA. The label is white on every card by owner ruling
+     * 2026-08-26, so on the three light fills it sits below AA and no ink choice here can lift it —
+     * the fix belongs in the fill. This guards against getting WORSE; see the `cardInkContrast` delta.
      */
     @Test
     fun `product card text is legible on every hue in both modes`() = eachScheme { name, colors ->
         smileProductHues.forEach { (product, hue) ->
             val fill = hue.from.copy(alpha = hue.fromAlpha).over(colors.background)
-            val minimum = if (product in MID_TONE_FILLS) LARGE_TEXT_MINIMUM else TEXT_MINIMUM
-            assertContrast("$name: card label on $product", fill.inkOn(), fill, minimum)
+            assertContrast("$name: card label on $product", SmileColorLight.colorTextInverse, fill, DESIGN_INK_FLOOR)
         }
     }
 
@@ -96,15 +96,6 @@ class UseSmileIDSampleContrastTest {
         /** Not WCAG: a container only has to be seen. The design's surface-2 on white is 1.13:1. */
         const val CONTAINER_MINIMUM = 1.08
 
-        /** The card's own white-or-dark crossover. */
-        const val INK_CROSSOVER = 0.179f
-
-        /**
-         * Fills so near the crossover that NEITHER ink clears AA — 3.55:1 is the best available on
-         * Enhanced KYC's sky blue over the dark page, so only design can move it. Should stay one entry.
-         */
-        val MID_TONE_FILLS = setOf("enhancedKyc")
-
         /** Not the same colour. Light's bar is near-white on near-white and rides on its shadow. */
         const val DISTINCT = 1.02
 
@@ -117,10 +108,6 @@ class UseSmileIDSampleContrastTest {
             green = green * alpha + background.green * (1f - alpha),
             blue = blue * alpha + background.blue * (1f - alpha),
         )
-
-        /** Mirrors the card's own rule, so the test fails if the two ever disagree. */
-        fun Color.inkOn(): Color =
-            if (luminance() > INK_CROSSOVER) smileOffBlackLight else SmileColorLight.colorTextInverse
 
         fun contrastRatio(a: Color, b: Color): Double {
             val la = relativeLuminance(a)

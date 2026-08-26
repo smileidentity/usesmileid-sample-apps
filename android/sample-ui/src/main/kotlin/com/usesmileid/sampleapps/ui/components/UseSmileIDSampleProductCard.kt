@@ -62,13 +62,16 @@ fun UseSmileIDSampleProductCard(
     val colors = UseSmileIDSampleTheme.colors
     // A hue is the same in both schemes, so anything drawn on it resolves from the light one.
     val tile = if (enabled) SmileColorLight.colorSurface else colors.surface
+    // Every card's text and arrow are white, per the frame. Owner ruling 2026-08-26: consistency
+    // across the six beats per-card contrast, and the fix for the light fills belongs in the fill.
+    val content = if (enabled) SmileColorLight.colorTextInverse else colors.textMuted
     // Six of these scroll; neither the fill nor the ink depends on anything that changes per frame.
     val fill = remember(hue, enabled, colors.surfaceMuted) {
         if (enabled) hue.brush() else Brush.linearGradient(flat(colors.surfaceMuted))
     }
-    // The label and ghost sit over the gradient's first stop, the go pill over its last, so each
-    // takes the ink for the end it actually covers.
-    val labelInk = if (enabled) remember(hue) { hue.from.inkOn() } else colors.textMuted
+    // The two marks the design draws at a fixed colour DO adapt, because one fixed value leaves the
+    // go pill invisible on the darkest card and the ghost invisible on the lightest. Each takes the
+    // ink for the end of the gradient it covers: the ghost the first stop, the go pill the last.
     val ghostInk = remember(hue) { hue.from.inkOn() }
     val goScrim = if (enabled) remember(hue) { hue.gradientEnd().inkOn() } else colors.textMuted
     Surface(
@@ -117,8 +120,8 @@ fun UseSmileIDSampleProductCard(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Bottom,
                 ) {
-                    CardLabel(title = title, family = family, color = labelInk, modifier = Modifier.weight(1f))
-                    GoAffordance(tint = goScrim, scrim = goScrim)
+                    CardLabel(title = title, family = family, color = content, modifier = Modifier.weight(1f))
+                    GoAffordance(tint = content, scrim = goScrim)
                 }
             }
         }
