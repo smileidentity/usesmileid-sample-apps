@@ -193,9 +193,9 @@ private fun ForwardNewIntentsTo(navController: NavHostController, sheetRequests:
 }
 
 /**
- * The graph no longer claims the five sheet paths, so androidx's own cold handling passes them over
- * and this picks them up. Saveable like [AutostartFlowOnce]: the intent is re-read on recreation, and
- * re-following it would drag a rotated device back to the owner with the sheet reopened.
+ * The graph no longer claims the five sheet paths, so androidx's cold handling passes them over and this
+ * picks them up. Saveable like [AutostartFlowOnce]: the intent is re-read on recreation, and re-following
+ * it would drag a rotated device back to the owner with the sheet reopened.
  */
 @Composable
 private fun OpenSheetLinkOnce(navController: NavHostController, sheetRequests: UseSmileIDSampleSheetRequests) {

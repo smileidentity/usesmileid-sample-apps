@@ -29,7 +29,7 @@ import com.usesmileid.sampleapps.ui.screens.ProfilesScreen as ProfilesContent
 
 /** The profile routes. Function names are load-bearing: KSP names each generated `…Destination` after the function. */
 
-/** A layer over Products, which owns its state — not a destination (R12). */
+/** A layer Products owns; it is not a destination (R12). */
 @Composable
 internal fun ProfileSwitchSheet(onDismissRequest: () -> Unit) {
     val app = LocalUseSmileIDSampleAppState.current
@@ -70,7 +70,7 @@ fun ProfilesScreen(navigator: DestinationsNavigator) {
             onCreate = { creating = true },
             onBack = { navigator.navigateUp() },
         )
-        // Composed only while open, so the sheet's five fields start empty each time (R12).
+        // Composed only while open, so its five fields start empty each time.
         if (creating) NewProfileSheet(onDismissRequest = { creating = false })
         UseSmileIDSampleTransientNoticeHost(
             state = notice,
@@ -105,7 +105,7 @@ fun ProfileConfigScreen(profileId: String, navigator: DestinationsNavigator) {
     )
 }
 
-/** A layer over the profiles list, which owns its state — not a destination (R12). */
+/** A layer the profiles list owns; it is not a destination (R12). */
 @Composable
 internal fun NewProfileSheet(onDismissRequest: () -> Unit) {
     val app = LocalUseSmileIDSampleAppState.current

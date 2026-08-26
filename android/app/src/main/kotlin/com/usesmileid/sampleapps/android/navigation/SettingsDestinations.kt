@@ -90,7 +90,6 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
             }
         },
     )
-    // A layer over Settings, so the drawer's scrim covers the screen it was opened from (R12).
     if (showScenarios) ScenarioDrawerSheet(onDismissRequest = { showScenarios = false })
 }
 

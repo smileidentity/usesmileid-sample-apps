@@ -14,8 +14,9 @@ import androidx.navigation.NavHostController
 
 /**
  * A sheet is a LAYER over the screen that owns it, never a destination that replaces it — R12 in
- * `docs/plan/navigation-plan.md`. The five sheet paths in `spec/routes.json` stay deep-linkable, so
- * each resolves to its owner's own link plus a request the owner picks up.
+ * `docs/plan/navigation-plan.md`, because a destination leaves the scrim covering a grey void. The five
+ * sheet paths in `spec/routes.json` stay deep-linkable: each resolves to its owner's own link plus a
+ * request the owner picks up.
  */
 internal enum class UseSmileIDSampleSheet {
     ProfileSwitch,
@@ -27,7 +28,7 @@ internal enum class UseSmileIDSampleSheet {
 
 internal data class UseSmileIDSampleSheetLink(val sheet: UseSmileIDSampleSheet, val ownerUri: String)
 
-/** String in, string out: the whole table is checkable without a device, which is how `spec/routes.json` is asserted. */
+/** String in, string out, so `spec/routes.json` can assert the whole table without a device. */
 internal object UseSmileIDSampleSheetLinks {
 
     /** Null for every other link, which the graph still claims itself. */

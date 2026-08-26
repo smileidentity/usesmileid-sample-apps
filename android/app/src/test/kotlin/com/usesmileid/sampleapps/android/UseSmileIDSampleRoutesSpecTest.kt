@@ -62,10 +62,7 @@ class UseSmileIDSampleRoutesSpecTest {
         }
     }
 
-    /**
-     * R12: a sheet is a layer, so its path must resolve to the OWNER's link plus the sheet, and no
-     * destination may claim the path itself — re-adding one is what left the scrim covering nothing.
-     */
+    /** R12: re-adding a destination for a sheet path is what left the scrim covering a grey void. */
     @Test
     fun every_sheet_route_resolves_to_its_owner_and_no_destination_claims_it() {
         val sheets = specRoutes.filter { it.isSheet }
@@ -82,7 +79,7 @@ class UseSmileIDSampleRoutesSpecTest {
         }
     }
 
-    /** The other side of the resolver: it must not swallow a route the graph owns, with or without a query. */
+    /** The other side of it: the resolver must not swallow a route the graph owns, query or no query. */
     @Test
     fun the_sheet_resolver_leaves_every_other_route_to_the_graph() {
         for (route in specRoutes.filterNot { it.isSheet }) {

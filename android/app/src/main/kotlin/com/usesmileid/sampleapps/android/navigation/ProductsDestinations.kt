@@ -41,6 +41,5 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
         onProfileClick = { switchingProfile = true },
         onScanClick = { navigator.navigate(ScanTokenScreenDestination) },
     )
-    // The screen stays composed underneath, so the sheet's scrim covers Products rather than a void (R12).
     if (switchingProfile) ProfileSwitchSheet(onDismissRequest = { switchingProfile = false })
 }

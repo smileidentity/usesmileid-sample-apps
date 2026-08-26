@@ -48,7 +48,7 @@ object UseSmileIDSampleShapes {
     val card = RoundedCornerShape(SmileDimens.radiusSurface)
     val tile = RoundedCornerShape(SmileDimens.radiusLg)
 
-    /** The verifications row's tile, which its own board draws at 10 — the one radius no token carries. */
+    /** The verifications row's tile: node 5206-2410 draws 10, the one radius no token carries. */
     val rowTile = RoundedCornerShape(ROW_TILE_RADIUS)
     val field = RoundedCornerShape(SmileDimens.radiusField)
     val pill = RoundedCornerShape(SmileDimens.radiusPill)
@@ -56,7 +56,7 @@ object UseSmileIDSampleShapes {
     val sheet = RoundedCornerShape(topStart = SmileDimens.radiusSurface, topEnd = SmileDimens.radiusSurface)
 }
 
-/** Node 5206-2410; PVR-A13 left verifications out of the 16 migration deliberately. */
+/** PVR-A13 left verifications out of the migration to 16 deliberately. */
 private val ROW_TILE_RADIUS = 10.dp
 
 /** The SDK maps the same tokens onto the same slots, keeping host chrome and flow continuous. */

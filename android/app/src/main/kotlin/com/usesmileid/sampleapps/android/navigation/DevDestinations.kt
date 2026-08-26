@@ -14,8 +14,8 @@ import com.usesmileid.sampleapps.ui.screens.ScenarioDrawerSheet as ScenarioDrawe
 /** The dev-only routes. Function names are load-bearing: KSP names each generated `…Destination` after the function. */
 
 /**
- * A layer over Settings, which owns its state — not a destination (R12). Its Settings row is
- * debug-only, but the layer is not: `/debug/scenarios` is how every flow reaches it, release included.
+ * A layer Settings owns; it is not a destination (R12). Its Settings row is debug-only but this is not:
+ * `/debug/scenarios` is how every device flow reaches it, release included.
  */
 @Composable
 internal fun ScenarioDrawerSheet(onDismissRequest: () -> Unit) {

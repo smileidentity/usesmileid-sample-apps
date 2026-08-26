@@ -59,12 +59,11 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
         onContinue = { navigator.navigate(app.sdkFlow(productId)) { launchSingleTop = true } },
         onTokenClick = { navigator.navigate(ScanTokenScreenDestination) },
     )
-    // Layers over the form, so each picker's scrim covers the fields it is filling in (R12).
     if (pickingCountry) CountryPickerSheet(onDismissRequest = { pickingCountry = false })
     if (pickingIdType) IdTypePickerSheet(onDismissRequest = { pickingIdType = false })
 }
 
-/** A layer over the ID-details form, which owns its state — not a destination (R12). */
+/** A layer the ID-details form owns; it is not a destination (R12). */
 @Composable
 private fun CountryPickerSheet(onDismissRequest: () -> Unit) {
     val app = LocalUseSmileIDSampleAppState.current
@@ -78,7 +77,7 @@ private fun CountryPickerSheet(onDismissRequest: () -> Unit) {
     )
 }
 
-/** A layer over the ID-details form, which owns its state — not a destination (R12). */
+/** A layer the ID-details form owns; it is not a destination (R12). */
 @Composable
 private fun IdTypePickerSheet(onDismissRequest: () -> Unit) {
     val app = LocalUseSmileIDSampleAppState.current
