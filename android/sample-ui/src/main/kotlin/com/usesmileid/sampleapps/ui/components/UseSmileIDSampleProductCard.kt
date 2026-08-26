@@ -39,7 +39,7 @@ import com.smileid.designsystem.SmileColorLight
 import com.smileid.designsystem.SmileDimens
 import com.smileid.designsystem.SmileProductHue
 import com.smileid.designsystem.SMILE_SECTION_HEADER_WEIGHT
-import com.smileid.designsystem.smileCardStroke
+import com.smileid.designsystem.smileCardStrokeWidth
 import com.smileid.designsystem.smileSectionHeaderLineHeight
 import com.smileid.designsystem.smileSectionHeaderSize
 import com.smileid.designsystem.smileCardTitleTracking
@@ -84,7 +84,7 @@ fun UseSmileIDSampleProductCard(
         shape = UseSmileIDSampleTheme.shapes.card,
         color = Color.Transparent,
         // Fractional and anti-aliased rather than rounded away, so it reads as a hairline at any density.
-        border = BorderStroke(smileCardStroke, colors.foreground),
+        border = BorderStroke(smileCardStrokeWidth, UseSmileIDSampleTheme.colors.cardStroke),
     ) {
         Box(
             modifier = Modifier

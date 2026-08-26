@@ -108,7 +108,7 @@
     "comment": "What the products grid offers, in design order. `jobType` is the SDK enum name; test ids derive from `id`. `label` is the SDK's job-type name in full and is what the verifications row and the result card read. `cardTitle` + `cardFamily` are the product CARD's two runs, added 2026-08-25 from node 5487:1351 — the card shortens the title to fit a 114.5dp text column and puts the family on a second line. They are specified here rather than derived because four platforms must abbreviate identically: 'Enhanced Doc.' and 'Enh. Doc' are both reasonable and only one is right. The 2026-08-13 ruling that `label` is the job-type name in full still holds.",
     "sections": [
       {
-        "section": "Biometric Authentication",
+        "section": "Authentication",
         "items": [
           {
             "id": "smartSelfieEnrollment",
@@ -133,7 +133,7 @@
         ]
       },
       {
-        "section": "Verifications",
+        "section": "Onboarding",
         "items": [
           {
             "id": "documentVerification",
@@ -189,6 +189,6 @@
     "flowOrderRuling": "OWNER RULING 2026-08-13: e.g. SmartSelfie Enrollment → Consent Details Form → SDK flow. The Figma prototype still shows the SDK consent screen first; that wiring is stale and is not being updated.",
     "needsUserDetailsNote": "Set true for every product on the evidence of the design's own label 'USER DETAILS — ATTACHED TO EVERY JOB' (board 06 profile config) plus the owner's SmartSelfie Enrollment example.",
     "captureless": "Products with capture=false (enhancedKyc) compose the SDK flow WITHOUT capture() or preview(): consent() + processing(). Everything before the SDK flow is unchanged.",
-    "sectionRename": "'Authentication' -> 'Biometric Authentication' 2026-08-25, per node 5487:1364. The section KEY in each app's enum is unchanged; only the displayed label moved."
+    "sectionRename": "OWNER RULING 2026-08-26, superseding the 2026-08-25 rename off node 5487:1364: the two headings are 'Authentication' and 'Onboarding'. The second stops colliding with the Verifications TAB, which named a products section and a destination the same thing. The section KEYS in each app's enum are unchanged — only the displayed labels moved, so Verifications stays the enum constant for the Onboarding heading."
   }
 }

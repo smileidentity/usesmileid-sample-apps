@@ -76,7 +76,7 @@ fun UseSmileIDSampleSelectionBar(
                     modifier = Modifier.testTag(UseSmileIDSampleTestIds.SELECTION_COUNT),
                 )
                 Text(
-                    text = if (selectedCount == 0) "Tap rows to select" else "Tap Remove to confirm",
+                    text = if (selectedCount == 0) "Tap rows to select" else "Tap `Hide from List` to confirm",
                     style = UseSmileIDSampleTheme.type.textStyleBodySm.copy(fontSize = HINT_SIZE),
                     color = colors.textMuted,
                 )
@@ -86,7 +86,7 @@ fun UseSmileIDSampleSelectionBar(
     }
 }
 
-/** The soft error pair, dimmed rather than recoloured when disabled, so a disabled Remove still reads as destructive. */
+/** The soft error pair, dimmed rather than recoloured when disabled, so a disabled action still reads as the strong one. */
 @Composable
 private fun RemoveAction(enabled: Boolean, onRemove: () -> Unit) {
     val colors = UseSmileIDSampleTheme.colors
@@ -111,7 +111,7 @@ private fun RemoveAction(enabled: Boolean, onRemove: () -> Unit) {
                 TrashGlyph(tint = colors.badge.errorText)
             }
             Text(
-                text = "Remove",
+                text = "Hide from List",
                 style = UseSmileIDSampleTheme.type.textStyleBodyStrong.copy(
                     fontSize = REMOVE_SIZE,
                     fontWeight = FontWeight.Bold,

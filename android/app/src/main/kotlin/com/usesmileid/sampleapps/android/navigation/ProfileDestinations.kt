@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.annotation.parameters.DeepLink
-import com.ramcosta.composedestinations.generated.destinations.NewProfileSheetDestination
 import com.ramcosta.composedestinations.generated.destinations.ProfileConfigScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.smileid.designsystem.SmileDimens
@@ -30,15 +29,15 @@ import com.usesmileid.sampleapps.ui.screens.ProfilesScreen as ProfilesContent
 
 /** The profile routes. Function names are load-bearing: KSP names each generated `…Destination` after the function. */
 
-@Destination<RootGraph>(style = UseSmileIDSampleSheetTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.PROFILE_SWITCH)])
+/** A layer Products owns; it is not a destination (R12). */
 @Composable
-fun ProfileSwitchSheet(navigator: DestinationsNavigator) {
+internal fun ProfileSwitchSheet(onDismissRequest: () -> Unit) {
     val app = LocalUseSmileIDSampleAppState.current
     ProfileSwitchContent(
         profiles = app.profiles.all,
         activeId = app.profiles.activeId,
-        onSelect = { app.profiles.setActive(it.id); navigator.navigateUp() },
-        onDismissRequest = { navigator.navigateUp() },
+        onSelect = { app.profiles.setActive(it.id); onDismissRequest() },
+        onDismissRequest = onDismissRequest,
     )
 }
 
@@ -48,6 +47,7 @@ fun ProfilesScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     val chrome = LocalUseSmileIDSampleChrome.current
     val notice = rememberTransientNotice()
+    var creating by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.NewProfile)
     val pendingId = app.profiles.lastCreatedId
     // Consumed on sight, so returning cannot re-show it.
     LaunchedEffect(pendingId) {
@@ -67,9 +67,11 @@ fun ProfilesScreen(navigator: DestinationsNavigator) {
             profiles = app.profiles.all,
             activeId = app.profiles.activeId,
             onProfileClick = { navigator.navigate(ProfileConfigScreenDestination(profileId = it.id)) },
-            onCreate = { navigator.navigate(NewProfileSheetDestination) },
+            onCreate = { creating = true },
             onBack = { navigator.navigateUp() },
         )
+        // Composed only while open, so its five fields start empty each time.
+        if (creating) NewProfileSheet(onDismissRequest = { creating = false })
         UseSmileIDSampleTransientNoticeHost(
             state = notice,
             // The host already inset this past the system bar; insetting again lifts it into the list.
@@ -103,9 +105,9 @@ fun ProfileConfigScreen(profileId: String, navigator: DestinationsNavigator) {
     )
 }
 
-@Destination<RootGraph>(style = UseSmileIDSampleSheetTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.NEW_PROFILE)])
+/** A layer the profiles list owns; it is not a destination (R12). */
 @Composable
-fun NewProfileSheet(navigator: DestinationsNavigator) {
+internal fun NewProfileSheet(onDismissRequest: () -> Unit) {
     val app = LocalUseSmileIDSampleAppState.current
     var name by rememberSaveable { mutableStateOf("") }
     var firstName by rememberSaveable { mutableStateOf("") }
@@ -135,8 +137,8 @@ fun NewProfileSheet(navigator: DestinationsNavigator) {
                     phone = phone,
                 ),
             )
-            navigator.navigateUp()
+            onDismissRequest()
         },
-        onDismissRequest = { navigator.navigateUp() },
+        onDismissRequest = onDismissRequest,
     )
 }

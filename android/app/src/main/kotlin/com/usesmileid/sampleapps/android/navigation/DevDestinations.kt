@@ -13,9 +13,12 @@ import com.usesmileid.sampleapps.ui.screens.ScenarioDrawerSheet as ScenarioDrawe
 
 /** The dev-only routes. Function names are load-bearing: KSP names each generated `…Destination` after the function. */
 
-@Destination<RootGraph>(style = UseSmileIDSampleSheetTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SCENARIO_DRAWER)])
+/**
+ * A layer Settings owns; it is not a destination (R12). Its Settings row is debug-only but this is not:
+ * `/debug/scenarios` is how every device flow reaches it, release included.
+ */
 @Composable
-fun ScenarioDrawerSheet(navigator: DestinationsNavigator) {
+internal fun ScenarioDrawerSheet(onDismissRequest: () -> Unit) {
     // App-level, not sheet-local: the result card reports the same selection.
     val app = LocalUseSmileIDSampleAppState.current
     ScenarioDrawerContent(
@@ -23,7 +26,7 @@ fun ScenarioDrawerSheet(navigator: DestinationsNavigator) {
         activeTheme = app.flowResult.theme,
         onScenarioSelect = app.flowResult::selectScenario,
         onThemeSelect = app.flowResult::selectTheme,
-        onDismissRequest = { navigator.navigateUp() },
+        onDismissRequest = onDismissRequest,
     )
 }
 

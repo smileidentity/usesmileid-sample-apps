@@ -61,6 +61,37 @@ class UseSmileIDSampleContrastTest {
         }
     }
 
+    /**
+     * The only CEILING in this file, because here too much contrast was the defect: one mode-invariant
+     * near-white outline was 1.18:1 on the light card and 12.09:1 on the dark one.
+     */
+    @Test
+    fun `the card stroke stays subtle in both modes`() = eachScheme { name, colors ->
+        val ratio = strokeRatio(colors)
+        assertTrue(
+            "$name: card stroke on its card is ${"%.2f".format(ratio)}:1, outside $STROKE_FLOOR..$STROKE_CEILING",
+            ratio in STROKE_FLOOR..STROKE_CEILING,
+        )
+    }
+
+    /** The real invariant: one weight in both schemes. A single mode-invariant value fails this, not the band. */
+    @Test
+    fun `the card stroke reads the same weight in light and dark`() {
+        val spread = kotlin.math.abs(strokeRatio(lightColors) - strokeRatio(darkColors))
+        assertTrue(
+            "the stroke differs by ${"%.2f".format(spread)} between schemes, over the $STROKE_SPREAD allowed",
+            spread <= STROKE_SPREAD,
+        )
+    }
+
+    /** Mode-invariant, unlike the pair above it: both halves are fixed hexes the Verifications board draws. */
+    @Test
+    fun `a verifications row glyph is legible on its own tile`() {
+        smileProductHues.forEach { (product, hue) ->
+            assertContrast("row glyph on $product tile", hue.icon, hue.tile, LARGE_TEXT_MINIMUM)
+        }
+    }
+
     @Test
     fun `session card text is legible on its gradient in both modes`() = eachScheme { name, colors ->
         smileTokenSessionGradient.forEachIndexed { index, stop ->
@@ -101,6 +132,16 @@ class UseSmileIDSampleContrastTest {
 
         /** Not WCAG either: the design's own worst case, the amber Registration card at 1.76:1. */
         const val DESIGN_INK_FLOOR = 1.75
+
+        /** Seen but not shouted. The ceiling, not the floor, is the point — see the `cardStroke` delta. */
+        const val STROKE_FLOOR = 1.10
+        const val STROKE_CEILING = 1.60
+
+        /** Light is 1.18:1 and dark 1.19:1; anything near a mode-invariant value blows straight through this. */
+        const val STROKE_SPREAD = 0.25
+
+        fun strokeRatio(colors: UseSmileIDSampleColors) =
+            contrastRatio(colors.cardStroke, colors.card.background)
 
         /** Source-over: a translucent card stop shows the page through it. */
         fun Color.over(background: Color): Color = Color(

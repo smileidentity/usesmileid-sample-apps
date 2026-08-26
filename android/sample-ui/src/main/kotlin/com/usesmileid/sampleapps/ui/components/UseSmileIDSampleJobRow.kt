@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +22,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.smileCardStrokeWidth
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
@@ -53,9 +53,9 @@ fun UseSmileIDSampleJobRow(
             .fillMaxWidth()
             .then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier)
             .tagged(testId),
-        shape = RoundedCornerShape(SmileDimens.radiusSurface),
+        shape = UseSmileIDSampleTheme.shapes.card,
         color = colors.card.background,
-        border = BorderStroke(SmileDimens.borderWidthHairline, colors.card.border),
+        border = BorderStroke(smileCardStrokeWidth, UseSmileIDSampleTheme.colors.cardStroke),
     ) {
         // A Row at the design's scale keeps the badge inline; a FlowRow above it lets the badge drop.
         // One layout cannot do both: weight() inside a FlowRow claims the whole line.
@@ -99,7 +99,7 @@ private fun JobRowTile(product: UseSmileIDSampleProduct) {
     val hue = product.hue
     Surface(
         modifier = Modifier.size(TILE_SIZE),
-        shape = RoundedCornerShape(TILE_RADIUS),
+        shape = UseSmileIDSampleTheme.shapes.rowTile,
         color = hue.tile,
     ) {
         Box(contentAlignment = Alignment.Center) {
@@ -143,5 +143,4 @@ private fun JobRowText(
 }
 
 private val TILE_SIZE = 36.dp
-private val TILE_RADIUS = 10.dp
 private val TILE_ICON_SIZE = 18.dp

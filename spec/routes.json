@@ -4,7 +4,7 @@
   "rules": [
     "Route ids match screen ids in screens.json. A screen with no route is a component, not a screen.",
     "Deep-link paths are identical across platforms. The scheme is per app (see app-identity.json) — usesmileid-sample-android://products, usesmileid-sample-ios://products, and so on.",
-    "Sheets are ROUTES, not local booleans, so a deep link can open one and a flow can assert it.",
+    "Sheets are LAYERS over the screen that owns them, never destinations that replace it. Their paths stay in this table and stay deep-linkable — a link resolves to the owner's own route with the sheet open, so a flow can still drive and assert one. A sheet that replaces the destination beneath it leaves nothing behind its scrim, which is what Android shipped. iOS, Flutter and React Native present sheets over the presenter by construction, so only Android's cell has to name both halves.",
     "The SDK flow is ONE route with TWO presentations. Same destination, different container.",
     "Arguments are typed on every platform. A stringly-typed argument that only fails at runtime is a defect.",
     "Dev-only shell surfaces are NOT routes in this table, deliberately. A component gallery or API scratchpad belongs to one shell, is not part of the journey the four apps share, and must not oblige the other three to build a counterpart. They still get a deep link under their app's own scheme, because reaching one cold is the only way a flow can drive it, and their ids use a dev_ prefix so the sample_ namespace stays the spec's. Android has one today: usesmileid-sample-android://debug/components."
@@ -162,7 +162,7 @@
         }
       ],
       "platform": {
-        "android": "CountryPickerSheetDestination",
+        "android": "IdDetailsFormScreenDestination + UseSmileIDSampleSheet.CountryPicker",
         "ios": "Sheet.countryPicker",
         "flutter": "/flow/:productId/id-details/country",
         "expo": "app/flow/[productId]/id-details/country.tsx"
@@ -181,7 +181,7 @@
         }
       ],
       "platform": {
-        "android": "IdTypePickerSheetDestination",
+        "android": "IdDetailsFormScreenDestination + UseSmileIDSampleSheet.IdTypePicker",
         "ios": "Sheet.idTypePicker",
         "flutter": "/flow/:productId/id-details/id-type",
         "expo": "app/flow/[productId]/id-details/id-type.tsx"
@@ -195,11 +195,12 @@
       "presentation": "modalSheet",
       "args": [],
       "platform": {
-        "android": "ProfileSwitchSheetDestination",
+        "android": "ProductsScreenDestination + UseSmileIDSampleSheet.ProfileSwitch",
         "ios": "Sheet.profileSwitch",
         "flutter": "/profiles/switch",
         "expo": "app/profiles/switch.tsx"
-      }
+      },
+      "notes": "Its path sits under /profiles but its owner is the products screen, the only place the avatar that opens it appears."
     },
     {
       "id": "profiles",
@@ -213,7 +214,7 @@
         "flutter": "/profiles",
         "expo": "app/profiles/index.tsx"
       },
-      "notes": "Reached from the settings PROFILE row — that row opens this list, not the active profile's own page. Owns the created confirmation, so a create that returns anywhere else loses it; a deep link straight to /profiles/new therefore shows no confirmation."
+      "notes": "Reached from the settings PROFILE row — that row opens this list, not the active profile's own page. Owns the created confirmation, and owns the /profiles/new sheet, so a create from a deep link lands on the confirmation rather than losing it."
     },
     {
       "id": "profileConfig",
@@ -242,12 +243,12 @@
       "presentation": "modalSheet",
       "args": [],
       "platform": {
-        "android": "NewProfileSheetDestination",
+        "android": "ProfilesScreenDestination + UseSmileIDSampleSheet.NewProfile",
         "ios": "Sheet.newProfile",
         "flutter": "/profiles/new",
         "expo": "app/profiles/new.tsx"
       },
-      "notes": "Declared before /profiles/:profileId so 'new' is not swallowed as a profile id. Pops back to /profiles, which is where the created confirmation appears."
+      "notes": "Resolved before /profiles/:profileId so 'new' is not swallowed as a profile id. It layers over /profiles, which is where the created confirmation appears — so a link straight here now gets the confirmation too, where a sheet-as-destination lost it."
     },
     {
       "id": "scanToken",
@@ -269,12 +270,12 @@
       "presentation": "modalSheet",
       "args": [],
       "platform": {
-        "android": "ScenarioDrawerSheetDestination",
+        "android": "SettingsScreenDestination + UseSmileIDSampleSheet.ScenarioDrawer",
         "ios": "Sheet.scenarioDrawer",
         "flutter": "/debug/scenarios",
         "expo": "app/debug/scenarios.tsx"
       },
-      "notes": "A debug affordance with no design frame. Deep-linkable so a flow can open it directly rather than reproducing a hidden gesture."
+      "notes": "A debug affordance with no design frame. Deep-linkable so a flow can open it directly rather than reproducing a hidden gesture — the Settings row that opens it is debug-only, the link is not."
     }
   ],
   "automationEntry": {

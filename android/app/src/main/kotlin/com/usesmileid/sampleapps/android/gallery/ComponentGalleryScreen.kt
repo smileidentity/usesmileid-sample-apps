@@ -293,13 +293,13 @@ private fun gallerySections(): List<GallerySectionSpec> {
             }
         },
         GallerySectionSpec("TOAST") {
-            UseSmileIDSampleToast(message = "Verification removed")
-            UseSmileIDSampleToast(message = "Verification removed", actionLabel = "Undo", onAction = {})
+            UseSmileIDSampleToast(message = "1 verification hidden from App list")
+            UseSmileIDSampleToast(message = "2 verifications hidden from App list", actionLabel = "Undo", onAction = {})
         },
         GallerySectionSpec("TOP APP BAR") {
             UseSmileIDSampleTopAppBar(title = "Verification details", onBack = {})
             UseSmileIDSampleTopAppBar(title = "Verification details", onBack = {}) {
-                UseSmileIDSampleTopAppBarButton(contentDescription = "Delete", onClick = {}) { tint ->
+                UseSmileIDSampleTopAppBarButton(contentDescription = "Hide", onClick = {}) { tint ->
                     TrashGlyph(tint = tint)
                 }
             }
@@ -540,7 +540,7 @@ private fun gallerySections(): List<GallerySectionSpec> {
             UseSmileIDSampleSwipeAction(onRemove = { swipedAway = true }) {
                 UseSmileIDSampleJobRow(
                     product = UseSmileIDSampleProduct.DocumentVerification,
-                    jobId = if (swipedAway) "Removed — tap Reset" else "Swipe me left",
+                    jobId = if (swipedAway) "Hidden — tap Reset" else "Swipe me left",
                     time = "13:03:41",
                     status = UseSmileIDSampleStatus.Clear,
                 )

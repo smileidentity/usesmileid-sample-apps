@@ -99,7 +99,7 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
         LaunchedEffect(Unit) {
             app.jobStore.removals.collect { count ->
                 notice.show(
-                    message = if (count == 1) "Verification removed" else "$count verifications removed",
+                    message = if (count == 1) "1 verification hidden from App list" else "$count verifications hidden from App list",
                     actionLabel = "Undo",
                     onAction = { app.storeScope.launch { app.jobStore.undoRemove() } },
                 )

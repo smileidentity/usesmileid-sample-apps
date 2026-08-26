@@ -7,8 +7,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.parameters.DeepLink
-import com.ramcosta.composedestinations.generated.destinations.CountryPickerSheetDestination
-import com.ramcosta.composedestinations.generated.destinations.IdTypePickerSheetDestination
 import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
@@ -49,35 +47,39 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
 @Composable
 fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
+    var pickingCountry by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.CountryPicker)
+    var pickingIdType by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.IdTypePicker)
     KycIdFormContent(
         productLabel = productOf(productId)?.label ?: productId,
         details = app.forms.idDetails,
-        onCountryClick = { navigator.navigate(CountryPickerSheetDestination(productId = productId)) },
-        onIdTypeClick = { navigator.navigate(IdTypePickerSheetDestination(productId = productId)) },
+        onCountryClick = { pickingCountry = true },
+        onIdTypeClick = { pickingIdType = true },
         onIdNumberChange = app.forms::setIdNumber,
         onBack = { navigator.navigateUp() },
         onContinue = { navigator.navigate(app.sdkFlow(productId)) { launchSingleTop = true } },
         onTokenClick = { navigator.navigate(ScanTokenScreenDestination) },
     )
+    if (pickingCountry) CountryPickerSheet(onDismissRequest = { pickingCountry = false })
+    if (pickingIdType) IdTypePickerSheet(onDismissRequest = { pickingIdType = false })
 }
 
-@Destination<FlowGraph>(style = UseSmileIDSampleSheetTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.COUNTRY_PICKER)])
+/** A layer the ID-details form owns; it is not a destination (R12). */
 @Composable
-fun CountryPickerSheet(productId: String, navigator: DestinationsNavigator) {
+private fun CountryPickerSheet(onDismissRequest: () -> Unit) {
     val app = LocalUseSmileIDSampleAppState.current
     var query by rememberSaveable { mutableStateOf("") }
     CountryPickerContent(
         selected = app.forms.idDetails.country,
         query = query,
         onQueryChange = { query = it },
-        onSelect = { app.forms.setCountry(it); navigator.navigateUp() },
-        onDismissRequest = { navigator.navigateUp() },
+        onSelect = { app.forms.setCountry(it); onDismissRequest() },
+        onDismissRequest = onDismissRequest,
     )
 }
 
-@Destination<FlowGraph>(style = UseSmileIDSampleSheetTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.ID_TYPE_PICKER)])
+/** A layer the ID-details form owns; it is not a destination (R12). */
 @Composable
-fun IdTypePickerSheet(productId: String, navigator: DestinationsNavigator) {
+private fun IdTypePickerSheet(onDismissRequest: () -> Unit) {
     val app = LocalUseSmileIDSampleAppState.current
     var query by rememberSaveable { mutableStateOf("") }
     IdTypePickerContent(
@@ -85,8 +87,8 @@ fun IdTypePickerSheet(productId: String, navigator: DestinationsNavigator) {
         selected = app.forms.idDetails.idType,
         query = query,
         onQueryChange = { query = it },
-        onSelect = { app.forms.setIdType(it); navigator.navigateUp() },
-        onDismissRequest = { navigator.navigateUp() },
+        onSelect = { app.forms.setIdType(it); onDismissRequest() },
+        onDismissRequest = onDismissRequest,
     )
 }
 

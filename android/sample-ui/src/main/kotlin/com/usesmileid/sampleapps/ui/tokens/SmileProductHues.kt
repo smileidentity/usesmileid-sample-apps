@@ -52,7 +52,7 @@ val smileProductHues: Map<String, SmileProductHue> = mapOf(
         from = Color(0xFF2CC05C),
         to = Color(0xFF00AA99),
         cardIcon = Color(0xFF06A850),
-        icon = Color(0xFFC46F00),
+        icon = Color(0xFFB36500),
         tile = Color(0xFFFBEEDA),
         stopStart = 0.66627f,
         stopEnd = 1.2978f,
@@ -151,10 +151,13 @@ const val SMILE_TOKEN_RING_TRACK_OPACITY = 0.18f
 /** The design's Type/Label: a point larger than text-style.overline, and spaced. */
 val smileLabelSize = 11.sp
 val smileLabelTracking = 0.88.sp
-/** The card's two label runs and its stroke, each one property off a token — see the `cardLabelRuns` delta. */
+/** The card's two label runs, each one property off a token — see the `cardLabelRuns` delta. */
 val smileCardTitleTracking = -0.4.sp
 const val SMILE_CARD_FAMILY_WEIGHT = 400
-val smileCardStroke = 0.2.dp
+/** One outline for every card and row, equally quiet in both schemes — see the `cardStroke` delta. */
+val smileCardStrokeLight: Color = Color(0xFFEAECF0)
+val smileCardStrokeDark: Color = Color(0xFF2D3748)
+val smileCardStrokeWidth = 0.5.dp
 /** The products header and section headers, which text-style.* does not match — see the `productsScreenType` delta. */
 val smileHeadingPageSize = 26.sp
 val smileHeadingPageLineHeight = 31.2.sp

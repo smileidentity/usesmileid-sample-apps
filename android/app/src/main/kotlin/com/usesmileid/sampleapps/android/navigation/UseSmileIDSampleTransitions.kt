@@ -40,12 +40,6 @@ object UseSmileIDSampleNavTransitions : NavHostAnimatedDestinationStyle() {
     }
 }
 
-/** A sheet animates itself; animating the destination too slides the scrim in before the sheet appears. */
-object UseSmileIDSampleSheetTransitions : DestinationStyle.Animated() {
-    override val enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? = { EnterTransition.None }
-    override val exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition? = { ExitTransition.None }
-}
-
 /** The SDK flow owns its own navigation, so the host only fades it in rather than implying a direction. */
 object UseSmileIDSampleFlowTransitions : DestinationStyle.Animated() {
     override val enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? = { fadeIn(ARRIVE) }

@@ -72,7 +72,8 @@ enum class UseSmileIDSampleProduct(
     }
 }
 
+/** Constant names outlive their labels: the second section is the Onboarding heading, not the Verifications tab. */
 enum class UseSmileIDSampleProductSection(val label: String) {
-    Authentication("Biometric Authentication"),
-    Verifications("Verifications"),
+    Authentication("Authentication"),
+    Verifications("Onboarding"),
 }

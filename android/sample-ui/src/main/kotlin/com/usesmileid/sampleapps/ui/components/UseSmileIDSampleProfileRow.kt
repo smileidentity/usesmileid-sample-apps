@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.smileProfileHues
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.smileCardStrokeWidth
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** An organisation and a supporting line — the person on the switch sheet, "Tap to configure" in settings. Hue varies per profile, so the caller passes it. */
@@ -46,7 +47,7 @@ fun UseSmileIDSampleProfileRow(
             .tagged(testId),
         shape = RoundedCornerShape(SmileDimens.radiusSurface),
         color = if (selected) colors.surfaceTile else colors.surface,
-        border = BorderStroke(SmileDimens.borderWidthHairline, colors.card.border),
+        border = BorderStroke(smileCardStrokeWidth, UseSmileIDSampleTheme.colors.cardStroke),
     ) {
         Row(
             modifier = Modifier
