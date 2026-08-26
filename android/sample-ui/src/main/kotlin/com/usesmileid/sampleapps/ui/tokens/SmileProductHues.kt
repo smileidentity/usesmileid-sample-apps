@@ -154,8 +154,9 @@ val smileLabelTracking = 0.88.sp
 /** The card's two label runs, each one property off a token — see the `cardLabelRuns` delta. */
 val smileCardTitleTracking = -0.4.sp
 const val SMILE_CARD_FAMILY_WEIGHT = 400
-/** One outline everywhere, mode-invariant by design — see the `cardStroke` delta. */
-val smileCardStrokeColor = Color(0xFF797C85)
+/** One outline for every card and row, equally quiet in both schemes — see the `cardStroke` delta. */
+val smileCardStrokeLight: Color = Color(0xFFEAECF0)
+val smileCardStrokeDark: Color = Color(0xFF2D3748)
 val smileCardStrokeWidth = 0.5.dp
 /** The products header and section headers, which text-style.* does not match — see the `productsScreenType` delta. */
 val smileHeadingPageSize = 26.sp

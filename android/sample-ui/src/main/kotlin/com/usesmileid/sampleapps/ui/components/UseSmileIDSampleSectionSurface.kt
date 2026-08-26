@@ -10,7 +10,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.smileid.designsystem.SmileDimens
-import com.smileid.designsystem.smileCardStrokeColor
 import com.smileid.designsystem.smileCardStrokeWidth
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -30,7 +29,7 @@ fun UseSmileIDSampleSectionSurface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(SmileDimens.radiusSurface),
             color = UseSmileIDSampleTheme.colors.surface,
-            border = BorderStroke(smileCardStrokeWidth, smileCardStrokeColor),
+            border = BorderStroke(smileCardStrokeWidth, UseSmileIDSampleTheme.colors.cardStroke),
         ) {
             Column { content() }
         }

@@ -510,17 +510,19 @@
         "note": "The design draws no stroke at all on the verifications or settings lists, so those two were implemented from border-width.hairline and color.border by default rather than by drawing."
       },
       "designSystem": {
-        "colour": "color.border and card.border are the SAME near-white #EAECF0 in BOTH modes — the generated light and dark outputs carry identical values, so there is no dark pair at all",
+        "colour": "color.border and card.border are the SAME near-white #EAECF0 in BOTH modes — the generated light and dark outputs carry identical values, so there is no dark pair at all. That is the whole defect: one value cannot be a subtle outline on white AND on #272A35.",
         "width": "border-width.hairline is 1dp; there is no 0.5 step, and no fractional border-width token of any kind"
       },
       "values": {
-        "colour": "#797C85",
+        "light": "#EAECF0",
+        "dark": "#2D3748",
         "width": 0.5
       },
-      "finding": "A mode-invariant near-white outline is not one treatment, it is two. Against the card surface #EAECF0 is 1.18:1 in light — the intended near-invisible hairline — and 12.09:1 in dark, where the same value becomes the loudest edge on the screen. That 10.90 spread is the defect, and it is why the dark verifications and settings lists read as outlined boxes while their light twins read as plain cards. #797C85 is 4.17:1 light and 3.43:1 dark, a 0.74 spread: one value that reads the same in both schemes, which is what a single mode-invariant token has to be to be correct. The 0.5 width halves the weight the higher contrast adds in light.",
-      "recommendation": "Give color.border a real light/dark PAIR upstream, or add a subtle-outline role with one mid value that works in both. Also add a 0.5 border-width step: the design already draws 0.2 and 0.5 and the scale starts at 1. Generated from here meanwhile, exactly as offBlack and borderStrong are, so no component carries a hex or a raw dp.",
-      "status": "OWNER RULING 2026-08-26 — one stroke everywhere: #797C85 at 0.5dp. This SUPERSEDES the 0.2 the products frame draws (recorded in cardLabelRuns) and the 1dp hairline the two lists inherited; uniform and subtle beat per-surface fidelity, because the frame never drew the lists at all.",
-      "guardedBy": "UseSmileIDSampleContrastTest holds the stroke to a MAXIMUM as well as a minimum in both schemes — the only ceiling in that test, because here too much contrast was the defect."
+      "finding": "A mode-invariant near-white outline is not one treatment, it is two. Against the card #EAECF0 is 1.18:1 in light — the intended near-invisible hairline, and the one the owner wants kept — and 12.09:1 in dark, where the same value becomes the loudest edge on the screen. The fix is a PAIR, not a compromise value: a single mid-grey was tried (#797C85, 4.17:1 light / 3.43:1 dark) and rejected on sight, because equalising the two schemes dragged light UP to meet dark when light was already correct. Light keeps #EAECF0 at 1.18:1; dark takes #2D3748 at 1.19:1, so the two schemes read the same and both read quietly.",
+      "recommendation": "Give color.border a real light/dark PAIR upstream; the dark half can be surface-alt's value, which already measures right. Also add a 0.5 border-width step: the design draws 0.2 and 0.5 and the scale starts at 1. Generated from here as a pair meanwhile, exactly as offBlack and navBarFill are, so no component carries a hex or a raw dp.",
+      "status": "OWNER RULING 2026-08-26 — one stroke everywhere at 0.5dp, as a light/dark PAIR. This supersedes the 0.2 the products frame draws (recorded in cardLabelRuns) and the 1dp hairline the two lists inherited. Ruled after seeing a single mid-grey on device goldens: uniform WEIGHT across the two schemes is the goal, not a uniform hex.",
+      "guardedBy": "UseSmileIDSampleContrastTest holds the stroke to a MAXIMUM as well as a minimum in both schemes — the only ceiling in that test, because here too much contrast was the defect. The band is tight enough that a regression to one mode-invariant value fails it.",
+      "darkValueIsNotInvented": "#2D3748 is the value the dark palette already carries for color.surface-alt (and colorGreyDarkCardAlt). It is used here for its VALUE, not its role — a surface token standing in for a border — which is exactly what the recommendation below asks design to fix properly."
     },
     {
       "id": "cardInkContrast",

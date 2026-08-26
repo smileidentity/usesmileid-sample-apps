@@ -5,6 +5,8 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import com.smileid.designsystem.SmileColorDark
 import com.smileid.designsystem.SmileColorLight
+import com.smileid.designsystem.smileCardStrokeDark
+import com.smileid.designsystem.smileCardStrokeLight
 import com.smileid.designsystem.smileNavBarDark
 import com.smileid.designsystem.smileNavBarLight
 import com.smileid.designsystem.smileOffBlackDark
@@ -111,6 +113,9 @@ data class UseSmileIDSampleColors(
     val foreground: Color,
     /** The floating nav bar's own fill: the design recesses it from the page in dark and raises it in light. */
     val navBar: Color,
+
+    /** One outline for every card and row. A PAIR, because `color.border` is the same near-white in both schemes. See the `cardStroke` delta. */
+    val cardStroke: Color,
     val border: Color,
     val overlayScrim: Color,
     val textTitle: Color,
@@ -151,6 +156,7 @@ internal val lightColors = UseSmileIDSampleColors(
     surfaceTile = smileSurface2,
     foreground = smileOffBlackLight,
     navBar = smileNavBarLight,
+    cardStroke = smileCardStrokeLight,
     border = SmileColorLight.colorBorder,
     overlayScrim = SmileColorLight.colorOverlayScrim,
     textTitle = SmileColorLight.colorTextTitle,
@@ -247,6 +253,7 @@ internal val darkColors = UseSmileIDSampleColors(
     foreground = smileOffBlackDark,
     // Recessed below the page, per node 5447:1701 — the pill is the darker of the two in dark mode.
     navBar = smileNavBarDark,
+    cardStroke = smileCardStrokeDark,
     border = SmileColorDark.colorBorder,
     overlayScrim = SmileColorDark.colorOverlayScrim,
     textTitle = SmileColorDark.colorTextTitle,

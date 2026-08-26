@@ -681,16 +681,16 @@ def read_card_stroke() -> dict:
 
 
 def emit_kotlin_card_stroke(values: dict) -> str:
-    """One outline for every card and row: the token source carries neither a mid-grey border nor a 0.5 width."""
-    colour = values.get("colour")
-    width = values.get("width")
-    if not colour or width is None:
-        raise TokenError("cardStroke needs a values.colour and a values.width")
+    """A pair, not one value: `color.border` is the same near-white in both schemes, which is the defect."""
+    missing = [mode for mode in ("light", "dark") if not values.get(mode)]
+    if missing or values.get("width") is None:
+        raise TokenError(f"spec/design-tokens.json cardStroke is missing {missing or ['width']}")
     return "\n".join([
         "",
-        "/** One outline everywhere, mode-invariant by design — see the `cardStroke` delta. */",
-        "val smileCardStrokeColor = %s" % kotlin_color(colour),
-        "val smileCardStrokeWidth = %s.dp" % width,
+        "/** One outline for every card and row, equally quiet in both schemes — see the `cardStroke` delta. */",
+        "val smileCardStrokeLight: Color = %s" % kotlin_color(values["light"]),
+        "val smileCardStrokeDark: Color = %s" % kotlin_color(values["dark"]),
+        "val smileCardStrokeWidth = %s.dp" % values["width"],
     ])
 
 

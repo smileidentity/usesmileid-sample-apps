@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.smileProfileHues
 import com.smileid.designsystem.SmileDimens
-import com.smileid.designsystem.smileCardStrokeColor
 import com.smileid.designsystem.smileCardStrokeWidth
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -48,7 +47,7 @@ fun UseSmileIDSampleProfileRow(
             .tagged(testId),
         shape = RoundedCornerShape(SmileDimens.radiusSurface),
         color = if (selected) colors.surfaceTile else colors.surface,
-        border = BorderStroke(smileCardStrokeWidth, smileCardStrokeColor),
+        border = BorderStroke(smileCardStrokeWidth, UseSmileIDSampleTheme.colors.cardStroke),
     ) {
         Row(
             modifier = Modifier

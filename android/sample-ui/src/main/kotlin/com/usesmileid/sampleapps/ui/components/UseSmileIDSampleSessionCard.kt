@@ -25,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SMILE_CARD_FAMILY_WEIGHT
 import com.smileid.designsystem.SmileColorLight
-import com.smileid.designsystem.smileCardStrokeColor
 import com.smileid.designsystem.smileCardStrokeWidth
 import com.smileid.designsystem.smileTokenSessionGradient
 import com.smileid.designsystem.smileTokenSessionGradientAlpha
@@ -52,7 +51,7 @@ fun UseSmileIDSampleSessionCard(
         modifier = modifier.fillMaxWidth().testTag(UseSmileIDSampleTestIds.SESSION_CARD),
         shape = UseSmileIDSampleTheme.shapes.card,
         color = Color.Transparent,
-        border = BorderStroke(smileCardStrokeWidth, smileCardStrokeColor),
+        border = BorderStroke(smileCardStrokeWidth, UseSmileIDSampleTheme.colors.cardStroke),
     ) {
         Box(modifier = Modifier.background(Brush.horizontalGradient(sessionGradient))) {
         FlowRow(
@@ -107,7 +106,7 @@ fun UseSmileIDSampleSessionEndedBanner(
         // Surface-muted per this component's token list; the banner contract's fill is a warm sand.
         color = colors.surfaceMuted,
         // The session card's stroke, per §7.10: color.border carries one light value in BOTH schemes.
-        border = BorderStroke(smileCardStrokeWidth, smileCardStrokeColor),
+        border = BorderStroke(smileCardStrokeWidth, UseSmileIDSampleTheme.colors.cardStroke),
     ) {
         FlowRow(
             modifier = Modifier

@@ -22,7 +22,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
-import com.smileid.designsystem.smileCardStrokeColor
 import com.smileid.designsystem.smileCardStrokeWidth
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
@@ -56,7 +55,7 @@ fun UseSmileIDSampleJobRow(
             .tagged(testId),
         shape = UseSmileIDSampleTheme.shapes.card,
         color = colors.card.background,
-        border = BorderStroke(smileCardStrokeWidth, smileCardStrokeColor),
+        border = BorderStroke(smileCardStrokeWidth, UseSmileIDSampleTheme.colors.cardStroke),
     ) {
         // A Row at the design's scale keeps the badge inline; a FlowRow above it lets the badge drop.
         // One layout cannot do both: weight() inside a FlowRow claims the whole line.
