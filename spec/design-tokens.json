@@ -514,7 +514,10 @@
       "belowAa": "14 of 28 stops",
       "recommendation": "Design question, not a local nudge: either darken the light fills or give the card an ink that varies with its hue. Not fixed here because the owner ruled the frame final as drawn on 2026-08-24, and inventing a per-card ink would put four platforms on four different answers.",
       "guardedBy": "UseSmileIDSampleContrastTest holds these surfaces to DESIGN_INK_FLOOR (1.75), the design's own worst case, so a REGRESSION fails while today's values pass. It is a floor, not a certification — raise it as design raises the values. The same test now covers gradient-backed surfaces at all, which is how the session card shipped near-black ink on its own fill in dark mode for as long as dark mode has existed: no token pair described it.",
-      "status": "OPEN 2026-08-25 — raised with design; implemented as drawn meanwhile"
+      "status": "PARTLY RESOLVED 2026-08-26 — product-card labels fixed by the luminance rule; two residuals need a design change, not a code one",
+      "resolution": "OWNER RULING 2026-08-26: extend the card's luminance rule to the LABEL as well as the two decorative marks, rather than keep white ink on every fill. Each element takes the ink for the end of the gradient it actually covers — the label and ghost over the first stop, the go pill and its arrow over the last. That takes the label from 14 failures of 28 to ONE, and the worst label contrast from 1.76:1 to 5.90:1.",
+      "residual": "enhancedKyc only. Its #0EA5E9 at 79% over the DARK page composites to a mid-tone that sits almost exactly on the white-or-dark crossover, so NEITHER ink clears AA — 3.55:1 is the best available and no ink choice can improve it. Only design can, by darkening that stop or dropping its alpha. Held to the large-text bar meanwhile and listed in UseSmileIDSampleContrastTest.MID_TONE_FILLS, which should stay a one-entry set.",
+      "sessionCardResidual": "The session card keeps white ink. Its gradient runs dark blue to light violet and the text spans both, so a single ink cannot serve both ends: the luminance rule would fix the countdown on the right and break the two runs on the left. Its right-hand stop is 2.18:1 over the light page — the same ask to design as the residual above, and the same fix (darken the stop)."
     },
     {
       "id": "productsScreenType",

@@ -1,6 +1,6 @@
 # Products visual refresh — Android, read off node 5447:1701
 
-**Status:** BUILT 2026-08-25/26; PVR-A13 audited rather than done (§7B). Re-read of the frame on 2026-08-26 in §7A. Source: **`Products · expressive -update`** (node `5447:1701`), read
+**Status:** BUILT 2026-08-25/26, PVR-A13 included. Re-read of the frame on 2026-08-26 in §7A. Source: **`Products · expressive -update`** (node `5447:1701`), read
 2026-08-24 with `get_metadata`, `get_variable_defs` and `get_design_context` on the frame, the header,
 the session card, one product card and the nav bar. Every number below is quoted from the design, not
 measured off a screenshot.
@@ -299,8 +299,8 @@ more:
    light frame 2026-08-25:** the only two shadows anywhere in 5487:1351 are the tabs pill's and the
    token button's, both `0px 8px 24px rgba(0,0,0,0.12)` and both identical to their dark twins. Product
    cards, the session card and the icon tiles carry none in either scheme. **Sheets are not drawn on
-   this frame**, so their elevation is still unsettled and stays with PVR-A13 — this frame cannot close
-   it.
+   this frame**, so their elevation is still unsettled — this frame cannot close it. Their RADIUS is
+   settled, by PVR-A13.
 5. **Stroke widths disagree with each other — and it is card-vs-card, not card-vs-session.** Five card
    nodes are `0.2px`; **Biometric (5448:2062) is `0.5px`**, as is the session card. §7.6 rules 0.2dp
    everywhere and records the two outliers to normalise in Figma.
@@ -334,7 +334,7 @@ which is what makes the authentication row 136 tall and the verification rows 13
 | PVR-A10 | ~~The header's missing profile trigger~~ — **closed, no work**: the avatar button stays | — | §7.5 |
 | PVR-A11 | `spec/` follows: `screens.json`, `components.json`, `design-tokens.json`, `scenarios.json` | **DONE** | A1–A9 |
 | PVR-A12 | Goldens and the structural predicates re-recorded | P2 | A2–A9 |
-| PVR-A13 | Scale migration: 16 across the board, sheets included; rules on `Shapes.extraLarge` | **AUDITED, not done** — §7B | §7.8 |
+| PVR-A13 | Scale migration: 16 across the board, sheets included; rules on `Shapes.extraLarge` | **DONE 2026-08-26** — §7B | §7.8 |
 | PVR-A14 | Ghost glyph to 10 %; split `SCRIM_ALPHA` from the go pill's 16 % | **DONE** — folded into A2, since it is the same two lines and the design proved both marks uniform | §7.9 |
 
 ### 5.6 Where this collides with the environment plan
@@ -373,7 +373,7 @@ the page subtitle), `components.json` (`ProductCard`, `SessionCard`, `NavBar`, `
 | `model/UseSmileIDSampleProduct.kt` | `cardTitle` / `cardFamily` |
 | `tokens/SmileProductHues.kt` | four replaced pairs |
 | `tokens/SmileTokens.kt` | the `Off_black` semantic token. **`radiusXl` stays** — §6 |
-| `theme/UseSmileIDSampleTheme.kt` | **only if** PVR-A13 rules `Shapes.extraLarge` moves. Not part of PVR-A2 |
+| `theme/UseSmileIDSampleTheme.kt` | the named shape set, and `Shapes.extraLarge` moving to 16 (PVR-A13) |
 
 **Assets** — `design/icons/`, re-exported per §7.7 at one 21 × 21 box plus the 16 token glyph.
 
@@ -789,11 +789,17 @@ migration would actually face rather than the ones the pre-refresh audit in §6 
    carries "Do not edit by hand". The real question was only ever whether app code still *references*
    it — and after PVR-A2 exactly one line does, `UseSmileIDSampleTheme.kt:81`.
 
-**Recommendation, for the reviewer this item is owed.** Move `Shapes.extraLarge` to `radiusSurface` and
-migrate the three sheets, in one small PR of its own: the first half is provably invisible today, and
-the second is the only part that needs eyes. Take the device look §7.8 asks for on the sheets alone —
-a sheet's corner is part of its native silhouette and 16 is squarer than Android users see elsewhere,
-which is the one judgement in this migration that a golden cannot settle.
+**Done 2026-08-26, and it stayed in this PR rather than getting its own.** `Shapes.extraLarge` and all
+three sheets now resolve `radiusSurface`. The first half is provably zero rendered pixels — nothing
+resolves `extraLarge` today — and the second is three components with one shared shape, so the change
+is `UseSmileIDSampleShapes.sheet` and one line of the M3 scale rather than a sweep. `radius.sheet` and
+`radius.xl` are now unreferenced by app code; both survive in the generated token file, which is not
+ours to edit.
+
+**Everything that chooses a radius now chooses 16.** What is deliberately NOT migrated: verifications,
+the forms, the details screen and the pickers were drawn against boards 5447:1701 does not supersede.
+"Uniform" means one radius value where a radius is chosen, not redrawing screens this frame never
+covered.
 
 **Not migrated, and not by omission.** Verifications, the forms, the details screen and the pickers were
 drawn against boards 5447:1701 does not supersede. "Uniform" means one radius value where a radius is

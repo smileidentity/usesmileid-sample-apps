@@ -746,7 +746,8 @@
         "horizontalPadding": "20 in the design, spacing.md (16) here",
         "platform": "Material 3 ModalBottomSheet — drag-to-dismiss, scrim tap and insets are the platform's",
         "openHeight": "content height, NOT the platform's half-screen partial state: the five-field new-profile sheet clipped its last field and put its CTA below the fold at half height",
-        "overflow": "the content scrolls rather than clips, so enlarged type cannot strand a CTA"
+        "overflow": "the content scrolls rather than clips, so enlarged type cannot strand a CTA",
+        "radius": "radius.surface (16) on the top corners. Was radius.sheet (20); PVR-A13 rules one radius value wherever a radius is chosen. A slightly squarer sheet than Android users see elsewhere, which is why §7.8 asks for a device look rather than a golden diff."
       },
       "variants": [
         "partialWithHandle",
@@ -763,7 +764,8 @@
         "Scrim — dimmed backdrop for partial sheets",
         "SheetHeader — back + title for full-height sheets",
         "GrabHandle — 44x5 pill on partial sheets"
-      ]
+      ],
+      "designRef": "Scale ruled 2026-08-24, migrated 2026-08-26 (PVR-A13)."
     },
     {
       "name": "NavBar",
@@ -937,7 +939,8 @@
       "metrics": {
         "size": "393x160, full-bleed at the bottom with radius.sheet top corners",
         "manualEntryRow": "353x46; size.control-md minimum, radius.field, surface-alt fill",
-        "simulateButton": "353x48 full-width primary — a first-class feature, not debug scaffolding: it is what makes token-session flows testable with no QR source"
+        "simulateButton": "353x48 full-width primary — a first-class feature, not debug scaffolding: it is what makes token-session flows testable with no QR source",
+        "radius": "radius.surface (16) on the top corners. Was radius.sheet (20); PVR-A13 rules one radius value wherever a radius is chosen. A slightly squarer sheet than Android users see elsewhere, which is why §7.8 asks for a device look rather than a golden diff."
       },
       "rows": [
         "manualEntryWithPaste"
@@ -951,7 +954,7 @@
         "SimulateRow — 'Simulate a successful scan'"
       ],
       "primaryAction": "'Simulate a successful scan' — a full-width PRIMARY BUTTON, not a row",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-3668"
+      "designRef": "Scale ruled 2026-08-24, migrated 2026-08-26 (PVR-A13)."
     },
     {
       "name": "ResultCard",
