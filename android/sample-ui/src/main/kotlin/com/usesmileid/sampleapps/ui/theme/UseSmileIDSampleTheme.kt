@@ -9,6 +9,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
 
 /** The Compose theme, built entirely from the vendored design-system tokens. */
@@ -39,18 +40,24 @@ object UseSmileIDSampleTheme {
 }
 
 /**
- * One shape per named surface. The radius still comes from [SmileDimens]; this fixes where it is
- * applied. Everything that chooses a radius chooses 16 — `radius.sheet`'s 20 and `radius.xl`'s 20
- * are no longer referenced by app code, though both survive in the generated token file.
+ * One shape per named surface. The radius comes from [SmileDimens]; this fixes where it is applied.
+ * Everything that chooses a radius chooses 16 — `radius.sheet`'s 20 and `radius.xl`'s 20 are no
+ * longer referenced by app code, though both survive in the generated token file.
  */
 object UseSmileIDSampleShapes {
     val card = RoundedCornerShape(SmileDimens.radiusSurface)
     val tile = RoundedCornerShape(SmileDimens.radiusLg)
+
+    /** The verifications row's tile, which its own board draws at 10 — the one radius no token carries. */
+    val rowTile = RoundedCornerShape(ROW_TILE_RADIUS)
     val field = RoundedCornerShape(SmileDimens.radiusField)
     val pill = RoundedCornerShape(SmileDimens.radiusPill)
     val chip = RoundedCornerShape(SmileDimens.radiusChip)
     val sheet = RoundedCornerShape(topStart = SmileDimens.radiusSurface, topEnd = SmileDimens.radiusSurface)
 }
+
+/** Node 5206-2410; PVR-A13 left verifications out of the 16 migration deliberately. */
+private val ROW_TILE_RADIUS = 10.dp
 
 /** The SDK maps the same tokens onto the same slots, keeping host chrome and flow continuous. */
 private fun UseSmileIDSampleColors.toMaterialColorScheme(darkTheme: Boolean) = if (darkTheme) {

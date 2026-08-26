@@ -224,7 +224,7 @@
         "documentVerification": {
           "from": "#2CC05C",
           "to": "#00AA99",
-          "icon": "#C46F00",
+          "icon": "#B36500",
           "tile": "#FBEEDA",
           "cardIcon": "#06A850",
           "stopStart": 0.66627,
@@ -291,7 +291,7 @@
         "#0EA5E9"
       ],
       "scrimIsNotPerHue": "REMOVED 2026-08-25. `scrim` was per-product and fed two different marks; both frames draw them uniform across all six cards, in two DIFFERENT colours: the go pill is rgba(45,43,42,0.16) — Off_black's light value at 16% — and the ghost glyph is WHITE at 10%. A per-hue field cannot express one value shared by six products, and the app had five white go pills where the design draws six dark ones. The card now takes the go pill from the offBlack token pinned light, and the ghost from the same colour-inverse ink its label already uses.",
-      "rowPairStale": "OPEN 2026-08-25 — the list row's `icon`/`tile` pair is unchanged and still coherent (each pale tile was chosen against its icon), but for those same three products it now describes the OLD product colour while the card describes the new one. Applying the card's tint to the row would have put a green glyph on a pale amber tile; inventing three new pale tints would have put un-sourced hexes in the token file. Neither is acceptable, so the row keeps its own pair until the Verifications board is re-read — node 5206-4037's job rows are not superseded by 5487:1351. This is the one place in the refresh where two surfaces knowingly disagree.",
+      "rowPairVsCard": "RE-READ 2026-08-26 off the Verifications board, node 5206-2410 (spec/screens.json → verifications → states → default); glyph tints taken from the exported row SVGs' stroke, since no variable carries them. The row pair is NOT stale: all five tiles the board draws are identical to the values here and four of the five glyph tints are too. One moved — documentVerification's row glyph is #B36500, corrected above from #C46F00, which also lifts it from 3.26:1 to 3.84:1 on its pale amber tile. enhancedKyc has no row on this board, which predates the sixth product, so its icon/tile stay derived. What is left is a DESIGN question rather than a merge: the board draws Document Verification amber and Enhanced Document Verification near-black in the row while 5487:1351 draws their cards green and dark green, so one product is two colours on two surfaces by the two boards' own account. Escalated to additions.candidates rather than settled here — taking either side in code invents a value neither board carries.",
       "stopsRunPastTheEdge": "Four cards stop at 129.78% and biometricKyc at 110.51%, so the end colour is never fully reached on screen. Compose colour stops must land inside 0..1, so the card interpolates the colour the gradient has actually arrived at by the edge and uses THAT as its last stop — exact, and no custom shader. Clamping to 1.0 instead would over-saturate every card's far corner."
     },
     {

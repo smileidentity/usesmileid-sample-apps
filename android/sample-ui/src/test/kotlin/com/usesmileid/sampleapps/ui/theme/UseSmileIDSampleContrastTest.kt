@@ -61,6 +61,14 @@ class UseSmileIDSampleContrastTest {
         }
     }
 
+    /** Mode-invariant, unlike the pair above it: both halves are fixed hexes the Verifications board draws. */
+    @Test
+    fun `a verifications row glyph is legible on its own tile`() {
+        smileProductHues.forEach { (product, hue) ->
+            assertContrast("row glyph on $product tile", hue.icon, hue.tile, LARGE_TEXT_MINIMUM)
+        }
+    }
+
     @Test
     fun `session card text is legible on its gradient in both modes`() = eachScheme { name, colors ->
         smileTokenSessionGradient.forEachIndexed { index, stop ->
