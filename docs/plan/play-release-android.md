@@ -8,11 +8,18 @@ Scope: the Google Play listing for `com.usesmileid.sampleapps.android`, the rele
 it, and the store-art pipeline. Not the app's behaviour: the app is feature-complete through #30 and
 this plan adds no screens.
 
-**Settled up front, so the work does not open by re-asking:** v12 is a **new publication, not an
-update** (owner, 2026-08-27) — a different application id was never going to be an update anyway, and
-this makes it deliberate rather than incidental. `targetSdk = 37` is accepted by Play today (owner),
-so REL-A14 is a periodic re-check rather than a blocker. The **v11 upload key is reused** (§3). The
-**launcher icon sources have landed** in `svgs/`, one per platform.
+**Settled up front, so the work does not open by re-asking.** All owner rulings 2026-08-27:
+
+- v12 is a **new publication, not an update** — a different application id was never going to be an
+  update anyway, so this makes it deliberate rather than incidental.
+- `targetSdk = 37` is **accepted by Play today**, so REL-A14 is a periodic re-check, not a blocker.
+- The **v11 upload key is reused** (§3).
+- The **store title takes the spec name**, "UseSmileID Sample", on the understanding that a store title
+  is one of the cheapest things on a listing to change later.
+- **Data safety mirrors v11 wherever the two apps behave the same** — and §6.1 shows they do, on every
+  question the form asks.
+- **Phone-only. No tablet art** — §6.2 is the code that decides it.
+- The **launcher icon sources have landed** in `svgs/`, one per platform.
 
 ## 1. What is blocking, read out of the build files
 
@@ -110,7 +117,7 @@ to publish *and* safe to run unattended in CI.
 | Preset | Dimensions | Used for |
 |---|---|---|
 | `android-phone` | 1080 × 1920 | the phone set |
-| `android-tablet` | 1600 × 2560 | the tablet set, if §6.3 says we declare tablet support |
+| `android-tablet` | 1600 × 2560 | **not used** — phone-only, see §6.2. Listed so a later tablet pass knows the preset exists |
 | `play-feature-graphic` | 1024 × 500 | the feature graphic |
 
 Tools are `list_presets`, `compose_screenshot`, `generate_set`, `create_showcase` and
@@ -233,28 +240,75 @@ PR numbers, emoji and internal shorthand. v12 writes them by hand, in the listin
 references a PR or a planning item. That also means dropping the generate-release-notes step when the
 workflows are copied, not adapting it.
 
-## 6. Still open
+## 6. The two answers that came from the code
 
-Three, and none blocks starting.
+### 6.1 Data safety — v11 and v12 match, so the answers carry over
 
-1. **The Play title.** `spec/app-identity.json` sets the display name to "UseSmileID Sample"; v11's store
-   title is just "Smile ID". The store title is a separate 30-character field and need not match the
-   launcher label — the spec already permits the launcher label and the in-app footer to differ. Does the
-   store title carry the word "Sample"? It is the one thing that tells a partner at a glance that this is
-   a reference app rather than a product.
-2. **Data-safety declaration.** Must be answered fresh, and v11's answers are not inheritable: v11
-   declares that it shares App activity and App info/performance and collects Personal info, Photos and
-   videos, and Device or other IDs — but v12 additionally keeps a **local Room database of submitted
-   jobs**, which v11 had no equivalent of.
-3. **Tablet support.** Does the listing declare it? If the app is phone-only, the tablet set and its
-   1600 × 2560 art are wasted work. Also decides whether §7's checklist needs 7-inch art.
+Checked rather than assumed, because "answer it the same way" is only safe if the behaviour is the same.
 
-**And one risk that is nobody's decision but will fail a review if ignored:** Play requires **App access**
-instructions whenever an app is not fully explorable without credentials, and this app does nothing
-useful without a Smile ID token. The answer is already built — `sample_token_simulate` mints a fixture
-token locally, and the seeded fixtures populate the list — so the reviewer note is a short recipe rather
-than a set of live credentials we would otherwise have to hand Google. Worth writing before submission,
-not after a rejection.
+| Form question | v11 | v12 | Same? |
+|---|---|---|---|
+| Collects Personal info | yes | yes — user details go to the API with a submission | yes |
+| Collects Photos and videos | yes | yes — selfies and document images | yes |
+| Collects Device or other IDs | yes | yes | yes |
+| Shares App activity, App info and performance | yes | yes — both SDKs bundle Sentry (v11 8.37.1, v12 8.53.0) | yes |
+| Encrypted in transit | yes | yes | yes |
+| Deletion can be requested | yes | yes | yes |
+
+**The local job database changes none of it, and an earlier draft of this plan was wrong to say it
+might.** Play's form asks about data **collected** — meaning transmitted off the device — and **shared**
+with third parties. On-device storage that never egresses is explicitly outside that definition, and
+`AndroidManifest.xml:17` sets `android:allowBackup="false"`, so the Room database has no cloud-backup
+path off the device either. It is not a data-safety fact at all.
+
+The one thing that was worth verifying rather than assuming is Sentry, since it is what backs v11's
+*sharing* declaration: both SDKs carry it, so that answer holds too. Net result — REL-A12 transcribes
+v11's answers and records this table as the reason, rather than re-deriving them.
+
+### 6.2 Tablets — the UI is flexible, but it is not adaptive. Ship phone-only
+
+The belief worth testing was that the UI is already responsive. It stretches; it does not adapt. What
+the code says:
+
+- **No window size classes anywhere.** No `WindowSizeClass`, no `calculateWindowSizeClass`, no
+  `windowWidthSizeClass` — and no `material3-adaptive` or `material3-window-size-class` entry in
+  `libs.versions.toml` at all. There is no breakpoint in the app to hit.
+- **The two width-aware call sites are not layout decisions.** `ScanTokenScreen.kt:150` uses
+  `BoxWithConstraints` to size the viewfinder, and `SdkFlowScreen.kt:131–138` *overrides*
+  `LocalConfiguration` for the SDK flow. Neither reads a breakpoint.
+- **Exactly one width is verified.** `GoldenTest.kt:36` pins every golden to
+  `qualifiers = "w411dp-h891dp-xhdpi"`, and the comment at `:100` records why that width was chosen —
+  *"411dp hid a nav-bar clip that the device showed"*. Width-specific defects have already been found
+  here at one width; there is no evidence about any other.
+
+So a tablet build lays out and runs, because `fillMaxWidth` content stretches and nothing crashes. What
+it produces is a single-column phone layout inflated to ten inches, which is not something to photograph
+at 1600 × 2560 and put on a listing. Declaring large-screen support with no adaptive layout also invites
+Play Console's own large-screen quality warnings.
+
+**Phone-only, and this is reversible on purpose.** Tablet screenshots can be added to a live listing at
+any time, and doing it properly is a feature — `material3-adaptive`, a two-pane verifications list, a
+second golden width — not a release chore. Recorded as deferred work rather than as a gap.
+
+### 6.3 App access — no special access, and the build agrees
+
+**Owner ruling 2026-08-27: answer "all functionality is available without special access."** No reviewer
+credentials, no access instructions. An earlier draft of this plan called it a rejection risk; the build
+says otherwise, so the risk was imagined and the ruling is the correct one.
+
+What makes it true, checked because a wrong "no" here is what gets a submission rejected: **Simulate is
+not debug-gated.** `UseSmileIDSampleScanSheet.kt:53` states the intent —*"Simulate is a product feature,
+not scaffolding"*— and there is no `BuildConfig.DEBUG` or `probes` condition on it anywhere. The app's
+only debug gates are the result card (`VerificationsDestinations.kt:155`), the scenario drawer
+(`SettingsDestinations.kt:76`) and SDK logging (`FlowBuilderConfig.kt:82`), none of which gates a
+feature.
+
+So on the production build a reviewer mints a fixture token from the scan sheet and reaches the token
+session, its bindings, its countdown, the expiry state and the flow handoff — alongside every host screen,
+which never needed a credential to begin with. Nothing is behind a login, a paywall, or a token we would
+have to issue. **A consequence worth protecting:** if Simulate ever moves behind a debug or `probes` gate,
+this answer becomes false and the listing is misdeclared. Worth a line in the release checklist rather
+than trusting that nobody will do it.
 
 ## 7. Work items
 
@@ -271,8 +325,8 @@ not after a rejection.
 | REL-A9 | `android/maestro/store-shots.yaml` for the camera panel only, on a Gradle Managed Device | §2.2. One frame, not six |
 | REL-A10 | Fixture-only capture data: test identities, simulated token, `seedJobs` | §2.4. Safe to publish and safe in CI |
 | REL-A11 | `storeshots` render script: presets, headlines, committed art | CLI, not the MCP server |
-| REL-A12 | Answer the data-safety questionnaire; record the answers in-repo | §6.2 |
-| REL-A13 | App access reviewer instructions built on the simulate path | §6, the rejection risk |
+| REL-A12 | Transcribe v11's data-safety answers; commit §6.1's comparison as the reason | §6.1. No re-derivation |
+| REL-A13 | Declare no special access; add a checklist line that Simulate must never become debug-gated | §6.3 |
 | REL-A14 | Periodic `targetSdk` re-check against Play's floor | 37 accepted today; the floor moves annually |
 | REL-A15 | Publish workflows adapted from v11: internal and production tracks | Copy the signing and upload steps, not the version or notes steps |
 | REL-A16 | Release CI lane: bundle, `validate_screenshot` over the art, fail on stale art | Mirrors the existing tokens/notices gates |
