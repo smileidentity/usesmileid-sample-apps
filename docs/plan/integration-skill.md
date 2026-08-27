@@ -124,50 +124,81 @@ reference is most likely to be noticed by exactly the wrong audience.
 |---|---|---|
 | SKL-1 | Skill skeleton here, with the version assertion and the trigger description | Authored in this repo; the submodule pin distributes it. Model the frontmatter on the workspace's existing skills |
 | SKL-2 | Extract the Android flow recipes from the working sample rather than authoring them | A recipe that diverges from the sample is wrong by construction |
+| SKL-2b | Split the material into **several narrow skills** — builder, token session, document capture, v11 migration, sandbox verification, release config | §7.2. One monolith is the wrong unit; Expo's decomposition is the model |
 | SKL-3 | Seed the gotcha set from §3.3, each entry with a symptom and an observed-on version | The part a partner cannot derive |
 | SKL-4 | Snippet compile harness: extract, build against the published SDK, fail on drift | §4.1. The anti-rot mechanism |
 | SKL-5 | Symbol-existence checks for the non-compilable snippets | Weaker but mechanical |
 | SKL-6 | The append ritual, written into `AGENTS.md` so it is a rule and not a habit | §4.2 |
 | SKL-7 | Retirement pass: drop gotchas fixed in a shipped version | Keeps the list readable |
 | SKL-8 | Per-platform recipes for iOS, Flutter and Expo | Rides with each port |
-| SKL-9 | Publish Tier 0 (docs page) and Tier 1 (`skill/` in the package) from one source | §7. Later phase; the format decision lands now so neither becomes a rewrite |
+| SKL-9 | Delivery: public skills repo → generated docs pages → hub page, from one source | §7.3. Later phase, deliberately. **Do not flip the internal `claude-skills` repo public** — its history was written for an internal audience |
 
-## 7. How partners get it — a channel already exists, and it is the best one
+## 7. How partners get it
 
-This was the open question. Checking rather than assuming changed the answer: **`docs.usesmileid.com`
-already publishes a complete AI-readable channel.** `llms.txt` (≈21 KB) indexes every page as a `.md`
-URL, and `llms-full.txt` serves **the entire documentation corpus as one file (≈960 KB)**. Both answer
-200 today. Nothing had to be built for this; GitBook has been doing it all along.
+Delivery is a later phase by decision — the immediate work is authoring (§6, SKL-1…SKL-4). But two
+things belong in the plan now, because they change the *format* and one of them changes the repo layout.
 
-That reorders the options, because reach-per-unit-of-work is now wildly uneven.
+### 7.1 The channel that already exists
 
-| Tier | Channel | Reach | Cost | Verdict |
-|---|---|---|---|---|
-| 0 | A docs page, picked up automatically by `llms.txt` / `llms-full.txt` | any agent with web access, no install, no partner action | **already running** | **do first** |
-| 1 | `skill/` inside each published SDK package | agents in a project that has the SDK — works offline | SDK packaging agreement | **do second** |
-| 2 | The public sample-apps repo plus a root `AGENTS.md` | agents working in a clone | free once public | automatic |
-| 3 | A Claude Code plugin / skill marketplace entry | discoverable by name, Claude Code users only | small, ongoing | later |
-| 4 | A hosted MCP server | highest capability — can answer queries and serve version-specific recipes | operationally expensive | on demand only |
+`docs.usesmileid.com` already publishes a complete AI-readable surface: `llms.txt` (≈21 KB) indexes every
+page as a `.md` URL, and **`llms-full.txt` serves the entire corpus as one ≈960 KB file**. Both answer 200
+today, on infrastructure nobody has to build or maintain for this. Any agent with web access can ingest
+the guidance with no install and no action from the partner. That is the highest reach per unit of work
+available, and it costs a page.
 
-**Recommendation: ship Tier 0 and Tier 1 as a pair, and treat 2 as a freebie.** Tier 0 gets the guidance
-in front of every partner's agent immediately using infrastructure that is already live and already
-maintained. Tier 1 covers the case Tier 0 cannot — an agent working offline, or one that never fetches a
-URL, in a project that already has the SDK installed. Between them they cover essentially every partner.
+One caveat that shapes authoring: `llms-full.txt` is already large, and adding to it dilutes. The skill
+has to be **findable by name** at a stable path in `llms.txt`, not reliant on an agent reading a
+960 KB dump.
 
-Three things worth deciding deliberately rather than discovering:
+### 7.2 A dedicated skills repo — the right source of truth, with one decision in the way
 
-- **`llms-full.txt` is already ~960 KB, and adding to it dilutes.** An agent ingesting the whole corpus
-  may never surface the integration recipes specifically. So the skill needs to be **findable by name** in
-  `llms.txt` — a clearly titled page at a stable path — rather than relying on the full-corpus dump. A
-  short "for AI agents" entry point in the docs would do more for discovery than more prose would.
-- **Tier 0 and Tier 1 must not drift.** One source, published two ways — the docs page generated from the
-  same file the package ships, not maintained twice. The moment they are two documents they are two
-  answers, and an agent will find the stale one.
-- **Tier 4 is the tempting wrong first move.** An MCP server is the most capable option and the one most
-  likely to be proposed; it is also the only one with an ongoing operational burden, and it reaches fewer
-  partners than a URL does. It earns its place only once there is demand Tier 0 and Tier 1 cannot serve.
+The model worth copying is Expo's, and it is more specific than "publish a skill":
 
-Publishing is a later phase either way — the immediate work is SKL-1 through SKL-4, authoring the skill
-and making it self-verifying. But the channel decision shapes the format, so it belongs in the plan now:
-**write it as a single Markdown file that is simultaneously a valid docs page and a valid skill**, and
-both tiers become publishing steps rather than rewrites.
+- one repo, `github.com/expo/skills`, laid out as `plugins/expo/skills/<name>/SKILL.md`
+- **one install command, agent-agnostic**: `bunx skills add expo/skills` — not Claude-specific, so a
+  single repo serves Claude Code, Cursor and anything else that speaks the convention
+- a branded landing page at `expo.dev/expo-skills` listing each skill with a one-line description and a
+  link straight to its `SKILL.md`
+- and the part most worth stealing: **many narrow skills, not one monolith** — `expo-upgrade`,
+  `expo-data-fetching`, `expo-brownfield`, `eas-app-stores`, and a dozen more, each triggered by a
+  specific task
+
+**This changes §3's shape.** One "how to integrate v12" skill is the wrong unit. The Smile ID
+decomposition falls out of the work naturally: the flow builder, the token session, document capture,
+migrating from v11, verifying in sandbox, release configuration. An agent then loads only what the task
+needs, and each skill gets a precise trigger instead of one broad one — which is also what makes the
+version assertion in §3.1 land, because it can be repeated in the two or three skills where a v11 memory
+actually causes damage.
+
+**The decision in the way:** `smileidentity/claude-skills` **already exists** — private, described as
+*"Shared Claude Code skills for Smile Identity engineers"*, actively updated. So the tempting move is to
+flip it public and add partner skills to it. **I would not.** Making a repo public publishes its **entire
+git history**, which is the same rule this repo already lives by in its own going-public checklist — and
+`claude-skills` has been accumulating internal engineering skills for months, written for an internal
+audience, with no expectation that any of it would ever be read by a partner. Auditing that history is a
+strictly worse job than starting clean.
+
+So: **a second, public repo** — born public, partner-facing from its first commit, with the internal
+`claude-skills` left alone to do its own job. It also gets an independent release cadence from the four
+SDKs, which is what makes the append ritual in §4.2 realistic; a gotcha can land the day it is learned
+rather than waiting for a version bump.
+
+### 7.3 What that leaves, ranked
+
+| | Channel | Reach | Cost |
+|---|---|---|---|
+| **1** | Public skills repo, Expo-shaped, one install command | any agent, any stack, versioned, independently releasable | one new repo |
+| **2** | Docs pages generated from that repo, picked up by `llms.txt` | any agent with web access, zero install | a publish step |
+| **3** | A branded hub page, the `expo.dev/expo-skills` equivalent | discovery and credibility; also feeds channel 2 | a docs page |
+| **4** | `skill/` inside each published SDK package | already present in a partner's project, works offline | four SDK repos must agree a packaging change, and it adds bytes to every artefact |
+| **5** | A hosted MCP server | highest capability — queries, version-specific answers | ongoing operational burden |
+
+**Recommendation: 1, 2 and 3 as one piece of work, from one source.** The repo is the source of truth, the
+docs pages are generated from it, the hub page is the front door. Channel 4 stays a real option but is no
+longer the lead: it was in the lead only because a repo was not on the table, and it is the one that
+requires agreement from four other repos. Channel 5 remains the tempting wrong first move — most capable,
+only one with ongoing ops cost, and it reaches fewer partners than a URL.
+
+**What this settles now, before any of it is built:** author each skill as a standalone `SKILL.md` under a
+`plugins/`-shaped path, narrow in scope, with a precise trigger description — so publishing to a repo, to
+the docs, and into a hub page are all publishing steps rather than rewrites.
