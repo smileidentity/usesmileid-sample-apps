@@ -156,12 +156,19 @@ Two things to be deliberate about rather than discover:
 - **Never reuse the app signing key.** Play Console will offer to sign the new app with an *existing
   app's* signing key. Decline it — that couples the two listings permanently for no benefit.
 
-The keystore is not in the v11 repo, and should not be here either: it is materialised in CI from
-`secrets.UPLOAD_KEYSTORE` (base64) by `timheuer/base64-to-file`, with the password in
-`secrets.UPLOAD_KEYSTORE_PASSWORD`. Copy that, and copy v11's `if (uploadKeystoreFile.exists())` guard
-too — it lets a contributor without the secret still build a release variant, which is why `verify.sh`
-works on any machine.
+The keystore is not committed to the v11 repository and must not be committed here either. It is
+materialised in CI from a base64 repository secret at build time. Copy v11's
+`if (uploadKeystoreFile.exists())` guard as well — it lets a contributor without the secret still build a
+release variant, which is why `verify.sh` works on any machine.
 
+<!-- INTERNAL-ONLY:START reason=ci-secret-names-and-sibling-repo-paths -->
+Specifics for whoever wires it: the source is `sample/sample.gradle.kts` in the v11 Android repository,
+decoded by `timheuer/base64-to-file` from `secrets.UPLOAD_KEYSTORE` with the password in
+`secrets.UPLOAD_KEYSTORE_PASSWORD`, and uploaded by `r0adkll/upload-google-play` using
+`secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON`.
+<!-- INTERNAL-ONLY:END -->
+
+<!-- INTERNAL-ONLY:START reason=defect-in-a-sibling-repo-not-yet-reported -->
 ### 3.1 One thing in the v11 workflows not to copy
 
 The two publish workflows compute `versionCode` differently, and the combination is broken:
@@ -178,6 +185,11 @@ v12 uses **one** monotonic scheme across every track. `git rev-list --count HEAD
 human-meaningful, provided it is the only source. v11's plumbing is worth keeping —
 `versionCode = findProperty("VERSION_CODE")?.toString()?.toInt() ?: 1` — it is only the two callers that
 disagree. Worth telling the v11 owners; it is latent there today.
+<!-- INTERNAL-ONLY:END -->
+
+**The rule that survives the flip:** v12 uses one monotonic `versionCode` scheme across every track,
+derived from a single source, because Play compares each upload against every prior upload for the app
+regardless of which track it went to.
 
 ## 4. The launcher icon — one source, two different treatments
 
