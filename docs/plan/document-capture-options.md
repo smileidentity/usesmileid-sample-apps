@@ -69,6 +69,13 @@ It projects onto the wire as `auto_capture_enabled` with values `auto_capture_on
 better test than a screenshot. And the fallback timeout is a duration, which means a device flow can prove
 the shutter actually appears rather than trusting that it would.
 
+**How the host observes it, and the one constraint that comes with it.** The sample already configures the
+SDK's own `network { config { … } }` block and already raises logging to body level on debug, which is
+where the field becomes readable. That makes the assertion cheap — but it is **debug-only by design**: the
+same block's comment records that release must never log traffic. So DOC-A4 is a debug-lane check, and the
+release lane still needs the on-screen behaviour as its signal. Worth stating up front rather than
+discovering when the release suite has nothing to assert on.
+
 **`allowGalleryUpload`** flips the capture screen from camera-only to camera-or-gallery. It changes the
 permission story and the capture surface, and it defaults off, so a partner who wants it has no reference.
 

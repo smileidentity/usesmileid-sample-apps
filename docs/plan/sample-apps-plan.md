@@ -319,7 +319,9 @@ symptom, and a reviewer comparing against the design would report it again.
    SDK's own repo has no root `Package.swift` and builds through its source layer, so the sample has
    to resolve one package two ways. Answering it by running it beats answering it by choosing.
 2. ~~**One cross-platform automation entry point**~~ — **settled 2026-08-27: delivery stays
-   per-platform, and that is not a compromise.** `spec/launch-args.json` already states the contract
+   per-platform, and that is not a compromise.** (`spec/launch-args.json` changed with this ruling and has
+   no app-side counterpart yet: Flutter and Expo have no apps, so the spec rule's four-app note is
+   "both follow when their apps land" — say so in the PR rather than leaving it looking unaddressed.) `spec/launch-args.json` already states the contract
    that matters — the argument *names* are identical everywhere and only delivery differs — and the
    names are what keep four apps honest. The deciding evidence is the trap this repo already measured
    on a device: an intent into a live task rebuilds the Activity and resets every argument to its

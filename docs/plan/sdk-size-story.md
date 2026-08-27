@@ -30,9 +30,11 @@ that sentence actually asks for.
 | flutter | Sample app (Android) | 18.84 MB | 42.43 MB |
 | flutter | Sample app (iOS) | 10.69 MB | 26.80 MB |
 | react-native-expo | Sample app (Android) | 28.90 MB | 76.23 MB |
+| react-native-expo | Sample app (iOS) | 17.91 MB | 56.88 MB |
 
-**Flutter is quietly the best of the four and should be the model.** It is the only table carrying *both*
-platforms, and its explainer already does the hard part — it says the per-package rows are the pub.dev
+**The two cross-platform SDKs already publish both platforms; the two native ones publish one each** —
+which is the right shape in both cases, since a native SDK has only one. **Flutter is the best of the four
+and should be the model**, because its explainer already does the hard part — it says the per-package rows are the pub.dev
 artefact (compressed archive, then unpacked in the cache), that those are Dart plus native *source*, and
 that *"their compiled contribution to your app is what the Sample app rows measure."* Android's AAR
 caveat is the same instinct applied to one column.
@@ -52,10 +54,10 @@ Some of that gap is real (a JS bundle and its engine; ML models packaged per ABI
 of what each sample happens to bundle. **None of it is explained.** A number a partner can misread
 against us is worse than no number.
 
-Also worth catching: Expo's row is labelled *"Sample app (Android)"* and there is **no iOS figure in the
-Expo table at all**, with nothing saying why — while Flutter publishes both. Whatever the reason, the
-asymmetry is between our own two cross-platform SDKs, which is the comparison a partner choosing between
-them will actually make.
+Where the asymmetry actually is: **Android publishes per-module rows with both size columns empty** (`—`),
+so nine of its eleven rows carry no number at all, while Flutter and Expo fill theirs and mean the
+package artefact by it. The reader cannot tell that these are different questions without reading three
+explainers.
 
 **3.3 The tables answer the wrong question.** Every headline row is the **absolute size of a sample app**.
 The question partners actually ask is the **marginal cost**: *what does adding Smile ID do to my app?*
@@ -77,7 +79,10 @@ ID code while the rest of the app stays byte-identical. That produced the number
 | + `usesmileid` + `mlkit-face` | selfie-capable | 5.02 MB | 4.74 MB |
 | **delta** | **what the SDK costs** | **+3.39 MB** | **+3.20 MB** |
 
-So SmartSelfie enrollment and authentication cost a partner **≈3.2–3.4 MB** in a release R8 build.
+So SmartSelfie enrollment and authentication cost **≈3.2–3.4 MB** in a release R8 build **of that host**.
+The qualifier is not pedantry: the delta depends on what the host already carries, which is exactly what
+the overlap dividend below measures. Any figure published must say which host it was measured against,
+or a partner will quote it as a universal constant and be wrong in both directions.
 Document capture adds **≈+13.75 MB** on top, almost all of it the ML model. And the overlap dividend —
 the saving from dependencies a real host already has — measured **16–22% on code and 0% on the model**.
 That last figure is the most useful single fact in the whole exercise: **the model gets no overlap
@@ -125,10 +130,12 @@ smaller floor exists.
 
 ## 5. Known tail — smaller than it was
 
+<!-- INTERNAL-ONLY:START reason=internal-ci-history-and-dates -->
 Two of the three things this plan originally listed here are **already closed, verified 2026-08-11**: the
 upload-quota pressure was retired by moving the lane from per-PR to weekly across all four repos, and the
 stale `automation/size-analysis-{android,ios}` branches were deleted, leaving only the live one. The Expo
 test-APK R8 rule also landed as a config plugin.
+<!-- INTERNAL-ONLY:END -->
 
 What remains is one genuinely open CI item: a **reusable size-report workflow with budget gates**. Today a
 regression is visible in a trend line nobody is required to look at. A budget gate is what turns the
@@ -146,7 +153,7 @@ green run that proves nothing.** A frozen table reads exactly like a current one
 | SIZ-2 | `noSdk`/`withSdk` source-set switch in the sample, both arms uploaded to Sentry | §4.1. Byte-identical baseline is the whole point — a stubbed-at-runtime baseline is not one |
 | SIZ-3 | Publish **+delta** as the headline, keep the absolute total beneath it | The number that answers the question partners ask |
 | SIZ-4 | One shared explainer paragraph on why platforms differ | Prevents the cross-platform misread |
-| SIZ-5 | An iOS figure in the Expo table, or a sentence saying why there is none | Today it is silently absent |
+| SIZ-5 | Fill Android's empty per-module columns, or drop them and say why | Nine of eleven rows currently carry no number |
 | SIZ-6 | Staleness guard: fail the lane when its own README PR has not merged | A frozen table must not read as a current one |
 | SIZ-7 | Reusable size-report workflow + **budget gates** | The one open CI item; turns the trend line into a signal. Absorbs the treemap-sanity and stale-prose checks |
 | SIZ-8 | State the "no ML provider" floor in the explainer | §4.1 — the smallest honest delta is SDK + a provider |

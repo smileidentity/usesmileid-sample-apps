@@ -133,7 +133,7 @@ reference is most likely to be noticed by exactly the wrong audience.
 | SKL-6 | The append ritual, written into `AGENTS.md` so it is a rule and not a habit | §4.2 |
 | SKL-7 | Retirement pass: drop gotchas fixed in a shipped version | Keeps the list readable |
 | SKL-8 | Per-platform recipes for iOS, Flutter and Expo | Rides with each port |
-| SKL-9 | Delivery: public skills repo → generated docs pages → hub page, from one source | §7.3. Later phase, deliberately. **Do not flip the internal `claude-skills` repo public** — its history was written for an internal audience |
+| SKL-9 | Delivery: public skills repo → generated docs pages → hub page, from one source | §7.3. Later phase, deliberately. **Do not flip the existing internal skills repo public** — its history was written for an internal audience |
 
 ## 7. How partners get it
 
@@ -172,18 +172,22 @@ needs, and each skill gets a precise trigger instead of one broad one — which 
 version assertion in §3.1 land, because it can be repeated in the two or three skills where a v11 memory
 actually causes damage.
 
-**The decision in the way:** `smileidentity/claude-skills` **already exists** — private, described as
-*"Shared Claude Code skills for Smile Identity engineers"*, actively updated. So the tempting move is to
-flip it public and add partner skills to it. **I would not.** Making a repo public publishes its **entire
-git history**, which is the same rule this repo already lives by in its own going-public checklist — and
-`claude-skills` has been accumulating internal engineering skills for months, written for an internal
-audience, with no expectation that any of it would ever be read by a partner. Auditing that history is a
+**The decision in the way:** an internal skills repository already exists for our own engineers, so the
+tempting move is to flip it public and add partner skills to it. **That would be a mistake.** Making a
+repository public publishes its **entire git history**, which is the same rule this repo already lives by
+in its own going-public checklist — and that repository has been accumulating skills written for an
+internal audience, with no expectation any of it would be read by a partner. Auditing that history is a
 strictly worse job than starting clean.
 
-So: **a second, public repo** — born public, partner-facing from its first commit, with the internal
-`claude-skills` left alone to do its own job. It also gets an independent release cadence from the four
-SDKs, which is what makes the append ritual in §4.2 realistic; a gotcha can land the day it is learned
-rather than waiting for a version bump.
+So: **a second, born-public repository** — partner-facing from its first commit, with the internal one
+left alone to do its own job. It also gets an independent release cadence from the four SDKs, which is
+what makes the append ritual in §4.2 realistic; a gotcha can land the day it is learned rather than
+waiting for a version bump.
+
+<!-- INTERNAL-ONLY:START reason=names-a-private-internal-repository -->
+Concretely: the internal repository is `smileidentity/claude-skills` (private, *"Shared Claude Code skills
+for Smile Identity engineers"*, actively updated). Leave it as-is; do not widen its charter.
+<!-- INTERNAL-ONLY:END -->
 
 ### 7.3 What that leaves, ranked
 
