@@ -96,11 +96,26 @@ the lie.
   classes the template's audit caught — concurrency seams around new persistence — are exactly
   what a fresh port re-introduces.
 
-## 5. Session mismatch — server behaviour confirmed, one ruling owed
+## 5. Session mismatch — the guard matches on partner, not session
 
 Confirmed against the sandbox: the status endpoint is token-agnostic **within** an environment
 (a different session token of the same environment reads the job fine) and rejects
-cross-environment reads (401). The apps' local session-mismatch outcome is therefore stricter
-than the server. Either keep it as a deliberate UX guard — a row always reports under the
-session that created it — or relax it to a documented note; whichever way, all four apps adopt
-the same ruling.
+cross-environment reads (401). The apps' local session-mismatch outcome was therefore stricter
+than the server.
+
+**Owner ruling 2026-08-27: refresh when the partner ids match.** A token always carries a
+`partner_id`, and tokens expire — so a person legitimately holds a *new* session for the same
+partner and must still be able to refresh the rows an earlier session created. Matching on the
+session made every expiry silently orphan its own rows.
+
+What that costs, and what every port inherits:
+
+- **The row has to store the partner.** The session carries `partnerId` from its own claim; the
+  row stored only `sessionId`. Persisting it is a schema change, not a predicate change.
+- **The outcome is renamed.** "Submitted under a different token session" describes the rule
+  that is going away; the row now reports a different *partner*.
+- **Cross-environment reads stop being pre-empted.** The request already uses the row's own
+  environment, so a mismatched pair now gets the server's real 401 instead of a local refusal.
+  The app no longer answers a question the server is willing to answer.
+- **Fixture rows are untouched.** They persist no session at all and return "never submitted"
+  before any of this is reached.
