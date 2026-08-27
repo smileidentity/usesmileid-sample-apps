@@ -318,9 +318,10 @@ feature.
 So on the production build a reviewer mints a fixture token from the scan sheet and reaches the token
 session, its bindings, its countdown, the expiry state and the flow handoff — alongside every host screen,
 which never needed a credential to begin with. Nothing is behind a login, a paywall, or a token we would
-have to issue. **A consequence worth protecting:** if Simulate ever moves behind a debug or `probes` gate,
-this answer becomes false and the listing is misdeclared. Worth a line in the release checklist rather
-than trusting that nobody will do it.
+have to issue. **A consequence worth protecting, and a checklist line is too weak for it:** if Simulate ever moves behind
+a debug or `probes` gate, this answer becomes false and the listing is misdeclared — a compliance problem,
+not a cosmetic one. Checklists rot; assertions do not. So the guard is a test that the scan sheet's
+Simulate affordance is present under release configuration, failing the build rather than the review.
 
 ## 7. Work items
 
@@ -338,7 +339,7 @@ than trusting that nobody will do it.
 | REL-A10 | Fixture-only capture data: test identities, simulated token, `seedJobs` | §2.4. Safe to publish and safe in CI |
 | REL-A11 | `storeshots` render script: presets, headlines, committed art | CLI, not the MCP server |
 | REL-A12 | Transcribe v11's data-safety answers; commit §6.1's comparison as the reason | §6.1. No re-derivation |
-| REL-A13 | Declare no special access; add a checklist line that Simulate must never become debug-gated | §6.3 |
+| REL-A13 | Declare no special access, and add a **test** that Simulate survives release configuration | §6.3. The declaration's truth depends on it, so assert it rather than remember it |
 | REL-A14 | Periodic `targetSdk` re-check against Play's floor | 37 accepted today; the floor moves annually |
 | REL-A15 | Publish workflows adapted from v11: internal and production tracks | Copy the signing and upload steps, not the version or notes steps |
 | REL-A16 | Release CI lane: bundle, `validate_screenshot` over the art, fail on stale art | Mirrors the existing tokens/notices gates |
