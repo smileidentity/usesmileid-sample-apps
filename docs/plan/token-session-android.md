@@ -396,12 +396,30 @@ reads as a defect in the SDK.
    still holds, but its inputs are gone — the token's `api_url` claim now decides, so there is no
    Settings row, no `sandbox` argument and no chip. See `environment-from-token-android.md`.
 
-3. **Sandbox only accepts predefined test identities, and this repo documents none.** The ID-details
-   form accepts any value, so a run typed with an arbitrary ID number cannot succeed whatever the
-   credentials — and neither can a device flow. **Owed, as its own PR** (owner call 2026-08-19): seed
-   the form with a valid sandbox identity and use it in `token-session.yaml`, or document the list.
-   Until then no automated sandbox run can reach a successful submission, which is worth knowing
-   before reading a red flow as a regression.
+3. **Sandbox only accepts predefined test identities, and this repo documents none.** **The diagnosis
+   above was wrong about which screen, corrected 2026-08-27** against the public list at
+   `docs.usesmileid.com/developer-resources/essentials/testing-in-sandbox` (append `.md` for a
+   machine-readable copy). Matching is on **`last_name` + `given_names` + `email`** — *not* the ID
+   number. `country`, `id_type`, `id_number` and the images are echoed back, never matched, though
+   standard validation (ID-number regex, supported country and ID type) runs *before* matching, so an
+   arbitrary ID number is fine as long as it is well-formed. So the ID-details form was never the
+   problem and can keep accepting anything, which is the realistic thing for a partner to read; the
+   fixture belongs in the **user-details form**.
+
+   The list is richer than a single success identity, and that changes what the device suites can
+   prove. There is a named identity per outcome per product, the sandbox has a real `attention` status,
+   and every one of the app's four verification filters is therefore reachable from live responses:
+   `Clearwater` is `clear` on all six products this app ships and `Dangerfield` is `block` on all six,
+   `error` is `Glitchford` everywhere except Enhanced KYC (which uses `Downsworth`), and **`attention`
+   exists only on the two document products** (`Xeroxley`, plus `Oldfield` on plain Document
+   Verification) — so a flow asserting that filter has to run a document journey. Emails follow
+   `<given>.<last>@example.com` and are safe to commit, so the list lands as spec data rather than as
+   constants in four suites.
+
+   **Token-bound runs reach a successful submission too** (owner, 2026-08-27): the API accepts token
+   PII in both environments, so the vault reference resolves server-side before matching and a token
+   minted against a test identity behaves like a typed one. E2E Portal tokens should therefore be
+   minted with a test identity's PII.
 
 **A fourth thing, and the reason the other three were findable:** the sample now sets
 `config { logging { enabled = BuildConfig.DEBUG; level = HEADERS } }`, and the SDK's own logging is
@@ -580,17 +598,18 @@ which is the signal the decision is for.
   release APK goes from **51.6 MB to 72.9 MB — plus 21.3 MB, a 41% increase**. The bundled model ships
   as a native library per ABI and this app packages four (`arm64-v8a`, `armeabi-v7a`, `x86`, `x86_64`),
   so barcode entries alone account for 44.4 MB uncompressed and the two x86 slices no phone will run
-  are about half the native payload. That is a real cost on a sample partners are asked to read, and it
-  deserves an owner ruling rather than silent acceptance. Three levers, none taken here because each
-  trades against something already settled: ABI splits or an app bundle (packaging only, no behaviour
-  change, would recover most of it); the play-services barcode variant (downloads the model, but
-  reintroduces the GMS dependency this choice exists to avoid); or accept it, on the grounds that a
-  reference sample's fidelity matters more than its size.
+  are about half the native payload. That is a real cost on a sample partners are asked to read.
+  **Owner ruling 2026-08-27: ABI splits or an app bundle.** Packaging only, no behaviour change, and it
+  recovers most of the increase — nothing is configured today, so this is new work on Android and each
+  port owes its own equivalent. The two rejected levers are worth recording: the play-services barcode
+  variant (downloads the model, but reintroduces a GMS dependency) and simply accepting the size, on
+  the grounds that a reference sample's fidelity matters more than its bytes.
   **One correction to that reasoning, read off the graph:** this app consumes `mlkit-face`, which
   pulls `com.google.android.gms:play-services-mlkit-face-detection`, so *this* app already requires
   Play services regardless. The GMS-free argument therefore justifies the variant choice for a
   partner building against `huawei-face` — it does not describe this sample as configured, and the
-  document should not imply it does.
+  document should not imply it does. Which also means the play-services variant was cheaper than this
+  document assumed; it lost on the model download, not on GMS.
 - **`CAMERA` permission moves into the host manifest**, and the scan screen must request it. The SDK
   asks for its own between consent and instructions; two requesters in one app is realistic partner
   behaviour and is now something this sample demonstrates.

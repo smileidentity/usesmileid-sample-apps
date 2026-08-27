@@ -183,8 +183,10 @@ is quota-limited upstream, which is why it is release-plus-weekly rather than pe
 | Android walking skeleton and screens (F2–F3) | done — shell, 8 primitives, 25 composites, all 14 screens |
 | Android result card, callback counters, launch arguments | done |
 | Android per-PR CI lane | done |
-| Android SDK flow handoff (N2) | done — both presentations, the §7.3 entry gate, exactly-once results on the card; `sandbox` consumed, `appLocale`/`holdCamera` still owe a consumer |
-| iOS, Flutter and Expo | **next** — N2 gives the ports a finished shape to copy |
+| Android SDK flow handoff (N2) | done — both presentations, the §7.3 entry gate, exactly-once results on the card |
+| Android token session, environment-from-token, Settings, visual refresh | done |
+| `appLocale` and `holdCamera` consumers | **owner ruling 2026-08-27: build both on Android before the ports.** `holdCamera` became implementable once the app owned a camera; `appLocale`'s recorded blocker — "no strings for it to affect" — is wrong in the way that matters, because the SDK ships its own localized text and a host override is the better probe against it |
+| iOS, then Flutter and Expo | **next** — iOS first: SwiftUI is the nearest idiom to Compose so it validates the translation table most cheaply, it is the parity sibling, it is the only port carrying a structural unknown (§9.1) and better to hit that now than after two ports assume it away, and under §9.2 it needs no new argument mechanism |
 
 <!-- INTERNAL-ONLY:START reason=roadmap-dates-and-work-in-progress -->
 
@@ -312,14 +314,25 @@ symptom, and a reviewer comparing against the design would report it again.
 
 1. **iOS `SampleUI` dependency switching** — environment-switched package manifest versus aligning
    the local package identity with the published one. Spike before wiring the iOS SDK repo; the
-   other three platforms have no equivalent unknown.
-2. **One cross-platform automation entry point** — a deep link would work identically on all four
-   platforms; native launch arguments are already proven on two. Decide when the second app lands
-   (see `spec/launch-args.json`).
+   other three platforms have no equivalent unknown. Still open, and it is a spike rather than a
+   ruling: the published identity is package `UseSmileID` from the SPM distribution repo, while the
+   SDK's own repo has no root `Package.swift` and builds through its source layer, so the sample has
+   to resolve one package two ways. Answering it by running it beats answering it by choosing.
+2. ~~**One cross-platform automation entry point**~~ — **settled 2026-08-27: delivery stays
+   per-platform, and that is not a compromise.** `spec/launch-args.json` already states the contract
+   that matters — the argument *names* are identical everywhere and only delivery differs — and the
+   names are what keep four apps honest. The deciding evidence is the trap this repo already measured
+   on a device: an intent into a live task rebuilds the Activity and resets every argument to its
+   default, and flows already deep-link mid-run to reach the scenario drawer. Making deep links carry
+   arguments would put those two on a collision course in all four apps, and the fix would be a
+   subtle "only the first link counts" invariant replicated four times. So Android keeps intent
+   extras and iOS keeps launch arguments, both immune to the drawer link; Flutter and Expo take a
+   cold-start deep link, because a native shim in the two Dart-and-TypeScript-first SDKs contradicts
+   the thing those SDKs are for.
 3. ~~App display name and the four bundle/application IDs~~ — **settled**, see
    `spec/app-identity.json`: display-name family `UseSmileID Sample`, id root
    `com.usesmileid.sampleapps`, one id and one URL scheme per platform. A separate root rather than
    a suffix under `com.usesmileid.sample`, because that space is fully taken by the SDK repos'
    development samples, an id nested under another app's id means "app extension" on iOS, and
    renaming those samples would break four repos' E2E workflows that hard-code them.
-4. **Licence** — required before the repository can go public.
+4. ~~**Licence**~~ — **settled**: MIT, committed with the scaffold. This entry was stale.
