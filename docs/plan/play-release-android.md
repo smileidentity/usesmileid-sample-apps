@@ -139,10 +139,14 @@ than from a screenshot. Beyond that, adding tools would add moving parts without
 
 ## 3. Signing — reuse the v11 upload key
 
-`android-v11/sample/sample.gradle.kts:43–53` reads a keystore named **`upload.jks`** with alias
-**`upload`**, password from the `uploadKeystorePassword` Gradle property. The name is the important
-part: that is an **upload key**, which means v11 is on **Play App Signing** — Google holds the app
-signing key and the repo only holds what authenticates uploads.
+The key v11 already uses is an **upload key**, and the name is the important part: it means v11 is on
+**Play App Signing** — Google holds the app signing key, and the repository only ever holds what
+authenticates an upload.
+
+<!-- INTERNAL-ONLY:START reason=sibling-repo-path-and-signing-material-names -->
+Where to read it: the v11 Android repository's sample Gradle file declares a keystore named `upload.jks`
+with alias `upload`, taking its password from the `uploadKeystorePassword` Gradle property.
+<!-- INTERNAL-ONLY:END -->
 
 **So reusing it is correct, and it is the low-friction answer.** Play permits one upload key across many
 apps in an account, and enrolls each new app with its own freshly generated app signing key, so
