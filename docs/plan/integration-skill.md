@@ -76,7 +76,9 @@ Seeded from what is already known, grouped by where it bites:
   Play-services build fails at resolution, and `developer.huawei.com` appears **nowhere** in the SDK
   README or the mobile documentation pages — so a partner following the docs literally cannot get there.
   This is the clearest example of why the gotcha set is worth having: the fix is one repository
-  declaration, and the cost of not knowing it is a blocked integration.
+  declaration, and the cost of not knowing it is a blocked integration. **Sequencing ruling 2026-08-27:
+  the Huawei work lands after the ports** — the entry belongs in the seed set now so it is not
+  rediscovered, but chasing the underlying documentation gap waits.
 
 **3.4 A verification recipe.** How a partner proves their integration works before shipping: the sandbox
 test identities and what each deterministic outcome is for, that an arbitrary but well-formed ID number is
