@@ -72,6 +72,11 @@ Seeded from what is already known, grouped by where it bites:
   resolution and framework embedding.
 - **Metadata coherence** — device model reported in image metadata must match the job's, which
   production checks and sandbox does not.
+- **The Huawei modules need a repository nothing tells you about.** Adding the Huawei pair to a
+  Play-services build fails at resolution, and `developer.huawei.com` appears **nowhere** in the SDK
+  README or the mobile documentation pages — so a partner following the docs literally cannot get there.
+  This is the clearest example of why the gotcha set is worth having: the fix is one repository
+  declaration, and the cost of not knowing it is a blocked integration.
 
 **3.4 A verification recipe.** How a partner proves their integration works before shipping: the sandbox
 test identities and what each deterministic outcome is for, that an arbitrary but well-formed ID number is
@@ -125,20 +130,44 @@ reference is most likely to be noticed by exactly the wrong audience.
 | SKL-6 | The append ritual, written into `AGENTS.md` so it is a rule and not a habit | §4.2 |
 | SKL-7 | Retirement pass: drop gotchas fixed in a shipped version | Keeps the list readable |
 | SKL-8 | Per-platform recipes for iOS, Flutter and Expo | Rides with each port |
-| SKL-9 | Decide and document how partners discover it | §7 — needs an owner answer |
+| SKL-9 | Publish Tier 0 (docs page) and Tier 1 (`skill/` in the package) from one source | §7. Later phase; the format decision lands now so neither becomes a rewrite |
 
-## 7. The one open question
+## 7. How partners get it — a channel already exists, and it is the best one
 
-**How does a partner find this?** The submodule handles our four repos, but a partner's agent is working
-in *their* project, not ours. The realistic options, and none is free:
+This was the open question. Checking rather than assuming changed the answer: **`docs.usesmileid.com`
+already publishes a complete AI-readable channel.** `llms.txt` (≈21 KB) indexes every page as a `.md`
+URL, and `llms-full.txt` serves **the entire documentation corpus as one file (≈960 KB)**. Both answer
+200 today. Nothing had to be built for this; GitBook has been doing it all along.
 
-- a `skill/` directory in each SDK's published package, so installing the SDK installs the guidance —
-  closest to how Expo does it, and the only option that needs no action from the partner
-- a documented path in `docs-v3` an agent can be pointed at
-- an MCP server we host, which is the most capable and by far the most operationally expensive
+That reorders the options, because reach-per-unit-of-work is now wildly uneven.
 
-Recommendation: the first, and treat the other two as later additions rather than alternatives. Shipping
-guidance inside the package is the only version that works for a partner who never reads our docs — and
-that is the partner this plan is for. It does mean the skill becomes part of each SDK's published
-artefact, which is a packaging decision the SDK repos have to agree to, and it interacts with the size
-story: text is small, but it is not nothing.
+| Tier | Channel | Reach | Cost | Verdict |
+|---|---|---|---|---|
+| 0 | A docs page, picked up automatically by `llms.txt` / `llms-full.txt` | any agent with web access, no install, no partner action | **already running** | **do first** |
+| 1 | `skill/` inside each published SDK package | agents in a project that has the SDK — works offline | SDK packaging agreement | **do second** |
+| 2 | The public sample-apps repo plus a root `AGENTS.md` | agents working in a clone | free once public | automatic |
+| 3 | A Claude Code plugin / skill marketplace entry | discoverable by name, Claude Code users only | small, ongoing | later |
+| 4 | A hosted MCP server | highest capability — can answer queries and serve version-specific recipes | operationally expensive | on demand only |
+
+**Recommendation: ship Tier 0 and Tier 1 as a pair, and treat 2 as a freebie.** Tier 0 gets the guidance
+in front of every partner's agent immediately using infrastructure that is already live and already
+maintained. Tier 1 covers the case Tier 0 cannot — an agent working offline, or one that never fetches a
+URL, in a project that already has the SDK installed. Between them they cover essentially every partner.
+
+Three things worth deciding deliberately rather than discovering:
+
+- **`llms-full.txt` is already ~960 KB, and adding to it dilutes.** An agent ingesting the whole corpus
+  may never surface the integration recipes specifically. So the skill needs to be **findable by name** in
+  `llms.txt` — a clearly titled page at a stable path — rather than relying on the full-corpus dump. A
+  short "for AI agents" entry point in the docs would do more for discovery than more prose would.
+- **Tier 0 and Tier 1 must not drift.** One source, published two ways — the docs page generated from the
+  same file the package ships, not maintained twice. The moment they are two documents they are two
+  answers, and an agent will find the stale one.
+- **Tier 4 is the tempting wrong first move.** An MCP server is the most capable option and the one most
+  likely to be proposed; it is also the only one with an ongoing operational burden, and it reaches fewer
+  partners than a URL does. It earns its place only once there is demand Tier 0 and Tier 1 cannot serve.
+
+Publishing is a later phase either way — the immediate work is SKL-1 through SKL-4, authoring the skill
+and making it self-verifying. But the channel decision shapes the format, so it belongs in the plan now:
+**write it as a single Markdown file that is simultaneously a valid docs page and a valid skill**, and
+both tiers become publishing steps rather than rewrites.

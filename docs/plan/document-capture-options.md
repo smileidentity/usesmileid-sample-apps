@@ -5,23 +5,54 @@ countable rather than estimated.
 
 ## 1. The surface, and what the sample uses of it
 
-`DocumentCaptureConfig` is the SDK's public document-capture contract. Six configurable fields; the
-sample sets two of them and hard-codes a third.
+`DocumentCaptureConfig` is the SDK's public document-capture contract. Six configurable fields, and the
+sample meaningfully exercises **one** of them.
 
 | Field | Default | Sample today | |
 |---|---|---|---|
-| `documentType` | `null` | set from the ID-details form | ✅ |
+| `documentType` | `null` | *derived* from the ID type, never chosen | ⚠️ §2.0 |
 | `captureBothSides` | `true` | hard-coded `true` | ⚠️ §3 |
 | `allowSkipBack` | `false` | set `true` | ✅ |
 | `captureMode` | `AutoCaptureWithManualFallback(10s)` | **never set** | ❌ |
 | `allowGalleryUpload` | `false` | **never set** | ❌ |
 | `knownIdAspectRatio` | `null` | **never set** | ❌ |
 
-`FlowBuilderConfig.kt:161–168` is the whole of it. So three options ship in the SDK, are documented as
-public API, and have **no host in this org exercising them** — which also means no device coverage and no
-screenshot of what they look like.
+`FlowBuilderConfig.kt:161–168` is the whole of it. So three options ship as documented public API with
+**no host in this org exercising them at all**, and a fourth — the document type itself — is set but never
+*chosen*, which turns out to be the one that matters most (§2.0). None of the four has device coverage or
+a screenshot.
 
 ## 2. What each unexercised option is worth
+
+### 2.0 Selecting the document type is the keystone — owner ruling 2026-08-27
+
+The sample never lets anyone *choose* a document type. `FlowBuilderConfig.kt:164` derives it —
+`documentType = snapshot.idDetails.idType.toDocumentType()` — so whatever the ID-type field maps to is
+what the SDK gets, and the three concrete `DocumentType` cases cannot be exercised independently.
+
+**Owner ruling: direct selection of the document type is the most important item here**, ahead of the
+three unset options, and the reason holds up in the type definitions. `DocumentType` is not a label — it
+carries three behavioural fields, and each concrete case sets them differently:
+
+| Case | `hasBackSide` | `orientation` | `knownAspectRatio` |
+|---|---|---|---|
+| `SouthAfricaGreenBook` | **false** | Portrait | 320/428 |
+| `Passport` | true | Landscape | 356/272 |
+| `GenericDocument(...)` | caller's choice (default true) | caller's choice (default Landscape) | **`null`** |
+
+So one control makes four separate behaviours observable that nothing observes today: back-side capture
+appearing or not, the capture frame's aspect ratio, portrait versus landscape framing, and — because
+`GenericDocument` is the only case with a null ratio — **the exact situation `knownIdAspectRatio` exists
+for**. Selecting the type is what turns that field from an orphan into a demonstrable one.
+
+It also makes §3's suspected defect visible rather than theoretical: pick the Green Book and the sample
+currently asks for both sides of a one-sided document, on screen, where anyone can see it.
+
+Two things it should carry. `GenericDocument` takes a display name, a back-side flag and an orientation,
+so choosing it needs to expose those rather than accept defaults silently — that is the case a partner
+with an unlisted document is in. And the selection must be independent of the ID-type field, because
+conflating them is how the current derivation hid all of this.
+
 
 **`captureMode` is the significant one.** It is a sealed interface with three cases, and it replaced an
 earlier `autoCapture` + `autoCaptureTimeout` flag pair — so partners migrating from that pair need to see
@@ -61,19 +92,23 @@ may surprise a partner who expects a single page.
 
 ## 4. How they should surface, and how not to
 
-The temptation is three more Settings switches. That is wrong for two of them:
+The temptation is a row of Settings switches. That is right for one of these, wrong for the rest —
+placement should follow *when a partner decides*, not what is easiest to add:
+
+- **The document type belongs with the journey's inputs, not in Settings.** It is a per-run choice, the
+  same kind as the ID details, and burying it in Settings would repeat the mistake of decoupling it from
+  the run it describes. It sits with the ID-details form, and choosing the generic case reveals both the
+  generic fields and `knownIdAspectRatio`.
 
 - **`captureMode` belongs in Settings.** It is a genuine product choice a partner makes once, it applies
   to every document journey, and Settings is already where SDK-journey composition lives. Three options,
   so a segmented control rather than a switch. The fallback duration stays at its default and is not
   exposed — a partner tuning a timeout is out of scope for a reference app.
 - **`allowGalleryUpload` belongs in Settings** for the same reason, and it is a switch.
-- **`knownIdAspectRatio` does not belong in Settings at all.** It is a float that only makes sense
-  alongside a `GenericDocument`, and a numeric field in a settings screen is a bad demonstration of it.
-  Its right home is the ID-details form's document-type selection: choosing "Other / generic document"
-  reveals it, because that is the situation in which a partner would set it.
+- **`knownIdAspectRatio` does not belong in Settings at all** — it is a float that only means anything
+  alongside a `GenericDocument`, so it lives where that choice is made, per the first bullet.
 
-All three then need what every other setting in this app already has: a `spec/` entry, an id in
+All of them then need what every other surface in this app already has: a `spec/` entry, an id in
 `spec/test-ids.json`, goldens light and dark, and the same treatment in the other three apps — so this is
 four apps' work, not one's, and it should land per-platform with each port rather than as a fifth pass
 afterwards.
@@ -82,7 +117,8 @@ afterwards.
 
 | ID | Item | Notes |
 |---|---|---|
-| DOC-A1 | `captureBothSides` follows `documentType.hasBackSide` | §3. One line plus a unit test; do this first, it is a correctness fix not a feature |
+| DOC-A0 | **Direct document-type selection** — Green Book, Passport, generic — decoupled from the ID-type field, with the generic case's own fields exposed | §2.0. The keystone: it makes back-side, aspect ratio, orientation and `knownIdAspectRatio` all observable |
+| DOC-A1 | `captureBothSides` follows `documentType.hasBackSide` | §3. A correctness fix, not a feature — one line plus a unit test |
 | DOC-A2 | Verify what the SDK does with `captureBothSides = true` on a `hasBackSide = false` type | Decides whether anything gets filed against the SDK |
 | DOC-A3 | `captureMode` as a three-way Settings control, wired into the builder | The significant one |
 | DOC-A4 | Assert the capture mode on the wire (`auto_capture_enabled`) rather than on screen | Cheaper and stronger than a screenshot |
@@ -93,8 +129,10 @@ afterwards.
 
 ## 6. Landing order
 
-DOC-A1 and DOC-A2 first and together — one is a fix, the other decides whether there is a second fix
-elsewhere, and neither waits on a design answer. DOC-A3 through A5 next as one change: a control nobody
+DOC-A0 first, because every other item on this list is easier to build and easier to *see* once a
+document type can be chosen — and because DOC-A1's fix is invisible without it. Then DOC-A1 and DOC-A2
+together — one is a fix, the other decides whether there is a second fix elsewhere, and neither waits on
+a design answer. DOC-A3 through A5 next as one change: a control nobody
 can observe is not worth shipping, so the wire assertion and the device proof belong in the same PR as the
 control. DOC-A6 after, since it is the same shape but smaller. DOC-A7 last of the features — it needs a
 form change, which is the most invasive surface here for the least reach.
