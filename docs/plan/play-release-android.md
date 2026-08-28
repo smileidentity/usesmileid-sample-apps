@@ -1,10 +1,10 @@
 # Shipping the Android sample to Play
 
-**Status:** in progress — REL-A1 through REL-A15 landed 2026-08-28, except the camera frame REL-A9 owes
-a device; REL-A16 and REL-A17 remain. §7 tracks each item. Runs in
-parallel with the iOS port and shares no files with it. Android is the first of the four apps to reach
-a store, so every decision here sets a pattern the other three copy — §8 records what travels and what
-is Play-specific.
+**Status:** REL-A1 through REL-A17 all landed 2026-08-28. Three things are owed and each carries a
+dated decision in §7.2: the camera panel needs a device, the rendered panel set waits on it, and the
+first upload is an owner action. §7 tracks each item. Runs in parallel with the iOS port and shares no
+files with it. Android is the first of the four apps to reach a store, so every decision here sets a
+pattern the other three copy — §8 records what travels and what is Play-specific.
 
 Scope: the Google Play listing for `com.usesmileid.sample.android`, the release build that backs
 it, and the store-art pipeline. Not the app's behaviour: the app is feature-complete through #30 and
@@ -465,8 +465,8 @@ Simulate affordance is present under release configuration, failing the build ra
 | REL-A13 | Declare no special access, and add a **test** that Simulate survives release configuration | **DONE 2026-08-28** — two tests, both mutation-checked | §6.3. The declaration's truth depends on it, so assert it rather than remember it |
 | REL-A14 | Periodic `targetSdk` re-check against Play's floor | **DONE 2026-08-28** — recorded as a dated recurring check | 37 accepted today; the floor moves annually |
 | REL-A15 | Publish workflows adapted from v11: internal and production tracks | **DONE 2026-08-28** — dispatch-only until the listing exists | Copy the signing and upload steps, not the version or notes steps. Both tracks pass `-PREQUIRE_UPLOAD_SIGNING=true` and the same `VERSION_CODE` command (§3) |
-| REL-A16 | Release CI lane: bundle, `validate_screenshot` over the art, fail on stale art |  | Mirrors the existing tokens/notices gates |
-| REL-A17 | The gate: art regenerates byte-identically, `verify.sh` green, nothing owed |  | Last, as a gate rather than as work |
+| REL-A16 | Release CI lane: bundle, `validate_screenshot` over the art, fail on stale art | **DONE 2026-08-28** — `release-check.yml`; stale-art gating already lives in the per-PR lane | Mirrors the existing tokens/notices gates |
+| REL-A17 | The gate: art regenerates byte-identically, `verify.sh` green, nothing owed | **WALKED 2026-08-28** — §7.2; three items owed, each dated | Last, as a gate rather than as work |
 
 ### 7.1 What the bundle recovered, measured
 
@@ -489,6 +489,39 @@ what the split removes; the 21.3 MB the bundled barcode model added is most of i
 and an install carrying only the device's language cannot do that — a defect that would appear on a
 Play install and on no other lane. The SDK ships no localized resources today, so the price is a
 handful of androidx locales now and correctness the day it does.
+
+### 7.2 REL-A17: the gate, walked 2026-08-28
+
+**§1's four blockers.**
+
+| # | Blocker | State |
+|---|---|---|
+| 1 | Release signed with the debug key | Closed by REL-A2, and proved against the real upload key: the store opens, its only alias is `upload`, and the release APK and bundle both carry that certificate's fingerprint |
+| 2 | No launcher icon | Closed by REL-A1, checked against a circle, a squircle and a rounded square, with the safe scale measured rather than assumed (§4.1) |
+| 3 | Hard-coded `versionCode` | Closed by REL-A3; a blank, non-numeric or non-positive value now fails the build, and a publish build without one fails before it can burn an integer |
+| 4 | No release lane | Closed by REL-A15 (publish) and REL-A16 (pre-flight bundle). Stale store art already fails the per-PR lane through `verifyRoborazziDebug` |
+
+**§6's three answers.**
+
+| Question | State |
+|---|---|
+| 6.1 Data safety | Transcribed into `docs/play-data-safety.md` with §6.1's comparison as the recorded reason |
+| 6.2 Tablets | Still phone-only. No adaptive dependency was added and no tablet art exists, so the answer that made it a deferral has not changed |
+| 6.3 App access | Declared as no special access, and both halves of that claim are now asserted by tests that were mutation-checked — each was made to fail on a change that compiles, then restored |
+
+**The determinism criterion, run rather than asserted.** A full `recordRoborazziDebug --rerun-tasks`
+reproduces all five panels byte-for-byte; their git blob hashes are unchanged. `android/verify.sh` is
+green on a machine holding no signing secret, which is the state a fresh clone is in.
+
+**What is still owed, each with a dated decision.**
+
+- **The camera panel (REL-A9), deferred 2026-08-28.** The flow, its landmarks and its output path are
+  written; the frame itself needs a device and nothing else is blocked by it. Five panels is above
+  Play's minimum of two.
+- **The rendered panel set is not committed**, because rendering the set needs that sixth frame.
+  `release-check.yml` validates the rendered panels when they exist and says so when they do not.
+- **The first upload and the listing are not done, by instruction.** They fix the signing identity
+  permanently and create the listing, so they are an owner action.
 
 ## 8. Parity — what the other three inherit
 
