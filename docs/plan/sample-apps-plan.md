@@ -185,7 +185,7 @@ is quota-limited upstream, which is why it is release-plus-weekly rather than pe
 | Android per-PR CI lane | done |
 | Android SDK flow handoff (N2) | done — both presentations, the §7.3 entry gate, exactly-once results on the card |
 | Android token session, environment-from-token, Settings, visual refresh | done |
-| `appLocale` and `holdCamera` consumers | **owner ruling 2026-08-27: build both on Android before the ports.** `holdCamera` became implementable once the app owned a camera; `appLocale`'s recorded blocker — "no strings for it to affect" — is wrong in the way that matters, because the SDK ships its own localized text and a host override is the better probe against it |
+| `appLocale` and `holdCamera` consumers | done — `holdCamera` with the token session, `appLocale` on 2026-08-28 as a composition-level override, so the SDK's own localized text answers to it without touching device settings |
 | iOS, then Flutter and Expo | **next** — iOS first: SwiftUI is the nearest idiom to Compose so it validates the translation table most cheaply, it is the parity sibling, it is the only port carrying a structural unknown (§9.1) and better to hit that now than after two ports assume it away, and under §9.2 it needs no new argument mechanism |
 
 <!-- INTERNAL-ONLY:START reason=roadmap-dates-and-work-in-progress -->

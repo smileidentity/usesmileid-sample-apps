@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.CompositionLocalProvider
+import com.usesmileid.sampleapps.android.launch.UseSmileIDSampleAppLocale
 import com.usesmileid.sampleapps.android.launch.useSmileIDSampleLaunchArgs
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -15,11 +16,14 @@ class UseSmileIDSampleActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val launchArgs = intent.useSmileIDSampleLaunchArgs()
         setContent {
-            // Collected above the theme, because the Dark mode switch is what the theme reads.
-            val appState = rememberUseSmileIDSampleAppState(launchArgs)
-            CompositionLocalProvider(LocalUseSmileIDSampleAppState provides appState) {
-                UseSmileIDSampleTheme(darkTheme = appState.settings.darkMode) {
-                    UseSmileIDSampleShell()
+            // Outermost, so the override reaches the SDK's own screens as well as this app's.
+            UseSmileIDSampleAppLocale(launchArgs.appLocale) {
+                // Collected above the theme, because the Dark mode switch is what the theme reads.
+                val appState = rememberUseSmileIDSampleAppState(launchArgs)
+                CompositionLocalProvider(LocalUseSmileIDSampleAppState provides appState) {
+                    UseSmileIDSampleTheme(darkTheme = appState.settings.darkMode) {
+                        UseSmileIDSampleShell()
+                    }
                 }
             }
         }
