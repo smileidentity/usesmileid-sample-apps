@@ -220,6 +220,27 @@ human-meaningful, provided it is the only source. v11's plumbing is worth keepin
 disagree. Worth telling the v11 owners; it is latent there today.
 <!-- INTERNAL-ONLY:END -->
 
+### 3.2 What the two publish workflows do differently from v11
+
+Three deliberate changes, beyond dropping the release-notes generation §5 rejects:
+
+- **The internal lane is `workflow_dispatch` only.** v11 publishes internal on every push to `main`.
+  Here that would perform the very first upload automatically, which is the one action reserved for an
+  owner because it fixes the signing identity and creates the listing. Adding the push trigger is a
+  one-line change once the listing exists.
+- **Both lanes compute `versionCode` with the same command**, which is the §3.1 defect not being
+  ported.
+- **Secrets reach Gradle as `ORG_GRADLE_PROJECT_*` environment variables, never as `-P` arguments**, so
+  the keystore password does not appear in the runner's process list.
+
+Both lanes set `-PREQUIRE_UPLOAD_SIGNING=true`, so a run whose keystore secret failed to materialise
+fails at the bundle step instead of producing a debug-signed artefact that only Play would reject.
+
+Note on the marker convention: these workflow files name their secrets in the clear, because a workflow
+cannot reference a secret without naming it and the names are not themselves sensitive. The
+`INTERNAL-ONLY` block above is marked for a different reason — it points at a sibling repository's
+file layout, which is what must not survive the flip.
+
 **The rule that survives the flip:** v12 uses one monotonic `versionCode` scheme across every track,
 derived from a single source, because Play compares each upload against every prior upload for the app
 regardless of which track it went to.
@@ -405,7 +426,7 @@ Simulate affordance is present under release configuration, failing the build ra
 | REL-A12 | Transcribe v11's data-safety answers; commit §6.1's comparison as the reason | **DONE 2026-08-28** — `docs/play-data-safety.md` | §6.1. No re-derivation |
 | REL-A13 | Declare no special access, and add a **test** that Simulate survives release configuration | **DONE 2026-08-28** — two tests, both mutation-checked | §6.3. The declaration's truth depends on it, so assert it rather than remember it |
 | REL-A14 | Periodic `targetSdk` re-check against Play's floor | **DONE 2026-08-28** — recorded as a dated recurring check | 37 accepted today; the floor moves annually |
-| REL-A15 | Publish workflows adapted from v11: internal and production tracks |  | Copy the signing and upload steps, not the version or notes steps. Both tracks pass `-PREQUIRE_UPLOAD_SIGNING=true` and the same `VERSION_CODE` command (§3) |
+| REL-A15 | Publish workflows adapted from v11: internal and production tracks | **DONE 2026-08-28** — dispatch-only until the listing exists | Copy the signing and upload steps, not the version or notes steps. Both tracks pass `-PREQUIRE_UPLOAD_SIGNING=true` and the same `VERSION_CODE` command (§3) |
 | REL-A16 | Release CI lane: bundle, `validate_screenshot` over the art, fail on stale art |  | Mirrors the existing tokens/notices gates |
 | REL-A17 | The gate: art regenerates byte-identically, `verify.sh` green, nothing owed |  | Last, as a gate rather than as work |
 
