@@ -135,7 +135,7 @@ to publish *and* safe to run unattended in CI.
 |---|---|---|
 | `android-phone` | 1080 × 1920 | the phone set |
 | `android-tablet` | 1600 × 2560 | **not used** — phone-only, see §6.2. Listed so a later tablet pass knows the preset exists |
-| `play-feature-graphic` | 1024 × 500 | the feature graphic |
+| `play-feature-graphic` | 1024 × 500 | the feature graphic — `android/play/feature-graphic.png`, rendered by the same script and gated by the release lane. Play will not publish a listing without one, which the first pass through Console is what surfaced |
 
 Tools are `list_presets`, `compose_screenshot`, `generate_set`, `create_showcase` and
 `validate_screenshot`. Layout variants are `text-top`, `text-bottom` and `tilted`; mixing them is what

@@ -45,6 +45,19 @@ compose verifications        "Review"    "every verification result"    text-top
 compose verification_details "See"       "the details of a verification" text-top
 compose settings             "Configure" "the steps in the flow"       text-top
 
+if [ -f "$FRAMES/products.png" ]; then
+  echo "==> feature graphic"
+  "${STORESHOTS[@]}" compose \
+    --preset play-feature-graphic \
+    --bg "$BG" \
+    --verb "Smile ID" \
+    --desc "identity verification, end to end" \
+    --variant text-top \
+    --screenshot "$FRAMES/products.png" \
+    --output "$(dirname "$OUT")/feature-graphic.png"
+  "${STORESHOTS[@]}" validate --preset play-feature-graphic "$(dirname "$OUT")/feature-graphic.png"
+fi
+
 if [ -z "$(ls -A "$OUT"/*.png 2>/dev/null)" ]; then
   echo "no frames to render; run with --frames" >&2
   exit 1
