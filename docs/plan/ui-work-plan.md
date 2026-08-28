@@ -1,9 +1,19 @@
 # UI work plan — Android first, then three ports
 
-**Status:** Android U0–U3 is built and in review. The iOS port has started: **U0, U1, U2 and the first two U3 screens are complete** — the type ramp, the stopgap values and the DM Sans faces are generated for
-SwiftUI, the design's marks are generated as SwiftUI shapes, `ios/verify.sh` has a golden step, and
-the eight primitives plus the section-and-row composites are built with their goldens in light and
-dark. The rest of U2 and U3–U4 follow. Flutter and Expo have not started. The design is
+**Status:** Android U0–U3 is built and in review. Flutter and Expo have not started.
+
+**iOS: U0, U1 and U2 are complete, and U3 has two of its sixteen screens** (settings, products). The
+type ramp, the stopgap values and the DM Sans faces are generated for SwiftUI, the design's marks are
+generated as SwiftUI shapes, `ios/verify.sh` gates tokens, icons, format, unit tests, goldens, the
+shell's route table and the release build, and every component has goldens in light and dark.
+
+**Picking iOS back up: read `ios-port-hardening.md` first — it opens with the order to work in.** One
+ruling is owed before more screens land (the nav container: the design's floating pill is built but
+the shell renders `TabView`), and three PRs are open and mergeable. Do not start a screen before
+those are settled — every screen records its bottom inset and baseline against whichever container
+wins.
+
+The design is
 captured in `spec/screens.json` (14 screens, 38 states, every one linked to its design node), the
 component inventory in `spec/components.json` (34 components, 13 documented sub-parts), and the token
 contract in `spec/design-tokens.json`.
