@@ -205,7 +205,8 @@ public struct SettingsScreen: View {
           ? "The token grants consent, so the screen is skipped"
           : "Ask permission before KYC checks",
         setting: .consentStep,
-        testId: UseSmileIDSampleTestIds.settingConsentStep
+        testId: UseSmileIDSampleTestIds.settingConsentStep,
+        enabled: !state.consentBoundByToken
       )
       UseSmileIDSampleRowDivider()
       switchRow(
@@ -270,7 +271,8 @@ public struct SettingsScreen: View {
     icon: SmileIcon,
     supporting: String,
     setting: UseSmileIDSampleSetting,
-    testId: String
+    testId: String,
+    enabled: Bool = true
   ) -> some View {
     UseSmileIDSampleSettingRow(title: title, supportingText: supporting) {
       UseSmileIDSampleIcon(icon, tint: colors.textTitle, size: SmileSpacing.sizeIconMd)
@@ -280,6 +282,7 @@ public struct SettingsScreen: View {
           get: { state.settings[setting] },
           set: { onSettingChange(setting, $0) }
         ),
+        enabled: enabled,
         testId: testId
       )
     }

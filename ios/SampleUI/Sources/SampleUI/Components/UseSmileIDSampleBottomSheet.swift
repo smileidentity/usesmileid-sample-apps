@@ -45,7 +45,7 @@ public struct UseSmileIDSampleBottomSheet<Content: View>: View {
   }
 
   private static var margin: CGFloat {
-    20
+    SmileSpacing.space20
   }
 }
 

@@ -31,15 +31,16 @@ public enum UseSmileIDSampleTestIds {
 
   /// Per-item ids the screens build; the spec lists the prefixes rather than every value.
   public static func productCard(_ product: String) -> String {
-    "sample_product_card_\(product)"
+    "\(productCardPrefix)_\(product)"
   }
 
   public static func navRow(_ row: String) -> String {
-    "sample_nav_row_\(row)"
+    "\(settingNavPrefix)_\(row)"
   }
 
   public static let navToken = "sample_nav_token"
-  public static let productCard = "sample_product_card"
+  public static let productCardPrefix = "sample_product_card"
+  public static let settingNavPrefix = "sample_setting_nav"
 
   public static let jobRow = "sample_job_row"
   public static let jobRowStatus = "sample_job_row_status"
@@ -55,7 +56,7 @@ public enum UseSmileIDSampleTestIds {
     productsScreen, verificationsScreen, settingsScreen,
     navProducts, navVerifications, navSettings,
     toast, toastUndo,
-    envChip, navToken, productCard,
+    envChip, navToken, productCardPrefix, settingNavPrefix,
     profileAvatarButton, profileSummary,
     sessionCard, sessionCountdown, sessionEndedBanner,
     scenarioDrawerButton, signOut, versionLabel,

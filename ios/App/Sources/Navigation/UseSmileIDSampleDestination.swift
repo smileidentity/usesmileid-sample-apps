@@ -7,6 +7,7 @@ struct UseSmileIDSampleDestination: View {
 
   @EnvironmentObject private var router: UseSmileIDSampleRouter
   @EnvironmentObject private var app: UseSmileIDSampleAppState
+  @State private var inAppLink: UseSmileIDSampleInAppLink?
 
   var body: some View {
     switch route {
@@ -26,7 +27,7 @@ struct UseSmileIDSampleDestination: View {
     case .verifications:
       VerificationsScreen()
     case .settings:
-      SettingsScreen(
+      browser(SettingsScreen(
         state: .init(
           settings: app.settings,
           organisation: app.organisation,
@@ -39,19 +40,30 @@ struct UseSmileIDSampleDestination: View {
         onNavRow: { row in open(row) },
         onOpenScenarioDrawer: { router.sheet = .scenarioDrawer },
         onSignOut: {}
-      )
+      ))
     default:
       UseSmileIDSampleSeat(name: String(describing: route))
     }
   }
 
-  /// A row with no url is the app's own screen; the two legal pages leave the app deliberately.
+  /// A layer over the screen that opened it, never a destination.
+  private func browser(_ content: some View) -> some View {
+    content.sheet(item: $inAppLink) { UseSmileIDSampleBrowser(url: $0.url) }
+  }
+
+  /// Three destinations, per `spec/screens.json` → linkPresentation: no url is the app's own
+  /// screen; `opensInApp` stays in an in-app browser; the two legal pages eject, because both serve
+  /// their document as an embedded PDF a mobile browser shows as a stub.
   private func open(_ row: UseSmileIDSampleNavRow) {
     guard let url = row.url else {
       router.open(.licenses)
       return
     }
-    UIApplication.shared.open(url)
+    if row.opensInApp {
+      inAppLink = UseSmileIDSampleInAppLink(url: url)
+    } else {
+      UIApplication.shared.open(url)
+    }
   }
 }
 
