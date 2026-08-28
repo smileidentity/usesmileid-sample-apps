@@ -577,7 +577,11 @@ None of these blocks anything, and none of them belongs to Android's critical pa
   sparse. Ship it, drop to four, or swap in a denser state — screenshots are editable on a live listing
   at any time.
 - **The internal lane is still dispatch-only.** It was deliberate while the first upload was an owner
-  action; now the listing exists, adding `push: branches: [main]` makes every merge an internal build.
+  action; now the listing exists, `push: branches: [main]` would make every merge an internal build.
+  It needs a **path filter** when it lands, or a docs-only merge publishes a release and burns a
+  versionCode for nothing. Two guards it does *not* need, so nobody adds them later: the versionCode is
+  already monotonic because it is the commit count, and a `push` trigger cannot fire from a fork, so the
+  secrets are not reachable that way.
 - ~~The app carries two privacy policy URLs.~~ **Fixed here.** The simulated token's consent notice
   pointed at `usesmileid.com/privacy-policy`, which returns 200 but redirects to `smile.id/` — the
   homepage, not the policy. Every reference now uses `smile.id/privacy-policy`, the one that actually
