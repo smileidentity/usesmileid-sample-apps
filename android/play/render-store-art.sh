@@ -1,12 +1,6 @@
 #!/usr/bin/env bash
-# Renders the Play screenshots from committed frames. No agent in the loop, so CI can run it.
-#
-# Two sources, because only one of them can be rendered off-device:
-#   five panels  — Roborazzi, on the JVM at 1080x1920 (sample-ui/src/test/store-art)
-#   one panel    — Maestro on a Gradle Managed Device (android/maestro/store-shots.yaml)
-#
-# The frames are an output artefact and never an oracle. Goldens live in a different directory and are
-# untouched by this script.
+# Renders the Play screenshots from the committed frames. --frames re-renders the five off-device
+# panels first; the camera panel comes from android/maestro/store/store-shots.yaml.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -14,15 +8,12 @@ REPO_ROOT="$(cd .. && pwd)"
 FRAMES="sample-ui/src/test/store-art"
 OUT="play/screenshots"
 PRESET="android-phone"
-# The brand blue the mark uses, so the panels sit on Smile ID's own colour rather than a default.
 BG="#151F72"
 
-# The CLI ships inside storeshots-mcp as a second binary; there is no package called `storeshots`.
 STORESHOTS=(npx --yes -p storeshots-mcp storeshots)
 
 if [ "${1:-}" = "--frames" ]; then
   echo "==> rendering the five off-device panels"
-  # Filtered to the store-art class: recording every Roborazzi test would also rewrite the goldens.
   ./gradlew :sample-ui:recordRoborazziDebug --tests "*StoreArtTest*"
 fi
 
@@ -39,7 +30,6 @@ fi
 
 mkdir -p "$OUT"
 
-# verb | descriptor | layout — the layout varies so six panels do not read as one template repeated.
 compose() {
   local name="$1" verb="$2" desc="$3" variant="$4"
   echo "==> $name"

@@ -108,7 +108,6 @@ tasks.withType<Test>().configureEach {
     inputs.dir(layout.projectDirectory.dir("../play"))
         .withPropertyName("listingCopy")
         .withPathSensitivity(PathSensitivity.RELATIVE)
-    // Read as text by the listing test, so a gate added in a comment-only edit still re-runs it.
     inputs.file(layout.projectDirectory.file("src/main/kotlin/com/usesmileid/sampleapps/android/navigation/TokenDestinations.kt"))
         .withPropertyName("simulateWiring")
         .withPathSensitivity(PathSensitivity.RELATIVE)

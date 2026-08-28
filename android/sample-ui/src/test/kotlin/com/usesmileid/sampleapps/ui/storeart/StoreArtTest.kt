@@ -30,18 +30,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
-/**
- * Raw frames for the Play listing, rendered at the `android-phone` preset's 1080x1920 and written to
- * `src/test/store-art` — a different directory and a different class from the goldens, which is what
- * makes it impossible for a store-art change to repaint an assertion. These are an output artefact,
- * never an oracle; the goldens remain the only screenshots anything asserts on.
- *
- * Five panels, not six: a live camera preview is not a pure function of state, so the SDK's capture
- * screen is the one frame that needs a device. `android/maestro/store-shots.yaml` captures it.
- *
- * Every fixture here is synthetic — no real name, ID number, partner id or token — because the output
- * is published.
- */
+/** Raw Play frames at the android-phone preset, in their own directory so they cannot repaint a golden. */
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [ROBOLECTRIC_SDK], qualifiers = STORE_PHONE_QUALIFIERS)
@@ -91,8 +80,7 @@ class StoreArtTest {
             onBack = {},
             onDelete = {},
             onCopy = { _, _ -> },
-            // The result card is a product feature, and it is what makes this panel worth publishing.
-            showProbes = true,
+            showProbes = false,
         )
     }
 
@@ -114,7 +102,6 @@ class StoreArtTest {
         )
     }
 
-    /** Full-bleed, unlike the goldens' padded component host: a store panel is a whole screen. */
     private fun panel(name: String, content: @Composable () -> Unit) = runComposeUiTest {
         setContent {
             UseSmileIDSampleTheme(darkTheme = false) {
@@ -135,12 +122,10 @@ class StoreArtTest {
     private companion object {
         const val PANEL = "store_panel"
 
-        /** 2026-07-16T11:50:12Z: fixed, so a re-render produces the same date headers and countdown. */
         const val FIXED_NOW = 1_784_202_612_000L
         val JOBS = UseSmileIDSampleJobStore.fixtures(FIXED_NOW)
         val PRODUCTS = UseSmileIDSampleProductsState(initials = "KA")
     }
 }
 
-/** 360x640dp at xxhdpi is 1080x1920px, which is storeshots' `android-phone` preset exactly. */
 internal const val STORE_PHONE_QUALIFIERS = "w360dp-h640dp-xxhdpi"

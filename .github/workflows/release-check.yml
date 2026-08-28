@@ -1,15 +1,8 @@
 name: Release check
 
-# Pre-flight for a publish, without publishing anything: builds the artefact Play would receive and
-# checks the store art, so a broken bundle is found before someone dispatches an upload.
-#
-# Not on every PR. `android/verify.sh` already assembles a release APK and already fails on stale store
-# art through `verifyRoborazziDebug`; a bundle on top of that would double the per-PR release build for
-# a packaging step that changes far less often than the code does.
 on:
   workflow_dispatch:
   schedule:
-    # Mondays, early UTC, so a packaging regression surfaces before anyone plans a release.
     - cron: '0 5 * * 1'
   pull_request:
     paths:
@@ -41,16 +34,12 @@ jobs:
       - name: Validate the Gradle wrapper
         uses: gradle/actions/wrapper-validation@v4
 
-      # No keystore here on purpose: this lane proves the bundle builds, and it must not need a signing
-      # secret to do that. The publish lanes are where signing is required and enforced.
       - name: Bundle
         working-directory: android
         run: ./gradlew bundleRelease
 
       - name: Report the delivered size
         working-directory: android
-        # The number a partner actually downloads, not the universal APK. Printed rather than gated:
-        # a threshold here would fail on an SDK bump that is nobody's mistake.
         run: |
           AAB=app/build/outputs/bundle/release/app-release.aab
           ls -l "$AAB" | awk '{printf "bundle: %.1f MB\n", $5/1048576}'
@@ -59,8 +48,6 @@ jobs:
         run: |
           FRAMES=android/sample-ui/src/test/store-art
           test -d "$FRAMES" || { echo "::error::no store-art directory"; exit 1; }
-          # Every committed frame must be the preset's exact pixel size, or storeshots rescales it and
-          # the panels stop matching each other.
           fail=0
           for f in "$FRAMES"/*.png; do
             dim=$(python3 -c "import struct,sys;d=open('$f','rb').read(33);print(f'{struct.unpack(\">I\",d[16:20])[0]}x{struct.unpack(\">I\",d[20:24])[0]}')")
@@ -74,8 +61,6 @@ jobs:
           exit $fail
 
       - name: Rendered panels are store-legal, when they have been rendered
-        # The rendered set needs the camera frame, which needs a device, so it is checked when present
-        # rather than required. Once it is committed this step starts gating on every run.
         run: |
           if [ -d android/play/screenshots ] && ls android/play/screenshots/*.png >/dev/null 2>&1; then
             for f in android/play/screenshots/*.png; do

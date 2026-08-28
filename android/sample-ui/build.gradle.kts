@@ -79,8 +79,6 @@ tasks.withType<Test>().configureEach {
         .withPropertyName("goldenScreenshots")
         .withPathSensitivity(PathSensitivity.RELATIVE)
 
-    // The store panels get the same treatment, in their own directory: separate from the goldens so
-    // regenerating store art can never repaint an assertion, and gated so it cannot go stale either.
     inputs.dir(layout.projectDirectory.dir("src/test/store-art"))
         .withPropertyName("storeArt")
         .withPathSensitivity(PathSensitivity.RELATIVE)

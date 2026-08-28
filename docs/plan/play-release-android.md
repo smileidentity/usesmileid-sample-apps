@@ -28,7 +28,9 @@ family, so Android publishes as `com.usesmileid.sample.android`. It is free to c
 from the first upload, which is why it lands with this tranche rather than after it.
 `spec/app-identity.json` carries both the decision and the debt it creates: the Flutter and Expo ids are
 held by SDK-repo development samples, which owe a rename before either of those apps is built. Android and
-iOS collide with nothing. The Kotlin namespace is unchanged — it is not an identity.
+iOS collide with nothing — and the iOS app, which landed while this branch was open, follows here:
+`ios/App/project.yml` now declares `com.usesmileid.sample.ios`, which is what its own spec test
+asserts. The Kotlin namespace is unchanged — it is not an identity.
 
 ## 1. What is blocking, read out of the build files
 

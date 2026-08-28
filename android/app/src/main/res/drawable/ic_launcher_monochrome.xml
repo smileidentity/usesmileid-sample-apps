@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Themed icons on Android 13+ take only this layer's alpha and apply the system's own tint, so it is
-  the Smile ID mark alone: the badge plate is white-on-white and the green glyph carries no meaning
-  once tinted, and both read as noise at launcher size. Scaled into the same safe box as the
-  foreground, but on its own bounds, so the mark sits centred rather than offset the way the badge
-  pulls it in the colour icon.
--->
+<!-- Themed icons take only this layer's alpha, so it is the mark alone. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"

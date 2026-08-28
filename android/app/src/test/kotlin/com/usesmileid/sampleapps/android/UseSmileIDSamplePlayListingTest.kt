@@ -5,11 +5,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/**
- * The listing copy under `android/play`. Play truncates silently rather than rejecting, so a
- * description that grows past its limit ships cut mid-sentence and nobody finds out from the upload;
- * the limits are asserted here instead of counted once by hand.
- */
+/** The Play listing copy: Play truncates silently rather than rejecting, so the limits are asserted. */
 class UseSmileIDSamplePlayListingTest {
 
     @Test
@@ -37,18 +33,12 @@ class UseSmileIDSamplePlayListingTest {
     @Test
     fun `release notes carry no pull request number or internal shorthand`() {
         val notes = listing("whatsnew/whatsnew-en-US")
-        // The v11 listing generated these from git log, which put "(#961)" and commit emoji in front
-        // of partners. Written by hand here, and this is what keeps them that way.
         for (pattern in listOf(Regex("""\(#\d+\)"""), Regex("""#\d{2,}"""), Regex("""\[\d{4}-\d{2}-\d{2}]"""))) {
             assertTrue("release notes contain $pattern: $notes", pattern.find(notes) == null)
         }
     }
 
-    /**
-     * REL-A13: the listing declares that all functionality is available without special access, which
-     * holds only while Simulate stays reachable on a release build. A debug or probes gate here would
-     * make that declaration false, so the absence of one is asserted rather than remembered.
-     */
+    /** The no-special-access declaration is false the moment Simulate is gated. */
     @Test
     fun `nothing gates the scan sheet's Simulate wiring behind debug or probes`() {
         val source = File(specDir(), "../android/app/src/main/kotlin/com/usesmileid/sampleapps/android/navigation/TokenDestinations.kt")

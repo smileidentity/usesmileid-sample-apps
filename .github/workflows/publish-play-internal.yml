@@ -1,8 +1,5 @@
 name: Publish to Play (internal)
 
-# Manual only, deliberately. The first upload creates the listing and fixes the signing identity
-# permanently, so it is an owner action; a push trigger here would do it on the next merge instead.
-# Once the listing exists, adding `push: branches: [main]` makes every merge an internal build.
 on:
   workflow_dispatch:
 
@@ -20,7 +17,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # versionCode is the commit count, so a shallow clone would compute the wrong one.
           fetch-depth: 0
 
       - uses: actions/setup-java@v4
@@ -42,14 +38,10 @@ jobs:
 
       - name: Version code
         id: version
-        # One scheme for every track. Play compares each upload against every prior upload for the
-        # app whichever track it went to, so internal and production must not compute this differently.
         run: echo "code=$(git rev-list --count HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Bundle
         working-directory: android
-        # Passed as ORG_GRADLE_PROJECT_* rather than -P so the keystore password never appears in the
-        # runner's process list.
         run: ./gradlew bundleRelease
         env:
           ORG_GRADLE_PROJECT_REQUIRE_UPLOAD_SIGNING: "true"
@@ -64,6 +56,4 @@ jobs:
           track: internal
           releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
           releaseName: ${{ steps.version.outputs.code }}
-          # Written by hand and committed. v11 generated these from git log, which put PR numbers and
-          # commit emoji in front of partners; that step is dropped rather than adapted.
           whatsNewDirectory: android/play/whatsnew

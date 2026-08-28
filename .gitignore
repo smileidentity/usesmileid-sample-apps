@@ -2,8 +2,6 @@
 *.jks
 *.keystore
 *.p12
-# A keystore base64'd for a CI secret is still the keystore.
-*.b64
 *.mobileprovision
 .env
 .env.*

@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Derived from svgs/android.svg, which is the single source for this app's launcher art. Two
-  differences from that file, both required by the adaptive-icon contract: the rounded ground is not
-  here (it is the background layer, unrounded, because the launcher applies its own mask), and the
-  content is scaled into the guaranteed-visible centre 72x72dp of the 108x108dp canvas — about 341 of
-  these 512 units — so no launcher mask can crop the off-centre badge.
--->
+<!-- From svgs/android.svg, scaled into the mask-safe area; see docs/plan/play-release-android.md §4.1. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
