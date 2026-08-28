@@ -1,10 +1,6 @@
 import SampleUI
 
-/// Every pushable destination in `spec/routes.json`. `Codable` is what makes restoration a decode
-/// rather than bespoke logic — the whole path round-trips through `@SceneStorage`.
-///
-/// Sheets are deliberately absent: a sheet is a layer over the screen that owns it, never a
-/// destination that replaces it. See `Sheet`.
+/// Every pushable destination in `spec/routes.json`. Sheets are absent by design — see `Sheet`.
 enum Route: Hashable, Codable {
   case products
   case verifications
@@ -19,7 +15,7 @@ enum Route: Hashable, Codable {
   case scanToken
 }
 
-/// The tab a route belongs to, so a deep link lands in the right stack rather than the selected one.
+/// The tab a route belongs to, so a link lands in the right stack rather than the selected one.
 extension Route {
   var tab: UseSmileIDSampleTab {
     switch self {
@@ -29,8 +25,7 @@ extension Route {
     }
   }
 
-  /// The routes pushed above the tab root before this one, so Back works after a cold link into a
-  /// detail. The tab root is never in here — the stack draws it, so listing it would render it twice.
+  /// Routes above the tab root; the root itself is never here, or the stack would draw it twice.
   var parents: [Route] {
     switch self {
     case .profileConfig: [.profiles]

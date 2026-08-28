@@ -12,9 +12,8 @@ SCHEME="${SCHEME:-UseSmileIDSample}"
 DESTINATION="${DESTINATION:-platform=iOS Simulator,name=iPhone 17 Pro}"
 
 echo "==> design tokens are current"
-# SMILE_DESIGN_SYSTEM points --check at a checkout outside the default skill paths, which is how CI
-# supplies its own. SMILE_TOKENS_OPTIONAL downgrades a missing one to a loud skip, for fork PRs that
-# get no secret — never set it locally, or vendored tokens drift from their source unnoticed.
+# SMILE_TOKENS_OPTIONAL downgrades a missing design system to a skip, for fork PRs that get no
+# secret — never set it locally, or vendored tokens drift from their source unnoticed.
 if [ -n "${SMILE_TOKENS_OPTIONAL:-}" ] && [ -z "${SMILE_DESIGN_SYSTEM:-}" ]; then
   echo "    SKIPPED — no design system available, so the vendored token output is unverified."
 else

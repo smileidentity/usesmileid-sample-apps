@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Seat for the real Verifications screen, which U3 builds. It exists now so N1 has something to route to.
+/// Seat for the real Verifications screen, which U3 builds.
 public struct VerificationsScreen: View {
   public init() {}
 

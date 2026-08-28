@@ -1,7 +1,6 @@
 import Foundation
 
-/// A sheet's deep link resolves to its OWNER's link plus a sheet request, so the five sheet paths in
-/// `spec/routes.json` stay linkable without any of them becoming a destination.
+/// A sheet's link resolves to its owner's link plus a sheet request, never to a destination.
 struct UseSmileIDSampleSheetLink: Equatable {
   let sheet: Sheet
   let ownerUri: String
@@ -9,9 +8,9 @@ struct UseSmileIDSampleSheetLink: Equatable {
 
 /// String in, string out, so `spec/routes.json` can assert the whole table without a device.
 enum UseSmileIDSampleSheetLinks {
-  /// Nil for every other link, which the route table still claims itself.
+  /// Nil for every other link, which the route table claims itself.
   static func resolve(_ link: String) -> UseSmileIDSampleSheetLink? {
-    // Dropped, not carried: `probes` reaches the app off the launch arguments, not off the route.
+    // `probes` reaches the app off the launch arguments, not off the route.
     let uri = String(link.prefix(while: { $0 != "?" && $0 != "#" }))
     if let fixed = fixed[uri] {
       return fixed

@@ -7,8 +7,7 @@ enum UseSmileIDSampleLink: Equatable {
   case sheet(Sheet, owner: Route)
 }
 
-/// Parses an incoming URL against the shared route table. Cold start is the case that matters: the
-/// link arrives before any tab has been built, so this answers with data rather than with navigation.
+/// Parses a URL against the route table, answering with data because on a cold start no tab exists yet.
 enum UseSmileIDSampleLinks {
   static func resolve(_ url: URL) -> UseSmileIDSampleLink? {
     guard url.scheme == UseSmileIDSampleDeepLinks.scheme else { return nil }
@@ -20,7 +19,7 @@ enum UseSmileIDSampleLinks {
     return route(uri: canonical, query: query(url)).map { .route($0) }
   }
 
-  /// Scheme plus path, with the query dropped — the form `UseSmileIDSampleSheetLinks` matches on.
+  /// Scheme plus path, the form `UseSmileIDSampleSheetLinks` matches on.
   private static func canonicalUri(_ url: URL) -> String {
     let segments = self.segments(url)
     return UseSmileIDSampleDeepLinks.scheme + "://" + segments.joined(separator: "/")
@@ -48,7 +47,6 @@ enum UseSmileIDSampleLinks {
     case ["token", "scan"]: return .scanToken
     default: break
     }
-    // Two segments: a detail route whose second segment is its argument.
     if segments.count == 2 {
       switch segments[0] {
       case "verifications": return .verificationDetails(jobId: segments[1])

@@ -1,12 +1,11 @@
 import SampleUI
 import SwiftUI
 
-/// The window's root: three tabs, each with its own stack, restored from scene storage and driven
-/// by deep links. Everything identity-bound stays here — `SampleUI` runs under eight identities.
+/// The window's root. Everything identity-bound stays here — `SampleUI` runs under eight identities.
 struct UseSmileIDSampleShell: View {
   @StateObject private var router = UseSmileIDSampleRouter()
 
-  /// One encoded value rather than two, so the tab and its stacks can never restore out of step.
+  /// One value, so the tab and its stacks cannot restore out of step.
   @SceneStorage("navigation") private var storedNavigation: String = ""
 
   var body: some View {
@@ -19,7 +18,7 @@ struct UseSmileIDSampleShell: View {
       }
     }
     .environmentObject(router)
-    // Held here only until U2/U3 land the screens that own these sheets; the owner presents it then.
+    // Held here until U2/U3 land the screens that own these sheets.
     .sheet(item: $router.sheet) { sheet in
       UseSmileIDSampleSeat(name: sheet.rawValue)
     }
@@ -38,7 +37,7 @@ struct UseSmileIDSampleShell: View {
     .onChange(of: router.paths) { _ in storedNavigation = router.encodedState() }
   }
 
-  /// Re-selecting the tab already showing pops it to its root, which is the platform's own behaviour.
+  /// Re-selecting the showing tab pops it to its root, as the platform does.
   private var tabSelection: Binding<UseSmileIDSampleTab> {
     Binding(
       get: { router.selectedTab },

@@ -2,8 +2,6 @@ import SampleUI
 @testable import UseSmileIDSample
 import XCTest
 
-/// Asserts the shell's routes against `spec/routes.json`, the four-platform route contract: a renamed
-/// case, argument label or path otherwise kills a deep link with no compile error.
 final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
   private var specRoutes: [SpecRoute] = []
 
@@ -27,7 +25,6 @@ final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
     }
   }
 
-  /// R12: re-adding a destination for a sheet path is what left the scrim covering a grey void.
   func testEverySheetRouteResolvesToItsOwnerAndNoRouteClaimsIt() throws {
     let sheets = specRoutes.filter(\.isSheet)
     XCTAssertFalse(sheets.isEmpty, "no sheet routes extracted from spec/routes.json")
@@ -44,7 +41,6 @@ final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
     }
   }
 
-  /// The other side of it: the resolver must not swallow a route the table owns, query or no query.
   func testTheSheetResolverLeavesEveryOtherRouteAlone() throws {
     for route in specRoutes where !route.isSheet {
       XCTAssertNil(
@@ -52,7 +48,6 @@ final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
         "\(route.id) is not a sheet"
       )
     }
-    // A drawer link carries ?probes=true, which the launch arguments read rather than the route.
     let drawer = try XCTUnwrap(specRoutes.first { $0.id == "scenarioDrawer" })
     XCTAssertNotNil(UseSmileIDSampleSheetLinks.resolve(drawer.exampleUri + "?probes=true"))
   }
@@ -66,7 +61,6 @@ final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
     ).split(separator: ",").map(String.init)
     XCTAssertEqual(values, UseSmileIDSampleFlowRoute.allCases.map(\.id))
     XCTAssertEqual(arg.defaultValue, UseSmileIDSampleFlowRoute.fullscreen.id, "spec default")
-    // An unreadable value falls back to the spec default rather than throwing.
     XCTAssertEqual(UseSmileIDSampleFlowRoute(id: "nonsense"), .fullscreen)
     XCTAssertEqual(UseSmileIDSampleFlowRoute(id: nil), .fullscreen)
   }
@@ -87,7 +81,6 @@ final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
     XCTAssertEqual(UseSmileIDSampleDeepLinks.scheme, ios["urlScheme"] as? String)
   }
 
-  /// project.yml is a third copy of both, and drift there kills every deep link at the OS.
   func testTheShellManifestClaimsTheSameSchemeAndBundleId() throws {
     let manifest = URL(fileURLWithPath: #filePath)
       .deletingLastPathComponent()
@@ -108,7 +101,6 @@ final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
     )
   }
 
-  /// The screen each sheet layers over, which its path alone does not always say.
   private let expectedOwners: [Sheet: Route] = [
     .profileSwitch: .products,
     .newProfile: .profiles,
@@ -117,7 +109,6 @@ final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
     .idTypePicker: .idDetailsForm(productId: "sample-productId")
   ]
 
-  /// Renders the case the spec's `platform.ios` cell names, labels included.
   private func binding(for route: Route) -> String {
     switch route {
     case .products: "Route.products"
@@ -146,7 +137,6 @@ private struct SpecRoute {
     presentation.hasSuffix("Sheet")
   }
 
-  /// The spec path with every `:param` filled in, which is what a real link looks like.
   var exampleUri: String {
     let filled = path.replacing(#":([A-Za-z][A-Za-z0-9]*)"#) { "sample-\($0)" }
     return UseSmileIDSampleDeepLinks.scheme + "://" + filled.dropFirst()
@@ -177,7 +167,6 @@ private struct SpecArg {
 }
 
 private extension String {
-  /// First capture group, or nil — enough for the two patterns this test needs.
   func firstMatch(of pattern: String) -> String? {
     guard let regex = try? NSRegularExpression(pattern: pattern),
           let match = regex.firstMatch(in: self, range: NSRange(startIndex..., in: self)),
@@ -186,7 +175,6 @@ private extension String {
     return String(self[range])
   }
 
-  /// Replaces every match of `pattern`'s first group using `transform`.
   func replacing(_ pattern: String, with transform: (String) -> String) -> String {
     guard let regex = try? NSRegularExpression(pattern: pattern) else { return self }
     var result = self

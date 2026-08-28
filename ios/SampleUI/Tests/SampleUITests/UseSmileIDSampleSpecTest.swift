@@ -2,8 +2,6 @@ import Foundation
 @testable import SampleUI
 import XCTest
 
-/// The library's half of the spec validation: every id it declares must exist in `spec/test-ids.json`,
-/// so a typo fails here rather than as a device flow that silently matches nothing.
 final class UseSmileIDSampleSpecTest: XCTestCase {
   private var specIds: Set<String> = []
 
@@ -32,7 +30,6 @@ final class UseSmileIDSampleSpecTest: XCTestCase {
     }
   }
 
-  /// Every `sample_*` string anywhere in the file, so the shape of the spec can change without this.
   private static func ids(in json: Any) -> Set<String> {
     switch json {
     case let string as String:

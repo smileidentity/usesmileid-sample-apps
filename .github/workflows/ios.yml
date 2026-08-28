@@ -47,9 +47,8 @@ jobs:
       - name: Install the build tools
         run: brew install xcodegen swiftformat
 
-      # Pinned rather than latest-stable, because a runner that silently moves Xcode moves the SDK the
-      # app compiles against with it. Falls back with a warning rather than failing, so an image that
-      # drops this version reports the drift instead of looking like a code failure.
+      # Pinned, because a runner that moves Xcode moves the SDK the app compiles against with it.
+      # Warns rather than fails, so an image dropping this version reports drift, not a code failure.
       - name: Select Xcode
         run: |
           if [ -d "$XCODE" ]; then

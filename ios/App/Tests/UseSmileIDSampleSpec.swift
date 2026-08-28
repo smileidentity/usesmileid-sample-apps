@@ -1,8 +1,6 @@
 import Foundation
 import XCTest
 
-/// Reads `spec/` from the source tree rather than a copied resource: the contract is the file, and a
-/// copy is exactly the transcription `spec/README.md` forbids.
 enum UseSmileIDSampleSpec {
   static var directory: URL {
     URL(fileURLWithPath: #filePath)

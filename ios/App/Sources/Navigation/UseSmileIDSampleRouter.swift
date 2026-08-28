@@ -1,20 +1,17 @@
 import Foundation
 import SwiftUI
 
-/// The typed path router. Each tab keeps its own stack (R7), the selected tab and every stack are
-/// `Codable` so restoration is a decode, and a sheet is held here as a request rather than pushed.
-///
-/// `ObservableObject` rather than `@Observable`: this library's floor is the SDK's, iOS 15.
+/// The typed path router: a `Codable` stack per tab, so restoration is a decode.
+/// `ObservableObject` rather than `@Observable` because the floor is the SDK's, iOS 15.
 @MainActor
 final class UseSmileIDSampleRouter: ObservableObject {
   @Published var selectedTab: UseSmileIDSampleTab = .products
   @Published var paths: [UseSmileIDSampleTab: [Route]] = [:]
 
-  /// The sheet the owning screen is showing. One at a time, because two cannot be presented at once.
+  /// One at a time, because two sheets cannot be presented at once.
   @Published var sheet: Sheet?
 
-  /// Whether a link or a restore has already decided where the app opens. On a cold start the two
-  /// race, and whichever the system delivers first must win — a later restore would discard the link.
+  /// On a cold start a link and a restore race; whichever lands first wins.
   private(set) var hasOpened = false
 
   func path(_ tab: UseSmileIDSampleTab) -> [Route] {
@@ -26,8 +23,7 @@ final class UseSmileIDSampleRouter: ObservableObject {
     selectedTab = route.tab
   }
 
-  /// Assigns the whole path at once, so a detail link restores its parent stack in one write.
-  /// A tab's own route is the stack's root rather than an entry on it, so it clears the stack.
+  /// Assigns the whole path at once; a tab's own route is the root, so it clears the stack.
   func open(_ route: Route) {
     hasOpened = true
     paths[route.tab] = route == route.tab.route ? [] : route.parents + [route]
@@ -39,7 +35,7 @@ final class UseSmileIDSampleRouter: ObservableObject {
     selectedTab = tab
   }
 
-  /// True while the stack is deeper than `depth`; setting it false pops back to exactly that depth.
+  /// Setting it false pops back to exactly `depth`.
   func isActive(_ tab: UseSmileIDSampleTab, depth: Int) -> Binding<Bool> {
     Binding(
       get: { [weak self] in (self?.path(tab).count ?? 0) > depth },
@@ -59,7 +55,7 @@ final class UseSmileIDSampleRouter: ObservableObject {
   }
 }
 
-/// What `@SceneStorage` persists: the selected tab and every stack, as one decodable value.
+/// What `@SceneStorage` persists, as one decodable value.
 struct UseSmileIDSampleNavigationState: Codable {
   var selectedTab: UseSmileIDSampleTab
   var paths: [UseSmileIDSampleTab: [Route]]
@@ -70,8 +66,7 @@ extension UseSmileIDSampleRouter {
     UseSmileIDSampleNavigationState(selectedTab: selectedTab, paths: paths)
   }
 
-  /// A decode that cannot throw its way into a blank window: unreadable state restores the default.
-  /// Skipped once a link has opened something, because on a cold start the link may arrive first.
+  /// Unreadable state restores the default rather than throwing into a blank window.
   func restore(from encoded: String) {
     guard !hasOpened else { return }
     hasOpened = true
@@ -79,8 +74,7 @@ extension UseSmileIDSampleRouter {
           let state = try? JSONDecoder().decode(UseSmileIDSampleNavigationState.self, from: data)
     else { return }
     selectedTab = state.selectedTab
-    // Decodable is not the same as current: a stack persisted by an older route table could seat a
-    // route under a tab that no longer owns it, so a mismatched stack is dropped rather than drawn.
+    // Decodable is not current: an older route table could seat a route under the wrong tab.
     paths = state.paths.filter { tab, routes in routes.allSatisfy { $0.tab == tab } }
   }
 

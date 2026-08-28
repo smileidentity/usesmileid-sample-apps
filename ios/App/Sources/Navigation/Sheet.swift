@@ -1,6 +1,4 @@
-/// A sheet is a LAYER over the screen that owns it, never a destination that replaces it — R12 in
-/// `docs/plan/navigation-plan.md`. SwiftUI gets this right by construction: `.sheet` presents over
-/// the presenter, so the screen underneath stays alive and drawn.
+/// A sheet layers over the screen that owns it, never replaces it — SwiftUI does this by construction.
 enum Sheet: String, Identifiable, Hashable {
   case profileSwitch
   case newProfile
