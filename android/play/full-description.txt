@@ -4,7 +4,7 @@ Verification runs use the Smile ID sandbox unless a linked session token specifi
 
 PRODUCTS
 
-SmartSelfie™ Registration enrolls an individual's biometrics by capturing a selfie and a set of liveness images. Smile ID confirms the images are of a live person and creates an enrolled reference image for the user, which SmartSelfie™ Authentication later verifies against. It is suitable for onboarding new users and establishing a biometric profile.
+SmartSelfie™ Enrollment captures a selfie and a set of liveness images to enroll an individual's biometrics. Smile ID confirms the images are of a live person and creates an enrolled reference image for the user, which SmartSelfie™ Authentication later verifies against. It is suitable for onboarding new users and establishing a biometric profile.
 
 SmartSelfie™ Authentication verifies a returning user's identity by comparing a newly captured selfie against the image enrolled for that user. It is suitable for re-verifying returning users: confirming identity at login, authorizing high-value transactions, account recovery, and step-up authentication.
 

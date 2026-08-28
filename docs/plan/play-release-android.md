@@ -336,7 +336,15 @@ change has a known blast radius:
 | Enhanced KYC | `onboarding-without-biometrics/enhanced-kyc.md` |
 
 Limits are counted, not estimated: title 30, short description 80, full description 4000, release notes
-500.
+500. They are now asserted by `UseSmileIDSamplePlayListingTest` rather than counted once, because Play
+truncates silently instead of rejecting.
+
+**One exception to "follow `docs-v3`", ruled by the owner 2026-08-28.** The two sources name the first
+product differently: `docs-v3` calls it SmartSelfie™ Registration, the app's own product list calls it
+SmartSelfie™ Enrollment. The listing takes **Enrollment**, so the store copy and the store screenshots
+agree with each other — a partner reading the listing next to the app should not see two names for one
+product. The trademark still renders as `docs-v3` writes it. Everything else in the copy follows
+`docs-v3` unchanged.
 
 **Release notes are v11's other defect, and this is where it stops.** v11 generates "What's new" with
 `git log --pretty=format:'- [%ad] %s' --date=short -n 5`, which is why the live listing shows
