@@ -79,7 +79,9 @@ extension UseSmileIDSampleRouter {
           let state = try? JSONDecoder().decode(UseSmileIDSampleNavigationState.self, from: data)
     else { return }
     selectedTab = state.selectedTab
-    paths = state.paths
+    // Decodable is not the same as current: a stack persisted by an older route table could seat a
+    // route under a tab that no longer owns it, so a mismatched stack is dropped rather than drawn.
+    paths = state.paths.filter { tab, routes in routes.allSatisfy { $0.tab == tab } }
   }
 
   func encodedState() -> String {

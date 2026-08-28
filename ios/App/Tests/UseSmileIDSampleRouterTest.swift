@@ -106,6 +106,37 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
     XCTAssertTrue(router.paths.isEmpty)
   }
 
+  /// `URL.path` already percent-decodes, so an argument is decoded exactly once. Decoding it again
+  /// would corrupt an id whose own value contains a percent escape.
+  func testAPercentEncodedArgumentIsDecodedExactlyOnce() throws {
+    XCTAssertEqual(try jobId(fromLink: "usesmileid-sample-ios://verifications/job%20123"), "job 123")
+    XCTAssertEqual(try jobId(fromLink: "usesmileid-sample-ios://verifications/job%2520123"), "job%20123")
+  }
+
+  private func jobId(fromLink link: String) throws -> String {
+    let url = try XCTUnwrap(URL(string: link))
+    guard case .route(let route) = UseSmileIDSampleLinks.resolve(url),
+          case .verificationDetails(let jobId) = route
+    else {
+      XCTFail("\(link) did not resolve to a verification detail")
+      return ""
+    }
+    return jobId
+  }
+
+  /// A stack persisted against an older route table must not seat a route in the wrong tab.
+  func testRestoreDropsAStackWhoseRoutesDoNotBelongToItsTab() throws {
+    let router = UseSmileIDSampleRouter()
+    let stale = UseSmileIDSampleNavigationState(
+      selectedTab: .verifications,
+      paths: [.verifications: [.licenses], .settings: [.profiles]]
+    )
+    let encoded = try String(decoding: JSONEncoder().encode(stale), as: UTF8.self)
+    router.restore(from: encoded)
+    XCTAssertEqual(router.path(.verifications), [], "a settings route must not sit in the verifications stack")
+    XCTAssertEqual(router.path(.settings), [.profiles], "a valid stack survives")
+  }
+
   func testAnUnknownLinkResolvesToNothingRatherThanADefaultScreen() throws {
     XCTAssertNil(try UseSmileIDSampleLinks.resolve(XCTUnwrap(URL(string: "usesmileid-sample-ios://nope"))))
     XCTAssertNil(try UseSmileIDSampleLinks.resolve(XCTUnwrap(URL(string: "usesmileid-sample-android://products"))))
