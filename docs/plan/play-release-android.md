@@ -586,6 +586,11 @@ None of these blocks anything, and none of them belongs to Android's critical pa
   pointed at `usesmileid.com/privacy-policy`, which returns 200 but redirects to `smile.id/` — the
   homepage, not the policy. Every reference now uses `smile.id/privacy-policy`, the one that actually
   serves the page, which is also what the listing declares.
+- **The Flutter and Expo id rename is deferred, ruled 2026-08-28.** Both development samples still hold
+  ids this repository's apps are specified to take, but neither app exists yet, so no SDK repo is
+  touched for it now. The rename travels with the sample-ui port to the four SDKs — that is when those
+  apps get built and when the collision first becomes real. `spec/app-identity.json` carries the target
+  ids so the work is a lookup rather than a re-decision.
 - **REL-A14 stays a calendar item.** `targetSdk` is re-checked against Play's floor annually;
   `docs/play-data-safety.md` holds the date it was last done.
 - **Production promotion is a Console action**, and production is reviewed again on promotion.

@@ -44,9 +44,9 @@
     "npmPackage": "@smileid/sample-ui"
   },
   "reserved": {
-    "comment": "Held by the development samples inside the SDK repos. The first two are BEING VACATED: this repository's Flutter and Expo apps are specified to take them, and the sibling repos have branches that move their development samples to a com.usesmileid.devsample.* root. A distinct root rather than a nested suffix, because on iOS a bundle id nested under another app's id is the app-extension convention. Do not claim, reuse, or nest under the rest.",
-    "com.usesmileid.sample.flutter": "BEING VACATED — the flutter SDK repo's development sample is moving to com.usesmileid.devsample.flutter on branch chore/vacate-the-sample-flutter-id. Until that lands, the two cannot be installed side by side",
-    "com.usesmileid.sample.expo": "BEING VACATED — the react-native-expo SDK repo's Expo development sample is moving to com.usesmileid.devsample.expo on branch chore/vacate-the-sample-expo-id. Until that lands, the two cannot be installed side by side",
+    "comment": "Held by the development samples inside the SDK repos. The first two are CONTESTED: this repository's Flutter and Expo apps are specified to take them. OWNER RULING 2026-08-28: the rename is DEFERRED and no SDK repo is touched for it now — it lands as part of porting sample-ui to the four SDKs, which is when those apps get built and when the collision would first be real. Both move to a com.usesmileid.devsample.* root: a distinct root rather than a nested suffix, because on iOS a bundle id nested under another app's id is the app-extension convention. Do not claim, reuse, or nest under the rest.",
+    "com.usesmileid.sample.flutter": "CONTESTED, rename DEFERRED — flutter SDK repo sample, both platforms; referenced by its E2E workflow. It moves to com.usesmileid.devsample.flutter when this repo's Flutter app is built, not before",
+    "com.usesmileid.sample.expo": "CONTESTED, rename DEFERRED — react-native-expo SDK repo Expo sample, both platforms. It moves to com.usesmileid.devsample.expo when this repo's Expo app is built, not before",
     "com.usesmileid.sample": "android SDK repo sample (+.debug) and iOS SDK repo sample; referenced by both repos' E2E workflows. Not contested — this repository's apps sit one level below it",
     "com.usesmileid.sample.react": "react-native-expo SDK repo bare-RN sample (iOS side reads com.usesmileid.sample.rn). Not contested",
     "usesmileid-sample": "URL scheme claimed by the Expo development sample"
