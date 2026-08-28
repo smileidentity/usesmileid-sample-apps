@@ -11,7 +11,10 @@ change in its output.
 
 from __future__ import annotations
 
+import io
+import json
 import os
+import re
 import sys
 import unittest
 
@@ -351,6 +354,116 @@ class TestProductHues(unittest.TestCase):
     def test_annotations_are_not_emitted_as_colours(self):
         out = gen.emit_kotlin_product_hues({"enhancedKyc": gen.read_product_hues()["enhancedKyc"]})
         self.assertNotIn("origin", out)
+
+
+class TestSwiftTypography(unittest.TestCase):
+    def style(self, **overrides):
+        base = {
+            "fontFamily": ["DM Sans", "sans-serif"],
+            "fontWeight": 700,
+            "fontSize": "16px",
+            "lineHeight": "24px",
+            "letterSpacing": "0px",
+        }
+        base.update(overrides)
+        return {"text-style": {"title": base}}
+
+    def test_line_height_stays_absolute(self):
+        # As Compose keeps it; `lineSpacing` subtracts the size at the use site, not here.
+        out = gen.emit_swift_type(self.style())
+        self.assertIn("size: 16,", out)
+        self.assertIn("lineHeight: 24,", out)
+        self.assertIn("weight: 700,", out)
+
+    def test_unitless_line_height_is_multiplied_out(self):
+        self.assertIn("lineHeight: 22.4,", gen.emit_swift_type(self.style(lineHeight=1.4)))
+
+    def test_negative_tracking_needs_no_parentheses(self):
+        # Unlike the Compose emitter, where `-0.4.sp` does not parse.
+        self.assertIn("tracking: -0.4", gen.emit_swift_type(self.style(letterSpacing="-0.4px")))
+
+    def test_family_is_chosen_per_token_not_hardcoded(self):
+        self.assertIn("family: body,", gen.emit_swift_type(self.style()))
+        self.assertIn("family: display,", gen.emit_swift_type(self.style(fontFamily=["Epilogue", "DM Sans"])))
+
+    def test_names_match_the_other_emitters(self):
+        tokens = {"text-style": {"display-lg": self.style()["text-style"]["title"]}}
+        self.assertIn("public var textStyleDisplayLg: SmileTextStyle {", gen.emit_swift_type(tokens))
+        self.assertIn("val textStyleDisplayLg = TextStyle(", gen.emit_kotlin_type(tokens))
+
+    def test_the_ramp_has_the_same_membership_as_the_compose_one(self):
+        # The two files are the same stopgap; a style in one and not the other is the bug to catch.
+        ds = gen.find_design_system(None)
+        with io.open(os.path.join(ds, "dist", "json", "tokens.flat.json"), encoding="utf-8") as handle:
+            light = json.load(handle)["light"]
+        names = {gen.camel(path) for path, value in gen.walk(light) if gen.is_type_leaf(value)}
+        swift = set(re.findall(r"public var ([A-Za-z0-9]+): SmileTextStyle", gen.emit_swift_type(light)))
+        kotlin = set(re.findall(r"val ([A-Za-z0-9]+) = TextStyle\(", gen.emit_kotlin_type(light)))
+        self.assertEqual(swift, names)
+        self.assertEqual(swift, kotlin)
+
+
+class TestSwiftStopgaps(unittest.TestCase):
+    HUE = {
+        "from": "#05723A", "to": "#0A9B4C", "cardIcon": "#05723A", "icon": "#05723A", "tile": "#E4F2EA",
+        "stopStart": 0.13, "stopEnd": 0.87, "fromAlpha": 1.0, "toAlpha": 1.0,
+    }
+
+    def test_hex_becomes_the_vendored_color_initialiser(self):
+        # `Color(hex:)` is declared in the vendored SmileTokens.swift, so nothing else has to exist.
+        self.assertEqual(gen.swift_color("#e08600"), "Color(hex: 0xE08600)")
+
+    def test_a_non_hex_value_is_rejected_rather_than_emitted(self):
+        with self.assertRaises(gen.TokenError):
+            gen.swift_color("rgba(5, 114, 58, 0.24)")
+
+    def test_every_product_emits_all_five_roles(self):
+        out = gen.emit_swift_product_hues({"smartSelfieEnrollment": self.HUE})
+        self.assertIn('"smartSelfieEnrollment": SmileProductHue(', out)
+        for role in ("from", "to", "cardIcon", "icon", "tile"):
+            self.assertIn(f"{role}: Color(hex: 0x", out)
+
+    def test_a_hue_missing_a_role_fails_loudly(self):
+        with self.assertRaises(gen.TokenError):
+            gen.emit_swift_product_hues({"biometricKyc": {"from": "#151F72", "to": "#2B3A9E"}})
+
+    def test_soft_badge_fills_emit_every_feedback_role(self):
+        out = gen.emit_swift_soft_badge_fills(gen.read_soft_badge_fills())
+        for role in ("success", "info", "warning", "error"):
+            self.assertIn(f'"{role}": SmileSoftBadgeFill(', out)
+
+    def test_the_pairs_are_emitted_for_both_schemes(self):
+        # Each of these shipped light-only once and produced a dark-mode defect.
+        self.assertIn("smileOffBlackDark", gen.emit_swift_off_black(gen.read_off_black()))
+        self.assertIn("smileNavBarDark", gen.emit_swift_nav_bar_fill(gen.read_nav_bar_fill()))
+        self.assertIn("smileCardStrokeDark", gen.emit_swift_card_stroke(gen.read_card_stroke()))
+
+    def test_a_pair_missing_its_dark_half_fails_loudly(self):
+        with self.assertRaises(gen.TokenError):
+            gen.emit_swift_off_black({"light": "#2D2B2A"})
+
+    def test_profile_hues_keep_the_designs_order(self):
+        out = gen.emit_swift_profile_hues(gen.read_profile_hues())
+        self.assertIn("public let smileProfileHues: [Color] = [", out)
+        self.assertEqual(out.count("Color(hex: 0x"), len(gen.read_profile_hues()))
+
+    def test_both_platforms_generate_from_one_spec_entry(self):
+        # The values, not the syntax: a divergence here means two apps disagree about a colour.
+        # Compose bakes an opaque alpha into the literal, SwiftUI applies it at the use site.
+        def swift(text):
+            return set(re.findall(r"Color\(hex: 0x([0-9A-F]{6})\)", text))
+
+        def kotlin(text):
+            return set(re.findall(r"Color\(0xFF([0-9A-F]{6})\)", text))
+
+        self.assertEqual(
+            swift(gen.emit_swift_product_hues(gen.read_product_hues())),
+            kotlin(gen.emit_kotlin_product_hues(gen.read_product_hues())),
+        )
+        self.assertEqual(
+            swift(gen.emit_swift_soft_badge_fills(gen.read_soft_badge_fills())),
+            kotlin(gen.emit_kotlin_soft_badge_fills(gen.read_soft_badge_fills())),
+        )
 
 
 if __name__ == "__main__":

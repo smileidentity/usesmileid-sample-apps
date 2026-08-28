@@ -25,6 +25,12 @@ the upstream emitter writes all 29 styles as comments. That is an emitter gap ra
 platform limit — see spec/design-tokens.json -> deltas -> composeTypeStylesAreComments — so this
 is a stopgap until upstream emits them. Compose also omits shadows, which Dart emits directly.
 
+SwiftUI needs the same two stopgaps and is a step worse: its upstream output omits the type ramp
+entirely, not even as comments. Both platforms also need the values the design system carries no
+role for (product and profile hues, soft badge fills, the light/dark pairs), which come from
+spec/design-tokens.json -> deltas rather than upstream, and are emitted from the same entries so
+the two cannot disagree.
+
 Every token leaf must classify into a known kind. An unrecognised value FAILS the run
 rather than being skipped, because silent skipping is how this generator first diverged
 from the Compose output: rgba() colours vanished and nothing complained.
@@ -67,19 +73,27 @@ ANDROID_UI = "android/sample-ui"
 KOTLIN_TYPE_OUT = f"{ANDROID_UI}/src/main/kotlin/com/usesmileid/sampleapps/ui/tokens/SmileTypeStyles.kt"
 KOTLIN_HUES_OUT = f"{ANDROID_UI}/src/main/kotlin/com/usesmileid/sampleapps/ui/tokens/SmileProductHues.kt"
 
+IOS_UI = "ios/SampleUI"
+IOS_TOKENS = f"{IOS_UI}/Sources/SampleUI/Tokens"
+SWIFT_TYPE_OUT = f"{IOS_TOKENS}/SmileTypeStyles.swift"
+SWIFT_HUES_OUT = f"{IOS_TOKENS}/SmileProductHues.swift"
+
 # Product hues come from spec/, not the design system: they are bound to no variable upstream.
 SPEC_TOKENS = "spec/design-tokens.json"
 
 # The five DM Sans weights the ramp uses (400–800). Android resource names must be lowercase.
+FACES = ["Regular", "Medium", "SemiBold", "Bold", "ExtraBold"]
+
 FONT_COPIES = [
-    (f"assets/fonts/DMSans-{upstream}.ttf", f"{ANDROID_UI}/src/main/res/font/dm_sans_{local}.ttf")
-    for upstream, local in [
-        ("Regular", "regular"),
-        ("Medium", "medium"),
-        ("SemiBold", "semibold"),
-        ("Bold", "bold"),
-        ("ExtraBold", "extrabold"),
-    ]
+    (f"assets/fonts/DMSans-{face}.ttf", f"{ANDROID_UI}/src/main/res/font/dm_sans_{face.lower()}.ttf")
+    for face in FACES
+]
+
+# iOS keeps the upstream file names: a custom face is addressed by its PostScript name, and
+# DMSans-SemiBold's family is "DM Sans SemiBold", so weight selection cannot reach it.
+IOS_FONT_COPIES = [
+    (f"assets/fonts/DMSans-{face}.ttf", f"{IOS_UI}/Sources/SampleUI/Resources/Fonts/DMSans-{face}.ttf")
+    for face in FACES
 ]
 
 # (upstream file, destination, the app directory that must exist for the copy to apply)
@@ -145,6 +159,72 @@ package com.smileid.designsystem
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+"""
+
+SWIFT_HEADER = """// Smile ID Design System — GENERATED. Do not edit by hand.
+//
+// Regenerate with: scripts/sync_design_tokens.py --all
+//
+// A stopgap: the upstream SwiftUI emitter omits the type ramp entirely — not even the comments the
+// Compose emitter leaves. Names mirror the Dart and Compose emitters' SmileType so the platforms
+// stay diffable. Delete this file once upstream emits the styles.
+//
+// This is DATA, not a Font: a custom face is addressed by PostScript name, which the weight number
+// resolves to in the app's typography layer.
+
+import CoreGraphics
+
+/// One style from the token source's ramp.
+public struct SmileTextStyle: Equatable, Sendable {
+    /// The token's own family name, resolved to a bundled face by the app's typography layer.
+    public let family: String
+    /// The DTCG numeric weight (400–800), not a `Font.Weight`.
+    public let weight: Int
+    public let size: CGFloat
+    public let lineHeight: CGFloat
+    public let tracking: CGFloat
+
+    public init(family: String, weight: Int, size: CGFloat, lineHeight: CGFloat, tracking: CGFloat) {
+        self.family = family
+        self.weight = weight
+        self.size = size
+        self.lineHeight = lineHeight
+        self.tracking = tracking
+    }
+
+    /// SwiftUI's `lineSpacing` is the gap BETWEEN lines, where the token carries the total height.
+    public var lineSpacing: CGFloat { max(0, lineHeight - size) }
+}
+"""
+
+SWIFT_HUES_HEADER = """// Smile ID product hues — GENERATED. Do not edit by hand.
+// Regenerate with: scripts/sync_design_tokens.py --all
+//
+// A stopgap: the source is spec/design-tokens.json → deltas, not the design system. Everything the
+// design system carries no role for lives here; delete each value once upstream carries its role.
+// The Compose twin is SmileProductHues.kt and the two are generated from the same entries.
+
+import SwiftUI
+
+/// One product's colouring. `cardIcon` tints the card's glyph; `icon` and `tile` are the list row's pair.
+public struct SmileProductHue: Equatable, Sendable {
+    public let from: Color
+    public let to: Color
+    public let cardIcon: Color
+    public let icon: Color
+    public let tile: Color
+    /// Stop positions as fractions. `stopEnd` may exceed 1: the design runs it past the card's edge.
+    public let stopStart: CGFloat
+    public let stopEnd: CGFloat
+    public let fromAlpha: CGFloat
+    public let toAlpha: CGFloat
+}
+
+/// One status pill's soft fill: a pale background with text that clears contrast on it.
+public struct SmileSoftBadgeFill: Equatable, Sendable {
+    public let background: Color
+    public let text: Color
+}
 """
 
 RGBA = re.compile(r"rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:,\s*([\d.]+)\s*)?\)")
@@ -738,6 +818,293 @@ def emit_kotlin_profile_hues(hues) -> str:
     return "\n".join(lines)
 
 
+def swift_color(value: str) -> str:
+    """`#RRGGBB` to the vendored `Color(hex:)`. Alpha is applied at the use site, never baked in."""
+    text = value.strip().lstrip("#")
+    if len(text) != 6 or not all(c in "0123456789abcdefABCDEF" for c in text):
+        raise TokenError(f"product hue {value!r} is not a #RRGGBB colour")
+    return f"Color(hex: 0x{text.upper()})"
+
+
+def emit_swift_type(tokens: dict) -> str:
+    """SwiftUI wants the ABSOLUTE line height, as Compose does; `lineSpacing` derives from it."""
+    lines = [
+        "/// The token source's type ramp, bound to the font families the app supplies.",
+        "public struct SmileTypeStyles: Sendable {",
+        "    private let display: String",
+        "    private let body: String",
+        "",
+        "    public init(display: String, body: String) {",
+        "        self.display = display",
+        "        self.body = body",
+        "    }",
+    ]
+    for path, value in walk(tokens):
+        if not is_type_leaf(value):
+            continue
+        family = value.get("fontFamily") or []
+        primary = family[0] if isinstance(family, list) and family else str(family or "DM Sans")
+        slot = "body" if primary.strip().lower() == "dm sans" else "display"
+        size = float(number(value["fontSize"]))
+        raw_line_height = value.get("lineHeight", value["fontSize"])
+        if is_unitless(raw_line_height):
+            line_height = float(number(raw_line_height)) * size
+        else:
+            line_height = float(number(raw_line_height))
+        tracking = float(number(value.get("letterSpacing", 0)))
+        lines += [
+            "",
+            f"    public var {camel(path)}: SmileTextStyle {{",
+            "        SmileTextStyle(",
+            f"            family: {slot},",
+            f"            weight: {int(float(value['fontWeight']))},",
+            f"            size: {size:g},",
+            f"            lineHeight: {line_height:g},",
+            f"            tracking: {tracking:g}",
+            "        )",
+            "    }",
+        ]
+    lines.append("}")
+    return "\n".join(lines)
+
+
+def emit_swift_product_hues(hues: dict) -> str:
+    """One entry per product, keyed by the same id `spec/` uses everywhere else."""
+    if not hues:
+        raise TokenError("spec/design-tokens.json carries no productHues.hues entries")
+    lines = [
+        "/// Keyed by the product id in spec/scenarios.json. A product absent here has no hue yet.",
+        "public let smileProductHues: [String: SmileProductHue] = [",
+    ]
+    for product, hue in hues.items():
+        missing = {"from", "to", "cardIcon", "icon", "tile"} - set(hue)
+        if missing:
+            raise TokenError(f"product hue {product!r} is missing {sorted(missing)}")
+        lines += [
+            f'    "{product}": SmileProductHue(',
+            f"        from: {swift_color(hue['from'])},",
+            f"        to: {swift_color(hue['to'])},",
+            f"        cardIcon: {swift_color(hue['cardIcon'])},",
+            f"        icon: {swift_color(hue['icon'])},",
+            f"        tile: {swift_color(hue['tile'])},",
+        ]
+        for index, role in enumerate(("stopStart", "stopEnd", "fromAlpha", "toAlpha")):
+            if hue.get(role) is None:
+                raise TokenError(f"product hue {product!r} is missing {role}")
+            comma = "" if index == 3 else ","
+            lines.append(f"        {role}: {hue[role]}{comma}")
+        lines.append("    ),")
+    lines.append("]")
+    return "\n".join(lines)
+
+
+def emit_swift_soft_badge_fills(fills: dict) -> str:
+    """The soft status pills, keyed by the feedback role the four job statuses map onto."""
+    roles = ["success", "info", "warning", "error"]
+    missing = [role for role in roles if role not in fills]
+    if missing:
+        raise TokenError(f"spec/design-tokens.json softBadgeFills.fills is missing {missing}")
+    lines = [
+        "",
+        "/// Keyed by feedback role. The design system's own badge.* pairs are saturated, a different treatment.",
+        "public let smileSoftBadgeFills: [String: SmileSoftBadgeFill] = [",
+    ]
+    for role in roles:
+        pair = fills[role]
+        for key in ("background", "text"):
+            if key not in pair:
+                raise TokenError(f"soft badge fill {role!r} is missing {key!r}")
+        lines += [
+            f'    "{role}": SmileSoftBadgeFill(',
+            f"        background: {swift_color(pair['background'])},",
+            f"        text: {swift_color(pair['text'])}",
+            "    ),",
+        ]
+    lines.append("]")
+    return "\n".join(lines)
+
+
+def emit_swift_spec_color(name: str, delta_id: str, doc: str, value) -> str:
+    """A colour the design uses that the design system carries no semantic role for."""
+    if not isinstance(value, str) or not value:
+        raise TokenError(f"spec/design-tokens.json {delta_id} carries no value")
+    return "\n".join(["", f"/// {doc}", f"public let {name}: Color = {swift_color(value)}"])
+
+
+def emit_swift_border_strong(value) -> str:
+    return emit_swift_spec_color(
+        "smileBorderStrong",
+        "borderStrong",
+        "The design's `color/border-strong`, for a control ring that `color.border` is too pale to draw.",
+        value,
+    )
+
+
+def emit_swift_surface2(value) -> str:
+    return emit_swift_spec_color(
+        "smileSurface2",
+        "surface2",
+        "The design's `color/surface-2`, a cool grey subtle fill — `color.surface-alt` is a warm cream.",
+        value,
+    )
+
+
+def emit_swift_off_black(values) -> str:
+    """A pair, not a single value: every role it paints is drawn in both schemes."""
+    missing = [mode for mode in ("light", "dark") if not values.get(mode)]
+    if missing:
+        raise TokenError(f"spec/design-tokens.json offBlack is missing {missing}")
+    return "\n".join([
+        "",
+        "/// The design's `Off_black`: the warm strong foreground. Seven roles, one variable — see the `offBlack` delta.",
+        f"public let smileOffBlackLight: Color = {swift_color(values['light'])}",
+        f"public let smileOffBlackDark: Color = {swift_color(values['dark'])}",
+    ])
+
+
+def emit_swift_nav_bar_fill(values) -> str:
+    """The bar's own fill: the page's own colour leaves it invisible in dark."""
+    missing = [mode for mode in ("light", "dark") if not values.get(mode)]
+    if missing:
+        raise TokenError(f"spec/design-tokens.json navBarFill is missing {missing}")
+    return "\n".join([
+        "",
+        "/// The floating nav bar's fill — see the `navBarFill` delta.",
+        f"public let smileNavBarLight: Color = {swift_color(values['light'])}",
+        f"public let smileNavBarDark: Color = {swift_color(values['dark'])}",
+    ])
+
+
+def emit_swift_profile_hues(hues) -> str:
+    """One avatar fill per profile, cycled by list position."""
+    if not hues:
+        raise TokenError("spec/design-tokens.json profileHues carries no hues")
+    lines = [
+        "",
+        "/// Avatar fills, one per profile, taken in list order and cycled beyond the list.",
+        "public let smileProfileHues: [Color] = [",
+    ]
+    lines += ["    %s," % swift_color(h) for h in hues]
+    lines.append("]")
+    return "\n".join(lines)
+
+
+def emit_swift_token_session(delta: dict) -> str:
+    """The session card's gradient and the countdown ring, which no semantic role covers."""
+    grad = delta.get("cardGradient") or []
+    alpha = delta.get("cardGradientAlpha") or []
+    ring = delta.get("ring")
+    opacity = delta.get("ringTrackOpacity")
+    if len(grad) != 2 or len(alpha) != 2 or not ring or opacity is None:
+        raise TokenError("tokenSessionGreens needs a two-stop cardGradient with its alphas, a ring and a ringTrackOpacity")
+    return "\n".join([
+        "",
+        "/// The session card's horizontal gradient. Both stops are translucent, so the card composites against the page.",
+        "public let smileTokenSessionGradient: [Color] = [%s, %s]" % (swift_color(grad[0]), swift_color(grad[1])),
+        "public let smileTokenSessionGradientAlpha: [CGFloat] = [%s, %s]" % (alpha[0], alpha[1]),
+        "",
+        "/// The countdown ring: this colour solid for progress, and the same colour faded for the track.",
+        "public let smileTokenRing: Color = %s" % swift_color(ring),
+        "public let smileTokenRingTrackOpacity: CGFloat = %s" % opacity,
+    ])
+
+
+def emit_swift_label_type_style(delta: dict) -> str:
+    """The all-caps label size and tracking, which text-style.overline sets a point small and solid."""
+    size = delta.get("size")
+    tracking = delta.get("tracking")
+    if not size or tracking is None:
+        raise TokenError("labelTypeStyle needs a size and a tracking")
+    return "\n".join([
+        "",
+        "/// The design's Type/Label: a point larger than text-style.overline, and spaced.",
+        "public let smileLabelSize: CGFloat = %s" % size,
+        "public let smileLabelTracking: CGFloat = %s" % tracking,
+    ])
+
+
+def emit_swift_card_label_runs(delta: dict) -> str:
+    """The one property each card-label run needs that its nearest semantic style does not carry."""
+    tracking = delta.get("tracking")
+    weight = delta.get("familyWeight")
+    if tracking is None or not weight:
+        raise TokenError("cardLabelRuns needs a tracking and a familyWeight")
+    return "\n".join([
+        "",
+        "/// The card's two label runs, each one property off a token — see the `cardLabelRuns` delta.",
+        "public let smileCardTitleTracking: CGFloat = %s" % tracking,
+        "public let smileCardFamilyWeight: Int = %s" % weight,
+    ])
+
+
+def emit_swift_card_stroke(values: dict) -> str:
+    """A pair, not one value: `color.border` is the same near-white in both schemes, which is the defect."""
+    missing = [mode for mode in ("light", "dark") if not values.get(mode)]
+    if missing or values.get("width") is None:
+        raise TokenError(f"spec/design-tokens.json cardStroke is missing {missing or ['width']}")
+    return "\n".join([
+        "",
+        "/// One outline for every card and row, equally quiet in both schemes — see the `cardStroke` delta.",
+        "public let smileCardStrokeLight: Color = %s" % swift_color(values["light"]),
+        "public let smileCardStrokeDark: Color = %s" % swift_color(values["dark"]),
+        "public let smileCardStrokeWidth: CGFloat = %s" % values["width"],
+    ])
+
+
+def emit_swift_products_type(delta: dict) -> str:
+    """The frame's Type/Heading and Type/Title, which the vendored ramp does not match."""
+    keys = ("headingSize", "headingLineHeight", "headingTracking", "headingWeight",
+            "sectionSize", "sectionLineHeight", "sectionWeight")
+    missing = [k for k in keys if delta.get(k) is None]
+    if missing:
+        raise TokenError(f"productsScreenType is missing {missing}")
+    return "\n".join([
+        "",
+        "/// The products header and section headers, which text-style.* does not match — see the `productsScreenType` delta.",
+        "public let smileHeadingPageSize: CGFloat = %s" % delta["headingSize"],
+        "public let smileHeadingPageLineHeight: CGFloat = %s" % delta["headingLineHeight"],
+        "public let smileHeadingPageTracking: CGFloat = %s" % delta["headingTracking"],
+        "public let smileHeadingPageWeight: Int = %s" % delta["headingWeight"],
+        "public let smileSectionHeaderSize: CGFloat = %s" % delta["sectionSize"],
+        "public let smileSectionHeaderLineHeight: CGFloat = %s" % delta["sectionLineHeight"],
+        "public let smileSectionHeaderWeight: Int = %s" % delta["sectionWeight"],
+    ])
+
+
+def generate_swift_product_hues() -> str:
+    body = (
+        SWIFT_HUES_HEADER
+        + "\n"
+        + emit_swift_product_hues(read_product_hues())
+        + "\n"
+        + emit_swift_soft_badge_fills(read_soft_badge_fills())
+        + "\n"
+        + emit_swift_border_strong(read_border_strong())
+        + "\n"
+        + emit_swift_surface2(read_surface2())
+        + "\n"
+        + emit_swift_off_black(read_off_black())
+        + emit_swift_nav_bar_fill(read_nav_bar_fill())
+        + "\n"
+        + emit_swift_profile_hues(read_profile_hues())
+        + "\n"
+        + emit_swift_token_session(read_token_session())
+        + emit_swift_label_type_style(read_label_type_style())
+        + emit_swift_card_label_runs(read_card_label_runs())
+        + emit_swift_card_stroke(read_card_stroke())
+        + emit_swift_products_type(read_products_type())
+        + "\n"
+    )
+    return swift_formatted(body)
+
+
+def generate_swift_type(ds: str) -> str:
+    tokens_path = os.path.join(ds, "dist", "json", "tokens.flat.json")
+    with io.open(tokens_path, encoding="utf-8") as handle:
+        data = json.load(handle)
+    return swift_formatted(SWIFT_HEADER + "\n" + emit_swift_type(data["light"]) + "\n")
+
+
 def generate_kotlin_product_hues() -> str:
     return (
         KOTLIN_HUES_HEADER
@@ -791,9 +1158,9 @@ def write_binary(rel_path: str, payload: bytes, check: bool) -> bool:
     return True
 
 
-def copy_fonts(ds: str, check: bool) -> bool:
+def copy_fonts(ds: str, check: bool, copies=FONT_COPIES) -> bool:
     ok = True
-    for source, dest in FONT_COPIES:
+    for source, dest in copies:
         source_path = os.path.join(ds, source)
         if not os.path.isfile(source_path):
             print(f"  MISSING    {source} (the design system does not ship this face)")
@@ -825,6 +1192,35 @@ def dart_formatted(content: str) -> str:
             raise TokenError(
                 "dart format rejected the generated source, which means the emitters "
                 "produced invalid Dart:\n" + (result.stderr or result.stdout).strip()[:800]
+            )
+        with io.open(path, encoding="utf-8") as handle:
+            return handle.read()
+
+
+def swift_formatted(content: str) -> str:
+    """Run swiftformat over the generated source when it is installed.
+
+    The same reason the Dart output is formatted: `ios/verify.sh` lints this tree, so without
+    this the generator and the formatter disagree and `--check` passes or fails depending on
+    which ran last.
+    """
+    if not shutil.which("swiftformat"):
+        return content
+    config = os.path.join(REPO, "ios", ".swiftformat")
+    with tempfile.TemporaryDirectory() as tmp:
+        path = os.path.join(tmp, "Generated.swift")
+        with io.open(path, "w", encoding="utf-8") as handle:
+            handle.write(content)
+        result = subprocess.run(
+            ["swiftformat", "--config", config, "--quiet", path],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            raise TokenError(
+                "swiftformat rejected the generated source, which means the emitters "
+                "produced invalid Swift:\n" + (result.stderr or result.stdout).strip()[:800]
             )
         with io.open(path, encoding="utf-8") as handle:
             return handle.read()
@@ -969,6 +1365,13 @@ def main(argv=None) -> int:
             ok = copy_fonts(ds, args.check) and ok
         else:
             print(f"  skipped    {KOTLIN_TYPE_OUT} ({ANDROID_UI} does not exist yet)")
+
+        if os.path.isdir(os.path.join(REPO, IOS_UI)):
+            ok = write(SWIFT_TYPE_OUT, generate_swift_type(ds), args.check) and ok
+            ok = write(SWIFT_HUES_OUT, generate_swift_product_hues(), args.check) and ok
+            ok = copy_fonts(ds, args.check, IOS_FONT_COPIES) and ok
+        else:
+            print(f"  skipped    {SWIFT_TYPE_OUT} ({IOS_UI} does not exist yet)")
 
     if not ok:
         message = (
