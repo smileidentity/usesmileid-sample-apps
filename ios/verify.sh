@@ -24,6 +24,11 @@ else
   python3 "$REPO_ROOT/scripts/sync_design_tokens.py" "${TOKEN_ARGS[@]}"
 fi
 
+echo "==> icons are current"
+# Generated from design/icons/, which lives in this repo rather than the design system, so this
+# needs no secret and always runs.
+python3 "$REPO_ROOT/scripts/generate_ios_icons.py" --check
+
 echo "==> format"
 swiftformat --lint .
 
