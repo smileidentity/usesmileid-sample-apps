@@ -1,9 +1,10 @@
 # UI work plan — Android first, then three ports
 
-**Status:** Android U0–U3 is built and in review. The iOS port has started: **U0 and U1 are
-complete** — the type ramp, the stopgap values and the DM Sans faces are generated for SwiftUI too,
-`ios/verify.sh` has a golden step, and the eight primitives are built with their goldens in light and
-dark. U2–U4 follow. Flutter and Expo have not started. The design is
+**Status:** Android U0–U3 is built and in review. The iOS port has started: **U0, U1 and the first
+half of U2 are complete** — the type ramp, the stopgap values and the DM Sans faces are generated for
+SwiftUI, the design's marks are generated as SwiftUI shapes, `ios/verify.sh` has a golden step, and
+the eight primitives plus the section-and-row composites are built with their goldens in light and
+dark. The rest of U2 and U3–U4 follow. Flutter and Expo have not started. The design is
 captured in `spec/screens.json` (14 screens, 38 states, every one linked to its design node), the
 component inventory in `spec/components.json` (34 components, 13 documented sub-parts), and the token
 contract in `spec/design-tokens.json`.
@@ -168,6 +169,11 @@ rather than rediscover:
   records and verifies on the iPhone 17 Pro that `ios/verify.sh` and `.github/workflows/ios.yml` both
   pin, matching the SDK repo's own snapshot gate. Recording locally and verifying on a different
   runner reds the lane for reasons that have nothing to do with the UI.
+- **A UIKit-backed control does not fully render into a baseline.** `Toggle` is a `UISwitch`, whose
+  thumb is drawn by a layer the offscreen render path skips, and the strategy that would capture it
+  needs a host application an SPM test target does not have. The switch baseline still catches a
+  tint or state regression; the thumb is the device pass's job. Expect the same for any other
+  platform control a port wraps rather than draws.
 - **The no-clipping predicate is weaker on iOS, deliberately.** Compose exposes `didExceedMaxLines`
   through the semantics tree, so Android fails the build on truncated text. SwiftUI publishes no
   truncation flag a unit test can read, so iOS asserts that nothing lays out past the viewport at the

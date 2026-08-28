@@ -40,6 +40,8 @@ final class UseSmileIDSamplePrimitivesGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("section_label") { SectionLabels() }
   }
 
+  /// No thumb in this baseline: UISwitch draws it in a layer the offscreen path skips, and the
+  /// strategy that captures it needs a host app. The tracks still catch a tint regression.
   func testSwitchStates() {
     goldens("switch_states") { SwitchStates() }
   }
