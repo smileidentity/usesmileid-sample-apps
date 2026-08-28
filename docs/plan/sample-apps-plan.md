@@ -67,7 +67,7 @@ SDK dependency for its local one:
 | Platform | `sample-ui` form | Substitution in the SDK repo |
 |---|---|---|
 | Android | Gradle library module | include by `projectDir` + `dependencySubstitution` mapping `com.usesmileid:*` to local projects; `sample-ui` applies plugins unversioned so each host supplies AGP/KGP |
-| iOS | `SampleUI` Swift package depending on the `ios-spm` package | local path reference; the SDK dependency flips by environment because the local package identity differs from the published one — **spike this first, it is the only unknown in the wiring** |
+| iOS | `SampleUI` Swift package depending on the `ios-spm` package | a local package directory *named* `ios-spm` in the SDK repo's workspace, which Xcode resolves in preference to the remote package of that identity; `SampleUI`'s manifest is untouched (§9.1) |
 | Flutter | `sample_ui` pub package, path-only | path dependency + `dependency_overrides` (overrides belong to the SDK-repo shell, never to this repo) |
 | Expo | pure-TS `sample-ui`, SDK as `peerDependencies` | add the submodule path to the workspace; peers resolve to the in-repo packages, so no substitution machinery is needed |
 
@@ -186,7 +186,8 @@ is quota-limited upstream, which is why it is release-plus-weekly rather than pe
 | Android SDK flow handoff (N2) | done — both presentations, the §7.3 entry gate, exactly-once results on the card |
 | Android token session, environment-from-token, Settings, visual refresh | done |
 | `appLocale` and `holdCamera` consumers | done — `holdCamera` with the token session, `appLocale` on 2026-08-28 as a composition-level override, so the SDK's own localized text answers to it without touching device settings |
-| iOS, then Flutter and Expo | **next** — iOS first: SwiftUI is the nearest idiom to Compose so it validates the translation table most cheaply, it is the parity sibling, it is the only port carrying a structural unknown (§9.1) and better to hit that now than after two ports assume it away, and under §9.2 it needs no new argument mechanism |
+| iOS walking skeleton (§9.1 spike, shell + `SampleUI`, `verify.sh`, spec validation, U0 tokens, N1) | done — registry-only against the stable tag, iOS 15 floor, per-tab stacks and deep links |
+| iOS U1 → U4, then Flutter and Expo | **in progress** — iOS first: SwiftUI is the nearest idiom to Compose so it validates the translation table most cheaply, it is the parity sibling, it is the only port carrying a structural unknown (§9.1) and better to hit that now than after two ports assume it away, and under §9.2 it needs no new argument mechanism |
 
 <!-- INTERNAL-ONLY:START reason=roadmap-dates-and-work-in-progress -->
 
@@ -317,12 +318,46 @@ symptom, and a reviewer comparing against the design would report it again.
 
 ## 9. Open decisions
 
-1. **iOS `SampleUI` dependency switching** — environment-switched package manifest versus aligning
-   the local package identity with the published one. Spike before wiring the iOS SDK repo; the
-   other three platforms have no equivalent unknown. Still open, and it is a spike rather than a
-   ruling: the published identity is package `UseSmileID` from the SPM distribution repo, while the
-   SDK's own repo has no root `Package.swift` and builds through its source layer, so the sample has
-   to resolve one package two ways. Answering it by running it beats answering it by choosing.
+1. ~~**iOS `SampleUI` dependency switching**~~ — **settled 2026-08-28 by building it: align the
+   local package identity with the published one.** No environment-switched manifest.
+
+   The answer turns on a distinction the question hid: a SwiftPM dependency's **identity** is the
+   last component of its URL, not the `name:` in its manifest. The published package declares
+   `name: "UseSmileID"` but lives at `github.com/smileidentity/ios-spm`, so its identity is
+   `ios-spm` and this repo consumes it as
+   `.product(name: "UseSmileID", package: "ios-spm")`, pinned `exact: "12.0.2"`.
+
+   That makes the switch the SDK repo's business, not this repo's. Xcode resolves a **local**
+   package in preference to a remote one of the same identity, so the SDK repo adds a package
+   directory *named* `ios-spm` — building `UseSmileID` from its source layer — to its own
+   workspace, and `SampleUI`'s manifest is never touched. It is the same shape as Android, where
+   `dependencySubstitution` also lives in the SDK repo rather than here.
+
+   Proven by A/B on a probe package rather than reasoned about. With the local package in the
+   workspace, a source-only symbol compiles; with it removed and nothing else changed, the same
+   manifest and the same code fail with `cannot find 'UseSmileIDSourceMarker' in scope`, because
+   `SampleUI` is bound to the published xcframework. `swift package edit ios-spm --path <local>`
+   is the command-line equivalent and behaves identically.
+
+   Two things that fall out of it:
+
+   - **This repo stays registry-only permanently, with nothing conditional in the manifest.** The
+     release build embeds `UseSmileID.framework`, `UseSmileIDBridge.framework`, Lottie and Sentry
+     — the published form, which is what a partner gets.
+   - **The SDK repo owes the other half.** It has no root `Package.swift` today, so it must add
+     one at a directory named `ios-spm` that builds `UseSmileID` from `SPMSourceLayer`. Until it
+     does, this UI has no source-side consumer; nothing here changes when it lands.
+
+   **The deployment target came off the same manifest: iOS 15**, and that is load-bearing rather
+   than incidental. Measured on a probe: a `SampleUI` declaring `.iOS(.v17)` cannot be consumed by
+   the SDK repo's Sample, which is iOS 15.0 — `compiling for iOS 15.0, but module 'SampleUI' has a
+   minimum deployment target of iOS 17.0`. Raising the floor here would silently delete the
+   compile-against-HEAD gate that §2 exists to provide. So `SampleUI` is iOS 15 and the port uses
+   the SDK's own documented iOS-15 exceptions — `ObservableObject` + `@Published` rather than
+   `@Observable`, `NavigationView` rather than `NavigationStack`. `navigation-plan.md` §3's typed
+   path router survives the translation intact; only the container differs. Revisit if and when
+   the floor moves.
+
 2. ~~**One cross-platform automation entry point**~~ — **settled 2026-08-27: delivery stays
    per-platform, and that is not a compromise.** (`spec/launch-args.json` changed with this ruling and has
    no app-side counterpart yet: Flutter and Expo have no apps, so the spec rule's four-app note is

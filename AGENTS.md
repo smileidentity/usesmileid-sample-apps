@@ -131,8 +131,8 @@ saying which platform is following and why.
 
 ## Commands
 
-No app exists yet. As each platform lands it must expose one script that is the definition of done
-for that platform, mirroring the per-PR CI gate:
+Android and iOS have apps; Flutter and Expo do not yet. Each platform exposes one script that is the
+definition of done for that platform, mirroring the per-PR CI gate:
 
 ```bash
 scripts/sync_design_tokens.py --all           # vendor design tokens for every platform present
@@ -148,9 +148,13 @@ expo/verify.sh        # eslint + tsc --noEmit + test + release build
 Until then, state plainly in the PR what you could and could not run. Publishing is not this
 repo's job; there is nothing here to publish.
 
-**Android runs in CI on every PR** (`.github/workflows/android.yml`); the other three platforms are
-still local-only until their apps land. The workflow runs `android/verify.sh` itself rather than
-repeating its steps, so the local contract and the gate cannot drift apart.
+**Android and iOS run in CI on every PR** (`.github/workflows/android.yml`, `ios.yml`); Flutter and
+Expo stay local-only until their apps land. Each workflow runs that platform's `verify.sh` itself
+rather than repeating its steps, so the local contract and the gate cannot drift apart.
+
+The iOS project is generated from `ios/App/project.yml` by XcodeGen, so the bundle id, URL scheme and
+deployment target stay reviewable and no `.pbxproj` is ever hand-edited; `ios/verify.sh` regenerates
+before it builds, and the generated project is not committed.
 
 Two things the token step needs. `--check` compares the vendored output against the design system,
 which lives in a **private** repo, so CI checks it out with a secret and points the script at it
