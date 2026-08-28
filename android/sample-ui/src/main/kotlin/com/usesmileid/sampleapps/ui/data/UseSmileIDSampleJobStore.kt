@@ -85,7 +85,7 @@ class UseSmileIDSampleJobStore(
 
     /**
      * The whole refresh sequence, owned by what owns the rows: read the row, take the environment
-     * and session FROM THE ROW, ask the source, write back atomically. Returns null when a refresh
+     * and partner FROM THE ROW, ask the source, write back atomically. Returns null when a refresh
      * for this job is already in flight — the second request is skipped, mirroring the screen
      * affordance it replaces.
      */
@@ -98,10 +98,11 @@ class UseSmileIDSampleJobStore(
         try {
             val row = dao.find(jobId)
                 ?: return UseSmileIDSampleStatusRefresh.Failed("The verification is no longer stored")
-            val rowSessionId = row.sessionId ?: return UseSmileIDSampleStatusRefresh.NoServerJob
+            if (row.sessionId == null) return UseSmileIDSampleStatusRefresh.NoServerJob
             val session = live?.takeUnless { it.hasExpired(nowMillis) }
                 ?: return UseSmileIDSampleStatusRefresh.NoSession
-            if (session.id != rowSessionId) return UseSmileIDSampleStatusRefresh.SessionMismatch
+            // The partner, not the session: tokens expire, so the same partner legitimately holds a newer one.
+            if (session.partnerId != row.partnerId) return UseSmileIDSampleStatusRefresh.PartnerMismatch
             val outcome = try {
                 // The row's environment, never the toggle: a row outlives the toggle that produced it.
                 source.check(jobId, session.token, sandbox = row.sandbox)

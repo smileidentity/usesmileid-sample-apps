@@ -183,6 +183,6 @@ private fun UseSmileIDSampleStatusRefresh.label(): String = when (this) {
     UseSmileIDSampleStatusRefresh.StillProcessing -> "Still processing"
     UseSmileIDSampleStatusRefresh.NoSession -> "Scan a token first"
     UseSmileIDSampleStatusRefresh.NoServerJob -> "Not submitted under a scanned token"
-    UseSmileIDSampleStatusRefresh.SessionMismatch -> "Submitted under a different token session"
+    UseSmileIDSampleStatusRefresh.PartnerMismatch -> "Submitted by a different partner"
     is UseSmileIDSampleStatusRefresh.Failed -> "Could not check status: $reason"
 }

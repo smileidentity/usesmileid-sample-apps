@@ -201,6 +201,7 @@ private fun processingJob(snapshot: FlowLaunchSnapshot, response: JobSubmissionR
     // From the snapshot, not re-read: by the time a result lands the toggle may have moved on.
     sandbox = snapshot.sandbox,
     sessionId = snapshot.liveSession?.id,
+    partnerId = snapshot.liveSession?.partnerId,
 )
 
 /** A failed run has no server-issued job id, so the landing route carries a stable non-id. */

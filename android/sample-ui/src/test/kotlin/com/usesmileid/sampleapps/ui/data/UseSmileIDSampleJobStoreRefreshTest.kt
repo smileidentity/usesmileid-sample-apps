@@ -58,14 +58,26 @@ class UseSmileIDSampleJobStoreRefreshTest {
     }
 
     @Test
-    fun `refresh with a different live session reports SessionMismatch without calling the server`() = runTest {
+    fun `refresh under a different partner reports PartnerMismatch without calling the server`() = runTest {
         val source = FakeStatusSource { _, _, _ -> updated() }
         val store = store(source)
-        store.add(job("job-1", sessionId = "old"))
+        store.add(job("job-1", sessionId = "old", partnerId = "partner-a"))
 
-        val outcome = store.refresh("job-1", session(id = "new"), NOW)
-        assertEquals(UseSmileIDSampleStatusRefresh.SessionMismatch, outcome)
+        val outcome = store.refresh("job-1", session(id = "new", partnerId = "partner-b"), NOW)
+        assertEquals(UseSmileIDSampleStatusRefresh.PartnerMismatch, outcome)
         assertTrue(source.calls.isEmpty())
+    }
+
+    /** The rule the guard exists for: tokens expire, so the same partner legitimately holds a newer session. */
+    @Test
+    fun `a new session for the same partner refreshes a row the expired one created`() = runTest {
+        val source = FakeStatusSource { _, _, _ -> updated() }
+        val store = store(source)
+        store.add(job("job-1", sessionId = "expired", partnerId = "partner-a"))
+
+        assertEquals(updated(), store.refresh("job-1", session(id = "fresh", partnerId = "partner-a"), NOW))
+        // The newer session's credential, not the one the row was submitted with.
+        assertEquals("token-fresh", source.calls.single().second)
     }
 
     @Test
@@ -181,16 +193,26 @@ class UseSmileIDSampleJobStoreRefreshTest {
 
     private fun updated() = UseSmileIDSampleStatusRefresh.Updated(UseSmileIDSampleStatus.Clear, "Approved", 200)
 
-    private fun session(id: String = "s-1", expiresAtMillis: Long = NOW + 60_000L) = UseSmileIDSampleTokenSession(
+    private fun session(
+        id: String = "s-1",
+        expiresAtMillis: Long = NOW + 60_000L,
+        partnerId: String? = PARTNER,
+    ) = UseSmileIDSampleTokenSession(
         id = id,
         token = "token-$id",
         issuedAtMillis = NOW - 60_000L,
         expiresAtMillis = expiresAtMillis,
         bindings = UseSmileIDSampleTokenBindings(),
+        partnerId = partnerId,
         environment = UseSmileIDSampleEnvironment.Sandbox,
     )
 
-    private fun job(id: String, sessionId: String?, sandbox: Boolean = true) = UseSmileIDSampleJob(
+    private fun job(
+        id: String,
+        sessionId: String?,
+        sandbox: Boolean = true,
+        partnerId: String? = PARTNER,
+    ) = UseSmileIDSampleJob(
         id = id,
         userId = "user-$id",
         product = UseSmileIDSampleProduct.SmartSelfieEnrollment,
@@ -200,10 +222,14 @@ class UseSmileIDSampleJobStoreRefreshTest {
         httpStatus = 202,
         sandbox = sandbox,
         sessionId = sessionId,
+        partnerId = partnerId,
     )
 
     private companion object {
         const val NOW = 1_784_202_612_000L
+
+        /** The rows and the live session share a partner unless a test is about them differing. */
+        const val PARTNER = "partner-a"
     }
 }
 

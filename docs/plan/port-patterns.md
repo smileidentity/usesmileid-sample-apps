@@ -108,6 +108,10 @@ than the server.
 partner and must still be able to refresh the rows an earlier session created. Matching on the
 session made every expiry silently orphan its own rows.
 
+**Built on Android 2026-08-28**, so a port mirrors what ships rather than the guard it replaced: the
+row carries `partnerId` (schema v3), the guard compares that, and the outcome is `PartnerMismatch` —
+"Submitted by a different partner".
+
 What that costs, and what every port inherits:
 
 - **The row has to store the partner.** The session carries `partnerId` from its own claim; the

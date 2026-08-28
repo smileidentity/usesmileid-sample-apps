@@ -264,7 +264,12 @@ But `UseSmileIDSampleJobStore.refresh` returns `SessionMismatch` for any row not
 mismatch for the rest — a gesture that visibly does nothing for most of the list, which is worse than
 one that is absent. The shape this needs first is a decision about whether a refresh spans sessions at
 all, and that is a token question rather than a list one. Written here so the next reader does not
-unblock it on the strength of the API call existing. When that lands:
+unblock it on the strength of the API call existing.
+
+**That token question is now answered, and this is unblocked (2026-08-28).** A refresh matches the
+row's *partner* rather than its session (`port-patterns.md` §5), so a list-wide pull refreshes every
+row the current partner submitted, including the ones an expired session created. What is left is
+list work rather than a token decision. When it is built:
 
 - The gesture belongs to the list, and the refresh belongs to whatever owns the jobs — the store, not
   the screen. The screen renders `refreshing` and calls a suspend function; it does not own a timer.

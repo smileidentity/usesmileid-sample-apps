@@ -19,9 +19,9 @@ import org.robolectric.annotation.Config
 @Config(sdk = [ROBOLECTRIC_SDK])
 class UseSmileIDSampleJobMigrationTest {
 
-    /** v1 rows written with the display strings the old schema stored. */
+    /** v1 rows written with the display strings the old schema stored, migrated the whole way to v3. */
     @Test
-    fun `migrating v1 rows turns display strings into codes`() = runTest {
+    fun `migrating v1 rows turns display strings into codes and leaves the partner unknown`() = runTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val name = "migration-test"
         context.deleteDatabase(name)
@@ -47,7 +47,10 @@ class UseSmileIDSampleJobMigrationTest {
             }
 
         val database = Room.databaseBuilder(context, UseSmileIDSampleJobDatabase::class.java, name)
-            .addMigrations(UseSmileIDSampleJobDatabase.MIGRATION_1_2)
+            .addMigrations(
+                UseSmileIDSampleJobDatabase.MIGRATION_1_2,
+                UseSmileIDSampleJobDatabase.MIGRATION_2_3,
+            )
             .build()
         try {
             val rows = database.jobs().all().first().associateBy { it.id }
@@ -57,6 +60,8 @@ class UseSmileIDSampleJobMigrationTest {
             // The rest of the row has to survive the table rebuild, not just the changed column.
             assertEquals("s-1", rows.getValue("job-1").sessionId)
             assertEquals(false, rows.getValue("job-3").sandbox)
+            // v3's column: a row written before it records no partner, so only a partnerless session matches it.
+            assertNull(rows.getValue("job-1").partnerId)
         } finally {
             database.close()
         }

@@ -42,7 +42,7 @@ interface UseSmileIDSampleJobDao {
 }
 
 /** The verification store's one database; its schema is exported and committed, so migrations are checkable. */
-@Database(entities = [UseSmileIDSampleJobEntity::class], version = 2, exportSchema = true)
+@Database(entities = [UseSmileIDSampleJobEntity::class], version = 3, exportSchema = true)
 abstract class UseSmileIDSampleJobDatabase : RoomDatabase() {
 
     abstract fun jobs(): UseSmileIDSampleJobDao
@@ -54,7 +54,7 @@ abstract class UseSmileIDSampleJobDatabase : RoomDatabase() {
                 context.applicationContext,
                 UseSmileIDSampleJobDatabase::class.java,
                 "usesmileid_sample_jobs",
-            ).addMigrations(MIGRATION_1_2).build()
+            ).addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
 
         /** v1 stored display text ("200 OK"); v2 stores the raw code. SQLite CAST reads the leading digits. */
         val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -75,6 +75,13 @@ abstract class UseSmileIDSampleJobDatabase : RoomDatabase() {
                 )
                 db.execSQL("DROP TABLE `jobs`")
                 db.execSQL("ALTER TABLE `jobs_v2` RENAME TO `jobs`")
+            }
+        }
+
+        /** v3 adds the partner a row was submitted under, which is what a later session's refresh matches on. */
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `jobs` ADD COLUMN `partnerId` TEXT")
             }
         }
     }
