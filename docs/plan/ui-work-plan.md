@@ -1,8 +1,9 @@
 # UI work plan — Android first, then three ports
 
-**Status:** Android U0–U3 is built and in review. The iOS port has started: **U0 is complete** — the
-type ramp, the stopgap values and the DM Sans faces are generated for SwiftUI too, and `ios/verify.sh`
-has a golden step. U1–U4 follow. Flutter and Expo have not started. The design is
+**Status:** Android U0–U3 is built and in review. The iOS port has started: **U0 and U1 are
+complete** — the type ramp, the stopgap values and the DM Sans faces are generated for SwiftUI too,
+`ios/verify.sh` has a golden step, and the eight primitives are built with their goldens in light and
+dark. U2–U4 follow. Flutter and Expo have not started. The design is
 captured in `spec/screens.json` (14 screens, 38 states, every one linked to its design node), the
 component inventory in `spec/components.json` (34 components, 13 documented sub-parts), and the token
 contract in `spec/design-tokens.json`.
@@ -108,6 +109,19 @@ Each one has a design-system contract to build against (except `Switch`, which h
 platform-native control styled with semantic tokens, and flag the missing contract). Build every
 state now, not later: a primitive without its disabled/error/focused state is a screen-level bug
 waiting to happen.
+
+**Three iOS divergences a later port should copy rather than re-derive** (built 2026-08-28):
+
+- **`Switch` diverges the most, as this plan predicted.** iOS lets a host set only the on-track
+  colour, so the off and disabled tracks stay the system's. The Compose twin maps those to
+  `color.border` — matching it on iOS would import the `darkBorder` defect as a bright white pill
+  rather than fix anything, so the native control is left alone.
+- **`SearchField` uses the SF Symbol.** Compose draws a magnifier by hand only because
+  `material-icons` is not on its classpath, and `design/icons/` carries no search mark to share.
+  Redrawing one on iOS would port the workaround instead of the design.
+- **Text decoration and tracking go on before the value stops being a `Text`.** `View.tracking(_:)`
+  and `View.underline(_:)` are both iOS 16; the `Text` forms are iOS 15. Both live in
+  `UseSmileIDSampleText` so no component has to know that.
 
 ### U2 — composites, cheapest first
 
