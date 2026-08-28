@@ -33,11 +33,15 @@ public enum UseSmileIDSampleFonts {
       return false
     }
     for url in urls {
-      // Already-registered is a success: the SDK ships the same faces and may have got there first.
       var error: Unmanaged<CFError>?
-      if !CTFontManagerRegisterFontsForURL(url as CFURL, .process, &error),
-         CFErrorGetCode(error?.takeUnretainedValue()) != CTFontManagerError.alreadyRegistered.rawValue {
-        return false
+      if !CTFontManagerRegisterFontsForURL(url as CFURL, .process, &error) {
+        // Retained, not unretained: an out-parameter follows the create rule, so the caller owns
+        // the error and taking it unretained leaks one object per failed face.
+        let code = error.map { CFErrorGetCode($0.takeRetainedValue()) }
+        // Already-registered is a success: the SDK ships the same faces and may have got there first.
+        if code != CTFontManagerError.alreadyRegistered.rawValue {
+          return false
+        }
       }
     }
     return faces.values.allSatisfy { UIFont(name: $0, size: 12) != nil }
