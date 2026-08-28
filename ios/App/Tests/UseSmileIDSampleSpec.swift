@@ -17,7 +17,7 @@ enum UseSmileIDSampleSpec {
     let url = directory.appendingPathComponent(name)
     let data = try Data(contentsOf: url)
     guard let object = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-      throw XCTSkip("spec/\(name) is not a JSON object")
+      throw NSError(domain: "spec", code: 1, userInfo: [NSLocalizedDescriptionKey: "spec/\(name) is not a JSON object"])
     }
     return object
   }

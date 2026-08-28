@@ -13,6 +13,10 @@ final class UseSmileIDSampleRouter: ObservableObject {
   /// The sheet the owning screen is showing. One at a time, because two cannot be presented at once.
   @Published var sheet: Sheet?
 
+  /// Whether a link or a restore has already decided where the app opens. On a cold start the two
+  /// race, and whichever the system delivers first must win — a later restore would discard the link.
+  private(set) var hasOpened = false
+
   func path(_ tab: UseSmileIDSampleTab) -> [Route] {
     paths[tab] ?? []
   }
@@ -23,8 +27,10 @@ final class UseSmileIDSampleRouter: ObservableObject {
   }
 
   /// Assigns the whole path at once, so a detail link restores its parent stack in one write.
+  /// A tab's own route is the stack's root rather than an entry on it, so it clears the stack.
   func open(_ route: Route) {
-    paths[route.tab] = route.parents + [route]
+    hasOpened = true
+    paths[route.tab] = route == route.tab.route ? [] : route.parents + [route]
     selectedTab = route.tab
   }
 
@@ -65,7 +71,10 @@ extension UseSmileIDSampleRouter {
   }
 
   /// A decode that cannot throw its way into a blank window: unreadable state restores the default.
+  /// Skipped once a link has opened something, because on a cold start the link may arrive first.
   func restore(from encoded: String) {
+    guard !hasOpened else { return }
+    hasOpened = true
     guard let data = encoded.data(using: .utf8),
           let state = try? JSONDecoder().decode(UseSmileIDSampleNavigationState.self, from: data)
     else { return }

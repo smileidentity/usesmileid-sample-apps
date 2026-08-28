@@ -18,23 +18,34 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
     return router
   }
 
+  /// The tab root is the stack's root, so linking to it leaves an empty stack rather than pushing
+  /// a second copy of the screen the stack already draws.
   func testATabLinkLandsOnTheTabRootWithAnEmptyStack() {
     let router = open("usesmileid-sample-ios://verifications")
     XCTAssertEqual(router.selectedTab, .verifications)
-    XCTAssertEqual(router.path(.verifications), [.verifications])
+    XCTAssertEqual(router.path(.verifications), [])
   }
 
-  /// A detail link builds its parent stack, so Back works after a cold link straight into it.
-  func testADetailLinkBuildsItsParentStack() {
+  /// A detail link pushes onto its tab root, so Back after a cold link lands on the list.
+  func testADetailLinkPushesOntoItsTabRoot() {
     let router = open("usesmileid-sample-ios://verifications/job-123")
     XCTAssertEqual(router.selectedTab, .verifications)
-    XCTAssertEqual(router.path(.verifications), [.verifications, .verificationDetails(jobId: "job-123")])
+    XCTAssertEqual(router.path(.verifications), [.verificationDetails(jobId: "job-123")])
   }
 
   func testANestedDetailLinkBuildsEveryParent() {
     let router = open("usesmileid-sample-ios://profiles/profile-7")
     XCTAssertEqual(router.selectedTab, .settings)
-    XCTAssertEqual(router.path(.settings), [.settings, .profiles, .profileConfig(profileId: "profile-7")])
+    XCTAssertEqual(router.path(.settings), [.profiles, .profileConfig(profileId: "profile-7")])
+  }
+
+  /// No route may appear both as a stack entry and as the root the stack already draws.
+  func testNoLinkPushesACopyOfItsOwnTabRoot() {
+    for tab in UseSmileIDSampleTab.allCases {
+      let router = UseSmileIDSampleRouter()
+      router.open(tab.route)
+      XCTAssertFalse(router.path(tab).contains(tab.route), "\(tab) pushed its own root")
+    }
   }
 
   /// R12: the owner is on screen underneath, so the sheet's scrim never covers a void.
@@ -42,7 +53,7 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
     let router = open("usesmileid-sample-ios://profiles/switch")
     XCTAssertEqual(router.sheet, .profileSwitch)
     XCTAssertEqual(router.selectedTab, .products)
-    XCTAssertEqual(router.path(.products), [.products])
+    XCTAssertEqual(router.path(.products), [])
   }
 
   func testAPickerSheetLinkOpensTheFormThatOwnsIt() {
@@ -55,7 +66,7 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
   func testDeactivatingALevelPopsToExactlyThatDepth() {
     let router = open("usesmileid-sample-ios://profiles/profile-7")
     router.isActive(.settings, depth: 1).wrappedValue = false
-    XCTAssertEqual(router.path(.settings), [.settings])
+    XCTAssertEqual(router.path(.settings), [.profiles])
   }
 
   func testEachTabKeepsItsOwnStack() {
@@ -63,8 +74,20 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
     router.open(.verificationDetails(jobId: "job-1"))
     router.open(.licenses)
     XCTAssertEqual(router.selectedTab, .settings)
-    XCTAssertEqual(router.path(.verifications), [.verifications, .verificationDetails(jobId: "job-1")])
-    XCTAssertEqual(router.path(.settings), [.settings, .licenses])
+    XCTAssertEqual(router.path(.verifications), [.verificationDetails(jobId: "job-1")])
+    XCTAssertEqual(router.path(.settings), [.licenses])
+  }
+
+  /// R9: on a cold start the link and the restore race, and the link must not be discarded.
+  func testALinkAlreadyOpenedIsNotOverwrittenByALaterRestore() {
+    let stored = UseSmileIDSampleRouter()
+    stored.open(.licenses)
+    let encoded = stored.encodedState()
+
+    let router = open("usesmileid-sample-ios://verifications/job-123")
+    router.restore(from: encoded)
+    XCTAssertEqual(router.selectedTab, .verifications)
+    XCTAssertEqual(router.path(.verifications), [.verificationDetails(jobId: "job-123")])
   }
 
   func testRestorationIsADecodeOfTheWholeNavigationState() {

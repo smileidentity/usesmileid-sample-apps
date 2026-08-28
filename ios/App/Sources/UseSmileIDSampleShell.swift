@@ -19,6 +19,7 @@ struct UseSmileIDSampleShell: View {
       }
     }
     .environmentObject(router)
+    // Held here only until U2/U3 land the screens that own these sheets; the owner presents it then.
     .sheet(item: $router.sheet) { sheet in
       UseSmileIDSampleSeat(name: sheet.rawValue)
     }

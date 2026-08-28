@@ -29,13 +29,11 @@ extension Route {
     }
   }
 
-  /// The stack a deep link builds behind this route, so Back works after a cold link into a detail.
+  /// The routes pushed above the tab root before this one, so Back works after a cold link into a
+  /// detail. The tab root is never in here — the stack draws it, so listing it would render it twice.
   var parents: [Route] {
     switch self {
-    case .licenses: [.settings]
-    case .verificationDetails: [.verifications]
-    case .profiles: [.settings]
-    case .profileConfig: [.settings, .profiles]
+    case .profileConfig: [.profiles]
     default: []
     }
   }

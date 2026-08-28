@@ -47,10 +47,20 @@ jobs:
       - name: Install the build tools
         run: brew install xcodegen swiftformat
 
-      # Pinned rather than latest-stable: the deployment floor is iOS 15, and a runner that silently
-      # moves Xcode moves the SDK the app is compiled against with it.
+      # Pinned rather than latest-stable, because a runner that silently moves Xcode moves the SDK the
+      # app compiles against with it. Falls back with a warning rather than failing, so an image that
+      # drops this version reports the drift instead of looking like a code failure.
       - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_16.4.app
+        run: |
+          if [ -d "$XCODE" ]; then
+            sudo xcode-select -s "$XCODE"
+          else
+            echo "::warning title=Xcode not pinned::$XCODE is not on this runner, so the build used \
+            $(xcodebuild -version | head -1) instead. Update the pin."
+          fi
+          xcodebuild -version
+        env:
+          XCODE: /Applications/Xcode_16.4.app
 
       - name: Verify
         env:

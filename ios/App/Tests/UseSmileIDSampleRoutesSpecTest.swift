@@ -40,7 +40,7 @@ final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
         return XCTFail("\(route.id): a sheet path resolved to a destination, which R12 forbids")
       }
       XCTAssertEqual(route.ios, "Sheet." + sheet.rawValue, "\(route.id): iOS binding")
-      XCTAssertNotNil(owner, "\(route.id): no owner")
+      XCTAssertEqual(expectedOwners[sheet], owner, "\(route.id): owner")
     }
   }
 
@@ -107,6 +107,15 @@ final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
       "project.yml does not claim \(UseSmileIDSampleDeepLinks.scheme)"
     )
   }
+
+  /// The screen each sheet layers over, which its path alone does not always say.
+  private let expectedOwners: [Sheet: Route] = [
+    .profileSwitch: .products,
+    .newProfile: .profiles,
+    .scenarioDrawer: .settings,
+    .countryPicker: .idDetailsForm(productId: "sample-productId"),
+    .idTypePicker: .idDetailsForm(productId: "sample-productId")
+  ]
 
   /// Renders the case the spec's `platform.ios` cell names, labels included.
   private func binding(for route: Route) -> String {
