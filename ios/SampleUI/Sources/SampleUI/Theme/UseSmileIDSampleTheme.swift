@@ -20,7 +20,7 @@ public enum UseSmileIDSampleShapes {
 }
 
 public extension EnvironmentValues {
-  // The active scheme's colours. Populated by ``SwiftUI/View/useSmileIDSampleTheme()``.
+  /// The active scheme's colours. Populated by ``SwiftUI/View/useSmileIDSampleTheme()``.
   @Entry var useSmileIDSampleColors: UseSmileIDSampleColors = .light
 }
 
