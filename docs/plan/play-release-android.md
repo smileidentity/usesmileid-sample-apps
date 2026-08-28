@@ -181,6 +181,11 @@ finished strip that instead put the phone at a different height and size in ever
 as inconsistency rather than variety. All panels now use `text-top`, so the device sits at y=201
 throughout. Variety comes from the headlines and the screens, which is enough.
 
+**A headline must not carry a count.** The first set opened with "Six products, one integration", which
+is wrong the day a product is added or removed and needs a re-render nobody will remember to do. The
+headlines are imperative verb plus concrete object, each true to the panel it sits above, and none of
+them states a number.
+
 ### 2.7 What building the pipeline changed
 
 Three corrections, all found by running it rather than by reading:

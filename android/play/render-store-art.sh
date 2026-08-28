@@ -38,12 +38,12 @@ compose() {
   "${STORESHOTS[@]}" validate --preset "$PRESET" "$OUT/$name.png"
 }
 
-compose products             "Six"     "products, one integration"      text-top
-compose token_session        "Link"    "a session from a token"         text-top
-compose capture              "Capture" "with the Smile ID SDK"          text-top
-compose verifications        "Track"   "every verification run"         text-top
-compose verification_details "Read"    "the result field by field"      text-top
-compose settings             "Compose" "the journey step by step"       text-top
+compose products             "Try"       "every Smile ID product"      text-top
+compose token_session        "Scan"      "a token to start a session"  text-top
+compose capture              "Capture"   "a selfie or a document"      text-top
+compose verifications        "Track"     "every run and its status"    text-top
+compose verification_details "Inspect"   "every field of a result"     text-top
+compose settings             "Configure" "the steps in the flow"       text-top
 
 if [ -z "$(ls -A "$OUT"/*.png 2>/dev/null)" ]; then
   echo "no frames to render; run with --frames" >&2
