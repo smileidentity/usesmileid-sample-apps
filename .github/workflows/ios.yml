@@ -1,0 +1,69 @@
+name: iOS
+
+# CI runs ios/verify.sh itself, so the local contract and the gate cannot drift apart.
+on:
+  pull_request:
+    paths:
+      - 'ios/**'
+      - 'spec/**'
+      - 'scripts/**'
+      - '.github/workflows/ios.yml'
+  push:
+    branches: [main]
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      # --check needs the design system, which is private; a fork PR gets no secret, so this skips and says so.
+      - name: Check out the design system
+        id: design-system
+        if: env.DESIGN_SYSTEM_TOKEN != ''
+        env:
+          DESIGN_SYSTEM_TOKEN: ${{ secrets.DESIGN_SYSTEM_TOKEN }}
+        uses: actions/checkout@v4
+        with:
+          repository: smileidentity/claude-skills
+          token: ${{ secrets.DESIGN_SYSTEM_TOKEN }}
+          path: .design-system
+          sparse-checkout: smile-design-system
+          sparse-checkout-cone-mode: true
+
+      - name: Note a skipped token check
+        if: steps.design-system.outcome == 'skipped'
+        run: |
+          echo "::warning title=Design tokens not verified::No DESIGN_SYSTEM_TOKEN available, so the \
+          vendored token output was not compared against the design system. Everything else ran."
+
+      - name: Install the build tools
+        run: brew install xcodegen swiftformat
+
+      # Pinned, because a runner that moves Xcode moves the SDK the app compiles against with it.
+      # Warns rather than fails, so an image dropping this version reports drift, not a code failure.
+      - name: Select Xcode
+        run: |
+          if [ -d "$XCODE" ]; then
+            sudo xcode-select -s "$XCODE"
+          else
+            echo "::warning title=Xcode not pinned::$XCODE is not on this runner, so the build used \
+            $(xcodebuild -version | head -1) instead. Update the pin."
+          fi
+          xcodebuild -version
+        env:
+          XCODE: /Applications/Xcode_16.4.app
+
+      - name: Verify
+        env:
+          SMILE_DESIGN_SYSTEM: ${{ steps.design-system.outcome == 'success' && format('{0}/.design-system/smile-design-system', github.workspace) || '' }}
+          SMILE_TOKENS_OPTIONAL: ${{ steps.design-system.outcome == 'skipped' && '1' || '' }}
+          DESTINATION: platform=iOS Simulator,name=iPhone 16 Pro
+        run: ios/verify.sh
