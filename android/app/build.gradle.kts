@@ -26,7 +26,6 @@ android {
         applicationId = "com.usesmileid.sampleapps.android"
         minSdk = 24
         targetSdk = 37
-        // One source for every track, and Play burns a code permanently, so a bad one must fail here.
         versionCode = findProperty("VERSION_CODE")?.toString()?.let { raw ->
             raw.toIntOrNull()?.takeIf { it > 0 }
                 ?: throw GradleException("VERSION_CODE must be a positive integer, got '$raw'")
@@ -34,7 +33,6 @@ android {
         versionName = "1.0.0"
     }
 
-    // Play App Signing holds the app signing key; this is only ever the upload credential.
     val uploadKeystore = file("upload.jks")
     signingConfigs {
         if (uploadKeystore.exists()) {
@@ -60,8 +58,6 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
-            // Debug-signed keeps release installable for the device suite; a publish lane sets
-            // REQUIRE_UPLOAD_SIGNING so it can never ship that artifact.
             if (findProperty("REQUIRE_UPLOAD_SIGNING")?.toString().toBoolean() && !uploadKeystore.exists()) {
                 throw GradleException("upload.jks is missing; refusing to build a debug-signed release")
             }
@@ -72,7 +68,6 @@ android {
     bundle {
         abi { enableSplit = true }
         density { enableSplit = true }
-        // Off: `appLocale` renders a locale that is not the device's, which a language-split install lacks.
         language { enableSplit = false }
     }
 
