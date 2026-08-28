@@ -6,7 +6,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 REPO_ROOT="$(cd .. && pwd)"
 FRAMES="sample-ui/src/test/store-art"
-OUT="play/screenshots"
+OUT="play/screenshots"   # exactly the panels Play receives
 PRESET="android-phone"
 BG="#151F72"
 
@@ -51,7 +51,7 @@ if [ -z "$(ls -A "$OUT"/*.png 2>/dev/null)" ]; then
 fi
 
 echo "==> showcase strip, for review in a PR"
-"${STORESHOTS[@]}" showcase --output "$OUT/showcase.png" \
+"${STORESHOTS[@]}" showcase --output "$(dirname "$OUT")/showcase.png" \
   $(for n in products token_session capture verifications verification_details settings; do
       [ -f "$OUT/$n.png" ] && printf '%s ' "$OUT/$n.png"
     done)

@@ -524,7 +524,10 @@ green on a machine holding no signing secret, which is the state a fresh clone i
   to complete a listing: Play's minimum is two. The render script skips a panel whose frame does not
   exist yet and names it, rather than refusing to run, so the camera panel drops in later without
   redoing anything. The renders are deterministic — re-running reproduces identical bytes — and each
-  one passes `storeshots validate`.
+  one passes `storeshots validate`. `android/play/screenshots` holds exactly the panels Play receives
+  and nothing else — the review strip sits beside it at `android/play/showcase.png`, because the first
+  version of the release lane validated it as a store panel and failed on a 3711x1344 image that was
+  never meant to be one.
 - **The `verification_details` panel is the weak one, and it is a design call rather than a defect.**
   Hiding the debug result card left that screen sparse, so its phone frame is half empty next to the
   others. Three ways out, none of them urgent: ship it, drop it and publish four, or swap in a denser
