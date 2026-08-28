@@ -1,8 +1,9 @@
 # Shipping the Android sample to Play
 
-**Status:** planning. Runs in parallel with the iOS port and shares no files with it. Android is the
-first of the four apps to reach a store, so every decision here sets a pattern the other three copy —
-§8 records what travels and what is Play-specific.
+**Status:** in progress — REL-A2, REL-A3 and REL-A4 landed 2026-08-28; §7 tracks the rest. Runs in
+parallel with the iOS port and shares no files with it. Android is the first of the four apps to reach
+a store, so every decision here sets a pattern the other three copy — §8 records what travels and what
+is Play-specific.
 
 Scope: the Google Play listing for `com.usesmileid.sampleapps.android`, the release build that backs
 it, and the store-art pipeline. Not the app's behaviour: the app is feature-complete through #30 and
@@ -30,11 +31,15 @@ Four items. One is irreversible, one is invisible until someone looks at a launc
    one `verify.sh` assembles, the ones the device suite runs on — has never been uploadable. Fixing it
    changes no behaviour, but signing identity is **permanent from the first upload**, which makes this
    the only item here that cannot be corrected afterwards. §3 says exactly what to do.
+   **Resolved (REL-A2).** `release` takes an `upload` signing config guarded on the keystore existing,
+   so only a build that held the upload key is uploadable.
 2. **There is no launcher icon wired.** `android/app/src/main/res/` holds `values/` and `values-night/`
    and nothing else — no density buckets, no adaptive icon, no `ic_launcher`. The app ships the platform
    default today. The art now exists; §4 covers why it cannot be dropped in as-is.
 3. **`versionCode = 1` and `versionName = "1.0.0"` are hard-coded** (`:29–30`) with no bump mechanism.
    versionCode is monotonic and non-reusable on Play, so a wasted upload burns an integer permanently.
+   **Resolved (REL-A3).** versionCode comes from a `VERSION_CODE` property, one derived source for every
+   track; versionName stays the hand-bumped marketing version the settings footer already renders.
 4. **There is no release lane.** `.github/workflows/android.yml` is the per-PR lane. `verify.sh`
    assembles a release APK (line 47) but nothing builds or validates a bundle.
 
@@ -164,6 +169,14 @@ The keystore is not committed to the v11 repository and must not be committed he
 materialised in CI from a base64 repository secret at build time. Copy v11's
 `if (uploadKeystoreFile.exists())` guard as well — it lets a contributor without the secret still build a
 release variant, which is why `verify.sh` works on any machine.
+
+**One deliberate divergence from v11, decided while writing the guard.** v11 leaves the release variant
+*unsigned* when the keystore is absent; here it falls back to the debug config, because `verify.sh`
+assembles the APK the release device suite installs and an unsigned APK cannot be installed. The fallback
+keys off the keystore file's absence alone, so it cannot mask a missing secret: a keystore present without
+its password fails `packageRelease` with *SigningConfig "upload" is missing required property
+"storePassword"*, and a wrong password fails with *Keystore was tampered with, or password was incorrect*.
+Both were run. A missing CI secret therefore fails at build time rather than at upload.
 
 <!-- INTERNAL-ONLY:START reason=ci-secret-names-and-sibling-repo-paths -->
 Specifics for whoever wires it: the source is `sample/sample.gradle.kts` in the v11 Android repository,
@@ -329,31 +342,55 @@ Simulate affordance is present under release configuration, failing the build ra
 
 ## 7. Work items
 
-| ID | Item | Notes |
-|---|---|---|
-| REL-A1 | Adaptive launcher icon decomposed from `svgs/android.svg`, plus monochrome layer and the 512×512 listing PNG | §4. Two treatments of one source; check against three masks |
-| REL-A2 | Release signing: reuse the v11 upload key, `exists()` guard, CI secrets | §3. The irreversible one |
-| REL-A3 | One monotonic `versionCode` source across all tracks, and a `versionName` scheme | §3.1. Do not copy v11's two-scheme split |
-| REL-A4 | App bundle + ABI splits | The A3 size ruling landing, not a second decision |
-| REL-A5 | `fastlane/metadata/android/en-US/` as the home for title, descriptions and changelogs | Standard machine-readable layout even if uploads stay manual |
-| REL-A6 | Draft the copy from §5's sources, counted against every limit | Derived from `docs-v3`, not written fresh |
-| REL-A7 | Hand-written release notes; drop v11's git-log generation step | Fixes the defect rather than porting it |
-| REL-A8 | Store-art Gradle task: Roborazzi at store device specs, own output dir, own staleness input | §2.1. Must not share a directory with goldens |
-| REL-A9 | `android/maestro/store-shots.yaml` for the camera panel only, on a Gradle Managed Device | §2.2. One frame, not six |
-| REL-A10 | Fixture-only capture data: test identities, simulated token, `seedJobs` | §2.4. Safe to publish and safe in CI |
-| REL-A11 | `storeshots` render script: presets, headlines, committed art | CLI, not the MCP server |
-| REL-A12 | Transcribe v11's data-safety answers; commit §6.1's comparison as the reason | §6.1. No re-derivation |
-| REL-A13 | Declare no special access, and add a **test** that Simulate survives release configuration | §6.3. The declaration's truth depends on it, so assert it rather than remember it |
-| REL-A14 | Periodic `targetSdk` re-check against Play's floor | 37 accepted today; the floor moves annually |
-| REL-A15 | Publish workflows adapted from v11: internal and production tracks | Copy the signing and upload steps, not the version or notes steps |
-| REL-A16 | Release CI lane: bundle, `validate_screenshot` over the art, fail on stale art | Mirrors the existing tokens/notices gates |
-| REL-A17 | The gate: art regenerates byte-identically, `verify.sh` green, nothing owed | Last, as a gate rather than as work |
+| ID | Item | Status | Notes |
+|---|---|---|---|
+| REL-A1 | Adaptive launcher icon decomposed from `svgs/android.svg`, plus monochrome layer and the 512×512 listing PNG | | §4. Two treatments of one source; check against three masks |
+| REL-A2 | Release signing: reuse the v11 upload key, `exists()` guard, CI secrets | **DONE 2026-08-28** — build side only; the CI secrets are wired by A15 | §3. The irreversible one |
+| REL-A3 | One monotonic `versionCode` source across all tracks, and a `versionName` scheme | **DONE 2026-08-28** | §3.1. Do not copy v11's two-scheme split |
+| REL-A4 | App bundle + ABI splits | **DONE 2026-08-28** — §7.1; language splits deliberately off | The A3 size ruling landing, not a second decision |
+| REL-A5 | `fastlane/metadata/android/en-US/` as the home for title, descriptions and changelogs |  | Standard machine-readable layout even if uploads stay manual |
+| REL-A6 | Draft the copy from §5's sources, counted against every limit |  | Derived from `docs-v3`, not written fresh |
+| REL-A7 | Hand-written release notes; drop v11's git-log generation step |  | Fixes the defect rather than porting it |
+| REL-A8 | Store-art Gradle task: Roborazzi at store device specs, own output dir, own staleness input |  | §2.1. Must not share a directory with goldens |
+| REL-A9 | `android/maestro/store-shots.yaml` for the camera panel only, on a Gradle Managed Device |  | §2.2. One frame, not six |
+| REL-A10 | Fixture-only capture data: test identities, simulated token, `seedJobs` |  | §2.4. Safe to publish and safe in CI |
+| REL-A11 | `storeshots` render script: presets, headlines, committed art |  | CLI, not the MCP server |
+| REL-A12 | Transcribe v11's data-safety answers; commit §6.1's comparison as the reason |  | §6.1. No re-derivation |
+| REL-A13 | Declare no special access, and add a **test** that Simulate survives release configuration |  | §6.3. The declaration's truth depends on it, so assert it rather than remember it |
+| REL-A14 | Periodic `targetSdk` re-check against Play's floor |  | 37 accepted today; the floor moves annually |
+| REL-A15 | Publish workflows adapted from v11: internal and production tracks |  | Copy the signing and upload steps, not the version or notes steps |
+| REL-A16 | Release CI lane: bundle, `validate_screenshot` over the art, fail on stale art |  | Mirrors the existing tokens/notices gates |
+| REL-A17 | The gate: art regenerates byte-identically, `verify.sh` green, nothing owed |  | Last, as a gate rather than as work |
+
+### 7.1 What the bundle recovered, measured
+
+The size ruling asked for packaging, so here is what packaging returned, built and measured on this
+tree rather than estimated:
+
+| Artefact | Size |
+|---|---|
+| Universal release APK (`assembleRelease`) | 69.7 MB |
+| App bundle (`bundleRelease`) | 39.7 MB |
+| Delivered download, arm64-v8a phone | **14.2 MB** |
+| Delivered download, armeabi-v7a phone | **13.1 MB** |
+
+`bundletool get-size total --dimensions=ABI` reports 13.8–15.8 MB across every configuration the
+bundle can serve. The three ABIs a given phone never runs and the density buckets it never reads are
+what the split removes; the 21.3 MB the bundled barcode model added is most of it.
+
+**Language splits are deliberately off**, which is the one place this diverges from the defaults.
+`appLocale` exists to render the app *and the SDK's own strings* in a locale that is not the device's,
+and an install carrying only the device's language cannot do that — a defect that would appear on a
+Play install and on no other lane. The SDK ships no localized resources today, so the price is a
+handful of androidx locales now and correctness the day it does.
 
 ## 8. Parity — what the other three inherit
 
 Unchanged: capture from committed, deterministic renders rather than by hand; fixture-only data in
 published frames; copy derived from the `docs-v3` product pages; store art committed and staleness-gated;
-release notes written by a person.
+release notes written by a person. Flutter and Expo also inherit §7.1 wholesale, because their Android
+builds package the same four ABIs and carry the same `appLocale` argument: app bundle, ABI and density
+splits on, language splits off.
 
 Platform-specific: iOS swaps to the `ios-phone` (1320 × 2868) and `ipad-13` (2064 × 2752) presets, and its
 off-device renderer is snapshot tests rather than Roborazzi, with XCUITest for the camera panel. Worth

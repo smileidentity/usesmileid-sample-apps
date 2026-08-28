@@ -26,8 +26,26 @@ android {
         applicationId = "com.usesmileid.sampleapps.android"
         minSdk = 24
         targetSdk = 37
-        versionCode = 1
+        // One source for every track: Play compares an upload against every prior upload for the
+        // app whichever track it went to, and a code it has already seen is burned permanently.
+        versionCode = findProperty("VERSION_CODE")?.toString()?.toInt() ?: 1
+        // The listing's marketing version, bumped here by hand; versionCode is never edited.
         versionName = "1.0.0"
+    }
+
+    // Play App Signing holds the app signing key, so this is only ever an upload credential:
+    // materialised from a secret at build time, never committed — `.gitignore` covers `*.jks`.
+    val uploadKeystore = file("upload.jks")
+    signingConfigs {
+        if (uploadKeystore.exists()) {
+            create("upload") {
+                val uploadKeystorePassword = findProperty("uploadKeystorePassword") as? String
+                storeFile = uploadKeystore
+                keyAlias = "upload"
+                storePassword = uploadKeystorePassword
+                keyPassword = uploadKeystorePassword
+            }
+        }
     }
 
     testOptions {
@@ -42,8 +60,19 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
-            signingConfig = signingConfigs.getByName("debug")
+            // Falls back so a machine without the secret still installs release for the device
+            // suite; only a build that held the upload key is uploadable, which is the point.
+            signingConfig = signingConfigs.getByName(if (uploadKeystore.exists()) "upload" else "debug")
         }
+    }
+
+    // Play splits the bundle per device rather than delivering all four ABIs to each one.
+    bundle {
+        abi { enableSplit = true }
+        density { enableSplit = true }
+        // Off: `appLocale` renders the app and the SDK in a locale that is not the device's, which
+        // an install carrying only the device language cannot do.
+        language { enableSplit = false }
     }
 
     compileOptions {
