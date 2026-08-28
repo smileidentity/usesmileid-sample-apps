@@ -5,13 +5,19 @@ public extension SmileTextStyle {
   ///
   /// The label styles need it: the design's Type/Label is a point larger than
   /// `text-style.overline` and spaced, and both values are generated rather than written here.
-  func with(size: CGFloat? = nil, tracking: CGFloat? = nil) -> SmileTextStyle {
+  func with(
+    size: CGFloat? = nil,
+    tracking: CGFloat? = nil,
+    weight: Int? = nil,
+    lineHeight: CGFloat? = nil
+  ) -> SmileTextStyle {
     SmileTextStyle(
       family: family,
-      weight: weight,
+      weight: weight ?? self.weight,
       size: size ?? self.size,
-      // The token carries a total height, so a resize keeps the ratio rather than the gap.
-      lineHeight: (size ?? self.size) * (lineHeight / self.size),
+      // A resize keeps the token's ratio unless the caller states a height, which the frame's own
+      // heading metrics do — scaling those by ratio silently changes where wrapped text sits.
+      lineHeight: lineHeight ?? (size ?? self.size) * (self.lineHeight / self.size),
       tracking: tracking ?? self.tracking
     )
   }

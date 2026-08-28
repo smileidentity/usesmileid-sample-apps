@@ -113,13 +113,13 @@ public struct ProductsScreen: View {
   }
 
   private var pageTitle: SmileTextStyle {
-    SmileTextStyle(
-      family: UseSmileIDSampleTheme.type.textStyleHeadingPage.family,
-      weight: smileHeadingPageWeight,
-      size: smileHeadingPageSize,
-      lineHeight: smileHeadingPageLineHeight,
-      tracking: smileHeadingPageTracking
-    )
+    UseSmileIDSampleTheme.type.textStyleHeadingPage
+      .with(
+        size: smileHeadingPageSize,
+        tracking: smileHeadingPageTracking,
+        weight: smileHeadingPageWeight,
+        lineHeight: smileHeadingPageLineHeight
+      )
   }
 
   private static var ghostSize: CGFloat {

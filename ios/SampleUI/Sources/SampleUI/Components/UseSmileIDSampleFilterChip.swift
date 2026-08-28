@@ -60,13 +60,6 @@ public struct UseSmileIDSampleFilterChip: View {
   }
 
   private var chipStyle: SmileTextStyle {
-    let base = UseSmileIDSampleTheme.type.filterChipFont.with(size: 12.5)
-    return SmileTextStyle(
-      family: base.family,
-      weight: 700,
-      size: base.size,
-      lineHeight: base.lineHeight,
-      tracking: base.tracking
-    )
+    UseSmileIDSampleTheme.type.filterChipFont.with(size: 12.5, weight: 700)
   }
 }

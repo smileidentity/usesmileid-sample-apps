@@ -41,14 +41,7 @@ public struct UseSmileIDSampleBottomSheet<Content: View>: View {
   }
 
   private var titleStyle: SmileTextStyle {
-    let base = UseSmileIDSampleTheme.type.textStyleHeadingSection
-    return SmileTextStyle(
-      family: base.family,
-      weight: 700,
-      size: base.size,
-      lineHeight: base.lineHeight,
-      tracking: base.tracking
-    )
+    UseSmileIDSampleTheme.type.textStyleHeadingSection.with(weight: 700)
   }
 
   private static var margin: CGFloat {

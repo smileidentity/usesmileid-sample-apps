@@ -20,13 +20,14 @@ public struct UseSmileIDSampleSectionHeader: View {
       .useSmileIDSampleTestId(testId)
   }
 
+  /// The frame's own heading metrics, which text-style.* does not match — see `productsScreenType`.
   private var headerStyle: SmileTextStyle {
-    SmileTextStyle(
-      family: UseSmileIDSampleTheme.type.textStyleHeadingSection.family,
-      weight: smileSectionHeaderWeight,
-      size: smileSectionHeaderSize,
-      lineHeight: smileSectionHeaderLineHeight,
-      tracking: 0
-    )
+    UseSmileIDSampleTheme.type.textStyleHeadingSection
+      .with(
+        size: smileSectionHeaderSize,
+        tracking: 0,
+        weight: smileSectionHeaderWeight,
+        lineHeight: smileSectionHeaderLineHeight
+      )
   }
 }
