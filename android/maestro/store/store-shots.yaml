@@ -1,0 +1,42 @@
+# The one store panel that cannot be rendered off-device: the SDK's live camera preview. Every other
+# panel is a pure function of state and is rendered on the JVM by StoreArtTest, which is why this flow
+# captures exactly one frame and nothing else.
+#
+# This is the only flow in the repository that takes a screenshot, and the boundary matters: the frame
+# is an output artefact, never an oracle. Nothing asserts on it. The assertions here run *before* the
+# capture and exist only to prove the flow is on the right screen, which is the testing contract being
+# followed rather than bent.
+#
+# In its own directory on purpose: folder runs are non-recursive, so the device suite never picks it
+# up — this flow needs a camera and writes a file, and neither belongs in a per-PR run.
+#
+# Run from the repository root, because the output path is relative to the working directory:
+#   maestro --device <serial> test -e APP_ID=com.usesmileid.sample.android android/maestro/store/store-shots.yaml
+#
+# Reproducibility: capture on a 1080x1920 device or emulator so the frame matches the five rendered
+# panels without rescaling — a Pixel-class AVD on API 34 is the image of record. Gradle Managed Devices
+# cannot host this: GMD starts and stops its emulator around a Gradle test task, and Maestro is not one,
+# so the image is pinned here by declaration rather than by the build.
+appId: ${APP_ID}
+---
+- stopApp
+- launchApp:
+    arguments:
+      seedJobs: true
+- runFlow: ../subflows/warm-start.yaml
+
+# Products → details → consent → camera grant. Reused rather than repeated, so a change to the
+# journey cannot leave this flow behind.
+- runFlow: ../subflows/consent-to-capture.yaml
+
+- assertVisible:
+    id: "si_instructions_screen"
+- tapOn: "Next"
+
+# The SDK's capture screen carries no `si_*` id, so its shipped start-button label is the landmark
+# that proves the preview is actually up before anything is written to disk.
+- assertVisible: "Start Capture"
+- waitForAnimationToEnd:
+    timeout: 5000
+
+- takeScreenshot: android/sample-ui/src/test/store-art/capture

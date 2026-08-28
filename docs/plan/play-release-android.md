@@ -1,6 +1,7 @@
 # Shipping the Android sample to Play
 
-**Status:** in progress — REL-A2, REL-A3 and REL-A4 landed 2026-08-28; §7 tracks the rest. Runs in
+**Status:** in progress — REL-A1 through REL-A15 landed 2026-08-28, except the camera frame REL-A9 owes
+a device; REL-A16 and REL-A17 remain. §7 tracks each item. Runs in
 parallel with the iOS port and shares no files with it. Android is the first of the four apps to reach
 a store, so every decision here sets a pattern the other three copy — §8 records what travels and what
 is Play-specific.
@@ -116,6 +117,27 @@ to confirm it is on the right screen *before* capturing, which is the contract b
 `mobile-mcp` is genuinely useful here, but only upstream of the pipeline: driving the app by hand to
 decide *which* states photograph well is exploration, and its screenshots must never become the
 committed artefact. That is the same boundary the device-verify guidance already draws.
+
+### 2.6 What building the pipeline changed
+
+Three corrections, all found by running it rather than by reading:
+
+- **Gradle Managed Devices cannot host the camera capture.** GMD starts and stops its emulator around a
+  Gradle *test task*, and Maestro is not one, so a GMD block would declare an image nothing uses. The
+  image is pinned in the flow's header instead — a Pixel-class AVD on API 34, at 1080x1920 so the frame
+  needs no rescaling next to the five rendered panels.
+- **The capture flow lives in `android/maestro/store/`, not beside the suite.** Folder runs are
+  non-recursive, which is how `subflows/` stays out of the suite; a top-level `store-shots.yaml` would
+  have joined every per-PR device run, needing a camera and writing a file on each one.
+- **The capture screen still has no `si_*` id**, so the landmark that proves the preview is up before
+  anything is written is the SDK's own shipped button text, "Start Capture". The assertions run before
+  the capture, never on it.
+
+**One naming trap, recorded so nobody "fixes" it.** `UseSmileIDSampleProduct` carries two names for the
+first product: `label` is "SmartSelfie Enrollment", used in the verifications list and details, while
+`cardTitle` is "Registration", a short form for the products card's narrow text column. Both therefore
+appear in the store panels. The listing follows `label`, per §5's ruling. They are not in conflict and
+neither should be changed to match the other.
 
 ### 2.4 PII discipline, because store art is published
 
@@ -435,10 +457,10 @@ Simulate affordance is present under release configuration, failing the build ra
 | REL-A5 | `android/play/` as the home for title, descriptions and release notes | **DONE 2026-08-28** — owner ruling: no fastlane | The upload action reads `whatsnew/whatsnew-en-US` directly; the rest is filled in Console |
 | REL-A6 | Draft the copy from §5's sources, counted against every limit | **DONE 2026-08-28** — counted by a test, not by hand | Derived from `docs-v3`, not written fresh |
 | REL-A7 | Hand-written release notes; drop v11's git-log generation step | **DONE 2026-08-28** — generation step dropped, not adapted | Fixes the defect rather than porting it |
-| REL-A8 | Store-art Gradle task: Roborazzi at store device specs, own output dir, own staleness input |  | §2.1. Must not share a directory with goldens |
-| REL-A9 | `android/maestro/store-shots.yaml` for the camera panel only, on a Gradle Managed Device |  | §2.2. One frame, not six |
-| REL-A10 | Fixture-only capture data: test identities, simulated token, `seedJobs` |  | §2.4. Safe to publish and safe in CI |
-| REL-A11 | `storeshots` render script: presets, headlines, committed art |  | CLI, not the MCP server |
+| REL-A8 | Store-art Gradle task: Roborazzi at store device specs, own output dir, own staleness input | **DONE 2026-08-28** — `StoreArtTest`, own directory and own staleness input | §2.1. Must not share a directory with goldens |
+| REL-A9 | `android/maestro/store-shots.yaml` for the camera panel only, on a Gradle Managed Device | **FLOW READY 2026-08-28** — the frame itself still needs a device; §2.6 | §2.2. One frame, not six |
+| REL-A10 | Fixture-only capture data: test identities, simulated token, `seedJobs` | **DONE 2026-08-28** — verified: the fixtures carry no names at all | §2.4. Safe to publish and safe in CI |
+| REL-A11 | `storeshots` render script: presets, headlines, committed art | **DONE 2026-08-28** — `android/play/render-store-art.sh` | CLI, not the MCP server |
 | REL-A12 | Transcribe v11's data-safety answers; commit §6.1's comparison as the reason | **DONE 2026-08-28** — `docs/play-data-safety.md` | §6.1. No re-derivation |
 | REL-A13 | Declare no special access, and add a **test** that Simulate survives release configuration | **DONE 2026-08-28** — two tests, both mutation-checked | §6.3. The declaration's truth depends on it, so assert it rather than remember it |
 | REL-A14 | Periodic `targetSdk` re-check against Play's floor | **DONE 2026-08-28** — recorded as a dated recurring check | 37 accepted today; the floor moves annually |
