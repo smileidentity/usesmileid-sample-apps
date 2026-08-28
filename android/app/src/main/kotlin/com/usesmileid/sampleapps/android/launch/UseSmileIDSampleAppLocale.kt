@@ -2,6 +2,7 @@ package com.usesmileid.sampleapps.android.launch
 
 import android.content.res.Configuration
 import android.os.LocaleList
+import android.view.ContextThemeWrapper
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -33,8 +34,11 @@ fun UseSmileIDSampleAppLocale(tag: String?, content: @Composable () -> Unit) {
         Configuration(configuration).apply { setLocales(requested) }
     }
     val context = LocalContext.current
-    // LocalResources computes off LocalContext, which is what carries the override into stringResource.
-    val localizedContext = remember(context, localized) { context.createConfigurationContext(localized) }
+    // A wrapper, never createConfigurationContext: LocalResources computes off LocalContext, and a
+    // configuration context has no Activity in its chain for the SDK's screens to unwrap to.
+    val localizedContext = remember(context, localized) {
+        ContextThemeWrapper(context, 0).apply { applyOverrideConfiguration(localized) }
+    }
 
     LaunchedEffect(requested, configuration.locales) {
         if (configuration.locales.toLanguageTags() == requested.toLanguageTags()) {
