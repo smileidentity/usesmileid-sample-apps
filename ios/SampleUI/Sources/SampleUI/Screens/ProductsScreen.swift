@@ -102,7 +102,7 @@ public struct ProductsScreen: View {
       UseSmileIDSampleProductCard(
         title: product.cardTitle,
         family: product.cardFamily,
-        hue: product.hue ?? smileProductHues.values.first!,
+        hue: product.resolvedHue,
         icon: product.icon,
         testId: UseSmileIDSampleTestIds.productCard(product.id),
         action: { onProduct(product) }

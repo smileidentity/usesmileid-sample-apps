@@ -20,8 +20,9 @@ struct UseSmileIDSampleShell: View {
     }
     .environmentObject(router)
     .environmentObject(app)
-    // The host owns the appearance, because the setting outlives any screen that changes it.
-    .preferredColorScheme(app.settings.darkMode ? .dark : nil)
+    // Pinned both ways, not nil: following the system when the switch is off leaves a device in
+    // dark mode rendering dark while Settings reads off.
+    .preferredColorScheme(app.settings.darkMode ? .dark : .light)
     // Held here until U2/U3 land the screens that own these sheets.
     .sheet(item: $router.sheet) { sheet in
       UseSmileIDSampleSeat(name: sheet.rawValue)
