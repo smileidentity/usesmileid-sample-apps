@@ -31,7 +31,13 @@ echo "==> project (generated from App/project.yml, so the pbxproj is never hand-
 (cd App && xcodegen generate)
 
 echo "==> library unit tests (includes the library's half of the spec validation)"
-(cd SampleUI && xcodebuild test -scheme SampleUI -destination "$DESTINATION" -quiet)
+(cd SampleUI && xcodebuild test -scheme SampleUI -destination "$DESTINATION" -only-testing:SampleUITests -quiet)
+
+echo "==> goldens, light and dark"
+# Baselines are pixel comparisons, so they are only meaningful on the simulator they were recorded
+# on — DESTINATION is pinned to the same iPhone 17 Pro the SDK repo's snapshot gate uses.
+# Re-record an intentional change with SNAPSHOT_TESTING_RECORD=all and commit what it writes.
+(cd SampleUI && xcodebuild test -scheme SampleUI -destination "$DESTINATION" -only-testing:SampleUIGoldenTests -quiet)
 
 echo "==> shell unit tests (includes the route table's spec validation)"
 xcodebuild test \
