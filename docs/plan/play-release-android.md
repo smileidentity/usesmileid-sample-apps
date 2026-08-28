@@ -5,7 +5,7 @@ parallel with the iOS port and shares no files with it. Android is the first of 
 a store, so every decision here sets a pattern the other three copy — §8 records what travels and what
 is Play-specific.
 
-Scope: the Google Play listing for `com.usesmileid.sampleapps.android`, the release build that backs
+Scope: the Google Play listing for `com.usesmileid.sample.android`, the release build that backs
 it, and the store-art pipeline. Not the app's behaviour: the app is feature-complete through #30 and
 this plan adds no screens.
 
@@ -21,6 +21,13 @@ this plan adds no screens.
   question the form asks.
 - **Phone-only. No tablet art** — §6.2 is the code that decides it.
 - The **launcher icon sources have landed** in `svgs/`, one per platform.
+
+**One further owner ruling, 2026-08-28:** the four sample apps take a single `com.usesmileid.sample.*` id
+family, so Android publishes as `com.usesmileid.sample.android`. It is free to change today and permanent
+from the first upload, which is why it lands with this tranche rather than after it.
+`spec/app-identity.json` carries both the decision and the debt it creates: the Flutter and Expo ids are
+held by SDK-repo development samples, which owe a rename before either of those apps is built. Android and
+iOS collide with nothing. The Kotlin namespace is unchanged — it is not an identity.
 
 ## 1. What is blocking, read out of the build files
 
@@ -155,7 +162,7 @@ with alias `upload`, taking its password from the `uploadKeystorePassword` Gradl
 
 **So reusing it is correct, and it is the low-friction answer.** Play permits one upload key across many
 apps in an account, and enrolls each new app with its own freshly generated app signing key, so
-`com.usesmileid.sampleapps.android` gets cryptographic separation for free while we distribute no new
+`com.usesmileid.sample.android` gets cryptographic separation for free while we distribute no new
 secret. Enrollment is not optional for a new app in any case.
 
 Two things to be deliberate about rather than discover:

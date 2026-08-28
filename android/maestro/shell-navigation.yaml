@@ -2,8 +2,8 @@
 #
 # APP_ID has no default on purpose: a flow-level `env:` default WINS over `-e` in Maestro 2.8, so
 # one here would silently pin every run to a single variant.
-#   maestro --device <serial> test -e APP_ID=com.usesmileid.sampleapps.android.debug android/maestro
-#   maestro --device <serial> test -e APP_ID=com.usesmileid.sampleapps.android       android/maestro
+#   maestro --device <serial> test -e APP_ID=com.usesmileid.sample.android.debug android/maestro
+#   maestro --device <serial> test -e APP_ID=com.usesmileid.sample.android       android/maestro
 appId: ${APP_ID}
 ---
 # `pm clear` is refused from the shell on some OEM builds, and there is no persisted state yet.

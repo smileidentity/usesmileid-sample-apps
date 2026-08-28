@@ -35,7 +35,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.usesmileid.sampleapps.android"
+        applicationId = "com.usesmileid.sample.android"
         minSdk = 24
         targetSdk = 37
         versionCode = versionCodeProperty?.let { raw ->
