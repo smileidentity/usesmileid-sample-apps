@@ -35,8 +35,7 @@ public struct UseSmileIDSampleDataFieldRow: View {
         .foregroundColor(colors.dataField.label)
         .useSmileIDSampleTestId(testId)
 
-      // Trailing-aligned and free to wrap inside its own column: letting the pair share one wrapping
-      // run sent a long value onto the line below its label.
+      // Its own column, or a long value wraps onto the line below its label.
       UseSmileIDSampleText(value, style: valueStyle)
         .foregroundColor(valueColor ?? colors.dataField.value)
         .multilineTextAlignment(.trailing)
@@ -50,7 +49,12 @@ public struct UseSmileIDSampleDataFieldRow: View {
               RoundedRectangle(cornerRadius: SmileSpacing.radiusSm, style: .continuous)
                 .fill(colors.surfaceTile)
             )
+            // Grown to the touch minimum and pulled back by the difference, so the row keeps its height.
+            .frame(width: Self.target, height: Self.target)
+            .contentShape(Rectangle())
+            .padding(-(Self.target - SmileSpacing.sizeIconLg) / 2)
         }
+        .buttonStyle(.plain)
         .accessibilityLabel("Copy \(label)")
         .useSmileIDSampleTestId(copyTestId)
       }
@@ -60,7 +64,9 @@ public struct UseSmileIDSampleDataFieldRow: View {
     .frame(minHeight: minHeight)
   }
 
-  /// A coloured value is the one the design also weights harder, so the two travel together.
+  private static let target: CGFloat = 44
+
+  /// A coloured value is the one the design also weights harder.
   private var valueStyle: SmileTextStyle {
     let style = UseSmileIDSampleTheme.type.dataFieldValueFont.with(size: 13)
     return SmileTextStyle(

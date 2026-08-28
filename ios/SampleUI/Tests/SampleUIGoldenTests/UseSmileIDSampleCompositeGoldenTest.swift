@@ -2,7 +2,6 @@
 import SwiftUI
 import XCTest
 
-/// The shared composites the detail, settings and picker screens are assembled from.
 final class UseSmileIDSampleCompositeGoldenTest: UseSmileIDSampleGoldenTest {
   func testTopAppBar() {
     goldens("top_app_bar") { TopAppBars() }
@@ -80,7 +79,6 @@ private struct DataFieldRows: View {
       UseSmileIDSampleRowDivider()
       UseSmileIDSampleDataFieldRow(label: "Submitted", value: "12 Aug 2026, 14:03")
       UseSmileIDSampleRowDivider()
-      // The one row the design colours, and the only one that takes the heavier weight.
       UseSmileIDSampleDataFieldRow(label: "Status", value: "200 OK", valueColor: .green)
       UseSmileIDSampleRowDivider()
       UseSmileIDSampleDataFieldRow(label: "Environment", value: "sandbox")
@@ -153,7 +151,6 @@ private struct SelectTriggers: View {
         UseSmileIDSampleTriggerEmoji("🇳🇬")
       }
       UseSmileIDSampleSelectTrigger(value: nil, placeholder: "Select country", onTap: {})
-      // Disabled is load-bearing: ID type stays greyed until a country is chosen.
       UseSmileIDSampleSelectTrigger(value: nil, placeholder: "Select ID type", enabled: false, onTap: {})
     }
   }

@@ -1,17 +1,13 @@
 import SwiftUI
 
-/// Filled is the dark control used for back and the Scan token torch; tonal is the light trailing
-/// action; destructive is the soft-red delete.
+/// Filled is back and the torch, tonal the trailing action, destructive the delete.
 public enum UseSmileIDSampleTopAppBarEmphasis: Sendable {
   case filled
   case tonal
   case destructive
 }
 
-/// One circular 40pt app-bar control.
-///
-/// A `Button` rather than a tappable shape, so it keeps the platform's own hit-testing and its
-/// VoiceOver button trait; the label is supplied here because the glyph inside is decorative.
+/// One circular 40pt app-bar control. The label lives here because the glyph is decorative.
 public struct UseSmileIDSampleTopAppBarButton<Glyph: View>: View {
   private let label: String
   private let emphasis: UseSmileIDSampleTopAppBarEmphasis
@@ -55,11 +51,8 @@ public struct UseSmileIDSampleTopAppBarButton<Glyph: View>: View {
   }
 }
 
-/// The pushed-screen app bar: a filled circular back control, a title, and an optional action.
-///
-/// The safe-area inset is NOT applied here. On iOS the presenting container already owns it, and a
-/// component that adds its own would double it inside a sheet — the mirror of the mistake the
-/// Compose twin's toast made by re-applying an inset the host had already handled.
+/// The pushed-screen app bar. No safe-area inset: the presenting container owns it, and applying
+/// one here would double it inside a sheet.
 public struct UseSmileIDSampleTopAppBar<Action: View>: View {
   private let title: String
   private let backLabel: String
@@ -91,7 +84,7 @@ public struct UseSmileIDSampleTopAppBar<Action: View>: View {
         UseSmileIDSampleIcon(SmileIcons.arrowBack, tint: tint, size: SmileSpacing.sizeIconMd)
       }
 
-      // Wraps rather than truncates: ellipsising a title is the clipping the predicate forbids.
+      // Wraps rather than truncates: an ellipsised title is the clipping the predicate forbids.
       UseSmileIDSampleText(title, style: UseSmileIDSampleTheme.type.textStyleTitle.with(size: 15))
         .foregroundColor(colors.textTitle)
         .multilineTextAlignment(.center)

@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// An organisation and a supporting line — the person on the switch sheet, "Tap to configure" in
-/// settings. The hue varies per profile, so the caller passes it.
+/// An organisation and a supporting line. The hue varies per profile, so the caller passes it.
 public struct UseSmileIDSampleProfileRow<Trailing: View>: View {
   private let organisation: String
   private let supportingText: String
@@ -20,7 +19,7 @@ public struct UseSmileIDSampleProfileRow<Trailing: View>: View {
     supportingText: String,
     initials: String,
     selected: Bool,
-    // The same default the avatar has: a second one drew one profile in two colours.
+    // The avatar's own default: a second one drew one profile in two colours.
     avatarColor: Color = smileProfileHues[0],
     testId: String? = nil,
     onTap: @escaping () -> Void,

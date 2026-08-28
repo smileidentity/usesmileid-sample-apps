@@ -13,9 +13,7 @@ public struct UseSmileIDSampleTriggerEmoji: View {
   }
 }
 
-/// Looks like an input, behaves like a button.
-///
-/// Disabled is load-bearing: ID type stays greyed until a country is chosen.
+/// Looks like an input, behaves like a button. Disabled is load-bearing: ID type waits on a country.
 public struct UseSmileIDSampleSelectTrigger<Leading: View>: View {
   private let value: String?
   private let placeholder: String
@@ -47,7 +45,7 @@ public struct UseSmileIDSampleSelectTrigger<Leading: View>: View {
     Button(action: onTap) {
       HStack(spacing: SmileSpacing.spacingXs) {
         if Leading.self != EmptyView.self {
-          // A minimum, not a fixed size: the slot may hold an emoji, which grows with Dynamic Type.
+          // A minimum, not a fixed size: an emoji in the slot grows with Dynamic Type.
           leading.frame(minWidth: SmileSpacing.sizeIconMd, minHeight: SmileSpacing.sizeIconMd)
         }
         UseSmileIDSampleText(

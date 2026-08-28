@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// One row in the country or ID-type picker; country rows lead with a flag.
-///
-/// A selected row takes a pale fill as well as a check, so the choice survives a colour-blind read.
+/// One picker row; selected takes a pale fill as well as a check, so colour alone never carries it.
 public struct UseSmileIDSampleOptionRow: View {
   private let label: String
   private let leadingText: String?
@@ -46,7 +44,6 @@ public struct UseSmileIDSampleOptionRow: View {
       .frame(maxWidth: .infinity)
       .background(
         RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.field, style: .continuous)
-          // Transparent over the sheet unless chosen; only the selected row takes a fill.
           .fill(selected ? colors.surfaceTile : .clear)
       )
       .contentShape(Rectangle())

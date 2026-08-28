@@ -40,12 +40,8 @@ final class UseSmileIDSamplePrimitivesGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("section_label") { SectionLabels() }
   }
 
-  /// The thumb is absent from this baseline and that is the harness, not the control.
-  ///
-  /// `Toggle` is a `UISwitch`, whose thumb is drawn by a layer the offscreen render path skips.
-  /// The strategy that would capture it, `drawHierarchyInKeyWindow`, needs a host application, and
-  /// an SPM test target has none. The four tracks still differ correctly, so this catches a tint
-  /// or state regression; the thumb itself is the device pass's job.
+  /// No thumb in this baseline: UISwitch draws it in a layer the offscreen path skips, and the
+  /// strategy that captures it needs a host app. The tracks still catch a tint regression.
   func testSwitchStates() {
     goldens("switch_states") { SwitchStates() }
   }

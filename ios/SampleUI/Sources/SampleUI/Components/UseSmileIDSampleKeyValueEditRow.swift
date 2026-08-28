@@ -33,8 +33,7 @@ public struct UseSmileIDSampleKeyValueEditRow: View {
   }
 
   public var body: some View {
-    // Side by side at the design's scale, stacked once type grows — the same rule DataFieldRow
-    // follows. SwiftUI has no FlowRow on this floor, so the switch is explicit.
+    // Stacks once type grows; SwiftUI has no FlowRow on this floor, so the switch is explicit.
     Group {
       if sizeCategory.isAccessibilityCategory {
         VStack(alignment: .leading, spacing: SmileSpacing.spacingXxs) {
@@ -71,7 +70,6 @@ public struct UseSmileIDSampleKeyValueEditRow: View {
       }
       TextField("", text: $value)
         .font(UseSmileIDSampleFonts.font(rowStyle))
-        // Muted when disabled, so a row that cannot be edited does not look editable.
         .foregroundColor(enabled ? colors.textTitle : colors.textMuted)
         .keyboardType(keyboardType)
         .accentColor(colors.primary)

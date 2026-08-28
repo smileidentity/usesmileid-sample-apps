@@ -30,8 +30,7 @@ public struct UseSmileIDSampleSettingRow<Leading: View, Trailing: View>: View {
   }
 
   public var body: some View {
-    // A whole-row Button when the row navigates, so the tap target and the VoiceOver trait are the
-    // platform's; a plain row otherwise, rather than a button that does nothing.
+    // A Button only when the row navigates, so nothing inert is announced as tappable.
     if let onTap {
       Button(action: onTap) { row }
         .buttonStyle(.plain)
