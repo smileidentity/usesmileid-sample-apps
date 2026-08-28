@@ -13,6 +13,10 @@ public enum UseSmileIDSampleTestIds {
   public static let toast = "sample_toast"
   public static let toastUndo = "sample_toast_undo"
 
+  public static let envChip = "sample_env_chip"
+  public static let navToken = "sample_nav_token"
+  public static let productCard = "sample_product_card"
+
   public static let jobRow = "sample_job_row"
   public static let jobRowStatus = "sample_job_row_status"
   public static let filterChip = "sample_filter_chip"
@@ -27,6 +31,7 @@ public enum UseSmileIDSampleTestIds {
     productsScreen, verificationsScreen, settingsScreen,
     navProducts, navVerifications, navSettings,
     toast, toastUndo,
+    envChip, navToken, productCard,
     jobRow, jobRowStatus, filterChip, filterCount,
     selectionBar, selectionCheckbox, selectionCount, selectionRemove
   ]
