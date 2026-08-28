@@ -60,6 +60,12 @@ jobs:
           done
           exit $fail
 
+      - name: Feature graphic is store-legal
+        run: |
+          FG=android/play/feature-graphic.png
+          test -f "$FG" || { echo "::error::Play requires a feature graphic and $FG is missing"; exit 1; }
+          npx --yes -p storeshots-mcp storeshots validate --preset play-feature-graphic "$FG"
+
       - name: Rendered panels are store-legal, when they have been rendered
         run: |
           if [ -d android/play/screenshots ] && ls android/play/screenshots/*.png >/dev/null 2>&1; then

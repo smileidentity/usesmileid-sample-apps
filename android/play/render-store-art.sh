@@ -45,6 +45,22 @@ compose verifications        "Review"    "every verification result"    text-top
 compose verification_details "See"       "the details of a verification" text-top
 compose settings             "Configure" "the steps in the flow"       text-top
 
+FEATURE_GRAPHIC="$(dirname "$OUT")/feature-graphic.png"
+if [ -f "$FRAMES/products.png" ]; then
+  echo "==> feature graphic"
+  "${STORESHOTS[@]}" compose \
+    --preset play-feature-graphic \
+    --bg "$BG" \
+    --verb "Smile ID" \
+    --desc "identity verification, end to end" \
+    --variant text-top \
+    --screenshot "$FRAMES/products.png" \
+    --output "$FEATURE_GRAPHIC"
+  "${STORESHOTS[@]}" validate --preset play-feature-graphic "$FEATURE_GRAPHIC"
+else
+  skipped="$skipped feature-graphic"
+fi
+
 if [ -z "$(ls -A "$OUT"/*.png 2>/dev/null)" ]; then
   echo "no frames to render; run with --frames" >&2
   exit 1
@@ -59,5 +75,6 @@ echo "==> showcase strip, for review in a PR"
 if [ -n "$skipped" ]; then
   echo "skipped, no frame yet:$skipped"
   echo "The camera panel needs a device: android/maestro/store/store-shots.yaml"
+  echo "The release lane requires every one of them, so it will fail until they exist."
 fi
 echo "OK — $OUT"
