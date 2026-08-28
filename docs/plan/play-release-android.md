@@ -43,6 +43,8 @@ Four items. One is irreversible, one is invisible until someone looks at a launc
 2. **There is no launcher icon wired.** `android/app/src/main/res/` holds `values/` and `values-night/`
    and nothing else — no density buckets, no adaptive icon, no `ic_launcher`. The app ships the platform
    default today. The art now exists; §4 covers why it cannot be dropped in as-is.
+   **Resolved (REL-A1).** Adaptive icon with background, foreground and monochrome layers, legacy
+   density PNGs for API 24–25, and the listing PNG; §4.1 records what the mask check measured.
 3. **`versionCode = 1` and `versionName = "1.0.0"` are hard-coded** (`:29–30`) with no bump mechanism.
    versionCode is monotonic and non-reusable on Play, so a wasted upload burns an integer permanently.
    **Resolved (REL-A3).** versionCode comes from a `VERSION_CODE` property, one derived source for every
@@ -245,6 +247,37 @@ and badge become the foreground scaled to sit inside the safe box, and the resul
 circle, a squircle and a rounded square rather than against one launcher. A monochrome layer is worth
 adding at the same time for themed icons on Android 13+.
 
+### 4.1 What the mask check actually measured, and where this plan was optimistic
+
+The 341 px figure above is the *viewport* the launcher masks inside — it is not the safe area. Every
+mask is inscribed in that square, so the guaranteed-visible region is the square's inscribed **circle**,
+radius 170.7. Scaling the art to fill the 341 px square is therefore still wrong, and visibly so: the
+first attempt did exactly that and the badge, the blue block and the arch were all clipped on the
+circle. Corners of the content box are the first thing a round mask takes.
+
+Rather than argue the geometry, each candidate scale was rendered and the clipped pixels counted —
+content rendered on a chroma key, masked by the circle, opaque pixels compared before and after:
+
+| Foreground scale | Content px | Inside the circle | Clipped |
+|---|---|---|---|
+| 0.824 (fill the square) | 44,718 | 41,537 | **3,181** |
+| 0.72 | 34,148 | 33,600 | 548 |
+| 0.68 | 30,673 | 30,595 | 78 |
+| **0.66** | 28,808 | 28,808 | **0** |
+| 0.65 (shipped) | 28,032 | 28,032 | 0 |
+
+So 0.66 is the boundary and 0.65 ships, with the monochrome layer measured the same way (boundary
+0.82, ships at 0.80 — it holds only the mark, which has a different bounding box). The round legacy
+icon is a separate case and was measured separately: its mask is the full 512 canvas rather than the
+341 viewport, so it ships at 0.95 where 1.0 would still not clip. Reusing the adaptive scale there
+made the icon look shrunken, which the contact sheet caught.
+
+**One tooling trap worth writing down.** Quick Look renders SVG onto opaque white, so a naive
+render gives white corners rather than transparent ones, and any alpha-based measurement over it
+reads 100% opaque and proves nothing. Both bugs were live here before the pixel counts were checked
+against a chroma key instead. The shipped PNGs rebuild their alpha from the known ground geometry —
+rounded rect at `rx=114` scaled per density, circle for the round variant.
+
 ## 5. The copy, and the voice ruling
 
 **Owner instruction: Play wording follows `docs-v3`.** That is a rewrite rather than a copy-edit, and
@@ -358,7 +391,7 @@ Simulate affordance is present under release configuration, failing the build ra
 
 | ID | Item | Status | Notes |
 |---|---|---|---|
-| REL-A1 | Adaptive launcher icon decomposed from `svgs/android.svg`, plus monochrome layer and the 512×512 listing PNG | | §4. Two treatments of one source; check against three masks |
+| REL-A1 | Adaptive launcher icon decomposed from `svgs/android.svg`, plus monochrome layer and the 512×512 listing PNG | **DONE 2026-08-28** — §4.1; safe scale measured, not assumed | §4. Two treatments of one source; check against three masks |
 | REL-A2 | Release signing: reuse the v11 upload key, `exists()` guard, CI secrets | **DONE 2026-08-28** — build side only; the CI secrets are wired by A15 | §3. The irreversible one |
 | REL-A3 | One monotonic `versionCode` source across all tracks, and a `versionName` scheme | **DONE 2026-08-28** | §3.1. Do not copy v11's two-scheme split |
 | REL-A4 | App bundle + ABI splits | **DONE 2026-08-28** — §7.1; language splits deliberately off | The A3 size ruling landing, not a second decision |
