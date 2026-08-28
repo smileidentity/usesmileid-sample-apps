@@ -22,6 +22,8 @@ data class UseSmileIDSampleJobEntity(
     val sandbox: Boolean,
     /** The session the run submitted under; null on a fixture token, which has no status to ask for. */
     val sessionId: String? = null,
+    /** The partner the run submitted under; a refresh matches this, not the session. */
+    val partnerId: String? = null,
     /** Which fields the token supplied — the shape, never the values: one of them is a vault reference. */
     @ColumnInfo(defaultValue = "0") val boundUserDetails: Boolean = false,
     @ColumnInfo(defaultValue = "0") val boundIdDetails: Boolean = false,
@@ -41,6 +43,7 @@ fun UseSmileIDSampleJobEntity.toJob() = UseSmileIDSampleJob(
     httpStatus = httpStatus,
     sandbox = sandbox,
     sessionId = sessionId,
+    partnerId = partnerId,
 )
 
 fun UseSmileIDSampleJob.toEntity(
@@ -57,6 +60,7 @@ fun UseSmileIDSampleJob.toEntity(
     httpStatus = httpStatus,
     sandbox = sandbox,
     sessionId = sessionId,
+    partnerId = partnerId,
     boundUserDetails = boundUserDetails,
     boundIdDetails = boundIdDetails,
     boundConsent = boundConsent,
