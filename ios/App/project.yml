@@ -1,0 +1,51 @@
+# The shell's identity as data; XcodeGen turns it into the project ios/verify.sh builds.
+name: UseSmileIDSample
+options:
+  bundleIdPrefix: com.usesmileid.sampleapps
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+
+packages:
+  SampleUI:
+    path: ../SampleUI
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+
+targets:
+  UseSmileIDSample:
+    type: application
+    platform: iOS
+    sources: [Sources]
+    dependencies:
+      - package: SampleUI
+        product: SampleUI
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.usesmileid.sampleapps.ios
+        INFOPLIST_FILE: Info.plist
+        CODE_SIGNING_ALLOWED: NO
+    info:
+      path: Info.plist
+      properties:
+        CFBundleDisplayName: UseSmileID Sample
+        UILaunchScreen: {}
+        # The SDK opens the camera; without this the first capture kills the app rather than prompting.
+        NSCameraUsageDescription: Smile ID uses the camera to capture your selfie and documents.
+        CFBundleURLTypes:
+          - CFBundleURLName: com.usesmileid.sampleapps.ios
+            CFBundleURLSchemes: [usesmileid-sample-ios]
+
+  UseSmileIDSampleTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [Tests]
+    dependencies:
+      - target: UseSmileIDSample
+    settings:
+      base:
+        CODE_SIGNING_ALLOWED: NO
