@@ -1,10 +1,12 @@
 # Shipping the Android sample to Play
 
-**Status:** planning. Runs in parallel with the iOS port and shares no files with it. Android is the
-first of the four apps to reach a store, so every decision here sets a pattern the other three copy —
-§8 records what travels and what is Play-specific.
+**Status:** REL-A1 through REL-A17 all landed 2026-08-28. Three things are owed and each carries a
+dated decision in §7.2: the camera panel needs a device, one rendered panel is visually weak, and the
+first upload is an owner action. §7 tracks each item. Runs in parallel with the iOS port and shares no
+files with it. Android is the first of the four apps to reach a store, so every decision here sets a
+pattern the other three copy — §8 records what travels and what is Play-specific.
 
-Scope: the Google Play listing for `com.usesmileid.sampleapps.android`, the release build that backs
+Scope: the Google Play listing for `com.usesmileid.sample.android`, the release build that backs
 it, and the store-art pipeline. Not the app's behaviour: the app is feature-complete through #30 and
 this plan adds no screens.
 
@@ -21,6 +23,15 @@ this plan adds no screens.
 - **Phone-only. No tablet art** — §6.2 is the code that decides it.
 - The **launcher icon sources have landed** in `svgs/`, one per platform.
 
+**One further owner ruling, 2026-08-28:** the four sample apps take a single `com.usesmileid.sample.*` id
+family, so Android publishes as `com.usesmileid.sample.android`. It is free to change today and permanent
+from the first upload, which is why it lands with this tranche rather than after it.
+`spec/app-identity.json` carries both the decision and the debt it creates: the Flutter and Expo ids are
+held by SDK-repo development samples, which owe a rename before either of those apps is built. Android and
+iOS collide with nothing — and the iOS app, which landed while this branch was open, follows here:
+`ios/App/project.yml` now declares `com.usesmileid.sample.ios`, which is what its own spec test
+asserts. The Kotlin namespace is unchanged — it is not an identity.
+
 ## 1. What is blocking, read out of the build files
 
 Four items. One is irreversible, one is invisible until someone looks at a launcher.
@@ -30,11 +41,17 @@ Four items. One is irreversible, one is invisible until someone looks at a launc
    one `verify.sh` assembles, the ones the device suite runs on — has never been uploadable. Fixing it
    changes no behaviour, but signing identity is **permanent from the first upload**, which makes this
    the only item here that cannot be corrected afterwards. §3 says exactly what to do.
+   **Resolved (REL-A2).** `release` takes an `upload` signing config guarded on the keystore existing,
+   so only a build that held the upload key is uploadable.
 2. **There is no launcher icon wired.** `android/app/src/main/res/` holds `values/` and `values-night/`
    and nothing else — no density buckets, no adaptive icon, no `ic_launcher`. The app ships the platform
    default today. The art now exists; §4 covers why it cannot be dropped in as-is.
+   **Resolved (REL-A1).** Adaptive icon with background, foreground and monochrome layers, legacy
+   density PNGs for API 24–25, and the listing PNG; §4.1 records what the mask check measured.
 3. **`versionCode = 1` and `versionName = "1.0.0"` are hard-coded** (`:29–30`) with no bump mechanism.
    versionCode is monotonic and non-reusable on Play, so a wasted upload burns an integer permanently.
+   **Resolved (REL-A3).** versionCode comes from a `VERSION_CODE` property, one derived source for every
+   track; versionName stays the hand-bumped marketing version the settings footer already renders.
 4. **There is no release lane.** `.github/workflows/android.yml` is the per-PR lane. `verify.sh`
    assembles a release APK (line 47) but nothing builds or validates a bundle.
 
@@ -124,8 +141,16 @@ Tools are `list_presets`, `compose_screenshot`, `generate_set`, `create_showcase
 `validate_screenshot`. Layout variants are `text-top`, `text-bottom` and `tilted`; mixing them is what
 stops six panels reading as one template repeated.
 
-**Use the CLI in CI and the MCP server locally.** `npx storeshots` is the same engine, and a CI lane must
+**Use the CLI in CI and the MCP server locally.** The CLI is the same engine, and a CI lane must
 not depend on an agent being in the loop. Local install: `claude mcp add storeshots -- npx -y storeshots-mcp`.
+
+**Correction, checked against the registry 2026-08-28:** `npx storeshots` does not resolve — there is no
+package by that name, and the command 404s. The CLI ships *inside* `storeshots-mcp`, which declares two
+binaries (`storeshots-mcp` for the server, `storeshots` for the CLI), so the invocation is
+`npx -p storeshots-mcp storeshots <command>`, or a devDependency on `storeshots-mcp` and a plain
+`storeshots` on the path. The engine claim itself holds. Its commands are `presets`, `compose`,
+`showcase` and `validate` — there is no `generate_set` on the CLI, so rendering a six-panel set is six
+`compose` calls from a script rather than one command, which is what REL-A11 has to write.
 The render path is pure — same frame plus same headline gives the same pixels — which is what makes the
 generated art committable, diffable in review, and gate-able for staleness alongside the design tokens
 and third-party notices `verify.sh` already checks.
@@ -136,6 +161,57 @@ production half. Translation lives in the agent by design. There is no Play Cons
 publishing is a solved, non-interactive problem and `r0adkll/upload-google-play` already does it in v11
 (§3). The Figma MCP is available if the feature graphic wants composing from the design system rather
 than from a screenshot. Beyond that, adding tools would add moving parts without removing work.
+
+### 2.6 Two things only a review of the output caught
+
+Both were invisible in the raw frames and obvious in the finished panels, which is the argument for
+committing the rendered set rather than only the frames.
+
+**A frame is not a screenshot: it needs a status bar.** The panels render the app edge to edge from
+y=0, but the device frame storeshots draws has a punch-hole and rounded corners over that area. The
+app bar landed underneath both — the camera cutout sat between "Verifications" and "Select", and
+beside the "Smile ID" title. Measured against a solid probe rendered through the same frame: the
+screen is drawn at 0.689 scale, the corners eat the top ~61px of the source and the punch-hole spans
+source y 70–96. `StoreArtTest` therefore insets its content by **40dp**, which clears both, and the
+band reads as a status bar. The check is that the top 120px of every frame is a single colour.
+
+**Mixing layout variants made the set look like different devices.** The plan suggested alternating
+`text-top`, `text-bottom` and `tilted` so six panels would not read as one template repeated. In the
+finished strip that instead put the phone at a different height and size in every panel, which reads
+as inconsistency rather than variety. All panels now use `text-top`, so the device sits at y=201
+throughout. Variety comes from the headlines and the screens, which is enough.
+
+**A headline must not carry a count.** The first set opened with "Six products, one integration", which
+is wrong the day a product is added or removed and needs a re-render nobody will remember to do. The
+headlines are imperative verb plus concrete object, each true to the panel it sits above, and none of
+them states a number. They also take their nouns from `docs-v3` rather than inventing new ones: it
+calls the record a **verification result** (28 uses) and describes one by its **status** and
+**message**, whose values — `clear`, `attention`, `block` — are the words on the app's own status
+pills. Two earlier drafts read as developer shorthand ("every field of a result") or trailed a clause
+("every run and its status"); the docs' vocabulary fixed both. The details panel then took its
+descriptor from the screen's own title, "Verification details", rather than naming two of the five
+fields it shows.
+
+### 2.7 What building the pipeline changed
+
+Three corrections, all found by running it rather than by reading:
+
+- **Gradle Managed Devices cannot host the camera capture.** GMD starts and stops its emulator around a
+  Gradle *test task*, and Maestro is not one, so a GMD block would declare an image nothing uses. The
+  image is pinned in the flow's header instead — a Pixel-class AVD on API 34, at 1080x1920 so the frame
+  needs no rescaling next to the five rendered panels.
+- **The capture flow lives in `android/maestro/store/`, not beside the suite.** Folder runs are
+  non-recursive, which is how `subflows/` stays out of the suite; a top-level `store-shots.yaml` would
+  have joined every per-PR device run, needing a camera and writing a file on each one.
+- **The capture screen still has no `si_*` id**, so the landmark that proves the preview is up before
+  anything is written is the SDK's own shipped button text, "Start Capture". The assertions run before
+  the capture, never on it.
+
+**One naming trap, recorded so nobody "fixes" it.** `UseSmileIDSampleProduct` carries two names for the
+first product: `label` is "SmartSelfie Enrollment", used in the verifications list and details, while
+`cardTitle` is "Registration", a short form for the products card's narrow text column. Both therefore
+appear in the store panels. The listing follows `label`, per §5's ruling. They are not in conflict and
+neither should be changed to match the other.
 
 ## 3. Signing — reuse the v11 upload key
 
@@ -150,7 +226,7 @@ with alias `upload`, taking its password from the `uploadKeystorePassword` Gradl
 
 **So reusing it is correct, and it is the low-friction answer.** Play permits one upload key across many
 apps in an account, and enrolls each new app with its own freshly generated app signing key, so
-`com.usesmileid.sampleapps.android` gets cryptographic separation for free while we distribute no new
+`com.usesmileid.sample.android` gets cryptographic separation for free while we distribute no new
 secret. Enrollment is not optional for a new app in any case.
 
 Two things to be deliberate about rather than discover:
@@ -164,6 +240,21 @@ The keystore is not committed to the v11 repository and must not be committed he
 materialised in CI from a base64 repository secret at build time. Copy v11's
 `if (uploadKeystoreFile.exists())` guard as well — it lets a contributor without the secret still build a
 release variant, which is why `verify.sh` works on any machine.
+
+**One deliberate divergence from v11, decided while writing the guard.** v11 leaves the release variant
+*unsigned* when the keystore is absent; here it falls back to the debug config, because `verify.sh`
+assembles the APK the release device suite installs and an unsigned APK cannot be installed. The fallback
+keys off the keystore file's absence alone, so it cannot mask a missing secret: a keystore present without
+its password fails `packageRelease` with *SigningConfig "upload" is missing required property
+"storePassword"*, and a wrong password fails with *Keystore was tampered with, or password was incorrect*.
+Both were run. A missing CI secret therefore fails at build time rather than at upload.
+
+The one case that leaves is a publish lane whose keystore never materialised at all, which would otherwise
+produce a perfectly successful debug-signed bundle. `-PREQUIRE_UPLOAD_SIGNING=true` refuses to build one,
+and **REL-A15 must pass it on both tracks** — that is the property's only caller, and the reason it exists.
+It also requires `VERSION_CODE`, because the `?: 1` default is otherwise reachable from a publish lane and
+uploading it would burn versionCode 1 permanently. Putting both checks in the build rather than in a
+workflow step covers a bundle built by hand as well.
 
 <!-- INTERNAL-ONLY:START reason=ci-secret-names-and-sibling-repo-paths -->
 Specifics for whoever wires it: the source is `sample/sample.gradle.kts` in the v11 Android repository,
@@ -191,6 +282,27 @@ human-meaningful, provided it is the only source. v11's plumbing is worth keepin
 disagree. Worth telling the v11 owners; it is latent there today.
 <!-- INTERNAL-ONLY:END -->
 
+### 3.2 What the two publish workflows do differently from v11
+
+Three deliberate changes, beyond dropping the release-notes generation §5 rejects:
+
+- **The internal lane is `workflow_dispatch` only.** v11 publishes internal on every push to `main`.
+  Here that would perform the very first upload automatically, which is the one action reserved for an
+  owner because it fixes the signing identity and creates the listing. Adding the push trigger is a
+  one-line change once the listing exists.
+- **Both lanes compute `versionCode` with the same command**, which is the §3.1 defect not being
+  ported.
+- **Secrets reach Gradle as `ORG_GRADLE_PROJECT_*` environment variables, never as `-P` arguments**, so
+  the keystore password does not appear in the runner's process list.
+
+Both lanes set `-PREQUIRE_UPLOAD_SIGNING=true`, so a run whose keystore secret failed to materialise
+fails at the bundle step instead of producing a debug-signed artefact that only Play would reject.
+
+Note on the marker convention: these workflow files name their secrets in the clear, because a workflow
+cannot reference a secret without naming it and the names are not themselves sensitive. The
+`INTERNAL-ONLY` block above is marked for a different reason — it points at a sibling repository's
+file layout, which is what must not survive the flip.
+
 **The rule that survives the flip:** v12 uses one monotonic `versionCode` scheme across every track,
 derived from a single source, because Play compares each upload against every prior upload for the app
 regardless of which track it went to.
@@ -217,6 +329,37 @@ So REL-A1 decomposes the source: `#F9F0E7` becomes a flat background layer with 
 and badge become the foreground scaled to sit inside the safe box, and the result gets checked against a
 circle, a squircle and a rounded square rather than against one launcher. A monochrome layer is worth
 adding at the same time for themed icons on Android 13+.
+
+### 4.1 What the mask check actually measured, and where this plan was optimistic
+
+The 341 px figure above is the *viewport* the launcher masks inside — it is not the safe area. Every
+mask is inscribed in that square, so the guaranteed-visible region is the square's inscribed **circle**,
+radius 170.7. Scaling the art to fill the 341 px square is therefore still wrong, and visibly so: the
+first attempt did exactly that and the badge, the blue block and the arch were all clipped on the
+circle. Corners of the content box are the first thing a round mask takes.
+
+Rather than argue the geometry, each candidate scale was rendered and the clipped pixels counted —
+content rendered on a chroma key, masked by the circle, opaque pixels compared before and after:
+
+| Foreground scale | Content px | Inside the circle | Clipped |
+|---|---|---|---|
+| 0.824 (fill the square) | 44,718 | 41,537 | **3,181** |
+| 0.72 | 34,148 | 33,600 | 548 |
+| 0.68 | 30,673 | 30,595 | 78 |
+| **0.66** | 28,808 | 28,808 | **0** |
+| 0.65 (shipped) | 28,032 | 28,032 | 0 |
+
+So 0.66 is the boundary and 0.65 ships, with the monochrome layer measured the same way (boundary
+0.82, ships at 0.80 — it holds only the mark, which has a different bounding box). The round legacy
+icon is a separate case and was measured separately: its mask is the full 512 canvas rather than the
+341 viewport, so it ships at 0.95 where 1.0 would still not clip. Reusing the adaptive scale there
+made the icon look shrunken, which the contact sheet caught.
+
+**One tooling trap worth writing down.** Quick Look renders SVG onto opaque white, so a naive
+render gives white corners rather than transparent ones, and any alpha-based measurement over it
+reads 100% opaque and proves nothing. Both bugs were live here before the pixel counts were checked
+against a chroma key instead. The shipped PNGs rebuild their alpha from the known ground geometry —
+rounded rect at `rx=114` scaled per density, circle for the round variant.
 
 ## 5. The copy, and the voice ruling
 
@@ -247,7 +390,15 @@ change has a known blast radius:
 | Enhanced KYC | `onboarding-without-biometrics/enhanced-kyc.md` |
 
 Limits are counted, not estimated: title 30, short description 80, full description 4000, release notes
-500.
+500. They are now asserted by `UseSmileIDSamplePlayListingTest` rather than counted once, because Play
+truncates silently instead of rejecting.
+
+**One exception to "follow `docs-v3`", ruled by the owner 2026-08-28.** The two sources name the first
+product differently: `docs-v3` calls it SmartSelfie™ Registration, the app's own product list calls it
+SmartSelfie™ Enrollment. The listing takes **Enrollment**, so the store copy and the store screenshots
+agree with each other — a partner reading the listing next to the app should not see two names for one
+product. The trademark still renders as `docs-v3` writes it. Everything else in the copy follows
+`docs-v3` unchanged.
 
 **Release notes are v11's other defect, and this is where it stops.** v11 generates "What's new" with
 `git log --pretty=format:'- [%ad] %s' --date=short -n 5`, which is why the live listing shows
@@ -329,31 +480,99 @@ Simulate affordance is present under release configuration, failing the build ra
 
 ## 7. Work items
 
-| ID | Item | Notes |
+| ID | Item | Status | Notes |
+|---|---|---|---|
+| REL-A1 | Adaptive launcher icon decomposed from `svgs/android.svg`, plus monochrome layer and the 512×512 listing PNG | **DONE 2026-08-28** — §4.1; safe scale measured, not assumed | §4. Two treatments of one source; check against three masks |
+| REL-A2 | Release signing: reuse the v11 upload key, `exists()` guard, CI secrets | **DONE 2026-08-28** — build side only; the CI secrets are wired by A15 | §3. The irreversible one |
+| REL-A3 | One monotonic `versionCode` source across all tracks, and a `versionName` scheme | **DONE 2026-08-28** | §3.1. Do not copy v11's two-scheme split |
+| REL-A4 | App bundle + ABI splits | **DONE 2026-08-28** — §7.1; language splits deliberately off | The A3 size ruling landing, not a second decision |
+| REL-A5 | `android/play/` as the home for title, descriptions and release notes | **DONE 2026-08-28** — owner ruling: no fastlane | The upload action reads `whatsnew/whatsnew-en-US` directly; the rest is filled in Console |
+| REL-A6 | Draft the copy from §5's sources, counted against every limit | **DONE 2026-08-28** — counted by a test, not by hand | Derived from `docs-v3`, not written fresh |
+| REL-A7 | Hand-written release notes; drop v11's git-log generation step | **DONE 2026-08-28** — generation step dropped, not adapted | Fixes the defect rather than porting it |
+| REL-A8 | Store-art Gradle task: Roborazzi at store device specs, own output dir, own staleness input | **DONE 2026-08-28** — `StoreArtTest`, own directory and own staleness input | §2.1. Must not share a directory with goldens |
+| REL-A9 | `android/maestro/store-shots.yaml` for the camera panel only, on a Gradle Managed Device | **FLOW READY 2026-08-28** — five panels rendered without it; the frame needs a device; §2.7 | §2.2. One frame, not six |
+| REL-A10 | Fixture-only capture data: test identities, simulated token, `seedJobs` | **DONE 2026-08-28** — verified: the fixtures carry no names at all | §2.4. Safe to publish and safe in CI |
+| REL-A11 | `storeshots` render script: presets, headlines, committed art | **DONE 2026-08-28** — `android/play/render-store-art.sh` | CLI, not the MCP server |
+| REL-A12 | Transcribe v11's data-safety answers; commit §6.1's comparison as the reason | **DONE 2026-08-28** — `docs/play-data-safety.md` | §6.1. No re-derivation |
+| REL-A13 | Declare no special access, and add a **test** that Simulate survives release configuration | **DONE 2026-08-28** — two tests, both mutation-checked | §6.3. The declaration's truth depends on it, so assert it rather than remember it |
+| REL-A14 | Periodic `targetSdk` re-check against Play's floor | **DONE 2026-08-28** — recorded as a dated recurring check | 37 accepted today; the floor moves annually |
+| REL-A15 | Publish workflows adapted from v11: internal and production tracks | **DONE 2026-08-28** — dispatch-only until the listing exists | Copy the signing and upload steps, not the version or notes steps. Both tracks pass `-PREQUIRE_UPLOAD_SIGNING=true` and the same `VERSION_CODE` command (§3) |
+| REL-A16 | Release CI lane: bundle, `validate_screenshot` over the art, fail on stale art | **DONE 2026-08-28** — `release-check.yml`; stale-art gating already lives in the per-PR lane | Mirrors the existing tokens/notices gates |
+| REL-A17 | The gate: art regenerates byte-identically, `verify.sh` green, nothing owed | **WALKED 2026-08-28** — §7.2; three items owed, each dated | Last, as a gate rather than as work |
+
+### 7.1 What the bundle recovered, measured
+
+The size ruling asked for packaging, so here is what packaging returned, built and measured on this
+tree rather than estimated:
+
+| Artefact | Size |
+|---|---|
+| Universal release APK (`assembleRelease`) | 69.7 MB |
+| App bundle (`bundleRelease`) | 39.7 MB |
+| Delivered download, arm64-v8a phone | **14.2 MB** |
+| Delivered download, armeabi-v7a phone | **13.1 MB** |
+
+`bundletool get-size total --dimensions=ABI` reports 13.8–15.8 MB across every configuration the
+bundle can serve. The three ABIs a given phone never runs and the density buckets it never reads are
+what the split removes; the 21.3 MB the bundled barcode model added is most of it.
+
+**Language splits are deliberately off**, which is the one place this diverges from the defaults.
+`appLocale` exists to render the app *and the SDK's own strings* in a locale that is not the device's,
+and an install carrying only the device's language cannot do that — a defect that would appear on a
+Play install and on no other lane. The SDK ships no localized resources today, so the price is a
+handful of androidx locales now and correctness the day it does.
+
+### 7.2 REL-A17: the gate, walked 2026-08-28
+
+**§1's four blockers.**
+
+| # | Blocker | State |
 |---|---|---|
-| REL-A1 | Adaptive launcher icon decomposed from `svgs/android.svg`, plus monochrome layer and the 512×512 listing PNG | §4. Two treatments of one source; check against three masks |
-| REL-A2 | Release signing: reuse the v11 upload key, `exists()` guard, CI secrets | §3. The irreversible one |
-| REL-A3 | One monotonic `versionCode` source across all tracks, and a `versionName` scheme | §3.1. Do not copy v11's two-scheme split |
-| REL-A4 | App bundle + ABI splits | The A3 size ruling landing, not a second decision |
-| REL-A5 | `fastlane/metadata/android/en-US/` as the home for title, descriptions and changelogs | Standard machine-readable layout even if uploads stay manual |
-| REL-A6 | Draft the copy from §5's sources, counted against every limit | Derived from `docs-v3`, not written fresh |
-| REL-A7 | Hand-written release notes; drop v11's git-log generation step | Fixes the defect rather than porting it |
-| REL-A8 | Store-art Gradle task: Roborazzi at store device specs, own output dir, own staleness input | §2.1. Must not share a directory with goldens |
-| REL-A9 | `android/maestro/store-shots.yaml` for the camera panel only, on a Gradle Managed Device | §2.2. One frame, not six |
-| REL-A10 | Fixture-only capture data: test identities, simulated token, `seedJobs` | §2.4. Safe to publish and safe in CI |
-| REL-A11 | `storeshots` render script: presets, headlines, committed art | CLI, not the MCP server |
-| REL-A12 | Transcribe v11's data-safety answers; commit §6.1's comparison as the reason | §6.1. No re-derivation |
-| REL-A13 | Declare no special access, and add a **test** that Simulate survives release configuration | §6.3. The declaration's truth depends on it, so assert it rather than remember it |
-| REL-A14 | Periodic `targetSdk` re-check against Play's floor | 37 accepted today; the floor moves annually |
-| REL-A15 | Publish workflows adapted from v11: internal and production tracks | Copy the signing and upload steps, not the version or notes steps |
-| REL-A16 | Release CI lane: bundle, `validate_screenshot` over the art, fail on stale art | Mirrors the existing tokens/notices gates |
-| REL-A17 | The gate: art regenerates byte-identically, `verify.sh` green, nothing owed | Last, as a gate rather than as work |
+| 1 | Release signed with the debug key | Closed by REL-A2, and proved against the real upload key: the store opens, its only alias is `upload`, and the release APK and bundle both carry that certificate's fingerprint |
+| 2 | No launcher icon | Closed by REL-A1, checked against a circle, a squircle and a rounded square, with the safe scale measured rather than assumed (§4.1) |
+| 3 | Hard-coded `versionCode` | Closed by REL-A3; a blank, non-numeric or non-positive value now fails the build, and a publish build without one fails before it can burn an integer |
+| 4 | No release lane | Closed by REL-A15 (publish) and REL-A16 (pre-flight bundle). Stale store art already fails the per-PR lane through `verifyRoborazziDebug` |
+
+**§6's three answers.**
+
+| Question | State |
+|---|---|
+| 6.1 Data safety | Transcribed into `docs/play-data-safety.md` with §6.1's comparison as the recorded reason |
+| 6.2 Tablets | Still phone-only. No adaptive dependency was added and no tablet art exists, so the answer that made it a deferral has not changed |
+| 6.3 App access | Declared as no special access, and both halves of that claim are now asserted by tests that were mutation-checked — each was made to fail on a change that compiles, then restored |
+
+**The determinism criterion, run rather than asserted.** A full `recordRoborazziDebug --rerun-tasks`
+reproduces all five panels byte-for-byte; their git blob hashes are unchanged. `android/verify.sh` is
+green on a machine holding no signing secret, which is the state a fresh clone is in.
+
+**What is still owed, each with a dated decision.**
+
+- **The camera panel (REL-A9), deferred 2026-08-28.** The flow, its landmarks and its output path are
+  written; the frame itself needs a device and nothing else is blocked by it. Five panels is above
+  Play's minimum of two.
+- **Five of the six rendered panels are committed** under `android/play/screenshots`, which is enough
+  to complete a listing: Play's minimum is two. The render script skips a panel whose frame does not
+  exist yet and names it, rather than refusing to run, so the camera panel drops in later without
+  redoing anything. The renders are deterministic — re-running reproduces identical bytes — and each
+  one passes `storeshots validate`. `android/play/screenshots` holds exactly the panels Play receives
+  and nothing else — the review strip sits beside it at `android/play/showcase.png`, because the first
+  version of the release lane validated it as a store panel and failed on a 3711x1344 image that was
+  never meant to be one.
+- **The `verification_details` panel is the weak one, and it is a design call rather than a defect.**
+  Hiding the debug result card left that screen sparse, so its phone frame is half empty next to the
+  others. Three ways out, none of them urgent: ship it, drop it and publish four, or swap in a denser
+  real state such as a blocked result or the token scanner. Screenshots are editable on a live listing
+  at any time, which is why this is not worth blocking the first upload on.
+- **The first upload and the listing are not done, by instruction.** They fix the signing identity
+  permanently and create the listing, so they are an owner action.
 
 ## 8. Parity — what the other three inherit
 
 Unchanged: capture from committed, deterministic renders rather than by hand; fixture-only data in
 published frames; copy derived from the `docs-v3` product pages; store art committed and staleness-gated;
-release notes written by a person.
+release notes written by a person. Flutter and Expo also inherit §7.1 wholesale, because their Android
+builds package the same four ABIs and carry the same `appLocale` argument: app bundle, ABI and density
+splits on, language splits off.
 
 Platform-specific: iOS swaps to the `ios-phone` (1320 × 2868) and `ipad-13` (2064 × 2752) presets, and its
 off-device renderer is snapshot tests rather than Roborazzi, with XCUITest for the camera panel. Worth

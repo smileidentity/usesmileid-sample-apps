@@ -78,4 +78,8 @@ tasks.withType<Test>().configureEach {
     inputs.dir(layout.projectDirectory.dir("src/test/screenshots"))
         .withPropertyName("goldenScreenshots")
         .withPathSensitivity(PathSensitivity.RELATIVE)
+
+    inputs.dir(layout.projectDirectory.dir("src/test/store-art"))
+        .withPropertyName("storeArt")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
 }

@@ -32,7 +32,7 @@ adb shell am start -a android.intent.action.VIEW \
   -d "usesmileid-sample-android://products"  # every route in spec/routes.json opens like this
 
 # the device flows; APP_ID picks the variant and has no default on purpose
-maestro --device <serial> test -e APP_ID=com.usesmileid.sampleapps.android.debug maestro
+maestro --device <serial> test -e APP_ID=com.usesmileid.sample.android.debug maestro
 ```
 
 ## Layout

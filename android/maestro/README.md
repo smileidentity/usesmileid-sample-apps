@@ -1,8 +1,8 @@
 # Android device flows
 
 ```bash
-maestro --device <serial> test -e APP_ID=com.usesmileid.sampleapps.android.debug android/maestro
-maestro --device <serial> test -e APP_ID=com.usesmileid.sampleapps.android       android/maestro
+maestro --device <serial> test -e APP_ID=com.usesmileid.sample.android.debug android/maestro
+maestro --device <serial> test -e APP_ID=com.usesmileid.sample.android       android/maestro
 ```
 
 Both variants must pass. Release is the one that matters most — it is minified and resource-shrunk

@@ -1,37 +1,39 @@
 {
-  "version": 1,
+  "version": 2,
   "description": "Application identity per platform. This is spec data, not documentation, because automation needs it: a device flow must verify which app is in the foreground before it concludes anything, and force-stop the right package before relaunching with new arguments.",
   "displayNameFamily": "UseSmileID Sample",
-  "idRoot": "com.usesmileid.sampleapps",
+  "idRoot": "com.usesmileid.sample",
   "apps": [
     {
       "platform": "android",
-      "applicationId": "com.usesmileid.sampleapps.android",
+      "applicationId": "com.usesmileid.sample.android",
       "debugSuffix": ".debug",
       "displayName": "UseSmileID Sample",
       "urlScheme": "usesmileid-sample-android"
     },
     {
       "platform": "ios",
-      "bundleIdentifier": "com.usesmileid.sampleapps.ios",
+      "bundleIdentifier": "com.usesmileid.sample.ios",
       "displayName": "UseSmileID Sample",
       "urlScheme": "usesmileid-sample-ios"
     },
     {
       "platform": "flutter",
-      "applicationId": "com.usesmileid.sampleapps.flutter",
-      "bundleIdentifier": "com.usesmileid.sampleapps.flutter",
+      "applicationId": "com.usesmileid.sample.flutter",
+      "bundleIdentifier": "com.usesmileid.sample.flutter",
       "debugSuffix": ".debug",
       "displayName": "UseSmileID Sample (F)",
-      "urlScheme": "usesmileid-sample-flutter"
+      "urlScheme": "usesmileid-sample-flutter",
+      "blockedOn": "The flutter SDK repo's development sample holds this id today and must be renamed before this app takes it. No Flutter app exists in this repository yet, so nothing is broken now — but the rename has to land before one does, or the two cannot be installed side by side."
     },
     {
       "platform": "expo",
-      "applicationId": "com.usesmileid.sampleapps.expo",
-      "bundleIdentifier": "com.usesmileid.sampleapps.expo",
+      "applicationId": "com.usesmileid.sample.expo",
+      "bundleIdentifier": "com.usesmileid.sample.expo",
       "debugSuffix": ".debug",
       "displayName": "UseSmileID Sample (Expo)",
-      "urlScheme": "usesmileid-sample-expo"
+      "urlScheme": "usesmileid-sample-expo",
+      "blockedOn": "The react-native-expo SDK repo's Expo development sample holds this id today and must be renamed before this app takes it. No Expo app exists in this repository yet, so nothing is broken now — but the rename has to land before one does, or the two cannot be installed side by side."
     }
   ],
   "sharedLibraryIdentity": {
@@ -42,17 +44,18 @@
     "npmPackage": "@smileid/sample-ui"
   },
   "reserved": {
-    "comment": "Already in use by the development samples inside the SDK repos. Do not claim, reuse, or nest under any of these.",
-    "com.usesmileid.sample": "android SDK repo sample (+.debug) and iOS SDK repo sample; referenced by both repos' E2E workflows",
-    "com.usesmileid.sample.flutter": "flutter SDK repo sample, both platforms; referenced by its E2E workflow",
-    "com.usesmileid.sample.expo": "react-native-expo SDK repo Expo sample, both platforms",
-    "com.usesmileid.sample.react": "react-native-expo SDK repo bare-RN sample (iOS side reads com.usesmileid.sample.rn)",
+    "comment": "Held by the development samples inside the SDK repos. The first two are now CONTESTED: this repository's Flutter and Expo apps are specified to take them, so those development samples must be renamed before either app lands. Do not claim, reuse, or nest under the rest.",
+    "com.usesmileid.sample.flutter": "CONTESTED — flutter SDK repo sample, both platforms; referenced by its E2E workflow. Owed: rename in that repo before this repo's Flutter app is built",
+    "com.usesmileid.sample.expo": "CONTESTED — react-native-expo SDK repo Expo sample, both platforms. Owed: rename in that repo before this repo's Expo app is built",
+    "com.usesmileid.sample": "android SDK repo sample (+.debug) and iOS SDK repo sample; referenced by both repos' E2E workflows. Not contested — this repository's apps sit one level below it",
+    "com.usesmileid.sample.react": "react-native-expo SDK repo bare-RN sample (iOS side reads com.usesmileid.sample.rn). Not contested",
     "usesmileid-sample": "URL scheme claimed by the Expo development sample"
   },
   "rationale": [
-    "A separate id root, rather than a suffix under com.usesmileid.sample, for three reasons. (1) The com.usesmileid.sample.* space is already fully occupied by the development samples, including the bare id on two platforms. (2) On iOS, a bundle id nested under another app's id is the convention for app extensions, so com.usesmileid.sample.ios would read as an extension of the development sample and confuse provisioning. (3) Renaming the development samples instead would touch four repos whose E2E workflows hard-code those ids to grant permissions and verify the foreground app — real breakage for a cosmetic gain.",
+    "OWNER DECISION 2026-08-28: one id family, com.usesmileid.sample.*, for all four apps. This SUPERSEDES the original com.usesmileid.sampleapps root, which was chosen to avoid the development samples entirely. Android moved first because it is the app reaching a store; iOS follows in its port. The cost is recorded rather than hidden: com.usesmileid.sample.flutter and com.usesmileid.sample.expo are held today by SDK-repo development samples, so those two SDK repos owe a rename before this repository's Flutter and Expo apps can be built. Both are unbuilt, so the debt is payable before it is due. Android and iOS collide with nothing.",
+    "What the superseded reasoning got right, and still applies to iOS: on iOS a bundle id nested under another app's id is the convention for app extensions, so com.usesmileid.sample.ios can read as an extension of the development sample com.usesmileid.sample. It is not a technical block — provisioning profiles are explicit — but expect it to look odd in the portal, and do not let anyone 'fix' it by nesting deeper.",
     "Every id is distinct per platform because a single device can host three of these four apps at once, plus their development counterparts. Ids that collide cannot be installed side by side, which is exactly the comparison these apps exist to enable.",
-    "URL schemes are per app for the same reason: two apps claiming one scheme means a disambiguation prompt on Android and last-installed-wins on iOS, both of which break automation silently.",
+    "URL schemes are per app for the same reason: two apps claiming one scheme means a disambiguation prompt on Android and last-installed-wins on iOS, both of which break automation silently. The schemes are unchanged by the id move — they were never under the id root.",
     "That collision also applies WITHIN one app, across its build types: debugSuffix separates the application ids, but the URL scheme is declared in the shared manifest, so a debug and a release build of the same app both claim it. CONFIRMED ON A DEVICE 2026-08-13: with both variants installed, opening usesmileid-sample-android://settings resolves to android/com.android.internal.app.ResolverActivity rather than to either app. A deep link raises a chooser and automation hangs on a dialog no flow asserts — the same silent failure as two apps sharing a scheme, from a source that looks harmless. Install one variant at a time, which is why the Maestro invocation names APP_ID explicitly rather than defaulting. Suffixing the scheme per build type was considered and rejected: the scheme is spec data shared by four apps and their flows, and per-variant schemes would fork it.",
     "On a device, the word 'Sample' in the label means the registry-consuming app from this repository; a label without it is a development harness from an SDK repo."
   ]

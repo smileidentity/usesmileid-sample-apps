@@ -285,7 +285,7 @@ appId: ${APP_ID}
 # Release only: debug always shows the card, so this is the one configuration that proves the flag.
 - runFlow:
     when:
-      true: ${APP_ID === "com.usesmileid.sampleapps.android"}
+      true: ${APP_ID === "com.usesmileid.sample.android"}
     commands:
       - stopApp
       - launchApp:

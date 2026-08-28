@@ -1,0 +1,21 @@
+# The one store panel that needs a device: the SDK's live camera preview. Run from the repo root,
+# because the output path is relative to the working directory. See docs/plan/play-release-android.md.
+appId: ${APP_ID}
+---
+- stopApp
+- launchApp:
+    arguments:
+      seedJobs: true
+- runFlow: ../subflows/warm-start.yaml
+
+- runFlow: ../subflows/consent-to-capture.yaml
+
+- assertVisible:
+    id: "si_instructions_screen"
+- tapOn: "Next"
+
+- assertVisible: "Start Capture"
+- waitForAnimationToEnd:
+    timeout: 5000
+
+- takeScreenshot: android/sample-ui/src/test/store-art/capture

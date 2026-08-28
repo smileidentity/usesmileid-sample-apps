@@ -1,7 +1,7 @@
 # The shell's identity as data; XcodeGen turns it into the project ios/verify.sh builds.
 name: UseSmileIDSample
 options:
-  bundleIdPrefix: com.usesmileid.sampleapps
+  bundleIdPrefix: com.usesmileid.sample
   deploymentTarget:
     iOS: "15.0"
   createIntermediateGroups: true
@@ -26,7 +26,7 @@ targets:
         product: SampleUI
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.usesmileid.sampleapps.ios
+        PRODUCT_BUNDLE_IDENTIFIER: com.usesmileid.sample.ios
         INFOPLIST_FILE: Info.plist
         CODE_SIGNING_ALLOWED: NO
     info:
@@ -37,7 +37,7 @@ targets:
         # The SDK opens the camera; without this the first capture kills the app rather than prompting.
         NSCameraUsageDescription: Smile ID uses the camera to capture your selfie and documents.
         CFBundleURLTypes:
-          - CFBundleURLName: com.usesmileid.sampleapps.ios
+          - CFBundleURLName: com.usesmileid.sample.ios
             CFBundleURLSchemes: [usesmileid-sample-ios]
 
   UseSmileIDSampleTests:
