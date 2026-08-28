@@ -184,7 +184,11 @@ throughout. Variety comes from the headlines and the screens, which is enough.
 **A headline must not carry a count.** The first set opened with "Six products, one integration", which
 is wrong the day a product is added or removed and needs a re-render nobody will remember to do. The
 headlines are imperative verb plus concrete object, each true to the panel it sits above, and none of
-them states a number.
+them states a number. They also take their nouns from `docs-v3` rather than inventing new ones: it
+calls the record a **verification result** (28 uses) and describes one by its **status** and
+**message**, whose values — `clear`, `attention`, `block` — are the words on the app's own status
+pills. Two earlier drafts read as developer shorthand ("every field of a result") or trailed a clause
+("every run and its status"); the docs' vocabulary fixed both.
 
 ### 2.7 What building the pipeline changed
 
