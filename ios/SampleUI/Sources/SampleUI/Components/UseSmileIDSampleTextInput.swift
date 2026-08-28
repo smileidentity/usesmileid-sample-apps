@@ -97,6 +97,8 @@ public struct UseSmileIDSampleTextInput<Leading: View, Trailing: View>: View {
       .foregroundColor(enabled ? colors.input.text : colors.textMuted)
       .keyboardType(masked ? .default : keyboardType)
       .autocorrectionDisabled(masked)
+      // A capitalised first character silently corrupts a credential the user typed correctly.
+      .textInputAutocapitalization(masked ? .never : nil)
       .accentColor(colors.input.borderFocus)
       .focused($focused)
       .disabled(!enabled)
