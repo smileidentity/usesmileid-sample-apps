@@ -8,9 +8,15 @@ public enum UseSmileIDSampleTestIds {
   public static let navVerifications = "sample_nav_verifications"
   public static let navSettings = "sample_nav_settings"
 
+  /// The bar carries the first, its action the second. Both sit on leaves: an identifier on the
+  /// bar itself would override the action's.
+  public static let toast = "sample_toast"
+  public static let toastUndo = "sample_toast_undo"
+
   /// Every id above, so the spec test cannot pass by omission.
   static let all = [
     productsScreen, verificationsScreen, settingsScreen,
-    navProducts, navVerifications, navSettings
+    navProducts, navVerifications, navSettings,
+    toast, toastUndo
   ]
 }
