@@ -1,7 +1,7 @@
 # Shipping the Android sample to Play
 
 **Status:** REL-A1 through REL-A17 all landed 2026-08-28. Three things are owed and each carries a
-dated decision in §7.2: the camera panel needs a device, the rendered panel set waits on it, and the
+dated decision in §7.2: the camera panel needs a device, one rendered panel is visually weak, and the
 first upload is an owner action. §7 tracks each item. Runs in parallel with the iOS port and shares no
 files with it. Android is the first of the four apps to reach a store, so every decision here sets a
 pattern the other three copy — §8 records what travels and what is Play-specific.
@@ -460,7 +460,7 @@ Simulate affordance is present under release configuration, failing the build ra
 | REL-A6 | Draft the copy from §5's sources, counted against every limit | **DONE 2026-08-28** — counted by a test, not by hand | Derived from `docs-v3`, not written fresh |
 | REL-A7 | Hand-written release notes; drop v11's git-log generation step | **DONE 2026-08-28** — generation step dropped, not adapted | Fixes the defect rather than porting it |
 | REL-A8 | Store-art Gradle task: Roborazzi at store device specs, own output dir, own staleness input | **DONE 2026-08-28** — `StoreArtTest`, own directory and own staleness input | §2.1. Must not share a directory with goldens |
-| REL-A9 | `android/maestro/store-shots.yaml` for the camera panel only, on a Gradle Managed Device | **FLOW READY 2026-08-28** — the frame itself still needs a device; §2.6 | §2.2. One frame, not six |
+| REL-A9 | `android/maestro/store-shots.yaml` for the camera panel only, on a Gradle Managed Device | **FLOW READY 2026-08-28** — five panels rendered without it; the frame needs a device; §2.6 | §2.2. One frame, not six |
 | REL-A10 | Fixture-only capture data: test identities, simulated token, `seedJobs` | **DONE 2026-08-28** — verified: the fixtures carry no names at all | §2.4. Safe to publish and safe in CI |
 | REL-A11 | `storeshots` render script: presets, headlines, committed art | **DONE 2026-08-28** — `android/play/render-store-art.sh` | CLI, not the MCP server |
 | REL-A12 | Transcribe v11's data-safety answers; commit §6.1's comparison as the reason | **DONE 2026-08-28** — `docs/play-data-safety.md` | §6.1. No re-derivation |
@@ -520,8 +520,16 @@ green on a machine holding no signing secret, which is the state a fresh clone i
 - **The camera panel (REL-A9), deferred 2026-08-28.** The flow, its landmarks and its output path are
   written; the frame itself needs a device and nothing else is blocked by it. Five panels is above
   Play's minimum of two.
-- **The rendered panel set is not committed**, because rendering the set needs that sixth frame.
-  `release-check.yml` validates the rendered panels when they exist and says so when they do not.
+- **Five of the six rendered panels are committed** under `android/play/screenshots`, which is enough
+  to complete a listing: Play's minimum is two. The render script skips a panel whose frame does not
+  exist yet and names it, rather than refusing to run, so the camera panel drops in later without
+  redoing anything. The renders are deterministic — re-running reproduces identical bytes — and each
+  one passes `storeshots validate`.
+- **The `verification_details` panel is the weak one, and it is a design call rather than a defect.**
+  Hiding the debug result card left that screen sparse, so its phone frame is half empty next to the
+  others. Three ways out, none of them urgent: ship it, drop it and publish four, or swap in a denser
+  real state such as a blocked result or the token scanner. Screenshots are editable on a live listing
+  at any time, which is why this is not worth blocking the first upload on.
 - **The first upload and the listing are not done, by instruction.** They fix the signing identity
   permanently and create the listing, so they are an owner action.
 
