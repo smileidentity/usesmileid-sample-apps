@@ -26,15 +26,15 @@ android {
         applicationId = "com.usesmileid.sampleapps.android"
         minSdk = 24
         targetSdk = 37
-        // One source for every track: Play compares an upload against every prior upload for the
-        // app whichever track it went to, and a code it has already seen is burned permanently.
-        versionCode = findProperty("VERSION_CODE")?.toString()?.toInt() ?: 1
-        // The listing's marketing version, bumped here by hand; versionCode is never edited.
+        // One source for every track, and Play burns a code permanently, so a bad one must fail here.
+        versionCode = findProperty("VERSION_CODE")?.toString()?.let { raw ->
+            raw.toIntOrNull()?.takeIf { it > 0 }
+                ?: throw GradleException("VERSION_CODE must be a positive integer, got '$raw'")
+        } ?: 1
         versionName = "1.0.0"
     }
 
-    // Play App Signing holds the app signing key, so this is only ever an upload credential:
-    // materialised from a secret at build time, never committed — `.gitignore` covers `*.jks`.
+    // Play App Signing holds the app signing key; this is only ever the upload credential.
     val uploadKeystore = file("upload.jks")
     signingConfigs {
         if (uploadKeystore.exists()) {
@@ -60,18 +60,19 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
-            // Falls back so a machine without the secret still installs release for the device
-            // suite; only a build that held the upload key is uploadable, which is the point.
+            // Debug-signed keeps release installable for the device suite; a publish lane sets
+            // REQUIRE_UPLOAD_SIGNING so it can never ship that artifact.
+            if (findProperty("REQUIRE_UPLOAD_SIGNING")?.toString().toBoolean() && !uploadKeystore.exists()) {
+                throw GradleException("upload.jks is missing; refusing to build a debug-signed release")
+            }
             signingConfig = signingConfigs.getByName(if (uploadKeystore.exists()) "upload" else "debug")
         }
     }
 
-    // Play splits the bundle per device rather than delivering all four ABIs to each one.
     bundle {
         abi { enableSplit = true }
         density { enableSplit = true }
-        // Off: `appLocale` renders the app and the SDK in a locale that is not the device's, which
-        // an install carrying only the device language cannot do.
+        // Off: `appLocale` renders a locale that is not the device's, which a language-split install lacks.
         language { enableSplit = false }
     }
 

@@ -178,6 +178,11 @@ its password fails `packageRelease` with *SigningConfig "upload" is missing requ
 "storePassword"*, and a wrong password fails with *Keystore was tampered with, or password was incorrect*.
 Both were run. A missing CI secret therefore fails at build time rather than at upload.
 
+The one case that leaves is a publish lane whose keystore never materialised at all, which would otherwise
+produce a perfectly successful debug-signed bundle. `-PREQUIRE_UPLOAD_SIGNING=true` refuses to build one,
+and **REL-A15 must pass it on both tracks** — that is the property's only caller, and the reason it exists.
+Putting the check in the build rather than in a workflow step also covers a bundle built by hand.
+
 <!-- INTERNAL-ONLY:START reason=ci-secret-names-and-sibling-repo-paths -->
 Specifics for whoever wires it: the source is `sample/sample.gradle.kts` in the v11 Android repository,
 decoded by `timheuer/base64-to-file` from `secrets.UPLOAD_KEYSTORE` with the password in
@@ -358,7 +363,7 @@ Simulate affordance is present under release configuration, failing the build ra
 | REL-A12 | Transcribe v11's data-safety answers; commit §6.1's comparison as the reason |  | §6.1. No re-derivation |
 | REL-A13 | Declare no special access, and add a **test** that Simulate survives release configuration |  | §6.3. The declaration's truth depends on it, so assert it rather than remember it |
 | REL-A14 | Periodic `targetSdk` re-check against Play's floor |  | 37 accepted today; the floor moves annually |
-| REL-A15 | Publish workflows adapted from v11: internal and production tracks |  | Copy the signing and upload steps, not the version or notes steps |
+| REL-A15 | Publish workflows adapted from v11: internal and production tracks |  | Copy the signing and upload steps, not the version or notes steps. Both tracks pass `-PREQUIRE_UPLOAD_SIGNING=true` and the same `VERSION_CODE` command (§3) |
 | REL-A16 | Release CI lane: bundle, `validate_screenshot` over the art, fail on stale art |  | Mirrors the existing tokens/notices gates |
 | REL-A17 | The gate: art regenerates byte-identically, `verify.sh` green, nothing owed |  | Last, as a gate rather than as work |
 
