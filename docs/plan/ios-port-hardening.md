@@ -31,7 +31,7 @@ silent — a clipped label still produces a passing test and a plausible-looking
 
 ---
 
-## 2. A test id can be declared and never applied, and nothing catches it
+## 2. A test id can be declared and never applied — CLOSED 2026-08-28
 
 **Now:** `UseSmileIDSampleSpecTest` asserts every id in `UseSmileIDSampleTestIds.all` exists in
 `spec/test-ids.json`. It does not assert that any view applies it.
@@ -43,10 +43,11 @@ timed out with no clue why.
 **Why it compounds:** every screen adds ids. The screens still to come own most of the spec's
 remaining ids, so the window for this defect is widening, not narrowing.
 
-**Plan:** a source-text test that greps `Sources/` for each declared id constant's symbol and fails
-on any with zero references. Ids owned by not-yet-built screens go on an explicit allow-list that
-shrinks as screens land — the allow-list is the point, because it is a visible inventory of what is
-still owed.
+**Done:** `UseSmileIDSampleTestIdUsageTest` scans `Sources/` for each declared id's symbol and
+asserts the unused set exactly matches a listed inventory — so an id that stops being applied fails,
+and a stale entry fails too. Writing it corrected the estimate: six ids are unapplied, not the twelve
+assumed. Two are the bare prefixes the spec check anchors on; the other four wait on the
+verifications screen.
 
 ---
 
