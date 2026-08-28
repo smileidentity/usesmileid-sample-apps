@@ -4,6 +4,7 @@ import SwiftUI
 /// The window's root. Everything identity-bound stays here — `SampleUI` runs under eight identities.
 struct UseSmileIDSampleShell: View {
   @StateObject private var router = UseSmileIDSampleRouter()
+  @StateObject private var app = UseSmileIDSampleAppState()
 
   /// One value, so the tab and its stacks cannot restore out of step.
   @SceneStorage("navigation") private var storedNavigation: String = ""
@@ -18,6 +19,9 @@ struct UseSmileIDSampleShell: View {
       }
     }
     .environmentObject(router)
+    .environmentObject(app)
+    // The host owns the appearance, because the setting outlives any screen that changes it.
+    .preferredColorScheme(app.settings.darkMode ? .dark : nil)
     // Held here until U2/U3 land the screens that own these sheets.
     .sheet(item: $router.sheet) { sheet in
       UseSmileIDSampleSeat(name: sheet.rawValue)

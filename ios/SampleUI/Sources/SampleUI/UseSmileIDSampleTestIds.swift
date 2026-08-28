@@ -14,6 +14,30 @@ public enum UseSmileIDSampleTestIds {
   public static let toastUndo = "sample_toast_undo"
 
   public static let envChip = "sample_env_chip"
+  public static let profileAvatarButton = "sample_profile_avatar_button"
+  public static let profileSummary = "sample_profile_summary"
+  public static let sessionCard = "sample_session_card"
+  public static let sessionCountdown = "sample_session_countdown"
+  public static let sessionEndedBanner = "sample_session_ended_banner"
+  public static let scenarioDrawerButton = "sample_scenario_drawer_button"
+  public static let signOut = "sample_sign_out"
+  public static let versionLabel = "sample_version_label"
+  public static let settingEnhancedSmartSelfie = "sample_setting_enhanced_smart_selfie"
+  public static let settingAgentMode = "sample_setting_agent_mode"
+  public static let settingDarkMode = "sample_setting_dark_mode"
+  public static let settingConsentStep = "sample_setting_consent_step"
+  public static let settingInstructionsStep = "sample_setting_instructions_step"
+  public static let settingPreviewStep = "sample_setting_preview_step"
+
+  /// Per-item ids the screens build; the spec lists the prefixes rather than every value.
+  public static func productCard(_ product: String) -> String {
+    "sample_product_card_\(product)"
+  }
+
+  public static func navRow(_ row: String) -> String {
+    "sample_nav_row_\(row)"
+  }
+
   public static let navToken = "sample_nav_token"
   public static let productCard = "sample_product_card"
 
@@ -32,6 +56,11 @@ public enum UseSmileIDSampleTestIds {
     navProducts, navVerifications, navSettings,
     toast, toastUndo,
     envChip, navToken, productCard,
+    profileAvatarButton, profileSummary,
+    sessionCard, sessionCountdown, sessionEndedBanner,
+    scenarioDrawerButton, signOut, versionLabel,
+    settingEnhancedSmartSelfie, settingAgentMode, settingDarkMode,
+    settingConsentStep, settingInstructionsStep, settingPreviewStep,
     jobRow, jobRowStatus, filterChip, filterCount,
     selectionBar, selectionCheckbox, selectionCount, selectionRemove
   ]
