@@ -120,27 +120,6 @@ to confirm it is on the right screen *before* capturing, which is the contract b
 decide *which* states photograph well is exploration, and its screenshots must never become the
 committed artefact. That is the same boundary the device-verify guidance already draws.
 
-### 2.6 What building the pipeline changed
-
-Three corrections, all found by running it rather than by reading:
-
-- **Gradle Managed Devices cannot host the camera capture.** GMD starts and stops its emulator around a
-  Gradle *test task*, and Maestro is not one, so a GMD block would declare an image nothing uses. The
-  image is pinned in the flow's header instead — a Pixel-class AVD on API 34, at 1080x1920 so the frame
-  needs no rescaling next to the five rendered panels.
-- **The capture flow lives in `android/maestro/store/`, not beside the suite.** Folder runs are
-  non-recursive, which is how `subflows/` stays out of the suite; a top-level `store-shots.yaml` would
-  have joined every per-PR device run, needing a camera and writing a file on each one.
-- **The capture screen still has no `si_*` id**, so the landmark that proves the preview is up before
-  anything is written is the SDK's own shipped button text, "Start Capture". The assertions run before
-  the capture, never on it.
-
-**One naming trap, recorded so nobody "fixes" it.** `UseSmileIDSampleProduct` carries two names for the
-first product: `label` is "SmartSelfie Enrollment", used in the verifications list and details, while
-`cardTitle` is "Registration", a short form for the products card's narrow text column. Both therefore
-appear in the store panels. The listing follows `label`, per §5's ruling. They are not in conflict and
-neither should be changed to match the other.
-
 ### 2.4 PII discipline, because store art is published
 
 A published frame must never carry a real name, ID number, partner id or token. The sandbox test
@@ -182,6 +161,46 @@ production half. Translation lives in the agent by design. There is no Play Cons
 publishing is a solved, non-interactive problem and `r0adkll/upload-google-play` already does it in v11
 (§3). The Figma MCP is available if the feature graphic wants composing from the design system rather
 than from a screenshot. Beyond that, adding tools would add moving parts without removing work.
+
+### 2.6 Two things only a review of the output caught
+
+Both were invisible in the raw frames and obvious in the finished panels, which is the argument for
+committing the rendered set rather than only the frames.
+
+**A frame is not a screenshot: it needs a status bar.** The panels render the app edge to edge from
+y=0, but the device frame storeshots draws has a punch-hole and rounded corners over that area. The
+app bar landed underneath both — the camera cutout sat between "Verifications" and "Select", and
+beside the "Smile ID" title. Measured against a solid probe rendered through the same frame: the
+screen is drawn at 0.689 scale, the corners eat the top ~61px of the source and the punch-hole spans
+source y 70–96. `StoreArtTest` therefore insets its content by **40dp**, which clears both, and the
+band reads as a status bar. The check is that the top 120px of every frame is a single colour.
+
+**Mixing layout variants made the set look like different devices.** The plan suggested alternating
+`text-top`, `text-bottom` and `tilted` so six panels would not read as one template repeated. In the
+finished strip that instead put the phone at a different height and size in every panel, which reads
+as inconsistency rather than variety. All panels now use `text-top`, so the device sits at y=201
+throughout. Variety comes from the headlines and the screens, which is enough.
+
+### 2.7 What building the pipeline changed
+
+Three corrections, all found by running it rather than by reading:
+
+- **Gradle Managed Devices cannot host the camera capture.** GMD starts and stops its emulator around a
+  Gradle *test task*, and Maestro is not one, so a GMD block would declare an image nothing uses. The
+  image is pinned in the flow's header instead — a Pixel-class AVD on API 34, at 1080x1920 so the frame
+  needs no rescaling next to the five rendered panels.
+- **The capture flow lives in `android/maestro/store/`, not beside the suite.** Folder runs are
+  non-recursive, which is how `subflows/` stays out of the suite; a top-level `store-shots.yaml` would
+  have joined every per-PR device run, needing a camera and writing a file on each one.
+- **The capture screen still has no `si_*` id**, so the landmark that proves the preview is up before
+  anything is written is the SDK's own shipped button text, "Start Capture". The assertions run before
+  the capture, never on it.
+
+**One naming trap, recorded so nobody "fixes" it.** `UseSmileIDSampleProduct` carries two names for the
+first product: `label` is "SmartSelfie Enrollment", used in the verifications list and details, while
+`cardTitle` is "Registration", a short form for the products card's narrow text column. Both therefore
+appear in the store panels. The listing follows `label`, per §5's ruling. They are not in conflict and
+neither should be changed to match the other.
 
 ## 3. Signing — reuse the v11 upload key
 
@@ -460,7 +479,7 @@ Simulate affordance is present under release configuration, failing the build ra
 | REL-A6 | Draft the copy from §5's sources, counted against every limit | **DONE 2026-08-28** — counted by a test, not by hand | Derived from `docs-v3`, not written fresh |
 | REL-A7 | Hand-written release notes; drop v11's git-log generation step | **DONE 2026-08-28** — generation step dropped, not adapted | Fixes the defect rather than porting it |
 | REL-A8 | Store-art Gradle task: Roborazzi at store device specs, own output dir, own staleness input | **DONE 2026-08-28** — `StoreArtTest`, own directory and own staleness input | §2.1. Must not share a directory with goldens |
-| REL-A9 | `android/maestro/store-shots.yaml` for the camera panel only, on a Gradle Managed Device | **FLOW READY 2026-08-28** — five panels rendered without it; the frame needs a device; §2.6 | §2.2. One frame, not six |
+| REL-A9 | `android/maestro/store-shots.yaml` for the camera panel only, on a Gradle Managed Device | **FLOW READY 2026-08-28** — five panels rendered without it; the frame needs a device; §2.7 | §2.2. One frame, not six |
 | REL-A10 | Fixture-only capture data: test identities, simulated token, `seedJobs` | **DONE 2026-08-28** — verified: the fixtures carry no names at all | §2.4. Safe to publish and safe in CI |
 | REL-A11 | `storeshots` render script: presets, headlines, committed art | **DONE 2026-08-28** — `android/play/render-store-art.sh` | CLI, not the MCP server |
 | REL-A12 | Transcribe v11's data-safety answers; commit §6.1's comparison as the reason | **DONE 2026-08-28** — `docs/play-data-safety.md` | §6.1. No re-derivation |

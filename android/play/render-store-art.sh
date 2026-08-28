@@ -39,11 +39,11 @@ compose() {
 }
 
 compose products             "Six"     "products, one integration"      text-top
-compose token_session        "Link"    "a session from a token"         text-bottom
+compose token_session        "Link"    "a session from a token"         text-top
 compose capture              "Capture" "with the Smile ID SDK"          text-top
-compose verifications        "Track"   "every verification run"         text-bottom
+compose verifications        "Track"   "every verification run"         text-top
 compose verification_details "Read"    "the result field by field"      text-top
-compose settings             "Compose" "the journey step by step"       tilted
+compose settings             "Compose" "the journey step by step"       text-top
 
 if [ -z "$(ls -A "$OUT"/*.png 2>/dev/null)" ]; then
   echo "no frames to render; run with --frames" >&2

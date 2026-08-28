@@ -3,9 +3,11 @@ package com.usesmileid.sampleapps.ui.storeart
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.v2.runComposeUiTest
@@ -109,7 +111,8 @@ class StoreArtTest {
                     modifier = Modifier
                         .testTag(PANEL)
                         .fillMaxSize()
-                        .background(UseSmileIDSampleTheme.colors.background),
+                        .background(UseSmileIDSampleTheme.colors.background)
+                        .padding(top = STATUS_BAR_INSET),
                 ) {
                     content()
                 }
@@ -125,6 +128,9 @@ class StoreArtTest {
         const val FIXED_NOW = 1_784_202_612_000L
         val JOBS = UseSmileIDSampleJobStore.fixtures(FIXED_NOW)
         val PRODUCTS = UseSmileIDSampleProductsState(initials = "KA")
+
+        /** The device frame's punch-hole ends 32dp down and its corners eat 20dp; content clears both. */
+        val STATUS_BAR_INSET = 40.dp
     }
 }
 
