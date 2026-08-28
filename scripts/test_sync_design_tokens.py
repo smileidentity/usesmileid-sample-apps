@@ -466,5 +466,72 @@ class TestSwiftStopgaps(unittest.TestCase):
         )
 
 
+class TestThemeParity(unittest.TestCase):
+    """The two theme layers are hand-written, not generated, so nothing else holds them together.
+
+    `docs/plan/port-patterns.md` treats a field resolving to a different token on one platform as a
+    defect, and the failure is invisible: both apps compile and only the colour is wrong.
+    """
+
+    KOTLIN = "android/sample-ui/src/main/kotlin/com/usesmileid/sampleapps/ui/theme/UseSmileIDSampleColors.kt"
+    SWIFT = "ios/SampleUI/Sources/SampleUI/Theme/UseSmileIDSampleColors.swift"
+
+    MODES = (
+        ("light", "internal val lightColors", "static let light = UseSmileIDSampleColors("),
+        ("dark", "internal val darkColors", "static let dark = UseSmileIDSampleColors("),
+    )
+
+    def read(self, rel_path):
+        with io.open(os.path.join(gen.REPO, rel_path), encoding="utf-8") as handle:
+            return handle.read()
+
+    def body(self, text, start, end):
+        if start not in text:
+            self.fail(f"{start!r} is gone; this test is comparing nothing")
+        index = text.index(start)
+        return text[index : text.index(end, index)]
+
+    def scalars(self, body, sep):
+        """The flat `field = SmileColorX.token` lines, keyed by field, valued by the token's leaf."""
+        return {
+            field: token.split(".")[-1]
+            for field, token in re.findall(r"^[ ]{4}(\w+)%s ([\w.]+),?$" % sep, body, re.M)
+        }
+
+    def groups(self, body, sep):
+        """The nested `field = XTokens( ... )` blocks, one dict of leaves per component group."""
+        return {
+            match.group(1): {
+                field: token.split(".")[-1]
+                for field, token in re.findall(r"^[ ]+(\w+)%s ([\w.]+),?$" % sep, match.group(2), re.M)
+            }
+            for match in re.finditer(
+                r"^[ ]+(\w+)%s ?\w*Tokens\(\n(.*?)^[ ]+\),?$" % sep, body, re.M | re.S
+            )
+        }
+
+    def test_every_field_resolves_to_the_same_token_on_both_platforms(self):
+        kotlin, swift = self.read(self.KOTLIN), self.read(self.SWIFT)
+        for mode, kotlin_start, swift_start in self.MODES:
+            kotlin_body = self.body(kotlin, kotlin_start, "\n)")
+            swift_body = self.body(swift, swift_start, "\n  )")
+
+            ours = self.scalars(kotlin_body, " =")
+            theirs = self.scalars(swift_body, ":")
+            self.assertTrue(ours, f"parsed no {mode} fields from the Compose theme")
+            self.assertEqual(ours, theirs, f"{mode} scalar colours differ between the two themes")
+
+            ours = self.groups(kotlin_body, " =")
+            theirs = self.groups(swift_body, ":")
+            self.assertTrue(ours, f"parsed no {mode} component groups from the Compose theme")
+            self.assertEqual(ours, theirs, f"{mode} component tokens differ between the two themes")
+
+    def test_the_badge_group_is_generated_on_both_platforms(self):
+        # Absent from both literals on purpose: the soft fills come from one spec entry, so the
+        # comparison above would report the group missing rather than agreeing.
+        self.assertIn("badge = softBadgeTokens()", self.read(self.KOTLIN))
+        self.assertIn("badge: softBadgeTokens()", self.read(self.SWIFT))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -19,10 +19,13 @@ class UseSmileIDSampleGoldenTest: XCTestCase {
     @ViewBuilder content: () -> some View
   ) {
     let view = host(content())
+    // Measured once for both schemes: colour is the only thing that differs between them, so a
+    // component whose HEIGHT changed with the scheme would size one baseline wrong. None does.
+    let layout = measured(view)
     for (suffix, style) in [("light", UIUserInterfaceStyle.light), ("dark", .dark)] {
       assertSnapshot(
         of: view,
-        as: .image(layout: measured(view), traits: .init(userInterfaceStyle: style)),
+        as: .image(layout: layout, traits: .init(userInterfaceStyle: style)),
         named: "\(name)_\(suffix)",
         file: file,
         testName: testName,

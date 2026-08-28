@@ -10,12 +10,13 @@ final class UseSmileIDSampleFontsTest: XCTestCase {
     }
   }
 
-  func testTheFamilyNameCannotSelectAWeight() {
+  func testTheFamilyNameCannotSelectAWeight() throws {
     // Why the ramp resolves PostScript names: three of the five faces are their own family, so
     // asking "DM Sans" for a semibold returns the regular face and the mismatch is silent.
-    let semibold = UIFont(name: "DMSans-SemiBold", size: 12)
-    XCTAssertNotEqual(semibold?.fontName, UIFont(name: "DMSans-Regular", size: 12)?.fontName)
-    XCTAssertNotEqual(UIFont(name: "DM Sans", size: 12)?.fontName, semibold?.fontName)
+    let semibold = try XCTUnwrap(UIFont(name: "DMSans-SemiBold", size: 12))
+    let regular = try XCTUnwrap(UIFont(name: "DM Sans", size: 12))
+    XCTAssertNotEqual(semibold.fontName, regular.fontName)
+    XCTAssertEqual(regular.fontName, try XCTUnwrap(UIFont(name: "DMSans-Regular", size: 12)).fontName)
   }
 
   func testAnUnlistedWeightFallsBackToTheNearestFace() {
