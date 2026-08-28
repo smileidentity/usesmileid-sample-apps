@@ -1,6 +1,8 @@
 # UI work plan — Android first, then three ports
 
-**Status:** Android U0–U3 is built and in review; the three ports have not started. The design is
+**Status:** Android U0–U3 is built and in review. The iOS port has started: **U0 is complete** — the
+type ramp, the stopgap values and the DM Sans faces are generated for SwiftUI too, and `ios/verify.sh`
+has a golden step. U1–U4 follow. Flutter and Expo have not started. The design is
 captured in `spec/screens.json` (14 screens, 38 states, every one linked to its design node), the
 component inventory in `spec/components.json` (34 components, 13 documented sub-parts), and the token
 contract in `spec/design-tokens.json`.
@@ -143,6 +145,20 @@ riskiest part of the app and needs device verification per platform.
 
 Every state in `spec/screens.json` becomes a preview and a golden test, light and dark. That is 38
 states, and the list is already written — no judgement needed about what to cover.
+
+**Per-platform golden tooling.** Android uses Roborazzi (`verifyRoborazziDebug`), iOS
+swift-snapshot-testing in its own `SampleUIGoldenTests` target. Two things a port must carry over
+rather than rediscover:
+
+- **Baselines are only meaningful on the simulator or device profile they were recorded on.** iOS
+  records and verifies on the iPhone 17 Pro that `ios/verify.sh` and `.github/workflows/ios.yml` both
+  pin, matching the SDK repo's own snapshot gate. Recording locally and verifying on a different
+  runner reds the lane for reasons that have nothing to do with the UI.
+- **The no-clipping predicate is weaker on iOS, deliberately.** Compose exposes `didExceedMaxLines`
+  through the semantics tree, so Android fails the build on truncated text. SwiftUI publishes no
+  truncation flag a unit test can read, so iOS asserts that nothing lays out past the viewport at the
+  largest content size and captures an AX5 baseline for review. Clipping *within* the viewport is
+  caught by reading that baseline, not by an assertion.
 
 ---
 

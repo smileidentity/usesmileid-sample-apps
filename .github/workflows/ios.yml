@@ -20,7 +20,11 @@ permissions:
 
 jobs:
   verify:
-    runs-on: macos-15
+    # macos-26 with the iPhone 17 Pro simulator, matching ios/verify.sh's default and the SDK repo's
+    # own snapshot gate. Goldens are pixel comparisons, so recording and verifying have to happen on
+    # one runtime — a runner or simulator that drifts from the local default reds the lane for
+    # reasons that have nothing to do with the UI.
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
 
@@ -47,23 +51,31 @@ jobs:
       - name: Install the build tools
         run: brew install xcodegen swiftformat
 
-      # Pinned, because a runner that moves Xcode moves the SDK the app compiles against with it.
-      # Warns rather than fails, so an image dropping this version reports drift, not a code failure.
+      # The BUILD is what is pinned, not a path: a runner that moves Xcode moves the SDK the app
+      # compiles against and the simulator runtime every golden baseline was recorded on, and the
+      # image names its Xcode directories differently from release to release.
+      # Warns rather than fails, so an image moving on reports drift rather than a code failure.
+      # The runtime is echoed so a golden diff can be told apart from a toolchain move at a glance.
       - name: Select Xcode
         run: |
-          if [ -d "$XCODE" ]; then
-            sudo xcode-select -s "$XCODE"
-          else
-            echo "::warning title=Xcode not pinned::$XCODE is not on this runner, so the build used \
-            $(xcodebuild -version | head -1) instead. Update the pin."
+          for candidate in /Applications/Xcode_${XCODE_VERSION}.app /Applications/Xcode.app; do
+            if [ -d "$candidate" ]; then sudo xcode-select -s "$candidate"; break; fi
+          done
+          BUILD="$(xcodebuild -version | tail -1)"
+          if [ "$BUILD" != "Build version $XCODE_BUILD" ]; then
+            echo "::warning title=Xcode build drifted::Goldens were recorded on build $XCODE_BUILD, \
+            and this runner has $BUILD. Check that before trusting a snapshot failure, and update \
+            the pin once the new build is the one baselines are recorded on."
           fi
           xcodebuild -version
+          xcrun simctl list runtimes | grep iOS
         env:
-          XCODE: /Applications/Xcode_16.4.app
+          XCODE_VERSION: "26.6"
+          XCODE_BUILD: 17F113
 
       - name: Verify
         env:
           SMILE_DESIGN_SYSTEM: ${{ steps.design-system.outcome == 'success' && format('{0}/.design-system/smile-design-system', github.workspace) || '' }}
           SMILE_TOKENS_OPTIONAL: ${{ steps.design-system.outcome == 'skipped' && '1' || '' }}
-          DESTINATION: platform=iOS Simulator,name=iPhone 16 Pro
+          DESTINATION: platform=iOS Simulator,name=iPhone 17 Pro
         run: ios/verify.sh

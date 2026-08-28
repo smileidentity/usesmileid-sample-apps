@@ -31,7 +31,7 @@ File names are the unit ports mirror, so the current Android inventory is the co
 | Pattern | Android (template) | iOS | Flutter | Expo |
 |---|---|---|---|---|
 | Network seam: interface in the shared UI library, adapter in the shell | Kotlin interface + Retrofit adapter | protocol + URLSession adapter | abstract class + shell impl | TS interface + fetch adapter |
-| Screen-level UI state: a plain holder class beside the screen — never a ViewModel-equivalent | class + `remember`/`rememberSaveable` | `@Observable` class | notifier / plain class | hook |
+| Screen-level UI state: a plain holder class beside the screen — never a ViewModel-equivalent | class + `remember`/`rememberSaveable` | `ObservableObject` + `@Published` | notifier / plain class | hook |
 | Removal notice: a consume-once, buffered event | `Channel(BUFFERED)` exposed as a Flow | buffered single-consumer `AsyncStream` | single-subscription `Stream` | emitter with a queued backlog |
 | "Not loaded yet" is not "empty" | nullable list, null until the first store emission | `Optional` | nullable | `T[] \| null` |
 | Bottom-chrome clearance | measured chrome height via `contentPadding` | real safe-area/chrome insets | ditto | ditto |
@@ -41,6 +41,13 @@ File names are the unit ports mirror, so the current Android inventory is the co
 
 Insets and presentation stay platform-native (AGENTS.md) — the clearance rule translates as
 "derive from the platform's measured chrome", not as copying any constant.
+
+**The iOS column is written to the iOS 15 floor**, which `sample-apps-plan.md` §9.1 settled by
+measurement: `SampleUI` above it cannot be consumed by the SDK repo's iOS 15.0 Sample, which deletes
+the compile-against-HEAD gate the two-consumer split exists to provide. So the state row reads
+`ObservableObject` + `@Published` and not `@Observable`, and navigation is `NavigationView` with
+`.navigationViewStyle(.stack)` rather than `NavigationStack`. These are the SDK's own documented
+iOS-15 exceptions, not a downgrade to fix later.
 
 **The two sheet rows are the one place a literal mirror of the tree gives the wrong answer.**
 Android shipped every sheet as a `@Destination`, so the navigation host replaced the screen
