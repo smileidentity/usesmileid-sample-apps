@@ -23,9 +23,10 @@ public struct UseSmileIDSampleSelectionCheckbox: View {
         )
         .overlay(checked ? UseSmileIDSampleIcon(SmileIcons.check, tint: colors.onPrimary, size: 11) : nil)
         .frame(width: size, height: size)
-        .frame(minWidth: Self.target, minHeight: Self.target)
+        // max(), or a scaled size past the target turns the compensating inset into outward padding.
+        .frame(minWidth: max(Self.target, size), minHeight: max(Self.target, size))
         .contentShape(Rectangle())
-        .padding(-(Self.target - size) / 2)
+        .padding(-max(0, (Self.target - size) / 2))
     }
     .buttonStyle(.plain)
     .accessibilityAddTraits(checked ? [.isButton, .isSelected] : .isButton)
@@ -67,6 +68,10 @@ public struct UseSmileIDSampleSelectionBar: View {
     .padding(.vertical, SmileSpacing.spacingSm)
     .frame(maxWidth: .infinity, alignment: .leading)
     .background(colors.surface)
+    // The one container that carries an id. `.contain` is what keeps the count and action
+    // addressable; without it SwiftUI merges them into this element and their ids vanish.
+    .accessibilityElement(children: .contain)
+    .useSmileIDSampleTestId(UseSmileIDSampleTestIds.selectionBar)
     // A top edge only, so a border is wrong — that would outline all four sides.
     .overlay(alignment: .top) {
       Rectangle().fill(colors.border).frame(height: SmileSpacing.borderWidthHairline)
