@@ -22,18 +22,29 @@ android {
     namespace = "com.usesmileid.sampleapps.android"
     compileSdk = 37
 
+    val uploadKeystore = file("upload.jks")
+    val versionCodeProperty = findProperty("VERSION_CODE")?.toString()
+
+    if (findProperty("REQUIRE_UPLOAD_SIGNING")?.toString().toBoolean()) {
+        if (!uploadKeystore.exists()) {
+            throw GradleException("upload.jks is missing; refusing to build a debug-signed release")
+        }
+        if (versionCodeProperty.isNullOrBlank()) {
+            throw GradleException("VERSION_CODE is required when REQUIRE_UPLOAD_SIGNING is set")
+        }
+    }
+
     defaultConfig {
         applicationId = "com.usesmileid.sampleapps.android"
         minSdk = 24
         targetSdk = 37
-        versionCode = findProperty("VERSION_CODE")?.toString()?.let { raw ->
+        versionCode = versionCodeProperty?.let { raw ->
             raw.toIntOrNull()?.takeIf { it > 0 }
                 ?: throw GradleException("VERSION_CODE must be a positive integer, got '$raw'")
         } ?: 1
         versionName = "1.0.0"
     }
 
-    val uploadKeystore = file("upload.jks")
     signingConfigs {
         if (uploadKeystore.exists()) {
             create("upload") {
@@ -58,9 +69,6 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
-            if (findProperty("REQUIRE_UPLOAD_SIGNING")?.toString().toBoolean() && !uploadKeystore.exists()) {
-                throw GradleException("upload.jks is missing; refusing to build a debug-signed release")
-            }
             signingConfig = signingConfigs.getByName(if (uploadKeystore.exists()) "upload" else "debug")
         }
     }

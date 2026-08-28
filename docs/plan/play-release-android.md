@@ -181,7 +181,9 @@ Both were run. A missing CI secret therefore fails at build time rather than at 
 The one case that leaves is a publish lane whose keystore never materialised at all, which would otherwise
 produce a perfectly successful debug-signed bundle. `-PREQUIRE_UPLOAD_SIGNING=true` refuses to build one,
 and **REL-A15 must pass it on both tracks** — that is the property's only caller, and the reason it exists.
-Putting the check in the build rather than in a workflow step also covers a bundle built by hand.
+It also requires `VERSION_CODE`, because the `?: 1` default is otherwise reachable from a publish lane and
+uploading it would burn versionCode 1 permanently. Putting both checks in the build rather than in a
+workflow step covers a bundle built by hand as well.
 
 <!-- INTERNAL-ONLY:START reason=ci-secret-names-and-sibling-repo-paths -->
 Specifics for whoever wires it: the source is `sample/sample.gradle.kts` in the v11 Android repository,
