@@ -188,7 +188,9 @@ them states a number. They also take their nouns from `docs-v3` rather than inve
 calls the record a **verification result** (28 uses) and describes one by its **status** and
 **message**, whose values — `clear`, `attention`, `block` — are the words on the app's own status
 pills. Two earlier drafts read as developer shorthand ("every field of a result") or trailed a clause
-("every run and its status"); the docs' vocabulary fixed both.
+("every run and its status"); the docs' vocabulary fixed both. The details panel then took its
+descriptor from the screen's own title, "Verification details", rather than naming two of the five
+fields it shows.
 
 ### 2.7 What building the pipeline changed
 

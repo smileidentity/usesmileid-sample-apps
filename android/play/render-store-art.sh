@@ -42,7 +42,7 @@ compose products             "Try"       "every Smile ID product"      text-top
 compose token_session        "Scan"      "a token to start a session"  text-top
 compose capture              "Capture"   "a selfie or a document"      text-top
 compose verifications        "Review"    "every verification result"    text-top
-compose verification_details "See"       "the status and message"      text-top
+compose verification_details "See"       "the details of a verification" text-top
 compose settings             "Configure" "the steps in the flow"       text-top
 
 if [ -z "$(ls -A "$OUT"/*.png 2>/dev/null)" ]; then
