@@ -395,16 +395,16 @@ Simulate affordance is present under release configuration, failing the build ra
 | REL-A2 | Release signing: reuse the v11 upload key, `exists()` guard, CI secrets | **DONE 2026-08-28** — build side only; the CI secrets are wired by A15 | §3. The irreversible one |
 | REL-A3 | One monotonic `versionCode` source across all tracks, and a `versionName` scheme | **DONE 2026-08-28** | §3.1. Do not copy v11's two-scheme split |
 | REL-A4 | App bundle + ABI splits | **DONE 2026-08-28** — §7.1; language splits deliberately off | The A3 size ruling landing, not a second decision |
-| REL-A5 | `fastlane/metadata/android/en-US/` as the home for title, descriptions and changelogs |  | Standard machine-readable layout even if uploads stay manual |
-| REL-A6 | Draft the copy from §5's sources, counted against every limit |  | Derived from `docs-v3`, not written fresh |
-| REL-A7 | Hand-written release notes; drop v11's git-log generation step |  | Fixes the defect rather than porting it |
+| REL-A5 | `android/play/` as the home for title, descriptions and release notes | **DONE 2026-08-28** — owner ruling: no fastlane | The upload action reads `whatsnew/whatsnew-en-US` directly; the rest is filled in Console |
+| REL-A6 | Draft the copy from §5's sources, counted against every limit | **DONE 2026-08-28** — counted by a test, not by hand | Derived from `docs-v3`, not written fresh |
+| REL-A7 | Hand-written release notes; drop v11's git-log generation step | **DONE 2026-08-28** — generation step dropped, not adapted | Fixes the defect rather than porting it |
 | REL-A8 | Store-art Gradle task: Roborazzi at store device specs, own output dir, own staleness input |  | §2.1. Must not share a directory with goldens |
 | REL-A9 | `android/maestro/store-shots.yaml` for the camera panel only, on a Gradle Managed Device |  | §2.2. One frame, not six |
 | REL-A10 | Fixture-only capture data: test identities, simulated token, `seedJobs` |  | §2.4. Safe to publish and safe in CI |
 | REL-A11 | `storeshots` render script: presets, headlines, committed art |  | CLI, not the MCP server |
-| REL-A12 | Transcribe v11's data-safety answers; commit §6.1's comparison as the reason |  | §6.1. No re-derivation |
-| REL-A13 | Declare no special access, and add a **test** that Simulate survives release configuration |  | §6.3. The declaration's truth depends on it, so assert it rather than remember it |
-| REL-A14 | Periodic `targetSdk` re-check against Play's floor |  | 37 accepted today; the floor moves annually |
+| REL-A12 | Transcribe v11's data-safety answers; commit §6.1's comparison as the reason | **DONE 2026-08-28** — `docs/play-data-safety.md` | §6.1. No re-derivation |
+| REL-A13 | Declare no special access, and add a **test** that Simulate survives release configuration | **DONE 2026-08-28** — two tests, both mutation-checked | §6.3. The declaration's truth depends on it, so assert it rather than remember it |
+| REL-A14 | Periodic `targetSdk` re-check against Play's floor | **DONE 2026-08-28** — recorded as a dated recurring check | 37 accepted today; the floor moves annually |
 | REL-A15 | Publish workflows adapted from v11: internal and production tracks |  | Copy the signing and upload steps, not the version or notes steps. Both tracks pass `-PREQUIRE_UPLOAD_SIGNING=true` and the same `VERSION_CODE` command (§3) |
 | REL-A16 | Release CI lane: bundle, `validate_screenshot` over the art, fail on stale art |  | Mirrors the existing tokens/notices gates |
 | REL-A17 | The gate: art regenerates byte-identically, `verify.sh` green, nothing owed |  | Last, as a gate rather than as work |

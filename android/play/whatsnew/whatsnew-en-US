@@ -1,0 +1,3 @@
+First release of the UseSmileID Sample app.
+
+It runs the Smile ID mobile SDK end to end for SmartSelfie™ Registration and Authentication, Document Verification, Enhanced Document Verification, Biometric KYC and Enhanced KYC. Each run reports its outcome, previous runs are kept on the device, and the app follows the system light and dark themes.
