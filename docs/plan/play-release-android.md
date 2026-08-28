@@ -578,9 +578,10 @@ None of these blocks anything, and none of them belongs to Android's critical pa
   at any time.
 - **The internal lane is still dispatch-only.** It was deliberate while the first upload was an owner
   action; now the listing exists, adding `push: branches: [main]` makes every merge an internal build.
-- **The app carries two privacy policy URLs.** `smile.id/privacy-policy` in the SDK flow config and the
-  settings row, `usesmileid.com/privacy-policy` in the simulated token's consent notice. The listing
-  declares one of them, so the two should agree — a real inconsistency rather than a cosmetic one.
+- ~~The app carries two privacy policy URLs.~~ **Fixed here.** The simulated token's consent notice
+  pointed at `usesmileid.com/privacy-policy`, which returns 200 but redirects to `smile.id/` — the
+  homepage, not the policy. Every reference now uses `smile.id/privacy-policy`, the one that actually
+  serves the page, which is also what the listing declares.
 - **REL-A14 stays a calendar item.** `targetSdk` is re-checked against Play's floor annually;
   `docs/play-data-safety.md` holds the date it was last done.
 - **Production promotion is a Console action**, and production is reviewed again on promotion.

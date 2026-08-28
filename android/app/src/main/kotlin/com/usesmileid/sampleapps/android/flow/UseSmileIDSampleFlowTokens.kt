@@ -84,6 +84,6 @@ object UseSmileIDSampleFlowTokens {
     private const val ENDED_LAG_SECONDS = 60L
     private const val API_PATH = "v3"
     private const val GRANTED_AT_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-    private const val PRIVACY_POLICY_URL = "https://usesmileid.com/privacy-policy"
+    private const val PRIVACY_POLICY_URL = "https://smile.id/privacy-policy"
     private val VAULTED_FIELDS = listOf("given_names", "last_name", "email", "phone_number", "id_number")
 }

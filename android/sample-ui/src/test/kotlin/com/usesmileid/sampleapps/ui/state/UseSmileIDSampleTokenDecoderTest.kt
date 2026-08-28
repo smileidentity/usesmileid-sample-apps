@@ -291,7 +291,7 @@ class UseSmileIDSampleTokenDecoderTest {
         granted: String = "true",
         grantedAt: String? = GRANTED_AT,
         language: String? = "en",
-        policyUrl: String? = "https://usesmileid.com/privacy-policy",
+        policyUrl: String? = "https://smile.id/privacy-policy",
     ) = """"consent":{"granted":$granted,"granted_at":${quoted(grantedAt)},""" +
         """"notice_language":${quoted(language)},"notice_privacy_policy_url":${quoted(policyUrl)}}"""
 
@@ -314,6 +314,6 @@ class UseSmileIDSampleTokenDecoderTest {
 
         const val SANDBOX_URL = """"api_url":"https://testapi.smileidentity.com/v3""""
         val CONSENT = """"consent":{"granted":true,"granted_at":"$GRANTED_AT",""" +
-            """"notice_language":"en","notice_privacy_policy_url":"https://usesmileid.com/privacy-policy"}"""
+            """"notice_language":"en","notice_privacy_policy_url":"https://smile.id/privacy-policy"}"""
     }
 }
