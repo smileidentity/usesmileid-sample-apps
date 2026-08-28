@@ -138,8 +138,16 @@ Tools are `list_presets`, `compose_screenshot`, `generate_set`, `create_showcase
 `validate_screenshot`. Layout variants are `text-top`, `text-bottom` and `tilted`; mixing them is what
 stops six panels reading as one template repeated.
 
-**Use the CLI in CI and the MCP server locally.** `npx storeshots` is the same engine, and a CI lane must
+**Use the CLI in CI and the MCP server locally.** The CLI is the same engine, and a CI lane must
 not depend on an agent being in the loop. Local install: `claude mcp add storeshots -- npx -y storeshots-mcp`.
+
+**Correction, checked against the registry 2026-08-28:** `npx storeshots` does not resolve — there is no
+package by that name, and the command 404s. The CLI ships *inside* `storeshots-mcp`, which declares two
+binaries (`storeshots-mcp` for the server, `storeshots` for the CLI), so the invocation is
+`npx -p storeshots-mcp storeshots <command>`, or a devDependency on `storeshots-mcp` and a plain
+`storeshots` on the path. The engine claim itself holds. Its commands are `presets`, `compose`,
+`showcase` and `validate` — there is no `generate_set` on the CLI, so rendering a six-panel set is six
+`compose` calls from a script rather than one command, which is what REL-A11 has to write.
 The render path is pure — same frame plus same headline gives the same pixels — which is what makes the
 generated art committable, diffable in review, and gate-able for staleness alongside the design tokens
 and third-party notices `verify.sh` already checks.
