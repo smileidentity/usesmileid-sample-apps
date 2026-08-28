@@ -68,7 +68,6 @@ class UseSmileIDSampleJobStoreRefreshTest {
         assertTrue(source.calls.isEmpty())
     }
 
-    /** The rule the guard exists for: tokens expire, so the same partner legitimately holds a newer session. */
     @Test
     fun `a new session for the same partner refreshes a row the expired one created`() = runTest {
         val source = FakeStatusSource { _, _, _ -> updated() }
@@ -76,7 +75,6 @@ class UseSmileIDSampleJobStoreRefreshTest {
         store.add(job("job-1", sessionId = "expired", partnerId = "partner-a"))
 
         assertEquals(updated(), store.refresh("job-1", session(id = "fresh", partnerId = "partner-a"), NOW))
-        // The newer session's credential, not the one the row was submitted with.
         assertEquals("token-fresh", source.calls.single().second)
     }
 
@@ -228,7 +226,6 @@ class UseSmileIDSampleJobStoreRefreshTest {
     private companion object {
         const val NOW = 1_784_202_612_000L
 
-        /** The rows and the live session share a partner unless a test is about them differing. */
         const val PARTNER = "partner-a"
     }
 }

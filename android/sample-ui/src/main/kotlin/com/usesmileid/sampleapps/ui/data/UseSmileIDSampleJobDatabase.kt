@@ -78,7 +78,7 @@ abstract class UseSmileIDSampleJobDatabase : RoomDatabase() {
             }
         }
 
-        /** v3 adds the partner a row was submitted under, which is what a later session's refresh matches on. */
+        /** v3 adds the partner a refresh matches on. */
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE `jobs` ADD COLUMN `partnerId` TEXT")

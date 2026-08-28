@@ -22,7 +22,7 @@ data class UseSmileIDSampleJobEntity(
     val sandbox: Boolean,
     /** The session the run submitted under; null on a fixture token, which has no status to ask for. */
     val sessionId: String? = null,
-    /** The partner the run submitted under: tokens expire, so a refresh matches on this, not on the session. */
+    /** The partner the run submitted under; a refresh matches this, not the session. */
     val partnerId: String? = null,
     /** Which fields the token supplied — the shape, never the values: one of them is a vault reference. */
     @ColumnInfo(defaultValue = "0") val boundUserDetails: Boolean = false,

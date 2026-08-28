@@ -7,7 +7,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-/** The parse, not the composition: an unusable tag must be refused rather than applied as "undefined". */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [36])
 class UseSmileIDSampleAppLocaleTest {
@@ -22,14 +21,12 @@ class UseSmileIDSampleAppLocaleTest {
         assertEquals("sw", useSmileIDSampleLocales("sw")?.toLanguageTags())
     }
 
-    /** `Locale.forLanguageTag` answers junk with an undefined locale, which would silently render the default. */
     @Test
     fun `a tag naming no language is refused`() {
         assertNull(useSmileIDSampleLocales("not a tag"))
         assertNull(useSmileIDSampleLocales(""))
     }
 
-    /** A list is legal input, so one bad entry must not be applied alongside a good one. */
     @Test
     fun `a list is kept in order and refused when any entry names no language`() {
         assertEquals("fr-FR,en-GB", useSmileIDSampleLocales("fr-FR,en-GB")?.toLanguageTags())

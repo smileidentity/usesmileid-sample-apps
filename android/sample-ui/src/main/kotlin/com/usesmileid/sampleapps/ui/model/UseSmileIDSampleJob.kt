@@ -17,7 +17,7 @@ data class UseSmileIDSampleJob(
     val sandbox: Boolean = true,
     /** The session the run submitted under; null on a fixture token. */
     val sessionId: String? = null,
-    /** The partner the run submitted under, which is what a later session's refresh matches on. */
+    /** The partner the run submitted under; a later session's refresh matches on it. */
     val partnerId: String? = null,
 ) {
     /** The design truncates the job id in the list and on the details row; the full one is still copyable. */

@@ -16,7 +16,7 @@ class UseSmileIDSampleActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val launchArgs = intent.useSmileIDSampleLaunchArgs()
         setContent {
-            // Outermost, so the override reaches the SDK's own screens as well as this app's.
+            // Outermost, so the override reaches the SDK's screens too.
             UseSmileIDSampleAppLocale(launchArgs.appLocale) {
                 // Collected above the theme, because the Dark mode switch is what the theme reads.
                 val appState = rememberUseSmileIDSampleAppState(launchArgs)

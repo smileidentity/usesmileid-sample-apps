@@ -101,7 +101,7 @@ class UseSmileIDSampleJobStore(
             if (row.sessionId == null) return UseSmileIDSampleStatusRefresh.NoServerJob
             val session = live?.takeUnless { it.hasExpired(nowMillis) }
                 ?: return UseSmileIDSampleStatusRefresh.NoSession
-            // The partner, not the session: tokens expire, so the same partner legitimately holds a newer one.
+            // The partner, not the session: tokens expire and the same partner holds a newer one.
             if (session.partnerId != row.partnerId) return UseSmileIDSampleStatusRefresh.PartnerMismatch
             val outcome = try {
                 // The row's environment, never the toggle: a row outlives the toggle that produced it.

@@ -2,7 +2,6 @@ package com.usesmileid.sampleapps.android.launch
 
 import android.content.res.Configuration
 import android.os.LocaleList
-import android.view.ContextThemeWrapper
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -10,19 +9,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 
 /**
- * Honours `appLocale`: every string the process renders — the SDK's own localized text included —
- * resolves in the requested BCP 47 tag, without touching device settings that `spec/launch-args.json`
- * records as unscriptable on some OEMs. Overriding the composition rather than the process is what
- * keeps it to one launch, which is the scope a launch argument has.
+ * Honours `appLocale`: every string the app renders, the SDK's own localized text included, resolves
+ * in the requested BCP 47 tag without touching device settings that some OEMs will not script.
  */
 @Composable
 fun UseSmileIDSampleAppLocale(tag: String?, content: @Composable () -> Unit) {
     val requested = remember(tag) { tag?.let(::useSmileIDSampleLocales) }
     if (requested == null) {
         LaunchedEffect(tag) {
-            // A probe that silently kept the device locale passes vacuously, so it says so.
             if (tag != null) Log.w(TAG, "appLocale=$tag did nothing: not a usable BCP 47 tag")
         }
         content()
@@ -34,31 +31,28 @@ fun UseSmileIDSampleAppLocale(tag: String?, content: @Composable () -> Unit) {
         Configuration(configuration).apply { setLocales(requested) }
     }
     val context = LocalContext.current
-    // A wrapper, never createConfigurationContext: LocalResources computes off LocalContext, and a
-    // configuration context has no Activity in its chain for the SDK's screens to unwrap to.
-    val localizedContext = remember(context, localized) {
-        ContextThemeWrapper(context, 0).apply { applyOverrideConfiguration(localized) }
+    // Resources rather than the context: the SDK reads every string through `stringResource`, and
+    // substituting LocalContext would take the Activity its screens unwrap to out of the chain.
+    val localizedResources = remember(context, localized) {
+        context.createConfigurationContext(localized).resources
     }
 
     LaunchedEffect(requested, configuration.locales) {
         if (configuration.locales.toLanguageTags() == requested.toLanguageTags()) {
             Log.w(TAG, "appLocale=$tag is already the device locale — the run proves nothing about localization")
         } else {
-            Log.i(TAG, "appLocale=$tag applied as ${requested.toLanguageTags()}, over ${configuration.locales.toLanguageTags()}")
+            Log.i(TAG, "appLocale=$tag applied over ${configuration.locales.toLanguageTags()}")
         }
     }
 
     CompositionLocalProvider(
         LocalConfiguration provides localized,
-        LocalContext provides localizedContext,
+        LocalResources provides localizedResources,
         content = content,
     )
 }
 
-/**
- * Null when the tag names no language: `Locale.forLanguageTag` answers unparseable input with an
- * undefined locale rather than failing, and applying that would silently render the default instead.
- */
+/** Null when the tag names no language: an undefined locale would silently render the default. */
 internal fun useSmileIDSampleLocales(tag: String): LocaleList? {
     val locales = LocaleList.forLanguageTags(tag)
     if (locales.isEmpty) return null
