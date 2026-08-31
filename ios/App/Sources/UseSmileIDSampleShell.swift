@@ -10,14 +10,10 @@ struct UseSmileIDSampleShell: View {
   @SceneStorage("navigation") private var storedNavigation: String = ""
 
   var body: some View {
-    TabView(selection: tabSelection) {
-      ForEach(UseSmileIDSampleTab.allCases, id: \.self) { tab in
-        UseSmileIDSampleStack(tab: tab)
-          // On the label, never on the stack: an id on a container overrides every child id.
-          .tabItem { Text(tab.title).accessibilityIdentifier(tab.testId) }
-          .tag(tab)
-      }
-    }
+    UseSmileIDSampleStack(tab: router.selectedTab) { navBar }
+      // One tab mounted at a time: a hidden stack still answers id queries, and neither
+      // `accessibilityHidden` nor a children-ignore suppresses its UIKit-backed controls.
+      .id(router.selectedTab)
     .environmentObject(router)
     .environmentObject(app)
     // Pinned both ways, not nil: following the system when the switch is off leaves a device in
@@ -42,17 +38,24 @@ struct UseSmileIDSampleShell: View {
     .onChange(of: router.paths) { _ in storedNavigation = router.encodedState() }
   }
 
-  /// Re-selecting the showing tab pops it to its root, as the platform does.
-  private var tabSelection: Binding<UseSmileIDSampleTab> {
-    Binding(
-      get: { router.selectedTab },
-      set: { tab in
-        if tab == router.selectedTab {
-          router.openTabRoot(tab)
-        } else {
-          router.selectedTab = tab
-        }
-      }
+  /// The design's floating pill, ruled over `TabView`. Sits inside the host, so a push covers it —
+  /// the visibility rule the Compose twin spells out as `selectedTab != null`.
+  private var navBar: some View {
+    UseSmileIDSampleNavBar(
+      selected: router.selectedTab.navItem,
+      // nil until `scanToken` starts a session; the ring is absent rather than reading empty.
+      sessionProgress: nil,
+      onSelect: { select(UseSmileIDSampleTab($0)) },
+      onToken: { router.open(.scanToken) }
     )
+  }
+
+  /// Re-selecting the showing tab pops it to its root, as the platform does.
+  private func select(_ tab: UseSmileIDSampleTab) {
+    if tab == router.selectedTab {
+      router.openTabRoot(tab)
+    } else {
+      router.selectedTab = tab
+    }
   }
 }

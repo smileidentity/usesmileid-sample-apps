@@ -7,11 +7,9 @@ type ramp, the stopgap values and the DM Sans faces are generated for SwiftUI, t
 generated as SwiftUI shapes, `ios/verify.sh` gates tokens, icons, format, unit tests, goldens, the
 shell's route table and the release build, and every component has goldens in light and dark.
 
-**Picking iOS back up: read `ios-port-hardening.md` first — it opens with the order to work in.** One
-ruling is owed before more screens land (the nav container: the design's floating pill is built but
-the shell renders `TabView`), and three PRs are open and mergeable. Do not start a screen before
-those are settled — every screen records its bottom inset and baseline against whichever container
-wins.
+**Picking iOS back up: read `ios-port-hardening.md` first — it opens with the order to work in.** The
+nav container is ruled (2026-08-31: the design's floating pill, not `TabView`), so screens are
+unblocked and each records its bottom inset against the pill.
 
 The design is
 captured in `spec/screens.json` (14 screens, 38 states, every one linked to its design node), the
