@@ -13,10 +13,21 @@ public enum UseSmileIDSampleTestIds {
   public static let toast = "sample_toast"
   public static let toastUndo = "sample_toast_undo"
 
+  public static let jobRow = "sample_job_row"
+  public static let jobRowStatus = "sample_job_row_status"
+  public static let filterChip = "sample_filter_chip"
+  public static let filterCount = "sample_filter_count"
+  public static let selectionBar = "sample_selection_bar"
+  public static let selectionCheckbox = "sample_selection_checkbox"
+  public static let selectionCount = "sample_selection_count"
+  public static let selectionRemove = "sample_selection_remove"
+
   /// Every id above, so the spec test cannot pass by omission.
   static let all = [
     productsScreen, verificationsScreen, settingsScreen,
     navProducts, navVerifications, navSettings,
-    toast, toastUndo
+    toast, toastUndo,
+    jobRow, jobRowStatus, filterChip, filterCount,
+    selectionBar, selectionCheckbox, selectionCount, selectionRemove
   ]
 }

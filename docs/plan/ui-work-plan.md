@@ -1,7 +1,7 @@
 # UI work plan — Android first, then three ports
 
-**Status:** Android U0–U3 is built and in review. The iOS port has started: **U0, U1 and the first
-half of U2 are complete** — the type ramp, the stopgap values and the DM Sans faces are generated for
+**Status:** Android U0–U3 is built and in review. The iOS port has started: **U0, U1 and U2's shared
+composites are complete** — the type ramp, the stopgap values and the DM Sans faces are generated for
 SwiftUI, the design's marks are generated as SwiftUI shapes, `ios/verify.sh` has a golden step, and
 the eight primitives plus the section-and-row composites are built with their goldens in light and
 dark. The rest of U2 and U3–U4 follow. Flutter and Expo have not started. The design is
@@ -174,6 +174,10 @@ rather than rediscover:
   needs a host application an SPM test target does not have. The switch baseline still catches a
   tint or state regression; the thumb is the device pass's job. Expect the same for any other
   platform control a port wraps rather than draws.
+- **There is no partial-height sheet on the iOS floor.** `presentationDetents` is iOS 16, so every
+  sheet is the platform's full-height card and the system draws the grabber. The Compose twin's
+  content-height variant has no counterpart, and hand-rolling one would reproduce Android's
+  presentation rather than the platform's.
 - **The no-clipping predicate is weaker on iOS, deliberately.** Compose exposes `didExceedMaxLines`
   through the semantics tree, so Android fails the build on truncated text. SwiftUI publishes no
   truncation flag a unit test can read, so iOS asserts that nothing lays out past the viewport at the

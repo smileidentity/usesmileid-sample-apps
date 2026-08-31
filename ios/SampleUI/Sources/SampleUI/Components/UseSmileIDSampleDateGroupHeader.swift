@@ -1,0 +1,29 @@
+import SwiftUI
+
+/// The date separator in the verifications list. Both halves arrive formatted, because both are
+/// locale-dependent.
+public struct UseSmileIDSampleDateGroupHeader: View {
+  private let relative: String
+  private let absolute: String
+  private let testId: String?
+
+  @Environment(\.useSmileIDSampleColors) private var colors
+
+  public init(relative: String, absolute: String, testId: String? = nil) {
+    self.relative = relative
+    self.absolute = absolute
+    self.testId = testId
+  }
+
+  public var body: some View {
+    // Two spaces either side of the dot, as the design sets it.
+    UseSmileIDSampleText(
+      "\(relative)  ·  \(absolute)",
+      style: UseSmileIDSampleTheme.type.textStyleOverline.with(size: smileLabelSize, tracking: smileLabelTracking)
+    )
+    .foregroundColor(colors.textMuted)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .padding(.vertical, SmileSpacing.spacingXs)
+    .useSmileIDSampleTestId(testId)
+  }
+}
