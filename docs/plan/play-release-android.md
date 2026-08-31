@@ -1,8 +1,9 @@
 # Shipping the Android sample to Play
 
-**Status:** REL-A1 through REL-A17 all landed 2026-08-28. Three things are owed and each carries a
-dated decision in §7.2: the camera panel needs a device, one rendered panel is visually weak, and the
-first upload is an owner action. §7 tracks each item. Runs in parallel with the iOS port and shares no
+**Status:** SHIPPED. REL-A1 through REL-A17 landed 2026-08-28 and the app is live on Play's internal
+testing track. §7.3 records what the release actually proved and §7.4 what is left, none of it blocking:
+the camera panel needs a device, one rendered panel is visually weak, and production promotion is a
+Console action. §7 tracks each item. Runs in parallel with the iOS port and shares no
 files with it. Android is the first of the four apps to reach a store, so every decision here sets a
 pattern the other three copy — §8 records what travels and what is Play-specific.
 
@@ -545,26 +546,54 @@ handful of androidx locales now and correctness the day it does.
 reproduces all five panels byte-for-byte; their git blob hashes are unchanged. `android/verify.sh` is
 green on a machine holding no signing secret, which is the state a fresh clone is in.
 
-**What is still owed, each with a dated decision.**
+### 7.3 What the release proved, 2026-08-28
 
-- **The camera panel (REL-A9), deferred 2026-08-28.** The flow, its landmarks and its output path are
-  written; the frame itself needs a device and nothing else is blocked by it. Five panels is above
-  Play's minimum of two.
-- **Five of the six rendered panels are committed** under `android/play/screenshots`, which is enough
-  to complete a listing: Play's minimum is two. The render script skips a panel whose frame does not
-  exist yet and names it, rather than refusing to run, so the camera panel drops in later without
-  redoing anything. The renders are deterministic — re-running reproduces identical bytes — and each
-  one passes `storeshots validate`. `android/play/screenshots` holds exactly the panels Play receives
-  and nothing else — the review strip sits beside it at `android/play/showcase.png`, because the first
-  version of the release lane validated it as a store panel and failed on a 3711x1344 image that was
-  never meant to be one.
-- **The `verification_details` panel is the weak one, and it is a design call rather than a defect.**
-  Hiding the debug result card left that screen sparse, so its phone frame is half empty next to the
-  others. Three ways out, none of them urgent: ship it, drop it and publish four, or swap in a denser
-  real state such as a blocked result or the token scanner. Screenshots are editable on a live listing
-  at any time, which is why this is not worth blocking the first upload on.
-- **The first upload and the listing are not done, by instruction.** They fix the signing identity
-  permanently and create the listing, so they are an owner action.
+The plan's claims were checked against Play rather than against the build:
+
+| Claim | How it was confirmed |
+|---|---|
+| The upload key is the v11 one and signing is correct | Console's upload certificate reads `80:11:95:8A:…:27:2C`, the keystore's own fingerprint. Signing identity is now fixed permanently, and it is the right key |
+| ABI and density splits recover the size | Console reports **15.1 MB for new installs** against a 69.7 MB universal APK — within a megabyte of what `bundletool` predicted |
+| One monotonic versionCode across tracks | 33 uploaded by hand, 37 published by CI, correctly ordered |
+| The publish lane works end to end | The internal workflow ran green: keystore decoded from the secret, bundle signed, service account accepted the upload |
+| The listing copy fits | Play accepted title, both descriptions and the release notes unchanged |
+
+**Internal testing does not trigger Google's full review**, which is why release 33 was live within
+minutes while the app was still Draft. The heavy review starts on the first promotion to closed
+testing, so that promotion is worth making early rather than under deadline.
+
+**The service account is reused from v11, like the upload key.** It already held the grant for this
+app, so nothing had to be created. The cost is the same one §3 accepted for the key and is recorded for
+the same reason: **one credential now has release rights to two listings**, so a future rotation
+touches both.
+
+### 7.4 Post-release follow-ups
+
+None of these blocks anything, and none of them belongs to Android's critical path any more.
+
+- **The camera panel (REL-A9)** needs a device. The flow and its output path are written; five panels
+  are published and the sixth drops in without rework.
+- **The `verification_details` panel is the weak one.** Hiding the debug result card left that screen
+  sparse. Ship it, drop to four, or swap in a denser state — screenshots are editable on a live listing
+  at any time.
+- **The internal lane is still dispatch-only.** It was deliberate while the first upload was an owner
+  action; now the listing exists, `push: branches: [main]` would make every merge an internal build.
+  It needs a **path filter** when it lands, or a docs-only merge publishes a release and burns a
+  versionCode for nothing. Two guards it does *not* need, so nobody adds them later: the versionCode is
+  already monotonic because it is the commit count, and a `push` trigger cannot fire from a fork, so the
+  secrets are not reachable that way.
+- ~~The app carries two privacy policy URLs.~~ **Fixed here.** The simulated token's consent notice
+  pointed at `usesmileid.com/privacy-policy`, which returns 200 but redirects to `smile.id/` — the
+  homepage, not the policy. Every reference now uses `smile.id/privacy-policy`, the one that actually
+  serves the page, which is also what the listing declares.
+- **The Flutter and Expo id rename is deferred, ruled 2026-08-28.** Both development samples still hold
+  ids this repository's apps are specified to take, but neither app exists yet, so no SDK repo is
+  touched for it now. The rename travels with the sample-ui port to the four SDKs — that is when those
+  apps get built and when the collision first becomes real. `spec/app-identity.json` carries the target
+  ids so the work is a lookup rather than a re-decision.
+- **REL-A14 stays a calendar item.** `targetSdk` is re-checked against Play's floor annually;
+  `docs/play-data-safety.md` holds the date it was last done.
+- **Production promotion is a Console action**, and production is reviewed again on promotion.
 
 ## 8. Parity — what the other three inherit
 
@@ -573,6 +602,25 @@ published frames; copy derived from the `docs-v3` product pages; store art commi
 release notes written by a person. Flutter and Expo also inherit §7.1 wholesale, because their Android
 builds package the same four ABIs and carry the same `appLocale` argument: app bundle, ABI and density
 splits on, language splits off.
+
+**What the Android release learned that the other three should not re-learn.** Five of these cost real
+time here:
+
+- **A rendered frame is not a screenshot — it needs a status-bar inset.** Panels render edge to edge
+  from y=0, but every device frame draws a cutout and rounded corners over that band, so the app bar
+  ends up underneath. Android needed 40dp. iOS will need more, and the Dynamic Island is a larger
+  obstruction than a punch-hole.
+- **Use one layout variant for the whole set.** Alternating `text-top`/`text-bottom`/`tilted` was meant
+  to stop the panels reading as one template; in the finished strip it just made the device a different
+  size and height in every panel, which reads as inconsistency.
+- **Headlines take their nouns from `docs-v3` and never state a count.** "Six products" is wrong the day
+  a product is added. `docs-v3` calls the record a *verification result* and describes it by *status*
+  and *message*; those words are also what the app's status pills say.
+- **Whatever directory the store art lands in must contain only store art.** The review strip sitting
+  among the panels failed the release lane, which validated it as a phone screenshot.
+- **Check the rendered output, not the raw frames.** Both the cutout collision and the variant problem
+  were invisible in the frames and obvious in the finished panels. That is the argument for committing
+  the rendered set rather than only its inputs.
 
 Platform-specific: iOS swaps to the `ios-phone` (1320 × 2868) and `ipad-13` (2064 × 2752) presets, and its
 off-device renderer is snapshot tests rather than Roborazzi, with XCUITest for the camera panel. Worth
