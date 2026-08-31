@@ -3,7 +3,8 @@ import SwiftUI
 /// One tab's stack. `NavigationView` plus an `isActive` chain, the idiom the iOS 15 floor allows.
 struct UseSmileIDSampleStack<Bar: View>: View {
   let tab: UseSmileIDSampleTab
-  /// Inset inside the host: applied outside it, the hosted scroll view never takes the inset.
+  /// Inset inside the host: applied outside it, the hosted scroll view never takes the inset. Root
+  /// level only, deliberately — a push covers the bar, so a pushed screen has nothing to inset for.
   @ViewBuilder let bar: () -> Bar
 
   var body: some View {

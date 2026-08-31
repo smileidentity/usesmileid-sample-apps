@@ -30,7 +30,7 @@ host, so a push covers it — the same visibility rule the Compose twin writes a
 than deleting one component. Behaviour stays platform-native because the per-tab `NavigationView`
 stacks below are untouched.
 
-**Two things building it taught, both worth copying to a port rather than rediscovering:**
+**Three things building it taught, all worth copying to a port rather than rediscovering:**
 
 - **Only the showing tab can be mounted.** Keeping all three alive and hiding two is the obvious
   translation of what `TabView` did for free, and it does not work: a hidden stack still answers an
@@ -40,7 +40,12 @@ stacks below are untouched.
   the only reliable answer. The path survives because it lives in the router; a scroll offset does not.
 - **The bottom inset has to be applied inside the navigation host.** `safeAreaInset` on the view
   *wrapping* `NavigationView` never reaches the hosted scroll view. Content passing under the bar
-  while scrolling is correct and not the symptom — check the last row at rest.
+  while scrolling is correct and not the symptom — check the last row at rest. It is applied at the
+  root level only, deliberately: a push covers the bar, so a pushed screen has nothing to inset for.
+- **State that must survive a tab switch cannot live in the screen.** One tab is mounted, so a
+  screen's `@State` and `@FocusState` are torn down with it. Today's screens are read-only and it
+  does not show, but the forms and pickers in U3's step 4 would lose part-entered input. Lift that
+  state to the app state, where the paths already live, rather than meeting it screen by screen.
 
 **How it got here, so it does not recur:** the component was built because it was on U2's list,
 without checking what would consume it. Run the app on a simulator at the end of each slice.
