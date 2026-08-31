@@ -68,13 +68,6 @@ public struct UseSmileIDSampleDataFieldRow: View {
 
   /// A coloured value is the one the design also weights harder.
   private var valueStyle: SmileTextStyle {
-    let style = UseSmileIDSampleTheme.type.dataFieldValueFont.with(size: 13)
-    return SmileTextStyle(
-      family: style.family,
-      weight: valueColor == nil ? 600 : 700,
-      size: style.size,
-      lineHeight: style.lineHeight,
-      tracking: style.tracking
-    )
+    UseSmileIDSampleTheme.type.dataFieldValueFont.with(size: 13, weight: valueColor == nil ? 600 : 700)
   }
 }

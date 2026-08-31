@@ -24,7 +24,7 @@ public struct UseSmileIDSampleJobRow: View {
     time: String,
     status: UseSmileIDSampleStatus,
     testId: String? = nil,
-    statusTestId: String? = UseSmileIDSampleTestIds.jobRowStatus,
+    statusTestId: String? = nil,
     onTap: (() -> Void)? = nil
   ) {
     self.product = product
@@ -32,7 +32,8 @@ public struct UseSmileIDSampleJobRow: View {
     self.time = time
     self.status = status
     self.testId = testId
-    self.statusTestId = statusTestId
+    // Derived from the row's own id, because one shared id would repeat on every row in the list.
+    self.statusTestId = statusTestId ?? testId.map { "\($0)_status" }
     self.onTap = onTap
   }
 
