@@ -10,32 +10,31 @@ struct UseSmileIDSampleShell: View {
   @SceneStorage("navigation") private var storedNavigation: String = ""
 
   var body: some View {
+    // One tab mounted at a time: a hidden stack still answers id queries, and neither
+    // `accessibilityHidden` nor a children-ignore suppresses its UIKit-backed controls.
     UseSmileIDSampleStack(tab: router.selectedTab) { navBar }
-      // One tab mounted at a time: a hidden stack still answers id queries, and neither
-      // `accessibilityHidden` nor a children-ignore suppresses its UIKit-backed controls.
-      .id(router.selectedTab)
-    .environmentObject(router)
-    .environmentObject(app)
-    // Pinned both ways, not nil: following the system when the switch is off leaves a device in
-    // dark mode rendering dark while Settings reads off.
-    .preferredColorScheme(app.settings.darkMode ? .dark : .light)
-    // Held here until U2/U3 land the screens that own these sheets.
-    .sheet(item: $router.sheet) { sheet in
-      UseSmileIDSampleSeat(name: sheet.rawValue)
-    }
-    .onOpenURL { url in
-      guard let link = UseSmileIDSampleLinks.resolve(url) else { return }
-      switch link {
-      case .route(let route):
-        router.open(route)
-      case .sheet(let sheet, let owner):
-        router.open(owner)
-        router.sheet = sheet
+      .environmentObject(router)
+      .environmentObject(app)
+      // Pinned both ways, not nil: following the system when the switch is off leaves a device in
+      // dark mode rendering dark while Settings reads off.
+      .preferredColorScheme(app.settings.darkMode ? .dark : .light)
+      // Held here until U2/U3 land the screens that own these sheets.
+      .sheet(item: $router.sheet) { sheet in
+        UseSmileIDSampleSeat(name: sheet.rawValue)
       }
-    }
-    .onAppear { router.restore(from: storedNavigation) }
-    .onChange(of: router.selectedTab) { _ in storedNavigation = router.encodedState() }
-    .onChange(of: router.paths) { _ in storedNavigation = router.encodedState() }
+      .onOpenURL { url in
+        guard let link = UseSmileIDSampleLinks.resolve(url) else { return }
+        switch link {
+        case .route(let route):
+          router.open(route)
+        case .sheet(let sheet, let owner):
+          router.open(owner)
+          router.sheet = sheet
+        }
+      }
+      .onAppear { router.restore(from: storedNavigation) }
+      .onChange(of: router.selectedTab) { _ in storedNavigation = router.encodedState() }
+      .onChange(of: router.paths) { _ in storedNavigation = router.encodedState() }
   }
 
   /// The design's floating pill, ruled over `TabView`. Sits inside the host, so a push covers it —

@@ -9,6 +9,9 @@ struct UseSmileIDSampleStack<Bar: View>: View {
   var body: some View {
     NavigationView {
       UseSmileIDSampleStackLevel(tab: tab, depth: 0, route: tab.route)
+        // Only the content carries the tab's identity, so switching rebuilds the screen but not
+        // the host or the bar — the bar is the control that handled the tap.
+        .id(tab)
         .safeAreaInset(edge: .bottom) { bar() }
     }
     .navigationViewStyle(.stack)
