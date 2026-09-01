@@ -41,6 +41,7 @@ class UseSmileIDSampleGoldenTest: XCTestCase {
   /// unit test can read. So overflow past the viewport fails here, and clipping *within* the
   /// viewport is caught by reviewing the baseline this writes.
   func assertSurvivesMaxDynamicType(
+    growsWithContentSize: Bool = true,
     file: StaticString = #filePath,
     testName: String = #function,
     line: UInt = #line,
@@ -65,6 +66,30 @@ class UseSmileIDSampleGoldenTest: XCTestCase {
       file: file,
       line: line
     )
+
+    // Growth is the only truncation signal SwiftUI leaves: a view that caps its own height reports
+    // the cap as its ideal size, so measuring it against itself cannot tell clipped from fitting.
+    // Declaring the fixed ones instead makes a component that STOPS growing fail, the way the
+    // unapplied-id inventory works, and a stale declaration fails too.
+    let natural = UIHostingController(rootView: content().useSmileIDSampleTheme())
+      .sizeThatFits(in: CGSize(width: available, height: .greatestFiniteMagnitude))
+    if growsWithContentSize {
+      XCTAssertGreaterThan(
+        ideal.height,
+        natural.height + Self.tolerance,
+        "did not get taller at the largest content size, so its text is capped rather than laid out",
+        file: file,
+        line: line
+      )
+    } else {
+      XCTAssertLessThanOrEqual(
+        ideal.height,
+        natural.height + Self.tolerance,
+        "grew at the largest content size, so it is no longer fixed by design — drop the flag",
+        file: file,
+        line: line
+      )
+    }
 
     let view = host(scaled)
     assertSnapshot(
