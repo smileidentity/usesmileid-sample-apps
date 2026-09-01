@@ -46,14 +46,15 @@ public struct CountryPickerSheet: View {
   }
 }
 
-/// An empty result is a state a search must have, or a typo looks like a broken sheet.
-public struct UseSmileIDSamplePickerList<Content: View>: View {
+/// An empty result is a state a search must have, or a typo looks like a broken sheet. Internal and
+/// beside its first caller, as the Compose twin is: the two picker sheets are its only consumers.
+struct UseSmileIDSamplePickerList<Content: View>: View {
   private let isEmpty: Bool
   private let emptyLabel: String
   private let emptyTestId: String
   private let content: Content
 
-  public init(
+  init(
     isEmpty: Bool,
     emptyLabel: String,
     emptyTestId: String,
@@ -65,7 +66,7 @@ public struct UseSmileIDSamplePickerList<Content: View>: View {
     self.content = content()
   }
 
-  public var body: some View {
+  var body: some View {
     if isEmpty {
       UseSmileIDSampleEmptyState(text: emptyLabel, testId: emptyTestId)
     } else {
