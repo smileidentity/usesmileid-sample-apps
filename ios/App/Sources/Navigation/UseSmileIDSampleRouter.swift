@@ -41,6 +41,9 @@ final class UseSmileIDSampleRouter: ObservableObject {
       get: { [weak self] in (self?.path(tab).count ?? 0) > depth },
       set: { [weak self] active in
         guard let self, !active else { return }
+        // Only the showing tab pops. Tearing down the outgoing tab's stack fires this setter too,
+        // and acting on it would drop the path the user is navigating away from.
+        guard self.selectedTab == tab else { return }
         var next = self.path(tab)
         guard next.count > depth else { return }
         next.removeSubrange(depth...)

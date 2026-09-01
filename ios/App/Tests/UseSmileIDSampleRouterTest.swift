@@ -34,6 +34,21 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
     XCTAssertEqual(router.path(.settings), [.profiles, .profileConfig(profileId: "profile-7")])
   }
 
+  func testTearingDownTheTabBeingLeftKeepsItsPath() {
+    let router = open("usesmileid-sample-ios://settings/licenses")
+    XCTAssertEqual(router.path(.settings), [.licenses])
+    router.selectedTab = .products
+    // What the outgoing stack's teardown does; it must not read as a pop.
+    router.isActive(.settings, depth: 0).wrappedValue = false
+    XCTAssertEqual(router.path(.settings), [.licenses])
+  }
+
+  func testBackOnTheShowingTabStillPops() {
+    let router = open("usesmileid-sample-ios://settings/licenses")
+    router.isActive(.settings, depth: 0).wrappedValue = false
+    XCTAssertEqual(router.path(.settings), [])
+  }
+
   func testNoLinkPushesACopyOfItsOwnTabRoot() {
     for tab in UseSmileIDSampleTab.allCases {
       let router = UseSmileIDSampleRouter()

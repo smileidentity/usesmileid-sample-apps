@@ -15,19 +15,20 @@ enum UseSmileIDSampleTab: String, CaseIterable, Codable {
     }
   }
 
-  var title: String {
+  /// Switched rather than bridged by `rawValue`, so a destination added to one enum fails to build.
+  var navItem: UseSmileIDSampleNavItem {
     switch self {
-    case .products: "Products"
-    case .verifications: "Verifications"
-    case .settings: "Settings"
+    case .products: .products
+    case .verifications: .verifications
+    case .settings: .settings
     }
   }
 
-  var testId: String {
-    switch self {
-    case .products: UseSmileIDSampleTestIds.navProducts
-    case .verifications: UseSmileIDSampleTestIds.navVerifications
-    case .settings: UseSmileIDSampleTestIds.navSettings
+  init(_ item: UseSmileIDSampleNavItem) {
+    switch item {
+    case .products: self = .products
+    case .verifications: self = .verifications
+    case .settings: self = .settings
     }
   }
 }

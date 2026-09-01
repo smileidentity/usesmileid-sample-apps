@@ -8,39 +8,47 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 
 | # | Do this | Why it comes first | Ends when |
 |---|---|---|---|
-| 1 | **Rule the nav container** — floating pill or `TabView`. See §1. | The only open question that can invalidate finished work. Every remaining screen lands inside the winner and records its bottom inset and baseline against it. | A ruling exists, and the losing option's code is deleted rather than left orphaned. |
-| 2 | **Merge the open stack**, oldest first. | Three PRs deep is the practical limit: this repo squash-merges, so each merge turns the branches above into a `rebase --onto`, not a plain rebase. | `main` carries all three; no stacked branches remain. |
+| 1 | **DONE 2026-08-31 — the pill won.** See §1. | The only open question that could invalidate finished work. | Ruled, built, and `TabView` gone. |
+| 2 | **DONE 2026-08-31 — the stack is merged.** | Three PRs deep is the practical limit: this repo squash-merges, so each merge turns the branches above into a `rebase --onto`, not a plain rebase. | `main` carries all three. |
 | 3 | **Build the first XCUITest.** See §5. | Every new route is currently asserted only at the resolver. One file now makes each later screen self-verifying; deferring it accumulates fourteen screens of unproven navigation into one pass. | A link launches the app and the resulting screen id is asserted in CI. |
 | 4 | **Continue U3** in `ui-work-plan.md`'s order — verifications, then verificationDetails, then the forms and pickers. | Settled order; do not relitigate it. | All sixteen screens exist. |
 | 5 | **Close the truncation gap.** See §2. | Only starts biting at U4, when the 38 states land. Doing it sooner spends effort on a problem still readable by eye. | An automated check fails on clipped text. |
 
-**The open stack, in merge order:** #40 (verifications list and select mode) → #42 (products grid and
-nav bar) → #43 (settings and products screens). All three are green with no unresolved review
-threads. #43 also carries this document.
+**The stack that carried U0–U2 and the first two screens** — #40, #42, #43 — is merged. Each squash
+turned the branches above it into a `rebase --onto`, which is the cost the three-deep limit buys.
 
 ---
 
-## 1. The nav container is undecided, and the shell and the component disagree
+## 1. The nav container — ruled 2026-08-31: the floating pill
 
-**Now:** `UseSmileIDSampleNavBar` is built, has goldens, and is called by nothing. The shell renders
-the platform `TabView`, which the simulator run on 2026-08-28 confirms — the app shows the system tab
-bar, not the design's floating pill.
+`UseSmileIDSampleNavBar` is what the shell renders; `TabView` is gone, and so are the `title` and
+`testId` on `UseSmileIDSampleTab` that only its `tabItem` used. The pill sits inside the navigation
+host, so a push covers it — the same visibility rule the Compose twin writes as `selectedTab != null`.
 
-**This is a real question, not an oversight to fix blindly.** A tab bar's appearance is a visual, and
-visuals are meant to be uniform across the four apps. Its behaviour is navigation, and navigation is
-meant to be platform-native. The Compose twin draws the floating pill. Someone has to rule which side
-of that line the iOS tab bar falls on.
+**The ruling turned on the token button.** The pill is three tabs *plus a detached token affordance*.
+`TabView` cannot host that, so choosing it would have orphaned the app's token entry point rather
+than deleting one component. Behaviour stays platform-native because the per-tab `NavigationView`
+stacks below are untouched.
 
-**Whichever way it goes, one of the two gets deleted.** If the pill wins, the shell hosts it over the
-content and `TabView` goes. If `TabView` wins, `UseSmileIDSampleNavBar` and its goldens go, rather
-than leaving a component the app does not use.
+**Three things building it taught, all worth copying to a port rather than rediscovering:**
+
+- **Only the showing tab can be mounted.** Keeping all three alive and hiding two is the obvious
+  translation of what `TabView` did for free, and it does not work: a hidden stack still answers an
+  id query. `accessibilityHidden` does not reach through the navigation host, and applying it inside
+  still leaves a leaf that carries its own identifier; adding `accessibilityElement(children:
+  .ignore)` then puts the UIKit-backed `UISwitch`es back as unlabelled elements. Mounting one tab is
+  the only reliable answer. The path survives because it lives in the router; a scroll offset does not.
+- **The bottom inset has to be applied inside the navigation host.** `safeAreaInset` on the view
+  *wrapping* `NavigationView` never reaches the hosted scroll view. Content passing under the bar
+  while scrolling is correct and not the symptom — check the last row at rest. It is applied at the
+  root level only, deliberately: a push covers the bar, so a pushed screen has nothing to inset for.
+- **State that must survive a tab switch cannot live in the screen.** One tab is mounted, so a
+  screen's `@State` and `@FocusState` are torn down with it. Today's screens are read-only and it
+  does not show, but the forms and pickers in U3's step 4 would lose part-entered input. Lift that
+  state to the app state, where the paths already live, rather than meeting it screen by screen.
 
 **How it got here, so it does not recur:** the component was built because it was on U2's list,
-without checking what would consume it. The shell has used `TabView` since the walking skeleton. Run
-the app on a simulator at the end of each slice — that is what surfaced this, and it would have
-surfaced it a PR earlier.
-
----
+without checking what would consume it. Run the app on a simulator at the end of each slice.
 
 ## 2. The golden harness cannot see truncation, and every screen inherits that
 
