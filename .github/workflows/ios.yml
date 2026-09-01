@@ -25,6 +25,9 @@ jobs:
     # one runtime — a runner or simulator that drifts from the local default reds the lane for
     # reasons that have nothing to do with the UI.
     runs-on: macos-26
+    # The UI tests drive a cross-process system alert, which can hang where the earlier programmatic
+    # steps could not; without this a wedged run holds the branch's concurrency group for hours.
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
@@ -79,3 +82,11 @@ jobs:
           SMILE_TOKENS_OPTIONAL: ${{ steps.design-system.outcome == 'skipped' && '1' || '' }}
           DESTINATION: platform=iOS Simulator,name=iPhone 17 Pro
         run: ios/verify.sh
+
+      - name: Keep the UI test result bundle when the lane reds
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-uitest-result
+          path: ios/build/uitest.xcresult
+          if-no-files-found: ignore

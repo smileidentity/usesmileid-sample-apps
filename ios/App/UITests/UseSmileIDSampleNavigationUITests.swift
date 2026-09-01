@@ -21,12 +21,15 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
   /// level arrives — a defect that predates the nav container change and reproduces on `main`, so
   /// it is recorded rather than fixed here. Remove the expectation with the fix; see §7 of the plan.
   func testALinkOpensATwoLevelRouteInAnotherTab() {
-    XCTExpectFailure("nested links do not chain on the iOS 15 NavigationView idiom")
     open("profiles/demo")
     let deepest = app.staticTexts.matching(
       NSPredicate(format: "label BEGINSWITH %@", "profileConfig")
     ).firstMatch
-    XCTAssertTrue(deepest.waitForExistence(timeout: 10), "the pushed level did not arrive")
+    // Scoped to this assertion alone: unscoped, it would also absorb a delivery failure raised by
+    // `open`, and a total regression would report as the limitation already known about.
+    XCTExpectFailure("nested links do not chain on the iOS 15 NavigationView idiom") {
+      XCTAssertTrue(deepest.waitForExistence(timeout: 10), "the pushed level did not arrive")
+    }
   }
 
   func testTheNavPillSwitchesTabs() {
@@ -37,11 +40,16 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
 
   /// The leak this shell was restructured to close: a tab that is not showing must not answer.
   func testOnlyTheShowingTabsIdsAreQueryable() {
+    // Each id is proven present before it is asserted gone; asserting absence alone passes just as
+    // well when the id never existed.
     XCTAssertTrue(element("sample_product_card_smartSelfieEnrollment").waitForExistence(timeout: 10))
+    element("sample_nav_verifications").tap()
+    XCTAssertTrue(element("sample_verifications_screen").waitForExistence(timeout: 10))
+    XCTAssertFalse(element("sample_product_card_smartSelfieEnrollment").exists)
     element("sample_nav_settings").tap()
     XCTAssertTrue(element("sample_sign_out").waitForExistence(timeout: 10))
-    XCTAssertFalse(element("sample_product_card_smartSelfieEnrollment").exists)
     XCTAssertFalse(element("sample_verifications_screen").exists)
+    XCTAssertFalse(element("sample_product_card_smartSelfieEnrollment").exists)
   }
 
   private func element(_ id: String) -> XCUIElement {

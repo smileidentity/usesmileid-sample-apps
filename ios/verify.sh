@@ -7,6 +7,7 @@ REPO_ROOT="$(cd .. && pwd)"
 
 SCHEME="${SCHEME:-UseSmileIDSample}"
 DESTINATION="${DESTINATION:-platform=iOS Simulator,name=iPhone 17 Pro}"
+RESULT_BUNDLE="${RESULT_BUNDLE:-build/uitest.xcresult}"
 
 echo "==> design tokens are current"
 # SMILE_TOKENS_OPTIONAL downgrades a missing design system to a skip, for fork PRs that get no
@@ -51,10 +52,17 @@ xcodebuild test \
 echo "==> navigation UI tests (the only ones that drive the real shell)"
 # Deep links and the nav bar are only provable against a running app: the resolver is unit-tested,
 # delivery is not. Every later screen asserts its route here rather than adding a harness.
+#
+# A build under the pre-rename bundle id declares the same URL scheme, so on a long-lived simulator
+# it takes the deep links and every test reds as though routing were broken. CI never sees it.
+xcrun simctl uninstall booted com.usesmileid.sampleapps.ios >/dev/null 2>&1 || true
+# A UI-test failure is a picture, not a message: without the bundle a red CI run cannot be read.
+rm -rf "$RESULT_BUNDLE"
 xcodebuild test \
   -project App/UseSmileIDSample.xcodeproj \
   -scheme UseSmileIDSampleUITests \
   -destination "$DESTINATION" \
+  -resultBundlePath "$RESULT_BUNDLE" \
   -quiet
 
 echo "==> release build (the configuration consumption defects actually surface in)"
