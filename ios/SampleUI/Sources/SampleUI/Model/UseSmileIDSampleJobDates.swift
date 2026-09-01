@@ -7,7 +7,6 @@ public extension UseSmileIDSampleJob {
   }
 }
 
-/// Fixed locale and zone, so the row reads the same on every device.
 private let utcIsoFormatter: DateFormatter = {
   let formatter = DateFormatter()
   formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"

@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// What the details screen draws. A nil job is a real state: a deep link can name one this build
-/// never had, and the id asked for is the whole diagnostic.
+/// A nil job is a real state: a deep link can name one this build never had.
 public struct UseSmileIDSampleVerificationDetailsState: Equatable {
   public var jobId: String
   public var job: UseSmileIDSampleJob?
@@ -53,14 +52,13 @@ public struct VerificationDetailsScreen: View {
         }
         .padding(.vertical, SmileSpacing.spacingXs)
       }
-      // On the scroll view, as the other screens' are: on the stack inside it, the id would
-      // override every child's.
+      // On the scroll view: on the stack inside it the id would override every child's.
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.verificationDetailsScreen)
     }
     .background(colors.background)
   }
 
-  /// Absent with no row: there is nothing to hide, and the copy would name a job that is not there.
+  /// Absent with no row: there is nothing to hide.
   @ViewBuilder
   private var deleteAction: some View {
     if state.job != nil {
@@ -125,8 +123,7 @@ public struct VerificationDetailsScreen: View {
     }
   }
 
-  /// Green while the call succeeded, red once it did not. No status is neither: colouring it red
-  /// would invent a failure.
+  /// Green while the call succeeded, red once it did not; no status is neither.
   private func httpStatusColor(_ job: UseSmileIDSampleJob) -> Color? {
     guard let code = job.httpStatus else { return nil }
     return (200..<300).contains(code) ? colors.badge.successText : colors.badge.errorText

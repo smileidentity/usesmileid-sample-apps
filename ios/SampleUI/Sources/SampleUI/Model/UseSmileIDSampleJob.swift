@@ -12,9 +12,9 @@ public struct UseSmileIDSampleJob: Equatable, Sendable {
   public let httpStatus: Int?
   /// The environment at submission time: a row outlives the toggle that produced it.
   public let sandbox: Bool
-  /// The session the run submitted under; nil on a fixture token.
+  /// Nil on a fixture token.
   public let sessionId: String?
-  /// The partner the run submitted under; a later session's refresh matches on it.
+  /// A later session's refresh matches on this, not on the session.
   public let partnerId: String?
 
   public init(
@@ -41,7 +41,7 @@ public struct UseSmileIDSampleJob: Equatable, Sendable {
     self.partnerId = partnerId
   }
 
-  /// The design truncates the job id in the list and on the details row; the full one is still copyable.
+  /// Truncated for the row; the full value stays copyable.
   public var shortId: String {
     Self.shortened(id)
   }

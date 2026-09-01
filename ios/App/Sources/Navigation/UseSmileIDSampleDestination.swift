@@ -27,11 +27,10 @@ struct UseSmileIDSampleDestination: View {
     case .verifications:
       VerificationsScreen()
     case .verificationDetails(let jobId):
-      // Its own bar is the screen's, so the host's is hidden rather than stacked above it.
       VerificationDetailsScreen(
         state: .init(jobId: jobId, job: app.jobs?.first { $0.id == jobId }),
         onBack: { router.pop() },
-        // Leaves the list, as Android's does; the row's removal lands with the store that holds it.
+        // The row's removal lands with the store that holds it.
         onDelete: { router.pop() },
         onCopy: { label, value in copy(label, value) }
       )
@@ -56,9 +55,7 @@ struct UseSmileIDSampleDestination: View {
     }
   }
 
-  /// The label is Android's clip label, which `UIPasteboard` has no counterpart for; only the value
-  /// crosses. No confirmation either: iOS announces a pasteboard READ, and there is nothing to say
-  /// about a write.
+  /// `UIPasteboard` has no clip label, so only the value crosses.
   private func copy(_: String, _ value: String) {
     UIPasteboard.general.string = value
   }

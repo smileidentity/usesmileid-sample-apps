@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// What a surface says when it has nothing to show. Not in the design; `supportingText` only where
-/// the reader can act on it.
+/// What a surface says when it has nothing to show; `supportingText` only where the reader can act.
 public struct UseSmileIDSampleEmptyState: View {
   private let text: String
   private let supportingText: String?
@@ -17,7 +16,6 @@ public struct UseSmileIDSampleEmptyState: View {
 
   public var body: some View {
     VStack(spacing: SmileSpacing.spacingXxs) {
-      // The id sits on the headline, not the stack: on a stack it would override the supporting line's.
       UseSmileIDSampleText(text, style: UseSmileIDSampleTheme.type.textStyleBodyStrong)
         .foregroundColor(colors.textBody)
         .multilineTextAlignment(.center)

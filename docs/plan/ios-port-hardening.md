@@ -67,15 +67,13 @@ not spend the same afternoon:
 - *The bottom row of the render is background.* The golden host pads the component and paints the
   background behind it, so that row is background whatever the component did.
 
-**The first screen it was pointed at found a real one, but only by reading the baseline.** The app
-bar's title ellipsised to `Veri fica tio…` at AX5 on the details screen while the component's own
-baseline wrapped it in full: above a scroll view in a fixed-height screen the wrapping title is the
-flexible child, so the stack compresses it instead of the scroll view. `UseSmileIDSampleTopAppBar`
-now takes its ideal height (`fixedSize(horizontal: false, vertical: true)`), which changed no
-existing baseline — the promise its doc comment already made was simply not enforced. Two things a
-port should take from this: neither assertion fired (the width was fine and the frame is pinned, so
-growth is declared `false`), and a screen's AX baseline is only readable if its pinned viewport is
-tall enough to show the rows.
+**Reading a baseline caught what neither assertion could.** On the details screen the app bar title
+ellipsised at AX5 while the component's own baseline wrapped it in full: above a scroll view in a
+fixed-height screen the wrapping title is the flexible child, so the stack compresses it.
+`UseSmileIDSampleTopAppBar` now takes its ideal height, which changed no existing baseline. Two
+things a port should take from it: the width check passes and growth is declared `false` on a
+screen, so neither fires; and a screen's AX baseline is only readable if its pinned viewport is tall
+enough to show the rows.
 
 **What it catches and what it does not.** It catches a component that *stops* growing — the
 regression case, where a fixed frame or a line limit arrives and text begins clipping silently. It
@@ -97,10 +95,9 @@ which is still a seat. Delete them from the list as it lands.
 
 Writing the test corrected the estimate: six unapplied, not the twelve assumed.
 
-**`sample_details_refresh` is deliberately not declared yet.** Pull-to-refresh needs the job store
-and the status source, neither of which is ported; declaring the id before the gesture exists would
-mean listing it here as a second kind of "not yet applied" — one that is waiting on a mechanism
-rather than on a caller.
+**`sample_details_refresh` is deliberately not declared yet** — pull-to-refresh needs the job store
+and the status source, and an id waiting on a mechanism is not the same kind of debt as one waiting
+on a caller.
 
 ---
 

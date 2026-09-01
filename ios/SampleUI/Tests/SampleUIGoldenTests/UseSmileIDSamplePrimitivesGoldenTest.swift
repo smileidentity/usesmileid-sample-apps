@@ -63,7 +63,7 @@ final class UseSmileIDSamplePrimitivesGoldenTest: UseSmileIDSampleGoldenTest {
   }
 }
 
-/// Both variants `spec/components.json` names: the supporting line only where a reader can act.
+/// Both variants `spec/components.json` names.
 private struct EmptyStates: View {
   var body: some View {
     VStack(spacing: SmileSpacing.spacingLg) {

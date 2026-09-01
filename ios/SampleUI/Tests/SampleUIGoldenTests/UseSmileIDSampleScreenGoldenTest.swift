@@ -40,7 +40,6 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     assertSurvivesMaxDynamicType(growsWithContentSize: false) { settings(UseSmileIDSampleSettings()) }
   }
 
-  /// The four states `spec/screens.json` lists, which differ by badge, message and HTTP colour.
   func testVerificationDetailsClear() {
     goldens("verification_details_clear") { details(Self.fixture(.clear, index: 0)) }
   }
@@ -53,12 +52,10 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("verification_details_blocked") { details(Self.fixture(.blocked, index: 4)) }
   }
 
-  /// 202 Accepted, which is the one status a refresh can still change.
   func testVerificationDetailsProcessing() {
     goldens("verification_details_processing") { details(Self.fixture(.processing, index: 1)) }
   }
 
-  /// A deep link can name a job this build never had; the id asked for is the whole diagnostic.
   func testVerificationDetailsUnknownJob() {
     goldens("verification_details_unknown") {
       VerificationDetailsScreen(
@@ -71,8 +68,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     }
   }
 
-  /// A taller viewport than the state goldens: this baseline exists to be read for clipping, and
-  /// at the largest content size the rows sit below 560pt.
+  /// A taller viewport: at the largest content size the rows sit below 560pt, unread.
   func testVerificationDetailsSurvivesMaxDynamicType() {
     assertSurvivesMaxDynamicType(growsWithContentSize: false) {
       details(Self.fixture(.processing, index: 1), height: 1800)
@@ -89,8 +85,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     .frame(height: height)
   }
 
-  /// The store's own rows, until the store lands: same ids, same offsets, same product strings the
-  /// four apps share.
+  /// The store's own rows, until the store lands.
   private static func fixture(_ status: UseSmileIDSampleStatus, index: Int) -> UseSmileIDSampleJob {
     let products = UseSmileIDSampleProduct.allCases
     return UseSmileIDSampleJob(
@@ -113,8 +108,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     }
   }
 
-  /// 2026-07-16T11:50:12Z, the instant the design's rows are dated from. Fixed, so the row a golden
-  /// records is the one it compares against tomorrow.
+  /// 2026-07-16T11:50:12Z, the instant the design's rows are dated from.
   private static let fixedNow = Date(timeIntervalSince1970: 1784202612)
 
   private func products(_ state: UseSmileIDSampleProductsState) -> some View {

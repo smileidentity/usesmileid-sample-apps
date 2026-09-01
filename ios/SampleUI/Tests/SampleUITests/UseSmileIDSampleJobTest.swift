@@ -9,14 +9,12 @@ final class UseSmileIDSampleJobTest: XCTestCase {
     XCTAssertEqual(job.shortUserId, "user-012\u{2026}")
   }
 
-  /// The full value stays copyable, which is the reason the row truncates rather than shortens.
   func testAShortIdIsLeftWhole() {
     let job = Self.job(id: "01234567", userId: "abc")
     XCTAssertEqual(job.shortId, "01234567")
     XCTAssertEqual(job.shortUserId, "abc")
   }
 
-  /// UTC, not the device's zone: the row is a machine-readable value, not a display date.
   func testTheCreatedAtRowIsUtcIso8601() {
     XCTAssertEqual(
       Self.job(createdAt: Date(timeIntervalSince1970: 1756000000)).createdAtLabel,
