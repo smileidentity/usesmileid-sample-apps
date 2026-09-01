@@ -14,8 +14,8 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// Nil is "not loaded yet", not "empty"; the store U3 lands resolves it.
   @Published var jobs: [UseSmileIDSampleJob]?
 
-  /// The forms live here, not in the screens: one tab is mounted, so a screen's own state is torn
-  /// down by a tab switch and part-entered input would go with it.
+  /// The forms live here, not in the screens: one tab is mounted, so a tab switch tears a screen's
+  /// own state down and part-entered input goes with it.
   @Published var userDetails = UseSmileIDSampleUserDetails()
   @Published var rememberDetails = false
 

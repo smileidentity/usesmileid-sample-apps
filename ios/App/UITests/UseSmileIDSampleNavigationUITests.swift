@@ -33,8 +33,7 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_verification_details_screen").waitForNonExistence(timeout: 5))
   }
 
-  /// The design's rule end to end, then the push §7's deep-link defect does not reach: one level
-  /// at a time chains, it is assigning both at once that does not.
+  /// One level at a time chains where §7's deep link does not, so the push is asserted here too.
   func testTheConsentFormGatesContinueThenPushesTheIdForm() {
     open("flow/biometricKyc/details")
     XCTAssertTrue(element("sample_user_details_screen").waitForExistence(timeout: 10))
