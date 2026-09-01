@@ -43,10 +43,8 @@ struct UseSmileIDSampleDestination: View {
     case .idDetailsForm(let productId):
       KycIdFormScreen(
         state: .init(productLabel: Self.product(productId)?.label ?? productId, details: app.idDetails),
-        onCountryTap: { app.countryQuery = ""
-          router.sheet = .countryPicker },
-        onIdTypeTap: { app.idTypeQuery = ""
-          router.sheet = .idTypePicker },
+        onCountryTap: { router.sheet = .countryPicker },
+        onIdTypeTap: { router.sheet = .idTypePicker },
         onIdNumberChange: { app.idDetails.idNumber = $0 },
         onBack: { router.pop() },
         onContinue: { router.push(.sdkFlow(productId: productId, presentation: .fullscreen)) },

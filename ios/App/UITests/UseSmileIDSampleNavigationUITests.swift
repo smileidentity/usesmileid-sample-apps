@@ -68,6 +68,21 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(app.buttons["sample_idtype_trigger"].isEnabled)
   }
 
+  /// The search text belongs to one visit: a reopened picker must not still be filtered.
+  func testAPickerReopensUnfiltered() {
+    open("flow/biometricKyc/id-details")
+    XCTAssertTrue(element("sample_kyc_form_screen").waitForExistence(timeout: 10))
+    app.buttons["sample_country_trigger"].tap()
+    XCTAssertTrue(element("sample_country_sheet").waitForExistence(timeout: 10))
+    type("sample_country_search", "Ken")
+    XCTAssertTrue(app.buttons["sample_country_option_NG"].waitForNonExistence(timeout: 5))
+    app.buttons["sample_country_option_KE"].tap()
+
+    XCTAssertTrue(element("sample_country_sheet").waitForNonExistence(timeout: 5))
+    app.buttons["sample_country_trigger"].tap()
+    XCTAssertTrue(app.buttons["sample_country_option_NG"].waitForExistence(timeout: 10))
+  }
+
   /// A sheet link resolves to its owner plus a sheet request, so the form is open underneath it.
   func testASheetLinkOpensThePickerOverItsOwner() {
     open("flow/biometricKyc/id-details/country")

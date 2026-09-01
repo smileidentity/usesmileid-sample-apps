@@ -42,6 +42,11 @@ final class UseSmileIDSampleAppState: ObservableObject {
     userDetails = field.write(userDetails, value)
   }
 
+  func clearPickerQueries() {
+    countryQuery = ""
+    idTypeQuery = ""
+  }
+
   /// The types are country-specific, so a country change drops the ID type with it.
   func selectCountry(_ country: UseSmileIDSampleCountry) {
     guard country != idDetails.country else { return }

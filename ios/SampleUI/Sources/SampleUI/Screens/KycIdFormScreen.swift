@@ -43,20 +43,22 @@ public struct KycIdFormScreen: View {
   public var body: some View {
     VStack(spacing: 0) {
       UseSmileIDSampleTopAppBar(title: state.productLabel, onBack: onBack)
-      ZStack(alignment: .bottomTrailing) {
-        ScrollView {
-          VStack(alignment: .leading, spacing: SmileSpacing.spacingSm) {
-            UseSmileIDSampleSectionLabel("COUNTRY")
-            countryTrigger
-            UseSmileIDSampleSectionLabel("ID TYPE")
-            idTypeTrigger
-            UseSmileIDSampleSectionLabel("ID NUMBER")
-            idNumberInput
-          }
-          .padding(.horizontal, SmileSpacing.spacingMd)
-          .padding(.vertical, SmileSpacing.spacingSm)
+      ScrollView {
+        VStack(alignment: .leading, spacing: SmileSpacing.spacingSm) {
+          UseSmileIDSampleSectionLabel("COUNTRY")
+          countryTrigger
+          UseSmileIDSampleSectionLabel("ID TYPE")
+          idTypeTrigger
+          UseSmileIDSampleSectionLabel("ID NUMBER")
+          idNumberInput
         }
-        .useSmileIDSampleTestId(UseSmileIDSampleTestIds.kycFormScreen)
+        .padding(.horizontal, SmileSpacing.spacingMd)
+        .padding(.vertical, SmileSpacing.spacingSm)
+      }
+      .useSmileIDSampleTestId(UseSmileIDSampleTestIds.kycFormScreen)
+      // An inset rather than an overlay: the button grows with Dynamic Type, and overlaid it
+      // would cover the last field once the list is long enough to scroll under it.
+      .safeAreaInset(edge: .bottom, alignment: .trailing) {
         UseSmileIDSampleFloatingTokenButton(action: onToken)
           .padding(SmileSpacing.spacingMd)
       }
@@ -108,5 +110,7 @@ public struct KycIdFormScreen: View {
     )
     // An ID number is upper-case everywhere it is printed, as the Compose twin also sets.
     .textInputAutocapitalization(.characters)
+    // An alphanumeric ID is exactly what autocorrect rewrites into a word.
+    .autocorrectionDisabled()
   }
 }
