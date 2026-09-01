@@ -45,11 +45,13 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_product_card_smartSelfieEnrollment").waitForExistence(timeout: 10))
     element("sample_nav_verifications").tap()
     XCTAssertTrue(element("sample_verifications_screen").waitForExistence(timeout: 10))
-    XCTAssertFalse(element("sample_product_card_smartSelfieEnrollment").exists)
+    // Waited for, not read once: the outgoing subtree lives for the length of the transition, so an
+    // instant read reds the lane whenever the tap and the query interleave differently.
+    XCTAssertTrue(element("sample_product_card_smartSelfieEnrollment").waitForNonExistence(timeout: 5))
     element("sample_nav_settings").tap()
     XCTAssertTrue(element("sample_sign_out").waitForExistence(timeout: 10))
-    XCTAssertFalse(element("sample_verifications_screen").exists)
-    XCTAssertFalse(element("sample_product_card_smartSelfieEnrollment").exists)
+    XCTAssertTrue(element("sample_verifications_screen").waitForNonExistence(timeout: 5))
+    XCTAssertTrue(element("sample_product_card_smartSelfieEnrollment").waitForNonExistence(timeout: 5))
   }
 
   private func element(_ id: String) -> XCUIElement {
