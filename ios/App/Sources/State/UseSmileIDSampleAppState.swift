@@ -42,8 +42,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     userDetails = field.write(userDetails, value)
   }
 
-  /// A country change drops the ID type with it: the types are country-specific, so keeping one
-  /// would leave a selection the new country does not offer.
+  /// The types are country-specific, so a country change drops the ID type with it.
   func selectCountry(_ country: UseSmileIDSampleCountry) {
     guard country != idDetails.country else { return }
     idDetails.country = country

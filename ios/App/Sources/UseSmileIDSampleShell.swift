@@ -18,8 +18,7 @@ struct UseSmileIDSampleShell: View {
       // Pinned both ways, not nil: following the system when the switch is off leaves a device in
       // dark mode rendering dark while Settings reads off.
       .preferredColorScheme(app.settings.darkMode ? .dark : .light)
-      // Presented at the root, over whichever route is showing: a link opens the owner first, so
-      // the sheet is always a layer over it rather than a destination replacing it.
+      // At the root, over whichever route is showing; a link opens the owner first, so it layers.
       .sheet(item: $router.sheet) { sheet in
         sheetContent(sheet)
       }

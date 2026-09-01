@@ -40,8 +40,6 @@ final class UseSmileIDSampleIdDetailsTest: XCTestCase {
     )
   }
 
-  /// An empty query lists everything. Foundation answers false to `contains("")` where Kotlin
-  /// answers true, so a literal port of the Compose filter opens both pickers empty.
   func testAnEmptyQueryMatchesEverything() {
     XCTAssertEqual(UseSmileIDSampleCountry.matching("").count, UseSmileIDSampleCountry.allCases.count)
     XCTAssertEqual(UseSmileIDSampleCountry.matching("   ").count, UseSmileIDSampleCountry.allCases.count)
@@ -58,7 +56,6 @@ final class UseSmileIDSampleIdDetailsTest: XCTestCase {
     XCTAssertEqual(UseSmileIDSampleIdType.of(.nigeria, matching: "pass"), [.passport])
   }
 
-  /// A search cannot reach an ID type the country does not offer.
   func testTheSearchStaysInsideTheCountry() {
     XCTAssertTrue(UseSmileIDSampleIdType.of(.uganda, matching: "voter").isEmpty)
     XCTAssertTrue(UseSmileIDSampleIdType.of(nil, matching: "").isEmpty)
