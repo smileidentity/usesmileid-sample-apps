@@ -51,12 +51,35 @@ public enum UseSmileIDSampleTestIds {
     "\(userDetailsFieldPrefix)_\(field)"
   }
 
+  public static func countryOption(_ code: String) -> String {
+    "\(countryOptionPrefix)_\(code)"
+  }
+
+  public static func idTypeOption(_ id: String) -> String {
+    "\(idTypeOptionPrefix)_\(id)"
+  }
+
   public static let navToken = "sample_nav_token"
   public static let productCardPrefix = "sample_product_card"
   public static let settingNavPrefix = "sample_setting_nav"
   public static let detailFieldPrefix = "sample_detail_field"
   public static let detailCopyPrefix = "sample_detail_copy"
   public static let userDetailsFieldPrefix = "sample_user_details_field"
+  public static let countryOptionPrefix = "sample_country_option"
+  public static let idTypeOptionPrefix = "sample_idtype_option"
+
+  public static let kycFormScreen = "sample_kyc_form_screen"
+  public static let countryTrigger = "sample_country_trigger"
+  public static let idTypeTrigger = "sample_idtype_trigger"
+  public static let idNumberInput = "sample_idnumber_input"
+  public static let kycContinue = "sample_kyc_continue"
+  public static let tokenFloat = "sample_token_float"
+  public static let countrySheet = "sample_country_sheet"
+  public static let countrySearch = "sample_country_search"
+  public static let countryEmpty = "sample_country_empty"
+  public static let idTypeSheet = "sample_idtype_sheet"
+  public static let idTypeSearch = "sample_idtype_search"
+  public static let idTypeEmpty = "sample_idtype_empty"
 
   public static let userDetailsScreen = "sample_user_details_screen"
   public static let userDetailsHint = "sample_user_details_hint"
@@ -85,6 +108,9 @@ public enum UseSmileIDSampleTestIds {
     detailFieldPrefix, detailCopyPrefix, statusBadge, detailsDelete, detailsEmpty,
     userDetailsScreen, userDetailsFieldPrefix, userDetailsHint, userDetailsContinue,
     rememberDetailsSwitch,
+    kycFormScreen, countryTrigger, idTypeTrigger, idNumberInput, kycContinue, tokenFloat,
+    countrySheet, countrySearch, countryEmpty, countryOptionPrefix,
+    idTypeSheet, idTypeSearch, idTypeEmpty, idTypeOptionPrefix,
     profileAvatarButton, profileSummary,
     sessionCard, sessionCountdown, sessionEndedBanner,
     scenarioDrawerButton, signOut, versionLabel,

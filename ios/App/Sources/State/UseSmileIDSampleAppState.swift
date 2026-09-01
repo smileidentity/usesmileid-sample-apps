@@ -18,6 +18,11 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// own state down and part-entered input goes with it.
   @Published var userDetails = UseSmileIDSampleUserDetails()
   @Published var rememberDetails = false
+  @Published var idDetails = UseSmileIDSampleIdDetails()
+
+  /// The pickers' search text, cleared on open so a sheet never reopens filtered.
+  @Published var countryQuery = ""
+  @Published var idTypeQuery = ""
 
   /// The active session, which the products strip renders and the nav ring counts down.
   @Published var sessionId: String?
@@ -35,6 +40,14 @@ final class UseSmileIDSampleAppState: ObservableObject {
 
   func setUserField(_ field: UseSmileIDSampleUserField, to value: String) {
     userDetails = field.write(userDetails, value)
+  }
+
+  /// A country change drops the ID type with it: the types are country-specific, so keeping one
+  /// would leave a selection the new country does not offer.
+  func selectCountry(_ country: UseSmileIDSampleCountry) {
+    guard country != idDetails.country else { return }
+    idDetails.country = country
+    idDetails.idType = nil
   }
 
   /// What the token still leaves the form to collect; every field until the token session lands.

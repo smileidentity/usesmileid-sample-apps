@@ -58,6 +58,12 @@ routed sheet where the platform already does the right thing. One caution for wh
 a device flow cannot assert what is behind a modal, because Android drops the windows below one
 from the accessibility tree. A screenshot is the only evidence.
 
+**That caution is Android's alone.** iOS keeps the presenter's ids queryable behind a presented
+sheet, so `testASheetLinkOpensThePickerOverItsOwner` asserts both halves — the sheet is up and its
+owner is open underneath — with no screenshot. Proven by stopping the link from opening the owner
+and watching the second assertion fail. Whoever ports the sheets to Flutter or Expo should check
+which of the two their platform behaves like rather than assume Android's limitation travels.
+
 ## 3. Semantic rules the idioms must preserve
 
 1. **A refresh reads the row, never the current toggle.** The environment and session a job

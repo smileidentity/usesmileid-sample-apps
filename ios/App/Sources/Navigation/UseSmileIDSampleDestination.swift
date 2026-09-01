@@ -40,6 +40,19 @@ struct UseSmileIDSampleDestination: View {
         onContinue: { router.push(Self.stepAfterUserDetails(productId)) }
       )
       .navigationBarHidden(true)
+    case .idDetailsForm(let productId):
+      KycIdFormScreen(
+        state: .init(productLabel: Self.product(productId)?.label ?? productId, details: app.idDetails),
+        onCountryTap: { app.countryQuery = ""
+          router.sheet = .countryPicker },
+        onIdTypeTap: { app.idTypeQuery = ""
+          router.sheet = .idTypePicker },
+        onIdNumberChange: { app.idDetails.idNumber = $0 },
+        onBack: { router.pop() },
+        onContinue: { router.push(.sdkFlow(productId: productId, presentation: .fullscreen)) },
+        onToken: { router.open(.scanToken) }
+      )
+      .navigationBarHidden(true)
     case .verificationDetails(let jobId):
       VerificationDetailsScreen(
         state: .init(jobId: jobId, job: app.jobs?.first { $0.id == jobId }),

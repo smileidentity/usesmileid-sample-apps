@@ -11,7 +11,7 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 | 1 | **DONE 2026-08-31 — the pill won.** See §1. | The only open question that could invalidate finished work. | Ruled, built, and `TabView` gone. |
 | 2 | **DONE 2026-08-31 — the stack is merged.** | Three PRs deep is the practical limit: this repo squash-merges, so each merge turns the branches above into a `rebase --onto`, not a plain rebase. | `main` carries all three. |
 | 3 | **DONE 2026-09-01 — the harness runs in CI.** See §5. | Every new route was asserted only at the resolver. | `UseSmileIDSampleUITests` runs inside `verify.sh`; a link launches the app and the screen id is asserted. |
-| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails and userDetails are built (2026-09-01); next kycIdForm and the two picker sheets. | Settled order; do not relitigate it. | All sixteen screens exist. |
+| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets are built (2026-09-01); next profiles, scanToken and the result card. | Settled order; do not relitigate it. | All sixteen screens exist. |
 | 5 | **DONE 2026-09-01 — a growth check, not the one §2 proposed.** See §2. | Would have started biting at U4, when the 38 states land. | A component that stops growing at the largest content size fails the build. |
 
 **The stack that carried U0–U2 and the first two screens** — #40, #42, #43 — is merged. Each squash
@@ -127,6 +127,17 @@ from before the rename to `com.usesmileid.sample.ios`) declared the *same* URL s
 display name, so the system handed the link to the wrong app and every link test failed as if
 routing were broken. The helper now asserts the app reached the foreground, which says which half
 broke. Uninstall the stale build on any simulator that has both.
+
+## 5b. A filter ported literally opens empty — 2026-09-01
+
+`localizedCaseInsensitiveContains("")` answers **false**; Kotlin's `contains("")` answers **true**.
+Both pickers filter their list on the search field, so the literal port listed nothing until
+something was typed. No assertion could have caught it — the sheet rendered its own empty state,
+which reads as correct — and it was found by looking at the recorded baseline.
+
+The filter now lives on the model (`UseSmileIDSampleCountry.matching(_:)`,
+`UseSmileIDSampleIdType.of(_:matching:)`) where a unit test pins it. Every port doing a
+string-contains against a possibly-empty query needs the same check.
 
 ## 6. The icon generator will meet a path command it does not support
 

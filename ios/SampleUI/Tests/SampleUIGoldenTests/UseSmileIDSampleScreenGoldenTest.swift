@@ -133,6 +133,68 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     phone: "+254 700 000 000"
   )
 
+  func testKycFormEmpty() {
+    goldens("kyc_form_empty") { kycForm(UseSmileIDSampleIdDetails()) }
+  }
+
+  func testKycFormSelected() {
+    goldens("kyc_form_selected") { kycForm(Self.selectedId) }
+  }
+
+  func testKycFormSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) { kycForm(Self.selectedId, height: 1400) }
+  }
+
+  func testCountryPicker() {
+    goldens("country_picker") { countryPicker(query: "") }
+  }
+
+  func testCountryPickerNoMatch() {
+    goldens("country_picker_no_match") { countryPicker(query: "Atlantis") }
+  }
+
+  func testIdTypePicker() {
+    goldens("idtype_picker") { idTypePicker(country: .ghana) }
+  }
+
+  /// The trigger is disabled without a country, but a deep link can still open the sheet.
+  func testIdTypePickerWithoutACountry() {
+    goldens("idtype_picker_no_country") { idTypePicker(country: nil) }
+  }
+
+  func testCountryPickerSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) { countryPicker(query: "", height: 1400) }
+  }
+
+  private func kycForm(_ details: UseSmileIDSampleIdDetails, height: CGFloat = 700) -> some View {
+    KycIdFormScreen(
+      state: .init(productLabel: "Biometric KYC", details: details),
+      onCountryTap: {},
+      onIdTypeTap: {},
+      onIdNumberChange: { _ in },
+      onBack: {},
+      onContinue: {},
+      onToken: {}
+    )
+    .frame(height: height)
+  }
+
+  private func countryPicker(query: String, height: CGFloat = 700) -> some View {
+    CountryPickerSheet(selected: .kenya, query: .constant(query), onSelect: { _ in })
+      .frame(height: height)
+  }
+
+  private func idTypePicker(country: UseSmileIDSampleCountry?, height: CGFloat = 700) -> some View {
+    IdTypePickerSheet(country: country, selected: .passport, query: .constant(""), onSelect: { _ in })
+      .frame(height: height)
+  }
+
+  private static let selectedId = UseSmileIDSampleIdDetails(
+    country: .kenya,
+    idType: .nationalId,
+    idNumber: "AO12345678"
+  )
+
   private func details(_ job: UseSmileIDSampleJob, height: CGFloat = 560) -> some View {
     VerificationDetailsScreen(
       state: .init(jobId: job.id, job: job),

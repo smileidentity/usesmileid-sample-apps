@@ -2,10 +2,11 @@
 
 **Status:** Android U0–U3 is built and in review. Flutter and Expo have not started.
 
-**iOS: U0, U1 and U2 are complete, and U3 has four of its sixteen screens** (settings, products,
-verificationDetails, userDetails). Two carry a caveat: the verifications list verificationDetails is
-pushed from is still a seat, so only the deep link reaches it and the row comes from a store nothing
-fills yet; and userDetails asks for every field until the token session lands to bind any. The
+**iOS: U0, U1 and U2 are complete, and U3 has six of its sixteen screens** (settings, products,
+verificationDetails, userDetails, kycIdForm and both picker sheets). Two carry a caveat: the
+verifications list verificationDetails is pushed from is still a seat, so only the deep link reaches
+it and the row comes from a store nothing fills yet; and userDetails asks for every field until the
+token session lands to bind any. The
 type ramp, the stopgap values and the DM Sans faces are generated for SwiftUI, the design's marks are
 generated as SwiftUI shapes, `ios/verify.sh` gates tokens, icons, format, unit tests, goldens, the
 shell's route table and the release build, and every component has goldens in light and dark.
