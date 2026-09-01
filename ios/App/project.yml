@@ -40,6 +40,19 @@ targets:
           - CFBundleURLName: com.usesmileid.sample.ios
             CFBundleURLSchemes: [usesmileid-sample-ios]
 
+  UseSmileIDSampleUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [UITests]
+    dependencies:
+      - target: UseSmileIDSample
+    settings:
+      base:
+        CODE_SIGNING_ALLOWED: NO
+        # Only the runner's floor. `XCUISystem.open` is how a custom-scheme link is delivered
+        # without the system prompt that swallows `simctl openurl`, and it needs 16.4.
+        IPHONEOS_DEPLOYMENT_TARGET: "16.4"
+
   UseSmileIDSampleTests:
     type: bundle.unit-test
     platform: iOS
@@ -49,3 +62,11 @@ targets:
     settings:
       base:
         CODE_SIGNING_ALLOWED: NO
+
+schemes:
+  UseSmileIDSampleUITests:
+    build:
+      targets:
+        UseSmileIDSampleUITests: [test]
+    test:
+      targets: [UseSmileIDSampleUITests]
