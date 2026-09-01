@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-# The definition of done for the iOS app: tokens, format, unit tests, release build.
-#
-# Device flows need a simulator or device and are not run here:
-#   xcodebuild test -project ios/App/UseSmileIDSample.xcodeproj -scheme UseSmileIDSampleUITests
+# The definition of done for the iOS app: tokens, format, unit tests, UI tests, release build.
 set -euo pipefail
 
 cd "$(dirname "$0")"
@@ -48,6 +45,15 @@ echo "==> shell unit tests (includes the route table's spec validation)"
 xcodebuild test \
   -project App/UseSmileIDSample.xcodeproj \
   -scheme "$SCHEME" \
+  -destination "$DESTINATION" \
+  -quiet
+
+echo "==> navigation UI tests (the only ones that drive the real shell)"
+# Deep links and the nav bar are only provable against a running app: the resolver is unit-tested,
+# delivery is not. Every later screen asserts its route here rather than adding a harness.
+xcodebuild test \
+  -project App/UseSmileIDSample.xcodeproj \
+  -scheme UseSmileIDSampleUITests \
   -destination "$DESTINATION" \
   -quiet
 

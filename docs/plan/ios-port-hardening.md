@@ -10,7 +10,7 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 |---|---|---|---|
 | 1 | **DONE 2026-08-31 — the pill won.** See §1. | The only open question that could invalidate finished work. | Ruled, built, and `TabView` gone. |
 | 2 | **DONE 2026-08-31 — the stack is merged.** | Three PRs deep is the practical limit: this repo squash-merges, so each merge turns the branches above into a `rebase --onto`, not a plain rebase. | `main` carries all three. |
-| 3 | **Build the first XCUITest.** See §5. | Every new route is currently asserted only at the resolver. One file now makes each later screen self-verifying; deferring it accumulates fourteen screens of unproven navigation into one pass. | A link launches the app and the resulting screen id is asserted in CI. |
+| 3 | **DONE 2026-09-01 — the harness runs in CI.** See §5. | Every new route was asserted only at the resolver. | `UseSmileIDSampleUITests` runs inside `verify.sh`; a link launches the app and the screen id is asserted. |
 | 4 | **Continue U3** in `ui-work-plan.md`'s order — verifications, then verificationDetails, then the forms and pickers. | Settled order; do not relitigate it. | All sixteen screens exist. |
 | 5 | **Close the truncation gap.** See §2. | Only starts biting at U4, when the 38 states land. Doing it sooner spends effort on a problem still readable by eye. | An automated check fails on clipped text. |
 
@@ -100,19 +100,19 @@ delta rather than from the token ramp.
 
 ---
 
-## 5. Deep-link delivery is still unproven end to end
+## 5. Deep-link delivery — PROVEN 2026-09-01
 
-**Now:** link resolution is unit-tested (URL → router state) and that is solid. Delivery is not.
-`simctl openurl` on a custom scheme raises a system "Open in?" prompt that swallows the link —
-re-confirmed on iOS 26.5 during this stack's simulator pass.
+`UseSmileIDSampleUITests` launches the app, opens a link and asserts the screen id. Delivery uses
+`XCUISystem.open`, which is why that target alone has a 16.4 floor; `simctl openurl` raises the
+system confirmation the test takes when a runtime still shows one. The suite also holds the
+accessibility-isolation assertion the nav change was restructured for, so that fix cannot silently
+regress. It runs inside `verify.sh`, so the local contract and the gate stay identical.
 
-**Why it compounds:** every screen adds a route and a deep link. The longer delivery goes unproven,
-the more links are asserted only at the resolver.
-
-**Plan:** one XCUITest that launches with a link and asserts the resulting screen id. It is owed for
-the device pass regardless, and each new route then costs one line instead of a new harness.
-
----
+**One trap it cost a run to find.** A stale build under an old bundle id (`com.usesmileid.sampleapps.ios`,
+from before the rename to `com.usesmileid.sample.ios`) declared the *same* URL scheme and the same
+display name, so the system handed the link to the wrong app and every link test failed as if
+routing were broken. The helper now asserts the app reached the foreground, which says which half
+broke. Uninstall the stale build on any simulator that has both.
 
 ## 6. The icon generator will meet a path command it does not support
 
@@ -125,6 +125,24 @@ should add the command to `emit_path`, **not** loosen the check — a skipped su
 renders wrong rather than not at all.
 
 ---
+
+## 7. A deep link into a two-level route stops at its first level
+
+**Now:** `usesmileid-sample-ios://profiles/{id}` seats `profileConfig` under `profiles`. The router
+assigns the whole path and its unit tests prove it, but the app lands on `profiles` with a back
+button and the second level never arrives.
+
+**It predates the nav container change** — reproduced on `main`'s `TabView` shell too, so mounting
+one tab at a time did not cause it. Two nested `NavigationLink(isActive:)` levels cannot both
+activate in one update on the iOS 15 idiom, and gating the deeper level on its parent's `onAppear`
+does not help.
+
+**Recorded rather than fixed** because the fix is a change of navigation mechanism, not a nudge, and
+the iOS 15 floor rules out `NavigationStack`. Nothing depends on it yet: `profiles` and
+`profileConfig` are both seats, and the other multi-level routes are pickers U3 has not built. Fix
+it alongside the profiles screens, when there is something to land on.
+`testALinkOpensATwoLevelRouteInAnotherTab` holds the repro as an expected failure, so it fails
+loudly the moment the defect goes.
 
 ## Considered and rejected
 
