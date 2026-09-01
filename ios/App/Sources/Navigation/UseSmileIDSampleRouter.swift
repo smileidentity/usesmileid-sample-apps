@@ -30,6 +30,14 @@ final class UseSmileIDSampleRouter: ObservableObject {
     selectedTab = route.tab
   }
 
+  /// Drops the deepest route on the showing tab — a pushed screen's app bar draws its own back
+  /// control, and the navigation host's is hidden with the rest of its bar.
+  func pop() {
+    guard var next = paths[selectedTab], !next.isEmpty else { return }
+    next.removeLast()
+    paths[selectedTab] = next
+  }
+
   func openTabRoot(_ tab: UseSmileIDSampleTab) {
     paths[tab] = []
     selectedTab = tab

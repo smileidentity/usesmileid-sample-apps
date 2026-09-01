@@ -17,6 +17,25 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_verifications_screen").waitForExistence(timeout: 10))
   }
 
+  /// One level under the verifications tab, so the link chains where `profiles/{id}` does not. The
+  /// second assertion is the discriminator: a screen id applied to a container would have swallowed
+  /// the empty state's, and the first assertion alone would still pass.
+  func testALinkOpensTheVerificationDetailsRoute() {
+    open("verifications/job_missing")
+    XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("sample_details_empty").waitForExistence(timeout: 10))
+  }
+
+  /// The app bar's back control is the only way off a pushed screen — the host's own bar is hidden.
+  /// Addressed by its label, as the Compose twin's is: neither platform gives it a `sample_*` id.
+  func testTheDetailsScreenPopsBackToItsTab() {
+    open("verifications/job_missing")
+    XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
+    app.buttons["Back"].tap()
+    XCTAssertTrue(element("sample_verifications_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("sample_verification_details_screen").waitForNonExistence(timeout: 5))
+  }
+
   /// The two-level case: `profiles/{id}` seats `profileConfig` under `profiles`. Only the first
   /// level arrives — a defect that predates the nav container change and reproduces on `main`, so
   /// it is recorded rather than fixed here. Remove the expectation with the fix; see §7 of the plan.

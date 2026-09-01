@@ -100,6 +100,9 @@ public struct UseSmileIDSampleTopAppBar<Action: View>: View {
     .padding(.horizontal, SmileSpacing.spacingMd)
     .padding(.bottom, SmileSpacing.spacingXs)
     .frame(minHeight: rowHeight)
+    // Takes its ideal height rather than what is left over: above a scroll view in a fixed-height
+    // screen the wrapping title is the flexible child, and it ellipsises instead of wrapping.
+    .fixedSize(horizontal: false, vertical: true)
     .useSmileIDSampleTestId(testId)
   }
 }

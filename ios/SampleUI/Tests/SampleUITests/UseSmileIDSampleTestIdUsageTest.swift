@@ -12,11 +12,12 @@ final class UseSmileIDSampleTestIdUsageTest: XCTestCase {
   /// Ids not yet on a view. Delete an entry when its screen lands — a stale list fails the test
   /// below, so this cannot rot into a permanent excuse.
   ///
-  /// The two prefixes are expected: they exist so the spec check has an anchor, and the real ids
-  /// are built from them by `productCard(_:)` and `navRow(_:)`. The other four are passed in by a
-  /// caller, and the verifications screen that will pass them is not built.
+  /// The four prefixes are expected: they exist so the spec check has an anchor, and the real ids
+  /// are built from them by `productCard(_:)`, `navRow(_:)`, `detailField(_:)` and `detailCopy(_:)`.
+  /// The other four are passed in by a caller, and the verifications screen that will pass them is
+  /// not built.
   private static let notYetApplied: Set<String> = [
-    "productCardPrefix", "settingNavPrefix",
+    "productCardPrefix", "settingNavPrefix", "detailFieldPrefix", "detailCopyPrefix",
     "jobRow", "jobRowStatus", "filterCount", "selectionCheckbox"
   ]
 
