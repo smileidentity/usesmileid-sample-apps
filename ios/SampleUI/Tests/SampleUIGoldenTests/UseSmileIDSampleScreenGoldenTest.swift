@@ -75,6 +75,64 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     }
   }
 
+  func testUserDetailsEmpty() {
+    goldens("user_details_empty") { userDetails(UseSmileIDSampleUserDetails()) }
+  }
+
+  func testUserDetailsComplete() {
+    goldens("user_details_complete") { userDetails(Self.completeDetails) }
+  }
+
+  /// A token binding both names and no contact — the partial case the form has to explain.
+  func testUserDetailsTokenSuppliedNames() {
+    goldens("user_details_token_supplied") {
+      userDetails(UseSmileIDSampleUserDetails(), requirement: .init(firstName: false, lastName: false))
+    }
+  }
+
+  func testUserDetailsSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) {
+      userDetails(Self.completeDetails, height: 1400)
+    }
+  }
+
+  func testUserDetailsTokenSuppliedSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) {
+      userDetails(
+        UseSmileIDSampleUserDetails(),
+        requirement: .init(firstName: false, lastName: false),
+        height: 1400
+      )
+    }
+  }
+
+  private func userDetails(
+    _ details: UseSmileIDSampleUserDetails,
+    requirement: UseSmileIDSampleUserDetailsRequirement = .init(),
+    height: CGFloat = 700
+  ) -> some View {
+    UserDetailsScreen(
+      state: .init(
+        productLabel: "Biometric KYC",
+        details: details,
+        rememberDetails: true,
+        requirement: requirement
+      ),
+      onFieldChange: { _, _ in },
+      onRememberChange: { _ in },
+      onBack: {},
+      onContinue: {}
+    )
+    .frame(height: height)
+  }
+
+  private static let completeDetails = UseSmileIDSampleUserDetails(
+    firstName: "Kwame",
+    lastName: "Asante",
+    email: "kwame@uptech.example",
+    phone: "+254 700 000 000"
+  )
+
   private func details(_ job: UseSmileIDSampleJob, height: CGFloat = 560) -> some View {
     VerificationDetailsScreen(
       state: .init(jobId: job.id, job: job),

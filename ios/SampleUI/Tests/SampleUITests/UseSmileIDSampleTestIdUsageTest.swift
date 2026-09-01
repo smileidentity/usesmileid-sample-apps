@@ -16,6 +16,7 @@ final class UseSmileIDSampleTestIdUsageTest: XCTestCase {
   /// verifications screen.
   private static let notYetApplied: Set<String> = [
     "productCardPrefix", "settingNavPrefix", "detailFieldPrefix", "detailCopyPrefix",
+    "userDetailsFieldPrefix",
     "jobRow", "jobRowStatus", "filterCount", "selectionCheckbox"
   ]
 

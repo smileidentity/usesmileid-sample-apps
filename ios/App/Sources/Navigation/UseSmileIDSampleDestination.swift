@@ -26,6 +26,20 @@ struct UseSmileIDSampleDestination: View {
       )
     case .verifications:
       VerificationsScreen()
+    case .consentDetailsForm(let productId):
+      UserDetailsScreen(
+        state: .init(
+          productLabel: Self.product(productId)?.label ?? productId,
+          details: app.userDetails,
+          rememberDetails: app.rememberDetails,
+          requirement: app.userDetailsRequirement
+        ),
+        onFieldChange: { field, value in app.setUserField(field, to: value) },
+        onRememberChange: { app.rememberDetails = $0 },
+        onBack: { router.pop() },
+        onContinue: { router.push(Self.stepAfterUserDetails(productId)) }
+      )
+      .navigationBarHidden(true)
     case .verificationDetails(let jobId):
       VerificationDetailsScreen(
         state: .init(jobId: jobId, job: app.jobs?.first { $0.id == jobId }),
@@ -53,6 +67,16 @@ struct UseSmileIDSampleDestination: View {
     default:
       UseSmileIDSampleSeat(name: String(describing: route))
     }
+  }
+
+  /// Only document and KYC products collect ID details; the rest go straight to the flow.
+  private static func stepAfterUserDetails(_ productId: String) -> Route {
+    let needsIdDetails = product(productId)?.needsIdDetails ?? false
+    return needsIdDetails ? .idDetailsForm(productId: productId) : .sdkFlow(productId: productId, presentation: .fullscreen)
+  }
+
+  private static func product(_ id: String) -> UseSmileIDSampleProduct? {
+    UseSmileIDSampleProduct(rawValue: id)
   }
 
   /// `UIPasteboard` has no clip label, so only the value crosses.
