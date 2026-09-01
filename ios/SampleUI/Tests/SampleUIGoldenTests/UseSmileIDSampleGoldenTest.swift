@@ -71,13 +71,18 @@ class UseSmileIDSampleGoldenTest: XCTestCase {
     // the cap as its ideal size, so measuring it against itself cannot tell clipped from fitting.
     // Declaring the fixed ones instead makes a component that STOPS growing fail, the way the
     // unapplied-id inventory works, and a stale declaration fails too.
-    let natural = UIHostingController(rootView: content().useSmileIDSampleTheme())
-      .sizeThatFits(in: CGSize(width: available, height: .greatestFiniteMagnitude))
+    // Pinned rather than inherited: measured at whatever category the host happens to carry, a
+    // runner set to large text makes this equal `ideal` and the assertion fails for nothing.
+    let natural = UIHostingController(
+      rootView: content().environment(\.sizeCategory, .large).useSmileIDSampleTheme()
+    )
+    .sizeThatFits(in: CGSize(width: available, height: .greatestFiniteMagnitude))
     if growsWithContentSize {
       XCTAssertGreaterThan(
         ideal.height,
         natural.height + Self.tolerance,
-        "did not get taller at the largest content size, so its text is capped rather than laid out",
+        "did not get taller at the largest content size: its text is capped, or it fills its frame "
+          + "and should declare growsWithContentSize: false",
         file: file,
         line: line
       )
