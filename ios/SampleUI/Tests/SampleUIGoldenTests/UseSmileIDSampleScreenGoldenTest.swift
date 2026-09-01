@@ -17,8 +17,10 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("products_session_ended") { products(.init(initials: "KB", sessionEnded: true)) }
   }
 
+  /// Fixed by the harness, not by the design: a screen scrolls, so its frame is pinned here and its
+  /// content grows inside it rather than making the frame taller.
   func testProductsSurvivesMaxDynamicType() {
-    assertSurvivesMaxDynamicType {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) {
       products(.init(initials: "KB", sessionId: "a41f", sessionRemaining: "07:12"))
     }
   }
@@ -35,7 +37,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   }
 
   func testSettingsSurvivesMaxDynamicType() {
-    assertSurvivesMaxDynamicType { settings(UseSmileIDSampleSettings()) }
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) { settings(UseSmileIDSampleSettings()) }
   }
 
   private func products(_ state: UseSmileIDSampleProductsState) -> some View {

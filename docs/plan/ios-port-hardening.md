@@ -12,7 +12,7 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 | 2 | **DONE 2026-08-31 — the stack is merged.** | Three PRs deep is the practical limit: this repo squash-merges, so each merge turns the branches above into a `rebase --onto`, not a plain rebase. | `main` carries all three. |
 | 3 | **DONE 2026-09-01 — the harness runs in CI.** See §5. | Every new route was asserted only at the resolver. | `UseSmileIDSampleUITests` runs inside `verify.sh`; a link launches the app and the screen id is asserted. |
 | 4 | **Continue U3** in `ui-work-plan.md`'s order — verifications, then verificationDetails, then the forms and pickers. | Settled order; do not relitigate it. | All sixteen screens exist. |
-| 5 | **Close the truncation gap.** See §2. | Only starts biting at U4, when the 38 states land. Doing it sooner spends effort on a problem still readable by eye. | An automated check fails on clipped text. |
+| 5 | **DONE 2026-09-01 — a growth check, not the one §2 proposed.** See §2. | Would have started biting at U4, when the 38 states land. | A component that stops growing at the largest content size fails the build. |
 
 **The stack that carried U0–U2 and the first two screens** — #40, #42, #43 — is merged. Each squash
 turned the branches above it into a `rebase --onto`, which is the cost the three-deep limit buys.
@@ -50,27 +50,28 @@ stacks below are untouched.
 **How it got here, so it does not recur:** the component was built because it was on U2's list,
 without checking what would consume it. Run the app on a simulator at the end of each slice.
 
-## 2. The golden harness cannot see truncation, and every screen inherits that
+## 2. The truncation gap — closed 2026-09-01, by a different route than this section proposed
 
-**Now:** `assertSurvivesMaxDynamicType` asserts nothing lays out past the viewport and writes an AX5
-baseline. It cannot assert text is un-truncated, because SwiftUI publishes no truncation flag a unit
-test can read — the Compose twin gets `didExceedMaxLines` from the semantics tree.
+**What shipped:** `assertSurvivesMaxDynamicType` asserts a component gets *taller* at the largest
+content size, with a `growsWithContentSize: false` flag for the ones whose height is fixed. Growth is
+the only truncation signal SwiftUI leaves, and the shape is the one §3 already uses: declare the
+exceptions, and fail when the set changes — a stale flag fails too. Proven by capping a component and
+watching the assertion fire, rather than assumed from a green run.
 
-**Why it compounds:** clipping inside the viewport is caught only by a human reading the baseline.
-Two screens is readable. Sixteen screens across 38 states is not, and the failure is silent: a
-clipped label still produces a passing test and a plausible-looking picture.
+**Both options this section proposed were tried and neither works.** Worth recording so a port does
+not spend the same afternoon:
 
-**Options, cheapest first:**
+- *Bounded against unbounded height.* A view that caps its own height reports the cap as its ideal
+  size, so measuring it against itself returns the same number whether its text fits or is clipped.
+  Measured: a `Text` needing 807pt inside a 40pt frame reports 40pt.
+- *The bottom row of the render is background.* The golden host pads the component and paints the
+  background behind it, so that row is background whatever the component did.
 
-- Compare the AX5 render against the same content laid out with unbounded height. A component whose
-  bounded height is smaller than its unbounded height has lost content. Measurable today with two
-  `UIHostingController.sizeThatFits` calls; needs no new dependency.
-- Failing that, assert the rendered image's bottom row of pixels is background. Weaker, and prone to
-  false positives on a component that legitimately fills its frame.
-
-**Do it before U4**, which is where the 38 states land.
-
----
+**What it catches and what it does not.** It catches a component that *stops* growing — the
+regression case, where a fixed frame or a line limit arrives and text begins clipping silently. It
+does not catch one that was always capped; that one is declared instead, which makes the cap visible
+and reviewable rather than invisible. Two carry the flag today and neither is a defect: a screen
+scrolls, so the harness pins its frame and the content grows inside it.
 
 ## 3. A test id can be declared and never applied — CLOSED 2026-08-28
 
