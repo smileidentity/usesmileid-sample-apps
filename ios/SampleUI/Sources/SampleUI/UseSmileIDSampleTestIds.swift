@@ -59,6 +59,14 @@ public enum UseSmileIDSampleTestIds {
     "\(idTypeOptionPrefix)_\(id)"
   }
 
+  public static func profileRow(_ profileId: String) -> String {
+    "\(profileRowPrefix)_\(profileId)"
+  }
+
+  public static func profileConfigField(_ field: String) -> String {
+    "\(profileConfigFieldPrefix)_\(field)"
+  }
+
   public static let navToken = "sample_nav_token"
   public static let productCardPrefix = "sample_product_card"
   public static let settingNavPrefix = "sample_setting_nav"
@@ -67,6 +75,8 @@ public enum UseSmileIDSampleTestIds {
   public static let userDetailsFieldPrefix = "sample_user_details_field"
   public static let countryOptionPrefix = "sample_country_option"
   public static let idTypeOptionPrefix = "sample_idtype_option"
+  public static let profileRowPrefix = "sample_profile_row"
+  public static let profileConfigFieldPrefix = "sample_profile_config_field"
 
   public static let kycFormScreen = "sample_kyc_form_screen"
   public static let countryTrigger = "sample_country_trigger"
@@ -85,6 +95,19 @@ public enum UseSmileIDSampleTestIds {
   public static let userDetailsHint = "sample_user_details_hint"
   public static let userDetailsContinue = "sample_user_details_continue"
   public static let rememberDetailsSwitch = "sample_remember_details_switch"
+
+  public static let profilesScreen = "sample_profiles_screen"
+  public static let createProfile = "sample_create_profile"
+  public static let profileConfigScreen = "sample_profile_config_screen"
+  public static let profileConfigSave = "sample_profile_config_save"
+  public static let profileSwitchSheet = "sample_profile_switch_sheet"
+  public static let newProfileSheet = "sample_new_profile_sheet"
+  public static let newProfileName = "sample_new_profile_name"
+  public static let newProfileFirstName = "sample_new_profile_first_name"
+  public static let newProfileLastName = "sample_new_profile_last_name"
+  public static let newProfileEmail = "sample_new_profile_email"
+  public static let newProfilePhone = "sample_new_profile_phone"
+  public static let newProfileSave = "sample_new_profile_save"
 
   public static let statusBadge = "sample_status_badge"
   public static let detailsDelete = "sample_details_delete"
@@ -112,6 +135,10 @@ public enum UseSmileIDSampleTestIds {
     countrySheet, countrySearch, countryEmpty, countryOptionPrefix,
     idTypeSheet, idTypeSearch, idTypeEmpty, idTypeOptionPrefix,
     profileAvatarButton, profileSummary,
+    profilesScreen, profileRowPrefix, createProfile,
+    profileConfigScreen, profileConfigFieldPrefix, profileConfigSave,
+    profileSwitchSheet, newProfileSheet, newProfileName, newProfileFirstName, newProfileLastName,
+    newProfileEmail, newProfilePhone, newProfileSave,
     sessionCard, sessionCountdown, sessionEndedBanner,
     scenarioDrawerButton, signOut, versionLabel,
     settingEnhancedSmartSelfie, settingAgentMode, settingDarkMode,

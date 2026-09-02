@@ -60,6 +60,24 @@ struct UseSmileIDSampleDestination: View {
         onCopy: { label, value in copy(label, value) }
       )
       .navigationBarHidden(true)
+    case .profiles:
+      UseSmileIDSampleProfilesHost()
+        .navigationBarHidden(true)
+    case .profileConfig(let profileId):
+      ProfileConfigScreen(
+        state: .init(
+          // Falls back to the id, so a link naming no profile still titles the screen.
+          organisation: app.profiles.find(profileId)?.organisation ?? profileId,
+          defaults: app.profileDraft(for: profileId),
+          isActive: profileId == app.profiles.activeId
+        ),
+        onFieldChange: { field, value in app.editProfileDraft(profileId, field, to: value) },
+        onBack: { app.discardProfileDraft(profileId)
+          router.pop() },
+        onSave: { app.saveProfile(profileId)
+          router.pop() }
+      )
+      .navigationBarHidden(true)
     case .settings:
       browser(SettingsScreen(
         state: .init(
@@ -113,6 +131,38 @@ struct UseSmileIDSampleDestination: View {
     } else {
       UIApplication.shared.open(url)
     }
+  }
+}
+
+/// The profiles list plus the created confirmation it owns. The created id is consumed on sight, so
+/// returning to the list cannot re-show it.
+private struct UseSmileIDSampleProfilesHost: View {
+  @EnvironmentObject private var router: UseSmileIDSampleRouter
+  @EnvironmentObject private var app: UseSmileIDSampleAppState
+  @State private var created: UseSmileIDSampleProfile?
+
+  var body: some View {
+    ProfilesScreen(
+      state: .init(
+        profiles: app.profiles.all,
+        activeId: app.profiles.activeId,
+        notice: created.map { .init(message: "\($0.organisation) created", actionLabel: "Make active") }
+      ),
+      onProfileTap: { router.push(.profileConfig(profileId: $0.id)) },
+      onCreate: { router.sheet = .newProfile },
+      onBack: { router.pop() },
+      // A new profile is not made active by creating it, so the confirmation carries the offer.
+      onNoticeAction: { created.map { app.profiles.setActive($0.id) } },
+      onNoticeDismiss: { created = nil }
+    )
+    .onAppear(perform: consumeCreated)
+    .onChange(of: app.profiles.lastCreatedId) { _ in consumeCreated() }
+  }
+
+  private func consumeCreated() {
+    guard let id = app.profiles.lastCreatedId else { return }
+    app.profiles.clearLastCreated()
+    created = app.profiles.find(id)
   }
 }
 

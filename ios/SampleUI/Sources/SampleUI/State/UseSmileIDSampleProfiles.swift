@@ -1,0 +1,156 @@
+import Foundation
+
+/// One partner profile: who is signed in, and the defaults their jobs are seeded from.
+public struct UseSmileIDSampleProfile: Equatable, Identifiable, Sendable {
+  public let id: String
+  public var organisation: String
+  public var person: String
+  public var defaults: UseSmileIDSampleUserDetails
+
+  public init(
+    id: String,
+    organisation: String,
+    person: String,
+    defaults: UseSmileIDSampleUserDetails = UseSmileIDSampleUserDetails()
+  ) {
+    self.id = id
+    self.organisation = organisation
+    self.person = person
+    self.defaults = defaults
+  }
+
+  /// The person's initials, as the design has them, falling back to the organisation for a new profile.
+  public var initials: String {
+    let source = person.isBlank ? organisation : person
+    let letters = source.split(separator: " ").prefix(2).compactMap { word in
+      word.first.map { String($0).uppercased() }
+    }
+    return letters.isEmpty ? "?" : letters.joined()
+  }
+}
+
+/// The profiles the app can act as, and which one is active. In memory until profiles are a real
+/// account concern.
+public struct UseSmileIDSampleProfiles: Equatable, Sendable {
+  private var items: [UseSmileIDSampleProfile]
+  public private(set) var activeId: String
+
+  /// The last profile `add` created, until whoever confirmed it calls `clearLastCreated`.
+  public private(set) var lastCreatedId: String?
+
+  /// `seed` must not be empty: an empty list would otherwise surface far from here, as the products
+  /// screen reading no active profile.
+  public init(seed: [UseSmileIDSampleProfile] = UseSmileIDSampleProfiles.defaults) {
+    precondition(!seed.isEmpty, "UseSmileIDSampleProfiles needs at least one profile")
+    items = seed
+    activeId = seed[0].id
+  }
+
+  public var all: [UseSmileIDSampleProfile] {
+    items
+  }
+
+  public var active: UseSmileIDSampleProfile {
+    items.first { $0.id == activeId } ?? items[0]
+  }
+
+  /// Position in the list, which is what picks a profile's avatar hue.
+  public var activeIndex: Int {
+    items.firstIndex { $0.id == activeId } ?? 0
+  }
+
+  public mutating func setActive(_ id: String) {
+    if items.contains(where: { $0.id == id }) {
+      activeId = id
+    }
+  }
+
+  public mutating func clearLastCreated() {
+    lastCreatedId = nil
+  }
+
+  public func find(_ id: String) -> UseSmileIDSampleProfile? {
+    items.first { $0.id == id }
+  }
+
+  @discardableResult
+  public mutating func add(
+    organisation: String,
+    person: String,
+    defaults: UseSmileIDSampleUserDetails = UseSmileIDSampleUserDetails()
+  ) -> UseSmileIDSampleProfile {
+    // First free id, not one derived from the count: duplicate keys crash the list and double a test id.
+    var number = items.count + 1
+    while items.contains(where: { $0.id == "p-\(number)" }) {
+      number += 1
+    }
+    let profile = UseSmileIDSampleProfile(
+      id: "p-\(number)",
+      organisation: organisation,
+      person: person,
+      defaults: defaults
+    )
+    items.append(profile)
+    lastCreatedId = profile.id
+    return profile
+  }
+
+  public mutating func setDefaults(_ id: String, _ defaults: UseSmileIDSampleUserDetails) {
+    guard let index = items.firstIndex(where: { $0.id == id }) else { return }
+    items[index].defaults = defaults
+  }
+
+  /// The three the design's sheet shows.
+  public static let defaults: [UseSmileIDSampleProfile] = [
+    UseSmileIDSampleProfile(
+      id: "p-1",
+      organisation: "UpTech Finance",
+      person: "Kwame Asante",
+      defaults: UseSmileIDSampleUserDetails(firstName: "Kwame", lastName: "Asante")
+    ),
+    UseSmileIDSampleProfile(
+      id: "p-2",
+      organisation: "Kazi Microlending",
+      person: "Amina Diallo",
+      defaults: UseSmileIDSampleUserDetails(firstName: "Amina", lastName: "Diallo")
+    ),
+    UseSmileIDSampleProfile(
+      id: "p-3",
+      organisation: "PesaLink",
+      person: "Tunde Okafor",
+      defaults: UseSmileIDSampleUserDetails(firstName: "Tunde", lastName: "Okafor")
+    )
+  ]
+}
+
+/// The new-profile sheet's five fields. Held outside the sheet so a tab switch beneath it cannot
+/// lose them; the shell clears it with the sheet so it opens empty each time.
+public struct UseSmileIDSampleNewProfile: Equatable, Sendable {
+  public var name: String
+  public var firstName: String
+  public var lastName: String
+  public var email: String
+  public var phone: String
+
+  public init(name: String = "", firstName: String = "", lastName: String = "", email: String = "", phone: String = "") {
+    self.name = name
+    self.firstName = firstName
+    self.lastName = lastName
+    self.email = email
+    self.phone = phone
+  }
+
+  /// The design's own rule: Create needs the profile name and both required names.
+  public var canCreate: Bool {
+    !name.isBlank && !firstName.isBlank && !lastName.isBlank
+  }
+
+  /// The person is the two required names; all four seed the details its jobs start from.
+  public var person: String {
+    "\(firstName) \(lastName)".trimmingCharacters(in: .whitespaces)
+  }
+
+  public var defaults: UseSmileIDSampleUserDetails {
+    UseSmileIDSampleUserDetails(firstName: firstName, lastName: lastName, email: email, phone: phone)
+  }
+}

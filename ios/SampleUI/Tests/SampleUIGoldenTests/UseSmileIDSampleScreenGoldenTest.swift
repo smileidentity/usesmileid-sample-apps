@@ -253,4 +253,115 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     )
     .frame(height: 1400)
   }
+
+  func testProfiles() {
+    goldens("profiles") { profiles(Self.seededProfiles) }
+  }
+
+  /// The fourth profile is listed but not active: the confirmation carries the offer.
+  func testProfilesCreated() {
+    goldens("profiles_created") { profiles(Self.profilesWithACreatedOne, notice: Self.createdNotice) }
+  }
+
+  func testProfilesSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) {
+      profiles(Self.profilesWithACreatedOne, notice: Self.createdNotice, height: 1400)
+    }
+  }
+
+  func testProfileConfigActiveProfile() {
+    goldens("profile_config_active") { profileConfig(Self.seededProfiles.active, isActive: true) }
+  }
+
+  func testProfileConfigOtherProfile() {
+    goldens("profile_config_other") { profileConfig(Self.seededProfiles.all[1]) }
+  }
+
+  /// Only the names came from the sheet, so the contact rows show their placeholders.
+  func testProfileConfigNewlyCreated() {
+    goldens("profile_config_new") { profileConfig(Self.profilesWithACreatedOne.all[3]) }
+  }
+
+  func testProfileConfigSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) {
+      profileConfig(Self.seededProfiles.active, isActive: true, height: 1400)
+    }
+  }
+
+  func testProfileSwitch() {
+    goldens("profile_switch") {
+      ProfileSwitchSheet(profiles: Self.seededProfiles.all, activeId: "p-1", onSelect: { _ in })
+        .frame(height: 700)
+    }
+  }
+
+  func testNewProfileEmpty() {
+    goldens("new_profile_empty") { newProfile(UseSmileIDSampleNewProfile()) }
+  }
+
+  func testNewProfileFilled() {
+    goldens("new_profile_filled") { newProfile(Self.filledNewProfile) }
+  }
+
+  func testNewProfileSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) { newProfile(Self.filledNewProfile, height: 1400) }
+  }
+
+  private func profiles(
+    _ profiles: UseSmileIDSampleProfiles,
+    notice: UseSmileIDSampleTransientNotice? = nil,
+    height: CGFloat = 700
+  ) -> some View {
+    ProfilesScreen(
+      state: .init(profiles: profiles.all, activeId: profiles.activeId, notice: notice),
+      onProfileTap: { _ in },
+      onCreate: {},
+      onBack: {}
+    )
+    .frame(height: height)
+  }
+
+  private func profileConfig(
+    _ profile: UseSmileIDSampleProfile,
+    isActive: Bool = false,
+    height: CGFloat = 700
+  ) -> some View {
+    ProfileConfigScreen(
+      state: .init(organisation: profile.organisation, defaults: profile.defaults, isActive: isActive),
+      onFieldChange: { _, _ in },
+      onBack: {},
+      onSave: {}
+    )
+    .frame(height: height)
+  }
+
+  private func newProfile(_ draft: UseSmileIDSampleNewProfile, height: CGFloat = 700) -> some View {
+    NewProfileSheet(draft: .constant(draft), onSave: {})
+      .frame(height: height)
+  }
+
+  private static let seededProfiles = UseSmileIDSampleProfiles()
+
+  private static let profilesWithACreatedOne: UseSmileIDSampleProfiles = {
+    var profiles = UseSmileIDSampleProfiles()
+    profiles.add(
+      organisation: "Acme Fintech",
+      person: "Ada Lovelace",
+      defaults: UseSmileIDSampleUserDetails(firstName: "Ada", lastName: "Lovelace")
+    )
+    return profiles
+  }()
+
+  private static let createdNotice = UseSmileIDSampleTransientNotice(
+    message: "Acme Fintech created",
+    actionLabel: "Make active"
+  )
+
+  private static let filledNewProfile = UseSmileIDSampleNewProfile(
+    name: "Acme Fintech",
+    firstName: "Ada",
+    lastName: "Lovelace",
+    email: "ada@acme.example",
+    phone: "+254 700 000 000"
+  )
 }

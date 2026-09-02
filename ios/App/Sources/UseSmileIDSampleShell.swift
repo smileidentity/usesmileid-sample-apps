@@ -33,10 +33,11 @@ struct UseSmileIDSampleShell: View {
         }
       }
       // Cleared on dismissal, not on open: that is the one point every path goes through, so a
-      // sheet reached by deep link or reopened after a swipe cannot come back still filtered.
+      // sheet reached by deep link or reopened after a swipe cannot come back still filtered or
+      // still holding a half-typed profile.
       .onChange(of: router.sheet) { sheet in
         if sheet == nil {
-          app.clearPickerQueries()
+          app.clearSheetState()
         }
       }
       .onAppear { router.restore(from: storedNavigation) }
@@ -60,6 +61,19 @@ struct UseSmileIDSampleShell: View {
         selected: app.idDetails.idType,
         query: $app.idTypeQuery,
         onSelect: { app.idDetails.idType = $0
+          router.sheet = nil }
+      )
+    case .profileSwitch:
+      ProfileSwitchSheet(
+        profiles: app.profiles.all,
+        activeId: app.profiles.activeId,
+        onSelect: { app.profiles.setActive($0.id)
+          router.sheet = nil }
+      )
+    case .newProfile:
+      NewProfileSheet(
+        draft: $app.newProfile,
+        onSave: { app.createProfile()
           router.sheet = nil }
       )
     default:
