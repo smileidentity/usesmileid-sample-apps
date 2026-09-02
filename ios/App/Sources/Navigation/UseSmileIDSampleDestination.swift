@@ -18,11 +18,12 @@ struct UseSmileIDSampleDestination: View {
           avatarColor: app.avatarColor,
           sessionId: app.sessionId,
           sessionRemaining: app.sessionRemaining,
-          sessionEnded: app.sessionEnded
+          sessionEnded: app.sessionExpired
         ),
         onProduct: { product in router.open(.consentDetailsForm(productId: product.id)) },
         onProfile: { router.sheet = .profileSwitch },
-        onScan: { router.open(.scanToken) }
+        // Pushed, not opened: linking pops back to where the scan started, as the Compose twin does.
+        onScan: { router.pushOnce(.scanToken) }
       )
     case .verifications:
       VerificationsScreen()
@@ -48,7 +49,7 @@ struct UseSmileIDSampleDestination: View {
         onIdNumberChange: { app.idDetails.idNumber = $0 },
         onBack: { router.pop() },
         onContinue: { router.push(.sdkFlow(productId: productId, presentation: .fullscreen)) },
-        onToken: { router.open(.scanToken) }
+        onToken: { router.pushOnce(.scanToken) }
       )
       .navigationBarHidden(true)
     case .verificationDetails(let jobId):
@@ -78,6 +79,9 @@ struct UseSmileIDSampleDestination: View {
           router.pop() }
       )
       .navigationBarHidden(true)
+    case .scanToken:
+      UseSmileIDSampleScanTokenHost()
+        .navigationBarHidden(true)
     case .settings:
       browser(SettingsScreen(
         state: .init(
@@ -91,7 +95,8 @@ struct UseSmileIDSampleDestination: View {
         onProfile: { router.open(.profiles) },
         onNavRow: { row in open(row) },
         onOpenScenarioDrawer: { router.sheet = .scenarioDrawer },
-        onSignOut: {}
+        // There is no auth to leave; the session is the local state a partner would expect gone.
+        onSignOut: { app.clearSession() }
       ))
     default:
       UseSmileIDSampleSeat(name: String(describing: route))

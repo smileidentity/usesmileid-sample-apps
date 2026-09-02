@@ -11,7 +11,7 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 | 1 | **DONE 2026-08-31 — the pill won.** See §1. | The only open question that could invalidate finished work. | Ruled, built, and `TabView` gone. |
 | 2 | **DONE 2026-08-31 — the stack is merged.** | Three PRs deep is the practical limit: this repo squash-merges, so each merge turns the branches above into a `rebase --onto`, not a plain rebase. | `main` carries all three. |
 | 3 | **DONE 2026-09-01 — the harness runs in CI.** See §5. | Every new route was asserted only at the resolver. | `UseSmileIDSampleUITests` runs inside `verify.sh`; a link launches the app and the screen id is asserted. |
-| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets (2026-09-01), then profiles, profileConfig and both profile sheets (2026-09-02) are built; next scanToken and the result card. | Settled order; do not relitigate it. | All sixteen screens exist. |
+| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets (2026-09-01), then profiles, profileConfig and both profile sheets (2026-09-02), then scanToken with the session model behind it (2026-09-02, §8 and §9) are built; next the result card and the automation affordances. | Settled order; do not relitigate it. | All sixteen screens exist. |
 | 5 | **DONE 2026-09-01 — a growth check, not the one §2 proposed.** See §2. | Would have started biting at U4, when the 38 states land. | A component that stops growing at the largest content size fails the build. |
 
 **The stack that carried U0–U2 and the first two screens** — #40, #42, #43 — is merged. Each squash
@@ -211,6 +211,46 @@ Android's unencrypted DataStore fine. Ruled so, with one cost the ruling had to 
   because an unhosted test bundle has no application identity and the adapter cannot be exercised there.
 - **Settings are still not persisted on iOS.** The store's name and folder mirror Android's so that
   work lands in the same file when it comes; it is not part of this slice.
+
+## 9. The scan screen — built 2026-09-02, and the three holes left open on purpose
+
+The screen, its sheet, status pill and glyph mirror the Compose files name for name; the route, the
+deep link (`usesmileid-sample-ios://token/scan`) and the five ids landed with it. The decode rules
+are pinned by the same fixtures Android pins, in the same three test files. What the shell adds, and
+what it deliberately does not:
+
+- **Simulate is the device path, never Paste.** It mints the same unsigned fixture Android's minter
+  does — span, environment, bindings — and the host links only what the real decoder reads back from
+  it; a fixture the decoder refuses leaves the tap doing nothing rather than fabricating a session.
+  The UI tests drive Simulate through link, countdown tick, the Expired span's retirement to the
+  banner, relinking over it, a relaunch, and sign-out. What no test proves: a server accepting the
+  token, and the QR itself.
+- **The clock lives in the app state.** One `now`, ticking once a second while a session is live and
+  stopping at the deadline, where the token is retired and only the handle and deadline stay. The ring,
+  the card and the countdown all read it; nothing in a screen owns a timer. A cold start after expiry
+  retires at once.
+- **The QR reader is `AVCaptureMetadataOutput`, no dependency.** Its session preset is pinned to
+  1920x1080 — the size Android's analyser needed once the dense token QR failed at 640x480 — and the
+  session stops when the view is dismantled, so the SDK is never handed a camera the host still holds.
+  Unproven here: the simulator has no camera, so the viewfinder is absent in every golden and every
+  simulator run and the screen keeps the glyph, exactly as the Compose screen does with a null
+  viewfinder. The reader has only been compiled, not pointed at a code.
+- **`redirected` has no caller.** `UseSmileIDSampleScanReason.sessionEnded` exists, the shared UI
+  owns its sentence, and the state is goldened — but `.sdkFlow` is a seat, there is no preflight gate,
+  and the host passes no reason. The gate is the flow slice's; building it to give the state a caller
+  would have been the wrong order.
+- **The verifications screen is still a seat**, so `jobRow`, `jobRowStatus`, `filterCount` and
+  `selectionCheckbox` stay in the unapplied inventory; `tokenEnvironmentPrefix` joins the prefixes.
+- **Sign-out clears the session only.** Android also clears the forms and lands on Products; those
+  belong with the settings slice and are not pretended here.
+
+**Two things reading the goldens caught.** In a fixed-height screen the sheet was proposed a share of
+the remaining height and its texts truncated at AX5 — it now takes its ideal height, the rule the app
+bar already follows. And the Paste action beside the field broke the placeholder mid-word at AX5, so
+it moves below the field at accessibility sizes, the switch the edit row already makes. One thing they
+show that is not this slice's: the app bar title breaks mid-word at AX5 wherever the bar carries a
+trailing action ("Sca / n / tok / en" here, "Veri / fica / tion" on the details screen, both
+pre-existing). Fixing it means the shared bar and every screen's AX baseline, so it is a follow-up.
 
 ## Considered and rejected
 

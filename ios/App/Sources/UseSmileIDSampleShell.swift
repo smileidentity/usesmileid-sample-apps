@@ -86,10 +86,9 @@ struct UseSmileIDSampleShell: View {
   private var navBar: some View {
     UseSmileIDSampleNavBar(
       selected: router.selectedTab.navItem,
-      // nil until `scanToken` starts a session; the ring is absent rather than reading empty.
-      sessionProgress: nil,
+      sessionProgress: app.sessionProgress,
       onSelect: { select(UseSmileIDSampleTab($0)) },
-      onToken: { router.open(.scanToken) }
+      onToken: { router.pushOnce(.scanToken) }
     )
   }
 

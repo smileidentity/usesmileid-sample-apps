@@ -10,6 +10,28 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     continueAfterFailure = false
     app = XCUIApplication()
     app.launch()
+    clearAnySession()
+  }
+
+  /// The session persists across launches by design, so a test that linked one and failed would
+  /// otherwise hand it to every test after it.
+  private func clearAnySession() {
+    XCTAssertTrue(element("sample_nav_settings").waitForExistence(timeout: 10))
+    guard element("sample_session_card").exists || element("sample_session_ended_banner").exists else { return }
+    signOut()
+    element("sample_nav_products").tap()
+    XCTAssertTrue(element("sample_session_card").waitForNonExistence(timeout: 5))
+  }
+
+  /// Reached from the settings root; the row sits below the fold on the pinned simulator.
+  private func signOut() {
+    element("sample_nav_settings").tap()
+    let signOut = element("sample_sign_out")
+    XCTAssertTrue(signOut.waitForExistence(timeout: 10))
+    for _ in 0..<4 where !signOut.isHittable {
+      app.swipeUp()
+    }
+    signOut.tap()
   }
 
   func testALinkOpensAScreenInAnotherTab() {
@@ -203,6 +225,74 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     open("profiles/new")
     XCTAssertTrue(element("sample_new_profile_sheet").waitForExistence(timeout: 10))
     XCTAssertTrue(element("sample_profiles_screen").exists, "the owner did not open beneath the sheet")
+  }
+
+  /// The second assertion is the discriminator: the screen id must not swallow the sheet's.
+  func testALinkOpensTheScanTokenScreenAndBackReturnsToProducts() {
+    open("token/scan")
+    XCTAssertTrue(element("sample_scan_token_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("sample_token_simulate").exists, "the sheet's id is not queryable under the screen's")
+    XCTAssertTrue(element("sample_token_manual_entry").exists)
+    XCTAssertTrue(element("sample_token_paste").exists)
+    app.buttons["Back"].tap()
+    XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("sample_scan_token_screen").waitForNonExistence(timeout: 5))
+  }
+
+  /// Simulate mints the fixture the decoder reads, the store keeps it, and the strip shows it — the
+  /// whole chain through one tap, ending where the scan started.
+  func testSimulateLinksASessionAndTheProductsStripCountsItDown() {
+    open("token/scan")
+    XCTAssertTrue(element("sample_token_simulate").waitForExistence(timeout: 10))
+    element("sample_token_simulate").tap()
+    XCTAssertTrue(element("sample_session_card").waitForExistence(timeout: 10), "the linked session did not reach products")
+    XCTAssertTrue(element("sample_scan_token_screen").waitForNonExistence(timeout: 5))
+    let countdown = element("sample_session_countdown")
+    XCTAssertTrue(countdown.waitForExistence(timeout: 5))
+    XCTAssertNotNil(countdown.label.range(of: #"^1[45]:[0-5]\d$"#, options: .regularExpression), countdown.label)
+    // One clock, ticking: the same element reads a different value within a few seconds.
+    let ticked = expectation(for: NSPredicate(format: "label != %@", countdown.label), evaluatedWith: countdown)
+    wait(for: [ticked], timeout: 5)
+  }
+
+  /// The Expired span is the only way to reach the expiry path without waiting: it is retired on
+  /// arrival, the banner replaces the card, and its Scan action relinks over it.
+  func testAnExpiredSimulatedSpanRetiresToTheBannerAndRelinkingReplacesIt() {
+    open("token/scan")
+    XCTAssertTrue(element("sample_token_simulate").waitForExistence(timeout: 10))
+    app.buttons["SIMULATED SCAN"].tap()
+    XCTAssertTrue(element("sample_token_environment_sandbox").waitForExistence(timeout: 5))
+    app.buttons["Expired"].tap()
+    element("sample_token_simulate").tap()
+    XCTAssertTrue(element("sample_session_ended_banner").waitForExistence(timeout: 10), "an expired token was not retired to the banner")
+    XCTAssertFalse(element("sample_session_card").exists)
+
+    app.buttons["Scan"].tap()
+    XCTAssertTrue(element("sample_scan_token_screen").waitForExistence(timeout: 10))
+    // The chosen span survived leaving the screen, so the controls are still open.
+    XCTAssertTrue(app.buttons["15m"].waitForExistence(timeout: 5), "the typed state did not survive the screen")
+    app.buttons["15m"].tap()
+    element("sample_token_simulate").tap()
+    XCTAssertTrue(element("sample_session_card").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("sample_session_ended_banner").waitForNonExistence(timeout: 5))
+  }
+
+  /// The store is the Keychain, so a relaunch reads the same session back and the clock resumes from its deadline.
+  func testALinkedSessionSurvivesARelaunchAndSignOutClearsIt() {
+    open("token/scan")
+    XCTAssertTrue(element("sample_token_simulate").waitForExistence(timeout: 10))
+    element("sample_token_simulate").tap()
+    XCTAssertTrue(element("sample_session_card").waitForExistence(timeout: 10))
+
+    app.terminate()
+    app.launch()
+    XCTAssertTrue(element("sample_session_card").waitForExistence(timeout: 10), "the session did not survive a relaunch")
+
+    signOut()
+    element("sample_nav_products").tap()
+    XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("sample_session_card").waitForNonExistence(timeout: 5))
+    XCTAssertFalse(element("sample_session_ended_banner").exists, "sign-out must leave no ended marker")
   }
 
   func testTheNavPillSwitchesTabs() {
