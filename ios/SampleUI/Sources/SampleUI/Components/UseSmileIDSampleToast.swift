@@ -12,6 +12,7 @@ public struct UseSmileIDSampleToast: View {
 
   @ScaledMetric(relativeTo: .body) private var minHeight: CGFloat = 46
   @Environment(\.useSmileIDSampleColors) private var colors
+  @Environment(\.sizeCategory) private var sizeCategory
 
   public init(message: String, actionLabel: String? = nil, onAction: (() -> Void)? = nil) {
     self.message = message
@@ -20,22 +21,18 @@ public struct UseSmileIDSampleToast: View {
   }
 
   public var body: some View {
-    HStack(spacing: SmileSpacing.spacingSm) {
-      UseSmileIDSampleText(message, style: messageStyle)
-        .foregroundColor(colors.background)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .useSmileIDSampleTestId(UseSmileIDSampleTestIds.toast)
-
-      if let actionLabel, let onAction {
-        Button(action: onAction) {
-          UseSmileIDSampleText(actionLabel, style: actionStyle, underlined: true)
-            .foregroundColor(colors.background)
-            .fixedSize()
-            // Widened, not squared off: an action sized to the 44 tap minimum inflates the 46 bar.
-            .frame(minWidth: SmileSpacing.sizeControlMd)
-            .padding(.horizontal, SmileSpacing.spacingXs)
+    // Stacks once type grows: beside a wrapping message, the fixed-size action lands on top of it.
+    Group {
+      if sizeCategory.isAccessibilityCategory {
+        VStack(alignment: .leading, spacing: SmileSpacing.spacingXs) {
+          messageText
+          action.frame(maxWidth: .infinity, alignment: .trailing)
         }
-        .useSmileIDSampleTestId(UseSmileIDSampleTestIds.toastUndo)
+      } else {
+        HStack(spacing: SmileSpacing.spacingSm) {
+          messageText
+          action
+        }
       }
     }
     .padding(.horizontal, SmileSpacing.spacingMd)
@@ -46,6 +43,28 @@ public struct UseSmileIDSampleToast: View {
         .fill(colors.textTitle)
         .shadow(color: .black.opacity(Self.shadowOpacity), radius: Self.shadowRadius, y: Self.shadowY)
     )
+  }
+
+  private var messageText: some View {
+    UseSmileIDSampleText(message, style: messageStyle)
+      .foregroundColor(colors.background)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .useSmileIDSampleTestId(UseSmileIDSampleTestIds.toast)
+  }
+
+  @ViewBuilder
+  private var action: some View {
+    if let actionLabel, let onAction {
+      Button(action: onAction) {
+        UseSmileIDSampleText(actionLabel, style: actionStyle, underlined: true)
+          .foregroundColor(colors.background)
+          .fixedSize()
+          // Widened, not squared off: an action sized to the 44 tap minimum inflates the 46 bar.
+          .frame(minWidth: SmileSpacing.sizeControlMd)
+          .padding(.horizontal, SmileSpacing.spacingXs)
+      }
+      .useSmileIDSampleTestId(UseSmileIDSampleTestIds.toastUndo)
+    }
   }
 
   private var messageStyle: SmileTextStyle {

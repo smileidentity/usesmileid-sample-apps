@@ -31,6 +31,10 @@ final class UseSmileIDSampleCompositeGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("profile_rows") { ProfileRows() }
   }
 
+  func testProfileRowsSurviveMaxDynamicType() {
+    assertSurvivesMaxDynamicType { ProfileRows() }
+  }
+
   func testOptionRows() {
     goldens("option_rows") { OptionRows() }
   }

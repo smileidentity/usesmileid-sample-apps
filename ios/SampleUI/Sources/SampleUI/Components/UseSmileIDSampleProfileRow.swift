@@ -13,6 +13,7 @@ public struct UseSmileIDSampleProfileRow<Trailing: View>: View {
 
   @ScaledMetric(relativeTo: .body) private var minHeight: CGFloat = SmileSpacing.space64
   @Environment(\.useSmileIDSampleColors) private var colors
+  @Environment(\.sizeCategory) private var sizeCategory
 
   public init(
     organisation: String,
@@ -37,23 +38,22 @@ public struct UseSmileIDSampleProfileRow<Trailing: View>: View {
 
   public var body: some View {
     Button(action: onTap) {
-      HStack(spacing: SmileSpacing.spacingSm) {
-        UseSmileIDSampleAvatar(initials: initials, containerColor: avatarColor)
-        VStack(alignment: .leading, spacing: SmileSpacing.spacingXxs) {
-          UseSmileIDSampleText(
-            organisation,
-            style: UseSmileIDSampleTheme.type.textStyleBodyStrong.with(size: 14.5)
-          )
-          .foregroundColor(colors.textTitle)
-          UseSmileIDSampleText(supportingText, style: UseSmileIDSampleTheme.type.textStyleCaption)
-            .foregroundColor(colors.textMuted)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-
-        if Trailing.self != EmptyView.self {
-          trailing
-        } else if selected {
-          UseSmileIDSampleIcon(SmileIcons.check, tint: colors.primary, size: SmileSpacing.sizeIconMd)
+      // Stacks once type grows: beside the avatar, an organisation name breaks mid-word.
+      Group {
+        if sizeCategory.isAccessibilityCategory {
+          VStack(alignment: .leading, spacing: SmileSpacing.spacingSm) {
+            avatar
+            HStack(spacing: SmileSpacing.spacingSm) {
+              labels
+              trailingContent
+            }
+          }
+        } else {
+          HStack(spacing: SmileSpacing.spacingSm) {
+            avatar
+            labels
+            trailingContent
+          }
         }
       }
       .padding(.horizontal, Self.paddingX)
@@ -72,6 +72,32 @@ public struct UseSmileIDSampleProfileRow<Trailing: View>: View {
     // A picker row, not a button: VoiceOver should say which profile is chosen.
     .accessibilityAddTraits(selected ? [.isButton, .isSelected] : .isButton)
     .useSmileIDSampleTestId(testId)
+  }
+
+  private var avatar: some View {
+    UseSmileIDSampleAvatar(initials: initials, containerColor: avatarColor)
+  }
+
+  private var labels: some View {
+    VStack(alignment: .leading, spacing: SmileSpacing.spacingXxs) {
+      UseSmileIDSampleText(
+        organisation,
+        style: UseSmileIDSampleTheme.type.textStyleBodyStrong.with(size: 14.5)
+      )
+      .foregroundColor(colors.textTitle)
+      UseSmileIDSampleText(supportingText, style: UseSmileIDSampleTheme.type.textStyleCaption)
+        .foregroundColor(colors.textMuted)
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  @ViewBuilder
+  private var trailingContent: some View {
+    if Trailing.self != EmptyView.self {
+      trailing
+    } else if selected {
+      UseSmileIDSampleIcon(SmileIcons.check, tint: colors.primary, size: SmileSpacing.sizeIconMd)
+    }
   }
 
   private static var paddingX: CGFloat {

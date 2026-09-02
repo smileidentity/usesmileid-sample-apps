@@ -12,11 +12,12 @@ final class UseSmileIDSampleTestIdUsageTest: XCTestCase {
   /// Ids not yet on a view. Delete an entry when its screen lands — a stale list fails the test
   /// below, so this cannot rot into a permanent excuse.
   ///
-  /// The four prefixes are anchors the real ids are built from; the other four wait on the
+  /// The prefixes are anchors the real ids are built from; the other four wait on the
   /// verifications screen.
   private static let notYetApplied: Set<String> = [
     "productCardPrefix", "settingNavPrefix", "detailFieldPrefix", "detailCopyPrefix",
     "userDetailsFieldPrefix", "countryOptionPrefix", "idTypeOptionPrefix",
+    "profileRowPrefix", "profileConfigFieldPrefix",
     "jobRow", "jobRowStatus", "filterCount", "selectionCheckbox"
   ]
 

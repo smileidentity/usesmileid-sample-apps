@@ -94,15 +94,80 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
   /// level arrives — a defect that predates the nav container change and reproduces on `main`, so
   /// it is recorded rather than fixed here. Remove the expectation with the fix; see §7 of the plan.
   func testALinkOpensATwoLevelRouteInAnotherTab() {
-    open("profiles/demo")
-    let deepest = app.staticTexts.matching(
-      NSPredicate(format: "label BEGINSWITH %@", "profileConfig")
-    ).firstMatch
+    open("profiles/p-2")
+    XCTAssertTrue(element("sample_profiles_screen").waitForExistence(timeout: 10), "the first level did not arrive")
     // Scoped to this assertion alone: unscoped, it would also absorb a delivery failure raised by
     // `open`, and a total regression would report as the limitation already known about.
     XCTExpectFailure("nested links do not chain on the iOS 15 NavigationView idiom") {
-      XCTAssertTrue(deepest.waitForExistence(timeout: 10), "the pushed level did not arrive")
+      XCTAssertTrue(
+        element("sample_profile_config_screen").waitForExistence(timeout: 10),
+        "the pushed level did not arrive"
+      )
     }
+  }
+
+  /// R12 for the profiles list: its sheet layers over it, and the created profile is listed but not
+  /// active until the confirmation's offer is taken.
+  func testCreatingAProfileListsItAndOffersToMakeItActive() {
+    open("profiles")
+    XCTAssertTrue(element("sample_profiles_screen").waitForExistence(timeout: 10))
+    element("sample_create_profile").tap()
+    XCTAssertTrue(element("sample_new_profile_sheet").waitForExistence(timeout: 10))
+    let create = app.buttons["sample_new_profile_save"]
+    XCTAssertTrue(create.waitForExistence(timeout: 10))
+    XCTAssertFalse(create.isEnabled)
+    type("sample_new_profile_name", "Acme Fintech")
+    type("sample_new_profile_first_name", "Ada")
+    XCTAssertFalse(create.isEnabled, "the last name is still outstanding")
+    type("sample_new_profile_last_name", "Lovelace")
+    XCTAssertTrue(create.isEnabled)
+    create.tap()
+
+    XCTAssertTrue(element("sample_new_profile_sheet").waitForNonExistence(timeout: 5))
+    XCTAssertTrue(element("sample_profile_row_p-4").waitForExistence(timeout: 10), "the new profile is not listed")
+    XCTAssertTrue(app.staticTexts["Ada Lovelace"].exists, "created must not mean active")
+    XCTAssertTrue(element("sample_toast").waitForExistence(timeout: 5))
+    element("sample_toast_undo").tap()
+    XCTAssertTrue(app.staticTexts["Ada Lovelace \u{00B7} active"].waitForExistence(timeout: 5))
+    XCTAssertTrue(element("sample_toast").waitForNonExistence(timeout: 5))
+  }
+
+  /// The CTA is the one place a profile becomes active from its own page, and it is disabled on the
+  /// profile that already is.
+  func testTheConfigCtaIsDisabledOnTheActiveProfileAndActivatesAnother() {
+    open("profiles")
+    XCTAssertTrue(element("sample_profiles_screen").waitForExistence(timeout: 10))
+    element("sample_profile_row_p-1").tap()
+    XCTAssertTrue(element("sample_profile_config_screen").waitForExistence(timeout: 10))
+    let save = app.buttons["sample_profile_config_save"]
+    XCTAssertTrue(save.waitForExistence(timeout: 10))
+    XCTAssertFalse(save.isEnabled, "the active profile cannot be made active again")
+    app.buttons["Back"].tap()
+
+    XCTAssertTrue(element("sample_profile_row_p-2").waitForExistence(timeout: 10))
+    element("sample_profile_row_p-2").tap()
+    XCTAssertTrue(element("sample_profile_config_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(save.isEnabled)
+    save.tap()
+    XCTAssertTrue(element("sample_profiles_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(app.staticTexts["Amina Diallo \u{00B7} active"].waitForExistence(timeout: 5))
+  }
+
+  /// The switch sheet's path sits under profiles but its owner is products, which is open beneath it.
+  func testTheSwitchSheetLinkOpensOverProductsAndSwitchingRenamesSettings() {
+    open("profiles/switch")
+    XCTAssertTrue(element("sample_profile_switch_sheet").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("sample_products_screen").exists, "the owner did not open beneath the sheet")
+    element("sample_profile_row_p-2").tap()
+    XCTAssertTrue(element("sample_profile_switch_sheet").waitForNonExistence(timeout: 5))
+    element("sample_nav_settings").tap()
+    XCTAssertTrue(app.staticTexts["Kazi Microlending"].waitForExistence(timeout: 10))
+  }
+
+  func testTheNewProfileLinkOpensTheSheetOverTheProfilesList() {
+    open("profiles/new")
+    XCTAssertTrue(element("sample_new_profile_sheet").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("sample_profiles_screen").exists, "the owner did not open beneath the sheet")
   }
 
   func testTheNavPillSwitchesTabs() {

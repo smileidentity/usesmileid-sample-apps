@@ -96,7 +96,7 @@ public struct UserDetailsScreen: View {
       ),
       placeholder: supplied ? "Provided by token" : field.placeholder,
       enabled: !supplied,
-      keyboardType: Self.keyboard(for: field),
+      keyboardType: field.keyboardType,
       testId: UseSmileIDSampleTestIds.userDetailsField(field.id)
     )
   }
@@ -137,9 +137,11 @@ public struct UserDetailsScreen: View {
         .strokeBorder(colors.cardStroke, lineWidth: smileCardStrokeWidth)
     )
   }
+}
 
-  private static func keyboard(for field: UseSmileIDSampleUserField) -> UIKeyboardType {
-    switch field {
+extension UseSmileIDSampleUserField {
+  var keyboardType: UIKeyboardType {
+    switch self {
     case .email: .emailAddress
     case .phone: .phonePad
     default: .default
