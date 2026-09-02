@@ -46,8 +46,48 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     type("sample_user_details_field_email", "kwame@uptech.example")
     XCTAssertTrue(continueButton.isEnabled)
     continueButton.tap()
-    let next = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "idDetailsForm")).firstMatch
-    XCTAssertTrue(next.waitForExistence(timeout: 10), "the second push did not arrive")
+    XCTAssertTrue(
+      element("sample_kyc_form_screen").waitForExistence(timeout: 10),
+      "the second push did not arrive"
+    )
+  }
+
+  /// R12 on a device: the picker is a layer over the form, and choosing a country unlocks ID type.
+  func testTheIdFormOpensThePickerAndTheChoiceUnlocksIdType() {
+    open("flow/biometricKyc/id-details")
+    XCTAssertTrue(element("sample_kyc_form_screen").waitForExistence(timeout: 10))
+    let idType = app.buttons["sample_idtype_trigger"]
+    XCTAssertTrue(idType.waitForExistence(timeout: 10))
+    XCTAssertFalse(idType.isEnabled, "ID type has no list without a country")
+
+    app.buttons["sample_country_trigger"].tap()
+    XCTAssertTrue(element("sample_country_sheet").waitForExistence(timeout: 10))
+    app.buttons["sample_country_option_KE"].tap()
+
+    XCTAssertTrue(element("sample_country_sheet").waitForNonExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["sample_idtype_trigger"].isEnabled)
+  }
+
+  /// The search text belongs to one visit: a reopened picker must not still be filtered.
+  func testAPickerReopensUnfiltered() {
+    open("flow/biometricKyc/id-details")
+    XCTAssertTrue(element("sample_kyc_form_screen").waitForExistence(timeout: 10))
+    app.buttons["sample_country_trigger"].tap()
+    XCTAssertTrue(element("sample_country_sheet").waitForExistence(timeout: 10))
+    type("sample_country_search", "Ken")
+    XCTAssertTrue(app.buttons["sample_country_option_NG"].waitForNonExistence(timeout: 5))
+    app.buttons["sample_country_option_KE"].tap()
+
+    XCTAssertTrue(element("sample_country_sheet").waitForNonExistence(timeout: 5))
+    app.buttons["sample_country_trigger"].tap()
+    XCTAssertTrue(app.buttons["sample_country_option_NG"].waitForExistence(timeout: 10))
+  }
+
+  /// A sheet link resolves to its owner plus a sheet request, so the form is open underneath it.
+  func testASheetLinkOpensThePickerOverItsOwner() {
+    open("flow/biometricKyc/id-details/country")
+    XCTAssertTrue(element("sample_country_sheet").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("sample_kyc_form_screen").exists, "the owner did not open beneath the sheet")
   }
 
   /// The two-level case: `profiles/{id}` seats `profileConfig` under `profiles`. Only the first
