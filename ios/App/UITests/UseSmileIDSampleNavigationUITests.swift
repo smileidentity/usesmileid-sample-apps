@@ -90,20 +90,55 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_kyc_form_screen").exists, "the owner did not open beneath the sheet")
   }
 
-  /// The two-level case: `profiles/{id}` seats `profileConfig` under `profiles`. Only the first
-  /// level arrives — a defect that predates the nav container change and reproduces on `main`, so
-  /// it is recorded rather than fixed here. Remove the expectation with the fix; see §7 of the plan.
+  /// The two-level case: `profiles/{id}` seats `profileConfig` under `profiles`, and the router lands
+  /// them one per appearance. Back proves the first level is really beneath the second.
   func testALinkOpensATwoLevelRouteInAnotherTab() {
     open("profiles/p-2")
-    XCTAssertTrue(element("sample_profiles_screen").waitForExistence(timeout: 10), "the first level did not arrive")
-    // Scoped to this assertion alone: unscoped, it would also absorb a delivery failure raised by
-    // `open`, and a total regression would report as the limitation already known about.
-    XCTExpectFailure("nested links do not chain on the iOS 15 NavigationView idiom") {
-      XCTAssertTrue(
-        element("sample_profile_config_screen").waitForExistence(timeout: 10),
-        "the pushed level did not arrive"
-      )
-    }
+    XCTAssertTrue(
+      element("sample_profile_config_screen").waitForExistence(timeout: 10),
+      "the pushed level did not arrive"
+    )
+    app.buttons["Back"].tap()
+    XCTAssertTrue(element("sample_profiles_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("sample_profile_config_screen").waitForNonExistence(timeout: 5))
+  }
+
+  /// From inside its own tab the first push would animate, which is the collision the router avoids.
+  func testATwoLevelLinkLandsBothLevelsFromWithinItsTab() {
+    element("sample_nav_settings").tap()
+    XCTAssertTrue(element("sample_sign_out").waitForExistence(timeout: 10))
+    open("profiles/p-2")
+    XCTAssertTrue(
+      element("sample_profile_config_screen").waitForExistence(timeout: 10),
+      "the pushed level did not arrive"
+    )
+  }
+
+  /// A tab remounts when it comes back, so a stack left two deep has to land both levels again.
+  func testSwitchingBackToATabLandsItsWholeStackAgain() {
+    open("profiles/p-2")
+    XCTAssertTrue(element("sample_profile_config_screen").waitForExistence(timeout: 10))
+    open("products")
+    XCTAssertTrue(element("sample_nav_settings").waitForExistence(timeout: 10))
+    element("sample_nav_settings").tap()
+    XCTAssertTrue(
+      element("sample_profile_config_screen").waitForExistence(timeout: 10),
+      "the second level did not come back with the tab"
+    )
+  }
+
+  /// With the list already open only the config has to land, and with another screen open the
+  /// link starts again from the root.
+  func testATwoLevelLinkLandsOverWhateverTheTabIsShowing() {
+    open("profiles")
+    XCTAssertTrue(element("sample_profiles_screen").waitForExistence(timeout: 10))
+    open("profiles/p-2")
+    XCTAssertTrue(element("sample_profile_config_screen").waitForExistence(timeout: 10))
+    open("settings/licenses")
+    XCTAssertTrue(element("sample_profile_config_screen").waitForNonExistence(timeout: 5))
+    open("profiles/p-3")
+    XCTAssertTrue(element("sample_profile_config_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(app.staticTexts["PesaLink"].waitForExistence(timeout: 5))
   }
 
   /// R12 for the profiles list: its sheet layers over it, and the created profile is listed but not

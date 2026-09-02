@@ -28,11 +28,18 @@ private struct UseSmileIDSampleStackLevel: View {
 
   var body: some View {
     UseSmileIDSampleDestination(route: route)
+      // Lands the level below once this one has finished arriving; see the router.
+      .background(
+        UseSmileIDSampleTransitionEnd { router.levelDidAppear(tab, depth: depth) }
+          .frame(width: 0, height: 0)
+      )
       .background(
         NavigationLink(isActive: router.isActive(tab, depth: depth)) {
           // Erased: a view whose body contains itself has no inferable body type.
           if let next = router.route(tab, depth: depth) {
             AnyView(UseSmileIDSampleStackLevel(tab: tab, depth: depth + 1, route: next))
+              // Its own identity per route, so a link that swaps this level re-appears it.
+              .id(next)
           }
         } label: {
           EmptyView()
