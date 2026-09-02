@@ -14,6 +14,11 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// Nil is "not loaded yet", not "empty"; the store U3 lands resolves it.
   @Published var jobs: [UseSmileIDSampleJob]?
 
+  /// The forms live here, not in the screens: one tab is mounted, so a tab switch tears a screen's
+  /// own state down and part-entered input goes with it.
+  @Published var userDetails = UseSmileIDSampleUserDetails()
+  @Published var rememberDetails = false
+
   /// The active session, which the products strip renders and the nav ring counts down.
   @Published var sessionId: String?
   @Published var sessionRemaining: String?
@@ -26,6 +31,15 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// Goes through the settings mutex, so agent mode and enhanced liveness cannot both end up on.
   func change(_ setting: UseSmileIDSampleSetting, to enabled: Bool) {
     settings = settings.with(setting, enabled)
+  }
+
+  func setUserField(_ field: UseSmileIDSampleUserField, to value: String) {
+    userDetails = field.write(userDetails, value)
+  }
+
+  /// What the token still leaves the form to collect; every field until the token session lands.
+  var userDetailsRequirement: UseSmileIDSampleUserDetailsRequirement {
+    UseSmileIDSampleUserDetailsRequirement()
   }
 
   var versionLabel: String {

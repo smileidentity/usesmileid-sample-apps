@@ -47,11 +47,21 @@ public enum UseSmileIDSampleTestIds {
     "\(detailCopyPrefix)_\(field)"
   }
 
+  public static func userDetailsField(_ field: String) -> String {
+    "\(userDetailsFieldPrefix)_\(field)"
+  }
+
   public static let navToken = "sample_nav_token"
   public static let productCardPrefix = "sample_product_card"
   public static let settingNavPrefix = "sample_setting_nav"
   public static let detailFieldPrefix = "sample_detail_field"
   public static let detailCopyPrefix = "sample_detail_copy"
+  public static let userDetailsFieldPrefix = "sample_user_details_field"
+
+  public static let userDetailsScreen = "sample_user_details_screen"
+  public static let userDetailsHint = "sample_user_details_hint"
+  public static let userDetailsContinue = "sample_user_details_continue"
+  public static let rememberDetailsSwitch = "sample_remember_details_switch"
 
   public static let statusBadge = "sample_status_badge"
   public static let detailsDelete = "sample_details_delete"
@@ -73,6 +83,8 @@ public enum UseSmileIDSampleTestIds {
     toast, toastUndo,
     envChip, navToken, productCardPrefix, settingNavPrefix,
     detailFieldPrefix, detailCopyPrefix, statusBadge, detailsDelete, detailsEmpty,
+    userDetailsScreen, userDetailsFieldPrefix, userDetailsHint, userDetailsContinue,
+    rememberDetailsSwitch,
     profileAvatarButton, profileSummary,
     sessionCard, sessionCountdown, sessionEndedBanner,
     scenarioDrawerButton, signOut, versionLabel,

@@ -11,7 +11,7 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 | 1 | **DONE 2026-08-31 — the pill won.** See §1. | The only open question that could invalidate finished work. | Ruled, built, and `TabView` gone. |
 | 2 | **DONE 2026-08-31 — the stack is merged.** | Three PRs deep is the practical limit: this repo squash-merges, so each merge turns the branches above into a `rebase --onto`, not a plain rebase. | `main` carries all three. |
 | 3 | **DONE 2026-09-01 — the harness runs in CI.** See §5. | Every new route was asserted only at the resolver. | `UseSmileIDSampleUITests` runs inside `verify.sh`; a link launches the app and the screen id is asserted. |
-| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails is built (2026-09-01); next userDetails, kycIdForm, then the two picker sheets. | Settled order; do not relitigate it. | All sixteen screens exist. |
+| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails and userDetails are built (2026-09-01); next kycIdForm and the two picker sheets. | Settled order; do not relitigate it. | All sixteen screens exist. |
 | 5 | **DONE 2026-09-01 — a growth check, not the one §2 proposed.** See §2. | Would have started biting at U4, when the 38 states land. | A component that stops growing at the largest content size fails the build. |
 
 **The stack that carried U0–U2 and the first two screens** — #40, #42, #43 — is merged. Each squash
@@ -157,6 +157,10 @@ the iOS 15 floor rules out `NavigationStack`. Nothing depends on it yet: `profil
 it alongside the profiles screens, when there is something to land on.
 `testALinkOpensATwoLevelRouteInAnotherTab` holds the repro as an expected failure, so it fails
 loudly the moment the defect goes.
+
+**It is only the deep link.** Pushing the levels one at a time chains fine — products → the consent
+form → the ID form is asserted end to end by `testTheConsentFormGatesContinueThenPushesTheIdForm`,
+so the flow's forward wiring is not blocked by this; only a link naming both levels at once is.
 
 ## Considered and rejected
 

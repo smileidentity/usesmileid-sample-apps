@@ -33,6 +33,23 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_verification_details_screen").waitForNonExistence(timeout: 5))
   }
 
+  /// One level at a time chains where §7's deep link does not, so the push is asserted here too.
+  func testTheConsentFormGatesContinueThenPushesTheIdForm() {
+    open("flow/biometricKyc/details")
+    XCTAssertTrue(element("sample_user_details_screen").waitForExistence(timeout: 10))
+    let continueButton = app.buttons["sample_user_details_continue"]
+    XCTAssertTrue(continueButton.waitForExistence(timeout: 10))
+    XCTAssertFalse(continueButton.isEnabled)
+    type("sample_user_details_field_firstName", "Kwame")
+    type("sample_user_details_field_lastName", "Asante")
+    XCTAssertFalse(continueButton.isEnabled, "a contact is still outstanding")
+    type("sample_user_details_field_email", "kwame@uptech.example")
+    XCTAssertTrue(continueButton.isEnabled)
+    continueButton.tap()
+    let next = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "idDetailsForm")).firstMatch
+    XCTAssertTrue(next.waitForExistence(timeout: 10), "the second push did not arrive")
+  }
+
   /// The two-level case: `profiles/{id}` seats `profileConfig` under `profiles`. Only the first
   /// level arrives — a defect that predates the nav container change and reproduces on `main`, so
   /// it is recorded rather than fixed here. Remove the expectation with the fix; see §7 of the plan.
@@ -68,6 +85,13 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_sign_out").waitForExistence(timeout: 10))
     XCTAssertTrue(element("sample_verifications_screen").waitForNonExistence(timeout: 5))
     XCTAssertTrue(element("sample_product_card_smartSelfieEnrollment").waitForNonExistence(timeout: 5))
+  }
+
+  private func type(_ id: String, _ text: String) {
+    let field = app.textFields[id]
+    XCTAssertTrue(field.waitForExistence(timeout: 5), id)
+    field.tap()
+    field.typeText(text)
   }
 
   private func element(_ id: String) -> XCUIElement {
