@@ -4,10 +4,9 @@
 
 **iOS: U0, U1 and U2 are complete, and U3 has eleven of its sixteen screens** (settings, products,
 verificationDetails, userDetails, kycIdForm, both picker sheets, profiles, profileConfig and both
-profile sheets). Three carry a caveat: the verifications list verificationDetails is pushed from is
-still a seat, so only the deep link reaches it and the row comes from a store nothing fills yet;
-userDetails asks for every field until the token session lands to bind any; and profileConfig's own
-deep link lands only its first level until `ios-port-hardening.md` §7 is fixed. The
+profile sheets). Two carry a caveat: the verifications list verificationDetails is pushed from is
+still a seat, so only the deep link reaches it and the row comes from a store nothing fills yet; and
+userDetails asks for every field until the token session lands to bind any. The
 type ramp, the stopgap values and the DM Sans faces are generated for SwiftUI, the design's marks are
 generated as SwiftUI shapes, `ios/verify.sh` gates tokens, icons, format, unit tests, goldens, the
 shell's route table and the release build, and every component has goldens in light and dark.

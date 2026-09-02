@@ -156,27 +156,35 @@ renders wrong rather than not at all.
 
 ---
 
-## 7. A deep link into a two-level route stops at its first level
+## 7. A deep link into a two-level route stops at its first level — FIXED 2026-09-02
 
-**Now:** `usesmileid-sample-ios://profiles/{id}` seats `profileConfig` under `profiles`. The router
-assigns the whole path and its unit tests prove it, but the app lands on `profiles` with a back
-button and the second level never arrives.
+**What it was:** `usesmileid-sample-ios://profiles/{id}` seats `profileConfig` under `profiles`. The
+router assigned the whole path and its unit tests proved it, but the app landed on `profiles` and the
+second level never arrived. It predated the nav container change and reproduced with a real screen on
+the second level, which is when it was fixed.
 
-**It predates the nav container change** — reproduced on `main`'s `TabView` shell too, so mounting
-one tab at a time did not cause it. Two nested `NavigationLink(isActive:)` levels cannot both
-activate in one update on the iOS 15 idiom, and gating the deeper level on its parent's `onAppear`
-does not help.
+**Why:** two nested `NavigationLink(isActive:)` levels cannot both activate in one update on the iOS
+15 idiom — UIKit drops a push made while another transition is in flight, and the deeper link's push
+lands exactly there. That is also why gating the deeper level on its parent's `onAppear` did nothing,
+and it was re-proven here before the fix: `onAppear` fires *inside* the first push's transition, so
+the push it triggers is the one UIKit drops, and the chain then has nothing left to retry.
 
-**Recorded rather than fixed** because the fix is a change of navigation mechanism, not a nudge, and
-the iOS 15 floor rules out `NavigationStack`. Nothing depends on it yet: `profiles` and
-`profileConfig` are both seats, and the other multi-level routes are pickers U3 has not built. Fix
-it alongside the profiles screens, when there is something to land on.
-`testALinkOpensATwoLevelRouteInAnotherTab` holds the repro as an expected failure, so it fails
-loudly the moment the defect goes.
+**The fix stays on the idiom.** The router keeps the whole path but tracks how many levels have
+*landed*; a link or a restore lands one, and each level lands the next when its transition has
+*ended*. The signal for that is UIKit's `viewDidAppear`, which SwiftUI does not expose, so a zero-size
+`UIViewControllerRepresentable` (`UseSmileIDSampleTransitionEnd`) sits behind every level and reports
+it. Pushes a link makes run in a transaction with animations disabled; a tap still pushes one level,
+animated. Three details a port should copy: a link lands from the deepest level it shares with what
+is already showing, not from the root; a level carries its route as its identity, so a link that
+swaps what a level shows re-appears it and the chain continues; and a tab coming on screen lands its
+stack from the root again, because one tab is mounted at a time and a remount that activates two
+links in one update is the same defect by another door. `testALinkOpensATwoLevelRouteInAnotherTab`
+now asserts both levels and that Back lands on the first; three siblings cover the same link from
+inside its own tab, over a level that is already showing or showing something else, and a two-deep
+stack coming back with its tab.
 
-**It is only the deep link.** Pushing the levels one at a time chains fine — products → the consent
-form → the ID form is asserted end to end by `testTheConsentFormGatesContinueThenPushesTheIdForm`,
-so the flow's forward wiring is not blocked by this; only a link naming both levels at once is.
+**It was only the deep link.** Pushing the levels one at a time chained fine before — products → the
+consent form → the ID form is asserted end to end by `testTheConsentFormGatesContinueThenPushesTheIdForm`.
 
 ## Considered and rejected
 

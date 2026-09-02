@@ -47,7 +47,9 @@ measurement: `SampleUI` above it cannot be consumed by the SDK repo's iOS 15.0 S
 the compile-against-HEAD gate the two-consumer split exists to provide. So the state row reads
 `ObservableObject` + `@Published` and not `@Observable`, and navigation is `NavigationView` with
 `.navigationViewStyle(.stack)` rather than `NavigationStack`. These are the SDK's own documented
-iOS-15 exceptions, not a downgrade to fix later.
+iOS-15 exceptions, not a downgrade to fix later. One consequence a port meets on its first two-level
+link: that idiom drops a push made while another is in flight, so the iOS router lands a linked path
+one level per finished transition, unanimated (`ios-port-hardening.md` §7).
 
 **The two sheet rows are the one place a literal mirror of the tree gives the wrong answer.**
 Android shipped every sheet as a `@Destination`, so the navigation host replaced the screen
