@@ -89,6 +89,18 @@ public struct UseSmileIDSampleUserDetailsRequirement: Equatable, Sendable {
   }
 }
 
+public extension UseSmileIDSampleUserDetailsRequirement {
+  /// The requirement a token leaves behind. Mirrors the SDK's union rule field for field, and the
+  /// decoder tests pin it: both names plus one contact field, and nothing else relaxes.
+  init(bindings: UseSmileIDSampleTokenBindings?) {
+    self.init(
+      firstName: bindings?.givenNames != true,
+      lastName: bindings?.lastName != true,
+      contact: !(bindings?.email == true || bindings?.phoneNumber == true)
+    )
+  }
+}
+
 /// Which user-details row changed, so the form reports one callback rather than four.
 public enum UseSmileIDSampleUserField: String, CaseIterable, Sendable {
   case firstName

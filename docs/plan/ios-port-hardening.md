@@ -186,6 +186,32 @@ stack coming back with its tab.
 **It was only the deep link.** Pushing the levels one at a time chained fine before — products → the
 consent form → the ID form is asserted end to end by `testTheConsentFormGatesContinueThenPushesTheIdForm`.
 
+## 8. Where the token lives — ruled 2026-09-02: the Keychain, ad-hoc signed
+
+`token-session-android.md` §9 named the Keychain as the obvious iOS home and called the asymmetry with
+Android's unencrypted DataStore fine. Ruled so, with one cost the ruling had to pay first:
+
+- **An unsigned process has no keychain.** Every target here built with `CODE_SIGNING_ALLOWED: NO`, and
+  under that `SecItemAdd` answers `-34018` (missing entitlement) on the simulator — measured, hosted by
+  the app, before deciding. The targets now sign ad hoc (`CODE_SIGN_IDENTITY: "-"`), which needs no
+  certificate or team and makes the same call answer `0`. The two test bundles generate an Info.plist
+  because signing demands one. Nothing else in the lane changed.
+- **The record is one Keychain item**, `UseSmileIDSampleStore` in `Data/`, holding the Android store's
+  three keys: the raw token, the ended handle and the ended deadline. One item, one write, so the live
+  half and the ended marker can never come from different writes — the invariant the retirement tests
+  pin against the same synthetic token Android retires. The token is the whole record; the handle,
+  deadline and bindings decode from it on every read, and a stored token that no longer decodes reads
+  as no session.
+- **What the Keychain buys and costs.** Encrypted at rest and never backed up
+  (`WhenUnlockedThisDeviceOnly`); it survives the process deaths the camera causes, which is the property
+  Android chose DataStore for. The one asymmetry: it also survives an uninstall, which the deadline
+  bounds and sign-out clears.
+- **Where each half is proven.** The record's semantics run in the SPM test target against an
+  in-memory storage. The Keychain adapter itself is proven in the app-hosted `UseSmileIDSampleTests`,
+  because an unhosted test bundle has no application identity and the adapter cannot be exercised there.
+- **Settings are still not persisted on iOS.** The store's name and folder mirror Android's so that
+  work lands in the same file when it comes; it is not part of this slice.
+
 ## Considered and rejected
 
 - **Giving the SPM test target a host app so `UISwitch` renders its thumb.** The thumb is missing
