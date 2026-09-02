@@ -75,8 +75,10 @@ public final class UseSmileIDSampleStore {
     write(StoredRecord(endedId: session.id, endedAt: Int64(session.expiresAt.timeIntervalSince1970 * 1000)))
   }
 
+  /// Nil is delete, so a record that fails to encode leaves the stored one untouched rather than wiping it.
   private func write(_ record: StoredRecord) {
-    storage.write(try? JSONEncoder().encode(record))
+    guard let data = try? JSONEncoder().encode(record) else { return }
+    storage.write(data)
   }
 
   /// The Android store's three keys, so a record reads the same in both.
