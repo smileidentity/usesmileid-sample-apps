@@ -49,6 +49,7 @@ struct UseSmileIDSampleQrScanner: UIViewRepresentable {
     private var device: AVCaptureDevice?
     private var lastReported: String?
     private var enabled = true
+    private var stopped = false
 
     init(onCode: @escaping (String) -> Void) {
       self.onCode = onCode
@@ -57,12 +58,14 @@ struct UseSmileIDSampleQrScanner: UIViewRepresentable {
     func start(previewing view: UseSmileIDSamplePreviewView) {
       AVCaptureDevice.requestAccess(for: .video) { granted in
         guard granted else { return }
-        // Configuring and starting block, so neither runs on the main thread.
+        // Configuring and starting block, so neither runs on the main thread. A view dismantled
+        // while the prompt was up has already stopped, and a session started after that would be held by nobody.
         self.queue.async {
+          guard !self.stopped else { return }
           self.configure()
           self.session.startRunning()
+          DispatchQueue.main.async { view.previewLayer.session = self.session }
         }
-        DispatchQueue.main.async { view.previewLayer.session = self.session }
       }
     }
 
@@ -119,6 +122,7 @@ struct UseSmileIDSampleQrScanner: UIViewRepresentable {
     /// Stopping the session is what hands the camera back; it also puts the torch out.
     func stop() {
       queue.async {
+        self.stopped = true
         if self.session.isRunning {
           self.session.stopRunning()
         }
