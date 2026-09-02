@@ -53,6 +53,27 @@ final class UseSmileIDSamplePrimitivesGoldenTest: UseSmileIDSampleGoldenTest {
   func testToastSurvivesMaxDynamicType() {
     assertSurvivesMaxDynamicType { Toasts() }
   }
+
+  func testEmptyStates() {
+    goldens("empty_states") { EmptyStates() }
+  }
+
+  func testEmptyStatesSurviveMaxDynamicType() {
+    assertSurvivesMaxDynamicType { EmptyStates() }
+  }
+}
+
+/// Both variants `spec/components.json` names.
+private struct EmptyStates: View {
+  var body: some View {
+    VStack(spacing: SmileSpacing.spacingLg) {
+      UseSmileIDSampleEmptyState(text: "Nothing matches that search")
+      UseSmileIDSampleEmptyState(
+        text: "No verification here",
+        supportingText: "Nothing stored for jobId = job_missing"
+      )
+    }
+  }
 }
 
 private struct ButtonStates: View {

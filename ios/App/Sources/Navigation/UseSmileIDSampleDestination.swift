@@ -26,6 +26,15 @@ struct UseSmileIDSampleDestination: View {
       )
     case .verifications:
       VerificationsScreen()
+    case .verificationDetails(let jobId):
+      VerificationDetailsScreen(
+        state: .init(jobId: jobId, job: app.jobs?.first { $0.id == jobId }),
+        onBack: { router.pop() },
+        // The row's removal lands with the store that holds it.
+        onDelete: { router.pop() },
+        onCopy: { label, value in copy(label, value) }
+      )
+      .navigationBarHidden(true)
     case .settings:
       browser(SettingsScreen(
         state: .init(
@@ -44,6 +53,11 @@ struct UseSmileIDSampleDestination: View {
     default:
       UseSmileIDSampleSeat(name: String(describing: route))
     }
+  }
+
+  /// `UIPasteboard` has no clip label, so only the value crosses.
+  private func copy(_: String, _ value: String) {
+    UIPasteboard.general.string = value
   }
 
   /// A layer over the screen that opened it, never a destination.

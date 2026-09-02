@@ -30,6 +30,13 @@ final class UseSmileIDSampleRouter: ObservableObject {
     selectedTab = route.tab
   }
 
+  /// Drops the deepest route on the showing tab: what a pushed screen's own back control calls.
+  func pop() {
+    guard var next = paths[selectedTab], !next.isEmpty else { return }
+    next.removeLast()
+    paths[selectedTab] = next
+  }
+
   func openTabRoot(_ tab: UseSmileIDSampleTab) {
     paths[tab] = []
     selectedTab = tab

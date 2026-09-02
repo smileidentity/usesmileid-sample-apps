@@ -11,7 +11,7 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 | 1 | **DONE 2026-08-31 — the pill won.** See §1. | The only open question that could invalidate finished work. | Ruled, built, and `TabView` gone. |
 | 2 | **DONE 2026-08-31 — the stack is merged.** | Three PRs deep is the practical limit: this repo squash-merges, so each merge turns the branches above into a `rebase --onto`, not a plain rebase. | `main` carries all three. |
 | 3 | **DONE 2026-09-01 — the harness runs in CI.** See §5. | Every new route was asserted only at the resolver. | `UseSmileIDSampleUITests` runs inside `verify.sh`; a link launches the app and the screen id is asserted. |
-| 4 | **Continue U3** in `ui-work-plan.md`'s order — verifications, then verificationDetails, then the forms and pickers. | Settled order; do not relitigate it. | All sixteen screens exist. |
+| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails is built (2026-09-01); next userDetails, kycIdForm, then the two picker sheets. | Settled order; do not relitigate it. | All sixteen screens exist. |
 | 5 | **DONE 2026-09-01 — a growth check, not the one §2 proposed.** See §2. | Would have started biting at U4, when the 38 states land. | A component that stops growing at the largest content size fails the build. |
 
 **The stack that carried U0–U2 and the first two screens** — #40, #42, #43 — is merged. Each squash
@@ -67,6 +67,14 @@ not spend the same afternoon:
 - *The bottom row of the render is background.* The golden host pads the component and paints the
   background behind it, so that row is background whatever the component did.
 
+**Reading a baseline caught what neither assertion could.** On the details screen the app bar title
+ellipsised at AX5 while the component's own baseline wrapped it in full: above a scroll view in a
+fixed-height screen the wrapping title is the flexible child, so the stack compresses it.
+`UseSmileIDSampleTopAppBar` now takes its ideal height, which changed no existing baseline. Two
+things a port should take from it: the width check passes and growth is declared `false` on a
+screen, so neither fires; and a screen's AX baseline is only readable if its pinned viewport is tall
+enough to show the rows.
+
 **What it catches and what it does not.** It catches a component that *stops* growing — the
 regression case, where a fixed frame or a line limit arrives and text begins clipping silently. It
 does not catch one that was always capped; that one is declared instead, which makes the cap visible
@@ -79,12 +87,17 @@ scrolls, so the harness pins its frame and the content grows inside it.
 unused set matches a listed inventory exactly — so an id that stops being applied fails, and a stale
 entry fails too.
 
-Kept here because the inventory is a live to-do list: **six ids are not yet on a view.**
-`productCardPrefix` and `settingNavPrefix` are expected — they exist so the spec check has an anchor,
-and the real ids are built from them. The other four — `jobRow`, `jobRowStatus`, `filterCount`,
-`selectionCheckbox` — wait on the verifications screen. Delete them from the list as it lands.
+Kept here because the inventory is a live to-do list: **eight ids are not yet on a view.**
+`productCardPrefix`, `settingNavPrefix`, `detailFieldPrefix` and `detailCopyPrefix` are expected —
+they exist so the spec check has an anchor, and the real ids are built from them. The other four —
+`jobRow`, `jobRowStatus`, `filterCount`, `selectionCheckbox` — wait on the verifications screen,
+which is still a seat. Delete them from the list as it lands.
 
 Writing the test corrected the estimate: six unapplied, not the twelve assumed.
+
+**`sample_details_refresh` is deliberately not declared yet** — pull-to-refresh needs the job store
+and the status source, and an id waiting on a mechanism is not the same kind of debt as one waiting
+on a caller.
 
 ---
 

@@ -2,6 +2,7 @@
 public enum UseSmileIDSampleTestIds {
   public static let productsScreen = "sample_products_screen"
   public static let verificationsScreen = "sample_verifications_screen"
+  public static let verificationDetailsScreen = "sample_verification_details_screen"
   public static let settingsScreen = "sample_settings_screen"
 
   public static let navProducts = "sample_nav_products"
@@ -38,9 +39,23 @@ public enum UseSmileIDSampleTestIds {
     "\(settingNavPrefix)_\(row)"
   }
 
+  public static func detailField(_ field: String) -> String {
+    "\(detailFieldPrefix)_\(field)"
+  }
+
+  public static func detailCopy(_ field: String) -> String {
+    "\(detailCopyPrefix)_\(field)"
+  }
+
   public static let navToken = "sample_nav_token"
   public static let productCardPrefix = "sample_product_card"
   public static let settingNavPrefix = "sample_setting_nav"
+  public static let detailFieldPrefix = "sample_detail_field"
+  public static let detailCopyPrefix = "sample_detail_copy"
+
+  public static let statusBadge = "sample_status_badge"
+  public static let detailsDelete = "sample_details_delete"
+  public static let detailsEmpty = "sample_details_empty"
 
   public static let jobRow = "sample_job_row"
   public static let jobRowStatus = "sample_job_row_status"
@@ -53,10 +68,11 @@ public enum UseSmileIDSampleTestIds {
 
   /// Every id above, so the spec test cannot pass by omission.
   static let all = [
-    productsScreen, verificationsScreen, settingsScreen,
+    productsScreen, verificationsScreen, verificationDetailsScreen, settingsScreen,
     navProducts, navVerifications, navSettings,
     toast, toastUndo,
     envChip, navToken, productCardPrefix, settingNavPrefix,
+    detailFieldPrefix, detailCopyPrefix, statusBadge, detailsDelete, detailsEmpty,
     profileAvatarButton, profileSummary,
     sessionCard, sessionCountdown, sessionEndedBanner,
     scenarioDrawerButton, signOut, versionLabel,

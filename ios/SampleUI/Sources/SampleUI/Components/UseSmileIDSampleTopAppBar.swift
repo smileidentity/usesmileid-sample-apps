@@ -100,6 +100,8 @@ public struct UseSmileIDSampleTopAppBar<Action: View>: View {
     .padding(.horizontal, SmileSpacing.spacingMd)
     .padding(.bottom, SmileSpacing.spacingXs)
     .frame(minHeight: rowHeight)
+    // Its ideal height, not what is left over: compressed, the wrapping title ellipsises.
+    .fixedSize(horizontal: false, vertical: true)
     .useSmileIDSampleTestId(testId)
   }
 }

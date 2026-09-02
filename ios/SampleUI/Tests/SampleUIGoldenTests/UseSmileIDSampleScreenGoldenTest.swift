@@ -40,6 +40,77 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     assertSurvivesMaxDynamicType(growsWithContentSize: false) { settings(UseSmileIDSampleSettings()) }
   }
 
+  func testVerificationDetailsClear() {
+    goldens("verification_details_clear") { details(Self.fixture(.clear, index: 0)) }
+  }
+
+  func testVerificationDetailsAttention() {
+    goldens("verification_details_attention") { details(Self.fixture(.attention, index: 3)) }
+  }
+
+  func testVerificationDetailsBlocked() {
+    goldens("verification_details_blocked") { details(Self.fixture(.blocked, index: 4)) }
+  }
+
+  func testVerificationDetailsProcessing() {
+    goldens("verification_details_processing") { details(Self.fixture(.processing, index: 1)) }
+  }
+
+  func testVerificationDetailsUnknownJob() {
+    goldens("verification_details_unknown") {
+      VerificationDetailsScreen(
+        state: .init(jobId: "job_missing"),
+        onBack: {},
+        onDelete: {},
+        onCopy: { _, _ in }
+      )
+      .frame(height: 560)
+    }
+  }
+
+  /// A taller viewport: at the largest content size the rows sit below 560pt, unread.
+  func testVerificationDetailsSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) {
+      details(Self.fixture(.processing, index: 1), height: 1800)
+    }
+  }
+
+  private func details(_ job: UseSmileIDSampleJob, height: CGFloat = 560) -> some View {
+    VerificationDetailsScreen(
+      state: .init(jobId: job.id, job: job),
+      onBack: {},
+      onDelete: {},
+      onCopy: { _, _ in }
+    )
+    .frame(height: height)
+  }
+
+  /// The store's own rows, until the store lands.
+  private static func fixture(_ status: UseSmileIDSampleStatus, index: Int) -> UseSmileIDSampleJob {
+    let products = UseSmileIDSampleProduct.allCases
+    return UseSmileIDSampleJob(
+      id: String(format: "job_%02dky31za%02d", index, index * 7 % 100),
+      userId: String(format: "user_%02dky31za%02d", index, index * 3 % 100),
+      product: products[index % products.count],
+      status: status,
+      createdAt: Self.fixedNow.addingTimeInterval(TimeInterval(-index * 5 * 60 * 60)),
+      message: Self.message(status),
+      httpStatus: status == .processing ? 202 : 200
+    )
+  }
+
+  private static func message(_ status: UseSmileIDSampleStatus) -> String {
+    switch status {
+    case .clear: "Approved"
+    case .attention: "Provisional \u{2014} needs review"
+    case .blocked: "Rejected"
+    case .processing: "Submitted, awaiting result"
+    }
+  }
+
+  /// 2026-07-16T11:50:12Z, the instant the design's rows are dated from.
+  private static let fixedNow = Date(timeIntervalSince1970: 1784202612)
+
   private func products(_ state: UseSmileIDSampleProductsState) -> some View {
     ProductsScreen(state: state, onProduct: { _ in }, onProfile: {}, onScan: {})
       .frame(height: 900)

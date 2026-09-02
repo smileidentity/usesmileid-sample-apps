@@ -11,6 +11,9 @@ final class UseSmileIDSampleAppState: ObservableObject {
   @Published var organisation = "Kobo Bank"
   @Published var initials = "KB"
 
+  /// Nil is "not loaded yet", not "empty"; the store U3 lands resolves it.
+  @Published var jobs: [UseSmileIDSampleJob]?
+
   /// The active session, which the products strip renders and the nav ring counts down.
   @Published var sessionId: String?
   @Published var sessionRemaining: String?
