@@ -67,6 +67,10 @@ public enum UseSmileIDSampleTestIds {
     "\(profileConfigFieldPrefix)_\(field)"
   }
 
+  public static func tokenEnvironment(_ environment: String) -> String {
+    "\(tokenEnvironmentPrefix)_\(environment)"
+  }
+
   public static let navToken = "sample_nav_token"
   public static let productCardPrefix = "sample_product_card"
   public static let settingNavPrefix = "sample_setting_nav"
@@ -109,6 +113,12 @@ public enum UseSmileIDSampleTestIds {
   public static let newProfilePhone = "sample_new_profile_phone"
   public static let newProfileSave = "sample_new_profile_save"
 
+  public static let scanTokenScreen = "sample_scan_token_screen"
+  public static let tokenManualEntry = "sample_token_manual_entry"
+  public static let tokenPaste = "sample_token_paste"
+  public static let tokenSimulate = "sample_token_simulate"
+  public static let tokenEnvironmentPrefix = "sample_token_environment"
+
   public static let statusBadge = "sample_status_badge"
   public static let detailsDelete = "sample_details_delete"
   public static let detailsEmpty = "sample_details_empty"
@@ -140,6 +150,7 @@ public enum UseSmileIDSampleTestIds {
     profileSwitchSheet, newProfileSheet, newProfileName, newProfileFirstName, newProfileLastName,
     newProfileEmail, newProfilePhone, newProfileSave,
     sessionCard, sessionCountdown, sessionEndedBanner,
+    scanTokenScreen, tokenManualEntry, tokenPaste, tokenSimulate, tokenEnvironmentPrefix,
     scenarioDrawerButton, signOut, versionLabel,
     settingEnhancedSmartSelfie, settingAgentMode, settingDarkMode,
     settingConsentStep, settingInstructionsStep, settingPreviewStep,
