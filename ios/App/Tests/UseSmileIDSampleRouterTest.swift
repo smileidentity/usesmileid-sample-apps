@@ -88,6 +88,16 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
     XCTAssertTrue(router.isActive(.settings, depth: 1).wrappedValue)
   }
 
+  /// A push while a linked path is still landing must not land two levels in one update either.
+  func testATapPushNeverLandsMoreThanOneLevelAtATime() {
+    let router = open("usesmileid-sample-ios://profiles/profile-7")
+    router.push(.licenses)
+    XCTAssertTrue(router.isActive(.settings, depth: 1).wrappedValue)
+    XCTAssertFalse(router.isActive(.settings, depth: 2).wrappedValue, "the config level had not landed yet")
+    router.levelDidAppear(.settings, depth: 2)
+    XCTAssertTrue(router.isActive(.settings, depth: 2).wrappedValue)
+  }
+
   /// A link into a level already showing lands from there, not from the root.
   func testADeepLinkReusesTheLevelsAlreadyShowing() {
     let router = open("usesmileid-sample-ios://profiles")

@@ -30,10 +30,11 @@ final class UseSmileIDSampleRouter: ObservableObject {
     paths[tab] ?? []
   }
 
-  /// A tap pushes one level, so it lands at once and animates as the platform does.
+  /// A tap pushes one level, so it lands at once and animates as the platform does. Bounded to one
+  /// step: landing more while a linked path is still arriving is the drop this router exists to avoid.
   func push(_ route: Route) {
     paths[route.tab, default: []].append(route)
-    landed[route.tab] = path(route.tab).count
+    landed[route.tab] = min(landedCount(route.tab) + 1, path(route.tab).count)
     selectedTab = route.tab
   }
 
