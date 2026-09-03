@@ -17,6 +17,13 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("products_session_ended") { products(.init(initials: "KB", sessionEnded: true)) }
   }
 
+  /// The compact result line, which only a run in flight puts above the grid.
+  func testProductsInFlight() {
+    goldens("products_in_flight") {
+      products(.init(initials: "KB", result: UseSmileIDSampleResultFixtures.running))
+    }
+  }
+
   /// Fixed by the harness, not by the design: a screen scrolls, so its frame is pinned here and its
   /// content grows inside it rather than making the frame taller.
   func testProductsSurvivesMaxDynamicType() {
@@ -59,7 +66,8 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   func testVerificationDetailsUnknownJob() {
     goldens("verification_details_unknown") {
       VerificationDetailsScreen(
-        state: .init(jobId: "job_missing"),
+        state: .init(jobId: "job_missing", result: UseSmileIDSampleResultFixtures.failed),
+        resultExpanded: .constant(true),
         onBack: {},
         onDelete: {},
         onCopy: { _, _ in }
@@ -68,10 +76,10 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     }
   }
 
-  /// A taller viewport: at the largest content size the rows sit below 560pt, unread.
+  /// A taller viewport: at the largest content size the rows fill 1800pt and the card sits below them.
   func testVerificationDetailsSurvivesMaxDynamicType() {
     assertSurvivesMaxDynamicType(growsWithContentSize: false) {
-      details(Self.fixture(.processing, index: 1), height: 1800)
+      details(Self.fixture(.processing, index: 1), height: 3400)
     }
   }
 
@@ -195,9 +203,11 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     idNumber: "AO12345678"
   )
 
-  private func details(_ job: UseSmileIDSampleJob, height: CGFloat = 560) -> some View {
+  /// The card sits under the details, so the four states need the room the design frame did not.
+  private func details(_ job: UseSmileIDSampleJob, height: CGFloat = 900) -> some View {
     VerificationDetailsScreen(
-      state: .init(jobId: job.id, job: job),
+      state: .init(jobId: job.id, job: job, result: UseSmileIDSampleResultFixtures.succeeded),
+      resultExpanded: .constant(true),
       onBack: {},
       onDelete: {},
       onCopy: { _, _ in }
@@ -341,6 +351,24 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   }
 
   private static let seededProfiles = UseSmileIDSampleProfiles()
+
+  func testScenarioDrawer() {
+    goldens("scenario_drawer") { scenarioDrawer() }
+  }
+
+  func testScenarioDrawerSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) { scenarioDrawer(height: 1400) }
+  }
+
+  private func scenarioDrawer(height: CGFloat = 700) -> some View {
+    ScenarioDrawerSheet(
+      activeScenario: .expiredToken,
+      activeTheme: .brandDefault,
+      onScenarioSelect: { _ in },
+      onThemeSelect: { _ in }
+    )
+    .frame(height: height)
+  }
 
   func testScanToken() {
     goldens("scan_token") { scanToken() }

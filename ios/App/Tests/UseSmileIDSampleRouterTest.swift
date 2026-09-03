@@ -57,6 +57,15 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
     }
   }
 
+  /// A drawer left over the details screen would be a layer over the wrong owner.
+  func testOpeningARouteDismissesAPresentedSheet() {
+    let router = open("usesmileid-sample-ios://debug/scenarios")
+    XCTAssertEqual(router.sheet, .scenarioDrawer)
+    router.open(.verificationDetails(jobId: "job-1"))
+    XCTAssertNil(router.sheet)
+    XCTAssertEqual(router.path(.verifications), [.verificationDetails(jobId: "job-1")])
+  }
+
   func testASheetLinkOpensItsOwnerAndThenTheSheet() {
     let router = open("usesmileid-sample-ios://profiles/switch")
     XCTAssertEqual(router.sheet, .profileSwitch)

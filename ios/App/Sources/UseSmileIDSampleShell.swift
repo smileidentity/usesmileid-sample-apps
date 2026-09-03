@@ -9,6 +9,9 @@ struct UseSmileIDSampleShell: View {
   /// One value, so the tab and its stacks cannot restore out of step.
   @SceneStorage("navigation") private var storedNavigation: String = ""
 
+  /// The run's outcome and counts, so a scene the system killed comes back mid-run rather than at zero.
+  @SceneStorage("flowResult") private var storedFlowResult: String = ""
+
   var body: some View {
     // One tab mounted at a time: a hidden stack still answers id queries, and neither
     // `accessibilityHidden` nor a children-ignore suppresses its UIKit-backed controls.
@@ -40,9 +43,13 @@ struct UseSmileIDSampleShell: View {
           app.clearSheetState()
         }
       }
-      .onAppear { router.restore(from: storedNavigation) }
+      .onAppear {
+        router.restore(from: storedNavigation)
+        app.restoreFlowResult(from: storedFlowResult)
+      }
       .onChange(of: router.selectedTab) { _ in storedNavigation = router.encodedState() }
       .onChange(of: router.paths) { _ in storedNavigation = router.encodedState() }
+      .onChange(of: app.flowResult) { _ in storedFlowResult = app.encodedFlowResult() }
   }
 
   @ViewBuilder
@@ -76,8 +83,14 @@ struct UseSmileIDSampleShell: View {
         onSave: { app.createProfile()
           router.sheet = nil }
       )
-    default:
-      UseSmileIDSampleSeat(name: sheet.rawValue)
+    case .scenarioDrawer:
+      // App-level, not sheet-local: the result card reports the same selection.
+      ScenarioDrawerSheet(
+        activeScenario: app.flowResult.scenario,
+        activeTheme: app.flowResult.theme,
+        onScenarioSelect: { app.flowResult.selectScenario($0) },
+        onThemeSelect: { app.flowResult.selectTheme($0) }
+      )
     }
   }
 

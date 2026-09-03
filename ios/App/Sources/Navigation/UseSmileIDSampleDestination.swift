@@ -18,7 +18,8 @@ struct UseSmileIDSampleDestination: View {
           avatarColor: app.avatarColor,
           sessionId: app.sessionId,
           sessionRemaining: app.sessionRemaining,
-          sessionEnded: app.sessionExpired
+          sessionEnded: app.sessionExpired,
+          result: app.flowResult.snapshot
         ),
         onProduct: { product in router.open(.consentDetailsForm(productId: product.id)) },
         onProfile: { router.sheet = .profileSwitch },
@@ -54,7 +55,13 @@ struct UseSmileIDSampleDestination: View {
       .navigationBarHidden(true)
     case .verificationDetails(let jobId):
       VerificationDetailsScreen(
-        state: .init(jobId: jobId, job: app.jobs?.first { $0.id == jobId }),
+        state: .init(
+          jobId: jobId,
+          job: app.jobs?.first { $0.id == jobId },
+          result: app.flowResult.snapshot,
+          showProbes: app.showProbes
+        ),
+        resultExpanded: $app.resultCardExpanded,
         onBack: { router.pop() },
         // The row's removal lands with the store that holds it.
         onDelete: { router.pop() },
@@ -94,7 +101,8 @@ struct UseSmileIDSampleDestination: View {
         onSettingChange: { setting, enabled in app.change(setting, to: enabled) },
         onProfile: { router.open(.profiles) },
         onNavRow: { row in open(row) },
-        onOpenScenarioDrawer: { router.sheet = .scenarioDrawer },
+        // Debug builds only, and no launch argument reveals it: every flow reaches the drawer by deep link.
+        onOpenScenarioDrawer: UseSmileIDSampleAppState.isDebugBuild ? { router.sheet = .scenarioDrawer } : nil,
         // There is no auth to leave; the session is the local state a partner would expect gone.
         onSignOut: { app.clearSession() }
       ))

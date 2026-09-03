@@ -71,6 +71,14 @@ public enum UseSmileIDSampleTestIds {
     "\(tokenEnvironmentPrefix)_\(environment)"
   }
 
+  public static func scenarioItem(_ scenarioId: String) -> String {
+    "\(scenarioItemPrefix)_\(scenarioId)"
+  }
+
+  public static func themeItem(_ themeId: String) -> String {
+    "\(themeItemPrefix)_\(themeId)"
+  }
+
   public static let navToken = "sample_nav_token"
   public static let productCardPrefix = "sample_product_card"
   public static let settingNavPrefix = "sample_setting_nav"
@@ -119,6 +127,25 @@ public enum UseSmileIDSampleTestIds {
   public static let tokenSimulate = "sample_token_simulate"
   public static let tokenEnvironmentPrefix = "sample_token_environment"
 
+  /// The drawer's own root; its opener is a separate id, matching every other sheet and opener.
+  public static let scenarioDrawer = "sample_scenario_drawer"
+  public static let scenarioItemPrefix = "sample_scenario_item"
+  public static let themeItemPrefix = "sample_theme_item"
+
+  /// The card and its eleven fields, one per `spec/result-card.schema.json` property.
+  public static let resultCard = "sample_result_card"
+  public static let resultActiveScenario = "sample_result_active_scenario"
+  public static let resultActiveTheme = "sample_result_active_theme"
+  public static let resultRoute = "sample_result_route"
+  public static let resultEnvironment = "sample_result_environment"
+  public static let resultJobId = "sample_result_job_id"
+  public static let resultUserId = "sample_result_user_id"
+  public static let resultJobStatus = "sample_result_job_status"
+  public static let resultResultCount = "sample_result_result_count"
+  public static let resultRefreshCount = "sample_result_refresh_count"
+  public static let resultLastError = "sample_result_last_error"
+  public static let resultSdkVersion = "sample_result_sdk_version"
+
   public static let statusBadge = "sample_status_badge"
   public static let detailsDelete = "sample_details_delete"
   public static let detailsEmpty = "sample_details_empty"
@@ -151,7 +178,10 @@ public enum UseSmileIDSampleTestIds {
     newProfileEmail, newProfilePhone, newProfileSave,
     sessionCard, sessionCountdown, sessionEndedBanner,
     scanTokenScreen, tokenManualEntry, tokenPaste, tokenSimulate, tokenEnvironmentPrefix,
-    scenarioDrawerButton, signOut, versionLabel,
+    scenarioDrawerButton, scenarioDrawer, scenarioItemPrefix, themeItemPrefix, signOut, versionLabel,
+    resultCard, resultActiveScenario, resultActiveTheme, resultRoute, resultEnvironment,
+    resultJobId, resultUserId, resultJobStatus, resultResultCount, resultRefreshCount,
+    resultLastError, resultSdkVersion,
     settingEnhancedSmartSelfie, settingAgentMode, settingDarkMode,
     settingConsentStep, settingInstructionsStep, settingPreviewStep,
     jobRow, jobRowStatus, filterChip, filterCount,

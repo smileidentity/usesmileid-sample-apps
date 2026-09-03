@@ -18,6 +18,7 @@ final class UseSmileIDSampleTestIdUsageTest: XCTestCase {
     "productCardPrefix", "settingNavPrefix", "detailFieldPrefix", "detailCopyPrefix",
     "userDetailsFieldPrefix", "countryOptionPrefix", "idTypeOptionPrefix",
     "profileRowPrefix", "profileConfigFieldPrefix", "tokenEnvironmentPrefix",
+    "scenarioItemPrefix", "themeItemPrefix",
     "jobRow", "jobRowStatus", "filterCount", "selectionCheckbox"
   ]
 
