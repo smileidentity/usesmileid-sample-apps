@@ -38,6 +38,12 @@ final class UseSmileIDSampleRouter: ObservableObject {
     selectedTab = route.tab
   }
 
+  /// A push that stays single: two quick taps on the token affordance must not stack two scanners.
+  func pushOnce(_ route: Route) {
+    guard path(route.tab).last != route else { return }
+    push(route)
+  }
+
   /// Assigns the whole path at once; a tab's own route is the root, so it clears the stack.
   func open(_ route: Route) {
     hasOpened = true

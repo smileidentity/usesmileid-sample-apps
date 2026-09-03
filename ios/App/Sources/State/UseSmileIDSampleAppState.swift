@@ -2,11 +2,16 @@ import Combine
 import SampleUI
 import SwiftUI
 
-/// What the shell holds on the app's behalf: the configuration every screen reads, and the profile
-/// that names it. An `ObservableObject`, not `@Observable`, because the floor is iOS 15.
+/// What the shell holds on the app's behalf: the configuration every screen reads, the profile that
+/// names it, the token session and the clock that ticks it. An `ObservableObject`, not `@Observable`,
+/// because the floor is iOS 15.
 ///
 /// Writes live here rather than in a screen so a setting survives the screen that changed it.
+@MainActor
 final class UseSmileIDSampleAppState: ObservableObject {
+  /// Persists the token session as one record, so the live half and the ended marker never disagree.
+  let store: UseSmileIDSampleStore
+
   @Published var settings = UseSmileIDSampleSettings()
 
   /// The profiles the app can act as; the active one names the products header and the settings summary.
@@ -31,10 +36,93 @@ final class UseSmileIDSampleAppState: ObservableObject {
   @Published var countryQuery = ""
   @Published var idTypeQuery = ""
 
-  /// The active session, which the products strip renders and the nav ring counts down.
-  @Published var sessionId: String?
-  @Published var sessionRemaining: String?
-  @Published var sessionEnded = false
+  /// Both halves from one read, per the store's contract.
+  @Published private(set) var sessionRecord: UseSmileIDSampleSessionRecord
+
+  /// The one clock the ring, the card and the countdown read. Ticks once a second while a session is
+  /// live and stops at its deadline, where the token is retired; nothing in a screen owns a timer.
+  @Published private(set) var now = Date()
+
+  /// The scan sheet's typed state, lifted here so a tab switch or a recreation keeps it (R6).
+  @Published var scanEntry = UseSmileIDSampleScanSheetState()
+
+  private var ticker: Task<Void, Never>?
+
+  init(store: UseSmileIDSampleStore = UseSmileIDSampleStore()) {
+    self.store = store
+    sessionRecord = store.session
+    tick()
+  }
+
+  var session: UseSmileIDSampleTokenSession? {
+    sessionRecord.live
+  }
+
+  /// The session that ran out, once its token has been deleted. Carries no credential.
+  var endedSession: UseSmileIDSampleEndedSession? {
+    sessionRecord.ended
+  }
+
+  var sessionActive: Bool {
+    session.map { !$0.hasExpired(at: now) } ?? false
+  }
+
+  /// True from the deadline on. Reads the marker too, since the token is deleted at expiry.
+  var sessionExpired: Bool {
+    endedSession != nil || session?.hasExpired(at: now) == true
+  }
+
+  /// 1 fresh to 0 expired for the nav ring; nil with no live session, so the ring is absent rather than empty.
+  var sessionProgress: Double? {
+    sessionActive ? session?.progress(at: now) : nil
+  }
+
+  var sessionId: String? {
+    sessionActive ? session?.id : nil
+  }
+
+  var sessionRemaining: String? {
+    sessionActive ? session.map { useSmileIDSampleCountdown($0.remaining(at: now)) } : nil
+  }
+
+  /// Takes a decoded session, never a raw token, so only what the decoder accepted is ever linked.
+  func linkSession(_ session: UseSmileIDSampleTokenSession) {
+    store.linkTokenSession(session)
+    reload()
+  }
+
+  /// Sign out: the session goes with no ended marker, which would send the next run to the scanner.
+  func clearSession() {
+    store.clearTokenSession()
+    reload()
+  }
+
+  private func reload() {
+    sessionRecord = store.session
+    now = Date()
+    tick()
+  }
+
+  /// Stops at the deadline: the session object does not change on expiry, so the loop is what ends
+  /// it. A cold start after expiry takes the same path, the loop exiting at once.
+  private func tick() {
+    ticker?.cancel()
+    guard let live = session else { return }
+    ticker = Task { [weak self] in
+      while let self, !Task.isCancelled {
+        now = Date()
+        if live.hasExpired(at: now) {
+          // Past the deadline the token is useless: delete it, keeping only that the session ended.
+          store.retireTokenSession(live)
+          sessionRecord = store.session
+          return
+        }
+        try? await Task.sleep(nanoseconds: Self.tickNanoseconds)
+      }
+    }
+  }
+
+  private static let tickNanoseconds: UInt64 = 1000000000
 
   var organisation: String {
     profiles.active.organisation
@@ -95,9 +183,10 @@ final class UseSmileIDSampleAppState: ObservableObject {
     idDetails.idType = nil
   }
 
-  /// What the token still leaves the form to collect; every field until the token session lands.
+  /// What the token still leaves the form to collect, read through the live-session rule the gate
+  /// will use, so a skipped form can never be followed by a redirect back to it.
   var userDetailsRequirement: UseSmileIDSampleUserDetailsRequirement {
-    UseSmileIDSampleUserDetailsRequirement()
+    UseSmileIDSampleUserDetailsRequirement(bindings: sessionActive ? session?.bindings : nil)
   }
 
   var versionLabel: String {

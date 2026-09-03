@@ -45,6 +45,8 @@ public struct UseSmileIDSampleSessionCard: View {
       RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.card, style: .continuous)
         .strokeBorder(colors.cardStroke, lineWidth: smileCardStrokeWidth)
     )
+    // A container that contains, or the card's id replaces the countdown's and a flow cannot read it.
+    .accessibilityElement(children: .contain)
     .useSmileIDSampleTestId(UseSmileIDSampleTestIds.sessionCard)
   }
 }
