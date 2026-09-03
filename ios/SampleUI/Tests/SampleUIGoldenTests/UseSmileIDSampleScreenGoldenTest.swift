@@ -342,6 +342,36 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
 
   private static let seededProfiles = UseSmileIDSampleProfiles()
 
+  func testScanToken() {
+    goldens("scan_token") { scanToken() }
+  }
+
+  /// The expiry gate's redirect: the caption is replaced by why the person was moved here.
+  func testScanTokenRedirected() {
+    goldens("scan_token_redirected") { scanToken(reason: .sessionEnded) }
+  }
+
+  func testScanTokenSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) { scanToken(height: 1400) }
+  }
+
+  func testScanTokenRedirectedSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) { scanToken(reason: .sessionEnded, height: 1400) }
+  }
+
+  /// No viewfinder, as in every golden and every simulator run: the screen keeps the glyph.
+  private func scanToken(reason: UseSmileIDSampleScanReason? = nil, height: CGFloat = 900) -> some View {
+    ScanTokenScreen(
+      entry: .constant(UseSmileIDSampleScanSheetState()),
+      reason: reason,
+      onBack: {},
+      onLink: { _ in },
+      onSimulate: { _, _, _ in },
+      onPaste: { nil }
+    )
+    .frame(height: height)
+  }
+
   private static let profilesWithACreatedOne: UseSmileIDSampleProfiles = {
     var profiles = UseSmileIDSampleProfiles()
     profiles.add(
