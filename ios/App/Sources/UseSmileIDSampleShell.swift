@@ -46,6 +46,8 @@ struct UseSmileIDSampleShell: View {
       .onAppear {
         router.restore(from: storedNavigation)
         app.restoreFlowResult(from: storedFlowResult)
+        // Mirrored at once, or a scene killed before the first change would come back at the defaults.
+        storedFlowResult = app.encodedFlowResult()
       }
       .onChange(of: router.selectedTab) { _ in storedNavigation = router.encodedState() }
       .onChange(of: router.paths) { _ in storedNavigation = router.encodedState() }
