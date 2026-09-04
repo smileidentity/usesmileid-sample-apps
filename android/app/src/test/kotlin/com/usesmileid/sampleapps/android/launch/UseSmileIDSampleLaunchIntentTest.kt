@@ -40,11 +40,15 @@ class UseSmileIDSampleLaunchIntentTest {
     /** Only `probes` is read off a link; letting one seed the others contradicts R9. */
     @Test
     fun `a link cannot seed any other argument`() {
-        val intent = Intent(Intent.ACTION_VIEW, "$SCHEME://flow/x/run?probes=true&seedJobs=true&route=shell".toUri())
+        val intent = Intent(
+            Intent.ACTION_VIEW,
+            "$SCHEME://flow/x/run?probes=true&seedJobs=true&seedProfiles=true&route=shell".toUri(),
+        )
 
         val args = intent.useSmileIDSampleLaunchArgs()
         assertTrue(args.probes)
         assertFalse(args.seedJobs)
+        assertFalse(args.seedProfiles)
         assertEquals(UseSmileIDSampleFlowRoute.Fullscreen, args.route)
     }
 

@@ -27,7 +27,7 @@ fun ProfileSwitchSheet(
             UseSmileIDSampleProfileRow(
                 avatarColor = avatarColorForProfile(index),
                 organisation = profile.organisation,
-                supportingText = profile.person,
+                supportingText = profile.caption,
                 initials = profile.initials,
                 selected = profile.id == activeId,
                 onClick = { onSelect(profile) },
