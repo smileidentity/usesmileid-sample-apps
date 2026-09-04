@@ -8,19 +8,23 @@ public struct UseSmileIDSampleProductsState: Equatable {
   public var sessionId: String?
   public var sessionRemaining: String?
   public var sessionEnded: Bool
+  /// Shown as the compact line only while a run is in flight.
+  public var result: UseSmileIDSampleResult?
 
   public init(
     initials: String,
     avatarColor: Color = smileProfileHues[0],
     sessionId: String? = nil,
     sessionRemaining: String? = nil,
-    sessionEnded: Bool = false
+    sessionEnded: Bool = false,
+    result: UseSmileIDSampleResult? = nil
   ) {
     self.initials = initials
     self.avatarColor = avatarColor
     self.sessionId = sessionId
     self.sessionRemaining = sessionRemaining
     self.sessionEnded = sessionEnded
+    self.result = result
   }
 }
 
@@ -49,6 +53,9 @@ public struct ProductsScreen: View {
     ScrollView {
       VStack(alignment: .leading, spacing: SmileSpacing.spacingSm) {
         header
+        if let result = state.result, result.inFlight {
+          UseSmileIDSampleResultLine(result: result)
+        }
         sessionStrip
         ForEach(UseSmileIDSampleProductSection.allCases, id: \.self) { section in
           VStack(alignment: .leading, spacing: SmileSpacing.spacingXs) {

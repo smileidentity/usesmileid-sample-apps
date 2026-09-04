@@ -46,6 +46,12 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// The scan sheet's typed state, lifted here so a tab switch or a recreation keeps it (R6).
   @Published var scanEntry = UseSmileIDSampleScanSheetState()
 
+  /// The run the card reports. The drawer owns the selection; see the type for what survives what.
+  @Published var flowResult = UseSmileIDSampleFlowResult()
+
+  /// The card's toggle, here so a tab switch cannot re-expand it.
+  @Published var resultCardExpanded = true
+
   private var ticker: Task<Void, Never>?
 
   init(store: UseSmileIDSampleStore = UseSmileIDSampleStore()) {
@@ -193,4 +199,18 @@ final class UseSmileIDSampleAppState: ObservableObject {
     let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
     return "UseSmileID Sample \(version)"
   }
+
+  /// The card and its counters are always on in debug; a release build shows them on request only.
+  var showProbes: Bool {
+    Self.isDebugBuild
+  }
+
+  /// What the Compose twin reads as `BuildConfig.DEBUG`: the Debug configuration's compilation condition.
+  static let isDebugBuild: Bool = {
+    #if DEBUG
+      true
+    #else
+      false
+    #endif
+  }()
 }

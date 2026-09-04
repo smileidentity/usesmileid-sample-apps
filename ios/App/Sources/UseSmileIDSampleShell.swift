@@ -76,8 +76,14 @@ struct UseSmileIDSampleShell: View {
         onSave: { app.createProfile()
           router.sheet = nil }
       )
-    default:
-      UseSmileIDSampleSeat(name: sheet.rawValue)
+    case .scenarioDrawer:
+      // App-level, not sheet-local: the result card reports the same selection.
+      ScenarioDrawerSheet(
+        activeScenario: app.flowResult.scenario,
+        activeTheme: app.flowResult.theme,
+        onScenarioSelect: { app.flowResult.selectScenario($0) },
+        onThemeSelect: { app.flowResult.selectTheme($0) }
+      )
     }
   }
 

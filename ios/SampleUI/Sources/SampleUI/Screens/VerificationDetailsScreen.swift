@@ -4,16 +4,29 @@ import SwiftUI
 public struct UseSmileIDSampleVerificationDetailsState: Equatable {
   public var jobId: String
   public var job: UseSmileIDSampleJob?
+  /// Rendered whether or not the job resolved: a run that failed before submission has nothing else.
+  public var result: UseSmileIDSampleResult
+  /// Computed by the host: `sample-ui` reads no build configuration and no launch argument.
+  public var showProbes: Bool
 
-  public init(jobId: String, job: UseSmileIDSampleJob? = nil) {
+  public init(
+    jobId: String,
+    job: UseSmileIDSampleJob? = nil,
+    result: UseSmileIDSampleResult = UseSmileIDSampleFlowResult().snapshot,
+    showProbes: Bool = true
+  ) {
     self.jobId = jobId
     self.job = job
+    self.result = result
+    self.showProbes = showProbes
   }
 }
 
 /// One verification, and where the flow lands after submission.
 public struct VerificationDetailsScreen: View {
   private let state: UseSmileIDSampleVerificationDetailsState
+  /// The card's toggle, lifted to the caller so a tab switch cannot re-expand it.
+  @Binding private var resultExpanded: Bool
   private let onBack: () -> Void
   private let onDelete: () -> Void
   private let onCopy: (String, String) -> Void
@@ -22,11 +35,13 @@ public struct VerificationDetailsScreen: View {
 
   public init(
     state: UseSmileIDSampleVerificationDetailsState,
+    resultExpanded: Binding<Bool>,
     onBack: @escaping () -> Void,
     onDelete: @escaping () -> Void,
     onCopy: @escaping (String, String) -> Void
   ) {
     self.state = state
+    _resultExpanded = resultExpanded
     self.onBack = onBack
     self.onDelete = onDelete
     self.onCopy = onCopy
@@ -48,6 +63,10 @@ public struct VerificationDetailsScreen: View {
               supportingText: "Nothing stored for jobId = \(state.jobId)",
               testId: UseSmileIDSampleTestIds.detailsEmpty
             )
+          }
+          if state.showProbes {
+            UseSmileIDSampleResultCard(result: state.result, expanded: $resultExpanded)
+              .padding(.horizontal, SmileSpacing.spacingMd)
           }
         }
         .padding(.vertical, SmileSpacing.spacingXs)

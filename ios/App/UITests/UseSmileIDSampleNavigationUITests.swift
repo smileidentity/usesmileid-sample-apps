@@ -317,6 +317,92 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_product_card_smartSelfieEnrollment").waitForNonExistence(timeout: 5))
   }
 
+  /// The drawer's link opens it over Settings, its owner, and a row's choice is the card's at once —
+  /// selecting closes nothing, as the Compose drawer does not.
+  func testTheScenarioDrawerLinkOpensOverSettingsAndASelectionReachesTheCard() {
+    open("debug/scenarios")
+    XCTAssertTrue(element("sample_scenario_drawer").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("sample_settings_screen").exists, "the owner did not open beneath the sheet")
+    let expired = app.buttons["sample_scenario_item_expiredToken"]
+    XCTAssertTrue(expired.waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["sample_scenario_item_normal"].isSelected, "normal is the default")
+    XCTAssertFalse(expired.isSelected)
+    expired.tap()
+    XCTAssertTrue(expired.isSelected)
+    XCTAssertFalse(app.buttons["sample_scenario_item_normal"].isSelected)
+    app.buttons["sample_theme_item_clashingHost"].tap()
+    XCTAssertTrue(element("sample_scenario_drawer").exists, "a selection must not close the drawer")
+
+    // The flows' own sequence: link to the drawer, choose, link to the card. The route link
+    // replaces the drawer's owner, so the drawer goes with it rather than covering the card.
+    open("verifications/job_missing")
+    XCTAssertTrue(element("sample_scenario_drawer").waitForNonExistence(timeout: 5), "the drawer outlived its owner")
+    XCTAssertTrue(element("sample_result_active_scenario").waitForExistence(timeout: 10))
+    XCTAssertEqual(element("sample_result_active_scenario").label, "expiredToken")
+    XCTAssertEqual(element("sample_result_active_theme").label, "clashingHost")
+  }
+
+  /// The DEBUG row belongs to a debug build, which this suite runs; the release lane proves its absence.
+  func testTheDebugSettingsRowOpensTheDrawer() {
+    element("sample_nav_settings").tap()
+    let row = element("sample_scenario_drawer_button")
+    XCTAssertTrue(row.waitForExistence(timeout: 10))
+    for _ in 0..<4 where !row.isHittable {
+      app.swipeUp()
+    }
+    row.tap()
+    XCTAssertTrue(element("sample_scenario_drawer").waitForExistence(timeout: 10))
+    // The platform's own dismissal, since the sheet has no control of its own, like the Compose
+    // drawer: a drag from inside the sheet to the bottom edge. A flick is too short for it.
+    element("sample_scenario_drawer")
+      .coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+      .press(forDuration: 0.3, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.98)))
+    XCTAssertTrue(element("sample_scenario_drawer").waitForNonExistence(timeout: 5), "the drag did not dismiss the sheet")
+    XCTAssertTrue(element("sample_settings_screen").exists, "the owner did not stay")
+  }
+
+  /// Twelve ids inside one container, each queryable, and every value read as text rather than prose.
+  func testTheResultCardPublishesEveryFieldAsText() {
+    open("verifications/job_missing")
+    XCTAssertTrue(element("sample_result_card").waitForExistence(timeout: 10))
+    let expected = [
+      "sample_result_active_scenario": "normal",
+      "sample_result_active_theme": "brandDefault",
+      "sample_result_route": "fullscreen",
+      "sample_result_environment": "sandbox",
+      "sample_result_job_id": "\u{2014}",
+      "sample_result_user_id": "\u{2014}",
+      "sample_result_job_status": "idle",
+      "sample_result_result_count": "0",
+      "sample_result_refresh_count": "0",
+      "sample_result_last_error": "\u{2014}",
+      "sample_result_sdk_version": "\u{2014}"
+    ]
+    for (id, value) in expected {
+      let field = element(id)
+      XCTAssertTrue(field.exists, "\(id) is not queryable under the card's id")
+      XCTAssertEqual(field.label, value, id)
+    }
+  }
+
+  /// The toggle lives in the app state, so it holds across a tab switch; and a collapsed field is
+  /// absent from the tree, which is why the card opens expanded.
+  func testCollapsingTheCardSurvivesATabSwitch() {
+    open("verifications/job_missing")
+    XCTAssertTrue(element("sample_result_active_scenario").waitForExistence(timeout: 10))
+    app.buttons["Collapse SDK result"].tap()
+    XCTAssertTrue(element("sample_result_active_scenario").waitForNonExistence(timeout: 5))
+    XCTAssertTrue(element("sample_result_card").exists, "the container stays while its fields go")
+
+    open("products")
+    XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
+    open("verifications/job_missing")
+    XCTAssertTrue(app.buttons["Expand SDK result"].waitForExistence(timeout: 10), "the toggle reset with the screen")
+    XCTAssertFalse(element("sample_result_active_scenario").exists)
+    app.buttons["Expand SDK result"].tap()
+    XCTAssertTrue(element("sample_result_active_scenario").waitForExistence(timeout: 5))
+  }
+
   private func type(_ id: String, _ text: String) {
     let field = app.textFields[id]
     XCTAssertTrue(field.waitForExistence(timeout: 5), id)

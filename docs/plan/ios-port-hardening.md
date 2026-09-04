@@ -11,7 +11,7 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 | 1 | **DONE 2026-08-31 — the pill won.** See §1. | The only open question that could invalidate finished work. | Ruled, built, and `TabView` gone. |
 | 2 | **DONE 2026-08-31 — the stack is merged.** | Three PRs deep is the practical limit: this repo squash-merges, so each merge turns the branches above into a `rebase --onto`, not a plain rebase. | `main` carries all three. |
 | 3 | **DONE 2026-09-01 — the harness runs in CI.** See §5. | Every new route was asserted only at the resolver. | `UseSmileIDSampleUITests` runs inside `verify.sh`; a link launches the app and the screen id is asserted. |
-| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets (2026-09-01), then profiles, profileConfig and both profile sheets (2026-09-02), then scanToken with the session model behind it (2026-09-02, §8 and §9) are built; next the result card and the automation affordances. | Settled order; do not relitigate it. | All sixteen screens exist. |
+| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets (2026-09-01), then profiles, profileConfig and both profile sheets (2026-09-02), then scanToken with the session model behind it (2026-09-02, §8 and §9), then the result card and the scenario drawer (2026-09-03, §10) are built; next the launch arguments that seed the card. Verifications and licenses stay seats until the job store exists. | Settled order; do not relitigate it. | All sixteen screens exist. |
 | 5 | **DONE 2026-09-01 — a growth check, not the one §2 proposed.** See §2. | Would have started biting at U4, when the 38 states land. | A component that stops growing at the largest content size fails the build. |
 
 **The stack that carried U0–U2 and the first two screens** — #40, #42, #43 — is merged. Each squash
@@ -251,6 +251,50 @@ it moves below the field at accessibility sizes, the switch the edit row already
 show that is not this slice's: the app bar title breaks mid-word at AX5 wherever the bar carries a
 trailing action ("Sca / n / tok / en" here, "Veri / fica / tion" on the details screen, both
 pre-existing). Fixing it means the shared bar and every screen's AX baseline, so it is a follow-up.
+
+## 10. The result card and the drawer — built 2026-09-03, with no producer yet
+
+The card, its compact line, the five-state model behind them and the drawer sheet mirror the Compose
+files name for name; the twelve `sample_result_*` ids and the drawer's three landed with them, and the
+scenario and result models are pinned to `spec/scenarios.json` and `spec/result-card.schema.json` by
+the same tests Android runs. What is decided here, and what is deliberately left with no caller:
+
+- **Where the run's result lives — ruled, then narrowed.** `UseSmileIDSampleFlowResult` is a value on
+  the app state and nowhere else, so it survives rotation and a tab switch and ends with the process.
+  It was first mirrored into `@SceneStorage` as the `rememberSaveable` analogue, and CI falsified the
+  assumption that carried: a run of the launch-argument suite restored the previous test's run over a
+  launch that named `-scenario badRefresh`, so a scene restore across an XCUITest relaunch is
+  intermittent, not absent, and a restored run overrides the one the launch asked for. What the mirror
+  bought was small here — a scene the system killed took the hosted flow with it, so the restored
+  counts could finish nothing — and what it cost was a card that could report a run nobody started.
+  The app never writes the run to scene storage, UserDefaults, the Keychain or disk: every launch is
+  a fresh run. `saved` and `init(saved:)` keep the Compose `Saver`'s shape, unit-tested and with no
+  caller, like the recorders. The card's expanded/collapsed toggle is app state too, because one tab
+  is mounted at a time.
+- **The recorders have no caller.** `startFlow`, `recordResultCallback`, `recordBlocked` and
+  `recordRefreshCallback` exist, are unit-tested, and nothing calls them: `.sdkFlow` is a seat, so no
+  run ever starts. The same treatment `redirected` got in §9 — building a flow host to give them a
+  caller would have been the wrong order. The compact line on products therefore never shows outside
+  its golden; like the Compose twin, it is not gated by `probes`, only by a run being in flight.
+- **Twelve ids inside one container.** The card carries its own id and eleven field ids, so it needs
+  `.accessibilityElement(children: .contain)` immediately before its identifier — the lesson
+  `sample_session_countdown` paid for — and `testTheResultCardPublishesEveryFieldAsText` proves every
+  one is queryable on the simulator and reads its value as text: counters as `"0"`, an absent value as
+  the em dash. It is queryable, not visible: a fixed-height screen proposed the card a share of the
+  remaining height, so it takes its ideal height, the rule the app bar and the scan sheet follow.
+- **The drawer is a debug sheet.** Settings shows its row under `#if DEBUG` only, the Compose twin's
+  `BuildConfig.DEBUG`; the deep link `usesmileid-sample-ios://debug/scenarios` is not gated, because
+  it is how every device flow reaches it, release included. A row selects without closing the sheet,
+  and the selection is the card's at once because both read the app state. The sheet has no dismiss
+  control, like the Compose drawer; the platform's swipe closes it.
+- **`sdkVersion` is nil on iOS as well.** Checked against the published 12.0.2 package rather than
+  the source: the `UseSmileID.swiftinterface` the XCFramework ships declares no public version symbol,
+  `UseSmileIDMetadataFactory.sdkVersion` is internal, and the framework's own `Info.plist` carries
+  `CFBundleShortVersionString` 1.0. So the field renders the em dash a flow asserts on, never the pin
+  in `Package.swift` — the same ask the schema records against Android stands here.
+
+**What the slice does not do.** The launch arguments still have no consumer: the card reports the
+defaults until the next PR seeds it from `scenario`, `theme` and `route` and gates it on `probes`.
 
 ## Considered and rejected
 

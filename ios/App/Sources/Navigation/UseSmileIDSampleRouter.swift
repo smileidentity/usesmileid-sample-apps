@@ -44,9 +44,11 @@ final class UseSmileIDSampleRouter: ObservableObject {
     push(route)
   }
 
-  /// Assigns the whole path at once; a tab's own route is the root, so it clears the stack.
+  /// Assigns the whole path at once; a tab's own route is the root, so it clears the stack. A sheet
+  /// goes with what it was layered over, as the Compose owner disposes its sheet on navigation.
   func open(_ route: Route) {
     hasOpened = true
+    sheet = nil
     let full = route == route.tab.route ? [] : route.parents + [route]
     // The levels already showing stay landed, so a link lands from the deepest of them, not the root.
     let showing = zip(path(route.tab).prefix(landedCount(route.tab)), full).prefix { $0 == $1 }.count

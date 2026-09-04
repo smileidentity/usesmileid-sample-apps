@@ -5,16 +5,11 @@ import XCTest
 final class UseSmileIDSampleSpecTest: XCTestCase {
   private var specIds: Set<String> = []
 
+  private var testIds: [String: Any] = [:]
+
   override func setUpWithError() throws {
-    let url = URL(fileURLWithPath: #filePath)
-      .deletingLastPathComponent() // SampleUITests
-      .deletingLastPathComponent() // Tests
-      .deletingLastPathComponent() // SampleUI
-      .deletingLastPathComponent() // ios
-      .deletingLastPathComponent() // the repo root
-      .appendingPathComponent("spec/test-ids.json")
-    let json = try JSONSerialization.jsonObject(with: Data(contentsOf: url))
-    specIds = Self.ids(in: json)
+    testIds = try UseSmileIDSampleSpecFiles.object("test-ids.json")
+    specIds = Self.ids(in: testIds)
     XCTAssertFalse(specIds.isEmpty, "extracted no ids from spec/test-ids.json")
   }
 
@@ -22,6 +17,32 @@ final class UseSmileIDSampleSpecTest: XCTestCase {
     for id in UseSmileIDSampleTestIds.all {
       XCTAssertTrue(specIds.contains(id), "\(id) is not in spec/test-ids.json")
     }
+  }
+
+  /// The card's group in the spec is the card plus one id per field; the declared set is the same set.
+  func testTheResultCardIdsAreExactlyTheSpecsResultCardGroup() throws {
+    let groups = try XCTUnwrap(testIds["ids"] as? [String: Any])
+    let group = try XCTUnwrap(groups["resultCard"] as? [[String: Any]])
+    let expected = Set(group.compactMap { $0["id"] as? String })
+    XCTAssertFalse(expected.isEmpty, "extracted no resultCard ids")
+    XCTAssertEqual(Set(UseSmileIDSampleTestIds.all.filter { $0.hasPrefix("sample_result_") }), expected)
+  }
+
+  func testFlowScenariosMatchTheSpec() throws {
+    XCTAssertEqual(try scenarioIds(kind: "flow"), UseSmileIDSampleScenario.allCases.map(\.id))
+  }
+
+  func testThemeScenariosMatchTheSpec() throws {
+    XCTAssertEqual(try scenarioIds(kind: "theme"), UseSmileIDSampleThemeScenario.allCases.map(\.id))
+  }
+
+  /// In spec order, so the drawer lists them as the other three apps do.
+  private func scenarioIds(kind: String) throws -> [String] {
+    let spec = try UseSmileIDSampleSpecFiles.object("scenarios.json")
+    let scenarios = try XCTUnwrap(spec["scenarios"] as? [[String: Any]])
+    let ids = scenarios.filter { $0["kind"] as? String == kind }.compactMap { $0["id"] as? String }
+    XCTAssertFalse(ids.isEmpty, "extracted no \(kind) scenarios")
+    return ids
   }
 
   func testTheFlowRouteIdsAreTheirCaseNames() {
