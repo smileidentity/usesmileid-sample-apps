@@ -18,6 +18,9 @@ struct UseSmileIDSampleShell: View {
       // Pinned both ways, not nil: following the system when the switch is off leaves a device in
       // dark mode rendering dark while Settings reads off.
       .preferredColorScheme(app.settings.darkMode ? .dark : .light)
+      // Reaches what reads `\.locale` in the shell's own views; the SDK's strings resolve through its
+      // bundle, which follows `-AppleLanguages`, the platform's own argument.
+      .modifier(UseSmileIDSampleLocaleOverride(locale: app.launchArguments.locale))
       // At the root, over whichever route is showing; a link opens the owner first, so it layers.
       .sheet(item: $router.sheet) { sheet in
         sheetContent(sheet)
@@ -104,6 +107,19 @@ struct UseSmileIDSampleShell: View {
       router.openTabRoot(tab)
     } else {
       router.selectedTab = tab
+    }
+  }
+}
+
+/// `appLocale`, applied only when the launch named one, so an ordinary launch keeps the device locale.
+private struct UseSmileIDSampleLocaleOverride: ViewModifier {
+  let locale: Locale?
+
+  func body(content: Content) -> some View {
+    if let locale {
+      content.environment(\.locale, locale)
+    } else {
+      content
     }
   }
 }

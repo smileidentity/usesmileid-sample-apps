@@ -11,7 +11,7 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 | 1 | **DONE 2026-08-31 — the pill won.** See §1. | The only open question that could invalidate finished work. | Ruled, built, and `TabView` gone. |
 | 2 | **DONE 2026-08-31 — the stack is merged.** | Three PRs deep is the practical limit: this repo squash-merges, so each merge turns the branches above into a `rebase --onto`, not a plain rebase. | `main` carries all three. |
 | 3 | **DONE 2026-09-01 — the harness runs in CI.** See §5. | Every new route was asserted only at the resolver. | `UseSmileIDSampleUITests` runs inside `verify.sh`; a link launches the app and the screen id is asserted. |
-| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets (2026-09-01), then profiles, profileConfig and both profile sheets (2026-09-02), then scanToken with the session model behind it (2026-09-02, §8 and §9), then the result card and the scenario drawer (2026-09-03, §10) are built; next the launch arguments that seed the card. Verifications and licenses stay seats until the job store exists. | Settled order; do not relitigate it. | All sixteen screens exist. |
+| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets (2026-09-01), then profiles, profileConfig and both profile sheets (2026-09-02), then scanToken with the session model behind it (2026-09-02, §8 and §9), then the result card, the scenario drawer and the launch arguments that seed the card (2026-09-03, §10) are built. Verifications and licenses stay seats until the job store exists, which is what the remaining three screens wait on. | Settled order; do not relitigate it. | All sixteen screens exist. |
 | 5 | **DONE 2026-09-01 — a growth check, not the one §2 proposed.** See §2. | Would have started biting at U4, when the 38 states land. | A component that stops growing at the largest content size fails the build. |
 
 **The stack that carried U0–U2 and the first two screens** — #40, #42, #43 — is merged. Each squash
@@ -301,8 +301,35 @@ the same tests Android runs. What is decided here, and what is deliberately left
   `CFBundleShortVersionString` 1.0. So the field renders the em dash a flow asserts on, never the pin
   in `Package.swift` — the same ask the schema records against Android stands here.
 
-**What the slice does not do.** The launch arguments still have no consumer: the card reports the
-defaults until the next PR seeds it from `scenario`, `theme` and `route` and gates it on `probes`.
+**The launch arguments — built 2026-09-03, the card's one live producer.** All eight names in
+`spec/launch-args.json` are read from `UserDefaults.standard`, which is where `app.launchArguments =
+["-scenario", "expiredToken"]` lands; the parser lives in the shell because the mechanism does, and its
+eight spec tests mirror Android's. Which ones act:
+
+- **Applied:** `scenario`, `theme` and `route` seed the run once, and the drawer's choice wins after
+  that (`testTheDrawerWinsOverTheArgumentAndARelaunchIsAFreshRun` proves both halves, and that a
+  relaunch with other arguments is a fresh run). `probes` reveals the card on a release build.
+  `appLocale` is applied as `.environment(\.locale)` at the root, and that is all it reaches: SwiftUI
+  formatting in the shell's own views, of which today there is none — the shell's copy is hard-coded
+  English, and the SDK's strings resolve through its bundle, which follows `-AppleLanguages`, the
+  platform's own launch argument. A flow that needs another language passes both.
+- **Read and dropped:** `autostart` and `holdCamera` wait on the flow host; `seedJobs` waits on the job
+  store. They parse (an unknown product id reads as nil, `holdCamera` takes milliseconds or `keep`) so
+  the four apps accept one surface, and nothing acts on them yet.
+- **`probes` rides the launch, not the link.** Android also reads it off the launching URI because a
+  deep link there carries no extras; on iOS the argument reaches a running app, which every link is
+  delivered to, so the sheet resolver already strips `?probes=` and nothing more is needed.
+
+**The gate is proven on the release build, both halves.** `verify.sh` gained a last step: two UI tests
+run against the Release configuration — without `-probes` the card must be absent, with it present.
+The release step names its configuration to the runner, and there the test also asserts the Settings
+DEBUG row is gone; anywhere else the row says which build this is, since it is compiled out of release
+on every platform, so the same test asserts "always on" in the debug suite and "hidden" in the release
+lane. Both halves caught a real defect before the PR opened: the shell's default argument built the
+empty defaults instead of reading UserDefaults, so nothing seeded and `-probes` never reached a release
+build. Falsified deliberately as well, by forcing `showProbes` true on release (the hide half fails)
+and false on debug (both fail). Cost: the release app is already built by the step before, so the
+added time is the runner.
 
 ## Considered and rejected
 

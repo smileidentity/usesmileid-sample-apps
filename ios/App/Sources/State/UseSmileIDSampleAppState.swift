@@ -12,6 +12,11 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// Persists the token session as one record, so the live half and the ended marker never disagree.
   let store: UseSmileIDSampleStore
 
+  /// Read once at launch. `scenario`, `theme` and `route` seed the run and `probes` gates the card;
+  /// `autostart` and `holdCamera` wait on the flow host and `seedJobs` on the job store, so they are
+  /// read and not acted on; `appLocale` reaches the shell's own SwiftUI formatting, not the SDK's strings.
+  let launchArguments: UseSmileIDSampleLaunchArguments
+
   @Published var settings = UseSmileIDSampleSettings()
 
   /// The profiles the app can act as; the active one names the products header and the settings summary.
@@ -46,16 +51,25 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// The scan sheet's typed state, lifted here so a tab switch or a recreation keeps it (R6).
   @Published var scanEntry = UseSmileIDSampleScanSheetState()
 
-  /// The run the card reports. The drawer owns the selection; see the type for what survives what.
-  @Published var flowResult = UseSmileIDSampleFlowResult()
+  /// The run the card reports: seeded from the launch, then the drawer's; see the type for what survives what.
+  @Published var flowResult: UseSmileIDSampleFlowResult
 
   /// The card's toggle, here so a tab switch cannot re-expand it.
   @Published var resultCardExpanded = true
 
   private var ticker: Task<Void, Never>?
 
-  init(store: UseSmileIDSampleStore = UseSmileIDSampleStore()) {
+  init(
+    store: UseSmileIDSampleStore = UseSmileIDSampleStore(),
+    launchArguments: UseSmileIDSampleLaunchArguments = UseSmileIDSampleLaunchArguments(defaults: .standard)
+  ) {
     self.store = store
+    self.launchArguments = launchArguments
+    flowResult = UseSmileIDSampleFlowResult(
+      scenario: launchArguments.scenario,
+      theme: launchArguments.theme,
+      route: launchArguments.route
+    )
     sessionRecord = store.session
     tick()
   }
@@ -202,7 +216,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
 
   /// The card and its counters are always on in debug; a release build shows them on request only.
   var showProbes: Bool {
-    Self.isDebugBuild
+    Self.isDebugBuild || launchArguments.probes
   }
 
   /// What the Compose twin reads as `BuildConfig.DEBUG`: the Debug configuration's compilation condition.

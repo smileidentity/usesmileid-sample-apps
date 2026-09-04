@@ -73,4 +73,17 @@ xcodebuild build \
   -destination "$DESTINATION" \
   -quiet
 
+echo "==> release probes gate (the card hides without -probes and shows with it, on the release build)"
+# The argument exists only for release runs, so a debug pass proves nothing about it. Two tests, on the
+# build the step above produced; the rest of the suite is configuration-blind and runs once, above.
+xcodebuild test \
+  -project App/UseSmileIDSample.xcodeproj \
+  -scheme UseSmileIDSampleUITests \
+  -configuration Release \
+  -destination "$DESTINATION" \
+  -only-testing:UseSmileIDSampleUITests/UseSmileIDSampleLaunchArgumentUITests/testWithoutTheArgumentTheCardFollowsTheBuild \
+  -only-testing:UseSmileIDSampleUITests/UseSmileIDSampleLaunchArgumentUITests/testWithTheArgumentTheCardShowsOnAnyBuild \
+  TEST_RUNNER_USESMILEID_SAMPLE_CONFIGURATION=Release \
+  -quiet
+
 echo "OK"
