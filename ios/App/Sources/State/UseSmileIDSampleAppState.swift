@@ -61,7 +61,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
 
   init(
     store: UseSmileIDSampleStore = UseSmileIDSampleStore(),
-    launchArguments: UseSmileIDSampleLaunchArguments = UseSmileIDSampleLaunchArguments(defaults: .standard)
+    launchArguments: UseSmileIDSampleLaunchArguments = UseSmileIDSampleLaunchArguments(reading: .standard)
   ) {
     self.store = store
     self.launchArguments = launchArguments

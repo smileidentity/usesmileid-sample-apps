@@ -17,7 +17,8 @@ enum UseSmileIDSampleHoldCamera: Equatable {
 
 /// The canonical arguments from `spec/launch-args.json`, read once at launch so the card reports the
 /// run they configured. iOS delivers them as launch arguments, which land in `UserDefaults.standard`'s
-/// argument domain: `app.launchArguments = ["-scenario", "expiredToken"]`.
+/// argument domain: `app.launchArguments = ["-scenario", "expiredToken"]`. `init()` is the spec's
+/// defaults and reads nothing; the launch is read by naming its source, `init(reading:)`.
 struct UseSmileIDSampleLaunchArguments: Equatable {
   var scenario: UseSmileIDSampleScenario = .normal
   var theme: UseSmileIDSampleThemeScenario = .brandDefault
@@ -48,8 +49,11 @@ struct UseSmileIDSampleLaunchArguments: Equatable {
   init() {}
 
   /// Every name is read whether or not this build can act on it, so the four apps accept one surface.
-  init(defaults: UserDefaults = .standard) {
-    self.init(raw: Dictionary(uniqueKeysWithValues: Self.names.map { ($0, defaults.object(forKey: $0)) }))
+  /// The argument domain alone: a value some later feature persists under one of these plain names
+  /// must never seed a run, or reveal the card on a release build.
+  init(reading defaults: UserDefaults) {
+    let arguments = defaults.volatileDomain(forName: UserDefaults.argumentDomain)
+    self.init(raw: Dictionary(uniqueKeysWithValues: Self.names.map { ($0, arguments[$0]) }))
   }
 
   /// An unrecognised value falls back to its default, which is safe only because the card reports it.
@@ -65,11 +69,12 @@ struct UseSmileIDSampleLaunchArguments: Equatable {
     holdCamera = Self.holdCamera(raw)
   }
 
-  /// The tag as a locale the environment can carry, or nil when it names no language.
+  /// The tag as a locale the environment can carry, or nil when it names no known language.
   var locale: Locale? {
     guard let appLocale else { return nil }
     let locale = Locale(identifier: appLocale)
-    return locale.languageCode?.isEmpty == false ? locale : nil
+    guard let code = locale.languageCode, Locale.isoLanguageCodes.contains(code) else { return nil }
+    return locale
   }
 
   private static func string(_ raw: [String: Any?], _ name: String) -> String? {

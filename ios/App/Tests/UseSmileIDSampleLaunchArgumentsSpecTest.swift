@@ -92,32 +92,42 @@ final class UseSmileIDSampleLaunchArgumentsSpecTest: XCTestCase {
     XCTAssertNil(args.autostart)
   }
 
-  /// The iOS mechanism: `-scenario expiredToken` lands in UserDefaults, and every name is read from it.
-  func testTheArgumentsAreReadThroughUserDefaults() throws {
+  /// The iOS mechanism: `-scenario expiredToken` lands in the argument domain, and only that domain is
+  /// read — a value persisted under the same plain name is not a launch argument.
+  func testTheArgumentsAreReadFromTheArgumentDomainOnly() throws {
     let suite = "usesmileid_sample_launch_test"
     let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
-    defer { defaults.removePersistentDomain(forName: suite) }
-    defaults.set("badRefresh", forKey: "scenario")
-    defaults.set("partnerOverride", forKey: "theme")
-    defaults.set("shell", forKey: "route")
-    defaults.set("true", forKey: "probes")
-    defaults.set("enhancedKyc", forKey: "autostart")
-    defaults.set("250", forKey: "holdCamera")
+    let previous = defaults.volatileDomain(forName: UserDefaults.argumentDomain)
+    defer {
+      defaults.setVolatileDomain(previous, forName: UserDefaults.argumentDomain)
+      defaults.removePersistentDomain(forName: suite)
+    }
+    defaults.setVolatileDomain(
+      ["scenario": "badRefresh", "theme": "partnerOverride", "route": "shell", "probes": "true", "autostart": "enhancedKyc", "holdCamera": "250"],
+      forName: UserDefaults.argumentDomain
+    )
+    defaults.set("true", forKey: "seedJobs")
 
-    let args = UseSmileIDSampleLaunchArguments(defaults: defaults)
+    let args = UseSmileIDSampleLaunchArguments(reading: defaults)
     XCTAssertEqual(args.scenario, .badRefresh)
     XCTAssertEqual(args.theme, .partnerOverride)
     XCTAssertEqual(args.route, .shell)
     XCTAssertTrue(args.probes)
     XCTAssertEqual(args.autostart, .enhancedKyc)
     XCTAssertEqual(args.holdCamera, .millis(250))
-    XCTAssertFalse(args.seedJobs, "an unset name keeps its default")
+    XCTAssertFalse(args.seedJobs, "a persisted value must not read as a launch argument")
+  }
+
+  /// The spelling with no arguments is the spec's defaults, never a read, so no call site can mistake it.
+  func testTheDefaultSpellingReadsNothing() {
+    XCTAssertEqual(UseSmileIDSampleLaunchArguments(), UseSmileIDSampleLaunchArguments(raw: [:]))
   }
 
   /// A tag naming no language is dropped rather than rendering the default silently.
   func testAppLocaleBecomesALocaleOnlyWhenItNamesALanguage() {
     XCTAssertEqual(UseSmileIDSampleLaunchArguments(raw: ["appLocale": "fr-FR"]).locale?.identifier, "fr-FR")
     XCTAssertNil(UseSmileIDSampleLaunchArguments(raw: ["appLocale": "-"]).locale)
+    XCTAssertNil(UseSmileIDSampleLaunchArguments(raw: ["appLocale": "zz-ZZ"]).locale, "not a known language")
     XCTAssertNil(UseSmileIDSampleLaunchArguments(raw: [:]).locale)
   }
 }

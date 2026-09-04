@@ -62,7 +62,11 @@ final class UseSmileIDSampleLaunchArgumentUITests: XCTestCase {
     if debugBuild {
       XCTAssertTrue(element("sample_result_card").exists, "a debug build always shows the card")
     } else {
-      XCTAssertFalse(element("sample_result_card").exists, "a release build hides the card without -probes")
+      // Waited for, not read once: an absence read on arrival passes even if the card lands a frame later.
+      XCTAssertFalse(
+        element("sample_result_card").waitForExistence(timeout: 3),
+        "a release build hides the card without -probes"
+      )
     }
   }
 

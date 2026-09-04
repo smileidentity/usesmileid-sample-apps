@@ -302,9 +302,13 @@ the same tests Android runs. What is decided here, and what is deliberately left
   in `Package.swift` — the same ask the schema records against Android stands here.
 
 **The launch arguments — built 2026-09-03, the card's one live producer.** All eight names in
-`spec/launch-args.json` are read from `UserDefaults.standard`, which is where `app.launchArguments =
-["-scenario", "expiredToken"]` lands; the parser lives in the shell because the mechanism does, and its
-eight spec tests mirror Android's. Which ones act:
+`spec/launch-args.json` are read from the argument domain of `UserDefaults.standard` — where
+`app.launchArguments = ["-scenario", "expiredToken"]` lands and nothing else does, so a value a later
+feature persists under one of these plain names can never seed a run or reveal the card on a release
+build. The parser lives in the shell because the mechanism does, and its spec tests mirror Android's.
+The spelling with no arguments builds the spec's defaults and reads nothing; the launch is read by
+naming its source, `init(reading:)`, because the two were once one overload apart and the shell picked
+the wrong one. Which ones act:
 
 - **Applied:** `scenario`, `theme` and `route` seed the run once, and the drawer's choice wins after
   that (`testTheDrawerWinsOverTheArgumentAndARelaunchIsAFreshRun` proves both halves, and that a
