@@ -220,6 +220,10 @@ modal), the back affordance, the switch control, swipe gestures, keyboard avoida
 A port that reproduces Android's navigation instead of using the platform's own is a defect even if
 it looks pixel-identical — that is precisely the host-interaction class these apps exist to catch.
 
+**What must not be ported: fixture defaults.** Android's profile store starts as one empty profile and
+the design's three sit behind `seedProfiles`. A port copies that split, gates its own fixtures the same
+way, and adds the unit test that holds the plain default — `port-patterns.md` §3, rule 8.
+
 **Same order, same slices.** A port repeats U0–U4 as written, including the U3 screen order.
 `spec/components.json` `buildOrder` is one list for all four platforms, not an Android artefact. The
 order is not preference: the most reused components are built before the screens that consume them,

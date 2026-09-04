@@ -92,6 +92,13 @@ which of the two their platform behaves like rather than assume Android's limita
    state). That written policy is part of the template, not decoration.
 7. **The data layer draws nothing.** No UI-framework state types inside stores; confirmations
    cross to the UI as events, and one shared transient-notice host renders them.
+8. **Fixture data arrives by launch argument, never by default.** A store's constructor default
+   is what a partner sees on a fresh install, so it carries no example anything: the profile
+   store starts as one empty `Default profile` and the job store starts empty. The design's
+   fixtures are reached through `seedJobs` and `seedProfiles` from `spec/launch-args.json`, and
+   a unit test on each platform asserts both the plain default and the launch choice. Profiles
+   are in memory, so that argument is per launch and a cold start by link shows the starter.
+   Why the rule exists: `play-release-android.md` §7.4.
 
 ## 4. Discipline that travels
 
