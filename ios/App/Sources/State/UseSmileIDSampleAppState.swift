@@ -49,12 +49,8 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// The run the card reports. The drawer owns the selection; see the type for what survives what.
   @Published var flowResult = UseSmileIDSampleFlowResult()
 
-  /// The card's toggle, here so a tab switch cannot re-expand it. Not restored with the run: a
-  /// restore re-expands, which puts every field back in the accessibility tree.
+  /// The card's toggle, here so a tab switch cannot re-expand it.
   @Published var resultCardExpanded = true
-
-  /// A restore or a link wins once; after that the drawer's choice is the run's.
-  private var flowResultRestored = false
 
   private var ticker: Task<Void, Never>?
 
@@ -217,19 +213,4 @@ final class UseSmileIDSampleAppState: ObservableObject {
       false
     #endif
   }()
-
-  /// Unreadable state keeps the seeded run rather than throwing into a blank card.
-  func restoreFlowResult(from encoded: String) {
-    guard !flowResultRestored else { return }
-    flowResultRestored = true
-    guard let data = encoded.data(using: .utf8),
-          let saved = try? JSONDecoder().decode([String].self, from: data)
-    else { return }
-    flowResult = UseSmileIDSampleFlowResult(saved: saved)
-  }
-
-  func encodedFlowResult() -> String {
-    guard let data = try? JSONEncoder().encode(flowResult.saved) else { return "" }
-    return String(decoding: data, as: UTF8.self)
-  }
 }

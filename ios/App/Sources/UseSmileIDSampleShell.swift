@@ -9,9 +9,6 @@ struct UseSmileIDSampleShell: View {
   /// One value, so the tab and its stacks cannot restore out of step.
   @SceneStorage("navigation") private var storedNavigation: String = ""
 
-  /// The run's outcome and counts, so a scene the system killed comes back mid-run rather than at zero.
-  @SceneStorage("flowResult") private var storedFlowResult: String = ""
-
   var body: some View {
     // One tab mounted at a time: a hidden stack still answers id queries, and neither
     // `accessibilityHidden` nor a children-ignore suppresses its UIKit-backed controls.
@@ -43,15 +40,9 @@ struct UseSmileIDSampleShell: View {
           app.clearSheetState()
         }
       }
-      .onAppear {
-        router.restore(from: storedNavigation)
-        app.restoreFlowResult(from: storedFlowResult)
-        // Mirrored at once, or a scene killed before the first change would come back at the defaults.
-        storedFlowResult = app.encodedFlowResult()
-      }
+      .onAppear { router.restore(from: storedNavigation) }
       .onChange(of: router.selectedTab) { _ in storedNavigation = router.encodedState() }
       .onChange(of: router.paths) { _ in storedNavigation = router.encodedState() }
-      .onChange(of: app.flowResult) { _ in storedFlowResult = app.encodedFlowResult() }
   }
 
   @ViewBuilder

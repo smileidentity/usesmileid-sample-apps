@@ -1,12 +1,12 @@
 /// What the hosted flow reported, and the run it belongs to; the card renders its `snapshot`.
 ///
-/// What survives what (port-patterns §3 rule 6). Every field here is held by the app state, so it
-/// survives rotation and a tab switch, and the shell mirrors the whole value into scene storage, so
-/// a scene the system killed restores the run's outcome and both counts — a count that reset on
-/// recreation would swallow the second call it exists to catch. Nothing here is ever written to
-/// UserDefaults, the Keychain or disk by the app: a launch the person or a test starts is a fresh
-/// run, seeded from the launch arguments, because a persisted count would carry one run's callbacks
-/// into the next and the exactly-once claim with it.
+/// What survives what (port-patterns §3 rule 6). Every field here is held by the app state and
+/// nowhere else, so it survives rotation and a tab switch and ends with the process: a scene the
+/// system killed took the hosted flow with it, so nothing could finish that run, and restoring its
+/// counts could only mislead the next one. Nothing is written to scene storage, UserDefaults, the
+/// Keychain or disk, so every launch is a fresh run, because a restored or persisted count would
+/// carry one run's callbacks into the next and the exactly-once claim with it. `saved` and
+/// `init(saved:)` keep the Compose `Saver`'s shape, unit-tested, with no caller.
 public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
   public private(set) var scenario: UseSmileIDSampleScenario
   public private(set) var theme: UseSmileIDSampleThemeScenario
@@ -109,7 +109,7 @@ public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
     refreshCallbackCount += 1
   }
 
-  /// The ten fields as strings in a fixed order, the shape scene storage keeps.
+  /// The ten fields as strings in a fixed order, the Compose `Saver`'s shape.
   public var saved: [String] {
     [
       scenario.id, theme.id, route.id, environment.id, status.id,

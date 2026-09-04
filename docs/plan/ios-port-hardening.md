@@ -259,18 +259,18 @@ files name for name; the twelve `sample_result_*` ids and the drawer's three lan
 scenario and result models are pinned to `spec/scenarios.json` and `spec/result-card.schema.json` by
 the same tests Android runs. What is decided here, and what is deliberately left with no caller:
 
-- **Where the run's result lives — ruled.** `UseSmileIDSampleFlowResult` is a value on the app state,
-  so it survives rotation and a tab switch, and the shell mirrors it into `@SceneStorage("flowResult")`
-  so a scene the system killed restores the run's outcome and both counts — the recreation
-  `rememberSaveable` covers on Android, and a count that reset there would swallow the second call it
-  exists to catch. The app never writes it to UserDefaults, the Keychain or disk: a launch the person
-  or a test starts is a fresh run, or a persisted count would carry one run's callbacks into the next.
-  The restore is defensive (a retired scenario id or an unreadable count reads as the default) and wins
-  once, on appear; after that the drawer's choice is the run's. Scene storage restores nothing across
-  an XCUITest relaunch — the navigation suite already depends on that, since every test starts at a
-  tab root whatever the previous one left on screen. The card's expanded/collapsed toggle is app state
-  too, because one tab is mounted at a time, but it is not restored: a restore re-expands, which puts
-  every field back in the accessibility tree.
+- **Where the run's result lives — ruled, then narrowed.** `UseSmileIDSampleFlowResult` is a value on
+  the app state and nowhere else, so it survives rotation and a tab switch and ends with the process.
+  It was first mirrored into `@SceneStorage` as the `rememberSaveable` analogue, and CI falsified the
+  assumption that carried: a run of the launch-argument suite restored the previous test's run over a
+  launch that named `-scenario badRefresh`, so a scene restore across an XCUITest relaunch is
+  intermittent, not absent, and a restored run overrides the one the launch asked for. What the mirror
+  bought was small here — a scene the system killed took the hosted flow with it, so the restored
+  counts could finish nothing — and what it cost was a card that could report a run nobody started.
+  The app never writes the run to scene storage, UserDefaults, the Keychain or disk: every launch is
+  a fresh run. `saved` and `init(saved:)` keep the Compose `Saver`'s shape, unit-tested and with no
+  caller, like the recorders. The card's expanded/collapsed toggle is app state too, because one tab
+  is mounted at a time.
 - **The recorders have no caller.** `startFlow`, `recordResultCallback`, `recordBlocked` and
   `recordRefreshCallback` exist, are unit-tested, and nothing calls them: `.sdkFlow` is a seat, so no
   run ever starts. The same treatment `redirected` got in §9 — building a flow host to give them a
