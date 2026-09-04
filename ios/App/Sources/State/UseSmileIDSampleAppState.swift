@@ -12,15 +12,16 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// Persists the token session as one record, so the live half and the ended marker never disagree.
   let store: UseSmileIDSampleStore
 
-  /// Read once at launch. `scenario`, `theme` and `route` seed the run and `probes` gates the card;
-  /// `autostart` and `holdCamera` wait on the flow host and `seedJobs` on the job store, so they are
-  /// read and not acted on; `appLocale` reaches the shell's own SwiftUI formatting, not the SDK's strings.
+  /// Read once at launch. `scenario`, `theme` and `route` seed the run, `probes` gates the card and
+  /// `seedProfiles` chooses the profiles; `autostart` and `holdCamera` wait on the flow host and
+  /// `seedJobs` on the job store, so they are read and not acted on; `appLocale` reaches the shell's
+  /// own SwiftUI formatting, not the SDK's strings.
   let launchArguments: UseSmileIDSampleLaunchArguments
 
   @Published var settings = UseSmileIDSampleSettings()
 
   /// The profiles the app can act as; the active one names the products header and the settings summary.
-  @Published var profiles = UseSmileIDSampleProfiles()
+  @Published var profiles: UseSmileIDSampleProfiles
 
   /// The new-profile sheet's fields, cleared with the sheet so it opens empty each time.
   @Published var newProfile = UseSmileIDSampleNewProfile()
@@ -65,6 +66,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
   ) {
     self.store = store
     self.launchArguments = launchArguments
+    profiles = UseSmileIDSampleProfiles.forLaunch(seedProfiles: launchArguments.seedProfiles)
     flowResult = UseSmileIDSampleFlowResult(
       scenario: launchArguments.scenario,
       theme: launchArguments.theme,

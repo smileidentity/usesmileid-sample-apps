@@ -268,6 +268,11 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("profiles") { profiles(Self.seededProfiles) }
   }
 
+  /// A plain launch: the one empty starter, its caption a placeholder until details are saved.
+  func testProfilesFirstRun() {
+    goldens("profiles_first_run") { profiles(UseSmileIDSampleProfiles()) }
+  }
+
   /// The fourth profile is listed but not active: the confirmation carries the offer.
   func testProfilesCreated() {
     goldens("profiles_created") { profiles(Self.profilesWithACreatedOne, notice: Self.createdNotice) }
@@ -350,7 +355,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
       .frame(height: height)
   }
 
-  private static let seededProfiles = UseSmileIDSampleProfiles()
+  private static let seededProfiles = UseSmileIDSampleProfiles(seed: UseSmileIDSampleProfiles.fixtures())
 
   func testScenarioDrawer() {
     goldens("scenario_drawer") { scenarioDrawer() }
@@ -401,7 +406,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   }
 
   private static let profilesWithACreatedOne: UseSmileIDSampleProfiles = {
-    var profiles = UseSmileIDSampleProfiles()
+    var profiles = UseSmileIDSampleProfiles(seed: UseSmileIDSampleProfiles.fixtures())
     profiles.add(
       organisation: "Acme Fintech",
       person: "Ada Lovelace",

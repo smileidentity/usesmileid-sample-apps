@@ -301,7 +301,7 @@ the same tests Android runs. What is decided here, and what is deliberately left
   `CFBundleShortVersionString` 1.0. So the field renders the em dash a flow asserts on, never the pin
   in `Package.swift` — the same ask the schema records against Android stands here.
 
-**The launch arguments — built 2026-09-03, the card's one live producer.** All eight names in
+**The launch arguments — built 2026-09-03, the card's one live producer.** All nine names in
 `spec/launch-args.json` are read from the argument domain of `UserDefaults.standard` — where
 `app.launchArguments = ["-scenario", "expiredToken"]` lands and nothing else does, so a value a later
 feature persists under one of these plain names can never seed a run or reveal the card on a release
@@ -313,6 +313,8 @@ the wrong one. Which ones act:
 - **Applied:** `scenario`, `theme` and `route` seed the run once, and the drawer's choice wins after
   that (`testTheDrawerWinsOverTheArgumentAndARelaunchIsAFreshRun` proves both halves, and that a
   relaunch with other arguments is a fresh run). `probes` reveals the card on a release build.
+  `seedProfiles` swaps the one empty starter profile for the design's three, per launch, because
+  profiles are in memory; two UI tests hold both halves on the device.
   `appLocale` is applied as `.environment(\.locale)` at the root, and that is all it reaches: SwiftUI
   formatting in the shell's own views, of which today there is none — the shell's copy is hard-coded
   English, and the SDK's strings resolve through its bundle, which follows `-AppleLanguages`, the
@@ -334,6 +336,20 @@ empty defaults instead of reading UserDefaults, so nothing seeded and `-probes` 
 build. Falsified deliberately as well, by forcing `showProbes` true on release (the hide half fails)
 and false on debug (both fail). Cost: the release app is already built by the step before, so the
 added time is the runner.
+
+## 11. No fixture profiles by default — done 2026-09-04, with the launch arguments
+
+- ~~**Owed before any TestFlight or App Store build — no fixture profiles by default.**~~ **Done with
+  the launch-arguments PR.** `UseSmileIDSampleProfiles` defaulted to UpTech Finance, Kazi Microlending
+  and PesaLink, the same default Android's first Play release shipped, and the active one's
+  organisation is what the SDK's consent screen will show as the partner. A plain launch now carries
+  one empty `Default profile` whose row reads "No user details yet" until details are saved, at which
+  point the first and last name become its person; the three sit behind `seedProfiles`, the ninth
+  name in `spec/launch-args.json`, and the navigation suite launches with it wherever it asserts on a
+  fixture. Two launch-argument UI tests hold the split on the device, the unit tests hold the plain
+  default, the launch choice and the naming rule, and `profiles_first_run` is the starter's golden.
+  The store's `forLaunch` takes the Bool rather than the arguments type, which lives in the shell:
+  `SampleUI` cannot import it, and Android's store could only because its arguments live in `sample-ui`.
 
 ## Considered and rejected
 

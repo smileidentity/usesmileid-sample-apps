@@ -84,7 +84,7 @@ public struct ProfilesScreen: View {
   }
 
   private func supportingText(_ profile: UseSmileIDSampleProfile) -> String {
-    profile.id == state.activeId ? profile.person + " \u{00B7} active" : profile.person
+    profile.id == state.activeId ? profile.caption + " \u{00B7} active" : profile.caption
   }
 
   /// The last row: no card and no border, a pale primary tile with a plus.

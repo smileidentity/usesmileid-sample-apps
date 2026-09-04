@@ -15,7 +15,7 @@ final class UseSmileIDSampleProfilesTest: XCTestCase {
   }
 
   func testTheFirstSeededProfileIsActiveUntilOneIsChosen() {
-    var profiles = UseSmileIDSampleProfiles()
+    var profiles = UseSmileIDSampleProfiles(seed: UseSmileIDSampleProfiles.fixtures())
     XCTAssertEqual(profiles.activeId, "p-1")
     XCTAssertEqual(profiles.activeIndex, 0)
     profiles.setActive("p-3")
@@ -37,7 +37,7 @@ final class UseSmileIDSampleProfilesTest: XCTestCase {
 
   /// Creating does not activate: the confirmation carries that offer, and it is consumed once.
   func testAddRecordsTheCreatedProfileWithoutActivatingIt() {
-    var profiles = UseSmileIDSampleProfiles()
+    var profiles = UseSmileIDSampleProfiles(seed: UseSmileIDSampleProfiles.fixtures())
     let created = profiles.add(
       organisation: "Acme Fintech",
       person: "Ada Lovelace",
@@ -51,13 +51,63 @@ final class UseSmileIDSampleProfilesTest: XCTestCase {
   }
 
   func testSetDefaultsTouchesOnlyThatProfile() {
-    var profiles = UseSmileIDSampleProfiles()
+    var profiles = UseSmileIDSampleProfiles(seed: UseSmileIDSampleProfiles.fixtures())
     let edited = UseSmileIDSampleUserDetails(firstName: "Kwame", lastName: "Asante", email: "k@uptech.example")
     profiles.setDefaults("p-1", edited)
     profiles.setDefaults("p-9", edited)
     XCTAssertEqual(profiles.find("p-1")?.defaults, edited)
     XCTAssertEqual(profiles.find("p-2")?.defaults, UseSmileIDSampleUserDetails(firstName: "Amina", lastName: "Diallo"))
     XCTAssertEqual(profiles.all.count, 3)
+  }
+
+  /// A plain launch carries one empty profile; the design's three are fixtures reached only by `seedProfiles`.
+  func testALaunchCarriesTheFixturesOnlyWhenSeedProfilesAsks() {
+    XCTAssertEqual(UseSmileIDSampleProfiles.forLaunch(seedProfiles: false).all, UseSmileIDSampleProfiles.starter())
+    XCTAssertEqual(UseSmileIDSampleProfiles.forLaunch(seedProfiles: true).all, UseSmileIDSampleProfiles.fixtures())
+  }
+
+  func testAPlainLaunchCarriesOneProfileWithNothingMadeUp() throws {
+    let profiles = UseSmileIDSampleProfiles()
+    let starter = try XCTUnwrap(profiles.all.first)
+    XCTAssertEqual(profiles.all.count, 1)
+    XCTAssertEqual(profiles.activeId, starter.id)
+    XCTAssertEqual(starter.organisation, UseSmileIDSampleProfiles.starterOrganisation)
+    XCTAssertTrue(starter.person.isBlank, "a starter profile names nobody")
+    XCTAssertEqual(starter.defaults, UseSmileIDSampleUserDetails())
+    // The consent screen shows this as the partner, so it must not collide with a fixture.
+    XCTAssertFalse(UseSmileIDSampleProfiles.fixtures().contains { $0.organisation == starter.organisation })
+  }
+
+  func testTheFixturesAreTheDesignsThreeWithDistinctIds() {
+    let fixtures = UseSmileIDSampleProfiles.fixtures()
+    XCTAssertEqual(fixtures.count, 3)
+    XCTAssertEqual(Set(fixtures.map(\.id)).count, 3)
+    XCTAssertEqual(UseSmileIDSampleProfiles(seed: fixtures).activeId, "p-1")
+  }
+
+  func testAProfileCreatedAfterTheStarterTakesTheNextIdAndDoesNotActivate() {
+    var profiles = UseSmileIDSampleProfiles()
+    let created = profiles.add(organisation: "Karibu Pay", person: "Njeri Wanjiku")
+    XCTAssertEqual(created.id, "p-2")
+    XCTAssertEqual(profiles.lastCreatedId, created.id)
+    XCTAssertEqual(profiles.activeId, "p-1")
+  }
+
+  func testAStarterProfileStillHasInitialsForTheAvatar() {
+    XCTAssertEqual(UseSmileIDSampleProfiles().active.initials, "DP")
+  }
+
+  func testSavingDetailsOnTheStarterNamesItAndACreatedProfileKeepsItsName() {
+    var profiles = UseSmileIDSampleProfiles()
+    XCTAssertEqual(profiles.active.caption, "No user details yet")
+
+    profiles.setDefaults("p-1", UseSmileIDSampleUserDetails(firstName: "Njeri", lastName: "Wanjiku"))
+    XCTAssertEqual(profiles.active.person, "Njeri Wanjiku")
+    XCTAssertEqual(profiles.active.caption, "Njeri Wanjiku")
+
+    let created = profiles.add(organisation: "Karibu Pay", person: "Amani Otieno")
+    profiles.setDefaults(created.id, UseSmileIDSampleUserDetails(firstName: "Someone", lastName: "Else"))
+    XCTAssertEqual(profiles.find(created.id)?.person, "Amani Otieno")
   }
 
   func testCreateNeedsTheProfileNameAndBothRequiredNames() {

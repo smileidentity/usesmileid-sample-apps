@@ -9,6 +9,8 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     super.setUp()
     continueAfterFailure = false
     app = XCUIApplication()
+    // The suite asserts on the design's three profiles, which a plain launch no longer carries.
+    app.launchArguments = ["-seedProfiles", "true"]
     app.launch()
     clearAnySession()
   }

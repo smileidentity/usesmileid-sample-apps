@@ -26,6 +26,8 @@ struct UseSmileIDSampleLaunchArguments: Equatable {
   var autostart: UseSmileIDSampleProduct?
   /// Automation precondition only — see `spec/launch-args.json`.
   var seedJobs = false
+  /// The design's three profiles instead of the one empty starter; in memory, so per launch.
+  var seedProfiles = false
   /// Reveals the result card on a release build. Always on in debug, so only a release run needs it.
   var probes = false
   var appLocale: String?
@@ -36,12 +38,14 @@ struct UseSmileIDSampleLaunchArguments: Equatable {
   static let routeName = "route"
   static let autostartName = "autostart"
   static let seedJobsName = "seedJobs"
+  static let seedProfilesName = "seedProfiles"
   static let probesName = "probes"
   static let appLocaleName = "appLocale"
   static let holdCameraName = "holdCamera"
 
   static let names = [
-    scenarioName, themeName, routeName, autostartName, seedJobsName, probesName, appLocaleName, holdCameraName
+    scenarioName, themeName, routeName, autostartName, seedJobsName, seedProfilesName, probesName, appLocaleName,
+    holdCameraName
   ]
 
   static let holdCameraKeep = "keep"
@@ -64,6 +68,7 @@ struct UseSmileIDSampleLaunchArguments: Equatable {
     route = Self.string(raw, Self.routeName).flatMap { UseSmileIDSampleFlowRoute(rawValue: $0) } ?? defaults.route
     autostart = Self.string(raw, Self.autostartName).flatMap { UseSmileIDSampleProduct(rawValue: $0) }
     seedJobs = Self.bool(raw, Self.seedJobsName) ?? defaults.seedJobs
+    seedProfiles = Self.bool(raw, Self.seedProfilesName) ?? defaults.seedProfiles
     probes = Self.bool(raw, Self.probesName) ?? defaults.probes
     appLocale = Self.string(raw, Self.appLocaleName)
     holdCamera = Self.holdCamera(raw)

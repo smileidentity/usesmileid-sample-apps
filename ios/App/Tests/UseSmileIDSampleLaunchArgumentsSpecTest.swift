@@ -33,6 +33,7 @@ final class UseSmileIDSampleLaunchArgumentsSpecTest: XCTestCase {
       UseSmileIDSampleLaunchArguments.routeName: defaults.route.id,
       UseSmileIDSampleLaunchArguments.autostartName: defaults.autostart?.id,
       UseSmileIDSampleLaunchArguments.seedJobsName: String(defaults.seedJobs),
+      UseSmileIDSampleLaunchArguments.seedProfilesName: String(defaults.seedProfiles),
       UseSmileIDSampleLaunchArguments.probesName: String(defaults.probes),
       UseSmileIDSampleLaunchArguments.appLocaleName: defaults.appLocale,
       UseSmileIDSampleLaunchArguments.holdCameraName: defaults.holdCamera?.description
@@ -51,6 +52,7 @@ final class UseSmileIDSampleLaunchArgumentsSpecTest: XCTestCase {
       "route": "shell",
       "autostart": "biometricKyc",
       "seedJobs": "true",
+      "seedProfiles": "true",
       "probes": true,
       "appLocale": "fr-FR",
       "holdCamera": "keep"
@@ -60,6 +62,7 @@ final class UseSmileIDSampleLaunchArgumentsSpecTest: XCTestCase {
     XCTAssertEqual(args.route, .shell)
     XCTAssertEqual(args.autostart, .biometricKyc)
     XCTAssertTrue(args.seedJobs)
+    XCTAssertTrue(args.seedProfiles)
     XCTAssertTrue(args.probes)
     XCTAssertEqual(args.appLocale, "fr-FR")
     XCTAssertEqual(args.holdCamera, .keep)

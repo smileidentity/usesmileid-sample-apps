@@ -70,6 +70,26 @@ final class UseSmileIDSampleLaunchArgumentUITests: XCTestCase {
     }
   }
 
+  /// A plain launch carries one empty profile whose row reads as a placeholder, never a fixture.
+  func testAPlainLaunchCarriesOneEmptyProfile() {
+    launch([])
+    open("profiles")
+    XCTAssertTrue(element("sample_profile_row_p-1").waitForExistence(timeout: 10))
+    XCTAssertTrue(app.staticTexts["Default profile"].exists)
+    XCTAssertTrue(app.staticTexts["No user details yet \u{00B7} active"].exists)
+    XCTAssertFalse(element("sample_profile_row_p-2").exists, "a fixture arrived without seedProfiles")
+    XCTAssertFalse(app.staticTexts["PesaLink"].exists)
+  }
+
+  func testSeedProfilesCarriesTheDesignsThree() {
+    launch(["-seedProfiles", "true"])
+    open("profiles")
+    XCTAssertTrue(element("sample_profile_row_p-3").waitForExistence(timeout: 10))
+    XCTAssertTrue(app.staticTexts["PesaLink"].exists)
+    XCTAssertTrue(app.staticTexts["Kwame Asante \u{00B7} active"].exists)
+    XCTAssertFalse(app.staticTexts["Default profile"].exists, "the starter must not sit among the fixtures")
+  }
+
   func testWithTheArgumentTheCardShowsOnAnyBuild() {
     launch(["-probes", "true"])
     openDetails()
