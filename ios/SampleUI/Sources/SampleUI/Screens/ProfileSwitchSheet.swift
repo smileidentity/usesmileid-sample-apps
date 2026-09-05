@@ -21,7 +21,7 @@ public struct ProfileSwitchSheet: View {
       ForEach(Array(profiles.enumerated()), id: \.element.id) { index, profile in
         UseSmileIDSampleProfileRow(
           organisation: profile.organisation,
-          supportingText: profile.person,
+          supportingText: profile.caption,
           initials: profile.initials,
           selected: profile.id == activeId,
           avatarColor: useSmileIDSampleAvatarColor(profileIndex: index),

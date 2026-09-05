@@ -27,6 +27,13 @@ public struct UseSmileIDSampleProfile: Equatable, Identifiable, Sendable {
     }
     return letters.isEmpty ? "?" : letters.joined()
   }
+
+  /// What a row says under the organisation: the person, or a placeholder until details are saved.
+  public var caption: String {
+    person.isBlank ? Self.noUserDetailsCaption : person
+  }
+
+  static let noUserDetailsCaption = "No user details yet"
 }
 
 /// The profiles the app can act as, and which one is active. In memory until profiles are a real
@@ -40,7 +47,7 @@ public struct UseSmileIDSampleProfiles: Equatable, Sendable {
 
   /// `seed` must not be empty: an empty list would otherwise surface far from here, as the products
   /// screen reading no active profile.
-  public init(seed: [UseSmileIDSampleProfile] = UseSmileIDSampleProfiles.defaults) {
+  public init(seed: [UseSmileIDSampleProfile] = UseSmileIDSampleProfiles.starter()) {
     precondition(!seed.isEmpty, "UseSmileIDSampleProfiles needs at least one profile")
     items = seed
     activeId = seed[0].id
@@ -98,29 +105,50 @@ public struct UseSmileIDSampleProfiles: Equatable, Sendable {
   public mutating func setDefaults(_ id: String, _ defaults: UseSmileIDSampleUserDetails) {
     guard let index = items.firstIndex(where: { $0.id == id }) else { return }
     items[index].defaults = defaults
+    // The starter names nobody until its details are saved; a created profile keeps the name its sheet gave it.
+    if items[index].person.isBlank {
+      items[index].person = "\(defaults.firstName) \(defaults.lastName)".trimmingCharacters(in: .whitespaces)
+    }
   }
 
-  /// The three the design's sheet shows.
-  public static let defaults: [UseSmileIDSampleProfile] = [
-    UseSmileIDSampleProfile(
-      id: "p-1",
-      organisation: "UpTech Finance",
-      person: "Kwame Asante",
-      defaults: UseSmileIDSampleUserDetails(firstName: "Kwame", lastName: "Asante")
-    ),
-    UseSmileIDSampleProfile(
-      id: "p-2",
-      organisation: "Kazi Microlending",
-      person: "Amina Diallo",
-      defaults: UseSmileIDSampleUserDetails(firstName: "Amina", lastName: "Diallo")
-    ),
-    UseSmileIDSampleProfile(
-      id: "p-3",
-      organisation: "PesaLink",
-      person: "Tunde Okafor",
-      defaults: UseSmileIDSampleUserDetails(firstName: "Tunde", lastName: "Okafor")
-    )
-  ]
+  /// The fixtures only when `seedProfiles` asks, so the shell holds no choice a unit test cannot reach.
+  /// A Bool rather than the arguments type, which lives in the shell this package cannot import.
+  public static func forLaunch(seedProfiles: Bool) -> UseSmileIDSampleProfiles {
+    UseSmileIDSampleProfiles(seed: seedProfiles ? fixtures() : starter())
+  }
+
+  /// A plain launch: one empty profile, never the fixtures — the active organisation names the partner
+  /// on the SDK's consent screen.
+  public static func starter() -> [UseSmileIDSampleProfile] {
+    [UseSmileIDSampleProfile(id: "p-1", organisation: starterOrganisation, person: "")]
+  }
+
+  /// Shown on the consent screen as the partner until a profile is created, so it must read as a placeholder.
+  public static let starterOrganisation = "Default profile"
+
+  /// The three the design's sheet shows. Reached only by the `seedProfiles` launch argument.
+  public static func fixtures() -> [UseSmileIDSampleProfile] {
+    [
+      UseSmileIDSampleProfile(
+        id: "p-1",
+        organisation: "UpTech Finance",
+        person: "Kwame Asante",
+        defaults: UseSmileIDSampleUserDetails(firstName: "Kwame", lastName: "Asante")
+      ),
+      UseSmileIDSampleProfile(
+        id: "p-2",
+        organisation: "Kazi Microlending",
+        person: "Amina Diallo",
+        defaults: UseSmileIDSampleUserDetails(firstName: "Amina", lastName: "Diallo")
+      ),
+      UseSmileIDSampleProfile(
+        id: "p-3",
+        organisation: "PesaLink",
+        person: "Tunde Okafor",
+        defaults: UseSmileIDSampleUserDetails(firstName: "Tunde", lastName: "Okafor")
+      )
+    ]
+  }
 }
 
 /// The new-profile sheet's five fields. Held outside the sheet so a tab switch beneath it cannot
