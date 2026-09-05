@@ -36,6 +36,7 @@ class UseSmileIDSampleLaunchArgsSpecTest {
                 UseSmileIDSampleLaunchArgs.ROUTE to defaults.route.id,
                 UseSmileIDSampleLaunchArgs.AUTOSTART to defaults.autostart?.id,
                 UseSmileIDSampleLaunchArgs.SEED_JOBS to defaults.seedJobs.toString(),
+                UseSmileIDSampleLaunchArgs.SEED_PROFILES to defaults.seedProfiles.toString(),
                 UseSmileIDSampleLaunchArgs.PROBES to defaults.probes.toString(),
                 UseSmileIDSampleLaunchArgs.APP_LOCALE to defaults.appLocale,
                 UseSmileIDSampleLaunchArgs.HOLD_CAMERA to defaults.holdCamera?.toString(),
@@ -82,6 +83,8 @@ class UseSmileIDSampleLaunchArgsSpecTest {
     fun the_boolean_arguments_read_either_extra_type() {
         assertTrue(UseSmileIDSampleLaunchArgs.from(mapOf("seedJobs" to true)).seedJobs)
         assertTrue(UseSmileIDSampleLaunchArgs.from(mapOf("seedJobs" to "TRUE")).seedJobs)
+        assertTrue(UseSmileIDSampleLaunchArgs.from(mapOf("seedProfiles" to true)).seedProfiles)
+        assertFalse(UseSmileIDSampleLaunchArgs.from(emptyMap()).seedProfiles)
         // A deep link's query parameter arrives as a String, which is the only form that path has.
         assertTrue(UseSmileIDSampleLaunchArgs.from(mapOf("probes" to "true")).probes)
         assertTrue(UseSmileIDSampleLaunchArgs.from(mapOf("probes" to true)).probes)

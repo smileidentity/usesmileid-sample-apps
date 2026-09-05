@@ -1,3 +1,3 @@
-First release of the UseSmileID Sample app.
+Profiles no longer come with example partners.
 
-It runs the Smile ID mobile SDK end to end for SmartSelfie™ Enrollment and Authentication, Document Verification, Enhanced Document Verification, Biometric KYC and Enhanced KYC. Each run reports its outcome, previous runs are kept on the device, and the app follows the system light and dark themes.
+A fresh install has one blank "Default profile". Create your own from Settings → Profiles and make it active, so the consent screen shows your organisation and your jobs carry your user details.

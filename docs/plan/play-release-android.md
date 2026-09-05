@@ -571,6 +571,14 @@ touches both.
 
 None of these blocks anything, and none of them belongs to Android's critical path any more.
 
+- ~~**The release shipped the design's three fixture profiles.**~~ **Found 2026-09-04, fixed with this
+  note, `versionName` 1.0.1.** `UseSmileIDSampleProfiles` defaulted to UpTech Finance, Kazi Microlending
+  and PesaLink, so every install showed them, the active one's organisation reached the SDK's consent
+  screen as the partner name, and its id was the partner id handed to the SDK whenever no token session
+  was linked. A plain launch now carries one empty `Default profile`; the three sit behind a new
+  `seedProfiles` launch argument mirroring `seedJobs`, and a unit test holds both the default and the
+  launch choice. REL-A10 audited what the flows *seed* and what the frames *show*; the profile store's
+  constructor default was neither, which is how it passed — see §8.
 - **The camera panel (REL-A9)** needs a device. The flow and its output path are written; five panels
   are published and the sixth drops in without rework.
 - **The `verification_details` panel is the weak one.** Hiding the debug result card left that screen
@@ -603,7 +611,7 @@ release notes written by a person. Flutter and Expo also inherit §7.1 wholesale
 builds package the same four ABIs and carry the same `appLocale` argument: app bundle, ABI and density
 splits on, language splits off.
 
-**What the Android release learned that the other three should not re-learn.** Five of these cost real
+**What the Android release learned that the other three should not re-learn.** Each of these cost real
 time here:
 
 - **A rendered frame is not a screenshot — it needs a status-bar inset.** Panels render edge to edge
@@ -621,6 +629,10 @@ time here:
 - **Check the rendered output, not the raw frames.** Both the cutout collision and the variant problem
   were invisible in the frames and obvious in the finished panels. That is the argument for committing
   the rendered set rather than only its inputs.
+- **Every default is a fixture until proven otherwise.** REL-A10 audited what the flows seed and what
+  the frames show; the profile store's constructor default was neither, and the release shipped three
+  fictional partners (§7.4). Before a store build, read every state holder's default for literal data
+  and put each behind a launch argument; each port's own split is tracked in its plan.
 
 Platform-specific: iOS swaps to the `ios-phone` (1320 × 2868) and `ipad-13` (2064 × 2752) presets, and its
 off-device renderer is snapshot tests rather than Roborazzi, with XCUITest for the camera panel. Worth

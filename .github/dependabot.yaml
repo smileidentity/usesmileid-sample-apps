@@ -1,0 +1,71 @@
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+# The Android SDK repo's shape, plus one group per platform for the SDK itself: a bump of it is the consumption test.
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: /android
+    assignees:
+      - wangerekaharun
+    schedule:
+      interval: weekly
+      day: monday
+      time: "15:00"
+      timezone: "Africa/Nairobi"
+    groups:
+      usesmileid:
+        # The published SDK, alone: the PR is the consumption test and its CI run is the verdict
+        patterns:
+          - "com.usesmileid*"
+      kotlin:
+        # KSP and Kotlin updates need to be applied simultaneously
+        patterns:
+          - "com.google.devtools.ksp"
+          - "org.jetbrains.kotlin.*"
+      agp:
+        # We often want to hold off on AGP updates, so bump this separately
+        patterns:
+          - "com.android.*"
+      androidx:
+        # AndroidX updates often include behavioral changes that need to be tested
+        patterns:
+          - "androidx.*"
+      all:
+        # Group all patch and minor updates together. The groups above are matched first, so their
+        # packages will not be updated as part of this group
+        update-types:
+          - "patch"
+          - "minor"
+        patterns:
+          - "*"
+
+  - package-ecosystem: swift
+    # The only manifest: the app is generated from ios/App/project.yml and depends on this package by path
+    directory: /ios/SampleUI
+    assignees:
+      - wangerekaharun
+    schedule:
+      interval: weekly
+      day: monday
+      time: "15:00"
+      timezone: "Africa/Nairobi"
+    groups:
+      usesmileid:
+        # The published SDK, alone, for the same reason as the Gradle group
+        patterns:
+          - "*ios-spm*"
+      swift-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: github-actions
+    directory: /
+    assignees:
+      - wangerekaharun
+    schedule:
+      interval: monthly
+      time: "15:00"
+      timezone: "Africa/Nairobi"
+    groups:
+      github-actions:
+        patterns:
+          - "*"

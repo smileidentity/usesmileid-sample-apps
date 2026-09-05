@@ -88,7 +88,7 @@ fun rememberUseSmileIDSampleAppState(
         if (launchArgs.seedJobs) jobStore.seedFixtures(System.currentTimeMillis())
     }
     val forms = rememberSaveable(saver = UseSmileIDSampleForms.Saver) { UseSmileIDSampleForms() }
-    val profiles = remember { UseSmileIDSampleProfiles() }
+    val profiles = remember { UseSmileIDSampleProfiles.forLaunch(launchArgs) }
     // Not saveable: the scanner claims it into its own saveable state, which survives a rotation.
     val interruptedRun = remember { UseSmileIDSampleInterruptedRun() }
     // Saveable, so the arguments seed the first launch only and a recreation keeps the drawer's choice.

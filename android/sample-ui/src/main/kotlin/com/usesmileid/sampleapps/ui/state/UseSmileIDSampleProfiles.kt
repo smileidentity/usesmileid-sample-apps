@@ -20,6 +20,10 @@ data class UseSmileIDSampleProfile(
             .split(" ").filter { it.isNotBlank() }.take(2)
             .joinToString("") { it.first().uppercase() }
             .ifEmpty { "?" }
+
+    /** What a row says under the organisation: the person, or a placeholder until details are saved. */
+    val caption: String
+        get() = person.ifBlank { NO_USER_DETAILS_CAPTION }
 }
 
 /**
@@ -28,7 +32,7 @@ data class UseSmileIDSampleProfile(
  * @param seed must not be empty; an empty list would otherwise surface far from here, as the products
  * screen throwing on its first read of the active profile.
  */
-class UseSmileIDSampleProfiles(seed: List<UseSmileIDSampleProfile> = defaults()) {
+class UseSmileIDSampleProfiles(seed: List<UseSmileIDSampleProfile> = starter()) {
 
     init {
         require(seed.isNotEmpty()) { "UseSmileIDSampleProfiles needs at least one profile" }
@@ -82,12 +86,25 @@ class UseSmileIDSampleProfiles(seed: List<UseSmileIDSampleProfile> = defaults())
 
     fun setDefaults(id: String, defaults: UseSmileIDSampleUserDetails) {
         val index = items.indexOfFirst { it.id == id }
-        if (index >= 0) items[index] = items[index].copy(defaults = defaults)
+        if (index < 0) return
+        val current = items[index]
+        // The starter names nobody until its details are saved; a created profile keeps the name its sheet gave it.
+        val person = current.person.ifBlank { "${defaults.firstName} ${defaults.lastName}".trim() }
+        items[index] = current.copy(defaults = defaults, person = person)
     }
 
     companion object {
-        /** The three the design's sheet shows. */
-        fun defaults() = listOf(
+        /** The fixtures only when `seedProfiles` asks, so the shell holds no choice a unit test cannot reach. */
+        fun forLaunch(args: UseSmileIDSampleLaunchArgs) =
+            UseSmileIDSampleProfiles(if (args.seedProfiles) fixtures() else starter())
+
+        /** A plain launch: one empty profile, never [fixtures] — the active organisation names the partner on the SDK's consent screen. */
+        fun starter() = listOf(
+            UseSmileIDSampleProfile(id = "p-1", organisation = STARTER_ORGANISATION, person = ""),
+        )
+
+        /** The three the design's sheet shows. Reached only by the `seedProfiles` launch argument — see `spec/launch-args.json`. */
+        fun fixtures() = listOf(
             UseSmileIDSampleProfile(
                 id = "p-1",
                 organisation = "UpTech Finance",
@@ -107,5 +124,10 @@ class UseSmileIDSampleProfiles(seed: List<UseSmileIDSampleProfile> = defaults())
                 defaults = UseSmileIDSampleUserDetails(firstName = "Tunde", lastName = "Okafor"),
             ),
         )
+
+        /** Shown on the consent screen as the partner until a profile is created, so it must read as a placeholder. */
+        const val STARTER_ORGANISATION = "Default profile"
     }
 }
+
+private const val NO_USER_DETAILS_CAPTION = "No user details yet"

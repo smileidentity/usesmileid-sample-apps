@@ -16,6 +16,12 @@ class ProfileGoldenTest : GoldenTest() {
     fun profiles_max_font_scale() = assertSurvivesMaxFontScale { Profiles() }
 
     @Test
+    fun profiles_first_run() = goldens("screen_profiles_first_run") { Profiles(STARTER) }
+
+    @Test
+    fun profiles_first_run_max_font_scale() = assertSurvivesMaxFontScale { Profiles(STARTER) }
+
+    @Test
     fun profile_config() = goldens("screen_profile_config") { Config() }
 
     @Test
@@ -25,13 +31,15 @@ class ProfileGoldenTest : GoldenTest() {
     fun profile_config_active() = goldens("screen_profile_config_active") { Config(isActive = true) }
 
     private companion object {
-        val PROFILES = UseSmileIDSampleProfiles()
+        /** The design's three, so these goldens stay the Figma boards; a plain launch is [STARTER]. */
+        val PROFILES = UseSmileIDSampleProfiles(UseSmileIDSampleProfiles.fixtures())
+        val STARTER = UseSmileIDSampleProfiles()
     }
 
     @Composable
-    private fun Profiles() = ProfilesScreen(
-        profiles = PROFILES.all,
-        activeId = PROFILES.activeId,
+    private fun Profiles(profiles: UseSmileIDSampleProfiles = PROFILES) = ProfilesScreen(
+        profiles = profiles.all,
+        activeId = profiles.activeId,
         onProfileClick = {},
         onCreate = {},
         onBack = {},

@@ -59,7 +59,7 @@ fun ProfilesScreen(
                 UseSmileIDSampleProfileRow(
                     avatarColor = avatarColorForProfile(index),
                     organisation = profile.organisation,
-                    supportingText = if (profile.id == activeId) profile.person + ACTIVE_SUFFIX else profile.person,
+                    supportingText = if (profile.id == activeId) profile.caption + ACTIVE_SUFFIX else profile.caption,
                     initials = profile.initials,
                     selected = false,
                     onClick = { onProfileClick(profile) },

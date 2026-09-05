@@ -17,6 +17,14 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 **The stack that carried U0–U2 and the first two screens** — #40, #42, #43 — is merged. Each squash
 turned the branches above it into a `rebase --onto`, which is the cost the three-deep limit buys.
 
+**Owed before any TestFlight or App Store build — no fixture profiles by default.** Android's first Play
+release shipped the design's three profiles because `UseSmileIDSampleProfiles` defaulted to them, and the
+active one's organisation is what the SDK's consent screen shows as the partner. iOS's
+`UseSmileIDSampleProfiles.swift` carries the same default and `UseSmileIDSampleNavigationUITests` asserts
+on the names. Mirror Android: one empty `Default profile` by default, the three behind the `seedProfiles`
+launch argument (`spec/launch-args.json`, the ninth name), the UI tests launching with it, and a unit test
+on the plain default. It lands after the launch-arguments PR, which owns the parser and its spec test.
+
 ---
 
 ## 1. The nav container — ruled 2026-08-31: the floating pill

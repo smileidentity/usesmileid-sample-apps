@@ -52,6 +52,11 @@ Two consequences that must shape what you commit *now*, not at flip time:
 - **Probe affordances are product features here.** The scenario drawer, the on-screen result card
   and the callback counters are how both a human and an automated flow observe what the SDK did.
   They stay in the shipped app; they are honest debug surfaces, not test-only scaffolding.
+- **Fixture data is opt-in, per launch.** Example profiles, seeded verifications and any other made-up
+  record reach a screen only through a `spec/launch-args.json` argument (`seedJobs`, `seedProfiles`),
+  never as a store's default: a launch with no arguments shows a partner nothing that is not theirs,
+  and the active profile's organisation is what the SDK's consent screen names as the partner. Each
+  platform's unit test asserts the plain default.
 - **Design tokens come from the Smile ID design system, generated — never hand-copied.** The apps are
   Smile ID branded and dark mode follows the same colour schemes the SDK uses, because both resolve
   from one token source (three-tier DTCG with pre-generated per-platform output). Consume semantic
@@ -279,6 +284,7 @@ Before finishing any change:
 - [ ] UI change → goldens updated, light and dark, plus the font-scale and contrast predicates
 - [ ] New scenario, screen or affordance → `spec/` updated in the same PR, IDs stable
 - [ ] Nothing added to the never-commit list; anything internal-only carries the marker
+- [ ] A launch with no arguments shows no fixture data; anything made up sits behind a launch argument
 - [ ] Self-review the diff in priority order: security (no secrets, no PII in logs) → correctness
       (does the release build behave like debug) → consistency across the four apps → readability.
       Don't flag style nits the formatter owns; if you cannot describe a concrete failure scenario,
