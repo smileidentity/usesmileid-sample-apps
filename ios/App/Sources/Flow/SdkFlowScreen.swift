@@ -3,33 +3,33 @@ import SwiftUI
 import UseSmileID
 
 /// The single route hosting the SDK flow, in both presentations (R3). The SDK owns everything inside
-/// it (R2): no host back control, no host chrome, and the SDK's own back is what steps through the
-/// journey. Where the two presentations differ is the host's insets — `fullscreen` contributes none,
-/// which is the Compose twin's `WindowInsets(0)`, and `shell` leaves the flow inside the shell's own
-/// safe area, which is the presentation that exposes inset defects.
+/// it (R2): no host back control and no host chrome. The presentations differ only in insets.
 struct SdkFlowScreen: View {
   let productId: String
   let presentation: UseSmileIDSampleFlowRoute
 
   @EnvironmentObject private var router: UseSmileIDSampleRouter
   @EnvironmentObject private var app: UseSmileIDSampleAppState
-  /// Once per entry: the snapshot is read here and never again, and the run starts once.
+  /// Once per entry: the snapshot is read here and never again.
   @StateObject private var run = SdkFlowRun()
 
   @Environment(\.useSmileIDSampleColors) private var colors
 
   var body: some View {
-    // A stack with real size, not a background on the content: before the gate has run the content
-    // is empty, and SwiftUI drops an empty view's background — with it the signal below never fired.
+    // A stack, not a background on the content: the content is empty until the gate has run, and
+    // SwiftUI drops an empty view's background — the signal below never fired that way.
     ZStack {
-      // The app's own ground, so the frame before the SDK mounts is not white.
+      // So the frame before the SDK mounts is not white.
       colors.background
       content
-      // The push is over here; `onAppear` fires inside it, and every gate exit is a path change.
+      // The push is over here: `onAppear` fires inside it, and every gate exit is a path change.
       UseSmileIDSampleTransitionEnd(action: enter).frame(width: 0, height: 0)
+      // Mounted with the run: a hold has to overlap it to contend with it.
+      if let product = run.product {
+        UseSmileIDSampleCameraHold(hold: app.launchArguments.holdCamera, product: product)
+      }
     }
-    // `fullscreen` contributes no insets, which is the Compose twin's `WindowInsets(0)`; `shell`
-    // leaves the flow inside the shell's own safe area.
+    // The Compose twin's `WindowInsets(0)`; `shell` stays inside the shell's own safe area.
     .ignoresSafeArea(edges: presentation == .fullscreen ? .all : [])
     .navigationBarHidden(true)
   }
@@ -41,12 +41,11 @@ struct SdkFlowScreen: View {
     }
   }
 
-  /// §7.3's gate, then the run. Every exit replaces the path rather than popping it, so a repeated
-  /// delivery cannot stack a second screen and nothing can go back into capture (R4).
+  /// The gate, then the run. Every exit replaces the path rather than popping it (R4).
   private func enter() {
     guard run.claimEntry() else { return }
-    // Hoisted out of the view: a teardown-delivered cancel arrives from the SDK's own `deinit`, after
-    // this level is gone, where reading an `@EnvironmentObject` is no longer valid.
+    // Hoisted: a teardown cancel arrives from the SDK's `deinit`, after this level is gone, where an
+    // `@EnvironmentObject` read is no longer valid.
     let app = app
     let router = router
     let run = run
@@ -55,30 +54,29 @@ struct SdkFlowScreen: View {
       productId: productId,
       route: presentation,
       app: app,
-      // A prior enrolment's id when the card holds one, so authentication has something enrolled.
+      // A prior enrolment's id, so authentication has something enrolled.
       userId: app.flowResult.userId ?? UUID().uuidString
     ) else {
-      // An unknown product id exits like a mistyped route: there is nothing to run.
+      // An unknown product id exits like a mistyped route.
       useSmileIDSampleLeaveFlow(router, run, flow)
       return
     }
     switch useSmileIDSamplePreflight(snapshot) {
     case .needsDetails:
-      // The form, with the flow gone from underneath it: a deep link seats no form below the run.
+      // The flow goes from underneath it: a deep link seats no form below the run.
       useSmileIDSampleLeaveFlow(router, run, flow, landing: .consentDetailsForm(productId: snapshot.product.id))
     case .needsSession:
-      // Back to the scanner, not to a form: the run needs a token, and no form holds one.
+      // The scanner, not a form: the run needs a token, and no form holds one.
       app.interruptedRun = UseSmileIDSampleRunIntent(productId: snapshot.product.id, route: snapshot.route)
       useSmileIDSampleLeaveFlow(router, run, flow, landing: .scanToken)
     case .misconfigured(let issues):
-      // No form fixes this, so it exits like a mistyped product id — but says why first: a silent
-      // return to the product list is indistinguishable from a dead tap.
+      // Says why first: a silent return to the product list reads as a dead tap.
       app.flowResult.recordBlocked(reason: issues.joined(separator: "; "), environment: snapshot.environment)
       useSmileIDSampleLeaveFlow(router, run, flow)
     case .ready:
       app.flowResult.startFlow(environment: snapshot.environment)
       let handler = SdkFlowResultHandler(app: app, router: router, run: run, flow: flow, snapshot: snapshot)
-      run.start(builder: builder(snapshot, app: app, handler: handler))
+      run.start(product: snapshot.product, builder: builder(snapshot, app: app, handler: handler))
     }
   }
 
@@ -89,16 +87,14 @@ struct SdkFlowScreen: View {
   ) -> UseSmileIDBuilder {
     UseSmileIDBuilder { builder in
       useSmileIDSampleApply(builder, snapshot, onTokenRefreshed: { app.flowResult.recordRefreshCallback() })
-      // The scenario is the whole point of `noCallback`: the SDK keeps its own default, which does
-      // nothing, and the run must neither hang nor crash.
+      // `noCallback` leaves the SDK's own default, which does nothing.
       guard snapshot.scenario != .noCallback else { return }
       builder.onResult = handler.deliver
     }
   }
 }
 
-/// The result path, wired at entry and holding no view: the SDK's teardown cancel is delivered from a
-/// `deinit`, by which time this level is gone and an `@EnvironmentObject` read is no longer valid.
+/// Holds no view: the SDK's teardown cancel is delivered from a `deinit`, after this level is gone.
 @MainActor
 struct SdkFlowResultHandler {
   let app: UseSmileIDSampleAppState
@@ -113,11 +109,10 @@ struct SdkFlowResultHandler {
     case .success(let response):
       app.addJob(processingJob(response), bindings: snapshot.liveSession?.bindings)
       useSmileIDSampleLeaveFlow(router, run, flow, landing: .verificationDetails(jobId: response.jobId))
-    // Same destination, showing the error: a failed run has no server-issued job id, so the route
-    // carries a stable non-id and the screen says nothing is stored under it.
+    // Same destination: a failed run has no server-issued job id, so the route carries a non-id.
     case .failure:
       useSmileIDSampleLeaveFlow(router, run, flow, landing: .verificationDetails(jobId: unsubmittedJobId))
-    // Popping the flow *is* the cancel, so the host must not fire one of its own.
+    // Popping the flow *is* the cancel, so the host fires none of its own.
     case .cancelled:
       useSmileIDSampleLeaveFlow(router, run, flow)
     }
@@ -143,7 +138,7 @@ struct SdkFlowResultHandler {
       createdAt: Date(),
       message: response.message,
       httpStatus: 202,
-      // From the snapshot, not re-read: by the time a result lands the session may have moved on.
+      // From the snapshot: by the time a result lands the session may have moved on.
       sandbox: snapshot.sandbox,
       sessionId: snapshot.liveSession?.id,
       partnerId: snapshot.liveSession?.partnerId
@@ -151,7 +146,7 @@ struct SdkFlowResultHandler {
   }
 }
 
-/// The one exit: the run stops mounting anything and the path is replaced (R4).
+/// The one exit: the run mounts nothing more and the path is replaced (R4).
 @MainActor
 func useSmileIDSampleLeaveFlow(
   _ router: UseSmileIDSampleRouter,
@@ -164,7 +159,7 @@ func useSmileIDSampleLeaveFlow(
 }
 
 extension Error {
-  /// The message the card reports, falling back to the type when an error carries none.
+  /// What the card reports, falling back to the type when an error carries no message.
   var useSmileIDSampleMessage: String {
     if let exception = self as? any UseSmileIDException, !exception.message.isEmpty {
       return exception.message
@@ -173,5 +168,5 @@ extension Error {
   }
 }
 
-/// A failed run has no server-issued job id, so the landing route carries a stable non-id.
+/// The landing route for a run with no server-issued job id.
 private let unsubmittedJobId = "unsubmitted"

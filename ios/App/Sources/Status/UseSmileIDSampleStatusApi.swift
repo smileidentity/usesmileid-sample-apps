@@ -10,8 +10,7 @@ struct UseSmileIDSampleStatusApi: UseSmileIDSampleJobStatusSource {
     self.session = session
   }
 
-  /// Ten seconds, matching the Compose adapter's client: `URLSession.shared` waits a minute, and a
-  /// pull that hangs that long reads worse than one that fails.
+  /// Ten seconds, as the Compose adapter's client: `URLSession.shared` would wait a minute.
   private static let bounded: URLSession = {
     let configuration = URLSessionConfiguration.default
     configuration.timeoutIntervalForRequest = 10
@@ -34,9 +33,8 @@ struct UseSmileIDSampleStatusApi: UseSmileIDSampleJobStatusSource {
   }
 }
 
-/// The status URL for one job, with the id percent-encoded as a single path segment: an id carrying
-/// `/`, `?` or `#` would otherwise change which request the session's token is sent with. Pure, so
-/// the encoding is unit-testable, and nil rather than a guess when nothing is left to ask about.
+/// The id is percent-encoded as one path segment: a `/`, `?` or `#` in it would otherwise change
+/// which request the session's token is sent with. Nil rather than a guess when nothing is left.
 func useSmileIDSampleStatusUrl(jobId: String, sandbox: Bool) -> URL? {
   let environment: UseSmileIDSampleEnvironment = sandbox ? .sandbox : .production
   let unreserved = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-._~"))
@@ -64,8 +62,7 @@ func useSmileIDSampleStatusOutcome(
 struct UseSmileIDSampleStatusResponse: Decodable {
   let status: String
   let message: String
-  /// Carried for the payload's shape, not read: required, one of them missing from an otherwise
-  /// good 2xx would fail the decode and report a readable status as a transport failure.
+  /// Carried for the shape, not read: required, a 2xx omitting one would decode to nil.
   let jobId: String?
   let userId: String?
   let createdAt: String?

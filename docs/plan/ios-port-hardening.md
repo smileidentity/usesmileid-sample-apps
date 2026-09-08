@@ -315,9 +315,13 @@ the wrong one. Which ones act:
   formatting in the shell's own views, of which today there is none — the shell's copy is hard-coded
   English, and the SDK's strings resolve through its bundle, which follows `-AppleLanguages`, the
   platform's own launch argument. A flow that needs another language passes both.
-- **Read and dropped:** `autostart` and `holdCamera` wait on the flow host. They parse (an unknown
-  product id reads as nil, `holdCamera` takes milliseconds or `keep`) so the four apps accept one
-  surface, and nothing acts on them yet. `seedJobs` joined the applied list on 2026-09-08 — see §12.
+- ~~**Read and dropped:** `autostart` and `holdCamera` wait on the flow host.~~ **Both act as of
+  2026-09-08, with the host — see §16.** `autostart` opens the flow route once per launch, after the
+  restore so the argument wins over what the last scene left; with empty forms the gate then
+  redirects to the form, which is the gate working rather than the argument failing. `holdCamera`
+  binds the product's own lens alongside the run and counts frames, because a probe that never
+  acquired the camera passes vacuously — and on a simulator that is exactly what happens, so the
+  contention itself is a phone-lane claim and the flow only proves the hold is inert, not harmful. `seedJobs` joined the applied list on 2026-09-08 — see §12.
 - **`probes` rides the launch, not the link.** Android also reads it off the launching URI because a
   deep link there carries no extras; on iOS the argument reaches a running app, which every link is
   delivered to, so the sheet resolver already strips `?probes=` and nothing more is needed.
@@ -571,11 +575,12 @@ per-payload validators, with the token's bindings subtracted exactly as Android 
 lesson `sample_session_countdown` paid for, met in the SDK — so the flow's cancel test addresses its
 back control by label. The 12.1.0 source has `si_back_button` on it; at 12.0.2 it is unreachable.
 
-**What the simulator proved, and what it could not.** Seven flow tests on the pinned iPhone 17 Pro:
+**What the simulator proved, and what it could not.** Ten flow tests on the pinned iPhone 17 Pro:
 the launch-integrity opener (launch → product list → SDK mounted), both presentations, Deny landing
 on the details screen with exactly one result, a back-out cancelling with no row created, the cold
 link redirected to the form, the ended-session redirect with its reason and the resume that follows
-it, and a rapid second tap starting nothing. Falsified by reinstating two defects: without clearing
+it, a rapid second tap starting nothing, a rotation keeping the same run, and both launch arguments
+acting. Falsified by reinstating two defects: without clearing
 the flow's tab the stacked form is caught, and the router test's own unguarded push is asserted.
 What the lane cannot show: a **Success**, which needs a 202 and so a real Portal token, and with it
 `jobStore.add` putting a row in the list — the path is wired and unit-tested, and the device lane

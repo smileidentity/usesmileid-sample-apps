@@ -21,8 +21,6 @@ struct UseSmileIDSampleDestination: View {
           sessionEnded: app.sessionExpired,
           result: app.flowResult.snapshot
         ),
-        // Through the journey policy, so a form the token already answers is not asked for — and so
-        // the entry the gate would redirect away from is never the one a tap lands on.
         onProduct: { product in router.open(app.firstStep(for: product)) },
         onProfile: { router.sheet = .profileSwitch },
         // Pushed, not opened: linking pops back to where the scan started, as the Compose twin does.
@@ -41,8 +39,7 @@ struct UseSmileIDSampleDestination: View {
         onFieldChange: { field, value in app.setUserField(field, to: value) },
         onRememberChange: { app.rememberDetails = $0 },
         onBack: { router.pop() },
-        // Pushed once: two quick taps would otherwise stack two flow levels, which is two runs and
-        // two terminal results for one journey.
+        // Pushed once: two quick taps would stack two flow levels, and so two runs.
         onContinue: { Self.product(productId).map { router.pushOnce(app.stepAfterUserDetails($0)) } }
       )
       .navigationBarHidden(true)
@@ -119,9 +116,8 @@ struct UseSmileIDSampleDestination: View {
     content.sheet(item: $inAppLink) { UseSmileIDSampleBrowser(url: $0.url) }
   }
 
-  /// Three destinations, per `spec/screens.json` → linkPresentation: no url is the app's own
-  /// screen; `opensInApp` stays in an in-app browser; the two legal pages eject, because both serve
-  /// their document as an embedded PDF a mobile browser shows as a stub.
+  /// No url is this app's own screen; `opensInApp` stays in a browser sheet; the legal pages eject,
+  /// because both serve a PDF a mobile browser shows as a stub.
   private func open(_ row: UseSmileIDSampleNavRow) {
     guard let url = row.url else {
       router.open(.licenses)
@@ -160,9 +156,8 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
       onRefresh: { await refresh(silentWhenUnchanged: false) }
     )
     .task(id: jobId) {
-      // Only a processing row can change, read off the store's first emission rather than whatever
-      // a cold-start link found: nil is "not loaded yet", and treating it as a row refreshes a
-      // settled one.
+      // Off the store's first emission: nil is "not loaded yet", and treating it as a row would
+      // refresh a settled one.
       guard await loaded(jobId)?.status == .processing else { return }
       await refresh(silentWhenUnchanged: true)
     }

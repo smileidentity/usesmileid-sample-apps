@@ -45,9 +45,7 @@ final class UseSmileIDSampleLaunchArgumentUITests: XCTestCase {
     XCTAssertEqual(element("sample_result_active_scenario").label, "throwingCallback")
   }
 
-  /// `probes` reveals the card on a release build; debug always shows it. The release lane names its
-  /// configuration, and there the Settings DEBUG row must be gone too; anywhere else the row says which
-  /// build this is, since it is compiled out of release on every platform.
+  /// The release lane names its configuration, and only there is the Settings DEBUG row gone.
   func testWithoutTheArgumentTheCardFollowsTheBuild() {
     launch([])
     element("sample_nav_settings").tap()

@@ -17,7 +17,6 @@ final class UseSmileIDSampleFlowJourneyTest: XCTestCase {
     XCTAssertEqual(useSmileIDSampleJourneySteps(snapshot), [.selfieCapture, .processing])
   }
 
-  /// The one journey without capture, per its own validator.
   func testEnhancedKycIsConsentAndProcessingOnly() {
     XCTAssertEqual(useSmileIDSampleJourneySteps(snapshot(.enhancedKyc)), [.consent, .processing])
     XCTAssertEqual(
@@ -26,7 +25,6 @@ final class UseSmileIDSampleFlowJourneyTest: XCTestCase {
     )
   }
 
-  /// The two document products capture in opposite orders, and each preview follows its own capture.
   func testTheDocumentProductsCaptureInOppositeOrders() {
     XCTAssertEqual(
       useSmileIDSampleJourneySteps(snapshot(.documentVerification)),
@@ -38,14 +36,11 @@ final class UseSmileIDSampleFlowJourneyTest: XCTestCase {
     )
   }
 
-  /// A consent binding lifts the SDK's requirement, and declaring the screen anyway ends the run
-  /// before it starts.
   func testAConsentBindingDropsTheConsentScreenEvenWithTheSwitchOn() {
     let bound = snapshot(.smartSelfieEnrollment, session: session(bindings: consentBindings))
     XCTAssertEqual(useSmileIDSampleJourneySteps(bound), [.instructions, .selfieCapture, .preview, .processing])
   }
 
-  /// The two scenarios that are about refresh keep their fixture token, so the binding is not read.
   func testARefreshScenarioIgnoresTheSessionsBindings() {
     let expired = snapshot(
       .smartSelfieEnrollment,
@@ -58,7 +53,6 @@ final class UseSmileIDSampleFlowJourneyTest: XCTestCase {
     )
   }
 
-  /// What the SDK is handed is built from the same steps the gate validates, one screen each.
   func testTheScreensHandedToTheSdkMirrorTheSteps() {
     let snapshot = snapshot(.smartSelfieEnrollment)
     let steps = useSmileIDSampleFlowSteps(snapshot)
@@ -70,7 +64,6 @@ final class UseSmileIDSampleFlowJourneyTest: XCTestCase {
     XCTAssertEqual(consent.partnerPrivacyPolicyUrl.absoluteString, "https://smile.id/privacy-policy")
   }
 
-  /// The selfie capture carries the two settings that decide how it behaves, unswapped.
   func testTheSelfieCaptureCarriesTheSettingsUnswapped() {
     let steps = useSmileIDSampleFlowSteps(snapshot(.smartSelfieEnrollment, agentMode: true, enhancedLiveness: false))
     let selfie = steps.compactMap { step -> SelfieCaptureConfig? in

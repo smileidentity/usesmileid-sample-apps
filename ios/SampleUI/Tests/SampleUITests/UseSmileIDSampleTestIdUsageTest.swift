@@ -1,17 +1,10 @@
 @testable import SampleUI
 import XCTest
 
-/// The second direction of the id contract.
-///
-/// `UseSmileIDSampleSpecTest` proves every declared id exists in `spec/test-ids.json`. Nothing
-/// proved any of them reaches a view, and that gap has already shipped twice — `sample_selection_bar`
-/// was declared and unapplied, and four list ids sat unused behind component parameters. A device
-/// flow waiting on one of those times out with no clue why, so the unused ones are listed here
-/// deliberately and the list shrinks as screens land.
+/// The other direction of the id contract: `UseSmileIDSampleSpecTest` proves a declared id is in the
+/// spec, this proves it reaches a view. A flow waiting on one that does not just times out.
 final class UseSmileIDSampleTestIdUsageTest: XCTestCase {
-  /// Ids not yet on a view. Delete an entry when its screen lands — a stale list fails the test
-  /// below, so this cannot rot into a permanent excuse. Every remaining entry is a prefix the real
-  /// ids are built from, and each one is used by the function that builds them.
+  /// Ids not yet on a view; delete an entry when its screen lands, because a stale list fails.
   private static let notYetApplied: Set<String> = [
     "productCardPrefix", "settingNavPrefix", "detailFieldPrefix", "detailCopyPrefix",
     "userDetailsFieldPrefix", "countryOptionPrefix", "idTypeOptionPrefix",

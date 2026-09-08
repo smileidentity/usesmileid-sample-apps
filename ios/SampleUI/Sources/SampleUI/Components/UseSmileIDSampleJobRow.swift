@@ -1,9 +1,7 @@
 import SwiftUI
 
 /// One verification: a product tile, its name, a secondary line of job id and time, and the status.
-///
-/// Select mode's checkbox is not a slot — the design puts it beside the card, and inside it cost the
-/// title its width.
+/// Select mode's checkbox is not a slot: the design puts it beside the card.
 public struct UseSmileIDSampleJobRow: View {
   private let product: UseSmileIDSampleProduct
   private let jobId: String

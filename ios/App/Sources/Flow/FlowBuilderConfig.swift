@@ -6,11 +6,10 @@ import UseSmileIDBridge
 import UseSmileIDVisionDocument
 import UseSmileIDVisionFace
 
-/// The one place that decides what the SDK is handed (§8).
+/// The one place that decides what the SDK is handed.
 ///
-/// The journey is built as `[FlowStep]` first and replayed into the builder's own `screens` block,
-/// so the gate in `FlowPreflight` validates the very screens the run composes. Two constructions of
-/// the same journey would be free to drift, and the SDK gives no way to read a builder's list back.
+/// The journey is built as `[FlowStep]` and replayed into the builder's `screens` block, so the gate
+/// validates the screens the run composes; the SDK reads no list back for a second construction.
 @MainActor
 func useSmileIDSampleApply(
   _ builder: UseSmileIDFlowBuilder,
@@ -30,8 +29,8 @@ func useSmileIDSampleApply(
     replay(useSmileIDSampleFlowSteps(snapshot), into: screens)
   }
   if snapshot.product.capture {
-    // Two call sites rather than one with a condition inside: `AnalyzersBuilder` declares only
-    // `buildBlock`, so a result-builder `if` does not compile against it.
+    // Two call sites: `AnalyzersBuilder` declares only `buildBlock`, so an `if` inside will not
+    // compile.
     builder.ml { ml in
       if snapshot.product.needsDocumentCapture {
         ml.analyzers {
@@ -55,8 +54,8 @@ func useSmileIDSampleApply(
       )
       config.onTokenExpired = { previous in
         await onTokenRefreshed()
-        // The Portal mints by hand and there is no endpoint this sample may call, so the auth failure
-        // has to surface rather than be papered over with an invented token.
+        // No endpoint this sample may call, so the auth failure surfaces rather than being papered
+        // over with an invented token.
         if scanned != nil {
           return previous
         }
@@ -65,16 +64,14 @@ func useSmileIDSampleApply(
         }
         return UseSmileIDSampleFlowTokens.token(expired: false, now: Date())
       }
-      // Debug builds only: a sample that shows a partner what the SDK put on the wire is a real probe
-      // affordance, but release must never log traffic.
+      // Debug only: release must never log traffic.
       config.logging { logging in
         logging.enabled = UseSmileIDSampleAppState.isDebugBuild
-        // HEADERS, not BODY: a logged body carries the user details this repo forbids in logs.
+        // Not BODY: a logged body carries the user details this repo forbids in logs.
         logging.level = .headers
       }
       config.partnerConfig { partner in
-        // The token wins over the local profile: it was minted for one partner, and a signed token
-        // submitted under a different id comes back 401.
+        // The token wins over the local profile: a signed token under another id comes back 401.
         partner.partnerId = scanned?.partnerId ?? snapshot.partnerId
         partner.callbackUrl = callbackUrl
         partner.useSandbox = snapshot.sandbox
@@ -82,9 +79,8 @@ func useSmileIDSampleApply(
     }
   }
   if snapshot.theme == .partnerOverride {
-    // A plausible partner palette through the SDK's public override. `clashingHost` has no iOS
-    // counterpart yet: the Compose twin swaps the *host's* MaterialTheme, and SwiftUI hands the SDK
-    // no host palette to collide with — see `ios-port-hardening.md` §16.
+    // `clashingHost` has no counterpart: the Compose twin swaps the host's own MaterialTheme, and
+    // SwiftUI hands the SDK no host palette to collide with.
     builder.theme { theme in
       theme.primaryColor = theme.color(light: .indigo, dark: .indigo)
       theme.primaryForeground = theme.color(light: .white, dark: .white)
@@ -95,7 +91,7 @@ func useSmileIDSampleApply(
   }
 }
 
-/// Omitted when the token binds what the SDK requires: the forms were skipped, so these would be blanks.
+/// Omitted when the token binds them: the forms were skipped, so these would be blanks.
 @MainActor
 func useSmileIDSampleUserDetails(_ snapshot: FlowLaunchSnapshot) -> UserDetails? {
   guard snapshot.liveSession?.bindings.bindsRequiredUserDetails != true else { return nil }
@@ -107,8 +103,8 @@ func useSmileIDSampleUserDetails(_ snapshot: FlowLaunchSnapshot) -> UserDetails?
   )
 }
 
-/// The four ID payloads, of which a product carries at most one. One value, so the gate validates the
-/// object the run passes rather than a second construction of it.
+/// The four ID payloads, of which a product carries at most one, so the gate validates the object
+/// the run passes.
 struct FlowIdParams {
   var biometricKyc: BiometricKYCParams?
   var enhancedKyc: EnhancedKYCParams?
@@ -119,11 +115,11 @@ struct FlowIdParams {
 @MainActor
 func useSmileIDSampleIdParams(_ snapshot: FlowLaunchSnapshot) -> FlowIdParams {
   let details = snapshot.idDetails
-  // Per field, the token beats the form — the server overwrites these from its claims regardless.
+  // Per field, the token beats the form; the server overwrites these from its claims anyway.
   let bound = snapshot.liveSession?.bindings
   let country = bound?.country ?? details.country?.code ?? ""
   let idType = bound?.idType ?? details.idType?.id ?? ""
-  // The SDK asks only that this be non-blank, and the server substitutes the same claim anyway.
+  // The SDK asks only that this be non-blank.
   let idNumber = bound?.idNumberReference ?? details.idNumber
   var params = FlowIdParams()
   switch snapshot.product {
@@ -131,7 +127,7 @@ func useSmileIDSampleIdParams(_ snapshot: FlowLaunchSnapshot) -> FlowIdParams {
     params.biometricKyc = BiometricKYCParams(idType: idType, idNumber: idNumber, country: country)
   case .enhancedKyc:
     params.enhancedKyc = EnhancedKYCParams(idType: idType, idNumber: idNumber, country: country)
-  // Nullable here: an unbound, unselected type stays absent rather than becoming a rejected "".
+  // Nullable: an unselected type stays absent rather than becoming a rejected "".
   case .documentVerification:
     params.documentVerification = DocumentVerificationParams(
       country: country,
@@ -145,7 +141,7 @@ func useSmileIDSampleIdParams(_ snapshot: FlowLaunchSnapshot) -> FlowIdParams {
   return params
 }
 
-/// The journey as the SDK's own screen list, from the steps the settings and the token decide.
+/// The SDK's own screen list, from the steps the settings and the token decide.
 @MainActor
 func useSmileIDSampleFlowSteps(_ snapshot: FlowLaunchSnapshot) -> [FlowStep] {
   useSmileIDSampleJourneySteps(snapshot).map { step in
@@ -153,8 +149,7 @@ func useSmileIDSampleFlowSteps(_ snapshot: FlowLaunchSnapshot) -> [FlowStep] {
     case .consent:
       .consent(ConsentScreenConfiguration(
         partnerName: snapshot.partnerName,
-        // Both required and non-optional here, unlike the builder's block, where omitting either
-        // fails build() while validate() still reports Valid.
+        // Non-optional here, unlike the builder's block, where omitting either fails build().
         partnerPrivacyPolicyUrl: privacyPolicyUrl,
         partnerIcon: UseSmileIDSampleFlowIcon.partnerMark
       ))
@@ -185,8 +180,7 @@ func useSmileIDSampleFlowSteps(_ snapshot: FlowLaunchSnapshot) -> [FlowStep] {
   }
 }
 
-/// The same screens back through the builder's block, which is the only way to hand them to the SDK:
-/// `UseSmileIDBuilder` takes no `FlowConfiguration`, and `ScreensBuilder` exposes no list to read.
+/// The only way to hand the screens over: `UseSmileIDBuilder` takes no `FlowConfiguration`.
 @MainActor
 private func replay(_ steps: [FlowStep], into screens: ScreensBuilder) {
   for step in steps {
@@ -220,8 +214,7 @@ private func replay(_ steps: [FlowStep], into screens: ScreensBuilder) {
       screens.preview { _ in }
     case .processing:
       screens.processing { _ in }
-    // A screen type this build does not know cannot be replayed, and dropping it silently would run
-    // a journey the gate validated and the host cannot see.
+    // Dropping one silently would run a journey the host cannot see.
     @unknown default:
       assertionFailure("unhandled SDK screen type \(step.type)")
     }
@@ -241,8 +234,7 @@ private func documentAnalyzer() -> CaptureTypeConfiguration {
   }
 }
 
-/// One SDK screen the host composes. Named so the journey can be asserted: neither the builder nor
-/// its screens block reads its list back.
+/// Named so the journey can be asserted: the builder reads no list back.
 enum FlowJourneyStep: Equatable {
   case consent
   case instructions
@@ -252,14 +244,14 @@ enum FlowJourneyStep: Equatable {
   case processing
 }
 
-/// The journey, as the three step switches and the token's bindings decide it. A consent binding
-/// lifts the SDK's requirement, and declaring the screen anyway ends the run before it starts.
+/// A consent binding lifts the SDK's requirement, and declaring the screen anyway ends the run
+/// before it starts.
 func useSmileIDSampleJourneySteps(_ snapshot: FlowLaunchSnapshot) -> [FlowJourneyStep] {
   var steps: [FlowJourneyStep] = []
   if snapshot.liveSession?.bindings.consent == nil, snapshot.consentStep {
     steps.append(.consent)
   }
-  // Enhanced KYC is the one journey without capture: consent and processing only, per its validator.
+  // Enhanced KYC is the one journey without capture, per its own validator.
   guard snapshot.product.capture else {
     steps.append(.processing)
     return steps
@@ -279,7 +271,7 @@ func useSmileIDSampleJourneySteps(_ snapshot: FlowLaunchSnapshot) -> [FlowJourne
   return steps
 }
 
-/// A preview follows its capture, and the document products' two previews go together or not at all.
+/// A preview follows its capture; the document products' two go together or not at all.
 private func capture(_ step: FlowJourneyStep, _ preview: Bool) -> [FlowJourneyStep] {
   preview ? [step, .preview] : [step]
 }

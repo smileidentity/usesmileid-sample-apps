@@ -15,10 +15,8 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// The submitted verifications; its writes are launched here rather than in a screen.
   let jobStore: UseSmileIDSampleJobStore
 
-  /// Read once at launch. `scenario`, `theme` and `route` seed the run, `probes` gates the card,
-  /// `seedProfiles` chooses the profiles and `seedJobs` seeds the verifications; `autostart` and
-  /// `holdCamera` are read and not acted on until the slice after this one; `appLocale` reaches the
-  /// shell's own SwiftUI formatting, not the SDK's strings.
+  /// Read once at launch. `appLocale` reaches the shell's own SwiftUI formatting, not the SDK's
+  /// strings, which follow `-AppleLanguages`.
   let launchArguments: UseSmileIDSampleLaunchArguments
 
   @Published var settings = UseSmileIDSampleSettings()
@@ -61,8 +59,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// The scan sheet's typed state, lifted here so a tab switch or a recreation keeps it (R6).
   @Published var scanEntry = UseSmileIDSampleScanSheetState()
 
-  /// The expiry gate's hand-off to the scanner, so relinking re-enters the run it interrupted.
-  /// Claimed by the scanner on arrival, so leaving by any other route drops it.
+  /// The expiry gate's hand-off, claimed by the scanner on arrival so leaving elsewhere drops it.
   @Published var interruptedRun: UseSmileIDSampleRunIntent?
 
   /// The run the card reports: seeded from the launch, then the drawer's; see the type for what survives what.
@@ -112,8 +109,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     }
   }
 
-  /// The row a delivered result leaves behind. Unstructured, never `.task`: the SDK delivers once,
-  /// and the write has to outlive the flow the result is tearing down.
+  /// Unstructured, never `.task`: the write outlives the flow the result is tearing down.
   func addJob(_ job: UseSmileIDSampleJob, bindings: UseSmileIDSampleTokenBindings?) {
     Task { [jobStore] in await jobStore.add(job, bindings: bindings) }
   }
@@ -155,8 +151,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     sessionRecord.live
   }
 
-  /// Sandbox unless a linked token's own `api_url` names production: there is no environment control
-  /// on this app, and a fixture run has nothing else to go on.
+  /// Sandbox unless a linked token's `api_url` names production; there is no control for it.
   var useSandbox: Bool {
     session?.environment != .production
   }

@@ -7,9 +7,8 @@ public protocol UseSmileIDSampleJobStorage: Sendable {
   func write(_ data: Data)
 }
 
-/// The submitted verifications, on disk: the SDK delivers a result once, and there is nowhere else
-/// to get it from. An `actor`, so a write is atomic without a lock; its writes are launched from an
-/// unstructured `Task`, never `.task`, so one outlives the screen that asked. One per process.
+/// The submitted verifications, on disk: the SDK delivers a result once. An `actor`, so a write is
+/// atomic without a lock, launched from an unstructured `Task` so it outlives the screen that asked.
 public actor UseSmileIDSampleJobStore {
   private let storage: UseSmileIDSampleJobStorage
   private let source: UseSmileIDSampleJobStatusSource
@@ -87,7 +86,6 @@ public actor UseSmileIDSampleJobStore {
     removalContinuation.yield(taken.count)
   }
 
-  /// Re-inserts the batch the last ``remove(_:)`` took, and is a no-op with nothing pending.
   /// Order restores itself: the list is ordered by the rows' own timestamps, not by insertion.
   public func undoRemove() {
     guard !lastRemoved.isEmpty else { return }
@@ -111,9 +109,8 @@ public actor UseSmileIDSampleJobStore {
     return true
   }
 
-  /// The refresh sequence, owned by what owns the rows: the environment and the partner come from
-  /// the row, never the caller. Nil when one is already in flight; throws only on cancellation, so
-  /// leaving the screen mid-request is not reported as a failure.
+  /// The environment and the partner come from the row, never the caller. Nil when one is already in
+  /// flight, and throws only on cancellation, so leaving mid-request is not a failure.
   public func refresh(
     _ jobId: String,
     live: UseSmileIDSampleTokenSession?,
