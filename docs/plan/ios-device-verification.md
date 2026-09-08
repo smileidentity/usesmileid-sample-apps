@@ -1,0 +1,109 @@
+# iOS device verification — the lane the port owes before it is finished
+
+**Status:** PROPOSED 2026-09-08, nothing in it implemented. Written the day the verifications slice
+landed, when the iOS suite reached 43 XCUITest tests and it became clear what it still cannot say.
+
+**The problem in one line:** iOS has the runner the contract asks for and none of the scaffolding
+around it, so a green iOS suite proves the app works on one simulator, launched one way, by one
+lane nobody records.
+
+`AGENTS.md` §Testing already decides the stack — Maestro on Android, XCUITest on iOS, assertions on
+`si_*` / `sample_*` ids, never on screenshots or coordinates. Nothing here re-opens that. This is
+the list of what is missing underneath it.
+
+---
+
+## 1. What exists today
+
+`ios/verify.sh` runs three suites on the pinned iPhone 17 Pro simulator, and per-PR CI runs the same
+script rather than repeating its steps:
+
+| Suite | Covers |
+|---|---|
+| `UseSmileIDSampleNavigationUITests` (25) | the shell, both link levels, the pill, profiles, the token session, the scenario drawer, the result card |
+| `UseSmileIDSampleLaunchArgumentUITests` (9) | every argument that acts, plus the release-build probes gate |
+| `UseSmileIDSampleVerificationsUITests` (9) | select mode, both removal paths, the undo, the counts, the emptied-filter fallback, the bottom inset |
+
+What that suite can already do, so a new check does not need a new mechanism: launch arguments as
+preconditions (`-seedJobs`, `-seedProfiles`, `-probes`, `-scenario`), a deep link to any route in
+`spec/routes.json`, id assertions from `spec/test-ids.json`, `press(forDuration:thenDragTo:)` for a
+gesture, a frame comparison for a layout rule (the last row against the floating bar), and
+`waitForNonExistence` for the negative half of a claim.
+
+What it cannot do: run on a phone, meet a permission prompt, survive a rotation, or say which build
+it verified.
+
+## 2. The gaps, in the order worth closing them
+
+### 2.1 Flow-set parity with the Android suite
+
+The Android flows are the contract to mirror, screen for screen. Where iOS has no counterpart it is
+because the screen is a seat, not because the flow was skipped — but that distinction is invisible
+today, and it should be written down per flow:
+
+| `android/maestro/` | iOS counterpart | State |
+|---|---|---|
+| `shell-navigation.yaml` | `NavigationUITests` | covered |
+| `deep-links.yaml` | `NavigationUITests` | covered |
+| `launch-args.yaml` | `LaunchArgumentUITests` | covered |
+| `profiles.yaml` | `NavigationUITests` | covered |
+| `token-session.yaml` | `NavigationUITests` | covered, minus the scanned-token flow a camera would need |
+| `verifications.yaml` | `VerificationsUITests` | covered |
+| `settings.yaml` | — | blocked: the switches are not persisted on iOS yet, so there is no open-and-close-with-defaults walk to write |
+| `sdk-flow.yaml` | — | blocked on the flow host; this is the one that asserts deny, back, and immediate re-entry |
+
+### 2.2 The opener every device flow owes
+
+`AGENTS.md` asks every device flow to open with launch → product list → SDK-mount assertions, so a
+packaging failure fails conclusively instead of looking like a UI defect, and to assert exactly one
+terminal result after any cancel or deny — including re-entry by rapid taps. iOS has neither half,
+because both need a flow that mounts the SDK. They land with the flow host, in the same change.
+
+### 2.3 A physical-device lane
+
+Everything above runs on a simulator, which cannot show a camera, a permission prompt, a thermal
+throttle or a real orientation change. The lane needs, in this order:
+
+- signing that lets `xcodebuild test -destination 'platform=iOS,id=<udid>'` install on the phone
+- the system-alert path: `XCUIApplication(bundleIdentifier: "com.apple.springboard").alerts` on a
+  device, `simctl privacy booted grant camera <bundle-id>` as the simulator's precondition
+- proof of which build was verified. Version and build number are identical across rebuilds, so a
+  stale install passes silently
+- a foreground guard. The four sample apps implement the same `sample_*` ids and render the same SDK
+  screens, and on iOS a shared URL scheme is last-installed-wins, so a deep link can land in a
+  sibling app and satisfy an assertion meant for this one
+
+It cannot run on a hosted CI runner, so it is a local lane triggered per PR by hand, or a device
+cloud — not part of `ios/verify.sh`.
+
+### 2.4 Recorded runs
+
+An iOS run currently leaves no trace beyond its exit code, so nothing can say what the iOS lane's
+pass rate is, which of its reds were environmental, or which finding is still owed a regression
+check — all of which the Android lane can answer.
+
+<!-- INTERNAL-ONLY:START reason=machine-local-tooling -->
+The machine-local harness at `v12/tools/verify/` already has the pieces: `run.sh` is
+runner-agnostic (`run.sh <label> <device> -- xcodebuild test …`) and classifies an infrastructure
+red, and `fresh-install.sh` already fingerprints an iOS bundle container for §2.3's install proof.
+What is missing is an iOS call site for `run.sh` and an iOS counterpart to `foreground.sh`, which
+reads the Android activity manager and has no equivalent. Tracked in that harness's own idea ledger.
+<!-- INTERNAL-ONLY:END -->
+
+## 3. What stays out, and why
+
+- **Frame injection and any recorded capture media.** Public flows stop at the shutter; this repo
+  goes public and its history survives the flip.
+- **Coordinate taps and screenshot diffs inside a flow.** Goldens are their own lane. Driving the app
+  by coordinates is how an agent *authors* a check — a 1200px swipe from the centre of the screen
+  invoked the home gesture and dismissed the app while this document's own screens were being read,
+  which is the argument in one line.
+- **A model in the pass/fail path.** Agents author and triage; the committed test replays with no
+  model in the loop and reports a real exit code.
+
+## 4. Suggested order
+
+1. §2.4 — cheapest, and it makes every later claim measurable.
+2. §2.1's two blocked rows, as the screens they wait on land.
+3. §2.2 with the flow host, in that change rather than after it.
+4. §2.3 last, and only once there is something on a phone that a simulator cannot show.

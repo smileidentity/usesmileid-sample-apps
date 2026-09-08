@@ -428,6 +428,13 @@ choice below is one the Compose twin did not have to make.
   `colors.filterChip` matched it. It now looks for the qualified `UseSmileIDSampleTestIds.` form,
   which is how every screen names one.
 
+## 14. The device lane the port still owes — see `ios-device-verification.md`
+
+The suite is 43 XCUITest tests on the pinned simulator, which is the runner the contract asks for and
+none of the scaffolding around it: no phone, no permission prompt, no proof of which build was
+verified, no record of what the lane's reds were, and two Android flows with no counterpart (settings
+waits on persistence, the SDK flow on the host). Written up separately because it outlives the port.
+
 ## Considered and rejected
 
 - **Giving the SPM test target a host app so `UISwitch` renders its thumb.** The thumb is missing
