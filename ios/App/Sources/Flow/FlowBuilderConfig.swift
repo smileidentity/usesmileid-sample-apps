@@ -87,7 +87,9 @@ func useSmileIDSampleApply(
       theme.secondaryColor = theme.color(light: palette.secondary, dark: palette.secondary)
       theme.accentColor = theme.color(light: palette.accent, dark: palette.accent)
       theme.buttonShape = theme.shape(palette.buttonRadius)
-      palette.fontFamily.map { theme.fontFamily = $0 }
+      if let fontFamily = palette.fontFamily {
+        theme.fontFamily = fontFamily
+      }
     }
   }
 }
