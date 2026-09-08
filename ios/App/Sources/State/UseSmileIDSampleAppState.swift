@@ -73,7 +73,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
 
   init(
     store: UseSmileIDSampleStore = UseSmileIDSampleStore(),
-    jobStore: UseSmileIDSampleJobStore = UseSmileIDSampleJobStore(),
+    jobStore: UseSmileIDSampleJobStore = UseSmileIDSampleJobStore(source: UseSmileIDSampleStatusApi()),
     launchArguments: UseSmileIDSampleLaunchArguments = UseSmileIDSampleLaunchArguments(reading: .standard)
   ) {
     self.store = store
@@ -125,6 +125,11 @@ final class UseSmileIDSampleAppState: ObservableObject {
     return Dictionary(
       uniqueKeysWithValues: UseSmileIDSampleJobFilter.allCases.map { ($0, jobs.filter($0.matches).count) }
     )
+  }
+
+  /// Screen-scoped, unlike a write: leaving cancels it, and the store releases its guard either way.
+  func refreshJob(_ jobId: String) async -> UseSmileIDSampleStatusRefresh? {
+    try? await jobStore.refresh(jobId, live: session, now: Date())
   }
 
   func undoJobRemoval() {

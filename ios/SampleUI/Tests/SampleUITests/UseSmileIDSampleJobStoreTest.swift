@@ -5,7 +5,7 @@ import XCTest
 /// The store's own semantics over storage held in memory; the file itself is the platform's.
 final class UseSmileIDSampleJobStoreTest: XCTestCase {
   func testAFreshStoreIsEmpty() async {
-    let jobs = await UseSmileIDSampleJobStore(storage: UseSmileIDSampleJobMemoryStorage()).jobs
+    let jobs = await UseSmileIDSampleJobStore(storage: UseSmileIDSampleJobMemoryStorage(), source: Self.noNetwork).jobs
     XCTAssertEqual(jobs, [])
   }
 
@@ -70,10 +70,10 @@ final class UseSmileIDSampleJobStoreTest: XCTestCase {
 
   func testTheRowsAreReadBackByAStoreOverTheSameStorage() async {
     let storage = UseSmileIDSampleJobMemoryStorage()
-    let first = UseSmileIDSampleJobStore(storage: storage)
+    let first = UseSmileIDSampleJobStore(storage: storage, source: Self.noNetwork)
     await first.add(Self.job(id: "job-1"))
 
-    let second = UseSmileIDSampleJobStore(storage: storage)
+    let second = UseSmileIDSampleJobStore(storage: storage, source: Self.noNetwork)
     let ids = await second.jobs.map(\.id)
     XCTAssertEqual(ids, ["job-1"])
   }
@@ -84,7 +84,8 @@ final class UseSmileIDSampleJobStoreTest: XCTestCase {
     "statusId":"Retired","createdAtMillis":0,"message":"","sandbox":true}]}
     """
     let store = UseSmileIDSampleJobStore(
-      storage: UseSmileIDSampleJobMemoryStorage(data: Data(stored.utf8))
+      storage: UseSmileIDSampleJobMemoryStorage(data: Data(stored.utf8)),
+      source: Self.noNetwork
     )
     let job = await store.find("job-1")
     XCTAssertEqual(job?.product, UseSmileIDSampleProduct.allCases[0])
@@ -93,7 +94,8 @@ final class UseSmileIDSampleJobStoreTest: XCTestCase {
 
   func testStorageThatCannotBeDecodedReadsAsNoRowsRatherThanCrashing() async {
     let store = UseSmileIDSampleJobStore(
-      storage: UseSmileIDSampleJobMemoryStorage(data: Data("not json".utf8))
+      storage: UseSmileIDSampleJobMemoryStorage(data: Data("not json".utf8)),
+      source: Self.noNetwork
     )
     let jobs = await store.jobs
     XCTAssertEqual(jobs, [])
@@ -101,7 +103,7 @@ final class UseSmileIDSampleJobStoreTest: XCTestCase {
 
   func testTheTokensBoundFieldsAreRecordedAsFlagsOnly() async throws {
     let storage = UseSmileIDSampleJobMemoryStorage()
-    let store = UseSmileIDSampleJobStore(storage: storage)
+    let store = UseSmileIDSampleJobStore(storage: storage, source: Self.noNetwork)
     let bindings = UseSmileIDSampleTokenBindings(
       givenNames: true,
       lastName: true,
@@ -123,7 +125,7 @@ final class UseSmileIDSampleJobStoreTest: XCTestCase {
 
   func testNoTokenLeavesEveryBoundFlagFalse() async throws {
     let storage = UseSmileIDSampleJobMemoryStorage()
-    let store = UseSmileIDSampleJobStore(storage: storage)
+    let store = UseSmileIDSampleJobStore(storage: storage, source: Self.noNetwork)
     await store.add(Self.job(id: "job-1"))
 
     let record = try Self.record("job-1", in: storage)
@@ -224,8 +226,10 @@ final class UseSmileIDSampleJobStoreTest: XCTestCase {
     )
   }
 
+  private static let noNetwork = UseSmileIDSampleUnreachableStatusSource()
+
   private static func store() -> UseSmileIDSampleJobStore {
-    UseSmileIDSampleJobStore(storage: UseSmileIDSampleJobMemoryStorage())
+    UseSmileIDSampleJobStore(storage: UseSmileIDSampleJobMemoryStorage(), source: noNetwork)
   }
 
   private static func record(

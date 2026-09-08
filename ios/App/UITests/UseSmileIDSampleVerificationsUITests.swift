@@ -153,6 +153,41 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
     XCTAssertFalse(element("sample_selection_bar").exists)
   }
 
+  /// A seeded row carries no session, so the outcome is deterministic and needs no network.
+  func testEnteringAProcessingRowRefreshesItAndSaysWhyItCannotSucceed() {
+    element("sample_job_row_1").tap()
+    XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("sample_toast").waitForExistence(timeout: 10))
+    XCTAssertTrue(app.staticTexts["Not submitted under a scanned token"].exists)
+  }
+
+  func testEnteringASettledRowRefreshesNothingUntilItIsPulled() {
+    element("sample_job_row_0").tap()
+    XCTAssertTrue(element("sample_details_refresh").waitForExistence(timeout: 10))
+    XCTAssertFalse(element("sample_toast").waitForExistence(timeout: 3), "a settled row refreshed itself")
+
+    let refresh = element("sample_details_refresh")
+    refresh.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.15))
+      .press(
+        forDuration: 0.1,
+        thenDragTo: refresh.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
+      )
+
+    XCTAssertTrue(element("sample_toast").waitForExistence(timeout: 10))
+    XCTAssertTrue(app.staticTexts["Not submitted under a scanned token"].exists)
+  }
+
+  /// The link launches the app, so the row arrives after the screen does — the case where treating
+  /// "not loaded yet" as "no row" refreshes a settled one. The rows are already on disk from setUp,
+  /// which is what a system-opened launch, carrying no arguments, relies on.
+  func testAColdStartLinkIntoASettledRowRefreshesNothing() {
+    app.terminate()
+    open("verifications/job_00ky31za00")
+    XCTAssertTrue(element("sample_details_refresh").waitForExistence(timeout: 15))
+    XCTAssertFalse(element("sample_details_empty").exists, "the stored row did not survive the relaunch")
+    XCTAssertFalse(element("sample_toast").waitForExistence(timeout: 3), "a settled row refreshed itself")
+  }
+
   private func count(_ filter: String) -> String {
     element("sample_filter_count_\(filter)").label
   }
