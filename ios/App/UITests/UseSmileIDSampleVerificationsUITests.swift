@@ -166,11 +166,15 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
     XCTAssertTrue(element("sample_details_refresh").waitForExistence(timeout: 10))
     XCTAssertFalse(element("sample_toast").waitForExistence(timeout: 3), "a settled row refreshed itself")
 
+    // Held at the end of the drag, or a quick release reads as a scroll and the refresh never fires —
+    // which is how this flaked once the suite grew long enough to slow the gesture down.
     let refresh = element("sample_details_refresh")
     refresh.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.15))
       .press(
         forDuration: 0.1,
-        thenDragTo: refresh.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
+        thenDragTo: refresh.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85)),
+        withVelocity: .slow,
+        thenHoldForDuration: 0.3
       )
 
     XCTAssertTrue(element("sample_toast").waitForExistence(timeout: 10))
