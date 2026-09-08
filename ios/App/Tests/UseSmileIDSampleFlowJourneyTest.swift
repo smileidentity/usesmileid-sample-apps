@@ -75,6 +75,19 @@ final class UseSmileIDSampleFlowJourneyTest: XCTestCase {
     XCTAssertEqual(selfie.first?.enableEnhancedLiveness, false)
   }
 
+  func testBothThemeScenariosOverrideAndTheShippedBrandingDoesNot() {
+    XCTAssertNil(UseSmileIDSampleThemeScenario.brandDefault.override)
+    let partner = UseSmileIDSampleThemeScenario.partnerOverride.override
+    let clashing = UseSmileIDSampleThemeScenario.clashingHost.override
+    XCTAssertNotNil(partner)
+    XCTAssertNotNil(clashing)
+    // Far from the defaults on every axis, or the scenario hides the collision it exists to show.
+    XCTAssertNotEqual(partner, clashing)
+    XCTAssertGreaterThan(clashing?.buttonRadius ?? 0, partner?.buttonRadius ?? 0)
+    XCTAssertNotNil(clashing?.fontFamily)
+    XCTAssertNotNil(UIFont(name: clashing?.fontFamily ?? "", size: 12), "the clashing face does not resolve")
+  }
+
   // MARK: - Fixtures
 
   private var consentBindings: UseSmileIDSampleTokenBindings {

@@ -78,15 +78,56 @@ func useSmileIDSampleApply(
       }
     }
   }
-  if snapshot.theme == .partnerOverride {
-    // `clashingHost` has no counterpart: the Compose twin swaps the host's own MaterialTheme, and
-    // SwiftUI hands the SDK no host palette to collide with.
+  // Both theme scenarios go through the SDK's public override, which is what `spec/scenarios.json`
+  // asks for: one a plausible partner palette, one deliberately far from the SDK's defaults.
+  if let palette = snapshot.theme.override {
     builder.theme { theme in
-      theme.primaryColor = theme.color(light: .indigo, dark: .indigo)
-      theme.primaryForeground = theme.color(light: .white, dark: .white)
-      theme.secondaryColor = theme.color(light: .teal, dark: .teal)
-      theme.accentColor = theme.color(light: .orange, dark: .orange)
-      theme.buttonShape = theme.shape(partnerButtonRadius)
+      theme.primaryColor = theme.color(light: palette.primary, dark: palette.primary)
+      theme.primaryForeground = theme.color(light: palette.onPrimary, dark: palette.onPrimary)
+      theme.secondaryColor = theme.color(light: palette.secondary, dark: palette.secondary)
+      theme.accentColor = theme.color(light: palette.accent, dark: palette.accent)
+      theme.buttonShape = theme.shape(palette.buttonRadius)
+      palette.fontFamily.map { theme.fontFamily = $0 }
+    }
+  }
+}
+
+/// What a theme scenario overrides, or nil for the shipped branding.
+struct FlowThemePalette: Equatable {
+  var primary: Color
+  var onPrimary: Color
+  var secondary: Color
+  var accent: Color
+  var buttonRadius: CGFloat
+  /// A family the app can actually resolve, or the SDK silently keeps its own.
+  var fontFamily: String?
+}
+
+extension UseSmileIDSampleThemeScenario {
+  var override: FlowThemePalette? {
+    switch self {
+    case .brandDefault:
+      nil
+    case .partnerOverride:
+      FlowThemePalette(
+        primary: .indigo,
+        onPrimary: .white,
+        secondary: .teal,
+        accent: .orange,
+        buttonRadius: 4,
+        fontFamily: nil
+      )
+    // Far from the defaults on every axis the override reaches, which is the point of the scenario:
+    // a collision a brand-matched palette hides. Courier is a system face, so it always resolves.
+    case .clashingHost:
+      FlowThemePalette(
+        primary: Color(red: 0.85, green: 0, blue: 0.5),
+        onPrimary: .yellow,
+        secondary: Color(red: 0.4, green: 0.8, blue: 0),
+        accent: Color(red: 0.9, green: 0.3, blue: 0),
+        buttonRadius: 24,
+        fontFamily: "Courier New"
+      )
     }
   }
 }
@@ -306,4 +347,3 @@ extension UseSmileIDSampleProduct {
 // The same host the Settings privacy row opens.
 private let privacyPolicyUrl = URL(string: "https://smile.id/privacy-policy")!
 private let callbackUrl = "https://your-callback-url.com"
-private let partnerButtonRadius: CGFloat = 4
