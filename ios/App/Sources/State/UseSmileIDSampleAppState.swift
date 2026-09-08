@@ -12,10 +12,13 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// Persists the token session as one record, so the live half and the ended marker never disagree.
   let store: UseSmileIDSampleStore
 
-  /// Read once at launch. `scenario`, `theme` and `route` seed the run, `probes` gates the card and
-  /// `seedProfiles` chooses the profiles; `autostart` and `holdCamera` wait on the flow host and
-  /// `seedJobs` on the job store, so they are read and not acted on; `appLocale` reaches the shell's
-  /// own SwiftUI formatting, not the SDK's strings.
+  /// The submitted verifications; its writes are launched here rather than in a screen.
+  let jobStore: UseSmileIDSampleJobStore
+
+  /// Read once at launch. `scenario`, `theme` and `route` seed the run, `probes` gates the card,
+  /// `seedProfiles` chooses the profiles and `seedJobs` seeds the verifications; `autostart` and
+  /// `holdCamera` wait on the flow host, so they are read and not acted on; `appLocale` reaches the
+  /// shell's own SwiftUI formatting, not the SDK's strings.
   let launchArguments: UseSmileIDSampleLaunchArguments
 
   @Published var settings = UseSmileIDSampleSettings()
@@ -29,8 +32,11 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// The config screen's unsaved edits, keyed by profile, so a tab switch cannot lose them.
   @Published var profileDrafts: [String: UseSmileIDSampleUserDetails] = [:]
 
-  /// Nil is "not loaded yet", not "empty"; the store U3 lands resolves it.
-  @Published var jobs: [UseSmileIDSampleJob]?
+  /// Nil is "not loaded yet", not "empty": the store's first emission resolves it.
+  @Published private(set) var jobs: [UseSmileIDSampleJob]?
+
+  /// The last removal's size, consumed by whichever screen draws the confirmation.
+  @Published private(set) var lastJobRemoval: Int?
 
   /// The forms live here, not in the screens: one tab is mounted, so a tab switch tears a screen's
   /// own state down and part-entered input goes with it.
@@ -59,12 +65,16 @@ final class UseSmileIDSampleAppState: ObservableObject {
   @Published var resultCardExpanded = true
 
   private var ticker: Task<Void, Never>?
+  private var jobsTask: Task<Void, Never>?
+  private var removalsTask: Task<Void, Never>?
 
   init(
     store: UseSmileIDSampleStore = UseSmileIDSampleStore(),
+    jobStore: UseSmileIDSampleJobStore = UseSmileIDSampleJobStore(),
     launchArguments: UseSmileIDSampleLaunchArguments = UseSmileIDSampleLaunchArguments(reading: .standard)
   ) {
     self.store = store
+    self.jobStore = jobStore
     self.launchArguments = launchArguments
     profiles = UseSmileIDSampleProfiles.forLaunch(seedProfiles: launchArguments.seedProfiles)
     flowResult = UseSmileIDSampleFlowResult(
@@ -74,6 +84,39 @@ final class UseSmileIDSampleAppState: ObservableObject {
     )
     sessionRecord = store.session
     tick()
+    readJobs()
+    // Seeded after the subscription, so the rows arrive as an emission rather than needing a reload.
+    if launchArguments.seedJobs {
+      Task { await jobStore.seedFixtures(now: Date()) }
+    }
+  }
+
+  /// For the life of the process: one tab is mounted, so a screen's subscription would miss a write.
+  private func readJobs() {
+    jobsTask = Task { [jobStore] in
+      for await rows in await jobStore.jobStream() {
+        jobs = rows
+      }
+    }
+    removalsTask = Task { [jobStore] in
+      for await count in await jobStore.removals {
+        lastJobRemoval = count
+      }
+    }
+  }
+
+  /// Unstructured, never `.task`: cancelling the screen that asked must not lose the write.
+  func removeJobs(_ ids: Set<String>) {
+    Task { [jobStore] in await jobStore.remove(ids) }
+  }
+
+  func undoJobRemoval() {
+    Task { [jobStore] in await jobStore.undoRemove() }
+  }
+
+  /// Consumed on sight, so returning to the list cannot replay a confirmation already spent.
+  func clearLastJobRemoval() {
+    lastJobRemoval = nil
   }
 
   var session: UseSmileIDSampleTokenSession? {

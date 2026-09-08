@@ -11,7 +11,7 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 | 1 | **DONE 2026-08-31 — the pill won.** See §1. | The only open question that could invalidate finished work. | Ruled, built, and `TabView` gone. |
 | 2 | **DONE 2026-08-31 — the stack is merged.** | Three PRs deep is the practical limit: this repo squash-merges, so each merge turns the branches above into a `rebase --onto`, not a plain rebase. | `main` carries all three. |
 | 3 | **DONE 2026-09-01 — the harness runs in CI.** See §5. | Every new route was asserted only at the resolver. | `UseSmileIDSampleUITests` runs inside `verify.sh`; a link launches the app and the screen id is asserted. |
-| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets (2026-09-01), then profiles, profileConfig and both profile sheets (2026-09-02), then scanToken with the session model behind it (2026-09-02, §8 and §9), then the result card, the scenario drawer and the launch arguments that seed the card (2026-09-03, §10) are built. Three screens remain, behind two slices. **The job store** (the Compose `UseSmileIDSampleJobStore`: many rows, filtered and counted, removed with undo) unblocks verifications, its four waiting ids and `seedJobs`; it is next, per the order. **The flow host** (`.sdkFlow`, N2 in `navigation-plan.md`) hosts the SDK-owned consent screen, gives the four recorders their caller and `redirected` its gate, and consumes `autostart` and `holdCamera`; it needs device verification, not only the simulator. Licenses waits on the generated notices asset, not the store. | Settled order; do not relitigate it. | All sixteen screens exist. |
+| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets (2026-09-01), then profiles, profileConfig and both profile sheets (2026-09-02), then scanToken with the session model behind it (2026-09-02, §8 and §9), then the result card, the scenario drawer and the launch arguments that seed the card (2026-09-03, §10) are built. Three screens remain, behind two slices. **The job store is built (2026-09-08, §12)**, so `seedJobs` acts and the details screen reads real rows; the verifications list, its four waiting ids and its goldens are what remain of that slice. **The flow host** (`.sdkFlow`, N2 in `navigation-plan.md`) hosts the SDK-owned consent screen, gives the four recorders their caller and `redirected` its gate, and consumes `autostart` and `holdCamera`; it needs device verification, not only the simulator. Licenses waits on the generated notices asset, not the store. | Settled order; do not relitigate it. | All sixteen screens exist. |
 | 5 | **DONE 2026-09-01 — a growth check, not the one §2 proposed.** See §2. | Would have started biting at U4, when the 38 states land. | A component that stops growing at the largest content size fails the build. |
 
 **The stack that carried U0–U2 and the first two screens** — #40, #42, #43 — is merged. Each squash
@@ -315,9 +315,9 @@ the wrong one. Which ones act:
   formatting in the shell's own views, of which today there is none — the shell's copy is hard-coded
   English, and the SDK's strings resolve through its bundle, which follows `-AppleLanguages`, the
   platform's own launch argument. A flow that needs another language passes both.
-- **Read and dropped:** `autostart` and `holdCamera` wait on the flow host; `seedJobs` waits on the job
-  store. They parse (an unknown product id reads as nil, `holdCamera` takes milliseconds or `keep`) so
-  the four apps accept one surface, and nothing acts on them yet.
+- **Read and dropped:** `autostart` and `holdCamera` wait on the flow host. They parse (an unknown
+  product id reads as nil, `holdCamera` takes milliseconds or `keep`) so the four apps accept one
+  surface, and nothing acts on them yet. `seedJobs` joined the applied list on 2026-09-08 — see §12.
 - **`probes` rides the launch, not the link.** Android also reads it off the launching URI because a
   deep link there carries no extras; on iOS the argument reaches a running app, which every link is
   delivered to, so the sheet resolver already strips `?probes=` and nothing more is needed.
@@ -346,6 +346,44 @@ added time is the runner.
   default, the launch choice and the naming rule, and `profiles_first_run` is the starter's golden.
   The store's `forLaunch` takes the Bool rather than the arguments type, which lives in the shell:
   `SampleUI` cannot import it, and Android's store could only because its arguments live in `sample-ui`.
+
+## 12. The job store — built 2026-09-08, on a file rather than a database
+
+Android's rows live in Room, and Room is what the store's shape is written against: insert-ignore, a
+delete that reports what it took, and one atomic status update. iOS has no equivalent that costs no
+dependency — Core Data would add a model file to review and hand-rolled SQLite would add more code
+than the store itself — so the rows are one JSON document in Application Support, replaced
+atomically, behind the same storage protocol the session store uses (the real thing in an app, memory
+in a test). The whole file is one document, which is what makes the decoding rule below matter.
+
+- **An `actor`, and that replaces most of Android's concurrency machinery.** Android needs a `Mutex`
+  for its in-flight guard, `NonCancellable` around the guard's release, and a process-lifetime write
+  scope so a write outlives the composition that launched it. Actor isolation gives the first two for
+  free, and the write scope is an unstructured `Task`: `.task` is cancelled with the view, a plain
+  `Task` is not. That is the rule the store's own doc comment states, and a test proves it by
+  cancelling the task that launched a write and asserting the row still landed.
+- **A property's default value is not a column default.** Swift's synthesised `Decodable` ignores
+  one, so a row written before the three `bound*` flags existed would fail to decode — and because
+  the file is one document, one undecodable row is every row. Decoded key by key with
+  `decodeIfPresent`, which is what Room's `defaultValue` says on the entity.
+- **One deliberate divergence: an unknown id does not spend the undo.** Both stores guard the empty
+  set, so an empty removal keeps the previous batch undoable. Android then overwrites the batch with
+  whatever a lookup returned, so removing an id it has no row for silently discards the undo; iOS
+  guards on what the removal actually took instead. Nothing reachable passes an unknown id — every
+  caller's ids come from the list in front of it — so this is hardening, not a fix, and Android can
+  follow whenever that file is next open.
+- **The rows persist, and that shapes what a device flow can assert.** A seeded launch leaves its
+  eleven rows behind for every later launch on the same simulator, which is the point (`seedJobs` is
+  a precondition, not a fixture the app carries). A test that needs an empty list therefore has to
+  uninstall first, so the plain-empty default is asserted by a unit test on the store rather than by
+  a flow.
+- **`add` still has no caller.** The flow host is a seat, so nothing submits: the store's one live
+  producer is `seedJobs`, the same treatment `redirected` and the recorders have in §9 and §10. It
+  is unit-tested, including that a repeated delivery of the same job id cannot overwrite the row it
+  already wrote.
+- **A refresh is not in the store yet.** `GET /v3/status/{jobId}`, the row-versus-partner guard and
+  the details screen's pull-to-refresh are the next slice; the seam belongs with the adapter that
+  fills it and the UI that calls it, so it lands with them rather than sitting unreachable.
 
 ## Considered and rejected
 

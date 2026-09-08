@@ -63,8 +63,9 @@ struct UseSmileIDSampleDestination: View {
         ),
         resultExpanded: $app.resultCardExpanded,
         onBack: { router.pop() },
-        // The row's removal lands with the store that holds it.
-        onDelete: { router.pop() },
+        // Hidden from this app's list, not deleted at the API: the store's own word for it.
+        onDelete: { app.removeJobs([jobId])
+          router.pop() },
         onCopy: { label, value in copy(label, value) }
       )
       .navigationBarHidden(true)
