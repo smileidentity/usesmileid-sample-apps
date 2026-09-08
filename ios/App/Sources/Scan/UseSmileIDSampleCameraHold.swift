@@ -10,9 +10,9 @@ struct UseSmileIDSampleCameraHold: View {
   let product: UseSmileIDSampleProduct
 
   var body: some View {
-    // `.task` is cancelled when the flow goes, which is what releases a `keep`.
     Color.clear
       .frame(width: 0, height: 0)
+      // `.task` is cancelled when the flow goes, which is what releases a `keep`.
       .task(id: product) {
         guard let hold else { return }
         await useSmileIDSampleHoldCamera(hold, lens: product.holdLens)
@@ -45,39 +45,79 @@ private func useSmileIDSampleHoldCamera(_ hold: UseSmileIDSampleHoldCamera, lens
     logger.warning("\(hold.description, privacy: .public) did nothing: no camera permission, so the hand-off was uncontended")
     return
   }
-  guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: lens.position),
-        let input = try? AVCaptureDeviceInput(device: device)
-  else {
-    logger.warning("\(hold.description, privacy: .public) found no \(lens.rawValue, privacy: .public) camera, so the hand-off was uncontended")
-    return
-  }
-  let counter = UseSmileIDSampleFrameCounter()
-  let session = AVCaptureSession()
-  let output = AVCaptureVideoDataOutput()
-  output.alwaysDiscardsLateVideoFrames = true
-  output.setSampleBufferDelegate(counter, queue: DispatchQueue(label: "com.usesmileid.sample.camerahold"))
-  guard session.canAddInput(input), session.canAddOutput(output) else {
-    logger.warning("\(hold.description, privacy: .public) could not bind the \(lens.rawValue, privacy: .public) camera, so the hand-off was uncontended")
-    return
-  }
-  session.addInput(input)
-  session.addOutput(output)
-  session.startRunning()
-  defer {
-    session.stopRunning()
-    counter.report(hold, lens: lens)
-  }
+  let held = UseSmileIDSampleHeldSession(hold: hold, lens: lens)
+  // Off the cooperative pool: opening the device and `startRunning` both block, and blocking one of
+  // its threads could stall the very start-up this hold exists to contend with.
+  held.queue.async { held.start() }
+  defer { held.queue.async { held.release() } }
   switch hold {
   case .keep: try? await Task.sleep(nanoseconds: .max)
   case .millis(let value): try? await Task.sleep(nanoseconds: UInt64(value) * nanosecondsPerMillisecond)
   }
 }
 
-/// Tells a hold that acquired the camera from one that only asked for it.
-private final class UseSmileIDSampleFrameCounter: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {
+/// The whole lifecycle, on one serial queue: the frames land on it too, so a release cannot report
+/// while one is still arriving. Unchecked because that queue is the only caller.
+private final class UseSmileIDSampleHeldSession: @unchecked Sendable {
+  let queue = DispatchQueue(label: "com.usesmileid.sample.camerahold")
+
+  private let hold: UseSmileIDSampleHoldCamera
+  private let lens: UseSmileIDSampleHoldLens
+  private let session = AVCaptureSession()
+  private let output = AVCaptureVideoDataOutput()
+  private let counter = UseSmileIDSampleFrameCounter()
+  private var running = false
+
+  init(hold: UseSmileIDSampleHoldCamera, lens: UseSmileIDSampleHoldLens) {
+    self.hold = hold
+    self.lens = lens
+  }
+
+  func start() {
+    output.alwaysDiscardsLateVideoFrames = true
+    output.setSampleBufferDelegate(counter, queue: queue)
+    guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: lens.position),
+          let input = try? AVCaptureDeviceInput(device: device),
+          session.canAddInput(input), session.canAddOutput(output)
+    else {
+      logger.warning("\(self.hold.description, privacy: .public) could not bind the \(self.lens.rawValue, privacy: .public) camera, so the hand-off was uncontended")
+      return
+    }
+    session.addInput(input)
+    session.addOutput(output)
+    session.startRunning()
+    running = true
+  }
+
+  /// Reports nothing when the hold never bound, or a failed start would read as one that lasted.
+  func release() {
+    guard running else { return }
+    session.stopRunning()
+    running = false
+    guard let counted = counter.counted else {
+      logger.warning("\(self.hold.description, privacy: .public) released the \(self.lens.rawValue, privacy: .public) camera without a single frame — treat the run as uncontended")
+      return
+    }
+    // Frames stopping early means something else took the camera.
+    let quietFor = Int(Date().timeIntervalSince(counted.lastFrameAt) * 1000)
+    logger.info("\(self.hold.description, privacy: .public) released the \(self.lens.rawValue, privacy: .public) camera after \(counted.frames, privacy: .public) frames, last one \(quietFor, privacy: .public)ms before release")
+  }
+}
+
+/// Tells a hold that acquired the camera from one that only asked for it. Unchecked because every
+/// mutable field is behind the lock.
+private final class UseSmileIDSampleFrameCounter: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate,
+  @unchecked Sendable {
   private let lock = NSLock()
   private var frames = 0
   private var lastFrameAt: Date?
+
+  /// Nil until a frame has actually arrived.
+  var counted: (frames: Int, lastFrameAt: Date)? {
+    lock.lock()
+    defer { lock.unlock() }
+    return lastFrameAt.map { (frames, $0) }
+  }
 
   func captureOutput(
     _: AVCaptureOutput,
@@ -88,20 +128,6 @@ private final class UseSmileIDSampleFrameCounter: NSObject, AVCaptureVideoDataOu
     defer { lock.unlock() }
     frames += 1
     lastFrameAt = Date()
-  }
-
-  func report(_ hold: UseSmileIDSampleHoldCamera, lens: UseSmileIDSampleHoldLens) {
-    lock.lock()
-    let frames = frames
-    let lastFrameAt = lastFrameAt
-    lock.unlock()
-    guard frames > 0, let lastFrameAt else {
-      logger.warning("\(hold.description, privacy: .public) released the \(lens.rawValue, privacy: .public) camera without a single frame — treat the run as uncontended")
-      return
-    }
-    // Frames stopping early means something else took the camera.
-    let quietFor = Int(Date().timeIntervalSince(lastFrameAt) * 1000)
-    logger.info("\(hold.description, privacy: .public) released the \(lens.rawValue, privacy: .public) camera after \(frames, privacy: .public) frames, last one \(quietFor, privacy: .public)ms before release")
   }
 }
 
