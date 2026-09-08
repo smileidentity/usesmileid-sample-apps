@@ -8,11 +8,17 @@ struct UseSmileIDSampleScanTokenHost: View {
   @EnvironmentObject private var app: UseSmileIDSampleAppState
   @State private var torchOn = false
 
+  /// Claimed on arrival, so leaving by any route drops it and a later scan resurrects nothing.
+  @State private var resuming: UseSmileIDSampleRunIntent?
+  /// So the resume waits for a *different* session.
+  @State private var arrivedWith: String?
+  @State private var resumeHandled = false
+
   var body: some View {
     ScanTokenScreen(
       entry: $app.scanEntry,
-      // Nothing sends anyone here mid-journey yet: the expiry gate is not built, so no caller passes a reason.
-      reason: nil,
+      // R10: the redirect's message belongs to the screen it arrives at.
+      reason: resuming == nil ? nil : .sessionEnded,
       torchOn: torchOn,
       onBack: { router.pop() },
       onLink: link,
@@ -29,6 +35,9 @@ struct UseSmileIDSampleScanTokenHost: View {
       onTorchToggle: { torchOn.toggle() },
       viewfinder: viewfinder
     )
+    .onAppear(perform: claim)
+    // Not `sessionActive`, whose clock read would fire once a second.
+    .onChange(of: app.session?.id) { _ in resume() }
   }
 
   /// The camera lives in the shell: `SampleUI` runs under eight identities, and only this one owns a
@@ -41,9 +50,32 @@ struct UseSmileIDSampleScanTokenHost: View {
     }
   }
 
-  /// One path for every entry route — typed, pasted or simulated, a session is linked the same way.
+  private func claim() {
+    guard resuming == nil else { return }
+    arrivedWith = app.session?.id
+    resuming = app.interruptedRun
+    app.interruptedRun = nil
+  }
+
+  /// Typed, pasted or simulated, a session is linked the same way.
   private func link(_ session: UseSmileIDSampleTokenSession) {
     app.linkSession(session)
-    router.pop()
+    // A resumed run leaves on the change below, once the write has reached the app state.
+    if resuming == nil {
+      router.pop()
+    }
+  }
+
+  /// Only on a *different* session: re-entering against the one that sent us here would bounce back.
+  private func resume() {
+    guard let resuming, !resumeHandled, let linked = app.session, linked.id != arrivedWith else { return }
+    resumeHandled = true
+    guard !linked.hasExpired(at: Date()) else {
+      // An expired relink cannot start the run, and freezing on "linked" says nothing.
+      router.pop()
+      return
+    }
+    // Opened, not pushed: the path is assigned, so two quick links cannot stack two runs.
+    router.open(.sdkFlow(productId: resuming.productId, presentation: resuming.route))
   }
 }

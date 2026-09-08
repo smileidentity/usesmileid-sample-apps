@@ -235,6 +235,46 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
     XCTAssertEqual(router.path(.settings), [.profiles], "a valid stack survives")
   }
 
+  func testPushingTheSameRouteTwiceKeepsOneLevel() {
+    let router = UseSmileIDSampleRouter()
+    let flow = Route.sdkFlow(productId: "smartSelfieEnrollment", presentation: .fullscreen)
+    router.pushOnce(flow)
+    router.pushOnce(flow)
+    XCTAssertEqual(router.path(.products), [flow])
+    // Falsified by the unguarded push.
+    router.push(flow)
+    XCTAssertEqual(router.path(.products), [flow, flow])
+  }
+
+  func testEndingAFlowClearsItsTabAndLandsTheResult() {
+    let router = UseSmileIDSampleRouter()
+    let flow = Route.sdkFlow(productId: "biometricKyc", presentation: .fullscreen)
+    router.push(.consentDetailsForm(productId: "biometricKyc"))
+    router.push(.idDetailsForm(productId: "biometricKyc"))
+    router.push(flow)
+
+    router.endFlow(flow, landing: .verificationDetails(jobId: "job-1"))
+    XCTAssertEqual(router.path(.products), [], "the flow and both forms must go together")
+    XCTAssertEqual(router.path(.verifications), [.verificationDetails(jobId: "job-1")])
+    XCTAssertEqual(router.selectedTab, .verifications)
+
+    // A repeated delivery replaces rather than stacks.
+    router.endFlow(flow, landing: .verificationDetails(jobId: "job-1"))
+    XCTAssertEqual(router.path(.verifications), [.verificationDetails(jobId: "job-1")])
+  }
+
+  func testEndingAFlowFromAnotherTabLeavesThatTabAlone() {
+    let router = UseSmileIDSampleRouter()
+    let flow = Route.sdkFlow(productId: "biometricKyc", presentation: .fullscreen)
+    router.push(flow)
+    router.open(.verificationDetails(jobId: "job-1"))
+
+    router.endFlow(flow)
+    XCTAssertEqual(router.path(.products), [], "the flow's own tab is what gets cleared")
+    XCTAssertEqual(router.path(.verifications), [.verificationDetails(jobId: "job-1")], "the link survived the cancel")
+    XCTAssertEqual(router.selectedTab, .verifications)
+  }
+
   func testAnUnknownLinkResolvesToNothingRatherThanADefaultScreen() throws {
     XCTAssertNil(try UseSmileIDSampleLinks.resolve(XCTUnwrap(URL(string: "usesmileid-sample-ios://nope"))))
     XCTAssertNil(try UseSmileIDSampleLinks.resolve(XCTUnwrap(URL(string: "usesmileid-sample-android://products"))))

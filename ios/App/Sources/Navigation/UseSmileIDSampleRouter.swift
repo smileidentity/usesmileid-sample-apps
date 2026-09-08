@@ -60,6 +60,15 @@ final class UseSmileIDSampleRouter: ObservableObject {
     selectedTab = route.tab
   }
 
+  /// R4: the flow and both pre-flow forms leave in one assignment. Keyed on the flow's own tab, not
+  /// the showing one — a teardown cancel arrives after a link may have moved away.
+  func endFlow(_ flow: Route, landing: Route? = nil) {
+    set([], on: flow.tab)
+    if let landing {
+      open(landing)
+    }
+  }
+
   /// Called as each level's transition ends: lands the next one, if the path has one.
   func levelDidAppear(_ tab: UseSmileIDSampleTab, depth: Int) {
     guard landedCount(tab) == depth, path(tab).count > depth else { return }

@@ -1,0 +1,267 @@
+import XCTest
+
+/// The flow host on the simulator, which stops at the shutter: a success needs a real token, so the
+/// paths proven here are the mount, both presentations, the gate's exits, a deny and a back-out.
+final class UseSmileIDSampleFlowUITests: XCTestCase {
+  private var app: XCUIApplication!
+
+  override func setUp() {
+    super.setUp()
+    continueAfterFailure = false
+    app = XCUIApplication()
+  }
+
+  func testTheOpenerLaunchesToTheProductListAndAProductMountsTheSdk() {
+    launch()
+    XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
+    startEnrollment()
+    XCTAssertTrue(
+      element("si_consent_screen").waitForExistence(timeout: 20),
+      "the SDK did not mount — check that the XCFramework and its analyzers shipped with this build"
+    )
+    XCTAssertTrue(app.buttons["si_deny_button"].exists, "the SDK's own controls are not queryable")
+  }
+
+  func testDenyingConsentDeliversOneResultAndReplacesTheFlow() {
+    launch()
+    startEnrollment()
+    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20))
+    app.buttons["si_deny_button"].tap()
+
+    XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("si_consent_screen").waitForNonExistence(timeout: 5), "the flow is still mounted")
+    XCTAssertEqual(element("sample_result_result_count").label, "1", "the callback did not arrive exactly once")
+    XCTAssertEqual(element("sample_result_job_status").label, "failed", "a denial is a failure, not a cancel")
+    XCTAssertTrue(element("sample_details_empty").exists)
+
+    // Back never goes into capture: the flow's own tab is at its root.
+    app.buttons["Back"].tap()
+    XCTAssertTrue(element("sample_verifications_screen").waitForExistence(timeout: 10))
+    element("sample_nav_products").tap()
+    XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("sample_user_details_screen").waitForNonExistence(timeout: 5), "the form is still stacked")
+  }
+
+  /// Needs a consent-binding token: only then is instructions the first screen, and only it carries
+  /// the SDK's back control. The edge swipe is the other way out, and XCUITest cannot drive it.
+  func testBackingOutOfTheSdksFirstScreenCancelsAndCreatesNoJob() {
+    launch()
+    let rowsBefore = allVerificationsCount()
+    linkASessionThatBindsConsent()
+    startEnrollment()
+
+    XCTAssertTrue(
+      element("si_instructions_screen").waitForExistence(timeout: 20),
+      "the SDK's first screen is not the one with a back control"
+    )
+    XCTAssertFalse(element("si_consent_screen").exists, "the token's consent binding did not lift the screen")
+    // By label: at 12.0.2 that screen's container id overrides every control's own identifier.
+    app.buttons["Back"].tap()
+    XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10), "the cancel did not leave the flow")
+
+    XCTAssertEqual(allVerificationsCount(), rowsBefore, "a cancelled run must create no row")
+    // The card is the only surface publishing the counters, and a finished run shows none on products.
+    open("verifications/job_missing")
+    XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
+    XCTAssertEqual(element("sample_result_result_count").label, "1", "the cancel did not arrive exactly once")
+    XCTAssertEqual(element("sample_result_job_status").label, "cancelled")
+  }
+
+  func testRotatingWhileTheFlowIsMountedKeepsTheSameRun() {
+    launch()
+    startEnrollment()
+    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20))
+
+    XCUIDevice.shared.orientation = .landscapeLeft
+    defer { XCUIDevice.shared.orientation = .portrait }
+    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 10), "the flow did not survive the rotation")
+    // Or the assertion above passes vacuously against an app locked to portrait.
+    let window = app.windows.element(boundBy: 0).frame
+    XCTAssertGreaterThan(window.width, window.height, "the app did not rotate, so nothing was rebuilt")
+
+    // The same run, not a second one: a restart would have re-run the gate and the counters with it.
+    app.buttons["si_deny_button"].tap()
+    XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
+    XCTAssertEqual(element("sample_result_result_count").label, "1", "the rotation started a second run")
+  }
+
+  func testALinkIntoTheRunWithNothingTypedRedirectsToTheForm() {
+    launch()
+    open("flow/biometricKyc/run")
+    XCTAssertTrue(element("sample_user_details_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("si_consent_screen").waitForNonExistence(timeout: 5), "an empty payload reached the SDK")
+  }
+
+  func testAnEndedSessionSendsTheRunToTheScannerAndRelinkingResumesTheRun() {
+    launch()
+    linkAnExpiredSession()
+    startEnrollment()
+
+    XCTAssertTrue(element("sample_scan_token_screen").waitForExistence(timeout: 10), "the run reached the SDK anyway")
+    XCTAssertTrue(
+      app.staticTexts["Token session ended. Scan to continue where you left off."].exists,
+      "the scanner did not say why it opened"
+    )
+
+    // Relinking a live token re-enters the run the gate interrupted.
+    app.buttons["15m"].tap()
+    element("sample_token_simulate").tap()
+    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20), "the run did not resume")
+    XCTAssertTrue(element("sample_scan_token_screen").waitForNonExistence(timeout: 5), "the scanner is still stacked")
+  }
+
+  func testAutostartOpensTheFlowRouteOnLaunch() {
+    // A plain launch first, only to clear a session a previous test left. The argument's own launch
+    // cannot use that helper: it lands on a pushed level, where the pill the helper waits for is gone.
+    launch()
+    app.terminate()
+    app.launchArguments = ["-autostart", "smartSelfieEnrollment"]
+    app.launch()
+    XCTAssertTrue(
+      element("sample_user_details_screen").waitForExistence(timeout: 10),
+      "the argument did not open the flow route"
+    )
+    XCTAssertFalse(element("sample_products_screen").exists)
+
+    type("sample_user_details_field_firstName", "Kwame")
+    type("sample_user_details_field_lastName", "Asante")
+    type("sample_user_details_field_email", "kwame@uptech.example")
+    app.buttons["sample_user_details_continue"].tap()
+    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20))
+  }
+
+  /// A simulator has no lens to take, so this proves the hold is inert rather than harmful; the
+  /// contention itself is only observable on a phone.
+  func testHoldingTheCameraDoesNotStopTheRun() {
+    launch(arguments: ["-holdCamera", "500"])
+    startEnrollment()
+    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20), "the hold blocked the run")
+    app.buttons["si_deny_button"].tap()
+    XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
+    XCTAssertEqual(element("sample_result_result_count").label, "1")
+  }
+
+  func testTheInShellPresentationRunsAndReportsItsRoute() {
+    launch(arguments: ["-route", "shell"])
+    startEnrollment()
+    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20), "the in-shell flow did not mount")
+    app.buttons["si_deny_button"].tap()
+    XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
+    XCTAssertEqual(element("sample_result_route").label, "shell")
+  }
+
+  func testRapidTapsOnContinueStartOneRunWithOneResult() {
+    launch()
+    fillTheDetailsForm()
+    // Anchored on the app, not the button: a coordinate re-resolves its element on every tap, and the
+    // first tap navigates away. The point still comes from the id.
+    let button = app.buttons["sample_user_details_continue"]
+    XCTAssertTrue(button.waitForExistence(timeout: 10))
+    let centre = CGVector(dx: button.frame.midX, dy: button.frame.midY)
+    let target = app.coordinate(withNormalizedOffset: .zero).withOffset(centre)
+    target.tap()
+    target.tap()
+
+    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20))
+    app.buttons["si_deny_button"].tap()
+    XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
+    XCTAssertEqual(element("sample_result_result_count").label, "1", "two taps started two runs")
+    XCTAssertTrue(element("si_consent_screen").waitForNonExistence(timeout: 5), "a second flow is still stacked")
+  }
+
+  // MARK: - Journeys
+
+  private func startEnrollment() {
+    fillTheDetailsForm()
+    app.buttons["sample_user_details_continue"].tap()
+  }
+
+  private func fillTheDetailsForm() {
+    XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
+    element("sample_product_card_smartSelfieEnrollment").tap()
+    XCTAssertTrue(element("sample_user_details_screen").waitForExistence(timeout: 10))
+    type("sample_user_details_field_firstName", "Kwame")
+    type("sample_user_details_field_lastName", "Asante")
+    type("sample_user_details_field_email", "kwame@uptech.example")
+  }
+
+  private func linkASessionThatBindsConsent() {
+    open("token/scan")
+    XCTAssertTrue(element("sample_token_simulate").waitForExistence(timeout: 10))
+    app.buttons["SIMULATED SCAN"].tap()
+    XCTAssertTrue(app.buttons["Binds consent"].waitForExistence(timeout: 5))
+    app.buttons["Binds consent"].tap()
+    element("sample_token_simulate").tap()
+    XCTAssertTrue(element("sample_session_card").waitForExistence(timeout: 10))
+  }
+
+  private func linkAnExpiredSession() {
+    open("token/scan")
+    XCTAssertTrue(element("sample_token_simulate").waitForExistence(timeout: 10))
+    app.buttons["SIMULATED SCAN"].tap()
+    XCTAssertTrue(app.buttons["Expired"].waitForExistence(timeout: 5))
+    app.buttons["Expired"].tap()
+    element("sample_token_simulate").tap()
+    XCTAssertTrue(element("sample_session_ended_banner").waitForExistence(timeout: 10))
+  }
+
+  /// Compared before and after, not asserted at zero: the rows persist across launches by design.
+  private func allVerificationsCount() -> String {
+    element("sample_nav_verifications").tap()
+    let count = element("sample_filter_count_all")
+    XCTAssertTrue(count.waitForExistence(timeout: 10))
+    let label = count.label
+    element("sample_nav_products").tap()
+    XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
+    return label
+  }
+
+  // MARK: - Harness
+
+  /// The session is a Keychain record that outlives an uninstall, so every launch clears it: an
+  /// ended marker left behind sends every later run to the scanner.
+  private func launch(arguments: [String] = []) {
+    app.launchArguments = arguments
+    app.launch()
+    XCTAssertTrue(element("sample_nav_settings").waitForExistence(timeout: 10))
+    guard element("sample_session_card").exists || element("sample_session_ended_banner").exists else { return }
+    signOut()
+    element("sample_nav_products").tap()
+    XCTAssertTrue(element("sample_session_card").waitForNonExistence(timeout: 5))
+  }
+
+  /// The row sits below the fold on the pinned simulator.
+  private func signOut() {
+    element("sample_nav_settings").tap()
+    let signOut = element("sample_sign_out")
+    XCTAssertTrue(signOut.waitForExistence(timeout: 10))
+    for _ in 0..<4 where !signOut.isHittable {
+      app.swipeUp()
+    }
+    signOut.tap()
+  }
+
+  private func type(_ id: String, _ text: String) {
+    let field = app.textFields[id]
+    XCTAssertTrue(field.waitForExistence(timeout: 5), id)
+    field.tap()
+    field.typeText(text)
+  }
+
+  private func element(_ id: String) -> XCUIElement {
+    app.descendants(matching: .any).matching(identifier: id).firstMatch
+  }
+
+  private func open(_ path: String) {
+    XCUIDevice.shared.system.open(URL(string: "usesmileid-sample-ios://\(path)")!)
+    let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+    let confirm = springboard.buttons["Open"]
+    if confirm.waitForExistence(timeout: 2) {
+      confirm.tap()
+    }
+    XCTAssertTrue(
+      app.wait(for: .runningForeground, timeout: 10),
+      "the link did not reach this app — another installed app may claim the scheme"
+    )
+  }
+}

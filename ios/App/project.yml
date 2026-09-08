@@ -9,6 +9,11 @@ options:
 packages:
   SampleUI:
     path: ../SampleUI
+  # The registry, never a path, and the exact version SampleUI/Package.swift pins — SwiftPM unifies
+  # the two on package identity, so a drift here fails resolution instead of building two SDKs.
+  UseSmileID:
+    url: https://github.com/smileidentity/ios-spm.git
+    exactVersion: 12.0.2
 
 settings:
   base:
@@ -24,6 +29,14 @@ targets:
     dependencies:
       - package: SampleUI
         product: SampleUI
+      # The shell hosts the flow, so the SDK is its dependency too; the analyzers are separate
+      # products, and a capture screen with no analyzer registered fails at the shutter.
+      - package: UseSmileID
+        product: UseSmileID
+      - package: UseSmileID
+        product: UseSmileIDVisionFace
+      - package: UseSmileID
+        product: UseSmileIDVisionDocument
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.usesmileid.sample.ios

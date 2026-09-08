@@ -12,6 +12,9 @@ struct UseSmileIDSampleShell: View {
   /// Consumed on sight and never saved, so a confirmation already spent cannot come back with you.
   @State private var removalNotice: UseSmileIDSampleTransientNotice?
 
+  /// Never in scene storage: a restored flag would swallow the run the launch asked for.
+  @State private var autostarted = false
+
   var body: some View {
     // One tab mounted at a time: a hidden stack still answers id queries, and neither
     // `accessibilityHidden` nor a children-ignore suppresses its UIKit-backed controls.
@@ -38,15 +41,14 @@ struct UseSmileIDSampleShell: View {
           router.sheet = sheet
         }
       }
-      // Cleared on dismissal, not on open: that is the one point every path goes through, so a
-      // sheet reached by deep link or reopened after a swipe cannot come back still filtered or
-      // still holding a half-typed profile.
+      // On dismissal, not on open: the one point every path goes through, including a swipe.
       .onChange(of: router.sheet) { sheet in
         if sheet == nil {
           app.clearSheetState()
         }
       }
-      .onAppear { router.restore(from: storedNavigation) }
+      .onAppear { router.restore(from: storedNavigation)
+        autostart() }
       .onChange(of: app.lastJobRemoval) { count in showRemoval(count) }
       .onChange(of: router.selectedTab) { _ in
         storedNavigation = router.encodedState()
@@ -140,6 +142,14 @@ struct UseSmileIDSampleShell: View {
       onSelect: { select(UseSmileIDSampleTab($0)) },
       onToken: { router.pushOnce(.scanToken) }
     )
+  }
+
+  /// Lands on the flow route, after the restore so the argument wins over what the last scene left.
+  /// With empty forms the gate then redirects to the form, which is the gate working.
+  private func autostart() {
+    guard !autostarted, let product = app.launchArguments.autostart else { return }
+    autostarted = true
+    router.open(.sdkFlow(productId: product.id, presentation: app.launchArguments.route))
   }
 
   /// Re-selecting the showing tab pops it to its root, as the platform does.

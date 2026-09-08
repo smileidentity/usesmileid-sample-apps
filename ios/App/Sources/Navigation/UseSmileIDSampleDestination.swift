@@ -21,7 +21,7 @@ struct UseSmileIDSampleDestination: View {
           sessionEnded: app.sessionExpired,
           result: app.flowResult.snapshot
         ),
-        onProduct: { product in router.open(.consentDetailsForm(productId: product.id)) },
+        onProduct: { product in router.open(app.firstStep(for: product)) },
         onProfile: { router.sheet = .profileSwitch },
         // Pushed, not opened: linking pops back to where the scan started, as the Compose twin does.
         onScan: { router.pushOnce(.scanToken) }
@@ -39,7 +39,8 @@ struct UseSmileIDSampleDestination: View {
         onFieldChange: { field, value in app.setUserField(field, to: value) },
         onRememberChange: { app.rememberDetails = $0 },
         onBack: { router.pop() },
-        onContinue: { router.push(Self.stepAfterUserDetails(productId)) }
+        // Pushed once: two quick taps would stack two flow levels, and so two runs.
+        onContinue: { Self.product(productId).map { router.pushOnce(app.stepAfterUserDetails($0)) } }
       )
       .navigationBarHidden(true)
     case .idDetailsForm(let productId):
@@ -49,7 +50,7 @@ struct UseSmileIDSampleDestination: View {
         onIdTypeTap: { router.sheet = .idTypePicker },
         onIdNumberChange: { app.idDetails.idNumber = $0 },
         onBack: { router.pop() },
-        onContinue: { router.push(.sdkFlow(productId: productId, presentation: .fullscreen)) },
+        onContinue: { Self.product(productId).map { router.pushOnce(app.sdkFlow($0)) } },
         onToken: { router.pushOnce(.scanToken) }
       )
       .navigationBarHidden(true)
@@ -74,6 +75,8 @@ struct UseSmileIDSampleDestination: View {
           router.pop() }
       )
       .navigationBarHidden(true)
+    case .sdkFlow(let productId, let presentation):
+      SdkFlowScreen(productId: productId, presentation: presentation)
     case .scanToken:
       UseSmileIDSampleScanTokenHost()
         .navigationBarHidden(true)
@@ -99,12 +102,6 @@ struct UseSmileIDSampleDestination: View {
     }
   }
 
-  /// Only document and KYC products collect ID details; the rest go straight to the flow.
-  private static func stepAfterUserDetails(_ productId: String) -> Route {
-    let needsIdDetails = product(productId)?.needsIdDetails ?? false
-    return needsIdDetails ? .idDetailsForm(productId: productId) : .sdkFlow(productId: productId, presentation: .fullscreen)
-  }
-
   private static func product(_ id: String) -> UseSmileIDSampleProduct? {
     UseSmileIDSampleProduct(rawValue: id)
   }
@@ -119,9 +116,8 @@ struct UseSmileIDSampleDestination: View {
     content.sheet(item: $inAppLink) { UseSmileIDSampleBrowser(url: $0.url) }
   }
 
-  /// Three destinations, per `spec/screens.json` → linkPresentation: no url is the app's own
-  /// screen; `opensInApp` stays in an in-app browser; the two legal pages eject, because both serve
-  /// their document as an embedded PDF a mobile browser shows as a stub.
+  /// No url is this app's own screen; `opensInApp` stays in a browser sheet; the legal pages eject,
+  /// because both serve a PDF a mobile browser shows as a stub.
   private func open(_ row: UseSmileIDSampleNavRow) {
     guard let url = row.url else {
       router.open(.licenses)
@@ -160,9 +156,8 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
       onRefresh: { await refresh(silentWhenUnchanged: false) }
     )
     .task(id: jobId) {
-      // Only a processing row can change, read off the store's first emission rather than whatever
-      // a cold-start link found: nil is "not loaded yet", and treating it as a row refreshes a
-      // settled one.
+      // Off the store's first emission: nil is "not loaded yet", and treating it as a row would
+      // refresh a settled one.
       guard await loaded(jobId)?.status == .processing else { return }
       await refresh(silentWhenUnchanged: true)
     }
