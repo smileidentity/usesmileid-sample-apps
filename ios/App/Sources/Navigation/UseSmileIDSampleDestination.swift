@@ -21,7 +21,9 @@ struct UseSmileIDSampleDestination: View {
           sessionEnded: app.sessionExpired,
           result: app.flowResult.snapshot
         ),
-        onProduct: { product in router.open(.consentDetailsForm(productId: product.id)) },
+        // Through the journey policy, so a form the token already answers is not asked for — and so
+        // the entry the gate would redirect away from is never the one a tap lands on.
+        onProduct: { product in router.open(app.firstStep(for: product)) },
         onProfile: { router.sheet = .profileSwitch },
         // Pushed, not opened: linking pops back to where the scan started, as the Compose twin does.
         onScan: { router.pushOnce(.scanToken) }
@@ -39,7 +41,9 @@ struct UseSmileIDSampleDestination: View {
         onFieldChange: { field, value in app.setUserField(field, to: value) },
         onRememberChange: { app.rememberDetails = $0 },
         onBack: { router.pop() },
-        onContinue: { router.push(Self.stepAfterUserDetails(productId)) }
+        // Pushed once: two quick taps would otherwise stack two flow levels, which is two runs and
+        // two terminal results for one journey.
+        onContinue: { Self.product(productId).map { router.pushOnce(app.stepAfterUserDetails($0)) } }
       )
       .navigationBarHidden(true)
     case .idDetailsForm(let productId):
@@ -49,7 +53,7 @@ struct UseSmileIDSampleDestination: View {
         onIdTypeTap: { router.sheet = .idTypePicker },
         onIdNumberChange: { app.idDetails.idNumber = $0 },
         onBack: { router.pop() },
-        onContinue: { router.push(.sdkFlow(productId: productId, presentation: .fullscreen)) },
+        onContinue: { Self.product(productId).map { router.pushOnce(app.sdkFlow($0)) } },
         onToken: { router.pushOnce(.scanToken) }
       )
       .navigationBarHidden(true)
@@ -74,6 +78,8 @@ struct UseSmileIDSampleDestination: View {
           router.pop() }
       )
       .navigationBarHidden(true)
+    case .sdkFlow(let productId, let presentation):
+      SdkFlowScreen(productId: productId, presentation: presentation)
     case .scanToken:
       UseSmileIDSampleScanTokenHost()
         .navigationBarHidden(true)
@@ -97,12 +103,6 @@ struct UseSmileIDSampleDestination: View {
     default:
       UseSmileIDSampleSeat(name: String(describing: route))
     }
-  }
-
-  /// Only document and KYC products collect ID details; the rest go straight to the flow.
-  private static func stepAfterUserDetails(_ productId: String) -> Route {
-    let needsIdDetails = product(productId)?.needsIdDetails ?? false
-    return needsIdDetails ? .idDetailsForm(productId: productId) : .sdkFlow(productId: productId, presentation: .fullscreen)
   }
 
   private static func product(_ id: String) -> UseSmileIDSampleProduct? {

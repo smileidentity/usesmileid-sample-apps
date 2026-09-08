@@ -17,7 +17,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
 
   /// Read once at launch. `scenario`, `theme` and `route` seed the run, `probes` gates the card,
   /// `seedProfiles` chooses the profiles and `seedJobs` seeds the verifications; `autostart` and
-  /// `holdCamera` wait on the flow host, so they are read and not acted on; `appLocale` reaches the
+  /// `holdCamera` are read and not acted on until the slice after this one; `appLocale` reaches the
   /// shell's own SwiftUI formatting, not the SDK's strings.
   let launchArguments: UseSmileIDSampleLaunchArguments
 
@@ -60,6 +60,10 @@ final class UseSmileIDSampleAppState: ObservableObject {
 
   /// The scan sheet's typed state, lifted here so a tab switch or a recreation keeps it (R6).
   @Published var scanEntry = UseSmileIDSampleScanSheetState()
+
+  /// The expiry gate's hand-off to the scanner, so relinking re-enters the run it interrupted.
+  /// Claimed by the scanner on arrival, so leaving by any other route drops it.
+  @Published var interruptedRun: UseSmileIDSampleRunIntent?
 
   /// The run the card reports: seeded from the launch, then the drawer's; see the type for what survives what.
   @Published var flowResult: UseSmileIDSampleFlowResult
@@ -108,6 +112,12 @@ final class UseSmileIDSampleAppState: ObservableObject {
     }
   }
 
+  /// The row a delivered result leaves behind. Unstructured, never `.task`: the SDK delivers once,
+  /// and the write has to outlive the flow the result is tearing down.
+  func addJob(_ job: UseSmileIDSampleJob, bindings: UseSmileIDSampleTokenBindings?) {
+    Task { [jobStore] in await jobStore.add(job, bindings: bindings) }
+  }
+
   /// One handler for the swipe, the selection bar and the details screen, so the fallback below
   /// cannot end up fixed in one of them only. Unstructured, never `.task`: the write outlives the screen.
   func removeJobs(_ ids: Set<String>) {
@@ -143,6 +153,12 @@ final class UseSmileIDSampleAppState: ObservableObject {
 
   var session: UseSmileIDSampleTokenSession? {
     sessionRecord.live
+  }
+
+  /// Sandbox unless a linked token's own `api_url` names production: there is no environment control
+  /// on this app, and a fixture run has nothing else to go on.
+  var useSandbox: Bool {
+    session?.environment != .production
   }
 
   /// The session that ran out, once its token has been deleted. Carries no credential.
