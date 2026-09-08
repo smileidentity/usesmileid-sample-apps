@@ -27,7 +27,7 @@ struct UseSmileIDSampleDestination: View {
         onScan: { router.pushOnce(.scanToken) }
       )
     case .verifications:
-      VerificationsScreen()
+      UseSmileIDSampleVerificationsHost()
     case .consentDetailsForm(let productId):
       UserDetailsScreen(
         state: .init(
@@ -145,6 +145,31 @@ struct UseSmileIDSampleDestination: View {
     } else {
       UIApplication.shared.open(url)
     }
+  }
+}
+
+/// The list, the clock it reads coarsely, and the row a tap opens.
+private struct UseSmileIDSampleVerificationsHost: View {
+  @EnvironmentObject private var router: UseSmileIDSampleRouter
+  @EnvironmentObject private var app: UseSmileIDSampleAppState
+
+  var body: some View {
+    VerificationsScreen(
+      state: .init(
+        jobs: app.jobs,
+        counts: app.jobCounts,
+        filter: app.verifications.filter,
+        selectMode: app.verifications.selectMode,
+        selected: app.verifications.selected,
+        // Midnight, so a per-second tick cannot invalidate the grouping.
+        today: useSmileIDSampleStartOfDay(app.now)
+      ),
+      onFilterChange: { app.verifications.filter = $0 },
+      onSelectModeChange: { app.verifications.changeSelectMode($0) },
+      onSelectionChange: { id, checked in app.verifications.setSelection(id, checked) },
+      onJobTap: { router.push(.verificationDetails(jobId: $0.id)) },
+      onRemove: { app.removeJobs($0) }
+    )
   }
 }
 

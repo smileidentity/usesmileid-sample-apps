@@ -67,6 +67,24 @@ public enum UseSmileIDSampleTestIds {
     "\(profileConfigFieldPrefix)_\(field)"
   }
 
+  /// Suffixed with the filter's own id, so a count is asserted per chip.
+  public static func filterChip(_ filter: String) -> String {
+    "\(filterChipPrefix)_\(filter)"
+  }
+
+  public static func filterCount(_ filter: String) -> String {
+    "\(filterCountPrefix)_\(filter)"
+  }
+
+  /// Suffixed with the row's index in the whole visible list, never the one within its day group.
+  public static func jobRow(_ index: Int) -> String {
+    "\(jobRowPrefix)_\(index)"
+  }
+
+  public static func selectionCheckbox(_ index: Int) -> String {
+    "\(selectionCheckboxPrefix)_\(index)"
+  }
+
   public static func tokenEnvironment(_ environment: String) -> String {
     "\(tokenEnvironmentPrefix)_\(environment)"
   }
@@ -150,12 +168,15 @@ public enum UseSmileIDSampleTestIds {
   public static let detailsDelete = "sample_details_delete"
   public static let detailsEmpty = "sample_details_empty"
 
-  public static let jobRow = "sample_job_row"
+  public static let jobRowPrefix = "sample_job_row"
+  /// One id for every row's badge, as the Compose twin has: a row is found first, its badge inside it.
   public static let jobRowStatus = "sample_job_row_status"
-  public static let filterChip = "sample_filter_chip"
-  public static let filterCount = "sample_filter_count"
+  public static let filterChipPrefix = "sample_filter_chip"
+  public static let filterCountPrefix = "sample_filter_count"
+  public static let verificationsEmpty = "sample_verifications_empty"
+  public static let selectToggle = "sample_select_toggle"
   public static let selectionBar = "sample_selection_bar"
-  public static let selectionCheckbox = "sample_selection_checkbox"
+  public static let selectionCheckboxPrefix = "sample_selection_checkbox"
   public static let selectionCount = "sample_selection_count"
   public static let selectionRemove = "sample_selection_remove"
 
@@ -184,7 +205,7 @@ public enum UseSmileIDSampleTestIds {
     resultLastError, resultSdkVersion,
     settingEnhancedSmartSelfie, settingAgentMode, settingDarkMode,
     settingConsentStep, settingInstructionsStep, settingPreviewStep,
-    jobRow, jobRowStatus, filterChip, filterCount,
-    selectionBar, selectionCheckbox, selectionCount, selectionRemove
+    jobRowPrefix, jobRowStatus, filterChipPrefix, filterCountPrefix, verificationsEmpty,
+    selectToggle, selectionBar, selectionCheckboxPrefix, selectionCount, selectionRemove
   ]
 }

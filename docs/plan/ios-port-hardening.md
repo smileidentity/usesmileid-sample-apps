@@ -11,7 +11,7 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 | 1 | **DONE 2026-08-31 — the pill won.** See §1. | The only open question that could invalidate finished work. | Ruled, built, and `TabView` gone. |
 | 2 | **DONE 2026-08-31 — the stack is merged.** | Three PRs deep is the practical limit: this repo squash-merges, so each merge turns the branches above into a `rebase --onto`, not a plain rebase. | `main` carries all three. |
 | 3 | **DONE 2026-09-01 — the harness runs in CI.** See §5. | Every new route was asserted only at the resolver. | `UseSmileIDSampleUITests` runs inside `verify.sh`; a link launches the app and the screen id is asserted. |
-| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets (2026-09-01), then profiles, profileConfig and both profile sheets (2026-09-02), then scanToken with the session model behind it (2026-09-02, §8 and §9), then the result card, the scenario drawer and the launch arguments that seed the card (2026-09-03, §10) are built. Three screens remain, behind two slices. **The job store is built (2026-09-08, §12)**, so `seedJobs` acts and the details screen reads real rows; the verifications list, its four waiting ids and its goldens are what remain of that slice. **The flow host** (`.sdkFlow`, N2 in `navigation-plan.md`) hosts the SDK-owned consent screen, gives the four recorders their caller and `redirected` its gate, and consumes `autostart` and `holdCamera`; it needs device verification, not only the simulator. Licenses waits on the generated notices asset, not the store. | Settled order; do not relitigate it. | All sixteen screens exist. |
+| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets (2026-09-01), then profiles, profileConfig and both profile sheets (2026-09-02), then scanToken with the session model behind it (2026-09-02, §8 and §9), then the result card, the scenario drawer and the launch arguments that seed the card (2026-09-03, §10) are built. **The job store and the verifications list are built (2026-09-08, §12 and §13)**, so `seedJobs` acts, the four waiting ids are applied and the last of the four unused-id entries are prefixes. Two screens remain. **The flow host** (`.sdkFlow`, N2 in `navigation-plan.md`) hosts the SDK-owned consent screen, gives the four recorders their caller and `redirected` its gate, and consumes `autostart` and `holdCamera`; it needs device verification, not only the simulator. Licenses waits on the generated notices asset, not the store. | Settled order; do not relitigate it. | All sixteen screens exist. |
 | 5 | **DONE 2026-09-01 — a growth check, not the one §2 proposed.** See §2. | Would have started biting at U4, when the 38 states land. | A component that stops growing at the largest content size fails the build. |
 
 **The stack that carried U0–U2 and the first two screens** — #40, #42, #43 — is merged. Each squash
@@ -384,6 +384,49 @@ in a test). The whole file is one document, which is what makes the decoding rul
 - **A refresh is not in the store yet.** `GET /v3/status/{jobId}`, the row-versus-partner guard and
   the details screen's pull-to-refresh are the next slice; the seam belongs with the adapter that
   fills it and the UI that calls it, so it lands with them rather than sitting unreachable.
+
+## 13. The verifications list — built 2026-09-08, and the four containers it had to choose
+
+The rows, the chips and the bars were built in U2; this is the screen that consumes them, and every
+choice below is one the Compose twin did not have to make.
+
+- **A scroll view, not a `List`, so the swipe is ours.** `List` would have brought
+  `swipeActions` — the platform's own gesture — but on the iOS 15 floor a `List`'s backdrop cannot be
+  cleared (`scrollContentBackground` is iOS 16, and the appearance-proxy trick does not reach the
+  collection view that backs it now), so it would paint the system background where every other
+  screen paints `color.background`, off-white and near-black rather than white and black.
+  `UseSmileIDSampleSwipeAction` mirrors the Compose file name instead: a trailing reveal of the trash
+  glyph and "Hide", committed on the settled translation past the reveal width. Two things it paid
+  for — the gesture has to be a `highPriorityGesture`, or the row's own button swallows the drag
+  before it is recognised; and it needs a minimum distance, or the vertical drag never reaches the
+  scroll view. A device test drags a row and asserts the confirmation, because neither is provable
+  off-device.
+- **The chips scroll rather than wrap.** `FlowRow` needs iOS 16's `Layout`. A plain row squeezes the
+  widest chip into two lines as soon as the type or the language is wider — caught by reading the
+  golden, where the harness's own padding makes the viewport 16pt narrower than the phone and
+  "Attention" wrapped. A horizontal scroll is what iOS does with a filter row, and it is honest at
+  every content size.
+- **The list's UI state lives in the app state.** §1's rule, met for the first time by a screen that
+  has state worth losing: one tab is mounted, so the filter and the selection would reset on every
+  tab switch. `UseSmileIDSampleVerificationsScreenState` is the Compose holder, minus its `Saver` —
+  scene restoration is deliberately not used for it, per §10's ruling on restoring what a launch seeded.
+- **Select mode swaps the shell's bottom slot.** The pill and the selection bar are the same
+  `safeAreaInset`, so the content inset cannot change when one replaces the other, and a device test
+  asserts the pill's ids are gone rather than merely covered. The bar leaves with the tab: a link
+  that lands on another tab while select mode is on ends it, since the pill is what got replaced.
+- **One removal handler, for all three paths.** The swipe, the selection bar and the details screen's
+  delete all call the app state's `removeJobs`, which is where the emptied-filter fallback to All
+  lives. `spec/screens.json` records the rule and that Android had two copies of it; on iOS the
+  details path goes through the same handler too, so a row hidden from the details screen also
+  releases the filter.
+- **A truncation fix the real screen exposed.** `UseSmileIDSampleJobRow` had no line limit, so
+  "Enhanced Document Verification" wrapped where the Compose twin ellipsises at one line — invisible
+  until eleven real rows rendered, and visible in the component's own baseline once looked for. One
+  line each at the design's scale, unlimited once the badge stacks, and the baselines re-recorded.
+- **The id inventory caught nothing, because it was matching loosely.** `sample_filter_chip` read as
+  applied for months: the check looked for `.filterChip` anywhere in the sources and the colour token
+  `colors.filterChip` matched it. It now looks for the qualified `UseSmileIDSampleTestIds.` form,
+  which is how every screen names one.
 
 ## Considered and rejected
 

@@ -10,16 +10,14 @@ import XCTest
 /// deliberately and the list shrinks as screens land.
 final class UseSmileIDSampleTestIdUsageTest: XCTestCase {
   /// Ids not yet on a view. Delete an entry when its screen lands — a stale list fails the test
-  /// below, so this cannot rot into a permanent excuse.
-  ///
-  /// The prefixes are anchors the real ids are built from; the other four wait on the
-  /// verifications screen.
+  /// below, so this cannot rot into a permanent excuse. Every remaining entry is a prefix the real
+  /// ids are built from, and each one is used by the function that builds them.
   private static let notYetApplied: Set<String> = [
     "productCardPrefix", "settingNavPrefix", "detailFieldPrefix", "detailCopyPrefix",
     "userDetailsFieldPrefix", "countryOptionPrefix", "idTypeOptionPrefix",
     "profileRowPrefix", "profileConfigFieldPrefix", "tokenEnvironmentPrefix",
     "scenarioItemPrefix", "themeItemPrefix",
-    "jobRow", "jobRowStatus", "filterCount", "selectionCheckbox"
+    "jobRowPrefix", "filterChipPrefix", "filterCountPrefix", "selectionCheckboxPrefix"
   ]
 
   func testEveryDeclaredIdIsAppliedSomewhere() throws {
@@ -35,7 +33,9 @@ final class UseSmileIDSampleTestIdUsageTest: XCTestCase {
       .map { try String(contentsOf: $0) }
       .joined()
 
-    let unused = declared.filter { !body.contains(".\($0)") }.sorted()
+    // Qualified, not `.name`: `sample_filter_chip` read as applied for months because the colour
+    // token `colors.filterChip` matches the loose form. Every id in a screen names its enum.
+    let unused = declared.filter { !body.contains("UseSmileIDSampleTestIds.\($0)") }.sorted()
     XCTAssertEqual(
       Set(unused), Self.notYetApplied,
       "the unused-id list is stale: remove ids now applied, add ids newly declared"

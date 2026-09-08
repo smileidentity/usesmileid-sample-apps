@@ -215,27 +215,84 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     .frame(height: height)
   }
 
-  /// The store's own rows, until the store lands.
+  /// The store's own rows, so a screen's golden and a device run show the same eleven.
+  private static let fixtures = UseSmileIDSampleJobStore.fixtures(
+    now: Date(timeIntervalSince1970: 1784202612)
+  )
+
   private static func fixture(_ status: UseSmileIDSampleStatus, index: Int) -> UseSmileIDSampleJob {
-    let products = UseSmileIDSampleProduct.allCases
-    return UseSmileIDSampleJob(
-      id: String(format: "job_%02dky31za%02d", index, index * 7 % 100),
-      userId: String(format: "user_%02dky31za%02d", index, index * 3 % 100),
-      product: products[index % products.count],
-      status: status,
-      createdAt: Self.fixedNow.addingTimeInterval(TimeInterval(-index * 5 * 60 * 60)),
-      message: Self.message(status),
-      httpStatus: status == .processing ? 202 : 200
-    )
+    let job = fixtures[index]
+    XCTAssertEqual(job.status, status, "fixture \(index) is no longer \(status.label)")
+    return job
   }
 
-  private static func message(_ status: UseSmileIDSampleStatus) -> String {
-    switch status {
-    case .clear: "Approved"
-    case .attention: "Provisional \u{2014} needs review"
-    case .blocked: "Rejected"
-    case .processing: "Submitted, awaiting result"
+  func testVerifications() {
+    goldens("verifications") { verifications() }
+  }
+
+  func testVerificationsFiltered() {
+    goldens("verifications_filtered") { verifications(filter: .attention) }
+  }
+
+  func testVerificationsEmpty() {
+    goldens("verifications_empty") { verifications(jobs: []) }
+  }
+
+  func testVerificationsFilterEmpty() {
+    goldens("verifications_filter_empty") {
+      verifications(jobs: Self.fixtures.filter { $0.status == .clear }, filter: .blocked)
     }
+  }
+
+  func testVerificationsSelectMode() {
+    goldens("verifications_select") { verifications(selectMode: true) }
+  }
+
+  func testVerificationsItemsSelected() {
+    goldens("verifications_selected") {
+      verifications(selectMode: true, selected: Set(Self.fixtures.prefix(2).map(\.id)))
+    }
+  }
+
+  func testVerificationsSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) { verifications(height: 2200) }
+  }
+
+  private func verifications(
+    jobs: [UseSmileIDSampleJob]? = nil,
+    filter: UseSmileIDSampleJobFilter = .all,
+    selectMode: Bool = false,
+    selected: Set<String> = [],
+    height: CGFloat = 900
+  ) -> some View {
+    let rows = jobs ?? Self.fixtures
+    return VerificationsScreen(
+      state: .init(
+        jobs: rows,
+        counts: Dictionary(
+          uniqueKeysWithValues: UseSmileIDSampleJobFilter.allCases.map { ($0, rows.filter($0.matches).count) }
+        ),
+        filter: filter,
+        selectMode: selectMode,
+        selected: selected,
+        today: useSmileIDSampleStartOfDay(Self.fixedNow, calendar: Self.utc),
+        // Pinned, or the day headers and row times read in the recorder's own zone.
+        calendar: Self.utc
+      ),
+      onFilterChange: { _ in },
+      onSelectModeChange: { _ in },
+      onSelectionChange: { _, _ in },
+      onJobTap: { _ in },
+      onRemove: { _ in }
+    )
+    .frame(height: height)
+  }
+
+  private static var utc: Calendar {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.locale = Locale(identifier: "en_US_POSIX")
+    calendar.timeZone = TimeZone(identifier: "UTC")!
+    return calendar
   }
 
   /// 2026-07-16T11:50:12Z, the instant the design's rows are dated from.
