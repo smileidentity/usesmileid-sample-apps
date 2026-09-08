@@ -19,8 +19,7 @@ struct UseSmileIDSampleStatusApi: UseSmileIDSampleJobStatusSource {
   }()
 
   func check(jobId: String, token: String, sandbox: Bool) async throws -> UseSmileIDSampleStatusRefresh {
-    let environment: UseSmileIDSampleEnvironment = sandbox ? .sandbox : .production
-    guard let url = URL(string: environment.baseUrl + "v3/status/\(jobId)") else {
+    guard let url = useSmileIDSampleStatusUrl(jobId: jobId, sandbox: sandbox) else {
       throw URLError(.badURL)
     }
     var request = URLRequest(url: url)
@@ -33,6 +32,18 @@ struct UseSmileIDSampleStatusApi: UseSmileIDSampleJobStatusSource {
       body: try? JSONDecoder().decode(UseSmileIDSampleStatusResponse.self, from: data)
     )
   }
+}
+
+/// The status URL for one job, with the id percent-encoded as a single path segment: an id carrying
+/// `/`, `?` or `#` would otherwise change which request the session's token is sent with. Pure, so
+/// the encoding is unit-testable, and nil rather than a guess when nothing is left to ask about.
+func useSmileIDSampleStatusUrl(jobId: String, sandbox: Bool) -> URL? {
+  let environment: UseSmileIDSampleEnvironment = sandbox ? .sandbox : .production
+  let unreserved = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-._~"))
+  guard let segment = jobId.addingPercentEncoding(withAllowedCharacters: unreserved), !segment.isEmpty else {
+    return nil
+  }
+  return URL(string: environment.baseUrl + "v3/status/\(segment)")
 }
 
 /// The HTTP code and body onto an outcome. Pure, so the branch table is unit-testable.

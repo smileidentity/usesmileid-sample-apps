@@ -58,6 +58,31 @@ final class UseSmileIDSampleStatusOutcomeTest: XCTestCase {
     XCTAssertEqual(body.createdAt, "2026-07-16T11:50:12.000Z")
   }
 
+  func testTheJobIdIsEncodedAsOnePathSegment() {
+    XCTAssertEqual(
+      useSmileIDSampleStatusUrl(jobId: "job_00ky31za00", sandbox: true)?.absoluteString,
+      "https://testapi.smileidentity.com/v3/status/job_00ky31za00"
+    )
+    // A stored id is the SDK's, but the route that reads one is a deep link: anything that would
+    // change the request target has to stay inside the segment it was given.
+    for hostile in ["../../v2/oops", "job?x=1", "job#frag", "job 1"] {
+      let url = useSmileIDSampleStatusUrl(jobId: hostile, sandbox: true)
+      XCTAssertEqual(url?.host, "testapi.smileidentity.com", hostile)
+      XCTAssertEqual(url?.pathComponents.count, 4, "\(hostile) left the segment")
+      XCTAssertNil(url?.query, hostile)
+      XCTAssertNil(url?.fragment, hostile)
+    }
+  }
+
+  func testTheEnvironmentComesFromTheRowsOwnFlag() {
+    XCTAssertEqual(useSmileIDSampleStatusUrl(jobId: "job-1", sandbox: false)?.host, "api.smileidentity.com")
+    XCTAssertEqual(useSmileIDSampleStatusUrl(jobId: "job-1", sandbox: true)?.host, "testapi.smileidentity.com")
+  }
+
+  func testAnIdWithNothingLeftToAskAboutIsNoUrlAtAll() {
+    XCTAssertNil(useSmileIDSampleStatusUrl(jobId: "", sandbox: true))
+  }
+
   private func outcome(
     _ status: String,
     message: String = "Approved",

@@ -475,6 +475,12 @@ back atomically. What is decided here:
   `job_id`, `user_id` and `created_at` alongside the two fields the outcome actually uses, so a 2xx
   omitting any of them decoded to nil and reported a readable status as `HTTP 200`. The three are
   optional now; the Compose twin's `@Serializable` requires all five, so it has the same hole.
+- **The id in the path is a deep link's, so it is encoded as one segment.** A stored id is the
+  SDK's, but the route that reads one is `verifications/{jobId}`: interpolating it raw let a `/`,
+  `?` or `#` change which request the session's token was sent with. Percent-encoded to the
+  unreserved set, nil rather than a guess when nothing is left, and unit-tested against four hostile
+  ids. Reachability today is nil — a refresh needs a row already in the store — which is exactly why
+  it is worth holding before the flow host starts writing rows.
 - **OPEN, and a four-app copy question rather than an iOS one:** a non-2xx drops the body, so a 401
   that explains itself reads as a bare code — the one case a partner most needs the server's words.
   Both apps do this; changing one of them would diverge an outcome string the flows key off.
