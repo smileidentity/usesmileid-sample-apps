@@ -60,10 +60,8 @@ final class UseSmileIDSampleRouter: ObservableObject {
     selectedTab = route.tab
   }
 
-  /// R4: the flow and both pre-flow forms leave in one assignment, so nothing can go back into
-  /// capture and a repeated delivery cannot stack a second landing screen. Keyed on the flow's own
-  /// tab rather than the showing one — a teardown-delivered cancel arrives after a link has already
-  /// moved away, and popping the showing tab would act on whatever replaced it.
+  /// R4: the flow and both pre-flow forms leave in one assignment. Keyed on the flow's own tab, not
+  /// the showing one — a teardown cancel arrives after a link may have moved away.
   func endFlow(_ flow: Route, landing: Route? = nil) {
     set([], on: flow.tab)
     if let landing {

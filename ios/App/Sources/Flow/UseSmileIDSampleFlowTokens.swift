@@ -3,15 +3,15 @@ import SampleUI
 
 /// Structurally valid unsigned JWTs — fixtures a simulated scan links, never credentials.
 enum UseSmileIDSampleFlowTokens {
-  /// The token a run with no scanned session submits under: structurally valid, and expired on
-  /// demand because the scenarios demand "a well-formed JWT whose exp is in the past".
+  /// What a run with no scanned session submits under. Structurally valid: the scenarios demand a
+  /// well-formed JWT whose `exp` is in the past, not a garbage string.
   static func token(expired: Bool, now: Date) -> String {
     let seconds = Int64(now.timeIntervalSince1970)
     let exp = seconds + (expired ? -validitySeconds : validitySeconds)
     return [header, "{\"exp\":\(exp)}", signature].map(base64Url).joined(separator: ".")
   }
 
-  /// What `badRefresh` refreshes to: a string no decoder can read, which is the point.
+  /// What `badRefresh` refreshes to.
   static func malformed() -> String {
     "sample-not-a-jwt"
   }

@@ -10,7 +10,6 @@ struct FlowLaunchSnapshot: Equatable {
   let scenario: UseSmileIDSampleScenario
   let theme: UseSmileIDSampleThemeScenario
   let sandbox: Bool
-  /// The five fields, not the settings object: the snapshot is read once at entry (R2).
   let allowAgentMode: Bool
   let enableEnhancedLiveness: Bool
   let consentStep: Bool
@@ -19,9 +18,9 @@ struct FlowLaunchSnapshot: Equatable {
   let userId: String
   let partnerId: String
   let partnerName: String
-  /// Live at entry only: a session that has run out is the gate's business, never the builder's.
+  /// Live at entry only: an expired session is the gate's business, never the builder's.
   let session: UseSmileIDSampleTokenSession?
-  /// Run out — the one thing that routes back to the scanner. Usually true with no ``session``.
+  /// The one thing that routes back to the scanner.
   let sessionExpired: Bool
 
   init(
@@ -75,9 +74,8 @@ func buildSnapshot(
   userId: String
 ) -> FlowLaunchSnapshot? {
   guard let product = UseSmileIDSampleProduct(rawValue: productId) else { return nil }
-  // The clock is read here rather than through the app state's ticking value: the snapshot is taken
-  // once at entry (R2), and subscribing the flow host to a once-a-second tick would re-render it —
-  // which the SDK answers by re-running `build()` and tearing the run down.
+  // Read here, not through the app state's ticking value: subscribing the host to the tick would
+  // re-render it once a second.
   let entry = Date()
   let session = app.session
   return FlowLaunchSnapshot(

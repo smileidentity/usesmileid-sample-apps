@@ -2,11 +2,10 @@ import SampleUI
 import SwiftUI
 import UIKit
 
-/// The consent screen takes a `UIImage`, and this app's marks are generated as SwiftUI shapes, so the
-/// mark is drawn into one here rather than shipping a second copy of the same asset.
+/// The consent screen takes a `UIImage` and this app's marks are SwiftUI shapes, so one is drawn
+/// rather than a second copy of the asset shipped.
 enum UseSmileIDSampleFlowIcon {
-  /// The product mark the Compose twin passes as `sample_ic_product_mark`, at the size the SDK's
-  /// consent header draws it.
+  /// What the Compose twin passes as `sample_ic_product_mark`.
   static let partnerMark: UIImage = image(SmileIcons.productMark, size: markSize)
 
   private static func image(_ icon: SmileIcon, size: CGFloat) -> UIImage {
@@ -14,7 +13,7 @@ enum UseSmileIDSampleFlowIcon {
     let transform = CGAffineTransform(translationX: -icon.minX, y: -icon.minY)
       .concatenating(CGAffineTransform(scaleX: scale, y: scale))
     return UIGraphicsImageRenderer(size: CGSize(width: size, height: size)).image { context in
-      // Template-tinted by the SDK's own theme, so the mark is drawn in one opaque colour.
+      // Template-tinted by the SDK's theme, so one opaque colour is enough.
       UIColor.label.setFill()
       UIColor.label.setStroke()
       for part in icon.parts {

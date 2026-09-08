@@ -235,21 +235,17 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
     XCTAssertEqual(router.path(.settings), [.profiles], "a valid stack survives")
   }
 
-  /// Two taps on a form's Continue before the push lands would otherwise stack two flow levels,
-  /// which is two runs and two terminal results for one journey.
   func testPushingTheSameRouteTwiceKeepsOneLevel() {
     let router = UseSmileIDSampleRouter()
     let flow = Route.sdkFlow(productId: "smartSelfieEnrollment", presentation: .fullscreen)
     router.pushOnce(flow)
     router.pushOnce(flow)
     XCTAssertEqual(router.path(.products), [flow])
-    // Falsified by the unguarded push, which is what the form used to call.
+    // Falsified by the unguarded push.
     router.push(flow)
     XCTAssertEqual(router.path(.products), [flow, flow])
   }
 
-  /// R4: the flow and both pre-flow forms leave in one assignment, and the landing route arrives with
-  /// them already gone — so nothing can go back into capture.
   func testEndingAFlowClearsItsTabAndLandsTheResult() {
     let router = UseSmileIDSampleRouter()
     let flow = Route.sdkFlow(productId: "biometricKyc", presentation: .fullscreen)
@@ -262,13 +258,11 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
     XCTAssertEqual(router.path(.verifications), [.verificationDetails(jobId: "job-1")])
     XCTAssertEqual(router.selectedTab, .verifications)
 
-    // A repeated delivery replaces rather than stacks, because the path is assigned.
+    // A repeated delivery replaces rather than stacks.
     router.endFlow(flow, landing: .verificationDetails(jobId: "job-1"))
     XCTAssertEqual(router.path(.verifications), [.verificationDetails(jobId: "job-1")])
   }
 
-  /// A teardown-delivered cancel arrives after a link has moved to another tab, and clearing the
-  /// showing tab would act on whatever replaced it.
   func testEndingAFlowFromAnotherTabLeavesThatTabAlone() {
     let router = UseSmileIDSampleRouter()
     let flow = Route.sdkFlow(productId: "biometricKyc", presentation: .fullscreen)

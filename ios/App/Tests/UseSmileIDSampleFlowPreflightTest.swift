@@ -5,7 +5,6 @@ import XCTest
 
 @MainActor
 final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
-  /// Ahead of every payload check, because no form fixes a session that has run out.
   func testAnEndedSessionAsksForATokenBeforeAnythingElse() {
     let blank = snapshot(.biometricKyc, sessionExpired: true)
     XCTAssertEqual(useSmileIDSamplePreflight(blank), .needsSession)
@@ -22,7 +21,6 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
     XCTAssertFalse(issues.isEmpty, "the redirect carries no reason")
   }
 
-  /// The ID payload is checked too, so a KYC run with no ID number never reaches the SDK.
   func testAKycRunWithNoIdNumberIsSentToTheForm() {
     let missing = snapshot(.biometricKyc, userDetails: complete)
     guard case .needsDetails = useSmileIDSamplePreflight(missing) else {
@@ -36,8 +34,6 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
     XCTAssertEqual(useSmileIDSamplePreflight(complete), .ready)
   }
 
-  /// A token that binds both names and a contact field answers the form, so an empty form still
-  /// passes: the issues the SDK reports are the ones the bindings cover.
   func testATokenThatBindsTheDetailsPassesAnEmptyForm() {
     let bound = snapshot(
       .smartSelfieEnrollment,
@@ -46,7 +42,6 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
     XCTAssertEqual(useSmileIDSamplePreflight(bound), .ready)
   }
 
-  /// Falsifies the subtraction: a token binding only one name leaves the rest outstanding.
   func testAPartialBindingStillGoesToTheForm() {
     let partial = snapshot(
       .smartSelfieEnrollment,
@@ -57,8 +52,6 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
     }
   }
 
-  /// The gate reads the bindings through the same live-session rule the forms do, so a refresh
-  /// scenario cannot skip a form and then be redirected back to it.
   func testARefreshScenarioDoesNotReadTheBindings() {
     let expired = snapshot(
       .smartSelfieEnrollment,
@@ -70,10 +63,6 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
     }
   }
 
-  /// The per-job-type rule the one-argument validator does not run: every job type needs consent,
-  /// from a screen or from the token. Turning the Consent screen switch off with no consent binding
-  /// leaves neither, and the SDK refuses the flow — the whole point of the gate is that it says so
-  /// before the SDK mounts, rather than delivering it as a Failure a test cannot tell from a real one.
   func testAJourneyWithNoConsentAtAllIsBlockedRatherThanRedirected() {
     let neither = snapshot(.smartSelfieEnrollment, userDetails: complete, consentStep: false)
     guard case .misconfigured(let issues) = useSmileIDSamplePreflight(neither) else {
@@ -81,7 +70,7 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
     }
     XCTAssertFalse(issues.isEmpty, "the block carries no reason for the card to report")
 
-    // Falsified both ways: the switch back on, and the switch off against a token that binds consent.
+    // Falsified both ways: the switch on, and the switch off against a consent-binding token.
     XCTAssertEqual(useSmileIDSamplePreflight(snapshot(.smartSelfieEnrollment, userDetails: complete)), .ready)
     let bound = snapshot(
       .smartSelfieEnrollment,
@@ -92,24 +81,19 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
     XCTAssertEqual(useSmileIDSamplePreflight(bound), .ready)
   }
 
-  /// The pair the SDK refuses: agent mode captures on the rear lens and the head-turn challenge is
-  /// only validated for front-camera framing. Settings holds a mutex so no reader can set both, and
-  /// this is the gate that would still stop it — no form fixes it, and it must never reach the SDK.
   func testAgentModeWithEnhancedLivenessIsBlockedRatherThanRedirected() {
     let both = snapshot(.smartSelfieEnrollment, userDetails: complete, agentMode: true, enhancedLiveness: true)
     guard case .misconfigured(let issues) = useSmileIDSamplePreflight(both) else {
       return XCTFail("the pair the SDK refuses passed the gate")
     }
     XCTAssertFalse(issues.isEmpty, "the block carries no reason for the card to report")
-    // Falsified by the mutex's own state: either one alone is a valid run.
+    // Falsified: either one alone is a valid run.
     XCTAssertEqual(
       useSmileIDSamplePreflight(snapshot(.smartSelfieEnrollment, userDetails: complete, agentMode: true)),
       .ready
     )
   }
 
-  /// Every product's happy path passes the gate, which is what stops a rule written for one journey
-  /// from blocking another.
   func testEveryProductWithItsPayloadFilledPassesTheGate() {
     for product in UseSmileIDSampleProduct.allCases {
       let filled = snapshot(

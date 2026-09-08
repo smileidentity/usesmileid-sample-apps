@@ -2,8 +2,8 @@ import Foundation
 import SampleUI
 import UseSmileID
 
-/// The session a run actually submits under. Absent for the two scenarios that are *about* refresh:
-/// a scanned token has no refresh journey, and the fixtures are what keep those scenarios meaningful.
+/// The session a run submits under. Absent for the two scenarios that are *about* refresh, which
+/// need the fixture token to stay meaningful.
 extension FlowLaunchSnapshot {
   var liveSession: UseSmileIDSampleTokenSession? {
     scenario.startsExpired ? nil : session
@@ -16,7 +16,6 @@ extension UseSmileIDSampleScenario {
   }
 }
 
-/// The live-session rule, in one place, so nothing disagrees about whether a token is live.
 extension UseSmileIDSampleTokenSession {
   func live(for scenario: UseSmileIDSampleScenario, at now: Date) -> UseSmileIDSampleTokenSession? {
     hasExpired(at: now) || scenario.startsExpired ? nil : self
@@ -28,15 +27,14 @@ extension UseSmileIDSampleAppState {
     session?.live(for: flowResult.scenario, at: now)
   }
 
-  /// The bindings a run may read, or nil when no live token backs it. Read through the same rule the
-  /// gate uses, so a skipped form can never be followed by a redirect back to it.
+  /// Read through the same rule the gate uses, so a skipped form is never followed by a redirect
+  /// back to it.
   var liveBindings: UseSmileIDSampleTokenBindings? {
     liveSession(at: now)?.bindings
   }
 
-  /// Whether the token this run will submit under binds the user details the SDK requires — both
-  /// names plus one contact field. When it does the SDK asks nothing more of `userDetails`, so the
-  /// host's own form has nothing left to collect and the journey may start past it.
+  /// Both names plus one contact field: with those bound the SDK asks nothing more, so the form has
+  /// nothing left to collect.
   var tokenBindsUserDetails: Bool {
     liveBindings?.bindsRequiredUserDetails == true
   }
@@ -46,7 +44,7 @@ extension UseSmileIDSampleAppState {
   }
 }
 
-/// Drops the issues the token already answers; every other rule the SDK applies still stands.
+/// Drops the issues the token answers; every other rule the SDK applies still stands.
 func useSmileIDSampleOutstanding(
   _ state: ValidationState,
   _ requirement: UseSmileIDSampleUserDetailsRequirement
@@ -62,8 +60,7 @@ private extension UseSmileIDSampleUserDetailsRequirement {
     switch field.fieldName {
     case "userDetails.givenNames": return !firstName
     case "userDetails.lastName": return !lastName
-    // The contact rule is reported against the object rather than a field, so the reason is what
-    // identifies it — anything else raised at that level is not ours to drop.
+    // Reported against the object rather than a field, so the reason is what identifies it.
     case "userDetails": return !contact && field.reason.range(of: "email", options: .caseInsensitive) != nil
     default: return false
     }
