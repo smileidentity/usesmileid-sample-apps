@@ -336,6 +336,9 @@ Two milestones worth naming separately, because they are where the defects live:
   transition (R4), cancellation semantics (R5), and recreation survival (R6). This is the riskiest
   part of the whole app and it deserves device verification on every platform, not just CI.
   What the flow route receives, and how — the argument contract N2 builds on — is §8.
+  **Android and iOS have landed N2** (iOS 2026-09-08); what the iOS platform decided differently,
+  including the two §7.3 assumptions that did not hold against the published SDK, is
+  `ios-port-hardening.md` §16.
 
 ## 7. Result handling — settled from the SDK source (2026-08-13)
 
@@ -396,7 +399,10 @@ trusting the caller:
   (`FlowValidator.validateBuilder(...)`), iOS `UseSmileIDFlowBuilder.swift:160`
   (`FlowValidator.shared.validateBuilder(screens:)`), Flutter
   `use_smile_id_flow_builder.dart:141`, Expo `use_smile_id_flow_builder.ts:214`. Parity holds; call
-  it on route entry.
+  it on route entry. **Corrected 2026-09-08 against the published iOS 12.0.2:** the *builder* is not
+  constructible outside `UseSmileIDBuilder`'s closure there — it has no public initialiser — so an
+  iOS host calls `FlowValidator.shared` directly instead. Same object, same rules, reachable before
+  the SDK mounts. Whoever ports Flutter or Expo should check which of the two their SDK allows.
 - Android and iOS additionally expose per-payload validators for dynamically-sourced input —
   `validateConsent`, `validateUserDetails`, `validateBiometricKYCParams`,
   `validateDocumentVerificationParams`, `validateEnhancedDocumentVerificationParams`,
@@ -410,6 +416,14 @@ want of user or ID details, redirect to the corresponding form route and keep th
 destination so the form's Continue resumes the journey. Do not let an invalid configuration reach the
 flow — submission-time validation throws, and a thrown builder error surfaces as
 `Failure`, which is indistinguishable to a test from a real submission failure.
+
+**One rule the validators cannot be asked for, found on iOS 2026-09-08:** every job type needs
+consent, from an in-flow consent screen or from the token's own claim, and the validator that
+enforces it takes a decoded token payload that no public overload accepts. So with the Consent screen
+switch off and no consent binding, a run has neither source and the SDK refuses it — as a `Failure`
+from inside its own render, which is exactly what this rule says must not happen. The host has to
+state that rule itself. iOS does; **Android does not yet**, and the two other ports inherit the same
+requirement.
 
 **Incidental finding worth carrying to the products question:** iOS `buildJobRequest()` documents that
 **the BVN job type is not supported and throws**. That strengthens the case for leaving `BVN` out of

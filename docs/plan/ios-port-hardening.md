@@ -11,7 +11,7 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 | 1 | **DONE 2026-08-31 — the pill won.** See §1. | The only open question that could invalidate finished work. | Ruled, built, and `TabView` gone. |
 | 2 | **DONE 2026-08-31 — the stack is merged.** | Three PRs deep is the practical limit: this repo squash-merges, so each merge turns the branches above into a `rebase --onto`, not a plain rebase. | `main` carries all three. |
 | 3 | **DONE 2026-09-01 — the harness runs in CI.** See §5. | Every new route was asserted only at the resolver. | `UseSmileIDSampleUITests` runs inside `verify.sh`; a link launches the app and the screen id is asserted. |
-| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets (2026-09-01), then profiles, profileConfig and both profile sheets (2026-09-02), then scanToken with the session model behind it (2026-09-02, §8 and §9), then the result card, the scenario drawer and the launch arguments that seed the card (2026-09-03, §10) are built. **The job store, the verifications list and the status refresh are built (2026-09-08, §12, §13 and §15)**, so `seedJobs` acts, the four waiting ids are applied and a processing row can be re-checked. Two screens remain. **The flow host** (`.sdkFlow`, N2 in `navigation-plan.md`) hosts the SDK-owned consent screen, gives the four recorders their caller and `redirected` its gate, and consumes `autostart` and `holdCamera`; it needs device verification, not only the simulator. Licenses waits on the generated notices asset, not the store. | Settled order; do not relitigate it. | All sixteen screens exist. |
+| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets (2026-09-01), then profiles, profileConfig and both profile sheets (2026-09-02), then scanToken with the session model behind it (2026-09-02, §8 and §9), then the result card, the scenario drawer and the launch arguments that seed the card (2026-09-03, §10) are built. **The job store, the verifications list and the status refresh are built (2026-09-08, §12, §13 and §15)**, so `seedJobs` acts, the four waiting ids are applied and a processing row can be re-checked. **The flow host is built (2026-09-08, §16)**: the SDK is hosted in both presentations, the four recorders and `redirected` have their callers, `jobStore.add` has one too, and the launch-integrity opener runs. One screen remains — licenses, which waits on the generated notices asset, not the store. `autostart` and `holdCamera` follow the host in the same slice. | Settled order; do not relitigate it. | All sixteen screens exist. |
 | 5 | **DONE 2026-09-01 — a growth check, not the one §2 proposed.** See §2. | Would have started biting at U4, when the 38 states land. | A component that stops growing at the largest content size fails the build. |
 
 **The stack that carried U0–U2 and the first two screens** — #40, #42, #43 — is merged. Each squash
@@ -239,10 +239,9 @@ what it deliberately does not:
   Unproven here: the simulator has no camera, so the viewfinder is absent in every golden and every
   simulator run and the screen keeps the glyph, exactly as the Compose screen does with a null
   viewfinder. The reader has only been compiled, not pointed at a code.
-- **`redirected` has no caller.** `UseSmileIDSampleScanReason.sessionEnded` exists, the shared UI
-  owns its sentence, and the state is goldened — but `.sdkFlow` is a seat, there is no preflight gate,
-  and the host passes no reason. The gate is the flow slice's; building it to give the state a caller
-  would have been the wrong order.
+- ~~**`redirected` has no caller.**~~ **Given one with the flow host — see §16.** The gate's
+  session exit sends the run to the scanner with a `UseSmileIDSampleRunIntent`, the screen says why it
+  opened, and relinking a *different* live token re-enters the run; a device test drives both halves.
 - **The verifications screen is still a seat**, so `jobRow`, `jobRowStatus`, `filterCount` and
   `selectionCheckbox` stay in the unapplied inventory; `tokenEnvironmentPrefix` joins the prefixes.
 - **Sign-out clears the session only.** Android also clears the forms and lands on Products; those
@@ -275,9 +274,10 @@ the same tests Android runs. What is decided here, and what is deliberately left
   a fresh run. `saved` and `init(saved:)` keep the Compose `Saver`'s shape, unit-tested and with no
   caller, like the recorders. The card's expanded/collapsed toggle is app state too, because one tab
   is mounted at a time.
-- **The recorders have no caller.** `startFlow`, `recordResultCallback`, `recordBlocked` and
-  `recordRefreshCallback` exist, are unit-tested, and nothing calls them: `.sdkFlow` is a seat, so no
-  run ever starts. The same treatment `redirected` got in §9 — building a flow host to give them a
+- ~~**The recorders have no caller.**~~ **All four have one with the flow host — see §16.**
+  `startFlow` runs when the gate passes, `recordBlocked` when it refuses, `recordResultCallback` on
+  every delivery and `recordRefreshCallback` from the SDK's own token-refresh hook. The paragraph
+  below is kept because it is the reasoning that put them there first. The same treatment `redirected` got in §9 — building a flow host to give them a
   caller would have been the wrong order. The compact line on products therefore never shows outside
   its golden; like the Compose twin, it is not gated by `probes`, only by a run being in flight.
 - **Twelve ids inside one container.** The card carries its own id and eleven field ids, so it needs
@@ -377,10 +377,11 @@ in a test). The whole file is one document, which is what makes the decoding rul
   a precondition, not a fixture the app carries). A test that needs an empty list therefore has to
   uninstall first, so the plain-empty default is asserted by a unit test on the store rather than by
   a flow.
-- **`add` still has no caller.** The flow host is a seat, so nothing submits: the store's one live
-  producer is `seedJobs`, the same treatment `redirected` and the recorders have in §9 and §10. It
-  is unit-tested, including that a repeated delivery of the same job id cannot overwrite the row it
-  already wrote.
+- ~~**`add` still has no caller.**~~ **Given one with the flow host — see §16**, on the app
+  state so the write outlives the flow the result is tearing down. Its only producer is a Success,
+  which needs a 202 from the server, so what reaches the list is proven on the phone lane rather than
+  the simulator. It is unit-tested, including that a repeated delivery of the same job id cannot
+  overwrite the row it already wrote.
 - **A refresh was not in the store at first.** It landed with its adapter and its UI, in the slice
   §15 records, rather than sitting unreachable behind a seam nothing filled.
 
@@ -488,6 +489,100 @@ back atomically. What is decided here:
   `sample_details_check_status`, an id in no test-ids file, and described the button pull-to-refresh
   replaced on Android months ago. Android needed no code change; the entry now describes the gesture,
   the automatic entry refresh, and that the LIST's own pull is a different thing and still deferred.
+
+## 16. The SDK flow host — built 2026-09-08, and the five things the platform decided
+
+`.sdkFlow` is N2 in `navigation-plan.md`, and the riskiest screen in the app. The four launch units
+mirror the Compose files name for name — `FlowLaunchSnapshot`, `FlowBuilderConfig`, `FlowPreflight`,
+`TokenBindingRules`, plus `FlowJourney` and `SdkFlowScreen` — and the shell now depends on the
+`ios-spm` registry at the same 12.0.2 `SampleUI/Package.swift` pins, adding the two Vision analyzer
+products the SDK's `UseSmileID` product does not carry. What the platform, rather than the design,
+decided:
+
+- **R6 is met by what was already ruled, not by new machinery.** The forms, the scenario, the theme
+  and the selected tab are app state; each tab's stack is `@SceneStorage`; the token session is an
+  absolute deadline in the Keychain. The one thing R6 asks *of the flow host* — a saveable identity
+  key, because Android regenerating one orphans a buffered result — has no iOS counterpart: the run
+  is a `@StateObject` whose identity is the route, so a rotation or a re-render keeps it, and there is
+  no buffer to orphan. See the next point.
+- **`SdkFlowViewModel` has no counterpart, deliberately.** iOS has no per-back-stack-entry
+  ViewModel, and `port-patterns.md` §2 puts screen state in a holder beside the screen, so the run
+  is a `@StateObject` (`SdkFlowRun`) created once per entry. What Android's `SavedStateHandle` buys
+  it — a run that survives process death, and with it §7.2's buffered-result replay — has nothing to
+  survive here: the SDK's own `FlowNavigationManager` is a `@StateObject`, so a killed scene takes
+  the run with it and there is no buffer left to orphan. §10 had already ruled every launch a fresh
+  run for the same reason.
+- **The gate runs when the push has landed, not in `onAppear`.** §7's lesson, met from the other
+  side: `onAppear` fires *inside* the transition, and every gate exit is a path change. The flow host
+  wires the same `UseSmileIDSampleTransitionEnd` representable the router uses. Two costs paid for
+  this: the SDK is not mounted under a running animation, and the first frame is the app's own
+  background rather than white. One thing it cost to learn — the signal never fired at first, because
+  the host hung it on `.background()` of a view that is empty until the gate has run, and SwiftUI
+  drops an empty view's background. It is a `ZStack` member now.
+- **The two presentations differ by insets, and neither disables a gesture.** `fullscreen` ignores
+  the safe area, which is the Compose twin's `contentWindowInsets = WindowInsets(0)`; `shell` leaves
+  the flow inside the shell's own safe area, which is the presentation R3 exists to expose. Both are
+  pushed levels, so one route table, one deep link and one result transition serve both. The pill is
+  already covered by any push, so neither presentation has to hide it. What the simulator can show of
+  this is which presentation a run launched in — the card's `route` field — and no more: every SDK
+  screen it can reach paints its own background past the safe area anyway, so the difference only
+  becomes visible on the capture screen, which is the phone lane's.
+- **The result transition is one assignment, keyed on the flow's own tab.** `endFlow` clears the
+  products stack — the flow and both pre-flow forms — and opens the landing route, so a repeated
+  delivery cannot stack a second screen and nothing can swipe back into capture (R4). Keyed on the
+  route rather than the showing tab because a teardown-delivered cancel arrives *after* the level is
+  gone: that is what Android guards with its `composed` flag, and on iOS the key is the guard. The
+  SDK completes by calling `dismiss()` on the host's context one update later, and the landing screen
+  survives it — asserted, because the reverse would have been invisible in code.
+- **A form's Continue pushes once.** `push` appends, so two taps stacked two flow levels, which is
+  two runs and two terminal results for one journey. Found while writing the opener's rapid-tap half.
+  The router's own test is where that is proven; the device test can only show that a tap landing on
+  the mounted flow starts nothing, because the runner serialises its events.
+
+**What the gate can and cannot ask the SDK, at 12.0.2.** §7.3 assumed `UseSmileIDFlowBuilder` was
+constructible, as it is on Android. It is not: it has no public initialiser, so a host reaches it
+only inside `UseSmileIDBuilder`'s closure — after the SDK has mounted. `FlowValidator.shared` is
+public and is the same object the builder's `validate()` calls, so the gate goes through it: the
+per-payload validators, with the token's bindings subtracted exactly as Android subtracts them, then
+`validate(configuration:)` for the structural rules. Two consequences:
+
+- **The per-job-type rules need a token payload the public API cannot pass.** The dispatching
+  overload runs them, but with no `tokenPayload` it reports `userDetails is required` for a run whose
+  token supplies the details — measured, not assumed. So the gate does not use it, and the one rule
+  worth keeping from it is stated in the host instead: every job type needs consent, from the screen
+  or from the token. That rule found a real hole — with the Consent screen switch off and no consent
+  binding, a run has neither, and the SDK refuses it. It used to surface as a `Failure` from inside
+  the SDK's own render, which §7.3 warns is indistinguishable from a real submission failure; it is a
+  block with a reason on the card now. **The same hole is open on Android**, whose gate calls
+  `validate()` (screens only) — an owner call, not an iOS one.
+- **`clashingHost` reaches the SDK as nothing on iOS.** `partnerOverride` applies a palette through
+  the SDK's public `theme { }`, as the Compose twin does. Android's `clashingHost` swaps the *host's*
+  `MaterialTheme` and lets the collision show at the boundary; SwiftUI hands the SDK no host palette
+  to inherit, so there is nothing to clash. Left unimplemented rather than invented — what the
+  scenario should mean on iOS is a product question.
+- **`throwingCallback` is not expressible in Swift.** `onResult` is a non-throwing closure and Swift
+  has no unchecked exception, so the only way to throw from it is to trap — which is the app dying,
+  not the scenario's "must not take the app down". The id stays for spec parity and the card reports
+  it; nothing throws.
+
+**Two ids the pinned SDK does not give back.** The consent screen publishes `si_consent_screen`,
+`si_allow_button` and `si_deny_button`, all queryable. The instructions screen puts
+`si_instructions_screen` on a *container*, which overrides every control's own identifier — the
+lesson `sample_session_countdown` paid for, met in the SDK — so the flow's cancel test addresses its
+back control by label. The 12.1.0 source has `si_back_button` on it; at 12.0.2 it is unreachable.
+
+**What the simulator proved, and what it could not.** Seven flow tests on the pinned iPhone 17 Pro:
+the launch-integrity opener (launch → product list → SDK mounted), both presentations, Deny landing
+on the details screen with exactly one result, a back-out cancelling with no row created, the cold
+link redirected to the form, the ended-session redirect with its reason and the resume that follows
+it, and a rapid second tap starting nothing. Falsified by reinstating two defects: without clearing
+the flow's tab the stacked form is caught, and the router test's own unguarded push is asserted.
+What the lane cannot show: a **Success**, which needs a 202 and so a real Portal token, and with it
+`jobStore.add` putting a row in the list — the path is wired and unit-tested, and the device lane
+§2.3 owes is where it gets proven. Also not provable here: the interactive pop out of the flow.
+XCUITest's synthesised drag does not drive `UIScreenEdgePanGestureRecognizer` — falsified against a
+host screen, which did not pop either — so the swipe belongs to the phone lane, and the cancel path
+this suite drives is the SDK's own back on its first screen.
 
 ## Considered and rejected
 

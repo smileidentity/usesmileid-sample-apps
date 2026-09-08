@@ -51,14 +51,21 @@ today, and it should be written down per flow:
 | `verifications.yaml`'s refresh steps | `VerificationsUITests` | covered against a fixture row, which needs no network |
 | `verifications.yaml` | `VerificationsUITests` | covered |
 | `settings.yaml` | — | blocked: the switches are not persisted on iOS yet, so there is no open-and-close-with-defaults walk to write |
-| `sdk-flow.yaml` | — | blocked on the flow host; this is the one that asserts deny, back, and immediate re-entry |
+| `sdk-flow.yaml` | `FlowUITests` | covered on the simulator up to the shutter (2026-09-08): deny, back-out, both presentations, the gate's three exits and a rapid re-entry. A **Success** and the interactive pop out of the flow are not provable here — see §2.3 |
 
 ### 2.2 The opener every device flow owes
 
 `AGENTS.md` asks every device flow to open with launch → product list → SDK-mount assertions, so a
 packaging failure fails conclusively instead of looking like a UI defect, and to assert exactly one
-terminal result after any cancel or deny — including re-entry by rapid taps. iOS has neither half,
-because both need a flow that mounts the SDK. They land with the flow host, in the same change.
+terminal result after any cancel or deny — including re-entry by rapid taps.
+
+**Both halves landed with the flow host, 2026-09-08.**
+`UseSmileIDSampleFlowUITests.testTheOpenerLaunchesToTheProductListAndAProductMountsTheSdk` is the
+opener; the exactly-once assertion is on `sample_result_result_count` after a deny, after a back-out
+and after a rapid second tap. One caveat to carry: the rapid-tap half is weaker than the Android
+flow's, because XCUITest serialises its events, so the second tap lands *after* the push rather than
+beside it. That two pushes of the same route keep one level is proven in the router's unit test
+instead.
 
 ### 2.3 A physical-device lane
 
@@ -73,6 +80,15 @@ throttle or a real orientation change. The lane needs, in this order:
 - a foreground guard. The four sample apps implement the same `sample_*` ids and render the same SDK
   screens, and on iOS a shared URL scheme is last-installed-wins, so a deep link can land in a
   sibling app and satisfy an assertion meant for this one
+
+Two things the flow host added to this list on 2026-09-08:
+
+- **a Success, and with it the store's `add` reaching the list.** Every terminal result the simulator
+  can reach is a cancel or a failure; a 202 needs a real Portal token, so the one path that writes a
+  row is unproven end to end.
+- **the interactive pop out of a running flow.** XCUITest's synthesised drag does not drive
+  `UIScreenEdgePanGestureRecognizer` — falsified against a host screen, which did not pop either — so
+  the swipe that leaves a flow mid-capture cannot be asserted on this runner at all.
 
 It cannot run on a hosted CI runner, so it is a local lane triggered per PR by hand, or a device
 cloud — not part of `ios/verify.sh`.
