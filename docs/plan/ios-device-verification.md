@@ -1,7 +1,7 @@
 # iOS device verification — the lane the port owes before it is finished
 
 **Status:** PROPOSED 2026-09-08, nothing in it implemented. Written the day the verifications slice
-landed, when the iOS suite reached 43 XCUITest tests and it became clear what it still cannot say.
+landed, when the iOS suite reached 45 XCUITest tests and it became clear what it still cannot say.
 
 **The problem in one line:** iOS has the runner the contract asks for and none of the scaffolding
 around it, so a green iOS suite proves the app works on one simulator, launched one way, by one
@@ -22,7 +22,7 @@ script rather than repeating its steps:
 |---|---|
 | `UseSmileIDSampleNavigationUITests` (25) | the shell, both link levels, the pill, profiles, the token session, the scenario drawer, the result card |
 | `UseSmileIDSampleLaunchArgumentUITests` (9) | every argument that acts, plus the release-build probes gate |
-| `UseSmileIDSampleVerificationsUITests` (9) | select mode, both removal paths, the undo, the counts, the emptied-filter fallback, the bottom inset |
+| `UseSmileIDSampleVerificationsUITests` (11) | select mode, both removal paths, the undo, the counts, the emptied-filter fallback, the bottom inset, both refresh paths |
 
 What that suite can already do, so a new check does not need a new mechanism: launch arguments as
 preconditions (`-seedJobs`, `-seedProfiles`, `-probes`, `-scenario`), a deep link to any route in
@@ -48,6 +48,7 @@ today, and it should be written down per flow:
 | `launch-args.yaml` | `LaunchArgumentUITests` | covered |
 | `profiles.yaml` | `NavigationUITests` | covered |
 | `token-session.yaml` | `NavigationUITests` | covered, minus the scanned-token flow a camera would need |
+| `verifications.yaml`'s refresh steps | `VerificationsUITests` | covered against a fixture row, which needs no network |
 | `verifications.yaml` | `VerificationsUITests` | covered |
 | `settings.yaml` | — | blocked: the switches are not persisted on iOS yet, so there is no open-and-close-with-defaults walk to write |
 | `sdk-flow.yaml` | — | blocked on the flow host; this is the one that asserts deny, back, and immediate re-entry |

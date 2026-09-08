@@ -11,7 +11,7 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 | 1 | **DONE 2026-08-31 — the pill won.** See §1. | The only open question that could invalidate finished work. | Ruled, built, and `TabView` gone. |
 | 2 | **DONE 2026-08-31 — the stack is merged.** | Three PRs deep is the practical limit: this repo squash-merges, so each merge turns the branches above into a `rebase --onto`, not a plain rebase. | `main` carries all three. |
 | 3 | **DONE 2026-09-01 — the harness runs in CI.** See §5. | Every new route was asserted only at the resolver. | `UseSmileIDSampleUITests` runs inside `verify.sh`; a link launches the app and the screen id is asserted. |
-| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets (2026-09-01), then profiles, profileConfig and both profile sheets (2026-09-02), then scanToken with the session model behind it (2026-09-02, §8 and §9), then the result card, the scenario drawer and the launch arguments that seed the card (2026-09-03, §10) are built. **The job store and the verifications list are built (2026-09-08, §12 and §13)**, so `seedJobs` acts, the four waiting ids are applied and the last of the four unused-id entries are prefixes. Two screens remain. **The flow host** (`.sdkFlow`, N2 in `navigation-plan.md`) hosts the SDK-owned consent screen, gives the four recorders their caller and `redirected` its gate, and consumes `autostart` and `holdCamera`; it needs device verification, not only the simulator. Licenses waits on the generated notices asset, not the store. | Settled order; do not relitigate it. | All sixteen screens exist. |
+| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets (2026-09-01), then profiles, profileConfig and both profile sheets (2026-09-02), then scanToken with the session model behind it (2026-09-02, §8 and §9), then the result card, the scenario drawer and the launch arguments that seed the card (2026-09-03, §10) are built. **The job store, the verifications list and the status refresh are built (2026-09-08, §12, §13 and §15)**, so `seedJobs` acts, the four waiting ids are applied and a processing row can be re-checked. Two screens remain. **The flow host** (`.sdkFlow`, N2 in `navigation-plan.md`) hosts the SDK-owned consent screen, gives the four recorders their caller and `redirected` its gate, and consumes `autostart` and `holdCamera`; it needs device verification, not only the simulator. Licenses waits on the generated notices asset, not the store. | Settled order; do not relitigate it. | All sixteen screens exist. |
 | 5 | **DONE 2026-09-01 — a growth check, not the one §2 proposed.** See §2. | Would have started biting at U4, when the 38 states land. | A component that stops growing at the largest content size fails the build. |
 
 **The stack that carried U0–U2 and the first two screens** — #40, #42, #43 — is merged. Each squash
@@ -381,9 +381,8 @@ in a test). The whole file is one document, which is what makes the decoding rul
   producer is `seedJobs`, the same treatment `redirected` and the recorders have in §9 and §10. It
   is unit-tested, including that a repeated delivery of the same job id cannot overwrite the row it
   already wrote.
-- **A refresh is not in the store yet.** `GET /v3/status/{jobId}`, the row-versus-partner guard and
-  the details screen's pull-to-refresh are the next slice; the seam belongs with the adapter that
-  fills it and the UI that calls it, so it lands with them rather than sitting unreachable.
+- **A refresh was not in the store at first.** It landed with its adapter and its UI, in the slice
+  §15 records, rather than sitting unreachable behind a seam nothing filled.
 
 ## 13. The verifications list — built 2026-09-08, and the four containers it had to choose
 
@@ -434,6 +433,48 @@ The suite is 43 XCUITest tests on the pinned simulator, which is the runner the 
 none of the scaffolding around it: no phone, no permission prompt, no proof of which build was
 verified, no record of what the lane's reds were, and two Android flows with no counterpart (settings
 waits on persistence, the SDK flow on the host). Written up separately because it outlives the port.
+
+## 15. The status refresh — built 2026-09-08, and what a fixture row can prove
+
+`GET /v3/status/{jobId}` is the partner's own call: the SDK stops at the 202 that creates the job.
+The protocol lives in the library, the `URLSession` adapter in the shell, and the store owns the
+sequence — read the row, take the environment and the partner FROM the row, ask the source, write
+back atomically. What is decided here:
+
+- **The gesture is the platform's, and it is inert on the floor.** `refreshable` drives a
+  `ScrollView` only from iOS 16, so on iOS 15 there is no pull affordance at all. Ruled with the
+  owner rather than worked around: hand-rolling a second pull gesture would put our thresholds where
+  the platform's belong, and reinstating the "Check status" button would diverge from the Compose
+  screen. The entry refresh below is what covers the floor, and it is the path that matters — only a
+  processing row can change. Unlike the Compose twin the screen holds no `refreshing` flag: SwiftUI
+  owns the indicator for as long as the action runs.
+- **A fixture row makes the whole path assertable with no network.** A seeded row carries no session,
+  so the outcome is `noServerJob` — "Not submitted under a scanned token" — deterministically. Two
+  device tests key off that: entering the processing fixture refreshes itself and says why, and
+  entering a settled row refreshes nothing until it is pulled. The real HTTP path is exercised only
+  by the branch table, which is pure and unit-tested, exactly as on Android.
+- **The entry refresh is silent unless something changed.** "Still processing" on every visit is
+  noise, so that one outcome is swallowed there and reported when pulled.
+- **Cancellation is not an outcome.** `refresh` throws only `CancellationError` — a `URLError`
+  cancellation is mapped to it — so leaving the screen mid-request is not reported as a failure. The
+  in-flight guard releases in a `defer`, which the actor runs on the way out either way; a test
+  cancels a request mid-flight and proves the next one is not skipped.
+- **A removal landing mid-request wins.** The only point another caller can reach the actor is the
+  suspension the request is waiting on, which is precisely where the test removes the row: the write
+  back reports that nothing was there and the row is not resurrected.
+- **"Not loaded yet" is not "no row", and the entry refresh is where that bites.** The first cut
+  refreshed whenever the rows were still nil, so a cold-start link into a settled row re-checked it
+  and toasted on arrival — invisible from the list, because by then the rows are loaded. A device
+  test opens the route by link with the app terminated, which is the only way to arrive before the
+  store emits, and it was falsified by reinstating the defect and watching it fail.
+- **Two ids the screen could not both carry.** The scroll view is the refresh container, so it takes
+  `sample_details_refresh`; the screen's own id moved to the enclosing stack, which needs
+  `.accessibilityElement(children: .contain)` or it swallows every child's — the lesson
+  `sample_session_countdown` paid for, met again.
+- **`spec/screens.json` was stale and is corrected here** (owner-approved): it named
+  `sample_details_check_status`, an id in no test-ids file, and described the button pull-to-refresh
+  replaced on Android months ago. Android needed no code change; the entry now describes the gesture,
+  the automatic entry refresh, and that the LIST's own pull is a different thing and still deferred.
 
 ## Considered and rejected
 

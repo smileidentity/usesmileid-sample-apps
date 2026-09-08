@@ -30,6 +30,7 @@ public struct VerificationDetailsScreen: View {
   private let onBack: () -> Void
   private let onDelete: () -> Void
   private let onCopy: (String, String) -> Void
+  private let onRefresh: () async -> Void
 
   @Environment(\.useSmileIDSampleColors) private var colors
 
@@ -38,13 +39,16 @@ public struct VerificationDetailsScreen: View {
     resultExpanded: Binding<Bool>,
     onBack: @escaping () -> Void,
     onDelete: @escaping () -> Void,
-    onCopy: @escaping (String, String) -> Void
+    onCopy: @escaping (String, String) -> Void,
+    // Always wired, never conditionally hidden: a refresh that cannot succeed says why instead.
+    onRefresh: @escaping () async -> Void = {}
   ) {
     self.state = state
     _resultExpanded = resultExpanded
     self.onBack = onBack
     self.onDelete = onDelete
     self.onCopy = onCopy
+    self.onRefresh = onRefresh
   }
 
   public var body: some View {
@@ -71,10 +75,14 @@ public struct VerificationDetailsScreen: View {
         }
         .padding(.vertical, SmileSpacing.spacingXs)
       }
-      // On the scroll view: on the stack inside it the id would override every child's.
-      .useSmileIDSampleTestId(UseSmileIDSampleTestIds.verificationDetailsScreen)
+      // The refresh container carries that id; the screen's own goes on the stack, which needs `.contain`.
+      .useSmileIDSampleTestId(UseSmileIDSampleTestIds.detailsRefresh)
+      // SwiftUI owns the indicator while the action runs. The gesture needs iOS 16; see §15.
+      .refreshable { await onRefresh() }
     }
     .background(colors.background)
+    .accessibilityElement(children: .contain)
+    .useSmileIDSampleTestId(UseSmileIDSampleTestIds.verificationDetailsScreen)
   }
 
   /// Absent with no row: there is nothing to hide.

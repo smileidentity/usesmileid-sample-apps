@@ -54,21 +54,8 @@ struct UseSmileIDSampleDestination: View {
       )
       .navigationBarHidden(true)
     case .verificationDetails(let jobId):
-      VerificationDetailsScreen(
-        state: .init(
-          jobId: jobId,
-          job: app.jobs?.first { $0.id == jobId },
-          result: app.flowResult.snapshot,
-          showProbes: app.showProbes
-        ),
-        resultExpanded: $app.resultCardExpanded,
-        onBack: { router.pop() },
-        // Hidden from this app's list, not deleted at the API: the store's own word for it.
-        onDelete: { app.removeJobs([jobId])
-          router.pop() },
-        onCopy: { label, value in copy(label, value) }
-      )
-      .navigationBarHidden(true)
+      UseSmileIDSampleVerificationDetailsHost(jobId: jobId)
+        .navigationBarHidden(true)
     case .profiles:
       UseSmileIDSampleProfilesHost()
         .navigationBarHidden(true)
@@ -145,6 +132,83 @@ struct UseSmileIDSampleDestination: View {
     } else {
       UIApplication.shared.open(url)
     }
+  }
+}
+
+/// One verification, the refresh it can ask for and the outcome that has to be said out loud.
+private struct UseSmileIDSampleVerificationDetailsHost: View {
+  let jobId: String
+
+  @EnvironmentObject private var router: UseSmileIDSampleRouter
+  @EnvironmentObject private var app: UseSmileIDSampleAppState
+  @State private var notice: UseSmileIDSampleTransientNotice?
+
+  var body: some View {
+    VerificationDetailsScreen(
+      state: .init(
+        jobId: jobId,
+        job: app.jobs?.first { $0.id == jobId },
+        result: app.flowResult.snapshot,
+        showProbes: app.showProbes
+      ),
+      resultExpanded: $app.resultCardExpanded,
+      onBack: { router.pop() },
+      // Hidden from this app's list, not deleted at the API: the store's own word for it.
+      onDelete: { app.removeJobs([jobId])
+        router.pop() },
+      onCopy: { label, value in copy(label, value) },
+      onRefresh: { await refresh(silentWhenUnchanged: false) }
+    )
+    .task(id: jobId) {
+      // Only a processing row can change, read off the store's first emission rather than whatever
+      // a cold-start link found: nil is "not loaded yet", and treating it as a row refreshes a
+      // settled one.
+      guard await loaded(jobId)?.status == .processing else { return }
+      await refresh(silentWhenUnchanged: true)
+    }
+    .overlay(alignment: .bottom) {
+      UseSmileIDSampleTransientNoticeHost(notice: notice, onDismiss: { notice = nil })
+        .padding(.horizontal, SmileSpacing.spacingMd)
+        .padding(.vertical, SmileSpacing.spacingLg)
+    }
+  }
+
+  /// The row once the store has emitted at all; nil if the list arrives without it.
+  private func loaded(_ jobId: String) async -> UseSmileIDSampleJob? {
+    if let jobs = app.jobs {
+      return jobs.first { $0.id == jobId }
+    }
+    for await jobs in app.$jobs.values {
+      if let jobs {
+        return jobs.first { $0.id == jobId }
+      }
+    }
+    return nil
+  }
+
+  private func refresh(silentWhenUnchanged: Bool) async {
+    guard let outcome = await app.refreshJob(jobId) else { return }
+    if silentWhenUnchanged, outcome == .stillProcessing {
+      return
+    }
+    notice = UseSmileIDSampleTransientNotice(message: label(outcome))
+  }
+
+  /// One line per outcome, in the other three apps' words: a flow keys off these strings.
+  private func label(_ outcome: UseSmileIDSampleStatusRefresh) -> String {
+    switch outcome {
+    case .updated(let status, let message, _): "\(status.label) — \(message)"
+    case .stillProcessing: "Still processing"
+    case .noSession: "Scan a token first"
+    case .noServerJob: "Not submitted under a scanned token"
+    case .partnerMismatch: "Submitted by a different partner"
+    case .failed(let reason): "Could not check status: \(reason)"
+    }
+  }
+
+  /// `UIPasteboard` has no clip label, so only the value crosses.
+  private func copy(_: String, _ value: String) {
+    UIPasteboard.general.string = value
   }
 }
 

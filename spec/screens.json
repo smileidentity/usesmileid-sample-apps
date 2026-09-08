@@ -245,7 +245,9 @@
         "sample_detail_field",
         "sample_detail_copy",
         "sample_status_badge",
-        "sample_details_check_status",
+        "sample_details_delete",
+        "sample_details_empty",
+        "sample_details_refresh",
         "sample_result_environment"
       ],
       "entryPoints": [
@@ -253,7 +255,7 @@
         "POST-SUBMISSION: the app lands here in the processing state once a job is submitted (observed 202 Accepted straight after the ID form's Continue)"
       ],
       "additions": [
-        "A 'Check status' button stands in for the pull-to-refresh the design draws in the processing state. The gesture itself is deferred with the rest of pull-to-refresh (docs/plan/sample-apps-plan.md 8.1); the button is what makes the real GET /v3/status call reachable in the meantime."
+        "CORRECTED 2026-09-08: pull-to-refresh, not the 'Check status' button that once stood in for it \u2014 Android replaced the button when GET /v3/status landed, and the stale entry named an id (sample_details_check_status) that is in no test-ids file. The gesture is present in every state, not only processing: an outcome that cannot succeed says why (no live scanned session, or a row never submitted under one, which is every fixture-token run) rather than doing nothing. A row still processing is also refreshed automatically on entry, since that is the only status that can change, and that refresh is silent unless something changed. The LIST's own pull is a different thing and is still deferred (docs/plan/sample-apps-plan.md 8.1)."
       ],
       "note": "The details screen doubles as the result screen, which is why the result card belongs here rather than needing a new home. NO NAV BAR: it is a pushed screen, even though its route lives in the verifications graph. You leave it by going back, not by switching tab. The RESULT CARD and its callback counters are hidden on a release build unless the `probes` launch argument asks for them, and always shown in debug (2026-08-25): the affordance still ships on the release classpath, minified and shrunk, because that is where consumption defects surface — compiling it out with a debug-only source set would also make the argument impossible. The rest of the screen is unchanged either way, so a partner sees the design's screen and automation sees the card."
     },

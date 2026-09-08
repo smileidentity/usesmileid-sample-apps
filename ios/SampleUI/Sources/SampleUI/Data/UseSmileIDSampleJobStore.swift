@@ -12,6 +12,10 @@ public protocol UseSmileIDSampleJobStorage: Sendable {
 /// unstructured `Task`, never `.task`, so one outlives the screen that asked. One per process.
 public actor UseSmileIDSampleJobStore {
   private let storage: UseSmileIDSampleJobStorage
+  private let source: UseSmileIDSampleJobStatusSource
+
+  /// In flight per job id, so an entry refresh and a pull cannot double-request the same row.
+  private var inFlight: Set<String> = []
 
   /// Read on first use, not in `init`: nothing touches the file system on the main thread.
   private var rows: [UseSmileIDSampleJobRecord]?
@@ -26,8 +30,12 @@ public actor UseSmileIDSampleJobStore {
   /// Batch sizes, consumed once: the details screen navigates away before it could confirm one.
   public let removals: AsyncStream<Int>
 
-  public init(storage: UseSmileIDSampleJobStorage = UseSmileIDSampleJobFileStorage()) {
+  public init(
+    storage: UseSmileIDSampleJobStorage = UseSmileIDSampleJobFileStorage(),
+    source: UseSmileIDSampleJobStatusSource
+  ) {
     self.storage = storage
+    self.source = source
     var continuation: AsyncStream<Int>.Continuation!
     removals = AsyncStream(bufferingPolicy: .unbounded) { continuation = $0 }
     removalContinuation = continuation
@@ -85,6 +93,62 @@ public actor UseSmileIDSampleJobStore {
     guard !lastRemoved.isEmpty else { return }
     insert(lastRemoved)
     lastRemoved = []
+  }
+
+  /// The one write that overwrites. Reports whether a row still existed, so a removal mid-refresh wins.
+  public func applyStatus(
+    _ jobId: String,
+    status: UseSmileIDSampleStatus,
+    message: String,
+    httpStatus: Int
+  ) -> Bool {
+    var rows = stored()
+    guard let index = rows.firstIndex(where: { $0.id == jobId }) else { return false }
+    rows[index].statusId = status.rawValue
+    rows[index].message = message
+    rows[index].httpStatus = httpStatus
+    save(rows)
+    return true
+  }
+
+  /// The refresh sequence, owned by what owns the rows: the environment and the partner come from
+  /// the row, never the caller. Nil when one is already in flight; throws only on cancellation, so
+  /// leaving the screen mid-request is not reported as a failure.
+  public func refresh(
+    _ jobId: String,
+    live: UseSmileIDSampleTokenSession?,
+    now: Date
+  ) async throws -> UseSmileIDSampleStatusRefresh? {
+    guard inFlight.insert(jobId).inserted else { return nil }
+    // Released even on a cancelled caller, or the row is unrefreshable for the rest of the process.
+    defer { inFlight.remove(jobId) }
+
+    guard let row = stored().first(where: { $0.id == jobId }) else {
+      return .failed(reason: "The verification is no longer stored")
+    }
+    guard row.sessionId != nil else { return .noServerJob }
+    guard let session = live, !session.hasExpired(at: now) else { return .noSession }
+    // The partner, not the session: tokens expire and the same partner holds a newer one.
+    guard session.partnerId == row.partnerId else { return .partnerMismatch }
+
+    let outcome: UseSmileIDSampleStatusRefresh
+    do {
+      // The row's environment, never the toggle: a row outlives the toggle that produced it.
+      outcome = try await source.check(jobId: jobId, token: session.token, sandbox: row.sandbox)
+    } catch is CancellationError {
+      throw CancellationError()
+    } catch let error as URLError where error.code == .cancelled {
+      throw CancellationError()
+    } catch is URLError {
+      return .failed(reason: "Could not reach the server")
+    } catch {
+      // The type, never the message: this text goes on screen and a client error carries the URL.
+      return .failed(reason: "Unexpected error: \(type(of: error))")
+    }
+
+    guard case .updated(let status, let message, let httpCode) = outcome else { return outcome }
+    let written = applyStatus(jobId, status: status, message: message, httpStatus: httpCode)
+    return written ? outcome : .failed(reason: "The verification is no longer stored")
   }
 
   /// Reached only by the `seedJobs` launch argument — see `spec/launch-args.json`. Idempotent.

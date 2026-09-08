@@ -167,6 +167,8 @@ public enum UseSmileIDSampleTestIds {
   public static let statusBadge = "sample_status_badge"
   public static let detailsDelete = "sample_details_delete"
   public static let detailsEmpty = "sample_details_empty"
+  /// The pull-to-refresh container, always present: a gesture that silently does nothing reads as a defect.
+  public static let detailsRefresh = "sample_details_refresh"
 
   public static let jobRowPrefix = "sample_job_row"
   /// One id for every row's badge, as the Compose twin has: a row is found first, its badge inside it.
@@ -186,7 +188,7 @@ public enum UseSmileIDSampleTestIds {
     navProducts, navVerifications, navSettings,
     toast, toastUndo,
     envChip, navToken, productCardPrefix, settingNavPrefix,
-    detailFieldPrefix, detailCopyPrefix, statusBadge, detailsDelete, detailsEmpty,
+    detailFieldPrefix, detailCopyPrefix, statusBadge, detailsDelete, detailsEmpty, detailsRefresh,
     userDetailsScreen, userDetailsFieldPrefix, userDetailsHint, userDetailsContinue,
     rememberDetailsSwitch,
     kycFormScreen, countryTrigger, idTypeTrigger, idNumberInput, kycContinue, tokenFloat,
