@@ -38,6 +38,9 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// The last removal's size, consumed by whichever screen draws the confirmation.
   @Published private(set) var lastJobRemoval: Int?
 
+  /// The list's filter and selection, here rather than in the screen: one tab is mounted at a time.
+  @Published var verifications = UseSmileIDSampleVerificationsScreenState()
+
   /// The forms live here, not in the screens: one tab is mounted, so a tab switch tears a screen's
   /// own state down and part-entered input goes with it.
   @Published var userDetails = UseSmileIDSampleUserDetails()
@@ -105,9 +108,23 @@ final class UseSmileIDSampleAppState: ObservableObject {
     }
   }
 
-  /// Unstructured, never `.task`: cancelling the screen that asked must not lose the write.
+  /// One handler for the swipe, the selection bar and the details screen, so the fallback below
+  /// cannot end up fixed in one of them only. Unstructured, never `.task`: the write outlives the screen.
   func removeJobs(_ ids: Set<String>) {
     Task { [jobStore] in await jobStore.remove(ids) }
+    verifications.changeSelectMode(false)
+    // Against the list minus the ids, since the write has not landed: else the screen is blank under a 0.
+    if jobs?.contains(where: { !ids.contains($0.id) && verifications.filter.matches($0) }) == false {
+      verifications.filter = .all
+    }
+  }
+
+  /// Counted off the same list the rows render from, so a count cannot disagree with the screen.
+  var jobCounts: [UseSmileIDSampleJobFilter: Int] {
+    let jobs = jobs ?? []
+    return Dictionary(
+      uniqueKeysWithValues: UseSmileIDSampleJobFilter.allCases.map { ($0, jobs.filter($0.matches).count) }
+    )
   }
 
   func undoJobRemoval() {

@@ -9,10 +9,13 @@ struct UseSmileIDSampleShell: View {
   /// One value, so the tab and its stacks cannot restore out of step.
   @SceneStorage("navigation") private var storedNavigation: String = ""
 
+  /// Consumed on sight and never saved, so a confirmation already spent cannot come back with you.
+  @State private var removalNotice: UseSmileIDSampleTransientNotice?
+
   var body: some View {
     // One tab mounted at a time: a hidden stack still answers id queries, and neither
     // `accessibilityHidden` nor a children-ignore suppresses its UIKit-backed controls.
-    UseSmileIDSampleStack(tab: router.selectedTab) { navBar }
+    UseSmileIDSampleStack(tab: router.selectedTab) { bottomChrome }
       .environmentObject(router)
       .environmentObject(app)
       // Pinned both ways, not nil: following the system when the switch is off leaves a device in
@@ -44,7 +47,13 @@ struct UseSmileIDSampleShell: View {
         }
       }
       .onAppear { router.restore(from: storedNavigation) }
-      .onChange(of: router.selectedTab) { _ in storedNavigation = router.encodedState() }
+      .onChange(of: app.lastJobRemoval) { count in showRemoval(count) }
+      .onChange(of: router.selectedTab) { _ in
+        storedNavigation = router.encodedState()
+        // Select mode and its confirmation belong to the list, so neither follows you to another tab.
+        app.verifications.changeSelectMode(false)
+        removalNotice = nil
+      }
       .onChange(of: router.paths) { _ in storedNavigation = router.encodedState() }
   }
 
@@ -88,6 +97,38 @@ struct UseSmileIDSampleShell: View {
         onThemeSelect: { app.flowResult.selectTheme($0) }
       )
     }
+  }
+
+  /// Select mode replaces the pill with the selection bar; the confirmation sits above whichever shows.
+  private var bottomChrome: some View {
+    VStack(spacing: SmileSpacing.spacingXs) {
+      UseSmileIDSampleTransientNoticeHost(
+        notice: router.selectedTab == .verifications ? removalNotice : nil,
+        onAction: { app.undoJobRemoval() },
+        onDismiss: { removalNotice = nil }
+      )
+      .padding(.horizontal, SmileSpacing.spacingMd)
+      if app.verifications.selectMode {
+        UseSmileIDSampleSelectionBar(
+          selectedCount: app.verifications.selected.count,
+          onRemove: { app.removeJobs(app.verifications.selected) }
+        )
+      } else {
+        navBar
+      }
+    }
+  }
+
+  /// The Compose twin's copy, word for word: the rows are hidden from this app's list, not deleted.
+  private func showRemoval(_ count: Int?) {
+    guard let count else { return }
+    app.clearLastJobRemoval()
+    removalNotice = UseSmileIDSampleTransientNotice(
+      message: count == 1
+        ? "1 verification hidden from App list"
+        : "\(count) verifications hidden from App list",
+      actionLabel: "Undo"
+    )
   }
 
   /// The design's floating pill, ruled over `TabView`. Sits inside the host, so a push covers it —

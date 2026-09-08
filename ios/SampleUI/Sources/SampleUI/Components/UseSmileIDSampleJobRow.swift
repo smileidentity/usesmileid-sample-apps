@@ -94,6 +94,8 @@ public struct UseSmileIDSampleJobRow: View {
       UseSmileIDSampleText("\(jobId)  ·  \(time)", style: UseSmileIDSampleTheme.type.textStyleCaption)
         .foregroundColor(colors.textMuted)
     }
+    // One line each at the design's scale, as the design draws it; unlimited once the badge stacks.
+    .lineLimit(sizeCategory.isAccessibilityCategory ? nil : 1)
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 }
