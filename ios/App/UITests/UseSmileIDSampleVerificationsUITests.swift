@@ -157,8 +157,8 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
   func testEnteringAProcessingRowRefreshesItAndSaysWhyItCannotSucceed() {
     element("sample_job_row_1").tap()
     XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
-    XCTAssertTrue(element("sample_toast").waitForExistence(timeout: 10))
-    XCTAssertTrue(app.staticTexts["Not submitted under a scanned token"].exists)
+    // The message, not the container: the toast dismisses itself between two queries.
+    XCTAssertTrue(app.staticTexts["Not submitted under a scanned token"].waitForExistence(timeout: 10))
   }
 
   func testEnteringASettledRowRefreshesNothingUntilItIsPulled() {
@@ -166,19 +166,13 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
     XCTAssertTrue(element("sample_details_refresh").waitForExistence(timeout: 10))
     XCTAssertFalse(element("sample_toast").waitForExistence(timeout: 3), "a settled row refreshed itself")
 
-    // Held at the end of the drag, or a quick release reads as a scroll and the refresh never fires —
-    // which is how this flaked once the suite grew long enough to slow the gesture down.
-    let refresh = element("sample_details_refresh")
-    refresh.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.15))
-      .press(
-        forDuration: 0.1,
-        thenDragTo: refresh.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85)),
-        withVelocity: .slow,
-        thenHoldForDuration: 0.3
-      )
-
-    XCTAssertTrue(element("sample_toast").waitForExistence(timeout: 10))
-    XCTAssertTrue(app.staticTexts["Not submitted under a scanned token"].exists)
+    // What is under test is that a pull refreshes, not that one synthesised drag always lands: under
+    // a full suite the runner coalesces the drag's intermediate events and the refresh control never
+    // sees a pan. Retried rather than tuned, because no velocity made delivery reliable.
+    XCTAssertTrue(
+      pullToRefreshUntilItSays("Not submitted under a scanned token"),
+      "no pull produced the refresh outcome"
+    )
   }
 
   /// The link launches the app, so the row arrives after the screen: the case where "not loaded yet"
@@ -189,6 +183,26 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
     XCTAssertTrue(element("sample_details_refresh").waitForExistence(timeout: 15))
     XCTAssertFalse(element("sample_details_empty").exists, "the stored row did not survive the relaunch")
     XCTAssertFalse(element("sample_toast").waitForExistence(timeout: 3), "a settled row refreshed itself")
+  }
+
+  /// Pulls until the refresh says `message`, waiting on the message itself: the toast dismisses
+  /// itself, so waiting on its container and then reading its text loses a transient one between
+  /// the two queries.
+  private func pullToRefreshUntilItSays(_ message: String, attempts: Int = 4) -> Bool {
+    let refresh = element("sample_details_refresh")
+    for _ in 0..<attempts {
+      refresh.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.15))
+        .press(
+          forDuration: 0.1,
+          thenDragTo: refresh.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85)),
+          withVelocity: .slow,
+          thenHoldForDuration: 0.3
+        )
+      if app.staticTexts[message].waitForExistence(timeout: 5) {
+        return true
+      }
+    }
+    return false
   }
 
   private func count(_ filter: String) -> String {
