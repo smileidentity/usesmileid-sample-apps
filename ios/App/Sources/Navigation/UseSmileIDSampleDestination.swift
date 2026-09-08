@@ -116,9 +116,8 @@ struct UseSmileIDSampleDestination: View {
     content.sheet(item: $inAppLink) { UseSmileIDSampleBrowser(url: $0.url) }
   }
 
-  /// Three destinations, per `spec/screens.json` → linkPresentation: no url is the app's own
-  /// screen; `opensInApp` stays in an in-app browser; the two legal pages eject, because both serve
-  /// their document as an embedded PDF a mobile browser shows as a stub.
+  /// No url is this app's own screen; `opensInApp` stays in a browser sheet; the legal pages eject,
+  /// because both serve a PDF a mobile browser shows as a stub.
   private func open(_ row: UseSmileIDSampleNavRow) {
     guard let url = row.url else {
       router.open(.licenses)
@@ -157,9 +156,8 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
       onRefresh: { await refresh(silentWhenUnchanged: false) }
     )
     .task(id: jobId) {
-      // Only a processing row can change, read off the store's first emission rather than whatever
-      // a cold-start link found: nil is "not loaded yet", and treating it as a row refreshes a
-      // settled one.
+      // Off the store's first emission: nil is "not loaded yet", and treating it as a row would
+      // refresh a settled one.
       guard await loaded(jobId)?.status == .processing else { return }
       await refresh(silentWhenUnchanged: true)
     }

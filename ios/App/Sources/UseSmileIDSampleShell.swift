@@ -41,9 +41,7 @@ struct UseSmileIDSampleShell: View {
           router.sheet = sheet
         }
       }
-      // Cleared on dismissal, not on open: that is the one point every path goes through, so a
-      // sheet reached by deep link or reopened after a swipe cannot come back still filtered or
-      // still holding a half-typed profile.
+      // On dismissal, not on open: the one point every path goes through, including a swipe.
       .onChange(of: router.sheet) { sheet in
         if sheet == nil {
           app.clearSheetState()

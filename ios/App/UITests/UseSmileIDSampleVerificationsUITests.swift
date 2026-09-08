@@ -177,9 +177,8 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
     XCTAssertTrue(app.staticTexts["Not submitted under a scanned token"].exists)
   }
 
-  /// The link launches the app, so the row arrives after the screen does — the case where treating
-  /// "not loaded yet" as "no row" refreshes a settled one. The rows are already on disk from setUp,
-  /// which is what a system-opened launch, carrying no arguments, relies on.
+  /// The link launches the app, so the row arrives after the screen: the case where "not loaded yet"
+  /// read as "no row" refreshes a settled one. The rows are on disk from setUp.
   func testAColdStartLinkIntoASettledRowRefreshesNothing() {
     app.terminate()
     open("verifications/job_00ky31za00")

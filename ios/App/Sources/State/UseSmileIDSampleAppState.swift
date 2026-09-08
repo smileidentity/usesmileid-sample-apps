@@ -15,10 +15,8 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// The submitted verifications; its writes are launched here rather than in a screen.
   let jobStore: UseSmileIDSampleJobStore
 
-  /// Read once at launch. `scenario`, `theme` and `route` seed the run, `probes` gates the card,
-  /// `seedProfiles` chooses the profiles, `seedJobs` seeds the verifications, `autostart` opens the
-  /// flow route on launch and `holdCamera` contends for the lens while the SDK starts; `appLocale`
-  /// reaches the shell's own SwiftUI formatting, not the SDK's strings.
+  /// Read once at launch. `appLocale` reaches the shell's own SwiftUI formatting, not the SDK's
+  /// strings, which follow `-AppleLanguages`.
   let launchArguments: UseSmileIDSampleLaunchArguments
 
   @Published var settings = UseSmileIDSampleSettings()
