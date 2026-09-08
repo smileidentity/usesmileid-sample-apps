@@ -90,6 +90,29 @@ final class UseSmileIDSampleLaunchArgumentUITests: XCTestCase {
     XCTAssertFalse(app.staticTexts["Default profile"].exists, "the starter must not sit among the fixtures")
   }
 
+  /// Rows persist, so the plain-empty default is a unit test on the store rather than a flow here.
+  func testSeedJobsStoresTheDesignsRowsSoTheDetailsScreenCanReadOne() {
+    launch(["-seedJobs", "true"])
+    open("verifications/job_00ky31za00")
+    XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
+    XCTAssertFalse(element("sample_details_empty").exists, "the seeded row never reached the store")
+    XCTAssertTrue(app.staticTexts["SmartSelfie Enrollment"].exists)
+    XCTAssertEqual(element("sample_status_badge").label, "Clear")
+    XCTAssertTrue(app.staticTexts["Approved"].exists)
+    XCTAssertTrue(app.staticTexts["200 OK"].exists)
+  }
+
+  func testHidingAVerificationRemovesTheStoredRow() {
+    launch(["-seedJobs", "true"])
+    open("verifications/job_01ky31za07")
+    XCTAssertTrue(element("sample_details_delete").waitForExistence(timeout: 10))
+    element("sample_details_delete").tap()
+    XCTAssertTrue(element("sample_verifications_screen").waitForExistence(timeout: 10))
+
+    open("verifications/job_01ky31za07")
+    XCTAssertTrue(element("sample_details_empty").waitForExistence(timeout: 10))
+  }
+
   func testWithTheArgumentTheCardShowsOnAnyBuild() {
     launch(["-probes", "true"])
     openDetails()

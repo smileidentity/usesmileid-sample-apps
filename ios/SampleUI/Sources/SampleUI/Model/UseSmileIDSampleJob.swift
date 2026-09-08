@@ -56,3 +56,37 @@ public struct UseSmileIDSampleJob: Equatable, Sendable {
     value.count <= shortIdLength ? value : value.prefix(shortIdLength) + "\u{2026}"
   }
 }
+
+/// The filters above the list. `all` is not a status, which is why this is not the status enum.
+public enum UseSmileIDSampleJobFilter: String, CaseIterable, Sendable {
+  case all
+  case clear
+  case attention
+  case blocked
+
+  public var id: String {
+    rawValue
+  }
+
+  public var label: String {
+    switch self {
+    case .all: "All"
+    case .clear: "Clear"
+    case .attention: "Attention"
+    case .blocked: "Blocked"
+    }
+  }
+
+  public var status: UseSmileIDSampleStatus? {
+    switch self {
+    case .all: nil
+    case .clear: .clear
+    case .attention: .attention
+    case .blocked: .blocked
+    }
+  }
+
+  public func matches(_ job: UseSmileIDSampleJob) -> Bool {
+    status == nil || job.status == status
+  }
+}
