@@ -471,6 +471,13 @@ back atomically. What is decided here:
   `sample_details_refresh`; the screen's own id moved to the enclosing stack, which needs
   `.accessibilityElement(children: .contain)` or it swallows every child's — the lesson
   `sample_session_countdown` paid for, met again.
+- **A field you never read can still fail a good response.** The response type first required
+  `job_id`, `user_id` and `created_at` alongside the two fields the outcome actually uses, so a 2xx
+  omitting any of them decoded to nil and reported a readable status as `HTTP 200`. The three are
+  optional now; the Compose twin's `@Serializable` requires all five, so it has the same hole.
+- **OPEN, and a four-app copy question rather than an iOS one:** a non-2xx drops the body, so a 401
+  that explains itself reads as a bare code — the one case a partner most needs the server's words.
+  Both apps do this; changing one of them would diverge an outcome string the flows key off.
 - **`spec/screens.json` was stale and is corrected here** (owner-approved): it named
   `sample_details_check_status`, an id in no test-ids file, and described the button pull-to-refresh
   replaced on Android months ago. Android needed no code change; the entry now describes the gesture,

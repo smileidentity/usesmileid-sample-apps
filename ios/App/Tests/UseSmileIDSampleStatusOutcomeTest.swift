@@ -37,6 +37,16 @@ final class UseSmileIDSampleStatusOutcomeTest: XCTestCase {
     )
   }
 
+  /// Only `status` and `message` are read, so a 2xx missing any of the rest is still an outcome.
+  func testABodyCarryingOnlyWhatIsConsumedIsStillAnOutcome() throws {
+    let json = #"{"status":"clear","message":"Approved"}"#
+    let body = try JSONDecoder().decode(UseSmileIDSampleStatusResponse.self, from: Data(json.utf8))
+    XCTAssertEqual(
+      useSmileIDSampleStatusOutcome(code: 200, body: body),
+      .updated(status: .clear, message: "Approved", httpCode: 200)
+    )
+  }
+
   func testTheResponseDecodesTheApiSnakeCaseKeys() throws {
     let json = """
     {"status":"clear","job_id":"job-1","user_id":"user-1","message":"Approved",
@@ -57,9 +67,9 @@ final class UseSmileIDSampleStatusOutcomeTest: XCTestCase {
       code: code,
       body: UseSmileIDSampleStatusResponse(
         status: status,
+        message: message,
         jobId: "job-1",
         userId: "user-1",
-        message: message,
         createdAt: "2026-07-16T11:50:12.000Z"
       )
     )

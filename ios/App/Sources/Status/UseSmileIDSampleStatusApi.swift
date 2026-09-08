@@ -52,10 +52,12 @@ func useSmileIDSampleStatusOutcome(
 
 struct UseSmileIDSampleStatusResponse: Decodable {
   let status: String
-  let jobId: String
-  let userId: String
   let message: String
-  let createdAt: String
+  /// Carried for the payload's shape, not read: required, one of them missing from an otherwise
+  /// good 2xx would fail the decode and report a readable status as a transport failure.
+  let jobId: String?
+  let userId: String?
+  let createdAt: String?
 
   /// Five API states onto the four badges: `error` lands on Blocked and leans on the server's message.
   var sampleStatus: UseSmileIDSampleStatus? {
