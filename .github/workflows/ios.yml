@@ -27,7 +27,9 @@ jobs:
     runs-on: macos-26
     # The UI tests drive a cross-process system alert, which can hang where the earlier programmatic
     # steps could not; without this a wedged run holds the branch's concurrency group for hours.
-    timeout-minutes: 45
+    # Headroom, not an expectation: the lane has run 44 minutes against a 45-minute cap, and a
+    # timeout reads as a failure. Drop it back once the suite runs a clone per class.
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7
 
