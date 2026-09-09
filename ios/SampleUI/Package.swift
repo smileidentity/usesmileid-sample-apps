@@ -3,8 +3,10 @@ import PackageDescription
 
 let package = Package(
   name: "SampleUI",
-  // The SDK's own floor: raising it would stop the SDK repo's Sample compiling this against HEAD.
-  platforms: [.iOS(.v15)],
+  // Above the SDK's own floor of 15, so the store can be SwiftData rather than a JSON document —
+  // see docs/plan/offline-storage.md D1. The SDK repo's Sample has to match when `sample-ui` is
+  // finally wired into it; nothing consumes this library that way yet.
+  platforms: [.iOS(.v17)],
   products: [
     .library(name: "SampleUI", targets: ["SampleUI"])
   ],
