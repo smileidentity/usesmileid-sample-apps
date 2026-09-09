@@ -22,6 +22,10 @@ public enum UseSmileIDSampleShapes {
 public extension EnvironmentValues {
   /// The active scheme's colours. Populated by ``SwiftUI/View/useSmileIDSampleTheme()``.
   @Entry var useSmileIDSampleColors: UseSmileIDSampleColors = .light
+
+  /// How long a transient notice stays. The shell overrides it from `noticeWindow`; the default is
+  /// the product's, so a library consumer that publishes nothing gets the real behaviour.
+  @Entry var useSmileIDSampleNoticeWindow: TimeInterval = 5
 }
 
 private struct UseSmileIDSampleThemeModifier: ViewModifier {

@@ -74,6 +74,13 @@
       "values": "milliseconds, or 'keep'",
       "default": null,
       "description": "Host acquires the camera before handing off, to test contention. Verify the host actually acquired it before concluding anything — a probe that never acquired the camera passes vacuously."
+    },
+    {
+      "name": "noticeWindow",
+      "type": "string",
+      "values": "seconds, e.g. 60",
+      "default": null,
+      "description": "How long a transient notice stays before dismissing itself. Exists because a notice that offers an action is a race for automation: the default window is short enough not to outlive its cause, so on a loaded runner a flow can wait for the action, tap it, and have the tap land after the notice has gone — and the offer is consumed on dismissal, so there is no second chance to retry. A flow that has to act on a notice sets this; a flow whose subject IS the auto-dismiss must not, or it stops testing the timer. Not set by an ordinary launch, so a partner build behaves exactly as it would without the argument."
     }
   ],
   "mechanisms": {
