@@ -410,6 +410,20 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_result_active_scenario").waitForExistence(timeout: 5))
   }
 
+  func testTheLicensesRouteListsTheNoticesAndARowExpandsToItsText() {
+    open("settings/licenses")
+    XCTAssertTrue(element("sample_licenses_screen").waitForExistence(timeout: 10))
+    XCTAssertFalse(element("sample_licenses_empty").exists, "the generated asset did not ship")
+    // A row id is built from a component name, so finding one proves the asset reached the screen.
+    let row = element("sample_license_row_lottie_spm")
+    XCTAssertTrue(row.waitForExistence(timeout: 10), "no row for a component the app links")
+    XCTAssertFalse(element("sample_license_text_lottie_spm").exists, "opened already expanded")
+    row.tap()
+    XCTAssertTrue(element("sample_license_text_lottie_spm").waitForExistence(timeout: 5))
+    app.buttons["Back"].tap()
+    XCTAssertTrue(element("sample_settings_screen").waitForExistence(timeout: 10))
+  }
+
   private func type(_ id: String, _ text: String) {
     let field = app.textFields[id]
     XCTAssertTrue(field.waitForExistence(timeout: 5), id)

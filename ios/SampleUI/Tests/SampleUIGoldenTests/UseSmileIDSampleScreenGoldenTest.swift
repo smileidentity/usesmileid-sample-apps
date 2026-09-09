@@ -462,6 +462,56 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     .frame(height: height)
   }
 
+  func testLicenses() {
+    goldens("licenses") { licenses(Self.notices) }
+  }
+
+  func testLicensesWithoutTheGeneratedAsset() {
+    goldens("licenses_empty") { licenses(UseSmileIDSampleLicenses()) }
+  }
+
+  func testLicensesSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) { licenses(Self.notices) }
+  }
+
+  private func licenses(_ notices: UseSmileIDSampleLicenses, height: CGFloat = 700) -> some View {
+    LicensesScreen(licenses: notices, onBack: {})
+      .frame(height: height)
+  }
+
+  /// Fixed rather than the bundled asset, which a dependency bump would redraw every baseline from;
+  /// the two vendored rows carry no version, which is the subtitle case Android's twin cannot reach.
+  private static let notices = UseSmileIDSampleLicenses(components: [
+    .init(
+      component: "lottie-spm",
+      version: "4.6.1",
+      licenseId: "Apache-2.0",
+      licenseName: "Apache License, Version 2.0",
+      text: "Apache License\nVersion 2.0, January 2004"
+    ),
+    .init(
+      component: "sentry-cocoa",
+      version: "9.26.1",
+      licenseId: "MIT",
+      licenseName: "MIT License",
+      text: "MIT License\n\nCopyright (c) 2015 Sentry"
+    ),
+    .init(
+      component: "sentry-cocoa/KSCrash",
+      version: "",
+      licenseId: "MIT",
+      licenseName: "MIT License",
+      text: "MIT License\n\nCopyright (c) 2012 Karl Stenerud"
+    ),
+    .init(
+      component: "sentry-cocoa/facebook/fishhook",
+      version: "",
+      licenseId: "BSD-3-Clause",
+      licenseName: "BSD 3-Clause License",
+      text: "Copyright (c) 2013, Facebook, Inc. All rights reserved."
+    )
+  ])
+
   private static let profilesWithACreatedOne: UseSmileIDSampleProfiles = {
     var profiles = UseSmileIDSampleProfiles(seed: UseSmileIDSampleProfiles.fixtures())
     profiles.add(
