@@ -72,6 +72,17 @@ class UseSmileIDSampleJobStoreTest {
         store.undoRemove()
         assertEquals(listOf("job-1"), store.jobs.first().map { it.id })
     }
+
+    /** The mixed case is where the retained batch could diverge from what was actually deleted. */
+    @Test
+    fun `a partial removal keeps and restores only the rows it took`() = runTest {
+        val store = UseSmileIDSampleJobStore(FakeJobDao(), NoStatusSource)
+        store.add(job("job-1"))
+        store.remove(setOf("job-1", "job-never-stored"))
+        assertEquals(emptyList<String>(), store.jobs.first().map { it.id })
+        store.undoRemove()
+        assertEquals(listOf("job-1"), store.jobs.first().map { it.id })
+    }
     @Test
     fun `a status refresh rewrites the row it read`() = runTest {
         val store = UseSmileIDSampleJobStore(FakeJobDao(), NoStatusSource)

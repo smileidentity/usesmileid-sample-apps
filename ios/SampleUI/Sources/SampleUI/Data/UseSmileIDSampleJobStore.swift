@@ -1,23 +1,22 @@
 import Foundation
+import SwiftData
 
-/// Where the rows' bytes live: a file in an app, memory in a test.
-public protocol UseSmileIDSampleJobStorage: Sendable {
-  func read() -> Data?
-  /// The whole list is replaced in one write, never patched.
-  func write(_ data: Data)
-}
-
-/// The submitted verifications, on disk: the SDK delivers a result once. An `actor`, so a write is
-/// atomic without a lock, launched from an unstructured `Task` so it outlives the screen that asked.
+/// The submitted verifications, in SwiftData: the SDK delivers a result once. An `actor`, so a write
+/// is atomic without a lock, launched from an unstructured `Task` so it outlives the screen that
+/// asked. Rows are written one at a time, so a row that cannot be read is one row rather than all of
+/// them — which is what the JSON document this replaced could not promise.
 public actor UseSmileIDSampleJobStore {
-  private let storage: UseSmileIDSampleJobStorage
+  private let open: @Sendable () -> ModelContainer?
+  private var opened: ModelContext?
   private let source: UseSmileIDSampleJobStatusSource
+  private let legacy: UseSmileIDSampleJobImport?
+
+  /// The pre-SwiftData document is read once, on first use rather than in `init`: nothing touches
+  /// the file system on the main thread.
+  private var importedLegacy = false
 
   /// In flight per job id, so an entry refresh and a pull cannot double-request the same row.
   private var inFlight: Set<String> = []
-
-  /// Read on first use, not in `init`: nothing touches the file system on the main thread.
-  private var rows: [UseSmileIDSampleJobRecord]?
 
   /// What the last ``remove(_:)`` took, so undo re-inserts rather than clearing a soft-delete column.
   private var lastRemoved: [UseSmileIDSampleJobRecord] = []
@@ -29,15 +28,55 @@ public actor UseSmileIDSampleJobStore {
   /// Batch sizes, consumed once: the details screen navigates away before it could confirm one.
   public let removals: AsyncStream<Int>
 
+  /// `importingLegacyFileAt` is the JSON document a pre-SwiftData version left behind; nil is a
+  /// store with no history to inherit, which is every test that is not about the import itself.
   public init(
-    storage: UseSmileIDSampleJobStorage = UseSmileIDSampleJobFileStorage(),
-    source: UseSmileIDSampleJobStatusSource
+    container: ModelContainer,
+    source: UseSmileIDSampleJobStatusSource,
+    importingLegacyFileAt url: URL? = nil
   ) {
-    self.storage = storage
+    self.init(opening: { container }, source: source, importingLegacyFileAt: url)
+  }
+
+  private init(
+    opening open: @escaping @Sendable () -> ModelContainer?,
+    source: UseSmileIDSampleJobStatusSource,
+    importingLegacyFileAt url: URL?
+  ) {
+    self.open = open
     self.source = source
+    legacy = url.map { UseSmileIDSampleJobImport(url: $0) }
     var continuation: AsyncStream<Int>.Continuation!
     removals = AsyncStream(bufferingPolicy: .unbounded) { continuation = $0 }
     removalContinuation = continuation
+  }
+
+  /// The app's store, and the rows a previous version left in a JSON document.
+  ///
+  /// A container that cannot be opened degrades to memory rather than trapping: the list then reads
+  /// empty, which the screen says out loud, and the app still runs. Crashing on launch is worse.
+  public init(source: UseSmileIDSampleJobStatusSource) {
+    // The closure, not the container: opening the store is file I/O and this initialiser runs where
+    // the app builds its state, which is the main thread at launch.
+    self.init(
+      opening: { try? ModelContainer.useSmileIDSampleJobs() },
+      source: source,
+      importingLegacyFileAt: UseSmileIDSampleJobImport.defaultURL
+    )
+  }
+
+  /// Opened on first use, on the actor rather than wherever `init` was called.
+  private func context() -> ModelContext {
+    if let opened {
+      return opened
+    }
+    // Force-tried only for the in-memory fallback, which cannot fail for a schema that compiled.
+    let container = open() ?? (try! ModelContainer.useSmileIDSampleJobs(inMemory: true))
+    let context = ModelContext(container)
+    // Saved explicitly at each write, so a partial batch never reaches disk on its own schedule.
+    context.autosaveEnabled = false
+    opened = context
+    return context
   }
 
   /// The rows, newest first: replayed on subscription and yielded again on every write.
@@ -59,12 +98,12 @@ public actor UseSmileIDSampleJobStore {
   }
 
   public func find(_ jobId: String) -> UseSmileIDSampleJob? {
-    stored().first { $0.id == jobId }?.job
+    entity(jobId)?.record.job
   }
 
   /// A no-op on an id already stored, which is what makes a repeated result delivery harmless.
   public func add(_ job: UseSmileIDSampleJob, bindings: UseSmileIDSampleTokenBindings? = nil) {
-    insert([
+    write(inserting: [
       UseSmileIDSampleJobRecord(
         job: job,
         boundUserDetails: bindings?.bindsRequiredUserDetails == true,
@@ -76,20 +115,22 @@ public actor UseSmileIDSampleJobStore {
 
   /// Retains the removed rows for ``undoRemove()``; only the most recent batch stays undoable.
   public func remove(_ ids: Set<String>) {
-    var rows = stored()
-    let taken = rows.filter { ids.contains($0.id) }
+    let doomed = entities().filter { ids.contains($0.id) }
     // A removal that took no rows must not discard an earlier batch that is still undoable.
-    guard !taken.isEmpty else { return }
+    guard !doomed.isEmpty else { return }
+    let taken = doomed.map(\.record)
+    for entity in doomed {
+      context().delete(entity)
+    }
+    guard commit() else { return }
     lastRemoved = taken
-    rows.removeAll { ids.contains($0.id) }
-    save(rows)
     removalContinuation.yield(taken.count)
   }
 
   /// Order restores itself: the list is ordered by the rows' own timestamps, not by insertion.
   public func undoRemove() {
     guard !lastRemoved.isEmpty else { return }
-    insert(lastRemoved)
+    write(inserting: lastRemoved)
     lastRemoved = []
   }
 
@@ -100,13 +141,13 @@ public actor UseSmileIDSampleJobStore {
     message: String,
     httpStatus: Int
   ) -> Bool {
-    var rows = stored()
-    guard let index = rows.firstIndex(where: { $0.id == jobId }) else { return false }
-    rows[index].statusId = status.rawValue
-    rows[index].message = message
-    rows[index].httpStatus = httpStatus
-    save(rows)
-    return true
+    guard let entity = entity(jobId) else { return false }
+    var record = entity.record
+    record.statusId = status.rawValue
+    record.message = message
+    record.httpStatus = httpStatus
+    entity.apply(record)
+    return commit()
   }
 
   /// The environment and the partner come from the row, never the caller. Nil when one is already in
@@ -120,7 +161,7 @@ public actor UseSmileIDSampleJobStore {
     // Released even on a cancelled caller, or the row is unrefreshable for the rest of the process.
     defer { inFlight.remove(jobId) }
 
-    guard let row = stored().first(where: { $0.id == jobId }) else {
+    guard let row = entity(jobId)?.record else {
       return .failed(reason: "The verification is no longer stored")
     }
     guard row.sessionId != nil else { return .noServerJob }
@@ -150,39 +191,66 @@ public actor UseSmileIDSampleJobStore {
 
   /// Reached only by the `seedJobs` launch argument — see `spec/launch-args.json`. Idempotent.
   public func seedFixtures(now: Date) {
-    insert(Self.fixtures(now: now).map { UseSmileIDSampleJobRecord(job: $0) })
-  }
-
-  /// Ignores an id already stored, so a repeated delivery cannot overwrite the row it already wrote.
-  private func insert(_ records: [UseSmileIDSampleJobRecord]) {
-    var rows = stored()
-    let known = Set(rows.map(\.id))
-    let fresh = records.filter { !known.contains($0.id) }
-    guard !fresh.isEmpty else { return }
-    rows.append(contentsOf: fresh)
-    save(rows)
+    write(inserting: Self.fixtures(now: now).map { UseSmileIDSampleJobRecord(job: $0) })
   }
 
   private func stored() -> [UseSmileIDSampleJobRecord] {
-    if let rows {
-      return rows
-    }
-    let decoded = storage.read().flatMap { try? JSONDecoder().decode(UseSmileIDSampleJobFile.self, from: $0) }
-    let rows = decoded?.jobs ?? []
-    self.rows = rows
-    return rows
+    entities().map(\.record)
   }
 
-  /// The one write path: the file, then everyone reading the list. A failed encode leaves it as it was.
-  private func save(_ rows: [UseSmileIDSampleJobRecord]) {
-    self.rows = rows
-    if let data = try? JSONEncoder().encode(UseSmileIDSampleJobFile(jobs: rows)) {
-      storage.write(data)
+  /// One row, asked of SQLite rather than filtered in memory: every refresh and every `find` would
+  /// otherwise load the whole history to look at one of it.
+  private func entity(_ jobId: String) -> UseSmileIDSampleJobEntity? {
+    importLegacyRowsIfNeeded()
+    var descriptor = FetchDescriptor<UseSmileIDSampleJobEntity>(predicate: #Predicate { $0.id == jobId })
+    descriptor.fetchLimit = 1
+    return (try? context().fetch(descriptor))?.first
+  }
+
+  /// Every row, newest first left to the caller: SwiftData sorts, but the order is the list's rule.
+  private func entities() -> [UseSmileIDSampleJobEntity] {
+    importLegacyRowsIfNeeded()
+    return (try? context().fetch(FetchDescriptor<UseSmileIDSampleJobEntity>())) ?? []
+  }
+
+  /// Once, and only where a document was actually left behind. The insert ignores an id already
+  /// stored, so a crash between committing and deleting the file repeats the import harmlessly.
+  private func importLegacyRowsIfNeeded() {
+    guard !importedLegacy else { return }
+    importedLegacy = true
+    guard let legacy, let pending = legacy.pending() else { return }
+    // Committed before the document goes, so a failure between the two repeats the import.
+    guard write(inserting: pending) else { return }
+    legacy.done()
+  }
+
+  /// The one write path: the rows, then everyone reading the list. A failed commit leaves the store
+  /// as it was and tells the caller, because a silent failure here loses a partner's history.
+  @discardableResult
+  private func commit() -> Bool {
+    do {
+      try context().save()
+    } catch {
+      context().rollback()
+      return false
     }
     let jobs = jobs
     for listener in listeners.values {
       listener.yield(jobs)
     }
+    return true
+  }
+
+  /// Inserts the records this store does not already hold, keyed by job id.
+  @discardableResult
+  private func write(inserting records: [UseSmileIDSampleJobRecord]) -> Bool {
+    let known = Set(entities().map(\.id))
+    let fresh = records.filter { !known.contains($0.id) }
+    guard !fresh.isEmpty else { return true }
+    for record in fresh {
+      context().insert(UseSmileIDSampleJobEntity(record))
+    }
+    return commit()
   }
 
   private func forget(_ id: UUID) {
@@ -223,45 +291,4 @@ public actor UseSmileIDSampleJobStore {
   private static let httpAccepted = 202
 }
 
-/// One JSON file in Application Support, replaced atomically. No identity in the path.
-public struct UseSmileIDSampleJobFileStorage: UseSmileIDSampleJobStorage {
-  private let url: URL
-
-  public init(fileName: String = "usesmileid_sample_jobs.json") {
-    // Falls back rather than indexing into what the platform returned: this runs at launch.
-    let directory = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
-      ?? URL(fileURLWithPath: NSTemporaryDirectory())
-    url = directory.appendingPathComponent(fileName)
-  }
-
-  public func read() -> Data? {
-    try? Data(contentsOf: url)
-  }
-
-  public func write(_ data: Data) {
-    // Created on demand: unlike Documents, Application Support does not exist on a fresh install.
-    try? FileManager.default.createDirectory(
-      at: url.deletingLastPathComponent(),
-      withIntermediateDirectories: true
-    )
-    try? data.write(to: url, options: .atomic)
-  }
-}
-
-/// Rows held for one process, for tests and for a host that wants no persistence.
-public final class UseSmileIDSampleJobMemoryStorage: UseSmileIDSampleJobStorage, @unchecked Sendable {
-  private let lock = NSLock()
-  private var data: Data?
-
-  public init(data: Data? = nil) {
-    self.data = data
-  }
-
-  public func read() -> Data? {
-    lock.withLock { data }
-  }
-
-  public func write(_ data: Data) {
-    lock.withLock { self.data = data }
-  }
-}
+// One JSON file in Application Support, replaced atomically. No identity in the path.

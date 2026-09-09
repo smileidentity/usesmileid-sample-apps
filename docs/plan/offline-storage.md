@@ -85,14 +85,48 @@ proves the implementation, not the behaviour. Specifically:
 - **The listener and `yield` mechanism stays.** SwiftData pushes nothing outside a SwiftUI `@Query`,
   and a store is not a view.
 
+## D2b. What the port cost, and the two things it changed
+
+Built 2026-09-09. All 36 store tests pass with their assertions untouched; what changed is their
+construction, which was unavoidable — the seam moved from `Data` to a `ModelContainer`. Two
+decisions the implementation forced, recorded because neither followed from the plan:
+
+- **`UseSmileIDSampleJobStorage` is gone rather than reimplemented.** It existed to swap bytes: a
+  file in an app, memory in a test. Its replacement is `ModelContainer(isStoredInMemoryOnly:)`, so
+  the protocol and both its implementations had nothing left to do. The tests that seeded it with a
+  JSON string became import tests, which is where that behaviour moved rather than being dropped.
+- **The container is opened on first use, not in `init`.** Worth stating because the port got this
+  wrong first: `UseSmileIDSampleJobStore(source:)` is a *default argument* of the app state's
+  initialiser, so opening the store there put SQLite creation — and one day a migration — on the
+  main thread at launch, contradicting the comment the old lazy design left behind. The initialiser
+  now takes a closure and the container is opened on the actor, on first use.
+- **The store degrades to memory when its container cannot open.** A partner's history is then
+  invisible, which is bad — but trapping on launch is worse, and the empty state already says the
+  rows are missing rather than absent. Recorded as the lesser of two, not as a good outcome.
+
 ## D3. Migrating the rows already on devices
 
 A one-shot importer, not a fresh start: on first launch, if the JSON document exists, import its rows
 and then remove it. It is testable without a device, because the JSON fixture is already in the test
-suite, and it must be idempotent — a crash mid-import must neither double the rows nor lose them.
+suite.
+
+Idempotency here is a mechanism rather than an aspiration, and worth naming because the sentence
+above can be satisfied by an implementation that still duplicates or drops rows. Each row goes in
+through the same fetch-by-id-then-insert that `add` uses (D2), so a row already stored is a no-op;
+and the document is deleted only *after* the insert has committed. A crash before the delete replays
+into no-ops on the next launch, and a crash before the commit leaves the document in place to retry.
+Neither order loses a row.
 
 This is where the `version` field finally earns the comment it already carries. Version 1 means "the
 JSON shape those tests describe", and the importer is what reads it.
+
+**One rule the tests found rather than the plan.** A document from an *unknown* version is left
+exactly where it is, not consumed. Treating "cannot read this" the same as "nothing to import" would
+delete rows a later build could have imported, and that is the one mistake here that cannot be
+undone. An undecodable document is a different case and is cleared out of the way: nothing is lost
+by removing something that was never a document. Six cases cover this, including that importing
+twice over the same container keeps one row each — which is what makes a crash between committing
+the rows and deleting the file safe rather than duplicating.
 
 ## D4. The migration contract all three platforms owe Room's
 
@@ -105,6 +139,11 @@ are ordinary code, and nothing fails if you add a property and forget them. `dri
 So on every platform the parity item is a **test, not a configuration**: one stored-schema fixture
 per released version, asserting rows written under an older schema still load. Android gets this free
 from its committed schema JSONs; the other three have to write it deliberately.
+
+On iOS that is `UseSmileIDSampleJobSchemaTest`: a store written under v1 through the released
+`VersionedSchema` and reopened, the declared version pinned against the migration plan's first
+stage, and the nullable columns asserted to survive being absent, because nil is not a zero. A
+version added without a case there is exactly the gap this section exists to prevent.
 
 Without that, this whole change swaps a hand-maintained decode discipline for a hand-maintained
 migration plan and gains nothing on the axis that motivated it. A store that loses a partner's

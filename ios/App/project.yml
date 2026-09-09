@@ -3,7 +3,8 @@ name: UseSmileIDSample
 options:
   bundleIdPrefix: com.usesmileid.sample
   deploymentTarget:
-    iOS: "15.0"
+    # Follows the library's floor, which SwiftData sets — see docs/plan/offline-storage.md D1.
+    iOS: "17.0"
   createIntermediateGroups: true
 
 packages:

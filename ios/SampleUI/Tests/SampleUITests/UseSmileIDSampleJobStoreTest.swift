@@ -1,11 +1,12 @@
 import Foundation
 @testable import SampleUI
+import SwiftData
 import XCTest
 
-/// The store's own semantics over storage held in memory; the file itself is the platform's.
+/// The store's own semantics over a container held in memory; the file itself is the platform's.
 final class UseSmileIDSampleJobStoreTest: XCTestCase {
   func testAFreshStoreIsEmpty() async {
-    let jobs = await UseSmileIDSampleJobStore(storage: UseSmileIDSampleJobMemoryStorage(), source: Self.noNetwork).jobs
+    let jobs = await Self.store().jobs
     XCTAssertEqual(jobs, [])
   }
 
@@ -68,42 +69,36 @@ final class UseSmileIDSampleJobStoreTest: XCTestCase {
     XCTAssertEqual(stored?.partnerId, "partner-a")
   }
 
-  func testTheRowsAreReadBackByAStoreOverTheSameStorage() async {
-    let storage = UseSmileIDSampleJobMemoryStorage()
-    let first = UseSmileIDSampleJobStore(storage: storage, source: Self.noNetwork)
+  func testTheRowsAreReadBackByAStoreOverTheSameContainer() async {
+    let container = Self.container()
+    let first = Self.store(container)
     await first.add(Self.job(id: "job-1"))
 
-    let second = UseSmileIDSampleJobStore(storage: storage, source: Self.noNetwork)
+    let second = Self.store(container)
     let ids = await second.jobs.map(\.id)
     XCTAssertEqual(ids, ["job-1"])
   }
 
-  func testAnUnknownProductOrStatusIdFallsBackRatherThanFailingToLoad() async {
+  func testAnUnknownProductOrStatusIdFallsBackRatherThanFailingToLoad() async throws {
     let stored = """
     {"version":1,"jobs":[{"id":"job-1","userId":"user-1","productId":"retiredProduct",\
     "statusId":"Retired","createdAtMillis":0,"message":"","sandbox":true}]}
     """
-    let store = UseSmileIDSampleJobStore(
-      storage: UseSmileIDSampleJobMemoryStorage(data: Data(stored.utf8)),
-      source: Self.noNetwork
-    )
+    let store = try Self.store(legacy: Self.legacyFile(stored))
     let job = await store.find("job-1")
     XCTAssertEqual(job?.product, UseSmileIDSampleProduct.allCases[0])
     XCTAssertEqual(job?.status, .processing)
   }
 
-  func testStorageThatCannotBeDecodedReadsAsNoRowsRatherThanCrashing() async {
-    let store = UseSmileIDSampleJobStore(
-      storage: UseSmileIDSampleJobMemoryStorage(data: Data("not json".utf8)),
-      source: Self.noNetwork
-    )
+  func testALegacyDocumentThatCannotBeDecodedReadsAsNoRowsRatherThanCrashing() async throws {
+    let store = try Self.store(legacy: Self.legacyFile("not json"))
     let jobs = await store.jobs
     XCTAssertEqual(jobs, [])
   }
 
   func testTheTokensBoundFieldsAreRecordedAsFlagsOnly() async throws {
-    let storage = UseSmileIDSampleJobMemoryStorage()
-    let store = UseSmileIDSampleJobStore(storage: storage, source: Self.noNetwork)
+    let container = Self.container()
+    let store = Self.store(container)
     let bindings = UseSmileIDSampleTokenBindings(
       givenNames: true,
       lastName: true,
@@ -115,20 +110,21 @@ final class UseSmileIDSampleJobStoreTest: XCTestCase {
     )
     await store.add(Self.job(id: "job-1", product: .biometricKyc), bindings: bindings)
 
-    let record = try Self.record("job-1", in: storage)
+    let record = try Self.record("job-1", in: container)
     XCTAssertEqual(record.boundUserDetails, true)
     XCTAssertEqual(record.boundIdDetails, true)
     XCTAssertEqual(record.boundConsent, true)
-    let encoded = try XCTUnwrap(try String(data: XCTUnwrap(storage.read()), encoding: .utf8))
+    // The persisted row, not the model in memory: the row is what outlives the process.
+    let encoded = try XCTUnwrap(String(data: JSONEncoder().encode(record), encoding: .utf8))
     XCTAssertFalse(encoded.contains("vault-ref"), "a binding's value must never be persisted")
   }
 
   func testNoTokenLeavesEveryBoundFlagFalse() async throws {
-    let storage = UseSmileIDSampleJobMemoryStorage()
-    let store = UseSmileIDSampleJobStore(storage: storage, source: Self.noNetwork)
+    let container = Self.container()
+    let store = Self.store(container)
     await store.add(Self.job(id: "job-1"))
 
-    let record = try Self.record("job-1", in: storage)
+    let record = try Self.record("job-1", in: container)
     XCTAssertEqual([record.boundUserDetails, record.boundIdDetails, record.boundConsent], [false, false, false])
   }
 
@@ -228,17 +224,38 @@ final class UseSmileIDSampleJobStoreTest: XCTestCase {
 
   private static let noNetwork = UseSmileIDSampleUnreachableStatusSource()
 
-  private static func store() -> UseSmileIDSampleJobStore {
-    UseSmileIDSampleJobStore(storage: UseSmileIDSampleJobMemoryStorage(), source: noNetwork)
+  private static func container() -> ModelContainer {
+    // Force-tried: a schema that failed to open in memory is a broken build, not a test condition.
+    try! ModelContainer.useSmileIDSampleJobs(inMemory: true)
+  }
+
+  private static func store(
+    _ container: ModelContainer? = nil,
+    legacy: URL? = nil
+  ) -> UseSmileIDSampleJobStore {
+    UseSmileIDSampleJobStore(
+      container: container ?? Self.container(),
+      source: noNetwork,
+      importingLegacyFileAt: legacy
+    )
+  }
+
+  /// A JSON document of the shape a pre-SwiftData version left behind, on disk where the import
+  /// reads it from. Deleted with the test, and the import deletes it too once its rows are in.
+  private static func legacyFile(_ json: String) throws -> URL {
+    let url = URL(fileURLWithPath: NSTemporaryDirectory())
+      .appendingPathComponent("legacy-\(UUID().uuidString).json")
+    try Data(json.utf8).write(to: url)
+    return url
   }
 
   private static func record(
     _ id: String,
-    in storage: UseSmileIDSampleJobMemoryStorage
+    in container: ModelContainer
   ) throws -> UseSmileIDSampleJobRecord {
-    let data = try XCTUnwrap(storage.read())
-    let file = try JSONDecoder().decode(UseSmileIDSampleJobFile.self, from: data)
-    return try XCTUnwrap(file.jobs.first { $0.id == id })
+    let context = ModelContext(container)
+    let rows = try context.fetch(FetchDescriptor<UseSmileIDSampleJobEntity>())
+    return try XCTUnwrap(rows.first { $0.id == id }).record
   }
 
   private static func job(
