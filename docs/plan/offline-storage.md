@@ -95,6 +95,11 @@ decisions the implementation forced, recorded because neither followed from the 
   file in an app, memory in a test. Its replacement is `ModelContainer(isStoredInMemoryOnly:)`, so
   the protocol and both its implementations had nothing left to do. The tests that seeded it with a
   JSON string became import tests, which is where that behaviour moved rather than being dropped.
+- **The container is opened on first use, not in `init`.** Worth stating because the port got this
+  wrong first: `UseSmileIDSampleJobStore(source:)` is a *default argument* of the app state's
+  initialiser, so opening the store there put SQLite creation — and one day a migration — on the
+  main thread at launch, contradicting the comment the old lazy design left behind. The initialiser
+  now takes a closure and the container is opened on the actor, on first use.
 - **The store degrades to memory when its container cannot open.** A partner's history is then
   invisible, which is bad — but trapping on launch is worse, and the empty state already says the
   rows are missing rather than absent. Recorded as the lesser of two, not as a good outcome.
