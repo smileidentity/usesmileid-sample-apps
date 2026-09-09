@@ -63,6 +63,11 @@ echo "==> navigation UI tests (the only ones that drive the real shell)"
 # A build under the pre-rename bundle id declares the same URL scheme, so on a long-lived simulator
 # it takes the deep links and every test reds as though routing were broken. CI never sees it.
 xcrun simctl uninstall booted com.usesmileid.sampleapps.ios >/dev/null 2>&1 || true
+# And the app's own store, because the suite addresses rows by position: `seedJobs` re-adds a row an
+# earlier test removed with a freshly computed date, so a store surviving an earlier session makes
+# the processing row the newest and inverts two verifications tests. CI never sees this one either,
+# its simulator being fresh — so locally the run has to start from one too.
+xcrun simctl uninstall booted com.usesmileid.sample.ios >/dev/null 2>&1 || true
 # A UI-test failure is a picture, not a message: without the bundle a red CI run cannot be read.
 rm -rf "$RESULT_BUNDLE"
 xcodebuild test \

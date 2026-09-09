@@ -675,6 +675,21 @@ are tested against synthetic checkouts and synthetic manifests, so the suite nee
 network nor `swift`, and the four build-failing guards above are each falsified by a case rather
 than by hand.
 
+**What running that gate cost, and the line it bought.** The first full run came back red on two
+`UseSmileIDSampleVerificationsUITests` cases, neither of which this section touches — and the
+failures were mirror images, one expecting a toast and getting none, the other expecting none and
+getting one. That is two rows swapping position. `fixtures(now:)` dates row *n* at `now - n*5h` and
+`insert` skips ids it already knows, so a row an earlier test *removed* is re-added with a freshly
+computed date: `UseSmileIDSampleLaunchArgumentUITests` removes exactly the processing row and never
+relaunches, so the verifications class's own `seedJobs` re-adds it, and once more than five hours
+have passed since the original seed it is the newest row and takes position 0. The count stays 11,
+which is why the count test still passed. It needs a store that survived an earlier session, so CI's
+fresh simulator never sees it and `verify.sh` uninstalled only the *pre-rename* bundle id — which is
+now two uninstalls, so a local run starts from the clean install CI gets. Proven rather than argued:
+back-dating the store on `origin/main` and deleting that one row reds the same two assertions at the
+same two lines with none of this section's code present. The suite addressing rows by position is a
+contract with the Compose twin, so the fix is the clean slate, not the ids.
+
 **One thing the stash had never compiled.** `Bundle.module` is internal, so it cannot be a *public*
 method's default argument — `bundled(in: .module)` as a signature is rejected outright. The public
 entry point therefore takes no argument and the bundle-taking overload is internal, which is also
