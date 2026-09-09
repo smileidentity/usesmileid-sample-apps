@@ -99,10 +99,23 @@ def shell_products() -> set[tuple[str, str]]:
     """
     with open(SHELL_PROJECT, encoding="utf-8") as handle:
         body = handle.read()
-    identities = {
-        key.lower(): os.path.basename(url).removesuffix(".git").lower()
-        for key, url in re.findall(r"^  (\w+):\n(?:\s+#.*\n)*\s+url:\s*(\S+)", body, flags=re.MULTILINE)
-    }
+    # Any field may precede `url:`, and a sibling key at two spaces must not be crossed into, so the
+    # block is walked by indent: one regex spanning it either misses a reordered field or reads the
+    # next package's url as this one's.
+    identities: dict[str, str] = {}
+    key: str | None = None
+    for line in body.splitlines():
+        heading = re.match(r"^  (\w+):\s*$", line)
+        if heading:
+            key = heading.group(1)
+            continue
+        if line.strip() and not line.startswith("    "):
+            key = None
+            continue
+        found = re.match(r"^\s+url:\s*(\S+)", line) if key else None
+        if found:
+            identities[key.lower()] = os.path.basename(found.group(1)).removesuffix(".git").lower()
+            key = None
     pairs = {
         (identities.get(package.lower(), package.lower()), product)
         for package, product in re.findall(r"-\s*package:\s*(\S+)\s*\n\s*product:\s*(\S+)", body)

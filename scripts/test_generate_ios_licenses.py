@@ -396,6 +396,36 @@ class TestShellProducts(unittest.TestCase):
         )
         self.assertEqual({("ios-spm", "UseSmileID")}, gen.shell_products())
 
+    def test_a_field_before_the_url_does_not_hide_it(self):
+        self.write(
+            "packages:\n"
+            "  UseSmileID:\n"
+            "    exactVersion: 12.0.2\n"
+            "\n"
+            "    url: https://github.com/smileidentity/ios-spm.git\n"
+            "targets:\n"
+            "  App:\n"
+            "    dependencies:\n"
+            "      - package: UseSmileID\n"
+            "        product: UseSmileID\n"
+        )
+        self.assertEqual({("ios-spm", "UseSmileID")}, gen.shell_products())
+
+    def test_a_package_with_no_url_does_not_borrow_the_next_ones(self):
+        self.write(
+            "packages:\n"
+            "  SampleUI:\n"
+            "    path: ../SampleUI\n"
+            "  UseSmileID:\n"
+            "    url: https://github.com/smileidentity/ios-spm.git\n"
+            "targets:\n"
+            "  App:\n"
+            "    dependencies:\n"
+            "      - package: SampleUI\n"
+            "        product: SampleUI\n"
+        )
+        self.assertEqual({("sampleui", "SampleUI")}, gen.shell_products())
+
     def test_a_local_package_keeps_its_key_as_its_identity(self):
         self.write(
             "packages:\n"
