@@ -6,7 +6,8 @@ import SwiftData
 /// asked. Rows are written one at a time, so a row that cannot be read is one row rather than all of
 /// them — which is what the JSON document this replaced could not promise.
 public actor UseSmileIDSampleJobStore {
-  private let context: ModelContext
+  private let open: @Sendable () -> ModelContainer?
+  private var opened: ModelContext?
   private let source: UseSmileIDSampleJobStatusSource
   private let legacy: UseSmileIDSampleJobImport?
 
@@ -34,9 +35,15 @@ public actor UseSmileIDSampleJobStore {
     source: UseSmileIDSampleJobStatusSource,
     importingLegacyFileAt url: URL? = nil
   ) {
-    context = ModelContext(container)
-    // Saved explicitly at each write, so a partial batch never reaches disk on its own schedule.
-    context.autosaveEnabled = false
+    self.init(opening: { container }, source: source, importingLegacyFileAt: url)
+  }
+
+  private init(
+    opening open: @escaping @Sendable () -> ModelContainer?,
+    source: UseSmileIDSampleJobStatusSource,
+    importingLegacyFileAt url: URL?
+  ) {
+    self.open = open
     self.source = source
     legacy = url.map { UseSmileIDSampleJobImport(url: $0) }
     var continuation: AsyncStream<Int>.Continuation!
@@ -49,15 +56,27 @@ public actor UseSmileIDSampleJobStore {
   /// A container that cannot be opened degrades to memory rather than trapping: the list then reads
   /// empty, which the screen says out loud, and the app still runs. Crashing on launch is worse.
   public init(source: UseSmileIDSampleJobStatusSource) {
-    let container =
-      (try? ModelContainer.useSmileIDSampleJobs())
-        ?? (try? ModelContainer.useSmileIDSampleJobs(inMemory: true))
-    // Force-unwrapped only after an in-memory fallback, which cannot fail for a schema that compiled.
+    // The closure, not the container: opening the store is file I/O and this initialiser runs where
+    // the app builds its state, which is the main thread at launch.
     self.init(
-      container: container!,
+      opening: { try? ModelContainer.useSmileIDSampleJobs() },
       source: source,
       importingLegacyFileAt: UseSmileIDSampleJobImport.defaultURL
     )
+  }
+
+  /// Opened on first use, on the actor rather than wherever `init` was called.
+  private func context() -> ModelContext {
+    if let opened {
+      return opened
+    }
+    // Force-tried only for the in-memory fallback, which cannot fail for a schema that compiled.
+    let container = open() ?? (try! ModelContainer.useSmileIDSampleJobs(inMemory: true))
+    let context = ModelContext(container)
+    // Saved explicitly at each write, so a partial batch never reaches disk on its own schedule.
+    context.autosaveEnabled = false
+    opened = context
+    return context
   }
 
   /// The rows, newest first: replayed on subscription and yielded again on every write.
@@ -101,7 +120,7 @@ public actor UseSmileIDSampleJobStore {
     guard !doomed.isEmpty else { return }
     let taken = doomed.map(\.record)
     for entity in doomed {
-      context.delete(entity)
+      context().delete(entity)
     }
     guard commit() else { return }
     lastRemoved = taken
@@ -182,7 +201,7 @@ public actor UseSmileIDSampleJobStore {
   /// Every row, newest first left to the caller: SwiftData sorts, but the order is the list's rule.
   private func entities() -> [UseSmileIDSampleJobEntity] {
     importLegacyRowsIfNeeded()
-    return (try? context.fetch(FetchDescriptor<UseSmileIDSampleJobEntity>())) ?? []
+    return (try? context().fetch(FetchDescriptor<UseSmileIDSampleJobEntity>())) ?? []
   }
 
   /// Once, and only where a document was actually left behind. The insert ignores an id already
@@ -201,9 +220,9 @@ public actor UseSmileIDSampleJobStore {
   @discardableResult
   private func commit() -> Bool {
     do {
-      try context.save()
+      try context().save()
     } catch {
-      context.rollback()
+      context().rollback()
       return false
     }
     let jobs = jobs
@@ -220,7 +239,7 @@ public actor UseSmileIDSampleJobStore {
     let fresh = records.filter { !known.contains($0.id) }
     guard !fresh.isEmpty else { return true }
     for record in fresh {
-      context.insert(UseSmileIDSampleJobEntity(record))
+      context().insert(UseSmileIDSampleJobEntity(record))
     }
     return commit()
   }
