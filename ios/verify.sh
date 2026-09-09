@@ -108,6 +108,13 @@ if runs ui; then
   #
   # A build under the pre-rename bundle id declares the same URL scheme, so on a long-lived simulator
   # it takes the deep links and every test reds as though routing were broken. CI never sees it.
+  # Waited for, not assumed: a cold simulator makes the timing-sensitive tests flaky — the rotation
+  # one reads the window frame right after asking for landscape. A serial run had already warmed it
+  # on the earlier steps; a job that runs only this step has not.
+  DEVICE="$(printf '%s' "$DESTINATION" | sed -n 's/.*name=\([^,]*\).*/\1/p')"
+  if [ -n "$DEVICE" ]; then
+    xcrun simctl bootstatus "$DEVICE" -b >/dev/null 2>&1 || true
+  fi
   xcrun simctl uninstall booted com.usesmileid.sampleapps.ios >/dev/null 2>&1 || true
   # And the app's own store, because the suite addresses rows by position: `seedJobs` re-adds a row an
   # earlier test removed with a freshly computed date, so a store surviving an earlier session makes
