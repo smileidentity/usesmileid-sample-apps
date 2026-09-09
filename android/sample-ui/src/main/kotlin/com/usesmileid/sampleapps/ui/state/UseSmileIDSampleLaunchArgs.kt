@@ -34,6 +34,8 @@ data class UseSmileIDSampleLaunchArgs(
     val probes: Boolean = false,
     val appLocale: String? = null,
     val holdCamera: UseSmileIDSampleHoldCamera? = null,
+    /** Seconds a transient notice stays — see `spec/launch-args.json`. Automation only. */
+    val noticeWindow: Int? = null,
 ) {
     companion object {
         const val SCENARIO = "scenario"
@@ -45,8 +47,10 @@ data class UseSmileIDSampleLaunchArgs(
         const val PROBES = "probes"
         const val APP_LOCALE = "appLocale"
         const val HOLD_CAMERA = "holdCamera"
+        const val NOTICE_WINDOW = "noticeWindow"
 
-        val names = listOf(SCENARIO, THEME, ROUTE, AUTOSTART, SEED_JOBS, SEED_PROFILES, PROBES, APP_LOCALE, HOLD_CAMERA)
+        val names =
+            listOf(SCENARIO, THEME, ROUTE, AUTOSTART, SEED_JOBS, SEED_PROFILES, PROBES, APP_LOCALE, HOLD_CAMERA, NOTICE_WINDOW)
 
         internal const val HOLD_CAMERA_KEEP = "keep"
 
@@ -66,8 +70,13 @@ data class UseSmileIDSampleLaunchArgs(
                 probes = raw.boolean(PROBES) ?: defaults.probes,
                 appLocale = raw.string(APP_LOCALE),
                 holdCamera = raw.holdCamera(),
+                noticeWindow = raw.noticeWindow(),
             )
         }
+
+        /** Positive seconds; anything else falls back to the product's own window. */
+        private fun Map<String, Any?>.noticeWindow(): Int? =
+            string(NOTICE_WINDOW)?.toIntOrNull()?.takeIf { it > 0 }
 
         private fun Map<String, Any?>.string(name: String): String? =
             this[name]?.toString()?.trim()?.takeIf { it.isNotEmpty() }

@@ -59,6 +59,7 @@ import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleSheetLinks
 import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleSheetRequests
 import com.usesmileid.sampleapps.android.navigation.openUseSmileIDSampleSheet
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
+import com.usesmileid.sampleapps.ui.components.LocalUseSmileIDSampleNoticeWindow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavItem
 
@@ -80,6 +81,11 @@ fun UseSmileIDSampleShell() {
     val chrome = remember { UseSmileIDSampleChromeState() }
 
     val sheetRequests = remember { UseSmileIDSampleSheetRequests() }
+
+    // Seconds in the argument, millis in the local: the notice host counts in millis.
+    val noticeWindowMillis = LocalUseSmileIDSampleAppState.current.launchArgs.noticeWindow
+        ?.let { it * 1_000L }
+        ?: LocalUseSmileIDSampleNoticeWindow.current
 
     ForwardNewIntentsTo(navController, sheetRequests)
     AutostartFlowOnce(navigator)
@@ -111,6 +117,8 @@ fun UseSmileIDSampleShell() {
             CompositionLocalProvider(
                 LocalUseSmileIDSampleChrome provides chrome,
                 LocalUseSmileIDSampleSheetRequests provides sheetRequests,
+                // Only automation passes one; without it the local's default is the product's.
+                LocalUseSmileIDSampleNoticeWindow provides noticeWindowMillis,
             ) {
                 ProvideUseSmileIDSampleUrlOpener {
                     DestinationsNavHost(

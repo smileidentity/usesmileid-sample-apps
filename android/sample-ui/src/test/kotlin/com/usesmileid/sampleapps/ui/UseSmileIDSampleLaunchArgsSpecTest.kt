@@ -40,6 +40,7 @@ class UseSmileIDSampleLaunchArgsSpecTest {
                 UseSmileIDSampleLaunchArgs.PROBES to defaults.probes.toString(),
                 UseSmileIDSampleLaunchArgs.APP_LOCALE to defaults.appLocale,
                 UseSmileIDSampleLaunchArgs.HOLD_CAMERA to defaults.holdCamera?.toString(),
+                UseSmileIDSampleLaunchArgs.NOTICE_WINDOW to defaults.noticeWindow?.toString(),
             ),
         )
     }
@@ -60,6 +61,7 @@ class UseSmileIDSampleLaunchArgsSpecTest {
                 UseSmileIDSampleLaunchArgs.PROBES to true,
                 UseSmileIDSampleLaunchArgs.APP_LOCALE to "fr-FR",
                 UseSmileIDSampleLaunchArgs.HOLD_CAMERA to "keep",
+                UseSmileIDSampleLaunchArgs.NOTICE_WINDOW to "60",
             ),
         )
         assertTrue(args.probes)
@@ -68,6 +70,16 @@ class UseSmileIDSampleLaunchArgsSpecTest {
         assertEquals(UseSmileIDSampleProduct.BiometricKyc, args.autostart)
         assertEquals("fr-FR", args.appLocale)
         assertEquals(UseSmileIDSampleHoldCamera.Keep, args.holdCamera)
+        assertEquals(60, args.noticeWindow)
+    }
+
+    /** Null rather than zero for a rejected value: zero would dismiss the notice before it rendered. */
+    @Test
+    fun notice_window_takes_positive_seconds_only() {
+        assertEquals(60, UseSmileIDSampleLaunchArgs.from(mapOf("noticeWindow" to "60")).noticeWindow)
+        assertNull(UseSmileIDSampleLaunchArgs.from(mapOf("noticeWindow" to "soon")).noticeWindow)
+        assertNull(UseSmileIDSampleLaunchArgs.from(mapOf("noticeWindow" to "0")).noticeWindow)
+        assertNull(UseSmileIDSampleLaunchArgs.from(mapOf("noticeWindow" to "-5")).noticeWindow)
     }
 
     @Test
