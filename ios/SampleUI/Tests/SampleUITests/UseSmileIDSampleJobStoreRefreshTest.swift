@@ -1,5 +1,6 @@
 import Foundation
 @testable import SampleUI
+import SwiftData
 import XCTest
 
 /// The refresh sequence the store owns: what it reads off the row, and what it never asks the caller for.
@@ -199,7 +200,7 @@ final class UseSmileIDSampleJobStoreRefreshTest: XCTestCase {
   }
 
   private static func store(_ source: UseSmileIDSampleJobStatusSource) -> UseSmileIDSampleJobStore {
-    UseSmileIDSampleJobStore(storage: UseSmileIDSampleJobMemoryStorage(), source: source)
+    UseSmileIDSampleJobStore(container: try! .useSmileIDSampleJobs(inMemory: true), source: source)
   }
 
   private static let updated = UseSmileIDSampleStatusRefresh.updated(
