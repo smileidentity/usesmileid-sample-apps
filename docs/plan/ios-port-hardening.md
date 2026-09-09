@@ -353,6 +353,11 @@ added time is the runner.
 
 ## 12. The job store — built 2026-09-08, on a file rather than a database
 
+**Superseded 2026-09-09 by `offline-storage.md`:** the file choice is reversed, and the store
+moves to SwiftData on an iOS 17 floor. Everything below still describes what the file bought,
+and the concurrency and undo rules it records are requirements the port carries forward — read
+it for those, not for the storage decision.
+
 Android's rows live in Room, and Room is what the store's shape is written against: insert-ignore, a
 delete that reports what it took, and one atomic status update. iOS has no equivalent that costs no
 dependency — Core Data would add a model file to review and hand-rolled SQLite would add more code
