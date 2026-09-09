@@ -20,6 +20,26 @@ permissions:
 
 jobs:
   verify:
+    name: ${{ matrix.class || 'checks' }}
+    # One job per UI test class, plus one for everything else, because the UI suite was most of the
+    # lane. Not simulator clones inside a single runner: measured at 35m against 43-49m serial, since
+    # a runner gives xcodebuild two clones and they contend for its two cores — 20% off, and five
+    # failures for it. A whole runner each is what actually parallelises.
+    # `UseSmileIDSampleUiLaneSpecTest` asserts this list names every class, so a new one cannot
+    # quietly go unrun.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - phase: checks
+          - phase: ui
+            class: UseSmileIDSampleNavigationUITests
+          - phase: ui
+            class: UseSmileIDSampleFlowUITests
+          - phase: ui
+            class: UseSmileIDSampleVerificationsUITests
+          - phase: ui
+            class: UseSmileIDSampleLaunchArgumentUITests
     # macos-26 with the iPhone 17 Pro simulator, matching ios/verify.sh's default and the SDK repo's
     # own snapshot gate. Goldens are pixel comparisons, so recording and verifying have to happen on
     # one runtime — a runner or simulator that drifts from the local default reds the lane for
@@ -27,9 +47,9 @@ jobs:
     runs-on: macos-26
     # The UI tests drive a cross-process system alert, which can hang where the earlier programmatic
     # steps could not; without this a wedged run holds the branch's concurrency group for hours.
-    # Headroom, not an expectation: the lane has run 44 minutes against a 45-minute cap, and a
-    # timeout reads as a failure. Drop it back once the suite runs a clone per class.
-    timeout-minutes: 60
+    # Back to 45 now the suite is split: the headroom was for one serial job that had reached 44
+    # minutes, and the longest job here is a single test class.
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
 
@@ -83,12 +103,12 @@ jobs:
           SMILE_DESIGN_SYSTEM: ${{ steps.design-system.outcome == 'success' && format('{0}/.design-system/smile-design-system', github.workspace) || '' }}
           SMILE_TOKENS_OPTIONAL: ${{ steps.design-system.outcome == 'skipped' && '1' || '' }}
           DESTINATION: platform=iOS Simulator,name=iPhone 17 Pro
-        run: ios/verify.sh
+        run: ios/verify.sh ${{ matrix.phase }} ${{ matrix.class }}
 
       - name: Keep the UI test result bundle when the lane reds
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: ios-uitest-result
-          path: ios/build/uitest.xcresult
+          name: ios-uitest-result-${{ matrix.class || 'checks' }}
+          path: ios/build/*.xcresult
           if-no-files-found: ignore
