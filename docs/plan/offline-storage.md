@@ -131,10 +131,11 @@ D4 by construction rather than by discipline.
 `AsyncStorage` is the wrong shape and is recorded here so it is not proposed later: a key-value store
 rewriting one blob is precisely what iOS is moving away from, one undecodable blob being every row.
 
-## Dependencies this needs approved
+## Dependencies
 
-Flagged rather than assumed, per the ask-first rule. Note that none of these is an SDK dependency, so
-the registry-only rule is untouched.
+Decided rather than left pending, because these are for apps that do not exist yet and a decision
+with no implementation date should not also carry an open approval. None of them is an SDK
+dependency, so the registry-only rule is untouched.
 
 | Platform | Package | Why it is not optional |
 |---|---|---|
@@ -143,15 +144,20 @@ the registry-only rule is untouched.
 | Expo | `expo-sqlite` | The engine; first-party. |
 | Expo | `drizzle-orm`, `drizzle-kit` | D4. Without it, migrations are hand-written SQL. |
 
-One property worth noting: on iOS the notices generator now walks the products the app links, so any
-future third-party dependency either appears in the notices automatically or fails the build.
-Additions on that platform are self-documenting.
+Whoever builds those apps adds them under the ask-first rule at that point, citing this table rather
+than re-deriving the choice. On iOS the notices generator walks the products the app links, so any
+future third-party dependency there either appears in the notices automatically or fails the build —
+additions on that platform are self-documenting.
 
-## Open questions
+## Settled, and what is genuinely still open
 
-- **OQ1.** Does the iOS SDK repo accept an iOS 17 floor for its own Sample when `sample-ui` is finally
-  wired into it? Blocks nothing now; blocks that wiring. Needs asking before, not during.
-- **OQ2.** Android's undo divergence from §12 is still unfollowed — removing an id it has no row for
-  silently discards the undo. Worth doing while the store files are open on both sides.
-- **OQ3.** Flutter and Expo have no apps, so D5 and D6 are decisions with no implementation date.
-  They are recorded so the choice is made once rather than re-derived by whoever builds them.
+- **The iOS SDK repo's floor is not a blocker, and is not a question for now.** `ios-v12` has no
+  submodule wiring and its Sample references no `SampleUI` package, so nothing depends on this
+  library's floor today. The ruling is that the sample app takes 17 while the SDK stays at 15, and
+  the PR that finally wires `sample-ui` into `ios-v12/Sample` is the one that carries that Sample's
+  floor change. It is recorded here so that PR's author finds a decision rather than a surprise.
+- **Android's undo divergence is scheduled, not open.** Removing an id it has no row for silently
+  discards the undo, where iOS guards on what the removal actually took. Nothing reachable passes an
+  unknown id, so it is hardening; it follows on Android's own store, after this port.
+- **D5 and D6 have no implementation date**, Flutter and Expo having no apps. That is the one thing
+  here genuinely waiting on something else, and what it waits on is those apps existing.
