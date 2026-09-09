@@ -123,6 +123,8 @@ if runs ui; then
   xcrun simctl uninstall booted com.usesmileid.sample.ios >/dev/null 2>&1 || true
   # A UI-test failure is a picture, not a message: without the bundle a red CI run cannot be read.
   # One bundle per class, or four jobs writing one path would overwrite each other's evidence.
+  # Expanded with the `+` guard because macOS ships bash 3.2, where an empty array under `set -u` is
+  # an unbound variable — which is the no-class run, the one a developer types.
   UI_ARGS=()
   BUNDLE="$RESULT_BUNDLE"
   if [ -n "$UI_CLASS" ]; then
@@ -135,7 +137,7 @@ if runs ui; then
     -scheme UseSmileIDSampleUITests \
     -destination "$DESTINATION" \
     -resultBundlePath "$BUNDLE" \
-    "${UI_ARGS[@]}" \
+    ${UI_ARGS[@]+"${UI_ARGS[@]}"} \
     -quiet
 fi
 
