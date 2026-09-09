@@ -27,6 +27,13 @@ echo "==> icons are current"
 # needs no secret and always runs.
 python3 "$REPO_ROOT/scripts/generate_ios_icons.py" --check
 
+echo "==> third-party notices are current"
+# Apache-2.0 §4 asks the notice to travel with the distribution, so the app ships the list rather
+# than linking it. Walked from the products the app links, which needs the graph resolved first.
+python3 "$REPO_ROOT/scripts/test_generate_ios_licenses.py" >/dev/null
+python3 "$REPO_ROOT/scripts/generate_ios_licenses.py" \
+  --out SampleUI/Sources/SampleUI/Resources/licenses.json --check
+
 echo "==> format"
 swiftformat --lint .
 

@@ -595,6 +595,91 @@ XCUITest's synthesised drag does not drive `UIScreenEdgePanGestureRecognizer` �
 host screen, which did not pop either — so the swipe belongs to the phone lane, and the cancel path
 this suite drives is the SDK's own back on its first screen.
 
+## 17. The third-party notices — generated 2026-09-09, and why the generator is not Android's ported
+
+The last U3 screen is licenses, and the screen itself is three components this app already has. The
+work was the asset behind it, which is where every platform decision lives.
+
+**SwiftPM has no POM.** A Swift package declares no licence metadata at all — there is no
+`<licenses>` block to read and no parent chain to walk. The notice is the `LICENSE` file in the
+resolved checkout. Three consequences, none of them cosmetic:
+
+- **The text is the component's own, holder line included**, not an SPDX template. So iOS ships no
+  `scripts/license-texts/` counterpart: there is nothing to vendor.
+- **Therefore the text is keyed per component, not per licence.** Android shares one Apache copy
+  across two hundred artifacts because its texts are holder-free templates. Doing that here would
+  attribute Sentry's copyright line to KSCrash — both are MIT, with different holders. Its notice
+  also carries one licence rather than a list, because a POM can declare several and a `LICENSE`
+  file is one text. Both are schema divergences from Android's asset with a correctness reason, not
+  a port that drifted, and `UseSmileIDSampleLicensesTest` pins the first against the real asset.
+- **`Package.resolved` is the wrong input.** It lists test-only pins — `swift-snapshot-testing` and
+  its three transitive packages — and a partner ships none of them. The generator walks the products
+  the app actually links (`ios/App/project.yml`) outward through each package's manifest via
+  `swift package dump-package`, so a test-only package needs no exclusion list: a test target is
+  never a root, and nothing reaches them.
+
+**What the shipping graph actually is:** `lottie-spm` (Apache-2.0) and `sentry-cocoa` (MIT). The SDK
+is excluded as first-party — a partner licenses it from Smile ID, so its terms are not a third-party
+notice — and the two Vision analyzer products the shell adds reach no package the `UseSmileID`
+product does not.
+
+**A component that vendors third-party code carries its own notices file, and it has to travel.**
+`sentry-cocoa` ships `THIRD_PARTY_NOTICES.md` covering KSCrash (MIT), YANDEX LLC (MIT),
+`facebook/fishhook` (BSD-3-Clause) and Apple-originated code under APSL-2.0. SwiftPM surfaces none
+of that — Android gets the equivalent transitively through POMs — so the nested file is the only
+signal, and skipping it would silently under-report four notices. They are listed as components in
+their own right, named `sentry-cocoa/KSCrash` and so on, so one section and one row shape serve all
+six.
+
+Three things keep that honest, all of which fail the build rather than emit a wrong notice:
+
+- **A notices file that exists but parses to nothing is a red build**, not a shorter list. If Sentry
+  restructures that file, the failure is loud instead of four notices quietly disappearing.
+- **The heading states the licence, so it is a free second opinion on the text match.** A
+  disagreement fails. This is not theoretical: it caught `facebook/fishhook` being identified as
+  BSD-2-Clause, because the first signature written for the 3-clause variant keyed on wording
+  fishhook does not use. The clause that separates the two — non-endorsement — is what it keys on
+  now, and the check was falsified by doctoring a heading and watching it fail.
+- **An `OVERRIDES` entry the screen could not render fails too.** A missing key would emit a
+  component the model cannot decode, and a failed decode is the whole list gone rather than one row
+  wrong — which is the empty state, and so indistinguishable from an asset that never shipped.
+
+**`sample_license_link` has no instance on iOS today, and the path stays.** The spec reserves the id
+for a row whose licence text ships inside the component rather than with the app; every package the
+app currently ships carries its own text, so nothing takes that path. A package that ships no
+licence file fails the build with a message pointing at the reviewed `OVERRIDES` table — the same
+shape as Android's, empty today — because a guessed licence is worse than a red build. The nil-text
+path is covered at the model, by a decoded fixture rather than a real component.
+
+**Android's second section has no iOS counterpart.** "UNDER GOOGLE'S OWN TERMS" lists ML Kit, Play
+Integrity and the Android SDK, which declare terms-of-service pages rather than a licence. iOS links
+Apple's frameworks as system frameworks, not as shipped dependencies, so no artifact of that class
+is in the graph. The section is absent because it is empty, and the Compose twin hides its own when
+it is.
+
+**Where the asset lives, and the one consumer it is imprecise for.** It is generated into
+`SampleUI/Sources/SampleUI/Resources/licenses.json` — the library that owns the screen, mirroring
+Android putting it in `sample-ui` rather than in the shell, so the SDK repo's Sample gets the screen
+too. It is a `.copy` resource, so it lands at the bundle root where `Bundle.module.url(forResource:)`
+looks for it; a unit test asserts it is readable there rather than trusting the declaration. That
+second consumer resolves the SDK from source rather than from the registry, so the committed list is
+not exactly its graph. Android's asset has the same property for the same reason; this is a
+development sample, not a partner distribution, and the app whose notices have to be right is the
+one that ships.
+
+**The gate step is a third generator check, not new machinery.** `ios/verify.sh` already opens with
+`sync_design_tokens.py --check` and `generate_ios_icons.py --check`; the notices check is the same
+shape, and it fails on a stale asset exactly as `checkLicenses` does on Android. It runs
+`test_generate_ios_licenses.py` first, as `android/verify.sh` runs its generator's tests: the rules
+are tested against synthetic checkouts and synthetic manifests, so the suite needs neither the
+network nor `swift`, and the four build-failing guards above are each falsified by a case rather
+than by hand.
+
+**One thing the stash had never compiled.** `Bundle.module` is internal, so it cannot be a *public*
+method's default argument — `bundled(in: .module)` as a signature is rejected outright. The public
+entry point therefore takes no argument and the bundle-taking overload is internal, which is also
+what lets the test drive a bundle with no asset in it.
+
 ## Considered and rejected
 
 - **Giving the SPM test target a host app so `UISwitch` renders its thumb.** The thumb is missing
