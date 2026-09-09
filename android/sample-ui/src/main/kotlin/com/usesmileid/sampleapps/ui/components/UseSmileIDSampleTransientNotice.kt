@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.runtime.staticCompositionLocalOf
 import kotlinx.coroutines.delay
 
 /** One transient confirmation: what it says and the single action it may offer. */
@@ -50,8 +51,8 @@ fun rememberTransientNotice(): UseSmileIDSampleTransientNoticeState =
 fun UseSmileIDSampleTransientNoticeHost(
     state: UseSmileIDSampleTransientNoticeState,
     modifier: Modifier = Modifier,
-    windowMillis: Long = NOTICE_WINDOW_MILLIS,
 ) {
+    val windowMillis = LocalUseSmileIDSampleNoticeWindow.current
     LaunchedEffect(state.showToken) {
         if (state.current == null) return@LaunchedEffect
         delay(windowMillis)
@@ -69,4 +70,10 @@ fun UseSmileIDSampleTransientNoticeHost(
 }
 
 /** Long enough to undo, short enough not to outlive its cause. */
+/**
+ * How long a transient notice stays. The shell overrides it from `noticeWindow`; the default is the
+ * product's, so a library consumer that provides nothing gets the real behaviour.
+ */
+val LocalUseSmileIDSampleNoticeWindow = staticCompositionLocalOf { NOTICE_WINDOW_MILLIS }
+
 private const val NOTICE_WINDOW_MILLIS = 5_000L

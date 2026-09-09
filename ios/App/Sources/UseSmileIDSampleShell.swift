@@ -27,6 +27,8 @@ struct UseSmileIDSampleShell: View {
       // Reaches what reads `\.locale` in the shell's own views; the SDK's strings resolve through its
       // bundle, which follows `-AppleLanguages`, the platform's own argument.
       .modifier(UseSmileIDSampleLocaleOverride(locale: app.launchArguments.locale))
+      // Only automation passes one; without it the environment default is the product's.
+      .modifier(UseSmileIDSampleNoticeWindowOverride(seconds: app.launchArguments.noticeWindow))
       // At the root, over whichever route is showing; a link opens the owner first, so it layers.
       .sheet(item: $router.sheet) { sheet in
         sheetContent(sheet)
@@ -158,6 +160,19 @@ struct UseSmileIDSampleShell: View {
       router.openTabRoot(tab)
     } else {
       router.selectedTab = tab
+    }
+  }
+}
+
+/// `noticeWindow`, applied only when the launch named one, so an ordinary launch keeps the product's.
+private struct UseSmileIDSampleNoticeWindowOverride: ViewModifier {
+  let seconds: Int?
+
+  func body(content: Content) -> some View {
+    if let seconds {
+      content.environment(\.useSmileIDSampleNoticeWindow, TimeInterval(seconds))
+    } else {
+      content
     }
   }
 }

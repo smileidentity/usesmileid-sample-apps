@@ -36,7 +36,8 @@ final class UseSmileIDSampleLaunchArgumentsSpecTest: XCTestCase {
       UseSmileIDSampleLaunchArguments.seedProfilesName: String(defaults.seedProfiles),
       UseSmileIDSampleLaunchArguments.probesName: String(defaults.probes),
       UseSmileIDSampleLaunchArguments.appLocaleName: defaults.appLocale,
-      UseSmileIDSampleLaunchArguments.holdCameraName: defaults.holdCamera?.description
+      UseSmileIDSampleLaunchArguments.holdCameraName: defaults.holdCamera?.description,
+      UseSmileIDSampleLaunchArguments.noticeWindowName: defaults.noticeWindow.map(String.init)
     ]
     XCTAssertEqual(Dictionary(uniqueKeysWithValues: specArgs), declared)
   }
@@ -55,7 +56,8 @@ final class UseSmileIDSampleLaunchArgumentsSpecTest: XCTestCase {
       "seedProfiles": "true",
       "probes": true,
       "appLocale": "fr-FR",
-      "holdCamera": "keep"
+      "holdCamera": "keep",
+      "noticeWindow": "60"
     ])
     XCTAssertEqual(args.scenario, .expiredToken)
     XCTAssertEqual(args.theme, .clashingHost)
@@ -66,6 +68,7 @@ final class UseSmileIDSampleLaunchArgumentsSpecTest: XCTestCase {
     XCTAssertTrue(args.probes)
     XCTAssertEqual(args.appLocale, "fr-FR")
     XCTAssertEqual(args.holdCamera, .keep)
+    XCTAssertEqual(args.noticeWindow, 60)
   }
 
   func testTheRetiredSandboxArgumentIsNeitherDeclaredNorRead() {
@@ -86,6 +89,14 @@ final class UseSmileIDSampleLaunchArgumentsSpecTest: XCTestCase {
     XCTAssertEqual(UseSmileIDSampleLaunchArguments(raw: ["holdCamera": "1500"]).holdCamera, .millis(1500))
     XCTAssertNil(UseSmileIDSampleLaunchArguments(raw: ["holdCamera": "soon"]).holdCamera)
     XCTAssertNil(UseSmileIDSampleLaunchArguments(raw: ["holdCamera": "0"]).holdCamera)
+  }
+
+  /// Nil rather than zero for a rejected value: zero would dismiss the notice before it rendered.
+  func testNoticeWindowTakesPositiveSecondsOnly() {
+    XCTAssertEqual(UseSmileIDSampleLaunchArguments(raw: ["noticeWindow": "60"]).noticeWindow, 60)
+    XCTAssertNil(UseSmileIDSampleLaunchArguments(raw: ["noticeWindow": "soon"]).noticeWindow)
+    XCTAssertNil(UseSmileIDSampleLaunchArguments(raw: ["noticeWindow": "0"]).noticeWindow)
+    XCTAssertNil(UseSmileIDSampleLaunchArguments(raw: ["noticeWindow": "-5"]).noticeWindow)
   }
 
   func testAnUnrecognisedValueFallsBackToItsDefault() {

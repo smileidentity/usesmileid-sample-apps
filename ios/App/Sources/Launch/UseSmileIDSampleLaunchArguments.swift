@@ -32,6 +32,8 @@ struct UseSmileIDSampleLaunchArguments: Equatable {
   var probes = false
   var appLocale: String?
   var holdCamera: UseSmileIDSampleHoldCamera?
+  /// Seconds a transient notice stays — see `spec/launch-args.json`. Automation only.
+  var noticeWindow: Int?
 
   static let scenarioName = "scenario"
   static let themeName = "theme"
@@ -42,10 +44,11 @@ struct UseSmileIDSampleLaunchArguments: Equatable {
   static let probesName = "probes"
   static let appLocaleName = "appLocale"
   static let holdCameraName = "holdCamera"
+  static let noticeWindowName = "noticeWindow"
 
   static let names = [
     scenarioName, themeName, routeName, autostartName, seedJobsName, seedProfilesName, probesName, appLocaleName,
-    holdCameraName
+    holdCameraName, noticeWindowName
   ]
 
   static let holdCameraKeep = "keep"
@@ -72,6 +75,7 @@ struct UseSmileIDSampleLaunchArguments: Equatable {
     probes = Self.bool(raw, Self.probesName) ?? defaults.probes
     appLocale = Self.string(raw, Self.appLocaleName)
     holdCamera = Self.holdCamera(raw)
+    noticeWindow = Self.noticeWindow(raw)
   }
 
   /// The tag as a locale the environment can carry, or nil when it names no known language.
@@ -99,6 +103,12 @@ struct UseSmileIDSampleLaunchArguments: Equatable {
     case "false": return false
     default: return nil
     }
+  }
+
+  /// Positive seconds; anything else falls back to the product's own window.
+  private static func noticeWindow(_ raw: [String: Any?]) -> Int? {
+    guard let seconds = string(raw, noticeWindowName).flatMap(Int.init), seconds > 0 else { return nil }
+    return seconds
   }
 
   private static func holdCamera(_ raw: [String: Any?]) -> UseSmileIDSampleHoldCamera? {

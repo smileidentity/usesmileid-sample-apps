@@ -15,19 +15,19 @@ public struct UseSmileIDSampleTransientNotice: Equatable, Sendable {
 /// clears different chrome.
 public struct UseSmileIDSampleTransientNoticeHost: View {
   private let notice: UseSmileIDSampleTransientNotice?
-  private let window: TimeInterval
   private let onAction: () -> Void
   private let onDismiss: () -> Void
 
+  /// Long enough to act on, short enough not to outlive its cause — and overridable at the root,
+  /// because acting on a notice is a race a flow cannot retry: the offer is consumed on dismissal.
+  @Environment(\.useSmileIDSampleNoticeWindow) private var window
+
   public init(
     notice: UseSmileIDSampleTransientNotice?,
-    // Long enough to act on, short enough not to outlive its cause.
-    window: TimeInterval = 5,
     onAction: @escaping () -> Void = {},
     onDismiss: @escaping () -> Void
   ) {
     self.notice = notice
-    self.window = window
     self.onAction = onAction
     self.onDismiss = onDismiss
   }
