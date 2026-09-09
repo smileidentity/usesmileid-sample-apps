@@ -11,6 +11,21 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     app = XCUIApplication()
   }
 
+  /// This class links sessions and ends deep in pushed stacks, and both outlive it — the session in
+  /// the Keychain, the stack in scene storage. Left as it found them, or the next class inherits a
+  /// live token its outcomes do not expect and a pill its launch cannot see.
+  override func tearDown() {
+    if app.state == .runningForeground {
+      atATabRoot()
+      if element("sample_session_card").exists || element("sample_session_ended_banner").exists {
+        signOut()
+        element("sample_nav_products").tap()
+      }
+    }
+    app.terminate()
+    super.tearDown()
+  }
+
   func testTheOpenerLaunchesToTheProductListAndAProductMountsTheSdk() {
     launch()
     XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
@@ -223,11 +238,19 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
   private func launch(arguments: [String] = []) {
     app.launchArguments = arguments
     app.launch()
-    XCTAssertTrue(element("sample_nav_settings").waitForExistence(timeout: 10))
+    atATabRoot()
     guard element("sample_session_card").exists || element("sample_session_ended_banner").exists else { return }
     signOut()
     element("sample_nav_products").tap()
     XCTAssertTrue(element("sample_session_card").waitForNonExistence(timeout: 5))
+  }
+
+  /// The scene restores whatever stack the last test left, and a pushed one covers the pill every
+  /// cleanup below needs. Intermittent rather than absent, so it is healed rather than assumed.
+  private func atATabRoot() {
+    guard !element("sample_nav_settings").waitForExistence(timeout: 10) else { return }
+    open("products")
+    XCTAssertTrue(element("sample_nav_settings").waitForExistence(timeout: 10), "no tab root to clean up from")
   }
 
   /// The row sits below the fold on the pinned simulator.

@@ -552,18 +552,24 @@ per-payload validators, with the token's bindings subtracted exactly as Android 
 
 - **The per-job-type rules need a token payload the public API cannot pass.** The dispatching
   overload runs them, but with no `tokenPayload` it reports `userDetails is required` for a run whose
-  token supplies the details — measured, not assumed. So the gate does not use it, and the one rule
-  worth keeping from it is stated in the host instead: every job type needs consent, from the screen
-  or from the token. That rule found a real hole — with the Consent screen switch off and no consent
-  binding, a run has neither, and the SDK refuses it. It used to surface as a `Failure` from inside
-  the SDK's own render, which §7.3 warns is indistinguishable from a real submission failure; it is a
-  block with a reason on the card now. **The same hole is open on Android**, whose gate calls
-  `validate()` (screens only) — an owner call, not an iOS one.
-- **`clashingHost` reaches the SDK as nothing on iOS.** `partnerOverride` applies a palette through
-  the SDK's public `theme { }`, as the Compose twin does. Android's `clashingHost` swaps the *host's*
-  `MaterialTheme` and lets the collision show at the boundary; SwiftUI hands the SDK no host palette
-  to inherit, so there is nothing to clash. Left unimplemented rather than invented — what the
-  scenario should mean on iOS is a product question.
+  token supplies the details — measured, not assumed. So the gate does not use it, and the structural
+  overload plus the per-payload validators are what it runs.
+- **One rule is therefore missing, on purpose.** Every job type needs consent, from the screen or
+  from the token, and no host's gate checks it: Android's `validateBuilder` covers only an ML
+  failure, a network failure and empty screens. So with the Consent screen switch off and no consent
+  binding, a run reaches the SDK and comes back as a `Failure` from inside its own render — which
+  §7.3 warns is indistinguishable from a real submission failure. iOS briefly stated the rule
+  host-side and no longer does: **owner ruling 2026-09-08 is to hold the shared behaviour and fix all
+  four together**, so a unilateral improvement does not diverge them. The current behaviour is pinned
+  by `testAJourneyWithNoConsentAtAllStillReachesTheSdk`, so the next change to it has to be deliberate.
+- **Both theme scenarios go through the SDK's public override, and the spec is why.** This was
+  briefly shipped with `clashingHost` doing nothing, on the reasoning that Android swaps the *host's*
+  `MaterialTheme` and SwiftUI hands the SDK no host palette to inherit. That reasoning read the wrong
+  reference: `spec/scenarios.json` already says the scenario is "applied through the SDK's public
+  theme override", forcing "values far from the SDK defaults" — so the mechanism is the same as
+  `partnerOverride`'s and only the values differ. iOS does that now: a distant palette, a 24pt button
+  radius and Courier, which is a system face and therefore always resolves. **Android is the
+  divergence here**, and `spec/` outranks it.
 - **`throwingCallback` is not expressible in Swift.** `onResult` is a non-throwing closure and Swift
   has no unchecked exception, so the only way to throw from it is to trap — which is the app dying,
   not the scenario's "must not take the app down". The id stays for spec parity and the card reports

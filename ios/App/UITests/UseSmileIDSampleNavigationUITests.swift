@@ -185,8 +185,11 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_new_profile_sheet").waitForNonExistence(timeout: 5))
     XCTAssertTrue(element("sample_profile_row_p-4").waitForExistence(timeout: 10), "the new profile is not listed")
     XCTAssertTrue(app.staticTexts["Ada Lovelace"].exists, "created must not mean active")
-    XCTAssertTrue(element("sample_toast").waitForExistence(timeout: 5))
-    element("sample_toast_undo").tap()
+    // Waited for on the action itself, not on the notice around it: the notice dismisses on a timer,
+    // so asserting it exists and then querying its button again is a race the slower suite lost.
+    let makeActive = element("sample_toast_undo")
+    XCTAssertTrue(makeActive.waitForExistence(timeout: 5))
+    makeActive.tap()
     XCTAssertTrue(app.staticTexts["Ada Lovelace \u{00B7} active"].waitForExistence(timeout: 5))
     XCTAssertTrue(element("sample_toast").waitForNonExistence(timeout: 5))
   }

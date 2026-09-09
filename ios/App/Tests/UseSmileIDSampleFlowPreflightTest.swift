@@ -63,22 +63,12 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
     }
   }
 
-  func testAJourneyWithNoConsentAtAllIsBlockedRatherThanRedirected() {
+  /// Level with the Compose twin by owner ruling, not by oversight: the SDK requires consent from the
+  /// screen or the token, neither host's gate checks it, and a run with neither reaches the SDK and
+  /// fails there. Pinned so a well-meaning fix on one platform cannot diverge the four silently.
+  func testAJourneyWithNoConsentAtAllStillReachesTheSdk() {
     let neither = snapshot(.smartSelfieEnrollment, userDetails: complete, consentStep: false)
-    guard case .misconfigured(let issues) = useSmileIDSamplePreflight(neither) else {
-      return XCTFail("a flow with no source of consent passed the gate")
-    }
-    XCTAssertFalse(issues.isEmpty, "the block carries no reason for the card to report")
-
-    // Falsified both ways: the switch on, and the switch off against a consent-binding token.
-    XCTAssertEqual(useSmileIDSamplePreflight(snapshot(.smartSelfieEnrollment, userDetails: complete)), .ready)
-    let bound = snapshot(
-      .smartSelfieEnrollment,
-      userDetails: complete,
-      consentStep: false,
-      session: session(bindings: UseSmileIDSampleTokenBindings(consent: UseSmileIDSampleTokenConsent(granted: true)))
-    )
-    XCTAssertEqual(useSmileIDSamplePreflight(bound), .ready)
+    XCTAssertEqual(useSmileIDSamplePreflight(neither), .ready)
   }
 
   func testAgentModeWithEnhancedLivenessIsBlockedRatherThanRedirected() {
