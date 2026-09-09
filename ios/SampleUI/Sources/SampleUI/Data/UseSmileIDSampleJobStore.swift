@@ -98,7 +98,7 @@ public actor UseSmileIDSampleJobStore {
   }
 
   public func find(_ jobId: String) -> UseSmileIDSampleJob? {
-    stored().first { $0.id == jobId }?.job
+    entity(jobId)?.record.job
   }
 
   /// A no-op on an id already stored, which is what makes a repeated result delivery harmless.
@@ -141,7 +141,7 @@ public actor UseSmileIDSampleJobStore {
     message: String,
     httpStatus: Int
   ) -> Bool {
-    guard let entity = entities().first(where: { $0.id == jobId }) else { return false }
+    guard let entity = entity(jobId) else { return false }
     var record = entity.record
     record.statusId = status.rawValue
     record.message = message
@@ -161,7 +161,7 @@ public actor UseSmileIDSampleJobStore {
     // Released even on a cancelled caller, or the row is unrefreshable for the rest of the process.
     defer { inFlight.remove(jobId) }
 
-    guard let row = stored().first(where: { $0.id == jobId }) else {
+    guard let row = entity(jobId)?.record else {
       return .failed(reason: "The verification is no longer stored")
     }
     guard row.sessionId != nil else { return .noServerJob }
@@ -196,6 +196,15 @@ public actor UseSmileIDSampleJobStore {
 
   private func stored() -> [UseSmileIDSampleJobRecord] {
     entities().map(\.record)
+  }
+
+  /// One row, asked of SQLite rather than filtered in memory: every refresh and every `find` would
+  /// otherwise load the whole history to look at one of it.
+  private func entity(_ jobId: String) -> UseSmileIDSampleJobEntity? {
+    importLegacyRowsIfNeeded()
+    var descriptor = FetchDescriptor<UseSmileIDSampleJobEntity>(predicate: #Predicate { $0.id == jobId })
+    descriptor.fetchLimit = 1
+    return (try? context().fetch(descriptor))?.first
   }
 
   /// Every row, newest first left to the caller: SwiftData sorts, but the order is the list's rule.

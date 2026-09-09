@@ -108,7 +108,14 @@ decisions the implementation forced, recorded because neither followed from the 
 
 A one-shot importer, not a fresh start: on first launch, if the JSON document exists, import its rows
 and then remove it. It is testable without a device, because the JSON fixture is already in the test
-suite, and it must be idempotent — a crash mid-import must neither double the rows nor lose them.
+suite.
+
+Idempotency here is a mechanism rather than an aspiration, and worth naming because the sentence
+above can be satisfied by an implementation that still duplicates or drops rows. Each row goes in
+through the same fetch-by-id-then-insert that `add` uses (D2), so a row already stored is a no-op;
+and the document is deleted only *after* the insert has committed. A crash before the delete replays
+into no-ops on the next launch, and a crash before the commit leaves the document in place to retry.
+Neither order loses a row.
 
 This is where the `version` field finally earns the comment it already carries. Version 1 means "the
 JSON shape those tests describe", and the importer is what reads it.

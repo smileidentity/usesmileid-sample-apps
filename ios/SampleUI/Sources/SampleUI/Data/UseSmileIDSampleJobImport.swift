@@ -14,10 +14,14 @@ struct UseSmileIDSampleJobImport: Sendable {
   /// The rows to hand the store — empty on a fresh install, and nil where the document has to be
   /// left exactly where it is.
   ///
-  /// Nil is a version this build does not know how to read. Consuming it would delete rows a later
-  /// build could have imported, which is the one mistake here that cannot be undone.
+  /// Nil is a document this build must not consume: a version it cannot read, or one it could not
+  /// read this time. Either way, deleting it would lose rows a later launch could have imported,
+  /// which is the one mistake here that cannot be undone.
   func pending() -> [UseSmileIDSampleJobRecord]? {
-    guard let data = try? Data(contentsOf: url) else { return [] }
+    // Absent is a fresh install and safe. Present but unreadable is not the same thing: a
+    // permissions or I/O error must not read as "no rows" and let the caller delete the document.
+    guard FileManager.default.fileExists(atPath: url.path) else { return [] }
+    guard let data = try? Data(contentsOf: url) else { return nil }
     guard let file = try? JSONDecoder().decode(UseSmileIDSampleJobFile.self, from: data) else {
       // Not a document at all, so nothing is lost by clearing it out of the way.
       return []
