@@ -19,8 +19,9 @@ let package = Package(
     .target(
       name: "SampleUI",
       dependencies: [.product(name: "UseSmileID", package: "ios-spm")],
-      // Copied, not processed, so the faces keep the subdirectory the registrar enumerates.
-      resources: [.copy("Resources/Fonts")]
+      // Copied, not processed: the faces keep the subdirectory the registrar enumerates, and the
+      // notices land at the bundle root, where `Bundle.module.url(forResource:)` looks for them.
+      resources: [.copy("Resources/Fonts"), .copy("Resources/licenses.json")]
     ),
     .testTarget(name: "SampleUITests", dependencies: ["SampleUI"]),
     // Its own target so `ios/verify.sh` has a golden step it can name, and so the snapshot
