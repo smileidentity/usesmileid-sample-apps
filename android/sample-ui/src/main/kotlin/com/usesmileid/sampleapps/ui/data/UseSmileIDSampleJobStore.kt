@@ -58,11 +58,14 @@ class UseSmileIDSampleJobStore(
 
     /** Retains the deleted rows for [undoRemove]; only the most recent batch stays undoable. */
     suspend fun remove(ids: Set<String>) {
-        // A no-op removal must not discard an earlier batch that is still undoable.
         if (ids.isEmpty()) return
-        lastRemoved = dao.findAll(ids)
+        val taken = dao.findAll(ids)
+        // Guarded on what the removal actually took, not on what it was asked for: an id with no row
+        // would otherwise overwrite a batch that is still undoable and silently spend the undo.
+        if (taken.isEmpty()) return
+        lastRemoved = taken
         dao.delete(ids)
-        lastRemoved.size.takeIf { it > 0 }?.let { removalNotices.trySend(it) }
+        removalNotices.trySend(taken.size)
     }
 
     /**

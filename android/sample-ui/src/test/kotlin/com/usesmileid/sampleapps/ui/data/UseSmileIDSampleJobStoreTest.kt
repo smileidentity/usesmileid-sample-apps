@@ -61,6 +61,17 @@ class UseSmileIDSampleJobStoreTest {
         assertEquals(listOf("job-1"), store.jobs.first().map { it.id })
     }
 
+
+    /** The iOS store guarded this first; nothing reachable passes an unknown id, so it is hardening. */
+    @Test
+    fun `a removal that took no rows keeps the previous batch undoable`() = runTest {
+        val store = UseSmileIDSampleJobStore(FakeJobDao(), NoStatusSource)
+        store.add(job("job-1"))
+        store.remove(setOf("job-1"))
+        store.remove(setOf("job-never-stored"))
+        store.undoRemove()
+        assertEquals(listOf("job-1"), store.jobs.first().map { it.id })
+    }
     @Test
     fun `a status refresh rewrites the row it read`() = runTest {
         val store = UseSmileIDSampleJobStore(FakeJobDao(), NoStatusSource)
