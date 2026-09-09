@@ -8,6 +8,11 @@ REPO_ROOT="$(cd .. && pwd)"
 SCHEME="${SCHEME:-UseSmileIDSample}"
 DESTINATION="${DESTINATION:-platform=iOS Simulator,name=iPhone 17 Pro}"
 RESULT_BUNDLE="${RESULT_BUNDLE:-build/uitest.xcresult}"
+# The UI suite is the gate's whole cost — every other step together is under two minutes — and it is
+# launch-bound, one app launch per test. So it runs one clone per class. More clones than classes is
+# waste; a machine that swaps during a UI run has its tests killed by jetsam, which reads as a test
+# failure rather than a resource one, so set UI_CLONES=1 there to get the serial run back.
+UI_CLONES="${UI_CLONES:-4}"
 
 echo "==> design tokens are current"
 # SMILE_TOKENS_OPTIONAL downgrades a missing design system to a skip, for fork PRs that get no
@@ -75,6 +80,8 @@ xcodebuild test \
   -scheme UseSmileIDSampleUITests \
   -destination "$DESTINATION" \
   -resultBundlePath "$RESULT_BUNDLE" \
+  -parallel-testing-enabled YES \
+  -maximum-concurrent-test-simulator-destinations "$UI_CLONES" \
   -quiet
 
 echo "==> release build (the configuration consumption defects actually surface in)"

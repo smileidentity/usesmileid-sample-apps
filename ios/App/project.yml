@@ -85,4 +85,9 @@ schemes:
       targets:
         UseSmileIDSampleUITests: [test]
     test:
-      targets: [UseSmileIDSampleUITests]
+      # Parallelised by class, onto simulator clones. Two things fall out of it: the suite stops
+      # being the gate's whole cost, and each class gets its own data container — which is what the
+      # store bleed between classes actually needed, the rows being addressed by position.
+      targets:
+        - name: UseSmileIDSampleUITests
+          parallelizable: true
