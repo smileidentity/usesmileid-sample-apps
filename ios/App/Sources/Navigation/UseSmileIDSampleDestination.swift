@@ -97,6 +97,14 @@ struct UseSmileIDSampleDestination: View {
         // There is no auth to leave; the session is the local state a partner would expect gone.
         onSignOut: { app.clearSession() }
       ))
+    case .licenses:
+      LicensesScreen(
+        licenses: Self.notices,
+        onBack: { router.pop() },
+        // Ejects, as the legal rows above it do; no shipped component takes this path today.
+        onOpenUrl: { link in URL(string: link).map { UIApplication.shared.open($0) } }
+      )
+      .navigationBarHidden(true)
     default:
       UseSmileIDSampleSeat(name: String(describing: route))
     }
@@ -105,6 +113,9 @@ struct UseSmileIDSampleDestination: View {
   private static func product(_ id: String) -> UseSmileIDSampleProduct? {
     UseSmileIDSampleProduct(rawValue: id)
   }
+
+  /// Read once: the asset is generated into the binary, so it cannot change while the app runs.
+  private static let notices = UseSmileIDSampleLicenses.bundled()
 
   /// `UIPasteboard` has no clip label, so only the value crosses.
   private func copy(_: String, _ value: String) {

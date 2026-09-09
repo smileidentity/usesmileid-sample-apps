@@ -89,6 +89,24 @@ public enum UseSmileIDSampleTestIds {
     "\(tokenEnvironmentPrefix)_\(environment)"
   }
 
+  /// Component names carry dots, slashes and spaces, which no id may: they become underscores.
+  public static func licenseRow(_ component: String) -> String {
+    "\(licenseRowPrefix)_\(idSafe(component))"
+  }
+
+  public static func licenseText(_ component: String) -> String {
+    "\(licenseTextPrefix)_\(idSafe(component))"
+  }
+
+  public static func licenseLink(_ component: String) -> String {
+    "\(licenseLinkPrefix)_\(idSafe(component))"
+  }
+
+  /// ASCII-only, as the Compose twin's `[^A-Za-z0-9]` is: an accented letter is not id-safe either.
+  private static func idSafe(_ value: String) -> String {
+    String(value.map { $0.isASCII && ($0.isLetter || $0.isNumber) ? $0 : "_" })
+  }
+
   public static func scenarioItem(_ scenarioId: String) -> String {
     "\(scenarioItemPrefix)_\(scenarioId)"
   }
@@ -138,6 +156,13 @@ public enum UseSmileIDSampleTestIds {
   public static let newProfileEmail = "sample_new_profile_email"
   public static let newProfilePhone = "sample_new_profile_phone"
   public static let newProfileSave = "sample_new_profile_save"
+
+  public static let licensesScreen = "sample_licenses_screen"
+  /// Only reachable when the generated asset did not ship, which is the only way the list is empty.
+  public static let licensesEmpty = "sample_licenses_empty"
+  public static let licenseRowPrefix = "sample_license_row"
+  public static let licenseTextPrefix = "sample_license_text"
+  public static let licenseLinkPrefix = "sample_license_link"
 
   public static let scanTokenScreen = "sample_scan_token_screen"
   public static let tokenManualEntry = "sample_token_manual_entry"
@@ -200,6 +225,7 @@ public enum UseSmileIDSampleTestIds {
     profileSwitchSheet, newProfileSheet, newProfileName, newProfileFirstName, newProfileLastName,
     newProfileEmail, newProfilePhone, newProfileSave,
     sessionCard, sessionCountdown, sessionEndedBanner,
+    licensesScreen, licensesEmpty, licenseRowPrefix, licenseTextPrefix, licenseLinkPrefix,
     scanTokenScreen, tokenManualEntry, tokenPaste, tokenSimulate, tokenEnvironmentPrefix,
     scenarioDrawerButton, scenarioDrawer, scenarioItemPrefix, themeItemPrefix, signOut, versionLabel,
     resultCard, resultActiveScenario, resultActiveTheme, resultRoute, resultEnvironment,

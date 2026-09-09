@@ -11,7 +11,7 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 | 1 | **DONE 2026-08-31 — the pill won.** See §1. | The only open question that could invalidate finished work. | Ruled, built, and `TabView` gone. |
 | 2 | **DONE 2026-08-31 — the stack is merged.** | Three PRs deep is the practical limit: this repo squash-merges, so each merge turns the branches above into a `rebase --onto`, not a plain rebase. | `main` carries all three. |
 | 3 | **DONE 2026-09-01 — the harness runs in CI.** See §5. | Every new route was asserted only at the resolver. | `UseSmileIDSampleUITests` runs inside `verify.sh`; a link launches the app and the screen id is asserted. |
-| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets (2026-09-01), then profiles, profileConfig and both profile sheets (2026-09-02), then scanToken with the session model behind it (2026-09-02, §8 and §9), then the result card, the scenario drawer and the launch arguments that seed the card (2026-09-03, §10) are built. **The job store, the verifications list and the status refresh are built (2026-09-08, §12, §13 and §15)**, so `seedJobs` acts, the four waiting ids are applied and a processing row can be re-checked. **The flow host is built (2026-09-08, §16)**: the SDK is hosted in both presentations, the four recorders and `redirected` have their callers, `jobStore.add` has one too, and the launch-integrity opener runs. One screen remains — licenses, which waits on the generated notices asset, not the store. `autostart` and `holdCamera` follow the host in the same slice. | Settled order; do not relitigate it. | All sixteen screens exist. |
+| 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets (2026-09-01), then profiles, profileConfig and both profile sheets (2026-09-02), then scanToken with the session model behind it (2026-09-02, §8 and §9), then the result card, the scenario drawer and the launch arguments that seed the card (2026-09-03, §10) are built. **The job store, the verifications list and the status refresh are built (2026-09-08, §12, §13 and §15)**, so `seedJobs` acts, the four waiting ids are applied and a processing row can be re-checked. **The flow host is built (2026-09-08, §16)**: the SDK is hosted in both presentations, the four recorders and `redirected` have their callers, `jobStore.add` has one too, and the launch-integrity opener runs. **Licenses is built (2026-09-09, §17 and §18), so all sixteen exist**: the notices are generated from the products the app links, the gate fails a stale asset, and the screen renders them. `autostart` and `holdCamera` are what the host still owes. | Settled order; do not relitigate it. | **DONE — all sixteen screens exist.** |
 | 5 | **DONE 2026-09-01 — a growth check, not the one §2 proposed.** See §2. | Would have started biting at U4, when the 38 states land. | A component that stops growing at the largest content size fails the build. |
 
 **The stack that carried U0–U2 and the first two screens** — #40, #42, #43 — is merged. Each squash
@@ -699,6 +699,44 @@ contract with the Compose twin, so the fix is the clean slate, not the ids.
 method's default argument — `bundled(in: .module)` as a signature is rejected outright. The public
 entry point therefore takes no argument and the bundle-taking overload is internal, which is also
 what lets the test drive a bundle with no asset in it.
+
+## 18. The licenses screen — built 2026-09-09, and the sixteenth U3 screen
+
+The asset is §17; this is what renders it. Three components this app already has, assembled the way
+the Compose twin assembles them: a top app bar, a section label carrying the count, and one
+`UseSmileIDSampleSettingRow` per component with no leading tile and no chevron, because the
+component name is the content and the row expands rather than pushing. Flat rather than the rounded
+section cards, for the reason the twin gives: the screen has no design frame, and a card holding two
+hundred rows composes all of them at once. `LazyVStack` inside a `ScrollView`, so it does not.
+
+**One expanded at a time.** `expanded` is a single optional component name rather than a set: two
+copies of the Apache text at once is a screen nobody can read. Tapping the open row closes it.
+
+**The subtitle drops its separator where there is no version.** Android's is unconditionally
+`"$version · $licences"`, which is right for it — every Maven artifact has a version. Half of this
+app's rows are notices vendored inside another component, which are not separately pinned, so an
+unconditional separator would render " · MIT License". This is a divergence the schema forces, and a
+unit test pins both halves of it.
+
+**What the empty state actually is.** Not defensive: it is what a build that shipped without the
+generated asset shows, which is the only way the list is empty — the gate makes a stale asset a red
+build, but nothing stops a packaging change from dropping the resource. So it says the asset is
+missing rather than "no licences", and it is goldened. It is covered at the model too, where a
+bundle with no asset is one line, and in the UI test as a negative assertion: a run that reached the
+empty state would otherwise pass the screen-id assertion and look fine.
+
+**`onOpenUrl` is wired to nothing today, and is wired anyway.** No shipped component takes the
+nil-text path (§17), so the link row has no instance. It ejects to the browser, as the Terms and
+Privacy rows above it do, rather than being left a no-op that a future `OVERRIDES` entry would
+silently render dead.
+
+**What the simulator proved.** The route opens by deep link, the notices are listed, a row built
+from a real component name expands to its text, and the back control pops to the settings root — one
+test, because it is one journey. The row id is the load-bearing assertion: a screen that mounted
+without its asset passes a screen-id check and fails this one. Three goldens, light and dark, from a
+fixed fixture rather than the bundled asset, so a dependency bump does not redraw every baseline.
+Not covered here and not implied: nothing on this screen needs the phone lane, so unlike §16 it owes
+it nothing.
 
 ## Considered and rejected
 

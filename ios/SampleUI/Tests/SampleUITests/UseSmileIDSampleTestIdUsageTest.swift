@@ -10,7 +10,8 @@ final class UseSmileIDSampleTestIdUsageTest: XCTestCase {
     "userDetailsFieldPrefix", "countryOptionPrefix", "idTypeOptionPrefix",
     "profileRowPrefix", "profileConfigFieldPrefix", "tokenEnvironmentPrefix",
     "scenarioItemPrefix", "themeItemPrefix",
-    "jobRowPrefix", "filterChipPrefix", "filterCountPrefix", "selectionCheckboxPrefix"
+    "jobRowPrefix", "filterChipPrefix", "filterCountPrefix", "selectionCheckboxPrefix",
+    "licenseRowPrefix", "licenseTextPrefix", "licenseLinkPrefix"
   ]
 
   func testEveryDeclaredIdIsAppliedSomewhere() throws {
