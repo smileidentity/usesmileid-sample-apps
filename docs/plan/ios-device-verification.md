@@ -15,7 +15,7 @@ the list of what is missing underneath it.
 
 ## 1. What exists today
 
-`ios/verify.sh` runs three suites on the pinned iPhone 17 Pro simulator, and per-PR CI runs the same
+`ios/verify.sh` runs these suites on the pinned iPhone 17 Pro simulator, and per-PR CI runs the same
 script rather than repeating its steps:
 
 | Suite | Covers |
@@ -23,6 +23,7 @@ script rather than repeating its steps:
 | `UseSmileIDSampleNavigationUITests` (25) | the shell, both link levels, the pill, profiles, the token session, the scenario drawer, the result card |
 | `UseSmileIDSampleLaunchArgumentUITests` (9) | every argument that acts, plus the release-build probes gate |
 | `UseSmileIDSampleVerificationsUITests` (11) | select mode, both removal paths, the undo, the counts, the emptied-filter fallback, the bottom inset, both refresh paths |
+| `UseSmileIDSampleSettingsUITests` (5) | the shipped defaults, the capture mutex from the UI, a flip surviving a relaunch, a seeded switch persisting nothing, and sign-out clearing the forms |
 
 What that suite can already do, so a new check does not need a new mechanism: launch arguments as
 preconditions (`-seedJobs`, `-seedProfiles`, `-probes`, `-scenario`), a deep link to any route in
@@ -50,7 +51,7 @@ today, and it should be written down per flow:
 | `token-session.yaml` | `NavigationUITests` | covered, minus the scanned-token flow a camera would need |
 | `verifications.yaml`'s refresh steps | `VerificationsUITests` | covered against a fixture row, which needs no network |
 | `verifications.yaml` | `VerificationsUITests` | covered |
-| `settings.yaml` | — | blocked: the switches are not persisted on iOS yet, so there is no open-and-close-with-defaults walk to write |
+| `settings.yaml` | `SettingsUITests` | covered 2026-09-10, by preconditions rather than the Android flow's open-and-close walk: the switches persist now, and every launch in the suite passes them at their shipped defaults — `ios-port-hardening.md` §20 |
 | `sdk-flow.yaml` | `FlowUITests` | covered on the simulator up to the shutter (2026-09-08): deny, back-out, both presentations, the gate's three exits and a rapid re-entry. A **Success** and the interactive pop out of the flow are not provable here — see §2.3 |
 
 ### 2.2 The opener every device flow owes

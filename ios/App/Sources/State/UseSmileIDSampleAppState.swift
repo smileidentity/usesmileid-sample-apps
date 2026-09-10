@@ -14,7 +14,8 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// Read once at launch; `appLocale` reaches the shell's own formatting, not the SDK's strings.
   let launchArguments: UseSmileIDSampleLaunchArguments
 
-  @Published var settings = UseSmileIDSampleSettings()
+  /// Seeded from the store at launch and written back through it, so the six switches survive the process deaths the camera causes.
+  @Published private(set) var settings: UseSmileIDSampleSettings
 
   /// The profiles the app can act as; the active one names the products header and the settings summary.
   @Published var profiles: UseSmileIDSampleProfiles
@@ -73,6 +74,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     self.store = store
     self.jobStore = jobStore
     self.launchArguments = launchArguments
+    settings = store.settings
     profiles = UseSmileIDSampleProfiles.forLaunch(seedProfiles: launchArguments.seedProfiles)
     flowResult = UseSmileIDSampleFlowResult(
       scenario: launchArguments.scenario,
@@ -181,9 +183,12 @@ final class UseSmileIDSampleAppState: ObservableObject {
     reload()
   }
 
-  /// Sign out: the session goes with no ended marker, which would send the next run to the scanner.
-  func clearSession() {
+  /// Sign out: the session goes with no ended marker, which would send the next run to the scanner, and the forms go with it because they hold PII.
+  func signOut() {
     store.clearTokenSession()
+    userDetails = UseSmileIDSampleUserDetails()
+    rememberDetails = false
+    idDetails = UseSmileIDSampleIdDetails()
     reload()
   }
 
@@ -225,9 +230,9 @@ final class UseSmileIDSampleAppState: ObservableObject {
     useSmileIDSampleAvatarColor(profileIndex: profiles.activeIndex)
   }
 
-  /// Goes through the settings mutex, so agent mode and enhanced liveness cannot both end up on.
+  /// Written through the store, which holds the mutex, so agent mode and enhanced liveness cannot both end up on.
   func change(_ setting: UseSmileIDSampleSetting, to enabled: Bool) {
-    settings = settings.with(setting, enabled)
+    settings = store.setSetting(setting, enabled)
   }
 
   func setUserField(_ field: UseSmileIDSampleUserField, to value: String) {

@@ -30,12 +30,43 @@ public protocol UseSmileIDSampleRecordStorage: AnyObject {
   func write(_ data: Data?)
 }
 
-/// The token session, in the Keychain. The token is the whole record — handle, deadline and bindings decode from it — so nothing can disagree with it.
+/// Everything the sample persists: the settings the SDK flow is composed from, and the token session. Each record has its own home — the token is a credential, the switches are not.
 public final class UseSmileIDSampleStore {
   private let storage: UseSmileIDSampleRecordStorage
+  private let settingsStorage: UseSmileIDSampleSettingsStorage
 
-  public init(storage: UseSmileIDSampleRecordStorage = UseSmileIDSampleKeychainStorage()) {
+  /// The six switches, read once at construction: a value passed at launch outranks the written one for the life of the process, so re-reading would answer a write with the launch's value.
+  public private(set) var settings: UseSmileIDSampleSettings
+
+  public init(
+    storage: UseSmileIDSampleRecordStorage = UseSmileIDSampleKeychainStorage(),
+    settingsStorage: UseSmileIDSampleSettingsStorage = UseSmileIDSampleDefaultsStorage()
+  ) {
     self.storage = storage
+    self.settingsStorage = settingsStorage
+    let defaults = UseSmileIDSampleSettings()
+    // Absent rows are today's defaults, so a default the design changes still reaches a device that has used the screen.
+    settings = UseSmileIDSampleSettings(
+      enhancedSmartSelfie: settingsStorage.flag(.enhancedSmartSelfie) ?? defaults.enhancedSmartSelfie,
+      agentMode: settingsStorage.flag(.agentMode) ?? defaults.agentMode,
+      darkMode: settingsStorage.flag(.darkMode) ?? defaults.darkMode,
+      consentStep: settingsStorage.flag(.consentStep) ?? defaults.consentStep,
+      instructionsStep: settingsStorage.flag(.instructionsStep) ?? defaults.instructionsStep,
+      previewStep: settingsStorage.flag(.previewStep) ?? defaults.previewStep
+    ).normalised()
+  }
+
+  /// Writes through the settings model, so the capture mutex moves the other row in the same edit; returns the result, which is also what the store now reads.
+  @discardableResult
+  public func setSetting(_ setting: UseSmileIDSampleSetting, _ enabled: Bool) -> UseSmileIDSampleSettings {
+    let current = settings
+    let updated = current.with(setting, enabled)
+    // Only what moved: writing all six would freeze today's defaults onto the device.
+    for row in UseSmileIDSampleSetting.allCases where updated[row] != current[row] {
+      settingsStorage.setFlag(row, updated[row])
+    }
+    settings = updated
+    return updated
   }
 
   /// Both halves from one read, so the UI can never hold the token from one write and the marker from the next.
@@ -123,6 +154,69 @@ public final class UseSmileIDSampleKeychainStorage: UseSmileIDSampleRecordStorag
       kSecAttrService as String: service,
       kSecAttrAccount as String: "token_session"
     ]
+  }
+}
+
+public extension UseSmileIDSampleSetting {
+  /// The Android store's own key name, so a row reads the same in both and automation can seed one at launch.
+  var storageKey: String {
+    switch self {
+    case .enhancedSmartSelfie: "enhanced_smart_selfie"
+    case .agentMode: "agent_mode"
+    case .darkMode: "dark_mode"
+    case .consentStep: "consent_step"
+    case .instructionsStep: "instructions_step"
+    case .previewStep: "preview_step"
+    }
+  }
+}
+
+/// Where the six switches live: `UserDefaults` in an app, memory in a test. Read per row, since an absent row is today's default rather than `false`.
+public protocol UseSmileIDSampleSettingsStorage: AnyObject {
+  func flag(_ key: String) -> Bool?
+  func setFlag(_ key: String, _ value: Bool)
+}
+
+public extension UseSmileIDSampleSettingsStorage {
+  /// By row rather than by key, so a caller never spells one.
+  func flag(_ setting: UseSmileIDSampleSetting) -> Bool? {
+    flag(setting.storageKey)
+  }
+
+  func setFlag(_ setting: UseSmileIDSampleSetting, _ value: Bool) {
+    setFlag(setting.storageKey, value)
+  }
+}
+
+/// The switches, in the app's own defaults: not credentials, and the app container is what an uninstall clears.
+public final class UseSmileIDSampleDefaultsStorage: UseSmileIDSampleSettingsStorage {
+  private let defaults: UserDefaults
+
+  public init(defaults: UserDefaults = .standard) {
+    self.defaults = defaults
+  }
+
+  public func flag(_ key: String) -> Bool? {
+    defaults.object(forKey: key) == nil ? nil : defaults.bool(forKey: key)
+  }
+
+  public func setFlag(_ key: String, _ value: Bool) {
+    defaults.set(value, forKey: key)
+  }
+}
+
+/// The switches held for one process, for tests and for a host that wants no persistence.
+public final class UseSmileIDSampleMemorySettingsStorage: UseSmileIDSampleSettingsStorage {
+  private var flags: [String: Bool] = [:]
+
+  public init() {}
+
+  public func flag(_ key: String) -> Bool? {
+    flags[key]
+  }
+
+  public func setFlag(_ key: String, _ value: Bool) {
+    flags[key] = value
   }
 }
 

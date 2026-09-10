@@ -119,7 +119,8 @@ if runs ui; then
   # And the app's own store, because the suite addresses rows by position: `seedJobs` re-adds a row an
   # earlier test removed with a freshly computed date, so a store surviving an earlier session makes
   # the processing row the newest and inverts two verifications tests. CI never sees this one either,
-  # its simulator being fresh — so locally the run has to start from one too.
+  # its simulator being fresh — so locally the run has to start from one too. It takes the persisted
+  # settings with it, the container holding both; each launch seeds the switches regardless.
   xcrun simctl uninstall booted com.usesmileid.sample.ios >/dev/null 2>&1 || true
   # A UI-test failure is a picture, not a message: without the bundle a red CI run cannot be read.
   # One bundle per class, or four jobs writing one path would overwrite each other's evidence.
