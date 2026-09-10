@@ -15,6 +15,7 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 | 5 | **DONE 2026-09-01 — a growth check, not the one §2 proposed.** See §2. | Would have started biting at U4, when the 41 states land. | A component that stops growing at the largest content size fails the build. |
 | 6 | **U4 — DONE 2026-09-10. See §19.** | Every state in `spec/screens.json` is now recorded or exempt with a reason, and a test fails if that stops being true. | `UseSmileIDSampleScreenStateGoldenTest` is green and falsified. |
 | 7 | **Settings persistence — DONE 2026-09-10. See §20.** | The last functional parity gap, and `android/maestro/settings.yaml` had no iOS counterpart without it. | The six switches survive a relaunch, the UI suite declares them per launch, and `UseSmileIDSampleSettingsUITests` runs in the lane. |
+| 8 | **The device lane, then the release lane.** `ios-device-verification.md` §2.4 first (no iOS run has ever been recorded, so the lane's pass rate is unknown), then §2.3. Publishing has no plan doc yet; §1 of the audit is that the app is ad-hoc signed, has no icon, no privacy manifest and no export-compliance declaration. | The port is functionally complete, so what is left is proving it on hardware and shipping it. | An iOS run appears in the workspace ledger; then a build installs on a phone. |
 
 **The stack that carried U0–U2 and the first two screens** — #40, #42, #43 — is merged. Each squash
 turned the branches above it into a `rebase --onto`, which is the cost the three-deep limit buys.
@@ -788,6 +789,12 @@ neutral rather than assumed: with only the bar changed, the run failed exactly o
 and nine screen AX baselines and **no existing light or dark baseline at all**, which is the evidence that the
 non-accessibility layout is untouched.
 
+**Android did not follow, and that is the ruling rather than a gap.** Its bar controls are `dp`, so
+they do not scale with the font scale and the title keeps a 233 dp column at 2× — measured across
+all thirteen shipped titles, every one wrapping on word boundaries. The stacked layout is a remedy
+for a cause Android does not have, so the two diverge at accessibility sizes on purpose; what
+travels is the guarantee, which Android holds as a predicate rather than a paragraph.
+
 ### Reading the baselines found two things no assertion could, which is the point of reading them
 
 - **`DataFieldRow` never got the AX stack**, so on the details screen at AX5 the label and value
@@ -811,16 +818,27 @@ non-accessibility layout is untouched.
   (`ui-work-plan.md` §5.1) and a hex is not ours to change, so it goes there rather than into a fix.
 - **A day header older than yesterday prints its date twice** — "TUE, 14 JUL 2026 · TUE, 14 JUL
   2026" — because the relative label falls back to the absolute one. Pre-existing, and the Compose
-  twin composes `DateGroupHeader` the same way, so this is a four-app copy question like the
-  `Hide from List` backticks below: change it in all four or not at all.
+  twin composes `DateGroupHeader` the same way. **Re-classified by Android's U4: a defect, not a
+  copy question.** `spec/components.json` specifies the format as "relative *word* plus absolute
+  date", so with no word there is nothing to put left of the dot and the header should be the date
+  alone. It needs no owner, only one change touching both apps with both `verifications` baselines
+  re-recorded — carried in `ui-work-plan.md` §5 item 16b.
 
-### The parity question this raises rather than answers
+### The parity question this raised — answered by Android's U4, 2026-09-10
 
-Android's `screens.json` reference is a doc comment, not an assertion, and **Android still owes U4**.
-Whether it adopts the same enforcement belongs to that PR, not to this one: its goldens are Roborazzi
-and its natural shape may be a `@Preview` inventory rather than a name table. What does not vary is
-the requirement — a state added to `spec/screens.json` must fail some platform's build — and iOS is
-now the reference for one way of meeting it. Flutter and Expo inherit the question with their apps.
+Android took the name table too, not the `@Preview` inventory this section expected: the repo has
+no previews at all, and preview-scanner names a baseline from its function's full path, so moving a
+file would rename every baseline it owns. `ScreenStateGoldenTest` mirrors this one and adds a check
+iOS does not have — that both the light and the dark baseline are on disk — while keeping the source
+parse, which is the only limb that catches a rename.
+
+**The exemption sets are not the same, and a port must not copy either.** Android exempts four where
+iOS exempts five, because two of iOS's reasons are iOS's own: a Compose test can hold a pointer
+mid-drag, so `verifications.swipeToDelete` has a real half-open row, and it can hold the clock 250 ms
+past focus, so `userDetails.editing` has a real caret. `verifications.refreshing` stays exempt on
+both, for opposite reasons — SwiftUI draws the indicator itself, and the Compose list has no pull
+affordance at all. Reasoning in `android-u4-screen-state-goldens.md`; Flutter and Expo inherit the
+question, not either answer.
 
 ## 20. The Settings switches persist — ruled and built 2026-09-10
 
