@@ -7,9 +7,9 @@ not started.
 verifications, verificationDetails, userDetails, kycIdForm, both picker sheets, profiles,
 profileConfig, both profile sheets, scanToken, the SDK flow host and licenses, with the token session
 model, its Keychain store, the clock, the verification store and the generated third-party notices
-behind them). The
-type ramp, the stopgap values and the DM Sans faces are generated for SwiftUI, the design's marks are
-generated as SwiftUI shapes, `ios/verify.sh` gates tokens, icons, format, unit tests, goldens, the
+behind them). The six Settings switches persist, so a relaunch composes the SDK flow from what the
+last run chose — `ios-port-hardening.md` §20. The type ramp, the stopgap values and the DM Sans
+faces are generated for SwiftUI, the design's marks are generated as SwiftUI shapes, `ios/verify.sh` gates tokens, icons, format, unit tests, goldens, the
 shell's route table and the release build, and every component has goldens in light and dark. U4
 adds a golden per `spec/screens.json` state, light and dark, and the test that fails when a state
 stops having one — `ios-port-hardening.md` §19.

@@ -844,7 +844,9 @@ What each alternative would have cost:
   uninstall, which is §8's one recorded asymmetry, so `verify.sh`'s `simctl uninstall` would stop
   resetting the switches and the only route back to defaults would be app code behind a new launch
   argument. `UserDefaults` lives in the app's data container, which the uninstall deletes: the clean
-  slate the port already pays for now covers the switches for free. Measured, not assumed — see D3.
+  slate the port already pays for now covers the switches for free. Measured after a real suite run —
+  the container held `Library/Preferences/com.usesmileid.sample.ios.plist` with exactly the three rows
+  that run had moved, and `simctl uninstall` left `get_app_container` answering "no such file".
 - **One write carrying both records.** The invariant that needs a single write is *inside* the session
   record (a live token and an ended marker must never come from different writes, §8); the settings'
   own invariant is *inside* the settings record. Nothing spans the two, so one write across both would
@@ -866,12 +868,21 @@ asks for the mutex "where settings are persisted rather than in the screen", so 
 placement rather than a preference, and `UseSmileIDSampleSettingsPersistenceTest` is the Android
 behaviour it is held to, test for test.
 
-It **returns** the settings it wrote, and the app state takes that value rather than re-reading the
-store. That is not decoration: **a value passed at launch shadows a later write.** Measured 2026-09-10
-with a scratch binary — with `-agent_mode true` in the argument domain, `set(false, forKey:)` lands in
-the persistent domain and `object(forKey:)` still answers `true`, because the argument domain outranks
-it for the life of the process. A store re-read after every write would therefore have left a seeded
-row's switch looking stuck under automation and nowhere else, which is the worst shape a bug can have.
+**The six rows are read once, at construction, and the store answers from what it last wrote.** The
+first shape of this — re-read the rows on every access — is wrong, because **a value passed at launch
+outranks a written one for the life of the process.** Measured twice on 2026-09-10: with `-agent_mode
+true` in the argument domain a scratch binary's `set(false, forKey:)` lands in the persistent domain and
+`object(forKey:)` still answers `true`; then the UI suite failed on it for real. Two taps under a seeded
+launch — agent mode on, then enhanced liveness on — left the *second* tap computing its mutex from the
+launch's values rather than from what the first tap had written, so the pair persisted was not the pair
+the screen showed. Reading the rows once removes the whole class: the launch seeds the store, and after
+that the store is the only writer and the only reader of its own state, exactly as the persisted session
+half is.
+
+What that costs, so it is not mistaken for a cache: a second `UseSmileIDSampleStore` in one process
+would not see the first's writes. There is one, held by the app state for the life of the app, and the
+tests construct a fresh store where they mean a fresh launch — which is what makes the relaunch tests
+say something.
 
 ### D3 — a relaunch inherits the switches, so every UI launch declares them
 
