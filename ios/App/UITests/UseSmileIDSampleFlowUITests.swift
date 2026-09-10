@@ -129,7 +129,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     // A plain launch first, to clear a session a previous test left; the argument's own launch lands where the pill is gone.
     launch()
     app.terminate()
-    app.launchArguments = ["-autostart", "smartSelfieEnrollment"]
+    app.launchArguments = useSmileIDSampleSettingsSeed + ["-autostart", "smartSelfieEnrollment"]
     app.launch()
     XCTAssertTrue(
       element("sample_user_details_screen").waitForExistence(timeout: 10),
@@ -232,7 +232,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
 
   /// The session outlives an uninstall, so every launch clears it: an ended marker sends every later run to the scanner.
   private func launch(arguments: [String] = []) {
-    app.launchArguments = arguments
+    app.launchArguments = useSmileIDSampleSettingsSeed + arguments
     app.launch()
     atATabRoot()
     guard element("sample_session_card").exists || element("sample_session_ended_banner").exists else { return }

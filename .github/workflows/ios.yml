@@ -40,6 +40,8 @@ jobs:
             class: UseSmileIDSampleVerificationsUITests
           - phase: ui
             class: UseSmileIDSampleLaunchArgumentUITests
+          - phase: ui
+            class: UseSmileIDSampleSettingsUITests
     # macos-26 with the iPhone 17 Pro simulator, matching ios/verify.sh's default and the SDK repo's
     # own snapshot gate. Goldens are pixel comparisons, so recording and verifying have to happen on
     # one runtime — a runner or simulator that drifts from the local default reds the lane for

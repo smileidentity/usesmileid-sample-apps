@@ -9,7 +9,7 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
     continueAfterFailure = false
     app = XCUIApplication()
     // Rows are the precondition, not the subject; re-seeding is a no-op, so a row an earlier test hid is back.
-    app.launchArguments = ["-seedJobs", "true"]
+    app.launchArguments = useSmileIDSampleSettingsSeed + ["-seedJobs", "true"]
     app.launch()
     XCTAssertTrue(element("sample_nav_settings").waitForExistence(timeout: 10))
     element("sample_nav_verifications").tap()

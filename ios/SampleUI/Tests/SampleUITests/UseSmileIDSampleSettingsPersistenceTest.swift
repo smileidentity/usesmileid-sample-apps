@@ -3,62 +3,65 @@ import XCTest
 
 final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
   private var rows: UseSmileIDSampleMemorySettingsStorage!
-  private var store: UseSmileIDSampleStore!
 
   override func setUp() {
     super.setUp()
     rows = UseSmileIDSampleMemorySettingsStorage()
-    store = UseSmileIDSampleStore(storage: UseSmileIDSampleMemoryStorage(), settingsStorage: rows)
   }
 
   func testTheMutexWritesBothRowsNotJustTheOneThatWasTapped() {
+    let store = makeStore()
+
     let written = store.setSetting(.agentMode, true)
 
     XCTAssertTrue(written.agentMode)
     XCTAssertFalse(written.enhancedSmartSelfie, "agent mode must take enhanced liveness with it")
-    XCTAssertEqual(rows.flag(Self.enhancedSmartSelfie), false)
-    XCTAssertEqual(store.settings, written, "the returned settings must be the stored ones")
+    XCTAssertEqual(rows.flag(.enhancedSmartSelfie), false)
+    XCTAssertEqual(store.settings, written, "the store must read back its own write")
   }
 
   func testARowThatDidNotMoveIsNeverWritten() {
-    store.setSetting(.consentStep, false)
+    makeStore().setSetting(.consentStep, false)
 
-    XCTAssertEqual(rows.flag(Self.consentStep), false)
+    XCTAssertEqual(rows.flag(.consentStep), false)
     // Writing all six would freeze today's defaults onto the device.
-    XCTAssertNil(rows.flag(Self.previewStep))
-    XCTAssertNil(rows.flag(Self.agentMode))
+    XCTAssertNil(rows.flag(.previewStep))
+    XCTAssertNil(rows.flag(.agentMode))
   }
 
   func testSettingARowToTheValueItAlreadyHoldsWritesNothing() {
-    store.setSetting(.previewStep, true)
+    makeStore().setSetting(.previewStep, true)
 
-    XCTAssertNil(rows.flag(Self.previewStep))
+    XCTAssertNil(rows.flag(.previewStep))
   }
 
   func testAnAbsentRowReadsAsTodaysDefault() {
-    XCTAssertEqual(store.settings, UseSmileIDSampleSettings())
+    XCTAssertEqual(makeStore().settings, UseSmileIDSampleSettings())
 
-    store.setSetting(.darkMode, true)
+    makeStore().setSetting(.darkMode, true)
 
-    XCTAssertEqual(store.settings, UseSmileIDSampleSettings(darkMode: true))
+    XCTAssertEqual(makeStore().settings, UseSmileIDSampleSettings(darkMode: true))
   }
 
   func testAStoredPairTheSdkRefusesIsNormalisedOnRead() {
-    rows.setFlag(Self.agentMode, true)
-    rows.setFlag(Self.enhancedSmartSelfie, true)
+    rows.setFlag(.agentMode, true)
+    rows.setFlag(.enhancedSmartSelfie, true)
 
-    XCTAssertTrue(store.settings.agentMode)
-    XCTAssertFalse(store.settings.enhancedSmartSelfie, "the pair the SDK refuses must be repaired on read")
+    let settings = makeStore().settings
+
+    XCTAssertTrue(settings.agentMode)
+    XCTAssertFalse(settings.enhancedSmartSelfie, "the pair the SDK refuses must be repaired on read")
   }
 
   func testEveryRowSurvivesARoundTripUnderItsOwnKey() {
+    let store = makeStore()
     for setting in UseSmileIDSampleSetting.allCases {
       store.setSetting(setting, !UseSmileIDSampleSettings()[setting])
     }
 
-    // All six read back at once: two rows sharing a key would pass row by row and fail here.
+    // Read back through a second store, all six at once: two rows sharing a key pass row by row and fail here.
     XCTAssertEqual(
-      store.settings,
+      makeStore().settings,
       UseSmileIDSampleSettings(
         enhancedSmartSelfie: false,
         agentMode: true,
@@ -71,57 +74,60 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
     XCTAssertEqual(Self.keys.count, UseSmileIDSampleSetting.allCases.count, "a row was added with no key here")
   }
 
+  func testTheKeysAreTheAndroidStoresOwn() {
+    XCTAssertEqual(UseSmileIDSampleSetting.allCases.map(\.storageKey), Self.keys)
+  }
+
   func testAValueGivenAtLaunchSeedsTheReadAndPersistsNothing() throws {
     let suite = "usesmileid_sample_settings_test"
     let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
     let previous = defaults.volatileDomain(forName: UserDefaults.argumentDomain)
-    defer {
-      defaults.setVolatileDomain(previous, forName: UserDefaults.argumentDomain)
-      defaults.removePersistentDomain(forName: suite)
-    }
-    let launched = UseSmileIDSampleStore(
-      storage: UseSmileIDSampleMemoryStorage(),
-      settingsStorage: UseSmileIDSampleDefaultsStorage(defaults: defaults)
+    defer { Self.reset(defaults, suite, previous) }
+    defaults.setVolatileDomain(
+      [UseSmileIDSampleSetting.agentMode.storageKey: "true", UseSmileIDSampleSetting.enhancedSmartSelfie.storageKey: "false"],
+      forName: UserDefaults.argumentDomain
     )
-    defaults.setVolatileDomain([Self.agentMode: "true", Self.enhancedSmartSelfie: "false"], forName: UserDefaults.argumentDomain)
+
+    let launched = makeStore(defaults)
 
     XCTAssertTrue(launched.settings.agentMode, "a launch value must seed the read")
     XCTAssertFalse(launched.settings.enhancedSmartSelfie)
     XCTAssertNil(
-      defaults.persistentDomain(forName: suite)?[Self.agentMode],
+      defaults.persistentDomain(forName: suite)?[UseSmileIDSampleSetting.agentMode.storageKey],
       "the seed is volatile: a launch must persist nothing"
     )
   }
 
-  func testAWriteIsShadowedByALaunchValueWhichIsWhyTheStoreReturnsWhatItWrote() throws {
+  func testALaunchValueDoesNotShadowALaterWriteWhichIsWhyTheRowsAreReadOnce() throws {
     let suite = "usesmileid_sample_settings_shadow_test"
     let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
     let previous = defaults.volatileDomain(forName: UserDefaults.argumentDomain)
-    defer {
-      defaults.setVolatileDomain(previous, forName: UserDefaults.argumentDomain)
-      defaults.removePersistentDomain(forName: suite)
-    }
-    let launched = UseSmileIDSampleStore(
-      storage: UseSmileIDSampleMemoryStorage(),
-      settingsStorage: UseSmileIDSampleDefaultsStorage(defaults: defaults)
-    )
-    defaults.setVolatileDomain([Self.darkMode: "true"], forName: UserDefaults.argumentDomain)
+    defer { Self.reset(defaults, suite, previous) }
+    let key = UseSmileIDSampleSetting.darkMode.storageKey
+    defaults.setVolatileDomain([key: "true"], forName: UserDefaults.argumentDomain)
+    let launched = makeStore(defaults)
 
-    let written = launched.setSetting(.darkMode, false)
+    launched.setSetting(.darkMode, false)
 
-    XCTAssertFalse(written.darkMode, "the caller must see what was written")
-    XCTAssertTrue(launched.settings.darkMode, "the argument domain outranks the write for this launch")
-    XCTAssertEqual(defaults.persistentDomain(forName: suite)?[Self.darkMode] as? Bool, false)
+    XCTAssertFalse(launched.settings.darkMode, "the store must answer with its own write")
+    XCTAssertEqual(defaults.persistentDomain(forName: suite)?[key] as? Bool, false)
+    // Measured: the argument domain outranks the persistent one, so a re-read would still say true.
+    XCTAssertTrue(makeStore(defaults).settings.darkMode)
   }
 
-  private static let enhancedSmartSelfie = "enhanced_smart_selfie"
-  private static let agentMode = "agent_mode"
-  private static let darkMode = "dark_mode"
-  private static let consentStep = "consent_step"
-  private static let instructionsStep = "instructions_step"
-  private static let previewStep = "preview_step"
+  private func makeStore(_ defaults: UserDefaults? = nil) -> UseSmileIDSampleStore {
+    UseSmileIDSampleStore(
+      storage: UseSmileIDSampleMemoryStorage(),
+      settingsStorage: defaults.map(UseSmileIDSampleDefaultsStorage.init) ?? rows
+    )
+  }
+
+  private static func reset(_ defaults: UserDefaults, _ suite: String, _ previous: [String: Any]) {
+    defaults.setVolatileDomain(previous, forName: UserDefaults.argumentDomain)
+    defaults.removePersistentDomain(forName: suite)
+  }
 
   private static let keys = [
-    enhancedSmartSelfie, agentMode, darkMode, consentStep, instructionsStep, previewStep
+    "enhanced_smart_selfie", "agent_mode", "dark_mode", "consent_step", "instructions_step", "preview_step"
   ]
 }
