@@ -1,8 +1,6 @@
 import Foundation
 
-/// A linked session: the token a run submits under, held as an absolute deadline because a counter
-/// restarts at the wrong value after process death. Built only by ``UseSmileIDSampleTokenDecoder``,
-/// so a session cannot exist without a token that decodes.
+/// A linked session, held as an absolute deadline because a counter restarts wrong after process death.
 public struct UseSmileIDSampleTokenSession: Equatable, Sendable, CustomStringConvertible {
   /// A display handle — the token's `jti`, else a digest of it. Never a prefix of the credential.
   public let id: String
@@ -10,9 +8,7 @@ public struct UseSmileIDSampleTokenSession: Equatable, Sendable, CustomStringCon
   public let issuedAt: Date
   public let expiresAt: Date
   public let bindings: UseSmileIDSampleTokenBindings
-  /// The partner the token was minted for, from its own `partner_id` claim. The authority for a
-  /// submission's identity: sending a locally configured id alongside a real token is how a signed
-  /// request gets a 401. Never logged — a partner id is on this repo's never-commit list.
+  /// The partner from the token's own claim, never a locally configured id, which is how a signed request gets a 401. Never logged.
   public let partnerId: String?
   /// From the token's own `api_url` claim. Non-nil by construction: the decoder refuses a token it cannot place.
   public let environment: UseSmileIDSampleEnvironment
@@ -43,10 +39,7 @@ public struct UseSmileIDSampleTokenSession: Equatable, Sendable, CustomStringCon
     now >= expiresAt
   }
 
-  /// 1 on a fresh session down to 0 on an expired one, over the token's own span, for the nav bar's
-  /// ring. The decoder rejects a token whose `exp` is not after its `iat`, so the span is positive by
-  /// construction — but this initialiser is public, and a zero span would divide to NaN, which a
-  /// clamp passes straight through to the ring.
+  /// 1 fresh down to 0 expired, over the token's own span; the zero-span guard is for the public initialiser, since NaN survives a clamp.
   public func progress(at now: Date) -> Double {
     let span = max(expiresAt.timeIntervalSince(issuedAt), 0.001)
     return min(max(remaining(at: now) / span, 0), 1)
@@ -58,8 +51,7 @@ public struct UseSmileIDSampleTokenSession: Equatable, Sendable, CustomStringCon
   }
 }
 
-/// `m:ss`, growing an hours part when the span needs one — an 8h token reads 7:59:12, not 479:12.
-/// Floors rather than rounds, so it never shows time that has gone.
+/// `m:ss`, growing an hours part when the span needs one (7:59:12, not 479:12); floors, so it never shows time that has gone.
 public func useSmileIDSampleCountdown(_ remaining: TimeInterval) -> String {
   let total = Int(max(0, remaining).rounded(.down))
   let hours = total / 3600

@@ -1,18 +1,14 @@
 import Foundation
 import SwiftData
 
-/// The submitted verifications, in SwiftData: the SDK delivers a result once. An `actor`, so a write
-/// is atomic without a lock, launched from an unstructured `Task` so it outlives the screen that
-/// asked. Rows are written one at a time, so a row that cannot be read is one row rather than all of
-/// them — which is what the JSON document this replaced could not promise.
+/// The submitted verifications, in SwiftData. An `actor`, so a write is atomic without a lock, and one bad row is one row rather than all of them.
 public actor UseSmileIDSampleJobStore {
   private let open: @Sendable () -> ModelContainer?
   private var opened: ModelContext?
   private let source: UseSmileIDSampleJobStatusSource
   private let legacy: UseSmileIDSampleJobImport?
 
-  /// The pre-SwiftData document is read once, on first use rather than in `init`: nothing touches
-  /// the file system on the main thread.
+  /// Read once, on first use rather than in `init`: nothing touches the file system on the main thread.
   private var importedLegacy = false
 
   /// In flight per job id, so an entry refresh and a pull cannot double-request the same row.
@@ -28,8 +24,7 @@ public actor UseSmileIDSampleJobStore {
   /// Batch sizes, consumed once: the details screen navigates away before it could confirm one.
   public let removals: AsyncStream<Int>
 
-  /// `importingLegacyFileAt` is the JSON document a pre-SwiftData version left behind; nil is a
-  /// store with no history to inherit, which is every test that is not about the import itself.
+  /// `importingLegacyFileAt` is the pre-SwiftData document; nil is a store with no history to inherit.
   public init(
     container: ModelContainer,
     source: UseSmileIDSampleJobStatusSource,
@@ -51,13 +46,9 @@ public actor UseSmileIDSampleJobStore {
     removalContinuation = continuation
   }
 
-  /// The app's store, and the rows a previous version left in a JSON document.
-  ///
-  /// A container that cannot be opened degrades to memory rather than trapping: the list then reads
-  /// empty, which the screen says out loud, and the app still runs. Crashing on launch is worse.
+  /// The app's store. A container that cannot open degrades to memory rather than trapping, because crashing on launch is worse.
   public init(source: UseSmileIDSampleJobStatusSource) {
-    // The closure, not the container: opening the store is file I/O and this initialiser runs where
-    // the app builds its state, which is the main thread at launch.
+    // The closure, not the container: opening the store is file I/O and this runs on the main thread at launch.
     self.init(
       opening: { try? ModelContainer.useSmileIDSampleJobs() },
       source: source,
@@ -150,8 +141,7 @@ public actor UseSmileIDSampleJobStore {
     return commit()
   }
 
-  /// The environment and the partner come from the row, never the caller. Nil when one is already in
-  /// flight, and throws only on cancellation, so leaving mid-request is not a failure.
+  /// The environment and partner come from the row, never the caller; throws only on cancellation.
   public func refresh(
     _ jobId: String,
     live: UseSmileIDSampleTokenSession?,
@@ -198,8 +188,7 @@ public actor UseSmileIDSampleJobStore {
     entities().map(\.record)
   }
 
-  /// One row, asked of SQLite rather than filtered in memory: every refresh and every `find` would
-  /// otherwise load the whole history to look at one of it.
+  /// One row, asked of SQLite rather than filtered in memory, which would load the whole history.
   private func entity(_ jobId: String) -> UseSmileIDSampleJobEntity? {
     importLegacyRowsIfNeeded()
     var descriptor = FetchDescriptor<UseSmileIDSampleJobEntity>(predicate: #Predicate { $0.id == jobId })
@@ -213,8 +202,7 @@ public actor UseSmileIDSampleJobStore {
     return (try? context().fetch(FetchDescriptor<UseSmileIDSampleJobEntity>())) ?? []
   }
 
-  /// Once, and only where a document was actually left behind. The insert ignores an id already
-  /// stored, so a crash between committing and deleting the file repeats the import harmlessly.
+  /// Once, and only where a document was left behind; the insert ignores a stored id, so a crash mid-import repeats harmlessly.
   private func importLegacyRowsIfNeeded() {
     guard !importedLegacy else { return }
     importedLegacy = true
@@ -224,8 +212,7 @@ public actor UseSmileIDSampleJobStore {
     legacy.done()
   }
 
-  /// The one write path: the rows, then everyone reading the list. A failed commit leaves the store
-  /// as it was and tells the caller, because a silent failure here loses a partner's history.
+  /// The one write path; a failed commit leaves the store as it was and tells the caller.
   @discardableResult
   private func commit() -> Bool {
     do {
