@@ -10,6 +10,10 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     app = XCUIApplication()
   }
 
+  /// Set by a test that runs on a session someone SCANNED: signing that out costs a real token and
+  /// a trip to the Portal, where every other test's session was minted locally by Simulate.
+  private var preservesSession = false
+
   /// The session and the pushed stack both outlive this class, so they are left as found or the next class inherits them.
   override func tearDown() {
     // Only when it is actually rotated: a killed runner never reaches the rotating test's `defer`, and the simulator keeps it.
@@ -18,7 +22,8 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     }
     if app.state == .runningForeground {
       atATabRoot()
-      if element("sample_session_card").exists || element("sample_session_ended_banner").exists {
+      if !preservesSession,
+         element("sample_session_card").exists || element("sample_session_ended_banner").exists {
         signOut()
         element("sample_nav_products").tap()
       }
@@ -239,6 +244,8 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
       "needs a token already scanned onto the device; nothing here mints one"
     )
     // Deliberately not `launch()`: that signs out any session, which is the one thing this needs.
+    // The teardown is told to leave it too, or one run costs the token and the next has nothing.
+    preservesSession = true
     app.launchArguments = useSmileIDSampleSettingsSeed
     app.launch()
     atATabRoot()
