@@ -183,9 +183,12 @@ final class UseSmileIDSampleAppState: ObservableObject {
     reload()
   }
 
-  /// Sign out: the session goes with no ended marker, which would send the next run to the scanner.
+  /// Sign out: the session goes with no ended marker, which would send the next run to the scanner, and the forms go with it because they hold PII.
   func clearSession() {
     store.clearTokenSession()
+    userDetails = UseSmileIDSampleUserDetails()
+    rememberDetails = false
+    idDetails = UseSmileIDSampleIdDetails()
     reload()
   }
 
