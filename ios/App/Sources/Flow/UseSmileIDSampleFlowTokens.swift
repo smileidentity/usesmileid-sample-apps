@@ -3,8 +3,7 @@ import SampleUI
 
 /// Structurally valid unsigned JWTs — fixtures a simulated scan links, never credentials.
 enum UseSmileIDSampleFlowTokens {
-  /// What a run with no scanned session submits under. Structurally valid: the scenarios demand a
-  /// well-formed JWT whose `exp` is in the past, not a garbage string.
+  /// What a run with no scanned session submits under: a well-formed JWT whose `exp` is past, not a garbage string.
   static func token(expired: Bool, now: Date) -> String {
     let seconds = Int64(now.timeIntervalSince1970)
     let exp = seconds + (expired ? -validitySeconds : validitySeconds)
@@ -16,12 +15,7 @@ enum UseSmileIDSampleFlowTokens {
     "sample-not-a-jwt"
   }
 
-  /// What a simulated scan links. The same unsigned shape a real token has, over the chosen span
-  /// and carrying the chosen bindings — enough to exercise every client-side rule, because the SDK
-  /// decodes a token but never verifies one. What it cannot exercise is a server accepting it.
-  ///
-  /// The PII values are deliberate nonsense: a real token carries an opaque vault reference in their
-  /// place, so no plausible-looking name or number belongs in a fixture.
+  /// What a simulated scan links: a real token's unsigned shape, exercising every client-side rule but never a server. PII values are deliberate nonsense.
   static func session(
     span: UseSmileIDSampleSimulatedSpan,
     bindings: UseSmileIDSampleSimulatedBindings,

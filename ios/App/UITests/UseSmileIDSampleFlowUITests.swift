@@ -1,7 +1,6 @@
 import XCTest
 
-/// The flow host on the simulator, which stops at the shutter: a success needs a real token, so the
-/// paths proven here are the mount, both presentations, the gate's exits, a deny and a back-out.
+/// The flow host on the simulator, which stops at the shutter: the mount, both presentations, the gate's exits, a deny and a back-out.
 final class UseSmileIDSampleFlowUITests: XCTestCase {
   private var app: XCUIApplication!
 
@@ -11,9 +10,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     app = XCUIApplication()
   }
 
-  /// This class links sessions and ends deep in pushed stacks, and both outlive it — the session in
-  /// the Keychain, the stack in scene storage. Left as it found them, or the next class inherits a
-  /// live token its outcomes do not expect and a pill its launch cannot see.
+  /// The session and the pushed stack both outlive this class, so they are left as found or the next class inherits them.
   override func tearDown() {
     if app.state == .runningForeground {
       atATabRoot()
@@ -57,8 +54,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     XCTAssertTrue(element("sample_user_details_screen").waitForNonExistence(timeout: 5), "the form is still stacked")
   }
 
-  /// Needs a consent-binding token: only then is instructions the first screen, and only it carries
-  /// the SDK's back control. The edge swipe is the other way out, and XCUITest cannot drive it.
+  /// Needs a consent-binding token, since only instructions carries the SDK's back control; XCUITest cannot drive the edge swipe.
   func testBackingOutOfTheSdksFirstScreenCancelsAndCreatesNoJob() {
     launch()
     let rowsBefore = allVerificationsCount()
@@ -126,8 +122,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
   }
 
   func testAutostartOpensTheFlowRouteOnLaunch() {
-    // A plain launch first, only to clear a session a previous test left. The argument's own launch
-    // cannot use that helper: it lands on a pushed level, where the pill the helper waits for is gone.
+    // A plain launch first, to clear a session a previous test left; the argument's own launch lands where the pill is gone.
     launch()
     app.terminate()
     app.launchArguments = ["-autostart", "smartSelfieEnrollment"]
@@ -145,8 +140,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20))
   }
 
-  /// A simulator has no lens to take, so this proves the hold is inert rather than harmful; the
-  /// contention itself is only observable on a phone.
+  /// A simulator has no lens to take, so this proves the hold is inert; the contention needs a phone.
   func testHoldingTheCameraDoesNotStopTheRun() {
     launch(arguments: ["-holdCamera", "500"])
     startEnrollment()
@@ -168,8 +162,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
   func testRapidTapsOnContinueStartOneRunWithOneResult() {
     launch()
     fillTheDetailsForm()
-    // Anchored on the app, not the button: a coordinate re-resolves its element on every tap, and the
-    // first tap navigates away. The point still comes from the id.
+    // Anchored on the app, not the button: a coordinate re-resolves its element per tap, and the first tap navigates away.
     let button = app.buttons["sample_user_details_continue"]
     XCTAssertTrue(button.waitForExistence(timeout: 10))
     let centre = CGVector(dx: button.frame.midX, dy: button.frame.midY)
@@ -233,8 +226,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
 
   // MARK: - Harness
 
-  /// The session is a Keychain record that outlives an uninstall, so every launch clears it: an
-  /// ended marker left behind sends every later run to the scanner.
+  /// The session outlives an uninstall, so every launch clears it: an ended marker sends every later run to the scanner.
   private func launch(arguments: [String] = []) {
     app.launchArguments = arguments
     app.launch()
@@ -245,8 +237,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     XCTAssertTrue(element("sample_session_card").waitForNonExistence(timeout: 5))
   }
 
-  /// The scene restores whatever stack the last test left, and a pushed one covers the pill every
-  /// cleanup below needs. Intermittent rather than absent, so it is healed rather than assumed.
+  /// The scene restores the last test's stack, and a pushed one covers the pill the cleanups need; healed, not assumed.
   private func atATabRoot() {
     guard !element("sample_nav_settings").waitForExistence(timeout: 10) else { return }
     open("products")

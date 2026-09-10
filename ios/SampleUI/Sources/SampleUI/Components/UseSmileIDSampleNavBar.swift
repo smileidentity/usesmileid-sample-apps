@@ -48,11 +48,7 @@ public struct UseSmileIDSampleTokenRing: View {
   }
 }
 
-/// A floating pill of three tabs, plus a detached token button that navigates rather than switching
-/// tab. `sessionProgress` drives its ring, 1 fresh to 0 expired.
-///
-/// The pill has its own fill: the design recesses it below the page, which this app's page colour
-/// cannot express without hiding the bar. See the `navBarFill` delta.
+/// Three tabs plus a detached token button that navigates rather than switching tab; the pill has its own fill, per the `navBarFill` delta.
 public struct UseSmileIDSampleNavBar: View {
   private let selected: UseSmileIDSampleNavItem
   private let sessionProgress: Double?
@@ -103,8 +99,7 @@ public struct UseSmileIDSampleNavBar: View {
     .useSmileIDSampleTestId(item.testId)
   }
 
-  /// The ring is painted outside the button's bounds rather than laid out around it: sized into the
-  /// layout it pushed the bar off a 393pt screen.
+  /// The ring is painted outside the button's bounds: sized into the layout it pushed the bar off a 393pt screen.
   private var token: some View {
     Button(action: onToken) {
       VStack(spacing: 0) {

@@ -137,7 +137,7 @@ public struct VerificationsScreen: View {
     .padding(.horizontal, SmileSpacing.spacingMd)
   }
 
-  /// Scrolled, not wrapped: `FlowRow` needs iOS 16's `Layout`, and a plain row wraps a chip's label.
+  /// Scrolled, not wrapped, which is what iOS does with a filter row and stays honest at every content size.
   private var chips: some View {
     ScrollView(.horizontal, showsIndicators: false) {
       HStack(spacing: SmileSpacing.spacingXs) {

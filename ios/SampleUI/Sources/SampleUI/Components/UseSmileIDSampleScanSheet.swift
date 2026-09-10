@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// What the sheet edits. Lifted to the app state by the shell, because one tab is mounted at a time
-/// and anything typed has to survive the screen that took it (R6).
+/// What the sheet edits, lifted to the app state so anything typed survives the screen that took it.
 public struct UseSmileIDSampleScanSheetState: Equatable, Sendable {
   public var token: String
   /// Why the entered token is not a session — shown under the field, never the token itself.
@@ -30,9 +29,7 @@ public struct UseSmileIDSampleScanSheetState: Equatable, Sendable {
   }
 }
 
-/// The sheet under the scanner: manual entry, and a simulated scan that mints its own fixture token.
-/// Simulate is a product feature, not scaffolding — it is how a flow reaches the session states with
-/// no QR source, and what it mints is chosen here rather than hard-coded.
+/// The sheet under the scanner: manual entry, and a simulated scan that mints its own fixture token — a product feature, not scaffolding.
 public struct UseSmileIDSampleScanSheet: View {
   @Binding private var state: UseSmileIDSampleScanSheetState
   private let onPaste: () -> Void
@@ -68,8 +65,7 @@ public struct UseSmileIDSampleScanSheet: View {
         placeholder: "Or enter token manually",
         isError: state.rejection != nil,
         errorMessage: state.rejection,
-        // The token is a bearer credential and 900 characters long: nobody proofreads it, and
-        // masked it stays out of screenshots and out of a failed run's hierarchy dump.
+        // A 900-character bearer credential: masked, it stays out of screenshots and hierarchy dumps.
         masked: true,
         testId: UseSmileIDSampleTestIds.tokenManualEntry
       ) {
@@ -87,8 +83,7 @@ public struct UseSmileIDSampleScanSheet: View {
       if !state.token.isBlank {
         UseSmileIDSampleButton(text: "Link token", action: onLink)
       }
-      // Collapsed by default, and that is the point: this is a scanner, and the mint controls are a
-      // probe affordance. Expanded they took enough height to leave the viewfinder a letterbox.
+      // Collapsed by default: expanded, the mint controls left the viewfinder a letterbox.
       Button {
         state.expanded.toggle()
       } label: {
@@ -208,7 +203,7 @@ private struct ScanSheetChip: View {
   }
 }
 
-/// A surface rounded on its top corners only, which the iOS 15 floor has no shape for.
+/// A surface rounded on its top corners only, which no built-in shape provides.
 struct UseSmileIDSampleTopRoundedShape: Shape {
   let radius: CGFloat
 

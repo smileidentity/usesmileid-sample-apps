@@ -16,16 +16,13 @@ struct UseSmileIDSampleShell: View {
   @State private var autostarted = false
 
   var body: some View {
-    // One tab mounted at a time: a hidden stack still answers id queries, and neither
-    // `accessibilityHidden` nor a children-ignore suppresses its UIKit-backed controls.
+    // One tab mounted at a time: a hidden stack still answers id queries, and no modifier suppresses that.
     UseSmileIDSampleStack(tab: router.selectedTab) { bottomChrome }
       .environmentObject(router)
       .environmentObject(app)
-      // Pinned both ways, not nil: following the system when the switch is off leaves a device in
-      // dark mode rendering dark while Settings reads off.
+      // Pinned both ways, not nil: following the system leaves a dark device rendering dark while Settings reads off.
       .preferredColorScheme(app.settings.darkMode ? .dark : .light)
-      // Reaches what reads `\.locale` in the shell's own views; the SDK's strings resolve through its
-      // bundle, which follows `-AppleLanguages`, the platform's own argument.
+      // Reaches `\.locale` in the shell's own views only; the SDK's strings follow `-AppleLanguages`.
       .modifier(UseSmileIDSampleLocaleOverride(locale: app.launchArguments.locale))
       // Only automation passes one; without it the environment default is the product's.
       .modifier(UseSmileIDSampleNoticeWindowOverride(seconds: app.launchArguments.noticeWindow))
@@ -135,8 +132,7 @@ struct UseSmileIDSampleShell: View {
     )
   }
 
-  /// The design's floating pill, ruled over `TabView`. Sits inside the host, so a push covers it —
-  /// the visibility rule the Compose twin spells out as `selectedTab != null`.
+  /// The design's floating pill, ruled over `TabView`; it sits inside the host, so a push covers it.
   private var navBar: some View {
     UseSmileIDSampleNavBar(
       selected: router.selectedTab.navItem,
@@ -146,8 +142,7 @@ struct UseSmileIDSampleShell: View {
     )
   }
 
-  /// Lands on the flow route, after the restore so the argument wins over what the last scene left.
-  /// With empty forms the gate then redirects to the form, which is the gate working.
+  /// Lands on the flow route after the restore, so the argument wins over what the last scene left.
   private func autostart() {
     guard !autostarted, let product = app.launchArguments.autostart else { return }
     autostarted = true

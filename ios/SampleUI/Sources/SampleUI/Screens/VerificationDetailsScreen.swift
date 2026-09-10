@@ -78,7 +78,7 @@ public struct VerificationDetailsScreen: View {
       }
       // The refresh container carries that id; the screen's own goes on the stack, which needs `.contain`.
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.detailsRefresh)
-      // SwiftUI owns the indicator while the action runs. The gesture needs iOS 16; see §15.
+      // SwiftUI owns the indicator while the action runs, so the screen holds no refreshing flag.
       .refreshable { await onRefresh() }
     }
     .background(colors.background)

@@ -1,7 +1,6 @@
 import XCTest
 
-/// The list, its select mode and both removal paths, against the rows `seedJobs` puts there. Every
-/// assertion here stands for a defect the Compose twin reported on a device.
+/// The list, its select mode and both removal paths, against the rows `seedJobs` puts there.
 final class UseSmileIDSampleVerificationsUITests: XCTestCase {
   private var app: XCUIApplication!
 
@@ -9,8 +8,7 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
     super.setUp()
     continueAfterFailure = false
     app = XCUIApplication()
-    // Rows are the precondition, not the subject: the app seeds none. Re-seeding is a no-op, so a
-    // row an earlier test hid is back for this one.
+    // Rows are the precondition, not the subject; re-seeding is a no-op, so a row an earlier test hid is back.
     app.launchArguments = ["-seedJobs", "true"]
     app.launch()
     XCTAssertTrue(element("sample_nav_settings").waitForExistence(timeout: 10))
@@ -127,8 +125,7 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
 
     element("sample_job_row_0").tap()
     XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
-    // Reached by tapping, not by link: whether a screen carries the bar is a property of the
-    // destination, so covering one arrival route would let the other hide a regression.
+    // Reached by tapping, not by link: the bar is a property of the destination, so one route cannot cover both.
     XCTAssertFalse(element("sample_nav_products").exists)
     XCTAssertFalse(element("sample_nav_token").exists)
 
@@ -166,17 +163,14 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
     XCTAssertTrue(element("sample_details_refresh").waitForExistence(timeout: 10))
     XCTAssertFalse(element("sample_toast").waitForExistence(timeout: 3), "a settled row refreshed itself")
 
-    // What is under test is that a pull refreshes, not that one synthesised drag always lands: under
-    // a full suite the runner coalesces the drag's intermediate events and the refresh control never
-    // sees a pan. Retried rather than tuned, because no velocity made delivery reliable.
+    // Retried, not tuned: under a full suite the runner coalesces the drag and no velocity made delivery reliable.
     XCTAssertTrue(
       pullToRefreshUntilItSays("Not submitted under a scanned token"),
       "no pull produced the refresh outcome"
     )
   }
 
-  /// The link launches the app, so the row arrives after the screen: the case where "not loaded yet"
-  /// read as "no row" refreshes a settled one. The rows are on disk from setUp.
+  /// The link launches the app, so the row arrives after the screen — the case where "not loaded yet" read as "no row".
   func testAColdStartLinkIntoASettledRowRefreshesNothing() {
     app.terminate()
     open("verifications/job_00ky31za00")
@@ -185,9 +179,7 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
     XCTAssertFalse(element("sample_toast").waitForExistence(timeout: 3), "a settled row refreshed itself")
   }
 
-  /// Pulls until the refresh says `message`, waiting on the message itself: the toast dismisses
-  /// itself, so waiting on its container and then reading its text loses a transient one between
-  /// the two queries.
+  /// Pulls until the refresh says `message`, waiting on the message itself, since the toast dismisses between two queries.
   private func pullToRefreshUntilItSays(_ message: String, attempts: Int = 4) -> Bool {
     let refresh = element("sample_details_refresh")
     for _ in 0..<attempts {

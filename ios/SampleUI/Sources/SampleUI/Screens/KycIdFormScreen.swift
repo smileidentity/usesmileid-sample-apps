@@ -93,7 +93,7 @@ public struct KycIdFormScreen: View {
       testId: UseSmileIDSampleTestIds.idTypeTrigger,
       onTap: onIdTypeTap
     ) {
-      // Not the design's ID-card emoji: Emoji 14 is iOS 15.4 and this package's floor is 15.0.
+      // Not the design's ID-card emoji, whose glyph is unavailable on older runtimes; changing it is a design call.
       UseSmileIDSampleIcon(
         SmileIcons.biometricKyc,
         tint: state.details.country == nil ? colors.textMuted : colors.textTitle,

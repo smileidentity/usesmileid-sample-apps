@@ -1,13 +1,6 @@
 import SwiftUI
 
-/// The sheet's own chrome: a title and the content, scrolling so enlarged type cannot push a CTA
-/// out of reach.
-///
-/// There is no partial-height variant. `presentationDetents` is iOS 16 and this package's floor is
-/// 15, so every sheet is the platform's full-height card and the system supplies the grabber. The
-/// Compose twin distinguishes a content-height sheet from a full-height one; hand-rolling that here
-/// would reproduce Android's presentation instead of the platform's, which the porting rules call a
-/// defect even when it looks identical.
+/// The sheet's chrome: a title and scrolling content, always the platform's full-height card — the Compose twin's content-height variant has no counterpart here.
 public struct UseSmileIDSampleBottomSheet<Content: View>: View {
   private let title: String?
   private let testId: String?

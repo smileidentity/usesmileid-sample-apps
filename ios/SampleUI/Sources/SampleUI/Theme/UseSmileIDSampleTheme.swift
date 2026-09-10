@@ -2,8 +2,7 @@ import SwiftUI
 
 /// Token accessors that are the same in both schemes.
 public enum UseSmileIDSampleTheme {
-  /// The full ramp. Display styles name a family the design system does not ship, so both slots
-  /// resolve to DM Sans — the same substitution the Compose theme makes.
+  /// The full ramp; display styles name a family the system does not ship, so both slots resolve to DM Sans.
   public static let type = SmileTypeStyles(display: "DM Sans", body: "DM Sans")
 }
 
@@ -23,8 +22,7 @@ public extension EnvironmentValues {
   /// The active scheme's colours. Populated by ``SwiftUI/View/useSmileIDSampleTheme()``.
   @Entry var useSmileIDSampleColors: UseSmileIDSampleColors = .light
 
-  /// How long a transient notice stays. The shell overrides it from `noticeWindow`; the default is
-  /// the product's, so a library consumer that publishes nothing gets the real behaviour.
+  /// How long a transient notice stays; the shell overrides it, and the default is the product's.
   @Entry var useSmileIDSampleNoticeWindow: TimeInterval = 5
 }
 
@@ -37,10 +35,7 @@ private struct UseSmileIDSampleThemeModifier: ViewModifier {
 }
 
 public extension View {
-  /// Resolves the token colours for the active scheme and publishes them to the subtree.
-  ///
-  /// The SDK is not re-themed here: it resolves the same tokens internally, so host chrome and the
-  /// flow stay continuous without either side sharing code.
+  /// Publishes the active scheme's token colours to the subtree; the SDK is not re-themed, resolving the same tokens itself.
   func useSmileIDSampleTheme() -> some View {
     modifier(UseSmileIDSampleThemeModifier())
   }

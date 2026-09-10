@@ -36,8 +36,7 @@ public struct UseSmileIDSampleProfile: Equatable, Identifiable, Sendable {
   static let noUserDetailsCaption = "No user details yet"
 }
 
-/// The profiles the app can act as, and which one is active. In memory until profiles are a real
-/// account concern.
+/// The profiles the app can act as, and which is active; in memory until profiles are a real account concern.
 public struct UseSmileIDSampleProfiles: Equatable, Sendable {
   private var items: [UseSmileIDSampleProfile]
   public private(set) var activeId: String
@@ -45,8 +44,7 @@ public struct UseSmileIDSampleProfiles: Equatable, Sendable {
   /// The last profile `add` created, until whoever confirmed it calls `clearLastCreated`.
   public private(set) var lastCreatedId: String?
 
-  /// `seed` must not be empty: an empty list would otherwise surface far from here, as the products
-  /// screen reading no active profile.
+  /// `seed` must not be empty, or the failure surfaces far from here as the products screen reading no active profile.
   public init(seed: [UseSmileIDSampleProfile] = UseSmileIDSampleProfiles.starter()) {
     precondition(!seed.isEmpty, "UseSmileIDSampleProfiles needs at least one profile")
     items = seed
@@ -111,14 +109,12 @@ public struct UseSmileIDSampleProfiles: Equatable, Sendable {
     }
   }
 
-  /// The fixtures only when `seedProfiles` asks, so the shell holds no choice a unit test cannot reach.
-  /// A Bool rather than the arguments type, which lives in the shell this package cannot import.
+  /// The fixtures only when `seedProfiles` asks; a Bool rather than the arguments type, which lives in the shell.
   public static func forLaunch(seedProfiles: Bool) -> UseSmileIDSampleProfiles {
     UseSmileIDSampleProfiles(seed: seedProfiles ? fixtures() : starter())
   }
 
-  /// A plain launch: one empty profile, never the fixtures — the active organisation names the partner
-  /// on the SDK's consent screen.
+  /// A plain launch: one empty profile, never the fixtures, since the active organisation names the partner on consent.
   public static func starter() -> [UseSmileIDSampleProfile] {
     [UseSmileIDSampleProfile(id: "p-1", organisation: starterOrganisation, person: "")]
   }
@@ -151,8 +147,7 @@ public struct UseSmileIDSampleProfiles: Equatable, Sendable {
   }
 }
 
-/// The new-profile sheet's five fields. Held outside the sheet so a tab switch beneath it cannot
-/// lose them; the shell clears it with the sheet so it opens empty each time.
+/// The new-profile sheet's five fields, held outside the sheet so a tab switch cannot lose them.
 public struct UseSmileIDSampleNewProfile: Equatable, Sendable {
   public var name: String
   public var firstName: String

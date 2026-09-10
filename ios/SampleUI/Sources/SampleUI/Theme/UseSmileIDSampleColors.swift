@@ -87,11 +87,7 @@ public struct UseSmileIDSampleDecorativeTokens: Equatable, Sendable {
   public let deepRed: Color
 }
 
-/// Every colour the app draws, already resolved for one scheme.
-///
-/// Grouped here rather than read from `SmileColorLight` / `SmileColorDark` at the use site, because
-/// those are two unrelated generated enums with no common type — a component cannot choose between
-/// them itself. The Compose twin is `UseSmileIDSampleColors.kt` and the two carry the same fields.
+/// Every colour the app draws, resolved for one scheme: the generated light and dark enums share no type, so a component cannot choose between them.
 public struct UseSmileIDSampleColors: Equatable, Sendable {
   public let background: Color
   public let surface: Color
@@ -137,8 +133,7 @@ public struct UseSmileIDSampleColors: Equatable, Sendable {
   public let decorative: UseSmileIDSampleDecorativeTokens
 }
 
-/// Soft status tints, which no design-system `badge.*` pair carries. Generated from
-/// `spec/design-tokens.json` → softBadgeFills, and the same in both schemes.
+/// Soft status tints, which no `badge.*` pair carries; generated from the spec and the same in both schemes.
 private func softBadgeTokens() -> UseSmileIDSampleBadgeTokens {
   func fill(_ role: String) -> SmileSoftBadgeFill {
     guard let fill = smileSoftBadgeFills[role] else {

@@ -2,7 +2,6 @@ import Foundation
 import SwiftUI
 
 /// The typed path router: a `Codable` stack per tab, so restoration is a decode.
-/// `ObservableObject` rather than `@Observable` because the floor is the SDK's, iOS 15.
 @MainActor
 final class UseSmileIDSampleRouter: ObservableObject {
   /// One tab is mounted at a time, so the tab coming on screen lands its stack from the root again.
@@ -16,8 +15,7 @@ final class UseSmileIDSampleRouter: ObservableObject {
 
   @Published var paths: [UseSmileIDSampleTab: [Route]] = [:]
 
-  /// How many of each tab's routes are on screen. A link or a restore lands them one per finished
-  /// transition, because the iOS 15 `NavigationView` idiom drops a push made while another is in flight.
+  /// How many of each tab's routes are on screen, landed one per finished transition: `NavigationView` drops a push made during one.
   @Published private(set) var landed: [UseSmileIDSampleTab: Int] = [:]
 
   /// One at a time, because two sheets cannot be presented at once.
