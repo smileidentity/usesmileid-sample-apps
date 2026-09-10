@@ -2,9 +2,7 @@
 import SwiftUI
 import XCTest
 
-/// Proves the harness before any component exists, against the layer everything else resolves
-/// through. A scheme that stops re-resolving, a face that stops registering, or a soft badge fill
-/// that reverts to the saturated pair all show up here rather than in the first screen that ships.
+/// The layer everything resolves through: a scheme that stops re-resolving or a face that stops registering shows up here.
 final class UseSmileIDSampleTokensGoldenTest: UseSmileIDSampleGoldenTest {
   func testTypeRamp() {
     goldens("type_ramp") { TypeRamp() }

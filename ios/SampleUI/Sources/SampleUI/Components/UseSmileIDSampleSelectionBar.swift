@@ -36,8 +36,7 @@ public struct UseSmileIDSampleSelectionCheckbox: View {
   private static let target: CGFloat = 44
 }
 
-/// Replaces the nav bar in select mode. The count is its own node, so a flow asserts equality
-/// rather than parsing prose.
+/// Replaces the nav bar in select mode; the count is its own node, so a flow asserts equality rather than parsing prose.
 public struct UseSmileIDSampleSelectionBar: View {
   private let selectedCount: Int
   private let onRemove: () -> Void
@@ -68,8 +67,7 @@ public struct UseSmileIDSampleSelectionBar: View {
     .padding(.vertical, SmileSpacing.spacingSm)
     .frame(maxWidth: .infinity, alignment: .leading)
     .background(colors.surface)
-    // The one container that carries an id. `.contain` is what keeps the count and action
-    // addressable; without it SwiftUI merges them into this element and their ids vanish.
+    // The one container carrying an id: `.contain` keeps the count and action addressable.
     .accessibilityElement(children: .contain)
     .useSmileIDSampleTestId(UseSmileIDSampleTestIds.selectionBar)
     // A top edge only, so a border is wrong — that would outline all four sides.

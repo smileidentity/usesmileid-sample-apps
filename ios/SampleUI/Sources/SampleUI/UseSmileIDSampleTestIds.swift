@@ -9,8 +9,7 @@ public enum UseSmileIDSampleTestIds {
   public static let navVerifications = "sample_nav_verifications"
   public static let navSettings = "sample_nav_settings"
 
-  /// The bar carries the first, its action the second. Both sit on leaves: an identifier on the
-  /// bar itself would override the action's.
+  /// The bar carries the first and its action the second, both on leaves, or the bar would override the action's.
   public static let toast = "sample_toast"
   public static let toastUndo = "sample_toast_undo"
 

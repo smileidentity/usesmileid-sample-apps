@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// A shipped affordance, not scaffolding. Theme scenarios apply on top of the flow scenario, so the
-/// two are separate selections, and a row selects without closing the sheet.
+/// A shipped affordance: theme applies on top of flow, so the two are separate selections and a row selects without closing.
 public struct ScenarioDrawerSheet: View {
   private let activeScenario: UseSmileIDSampleScenario
   private let activeTheme: UseSmileIDSampleThemeScenario

@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// A status dot and the environment name on a pale fill. Display-only, and not fixed-width, because
-/// Production is wider than Sandbox.
+/// A status dot and the environment name on a pale fill: display-only, and not fixed-width.
 public struct UseSmileIDSampleProfileEnvChip: View {
   private let environment: UseSmileIDSampleEnvironment
 

@@ -106,8 +106,7 @@ final class UseSmileIDSampleLaunchArgumentsSpecTest: XCTestCase {
     XCTAssertNil(args.autostart)
   }
 
-  /// The iOS mechanism: `-scenario expiredToken` lands in the argument domain, and only that domain is
-  /// read — a value persisted under the same plain name is not a launch argument.
+  /// Only the argument domain is read, so a value persisted under the same plain name is not a launch argument.
   func testTheArgumentsAreReadFromTheArgumentDomainOnly() throws {
     let suite = "usesmileid_sample_launch_test"
     let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))

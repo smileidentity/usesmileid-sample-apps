@@ -1,7 +1,6 @@
 import Foundation
 
-/// One submitted verification on disk, keyed by job id. Enums stored as string ids, never ordinals,
-/// and the instant as epoch milliseconds — the Android row's shape, so the two read the same.
+/// One verification on disk, keyed by job id: enums as string ids, never ordinals, and the instant as epoch millis.
 struct UseSmileIDSampleJobRecord: Codable, Equatable, Sendable {
   var id: String
   var userId: String

@@ -51,8 +51,7 @@ public struct UseSmileIDSampleTopAppBarButton<Glyph: View>: View {
   }
 }
 
-/// The pushed-screen app bar. No safe-area inset: the presenting container owns it, and applying
-/// one here would double it inside a sheet.
+/// The pushed-screen app bar; no safe-area inset, which the presenting container owns and a sheet would double.
 public struct UseSmileIDSampleTopAppBar<Action: View>: View {
   private let title: String
   private let backLabel: String

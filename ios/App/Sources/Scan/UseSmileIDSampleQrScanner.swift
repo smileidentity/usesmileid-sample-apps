@@ -44,8 +44,7 @@ struct UseSmileIDSampleQrScanner: UIViewRepresentable {
     func start(previewing view: UseSmileIDSamplePreviewView) {
       AVCaptureDevice.requestAccess(for: .video) { granted in
         guard granted else { return }
-        // Configuring and starting block, so neither runs on the main thread. A view dismantled
-        // while the prompt was up has already stopped, and a session started after that would be held by nobody.
+        // Configuring and starting block, so neither runs on the main thread, and a dismantled view has already stopped.
         self.queue.async {
           guard !self.stopped else { return }
           self.configure()
@@ -60,8 +59,7 @@ struct UseSmileIDSampleQrScanner: UIViewRepresentable {
             let input = try? AVCaptureDeviceInput(device: device)
       else { return }
       session.beginConfiguration()
-      // Pinned to 1920x1080, the size the Android analyser needed: a dense token QR only decodes
-      // at the default 640x480 once it overflows the reticle, and `.high` varies by device.
+      // Pinned to 1920x1080: a dense token QR fails at the default 640x480, and `.high` varies by device.
       if session.canSetSessionPreset(.hd1920x1080) {
         session.sessionPreset = .hd1920x1080
       }

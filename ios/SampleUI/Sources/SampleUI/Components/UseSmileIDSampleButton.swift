@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// The full-width primary action. A minimum height so the label wraps rather than clips, and
-/// loading refuses taps while keeping the enabled colours.
+/// The full-width primary action: a minimum height so the label wraps, and loading refuses taps while looking enabled.
 public struct UseSmileIDSampleButton: View {
   private let text: String
   private let action: () -> Void

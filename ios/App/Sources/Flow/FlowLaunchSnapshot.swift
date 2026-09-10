@@ -74,8 +74,7 @@ func buildSnapshot(
   userId: String
 ) -> FlowLaunchSnapshot? {
   guard let product = UseSmileIDSampleProduct(rawValue: productId) else { return nil }
-  // Read here, not through the app state's ticking value: subscribing the host to the tick would
-  // re-render it once a second.
+  // Read here, not through the ticking value, which would re-render the host once a second.
   let entry = Date()
   let session = app.session
   return FlowLaunchSnapshot(

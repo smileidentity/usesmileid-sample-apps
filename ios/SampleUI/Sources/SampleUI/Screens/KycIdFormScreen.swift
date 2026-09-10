@@ -56,8 +56,7 @@ public struct KycIdFormScreen: View {
         .padding(.vertical, SmileSpacing.spacingSm)
       }
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.kycFormScreen)
-      // An inset rather than an overlay: the button grows with Dynamic Type, and overlaid it
-      // would cover the last field once the list is long enough to scroll under it.
+      // An inset rather than an overlay: the button grows with Dynamic Type and would cover the last field.
       .safeAreaInset(edge: .bottom, alignment: .trailing) {
         UseSmileIDSampleFloatingTokenButton(action: onToken)
           .padding(SmileSpacing.spacingMd)

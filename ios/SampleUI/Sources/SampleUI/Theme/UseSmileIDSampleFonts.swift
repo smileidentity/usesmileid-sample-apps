@@ -25,8 +25,7 @@ public enum UseSmileIDSampleFonts {
     for url in urls {
       var error: Unmanaged<CFError>?
       if !CTFontManagerRegisterFontsForURL(url as CFURL, .process, &error) {
-        // Retained, not unretained: an out-parameter follows the create rule, so the caller owns
-        // the error and taking it unretained leaks one object per failed face.
+        // Retained, not unretained: an out-parameter follows the create rule, so unretained leaks per failed face.
         let code = error.map { CFErrorGetCode($0.takeRetainedValue()) }
         // Already-registered is a success: the SDK ships the same faces and may have got there first.
         if code != CTFontManagerError.alreadyRegistered.rawValue {
@@ -43,8 +42,7 @@ public enum UseSmileIDSampleFonts {
     if let exact = faces[weight] {
       return exact
     }
-    // An exact tie takes the lighter face, and says so: comparing distance alone leaves 650 to
-    // pick whichever of 600 and 700 the unordered keys happened to yield first.
+    // An exact tie takes the lighter face: distance alone lets 650 pick whichever key came first.
     let nearest = faces.keys.min { lhs, rhs in
       let left = abs(lhs - weight), right = abs(rhs - weight)
       return left == right ? lhs < rhs : left < right

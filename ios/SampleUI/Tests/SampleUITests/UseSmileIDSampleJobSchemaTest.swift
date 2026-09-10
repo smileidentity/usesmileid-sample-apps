@@ -3,8 +3,7 @@ import Foundation
 import SwiftData
 import XCTest
 
-/// The guarantee Room gives Android by failing the build, which SwiftData does not give: a store
-/// written under a released schema still loads. One case per version, added when a version is.
+/// The guarantee SwiftData does not give: a store written under a released schema still loads. One case per version.
 final class UseSmileIDSampleJobSchemaTest: XCTestCase {
   private var directory: URL!
 
@@ -29,8 +28,7 @@ final class UseSmileIDSampleJobSchemaTest: XCTestCase {
     XCTAssertEqual(record, Self.row, "a row round-tripped through the released schema came back changed")
   }
 
-  /// The version the migration plan declares is the one the app writes, so a stage added without
-  /// bumping it would migrate nothing.
+  /// The plan's declared version is the one the app writes, so a stage added without bumping it migrates nothing.
   func testTheDeclaredVersionIsTheOneTheMigrationPlanStartsFrom() {
     XCTAssertEqual(UseSmileIDSampleJobSchemaV1.versionIdentifier, Schema.Version(1, 0, 0))
     XCTAssertEqual(UseSmileIDSampleJobMigrations.schemas.count, 1)

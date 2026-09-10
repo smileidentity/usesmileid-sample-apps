@@ -90,8 +90,7 @@ public struct UseSmileIDSampleUserDetailsRequirement: Equatable, Sendable {
 }
 
 public extension UseSmileIDSampleUserDetailsRequirement {
-  /// The requirement a token leaves behind. Mirrors the SDK's union rule field for field, and the
-  /// decoder tests pin it: both names plus one contact field, and nothing else relaxes.
+  /// What a token leaves the form to collect, mirroring the SDK's union rule: both names plus one contact field.
   init(bindings: UseSmileIDSampleTokenBindings?) {
     self.init(
       firstName: bindings?.givenNames != true,

@@ -31,8 +31,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     }
   }
 
-  /// Fixed by the harness, not by the design: a screen scrolls, so its frame is pinned here and its
-  /// content grows inside it rather than making the frame taller.
+  /// Fixed by the harness: a screen scrolls, so its frame is pinned and the content grows inside it.
   func testProductsSurvivesMaxDynamicType() {
     assertSurvivesMaxDynamicType(growsWithContentSize: false) {
       products(.init(initials: "KB", sessionId: "a41f", sessionRemaining: "07:12"))
@@ -540,8 +539,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
       .frame(height: height)
   }
 
-  /// Fixed rather than the bundled asset, which a dependency bump would redraw every baseline from;
-  /// the two vendored rows carry no version, which is the subtitle case Android's twin cannot reach.
+  /// Fixed rather than the bundled asset, so a dependency bump redraws no baseline; two rows carry no version.
   private static let notices = UseSmileIDSampleLicenses(components: [
     .init(
       component: "lottie-spm",
