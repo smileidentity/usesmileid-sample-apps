@@ -1,7 +1,6 @@
 # UI work plan — Android first, then three ports
 
-**Status:** Android U0–U3 is built and in review; **Android still owes U4**. Flutter and Expo have
-not started.
+**Status:** Android U0–U4 is built. Flutter and Expo have not started.
 
 **iOS: U0–U4 are complete.** U3 has all sixteen screens (settings, products,
 verifications, verificationDetails, userDetails, kycIdForm, both picker sheets, profiles,
@@ -172,17 +171,25 @@ riskiest part of the app and needs device verification per platform.
 
 ### U4 — states and goldens
 
-Every state in `spec/screens.json` becomes a preview and a golden test, light and dark. That is 41
-states, of which two belong to the SDK's own consent screen and are not this app's to draw, and the
-list is already written — no judgement needed about what to cover.
+Every state in `spec/screens.json` becomes a golden test, light and dark. That is 41 states, of
+which two belong to the SDK's own consent screen and are not this app's to draw, and the list is
+already written — no judgement needed about what to cover. (Previews were the original plan; neither
+platform needed them, and Android has none. The golden is the artefact.)
 
 **The count is not maintained by hand, and was wrong for a month because it had been.** This section
 and the paragraph above both said 38 from the day they were written, in the same commit that shipped
 a spec of 15 screens and 40 states; the spec has changed three times since. So a platform's U4
 carries a test that reads `spec/screens.json` and fails when a state has no golden — iOS
-`UseSmileIDSampleScreenStateGoldenTest`, which also fails on a stale exemption and on a golden that
-was renamed out from under its entry. Correct the numbers here when the spec changes, but the test is
-what makes a missed state impossible rather than merely documented.
+`UseSmileIDSampleScreenStateGoldenTest`, Android `ScreenStateGoldenTest` — which also fails on a
+stale exemption and on a golden renamed out from under its entry. Correct the numbers here when the
+spec changes, but the test is what makes a missed state impossible rather than merely documented.
+
+**Both platforms hold a state→golden-name table; neither derives it.** Android's shape and the
+`@Preview`-inventory alternative it rejected are in `android-u4-screen-state-goldens.md` §D1. The
+exemption sets are **not** the same and a port must not copy one: Android exempts four where iOS
+exempts five, because a Compose test can hold a swipe mid-drag and a caret in its visible phase,
+and SwiftUI's `@GestureState` and system refresh control cannot be held at all (§D2). Re-derive
+them on the platform's terms.
 
 **Per-platform golden tooling.** Android uses Roborazzi (`verifyRoborazziDebug`), iOS
 swift-snapshot-testing in its own `SampleUIGoldenTests` target. Two things a port must carry over
@@ -206,6 +213,10 @@ rather than rediscover:
   truncation flag a unit test can read, so iOS asserts that nothing lays out past the viewport at the
   largest content size and captures an AX5 baseline for review. Clipping *within* the viewport is
   caught by reading that baseline, not by an assertion.
+- **Neither predicate sees a word broken across lines**, because wrapped text does not truncate —
+  which is how iOS's app bar shipped "Sca / n / tok / en" through a green lane. Android now asserts
+  it directly (`assertBreaksBetweenWords`), applied to the shipped app-bar titles; a port either
+  adds the same predicate or reads its AX baseline knowing this is what to look for.
 - **So the baselines have to actually be read, and iOS's U4 is the evidence that this is not
   ceremony.** Recording the 41 states green found nothing; *reading* the pictures found the shared
   app bar and `DataFieldRow` both breaking text character by character at AX5, and two scan-token
@@ -321,7 +332,9 @@ stand-in, so a port should use the same one rather than inventing a second answe
    four platforms resolve the same hue for the same product. The profile→hue list is untouched by
    this and still owed — and iOS's U4 goldens gave the ask one concrete input: the fourth stand-in
    hue, `#2d2b2a`, draws a near-black avatar tile on the near-black dark page, legible only by its
-   white initials. Whatever the designer supplies, the fourth profile has to survive dark mode.
+   white initials. Confirmed unchanged on Android in `screen_settings_new_profile_dark`, so it is the
+   token and not a platform's rendering. Whatever the designer supplies, the fourth profile has to
+   survive dark mode.
 2. **Mostly delivered 2026-08-15.** Eight icons arrived and are imported — four product marks plus
    the three nav icons and the token scan mark — and the sources are the shared record in
    `design/icons/`. Five of the six products are covered: the two document products **share one
@@ -334,6 +347,14 @@ stand-in, so a port should use the same one rather than inventing a second answe
    and not a wiring one. Their export colours — products in primary, the other two in text.muted —
    look like the active and inactive tab treatment, so the question is worth asking.
 3. Rename board 05 to "KYC / ID details" — it holds no consent screen.
+3a. **Does the products grid stay 2-up at accessibility font sizes?** Measured while recording
+   Android's U4 goldens: at 2x the design's expressive grid leaves each card a 102 dp text column,
+   and every product word is wider than it, so the cards read "Registr / ation", "Docum / ent",
+   "Biometr / ic", "Enhanc / ed". Nothing clips, so the no-clipping predicate passes; the words are
+   simply broken. The card's text was already tuned once for this (see the answered note below), so
+   the remaining lever is the grid itself — one column at accessibility sizes, which the design has
+   not drawn. Not invented locally: Android is the arbiter the other three ports copy, so a layout
+   guessed here propagates.
 
 *From the design system:*
 
@@ -391,6 +412,15 @@ than local work:
 
 **Housekeeping still open:**
 
+16b. **The day header prints its date twice on any day older than yesterday** —
+    "TUE, 14 JUL 2026 · TUE, 14 JUL 2026" — because `groupByDay` falls back to the absolute date
+    when there is no relative word and `DateGroupHeader` renders both halves regardless. Visible in
+    `screen_verifications` on Android and in `verifications` on iOS. **Ruled a defect, not a copy
+    question:** `spec/components.json` specifies "'<relative> · <absolute>' … relative *word* plus
+    absolute date", so with no word the header is the absolute date alone. It needs no owner, only a
+    change that lands in both apps at once with both `verifications` baselines re-recorded — which
+    is why Android's U4 did not take it unilaterally. Full reasoning in
+    `android-u4-screen-state-goldens.md`.
 16. **The app has no launcher icon.** `MissingApplicationIcon` is the one lint warning worth closing
     of the five the app reports — the others are a min-API attribute note, two dependency-upgrade
     nags and a deprecated-`allowBackup` note. Needs the Smile ID mark at adaptive-icon densities, so

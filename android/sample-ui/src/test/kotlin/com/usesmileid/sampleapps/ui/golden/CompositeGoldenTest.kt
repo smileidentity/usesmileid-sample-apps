@@ -31,6 +31,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarEmphasis
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
 import org.junit.Test
 
 /** `BottomSheet` is absent on purpose: `ModalBottomSheet` renders into its own window, so it is verified on a device. */
@@ -41,6 +42,20 @@ class CompositeGoldenTest : GoldenTest() {
 
     @Test
     fun top_app_bar_max_font_scale() = assertSurvivesMaxFontScale { TopAppBars() }
+
+    // The 40dp controls are dp, so the title keeps a 233dp column at 2x rather than iOS's few characters.
+    @Test
+    fun top_app_bar_titles_break_between_words_at_max_font_scale() = assertBreaksBetweenWords {
+        Column(verticalArrangement = stack) {
+            SHIPPED_TITLES.forEach { title ->
+                UseSmileIDSampleTopAppBar(title = title, onBack = {}) {
+                    UseSmileIDSampleTopAppBarButton(contentDescription = "Delete", onClick = {}) { tint ->
+                        TrashGlyph(tint = tint)
+                    }
+                }
+            }
+        }
+    }
 
     @Test
     fun data_field_row() = goldens("data_field_row") { DataFieldRows() }
@@ -107,6 +122,14 @@ class CompositeGoldenTest : GoldenTest() {
 
     @Test
     fun selection_bar_max_font_scale() = assertSurvivesMaxFontScale { SelectionBars() }
+
+    private companion object {
+        /** Read from the sources that supply them, so a new product or a longer profile name is covered. */
+        val SHIPPED_TITLES = UseSmileIDSampleProduct.entries.map { it.label } +
+            listOf("Verification details", "Scan token", "Profiles", "Open-source licenses") +
+            UseSmileIDSampleProfiles.fixtures().map { it.organisation } +
+            UseSmileIDSampleProfiles.STARTER_ORGANISATION
+    }
 }
 
 private val stack: Arrangement.Vertical = Arrangement.spacedBy(SmileDimens.spacingXs)

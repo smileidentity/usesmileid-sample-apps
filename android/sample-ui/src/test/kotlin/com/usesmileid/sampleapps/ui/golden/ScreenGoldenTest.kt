@@ -1,12 +1,20 @@
 package com.usesmileid.sampleapps.ui.golden
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleLicenseRef
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleLicenses
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleNotice
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 import com.usesmileid.sampleapps.ui.screens.LicensesScreen
 import com.usesmileid.sampleapps.ui.screens.ProductsScreen
+import com.usesmileid.sampleapps.ui.screens.ProfileSwitchSheet
 import com.usesmileid.sampleapps.ui.screens.ScanTokenScreen
+import com.usesmileid.sampleapps.ui.screens.ScenarioDrawerSheet
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleScanReason
 import com.usesmileid.sampleapps.ui.screens.SettingsScreen
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleProductsState
@@ -14,7 +22,7 @@ import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleSettingsState
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
 import org.junit.Test
 
-/** The screens U3 builds first, in the states `spec/screens.json` names for each. */
+/** The screens U3 builds first; `ScreenStateGoldenTest` is what holds these to `spec/screens.json`. */
 class ScreenGoldenTest : GoldenTest() {
 
     /** The partner's screen: no DEBUG section, which is the only state the design draws. */
@@ -41,6 +49,25 @@ class ScreenGoldenTest : GoldenTest() {
         Settings(consentBoundByToken = true)
     }
 
+    /** A different profile active: the row's organisation, initials and hue all move together. */
+    @Test
+    fun settings_alt_profile() = goldens("screen_settings_alt_profile") { Settings(profileIndex = 1) }
+
+    /** The fourth hue, which is where the profile palette runs out and starts again. */
+    @Test
+    fun settings_newly_created_profile() = goldens("screen_settings_new_profile") { Settings(profileIndex = 3) }
+
+    /** One sheet holds both sections, so the two spec states differ by which section's selection has moved. */
+    @Test
+    fun scenario_drawer_flow() = goldens("sheet_scenario_drawer_flow", fullWindow = true) {
+        ScenarioDrawer(scenario = UseSmileIDSampleScenario.ExpiredToken)
+    }
+
+    @Test
+    fun scenario_drawer_theme() = goldens("sheet_scenario_drawer_theme", fullWindow = true) {
+        ScenarioDrawer(theme = UseSmileIDSampleThemeScenario.PartnerOverride)
+    }
+
     @Test
     fun products() = goldens("screen_products") { Products(DEFAULT) }
 
@@ -54,11 +81,30 @@ class ScreenGoldenTest : GoldenTest() {
     @Test
     fun products_token_linked_max_font_scale() = assertSurvivesMaxFontScale { Products(TOKEN_LINKED) }
 
+    /** The design's second session state is the same card counting down towards its expiry. */
+    @Test
+    fun products_token_linked_late() =
+        goldens("screen_products_token_linked_late") { Products(TOKEN_LINKED_LATE) }
+
     @Test
     fun products_token_expired() = goldens("screen_products_token_expired") { Products(TOKEN_EXPIRED) }
 
     @Test
     fun products_flow_in_flight() = goldens("screen_products_in_flight") { Products(IN_FLIGHT) }
+
+    /** Products presents it, not Profiles: the sheet's own link resolves to the products route. */
+    @Test
+    fun profile_switch_sheet() = goldens("sheet_profile_switch", fullWindow = true) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Products(TOKEN_LINKED)
+            ProfileSwitchSheet(
+                profiles = ProfileFixtures.Seeded.all,
+                activeId = ProfileFixtures.Seeded.activeId,
+                onSelect = {},
+                onDismissRequest = {},
+            )
+        }
+    }
 
     @Test
     fun licenses() = goldens("screen_licenses") { Licenses(LICENCE_FIXTURE) }
@@ -141,6 +187,9 @@ class ScreenGoldenTest : GoldenTest() {
 
         val DEFAULT = UseSmileIDSampleProductsState(initials = "KA")
         val TOKEN_LINKED = DEFAULT.copy(sessionId = "9f3a2c71", sessionRemaining = "7:59:12")
+
+        /** The design's late countdown, at 1:40. */
+        val TOKEN_LINKED_LATE = TOKEN_LINKED.copy(sessionRemaining = "1:40")
         val TOKEN_EXPIRED = DEFAULT.copy(sessionEnded = true)
 
         val SESSION_ENDED = UseSmileIDSampleScanReason.SessionEnded
@@ -153,13 +202,15 @@ private fun Settings(
     settings: UseSmileIDSampleSettings = UseSmileIDSampleSettings(),
     consentBoundByToken: Boolean = false,
     debug: Boolean = false,
+    profileIndex: Int = 0,
 ) = SettingsScreen(
     state = UseSmileIDSampleSettingsState(
         settings = settings,
-        organisation = "UpTech Finance",
-        initials = "KA",
+        organisation = ProfileFixtures.WithCreated.all[profileIndex].organisation,
+        initials = ProfileFixtures.WithCreated.all[profileIndex].initials,
         versionLabel = "Smile ID Sample App · 1.0.0",
         consentBoundByToken = consentBoundByToken,
+        avatarColor = avatarColorForProfile(profileIndex),
     ),
     onSettingChange = { _, _ -> },
     onProfileClick = {},
@@ -167,6 +218,21 @@ private fun Settings(
     onOpenScenarioDrawer = if (debug) ({ }) else null,
     onSignOut = {},
 )
+
+@Composable
+private fun ScenarioDrawer(
+    scenario: UseSmileIDSampleScenario = UseSmileIDSampleScenario.Normal,
+    theme: UseSmileIDSampleThemeScenario = UseSmileIDSampleThemeScenario.BrandDefault,
+) = Box(modifier = Modifier.fillMaxSize()) {
+    Settings(debug = true)
+    ScenarioDrawerSheet(
+        activeScenario = scenario,
+        activeTheme = theme,
+        onScenarioSelect = {},
+        onThemeSelect = {},
+        onDismissRequest = {},
+    )
+}
 
 /** A fixture, not the shipped asset: one row of each kind. Expanding one is the device flow's job. */
 @Composable
