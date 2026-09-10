@@ -12,8 +12,10 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
 
   /// The session and the pushed stack both outlive this class, so they are left as found or the next class inherits them.
   override func tearDown() {
-    // Here too, not only in the rotating test's `defer`: a killed runner leaves the simulator landscape for every later run.
-    XCUIDevice.shared.orientation = .portrait
+    // Only when it is actually rotated: a killed runner never reaches the rotating test's `defer`, and the simulator keeps it.
+    if XCUIDevice.shared.orientation != .portrait {
+      XCUIDevice.shared.orientation = .portrait
+    }
     if app.state == .runningForeground {
       atATabRoot()
       if element("sample_session_card").exists || element("sample_session_ended_banner").exists {
