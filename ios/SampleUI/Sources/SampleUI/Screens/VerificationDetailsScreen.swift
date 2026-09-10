@@ -33,6 +33,7 @@ public struct VerificationDetailsScreen: View {
   private let onRefresh: () async -> Void
 
   @Environment(\.useSmileIDSampleColors) private var colors
+  @Environment(\.sizeCategory) private var sizeCategory
 
   public init(
     state: UseSmileIDSampleVerificationDetailsState,
@@ -100,12 +101,25 @@ public struct VerificationDetailsScreen: View {
     }
   }
 
+  /// Stacks once type grows: beside the badge the product name has a few characters of width and
+  /// breaks mid-word — "SmartS / elfie / Authen / ticatio / n" is what the AX baseline showed.
   private func heading(_ job: UseSmileIDSampleJob) -> some View {
-    HStack(spacing: SmileSpacing.spacingXs) {
-      UseSmileIDSampleText(job.product.label, style: UseSmileIDSampleTheme.type.textStyleTitle)
-        .foregroundColor(colors.textTitle)
-        .frame(maxWidth: .infinity, alignment: .leading)
-      UseSmileIDSampleStatusBadge(status: job.status, testId: UseSmileIDSampleTestIds.statusBadge)
+    let title = UseSmileIDSampleText(job.product.label, style: UseSmileIDSampleTheme.type.textStyleTitle)
+      .foregroundColor(colors.textTitle)
+      .frame(maxWidth: .infinity, alignment: .leading)
+    let badge = UseSmileIDSampleStatusBadge(status: job.status, testId: UseSmileIDSampleTestIds.statusBadge)
+    return Group {
+      if sizeCategory.isAccessibilityCategory {
+        VStack(alignment: .leading, spacing: SmileSpacing.spacingXxs) {
+          title
+          badge
+        }
+      } else {
+        HStack(spacing: SmileSpacing.spacingXs) {
+          title
+          badge
+        }
+      }
     }
     .padding(.horizontal, SmileSpacing.spacingMd)
     .padding(.vertical, SmileSpacing.spacingXxs)

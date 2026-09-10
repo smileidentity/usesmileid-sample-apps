@@ -13,6 +13,13 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     }
   }
 
+  /// The same card late in the span: the spec's state is the number, the frame having only one card.
+  func testProductsSessionLate() {
+    goldens("products_session_late") {
+      products(.init(initials: "KB", sessionId: "a41f", sessionRemaining: "01:40"))
+    }
+  }
+
   func testProductsSessionEnded() {
     goldens("products_session_ended") { products(.init(initials: "KB", sessionEnded: true)) }
   }
@@ -40,6 +47,20 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   func testSettingsAgentMode() {
     goldens("settings_agent_mode") {
       settings(UseSmileIDSampleSettings(enhancedSmartSelfie: false, agentMode: true), consentBound: true)
+    }
+  }
+
+  /// A second seeded profile active: the PROFILE row is the only thing the frame changes.
+  func testSettingsAltProfile() {
+    goldens("settings_alt_profile") {
+      settings(UseSmileIDSampleSettings(), profile: Self.seededProfiles.all[1], profileIndex: 1)
+    }
+  }
+
+  /// Straight out of the new-profile sheet, so the row carries the created organisation's own hue.
+  func testSettingsNewlyCreatedProfile() {
+    goldens("settings_new_profile") {
+      settings(UseSmileIDSampleSettings(), profile: Self.profilesWithACreatedOne.all[3], profileIndex: 3)
     }
   }
 
@@ -85,6 +106,12 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
 
   func testUserDetailsEmpty() {
     goldens("user_details_empty") { userDetails(UseSmileIDSampleUserDetails()) }
+  }
+
+  /// Mid-entry, so Continue is still refused and the hint still asks. The caret is UIKit's, drawn by
+  /// the first responder an unhosted render has none of — the device pass's, like the switch thumb.
+  func testUserDetailsEditing() {
+    goldens("user_details_editing") { userDetails(Self.partialDetails) }
   }
 
   func testUserDetailsComplete() {
@@ -140,6 +167,8 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     email: "kwame@uptech.example",
     phone: "+254 700 000 000"
   )
+
+  private static let partialDetails = UseSmileIDSampleUserDetails(firstName: "Kwa")
 
   func testKycFormEmpty() {
     goldens("kyc_form_empty") { kycForm(UseSmileIDSampleIdDetails()) }
@@ -254,9 +283,27 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     }
   }
 
+  /// Two rows gone, counts recomputed from what is left, and the confirmation that offers them back.
+  /// The notice is the shell's bottom chrome rather than the screen's, so the state is the pair.
+  func testVerificationsAfterDelete() {
+    goldens("verifications_after_delete") {
+      VStack(spacing: SmileSpacing.spacingXs) {
+        verifications(jobs: Array(Self.fixtures.dropFirst(2)), height: 800)
+        UseSmileIDSampleTransientNoticeHost(notice: Self.removalNotice, onDismiss: {})
+          .padding(.horizontal, SmileSpacing.spacingMd)
+      }
+    }
+  }
+
   func testVerificationsSurvivesMaxDynamicType() {
     assertSurvivesMaxDynamicType(growsWithContentSize: false) { verifications(height: 2200) }
   }
+
+  /// The shell's copy, word for word: the rows are hidden from this app's list, not deleted.
+  private static let removalNotice = UseSmileIDSampleTransientNotice(
+    message: "2 verifications hidden from App list",
+    actionLabel: "Undo"
+  )
 
   private func verifications(
     jobs: [UseSmileIDSampleJob]? = nil,
@@ -303,14 +350,20 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
       .frame(height: 900)
   }
 
-  private func settings(_ values: UseSmileIDSampleSettings, consentBound: Bool = false) -> some View {
+  private func settings(
+    _ values: UseSmileIDSampleSettings,
+    consentBound: Bool = false,
+    profile: UseSmileIDSampleProfile? = nil,
+    profileIndex: Int = 0
+  ) -> some View {
     SettingsScreen(
       state: .init(
         settings: values,
-        organisation: "Kobo Bank",
-        initials: "KB",
+        organisation: profile?.organisation ?? "Kobo Bank",
+        initials: profile?.initials ?? "KB",
         versionLabel: "UseSmileID Sample 1.0 · SDK 12.0.2",
-        consentBoundByToken: consentBound
+        consentBoundByToken: consentBound,
+        avatarColor: useSmileIDSampleAvatarColor(profileIndex: profileIndex)
       ),
       onSettingChange: { _, _ in },
       onProfile: {},
@@ -418,14 +471,23 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("scenario_drawer") { scenarioDrawer() }
   }
 
+  /// One sheet holds both sections, so the two spec states differ by which selection has moved.
+  func testScenarioDrawerThemeSelected() {
+    goldens("scenario_drawer_theme") { scenarioDrawer(scenario: .normal, theme: .partnerOverride) }
+  }
+
   func testScenarioDrawerSurvivesMaxDynamicType() {
     assertSurvivesMaxDynamicType(growsWithContentSize: false) { scenarioDrawer(height: 1400) }
   }
 
-  private func scenarioDrawer(height: CGFloat = 700) -> some View {
+  private func scenarioDrawer(
+    scenario: UseSmileIDSampleScenario = .expiredToken,
+    theme: UseSmileIDSampleThemeScenario = .brandDefault,
+    height: CGFloat = 700
+  ) -> some View {
     ScenarioDrawerSheet(
-      activeScenario: .expiredToken,
-      activeTheme: .brandDefault,
+      activeScenario: scenario,
+      activeTheme: theme,
       onScenarioSelect: { _ in },
       onThemeSelect: { _ in }
     )
@@ -441,12 +503,14 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("scan_token_redirected") { scanToken(reason: .sessionEnded) }
   }
 
+  /// 2400, not 1400: the caption is the last thing in a scroll view the sheet shares the screen
+  /// with, so at 1400 it fell outside the viewport and both baselines recorded the same picture.
   func testScanTokenSurvivesMaxDynamicType() {
-    assertSurvivesMaxDynamicType(growsWithContentSize: false) { scanToken(height: 1400) }
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) { scanToken(height: 2400) }
   }
 
   func testScanTokenRedirectedSurvivesMaxDynamicType() {
-    assertSurvivesMaxDynamicType(growsWithContentSize: false) { scanToken(reason: .sessionEnded, height: 1400) }
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) { scanToken(reason: .sessionEnded, height: 2400) }
   }
 
   /// No viewfinder, as in every golden and every simulator run: the screen keeps the glyph.
