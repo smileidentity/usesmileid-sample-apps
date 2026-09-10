@@ -94,7 +94,7 @@ struct UseSmileIDSampleDestination: View {
         // No launch argument reveals it: every flow reaches the drawer by deep link.
         onOpenScenarioDrawer: UseSmileIDSampleAppState.isDebugBuild ? { router.sheet = .scenarioDrawer } : nil,
         // There is no auth to leave; the session is the local state a partner would expect gone.
-        onSignOut: { app.clearSession()
+        onSignOut: { app.signOut()
           // The pill's own cross-tab switch, so the stack lands where selecting Products would.
           router.selectedTab = .products }
       ))

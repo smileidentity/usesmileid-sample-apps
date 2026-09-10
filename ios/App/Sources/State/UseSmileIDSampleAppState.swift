@@ -184,7 +184,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
   }
 
   /// Sign out: the session goes with no ended marker, which would send the next run to the scanner, and the forms go with it because they hold PII.
-  func clearSession() {
+  func signOut() {
     store.clearTokenSession()
     userDetails = UseSmileIDSampleUserDetails()
     rememberDetails = false
@@ -230,7 +230,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     useSmileIDSampleAvatarColor(profileIndex: profiles.activeIndex)
   }
 
-  /// Takes the store's own result rather than re-reading it: a row seeded at launch shadows the write.
+  /// Written through the store, which holds the mutex, so agent mode and enhanced liveness cannot both end up on.
   func change(_ setting: UseSmileIDSampleSetting, to enabled: Bool) {
     settings = store.setSetting(setting, enabled)
   }
