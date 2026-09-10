@@ -918,6 +918,11 @@ are pinned by tests, in the store's own test and in the UI suite.
 - the positive halves fail loudly instead, which is why this went unnoticed rather than undiscovered: a
   leaked `consentStep = false` reds eleven `si_consent_screen` waits in the same class.
 
+**Proven rather than argued.** XCTest runs a class alphabetically, which puts
+`testTheSwitchesOpenAtTheirShippedDefaults` **last** — after three tests that have persisted a flipped
+consent step, agent mode and enhanced liveness. It asserts all six rows at their shipped defaults and
+passes, so the seed is demonstrably overriding a dirty store rather than a fresh one.
+
 **The one test that opts out** is the persistence claim itself: it launches seeded, flips a row, relaunches
 with **no** seeds and asserts the flip survived — so it proves both that the write persists and that the
 seed did not. The reverse test seeds a non-default row and relaunches bare to watch it go, which is what
@@ -937,7 +942,9 @@ and one must not be; neither is the other's control.
 
 - **Sign-out reached parity**, which §9 parked here: Android clears the token session, clears the forms
   and lands on Products, and iOS cleared only the session. It now does all three — the flow counterpart
-  asserts the landing, so the gap blocked the flow rather than being tidied up beside it.
+  asserts the landing, so the gap blocked the flow rather than being tidied up beside it. The landing is
+  the pill's own cross-tab switch, which keeps the Products stack, because that is what Android's
+  `restoreState = true` does; popping it to the root would have been a quiet divergence.
 - **`android/maestro/settings.yaml` has an iOS counterpart**: `UseSmileIDSampleSettingsUITests`, so
   `ios-device-verification.md` §2.1's blocked row closes. What it cannot cover is what that table already
   says the simulator cannot reach; the switches themselves need no camera.
