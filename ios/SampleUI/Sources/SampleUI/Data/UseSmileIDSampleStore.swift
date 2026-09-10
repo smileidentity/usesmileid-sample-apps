@@ -63,7 +63,7 @@ public final class UseSmileIDSampleStore {
     let updated = current.with(setting, enabled)
     // Only what moved: writing all six would freeze today's defaults onto the device.
     for row in UseSmileIDSampleSetting.allCases where updated[row] != current[row] {
-      settingsStorage.setFlag(row.storageKey, updated[row])
+      settingsStorage.setFlag(row, updated[row])
     }
     settings = updated
     return updated

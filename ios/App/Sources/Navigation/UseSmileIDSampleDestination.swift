@@ -95,8 +95,8 @@ struct UseSmileIDSampleDestination: View {
         onOpenScenarioDrawer: UseSmileIDSampleAppState.isDebugBuild ? { router.sheet = .scenarioDrawer } : nil,
         // There is no auth to leave; the session is the local state a partner would expect gone.
         onSignOut: { app.clearSession()
-          // The nav bar's own tab switch, so the stack lands where selecting Products would.
-          router.openTabRoot(.products) }
+          // The pill's own cross-tab switch, so the stack lands where selecting Products would.
+          router.selectedTab = .products }
       ))
     case .licenses:
       LicensesScreen(
