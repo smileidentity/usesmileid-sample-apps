@@ -1,10 +1,6 @@
 import SwiftUI
 
-/// The sheet search field.
-///
-/// The glyph is the SF Symbol. The Compose twin draws a magnifier by hand only because
-/// `material-icons` is not on its classpath, and `design/icons/` carries no search mark to share —
-/// so redrawing one here would port an Android workaround rather than the design.
+/// The sheet search field; the glyph is the SF Symbol, the Compose twin's hand-drawn magnifier being a classpath workaround.
 public struct UseSmileIDSampleSearchField: View {
   @Binding private var query: String
   private let placeholder: String

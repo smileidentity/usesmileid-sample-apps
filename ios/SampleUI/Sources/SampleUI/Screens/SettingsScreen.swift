@@ -8,8 +8,7 @@ public struct UseSmileIDSampleNavRow: Identifiable, Equatable, Sendable {
   public let icon: SmileIcon
   /// Opened externally. `nil` means the app handles the row itself, which only licences does.
   public let url: URL?
-  /// False for a destination the in-app browser cannot render: both legal pages wrap their document
-  /// in an embedded PDF, which mobile browsers show as a stub rather than the document.
+  /// False where the in-app browser cannot render it: both legal pages serve a PDF a browser shows as a stub.
   public let opensInApp: Bool
 
   public static func == (lhs: Self, rhs: Self) -> Bool {

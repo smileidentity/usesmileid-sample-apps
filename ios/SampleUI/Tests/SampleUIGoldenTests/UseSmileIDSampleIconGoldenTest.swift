@@ -2,11 +2,7 @@
 import SwiftUI
 import XCTest
 
-/// Every mark in one baseline.
-///
-/// The generator turns SVG path data into Swift, and a wrong transform or a dropped subpath still
-/// compiles and still draws something. Only a picture catches that, so all 35 are rendered together
-/// rather than as each screen happens to need one.
+/// Every mark in one baseline: a wrong transform or a dropped subpath still compiles and still draws something.
 final class UseSmileIDSampleIconGoldenTest: UseSmileIDSampleGoldenTest {
   func testEveryIcon() {
     goldens("icons") { IconGrid() }
@@ -35,8 +31,7 @@ private struct IconGrid: View {
     }
   }
 
-  /// Listed by hand rather than reflected over: a mark the generator stopped emitting should break
-  /// the build here, not quietly shrink the baseline.
+  /// Listed by hand: a mark the generator stopped emitting should break the build, not shrink the baseline.
   private static let all: [(String, SmileIcon)] = [
     ("agent", SmileIcons.agent), ("arrowBack", SmileIcons.arrowBack),
     ("arrowForward", SmileIcons.arrowForward), ("biometricKyc", SmileIcons.biometricKyc),

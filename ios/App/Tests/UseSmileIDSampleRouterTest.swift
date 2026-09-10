@@ -258,7 +258,6 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
     XCTAssertEqual(router.path(.verifications), [.verificationDetails(jobId: "job-1")])
     XCTAssertEqual(router.selectedTab, .verifications)
 
-    // A repeated delivery replaces rather than stacks.
     router.endFlow(flow, landing: .verificationDetails(jobId: "job-1"))
     XCTAssertEqual(router.path(.verifications), [.verificationDetails(jobId: "job-1")])
   }

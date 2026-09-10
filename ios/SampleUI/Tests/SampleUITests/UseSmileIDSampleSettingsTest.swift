@@ -32,8 +32,7 @@ final class UseSmileIDSampleSettingsTest: XCTestCase {
   }
 
   func testNormalisedRepairsAStoredStateCarryingBoth() {
-    // The pair the SDK refuses. A stored blob predating the mutex can hold it, so the load path
-    // repairs rather than rejects — the initialiser deliberately does not enforce this.
+    // The pair the SDK refuses: a stored blob predating the mutex can hold it, so the load path repairs it.
     var stored = UseSmileIDSampleSettings()
     stored.agentMode = true
     stored.enhancedSmartSelfie = true

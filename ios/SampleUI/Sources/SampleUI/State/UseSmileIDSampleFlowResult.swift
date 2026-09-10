@@ -1,12 +1,4 @@
-/// What the hosted flow reported, and the run it belongs to; the card renders its `snapshot`.
-///
-/// What survives what (port-patterns §3 rule 6). Every field here is held by the app state and
-/// nowhere else, so it survives rotation and a tab switch and ends with the process: a scene the
-/// system killed took the hosted flow with it, so nothing could finish that run, and restoring its
-/// counts could only mislead the next one. Nothing is written to scene storage, UserDefaults, the
-/// Keychain or disk, so every launch is a fresh run, because a restored or persisted count would
-/// carry one run's callbacks into the next and the exactly-once claim with it. `saved` and
-/// `init(saved:)` keep the Compose `Saver`'s shape, unit-tested, with no caller.
+/// What the hosted flow reported. Held by the app state and nowhere else, so every launch is a fresh run and no count carries into the next.
 public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
   public private(set) var scenario: UseSmileIDSampleScenario
   public private(set) var theme: UseSmileIDSampleThemeScenario

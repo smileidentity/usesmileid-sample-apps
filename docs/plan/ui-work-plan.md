@@ -1,24 +1,27 @@
 # UI work plan — Android first, then three ports
 
-**Status:** Android U0–U3 is built and in review. Flutter and Expo have not started.
+**Status:** Android U0–U3 is built and in review; **Android still owes U4**. Flutter and Expo have
+not started.
 
-**iOS: U0, U1 and U2 are complete, and U3 has all sixteen screens** (settings, products,
+**iOS: U0–U4 are complete.** U3 has all sixteen screens (settings, products,
 verifications, verificationDetails, userDetails, kycIdForm, both picker sheets, profiles,
 profileConfig, both profile sheets, scanToken, the SDK flow host and licenses, with the token session
 model, its Keychain store, the clock, the verification store and the generated third-party notices
 behind them). The
 type ramp, the stopgap values and the DM Sans faces are generated for SwiftUI, the design's marks are
 generated as SwiftUI shapes, `ios/verify.sh` gates tokens, icons, format, unit tests, goldens, the
-shell's route table and the release build, and every component has goldens in light and dark.
+shell's route table and the release build, and every component has goldens in light and dark. U4
+adds a golden per `spec/screens.json` state, light and dark, and the test that fails when a state
+stops having one — `ios-port-hardening.md` §19.
 
 **Picking iOS back up: read `ios-port-hardening.md` first — it opens with the order to work in.** The
 nav container is ruled (2026-08-31: the design's floating pill, not `TabView`), so screens are
 unblocked and each records its bottom inset against the pill.
 
 The design is
-captured in `spec/screens.json` (14 screens, 38 states, every one linked to its design node), the
-component inventory in `spec/components.json` (34 components, 13 documented sub-parts), and the token
-contract in `spec/design-tokens.json`.
+captured in `spec/screens.json` (16 screens, 41 states, every one with a design node or a recorded
+reason it has none), the component inventory in `spec/components.json` (36 components, 14 documented
+sub-parts), and the token contract in `spec/design-tokens.json`.
 
 **Inputs:** the *Product Enhancements* design file (boards 01, 01b, 02–07), the Smile ID design
 system (three-tier tokens with generated per-platform output), and the SDK's public flow DSL.
@@ -169,8 +172,17 @@ riskiest part of the app and needs device verification per platform.
 
 ### U4 — states and goldens
 
-Every state in `spec/screens.json` becomes a preview and a golden test, light and dark. That is 38
-states, and the list is already written — no judgement needed about what to cover.
+Every state in `spec/screens.json` becomes a preview and a golden test, light and dark. That is 41
+states, of which two belong to the SDK's own consent screen and are not this app's to draw, and the
+list is already written — no judgement needed about what to cover.
+
+**The count is not maintained by hand, and was wrong for a month because it had been.** This section
+and the paragraph above both said 38 from the day they were written, in the same commit that shipped
+a spec of 15 screens and 40 states; the spec has changed three times since. So a platform's U4
+carries a test that reads `spec/screens.json` and fails when a state has no golden — iOS
+`UseSmileIDSampleScreenStateGoldenTest`, which also fails on a stale exemption and on a golden that
+was renamed out from under its entry. Correct the numbers here when the spec changes, but the test is
+what makes a missed state impossible rather than merely documented.
 
 **Per-platform golden tooling.** Android uses Roborazzi (`verifyRoborazziDebug`), iOS
 swift-snapshot-testing in its own `SampleUIGoldenTests` target. Two things a port must carry over
@@ -194,6 +206,13 @@ rather than rediscover:
   truncation flag a unit test can read, so iOS asserts that nothing lays out past the viewport at the
   largest content size and captures an AX5 baseline for review. Clipping *within* the viewport is
   caught by reading that baseline, not by an assertion.
+- **So the baselines have to actually be read, and iOS's U4 is the evidence that this is not
+  ceremony.** Recording the 41 states green found nothing; *reading* the pictures found the shared
+  app bar and `DataFieldRow` both breaking text character by character at AX5, and two scan-token
+  baselines that were byte-identical because the state's own caption sat below the pinned viewport.
+  Two rules a port should take from it: whenever two states differ only in text that may be below
+  the fold, compare the baseline hashes; and a row that puts a label and a value in one line needs
+  the accessibility stack, or at AX5 each gets a column a few characters wide.
 
 ---
 
@@ -300,7 +319,9 @@ stand-in, so a port should use the same one rather than inventing a second answe
    which is the review failure the token rule exists to prevent. Stand-in stays until that is
    resolved: the decorative palette indexed by declaration order, which the spec test pins so all
    four platforms resolve the same hue for the same product. The profile→hue list is untouched by
-   this and still owed.
+   this and still owed — and iOS's U4 goldens gave the ask one concrete input: the fourth stand-in
+   hue, `#2d2b2a`, draws a near-black avatar tile on the near-black dark page, legible only by its
+   white initials. Whatever the designer supplies, the fourth profile has to survive dark mode.
 2. **Mostly delivered 2026-08-15.** Eight icons arrived and are imported — four product marks plus
    the three nav icons and the token scan mark — and the sources are the shared record in
    `design/icons/`. Five of the six products are covered: the two document products **share one

@@ -2,8 +2,7 @@ import SampleUI
 import SwiftUI
 import UseSmileID
 
-/// The single route hosting the SDK flow, in both presentations (R3). The SDK owns everything inside
-/// it (R2): no host back control and no host chrome. The presentations differ only in insets.
+/// The single route hosting the SDK flow in both presentations, which differ only in insets; no host chrome inside it.
 struct SdkFlowScreen: View {
   let productId: String
   let presentation: UseSmileIDSampleFlowRoute
@@ -16,10 +15,8 @@ struct SdkFlowScreen: View {
   @Environment(\.useSmileIDSampleColors) private var colors
 
   var body: some View {
-    // A stack, not a background on the content: the content is empty until the gate has run, and
-    // SwiftUI drops an empty view's background — the signal below never fired that way.
+    // A stack, not a background: the content is empty until the gate runs, and SwiftUI drops an empty view's background.
     ZStack {
-      // So the frame before the SDK mounts is not white.
       colors.background
       content
       // The push is over here: `onAppear` fires inside it, and every gate exit is a path change.
@@ -29,7 +26,6 @@ struct SdkFlowScreen: View {
         UseSmileIDSampleCameraHold(hold: app.launchArguments.holdCamera, product: product)
       }
     }
-    // The Compose twin's `WindowInsets(0)`; `shell` stays inside the shell's own safe area.
     .ignoresSafeArea(edges: presentation == .fullscreen ? .all : [])
     .navigationBarHidden(true)
   }
@@ -44,8 +40,7 @@ struct SdkFlowScreen: View {
   /// The gate, then the run. Every exit replaces the path rather than popping it (R4).
   private func enter() {
     guard run.claimEntry() else { return }
-    // Hoisted: a teardown cancel arrives from the SDK's `deinit`, after this level is gone, where an
-    // `@EnvironmentObject` read is no longer valid.
+    // Hoisted: a teardown cancel arrives from the SDK's `deinit`, where an `@EnvironmentObject` read is invalid.
     let app = app
     let router = router
     let run = run
@@ -57,7 +52,6 @@ struct SdkFlowScreen: View {
       // A prior enrolment's id, so authentication has something enrolled.
       userId: app.flowResult.userId ?? UUID().uuidString
     ) else {
-      // An unknown product id exits like a mistyped route.
       useSmileIDSampleLeaveFlow(router, run, flow)
       return
     }

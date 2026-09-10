@@ -4,8 +4,7 @@ import XCTest
 
 /// The scan screen's composites and the ring they feed, in every state a device can show.
 final class UseSmileIDSampleScanChromeGoldenTest: UseSmileIDSampleGoldenTest {
-  /// Collapsed is the design's two rows; expanded shows what a simulated scan mints; a typed token
-  /// adds the link action, and a rejection sits under the field.
+  /// Collapsed, expanded, a typed token adding the link action, and a rejection under the field.
   func testScanSheet() {
     goldens("scan_sheet") { ScanSheets() }
   }

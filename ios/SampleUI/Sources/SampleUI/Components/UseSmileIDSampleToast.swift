@@ -1,10 +1,6 @@
 import SwiftUI
 
-/// A snackbar: a dark bar with a message and an underlined action, spanning the width it is given.
-///
-/// Keeps the `sample_toast*` ids — the design node is named "toast", and renaming would churn
-/// four apps. The ids sit on the two leaves rather than the bar, because an identifier on the
-/// container would override the action's own.
+/// A snackbar with a message and an underlined action; the `sample_toast*` ids sit on the two leaves, or the container would override the action's.
 public struct UseSmileIDSampleToast: View {
   private let message: String
   private let actionLabel: String?

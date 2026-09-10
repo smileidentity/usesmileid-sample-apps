@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Colour maths the design's own fills need. Generic, so it sits beside the other theme helpers
-/// rather than inside the one component that happens to use it first.
+/// Colour maths the design's fills need, kept with the theme helpers rather than in its first caller.
 extension Color {
   /// The standard white-or-dark crossover: above it a fill carries dark ink, below it light.
   var inkOn: Color {

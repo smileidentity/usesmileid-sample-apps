@@ -17,15 +17,14 @@ struct UseSmileIDSampleScanTokenHost: View {
   var body: some View {
     ScanTokenScreen(
       entry: $app.scanEntry,
-      // R10: the redirect's message belongs to the screen it arrives at.
+      // The redirect's message belongs to the screen it arrives at.
       reason: resuming == nil ? nil : .sessionEnded,
       torchOn: torchOn,
       onBack: { router.pop() },
       onLink: link,
       onSimulate: { span, bindings, environment in
         let minted = UseSmileIDSampleFlowTokens.session(span: span, bindings: bindings, environment: environment, now: Date())
-        // The minter and the decoder have to agree, and a fixture that no longer decodes is a defect
-        // rather than something to paper over with a fabricated session.
+        // The minter and decoder have to agree: a fixture that no longer decodes is a defect, not a session to fabricate.
         if let session = UseSmileIDSampleTokenDecoder.session(minted) {
           link(session)
         }
@@ -40,8 +39,7 @@ struct UseSmileIDSampleScanTokenHost: View {
     .onChange(of: app.session?.id) { _ in resume() }
   }
 
-  /// The camera lives in the shell: `SampleUI` runs under eight identities, and only this one owns a
-  /// scanner. Absent — every simulator, or a device without one — the screen keeps the glyph.
+  /// The camera lives in the shell, `SampleUI` running under eight identities; absent, the screen keeps the glyph.
   private var viewfinder: UseSmileIDSampleViewfinder? {
     guard AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) != nil else { return nil }
     let torchOn = torchOn

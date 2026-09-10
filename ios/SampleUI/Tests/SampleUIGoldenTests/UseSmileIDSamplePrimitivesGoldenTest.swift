@@ -40,8 +40,7 @@ final class UseSmileIDSamplePrimitivesGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("section_label") { SectionLabels() }
   }
 
-  /// No thumb in this baseline: UISwitch draws it in a layer the offscreen path skips, and the
-  /// strategy that captures it needs a host app. The tracks still catch a tint regression.
+  /// No thumb in this baseline: UISwitch draws it in a layer the offscreen path skips; the tracks still catch a tint regression.
   func testSwitchStates() {
     goldens("switch_states") { SwitchStates() }
   }
@@ -77,8 +76,7 @@ private struct EmptyStates: View {
 }
 
 private struct ButtonStates: View {
-  /// Loading is off for the baseline and on for the font-scale predicate, matching the Compose
-  /// twin: a spinner's frame zero is a fragile golden, but it lays out fine to assert against.
+  /// Loading is off for the baseline and on for the font-scale predicate: a spinner's frame zero is a fragile golden.
   var loading = false
 
   var body: some View {

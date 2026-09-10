@@ -12,7 +12,8 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 | 2 | **DONE 2026-08-31 — the stack is merged.** | Three PRs deep is the practical limit: this repo squash-merges, so each merge turns the branches above into a `rebase --onto`, not a plain rebase. | `main` carries all three. |
 | 3 | **DONE 2026-09-01 — the harness runs in CI.** See §5. | Every new route was asserted only at the resolver. | `UseSmileIDSampleUITests` runs inside `verify.sh`; a link launches the app and the screen id is asserted. |
 | 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets (2026-09-01), then profiles, profileConfig and both profile sheets (2026-09-02), then scanToken with the session model behind it (2026-09-02, §8 and §9), then the result card, the scenario drawer and the launch arguments that seed the card (2026-09-03, §10) are built. **The job store, the verifications list and the status refresh are built (2026-09-08, §12, §13 and §15)**, so `seedJobs` acts, the four waiting ids are applied and a processing row can be re-checked. **The flow host is built (2026-09-08, §16)**: the SDK is hosted in both presentations, the four recorders and `redirected` have their callers, `jobStore.add` has one too, and the launch-integrity opener runs. **Licenses is built (2026-09-09, §17 and §18), so all sixteen exist**: the notices are generated from the products the app links, the gate fails a stale asset, and the screen renders them. `autostart` and `holdCamera` are what the host still owes. | Settled order; do not relitigate it. | **DONE — all sixteen screens exist.** |
-| 5 | **DONE 2026-09-01 — a growth check, not the one §2 proposed.** See §2. | Would have started biting at U4, when the 38 states land. | A component that stops growing at the largest content size fails the build. |
+| 5 | **DONE 2026-09-01 — a growth check, not the one §2 proposed.** See §2. | Would have started biting at U4, when the 41 states land. | A component that stops growing at the largest content size fails the build. |
+| 6 | **U4 — DONE 2026-09-10. See §19.** | Every state in `spec/screens.json` is now recorded or exempt with a reason, and a test fails if that stops being true. | `UseSmileIDSampleScreenStateGoldenTest` is green and falsified. |
 
 **The stack that carried U0–U2 and the first two screens** — #40, #42, #43 — is merged. Each squash
 turned the branches above it into a `rebase --onto`, which is the cost the three-deep limit buys.
@@ -737,6 +738,88 @@ without its asset passes a screen-id check and fails this one. Three goldens, li
 fixed fixture rather than the bundled asset, so a dependency bump does not redraw every baseline.
 Not covered here and not implied: nothing on this screen needs the phone lane, so unlike §16 it owes
 it nothing.
+
+## 19. U4 — every state goldened, 2026-09-10, and the count that had been wrong all along
+
+**Three sources disagreed on how many states there are, and the spec was the one telling the truth.**
+`spec/screens.json` has **41 states across 16 screens**; `ui-work-plan.md` said 38 across 14. The doc
+was never right: both numbers were written in the scaffold commit that shipped a spec of 15 screens
+and 40 states, and the spec has changed three times since (`scanToken.redirected` and the two
+`licenses` states arrived, the two `production` states left). The golden target's 40 named goldens
+were a third number again, and reconcile exactly: 30 of the 39 non-`consent` states were recorded,
+plus ten goldens that are deliberately beyond the spec — an unknown job, a token-supplied form, an
+empty and a filtered-empty list, agent mode, a no-match picker, a picker with no country, the
+first-run profiles and the in-flight compact line. So nothing was missing that anyone had noticed;
+what was missing was anything that would notice.
+
+**The list is self-enforcing now.** `UseSmileIDSampleScreenStateGoldenTest` reads the spec and holds
+a state→golden inventory plus five exemptions, in the shape §3's unapplied-id inventory already
+uses: a state added to the spec fails, a stale exemption fails, an exemption that is also recorded
+fails, two states sharing one baseline fails, and a golden renamed out from under its entry fails.
+It parses every file in the golden target rather than one, so splitting a screen's goldens out later
+does not red it. Falsified by injecting a state into the spec and watching that one test fail.
+
+**What it cannot do, stated so nobody reads more into a green run:** it proves a golden *exists* for
+a state, never that the golden shows that state. That is the review of the picture, and it is the
+same limit §3's inventory has.
+
+**The five exemptions, each with the reason in the test:** the SDK owns the `consent` screen and this
+app only decides whether the step runs; `products.supersededListLayout` is a layout the spec keeps
+so nobody rebuilds it, and there is no implementation to render; `verifications.swipeToDelete` is
+driven by `@GestureState`, which rests at zero by design so there is no half-open row to capture —
+the device suite drags one; and `verifications.refreshing` is the list's own pull, deferred with the
+owner in §15, whose indicator the system draws and a static render never sees.
+
+### The app-bar title at AX5 — ruled, and fixed here rather than deferred again
+
+§9 recorded the shared bar breaking its title character by character wherever it carries a trailing
+action ("Sca / n / tok / en", "Veri / fica / tion") and deferred it because fixing it rebaselines
+every screen's AX golden. **Ruled the other way: it is fixed.** U4 is the one change that re-reads
+every AX baseline anyway, so the rebaseline is already paid for and never gets cheaper; and the
+alternative was to bless the AX baseline of every screen carrying a bar — nine of them — as correctly
+recording a title nobody can read, and to hand that on as the reference the other platforms port
+against. A blessed picture of a defect is worse than the defect.
+
+The fix is the switch `KeyValueEditRow` already makes: at `sizeCategory.isAccessibilityCategory` the
+controls take one row and the title takes the next at full width, leading-aligned. The two 40pt
+controls scale with the type, which is what squeezed the title's column to a few characters. Proven
+neutral rather than assumed: with only the bar changed, the run failed exactly one composite baseline
+and nine screen AX baselines and **no existing light or dark baseline at all**, which is the evidence that the
+non-accessibility layout is untouched.
+
+### Reading the baselines found two things no assertion could, which is the point of reading them
+
+- **`DataFieldRow` never got the AX stack**, so on the details screen at AX5 the label and value
+  stayed in two columns a few characters wide: "Messag / e", "User_i / d", "Submitt / ed,",
+  "Accepte / d", and a timestamp as "2026-0 / 7-16T06 / :50:12.0 / 00Z". Fixed the same way, and the
+  details screen's own heading row too — beside its status badge the product name read "SmartS /
+  elfie / Authen / ticatio / n". "Authenticatio / n" still breaks, because at AX5 that single word
+  exceeds the full width and there is no break opportunity in it; that is not the same defect.
+- **The two scan-token AX baselines were byte-identical**, because the caption is the last thing in a
+  scroll view that shares the screen with the sheet, and at a 1400pt pinned frame it fell outside the
+  viewport. So `scanToken.redirected` had an AX baseline that could not show the one thing that makes
+  it that state. The frame is 2400 now and both captions are in the picture. This is §2's warning met
+  again — a screen's AX baseline is only readable if its pinned viewport is tall enough — and worth
+  a check whenever a state's difference is below the fold: compare the hashes.
+
+### Two things read off the baselines that are not this slice's to fix
+
+- **The fourth profile hue is nearly invisible in dark.** `smileProfileHues[3]` is `#2d2b2a`, so the
+  newly-created profile's avatar tile on the settings row is a near-black square on the near-black
+  page, carried only by its white initials. The profile→hue list is still an open design ask
+  (`ui-work-plan.md` §5.1) and a hex is not ours to change, so it goes there rather than into a fix.
+- **A day header older than yesterday prints its date twice** — "TUE, 14 JUL 2026 · TUE, 14 JUL
+  2026" — because the relative label falls back to the absolute one. Pre-existing, and the Compose
+  twin composes `DateGroupHeader` the same way, so this is a four-app copy question like the
+  `Hide from List` backticks below: change it in all four or not at all.
+
+### The parity question this raises rather than answers
+
+Android's `screens.json` reference is a doc comment, not an assertion, and **Android still owes U4**.
+Whether it adopts the same enforcement belongs to that PR, not to this one: its goldens are Roborazzi
+and its natural shape may be a `@Preview` inventory rather than a name table. What does not vary is
+the requirement — a state added to `spec/screens.json` must fail some platform's build — and iOS is
+now the reference for one way of meeting it. Flutter and Expo inherit the question with their apps.
 
 ## Considered and rejected
 

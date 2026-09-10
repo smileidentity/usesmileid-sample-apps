@@ -1,5 +1,4 @@
-/// The deep-link URI for every route. Paths are shared across the four sample apps; the scheme is
-/// per app, which is why these live in the shell and never in the shared UI library.
+/// The deep-link URI per route: paths are shared across the four apps, the scheme is per app, so these live in the shell.
 enum UseSmileIDSampleDeepLinks {
   static let scheme = "usesmileid-sample-ios"
 

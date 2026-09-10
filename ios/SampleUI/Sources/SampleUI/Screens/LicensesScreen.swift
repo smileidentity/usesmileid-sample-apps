@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// The notices the app ships rather than links to (Apache-2.0 §4).
-///
-/// A flat list, not the rounded section cards: this screen has no design frame, and two hundred
-/// rows inside one card would compose all of them at once.
+/// The notices the app ships rather than links to, as a flat list: two hundred rows in one card would compose all at once.
 public struct LicensesScreen: View {
   private let licenses: UseSmileIDSampleLicenses
   private let onBack: () -> Void
@@ -55,7 +52,6 @@ public struct LicensesScreen: View {
 
   private func noticeRow(_ notice: UseSmileIDSampleNotice) -> some View {
     VStack(alignment: .leading, spacing: 0) {
-      // No leading tile and no chevron: the component is the content, and the row expands.
       UseSmileIDSampleSettingRow(
         title: notice.component,
         supportingText: notice.subtitle,

@@ -2,8 +2,7 @@ import Foundation
 
 /// The one network call the app owns, behind a seam so the refresh orchestration tests off-device.
 public protocol UseSmileIDSampleJobStatusSource: Sendable {
-  /// Maps the HTTP exchange onto an outcome and lets a transport failure throw: the store owns
-  /// turning one into something a screen can say.
+  /// Maps the HTTP exchange onto an outcome and lets a transport failure throw, which the store translates.
   func check(jobId: String, token: String, sandbox: Bool) async throws -> UseSmileIDSampleStatusRefresh
 }
 

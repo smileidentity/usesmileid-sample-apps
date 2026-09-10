@@ -2,8 +2,7 @@ import SampleUI
 @testable import UseSmileIDSample
 import XCTest
 
-/// The minter and the decoder have to agree: Simulate links what the decoder reads out of this, and a
-/// fixture the decoder refuses would leave the affordance silently dead.
+/// The minter and decoder have to agree, or a fixture the decoder refuses leaves Simulate silently dead.
 final class UseSmileIDSampleFlowTokensTest: XCTestCase {
   func testEveryLiveSpanDecodesOverItsOwnSpanInItsOwnEnvironment() throws {
     for span in UseSmileIDSampleSimulatedSpan.allCases where !span.isEnded {

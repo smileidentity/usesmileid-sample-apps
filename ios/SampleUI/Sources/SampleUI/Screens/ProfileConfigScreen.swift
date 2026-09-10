@@ -59,7 +59,6 @@ public struct ProfileConfigScreen: View {
       }
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.profileConfigScreen)
       UseSmileIDSampleButton(
-        // The design disables it on the profile that is already active, and says so.
         text: state.isActive ? "Active profile" : "Make this profile active",
         enabled: !state.isActive,
         testId: UseSmileIDSampleTestIds.profileConfigSave,

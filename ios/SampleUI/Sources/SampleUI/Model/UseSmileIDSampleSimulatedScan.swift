@@ -1,7 +1,6 @@
 import Foundation
 
-/// How long a simulated scan's token lasts. The three live spans are the Portal's own expiry
-/// allow-list; `ended` is the only way a device flow can reach the expiry gate without waiting.
+/// How long a simulated token lasts: the three live spans are the Portal's allow-list, and `ended` reaches the expiry gate without waiting.
 public enum UseSmileIDSampleSimulatedSpan: String, CaseIterable, Sendable {
   case fifteenMinutes
   case oneHour
@@ -30,9 +29,7 @@ public enum UseSmileIDSampleSimulatedSpan: String, CaseIterable, Sendable {
   }
 }
 
-/// What a simulated scan's token binds. Both default to off, so a simulated session never silently
-/// changes the screen set: a bound consent removes the SDK's consent screen at runtime, and bound
-/// details carry the ID parameters too, which removes the host's own ID form.
+/// What a simulated token binds, both off by default: a binding removes a screen at runtime, so it must be asked for.
 public struct UseSmileIDSampleSimulatedBindings: Equatable, Sendable {
   public var consent: Bool
   public var userDetails: Bool

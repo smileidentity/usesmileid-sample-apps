@@ -28,8 +28,7 @@ public enum UseSmileIDSampleEnvironment: String, CaseIterable, Sendable {
     "https://\(host)/"
   }
 
-  /// A token's `api_url` onto an environment. On the parsed host, never the whole string: a real
-  /// claim carries a `/v3` path and no trailing slash, so a string compare misses, and misses silently.
+  /// A token's `api_url` onto an environment, matched on the parsed host: a real claim carries a `/v3` path.
   public static func of(apiUrl: String?) -> UseSmileIDSampleEnvironment? {
     guard let host = apiUrlHost(apiUrl) else { return nil }
     return allCases.first { $0.host == host }

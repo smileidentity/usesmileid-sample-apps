@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// One verification: a product tile, its name, a secondary line of job id and time, and the status.
-/// Select mode's checkbox is not a slot: the design puts it beside the card.
+/// One verification: tile, name, a secondary line of id and time, and the status; the checkbox sits beside the card, not in it.
 public struct UseSmileIDSampleJobRow: View {
   private let product: UseSmileIDSampleProduct
   private let jobId: String
@@ -44,8 +43,7 @@ public struct UseSmileIDSampleJobRow: View {
   }
 
   private var card: some View {
-    // The badge stays inline at the design's scale and drops below once type grows; one layout
-    // cannot do both, because the text column claims the whole line either way.
+    // The badge stays inline at the design's scale and drops below once type grows; one layout cannot do both.
     Group {
       if sizeCategory.isAccessibilityCategory {
         VStack(alignment: .leading, spacing: SmileSpacing.spacingXs) {

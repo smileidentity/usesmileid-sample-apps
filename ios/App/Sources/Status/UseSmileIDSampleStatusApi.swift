@@ -1,8 +1,7 @@
 import Foundation
 import SampleUI
 
-/// `GET /v3/status/{jobId}` — the partner's own call: the SDK stops at the 202 that creates the job.
-/// `URLSession` stays in the shell; the library defines the seam.
+/// `GET /v3/status/{jobId}`, the partner's own call, the SDK stopping at the 202; `URLSession` stays in the shell.
 struct UseSmileIDSampleStatusApi: UseSmileIDSampleJobStatusSource {
   private let session: URLSession
 
@@ -33,8 +32,7 @@ struct UseSmileIDSampleStatusApi: UseSmileIDSampleJobStatusSource {
   }
 }
 
-/// The id is percent-encoded as one path segment: a `/`, `?` or `#` in it would otherwise change
-/// which request the session's token is sent with. Nil rather than a guess when nothing is left.
+/// Percent-encoded as one path segment, or a `/`, `?` or `#` would change which request the token is sent with.
 func useSmileIDSampleStatusUrl(jobId: String, sandbox: Bool) -> URL? {
   let environment: UseSmileIDSampleEnvironment = sandbox ? .sandbox : .production
   let unreserved = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-._~"))

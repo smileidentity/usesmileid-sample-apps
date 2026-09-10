@@ -30,16 +30,7 @@ public protocol UseSmileIDSampleRecordStorage: AnyObject {
   func write(_ data: Data?)
 }
 
-/// The token session the sample persists. Settings are not yet persisted on iOS; when they are, they land here.
-///
-/// The token is the whole record: the handle, the deadline and the bindings all decode from it, so
-/// storing them alongside it would only create copies that can disagree with it. A stored token that
-/// no longer decodes reads as no session rather than a degraded one.
-///
-/// The Keychain rather than `UserDefaults`, because it is the platform's credential store and costs
-/// no dependency: encrypted at rest, kept out of backups, and — like the Android store — surviving the
-/// process deaths the camera causes. The one asymmetry is that it also survives an uninstall, which
-/// the deadline bounds and sign-out clears.
+/// The token session, in the Keychain. The token is the whole record — handle, deadline and bindings decode from it — so nothing can disagree with it.
 public final class UseSmileIDSampleStore {
   private let storage: UseSmileIDSampleRecordStorage
 
@@ -95,8 +86,7 @@ public final class UseSmileIDSampleStore {
   }
 }
 
-/// One generic-password item, readable while the device is unlocked and never leaving it.
-/// The service is not an application id, so it stays identity-agnostic across all eight hosts.
+/// One generic-password item, unlocked-only; the service is not an application id, so it stays identity-agnostic.
 public final class UseSmileIDSampleKeychainStorage: UseSmileIDSampleRecordStorage {
   private let service: String
 

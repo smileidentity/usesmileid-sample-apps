@@ -15,8 +15,7 @@ extension UseSmileIDSampleAppState {
       : sdkFlow(product)
   }
 
-  /// Carries the launched presentation (R3): without it the in-shell route is only ever reached by a
-  /// cold link, where the forms are empty.
+  /// Carries the launched presentation: without it the in-shell route is only reached by a cold link.
   func sdkFlow(_ product: UseSmileIDSampleProduct) -> Route {
     .sdkFlow(productId: product.id, presentation: launchArguments.route)
   }

@@ -2,8 +2,7 @@ import Foundation
 import SampleUI
 import UseSmileID
 
-/// The session a run submits under. Absent for the two scenarios that are *about* refresh, which
-/// need the fixture token to stay meaningful.
+/// The session a run submits under, absent for the two scenarios that are about refresh.
 extension FlowLaunchSnapshot {
   var liveSession: UseSmileIDSampleTokenSession? {
     scenario.startsExpired ? nil : session
@@ -27,14 +26,12 @@ extension UseSmileIDSampleAppState {
     session?.live(for: flowResult.scenario, at: now)
   }
 
-  /// Read through the same rule the gate uses, so a skipped form is never followed by a redirect
-  /// back to it.
+  /// Read through the gate's own rule, so a skipped form is never followed by a redirect back to it.
   var liveBindings: UseSmileIDSampleTokenBindings? {
     liveSession(at: now)?.bindings
   }
 
-  /// Both names plus one contact field: with those bound the SDK asks nothing more, so the form has
-  /// nothing left to collect.
+  /// Both names plus one contact field: with those bound the form has nothing left to collect.
   var tokenBindsUserDetails: Bool {
     liveBindings?.bindsRequiredUserDetails == true
   }

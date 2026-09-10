@@ -1,21 +1,7 @@
 import AVFoundation
 import SwiftUI
 
-/// The token QR reader: an AVFoundation session in the app's own scan screen rather than behind a
-/// system sheet, so camera contention with the SDK is something this sample can actually demonstrate.
-///
-/// Three invariants this view owns:
-///
-/// - **The capture session stops when the view leaves.** Navigating scan → flow otherwise hands the
-///   SDK a camera the host still holds, one of the host-interaction defects this repo exists to catch.
-/// - **Codes are only reported while `enabled`.** The screen pauses the scanner while it shows what it
-///   found, so nothing is decoded behind a result the person has not seen yet.
-/// - **A given code is reported once, but a different one still gets through.** The output sees the
-///   same QR in many consecutive frames; a one-shot latch would leave the scanner dead after a QR that
-///   is not a token. Keying on the last value reported gives both, and re-enabling forgets it.
-///
-/// A denied camera is not a dead end — the sheet's manual entry still links a token — so the denial
-/// leaves the preview empty and gets out of the way.
+/// The token QR reader: the session stops when the view leaves, codes report only while `enabled`, and one code reports once without deadening the scanner.
 struct UseSmileIDSampleQrScanner: UIViewRepresentable {
   let onCode: (String) -> Void
   let torchOn: Bool
@@ -58,8 +44,7 @@ struct UseSmileIDSampleQrScanner: UIViewRepresentable {
     func start(previewing view: UseSmileIDSamplePreviewView) {
       AVCaptureDevice.requestAccess(for: .video) { granted in
         guard granted else { return }
-        // Configuring and starting block, so neither runs on the main thread. A view dismantled
-        // while the prompt was up has already stopped, and a session started after that would be held by nobody.
+        // Configuring and starting block, so neither runs on the main thread, and a dismantled view has already stopped.
         self.queue.async {
           guard !self.stopped else { return }
           self.configure()
@@ -74,8 +59,7 @@ struct UseSmileIDSampleQrScanner: UIViewRepresentable {
             let input = try? AVCaptureDeviceInput(device: device)
       else { return }
       session.beginConfiguration()
-      // Pinned to 1920x1080, the size the Android analyser needed: a dense token QR only decodes
-      // at the default 640x480 once it overflows the reticle, and `.high` varies by device.
+      // Pinned to 1920x1080: a dense token QR fails at the default 640x480, and `.high` varies by device.
       if session.canSetSessionPreset(.hd1920x1080) {
         session.sessionPreset = .hd1920x1080
       }

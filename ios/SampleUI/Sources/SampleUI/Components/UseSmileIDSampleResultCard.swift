@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// Every field in `spec/result-card.schema.json` under its own id, expanded by default because a
-/// collapsed field is absent from the accessibility tree. `expanded` is the caller's: one tab is
-/// mounted at a time, so a toggle kept here would reset with the screen.
+/// Every `spec/result-card.schema.json` field under its own id, expanded by default since a collapsed field leaves the tree; `expanded` is the caller's.
 public struct UseSmileIDSampleResultCard: View {
   private let result: UseSmileIDSampleResult
   @Binding private var expanded: Bool
@@ -57,8 +55,7 @@ public struct UseSmileIDSampleResultCard: View {
     }
     .padding(.vertical, SmileSpacing.spacingSm)
     .frame(maxWidth: .infinity)
-    // Its ideal height, not a share of what is left: compressed in a fixed-height screen, the values
-    // truncate at large type.
+    // Its ideal height, not a share of what is left, or the values truncate at large type.
     .fixedSize(horizontal: false, vertical: true)
     .background(
       RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.card, style: .continuous)
@@ -70,8 +67,7 @@ public struct UseSmileIDSampleResultCard: View {
   }
 }
 
-/// The compact form on products while a run is in flight: the three fields a flow reads first, under
-/// the same ids as the card.
+/// The compact form on products while a run is in flight: three fields, under the same ids as the card.
 public struct UseSmileIDSampleResultLine: View {
   private let result: UseSmileIDSampleResult
 
@@ -132,8 +128,7 @@ public struct UseSmileIDSampleResultLine: View {
   }
 }
 
-/// One label and its value. A nil value still renders: an id missing from the tree and one with no
-/// value are different failures.
+/// One label and its value; a nil value still renders, since a missing id and an empty one are different failures.
 private struct UseSmileIDSampleResultField: View {
   private let label: String
   private let value: String?

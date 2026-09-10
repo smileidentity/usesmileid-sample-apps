@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Why the scanner opened. The copy lives here so the golden pins the sentence the app ships, and
-/// typed so the eight hosts cannot word it differently.
+/// Why the scanner opened; typed and worded here so the goldens pin it and the eight hosts cannot differ.
 public enum UseSmileIDSampleScanReason: Equatable, Sendable {
   case sessionEnded
 
@@ -12,13 +11,10 @@ public enum UseSmileIDSampleScanReason: Equatable, Sendable {
   }
 }
 
-/// The host's camera preview: given the same candidate handler the sheet uses, so a scanned code,
-/// a pasted one and a typed one are all judged by one decode.
+/// The host's camera preview, given the sheet's own candidate handler so scanned, pasted and typed share one decode.
 public typealias UseSmileIDSampleViewfinder = (_ enabled: Bool, _ onCandidate: @escaping (String) -> Void) -> AnyView
 
-/// Scan token. A token arrives from the host's camera, by hand, or from a simulated scan, and every
-/// route links a session only after the token decodes. With no viewfinder — in a golden, on a
-/// simulator, or in an SDK repo's development sample that carries no camera — the screen keeps the glyph.
+/// Scan token: camera, hand or simulated scan, each linking a session only after the token decodes; with no viewfinder the screen keeps the glyph.
 public struct ScanTokenScreen: View {
   @Binding private var entry: UseSmileIDSampleScanSheetState
   private let reason: UseSmileIDSampleScanReason?
@@ -93,8 +89,7 @@ public struct ScanTokenScreen: View {
     // A container that contains, so the id sits on the screen without replacing its children's.
     .accessibilityElement(children: .contain)
     .useSmileIDSampleTestId(UseSmileIDSampleTestIds.scanTokenScreen)
-    // Acknowledge in the hand as well as on screen: a scanner people hold up to a code is exactly
-    // where a silent success feels like a freeze.
+    // Acknowledged in the hand as well as on screen: on a held-up scanner a silent success feels like a freeze.
     .task(id: scan) { await acknowledge(scan) }
   }
 
@@ -154,8 +149,7 @@ public struct ScanTokenScreen: View {
     }
   }
 
-  /// Scanned, pasted or typed, a candidate is judged here and nowhere else. Decoding is not
-  /// verification, so this proves the token parses — never that it is valid.
+  /// Every candidate is judged here; decoding is not verification, so this proves the token parses, never that it is valid.
   private func judge(_ candidate: String, fromField: Bool) {
     if !fromField {
       scan = .found
@@ -165,8 +159,7 @@ public struct ScanTokenScreen: View {
       entry.rejection = nil
       linked = session
       scan = .linked(handle: session.id, remaining: useSmileIDSampleCountdown(session.remaining(at: Date())))
-    // The field's own error sits under the field, where the person is looking; a scanned code
-    // has no field to annotate, so it answers in the status pill instead. Never both.
+    // A typed error sits under the field; a scanned one has no field, so it answers in the status pill. Never both.
     case .rejected(let reason):
       if fromField {
         entry.rejection = reason
@@ -195,8 +188,7 @@ public struct ScanTokenScreen: View {
       UINotificationFeedbackGenerator().notificationOccurred(.error)
     case .linked:
       UINotificationFeedbackGenerator().notificationOccurred(.success)
-      // Held long enough to be read, then the screen leaves. Navigating on the same frame as
-      // the decode is what made a successful scan look like nothing happening at all.
+      // Held long enough to read: navigating on the decode's own frame made a successful scan look like nothing.
       try? await Task.sleep(nanoseconds: Self.linkedDwellNanoseconds)
       guard !Task.isCancelled, let linked else { return }
       onLink(linked)

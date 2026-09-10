@@ -51,8 +51,7 @@ public struct UseSmileIDSampleTopAppBarButton<Glyph: View>: View {
   }
 }
 
-/// The pushed-screen app bar. No safe-area inset: the presenting container owns it, and applying
-/// one here would double it inside a sheet.
+/// The pushed-screen app bar; no safe-area inset, which the presenting container owns and a sheet would double.
 public struct UseSmileIDSampleTopAppBar<Action: View>: View {
   private let title: String
   private let backLabel: String
@@ -63,6 +62,7 @@ public struct UseSmileIDSampleTopAppBar<Action: View>: View {
   @ScaledMetric(relativeTo: .body) private var rowHeight: CGFloat = 40
   @ScaledMetric(relativeTo: .body) private var actionWidth: CGFloat = SmileSpacing.space40
   @Environment(\.useSmileIDSampleColors) private var colors
+  @Environment(\.sizeCategory) private var sizeCategory
 
   public init(
     title: String,
@@ -79,22 +79,25 @@ public struct UseSmileIDSampleTopAppBar<Action: View>: View {
   }
 
   public var body: some View {
-    HStack(spacing: SmileSpacing.spacingXs) {
-      UseSmileIDSampleTopAppBarButton(label: backLabel, emphasis: .filled, action: onBack) { tint in
-        UseSmileIDSampleIcon(SmileIcons.arrowBack, tint: tint, size: SmileSpacing.sizeIconMd)
-      }
-
-      // Wraps rather than truncates: an ellipsised title is the clipping the predicate forbids.
-      UseSmileIDSampleText(title, style: UseSmileIDSampleTheme.type.textStyleTitle.with(size: 15))
-        .foregroundColor(colors.textTitle)
-        .multilineTextAlignment(.center)
-        .frame(maxWidth: .infinity)
-
-      // Holds the action's width even with none, so the title sits identically either way.
-      if Action.self == EmptyView.self {
-        Color.clear.frame(width: actionWidth, height: 1)
+    // Stacks once type grows: between two controls that scale with it the title wraps letter by letter.
+    Group {
+      if sizeCategory.isAccessibilityCategory {
+        VStack(alignment: .leading, spacing: SmileSpacing.spacingXs) {
+          HStack(spacing: SmileSpacing.spacingXs) {
+            backButton
+            Spacer(minLength: 0)
+            trailing
+          }
+          titleText(alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
       } else {
-        action
+        HStack(spacing: SmileSpacing.spacingXs) {
+          backButton
+          titleText(alignment: .center)
+            .frame(maxWidth: .infinity)
+          trailing
+        }
       }
     }
     .padding(.horizontal, SmileSpacing.spacingMd)
@@ -103,5 +106,28 @@ public struct UseSmileIDSampleTopAppBar<Action: View>: View {
     // Its ideal height, not what is left over: compressed, the wrapping title ellipsises.
     .fixedSize(horizontal: false, vertical: true)
     .useSmileIDSampleTestId(testId)
+  }
+
+  private var backButton: some View {
+    UseSmileIDSampleTopAppBarButton(label: backLabel, emphasis: .filled, action: onBack) { tint in
+      UseSmileIDSampleIcon(SmileIcons.arrowBack, tint: tint, size: SmileSpacing.sizeIconMd)
+    }
+  }
+
+  /// Wraps rather than truncates: an ellipsised title is the clipping the predicate forbids.
+  private func titleText(alignment: TextAlignment) -> some View {
+    UseSmileIDSampleText(title, style: UseSmileIDSampleTheme.type.textStyleTitle.with(size: 15))
+      .foregroundColor(colors.textTitle)
+      .multilineTextAlignment(alignment)
+  }
+
+  /// Holds the action's width even with none, so the title sits identically either way.
+  @ViewBuilder
+  private var trailing: some View {
+    if Action.self == EmptyView.self {
+      Color.clear.frame(width: actionWidth, height: 1)
+    } else {
+      action
+    }
   }
 }

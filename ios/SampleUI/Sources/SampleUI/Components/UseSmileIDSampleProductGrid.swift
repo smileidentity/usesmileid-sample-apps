@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// Two columns of product cards, an odd count leaving its last cell empty.
-///
-/// Rows rather than a lazy grid, because the host screen already scrolls; each row takes its
-/// tallest card's height.
+/// Two columns of product cards, an odd count leaving its last cell empty; rows, not a lazy grid, since the host already scrolls.
 public struct UseSmileIDSampleProductGrid<Item: View>: View {
   private let itemCount: Int
   private let item: (Int) -> Item

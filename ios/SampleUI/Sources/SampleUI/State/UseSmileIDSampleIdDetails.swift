@@ -103,8 +103,7 @@ public extension UseSmileIDSampleCountry {
 }
 
 extension String {
-  /// An empty query matches everything: `localizedCaseInsensitiveContains("")` answers false where
-  /// the Compose twin's `contains("")` answers true, so a literal port opens both pickers empty.
+  /// An empty query matches everything: `localizedCaseInsensitiveContains("")` is false where Kotlin's is true.
   func matches(_ query: String) -> Bool {
     query.isBlank || localizedCaseInsensitiveContains(query)
   }

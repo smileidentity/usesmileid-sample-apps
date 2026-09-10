@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// The scanner's state, over the viewfinder. One pill so the eye has a single place to look, coloured
-/// from the feedback tokens rather than by inventing a palette: informational while decoding, success
-/// once linked, error on a rejection — which is the only state that offers an action, because it is
-/// the only one the person can do anything about.
+/// The scanner's state over the viewfinder, in one pill coloured from the feedback tokens; only a rejection offers an action.
 public struct UseSmileIDSampleScanStatus: View {
   private let state: UseSmileIDSampleScanState
   private let onRetry: () -> Void

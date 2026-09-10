@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Wraps a row in a trailing swipe that reveals Hide. Not `List`'s `swipeActions`: a `List`'s own
-/// backdrop cannot be cleared on the iOS 15 floor, and it would replace the screen background.
+/// Wraps a row in a trailing swipe that reveals Hide, rather than `List`'s `swipeActions`: the list is a `ScrollView` so the screen keeps its own background.
 public struct UseSmileIDSampleSwipeAction<Content: View>: View {
   private let onRemove: () -> Void
   private let content: Content

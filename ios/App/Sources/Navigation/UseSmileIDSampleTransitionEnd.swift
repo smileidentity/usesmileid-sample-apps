@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Reports when a pushed level's transition has ended. SwiftUI's `onAppear` fires inside that
-/// transition, and UIKit drops a push made before it ends, so the router lands the next level here.
+/// Reports when a push's transition has ended: `onAppear` fires inside it, and UIKit drops a push made before it ends.
 struct UseSmileIDSampleTransitionEnd: UIViewControllerRepresentable {
   let action: () -> Void
 

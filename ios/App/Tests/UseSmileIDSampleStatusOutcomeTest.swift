@@ -2,8 +2,7 @@ import SampleUI
 @testable import UseSmileIDSample
 import XCTest
 
-/// The branch table between `GET /v3/status` and what the screen says. Pure, so none of it needs a
-/// network — the same table the Compose adapter is tested against.
+/// The branch table between `GET /v3/status` and what the screen says; pure, so none of it needs a network.
 final class UseSmileIDSampleStatusOutcomeTest: XCTestCase {
   func testTheFiveApiStatesLandOnTheFourBadgesTheDesignDraws() {
     XCTAssertEqual(outcome("clear"), .updated(status: .clear, message: "Approved", httpCode: 200))
@@ -63,8 +62,7 @@ final class UseSmileIDSampleStatusOutcomeTest: XCTestCase {
       useSmileIDSampleStatusUrl(jobId: "job_00ky31za00", sandbox: true)?.absoluteString,
       "https://testapi.smileidentity.com/v3/status/job_00ky31za00"
     )
-    // A stored id is the SDK's, but the route that reads one is a deep link: anything that would
-    // change the request target has to stay inside the segment it was given.
+    // The route that reads a stored id is a deep link, so nothing may escape the segment it was given.
     for hostile in ["../../v2/oops", "job?x=1", "job#frag", "job 1"] {
       let url = useSmileIDSampleStatusUrl(jobId: hostile, sandbox: true)
       XCTAssertEqual(url?.host, "testapi.smileidentity.com", hostile)

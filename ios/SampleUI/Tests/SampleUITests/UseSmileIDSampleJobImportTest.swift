@@ -3,8 +3,7 @@ import Foundation
 import SwiftData
 import XCTest
 
-/// The upgrade path: rows a pre-SwiftData version left in a JSON document reach the new store, and
-/// reach it once. This is the only code that can lose a partner's verification history.
+/// The upgrade path: pre-SwiftData rows reach the new store, once. The only code that can lose a partner's history.
 final class UseSmileIDSampleJobImportTest: XCTestCase {
   private var url: URL!
 
@@ -29,8 +28,7 @@ final class UseSmileIDSampleJobImportTest: XCTestCase {
     XCTAssertFalse(FileManager.default.fileExists(atPath: url.path), "a second launch would import again")
   }
 
-  /// A crash between committing the rows and deleting the file repeats the import, so the insert
-  /// ignoring an id it already holds is what makes that safe rather than duplicating.
+  /// A crash between committing and deleting repeats the import, which the insert-ignore makes safe.
   func testImportingTwiceOverTheSameContainerKeepsOneRowEach() async throws {
     let container = Self.container()
     try write(Self.twoRows)
@@ -46,8 +44,7 @@ final class UseSmileIDSampleJobImportTest: XCTestCase {
     XCTAssertEqual(ids, [])
   }
 
-  /// The version is what the field was always for: an unknown one is left alone rather than guessed
-  /// at, and leaves the document in place for a version that does know how to read it.
+  /// An unknown version is left alone rather than guessed at, in place for a build that can read it.
   func testADocumentFromAnUnknownVersionIsNotImportedAndIsNotDeleted() async throws {
     try write(#"{"version":99,"jobs":[\#(Self.row(id: "job-1", millis: 1))]}"#)
     let ids = await store().jobs.map(\.id)
@@ -55,11 +52,9 @@ final class UseSmileIDSampleJobImportTest: XCTestCase {
     XCTAssertTrue(FileManager.default.fileExists(atPath: url.path))
   }
 
-  /// A document that exists but cannot be read is not the same as no document. Reading it as "no
-  /// rows" would let the caller delete it, losing rows a later launch could have imported.
+  /// Unreadable is not the same as absent: reading it as "no rows" would let the caller delete it.
   func testAnUnreadableDocumentIsLeftAloneRatherThanTreatedAsEmpty() async throws {
-    // A directory at the document's path: it exists, and reading it as data fails — which is the
-    // shape of a permissions or I/O failure without having to provoke one.
+    // A directory at the document's path exists but cannot be read as data: an I/O failure without provoking one.
     try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
     let ids = await store().jobs.map(\.id)
     XCTAssertEqual(ids, [])

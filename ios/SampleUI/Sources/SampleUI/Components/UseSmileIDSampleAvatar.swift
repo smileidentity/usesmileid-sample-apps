@@ -1,10 +1,6 @@
 import SwiftUI
 
-/// Initials in a rounded square, or a placeholder without them.
-///
-/// A rounded square at radius 12, not a circle (node 5206:2904). The size scales with Dynamic
-/// Type, because a box that stays fixed while its initials grow renders an ellipse at the largest
-/// sizes.
+/// Initials in a rounded square at radius 12, not a circle; the box scales with Dynamic Type or its initials render an ellipse.
 public struct UseSmileIDSampleAvatar: View {
   private let initials: String
   private let containerColor: Color
@@ -42,10 +38,7 @@ public struct UseSmileIDSampleAvatar: View {
   private static let radius: CGFloat = 12
 }
 
-/// The avatar fill for a profile at `index`, cycled.
-///
-/// Position, not a hash of the initials: a hash reproduces no design order and gives the same
-/// profile a different colour on each platform.
+/// The avatar fill for a profile at `index`, cycled by position: a hash of the initials would differ per platform.
 public func useSmileIDSampleAvatarColor(profileIndex: Int) -> Color {
   smileProfileHues[max(0, profileIndex) % smileProfileHues.count]
 }
