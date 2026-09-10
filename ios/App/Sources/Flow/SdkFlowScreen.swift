@@ -2,8 +2,7 @@ import SampleUI
 import SwiftUI
 import UseSmileID
 
-/// The single route hosting the SDK flow, in both presentations (R3). The SDK owns everything inside
-/// it (R2): no host back control and no host chrome. The presentations differ only in insets.
+/// The single route hosting the SDK flow in both presentations, which differ only in insets; no host chrome inside it.
 struct SdkFlowScreen: View {
   let productId: String
   let presentation: UseSmileIDSampleFlowRoute
@@ -16,8 +15,7 @@ struct SdkFlowScreen: View {
   @Environment(\.useSmileIDSampleColors) private var colors
 
   var body: some View {
-    // A stack, not a background on the content: the content is empty until the gate has run, and
-    // SwiftUI drops an empty view's background — the signal below never fired that way.
+    // A stack, not a background: the content is empty until the gate runs, and SwiftUI drops an empty view's background.
     ZStack {
       // So the frame before the SDK mounts is not white.
       colors.background
@@ -44,8 +42,7 @@ struct SdkFlowScreen: View {
   /// The gate, then the run. Every exit replaces the path rather than popping it (R4).
   private func enter() {
     guard run.claimEntry() else { return }
-    // Hoisted: a teardown cancel arrives from the SDK's `deinit`, after this level is gone, where an
-    // `@EnvironmentObject` read is no longer valid.
+    // Hoisted: a teardown cancel arrives from the SDK's `deinit`, where an `@EnvironmentObject` read is invalid.
     let app = app
     let router = router
     let run = run

@@ -70,8 +70,7 @@ public struct UseSmileIDSampleProductCard<Ghost: View>: View {
     .useSmileIDSampleTestId(testId)
   }
 
-  /// One text node with two runs, not two stacked `Text`s, which drift apart at large sizes. The
-  /// title shrinks to fit its column before it is allowed to wrap, and only at the default size.
+  /// One text node with two runs, not two stacked `Text`s, which drift apart at large sizes.
   private var label: some View {
     let type = UseSmileIDSampleTheme.type
     let titleStyle = type.textStyleBodyStrong
@@ -90,8 +89,7 @@ public struct UseSmileIDSampleProductCard<Ghost: View>: View {
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 
-  /// The design runs the outer stop past the card's edge, and a gradient stop must land inside
-  /// 0...1 — so the last stop is the colour the gradient has reached by the edge.
+  /// The design runs the outer stop past the card's edge, so the last stop is the colour reached by it.
   private var fill: LinearGradient {
     guard enabled else {
       return LinearGradient(colors: [colors.surfaceMuted, colors.surfaceMuted], startPoint: .topLeading, endPoint: .bottomTrailing)
@@ -113,8 +111,7 @@ public struct UseSmileIDSampleProductCard<Ghost: View>: View {
     return start.mixed(with: end, by: (1 - hue.stopStart) / (hue.stopEnd - hue.stopStart))
   }
 
-  /// Each mark takes the ink for the end of the gradient it covers: one fixed value leaves the go
-  /// pill invisible on the darkest card and the ghost invisible on the lightest.
+  /// Each mark takes the ink for the gradient end it covers; one fixed value goes invisible at one extreme.
   private var ghostInk: Color {
     hue.from.inkOn
   }

@@ -1,10 +1,6 @@
 import SwiftUI
 
-/// A status pill in the design's soft tinted treatment: a pale fill with a dark same-hue label.
-///
-/// Two things a port gets wrong here. The label is Title case, NOT upper-cased — the same
-/// 11/700 style IS upper-cased for date and section headers. And the pill takes `radius.control`,
-/// not `radius.chip`.
+/// A soft tinted status pill: the label is Title case, not upper-cased like the same style's headers, and it takes `radius.control`.
 public struct UseSmileIDSampleStatusBadge: View {
   private let status: UseSmileIDSampleStatus
   private let testId: String?

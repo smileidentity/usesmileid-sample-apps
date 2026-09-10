@@ -65,8 +65,7 @@ final class UseSmileIDSampleLicensesTest: XCTestCase {
     }
   }
 
-  /// The schema divergence from Android's asset: its texts are holder-free templates keyed by licence,
-  /// and a LICENSE file is not, so sharing one copy would attribute one component's holder to another.
+  /// Keyed per component, not per licence: sharing one copy would attribute one component's holder to another.
   func testTheMitComponentsShareNeitherATextNorAHolder() {
     let mit = licenses.components.filter { $0.licenseId == "MIT" }.compactMap(\.text)
     XCTAssertGreaterThan(mit.count, 1, "expected more than one MIT component")
@@ -96,8 +95,7 @@ final class UseSmileIDSampleLicensesTest: XCTestCase {
     XCTAssertTrue(UseSmileIDSampleLicenses.bundled(in: Bundle(for: Self.self)).isEmpty)
   }
 
-  /// No shipped component takes this path, so the decode is what covers it: the reviewed OVERRIDES
-  /// table is how a component whose text stays inside it gets listed.
+  /// No shipped component takes this path, so the decode is what covers it.
   func testAComponentWhoseTextStaysInsideItDecodesToALink() throws {
     let asset = #"""
     {"components": [{
@@ -111,8 +109,7 @@ final class UseSmileIDSampleLicensesTest: XCTestCase {
     XCTAssertEqual("1.0.0 · Vendor Licence", notice.subtitle)
   }
 
-  /// A vendored notice is not separately pinned, so its row would read " · MIT License" if the
-  /// separator were unconditional the way the Compose twin's is.
+  /// A vendored notice has no version, so an unconditional separator would render " · MIT License".
   func testAVersionIsShownOnlyWhereThereIsOne() {
     XCTAssertEqual("MIT License", Self.notice(version: "").subtitle)
     XCTAssertEqual("1.2 · MIT License", Self.notice(version: "1.2").subtitle)

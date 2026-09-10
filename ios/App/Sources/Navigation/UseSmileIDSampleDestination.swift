@@ -127,8 +127,7 @@ struct UseSmileIDSampleDestination: View {
     content.sheet(item: $inAppLink) { UseSmileIDSampleBrowser(url: $0.url) }
   }
 
-  /// No url is this app's own screen; `opensInApp` stays in a browser sheet; the legal pages eject,
-  /// because both serve a PDF a mobile browser shows as a stub.
+  /// No url is this app's own screen, `opensInApp` stays in a sheet, and the legal pages eject because both serve a PDF.
   private func open(_ row: UseSmileIDSampleNavRow) {
     guard let url = row.url else {
       router.open(.licenses)
@@ -167,8 +166,7 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
       onRefresh: { await refresh(silentWhenUnchanged: false) }
     )
     .task(id: jobId) {
-      // Off the store's first emission: nil is "not loaded yet", and treating it as a row would
-      // refresh a settled one.
+      // Off the store's first emission: nil is "not loaded yet", not "no row".
       guard await loaded(jobId)?.status == .processing else { return }
       await refresh(silentWhenUnchanged: true)
     }
@@ -243,8 +241,7 @@ private struct UseSmileIDSampleVerificationsHost: View {
   }
 }
 
-/// The profiles list plus the created confirmation it owns. The created id is consumed on sight, so
-/// returning to the list cannot re-show it.
+/// The profiles list and its created confirmation; the id is consumed on sight, so returning cannot re-show it.
 private struct UseSmileIDSampleProfilesHost: View {
   @EnvironmentObject private var router: UseSmileIDSampleRouter
   @EnvironmentObject private var app: UseSmileIDSampleAppState

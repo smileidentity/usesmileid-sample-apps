@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// A single-line field on the input tokens.
-///
-/// Error outranks focus, so tapping back into a rejected field does not hide the message.
+/// A single-line field on the input tokens; error outranks focus, so tapping back in does not hide the message.
 public struct UseSmileIDSampleTextInput<Leading: View, Trailing: View>: View {
   @Binding private var value: String
   private let placeholder: String
@@ -27,8 +25,7 @@ public struct UseSmileIDSampleTextInput<Leading: View, Trailing: View>: View {
     isError: Bool = false,
     errorMessage: String? = nil,
     keyboardType: UIKeyboardType = .default,
-    // Masks the value and marks the field a password, keeping a credential out of screenshots
-    // and out of the view hierarchy an automated run dumps on failure.
+    // Masks the value and marks the field a password, keeping a credential out of screenshots and hierarchy dumps.
     masked: Bool = false,
     testId: String? = nil,
     @ViewBuilder leading: () -> Leading = { EmptyView() },
@@ -84,8 +81,7 @@ public struct UseSmileIDSampleTextInput<Leading: View, Trailing: View>: View {
         UseSmileIDSampleText(placeholder, style: UseSmileIDSampleTheme.type.inputFont)
           .foregroundColor(colors.input.placeholder)
       }
-      // SecureField rather than a masking transform: it is what stops the system offering to
-      // learn the value, and what keeps it out of a screenshot.
+      // SecureField rather than a masking transform: it stops the system offering to learn the value.
       Group {
         if masked {
           SecureField("", text: $value)

@@ -1,9 +1,7 @@
 @testable import SampleUI
 import XCTest
 
-/// The decode rules, held against the SDK's own and against the same fixtures the Android twin pins.
-/// The SDK's payload parsing is internal, so these cases are what stop this duplicate drifting from
-/// the rules the SDK actually applies at `build()`.
+/// The decode rules against the same fixtures the Android twin pins: the SDK's parsing is internal, so these stop the duplicate drifting.
 final class UseSmileIDSampleTokenDecoderTest: XCTestCase {
   func testATokenIsThreeBase64UrlSegmentsOrItIsNotAToken() {
     for candidate in [
@@ -156,8 +154,7 @@ final class UseSmileIDSampleTokenDecoderTest: XCTestCase {
     let bound = UseSmileIDSampleTokenBindings(country: "KE", idType: "NATIONAL_ID")
     for product in [UseSmileIDSampleProduct.documentVerification, .enhancedDocumentVerification] {
       XCTAssertTrue(bound.bindsIdDetails(product))
-      // Document Verification's own validator accepts a nil ID type, but the form is where the
-      // document type is chosen — so a partial binding must still go through it.
+      // Document Verification's validator accepts a nil ID type, but the form is where the type is chosen.
       XCTAssertFalse(bound.removing(\.idType).bindsIdDetails(product))
       XCTAssertFalse(bound.removing(\.country).bindsIdDetails(product))
     }

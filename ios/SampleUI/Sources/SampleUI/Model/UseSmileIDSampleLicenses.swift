@@ -13,10 +13,7 @@ public struct UseSmileIDSampleLicenses: Equatable {
   }
 }
 
-/// One component a partner ships, and what it is licensed under.
-///
-/// The text is the component's own, holder line included, so it belongs to the notice rather than
-/// to a table keyed by licence: two MIT components carry two different copyright holders.
+/// One component a partner ships and its licence; the text is the component's own, since two MIT components carry two holders.
 public struct UseSmileIDSampleNotice: Equatable, Decodable {
   public let component: String
   public let version: String
@@ -50,8 +47,7 @@ public struct UseSmileIDSampleNotice: Equatable, Decodable {
 }
 
 extension UseSmileIDSampleLicenses {
-  /// Reads the generated notices out of the library bundle; an absent or unreadable asset is the
-  /// empty state rather than a crash, because it means the build did not ship them.
+  /// Reads the generated notices from the library bundle; an absent asset is the empty state, not a crash.
   public static func bundled() -> UseSmileIDSampleLicenses {
     // `.module` is internal, so it cannot be this public method's default argument.
     bundled(in: .module)

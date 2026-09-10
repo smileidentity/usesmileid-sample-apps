@@ -1,10 +1,7 @@
 import SafariServices
 import SwiftUI
 
-/// An in-app browser for the ABOUT rows.
-///
-/// `SFSafariViewController`, not a `WKWebView`: a web view would lose the user's session, autofill
-/// and password manager, and this is code partners copy.
+/// An in-app browser for the ABOUT rows; `SFSafariViewController`, not a `WKWebView`, which would lose session and autofill.
 struct UseSmileIDSampleBrowser: UIViewControllerRepresentable {
   let url: URL
 
