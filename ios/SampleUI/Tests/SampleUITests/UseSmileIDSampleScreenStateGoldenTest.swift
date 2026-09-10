@@ -98,7 +98,8 @@ final class UseSmileIDSampleScreenStateGoldenTest: XCTestCase {
       .deletingLastPathComponent()
       .deletingLastPathComponent()
       .appendingPathComponent("SampleUIGoldenTests")
-    let files = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
+    let found = FileManager.default.enumerator(at: directory, includingPropertiesForKeys: nil)
+    let files = (found?.allObjects as? [URL] ?? [])
     let body = try files.filter { $0.pathExtension == "swift" }
       .map { try String(contentsOf: $0, encoding: .utf8) }
       .joined(separator: "\n")
