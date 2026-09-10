@@ -108,8 +108,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("user_details_empty") { userDetails(UseSmileIDSampleUserDetails()) }
   }
 
-  /// Mid-entry, so Continue is still refused and the hint still asks. The caret is UIKit's, drawn by
-  /// the first responder an unhosted render has none of — the device pass's, like the switch thumb.
+  /// Mid-entry. The caret is the first responder's, which an unhosted render has none of.
   func testUserDetailsEditing() {
     goldens("user_details_editing") { userDetails(Self.partialDetails) }
   }
@@ -283,8 +282,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     }
   }
 
-  /// Two rows gone, counts recomputed from what is left, and the confirmation that offers them back.
-  /// The notice is the shell's bottom chrome rather than the screen's, so the state is the pair.
+  /// Two rows gone and the confirmation that offers them back, which is the shell's bottom chrome.
   func testVerificationsAfterDelete() {
     goldens("verifications_after_delete") {
       VStack(spacing: SmileSpacing.spacingXs) {
@@ -503,8 +501,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("scan_token_redirected") { scanToken(reason: .sessionEnded) }
   }
 
-  /// 2400, not 1400: the caption is the last thing in a scroll view the sheet shares the screen
-  /// with, so at 1400 it fell outside the viewport and both baselines recorded the same picture.
+  /// 2400, not 1400: at 1400 the caption fell outside the viewport and both baselines matched.
   func testScanTokenSurvivesMaxDynamicType() {
     assertSurvivesMaxDynamicType(growsWithContentSize: false) { scanToken(height: 2400) }
   }

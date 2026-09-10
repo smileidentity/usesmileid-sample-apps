@@ -101,8 +101,7 @@ public struct VerificationDetailsScreen: View {
     }
   }
 
-  /// Stacks once type grows: beside the badge the product name has a few characters of width and
-  /// breaks mid-word — "SmartS / elfie / Authen / ticatio / n" is what the AX baseline showed.
+  /// Stacks once type grows: beside the badge the product name has a few characters and breaks mid-word.
   private func heading(_ job: UseSmileIDSampleJob) -> some View {
     let title = UseSmileIDSampleText(job.product.label, style: UseSmileIDSampleTheme.type.textStyleTitle)
       .foregroundColor(colors.textTitle)

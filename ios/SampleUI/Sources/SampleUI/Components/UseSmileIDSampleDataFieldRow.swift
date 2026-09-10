@@ -31,8 +31,7 @@ public struct UseSmileIDSampleDataFieldRow: View {
   }
 
   public var body: some View {
-    // Stacks once type grows, the switch KeyValueEditRow makes: two columns at the largest content
-    // size leave each a few characters wide, and a job id or a timestamp then breaks mid-token.
+    // Stacks once type grows, the switch KeyValueEditRow makes: two columns leave each a few characters.
     Group {
       if sizeCategory.isAccessibilityCategory {
         VStack(alignment: .leading, spacing: SmileSpacing.spacingXxs) {

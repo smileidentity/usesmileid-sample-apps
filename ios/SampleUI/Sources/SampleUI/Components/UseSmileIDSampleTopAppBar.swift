@@ -80,8 +80,7 @@ public struct UseSmileIDSampleTopAppBar<Action: View>: View {
   }
 
   public var body: some View {
-    // Stacks once type grows, the switch KeyValueEditRow makes: between two 40pt controls that scale
-    // with it, the title's column narrows to a few characters and wraps letter by letter.
+    // Stacks once type grows: between two controls that scale with it the title wraps letter by letter.
     Group {
       if sizeCategory.isAccessibilityCategory {
         VStack(alignment: .leading, spacing: SmileSpacing.spacingXs) {

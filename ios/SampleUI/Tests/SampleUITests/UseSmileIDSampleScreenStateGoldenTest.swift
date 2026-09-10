@@ -1,7 +1,4 @@
-// U4's contract, asserted rather than documented: every state in spec/screens.json has a golden.
-// A state added to the spec with nothing recording it fails here, as does a stale exemption and a
-// golden renamed out from under its entry. What it cannot prove is that a golden shows the state it
-// claims — that is the review of the picture, the same limit the unapplied-id inventory has.
+// Every state in spec/screens.json has a golden, or an exemption saying why it cannot.
 
 import Foundation
 import XCTest
@@ -47,7 +44,6 @@ final class UseSmileIDSampleScreenStateGoldenTest: XCTestCase {
   ]
 
   private static let exempt: [String: String] = [
-    // Each says why it cannot be recorded, because an exemption with no reason is an untracked gap.
     "consent.notAgreed": "the SDK's own screen: this app decides whether the step runs, never draws it",
     "consent.agreed": "the SDK's own screen: this app decides whether the step runs, never draws it",
     "products.supersededListLayout":
