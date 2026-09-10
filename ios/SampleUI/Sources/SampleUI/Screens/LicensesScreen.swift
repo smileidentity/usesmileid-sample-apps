@@ -52,7 +52,6 @@ public struct LicensesScreen: View {
 
   private func noticeRow(_ notice: UseSmileIDSampleNotice) -> some View {
     VStack(alignment: .leading, spacing: 0) {
-      // No leading tile and no chevron: the component is the content, and the row expands.
       UseSmileIDSampleSettingRow(
         title: notice.component,
         supportingText: notice.subtitle,

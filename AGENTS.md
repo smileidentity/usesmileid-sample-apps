@@ -186,12 +186,17 @@ that variable locally — a silent pass is how vendored tokens drift from their 
     as unaddressed work. Say in your own summary which findings you rejected and why.
   - **A person** — reply saying what changed and how you verified it, then resolve the thread. Say
     so plainly when a comment is wrong, with the reasoning; silence reads as unaddressed.
-- **Comments earn their line, and they get one.** One line each, for code comments and doc
-  comments alike; no multi-line commentary, and no comment that only restates the code. The long
-  form of a decision belongs in `docs/plan/`, which is reviewed and searchable — a paragraph above a
-  function is neither, and goes stale where nobody looks. Delete a comment rather than update it to
-  say less. This applies to what you add *and* to what you touch: if you are editing near a
-  verbose comment, trim it on the way past.
+- **The doc comment is the documentation; inline comments are the exception.** Every type,
+  function and non-obvious property carries a `///` doc comment of **one line** — that is where a
+  reader looks, and it is what the formatter enforces on declarations. Inside a body, prefer no
+  comment at all: name the thing so the code reads for itself. An inline `//` is earned only by
+  something the code cannot say — a measured constraint, a platform trap, an order that looks
+  arbitrary and is not, a value that must not change and why. "What this line does" is never a
+  reason; if a comment would restate the code, delete it or rename the code instead.
+- **One line, and the long form goes elsewhere.** No multi-line commentary anywhere. The reasoning
+  behind a decision belongs in `docs/plan/`, which is reviewed, searchable and read on purpose — a
+  paragraph above a function is none of those and goes stale where nobody looks. This applies to
+  what you add *and* to what you touch: trim a verbose comment on the way past.
 - Mirror structure across the four platforms. Same screen, same file name adjusted only for
   platform casing conventions, same relative folder. If you add a screen to one app, add it to the
   other three or explain in the PR why it is platform-specific.
@@ -295,7 +300,8 @@ Before finishing any change:
 - [ ] UI change → goldens updated, light and dark, plus the font-scale and contrast predicates
 - [ ] New scenario, screen or affordance → `spec/` updated in the same PR, IDs stable
 - [ ] Nothing added to the never-commit list; anything internal-only carries the marker
-- [ ] Every comment you added or touched is one line, and none of them restates the code
+- [ ] Declarations carry a one-line doc comment; inline comments are gone unless the code cannot
+      say what they say
 - [ ] The PR's bot findings are fixed or explicitly rejected, and every thread is resolved
 - [ ] A launch with no arguments shows no fixture data; anything made up sits behind a launch argument
 - [ ] Self-review the diff in priority order: security (no secrets, no PII in logs) → correctness

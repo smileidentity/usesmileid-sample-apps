@@ -67,7 +67,6 @@ private struct UseSmileIDSampleButtonStyle: ButtonStyle {
         RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.pill, style: .continuous)
           .fill(usesPrimary ? colors.button.primaryBackground : colors.button.disabledBackground)
       )
-      // The platform's own press feedback, rather than Android's ripple redrawn.
       .opacity(configuration.isPressed ? Self.pressedOpacity : 1)
   }
 

@@ -63,7 +63,6 @@ struct UseSmileIDSampleDestination: View {
     case .profileConfig(let profileId):
       ProfileConfigScreen(
         state: .init(
-          // Falls back to the id, so a link naming no profile still titles the screen.
           organisation: app.profiles.find(profileId)?.organisation ?? profileId,
           defaults: app.profileDraft(for: profileId),
           isActive: profileId == app.profiles.activeId
@@ -92,7 +91,7 @@ struct UseSmileIDSampleDestination: View {
         onSettingChange: { setting, enabled in app.change(setting, to: enabled) },
         onProfile: { router.open(.profiles) },
         onNavRow: { row in open(row) },
-        // Debug builds only, and no launch argument reveals it: every flow reaches the drawer by deep link.
+        // No launch argument reveals it: every flow reaches the drawer by deep link.
         onOpenScenarioDrawer: UseSmileIDSampleAppState.isDebugBuild ? { router.sheet = .scenarioDrawer } : nil,
         // There is no auth to leave; the session is the local state a partner would expect gone.
         onSignOut: { app.clearSession() }

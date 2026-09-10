@@ -17,7 +17,6 @@ struct SdkFlowScreen: View {
   var body: some View {
     // A stack, not a background: the content is empty until the gate runs, and SwiftUI drops an empty view's background.
     ZStack {
-      // So the frame before the SDK mounts is not white.
       colors.background
       content
       // The push is over here: `onAppear` fires inside it, and every gate exit is a path change.
@@ -27,7 +26,6 @@ struct SdkFlowScreen: View {
         UseSmileIDSampleCameraHold(hold: app.launchArguments.holdCamera, product: product)
       }
     }
-    // The Compose twin's `WindowInsets(0)`; `shell` stays inside the shell's own safe area.
     .ignoresSafeArea(edges: presentation == .fullscreen ? .all : [])
     .navigationBarHidden(true)
   }
@@ -54,7 +52,6 @@ struct SdkFlowScreen: View {
       // A prior enrolment's id, so authentication has something enrolled.
       userId: app.flowResult.userId ?? UUID().uuidString
     ) else {
-      // An unknown product id exits like a mistyped route.
       useSmileIDSampleLeaveFlow(router, run, flow)
       return
     }

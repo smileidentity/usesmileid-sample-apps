@@ -59,7 +59,6 @@ func useSmileIDSampleApply(
         }
         return UseSmileIDSampleFlowTokens.token(expired: false, now: Date())
       }
-      // Debug only: release must never log traffic.
       config.logging { logging in
         logging.enabled = UseSmileIDSampleAppState.isDebugBuild
         // Not BODY: a logged body carries the user details this repo forbids in logs.
@@ -337,6 +336,5 @@ extension UseSmileIDSampleProduct {
   }
 }
 
-// The same host the Settings privacy row opens.
 private let privacyPolicyUrl = URL(string: "https://smile.id/privacy-policy")!
 private let callbackUrl = "https://your-callback-url.com"

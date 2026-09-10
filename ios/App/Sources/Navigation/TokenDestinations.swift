@@ -17,7 +17,7 @@ struct UseSmileIDSampleScanTokenHost: View {
   var body: some View {
     ScanTokenScreen(
       entry: $app.scanEntry,
-      // R10: the redirect's message belongs to the screen it arrives at.
+      // The redirect's message belongs to the screen it arrives at.
       reason: resuming == nil ? nil : .sessionEnded,
       torchOn: torchOn,
       onBack: { router.pop() },
