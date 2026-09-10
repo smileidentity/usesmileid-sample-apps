@@ -1,7 +1,7 @@
 import Foundation
 
 /// Reads the pre-SwiftData JSON document so an upgrade keeps its rows; one shot, and harmless to repeat.
-struct UseSmileIDSampleJobImport: Sendable {
+struct UseSmileIDSampleJobImport {
   private let url: URL
 
   init(url: URL) {
