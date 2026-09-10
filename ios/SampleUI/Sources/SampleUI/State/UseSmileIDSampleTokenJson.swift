@@ -1,6 +1,4 @@
-/// The smallest JSON reader that can tell a string from a number from a boolean, which is what every
-/// token binding rule turns on. Hand-written rather than `JSONSerialization`, which reads `true` and
-/// `1` back as the same `NSNumber` and has no nesting cap a test can pin.
+/// The smallest JSON reader that tells a string from a number from a boolean: `JSONSerialization` reads `true` and `1` as one `NSNumber`.
 indirect enum TokenJson: Equatable {
   case obj([String: TokenJson])
   case arr([TokenJson])
@@ -40,9 +38,7 @@ extension [String: TokenJson] {
   }
 }
 
-/// Nil on anything malformed or trailing; the caller turns that into a rejection with a reason.
-/// A token arrives from a clipboard or a QR code, so its nesting is untrusted: without a cap a deeply
-/// nested payload takes the app down with a stack overflow.
+/// Nil on anything malformed or trailing; nesting is capped because a token's depth is untrusted and would overflow the stack.
 func parseTokenJson(_ text: String) -> TokenJson? {
   var reader = TokenJsonReader(text)
   return reader.parse()

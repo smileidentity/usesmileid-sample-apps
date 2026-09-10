@@ -1,7 +1,6 @@
 import XCTest
 
-/// The app's first test that drives the real shell. Every later screen asserts its route here for
-/// one line rather than a new harness.
+/// The suite that drives the real shell; every later screen asserts its route here rather than adding a harness.
 final class UseSmileIDSampleNavigationUITests: XCTestCase {
   private var app: XCUIApplication!
 
@@ -9,16 +8,13 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     super.setUp()
     continueAfterFailure = false
     app = XCUIApplication()
-    // The suite asserts on the design's three profiles, which a plain launch no longer carries. The
-    // notice window is widened because two tests act on a notice, and the offer is consumed when it
-    // dismisses — so a tap that lands late has nothing left to hit and no way to retry.
+    // Seeded because the suite asserts on the design's three profiles; the notice window is widened because its offer is consumed on dismissal.
     app.launchArguments = ["-seedProfiles", "true", "-noticeWindow", "60"]
     app.launch()
     clearAnySession()
   }
 
-  /// The session persists across launches by design, so a test that linked one and failed would
-  /// otherwise hand it to every test after it.
+  /// The session persists across launches, so a test that linked one and failed would hand it to every test after it.
   private func clearAnySession() {
     XCTAssertTrue(element("sample_nav_settings").waitForExistence(timeout: 10))
     guard element("sample_session_card").exists || element("sample_session_ended_banner").exists else { return }
@@ -116,8 +112,7 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_kyc_form_screen").exists, "the owner did not open beneath the sheet")
   }
 
-  /// The two-level case: `profiles/{id}` seats `profileConfig` under `profiles`, and the router lands
-  /// them one per appearance. Back proves the first level is really beneath the second.
+  /// The two-level case, landed one level per appearance; Back proves the first is really beneath the second.
   func testALinkOpensATwoLevelRouteInAnotherTab() {
     open("profiles/p-2")
     XCTAssertTrue(
@@ -153,8 +148,7 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     )
   }
 
-  /// With the list already open only the config has to land, and with another screen open the
-  /// link starts again from the root.
+  /// With the list already open only the config lands; with another screen open the link starts from the root.
   func testATwoLevelLinkLandsOverWhateverTheTabIsShowing() {
     open("profiles")
     XCTAssertTrue(element("sample_profiles_screen").waitForExistence(timeout: 10))
@@ -167,8 +161,7 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(app.staticTexts["PesaLink"].waitForExistence(timeout: 5))
   }
 
-  /// R12 for the profiles list: its sheet layers over it, and the created profile is listed but not
-  /// active until the confirmation's offer is taken.
+  /// The sheet layers over the list, and a created profile is listed but not active until the offer is taken.
   func testCreatingAProfileListsItAndOffersToMakeItActive() {
     open("profiles")
     XCTAssertTrue(element("sample_profiles_screen").waitForExistence(timeout: 10))
@@ -187,8 +180,7 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_new_profile_sheet").waitForNonExistence(timeout: 5))
     XCTAssertTrue(element("sample_profile_row_p-4").waitForExistence(timeout: 10), "the new profile is not listed")
     XCTAssertTrue(app.staticTexts["Ada Lovelace"].exists, "created must not mean active")
-    // Waited for on the action itself, not on the notice around it: the notice dismisses on a timer,
-    // so asserting it exists and then querying its button again is a race the slower suite lost.
+    // Waited for on the action, not the notice around it: the notice dismisses on a timer, and the second query is a race.
     let makeActive = element("sample_toast_undo")
     XCTAssertTrue(makeActive.waitForExistence(timeout: 5))
     makeActive.tap()
@@ -196,8 +188,7 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_toast").waitForNonExistence(timeout: 5))
   }
 
-  /// The CTA is the one place a profile becomes active from its own page, and it is disabled on the
-  /// profile that already is.
+  /// The CTA is the one place a profile becomes active from its own page, and is disabled on the one that already is.
   func testTheConfigCtaIsDisabledOnTheActiveProfileAndActivatesAnother() {
     open("profiles")
     XCTAssertTrue(element("sample_profiles_screen").waitForExistence(timeout: 10))
@@ -246,8 +237,7 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_scan_token_screen").waitForNonExistence(timeout: 5))
   }
 
-  /// Simulate mints the fixture the decoder reads, the store keeps it, and the strip shows it — the
-  /// whole chain through one tap, ending where the scan started.
+  /// Simulate mints the fixture the decoder reads, the store keeps it and the strip shows it, in one tap.
   func testSimulateLinksASessionAndTheProductsStripCountsItDown() {
     open("token/scan")
     XCTAssertTrue(element("sample_token_simulate").waitForExistence(timeout: 10))
@@ -262,8 +252,7 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     wait(for: [ticked], timeout: 5)
   }
 
-  /// The Expired span is the only way to reach the expiry path without waiting: it is retired on
-  /// arrival, the banner replaces the card, and its Scan action relinks over it.
+  /// The Expired span reaches the expiry path without waiting: retired on arrival, banner for card, and Scan relinks over it.
   func testAnExpiredSimulatedSpanRetiresToTheBannerAndRelinkingReplacesIt() {
     open("token/scan")
     XCTAssertTrue(element("sample_token_simulate").waitForExistence(timeout: 10))
@@ -310,13 +299,11 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
 
   /// The leak this shell was restructured to close: a tab that is not showing must not answer.
   func testOnlyTheShowingTabsIdsAreQueryable() {
-    // Each id is proven present before it is asserted gone; asserting absence alone passes just as
-    // well when the id never existed.
+    // Proven present before it is asserted gone: absence alone passes just as well when the id never existed.
     XCTAssertTrue(element("sample_product_card_smartSelfieEnrollment").waitForExistence(timeout: 10))
     element("sample_nav_verifications").tap()
     XCTAssertTrue(element("sample_verifications_screen").waitForExistence(timeout: 10))
-    // Waited for, not read once: the outgoing subtree lives for the length of the transition, so an
-    // instant read reds the lane whenever the tap and the query interleave differently.
+    // Waited for, not read once: the outgoing subtree lives for the transition, so an instant read is a race.
     XCTAssertTrue(element("sample_product_card_smartSelfieEnrollment").waitForNonExistence(timeout: 5))
     element("sample_nav_settings").tap()
     XCTAssertTrue(element("sample_sign_out").waitForExistence(timeout: 10))
@@ -324,8 +311,7 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_product_card_smartSelfieEnrollment").waitForNonExistence(timeout: 5))
   }
 
-  /// The drawer's link opens it over Settings, its owner, and a row's choice is the card's at once —
-  /// selecting closes nothing, as the Compose drawer does not.
+  /// The link opens the drawer over Settings, its owner, and a row's choice is the card's at once without closing it.
   func testTheScenarioDrawerLinkOpensOverSettingsAndASelectionReachesTheCard() {
     open("debug/scenarios")
     XCTAssertTrue(element("sample_scenario_drawer").waitForExistence(timeout: 10))
@@ -340,8 +326,7 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     app.buttons["sample_theme_item_clashingHost"].tap()
     XCTAssertTrue(element("sample_scenario_drawer").exists, "a selection must not close the drawer")
 
-    // The flows' own sequence: link to the drawer, choose, link to the card. The route link
-    // replaces the drawer's owner, so the drawer goes with it rather than covering the card.
+    // The route link replaces the drawer's owner, so the drawer goes with it rather than covering the card.
     open("verifications/job_missing")
     XCTAssertTrue(element("sample_scenario_drawer").waitForNonExistence(timeout: 5), "the drawer outlived its owner")
     XCTAssertTrue(element("sample_result_active_scenario").waitForExistence(timeout: 10))
@@ -359,8 +344,7 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     }
     row.tap()
     XCTAssertTrue(element("sample_scenario_drawer").waitForExistence(timeout: 10))
-    // The platform's own dismissal, since the sheet has no control of its own, like the Compose
-    // drawer: a drag from inside the sheet to the bottom edge. A flick is too short for it.
+    // The platform's own dismissal, the sheet having no control: a drag to the bottom edge, since a flick is too short.
     element("sample_scenario_drawer")
       .coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
       .press(forDuration: 0.3, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.98)))
@@ -392,8 +376,7 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     }
   }
 
-  /// The toggle lives in the app state, so it holds across a tab switch; and a collapsed field is
-  /// absent from the tree, which is why the card opens expanded.
+  /// The toggle lives in the app state, so it holds across a tab switch; a collapsed field is absent from the tree.
   func testCollapsingTheCardSurvivesATabSwitch() {
     open("verifications/job_missing")
     XCTAssertTrue(element("sample_result_active_scenario").waitForExistence(timeout: 10))
@@ -435,8 +418,7 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     app.descendants(matching: .any).matching(identifier: id).firstMatch
   }
 
-  /// `simctl openurl` raises a system confirmation that swallows the link; this is the delivery that
-  /// does not, and the prompt is taken if a runtime still shows one.
+  /// `simctl openurl` raises a confirmation that swallows the link; this delivery does not, and takes the prompt if shown.
   private func open(_ path: String) {
     XCUIDevice.shared.system.open(URL(string: "usesmileid-sample-ios://\(path)")!)
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
@@ -444,8 +426,7 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     if confirm.waitForExistence(timeout: 2) {
       confirm.tap()
     }
-    // Says which half broke: a second app declaring the same scheme takes the link instead, and
-    // the screen assertion alone reads as a routing bug in this app.
+    // Says which half broke: a second app on the same scheme takes the link, which reads as a routing bug here.
     XCTAssertTrue(
       app.wait(for: .runningForeground, timeout: 10),
       "the link did not reach this app — another installed app may claim the scheme"

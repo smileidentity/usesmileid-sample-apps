@@ -65,8 +65,7 @@ final class UseSmileIDSampleJobDatesTest: XCTestCase {
     var calendar = Calendar(identifier: .gregorian)
     calendar.locale = Locale(identifier: "en_US_POSIX")
     calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "America/New_York"))
-    // Midnight on 2025-03-10 in New York, the day after its clocks went forward: the day before it
-    // is 25 hours long, so subtracting 86,400 seconds lands an hour into it and names the date instead.
+    // The day after New York's clocks went forward: the day before is 25 hours, so subtracting 86,400s lands inside it.
     let today = useSmileIDSampleStartOfDay(Date(timeIntervalSince1970: 1741579200), calendar: calendar)
     let jobs = [Self.job(id: "yesterday", createdAt: today.addingTimeInterval(-3600))]
     XCTAssertEqual(jobs.groupByDay(today, calendar: calendar).map(\.relative), ["YESTERDAY"])

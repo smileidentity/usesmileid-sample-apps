@@ -1,8 +1,7 @@
 import SampleUI
 import XCTest
 
-/// Hosted by the app on purpose: the Keychain answers to a process with an application identity, and an
-/// unhosted test bundle has none, so the adapter can only be proven where the app will run it.
+/// Hosted by the app on purpose: the Keychain needs an application identity, which an unhosted bundle has none of.
 final class UseSmileIDSampleKeychainStorageTest: XCTestCase {
   private let keychain = UseSmileIDSampleKeychainStorage(service: "usesmileid_sample_test")
 

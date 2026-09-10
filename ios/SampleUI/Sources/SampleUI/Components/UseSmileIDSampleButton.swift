@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// The full-width primary action. A minimum height so the label wraps rather than clips, and
-/// loading refuses taps while keeping the enabled colours.
+/// The full-width primary action: a minimum height so the label wraps, and loading refuses taps while looking enabled.
 public struct UseSmileIDSampleButton: View {
   private let text: String
   private let action: () -> Void
@@ -68,7 +67,6 @@ private struct UseSmileIDSampleButtonStyle: ButtonStyle {
         RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.pill, style: .continuous)
           .fill(usesPrimary ? colors.button.primaryBackground : colors.button.disabledBackground)
       )
-      // The platform's own press feedback, rather than Android's ripple redrawn.
       .opacity(configuration.isPressed ? Self.pressedOpacity : 1)
   }
 

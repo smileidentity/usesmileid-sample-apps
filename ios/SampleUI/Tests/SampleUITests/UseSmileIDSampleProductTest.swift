@@ -3,8 +3,7 @@ import XCTest
 
 final class UseSmileIDSampleProductTest: XCTestCase {
   func testEveryProductResolvesAHue() {
-    // A missing hue falls back to a grey tile, which is indistinguishable from Enhanced Document
-    // Verification's real one — so the silent case has to fail here instead.
+    // A missing hue falls back to a grey tile indistinguishable from a real one, so it fails here instead.
     for product in UseSmileIDSampleProduct.allCases {
       XCTAssertNotNil(product.hue, "\(product.id) has no entry in productHues")
     }

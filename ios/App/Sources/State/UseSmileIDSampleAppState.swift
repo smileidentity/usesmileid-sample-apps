@@ -2,11 +2,7 @@ import Combine
 import SampleUI
 import SwiftUI
 
-/// What the shell holds on the app's behalf: the configuration every screen reads, the profile that
-/// names it, the token session and the clock that ticks it. An `ObservableObject`, not `@Observable`,
-/// because the floor is iOS 15.
-///
-/// Writes live here rather than in a screen so a setting survives the screen that changed it.
+/// What the shell holds for every screen: configuration, profile, token session and the clock, so a write survives the screen that made it.
 @MainActor
 final class UseSmileIDSampleAppState: ObservableObject {
   /// Persists the token session as one record, so the live half and the ended marker never disagree.
@@ -15,8 +11,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// The submitted verifications; its writes are launched here rather than in a screen.
   let jobStore: UseSmileIDSampleJobStore
 
-  /// Read once at launch. `appLocale` reaches the shell's own SwiftUI formatting, not the SDK's
-  /// strings, which follow `-AppleLanguages`.
+  /// Read once at launch; `appLocale` reaches the shell's own formatting, not the SDK's strings.
   let launchArguments: UseSmileIDSampleLaunchArguments
 
   @Published var settings = UseSmileIDSampleSettings()
@@ -39,8 +34,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// The list's filter and selection, here rather than in the screen: one tab is mounted at a time.
   @Published var verifications = UseSmileIDSampleVerificationsScreenState()
 
-  /// The forms live here, not in the screens: one tab is mounted, so a tab switch tears a screen's
-  /// own state down and part-entered input goes with it.
+  /// The forms live here, not in the screens: one tab is mounted, so a tab switch would lose part-entered input.
   @Published var userDetails = UseSmileIDSampleUserDetails()
   @Published var rememberDetails = false
   @Published var idDetails = UseSmileIDSampleIdDetails()
@@ -52,8 +46,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// Both halves from one read, per the store's contract.
   @Published private(set) var sessionRecord: UseSmileIDSampleSessionRecord
 
-  /// The one clock the ring, the card and the countdown read. Ticks once a second while a session is
-  /// live and stops at its deadline, where the token is retired; nothing in a screen owns a timer.
+  /// The one clock the ring, card and countdown read, ticking while a session is live; no screen owns a timer.
   @Published private(set) var now = Date()
 
   /// The scan sheet's typed state, lifted here so a tab switch or a recreation keeps it (R6).
@@ -114,8 +107,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     Task { [jobStore] in await jobStore.add(job, bindings: bindings) }
   }
 
-  /// One handler for the swipe, the selection bar and the details screen, so the fallback below
-  /// cannot end up fixed in one of them only. Unstructured, never `.task`: the write outlives the screen.
+  /// One handler for all three removal paths; unstructured, never `.task`, so the write outlives the screen.
   func removeJobs(_ ids: Set<String>) {
     Task { [jobStore] in await jobStore.remove(ids) }
     verifications.changeSelectMode(false)
@@ -201,8 +193,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     tick()
   }
 
-  /// Stops at the deadline: the session object does not change on expiry, so the loop is what ends
-  /// it. A cold start after expiry takes the same path, the loop exiting at once.
+  /// Stops at the deadline: the session object does not change on expiry, so the loop is what ends it.
   private func tick() {
     ticker?.cancel()
     guard let live = session else { return }
@@ -281,8 +272,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     idDetails.idType = nil
   }
 
-  /// What the token still leaves the form to collect, read through the live-session rule the gate
-  /// will use, so a skipped form can never be followed by a redirect back to it.
+  /// What the token leaves the form to collect, read through the gate's own rule so a skipped form cannot redirect back.
   var userDetailsRequirement: UseSmileIDSampleUserDetailsRequirement {
     UseSmileIDSampleUserDetailsRequirement(bindings: sessionActive ? session?.bindings : nil)
   }

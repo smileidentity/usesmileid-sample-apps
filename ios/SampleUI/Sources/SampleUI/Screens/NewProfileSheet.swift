@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// A profile name, then the four user details that will live under it. Create needs the name and
-/// both required names.
+/// A profile name and the four user details under it; Create needs the name and both required names.
 public struct NewProfileSheet: View {
   @Binding private var draft: UseSmileIDSampleNewProfile
   private let onSave: () -> Void

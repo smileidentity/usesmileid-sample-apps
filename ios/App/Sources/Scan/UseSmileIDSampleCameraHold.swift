@@ -3,8 +3,7 @@ import os
 import SampleUI
 import SwiftUI
 
-/// Honours `holdCamera`: the host keeps the product's lens while the SDK starts. Frames are counted
-/// because a probe that never acquired the camera passes vacuously.
+/// Honours `holdCamera`, counting frames because a probe that never acquired the camera passes vacuously.
 struct UseSmileIDSampleCameraHold: View {
   let hold: UseSmileIDSampleHoldCamera?
   let product: UseSmileIDSampleProduct
@@ -46,8 +45,7 @@ private func useSmileIDSampleHoldCamera(_ hold: UseSmileIDSampleHoldCamera, lens
     return
   }
   let held = UseSmileIDSampleHeldSession(hold: hold, lens: lens)
-  // Off the cooperative pool: opening the device and `startRunning` both block, and blocking one of
-  // its threads could stall the very start-up this hold exists to contend with.
+  // Off the cooperative pool: opening the device blocks, and stalling one of its threads is what this hold contends with.
   held.queue.async { held.start() }
   defer { held.queue.async { held.release() } }
   switch hold {
@@ -56,8 +54,7 @@ private func useSmileIDSampleHoldCamera(_ hold: UseSmileIDSampleHoldCamera, lens
   }
 }
 
-/// The whole lifecycle, on one serial queue: the frames land on it too, so a release cannot report
-/// while one is still arriving. Unchecked because that queue is the only caller.
+/// The whole lifecycle on one serial queue, frames included, so a release cannot report mid-frame; unchecked because that queue is the only caller.
 private final class UseSmileIDSampleHeldSession: @unchecked Sendable {
   let queue = DispatchQueue(label: "com.usesmileid.sample.camerahold")
 
@@ -104,8 +101,7 @@ private final class UseSmileIDSampleHeldSession: @unchecked Sendable {
   }
 }
 
-/// Tells a hold that acquired the camera from one that only asked for it. Unchecked because every
-/// mutable field is behind the lock.
+/// Tells a hold that acquired the camera from one that only asked; unchecked because every mutable field is behind the lock.
 private final class UseSmileIDSampleFrameCounter: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate,
   @unchecked Sendable {
   private let lock = NSLock()

@@ -8,8 +8,7 @@ public struct UseSmileIDSampleScanGlyph: View {
 
   @Environment(\.useSmileIDSampleColors) private var colors
 
-  /// `tint` is the caller's because the reticle carries the scanner's state over a live camera;
-  /// `reticle` is the design's hidden 45% state, kept for that camera and animatable from it.
+  /// `tint` is the caller's, carrying the scanner's state; `reticle` is the design's hidden 45% state.
   public init(size: CGFloat = 279, tint: Color? = nil, reticle: Bool = false) {
     self.size = size
     self.tint = tint
@@ -24,8 +23,7 @@ public struct UseSmileIDSampleScanGlyph: View {
   /// The design's own reticle opacity, which is what keeps it from competing with the preview.
   private static let reticleOpacity: Double = 0.45
 
-  /// The generated mark carries that 0.45 as a group opacity. At rest the glyph draws at full
-  /// strength, as the Compose twin's drawable does, so the parts are re-emitted opaque.
+  /// The generated mark carries 0.45 as a group opacity, so the parts are re-emitted opaque for the resting glyph.
   private static let mark = SmileIcon(
     width: SmileIcons.scanGlyph.width,
     height: SmileIcons.scanGlyph.height,

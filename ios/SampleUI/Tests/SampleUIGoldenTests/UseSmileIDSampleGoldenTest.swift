@@ -3,11 +3,7 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-/// The golden harness. Baselines live in `__Snapshots__/` beside this file and are recorded on the
-/// pinned simulator (iPhone 17 Pro) — a diff means the UI changed, not the environment.
-///
-/// Re-record an intentional change by deleting the affected baseline, or with
-/// `SNAPSHOT_TESTING_RECORD=all`, then commit what the run wrote.
+/// The golden harness: baselines in `__Snapshots__/`, recorded on the pinned iPhone 17 Pro; delete one to re-record.
 @MainActor
 class UseSmileIDSampleGoldenTest: XCTestCase {
   /// Captures one component in light and dark, the pair every UI change has to update together.
@@ -19,8 +15,7 @@ class UseSmileIDSampleGoldenTest: XCTestCase {
     @ViewBuilder content: () -> some View
   ) {
     let view = host(content())
-    // Measured once for both schemes: colour is the only thing that differs between them, so a
-    // component whose HEIGHT changed with the scheme would size one baseline wrong. None does.
+    // Measured once for both schemes: only colour differs, so a scheme-dependent height would size one wrong.
     let layout = measured(view)
     for (suffix, style) in [("light", UIUserInterfaceStyle.light), ("dark", .dark)] {
       assertSnapshot(
@@ -34,12 +29,7 @@ class UseSmileIDSampleGoldenTest: XCTestCase {
     }
   }
 
-  /// The largest accessibility size, as a baseline plus a width assertion.
-  ///
-  /// Weaker than the Compose twin, and deliberately so rather than by omission: Compose exposes
-  /// `didExceedMaxLines` through the semantics tree, and SwiftUI publishes no truncation flag a
-  /// unit test can read. So overflow past the viewport fails here, and clipping *within* the
-  /// viewport is caught by reviewing the baseline this writes.
+  /// The largest accessibility size: overflow past the viewport fails here, clipping within it is caught by reading the baseline.
   func assertSurvivesMaxDynamicType(
     growsWithContentSize: Bool = true,
     file: StaticString = #filePath,
@@ -47,14 +37,10 @@ class UseSmileIDSampleGoldenTest: XCTestCase {
     line: UInt = #line,
     @ViewBuilder content: () -> some View
   ) {
-    // The size category goes in through SwiftUI's environment, not a UITraitCollection: a trait is
-    // applied after `.sizeThatFits` has measured, so the content renders larger than the frame it
-    // was sized for and the baseline records a clipped view instead of a tall one.
+    // Through the environment, not a UITraitCollection: a trait applies after `.sizeThatFits`, so the baseline clips.
     let scaled = content().environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
 
-    // Measured WITHOUT the host's fixed-width frame, which would force the answer to the viewport
-    // width and make the assertion vacuous. Text that wraps comes back within the proposed width;
-    // a child that cannot shrink — a fixed frame, a row of fixed-width controls — comes back wider.
+    // Without the host's fixed-width frame, which would force the answer to the viewport width and make this vacuous.
     let available = Self.width - SmileSpacing.spacingMd * 2
     let ideal = UIHostingController(rootView: scaled.useSmileIDSampleTheme())
       .sizeThatFits(in: CGSize(width: available, height: .greatestFiniteMagnitude))
@@ -67,12 +53,8 @@ class UseSmileIDSampleGoldenTest: XCTestCase {
       line: line
     )
 
-    // Growth is the only truncation signal SwiftUI leaves: a view that caps its own height reports
-    // the cap as its ideal size, so measuring it against itself cannot tell clipped from fitting.
-    // Declaring the fixed ones instead makes a component that STOPS growing fail, the way the
-    // unapplied-id inventory works, and a stale declaration fails too.
-    // Pinned rather than inherited: measured at whatever category the host happens to carry, a
-    // runner set to large text makes this equal `ideal` and the assertion fails for nothing.
+    // Growth is the only truncation signal SwiftUI leaves, so the fixed ones are declared and a stale declaration fails.
+    // Pinned rather than inherited: at the host's own category a runner set to large text makes this equal `ideal`.
     let natural = UIHostingController(
       rootView: content().environment(\.sizeCategory, .large).useSmileIDSampleTheme()
     )
@@ -116,12 +98,7 @@ class UseSmileIDSampleGoldenTest: XCTestCase {
       .useSmileIDSampleTheme()
   }
 
-  /// The height the view actually needs at the golden width, pinned as a fixed layout.
-  ///
-  /// Not `.sizeThatFits`, which measures with `layoutFittingCompressedSize` — that returns a
-  /// SINGLE line's height for wrapping text, so the baseline records the component truncated into
-  /// a box too short for it. Measured here: 88.7pt compressed against 198.7pt actual for three
-  /// lines of the heading style at the largest content size.
+  /// The height the view needs at the golden width — not `.sizeThatFits`, which returns one line's height for wrapping text.
   private func measured(_ view: some View) -> SwiftUISnapshotLayout {
     let height = UIHostingController(rootView: view)
       .sizeThatFits(in: CGSize(width: Self.width, height: .greatestFiniteMagnitude))

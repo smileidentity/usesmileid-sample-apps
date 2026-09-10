@@ -240,8 +240,7 @@ final class UseSmileIDSampleJobStoreTest: XCTestCase {
     )
   }
 
-  /// A JSON document of the shape a pre-SwiftData version left behind, on disk where the import
-  /// reads it from. Deleted with the test, and the import deletes it too once its rows are in.
+  /// A pre-SwiftData document on disk where the import reads it, deleted with the test and by the import.
   private static func legacyFile(_ json: String) throws -> URL {
     let url = URL(fileURLWithPath: NSTemporaryDirectory())
       .appendingPathComponent("legacy-\(UUID().uuidString).json")

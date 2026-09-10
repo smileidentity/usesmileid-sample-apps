@@ -93,9 +93,7 @@ public enum UseSmileIDSampleProduct: String, CaseIterable, Sendable {
     smileProductHues[id]
   }
 
-  /// Named, not `values.first`, which reads an unordered dictionary and so differs between runs.
-  /// Unreachable in practice — `testEveryProductResolvesAHue` fails first — but a sample app should
-  /// draw a wrong colour rather than trap on a partner's device.
+  /// Named, not `values.first`, which is unordered; unreachable, but a wrong colour beats a trap on a partner's device.
   public var resolvedHue: SmileProductHue {
     hue ?? smileProductHues[UseSmileIDSampleProduct.smartSelfieEnrollment.id]!
   }

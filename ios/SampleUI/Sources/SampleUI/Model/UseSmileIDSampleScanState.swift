@@ -1,8 +1,4 @@
-/// What the scanner is doing, said out loud on screen.
-///
-/// A scan used to decode, release the camera and navigate in one frame, which reads as the preview
-/// freezing for no reason: the work all happened, and none of it was acknowledged. Each state here
-/// exists to be *shown* — found before linked, and a rejection that names itself and can be retried.
+/// What the scanner is doing, said out loud: each state exists to be shown, since decoding and navigating in one frame reads as a freeze.
 public enum UseSmileIDSampleScanState: Equatable, Sendable {
   /// Camera live, nothing in hand.
   case searching

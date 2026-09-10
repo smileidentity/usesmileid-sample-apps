@@ -11,15 +11,13 @@ public struct UseSmileIDSampleTransientNotice: Equatable, Sendable {
   }
 }
 
-/// Renders a notice and owns its auto-dismiss window. Padding stays the caller's: every screen
-/// clears different chrome.
+/// Renders a notice and owns its auto-dismiss window; padding stays the caller's, every screen clearing different chrome.
 public struct UseSmileIDSampleTransientNoticeHost: View {
   private let notice: UseSmileIDSampleTransientNotice?
   private let onAction: () -> Void
   private let onDismiss: () -> Void
 
-  /// Long enough to act on, short enough not to outlive its cause — and overridable at the root,
-  /// because acting on a notice is a race a flow cannot retry: the offer is consumed on dismissal.
+  /// Long enough to act on, and overridable at the root because the offer is consumed on dismissal.
   @Environment(\.useSmileIDSampleNoticeWindow) private var window
 
   public init(

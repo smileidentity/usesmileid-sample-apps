@@ -2,7 +2,6 @@ import Foundation
 import SwiftUI
 
 /// The typed path router: a `Codable` stack per tab, so restoration is a decode.
-/// `ObservableObject` rather than `@Observable` because the floor is the SDK's, iOS 15.
 @MainActor
 final class UseSmileIDSampleRouter: ObservableObject {
   /// One tab is mounted at a time, so the tab coming on screen lands its stack from the root again.
@@ -16,8 +15,7 @@ final class UseSmileIDSampleRouter: ObservableObject {
 
   @Published var paths: [UseSmileIDSampleTab: [Route]] = [:]
 
-  /// How many of each tab's routes are on screen. A link or a restore lands them one per finished
-  /// transition, because the iOS 15 `NavigationView` idiom drops a push made while another is in flight.
+  /// How many of each tab's routes are on screen, landed one per finished transition: `NavigationView` drops a push made during one.
   @Published private(set) var landed: [UseSmileIDSampleTab: Int] = [:]
 
   /// One at a time, because two sheets cannot be presented at once.
@@ -30,8 +28,7 @@ final class UseSmileIDSampleRouter: ObservableObject {
     paths[tab] ?? []
   }
 
-  /// A tap pushes one level, so it lands at once and animates as the platform does. Bounded to one
-  /// step: landing more while a linked path is still arriving is the drop this router exists to avoid.
+  /// A tap pushes one level, animated; bounded to one step, since landing more mid-arrival is the drop this router avoids.
   func push(_ route: Route) {
     paths[route.tab, default: []].append(route)
     landed[route.tab] = min(landedCount(route.tab) + 1, path(route.tab).count)
@@ -44,8 +41,7 @@ final class UseSmileIDSampleRouter: ObservableObject {
     push(route)
   }
 
-  /// Assigns the whole path at once; a tab's own route is the root, so it clears the stack. A sheet
-  /// goes with what it was layered over, as the Compose owner disposes its sheet on navigation.
+  /// Assigns the whole path at once, a tab's own route clearing the stack; a sheet goes with what it was layered over.
   func open(_ route: Route) {
     hasOpened = true
     sheet = nil
@@ -60,8 +56,7 @@ final class UseSmileIDSampleRouter: ObservableObject {
     selectedTab = route.tab
   }
 
-  /// R4: the flow and both pre-flow forms leave in one assignment. Keyed on the flow's own tab, not
-  /// the showing one — a teardown cancel arrives after a link may have moved away.
+  /// The flow and both pre-flow forms leave in one assignment, keyed on the flow's own tab: a teardown cancel arrives late.
   func endFlow(_ flow: Route, landing: Route? = nil) {
     set([], on: flow.tab)
     if let landing {
@@ -95,8 +90,7 @@ final class UseSmileIDSampleRouter: ObservableObject {
       get: { [weak self] in (self?.landedCount(tab) ?? 0) > depth },
       set: { [weak self] active in
         guard let self, !active else { return }
-        // Only the showing tab pops. Tearing down the outgoing tab's stack fires this setter too,
-        // and acting on it would drop the path the user is navigating away from.
+        // Only the showing tab pops: the outgoing tab's teardown fires this setter too.
         guard self.selectedTab == tab else { return }
         var next = self.path(tab)
         guard next.count > depth else { return }

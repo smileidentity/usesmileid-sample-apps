@@ -56,8 +56,7 @@ public struct KycIdFormScreen: View {
         .padding(.vertical, SmileSpacing.spacingSm)
       }
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.kycFormScreen)
-      // An inset rather than an overlay: the button grows with Dynamic Type, and overlaid it
-      // would cover the last field once the list is long enough to scroll under it.
+      // An inset rather than an overlay: the button grows with Dynamic Type and would cover the last field.
       .safeAreaInset(edge: .bottom, alignment: .trailing) {
         UseSmileIDSampleFloatingTokenButton(action: onToken)
           .padding(SmileSpacing.spacingMd)
@@ -93,7 +92,7 @@ public struct KycIdFormScreen: View {
       testId: UseSmileIDSampleTestIds.idTypeTrigger,
       onTap: onIdTypeTap
     ) {
-      // Not the design's ID-card emoji: Emoji 14 is iOS 15.4 and this package's floor is 15.0.
+      // Not the design's ID-card emoji, whose glyph is unavailable on older runtimes; changing it is a design call.
       UseSmileIDSampleIcon(
         SmileIcons.biometricKyc,
         tint: state.details.country == nil ? colors.textMuted : colors.textTitle,

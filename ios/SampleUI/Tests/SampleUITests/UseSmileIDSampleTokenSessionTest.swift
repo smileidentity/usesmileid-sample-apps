@@ -1,8 +1,7 @@
 @testable import SampleUI
 import XCTest
 
-/// The countdown and the ring at every span the Portal mints. Asserted here rather than watched on a
-/// device, which is the only affordable way to know an 8h token reads correctly at its seventh hour.
+/// The countdown and ring at every span the Portal mints, which is the only affordable way to check an 8h token's seventh hour.
 final class UseSmileIDSampleTokenSessionTest: XCTestCase {
   func testTheRingMeasuresTheTokensOwnSpanNotAFixedFiveMinutes() {
     for span in Self.portalSpans {
@@ -48,8 +47,7 @@ final class UseSmileIDSampleTokenSessionTest: XCTestCase {
   }
 
   func testAZeroSpanReadsAsSpentRatherThanAsNaN() {
-    // Unreachable through the decoder, which rejects exp <= iat — but this initialiser is public,
-    // and NaN survives a clamp to reach the ring.
+    // Unreachable through the decoder, but this initialiser is public and NaN survives a clamp.
     let degenerate = UseSmileIDSampleTokenSession(
       id: "a1b2c3d4",
       token: "header.payload.signature",

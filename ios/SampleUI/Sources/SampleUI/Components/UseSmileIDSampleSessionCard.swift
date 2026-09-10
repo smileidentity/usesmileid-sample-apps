@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// The active token session and its countdown. `remaining` arrives formatted, because the deadline
-/// is absolute and the ticking is the screen's.
+/// The active session and its countdown; `remaining` arrives formatted, the deadline being absolute.
 public struct UseSmileIDSampleSessionCard: View {
   private let sessionId: String
   private let remaining: String

@@ -1,7 +1,6 @@
 import XCTest
 
-/// The launch arguments, read through UserDefaults, and what the card says the run actually got.
-/// Launches per test, because the arguments are the subject.
+/// The launch arguments and what the card says the run got; launches per test, the arguments being the subject.
 final class UseSmileIDSampleLaunchArgumentUITests: XCTestCase {
   private var app: XCUIApplication!
 
@@ -28,8 +27,7 @@ final class UseSmileIDSampleLaunchArgumentUITests: XCTestCase {
     XCTAssertEqual(element("sample_result_route").label, "fullscreen")
   }
 
-  /// The argument seeds the first launch only: a drawer choice wins for the rest of the run, and a
-  /// relaunch with other arguments is a fresh run, restoring nothing.
+  /// The argument seeds the first launch only: a drawer choice wins after it, and a relaunch restores nothing.
   func testTheDrawerWinsOverTheArgumentAndARelaunchIsAFreshRun() {
     launch(["-scenario", "expiredToken", "-probes", "true"])
     open("debug/scenarios")

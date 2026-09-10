@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// The all-caps group heading above a section.
-///
-/// Callers pass the text already cased, so nothing upper-cases per locale.
+/// The all-caps group heading above a section; callers pass the text already cased, so nothing upper-cases per locale.
 public struct UseSmileIDSampleSectionLabel: View {
   private let text: String
   private let testId: String?

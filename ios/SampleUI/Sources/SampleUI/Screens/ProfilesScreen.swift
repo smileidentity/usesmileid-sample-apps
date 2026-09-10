@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// What the profiles list draws, plus the created confirmation it owns because the sheet that causes
-/// it is its layer.
+/// What the profiles list draws, plus the created confirmation it owns because the sheet is its layer.
 public struct UseSmileIDSampleProfilesState: Equatable {
   public var profiles: [UseSmileIDSampleProfile]
   public var activeId: String

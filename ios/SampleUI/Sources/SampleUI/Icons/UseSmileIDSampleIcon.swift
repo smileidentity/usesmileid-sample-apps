@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// One generated mark, drawn at `size` and tinted by the caller.
-///
-/// Decorative by default: the enclosing control supplies the accessibility label, so a bare icon
-/// is hidden from VoiceOver rather than read out as a second, unlabelled element.
+/// One generated mark, drawn at `size` and tinted by the caller; decorative by default, the enclosing control carrying the label.
 public struct UseSmileIDSampleIcon: View {
   private let icon: SmileIcon
   private let tint: Color

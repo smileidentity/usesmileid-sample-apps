@@ -1,8 +1,7 @@
 @testable import SampleUI
 import XCTest
 
-/// The other direction of the id contract: `UseSmileIDSampleSpecTest` proves a declared id is in the
-/// spec, this proves it reaches a view. A flow waiting on one that does not just times out.
+/// The other direction of the id contract: this proves a declared id reaches a view, not just the spec.
 final class UseSmileIDSampleTestIdUsageTest: XCTestCase {
   /// Ids not yet on a view; delete an entry when its screen lands, because a stale list fails.
   private static let notYetApplied: Set<String> = [
@@ -27,8 +26,7 @@ final class UseSmileIDSampleTestIdUsageTest: XCTestCase {
       .map { try String(contentsOf: $0) }
       .joined()
 
-    // Qualified, not `.name`: `sample_filter_chip` read as applied for months because the colour
-    // token `colors.filterChip` matches the loose form. Every id in a screen names its enum.
+    // Qualified, not `.name`: the colour token `colors.filterChip` matched the loose form for months.
     let unused = declared.filter { !body.contains("UseSmileIDSampleTestIds.\($0)") }.sorted()
     XCTAssertEqual(
       Set(unused), Self.notYetApplied,

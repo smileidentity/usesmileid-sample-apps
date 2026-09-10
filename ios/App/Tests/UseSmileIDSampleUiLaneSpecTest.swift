@@ -1,9 +1,7 @@
 import Foundation
 import XCTest
 
-/// The UI suite runs one class per CI job, so the workflow names the classes — and a list of names
-/// is exactly the kind of thing that goes stale silently. A class added without a job would simply
-/// never run, and the lane would stay green while covering less. This is what makes that fail.
+/// The workflow names one class per job, so a class added without one would never run while the lane stayed green.
 final class UseSmileIDSampleUiLaneSpecTest: XCTestCase {
   func testTheWorkflowRunsEveryUiTestClass() throws {
     let onDisk = try Self.classesOnDisk()

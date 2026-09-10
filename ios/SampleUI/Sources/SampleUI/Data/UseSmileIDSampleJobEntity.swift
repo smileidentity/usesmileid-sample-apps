@@ -1,14 +1,10 @@
 import Foundation
 import SwiftData
 
-/// One submitted verification in the store, keyed by job id.
-///
-/// The same shape as the Android row, so the two read the same, and the same shape as the JSON
-/// document this replaced, so the import in ``UseSmileIDSampleJobImport`` is a field-for-field copy.
+/// One submitted verification, keyed by job id, in the Android row's shape and the replaced document's, so the import is field-for-field.
 @Model
 final class UseSmileIDSampleJobEntity {
-  /// Not `@Attribute(.unique)`: a unique attribute upserts, and `add` has to ignore an id it already
-  /// holds so a repeated result delivery cannot overwrite the row it already wrote.
+  /// Not `@Attribute(.unique)`, which upserts: `add` has to ignore an id it holds so a repeated delivery cannot overwrite.
   var id: String = ""
   var userId: String = ""
   var productId: String = ""
@@ -63,11 +59,7 @@ final class UseSmileIDSampleJobEntity {
   }
 }
 
-/// The schema, versioned explicitly rather than left implicit.
-///
-/// SwiftData does not enforce a migration the way Room does — `VersionedSchema` is ordinary code and
-/// nothing fails to build if a property is added without one. So the guarantee is a test per version
-/// that loads a store written under it; see `UseSmileIDSampleJobSchemaTest`.
+/// The schema, versioned explicitly: SwiftData enforces no migration, so the guarantee is a test per version that loads a store written under it.
 enum UseSmileIDSampleJobSchemaV1: VersionedSchema {
   static var versionIdentifier: Schema.Version {
     Schema.Version(1, 0, 0)

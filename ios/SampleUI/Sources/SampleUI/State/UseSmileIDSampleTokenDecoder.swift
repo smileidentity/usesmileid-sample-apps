@@ -1,9 +1,7 @@
 import CryptoKit
 import Foundation
 
-/// What a v3 token binds. The SDK reads the same claim and exposes presence flags only, because every
-/// PII value in it is swapped for a vault token before signing — `country` and `idType` are the two
-/// that arrive in plaintext.
+/// What a v3 token binds: presence flags only, every PII value being vaulted before signing — `country` and `idType` arrive in plaintext.
 public struct UseSmileIDSampleTokenBindings: Equatable, Sendable, CustomStringConvertible {
   public var givenNames: Bool
   public var lastName: Bool
@@ -42,14 +40,12 @@ public struct UseSmileIDSampleTokenBindings: Equatable, Sendable, CustomStringCo
       + "idType=\(idType != nil), idNumberReference=\(idNumberReference != nil))"
   }
 
-  /// Whether the token binds enough for the SDK to stop requiring `userDetails` — both names plus
-  /// one contact field. A duplicate of the SDK's own rule, which is internal; the unit tests pin it.
+  /// Both names plus one contact field: a documented duplicate of the SDK's internal rule, pinned by the unit tests.
   public var bindsRequiredUserDetails: Bool {
     UseSmileIDSampleUserDetailsRequirement(bindings: self).isSatisfied
   }
 
-  /// Whether the token carries every ID parameter `product` submits. Stricter than Document
-  /// Verification's validator, which accepts a nil ID type: the form is where the document type is chosen.
+  /// Stricter than Document Verification's validator, which accepts a nil ID type: the form is where the type is chosen.
   public func bindsIdDetails(_ product: UseSmileIDSampleProduct) -> Bool {
     switch product {
     case .enhancedKyc, .biometricKyc:
@@ -62,8 +58,7 @@ public struct UseSmileIDSampleTokenBindings: Equatable, Sendable, CustomStringCo
   }
 }
 
-/// The consent record bound into the token. `granted` is `true` or absent by construction, mirroring
-/// the SDK reading `granted: false` as no binding at all.
+/// The token's consent record: `granted` is `true` or absent, mirroring the SDK reading `granted: false` as no binding.
 public struct UseSmileIDSampleTokenConsent: Equatable, Sendable {
   public var granted: Bool?
   public var grantedAt: String?
@@ -110,14 +105,7 @@ public enum UseSmileIDSampleTokenDecode: Equatable, Sendable {
   }
 }
 
-/// Reads the claims a session is made of. **Decoding is not verification:** the sample holds no
-/// signing key, so a decoded token is only a claim about itself and a rejection is the one honest
-/// response to a token that will not parse.
-///
-/// The SDK's own decoder is public but its parsed payload is internal, so a host cannot reach the
-/// claim through it. Until that accessor widens, this is a documented duplicate of two SDK rules — a
-/// field binds iff the claim carries it as a non-empty string, and a consent object binds only when
-/// `granted` is boolean `true`.
+/// Reads the claims a session is made of. Decoding is not verification: the sample holds no signing key, so a decoded token is only a claim about itself.
 public enum UseSmileIDSampleTokenDecoder {
   /// Decoded when the segments, the iat/exp pair and the api_url all read; otherwise rejected, naming the first failure.
   public static func decode(_ token: String) -> UseSmileIDSampleTokenDecode {
@@ -141,8 +129,7 @@ public enum UseSmileIDSampleTokenDecoder {
     guard expires > issuedAt else {
       return .rejected("The token's exp claim is not after its iat claim.")
     }
-    // Refused rather than defaulted: a silent sandbox fallback sends a production token to the
-    // wrong host and comes back as a 401 that reads like a bad token.
+    // Refused rather than defaulted: a sandbox fallback sends a production token to the wrong host as a 401.
     guard let apiUrl = json.string("api_url"), !apiUrl.isBlank else {
       return .rejected("The token carries no api_url claim, so nothing says which environment it was minted for.")
     }

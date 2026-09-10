@@ -15,10 +15,7 @@ enum UseSmileIDSampleHoldCamera: Equatable {
   }
 }
 
-/// The canonical arguments from `spec/launch-args.json`, read once at launch so the card reports the
-/// run they configured. iOS delivers them as launch arguments, which land in `UserDefaults.standard`'s
-/// argument domain: `app.launchArguments = ["-scenario", "expiredToken"]`. `init()` is the spec's
-/// defaults and reads nothing; the launch is read by naming its source, `init(reading:)`.
+/// The `spec/launch-args.json` arguments, read once from `UserDefaults.standard`'s argument domain; `init()` is the spec's defaults and reads nothing.
 struct UseSmileIDSampleLaunchArguments: Equatable {
   var scenario: UseSmileIDSampleScenario = .normal
   var theme: UseSmileIDSampleThemeScenario = .brandDefault
@@ -55,9 +52,7 @@ struct UseSmileIDSampleLaunchArguments: Equatable {
 
   init() {}
 
-  /// Every name is read whether or not this build can act on it, so the four apps accept one surface.
-  /// The argument domain alone: a value some later feature persists under one of these plain names
-  /// must never seed a run, or reveal the card on a release build.
+  /// Every name is read whether this build acts on it or not, and only from the argument domain, so nothing persisted can seed a run.
   init(reading defaults: UserDefaults) {
     let arguments = defaults.volatileDomain(forName: UserDefaults.argumentDomain)
     self.init(raw: Dictionary(uniqueKeysWithValues: Self.names.map { ($0, arguments[$0]) }))

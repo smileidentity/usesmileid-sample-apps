@@ -2,10 +2,7 @@ import Foundation
 import SampleUI
 import UseSmileID
 
-/// One run's identity, created once per flow entry.
-///
-/// The Compose twin's `SdkFlowViewModel` minus its saved state: nothing here survives process death,
-/// because the SDK's own manager is a `@StateObject` that goes with the scene.
+/// One run's identity, created once per flow entry; nothing here survives process death, the SDK's own manager going with the scene.
 @MainActor
 final class SdkFlowRun: ObservableObject {
   enum Stage: Equatable {
@@ -17,8 +14,7 @@ final class SdkFlowRun: ObservableObject {
 
   @Published private(set) var stage: Stage = .entering
 
-  /// Held rather than rebuilt: `UseSmileIDBuilder.init` applies the configuration eagerly, and the
-  /// host re-renders once a second while a session is live.
+  /// Held rather than rebuilt: `init` applies the configuration eagerly, and the host re-renders once a second.
   private(set) var builder: UseSmileIDBuilder?
 
   /// Non-nil only while the run is mounted, which is when a camera hold is worth taking.

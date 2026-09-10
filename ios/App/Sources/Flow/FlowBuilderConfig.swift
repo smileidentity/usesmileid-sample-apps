@@ -6,10 +6,7 @@ import UseSmileIDBridge
 import UseSmileIDVisionDocument
 import UseSmileIDVisionFace
 
-/// The one place that decides what the SDK is handed.
-///
-/// The journey is built as `[FlowStep]` and replayed into the builder's `screens` block, so the gate
-/// validates the screens the run composes; the SDK reads no list back for a second construction.
+/// The one place that decides what the SDK is handed: the journey is `[FlowStep]`, replayed into the builder so the gate validates what the run composes.
 @MainActor
 func useSmileIDSampleApply(
   _ builder: UseSmileIDFlowBuilder,
@@ -29,8 +26,7 @@ func useSmileIDSampleApply(
     replay(useSmileIDSampleFlowSteps(snapshot), into: screens)
   }
   if snapshot.product.capture {
-    // Two call sites: `AnalyzersBuilder` declares only `buildBlock`, so an `if` inside will not
-    // compile.
+    // Two call sites: `AnalyzersBuilder` declares only `buildBlock`, so an `if` inside will not compile.
     builder.ml { ml in
       if snapshot.product.needsDocumentCapture {
         ml.analyzers {
@@ -54,8 +50,7 @@ func useSmileIDSampleApply(
       )
       config.onTokenExpired = { previous in
         await onTokenRefreshed()
-        // No endpoint this sample may call, so the auth failure surfaces rather than being papered
-        // over with an invented token.
+        // No endpoint this sample may call, so the auth failure surfaces rather than being invented away.
         if scanned != nil {
           return previous
         }
@@ -64,7 +59,6 @@ func useSmileIDSampleApply(
         }
         return UseSmileIDSampleFlowTokens.token(expired: false, now: Date())
       }
-      // Debug only: release must never log traffic.
       config.logging { logging in
         logging.enabled = UseSmileIDSampleAppState.isDebugBuild
         // Not BODY: a logged body carries the user details this repo forbids in logs.
@@ -78,8 +72,7 @@ func useSmileIDSampleApply(
       }
     }
   }
-  // Both theme scenarios go through the SDK's public override, which is what `spec/scenarios.json`
-  // asks for: one a plausible partner palette, one deliberately far from the SDK's defaults.
+  // Both theme scenarios go through the SDK's public override, as `spec/scenarios.json` asks; only the values differ.
   if let palette = snapshot.theme.override {
     builder.theme { theme in
       theme.primaryColor = theme.color(light: palette.primary, dark: palette.primary)
@@ -119,8 +112,7 @@ extension UseSmileIDSampleThemeScenario {
         buttonRadius: 4,
         fontFamily: nil
       )
-    // Far from the defaults on every axis the override reaches, which is the point of the scenario:
-    // a collision a brand-matched palette hides. Courier is a system face, so it always resolves.
+    // Far from the defaults on every axis the override reaches; Courier is a system face, so it always resolves.
     case .clashingHost:
       FlowThemePalette(
         primary: Color(red: 0.85, green: 0, blue: 0.5),
@@ -146,8 +138,7 @@ func useSmileIDSampleUserDetails(_ snapshot: FlowLaunchSnapshot) -> UserDetails?
   )
 }
 
-/// The four ID payloads, of which a product carries at most one, so the gate validates the object
-/// the run passes.
+/// The four ID payloads, of which a product carries at most one, so the gate validates what the run passes.
 struct FlowIdParams {
   var biometricKyc: BiometricKYCParams?
   var enhancedKyc: EnhancedKYCParams?
@@ -287,8 +278,7 @@ enum FlowJourneyStep: Equatable {
   case processing
 }
 
-/// A consent binding lifts the SDK's requirement, and declaring the screen anyway ends the run
-/// before it starts.
+/// A consent binding lifts the SDK's requirement, and declaring the screen anyway ends the run before it starts.
 func useSmileIDSampleJourneySteps(_ snapshot: FlowLaunchSnapshot) -> [FlowJourneyStep] {
   var steps: [FlowJourneyStep] = []
   if snapshot.liveSession?.bindings.consent == nil, snapshot.consentStep {
@@ -346,6 +336,5 @@ extension UseSmileIDSampleProduct {
   }
 }
 
-// The same host the Settings privacy row opens.
 private let privacyPolicyUrl = URL(string: "https://smile.id/privacy-policy")!
 private let callbackUrl = "https://your-callback-url.com"

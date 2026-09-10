@@ -40,14 +40,12 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     }
   }
 
-  /// Drops enhanced liveness where a stored state carries both, so the SDK is never handed the pair
-  /// it refuses. Not enforced in the initialiser: stored preferences predate the rule.
+  /// Drops enhanced liveness where a stored state carries both, since the SDK refuses the pair.
   public func normalised() -> Self {
     agentMode && enhancedSmartSelfie ? with(.enhancedSmartSelfie, false) : self
   }
 
-  /// The capture mutex: the SDK refuses agent mode with enhanced liveness, so turning either on
-  /// turns the other off.
+  /// The capture mutex: the SDK refuses the pair, so turning either on turns the other off.
   public func with(_ setting: UseSmileIDSampleSetting, _ enabled: Bool) -> Self {
     var copy = self
     switch setting {

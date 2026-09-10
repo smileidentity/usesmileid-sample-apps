@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// The date separator in the verifications list. Both halves arrive formatted, because both are
-/// locale-dependent.
+/// The date separator in the verifications list; both halves arrive formatted, being locale-dependent.
 public struct UseSmileIDSampleDateGroupHeader: View {
   private let relative: String
   private let absolute: String
