@@ -14,7 +14,8 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// Read once at launch; `appLocale` reaches the shell's own formatting, not the SDK's strings.
   let launchArguments: UseSmileIDSampleLaunchArguments
 
-  @Published var settings = UseSmileIDSampleSettings()
+  /// Seeded from the store at launch and written back through it, so the six switches survive the process deaths the camera causes.
+  @Published private(set) var settings: UseSmileIDSampleSettings
 
   /// The profiles the app can act as; the active one names the products header and the settings summary.
   @Published var profiles: UseSmileIDSampleProfiles
@@ -73,6 +74,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     self.store = store
     self.jobStore = jobStore
     self.launchArguments = launchArguments
+    settings = store.settings
     profiles = UseSmileIDSampleProfiles.forLaunch(seedProfiles: launchArguments.seedProfiles)
     flowResult = UseSmileIDSampleFlowResult(
       scenario: launchArguments.scenario,
@@ -225,9 +227,9 @@ final class UseSmileIDSampleAppState: ObservableObject {
     useSmileIDSampleAvatarColor(profileIndex: profiles.activeIndex)
   }
 
-  /// Goes through the settings mutex, so agent mode and enhanced liveness cannot both end up on.
+  /// Takes the store's own result rather than re-reading it: a row seeded at launch shadows the write.
   func change(_ setting: UseSmileIDSampleSetting, to enabled: Bool) {
-    settings = settings.with(setting, enabled)
+    settings = store.setSetting(setting, enabled)
   }
 
   func setUserField(_ field: UseSmileIDSampleUserField, to value: String) {

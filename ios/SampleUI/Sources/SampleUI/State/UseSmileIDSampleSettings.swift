@@ -8,6 +8,7 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
   /// ON is the head-turn challenge, which is the default the design draws.
   public var enhancedSmartSelfie: Bool
   public var agentMode: Bool
+  /// This app's own appearance; the `theme` launch argument seeds a run's SDK theme scenario, which is a different axis.
   public var darkMode: Bool
   public var consentStep: Bool
   public var instructionsStep: Bool
