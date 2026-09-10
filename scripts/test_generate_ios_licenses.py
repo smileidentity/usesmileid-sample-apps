@@ -80,11 +80,11 @@ class GeneratorCase(unittest.TestCase):
         self.versions[identity] = version
 
     def build(self) -> list[dict]:
-        return gen.build(self.scratch)["components"]
+        return gen.build(self.scratch, vendored=())["components"]
 
     def failure(self) -> str:
         with self.assertRaises(gen.Unidentified) as raised:
-            gen.build(self.scratch)
+            gen.build(self.scratch, vendored=())
         return str(raised.exception)
 
 
@@ -462,6 +462,38 @@ class TestResolvedVersions(unittest.TestCase):
             self.assertEqual({"tagged": "1.2.3", "pinned": "0123456"}, gen.resolved_versions())
         finally:
             gen.ROOT_PACKAGE = real
+
+
+class VendoredNotices(unittest.TestCase):
+    """Vendored source has no SwiftPM checkout, so its notice ships only if VENDORED names it."""
+
+    def test_every_vendored_component_has_its_text_committed(self):
+        for entry in gen.VENDORED:
+            path = os.path.join(gen.REPO, "scripts", "license-texts", entry["text_file"])
+            self.assertTrue(os.path.exists(path), f"{entry['component']}: {entry['text_file']} is missing")
+
+    def test_the_committed_text_reads_as_the_licence_it_declares(self):
+        for entry in gen.VENDORED:
+            path = os.path.join(gen.REPO, "scripts", "license-texts", entry["text_file"])
+            with open(path, encoding="utf-8") as handle:
+                spdx, _ = gen.identify(handle.read())
+            self.assertEqual(spdx.lower(), entry["declared"].lower(), entry["component"])
+
+    def test_the_text_carries_a_holder_line_rather_than_a_template_placeholder(self):
+        """An MIT notice without its holder attributes nobody, which is worse than no notice."""
+        for entry in gen.VENDORED:
+            path = os.path.join(gen.REPO, "scripts", "license-texts", entry["text_file"])
+            with open(path, encoding="utf-8") as handle:
+                text = handle.read()
+            self.assertIn("Copyright", text, entry["component"])
+            self.assertNotIn("<year>", text, entry["component"])
+            self.assertNotIn("<copyright holders>", text, entry["component"])
+
+    def test_the_shipped_notices_name_every_vendored_component(self):
+        with open(gen.os.path.join(gen.REPO, "ios", "SampleUI", "Sources", "SampleUI", "Resources", "licenses.json")) as handle:
+            shipped = {entry["component"] for entry in gen.json.load(handle)["components"]}
+        for entry in gen.VENDORED:
+            self.assertIn(entry["component"], shipped)
 
 
 if __name__ == "__main__":
