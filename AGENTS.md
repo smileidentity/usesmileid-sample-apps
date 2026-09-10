@@ -178,9 +178,20 @@ that variable locally — a silent pass is how vendored tokens drift from their 
 - **Agents: open and update PRs through the `create-pr` skill, never by hand.** It runs the pre-PR
   review, takes the description's rationale from the author rather than the diff, and keeps internal
   context out of what reviewers read.
-- **A PR is not finished when it is opened.** Pull its review comments, fix what is real, reply
-  saying what changed and how you verified it, then resolve the thread. Say so plainly when a
-  comment is wrong, with the reasoning — silence reads as unaddressed.
+- **A PR is not finished when it is opened.** Pull its review comments and fix what is real. Who
+  left the comment decides what happens next, and this gets skipped often enough to be worth
+  spelling out:
+  - **A review bot** (`prfectionist`) — fix the valid findings, ignore the false positives, and
+    resolve every thread once done. **Do not reply**: nobody reads it, and a thread left open reads
+    as unaddressed work. Say in your own summary which findings you rejected and why.
+  - **A person** — reply saying what changed and how you verified it, then resolve the thread. Say
+    so plainly when a comment is wrong, with the reasoning; silence reads as unaddressed.
+- **Comments earn their line, and they get one.** One line each, for code comments and doc
+  comments alike; no multi-line commentary, and no comment that only restates the code. The long
+  form of a decision belongs in `docs/plan/`, which is reviewed and searchable — a paragraph above a
+  function is neither, and goes stale where nobody looks. Delete a comment rather than update it to
+  say less. This applies to what you add *and* to what you touch: if you are editing near a
+  verbose comment, trim it on the way past.
 - Mirror structure across the four platforms. Same screen, same file name adjusted only for
   platform casing conventions, same relative folder. If you add a screen to one app, add it to the
   other three or explain in the PR why it is platform-specific.
@@ -284,6 +295,8 @@ Before finishing any change:
 - [ ] UI change → goldens updated, light and dark, plus the font-scale and contrast predicates
 - [ ] New scenario, screen or affordance → `spec/` updated in the same PR, IDs stable
 - [ ] Nothing added to the never-commit list; anything internal-only carries the marker
+- [ ] Every comment you added or touched is one line, and none of them restates the code
+- [ ] The PR's bot findings are fixed or explicitly rejected, and every thread is resolved
 - [ ] A launch with no arguments shows no fixture data; anything made up sits behind a launch argument
 - [ ] Self-review the diff in priority order: security (no secrets, no PII in logs) → correctness
       (does the release build behave like debug) → consistency across the four apps → readability.
