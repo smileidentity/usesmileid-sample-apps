@@ -13,6 +13,7 @@ final class LoupeURLProtocol: URLProtocol, @unchecked Sendable {
 
   /// Everything this instance accumulates while its request is in flight.
   private struct State {
+    var id = UUID()
     var requestDate = Date()
     var response: URLResponse?
     var data = Data()
@@ -53,7 +54,16 @@ final class LoupeURLProtocol: URLProtocol, @unchecked Sendable {
   }
 
   override func startLoading() {
-    state.write { $0.requestDate = Date() }
+    let started = state.read { $0 }
+    // Reported before it is sent, so a request that never comes back is still visible
+    Self.sink.deliver(LoupeRecord(
+      id: started.id,
+      method: request.httpMethod ?? "GET",
+      url: request.url,
+      requestDate: started.requestDate,
+      requestHeaders: request.allHTTPHeaderFields ?? [:],
+      requestBody: Self.bodyData(from: request)
+    ))
     guard let forwarded = (request as NSURLRequest).mutableCopy() as? NSMutableURLRequest else {
       client?.urlProtocol(self, didFailWithError: URLError(.badURL))
       return
@@ -122,6 +132,7 @@ extension LoupeURLProtocol: URLSessionDataDelegate {
     }
 
     let record = LoupeRecord(
+      id: snapshot.id,
       method: original.httpMethod ?? "GET",
       url: original.url,
       requestDate: snapshot.requestDate,

@@ -56,6 +56,35 @@ than a method swizzle in a sample app.
 cannot become first responder for them. A `UIWindow` override posts a notification, which keeps the
 UIKit detail out of the shell.
 
+## Borrowed from DebugOverlay-Android
+
+[DebugOverlay-Android](https://github.com/Manabu-GT/DebugOverlay-Android) (Apache-2.0) is a
+different tool — a runtime diagnostics overlay — and none of its code is here. Three of its ideas
+are:
+
+**An always-visible overlay, not only a gesture.** Its headline is a draggable pill over the app
+that opens a panel. A shake nobody is told about is a feature nobody uses, and a count on screen is
+what makes a stall or a run of failures noticeable before anyone thinks to look. Loupe's pill shows
+in-flight first, then failures, then the plain count, and drags anywhere on screen; it is clamped to
+the container so it cannot be stranded off-screen.
+
+**A report, not a dump.** Its bug report bundles diagnostics with the log so a repro arrives as one
+artefact. Loupe's export leads with the app, bundle, system and the window it covers, then the
+totals, then the traffic — one paste into an issue.
+
+**Clearing scopes the next report.** Its toolbar wipes entries "so the next bug report covers only
+the repro window". Loupe's clear restarts the window, and the report names when it opened, so a
+reader knows what the transcript does and does not cover.
+
+Not borrowed: CPU, heap, FPS and thermal readouts. Those belong to Instruments, and this repo's
+rules are explicit that a sample which reimplements the platform stops being a sample.
+
+## In-flight requests, which neither tool had
+
+netfox and DebugOverlay both record an exchange when it completes, so a request that never comes
+back is invisible in both — the case most worth seeing. A record is now reported when the request
+is sent and replaced when it finishes, which is why the store upserts by id rather than appending.
+
 ## What was not ported
 
 The macOS viewer, the demo app, and netfox's own logo and font assets. The session log file is

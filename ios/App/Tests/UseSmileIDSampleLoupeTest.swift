@@ -82,9 +82,9 @@ final class UseSmileIDSampleLoupeTest: XCTestCase {
   @MainActor
   func testTheNewestRecordIsFirstAndTheOldestFallsOffTheCap() {
     let store = LoupeStore(limit: 2)
-    store.append(Self.record(path: "/first"))
-    store.append(Self.record(path: "/second"))
-    store.append(Self.record(path: "/third"))
+    store.upsert(Self.record(path: "/first"))
+    store.upsert(Self.record(path: "/second"))
+    store.upsert(Self.record(path: "/third"))
 
     XCTAssertEqual(store.records.count, 2)
     XCTAssertEqual(store.records.map(\.path), ["/third", "/second"])
@@ -93,8 +93,8 @@ final class UseSmileIDSampleLoupeTest: XCTestCase {
   @MainActor
   func testSearchMatchesTheUrlAndTheKindFilterNarrowsIt() {
     let store = LoupeStore()
-    store.append(Self.record(path: "/jobs", kind: .json))
-    store.append(Self.record(path: "/avatar.png", kind: .image))
+    store.upsert(Self.record(path: "/jobs", kind: .json))
+    store.upsert(Self.record(path: "/avatar.png", kind: .image))
 
     store.searchText = "avatar"
     XCTAssertEqual(store.visibleRecords.map(\.path), ["/avatar.png"])
@@ -117,13 +117,64 @@ final class UseSmileIDSampleLoupeTest: XCTestCase {
   @MainActor
   func testClearingLeavesTheFilterAlone() {
     let store = LoupeStore()
-    store.append(Self.record())
+    store.upsert(Self.record())
     store.toggle(.image)
 
     store.clear()
 
     XCTAssertTrue(store.records.isEmpty)
     XCTAssertFalse(store.visibleKinds.contains(.image))
+  }
+
+  @MainActor
+  func testACompletionReplacesTheRequestItFinishesRatherThanAddingASecondRow() {
+    let store = LoupeStore()
+    let id = UUID()
+    store.upsert(Self.record(id: id, responseDate: nil, status: nil))
+    XCTAssertEqual(store.inFlightCount, 1)
+
+    store.upsert(Self.record(id: id, status: 200))
+
+    XCTAssertEqual(store.records.count, 1)
+    XCTAssertEqual(store.inFlightCount, 0)
+  }
+
+  @MainActor
+  func testAHungRequestIsCountedInFlightAndNotAsAFailure() {
+    let store = LoupeStore()
+    store.upsert(Self.record(responseDate: nil, status: nil))
+
+    XCTAssertEqual(store.inFlightCount, 1)
+    XCTAssertEqual(store.failureCount, 0)
+  }
+
+  @MainActor
+  func testAFailureIsAnyNon2xxOrATransportError() {
+    let store = LoupeStore()
+    store.upsert(Self.record(path: "/a", status: 500))
+    store.upsert(Self.record(path: "/b", status: nil, error: "lost connection"))
+    store.upsert(Self.record(path: "/c", status: 201))
+
+    XCTAssertEqual(store.failureCount, 2)
+  }
+
+  @MainActor
+  func testClearingRestartsTheWindowSoAnExportCoversOnlyTheRepro() {
+    let store = LoupeStore()
+    store.upsert(Self.record())
+    let opened = store.recordingSince
+
+    store.clear()
+
+    XCTAssertTrue(store.recordingSince > opened)
+  }
+
+  func testTheReportLeadsWithContextThenTheTraffic() {
+    let text = LoupeReport.text(records: [Self.record(status: 200)], since: Date())
+
+    XCTAssertTrue(text.hasPrefix("# Network report"), text)
+    XCTAssertTrue(text.contains("Requests: 1 — 1 ok, 0 failed"), text)
+    XCTAssertTrue(text.contains("curl -X POST"), text)
   }
 
   func testStatisticsCountA2xxAsSuccessAndEverythingElseAsFailure() {
@@ -203,6 +254,7 @@ final class UseSmileIDSampleLoupeTest: XCTestCase {
   private static let url = URL(string: "https://api.example.com/v1/jobs?page=2")!
 
   private static func record(
+    id: UUID = UUID(),
     path: String? = nil,
     headers: [String: String] = [:],
     body: Data? = nil,
@@ -214,6 +266,7 @@ final class UseSmileIDSampleLoupeTest: XCTestCase {
     kind: LoupeBodyKind = .json
   ) -> LoupeRecord {
     LoupeRecord(
+      id: id,
       method: "POST",
       url: path.map { URL(string: "https://api.example.com\($0)")! } ?? url,
       requestDate: Date(timeIntervalSince1970: 0),

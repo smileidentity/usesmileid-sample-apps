@@ -23,7 +23,7 @@ final class Loupe {
     self.ignoredURLPrefixes = ignoredURLPrefixes
     let store = store
     LoupeURLProtocol.sink.install { record in
-      Task { @MainActor in store.append(record) }
+      Task { @MainActor in store.upsert(record) }
     }
     LoupeURLProtocol.configuration.update {
       $0.isRecording = true

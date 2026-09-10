@@ -14,12 +14,15 @@ extension Notification.Name {
   static let loupeShakeDetected = Notification.Name("com.usesmileid.sample.loupe.shake")
 }
 
-/// Presents the loupe over whatever is on screen when the device is shaken.
+/// Puts the overlay over the app and opens the loupe from it, or from a shake.
 struct LoupePresentation: ViewModifier {
   @Bindable private var loupe = Loupe.shared
 
   func body(content: Content) -> some View {
     content
+      .overlay(alignment: .bottomTrailing) {
+        LoupeOverlay(store: loupe.store) { loupe.isPresented = true }
+      }
       .onReceive(NotificationCenter.default.publisher(for: .loupeShakeDetected)) { _ in
         loupe.isPresented = true
       }

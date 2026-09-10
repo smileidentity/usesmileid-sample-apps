@@ -76,6 +76,22 @@ struct LoupeRecord: Identifiable, Equatable, Hashable {
     responseDate.map { .seconds($0.timeIntervalSince(requestDate)) }
   }
 
+  /// True while the request is still out, which is the only way a hung call is visible at all.
+  var isInFlight: Bool {
+    responseDate == nil && errorDescription == nil
+  }
+
+  /// True when the exchange finished in a way the caller has to deal with.
+  var isFailure: Bool {
+    if errorDescription != nil {
+      return true
+    }
+    guard let statusCode else {
+      return false
+    }
+    return !(200..<300).contains(statusCode)
+  }
+
   /// The path with its query, which is what identifies a call in a list of them.
   var path: String {
     guard let url else { return "" }

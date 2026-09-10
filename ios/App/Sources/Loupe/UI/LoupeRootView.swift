@@ -24,7 +24,7 @@ struct LoupeRootView: View {
           Button("Close", action: onClose)
         }
         ToolbarItem(placement: .primaryAction) {
-          ShareLink("Export", item: LoupeExport.text(for: store.records))
+          ShareLink("Report", item: LoupeReport.text(records: store.records, since: store.recordingSince))
             .disabled(store.records.isEmpty)
         }
       }
