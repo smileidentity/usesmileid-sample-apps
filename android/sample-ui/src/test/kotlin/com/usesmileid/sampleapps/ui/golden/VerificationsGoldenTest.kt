@@ -1,6 +1,14 @@
 package com.usesmileid.sampleapps.ui.golden
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import com.smileid.designsystem.SmileDimens
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleToast
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
@@ -43,11 +51,45 @@ class VerificationsGoldenTest : GoldenTest() {
         )
     }
 
+    /** The shell's copy word for word: the rows are hidden from this app's list, not deleted. */
     @Test
-    fun verification_details() = goldens("screen_verification_details") { Details() }
+    fun verifications_after_delete() = goldens("screen_verifications_after_delete") {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Verifications(jobs = AFTER_DELETE)
+            UseSmileIDSampleToast(
+                message = "2 verifications hidden from App list",
+                actionLabel = "Undo",
+                onAction = {},
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingXxs),
+            )
+        }
+    }
 
     @Test
-    fun verification_details_max_font_scale() = assertSurvivesMaxFontScale { Details() }
+    fun verifications_swipe_to_delete() = goldens(
+        name = "screen_verifications_swipe_open",
+        interact = { dragLeft(UseSmileIDSampleTestIds.jobRow(0), SWIPE_REVEAL) },
+    ) { Verifications() }
+
+    @Test
+    fun verification_details_clear() = goldens("screen_verification_details_clear") { Details(CLEAR) }
+
+    @Test
+    fun verification_details_max_font_scale() = assertSurvivesMaxFontScale { Details(CLEAR) }
+
+    @Test
+    fun verification_details_attention() = goldens("screen_verification_details_attention") { Details(ATTENTION) }
+
+    @Test
+    fun verification_details_blocked() = goldens("screen_verification_details_blocked") { Details(BLOCKED) }
+
+    @Test
+    fun verification_details_processing() = goldens("screen_verification_details_processing") { Details(PROCESSING) }
+
+    @Test
+    fun verification_details_processing_max_font_scale() = assertSurvivesMaxFontScale { Details(PROCESSING) }
 
     @Test
     fun verification_details_unknown_job() = goldens("screen_verification_details_unknown") { UnknownDetails() }
@@ -56,22 +98,25 @@ class VerificationsGoldenTest : GoldenTest() {
     fun verification_details_without_probes() =
         goldens("screen_verification_details_no_probes") { Details(showProbes = false) }
 
-    @Test
-    fun verification_details_queued() = goldens("screen_verification_details_queued") { Details(QUEUED) }
-
-    @Test
-    fun verification_details_queued_max_font_scale() = assertSurvivesMaxFontScale { Details(QUEUED) }
-
     private companion object {
         /** 2026-07-16T11:50:12Z, the instant the design's rows are dated from. */
         const val FIXED_NOW = 1_784_202_612_000L
         val JOBS = UseSmileIDSampleJobStore.fixtures(FIXED_NOW)
 
-        /** What a real 202 looks like: a message long enough to need a second line of its own column. */
-        val QUEUED = JOBS.first().copy(
-            message = "Request accepted and queued for processing.",
-            httpStatus = 202,
-        )
+        /** One fixture per status, so a state's picture carries the badge the spec names it after. */
+        val CLEAR = JOBS.first { it.status == UseSmileIDSampleStatus.Clear }
+        val ATTENTION = JOBS.first { it.status == UseSmileIDSampleStatus.Attention }
+        val BLOCKED = JOBS.first { it.status == UseSmileIDSampleStatus.Blocked }
+
+        /** What a real 202 says: a message long enough to need a second line of its own column. */
+        val PROCESSING = JOBS.first { it.status == UseSmileIDSampleStatus.Processing }
+            .copy(message = "Request accepted and queued for processing.")
+
+        /** The count the shell reports after the selection bar hides two rows. */
+        val AFTER_DELETE = JOBS.drop(2)
+
+        /** The backdrop's own width, so the row settles flush against it rather than past it. */
+        val SWIPE_REVEAL = SmileDimens.space64 + SmileDimens.spacingMd
     }
 
     @Composable
