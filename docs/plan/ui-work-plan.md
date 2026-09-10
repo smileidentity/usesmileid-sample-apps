@@ -341,11 +341,13 @@ stand-in, so a port should use the same one rather than inventing a second answe
    mark** by design and are told apart by the card's hue, which is already the icon's tint, so a
    port should reuse the drawable rather than add a near-identical second one. **Enhanced KYC** is
    the one card still owed an icon; it keeps the shared product mark, which reads as visibly generic
-   next to five real icons rather than borrowing an unrelated one. Separately, the three nav icons
-   (`products`, `verifications`, `settings`) are imported but unused: `components.json` records the
-   nav bar as three text tabs, verified against a render, so putting icons in it is a design change
-   and not a wiring one. Their export colours — products in primary, the other two in text.muted —
-   look like the active and inactive tab treatment, so the question is worth asking.
+   next to five real icons rather than borrowing an unrelated one. ~~Separately, the three nav icons are imported but unused:
+   `components.json` records the nav bar as three text tabs.~~ **Stale, and it cost a defect.**
+   `components.json` was corrected on 2026-08-17 against node 5206:2436 — each tab is an icon above
+   its label, primary when active — and this paragraph was not, so it read as permission to leave
+   them out. Android drew them; iOS mapped `item.icon` and never rendered it, which Harun found on
+   a device on 2026-09-10 and which the spec had warned in terms was "the trap for a port". Both
+   platforms draw them now.
 3. Rename board 05 to "KYC / ID details" — it holds no consent screen.
 3a. **Does the products grid stay 2-up at accessibility font sizes?** Measured while recording
    Android's U4 goldens: at 2x the design's expressive grid leaves each card a 102 dp text column,

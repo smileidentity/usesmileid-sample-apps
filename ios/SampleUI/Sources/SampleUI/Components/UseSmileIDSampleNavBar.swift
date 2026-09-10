@@ -88,11 +88,19 @@ public struct UseSmileIDSampleNavBar: View {
   }
 
   private func tab(_ item: UseSmileIDSampleNavItem) -> some View {
-    Button { onSelect(item) } label: {
-      UseSmileIDSampleText(item.label, style: UseSmileIDSampleTheme.type.tabFont)
-        .foregroundColor(item == selected ? colors.foreground : colors.textMuted)
-        .frame(maxWidth: .infinity, minHeight: SmileSpacing.sizeControlMd)
-        .contentShape(Rectangle())
+    // Icon above label, primary when active: `spec/components.json` corrected the bar to this on
+    // 2026-08-17 and warns in terms that the icons get imported and left unused, which is what
+    // happened here — `item.icon` was mapped and never drawn, and the tints were inverted too.
+    let tint = item == selected ? colors.primary : colors.foreground
+    return Button { onSelect(item) } label: {
+      VStack(spacing: SmileSpacing.spacingXxs) {
+        UseSmileIDSampleIcon(item.icon, tint: tint, size: Self.tabIconSize)
+        UseSmileIDSampleText(item.label, style: UseSmileIDSampleTheme.type.tabFont)
+          .foregroundColor(tint)
+          .multilineTextAlignment(.center)
+      }
+      .frame(maxWidth: .infinity, minHeight: SmileSpacing.sizeControlMd)
+      .contentShape(Rectangle())
     }
     .buttonStyle(.plain)
     .accessibilityAddTraits(item == selected ? [.isButton, .isSelected] : .isButton)
@@ -125,5 +133,10 @@ public struct UseSmileIDSampleNavBar: View {
 
   private static var ringBleed: CGFloat {
     3
+  }
+
+  /// The Compose twin's own 21, which no scale token carries.
+  private static var tabIconSize: CGFloat {
+    21
   }
 }

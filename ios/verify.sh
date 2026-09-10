@@ -38,6 +38,18 @@ SCHEME="${SCHEME:-UseSmileIDSample}"
 DESTINATION="${DESTINATION:-platform=iOS Simulator,name=iPhone 17 Pro}"
 RESULT_BUNDLE="${RESULT_BUNDLE:-build/uitest.xcresult}"
 
+# Refused rather than skipped: the clean-slate resets below are simctl, so a device destination
+# would no-op them silently and leave the run sharing state with the last one — on the runner where
+# state actually survives. The goldens are simulator-pinned too. The device lane is its own thing.
+case "$DESTINATION" in
+  *"iOS Simulator"*) ;;
+  *)
+    echo "verify.sh runs on a simulator; '$DESTINATION' is not one." >&2
+    echo "For a device see docs/plan/ios-device-verification.md §2.3 — it needs its own reset." >&2
+    exit 2
+    ;;
+esac
+
 if runs checks; then
   echo "==> design tokens are current"
   # SMILE_TOKENS_OPTIONAL downgrades a missing design system to a skip, for fork PRs that get no

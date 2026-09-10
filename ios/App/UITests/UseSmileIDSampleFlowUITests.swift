@@ -231,6 +231,81 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
   // MARK: - Harness
 
   /// The session outlives an uninstall, so every launch clears it: an ended marker sends every later run to the scanner.
+  /// Enhanced KYC on a REAL linked session: the one journey with `capture: false`, so a terminal
+  /// result needs no camera and no frame injection. Opt-in — CI has no token and must skip it.
+  func testEnhancedKycOnALiveSessionReachesATerminalResult() throws {
+    try XCTSkipUnless(
+      ProcessInfo.processInfo.environment["SMILE_LIVE_SESSION"] == "1",
+      "needs a token already scanned onto the device; nothing here mints one"
+    )
+    // Deliberately not `launch()`: that signs out any session, which is the one thing this needs.
+    app.launchArguments = useSmileIDSampleSettingsSeed
+    app.launch()
+    atATabRoot()
+    XCTAssertTrue(
+      element("sample_session_card").waitForExistence(timeout: 10),
+      "no live session on the device — scan a sandbox token before running this"
+    )
+
+    // The environment is a property of the scanned TOKEN, not of this run, so nothing here announces
+    // it — an agent submitted to production on 2026-09-10 for exactly that reason. Sandbox needs no
+    // flag; production is reachable but only ever on purpose, never by inheriting someone's token.
+    let chip = element("sample_env_chip")
+    XCTAssertTrue(chip.waitForExistence(timeout: 10), "no environment chip — cannot tell which environment this is")
+    if chip.label != "Sandbox" {
+      try XCTSkipUnless(
+        ProcessInfo.processInfo.environment["SMILE_ALLOW_PRODUCTION"] == "1",
+        "REFUSING TO SUBMIT: the linked token is \(chip.label), not Sandbox. Set SMILE_ALLOW_PRODUCTION=1 only for a test account."
+      )
+    }
+
+    element("sample_product_card_enhancedKyc").tap()
+
+    // A token binding consent and user details makes the app skip both forms and mount the SDK
+    // directly — measured, and the reason the first cut of this test failed on the wrong screen.
+    if element("sample_user_details_screen").waitForExistence(timeout: 10) {
+      fillAnyEmptyUserFields()
+      app.buttons["sample_user_details_continue"].tap()
+    }
+    if element("sample_kyc_form_screen").waitForExistence(timeout: 10) {
+      element("sample_country_trigger").tap()
+      XCTAssertTrue(element("sample_country_sheet").waitForExistence(timeout: 10))
+      element("sample_country_option_KE").tap()
+      element("sample_idtype_trigger").tap()
+      XCTAssertTrue(element("sample_idtype_sheet").waitForExistence(timeout: 10))
+      element("sample_idtype_option_nationalId").tap()
+      type("sample_idnumber_input", "AO12345678")
+      app.buttons["sample_kyc_continue"].tap()
+    }
+
+    // Reported, not assumed: no lane on any platform has reached a terminal result here, and the
+    // ledger records this exact journey stalling on processing with a real token.
+    let details = element("sample_verification_details_screen")
+    let landed = details.waitForExistence(timeout: 180)
+    let status = landed ? element("sample_result_job_status").label : "<never landed>"
+    let count = landed ? element("sample_result_result_count").label : "-"
+    let jobId = landed && element("sample_result_job_id").exists ? element("sample_result_job_id").label : "-"
+    XCTContext.runActivity(named: "terminal state: \(status) | results: \(count) | job: \(jobId)") { _ in }
+
+    XCTAssertTrue(landed, "no terminal result in 180s — the SDK never handed one back")
+    XCTAssertEqual(count, "1", "the result callback did not arrive exactly once")
+    XCTAssertNotEqual(status, "running", "still running after a terminal landing")
+  }
+
+  /// The token supplies what it binds and those rows are disabled; anything still empty is ours to fill.
+  private func fillAnyEmptyUserFields() {
+    for (id, value) in [
+      ("sample_user_details_field_firstName", "Kwame"),
+      ("sample_user_details_field_lastName", "Asante"),
+      ("sample_user_details_field_email", "kwame@uptech.example")
+    ] {
+      let field = app.textFields[id]
+      guard field.exists, field.isEnabled, (field.value as? String ?? "").isEmpty else { continue }
+      field.tap()
+      field.typeText(value)
+    }
+  }
+
   private func launch(arguments: [String] = []) {
     app.launchArguments = useSmileIDSampleSettingsSeed + arguments
     app.launch()

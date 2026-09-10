@@ -61,7 +61,12 @@ public struct ScanTokenScreen: View {
           emphasis: .filled,
           action: onTorchToggle
         ) { tint in
-          UseSmileIDSampleIcon(SmileIcons.torch, tint: tint, size: SmileSpacing.sizeIconMd)
+          // A bolt, matching the Compose twin: `SmileIcons.torch` is a flashlight OBJECT, which
+          // reads as a device rather than the flash affordance every camera UI uses. The shared
+          // icon set carries no bolt, so this takes the SF Symbol — the same call SearchField
+          // already makes for the magnifier Compose has to draw by hand.
+          Image(systemName: "bolt.fill")
+            .foregroundColor(tint)
         }
       }
       if let viewfinder {
