@@ -34,8 +34,12 @@ final class LoupeURLProtocol: URLProtocol, @unchecked Sendable {
 
   override class func canInit(with task: URLSessionTask) -> Bool {
     // A web socket is not an exchange this can replay, and taking it breaks the connection
-    if task is URLSessionWebSocketTask { return false }
-    guard let request = task.currentRequest else { return false }
+    if task is URLSessionWebSocketTask {
+      return false
+    }
+    guard let request = task.currentRequest else {
+      return false
+    }
     return canRecord(request)
   }
 
@@ -64,8 +68,12 @@ final class LoupeURLProtocol: URLProtocol, @unchecked Sendable {
 
   /// The body as it will be sent, reading the stream `httpBody` is nil for, capped.
   private static func bodyData(from request: URLRequest, limit: Int = 1048576) -> Data? {
-    if let body = request.httpBody { return body }
-    guard let stream = request.httpBodyStream else { return nil }
+    if let body = request.httpBody {
+      return body
+    }
+    guard let stream = request.httpBodyStream else {
+      return nil
+    }
     stream.open()
     defer { stream.close() }
     var data = Data()

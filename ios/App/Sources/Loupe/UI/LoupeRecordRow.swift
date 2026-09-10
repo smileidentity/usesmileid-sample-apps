@@ -36,14 +36,22 @@ struct LoupeRecordRow: View {
 
   /// A transport failure has no status code, so the badge says so rather than reading as pending.
   private var statusText: String {
-    if record.errorDescription != nil { return "ERR" }
-    guard let statusCode = record.statusCode else { return "…" }
+    if record.errorDescription != nil {
+      return "ERR"
+    }
+    guard let statusCode = record.statusCode else {
+      return "…"
+    }
     return String(statusCode)
   }
 
   private var statusColor: Color {
-    if record.errorDescription != nil { return .red }
-    guard let statusCode = record.statusCode else { return .gray }
+    if record.errorDescription != nil {
+      return .red
+    }
+    guard let statusCode = record.statusCode else {
+      return .gray
+    }
     switch statusCode {
     case 200..<300: return .green
     case 300..<400: return .blue
