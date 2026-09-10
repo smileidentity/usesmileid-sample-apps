@@ -14,6 +14,7 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 | 4 | **Continue U3** in `ui-work-plan.md`'s order — verificationDetails, userDetails, kycIdForm and both picker sheets (2026-09-01), then profiles, profileConfig and both profile sheets (2026-09-02), then scanToken with the session model behind it (2026-09-02, §8 and §9), then the result card, the scenario drawer and the launch arguments that seed the card (2026-09-03, §10) are built. **The job store, the verifications list and the status refresh are built (2026-09-08, §12, §13 and §15)**, so `seedJobs` acts, the four waiting ids are applied and a processing row can be re-checked. **The flow host is built (2026-09-08, §16)**: the SDK is hosted in both presentations, the four recorders and `redirected` have their callers, `jobStore.add` has one too, and the launch-integrity opener runs. **Licenses is built (2026-09-09, §17 and §18), so all sixteen exist**: the notices are generated from the products the app links, the gate fails a stale asset, and the screen renders them. `autostart` and `holdCamera` are what the host still owes. | Settled order; do not relitigate it. | **DONE — all sixteen screens exist.** |
 | 5 | **DONE 2026-09-01 — a growth check, not the one §2 proposed.** See §2. | Would have started biting at U4, when the 41 states land. | A component that stops growing at the largest content size fails the build. |
 | 6 | **U4 — DONE 2026-09-10. See §19.** | Every state in `spec/screens.json` is now recorded or exempt with a reason, and a test fails if that stops being true. | `UseSmileIDSampleScreenStateGoldenTest` is green and falsified. |
+| 7 | **Settings persistence — DONE 2026-09-10. See §20.** | The last functional parity gap, and `android/maestro/settings.yaml` had no iOS counterpart without it. | The six switches survive a relaunch, the UI suite declares them per launch, and `UseSmileIDSampleSettingsUITests` runs in the lane. |
 
 **The stack that carried U0–U2 and the first two screens** — #40, #42, #43 — is merged. Each squash
 turned the branches above it into a `rebase --onto`, which is the cost the three-deep limit buys.
@@ -820,6 +821,118 @@ Whether it adopts the same enforcement belongs to that PR, not to this one: its 
 and its natural shape may be a `@Preview` inventory rather than a name table. What does not vary is
 the requirement — a state added to `spec/screens.json` must fail some platform's build — and iOS is
 now the reference for one way of meeting it. Flutter and Expo inherit the question with their apps.
+
+## 20. The Settings switches persist — ruled and built 2026-09-10
+
+Android persists all six switches — `enhancedSmartSelfie`, `agentMode`, `darkMode`, `consentStep`,
+`instructionsStep`, `previewStep` — in the one `usesmileid_sample` DataStore that also holds the token
+session, writing through the settings model so the capture mutex moves the other row in the same edit.
+iOS persisted the token and nothing else (§8), which left `android/maestro/settings.yaml` with no iOS
+counterpart at all (`ios-device-verification.md` §2.1). Two rulings, both taken before the store was
+written, because either one is expensive to reverse afterwards.
+
+### D1 — one store, two homes: the token in the Keychain, the six switches in `UserDefaults`
+
+`UseSmileIDSampleStore` keeps both records, which is what §8 chose its name and folder for; the token
+stays a Keychain item and the switches become six `UserDefaults` keys under Android's own names. The
+seam stays one seam on all four platforms and the *homes* differ, rather than the reverse.
+
+What each alternative would have cost:
+
+- **Everything in the Keychain**, a literal mirror of Android's one store, puts six non-secrets in a
+  credential store — and then takes the UI suite's clean slate away. A Keychain item survives an
+  uninstall, which is §8's one recorded asymmetry, so `verify.sh`'s `simctl uninstall` would stop
+  resetting the switches and the only route back to defaults would be app code behind a new launch
+  argument. `UserDefaults` lives in the app's data container, which the uninstall deletes: the clean
+  slate the port already pays for now covers the switches for free. Measured, not assumed — see D3.
+- **One write carrying both records.** The invariant that needs a single write is *inside* the session
+  record (a live token and an ended marker must never come from different writes, §8); the settings'
+  own invariant is *inside* the settings record. Nothing spans the two, so one write across both would
+  buy no invariant and would tie a settings tap to a credential write.
+- **A second store type** would leave two files to keep in step for one platform, against a seam every
+  other platform has once.
+
+Nothing is stored twice, which is the rule `token-session-android.md`'s home table applies. Both
+platforms now persist exactly the same set: the six switches, the session, and the submitted jobs
+(Room there, SwiftData here). Profiles, the drafts and the forms stay in memory on both.
+
+### D2 — the mutex and the diff stay in the store, and the write reports what it wrote
+
+`setSetting` mirrors Android's: it reads the current six, puts the change through
+`UseSmileIDSampleSettings.with` so agent mode and enhanced liveness cannot both end up on, and writes
+only the rows that moved — writing all six would freeze today's defaults onto the device, so a default
+the design changes later would never reach a phone that had touched the screen. `spec/test-ids.json`
+asks for the mutex "where settings are persisted rather than in the screen", so this is the spec's
+placement rather than a preference, and `UseSmileIDSampleSettingsPersistenceTest` is the Android
+behaviour it is held to, test for test.
+
+It **returns** the settings it wrote, and the app state takes that value rather than re-reading the
+store. That is not decoration: **a value passed at launch shadows a later write.** Measured 2026-09-10
+with a scratch binary — with `-agent_mode true` in the argument domain, `set(false, forKey:)` lands in
+the persistent domain and `object(forKey:)` still answers `true`, because the argument domain outranks
+it for the life of the process. A store re-read after every write would therefore have left a seeded
+row's switch looking stuck under automation and nowhere else, which is the worst shape a bug can have.
+
+### D3 — a relaunch inherits the switches, so every UI launch declares them
+
+Persisted switches survive a relaunch, so the third test in a class inherits the second's settings. This
+repo has been bitten twice by exactly that: §17's seeded job rows survived an earlier session and
+inverted two verifications assertions by position, and `settings.yaml` records a device-measured
+mid-flow failure that left the consent screen off and read as two later regressions. Android's answer is
+in the flow — `settings.yaml` opens *and* closes with `subflows/settings-defaults.yaml`.
+
+**Ruled: iOS does both, and the seeding half is a precondition rather than a cleanup.** Every UI test
+launch passes the six switches at their shipped defaults, and `verify.sh` keeps the uninstall that gives
+a local run the clean install CI gets. A precondition is strictly stronger than Android's teardown, which
+is skipped by the very failure that makes it necessary — the one that actually happened. It is also
+cheaper: a launch argument rather than a walk down the settings list tapping what moved.
+
+**This needs no `spec/` change, and is not a new launch argument.** The six names are the *persistence
+keys*; the app parses none of them, and `spec/launch-args.json` is untouched. The two directions are
+already separated and tested: `UseSmileIDSampleLaunchArguments` reads the argument domain **only**, so a
+persisted value can never masquerade as an argument (`testTheArgumentsAreReadFromTheArgumentDomainOnly`),
+while the settings store reads `UserDefaults` in the ordinary way, so a launch value seeds it through the
+search order the platform already has. The spec names that mechanism for iOS itself — "launch arguments
+read through `UserDefaults`" — and the seed is volatile, so a seeded launch persists nothing. Both halves
+are pinned by tests, in the store's own test and in the UI suite.
+
+**What would have silently passed on stale state**, had the seeding gone unwritten:
+
+- `UseSmileIDSampleFlowUITests.testBackingOutOfTheSdksFirstScreenCancelsAndCreatesNoJob` asserts
+  `si_consent_screen` is **absent** because the linked token bound consent. A leaked `consentStep = false`
+  makes it absent for the wrong reason, and the test passes while proving nothing. Same shape at
+  `testALinkIntoTheRunWithNothingTypedRedirectsToTheForm`, which reads the same absence.
+- every id-based assertion in the suite under a leaked `darkMode = true`: the app renders in the wrong
+  appearance for the rest of the run and nothing fails, including the screenshots a red run is read from.
+- the positive halves fail loudly instead, which is why this went unnoticed rather than undiscovered: a
+  leaked `consentStep = false` reds eleven `si_consent_screen` waits in the same class.
+
+**The one test that opts out** is the persistence claim itself: it launches seeded, flips a row, relaunches
+with **no** seeds and asserts the flip survived — so it proves both that the write persists and that the
+seed did not. The reverse test seeds a non-default row and relaunches bare to watch it go, which is what
+keeps the seed honest as a launch override.
+
+### `darkMode` and the `theme` launch argument are different axes
+
+They read as the same thing and are not, so: `settings.darkMode` is **this app's own appearance** — a
+switch a person flips, persisted with the other five, applied as the shell's `preferredColorScheme`.
+`theme` is a **launch argument seeding a run's SDK theme scenario** (`ThemeConfiguration`, reported on the
+result card), and `token-session-android.md` rules that scenario and theme must never be persisted,
+because a persisted launch argument is a sticky one: a run that passed `theme=clashingHost` once would
+keep it on every later launch that passed nothing, with no way to tell which won. One is persisted state
+and one must not be; neither is the other's control.
+
+### What went with this slice, and what did not
+
+- **Sign-out reached parity**, which §9 parked here: Android clears the token session, clears the forms
+  and lands on Products, and iOS cleared only the session. It now does all three — the flow counterpart
+  asserts the landing, so the gap blocked the flow rather than being tidied up beside it.
+- **`android/maestro/settings.yaml` has an iOS counterpart**: `UseSmileIDSampleSettingsUITests`, so
+  `ios-device-verification.md` §2.1's blocked row closes. What it cannot cover is what that table already
+  says the simulator cannot reach; the switches themselves need no camera.
+- **Not touched:** the switches' effect on the composed flow is unit-proven in `FlowLaunchSnapshot`'s and
+  `FlowJourney`'s own tests, and this slice adds no assertion there — persistence changes where the six
+  booleans come from, not what the builder does with them.
 
 ## Considered and rejected
 
