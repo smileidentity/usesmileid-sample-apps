@@ -2,9 +2,9 @@
 
 ## What it is
 
-A shake opens a viewer over whatever is on screen showing every HTTP exchange the app has made this
-launch: the request, the response, the timing, a `curl` that reproduces it, and an export of the
-whole session. Debug builds only.
+A pill sits over the app showing what its traffic is doing; tapping it opens a viewer with every
+HTTP exchange this launch — the request, the response, the timing, a `curl` that reproduces it, and
+an export of the whole session. Debug builds only.
 
 It exists because the sample app's whole job is to prove the published SDK works, and when a flow
 fails the first question is always what went over the wire.
@@ -13,7 +13,7 @@ fails the first question is always what went over the wire.
 
 Ported from [netfox](https://github.com/kasketis/netfox) (MIT, © 2015 Christos Kasketis). The
 architecture is netfox's: a `URLProtocol` that replays each request through a private session so it
-can record both halves, a store the viewer observes, and a shake to open it.
+can record both halves, and a store the viewer observes.
 
 The code is not netfox's. It was rewritten for this repo's floor — Swift 6 language mode on iOS 17 —
 and the macOS half and demo app were dropped. Renaming it to Loupe is a product decision and changes
@@ -52,9 +52,15 @@ builds with its own list never consults the registry, so it passes through `Loup
 first. netfox swizzled `URLSessionConfiguration` to avoid that call; a one-line opt-in is worth more
 than a method swizzle in a sample app.
 
-**The shake is read at the window.** Motion events travel the responder chain, and a SwiftUI view
-cannot become first responder for them. A `UIWindow` override posts a notification, which keeps the
-UIKit detail out of the shell.
+**No shake, after review.** netfox opened on one because it had no visible chrome. Reading a shake
+from SwiftUI costs a `UIWindow` category overriding its own class's method, which is undefined
+behaviour and would have changed `UIWindow` in release builds too. The overlay is chrome, so the
+gesture bought nothing and was removed.
+
+**A streamed request body is never read.** Reading `httpBodyStream` consumes it, and the record is
+taken before the request is forwarded — so capturing one would empty the body out of the very
+request being observed. Streamed bodies are reported as streamed. An inspector that changes the
+traffic is worse than one that misses part of it.
 
 ## Borrowed from DebugOverlay-Android
 
@@ -87,5 +93,6 @@ is sent and replaced when it finishes, which is why the store upserts by id rath
 
 ## What was not ported
 
-The macOS viewer, the demo app, and netfox's own logo and font assets. The session log file is
-replaced by the share export, which produces the same transcript without leaving it on disk.
+The macOS viewer, the demo app, netfox's own logo and font assets, and its shake trigger. The
+session log file is replaced by the share export, which produces the same transcript without leaving
+it on disk.

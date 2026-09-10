@@ -25,7 +25,15 @@ struct LoupeRecordDetailView: View {
       }
 
       headerSection("Request headers", headers: record.requestHeaders)
-      bodySection("Request body", data: record.requestBody, kind: .other)
+      if record.isRequestBodyStreamed {
+        Section("Request body") {
+          Text("Streamed, so it is not captured — reading it would empty the request.")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        }
+      } else {
+        bodySection("Request body", data: record.requestBody, kind: .other)
+      }
       headerSection("Response headers", headers: record.responseHeaders)
       bodySection("Response body", data: record.responseBody, kind: record.bodyKind)
 

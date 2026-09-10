@@ -55,6 +55,7 @@ final class LoupeURLProtocol: URLProtocol, @unchecked Sendable {
 
   override func startLoading() {
     let started = state.read { $0 }
+    let body = Self.body(of: request)
     // Reported before it is sent, so a request that never comes back is still visible
     Self.sink.deliver(LoupeRecord(
       id: started.id,
@@ -62,7 +63,8 @@ final class LoupeURLProtocol: URLProtocol, @unchecked Sendable {
       url: request.url,
       requestDate: started.requestDate,
       requestHeaders: request.allHTTPHeaderFields ?? [:],
-      requestBody: Self.bodyData(from: request)
+      requestBody: body.data,
+      isRequestBodyStreamed: body.streamed
     ))
     guard let forwarded = (request as NSURLRequest).mutableCopy() as? NSMutableURLRequest else {
       client?.urlProtocol(self, didFailWithError: URLError(.badURL))
@@ -76,24 +78,21 @@ final class LoupeURLProtocol: URLProtocol, @unchecked Sendable {
     session.invalidateAndCancel()
   }
 
-  /// The body as it will be sent, reading the stream `httpBody` is nil for, capped.
-  private static func bodyData(from request: URLRequest, limit: Int = 1048576) -> Data? {
+  /// The body, and never by reading `httpBodyStream`.
+  ///
+  /// A stream is consumed by reading it, and at `startLoading` the request has not been sent yet —
+  /// so capturing one here would empty the body out of the very request being observed. An
+  /// inspector that changes the traffic is worse than one that misses part of it, so a streamed
+  /// body is reported as streamed rather than read.
+  static func bodyForTesting(_ request: URLRequest) -> (data: Data?, streamed: Bool) {
+    body(of: request)
+  }
+
+  private static func body(of request: URLRequest) -> (data: Data?, streamed: Bool) {
     if let body = request.httpBody {
-      return body
+      return (body, false)
     }
-    guard let stream = request.httpBodyStream else {
-      return nil
-    }
-    stream.open()
-    defer { stream.close() }
-    var data = Data()
-    var buffer = [UInt8](repeating: 0, count: 4096)
-    while stream.hasBytesAvailable, data.count < limit {
-      let read = stream.read(&buffer, maxLength: buffer.count)
-      guard read > 0 else { break }
-      data.append(contentsOf: buffer[0..<read])
-    }
-    return data
+    return (nil, request.httpBodyStream != nil)
   }
 }
 
@@ -137,7 +136,8 @@ extension LoupeURLProtocol: URLSessionDataDelegate {
       url: original.url,
       requestDate: snapshot.requestDate,
       requestHeaders: original.allHTTPHeaderFields ?? [:],
-      requestBody: Self.bodyData(from: original),
+      requestBody: Self.body(of: original).data,
+      isRequestBodyStreamed: Self.body(of: original).streamed,
       responseDate: Date(),
       statusCode: status,
       responseHeaders: headers,

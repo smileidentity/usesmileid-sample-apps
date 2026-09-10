@@ -177,6 +177,32 @@ final class UseSmileIDSampleLoupeTest: XCTestCase {
     XCTAssertTrue(text.contains("curl -X POST"), text)
   }
 
+  /// The record is taken before the request is forwarded, so reading the stream here would empty
+  /// the body out of the very request being observed.
+  func testAStreamedRequestBodyIsLeftUnreadSoTheRequestStillCarriesIt() {
+    let payload = Data(#"{"selfie":"..."}"#.utf8)
+    var request = URLRequest(url: Self.url)
+    request.httpMethod = "POST"
+    request.httpBodyStream = InputStream(data: payload)
+
+    let captured = LoupeURLProtocol.bodyForTesting(request)
+
+    XCTAssertNil(captured.data, "a streamed body must not be read")
+    XCTAssertTrue(captured.streamed)
+    // The stream is still unopened, so the loading system can still send it
+    XCTAssertEqual(request.httpBodyStream?.streamStatus, .notOpen)
+  }
+
+  func testAPlainRequestBodyIsCapturedBecauseReadingItCostsNothing() {
+    var request = URLRequest(url: Self.url)
+    request.httpBody = Data("hello".utf8)
+
+    let captured = LoupeURLProtocol.bodyForTesting(request)
+
+    XCTAssertEqual(captured.data, Data("hello".utf8))
+    XCTAssertFalse(captured.streamed)
+  }
+
   func testStatisticsCountA2xxAsSuccessAndEverythingElseAsFailure() {
     let statistics = LoupeStatistics(records: [
       Self.record(status: 200),

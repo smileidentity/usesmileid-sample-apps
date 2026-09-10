@@ -35,6 +35,8 @@ struct LoupeRecord: Identifiable, Equatable, Hashable {
   let requestDate: Date
   let requestHeaders: [String: String]
   let requestBody: Data?
+  /// True when the body was a stream, which is deliberately never read.
+  let isRequestBodyStreamed: Bool
   let responseDate: Date?
   let statusCode: Int?
   let responseHeaders: [String: String]
@@ -50,6 +52,7 @@ struct LoupeRecord: Identifiable, Equatable, Hashable {
     requestDate: Date,
     requestHeaders: [String: String],
     requestBody: Data?,
+    isRequestBodyStreamed: Bool = false,
     responseDate: Date? = nil,
     statusCode: Int? = nil,
     responseHeaders: [String: String] = [:],
@@ -63,6 +66,7 @@ struct LoupeRecord: Identifiable, Equatable, Hashable {
     self.requestDate = requestDate
     self.requestHeaders = requestHeaders
     self.requestBody = requestBody
+    self.isRequestBodyStreamed = isRequestBodyStreamed
     self.responseDate = responseDate
     self.statusCode = statusCode
     self.responseHeaders = responseHeaders
