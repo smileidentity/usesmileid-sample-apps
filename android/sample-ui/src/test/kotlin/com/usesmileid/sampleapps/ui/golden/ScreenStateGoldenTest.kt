@@ -97,12 +97,16 @@ class ScreenStateGoldenTest {
     }
 
     private fun specStates(): Set<String> {
+        val json = spec("screens.json")
         val states = mutableSetOf<String>()
         var screen: String? = null
-        SCREEN_OR_STATE.findAll(spec("screens.json")).forEach { match ->
+        SCREEN_OR_STATE.findAll(json).forEach { match ->
             val (id, state) = match.destructured
             if (id.isNotEmpty()) screen = id else states += "${requireNotNull(screen)}.$state"
         }
+        // A pattern that reads fewer states than the file holds would drop one silently, which is
+        // the failure this whole test exists to prevent. Counted against the raw keys, not trusted.
+        assertEquals("read fewer states than screens.json holds", STATE_KEY.findAll(json).count(), states.size)
         return states
     }
 
@@ -120,7 +124,10 @@ class ScreenStateGoldenTest {
 
         /** A screen id is the only `"id"` followed by `"title"`; states then belong to the last one seen. */
         val SCREEN_OR_STATE =
-            Regex("\"id\"\\s*:\\s*\"([A-Za-z]+)\"\\s*,\\s*\"title\"|\"state\"\\s*:\\s*\"([A-Za-z]+)\"")
+            Regex("\"id\"\\s*:\\s*\"([^\"]+)\"\\s*,\\s*\"title\"|\"state\"\\s*:\\s*\"([^\"]+)\"")
+
+        /** Counted, so a state the pattern above cannot read is a failure rather than an omission. */
+        val STATE_KEY = Regex("\"state\"\\s*:")
 
         /** Roborazzi names its output from this argument, so a renamed golden is a renamed baseline. */
         val GOLDEN_CALL = Regex("goldens\\(\\s*(?:name\\s*=\\s*)?\"([a-z0-9_]+)\"")
