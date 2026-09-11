@@ -33,8 +33,7 @@ struct LoupeRootView: View {
 
   @ViewBuilder private var traffic: some View {
     let records = store.visibleRecords
-    VStack(spacing: 0) {
-      LoupeKindFilter(store: store)
+    Group {
       if records.isEmpty {
         emptyState
       } else {
@@ -61,32 +60,5 @@ struct LoupeRootView: View {
     } else {
       ContentUnavailableView.search
     }
-  }
-}
-
-/// The body-kind chips, above the list so a filter you set stays visible.
-private struct LoupeKindFilter: View {
-  let store: LoupeStore
-
-  var body: some View {
-    ScrollView(.horizontal, showsIndicators: false) {
-      HStack(spacing: 8) {
-        ForEach(LoupeBodyKind.allCases, id: \.self) { kind in
-          let isOn = store.visibleKinds.contains(kind)
-          Button { store.toggle(kind) } label: {
-            Text(kind.rawValue)
-              .font(.caption)
-              .padding(.horizontal, 10)
-              .padding(.vertical, 5)
-              .background(isOn ? Color.accentColor : Color(.secondarySystemBackground))
-              .foregroundStyle(isOn ? Color.white : Color.primary)
-              .clipShape(Capsule())
-          }
-          .buttonStyle(.plain)
-        }
-      }
-      .padding(.horizontal)
-    }
-    .padding(.vertical, 8)
   }
 }

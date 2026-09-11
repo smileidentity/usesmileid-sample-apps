@@ -6,7 +6,6 @@ import Observation
 @Observable
 final class LoupeStore {
   private(set) var records: [LoupeRecord] = []
-  var visibleKinds: Set<LoupeBodyKind> = Set(LoupeBodyKind.allCases)
   var searchText = ""
 
   /// Bodies are held in memory, so the history is bounded rather than the launch's whole traffic.
@@ -16,14 +15,13 @@ final class LoupeStore {
     self.limit = limit
   }
 
-  /// The kind filter and the search box applied together, which is what the list draws.
+  /// What the list draws: the search box applied, and nothing else.
   var visibleRecords: [LoupeRecord] {
     let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-    return records.filter { record in
-      guard visibleKinds.contains(record.bodyKind) else { return false }
-      guard !query.isEmpty else { return true }
-      return record.url?.absoluteString.lowercased().contains(query) ?? false
+    guard !query.isEmpty else {
+      return records
     }
+    return records.filter { $0.url?.absoluteString.lowercased().contains(query) ?? false }
   }
 
   /// When the current window of traffic started, so an export says what it covers.
@@ -54,15 +52,5 @@ final class LoupeStore {
   func clear() {
     records.removeAll()
     recordingSince = Date()
-  }
-
-  /// Turns one kind on or off, never leaving the set empty, which reads as broken.
-  func toggle(_ kind: LoupeBodyKind) {
-    if visibleKinds.contains(kind) {
-      guard visibleKinds.count > 1 else { return }
-      visibleKinds.remove(kind)
-    } else {
-      visibleKinds.insert(kind)
-    }
   }
 }

@@ -92,6 +92,12 @@ question.
 different tool — a runtime diagnostics overlay — and none of its code is here. Three of its ideas
 are:
 
+**No body-kind filter.** netfox offered JSON / XML / HTML / Image / Other chips above the list.
+Every call this app makes is JSON, so the chips were five controls that could only ever hide rows.
+The kind still decides how a body renders and still shows on each row, where it earns its place the
+other way round: the interesting case is the response that is *not* JSON — an image, or a proxy's
+HTML error page.
+
 **A report, not a dump.** Its bug report bundles diagnostics with the log so a repro arrives as one
 artefact. Loupe's export leads with the app, bundle, system and the window it covers, then the
 totals, then the traffic — one paste into an issue.

@@ -91,39 +91,28 @@ final class UseSmileIDSampleLoupeTest: XCTestCase {
   }
 
   @MainActor
-  func testSearchMatchesTheUrlAndTheKindFilterNarrowsIt() {
+  func testSearchNarrowsTheListByUrlAndAnEmptyQueryShowsEverything() {
     let store = LoupeStore()
-    store.upsert(Self.record(path: "/jobs", kind: .json))
-    store.upsert(Self.record(path: "/avatar.png", kind: .image))
+    store.upsert(Self.record(path: "/jobs"))
+    store.upsert(Self.record(path: "/avatar.png"))
 
     store.searchText = "avatar"
     XCTAssertEqual(store.visibleRecords.map(\.path), ["/avatar.png"])
 
-    store.searchText = ""
-    store.toggle(.image)
-    XCTAssertEqual(store.visibleRecords.map(\.path), ["/jobs"])
+    store.searchText = "   "
+    XCTAssertEqual(store.visibleRecords.count, 2, "whitespace is not a query")
   }
 
   @MainActor
-  func testTheLastKindCannotBeTurnedOffBecauseAnEmptyListReadsAsBroken() {
-    let store = LoupeStore()
-    for kind in LoupeBodyKind.allCases {
-      store.toggle(kind)
-    }
-
-    XCTAssertEqual(store.visibleKinds.count, 1)
-  }
-
-  @MainActor
-  func testClearingLeavesTheFilterAlone() {
+  func testClearingLeavesTheSearchAlone() {
     let store = LoupeStore()
     store.upsert(Self.record())
-    store.toggle(.image)
+    store.searchText = "jobs"
 
     store.clear()
 
     XCTAssertTrue(store.records.isEmpty)
-    XCTAssertFalse(store.visibleKinds.contains(.image))
+    XCTAssertEqual(store.searchText, "jobs")
   }
 
   @MainActor
