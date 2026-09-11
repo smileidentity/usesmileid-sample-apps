@@ -35,6 +35,10 @@ echo "==> third-party notices are current"
 python3 "$REPO_ROOT/scripts/test_generate_licenses.py" >/dev/null
 ./gradlew :app:checkLicenses
 
+echo "==> icons are current"
+# Generated from design/icons/ like the iOS shapes are; a hand-edited drawable fails here.
+python3 "$REPO_ROOT/scripts/generate_android_icons.py" --check
+
 echo "==> lint"
 ./gradlew lint
 

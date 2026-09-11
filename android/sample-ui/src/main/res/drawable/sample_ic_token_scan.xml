@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Generated from the design set's SVG export; tinted at the use site. -->
+<!-- GENERATED from design/icons/token_scan.svg by scripts/generate_android_icons.py. Do not edit by hand. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="16dp"
     android:height="16dp"
@@ -9,12 +9,11 @@
         android:pathData="M2.66667 5.33333V4C2.66667 3.64638 2.80714 3.30724 3.05719 3.05719C3.30724 2.80714 3.64638 2.66667 4 2.66667H5.33333M10.6667 2.66667H12C12.3536 2.66667 12.6928 2.80714 12.9428 3.05719C13.1929 3.30724 13.3333 3.64638 13.3333 4V5.33333M13.3333 10.6667V12C13.3333 12.3536 13.1929 12.6928 12.9428 12.9428C12.6928 13.1929 12.3536 13.3333 12 13.3333H10.6667M5.33333 13.3333H4C3.64638 13.3333 3.30724 13.1929 3.05719 12.9428C2.80714 12.6928 2.66667 12.3536 2.66667 12V10.6667"
         android:strokeColor="#FF000000"
         android:strokeWidth="1.83333"
-        android:strokeLineCap="round"
-        android:fillColor="#00000000" />
+        android:strokeLineCap="round" />
+
     <path
         android:pathData="M2.66667 8H13.3333"
         android:strokeColor="#FF000000"
         android:strokeWidth="1.83333"
-        android:strokeLineCap="round"
-        android:fillColor="#00000000" />
+        android:strokeLineCap="round" />
 </vector>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Generated from the design set's SVG export; tinted at the use site. -->
+<!-- GENERATED from design/icons/field_phone.svg by scripts/generate_android_icons.py. Do not edit by hand. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="17dp"
     android:height="17dp"
@@ -8,12 +8,11 @@
     <path
         android:pathData="M10.625 1.41667H6.375C5.5926 1.41667 4.95833 2.05093 4.95833 2.83333V14.1667C4.95833 14.9491 5.5926 15.5833 6.375 15.5833H10.625C11.4074 15.5833 12.0417 14.9491 12.0417 14.1667V2.83333C12.0417 2.05093 11.4074 1.41667 10.625 1.41667Z"
         android:strokeColor="#FF000000"
-        android:strokeWidth="1.41667"
-        android:fillColor="#00000000" />
+        android:strokeWidth="1.41667" />
+
     <path
         android:pathData="M7.79167 12.75H9.20833"
         android:strokeColor="#FF000000"
         android:strokeWidth="1.41667"
-        android:strokeLineCap="round"
-        android:fillColor="#00000000" />
+        android:strokeLineCap="round" />
 </vector>

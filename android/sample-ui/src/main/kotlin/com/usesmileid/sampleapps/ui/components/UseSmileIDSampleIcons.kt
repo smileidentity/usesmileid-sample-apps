@@ -58,7 +58,8 @@ val UseSmileIDSampleProduct.iconRes: Int?
         UseSmileIDSampleProduct.SmartSelfieEnrollment -> R.drawable.sample_ic_smart_selfie_enrollment
         UseSmileIDSampleProduct.SmartSelfieAuth -> R.drawable.sample_ic_smart_selfie_auth
         UseSmileIDSampleProduct.DocumentVerification -> R.drawable.sample_ic_document_verification
-        UseSmileIDSampleProduct.EnhancedDocumentVerification -> R.drawable.sample_ic_enhanced_document_verification
+        // One mark for both document products, told apart by the card's hue — design/icons/README.md.
+        UseSmileIDSampleProduct.EnhancedDocumentVerification -> R.drawable.sample_ic_document_verification
         UseSmileIDSampleProduct.BiometricKyc -> R.drawable.sample_ic_biometric_kyc
         UseSmileIDSampleProduct.EnhancedKyc -> R.drawable.sample_ic_enhanced_kyc
     }

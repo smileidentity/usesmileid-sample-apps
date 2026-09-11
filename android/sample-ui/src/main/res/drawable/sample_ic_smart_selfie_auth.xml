@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Generated from the design set's SVG export; tinted at the use site. -->
+<!-- GENERATED from design/icons/smart_selfie_auth.svg by scripts/generate_android_icons.py. Do not edit by hand. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="21dp"
     android:height="21dp"
@@ -8,7 +8,7 @@
     <path
         android:pathData="M9.625 16.1875C13.2494 16.1875 16.1875 13.2494 16.1875 9.625C16.1875 6.00063 13.2494 3.0625 9.625 3.0625C6.00063 3.0625 3.0625 6.00063 3.0625 9.625C3.0625 13.2494 6.00063 16.1875 9.625 16.1875Z"
         android:strokeColor="#FF000000"
-        android:strokeWidth="1.5" />
+        android:strokeWidth="2.16667" />
 
     <path
         android:pathData="M7 9.625H7.00875M12.25 9.625H12.2588M7 12.25C8.4 13.475 10.85 13.475 12.25 12.25"
@@ -18,7 +18,7 @@
     <path
         android:pathData="M14.4375 14.875L16.1875 16.625L19.25 13.5625"
         android:strokeColor="#FF000000"
-        android:strokeWidth="1.5"
+        android:strokeWidth="2.16667"
         android:strokeLineCap="round"
         android:strokeLineJoin="round" />
 </vector>
