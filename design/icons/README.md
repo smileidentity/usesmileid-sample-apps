@@ -12,9 +12,9 @@ Enhanced KYC has no icon yet and falls back to the shared product mark; see
 `spec/components.json` → `ProductCard`.
 
 `material-symbols/` holds the Material Symbols Outlined stand-ins for the glyphs the design supplies
-nowhere. Check the design node's exported assets before adding one: `trash` and `flash` sat there
-for a month while Android drew the design's own, and a port that generated from this folder shipped
-the stand-in.
+nowhere. Check the design node's exported assets before adding one, and commit the export here the
+day it is used: `trash` and `flash` sat there for a month while Android drew the design's own from
+Figma exports that never reached this folder, and a port that generated from it shipped the stand-in.
 
 Per platform:
 
@@ -22,5 +22,5 @@ Per platform:
   `scripts/generate_android_icons.py` (stroke widths, caps, joins and inherited opacity preserved)
   and tinted at the use site; `android/verify.sh` fails on a stale, missing or unsourced drawable.
   The drawables carry an opaque base colour because the format requires one; nothing reads it.
-  They were hand-converted until 2026-09-11, by which point four of the six product marks had
-  drifted from this folder without anything noticing.
+  Until 2026-09-11 each drawable was written by hand from Figma's export, by which point four of the
+  six product marks had drifted from this folder without anything noticing.
