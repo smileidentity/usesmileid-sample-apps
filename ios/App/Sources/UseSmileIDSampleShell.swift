@@ -22,10 +22,7 @@ struct UseSmileIDSampleShell: View {
       .environmentObject(app)
       // Pinned both ways, not nil: following the system leaves a dark device rendering dark while Settings reads off.
       .preferredColorScheme(app.settings.darkMode ? .dark : .light)
-      // Without this the token palette stays light whatever the scheme says: `preferredColorScheme`
-      // moves the system's controls, and only this maps the scheme onto the app's own colours. It
-      // was applied in the golden harness and nowhere in the app, so every golden passed in dark
-      // and the device never rendered it.
+      // `preferredColorScheme` moves the system's controls; only this maps the scheme onto our tokens.
       .useSmileIDSampleTheme()
       // Reaches `\.locale` in the shell's own views only; the SDK's strings follow `-AppleLanguages`.
       .modifier(UseSmileIDSampleLocaleOverride(locale: app.launchArguments.locale))

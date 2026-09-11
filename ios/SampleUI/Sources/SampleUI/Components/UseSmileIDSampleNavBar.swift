@@ -88,9 +88,7 @@ public struct UseSmileIDSampleNavBar: View {
   }
 
   private func tab(_ item: UseSmileIDSampleNavItem) -> some View {
-    // Icon above label, primary when active: `spec/components.json` corrected the bar to this on
-    // 2026-08-17 and warns in terms that the icons get imported and left unused, which is what
-    // happened here — `item.icon` was mapped and never drawn, and the tints were inverted too.
+    // Icon above label, primary when active — `spec/components.json`, corrected 2026-08-17.
     let tint = item == selected ? colors.primary : colors.foreground
     return Button { onSelect(item) } label: {
       VStack(spacing: SmileSpacing.spacingXxs) {
@@ -99,8 +97,7 @@ public struct UseSmileIDSampleNavBar: View {
           .foregroundColor(tint)
           .multilineTextAlignment(.center)
       }
-      // Padded like the Compose twin rather than floored at `sizeControlMd`: 44 is SHORTER than the
-      // icon, gap, label and padding come to, so the flat minimum was silently shrinking the pill.
+      // Padded, not floored at `sizeControlMd`: 44 is shorter than the content, so it shrank the pill.
       .frame(maxWidth: .infinity)
       .padding(.vertical, SmileSpacing.spacingXs)
       .contentShape(Rectangle())

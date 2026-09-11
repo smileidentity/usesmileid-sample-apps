@@ -10,8 +10,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     app = XCUIApplication()
   }
 
-  /// Set by a test that runs on a session someone SCANNED: signing that out costs a real token and
-  /// a trip to the Portal, where every other test's session was minted locally by Simulate.
+  /// Set by a test running on a SCANNED session, which signing out would cost a real token.
   private var preservesSession = false
 
   /// The session and the pushed stack both outlive this class, so they are left as found or the next class inherits them.
@@ -236,21 +235,18 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
   // MARK: - Harness
 
   /// The session outlives an uninstall, so every launch clears it: an ended marker sends every later run to the scanner.
-  /// Enhanced KYC on a REAL linked session: the one journey with `capture: false`, so a terminal
-  /// result needs no camera and no frame injection. Opt-in — CI has no token and must skip it.
+  /// Enhanced KYC on a real session: the one journey with `capture: false`, so it needs no camera.
   func testEnhancedKycOnALiveSessionReachesATerminalResult() throws {
     try XCTSkipUnless(
       ProcessInfo.processInfo.environment["SMILE_LIVE_SESSION"] == "1",
       "needs a token already scanned onto the device; nothing here mints one"
     )
-    // Deliberately not `launch()`: that signs out any session, which is the one thing this needs.
-    // The teardown is told to leave it too, or one run costs the token and the next has nothing.
+    // Not `launch()`: it signs out the session this needs, and the teardown is told to keep it.
     preservesSession = true
     app.launchArguments = useSmileIDSampleSettingsSeed
     app.launch()
     atATabRoot()
-    // `atATabRoot` only guarantees SOME tab root, and the session card lives on Products alone —
-    // so without this the check reports "no session" whenever the scene restored another tab.
+    // `atATabRoot` reaches any tab root; the session card is on Products alone.
     element("sample_nav_products").tap()
     XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
     XCTAssertTrue(
@@ -258,13 +254,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
       "no live session on the device — scan a token before running this"
     )
 
-    // The environment is a property of the scanned TOKEN, not of this run, so nothing here announces
-    // it — an agent submitted to production on 2026-09-10 for exactly that reason. Sandbox needs no
-    // flag; production is reachable but only ever on purpose, never by inheriting someone's token.
-    // Ruled 2026-09-10: the app deliberately does not report the environment before a run, because
-    // whoever scans the token knows which one it is. An agent does not — it inherits a session it
-    // did not scan — so this one submitting test asks out loud, and having no chip to read counts
-    // as not proven rather than as safe.
+    // The token decides the environment, so an agent inheriting one must say production out loud.
     let chip = element("sample_env_chip")
     if !chip.waitForExistence(timeout: 5) || chip.label != "Sandbox" {
       try XCTSkipUnless(
@@ -275,8 +265,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
 
     element("sample_product_card_enhancedKyc").tap()
 
-    // A token binding consent and user details makes the app skip both forms and mount the SDK
-    // directly — measured, and the reason the first cut of this test failed on the wrong screen.
+    // A token binding consent and user details makes the app skip both forms and mount the SDK.
     if element("sample_user_details_screen").waitForExistence(timeout: 10) {
       fillAnyEmptyUserFields()
       app.buttons["sample_user_details_continue"].tap()
@@ -292,8 +281,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
       app.buttons["sample_kyc_continue"].tap()
     }
 
-    // Reported, not assumed: no lane on any platform has reached a terminal result here, and the
-    // ledger records this exact journey stalling on processing with a real token.
+    // Reported rather than asserted: no lane on any platform has reached a terminal result here.
     let details = element("sample_verification_details_screen")
     let landed = details.waitForExistence(timeout: 180)
     let status = landed ? element("sample_result_job_status").label : "<never landed>"

@@ -38,9 +38,7 @@ SCHEME="${SCHEME:-UseSmileIDSample}"
 DESTINATION="${DESTINATION:-platform=iOS Simulator,name=iPhone 17 Pro}"
 RESULT_BUNDLE="${RESULT_BUNDLE:-build/uitest.xcresult}"
 
-# Refused rather than skipped: the clean-slate resets below are simctl, so a device destination
-# would no-op them silently and leave the run sharing state with the last one — on the runner where
-# state actually survives. The goldens are simulator-pinned too. The device lane is its own thing.
+# Refused, not skipped: the resets below are simctl and would no-op in silence on a device.
 case "$DESTINATION" in
   *"iOS Simulator"*) ;;
   *)
