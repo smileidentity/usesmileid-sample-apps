@@ -43,6 +43,12 @@ dist/
 npm-debug.log*
 yarn-error.log*
 
+# --- Python ---
+# scripts/ is run with python3, which writes bytecode next to the sources. One .pyc was committed
+# by accident twice before this line existed; nothing here is reproducible from a checkout.
+__pycache__/
+*.py[cod]
+
 # --- editors / OS ---
 .idea/
 .vscode/
