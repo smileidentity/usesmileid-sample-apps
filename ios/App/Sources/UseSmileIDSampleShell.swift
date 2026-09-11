@@ -70,7 +70,8 @@ struct UseSmileIDSampleShell: View {
         selected: app.idDetails.country,
         query: $app.countryQuery,
         onSelect: { app.selectCountry($0)
-          router.sheet = nil }
+          router.sheet = nil },
+        onClose: { router.sheet = nil }
       )
     case .idTypePicker:
       IdTypePickerSheet(
@@ -78,7 +79,8 @@ struct UseSmileIDSampleShell: View {
         selected: app.idDetails.idType,
         query: $app.idTypeQuery,
         onSelect: { app.idDetails.idType = $0
-          router.sheet = nil }
+          router.sheet = nil },
+        onClose: { router.sheet = nil }
       )
     case .profileSwitch:
       ProfileSwitchSheet(

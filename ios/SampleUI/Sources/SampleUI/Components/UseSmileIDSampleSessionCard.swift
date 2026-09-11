@@ -70,13 +70,14 @@ public struct UseSmileIDSampleSessionEndedBanner: View {
           .foregroundColor(colors.banner.title)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
+      // A text action widened to the touch target, per the component's spec — not a filled pill.
       Button(action: onScan) {
-        UseSmileIDSampleText("Scan", style: UseSmileIDSampleTheme.type.textStyleButtonSm)
-          .foregroundColor(colors.onPrimary)
-          .padding(.horizontal, SmileSpacing.spacingMd)
-          .padding(.vertical, SmileSpacing.spacingXs)
-          .frame(minHeight: SmileSpacing.space40)
-          .background(Capsule().fill(colors.primary))
+        UseSmileIDSampleText("Scan", style: UseSmileIDSampleTheme.type.linkFont)
+          .foregroundColor(colors.primary)
+          .fixedSize()
+          .padding(.horizontal, SmileSpacing.spacingXs)
+          .frame(minHeight: SmileSpacing.sizeControlMd)
+          .contentShape(Rectangle())
       }
       .buttonStyle(.plain)
     }

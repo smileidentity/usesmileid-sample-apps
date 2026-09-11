@@ -63,12 +63,15 @@ public struct UseSmileIDSampleKeyValueEditRow: View {
   }
 
   private var field: some View {
-    ZStack(alignment: .leading) {
+    // A text field fills its column, so the row's own alignment cannot place the text: this does.
+    let stacked = sizeCategory.isAccessibilityCategory
+    return ZStack(alignment: stacked ? .leading : .trailing) {
       if value.isEmpty {
         UseSmileIDSampleText(placeholder, style: rowStyle)
           .foregroundColor(colors.textMuted)
       }
       TextField("", text: $value)
+        .multilineTextAlignment(stacked ? .leading : .trailing)
         .font(UseSmileIDSampleFonts.font(rowStyle))
         .foregroundColor(enabled ? colors.textTitle : colors.textMuted)
         .keyboardType(keyboardType)

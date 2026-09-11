@@ -5,19 +5,26 @@ public struct CountryPickerSheet: View {
   private let selected: UseSmileIDSampleCountry?
   @Binding private var query: String
   private let onSelect: (UseSmileIDSampleCountry) -> Void
+  private let onClose: () -> Void
 
   public init(
     selected: UseSmileIDSampleCountry?,
     query: Binding<String>,
-    onSelect: @escaping (UseSmileIDSampleCountry) -> Void
+    onSelect: @escaping (UseSmileIDSampleCountry) -> Void,
+    onClose: @escaping () -> Void
   ) {
     self.selected = selected
     _query = query
     self.onSelect = onSelect
+    self.onClose = onClose
   }
 
   public var body: some View {
-    UseSmileIDSampleBottomSheet(title: "Country", testId: UseSmileIDSampleTestIds.countrySheet) {
+    UseSmileIDSampleFullHeightBottomSheet(
+      title: "Country",
+      testId: UseSmileIDSampleTestIds.countrySheet,
+      onClose: onClose
+    ) {
       UseSmileIDSampleSearchField(
         query: $query,
         placeholder: "Search country",

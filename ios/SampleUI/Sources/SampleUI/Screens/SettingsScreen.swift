@@ -273,18 +273,22 @@ public struct SettingsScreen: View {
     testId: String,
     enabled: Bool = true
   ) -> some View {
-    UseSmileIDSampleSettingRow(title: title, supportingText: supporting) {
-      UseSmileIDSampleIcon(icon, tint: colors.textTitle, size: SmileSpacing.sizeIconMd)
-    } trailing: {
-      UseSmileIDSampleSwitch(
-        isOn: Binding(
-          get: { state.settings[setting] },
-          set: { onSettingChange(setting, $0) }
-        ),
-        enabled: enabled,
-        testId: testId
-      )
-    }
+    // Both closures labelled: with no onTap to take it, an unlabelled one binds there and the glyph vanishes.
+    UseSmileIDSampleSettingRow(
+      title: title,
+      supportingText: supporting,
+      leading: { UseSmileIDSampleIcon(icon, tint: colors.textTitle, size: SmileSpacing.sizeIconMd) },
+      trailing: {
+        UseSmileIDSampleSwitch(
+          isOn: Binding(
+            get: { state.settings[setting] },
+            set: { onSettingChange(setting, $0) }
+          ),
+          enabled: enabled,
+          testId: testId
+        )
+      }
+    )
   }
 
   private static let enhancedSmartSelfieTitle = "Enhanced SmartSelfie\u{2122}"

@@ -70,15 +70,17 @@ public struct ScanTokenScreen: View {
         camera(viewfinder)
       } else {
         // Scrolls because the glyph is fixed: at 2x its copy no longer fits above the sheet.
-        ScrollView {
-          VStack(spacing: SmileSpacing.spacingSm) {
-            UseSmileIDSampleScanGlyph()
-            copy
+        GeometryReader { geometry in
+          ScrollView {
+            VStack(spacing: SmileSpacing.spacingSm) {
+              UseSmileIDSampleScanGlyph()
+              copy
+            }
+            .padding(SmileSpacing.spacingMd)
+            // The minimum is what centres it: a scroll view alone pins short content to the top.
+            .frame(maxWidth: .infinity, minHeight: geometry.size.height)
           }
-          .padding(SmileSpacing.spacingMd)
-          .frame(maxWidth: .infinity)
         }
-        .frame(maxHeight: .infinity)
       }
       UseSmileIDSampleScanSheet(
         state: $entry,

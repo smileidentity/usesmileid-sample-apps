@@ -96,11 +96,12 @@ private struct SettingRows: View {
   var body: some View {
     VStack(spacing: SmileSpacing.spacingSm) {
       UseSmileIDSampleSectionSurface(label: "CAPTURE") {
-        UseSmileIDSampleSettingRow(title: "Agent mode", supportingText: "Capture on someone else's behalf") {
-          UseSmileIDSampleIcon(SmileIcons.agent, tint: colors.textTitle, size: SmileSpacing.sizeIconMd)
-        } trailing: {
-          UseSmileIDSampleSwitch(isOn: .constant(true))
-        }
+        UseSmileIDSampleSettingRow(
+          title: "Agent mode",
+          supportingText: "Capture on someone else's behalf",
+          leading: { UseSmileIDSampleIcon(SmileIcons.agent, tint: colors.textTitle, size: SmileSpacing.sizeIconMd) },
+          trailing: { UseSmileIDSampleSwitch(isOn: .constant(true)) }
+        )
         UseSmileIDSampleRowDivider()
         UseSmileIDSampleSettingRow(title: "Consent screen", onTap: {}) {
           UseSmileIDSampleIcon(SmileIcons.consent, tint: colors.textTitle, size: SmileSpacing.sizeIconMd)

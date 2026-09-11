@@ -6,15 +6,17 @@ public struct UseSmileIDSampleAvatar: View {
   private let containerColor: Color
   private let testId: String?
 
-  @ScaledMetric(relativeTo: .body) private var size: CGFloat = SmileSpacing.space40
+  @ScaledMetric private var size: CGFloat
   @Environment(\.useSmileIDSampleColors) private var colors
 
   public init(
     initials: String,
+    size: CGFloat = SmileSpacing.space40,
     containerColor: Color = smileProfileHues[0],
     testId: String? = nil
   ) {
     self.initials = initials
+    _size = ScaledMetric(wrappedValue: size, relativeTo: .body)
     self.containerColor = containerColor
     self.testId = testId
   }
