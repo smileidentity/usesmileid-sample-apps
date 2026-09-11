@@ -5,11 +5,14 @@
 the badge is the point — four sample apps sit on one home screen and the badge is what tells them
 apart. A mark without it was committed once by hand, which is why this is generated now.
 
-Two transforms the source cannot carry, because it is also used as an ordinary illustration:
+Three transforms the source cannot carry, because it is also used as an ordinary illustration:
 
 - the corner radius is dropped, because iOS masks the icon itself and a rounded source is masked
   twice, leaving a pale fringe on the device
 - the alpha channel is dropped, because App Store Connect rejects an icon that has one
+- the artwork is inset, because the home screen's mask is a superellipse rather than the source's
+  rounded rectangle, and it cuts further into the corners: measured against it, the platform badge's
+  outer corner sits at 1.07 of the mask's boundary at full size and is clipped on a real device
 
 Rendered through QuickLook, which is WebKit: ImageMagick's own SVG renderer ignores a nested `<svg>`
 element's x/y placement and drops the badge in the top-left corner at the wrong size, silently.
@@ -33,6 +36,10 @@ SOURCE = ROOT / "svgs" / "ios.svg"
 TARGET = ROOT / "ios" / "App" / "Assets.xcassets" / "AppIcon.appiconset" / "AppIcon1024.png"
 SIZE = 1024
 
+# Chosen against a render of the actual mask, not from a guideline: at 1.00 the badge is cut, at 0.86
+# the mark starts swimming in its own margin. Raising it back past ~0.94 re-clips the badge.
+CONTENT_SCALE = 0.90
+
 # A renderer's own antialiasing shifts by a pixel between OS versions, so the check is a tolerance
 # rather than byte equality: a changed source moves far more than this, a changed renderer does not.
 TOLERANCE = 2.0
@@ -46,30 +53,41 @@ def squared_off(svg: str) -> str:
 def render(svg: str) -> bytes:
     if shutil.which("qlmanage") is None:
         raise SystemExit("generate_app_icon.py needs qlmanage, which ships with macOS")
+    from PIL import Image
+
     with tempfile.TemporaryDirectory() as work:
         source = Path(work) / "icon.svg"
         source.write_text(svg, encoding="utf-8")
+        inner = round(SIZE * CONTENT_SCALE)
         subprocess.run(
-            ["qlmanage", "-t", "-s", str(SIZE), "-o", work, str(source)],
+            ["qlmanage", "-t", "-s", str(inner), "-o", work, str(source)],
             check=True,
             capture_output=True,
         )
         rendered = Path(work) / "icon.svg.png"
         if not rendered.is_file():
             raise SystemExit("qlmanage rendered nothing; is the source valid SVG?")
-        return flatten(rendered)
+        artwork = flatten(rendered, inner)
+        # Sampled rather than hard-coded: the ground is the squared-off source's own background.
+        canvas = Image.new("RGB", (SIZE, SIZE), artwork.getpixel((1, 1)))
+        canvas.paste(artwork, ((SIZE - inner) // 2, (SIZE - inner) // 2))
+        return encode(canvas)
 
 
-def flatten(path: Path) -> bytes:
+def flatten(path: Path, size: int):
     from PIL import Image
 
     image = Image.open(path).convert("RGBA")
-    if image.size != (SIZE, SIZE):
-        image = image.resize((SIZE, SIZE), Image.LANCZOS)
+    if image.size != (size, size):
+        image = image.resize((size, size), Image.LANCZOS)
     opaque = Image.new("RGB", image.size, (255, 255, 255))
     opaque.paste(image, mask=image.split()[3])
+    return opaque
+
+
+def encode(image) -> bytes:
     buffer = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
-    opaque.save(buffer.name, "PNG")
+    image.save(buffer.name, "PNG")
     return Path(buffer.name).read_bytes()
 
 
