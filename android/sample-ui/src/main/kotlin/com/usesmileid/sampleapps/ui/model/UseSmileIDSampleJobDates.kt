@@ -23,7 +23,7 @@ fun List<UseSmileIDSampleJob>.groupByDay(
                 relative = when (day) {
                     today -> "TODAY"
                     today - MILLIS_PER_DAY -> "YESTERDAY"
-                    else -> dayFormat.format(Date(day)).uppercase(locale)
+                    else -> ""
                 },
                 absolute = dayFormat.format(Date(day)).uppercase(locale),
                 jobs = jobs,
