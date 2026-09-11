@@ -81,6 +81,12 @@ if runs checks; then
 fi
 
 if runs checks; then
+  echo "==> the listing App Store Connect receives"
+  # Files only, so it needs no simulator and the archive phase can run the same check in seconds.
+  python3 "$REPO_ROOT/scripts/check_store_listing.py" --check
+fi
+
+if runs checks; then
   echo "==> third-party notices are current"
   # Apache-2.0 §4 asks the notice to travel with the distribution, so the app ships the list rather
   # than linking it. Walked from the products the app links, which needs the graph resolved first.
@@ -191,12 +197,25 @@ if runs checks; then
 
 fi
 
-if runs archive; then
+# Deliberately not `runs archive`: that is true under `all`, and the bare script — the definition
+# of done — would then demand a signing identity a fresh clone does not have.
+if [ "$PHASE" = archive ]; then
+  echo "==> the listing App Store Connect receives"
+  python3 "$REPO_ROOT/scripts/check_store_listing.py" --check
+
   echo "==> archive (Release, generic device, for App Store distribution)"
   # Both refusals are here rather than in a workflow step, so a hand-built archive is held to the
   # same rule as a CI one. A build number App Store Connect has already seen for this marketing
   # version is rejected at upload, which is late and wastes an integer.
-  : "${DEVELOPMENT_TEAM:?archive needs DEVELOPMENT_TEAM — it is never committed, see docs/plan/app-store-release-ios.md §3}"
+  # A lane with no credentials can still prove the shipped configuration builds and declares what
+  # an upload is rejected for; only a real upload needs an identity.
+  SIGNING_ARGS=()
+  if [ -n "${ARCHIVE_UNSIGNED:-}" ]; then
+    SIGNING_ARGS=(CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="")
+    DEVELOPMENT_TEAM="${DEVELOPMENT_TEAM:-}"
+  else
+    : "${DEVELOPMENT_TEAM:?archive needs DEVELOPMENT_TEAM — it is never committed, see docs/plan/app-store-release-ios.md §3}"
+  fi
   case "${BUILD_NUMBER:-}" in
     "" | *[!0-9]*)
       echo "archive needs a positive integer BUILD_NUMBER; the workflows pass git rev-list --count HEAD" >&2
@@ -208,10 +227,13 @@ if runs archive; then
   # Optional: unset keeps project.yml's hand-bumped value, which is what a local archive wants.
   VERSION_ARGS=()
   if [ -n "${MARKETING_VERSION:-}" ]; then
-    case "$MARKETING_VERSION" in
-      [0-9]*.[0-9]*) VERSION_ARGS+=(MARKETING_VERSION="$MARKETING_VERSION") ;;
-      *) echo "MARKETING_VERSION '$MARKETING_VERSION' is not a version number" >&2; exit 2 ;;
-    esac
+    # Anchored, not a glob: `[0-9]*.[0-9]*` matched `1.0; anything` and refused the bare `1`.
+    if printf '%s' "$MARKETING_VERSION" | grep -Eq '^[0-9]+(\.[0-9]+){0,2}$'; then
+      VERSION_ARGS+=(MARKETING_VERSION="$MARKETING_VERSION")
+    else
+      echo "MARKETING_VERSION '$MARKETING_VERSION' is not one to three dot-separated numbers" >&2
+      exit 2
+    fi
   fi
 
   ARCHIVE="${ARCHIVE_PATH:-build/UseSmileIDSample.xcarchive}"
@@ -230,6 +252,7 @@ if runs archive; then
     DEVELOPMENT_TEAM="$DEVELOPMENT_TEAM" \
     CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
     ${VERSION_ARGS[@]+"${VERSION_ARGS[@]}"} \
+    ${SIGNING_ARGS[@]+"${SIGNING_ARGS[@]}"} \
     -quiet
 
   if [ -n "${EXPORT_ARCHIVE_ONLY:-}" ]; then
