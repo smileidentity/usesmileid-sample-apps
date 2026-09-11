@@ -248,9 +248,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   }
 
   /// The store's own rows, so a screen's golden and a device run show the same eleven.
-  private static let fixtures = UseSmileIDSampleJobStore.fixtures(
-    now: Date(timeIntervalSince1970: 1784202612)
-  )
+  private static let fixtures = UseSmileIDSampleJobStore.fixtures(now: UseSmileIDSampleFixedClock.now)
 
   private static func fixture(_ status: UseSmileIDSampleStatus, index: Int) -> UseSmileIDSampleJob {
     let job = fixtures[index]
@@ -355,14 +353,10 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   }
 
   private static var utc: Calendar {
-    var calendar = Calendar(identifier: .gregorian)
-    calendar.locale = Locale(identifier: "en_US_POSIX")
-    calendar.timeZone = TimeZone(identifier: "UTC")!
-    return calendar
+    UseSmileIDSampleFixedClock.utc
   }
 
-  /// 2026-07-16T11:50:12Z, the instant the design's rows are dated from.
-  private static let fixedNow = Date(timeIntervalSince1970: 1784202612)
+  private static let fixedNow = UseSmileIDSampleFixedClock.now
 
   private func products(_ state: UseSmileIDSampleProductsState) -> some View {
     ProductsScreen(state: state, onProduct: { _ in }, onProfile: {}, onScan: {})

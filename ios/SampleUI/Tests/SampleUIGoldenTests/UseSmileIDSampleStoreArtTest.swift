@@ -9,8 +9,7 @@ final class UseSmileIDSampleStoreArtTest: XCTestCase {
   /// 440 × 956 pt is the ios-phone preset's 1320 × 2868 at the recorder's 3× scale.
   private static let size = CGSize(width: 440, height: 956)
 
-  /// The frame's corner radius eats the top 153 px of the source; 62 pt clears it and is also the
-  /// phone's real status-bar height, so the band reads as one — docs/plan/app-store-release-ios.md §2.4.
+  /// Clears the frame's 153 px corner radius and matches the phone's status bar — see docs/plan/app-store-release-ios.md §2.4.
   private static let statusBarInset: CGFloat = 62
 
   /// Its own directory, so a store-art change can never quietly repaint a golden.
@@ -54,8 +53,8 @@ final class UseSmileIDSampleStoreArtTest: XCTestCase {
           filter: .all,
           selectMode: false,
           selected: [],
-          today: useSmileIDSampleStartOfDay(Self.now, calendar: Self.utc),
-          calendar: Self.utc
+          today: useSmileIDSampleStartOfDay(UseSmileIDSampleFixedClock.now, calendar: UseSmileIDSampleFixedClock.utc),
+          calendar: UseSmileIDSampleFixedClock.utc
         ),
         onFilterChange: { _ in },
         onSelectModeChange: { _ in },
@@ -66,8 +65,7 @@ final class UseSmileIDSampleStoreArtTest: XCTestCase {
     }
   }
 
-  /// Probes off, because a plain release install hides the result card and store art must not show
-  /// a state the App Store reviewer's own build cannot reach.
+  /// Probes off: a plain release install hides the result card, so store art must not show it.
   func testVerificationDetails() {
     let job = Self.jobs[0]
     panel("verification_details") {
@@ -121,8 +119,8 @@ final class UseSmileIDSampleStoreArtTest: XCTestCase {
     .background(StoreArtBackground())
     .useSmileIDSampleTheme()
 
-    // verifySnapshot rather than assertSnapshot: only it takes snapshotDirectory, which is what
-    // keeps the frames out of __Snapshots__. testName is the panel, so the file is <panel>.frame.png.
+    // verifySnapshot, not assertSnapshot: only it takes snapshotDirectory, which keeps the frames
+    // out of __Snapshots__.
     let failure = verifySnapshot(
       of: view,
       as: .image(
@@ -140,17 +138,7 @@ final class UseSmileIDSampleStoreArtTest: XCTestCase {
     }
   }
 
-  /// 2026-07-16T11:50:12Z, the instant the design's rows are dated from; the store art must not move with the clock.
-  private static let now = Date(timeIntervalSince1970: 1784202612)
-
-  private static let jobs = UseSmileIDSampleJobStore.fixtures(now: now)
-
-  private static var utc: Calendar {
-    var calendar = Calendar(identifier: .gregorian)
-    calendar.locale = Locale(identifier: "en_US_POSIX")
-    calendar.timeZone = TimeZone(identifier: "UTC")!
-    return calendar
-  }
+  private static let jobs = UseSmileIDSampleJobStore.fixtures(now: UseSmileIDSampleFixedClock.now)
 }
 
 /// Reads the themed background, which the panel cannot do before the theme is in the environment.
