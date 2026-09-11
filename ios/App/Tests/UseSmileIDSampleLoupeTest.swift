@@ -214,6 +214,27 @@ final class UseSmileIDSampleLoupeTest: XCTestCase {
     XCTAssertEqual(classes.first == LoupeURLProtocol.self, true, "the protocol must be offered first")
   }
 
+  /// Every session is built from a configuration and copies it at that moment, so swizzling the
+  /// session factories covers configurations the two config factories never see — a copy, an
+  /// ephemeral one, or one carried in from elsewhere.
+  @MainActor
+  func testASessionCarriesTheProtocolHoweverItsConfigurationWasObtained() {
+    LoupeSessionInstrumentation.install()
+
+    let session = URLSession(configuration: .ephemeral)
+
+    XCTAssertEqual(session.configuration.protocolClasses?.first == LoupeURLProtocol.self, true)
+  }
+
+  @MainActor
+  func testASessionBuiltWithADelegateIsSeenToo() {
+    LoupeSessionInstrumentation.install()
+
+    let session = URLSession(configuration: .default, delegate: nil, delegateQueue: nil)
+
+    XCTAssertEqual(session.configuration.protocolClasses?.first == LoupeURLProtocol.self, true)
+  }
+
   @MainActor
   func testInstrumentingTwiceDoesNotStackTheProtocol() {
     let configuration = URLSessionConfiguration.default
@@ -279,6 +300,34 @@ final class UseSmileIDSampleLoupeTest: XCTestCase {
     let body = Data("not json at all".utf8)
 
     XCTAssertEqual(LoupeRedaction.body(body), body)
+  }
+
+  func testARefusalNamesTheRuleThatTurnedTheRequestAway() throws {
+    var configuration = LoupeConfiguration()
+    XCTAssertEqual(configuration.refusal(for: URLRequest(url: Self.url)), "not recording")
+
+    configuration.isRecording = true
+    XCTAssertNil(configuration.refusal(for: URLRequest(url: Self.url)))
+
+    let ws = try URLRequest(url: XCTUnwrap(URL(string: "ws://example.com")))
+    XCTAssertEqual(configuration.refusal(for: ws), "scheme ws")
+
+    configuration.ignoredURLPrefixes = ["https://api.example.com"]
+    XCTAssertEqual(configuration.refusal(for: URLRequest(url: Self.url)), "ignored prefix")
+  }
+
+  func testTheDiagnosticsKeepOnlyTheLastFewRefusals() {
+    let diagnostics = LoupeDiagnostics.shared
+    diagnostics.reset()
+
+    for index in 0..<15 {
+      diagnostics.countDeclined("reason\(index)", host: "host")
+    }
+
+    XCTAssertEqual(diagnostics.current.declined, 15)
+    XCTAssertEqual(diagnostics.current.reasons.count, 10, "the list is bounded")
+    XCTAssertTrue(diagnostics.current.reasons.first?.hasPrefix("reason14") == true, "newest first")
+    diagnostics.reset()
   }
 
   func testStatisticsCountA2xxAsSuccessAndEverythingElseAsFailure() {

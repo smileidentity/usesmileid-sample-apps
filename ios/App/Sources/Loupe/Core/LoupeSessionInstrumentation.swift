@@ -8,9 +8,8 @@ import ObjectiveC
 /// the global registry. The SDK builds its own session, so without this the one traffic worth
 /// watching is the traffic the loupe cannot see.
 ///
-/// Swizzling the two factory getters is how netfox reached it, and there is no API that does the
-/// same job — the configuration is created inside the SDK, where nothing can hand it over.
-/// Debug builds only, installed once.
+/// Swizzling is how netfox reached it, and there is no API that does the same job — the session is
+/// created inside the SDK, where nothing can hand it over. Debug builds only, installed once.
 @MainActor
 enum LoupeSessionInstrumentation {
   private static var isInstalled = false
@@ -21,16 +20,45 @@ enum LoupeSessionInstrumentation {
       return
     }
     isInstalled = true
-    exchange(NSSelectorFromString("defaultSessionConfiguration"), #selector(URLSessionConfiguration.loupeDefault))
-    exchange(NSSelectorFromString("ephemeralSessionConfiguration"), #selector(URLSessionConfiguration.loupeEphemeral))
+    exchange(URLSessionConfiguration.self, NSSelectorFromString("defaultSessionConfiguration"), #selector(URLSessionConfiguration.loupeDefault))
+    exchange(URLSessionConfiguration.self, NSSelectorFromString("ephemeralSessionConfiguration"), #selector(URLSessionConfiguration.loupeEphemeral))
+    // The one that actually guarantees coverage: a configuration can be obtained in ways the two
+    // factories above never see — `URLSessionConfiguration()` among them — but every session is
+    // built from one of these, and the configuration is copied at that moment
+    exchange(URLSession.self, NSSelectorFromString("sessionWithConfiguration:"), #selector(URLSession.loupeSession(configuration:)))
+    exchange(
+      URLSession.self,
+      NSSelectorFromString("sessionWithConfiguration:delegate:delegateQueue:"),
+      #selector(URLSession.loupeSession(configuration:delegate:delegateQueue:))
+    )
   }
 
-  private static func exchange(_ original: Selector, _ replacement: Selector) {
-    guard let lhs = class_getClassMethod(URLSessionConfiguration.self, original),
-          let rhs = class_getClassMethod(URLSessionConfiguration.self, replacement) else {
+  private static func exchange(_ owner: AnyClass, _ original: Selector, _ replacement: Selector) {
+    guard let lhs = class_getClassMethod(owner, original),
+          let rhs = class_getClassMethod(owner, replacement) else {
       return
     }
     method_exchangeImplementations(lhs, rhs)
+  }
+}
+
+extension URLSession {
+  /// The stock session factory, with the loupe's protocol added to the configuration first.
+  @objc class func loupeSession(configuration: URLSessionConfiguration) -> URLSession {
+    Loupe.instrument(configuration)
+    return loupeSession(configuration: configuration)
+  }
+
+  @objc class func loupeSession(
+    configuration: URLSessionConfiguration,
+    delegate: URLSessionDelegate?,
+    delegateQueue: OperationQueue?
+  ) -> URLSession {
+    // Not for the loupe's own replay session, which would then hand its own traffic back to itself
+    if !(delegate is LoupeURLProtocol) {
+      Loupe.instrument(configuration)
+    }
+    return loupeSession(configuration: configuration, delegate: delegate, delegateQueue: delegateQueue)
   }
 }
 

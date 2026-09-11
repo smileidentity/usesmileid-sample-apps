@@ -49,8 +49,17 @@ final class LoupeURLProtocol: URLProtocol, @unchecked Sendable {
   }
 
   private class func canRecord(_ request: URLRequest) -> Bool {
-    guard URLProtocol.property(forKey: forwardedKey, in: request) == nil else { return false }
-    return configuration.current.shouldRecord(request)
+    // Already ours, so it is the replay rather than a request to judge
+    guard URLProtocol.property(forKey: forwardedKey, in: request) == nil else {
+      return false
+    }
+    LoupeDiagnostics.shared.countOffered()
+    let host = request.url?.host() ?? "no host"
+    guard let reason = configuration.current.refusal(for: request) else {
+      return true
+    }
+    LoupeDiagnostics.shared.countDeclined(reason, host: host)
+    return false
   }
 
   override func startLoading() {

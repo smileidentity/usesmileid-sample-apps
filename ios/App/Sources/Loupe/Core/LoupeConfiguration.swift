@@ -10,10 +10,26 @@ struct LoupeConfiguration: Equatable {
 
   /// Whether a request should be recorded, and so forwarded through the protocol.
   func shouldRecord(_ request: URLRequest) -> Bool {
-    guard isRecording, let url = request.url else { return false }
+    refusal(for: request) == nil
+  }
+
+  /// Why a request will not be recorded, or nil when it will be — named so a missing call can say
+  /// which rule turned it away rather than leaving it to be guessed at.
+  func refusal(for request: URLRequest) -> String? {
+    guard isRecording else {
+      return "not recording"
+    }
+    guard let url = request.url else {
+      return "no url"
+    }
     let absolute = url.absoluteString
-    guard absolute.hasPrefix("http://") || absolute.hasPrefix("https://") else { return false }
-    return !ignoredURLPrefixes.contains { !$0.isEmpty && absolute.hasPrefix($0) }
+    guard absolute.hasPrefix("http://") || absolute.hasPrefix("https://") else {
+      return "scheme \(url.scheme ?? "none")"
+    }
+    if ignoredURLPrefixes.contains(where: { !$0.isEmpty && absolute.hasPrefix($0) }) {
+      return "ignored prefix"
+    }
+    return nil
   }
 }
 

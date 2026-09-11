@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// Recording state, what is being skipped, and the host this build is running as.
+/// Recording state, what is being skipped, the host this build is running as, and what the
+/// loupe was offered — three counters that localise a call that went unrecorded.
 struct LoupeSettingsView: View {
   let loupe: Loupe
   let recordCount: Int
@@ -29,6 +30,18 @@ struct LoupeSettingsView: View {
         LoupeDetailRow(name: "Version", value: Self.version)
         LoupeDetailRow(name: "Bundle id", value: Bundle.main.bundleIdentifier ?? "—")
         LoupeDetailRow(name: "System", value: "\(Self.systemName) \(Self.systemVersion)")
+      }
+
+      Section("Diagnostics") {
+        let diagnostics = LoupeDiagnostics.shared.current
+        LoupeDetailRow(name: "Sessions instrumented", value: String(diagnostics.instrumentedSessions))
+        LoupeDetailRow(name: "Requests offered", value: String(diagnostics.offered))
+        LoupeDetailRow(name: "Requests declined", value: String(diagnostics.declined))
+        ForEach(diagnostics.reasons, id: \.self) { reason in
+          Text(reason)
+            .font(.caption2.monospaced())
+            .foregroundStyle(.secondary)
+        }
       }
 
       Section {

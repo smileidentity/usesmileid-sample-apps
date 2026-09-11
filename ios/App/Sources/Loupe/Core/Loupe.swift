@@ -48,5 +48,6 @@ final class Loupe {
     guard !classes.contains(where: { $0 == LoupeURLProtocol.self }) else { return }
     classes.insert(LoupeURLProtocol.self, at: 0)
     configuration.protocolClasses = classes
+    LoupeDiagnostics.shared.countInstrumentedSession()
   }
 }
