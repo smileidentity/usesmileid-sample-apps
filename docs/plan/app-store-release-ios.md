@@ -285,8 +285,15 @@ build and the note is the thing most likely to need editing.
 **Release notes are written by a person**, which is Android's §5 ruling. v11 generated them from
 `git log` and shipped PR numbers and emoji to partners; that stops here and it stopped there.
 
-Limits are asserted by a test rather than counted once, because both stores truncate silently instead
-of rejecting — `UseSmileIDSampleAppStoreListingTest`, mirroring `UseSmileIDSamplePlayListingTest`.
+Limits are asserted rather than counted once, because both stores truncate silently instead of
+rejecting. Android's `UseSmileIDSamplePlayListingTest` is a JVM unit test; iOS takes
+`scripts/check_store_listing.py` instead, and the divergence is deliberate. The checks read files and
+touch no app code, so as an XCTest they would have cost a full simulator build in every lane that
+wanted them — and `ios/verify.sh archive` could not have run them at all without pulling a simulator
+into a phase that otherwise needs none. A python `--check` is also the shape this repo already uses
+for committed artefacts (`sync_design_tokens.py`, `generate_ios_icons.py`, `generate_app_icon.py`),
+so the gate runs in both `checks` and `archive`, and a hand-built archive is held to the same rule as
+a CI one.
 
 ## 6. The answers that come from the code
 
@@ -419,7 +426,7 @@ affordance that reaches the session states.
 | REL-I5 | `ios/verify.sh archive`: archive + `exportArchive`, team from the environment | **DONE 2026-09-11** — archive proven locally; export reaches the distribution certificate and stops there | §3. The only caller, so hand and CI builds match |
 | REL-I6 | Store-art snapshot test at 1320 × 2868, own directory, own staleness input | **DONE 2026-09-11** — `UseSmileIDSampleStoreArtTest`, five frames at 1320 × 2868 | §2.2. Must not share a directory with the goldens |
 | REL-I7 | `ios/store/render-store-art.sh` | **DONE 2026-09-11** — `ios/store/render-store-art.sh` | §2.5. CLI, not the MCP server |
-| REL-I8 | Listing copy in `ios/store/`, counted by a test | **DONE 2026-09-11** — six fields, all counted by `UseSmileIDSampleAppStoreListingTest` | §5. Only the subtitle is written fresh |
+| REL-I8 | Listing copy in `ios/store/`, counted by a check | **DONE 2026-09-11** — six fields, plus the panels and the art lock, in `scripts/check_store_listing.py` | §5. Only the subtitle is written fresh |
 | REL-I9 | `docs/app-store-privacy.md` — the App Privacy answers and their derivation | **DONE 2026-09-11** — `docs/app-store-privacy.md` | §6.1. Play's answers mapped, not re-derived |
 | REL-I10 | Re-audit every state holder's default before the store build | **DONE 2026-09-11** — §6.4; clean, and the reason is a test | §6.4. Executed, not assumed |
 | REL-I11 | App icon | **DONE (#81)** | §4. Untouched here |
@@ -473,6 +480,32 @@ release lane's assertions all pass `-o -`, with a comment saying why.
 - **The products panel's lower third is empty** at 440 pt, where the goldens' 393 pt fills it — wider
   cards make a shorter grid. It does not show in the composed panel, because the frame crops the device
   below that point. Recorded so nobody re-finds it in the frame and assumes the panel is broken.
+- **The two stores show different demo data for the same app.** iOS renders `Kobo Bank` / `KB`;
+  Android renders `UpTech Finance` / `KA` (`android/sample-ui/src/test/kotlin/.../StoreArtTest.kt`).
+  Both are fixtures, so neither leaks anything — but a partner comparing the listings sees two
+  organisations for one app, which `AGENTS.md`'s uniform-visuals rule exists to prevent. Aligning iOS
+  is a one-line change; aligning Android means re-rendering its committed art. **Owner's call, and it
+  should end in `spec/` so the two cannot drift again.**
+
+### 7.3 What the review caught that the build did not
+
+Three passes over the branch found defects no green lane would have: worth recording because each is
+a shape that will recur in the Flutter and Expo ports.
+
+- **`archive` ran as part of `all`.** `runs()` is true for every phase under `all`, so the bare
+  `ios/verify.sh` — the definition of done — demanded a signing identity a fresh clone has not got and
+  could never exit 0. The phase's own header comment claimed the opposite. Gated on `$PHASE` directly now.
+- **The phone-only gate proved nothing.** `plutil -extract UIDeviceFamily.0` reads `1` for `[1,2]` as
+  well as for `[1]`, so the assertion added to catch the iPad regression would have passed through it.
+  The whole array is compared now.
+- **The release-check lane could never have passed.** It set `DEVELOPMENT_TEAM` from a secret but
+  imported no certificate, so automatic signing had nothing to find — and taking a secret on a
+  `pull_request` trigger is what `AGENTS.md` forbids outright. It archives unsigned now
+  (`CODE_SIGNING_ALLOWED=NO`), which needs no credential and still proves every declaration.
+- **`render-store-art.sh --frames` could ship the previous release's art in silence.** The `|| true`
+  that record mode requires also swallowed a compile error; the script then composed from the stale
+  frames and rewrote the lock from them, so every downstream gate agreed. It now compares the frames'
+  hashes across the run and fails when the recorder wrote nothing.
 
 ## 8. Parity — what Flutter and Expo inherit
 
