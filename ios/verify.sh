@@ -68,8 +68,7 @@ if runs checks; then
   # Generated from design/icons/, which lives in this repo rather than the design system, so this
   # needs no secret and always runs.
   python3 "$REPO_ROOT/scripts/generate_ios_icons.py" --check
-  # The launcher mark too: it was hand-exported once, from the shared art rather than the iOS art,
-  # and shipped without the badge that tells the four sample apps apart on one home screen.
+  # The launcher mark too; a hand export once shipped without the platform badge.
   python3 "$REPO_ROOT/scripts/generate_app_icon.py" --check
 fi
 

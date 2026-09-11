@@ -55,8 +55,7 @@ public struct UseSmileIDSampleToast: View {
         UseSmileIDSampleText(actionLabel, style: actionStyle, underlined: true)
           .foregroundColor(colors.background)
           .fixedSize()
-          // Widened, not squared off: an action sized to the 44 tap minimum inflates the 46 bar.
-          // Padded inside the minimum, or the action reserves 16 more than the Compose twin and the message wraps.
+          // Widened, not squared off, and padded inside the minimum: outside it the message wraps.
           .padding(.horizontal, SmileSpacing.spacingXs)
           .frame(minWidth: SmileSpacing.sizeControlMd)
       }

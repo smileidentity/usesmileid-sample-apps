@@ -15,7 +15,7 @@ public struct UseSmileIDSampleDateGroupHeader: View {
   }
 
   public var body: some View {
-    // Two spaces either side of the dot, as the design sets it; with no relative word the date stands alone.
+    // Two spaces either side of the dot, as the design sets it.
     UseSmileIDSampleText(
       relative.isEmpty ? absolute : "\(relative)  ·  \(absolute)",
       style: UseSmileIDSampleTheme.type.textStyleOverline.with(size: smileLabelSize, tracking: smileLabelTracking)

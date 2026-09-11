@@ -126,7 +126,7 @@ struct UseSmileIDSampleShell: View {
     }
   }
 
-  /// The Compose twin's copy, word for word: the rows are hidden from this app's list, not deleted.
+  /// The same copy on every platform: the rows are hidden from this app's list, not deleted.
   private func showRemoval(_ count: Int?) {
     guard let count else { return }
     app.clearLastJobRemoval()

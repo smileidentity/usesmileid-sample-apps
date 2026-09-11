@@ -234,11 +234,9 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
 
   // MARK: - Harness
 
-  /// The session outlives an uninstall, so every launch clears it: an ended marker sends every later run to the scanner.
-  /// Enhanced KYC on a real session: the one journey with `capture: false`, so it needs no camera.
+  /// Enhanced KYC on a scanned session: the one journey with `capture: false`, so it needs no camera.
   func testEnhancedKycOnALiveSessionReachesATerminalResult() throws {
-    // Before the skip, not after: a skip returns immediately and the teardown would then sign out
-    // the very session this test skipped for, spending a real token to run nothing.
+    // Before the skip: a skipped test still tears down, and the teardown would sign out this session.
     preservesSession = true
     try XCTSkipUnless(
       ProcessInfo.processInfo.environment["SMILE_LIVE_SESSION"] == "1",
@@ -283,11 +281,10 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
       app.buttons["sample_kyc_continue"].tap()
     }
 
-    // A refused submission stops on the SDK's own failure state, still under si_processing_screen, and
-    // the host hears nothing until Exit is tapped — so a passive wait here reads a failure as a hang.
+    // A refusal parks on the SDK's failure state, still `si_processing_screen`, until Exit is tapped.
     let details = element("sample_verification_details_screen")
     let exit = app.buttons["si_button_exit"]
-    // Whichever comes first: `XCTWaiter.wait(for:)` waits for ALL expectations, and only one of these can exist.
+    // Whichever comes first; `XCTWaiter.wait(for:)` would wait for both.
     let deadline = Date().addingTimeInterval(180)
     while Date() < deadline, !details.exists, !exit.exists {
       RunLoop.current.run(until: Date().addingTimeInterval(0.5))

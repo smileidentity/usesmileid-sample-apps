@@ -1,20 +1,10 @@
 #!/usr/bin/env python3
-"""Turn the shared icon record into Android vector drawables.
+"""Generate the Android vector drawables from design/icons/, and check them.
 
-`design/icons/` is the source of record for every mark; iOS has generated SwiftUI shapes from it
-since U1 and gates them in `ios/verify.sh`. Android's drawables were hand-converted once and never
-checked again, so the two platforms drew from two sets of art and only one was gated: four of the
-six product marks differed between the apps before anyone noticed. This closes that gap the way
-iOS did — generate, and fail the build when the output is stale.
-
-The emitter is simpler than the iOS one because `android:pathData` takes SVG path grammar as-is:
-no command translation, only the wrapping. What it does handle, because the set uses it: `<g>`
-wrappers carrying an inherited `opacity`; the negative-origin viewBox of the Material Symbols
-exports, applied as a `<group>` translate; strokes with their caps and joins; and `<defs>`, whose
-clip paths here are the full frame and so draw nothing.
-
-Names are mechanical except where Android's resources already diverged, and that map is explicit
-below rather than inferred, so an unmapped file on either side fails `--check` instead of drifting.
+`android:pathData` takes SVG path grammar as-is, so this only wraps: `<g>` opacity is inherited,
+a negative-origin viewBox becomes a `<group>` translate, strokes keep their caps and joins, and
+`<defs>` is skipped (its clip paths are the full frame). The name map below is explicit so an
+unmapped file on either side fails `--check`.
 
 Usage:
     scripts/generate_android_icons.py            # write the drawables
@@ -66,10 +56,6 @@ def resource_name(svg_name: str) -> str:
 
 def fmt(value: float) -> str:
     return f"{value:g}"
-
-
-def alpha(value: float) -> str:
-    return "" if value >= 1 else f' android:{{kind}}Alpha="{value:g}"'
 
 
 def parse(text: str, name: str) -> str:

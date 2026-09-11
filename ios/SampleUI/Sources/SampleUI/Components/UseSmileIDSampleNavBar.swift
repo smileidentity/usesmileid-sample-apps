@@ -88,7 +88,6 @@ public struct UseSmileIDSampleNavBar: View {
   }
 
   private func tab(_ item: UseSmileIDSampleNavItem) -> some View {
-    // Icon above label, primary when active — `spec/components.json`, corrected 2026-08-17.
     let tint = item == selected ? colors.primary : colors.foreground
     return Button { onSelect(item) } label: {
       VStack(spacing: SmileSpacing.spacingXxs) {
@@ -135,7 +134,7 @@ public struct UseSmileIDSampleNavBar: View {
     3
   }
 
-  /// The Compose twin's own 21, which no scale token carries.
+  /// 21 on every platform; no scale token carries it.
   private static var tabIconSize: CGFloat {
     21
   }

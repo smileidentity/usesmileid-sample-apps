@@ -19,7 +19,7 @@ fun UseSmileIDSampleDateGroupHeader(
     testId: String? = null,
 ) {
     Text(
-        // Two spaces either side of the dot, as the design sets it; with no relative word the date stands alone.
+        // Two spaces either side of the dot, as the design sets it.
         text = if (relative.isEmpty()) absolute else "$relative  ·  $absolute",
         style = UseSmileIDSampleTheme.type.textStyleOverline.copy(
             fontSize = smileLabelSize,

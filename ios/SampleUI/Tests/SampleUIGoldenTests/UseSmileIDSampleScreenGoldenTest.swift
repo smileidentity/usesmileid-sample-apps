@@ -609,7 +609,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     actionLabel: "Make active"
   )
 
-  /// The Compose twin's draft, phone left on its placeholder, so the two sheets draw the same thing.
+  /// Phone left on its placeholder, matching the Android fixture.
   private static let filledNewProfile = UseSmileIDSampleNewProfile(
     name: "Sahara Pay",
     firstName: "Ngozi",

@@ -70,7 +70,7 @@ public struct UseSmileIDSampleSessionEndedBanner: View {
           .foregroundColor(colors.banner.title)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
-      // A text action widened to the touch target, per the component's spec — not a filled pill.
+      // Widened to the touch target, as the spec's text action asks.
       Button(action: onScan) {
         UseSmileIDSampleText("Scan", style: UseSmileIDSampleTheme.type.linkFont)
           .foregroundColor(colors.primary)

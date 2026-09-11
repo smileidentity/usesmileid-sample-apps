@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The sheet's chrome: a title and scrolling content, always the platform's full-height card — the Compose twin's content-height variant has no counterpart here.
+/// The sheet's chrome: a title and scrolling content, always the platform's full-height card.
 public struct UseSmileIDSampleBottomSheet<Content: View>: View {
   private let title: String?
   private let testId: String?

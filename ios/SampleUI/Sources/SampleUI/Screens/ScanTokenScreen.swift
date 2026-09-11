@@ -61,7 +61,7 @@ public struct ScanTokenScreen: View {
           emphasis: .filled,
           action: onTorchToggle
         ) { tint in
-          // A bolt like the Compose twin; the shared icon set has none, so the SF Symbol as SearchField does.
+          // The shared icon set has no bolt, so the SF Symbol, as SearchField does.
           Image(systemName: "bolt.fill")
             .foregroundColor(tint)
         }
@@ -69,7 +69,7 @@ public struct ScanTokenScreen: View {
       if let viewfinder {
         camera(viewfinder)
       } else {
-        // Scrolls because the glyph is fixed: at 2x its copy no longer fits above the sheet.
+        // Scrolls because the glyph is fixed; the minimum height is what centres short content.
         GeometryReader { geometry in
           ScrollView {
             VStack(spacing: SmileSpacing.spacingSm) {
@@ -77,7 +77,6 @@ public struct ScanTokenScreen: View {
               copy
             }
             .padding(SmileSpacing.spacingMd)
-            // The minimum is what centres it: a scroll view alone pins short content to the top.
             .frame(maxWidth: .infinity, minHeight: geometry.size.height)
           }
         }

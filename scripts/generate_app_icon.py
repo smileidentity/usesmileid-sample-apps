@@ -1,26 +1,11 @@
 #!/usr/bin/env python3
-"""Turn the platform's launcher mark in svgs/ into the iOS app-icon asset.
+"""Render svgs/ios.svg into the iOS app-icon asset, and check it.
 
-`svgs/<platform>.svg` is the shared source: the Smile ID mark plus a badge naming the platform, and
-the badge is the point — four sample apps sit on one home screen and the badge is what tells them
-apart. A mark without it was committed once by hand, which is why this is generated now.
-
-Three transforms the source cannot carry, because it is also used as an ordinary illustration:
-
-- the corner radius is dropped, because iOS masks the icon itself and a rounded source is masked
-  twice, leaving a pale fringe on the device
-- the alpha channel is dropped, because App Store Connect rejects an icon that has one
-- the artwork is inset, because the home screen's mask is a superellipse rather than the source's
-  rounded rectangle, and it cuts further into the corners: measured against it, the platform badge's
-  outer corner sits at 1.07 of the mask's boundary at full size and is clipped on a real device
-
-Rendered through QuickLook, which is WebKit: ImageMagick's own SVG renderer ignores a nested `<svg>`
-element's x/y placement and drops the badge in the top-left corner at the wrong size, silently.
-
-Writing the asset needs Pillow and QuickLook, which a developer's Mac has and CI does not — so
-`--check` compares a recorded hash of the source and the scale instead of re-rendering. It catches
-the failure that actually happens (the art changes and nobody regenerates) without putting an image
-dependency or a window server in the gate, the way the other generators here stay pure stdlib.
+Three transforms the shared art cannot carry: the corner radius is dropped (iOS masks the icon
+itself), the alpha channel is dropped (App Store Connect rejects one), and the artwork is inset
+(the home-screen mask is a superellipse and clipped the badge at full size). Rendered through
+QuickLook because ImageMagick misplaces a nested `<svg>`. `--check` compares a recorded hash of the
+source and scale, so CI needs neither Pillow nor a window server.
 
 Usage:
     scripts/generate_app_icon.py            # write the asset
@@ -43,8 +28,7 @@ TARGET = ROOT / "ios" / "App" / "Assets.xcassets" / "AppIcon.appiconset" / "AppI
 LOCK = ROOT / "scripts" / "app-icon.lock"
 SIZE = 1024
 
-# Chosen against a render of the actual mask, not from a guideline: at 1.00 the badge is cut, at 0.86
-# the mark starts swimming in its own margin. Raising it back past ~0.94 re-clips the badge.
+# Chosen against a render of the mask: 1.00 clips the badge, 0.86 leaves the mark swimming.
 CONTENT_SCALE = 0.90
 
 
