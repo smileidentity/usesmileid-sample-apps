@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+# Renders the App Store screenshots from the committed frames. --frames re-records the five
+# off-device panels first; the capture panel comes from ios/App/UITests on a real device.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+FRAMES="store/frames"
+OUT="store/screenshots"   # exactly the panels App Store Connect receives
+PRESET="ios-phone"
+BG="#151F72"
+DESTINATION="${DESTINATION:-platform=iOS Simulator,name=iPhone 17 Pro}"
+
+STORESHOTS=(npx --yes -p storeshots-mcp storeshots)
+
+if [ "${1:-}" = "--frames" ]; then
+  echo "==> recording the five off-device panels"
+  # TEST_RUNNER_ prefixed, or xcodebuild drops it and the run verifies instead of recording.
+  (cd SampleUI && TEST_RUNNER_SNAPSHOT_TESTING_RECORD=all xcodebuild test \
+    -scheme SampleUI \
+    -destination "$DESTINATION" \
+    -only-testing:SampleUIGoldenTests/UseSmileIDSampleStoreArtTest \
+    -quiet) || true
+fi
+
+mkdir -p "$OUT"
+skipped=""
+
+compose() {
+  local name="$1" verb="$2" desc="$3" variant="$4"
+  if [ ! -f "$FRAMES/$name.frame.png" ]; then
+    skipped="$skipped $name"
+    return 0
+  fi
+  echo "==> $name"
+  "${STORESHOTS[@]}" compose \
+    --preset "$PRESET" \
+    --bg "$BG" \
+    --verb "$verb" \
+    --desc "$desc" \
+    --variant "$variant" \
+    --screenshot "$FRAMES/$name.frame.png" \
+    --output "$OUT/$name.png"
+  "${STORESHOTS[@]}" validate --preset "$PRESET" "$OUT/$name.png"
+}
+
+compose products             "Try"       "every Smile ID product"        text-top
+compose token_session        "Scan"      "a token to start a session"    text-top
+compose capture              "Capture"   "a selfie or a document"        text-top
+compose verifications        "Review"    "every verification result"     text-top
+compose verification_details "See"       "the details of a verification" text-top
+compose settings             "Configure" "the steps in the flow"         text-top
+
+if [ -z "$(ls -A "$OUT"/*.png 2>/dev/null)" ]; then
+  echo "no frames to render; run with --frames" >&2
+  exit 1
+fi
+
+# A level above the panels: App Store Connect rejects a listing whose screenshot set carries
+# anything that is not a screenshot, and the strip validates as one.
+echo "==> showcase strip, for review in a PR"
+"${STORESHOTS[@]}" showcase --output store/showcase.png \
+  $(for n in products token_session capture verifications verification_details settings; do
+      [ -f "$OUT/$n.png" ] && printf '%s ' "$OUT/$n.png"
+    done)
+
+# The panels are rendered from the frames, and nothing else notices when a frame moves under them.
+# Same shape as scripts/app-icon.lock: the hash is committed, and the listing test fails on a drift.
+echo "==> lock"
+(cd "$FRAMES" && shasum -a 256 ./*.frame.png | sed 's| \./| |') > store/panels.lock
+
+if [ -n "$skipped" ]; then
+  echo "skipped, no frame yet:$skipped"
+  echo "The camera panel needs a device: ios/App/UITests, see docs/plan/app-store-release-ios.md §2.3"
+fi
+echo "OK — $OUT"
