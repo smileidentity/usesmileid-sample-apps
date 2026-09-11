@@ -249,17 +249,24 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     app.launchArguments = useSmileIDSampleSettingsSeed
     app.launch()
     atATabRoot()
+    // `atATabRoot` only guarantees SOME tab root, and the session card lives on Products alone —
+    // so without this the check reports "no session" whenever the scene restored another tab.
+    element("sample_nav_products").tap()
+    XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
     XCTAssertTrue(
       element("sample_session_card").waitForExistence(timeout: 10),
-      "no live session on the device — scan a sandbox token before running this"
+      "no live session on the device — scan a token before running this"
     )
 
     // The environment is a property of the scanned TOKEN, not of this run, so nothing here announces
     // it — an agent submitted to production on 2026-09-10 for exactly that reason. Sandbox needs no
     // flag; production is reachable but only ever on purpose, never by inheriting someone's token.
+    // Ruled 2026-09-10: the app deliberately does not report the environment before a run, because
+    // whoever scans the token knows which one it is. An agent does not — it inherits a session it
+    // did not scan — so this one submitting test asks out loud, and having no chip to read counts
+    // as not proven rather than as safe.
     let chip = element("sample_env_chip")
-    XCTAssertTrue(chip.waitForExistence(timeout: 10), "no environment chip — cannot tell which environment this is")
-    if chip.label != "Sandbox" {
+    if !chip.waitForExistence(timeout: 5) || chip.label != "Sandbox" {
       try XCTSkipUnless(
         ProcessInfo.processInfo.environment["SMILE_ALLOW_PRODUCTION"] == "1",
         "REFUSING TO SUBMIT: the linked token is \(chip.label), not Sandbox. Set SMILE_ALLOW_PRODUCTION=1 only for a test account."

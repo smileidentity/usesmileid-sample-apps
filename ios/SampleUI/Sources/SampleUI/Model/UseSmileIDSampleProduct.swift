@@ -84,8 +84,9 @@ public enum UseSmileIDSampleProduct: String, CaseIterable, Sendable {
     case .smartSelfieAuth: SmileIcons.smartSelfieAuth
     case .documentVerification, .enhancedDocumentVerification: SmileIcons.documentVerification
     case .biometricKyc: SmileIcons.biometricKyc
-    // Still owed an icon of its own, so it keeps the generic product mark.
-    case .enhancedKyc: SmileIcons.productMark
+    // The mark arrived in `design/icons/` and was generated into the set; only this line was
+    // missed, so the card kept the generic fallback while the Compose twin drew the real one.
+    case .enhancedKyc: SmileIcons.enhancedKyc
     }
   }
 
