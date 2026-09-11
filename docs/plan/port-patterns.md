@@ -209,3 +209,10 @@ lands on the same content on each, and a profile of where ink starts and stops d
     screens agree. Fixtures are part of the contract: same seed, same selection, same message. Where
     one platform deliberately picks a harder case — a message long enough to wrap — the others take
     the same one.
+11. **Generating an asset over the arbiter's hand-made one can replace the design with a stand-in.**
+    Android's delete and flash icons were the design's own strokes, hand-converted from Figma nodes
+    with no SVG in `design/icons/`; the shared record held only the Material Symbols stand-ins, and
+    iOS drew those. Generating Android from the record overwrote the design's icons with the
+    stand-ins, and re-recorded goldens hid it. Before generating over an existing asset, read its
+    header for a source the record lacks, and read the re-recorded baseline for every mark that
+    changed, not only the ones you meant to change.

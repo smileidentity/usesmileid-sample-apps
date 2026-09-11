@@ -64,7 +64,7 @@ private struct TopAppBars: View {
       UseSmileIDSampleTopAppBar(title: "Verification details", onBack: {})
       UseSmileIDSampleTopAppBar(title: "Scan token", onBack: {}) {
         UseSmileIDSampleTopAppBarButton(label: "Torch", action: {}) { tint in
-          UseSmileIDSampleIcon(SmileIcons.torch, tint: tint, size: SmileSpacing.sizeIconMd)
+          UseSmileIDSampleIcon(SmileIcons.flash, tint: tint, size: SmileSpacing.sizeIconMd)
         }
       }
       UseSmileIDSampleTopAppBar(title: "Verification details", onBack: {}) {

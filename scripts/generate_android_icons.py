@@ -38,7 +38,6 @@ RENAMED = {
     "support": "setting_support",
     "terms": "setting_terms",
     "chevron": "chevron_right",
-    "torch": "flash",
 }
 
 HEADER = "<!-- GENERATED from {source} by scripts/generate_android_icons.py. Do not edit by hand. -->"

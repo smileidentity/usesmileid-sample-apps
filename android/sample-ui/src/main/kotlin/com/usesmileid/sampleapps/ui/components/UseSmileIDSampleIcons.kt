@@ -34,6 +34,14 @@ fun UseSmileIDSampleIcon(
 fun ScanMarkGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) =
     UseSmileIDSampleIcon(id = R.drawable.sample_ic_token_scan, tint = tint, size = size)
 
+@Composable
+fun TrashGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) =
+    UseSmileIDSampleIcon(id = R.drawable.sample_ic_trash, tint = tint, size = size)
+
+@Composable
+fun FlashGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) =
+    UseSmileIDSampleIcon(id = R.drawable.sample_ic_flash, tint = tint, size = size)
+
 /** The design's own arrows, which are shorter than the hand-drawn glyphs they replace. */
 @Composable
 fun ArrowForwardGlyph(tint: Color, size: Dp = SmileDimens.sizeIconSm) =

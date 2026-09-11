@@ -100,7 +100,8 @@ if runs checks; then
   echo "==> goldens, light and dark"
   # Baselines are pixel comparisons, so they are only meaningful on the simulator they were recorded
   # on — DESTINATION is pinned to the same iPhone 17 Pro the SDK repo's snapshot gate uses.
-  # Re-record an intentional change with SNAPSHOT_TESTING_RECORD=all and commit what it writes.
+  # Re-record an intentional change with TEST_RUNNER_SNAPSHOT_TESTING_RECORD=all (xcodebuild forwards only
+  # TEST_RUNNER_ variables; the bare name records nothing) and commit what it writes.
   (cd SampleUI && xcodebuild test -scheme SampleUI -destination "$DESTINATION" -only-testing:SampleUIGoldenTests -quiet)
 fi
 

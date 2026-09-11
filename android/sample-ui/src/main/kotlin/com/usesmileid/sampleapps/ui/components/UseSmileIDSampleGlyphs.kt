@@ -19,14 +19,6 @@ fun CheckGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) =
     UseSmileIDSampleIcon(id = R.drawable.sample_ic_check, tint = tint, size = size)
 
 @Composable
-fun TrashGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) =
-    UseSmileIDSampleIcon(id = R.drawable.sample_ic_trash, tint = tint, size = size)
-
-@Composable
-fun FlashGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) =
-    UseSmileIDSampleIcon(id = R.drawable.sample_ic_flash, tint = tint, size = size)
-
-@Composable
 fun CopyGlyph(tint: Color, size: Dp = SmileDimens.sizeIconSm) =
     UseSmileIDSampleIcon(id = R.drawable.sample_ic_copy, tint = tint, size = size)
 

@@ -61,9 +61,7 @@ public struct ScanTokenScreen: View {
           emphasis: .filled,
           action: onTorchToggle
         ) { tint in
-          // The shared icon set has no bolt, so the SF Symbol, as SearchField does.
-          Image(systemName: "bolt.fill")
-            .foregroundColor(tint)
+          UseSmileIDSampleIcon(SmileIcons.flash, tint: tint, size: SmileSpacing.sizeIconMd)
         }
       }
       if let viewfinder {

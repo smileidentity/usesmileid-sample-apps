@@ -11,6 +11,11 @@ card's hue, which is already what tints the icon, so there is no second file to 
 Enhanced KYC has no icon yet and falls back to the shared product mark; see
 `spec/components.json` → `ProductCard`.
 
+`material-symbols/` holds the Material Symbols Outlined stand-ins for the glyphs the design supplies
+nowhere. Check the design node's exported assets before adding one: `trash` and `flash` sat there
+for a month while Android drew the design's own, and a port that generated from this folder shipped
+the stand-in.
+
 Per platform:
 
 - **Android** — `android/sample-ui/src/main/res/drawable/sample_ic_*.xml`, **generated** by
