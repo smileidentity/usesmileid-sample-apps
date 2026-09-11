@@ -55,16 +55,16 @@ public struct UseSmileIDSampleToast: View {
         UseSmileIDSampleText(actionLabel, style: actionStyle, underlined: true)
           .foregroundColor(colors.background)
           .fixedSize()
-          // Widened, not squared off: an action sized to the 44 tap minimum inflates the 46 bar.
-          .frame(minWidth: SmileSpacing.sizeControlMd)
+          // Widened, not squared off, and padded inside the minimum: outside it the message wraps.
           .padding(.horizontal, SmileSpacing.spacingXs)
+          .frame(minWidth: SmileSpacing.sizeControlMd)
       }
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.toastUndo)
     }
   }
 
   private var messageStyle: SmileTextStyle {
-    UseSmileIDSampleTheme.type.bannerTextFont.with(size: 13.5)
+    UseSmileIDSampleTheme.type.bannerTextFont.with(size: 13.5, weight: 500)
   }
 
   private var actionStyle: SmileTextStyle {

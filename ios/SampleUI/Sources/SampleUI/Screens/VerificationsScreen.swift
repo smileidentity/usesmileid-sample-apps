@@ -135,6 +135,7 @@ public struct VerificationsScreen: View {
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.selectToggle)
     }
     .padding(.horizontal, SmileSpacing.spacingMd)
+    .padding(.vertical, SmileSpacing.spacingXs)
   }
 
   /// Scrolled, not wrapped, which is what iOS does with a filter row and stays honest at every content size.

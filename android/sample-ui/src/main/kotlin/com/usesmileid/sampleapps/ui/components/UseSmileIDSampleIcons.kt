@@ -34,6 +34,14 @@ fun UseSmileIDSampleIcon(
 fun ScanMarkGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) =
     UseSmileIDSampleIcon(id = R.drawable.sample_ic_token_scan, tint = tint, size = size)
 
+@Composable
+fun TrashGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) =
+    UseSmileIDSampleIcon(id = R.drawable.sample_ic_trash, tint = tint, size = size)
+
+@Composable
+fun FlashGlyph(tint: Color, size: Dp = SmileDimens.sizeIconMd) =
+    UseSmileIDSampleIcon(id = R.drawable.sample_ic_flash, tint = tint, size = size)
+
 /** The design's own arrows, which are shorter than the hand-drawn glyphs they replace. */
 @Composable
 fun ArrowForwardGlyph(tint: Color, size: Dp = SmileDimens.sizeIconSm) =
@@ -58,7 +66,8 @@ val UseSmileIDSampleProduct.iconRes: Int?
         UseSmileIDSampleProduct.SmartSelfieEnrollment -> R.drawable.sample_ic_smart_selfie_enrollment
         UseSmileIDSampleProduct.SmartSelfieAuth -> R.drawable.sample_ic_smart_selfie_auth
         UseSmileIDSampleProduct.DocumentVerification -> R.drawable.sample_ic_document_verification
-        UseSmileIDSampleProduct.EnhancedDocumentVerification -> R.drawable.sample_ic_enhanced_document_verification
+        // One mark for both document products, told apart by the card's hue — design/icons/README.md.
+        UseSmileIDSampleProduct.EnhancedDocumentVerification -> R.drawable.sample_ic_document_verification
         UseSmileIDSampleProduct.BiometricKyc -> R.drawable.sample_ic_biometric_kyc
         UseSmileIDSampleProduct.EnhancedKyc -> R.drawable.sample_ic_enhanced_kyc
     }

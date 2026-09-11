@@ -41,6 +41,7 @@ private struct IconGrid: View {
     ("docs", SmileIcons.docs), ("documentVerification", SmileIcons.documentVerification),
     ("enhancedKyc", SmileIcons.enhancedKyc), ("fieldEmail", SmileIcons.fieldEmail),
     ("fieldPerson", SmileIcons.fieldPerson), ("fieldPhone", SmileIcons.fieldPhone),
+    ("flash", SmileIcons.flash),
     ("instructions", SmileIcons.instructions), ("licenses", SmileIcons.licenses),
     ("plus", SmileIcons.plus), ("preview", SmileIcons.preview),
     ("privacy", SmileIcons.privacy), ("productMark", SmileIcons.productMark),
@@ -50,7 +51,7 @@ private struct IconGrid: View {
     ("smartSelfieEnrollment", SmileIcons.smartSelfieEnrollment),
     ("smile", SmileIcons.smile), ("support", SmileIcons.support),
     ("terms", SmileIcons.terms), ("tokenScan", SmileIcons.tokenScan),
-    ("torch", SmileIcons.torch), ("trash", SmileIcons.trash),
+    ("trash", SmileIcons.trash),
     ("verifications", SmileIcons.verifications)
   ]
 }

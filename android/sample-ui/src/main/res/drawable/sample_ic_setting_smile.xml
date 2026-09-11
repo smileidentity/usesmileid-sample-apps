@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Generated from the design set's SVG export; tinted at the use site. -->
+<!-- GENERATED from design/icons/smile.svg by scripts/generate_android_icons.py. Do not edit by hand. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="19dp"
     android:height="19dp"
@@ -8,11 +8,10 @@
     <path
         android:pathData="M9.5 15.0417C12.9978 15.0417 15.8333 12.2061 15.8333 8.70833C15.8333 5.21053 12.9978 2.375 9.5 2.375C6.0022 2.375 3.16667 5.21053 3.16667 8.70833C3.16667 12.2061 6.0022 15.0417 9.5 15.0417Z"
         android:strokeColor="#FF000000"
-        android:strokeWidth="1.58333"
-        android:fillColor="#00000000" />
+        android:strokeWidth="1.58333" />
+
     <path
         android:pathData="M7.125 8.70833H7.13292M11.875 8.70833H11.8829M7.125 11.4792C8.47083 12.6667 10.5292 12.6667 11.875 11.4792"
         android:strokeColor="#FF000000"
-        android:strokeWidth="1.58333"
-        android:fillColor="#00000000" />
+        android:strokeWidth="1.58333" />
 </vector>

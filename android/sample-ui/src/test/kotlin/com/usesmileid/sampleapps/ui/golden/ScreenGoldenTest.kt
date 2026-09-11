@@ -21,18 +21,21 @@ import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleProductsState
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleSettingsState
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
 import org.junit.Test
+import org.robolectric.annotation.Config
 
 /** The screens U3 builds first; `ScreenStateGoldenTest` is what holds these to `spec/screens.json`. */
 class ScreenGoldenTest : GoldenTest() {
 
     /** The partner's screen: no DEBUG section, which is the only state the design draws. */
     @Test
+    @Config(qualifiers = TALL)
     fun settings() = goldens("screen_settings") { Settings() }
 
     @Test
     fun settings_max_font_scale() = assertSurvivesMaxFontScale { Settings() }
 
     @Test
+    @Config(qualifiers = TALL)
     fun settings_debug_build() = goldens("screen_settings_debug") { Settings(debug = true) }
 
     @Test
@@ -40,21 +43,25 @@ class ScreenGoldenTest : GoldenTest() {
 
     /** Agent mode on, so the mutex's two supporting lines are recorded rather than described. */
     @Test
+    @Config(qualifiers = TALL)
     fun settings_agent_mode() = goldens("screen_settings_agent_mode") {
         Settings(settings = UseSmileIDSampleSettings(enhancedSmartSelfie = false, agentMode = true))
     }
 
     @Test
+    @Config(qualifiers = TALL)
     fun settings_consent_bound_by_token() = goldens("screen_settings_consent_bound") {
         Settings(consentBoundByToken = true)
     }
 
     /** A different profile active: the row's organisation, initials and hue all move together. */
     @Test
+    @Config(qualifiers = TALL)
     fun settings_alt_profile() = goldens("screen_settings_alt_profile") { Settings(profileIndex = 1) }
 
     /** The fourth hue, which is where the profile palette runs out and starts again. */
     @Test
+    @Config(qualifiers = TALL)
     fun settings_newly_created_profile() = goldens("screen_settings_new_profile") { Settings(profileIndex = 3) }
 
     /** One sheet holds both sections, so the two spec states differ by which section's selection has moved. */
@@ -128,6 +135,9 @@ class ScreenGoldenTest : GoldenTest() {
     fun scan_token_redirected_max_font_scale() = assertSurvivesMaxFontScale { ScanToken(SESSION_ENDED) }
 
     private companion object {
+        /** A window tall enough for the whole settings screen: the default 891dp stops inside the ABOUT card. */
+        const val TALL = "+h1600dp"
+
         val LICENCE_FIXTURE = UseSmileIDSampleLicenses(
             openSource = listOf(
                 UseSmileIDSampleNotice(

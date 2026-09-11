@@ -9,7 +9,7 @@ struct UseSmileIDSampleStatusApi: UseSmileIDSampleJobStatusSource {
     self.session = session
   }
 
-  /// Ten seconds, as the Compose adapter's client: `URLSession.shared` would wait a minute.
+  /// Ten seconds, the same on every platform: `URLSession.shared` would wait a minute.
   private static let bounded: URLSession = {
     let configuration = URLSessionConfiguration.default
     configuration.timeoutIntervalForRequest = 10

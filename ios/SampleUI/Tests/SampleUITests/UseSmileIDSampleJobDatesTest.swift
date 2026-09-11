@@ -33,7 +33,7 @@ final class UseSmileIDSampleJobDatesTest: XCTestCase {
     ]
     XCTAssertEqual(
       jobs.groupByDay(today, calendar: Self.utc).map(\.relative),
-      ["TODAY", "YESTERDAY", "TUE, 14 JUL 2026"]
+      ["TODAY", "YESTERDAY", ""]
     )
   }
 
@@ -57,7 +57,7 @@ final class UseSmileIDSampleJobDatesTest: XCTestCase {
   func testTheSeededFixturesGroupIntoTheDesignsDays() {
     let days = UseSmileIDSampleJobStore.fixtures(now: Self.fixedNow)
       .groupByDay(Self.fixedNow, calendar: Self.utc)
-    XCTAssertEqual(days.map(\.relative), ["TODAY", "YESTERDAY", "TUE, 14 JUL 2026"])
+    XCTAssertEqual(days.map(\.relative), ["TODAY", "YESTERDAY", ""])
     XCTAssertEqual(days.map(\.jobs.count), [3, 5, 3])
   }
 

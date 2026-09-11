@@ -33,7 +33,7 @@ class UseSmileIDSampleJobDatesTest {
     }
 
     @Test
-    fun `today and yesterday are named, older days are dated`() {
+    fun `today and yesterday are named, older days carry no relative word`() {
         val today = startOfDayMillis(FIXED_NOW)
         val jobs = listOf(
             job("today", createdAtMillis = today),
@@ -41,7 +41,7 @@ class UseSmileIDSampleJobDatesTest {
             job("older", createdAtMillis = today - 2 * MILLIS_PER_DAY),
         )
         assertEquals(
-            listOf("TODAY", "YESTERDAY", "TUE, 14 JUL 2026"),
+            listOf("TODAY", "YESTERDAY", ""),
             jobs.groupByDay(today, Locale.US).map { it.relative },
         )
     }

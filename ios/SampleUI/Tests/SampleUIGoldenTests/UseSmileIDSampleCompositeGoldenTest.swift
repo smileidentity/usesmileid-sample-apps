@@ -64,7 +64,7 @@ private struct TopAppBars: View {
       UseSmileIDSampleTopAppBar(title: "Verification details", onBack: {})
       UseSmileIDSampleTopAppBar(title: "Scan token", onBack: {}) {
         UseSmileIDSampleTopAppBarButton(label: "Torch", action: {}) { tint in
-          UseSmileIDSampleIcon(SmileIcons.torch, tint: tint, size: SmileSpacing.sizeIconMd)
+          UseSmileIDSampleIcon(SmileIcons.flash, tint: tint, size: SmileSpacing.sizeIconMd)
         }
       }
       UseSmileIDSampleTopAppBar(title: "Verification details", onBack: {}) {
@@ -96,11 +96,12 @@ private struct SettingRows: View {
   var body: some View {
     VStack(spacing: SmileSpacing.spacingSm) {
       UseSmileIDSampleSectionSurface(label: "CAPTURE") {
-        UseSmileIDSampleSettingRow(title: "Agent mode", supportingText: "Capture on someone else's behalf") {
-          UseSmileIDSampleIcon(SmileIcons.agent, tint: colors.textTitle, size: SmileSpacing.sizeIconMd)
-        } trailing: {
-          UseSmileIDSampleSwitch(isOn: .constant(true))
-        }
+        UseSmileIDSampleSettingRow(
+          title: "Agent mode",
+          supportingText: "Capture on someone else's behalf",
+          leading: { UseSmileIDSampleIcon(SmileIcons.agent, tint: colors.textTitle, size: SmileSpacing.sizeIconMd) },
+          trailing: { UseSmileIDSampleSwitch(isOn: .constant(true)) }
+        )
         UseSmileIDSampleRowDivider()
         UseSmileIDSampleSettingRow(title: "Consent screen", onTap: {}) {
           UseSmileIDSampleIcon(SmileIcons.consent, tint: colors.textTitle, size: SmileSpacing.sizeIconMd)

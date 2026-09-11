@@ -6,21 +6,28 @@ public struct IdTypePickerSheet: View {
   private let selected: UseSmileIDSampleIdType?
   @Binding private var query: String
   private let onSelect: (UseSmileIDSampleIdType) -> Void
+  private let onClose: () -> Void
 
   public init(
     country: UseSmileIDSampleCountry?,
     selected: UseSmileIDSampleIdType?,
     query: Binding<String>,
-    onSelect: @escaping (UseSmileIDSampleIdType) -> Void
+    onSelect: @escaping (UseSmileIDSampleIdType) -> Void,
+    onClose: @escaping () -> Void
   ) {
     self.country = country
     self.selected = selected
     _query = query
     self.onSelect = onSelect
+    self.onClose = onClose
   }
 
   public var body: some View {
-    UseSmileIDSampleBottomSheet(title: "ID type", testId: UseSmileIDSampleTestIds.idTypeSheet) {
+    UseSmileIDSampleFullHeightBottomSheet(
+      title: "ID type",
+      testId: UseSmileIDSampleTestIds.idTypeSheet,
+      onClose: onClose
+    ) {
       UseSmileIDSampleSearchField(
         query: $query,
         placeholder: "Search ID type",

@@ -152,3 +152,67 @@ What that costs, and what every port inherits:
   The app no longer answers a question the server is willing to answer.
 - **Fixture rows are untouched.** They persist no session at all and return "never submitted"
   before any of this is reached.
+
+## 6. Traps the iOS port paid for — the Flutter and Expo ports should not pay them again
+
+Every rule below is a divergence a state-by-state comparison against Android actually found, after
+the port was believed finished and its own suite was green. They are written as checks because that
+is how they were missed: each one compiles, renders, and passes every assertion the port had.
+
+**How to find them at all.** Compare state by state against Android, reading the pairs rather than
+diffing them. Android records 786×1782 at 2×, iOS 1179×N at 3×, and Flutter and Expo will differ
+again — but every platform renders **393 logical units wide**, so a crop expressed in dp/pt/units
+lands on the same content on each, and a profile of where ink starts and stops down the frame turns
+"this looks loose" into a number. Eight of the divergences below were invisible until measured.
+
+1. **A component that exists and has no call site is a defect, not a spare part.** The full-height
+   sheet header was built on iOS, matched the spec, and was never called — both picker sheets used
+   the partial sheet's chrome instead, so they shipped with no back control. Grep each component for
+   callers as part of finishing a slice; zero is a finding. This is the sixth instance in this repo
+   of something declared and never applied, which is why it leads the list.
+2. **A metric the spec names is not a default to inherit.** The profile row's avatar is 44, and the
+   avatar component's own default is 40; the iOS port called the component without the size and
+   every profile row came out 4 short. When `components.json` gives a component a metric under a
+   *parent's* entry, the parent passes it — check the number, do not assume the default matches.
+3. **A text input fills its column, so aligning the container does not align the text.** The inline
+   editable value was right-aligned by the row and still rendered hard left. Set the alignment on
+   the field itself: Flutter `TextField(textAlign: TextAlign.end)`, Expo
+   `<TextInput style={{textAlign: 'right'}}>`. Read the golden; do not trust the container.
+4. **A scroll view pins short content to the top.** Android centres the scan placeholder with
+   `Arrangement.spacedBy(…, Alignment.CenterVertically)` inside a scrollable column, which has no
+   direct counterpart. Flutter: `SingleChildScrollView` + `ConstrainedBox(minHeight: viewport)`, or
+   `SliverFillRemaining(hasScrollBody: false)`. Expo: `contentContainerStyle={{flexGrow: 1,
+   justifyContent: 'center'}}`. Centring and scrolling are one requirement, not two.
+5. **Padding outside a minimum-size box reserves more room than padding inside it.** The toast's
+   undo action reserved 16 more than its Compose twin and pushed the message onto a second line.
+   Compose's `defaultMinSize(...).padding(...)` means `max(content + padding, minimum)`; a naive
+   port means `max(content, minimum) + padding`. Whenever you port a minimum size next to padding,
+   work out which one the original applies first.
+6. **A header row's vertical padding is a metric, not whitespace.** Omitting it lifted the
+   verifications filter chips 17 points. Touch-target differences (44 against 48) are platform-native
+   and stay; the padding around them is not and does not.
+7. **The platform's native control sets the text's column.** The native switch is wider on iOS than
+   Android's, so the same row title wraps a word earlier. That is accepted — `components.json` says
+   in terms to use the platform's own switch and to expect it to be the least consistent primitive —
+   but check what the extra width pushes out of the row before assuming the row is fine.
+8. **A golden that cannot draw a control is not coverage of that control.** No iOS switch baseline
+   contains a thumb: the harness does not capture the knob, so the four-state baseline recording
+   on, off, disabled-on and disabled-off records four identical pills. Before counting a control as
+   goldened, look at the picture. Where the harness cannot draw it, assert its state in the device
+   suite and say so next to the component.
+9. **Capture a screen at its content height, not one viewport.** Android's baselines are exactly
+   393×891, so the settings screen's picture ends inside the About card and its legal rows, sign-out
+   and version footer appear in no baseline at all. A port that copies that framing inherits a blind
+   spot on precisely the screens long enough to hide something.
+10. **Two platforms' fixtures must match or the pair cannot be read.** Where one app's golden draws
+    Kenya's ID types and the other's draws Ghana's, no amount of looking will tell you whether the
+    screens agree. Fixtures are part of the contract: same seed, same selection, same message. Where
+    one platform deliberately picks a harder case — a message long enough to wrap — the others take
+    the same one.
+11. **Generating an asset over one the arbiter wrote by hand can replace the design with a stand-in.**
+    Android's delete and flash icons were the design's own strokes, exported from Figma and written
+    into drawables by hand; the exports never reached `design/icons/`, which held only the Material
+    Symbols stand-ins, and iOS drew those. Generating Android from the record overwrote the design's
+    icons with the stand-ins, and re-recorded goldens hid it. Before generating over an existing
+    asset, read its header for a source the record lacks, and read the re-recorded baseline for every
+    mark that changed, not only the ones you meant to change.

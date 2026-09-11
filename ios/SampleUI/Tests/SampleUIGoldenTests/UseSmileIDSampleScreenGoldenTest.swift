@@ -38,8 +38,13 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     }
   }
 
+  /// The partner's screen: no DEBUG section, which is the only state the design draws.
   func testSettings() {
     goldens("settings") { settings(UseSmileIDSampleSettings()) }
+  }
+
+  func testSettingsDebugBuild() {
+    goldens("settings_debug") { settings(UseSmileIDSampleSettings(), debug: true) }
   }
 
   /// Agent mode on: the capture pair is mutually exclusive, so both supporting lines change.
@@ -80,7 +85,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   }
 
   func testVerificationDetailsProcessing() {
-    goldens("verification_details_processing") { details(Self.fixture(.processing, index: 1)) }
+    goldens("verification_details_processing") { details(Self.processing) }
   }
 
   func testVerificationDetailsUnknownJob() {
@@ -189,7 +194,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   }
 
   func testIdTypePicker() {
-    goldens("idtype_picker") { idTypePicker(country: .ghana) }
+    goldens("idtype_picker") { idTypePicker(country: .kenya) }
   }
 
   /// The trigger is disabled without a country, but a deep link can still open the sheet.
@@ -215,12 +220,12 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   }
 
   private func countryPicker(query: String, height: CGFloat = 700) -> some View {
-    CountryPickerSheet(selected: .kenya, query: .constant(query), onSelect: { _ in })
+    CountryPickerSheet(selected: nil, query: .constant(query), onSelect: { _ in }, onClose: {})
       .frame(height: height)
   }
 
   private func idTypePicker(country: UseSmileIDSampleCountry?, height: CGFloat = 700) -> some View {
-    IdTypePickerSheet(country: country, selected: .passport, query: .constant(""), onSelect: { _ in })
+    IdTypePickerSheet(country: country, selected: nil, query: .constant(""), onSelect: { _ in }, onClose: {})
       .frame(height: height)
   }
 
@@ -251,6 +256,23 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     let job = fixtures[index]
     XCTAssertEqual(job.status, status, "fixture \(index) is no longer \(status.label)")
     return job
+  }
+
+  /// What a real 202 says: a message long enough to need a second line of its own column.
+  private static var processing: UseSmileIDSampleJob {
+    let job = fixture(.processing, index: 1)
+    return UseSmileIDSampleJob(
+      id: job.id,
+      userId: job.userId,
+      product: job.product,
+      status: job.status,
+      createdAt: job.createdAt,
+      message: "Request accepted and queued for processing.",
+      httpStatus: job.httpStatus,
+      sandbox: job.sandbox,
+      sessionId: job.sessionId,
+      partnerId: job.partnerId
+    )
   }
 
   func testVerifications() {
@@ -351,7 +373,8 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     _ values: UseSmileIDSampleSettings,
     consentBound: Bool = false,
     profile: UseSmileIDSampleProfile? = nil,
-    profileIndex: Int = 0
+    profileIndex: Int = 0,
+    debug: Bool = false
   ) -> some View {
     SettingsScreen(
       state: .init(
@@ -365,7 +388,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
       onSettingChange: { _, _ in },
       onProfile: {},
       onNavRow: { _ in },
-      onOpenScenarioDrawer: {},
+      onOpenScenarioDrawer: debug ? {} : nil,
       onSignOut: {}
     )
     .frame(height: 1400)
@@ -574,23 +597,24 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   private static let profilesWithACreatedOne: UseSmileIDSampleProfiles = {
     var profiles = UseSmileIDSampleProfiles(seed: UseSmileIDSampleProfiles.fixtures())
     profiles.add(
-      organisation: "Acme Fintech",
-      person: "Ada Lovelace",
-      defaults: UseSmileIDSampleUserDetails(firstName: "Ada", lastName: "Lovelace")
+      organisation: "Sahara Pay",
+      person: "Ngozi Eze",
+      defaults: UseSmileIDSampleUserDetails(firstName: "Ngozi", lastName: "Eze")
     )
     return profiles
   }()
 
   private static let createdNotice = UseSmileIDSampleTransientNotice(
-    message: "Acme Fintech created",
+    message: "Sahara Pay created",
     actionLabel: "Make active"
   )
 
+  /// Phone left on its placeholder, matching the Android fixture.
   private static let filledNewProfile = UseSmileIDSampleNewProfile(
-    name: "Acme Fintech",
-    firstName: "Ada",
-    lastName: "Lovelace",
-    email: "ada@acme.example",
-    phone: "+254 700 000 000"
+    name: "Sahara Pay",
+    firstName: "Ngozi",
+    lastName: "Eze",
+    email: "ngozi@saharapay.example",
+    phone: ""
   )
 }

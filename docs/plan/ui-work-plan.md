@@ -247,6 +247,14 @@ inventory and names, screen and state lists, `sample_*` ids, spacing and size me
 references, copy. What must be **platform-native**: navigation and presentation (sheets, push,
 modal), the back affordance, the switch control, swipe gestures, keyboard avoidance, and haptics.
 
+**Read `port-patterns.md` §6 before starting, not after.** It lists the ten divergences a
+state-by-state comparison found in the iOS port *after* that port was believed finished and its own
+suite was green — a component built and never called, a metric left at its default, an alignment set
+on the wrong element, a centred layout that a scroll view silently top-aligns. Every one compiled,
+rendered and passed. It also records how they were found at all: all four platforms render 393
+logical units wide, so a crop in dp/pt/units lands on the same content on each and the comparison
+becomes a measurement rather than a squint.
+
 A port that reproduces Android's navigation instead of using the platform's own is a defect even if
 it looks pixel-identical — that is precisely the host-interaction class these apps exist to catch.
 
@@ -341,11 +349,13 @@ stand-in, so a port should use the same one rather than inventing a second answe
    mark** by design and are told apart by the card's hue, which is already the icon's tint, so a
    port should reuse the drawable rather than add a near-identical second one. **Enhanced KYC** is
    the one card still owed an icon; it keeps the shared product mark, which reads as visibly generic
-   next to five real icons rather than borrowing an unrelated one. Separately, the three nav icons
-   (`products`, `verifications`, `settings`) are imported but unused: `components.json` records the
-   nav bar as three text tabs, verified against a render, so putting icons in it is a design change
-   and not a wiring one. Their export colours — products in primary, the other two in text.muted —
-   look like the active and inactive tab treatment, so the question is worth asking.
+   next to five real icons rather than borrowing an unrelated one. ~~Separately, the three nav icons are imported but unused:
+   `components.json` records the nav bar as three text tabs.~~ **Stale, and it cost a defect.**
+   `components.json` was corrected on 2026-08-17 against node 5206:2436 — each tab is an icon above
+   its label, primary when active — and this paragraph was not, so it read as permission to leave
+   them out. Android drew them; iOS mapped `item.icon` and never rendered it, which Harun found on
+   a device on 2026-09-10 and which the spec had warned in terms was "the trap for a port". Both
+   platforms draw them now.
 3. Rename board 05 to "KYC / ID details" — it holds no consent screen.
 3a. **Does the products grid stay 2-up at accessibility font sizes?** Measured while recording
    Android's U4 goldens: at 2x the design's expressive grid leaves each card a 102 dp text column,
@@ -412,7 +422,9 @@ than local work:
 
 **Housekeeping still open:**
 
-16b. **The day header prints its date twice on any day older than yesterday** —
+16b. ~~**The day header prints its date twice on any day older than yesterday**~~ **CLOSED
+    2026-09-11: a day with no relative word now renders its absolute date alone, in both apps at once,
+    both `verifications` baselines re-recorded together as this item asked.** Original note: —
     "TUE, 14 JUL 2026 · TUE, 14 JUL 2026" — because `groupByDay` falls back to the absolute date
     when there is no relative word and `DateGroupHeader` renders both halves regardless. Visible in
     `screen_verifications` on Android and in `verifications` on iOS. **Ruled a defect, not a copy

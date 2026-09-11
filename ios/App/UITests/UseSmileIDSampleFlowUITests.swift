@@ -10,6 +10,9 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     app = XCUIApplication()
   }
 
+  /// Set by a test running on a SCANNED session, which signing out would cost a real token.
+  private var preservesSession = false
+
   /// The session and the pushed stack both outlive this class, so they are left as found or the next class inherits them.
   override func tearDown() {
     // Only when it is actually rotated: a killed runner never reaches the rotating test's `defer`, and the simulator keeps it.
@@ -18,7 +21,8 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     }
     if app.state == .runningForeground {
       atATabRoot()
-      if element("sample_session_card").exists || element("sample_session_ended_banner").exists {
+      if !preservesSession,
+         element("sample_session_card").exists || element("sample_session_ended_banner").exists {
         signOut()
         element("sample_nav_products").tap()
       }
@@ -230,7 +234,92 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
 
   // MARK: - Harness
 
-  /// The session outlives an uninstall, so every launch clears it: an ended marker sends every later run to the scanner.
+  /// Enhanced KYC on a scanned session: the one journey with `capture: false`, so it needs no camera.
+  func testEnhancedKycOnALiveSessionReachesATerminalResult() throws {
+    // Before the skip: a skipped test still tears down, and the teardown would sign out this session.
+    preservesSession = true
+    try XCTSkipUnless(
+      ProcessInfo.processInfo.environment["SMILE_LIVE_SESSION"] == "1",
+      "needs a token already scanned onto the device; nothing here mints one"
+    )
+    // Not `launch()`: it signs out the session this needs, and the teardown is told to keep it.
+    app.launchArguments = useSmileIDSampleSettingsSeed
+    app.launch()
+    atATabRoot()
+    // `atATabRoot` reaches any tab root; the session card is on Products alone.
+    element("sample_nav_products").tap()
+    XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(
+      element("sample_session_card").waitForExistence(timeout: 10),
+      "no live session on the device — scan a token before running this"
+    )
+
+    // The token decides the environment, so an agent inheriting one must say production out loud.
+    let chip = element("sample_env_chip")
+    if !chip.waitForExistence(timeout: 5) || chip.label != "Sandbox" {
+      try XCTSkipUnless(
+        ProcessInfo.processInfo.environment["SMILE_ALLOW_PRODUCTION"] == "1",
+        "REFUSING TO SUBMIT: the linked token is \(chip.label), not Sandbox. Set SMILE_ALLOW_PRODUCTION=1 only for a test account."
+      )
+    }
+
+    element("sample_product_card_enhancedKyc").tap()
+
+    // A token binding consent and user details makes the app skip both forms and mount the SDK.
+    if element("sample_user_details_screen").waitForExistence(timeout: 10) {
+      fillAnyEmptyUserFields()
+      app.buttons["sample_user_details_continue"].tap()
+    }
+    if element("sample_kyc_form_screen").waitForExistence(timeout: 10) {
+      element("sample_country_trigger").tap()
+      XCTAssertTrue(element("sample_country_sheet").waitForExistence(timeout: 10))
+      element("sample_country_option_KE").tap()
+      element("sample_idtype_trigger").tap()
+      XCTAssertTrue(element("sample_idtype_sheet").waitForExistence(timeout: 10))
+      element("sample_idtype_option_nationalId").tap()
+      type("sample_idnumber_input", "AO12345678")
+      app.buttons["sample_kyc_continue"].tap()
+    }
+
+    // A refusal parks on the SDK's failure state, still `si_processing_screen`, until Exit is tapped.
+    let details = element("sample_verification_details_screen")
+    let exit = app.buttons["si_button_exit"]
+    // Whichever comes first; `XCTWaiter.wait(for:)` would wait for both.
+    let deadline = Date().addingTimeInterval(180)
+    while Date() < deadline, !details.exists, !exit.exists {
+      RunLoop.current.run(until: Date().addingTimeInterval(0.5))
+    }
+    if exit.exists {
+      XCTContext.runActivity(named: "SDK reported a failure and waited for Exit") { _ in }
+      exit.tap()
+    }
+    let landed = details.waitForExistence(timeout: 20)
+    let status = landed ? element("sample_result_job_status").label : "<never landed>"
+    let count = landed ? element("sample_result_result_count").label : "-"
+    let jobId = landed && element("sample_result_job_id").exists ? element("sample_result_job_id").label : "-"
+    XCTContext.runActivity(named: "terminal state: \(status) | results: \(count) | job: \(jobId)") { _ in }
+
+    XCTAssertTrue(landed, "no terminal result in 180s — the SDK never handed one back")
+    XCTAssertEqual(count, "1", "the result callback did not arrive exactly once")
+    XCTAssertNotEqual(status, "running", "still running after a terminal landing")
+  }
+
+  /// The token supplies what it binds and those rows are disabled; anything still empty is ours to fill.
+  private func fillAnyEmptyUserFields() {
+    for (id, value) in [
+      ("sample_user_details_field_firstName", "Kwame"),
+      ("sample_user_details_field_lastName", "Asante"),
+      ("sample_user_details_field_email", "kwame@uptech.example")
+    ] {
+      let field = app.textFields[id]
+      let current = (field.value as? String) ?? ""
+      // An empty field reports its placeholder as its value.
+      guard field.exists, field.isEnabled, current.isEmpty || current == field.placeholderValue else { continue }
+      field.tap()
+      field.typeText(value)
+    }
+  }
+
   private func launch(arguments: [String] = []) {
     app.launchArguments = useSmileIDSampleSettingsSeed + arguments
     app.launch()

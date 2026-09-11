@@ -75,7 +75,7 @@ public struct UseSmileIDSampleProfileRow<Trailing: View>: View {
   }
 
   private var avatar: some View {
-    UseSmileIDSampleAvatar(initials: initials, containerColor: avatarColor)
+    UseSmileIDSampleAvatar(initials: initials, size: SmileSpacing.sizeControlMd, containerColor: avatarColor)
   }
 
   private var labels: some View {

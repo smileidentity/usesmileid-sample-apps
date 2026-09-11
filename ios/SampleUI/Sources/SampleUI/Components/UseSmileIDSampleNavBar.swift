@@ -88,11 +88,18 @@ public struct UseSmileIDSampleNavBar: View {
   }
 
   private func tab(_ item: UseSmileIDSampleNavItem) -> some View {
-    Button { onSelect(item) } label: {
-      UseSmileIDSampleText(item.label, style: UseSmileIDSampleTheme.type.tabFont)
-        .foregroundColor(item == selected ? colors.foreground : colors.textMuted)
-        .frame(maxWidth: .infinity, minHeight: SmileSpacing.sizeControlMd)
-        .contentShape(Rectangle())
+    let tint = item == selected ? colors.primary : colors.foreground
+    return Button { onSelect(item) } label: {
+      VStack(spacing: SmileSpacing.spacingXxs) {
+        UseSmileIDSampleIcon(item.icon, tint: tint, size: Self.tabIconSize)
+        UseSmileIDSampleText(item.label, style: UseSmileIDSampleTheme.type.tabFont)
+          .foregroundColor(tint)
+          .multilineTextAlignment(.center)
+      }
+      // Padded, not floored at `sizeControlMd`: 44 is shorter than the content, so it shrank the pill.
+      .frame(maxWidth: .infinity)
+      .padding(.vertical, SmileSpacing.spacingXs)
+      .contentShape(Rectangle())
     }
     .buttonStyle(.plain)
     .accessibilityAddTraits(item == selected ? [.isButton, .isSelected] : .isButton)
@@ -125,5 +132,10 @@ public struct UseSmileIDSampleNavBar: View {
 
   private static var ringBleed: CGFloat {
     3
+  }
+
+  /// 21 on every platform; no scale token carries it.
+  private static var tabIconSize: CGFloat {
+    21
   }
 }

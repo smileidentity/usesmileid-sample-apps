@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Generated from the design set's SVG export; tinted at the use site. -->
+<!-- GENERATED from design/icons/field_email.svg by scripts/generate_android_icons.py. Do not edit by hand. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="17dp"
     android:height="17dp"
@@ -8,11 +8,10 @@
     <path
         android:pathData="M13.4583 3.54167H3.54167C2.75926 3.54167 2.125 4.17593 2.125 4.95833V12.0417C2.125 12.8241 2.75926 13.4583 3.54167 13.4583H13.4583C14.2407 13.4583 14.875 12.8241 14.875 12.0417V4.95833C14.875 4.17593 14.2407 3.54167 13.4583 3.54167Z"
         android:strokeColor="#FF000000"
-        android:strokeWidth="1.41667"
-        android:fillColor="#00000000" />
+        android:strokeWidth="1.41667" />
+
     <path
         android:pathData="M2.125 4.95833L8.5 9.20833L14.875 4.95833"
         android:strokeColor="#FF000000"
-        android:strokeWidth="1.41667"
-        android:fillColor="#00000000" />
+        android:strokeWidth="1.41667" />
 </vector>

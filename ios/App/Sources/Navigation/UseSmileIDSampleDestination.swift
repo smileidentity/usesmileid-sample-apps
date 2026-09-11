@@ -23,7 +23,7 @@ struct UseSmileIDSampleDestination: View {
         ),
         onProduct: { product in router.open(app.firstStep(for: product)) },
         onProfile: { router.sheet = .profileSwitch },
-        // Pushed, not opened: linking pops back to where the scan started, as the Compose twin does.
+        // Pushed, not opened: linking pops back to where the scan started.
         onScan: { router.pushOnce(.scanToken) }
       )
     case .verifications:

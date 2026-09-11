@@ -61,22 +61,23 @@ public struct ScanTokenScreen: View {
           emphasis: .filled,
           action: onTorchToggle
         ) { tint in
-          UseSmileIDSampleIcon(SmileIcons.torch, tint: tint, size: SmileSpacing.sizeIconMd)
+          UseSmileIDSampleIcon(SmileIcons.flash, tint: tint, size: SmileSpacing.sizeIconMd)
         }
       }
       if let viewfinder {
         camera(viewfinder)
       } else {
-        // Scrolls because the glyph is fixed: at 2x its copy no longer fits above the sheet.
-        ScrollView {
-          VStack(spacing: SmileSpacing.spacingSm) {
-            UseSmileIDSampleScanGlyph()
-            copy
+        // Scrolls because the glyph is fixed; the minimum height is what centres short content.
+        GeometryReader { geometry in
+          ScrollView {
+            VStack(spacing: SmileSpacing.spacingSm) {
+              UseSmileIDSampleScanGlyph()
+              copy
+            }
+            .padding(SmileSpacing.spacingMd)
+            .frame(maxWidth: .infinity, minHeight: geometry.size.height)
           }
-          .padding(SmileSpacing.spacingMd)
-          .frame(maxWidth: .infinity)
         }
-        .frame(maxHeight: .infinity)
       }
       UseSmileIDSampleScanSheet(
         state: $entry,

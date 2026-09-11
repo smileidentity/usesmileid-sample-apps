@@ -3,7 +3,6 @@
 //
 // A stopgap: the source is spec/design-tokens.json → deltas, not the design system. Everything the
 // design system carries no role for lives here; delete each value once upstream carries its role.
-// The Compose twin is SmileProductHues.kt and the two are generated from the same entries.
 
 import SwiftUI
 

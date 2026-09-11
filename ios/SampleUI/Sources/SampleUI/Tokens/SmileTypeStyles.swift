@@ -2,9 +2,8 @@
 //
 // Regenerate with: scripts/sync_design_tokens.py --all
 //
-// A stopgap: the upstream SwiftUI emitter omits the type ramp entirely — not even the comments the
-// Compose emitter leaves. Names mirror the Dart and Compose emitters' SmileType so the platforms
-// stay diffable. Delete this file once upstream emits the styles.
+// A stopgap: the upstream SwiftUI emitter omits the type ramp entirely. Names mirror the other
+// platforms' SmileType so they stay diffable. Delete this file once upstream emits the styles.
 //
 // This is DATA, not a Font: a custom face is addressed by PostScript name, which the weight number
 // resolves to in the app's typography layer.

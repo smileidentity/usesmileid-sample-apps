@@ -38,6 +38,16 @@ SCHEME="${SCHEME:-UseSmileIDSample}"
 DESTINATION="${DESTINATION:-platform=iOS Simulator,name=iPhone 17 Pro}"
 RESULT_BUNDLE="${RESULT_BUNDLE:-build/uitest.xcresult}"
 
+# Refused, not skipped: the resets below are simctl and would no-op in silence on a device.
+case "$DESTINATION" in
+  *"iOS Simulator"*) ;;
+  *)
+    echo "verify.sh runs on a simulator; '$DESTINATION' is not one." >&2
+    echo "For a device see docs/plan/ios-device-verification.md §2.3 — it needs its own reset." >&2
+    exit 2
+    ;;
+esac
+
 if runs checks; then
   echo "==> design tokens are current"
   # SMILE_TOKENS_OPTIONAL downgrades a missing design system to a skip, for fork PRs that get no
@@ -58,6 +68,8 @@ if runs checks; then
   # Generated from design/icons/, which lives in this repo rather than the design system, so this
   # needs no secret and always runs.
   python3 "$REPO_ROOT/scripts/generate_ios_icons.py" --check
+  # The launcher mark too; a hand export once shipped without the platform badge.
+  python3 "$REPO_ROOT/scripts/generate_app_icon.py" --check
 fi
 
 if runs checks; then
@@ -88,7 +100,8 @@ if runs checks; then
   echo "==> goldens, light and dark"
   # Baselines are pixel comparisons, so they are only meaningful on the simulator they were recorded
   # on — DESTINATION is pinned to the same iPhone 17 Pro the SDK repo's snapshot gate uses.
-  # Re-record an intentional change with SNAPSHOT_TESTING_RECORD=all and commit what it writes.
+  # Re-record an intentional change with TEST_RUNNER_SNAPSHOT_TESTING_RECORD=all (xcodebuild forwards only
+  # TEST_RUNNER_ variables; the bare name records nothing) and commit what it writes.
   (cd SampleUI && xcodebuild test -scheme SampleUI -destination "$DESTINATION" -only-testing:SampleUIGoldenTests -quiet)
 fi
 

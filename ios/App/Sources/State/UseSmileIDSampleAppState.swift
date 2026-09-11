@@ -292,7 +292,6 @@ final class UseSmileIDSampleAppState: ObservableObject {
     Self.isDebugBuild || launchArguments.probes
   }
 
-  /// What the Compose twin reads as `BuildConfig.DEBUG`: the Debug configuration's compilation condition.
   static let isDebugBuild: Bool = {
     #if DEBUG
       true

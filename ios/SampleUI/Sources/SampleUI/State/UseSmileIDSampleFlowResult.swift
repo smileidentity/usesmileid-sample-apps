@@ -101,7 +101,7 @@ public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
     refreshCallbackCount += 1
   }
 
-  /// The ten fields as strings in a fixed order, the Compose `Saver`'s shape.
+  /// The ten fields as strings in a fixed order; `init(saved:)` reads them back by position.
   public var saved: [String] {
     [
       scenario.id, theme.id, route.id, environment.id, status.id,

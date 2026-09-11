@@ -22,6 +22,8 @@ struct UseSmileIDSampleShell: View {
       .environmentObject(app)
       // Pinned both ways, not nil: following the system leaves a dark device rendering dark while Settings reads off.
       .preferredColorScheme(app.settings.darkMode ? .dark : .light)
+      // `preferredColorScheme` moves the system's controls; only this maps the scheme onto our tokens.
+      .useSmileIDSampleTheme()
       // Reaches `\.locale` in the shell's own views only; the SDK's strings follow `-AppleLanguages`.
       .modifier(UseSmileIDSampleLocaleOverride(locale: app.launchArguments.locale))
       // Only automation passes one; without it the environment default is the product's.
@@ -68,7 +70,8 @@ struct UseSmileIDSampleShell: View {
         selected: app.idDetails.country,
         query: $app.countryQuery,
         onSelect: { app.selectCountry($0)
-          router.sheet = nil }
+          router.sheet = nil },
+        onClose: { router.sheet = nil }
       )
     case .idTypePicker:
       IdTypePickerSheet(
@@ -76,7 +79,8 @@ struct UseSmileIDSampleShell: View {
         selected: app.idDetails.idType,
         query: $app.idTypeQuery,
         onSelect: { app.idDetails.idType = $0
-          router.sheet = nil }
+          router.sheet = nil },
+        onClose: { router.sheet = nil }
       )
     case .profileSwitch:
       ProfileSwitchSheet(
@@ -122,7 +126,7 @@ struct UseSmileIDSampleShell: View {
     }
   }
 
-  /// The Compose twin's copy, word for word: the rows are hidden from this app's list, not deleted.
+  /// The same copy on every platform: the rows are hidden from this app's list, not deleted.
   private func showRemoval(_ count: Int?) {
     guard let count else { return }
     app.clearLastJobRemoval()

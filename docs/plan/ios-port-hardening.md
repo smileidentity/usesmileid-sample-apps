@@ -15,6 +15,7 @@ Do these in order. The first is a decision, not code, and it blocks the rest.
 | 5 | **DONE 2026-09-01 — a growth check, not the one §2 proposed.** See §2. | Would have started biting at U4, when the 41 states land. | A component that stops growing at the largest content size fails the build. |
 | 6 | **U4 — DONE 2026-09-10. See §19.** | Every state in `spec/screens.json` is now recorded or exempt with a reason, and a test fails if that stops being true. | `UseSmileIDSampleScreenStateGoldenTest` is green and falsified. |
 | 7 | **Settings persistence — DONE 2026-09-10. See §20.** | The last functional parity gap, and `android/maestro/settings.yaml` had no iOS counterpart without it. | The six switches survive a relaunch, the UI suite declares them per launch, and `UseSmileIDSampleSettingsUITests` runs in the lane. |
+| 8 | **The device lane, then the release lane.** `ios-device-verification.md` §2.4 first (no iOS run has ever been recorded, so the lane's pass rate is unknown), then §2.3. Publishing has no plan doc yet; §1 of the audit is that the app is ad-hoc signed, has no icon, no privacy manifest and no export-compliance declaration. | The port is functionally complete, so what is left is proving it on hardware and shipping it. | An iOS run appears in the workspace ledger; then a build installs on a phone. |
 
 **The stack that carried U0–U2 and the first two screens** — #40, #42, #43 — is merged. Each squash
 turned the branches above it into a `rebase --onto`, which is the cost the three-deep limit buys.
@@ -788,6 +789,12 @@ neutral rather than assumed: with only the bar changed, the run failed exactly o
 and nine screen AX baselines and **no existing light or dark baseline at all**, which is the evidence that the
 non-accessibility layout is untouched.
 
+**Android did not follow, and that is the ruling rather than a gap.** Its bar controls are `dp`, so
+they do not scale with the font scale and the title keeps a 233 dp column at 2× — measured across
+all thirteen shipped titles, every one wrapping on word boundaries. The stacked layout is a remedy
+for a cause Android does not have, so the two diverge at accessibility sizes on purpose; what
+travels is the guarantee, which Android holds as a predicate rather than a paragraph.
+
 ### Reading the baselines found two things no assertion could, which is the point of reading them
 
 - **`DataFieldRow` never got the AX stack**, so on the details screen at AX5 the label and value
@@ -811,16 +818,27 @@ non-accessibility layout is untouched.
   (`ui-work-plan.md` §5.1) and a hex is not ours to change, so it goes there rather than into a fix.
 - **A day header older than yesterday prints its date twice** — "TUE, 14 JUL 2026 · TUE, 14 JUL
   2026" — because the relative label falls back to the absolute one. Pre-existing, and the Compose
-  twin composes `DateGroupHeader` the same way, so this is a four-app copy question like the
-  `Hide from List` backticks below: change it in all four or not at all.
+  twin composes `DateGroupHeader` the same way. **Re-classified by Android's U4: a defect, not a
+  copy question.** `spec/components.json` specifies the format as "relative *word* plus absolute
+  date", so with no word there is nothing to put left of the dot and the header should be the date
+  alone. It needs no owner, only one change touching both apps with both `verifications` baselines
+  re-recorded — carried in `ui-work-plan.md` §5 item 16b.
 
-### The parity question this raises rather than answers
+### The parity question this raised — answered by Android's U4, 2026-09-10
 
-Android's `screens.json` reference is a doc comment, not an assertion, and **Android still owes U4**.
-Whether it adopts the same enforcement belongs to that PR, not to this one: its goldens are Roborazzi
-and its natural shape may be a `@Preview` inventory rather than a name table. What does not vary is
-the requirement — a state added to `spec/screens.json` must fail some platform's build — and iOS is
-now the reference for one way of meeting it. Flutter and Expo inherit the question with their apps.
+Android took the name table too, not the `@Preview` inventory this section expected: the repo has
+no previews at all, and preview-scanner names a baseline from its function's full path, so moving a
+file would rename every baseline it owns. `ScreenStateGoldenTest` mirrors this one and adds a check
+iOS does not have — that both the light and the dark baseline are on disk — while keeping the source
+parse, which is the only limb that catches a rename.
+
+**The exemption sets are not the same, and a port must not copy either.** Android exempts four where
+iOS exempts five, because two of iOS's reasons are iOS's own: a Compose test can hold a pointer
+mid-drag, so `verifications.swipeToDelete` has a real half-open row, and it can hold the clock 250 ms
+past focus, so `userDetails.editing` has a real caret. `verifications.refreshing` stays exempt on
+both, for opposite reasons — SwiftUI draws the indicator itself, and the Compose list has no pull
+affordance at all. Reasoning in `android-u4-screen-state-goldens.md`; Flutter and Expo inherit the
+question, not either answer.
 
 ## 20. The Settings switches persist — ruled and built 2026-09-10
 
@@ -964,3 +982,112 @@ and one must not be; neither is the other's control.
 - **Removing the backticks from "Tap `Hide from List` to confirm".** They render literally, but the
   Compose twin ships the same literal backticks, and copy is identical across the four apps by
   contract. Change it in all four or not at all.
+
+---
+
+## 21. The Android-vs-iOS state parity pass — 2026-09-11, and the eight divergences it found
+
+**What was compared, and how.** The two state→golden tables — Android's `ScreenStateGoldenTest` and
+iOS's `UseSmileIDSampleScreenStateGoldenTest` — were joined on the `spec/screens.json` state key,
+which yields **36 states with a golden on both platforms** (`verifications.swipeToDelete` is
+Android-only, exempted on iOS because `@GestureState` rests at zero). Each pair was read side by
+side in spec order, Android as the visual arbiter per `ui-work-plan.md` §4. Pixel diffing is
+meaningless across the two — Android records 786×1782 at 2×, iOS 1179×N at 3× — but **both render
+393 logical units wide**, so a crop given in dp/pt lands on the same content on both and a
+band profile of each frame's ink makes a vertical-rhythm difference measurable rather than a
+matter of eye. That is what turned "the verifications header looks loose" into "17pt, and here is
+the padding it comes from".
+
+### The eight fixed on iOS, each with what settled it
+
+| # | State(s) | What differed | What ruled |
+|---|---|---|---|
+| 1 | `products.tokenExpired` | iOS drew **Scan as a filled primary capsule**; Android draws a text action | `components.json` → `SessionEndedBanner.metrics.action`: "'Scan' as a text action, expanded to the platform touch target" |
+| 2 | `settings.*` (3) | **Five switch rows had no leading glyph** — see below, this is the interesting one | Android draws `sample_ic_setting_*` on every row; iOS passed an icon that never arrived |
+| 3 | `userDetails.*` (3), `profileConfig.*` (3) | The inline **value rendered left-aligned**, immediately after its label | Android right-aligns, iOS's own `DataFieldRow` right-aligns, and this component's code already said `alignment: .trailing` — a `TextField` fills its column, so the row's alignment could never place the text |
+| 4 | `profiles.*` (2), `profileSwitchSheet`, `settings.*` | The **ProfileRow avatar was 40, not 44**, shortening every row by 4 | `components.json` → `ProfileRow.metrics.avatar`: "44 (size.control-md)". Android passes it; iOS's `Avatar` had no size parameter to pass |
+| 5 | `countryPickerSheet`, `idTypePickerSheet` | **No back control and the wrong title size** — the partial sheet's chrome on a full-height sheet | `components.json` → `BottomSheet.metrics.fullHeight`: "no handle; a 40 filled circular back control and the title". `UseSmileIDSampleSheetHeader` already existed on iOS **with zero call sites** |
+| 6 | `verifications.*` (4) | The chip row sat **17pt higher**: the header row had no vertical padding | Android's header carries `vertical = spacing.xs`; 16 of the 17 is that, the other 2 is 44 vs 48 touch targets and stays |
+| 7 | `verifications.afterDelete` | The toast **wrapped to two lines** where Android fits one | The action padded *outside* its `minWidth` frame reserves 16 more than Compose's `defaultMinSize` + padding does. Message weight was 400 against the spec's "message 13.5/500" |
+| 8 | `scanToken.*` (2) | The reticle and copy sat **at the top**; Android centres them | Android's scrolling column is `spacedBy(…, Alignment.CenterVertically)`; a SwiftUI `ScrollView` pins short content to the top, so the content needs `minHeight: geometry.size.height` |
+
+### #2 is worth its own note: Swift bound the icon to the wrong parameter, silently
+
+`UseSmileIDSampleSettingRow` is `init(title:supportingText:testId:onTap:leading:trailing:)` with
+defaults on the last three. A call written in the natural SwiftUI shape —
+
+```swift
+UseSmileIDSampleSettingRow(title: title, supportingText: supporting) {
+  UseSmileIDSampleIcon(icon, …)      // meant for `leading`
+} trailing: {
+  UseSmileIDSampleSwitch(…)
+}
+```
+
+— binds the **unlabelled trailing closure to `onTap`**, not to `leading`: `onTap` is the first
+unfulfilled closure parameter, and Swift will read a single-expression closure returning a `View` as
+`() -> Void` by discarding the result. `leading` then takes its `EmptyView` default, the row's
+`if Leading.self != EmptyView.self` is false, and no tile is drawn — while the row quietly becomes a
+`Button` whose action builds an icon and throws it away. Reduced to a 14-line repro to be sure:
+with `onTap:` supplied the same call infers `Leading = Int`, without it `Leading = Empty`, and the
+only diagnostic is `warning: integer literal is unused`.
+
+Every navigation row passes `onTap:` and kept its icon, which is why the screen looked deliberate.
+**Fixed by labelling `leading:` and `trailing:` at the two affected call sites**; the trap itself is
+recorded as `f135` in the workspace ledger, because it needs no wrong argument — only an omitted one
+— and this component is next in line to be ported to Flutter and Expo.
+
+### Two fixtures aligned, because a pair that draws different content cannot be compared
+
+- **`verificationDetails.processing`** — Android overrides the seeded message with "Request accepted
+  and queued for processing.", deliberately, so the value column wraps; iOS used the store's short
+  one and lost that coverage. iOS now uses the same override.
+- **`settings.default`** — iOS's golden carried the **DEBUG section**, which `spec/screens.json`'s
+  `sections` list does not name and which Android's same-named golden excludes on purpose. The
+  default is now the partner's screen, and `settings_debug` was added alongside it, mirroring
+  Android's pair exactly.
+
+### Three things deliberately not changed
+
+- **The product and job-row icons.** Four of six product marks differ, and so do the document and
+  KYC glyphs in the job rows and the ID-type trigger. That is `f132` — Android's drawables are not
+  generated from `design/icons/` and nothing gates them — and it is the arbiter's side to fix.
+- **The day header printing its date twice** on rows older than yesterday. Both platforms do it, so
+  there is no parity gap; it is `ui-work-plan.md` §5 item 16b and lands in both apps at once.
+- **The switch being wider on iOS**, which is why "Enhanced SmartSelfie™" now wraps in the settings
+  row where Android fits it. The row metrics are identical (16 padding, 12 gap, 38 tile); the
+  difference is the native control, and `components.json` → `Switch` says in terms to use the
+  platform's own and to "expect the control to be the least visually consistent primitive across the
+  four apps".
+
+### What the pass could not check, and what that cost
+
+Two structural findings went to the ledger rather than into a fix, `f132`'s precedent:
+
+- **`f133` — no iOS switch baseline contains a thumb.** `switch_states` (all four states),
+  `setting_rows`, every `settings*`, `user_details_complete`: the control renders as a solid capsule
+  in both schemes. **Verified as the harness, not the app** — the Debug build installed on the
+  simulator draws the white knob on all six switches, correctly positioned. So the one primitive
+  whose whole meaning is its on/off state is the one primitive a golden on this platform cannot tell
+  apart, and the four-state baseline that exists to record those states records four identical pills.
+- **`f134` — the arbiter's own goldens stop at the fold.** Every Android screen baseline is exactly
+  one 393×891dp viewport; iOS's are content-height. `screen_settings` ends inside the ABOUT card, so
+  LEGAL, sign out and the version footer are in the code, in the spec's `sections`, and in no Android
+  picture. For the two screens that exceed the viewport the reference has nothing to compare against.
+
+### What this pass leaves to act on, in the order it is worth doing
+
+Nothing below blocks the branch; each is a decision or a small change the pass surfaced and did not
+take unilaterally.
+
+| # | Item | What it needs | Where it is recorded |
+|---|---|---|---|
+| 1 | ~~**The iOS switch has no thumb in any golden**~~ **RULED 2026-09-11.** | Tried the fix first: swift-snapshot-testing draws a UIKit knob only with `drawHierarchyInKeyWindow`, and that aborts with "requires tests to be run in a host application" — the package's golden target is hostless. So the state is asserted where it can be seen, `UseSmileIDSampleSettingsUITests.assertRows` on the device suite, and `components.json` → `Switch.goldenCoverage` now says the iOS goldens record the track colour only. | `f133` promoted |
+| 2 | ~~**Android's goldens stop at one 891dp viewport**~~ **CLOSED 2026-09-11 for the screen that exceeded it.** | The six `screen_settings*` goldens record under a method-level `@Config(qualifiers = "+h1600dp")`, so LEGAL, sign out and the version footer are finally in the arbiter's picture; `licenses` fits the default window as it stands. A port comparing against Android now has the whole screen. | `f134` promoted |
+| 3 | ~~**Android's icons are hand-maintained and ungated**~~ **CLOSED 2026-09-11.** | `scripts/generate_android_icons.py` emits every drawable from `design/icons/` and `android/verify.sh` fails a stale, missing or unsourced one. Five marks changed geometry (document, biometric KYC, enhanced KYC, flash, trash); the scan glyph regained the design's 45% opacity the hand copy had dropped; `enhanced_document_verification` had no source and now shares `document_verification`, as the README always said. All six product cards match iOS. | `f132` promoted |
+| 4 | ~~**Two picker fixtures draw different content**~~ **CLOSED 2026-09-11.** | iOS draws Kenya's ID types with nothing selected, as Android does; the selected-row treatment keeps its own coverage in the `option_rows` composite. | here |
+| 5 | ~~**The new-profile sheet fixtures differ**~~ **CLOSED 2026-09-11.** | iOS uses Sahara Pay / Ngozi Eze with the phone on its placeholder, the Compose twin's draft, so the created-profile states match too. | here |
+| 6 | **"Enhanced SmartSelfie™" wraps on iOS and not on Android** | Accepted: the row metrics are identical and the native switch is simply wider, which `components.json` → `Switch` predicts. If design wants the two titles to break the same way, that is a design ruling, not a code one. | here |
+| 7 | ~~**The day header prints its date twice**~~ **CLOSED 2026-09-11, both apps at once.** | A day with no relative word renders its absolute date alone; the unit test on each platform holds it and both `verifications` baseline sets were re-recorded together. | `ui-work-plan.md` §5 item 16b |
+| 8 | **The Flutter and Expo ports inherit all eight fixes** | They have not been written yet, so the cheapest moment is before, not after. The trailing-closure trap in #2 of the table above is Swift-specific, but the other seven are metric or structural and will port as written. | here |
+| 9 | **Both delete affordances and the scan screen's flash drew a Material glyph on iOS, and after item 3 on Android too** — found by Harun on the phone 2026-09-11, after the pass. | The arbiter had the design's own stroke trash and bolt, exported from Figma nodes 5206-2756 and 5206-3668 and written into drawables by hand, the same path numbers Figma exports today; the exports never reached `design/icons/`, which held only the Material stand-ins iOS drew, and `components.json` → `iconFamilies` listed both under Material. Generating Android from the record (item 3) therefore replaced the design's icons with the stand-ins, and the re-recorded goldens were read for the product marks, not for these. **FIXED 2026-09-11:** `trash.svg` and `flash.svg` are in the record as the design's own, the two Material files are gone, both platforms generate from them, the spec entry carries the correction, and the Android and iOS baselines that show them are re-recorded and read. | `design/icons/README.md`; `port-patterns.md` §6 item 11 |

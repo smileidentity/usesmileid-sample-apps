@@ -26,7 +26,7 @@ targets:
   UseSmileIDSample:
     type: application
     platform: iOS
-    sources: [Sources]
+    sources: [Sources, Assets.xcassets]
     dependencies:
       - package: SampleUI
         product: SampleUI
@@ -42,8 +42,13 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.usesmileid.sample.ios
         INFOPLIST_FILE: Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         # Ad hoc, needing no certificate: an unsigned process has no keychain (SecItemAdd -34018).
         CODE_SIGN_IDENTITY: "-"
+        # A phone refuses an ad-hoc binary, so the device SDK signs for real. No team is committed —
+        # pass DEVELOPMENT_TEAM on the xcodebuild line, or every other developer inherits this one.
+        "CODE_SIGN_IDENTITY[sdk=iphoneos*]": Apple Development
+        "CODE_SIGN_STYLE[sdk=iphoneos*]": Automatic
     info:
       path: Info.plist
       properties:
@@ -64,6 +69,9 @@ targets:
     settings:
       base:
         CODE_SIGN_IDENTITY: "-"
+        # The runner installs as its own app, so it needs the same device identity as the host.
+        "CODE_SIGN_IDENTITY[sdk=iphoneos*]": Apple Development
+        "CODE_SIGN_STYLE[sdk=iphoneos*]": Automatic
         GENERATE_INFOPLIST_FILE: YES
         # Only the runner's floor. `XCUISystem.open` is how a custom-scheme link is delivered
         # without the system prompt that swallows `simctl openurl`, and it needs 16.4.

@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The design system's own stroke icon (node 5206-2756). Tinted at the use site. -->
+<!-- GENERATED from design/icons/trash.svg by scripts/generate_android_icons.py. Do not edit by hand. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
+    android:width="17dp"
+    android:height="17dp"
     android:viewportWidth="17"
     android:viewportHeight="17">
     <path
         android:pathData="M2.83333,4.95833H14.1667M6.375,4.95833V3.54167C6.375,3.3538 6.44963,3.17364 6.58247,3.0408C6.7153,2.90796 6.89547,2.83333 7.08333,2.83333H9.91667C10.1045,2.83333 10.2847,2.90796 10.4175,3.0408C10.5504,3.17364 10.625,3.3538 10.625,3.54167V4.95833M4.25,4.95833L4.95833,14.1667C4.95833,14.3545 5.03296,14.5347 5.1658,14.6675C5.29864,14.8004 5.4788,14.875 5.66667,14.875H11.3333C11.5212,14.875 11.7014,14.8004 11.8342,14.6675C11.967,14.5347 12.0417,14.3545 12.0417,14.1667L12.75,4.95833"
-        android:fillColor="#00000000"
         android:strokeColor="#FF000000"
         android:strokeWidth="1.5" />
 </vector>
