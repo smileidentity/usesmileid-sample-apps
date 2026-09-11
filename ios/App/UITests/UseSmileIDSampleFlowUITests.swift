@@ -312,7 +312,9 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
       ("sample_user_details_field_email", "kwame@uptech.example")
     ] {
       let field = app.textFields[id]
-      guard field.exists, field.isEnabled, (field.value as? String ?? "").isEmpty else { continue }
+      let current = (field.value as? String) ?? ""
+      // An empty field reports its placeholder as its value.
+      guard field.exists, field.isEnabled, current.isEmpty || current == field.placeholderValue else { continue }
       field.tap()
       field.typeText(value)
     }
