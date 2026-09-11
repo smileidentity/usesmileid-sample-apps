@@ -85,41 +85,43 @@ jobs:
     runs-on: macos-26
     timeout-minutes: 60
     steps:
+      # No fetch-depth: the build number here is the run number, and this job runs no git command.
       - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
 
       - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_26.6.app || sudo xcode-select -s /Applications/Xcode.app
+        run: |
+          for candidate in /Applications/Xcode_${XCODE_VERSION}.app /Applications/Xcode.app; do
+            if [ -d "$candidate" ]; then sudo xcode-select -s "$candidate"; break; fi
+          done
+          BUILD="$(xcodebuild -version | tail -1)"
+          if [ "$BUILD" != "Build version $XCODE_BUILD" ]; then
+            echo "::warning title=Xcode build drifted::The archive links against this runner's SDK, \
+            and it is $BUILD rather than the pinned $XCODE_BUILD."
+          fi
+          xcodebuild -version
+        env:
+          XCODE_VERSION: "26.6"
+          XCODE_BUILD: 17F113
 
       - name: Install XcodeGen
         run: brew install xcodegen
 
-      # The listing and the panels, before the build: both fail in seconds and the archive does not.
-      - name: The listing is complete and store-legal
-        run: |
-          (cd ios/App && xcodegen generate)
-          xcodebuild test \
-            -project ios/App/UseSmileIDSample.xcodeproj \
-            -scheme UseSmileIDSample \
-            -destination "platform=iOS Simulator,name=iPhone 17 Pro" \
-            -only-testing:UseSmileIDSampleTests/UseSmileIDSampleAppStoreListingTest \
-            -quiet
-
       - name: Panels are store-legal by the tool that made them
         run: |
+          ls ios/store/screenshots/*.png >/dev/null 2>&1 \
+            || { echo "::error::no rendered panels — run ios/store/render-store-art.sh"; exit 1; }
           for f in ios/store/screenshots/*.png; do
             npx --yes -p storeshots-mcp storeshots validate --preset ios-phone "$f"
           done
 
-      # Distribution signing is a secret this lane deliberately does not hold, so it stops at the
-      # archive: what it proves is that the shipped configuration still builds and still declares
-      # the four things an upload is rejected for.
+      # Unsigned on purpose: this lane holds no credential, and an archive that needs one would be
+      # red on every PR. What it proves is that the shipped configuration still builds and still
+      # declares the four things an upload is rejected for. verify.sh runs the listing check first.
       - name: Archive
         run: ios/verify.sh archive
         env:
-          DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
           BUILD_NUMBER: ${{ github.run_number }}
+          ARCHIVE_UNSIGNED: "1"
           EXPORT_ARCHIVE_ONLY: "1"
 
       - name: The archive declares what an upload is rejected for
@@ -138,7 +140,14 @@ jobs:
           }
           check ITSAppUsesNonExemptEncryption false
           check CFBundleVersion "${{ github.run_number }}"
-          check UIDeviceFamily.0 1
+          # The whole array: UIDeviceFamily.0 reads 1 for [1,2] as well, so it proved nothing.
+          got="$(plutil -extract UIDeviceFamily json -o - "$APP" 2>/dev/null || echo MISSING)"
+          if [ "$got" != "[1]" ]; then
+            echo "::error::UIDeviceFamily is '$got', expected [1] — the app is specified phone-only"
+            fail=1
+          else
+            echo "  UIDeviceFamily = $got"
+          fi
           test -f "$(dirname "$APP")/PrivacyInfo.xcprivacy" \
             || { echo "::error::the archive ships no privacy manifest"; fail=1; }
           exit $fail
