@@ -283,9 +283,20 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
       app.buttons["sample_kyc_continue"].tap()
     }
 
-    // Reported rather than asserted: no lane on any platform has reached a terminal result here.
+    // A refused submission stops on the SDK's own failure state, still under si_processing_screen, and
+    // the host hears nothing until Exit is tapped — so a passive wait here reads a failure as a hang.
     let details = element("sample_verification_details_screen")
-    let landed = details.waitForExistence(timeout: 180)
+    let exit = app.buttons["si_button_exit"]
+    // Whichever comes first: `XCTWaiter.wait(for:)` waits for ALL expectations, and only one of these can exist.
+    let deadline = Date().addingTimeInterval(180)
+    while Date() < deadline, !details.exists, !exit.exists {
+      RunLoop.current.run(until: Date().addingTimeInterval(0.5))
+    }
+    if exit.exists {
+      XCTContext.runActivity(named: "SDK reported a failure and waited for Exit") { _ in }
+      exit.tap()
+    }
+    let landed = details.waitForExistence(timeout: 20)
     let status = landed ? element("sample_result_job_status").label : "<never landed>"
     let count = landed ? element("sample_result_result_count").label : "-"
     let jobId = landed && element("sample_result_job_id").exists ? element("sample_result_job_id").label : "-"
