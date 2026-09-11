@@ -72,56 +72,18 @@ func useSmileIDSampleApply(
       }
     }
   }
-  // Both theme scenarios go through the SDK's public override, as `spec/scenarios.json` asks; only the values differ.
+  // Both theme scenarios go through the SDK's public override, as `spec/scenarios.json` asks; only
+  // the values differ. SampleUI states them in the SDK's own types, so this is a straight assignment.
   if let palette = snapshot.theme.override {
     builder.theme { theme in
-      theme.primaryColor = theme.color(light: palette.primary, dark: palette.primary)
-      theme.primaryForeground = theme.color(light: palette.onPrimary, dark: palette.onPrimary)
-      theme.secondaryColor = theme.color(light: palette.secondary, dark: palette.secondary)
-      theme.accentColor = theme.color(light: palette.accent, dark: palette.accent)
-      theme.buttonShape = theme.shape(palette.buttonRadius)
+      theme.primaryColor = palette.primaryColor
+      theme.primaryForeground = palette.primaryForeground
+      theme.secondaryColor = palette.secondaryColor
+      theme.accentColor = palette.accentColor
+      theme.buttonShape = palette.buttonShape
       if let fontFamily = palette.fontFamily {
         theme.fontFamily = fontFamily
       }
-    }
-  }
-}
-
-/// What a theme scenario overrides, or nil for the shipped branding.
-struct FlowThemePalette: Equatable {
-  var primary: Color
-  var onPrimary: Color
-  var secondary: Color
-  var accent: Color
-  var buttonRadius: CGFloat
-  /// A family the app can actually resolve, or the SDK silently keeps its own.
-  var fontFamily: String?
-}
-
-extension UseSmileIDSampleThemeScenario {
-  var override: FlowThemePalette? {
-    switch self {
-    case .brandDefault:
-      nil
-    case .partnerOverride:
-      FlowThemePalette(
-        primary: .indigo,
-        onPrimary: .white,
-        secondary: .teal,
-        accent: .orange,
-        buttonRadius: 4,
-        fontFamily: nil
-      )
-    // Far from the defaults on every axis the override reaches; Courier is a system face, so it always resolves.
-    case .clashingHost:
-      FlowThemePalette(
-        primary: Color(red: 0.85, green: 0, blue: 0.5),
-        onPrimary: .yellow,
-        secondary: Color(red: 0.4, green: 0.8, blue: 0),
-        accent: Color(red: 0.9, green: 0.3, blue: 0),
-        buttonRadius: 24,
-        fontFamily: "Courier New"
-      )
     }
   }
 }

@@ -1,7 +1,5 @@
 package com.usesmileid.sampleapps.android.flow
 
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.unit.dp
 import com.usesmileid.bridge.dsl.builder.FaceDetectorMode
 import com.usesmileid.bridge.mlkit.document.DocumentDetectorAnalyzer
@@ -20,9 +18,9 @@ import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
-import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdType
 import com.usesmileid.sampleapps.ui.state.bindsRequiredUserDetails
+import com.usesmileid.sampleapps.ui.theme.override
 import java.net.URL
 import com.usesmileid.sampleapps.ui.R as SampleUiR
 
@@ -94,16 +92,16 @@ fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshe
             }
         }
     }
-    if (snapshot.theme == UseSmileIDSampleThemeScenario.PartnerOverride) {
-        // Baseline Material3: the partner-override scenario needs stable non-brand colours, and no raw hex exists here.
+    // Both theme scenarios go through the SDK's public override, as spec/scenarios.json asks; only
+    // the values differ. sample-ui states them in the SDK's own types, so this is a straight assignment.
+    snapshot.theme.override?.let { palette ->
         theme {
-            val light = lightColorScheme()
-            val dark = darkColorScheme()
-            primaryColor = color(light = light.primary, dark = dark.primary)
-            primaryForeground = color(light = light.onPrimary, dark = dark.onPrimary)
-            secondaryColor = color(light = light.secondary, dark = dark.secondary)
-            accentColor = color(light = light.tertiary, dark = dark.tertiary)
-            buttonShape = shape(PARTNER_BUTTON_RADIUS)
+            primaryColor = palette.primaryColor
+            primaryForeground = palette.primaryForeground
+            secondaryColor = palette.secondaryColor
+            accentColor = palette.accentColor
+            buttonShape = palette.buttonShape
+            palette.fontFamily?.let { fontFamily = it }
         }
     }
 }
@@ -235,4 +233,3 @@ private val UseSmileIDSampleProduct.needsDocumentCapture: Boolean
 // The same host the Settings privacy row opens.
 private val PRIVACY_POLICY_URL = URL("https://smile.id/privacy-policy")
 private const val CALLBACK_URL = "https://your-callback-url.com"
-private val PARTNER_BUTTON_RADIUS = 4.dp
