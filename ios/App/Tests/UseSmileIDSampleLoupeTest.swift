@@ -203,6 +203,27 @@ final class UseSmileIDSampleLoupeTest: XCTestCase {
     XCTAssertFalse(captured.streamed)
   }
 
+  /// Registration reaches only `URLSession.shared`; a session built from a configuration reads
+  /// that configuration, which is how the SDK's traffic went unseen.
+  @MainActor
+  func testAStockConfigurationCarriesTheProtocolOnceInstrumentationIsInstalled() {
+    LoupeSessionInstrumentation.install()
+
+    let classes = URLSessionConfiguration.default.protocolClasses ?? []
+
+    XCTAssertEqual(classes.first == LoupeURLProtocol.self, true, "the protocol must be offered first")
+  }
+
+  @MainActor
+  func testInstrumentingTwiceDoesNotStackTheProtocol() {
+    let configuration = URLSessionConfiguration.default
+    Loupe.instrument(configuration)
+    Loupe.instrument(configuration)
+
+    let matches = (configuration.protocolClasses ?? []).filter { $0 == LoupeURLProtocol.self }
+    XCTAssertEqual(matches.count, 1)
+  }
+
   func testStatisticsCountA2xxAsSuccessAndEverythingElseAsFailure() {
     let statistics = LoupeStatistics(records: [
       Self.record(status: 200),

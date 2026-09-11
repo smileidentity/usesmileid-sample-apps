@@ -2,9 +2,8 @@
 
 ## What it is
 
-A pill sits over the app showing what its traffic is doing; tapping it opens a viewer with every
-HTTP exchange this launch — the request, the response, the timing, a `curl` that reproduces it, and
-an export of the whole session. Debug builds only.
+A shake opens a viewer with every HTTP exchange this launch — the request, the response, the
+timing, a `curl` that reproduces it, and an export of the whole session. Debug builds only.
 
 It exists because the sample app's whole job is to prove the published SDK works, and when a flow
 fails the first question is always what went over the wire.
@@ -46,16 +45,26 @@ memory and the history is capped instead.
 **Prefixes, not regular expressions, for the skip list.** netfox compiled user-supplied patterns with
 `preconditionFailure` on a bad one, so a typo crashed the app being debugged.
 
-**Registering is not enough on its own.** `URLProtocol.registerClass` covers `URLSession.shared` and
-any session built from a configuration that has not replaced `protocolClasses`. A session the app
-builds with its own list never consults the registry, so it passes through `Loupe.instrument(_:)`
-first. netfox swizzled `URLSessionConfiguration` to avoid that call; a one-line opt-in is worth more
-than a method swizzle in a sample app.
+**Registering reaches almost nothing, and the swizzle is not optional.** `URLProtocol.registerClass`
+covers `URLSession.shared` and `NSURLConnection`. Every other session reads its own
+configuration's `protocolClasses` and never consults the registry — so the SDK, which builds its own
+session from `URLSessionConfiguration.default`, was completely invisible.
 
-**No shake, after review.** netfox opened on one because it had no visible chrome. Reading a shake
-from SwiftUI costs a `UIWindow` category overriding its own class's method, which is undefined
-behaviour and would have changed `UIWindow` in release builds too. The overlay is chrome, so the
-gesture bought nothing and was removed.
+This was first shipped with a `Loupe.instrument(_:)` opt-in instead, on the reasoning that a
+one-line call beats a method swizzle. That was wrong: the configuration is created inside the SDK,
+where the app has nothing to call the method on, so the opt-in was unreachable and the one traffic
+worth watching was the traffic the loupe could not see. `LoupeSessionInstrumentation` swizzles the
+two stock factory getters, which is what netfox did and what there is no API for. Debug only.
+
+**The shake is read at the window, and there is no overlay.** An always-visible pill was tried and
+removed: chrome over a sample app is chrome a partner sees in every screenshot. That leaves the
+shake as the only way in, so it has to be reliable — which rules out a view controller in the
+hierarchy, since those miss every shake made while a text field holds focus. Motion events end at
+the window.
+
+The `UIWindow` category overriding its own class's method is a pattern Apple documents as undefined
+when two categories collide. One file overrides it, compiled into debug builds alone, so the
+collision cannot arise; the whole file is inside `#if DEBUG` so nothing reaches release.
 
 **A streamed request body is never read.** Reading `httpBodyStream` consumes it, and the record is
 taken before the request is forwarded — so capturing one would empty the body out of the very
@@ -68,12 +77,6 @@ traffic is worse than one that misses part of it.
 different tool — a runtime diagnostics overlay — and none of its code is here. Three of its ideas
 are:
 
-**An always-visible overlay, not only a gesture.** Its headline is a draggable pill over the app
-that opens a panel. A shake nobody is told about is a feature nobody uses, and a count on screen is
-what makes a stall or a run of failures noticeable before anyone thinks to look. Loupe's pill shows
-in-flight first, then failures, then the plain count, and drags anywhere on screen; it is clamped to
-the container so it cannot be stranded off-screen.
-
 **A report, not a dump.** Its bug report bundles diagnostics with the log so a repro arrives as one
 artefact. Loupe's export leads with the app, bundle, system and the window it covers, then the
 totals, then the traffic — one paste into an issue.
@@ -82,7 +85,9 @@ totals, then the traffic — one paste into an issue.
 the repro window". Loupe's clear restarts the window, and the report names when it opened, so a
 reader knows what the transcript does and does not cover.
 
-Not borrowed: CPU, heap, FPS and thermal readouts. Those belong to Instruments, and this repo's
+Not borrowed: the always-visible overlay pill, which was built and then removed — chrome over a
+sample app is chrome a partner sees in every screenshot, and the shake costs nothing when it is not
+wanted. Nor CPU, heap, FPS and thermal readouts. Those belong to Instruments, and this repo's
 rules are explicit that a sample which reimplements the platform stops being a sample.
 
 ## In-flight requests, which neither tool had

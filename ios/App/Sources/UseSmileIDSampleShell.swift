@@ -56,7 +56,7 @@ struct UseSmileIDSampleShell: View {
         removalNotice = nil
       }
       .onChange(of: router.paths) { _ in storedNavigation = router.encodedState() }
-      // Debug only, and last in the chain so the overlay layers over whatever is showing.
+      // Debug only: shake to read the app's own traffic.
       .modifier(UseSmileIDSampleLoupeAccess())
   }
 

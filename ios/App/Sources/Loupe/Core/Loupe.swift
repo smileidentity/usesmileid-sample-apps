@@ -30,6 +30,8 @@ final class Loupe {
       $0.ignoredURLPrefixes = ignoredURLPrefixes
     }
     URLProtocol.registerClass(LoupeURLProtocol.self)
+    // Registration alone reaches only URLSession.shared; the SDK builds its own session
+    LoupeSessionInstrumentation.install()
   }
 
   /// Stops recording, keeping the records already taken.
