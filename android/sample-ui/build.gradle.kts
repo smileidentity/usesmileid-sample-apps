@@ -47,8 +47,10 @@ ksp {
 dependencies {
     // The SDK, by its published coordinates exactly as a partner names it. An SDK repo substitutes
     // these for its own projects, which is what makes this module its public-API gate.
-    implementation(platform(libs.usesmileid.bom))
-    implementation(libs.usesmileid)
+    // api, not implementation: UseSmileIDSampleThemeOverride has AdaptiveColor in its public
+    // signature, so every consumer needs the SDK on its compile classpath to assign those fields.
+    api(platform(libs.usesmileid.bom))
+    api(libs.usesmileid)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)

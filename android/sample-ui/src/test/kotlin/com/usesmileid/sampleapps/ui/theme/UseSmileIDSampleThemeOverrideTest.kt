@@ -20,6 +20,9 @@ class UseSmileIDSampleThemeOverrideTest {
         assertNotNull(clashing)
         // Far from the defaults on every axis, or the scenario hides the collision it exists to show.
         assertNotEquals(partner, clashing)
+        // Named separately from the whole-object check: a regression that gave both the same corner
+        // radius would still differ by colour, and pass.
+        assertNotEquals(partner?.buttonShape, clashing?.buttonShape)
         assertNotNull(clashing?.fontFamily)
     }
 
