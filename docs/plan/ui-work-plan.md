@@ -422,7 +422,9 @@ than local work:
 
 **Housekeeping still open:**
 
-16b. **The day header prints its date twice on any day older than yesterday** —
+16b. ~~**The day header prints its date twice on any day older than yesterday**~~ **CLOSED
+    2026-09-11: a day with no relative word now renders its absolute date alone, in both apps at once,
+    both `verifications` baselines re-recorded together as this item asked.** Original note: —
     "TUE, 14 JUL 2026 · TUE, 14 JUL 2026" — because `groupByDay` falls back to the absolute date
     when there is no relative word and `DateGroupHeader` renders both halves regardless. Visible in
     `screen_verifications` on Android and in `verifications` on iOS. **Ruled a defect, not a copy

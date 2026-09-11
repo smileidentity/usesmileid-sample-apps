@@ -13,6 +13,9 @@ Enhanced KYC has no icon yet and falls back to the shared product mark; see
 
 Per platform:
 
-- **Android** — `android/sample-ui/src/main/res/drawable/sample_ic_*.xml`, converted faithfully
-  (stroke widths, caps and joins preserved) and tinted at the use site. The drawables carry an
-  opaque base colour because the format requires one; nothing reads it.
+- **Android** — `android/sample-ui/src/main/res/drawable/sample_ic_*.xml`, **generated** by
+  `scripts/generate_android_icons.py` (stroke widths, caps, joins and inherited opacity preserved)
+  and tinted at the use site; `android/verify.sh` fails on a stale, missing or unsourced drawable.
+  The drawables carry an opaque base colour because the format requires one; nothing reads it.
+  They were hand-converted until 2026-09-11, by which point four of the six product marks had
+  drifted from this folder without anything noticing.
