@@ -1,7 +1,7 @@
 import Foundation
 
 /// One verification on disk, keyed by job id: enums as string ids, never ordinals, and the instant as epoch millis.
-struct UseSmileIDSampleJobRecord: Codable, Equatable, Sendable {
+struct UseSmileIDSampleJobRecord: Codable, Equatable {
   var id: String
   var userId: String
   var productId: String
@@ -82,7 +82,7 @@ extension UseSmileIDSampleJobRecord {
 }
 
 /// The file's whole contents. Versioned, so a later shape can be read forward rather than guessed at.
-struct UseSmileIDSampleJobFile: Codable, Sendable {
+struct UseSmileIDSampleJobFile: Codable {
   var version = UseSmileIDSampleJobFile.currentVersion
   var jobs: [UseSmileIDSampleJobRecord]
 

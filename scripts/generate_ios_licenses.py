@@ -32,6 +32,18 @@ FIRST_PARTY = {"ios-spm", "sampleui"}
 
 LICENCE_FILES = ("LICENSE", "LICENSE.md", "LICENSE.txt", "LICENCE", "LICENCE.md", "COPYING")
 
+# Source copied into the app rather than resolved by SwiftPM, so no checkout carries its licence and
+# the walk below cannot see it. The text lives in scripts/license-texts because nothing else in the
+# tree holds a copy; `version` is the upstream release the port was taken from.
+VENDORED = (
+    {
+        "component": "netfox",
+        "version": "1.21.0",
+        "text_file": "netfox.txt",
+        "declared": "MIT",
+    },
+)
+
 # A component that vendors third-party code carries its own notices file. SwiftPM gives no
 # transitive licence metadata, so this file is the only signal that the notice has to travel.
 NESTED_NOTICES = ("THIRD_PARTY_NOTICES.md", "THIRD-PARTY-NOTICES.md", "NOTICE", "NOTICE.md")
@@ -229,7 +241,7 @@ def walk(scratch: str) -> list[str]:
     return sorted(shipped - FIRST_PARTY)
 
 
-def build(scratch: str) -> dict:
+def build(scratch: str, vendored: tuple[dict, ...] = VENDORED) -> dict:
     components = []
     problems = []
     versions = resolved_versions()
@@ -299,12 +311,38 @@ def build(scratch: str) -> dict:
                 }
             )
 
+    for entry in vendored:
+        path = os.path.join(REPO, "scripts", "license-texts", entry["text_file"])
+        if not os.path.exists(path):
+            problems.append(f"{entry['component']}: {entry['text_file']} is missing, so its notice would not ship")
+            continue
+        with open(path, encoding="utf-8") as handle:
+            text = handle.read().strip()
+        try:
+            spdx, name = identify(text)
+        except Unidentified as error:
+            problems.append(f"{entry['component']}: {error}")
+            continue
+        # The declaration is a free second opinion on the text match, as it is for nested notices.
+        if entry["declared"].lower() != spdx.lower():
+            problems.append(f"{entry['component']}: declared {entry['declared']}, the text reads as {spdx}")
+            continue
+        components.append(
+            {
+                "component": entry["component"],
+                "version": entry["version"],
+                "licenseId": spdx,
+                "licenseName": name,
+                "text": text,
+            }
+        )
+
     if problems:
         raise Unidentified("\n".join(problems))
     if not components:
         raise Unidentified("the shipping graph resolved no third-party component, which cannot be right")
     return {
-        "generatedBy": "scripts/generate_ios_licenses.py from the products the iOS app links",
+        "generatedBy": "scripts/generate_ios_licenses.py from the products the iOS app links, plus its vendored source",
         "components": sorted(components, key=lambda entry: entry["component"].lower()),
     }
 

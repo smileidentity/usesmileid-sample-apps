@@ -56,6 +56,8 @@ struct UseSmileIDSampleShell: View {
         removalNotice = nil
       }
       .onChange(of: router.paths) { _ in storedNavigation = router.encodedState() }
+      // Debug only: shake to read the app's own traffic.
+      .modifier(UseSmileIDSampleLoupeAccess())
   }
 
   @ViewBuilder
