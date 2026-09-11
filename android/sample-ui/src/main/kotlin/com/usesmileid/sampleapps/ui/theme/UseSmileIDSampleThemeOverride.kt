@@ -1,6 +1,8 @@
 package com.usesmileid.sampleapps.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -8,7 +10,7 @@ import com.usesmileid.presentation.theme.colors.AdaptiveColor
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 
 /**
- * What a theme scenario hands the SDK's theme configuration, field for field.
+ * What a theme scenario hands the SDK's theme builder, field for field.
  *
  * Typed in the SDK's own [AdaptiveColor] rather than a parallel colour type, so the shell assigns
  * these straight across and a rename on either side is a compile error rather than a silent drift.
@@ -19,7 +21,7 @@ data class UseSmileIDSampleThemeOverride(
     val secondaryColor: AdaptiveColor,
     val accentColor: AdaptiveColor,
     val buttonShape: RoundedCornerShape,
-    /** A family the app can actually resolve, or the SDK keeps its own. */
+    /** A family the device can actually resolve, or the SDK keeps its own. */
     val fontFamily: FontFamily? = null,
 )
 
@@ -27,27 +29,31 @@ data class UseSmileIDSampleThemeOverride(
 val UseSmileIDSampleThemeScenario.override: UseSmileIDSampleThemeOverride?
     get() = when (this) {
         UseSmileIDSampleThemeScenario.BrandDefault -> null
-        UseSmileIDSampleThemeScenario.PartnerOverride -> UseSmileIDSampleThemeOverride(
-            primaryColor = AdaptiveColor(light = Indigo, dark = Indigo),
-            primaryForeground = AdaptiveColor(light = Color.White, dark = Color.White),
-            secondaryColor = AdaptiveColor(light = Teal, dark = Teal),
-            accentColor = AdaptiveColor(light = Orange, dark = Orange),
-            buttonShape = RoundedCornerShape(4.dp),
-        )
-        // Far from the defaults on every axis the override reaches; Monospace is a system face, so it always resolves.
+
+        UseSmileIDSampleThemeScenario.PartnerOverride -> {
+            // Baseline Material3: a plausible partner palette that is nobody's brand, and no raw hex.
+            val light = lightColorScheme()
+            val dark = darkColorScheme()
+            UseSmileIDSampleThemeOverride(
+                primaryColor = AdaptiveColor(light = light.primary, dark = dark.primary),
+                primaryForeground = AdaptiveColor(light = light.onPrimary, dark = dark.onPrimary),
+                secondaryColor = AdaptiveColor(light = light.secondary, dark = dark.secondary),
+                accentColor = AdaptiveColor(light = light.tertiary, dark = dark.tertiary),
+                buttonShape = RoundedCornerShape(PARTNER_BUTTON_RADIUS),
+            )
+        }
+
+        // Named Compose colours, deliberately outside every palette: this scenario exists to collide.
+        // Monospace is a guaranteed system family, so the font override always resolves.
         UseSmileIDSampleThemeScenario.ClashingHost -> UseSmileIDSampleThemeOverride(
-            primaryColor = AdaptiveColor(light = ClashingPrimary, dark = ClashingPrimary),
+            primaryColor = AdaptiveColor(light = Color.Magenta, dark = Color.Magenta),
             primaryForeground = AdaptiveColor(light = Color.Yellow, dark = Color.Yellow),
-            secondaryColor = AdaptiveColor(light = ClashingSecondary, dark = ClashingSecondary),
-            accentColor = AdaptiveColor(light = ClashingAccent, dark = ClashingAccent),
-            buttonShape = RoundedCornerShape(24.dp),
+            secondaryColor = AdaptiveColor(light = Color.Green, dark = Color.Green),
+            accentColor = AdaptiveColor(light = Color.Red, dark = Color.Red),
+            buttonShape = RoundedCornerShape(CLASHING_BUTTON_RADIUS),
             fontFamily = FontFamily.Monospace,
         )
     }
 
-private val Indigo = Color(0xFF4B0082)
-private val Teal = Color(0xFF008080)
-private val Orange = Color(0xFFFF7F00)
-private val ClashingPrimary = Color(red = 0.85f, green = 0f, blue = 0.5f)
-private val ClashingSecondary = Color(red = 0.4f, green = 0.8f, blue = 0f)
-private val ClashingAccent = Color(red = 0.9f, green = 0.3f, blue = 0f)
+private val PARTNER_BUTTON_RADIUS = 4.dp
+private val CLASHING_BUTTON_RADIUS = 24.dp

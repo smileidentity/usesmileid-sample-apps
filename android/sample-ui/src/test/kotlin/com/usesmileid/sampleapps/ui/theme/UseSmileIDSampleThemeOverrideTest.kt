@@ -31,8 +31,8 @@ class UseSmileIDSampleThemeOverrideTest {
     fun `the override is stated in the SDK colour type`() {
         val partner = UseSmileIDSampleThemeScenario.PartnerOverride.override
 
-        assertEquals(partner?.primaryColor?.light, partner?.primaryColor?.dark)
         assertNotEquals(partner?.primaryColor, partner?.secondaryColor)
-        assertEquals(Color.White, partner?.primaryForeground?.light)
+        // The clashing scenario states colours no palette would pick, which is the point of it.
+        assertEquals(Color.Magenta, UseSmileIDSampleThemeScenario.ClashingHost.override?.primaryColor?.light)
     }
 }
