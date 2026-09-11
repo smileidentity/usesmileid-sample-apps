@@ -45,6 +45,11 @@ ksp {
 }
 
 dependencies {
+    // The SDK, by its published coordinates exactly as a partner names it. An SDK repo substitutes
+    // these for its own projects, which is what makes this module its public-API gate.
+    implementation(platform(libs.usesmileid.bom))
+    implementation(libs.usesmileid)
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)
