@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 512 512" role="img" aria-label="UseSmileID Sample">
-  <!-- Full bleed and unrounded: every platform masks the icon itself, and a rounded source is masked twice. -->
-  <rect width="512" height="512" fill="#F9F0E7"/>
-  <g transform="translate(256,256) scale(0.70) translate(-282,-281.95)">
-    <rect x="81.1" y="279.4" width="232.1" height="216.9" fill="#151F72"/>
-    <path fill="#FF9B00" d="M369.7,67.6c-1.1,0-2.1,0.1-3.2,0.1c-1.1,0-2.1-0.1-3.2-0.1c-59.2,0-112.1,38.6-112.1,123.7v88.2h231.5v-88.2C482.9,106.2,429.3,67.6,369.7,67.6z"/>
-  </g>
-</svg>

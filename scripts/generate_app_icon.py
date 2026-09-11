@@ -1,0 +1,117 @@
+#!/usr/bin/env python3
+"""Turn the platform's launcher mark in svgs/ into the iOS app-icon asset.
+
+`svgs/<platform>.svg` is the shared source: the Smile ID mark plus a badge naming the platform, and
+the badge is the point — four sample apps sit on one home screen and the badge is what tells them
+apart. A mark without it was committed once by hand, which is why this is generated now.
+
+Two transforms the source cannot carry, because it is also used as an ordinary illustration:
+
+- the corner radius is dropped, because iOS masks the icon itself and a rounded source is masked
+  twice, leaving a pale fringe on the device
+- the alpha channel is dropped, because App Store Connect rejects an icon that has one
+
+Rendered through QuickLook, which is WebKit: ImageMagick's own SVG renderer ignores a nested `<svg>`
+element's x/y placement and drops the badge in the top-left corner at the wrong size, silently.
+
+Usage:
+    scripts/generate_app_icon.py            # write the asset
+    scripts/generate_app_icon.py --check    # fail if the asset is stale
+"""
+from __future__ import annotations
+
+import argparse
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+SOURCE = ROOT / "svgs" / "ios.svg"
+TARGET = ROOT / "ios" / "App" / "Assets.xcassets" / "AppIcon.appiconset" / "AppIcon1024.png"
+SIZE = 1024
+
+# A renderer's own antialiasing shifts by a pixel between OS versions, so the check is a tolerance
+# rather than byte equality: a changed source moves far more than this, a changed renderer does not.
+TOLERANCE = 2.0
+
+
+def squared_off(svg: str) -> str:
+    """The same artwork with its corner radius removed, so the platform's mask is the only one."""
+    return re.sub(r'\s+r[xy]="[^"]*"', "", svg, count=2)
+
+
+def render(svg: str) -> bytes:
+    if shutil.which("qlmanage") is None:
+        raise SystemExit("generate_app_icon.py needs qlmanage, which ships with macOS")
+    with tempfile.TemporaryDirectory() as work:
+        source = Path(work) / "icon.svg"
+        source.write_text(svg, encoding="utf-8")
+        subprocess.run(
+            ["qlmanage", "-t", "-s", str(SIZE), "-o", work, str(source)],
+            check=True,
+            capture_output=True,
+        )
+        rendered = Path(work) / "icon.svg.png"
+        if not rendered.is_file():
+            raise SystemExit("qlmanage rendered nothing; is the source valid SVG?")
+        return flatten(rendered)
+
+
+def flatten(path: Path) -> bytes:
+    from PIL import Image
+
+    image = Image.open(path).convert("RGBA")
+    if image.size != (SIZE, SIZE):
+        image = image.resize((SIZE, SIZE), Image.LANCZOS)
+    opaque = Image.new("RGB", image.size, (255, 255, 255))
+    opaque.paste(image, mask=image.split()[3])
+    buffer = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
+    opaque.save(buffer.name, "PNG")
+    return Path(buffer.name).read_bytes()
+
+
+def difference(left: bytes, right: bytes) -> float:
+    from PIL import Image, ImageChops, ImageStat
+
+    with tempfile.TemporaryDirectory() as work:
+        a, b = Path(work) / "a.png", Path(work) / "b.png"
+        a.write_bytes(left)
+        b.write_bytes(right)
+        first, second = Image.open(a).convert("RGB"), Image.open(b).convert("RGB")
+        if first.size != second.size:
+            return 255.0
+        return max(ImageStat.Stat(ImageChops.difference(first, second)).mean)
+
+
+def main(argv=None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check", action="store_true", help="fail if the asset is stale")
+    args = parser.parse_args(argv)
+
+    fresh = render(squared_off(SOURCE.read_text(encoding="utf-8")))
+    if args.check:
+        if not TARGET.is_file():
+            print(f"{TARGET.relative_to(ROOT)} is missing", file=sys.stderr)
+            return 1
+        drift = difference(fresh, TARGET.read_bytes())
+        if drift > TOLERANCE:
+            print(
+                f"{TARGET.relative_to(ROOT)} is stale ({drift:.1f} off "
+                f"{SOURCE.relative_to(ROOT)}) — run scripts/generate_app_icon.py",
+                file=sys.stderr,
+            )
+            return 1
+        print(f"    {TARGET.relative_to(ROOT)} matches {SOURCE.relative_to(ROOT)}")
+        return 0
+
+    TARGET.parent.mkdir(parents=True, exist_ok=True)
+    TARGET.write_bytes(fresh)
+    print(f"wrote {TARGET.relative_to(ROOT)} from {SOURCE.relative_to(ROOT)}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
