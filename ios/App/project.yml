@@ -26,7 +26,7 @@ targets:
   UseSmileIDSample:
     type: application
     platform: iOS
-    sources: [Sources, Assets.xcassets]
+    sources: [Sources, Assets.xcassets, PrivacyInfo.xcprivacy]
     dependencies:
       - package: SampleUI
         product: SampleUI
@@ -43,17 +43,25 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.usesmileid.sample.ios
         INFOPLIST_FILE: Info.plist
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        # Declared, not left to XcodeGen's "1,2", which owes the App Store iPad art and an iPad review.
+        TARGETED_DEVICE_FAMILY: "1"
         # Ad hoc, needing no certificate: an unsigned process has no keychain (SecItemAdd -34018).
         CODE_SIGN_IDENTITY: "-"
         # A phone refuses an ad-hoc binary, so the device SDK signs for real. No team is committed —
         # pass DEVELOPMENT_TEAM on the xcodebuild line, or every other developer inherits this one.
+        # Development in Release too, because exportArchive re-signs for distribution.
         "CODE_SIGN_IDENTITY[sdk=iphoneos*]": Apple Development
         "CODE_SIGN_STYLE[sdk=iphoneos*]": Automatic
     info:
       path: Info.plist
       properties:
         CFBundleDisplayName: UseSmileID Sample
+        # Placeholders, or XcodeGen bakes the numbers in and every upload carries build 1.
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         UILaunchScreen: {}
+        # HTTPS only, so exempt; without the key every TestFlight build waits on a human to say so.
+        ITSAppUsesNonExemptEncryption: false
         # The SDK opens the camera; without this the first capture kills the app rather than prompting.
         NSCameraUsageDescription: Smile ID uses the camera to capture your selfie and documents.
         CFBundleURLTypes:
