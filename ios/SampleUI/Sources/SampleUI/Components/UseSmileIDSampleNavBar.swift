@@ -99,7 +99,10 @@ public struct UseSmileIDSampleNavBar: View {
           .foregroundColor(tint)
           .multilineTextAlignment(.center)
       }
-      .frame(maxWidth: .infinity, minHeight: SmileSpacing.sizeControlMd)
+      // Padded like the Compose twin rather than floored at `sizeControlMd`: 44 is SHORTER than the
+      // icon, gap, label and padding come to, so the flat minimum was silently shrinking the pill.
+      .frame(maxWidth: .infinity)
+      .padding(.vertical, SmileSpacing.spacingXs)
       .contentShape(Rectangle())
     }
     .buttonStyle(.plain)
