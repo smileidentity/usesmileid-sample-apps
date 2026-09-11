@@ -4,7 +4,6 @@ import UIKit
 
 /// The consent screen takes a `UIImage` and this app's marks are shapes, so one is drawn rather than shipped twice.
 enum UseSmileIDSampleFlowIcon {
-  /// What the Compose twin passes as `sample_ic_product_mark`.
   static let partnerMark: UIImage = image(SmileIcons.productMark, size: markSize)
 
   private static func image(_ icon: SmileIcon, size: CGFloat) -> UIImage {

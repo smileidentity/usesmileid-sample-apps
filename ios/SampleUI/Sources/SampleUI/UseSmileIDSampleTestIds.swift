@@ -101,7 +101,7 @@ public enum UseSmileIDSampleTestIds {
     "\(licenseLinkPrefix)_\(idSafe(component))"
   }
 
-  /// ASCII-only, as the Compose twin's `[^A-Za-z0-9]` is: an accented letter is not id-safe either.
+  /// ASCII-only: an accented letter is not id-safe either.
   private static func idSafe(_ value: String) -> String {
     String(value.map { $0.isASCII && ($0.isLetter || $0.isNumber) ? $0 : "_" })
   }
@@ -195,7 +195,7 @@ public enum UseSmileIDSampleTestIds {
   public static let detailsRefresh = "sample_details_refresh"
 
   public static let jobRowPrefix = "sample_job_row"
-  /// One id for every row's badge, as the Compose twin has: a row is found first, its badge inside it.
+  /// One id for every row's badge: a row is found first, its badge inside it.
   public static let jobRowStatus = "sample_job_row_status"
   public static let filterChipPrefix = "sample_filter_chip"
   public static let filterCountPrefix = "sample_filter_count"

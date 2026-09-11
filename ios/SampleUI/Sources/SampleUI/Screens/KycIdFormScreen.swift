@@ -107,7 +107,7 @@ public struct KycIdFormScreen: View {
       placeholder: "Enter ID number",
       testId: UseSmileIDSampleTestIds.idNumberInput
     )
-    // An ID number is upper-case everywhere it is printed, as the Compose twin also sets.
+    // An ID number is upper-case everywhere it is printed.
     .textInputAutocapitalization(.characters)
     // An alphanumeric ID is exactly what autocorrect rewrites into a word.
     .autocorrectionDisabled()

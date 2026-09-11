@@ -2,7 +2,7 @@
 import SwiftUI
 import XCTest
 
-/// The card in every terminal state and the line in the one state it shows, matching the Compose goldens.
+/// The card in every terminal state and the line in the one state it shows, matching the Android goldens.
 final class UseSmileIDSampleResultCardGoldenTest: UseSmileIDSampleGoldenTest {
   func testResultCardIdle() {
     goldens("result_card_idle") { card(UseSmileIDSampleResultFixtures.idle) }

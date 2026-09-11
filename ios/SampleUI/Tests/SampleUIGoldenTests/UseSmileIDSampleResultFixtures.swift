@@ -1,6 +1,6 @@
 @testable import SampleUI
 
-/// The card's five states, with the values the Compose goldens carry.
+/// The card's five states, with the values the Android goldens carry.
 enum UseSmileIDSampleResultFixtures {
   static let idle = UseSmileIDSampleResult(
     activeScenario: .normal,

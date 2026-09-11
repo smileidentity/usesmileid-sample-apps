@@ -12,7 +12,7 @@ enum FlowPreflight: Equatable {
   case misconfigured(issues: [String])
 }
 
-/// The entry gate: the SDK's own validators through `FlowValidator.shared`, before anything mounts. No consent rule, level with the Compose twin.
+/// The entry gate: the SDK's own validators through `FlowValidator.shared`, before anything mounts. No consent rule, by owner ruling.
 @MainActor
 func useSmileIDSamplePreflight(_ snapshot: FlowLaunchSnapshot) -> FlowPreflight {
   // Ahead of the payloads: no form fixes a session that has run out.

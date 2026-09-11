@@ -165,9 +165,8 @@ SWIFT_HEADER = """// Smile ID Design System — GENERATED. Do not edit by hand.
 //
 // Regenerate with: scripts/sync_design_tokens.py --all
 //
-// A stopgap: the upstream SwiftUI emitter omits the type ramp entirely — not even the comments the
-// Compose emitter leaves. Names mirror the Dart and Compose emitters' SmileType so the platforms
-// stay diffable. Delete this file once upstream emits the styles.
+// A stopgap: the upstream SwiftUI emitter omits the type ramp entirely. Names mirror the other
+// platforms' SmileType so they stay diffable. Delete this file once upstream emits the styles.
 //
 // This is DATA, not a Font: a custom face is addressed by PostScript name, which the weight number
 // resolves to in the app's typography layer.
@@ -202,7 +201,6 @@ SWIFT_HUES_HEADER = """// Smile ID product hues — GENERATED. Do not edit by ha
 //
 // A stopgap: the source is spec/design-tokens.json → deltas, not the design system. Everything the
 // design system carries no role for lives here; delete each value once upstream carries its role.
-// The Compose twin is SmileProductHues.kt and the two are generated from the same entries.
 
 import SwiftUI
 

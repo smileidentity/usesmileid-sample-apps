@@ -46,7 +46,7 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_details_empty").waitForExistence(timeout: 10))
   }
 
-  /// Addressed by its label, as the Compose twin's is: neither platform gives back a `sample_*` id.
+  /// Addressed by its label: the back control gives back no `sample_*` id on any platform.
   func testTheDetailsScreenPopsBackToItsTab() {
     open("verifications/job_missing")
     XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))

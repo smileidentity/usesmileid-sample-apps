@@ -4,7 +4,6 @@
 //
 // SwiftUI cannot render an SVG and this repo will not add a library to do it, so the marks are
 // emitted as Shapes in their own viewBox coordinates and scaled to the size the caller asks for.
-// The Compose twin consumes the same SVGs as vector drawables.
 
 import SwiftUI
 
