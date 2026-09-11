@@ -982,3 +982,95 @@ and one must not be; neither is the other's control.
 - **Removing the backticks from "Tap `Hide from List` to confirm".** They render literally, but the
   Compose twin ships the same literal backticks, and copy is identical across the four apps by
   contract. Change it in all four or not at all.
+
+---
+
+## 21. The Android-vs-iOS state parity pass — 2026-09-11, and the eight divergences it found
+
+**What was compared, and how.** The two state→golden tables — Android's `ScreenStateGoldenTest` and
+iOS's `UseSmileIDSampleScreenStateGoldenTest` — were joined on the `spec/screens.json` state key,
+which yields **36 states with a golden on both platforms** (`verifications.swipeToDelete` is
+Android-only, exempted on iOS because `@GestureState` rests at zero). Each pair was read side by
+side in spec order, Android as the visual arbiter per `ui-work-plan.md` §4. Pixel diffing is
+meaningless across the two — Android records 786×1782 at 2×, iOS 1179×N at 3× — but **both render
+393 logical units wide**, so a crop given in dp/pt lands on the same content on both and a
+band profile of each frame's ink makes a vertical-rhythm difference measurable rather than a
+matter of eye. That is what turned "the verifications header looks loose" into "17pt, and here is
+the padding it comes from".
+
+### The eight fixed on iOS, each with what settled it
+
+| # | State(s) | What differed | What ruled |
+|---|---|---|---|
+| 1 | `products.tokenExpired` | iOS drew **Scan as a filled primary capsule**; Android draws a text action | `components.json` → `SessionEndedBanner.metrics.action`: "'Scan' as a text action, expanded to the platform touch target" |
+| 2 | `settings.*` (3) | **Five switch rows had no leading glyph** — see below, this is the interesting one | Android draws `sample_ic_setting_*` on every row; iOS passed an icon that never arrived |
+| 3 | `userDetails.*` (3), `profileConfig.*` (3) | The inline **value rendered left-aligned**, immediately after its label | Android right-aligns, iOS's own `DataFieldRow` right-aligns, and this component's code already said `alignment: .trailing` — a `TextField` fills its column, so the row's alignment could never place the text |
+| 4 | `profiles.*` (2), `profileSwitchSheet`, `settings.*` | The **ProfileRow avatar was 40, not 44**, shortening every row by 4 | `components.json` → `ProfileRow.metrics.avatar`: "44 (size.control-md)". Android passes it; iOS's `Avatar` had no size parameter to pass |
+| 5 | `countryPickerSheet`, `idTypePickerSheet` | **No back control and the wrong title size** — the partial sheet's chrome on a full-height sheet | `components.json` → `BottomSheet.metrics.fullHeight`: "no handle; a 40 filled circular back control and the title". `UseSmileIDSampleSheetHeader` already existed on iOS **with zero call sites** |
+| 6 | `verifications.*` (4) | The chip row sat **17pt higher**: the header row had no vertical padding | Android's header carries `vertical = spacing.xs`; 16 of the 17 is that, the other 2 is 44 vs 48 touch targets and stays |
+| 7 | `verifications.afterDelete` | The toast **wrapped to two lines** where Android fits one | The action padded *outside* its `minWidth` frame reserves 16 more than Compose's `defaultMinSize` + padding does. Message weight was 400 against the spec's "message 13.5/500" |
+| 8 | `scanToken.*` (2) | The reticle and copy sat **at the top**; Android centres them | Android's scrolling column is `spacedBy(…, Alignment.CenterVertically)`; a SwiftUI `ScrollView` pins short content to the top, so the content needs `minHeight: geometry.size.height` |
+
+### #2 is worth its own note: Swift bound the icon to the wrong parameter, silently
+
+`UseSmileIDSampleSettingRow` is `init(title:supportingText:testId:onTap:leading:trailing:)` with
+defaults on the last three. A call written in the natural SwiftUI shape —
+
+```swift
+UseSmileIDSampleSettingRow(title: title, supportingText: supporting) {
+  UseSmileIDSampleIcon(icon, …)      // meant for `leading`
+} trailing: {
+  UseSmileIDSampleSwitch(…)
+}
+```
+
+— binds the **unlabelled trailing closure to `onTap`**, not to `leading`: `onTap` is the first
+unfulfilled closure parameter, and Swift will read a single-expression closure returning a `View` as
+`() -> Void` by discarding the result. `leading` then takes its `EmptyView` default, the row's
+`if Leading.self != EmptyView.self` is false, and no tile is drawn — while the row quietly becomes a
+`Button` whose action builds an icon and throws it away. Reduced to a 14-line repro to be sure:
+with `onTap:` supplied the same call infers `Leading = Int`, without it `Leading = Empty`, and the
+only diagnostic is `warning: integer literal is unused`.
+
+Every navigation row passes `onTap:` and kept its icon, which is why the screen looked deliberate.
+**Fixed by labelling `leading:` and `trailing:` at the two affected call sites**; the trap itself is
+recorded as `f135` in the workspace ledger, because it needs no wrong argument — only an omitted one
+— and this component is next in line to be ported to Flutter and Expo.
+
+### Two fixtures aligned, because a pair that draws different content cannot be compared
+
+- **`verificationDetails.processing`** — Android overrides the seeded message with "Request accepted
+  and queued for processing.", deliberately, so the value column wraps; iOS used the store's short
+  one and lost that coverage. iOS now uses the same override.
+- **`settings.default`** — iOS's golden carried the **DEBUG section**, which `spec/screens.json`'s
+  `sections` list does not name and which Android's same-named golden excludes on purpose. The
+  default is now the partner's screen, and `settings_debug` was added alongside it, mirroring
+  Android's pair exactly.
+
+### Three things deliberately not changed
+
+- **The product and job-row icons.** Four of six product marks differ, and so do the document and
+  KYC glyphs in the job rows and the ID-type trigger. That is `f132` — Android's drawables are not
+  generated from `design/icons/` and nothing gates them — and it is the arbiter's side to fix.
+- **The day header printing its date twice** on rows older than yesterday. Both platforms do it, so
+  there is no parity gap; it is `ui-work-plan.md` §5 item 16b and lands in both apps at once.
+- **The switch being wider on iOS**, which is why "Enhanced SmartSelfie™" now wraps in the settings
+  row where Android fits it. The row metrics are identical (16 padding, 12 gap, 38 tile); the
+  difference is the native control, and `components.json` → `Switch` says in terms to use the
+  platform's own and to "expect the control to be the least visually consistent primitive across the
+  four apps".
+
+### What the pass could not check, and what that cost
+
+Two structural findings went to the ledger rather than into a fix, `f132`'s precedent:
+
+- **`f133` — no iOS switch baseline contains a thumb.** `switch_states` (all four states),
+  `setting_rows`, every `settings*`, `user_details_complete`: the control renders as a solid capsule
+  in both schemes. **Verified as the harness, not the app** — the Debug build installed on the
+  simulator draws the white knob on all six switches, correctly positioned. So the one primitive
+  whose whole meaning is its on/off state is the one primitive a golden on this platform cannot tell
+  apart, and the four-state baseline that exists to record those states records four identical pills.
+- **`f134` — the arbiter's own goldens stop at the fold.** Every Android screen baseline is exactly
+  one 393×891dp viewport; iOS's are content-height. `screen_settings` ends inside the ABOUT card, so
+  LEGAL, sign out and the version footer are in the code, in the spec's `sections`, and in no Android
+  picture. For the two screens that exceed the viewport the reference has nothing to compare against.
