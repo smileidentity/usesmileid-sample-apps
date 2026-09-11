@@ -237,12 +237,14 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
   /// The session outlives an uninstall, so every launch clears it: an ended marker sends every later run to the scanner.
   /// Enhanced KYC on a real session: the one journey with `capture: false`, so it needs no camera.
   func testEnhancedKycOnALiveSessionReachesATerminalResult() throws {
+    // Before the skip, not after: a skip returns immediately and the teardown would then sign out
+    // the very session this test skipped for, spending a real token to run nothing.
+    preservesSession = true
     try XCTSkipUnless(
       ProcessInfo.processInfo.environment["SMILE_LIVE_SESSION"] == "1",
       "needs a token already scanned onto the device; nothing here mints one"
     )
     // Not `launch()`: it signs out the session this needs, and the teardown is told to keep it.
-    preservesSession = true
     app.launchArguments = useSmileIDSampleSettingsSeed
     app.launch()
     atATabRoot()
