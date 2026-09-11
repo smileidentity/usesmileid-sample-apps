@@ -213,6 +213,10 @@ if [ "$PHASE" = archive ]; then
   if [ -n "${ARCHIVE_UNSIGNED:-}" ]; then
     SIGNING_ARGS=(CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="")
     DEVELOPMENT_TEAM="${DEVELOPMENT_TEAM:-}"
+    if [ -z "${EXPORT_ARCHIVE_ONLY:-}" ]; then
+      echo "ARCHIVE_UNSIGNED produces nothing exportable; set EXPORT_ARCHIVE_ONLY=1" >&2
+      exit 2
+    fi
   else
     : "${DEVELOPMENT_TEAM:?archive needs DEVELOPMENT_TEAM — it is never committed, see docs/plan/app-store-release-ios.md §3}"
   fi

@@ -74,7 +74,10 @@ def check_copy(problems: list[str]) -> None:
         if EMOJI.search(text):
             problems.append(f"{name} carries an emoji")
 
-    description = (STORE / "description.txt").read_text(encoding="utf-8")
+    description_path = STORE / "description.txt"
+    if not description_path.exists():
+        return
+    description = description_path.read_text(encoding="utf-8")
     if "SmartSelfie™ Enrollment" not in description:
         problems.append("description.txt must name the first product as the app's own list does")
     if "SmartSelfie™ Registration" in description:
@@ -107,7 +110,11 @@ def check_images(problems: list[str], kind: str, directory: Path, suffix: str, *
 
 def check_directory_holds_only_panels(problems: list[str], found: list[str]) -> None:
     """The review strip validates as nothing, so a listing built from this directory would break."""
-    actual = {p.name for p in (STORE / "screenshots").iterdir() if not p.name.startswith(".")}
+    screenshots = STORE / "screenshots"
+    if not screenshots.is_dir():
+        problems.append("ios/store/screenshots is missing — run ios/store/render-store-art.sh")
+        return
+    actual = {p.name for p in screenshots.iterdir() if not p.name.startswith(".")}
     expected = {f"{panel}.png" for panel in found}
     for extra in sorted(actual - expected):
         problems.append(f"ios/store/screenshots holds {extra}, which is not a panel")
