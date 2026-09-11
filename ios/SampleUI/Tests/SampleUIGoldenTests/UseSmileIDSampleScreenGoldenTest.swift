@@ -194,7 +194,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   }
 
   func testIdTypePicker() {
-    goldens("idtype_picker") { idTypePicker(country: .ghana) }
+    goldens("idtype_picker") { idTypePicker(country: .kenya) }
   }
 
   /// The trigger is disabled without a country, but a deep link can still open the sheet.
@@ -220,12 +220,12 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   }
 
   private func countryPicker(query: String, height: CGFloat = 700) -> some View {
-    CountryPickerSheet(selected: .kenya, query: .constant(query), onSelect: { _ in }, onClose: {})
+    CountryPickerSheet(selected: nil, query: .constant(query), onSelect: { _ in }, onClose: {})
       .frame(height: height)
   }
 
   private func idTypePicker(country: UseSmileIDSampleCountry?, height: CGFloat = 700) -> some View {
-    IdTypePickerSheet(country: country, selected: .passport, query: .constant(""), onSelect: { _ in }, onClose: {})
+    IdTypePickerSheet(country: country, selected: nil, query: .constant(""), onSelect: { _ in }, onClose: {})
       .frame(height: height)
   }
 
@@ -597,23 +597,24 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   private static let profilesWithACreatedOne: UseSmileIDSampleProfiles = {
     var profiles = UseSmileIDSampleProfiles(seed: UseSmileIDSampleProfiles.fixtures())
     profiles.add(
-      organisation: "Acme Fintech",
-      person: "Ada Lovelace",
-      defaults: UseSmileIDSampleUserDetails(firstName: "Ada", lastName: "Lovelace")
+      organisation: "Sahara Pay",
+      person: "Ngozi Eze",
+      defaults: UseSmileIDSampleUserDetails(firstName: "Ngozi", lastName: "Eze")
     )
     return profiles
   }()
 
   private static let createdNotice = UseSmileIDSampleTransientNotice(
-    message: "Acme Fintech created",
+    message: "Sahara Pay created",
     actionLabel: "Make active"
   )
 
+  /// The Compose twin's draft, phone left on its placeholder, so the two sheets draw the same thing.
   private static let filledNewProfile = UseSmileIDSampleNewProfile(
-    name: "Acme Fintech",
-    firstName: "Ada",
-    lastName: "Lovelace",
-    email: "ada@acme.example",
-    phone: "+254 700 000 000"
+    name: "Sahara Pay",
+    firstName: "Ngozi",
+    lastName: "Eze",
+    email: "ngozi@saharapay.example",
+    phone: ""
   )
 }
