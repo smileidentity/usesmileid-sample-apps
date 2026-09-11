@@ -247,6 +247,14 @@ inventory and names, screen and state lists, `sample_*` ids, spacing and size me
 references, copy. What must be **platform-native**: navigation and presentation (sheets, push,
 modal), the back affordance, the switch control, swipe gestures, keyboard avoidance, and haptics.
 
+**Read `port-patterns.md` §6 before starting, not after.** It lists the ten divergences a
+state-by-state comparison found in the iOS port *after* that port was believed finished and its own
+suite was green — a component built and never called, a metric left at its default, an alignment set
+on the wrong element, a centred layout that a scroll view silently top-aligns. Every one compiled,
+rendered and passed. It also records how they were found at all: all four platforms render 393
+logical units wide, so a crop in dp/pt/units lands on the same content on each and the comparison
+becomes a measurement rather than a squint.
+
 A port that reproduces Android's navigation instead of using the platform's own is a defect even if
 it looks pixel-identical — that is precisely the host-interaction class these apps exist to catch.
 
