@@ -1,0 +1,76 @@
+name: Publish to the App Store
+
+# Dispatch only, permanently. iOS has one upload for both destinations, so what separates this lane
+# from TestFlight is that it gates the listing first: a build that reaches a public release must
+# carry store art and copy App Store Connect will accept. Submitting for review stays a Console
+# action, as Play's production promotion does.
+on:
+  workflow_dispatch:
+    inputs:
+      marketing_version:
+        description: The MARKETING_VERSION this release ships as, e.g. 1.0
+        required: true
+
+concurrency:
+  group: publish-app-store
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.6.app || sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      # The listing's own gate, before anything is built: a rejected upload costs a build number.
+      - name: The listing is complete and store-legal
+        run: |
+          (cd ios/App && xcodegen generate)
+          xcodebuild test \
+            -project ios/App/UseSmileIDSample.xcodeproj \
+            -scheme UseSmileIDSample \
+            -destination "platform=iOS Simulator,name=iPhone 17 Pro" \
+            -only-testing:UseSmileIDSampleTests/UseSmileIDSampleAppStoreListingTest \
+            -quiet
+
+      - name: Materialise the App Store Connect API key
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          printf '%s' "$KEY" > ~/.appstoreconnect/private_keys/AuthKey_${KEY_ID}.p8
+        env:
+          KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+
+      - name: Build number
+        id: version
+        run: echo "build=$(git rev-list --count HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Archive and upload
+        run: ios/verify.sh archive
+        env:
+          DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
+          BUILD_NUMBER: ${{ steps.version.outputs.build }}
+          MARKETING_VERSION: ${{ inputs.marketing_version }}
+          EXPORT_DESTINATION: upload
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+
+      - name: Remove the API key
+        if: always()
+        run: rm -rf ~/.appstoreconnect/private_keys
+
+      - name: What is still an owner action
+        run: |
+          echo "::notice::Uploaded build ${{ steps.version.outputs.build }} as ${{ inputs.marketing_version }}."
+          echo "::notice::Attaching it to a version and submitting for review is a Console action."

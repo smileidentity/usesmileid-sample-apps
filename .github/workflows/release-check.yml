@@ -8,6 +8,10 @@ on:
     paths:
       - 'android/play/**'
       - 'android/app/build.gradle.kts'
+      - 'ios/store/**'
+      - 'ios/App/project.yml'
+      - 'ios/App/PrivacyInfo.xcprivacy'
+      - 'ios/verify.sh'
       - '.github/workflows/release-check.yml'
 
 concurrency:
@@ -75,3 +79,66 @@ jobs:
           else
             echo "::notice::no rendered panels yet — android/play/render-store-art.sh has not been run with a camera frame"
           fi
+
+  archive:
+    name: iOS archive and store art
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.6.app || sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      # The listing and the panels, before the build: both fail in seconds and the archive does not.
+      - name: The listing is complete and store-legal
+        run: |
+          (cd ios/App && xcodegen generate)
+          xcodebuild test \
+            -project ios/App/UseSmileIDSample.xcodeproj \
+            -scheme UseSmileIDSample \
+            -destination "platform=iOS Simulator,name=iPhone 17 Pro" \
+            -only-testing:UseSmileIDSampleTests/UseSmileIDSampleAppStoreListingTest \
+            -quiet
+
+      - name: Panels are store-legal by the tool that made them
+        run: |
+          for f in ios/store/screenshots/*.png; do
+            npx --yes -p storeshots-mcp storeshots validate --preset ios-phone "$f"
+          done
+
+      # Distribution signing is a secret this lane deliberately does not hold, so it stops at the
+      # archive: what it proves is that the shipped configuration still builds and still declares
+      # the four things an upload is rejected for.
+      - name: Archive
+        run: ios/verify.sh archive
+        env:
+          DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
+          BUILD_NUMBER: ${{ github.run_number }}
+          EXPORT_ARCHIVE_ONLY: "1"
+
+      - name: The archive declares what an upload is rejected for
+        run: |
+          APP=ios/build/UseSmileIDSample.xcarchive/Products/Applications/UseSmileIDSample.app/Info.plist
+          fail=0
+          check() {
+            # -o - or plutil rewrites the plist it was asked to read, which then fails every later check.
+            got="$(plutil -extract "$1" raw -o - "$APP" 2>/dev/null || echo MISSING)"
+            if [ "$got" != "$2" ]; then
+              echo "::error::$1 is '$got', expected '$2'"
+              fail=1
+            else
+              echo "  $1 = $got"
+            fi
+          }
+          check ITSAppUsesNonExemptEncryption false
+          check CFBundleVersion "${{ github.run_number }}"
+          check UIDeviceFamily.0 1
+          test -f "$(dirname "$APP")/PrivacyInfo.xcprivacy" \
+            || { echo "::error::the archive ships no privacy manifest"; fail=1; }
+          exit $fail

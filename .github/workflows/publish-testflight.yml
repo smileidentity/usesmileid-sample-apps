@@ -1,0 +1,56 @@
+name: Publish to TestFlight
+
+# Dispatch only: the first upload fixes the signing identity and creates the listing, which is an
+# owner action. A `push` trigger later needs a path filter, or a docs-only merge ships a build.
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: publish-testflight
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.6.app || sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      # Written to the directory xcodebuild reads keys from, and removed however the run ends.
+      - name: Materialise the App Store Connect API key
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          printf '%s' "$KEY" > ~/.appstoreconnect/private_keys/AuthKey_${KEY_ID}.p8
+        env:
+          KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+
+      - name: Build number
+        id: version
+        run: echo "build=$(git rev-list --count HEAD)" >> "$GITHUB_OUTPUT"
+
+      # Secrets reach xcodebuild as environment variables, never as arguments, so the team id and
+      # the key id stay out of the runner's process list.
+      - name: Archive and upload
+        run: ios/verify.sh archive
+        env:
+          DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
+          BUILD_NUMBER: ${{ steps.version.outputs.build }}
+          EXPORT_DESTINATION: upload
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+
+      - name: Remove the API key
+        if: always()
+        run: rm -rf ~/.appstoreconnect/private_keys
