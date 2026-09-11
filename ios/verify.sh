@@ -4,11 +4,16 @@
 #   ios/verify.sh                  everything, which is what a developer runs and what "green" means
 #   ios/verify.sh checks           everything except the navigation UI suite
 #   ios/verify.sh ui <ClassName>   only that UI class
+#   ios/verify.sh archive          the distributable archive and its IPA — not part of `all`
 #
 # The phases exist because the UI suite is most of the lane and CI can give each class its own
 # runner. They are modes of this script rather than steps repeated in YAML, so the contract still
 # lives in one place; `.github/workflows/ios.yml` names the classes and a test asserts that list is
 # complete.
+#
+# `archive` is out of `all` because it needs a signing identity a fresh clone does not have, and
+# because it is the only phase that leaves a publishable artefact. See
+# docs/plan/app-store-release-ios.md §3.
 set -euo pipefail
 
 cd "$(dirname "$0")"
@@ -17,7 +22,7 @@ REPO_ROOT="$(cd .. && pwd)"
 PHASE="${1:-all}"
 UI_CLASS="${2:-}"
 case "$PHASE" in
-  all | checks) ;;
+  all | checks | archive) ;;
   ui)
     if [ -z "$UI_CLASS" ]; then
       echo "verify.sh ui needs a test class name" >&2
@@ -25,7 +30,7 @@ case "$PHASE" in
     fi
     ;;
   *)
-    echo "verify.sh: unknown phase '$PHASE' — expected all, checks or ui <ClassName>" >&2
+    echo "verify.sh: unknown phase '$PHASE' — expected all, checks, ui <ClassName> or archive" >&2
     exit 2
     ;;
 esac
@@ -39,14 +44,17 @@ DESTINATION="${DESTINATION:-platform=iOS Simulator,name=iPhone 17 Pro}"
 RESULT_BUNDLE="${RESULT_BUNDLE:-build/uitest.xcresult}"
 
 # Refused, not skipped: the resets below are simctl and would no-op in silence on a device.
-case "$DESTINATION" in
-  *"iOS Simulator"*) ;;
-  *)
-    echo "verify.sh runs on a simulator; '$DESTINATION' is not one." >&2
-    echo "For a device see docs/plan/ios-device-verification.md §2.3 — it needs its own reset." >&2
-    exit 2
-    ;;
-esac
+# `archive` is exempt because it builds for generic/platform=iOS and runs nothing.
+if [ "$PHASE" != archive ]; then
+  case "$DESTINATION" in
+    *"iOS Simulator"*) ;;
+    *)
+      echo "verify.sh runs on a simulator; '$DESTINATION' is not one." >&2
+      echo "For a device see docs/plan/ios-device-verification.md §2.3 — it needs its own reset." >&2
+      exit 2
+      ;;
+  esac
+fi
 
 if runs checks; then
   echo "==> design tokens are current"
@@ -166,9 +174,10 @@ if runs checks; then
 fi
 
 if runs checks; then
-  echo "==> release probes gate (the card hides without -probes and shows with it, on the release build)"
-  # The argument exists only for release runs, so a debug pass proves nothing about it. Two tests, on the
-  # build the step above produced; the rest of the suite is configuration-blind and runs once, above.
+  echo "==> release probes gate, and the App Review claim that needs no credential"
+  # The argument exists only for release runs, so a debug pass proves nothing about it. The third test
+  # is the compliance one: "all functionality is available without special access" is only true while
+  # Simulate survives release, and a checklist line would rot where an assertion does not.
   xcodebuild test \
     -project App/UseSmileIDSample.xcodeproj \
     -scheme UseSmileIDSampleUITests \
@@ -176,9 +185,90 @@ if runs checks; then
     -destination "$DESTINATION" \
     -only-testing:UseSmileIDSampleUITests/UseSmileIDSampleLaunchArgumentUITests/testWithoutTheArgumentTheCardFollowsTheBuild \
     -only-testing:UseSmileIDSampleUITests/UseSmileIDSampleLaunchArgumentUITests/testWithTheArgumentTheCardShowsOnAnyBuild \
+    -only-testing:UseSmileIDSampleUITests/UseSmileIDSampleNavigationUITests/testSimulateLinksASessionAndTheProductsStripCountsItDown \
     TEST_RUNNER_USESMILEID_SAMPLE_CONFIGURATION=Release \
     -quiet
 
+fi
+
+if runs archive; then
+  echo "==> archive (Release, generic device, for App Store distribution)"
+  # Both refusals are here rather than in a workflow step, so a hand-built archive is held to the
+  # same rule as a CI one. A build number App Store Connect has already seen for this marketing
+  # version is rejected at upload, which is late and wastes an integer.
+  : "${DEVELOPMENT_TEAM:?archive needs DEVELOPMENT_TEAM — it is never committed, see docs/plan/app-store-release-ios.md §3}"
+  case "${BUILD_NUMBER:-}" in
+    "" | *[!0-9]*)
+      echo "archive needs a positive integer BUILD_NUMBER; the workflows pass git rev-list --count HEAD" >&2
+      exit 2
+      ;;
+  esac
+  [ "$BUILD_NUMBER" -gt 0 ] || { echo "BUILD_NUMBER must be positive" >&2; exit 2; }
+
+  # Optional: unset keeps project.yml's hand-bumped value, which is what a local archive wants.
+  VERSION_ARGS=()
+  if [ -n "${MARKETING_VERSION:-}" ]; then
+    case "$MARKETING_VERSION" in
+      [0-9]*.[0-9]*) VERSION_ARGS+=(MARKETING_VERSION="$MARKETING_VERSION") ;;
+      *) echo "MARKETING_VERSION '$MARKETING_VERSION' is not a version number" >&2; exit 2 ;;
+    esac
+  fi
+
+  ARCHIVE="${ARCHIVE_PATH:-build/UseSmileIDSample.xcarchive}"
+  EXPORT_DIR="${EXPORT_PATH:-build/export}"
+  rm -rf "$ARCHIVE" "$EXPORT_DIR"
+
+  # The identity is the target's own Release setting, never an argument: a command-line one is
+  # global and reaches SampleUI's resource bundle, which has no team and fails the whole archive.
+  xcodebuild archive \
+    -project App/UseSmileIDSample.xcodeproj \
+    -scheme "$SCHEME" \
+    -configuration Release \
+    -destination "generic/platform=iOS" \
+    -archivePath "$ARCHIVE" \
+    -allowProvisioningUpdates \
+    DEVELOPMENT_TEAM="$DEVELOPMENT_TEAM" \
+    CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+    ${VERSION_ARGS[@]+"${VERSION_ARGS[@]}"} \
+    -quiet
+
+  if [ -n "${EXPORT_ARCHIVE_ONLY:-}" ]; then
+    # For a lane holding no distribution key: the archive is the whole of what it can prove.
+    echo "==> export skipped (EXPORT_ARCHIVE_ONLY)"
+    echo "OK"
+    exit 0
+  fi
+
+  echo "==> export (IPA, or the upload when EXPORT_DESTINATION=upload)"
+  # The committed plist carries no team, so the copy that does is built here and dies with the run.
+  WORK="$(mktemp -d)"
+  trap 'rm -rf "$WORK"' EXIT
+  OPTIONS="$WORK/ExportOptions.plist"
+  cp store/ExportOptions.plist "$OPTIONS"
+  plutil -replace teamID -string "$DEVELOPMENT_TEAM" "$OPTIONS"
+  plutil -replace destination -string "${EXPORT_DESTINATION:-export}" "$OPTIONS"
+
+  # The API key authenticates the upload and lets automatic signing fetch a distribution profile,
+  # which is what replaces a keychain this repository would otherwise have to carry. The path is
+  # derived rather than passed: a workflow `env:` value is not a shell, so a `~` in one stays a
+  # literal and xcodebuild reports a missing key that is sitting where it was put.
+  AUTH=()
+  if [ -n "${APP_STORE_CONNECT_KEY_ID:-}" ]; then
+    KEY_PATH="${APP_STORE_CONNECT_KEY_PATH:-$HOME/.appstoreconnect/private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8}"
+    [ -f "$KEY_PATH" ] || { echo "no App Store Connect key at $KEY_PATH" >&2; exit 2; }
+    AUTH=(
+      -authenticationKeyPath "$KEY_PATH"
+      -authenticationKeyID "$APP_STORE_CONNECT_KEY_ID"
+      -authenticationKeyIssuerID "${APP_STORE_CONNECT_ISSUER_ID:?an API key needs its issuer id}"
+    )
+  fi
+
+  xcodebuild -exportArchive \
+    -archivePath "$ARCHIVE" \
+    -exportOptionsPlist "$OPTIONS" \
+    -exportPath "$EXPORT_DIR" \
+    -allowProvisioningUpdates \
+    ${AUTH[@]+"${AUTH[@]}"}
 fi
 
 echo "OK"

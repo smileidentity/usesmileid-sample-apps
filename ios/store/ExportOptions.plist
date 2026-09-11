@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- teamID is injected into a copy at export time: a team id on the never-commit list, and a
+	     tree that must build for anyone. ios/verify.sh archive is the only reader. -->
+	<key>method</key>
+	<string>app-store-connect</string>
+	<key>destination</key>
+	<string>export</string>
+	<key>signingStyle</key>
+	<string>automatic</string>
+	<key>uploadSymbols</key>
+	<true/>
+	<!-- Bitcode is gone and thinning would produce a per-device IPA, which the store does itself. -->
+	<key>stripSwiftSymbols</key>
+	<true/>
+</dict>
+</plist>
