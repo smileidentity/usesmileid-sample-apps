@@ -1,0 +1,3 @@
+Profiles no longer come with example partners.
+
+A fresh install has one blank "Default profile". Create your own from Settings → Profiles and make it active, so the consent screen shows your organisation and your jobs carry your user details.

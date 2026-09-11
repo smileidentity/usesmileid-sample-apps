@@ -1,0 +1,1 @@
+Verification runs use the Smile ID sandbox unless a linked session token specifies another environment.
