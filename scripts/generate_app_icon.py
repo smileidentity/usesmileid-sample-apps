@@ -17,6 +17,11 @@ Three transforms the source cannot carry, because it is also used as an ordinary
 Rendered through QuickLook, which is WebKit: ImageMagick's own SVG renderer ignores a nested `<svg>`
 element's x/y placement and drops the badge in the top-left corner at the wrong size, silently.
 
+Writing the asset needs Pillow and QuickLook, which a developer's Mac has and CI does not — so
+`--check` compares a recorded hash of the source and the scale instead of re-rendering. It catches
+the failure that actually happens (the art changes and nobody regenerates) without putting an image
+dependency or a window server in the gate, the way the other generators here stay pure stdlib.
+
 Usage:
     scripts/generate_app_icon.py            # write the asset
     scripts/generate_app_icon.py --check    # fail if the asset is stale
@@ -24,6 +29,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import re
 import shutil
 import subprocess
@@ -34,15 +40,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "svgs" / "ios.svg"
 TARGET = ROOT / "ios" / "App" / "Assets.xcassets" / "AppIcon.appiconset" / "AppIcon1024.png"
+LOCK = ROOT / "scripts" / "app-icon.lock"
 SIZE = 1024
 
 # Chosen against a render of the actual mask, not from a guideline: at 1.00 the badge is cut, at 0.86
 # the mark starts swimming in its own margin. Raising it back past ~0.94 re-clips the badge.
 CONTENT_SCALE = 0.90
-
-# A renderer's own antialiasing shifts by a pixel between OS versions, so the check is a tolerance
-# rather than byte equality: a changed source moves far more than this, a changed renderer does not.
-TOLERANCE = 2.0
 
 
 def squared_off(svg: str) -> str:
@@ -91,17 +94,10 @@ def encode(image) -> bytes:
     return Path(buffer.name).read_bytes()
 
 
-def difference(left: bytes, right: bytes) -> float:
-    from PIL import Image, ImageChops, ImageStat
-
-    with tempfile.TemporaryDirectory() as work:
-        a, b = Path(work) / "a.png", Path(work) / "b.png"
-        a.write_bytes(left)
-        b.write_bytes(right)
-        first, second = Image.open(a).convert("RGB"), Image.open(b).convert("RGB")
-        if first.size != second.size:
-            return 255.0
-        return max(ImageStat.Stat(ImageChops.difference(first, second)).mean)
+def stamp() -> str:
+    """What the asset was rendered from: the source's bytes and the inset the render applied."""
+    digest = hashlib.sha256(SOURCE.read_bytes()).hexdigest()
+    return f"{digest}  {SOURCE.relative_to(ROOT)}  scale={CONTENT_SCALE}\n"
 
 
 def main(argv=None) -> int:
@@ -109,16 +105,15 @@ def main(argv=None) -> int:
     parser.add_argument("--check", action="store_true", help="fail if the asset is stale")
     args = parser.parse_args(argv)
 
-    fresh = render(squared_off(SOURCE.read_text(encoding="utf-8")))
     if args.check:
-        if not TARGET.is_file():
-            print(f"{TARGET.relative_to(ROOT)} is missing", file=sys.stderr)
-            return 1
-        drift = difference(fresh, TARGET.read_bytes())
-        if drift > TOLERANCE:
+        for missing in (TARGET, LOCK):
+            if not missing.is_file():
+                print(f"{missing.relative_to(ROOT)} is missing", file=sys.stderr)
+                return 1
+        if LOCK.read_text(encoding="utf-8") != stamp():
             print(
-                f"{TARGET.relative_to(ROOT)} is stale ({drift:.1f} off "
-                f"{SOURCE.relative_to(ROOT)}) — run scripts/generate_app_icon.py",
+                f"{TARGET.relative_to(ROOT)} was not rendered from the current "
+                f"{SOURCE.relative_to(ROOT)} — run scripts/generate_app_icon.py",
                 file=sys.stderr,
             )
             return 1
@@ -126,7 +121,8 @@ def main(argv=None) -> int:
         return 0
 
     TARGET.parent.mkdir(parents=True, exist_ok=True)
-    TARGET.write_bytes(fresh)
+    TARGET.write_bytes(render(squared_off(SOURCE.read_text(encoding="utf-8"))))
+    LOCK.write_text(stamp(), encoding="utf-8")
     print(f"wrote {TARGET.relative_to(ROOT)} from {SOURCE.relative_to(ROOT)}")
     return 0
 
