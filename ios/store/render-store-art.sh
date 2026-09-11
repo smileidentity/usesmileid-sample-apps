@@ -14,13 +14,27 @@ STORESHOTS=(npx --yes -p storeshots-mcp storeshots)
 
 if [ "${1:-}" = "--frames" ]; then
   echo "==> recording the five off-device panels"
+  before="$(shasum -a 256 "$FRAMES"/*.frame.png 2>/dev/null || true)"
+  # Record mode always exits non-zero, so the status cannot distinguish it from a compile error,
+  # a missing simulator or a crashed host. Whether the frames actually moved can.
   # TEST_RUNNER_ prefixed, or xcodebuild drops it and the run verifies instead of recording.
   (cd SampleUI && TEST_RUNNER_SNAPSHOT_TESTING_RECORD=all xcodebuild test \
     -scheme SampleUI \
     -destination "$DESTINATION" \
     -only-testing:SampleUIGoldenTests/UseSmileIDSampleStoreArtTest \
     -quiet) || true
+  after="$(shasum -a 256 "$FRAMES"/*.frame.png 2>/dev/null || true)"
+  if [ -z "$after" ]; then
+    echo "the recorder wrote no frames — it failed before rendering" >&2
+    exit 1
+  fi
+  if [ "$before" = "$after" ]; then
+    echo "note: --frames rewrote nothing, so the screens are unchanged since the last record" >&2
+  fi
 fi
+
+# Cleared, or a panel whose frame went missing keeps the previous run's PNG and is re-locked as current.
+rm -rf "$OUT"
 
 mkdir -p "$OUT"
 skipped=""
