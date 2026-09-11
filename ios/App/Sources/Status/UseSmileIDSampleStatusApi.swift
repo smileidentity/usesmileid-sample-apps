@@ -13,6 +13,11 @@ struct UseSmileIDSampleStatusApi: UseSmileIDSampleJobStatusSource {
   private static let bounded: URLSession = {
     let configuration = URLSessionConfiguration.default
     configuration.timeoutIntervalForRequest = 10
+    // Named rather than left to the loupe's swizzle: this session is built once, and whether that
+    // happens before or after the loupe installs is an ordering nobody should have to reason about
+    #if DEBUG
+      Loupe.instrument(configuration)
+    #endif
     return URLSession(configuration: configuration)
   }()
 

@@ -71,6 +71,21 @@ taken before the request is forwarded — so capturing one would empty the body 
 request being observed. Streamed bodies are reported as streamed. An inspector that changes the
 traffic is worse than one that misses part of it.
 
+**Credentials are masked where the record is built, not where it is shown.** The SDK sends
+`smileid-token`, `smileid-api-key` and `smileid-request-mac`, and the auth response returns the
+token in its body. Masking at render time would leave the real value in the store, where an export,
+a share sheet or a screenshot would still carry it — so the record never holds it. Five characters
+survive, enough to tell two tokens apart, and anything five characters or shorter is masked whole
+rather than revealed entire. `smileid-partner-id` and the `smileid-source-sdk*` headers are left
+alone: they identify the caller without authenticating it, and masking them would cost the
+debugging they exist for. A body that is not JSON is untouched, because guessing at credentials in
+an arbitrary payload mangles the thing being debugged more often than it protects anything.
+
+**The app's own session is instrumented by name.** `UseSmileIDSampleStatusApi` builds its session
+once in a `static let`, and whether that happens before or after the loupe installs its swizzle is
+an ordering nobody should have to reason about. One `Loupe.instrument` call in debug removes the
+question.
+
 ## Borrowed from DebugOverlay-Android
 
 [DebugOverlay-Android](https://github.com/Manabu-GT/DebugOverlay-Android) (Apache-2.0) is a

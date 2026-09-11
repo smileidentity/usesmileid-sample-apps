@@ -62,8 +62,8 @@ final class LoupeURLProtocol: URLProtocol, @unchecked Sendable {
       method: request.httpMethod ?? "GET",
       url: request.url,
       requestDate: started.requestDate,
-      requestHeaders: request.allHTTPHeaderFields ?? [:],
-      requestBody: body.data,
+      requestHeaders: LoupeRedaction.headers(request.allHTTPHeaderFields ?? [:]),
+      requestBody: LoupeRedaction.body(body.data),
       isRequestBodyStreamed: body.streamed
     ))
     guard let forwarded = (request as NSURLRequest).mutableCopy() as? NSMutableURLRequest else {
@@ -135,13 +135,13 @@ extension LoupeURLProtocol: URLSessionDataDelegate {
       method: original.httpMethod ?? "GET",
       url: original.url,
       requestDate: snapshot.requestDate,
-      requestHeaders: original.allHTTPHeaderFields ?? [:],
-      requestBody: Self.body(of: original).data,
+      requestHeaders: LoupeRedaction.headers(original.allHTTPHeaderFields ?? [:]),
+      requestBody: LoupeRedaction.body(Self.body(of: original).data),
       isRequestBodyStreamed: Self.body(of: original).streamed,
       responseDate: Date(),
       statusCode: status,
-      responseHeaders: headers,
-      responseBody: snapshot.data.isEmpty ? nil : snapshot.data,
+      responseHeaders: LoupeRedaction.headers(headers),
+      responseBody: LoupeRedaction.body(snapshot.data.isEmpty ? nil : snapshot.data),
       bodyKind: kind,
       errorDescription: error.map { String(describing: $0) }
     )

@@ -224,6 +224,63 @@ final class UseSmileIDSampleLoupeTest: XCTestCase {
     XCTAssertEqual(matches.count, 1)
   }
 
+  func testACredentialHeaderKeepsFiveCharactersAndNoMore() {
+    XCTAssertEqual(LoupeRedaction.mask("abcdefghijklmnop"), "abcde*****")
+    XCTAssertEqual(LoupeRedaction.mask("abcdefghijklmnop").count, 10)
+  }
+
+  /// Revealing a short secret whole would defeat the masking entirely.
+  func testAShortValueIsMaskedWholeRatherThanRevealed() {
+    XCTAssertEqual(LoupeRedaction.mask("abc"), "*****")
+    XCTAssertEqual(LoupeRedaction.mask("abcde"), "*****")
+  }
+
+  func testTheTokenAndItsSiblingsAreMaskedWhateverTheHeaderCase() {
+    let masked = LoupeRedaction.headers([
+      "smileid-token": "eyJhbGciOiJIUzI1NiJ9.payload",
+      "SmileID-Api-Key": "0123456789abcdef",
+      "smileid-request-mac": "deadbeefcafe",
+      "Authorization": "Bearer sk_live_abcdefgh"
+    ])
+
+    XCTAssertEqual(masked["smileid-token"], "eyJhb*****")
+    XCTAssertEqual(masked["SmileID-Api-Key"], "01234*****")
+    XCTAssertEqual(masked["smileid-request-mac"], "deadb*****")
+    XCTAssertEqual(masked["Authorization"], "Beare*****")
+  }
+
+  /// Masking what merely identifies the caller would cost the debugging these headers exist for.
+  func testHeadersThatIdentifyRatherThanAuthenticateAreLeftAlone() {
+    let masked = LoupeRedaction.headers([
+      "smileid-partner-id": "0001",
+      "smileid-source-sdk": "ios",
+      "Content-Type": "application/json"
+    ])
+
+    XCTAssertEqual(masked["smileid-partner-id"], "0001")
+    XCTAssertEqual(masked["smileid-source-sdk"], "ios")
+    XCTAssertEqual(masked["Content-Type"], "application/json")
+  }
+
+  /// The auth response carries the token in its body, so headers alone would leave it in clear on
+  /// the one call that mints it.
+  func testATokenInAJsonBodyIsMaskedAtAnyDepth() throws {
+    let body = Data(#"{"data":{"token":"eyJhbGciOiJIUzI1NiJ9","expires":"2026"},"ok":true}"#.utf8)
+
+    let masked = try XCTUnwrap(LoupeRedaction.body(body))
+    let text = try XCTUnwrap(String(data: masked, encoding: .utf8))
+
+    XCTAssertTrue(text.contains("eyJhb*****"), text)
+    XCTAssertFalse(text.contains("eyJhbGciOiJIUzI1NiJ9"), text)
+    XCTAssertTrue(text.contains("2026"), "everything else must survive")
+  }
+
+  func testABodyThatIsNotJsonIsLeftExactlyAsItCame() {
+    let body = Data("not json at all".utf8)
+
+    XCTAssertEqual(LoupeRedaction.body(body), body)
+  }
+
   func testStatisticsCountA2xxAsSuccessAndEverythingElseAsFailure() {
     let statistics = LoupeStatistics(records: [
       Self.record(status: 200),
