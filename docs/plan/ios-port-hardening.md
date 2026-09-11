@@ -1074,3 +1074,19 @@ Two structural findings went to the ledger rather than into a fix, `f132`'s prec
   one 393×891dp viewport; iOS's are content-height. `screen_settings` ends inside the ABOUT card, so
   LEGAL, sign out and the version footer are in the code, in the spec's `sections`, and in no Android
   picture. For the two screens that exceed the viewport the reference has nothing to compare against.
+
+### What this pass leaves to act on, in the order it is worth doing
+
+Nothing below blocks the branch; each is a decision or a small change the pass surfaced and did not
+take unilaterally.
+
+| # | Item | What it needs | Where it is recorded |
+|---|---|---|---|
+| 1 | **The iOS switch has no thumb in any golden** | A ruling. Either assert the control's state in `UseSmileIDSampleSettingsUITests`, which already reads it, or stop claiming golden coverage for the switch and amend `components.json` → `Switch`, whose entry today describes a thumb none of the pictures contain. | `f133` |
+| 2 | **Android's goldens stop at one 891dp viewport** | A ruling, and it affects the other two ports because they compare against these pictures. Capture at content height, or add a scrolled second baseline for the two screens that exceed the viewport (`settings`, `licenses`), or write the limit down so a green Android lane is not read as whole-screen coverage. | `f134` |
+| 3 | **Android's icons are hand-maintained and ungated** | Still the largest single source of visible difference between the two apps — four of six product marks, plus the document, KYC and ID-type glyphs. Give Android the generator and check `ios/verify.sh` has, or accept the divergence in writing. | `f132` |
+| 4 | **Two picker fixtures draw different content** | Android's ID-type golden lists Kenya's types with nothing selected; iOS's lists Ghana's with Passport selected. Both are legitimate, but the pair cannot be compared as it stands. Pick one country and one selection state for both. | here |
+| 5 | **The new-profile sheet fixtures differ** | Android fills three fields and leaves the phone on its placeholder; iOS fills four. Same point as #4 — align them so the pair is readable. | here |
+| 6 | **"Enhanced SmartSelfie™" wraps on iOS and not on Android** | Accepted for now: the row metrics are identical and the native switch is simply wider, which `components.json` → `Switch` predicts. If design wants the two titles to break the same way, that is a design ruling, not a code one. | here |
+| 7 | **The day header prints its date twice** | Unchanged and unchanged deliberately — both apps do it, so it is a twin change with both `verifications` baselines re-recorded together. | `ui-work-plan.md` §5 item 16b |
+| 8 | **The Flutter and Expo ports inherit all eight fixes** | They have not been written yet, so the cheapest moment is before, not after. The trailing-closure trap in #2 of the table above is Swift-specific, but the other seven are metric or structural and will port as written. | here |

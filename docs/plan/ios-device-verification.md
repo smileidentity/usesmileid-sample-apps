@@ -95,7 +95,13 @@ throttle or a real orientation change. The lane needs, in this order:
   `CODE_SIGN_IDENTITY: "-"` for every SDK. It is now conditional — ad hoc for the simulator, which
   is what gives that process a keychain at all, and a real identity for `iphoneos`. **No
   `DEVELOPMENT_TEAM` is committed**: it goes on the xcodebuild line, because a team baked into a
-  shared project breaks every other developer's build.
+  shared project breaks every other developer's build. **The value is `99P7YGX9Q6`** — the team that
+  owns the `iOS Team Provisioning Profile: *` wildcard, not the identifier in the parentheses of
+  `security find-identity`, which is the certificate's and provisions nothing. Two builds were spent
+  learning that, and a third on looking for the profile in `~/Library/MobileDevice/Provisioning
+  Profiles`: current Xcode keeps them in `~/Library/Developer/Xcode/UserData/Provisioning Profiles`,
+  and the legacy path does not exist on this machine at all. Install and launch with `devicectl`:
+  `xcrun devicectl device install app --device <udid> <path>.app`, then `device process launch`.
 - the system-alert path: `XCUIApplication(bundleIdentifier: "com.apple.springboard").alerts` on a
   device, `simctl privacy booted grant camera <bundle-id>` as the simulator's precondition
 - ~~proof of which build was verified. Version and build number are identical across rebuilds, so a
