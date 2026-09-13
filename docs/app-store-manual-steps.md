@@ -6,6 +6,22 @@ minutes.
 
 `docs/plan/app-store-release-ios.md` is the reasoning. This is the values.
 
+## From merge to live, in order
+
+Each phase is gated by the one before it. The account steps below are §1–§4; everything else is a
+workflow dispatch or a device in hand.
+
+| # | Phase | Who | Done when |
+|---|---|---|---|
+| 0 | **Merge this PR** with the two usage strings in it — one of them is an upload rejection (§6.6 of the plan) | reviewer | `main` carries it |
+| 1 | **Account actions, §1–§4 below** — the app record, the API key as four secrets, the TestFlight group, the App Privacy form. ~20 minutes | account holder | the four secrets exist and the record shows `com.usesmileid.sample.ios` |
+| 2 | **Actions → Publish to TestFlight → Run workflow.** Leave `build_number` empty the first time. Processing takes 10–20 minutes; export compliance is already answered by the plist, so the build goes straight to the internal group | anyone with the repo | the build shows *Ready to Test* and installs from the TestFlight app |
+| 3 | **Test it on a phone, from TestFlight** — the checklist in §5. The one expected red is landscape on document capture, until the orientation hook lands | a tester | §5 walked, defects filed |
+| 4 | **The orientation hook** — a `@UIApplicationDelegateAdaptor` returning `UseSmileIDOrientationController.shared.mask`, as the SDK's own sample does. Small PR, then TestFlight again | engineer | landscape holds on document capture |
+| 5 | **Actions → Publish to the App Store → Run workflow** with `marketing_version` `1.0`. It gates the listing first, then uploads a fresh build | anyone with the repo | the build appears under the version in App Store Connect |
+| 6 | **Fill the 1.0 version in App Store Connect** from `ios/store/` (§1's table), attach the build, answer the review questions (§6), **Add for Review → Submit** | account holder | status *Waiting for Review*; expect 24–48 hours |
+| 7 | **After approval** — release manually or on approval as chosen; then the follow-ups in the plan's §7.2 (camera panel, `push: main` with a path filter, pinning `storeshots`, aligning the two stores' demo data) | engineer | plan status set to SHIPPED, with what the release proved, as the Android plan's §7.3 does |
+
 ## 1. The app record
 
 **App Store Connect → Apps → + → New App.** Creating the record is what makes the bundle id
@@ -96,11 +112,35 @@ human clicks through it.
 of what to enter and why each answer is what it is. Do not answer it from memory; the answers are
 derived from what the app actually sends, and the derivation is written down.
 
-The short version: **Yes**, the app collects data; nine data types; **no tracking on any of them**.
+The short version: **Yes**, the app collects data; ten data types, one of them (Precise Location) declared because the SDK's manifest declares it; **no tracking on any of them**.
 
 Privacy Policy URL: `https://smile.id/privacy-policy` — the one that serves the page. The
 `usesmileid.com` variant returns 200 and redirects to the homepage, which is the defect Android's
 release found.
+
+## 5. What to test from TestFlight, before submitting
+
+Ten minutes on a phone, from the TestFlight install and not from Xcode — a TestFlight build is signed
+and provisioned the way the App Store build will be, and an Xcode install is not.
+
+- Launch → products grid, no fixture profiles, one *Default profile* in Settings
+- Camera prompt fires on the first capture, with the Smile ID wording, and **no** location or photo
+  prompt ever appears — the strings exist for the upload check, the SDK never asks
+- Scan sheet → *Simulate a successful scan* → session card counts down → start a flow → reach the
+  shutter → back out → the result card shows exactly one result
+- Document capture → rotate to landscape. **Expected to fail to hold until phase 4**; note it
+- Dark mode follows the system; Settings switches survive a relaunch
+- `usesmileid-sample-ios://settings` from Notes opens Settings
+- Verifications → seed nothing; the list is empty on a fresh install
+
+## 6. What App Review will ask, and the answers
+
+| Question | Answer |
+|---|---|
+| Does the app need an account? | No. Every screen is reachable on a fresh install; *Simulate* on the scan sheet reaches the session states |
+| Why does it declare location? | The SDK reads a cached position when the host already has permission, for fraud prevention. This app never requests it — the string satisfies the binary check |
+| Why does it declare photo library? | Document images can be imported through the system picker, which needs no permission; the string is for parity with the SDK's own declaration |
+| Contact for review | the account holder's email, plus a phone number Apple can reach |
 
 ## Then the lanes work
 

@@ -28,8 +28,8 @@ noted:
 
 ## 1. What is blocking, read out of the build files
 
-Six items. One is irreversible, two stop an upload at App Store Connect rather than at build time,
-and one is a default nobody chose.
+Seven items. One is irreversible, three stop an upload at App Store Connect rather than at build
+time, and one is a default nobody chose.
 
 1. **There is no distribution signing path at all.** `ios/App/project.yml` declares
    `CODE_SIGN_IDENTITY: "-"` (ad hoc) for the simulator and `Apple Development` for a device. Nothing
@@ -60,6 +60,15 @@ and one is a default nobody chose.
    decision. It is not declared in `project.yml` at all, which is how it went unnoticed. A universal
    app owes iPad screenshots at 2064 × 2752 and gets Apple's iPad review against a layout that has no
    iPad in it. §6.2 is the code that settles it.
+
+7. **Two usage strings are missing, and one of them is an upload rejection.** Found by comparing
+   against the v11 sample's `Info.plist` rather than by reading this tree, which is the argument for
+   the comparison. `UseSmileID.framework` references `CLLocationManager`, `CMMotionManager` and
+   `PHPickerViewController`; `UseSmileIDBridge.framework` references `LAContext`. App Store Connect's
+   missing-purpose-string check (ITMS-90683) runs against the binary's references, not its calls, so a
+   referenced `CLLocationManager` with no `NSLocationWhenInUseUsageDescription` fails the upload —
+   even though the SDK never prompts. All three Smile ID samples (v11 ×2, the v12 SDK's own) ship it;
+   this one did not. §6.6 has the ruling on each of the four references.
 
 **Checked and cleared, so it does not linger as a suspicion:** the deployment target is consistent —
 `project.yml` declares iOS 17.0 for the app, `SampleUI/Package.swift` sets the same floor, and the
@@ -313,6 +322,7 @@ over and only their names change.
 | App activity — Other actions | Usage Data → Product Interaction | Yes | No | No |
 | App info and performance — Crash logs | Diagnostics → Crash Data | Yes | No | No |
 | App info and performance — Diagnostics | Diagnostics → Performance Data | Yes | No | No |
+| — (declared by the SDK's manifest, not by Play) | Location → Precise Location | Yes | Yes | No |
 
 **Tracking is "No" on every row, and that is a claim with teeth.** Apple defines tracking as linking
 this app's data to third-party data for advertising or data-broker purposes. Nothing in the graph
@@ -355,8 +365,15 @@ dependencies is the common way this ships broken.
 |---|---|---|---|
 | `lottie-spm` | 4.6.1 | **yes** | FileTimestamp (C617.1) |
 | `sentry-cocoa` | 9.26.1 | **yes** | UserDefaults (CA92.1), SystemBootTime (35F9.1), FileTimestamp (C617.1); crash, performance and diagnostic data |
-| `ios-spm` | 12.1.1 | **no** | — |
-| `kamera-spm` | 1.0.6 | **no** | — |
+| `ios-spm` `UseSmileID` | 12.1.1 | **yes** | UserDefaults (CA92.1); PreciseLocation, PhotosorVideos and UserID (linked), CrashData and OtherDiagnosticData |
+| `ios-spm` `Bridge`, `VisionFace`, `VisionDocument` | 12.1.1 | **yes** | `NSPrivacyTracking: false` only — they collect nothing themselves |
+| `kamera-spm` | 1.0.6 | **no** | — but it links only CoreGraphics, CoreMedia, CoreVideo and ImageIO, and its binary references no required-reason API, so it has nothing to declare |
+
+**A correction, recorded because the first draft of this section got it wrong.** It said `ios-spm`
+ships no manifest. It does — one in every slice of all four XCFrameworks, byte-identical to the
+source repository's. The search that produced the wrong answer ran over `SourcePackages/checkouts/`,
+which holds the SPM wrapper package; the binaries land in `SourcePackages/artifacts/`, and that is
+where the manifests are. A finding about a binary dependency has to be made against the binary.
 
 Two consequences, and only one of them is this repository's to fix.
 
@@ -367,12 +384,13 @@ reading its own container — reason **CA92.1**. Nothing else in `ios/App/Source
 `ios/SampleUI/Sources` touches a required-reason API: file timestamps, disk space, system boot time
 and active keyboards return no hits.
 
-**The two Smile ID packages shipping no manifest is a finding against the SDK, not something to work
-around here** — `AGENTS.md` is explicit that a defect in the published artefact gets filed rather than
-patched locally. It does not block this release: the SDK is a first-party dependency of a first-party
-app, so its data collection is declared in the app's own manifest and App Privacy answers, and the
-required-reason APIs Apple asks about are declared by whoever calls them. It would block a *partner*
-shipping the SDK, which is why it is worth filing.
+**The SDK's manifest declares Precise Location, and that has to reach the App Privacy form.** The SDK
+reads `CLLocationManager.location` — the cached fix — whenever the host already holds the permission,
+and never asks for it (`UseSmileIDMetadataFactory.resolveGeolocation`). This app never asks either, so
+on this app the fix is always `nil` and nothing is sent. But the privacy report Xcode generates from
+the archive merges the SDK's manifest, and a reviewer comparing that report with the form sees
+Precise Location in one and not the other. §6.1's table therefore carries a Precise Location row,
+marked as coming from the SDK's declaration rather than from anything this app does.
 
 ### 6.4 Fixture defaults — re-audited before the store build
 
@@ -409,11 +427,35 @@ The same is true here and for the same reason, and the iOS suite already proves 
 rot: `UseSmileIDSampleLaunchArgumentUITests` runs the probes gate **under Release configuration**
 (`ios/verify.sh`, the release probes step), which is the configuration-blind assertion Android's test
 was added to make. What that leaves is the scan sheet's Simulate affordance surviving release, which
-`UseSmileIDSampleAppStoreListingTest` asserts alongside the copy limits — the declaration's truth
-depends on it, so it is asserted rather than remembered.
+`ios/verify.sh`'s release probes step asserts by running
+`testSimulateLinksASessionAndTheProductsStripCountsItDown` under Release configuration — the
+declaration's truth depends on it, so it is asserted rather than remembered.
 
 App Review notes therefore say: no account required, no special access, and Simulate is the
 affordance that reaches the session states.
+
+### 6.6 The four privacy-sensitive references, and what each one owes
+
+Read out of the shipped binaries with `nm -u`, then traced to the SDK source, then calibrated against
+what the three existing Smile ID samples ship — because a usage string is cheap and a wrong one is a
+rejection either way.
+
+| Reference | Where, and what for | Owes | Ruling |
+|---|---|---|---|
+| `CLLocationManager` | `UseSmileIDMetadataFactory` reads the cached fix when already authorised; never requests | `NSLocationWhenInUseUsageDescription` | **Required.** The upload check is on the reference. All three Smile ID samples ship it |
+| `PHPickerViewController` | `UseSmileIDDocumentCaptureControls`, gallery import of a document | `NSPhotoLibraryUsageDescription` | **Shipped, for parity.** PHPicker is out-of-process and needs no permission — the SDK's own comment says so — but every Smile ID sample ships the string and the SDK's manifest declares the type |
+| `LAContext` | `UseSmileIDPrivileges`: `canEvaluatePolicy` and `biometryType` for device-state metadata; never `evaluatePolicy`, so it never prompts | `NSFaceIDUsageDescription` | **Not shipped.** No Smile ID sample carries it and v11 is live with the same reference, which is the evidence the check does not fire on it |
+| `CMMotionManager` | `DeviceOrientationTracker`, accelerometer for capture orientation | nothing — iOS has no purpose string for the motion manager | **Nothing owed** |
+
+**One functional gap the same comparison found, and it is not release work.** The SDK's documentation
+(`Document-Capture-Orientation.md`, and `docs-v3` *performing-a-verification*) says document capture
+on iOS needs the host to return `UseSmileIDOrientationController.shared.mask` from
+`application(_:supportedInterfaceOrientationsFor:)` — *"the hook is what matters; it outranks
+Info.plist"*. The v12 SDK's own sample wires it in its `AppDelegate`. This app does not: it has no
+`AppDelegate`, and no `UISupportedInterfaceOrientations` either (iOS's default gives it portrait and
+both landscapes, which satisfies the plist half). Without the hook the SDK can request a rotation but
+not hold it. This is app behaviour, not listing work, and it belongs in a small PR of its own before
+the App Store submission rather than before TestFlight — recorded in §7.2.
 
 ## 7. Work items
 
@@ -447,6 +489,7 @@ affordance that reaches the session states.
 | 4 | No privacy manifest | Closed by REL-I2; `PrivacyInfo.xcprivacy` is in the archived app bundle, and §6.3 records what the graph does and does not declare |
 | 5 | Hard-coded build number | Closed by REL-I4, and it was not the one-liner it looked like — see below |
 | 6 | `TARGETED_DEVICE_FAMILY = "1,2"` | Closed by REL-I3; `UIDeviceFamily = [1]` in the built binary |
+| 7 | Missing usage strings | Closed 2026-09-13 after the v11 comparison; both in the archived app's plist, §6.6 has the ruling per reference |
 
 **§6's answers.** 6.1 is transcribed into `docs/app-store-privacy.md` with Play's mapping as the
 recorded reason. 6.2 is still phone-only: no size class was added and no iPad art exists, so what made
@@ -487,6 +530,12 @@ release lane's assertions all pass `-o -`, with a comment saying why.
   is a one-line change; aligning Android means re-rendering its committed art. **Owner's call, and it
   should end in `spec/` so the two cannot drift again.**
 
+- **The orientation hook is not wired** (§6.6). `UseSmileIDOrientationController.shared.mask` from
+  `supportedInterfaceOrientationsFor` is what the SDK documents and what its own sample does; this app
+  has no `AppDelegate` to return it from. A `@UIApplicationDelegateAdaptor` of a few lines. Before the
+  App Store submission, not before TestFlight — a tester on TestFlight is who finds out whether
+  document capture holds landscape.
+
 ### 7.3 What the review caught that the build did not
 
 Three passes over the branch found defects no green lane would have: worth recording because each is
@@ -502,6 +551,11 @@ a shape that will recur in the Flutter and Expo ports.
   imported no certificate, so automatic signing had nothing to find — and taking a secret on a
   `pull_request` trigger is what `AGENTS.md` forbids outright. It archives unsigned now
   (`CODE_SIGNING_ALLOWED=NO`), which needs no credential and still proves every declaration.
+- **The v11 comparison caught a seventh blocker.** No amount of reading this tree would have found the
+  missing `NSLocationWhenInUseUsageDescription`, because nothing in this tree uses location; the SDK's
+  binary references `CLLocationManager` and the upload check runs on references. The three existing
+  Smile ID samples all ship the string, which is the kind of fact only a sibling can tell you.
+- **The same comparison falsified this plan's own SDK-manifest finding.** §6.3 records how.
 - **`render-store-art.sh --frames` could ship the previous release's art in silence.** The `|| true`
   that record mode requires also swallowed a compile error; the script then composed from the stale
   frames and rewrote the lock from them, so every downstream gate agreed. It now compares the frames'
@@ -528,8 +582,11 @@ else; release notes written by a person; one monotonic build number across every
   the first rejection.
 - **`TARGETED_DEVICE_FAMILY` defaults to "1,2"** in an XcodeGen project that does not mention it,
   which is a decision nobody made showing up as an iPad review obligation.
-- **The SDK ships no privacy manifest on iOS.** It does not block a first-party app, and it will
-  block a partner. Both Flutter and Expo embed the same XCFrameworks, so both inherit the finding.
+- **`nm -u` the SDK binaries before the first upload.** Four privacy-sensitive classes are referenced
+  and one of them (`CLLocationManager`) fails the upload without its usage string, though the SDK
+  never prompts. Flutter and Expo embed the same XCFrameworks, so both owe the same two strings — and
+  the check is on `SourcePackages/artifacts/`, not `checkouts/`, which is also where the SDK's
+  manifests turn out to be.
 - **A generated Info.plist can silently ignore the build setting you are overriding.** XcodeGen bakes
   `CURRENT_PROJECT_VERSION` in as a literal unless the plist asks for `$(CURRENT_PROJECT_VERSION)`.
   Every version-derivation refusal can pass while the bundle still carries build 1. Assert the number

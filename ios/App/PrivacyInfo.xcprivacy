@@ -2,9 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- This app's own declaration only. Xcode merges a dependency's manifest into the privacy
-	     report, so Sentry's diagnostic types and its UserDefaults access are not repeated here.
-	     docs/app-store-privacy.md derives every answer below; update the two together. -->
+	<!-- This app's own declaration only. Xcode merges the SDK's and Sentry's manifests into the
+	     privacy report, so what they declare is not repeated here — docs/app-store-privacy.md
+	     derives every answer below and lists theirs; update the two together. -->
 	<key>NSPrivacyTracking</key>
 	<false/>
 	<key>NSPrivacyTrackingDomains</key>

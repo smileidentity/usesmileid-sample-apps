@@ -7,7 +7,7 @@ memory, and update this page in the same change as any behaviour that moves an a
 This page and `ios/App/PrivacyInfo.xcprivacy` are two halves of one declaration: the manifest is what
 the build ships, this is what a person types into the form. They must agree.
 
-Verified 2026-09-11 against the v12 app as built.
+Verified 2026-09-13 against the v12 app as built and the shipped 12.1.1 frameworks.
 
 ## The answers
 
@@ -24,9 +24,16 @@ Verified 2026-09-11 against the v12 app as built.
 | Diagnostics → Crash Data | Yes | No | No | App Functionality |
 | Diagnostics → Performance Data | Yes | No | No | App Functionality |
 | Diagnostics → Other Diagnostic Data | Yes | No | No | App Functionality |
+| Location → Precise Location | Yes | Yes | No | App Functionality |
 
 **Tracking:** No. The app does not link its data to third-party data for advertising or a data
 broker, and it does not use App Tracking Transparency because it has nothing to ask for.
+
+**Precise Location is declared because the SDK declares it, not because this app collects it.** The
+SDK reads the device's cached location only when the host app already holds the permission, and never
+asks; this app never asks either, so on this app the value is always absent. But Xcode's privacy report
+for the archive merges the SDK's manifest, which declares Precise Location, and a form that omits what
+the report shows is the mismatch a reviewer is looking for. Declared, with this note as the reason.
 
 ## Why these are the answers
 
@@ -62,14 +69,15 @@ has to change before the next release.
 ## What the privacy manifest declares, and what it deliberately does not
 
 Xcode merges every dependency's `PrivacyInfo.xcprivacy` into the privacy report, so the app's own
-manifest declares the app's own behaviour and repeats nobody.
+manifest declares what the app itself does and leaves each dependency's declaration to its own file.
 
 | Package | Ships a manifest | Declares |
 |---|---|---|
 | `lottie-spm` 4.6.1 | yes | FileTimestamp (C617.1) |
 | `sentry-cocoa` 9.26.1 | yes | UserDefaults (CA92.1), SystemBootTime (35F9.1), FileTimestamp (C617.1); crash, performance and diagnostic data |
-| `ios-spm` 12.1.1 | **no** | — |
-| `kamera-spm` 1.0.6 | **no** | — |
+| `ios-spm` 12.1.1 — `UseSmileID` | yes | UserDefaults (CA92.1); Precise Location, Photos or Videos and User ID (linked); Crash Data, Other Diagnostic Data |
+| `ios-spm` 12.1.1 — `Bridge`, `VisionFace`, `VisionDocument` | yes | `NSPrivacyTracking: false` only |
+| `kamera-spm` 1.0.6 | no | nothing to declare: its binary references no required-reason API and links no privacy-sensitive framework |
 
 **The app's own required-reason API usage is exactly `UserDefaults`**, at two call sites — the launch
 arguments' domain and the six settings switches — both of which read the app's own container, which
@@ -77,17 +85,30 @@ is reason **CA92.1**. Nothing in `ios/App/Sources` or `ios/SampleUI/Sources` tou
 required-reason API: file timestamps, disk space, system boot time and active keyboards return no
 hits.
 
-**The two Smile ID packages shipping no manifest is a finding against the SDK.** It does not block
-this release — a first-party app declares its own data collection, and every required-reason API in
-the binary is declared by whoever calls it. It does block a partner who embeds the SDK and is asked
-for a complete privacy report, which is why it is worth filing rather than working around.
+**The app repeats what it itself hands the SDK** — name, photos, the ID number — and leaves the rest
+to the manifests that own it. An earlier draft of this page said the SDK shipped no manifest; it does,
+in every XCFramework slice, and the draft had searched the wrong directory. Corrected 2026-09-13.
+
+## The usage strings the binary owes
+
+App Store Connect rejects an upload whose binary references a privacy-sensitive class with no purpose
+string in the Info.plist — on the reference, not the call. Read out of the shipped frameworks with
+`nm -u`:
+
+| Reference | Purpose string | Shipped |
+|---|---|---|
+| `CLLocationManager` (`UseSmileID`) | `NSLocationWhenInUseUsageDescription` | yes — required, the upload fails without it |
+| `PHPickerViewController` (`UseSmileID`) | `NSPhotoLibraryUsageDescription` | yes — not required for PHPicker, shipped for parity with every Smile ID sample |
+| `LAContext` (`UseSmileIDBridge`) | `NSFaceIDUsageDescription` | no — it never prompts, no Smile ID sample ships it, and v11 is live with the same reference |
+| `CMMotionManager` (`UseSmileID`) | none exists | — |
 
 ## App Review
 
 **No account required, and no special access.** Every screen is reachable on a fresh install, and the
 token session states are reached through the scan sheet's Simulate affordance, which is a product
-feature rather than a debug gate. The claim is asserted rather than remembered:
-`UseSmileIDSampleAppStoreListingTest` fails if Simulate stops surviving release configuration.
+feature rather than a debug gate. The claim is asserted rather than remembered: `ios/verify.sh` runs
+`testSimulateLinksASessionAndTheProductsStripCountsItDown` under Release configuration, so Simulate
+disappearing from the shipped build fails the lane.
 
 Review notes should say exactly that: no credentials, and Simulate on the scan sheet is how a
 reviewer reaches a linked session, its countdown and its expiry.
@@ -98,4 +119,4 @@ reviewer reaches a linked session, its countdown and its expiry.
 |---|---|---|
 | Answers still match what the app sends | Every release that changes submission, analytics or storage | 2026-09-11 |
 | The dependency graph still ships the manifests this page assumes | Every SDK version bump | 2026-09-11 |
-| `ios-spm` and `kamera-spm` still ship no manifest | Every SDK version bump — remove the finding when they do | 2026-09-11 |
+| The SDK binaries' privacy-sensitive references still match the usage strings shipped | Every SDK version bump — `nm -u` the device slices | 2026-09-13 |
