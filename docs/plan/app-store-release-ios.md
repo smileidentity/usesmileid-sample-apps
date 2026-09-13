@@ -279,8 +279,14 @@ changes it. Recorded here only so the next reader does not go looking for the mi
 ## 5. The copy — the product paragraphs travel, the fields do not
 
 `play-release-android.md` §8 ruled that all four listings share one set of product paragraphs, and
-`android/play/full-description.txt` is that set. The App Store description takes it unchanged, which
-means a `docs-v3` change still has one blast radius rather than four.
+`android/play/full-description.txt` is that set. The App Store description takes it with **one
+deliberate divergence**, ruled 2026-09-14: its opening sentence names the app as the store does —
+*"Smile ID is the reference app…"* where Play's still says *"UseSmileID Sample is…"*, because the
+first line a reviewer reads should not contradict the title above it. The product paragraphs
+themselves are unchanged, so a `docs-v3` change still has one blast radius. **The divergence closes
+when Android renames:** the Play title and the first sentence of `full-description.txt` move together,
+and the two files are identical again — recorded in the Android plan's follow-ups so the rename
+cannot land without it.
 
 **What the App Store forces to differ is field shape, not voice.** Its limits are not Play's, and one
 of them does not fit:
@@ -541,6 +547,8 @@ release lane's assertions all pass `-o -`, with a comment saying why.
 - **The products panel's lower third is empty** at 440 pt, where the goldens' 393 pt fills it — wider
   cards make a shorter grid. It does not show in the composed panel, because the frame crops the device
   below that point. Recorded so nobody re-finds it in the frame and assumes the panel is broken.
+- **The description's first sentence diverges from Play's** (§5) until Android renames to "Smile ID";
+  the Android rename changes the Play title and that sentence in the same PR.
 - ~~The two stores show different demo data for the same app.~~ **Ruled 2026-09-13: iOS takes
   Android's** — `UpTech Finance` / `KA` / session `9f3a2c71` at `7:59:12`, a countdown both apps'
   formatters actually produce. Both store-art tests now carry the same literals; lifting them into

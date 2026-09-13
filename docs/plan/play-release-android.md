@@ -599,6 +599,11 @@ None of these blocks anything, and none of them belongs to Android's critical pa
   touched for it now. The rename travels with the sample-ui port to the four SDKs — that is when those
   apps get built and when the collision first becomes real. `spec/app-identity.json` carries the target
   ids so the work is a lookup rather than a re-decision.
+- **The rename to "Smile ID" is owed, and it carries a sentence with it.** The iOS app shipped under the
+  store name "Smile ID" on 2026-09-13 (its plan's §5), so its description now opens *"Smile ID is the
+  reference app…"* while `full-description.txt` here still opens *"UseSmileID Sample is…"*. When the
+  Play title moves to "Smile ID", change that first sentence in the same PR — the two descriptions are
+  then identical again, and the shared-paragraph rule in §8 holds without an exception.
 - **REL-A14 stays a calendar item.** `targetSdk` is re-checked against Play's floor annually;
   `docs/play-data-safety.md` holds the date it was last done.
 - **Production promotion is a Console action**, and production is reviewed again on promotion.
