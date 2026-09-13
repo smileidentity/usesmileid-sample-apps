@@ -76,12 +76,16 @@ And on the version page, from `ios/store/`:
 | Field | Value |
 |---|---|
 | Name | `usesmileid-sample-ios CI` |
-| Access | **App Manager** |
-| Access to Cloud Managed Distribution Certificate | **ticked** — without it the export fails with *Cloud signing permission error*, because the pipeline creates its distribution certificate through this key |
+| Access | **Admin** |
 
-A key cannot be changed after it is generated, so an App Manager key made without that box ticked is
-useless to the pipeline and has to be replaced; an Admin key carries the permission implicitly but
-grants far more than CI needs. The `.p8` downloads **once** and cannot be downloaded again. Then add four repository secrets at
+**Why Admin and not App Manager.** The pipeline signs with a cloud-managed distribution certificate
+that Xcode creates and uses *through this key*, and App Store Connect grants that only to keys with
+the Admin role. An App Manager key can read and upload but is refused at signing —
+`403 FORBIDDEN_ERROR: You haven't been given access to cloud-managed distribution certificates` — and
+the grant is on the key, not on the person who generated it, so a user's own permission does not
+help. A key cannot be changed after it is generated, so the wrong role means a new key. The team's
+existing CI keys are Admin for the same reason. The `.p8` downloads **once** and cannot be downloaded
+again. Then add four repository secrets at
 **Settings → Secrets and variables → Actions**:
 
 | Secret | Where it comes from |
