@@ -77,8 +77,11 @@ And on the version page, from `ios/store/`:
 |---|---|
 | Name | `usesmileid-sample-ios CI` |
 | Access | **App Manager** |
+| Access to Cloud Managed Distribution Certificate | **ticked** — without it the export fails with *Cloud signing permission error*, because the pipeline creates its distribution certificate through this key |
 
-The `.p8` downloads **once** and cannot be downloaded again. Then add four repository secrets at
+A key cannot be changed after it is generated, so an App Manager key made without that box ticked is
+useless to the pipeline and has to be replaced; an Admin key carries the permission implicitly but
+grants far more than CI needs. The `.p8` downloads **once** and cannot be downloaded again. Then add four repository secrets at
 **Settings → Secrets and variables → Actions**:
 
 | Secret | Where it comes from |
