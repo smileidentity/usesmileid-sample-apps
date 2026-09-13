@@ -335,6 +335,7 @@ over and only their names change.
 | Play data type | App Store equivalent | Collected | Linked | Tracking |
 |---|---|---|---|---|
 | Personal info — Name | Contact Info → Name | Yes | Yes | No |
+| — (Play omits them; `FlowBuilderConfig` sends both) | Contact Info → Email Address, Phone Number | Yes | Yes | No |
 | Personal info — Other info | Identifiers → User ID; Sensitive Info | Yes | Yes | No |
 | Photos and videos — Photos | User Content → Photos or Videos | Yes | Yes | No |
 | Device or other IDs | Identifiers → Device ID | Yes | No | No |

@@ -604,6 +604,9 @@ None of these blocks anything, and none of them belongs to Android's critical pa
   reference app…"* while `full-description.txt` here still opens *"UseSmileID Sample is…"*. When the
   Play title moves to "Smile ID", change that first sentence in the same PR — the two descriptions are
   then identical again, and the shared-paragraph rule in §8 holds without an exception.
+- **Data safety owes two rows.** The user-details form sends email and phone with a submission, and
+  neither is declared. Found 2026-09-14 while the iOS App Privacy form was filled from the same
+  derivation; `docs/play-data-safety.md` marks them owed. Add both at the next Play release.
 - **REL-A14 stays a calendar item.** `targetSdk` is re-checked against Play's floor annually;
   `docs/play-data-safety.md` holds the date it was last done.
 - **Production promotion is a Console action**, and production is reviewed again on promotion.

@@ -7,7 +7,7 @@ memory, and update this page in the same change as any behaviour that moves an a
 This page and `ios/App/PrivacyInfo.xcprivacy` are two halves of one declaration: the manifest is what
 the build ships, this is what a person types into the form. They must agree.
 
-Verified 2026-09-13 against the v12 app as built and the shipped 12.1.1 frameworks.
+Verified 2026-09-14 against the v12 app as built and the shipped 12.1.1 frameworks.
 
 ## The answers
 
@@ -16,6 +16,8 @@ Verified 2026-09-13 against the v12 app as built and the shipped 12.1.1 framewor
 | Data type | Collected | Linked to the user | Used for tracking | Purpose |
 |---|---|---|---|---|
 | Contact Info → Name | Yes | Yes | No | App Functionality |
+| Contact Info → Email Address | Yes | Yes | No | App Functionality |
+| Contact Info → Phone Number | Yes | Yes | No | App Functionality |
 | User Content → Photos or Videos | Yes | Yes | No | App Functionality |
 | Sensitive Info | Yes | Yes | No | App Functionality |
 | Identifiers → User ID | Yes | Yes | No | App Functionality |
@@ -44,12 +46,20 @@ source and this is the translation:
 | Play data type | App Store equivalent |
 |---|---|
 | Personal info — Name | Contact Info → Name |
+| — (not on Play's form; see below) | Contact Info → Email Address, Phone Number |
 | Personal info — Other info (ID number, date of birth) | Sensitive Info, and Identifiers → User ID |
 | Photos and videos — Photos | User Content → Photos or Videos |
 | Device or other IDs | Identifiers → Device ID |
 | App activity — Other actions | Usage Data → Product Interaction |
 | App info and performance — Crash logs | Diagnostics → Crash Data |
 | App info and performance — Diagnostics | Diagnostics → Performance Data, Other Diagnostic Data |
+
+**Email and phone are collected, and Play's form does not say so.** The user-details form has both
+fields and `FlowBuilderConfig` hands them to the SDK as the job's `email` and `phoneNumber`, so they
+travel with a submission whenever the user fills them in. The first draft of this page mapped Play's
+answers and inherited Play's omission; the App Store form was corrected to twelve types on 2026-09-14
+before submission, and Play's Data safety form owes the same two rows — recorded in the Android plan's
+follow-ups. The privacy manifest carries both too, from the build after 103.
 
 Three points worth keeping, because each is a place the answer could be got wrong.
 

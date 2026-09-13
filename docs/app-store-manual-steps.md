@@ -122,7 +122,7 @@ human clicks through it.
 of what to enter and why each answer is what it is. Do not answer it from memory; the answers are
 derived from what the app actually sends, and the derivation is written down.
 
-The short version: **Yes**, the app collects data; ten data types, one of them (Precise Location) declared because the SDK's manifest declares it; **no tracking on any of them**.
+The short version: **Yes**, the app collects data; twelve data types, one of them (Precise Location) declared because the SDK's manifest declares it; **no tracking on any of them**. The form is not complete until you press **Publish** — Apple checks the published state, not the saved one.
 
 Privacy Policy URL: `https://smile.id/privacy-policy` — the one that serves the page. The
 `usesmileid.com` variant returns 200 and redirects to the homepage, which is the defect Android's

@@ -13,6 +13,7 @@ Verified 2026-08-28 against the v12 app as built.
 | Data type | Collected | Shared | Processed ephemerally | Required | Purpose |
 |---|---|---|---|---|---|
 | Personal info — Name | Yes | No | No | Required | App functionality |
+| Personal info — Email address, Phone number | **owed** — collected (the user-details form sends both with a submission), found 2026-09-14 while filling the App Store's form; add at the next Play release | | | | |
 | Personal info — Other info (ID number, date of birth) | Yes | No | No | Required | App functionality |
 | Photos and videos — Photos | Yes | No | No | Required | App functionality |
 | Device or other IDs | Yes | Yes | No | Required | App functionality, analytics |
