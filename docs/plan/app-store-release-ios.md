@@ -15,7 +15,10 @@ noted:
 
 - The **bundle id is `com.usesmileid.sample.ios`**, already declared in `ios/App/project.yml` and
   asserted by the shell's own spec test. It is permanent from the first upload.
-- The **store name takes the spec name**, "UseSmileID Sample", as Play's title did.
+- The **app is named "Smile ID"** — launcher label and store name — by owner ruling 2026-09-13, so the
+  listing reads as the product a partner searches for. Android, Flutter and Expo rename after this
+  release; the shared description still opens with the old name until Android's copy moves, and
+  that is the one visible seam accepted to keep the release moving.
 - **Phone-only** — §6.2 is the code that decides it, and it is the same code shape Android's §6.2 read.
 - The **app icon has landed** (#81) from `svgs/ios.svg`, gated by `scripts/generate_app_icon.py --check`
   in `ios/verify.sh`. §4 says why nothing here touches it.
@@ -274,7 +277,7 @@ of them does not fit:
 
 | Field | App Store limit | Play counterpart | Action |
 |---|---|---|---|
-| Name | 30 | title, 30 | "UseSmileID Sample" (17) — unchanged |
+| Name | 30 | title, 30 | "Smile ID" (8) — renamed 2026-09-13; Play's title follows later |
 | **Subtitle** | **30** | short description, 80 | **new copy needed**: Play's is 67 characters |
 | Description | 4000 | full description, 4000 | unchanged (3030) |
 | Promotional text | 170 | — | new, and editable without a build |
@@ -447,15 +450,20 @@ rejection either way.
 | `LAContext` | `UseSmileIDPrivileges`: `canEvaluatePolicy` and `biometryType` for device-state metadata; never `evaluatePolicy`, so it never prompts | `NSFaceIDUsageDescription` | **Not shipped.** No Smile ID sample carries it and v11 is live with the same reference, which is the evidence the check does not fire on it |
 | `CMMotionManager` | `DeviceOrientationTracker`, accelerometer for capture orientation | nothing — iOS has no purpose string for the motion manager | **Nothing owed** |
 
-**One functional gap the same comparison found, and it is not release work.** The SDK's documentation
-(`Document-Capture-Orientation.md`, and `docs-v3` *performing-a-verification*) says document capture
-on iOS needs the host to return `UseSmileIDOrientationController.shared.mask` from
+**One functional gap the same comparison found, closed here by owner ruling 2026-09-13.** The SDK's
+documentation (`Document-Capture-Orientation.md`, and `docs-v3` *performing-a-verification*) says
+document capture on iOS needs the host to return `UseSmileIDOrientationController.shared.mask` from
 `application(_:supportedInterfaceOrientationsFor:)` — *"the hook is what matters; it outranks
-Info.plist"*. The v12 SDK's own sample wires it in its `AppDelegate`. This app does not: it has no
-`AppDelegate`, and no `UISupportedInterfaceOrientations` either (iOS's default gives it portrait and
-both landscapes, which satisfies the plist half). Without the hook the SDK can request a rotation but
-not hold it. This is app behaviour, not listing work, and it belongs in a small PR of its own before
-the App Store submission rather than before TestFlight — recorded in §7.2.
+Info.plist"*. The v12 SDK's own sample wires it in its `AppDelegate`; this app had no `AppDelegate`
+and no `UISupportedInterfaceOrientations`, so the SDK could request a rotation but not hold it.
+`UseSmileIDSampleAppDelegate` now returns the mask through `@UIApplicationDelegateAdaptor`, and the
+plist declares portrait plus both landscapes so the mask has something to grant.
+
+**What that changes, stated so nobody reads it as a regression:** the SDK's default mask is
+**portrait**, so the app is now portrait-only everywhere except document capture — exactly what the
+SDK's own sample and the v11 sample do. `testRotatingWhileTheFlowIsMountedKeepsTheSameRun` used to
+assert the window went landscape; it now asserts it **stayed portrait**, which is the assertion that
+fails the day the hook is removed, and it still proves the run survives the attempt.
 
 ## 7. Work items
 
@@ -523,18 +531,11 @@ release lane's assertions all pass `-o -`, with a comment saying why.
 - **The products panel's lower third is empty** at 440 pt, where the goldens' 393 pt fills it — wider
   cards make a shorter grid. It does not show in the composed panel, because the frame crops the device
   below that point. Recorded so nobody re-finds it in the frame and assumes the panel is broken.
-- **The two stores show different demo data for the same app.** iOS renders `Kobo Bank` / `KB`;
-  Android renders `UpTech Finance` / `KA` (`android/sample-ui/src/test/kotlin/.../StoreArtTest.kt`).
-  Both are fixtures, so neither leaks anything — but a partner comparing the listings sees two
-  organisations for one app, which `AGENTS.md`'s uniform-visuals rule exists to prevent. Aligning iOS
-  is a one-line change; aligning Android means re-rendering its committed art. **Owner's call, and it
-  should end in `spec/` so the two cannot drift again.**
+- ~~The two stores show different demo data for the same app.~~ **Ruled 2026-09-13: iOS takes
+  Android's** — `UpTech Finance` / `KA` / session `9f3a2c71` at `7:59:12`, a countdown both apps'
+  formatters actually produce. Both store-art tests now carry the same literals; lifting them into
+  `spec/` so they cannot drift again is still worth doing when Android next touches its art.
 
-- **The orientation hook is not wired** (§6.6). `UseSmileIDOrientationController.shared.mask` from
-  `supportedInterfaceOrientationsFor` is what the SDK documents and what its own sample does; this app
-  has no `AppDelegate` to return it from. A `@UIApplicationDelegateAdaptor` of a few lines. Before the
-  App Store submission, not before TestFlight — a tester on TestFlight is who finds out whether
-  document capture holds landscape.
 
 ### 7.3 What the review caught that the build did not
 

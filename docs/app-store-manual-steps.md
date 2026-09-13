@@ -16,11 +16,10 @@ workflow dispatch or a device in hand.
 | 0 | **Merge this PR** with the two usage strings in it — one of them is an upload rejection (§6.6 of the plan) | reviewer | `main` carries it |
 | 1 | **Account actions, §1–§4 below** — the app record, the API key as four secrets, the TestFlight group, the App Privacy form. ~20 minutes | account holder | the four secrets exist and the record shows `com.usesmileid.sample.ios` |
 | 2 | **Actions → Publish to TestFlight → Run workflow.** Leave `build_number` empty the first time. Processing takes 10–20 minutes; export compliance is already answered by the plist, so the build goes straight to the internal group | anyone with the repo | the build shows *Ready to Test* and installs from the TestFlight app |
-| 3 | **Test it on a phone, from TestFlight** — the checklist in §5. The one expected red is landscape on document capture, until the orientation hook lands | a tester | §5 walked, defects filed |
-| 4 | **The orientation hook** — a `@UIApplicationDelegateAdaptor` returning `UseSmileIDOrientationController.shared.mask`, as the SDK's own sample does. Small PR, then TestFlight again | engineer | landscape holds on document capture |
-| 5 | **Actions → Publish to the App Store → Run workflow** with `marketing_version` `1.0`. It gates the listing first, then uploads a fresh build | anyone with the repo | the build appears under the version in App Store Connect |
-| 6 | **Fill the 1.0 version in App Store Connect** from `ios/store/` (§1's table), attach the build, answer the review questions (§6), **Add for Review → Submit** | account holder | status *Waiting for Review*; expect 24–48 hours |
-| 7 | **After approval** — release manually or on approval as chosen; then the follow-ups in the plan's §7.2 (camera panel, `push: main` with a path filter, pinning `storeshots`, aligning the two stores' demo data) | engineer | plan status set to SHIPPED, with what the release proved, as the Android plan's §7.3 does |
+| 3 | **Test it on a phone, from TestFlight** — the checklist in §5 | a tester | §5 walked, defects filed |
+| 4 | **Actions → Publish to the App Store → Run workflow** with `marketing_version` `1.0`. It gates the listing first, then uploads a fresh build | anyone with the repo | the build appears under the version in App Store Connect |
+| 5 | **Fill the 1.0 version in App Store Connect** from `ios/store/` (§1's table), attach the build, answer the review questions (§6), **Add for Review → Submit** | account holder | status *Waiting for Review*; expect 24–48 hours |
+| 6 | **After approval** — release manually or on approval as chosen; then the follow-ups in the plan's §7.2 (camera panel, `push: main` with a path filter, pinning `storeshots`) | engineer | plan status set to SHIPPED, with what the release proved, as the Android plan's §7.3 does |
 
 ## 1. The app record
 
@@ -30,7 +29,7 @@ permanent, so read the values before typing them.
 | Field | Value |
 |---|---|
 | Platform | iOS |
-| Name | `UseSmileID Sample` |
+| Name | `Smile ID` — **check it is free first**: the v11 sample's display name is also `Smile ID`, and App Store names are unique. If its listing holds the name, use `Smile ID Sample` here and in `ios/store/name.txt` |
 | Primary language | English (U.S.) |
 | Bundle ID | `com.usesmileid.sample.ios` |
 | SKU | `usesmileid-sample-ios` |
@@ -38,7 +37,7 @@ permanent, so read the values before typing them.
 
 **The bundle id must already exist as an identifier** before it appears in that menu. If it does not:
 **Certificates, Identifiers & Profiles → Identifiers → + → App IDs → App**, description
-`UseSmileID Sample`, explicit bundle id `com.usesmileid.sample.ios`, and **no capabilities** — the app
+`Smile ID`, explicit bundle id `com.usesmileid.sample.ios`, and **no capabilities** — the app
 uses the camera, which needs a usage string rather than an entitlement.
 
 Then, on the app's **App Information** page:
@@ -132,7 +131,8 @@ and provisioned the way the App Store build will be, and an Xcode install is not
   prompt ever appears — the strings exist for the upload check, the SDK never asks
 - Scan sheet → *Simulate a successful scan* → session card counts down → start a flow → reach the
   shutter → back out → the result card shows exactly one result
-- Document capture → rotate to landscape. **Expected to fail to hold until phase 4**; note it
+- The app holds portrait everywhere — rotate on the products grid and nothing happens — and document
+  capture rotates to landscape and **holds** it, which is the SDK's mask being honoured
 - Dark mode follows the system; Settings switches survive a relaunch
 - `usesmileid-sample-ios://settings` from Notes opens Settings
 - Verifications → seed nothing; the list is empty on a fresh install
