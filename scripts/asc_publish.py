@@ -49,6 +49,8 @@ SUPPORT_URL = "https://docs.smileidentity.com"
 MARKETING_URL = "https://smile.id"
 PRIVACY_POLICY_URL = "https://smile.id/privacy-policy"
 PRIMARY_CATEGORY, SECONDARY_CATEGORY = "DEVELOPER_TOOLS", "BUSINESS"
+# The seller name as the App Store shows it; the year is the release's, so it follows the calendar.
+COPYRIGHT = f"{time.gmtime().tm_year} Smile Identity, Inc."
 # 1320 × 2868 is the 6.9" iPhone; App Store Connect files it under the 6.7" display set.
 SCREENSHOT_DISPLAY_TYPE = "APP_IPHONE_67"
 PANELS = ["products", "token_session", "verifications", "verification_details", "settings"]
@@ -144,7 +146,12 @@ class ASC:
 
 
 def errors(body: dict) -> str:
-    return "; ".join(f"{e.get('title', '')}: {e.get('detail', '')}" for e in body.get("errors", [])) or json.dumps(body)[:300]
+    parts = []
+    for e in body.get("errors", []):
+        parts.append(f"{e.get('title', '')}: {e.get('detail', '')}")
+        for errs in ((e.get("meta") or {}).get("associatedErrors") or {}).values():
+            parts.extend(f"→ {ae.get('title', '')}: {ae.get('detail', '')}" for ae in errs)
+    return "; ".join(parts) or json.dumps(body)[:300]
 
 
 # ---- what the repository says the listing is ---------------------------------------------------
@@ -205,7 +212,7 @@ def plan(asc: ASC, args):
     print(f"  supportUrl         {SUPPORT_URL}\n  marketingUrl       {MARKETING_URL}\n  privacyPolicyUrl   {PRIVACY_POLICY_URL}")
     print(f"  categories         {PRIMARY_CATEGORY} / {SECONDARY_CATEGORY}\n  content rights     does not use third-party content")
     print(f"  age rating         every descriptor NONE → 4+\n  price              Free, base territory {BASE_TERRITORY}, all territories")
-    print(f"  release            {args.release}")
+    print(f"  release            {args.release}\n  copyright          {COPYRIGHT}")
     notes = read(REVIEW_NOTES_FILE)
     print(f"  review notes       {len(notes)}/4000  {notes.splitlines()[0][:70]!r}…")
     name, phone, email = review_contact(required=False)
@@ -250,14 +257,14 @@ def apply(asc: ASC, args):
     v = editable_version(asc, app_id)
     release = "MANUAL" if args.release == "manual" else "AFTER_APPROVAL"
     if v:
-        attrs = {"releaseType": release}
+        attrs = {"releaseType": release, "copyright": COPYRIGHT}
         if version_string and v["attributes"]["versionString"] != version_string:
             attrs["versionString"] = version_string
         asc.write("PATCH", f"appStoreVersions/{v['id']}", {"data": {"type": "appStoreVersions", "id": v["id"], "attributes": attrs}},
                   f"version {v['attributes']['versionString']} → {version_string or v['attributes']['versionString']}, release {release}")
     else:
         v = asc.write("POST", "appStoreVersions", {"data": {"type": "appStoreVersions",
-            "attributes": {"platform": "IOS", "versionString": version_string, "releaseType": release},
+            "attributes": {"platform": "IOS", "versionString": version_string, "releaseType": release, "copyright": COPYRIGHT},
             "relationships": {"app": {"data": {"type": "apps", "id": app_id}}}}}, f"create version {version_string}")["data"]
     vid = v["id"]
 
