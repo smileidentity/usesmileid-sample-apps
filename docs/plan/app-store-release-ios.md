@@ -1,6 +1,6 @@
 # Shipping the iOS sample to the App Store
 
-**Status:** ON TESTFLIGHT. Build 103 (`20260913.1211.103`) was uploaded 2026-09-13 and is in internal beta testing; §7.3 records what the upload proved. What is left is the tester walk, the merge, and the App Store submission, and `docs/app-store-manual-steps.md` is that sequence. This is the plan `ios-port-hardening.md` "Where to pick up" item 8 says does
+**Status:** SUBMITTED FOR REVIEW 2026-09-14. Version `20260913.1211.103` (build 103) is *Waiting for Review* with manual release; §7.3 records what the upload and the submission proved. What is left is Apple's review, the owner pressing Release, and the merge — `docs/app-store-manual-steps.md` is that sequence. This is the plan `ios-port-hardening.md` "Where to pick up" item 8 says does
 not exist yet, and it closes that half of the item — the device lane is the other half and has its own
 doc. Scope: the App Store Connect listing for `com.usesmileid.sample.ios`, the archive that backs it,
 the store-art pipeline, and a TestFlight lane with an App Store lane behind it. Not the app's
@@ -569,11 +569,21 @@ Checked against App Store Connect rather than against the build, as the Android 
 | Processing is fast for a 9 MB IPA | Uploaded 20:34Z, `VALID` by 20:36Z |
 | Automatic distribution | The group's own build list holds 103 and the build reports `internalBuildState: IN_BETA_TESTING` with notifications on. Read it from the group, not the build: a build's `betaGroups` relationship stays empty for an all-builds group, and attaching one by hand is refused with `422 Cannot add internal group to a build` — the access is implicit by design |
 
+| The listing is code, and Apple accepts it | `scripts/asc_publish.py apply` wrote every field from `ios/store/`; a **draft** review submission then accepted the version (`READY_FOR_REVIEW`), which is Apple's own completeness check, and `submit` moved it to *Waiting for Review* at 21:52 UTC on 2026-09-14 (14 September in the workspace's clock) |
+| Apple names what a submission lacks | The first draft was refused for two things, both in the 409's `meta.associatedErrors`: the version's `copyright`, and unpublished App Privacy answers. Nothing else — the rest of the listing had been complete since `apply` |
+| App Privacy owed two rows the derivation missed | Filling the form against the code found that the user-details form sends **email and phone** (`FlowBuilderConfig.swift:96–99`); both are declared now, on the manifest and in `docs/app-store-privacy.md`, and Play's Data safety form owes the same two |
+
 **Two things the upload taught that the plan had wrong.** A `workflow_dispatch` workflow is only
 runnable once its file is on the default branch, so `gh workflow run … --ref <branch>` returns 404 for
 a workflow that lives only on a PR — the first upload therefore ran from a Mac holding the key, and
 the workflows are proven on the first upload after the merge. And the API key's role is the whole of
 the cloud-signing permission: nothing on the key form or the user grants it separately.
+
+**Three App Store Connect API shapes the submission taught**, recorded for the script's next reader: a
+sparse `fields[…]` set silently drops any relationship it does not name (`build` on a version, and
+`appStoreVersion` on a submission item — both read back as absent until named); a version added to a
+draft submission reports `READY_FOR_REVIEW`, which is still editable and still ours to submit; and
+`whatsNew` does not exist on an app's first version, so the first release's copy omits it.
 
 ### 7.4 What the review caught that the build did not
 

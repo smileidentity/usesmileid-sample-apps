@@ -185,7 +185,7 @@ def has_live_version(asc: ASC, app_id: str) -> bool:
 
 def editable_version(asc: ASC, app_id: str) -> dict | None:
     versions = asc.get(f"apps/{app_id}/appStoreVersions", **{
-        "filter[appStoreState]": "PREPARE_FOR_SUBMISSION,DEVELOPER_REJECTED,REJECTED,METADATA_REJECTED,WAITING_FOR_REVIEW",
+        "filter[appStoreState]": "PREPARE_FOR_SUBMISSION,READY_FOR_REVIEW,DEVELOPER_REJECTED,REJECTED,METADATA_REJECTED,WAITING_FOR_REVIEW",
         "fields[appStoreVersions]": "versionString,appStoreState,releaseType,build", "include": "build", "fields[builds]": "version",
     })
     return versions["data"][0] if versions["data"] else None
@@ -411,13 +411,15 @@ def submit(asc: ASC, args):
         if not created:
             sys.exit(1)
         sub = created["data"]
-    items = asc.get(f"reviewSubmissions/{sub['id']}/items", **{"fields[reviewSubmissionItems]": "state", "include": "appStoreVersion"})["data"]
+    # The relationship has to be named in the sparse field set, or it is absent from the response.
+    items = asc.get(f"reviewSubmissions/{sub['id']}/items", **{"fields[reviewSubmissionItems]": "state,appStoreVersion", "include": "appStoreVersion"})["data"]
     if not any((i.get("relationships", {}).get("appStoreVersion", {}).get("data") or {}).get("id") == v["id"] for i in items):
-        item = asc.write("POST", "reviewSubmissionItems", {"data": {"type": "reviewSubmissionItems",
-                         "relationships": {"reviewSubmission": {"data": {"type": "reviewSubmissions", "id": sub["id"]}},
-                                           "appStoreVersion": {"data": {"type": "appStoreVersions", "id": v["id"]}}}}},
-                         f"add version {v['attributes']['versionString']} to the draft")
-        if not item:
+        code, out = asc.call("POST", "reviewSubmissionItems", {"data": {"type": "reviewSubmissionItems",
+                             "relationships": {"reviewSubmission": {"data": {"type": "reviewSubmissions", "id": sub["id"]}},
+                                               "appStoreVersion": {"data": {"type": "appStoreVersions", "id": v["id"]}}}}})
+        already = code == 409 and "already added" in errors(out)
+        print(f"  {'ok ' if code == 201 or already else 'ERR'} add version {v['attributes']['versionString']} to the draft ({code}{' — already in it' if already else ('' if code == 201 else ': ' + errors(out))})")
+        if code != 201 and not already:
             sys.exit("Apple refused the version as an item — the message above says what is missing")
         items = asc.get(f"reviewSubmissions/{sub['id']}/items", **{"fields[reviewSubmissionItems]": "state"})["data"]
     print("  items: " + ", ".join(i["attributes"]["state"] for i in items))
