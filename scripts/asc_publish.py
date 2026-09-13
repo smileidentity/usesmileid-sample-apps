@@ -172,10 +172,14 @@ def app(asc: ASC) -> dict:
     return data[0]
 
 
+def has_live_version(asc: ASC, app_id: str) -> bool:
+    return bool(asc.get(f"apps/{app_id}/appStoreVersions", **{"filter[appStoreState]": "READY_FOR_SALE,PENDING_DEVELOPER_RELEASE,PROCESSING_FOR_APP_STORE", "limit": "1"})["data"])
+
+
 def editable_version(asc: ASC, app_id: str) -> dict | None:
     versions = asc.get(f"apps/{app_id}/appStoreVersions", **{
         "filter[appStoreState]": "PREPARE_FOR_SUBMISSION,DEVELOPER_REJECTED,REJECTED,METADATA_REJECTED,WAITING_FOR_REVIEW",
-        "fields[appStoreVersions]": "versionString,appStoreState,releaseType", "include": "build", "fields[builds]": "version",
+        "fields[appStoreVersions]": "versionString,appStoreState,releaseType,build", "include": "build", "fields[builds]": "version",
     })
     return versions["data"][0] if versions["data"] else None
 
@@ -261,6 +265,9 @@ def apply(asc: ASC, args):
     locs = asc.get(f"appStoreVersions/{vid}/appStoreVersionLocalizations", **{"fields[appStoreVersionLocalizations]": "locale"})["data"]
     attrs = {field: read(name) for field, (name, _) in COPY.items()}
     attrs.update({"supportUrl": SUPPORT_URL, "marketingUrl": MARKETING_URL})
+    # A first version has nothing to be new against, and App Store Connect refuses the field (409).
+    if not has_live_version(asc, app_id):
+        attrs.pop("whatsNew", None)
     loc = next((l for l in locs if l["attributes"]["locale"] == LOCALE), None)
     if loc:
         asc.write("PATCH", f"appStoreVersionLocalizations/{loc['id']}", {"data": {"type": "appStoreVersionLocalizations", "id": loc["id"], "attributes": attrs}}, f"{LOCALE} copy")
@@ -271,12 +278,12 @@ def apply(asc: ASC, args):
     print("app information")
     infos = asc.get(f"apps/{app_id}/appInfos", **{"fields[appInfos]": "appStoreState"})["data"]
     info = infos[0]
-    cats = {c["attributes"]["platforms"] and c["id"]: c["id"] for c in asc.get("appCategories", **{"filter[platforms]": "IOS", "limit": "200"})["data"]}
     asc.write("PATCH", f"appInfos/{info['id']}", {"data": {"type": "appInfos", "id": info["id"],
-        "attributes": {"contentRightsDeclaration": "DOES_NOT_USE_THIRD_PARTY_CONTENT"},
         "relationships": {"primaryCategory": {"data": {"type": "appCategories", "id": PRIMARY_CATEGORY}},
                           "secondaryCategory": {"data": {"type": "appCategories", "id": SECONDARY_CATEGORY}}}}},
-        f"categories {PRIMARY_CATEGORY}/{SECONDARY_CATEGORY}, no third-party content")
+        f"categories {PRIMARY_CATEGORY}/{SECONDARY_CATEGORY}")
+    asc.write("PATCH", f"apps/{app_id}", {"data": {"type": "apps", "id": app_id,
+        "attributes": {"contentRightsDeclaration": "DOES_NOT_USE_THIRD_PARTY_CONTENT"}}}, "no third-party content")
     ilocs = asc.get(f"appInfos/{info['id']}/appInfoLocalizations", **{"fields[appInfoLocalizations]": "locale"})["data"]
     iloc = next((l for l in ilocs if l["attributes"]["locale"] == LOCALE), None)
     iattrs = {"subtitle": read(SUBTITLE_FILE), "privacyPolicyUrl": PRIVACY_POLICY_URL}
@@ -295,27 +302,28 @@ def apply(asc: ASC, args):
         asc.write("POST", "appPriceSchedules", {"data": {"type": "appPriceSchedules",
             "relationships": {"app": {"data": {"type": "apps", "id": app_id}},
                               "baseTerritory": {"data": {"type": "territories", "id": BASE_TERRITORY}},
-                              "manualPrices": {"data": [{"type": "appPrices", "id": "free"}]}}},
-            "included": [{"type": "appPrices", "id": "free", "attributes": {"startDate": None},
+                              "manualPrices": {"data": [{"type": "appPrices", "id": "${free}"}]}}},
+            "included": [{"type": "appPrices", "id": "${free}", "attributes": {"startDate": None},
                           "relationships": {"appPricePoint": {"data": {"type": "appPricePoints", "id": free["id"]}}}}]},
             "Free, base USA")
     else:
         print("  ERR no free price point found for the base territory — set Free in Pricing and Availability")
     territories = [t["id"] for t in asc.get("territories", limit="200")["data"]]
-    status, out = asc.call("POST", "https://api.appstoreconnect.apple.com/v2/appAvailabilities", {"data": {"type": "appAvailabilities",
-        "attributes": {"availableInNewTerritories": True},
-        "relationships": {"app": {"data": {"type": "apps", "id": app_id}},
-                          "territoryAvailabilities": {"data": [{"type": "territoryAvailabilities", "id": t} for t in territories]}},
-        "included": [{"type": "territoryAvailabilities", "id": t, "attributes": {"available": True},
-                      "relationships": {"territory": {"data": {"type": "territories", "id": t}}}} for t in territories]}})
-    print(f"  {'ok ' if status in (200, 201) else 'ERR'} availability: all {len(territories)} territories ({status}{'' if status in (200, 201) else ': ' + errors(out) + ' — set it under Pricing and Availability if this stays red'})")
+    code, out = asc.call("POST", "https://api.appstoreconnect.apple.com/v2/appAvailabilities", {
+        "data": {"type": "appAvailabilities",
+                 "attributes": {"availableInNewTerritories": True},
+                 "relationships": {"app": {"data": {"type": "apps", "id": app_id}},
+                                   "territoryAvailabilities": {"data": [{"type": "territoryAvailabilities", "id": "${" + t + "}"} for t in territories]}}},
+        "included": [{"type": "territoryAvailabilities", "id": "${" + t + "}", "attributes": {"available": True},
+                      "relationships": {"territory": {"data": {"type": "territories", "id": t}}}} for t in territories]})
+    print(f"  {'ok ' if code in (200, 201) else 'ERR'} availability: all {len(territories)} territories ({code}{'' if code in (200, 201) else ': ' + errors(out) + ' — set it under Pricing and Availability if this stays red'})")
 
     print("review details")
     name, phone, email = review_contact(required=True)
     rattrs = {"contactFirstName": name.split()[0], "contactLastName": " ".join(name.split()[1:]) or name.split()[0],
               "contactPhone": phone, "contactEmail": email, "demoAccountRequired": False, "notes": read(REVIEW_NOTES_FILE)}
-    status, existing = asc.call("GET", f"appStoreVersions/{vid}/appStoreReviewDetail")
-    if status == 200 and existing.get("data"):
+    code, existing = asc.call("GET", f"appStoreVersions/{vid}/appStoreReviewDetail")
+    if code == 200 and existing.get("data"):
         asc.write("PATCH", f"appStoreReviewDetails/{existing['data']['id']}", {"data": {"type": "appStoreReviewDetails", "id": existing["data"]["id"], "attributes": rattrs}}, "contact + notes")
     else:
         asc.write("POST", "appStoreReviewDetails", {"data": {"type": "appStoreReviewDetails", "attributes": rattrs,
@@ -335,7 +343,7 @@ def apply(asc: ASC, args):
         data = path.read_bytes()
         digest = hashlib.md5(data).hexdigest()
         current = have.get(path.name)
-        if current and current["attributes"].get("sourceFileChecksum") == digest and current["attributes"]["assetDeliveryState"]["state"] == "COMPLETE":
+        if current and current["attributes"].get("sourceFileChecksum") == digest and current["attributes"]["assetDeliveryState"]["state"] in ("COMPLETE", "UPLOAD_COMPLETE"):
             print(f"  ok  {panel} unchanged")
             continue
         if current:
@@ -370,7 +378,7 @@ def apply(asc: ASC, args):
 
 def status(asc: ASC, args=None):
     a = app(asc)
-    for v in asc.get(f"apps/{a['id']}/appStoreVersions", **{"fields[appStoreVersions]": "versionString,appStoreState,releaseType", "include": "build", "fields[builds]": "version", "limit": "3"})["data"]:
+    for v in asc.get(f"apps/{a['id']}/appStoreVersions", **{"fields[appStoreVersions]": "versionString,appStoreState,releaseType,build", "include": "build", "fields[builds]": "version", "limit": "3"})["data"]:
         b = (v.get("relationships", {}).get("build", {}).get("data") or {}).get("id")
         print(f"  {v['attributes']['versionString']:<24} {v['attributes']['appStoreState']:<28} release {v['attributes']['releaseType']:<15} build {'attached' if b else 'none'}")
     subs = asc.get("reviewSubmissions", **{"filter[app]": a["id"], "fields[reviewSubmissions]": "state,submittedDate,platform"})["data"]
