@@ -94,7 +94,11 @@ provisioning profile — but `AGENTS.md`'s never-commit list names team identifi
 goes public.
 
 **Do not create a distribution certificate by hand.** `-allowProvisioningUpdates` plus the API key
-creates and fetches one, which is why the pipeline needs no keychain in CI.
+creates and fetches one, which is why the pipeline needs no keychain in CI. **Check there is room for
+it first:** Apple allows three Apple Distribution certificates per team, and the first dispatch fails
+with *maximum number of certificates generated* if the team is already at three. **Certificates,
+Identifiers & Profiles → Certificates** — revoke one nothing uses before the first run, not after it
+fails.
 
 ## 3. TestFlight internal testing
 

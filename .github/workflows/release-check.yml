@@ -140,6 +140,15 @@ jobs:
           }
           check ITSAppUsesNonExemptEncryption false
           check CFBundleVersion "${{ github.run_number }}"
+          # Referenced by the SDK binary, so the upload check demands them; asserted as present, not by wording.
+          for key in NSCameraUsageDescription NSLocationWhenInUseUsageDescription NSPhotoLibraryUsageDescription; do
+            if [ -z "$(plutil -extract "$key" raw -o - "$APP" 2>/dev/null)" ]; then
+              echo "::error::$key is missing — the SDK binary references its API and the upload is rejected without it"
+              fail=1
+            else
+              echo "  $key present"
+            fi
+          done
           # The whole array: UIDeviceFamily.0 reads 1 for [1,2] as well, so it proved nothing.
           got="$(plutil -extract UIDeviceFamily json -o - "$APP" 2>/dev/null || echo MISSING)"
           if [ "$got" != "[1]" ]; then
