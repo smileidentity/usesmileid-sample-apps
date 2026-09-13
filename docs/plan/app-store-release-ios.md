@@ -558,7 +558,7 @@ Checked against App Store Connect rather than against the build, as the Android 
 | The date-led version reaches App Store Connect intact | The build sits in version train `20260913.1211.103`, build 103, minimum OS 17.0 |
 | Export compliance never prompts | The build's `usesNonExemptEncryption` reads `false` straight after processing — the plist key was read and no compliance question is pending |
 | Processing is fast for a 9 MB IPA | Uploaded 20:34Z, `VALID` by 20:36Z |
-| Automatic distribution | The build reports `internalBuildState: IN_BETA_TESTING` with notifications on; the internal group's access is implicit, which is how an all-builds group behaves |
+| Automatic distribution | The group's own build list holds 103 and the build reports `internalBuildState: IN_BETA_TESTING` with notifications on. Read it from the group, not the build: a build's `betaGroups` relationship stays empty for an all-builds group, and attaching one by hand is refused with `422 Cannot add internal group to a build` — the access is implicit by design |
 
 **Two things the upload taught that the plan had wrong.** A `workflow_dispatch` workflow is only
 runnable once its file is on the default branch, so `gh workflow run … --ref <branch>` returns 404 for
