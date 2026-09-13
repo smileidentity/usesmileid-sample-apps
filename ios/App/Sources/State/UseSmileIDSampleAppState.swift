@@ -284,7 +284,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
 
   var versionLabel: String {
     let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
-    return "UseSmileID Sample \(version)"
+    return "Smile ID \(version)"
   }
 
   /// The card and its counters are always on in debug; a release build shows them on request only.

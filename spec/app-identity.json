@@ -14,7 +14,7 @@
     {
       "platform": "ios",
       "bundleIdentifier": "com.usesmileid.sample.ios",
-      "displayName": "UseSmileID Sample",
+      "displayName": "Smile ID",
       "urlScheme": "usesmileid-sample-ios"
     },
     {
@@ -57,6 +57,7 @@
     "Every id is distinct per platform because a single device can host three of these four apps at once, plus their development counterparts. Ids that collide cannot be installed side by side, which is exactly the comparison these apps exist to enable.",
     "URL schemes are per app for the same reason: two apps claiming one scheme means a disambiguation prompt on Android and last-installed-wins on iOS, both of which break automation silently. The schemes are unchanged by the id move — they were never under the id root.",
     "That collision also applies WITHIN one app, across its build types: debugSuffix separates the application ids, but the URL scheme is declared in the shared manifest, so a debug and a release build of the same app both claim it. CONFIRMED ON A DEVICE 2026-08-13: with both variants installed, opening usesmileid-sample-android://settings resolves to android/com.android.internal.app.ResolverActivity rather than to either app. A deep link raises a chooser and automation hangs on a dialog no flow asserts — the same silent failure as two apps sharing a scheme, from a source that looks harmless. Install one variant at a time, which is why the Maestro invocation names APP_ID explicitly rather than defaulting. Suffixing the scheme per build type was considered and rejected: the scheme is spec data shared by four apps and their flows, and per-variant schemes would fork it.",
-    "On a device, the word 'Sample' in the label means the registry-consuming app from this repository; a label without it is a development harness from an SDK repo."
+    "On a device, the word 'Sample' in the label means the registry-consuming app from this repository; a label without it is a development harness from an SDK repo. SUPERSEDED FOR iOS 2026-09-13, see the next entry.",
+    "OWNER RULING 2026-09-13: the iOS app's launcher label and App Store name are 'Smile ID' — the product's name, as a partner searches for it — and the store listing ships under it. Android, Flutter and Expo keep 'UseSmileID Sample' until each renames after the iOS release, so displayNameFamily is unchanged for now. This inverts the label heuristic above on iOS: the registry-consuming app is the one named for the product, and the SDK repo's development harness is the one labelled 'UseSmileID'. The v11 sample is also labelled 'Smile ID', so a tester holding both sees two identical labels — a known cost of the ruling, not an oversight."
   ]
 }
