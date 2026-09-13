@@ -17,8 +17,8 @@ workflow dispatch or a device in hand.
 | 1 | **Account actions, §1–§4 below** — the app record, the API key as four secrets, the TestFlight group, the App Privacy form. ~20 minutes | account holder | the four secrets exist and the record shows `com.usesmileid.sample.ios` |
 | 2 | **Actions → Publish to TestFlight → Run workflow.** Leave `build_number` empty the first time. Processing takes 10–20 minutes; export compliance is already answered by the plist, so the build goes straight to the internal group | anyone with the repo | the build shows *Ready to Test* and installs from the TestFlight app |
 | 3 | **Test it on a phone, from TestFlight** — the checklist in §5 | a tester | §5 walked, defects filed |
-| 4 | **Actions → Publish to the App Store → Run workflow** with `marketing_version` `1.0`. It gates the listing first, then uploads a fresh build | anyone with the repo | the build appears under the version in App Store Connect |
-| 5 | **Fill the 1.0 version in App Store Connect** from `ios/store/` (§1's table), attach the build, answer the review questions (§6), **Add for Review → Submit** | account holder | status *Waiting for Review*; expect 24–48 hours |
+| 4 | **Actions → Publish to the App Store → Run workflow**, `marketing_version` left empty — the version derives as `<yyyyMMdd>.<SDK>.<build>`, v11's scheme. It gates the listing first, then uploads a fresh build | anyone with the repo | the build appears under the version in App Store Connect |
+| 5 | **Create the version in App Store Connect with the string the upload carried** (it is in the archive step's log and on the build in TestFlight), fill it from `ios/store/` (§1's table), attach the build, answer the review questions (§6), **Add for Review → Submit** | account holder | status *Waiting for Review*; expect 24–48 hours |
 | 6 | **After approval** — release manually or on approval as chosen; then the follow-ups in the plan's §7.2 (camera panel, `push: main` with a path filter, pinning `storeshots`) | engineer | plan status set to SHIPPED, with what the release proved, as the Android plan's §7.3 does |
 
 ## 1. The app record

@@ -58,7 +58,8 @@ time, and one is a default nobody chose.
    `project.yml:settings.base` with no bump mechanism. App Store Connect rejects a build whose number
    it has already seen for that marketing version, so a wasted upload burns one — the same failure
    mode as Play's `versionCode`, with a smaller blast radius because the number resets per version
-   train. §3.1 derives it the way Android derives `versionCode`.
+   train. §3.1 derives the build number the way Android derives `versionCode`, and the marketing
+   version the way v11 does.
 6. **`TARGETED_DEVICE_FAMILY` is `"1,2"`** in the generated project — XcodeGen's default, not a
    decision. It is not declared in `project.yml` at all, which is how it went unnoticed. A universal
    app owes iPad screenshots at 2064 × 2752 and gets Apple's iPad review against a layout that has no
@@ -229,8 +230,17 @@ the same code, and the local contract cannot drift from the gate.
 `xcodebuild` line. One monotonic source across both lanes, which is Android's §3.1 defect not being
 ported: v11 computed it two different ways on two tracks and made the pair unuploadable.
 
-`MARKETING_VERSION` stays the hand-bumped `1.0`, as `versionName` did — it is what the settings
-footer renders and it should change when a person decides it has.
+`MARKETING_VERSION` takes **v11's scheme**, by owner ruling 2026-09-13, so every Smile ID sample
+versions the same way: `<yyyyMMdd>.<SDK version without dots>.<build>` — `20260913.1211.90` is a build
+on 13 September against SDK 12.1.1. v11's Xcode Cloud step (`ci_pre_xcodebuild.sh`) writes it on
+every build; here `ios/verify.sh archive` derives it when none is passed, and the App Store lane's
+`marketing_version` input is an override rather than a requirement. **One deliberate change from
+v11:** its third component is the first four hex digits of the commit hash as a decimal, which is
+not ordered — two builds on one day can go backwards, and App Store Connect refuses a version lower
+than the last. Here the third component is the build number, so same-day builds order. The
+committed `1.0` in `project.yml` is only what a local build shows, exactly as v11's committed `1.5.1`
+is. The footer renders the version, so the goldens carry the same shape pinned to the fixed clock's
+day: `Smile ID 20260716.1211.61`.
 
 **Two build-time refusals, so a misconfigured lane fails before it burns a number** — the same
 argument that put `-PREQUIRE_UPLOAD_SIGNING` in Android's Gradle file rather than in a workflow step:
@@ -495,7 +505,7 @@ fails the day the hook is removed, and it still proves the run survives the atte
 | 2 | Identity permanent from the first upload | Unchanged and unchangeable; it is why both lanes are dispatch-only and why §1 of `docs/app-store-manual-steps.md` says read the values before typing them |
 | 3 | No `ITSAppUsesNonExemptEncryption` | Closed by REL-I1; `false` in the archived app's own Info.plist, not only in the source |
 | 4 | No privacy manifest | Closed by REL-I2; `PrivacyInfo.xcprivacy` is in the archived app bundle, and §6.3 records what the graph does and does not declare |
-| 5 | Hard-coded build number | Closed by REL-I4, and it was not the one-liner it looked like — see below |
+| 5 | Hard-coded build number and version | Closed by REL-I4 (build number) and, 2026-09-13, by porting v11's date-led marketing version with an ordered third component (§3.1); neither was the one-liner it looked like — see below |
 | 6 | `TARGETED_DEVICE_FAMILY = "1,2"` | Closed by REL-I3; `UIDeviceFamily = [1]` in the built binary |
 | 7 | Missing usage strings | Closed 2026-09-13 after the v11 comparison; both in the archived app's plist, §6.6 has the ruling per reference |
 
