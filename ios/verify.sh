@@ -228,17 +228,21 @@ if [ "$PHASE" = archive ]; then
   esac
   [ "$BUILD_NUMBER" -gt 0 ] || { echo "BUILD_NUMBER must be positive" >&2; exit 2; }
 
-  # Optional: unset keeps project.yml's hand-bumped value, which is what a local archive wants.
-  VERSION_ARGS=()
-  if [ -n "${MARKETING_VERSION:-}" ]; then
-    # Anchored, not a glob: `[0-9]*.[0-9]*` matched `1.0; anything` and refused the bare `1`.
-    if printf '%s' "$MARKETING_VERSION" | grep -Eq '^[0-9]+(\.[0-9]+){0,2}$'; then
-      VERSION_ARGS+=(MARKETING_VERSION="$MARKETING_VERSION")
-    else
-      echo "MARKETING_VERSION '$MARKETING_VERSION' is not one to three dot-separated numbers" >&2
-      exit 2
-    fi
+  # v11's scheme, so every Smile ID sample versions the same way: <yyyyMMdd>.<SDK version without
+  # dots>.<build>. The third component is the build number rather than v11's hashed git ref, so two
+  # archives on one day still order — an App Store version must exceed the one before it.
+  if [ -z "${MARKETING_VERSION:-}" ]; then
+    SDK_VERSION="$(sed -nE 's/^ *exactVersion: *([0-9.]+).*/\1/p' App/project.yml | head -1 | tr -d .)"
+    [ -n "$SDK_VERSION" ] || { echo "archive could not read the SDK's exactVersion from App/project.yml" >&2; exit 2; }
+    MARKETING_VERSION="$(date -u +%Y%m%d).${SDK_VERSION}.${BUILD_NUMBER}"
   fi
+  # Anchored, not a glob: `[0-9]*.[0-9]*` matched `1.0; anything` and refused the bare `1`.
+  if ! printf '%s' "$MARKETING_VERSION" | grep -Eq '^[0-9]+(\.[0-9]+){0,2}$'; then
+    echo "MARKETING_VERSION '$MARKETING_VERSION' is not one to three dot-separated numbers" >&2
+    exit 2
+  fi
+  echo "    version $MARKETING_VERSION, build $BUILD_NUMBER"
+  VERSION_ARGS=(MARKETING_VERSION="$MARKETING_VERSION")
 
   ARCHIVE="${ARCHIVE_PATH:-build/UseSmileIDSample.xcarchive}"
   EXPORT_DIR="${EXPORT_PATH:-build/export}"
@@ -255,7 +259,7 @@ if [ "$PHASE" = archive ]; then
     -allowProvisioningUpdates \
     DEVELOPMENT_TEAM="$DEVELOPMENT_TEAM" \
     CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
-    ${VERSION_ARGS[@]+"${VERSION_ARGS[@]}"} \
+    "${VERSION_ARGS[@]}" \
     ${SIGNING_ARGS[@]+"${SIGNING_ARGS[@]}"} \
     -quiet
 

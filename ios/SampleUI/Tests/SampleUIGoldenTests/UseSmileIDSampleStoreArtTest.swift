@@ -92,7 +92,7 @@ final class UseSmileIDSampleStoreArtTest: XCTestCase {
           settings: UseSmileIDSampleSettings(),
           organisation: "UpTech Finance",
           initials: "KA",
-          versionLabel: "Smile ID 1.0 · SDK 12.1.1",
+          versionLabel: "Smile ID 20260716.1211.61",
           consentBoundByToken: false,
           avatarColor: useSmileIDSampleAvatarColor(profileIndex: 0)
         ),

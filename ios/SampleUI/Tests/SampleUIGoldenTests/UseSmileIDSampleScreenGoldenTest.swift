@@ -375,7 +375,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
         settings: values,
         organisation: profile?.organisation ?? "Kobo Bank",
         initials: profile?.initials ?? "KB",
-        versionLabel: "Smile ID 1.0 · SDK 12.0.2",
+        versionLabel: "Smile ID 20260716.1211.61",
         consentBoundByToken: consentBound,
         avatarColor: useSmileIDSampleAvatarColor(profileIndex: profileIndex)
       ),
