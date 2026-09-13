@@ -29,7 +29,7 @@ permanent, so read the values before typing them.
 | Field | Value |
 |---|---|
 | Platform | iOS |
-| Name | `Smile ID` — **check it is free first**: the v11 sample's display name is also `Smile ID`, and App Store names are unique. If its listing holds the name, use `Smile ID Sample` here and in `ios/store/name.txt` |
+| Name | `Smile ID` — freed by the v11 sample's rename to `Smile ID Legacy App (v11)`, released 2026-09-13. The public search index lags App Store Connect by a few hours; if the field still reports the name as taken, that is the lag, not a collision |
 | Primary language | English (U.S.) |
 | Bundle ID | `com.usesmileid.sample.ios` |
 | SKU | `usesmileid-sample-ios` |
