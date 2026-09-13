@@ -387,21 +387,37 @@ def status(asc: ASC, args=None):
 
 
 def submit(asc: ASC, args):
+    """A draft submission first: Apple validates completeness when the version is added, before anything is sent."""
     a = app(asc)
     v = editable_version(asc, a["id"])
     if not v:
         sys.exit("no editable version to submit")
     if not (v.get("relationships", {}).get("build", {}).get("data")):
         sys.exit("the version has no build attached — run apply --build first")
-    print(f"submitting {v['attributes']['versionString']} for review")
-    sub = asc.write("POST", "reviewSubmissions", {"data": {"type": "reviewSubmissions", "attributes": {"platform": "IOS"},
-                    "relationships": {"app": {"data": {"type": "apps", "id": a["id"]}}}}}, "create submission")
-    if not sub:
-        sys.exit(1)
-    asc.write("POST", "reviewSubmissionItems", {"data": {"type": "reviewSubmissionItems",
-              "relationships": {"reviewSubmission": {"data": {"type": "reviewSubmissions", "id": sub["data"]["id"]}},
-                                "appStoreVersion": {"data": {"type": "appStoreVersions", "id": v["id"]}}}}}, "add the version")
-    asc.write("PATCH", f"reviewSubmissions/{sub['data']['id']}", {"data": {"type": "reviewSubmissions", "id": sub["data"]["id"], "attributes": {"submitted": True}}}, "submit")
+    drafts = [x for x in asc.get("reviewSubmissions", **{"filter[app]": a["id"], "filter[state]": "READY_FOR_REVIEW,UNRESOLVED_ISSUES", "fields[reviewSubmissions]": "state,platform"})["data"]]
+    if drafts:
+        sub = drafts[0]
+        print(f"reusing draft submission {sub['id']} ({sub['attributes']['state']})")
+    else:
+        created = asc.write("POST", "reviewSubmissions", {"data": {"type": "reviewSubmissions", "attributes": {"platform": "IOS"},
+                            "relationships": {"app": {"data": {"type": "apps", "id": a["id"]}}}}}, "create draft submission")
+        if not created:
+            sys.exit(1)
+        sub = created["data"]
+    items = asc.get(f"reviewSubmissions/{sub['id']}/items", **{"fields[reviewSubmissionItems]": "state", "include": "appStoreVersion"})["data"]
+    if not any((i.get("relationships", {}).get("appStoreVersion", {}).get("data") or {}).get("id") == v["id"] for i in items):
+        item = asc.write("POST", "reviewSubmissionItems", {"data": {"type": "reviewSubmissionItems",
+                         "relationships": {"reviewSubmission": {"data": {"type": "reviewSubmissions", "id": sub["id"]}},
+                                           "appStoreVersion": {"data": {"type": "appStoreVersions", "id": v["id"]}}}}},
+                         f"add version {v['attributes']['versionString']} to the draft")
+        if not item:
+            sys.exit("Apple refused the version as an item — the message above says what is missing")
+        items = asc.get(f"reviewSubmissions/{sub['id']}/items", **{"fields[reviewSubmissionItems]": "state"})["data"]
+    print("  items: " + ", ".join(i["attributes"]["state"] for i in items))
+    if args.dry_run:
+        print("dry run: the draft is complete as far as Apple validates at this step; nothing was submitted")
+        return
+    asc.write("PATCH", f"reviewSubmissions/{sub['id']}", {"data": {"type": "reviewSubmissions", "id": sub["id"], "attributes": {"submitted": True}}}, "submit for review")
     status(asc)
 
 
@@ -410,7 +426,7 @@ def main(argv=None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     p = sub.add_parser("plan"); p.add_argument("--build"); p.add_argument("--release", choices=["manual", "after-approval"], default="manual")
     p = sub.add_parser("apply"); p.add_argument("--build", required=True); p.add_argument("--release", choices=["manual", "after-approval"], default="manual")
-    sub.add_parser("submit")
+    p = sub.add_parser("submit"); p.add_argument("--dry-run", action="store_true", help="create the draft and add the version, but do not submit")
     sub.add_parser("status")
     args = parser.parse_args(argv)
     asc = ASC()
