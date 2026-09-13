@@ -4,6 +4,7 @@ import SwiftUI
 import XCTest
 
 /// The App Store panels: frames only, written to ios/store/frames and rendered by ios/store/render-store-art.sh.
+/// The demo organisation, initials and session are Android's `StoreArtTest` values, so the two listings show one app.
 @MainActor
 final class UseSmileIDSampleStoreArtTest: XCTestCase {
   /// 440 × 956 pt is the ios-phone preset's 1320 × 2868 at the recorder's 3× scale.
@@ -25,7 +26,7 @@ final class UseSmileIDSampleStoreArtTest: XCTestCase {
 
   func testProducts() {
     panel("products") {
-      ProductsScreen(state: .init(initials: "KB"), onProduct: { _ in }, onProfile: {}, onScan: {})
+      ProductsScreen(state: .init(initials: "KA"), onProduct: { _ in }, onProfile: {}, onScan: {})
     }
   }
 
@@ -33,7 +34,7 @@ final class UseSmileIDSampleStoreArtTest: XCTestCase {
   func testTokenSession() {
     panel("token_session") {
       ProductsScreen(
-        state: .init(initials: "KB", sessionId: "a41f", sessionRemaining: "07:12"),
+        state: .init(initials: "KA", sessionId: "9f3a2c71", sessionRemaining: "7:59:12"),
         onProduct: { _ in },
         onProfile: {},
         onScan: {}
@@ -89,9 +90,9 @@ final class UseSmileIDSampleStoreArtTest: XCTestCase {
       SettingsScreen(
         state: .init(
           settings: UseSmileIDSampleSettings(),
-          organisation: "Kobo Bank",
-          initials: "KB",
-          versionLabel: "UseSmileID Sample 1.0 · SDK 12.1.1",
+          organisation: "UpTech Finance",
+          initials: "KA",
+          versionLabel: "Smile ID 1.0 · SDK 12.1.1",
           consentBoundByToken: false,
           avatarColor: useSmileIDSampleAvatarColor(profileIndex: 0)
         ),
