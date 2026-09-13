@@ -30,6 +30,7 @@ LIMITS = {
     "promotional-text.txt": 170,
     "description.txt": 4000,
     "whats-new.txt": 4000,
+    "review-notes.txt": 4000,
 }
 
 # The ios-phone preset. The frames are rendered at it too, so a recorder on a 2x device is caught
