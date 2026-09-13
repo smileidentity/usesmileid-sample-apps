@@ -1,6 +1,6 @@
 # Shipping the iOS sample to the App Store
 
-**Status:** READY FOR THE ACCOUNT ACTIONS. Every item but the camera panel is landed and walked (§7.1); what is left needs an App Store Connect account, and `docs/app-store-manual-steps.md` is that list. This is the plan `ios-port-hardening.md` "Where to pick up" item 8 says does
+**Status:** ON TESTFLIGHT. Build 103 (`20260913.1211.103`) was uploaded 2026-09-13 and is in internal beta testing; §7.3 records what the upload proved. What is left is the tester walk, the merge, and the App Store submission, and `docs/app-store-manual-steps.md` is that sequence. This is the plan `ios-port-hardening.md` "Where to pick up" item 8 says does
 not exist yet, and it closes that half of the item — the device lane is the other half and has its own
 doc. Scope: the App Store Connect listing for `com.usesmileid.sample.ios`, the archive that backs it,
 the store-art pipeline, and a TestFlight lane with an App Store lane behind it. Not the app's
@@ -547,7 +547,26 @@ release lane's assertions all pass `-o -`, with a comment saying why.
   `spec/` so they cannot drift again is still worth doing when Android next touches its art.
 
 
-### 7.3 What the review caught that the build did not
+### 7.3 What the first upload proved, 2026-09-13
+
+Checked against App Store Connect rather than against the build, as the Android plan's §7.3 did:
+
+| Claim | How it was confirmed |
+|---|---|
+| Cloud signing works through the API key with no keychain anywhere | `exportArchive` created `iOS Team Store Provisioning Profile: com.usesmileid.sample.ios` and a managed Distribution certificate on the team; the IPA carried `get-task-allow=false` |
+| The key has to be **Admin** | An App Manager key was refused at signing — `403 FORBIDDEN_ERROR: You haven't been given access to cloud-managed distribution certificates` — and the grant is on the key, not the person. §3's secret is an Admin key for that reason alone |
+| The date-led version reaches App Store Connect intact | The build sits in version train `20260913.1211.103`, build 103, minimum OS 17.0 |
+| Export compliance never prompts | The build's `usesNonExemptEncryption` reads `false` straight after processing — the plist key was read and no compliance question is pending |
+| Processing is fast for a 9 MB IPA | Uploaded 20:34Z, `VALID` by 20:36Z |
+| Automatic distribution | The build reports `internalBuildState: IN_BETA_TESTING` with notifications on; the internal group's access is implicit, which is how an all-builds group behaves |
+
+**Two things the upload taught that the plan had wrong.** A `workflow_dispatch` workflow is only
+runnable once its file is on the default branch, so `gh workflow run … --ref <branch>` returns 404 for
+a workflow that lives only on a PR — the first upload therefore ran from a Mac holding the key, and
+the workflows are proven on the first upload after the merge. And the API key's role is the whole of
+the cloud-signing permission: nothing on the key form or the user grants it separately.
+
+### 7.4 What the review caught that the build did not
 
 Three passes over the branch found defects no green lane would have: worth recording because each is
 a shape that will recur in the Flutter and Expo ports.
