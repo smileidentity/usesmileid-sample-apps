@@ -55,11 +55,17 @@ targets:
     info:
       path: Info.plist
       properties:
-        CFBundleDisplayName: UseSmileID Sample
+        # The product's name, by owner ruling 2026-09-13; Android renames after this release.
+        CFBundleDisplayName: Smile ID
         # Placeholders, or XcodeGen bakes the numbers in and every upload carries build 1.
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         UILaunchScreen: {}
+        # Declared so the SDK's mask can grant landscape during document capture; the hook, not this list, decides.
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
         # HTTPS only, so exempt; without the key every TestFlight build waits on a human to say so.
         ITSAppUsesNonExemptEncryption: false
         # The SDK opens the camera; without this the first capture kills the app rather than prompting.

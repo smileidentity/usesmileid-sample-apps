@@ -94,9 +94,10 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     XCUIDevice.shared.orientation = .landscapeLeft
     defer { XCUIDevice.shared.orientation = .portrait }
     XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 10), "the flow did not survive the rotation")
-    // Or the assertion above passes vacuously against an app locked to portrait.
+    // The SDK's mask is portrait outside document capture, and the app delegate returns it: a
+    // window that went landscape here means the hook is no longer wired.
     let window = app.windows.element(boundBy: 0).frame
-    XCTAssertGreaterThan(window.width, window.height, "the app did not rotate, so nothing was rebuilt")
+    XCTAssertLessThan(window.width, window.height, "the app rotated, so the SDK's orientation mask is not being honoured")
 
     // The same run, not a second one: a restart would have re-run the gate and the counters with it.
     app.buttons["si_deny_button"].tap()
