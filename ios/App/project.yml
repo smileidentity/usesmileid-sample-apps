@@ -64,6 +64,10 @@ targets:
         ITSAppUsesNonExemptEncryption: false
         # The SDK opens the camera; without this the first capture kills the app rather than prompting.
         NSCameraUsageDescription: Smile ID uses the camera to capture your selfie and documents.
+        # Required by the upload check: the SDK binary references CLLocationManager, though it never prompts.
+        NSLocationWhenInUseUsageDescription: Smile ID uses your location to help prevent fraud.
+        # PHPicker needs no permission, but every Smile ID sample ships the string and the SDK declares the type.
+        NSPhotoLibraryUsageDescription: Smile ID uses your photo library to import a document image.
         CFBundleURLTypes:
           - CFBundleURLName: com.usesmileid.sample.ios
             CFBundleURLSchemes: [usesmileid-sample-ios]
