@@ -1,0 +1,7 @@
+No account, credentials or special access are needed. Every screen is reachable on a fresh install.
+
+To see the token session states, open the scan sheet from the products screen and choose "Simulate a successful scan": it mints a fixture token, links a session, and shows the countdown and the flow handoff. No real token or partner exists behind it.
+
+Verification runs go to the Smile ID sandbox. Starting a product opens the SDK's camera flow, which is where the camera prompt appears.
+
+Location and photo-library usage strings are declared because the SDK references those APIs; this app never requests either permission, and no location or photo prompt appears in normal use.

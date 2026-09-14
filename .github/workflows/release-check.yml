@@ -8,6 +8,10 @@ on:
     paths:
       - 'android/play/**'
       - 'android/app/build.gradle.kts'
+      - 'ios/store/**'
+      - 'ios/App/project.yml'
+      - 'ios/App/PrivacyInfo.xcprivacy'
+      - 'ios/verify.sh'
       - '.github/workflows/release-check.yml'
 
 concurrency:
@@ -75,3 +79,92 @@ jobs:
           else
             echo "::notice::no rendered panels yet — android/play/render-store-art.sh has not been run with a camera frame"
           fi
+
+  archive:
+    name: iOS archive and store art
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      # No fetch-depth: the build number here is the run number, and this job runs no git command.
+      - uses: actions/checkout@v7
+
+      - name: Select Xcode
+        run: |
+          for candidate in /Applications/Xcode_${XCODE_VERSION}.app /Applications/Xcode.app; do
+            if [ -d "$candidate" ]; then sudo xcode-select -s "$candidate"; break; fi
+          done
+          BUILD="$(xcodebuild -version | tail -1)"
+          if [ "$BUILD" != "Build version $XCODE_BUILD" ]; then
+            echo "::warning title=Xcode build drifted::The archive links against this runner's SDK, \
+            and it is $BUILD rather than the pinned $XCODE_BUILD."
+          fi
+          xcodebuild -version
+        env:
+          XCODE_VERSION: "26.6"
+          XCODE_BUILD: 17F113
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Panels are store-legal by the tool that made them
+        run: |
+          ls ios/store/screenshots/*.png >/dev/null 2>&1 \
+            || { echo "::error::no rendered panels — run ios/store/render-store-art.sh"; exit 1; }
+          for f in ios/store/screenshots/*.png; do
+            npx --yes -p storeshots-mcp storeshots validate --preset ios-phone "$f"
+          done
+
+      # Unsigned on purpose: this lane holds no credential, and an archive that needs one would be
+      # red on every PR. What it proves is that the shipped configuration still builds and still
+      # declares the four things an upload is rejected for. verify.sh runs the listing check first.
+      - name: Archive
+        run: ios/verify.sh archive
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+          ARCHIVE_UNSIGNED: "1"
+          EXPORT_ARCHIVE_ONLY: "1"
+
+      - name: The archive declares what an upload is rejected for
+        run: |
+          APP=ios/build/UseSmileIDSample.xcarchive/Products/Applications/UseSmileIDSample.app/Info.plist
+          fail=0
+          check() {
+            # -o - or plutil rewrites the plist it was asked to read, which then fails every later check.
+            got="$(plutil -extract "$1" raw -o - "$APP" 2>/dev/null || echo MISSING)"
+            if [ "$got" != "$2" ]; then
+              echo "::error::$1 is '$got', expected '$2'"
+              fail=1
+            else
+              echo "  $1 = $got"
+            fi
+          }
+          check ITSAppUsesNonExemptEncryption false
+          check CFBundleVersion "${{ github.run_number }}"
+          # v11's date-led scheme, so a lane that fell back to the committed 1.0 is caught here.
+          ver="$(plutil -extract CFBundleShortVersionString raw -o - "$APP" 2>/dev/null || echo MISSING)"
+          if printf '%s' "$ver" | grep -Eq '^[0-9]{8}\.[0-9]+\.${{ github.run_number }}$'; then
+            echo "  CFBundleShortVersionString = $ver"
+          else
+            echo "::error::CFBundleShortVersionString is '$ver', expected <yyyyMMdd>.<sdk>.${{ github.run_number }}"
+            fail=1
+          fi
+          # Referenced by the SDK binary, so the upload check demands them; asserted as present, not by wording.
+          for key in NSCameraUsageDescription NSLocationWhenInUseUsageDescription NSPhotoLibraryUsageDescription; do
+            if [ -z "$(plutil -extract "$key" raw -o - "$APP" 2>/dev/null)" ]; then
+              echo "::error::$key is missing — the SDK binary references its API and the upload is rejected without it"
+              fail=1
+            else
+              echo "  $key present"
+            fi
+          done
+          # The whole array: UIDeviceFamily.0 reads 1 for [1,2] as well, so it proved nothing.
+          got="$(plutil -extract UIDeviceFamily json -o - "$APP" 2>/dev/null || echo MISSING)"
+          if [ "$got" != "[1]" ]; then
+            echo "::error::UIDeviceFamily is '$got', expected [1] — the app is specified phone-only"
+            fail=1
+          else
+            echo "  UIDeviceFamily = $got"
+          fi
+          test -f "$(dirname "$APP")/PrivacyInfo.xcprivacy" \
+            || { echo "::error::the archive ships no privacy manifest"; fail=1; }
+          exit $fail

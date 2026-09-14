@@ -1,0 +1,92 @@
+name: Publish to the App Store
+
+# Dispatch only, permanently. iOS has one upload for both destinations, so what separates this lane
+# from TestFlight is that it gates the listing first: a build that reaches a public release must
+# carry store art and copy App Store Connect will accept. Submitting for review stays a Console
+# action, as Play's production promotion does.
+on:
+  workflow_dispatch:
+    inputs:
+      marketing_version:
+        description: Override the version; empty derives <yyyyMMdd>.<SDK version>.<build>, e.g. 20260913.1211.90
+        required: false
+      build_number:
+        description: Override the build number; the commit count is used when this is empty
+        required: false
+
+concurrency:
+  group: publish-ios
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Select Xcode
+        run: |
+          for candidate in /Applications/Xcode_${XCODE_VERSION}.app /Applications/Xcode.app; do
+            if [ -d "$candidate" ]; then sudo xcode-select -s "$candidate"; break; fi
+          done
+          BUILD="$(xcodebuild -version | tail -1)"
+          if [ "$BUILD" != "Build version $XCODE_BUILD" ]; then
+            echo "::warning title=Xcode build drifted::The uploaded binary links against this \
+            runner's SDK, and it is $BUILD rather than the pinned $XCODE_BUILD."
+          fi
+          xcodebuild -version
+        env:
+          XCODE_VERSION: "26.6"
+          XCODE_BUILD: 17F113
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      # umask first: the default leaves the private key world-readable on the runner.
+      - name: Materialise the App Store Connect API key
+        run: |
+          case "$KEY_ID" in
+            "" | *[!A-Z0-9]*) echo "::error::APP_STORE_CONNECT_KEY_ID is not a key id"; exit 1 ;;
+          esac
+          umask 077
+          mkdir -p "$HOME/.appstoreconnect/private_keys"
+          printf '%s' "$KEY" > "$HOME/.appstoreconnect/private_keys/AuthKey_${KEY_ID}.p8"
+        env:
+          KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+
+      # The same commit shipped to TestFlight already carries this number, and App Store Connect
+      # rejects a repeat for a marketing version it has seen, so the override is how that run wins.
+      - name: Build number
+        id: version
+        run: echo "build=${OVERRIDE:-$(git rev-list --count HEAD)}" >> "$GITHUB_OUTPUT"
+        env:
+          OVERRIDE: ${{ inputs.build_number }}
+
+      - name: Archive and upload
+        run: ios/verify.sh archive
+        env:
+          DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
+          BUILD_NUMBER: ${{ steps.version.outputs.build }}
+          MARKETING_VERSION: ${{ inputs.marketing_version }}
+          EXPORT_DESTINATION: upload
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+
+      - name: Remove the API key
+        if: always()
+        run: rm -rf ~/.appstoreconnect/private_keys
+
+      - name: What is still an owner action
+        run: |
+          echo "::notice::Uploaded build $BUILD${VERSION:+ as $VERSION}; the version is in the archive step's log."
+          echo "::notice::Attaching it to a version and submitting for review is a Console action."
+        env:
+          BUILD: ${{ steps.version.outputs.build }}
+          VERSION: ${{ inputs.marketing_version }}
