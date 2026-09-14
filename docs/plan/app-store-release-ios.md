@@ -290,8 +290,11 @@ first line a reviewer reads should not contradict the title above it. The produc
 themselves are unchanged, so a `docs-v3` change still has one blast radius. **The divergence closes
 when Android renames:** the Play title and the first sentence of `full-description.txt` move together,
 and the two files are identical again — recorded in the Android plan's follow-ups so the rename
-cannot land without it. **Closed 2026-09-14:** Android renamed, the files are identical, and
-`scripts/check_store_listing.py` holds them so.
+cannot land without it. **Closed 2026-09-14** for the sentence: Android renamed, and both listings now
+open identically. The bodies diverged the same day by a second ruling — Play dropped the per-product
+paragraphs (its §5) while this version sat in the review queue — so `scripts/check_store_listing.py`
+now holds the invariant that outlives the gap: both listings name the same six products. This
+description takes Play's shorter text on the next version, see §7.2.
 
 **What the App Store forces to differ is field shape, not voice.** Its limits are not Play's, and one
 of them does not fit:
@@ -543,6 +546,12 @@ release lane's assertions all pass `-o -`, with a comment saying why.
 
 ### 7.2 What is owed, and what it does not block
 
+- **This description takes Play's shorter text on the next version.** Play dropped the per-product
+  paragraphs on 2026-09-14 and kept the six names (its §5). This one could not follow: description is
+  per-version metadata and 20260913.1211.103 was already in the review queue. Copy
+  `android/play/full-description.txt` over `ios/store/description.txt` when the next version is created,
+  which is after the current submission reaches a verdict. The listing check holds the product set in
+  the meantime, so the gap cannot widen unnoticed.
 - **The camera panel** needs a device, exactly as Android's REL-A9 does. The composer already has its
   slot; five panels are rendered and Apple requires one, so it blocks nothing.
 - **The `verification_details` panel is the weak one**, and it is weak for precisely the reason Android

@@ -407,6 +407,20 @@ agree with each other — a partner reading the listing next to the app should n
 product. The trademark still renders as `docs-v3` writes it. Everything else in the copy follows
 `docs-v3` unchanged.
 
+**Owner ruling 2026-09-14: the per-product paragraphs come out of Play's description.** They restated
+`docs-v3` in full, so every product change meant re-editing the listing. The six product names stay,
+because **Play indexes the full description for search** and those names are what a partner searches
+for; what goes is the mechanism paragraph under each, which `docs.smileidentity.com` already owns and
+keeps current. The description drops from 3022 characters to 1016.
+
+**Play moves first and alone.** The App Store description is per-version metadata and version
+20260913.1211.103 was sitting in Apple's review queue when this was ruled, so editing it would have
+meant touching a submitted version. iOS takes the same text on its next version, which is recorded in
+that plan's §7.2. Until then the two descriptions differ by those paragraphs, deliberately, and
+`scripts/check_store_listing.py` enforces the invariant that survives the gap: both listings name the
+same six products. Apple is unaffected by the search argument either way, because the App Store does
+not index the description at all.
+
 **Release notes are v11's other defect, and this is where it stops.** v11 generates "What's new" with
 `git log --pretty=format:'- [%ad] %s' --date=short -n 5`, which is why the live listing shows
 `- [2026-08-07] 🚢 release: prep 11.2.0 — release notes and smileid-security bump (#961)` to partners —
@@ -608,8 +622,8 @@ None of these blocks anything, and none of them belongs to Android's critical pa
 - ~~**The rename to "Smile ID" is owed, and it carries a sentence with it.**~~ **Done 2026-09-14.** The iOS
   app shipped under the store name "Smile ID" on 2026-09-13 (its plan's §5), so its description opened
   *"Smile ID is the reference app…"* while `full-description.txt` here still opened *"UseSmileID Sample
-  is…"*. Launcher label, Play title, Settings footer and that first sentence moved together; the two
-  descriptions are identical again and `scripts/check_store_listing.py` now fails if they drift apart.
+  is…"*. Launcher label, Play title, Settings footer and that first sentence moved together, so both
+  listings now open on the same sentence. The bodies then diverged again by ruling, see §5.
   The Console still takes title and description by hand (REL-A5: no fastlane), so paste both at the
   next internal publish; the upload action carries only `whatsnew/`.
 - **Data safety owes two rows.** The user-details form sends email and phone with a submission, and
