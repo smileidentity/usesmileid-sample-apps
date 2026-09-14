@@ -83,6 +83,10 @@ def check_copy(problems: list[str]) -> None:
         problems.append("description.txt must name the first product as the app's own list does")
     if "SmartSelfie™ Registration" in description:
         problems.append("description.txt uses docs-v3's name; the listing takes the app's, by owner ruling")
+    # Both stores ship one description since the Android rename; a docs-v3 change lands in both or neither.
+    play_description = ROOT / "android" / "play" / "full-description.txt"
+    if play_description.exists() and play_description.read_text(encoding="utf-8") != description:
+        problems.append("description.txt differs from android/play/full-description.txt; the stores share one")
 
 
 def check_images(problems: list[str], kind: str, directory: Path, suffix: str, *, alpha_ok: bool) -> list[str]:

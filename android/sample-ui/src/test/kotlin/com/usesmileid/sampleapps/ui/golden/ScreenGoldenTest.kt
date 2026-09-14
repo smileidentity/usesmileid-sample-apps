@@ -218,7 +218,7 @@ private fun Settings(
         settings = settings,
         organisation = ProfileFixtures.WithCreated.all[profileIndex].organisation,
         initials = ProfileFixtures.WithCreated.all[profileIndex].initials,
-        versionLabel = "Smile ID Sample App · 1.0.0",
+        versionLabel = "Smile ID · 1.0.0",
         consentBoundByToken = consentBoundByToken,
         avatarColor = avatarColorForProfile(profileIndex),
     ),

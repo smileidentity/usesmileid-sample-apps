@@ -4,6 +4,7 @@
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
+REPO_ROOT="$(cd .. && pwd)"
 FRAMES="store/frames"
 OUT="store/screenshots"   # exactly the panels App Store Connect receives
 PRESET="ios-phone"
@@ -39,30 +40,29 @@ rm -rf "$OUT"
 mkdir -p "$OUT"
 skipped=""
 
+# Panels carry no headline (ruled 2026-09-14): the screen is the message, and the copy is on the listing.
+# storeshots cannot compose without one, so the wordless panel is drawn from its own background and frame.
 compose() {
-  local name="$1" verb="$2" desc="$3" variant="$4"
+  local name="$1"
   if [ ! -f "$FRAMES/$name.frame.png" ]; then
     skipped="$skipped $name"
     return 0
   fi
   echo "==> $name"
-  "${STORESHOTS[@]}" compose \
+  node "$REPO_ROOT/scripts/compose-store-panel.mjs" \
     --preset "$PRESET" \
     --bg "$BG" \
-    --verb "$verb" \
-    --desc "$desc" \
-    --variant "$variant" \
     --screenshot "$FRAMES/$name.frame.png" \
     --output "$OUT/$name.png"
   "${STORESHOTS[@]}" validate --preset "$PRESET" "$OUT/$name.png"
 }
 
-compose products             "Try"       "every Smile ID product"        text-top
-compose token_session        "Scan"      "a token to start a session"    text-top
-compose capture              "Capture"   "a selfie or a document"        text-top
-compose verifications        "Review"    "every verification result"     text-top
-compose verification_details "See"       "the details of a verification" text-top
-compose settings             "Configure" "the steps in the flow"         text-top
+compose products
+compose token_session
+compose capture
+compose verifications
+compose verification_details
+compose settings
 
 if [ -z "$(ls -A "$OUT"/*.png 2>/dev/null)" ]; then
   echo "no frames to render; run with --frames" >&2

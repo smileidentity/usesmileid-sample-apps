@@ -27,7 +27,7 @@ class UseSmileIDSamplePlayListingTest {
 
     @Test
     fun `the store title is the identity the spec settled`() {
-        assertEquals("UseSmileID Sample", listing("title.txt"))
+        assertEquals("Smile ID", listing("title.txt"))
     }
 
     @Test

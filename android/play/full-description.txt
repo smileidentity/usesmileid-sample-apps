@@ -1,4 +1,4 @@
-UseSmileID Sample is the reference app for the Smile ID mobile SDKs. It runs the same verification flows a Smile ID integration ships, so each product can be seen end to end before any code is written.
+Smile ID is the reference app for the Smile ID mobile SDKs. It runs the same verification flows a Smile ID integration ships, so each product can be seen end to end before any code is written.
 
 Verification runs use the Smile ID sandbox unless a linked session token specifies another environment.
 

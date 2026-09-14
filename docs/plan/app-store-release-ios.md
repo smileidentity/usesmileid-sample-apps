@@ -18,7 +18,8 @@ noted:
 - The **app is named "Smile ID"** — launcher label and store name — by owner ruling 2026-09-13, so the
   listing reads as the product a partner searches for. Android, Flutter and Expo rename after this
   release; the shared description still opens with the old name until Android's copy moves, and
-  that is the one visible seam accepted to keep the release moving.
+  that is the one visible seam accepted to keep the release moving. Android moved on 2026-09-14, so
+  the seam is closed.
 - **Phone-only** — §6.2 is the code that decides it, and it is the same code shape Android's §6.2 read.
 - The **app icon has landed** (#81) from `svgs/ios.svg`, gated by `scripts/generate_app_icon.py --check`
   in `ios/verify.sh`. §4 says why nothing here touches it.
@@ -169,9 +170,12 @@ over all five.
 `showcase` strip for review. Three of Android's findings are taken as settled rather than re-learned:
 
 - **One layout variant for the whole set.** Every panel is `text-top`, so the device sits at the same
-  height throughout. Variety comes from the headlines and the screens.
+  height throughout. Variety comes from the headlines and the screens. *Since 2026-09-14 there is no
+  headline: the panels are the screen alone, whole device centred, on both platforms — see the Android
+  plan's §2.6 for the ruling and `scripts/compose-store-panel.mjs` for how.*
 - **No headline states a count**, and the nouns come from `docs-v3` — *verification result*, and its
-  *status* and *message*, which are also the words on the app's own status pills.
+  *status* and *message*, which are also the words on the app's own status pills. *The rule now
+  governs the listing copy, the panels having no words.*
 - **The output directory holds store art and nothing else.** Android's review strip sitting among the
   panels failed its release lane, which validated it as a phone screenshot. Here the strip is written
   to `ios/store/showcase.png`, a level above `ios/store/screenshots/`.
@@ -286,14 +290,15 @@ first line a reviewer reads should not contradict the title above it. The produc
 themselves are unchanged, so a `docs-v3` change still has one blast radius. **The divergence closes
 when Android renames:** the Play title and the first sentence of `full-description.txt` move together,
 and the two files are identical again — recorded in the Android plan's follow-ups so the rename
-cannot land without it.
+cannot land without it. **Closed 2026-09-14:** Android renamed, the files are identical, and
+`scripts/check_store_listing.py` holds them so.
 
 **What the App Store forces to differ is field shape, not voice.** Its limits are not Play's, and one
 of them does not fit:
 
 | Field | App Store limit | Play counterpart | Action |
 |---|---|---|---|
-| Name | 30 | title, 30 | "Smile ID" (8) — renamed 2026-09-13; Play's title follows later |
+| Name | 30 | title, 30 | "Smile ID" (8) — renamed 2026-09-13; Play's title followed 2026-09-14 |
 | **Subtitle** | **30** | short description, 80 | **new copy needed**: Play's is 67 characters |
 | Description | 4000 | full description, 4000 | unchanged (3030) |
 | Promotional text | 170 | — | new, and editable without a build |
@@ -539,7 +544,7 @@ release lane's assertions all pass `-o -`, with a comment saying why.
 ### 7.2 What is owed, and what it does not block
 
 - **The camera panel** needs a device, exactly as Android's REL-A9 does. The composer already has its
-  slot and its headline; five panels are rendered and Apple requires one, so it blocks nothing.
+  slot; five panels are rendered and Apple requires one, so it blocks nothing.
 - **The `verification_details` panel is the weak one**, and it is weak for precisely the reason Android
   recorded: hiding the debug result card leaves the screen sparse. That hiding is not optional — a
   plain release install has `showProbes` false, and store art showing a state a reviewer's own build
@@ -554,8 +559,8 @@ release lane's assertions all pass `-o -`, with a comment saying why.
   affected — the form is what Apple reads — but the next TestFlight build closes the gap.
 - **Play's Data safety form owes Email address and Phone number** — the same finding, on the other
   store; `docs/play-data-safety.md` marks the rows owed and the Android plan carries the follow-up.
-- **The description's first sentence diverges from Play's** (§5) until Android renames to "Smile ID";
-  the Android rename changes the Play title and that sentence in the same PR.
+- ~~The description's first sentence diverges from Play's (§5) until Android renames to "Smile ID".~~
+  **Closed 2026-09-14** by the Android rename, which moved the Play title and that sentence together.
 - ~~The two stores show different demo data for the same app.~~ **Ruled 2026-09-13: iOS takes
   Android's** — `UpTech Finance` / `KA` / session `9f3a2c71` at `7:59:12`, a countdown both apps'
   formatters actually produce. Both store-art tests now carry the same literals; lifting them into
@@ -619,9 +624,10 @@ a shape that will recur in the Flutter and Expo ports.
 ## 8. Parity — what Flutter and Expo inherit
 
 **Unchanged from Android, and now proved twice:** capture from committed deterministic renders; one
-layout variant for the whole set; headlines from `docs-v3` nouns with no count; fixture-only data in
-every published frame; store art committed and staleness-gated; the art directory holding nothing
-else; release notes written by a person; one monotonic build number across every lane, computed once.
+layout variant for the whole set; no headline on a panel since 2026-09-14 (the `docs-v3` nouns rule
+moved to the listing copy); fixture-only data in every published frame; store art committed and
+staleness-gated; the art directory holding nothing else; release notes written by a person; one
+monotonic build number across every lane, computed once.
 
 **What the iOS release learned that Flutter and Expo should not re-learn:**
 
