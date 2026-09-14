@@ -20,8 +20,7 @@ fi
 mkdir -p "$OUT"
 skipped=""
 
-# Panels carry no headline (ruled 2026-09-14): the screen is the message, and the copy is on the listing.
-# storeshots cannot compose without one, so the wordless panel is drawn from its own background and frame.
+# Wordless since 2026-09-14, and storeshots cannot compose without a headline — hence the local composer.
 compose() {
   local name="$1"
   if [ ! -f "$FRAMES/$name.png" ]; then

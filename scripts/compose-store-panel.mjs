@@ -1,11 +1,8 @@
 #!/usr/bin/env node
-// Composes one store panel with no headline: storeshots' brand background, gradient and device frame
-// around the screenshot, nothing else. storeshots refuses an empty headline, so this reuses its own
-// renderer for the parts that stay; the panel still goes through `storeshots validate` afterwards.
-//
-//   node scripts/compose-store-panel.mjs --preset ios-phone --bg "#151F72" --screenshot frame.png --output panel.png
-//
-// The package is the one `npx -p storeshots-mcp` resolves, so the composer and the validator are one version.
+// Composes one wordless store panel: storeshots' own background, gradient and device frame, no headline.
+//   node scripts/compose-store-panel.mjs --preset ios-phone --bg "#151F72" --screenshot f.png --output p.png
+// It reuses the package npx resolves, so the frame matches the tool that still validates the output.
+
 import { execFileSync } from "node:child_process";
 import { mkdirSync, realpathSync } from "node:fs";
 import { createRequire } from "node:module";

@@ -147,6 +147,19 @@ class UseSmileIDSampleRoutesSpecTest {
         assertEquals(UseSmileIDSampleDeepLinks.SCHEME, entry.required("urlScheme"))
     }
 
+    /** The launcher label is a second copy of the spec's display name, and both stores list under it. */
+    @Test
+    fun the_launcher_label_is_the_android_entry_in_app_identity() {
+        val entry = requireNotNull(ANDROID_APP_ENTRY.find(spec("app-identity.json"))) {
+            "no flat android app entry in spec/app-identity.json"
+        }.value
+        val strings = File(specDir(), "../android/app/src/main/res/values/strings.xml").readText()
+        val label = requireNotNull(Regex("<string name=\"app_name\">([^<]+)</string>").find(strings)) {
+            "no app_name in strings.xml"
+        }.groupValues[1]
+        assertEquals(label, entry.required("displayName"))
+    }
+
     /** The intent filter is a third copy of the scheme; drift there kills every deep link at the OS. */
     @Test
     fun the_manifest_intent_filter_claims_the_same_scheme() {
