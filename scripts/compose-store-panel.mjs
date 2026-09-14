@@ -39,13 +39,13 @@ const bg = normalizeHex(values.bg);
 let { buffer, width: deviceW, height: deviceH } = await renderDevice(preset, values.screenshot);
 
 // The whole device, centred: with no headline to sit under, there is nothing for it to bleed away from.
+// Fitted on both axes, or an overhang on either one centres to a negative offset and sharp throws.
 const margin = Math.round(preset.height * 0.03);
-if (deviceH > preset.height - 2 * margin) {
-  const fitH = preset.height - 2 * margin;
-  const fitW = Math.round(deviceW * (fitH / deviceH));
-  buffer = await sharp(buffer).resize(fitW, fitH).png().toBuffer();
-  deviceW = fitW;
-  deviceH = fitH;
+const scale = Math.min(1, (preset.height - 2 * margin) / deviceH, (preset.width - 2 * margin) / deviceW);
+if (scale < 1) {
+  deviceW = Math.round(deviceW * scale);
+  deviceH = Math.round(deviceH * scale);
+  buffer = await sharp(buffer).resize(deviceW, deviceH).png().toBuffer();
 }
 const deviceLeft = Math.round((preset.width - deviceW) / 2);
 const deviceTop = Math.round((preset.height - deviceH) / 2);
