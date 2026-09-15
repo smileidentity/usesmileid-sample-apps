@@ -93,7 +93,7 @@ class StoreArtTest {
                 settings = UseSmileIDSampleSettings(),
                 organisation = "UpTech Finance",
                 initials = "KA",
-                versionLabel = "Smile ID Sample App · 1.0.0",
+                versionLabel = "Smile ID · 1.0.0",
                 consentBoundByToken = false,
             ),
             onSettingChange = { _, _ -> },

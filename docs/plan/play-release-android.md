@@ -18,7 +18,8 @@ this plan adds no screens.
 - `targetSdk = 37` is **accepted by Play today**, so REL-A14 is a periodic re-check, not a blocker.
 - The **v11 upload key is reused** (§3).
 - The **store title takes the spec name**, "UseSmileID Sample", on the understanding that a store title
-  is one of the cheapest things on a listing to change later.
+  is one of the cheapest things on a listing to change later — and it changed: the title became
+  "Smile ID" on 2026-09-14 (§7.4).
 - **Data safety mirrors v11 wherever the two apps behave the same** — and §6.1 shows they do, on every
   question the form asks.
 - **Phone-only. No tablet art** — §6.2 is the code that decides it.
@@ -192,6 +193,11 @@ pills. Two earlier drafts read as developer shorthand ("every field of a result"
 ("every run and its status"); the docs' vocabulary fixed both. The details panel then took its
 descriptor from the screen's own title, "Verification details", rather than naming two of the five
 fields it shows.
+
+**The headlines came off on 2026-09-14** (owner ruling): every panel is now the screen alone — storeshots'
+background, gradient and frame with the whole device centred, composed by `scripts/compose-store-panel.mjs`
+because storeshots refuses an empty headline, then validated by storeshots as before. The listing copy
+carries the words, so the two rules above now govern that copy rather than the art.
 
 ### 2.7 What building the pipeline changed
 
@@ -401,6 +407,20 @@ agree with each other — a partner reading the listing next to the app should n
 product. The trademark still renders as `docs-v3` writes it. Everything else in the copy follows
 `docs-v3` unchanged.
 
+**Owner ruling 2026-09-14: the per-product paragraphs come out of Play's description.** They restated
+`docs-v3` in full, so every product change meant re-editing the listing. The six product names stay,
+because **Play indexes the full description for search** and those names are what a partner searches
+for; what goes is the mechanism paragraph under each, which `docs.smileidentity.com` already owns and
+keeps current. The description drops from 3022 characters to 1016.
+
+**Play moves first and alone.** The App Store description is per-version metadata and version
+20260913.1211.103 was sitting in Apple's review queue when this was ruled, so editing it would have
+meant touching a submitted version. iOS takes the same text on its next version, which is recorded in
+that plan's §7.2. Until then the two descriptions differ by those paragraphs, deliberately, and
+`scripts/check_store_listing.py` enforces the invariant that survives the gap: both listings name the
+same six products. Apple is unaffected by the search argument either way, because the App Store does
+not index the description at all.
+
 **Release notes are v11's other defect, and this is where it stops.** v11 generates "What's new" with
 `git log --pretty=format:'- [%ad] %s' --date=short -n 5`, which is why the live listing shows
 `- [2026-08-07] 🚢 release: prep 11.2.0 — release notes and smileid-security bump (#961)` to partners —
@@ -599,11 +619,13 @@ None of these blocks anything, and none of them belongs to Android's critical pa
   touched for it now. The rename travels with the sample-ui port to the four SDKs — that is when those
   apps get built and when the collision first becomes real. `spec/app-identity.json` carries the target
   ids so the work is a lookup rather than a re-decision.
-- **The rename to "Smile ID" is owed, and it carries a sentence with it.** The iOS app shipped under the
-  store name "Smile ID" on 2026-09-13 (its plan's §5), so its description now opens *"Smile ID is the
-  reference app…"* while `full-description.txt` here still opens *"UseSmileID Sample is…"*. When the
-  Play title moves to "Smile ID", change that first sentence in the same PR — the two descriptions are
-  then identical again, and the shared-paragraph rule in §8 holds without an exception.
+- ~~**The rename to "Smile ID" is owed, and it carries a sentence with it.**~~ **Done 2026-09-14.** The iOS
+  app shipped under the store name "Smile ID" on 2026-09-13 (its plan's §5), so its description opened
+  *"Smile ID is the reference app…"* while `full-description.txt` here still opened *"UseSmileID Sample
+  is…"*. Launcher label, Play title, Settings footer and that first sentence moved together, so both
+  listings now open on the same sentence. The bodies then diverged again by ruling, see §5.
+  The Console still takes title and description by hand (REL-A5: no fastlane), so paste both at the
+  next internal publish; the upload action carries only `whatsnew/`.
 - **Data safety owes two rows.** The user-details form sends email and phone with a submission, and
   neither is declared. Found 2026-09-14 while the iOS App Privacy form was filled from the same
   derivation; `docs/play-data-safety.md` marks them owed. Add both at the next Play release.
@@ -631,7 +653,8 @@ time here:
   size and height in every panel, which reads as inconsistency.
 - **Headlines take their nouns from `docs-v3` and never state a count.** "Six products" is wrong the day
   a product is added. `docs-v3` calls the record a *verification result* and describes it by *status*
-  and *message*; those words are also what the app's status pills say.
+  and *message*; those words are also what the app's status pills say. *Since 2026-09-14 the panels
+  carry no headline at all (§2.6), so this rule now governs the listing copy.*
 - **Whatever directory the store art lands in must contain only store art.** The review strip sitting
   among the panels failed the release lane, which validated it as a phone screenshot.
 - **Check the rendered output, not the raw frames.** Both the cutout collision and the variant problem

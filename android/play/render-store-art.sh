@@ -20,30 +20,28 @@ fi
 mkdir -p "$OUT"
 skipped=""
 
+# Wordless since 2026-09-14, and storeshots cannot compose without a headline — hence the local composer.
 compose() {
-  local name="$1" verb="$2" desc="$3" variant="$4"
+  local name="$1"
   if [ ! -f "$FRAMES/$name.png" ]; then
     skipped="$skipped $name"
     return 0
   fi
   echo "==> $name"
-  "${STORESHOTS[@]}" compose \
+  node "$REPO_ROOT/scripts/compose-store-panel.mjs" \
     --preset "$PRESET" \
     --bg "$BG" \
-    --verb "$verb" \
-    --desc "$desc" \
-    --variant "$variant" \
     --screenshot "$FRAMES/$name.png" \
     --output "$OUT/$name.png"
   "${STORESHOTS[@]}" validate --preset "$PRESET" "$OUT/$name.png"
 }
 
-compose products             "Try"       "every Smile ID product"      text-top
-compose token_session        "Scan"      "a token to start a session"  text-top
-compose capture              "Capture"   "a selfie or a document"      text-top
-compose verifications        "Review"    "every verification result"    text-top
-compose verification_details "See"       "the details of a verification" text-top
-compose settings             "Configure" "the steps in the flow"       text-top
+compose products
+compose token_session
+compose capture
+compose verifications
+compose verification_details
+compose settings
 
 FEATURE_GRAPHIC="$(dirname "$OUT")/feature-graphic.png"
 if [ -f "$FRAMES/products.png" ]; then

@@ -39,6 +39,16 @@ PANEL_SIZE = (1320, 2868)
 
 # capture comes from a device and is the one panel that may legitimately be absent; the five
 # rendered ones may not. render-store-art.sh composes exactly this list, in this order.
+# Named in both listings, so neither store can quietly drop or rename one.
+PRODUCTS = [
+    "SmartSelfie\u2122 Enrollment",
+    "SmartSelfie\u2122 Authentication",
+    "Document Verification",
+    "Enhanced Document Verification",
+    "Biometric KYC",
+    "Enhanced KYC",
+]
+
 REQUIRED_PANELS = ["products", "token_session", "verifications", "verification_details", "settings"]
 OPTIONAL_PANELS = ["capture"]
 
@@ -83,6 +93,18 @@ def check_copy(problems: list[str]) -> None:
         problems.append("description.txt must name the first product as the app's own list does")
     if "SmartSelfie™ Registration" in description:
         problems.append("description.txt uses docs-v3's name; the listing takes the app's, by owner ruling")
+    # Play's copy is the short list and this one is not, until the next version takes it (plan section 5).
+    # What must not drift is the product set: one store naming a product the other omits is a listing defect.
+    play_description = ROOT / "android" / "play" / "full-description.txt"
+    if not play_description.exists():
+        problems.append("android/play/full-description.txt is missing; the two listings name the same products")
+    else:
+        play = play_description.read_text(encoding="utf-8")
+        for product in PRODUCTS:
+            if product in description and product not in play:
+                problems.append(f"{product} is in description.txt but not android/play/full-description.txt")
+            if product in play and product not in description:
+                problems.append(f"{product} is in android/play/full-description.txt but not description.txt")
 
 
 def check_images(problems: list[str], kind: str, directory: Path, suffix: str, *, alpha_ok: bool) -> list[str]:

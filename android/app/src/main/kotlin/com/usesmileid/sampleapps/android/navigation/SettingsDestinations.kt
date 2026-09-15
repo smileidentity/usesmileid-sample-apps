@@ -193,7 +193,7 @@ private fun rememberWarmCustomTabsSession(): CustomTabsSession? {
     return session
 }
 
-// Brand copy rather than the launcher label — see spec/app-identity.json.
-private const val APP_DISPLAY_NAME = "Smile ID Sample App"
+// The product name, as the launcher label and both store listings carry it — see spec/app-identity.json.
+private const val APP_DISPLAY_NAME = "Smile ID"
 
 private const val LICENSES_ASSET = "licenses.json"
