@@ -413,10 +413,11 @@ because **Play indexes the full description for search** and those names are wha
 for; what goes is the mechanism paragraph under each, which `docs.smileidentity.com` already owns and
 keeps current. The description drops from 3022 characters to 1016.
 
-**Play moves first and alone.** The App Store description is per-version metadata and version
+**Play moved first and alone.** The App Store description is per-version metadata and version
 20260913.1211.103 was sitting in Apple's review queue when this was ruled, so editing it would have
-meant touching a submitted version. iOS takes the same text on its next version, which is recorded in
-that plan's §7.2. Until then the two descriptions differ by those paragraphs, deliberately, and
+meant touching a submitted version. `ios/store/description.txt` took this text on 2026-09-16, so the
+two files are identical again; pushing it to App Store Connect waits for that submission to clear, and
+that plan's §7.2 holds the action. Until then the two descriptions differ by those paragraphs, deliberately, and
 `scripts/check_store_listing.py` enforces the invariant that survives the gap: both listings name the
 same six products. Apple is unaffected by the search argument either way, because the App Store does
 not index the description at all.

@@ -546,12 +546,23 @@ release lane's assertions all pass `-o -`, with a comment saying why.
 
 ### 7.2 What is owed, and what it does not block
 
-- **This description takes Play's shorter text on the next version.** Play dropped the per-product
-  paragraphs on 2026-09-14 and kept the six names (its §5). This one could not follow: description is
-  per-version metadata and 20260913.1211.103 was already in the review queue. Copy
-  `android/play/full-description.txt` over `ios/store/description.txt` when the next version is created,
-  which is after the current submission reaches a verdict. The listing check holds the product set in
-  the meantime, so the gap cannot widen unnoticed.
+- **The shorter description is in the repository; pushing it to Apple is queued.** Play dropped the
+  per-product paragraphs on 2026-09-14 and kept the six names (its §5); `ios/store/description.txt` now
+  carries that same text, so the two files are byte-identical again. What is **not** done is the App
+  Store side: description is per-version metadata, and metadata must not move while a review
+  conversation is open on the version. **First action once the submission clears** (approved, or Apple
+  asks for a resubmission): `scripts/asc_publish.py apply`, which carries this description and the
+  wordless screenshots together, then `submit` on the owner's word. Nothing else in the listing is
+  waiting on anything.
+- ~~**Guideline 2.1: App Review asked what the app does with the TrueDepth API.**~~ **Answered
+  2026-09-16.** Worth knowing before anyone denies it: the SDK does use it. The selfie screen runs an
+  `ARFaceTrackingConfiguration` session and reads two blend shapes, `mouthSmileLeft` and
+  `mouthSmileRight`, averaged into one smile probability that times the shutter; the face mesh is
+  created invisible purely to keep tracking alive. Nothing depth-derived is stored or transmitted — the
+  value is cleared when the screen closes, and the upload is the same JPEG selfie and liveness frames
+  on every device. The answer now ships in `review-notes.txt`, so the question should not recur here or
+  in the Flutter and Expo ports. The published App Privacy form already declares Sensitive Info on the
+  reasoning that the selfie is biometric, which is the cross-check a reviewer makes.
 - **The camera panel** needs a device, exactly as Android's REL-A9 does. The composer already has its
   slot; five panels are rendered and Apple requires one, so it blocks nothing.
 - **The `verification_details` panel is the weak one**, and it is weak for precisely the reason Android
