@@ -119,7 +119,7 @@
         "android": "IdDetailsFormScreenDestination",
         "ios": "Route.idDetailsForm(productId:)",
         "flutter": "/flow/:productId/id-details",
-        "expo": "app/flow/[productId]/id-details.tsx"
+        "expo": "app/flow/[productId]/id-details/index.tsx"
       },
       "notes": "Only for products whose spec entry sets needsIdDetails."
     },
@@ -198,7 +198,7 @@
         "android": "ProductsScreenDestination + UseSmileIDSampleSheet.ProfileSwitch",
         "ios": "Sheet.profileSwitch",
         "flutter": "/profiles/switch",
-        "expo": "app/profiles/switch.tsx"
+        "expo": "app/(products)/profiles/switch.tsx"
       },
       "notes": "Its path sits under /profiles but its owner is the products screen, the only place the avatar that opens it appears."
     },
