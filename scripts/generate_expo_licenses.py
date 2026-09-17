@@ -102,22 +102,34 @@ def declared(package: dict) -> str | None:
     return None
 
 
-def licence_text(directory: str) -> str | None:
-    for name in LICENCE_FILES:
+def read_first(directory: str, candidates: tuple[str, ...]) -> str | None:
+    """The first candidate present, matched without regard to case and in the order given.
+
+    npm packages spell the file both ways and macOS cannot tell them apart, so a lookup by exact
+    name reads `license` here and finds nothing on a Linux runner. That silently emitted six
+    components with no licence text at all, which is the shape a licence file must never have.
+    """
+    try:
+        actual = {name.lower(): name for name in os.listdir(directory)}
+    except OSError:
+        return None
+    for candidate in candidates:
+        name = actual.get(candidate.lower())
+        if name is None:
+            continue
         path = os.path.join(directory, name)
         if os.path.isfile(path):
             with io.open(path, encoding="utf-8", errors="replace") as handle:
                 return handle.read().strip()
     return None
+
+
+def licence_text(directory: str) -> str | None:
+    return read_first(directory, LICENCE_FILES)
 
 
 def nested_notice(directory: str) -> str | None:
-    for name in NESTED_NOTICES:
-        path = os.path.join(directory, name)
-        if os.path.isfile(path):
-            with io.open(path, encoding="utf-8", errors="replace") as handle:
-                return handle.read().strip()
-    return None
+    return read_first(directory, NESTED_NOTICES)
 
 
 def package_name(source: str) -> str | None:

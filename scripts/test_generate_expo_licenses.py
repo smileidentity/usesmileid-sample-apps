@@ -199,6 +199,46 @@ class TestTheEmittedNotice(BundleCase):
         self.assertIn("nothing shipped", str(caught.exception))
 
 
+class TestTheFilenameLookup(BundleCase):
+    """A lookup by exact name reads `license` on macOS and nothing on Linux, so it is done by fold."""
+
+    def test_no_candidate_is_spelled_lowercase(self):
+        # Load-bearing for the tests below: a lowercase candidate would let an exact-name lookup
+        # succeed and hide the defect, which is what made this invisible on a developer machine.
+        for name in gen.LICENCE_FILES + gen.NESTED_NOTICES:
+            self.assertNotEqual(name, name.lower(), name)
+
+    def test_a_lowercase_licence_file_is_read(self):
+        directory = self.package("query-string", text="")
+        with io.open(os.path.join(directory, "license"), "w", encoding="utf-8") as handle:
+            handle.write("MIT, Copyright Sindre")
+        self.emit_map(self.module("query-string"))
+        emitted = json.loads(gen.generate(self.bundle))["components"]
+        self.assertEqual(emitted[0]["text"], "MIT, Copyright Sindre")
+
+    def test_a_lowercase_vendored_notice_is_read(self):
+        # Never observed, but the same lookup: a notice missed on Linux drops one we must ship.
+        directory = self.package("vendoring")
+        with io.open(os.path.join(directory, "notice"), "w", encoding="utf-8") as handle:
+            handle.write("contains third-party code")
+        self.emit_map(self.module("vendoring"))
+        emitted = json.loads(gen.generate(self.bundle))["components"]
+        self.assertEqual(emitted[0]["notice"], "contains third-party code")
+
+    def test_the_candidate_order_still_decides_between_two_present_files(self):
+        directory = self.package("both", text="")
+        for name, body in (("license.md", "the markdown one"), ("license", "the plain one")):
+            with io.open(os.path.join(directory, name), "w", encoding="utf-8") as handle:
+                handle.write(body)
+        self.emit_map(self.module("both"))
+        emitted = json.loads(gen.generate(self.bundle))["components"]
+        # LICENSE precedes LICENSE.md in the tuple, so the plain file wins however it is spelled.
+        self.assertEqual(emitted[0]["text"], "the plain one")
+
+    def test_a_directory_that_cannot_be_listed_reports_no_text_rather_than_raising(self):
+        self.assertIsNone(gen.read_first(os.path.join(self.root, "absent"), gen.LICENCE_FILES))
+
+
 class TestTheDeltaReport(unittest.TestCase):
     @staticmethod
     def asset(*pairs: tuple[str, str]) -> str:
