@@ -636,6 +636,14 @@ None of these blocks anything, and none of them belongs to Android's critical pa
 - **REL-A14 stays a calendar item.** `targetSdk` is re-checked against Play's floor annually;
   `docs/play-data-safety.md` holds the date it was last done.
 - **Production promotion is a Console action**, and production is reviewed again on promotion.
+- **Both publish workflows derive `versionCode` from `git rev-list --count HEAD`, and that is kept
+  deliberately (owner ruling 2026-09-17).** Two workflows is the right shape — a branch goes to
+  internal for people to try, production is a later and separate decision — so the count stays. Two
+  consequences to respect when dispatching, because Play enforces both: **dispatching twice on one
+  ref** gives the same code and the second upload is rejected (it happened 2026-09-07, production took
+  56 and the internal run died eleven seconds later), and **dispatching from a branch behind main**
+  gives a *lower* code, which Play refuses outright. Reading the highest code off Play and adding one
+  would remove both; it was weighed and deferred, not missed.
 
 ## 8. Parity — what the other three inherit
 
