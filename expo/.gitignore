@@ -1,0 +1,7 @@
+node_modules/
+.expo/
+dist/
+# Prebuild output, regenerated from app.config.ts — committing it is how a hand-patched Podfile gets in.
+app/android/
+app/ios/
+*.tsbuildinfo

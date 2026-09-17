@@ -413,13 +413,15 @@ because **Play indexes the full description for search** and those names are wha
 for; what goes is the mechanism paragraph under each, which `docs.smileidentity.com` already owns and
 keeps current. The description drops from 3022 characters to 1016.
 
-**Play moves first and alone.** The App Store description is per-version metadata and version
+**Play moved first and alone.** The App Store description is per-version metadata and version
 20260913.1211.103 was sitting in Apple's review queue when this was ruled, so editing it would have
-meant touching a submitted version. iOS takes the same text on its next version, which is recorded in
-that plan's §7.2. Until then the two descriptions differ by those paragraphs, deliberately, and
-`scripts/check_store_listing.py` enforces the invariant that survives the gap: both listings name the
-same six products. Apple is unaffected by the search argument either way, because the App Store does
-not index the description at all.
+meant touching a submitted version. `ios/store/description.txt` took this text on 2026-09-16, so the
+two files are identical again; pushing it to App Store Connect waits for that submission to clear, and
+that plan's §7.2 holds the action. What still diverges is therefore the *published* App Store listing
+against this repository, not the two files: until that push lands, the live listing carries the
+per-product paragraphs and Play does not. `scripts/check_store_listing.py` holds the invariant that
+outlives the gap either way — both listings name the same six products. Apple is unaffected by the
+search argument, because the App Store does not index the description at all.
 
 **Release notes are v11's other defect, and this is where it stops.** v11 generates "What's new" with
 `git log --pretty=format:'- [%ad] %s' --date=short -n 5`, which is why the live listing shows
@@ -624,14 +626,25 @@ None of these blocks anything, and none of them belongs to Android's critical pa
   *"Smile ID is the reference app…"* while `full-description.txt` here still opened *"UseSmileID Sample
   is…"*. Launcher label, Play title, Settings footer and that first sentence moved together, so both
   listings now open on the same sentence. The bodies then diverged again by ruling, see §5.
-  The Console still takes title and description by hand (REL-A5: no fastlane), so paste both at the
-  next internal publish; the upload action carries only `whatsnew/`.
-- **Data safety owes two rows.** The user-details form sends email and phone with a submission, and
-  neither is declared. Found 2026-09-14 while the iOS App Privacy form was filled from the same
-  derivation; `docs/play-data-safety.md` marks them owed. Add both at the next Play release.
+  The Console takes title and description by hand (REL-A5: no fastlane), and both were pasted: the
+  live listing reads "Smile ID", carries the shorter description, and serves all five wordless panels
+  byte-identical to `android/play/screenshots/`, verified 2026-09-17. What a listing edit cannot carry
+  is the launcher label, which is in the binary and needs an internal publish.
+- ~~**Data safety owes two rows.**~~ **Done, verified 2026-09-17** against the published Data safety
+  page rather than against this file: Personal info declares Name, Email address, User IDs, Phone
+  number and Other info. `docs/play-data-safety.md` now records the published answers, which differ
+  from this plan's derivation in two places.
 - **REL-A14 stays a calendar item.** `targetSdk` is re-checked against Play's floor annually;
   `docs/play-data-safety.md` holds the date it was last done.
 - **Production promotion is a Console action**, and production is reviewed again on promotion.
+- **Both publish workflows derive `versionCode` from `git rev-list --count HEAD`, and that is kept
+  deliberately (owner ruling 2026-09-17).** Two workflows is the right shape — a branch goes to
+  internal for people to try, production is a later and separate decision — so the count stays. Two
+  consequences to respect when dispatching, because Play enforces both: **dispatching twice on one
+  ref** gives the same code and the second upload is rejected (it happened 2026-09-07, production took
+  56 and the internal run died eleven seconds later), and **dispatching from a branch behind main**
+  gives a *lower* code, which Play refuses outright. Reading the highest code off Play and adding one
+  would remove both; it was weighed and deferred, not missed.
 
 ## 8. Parity — what the other three inherit
 

@@ -4,17 +4,14 @@ Verification runs use the Smile ID sandbox unless a linked session token specifi
 
 PRODUCTS
 
-SmartSelfie™ Enrollment captures a selfie and a set of liveness images to enroll an individual's biometrics. Smile ID confirms the images are of a live person and creates an enrolled reference image for the user, which SmartSelfie™ Authentication later verifies against. It is suitable for onboarding new users and establishing a biometric profile.
+SmartSelfie™ Enrollment
+SmartSelfie™ Authentication
+Document Verification
+Enhanced Document Verification
+Biometric KYC
+Enhanced KYC
 
-SmartSelfie™ Authentication verifies a returning user's identity by comparing a newly captured selfie against the image enrolled for that user. It is suitable for re-verifying returning users: confirming identity at login, authorizing high-value transactions, account recovery, and step-up authentication.
-
-Document Verification confirms the authenticity of an identity document and that it belongs to the person presenting it. Smile ID authenticates the document, checking security features, the machine-readable zone, and barcodes, extracts the information printed on it, and compares the photo on the document against the submitted selfie. It is suitable for onboarding flows that confirm a government-issued document is genuine and belongs to the user, without an ID authority lookup.
-
-Enhanced Document Verification extends Document Verification with an additional check against the document issuer's records. It authenticates the document, compares the photo on the document against the submitted selfie, and cross-references the document data against the issuing authority's database in a single call. It is available where Smile ID is integrated with the document's issuing authority.
-
-Biometric KYC verifies an individual's identity by combining a government ID authority lookup with biometric face matching. Smile ID validates the ID against the issuing authority's records, retrieves the registered photo on file, and performs a face comparison between the selfie and the official photo. It is suitable for confirming that an ID number is valid and that the person submitting it is the individual on record with the ID authority.
-
-Enhanced KYC verifies an individual's identity by querying government ID authority databases in real time. Smile ID validates the ID against the issuing authority's records and returns the personal information on file. It is suitable for confirming an ID number and retrieving the identity information associated with it, without biometric capture.
+Each product runs end to end: the SDK's own capture screens, where that product uses them, and the verification result it returns. What each product checks, and the identity documents and countries it covers, is documented at docs.smileidentity.com.
 
 IN THIS APP
 
@@ -23,4 +20,4 @@ IN THIS APP
 • A history of previous runs, kept on the device
 • Light and dark themes, and the SDK's theming options
 
-Smile ID provides digital KYC, identity verification and onboarding across Africa. SDK documentation is at docs.smileidentity.com.
+Smile ID provides digital KYC, identity verification and onboarding across Africa.

@@ -1,0 +1,38 @@
+{
+  "name": "@smileid/sample-apps-expo",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Workspace root for the UseSmileID Expo sample app and its shared UI package.",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=20.19.4",
+    "pnpm": ">=9.15.9 <10"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "pnpm -r --workspace-concurrency=1 exec tsc --noEmit",
+    "test": "pnpm --filter @smileid/sample-ui test",
+    "bundle": "pnpm --filter usesmileid-sample-expo bundle"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "eslint": "9.39.5",
+    "eslint-config-expo": "57.0.2",
+    "typescript-eslint": "8.70.0"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "react-dom",
+        "react-native-web",
+        "react-server-dom-webpack"
+      ]
+    }
+  },
+  "pinRationale": {
+    "@eslint/js": "The flat-config base ruleset, matched to the eslint version so the two cannot disagree.",
+    "eslint": "9.39.5, not 10: typescript-eslint 8 supports both, and eslint-config-expo is only tested against 9.",
+    "eslint-config-expo": "Versioned with the Expo SDK; knows the Metro, JSX and React Native globals.",
+    "typescript-eslint": "Type-aware linting for both packages; pinned with eslint because the pair must agree."
+  }
+}

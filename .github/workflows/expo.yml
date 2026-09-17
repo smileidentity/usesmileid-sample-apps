@@ -1,0 +1,76 @@
+name: Expo
+
+# CI runs expo/verify.sh itself, so the local contract and the gate cannot drift apart.
+on:
+  pull_request:
+    paths:
+      - 'expo/**'
+      - 'spec/**'
+      - 'scripts/**'
+      - '.github/workflows/expo.yml'
+  push:
+    branches: [main]
+
+concurrency:
+  group: expo-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # --check needs the design system, which is private; a fork PR gets no secret, so this skips and says so.
+      - name: Check out the design system
+        id: design-system
+        if: env.DESIGN_SYSTEM_TOKEN != ''
+        env:
+          DESIGN_SYSTEM_TOKEN: ${{ secrets.DESIGN_SYSTEM_TOKEN }}
+        uses: actions/checkout@v7
+        with:
+          repository: smileidentity/claude-skills
+          token: ${{ secrets.DESIGN_SYSTEM_TOKEN }}
+          path: .design-system
+          sparse-checkout: smile-design-system
+          sparse-checkout-cone-mode: true
+
+      - name: Note a skipped token check
+        if: steps.design-system.outcome == 'skipped'
+        run: |
+          echo "::warning title=Design tokens not verified::No DESIGN_SYSTEM_TOKEN available, so the \
+          vendored token output was not compared against the design system. Everything else ran."
+
+      # The workspace pins pnpm 9; the sibling SDK repo needs 10.x and resolves its own through npx.
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: expo/pnpm-lock.yaml
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Verify
+        env:
+          SMILE_DESIGN_SYSTEM: ${{ steps.design-system.outcome == 'success' && format('{0}/.design-system/smile-design-system', github.workspace) || '' }}
+          SMILE_TOKENS_OPTIONAL: ${{ steps.design-system.outcome == 'skipped' && '1' || '' }}
+        run: expo/verify.sh
+
+      # The goldens are style trees rather than pixels, so a failure is a readable diff.
+      - name: Upload golden diffs
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: expo-golden-diffs
+          path: expo/sample-ui/test/goldens/**
+          if-no-files-found: ignore
+          retention-days: 7
