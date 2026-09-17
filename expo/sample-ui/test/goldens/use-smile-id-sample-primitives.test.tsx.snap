@@ -1,0 +1,3055 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Avatar dark initials 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+        "overflow": "hidden",
+      },
+      {
+        "backgroundColor": "#151f72",
+        "borderRadius": 12,
+        "height": 80,
+        "width": 80,
+      },
+      undefined,
+    ]
+  }
+>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 14,
+          "fontWeight": "500",
+          "letterSpacing": 0,
+          "lineHeight": 20,
+        },
+        {
+          "color": "#ffffff",
+        },
+        {
+          "textAlign": "center",
+        },
+      ]
+    }
+  >
+    KA
+  </Text>
+</View>
+`;
+
+exports[`Avatar dark placeholder 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+        "overflow": "hidden",
+      },
+      {
+        "backgroundColor": "#1a1c23",
+        "borderRadius": 12,
+        "height": 80,
+        "width": 80,
+      },
+      undefined,
+    ]
+  }
+>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 14,
+          "fontWeight": "500",
+          "letterSpacing": 0,
+          "lineHeight": 20,
+        },
+        {
+          "color": "#848282",
+        },
+        {
+          "textAlign": "center",
+        },
+      ]
+    }
+  >
+    ?
+  </Text>
+</View>
+`;
+
+exports[`Avatar dark row_size 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+        "overflow": "hidden",
+      },
+      {
+        "backgroundColor": "#151f72",
+        "borderRadius": 12,
+        "height": 88,
+        "width": 88,
+      },
+      undefined,
+    ]
+  }
+>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 14,
+          "fontWeight": "500",
+          "letterSpacing": 0,
+          "lineHeight": 20,
+        },
+        {
+          "color": "#ffffff",
+        },
+        {
+          "textAlign": "center",
+        },
+      ]
+    }
+  >
+    AD
+  </Text>
+</View>
+`;
+
+exports[`Avatar light initials 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+        "overflow": "hidden",
+      },
+      {
+        "backgroundColor": "#151f72",
+        "borderRadius": 12,
+        "height": 80,
+        "width": 80,
+      },
+      undefined,
+    ]
+  }
+>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 14,
+          "fontWeight": "500",
+          "letterSpacing": 0,
+          "lineHeight": 20,
+        },
+        {
+          "color": "#ffffff",
+        },
+        {
+          "textAlign": "center",
+        },
+      ]
+    }
+  >
+    KA
+  </Text>
+</View>
+`;
+
+exports[`Avatar light placeholder 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+        "overflow": "hidden",
+      },
+      {
+        "backgroundColor": "#f9fafb",
+        "borderRadius": 12,
+        "height": 80,
+        "width": 80,
+      },
+      undefined,
+    ]
+  }
+>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 14,
+          "fontWeight": "500",
+          "letterSpacing": 0,
+          "lineHeight": 20,
+        },
+        {
+          "color": "#848282",
+        },
+        {
+          "textAlign": "center",
+        },
+      ]
+    }
+  >
+    ?
+  </Text>
+</View>
+`;
+
+exports[`Avatar light row_size 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+        "overflow": "hidden",
+      },
+      {
+        "backgroundColor": "#151f72",
+        "borderRadius": 12,
+        "height": 88,
+        "width": 88,
+      },
+      undefined,
+    ]
+  }
+>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 14,
+          "fontWeight": "500",
+          "letterSpacing": 0,
+          "lineHeight": 20,
+        },
+        {
+          "color": "#ffffff",
+        },
+        {
+          "textAlign": "center",
+        },
+      ]
+    }
+  >
+    AD
+  </Text>
+</View>
+`;
+
+exports[`Button dark disabled 1`] = `
+<View
+  accessibilityRole="button"
+  accessibilityState={
+    {
+      "busy": false,
+      "checked": undefined,
+      "disabled": true,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    [
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#eaecf0",
+        "borderRadius": 32,
+        "minHeight": 52,
+        "opacity": 1,
+        "paddingHorizontal": 24,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+      }
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "letterSpacing": 0,
+            "lineHeight": 24,
+          },
+          {
+            "textAlign": "center",
+          },
+          {
+            "color": "#848282",
+            "paddingVertical": 4,
+          },
+        ]
+      }
+    >
+      Continue
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`Button dark enabled 1`] = `
+<View
+  accessibilityRole="button"
+  accessibilityState={
+    {
+      "busy": false,
+      "checked": undefined,
+      "disabled": false,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    [
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#4d88ff",
+        "borderRadius": 32,
+        "minHeight": 52,
+        "opacity": 1,
+        "paddingHorizontal": 24,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+      }
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "letterSpacing": 0,
+            "lineHeight": 24,
+          },
+          {
+            "textAlign": "center",
+          },
+          {
+            "color": "#ffffff",
+            "paddingVertical": 4,
+          },
+        ]
+      }
+    >
+      Continue
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`Button dark loading 1`] = `
+<View
+  accessibilityRole="button"
+  accessibilityState={
+    {
+      "busy": true,
+      "checked": undefined,
+      "disabled": true,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    [
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#4d88ff",
+        "borderRadius": 32,
+        "minHeight": 52,
+        "opacity": 1,
+        "paddingHorizontal": 24,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+      }
+    }
+  >
+    <ActivityIndicator
+      color="#ffffff"
+      size="small"
+      style={
+        {
+          "height": 20,
+          "width": 20,
+        }
+      }
+    />
+  </View>
+</View>
+`;
+
+exports[`Button dark wrapping 1`] = `
+<View
+  accessibilityRole="button"
+  accessibilityState={
+    {
+      "busy": false,
+      "checked": undefined,
+      "disabled": false,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    [
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#4d88ff",
+        "borderRadius": 32,
+        "minHeight": 52,
+        "opacity": 1,
+        "paddingHorizontal": 24,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+      }
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "letterSpacing": 0,
+            "lineHeight": 24,
+          },
+          {
+            "textAlign": "center",
+          },
+          {
+            "color": "#ffffff",
+            "paddingVertical": 4,
+          },
+        ]
+      }
+    >
+      Continue to the ID details form
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`Button light disabled 1`] = `
+<View
+  accessibilityRole="button"
+  accessibilityState={
+    {
+      "busy": false,
+      "checked": undefined,
+      "disabled": true,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    [
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#eaecf0",
+        "borderRadius": 32,
+        "minHeight": 52,
+        "opacity": 1,
+        "paddingHorizontal": 24,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+      }
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "letterSpacing": 0,
+            "lineHeight": 24,
+          },
+          {
+            "textAlign": "center",
+          },
+          {
+            "color": "#848282",
+            "paddingVertical": 4,
+          },
+        ]
+      }
+    >
+      Continue
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`Button light enabled 1`] = `
+<View
+  accessibilityRole="button"
+  accessibilityState={
+    {
+      "busy": false,
+      "checked": undefined,
+      "disabled": false,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    [
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#151f72",
+        "borderRadius": 32,
+        "minHeight": 52,
+        "opacity": 1,
+        "paddingHorizontal": 24,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+      }
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "letterSpacing": 0,
+            "lineHeight": 24,
+          },
+          {
+            "textAlign": "center",
+          },
+          {
+            "color": "#ffffff",
+            "paddingVertical": 4,
+          },
+        ]
+      }
+    >
+      Continue
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`Button light loading 1`] = `
+<View
+  accessibilityRole="button"
+  accessibilityState={
+    {
+      "busy": true,
+      "checked": undefined,
+      "disabled": true,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    [
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#151f72",
+        "borderRadius": 32,
+        "minHeight": 52,
+        "opacity": 1,
+        "paddingHorizontal": 24,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+      }
+    }
+  >
+    <ActivityIndicator
+      color="#ffffff"
+      size="small"
+      style={
+        {
+          "height": 20,
+          "width": 20,
+        }
+      }
+    />
+  </View>
+</View>
+`;
+
+exports[`Button light wrapping 1`] = `
+<View
+  accessibilityRole="button"
+  accessibilityState={
+    {
+      "busy": false,
+      "checked": undefined,
+      "disabled": false,
+      "expanded": undefined,
+      "selected": undefined,
+    }
+  }
+  accessibilityValue={
+    {
+      "max": undefined,
+      "min": undefined,
+      "now": undefined,
+      "text": undefined,
+    }
+  }
+  accessible={true}
+  collapsable={false}
+  focusable={true}
+  onBlur={[Function]}
+  onClick={[Function]}
+  onFocus={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    [
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#151f72",
+        "borderRadius": 32,
+        "minHeight": 52,
+        "opacity": 1,
+        "paddingHorizontal": 24,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+      }
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 16,
+            "fontWeight": "700",
+            "letterSpacing": 0,
+            "lineHeight": 24,
+          },
+          {
+            "textAlign": "center",
+          },
+          {
+            "color": "#ffffff",
+            "paddingVertical": 4,
+          },
+        ]
+      }
+    >
+      Continue to the ID details form
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`SearchField dark empty 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#272a35",
+        "borderColor": "#eaecf0",
+        "borderRadius": 12,
+        "borderWidth": 1,
+        "columnGap": 8,
+        "minHeight": 44,
+        "paddingHorizontal": 16,
+        "paddingVertical": 12,
+      },
+      undefined,
+    ]
+  }
+>
+  <RNSVGSvgView
+    align="xMidYMid"
+    bbHeight={20}
+    bbWidth={20}
+    focusable={false}
+    height={20}
+    meetOrSlice={0}
+    minX={0}
+    minY={0}
+    style={
+      [
+        {
+          "backgroundColor": "transparent",
+          "borderWidth": 0,
+        },
+        {
+          "flex": 0,
+          "height": 20,
+          "width": 20,
+        },
+      ]
+    }
+    vbHeight={20}
+    vbWidth={20}
+    width={20}
+  >
+    <RNSVGGroup
+      fill={
+        {
+          "payload": 4278190080,
+          "type": 0,
+        }
+      }
+    >
+      <RNSVGCircle
+        cx={7.9}
+        cy={7.9}
+        fill={null}
+        propList={
+          [
+            "fill",
+            "stroke",
+            "strokeWidth",
+          ]
+        }
+        r={6.4}
+        stroke={
+          {
+            "payload": 4286874242,
+            "type": 0,
+          }
+        }
+        strokeWidth={1.5}
+      />
+      <RNSVGLine
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+        propList={
+          [
+            "stroke",
+            "strokeWidth",
+            "strokeLinecap",
+          ]
+        }
+        stroke={
+          {
+            "payload": 4286874242,
+            "type": 0,
+          }
+        }
+        strokeLinecap={1}
+        strokeWidth={1.5}
+        x1={12.379999999999999}
+        x2={18.5}
+        y1={12.379999999999999}
+        y2={18.5}
+      />
+    </RNSVGGroup>
+  </RNSVGSvgView>
+  <TextInput
+    onBlur={[Function]}
+    onChangeText={[Function]}
+    onFocus={[Function]}
+    placeholder="Search"
+    placeholderTextColor="#848282"
+    selectionColor="#4d88ff"
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Regular",
+          "fontSize": 14,
+          "fontWeight": "400",
+          "letterSpacing": 0,
+          "lineHeight": 20,
+        },
+        {
+          "flex": 1,
+          "padding": 0,
+        },
+        {
+          "color": "#f2f2f2",
+        },
+      ]
+    }
+    value=""
+  />
+</View>
+`;
+
+exports[`SearchField dark filled 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#272a35",
+        "borderColor": "#eaecf0",
+        "borderRadius": 12,
+        "borderWidth": 1,
+        "columnGap": 8,
+        "minHeight": 44,
+        "paddingHorizontal": 16,
+        "paddingVertical": 12,
+      },
+      undefined,
+    ]
+  }
+>
+  <RNSVGSvgView
+    align="xMidYMid"
+    bbHeight={20}
+    bbWidth={20}
+    focusable={false}
+    height={20}
+    meetOrSlice={0}
+    minX={0}
+    minY={0}
+    style={
+      [
+        {
+          "backgroundColor": "transparent",
+          "borderWidth": 0,
+        },
+        {
+          "flex": 0,
+          "height": 20,
+          "width": 20,
+        },
+      ]
+    }
+    vbHeight={20}
+    vbWidth={20}
+    width={20}
+  >
+    <RNSVGGroup
+      fill={
+        {
+          "payload": 4278190080,
+          "type": 0,
+        }
+      }
+    >
+      <RNSVGCircle
+        cx={7.9}
+        cy={7.9}
+        fill={null}
+        propList={
+          [
+            "fill",
+            "stroke",
+            "strokeWidth",
+          ]
+        }
+        r={6.4}
+        stroke={
+          {
+            "payload": 4286874242,
+            "type": 0,
+          }
+        }
+        strokeWidth={1.5}
+      />
+      <RNSVGLine
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+        propList={
+          [
+            "stroke",
+            "strokeWidth",
+            "strokeLinecap",
+          ]
+        }
+        stroke={
+          {
+            "payload": 4286874242,
+            "type": 0,
+          }
+        }
+        strokeLinecap={1}
+        strokeWidth={1.5}
+        x1={12.379999999999999}
+        x2={18.5}
+        y1={12.379999999999999}
+        y2={18.5}
+      />
+    </RNSVGGroup>
+  </RNSVGSvgView>
+  <TextInput
+    onBlur={[Function]}
+    onChangeText={[Function]}
+    onFocus={[Function]}
+    placeholder=""
+    placeholderTextColor="#848282"
+    selectionColor="#4d88ff"
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Regular",
+          "fontSize": 14,
+          "fontWeight": "400",
+          "letterSpacing": 0,
+          "lineHeight": 20,
+        },
+        {
+          "flex": 1,
+          "padding": 0,
+        },
+        {
+          "color": "#f2f2f2",
+        },
+      ]
+    }
+    value="Kenya"
+  />
+</View>
+`;
+
+exports[`SearchField light empty 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#ffffff",
+        "borderColor": "#eaecf0",
+        "borderRadius": 12,
+        "borderWidth": 1,
+        "columnGap": 8,
+        "minHeight": 44,
+        "paddingHorizontal": 16,
+        "paddingVertical": 12,
+      },
+      undefined,
+    ]
+  }
+>
+  <RNSVGSvgView
+    align="xMidYMid"
+    bbHeight={20}
+    bbWidth={20}
+    focusable={false}
+    height={20}
+    meetOrSlice={0}
+    minX={0}
+    minY={0}
+    style={
+      [
+        {
+          "backgroundColor": "transparent",
+          "borderWidth": 0,
+        },
+        {
+          "flex": 0,
+          "height": 20,
+          "width": 20,
+        },
+      ]
+    }
+    vbHeight={20}
+    vbWidth={20}
+    width={20}
+  >
+    <RNSVGGroup
+      fill={
+        {
+          "payload": 4278190080,
+          "type": 0,
+        }
+      }
+    >
+      <RNSVGCircle
+        cx={7.9}
+        cy={7.9}
+        fill={null}
+        propList={
+          [
+            "fill",
+            "stroke",
+            "strokeWidth",
+          ]
+        }
+        r={6.4}
+        stroke={
+          {
+            "payload": 4286874242,
+            "type": 0,
+          }
+        }
+        strokeWidth={1.5}
+      />
+      <RNSVGLine
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+        propList={
+          [
+            "stroke",
+            "strokeWidth",
+            "strokeLinecap",
+          ]
+        }
+        stroke={
+          {
+            "payload": 4286874242,
+            "type": 0,
+          }
+        }
+        strokeLinecap={1}
+        strokeWidth={1.5}
+        x1={12.379999999999999}
+        x2={18.5}
+        y1={12.379999999999999}
+        y2={18.5}
+      />
+    </RNSVGGroup>
+  </RNSVGSvgView>
+  <TextInput
+    onBlur={[Function]}
+    onChangeText={[Function]}
+    onFocus={[Function]}
+    placeholder="Search"
+    placeholderTextColor="#848282"
+    selectionColor="#4d88ff"
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Regular",
+          "fontSize": 14,
+          "fontWeight": "400",
+          "letterSpacing": 0,
+          "lineHeight": 20,
+        },
+        {
+          "flex": 1,
+          "padding": 0,
+        },
+        {
+          "color": "#21232c",
+        },
+      ]
+    }
+    value=""
+  />
+</View>
+`;
+
+exports[`SearchField light filled 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#ffffff",
+        "borderColor": "#eaecf0",
+        "borderRadius": 12,
+        "borderWidth": 1,
+        "columnGap": 8,
+        "minHeight": 44,
+        "paddingHorizontal": 16,
+        "paddingVertical": 12,
+      },
+      undefined,
+    ]
+  }
+>
+  <RNSVGSvgView
+    align="xMidYMid"
+    bbHeight={20}
+    bbWidth={20}
+    focusable={false}
+    height={20}
+    meetOrSlice={0}
+    minX={0}
+    minY={0}
+    style={
+      [
+        {
+          "backgroundColor": "transparent",
+          "borderWidth": 0,
+        },
+        {
+          "flex": 0,
+          "height": 20,
+          "width": 20,
+        },
+      ]
+    }
+    vbHeight={20}
+    vbWidth={20}
+    width={20}
+  >
+    <RNSVGGroup
+      fill={
+        {
+          "payload": 4278190080,
+          "type": 0,
+        }
+      }
+    >
+      <RNSVGCircle
+        cx={7.9}
+        cy={7.9}
+        fill={null}
+        propList={
+          [
+            "fill",
+            "stroke",
+            "strokeWidth",
+          ]
+        }
+        r={6.4}
+        stroke={
+          {
+            "payload": 4286874242,
+            "type": 0,
+          }
+        }
+        strokeWidth={1.5}
+      />
+      <RNSVGLine
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+        propList={
+          [
+            "stroke",
+            "strokeWidth",
+            "strokeLinecap",
+          ]
+        }
+        stroke={
+          {
+            "payload": 4286874242,
+            "type": 0,
+          }
+        }
+        strokeLinecap={1}
+        strokeWidth={1.5}
+        x1={12.379999999999999}
+        x2={18.5}
+        y1={12.379999999999999}
+        y2={18.5}
+      />
+    </RNSVGGroup>
+  </RNSVGSvgView>
+  <TextInput
+    onBlur={[Function]}
+    onChangeText={[Function]}
+    onFocus={[Function]}
+    placeholder=""
+    placeholderTextColor="#848282"
+    selectionColor="#4d88ff"
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Regular",
+          "fontSize": 14,
+          "fontWeight": "400",
+          "letterSpacing": 0,
+          "lineHeight": 20,
+        },
+        {
+          "flex": 1,
+          "padding": 0,
+        },
+        {
+          "color": "#21232c",
+        },
+      ]
+    }
+    value="Kenya"
+  />
+</View>
+`;
+
+exports[`SectionLabel dark default 1`] = `
+<Text
+  style={
+    [
+      {
+        "fontFamily": "DMSans-Bold",
+        "fontSize": 10,
+        "fontWeight": "700",
+        "letterSpacing": 0,
+        "lineHeight": 16,
+      },
+      {
+        "color": "#848282",
+        "fontSize": 11,
+        "letterSpacing": 0.88,
+      },
+      undefined,
+    ]
+  }
+>
+  AUTHENTICATION
+</Text>
+`;
+
+exports[`SectionLabel light default 1`] = `
+<Text
+  style={
+    [
+      {
+        "fontFamily": "DMSans-Bold",
+        "fontSize": 10,
+        "fontWeight": "700",
+        "letterSpacing": 0,
+        "lineHeight": 16,
+      },
+      {
+        "color": "#848282",
+        "fontSize": 11,
+        "letterSpacing": 0.88,
+      },
+      undefined,
+    ]
+  }
+>
+  AUTHENTICATION
+</Text>
+`;
+
+exports[`StatusBadge dark attention 1`] = `
+<Text
+  style={
+    [
+      {
+        "fontFamily": "DMSans-Bold",
+        "fontSize": 10,
+        "fontWeight": "700",
+        "letterSpacing": 0,
+        "lineHeight": 16,
+      },
+      {
+        "backgroundColor": "#fff0d9",
+        "borderRadius": 32,
+        "color": "#7a4a00",
+        "fontSize": 11,
+        "letterSpacing": 0.88,
+        "overflow": "hidden",
+        "paddingHorizontal": 8,
+        "paddingVertical": 4,
+      },
+      undefined,
+    ]
+  }
+>
+  Attention
+</Text>
+`;
+
+exports[`StatusBadge dark blocked 1`] = `
+<Text
+  style={
+    [
+      {
+        "fontFamily": "DMSans-Bold",
+        "fontSize": 10,
+        "fontWeight": "700",
+        "letterSpacing": 0,
+        "lineHeight": 16,
+      },
+      {
+        "backgroundColor": "#fde4e1",
+        "borderRadius": 32,
+        "color": "#a11209",
+        "fontSize": 11,
+        "letterSpacing": 0.88,
+        "overflow": "hidden",
+        "paddingHorizontal": 8,
+        "paddingVertical": 4,
+      },
+      undefined,
+    ]
+  }
+>
+  Blocked
+</Text>
+`;
+
+exports[`StatusBadge dark clear 1`] = `
+<Text
+  style={
+    [
+      {
+        "fontFamily": "DMSans-Bold",
+        "fontSize": 10,
+        "fontWeight": "700",
+        "letterSpacing": 0,
+        "lineHeight": 16,
+      },
+      {
+        "backgroundColor": "#dbf5e4",
+        "borderRadius": 32,
+        "color": "#04713a",
+        "fontSize": 11,
+        "letterSpacing": 0.88,
+        "overflow": "hidden",
+        "paddingHorizontal": 8,
+        "paddingVertical": 4,
+      },
+      undefined,
+    ]
+  }
+>
+  Clear
+</Text>
+`;
+
+exports[`StatusBadge dark processing 1`] = `
+<Text
+  style={
+    [
+      {
+        "fontFamily": "DMSans-Bold",
+        "fontSize": 10,
+        "fontWeight": "700",
+        "letterSpacing": 0,
+        "lineHeight": 16,
+      },
+      {
+        "backgroundColor": "#e5edff",
+        "borderRadius": 32,
+        "color": "#151f72",
+        "fontSize": 11,
+        "letterSpacing": 0.88,
+        "overflow": "hidden",
+        "paddingHorizontal": 8,
+        "paddingVertical": 4,
+      },
+      undefined,
+    ]
+  }
+>
+  Processing
+</Text>
+`;
+
+exports[`StatusBadge light attention 1`] = `
+<Text
+  style={
+    [
+      {
+        "fontFamily": "DMSans-Bold",
+        "fontSize": 10,
+        "fontWeight": "700",
+        "letterSpacing": 0,
+        "lineHeight": 16,
+      },
+      {
+        "backgroundColor": "#fff0d9",
+        "borderRadius": 32,
+        "color": "#7a4a00",
+        "fontSize": 11,
+        "letterSpacing": 0.88,
+        "overflow": "hidden",
+        "paddingHorizontal": 8,
+        "paddingVertical": 4,
+      },
+      undefined,
+    ]
+  }
+>
+  Attention
+</Text>
+`;
+
+exports[`StatusBadge light blocked 1`] = `
+<Text
+  style={
+    [
+      {
+        "fontFamily": "DMSans-Bold",
+        "fontSize": 10,
+        "fontWeight": "700",
+        "letterSpacing": 0,
+        "lineHeight": 16,
+      },
+      {
+        "backgroundColor": "#fde4e1",
+        "borderRadius": 32,
+        "color": "#a11209",
+        "fontSize": 11,
+        "letterSpacing": 0.88,
+        "overflow": "hidden",
+        "paddingHorizontal": 8,
+        "paddingVertical": 4,
+      },
+      undefined,
+    ]
+  }
+>
+  Blocked
+</Text>
+`;
+
+exports[`StatusBadge light clear 1`] = `
+<Text
+  style={
+    [
+      {
+        "fontFamily": "DMSans-Bold",
+        "fontSize": 10,
+        "fontWeight": "700",
+        "letterSpacing": 0,
+        "lineHeight": 16,
+      },
+      {
+        "backgroundColor": "#dbf5e4",
+        "borderRadius": 32,
+        "color": "#04713a",
+        "fontSize": 11,
+        "letterSpacing": 0.88,
+        "overflow": "hidden",
+        "paddingHorizontal": 8,
+        "paddingVertical": 4,
+      },
+      undefined,
+    ]
+  }
+>
+  Clear
+</Text>
+`;
+
+exports[`StatusBadge light processing 1`] = `
+<Text
+  style={
+    [
+      {
+        "fontFamily": "DMSans-Bold",
+        "fontSize": 10,
+        "fontWeight": "700",
+        "letterSpacing": 0,
+        "lineHeight": 16,
+      },
+      {
+        "backgroundColor": "#e5edff",
+        "borderRadius": 32,
+        "color": "#151f72",
+        "fontSize": 11,
+        "letterSpacing": 0.88,
+        "overflow": "hidden",
+        "paddingHorizontal": 8,
+        "paddingVertical": 4,
+      },
+      undefined,
+    ]
+  }
+>
+  Processing
+</Text>
+`;
+
+exports[`Switch dark disabled_off 1`] = `
+<RCTSwitch
+  accessibilityRole="switch"
+  disabled={true}
+  onChange={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  onTintColor="#848282"
+  style={
+    [
+      {
+        "alignSelf": "flex-start",
+      },
+      {
+        "backgroundColor": "#eaecf0",
+        "borderRadius": 16,
+      },
+    ]
+  }
+  thumbTintColor="#1a1c23"
+  tintColor="#eaecf0"
+  value={false}
+/>
+`;
+
+exports[`Switch dark disabled_on 1`] = `
+<RCTSwitch
+  accessibilityRole="switch"
+  disabled={true}
+  onChange={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  onTintColor="#848282"
+  style={
+    [
+      {
+        "alignSelf": "flex-start",
+      },
+      {
+        "backgroundColor": "#eaecf0",
+        "borderRadius": 16,
+      },
+    ]
+  }
+  thumbTintColor="#272a35"
+  tintColor="#eaecf0"
+  value={true}
+/>
+`;
+
+exports[`Switch dark off 1`] = `
+<RCTSwitch
+  accessibilityRole="switch"
+  disabled={false}
+  onChange={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  onTintColor="#4d88ff"
+  style={
+    [
+      {
+        "alignSelf": "flex-start",
+      },
+      {
+        "backgroundColor": "#eaecf0",
+        "borderRadius": 16,
+      },
+    ]
+  }
+  thumbTintColor="#272a35"
+  tintColor="#eaecf0"
+  value={false}
+/>
+`;
+
+exports[`Switch dark on 1`] = `
+<RCTSwitch
+  accessibilityRole="switch"
+  disabled={false}
+  onChange={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  onTintColor="#4d88ff"
+  style={
+    [
+      {
+        "alignSelf": "flex-start",
+      },
+      {
+        "backgroundColor": "#eaecf0",
+        "borderRadius": 16,
+      },
+    ]
+  }
+  thumbTintColor="#272a35"
+  tintColor="#eaecf0"
+  value={true}
+/>
+`;
+
+exports[`Switch light disabled_off 1`] = `
+<RCTSwitch
+  accessibilityRole="switch"
+  disabled={true}
+  onChange={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  onTintColor="#848282"
+  style={
+    [
+      {
+        "alignSelf": "flex-start",
+      },
+      {
+        "backgroundColor": "#eaecf0",
+        "borderRadius": 16,
+      },
+    ]
+  }
+  thumbTintColor="#f9fafb"
+  tintColor="#eaecf0"
+  value={false}
+/>
+`;
+
+exports[`Switch light disabled_on 1`] = `
+<RCTSwitch
+  accessibilityRole="switch"
+  disabled={true}
+  onChange={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  onTintColor="#848282"
+  style={
+    [
+      {
+        "alignSelf": "flex-start",
+      },
+      {
+        "backgroundColor": "#eaecf0",
+        "borderRadius": 16,
+      },
+    ]
+  }
+  thumbTintColor="#ffffff"
+  tintColor="#eaecf0"
+  value={true}
+/>
+`;
+
+exports[`Switch light off 1`] = `
+<RCTSwitch
+  accessibilityRole="switch"
+  disabled={false}
+  onChange={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  onTintColor="#151f72"
+  style={
+    [
+      {
+        "alignSelf": "flex-start",
+      },
+      {
+        "backgroundColor": "#eaecf0",
+        "borderRadius": 16,
+      },
+    ]
+  }
+  thumbTintColor="#ffffff"
+  tintColor="#eaecf0"
+  value={false}
+/>
+`;
+
+exports[`Switch light on 1`] = `
+<RCTSwitch
+  accessibilityRole="switch"
+  disabled={false}
+  onChange={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  onTintColor="#151f72"
+  style={
+    [
+      {
+        "alignSelf": "flex-start",
+      },
+      {
+        "backgroundColor": "#eaecf0",
+        "borderRadius": 16,
+      },
+    ]
+  }
+  thumbTintColor="#ffffff"
+  tintColor="#eaecf0"
+  value={true}
+/>
+`;
+
+exports[`TextInput dark disabled 1`] = `
+<View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "width": "100%",
+        },
+        {
+          "backgroundColor": "#1a1c23",
+          "borderColor": "#eaecf0",
+          "borderRadius": 12,
+          "borderWidth": 1,
+          "columnGap": 8,
+          "minHeight": 44,
+          "paddingHorizontal": 16,
+          "paddingVertical": 12,
+        },
+      ]
+    }
+  >
+    <TextInput
+      autoCorrect={true}
+      editable={false}
+      onBlur={[Function]}
+      onChangeText={[Function]}
+      onFocus={[Function]}
+      placeholder=""
+      placeholderTextColor="#848282"
+      secureTextEntry={false}
+      selectionColor="#4d88ff"
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Regular",
+            "fontSize": 14,
+            "fontWeight": "400",
+            "letterSpacing": 0,
+            "lineHeight": 20,
+          },
+          {
+            "flex": 1,
+            "padding": 0,
+          },
+          {
+            "color": "#848282",
+          },
+          null,
+        ]
+      }
+      value="1234"
+    />
+  </View>
+</View>
+`;
+
+exports[`TextInput dark empty 1`] = `
+<View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "width": "100%",
+        },
+        {
+          "backgroundColor": "#272a35",
+          "borderColor": "#eaecf0",
+          "borderRadius": 12,
+          "borderWidth": 1,
+          "columnGap": 8,
+          "minHeight": 44,
+          "paddingHorizontal": 16,
+          "paddingVertical": 12,
+        },
+      ]
+    }
+  >
+    <TextInput
+      autoCorrect={true}
+      editable={true}
+      onBlur={[Function]}
+      onChangeText={[Function]}
+      onFocus={[Function]}
+      placeholder="ID number"
+      placeholderTextColor="#848282"
+      secureTextEntry={false}
+      selectionColor="#4d88ff"
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Regular",
+            "fontSize": 14,
+            "fontWeight": "400",
+            "letterSpacing": 0,
+            "lineHeight": 20,
+          },
+          {
+            "flex": 1,
+            "padding": 0,
+          },
+          {
+            "color": "#f2f2f2",
+          },
+          null,
+        ]
+      }
+      value=""
+    />
+  </View>
+</View>
+`;
+
+exports[`TextInput dark end_aligned 1`] = `
+<View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "width": "100%",
+        },
+        {
+          "backgroundColor": "#272a35",
+          "borderColor": "#eaecf0",
+          "borderRadius": 12,
+          "borderWidth": 1,
+          "columnGap": 8,
+          "minHeight": 44,
+          "paddingHorizontal": 16,
+          "paddingVertical": 12,
+        },
+      ]
+    }
+  >
+    <TextInput
+      autoCorrect={true}
+      editable={true}
+      onBlur={[Function]}
+      onChangeText={[Function]}
+      onFocus={[Function]}
+      placeholder=""
+      placeholderTextColor="#848282"
+      secureTextEntry={false}
+      selectionColor="#4d88ff"
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Regular",
+            "fontSize": 14,
+            "fontWeight": "400",
+            "letterSpacing": 0,
+            "lineHeight": 20,
+          },
+          {
+            "flex": 1,
+            "padding": 0,
+          },
+          {
+            "color": "#f2f2f2",
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      value="Ada Nwosu"
+    />
+  </View>
+</View>
+`;
+
+exports[`TextInput dark error 1`] = `
+<View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "width": "100%",
+        },
+        {
+          "backgroundColor": "#272a35",
+          "borderColor": "#ea2d2d",
+          "borderRadius": 12,
+          "borderWidth": 1.5,
+          "columnGap": 8,
+          "minHeight": 44,
+          "paddingHorizontal": 16,
+          "paddingVertical": 12,
+        },
+      ]
+    }
+  >
+    <TextInput
+      autoCorrect={true}
+      editable={true}
+      onBlur={[Function]}
+      onChangeText={[Function]}
+      onFocus={[Function]}
+      placeholder=""
+      placeholderTextColor="#848282"
+      secureTextEntry={false}
+      selectionColor="#4d88ff"
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Regular",
+            "fontSize": 14,
+            "fontWeight": "400",
+            "letterSpacing": 0,
+            "lineHeight": 20,
+          },
+          {
+            "flex": 1,
+            "padding": 0,
+          },
+          {
+            "color": "#f2f2f2",
+          },
+          null,
+        ]
+      }
+      value="12"
+    />
+  </View>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 12,
+          "fontWeight": "500",
+          "letterSpacing": 0,
+          "lineHeight": 16,
+        },
+        {
+          "color": "#ea2d2d",
+          "marginStart": 16,
+          "marginTop": 4,
+        },
+      ]
+    }
+  >
+    Enter a valid ID number
+  </Text>
+</View>
+`;
+
+exports[`TextInput dark filled 1`] = `
+<View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "width": "100%",
+        },
+        {
+          "backgroundColor": "#272a35",
+          "borderColor": "#eaecf0",
+          "borderRadius": 12,
+          "borderWidth": 1,
+          "columnGap": 8,
+          "minHeight": 44,
+          "paddingHorizontal": 16,
+          "paddingVertical": 12,
+        },
+      ]
+    }
+  >
+    <TextInput
+      autoCorrect={true}
+      editable={true}
+      onBlur={[Function]}
+      onChangeText={[Function]}
+      onFocus={[Function]}
+      placeholder=""
+      placeholderTextColor="#848282"
+      secureTextEntry={false}
+      selectionColor="#4d88ff"
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Regular",
+            "fontSize": 14,
+            "fontWeight": "400",
+            "letterSpacing": 0,
+            "lineHeight": 20,
+          },
+          {
+            "flex": 1,
+            "padding": 0,
+          },
+          {
+            "color": "#f2f2f2",
+          },
+          null,
+        ]
+      }
+      value="1234567890"
+    />
+  </View>
+</View>
+`;
+
+exports[`TextInput dark masked 1`] = `
+<View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "width": "100%",
+        },
+        {
+          "backgroundColor": "#272a35",
+          "borderColor": "#eaecf0",
+          "borderRadius": 12,
+          "borderWidth": 1,
+          "columnGap": 8,
+          "minHeight": 44,
+          "paddingHorizontal": 16,
+          "paddingVertical": 12,
+        },
+      ]
+    }
+  >
+    <TextInput
+      autoCorrect={false}
+      editable={true}
+      onBlur={[Function]}
+      onChangeText={[Function]}
+      onFocus={[Function]}
+      placeholder=""
+      placeholderTextColor="#848282"
+      secureTextEntry={true}
+      selectionColor="#4d88ff"
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Regular",
+            "fontSize": 14,
+            "fontWeight": "400",
+            "letterSpacing": 0,
+            "lineHeight": 20,
+          },
+          {
+            "flex": 1,
+            "padding": 0,
+          },
+          {
+            "color": "#f2f2f2",
+          },
+          null,
+        ]
+      }
+      value="secret"
+    />
+  </View>
+</View>
+`;
+
+exports[`TextInput light disabled 1`] = `
+<View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "width": "100%",
+        },
+        {
+          "backgroundColor": "#f9fafb",
+          "borderColor": "#eaecf0",
+          "borderRadius": 12,
+          "borderWidth": 1,
+          "columnGap": 8,
+          "minHeight": 44,
+          "paddingHorizontal": 16,
+          "paddingVertical": 12,
+        },
+      ]
+    }
+  >
+    <TextInput
+      autoCorrect={true}
+      editable={false}
+      onBlur={[Function]}
+      onChangeText={[Function]}
+      onFocus={[Function]}
+      placeholder=""
+      placeholderTextColor="#848282"
+      secureTextEntry={false}
+      selectionColor="#4d88ff"
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Regular",
+            "fontSize": 14,
+            "fontWeight": "400",
+            "letterSpacing": 0,
+            "lineHeight": 20,
+          },
+          {
+            "flex": 1,
+            "padding": 0,
+          },
+          {
+            "color": "#848282",
+          },
+          null,
+        ]
+      }
+      value="1234"
+    />
+  </View>
+</View>
+`;
+
+exports[`TextInput light empty 1`] = `
+<View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "width": "100%",
+        },
+        {
+          "backgroundColor": "#ffffff",
+          "borderColor": "#eaecf0",
+          "borderRadius": 12,
+          "borderWidth": 1,
+          "columnGap": 8,
+          "minHeight": 44,
+          "paddingHorizontal": 16,
+          "paddingVertical": 12,
+        },
+      ]
+    }
+  >
+    <TextInput
+      autoCorrect={true}
+      editable={true}
+      onBlur={[Function]}
+      onChangeText={[Function]}
+      onFocus={[Function]}
+      placeholder="ID number"
+      placeholderTextColor="#848282"
+      secureTextEntry={false}
+      selectionColor="#4d88ff"
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Regular",
+            "fontSize": 14,
+            "fontWeight": "400",
+            "letterSpacing": 0,
+            "lineHeight": 20,
+          },
+          {
+            "flex": 1,
+            "padding": 0,
+          },
+          {
+            "color": "#21232c",
+          },
+          null,
+        ]
+      }
+      value=""
+    />
+  </View>
+</View>
+`;
+
+exports[`TextInput light end_aligned 1`] = `
+<View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "width": "100%",
+        },
+        {
+          "backgroundColor": "#ffffff",
+          "borderColor": "#eaecf0",
+          "borderRadius": 12,
+          "borderWidth": 1,
+          "columnGap": 8,
+          "minHeight": 44,
+          "paddingHorizontal": 16,
+          "paddingVertical": 12,
+        },
+      ]
+    }
+  >
+    <TextInput
+      autoCorrect={true}
+      editable={true}
+      onBlur={[Function]}
+      onChangeText={[Function]}
+      onFocus={[Function]}
+      placeholder=""
+      placeholderTextColor="#848282"
+      secureTextEntry={false}
+      selectionColor="#4d88ff"
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Regular",
+            "fontSize": 14,
+            "fontWeight": "400",
+            "letterSpacing": 0,
+            "lineHeight": 20,
+          },
+          {
+            "flex": 1,
+            "padding": 0,
+          },
+          {
+            "color": "#21232c",
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      value="Ada Nwosu"
+    />
+  </View>
+</View>
+`;
+
+exports[`TextInput light error 1`] = `
+<View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "width": "100%",
+        },
+        {
+          "backgroundColor": "#ffffff",
+          "borderColor": "#ef4343",
+          "borderRadius": 12,
+          "borderWidth": 1.5,
+          "columnGap": 8,
+          "minHeight": 44,
+          "paddingHorizontal": 16,
+          "paddingVertical": 12,
+        },
+      ]
+    }
+  >
+    <TextInput
+      autoCorrect={true}
+      editable={true}
+      onBlur={[Function]}
+      onChangeText={[Function]}
+      onFocus={[Function]}
+      placeholder=""
+      placeholderTextColor="#848282"
+      secureTextEntry={false}
+      selectionColor="#4d88ff"
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Regular",
+            "fontSize": 14,
+            "fontWeight": "400",
+            "letterSpacing": 0,
+            "lineHeight": 20,
+          },
+          {
+            "flex": 1,
+            "padding": 0,
+          },
+          {
+            "color": "#21232c",
+          },
+          null,
+        ]
+      }
+      value="12"
+    />
+  </View>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 12,
+          "fontWeight": "500",
+          "letterSpacing": 0,
+          "lineHeight": 16,
+        },
+        {
+          "color": "#ef4343",
+          "marginStart": 16,
+          "marginTop": 4,
+        },
+      ]
+    }
+  >
+    Enter a valid ID number
+  </Text>
+</View>
+`;
+
+exports[`TextInput light filled 1`] = `
+<View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "width": "100%",
+        },
+        {
+          "backgroundColor": "#ffffff",
+          "borderColor": "#eaecf0",
+          "borderRadius": 12,
+          "borderWidth": 1,
+          "columnGap": 8,
+          "minHeight": 44,
+          "paddingHorizontal": 16,
+          "paddingVertical": 12,
+        },
+      ]
+    }
+  >
+    <TextInput
+      autoCorrect={true}
+      editable={true}
+      onBlur={[Function]}
+      onChangeText={[Function]}
+      onFocus={[Function]}
+      placeholder=""
+      placeholderTextColor="#848282"
+      secureTextEntry={false}
+      selectionColor="#4d88ff"
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Regular",
+            "fontSize": 14,
+            "fontWeight": "400",
+            "letterSpacing": 0,
+            "lineHeight": 20,
+          },
+          {
+            "flex": 1,
+            "padding": 0,
+          },
+          {
+            "color": "#21232c",
+          },
+          null,
+        ]
+      }
+      value="1234567890"
+    />
+  </View>
+</View>
+`;
+
+exports[`TextInput light masked 1`] = `
+<View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "width": "100%",
+        },
+        {
+          "backgroundColor": "#ffffff",
+          "borderColor": "#eaecf0",
+          "borderRadius": 12,
+          "borderWidth": 1,
+          "columnGap": 8,
+          "minHeight": 44,
+          "paddingHorizontal": 16,
+          "paddingVertical": 12,
+        },
+      ]
+    }
+  >
+    <TextInput
+      autoCorrect={false}
+      editable={true}
+      onBlur={[Function]}
+      onChangeText={[Function]}
+      onFocus={[Function]}
+      placeholder=""
+      placeholderTextColor="#848282"
+      secureTextEntry={true}
+      selectionColor="#4d88ff"
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Regular",
+            "fontSize": 14,
+            "fontWeight": "400",
+            "letterSpacing": 0,
+            "lineHeight": 20,
+          },
+          {
+            "flex": 1,
+            "padding": 0,
+          },
+          {
+            "color": "#21232c",
+          },
+          null,
+        ]
+      }
+      value="secret"
+    />
+  </View>
+</View>
+`;
+
+exports[`Toast dark message 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "flexWrap": "wrap",
+        "width": "100%",
+      },
+      {
+        "elevation": 12,
+        "shadowColor": "#00000026",
+        "shadowOffset": {
+          "height": 4,
+          "width": 0,
+        },
+        "shadowOpacity": 1,
+        "shadowRadius": 12,
+      },
+      {
+        "backgroundColor": "#f2f2f2",
+        "borderRadius": 12,
+        "columnGap": 12,
+        "minHeight": 46,
+        "paddingHorizontal": 16,
+        "paddingVertical": 13,
+        "rowGap": 4,
+      },
+      undefined,
+    ]
+  }
+  testID="sample_toast"
+>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 14,
+          "fontWeight": "500",
+          "letterSpacing": 0,
+          "lineHeight": 20,
+        },
+        {
+          "flexBasis": "auto",
+          "flexGrow": 1,
+          "flexShrink": 1,
+        },
+        {
+          "color": "#1a1c23",
+          "fontSize": 13.5,
+        },
+      ]
+    }
+  >
+    1 verification hidden from App list
+  </Text>
+</View>
+`;
+
+exports[`Toast dark message_with_action 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "flexWrap": "wrap",
+        "width": "100%",
+      },
+      {
+        "elevation": 12,
+        "shadowColor": "#00000026",
+        "shadowOffset": {
+          "height": 4,
+          "width": 0,
+        },
+        "shadowOpacity": 1,
+        "shadowRadius": 12,
+      },
+      {
+        "backgroundColor": "#f2f2f2",
+        "borderRadius": 12,
+        "columnGap": 12,
+        "minHeight": 46,
+        "paddingHorizontal": 16,
+        "paddingVertical": 13,
+        "rowGap": 4,
+      },
+      undefined,
+    ]
+  }
+  testID="sample_toast"
+>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 14,
+          "fontWeight": "500",
+          "letterSpacing": 0,
+          "lineHeight": 20,
+        },
+        {
+          "flexBasis": "auto",
+          "flexGrow": 1,
+          "flexShrink": 1,
+        },
+        {
+          "color": "#1a1c23",
+          "fontSize": 13.5,
+        },
+      ]
+    }
+  >
+    1 verification hidden from App list
+  </Text>
+  <View
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      [
+        {
+          "alignItems": "center",
+          "justifyContent": "center",
+        },
+        {
+          "minWidth": 44,
+          "paddingHorizontal": 8,
+        },
+      ]
+    }
+    testID="sample_toast_undo"
+  >
+    <Text
+      numberOfLines={1}
+      style={
+        [
+          {
+            "fontFamily": "DMSans-SemiBold",
+            "fontSize": 14,
+            "fontWeight": "600",
+            "letterSpacing": 0,
+            "lineHeight": 20,
+          },
+          {
+            "textAlign": "center",
+            "textDecorationLine": "underline",
+          },
+          {
+            "color": "#1a1c23",
+            "fontSize": 14,
+          },
+        ]
+      }
+    >
+      Undo
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`Toast light message 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "flexWrap": "wrap",
+        "width": "100%",
+      },
+      {
+        "elevation": 12,
+        "shadowColor": "#00000026",
+        "shadowOffset": {
+          "height": 4,
+          "width": 0,
+        },
+        "shadowOpacity": 1,
+        "shadowRadius": 12,
+      },
+      {
+        "backgroundColor": "#21232c",
+        "borderRadius": 12,
+        "columnGap": 12,
+        "minHeight": 46,
+        "paddingHorizontal": 16,
+        "paddingVertical": 13,
+        "rowGap": 4,
+      },
+      undefined,
+    ]
+  }
+  testID="sample_toast"
+>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 14,
+          "fontWeight": "500",
+          "letterSpacing": 0,
+          "lineHeight": 20,
+        },
+        {
+          "flexBasis": "auto",
+          "flexGrow": 1,
+          "flexShrink": 1,
+        },
+        {
+          "color": "#f9fafb",
+          "fontSize": 13.5,
+        },
+      ]
+    }
+  >
+    1 verification hidden from App list
+  </Text>
+</View>
+`;
+
+exports[`Toast light message_with_action 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "flexWrap": "wrap",
+        "width": "100%",
+      },
+      {
+        "elevation": 12,
+        "shadowColor": "#00000026",
+        "shadowOffset": {
+          "height": 4,
+          "width": 0,
+        },
+        "shadowOpacity": 1,
+        "shadowRadius": 12,
+      },
+      {
+        "backgroundColor": "#21232c",
+        "borderRadius": 12,
+        "columnGap": 12,
+        "minHeight": 46,
+        "paddingHorizontal": 16,
+        "paddingVertical": 13,
+        "rowGap": 4,
+      },
+      undefined,
+    ]
+  }
+  testID="sample_toast"
+>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 14,
+          "fontWeight": "500",
+          "letterSpacing": 0,
+          "lineHeight": 20,
+        },
+        {
+          "flexBasis": "auto",
+          "flexGrow": 1,
+          "flexShrink": 1,
+        },
+        {
+          "color": "#f9fafb",
+          "fontSize": 13.5,
+        },
+      ]
+    }
+  >
+    1 verification hidden from App list
+  </Text>
+  <View
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      [
+        {
+          "alignItems": "center",
+          "justifyContent": "center",
+        },
+        {
+          "minWidth": 44,
+          "paddingHorizontal": 8,
+        },
+      ]
+    }
+    testID="sample_toast_undo"
+  >
+    <Text
+      numberOfLines={1}
+      style={
+        [
+          {
+            "fontFamily": "DMSans-SemiBold",
+            "fontSize": 14,
+            "fontWeight": "600",
+            "letterSpacing": 0,
+            "lineHeight": 20,
+          },
+          {
+            "textAlign": "center",
+            "textDecorationLine": "underline",
+          },
+          {
+            "color": "#f9fafb",
+            "fontSize": 14,
+          },
+        ]
+      }
+    >
+      Undo
+    </Text>
+  </View>
+</View>
+`;

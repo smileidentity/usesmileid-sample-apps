@@ -9,7 +9,7 @@ export const UseSmileIDSampleStatus = {
 export type UseSmileIDSampleStatus = (typeof UseSmileIDSampleStatus)[keyof typeof UseSmileIDSampleStatus];
 
 /// The feedback role each status draws its soft pill from.
-export const useSmileIDSampleStatusRole = (status: UseSmileIDSampleStatus): string => {
+export const smileIDSampleStatusRole = (status: UseSmileIDSampleStatus): string => {
   switch (status) {
     case UseSmileIDSampleStatus.Clear:
       return 'success';
@@ -23,7 +23,7 @@ export const useSmileIDSampleStatusRole = (status: UseSmileIDSampleStatus): stri
 };
 
 /// Resolves a persisted or restored status by lookup, so a rename cannot crash a restore.
-export const useSmileIDSampleStatusFrom = (
+export const smileIDSampleStatusFrom = (
   value: string | null | undefined,
   fallback: UseSmileIDSampleStatus = UseSmileIDSampleStatus.Processing,
 ): UseSmileIDSampleStatus => {

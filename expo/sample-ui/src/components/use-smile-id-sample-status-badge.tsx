@@ -1,6 +1,6 @@
 import { Text, type StyleProp, type TextStyle } from 'react-native';
 
-import { UseSmileIDSampleStatus, useSmileIDSampleStatusRole } from '../model/use-smile-id-sample-status';
+import { type UseSmileIDSampleStatus, smileIDSampleStatusRole } from '../model/use-smile-id-sample-status';
 import { smileLabelSize, smileLabelTracking } from '../smile-product-hues';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 import type { BadgeTokens } from '../theme/smile-colors';
@@ -27,7 +27,7 @@ const pairFor = (badge: BadgeTokens, role: string): { background: string; foregr
 /// A status pill in the design's soft tinted fill, Title case and on `radius.control` rather than `radius.chip`.
 export const UseSmileIDSampleStatusBadge = ({ status, testID, style }: Props) => {
   const theme = useSmileIDSampleTheme();
-  const { background, foreground } = pairFor(theme.colors.badge, useSmileIDSampleStatusRole(status));
+  const { background, foreground } = pairFor(theme.colors.badge, smileIDSampleStatusRole(status));
 
   return (
     <Text
