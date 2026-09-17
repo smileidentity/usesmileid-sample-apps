@@ -25,11 +25,9 @@ const config: ExpoConfig = {
   scheme: urlScheme,
   orientation: 'portrait',
   userInterfaceStyle: 'automatic',
-  newArchEnabled: true,
   android: {
     package: applicationId,
     permissions: ['android.permission.CAMERA'],
-    edgeToEdgeEnabled: true,
   },
   ios: {
     bundleIdentifier,

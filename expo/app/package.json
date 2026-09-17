@@ -8,7 +8,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "start": "expo start",
-    "bundle": "expo export --platform android --platform ios --output-dir dist --no-minify=false",
+    "bundle": "expo export --platform android --platform ios --output-dir dist",
     "prebuild": "expo prebuild --clean"
   },
   "dependencies": {

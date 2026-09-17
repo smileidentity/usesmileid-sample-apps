@@ -31,7 +31,7 @@ module.exports = tseslint.config(
   },
   {
     // CommonJS by necessity: eslint and jest both load their config before any ESM loader exists.
-    files: ['eslint.config.js', '**/jest.config.js', 'sample-ui/test/snapshot-resolver.js'],
+    files: ['eslint.config.js', '**/jest.config.js', '**/metro.config.js', 'sample-ui/test/snapshot-resolver.js'],
     rules: { '@typescript-eslint/no-require-imports': 'off' },
   },
   {
