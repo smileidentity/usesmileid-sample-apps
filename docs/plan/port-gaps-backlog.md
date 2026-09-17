@@ -43,6 +43,32 @@ currently the odd ones out in each case, which is a parity divergence until the 
   unnoticed, and it is the more valuable of the two fixes: a one-directional set assertion cannot fail
   on an omission.
 
+- **The top app bar's semantics need checking on Android and iOS.** Flutter's had `header: true` on
+  the row's container, which absorbed and reordered its children. With no trailing action — the
+  configuration most screens use — the whole bar collapsed into a single node labelled `Back` then
+  the title and flagged as a button, so a screen reader announced the title as part of the back
+  control and neither could be reached alone. With an action, the title was traversed before the back
+  control despite being visually to its right. Fixed on Flutter by moving the flag to the title,
+  where it belongs. **No pixel changed and no golden moved**, so the twins' baselines cannot rule this
+  out either — it needs a semantics test on each, not a look.
+
+  iOS has a documented sibling trap already: `.accessibilityElement(children: .contain)` must come
+  before the id or child ids go unreachable. Same class of defect — a container swallowing its
+  children — so iOS is the likelier of the two to carry it.
+
+- **A declared test id can be attached to nothing, and both existing checks pass.** Flutter's
+  `sample_scenario_drawer_button` was declared in the app's id list, present in `spec/test-ids.json`,
+  and set on no widget. The spec test asserts every declared id exists in the spec — the other
+  direction — so it was green, and a golden cannot see an accessibility identifier, so the pictures
+  were green too. A Maestro or XCUITest flow keying off the spec would have been the first thing to
+  find it, at which point the id looks like a spec error rather than a missing call site.
+
+  The check that finds it is three lines: read the declarations, read every source file in the repo's
+  two packages, and assert each declared name appears somewhere other than its own declaration. It has
+  to span both packages, because a sheet's id is supplied by whichever host PRESENTS the sheet, and
+  only a host sees both halves — scoped to the shared UI package alone it reports four false
+  positives. Android and iOS should both be checked; neither has this assertion today.
+
 ## 3. Design-system and spec debt
 
 Not port defects — the value is identical across the generated schemes, so there is nothing for a
@@ -58,6 +84,24 @@ port to choose.
 - **`DESIGN_SYSTEM_TOKEN` has never existed as a secret**, so the design-token drift check has never
   actually run in CI. It reports itself skipped, which reads as a pass.
 
+- **`spec/` and the design both understate what the consent form requires.** The spec lists only the
+  two name fields as required; Android additionally requires a contact because the SDK rejects a
+  submission without one, and the design labels both contact rows optional. All three cannot be right.
+  The SDK's constraint is the binding one, so the apps require a contact and the spec and the design
+  labels are the things owed a correction. Recorded because a form that passes its own validation and
+  then fails inside the SDK is the expensive version of this bug: the failure surfaces far from its
+  cause, and the spec would have been cited as evidence the form was correct.
+
+- **`spec/screens.json` describes the licences screen in Android's terms, and two platforms cannot
+  follow it.** It specifies two sections — open-source components, and artifacts under Google's own
+  terms whose row opens a page — plus a `sample_license_link` id. Those exist because the Android
+  release classpath carries ML Kit and Play Integrity, which declare terms-of-service pages rather
+  than a licence. Flutter's notices come from the toolchain and contain no such artifact, so there is
+  no second section and no link row; the id has no Flutter call site. iOS is the same shape today
+  with a single section. The spec should describe the property (a notice whose text cannot travel
+  links the page instead) rather than Android's specific section names, and say the second section is
+  present only where the platform graph produces one.
+
 ## 4. Product questions
 
 These need an owner's answer rather than an engineer's. Neither blocks anything.
@@ -66,6 +110,14 @@ These need an owner's answer rather than an engineer's. Neither blocks anything.
   switch remember anything? Today it persists nothing.
 - Should `expo/app` declare `expo-router/testing-library` so a cold deep link's navigation state can
   be asserted? It is a test-only dependency.
+
+- **An edit to the already-active profile cannot be saved, on every platform.** The profile page's
+  only write both saves the details and activates the profile, and its CTA reads "Make this profile
+  active" — so on the profile that is already active the button is disabled, and any edit made there
+  is silently discarded on leaving. Flutter matches the twin here deliberately rather than diverging,
+  because the fix is a product decision and not an engineering one: either the screen needs a second,
+  always-enabled Save, or the CTA needs to change its label and meaning when the profile is already
+  active. Worth deciding before a partner hits it, since the failure is silent.
 
 ## 5. Harness and environment notes
 
@@ -101,3 +153,98 @@ Worth having written down before the next port run rather than rediscovered.
   - On the ColorOS handset a green circle with a person glyph sits at a fixed screen position and
     overlaps whatever row is beneath it. It is a floating system overlay, not app UI: it does not move
     when the list scrolls, and it is absent from the goldens of the same screen.
+
+- **A component with no caller is a third way a green suite proves nothing**, distinct from the two
+  already listed. The app bar had goldens for eight months and no caller until the detail page; the
+  pictures were green because pictures cannot see semantics. The other two were a fixture disagreeing
+  with its caller, and two features never tested in the same room. All three are the same root
+  question: what does this test actually exercise?
+
+- **`wm dismiss-keyguard` does not always clear the lock screen** — an earlier note in the device
+  ledger over-promised and has been superseded rather than edited, so the over-promise stays visible.
+  It works only while the screen is already on and the keyguard is not demanding authentication. Read
+  the distinguishing state before blaming the dismiss: `mScreenState`, `mWakefulness`, and
+  `deviceLocked` from `dumpsys trust`. A keyguard reporting `deviceLocked=1, trusted=0,
+  trustManaged=0` after a confirmed wake needs a human unlock and no adb command will bypass it.
+
+- **Always pass an explicit `-s <serial>` to adb.** An unrelated `emulator-5554` appeared mid-session
+  and was confirmed a genuinely different device rather than a second transport of the handset.
+
+- **`LicenseRegistry` is empty under `flutter test`, whatever the build bundles.** The test binding
+  overrides `initLicenses()` to a no-op so a suite does not pay to parse 1.4 MB. The bundle really is
+  there — `build/unit_test_assets/NOTICES.Z` decompresses to the full set — so the emptiness reads
+  like a missing asset and is not. Consequences: a screen backed by the registry cannot have its real
+  content asserted in a unit test, every golden must pose a fixture, and the only place the true list
+  can be seen is a device. There is a test asserting the registry IS empty, so that if Flutter ever
+  changes this the suite says so rather than the screen quietly becoming testable and nobody noticing.
+
+- **A non-vacuous check has to be proved against the thing it protects, not against a plausible
+  input.** A test named "a signature matches across a line break" passed with the whitespace
+  normalisation deleted, because `LicenseEntryWithLineBreaks` had already collapsed the newline before
+  the code under test saw it — the test exercised the constructor, not the normaliser. Rewritten
+  against a custom `LicenseEntry` that chooses its own paragraph boundaries, it reds without the
+  normalisation. The tell was cheap and worth repeating on any predicate: delete the line it defends
+  and confirm the test notices.
+
+- **A row that has only just scrolled into view is not tappable when a bar floats over the list.**
+  `scrollUntilVisible` stops the moment the target enters the viewport, which puts it under the
+  floating nav bar, and the tap lands on the bar — reported as a hit-test warning and then as a
+  missing widget two assertions later, which reads like a wiring bug. Drive to the foot of the list
+  instead. The app side is a different question and should be asserted separately: with the screen
+  fully scrolled, is the last control above the bar? On Flutter it is, because the screen reserves the
+  clearance, and that is now a test. Android and iOS ship the same floating bar over the same long
+  settings list and neither asserts it.
+
+## 6. A branch with no pull request is invisible to every check
+
+The Expo screen-state tranche sat finished on a branch for hours after the rest of its port merged. It
+was named in the PR body of the tranche below it and in three separate hand-offs, and still went
+unnoticed — because every verification anyone ran was scoped to pull requests, and this branch had
+none. What found it was a content check across all remote branches during cleanup; a prune keyed on
+"is there a merged PR for this branch" would have deleted it instead.
+
+**How to apply:** track owed work where the work lives, not in prose. A branch with no PR is owed one
+the moment its dependency merges, and before deleting any branch, diff it against `main` rather than
+trusting the PR list.
+
+## 7. The semantics predicate every platform owes
+
+The Flutter fix is one line; the check that finds it is what ports. The property is not about an app
+bar at all: **a container must not absorb its children's semantics nodes, and traversal order must
+follow visual order rather than tree order.** Any composite that groups controls can break it.
+
+**What the Flutter test asserts.** It enumerates every semantics node carrying a label, with two
+flags each — is it a button, is it a header — and checks three things:
+
+1. **With no trailing action**, back and title are two nodes: `['Back', 'Verification details']` in
+   that order, the first a button, the second a header and not a button.
+2. **With a trailing action**, all three are separately reachable and in visual order:
+   `['Back', 'Verification details', 'Hide verification from the app list']`.
+3. **No node's label contains a newline.** That is the collapse's signature: merged labels arrive as
+   `'Back\nTitle'` on one node, so this catches the shape without naming the strings.
+
+Assert all three. **A platform can carry one failure mode without the other** — Flutter had the full
+collapse only when there was no trailing action, and with one it still inverted traversal order, so a
+test written against the with-action case alone would have passed while the common configuration was
+broken.
+
+**What it does not catch.** Nothing about hit targets, focus order under a real screen reader, or
+whether the labels are the right words. It is a structural predicate: the controls are separable and
+ordered. It also says nothing about a container that merges correctly but labels itself badly.
+
+**What is Flutter-specific, so the recipe does not port verbatim:**
+
+- The cause was `Semantics(header: true)` on the row's container absorbing its children. The flag
+  belongs on the title. Other toolkits will have their own absorbing construct — on iOS the
+  documented sibling is `.accessibilityElement(children: .contain)`, which must come before the id or
+  child ids go unreachable.
+- Enumerating the tree needs `tester.binding.pipelineOwner.semanticsOwner`, which is deprecated with
+  no working replacement in a widget test — `rootPipelineOwner` holds no semantics owner there. The
+  Flutter test carries an ignore and says why.
+- `tester.ensureSemantics()`'s handle must be disposed **inline**, not in a tear-down: flutter_test
+  verifies no handle is live before its tear-downs run, so a deferred dispose fails the test it was
+  meant to clean up after. This is the same shape as the painting-flag trap already in these notes.
+
+**Why a golden cannot stand in for it.** The Flutter fix moved no pixel and no baseline changed, so
+every screenshot on every platform is green either side of the defect. That is the whole reason this
+needs its own test rather than a look.
