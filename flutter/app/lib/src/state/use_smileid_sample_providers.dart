@@ -46,9 +46,17 @@ class UseSmileIDSampleSettingsNotifier
   /// Applies one switch, taking the stored result rather than assuming it, because the capture
   /// mutex can turn the other one off on the way past.
   Future<void> setSetting(UseSmileIDSampleSetting setting, bool enabled) async {
-    state = await ref
-        .read(useSmileIDSampleSettingsRepositoryProvider)
-        .setSetting(setting, enabled);
+    final UseSmileIDSampleSettings previous = state;
+    try {
+      state = await ref
+          .read(useSmileIDSampleSettingsRepositoryProvider)
+          .setSetting(setting, enabled);
+    } on Object {
+      // The platform store can refuse a write. The caller discards this future, so without the
+      // catch the error is unhandled AND the switch keeps the position it never persisted —
+      // it would read as saved and revert on the next launch. Snapping back is the honest state.
+      state = previous;
+    }
   }
 }
 

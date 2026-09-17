@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sample_ui/sample_ui.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_version.dart';
 
@@ -86,5 +87,40 @@ void main() {
     ).firstMatch(File('pubspec.yaml').readAsStringSync());
     final String version = declared!.group(1)!;
     expect(useSmileIDSampleVersionLabel, endsWith(version));
+  });
+  _tabOrderIsOneContract();
+}
+
+/// The shell reads `UseSmileIDSampleNavItem.values[shell.currentIndex]` and navigates with
+/// `item.index`, so the enum's order and the branch order are one contract with nothing holding
+/// them together. Reordering either silently highlights or opens the wrong tab: it compiles, and
+/// the three symmetric cases still pass. This is the assertion that fails instead.
+void _tabOrderIsOneContract() {
+  test('the nav items are in the same order as the tab roots', () {
+    expect(
+      UseSmileIDSampleNavItem.values.length,
+      UseSmileIDSampleRoutes.tabRoots.length,
+    );
+    final List<String> expected = <String>[
+      UseSmileIDSampleTestIds.navProducts,
+      UseSmileIDSampleTestIds.navVerifications,
+      UseSmileIDSampleTestIds.navSettings,
+    ];
+    for (int i = 0; i < expected.length; i++) {
+      expect(
+        UseSmileIDSampleNavItem.values[i].testId,
+        expected[i],
+        reason: 'nav item $i',
+      );
+      expect(
+        UseSmileIDSampleRoutes.tabRoots[i],
+        <String>[
+          UseSmileIDSampleRoutes.products,
+          UseSmileIDSampleRoutes.verifications,
+          UseSmileIDSampleRoutes.settings,
+        ][i],
+        reason: 'tab root $i',
+      );
+    }
   });
 }

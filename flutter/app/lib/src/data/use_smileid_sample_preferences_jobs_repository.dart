@@ -16,8 +16,10 @@ class UseSmileIDSamplePreferencesJobsRepository
   final SharedPreferences _preferences;
 
   /// The last batch taken, in memory rather than on disk: an undo is a confirmation's offer and
-  /// must not outlive the process that made it, which is what the twin does too.
-  static List<UseSmileIDSampleJob> _lastRemoved = const <UseSmileIDSampleJob>[];
+  /// must not outlive the process that made it, which is what the twin does too. An INSTANCE field,
+  /// not a static one — an undo belongs to the store that performed the removal, and a shared buffer
+  /// also leaks between test cases in one process.
+  List<UseSmileIDSampleJob> _lastRemoved = const <UseSmileIDSampleJob>[];
 
   /// Opens the store, which is done once before the first frame.
   static Future<UseSmileIDSamplePreferencesJobsRepository> open() async =>
