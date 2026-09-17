@@ -32,11 +32,14 @@ class BundleCase(unittest.TestCase):
         self._real_autolinked = gen.autolinked_packages
         self._real_hoisted = gen.HOISTED
         gen.autolinked_packages = lambda: dict(self.autolinked)
+        self._real_app_modules = gen.APP_MODULES
         gen.HOISTED = self.modules
+        gen.APP_MODULES = os.path.join(self.root, "app-node_modules")
 
     def tearDown(self) -> None:
         gen.autolinked_packages = self._real_autolinked
         gen.HOISTED = self._real_hoisted
+        gen.APP_MODULES = self._real_app_modules
         shutil.rmtree(self.root, ignore_errors=True)
 
     def package(self, name: str, version: str = "1.0.0", licence: str = "MIT", text: str = "MIT text") -> str:
@@ -110,19 +113,44 @@ class TestTheShippingSet(BundleCase):
             gen.shipping_set(self.bundle)
         self.assertIn("--source-maps", str(caught.exception))
 
-    def test_the_version_comes_from_the_copy_that_shipped_not_the_hoisted_one(self):
-        # The drift this guards: the hoisted copy and the nested copy can differ, and only the one
-        # the bundle actually pulled from is the one whose licence and version ship.
+    def test_a_metro_path_names_a_package_without_naming_a_location(self):
+        # Every real source reads "/node_modules/x/y.js": Metro writes them relative to its server
+        # root, so the map identifies packages and never directories. Resolution is by name.
+        self.package("query-string", version="7.1.3")
+        self.emit_map("/node_modules/query-string/index.js")
+        emitted = json.loads(gen.generate(self.bundle))["components"]
+        self.assertEqual([(c["component"], c["version"]) for c in emitted], [("query-string", "7.1.3")])
+
+    def test_a_nested_copy_does_not_win_over_the_installed_one(self):
+        # The map cannot say which copy Metro used, so one fixed order decides it on every machine
+        # rather than whichever path happened to resolve.
         self.package("chalk", version="5.3.0")
         nested = os.path.join(self.modules, "ora", "node_modules", "chalk")
         os.makedirs(nested)
         with io.open(os.path.join(nested, "package.json"), "w", encoding="utf-8") as handle:
             json.dump({"name": "chalk", "version": "4.1.2", "license": "MIT"}, handle)
-        with io.open(os.path.join(nested, "LICENSE"), "w", encoding="utf-8") as handle:
-            handle.write("MIT text")
         self.emit_map(os.path.join(nested, "source.js"))
         emitted = json.loads(gen.generate(self.bundle))["components"]
-        self.assertEqual([(c["component"], c["version"]) for c in emitted], [("chalk", "4.1.2")])
+        self.assertEqual([(c["component"], c["version"]) for c in emitted], [("chalk", "5.3.0")])
+
+    def test_the_walk_order_of_the_maps_cannot_change_the_result(self):
+        # os.walk returns filesystem order and two platforms do not agree on it, so the set is built
+        # from sorted maps and from names rather than from whichever file was read first.
+        self.package("color")
+        self.package("tslib")
+        self.emit_map(self.module("color"), name="a.hbc.map")
+        self.emit_map(self.module("tslib"), name="b.hbc.map")
+        first = json.loads(gen.generate(self.bundle))
+        os.rename(os.path.join(self.bundle, "a.hbc.map"), os.path.join(self.bundle, "z.hbc.map"))
+        self.assertEqual(json.loads(gen.generate(self.bundle)), first)
+
+    def test_a_bundled_package_that_is_not_installed_fails_rather_than_being_skipped(self):
+        # A short licence file is the failure nobody notices, so an unlocatable package stops the run.
+        self.package("color")
+        self.emit_map(self.module("color"), "/node_modules/ghost/index.js")
+        with self.assertRaises(gen.LicenceError) as caught:
+            gen.shipping_set(self.bundle)
+        self.assertIn("ghost", str(caught.exception))
 
 
 class TestTheEmittedNotice(BundleCase):

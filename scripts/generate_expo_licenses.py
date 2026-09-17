@@ -12,6 +12,11 @@ graph: the JavaScript in the release bundle, read from its source maps, and the 
 autolinks. Both name the exact directory the shipped copy came from, so the version recorded is the
 one that shipped.
 
+Metro writes `sources` relative to its server root, so a map entry reads `/node_modules/x/y.js` and
+identifies a package without locating it. Packages are therefore resolved by name in one fixed order
+and the maps are read sorted, because `os.walk` returns filesystem order and two platforms disagree
+on it. A package in the bundle that cannot be found on disk stops the run rather than being skipped.
+
 Walking `dependencies` instead was wrong twice over. `expo` and `expo-constants` declare the Expo
 CLI, Jest's formatter and a terminal spinner among their own dependencies, so the set reached 542
 components a partner receives almost none of. And because those packages exist at several versions,
@@ -42,6 +47,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXPO = os.path.join(REPO, "expo")
 APP_MANIFEST = os.path.join(EXPO, "app", "package.json")
 HOISTED = os.path.join(EXPO, "node_modules")
+APP_MODULES = os.path.join(EXPO, "app", "node_modules")
 
 NODE_MODULES = "node_modules/"
 
@@ -114,10 +120,36 @@ def nested_notice(directory: str) -> str | None:
     return None
 
 
+def package_name(source: str) -> str | None:
+    """The package a source path belongs to, or None when the path names none."""
+    marker = source.rfind(NODE_MODULES)
+    if marker < 0:
+        return None
+    parts = source[marker + len(NODE_MODULES):].split("/")
+    if not parts or not parts[0]:
+        return None
+    depth = 2 if parts[0].startswith("@") and len(parts) > 1 else 1
+    return "/".join(parts[:depth])
+
+
+def installed(name: str) -> str | None:
+    """Where a package is installed, in one fixed order so two machines resolve it the same way."""
+    for base in (APP_MODULES, HOISTED):
+        directory = os.path.join(base, *name.split("/"))
+        if os.path.isfile(os.path.join(directory, "package.json")):
+            return directory
+    return None
+
+
 def bundled_packages(bundle: str) -> dict[str, str]:
-    """Every package with JavaScript in the release bundle, at the directory that code came from."""
-    found: dict[str, str] = {}
-    maps = []
+    """Every package with JavaScript in the release bundle, resolved to where it is installed.
+
+    Metro writes `sources` relative to its server root, so every entry reads `/node_modules/x/y.js`
+    and names no location — the map identifies packages, never directories. Resolving by name in a
+    fixed order is therefore the honest reading, and the alternative was a silent fallback that
+    supplied the same answer while appearing to use the path.
+    """
+    maps: list[str] = []
     for root, _, files in os.walk(bundle):
         maps += [os.path.join(root, name) for name in files if name.endswith(".map")]
     if not maps:
@@ -125,30 +157,32 @@ def bundled_packages(bundle: str) -> dict[str, str]:
             f"no source maps under {bundle}; export with --source-maps so the notices can be "
             "derived from what ships rather than from the dependency graph"
         )
-    for path in maps:
+
+    names: set[str] = set()
+    # Sorted, because os.walk returns filesystem order and two platforms do not agree on it.
+    for path in sorted(maps):
         with io.open(path, encoding="utf-8") as handle:
             sources = json.load(handle).get("sources", [])
         for source in sources:
-            marker = source.rfind(NODE_MODULES)
-            if marker < 0:
-                continue
-            rest = source[marker + len(NODE_MODULES):]
-            parts = rest.split("/")
-            if not parts or not parts[0]:
-                continue
-            depth = 2 if parts[0].startswith("@") and len(parts) > 1 else 1
-            name = "/".join(parts[:depth])
-            if name.startswith(FIRST_PARTY_PREFIX):
-                continue
-            # The directory the module actually came from, not a hoisted guess: a package can be
-            # installed at several versions and only the shipped copy owes a notice.
-            directory = os.path.normpath(
-                os.path.join(source[: marker + len(NODE_MODULES)], name)
-            )
-            if not os.path.isfile(os.path.join(directory, "package.json")):
-                directory = os.path.join(HOISTED, name)
-            if os.path.isfile(os.path.join(directory, "package.json")):
-                found.setdefault(name, directory)
+            name = package_name(source)
+            if name is not None and not name.startswith(FIRST_PARTY_PREFIX):
+                names.add(name)
+
+    found: dict[str, str] = {}
+    unresolved: list[str] = []
+    for name in sorted(names):
+        directory = installed(name)
+        if directory is None:
+            unresolved.append(name)
+            continue
+        found[name] = directory
+    if unresolved:
+        # Loud rather than skipped: a package in the bundle that cannot be located on disk means the
+        # notice is short, and a short licence file is the failure nobody notices.
+        raise LicenceError(
+            "these packages are in the bundle and cannot be found on disk, so no notice can be "
+            f"emitted for them: {unresolved}"
+        )
     return found
 
 
@@ -237,6 +271,17 @@ def report_delta(existing: str | None, generated: str) -> None:
             shown = ", ".join(names[:12])
             more = f" (+{len(names) - 12} more)" if len(names) > 12 else ""
             print(f"      {label}: {shown}{more}")
+    # What changed, not only which: a version says the wrong copy was resolved, a text says the same
+    # copy carries different bytes, and the two have different causes. Naming the field is what a
+    # runner can report back that a local run cannot reproduce.
+    for name in changed[:12]:
+        before, after = was[name], now[name]
+        fields = sorted(key for key in set(before) | set(after) if before.get(key) != after.get(key))
+        detail = ", ".join(
+            f"{key} {before.get(key)!r} -> {after.get(key)!r}" if key == "version" else key
+            for key in fields
+        )
+        print(f"        {name}: {detail}   at {installed(name) or 'not installed'}")
     if not (added or removed or changed):
         print("      same components: the difference is formatting or order")
 
