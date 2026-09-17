@@ -15,6 +15,9 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useLaunchArgs } from '../src/use-smile-id-sample-launch';
 
+/// Every pushed route and sheet layers over the tabs, so a cold deep link lands with its owner beneath (routes.json R12).
+export const unstable_settings = { initialRouteName: '(tabs)' };
+
 /// The navigation host. Every route is a file under app/, matching the expo column of spec/routes.json.
 export default function RootLayout() {
   const scheme = useColorScheme();
@@ -43,7 +46,17 @@ export default function RootLayout() {
             headerShown: false,
             contentStyle: { backgroundColor: colors.background },
           }}
-        />
+        >
+          {/* Transparent, so products stays visible behind the sheet rather than being replaced. */}
+          <Stack.Screen
+            name="(products)/profiles/switch"
+            options={{
+              presentation: 'transparentModal',
+              animation: 'none',
+              contentStyle: { backgroundColor: 'transparent' },
+            }}
+          />
+        </Stack>
       </UseSmileIDSampleThemeProvider>
     </SafeAreaProvider>
   );

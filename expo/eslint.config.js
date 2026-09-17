@@ -31,7 +31,7 @@ module.exports = tseslint.config(
   },
   {
     // CommonJS by necessity: eslint and jest both load their config before any ESM loader exists.
-    files: ['eslint.config.js', '**/jest.config.js', '**/metro.config.js', 'sample-ui/test/snapshot-resolver.js'],
+    files: ['eslint.config.js', '**/jest.config.js', '**/metro.config.js', 'sample-ui/test/snapshot-resolver.js', 'sample-ui/test/setup.ts'],
     rules: { '@typescript-eslint/no-require-imports': 'off' },
   },
   {
@@ -41,7 +41,7 @@ module.exports = tseslint.config(
   },
   {
     // GENERATED: the emitter owns these files and the hex values are the point of them.
-    files: ['sample-ui/src/tokens.ts', 'sample-ui/src/smile-product-hues.ts'],
+    files: ['sample-ui/src/tokens.ts', 'sample-ui/src/smile-product-hues.ts', 'sample-ui/src/smile-icons.ts'],
     rules: { 'no-restricted-syntax': 'off' },
   },
   {

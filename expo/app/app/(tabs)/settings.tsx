@@ -1,20 +1,57 @@
 import {
-  UseSmileIDSampleSectionLabel,
-  UseSmileIDSampleTestIds,
+  SettingsScreen,
+  smileIDSampleProfileInitials,
+  useSmileIDSampleActiveProfile,
+  useSmileIDSampleActiveProfileIndex,
+  useSmileIDSampleSettingsStore,
   useSmileIDSampleTheme,
+  avatarColorForProfile,
+  type UseSmileIDSampleNavRow,
 } from '@smileid/sample-ui';
-import { View } from 'react-native';
+import Constants from 'expo-constants';
+import { useRouter } from 'expo-router';
+import { useEffect } from 'react';
 
-/// The settings destination, which drives every other screen's configuration once U3 fills it in.
-export default function SettingsScreen() {
+import { openNavRow } from '../../src/use-smile-id-sample-links';
+
+/// The Settings footer names the product and the host's own version, which only a shell can read.
+const versionLabel = () => `Smile ID · ${Constants.expoConfig?.version ?? '0.0.0'}`;
+
+export default function Settings() {
   const theme = useSmileIDSampleTheme();
+  const router = useRouter();
+  const profile = useSmileIDSampleActiveProfile();
+  const index = useSmileIDSampleActiveProfileIndex();
+  const settings = useSmileIDSampleSettingsStore((state) => state.settings);
+  const setSetting = useSmileIDSampleSettingsStore((state) => state.setSetting);
+  const load = useSmileIDSampleSettingsStore((state) => state.load);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  const onNavRowPress = (row: UseSmileIDSampleNavRow) => {
+    if (row.id === 'licenses') {
+      router.push('/settings/licenses');
+      return;
+    }
+    // Per scheme: one shared toolbar colour left a white bar on a white page.
+    void openNavRow(row, theme.dark ? theme.colors.surface : theme.colors.primary);
+  };
 
   return (
-    <View
-      testID={UseSmileIDSampleTestIds.SETTINGS_SCREEN}
-      style={{ backgroundColor: theme.colors.background, flex: 1, padding: theme.dimens.spacing.md }}
-    >
-      <UseSmileIDSampleSectionLabel text="APPEARANCE" />
-    </View>
+    <SettingsScreen
+      state={{
+        settings,
+        organisation: profile.organisation,
+        initials: smileIDSampleProfileInitials(profile),
+        versionLabel: versionLabel(),
+        avatarColor: avatarColorForProfile(index),
+      }}
+      onSettingChange={(setting, enabled) => void setSetting(setting, enabled)}
+      onProfilePress={() => router.push('/profiles')}
+      onNavRowPress={onNavRowPress}
+      onSignOut={() => undefined}
+    />
   );
 }

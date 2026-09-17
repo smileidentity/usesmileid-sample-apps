@@ -3,14 +3,14 @@
 #
 #   expo/verify.sh              everything, which is what a developer runs and what "green" means
 #   expo/verify.sh checks       everything except the release bundle
-#   expo/verify.sh bundle       only the production bundle both platforms ship
+#   expo/verify.sh bundle       the production bundle both platforms ship, and the notices from it
 #   expo/verify.sh native       the minified release APK — not part of `all`
 #
 # `native` is out of `all` for the same reason iOS keeps `archive` out of its own: it needs a
 # platform SDK a fresh clone does not have (the Android SDK, and a JDK the AARs were built against)
 # and it is the only phase that leaves an installable artefact. `bundle` IS in `all`, because the
 # Metro graph is where a missing file in a published package shows up, and it needs no native
-# toolchain at all.
+# toolchain at all. The notices check lives in `bundle` because it reads that bundle's source maps.
 set -euo pipefail
 
 cd "$(dirname "$0")"
@@ -64,6 +64,16 @@ if runs checks; then
     python3 "$REPO_ROOT/scripts/sync_design_tokens.py" "${TOKEN_ARGS[@]}"
   fi
   python3 "$REPO_ROOT/scripts/test_sync_design_tokens.py" >/dev/null
+  # The notices generator's own rules, which no export is needed to check and which a wrong shipping
+  # set would pass silently: a graph-walked set shipped 542 components and drifted 48 of them.
+  python3 "$REPO_ROOT/scripts/test_generate_expo_licenses.py" >/dev/null 2>&1
+fi
+
+if runs checks; then
+  echo "==> icons are current"
+  # Generated from design/icons/, which lives in this repo rather than the design system, so this
+  # needs no secret and always runs. A hand-edited path fails here.
+  python3 "$REPO_ROOT/scripts/generate_expo_icons.py" --check
 fi
 
 if runs checks; then
@@ -92,8 +102,20 @@ fi
 
 if runs bundle; then
   echo "==> release bundle for both platforms (minified, Hermes bytecode)"
+  # Source maps are what the notices are derived from: they name every module that actually shipped,
+  # so the licence set cannot drift with whatever the hoisted installer left at the top of the tree.
   "$PNPM" --filter usesmileid-sample-expo exec expo export \
-    --platform android --platform ios --output-dir dist
+    --platform android --platform ios --source-maps --output-dir dist
+fi
+
+if runs bundle; then
+  echo "==> third-party notices are current"
+  # Apache-2.0 §4 asks the notice to travel with the distribution, so the bundle ships the list
+  # rather than linking it. Derived from the bundle above and from the autolinked native modules,
+  # which is what the app actually contains — the dependency graph reached 542 components a partner
+  # receives almost none of, and 48 of them differed between a developer machine and CI.
+  python3 "$REPO_ROOT/scripts/generate_expo_licenses.py" \
+    --out expo/sample-ui/src/assets/licenses.json --bundle expo/app/dist --check
 fi
 
 if runs native; then

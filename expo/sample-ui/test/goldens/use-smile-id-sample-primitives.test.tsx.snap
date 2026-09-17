@@ -12,8 +12,8 @@ exports[`Avatar dark initials 1`] = `
       {
         "backgroundColor": "#151f72",
         "borderRadius": 12,
-        "height": 80,
-        "width": 80,
+        "height": 40,
+        "width": 40,
       },
       undefined,
     ]
@@ -55,8 +55,8 @@ exports[`Avatar dark placeholder 1`] = `
       {
         "backgroundColor": "#1a1c23",
         "borderRadius": 12,
-        "height": 80,
-        "width": 80,
+        "height": 40,
+        "width": 40,
       },
       undefined,
     ]
@@ -98,8 +98,8 @@ exports[`Avatar dark row_size 1`] = `
       {
         "backgroundColor": "#151f72",
         "borderRadius": 12,
-        "height": 88,
-        "width": 88,
+        "height": 44,
+        "width": 44,
       },
       undefined,
     ]
@@ -141,8 +141,8 @@ exports[`Avatar light initials 1`] = `
       {
         "backgroundColor": "#151f72",
         "borderRadius": 12,
-        "height": 80,
-        "width": 80,
+        "height": 40,
+        "width": 40,
       },
       undefined,
     ]
@@ -184,8 +184,8 @@ exports[`Avatar light placeholder 1`] = `
       {
         "backgroundColor": "#f9fafb",
         "borderRadius": 12,
-        "height": 80,
-        "width": 80,
+        "height": 40,
+        "width": 40,
       },
       undefined,
     ]
@@ -227,8 +227,8 @@ exports[`Avatar light row_size 1`] = `
       {
         "backgroundColor": "#151f72",
         "borderRadius": 12,
-        "height": 88,
-        "width": 88,
+        "height": 44,
+        "width": 44,
       },
       undefined,
     ]
@@ -1359,9 +1359,9 @@ exports[`SearchField dark focused 1`] = `
       },
       {
         "backgroundColor": "#272a35",
-        "borderColor": "#eaecf0",
+        "borderColor": "#4d88ff",
         "borderRadius": 12,
-        "borderWidth": 1,
+        "borderWidth": 1.5,
         "columnGap": 8,
         "minHeight": 44,
         "paddingHorizontal": 16,
@@ -1768,9 +1768,9 @@ exports[`SearchField light focused 1`] = `
       },
       {
         "backgroundColor": "#ffffff",
-        "borderColor": "#eaecf0",
+        "borderColor": "#4d88ff",
         "borderRadius": 12,
-        "borderWidth": 1,
+        "borderWidth": 1.5,
         "columnGap": 8,
         "minHeight": 44,
         "paddingHorizontal": 16,
@@ -2777,9 +2777,9 @@ exports[`TextInput dark focused 1`] = `
         },
         {
           "backgroundColor": "#272a35",
-          "borderColor": "#eaecf0",
+          "borderColor": "#4d88ff",
           "borderRadius": 12,
-          "borderWidth": 1,
+          "borderWidth": 1.5,
           "columnGap": 8,
           "minHeight": 44,
           "paddingHorizontal": 16,
@@ -3285,9 +3285,9 @@ exports[`TextInput light focused 1`] = `
         },
         {
           "backgroundColor": "#ffffff",
-          "borderColor": "#eaecf0",
+          "borderColor": "#4d88ff",
           "borderRadius": 12,
-          "borderWidth": 1,
+          "borderWidth": 1.5,
           "columnGap": 8,
           "minHeight": 44,
           "paddingHorizontal": 16,

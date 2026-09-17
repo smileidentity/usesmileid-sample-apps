@@ -81,3 +81,21 @@ export const smileIDSampleProfilesForLaunch = (
   args: UseSmileIDSampleLaunchArgs,
 ): readonly UseSmileIDSampleProfile[] =>
   args.seedProfiles ? smileIDSampleFixtureProfiles() : smileIDSampleStarterProfiles();
+
+/// What the partner has typed into a profile editor, and which profile they typed it into.
+export type UseSmileIDSampleProfileEdit = {
+  readonly profileId: string;
+  readonly details: UseSmileIDSampleUserDetails;
+};
+
+/// Which values a profile editor shows: the typed ones, else the stored ones, else empty.
+export const smileIDSampleEditorDefaults = (
+  edit: UseSmileIDSampleProfileEdit | null,
+  profileId: string | undefined,
+  stored: UseSmileIDSampleUserDetails | undefined,
+): UseSmileIDSampleUserDetails => {
+  // Never captured at mount: a profile that arrives later must replace the empty form, or the CTA
+  // writes that emptiness over stored defaults. An edit wins only for the profile it was typed into.
+  if (edit !== null && profileId !== undefined && edit.profileId === profileId) return edit.details;
+  return stored ?? smileIDSampleUserDetailsDefaults;
+};

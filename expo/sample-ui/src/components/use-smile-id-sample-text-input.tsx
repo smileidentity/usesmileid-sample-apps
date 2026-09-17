@@ -5,6 +5,7 @@ import {
   TextInput,
   View,
   type KeyboardTypeOptions,
+  type TextInputProps,
   type StyleProp,
   type TextStyle,
   type ViewStyle,
@@ -23,6 +24,8 @@ type Props = {
   isError?: boolean;
   errorMessage?: string | null;
   keyboardType?: KeyboardTypeOptions;
+  /// An ID number is entered uppercase, which is a keyboard hint rather than a transform.
+  autoCapitalize?: TextInputProps['autoCapitalize'];
   masked?: boolean;
   textAlign?: TextStyle['textAlign'];
   testID?: string;
@@ -40,6 +43,7 @@ export const UseSmileIDSampleTextInput = ({
   isError = false,
   errorMessage,
   keyboardType,
+  autoCapitalize,
   masked = false,
   textAlign,
   testID,
@@ -85,6 +89,7 @@ export const UseSmileIDSampleTextInput = ({
           placeholderTextColor={theme.colors.input.placeholder}
           secureTextEntry={masked}
           autoCorrect={!masked}
+          autoCapitalize={autoCapitalize}
           keyboardType={keyboardType}
           selectionColor={theme.colors.input.borderFocus}
           onFocus={() => setFocused(true)}
