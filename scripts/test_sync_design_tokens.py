@@ -23,6 +23,19 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import sync_design_tokens as gen  # noqa: E402
 
 
+def design_system_or_skip(case: unittest.TestCase) -> str:
+    """The design system, or a stated skip: it is a private repo, so CI and fork PRs have no copy."""
+    try:
+        return gen.find_design_system(None)
+    except SystemExit:
+        case.skipTest(
+            "no design system on this machine, so this assertion cannot run. It compares the emitters "
+            "against the real token set; run it with SMILE_DESIGN_SYSTEM pointed at a checkout, or set "
+            "the DESIGN_SYSTEM_TOKEN secret so CI checks one out."
+        )
+        raise  # unreachable: skipTest raises. Present so the return type stays honest.
+
+
 class TestColours(unittest.TestCase):
     def test_six_digit_hex_gets_opaque_alpha(self):
         self.assertEqual(gen.dart_color("#151f72"), "Color(0xFF151F72)")
@@ -393,7 +406,7 @@ class TestSwiftTypography(unittest.TestCase):
 
     def test_the_ramp_has_the_same_membership_as_the_compose_one(self):
         # The two files are the same stopgap; a style in one and not the other is the bug to catch.
-        ds = gen.find_design_system(None)
+        ds = design_system_or_skip(self)
         with io.open(os.path.join(ds, "dist", "json", "tokens.flat.json"), encoding="utf-8") as handle:
             light = json.load(handle)["light"]
         names = {gen.camel(path) for path, value in gen.walk(light) if gen.is_type_leaf(value)}
