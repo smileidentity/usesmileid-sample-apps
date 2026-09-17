@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:sample_ui/sample_ui.dart';
 
+/// The picker's countries, so the trigger cannot draw a flag the selected row never set.
+const Map<String, String> _countryFlags = <String, String>{
+  'Kenya': '🇰🇪',
+  'Ghana': '🇬🇭',
+};
+
 /// Every primitive in one scrollable page, so each one has a call site and a device can be driven
 /// over it before the screens that consume it exist. A dev surface, which is why it lives here.
+
 class UseSmileIDSampleComponentGallery extends StatefulWidget {
   /// Takes nothing; the gallery owns the state its controls need.
   const UseSmileIDSampleComponentGallery({super.key});
@@ -136,22 +143,18 @@ class _UseSmileIDSampleComponentGalleryState
               placeholder: 'Select country',
               onTap: () => setState(() => _country = null),
               leading: (Color tint) => UseSmileIDSampleTriggerEmoji(
-                emoji: _country == null ? '🌍' : '🇰🇪',
+                emoji: _countryFlags[_country] ?? '🌍',
               ),
             ),
             const SizedBox(height: SmileDimens.spacingXs),
-            UseSmileIDSampleOptionRow(
-              label: 'Kenya',
-              leadingText: '🇰🇪',
-              selected: _country == 'Kenya',
-              onTap: () => setState(() => _country = 'Kenya'),
-            ),
-            UseSmileIDSampleOptionRow(
-              label: 'Ghana',
-              leadingText: '🇬🇭',
-              selected: _country == 'Ghana',
-              onTap: () => setState(() => _country = 'Ghana'),
-            ),
+            for (final MapEntry<String, String> country
+                in _countryFlags.entries)
+              UseSmileIDSampleOptionRow(
+                label: country.key,
+                leadingText: country.value,
+                selected: _country == country.key,
+                onTap: () => setState(() => _country = country.key),
+              ),
           ],
         ),
       ),
