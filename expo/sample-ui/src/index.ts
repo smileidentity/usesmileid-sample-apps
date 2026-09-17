@@ -113,7 +113,6 @@ export { UseSmileIDSampleFloatingTokenButton } from './components/use-smile-id-s
 export { UseSmileIDSampleNavBar } from './components/use-smile-id-sample-nav-bar';
 export { UseSmileIDSampleProductCard } from './components/use-smile-id-sample-product-card';
 export { UseSmileIDSampleProductGrid } from './components/use-smile-id-sample-product-grid';
-export { UseSmileIDSampleProfileEnvChip } from './components/use-smile-id-sample-profile-env-chip';
 export { UseSmileIDSampleScanGlyph } from './components/use-smile-id-sample-scan-glyph';
 export { UseSmileIDSampleScanSheet } from './components/use-smile-id-sample-scan-sheet';
 export { UseSmileIDSampleSectionHeader } from './components/use-smile-id-sample-section-header';
