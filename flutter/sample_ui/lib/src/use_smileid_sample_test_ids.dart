@@ -176,6 +176,61 @@ abstract final class UseSmileIDSampleTestIds {
   /// Creates the profile; the confirmation offers to make it active.
   static const String newProfileSave = 'sample_new_profile_save';
 
+  /// The consent details form, which every product shows before its flow.
+  static const String userDetailsScreen = 'sample_user_details_screen';
+
+  /// One of its four rows, suffixed with the field's camelCase id.
+  static String userDetailsField(String field) =>
+      'sample_user_details_field_$field';
+
+  /// The line under the card that says what is still outstanding.
+  static const String userDetailsHint = 'sample_user_details_hint';
+
+  /// The remember switch, which appears only once the form is satisfied.
+  static const String rememberDetailsSwitch = 'sample_remember_details_switch';
+
+  /// The consent form's continue.
+  static const String userDetailsContinue = 'sample_user_details_continue';
+
+  /// The ID details form, shown only for the products that need one.
+  static const String kycFormScreen = 'sample_kyc_form_screen';
+
+  /// The country select trigger.
+  static const String countryTrigger = 'sample_country_trigger';
+
+  /// The ID type select trigger, disabled until a country is chosen.
+  static const String idTypeTrigger = 'sample_idtype_trigger';
+
+  /// The ID number field.
+  static const String idNumberInput = 'sample_idnumber_input';
+
+  /// The ID form's continue.
+  static const String kycContinue = 'sample_kyc_continue';
+
+  /// The country picker sheet.
+  static const String countrySheet = 'sample_country_sheet';
+
+  /// Its search field, which filters on the country NAME and never the code.
+  static const String countrySearch = 'sample_country_search';
+
+  /// One country row, suffixed with its ISO code.
+  static String countryOption(String code) => 'sample_country_option_$code';
+
+  /// What the country picker shows when the search matches nothing.
+  static const String countryEmpty = 'sample_country_empty';
+
+  /// The ID type picker sheet.
+  static const String idTypeSheet = 'sample_idtype_sheet';
+
+  /// Its search field.
+  static const String idTypeSearch = 'sample_idtype_search';
+
+  /// One ID type row, suffixed with its id.
+  static String idTypeOption(String typeId) => 'sample_idtype_option_$typeId';
+
+  /// What the ID type picker shows with no country, and with no match.
+  static const String idTypeEmpty = 'sample_idtype_empty';
+
   /// The selection bar shown instead of the nav bar.
   static const String selectionBar = 'sample_selection_bar';
 
@@ -232,6 +287,21 @@ abstract final class UseSmileIDSampleTestIds {
     newProfileEmail,
     newProfilePhone,
     newProfileSave,
+    userDetailsScreen,
+    userDetailsHint,
+    rememberDetailsSwitch,
+    userDetailsContinue,
+    kycFormScreen,
+    countryTrigger,
+    idTypeTrigger,
+    idNumberInput,
+    kycContinue,
+    countrySheet,
+    countrySearch,
+    countryEmpty,
+    idTypeSheet,
+    idTypeSearch,
+    idTypeEmpty,
     selectionBar,
     selectionCount,
     selectionRemove,
