@@ -13,6 +13,16 @@ abstract interface class UseSmileIDSampleJobsRepository {
 
   /// Adds the design's eleven, ignoring any whose id is already stored.
   Future<void> seedFixtures(int nowMillis);
+
+  /// Hides the rows with these ids and returns how many were actually taken.
+  ///
+  /// The count is what was TAKEN, not what was asked for, because that is what the confirmation
+  /// reports; and an id that matched nothing must not overwrite a still-undoable batch, or a no-op
+  /// silently spends the undo.
+  Future<int> remove(Set<String> ids);
+
+  /// Puts the last removal back, once. A second call restores nothing.
+  Future<void> undoRemove();
 }
 
 /// Jobs that live as long as the process, which is what a test and a preview want.
@@ -29,6 +39,8 @@ class UseSmileIDSampleMemoryJobsRepository
   Future<List<UseSmileIDSampleJob>?> read() async =>
       List<UseSmileIDSampleJob>.unmodifiable(_jobs);
 
+  List<UseSmileIDSampleJob> _lastRemoved = const <UseSmileIDSampleJob>[];
+
   @override
   Future<void> seedFixtures(int nowMillis) async {
     final Set<String> stored = _jobs
@@ -39,6 +51,25 @@ class UseSmileIDSampleMemoryJobsRepository
         nowMillis,
       ).where((UseSmileIDSampleJob job) => !stored.contains(job.id)),
     );
+  }
+
+  @override
+  Future<int> remove(Set<String> ids) async {
+    final List<UseSmileIDSampleJob> taken = _jobs
+        .where((UseSmileIDSampleJob job) => ids.contains(job.id))
+        .toList();
+    if (taken.isEmpty) {
+      return 0;
+    }
+    _lastRemoved = taken;
+    _jobs.removeWhere((UseSmileIDSampleJob job) => ids.contains(job.id));
+    return taken.length;
+  }
+
+  @override
+  Future<void> undoRemove() async {
+    _jobs.addAll(_lastRemoved);
+    _lastRemoved = const <UseSmileIDSampleJob>[];
   }
 }
 

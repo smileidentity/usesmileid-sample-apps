@@ -104,6 +104,13 @@ abstract final class UseSmileIDSampleTestIds {
   /// The status badge inside a verification row, which the row attaches itself.
   static const String jobRowStatus = 'sample_job_row_status';
 
+  /// The header action that enters and leaves select mode; its label flips Select / Cancel.
+  static const String selectToggle = 'sample_select_toggle';
+
+  /// One row's selection checkbox, suffixed with the row's position, present only in select mode.
+  static String selectionCheckbox(int index) =>
+      'sample_selection_checkbox_$index';
+
   /// The selection bar shown instead of the nav bar.
   static const String selectionBar = 'sample_selection_bar';
 
@@ -142,6 +149,7 @@ abstract final class UseSmileIDSampleTestIds {
     toast,
     toastUndo,
     jobRowStatus,
+    selectToggle,
     selectionBar,
     selectionCount,
     selectionRemove,
