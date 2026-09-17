@@ -74,6 +74,10 @@ Future<void> goldens(
   Widget Function() build, {
   double textScale = 1,
 }) async {
+  // A disabled shadow records as a SOLID block, which drew the nav bar's elevation as a hard ring
+  // and hid the token ring behind it. Restored inline, because the framework asserts every
+  // painting flag is back before a test's tear-downs run.
+  debugDisableShadows = false;
   for (final (String suffix, ThemeData theme, UseSmileIDSampleColors colors)
       in <(String, ThemeData, UseSmileIDSampleColors)>[
         (
@@ -93,6 +97,7 @@ Future<void> goldens(
       matchesGoldenFile('../goldens/${name}_$suffix.png'),
     );
   }
+  debugDisableShadows = true;
 }
 
 /// Pumps the widget at [textScale] and fails on truncated text or a mid-word break.
@@ -143,7 +148,10 @@ Future<void> assertSurvivesMaxTextScale(
       textScaler: paragraph.textScaler,
       ellipsis: paragraph.overflow == TextOverflow.ellipsis ? '…' : null,
     )..layout(maxWidth: paragraph.size.width);
-    if (painter.didExceedMaxLines) {
+    // Only where the paragraph is allowed to wrap. A single-line paragraph has declared that it
+    // ellipsises instead, which a text field cannot avoid — whether the chosen copy fits at 2x is
+    // a question for the baseline and the device pass, not a layout defect.
+    if (painter.didExceedMaxLines && paragraph.maxLines != 1) {
       truncated.add(text);
     }
     split.addAll(_midWordBreaks(painter, text, paragraph.size.width));
