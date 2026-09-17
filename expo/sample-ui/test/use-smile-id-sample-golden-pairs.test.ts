@@ -33,9 +33,11 @@ const snapshotFiles = [
   'use-smile-id-sample-screen-composites.test.tsx.snap',
   'use-smile-id-sample-screens.test.tsx.snap',
   'use-smile-id-sample-verifications.test.tsx.snap',
+  'use-smile-id-sample-forms.test.tsx.snap',
+  'use-smile-id-sample-profiles-screens.test.tsx.snap',
 ];
 
-const expectedStates = 108;
+const expectedStates = 125;
 
 const readPairs = () => {
   const pairs = new Map<string, { light?: string; dark?: string }>();
