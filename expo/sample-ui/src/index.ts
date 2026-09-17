@@ -108,3 +108,18 @@ export {
   smileIDSampleProductIcon,
 } from './model/use-smile-id-sample-product';
 export type { CardTokens, DataFieldTokens, FilterChipTokens } from './theme/smile-colors';
+
+export { UseSmileIDSampleFloatingTokenButton } from './components/use-smile-id-sample-floating-token-button';
+export { UseSmileIDSampleNavBar } from './components/use-smile-id-sample-nav-bar';
+export { UseSmileIDSampleProductCard } from './components/use-smile-id-sample-product-card';
+export { UseSmileIDSampleProductGrid } from './components/use-smile-id-sample-product-grid';
+export { UseSmileIDSampleProfileEnvChip } from './components/use-smile-id-sample-profile-env-chip';
+export { UseSmileIDSampleScanGlyph } from './components/use-smile-id-sample-scan-glyph';
+export { UseSmileIDSampleScanSheet } from './components/use-smile-id-sample-scan-sheet';
+export { UseSmileIDSampleSectionHeader } from './components/use-smile-id-sample-section-header';
+export { UseSmileIDSampleSessionCard } from './components/use-smile-id-sample-session-card';
+export { UseSmileIDSampleSessionEndedBanner } from './components/use-smile-id-sample-session-ended-banner';
+export { UseSmileIDSampleSwipeAction } from './components/use-smile-id-sample-swipe-action';
+export { UseSmileIDSampleTokenRing } from './components/use-smile-id-sample-token-ring';
+export { smileIDSampleNavItems, type UseSmileIDSampleNavItem } from './model/use-smile-id-sample-nav-item';
+export { smileInkOn, smileLuminance, smileMix, smileWithAlpha } from './theme/smile-color-math';

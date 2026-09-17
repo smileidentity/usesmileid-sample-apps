@@ -14,6 +14,7 @@
     "@smileid/usesmileid": ">=12.1.1",
     "react": ">=19.0.0",
     "react-native": ">=0.78.0",
+    "react-native-gesture-handler": ">=2.0.0",
     "react-native-safe-area-context": ">=5.0.0",
     "react-native-svg": ">=15.0.0",
     "zustand": ">=5.0.0"
@@ -45,6 +46,7 @@
     "typescript": "6.0.3, the version Expo SDK 57 expects. It also satisfies typescript-eslint 8's `>=4.8.4 <6.1.0`, so type-aware linting stays on — 7.x would not.",
     "@types/node": "The test files read spec/ from disk, which needs the Node globals; nothing in src/ uses them.",
     "react-native-safe-area-context": "peer; the app bar reads the real status-bar inset rather than a constant, which is the rule insets stay platform-native.",
-    "@expo/ui": "peer; the bottom sheet is the platform's own (SwiftUI sheet, Material3 ModalBottomSheet), which spec/components.json requires rather than a hand-rolled one. Already in the graph via expo-router."
+    "@expo/ui": "peer; the bottom sheet is the platform's own (SwiftUI sheet, Material3 ModalBottomSheet), which spec/components.json requires rather than a hand-rolled one. Already in the graph via expo-router.",
+    "react-native-gesture-handler": "peer; the row swipe is the platform's own gesture, which spec/components.json requires rather than reproducing Android's velocity and threshold by hand."
   }
 }
