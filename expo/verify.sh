@@ -77,6 +77,14 @@ if runs checks; then
 fi
 
 if runs checks; then
+  echo "==> third-party notices are current"
+  # Apache-2.0 §4 asks the notice to travel with the distribution, so the bundle ships the list
+  # rather than linking it. Walked from the app's production closure, which is what a partner ships.
+  python3 "$REPO_ROOT/scripts/generate_expo_licenses.py" \
+    --out expo/sample-ui/src/assets/licenses.json --check
+fi
+
+if runs checks; then
   echo "==> the project is still a well-formed Expo app"
   # The cheapest check that continuous native generation still holds and that every dependency version
   # agrees with the installed SDK — otherwise only a human noticing catches either.
