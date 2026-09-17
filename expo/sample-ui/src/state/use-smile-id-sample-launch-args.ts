@@ -112,7 +112,12 @@ export const smileIDSampleLaunchArgsFrom = (raw: RawArgs): UseSmileIDSampleLaunc
 /// Reads the arguments out of a cold-start URL, which is this platform's mechanism per `spec/launch-args.json`.
 export const smileIDSampleLaunchArgsFromUrl = (url: string | null): UseSmileIDSampleLaunchArgs => {
   if (!url) return smileIDSampleLaunchArgDefaults;
-  const query = url.includes('?') ? url.slice(url.indexOf('?') + 1) : '';
+  // The fragment has to go before the split, or it lands inside the last value and that argument
+  // parses as garbage and silently falls back to its default.
+  const beforeFragment = url.split('#')[0] ?? '';
+  const query = beforeFragment.includes('?')
+    ? beforeFragment.slice(beforeFragment.indexOf('?') + 1)
+    : '';
   const params = new URLSearchParams(query);
   const raw: Record<string, string> = {};
   for (const name of UseSmileIDSampleLaunchArgNames) {

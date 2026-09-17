@@ -75,13 +75,19 @@ export const useSmileIDSampleProfileStore = create<State & Actions>((set, get) =
 }));
 
 /// The active profile, which never returns undefined because the store always holds at least one.
-export const useSmileIDSampleActiveProfile = (): UseSmileIDSampleProfile => {
-  const { items, activeId } = useSmileIDSampleProfileStore();
-  return items.find((item) => item.id === activeId) ?? (items[0] as UseSmileIDSampleProfile);
-};
+export const useSmileIDSampleActiveProfile = (): UseSmileIDSampleProfile =>
+  // Selector, not the whole store: a bare call subscribes every caller to lastCreatedId too.
+  useSmileIDSampleProfileStore(
+    (state) =>
+      state.items.find((item) => item.id === state.activeId) ??
+      (state.items[0] as UseSmileIDSampleProfile),
+  );
 
 /// Position in the list, which is what picks a profile's avatar hue.
-export const useSmileIDSampleActiveProfileIndex = (): number => {
-  const { items, activeId } = useSmileIDSampleProfileStore();
-  return Math.max(0, items.findIndex((item) => item.id === activeId));
-};
+export const useSmileIDSampleActiveProfileIndex = (): number =>
+  useSmileIDSampleProfileStore((state) =>
+    Math.max(
+      0,
+      state.items.findIndex((item) => item.id === state.activeId),
+    ),
+  );

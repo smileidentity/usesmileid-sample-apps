@@ -83,4 +83,15 @@ describe('the cold-start URL', () => {
       smileIDSampleLaunchArgDefaults,
     );
   });
+
+  it('reads the arguments out of a link that carries a fragment', () => {
+    const withFragment = smileIDSampleLaunchArgsFromUrl(
+      'usesmileid-sample-expo://products?probes=true&seedProfiles=true#top',
+    );
+    expect(withFragment.probes).toBe(true);
+    expect(withFragment.seedProfiles).toBe(true);
+    expect(smileIDSampleLaunchArgsFromUrl('usesmileid-sample-expo://products#top')).toEqual(
+      smileIDSampleLaunchArgDefaults,
+    );
+  });
 });
