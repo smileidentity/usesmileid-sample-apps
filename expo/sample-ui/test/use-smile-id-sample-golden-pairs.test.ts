@@ -43,8 +43,8 @@ describe('the recorded goldens', () => {
     expect(halves).toEqual([]);
   });
 
-  it('records twenty-six states', () => {
-    expect(pairs.size).toBe(26);
+  it('records thirty states', () => {
+    expect(pairs.size).toBe(30);
   });
 
   it('has no identical light and dark pair that is not explained', () => {
