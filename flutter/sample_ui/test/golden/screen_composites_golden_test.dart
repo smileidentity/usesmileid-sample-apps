@@ -15,7 +15,14 @@ void main() {
   testWidgets('product cards survive max text scale', (
     WidgetTester tester,
   ) async {
-    await assertSurvivesMaxTextScale(tester, _productCards());
+    await assertSurvivesMaxTextScale(
+      tester,
+      _productCards(),
+      // Every product word is wider than the card's text column at 2x, so the words break. That
+      // is `ui-work-plan.md` §5 item 3a, an open design question about whether the grid drops to
+      // one column at accessibility sizes — Android is the arbiter, so a port must not answer it.
+      knownOpenWords: _gridOpenWords,
+    );
   });
 
   testWidgets('product grid', (WidgetTester tester) async {
@@ -25,7 +32,14 @@ void main() {
   testWidgets('product grid survives max text scale', (
     WidgetTester tester,
   ) async {
-    await assertSurvivesMaxTextScale(tester, _productGrid());
+    await assertSurvivesMaxTextScale(
+      tester,
+      _productGrid(),
+      // Every product word is wider than the card's text column at 2x, so the words break. That
+      // is `ui-work-plan.md` §5 item 3a, an open design question about whether the grid drops to
+      // one column at accessibility sizes — Android is the arbiter, so a port must not answer it.
+      knownOpenWords: _gridOpenWords,
+    );
   });
 
   testWidgets('section header', (WidgetTester tester) async {
@@ -223,3 +237,13 @@ Widget _swipeActions() => Builder(
 void _ignore(String value) {}
 
 void _ignoreItem(UseSmileIDSampleNavItem item) {}
+
+/// The words `ui-work-plan.md` §5 item 3a records as breaking at 2x in the design's own grid.
+const Set<String> _gridOpenWords = <String>{
+  'Registration',
+  'Document',
+  'Enhanced',
+  'Biometric',
+  'Verification',
+  'SmartSelfie\u2122',
+};
