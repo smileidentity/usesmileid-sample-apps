@@ -18,6 +18,7 @@ class _UseSmileIDSampleComponentGalleryState
   String _query = '';
   bool _agentMode = false;
   bool _loading = false;
+  String? _country;
 
   @override
   Widget build(BuildContext context) {
@@ -123,6 +124,33 @@ class _UseSmileIDSampleComponentGalleryState
               message: '1 verification hidden from App list',
               actionLabel: 'Undo',
               onAction: () {},
+            ),
+            const SizedBox(height: SmileDimens.spacingLg),
+
+            // The only components that draw an emoji, so this is where a device run can see whether
+            // the platform's emoji faces survived naming a bundled font family.
+            const UseSmileIDSampleSectionLabel(text: 'COUNTRY PICKER'),
+            const SizedBox(height: SmileDimens.spacingXs),
+            UseSmileIDSampleSelectTrigger(
+              value: _country,
+              placeholder: 'Select country',
+              onTap: () => setState(() => _country = null),
+              leading: (Color tint) => UseSmileIDSampleTriggerEmoji(
+                emoji: _country == null ? '🌍' : '🇰🇪',
+              ),
+            ),
+            const SizedBox(height: SmileDimens.spacingXs),
+            UseSmileIDSampleOptionRow(
+              label: 'Kenya',
+              leadingText: '🇰🇪',
+              selected: _country == 'Kenya',
+              onTap: () => setState(() => _country = 'Kenya'),
+            ),
+            UseSmileIDSampleOptionRow(
+              label: 'Ghana',
+              leadingText: '🇬🇭',
+              selected: _country == 'Ghana',
+              onTap: () => setState(() => _country = 'Ghana'),
             ),
           ],
         ),
