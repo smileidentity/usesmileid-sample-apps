@@ -1,0 +1,40 @@
+name: usesmileid_sample_flutter
+description: The UseSmileID Flutter sample, consuming the SDK from pub.dev exactly as a partner does.
+version: 1.0.0+1
+
+# Not a package: this is the app, and nothing here is published.
+publish_to: none
+
+environment:
+  sdk: ^3.11.0
+  flutter: '>=3.41.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # The SDK from pub.dev. Registry-only, permanently: no path dependency and no
+  # dependency_overrides, because consuming the published form is why this app exists.
+  usesmileid: ^12.1.1
+
+  # The shared journey, by path. Never published, and the SDK repo maps the same source into its
+  # own development sample.
+  sample_ui:
+    path: ../sample_ui
+
+  # Chosen in docs/plan/navigation-plan.md for StatefulShellRoute's per-tab back stacks.
+  go_router: ^17.5.0
+
+  # The template's own. Switch.adaptive puts Cupertino widgets in the tree, and without this the
+  # icon tree-shaker warns that it cannot find the family they reference.
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # The published lint set, so a partner reading this app sees the rules they already have.
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
