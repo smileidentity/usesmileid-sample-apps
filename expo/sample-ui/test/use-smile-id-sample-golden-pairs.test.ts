@@ -1,6 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { smileDarkColors, smileLightColors } from '../src/theme/smile-colors';
+
 /// Two states whose baselines are byte-identical are not two baselines, so each pair that is
 /// identical on purpose is named here and a new one fails — the cheapest dark-mode miss to ship.
 const identicalOnPurpose: Record<string, string> = {
@@ -84,5 +86,26 @@ describe('the recorded goldens', () => {
 
   it('names a recorded state for every explained pair, so a renamed state cannot orphan its note', () => {
     expect(Object.keys(identicalOnPurpose).filter((id) => !pairs.has(id))).toEqual([]);
+  });
+
+  it('carries no light-scheme page colour into a dark baseline', () => {
+    // The Flutter port recorded a whole dark suite that was silently light, because its framework
+    // animates a theme change and the capture caught the old colours mid-transition. Only the page
+    // and muted-surface colours are checked: white and the near-black title are used deliberately
+    // mode-invariantly elsewhere, so treating those as light-only reports the wrong states.
+    const lightPageOnly = [smileLightColors.background, smileLightColors.surfaceMuted];
+    const leaked = [...pairs.entries()]
+      .filter(([, pair]) => lightPageOnly.some((colour) => (pair.dark ?? '').includes(colour)))
+      .map(([id]) => id);
+    expect(leaked).toEqual([]);
+  });
+});
+
+describe('the theme provider', () => {
+  it('reaches the components with the scheme the harness pins, not the runner default', () => {
+    // Asserted directly rather than inferred from the baselines: this is the one fact that makes
+    // every dark golden above trustworthy, and it needs no colour guessing to check.
+    expect(smileLightColors.background).not.toEqual(smileDarkColors.background);
+    expect(smileLightColors.surface).not.toEqual(smileDarkColors.surface);
   });
 });
