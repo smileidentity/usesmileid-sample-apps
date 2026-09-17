@@ -134,13 +134,12 @@ class UseSmileIDSampleJobsNotifier
     extends AsyncNotifier<List<UseSmileIDSampleJob>> {
   @override
   Future<List<UseSmileIDSampleJob>> build() async {
-    final UseSmileIDSampleJobsRepository jobs = ref.watch(
-      useSmileIDSampleJobsRepositoryProvider,
-    );
-    if (ref.watch(useSmileIDSampleLaunchArgsProvider).seedJobs) {
-      await jobs.seedFixtures(DateTime.now().millisecondsSinceEpoch);
-    }
-    return await jobs.read() ?? const <UseSmileIDSampleJob>[];
+    // READ ONLY. Seeding used to live here, and invalidating after a removal re-ran it, which put
+    // the row straight back with a fresh timestamp — found on a device, where the count went back
+    // to eleven and the top row's clock had moved. Seeding is a start-up act, so it happens once
+    // before the first frame instead.
+    return await ref.watch(useSmileIDSampleJobsRepositoryProvider).read() ??
+        const <UseSmileIDSampleJob>[];
   }
 
   /// Hides rows and returns how many were taken, which is what the confirmation reports.

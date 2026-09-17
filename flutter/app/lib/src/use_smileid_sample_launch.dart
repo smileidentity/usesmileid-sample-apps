@@ -43,3 +43,17 @@ class UseSmileIDSampleLaunch {
   bool _flag(String name) =>
       _uri.queryParameters[name]?.trim().toLowerCase() == 'true';
 }
+
+/// Everything a launch does to the stores before the first frame.
+///
+/// One function rather than a few lines in `main`, so a test drives the SAME path the app does. A
+/// test that seeds by hand proves its own arrangement rather than the app's.
+Future<void> useSmileIDSampleApplyLaunch(
+  UseSmileIDSampleLaunchArgs args,
+  UseSmileIDSampleJobsRepository jobs, {
+  DateTime? now,
+}) async {
+  if (args.seedJobs) {
+    await jobs.seedFixtures((now ?? DateTime.now()).millisecondsSinceEpoch);
+  }
+}

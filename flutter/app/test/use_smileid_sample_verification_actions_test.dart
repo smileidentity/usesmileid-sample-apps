@@ -5,6 +5,7 @@ import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usesmileid_sample_flutter/src/data/use_smileid_sample_preferences_jobs_repository.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
+import 'package:usesmileid_sample_flutter/src/use_smileid_sample_launch.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 
 /// Hiding a row: the two affordances that do it, and the four things a removal must also do.
@@ -281,6 +282,49 @@ void main() {
       reason: 'the row body is not a second checkbox either',
     );
     expect(byId(UseSmileIDSampleTestIds.verificationsScreen), findsOne);
+  });
+
+  // Found on a device: with seedJobs on, a removal came straight BACK with a fresh timestamp,
+  // because the read the screen watches was also doing the seeding and every invalidation re-ran
+  // it. The list went back to eleven and the top row's clock had moved.
+  testWidgets('a removal is not undone by a seeded launch', (
+    WidgetTester tester,
+  ) async {
+    final UseSmileIDSampleMemoryJobsRepository store =
+        UseSmileIDSampleMemoryJobsRepository();
+    await useSmileIDSampleApplyLaunch(
+      const UseSmileIDSampleLaunchArgs(seedJobs: true),
+      store,
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          useSmileIDSampleJobsRepositoryProvider.overrideWithValue(store),
+          useSmileIDSampleLaunchArgsProvider.overrideWithValue(
+            const UseSmileIDSampleLaunchArgs(seedJobs: true),
+          ),
+        ],
+        child: MaterialApp.router(
+          theme: UseSmileIDSampleTheme.light(),
+          routerConfig: useSmileIDSampleRouter(
+            initialLocation: UseSmileIDSampleRoutes.verifications,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    container = ProviderScope.containerOf(
+      tester.element(find.byType(MaterialApp)),
+    );
+    expect(container.read(useSmileIDSampleJobsProvider).value, hasLength(11));
+
+    await tester.drag(
+      byId(UseSmileIDSampleTestIds.jobRow(0)),
+      const Offset(-500, 0),
+    );
+    await tester.pumpAndSettle();
+
+    expect(container.read(useSmileIDSampleJobsProvider).value, hasLength(10));
   });
 
   group('the store', () {

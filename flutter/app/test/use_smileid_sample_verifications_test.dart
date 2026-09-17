@@ -7,6 +7,7 @@ import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usesmileid_sample_flutter/src/data/use_smileid_sample_preferences_jobs_repository.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
+import 'package:usesmileid_sample_flutter/src/use_smileid_sample_launch.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 
 /// The verifications tab: what a launch shows, and what only `seedJobs` reaches.
@@ -20,6 +21,11 @@ void main() {
     UseSmileIDSampleLaunchArgs args = const UseSmileIDSampleLaunchArgs(),
     UseSmileIDSampleJobsRepository? jobs,
   }) async {
+    // The app's own start-up act, run here for the same reason the app runs it: seeding happens
+    // once before the first frame, not inside the provider the screen watches.
+    if (jobs != null) {
+      await useSmileIDSampleApplyLaunch(args, jobs);
+    }
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -76,6 +82,7 @@ void main() {
     await pumpTab(
       tester,
       args: const UseSmileIDSampleLaunchArgs(seedJobs: true),
+      jobs: UseSmileIDSampleMemoryJobsRepository(),
     );
     await tester.pumpAndSettle();
 
@@ -96,6 +103,7 @@ void main() {
     await pumpTab(
       tester,
       args: const UseSmileIDSampleLaunchArgs(seedJobs: true),
+      jobs: UseSmileIDSampleMemoryJobsRepository(),
     );
     await tester.pumpAndSettle();
 

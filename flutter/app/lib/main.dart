@@ -25,6 +25,9 @@ Future<void> main() async {
   final UseSmileIDSampleLaunch launch = UseSmileIDSampleLaunch(
     PlatformDispatcher.instance.defaultRouteName,
   );
+  // Once, before the first frame: a seed inside the provider re-ran on every invalidation and put
+  // a just-removed row back. Idempotent by id, so a second seeded launch adds nothing.
+  await useSmileIDSampleApplyLaunch(launch.args, jobs);
   runApp(
     ProviderScope(
       overrides: [
