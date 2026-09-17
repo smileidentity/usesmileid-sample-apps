@@ -55,6 +55,7 @@ class UseSmileIDSampleProfileRow extends StatelessWidget {
     final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
       context,
     );
+    final bool stacks = MediaQuery.textScalerOf(context).scale(1) > 1;
     return Semantics(
       identifier: testId,
       selected: selected,
@@ -77,52 +78,60 @@ class UseSmileIDSampleProfileRow extends StatelessWidget {
                 horizontal: _rowPaddingX,
                 vertical: SmileDimens.spacingSm,
               ),
-              child: Row(
-                children: <Widget>[
-                  UseSmileIDSampleAvatar(
-                    initials: initials,
-                    size: SmileDimens.sizeControlMd,
-                    containerColor: avatarColor ?? smileProfileHues.first,
-                  ),
-                  const SizedBox(width: SmileDimens.spacingSm),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
+              // A Row at the design's scale; a Wrap above it, so the trailing drops below rather
+              // than squeezing the text column until a word breaks mid-word. The JobRow makes the
+              // same trade for the same reason.
+              child: stacks
+                  ? Wrap(
+                      spacing: SmileDimens.spacingSm,
+                      runSpacing: SmileDimens.spacingXs,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: <Widget>[
-                        Text(
-                          organisation,
-                          style: UseSmileIDSampleType.textStyleBodyStrong
-                              .copyWith(
-                                fontSize: _rowTitleSize,
-                                color: colors.textTitle,
-                              ),
+                        UseSmileIDSampleAvatar(
+                          initials: initials,
+                          size: SmileDimens.sizeControlMd,
+                          containerColor: avatarColor ?? smileProfileHues.first,
                         ),
-                        const SizedBox(height: SmileDimens.spacingXxs),
-                        Text(
-                          supportingText,
-                          style: UseSmileIDSampleType.textStyleCaption.copyWith(
-                            color: colors.textMuted,
+                        _RowText(
+                          organisation: organisation,
+                          supportingText: supportingText,
+                          colors: colors,
+                        ),
+                        if (trailing != null) trailing!,
+                      ],
+                    )
+                  : Row(
+                      children: <Widget>[
+                        UseSmileIDSampleAvatar(
+                          initials: initials,
+                          size: SmileDimens.sizeControlMd,
+                          containerColor: avatarColor ?? smileProfileHues.first,
+                        ),
+                        const SizedBox(width: SmileDimens.spacingSm),
+                        Expanded(
+                          child: _RowText(
+                            organisation: organisation,
+                            supportingText: supportingText,
+                            colors: colors,
                           ),
                         ),
+                        if (trailing != null) ...<Widget>[
+                          const SizedBox(width: SmileDimens.spacingSm),
+                          trailing!,
+                        ] else if (selected) ...<Widget>[
+                          const SizedBox(width: SmileDimens.spacingSm),
+                          SizedBox(
+                            width: SmileDimens.sizeIconMd,
+                            height: SmileDimens.sizeIconMd,
+                            child: Center(
+                              child: UseSmileIDSampleGlyphs.check(
+                                colors.primary,
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
-                  ),
-                  if (trailing != null) ...<Widget>[
-                    const SizedBox(width: SmileDimens.spacingSm),
-                    trailing!,
-                  ] else if (selected) ...<Widget>[
-                    const SizedBox(width: SmileDimens.spacingSm),
-                    SizedBox(
-                      width: SmileDimens.sizeIconMd,
-                      height: SmileDimens.sizeIconMd,
-                      child: Center(
-                        child: UseSmileIDSampleGlyphs.check(colors.primary),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
             ),
           ),
         ),
@@ -136,3 +145,38 @@ const double _rowPaddingX = 14;
 
 /// The organisation's run, a half-point off the nearest token.
 const double _rowTitleSize = 14.5;
+
+/// The row's two lines, shared by both layouts so they cannot drift apart.
+class _RowText extends StatelessWidget {
+  const _RowText({
+    required this.organisation,
+    required this.supportingText,
+    required this.colors,
+  });
+
+  final String organisation;
+  final String supportingText;
+  final UseSmileIDSampleColors colors;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      Text(
+        organisation,
+        style: UseSmileIDSampleType.textStyleBodyStrong.copyWith(
+          fontSize: _rowTitleSize,
+          color: colors.textTitle,
+        ),
+      ),
+      const SizedBox(height: SmileDimens.spacingXxs),
+      Text(
+        supportingText,
+        style: UseSmileIDSampleType.textStyleCaption.copyWith(
+          color: colors.textMuted,
+        ),
+      ),
+    ],
+  );
+}
