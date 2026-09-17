@@ -35,6 +35,13 @@ currently the odd ones out in each case, which is a parity divergence until the 
 - **The iOS ink calculation.** iOS picks foreground ink with `UIColor.getWhite`, a perceptual grey,
   where Android uses WCAG relative luminance against the 0.179 crossover. 12 of 51 delta colours
   differ, and in every one of them Android chooses white where iOS chooses dark. Android is right.
+- **Android's `UseSmileIDSampleStatusBadge` doc comment is stale.** It says only the saturated
+  `badge.<role>.*` pairs have landed, but `softBadgeTokens()` wires the soft fills from the deltas and
+  that is what the app draws. A one-line fix.
+- **Android's id spec test only asserts one direction.** It checks that nothing undeclared exists,
+  where Expo asserts the set in both directions. That asymmetry is why the missing-id gap below went
+  unnoticed, and it is the more valuable of the two fixes: a one-directional set assertion cannot fail
+  on an omission.
 
 ## 3. Design-system and spec debt
 
@@ -72,7 +79,25 @@ Worth having written down before the next port run rather than rediscovered.
 - **Two CI lanes flake rather than fail.** Flutter's `flutter_tools` Gradle build can fail resolving
   `org.gradle.kotlin.kotlin-dsl`, and the iOS `UseSmileIDSampleVerificationsUITests` slice can exit 74.
   Both passed on re-run with no code change; treat a single red on either as infra until reproduced.
-- **A green test can prove nothing.** Two cases this run: Flutter's launch-argument provider existed
-  with plain defaults and no code fed it, while every test passed because the tests override that
-  provider directly; and every widget test built the router with an explicit initial location, which
-  is the one path a real deep link never takes. Both were only found on a device.
+- **A green test can prove nothing.** Three cases this run, all found on a device and all sharing one
+  shape — no test put two features in the same room:
+  - Flutter's launch-argument provider existed with plain defaults and no code fed it, while every test
+    passed because the tests override that provider directly.
+  - Every widget test built the router with an explicit initial location, which is the one path a real
+    deep link never takes.
+  - The read the verifications screen watched was also doing the fixture seeding, so a removal
+    invalidated it, re-ran the seed and re-inserted the row just deleted. The seeded tests only counted
+    rows; the removal tests seeded by hand with the argument off. The tell on the device was the row's
+    clock moving, which says re-created rather than undeleted.
+
+  The regression tests for these call the app's own start-up path rather than arranging their own
+  world. A fixture that no caller uses proves only that the fixture is self-consistent.
+
+- **Two device-capture traps, both of which produced a wrong reading before being caught.**
+  - A screen capture pulled between two tool calls arrives after a five-second confirmation window has
+    closed, and the resulting picture cannot distinguish a working Undo from an action that never
+    fired — both show the same count. Captures either side of the tap must be taken device-side in a
+    single command.
+  - On the ColorOS handset a green circle with a person glyph sits at a fixed screen position and
+    overlaps whatever row is beneath it. It is a floating system overlay, not app UI: it does not move
+    when the list scrolls, and it is absent from the goldens of the same screen.
