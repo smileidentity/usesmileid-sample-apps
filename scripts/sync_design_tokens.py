@@ -138,6 +138,8 @@ HEADER = """// Smile ID Design System — GENERATED. Do not edit by hand.
 //
 // Requires Dart 3 — the token holders use `abstract final class`.
 
+// ignore_for_file: public_member_api_docs
+
 import 'package:flutter/material.dart';
 """
 
@@ -242,6 +244,8 @@ DART_HUES_HEADER = """// Smile ID product hues — GENERATED. Do not edit by han
 //
 // Metrics are bare doubles because Flutter measures in logical pixels — there is no dp or sp type
 // for the emitter to name, and the Compose twin's `.dp`/`.sp` carry the same numbers.
+
+// ignore_for_file: public_member_api_docs
 
 import 'package:flutter/material.dart';
 
