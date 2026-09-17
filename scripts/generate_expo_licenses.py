@@ -7,16 +7,26 @@ field is self-reported and the file is the only thing with a copyright holder in
 the TEXT per component, the way the iOS generator does and unlike the Android one: two MIT packages
 carry two different holders, and sharing one copy would attribute the wrong one.
 
-The shipping set is the PRODUCTION closure of the app's own package.json, walked through each
-package's own `dependencies`. Not the lockfile, which pins dev and optional trees a partner ships
-none of, and not `pnpm list`, which exhausts a 4 GB heap on this graph because it expands every
-peer-suffixed key.
+The shipping set is what actually reaches the app, from two artefacts rather than from the package
+graph: the JavaScript in the release bundle, read from its source maps, and the native modules Expo
+autolinks. Both name the exact directory the shipped copy came from, so the version recorded is the
+one that shipped.
+
+Walking `dependencies` instead was wrong twice over. `expo` and `expo-constants` declare the Expo
+CLI, Jest's formatter and a terminal spinner among their own dependencies, so the set reached 542
+components a partner receives almost none of. And because those packages exist at several versions,
+which copy the hoisted installer leaves at the top of node_modules depends on the whole graph —
+including packages Linux installs and macOS does not — so 48 versions differed between a developer
+machine and CI and the asset could not be current on both.
 
 A package with neither a declared licence nor a licence file FAILS the run. "Unknown" in a notice
 file is worse than a build that stops, because nobody audits what they cannot see.
 
-    scripts/generate_expo_licenses.py --out <asset>           # rewrite the committed asset
-    scripts/generate_expo_licenses.py --out <asset> --check    # fail if it is stale
+    scripts/generate_expo_licenses.py --out <asset> --bundle <dir>           # rewrite the asset
+    scripts/generate_expo_licenses.py --out <asset> --bundle <dir> --check   # fail if it is stale
+
+<dir> is an `expo export --source-maps` output directory. There is no fallback without one: a
+notice file guessed from the dependency graph is what this replaced.
 """
 
 from __future__ import annotations
@@ -25,12 +35,15 @@ import argparse
 import io
 import json
 import os
+import subprocess
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXPO = os.path.join(REPO, "expo")
 APP_MANIFEST = os.path.join(EXPO, "app", "package.json")
 HOISTED = os.path.join(EXPO, "node_modules")
+
+NODE_MODULES = "node_modules/"
 
 # Licensed from Smile ID, not a third-party notice; sample-ui's own identity is the same case.
 FIRST_PARTY_PREFIX = "@smileid/"
@@ -101,56 +114,78 @@ def nested_notice(directory: str) -> str | None:
     return None
 
 
-def closure() -> dict[str, str]:
-    """The production graph, breadth-first from the app's own dependencies."""
-    with io.open(APP_MANIFEST, encoding="utf-8") as handle:
-        app = json.load(handle)
-
+def bundled_packages(bundle: str) -> dict[str, str]:
+    """Every package with JavaScript in the release bundle, at the directory that code came from."""
     found: dict[str, str] = {}
-    unresolved: list[str] = []
-    queue: list[tuple[str, str | None]] = [(name, None) for name in app.get("dependencies", {})]
-    seen: set[str] = set()
-
-    while queue:
-        name, parent = queue.pop()
-        if name in seen:
-            continue
-        seen.add(name)
-        if name.startswith(FIRST_PARTY_PREFIX):
-            continue
-        directory = resolve(name, parent)
-        if directory is None:
-            unresolved.append(name)
-            continue
-        found[name] = directory
-        package = manifest(directory)
-        queue += [(child, directory) for child in package.get("dependencies", {})]
-
-    if unresolved:
-        # Reported rather than fatal: a package that is not installed ships no code and so owes no
-        # notice. It is still named on every run, because an absent REQUIRED dependency is a defect
-        # in somebody's graph and `strict-peer-dependencies` does not cover a plain dependency.
-        optional = set(app.get("optionalDependencies", {}))
-        for directory in found.values():
-            optional |= set(manifest(directory).get("optionalDependencies", {}))
-        for name in sorted(set(unresolved) - optional):
-            dependents = sorted(
-                package
-                for package, directory in found.items()
-                if name in manifest(directory).get("dependencies", {})
+    maps = []
+    for root, _, files in os.walk(bundle):
+        maps += [os.path.join(root, name) for name in files if name.endswith(".map")]
+    if not maps:
+        raise LicenceError(
+            f"no source maps under {bundle}; export with --source-maps so the notices can be "
+            "derived from what ships rather than from the dependency graph"
+        )
+    for path in maps:
+        with io.open(path, encoding="utf-8") as handle:
+            sources = json.load(handle).get("sources", [])
+        for source in sources:
+            marker = source.rfind(NODE_MODULES)
+            if marker < 0:
+                continue
+            rest = source[marker + len(NODE_MODULES):]
+            parts = rest.split("/")
+            if not parts or not parts[0]:
+                continue
+            depth = 2 if parts[0].startswith("@") and len(parts) > 1 else 1
+            name = "/".join(parts[:depth])
+            if name.startswith(FIRST_PARTY_PREFIX):
+                continue
+            # The directory the module actually came from, not a hoisted guess: a package can be
+            # installed at several versions and only the shipped copy owes a notice.
+            directory = os.path.normpath(
+                os.path.join(source[: marker + len(NODE_MODULES)], name)
             )
-            print(
-                f"  UNMET      {name} is declared by {dependents} and is not installed, so it ships "
-                "nothing and no notice is emitted for it",
-                file=sys.stderr,
-            )
+            if not os.path.isfile(os.path.join(directory, "package.json")):
+                directory = os.path.join(HOISTED, name)
+            if os.path.isfile(os.path.join(directory, "package.json")):
+                found.setdefault(name, directory)
     return found
 
 
-def generate() -> str:
-    packages = closure()
+def autolinked_packages() -> dict[str, str]:
+    """Every native module Expo links into the app, which ships code the bundle never mentions."""
+    try:
+        raw = subprocess.run(
+            ["npx", "--no-install", "expo-modules-autolinking", "search", "--json"],
+            cwd=os.path.join(EXPO, "app"),
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout
+    except (OSError, subprocess.CalledProcessError) as error:
+        raise LicenceError(f"could not list the autolinked native modules: {error}") from error
+    found: dict[str, str] = {}
+    for name, entry in json.loads(raw).items():
+        if name.startswith(FIRST_PARTY_PREFIX):
+            continue
+        directory = entry.get("path")
+        if directory and os.path.isfile(os.path.join(directory, "package.json")):
+            found[name] = directory
+    return found
+
+
+def shipping_set(bundle: str) -> dict[str, str]:
+    """The union of both: a module with no JavaScript still ships its native half."""
+    found = bundled_packages(bundle)
+    for name, directory in autolinked_packages().items():
+        found.setdefault(name, directory)
+    return found
+
+
+def generate(bundle: str) -> str:
+    packages = shipping_set(bundle)
     if not packages:
-        raise LicenceError("the production closure is empty; nothing would ship")
+        raise LicenceError("nothing shipped: the bundle named no packages and nothing autolinked")
 
     components = []
     missing = []
@@ -231,14 +266,24 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", required=True, help="the committed asset to write")
     parser.add_argument("--check", action="store_true", help="fail if the asset is stale")
+    parser.add_argument(
+        "--bundle",
+        required=True,
+        help="an `expo export --source-maps` directory, which is what names the shipped packages",
+    )
     args = parser.parse_args(argv)
 
     if not os.path.isdir(HOISTED):
         print(f"  skipped    {args.out} (expo/node_modules is absent; run pnpm install)")
         return 0
 
+    bundle = args.bundle if os.path.isabs(args.bundle) else os.path.join(REPO, args.bundle)
+    if not os.path.isdir(bundle):
+        print(f"\n{bundle} does not exist; run the bundle phase first", file=sys.stderr)
+        return 1
+
     try:
-        content = generate()
+        content = generate(bundle)
     except LicenceError as error:
         print(f"\n{error}", file=sys.stderr)
         return 1
