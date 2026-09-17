@@ -1,8 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import '../state/use_smileid_sample_providers.dart';
+import '../use_smileid_sample_journey.dart';
 
 /// The products tab: the grid every flow starts from.
 ///
@@ -46,7 +48,8 @@ class UseSmileIDSampleProductsTab extends ConsumerWidget {
         // showing the same profile has to agree on it.
         avatarColor: avatarColorForProfile(profiles.activeIndex),
       ),
-      onProductTap: (UseSmileIDSampleProduct product) {},
+      onProductTap: (UseSmileIDSampleProduct product) =>
+          context.go(UseSmileIDSampleJourney.firstStepFor(product)),
       onProfileTap: () => _switchProfile(context, ref),
       onScanTap: () {},
       bottomInset: useSmileIDSampleNavBarClearance(context),

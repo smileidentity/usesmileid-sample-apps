@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import 'screens/use_smileid_sample_flow_form_tabs.dart';
 import 'screens/use_smileid_sample_products_tab.dart';
 import 'screens/use_smileid_sample_profile_config_tab.dart';
 import 'screens/use_smileid_sample_profiles_tab.dart';
@@ -38,6 +39,25 @@ abstract final class UseSmileIDSampleRoutes {
 
   /// One profile's own page.
   static String profileConfig(String profileId) => '/profiles/$profileId';
+
+  /// The details every product collects before its flow.
+  static String consentDetailsForm(String productId) =>
+      '/flow/$productId/details';
+
+  /// The country, ID type and number the document products need.
+  static String idDetailsForm(String productId) =>
+      '/flow/$productId/id-details';
+
+  /// The country picker, which is a LAYER over the ID form rather than a page of its own.
+  static String countryPicker(String productId) =>
+      '/flow/$productId/id-details/country';
+
+  /// The ID type picker, the same.
+  static String idTypePicker(String productId) =>
+      '/flow/$productId/id-details/id-type';
+
+  /// The SDK flow itself.
+  static String sdkFlow(String productId) => '/flow/$productId/run';
 
   /// The tab roots, which are the only destinations that carry a nav bar.
   static const List<String> tabRoots = <String>[
@@ -110,6 +130,42 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
               builder: (_, _) => const UseSmileIDSampleSettingsTab(),
             ),
           ],
+        ),
+      ],
+    ),
+    // The flow's forms, above the shell so they cover the tab bar.
+    GoRoute(
+      path: '/flow/:productId/details',
+      builder: (BuildContext context, GoRouterState state) =>
+          UseSmileIDSampleUserDetailsTab(
+            productId: state.pathParameters['productId']!,
+          ),
+    ),
+    GoRoute(
+      path: '/flow/:productId/id-details',
+      builder: (BuildContext context, GoRouterState state) =>
+          UseSmileIDSampleKycFormTab(
+            productId: state.pathParameters['productId']!,
+          ),
+      // A sheet is a LAYER over its owner, never a destination that replaces it (R12): these two
+      // paths stay deep-linkable and resolve to the FORM with the picker already open, so the
+      // scrim has the page it is dimming behind it.
+      routes: <RouteBase>[
+        GoRoute(
+          path: 'country',
+          builder: (BuildContext context, GoRouterState state) =>
+              UseSmileIDSampleKycFormTab(
+                productId: state.pathParameters['productId']!,
+                openSheet: UseSmileIDSamplePicker.country,
+              ),
+        ),
+        GoRoute(
+          path: 'id-type',
+          builder: (BuildContext context, GoRouterState state) =>
+              UseSmileIDSampleKycFormTab(
+                productId: state.pathParameters['productId']!,
+                openSheet: UseSmileIDSamplePicker.idType,
+              ),
         ),
       ],
     ),
