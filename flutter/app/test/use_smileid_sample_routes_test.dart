@@ -55,17 +55,71 @@ void main() {
     }
   });
 
-  // R13's defect in one assertion: testing a tab's BRANCH instead of its destination put a bar on
-  // pushed screens the design draws without one. Verification details is the case that found it —
-  // it lives in the verifications branch and still has no bar.
-  test('the nav bar is drawn on nothing else the spec routes to', () {
-    final List<String> elsewhere = pathsWhere(
-      (Map<String, Object?> route) => route['presentation'] != 'tab',
+  // R13's defect: testing a tab's BRANCH rather than its destination put a bar on pushed screens.
+  test('the nav bar is drawn on no pushed route', () {
+    // Matched on a prefix, not equality: `push | fullScreen` is a pushed route too, and an
+    // equality test silently dropped it — the one route the flow opens.
+    final List<String> pushed = pathsWhere(
+      (Map<String, Object?> route) =>
+          (route['presentation']! as String).startsWith('push'),
     );
-    expect(elsewhere, isNotEmpty);
-    for (final String path in elsewhere) {
+    // Named, not merely non-empty: the flow route is the one an equality match dropped, so a
+    // future narrowing fails here rather than passing on the seven that still matched.
+    expect(pushed, contains('/flow/:productId/run'));
+    for (final String path in pushed) {
       expect(useSmileIDSampleShowsNavBar(path), isFalse, reason: path);
     }
+  });
+
+  // A sheet is a layer over its owner, so the bar belongs to the page behind the scrim rather than to the sheet.
+  test('a sheet takes the bar of the page it is layered over', () {
+    // Every sheet, not just the modal ones: the pickers are `fullSheet`, so matching `modalSheet`
+    // alone left the two routes this test's own comment claims to cover unasserted.
+    final List<String> sheets = pathsWhere(
+      (Map<String, Object?> route) =>
+          (route['presentation']! as String).endsWith('Sheet'),
+    );
+    // Named for the same reason: both pickers are `fullSheet` and were the routes this test
+    // claimed to cover while matching only `modalSheet`.
+    expect(
+      sheets,
+      containsAll(<String>[
+        '/flow/:productId/id-details/country',
+        '/flow/:productId/id-details/id-type',
+        '/debug/scenarios',
+      ]),
+    );
+    for (final String path in sheets) {
+      expect(
+        useSmileIDSampleShowsNavBar(path),
+        UseSmileIDSampleRoutes.tabRoots.contains(
+          useSmileIDSamplePageBehind(path),
+        ),
+        reason: path,
+      );
+    }
+    expect(
+      useSmileIDSampleShowsNavBar(UseSmileIDSampleRoutes.scenarioDrawer),
+      isTrue,
+    );
+    expect(
+      useSmileIDSampleShowsNavBar(
+        UseSmileIDSampleRoutes.countryPicker('biometric_kyc'),
+      ),
+      isFalse,
+    );
+  });
+
+  // The three rules above partition the table, so a presentation value none of them matches would
+  // otherwise escape unasserted — which is exactly how `push | fullScreen` and `fullSheet` did.
+  test('every route the spec lists is covered by one of the bar rules', () {
+    final List<String> uncovered = pathsWhere((Map<String, Object?> route) {
+      final String presentation = route['presentation']! as String;
+      return presentation != 'tab' &&
+          !presentation.startsWith('push') &&
+          !presentation.endsWith('Sheet');
+    });
+    expect(uncovered, isEmpty, reason: 'unclassified presentation');
   });
 
   test('the component gallery is a dev route the spec deliberately omits', () {
@@ -91,10 +145,7 @@ void main() {
   _tabOrderIsOneContract();
 }
 
-/// The shell reads `UseSmileIDSampleNavItem.values[shell.currentIndex]` and navigates with
-/// `item.index`, so the enum's order and the branch order are one contract with nothing holding
-/// them together. Reordering either silently highlights or opens the wrong tab: it compiles, and
-/// the three symmetric cases still pass. This is the assertion that fails instead.
+/// The shell reads `UseSmileIDSampleNavItem.values[shell.currentIndex]` and navigates with `item.index`.
 void _tabOrderIsOneContract() {
   test('the nav items are in the same order as the tab roots', () {
     expect(

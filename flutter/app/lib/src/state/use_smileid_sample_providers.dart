@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
 
@@ -52,9 +53,7 @@ class UseSmileIDSampleSettingsNotifier
           .read(useSmileIDSampleSettingsRepositoryProvider)
           .setSetting(setting, enabled);
     } on Object {
-      // The platform store can refuse a write. The caller discards this future, so without the
-      // catch the error is unhandled AND the switch keeps the position it never persisted —
-      // it would read as saved and revert on the next launch. Snapping back is the honest state.
+      // The platform store can refuse a write.
       state = previous;
     }
   }
@@ -142,10 +141,7 @@ class UseSmileIDSampleJobsNotifier
     extends AsyncNotifier<List<UseSmileIDSampleJob>> {
   @override
   Future<List<UseSmileIDSampleJob>> build() async {
-    // READ ONLY. Seeding used to live here, and invalidating after a removal re-ran it, which put
-    // the row straight back with a fresh timestamp — found on a device, where the count went back
-    // to eleven and the top row's clock had moved. Seeding is a start-up act, so it happens once
-    // before the first frame instead.
+    // READ ONLY.
     return await ref.watch(useSmileIDSampleJobsRepositoryProvider).read() ??
         const <UseSmileIDSampleJob>[];
   }
@@ -271,3 +267,62 @@ class UseSmileIDSampleRemovalNoticeNotifier extends Notifier<int?> {
 
 /// How long a transient confirmation stands, which the twin sets at five seconds.
 const Duration useSmileIDSampleNoticeWindow = Duration(seconds: 5);
+
+/// Which scenarios a run carries, seeded from the launch arguments and changed by the drawer.
+final NotifierProvider<
+  UseSmileIDSampleScenarioNotifier,
+  UseSmileIDSampleScenarioSelection
+>
+useSmileIDSampleScenarioProvider =
+    NotifierProvider<
+      UseSmileIDSampleScenarioNotifier,
+      UseSmileIDSampleScenarioSelection
+    >(UseSmileIDSampleScenarioNotifier.new);
+
+/// The flow and theme scenarios a run carries, which are one each.
+@immutable
+class UseSmileIDSampleScenarioSelection {
+  /// Both default to the ship state, which is what a launch with no arguments gets.
+  const UseSmileIDSampleScenarioSelection({
+    this.scenario = UseSmileIDSampleScenario.normal,
+    this.theme = UseSmileIDSampleThemeScenario.brandDefault,
+  });
+
+  /// The active flow scenario.
+  final UseSmileIDSampleScenario scenario;
+
+  /// The active theme scenario.
+  final UseSmileIDSampleThemeScenario theme;
+}
+
+/// Seeds from the launch arguments so a flow can start in a scenario without tapping the drawer.
+class UseSmileIDSampleScenarioNotifier
+    extends Notifier<UseSmileIDSampleScenarioSelection> {
+  @override
+  UseSmileIDSampleScenarioSelection build() {
+    final UseSmileIDSampleLaunchArgs args = ref.watch(
+      useSmileIDSampleLaunchArgsProvider,
+    );
+    return UseSmileIDSampleScenarioSelection(
+      scenario: args.scenario,
+      theme: args.theme,
+    );
+  }
+
+  /// Chooses a flow scenario.
+  void selectScenario(UseSmileIDSampleScenario scenario) => state =
+      UseSmileIDSampleScenarioSelection(scenario: scenario, theme: state.theme);
+
+  /// Chooses a theme scenario.
+  void selectTheme(UseSmileIDSampleThemeScenario theme) => state =
+      UseSmileIDSampleScenarioSelection(scenario: state.scenario, theme: theme);
+}
+
+/// The third-party notices Flutter's build step collected, read once per launch.
+///
+/// Asynchronous because the registry streams them: the list is a megabyte of text and parsing it
+/// on the first frame would stall the launch the notices are not part of.
+final FutureProvider<UseSmileIDSampleLicenses>
+useSmileIDSampleLicensesProvider = FutureProvider<UseSmileIDSampleLicenses>(
+  (Ref ref) => UseSmileIDSampleLicenses.bundled(),
+);

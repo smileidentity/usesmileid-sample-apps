@@ -284,9 +284,7 @@ void main() {
     expect(byId(UseSmileIDSampleTestIds.verificationsScreen), findsOne);
   });
 
-  // Found on a device: with seedJobs on, a removal came straight BACK with a fresh timestamp,
-  // because the read the screen watches was also doing the seeding and every invalidation re-ran
-  // it. The list went back to eleven and the top row's clock had moved.
+  // Found on a device: with seedJobs on, a removal came straight BACK with a fresh timestamp.
   testWidgets('a removal is not undone by a seeded launch', (
     WidgetTester tester,
   ) async {

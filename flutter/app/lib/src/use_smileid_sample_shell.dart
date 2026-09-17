@@ -9,10 +9,7 @@ import 'use_smileid_sample_routes.dart';
 
 /// The three-tab host: the branch's content, with the nav bar floating over it.
 ///
-/// It floats rather than sitting in `bottomNavigationBar`, which is R13: a bottom-bar slot insets
-/// the content and draws a seam across the page, where the design has the list continuing under
-/// the pill. The consequence is that each screen reserves its own room, which is the clearance the
-/// bar publishes.
+/// It floats rather than sitting in `bottomNavigationBar`, which is R13.
 class UseSmileIDSampleShell extends ConsumerWidget {
   /// [location] is the current destination, which alone decides whether the bar is drawn.
   const UseSmileIDSampleShell({
@@ -35,9 +32,7 @@ class UseSmileIDSampleShell extends ConsumerWidget {
     final UseSmileIDSampleSelection selection = ref.watch(
       useSmileIDSampleSelectionProvider,
     );
-    // Back from a tab that is not the first returns to products rather than leaving the app. Found
-    // on a device: an indexed stack whose branch is at its root lets the pop through to the system,
-    // where the twin's popUpTo is non-inclusive and keeps products underneath.
+    // Back from a tab that is not the first returns to products rather than leaving the app.
     return PopScope(
       canPop: shell.currentIndex == _productsBranch,
       onPopInvokedWithResult: (bool didPop, Object? result) {

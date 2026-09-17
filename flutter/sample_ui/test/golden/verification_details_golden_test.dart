@@ -50,6 +50,34 @@ void main() {
     );
   });
 
+  testWidgets('verification details attention', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_verification_details_attention',
+      () => _details(
+        job: _job(
+          status: UseSmileIDSampleStatus.attention,
+          message: 'Provisional — needs review',
+        ),
+      ),
+    );
+  });
+
+  /// Accepted but not decided: a 202 beside a Processing badge.
+  testWidgets('verification details processing', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_verification_details_processing',
+      () => _details(
+        job: _job(
+          status: UseSmileIDSampleStatus.processing,
+          message: 'Submitted, awaiting result',
+          httpStatus: 202,
+        ),
+      ),
+    );
+  });
+
   testWidgets('verification details survives max text scale', (
     WidgetTester tester,
   ) async {

@@ -4,11 +4,7 @@ import 'package:sample_ui/sample_ui.dart';
 
 import 'golden_harness.dart';
 
-/// What the shell actually draws: the bar floating over a tab root, with the room it asks for.
-///
-/// The screens have their own pictures without it, and a component's picture agreeing with its
-/// component while both disagree with the only caller is how a defect ships. This is the caller's
-/// picture, so the composition is pinned rather than inferred from two halves.
+/// The caller's picture: two halves each agreeing with themselves while disagreeing with the caller is how a defect ships.
 void main() {
   setUpAll(loadSampleFonts);
 

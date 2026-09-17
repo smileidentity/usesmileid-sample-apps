@@ -17,6 +17,7 @@ class UseSmileIDSampleTextInput extends StatefulWidget {
     this.isError = false,
     this.errorMessage,
     this.keyboardType,
+    this.textCapitalization = TextCapitalization.none,
     this.masked = false,
     this.testId,
     this.leading,
@@ -44,6 +45,9 @@ class UseSmileIDSampleTextInput extends StatefulWidget {
 
   /// The keyboard to raise.
   final TextInputType? keyboardType;
+
+  /// How the keyboard offers to capitalise; a HINT, so a pasted value is left as it was typed.
+  final TextCapitalization textCapitalization;
 
   /// Masks the value and marks the field a password, keeping a credential out of screenshots and
   /// out of the view hierarchy an automated run dumps on failure.

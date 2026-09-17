@@ -1,0 +1,76 @@
+import 'package:flutter/material.dart';
+
+import '../components/use_smileid_sample_option_row.dart';
+import '../components/use_smileid_sample_section_label.dart';
+import '../model/use_smileid_sample_scenario.dart';
+import '../theme/use_smileid_sample_colors.dart';
+import '../theme/use_smileid_sample_theme.dart';
+import '../theme/use_smileid_sample_typography.dart';
+import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_test_ids.dart';
+
+/// The flow and theme scenarios, as a sheet over whatever asked for it.
+///
+/// A debug affordance the design does not cover, and a shipped feature rather than scaffolding:
+/// it is how a human and an automated flow both say what the environment should do.
+class UseSmileIDSampleScenarioDrawer extends StatelessWidget {
+  /// Both selections are shown at once, because a run carries one of each.
+  const UseSmileIDSampleScenarioDrawer({
+    required this.scenario,
+    required this.theme,
+    required this.onScenarioSelected,
+    required this.onThemeSelected,
+    super.key,
+  });
+
+  /// The active flow scenario.
+  final UseSmileIDSampleScenario scenario;
+
+  /// The active theme scenario.
+  final UseSmileIDSampleThemeScenario theme;
+
+  /// Chooses a flow scenario.
+  final ValueChanged<UseSmileIDSampleScenario> onScenarioSelected;
+
+  /// Chooses a theme scenario.
+  final ValueChanged<UseSmileIDSampleThemeScenario> onThemeSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
+      context,
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text(
+          'Scenarios',
+          style: UseSmileIDSampleType.textStyleHeadingSection.copyWith(
+            color: colors.textTitle,
+          ),
+        ),
+        const SizedBox(height: SmileDimens.spacingSm),
+        const UseSmileIDSampleSectionLabel(text: 'FLOW SCENARIOS'),
+        for (final UseSmileIDSampleScenario option
+            in UseSmileIDSampleScenario.values)
+          UseSmileIDSampleOptionRow(
+            label: option.label,
+            selected: option == scenario,
+            onTap: () => onScenarioSelected(option),
+            testId: UseSmileIDSampleTestIds.scenarioItem(option.id),
+          ),
+        const SizedBox(height: SmileDimens.spacingSm),
+        const UseSmileIDSampleSectionLabel(text: 'THEME SCENARIOS'),
+        for (final UseSmileIDSampleThemeScenario option
+            in UseSmileIDSampleThemeScenario.values)
+          UseSmileIDSampleOptionRow(
+            label: option.label,
+            selected: option == theme,
+            onTap: () => onThemeSelected(option),
+            testId: UseSmileIDSampleTestIds.themeItem(option.id),
+          ),
+      ],
+    );
+  }
+}

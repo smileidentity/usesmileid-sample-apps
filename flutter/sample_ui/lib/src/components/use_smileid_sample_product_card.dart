@@ -145,10 +145,7 @@ class UseSmileIDSampleProductCard extends StatelessWidget {
 
 /// One text node with two runs, not two stacked widgets, which drift apart at large font scales.
 ///
-/// The Compose twin steps the title down before wrapping, which Flutter cannot do here: an
-/// autosizing label needs a LayoutBuilder, and a LayoutBuilder cannot be measured by the
-/// IntrinsicHeight the grid uses to keep two cards in a row the same height. Equal cards on every
-/// screen beat a font step-down on narrow ones, so the label wraps and the card grows instead.
+/// The Compose twin steps the title down before wrapping, which Flutter cannot do here.
 class _CardLabel extends StatelessWidget {
   const _CardLabel({
     required this.title,

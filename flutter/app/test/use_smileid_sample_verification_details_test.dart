@@ -61,9 +61,7 @@ void main() {
     expect(byId(UseSmileIDSampleTestIds.verificationDetailsScreen), findsOne);
   });
 
-  // The question the shell's PopScope raises: it blocks a pop on any tab but the first, so a
-  // pushed page inside the verifications tab must still pop to its OWN list rather than jumping to
-  // products. The branch navigator has to win, and this is the only route that can prove it.
+  // The question the shell's PopScope raises: it blocks a pop on any tab but the first.
   testWidgets('system back from the page returns to its own list', (
     WidgetTester tester,
   ) async {
@@ -83,9 +81,7 @@ void main() {
     );
   });
 
-  // The back control itself is asserted in sample_ui, where its semantics are reachable. It
-  // carries no `sample_*` id — the spec gives the details screen none — so a device flow reaches
-  // it the way the twin's flows do, with system back, which the test above drives.
+  // The back control itself is asserted in sample_ui, where its semantics are reachable.
 
   // It is inside the tab's branch, and R13 decides the bar by DESTINATION rather than by branch
   // membership — which is the defect R13 was written for.

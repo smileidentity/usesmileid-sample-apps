@@ -10,9 +10,7 @@ void main() {
       expect(at('/').location, '/products');
     });
 
-    // The defect this exists for, measured on a device: a custom-scheme link arrives WHOLE, and
-    // go_router matches on the path, so handing it over unchanged lands on the not-found page.
-    // The observed failure was 'no routes for location: usesmileid-sample-flutter://settings/'.
+    // The defect this exists for, measured on a device: a custom-scheme link arrives WHOLE.
     test('folds a custom scheme and its host back into a path', () {
       expect(at('usesmileid-sample-flutter://settings').location, '/settings');
       expect(at('usesmileid-sample-flutter://settings/').location, '/settings');

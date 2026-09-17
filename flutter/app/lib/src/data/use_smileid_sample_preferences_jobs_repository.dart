@@ -5,9 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// The verifications that survive a restart.
 ///
-/// One JSON array under one key, rather than a database: the twin uses Room, but this list is the
-/// design's eleven plus whatever one device session produces, and a database would be a dependency
-/// and a migration story for a sample that has neither query nor scale to justify them.
+/// One JSON array under one key: the twin's database buys query and scale this sample never needs.
 class UseSmileIDSamplePreferencesJobsRepository
     implements UseSmileIDSampleJobsRepository {
   /// Takes the already-opened preferences, so a caller cannot forget to await them.
@@ -15,10 +13,7 @@ class UseSmileIDSamplePreferencesJobsRepository
 
   final SharedPreferences _preferences;
 
-  /// The last batch taken, in memory rather than on disk: an undo is a confirmation's offer and
-  /// must not outlive the process that made it, which is what the twin does too. An INSTANCE field,
-  /// not a static one — an undo belongs to the store that performed the removal, and a shared buffer
-  /// also leaks between test cases in one process.
+  /// The last batch taken, per store and in memory: an undo must not outlive the process or leak between tests.
   List<UseSmileIDSampleJob> _lastRemoved = const <UseSmileIDSampleJob>[];
 
   /// Opens the store, which is done once before the first frame.

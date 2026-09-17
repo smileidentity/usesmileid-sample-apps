@@ -133,6 +133,129 @@ abstract final class UseSmileIDSampleTestIds {
   /// What the detail page shows for a job this build never stored.
   static const String detailsEmpty = 'sample_details_empty';
 
+  /// The profiles list.
+  static const String profilesScreen = 'sample_profiles_screen';
+
+  /// One profile row, suffixed with that profile's id; the list and the switch sheet share it.
+  static String profileRow(String profileId) => 'sample_profile_row_$profileId';
+
+  /// The row that opens the new-profile sheet.
+  static const String createProfile = 'sample_create_profile';
+
+  /// One profile's own page.
+  static const String profileConfigScreen = 'sample_profile_config_screen';
+
+  /// One editable field on that page, suffixed with the field's camelCase id.
+  static String profileConfigField(String field) =>
+      'sample_profile_config_field_$field';
+
+  /// The page's only write: it saves the details AND makes the profile active.
+  static const String profileConfigSave = 'sample_profile_config_save';
+
+  /// The switch sheet, which Products owns.
+  static const String profileSwitchSheet = 'sample_profile_switch_sheet';
+
+  /// The new-profile sheet, which the profiles list owns.
+  static const String newProfileSheet = 'sample_new_profile_sheet';
+
+  /// The new profile's organisation.
+  static const String newProfileName = 'sample_new_profile_name';
+
+  /// The new profile's given name.
+  static const String newProfileFirstName = 'sample_new_profile_first_name';
+
+  /// The new profile's family name.
+  static const String newProfileLastName = 'sample_new_profile_last_name';
+
+  /// The new profile's email, which never gates the confirm.
+  static const String newProfileEmail = 'sample_new_profile_email';
+
+  /// The new profile's phone, which never gates the confirm.
+  static const String newProfilePhone = 'sample_new_profile_phone';
+
+  /// Creates the profile; the confirmation offers to make it active.
+  static const String newProfileSave = 'sample_new_profile_save';
+
+  /// The consent details form, which every product shows before its flow.
+  static const String userDetailsScreen = 'sample_user_details_screen';
+
+  /// One of its four rows, suffixed with the field's camelCase id.
+  static String userDetailsField(String field) =>
+      'sample_user_details_field_$field';
+
+  /// The line under the card that says what is still outstanding.
+  static const String userDetailsHint = 'sample_user_details_hint';
+
+  /// The remember switch, which appears only once the form is satisfied.
+  static const String rememberDetailsSwitch = 'sample_remember_details_switch';
+
+  /// The consent form's continue.
+  static const String userDetailsContinue = 'sample_user_details_continue';
+
+  /// The ID details form, shown only for the products that need one.
+  static const String kycFormScreen = 'sample_kyc_form_screen';
+
+  /// The country select trigger.
+  static const String countryTrigger = 'sample_country_trigger';
+
+  /// The ID type select trigger, disabled until a country is chosen.
+  static const String idTypeTrigger = 'sample_idtype_trigger';
+
+  /// The ID number field.
+  static const String idNumberInput = 'sample_idnumber_input';
+
+  /// The ID form's continue.
+  static const String kycContinue = 'sample_kyc_continue';
+
+  /// The country picker sheet.
+  static const String countrySheet = 'sample_country_sheet';
+
+  /// Its search field, which filters on the country NAME and never the code.
+  static const String countrySearch = 'sample_country_search';
+
+  /// One country row, suffixed with its ISO code.
+  static String countryOption(String code) => 'sample_country_option_$code';
+
+  /// What the country picker shows when the search matches nothing.
+  static const String countryEmpty = 'sample_country_empty';
+
+  /// The ID type picker sheet.
+  static const String idTypeSheet = 'sample_idtype_sheet';
+
+  /// Its search field.
+  static const String idTypeSearch = 'sample_idtype_search';
+
+  /// One ID type row, suffixed with its id.
+  static String idTypeOption(String typeId) => 'sample_idtype_option_$typeId';
+
+  /// What the ID type picker shows with no country, and with no match.
+  static const String idTypeEmpty = 'sample_idtype_empty';
+
+  /// The scenario drawer, a debug affordance the design does not cover.
+  static const String scenarioDrawer = 'sample_scenario_drawer';
+
+  /// The settings row that opens it.
+  static const String scenarioDrawerButton = 'sample_scenario_drawer_button';
+
+  /// One flow-scenario row, suffixed with the scenario id.
+  static String scenarioItem(String scenarioId) =>
+      'sample_scenario_item_$scenarioId';
+
+  /// One theme-scenario row, suffixed with the theme id.
+  static String themeItem(String themeId) => 'sample_theme_item_$themeId';
+
+  /// The third-party notices screen.
+  static const String licensesScreen = 'sample_licenses_screen';
+
+  /// One notice row, suffixed with its package name.
+  static String licenseRow(String package) => 'sample_license_row_$package';
+
+  /// The expanded licence body, suffixed with its package name.
+  static String licenseText(String package) => 'sample_license_text_$package';
+
+  /// What the screen says when the notices did not ship.
+  static const String licensesEmpty = 'sample_licenses_empty';
+
   /// The selection bar shown instead of the nav bar.
   static const String selectionBar = 'sample_selection_bar';
 
@@ -177,6 +300,37 @@ abstract final class UseSmileIDSampleTestIds {
     detailsDelete,
     detailsRefresh,
     detailsEmpty,
+    profilesScreen,
+    createProfile,
+    profileConfigScreen,
+    profileConfigSave,
+    profileSwitchSheet,
+    newProfileSheet,
+    newProfileName,
+    newProfileFirstName,
+    newProfileLastName,
+    newProfileEmail,
+    newProfilePhone,
+    newProfileSave,
+    userDetailsScreen,
+    userDetailsHint,
+    rememberDetailsSwitch,
+    userDetailsContinue,
+    kycFormScreen,
+    countryTrigger,
+    idTypeTrigger,
+    idNumberInput,
+    kycContinue,
+    countrySheet,
+    countrySearch,
+    countryEmpty,
+    idTypeSheet,
+    idTypeSearch,
+    idTypeEmpty,
+    scenarioDrawer,
+    scenarioDrawerButton,
+    licensesScreen,
+    licensesEmpty,
     selectionBar,
     selectionCount,
     selectionRemove,

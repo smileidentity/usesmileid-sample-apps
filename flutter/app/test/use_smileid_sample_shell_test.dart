@@ -81,8 +81,6 @@ void main() {
   });
 
   // The bar insets nothing, so a tab screen wired without this has its last row under the pill.
-  // It is invisible until the content is long enough to reach the bottom, which a golden of a
-  // short page never is — so it is asserted on the value the shell passes, not on a picture.
   testWidgets('every tab root reserves room for the bar it floats under', (
     WidgetTester tester,
   ) async {
@@ -108,9 +106,7 @@ void main() {
     );
   });
 
-  // Found on a device, not here: system back from a non-first tab left the app entirely, because
-  // an indexed stack whose branch is at its root lets the pop through. The twin keeps products
-  // underneath, and its own device flow asserts back from verifications lands on products.
+  // Found on a device, not here: system back from a non-first tab left the app entirely.
   testWidgets('system back from another tab returns to products', (
     WidgetTester tester,
   ) async {
@@ -135,6 +131,29 @@ void main() {
 
     expect(byId(UseSmileIDSampleTestIds.navProducts), findsNothing);
     expect(byId(UseSmileIDSampleTestIds.navToken), findsNothing);
+  });
+
+  // The bar FLOATS over the page, so a screen that reserved no room ends with its last control under it.
+  testWidgets('the last control of settings clears the floating bar', (
+    WidgetTester tester,
+  ) async {
+    await pumpShell(tester, at: UseSmileIDSampleRoutes.settings);
+    for (int i = 0; i < 15; i++) {
+      await tester.drag(find.byType(Scrollable), const Offset(0, -400));
+      await tester.pumpAndSettle();
+    }
+
+    final double lastControl = tester
+        .getRect(byId(UseSmileIDSampleTestIds.signOut))
+        .bottom;
+    final double barTop = tester
+        .getRect(find.byType(UseSmileIDSampleNavBar))
+        .top;
+    expect(
+      lastControl,
+      lessThanOrEqualTo(barTop),
+      reason: 'sign out is $lastControl, the bar starts at $barTop',
+    );
   });
 }
 

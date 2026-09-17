@@ -38,6 +38,81 @@ class UseSmileIDSampleUserDetails {
   int get hashCode => Object.hash(firstName, lastName, email, phone);
 }
 
+/// The four fields a profile carries, in the order the design lists them.
+///
+/// The ids are camelCase because they suffix the test ids, and a device flow keys off those.
+enum UseSmileIDSampleUserField {
+  /// Given name; required.
+  firstName('firstName', 'First name', 'Add first name', true),
+
+  /// Family name; required.
+  lastName('lastName', 'Last name', 'Add last name', true),
+
+  /// Email; never gates anything.
+  email('email', 'Email (optional)', 'name@company.com', false),
+
+  /// Phone; never gates anything.
+  phone('phone', 'Phone (optional)', '+254 700 000 000', false);
+
+  const UseSmileIDSampleUserField(
+    this.id,
+    this.label,
+    this.placeholder,
+    this.isRequired,
+  );
+
+  /// The id that suffixes this field's test id.
+  final String id;
+
+  /// The row's label; the asterisk is appended by the row, not written here.
+  final String label;
+
+  /// Shown while the value is empty.
+  final String placeholder;
+
+  /// Whether the design marks it required.
+  final bool isRequired;
+
+  /// This field's value on [details].
+  String valueOf(UseSmileIDSampleUserDetails details) => switch (this) {
+    UseSmileIDSampleUserField.firstName => details.firstName,
+    UseSmileIDSampleUserField.lastName => details.lastName,
+    UseSmileIDSampleUserField.email => details.email,
+    UseSmileIDSampleUserField.phone => details.phone,
+  };
+
+  /// A copy of [details] with this field set to [value].
+  UseSmileIDSampleUserDetails apply(
+    UseSmileIDSampleUserDetails details,
+    String value,
+  ) => switch (this) {
+    UseSmileIDSampleUserField.firstName => UseSmileIDSampleUserDetails(
+      firstName: value,
+      lastName: details.lastName,
+      email: details.email,
+      phone: details.phone,
+    ),
+    UseSmileIDSampleUserField.lastName => UseSmileIDSampleUserDetails(
+      firstName: details.firstName,
+      lastName: value,
+      email: details.email,
+      phone: details.phone,
+    ),
+    UseSmileIDSampleUserField.email => UseSmileIDSampleUserDetails(
+      firstName: details.firstName,
+      lastName: details.lastName,
+      email: value,
+      phone: details.phone,
+    ),
+    UseSmileIDSampleUserField.phone => UseSmileIDSampleUserDetails(
+      firstName: details.firstName,
+      lastName: details.lastName,
+      email: details.email,
+      phone: value,
+    ),
+  };
+}
+
 /// One partner identity the app can act as; its organisation is what the SDK names as the partner.
 class UseSmileIDSampleProfile {
   /// [person] may be blank, which is what the starter is until its details are saved.

@@ -92,10 +92,7 @@ describe('the recorded goldens', () => {
   });
 
   it('carries no light-scheme page colour into a dark baseline', () => {
-    // The Flutter port recorded a whole dark suite that was silently light, because its framework
-    // animates a theme change and the capture caught the old colours mid-transition. Only the page
-    // and muted-surface colours are checked: white and the near-black title are used deliberately
-    // mode-invariantly elsewhere, so treating those as light-only reports the wrong states.
+    // The Flutter port recorded a whole dark suite that was silently light.
     const lightPageOnly = [smileLightColors.background, smileLightColors.surfaceMuted];
     const leaked = [...pairs.entries()]
       .filter(([, pair]) => lightPageOnly.some((colour) => (pair.dark ?? '').includes(colour)))
@@ -104,10 +101,7 @@ describe('the recorded goldens', () => {
   });
 });
 
-/// A state only reachable by interaction must differ from the state it starts in, or the event never
-/// landed and the golden records the base state twice. Two suites' focused baselines did exactly
-/// that until the harness started awaiting its own events, and the light-versus-dark guard above
-/// cannot see it, because both halves of the pair were wrong in the same way.
+/// An interaction state must differ from its base, or the event never landed and the pair records it twice.
 const interactionStates: readonly (readonly [string, string])[] = [
   ['Button/enabled', 'Button/pressed'],
   ['TextInput/filled', 'TextInput/focused'],
