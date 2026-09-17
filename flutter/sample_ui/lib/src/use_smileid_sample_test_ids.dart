@@ -92,6 +92,15 @@ abstract final class UseSmileIDSampleTestIds {
   /// The action inside a toast, whatever it is labelled.
   static const String toastUndo = 'sample_toast_undo';
 
+  /// One filter chip, suffixed with the filter's id.
+  static String filterChip(String filterId) => 'sample_filter_chip_$filterId';
+
+  /// A filter chip's count, asserted separately so a flow reads a number rather than prose.
+  static String filterCount(String filterId) => 'sample_filter_count_$filterId';
+
+  /// One verification row, suffixed with its position in the whole visible list.
+  static String jobRow(int index) => 'sample_job_row_$index';
+
   /// The status badge inside a verification row, which the row attaches itself.
   static const String jobRowStatus = 'sample_job_row_status';
 
