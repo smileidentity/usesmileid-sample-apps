@@ -3,6 +3,7 @@ library;
 
 export 'src/components/use_smileid_sample_avatar.dart';
 export 'src/components/use_smileid_sample_button.dart';
+export 'src/components/use_smileid_sample_icon.dart';
 export 'src/components/use_smileid_sample_search_field.dart';
 export 'src/components/use_smileid_sample_section_label.dart';
 export 'src/components/use_smileid_sample_status_badge.dart';
@@ -19,6 +20,7 @@ export 'src/theme/use_smileid_sample_colors.dart';
 export 'src/theme/use_smileid_sample_label_type.dart';
 export 'src/theme/use_smileid_sample_theme.dart';
 export 'src/theme/use_smileid_sample_typography.dart';
+export 'src/tokens/smile_icons.dart';
 export 'src/tokens/smile_product_hues.dart';
 export 'src/tokens/smile_tokens.dart';
 export 'src/use_smileid_sample_marks.dart';
