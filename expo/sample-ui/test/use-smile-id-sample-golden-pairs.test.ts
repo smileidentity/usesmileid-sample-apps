@@ -19,15 +19,19 @@ const identicalOnPurpose: Record<string, string> = {
     'data-field.label is the muted grey and the value is pinned to a soft badge colour, so nothing in the row varies by scheme',
   'SelectTrigger/disabled':
     'the disabled button pair and input.border are all mode-invariant — the buttonDisabledBypassesSemanticTier and darkBorder deltas together',
+  'TokenRing/fresh': 'the ring is one delta green on a faded copy of itself, neither per scheme',
+  'TokenRing/counting': 'the ring is one delta green on a faded copy of itself, neither per scheme',
+  'TokenRing/expired': 'the ring is one delta green on a faded copy of itself, neither per scheme',
 };
 
 /// Both suites record light-then-dark, so both are read the same way.
 const snapshotFiles = [
   'use-smile-id-sample-primitives.test.tsx.snap',
   'use-smile-id-sample-composites.test.tsx.snap',
+  'use-smile-id-sample-screen-composites.test.tsx.snap',
 ];
 
-const expectedStates = 70;
+const expectedStates = 91;
 
 const readPairs = () => {
   const pairs = new Map<string, { light?: string; dark?: string }>();
