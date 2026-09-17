@@ -362,3 +362,38 @@ describe('a row read back from storage', () => {
     expect(store().jobs).toEqual([]);
   });
 });
+
+describe('the removal confirmation', () => {
+  it('is consumed once, so returning to the list cannot replay it', async () => {
+    await store().add(job({ id: 'job_a' }));
+    await store().remove(['job_a']);
+
+    expect(store().consumeRemoval()).toBe(1);
+    expect(store().consumeRemoval()).toBeNull();
+  });
+
+  it('reports what each removal took, in the order they happened', async () => {
+    await store().add(job({ id: 'job_a' }));
+    await store().add(job({ id: 'job_b' }));
+    await store().add(job({ id: 'job_c' }));
+    await store().remove(['job_a']);
+    await store().remove(['job_b', 'job_c']);
+
+    expect(store().consumeRemoval()).toBe(1);
+    expect(store().consumeRemoval()).toBe(2);
+    expect(store().consumeRemoval()).toBeNull();
+  });
+
+  it('undoes the batch the newest confirmation names, which is the only one still shown', async () => {
+    await store().add(job({ id: 'job_a' }));
+    await store().add(job({ id: 'job_b' }));
+    await store().remove(['job_a']);
+    await store().remove(['job_b']);
+
+    await store().undoRemove();
+
+    // A second removal replaces the visible notice, so the batch undo restores is the one it names.
+    expect(store().jobs?.map((row) => row.id)).toContain('job_b');
+    expect(store().jobs?.map((row) => row.id)).not.toContain('job_a');
+  });
+});

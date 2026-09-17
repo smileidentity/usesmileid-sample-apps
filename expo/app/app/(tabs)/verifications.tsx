@@ -1,6 +1,7 @@
 import {
   UseSmileIDSampleTransientNoticeHost,
   VerificationsScreen,
+  smileIDSampleRemovalNotice,
   useSmileIDSampleJobStore,
   useSmileIDSampleTransientNotice,
 } from '@smileid/sample-ui';
@@ -31,11 +32,7 @@ export default function Verifications() {
     if (removals.length === 0) return;
     const count = consumeRemoval();
     if (count === null) return;
-    show({
-      message: count === 1 ? '1 verification removed' : `${count} verifications removed`,
-      actionLabel: 'Undo',
-      onAction: () => void undoRemove(),
-    });
+    show({ ...smileIDSampleRemovalNotice(count), onAction: () => void undoRemove() });
   }, [removals, consumeRemoval, undoRemove, show]);
 
   return (

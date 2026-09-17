@@ -1,3 +1,4 @@
+import { smileIDSampleRemovalNotice } from '../src/model/use-smile-id-sample-removal-notice';
 import {
   smileIDSampleProducts,
   smileIDSampleProductsOf,
@@ -92,5 +93,13 @@ describe('flow routes match the result card schema', () => {
   it('offers exactly the two presentations the card can report', () => {
     const schema = spec<ResultCard>('result-card.schema.json');
     expect([...smileIDSampleFlowRoutes]).toEqual(schema.properties.route.enum);
+  });
+});
+
+describe('the removal notice copy', () => {
+  it('is singular for one and plural for more, from the shared package', () => {
+    expect(smileIDSampleRemovalNotice(1).message).toBe('1 verification removed');
+    expect(smileIDSampleRemovalNotice(3).message).toBe('3 verifications removed');
+    expect(smileIDSampleRemovalNotice(2).actionLabel).toBe('Undo');
   });
 });
