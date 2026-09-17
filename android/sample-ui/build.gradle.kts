@@ -71,6 +71,19 @@ dependencies {
 }
 
 tasks.withType<Test>().configureEach {
+    // Robolectric 4.17 reaches into OpenJDK internals, which are closed by default from JDK 17 on.
+    jvmArgs(
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "--add-opens=java.base/java.util=ALL-UNNAMED",
+        "--add-opens=java.base/java.io=ALL-UNNAMED",
+        "--add-opens=java.base/java.net=ALL-UNNAMED",
+        "--add-opens=java.base/java.security=ALL-UNNAMED",
+        "--add-opens=java.base/java.text=ALL-UNNAMED",
+        "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED",
+        "--add-opens=java.desktop/java.awt.font=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+    )
+
     val specDir = layout.projectDirectory.dir("../../spec")
     systemProperty("sampleapps.spec.dir", specDir.asFile.absolutePath)
     // Declared so an edited spec re-runs the task; without it verify passes on a stale contract.
