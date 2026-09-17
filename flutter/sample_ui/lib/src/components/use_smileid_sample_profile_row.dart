@@ -97,7 +97,7 @@ class UseSmileIDSampleProfileRow extends StatelessWidget {
                           supportingText: supportingText,
                           colors: colors,
                         ),
-                        if (trailing != null) trailing!,
+                        ?trailing,
                       ],
                     )
                   : Row(
