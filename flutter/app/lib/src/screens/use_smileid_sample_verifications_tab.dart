@@ -1,9 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import '../state/use_smileid_sample_providers.dart';
 import '../use_smileid_sample_remove_jobs.dart';
+import '../use_smileid_sample_routes.dart';
 
 /// The verifications tab: the stored jobs, grouped by day, under the four chips.
 ///
@@ -38,6 +40,8 @@ class UseSmileIDSampleVerificationsTab extends ConsumerWidget {
       onFilterChanged: ref
           .read(useSmileIDSampleJobFilterProvider.notifier)
           .select,
+      onJobTap: (UseSmileIDSampleJob job) =>
+          context.go(UseSmileIDSampleRoutes.verificationDetails(job.id)),
       onSelectModeChanged: ref
           .read(useSmileIDSampleSelectionProvider.notifier)
           .setActive,
