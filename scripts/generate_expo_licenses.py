@@ -182,6 +182,30 @@ def generate() -> str:
     return json.dumps({"components": components}, indent=2, ensure_ascii=False) + "\n"
 
 
+def report_delta(existing: str | None, generated: str) -> None:
+    """Print which components differ, so a stale asset says why rather than only that it is stale."""
+    if existing is None:
+        print("      the asset does not exist yet")
+        return
+    try:
+        was = {c["component"]: c for c in json.loads(existing)["components"]}
+        now = {c["component"]: c for c in json.loads(generated)["components"]}
+    except (ValueError, KeyError) as error:
+        print(f"      cannot compare: {error}")
+        return
+    added = sorted(set(now) - set(was))
+    removed = sorted(set(was) - set(now))
+    changed = sorted(name for name in set(was) & set(now) if was[name] != now[name])
+    print(f"      committed {len(was)} components, generated {len(now)}")
+    for label, names in (("only generated", added), ("only committed", removed), ("changed", changed)):
+        if names:
+            shown = ", ".join(names[:12])
+            more = f" (+{len(names) - 12} more)" if len(names) > 12 else ""
+            print(f"      {label}: {shown}{more}")
+    if not (added or removed or changed):
+        print("      same components: the difference is formatting or order")
+
+
 def write(path: str, content: str, check: bool) -> bool:
     existing = None
     if os.path.isfile(path):
@@ -192,6 +216,9 @@ def write(path: str, content: str, check: bool) -> bool:
         return True
     if check:
         print(f"  STALE      {os.path.relpath(path, REPO)}")
+        # Name what moved. "STALE" alone sent two people guessing at a platform difference that
+        # was not one; the set this walks depends on what is installed, so print the delta.
+        report_delta(existing, content)
         return False
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with io.open(path, "w", encoding="utf-8") as handle:
