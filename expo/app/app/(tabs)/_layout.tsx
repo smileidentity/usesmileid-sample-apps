@@ -35,6 +35,7 @@ export default function TabsLayout() {
       />
       {/* Routable but not a tab: a pushed screen has no nav bar even inside a tab's own graph. */}
       <Tabs.Screen name="settings/licenses" options={{ href: null }} />
+      <Tabs.Screen name="verifications/[jobId]" options={{ href: null }} />
     </Tabs>
   );
 }
