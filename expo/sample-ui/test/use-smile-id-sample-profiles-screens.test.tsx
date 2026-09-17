@@ -15,6 +15,7 @@ import { ProfileSwitchSheet } from '../src/screens/profile-switch-sheet';
 import { ProfilesScreen } from '../src/screens/profiles-screen';
 import { useSmileIDSampleProfileStore } from '../src/state/use-smile-id-sample-profile-store';
 import {
+  smileIDSampleEditorDefaults,
   smileIDSampleFixtureProfiles,
   smileIDSampleStarterProfiles,
   smileIDSampleUserDetailsDefaults,
@@ -294,6 +295,37 @@ describe('creating a profile', () => {
     useSmileIDSampleProfileStore.getState().add('Zuri Health', 'Ada Nwosu');
     useSmileIDSampleProfileStore.getState().clearLastCreated();
     expect(useSmileIDSampleProfileStore.getState().lastCreatedId).toBeNull();
+  });
+});
+
+describe('the profile editor', () => {
+  const stored = { ...smileIDSampleUserDetailsDefaults, firstName: 'Kwame', lastName: 'Asante' };
+  const typed = { ...smileIDSampleUserDetailsDefaults, firstName: 'Ada' };
+
+  it('shows a profile that arrives after the editor first rendered', () => {
+    // The defect this guards: the route is deep-linkable, so a cold entry renders before the store
+    // holds the profile. Capturing at mount left an empty form, and the CTA wrote that emptiness
+    // over the stored defaults through setDefaults — on the button that also activates the profile.
+    expect(smileIDSampleEditorDefaults(null, 'p-1', undefined)).toEqual(
+      smileIDSampleUserDetailsDefaults,
+    );
+    expect(smileIDSampleEditorDefaults(null, 'p-1', stored)).toEqual(stored);
+  });
+
+  it('keeps what the partner typed, even as the store changes underneath', () => {
+    const edit = { profileId: 'p-1', details: typed };
+    expect(smileIDSampleEditorDefaults(edit, 'p-1', stored)).toEqual(typed);
+  });
+
+  it('does not carry one profile\'s edit into another opened on the same route', () => {
+    const edit = { profileId: 'p-1', details: typed };
+    expect(smileIDSampleEditorDefaults(edit, 'p-2', stored)).toEqual(stored);
+  });
+
+  it('falls back to empty only when nothing is typed and nothing is stored', () => {
+    expect(smileIDSampleEditorDefaults(null, undefined, undefined)).toEqual(
+      smileIDSampleUserDetailsDefaults,
+    );
   });
 });
 

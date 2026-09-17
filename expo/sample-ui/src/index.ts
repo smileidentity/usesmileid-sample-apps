@@ -61,8 +61,10 @@ export {
   smileIDSampleProfileInitials,
   smileIDSampleProfilesForLaunch,
   smileIDSampleStarterProfiles,
+  smileIDSampleEditorDefaults,
   smileIDSampleUserDetailsDefaults,
   type UseSmileIDSampleProfile,
+  type UseSmileIDSampleProfileEdit,
   type UseSmileIDSampleUserDetails,
 } from './state/use-smile-id-sample-profiles';
 export {
