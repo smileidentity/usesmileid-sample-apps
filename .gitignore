@@ -55,3 +55,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 .build/
+
+# Kotlin compiler session files: build output, and a tracked one shows as a phantom deletion after every build.
+android/.kotlin/
