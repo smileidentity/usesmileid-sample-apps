@@ -34,6 +34,8 @@ Pods/
 .packages
 *.lock.bak
 pubspec_overrides.yaml
+# The shell's lock is committed because it pins what the app resolved; a library's is not.
+flutter/sample_ui/pubspec.lock
 
 # --- Node / Expo / React Native ---
 node_modules/
@@ -55,3 +57,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 .build/
+
+# Kotlin compiler session files: build output, and a tracked one shows as a phantom deletion after every build.
+android/.kotlin/

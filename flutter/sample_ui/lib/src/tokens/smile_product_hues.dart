@@ -7,6 +7,8 @@
 // Metrics are bare doubles because Flutter measures in logical pixels — there is no dp or sp type
 // for the emitter to name, and the Compose twin's `.dp`/`.sp` carry the same numbers.
 
+// ignore_for_file: public_member_api_docs
+
 import 'package:flutter/material.dart';
 
 /// One product's colouring. `cardIcon` tints the card's glyph; `icon` and `tile` are the list row's pair.
