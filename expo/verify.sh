@@ -67,6 +67,13 @@ if runs checks; then
 fi
 
 if runs checks; then
+  echo "==> the project is still a well-formed Expo app"
+  # The cheapest check that continuous native generation still holds and that every dependency version
+  # agrees with the installed SDK — otherwise only a human noticing catches either.
+  "$PNPM" --filter usesmileid-sample-expo exec expo-doctor
+fi
+
+if runs checks; then
   echo "==> lint"
   "$PNPM" exec eslint .
 fi

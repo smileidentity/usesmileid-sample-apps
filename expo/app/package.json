@@ -48,7 +48,8 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
-    "typescript": "5.9.3"
+    "expo-doctor": "1.20.4",
+    "typescript": "6.0.3"
   },
   "pinRationale": {
     "@react-native/metro-config": "Exactly 0.86.3: react-native-worklets requires it at the react-native version, and Expo's map offers 0.87 which fails that peer.",
@@ -85,6 +86,7 @@
     "react-native-svg": "Required SDK peer, and what the design's own marks are drawn as.",
     "react-native-worklets": "Reanimated 4's worklets runtime, and the reason babel.config.js carries its plugin last.",
     "zustand": "The app-lifetime stores, per the navigation plan's per-platform choice; screen state stays in hooks.",
-    "typescript": "5.9.3 rather than 7.x because typescript-eslint 8 declares typescript <6.1.0, so 7 would silently disable type-aware linting."
+    "typescript": "6.0.3, the version Expo SDK 57 expects. It also satisfies typescript-eslint 8's `>=4.8.4 <6.1.0`, so type-aware linting stays on — 7.x would not.",
+    "expo-doctor": "Pinned so the gate cannot start failing on a check that appeared between runs; it is what keeps continuous native generation and the SDK's expected dependency versions honest."
   }
 }

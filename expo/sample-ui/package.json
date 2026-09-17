@@ -25,7 +25,7 @@
     "jest": "29.7.0",
     "jest-expo": "57.0.5",
     "test-renderer": "1.2.0",
-    "typescript": "5.9.3"
+    "typescript": "6.0.3"
   },
   "pinRationale": {
     "@smileid/usesmileid": "peer, not a dependency: the host resolves the SDK so one UI source compiles against the published artifact here and against SDK HEAD in the SDK repo. Nothing imports it yet — the flow host is the next tranche — but the peer contract is what the SDK repos substitute against.",
@@ -40,7 +40,7 @@
     "jest": "29.7.0, not 30: jest-expo 57 depends on the jest 29 family (jest-snapshot, babel-jest, @jest/globals), and mixing a 30 runner with a 29 snapshot serialiser is how every golden reds at once.",
     "jest-expo": "Versioned with the Expo SDK; supplies the React Native transform and module mocks.",
     "test-renderer": "The modern replacement react-test-renderer became; @testing-library/react-native 14 requires it by peer.",
-    "typescript": "5.9.3 rather than 7.x because typescript-eslint 8 declares typescript <6.1.0, so 7 would silently disable type-aware linting.",
+    "typescript": "6.0.3, the version Expo SDK 57 expects. It also satisfies typescript-eslint 8's `>=4.8.4 <6.1.0`, so type-aware linting stays on — 7.x would not.",
     "@types/node": "The test files read spec/ from disk, which needs the Node globals; nothing in src/ uses them."
   }
 }
