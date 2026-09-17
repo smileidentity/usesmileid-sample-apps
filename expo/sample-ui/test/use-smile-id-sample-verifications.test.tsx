@@ -125,6 +125,15 @@ describe.each(cases)('$screen', ({ states }) => {
   });
 });
 
+describe('the recording environment', () => {
+  it('formats in UTC, or a baseline holding a time would pin the machine that recorded it', () => {
+    // Node reads the zone once at startup, so this cannot be set from inside the suite: it is
+    // pinned on the jest invocation in package.json and verify.sh. Three hours of drift between a
+    // developer in Nairobi and a UTC runner is what this catches.
+    expect(Intl.DateTimeFormat().resolvedOptions().timeZone).toBe('UTC');
+  });
+});
+
 describe('verifications coverage', () => {
   it('records both schemes for every state', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
