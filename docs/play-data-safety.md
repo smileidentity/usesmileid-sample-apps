@@ -15,8 +15,11 @@ Verified 2026-08-28 against the v12 app as built.
 published answers differ from the derivation below in two places and the table now records what is
 published: the personal-info and photo rows carry **Account management** alongside App functionality,
 and **Device or other IDs** is published under fraud prevention, security and compliance rather than
-analytics, and is not published as shared. Read the live page before trusting this table again — it
-records a form filled by hand, not a generated artefact.
+analytics, and is not published as shared. **Owner ruling 2026-09-17: the published identifier answer
+is the correct one**, and the derivation below was wrong to call it shared — Play's "shared" means a
+transfer for the recipient's own purposes, which a crash reporter processing on our behalf is not.
+Read the live page before trusting this table again: it records a form filled by hand, not a generated
+artefact.
 
 | Data type | Collected | Shared | Processed ephemerally | Required | Purpose |
 |---|---|---|---|---|---|
@@ -46,7 +49,7 @@ was checked rather than assumed, question by question:
 |---|---|---|---|
 | Collects Personal info | yes | yes — user details go to the API with a submission | yes |
 | Collects Photos and videos | yes | yes — selfies and document images | yes |
-| Collects Device or other IDs | yes | yes | yes |
+| Collects Device or other IDs | yes | yes — collected, not shared; see the ruling above | yes |
 | Shares App activity, App info and performance | yes | yes — both SDKs bundle Sentry (v11 8.37.1, v12 8.53.0) | yes |
 | Encrypted in transit | yes | yes | yes |
 | Deletion can be requested | yes | yes | yes |
