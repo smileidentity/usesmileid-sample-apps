@@ -144,6 +144,7 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
     required this.onNavRowTap,
     required this.onSignOut,
     this.onOpenScenarioDrawer,
+    this.bottomInset = 0,
     super.key,
   });
 
@@ -166,6 +167,9 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
   /// Opens the scenario drawer; null hides the DEBUG section entirely.
   final VoidCallback? onOpenScenarioDrawer;
 
+  /// Trailing room so the last row can scroll clear of the floating bar.
+  final double bottomInset;
+
   @override
   Widget build(BuildContext context) {
     final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
@@ -174,9 +178,11 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
     return Semantics(
       identifier: UseSmileIDSampleTestIds.settingsScreen,
       child: ListView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: SmileDimens.spacingMd,
-          vertical: SmileDimens.spacingSm,
+        padding: EdgeInsets.fromLTRB(
+          SmileDimens.spacingMd,
+          SmileDimens.spacingSm,
+          SmileDimens.spacingMd,
+          SmileDimens.spacingSm + bottomInset,
         ),
         children: <Widget>[
           _Section(

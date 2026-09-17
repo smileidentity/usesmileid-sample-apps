@@ -45,6 +45,12 @@ abstract final class UseSmileIDSampleTestIds {
   static String productCard(String productId) =>
       'sample_product_card_$productId';
 
+  /// The verifications root.
+  static const String verificationsScreen = 'sample_verifications_screen';
+
+  /// The verifications list with nothing in it, which is what a first launch shows.
+  static const String verificationsEmpty = 'sample_verifications_empty';
+
   /// The settings root.
   static const String settingsScreen = 'sample_settings_screen';
 
