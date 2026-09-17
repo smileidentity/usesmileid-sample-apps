@@ -74,12 +74,19 @@ Widget _overProducts() => Builder(
   ),
 );
 
-Widget _overVerifications() => _shell(
-  UseSmileIDSampleNavItem.verifications,
-  const Center(
-    child: UseSmileIDSampleEmptyState(
-      text: 'No verifications yet',
-      supportingText: 'Run a product to see it here',
+Widget _overVerifications() => Builder(
+  builder: (BuildContext context) => _shell(
+    UseSmileIDSampleNavItem.verifications,
+    ListView(
+      padding: EdgeInsets.only(
+        bottom: useSmileIDSampleNavBarClearance(context),
+      ),
+      children: const <Widget>[
+        UseSmileIDSampleEmptyState(
+          text: 'No verifications yet',
+          supportingText: 'Start a product above and the job lands here.',
+        ),
+      ],
     ),
   ),
 );
