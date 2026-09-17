@@ -483,6 +483,86 @@ class TestSwiftStopgaps(unittest.TestCase):
         )
 
 
+class TestDartStopgaps(unittest.TestCase):
+    HUE = {
+        "from": "#05723A", "to": "#0A9B4C", "cardIcon": "#05723A", "icon": "#05723A", "tile": "#E4F2EA",
+        "stopStart": 0.13, "stopEnd": 0.87, "fromAlpha": 1.0, "toAlpha": 1.0,
+    }
+
+    def test_hex_becomes_an_opaque_flutter_colour(self):
+        self.assertEqual(gen.dart_hue_color("#e08600"), "Color(0xFFE08600)")
+
+    def test_a_non_hex_value_is_rejected_rather_than_emitted(self):
+        with self.assertRaises(gen.TokenError):
+            gen.dart_hue_color("rgba(5, 114, 58, 0.24)")
+
+    def test_a_metric_always_carries_a_decimal_point(self):
+        # `const double x = 11;` is legal Dart but reads as an int; the emitter never leaves it ambiguous.
+        self.assertEqual(gen.dart_double(11), "11.0")
+        self.assertEqual(gen.dart_double(0.88), "0.88")
+        self.assertEqual(gen.dart_double("-0.4"), "-0.4")
+
+    def test_every_product_emits_all_five_roles(self):
+        out = gen.emit_dart_product_hues({"smartSelfieEnrollment": self.HUE})
+        self.assertIn("'smartSelfieEnrollment': SmileProductHue(", out)
+        for role in ("from", "to", "cardIcon", "icon", "tile"):
+            self.assertIn(f"{role}: Color(0xFF", out)
+
+    def test_a_hue_missing_a_role_fails_loudly(self):
+        with self.assertRaises(gen.TokenError):
+            gen.emit_dart_product_hues({"biometricKyc": {"from": "#151F72", "to": "#2B3A9E"}})
+
+    def test_soft_badge_fills_emit_every_feedback_role(self):
+        out = gen.emit_dart_soft_badge_fills(gen.read_soft_badge_fills())
+        for role in ("success", "info", "warning", "error"):
+            self.assertIn(f"'{role}': SmileSoftBadgeFill(", out)
+
+    def test_the_pairs_are_emitted_for_both_schemes(self):
+        self.assertIn("smileOffBlackDark", gen.emit_dart_off_black(gen.read_off_black()))
+        self.assertIn("smileNavBarDark", gen.emit_dart_nav_bar_fill(gen.read_nav_bar_fill()))
+        self.assertIn("smileCardStrokeDark", gen.emit_dart_card_stroke(gen.read_card_stroke()))
+
+    def test_a_pair_missing_its_dark_half_fails_loudly(self):
+        with self.assertRaises(gen.TokenError):
+            gen.emit_dart_off_black({"light": "#2D2B2A"})
+
+    def test_profile_hues_keep_the_designs_order(self):
+        out = gen.emit_dart_profile_hues(gen.read_profile_hues())
+        self.assertIn("const List<Color> smileProfileHues = <Color>[", out)
+        self.assertEqual(out.count("Color(0xFF"), len(gen.read_profile_hues()))
+
+    def test_all_three_platforms_generate_the_same_hexes_from_one_spec_entry(self):
+        # The values, not the syntax: a divergence here means the four apps disagree about a colour.
+        def swift(text):
+            return set(re.findall(r"Color\(hex: 0x([0-9A-F]{6})\)", text))
+
+        def compose(text):
+            return set(re.findall(r"Color\(0xFF([0-9A-F]{6})\)", text))
+
+        for reader, emitters in (
+            (gen.read_product_hues, (gen.emit_dart_product_hues, gen.emit_kotlin_product_hues, gen.emit_swift_product_hues)),
+            (gen.read_soft_badge_fills, (gen.emit_dart_soft_badge_fills, gen.emit_kotlin_soft_badge_fills, gen.emit_swift_soft_badge_fills)),
+        ):
+            dart_emit, kotlin_emit, swift_emit = emitters
+            ours = compose(dart_emit(reader()))
+            self.assertTrue(ours, "parsed no colours out of the Dart emitter")
+            self.assertEqual(ours, compose(kotlin_emit(reader())))
+            self.assertEqual(ours, swift(swift_emit(reader())))
+
+    def test_the_generated_file_declares_every_value_a_theme_needs(self):
+        # Every name the hand-written Compose theme imports from the stopgap file must exist in Dart,
+        # or the port silently falls back to a semantic token and the colour is quietly wrong.
+        out = gen.generate_dart_product_hues()
+        for name in (
+            "smileProductHues", "smileSoftBadgeFills", "smileBorderStrong", "smileSurface2",
+            "smileOffBlackLight", "smileOffBlackDark", "smileNavBarLight", "smileNavBarDark",
+            "smileProfileHues", "smileTokenSessionGradient", "smileTokenRing",
+            "smileLabelSize", "smileLabelTracking", "smileCardStrokeLight", "smileCardStrokeDark",
+            "smileHeadingPageSize", "smileSectionHeaderSize",
+        ):
+            self.assertIn(name, out, f"{name} is missing from the generated Dart stopgaps")
+
+
 class TestTsStopgaps(unittest.TestCase):
     HUE = {
         "from": "#05723A", "to": "#0A9B4C", "cardIcon": "#05723A", "icon": "#05723A", "tile": "#E4F2EA",

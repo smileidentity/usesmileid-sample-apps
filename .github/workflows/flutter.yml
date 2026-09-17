@@ -1,0 +1,77 @@
+name: Flutter
+
+# CI runs flutter/verify.sh itself, so the local contract and the gate cannot drift apart.
+on:
+  pull_request:
+    paths:
+      - 'flutter/**'
+      - 'spec/**'
+      - 'scripts/**'
+      - '.github/workflows/flutter.yml'
+  push:
+    branches: [main]
+
+concurrency:
+  group: flutter-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    # macOS, not ubuntu: a Flutter golden is host-rasterised, so a baseline recorded on a Mac and
+    # verified on Linux reds the lane for reasons that have nothing to do with the UI. The same
+    # runner also builds the iOS release, which verify.sh skips loudly anywhere else.
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+
+      # --check needs the design system, which is private; a fork PR gets no secret, so this skips and says so.
+      - name: Check out the design system
+        id: design-system
+        if: env.DESIGN_SYSTEM_TOKEN != ''
+        env:
+          DESIGN_SYSTEM_TOKEN: ${{ secrets.DESIGN_SYSTEM_TOKEN }}
+        uses: actions/checkout@v7
+        with:
+          repository: smileidentity/claude-skills
+          token: ${{ secrets.DESIGN_SYSTEM_TOKEN }}
+          path: .design-system
+          sparse-checkout: smile-design-system
+          sparse-checkout-cone-mode: true
+
+      - name: Note a skipped token check
+        if: steps.design-system.outcome == 'skipped'
+        run: |
+          echo "::warning title=Design tokens not verified::No DESIGN_SYSTEM_TOKEN available, so the \
+          vendored token output was not compared against the design system. Everything else ran."
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          # Pinned: the toolchain the goldens were recorded on, and the floor the SDK's pubspec sets.
+          flutter-version: 3.44.0
+          channel: stable
+          cache: true
+
+      - name: Verify
+        env:
+          SMILE_DESIGN_SYSTEM: ${{ steps.design-system.outcome == 'success' && format('{0}/.design-system/smile-design-system', github.workspace) || '' }}
+          SMILE_TOKENS_OPTIONAL: ${{ steps.design-system.outcome == 'skipped' && '1' || '' }}
+        run: flutter/verify.sh
+
+      # A golden failure writes the actual and the diff next to the baseline; this is what shows why.
+      - name: Upload golden failures
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: flutter-golden-failures
+          path: flutter/sample_ui/test/golden/failures/**
+          if-no-files-found: ignore
+          retention-days: 7

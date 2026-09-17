@@ -34,6 +34,8 @@ Pods/
 .packages
 *.lock.bak
 pubspec_overrides.yaml
+# The shell's lock is committed because it pins what the app resolved; a library's is not.
+flutter/sample_ui/pubspec.lock
 
 # --- Node / Expo / React Native ---
 node_modules/

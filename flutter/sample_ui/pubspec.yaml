@@ -1,0 +1,47 @@
+name: sample_ui
+description: Every screen a partner sees in the UseSmileID Flutter sample, shared with the Flutter SDK repo's development sample.
+version: 0.1.0
+
+# Never published: source consumption in both hosts is what keeps the two from drifting apart.
+publish_to: none
+
+environment:
+  sdk: ^3.11.0
+  flutter: '>=3.41.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # The SDK by its published coordinates, exactly as a partner names it; an SDK repo substitutes its
+  # own project here, which is what makes this package its public-API gate. Exact, not a caret:
+  # a consumption test that cannot say which version it consumed has lost the point.
+  usesmileid: 12.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # The published lint set, so a partner reading this package sees the rules they already have.
+  flutter_lints: ^6.0.0
+
+flutter:
+  # The search field draws the platform's own mark: design/icons/ carries no search glyph and the
+  # sanctioned Material Symbols set covers five others, so no shared asset exists to convert.
+  uses-material-design: true
+
+  fonts:
+    # Vendored by scripts/sync_design_tokens.py, bundled rather than fetched: a font provider would
+    # make text depend on the network and goldens depend on a download.
+    - family: DM Sans
+      fonts:
+        - asset: assets/fonts/DMSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/DMSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/DMSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/DMSans-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/DMSans-ExtraBold.ttf
+          weight: 800

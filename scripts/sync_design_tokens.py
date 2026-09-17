@@ -71,7 +71,9 @@ DEFAULT_DS_PATHS = [
     "~/.agents/skills/smile-design-system",
 ]
 
-DART_OUT = "flutter/sample_ui/lib/src/tokens/smile_tokens.dart"
+FLUTTER_UI = "flutter/sample_ui"
+DART_OUT = f"{FLUTTER_UI}/lib/src/tokens/smile_tokens.dart"
+DART_HUES_OUT = f"{FLUTTER_UI}/lib/src/tokens/smile_product_hues.dart"
 
 ANDROID_UI = "android/sample-ui"
 KOTLIN_TYPE_OUT = f"{ANDROID_UI}/src/main/kotlin/com/usesmileid/sampleapps/ui/tokens/SmileTypeStyles.kt"
@@ -102,6 +104,13 @@ FONT_COPIES = [
 # DMSans-SemiBold's family is "DM Sans SemiBold", so weight selection cannot reach it.
 IOS_FONT_COPIES = [
     (f"assets/fonts/DMSans-{face}.ttf", f"{IOS_UI}/Sources/SampleUI/Resources/Fonts/DMSans-{face}.ttf")
+    for face in FACES
+]
+
+# Flutter keeps the upstream names too: the package's pubspec maps each file to one weight of one
+# family, so the face is addressed by path and `fontWeight` resolves within the declared family.
+FLUTTER_FONT_COPIES = [
+    (f"assets/fonts/DMSans-{face}.ttf", f"{FLUTTER_UI}/assets/fonts/DMSans-{face}.ttf")
     for face in FACES
 ]
 
@@ -144,6 +153,8 @@ HEADER = """// Smile ID Design System — GENERATED. Do not edit by hand.
 // SmileType) so the two platforms are diffable against each other.
 //
 // Requires Dart 3 — the token holders use `abstract final class`.
+
+// ignore_for_file: public_member_api_docs
 
 import 'package:flutter/material.dart';
 """
@@ -245,6 +256,57 @@ public struct SmileProductHue: Equatable, Sendable {
 public struct SmileSoftBadgeFill: Equatable, Sendable {
     public let background: Color
     public let text: Color
+}
+"""
+
+DART_HUES_HEADER = """// Smile ID product hues — GENERATED. Do not edit by hand.
+// Regenerate with: scripts/sync_design_tokens.py --all
+//
+// A stopgap: the source is spec/design-tokens.json → deltas, not the design system. Everything the
+// design system carries no role for lives here; delete each value once upstream carries its role.
+//
+// Metrics are bare doubles because Flutter measures in logical pixels — there is no dp or sp type
+// for the emitter to name, and the Compose twin's `.dp`/`.sp` carry the same numbers.
+
+// ignore_for_file: public_member_api_docs
+
+import 'package:flutter/material.dart';
+
+/// One product's colouring. `cardIcon` tints the card's glyph; `icon` and `tile` are the list row's pair.
+@immutable
+class SmileProductHue {
+  const SmileProductHue({
+    required this.from,
+    required this.to,
+    required this.cardIcon,
+    required this.icon,
+    required this.tile,
+    required this.stopStart,
+    required this.stopEnd,
+    required this.fromAlpha,
+    required this.toAlpha,
+  });
+
+  final Color from;
+  final Color to;
+  final Color cardIcon;
+  final Color icon;
+  final Color tile;
+
+  /// Stop positions as fractions. `stopEnd` may exceed 1: the design runs it past the card's edge.
+  final double stopStart;
+  final double stopEnd;
+  final double fromAlpha;
+  final double toAlpha;
+}
+
+/// One status pill's soft fill: a pale background with text that clears contrast on it.
+@immutable
+class SmileSoftBadgeFill {
+  const SmileSoftBadgeFill({required this.background, required this.text});
+
+  final Color background;
+  final Color text;
 }
 """
 
@@ -837,6 +899,251 @@ def emit_kotlin_profile_hues(hues) -> str:
     lines += ["    %s," % kotlin_color(h) for h in hues]
     lines.append(")")
     return "\n".join(lines)
+
+
+def dart_double(value) -> str:
+    """A bare Dart `double` literal, always with a decimal point so the type is unambiguous."""
+    parsed = float(str(value))
+    return f"{parsed:.1f}" if parsed.is_integer() else str(parsed)
+
+
+def dart_hue_color(value: str) -> str:
+    """The delta colours are all `#RRGGBB`; alpha is applied at the use site, never baked in."""
+    text = value.strip().lstrip("#")
+    if len(text) != 6 or not all(c in "0123456789abcdefABCDEF" for c in text):
+        raise TokenError(f"product hue {value!r} is not a #RRGGBB colour")
+    return f"Color(0xFF{text.upper()})"
+
+
+def emit_dart_product_hues(hues: dict) -> str:
+    """One entry per product, keyed by the same id `spec/` uses everywhere else."""
+    if not hues:
+        raise TokenError("spec/design-tokens.json carries no productHues.hues entries")
+    lines = [
+        "/// Keyed by the product id in spec/scenarios.json. A product absent here has no hue yet.",
+        "const Map<String, SmileProductHue> smileProductHues = <String, SmileProductHue>{",
+    ]
+    for product, hue in hues.items():
+        missing = {"from", "to", "cardIcon", "icon", "tile"} - set(hue)
+        if missing:
+            raise TokenError(f"product hue {product!r} is missing {sorted(missing)}")
+        lines += [
+            f"  '{product}': SmileProductHue(",
+            f"    from: {dart_hue_color(hue['from'])},",
+            f"    to: {dart_hue_color(hue['to'])},",
+            f"    cardIcon: {dart_hue_color(hue['cardIcon'])},",
+            f"    icon: {dart_hue_color(hue['icon'])},",
+            f"    tile: {dart_hue_color(hue['tile'])},",
+        ]
+        for role in ("stopStart", "stopEnd", "fromAlpha", "toAlpha"):
+            if hue.get(role) is None:
+                raise TokenError(f"product hue {product!r} is missing {role}")
+            lines.append(f"    {role}: {dart_double(hue[role])},")
+        lines.append("  ),")
+    lines.append("};")
+    return "\n".join(lines)
+
+
+def emit_dart_soft_badge_fills(fills: dict) -> str:
+    """The soft status pills, keyed by the feedback role the four job statuses map onto."""
+    roles = ["success", "info", "warning", "error"]
+    missing = [role for role in roles if role not in fills]
+    if missing:
+        raise TokenError(f"spec/design-tokens.json softBadgeFills.fills is missing {missing}")
+    lines = [
+        "",
+        "/// Keyed by feedback role. The design system's own badge.* pairs are saturated, a different treatment.",
+        "const Map<String, SmileSoftBadgeFill> smileSoftBadgeFills = <String, SmileSoftBadgeFill>{",
+    ]
+    for role in roles:
+        pair = fills[role]
+        for key in ("background", "text"):
+            if key not in pair:
+                raise TokenError(f"soft badge fill {role!r} is missing {key!r}")
+        lines += [
+            f"  '{role}': SmileSoftBadgeFill(",
+            f"    background: {dart_hue_color(pair['background'])},",
+            f"    text: {dart_hue_color(pair['text'])},",
+            "  ),",
+        ]
+    lines.append("};")
+    return "\n".join(lines)
+
+
+def emit_dart_spec_color(name: str, delta_id: str, doc: str, value) -> str:
+    """A colour the design uses that the design system carries no semantic role for."""
+    if not isinstance(value, str) or not value:
+        raise TokenError(f"spec/design-tokens.json {delta_id} carries no value")
+    return "\n".join(["", f"/// {doc}", f"const Color {name} = {dart_hue_color(value)};"])
+
+
+def emit_dart_border_strong(value) -> str:
+    return emit_dart_spec_color(
+        "smileBorderStrong",
+        "borderStrong",
+        "The design's `color/border-strong`, for a control ring that `color.border` is too pale to draw.",
+        value,
+    )
+
+
+def emit_dart_surface2(value) -> str:
+    return emit_dart_spec_color(
+        "smileSurface2",
+        "surface2",
+        "The design's `color/surface-2`, a cool grey subtle fill — `color.surface-alt` is a warm cream.",
+        value,
+    )
+
+
+def emit_dart_off_black(values) -> str:
+    """A pair, not a single value: every role it paints is drawn in both schemes."""
+    missing = [mode for mode in ("light", "dark") if not values.get(mode)]
+    if missing:
+        raise TokenError(f"spec/design-tokens.json offBlack is missing {missing}")
+    return "\n".join([
+        "",
+        "/// The design's `Off_black`: the warm strong foreground. Seven roles, one variable — see the `offBlack` delta.",
+        f"const Color smileOffBlackLight = {dart_hue_color(values['light'])};",
+        f"const Color smileOffBlackDark = {dart_hue_color(values['dark'])};",
+    ])
+
+
+def emit_dart_nav_bar_fill(values) -> str:
+    """The bar's own fill: the page's own colour leaves it invisible in dark."""
+    missing = [mode for mode in ("light", "dark") if not values.get(mode)]
+    if missing:
+        raise TokenError(f"spec/design-tokens.json navBarFill is missing {missing}")
+    return "\n".join([
+        "",
+        "/// The floating nav bar's fill — see the `navBarFill` delta.",
+        f"const Color smileNavBarLight = {dart_hue_color(values['light'])};",
+        f"const Color smileNavBarDark = {dart_hue_color(values['dark'])};",
+    ])
+
+
+def emit_dart_profile_hues(hues) -> str:
+    """One avatar fill per profile, cycled by list position."""
+    if not hues:
+        raise TokenError("spec/design-tokens.json profileHues carries no hues")
+    lines = [
+        "",
+        "/// Avatar fills, one per profile, taken in list order and cycled beyond the list.",
+        "const List<Color> smileProfileHues = <Color>[",
+    ]
+    lines += ["  %s," % dart_hue_color(h) for h in hues]
+    lines.append("];")
+    return "\n".join(lines)
+
+
+def emit_dart_token_session(delta: dict) -> str:
+    """The session card's gradient and the countdown ring, which no semantic role covers."""
+    grad = delta.get("cardGradient") or []
+    alpha = delta.get("cardGradientAlpha") or []
+    ring = delta.get("ring")
+    opacity = delta.get("ringTrackOpacity")
+    if len(grad) != 2 or len(alpha) != 2 or not ring or opacity is None:
+        raise TokenError("tokenSessionGreens needs a two-stop cardGradient with its alphas, a ring and a ringTrackOpacity")
+    return "\n".join([
+        "",
+        "/// The session card's horizontal gradient. Both stops are translucent, so the card composites against the page.",
+        "const List<Color> smileTokenSessionGradient = <Color>[%s, %s];"
+        % (dart_hue_color(grad[0]), dart_hue_color(grad[1])),
+        "const List<double> smileTokenSessionGradientAlpha = <double>[%s, %s];"
+        % (dart_double(alpha[0]), dart_double(alpha[1])),
+        "",
+        "/// The countdown ring: this colour solid for progress, and the same colour faded for the track.",
+        "const Color smileTokenRing = %s;" % dart_hue_color(ring),
+        "const double smileTokenRingTrackOpacity = %s;" % dart_double(opacity),
+    ])
+
+
+def emit_dart_label_type_style(delta: dict) -> str:
+    """The all-caps label size and tracking, which text-style.overline sets a point small and solid."""
+    size = delta.get("size")
+    tracking = delta.get("tracking")
+    if not size or tracking is None:
+        raise TokenError("labelTypeStyle needs a size and a tracking")
+    return "\n".join([
+        "",
+        "/// The design's Type/Label: a point larger than text-style.overline, and spaced.",
+        "const double smileLabelSize = %s;" % dart_double(size),
+        "const double smileLabelTracking = %s;" % dart_double(tracking),
+    ])
+
+
+def emit_dart_card_label_runs(delta: dict) -> str:
+    """The one property each card-label run needs that its nearest semantic style does not carry."""
+    tracking = delta.get("tracking")
+    weight = delta.get("familyWeight")
+    if tracking is None or not weight:
+        raise TokenError("cardLabelRuns needs a tracking and a familyWeight")
+    return "\n".join([
+        "",
+        "/// The card's two label runs, each one property off a token — see the `cardLabelRuns` delta.",
+        "const double smileCardTitleTracking = %s;" % dart_double(tracking),
+        "const int smileCardFamilyWeight = %s;" % int(weight),
+    ])
+
+
+def emit_dart_card_stroke(values: dict) -> str:
+    """A pair, not one value: `color.border` is the same near-white in both schemes, which is the defect."""
+    missing = [mode for mode in ("light", "dark") if not values.get(mode)]
+    if missing or values.get("width") is None:
+        raise TokenError(f"spec/design-tokens.json cardStroke is missing {missing or ['width']}")
+    return "\n".join([
+        "",
+        "/// One outline for every card and row, equally quiet in both schemes — see the `cardStroke` delta.",
+        "const Color smileCardStrokeLight = %s;" % dart_hue_color(values["light"]),
+        "const Color smileCardStrokeDark = %s;" % dart_hue_color(values["dark"]),
+        "const double smileCardStrokeWidth = %s;" % dart_double(values["width"]),
+    ])
+
+
+def emit_dart_products_type(delta: dict) -> str:
+    """The frame's Type/Heading and Type/Title, which the vendored ramp does not match."""
+    keys = ("headingSize", "headingLineHeight", "headingTracking", "headingWeight",
+            "sectionSize", "sectionLineHeight", "sectionWeight")
+    missing = [k for k in keys if delta.get(k) is None]
+    if missing:
+        raise TokenError(f"productsScreenType is missing {missing}")
+    return "\n".join([
+        "",
+        "/// The products header and section headers, which text-style.* does not match — see the `productsScreenType` delta.",
+        "const double smileHeadingPageSize = %s;" % dart_double(delta["headingSize"]),
+        "const double smileHeadingPageLineHeight = %s;" % dart_double(delta["headingLineHeight"]),
+        "const double smileHeadingPageTracking = %s;" % dart_double(delta["headingTracking"]),
+        "const int smileHeadingPageWeight = %s;" % int(delta["headingWeight"]),
+        "const double smileSectionHeaderSize = %s;" % dart_double(delta["sectionSize"]),
+        "const double smileSectionHeaderLineHeight = %s;" % dart_double(delta["sectionLineHeight"]),
+        "const int smileSectionHeaderWeight = %s;" % int(delta["sectionWeight"]),
+    ])
+
+
+def generate_dart_product_hues() -> str:
+    body = (
+        DART_HUES_HEADER
+        + "\n"
+        + emit_dart_product_hues(read_product_hues())
+        + "\n"
+        + emit_dart_soft_badge_fills(read_soft_badge_fills())
+        + "\n"
+        + emit_dart_border_strong(read_border_strong())
+        + "\n"
+        + emit_dart_surface2(read_surface2())
+        + "\n"
+        + emit_dart_off_black(read_off_black())
+        + emit_dart_nav_bar_fill(read_nav_bar_fill())
+        + "\n"
+        + emit_dart_profile_hues(read_profile_hues())
+        + "\n"
+        + emit_dart_token_session(read_token_session())
+        + emit_dart_label_type_style(read_label_type_style())
+        + emit_dart_card_label_runs(read_card_label_runs())
+        + emit_dart_card_stroke(read_card_stroke())
+        + emit_dart_products_type(read_products_type())
+        + "\n"
+    )
+    return dart_formatted(body)
 
 
 def swift_color(value: str) -> str:
@@ -1626,9 +1933,11 @@ def main(argv=None) -> int:
     ok = write(DART_OUT, dart, args.check)
     ok = check_counts(counts) and ok
     ok = check_parity(dart, ds) and ok
+    ok = write(DART_HUES_OUT, generate_dart_product_hues(), args.check) and ok
 
     if args.all:
         ok = copy_upstream(ds, args.check) and ok
+        ok = copy_fonts(ds, args.check, FLUTTER_FONT_COPIES) and ok
         if os.path.isdir(os.path.join(REPO, ANDROID_UI)):
             ok = write(KOTLIN_TYPE_OUT, generate_kotlin_type(ds), args.check) and ok
             ok = write(KOTLIN_HUES_OUT, generate_kotlin_product_hues(), args.check) and ok

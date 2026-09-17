@@ -8,6 +8,8 @@
 //
 // Requires Dart 3 — the token holders use `abstract final class`.
 
+// ignore_for_file: public_member_api_docs
+
 import 'package:flutter/material.dart';
 
 abstract final class SmileColorLight {

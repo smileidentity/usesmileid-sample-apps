@@ -1,6 +1,9 @@
 # UI work plan — Android first, then three ports
 
-**Status:** Android U0–U4 is built. Flutter and Expo have not started.
+**Status:** Android U0–U4 is built. **Flutter: U0 and U1 are complete** — the token pipeline
+emits the Dart deltas stopgap and bundles DM Sans, the eight primitives are built with goldens in
+light and dark, the shell resolves the SDK from pub.dev, `flutter/verify.sh` gates the platform and
+`.github/workflows/flutter.yml` runs it. Expo has not started.
 
 **iOS: U0–U4 are complete.** U3 has all sixteen screens (settings, products,
 verifications, verificationDetails, userDetails, kycIdForm, both picker sheets, profiles,
