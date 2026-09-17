@@ -2294,7 +2294,7 @@ exports[`TextInput dark masked 1`] = `
           null,
         ]
       }
-      value="secret"
+      value="9876543210"
     />
   </View>
 </View>
@@ -2664,7 +2664,7 @@ exports[`TextInput light masked 1`] = `
           null,
         ]
       }
-      value="secret"
+      value="9876543210"
     />
   </View>
 </View>

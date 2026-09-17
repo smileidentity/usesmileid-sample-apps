@@ -47,7 +47,7 @@ const cases: { component: string; states: Record<string, () => React.ReactElemen
         />
       ),
       disabled: () => <UseSmileIDSampleTextInput value="1234" onValueChange={noop} enabled={false} />,
-      masked: () => <UseSmileIDSampleTextInput value="secret" onValueChange={noop} masked />,
+      masked: () => <UseSmileIDSampleTextInput value="9876543210" onValueChange={noop} masked />,
       // A text input fills its column, so the alignment has to be set on the field itself.
       end_aligned: () => (
         <UseSmileIDSampleTextInput value="Ada Nwosu" onValueChange={noop} textAlign="right" />
