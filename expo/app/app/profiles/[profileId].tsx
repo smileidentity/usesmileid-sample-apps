@@ -5,11 +5,13 @@ import {
   useSmileIDSampleProfileStore,
   type UseSmileIDSampleUserDetails,
 } from '@smileid/sample-ui';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
+
+import { useSmileIDSampleBack } from '../../src/use-smile-id-sample-back';
 import { useState } from 'react';
 
 export default function ProfileConfig() {
-  const router = useRouter();
+  const back = useSmileIDSampleBack('/profiles');
   const { profileId } = useLocalSearchParams<{ profileId: string }>();
   const profile = useSmileIDSampleProfileStore((state) =>
     state.items.find((item) => item.id === profileId),
@@ -31,13 +33,13 @@ export default function ProfileConfig() {
       onFieldChange={(field, value) =>
         setLocalDefaults((current) => smileIDSampleUserFieldWrite(field, current, value))
       }
-      onBack={() => router.back()}
+      onBack={() => back()}
       onSave={() => {
         if (profileId === undefined) return;
         // The CTA reads "Make this profile active", so it has to do both.
         setDefaults(profileId, defaults);
         setActive(profileId);
-        router.back();
+        back();
       }}
     />
   );

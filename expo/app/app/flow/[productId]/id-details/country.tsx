@@ -1,9 +1,12 @@
 import { CountryPickerSheet, useSmileIDSampleFormsStore } from '@smileid/sample-ui';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
+
+import { useSmileIDSampleBack } from '../../../../src/use-smile-id-sample-back';
 import { useState } from 'react';
 
 export default function CountryPicker() {
-  const router = useRouter();
+  const { productId } = useLocalSearchParams<{ productId: string }>();
+  const back = useSmileIDSampleBack(`/flow/${productId}/id-details`);
   const [query, setQuery] = useState('');
   const selected = useSmileIDSampleFormsStore((state) => state.idDetails.country);
   const setCountry = useSmileIDSampleFormsStore((state) => state.setCountry);
@@ -15,9 +18,9 @@ export default function CountryPicker() {
       onQueryChange={setQuery}
       onSelect={(country) => {
         setCountry(country);
-        router.back();
+        back();
       }}
-      onDismiss={() => router.back()}
+      onDismiss={() => back()}
     />
   );
 }

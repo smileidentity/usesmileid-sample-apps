@@ -5,11 +5,14 @@ import {
   useSmileIDSampleTransientNotice,
 } from '@smileid/sample-ui';
 import { useRouter } from 'expo-router';
+
+import { useSmileIDSampleBack } from '../../src/use-smile-id-sample-back';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 export default function Profiles() {
   const router = useRouter();
+  const back = useSmileIDSampleBack('/settings');
   const notice = useSmileIDSampleTransientNotice();
   const profiles = useSmileIDSampleProfileStore((state) => state.items);
   const activeId = useSmileIDSampleProfileStore((state) => state.activeId);
@@ -38,7 +41,7 @@ export default function Profiles() {
         state={{ profiles, activeId }}
         onProfilePress={(profile) => router.push(`/profiles/${profile.id}`)}
         onCreate={() => router.push('/profiles/new')}
-        onBack={() => router.back()}
+        onBack={() => back()}
       />
       <UseSmileIDSampleTransientNoticeHost state={notice} style={styles.notice} />
     </View>

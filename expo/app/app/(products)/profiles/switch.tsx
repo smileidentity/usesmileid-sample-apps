@@ -1,9 +1,10 @@
 import { ProfileSwitchSheet, useSmileIDSampleProfileStore } from '@smileid/sample-ui';
-import { useRouter } from 'expo-router';
+
+import { useSmileIDSampleBack } from '../../../src/use-smile-id-sample-back';
 
 /// Grouped under products rather than the profiles list: routes.json names products as its owner.
 export default function ProfileSwitch() {
-  const router = useRouter();
+  const back = useSmileIDSampleBack('/products');
   const profiles = useSmileIDSampleProfileStore((state) => state.items);
   const activeId = useSmileIDSampleProfileStore((state) => state.activeId);
   const setActive = useSmileIDSampleProfileStore((state) => state.setActive);
@@ -14,9 +15,9 @@ export default function ProfileSwitch() {
       activeId={activeId}
       onSelect={(profile) => {
         setActive(profile.id);
-        router.back();
+        back();
       }}
-      onDismiss={() => router.back()}
+      onDismiss={() => back()}
     />
   );
 }

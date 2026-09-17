@@ -4,11 +4,12 @@ import {
   useSmileIDSampleProfileStore,
   type UseSmileIDSampleNewProfileDraft,
 } from '@smileid/sample-ui';
-import { useRouter } from 'expo-router';
+
+import { useSmileIDSampleBack } from '../../src/use-smile-id-sample-back';
 import { useState } from 'react';
 
 export default function NewProfile() {
-  const router = useRouter();
+  const back = useSmileIDSampleBack('/profiles');
   const add = useSmileIDSampleProfileStore((state) => state.add);
   // Mounted only while the route is, so its five fields start empty each time.
   const [draft, setDraft] = useState<UseSmileIDSampleNewProfileDraft>(
@@ -27,9 +28,9 @@ export default function NewProfile() {
           email: draft.email,
           phone: draft.phone,
         });
-        router.back();
+        back();
       }}
-      onDismiss={() => router.back()}
+      onDismiss={() => back()}
     />
   );
 }

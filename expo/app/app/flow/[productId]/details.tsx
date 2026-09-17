@@ -6,10 +6,13 @@ import {
   useSmileIDSampleProfileStore,
 } from '@smileid/sample-ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+
+import { useSmileIDSampleBack } from '../../../src/use-smile-id-sample-back';
 import { useEffect } from 'react';
 
 export default function ConsentDetailsForm() {
   const router = useRouter();
+  const back = useSmileIDSampleBack('/products');
   const { productId } = useLocalSearchParams<{ productId: string }>();
   const product = smileIDSampleProductFrom(productId);
   const profile = useSmileIDSampleActiveProfile();
@@ -34,7 +37,7 @@ export default function ConsentDetailsForm() {
       }}
       onFieldChange={setUserField}
       onRememberChange={setRememberDetails}
-      onBack={() => router.back()}
+      onBack={() => back()}
       onContinue={() => {
         // The switch says "remember these for next time", and the profile's defaults are where next time reads.
         if (rememberDetails) setDefaults(profile.id, details);
