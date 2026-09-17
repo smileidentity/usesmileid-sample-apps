@@ -417,10 +417,11 @@ keeps current. The description drops from 3022 characters to 1016.
 20260913.1211.103 was sitting in Apple's review queue when this was ruled, so editing it would have
 meant touching a submitted version. `ios/store/description.txt` took this text on 2026-09-16, so the
 two files are identical again; pushing it to App Store Connect waits for that submission to clear, and
-that plan's §7.2 holds the action. Until then the two descriptions differ by those paragraphs, deliberately, and
-`scripts/check_store_listing.py` enforces the invariant that survives the gap: both listings name the
-same six products. Apple is unaffected by the search argument either way, because the App Store does
-not index the description at all.
+that plan's §7.2 holds the action. What still diverges is therefore the *published* App Store listing
+against this repository, not the two files: until that push lands, the live listing carries the
+per-product paragraphs and Play does not. `scripts/check_store_listing.py` holds the invariant that
+outlives the gap either way — both listings name the same six products. Apple is unaffected by the
+search argument, because the App Store does not index the description at all.
 
 **Release notes are v11's other defect, and this is where it stops.** v11 generates "What's new" with
 `git log --pretty=format:'- [%ad] %s' --date=short -n 5`, which is why the live listing shows
