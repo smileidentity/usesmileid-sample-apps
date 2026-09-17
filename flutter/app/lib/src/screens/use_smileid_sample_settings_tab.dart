@@ -1,8 +1,10 @@
 import 'package:flutter/widgets.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import '../state/use_smileid_sample_providers.dart';
+import '../use_smileid_sample_routes.dart';
 import '../use_smileid_sample_version.dart';
 
 /// The settings tab, whose six switches survive a restart.
@@ -29,7 +31,8 @@ class UseSmileIDSampleSettingsTab extends ConsumerWidget {
       onSettingChanged: (UseSmileIDSampleSetting setting, bool enabled) => ref
           .read(useSmileIDSampleSettingsProvider.notifier)
           .setSetting(setting, enabled),
-      onProfileTap: () {},
+      // The LIST, not the active profile's own page: the twin's row is a way into every profile.
+      onProfileTap: () => context.go(UseSmileIDSampleRoutes.profiles),
       onNavRowTap: (UseSmileIDSampleNavRow row) {},
       onSignOut: () {},
       bottomInset: useSmileIDSampleNavBarClearance(context),

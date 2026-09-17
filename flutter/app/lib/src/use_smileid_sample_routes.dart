@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import 'screens/use_smileid_sample_products_tab.dart';
+import 'screens/use_smileid_sample_profile_config_tab.dart';
+import 'screens/use_smileid_sample_profiles_tab.dart';
 import 'screens/use_smileid_sample_settings_tab.dart';
 import 'screens/use_smileid_sample_verification_details_tab.dart';
 import 'screens/use_smileid_sample_verifications_tab.dart';
@@ -25,11 +27,17 @@ abstract final class UseSmileIDSampleRoutes {
   /// The licences page, pushed inside the settings tab.
   static const String licenses = '/settings/licenses';
 
+  /// The profiles list, above the tabs rather than inside one.
+  static const String profiles = '/profiles';
+
   /// The component gallery, a dev surface that is deliberately absent from `spec/routes.json`.
   static const String components = '/debug/components';
 
   /// One verification's detail page.
   static String verificationDetails(String jobId) => '/verifications/$jobId';
+
+  /// One profile's own page.
+  static String profileConfig(String profileId) => '/profiles/$profileId';
 
   /// The tab roots, which are the only destinations that carry a nav bar.
   static const List<String> tabRoots = <String>[
@@ -102,6 +110,23 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
               builder: (_, _) => const UseSmileIDSampleSettingsTab(),
             ),
           ],
+        ),
+      ],
+    ),
+    // Above the shell, not inside a tab: the backlog doc rules non-root routes sit above the tabs
+    // as Android has them, which gives a cold deep link one synthesised parent rather than a tab's.
+    GoRoute(
+      path: UseSmileIDSampleRoutes.profiles,
+      builder: (BuildContext context, GoRouterState state) =>
+          UseSmileIDSampleProfilesTab(onBack: () => context.pop()),
+      routes: <RouteBase>[
+        GoRoute(
+          path: ':profileId',
+          builder: (BuildContext context, GoRouterState state) =>
+              UseSmileIDSampleProfileConfigTab(
+                profileId: state.pathParameters['profileId']!,
+                onBack: () => context.pop(),
+              ),
         ),
       ],
     ),
