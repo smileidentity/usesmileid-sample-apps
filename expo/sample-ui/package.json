@@ -11,6 +11,7 @@
   },
   "peerDependencies": {
     "@expo/ui": ">=57.0.0",
+    "@react-native-async-storage/async-storage": ">=1.21.0",
     "@smileid/usesmileid": ">=12.1.1",
     "react": ">=19.0.0",
     "react-native": ">=0.78.0",
@@ -47,6 +48,7 @@
     "@types/node": "The test files read spec/ from disk, which needs the Node globals; nothing in src/ uses them.",
     "react-native-safe-area-context": "peer; the app bar reads the real status-bar inset rather than a constant, which is the rule insets stay platform-native.",
     "@expo/ui": "peer; the bottom sheet is the platform's own (SwiftUI sheet, Material3 ModalBottomSheet), which spec/components.json requires rather than a hand-rolled one. Already in the graph via expo-router.",
-    "react-native-gesture-handler": "peer; the row swipe is the platform's own gesture, which spec/components.json requires rather than reproducing Android's velocity and threshold by hand."
+    "react-native-gesture-handler": "peer; the row swipe is the platform's own gesture, which spec/components.json requires rather than reproducing Android's velocity and threshold by hand.",
+    "@react-native-async-storage/async-storage": "peer; the six settings are preferences and live where an uninstall clears them, apart from the token session. Already an optional peer of the SDK itself."
   }
 }

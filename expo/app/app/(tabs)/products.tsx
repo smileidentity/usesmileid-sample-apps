@@ -1,20 +1,27 @@
 import {
-  UseSmileIDSampleSectionLabel,
-  UseSmileIDSampleTestIds,
-  useSmileIDSampleTheme,
+  ProductsScreen,
+  avatarColorForProfile,
+  smileIDSampleProfileInitials,
+  useSmileIDSampleActiveProfile,
+  useSmileIDSampleActiveProfileIndex,
 } from '@smileid/sample-ui';
-import { View } from 'react-native';
+import { useRouter } from 'expo-router';
 
-/// The products destination. Its grid is U3; this tranche proves the route and its id resolve.
-export default function ProductsScreen() {
-  const theme = useSmileIDSampleTheme();
+export default function Products() {
+  const router = useRouter();
+  const profile = useSmileIDSampleActiveProfile();
+  const index = useSmileIDSampleActiveProfileIndex();
 
   return (
-    <View
-      testID={UseSmileIDSampleTestIds.PRODUCTS_SCREEN}
-      style={{ backgroundColor: theme.colors.background, flex: 1, padding: theme.dimens.spacing.md }}
-    >
-      <UseSmileIDSampleSectionLabel text="AUTHENTICATION" />
-    </View>
+    <ProductsScreen
+      state={{
+        initials: smileIDSampleProfileInitials(profile),
+        avatarColor: avatarColorForProfile(index),
+      }}
+      // Every product shows the Consent Details Form first, which is sample-owned.
+      onProductPress={(product) => router.push(`/flow/${product.id}/details`)}
+      onProfilePress={() => router.push('/profiles/switch')}
+      onScanPress={() => router.push('/token/scan')}
+    />
   );
 }
