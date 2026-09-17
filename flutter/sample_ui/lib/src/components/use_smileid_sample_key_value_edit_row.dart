@@ -60,7 +60,9 @@ class _UseSmileIDSampleKeyValueEditRowState
   @override
   void didUpdateWidget(UseSmileIDSampleKeyValueEditRow oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.value != _controller.text) {
+    // Against the old widget, not the live text: a parent that rebuilds without changing the
+    // value would otherwise collapse the selection to the end while the field is being edited.
+    if (widget.value != oldWidget.value && widget.value != _controller.text) {
       _controller.value = _controller.value.copyWith(
         text: widget.value,
         selection: TextSelection.collapsed(offset: widget.value.length),
