@@ -2142,7 +2142,7 @@
     },
     {
       "artifact": "org.jetbrains.kotlin:kotlin-stdlib",
-      "version": "2.4.10",
+      "version": "2.4.20",
       "licenses": [
         {
           "id": "Apache-2.0",

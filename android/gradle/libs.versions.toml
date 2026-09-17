@@ -2,8 +2,8 @@
 usesmileid = "12.1.1"
 
 android-gradle-plugin = "9.3.1"
-kotlin = "2.4.10"
-ksp = "2.3.11"
+kotlin = "2.4.20"
+ksp = "2.3.12"
 
 androidx-activity = "1.13.0"
 # Custom Tabs for the Settings links: the page keeps the user's own browser rather than a WebView.
