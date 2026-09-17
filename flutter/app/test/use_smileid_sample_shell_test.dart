@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
@@ -7,9 +8,11 @@ import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 void main() {
   Future<void> pumpShell(WidgetTester tester, {String? at}) async {
     await tester.pumpWidget(
-      MaterialApp.router(
-        theme: UseSmileIDSampleTheme.light(),
-        routerConfig: useSmileIDSampleRouter(initialLocation: at),
+      ProviderScope(
+        child: MaterialApp.router(
+          theme: UseSmileIDSampleTheme.light(),
+          routerConfig: useSmileIDSampleRouter(initialLocation: at),
+        ),
       ),
     );
     await tester.pump();
