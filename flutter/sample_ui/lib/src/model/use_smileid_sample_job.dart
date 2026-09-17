@@ -70,6 +70,43 @@ class UseSmileIDSampleJob {
   /// The user id as the detail page shows it.
   String get shortUserId => _elide(userId);
 
+  /// The submission instant, as the detail page shows it: ISO 8601 in UTC, to the millisecond.
+  ///
+  /// UTC and not local, unlike the list's clock: a job id travels to support with its timestamp,
+  /// and a local one cannot be compared against a server log without knowing the phone's zone.
+  String get createdAtLabel {
+    final DateTime at = DateTime.fromMillisecondsSinceEpoch(
+      createdAtMillis,
+      isUtc: true,
+    );
+    String pad(int value, int width) => value.toString().padLeft(width, '0');
+    return '${at.year}-${pad(at.month, 2)}-${pad(at.day, 2)}'
+        'T${pad(at.hour, 2)}:${pad(at.minute, 2)}:${pad(at.second, 2)}'
+        '.${pad(at.millisecond, 3)}Z';
+  }
+
+  /// The TRANSPORT outcome, which is not the verdict: a 202 means accepted, not cleared.
+  String get httpStatusLabel => switch (httpStatus) {
+    null => '',
+    200 => '200 OK',
+    202 => '202 Accepted',
+    final int code => '$code',
+  };
+
+  /// Whether the transport succeeded, which is what colours the status row.
+  ///
+  /// Null is neither: a job that never reached the API has no transport outcome to report, and
+  /// colouring it red would accuse the server of refusing a request it never saw.
+  bool? get httpSucceeded =>
+      httpStatus == null ? null : httpStatus! >= 200 && httpStatus! < 300;
+
+  /// Why this job cannot be refreshed, or null when it can be.
+  ///
+  /// A fixture ran under no session, so it can never refresh — which is most of what this app has
+  /// until the scanner lands, and the reason the affordance reports rather than fails silently.
+  String? get refreshBlockedReason =>
+      sessionId == null ? 'Not submitted under a scanned token' : null;
+
   /// What the store writes.
   Map<String, Object?> toJson() => <String, Object?>{
     'id': id,

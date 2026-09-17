@@ -216,6 +216,66 @@ void main() {
     });
   });
 
+  group('the detail page formats', () {
+    UseSmileIDSampleJob at(DateTime when, {int? httpStatus}) =>
+        UseSmileIDSampleJob(
+          id: 'job_1',
+          userId: 'user_1',
+          product: UseSmileIDSampleProduct.values.first,
+          status: UseSmileIDSampleStatus.clear,
+          createdAtMillis: when.millisecondsSinceEpoch,
+          httpStatus: httpStatus,
+        );
+
+    // UTC and not local, unlike the list's clock: a job id travels to support with its timestamp,
+    // and a local one cannot be read against a server log without knowing the phone's zone.
+    test('the instant in UTC, to the millisecond', () {
+      expect(
+        at(DateTime.utc(2026, 7, 16, 13, 3, 41, 7)).createdAtLabel,
+        '2026-07-16T13:03:41.007Z',
+      );
+    });
+
+    test('the same instant regardless of the phone zone', () {
+      final DateTime local = DateTime(2026, 7, 16, 13, 3, 41);
+      expect(at(local).createdAtLabel, at(local.toUtc()).createdAtLabel);
+    });
+
+    test('the transport outcome, named where the design names it', () {
+      expect(at(DateTime(2026), httpStatus: 200).httpStatusLabel, '200 OK');
+      expect(
+        at(DateTime(2026), httpStatus: 202).httpStatusLabel,
+        '202 Accepted',
+      );
+      expect(at(DateTime(2026), httpStatus: 403).httpStatusLabel, '403');
+      expect(at(DateTime(2026)).httpStatusLabel, isEmpty);
+    });
+
+    // Null is neither success nor failure: a job that never reached the API has no transport
+    // outcome, and colouring it red would accuse the server of refusing a request it never saw.
+    test('success is unknown for a job that never reached the API', () {
+      expect(at(DateTime(2026), httpStatus: 200).httpSucceeded, isTrue);
+      expect(at(DateTime(2026), httpStatus: 202).httpSucceeded, isTrue);
+      expect(at(DateTime(2026), httpStatus: 403).httpSucceeded, isFalse);
+      expect(at(DateTime(2026), httpStatus: 500).httpSucceeded, isFalse);
+      expect(at(DateTime(2026)).httpSucceeded, isNull);
+    });
+
+    test('a job under no session says why it cannot refresh', () {
+      expect(
+        at(DateTime(2026)).refreshBlockedReason,
+        'Not submitted under a scanned token',
+      );
+      expect(
+        useSmileIDSampleJobFixtures(
+          DateTime(2026).millisecondsSinceEpoch,
+        ).every((UseSmileIDSampleJob j) => j.refreshBlockedReason != null),
+        isTrue,
+        reason: 'every fixture ran under no session',
+      );
+    });
+  });
+
   // Null is NOT an empty list: the screen must draw neither empty state until the store answers.
   test('a state with no answer yet shows nothing and counts nothing', () {
     const UseSmileIDSampleVerificationsState state =
