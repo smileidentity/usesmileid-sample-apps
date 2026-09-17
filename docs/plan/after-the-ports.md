@@ -1,7 +1,27 @@
 # After the ports: what is next, and how to sequence it
 
-All four sample apps now exist. Android and iOS shipped earlier; the Flutter and Expo ports landed in
-one day across twelve pull requests. This is the work that follows and the order to take it in.
+## The ports are not finished, and it is worth being exact about that
+
+Every screen, both navigation hosts, persistence, the verifications list with its actions and detail
+page, profiles, the two pre-flow forms and the golden coverage landed for Flutter and Expo in one day
+across twelve pull requests. That is the whole **user interface**.
+
+It is not the whole app. Neither new app has ever invoked the SDK:
+
+- `flutter/app` and `expo/app` contain **zero** SDK flow calls.
+- Neither has a route for `/flow/:productId/run`. Flutter's two flow routes are `details` and
+  `id-details` — both forms. Expo has the same forms and no `run`.
+- Android, by contrast, has a flow layer of its own: `SdkFlowScreen`, `SdkFlowViewModel`,
+  `FlowBuilderConfig`, `FlowJourney`, `FlowPreflight`, `FlowLaunchSnapshot`.
+
+So both journeys walk a user to the door and stop. A sample app exists to demonstrate a verification,
+and on these two you cannot yet run one. **Phase 4 below is the remaining half of the port, not
+follow-on work** — the phases before it are debt and rulings that happen to be cheaper.
+
+The same gap explains two things that look like omissions elsewhere: there is no token session or
+scanner, which is why the session card, the countdown ring and four product states have goldens and no
+way to be reached; and the verification detail page has no status refresh, because a refresh is a call
+under a scanned session and no session exists.
 
 `port-gaps-backlog.md` holds the detail of every item referenced here. `stacked-pr-sequencing.md` holds
 the measured cost of the branching friction this session hit. Neither is repeated here.
@@ -61,15 +81,30 @@ Worth doing as one pass rather than three, and worth doing before the flow host 
 notices screen is the only way to see the licence registry populated — it is empty under `flutter test`
 by design, so no test can stand in for it.
 
-## Phase 4 — the next feature, which is the same one on both new apps
+## Phase 4 — the rest of the port: the flow host, then the token session
 
-Both journeys stop at `/flow/:productId/run`, a route no app claims. Neither port invented a placeholder,
-deliberately. So the next feature is the flow host, and after it the token session and scanner — which is
-what unblocks the session card, the countdown ring and the four product states that currently have
-goldens and no way to reach them.
+This is the larger half of the remaining work and the only phase that makes the apps do what they
+exist to do. Both journeys stop at `/flow/:productId/run`, a route neither app claims. Neither port
+invented a placeholder, deliberately — a page that is not in the design and says "not yet" gets
+mistaken for real UI.
+
+Order within the phase: the flow host first, since it is what a product tap has been walking toward
+since the forms landed; then the token session and scanner, which unblock the session card, the
+countdown ring and the four product states that currently have goldens and no way to be reached, and
+which the detail page's status refresh also waits on.
 
 Do Flutter and Expo as siblings again, one tranche at a time. The parity contract held well: where the
 two disagreed this session it was because one had a defect, and the other's implementation was the test.
+
+Two things make this phase unlike the four before it, and both argue for starting it differently:
+
+- **It is where the platforms genuinely differ.** Everything so far was UI the design specifies, so a
+  divergence was almost always a defect. The flow host is each SDK's own surface — Android needed six
+  files for it — so expect real divergence and document it rather than treating it as a parity failure.
+- **It cannot be verified without a device.** A flow means camera capture, so no golden and no widget
+  test proves it works. The twelve behaviours already owed a device pass are cosmetic beside this: a
+  flow host with no device run proves nothing at all. **Unlock the handset before this phase starts**,
+  not after it lands.
 
 ## How to sequence it, given what this session cost
 
