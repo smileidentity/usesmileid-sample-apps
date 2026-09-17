@@ -20,7 +20,10 @@ import argparse
 import io
 import os
 import re
+import shutil
+import subprocess
 import sys
+import tempfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -95,6 +98,27 @@ def emit_dart(icons: dict[str, tuple[str, str]]) -> str:
     return "\n".join(lines)
 
 
+def dart_formatted(content: str) -> str:
+    """Emit what `dart format` would, or the generator and the formatter fight over the file.
+
+    Without this, `--check` passes or fails depending on which of the two ran last.
+    """
+    if not shutil.which("dart"):
+        return content
+    with tempfile.TemporaryDirectory() as tmp:
+        path = os.path.join(tmp, "smile_icons.dart")
+        with io.open(path, "w", encoding="utf-8") as handle:
+            handle.write(content)
+        result = subprocess.run(["dart", "format", path], capture_output=True, text=True, check=False)
+        if result.returncode != 0:
+            raise IconError(
+                "dart format rejected the generated source, which means the emitter produced "
+                "invalid Dart:\n" + (result.stderr or result.stdout).strip()[:800]
+            )
+        with io.open(path, encoding="utf-8") as handle:
+            return handle.read()
+
+
 def write_text(rel_path: str, content: str, check: bool) -> bool:
     target = os.path.join(REPO, rel_path)
     existing = None
@@ -167,7 +191,7 @@ def main(argv=None) -> int:
             ok = write_bytes(f"{ASSET_DIR}/{asset}", handle.read(), args.check) and ok
     print(f"  vendored   {len(icons)} icons from {ICON_DIR}")
 
-    ok = write_text(DART_OUT, emit_dart(icons), args.check) and ok
+    ok = write_text(DART_OUT, dart_formatted(emit_dart(icons)), args.check) and ok
 
     stray = unsourced(icons)
     if stray:
