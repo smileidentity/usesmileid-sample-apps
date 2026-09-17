@@ -44,7 +44,28 @@ Future<void> loadSampleFonts() async {
   final FontLoader icons = FontLoader('MaterialIcons')
     ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'));
   await icons.load();
+
+  await _loadEmoji();
 }
+
+/// The country flags and the picker leads are emoji, and a baseline that draws tofu instead is not
+/// coverage of them. Required rather than skipped: the lane is pinned to macOS precisely so a
+/// baseline means one thing, and a silent tofu is how a picker ships with no flags.
+Future<void> _loadEmoji() async {
+  final File file = File(_appleColorEmoji);
+  if (!file.existsSync()) {
+    throw StateError(
+      'no emoji font at $_appleColorEmoji; goldens record flags and picker leads as tofu without '
+      'it, so record them on macOS as .github/workflows/flutter.yml pins',
+    );
+  }
+  final FontLoader emoji = FontLoader('Apple Color Emoji')
+    ..addFont(file.readAsBytes().then<ByteData>(ByteData.sublistView));
+  await emoji.load();
+}
+
+/// The system face, which is where every Apple platform's emoji come from.
+const String _appleColorEmoji = '/System/Library/Fonts/Apple Color Emoji.ttc';
 
 /// Records one baseline per scheme; `flutter test --update-goldens` writes them.
 Future<void> goldens(
@@ -89,6 +110,10 @@ Future<void> assertSurvivesMaxTextScale(
     UseSmileIDSampleColorSchemes.light,
     textScale,
     widget,
+    // Scrollable, so exceeding one viewport is not itself a failure: at 2x a list legitimately
+    // runs past the screen, and this predicate is about truncation and word breaks. Horizontal
+    // overflow still throws on its own, which is the direction that means clipping.
+    scrollable: true,
   );
 
   final List<RenderParagraph> paragraphs = <RenderParagraph>[];
@@ -121,7 +146,7 @@ Future<void> assertSurvivesMaxTextScale(
     if (painter.didExceedMaxLines) {
       truncated.add(text);
     }
-    split.addAll(_midWordBreaks(painter, text));
+    split.addAll(_midWordBreaks(painter, text, paragraph.size.width));
     painter.dispose();
   }
 
@@ -137,8 +162,13 @@ Future<void> assertSurvivesMaxTextScale(
   );
 }
 
-/// Each break that landed between two non-space characters, reported as the two halves it made.
-List<String> _midWordBreaks(TextPainter painter, String text) {
+/// Each break that split a word which would have fitted on a line of its own.
+///
+/// A token too wide for the whole column has to break somewhere, so breaking it is not a defect —
+/// a hex job id is the case that proves it, since UAX#14 forbids a break before a digit and so
+/// refuses every hyphen in a UUID. What this catches is the avoidable break: a word that had a
+/// line it could have moved to whole, split anyway, as an app bar's "Sca / n / tok / en" was.
+List<String> _midWordBreaks(TextPainter painter, String text, double maxWidth) {
   final List<ui.LineMetrics> lines = painter.computeLineMetrics();
   final List<String> breaks = <String>[];
   for (int line = 0; line < lines.length - 1; line++) {
@@ -147,10 +177,13 @@ List<String> _midWordBreaks(TextPainter painter, String text) {
     );
     final TextRange range = painter.getLineBoundary(position);
     final int end = range.end;
-    if (end > 0 &&
-        end < text.length &&
-        !_isWhitespace(text[end - 1]) &&
-        !_isWhitespace(text[end])) {
+    if (end <= 0 ||
+        end >= text.length ||
+        _isWordBoundary(text[end - 1]) ||
+        _isWordBoundary(text[end])) {
+      continue;
+    }
+    if (_tokenAt(text, end).width(painter, maxWidth) <= maxWidth) {
       breaks.add(
         '${text.substring(range.start, end)} | ${text.substring(end)}',
       );
@@ -159,15 +192,48 @@ List<String> _midWordBreaks(TextPainter painter, String text) {
   return breaks;
 }
 
-bool _isWhitespace(String character) => character.trim().isEmpty;
+/// The maximal run of non-breaking characters around [index] — the word the break landed inside.
+String _tokenAt(String text, int index) {
+  int start = index;
+  int end = index;
+  while (start > 0 && !_isWordBoundary(text[start - 1])) {
+    start--;
+  }
+  while (end < text.length && !_isWordBoundary(text[end])) {
+    end++;
+  }
+  return text.substring(start, end);
+}
+
+/// Extension point for measuring one token in the paragraph's own style.
+extension on String {
+  double width(TextPainter paragraph, double maxWidth) {
+    final TextPainter token = TextPainter(
+      text: TextSpan(text: this, style: paragraph.text?.style),
+      textDirection: paragraph.textDirection,
+      textScaler: paragraph.textScaler,
+    )..layout();
+    final double width = token.width;
+    token.dispose();
+    return width;
+  }
+}
+
+/// Where a word ends, which is whitespace and nothing else.
+///
+/// A hyphen deliberately does NOT count: UAX#14 refuses a break before a digit, so the hyphens in
+/// a hex job id offer nothing, and treating them as boundaries would make the unbreakable token
+/// look like four short ones that each fit. The width exemption is what handles that case.
+bool _isWordBoundary(String character) => character.trim().isEmpty;
 
 Future<void> _host(
   WidgetTester tester,
   ThemeData theme,
   UseSmileIDSampleColors colors,
   double textScale,
-  Widget child,
-) async {
+  Widget child, {
+  bool scrollable = false,
+}) async {
   tester.view
     ..devicePixelRatio = goldenPixelRatio
     ..physicalSize = const Size(
@@ -201,7 +267,10 @@ Future<void> _host(
               padding: const EdgeInsets.all(SmileDimens.spacingMd),
               // Every real screen sits on a Scaffold, and a text field asserts on the ancestor it
               // provides; transparency supplies it without painting over the page colour.
-              child: Material(type: MaterialType.transparency, child: child),
+              child: Material(
+                type: MaterialType.transparency,
+                child: scrollable ? SingleChildScrollView(child: child) : child,
+              ),
             ),
           ),
         ),

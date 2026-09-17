@@ -5,6 +5,13 @@ import '../tokens/smile_tokens.dart';
 /// The bundled family, addressed through the package that ships it so no host has to declare it.
 const String useSmileIDSampleFontFamily = 'packages/sample_ui/DM Sans';
 
+/// The emoji faces, named in the order the three platforms ship them.
+const List<String> useSmileIDSampleEmojiFallback = <String>[
+  'Apple Color Emoji',
+  'Noto Color Emoji',
+  'Segoe UI Emoji',
+];
+
 /// The generated ramp rebound onto the bundled family — the token source names Epilogue for the
 /// display styles and it is not shipped, so they resolve to DM Sans exactly as the Compose twin does.
 abstract final class UseSmileIDSampleType {
@@ -120,5 +127,9 @@ abstract final class UseSmileIDSampleType {
   static final TextStyle tabFont = _bundled(SmileType.tabFont);
 }
 
-TextStyle _bundled(TextStyle style) =>
-    style.copyWith(fontFamily: useSmileIDSampleFontFamily);
+TextStyle _bundled(TextStyle style) => style.copyWith(
+  fontFamily: useSmileIDSampleFontFamily,
+  // Naming a family replaces the platform's default, and with it the default fallback chain, so
+  // the emoji faces have to be named back: the country flags and the picker leads are emoji.
+  fontFamilyFallback: useSmileIDSampleEmojiFallback,
+);
