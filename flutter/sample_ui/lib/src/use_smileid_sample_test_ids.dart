@@ -35,6 +35,41 @@ abstract final class UseSmileIDSampleTestIds {
   /// Simulate a successful scan, which makes token flows testable with no QR source.
   static const String tokenSimulate = 'sample_token_simulate';
 
+  /// The settings root.
+  static const String settingsScreen = 'sample_settings_screen';
+
+  /// The profile row at the top of settings, which opens the profiles LIST.
+  static const String profileSummary = 'sample_profile_summary';
+
+  /// The Enhanced SmartSelfie switch, which drives enableEnhancedLiveness.
+  static const String settingEnhancedSmartSelfie =
+      'sample_setting_enhanced_smart_selfie';
+
+  /// The Agent mode switch, which drives allowAgentMode.
+  static const String settingAgentMode = 'sample_setting_agent_mode';
+
+  /// The Dark mode switch.
+  static const String settingDarkMode = 'sample_setting_dark_mode';
+
+  /// The Consent screen switch, which includes or omits consent().
+  static const String settingConsentStep = 'sample_setting_consent_step';
+
+  /// The Instruction screen switch, which includes or omits instructions().
+  static const String settingInstructionsStep =
+      'sample_setting_instructions_step';
+
+  /// The Preview screen switch, which includes or omits preview().
+  static const String settingPreviewStep = 'sample_setting_preview_step';
+
+  /// One ABOUT or LEGAL navigation row; suffixed with the row id.
+  static const String settingNav = 'sample_setting_nav';
+
+  /// The sign-out row.
+  static const String signOut = 'sample_sign_out';
+
+  /// The app name and version footer.
+  static const String versionLabel = 'sample_version_label';
+
   /// The toast container, shared by the removal confirmation and the profile-created one.
   static const String toast = 'sample_toast';
 
@@ -66,6 +101,17 @@ abstract final class UseSmileIDSampleTestIds {
     tokenManualEntry,
     tokenPaste,
     tokenSimulate,
+    settingsScreen,
+    profileSummary,
+    settingEnhancedSmartSelfie,
+    settingAgentMode,
+    settingDarkMode,
+    settingConsentStep,
+    settingInstructionsStep,
+    settingPreviewStep,
+    settingNav,
+    signOut,
+    versionLabel,
     toast,
     toastUndo,
     jobRowStatus,
