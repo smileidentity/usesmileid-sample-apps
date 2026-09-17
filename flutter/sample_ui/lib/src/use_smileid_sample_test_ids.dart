@@ -133,6 +133,49 @@ abstract final class UseSmileIDSampleTestIds {
   /// What the detail page shows for a job this build never stored.
   static const String detailsEmpty = 'sample_details_empty';
 
+  /// The profiles list.
+  static const String profilesScreen = 'sample_profiles_screen';
+
+  /// One profile row, suffixed with that profile's id; the list and the switch sheet share it.
+  static String profileRow(String profileId) => 'sample_profile_row_$profileId';
+
+  /// The row that opens the new-profile sheet.
+  static const String createProfile = 'sample_create_profile';
+
+  /// One profile's own page.
+  static const String profileConfigScreen = 'sample_profile_config_screen';
+
+  /// One editable field on that page, suffixed with the field's camelCase id.
+  static String profileConfigField(String field) =>
+      'sample_profile_config_field_$field';
+
+  /// The page's only write: it saves the details AND makes the profile active.
+  static const String profileConfigSave = 'sample_profile_config_save';
+
+  /// The switch sheet, which Products owns.
+  static const String profileSwitchSheet = 'sample_profile_switch_sheet';
+
+  /// The new-profile sheet, which the profiles list owns.
+  static const String newProfileSheet = 'sample_new_profile_sheet';
+
+  /// The new profile's organisation.
+  static const String newProfileName = 'sample_new_profile_name';
+
+  /// The new profile's given name.
+  static const String newProfileFirstName = 'sample_new_profile_first_name';
+
+  /// The new profile's family name.
+  static const String newProfileLastName = 'sample_new_profile_last_name';
+
+  /// The new profile's email, which never gates the confirm.
+  static const String newProfileEmail = 'sample_new_profile_email';
+
+  /// The new profile's phone, which never gates the confirm.
+  static const String newProfilePhone = 'sample_new_profile_phone';
+
+  /// Creates the profile; the confirmation offers to make it active.
+  static const String newProfileSave = 'sample_new_profile_save';
+
   /// The selection bar shown instead of the nav bar.
   static const String selectionBar = 'sample_selection_bar';
 
@@ -177,6 +220,18 @@ abstract final class UseSmileIDSampleTestIds {
     detailsDelete,
     detailsRefresh,
     detailsEmpty,
+    profilesScreen,
+    createProfile,
+    profileConfigScreen,
+    profileConfigSave,
+    profileSwitchSheet,
+    newProfileSheet,
+    newProfileName,
+    newProfileFirstName,
+    newProfileLastName,
+    newProfileEmail,
+    newProfilePhone,
+    newProfileSave,
     selectionBar,
     selectionCount,
     selectionRemove,
