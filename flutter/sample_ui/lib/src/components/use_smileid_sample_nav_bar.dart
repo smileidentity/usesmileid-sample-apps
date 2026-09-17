@@ -300,6 +300,17 @@ class _NavBarTab extends StatelessWidget {
   }
 }
 
+/// The room a screen leaves below its last row so it can scroll clear of the floating bar.
+///
+/// The bar is not a bottom-bar slot and insets nothing (R13), so a screen that does not reserve
+/// this has its last row clipped under the pill. Derived from the bar's own metrics rather than
+/// written down twice, and it counts the system inset because the bar draws over that too.
+double useSmileIDSampleNavBarClearance(BuildContext context) =>
+    SmileDimens.spacingSm * 2 +
+    _tokenSize +
+    MediaQuery.viewPaddingOf(context).bottom +
+    SmileDimens.spacingMd;
+
 /// A spacing token standing in for an elevation, because no token carries one — see the
 /// `floatingElevation` delta. It matches the design's 8 y-offset, which is the reproducible half.
 const double _barElevation = SmileDimens.space8;
