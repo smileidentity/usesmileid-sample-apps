@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:sample_ui/sample_ui.dart';
 
+/// The picker's countries, so the trigger cannot draw a flag the selected row never set.
+const Map<String, String> _countryFlags = <String, String>{
+  'Kenya': '🇰🇪',
+  'Ghana': '🇬🇭',
+};
+
 /// Every primitive in one scrollable page, so each one has a call site and a device can be driven
 /// over it before the screens that consume it exist. A dev surface, which is why it lives here.
+
 class UseSmileIDSampleComponentGallery extends StatefulWidget {
   /// Takes nothing; the gallery owns the state its controls need.
   const UseSmileIDSampleComponentGallery({super.key});
@@ -18,6 +25,7 @@ class _UseSmileIDSampleComponentGalleryState
   String _query = '';
   bool _agentMode = false;
   bool _loading = false;
+  String? _country;
 
   @override
   Widget build(BuildContext context) {
@@ -124,6 +132,29 @@ class _UseSmileIDSampleComponentGalleryState
               actionLabel: 'Undo',
               onAction: () {},
             ),
+            const SizedBox(height: SmileDimens.spacingLg),
+
+            // The only components that draw an emoji, so this is where a device run can see whether
+            // the platform's emoji faces survived naming a bundled font family.
+            const UseSmileIDSampleSectionLabel(text: 'COUNTRY PICKER'),
+            const SizedBox(height: SmileDimens.spacingXs),
+            UseSmileIDSampleSelectTrigger(
+              value: _country,
+              placeholder: 'Select country',
+              onTap: () => setState(() => _country = null),
+              leading: (Color tint) => UseSmileIDSampleTriggerEmoji(
+                emoji: _countryFlags[_country] ?? '🌍',
+              ),
+            ),
+            const SizedBox(height: SmileDimens.spacingXs),
+            for (final MapEntry<String, String> country
+                in _countryFlags.entries)
+              UseSmileIDSampleOptionRow(
+                label: country.key,
+                leadingText: country.value,
+                selected: _country == country.key,
+                onTap: () => setState(() => _country = country.key),
+              ),
           ],
         ),
       ),

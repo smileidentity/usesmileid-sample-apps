@@ -1,11 +1,134 @@
 /// The accessibility ids this package attaches. Stable forever: deprecate, never rename.
+///
+/// Ids a screen assigns per row arrive with that screen; these are the ones a component owns.
 abstract final class UseSmileIDSampleTestIds {
+  /// Bottom nav destination: products.
+  static const String navProducts = 'sample_nav_products';
+
+  /// Bottom nav destination: verifications.
+  static const String navVerifications = 'sample_nav_verifications';
+
+  /// Bottom nav destination: settings.
+  static const String navSettings = 'sample_nav_settings';
+
+  /// The bottom nav's token affordance, which carries the countdown ring.
+  static const String navToken = 'sample_nav_token';
+
+  /// The active-session card on the products screen.
+  static const String sessionCard = 'sample_session_card';
+
+  /// The countdown inside the session card, asserted as a value.
+  static const String sessionCountdown = 'sample_session_countdown';
+
+  /// The neutral card that replaces the session card on expiry.
+  static const String sessionEndedBanner = 'sample_session_ended_banner';
+
+  /// The floating affordance that reaches the token session from inside a form.
+  static const String tokenFloat = 'sample_token_float';
+
+  /// The manual token entry row on the scan screen.
+  static const String tokenManualEntry = 'sample_token_manual_entry';
+
+  /// The paste action inside the manual entry row.
+  static const String tokenPaste = 'sample_token_paste';
+
+  /// Simulate a successful scan, which makes token flows testable with no QR source.
+  static const String tokenSimulate = 'sample_token_simulate';
+
+  /// The products screen root.
+  static const String productsScreen = 'sample_products_screen';
+
+  /// The header avatar button, which opens the profile-switch sheet.
+  static const String profileAvatarButton = 'sample_profile_avatar_button';
+
+  /// One product card, suffixed with the product id.
+  static String productCard(String productId) =>
+      'sample_product_card_$productId';
+
+  /// The settings root.
+  static const String settingsScreen = 'sample_settings_screen';
+
+  /// The profile row at the top of settings, which opens the profiles LIST.
+  static const String profileSummary = 'sample_profile_summary';
+
+  /// The Enhanced SmartSelfie switch, which drives enableEnhancedLiveness.
+  static const String settingEnhancedSmartSelfie =
+      'sample_setting_enhanced_smart_selfie';
+
+  /// The Agent mode switch, which drives allowAgentMode.
+  static const String settingAgentMode = 'sample_setting_agent_mode';
+
+  /// The Dark mode switch.
+  static const String settingDarkMode = 'sample_setting_dark_mode';
+
+  /// The Consent screen switch, which includes or omits consent().
+  static const String settingConsentStep = 'sample_setting_consent_step';
+
+  /// The Instruction screen switch, which includes or omits instructions().
+  static const String settingInstructionsStep =
+      'sample_setting_instructions_step';
+
+  /// The Preview screen switch, which includes or omits preview().
+  static const String settingPreviewStep = 'sample_setting_preview_step';
+
+  /// One ABOUT or LEGAL navigation row; suffixed with the row id.
+  static const String settingNav = 'sample_setting_nav';
+
+  /// The sign-out row.
+  static const String signOut = 'sample_sign_out';
+
+  /// The app name and version footer.
+  static const String versionLabel = 'sample_version_label';
+
   /// The toast container, shared by the removal confirmation and the profile-created one.
   static const String toast = 'sample_toast';
 
   /// The action inside a toast, whatever it is labelled.
   static const String toastUndo = 'sample_toast_undo';
 
+  /// The status badge inside a verification row, which the row attaches itself.
+  static const String jobRowStatus = 'sample_job_row_status';
+
+  /// The selection bar shown instead of the nav bar.
+  static const String selectionBar = 'sample_selection_bar';
+
+  /// The "n selected" text, its own node so a flow asserts equality rather than parsing prose.
+  static const String selectionCount = 'sample_selection_count';
+
+  /// The remove action in the selection bar; the copy reads Hide from List.
+  static const String selectionRemove = 'sample_selection_remove';
+
   /// Every id declared here, which the spec test checks against `spec/test-ids.json`.
-  static const List<String> all = <String>[toast, toastUndo];
+  static const List<String> all = <String>[
+    navProducts,
+    navVerifications,
+    navSettings,
+    navToken,
+    sessionCard,
+    sessionCountdown,
+    sessionEndedBanner,
+    tokenFloat,
+    tokenManualEntry,
+    tokenPaste,
+    tokenSimulate,
+    productsScreen,
+    profileAvatarButton,
+    settingsScreen,
+    profileSummary,
+    settingEnhancedSmartSelfie,
+    settingAgentMode,
+    settingDarkMode,
+    settingConsentStep,
+    settingInstructionsStep,
+    settingPreviewStep,
+    settingNav,
+    signOut,
+    versionLabel,
+    toast,
+    toastUndo,
+    jobRowStatus,
+    selectionBar,
+    selectionCount,
+    selectionRemove,
+  ];
 }

@@ -66,9 +66,19 @@ A caveat that came out of R13: because a pushed screen carries no nav bar, you c
 one — you go back first. So the preserved stack is in practice the tab's root, and a flow cannot test
 preservation by switching tabs from a detail screen the way the Android flow used to.
 
-**R8 — Sheets are routes, not booleans.** All four sheets (profile switch, new profile, country, ID
-type) are destinations, so a deep link can open one and a flow can assert it. They keep the
-platform's native sheet behaviour — drag-to-dismiss, scrim tap, inset handling.
+**R8 — Sheets are layers over their owner. CORRECTED: see `port-patterns.md` R12, which is the
+rule.** This entry said the four sheets (profile switch, new profile, country, ID type) were
+destinations. That arrangement **was fixed as a defect on 2026-08-26**: routing a sheet replaced the
+screen it should have been covering, so its scrim dimmed a flat grey void. R12 records the fix and
+the per-platform idiom — a boolean the owning screen holds, presented with the platform's own sheet.
+
+What still holds from this rule, and what R12 already provides for: a sheet's deep link must
+resolve, and a flow must be able to assert one. R12's mapping is how — the link resolves to the
+OWNER's link plus a sheet request, which the owner consumes. `spec/routes.json` keeps the five sheet
+paths for exactly that. The native behaviour this rule asked for — drag-to-dismiss, scrim tap, inset
+handling — is a reason to use the platform's sheet rather than a routed one, not a reason to route.
+
+Do not restore the routed arrangement from memory; it is the thing that was removed.
 
 **R9 — Cold start is the test that matters.** Every route must open with the process not already
 running. Cold-start deep links are where argument parsing, state restoration and "the tab bar isn't
@@ -104,9 +114,11 @@ platforms inherit:
   the recreation R6 covers.
 - The confirmation carries the follow-up action the design offers ("Make active"), because creating
   a profile deliberately does **not** activate it.
-- A deep link straight to the sheet returns to the graph's start destination, not to the list, so no
-  confirmation appears. That is acceptable — deep links are automation affordances — but a flow that
-  asserts the confirmation has to reach the sheet by tapping.
+- ~~A deep link straight to the sheet returns to the graph's start destination, not to the list, so
+  no confirmation appears.~~ **Does not survive R8's correction.** That was a property of the routed
+  arrangement: only a sheet destination could strand the graph at its start. Under R12 a sheet link
+  resolves to its owner plus a sheet request, so the list is already open underneath and the
+  confirmation has somewhere to appear. A flow may reach the sheet by link or by tapping.
 
 The profile flow this settles, end to end: settings PROFILE row → `/profiles` (the LIST, not the
 active profile's page) → a row → `/profiles/:id`, titled with the profile's name, whose CTA both
@@ -145,7 +157,7 @@ replaces the destination beneath it has nothing behind its scrim, where the desi
 covers. This was broken on Android and correct on the other three by construction, because their
 platforms present sheets over the presenter. The evaluated options and the recommendation are in
 `sample-apps-plan.md` §8.2; the short version is that the presentation belongs to the navigator, and
-the workaround that fakes it with a dialog destination costs the native sheet behaviour R8 requires.
+the workaround that fakes it with a dialog destination costs the native sheet behaviour R8 asks for.
 
 **Ruled 2026-08-24, and it is a rule rather than a recommendation: use Material 3's own practice.**
 `androidx.compose.material3.ModalBottomSheet`, owned by the screen beneath it. The screen stays
@@ -236,15 +248,16 @@ does not have to match the SDK's Kotlin version, only supply its own.
   stack animates correctly, and never place this destination inside a tab that stays composed.
 - **State.** Form state in a ViewModel with `SavedStateHandle`; transient UI state in
   `rememberSaveable`. Settings persist to `DataStore` so the SDK-step toggles survive restart.
-- **Sheets.** The library's sheet destinations (or a `dialog`/sheet destination in androidx nav) so
-  R8 holds.
+- **Sheets.** A boolean the owning screen holds plus the platform's `ModalBottomSheet`, removed from
+  composition when hidden — not a destination. See R8's correction and `port-patterns.md` R12.
 
 ## 3. iOS — NavigationStack with a typed path
 
 - **Router.** An `@Observable` router holding `path: [Route]` where `Route: Hashable & Codable`, and
   `NavigationStack(path:)` with `navigationDestination(for: Route.self)`. Sheets are separate
   optional enum properties driven through `.sheet(item:)` / `.fullScreenCover(item:)`, which gives R3
-  and R8 for free.
+  and R8 for free — presenting over the owner is what R8's correction requires, and iOS does it by
+  construction.
 - **Safe to wrap.** The SDK does **not** create a `NavigationStack` — it swaps views through its own
   `FlowNavigationManager` — so hosting it inside the app's stack does not produce the nested-stack
   problems (broken toolbars, double back buttons) that wrapping a stack-owning view would.
@@ -295,8 +308,9 @@ globals and poor testability.
   (R6). Never store a counting-down value.
 - **Navigation side effects via `ref.listen`**, never from `build`. A `build` that navigates fires
   again on every rebuild.
-- **Sheets as routes** via a `pageBuilder` returning a modal page, so R8 holds and deep links reach
-  them.
+- **Sheets from their owner** via `showModalBottomSheet`, not a route: R8's correction rules a sheet
+  a layer over the screen that owns it. Its deep link resolves to the owner's link plus a sheet
+  request, which is how the link still reaches it.
 - **SDK flow.** A normal widget on its own route. Wrap it in `PopScope` and let the SDK handle the
   pop first (R2) rather than intercepting back at the route level.
 - **Restoration.** Set `restorationScopeId`, and rebuild notifiers from persisted state so a cold

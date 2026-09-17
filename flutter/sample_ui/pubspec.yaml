@@ -18,6 +18,10 @@ dependencies:
   # a consumption test that cannot say which version it consumed has lost the point.
   usesmileid: 12.1.1
 
+  # The design's own icons are SVG, vendored byte for byte from design/icons/ rather than converted.
+  # Already in the graph transitively through the SDK; declared because this package imports it.
+  flutter_svg: ^2.3.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -29,6 +33,10 @@ flutter:
   # The search field draws the platform's own mark: design/icons/ carries no search glyph and the
   # sanctioned Material Symbols set covers five others, so no shared asset exists to convert.
   uses-material-design: true
+
+  assets:
+    - assets/icons/
+    - assets/icons/material-symbols/
 
   fonts:
     # Vendored by scripts/sync_design_tokens.py, bundled rather than fetched: a font provider would

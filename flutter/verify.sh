@@ -27,6 +27,11 @@ fi
 echo "==> the token generator's own tests"
 python3 "$REPO_ROOT/scripts/test_sync_design_tokens.py" >/dev/null
 
+echo "==> icons are current"
+# Vendored byte for byte from design/icons/, like the Compose drawables and the SwiftUI shapes are
+# generated from it; a hand-edited asset or an unsourced one fails here.
+python3 "$REPO_ROOT/scripts/generate_flutter_icons.py" --check
+
 for package in "${PACKAGES[@]}"; do
   echo "==> $package: resolve"
   (cd "$package" && flutter pub get >/dev/null)
