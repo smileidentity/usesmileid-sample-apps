@@ -10,9 +10,11 @@
     "test": "jest"
   },
   "peerDependencies": {
+    "@expo/ui": ">=57.0.0",
     "@smileid/usesmileid": ">=12.1.1",
     "react": ">=19.0.0",
     "react-native": ">=0.78.0",
+    "react-native-safe-area-context": ">=5.0.0",
     "react-native-svg": ">=15.0.0",
     "zustand": ">=5.0.0"
   },
@@ -41,6 +43,8 @@
     "jest-expo": "Versioned with the Expo SDK; supplies the React Native transform and module mocks.",
     "test-renderer": "The modern replacement react-test-renderer became; @testing-library/react-native 14 requires it by peer.",
     "typescript": "6.0.3, the version Expo SDK 57 expects. It also satisfies typescript-eslint 8's `>=4.8.4 <6.1.0`, so type-aware linting stays on — 7.x would not.",
-    "@types/node": "The test files read spec/ from disk, which needs the Node globals; nothing in src/ uses them."
+    "@types/node": "The test files read spec/ from disk, which needs the Node globals; nothing in src/ uses them.",
+    "react-native-safe-area-context": "peer; the app bar reads the real status-bar inset rather than a constant, which is the rule insets stay platform-native.",
+    "@expo/ui": "peer; the bottom sheet is the platform's own (SwiftUI sheet, Material3 ModalBottomSheet), which spec/components.json requires rather than a hand-rolled one. Already in the graph via expo-router."
   }
 }

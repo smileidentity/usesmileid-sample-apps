@@ -12,6 +12,7 @@
     "prebuild": "expo prebuild --clean"
   },
   "dependencies": {
+    "@expo/ui": "~57.0.18",
     "@react-native/metro-config": "0.86.3",
     "@smileid/sample-ui": "workspace:*",
     "@smileid/usesmileid": "12.1.1",

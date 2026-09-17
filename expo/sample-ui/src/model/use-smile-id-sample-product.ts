@@ -1,3 +1,5 @@
+import { smileProductHues, type SmileProductHue } from '../smile-product-hues';
+import type { SmileIconName } from '../smile-icons';
 import { UseSmileIDSampleMarks } from '../use-smile-id-sample-marks';
 
 /// Constant keys outlive their labels: the second section is the Onboarding heading, not the Verifications tab.
@@ -81,6 +83,32 @@ export const smileIDSampleProducts: readonly UseSmileIDSampleProduct[] = [
 export const smileIDSampleProductsOf = (
   section: UseSmileIDSampleProductSectionKey,
 ): readonly UseSmileIDSampleProduct[] => smileIDSampleProducts.filter((p) => p.section === section);
+
+/// Every product has its own mark; the two document products deliberately share one, told apart by hue.
+export const smileIDSampleProductIcon = (product: UseSmileIDSampleProduct): SmileIconName => {
+  switch (product.id) {
+    case 'smartSelfieEnrollment':
+      return 'smartSelfieEnrollment';
+    case 'smartSelfieAuth':
+      return 'smartSelfieAuth';
+    case 'documentVerification':
+    case 'enhancedDocumentVerification':
+      return 'documentVerification';
+    case 'biometricKyc':
+      return 'biometricKyc';
+    default:
+      return 'enhancedKyc';
+  }
+};
+
+/// The product's colouring, which lives in spec/design-tokens.json rather than the design system.
+export const smileIDSampleProductHue = (product: UseSmileIDSampleProduct): SmileProductHue => {
+  const hue = smileProductHues[product.id];
+  if (!hue) {
+    throw new Error(`no hue for product '${product.id}'; see spec/design-tokens.json → productHues`);
+  }
+  return hue;
+};
 
 /// Resolves a product id from a launch argument or a route, returning null rather than throwing.
 export const smileIDSampleProductFrom = (id: string | null | undefined) =>

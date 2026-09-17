@@ -38,6 +38,20 @@ export type InputTokens = {
 
 export type SearchTokens = InputTokens & { readonly icon: string };
 
+/// The label/value pair on a details card.
+export type DataFieldTokens = { readonly label: string; readonly value: string };
+
+/// A filter chip's unselected paint; selected takes color.primary with its on-colour.
+export type FilterChipTokens = { readonly background: string; readonly label: string };
+
+/// Colours the cards draw, the section surfaces among them.
+export type CardTokens = {
+  readonly background: string;
+  readonly border: string;
+  readonly title: string;
+  readonly body: string;
+};
+
 /// Colours the status badges draw: one background/text pair per role.
 export type BadgeTokens = {
   readonly successBackground: string;
@@ -73,11 +87,16 @@ export type SmileColors = {
   readonly input: InputTokens;
   readonly search: SearchTokens;
   readonly badge: BadgeTokens;
+  readonly dataField: DataFieldTokens;
+  readonly filterChip: FilterChipTokens;
+  readonly card: CardTokens;
   readonly offBlack: string;
   readonly navBar: string;
   readonly cardStroke: string;
   readonly borderStrong: string;
   readonly surface2: string;
+  /// The cool-grey fill behind a leading tile and a tonal app-bar control, never the warm surface-alt.
+  readonly surfaceTile: string;
 };
 
 /// Soft status tints, which no design-system `badge.*` pair carries, and the same in both schemes.
@@ -149,9 +168,23 @@ type SmileColorSource = {
     readonly border: string;
     readonly 'border-focus': string;
   };
+  readonly 'data-field': { readonly label: string; readonly value: string };
+  readonly filter: { readonly 'chip-bg': string; readonly 'chip-label': string };
+  readonly card: {
+    readonly background: string;
+    readonly border: string;
+    readonly 'title-text': string;
+    readonly 'body-text': string;
+  };
 };
 
-const group = (source: SmileColorSource, offBlack: string, navBar: string, cardStroke: string): SmileColors => ({
+const group = (
+  source: SmileColorSource,
+  offBlack: string,
+  navBar: string,
+  cardStroke: string,
+  surfaceTile: string,
+): SmileColors => ({
   primary: source.color.primary,
   onPrimary: source.color['on-primary'],
   secondary: source.color.secondary,
@@ -199,11 +232,26 @@ const group = (source: SmileColorSource, offBlack: string, navBar: string, cardS
     borderError: source.input['border-error'],
   },
   badge: softBadgeTokens(),
+  dataField: {
+    label: source['data-field'].label,
+    value: source['data-field'].value,
+  },
+  filterChip: {
+    background: source.filter['chip-bg'],
+    label: source.filter['chip-label'],
+  },
+  card: {
+    background: source.card.background,
+    border: source.card.border,
+    title: source.card['title-text'],
+    body: source.card['body-text'],
+  },
   offBlack,
   navBar,
   cardStroke,
   borderStrong: smileBorderStrong,
   surface2: smileSurface2,
+  surfaceTile,
 });
 
 export const smileLightColors: SmileColors = group(
@@ -211,6 +259,7 @@ export const smileLightColors: SmileColors = group(
   smileOffBlackLight,
   smileNavBarLight,
   smileCardStrokeLight,
+  smileSurface2,
 );
 
 export const smileDarkColors: SmileColors = group(
@@ -218,4 +267,6 @@ export const smileDarkColors: SmileColors = group(
   smileOffBlackDark,
   smileNavBarDark,
   smileCardStrokeDark,
+  // surface-2 is a light cool grey with no dark counterpart, so dark takes the muted surface.
+  darkColors.color['surface-muted'],
 );
