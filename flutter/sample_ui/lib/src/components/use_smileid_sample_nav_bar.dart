@@ -303,11 +303,14 @@ class _NavBarTab extends StatelessWidget {
 /// The room a screen leaves below its last row so it can scroll clear of the floating bar.
 ///
 /// The bar is not a bottom-bar slot and insets nothing (R13), so a screen that does not reserve
-/// this has its last row clipped under the pill. Derived from the bar's own metrics rather than
-/// written down twice, and it counts the system inset because the bar draws over that too.
+/// this has its last row clipped under the pill. It counts the system inset because the bar draws
+/// over that too, and it scales the token box because the bar's height follows its labels: a fixed
+/// 58 is only the floor, so at 2x the bar outgrew a constant reserve by 39pt and clipped the row
+/// this exists to protect. `use_smileid_sample_nav_bar_clearance_test.dart` pins this against the
+/// bar's measured height across the supported scales, so the two cannot drift apart again.
 double useSmileIDSampleNavBarClearance(BuildContext context) =>
     SmileDimens.spacingSm * 2 +
-    _tokenSize +
+    MediaQuery.textScalerOf(context).scale(_tokenSize) +
     MediaQuery.viewPaddingOf(context).bottom +
     SmileDimens.spacingMd;
 
