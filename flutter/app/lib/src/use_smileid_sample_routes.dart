@@ -51,6 +51,10 @@ bool useSmileIDSampleShowsNavBar(String location) =>
 /// the shell so they cover the bar, and arrive with the screens they show.
 GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
   initialLocation: initialLocation ?? UseSmileIDSampleRoutes.products,
+  // Measured on a device: without this the platform's raw route WINS over initialLocation, and a
+  // custom-scheme link reaches the matcher whole — 'usesmileid-sample-flutter://settings/' — which
+  // matches nothing and lands on the not-found page. The caller has already folded it into a path.
+  overridePlatformDefaultLocation: true,
   routes: <RouteBase>[
     StatefulShellRoute.indexedStack(
       builder:
