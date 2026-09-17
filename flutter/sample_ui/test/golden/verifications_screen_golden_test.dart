@@ -67,6 +67,47 @@ void main() {
     );
   });
 
+  testWidgets('verifications in select mode', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_verifications_select_mode',
+      () => _verifications(
+        jobs: _jobs,
+        selectMode: true,
+        selected: <String>{_jobs[1].id, _jobs[2].id},
+      ),
+    );
+  });
+
+  /// Select mode with nothing picked, which is the hint the bar shows rather than the count.
+  testWidgets('verifications in select mode with nothing picked', (
+    WidgetTester tester,
+  ) async {
+    await _screenGoldens(
+      tester,
+      'screen_verifications_select_mode_empty',
+      () => _verifications(jobs: _jobs, selectMode: true),
+    );
+  });
+
+  testWidgets('verifications after a removal', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_verifications_removal_notice',
+      () => _verifications(jobs: _jobs.sublist(1), removedCount: 1),
+    );
+  });
+
+  testWidgets('verifications after removing several', (
+    WidgetTester tester,
+  ) async {
+    await _screenGoldens(
+      tester,
+      'screen_verifications_removal_notice_many',
+      () => _verifications(jobs: _jobs.sublist(2), removedCount: 2),
+    );
+  });
+
   testWidgets('verifications survives max text scale', (
     WidgetTester tester,
   ) async {
@@ -94,17 +135,29 @@ Future<void> _screenGoldens(
   fillsHost: true,
 );
 
+/// Every callback the tab passes is passed here too: omitting one hides the affordance it drives,
+/// and a baseline of a screen with fewer affordances than the app renders is the wrong picture.
 Widget _verifications({
   required List<UseSmileIDSampleJob>? jobs,
   UseSmileIDSampleJobFilter filter = UseSmileIDSampleJobFilter.all,
+  bool selectMode = false,
+  Set<String> selected = const <String>{},
+  int? removedCount,
 }) => UseSmileIDSampleVerificationsScreen(
   state: UseSmileIDSampleVerificationsState(
     jobs: jobs,
     nowMillis: _now,
     filter: filter,
+    selectMode: selectMode,
+    selected: selected,
+    removedCount: removedCount,
   ),
   onFilterChanged: _ignoreFilter,
   onJobTap: _ignoreJob,
+  onSelectModeChanged: _ignoreFlag,
+  onSelectionChanged: _ignoreSelection,
+  onRemove: _ignoreIds,
+  onUndo: () {},
 );
 
 /// A fixed afternoon, so TODAY, YESTERDAY and a dated header are all on screen at once.
@@ -130,6 +183,12 @@ UseSmileIDSampleJob _job(int i, UseSmileIDSampleStatus status, DateTime at) =>
     );
 
 void _ignoreFilter(UseSmileIDSampleJobFilter filter) {}
+
+void _ignoreFlag(bool on) {}
+
+void _ignoreSelection(String jobId, bool selected) {}
+
+void _ignoreIds(Set<String> ids) {}
 
 void _ignoreJob(UseSmileIDSampleJob job) {}
 
