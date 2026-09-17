@@ -82,8 +82,6 @@ bool useSmileIDSampleShowsNavBar(String location) => UseSmileIDSampleRoutes
 /// The destination a sheet route is layered over, which is itself for every other route.
 ///
 /// The picker paths nest under the form they cover, so they resolve to themselves and get no bar.
-/// The drawer's path does not nest under settings, so the owner is declared rather than derived —
-/// without it, dismissing the drawer leaves settings sitting there with its tab bar gone.
 String useSmileIDSamplePageBehind(String location) =>
     location == UseSmileIDSampleRoutes.scenarioDrawer
     ? UseSmileIDSampleRoutes.settings
@@ -95,9 +93,7 @@ String useSmileIDSamplePageBehind(String location) =>
 /// the shell so they cover the bar, and arrive with the screens they show.
 GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
   initialLocation: initialLocation ?? UseSmileIDSampleRoutes.products,
-  // Measured on a device: without this the platform's raw route WINS over initialLocation, and a
-  // custom-scheme link reaches the matcher whole — 'usesmileid-sample-flutter://settings/' — which
-  // matches nothing and lands on the not-found page. The caller has already folded it into a path.
+  // Measured on a device: without this the platform's raw route WINS over initialLocation.
   overridePlatformDefaultLocation: true,
   routes: <RouteBase>[
     StatefulShellRoute.indexedStack(
@@ -122,9 +118,7 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
               path: UseSmileIDSampleRoutes.verifications,
               builder: (_, _) => const UseSmileIDSampleVerificationsTab(),
               routes: <RouteBase>[
-                // A CHILD of the tab root, not a sibling: the detail page belongs to this tab's
-                // stack, so back returns to the list rather than to the start destination. It
-                // carries no nav bar because it is not a tab root, which the predicate decides.
+                // A CHILD of the tab root, not a sibling: the detail page belongs to this tab's stack.
                 GoRoute(
                   path: ':jobId',
                   builder: (BuildContext context, GoRouterState state) =>
@@ -156,9 +150,7 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
                 ),
               ],
             ),
-            // A sheet is a LAYER over its owner, never a destination that replaces it (R12), so
-            // this path resolves to SETTINGS with the drawer already open. It sits in this branch
-            // rather than above the shell because the page behind the scrim is this tab.
+            // A sheet is a LAYER over its owner, never a destination that replaces it (R12).
             GoRoute(
               path: UseSmileIDSampleRoutes.scenarioDrawer,
               builder: (_, _) =>
@@ -182,9 +174,7 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
           UseSmileIDSampleKycFormTab(
             productId: state.pathParameters['productId']!,
           ),
-      // A sheet is a LAYER over its owner, never a destination that replaces it (R12): these two
-      // paths stay deep-linkable and resolve to the FORM with the picker already open, so the
-      // scrim has the page it is dimming behind it.
+      // A sheet is a LAYER over its owner, never a destination that replaces it (R12).
       routes: <RouteBase>[
         GoRoute(
           path: 'country',

@@ -77,9 +77,7 @@ class UseSmileIDSampleTopAppBar extends StatelessWidget {
               ),
               const SizedBox(width: SmileDimens.spacingXs),
               Expanded(
-                // The header flag is the TITLE's, not the row's. On the row it absorbed the
-                // children: with no trailing action the whole bar collapsed into one node reading
-                // 'Back\nTitle', and with one the title was traversed BEFORE the back control.
+                // The header flag is the TITLE's, not the row's.
                 child: Semantics(
                   header: true,
                   child: Text(

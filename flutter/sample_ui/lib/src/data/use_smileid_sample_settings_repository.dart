@@ -2,9 +2,7 @@ import '../state/use_smileid_sample_settings.dart';
 
 /// Where the six switches are kept, so the screen never knows what is doing the keeping.
 ///
-/// The seam exists because this package runs under eight hosts, and a host may persist differently;
-/// the plugin-backed implementation lives in the shell, and the in-memory one below is the default
-/// a test or a preview gets without reaching for one.
+/// The seam exists because this package runs under eight hosts.
 abstract interface class UseSmileIDSampleSettingsRepository {
   /// The stored settings, or the plain defaults on a first launch.
   Future<UseSmileIDSampleSettings> read();

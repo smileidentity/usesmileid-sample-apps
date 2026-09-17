@@ -4,9 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// The settings store that survives a restart.
 ///
-/// It lives in the shell rather than in `sample_ui` because the plugin is a platform binding, and
-/// the package runs under eight hosts that may each keep their settings somewhere else. The keys
-/// are the four apps' shared set, so one device carries one set of preferences rather than four.
+/// It lives in the shell rather than in `sample_ui` because the plugin is a platform binding.
 class UseSmileIDSamplePreferencesSettingsRepository
     implements UseSmileIDSampleSettingsRepository {
   /// Takes the already-opened preferences, so a caller cannot forget to await them.
@@ -58,9 +56,7 @@ class UseSmileIDSamplePreferencesSettingsRepository
     ).normalised();
   }
 
-  /// Serialises the writes below. A read-modify-write with an await in the middle loses an update
-  /// when two switches are tapped before the first write lands: both read the same base and the
-  /// second write carries the first's old value. Six undebounced switches make that easy to hit.
+  /// Serialises the writes below.
   Future<void> _writes = Future<void>.value();
 
   @override

@@ -10,9 +10,7 @@ import 'src/state/use_smileid_sample_providers.dart';
 import 'src/use_smileid_sample_app.dart';
 import 'src/use_smileid_sample_launch.dart';
 
-/// Opens the store and reads it BEFORE the first frame, so a cold start and a restored start show
-/// the same tree; reading it after would flash the default appearance before settling on the saved
-/// one, which is the defect R9's cold-start rule exists for.
+/// Reads the store BEFORE the first frame, or the default appearance flashes before the saved one.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final UseSmileIDSamplePreferencesSettingsRepository settings =

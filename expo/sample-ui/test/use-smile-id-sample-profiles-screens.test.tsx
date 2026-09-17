@@ -238,10 +238,7 @@ describe('the new-profile sheet', () => {
   });
 
   it('is not driveable by a press in this runner, which is why the CTA is asserted structurally', async () => {
-    // Recorded rather than worked around: the sheet's host view reports pointerEvents=none in a
-    // hostless runner, so a press inside it reaches nothing. A test asserting "no call happened"
-    // would therefore pass whether the rule held or not. If this ever fails, presses work and the
-    // structural assertions above can go back to being real interactions.
+    // Recorded rather than worked around: the sheet's host view reports pointerEvents=none in a hostless runner.
     const pressed: string[] = [];
     const rendered = await renderInTheme(
       <NewProfileSheet
@@ -303,9 +300,7 @@ describe('the profile editor', () => {
   const typed = { ...smileIDSampleUserDetailsDefaults, firstName: 'Ada' };
 
   it('shows a profile that arrives after the editor first rendered', () => {
-    // The defect this guards: the route is deep-linkable, so a cold entry renders before the store
-    // holds the profile. Capturing at mount left an empty form, and the CTA wrote that emptiness
-    // over the stored defaults through setDefaults — on the button that also activates the profile.
+    // The defect this guards: the route is deep-linkable, so a cold entry renders before the store holds the profile.
     expect(smileIDSampleEditorDefaults(null, 'p-1', undefined)).toEqual(
       smileIDSampleUserDetailsDefaults,
     );

@@ -6,9 +6,7 @@ import 'golden_harness.dart';
 
 /// The four states `spec/screens.json` lists for verifications, light and dark.
 ///
-/// Every timestamp is built from LOCAL wall-clock components and rendered back to local ones, so
-/// the day headers and the times are identical in any timezone. Absolute millis would not be: this
-/// lane runs on a CI runner whose zone is not the author's, and the headers would move with it.
+/// Every timestamp is built from LOCAL wall-clock components and rendered back to local ones.
 void main() {
   setUpAll(loadSampleFonts);
 

@@ -78,9 +78,7 @@ class UseSmileIDSampleProfileRow extends StatelessWidget {
                 horizontal: _rowPaddingX,
                 vertical: SmileDimens.spacingSm,
               ),
-              // A Row at the design's scale; a Wrap above it, so the trailing drops below rather
-              // than squeezing the text column until a word breaks mid-word. The JobRow makes the
-              // same trade for the same reason.
+              // A Wrap above the design's scale, so the trailing drops below instead of breaking a word.
               child: stacks
                   ? Wrap(
                       spacing: SmileDimens.spacingSm,

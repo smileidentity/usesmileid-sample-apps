@@ -104,9 +104,7 @@ void main() {
     });
   });
 
-  /// The binding overrides initLicenses to a no-op, so the registry is empty under `flutter test`
-  /// however complete the bundled notices are. That is why every golden here passes a fixture; if
-  /// this ever goes red the screen's real content became assertable and should be.
+  /// The registry is empty under `flutter test`, so these pass fixtures; a red here means real content became assertable.
   testWidgets('the license registry is empty in a widget test', (
     WidgetTester tester,
   ) async {

@@ -4,11 +4,7 @@ import 'package:sample_ui/sample_ui.dart';
 
 import 'golden_harness.dart';
 
-/// The four reachable states `spec/screens.json` lists for products, light and dark.
-///
-/// `supersededListLayout` is not among them on purpose: the spec keeps that node only so nobody
-/// re-implements it by accident. Nor is `production` — no production state is reachable from the
-/// app now that the token's own claim decides the environment.
+/// The four reachable products states, light and dark; `supersededListLayout` and `production` are unreachable.
 void main() {
   setUpAll(loadSampleFonts);
 

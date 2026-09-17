@@ -18,9 +18,7 @@ void main() {
     await assertSurvivesMaxTextScale(
       tester,
       _productCards(),
-      // Every product word is wider than the card's text column at 2x, so the words break. That
-      // is `ui-work-plan.md` §5 item 3a, an open design question about whether the grid drops to
-      // one column at accessibility sizes — Android is the arbiter, so a port must not answer it.
+      // Every product word is wider than the card's text column at 2x, so the words break.
       knownOpenWords: _gridOpenWords,
     );
   });
@@ -35,9 +33,7 @@ void main() {
     await assertSurvivesMaxTextScale(
       tester,
       _productGrid(),
-      // Every product word is wider than the card's text column at 2x, so the words break. That
-      // is `ui-work-plan.md` §5 item 3a, an open design question about whether the grid drops to
-      // one column at accessibility sizes — Android is the arbiter, so a port must not answer it.
+      // Every product word is wider than the card's text column at 2x, so the words break.
       knownOpenWords: _gridOpenWords,
     );
   });

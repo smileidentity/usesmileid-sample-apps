@@ -55,9 +55,7 @@ void main() {
     }
   });
 
-  // R13's defect in one assertion: testing a tab's BRANCH instead of its destination put a bar on
-  // pushed screens the design draws without one. Verification details is the case that found it —
-  // it lives in the verifications branch and still has no bar.
+  // R13's defect: testing a tab's BRANCH rather than its destination put a bar on pushed screens.
   test('the nav bar is drawn on no pushed route', () {
     // Matched on a prefix, not equality: `push | fullScreen` is a pushed route too, and an
     // equality test silently dropped it — the one route the flow opens.
@@ -73,9 +71,7 @@ void main() {
     }
   });
 
-  // A sheet is a layer over its owner, so the bar belongs to the page behind the scrim rather than
-  // to the sheet. The pickers cover a form and keep no bar; the drawer covers settings and keeps
-  // its own — and without that, dismissing the drawer strands settings with its tab bar gone.
+  // A sheet is a layer over its owner, so the bar belongs to the page behind the scrim rather than to the sheet.
   test('a sheet takes the bar of the page it is layered over', () {
     // Every sheet, not just the modal ones: the pickers are `fullSheet`, so matching `modalSheet`
     // alone left the two routes this test's own comment claims to cover unasserted.
@@ -149,10 +145,7 @@ void main() {
   _tabOrderIsOneContract();
 }
 
-/// The shell reads `UseSmileIDSampleNavItem.values[shell.currentIndex]` and navigates with
-/// `item.index`, so the enum's order and the branch order are one contract with nothing holding
-/// them together. Reordering either silently highlights or opens the wrong tab: it compiles, and
-/// the three symmetric cases still pass. This is the assertion that fails instead.
+/// The shell reads `UseSmileIDSampleNavItem.values[shell.currentIndex]` and navigates with `item.index`.
 void _tabOrderIsOneContract() {
   test('the nav items are in the same order as the tab roots', () {
     expect(

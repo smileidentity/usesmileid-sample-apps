@@ -51,10 +51,7 @@ class UseSmileIDSampleDataFieldRow extends StatelessWidget {
             horizontal: SmileDimens.spacingMd,
             vertical: SmileDimens.spacingSm,
           ),
-          // The spec's wrapping rule, which the Compose twin does not yet follow: label and value
-          // share one line while the value fits and the value drops to a line of its own when it
-          // does not. Held in a fixed column instead, a job id breaks character by character at
-          // 2x, because the remaining width cannot take a twelve-character hex run.
+          // The spec's wrapping rule, which the Compose twin does not yet follow.
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) => Wrap(
               spacing: SmileDimens.spacingXs,

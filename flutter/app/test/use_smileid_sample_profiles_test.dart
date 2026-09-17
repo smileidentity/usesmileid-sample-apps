@@ -266,10 +266,7 @@ void main() {
 
       expect(byId(UseSmileIDSampleTestIds.profileSwitchSheet), findsOne);
 
-      // Through the row's own callback rather than a synthetic tap: inside a modal sheet the
-      // row's hit rectangle does not resolve in a widget test, though the identical row taps
-      // fine on the profiles list above. What this asserts is the WIRING — sheet to store to
-      // dismissal — and the row's own tappability is the component's to prove.
+      // Through the row's own callback rather than a synthetic tap.
       tester
           .widgetList<UseSmileIDSampleProfileRow>(
             find.byType(UseSmileIDSampleProfileRow),

@@ -4,9 +4,7 @@ import '../model/use_smileid_sample_status.dart';
 
 /// Where the verifications are kept, so the screen never knows what is doing the keeping.
 ///
-/// Read returns null for NOT LOADED YET, which is a third state and not an empty list: the screen
-/// draws neither empty state until the store has answered, or a first frame claims there is nothing
-/// stored when the answer has simply not arrived.
+/// Read returns null for NOT LOADED YET, which is a third state and not an empty list.
 abstract interface class UseSmileIDSampleJobsRepository {
   /// Every stored job, newest first, or null while the store has not answered.
   Future<List<UseSmileIDSampleJob>?> read();
@@ -14,11 +12,7 @@ abstract interface class UseSmileIDSampleJobsRepository {
   /// Adds the design's eleven, ignoring any whose id is already stored.
   Future<void> seedFixtures(int nowMillis);
 
-  /// Hides the rows with these ids and returns how many were actually taken.
-  ///
-  /// The count is what was TAKEN, not what was asked for, because that is what the confirmation
-  /// reports; and an id that matched nothing must not overwrite a still-undoable batch, or a no-op
-  /// silently spends the undo.
+  /// The count is what was TAKEN: an id matching nothing must not spend a still-undoable batch.
   Future<int> remove(Set<String> ids);
 
   /// Puts the last removal back, once. A second call restores nothing.

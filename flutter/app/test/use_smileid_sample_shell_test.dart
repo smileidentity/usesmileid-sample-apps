@@ -81,8 +81,6 @@ void main() {
   });
 
   // The bar insets nothing, so a tab screen wired without this has its last row under the pill.
-  // It is invisible until the content is long enough to reach the bottom, which a golden of a
-  // short page never is — so it is asserted on the value the shell passes, not on a picture.
   testWidgets('every tab root reserves room for the bar it floats under', (
     WidgetTester tester,
   ) async {
@@ -108,9 +106,7 @@ void main() {
     );
   });
 
-  // Found on a device, not here: system back from a non-first tab left the app entirely, because
-  // an indexed stack whose branch is at its root lets the pop through. The twin keeps products
-  // underneath, and its own device flow asserts back from verifications lands on products.
+  // Found on a device, not here: system back from a non-first tab left the app entirely.
   testWidgets('system back from another tab returns to products', (
     WidgetTester tester,
   ) async {
@@ -137,10 +133,7 @@ void main() {
     expect(byId(UseSmileIDSampleTestIds.navToken), findsNothing);
   });
 
-  // The bar FLOATS over the page, so a screen that reserved no room ends with its last control
-  // under it — present, painted, and untappable. The reserve is asserted on the rendered foot of
-  // the real screen rather than on the bar alone: a golden of a short page never reaches the
-  // bottom, and the component's own clearance test cannot see whether a screen applied it.
+  // The bar FLOATS over the page, so a screen that reserved no room ends with its last control under it.
   testWidgets('the last control of settings clears the floating bar', (
     WidgetTester tester,
   ) async {

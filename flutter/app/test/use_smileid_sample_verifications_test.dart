@@ -56,9 +56,7 @@ void main() {
     expect(byId(UseSmileIDSampleTestIds.jobRow(0)), findsNothing);
   });
 
-  // The third state, which an empty list cannot express: before the store answers, the screen must
-  // claim nothing. Collapsing it to an empty list says "nothing stored" on the very first frame.
-  // A store that answers instantly cannot show this, so this one is held open on purpose.
+  // The third state, which an empty list cannot express: before the store answers, the screen must claim nothing.
   testWidgets('before the store answers it claims nothing either way', (
     WidgetTester tester,
   ) async {

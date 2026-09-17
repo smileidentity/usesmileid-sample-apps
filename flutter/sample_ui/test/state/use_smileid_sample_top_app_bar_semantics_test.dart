@@ -5,9 +5,7 @@ import 'package:sample_ui/sample_ui.dart';
 
 /// The app bar's controls have to be reachable one at a time, which a golden cannot show.
 ///
-/// Found when the detail page became the app bar's first caller: with no trailing action the whole
-/// row collapsed into one node labelled 'Back\nTitle', flagged as a button. A screen reader
-/// announced the title as part of the back control, and neither could be reached alone.
+/// Found when the detail page became the app bar's first caller.
 void main() {
   /// Every labelled node in the tree, with the flags that decide how it is announced.
   List<({String label, bool button, bool header})> labelledNodes(
@@ -29,8 +27,7 @@ void main() {
       });
     }
 
-    // The non-deprecated `rootPipelineOwner` holds no semantics owner in a widget test, so this
-    // stays on the deprecated one until a replacement exists that actually works here.
+    // The non-deprecated `rootPipelineOwner` holds no semantics owner in a widget test.
     // ignore: deprecated_member_use
     walk(tester.binding.pipelineOwner.semanticsOwner!.rootSemanticsNode!);
     return found;
@@ -40,9 +37,7 @@ void main() {
     WidgetTester tester, {
     Widget? action,
   }) async {
-    // Disposed INLINE, not in a tear-down: flutter_test verifies no handle is live before its
-    // tear-downs run, so a deferred dispose fails the test it was meant to clean up after. The
-    // nodes are plain records by the time this returns, so nothing needs semantics to stay on.
+    // Disposed INLINE, not in a tear-down: flutter_test verifies no handle is live before its tear-downs run.
     final SemanticsHandle semantics = tester.ensureSemantics();
     await tester.pumpWidget(
       MaterialApp(

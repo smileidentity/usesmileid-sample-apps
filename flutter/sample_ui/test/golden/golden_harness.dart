@@ -17,9 +17,7 @@ const double goldenPixelRatio = 1;
 /// Tall enough that no capture is clipped by the window, which the boundary crops away anyway.
 const double goldenHostHeight = 1400;
 
-/// What a whole screen is hosted at. A screen owns a scroll view, which fills its constraints, so
-/// the host is the only thing that decides how much of it lays out — and a one-viewport host is the
-/// blind spot `port-patterns.md` §6 records, where the settings footer appeared in no baseline.
+/// What a whole screen is hosted at.
 const double goldenScreenHeight = 1750;
 
 /// The largest accessibility text scale the no-clipping predicate means.
@@ -53,9 +51,7 @@ Future<void> loadSampleFonts() async {
   await _loadEmoji();
 }
 
-/// The country flags and the picker leads are emoji, and a baseline that draws tofu instead is not
-/// coverage of them. Required rather than skipped: the lane is pinned to macOS precisely so a
-/// baseline means one thing, and a silent tofu is how a picker ships with no flags.
+/// Required, not skipped: a baseline drawing tofu instead of emoji is how a picker ships with no flags.
 Future<void> _loadEmoji() async {
   final File file = File(_appleColorEmoji);
   if (!file.existsSync()) {
@@ -89,9 +85,7 @@ Future<void> goldens(
   /// golden can pose it would distort the component for the test's benefit.
   Future<void> Function(WidgetTester tester)? afterPump,
 }) async {
-  // A disabled shadow records as a SOLID block, which drew the nav bar's elevation as a hard ring
-  // and hid the token ring behind it. Restored inline, because the framework asserts every
-  // painting flag is back before a test's tear-downs run.
+  // A disabled shadow records as a SOLID block; restored inline, as the framework checks flags before tear-down.
   debugDisableShadows = false;
   for (final (String suffix, ThemeData theme, UseSmileIDSampleColors colors)
       in <(String, ThemeData, UseSmileIDSampleColors)>[
@@ -148,9 +142,7 @@ Future<void> assertSurvivesMaxTextScale(
   double hostHeight = goldenHostHeight,
   bool ownsScrolling = false,
 
-  /// Words whose breaking is a RECORDED open design question rather than a defect this port may
-  /// fix — `ui-work-plan.md` §5 item 3a. Naming them keeps the rule strict everywhere else and
-  /// makes a green run say "the known open item", not "nothing to see".
+  /// Words whose breaking is a RECORDED open design question rather than a defect this port may fix.
   Set<String> knownOpenWords = const <String>{},
 }) async {
   final UseSmileIDSampleTextScaleFindings findings = await textScaleFindings(
@@ -191,10 +183,7 @@ Future<UseSmileIDSampleTextScaleFindings> textScaleFindings(
     UseSmileIDSampleColorSchemes.light,
     textScale,
     widget,
-    // Scrollable, so exceeding one viewport is not itself a failure: at 2x a list legitimately
-    // runs past the screen, and this predicate is about truncation and word breaks. Horizontal
-    // overflow still throws on its own, which is the direction that means clipping. A screen owns
-    // its own scroll view, and nesting two gives the inner one unbounded height.
+    // Scrollable, so exceeding one viewport is not itself a failure.
     scrollable: !ownsScrolling,
     hostHeight: hostHeight,
     fillsHost: ownsScrolling,
@@ -227,9 +216,7 @@ Future<UseSmileIDSampleTextScaleFindings> textScaleFindings(
       textScaler: paragraph.textScaler,
       ellipsis: paragraph.overflow == TextOverflow.ellipsis ? '…' : null,
     )..layout(maxWidth: paragraph.size.width);
-    // Only where the paragraph is allowed to wrap. A single-line paragraph has declared that it
-    // ellipsises instead, which a text field cannot avoid — whether the chosen copy fits at 2x is
-    // a question for the baseline and the device pass, not a layout defect.
+    // Only where the paragraph is allowed to wrap.
     if (painter.didExceedMaxLines && paragraph.maxLines != 1) {
       truncated.add(text);
     }
@@ -240,16 +227,7 @@ Future<UseSmileIDSampleTextScaleFindings> textScaleFindings(
   return (truncated: truncated, split: split);
 }
 
-/// Each break that split a word in text that had somewhere else to put it.
-///
-/// A paragraph of ONE token has nowhere else to go — a hex job id is the case that proves it, since
-/// UAX#14 refuses a break before a digit and so no hyphen in a UUID offers one — so breaking it is
-/// unavoidable rather than a defect. In text of two or more words, a break inside a word says the
-/// column is too narrow for the text at this scale, which is the finding: it is how an app bar
-/// shipped "Sca / n / tok / en" through a green lane.
-///
-/// Measuring the token instead, and exempting one too wide for the column, makes this unreachable:
-/// a line breaker only splits a word that cannot fit, so every case would be exempt.
+/// Measuring the token and exempting one too wide would exempt every case, since a breaker only splits what cannot fit.
 List<String> _midWordBreaks(TextPainter painter, String text) {
   if (!text.trim().contains(RegExp(r'\s'))) {
     return const <String>[];
@@ -272,11 +250,7 @@ List<String> _midWordBreaks(TextPainter painter, String text) {
 
 /// Whether a break at [index] is one the text itself offered, which is what UAX#14 decides.
 ///
-/// Whitespace always offers one. A hyphen offers one too — that is what a hyphen is for, so
-/// "head-turns" wrapping after the hyphen is correct — EXCEPT before a digit, which is the rule
-/// that stops "3-4" splitting and is also why no hyphen in a hex job id offers anything. Getting
-/// this wrong in either direction costs a real finding: too strict and every hyphenated label is
-/// reported, too loose and a hex id looks like four short tokens that each fit.
+/// Whitespace always offers one.
 bool _breaksCleanly(String text, int index) {
   if (_isSpace(text[index - 1]) || _isSpace(text[index])) {
     return true;

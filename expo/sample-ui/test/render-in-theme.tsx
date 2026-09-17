@@ -53,9 +53,7 @@ export const styleTree = async (
   return withoutElementProps(withoutHarness(rendered.toJSON()));
 };
 
-/// A React element held in a PROP rather than in children — `refreshControl` is the one that does
-/// this — carries its fiber graph, which the snapshot serialiser walks until it runs out of string.
-/// The element is still rendered and still has its own id; only the prop copy is dropped.
+/// A React element held in a PROP rather than in children — `refreshControl` is the one that does this.
 const withoutElementProps = <T,>(tree: T): T => {
   if (tree === null || typeof tree !== 'object') return tree;
   if (Array.isArray(tree)) return tree.map((entry) => withoutElementProps(entry)) as T;

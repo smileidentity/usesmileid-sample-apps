@@ -6,9 +6,7 @@ import '../state/use_smileid_sample_providers.dart';
 
 /// The third-party notices, pushed inside the settings tab.
 ///
-/// Reads Flutter's own licence registry rather than a committed asset: the toolchain regenerates
-/// the notices from the resolved graph on every build, so they cannot go stale, and they already
-/// cover the engine's C++ dependencies that a package-graph script cannot see.
+/// Reads Flutter's own licence registry rather than a committed asset.
 class UseSmileIDSampleLicensesTab extends ConsumerWidget {
   /// [onBack] leaves the screen, which the route supplies.
   const UseSmileIDSampleLicensesTab({required this.onBack, super.key});
@@ -23,10 +21,7 @@ class UseSmileIDSampleLicensesTab extends ConsumerWidget {
     );
     return Scaffold(
       body: SafeArea(
-        // While the registry is still streaming the screen shows its own empty state, which reads
-        // as "not bundled" — so it waits for the answer instead of claiming one.
-        // An error renders the screen empty rather than spinning: an empty list already reads as
-        // "the notices did not reach this build", and the spinner has no back affordance at all.
+        // While the registry is still streaming the screen shows its own empty state, which reads as "not bundled".
         child: licenses.hasError
             ? UseSmileIDSampleLicensesScreen(
                 licenses: const UseSmileIDSampleLicenses(),

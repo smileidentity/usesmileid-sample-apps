@@ -127,9 +127,7 @@ describe.each(cases)('$screen', ({ states }) => {
 
 describe('the recording environment', () => {
   it('formats in UTC and en-US, or a baseline would pin the machine that recorded it', () => {
-    // Both are set in jest.config.js, before the config is exported: Node reads them once at
-    // startup, so neither can be set from inside the suite. The zone shifts a job across a day
-    // boundary and moves a date header, and the locale rewrites that header's wording outright.
+    // Both are set in jest.config.js, before the config is exported.
     const resolved = Intl.DateTimeFormat().resolvedOptions();
     expect(resolved.timeZone).toBe('UTC');
     expect(resolved.locale).toBe('en-US');

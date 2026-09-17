@@ -53,9 +53,7 @@ class UseSmileIDSampleSettingsNotifier
           .read(useSmileIDSampleSettingsRepositoryProvider)
           .setSetting(setting, enabled);
     } on Object {
-      // The platform store can refuse a write. The caller discards this future, so without the
-      // catch the error is unhandled AND the switch keeps the position it never persisted —
-      // it would read as saved and revert on the next launch. Snapping back is the honest state.
+      // The platform store can refuse a write.
       state = previous;
     }
   }
@@ -143,10 +141,7 @@ class UseSmileIDSampleJobsNotifier
     extends AsyncNotifier<List<UseSmileIDSampleJob>> {
   @override
   Future<List<UseSmileIDSampleJob>> build() async {
-    // READ ONLY. Seeding used to live here, and invalidating after a removal re-ran it, which put
-    // the row straight back with a fresh timestamp — found on a device, where the count went back
-    // to eleven and the top row's clock had moved. Seeding is a start-up act, so it happens once
-    // before the first frame instead.
+    // READ ONLY.
     return await ref.watch(useSmileIDSampleJobsRepositoryProvider).read() ??
         const <UseSmileIDSampleJob>[];
   }
