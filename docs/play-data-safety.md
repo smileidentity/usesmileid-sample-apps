@@ -10,13 +10,22 @@ Verified 2026-08-28 against the v12 app as built.
 
 **Does the app collect or share any of the required user data types?** Yes.
 
+**Verified against the published form on 2026-09-17** by reading
+`play.google.com/store/apps/datasafety?id=com.usesmileid.sample.android`, which is what users see. The
+published answers differ from the derivation below in two places and the table now records what is
+published: the personal-info and photo rows carry **Account management** alongside App functionality,
+and **Device or other IDs** is published under fraud prevention, security and compliance rather than
+analytics, and is not published as shared. Read the live page before trusting this table again — it
+records a form filled by hand, not a generated artefact.
+
 | Data type | Collected | Shared | Processed ephemerally | Required | Purpose |
 |---|---|---|---|---|---|
 | Personal info — Name | Yes | No | No | Required | App functionality |
-| Personal info — Email address, Phone number | **owed** — collected (the user-details form sends both with a submission), found 2026-09-14 while filling the App Store's form; add at the next Play release | | | | |
+| Personal info — Email address | Yes | No | No | Required | App functionality, Account management |
+| Personal info — Phone number | Yes | No | No | Required | App functionality, Account management |
 | Personal info — Other info (ID number, date of birth) | Yes | No | No | Required | App functionality |
-| Photos and videos — Photos | Yes | No | No | Required | App functionality |
-| Device or other IDs | Yes | Yes | No | Required | App functionality, analytics |
+| Photos and videos — Photos | Yes | No | No | Required | App functionality, Account management |
+| Device or other IDs | Yes | No | No | Required | Fraud prevention, security, and compliance |
 | App activity — Other actions | No | Yes | No | Optional | Analytics, crash reporting |
 | App info and performance — Crash logs | No | Yes | No | Optional | Crash reporting |
 | App info and performance — Diagnostics | No | Yes | No | Optional | Analytics, crash reporting |

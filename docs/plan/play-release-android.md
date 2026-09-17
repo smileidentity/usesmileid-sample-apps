@@ -625,11 +625,14 @@ None of these blocks anything, and none of them belongs to Android's critical pa
   *"Smile ID is the reference app…"* while `full-description.txt` here still opened *"UseSmileID Sample
   is…"*. Launcher label, Play title, Settings footer and that first sentence moved together, so both
   listings now open on the same sentence. The bodies then diverged again by ruling, see §5.
-  The Console still takes title and description by hand (REL-A5: no fastlane), so paste both at the
-  next internal publish; the upload action carries only `whatsnew/`.
-- **Data safety owes two rows.** The user-details form sends email and phone with a submission, and
-  neither is declared. Found 2026-09-14 while the iOS App Privacy form was filled from the same
-  derivation; `docs/play-data-safety.md` marks them owed. Add both at the next Play release.
+  The Console takes title and description by hand (REL-A5: no fastlane), and both were pasted: the
+  live listing reads "Smile ID", carries the shorter description, and serves all five wordless panels
+  byte-identical to `android/play/screenshots/`, verified 2026-09-17. What a listing edit cannot carry
+  is the launcher label, which is in the binary and needs an internal publish.
+- ~~**Data safety owes two rows.**~~ **Done, verified 2026-09-17** against the published Data safety
+  page rather than against this file: Personal info declares Name, Email address, User IDs, Phone
+  number and Other info. `docs/play-data-safety.md` now records the published answers, which differ
+  from this plan's derivation in two places.
 - **REL-A14 stays a calendar item.** `targetSdk` is re-checked against Play's floor annually;
   `docs/play-data-safety.md` holds the date it was last done.
 - **Production promotion is a Console action**, and production is reviewed again on promotion.
