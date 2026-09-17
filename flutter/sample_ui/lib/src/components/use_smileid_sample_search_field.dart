@@ -45,7 +45,9 @@ class _UseSmileIDSampleSearchFieldState
   @override
   void didUpdateWidget(UseSmileIDSampleSearchField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.query != _controller.text) {
+    // Against the old widget, not the live text: a parent that rebuilds without changing the
+    // value would otherwise collapse the selection to the end while the field is being edited.
+    if (widget.query != oldWidget.query && widget.query != _controller.text) {
       _controller.value = _controller.value.copyWith(
         text: widget.query,
         selection: TextSelection.collapsed(offset: widget.query.length),
