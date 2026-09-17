@@ -33,6 +33,8 @@ export default function TabsLayout() {
         name="settings"
         options={{ title: 'Settings', tabBarButtonTestID: UseSmileIDSampleTestIds.NAV_SETTINGS }}
       />
+      {/* Routable but not a tab: a pushed screen has no nav bar even inside a tab's own graph. */}
+      <Tabs.Screen name="settings/licenses" options={{ href: null }} />
     </Tabs>
   );
 }
