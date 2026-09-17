@@ -26,10 +26,14 @@ platform limit — see spec/design-tokens.json -> deltas -> composeTypeStylesAre
 is a stopgap until upstream emits them. Compose also omits shadows, which Dart emits directly.
 
 SwiftUI needs the same two stopgaps and is a step worse: its upstream output omits the type ramp
-entirely, not even as comments. Both platforms also need the values the design system carries no
-role for (product and profile hues, soft badge fills, the light/dark pairs), which come from
+entirely, not even as comments. All three platforms also need the values the design system carries
+no role for (product and profile hues, soft badge fills, the light/dark pairs), which come from
 spec/design-tokens.json -> deltas rather than upstream, and are emitted from the same entries so
-the two cannot disagree.
+the three cannot disagree.
+
+TypeScript needs only that deltas file. Its upstream output already carries the 14 named text
+styles, the component fonts and every component dimension, so the two stopgaps the other platforms
+need do not apply here.
 
 Every token leaf must classify into a known kind. An unrecognised value FAILS the run
 rather than being skipped, because silent skipping is how this generator first diverged
@@ -78,6 +82,11 @@ IOS_TOKENS = f"{IOS_UI}/Sources/SampleUI/Tokens"
 SWIFT_TYPE_OUT = f"{IOS_TOKENS}/SmileTypeStyles.swift"
 SWIFT_HUES_OUT = f"{IOS_TOKENS}/SmileProductHues.swift"
 
+EXPO_UI = "expo/sample-ui"
+# No type-ramp stopgap: unlike the Compose and SwiftUI emitters, dist/ts carries text-style and
+# every component dimension, so only the `deltas` need generating here.
+TS_HUES_OUT = f"{EXPO_UI}/src/smile-product-hues.ts"
+
 # Product hues come from spec/, not the design system: they are bound to no variable upstream.
 SPEC_TOKENS = "spec/design-tokens.json"
 
@@ -93,6 +102,13 @@ FONT_COPIES = [
 # DMSans-SemiBold's family is "DM Sans SemiBold", so weight selection cannot reach it.
 IOS_FONT_COPIES = [
     (f"assets/fonts/DMSans-{face}.ttf", f"{IOS_UI}/Sources/SampleUI/Resources/Fonts/DMSans-{face}.ttf")
+    for face in FACES
+]
+
+# Expo keeps the upstream file names too: the faces are required from TypeScript by path, so the
+# name is the identifier and a rename silently drops a weight to the platform font.
+EXPO_FONT_COPIES = [
+    (f"assets/fonts/DMSans-{face}.ttf", f"{EXPO_UI}/assets/fonts/DMSans-{face}.ttf")
     for face in FACES
 ]
 
@@ -194,6 +210,13 @@ public struct SmileTextStyle: Equatable, Sendable {
     /// SwiftUI's `lineSpacing` is the gap BETWEEN lines, where the token carries the total height.
     public var lineSpacing: CGFloat { max(0, lineHeight - size) }
 }
+"""
+
+TS_HUES_HEADER = """// Smile ID product hues — GENERATED. Do not edit by hand.
+// Regenerate with: scripts/sync_design_tokens.py --all
+//
+// A stopgap: the source is spec/design-tokens.json → deltas, not the design system. Everything the
+// design system carries no role for lives here; delete each value once upstream carries its role.
 """
 
 SWIFT_HUES_HEADER = """// Smile ID product hues — GENERATED. Do not edit by hand.
@@ -1096,6 +1119,255 @@ def generate_swift_product_hues() -> str:
     return swift_formatted(body)
 
 
+def ts_color(value: str) -> str:
+    """`#RRGGBB` to a quoted lowercase hex string, matching the vendored tokens.ts convention."""
+    text = value.strip().lstrip("#")
+    if len(text) != 6 or not all(c in "0123456789abcdefABCDEF" for c in text):
+        raise TokenError(f"product hue {value!r} is not a #RRGGBB colour")
+    return f"'#{text.lower()}'"
+
+
+def emit_ts_product_hues(hues: dict) -> str:
+    """One entry per product, keyed by the same id `spec/` uses everywhere else."""
+    if not hues:
+        raise TokenError("spec/design-tokens.json carries no productHues.hues entries")
+    lines = [
+        "/** One product's colouring. `cardIcon` tints the card's glyph; `icon` and `tile` are the list row's pair. */",
+        "export type SmileProductHue = {",
+        "  readonly from: string;",
+        "  readonly to: string;",
+        "  readonly cardIcon: string;",
+        "  readonly icon: string;",
+        "  readonly tile: string;",
+        "  /** Stop positions as fractions. `stopEnd` may exceed 1: the design runs it past the card's edge. */",
+        "  readonly stopStart: number;",
+        "  readonly stopEnd: number;",
+        "  readonly fromAlpha: number;",
+        "  readonly toAlpha: number;",
+        "};",
+        "",
+        "/** Keyed by the product id in spec/scenarios.json. A product absent here has no hue yet. */",
+        "export const smileProductHues: Readonly<Record<string, SmileProductHue>> = {",
+    ]
+    for product, hue in hues.items():
+        missing = {"from", "to", "cardIcon", "icon", "tile"} - set(hue)
+        if missing:
+            raise TokenError(f"product hue {product!r} is missing {sorted(missing)}")
+        lines.append(f"  {product}: {{")
+        for role in ("from", "to", "cardIcon", "icon", "tile"):
+            lines.append(f"    {role}: {ts_color(hue[role])},")
+        for role in ("stopStart", "stopEnd", "fromAlpha", "toAlpha"):
+            if hue.get(role) is None:
+                raise TokenError(f"product hue {product!r} is missing {role}")
+            lines.append(f"    {role}: {hue[role]},")
+        lines.append("  },")
+    lines.append("};")
+    return "\n".join(lines)
+
+
+def emit_ts_soft_badge_fills(fills: dict) -> str:
+    """The soft status pills, keyed by the feedback role the four job statuses map onto."""
+    roles = ["success", "info", "warning", "error"]
+    missing = [role for role in roles if role not in fills]
+    if missing:
+        raise TokenError(f"spec/design-tokens.json softBadgeFills.fills is missing {missing}")
+    lines = [
+        "",
+        "/** One status pill's soft fill: a pale background with text that clears contrast on it. */",
+        "export type SmileSoftBadgeFill = { readonly background: string; readonly text: string };",
+        "",
+        "/** Keyed by feedback role. The design system's own badge.* pairs are saturated, which is a different treatment. */",
+        "export const smileSoftBadgeFills: Readonly<Record<string, SmileSoftBadgeFill>> = {",
+    ]
+    for role in roles:
+        pair = fills[role]
+        for key in ("background", "text"):
+            if key not in pair:
+                raise TokenError(f"soft badge fill {role!r} is missing {key!r}")
+        lines += [
+            f"  {role}: {{",
+            f"    background: {ts_color(pair['background'])},",
+            f"    text: {ts_color(pair['text'])},",
+            "  },",
+        ]
+    lines.append("};")
+    return "\n".join(lines)
+
+
+def emit_ts_spec_color(name: str, delta_id: str, doc: str, value) -> str:
+    """A colour the design uses that the design system carries no semantic role for."""
+    if not isinstance(value, str) or not value:
+        raise TokenError(f"spec/design-tokens.json {delta_id} carries no value")
+    return "\n".join(["", f"/** {doc} */", f"export const {name} = {ts_color(value)};"])
+
+
+def emit_ts_border_strong(value) -> str:
+    return emit_ts_spec_color(
+        "smileBorderStrong",
+        "borderStrong",
+        "The design's `color/border-strong`, for a control ring that `color.border` is too pale to draw.",
+        value,
+    )
+
+
+def emit_ts_surface2(value) -> str:
+    return emit_ts_spec_color(
+        "smileSurface2",
+        "surface2",
+        "The design's `color/surface-2`, a cool grey subtle fill — `color.surface-alt` is a warm cream.",
+        value,
+    )
+
+
+def emit_ts_off_black(values) -> str:
+    """A pair, not a single value: every role it paints is drawn in both schemes."""
+    missing = [mode for mode in ("light", "dark") if not values.get(mode)]
+    if missing:
+        raise TokenError(f"spec/design-tokens.json offBlack is missing {missing}")
+    return "\n".join([
+        "",
+        "/** The design's `Off_black`: the warm strong foreground. Seven roles, one variable — see the `offBlack` delta. */",
+        f"export const smileOffBlackLight = {ts_color(values['light'])};",
+        f"export const smileOffBlackDark = {ts_color(values['dark'])};",
+    ])
+
+
+def emit_ts_nav_bar_fill(values) -> str:
+    """The bar's own fill: the page's own colour leaves it invisible in dark."""
+    missing = [mode for mode in ("light", "dark") if not values.get(mode)]
+    if missing:
+        raise TokenError(f"spec/design-tokens.json navBarFill is missing {missing}")
+    return "\n".join([
+        "",
+        "/** The floating nav bar's fill — see the `navBarFill` delta. */",
+        f"export const smileNavBarLight = {ts_color(values['light'])};",
+        f"export const smileNavBarDark = {ts_color(values['dark'])};",
+    ])
+
+
+def emit_ts_profile_hues(hues) -> str:
+    """One avatar fill per profile, cycled by list position."""
+    if not hues:
+        raise TokenError("spec/design-tokens.json profileHues carries no hues")
+    lines = [
+        "",
+        "/** Avatar fills, one per profile, taken in list order and cycled beyond the list. */",
+        "export const smileProfileHues: readonly string[] = [",
+    ]
+    lines += ["  %s," % ts_color(hue) for hue in hues]
+    lines.append("];")
+    return "\n".join(lines)
+
+
+def emit_ts_token_session(delta: dict) -> str:
+    """The session card's gradient and the countdown ring, which no semantic role covers."""
+    grad = delta.get("cardGradient") or []
+    alpha = delta.get("cardGradientAlpha") or []
+    ring = delta.get("ring")
+    opacity = delta.get("ringTrackOpacity")
+    if len(grad) != 2 or len(alpha) != 2 or not ring or opacity is None:
+        raise TokenError("tokenSessionGreens needs a two-stop cardGradient with its alphas, a ring and a ringTrackOpacity")
+    return "\n".join([
+        "",
+        "/** The session card's horizontal gradient. Both stops are translucent, so the card composites against the page. */",
+        "export const smileTokenSessionGradient: readonly [string, string] = [%s, %s];"
+        % (ts_color(grad[0]), ts_color(grad[1])),
+        "export const smileTokenSessionGradientAlpha: readonly [number, number] = [%s, %s];" % (alpha[0], alpha[1]),
+        "",
+        "/** The countdown ring: this colour solid for progress, and the same colour faded for the track. */",
+        "export const smileTokenRing = %s;" % ts_color(ring),
+        "export const smileTokenRingTrackOpacity = %s;" % opacity,
+    ])
+
+
+def emit_ts_label_type_style(delta: dict) -> str:
+    """The all-caps label size and tracking, which text-style.overline sets a point small and solid."""
+    size = delta.get("size")
+    tracking = delta.get("tracking")
+    if not size or tracking is None:
+        raise TokenError("labelTypeStyle needs a size and a tracking")
+    return "\n".join([
+        "",
+        "/** The design's Type/Label: a point larger than text-style.overline, and spaced. */",
+        "export const smileLabelSize = %s;" % size,
+        "export const smileLabelTracking = %s;" % tracking,
+    ])
+
+
+def emit_ts_card_label_runs(delta: dict) -> str:
+    """The one property each card-label run needs that its nearest semantic style does not carry."""
+    tracking = delta.get("tracking")
+    weight = delta.get("familyWeight")
+    if tracking is None or not weight:
+        raise TokenError("cardLabelRuns needs a tracking and a familyWeight")
+    return "\n".join([
+        "",
+        "/** The card's two label runs, each one property off a token — see the `cardLabelRuns` delta. */",
+        "export const smileCardTitleTracking = %s;" % tracking,
+        "export const smileCardFamilyWeight = %s;" % weight,
+    ])
+
+
+def emit_ts_card_stroke(values: dict) -> str:
+    """A pair, not one value: `color.border` is the same near-white in both schemes, which is the defect."""
+    missing = [mode for mode in ("light", "dark") if not values.get(mode)]
+    if missing or values.get("width") is None:
+        raise TokenError(f"spec/design-tokens.json cardStroke is missing {missing or ['width']}")
+    return "\n".join([
+        "",
+        "/** One outline for every card and row, equally quiet in both schemes — see the `cardStroke` delta. */",
+        "export const smileCardStrokeLight = %s;" % ts_color(values["light"]),
+        "export const smileCardStrokeDark = %s;" % ts_color(values["dark"]),
+        "export const smileCardStrokeWidth = %s;" % values["width"],
+    ])
+
+
+def emit_ts_products_type(delta: dict) -> str:
+    """The frame's Type/Heading and Type/Title, which the vendored ramp does not match."""
+    keys = ("headingSize", "headingLineHeight", "headingTracking", "headingWeight",
+            "sectionSize", "sectionLineHeight", "sectionWeight")
+    missing = [k for k in keys if delta.get(k) is None]
+    if missing:
+        raise TokenError(f"productsScreenType is missing {missing}")
+    return "\n".join([
+        "",
+        "/** The products header and section headers, which text-style.* does not match — see the `productsScreenType` delta. */",
+        "export const smileHeadingPageSize = %s;" % delta["headingSize"],
+        "export const smileHeadingPageLineHeight = %s;" % delta["headingLineHeight"],
+        "export const smileHeadingPageTracking = %s;" % delta["headingTracking"],
+        "export const smileHeadingPageWeight = %s;" % delta["headingWeight"],
+        "export const smileSectionHeaderSize = %s;" % delta["sectionSize"],
+        "export const smileSectionHeaderLineHeight = %s;" % delta["sectionLineHeight"],
+        "export const smileSectionHeaderWeight = %s;" % delta["sectionWeight"],
+        "",
+    ])
+
+
+def generate_ts_product_hues() -> str:
+    return (
+        TS_HUES_HEADER
+        + "\n"
+        + emit_ts_product_hues(read_product_hues())
+        + "\n"
+        + emit_ts_soft_badge_fills(read_soft_badge_fills())
+        + "\n"
+        + emit_ts_border_strong(read_border_strong())
+        + "\n"
+        + emit_ts_surface2(read_surface2())
+        + "\n"
+        + emit_ts_off_black(read_off_black())
+        + emit_ts_nav_bar_fill(read_nav_bar_fill())
+        + "\n"
+        + emit_ts_profile_hues(read_profile_hues())
+        + "\n"
+        + emit_ts_token_session(read_token_session())
+        + emit_ts_label_type_style(read_label_type_style())
+        + emit_ts_card_label_runs(read_card_label_runs())
+        + emit_ts_card_stroke(read_card_stroke())
+        + emit_ts_products_type(read_products_type())
+    )
+
+
 def generate_swift_type(ds: str) -> str:
     tokens_path = os.path.join(ds, "dist", "json", "tokens.flat.json")
     with io.open(tokens_path, encoding="utf-8") as handle:
@@ -1370,6 +1642,12 @@ def main(argv=None) -> int:
             ok = copy_fonts(ds, args.check, IOS_FONT_COPIES) and ok
         else:
             print(f"  skipped    {SWIFT_TYPE_OUT} ({IOS_UI} does not exist yet)")
+
+        if os.path.isdir(os.path.join(REPO, EXPO_UI)):
+            ok = write(TS_HUES_OUT, generate_ts_product_hues(), args.check) and ok
+            ok = copy_fonts(ds, args.check, EXPO_FONT_COPIES) and ok
+        else:
+            print(f"  skipped    {TS_HUES_OUT} ({EXPO_UI} does not exist yet)")
 
     if not ok:
         message = (

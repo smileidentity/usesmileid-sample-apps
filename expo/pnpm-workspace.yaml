@@ -1,0 +1,4 @@
+# The workspace is scoped to expo/, so the other three platforms' tooling never resolves through it.
+packages:
+  - app
+  - sample-ui
