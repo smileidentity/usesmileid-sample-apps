@@ -141,6 +141,8 @@ export const useSmileIDSampleJobStore = create<State & Actions>((set, get) => ({
         ),
       };
     });
+    // Re-read, never a value captured before the await: a remove landing in that window is
+    // already absent from what this writes, where a captured array would resurrect the row.
     if (existed) await persist(get().jobs ?? []);
     return existed;
   },

@@ -30,7 +30,9 @@ export default function VerificationDetails() {
       if (jobId === undefined) return;
       if (!silent) setRefreshing(true);
       const outcome = await refresh(jobId, null, Date.now(), source);
-      setRefreshing(false);
+      // Only the call that raised the spinner lowers it: the on-entry refresh is silent and shows
+      // none, so clearing it there ended a pull-to-refresh the reader had started moments before.
+      if (!silent) setRefreshing(false);
       // A silent refresh says nothing unless something actually changed.
       if (outcome !== null && (!silent || outcome.kind === 'updated')) {
         setNotice(smileIDSampleRefreshLabel(outcome));
