@@ -4,7 +4,9 @@ import {
   useSmileIDSampleJobStore,
   type UseSmileIDSampleJobStatusSource,
 } from '@smileid/sample-ui';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
+
+import { useSmileIDSampleBack } from '../../../src/use-smile-id-sample-back';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 /// No scanned session exists yet, so every refresh reports why rather than doing nothing.
@@ -13,7 +15,7 @@ const source: UseSmileIDSampleJobStatusSource = {
 };
 
 export default function VerificationDetails() {
-  const router = useRouter();
+  const back = useSmileIDSampleBack('/verifications');
   const { jobId } = useLocalSearchParams<{ jobId: string }>();
   const jobs = useSmileIDSampleJobStore((state) => state.jobs);
   const refresh = useSmileIDSampleJobStore((state) => state.refresh);
@@ -52,10 +54,10 @@ export default function VerificationDetails() {
   return (
     <VerificationDetailsScreen
       state={{ job, jobId: jobId ?? '', refreshing, refreshNotice: notice }}
-      onBack={() => router.back()}
+      onBack={() => back()}
       onDelete={() => {
         if (job !== null) void remove([job.id]);
-        router.back();
+        back();
       }}
       onRefresh={() => void run(false)}
       onCopy={() => undefined}
