@@ -27,7 +27,7 @@ class UseSmileIDSampleUserDetailsTab extends ConsumerWidget {
         // for rather than showing an empty title.
         title: product?.label ?? productId,
         details: forms.userDetails,
-        onBack: () => context.pop(),
+        onBack: () => context.go(UseSmileIDSampleRoutes.products),
         onFieldChanged: ref
             .read(useSmileIDSampleFormsProvider.notifier)
             .setUserField,
@@ -94,7 +94,9 @@ class _UseSmileIDSampleKycFormTabState
       child: UseSmileIDSampleKycFormScreen(
         title: product?.label ?? widget.productId,
         details: details,
-        onBack: () => context.pop(),
+        onBack: () => context.go(
+          UseSmileIDSampleRoutes.consentDetailsForm(widget.productId),
+        ),
         onPickCountry: _pickCountry,
         onPickIdType: _pickIdType,
         onIdNumberChanged: ref

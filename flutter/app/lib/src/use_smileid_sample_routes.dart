@@ -199,14 +199,16 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
     GoRoute(
       path: UseSmileIDSampleRoutes.profiles,
       builder: (BuildContext context, GoRouterState state) =>
-          UseSmileIDSampleProfilesTab(onBack: () => context.pop()),
+          UseSmileIDSampleProfilesTab(
+            onBack: () => context.go(UseSmileIDSampleRoutes.settings),
+          ),
       routes: <RouteBase>[
         GoRoute(
           path: ':profileId',
           builder: (BuildContext context, GoRouterState state) =>
               UseSmileIDSampleProfileConfigTab(
                 profileId: state.pathParameters['profileId']!,
-                onBack: () => context.pop(),
+                onBack: () => context.go(UseSmileIDSampleRoutes.profiles),
               ),
         ),
       ],
