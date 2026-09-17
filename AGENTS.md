@@ -136,7 +136,7 @@ saying which platform is following and why.
 
 ## Commands
 
-Android and iOS have apps; Flutter and Expo do not yet. Each platform exposes one script that is the
+Android, iOS and Flutter have apps; Expo does not yet. Each platform exposes one script that is the
 definition of done for that platform, mirroring the per-PR CI gate:
 
 ```bash
@@ -153,9 +153,11 @@ expo/verify.sh        # eslint + tsc --noEmit + test + release build
 Until then, state plainly in the PR what you could and could not run. Publishing is not this
 repo's job; there is nothing here to publish.
 
-**Android and iOS run in CI on every PR** (`.github/workflows/android.yml`, `ios.yml`); Flutter and
-Expo stay local-only until their apps land. Each workflow runs that platform's `verify.sh` itself
-rather than repeating its steps, so the local contract and the gate cannot drift apart.
+**Android, iOS and Flutter run in CI on every PR** (`.github/workflows/android.yml`, `ios.yml`,
+`flutter.yml`); Expo stays local-only until its app lands. Each workflow runs that platform's
+`verify.sh` itself rather than repeating its steps, so the local contract and the gate cannot drift
+apart. The Flutter lane runs on macOS because a Flutter golden is host-rasterised, so a baseline
+recorded on a Mac and verified on Linux reds the lane for reasons unrelated to the UI.
 
 The iOS project is generated from `ios/App/project.yml` by XcodeGen, so the bundle id, URL scheme and
 deployment target stay reviewable and no `.pbxproj` is ever hand-edited; `ios/verify.sh` regenerates
