@@ -34,6 +34,17 @@ void main() {
     );
   });
 
+  /// Part-typed: what the form looks like while it is being filled in.
+  testWidgets('user details editing', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_user_details_editing',
+      () => _userDetails(
+        details: const UseSmileIDSampleUserDetails(firstName: 'Njeri'),
+      ),
+    );
+  });
+
   testWidgets('id details empty', (WidgetTester tester) async {
     await _screenGoldens(tester, 'screen_kyc_form', _kycForm);
   });

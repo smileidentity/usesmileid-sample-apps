@@ -82,6 +82,12 @@ Future<void> goldens(
 
   /// True for a whole screen, which owns a scroll view and so needs a bounded height to lay out.
   bool fillsHost = false,
+
+  /// Drives the widget into a state only interaction reaches, before each scheme is captured.
+  ///
+  /// A widget that holds its own state cannot be handed one, and lifting that state out so a
+  /// golden can pose it would distort the component for the test's benefit.
+  Future<void> Function(WidgetTester tester)? afterPump,
 }) async {
   // A disabled shadow records as a SOLID block, which drew the nav bar's elevation as a hard ring
   // and hid the token ring behind it. Restored inline, because the framework asserts every
@@ -109,6 +115,10 @@ Future<void> goldens(
       hostHeight: hostHeight,
       fillsHost: fillsHost,
     );
+    if (afterPump != null) {
+      await afterPump(tester);
+      await tester.pump();
+    }
     await expectLater(
       find.byKey(goldenRoot),
       matchesGoldenFile('../goldens/${name}_$suffix.png'),
