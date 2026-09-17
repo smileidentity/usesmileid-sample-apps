@@ -184,7 +184,9 @@ class _JobRowText extends StatelessWidget {
         // Elided like the title, so every row is the same height at the design's scale.
         maxLines: stacks ? null : 1,
         overflow: stacks ? null : TextOverflow.ellipsis,
-        style: UseSmileIDSampleType.textStyleBodySm.copyWith(
+        // Caption, not body-sm: the board draws 12/16/500 and `spec/components.json` rules that a
+        // port takes the board while Android, the only other implementation, follows.
+        style: UseSmileIDSampleType.textStyleCaption.copyWith(
           color: colors.textMuted,
         ),
       ),

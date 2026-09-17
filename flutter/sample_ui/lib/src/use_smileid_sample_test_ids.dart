@@ -92,8 +92,46 @@ abstract final class UseSmileIDSampleTestIds {
   /// The action inside a toast, whatever it is labelled.
   static const String toastUndo = 'sample_toast_undo';
 
+  /// One filter chip, suffixed with the filter's id.
+  static String filterChip(String filterId) => 'sample_filter_chip_$filterId';
+
+  /// A filter chip's count, asserted separately so a flow reads a number rather than prose.
+  static String filterCount(String filterId) => 'sample_filter_count_$filterId';
+
+  /// One verification row, suffixed with its position in the whole visible list.
+  static String jobRow(int index) => 'sample_job_row_$index';
+
   /// The status badge inside a verification row, which the row attaches itself.
   static const String jobRowStatus = 'sample_job_row_status';
+
+  /// The header action that enters and leaves select mode; its label flips Select / Cancel.
+  static const String selectToggle = 'sample_select_toggle';
+
+  /// One row's selection checkbox, suffixed with the row's position, present only in select mode.
+  static String selectionCheckbox(int index) =>
+      'sample_selection_checkbox_$index';
+
+  /// One verification's detail page.
+  static const String verificationDetailsScreen =
+      'sample_verification_details_screen';
+
+  /// The status badge on the detail page, which is NOT the row's badge id.
+  static const String statusBadge = 'sample_status_badge';
+
+  /// One label/value row on the detail page, suffixed with the field name.
+  static String detailField(String field) => 'sample_detail_field_$field';
+
+  /// A detail row's copy control, suffixed with the same field name.
+  static String detailCopy(String field) => 'sample_detail_copy_$field';
+
+  /// The detail page's destructive action, which hides the verification.
+  static const String detailsDelete = 'sample_details_delete';
+
+  /// The pull-to-refresh container, which the design draws in the processing state.
+  static const String detailsRefresh = 'sample_details_refresh';
+
+  /// What the detail page shows for a job this build never stored.
+  static const String detailsEmpty = 'sample_details_empty';
 
   /// The selection bar shown instead of the nav bar.
   static const String selectionBar = 'sample_selection_bar';
@@ -133,6 +171,12 @@ abstract final class UseSmileIDSampleTestIds {
     toast,
     toastUndo,
     jobRowStatus,
+    selectToggle,
+    verificationDetailsScreen,
+    statusBadge,
+    detailsDelete,
+    detailsRefresh,
+    detailsEmpty,
     selectionBar,
     selectionCount,
     selectionRemove,

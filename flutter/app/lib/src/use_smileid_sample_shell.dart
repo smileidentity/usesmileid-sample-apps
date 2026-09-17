@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
+import 'state/use_smileid_sample_providers.dart';
+import 'use_smileid_sample_remove_jobs.dart';
 import 'use_smileid_sample_routes.dart';
 
 /// The three-tab host: the branch's content, with the nav bar floating over it.
@@ -10,7 +13,7 @@ import 'use_smileid_sample_routes.dart';
 /// the content and draws a seam across the page, where the design has the list continuing under
 /// the pill. The consequence is that each screen reserves its own room, which is the clearance the
 /// bar publishes.
-class UseSmileIDSampleShell extends StatelessWidget {
+class UseSmileIDSampleShell extends ConsumerWidget {
   /// [location] is the current destination, which alone decides whether the bar is drawn.
   const UseSmileIDSampleShell({
     required this.shell,
@@ -25,9 +28,12 @@ class UseSmileIDSampleShell extends StatelessWidget {
   final String location;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
       context,
+    );
+    final UseSmileIDSampleSelection selection = ref.watch(
+      useSmileIDSampleSelectionProvider,
     );
     // Back from a tab that is not the first returns to products rather than leaving the app. Found
     // on a device: an indexed stack whose branch is at its root lets the pop through to the system,
@@ -41,12 +47,21 @@ class UseSmileIDSampleShell extends StatelessWidget {
       },
       child: Scaffold(
         backgroundColor: colors.background,
+        // The exception that proves R13's rule: the selection bar is opaque with a top edge, so it
+        // REPLACES the bottom chrome and the content does stop above it.
+        bottomNavigationBar: _showsSelectionBar(selection)
+            ? UseSmileIDSampleSelectionBar(
+                selectedCount: selection.ids.length,
+                onRemove: () => useSmileIDSampleRemoveJobs(ref, selection.ids),
+              )
+            : null,
         body: Stack(
           children: <Widget>[
             // Top only: the bar draws over the bottom inset itself, and insetting here as well
             // would lift it by the system bar twice.
             SafeArea(bottom: false, child: shell),
-            if (useSmileIDSampleShowsNavBar(location))
+            if (useSmileIDSampleShowsNavBar(location) &&
+                !_showsSelectionBar(selection))
               Positioned(
                 left: 0,
                 right: 0,
@@ -63,6 +78,10 @@ class UseSmileIDSampleShell extends StatelessWidget {
       ),
     );
   }
+
+  /// Whether select mode's bar stands in for the nav bar, which only the verifications tab has.
+  bool _showsSelectionBar(UseSmileIDSampleSelection selection) =>
+      selection.active && location == UseSmileIDSampleRoutes.verifications;
 
   /// Switches tab, and pops the tab to its root when the active one is tapped again.
   void _select(int index) =>

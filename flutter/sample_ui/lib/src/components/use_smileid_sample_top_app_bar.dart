@@ -58,7 +58,6 @@ class UseSmileIDSampleTopAppBar extends StatelessWidget {
     ).scale(_headerRowHeight);
     return Semantics(
       identifier: testId,
-      header: true,
       child: Padding(
         padding: EdgeInsets.only(
           top: MediaQuery.viewPaddingOf(context).top,
@@ -78,13 +77,20 @@ class UseSmileIDSampleTopAppBar extends StatelessWidget {
               ),
               const SizedBox(width: SmileDimens.spacingXs),
               Expanded(
-                child: Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  // Wraps rather than caps: ellipsising a title is the clipping the predicate forbids.
-                  style: UseSmileIDSampleType.textStyleTitle.copyWith(
-                    fontSize: _titleSize,
-                    color: colors.textTitle,
+                // The header flag is the TITLE's, not the row's. On the row it absorbed the
+                // children: with no trailing action the whole bar collapsed into one node reading
+                // 'Back\nTitle', and with one the title was traversed BEFORE the back control.
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    // Wraps rather than caps: ellipsising a title is the clipping the predicate
+                    // forbids.
+                    style: UseSmileIDSampleType.textStyleTitle.copyWith(
+                      fontSize: _titleSize,
+                      color: colors.textTitle,
+                    ),
                   ),
                 ),
               ),

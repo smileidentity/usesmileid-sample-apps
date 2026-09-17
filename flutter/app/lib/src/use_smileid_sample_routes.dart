@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'screens/use_smileid_sample_products_tab.dart';
 import 'screens/use_smileid_sample_settings_tab.dart';
+import 'screens/use_smileid_sample_verification_details_tab.dart';
 import 'screens/use_smileid_sample_verifications_tab.dart';
 import 'use_smileid_sample_component_gallery.dart';
 import 'use_smileid_sample_shell.dart';
@@ -51,6 +52,10 @@ bool useSmileIDSampleShowsNavBar(String location) =>
 /// the shell so they cover the bar, and arrive with the screens they show.
 GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
   initialLocation: initialLocation ?? UseSmileIDSampleRoutes.products,
+  // Measured on a device: without this the platform's raw route WINS over initialLocation, and a
+  // custom-scheme link reaches the matcher whole — 'usesmileid-sample-flutter://settings/' — which
+  // matches nothing and lands on the not-found page. The caller has already folded it into a path.
+  overridePlatformDefaultLocation: true,
   routes: <RouteBase>[
     StatefulShellRoute.indexedStack(
       builder:
@@ -73,6 +78,20 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
             GoRoute(
               path: UseSmileIDSampleRoutes.verifications,
               builder: (_, _) => const UseSmileIDSampleVerificationsTab(),
+              routes: <RouteBase>[
+                // A CHILD of the tab root, not a sibling: the detail page belongs to this tab's
+                // stack, so back returns to the list rather than to the start destination. It
+                // carries no nav bar because it is not a tab root, which the predicate decides.
+                GoRoute(
+                  path: ':jobId',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      UseSmileIDSampleVerificationDetailsTab(
+                        jobId: state.pathParameters['jobId']!,
+                        onBack: () =>
+                            context.go(UseSmileIDSampleRoutes.verifications),
+                      ),
+                ),
+              ],
             ),
           ],
         ),
