@@ -97,9 +97,7 @@ fi
 if runs checks; then
   echo "==> unit tests (spec validation, fixture defaults, and the goldens in light and dark)"
   # --ci so an unrecorded golden fails instead of being written, which is how a missing state passes.
-  # TZ, because a baseline holding a formatted time otherwise pins the machine that recorded it:
-  # Node reads the zone once at startup, so it cannot be set from inside the suite.
-  TZ=UTC "$PNPM" --filter @smileid/sample-ui exec jest --ci
+  "$PNPM" --filter @smileid/sample-ui exec jest --ci
 fi
 
 if runs bundle; then
