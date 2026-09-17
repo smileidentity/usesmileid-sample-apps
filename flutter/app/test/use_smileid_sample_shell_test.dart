@@ -105,6 +105,24 @@ void main() {
     );
   });
 
+  // Found on a device, not here: system back from a non-first tab left the app entirely, because
+  // an indexed stack whose branch is at its root lets the pop through. The twin keeps products
+  // underneath, and its own device flow asserts back from verifications lands on products.
+  testWidgets('system back from another tab returns to products', (
+    WidgetTester tester,
+  ) async {
+    await pumpShell(tester);
+    await tester.tap(byId(UseSmileIDSampleTestIds.navVerifications));
+    await tester.pumpAndSettle();
+    expect(byId(UseSmileIDSampleTestIds.verificationsScreen), findsOne);
+
+    final bool leftTheApp = await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+
+    expect(leftTheApp, isTrue, reason: 'the app handled the pop itself');
+    expect(byId(UseSmileIDSampleTestIds.productsScreen), findsOne);
+  });
+
   // R13 on a real destination rather than on the predicate alone: the gallery sits outside the
   // shell, so it is the one route today that proves the bar is absent where it should be.
   testWidgets('a route outside the shell carries no nav bar', (

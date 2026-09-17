@@ -29,25 +29,37 @@ class UseSmileIDSampleShell extends StatelessWidget {
     final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
       context,
     );
-    return Scaffold(
-      backgroundColor: colors.background,
-      body: Stack(
-        children: <Widget>[
-          // Top only: the bar draws over the bottom inset itself, and insetting here as well
-          // would lift it by the system bar twice.
-          SafeArea(bottom: false, child: shell),
-          if (useSmileIDSampleShowsNavBar(location))
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: UseSmileIDSampleNavBar(
-                selected: UseSmileIDSampleNavItem.values[shell.currentIndex],
-                onSelect: (UseSmileIDSampleNavItem item) => _select(item.index),
-                onTokenTap: () {},
+    // Back from a tab that is not the first returns to products rather than leaving the app. Found
+    // on a device: an indexed stack whose branch is at its root lets the pop through to the system,
+    // where the twin's popUpTo is non-inclusive and keeps products underneath.
+    return PopScope(
+      canPop: shell.currentIndex == _productsBranch,
+      onPopInvokedWithResult: (bool didPop, Object? result) {
+        if (!didPop) {
+          shell.goBranch(_productsBranch);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: colors.background,
+        body: Stack(
+          children: <Widget>[
+            // Top only: the bar draws over the bottom inset itself, and insetting here as well
+            // would lift it by the system bar twice.
+            SafeArea(bottom: false, child: shell),
+            if (useSmileIDSampleShowsNavBar(location))
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: UseSmileIDSampleNavBar(
+                  selected: UseSmileIDSampleNavItem.values[shell.currentIndex],
+                  onSelect: (UseSmileIDSampleNavItem item) =>
+                      _select(item.index),
+                  onTokenTap: () {},
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -56,3 +68,6 @@ class UseSmileIDSampleShell extends StatelessWidget {
   void _select(int index) =>
       shell.goBranch(index, initialLocation: index == shell.currentIndex);
 }
+
+/// Products' branch, which is the start destination and so where back lands.
+const int _productsBranch = 0;
