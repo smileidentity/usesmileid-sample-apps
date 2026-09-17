@@ -50,7 +50,28 @@ export const styleTree = async (
 ) => {
   const rendered = await renderInTheme(element, dark, fontScale);
   if (interact) await interact(rendered);
-  return withoutHarness(rendered.toJSON());
+  return withoutElementProps(withoutHarness(rendered.toJSON()));
+};
+
+/// A React element held in a PROP rather than in children — `refreshControl` is the one that does
+/// this — carries its fiber graph, which the snapshot serialiser walks until it runs out of string.
+/// The element is still rendered and still has its own id; only the prop copy is dropped.
+const withoutElementProps = <T,>(tree: T): T => {
+  if (tree === null || typeof tree !== 'object') return tree;
+  if (Array.isArray(tree)) return tree.map((entry) => withoutElementProps(entry)) as T;
+  const node = tree as { props?: Record<string, unknown>; children?: unknown[] };
+  if (node.props === undefined) return tree;
+  const props: Record<string, unknown> = {};
+  for (const [name, value] of Object.entries(node.props)) {
+    const isElement =
+      value !== null && typeof value === 'object' && '$$typeof' in (value as object);
+    if (!isElement) props[name] = value;
+  }
+  return {
+    ...node,
+    props,
+    children: (node.children ?? []).map((child) => withoutElementProps(child)),
+  } as T;
 };
 
 type Json = ReturnType<Rendered['toJSON']>;
@@ -66,11 +87,11 @@ const withoutHarness = (tree: Json): Json => {
 };
 
 /// Focus, which is what turns a field's border from `input.border` to `input.border-focus`.
-export const focusField = (testID: string): Interaction => (rendered) => {
-  fireEvent(rendered.getByTestId(testID), 'focus');
+export const focusField = (testID: string): Interaction => async (rendered) => {
+  await fireEvent(rendered.getByTestId(testID), 'focus');
 };
 
 /// A press held down, which a style function only reports while the finger is on the control.
-export const pressIn = (testID: string): Interaction => (rendered) => {
-  fireEvent(rendered.getByTestId(testID), 'pressIn');
+export const pressIn = (testID: string): Interaction => async (rendered) => {
+  await fireEvent(rendered.getByTestId(testID), 'pressIn');
 };

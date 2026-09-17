@@ -32,9 +32,10 @@ const snapshotFiles = [
   'use-smile-id-sample-composites.test.tsx.snap',
   'use-smile-id-sample-screen-composites.test.tsx.snap',
   'use-smile-id-sample-screens.test.tsx.snap',
+  'use-smile-id-sample-verifications.test.tsx.snap',
 ];
 
-const expectedStates = 99;
+const expectedStates = 108;
 
 const readPairs = () => {
   const pairs = new Map<string, { light?: string; dark?: string }>();
@@ -98,6 +99,34 @@ describe('the recorded goldens', () => {
       .filter(([, pair]) => lightPageOnly.some((colour) => (pair.dark ?? '').includes(colour)))
       .map(([id]) => id);
     expect(leaked).toEqual([]);
+  });
+});
+
+/// A state only reachable by interaction must differ from the state it starts in, or the event never
+/// landed and the golden records the base state twice. Two suites' focused baselines did exactly
+/// that until the harness started awaiting its own events, and the light-versus-dark guard above
+/// cannot see it, because both halves of the pair were wrong in the same way.
+const interactionStates: readonly (readonly [string, string])[] = [
+  ['Button/enabled', 'Button/pressed'],
+  ['TextInput/filled', 'TextInput/focused'],
+  ['TextInput/error', 'TextInput/error_focused'],
+  ['SearchField/filled', 'SearchField/focused'],
+  ['FilterChip/default', 'FilterChip/pressed'],
+  ['KeyValueEditRow/filled', 'KeyValueEditRow/focused'],
+];
+
+describe('a state reached by interaction', () => {
+  const pairs = readPairs();
+
+  it('differs from the state it starts in, in both schemes', () => {
+    const unchanged: string[] = [];
+    for (const [base, reached] of interactionStates) {
+      const from = pairs.get(base);
+      const to = pairs.get(reached);
+      expect({ base, found: from !== undefined && to !== undefined }).toEqual({ base, found: true });
+      if (from?.light === to?.light || from?.dark === to?.dark) unchanged.push(reached);
+    }
+    expect(unchanged).toEqual([]);
   });
 });
 
