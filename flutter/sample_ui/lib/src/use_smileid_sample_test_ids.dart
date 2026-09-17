@@ -111,6 +111,28 @@ abstract final class UseSmileIDSampleTestIds {
   static String selectionCheckbox(int index) =>
       'sample_selection_checkbox_$index';
 
+  /// One verification's detail page.
+  static const String verificationDetailsScreen =
+      'sample_verification_details_screen';
+
+  /// The status badge on the detail page, which is NOT the row's badge id.
+  static const String statusBadge = 'sample_status_badge';
+
+  /// One label/value row on the detail page, suffixed with the field name.
+  static String detailField(String field) => 'sample_detail_field_$field';
+
+  /// A detail row's copy control, suffixed with the same field name.
+  static String detailCopy(String field) => 'sample_detail_copy_$field';
+
+  /// The detail page's destructive action, which hides the verification.
+  static const String detailsDelete = 'sample_details_delete';
+
+  /// The pull-to-refresh container, which the design draws in the processing state.
+  static const String detailsRefresh = 'sample_details_refresh';
+
+  /// What the detail page shows for a job this build never stored.
+  static const String detailsEmpty = 'sample_details_empty';
+
   /// The selection bar shown instead of the nav bar.
   static const String selectionBar = 'sample_selection_bar';
 
@@ -150,6 +172,11 @@ abstract final class UseSmileIDSampleTestIds {
     toastUndo,
     jobRowStatus,
     selectToggle,
+    verificationDetailsScreen,
+    statusBadge,
+    detailsDelete,
+    detailsRefresh,
+    detailsEmpty,
     selectionBar,
     selectionCount,
     selectionRemove,
