@@ -100,8 +100,13 @@ class _UseSmileIDSampleKycFormTabState
         onIdNumberChanged: ref
             .read(useSmileIDSampleFormsProvider.notifier)
             .setIdNumber,
-        onContinue: () =>
-            context.go(UseSmileIDSampleRoutes.sdkFlow(widget.productId)),
+        // Through the journey, not straight to the route: the helper is the single place the
+        // order lives, and a second copy is how two entry points come to disagree about it.
+        onContinue: () => context.go(
+          product == null
+              ? UseSmileIDSampleRoutes.sdkFlow(widget.productId)
+              : UseSmileIDSampleJourney.afterIdDetails(product),
+        ),
       ),
     );
   }

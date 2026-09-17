@@ -74,20 +74,24 @@ class _UseSmileIDSampleSettingsTabState
   Future<void> _openScenarioDrawer() => showUseSmileIDSampleSheet<void>(
     context: context,
     testId: UseSmileIDSampleTestIds.scenarioDrawer,
-    builder: (BuildContext sheetContext) {
-      final UseSmileIDSampleScenarioSelection selection = ref.watch(
-        useSmileIDSampleScenarioProvider,
-      );
-      return UseSmileIDSampleScenarioDrawer(
-        scenario: selection.scenario,
-        theme: selection.theme,
-        onScenarioSelected: ref
-            .read(useSmileIDSampleScenarioProvider.notifier)
-            .selectScenario,
-        onThemeSelected: ref
-            .read(useSmileIDSampleScenarioProvider.notifier)
-            .selectTheme,
-      );
-    },
+    // A Consumer INSIDE the sheet: the outer `ref.watch` registers on this tab, so a selection
+    // rebuilt the page behind the scrim while the open drawer kept its old checkmarks.
+    builder: (BuildContext sheetContext) => Consumer(
+      builder: (BuildContext context, WidgetRef ref, Widget? _) {
+        final UseSmileIDSampleScenarioSelection selection = ref.watch(
+          useSmileIDSampleScenarioProvider,
+        );
+        return UseSmileIDSampleScenarioDrawer(
+          scenario: selection.scenario,
+          theme: selection.theme,
+          onScenarioSelected: ref
+              .read(useSmileIDSampleScenarioProvider.notifier)
+              .selectScenario,
+          onThemeSelected: ref
+              .read(useSmileIDSampleScenarioProvider.notifier)
+              .selectTheme,
+        );
+      },
+    ),
   );
 }

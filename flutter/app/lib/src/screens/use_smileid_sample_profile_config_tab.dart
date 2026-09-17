@@ -50,15 +50,19 @@ class _UseSmileIDSampleProfileConfigTabState
           onBack: widget.onBack,
           onFieldChanged: (UseSmileIDSampleUserField field, String value) =>
               setState(() => _edited = field.apply(details, value)),
-          onSave: () {
-            ref
-                .read(useSmileIDSampleProfilesProvider.notifier)
-                .setDefaults(widget.profileId, details);
-            ref
-                .read(useSmileIDSampleProfilesProvider.notifier)
-                .setActive(widget.profileId);
-            widget.onBack();
-          },
+          // Guarded on the profile existing: a stale link can reach this page with an id no
+          // profile holds, and saving would then activate an id that resolves to nothing.
+          onSave: profile == null
+              ? widget.onBack
+              : () {
+                  ref
+                      .read(useSmileIDSampleProfilesProvider.notifier)
+                      .setDefaults(widget.profileId, details);
+                  ref
+                      .read(useSmileIDSampleProfilesProvider.notifier)
+                      .setActive(widget.profileId);
+                  widget.onBack();
+                },
         ),
       ),
     );

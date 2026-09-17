@@ -70,24 +70,26 @@ class UseSmileIDSamplePreferencesSettingsRepository
   ) {
     final Completer<UseSmileIDSampleSettings> done =
         Completer<UseSmileIDSampleSettings>();
-    _writes = _writes.then((_) async {
-      // Through the model, so the capture mutex can move the OTHER switch, and both are written.
-      final UseSmileIDSampleSettings updated = (await read()).withSetting(
-        setting,
-        enabled,
-      );
-      for (final UseSmileIDSampleSetting each
-          in UseSmileIDSampleSetting.values) {
-        await _preferences.setBool(
-          UseSmileIDSampleSettingsKeys.of(each),
-          updated[each],
-        );
-      }
-      done.complete(updated);
-      // Never rethrown into the chain: one failed write must not stop every later one.
-    }).catchError((Object error, StackTrace stack) {
-      if (!done.isCompleted) done.completeError(error, stack);
-    });
+    _writes = _writes
+        .then((_) async {
+          // Through the model, so the capture mutex can move the OTHER switch, and both are written.
+          final UseSmileIDSampleSettings updated = (await read()).withSetting(
+            setting,
+            enabled,
+          );
+          for (final UseSmileIDSampleSetting each
+              in UseSmileIDSampleSetting.values) {
+            await _preferences.setBool(
+              UseSmileIDSampleSettingsKeys.of(each),
+              updated[each],
+            );
+          }
+          done.complete(updated);
+          // Never rethrown into the chain: one failed write must not stop every later one.
+        })
+        .catchError((Object error, StackTrace stack) {
+          if (!done.isCompleted) done.completeError(error, stack);
+        });
     return done.future;
   }
 }

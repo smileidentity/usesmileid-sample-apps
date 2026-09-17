@@ -25,7 +25,14 @@ class UseSmileIDSampleLicensesTab extends ConsumerWidget {
       body: SafeArea(
         // While the registry is still streaming the screen shows its own empty state, which reads
         // as "not bundled" — so it waits for the answer instead of claiming one.
-        child: licenses.value == null
+        // An error renders the screen empty rather than spinning: an empty list already reads as
+        // "the notices did not reach this build", and the spinner has no back affordance at all.
+        child: licenses.hasError
+            ? UseSmileIDSampleLicensesScreen(
+                licenses: const UseSmileIDSampleLicenses(),
+                onBack: onBack,
+              )
+            : licenses.value == null
             ? const Center(child: CircularProgressIndicator())
             : UseSmileIDSampleLicensesScreen(
                 licenses: licenses.value!,
