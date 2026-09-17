@@ -136,7 +136,7 @@ saying which platform is following and why.
 
 ## Commands
 
-Android and iOS have apps; Flutter and Expo do not yet. Each platform exposes one script that is the
+Android, iOS and Expo have apps; Flutter does not yet. Each platform exposes one script that is the
 definition of done for that platform, mirroring the per-PR CI gate:
 
 ```bash
@@ -153,9 +153,15 @@ expo/verify.sh        # eslint + tsc --noEmit + test + release build
 Until then, state plainly in the PR what you could and could not run. Publishing is not this
 repo's job; there is nothing here to publish.
 
-**Android and iOS run in CI on every PR** (`.github/workflows/android.yml`, `ios.yml`); Flutter and
-Expo stay local-only until their apps land. Each workflow runs that platform's `verify.sh` itself
-rather than repeating its steps, so the local contract and the gate cannot drift apart.
+**Android, iOS and Expo run in CI on every PR** (`.github/workflows/android.yml`, `ios.yml`,
+`expo.yml`); Flutter stays local-only until its app lands. Each workflow runs that platform's
+`verify.sh` itself rather than repeating its steps, so the local contract and the gate cannot drift
+apart.
+
+`expo/verify.sh` takes a phase, as `ios/verify.sh` does: `all` (the default) is checks plus the
+production bundle, and `native` builds the minified release APK on top of a regenerated prebuild. The
+prebuild output is never committed, which is what keeps a hand-patched Podfile or Gradle file from
+surviving a run.
 
 The iOS project is generated from `ios/App/project.yml` by XcodeGen, so the bundle id, URL scheme and
 deployment target stay reviewable and no `.pbxproj` is ever hand-edited; `ios/verify.sh` regenerates
