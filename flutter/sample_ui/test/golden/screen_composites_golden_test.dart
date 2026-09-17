@@ -108,10 +108,14 @@ Widget _card(UseSmileIDSampleProduct product) => UseSmileIDSampleProductCard(
   family: product.cardFamily,
   hue: productHue(product),
   onTap: () {},
+  // The sizes the screen actually passes, so the component baseline is not a fixture nobody draws.
   icon: (Color tint) =>
-      UseSmileIDSampleIcon(asset: productIcon(product), tint: tint, size: 21),
-  ghost: (Color tint) =>
-      UseSmileIDSampleIcon(asset: productIcon(product), tint: tint, size: 69.3),
+      UseSmileIDSampleIcon(asset: productIcon(product), tint: tint),
+  ghost: (Color tint) => UseSmileIDSampleIcon(
+    asset: productIcon(product),
+    tint: tint,
+    size: SmileDimens.space64 + SmileDimens.space4,
+  ),
 );
 
 /// The two-up pair the design draws, plus the disabled state and the worst-case label.

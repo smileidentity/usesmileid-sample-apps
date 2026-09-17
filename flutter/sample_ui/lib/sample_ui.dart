@@ -39,6 +39,7 @@ export 'src/model/use_smileid_sample_product.dart';
 export 'src/model/use_smileid_sample_result.dart';
 export 'src/model/use_smileid_sample_scenario.dart';
 export 'src/model/use_smileid_sample_status.dart';
+export 'src/screens/use_smileid_sample_products_screen.dart';
 export 'src/screens/use_smileid_sample_settings_screen.dart';
 export 'src/state/use_smileid_sample_launch_args.dart';
 export 'src/state/use_smileid_sample_settings.dart';

@@ -35,6 +35,16 @@ abstract final class UseSmileIDSampleTestIds {
   /// Simulate a successful scan, which makes token flows testable with no QR source.
   static const String tokenSimulate = 'sample_token_simulate';
 
+  /// The products screen root.
+  static const String productsScreen = 'sample_products_screen';
+
+  /// The header avatar button, which opens the profile-switch sheet.
+  static const String profileAvatarButton = 'sample_profile_avatar_button';
+
+  /// One product card, suffixed with the product id.
+  static String productCard(String productId) =>
+      'sample_product_card_$productId';
+
   /// The settings root.
   static const String settingsScreen = 'sample_settings_screen';
 
@@ -101,6 +111,8 @@ abstract final class UseSmileIDSampleTestIds {
     tokenManualEntry,
     tokenPaste,
     tokenSimulate,
+    productsScreen,
+    profileAvatarButton,
     settingsScreen,
     profileSummary,
     settingEnhancedSmartSelfie,
