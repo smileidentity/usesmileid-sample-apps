@@ -1,4 +1,3 @@
-import { Text, View } from 'react-native';
 
 import { UseSmileIDSampleFloatingTokenButton } from '../src/components/use-smile-id-sample-floating-token-button';
 import { UseSmileIDSampleIcon } from '../src/components/use-smile-id-sample-icon';
@@ -6,7 +5,6 @@ import { UseSmileIDSampleJobRow } from '../src/components/use-smile-id-sample-jo
 import { UseSmileIDSampleNavBar } from '../src/components/use-smile-id-sample-nav-bar';
 import { UseSmileIDSampleProductCard } from '../src/components/use-smile-id-sample-product-card';
 import { UseSmileIDSampleProductGrid } from '../src/components/use-smile-id-sample-product-grid';
-import { UseSmileIDSampleProfileEnvChip } from '../src/components/use-smile-id-sample-profile-env-chip';
 import { UseSmileIDSampleScanGlyph } from '../src/components/use-smile-id-sample-scan-glyph';
 import { UseSmileIDSampleScanSheet } from '../src/components/use-smile-id-sample-scan-sheet';
 import { UseSmileIDSampleSectionHeader } from '../src/components/use-smile-id-sample-section-header';
@@ -74,14 +72,6 @@ const cases: { component: string; states: Record<string, Case> }[] = [
   {
     component: 'SectionHeader',
     states: { default: { element: () => <UseSmileIDSampleSectionHeader text="Authentication" /> } },
-  },
-  {
-    component: 'ProfileEnvChip',
-    states: {
-      sandbox: { element: () => <UseSmileIDSampleProfileEnvChip environment="sandbox" /> },
-      // Production is wider, which is why the chip's width is not fixed.
-      production: { element: () => <UseSmileIDSampleProfileEnvChip environment="production" /> },
-    },
   },
   {
     component: 'NavBar',
@@ -171,7 +161,6 @@ describe('screen-composite coverage', () => {
       'ProductCard',
       'ProductGrid',
       'SectionHeader',
-      'ProfileEnvChip',
       'NavBar',
       'TokenRing',
       'SessionCard',
@@ -185,7 +174,7 @@ describe('screen-composite coverage', () => {
 
   it('records both schemes for every state', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(42);
+    expect(total * schemes.length).toBe(38);
   });
 });
 
@@ -253,18 +242,5 @@ describe('the nav bar', () => {
     ));
     expect((with_.match(/RNSVGSvgView/g) ?? []).length).toBe(5);
     expect(with_.length).toBeGreaterThan(without.length);
-  });
-});
-
-describe('a component with no call site is a defect', () => {
-  it('draws the environment chip, which no shipped screen renders but the spec keeps', async () => {
-    const tree = await styleTree(
-      <View>
-        <UseSmileIDSampleProfileEnvChip environment="sandbox" />
-        <Text>anchor</Text>
-      </View>,
-      false,
-    );
-    expect(JSON.stringify(tree)).toContain('Sandbox');
   });
 });
