@@ -67,6 +67,13 @@ if runs checks; then
 fi
 
 if runs checks; then
+  echo "==> icons are current"
+  # Generated from design/icons/, which lives in this repo rather than the design system, so this
+  # needs no secret and always runs. A hand-edited path fails here.
+  python3 "$REPO_ROOT/scripts/generate_expo_icons.py" --check
+fi
+
+if runs checks; then
   echo "==> the project is still a well-formed Expo app"
   # The cheapest check that continuous native generation still holds and that every dependency version
   # agrees with the installed SDK — otherwise only a human noticing catches either.

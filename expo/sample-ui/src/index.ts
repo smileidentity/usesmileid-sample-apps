@@ -70,3 +70,6 @@ export {
   useSmileIDSampleActiveProfileIndex,
   useSmileIDSampleProfileStore,
 } from './state/use-smile-id-sample-profile-store';
+
+export { UseSmileIDSampleIcon, UseSmileIDSampleMarkNames } from './components/use-smile-id-sample-icon';
+export { smileIcons, type SmileIcon, type SmileIconName, type SmileIconPart } from './smile-icons';

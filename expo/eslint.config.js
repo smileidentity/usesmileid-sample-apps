@@ -41,7 +41,7 @@ module.exports = tseslint.config(
   },
   {
     // GENERATED: the emitter owns these files and the hex values are the point of them.
-    files: ['sample-ui/src/tokens.ts', 'sample-ui/src/smile-product-hues.ts'],
+    files: ['sample-ui/src/tokens.ts', 'sample-ui/src/smile-product-hues.ts', 'sample-ui/src/smile-icons.ts'],
     rules: { 'no-restricted-syntax': 'off' },
   },
   {
