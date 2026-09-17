@@ -13,9 +13,10 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # The SDK from pub.dev. Registry-only, permanently: no path dependency and no
-  # dependency_overrides, because consuming the published form is why this app exists.
-  usesmileid: ^12.1.1
+  # The SDK from pub.dev, pinned EXACT rather than with a caret. A bump arrives as a PR, which is
+  # what makes every bump a free consumption test; a caret lets a fresh resolve move to a release
+  # no PR ever exercised. Registry-only, permanently: no path dependency, no dependency_overrides.
+  usesmileid: 12.1.1
 
   # The shared journey, by path. Never published, and the SDK repo maps the same source into its
   # own development sample.

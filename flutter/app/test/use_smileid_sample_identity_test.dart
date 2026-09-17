@@ -109,7 +109,13 @@ void main() {
         .map((String line) => line.trim())
         .where((String line) => !line.startsWith('#'))
         .toList();
-    expect(lines, contains('usesmileid: ^12.1.1'));
+    // Exact, not a caret. A bump arrives as a PR, which is what makes every bump a free
+    // consumption test; a caret lets a fresh resolve move to a release no PR ever exercised.
+    final Iterable<String> sdk = lines.where(
+      (String line) => line.startsWith('usesmileid:'),
+    );
+    expect(sdk, hasLength(1));
+    expect(sdk.single, matches(RegExp(r'^usesmileid: \d+\.\d+\.\d+$')));
     expect(
       lines.where((String line) => line.startsWith('dependency_overrides:')),
       isEmpty,

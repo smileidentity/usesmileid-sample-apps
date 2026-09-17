@@ -14,8 +14,9 @@ dependencies:
     sdk: flutter
 
   # The SDK by its published coordinates, exactly as a partner names it; an SDK repo substitutes its
-  # own project here, which is what makes this package its public-API gate.
-  usesmileid: ^12.1.1
+  # own project here, which is what makes this package its public-API gate. Exact, not a caret:
+  # a consumption test that cannot say which version it consumed has lost the point.
+  usesmileid: 12.1.1
 
 dev_dependencies:
   flutter_test:
