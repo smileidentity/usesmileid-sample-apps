@@ -184,4 +184,10 @@ class _HeldJobsRepository implements UseSmileIDSampleJobsRepository {
 
   @override
   Future<void> seedFixtures(int nowMillis) async {}
+
+  @override
+  Future<int> remove(Set<String> ids) async => 0;
+
+  @override
+  Future<void> undoRemove() async {}
 }

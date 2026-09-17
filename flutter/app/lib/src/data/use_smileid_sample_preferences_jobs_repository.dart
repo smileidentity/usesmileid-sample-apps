@@ -11,9 +11,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class UseSmileIDSamplePreferencesJobsRepository
     implements UseSmileIDSampleJobsRepository {
   /// Takes the already-opened preferences, so a caller cannot forget to await them.
-  const UseSmileIDSamplePreferencesJobsRepository(this._preferences);
+  UseSmileIDSamplePreferencesJobsRepository(this._preferences);
 
   final SharedPreferences _preferences;
+
+  /// The last batch taken, in memory rather than on disk: an undo is a confirmation's offer and
+  /// must not outlive the process that made it, which is what the twin does too.
+  static List<UseSmileIDSampleJob> _lastRemoved = const <UseSmileIDSampleJob>[];
 
   /// Opens the store, which is done once before the first frame.
   static Future<UseSmileIDSamplePreferencesJobsRepository> open() async =>
@@ -36,6 +40,33 @@ class UseSmileIDSamplePreferencesJobsRepository
         nowMillis,
       ).where((UseSmileIDSampleJob job) => !ids.contains(job.id)),
     ]);
+  }
+
+  @override
+  Future<int> remove(Set<String> ids) async {
+    final List<UseSmileIDSampleJob> stored = _stored();
+    final List<UseSmileIDSampleJob> taken = stored
+        .where((UseSmileIDSampleJob job) => ids.contains(job.id))
+        .toList();
+    // An id that matched nothing returns early rather than clearing the undo: a no-op must not
+    // spend a still-undoable batch.
+    if (taken.isEmpty) {
+      return 0;
+    }
+    _lastRemoved = taken;
+    await _write(
+      stored.where((UseSmileIDSampleJob job) => !ids.contains(job.id)).toList(),
+    );
+    return taken.length;
+  }
+
+  @override
+  Future<void> undoRemove() async {
+    if (_lastRemoved.isEmpty) {
+      return;
+    }
+    await _write(<UseSmileIDSampleJob>[..._stored(), ..._lastRemoved]);
+    _lastRemoved = const <UseSmileIDSampleJob>[];
   }
 
   List<UseSmileIDSampleJob> _stored() {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
 
@@ -140,6 +142,23 @@ class UseSmileIDSampleJobsNotifier
     }
     return await jobs.read() ?? const <UseSmileIDSampleJob>[];
   }
+
+  /// Hides rows and returns how many were taken, which is what the confirmation reports.
+  Future<int> removeJobs(Set<String> ids) async {
+    final int taken = await ref
+        .read(useSmileIDSampleJobsRepositoryProvider)
+        .remove(ids);
+    if (taken > 0) {
+      ref.invalidateSelf();
+    }
+    return taken;
+  }
+
+  /// Puts the last removal back.
+  Future<void> undoRemoval() async {
+    await ref.read(useSmileIDSampleJobsRepositoryProvider).undoRemove();
+    ref.invalidateSelf();
+  }
 }
 
 /// The active filter chip, which is screen state rather than stored state.
@@ -162,3 +181,86 @@ class UseSmileIDSampleJobFilterNotifier
   /// Switches the active chip.
   void select(UseSmileIDSampleJobFilter filter) => state = filter;
 }
+
+/// Which rows are being picked, and whether picking is on at all.
+class UseSmileIDSampleSelection {
+  /// A selection with nothing picked, which is what entering select mode starts from.
+  const UseSmileIDSampleSelection({
+    this.active = false,
+    this.ids = const <String>{},
+  });
+
+  /// Whether the rows are being picked rather than opened.
+  final bool active;
+
+  /// The ids picked so far.
+  final Set<String> ids;
+}
+
+/// The verifications list's select mode, held above the screen because the BAR lives in the shell.
+final NotifierProvider<
+  UseSmileIDSampleSelectionNotifier,
+  UseSmileIDSampleSelection
+>
+useSmileIDSampleSelectionProvider =
+    NotifierProvider<
+      UseSmileIDSampleSelectionNotifier,
+      UseSmileIDSampleSelection
+    >(UseSmileIDSampleSelectionNotifier.new);
+
+/// Owns select mode and the picked ids.
+class UseSmileIDSampleSelectionNotifier
+    extends Notifier<UseSmileIDSampleSelection> {
+  @override
+  UseSmileIDSampleSelection build() => const UseSmileIDSampleSelection();
+
+  /// Enters or leaves select mode, clearing the picks on the way IN rather than on the way out, so
+  /// the bar still reads its count while it animates away.
+  void setActive(bool on) => state = on
+      ? const UseSmileIDSampleSelection(active: true)
+      : UseSmileIDSampleSelection(ids: state.ids);
+
+  /// Picks or unpicks one row.
+  void select(String jobId, bool picked) => state = UseSmileIDSampleSelection(
+    active: state.active,
+    ids: <String>{
+      ...state.ids.where((String id) => id != jobId),
+      if (picked) jobId,
+    },
+  );
+}
+
+/// How many rows the last removal took, for as long as the confirmation stands.
+final NotifierProvider<UseSmileIDSampleRemovalNoticeNotifier, int?>
+useSmileIDSampleRemovalNoticeProvider =
+    NotifierProvider<UseSmileIDSampleRemovalNoticeNotifier, int?>(
+      UseSmileIDSampleRemovalNoticeNotifier.new,
+    );
+
+/// Shows a removal confirmation for its window, then withdraws it.
+class UseSmileIDSampleRemovalNoticeNotifier extends Notifier<int?> {
+  Timer? _timer;
+
+  @override
+  int? build() {
+    ref.onDispose(() => _timer?.cancel());
+    return null;
+  }
+
+  /// Shows a confirmation for [count] rows, restarting the window if one already stands.
+  void show(int count) {
+    _timer?.cancel();
+    state = count;
+    _timer = Timer(useSmileIDSampleNoticeWindow, dismiss);
+  }
+
+  /// Withdraws the confirmation, which is what taking its action also does.
+  void dismiss() {
+    _timer?.cancel();
+    _timer = null;
+    state = null;
+  }
+}
+
+/// How long a transient confirmation stands, which the twin sets at five seconds.
+const Duration useSmileIDSampleNoticeWindow = Duration(seconds: 5);
