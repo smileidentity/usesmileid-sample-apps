@@ -11,10 +11,8 @@
   },
   "peerDependencies": {
     "@smileid/usesmileid": ">=12.1.1",
-    "expo-linking": "*",
     "react": ">=19.0.0",
     "react-native": ">=0.78.0",
-    "react-native-safe-area-context": ">=5.0.0",
     "react-native-svg": ">=15.0.0",
     "zustand": ">=5.0.0"
   },
@@ -30,11 +28,9 @@
     "typescript": "5.9.3"
   },
   "pinRationale": {
-    "@smileid/usesmileid": "peer, not a dependency: the host resolves the SDK so one UI source compiles against the published artifact here and against SDK HEAD in the SDK repo.",
-    "expo-linking": "peer; the launch-argument reader parses the cold-start URL, and the host owns the scheme.",
+    "@smileid/usesmileid": "peer, not a dependency: the host resolves the SDK so one UI source compiles against the published artifact here and against SDK HEAD in the SDK repo. Nothing imports it yet — the flow host is the next tranche — but the peer contract is what the SDK repos substitute against.",
     "react": "peer at the floor the SDK itself declares, so the host's copy is the only React in the tree.",
     "react-native": "peer; the version travels with the host app, never with a library.",
-    "react-native-safe-area-context": "peer; bottom-chrome clearance is measured from real insets rather than a constant.",
     "react-native-svg": "peer; the design's marks are SVG and the SDK already requires this package.",
     "zustand": "peer; the stores are app-lifetime state and the host decides when they are created.",
     "@react-native/jest-preset": "Required by peer from both react-native and jest-expo, and matched to the react-native version.",
