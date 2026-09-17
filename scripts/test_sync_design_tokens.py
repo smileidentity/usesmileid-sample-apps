@@ -466,6 +466,91 @@ class TestSwiftStopgaps(unittest.TestCase):
         )
 
 
+class TestTsStopgaps(unittest.TestCase):
+    HUE = {
+        "from": "#05723A", "to": "#0A9B4C", "cardIcon": "#05723A", "icon": "#05723A", "tile": "#E4F2EA",
+        "stopStart": 0.13, "stopEnd": 0.87, "fromAlpha": 1.0, "toAlpha": 1.0,
+    }
+
+    def test_hex_becomes_a_lowercase_quoted_string(self):
+        # React Native takes a colour as a string, and the vendored tokens.ts is lowercase throughout.
+        self.assertEqual(gen.ts_color("#E08600"), "'#e08600'")
+
+    def test_a_non_hex_value_is_rejected_rather_than_emitted(self):
+        with self.assertRaises(gen.TokenError):
+            gen.ts_color("rgba(5, 114, 58, 0.24)")
+
+    def test_every_product_emits_all_five_roles(self):
+        out = gen.emit_ts_product_hues({"smartSelfieEnrollment": self.HUE})
+        self.assertIn("smartSelfieEnrollment: {", out)
+        for role in ("from", "to", "cardIcon", "icon", "tile"):
+            self.assertIn(f"{role}: '#", out)
+
+    def test_a_hue_missing_a_role_fails_loudly(self):
+        with self.assertRaises(gen.TokenError):
+            gen.emit_ts_product_hues({"biometricKyc": {"from": "#151F72", "to": "#2B3A9E"}})
+
+    def test_soft_badge_fills_emit_every_feedback_role(self):
+        out = gen.emit_ts_soft_badge_fills(gen.read_soft_badge_fills())
+        for role in ("success", "info", "warning", "error"):
+            self.assertIn(f"{role}: {{", out)
+
+    def test_the_pairs_are_emitted_for_both_schemes(self):
+        # Each of these shipped light-only once and produced a dark-mode defect.
+        self.assertIn("smileOffBlackDark", gen.emit_ts_off_black(gen.read_off_black()))
+        self.assertIn("smileNavBarDark", gen.emit_ts_nav_bar_fill(gen.read_nav_bar_fill()))
+        self.assertIn("smileCardStrokeDark", gen.emit_ts_card_stroke(gen.read_card_stroke()))
+
+    def test_a_pair_missing_its_dark_half_fails_loudly(self):
+        with self.assertRaises(gen.TokenError):
+            gen.emit_ts_off_black({"light": "#2D2B2A"})
+
+    def test_profile_hues_keep_the_designs_order(self):
+        out = gen.emit_ts_profile_hues(gen.read_profile_hues())
+        self.assertIn("export const smileProfileHues: readonly string[] = [", out)
+        self.assertEqual(out.count("'#"), len(gen.read_profile_hues()))
+
+    def test_the_generated_file_carries_every_delta_the_kotlin_twin_does(self):
+        # A port that vendors only tokens.ts has no product hues and no card stroke; this is the
+        # list that made that true, so a value dropped from one emitter fails here.
+        generated = gen.generate_ts_product_hues()
+        for name in (
+            "smileProductHues", "smileSoftBadgeFills", "smileBorderStrong", "smileSurface2",
+            "smileOffBlackLight", "smileOffBlackDark", "smileNavBarLight", "smileNavBarDark",
+            "smileProfileHues", "smileTokenSessionGradient", "smileTokenRing", "smileLabelSize",
+            "smileLabelTracking", "smileCardTitleTracking", "smileCardStrokeLight",
+            "smileCardStrokeDark", "smileCardStrokeWidth", "smileHeadingPageSize",
+            "smileSectionHeaderSize",
+        ):
+            self.assertIn(f"export const {name}", generated)
+
+    def test_all_three_platforms_generate_from_one_spec_entry(self):
+        # The values, not the syntax. TypeScript emits lowercase because that is what the vendored
+        # tokens.ts uses, so the comparison is case-folded rather than exact.
+        def ts(text):
+            return {hex_.upper() for hex_ in re.findall(r"'#([0-9a-f]{6})'", text)}
+
+        def swift(text):
+            return set(re.findall(r"Color\(hex: 0x([0-9A-F]{6})\)", text))
+
+        def kotlin(text):
+            return set(re.findall(r"Color\(0xFF([0-9A-F]{6})\)", text))
+
+        hues = gen.read_product_hues()
+        self.assertEqual(ts(gen.emit_ts_product_hues(hues)), kotlin(gen.emit_kotlin_product_hues(hues)))
+        self.assertEqual(ts(gen.emit_ts_product_hues(hues)), swift(gen.emit_swift_product_hues(hues)))
+
+        fills = gen.read_soft_badge_fills()
+        self.assertEqual(
+            ts(gen.emit_ts_soft_badge_fills(fills)), kotlin(gen.emit_kotlin_soft_badge_fills(fills))
+        )
+
+        profiles = gen.read_profile_hues()
+        self.assertEqual(
+            ts(gen.emit_ts_profile_hues(profiles)), kotlin(gen.emit_kotlin_profile_hues(profiles))
+        )
+
+
 class TestThemeParity(unittest.TestCase):
     """The two theme layers are hand-written, not generated, so nothing else holds them together.
 

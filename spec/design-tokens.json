@@ -607,10 +607,12 @@
       "generatedHere": "ios/SampleUI/Sources/SampleUI/Tokens/SmileTypeStyles.swift — 29 SmileTextStyle values, and the five DM Sans OFL faces in Sources/SampleUI/Resources/Fonts/. Both come from scripts/sync_design_tokens.py --all and are covered by --check. The faces are addressed by PostScript name rather than family plus weight: DMSans-Medium, -SemiBold and -ExtraBold each declare their own family, so Font.custom(\"DM Sans\").weight(.semibold) silently returns the regular face. A package's resources are invisible to the app's UIAppFonts, so they are registered at runtime by UseSmileIDSampleFonts."
     },
     "expo": {
-      "consume": "tokens.ts",
-      "wiring": "A typed token module the sample-ui package imports; no native code involved.",
+      "consume": "tokens.ts — lightColors / darkColors / tokens, where the component COLOURS hang off the two colour objects (lightColors.input.border-focus) and the component DIMENSIONS and fonts hang off tokens (tokens.input.height)",
+      "wiring": "A typed token module the sample-ui package imports; no native code involved. Selected by useColorScheme and grouped into the app's own mode-selected object, the same reason the Compose and SwiftUI themes group theirs.",
       "vendoredTo": "expo/sample-ui/src/tokens.ts (copied verbatim from dist/ts)",
-      "generatedStopgaps": "NOT YET EMITTED. The Android equivalent is SmileProductHues.kt; the generator has no expo emitter for the `deltas` in this file yet, so when this platform's app lands it needs one writing into expo/sample-ui/src/. Consuming the design system's own output alone is not enough — see the android entry for the list of values that exist only here."
+      "generatedStopgaps": "expo/sample-ui/src/smile-product-hues.ts — the SECOND generated file, and the one a port is most likely to miss. Emitted from the same deltas as the Compose and SwiftUI twins, so the three cannot disagree about a value; a generator test asserts all three emit an identical set of hexes. Added 2026-09-17 with this platform's app.",
+      "generatedHere": "expo/sample-ui/assets/fonts/DMSans-*.ttf — the five OFL faces, copied by scripts/sync_design_tokens.py --all and covered by --check. Kept at the upstream file names because TypeScript requires each face by path, so a rename silently drops a weight to the platform font.",
+      "noStopgapNeeded": "CORRECTED 2026-09-17, and it is the one place this platform is better off than the other three: dist/ts carries the 14 named text-style entries, a font per component group, and every component dimension the Compose and SwiftUI emitters drop. So neither composeTypeStylesAreComments nor composeDropsComponentDimensions applies here, and expo generates no type ramp and no dimension substitutes. A port reading the android entry should not copy those two stopgaps over."
     },
     "flutter": {
       "consume": "flutter/sample_ui/lib/src/tokens/smile_tokens.dart — GENERATED (committed 2026-08-13)",
