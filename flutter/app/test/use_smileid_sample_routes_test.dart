@@ -59,10 +59,15 @@ void main() {
   // pushed screens the design draws without one. Verification details is the case that found it —
   // it lives in the verifications branch and still has no bar.
   test('the nav bar is drawn on no pushed route', () {
+    // Matched on a prefix, not equality: `push | fullScreen` is a pushed route too, and an
+    // equality test silently dropped it — the one route the flow opens.
     final List<String> pushed = pathsWhere(
-      (Map<String, Object?> route) => route['presentation'] == 'push',
+      (Map<String, Object?> route) =>
+          (route['presentation']! as String).startsWith('push'),
     );
-    expect(pushed, isNotEmpty);
+    // Named, not merely non-empty: the flow route is the one an equality match dropped, so a
+    // future narrowing fails here rather than passing on the seven that still matched.
+    expect(pushed, contains('/flow/:productId/run'));
     for (final String path in pushed) {
       expect(useSmileIDSampleShowsNavBar(path), isFalse, reason: path);
     }
@@ -72,10 +77,22 @@ void main() {
   // to the sheet. The pickers cover a form and keep no bar; the drawer covers settings and keeps
   // its own — and without that, dismissing the drawer strands settings with its tab bar gone.
   test('a sheet takes the bar of the page it is layered over', () {
+    // Every sheet, not just the modal ones: the pickers are `fullSheet`, so matching `modalSheet`
+    // alone left the two routes this test's own comment claims to cover unasserted.
     final List<String> sheets = pathsWhere(
-      (Map<String, Object?> route) => route['presentation'] == 'modalSheet',
+      (Map<String, Object?> route) =>
+          (route['presentation']! as String).endsWith('Sheet'),
     );
-    expect(sheets, isNotEmpty);
+    // Named for the same reason: both pickers are `fullSheet` and were the routes this test
+    // claimed to cover while matching only `modalSheet`.
+    expect(
+      sheets,
+      containsAll(<String>[
+        '/flow/:productId/id-details/country',
+        '/flow/:productId/id-details/id-type',
+        '/debug/scenarios',
+      ]),
+    );
     for (final String path in sheets) {
       expect(
         useSmileIDSampleShowsNavBar(path),
@@ -95,6 +112,18 @@ void main() {
       ),
       isFalse,
     );
+  });
+
+  // The three rules above partition the table, so a presentation value none of them matches would
+  // otherwise escape unasserted — which is exactly how `push | fullScreen` and `fullSheet` did.
+  test('every route the spec lists is covered by one of the bar rules', () {
+    final List<String> uncovered = pathsWhere((Map<String, Object?> route) {
+      final String presentation = route['presentation']! as String;
+      return presentation != 'tab' &&
+          !presentation.startsWith('push') &&
+          !presentation.endsWith('Sheet');
+    });
+    expect(uncovered, isEmpty, reason: 'unclassified presentation');
   });
 
   test('the component gallery is a dev route the spec deliberately omits', () {
