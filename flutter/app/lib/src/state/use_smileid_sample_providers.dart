@@ -105,3 +105,60 @@ class UseSmileIDSampleProfilesNotifier
     ref.notifyListeners();
   }
 }
+
+/// Where the verifications are kept; the shell overrides this with the store that survives a restart.
+final Provider<UseSmileIDSampleJobsRepository>
+useSmileIDSampleJobsRepositoryProvider =
+    Provider<UseSmileIDSampleJobsRepository>(
+      (Ref ref) => UseSmileIDSampleMemoryJobsRepository(),
+    );
+
+/// The stored verifications, null until the store has answered.
+///
+/// Asynchronous on purpose: the list's third state is NOT LOADED YET, and collapsing it to an
+/// empty list makes a first frame claim there is nothing stored before anything has been read.
+final AsyncNotifierProvider<
+  UseSmileIDSampleJobsNotifier,
+  List<UseSmileIDSampleJob>
+>
+useSmileIDSampleJobsProvider =
+    AsyncNotifierProvider<
+      UseSmileIDSampleJobsNotifier,
+      List<UseSmileIDSampleJob>
+    >(UseSmileIDSampleJobsNotifier.new);
+
+/// Reads the store once, seeding the fixtures first when the launch argument asks for them.
+class UseSmileIDSampleJobsNotifier
+    extends AsyncNotifier<List<UseSmileIDSampleJob>> {
+  @override
+  Future<List<UseSmileIDSampleJob>> build() async {
+    final UseSmileIDSampleJobsRepository jobs = ref.watch(
+      useSmileIDSampleJobsRepositoryProvider,
+    );
+    if (ref.watch(useSmileIDSampleLaunchArgsProvider).seedJobs) {
+      await jobs.seedFixtures(DateTime.now().millisecondsSinceEpoch);
+    }
+    return await jobs.read() ?? const <UseSmileIDSampleJob>[];
+  }
+}
+
+/// The active filter chip, which is screen state rather than stored state.
+final NotifierProvider<
+  UseSmileIDSampleJobFilterNotifier,
+  UseSmileIDSampleJobFilter
+>
+useSmileIDSampleJobFilterProvider =
+    NotifierProvider<
+      UseSmileIDSampleJobFilterNotifier,
+      UseSmileIDSampleJobFilter
+    >(UseSmileIDSampleJobFilterNotifier.new);
+
+/// Holds which chip is active.
+class UseSmileIDSampleJobFilterNotifier
+    extends Notifier<UseSmileIDSampleJobFilter> {
+  @override
+  UseSmileIDSampleJobFilter build() => UseSmileIDSampleJobFilter.all;
+
+  /// Switches the active chip.
+  void select(UseSmileIDSampleJobFilter filter) => state = filter;
+}

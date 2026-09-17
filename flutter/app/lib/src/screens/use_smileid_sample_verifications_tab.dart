@@ -1,28 +1,37 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
 
-/// The verifications tab, which a first launch shows empty because nothing is seeded.
+import '../state/use_smileid_sample_providers.dart';
+
+/// The verifications tab: the stored jobs, grouped by day, under the four chips.
 ///
-/// The list, its filters and its row actions arrive with the job store. The empty state sits where
-/// the first row would, which is where the twin puts it, rather than centred in the page.
-class UseSmileIDSampleVerificationsTab extends StatelessWidget {
-  /// Takes nothing; there is nothing to show until a flow has run.
+/// A launch with no arguments shows the empty state, because fixtures reach a screen only through
+/// `seedJobs` and never as the store's default.
+class UseSmileIDSampleVerificationsTab extends ConsumerWidget {
+  /// Takes nothing; the jobs and the active chip both come from their providers.
   const UseSmileIDSampleVerificationsTab({super.key});
 
   @override
-  Widget build(BuildContext context) => Semantics(
-    identifier: UseSmileIDSampleTestIds.verificationsScreen,
-    child: ListView(
-      padding: EdgeInsets.only(
-        bottom: useSmileIDSampleNavBarClearance(context),
-      ),
-      children: const <Widget>[
-        UseSmileIDSampleEmptyState(
-          text: 'No verifications yet',
-          supportingText: 'Start a product above and the job lands here.',
-          testId: UseSmileIDSampleTestIds.verificationsEmpty,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<List<UseSmileIDSampleJob>> jobs = ref.watch(
+      useSmileIDSampleJobsProvider,
+    );
+    return UseSmileIDSampleVerificationsScreen(
+      state: UseSmileIDSampleVerificationsState(
+        // Null while the store is still answering, which is the state that draws no empty text.
+        jobs: jobs.value,
+        // Midnight rather than the clock: the day headers change once a day, and passing a ticking
+        // value would regroup the whole list every second for a string that did not move.
+        nowMillis: useSmileIDSampleStartOfDayMillis(
+          DateTime.now().millisecondsSinceEpoch,
         ),
-      ],
-    ),
-  );
+        filter: ref.watch(useSmileIDSampleJobFilterProvider),
+      ),
+      onFilterChanged: ref
+          .read(useSmileIDSampleJobFilterProvider.notifier)
+          .select,
+      bottomInset: useSmileIDSampleNavBarClearance(context),
+    );
+  }
 }
