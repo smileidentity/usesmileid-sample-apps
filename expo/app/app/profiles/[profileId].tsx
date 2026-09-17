@@ -6,9 +6,12 @@ import {
   type UseSmileIDSampleUserDetails,
 } from '@smileid/sample-ui';
 import { useLocalSearchParams } from 'expo-router';
+import { useState } from 'react';
 
 import { useSmileIDSampleBack } from '../../src/use-smile-id-sample-back';
-import { useState } from 'react';
+
+/// What the partner has typed, and which profile they typed it into.
+type Edit = { readonly profileId: string; readonly details: UseSmileIDSampleUserDetails };
 
 export default function ProfileConfig() {
   const back = useSmileIDSampleBack('/profiles');
@@ -19,9 +22,13 @@ export default function ProfileConfig() {
   const activeId = useSmileIDSampleProfileStore((state) => state.activeId);
   const setDefaults = useSmileIDSampleProfileStore((state) => state.setDefaults);
   const setActive = useSmileIDSampleProfileStore((state) => state.setActive);
-  const [defaults, setLocalDefaults] = useState<UseSmileIDSampleUserDetails>(
-    profile?.defaults ?? smileIDSampleUserDetailsDefaults,
-  );
+  const [edit, setEdit] = useState<Edit | null>(null);
+
+  // The store until the partner types, so a profile arriving after the first render is shown rather
+  // than an empty form that would save its emptiness over the stored defaults. Keyed by id, because
+  // a second profile opened on the same route would otherwise inherit the first one's edit.
+  const edited = edit !== null && edit.profileId === profileId ? edit.details : null;
+  const defaults = edited ?? profile?.defaults ?? smileIDSampleUserDetailsDefaults;
 
   return (
     <ProfileConfigScreen
@@ -30,12 +37,14 @@ export default function ProfileConfig() {
         defaults,
         isActive: profileId === activeId,
       }}
-      onFieldChange={(field, value) =>
-        setLocalDefaults((current) => smileIDSampleUserFieldWrite(field, current, value))
-      }
+      onFieldChange={(field, value) => {
+        if (profileId === undefined) return;
+        setEdit({ profileId, details: smileIDSampleUserFieldWrite(field, defaults, value) });
+      }}
       onBack={() => back()}
       onSave={() => {
-        if (profileId === undefined) return;
+        // A profile this build has no row for would otherwise save the fallback over nothing.
+        if (profileId === undefined || profile === undefined) return;
         // The CTA reads "Make this profile active", so it has to do both.
         setDefaults(profileId, defaults);
         setActive(profileId);
