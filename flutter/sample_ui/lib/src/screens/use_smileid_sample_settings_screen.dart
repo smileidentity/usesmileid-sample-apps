@@ -282,6 +282,7 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
                     tint: tint,
                   ),
                   trailing: const UseSmileIDSampleSettingRowChevron(),
+                  testId: UseSmileIDSampleTestIds.scenarioDrawerButton,
                 ),
               ],
             ),

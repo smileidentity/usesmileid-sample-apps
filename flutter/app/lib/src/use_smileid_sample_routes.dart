@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import 'screens/use_smileid_sample_flow_form_tabs.dart';
+import 'screens/use_smileid_sample_licenses_tab.dart';
 import 'screens/use_smileid_sample_products_tab.dart';
 import 'screens/use_smileid_sample_profile_config_tab.dart';
 import 'screens/use_smileid_sample_profiles_tab.dart';
@@ -30,6 +31,9 @@ abstract final class UseSmileIDSampleRoutes {
 
   /// The profiles list, above the tabs rather than inside one.
   static const String profiles = '/profiles';
+
+  /// The scenario drawer, a LAYER over settings rather than a page of its own.
+  static const String scenarioDrawer = '/debug/scenarios';
 
   /// The component gallery, a dev surface that is deliberately absent from `spec/routes.json`.
   static const String components = '/debug/components';
@@ -71,8 +75,19 @@ abstract final class UseSmileIDSampleRoutes {
 ///
 /// It takes the destination and nothing else. Testing membership of a tab's branch instead put a
 /// bar on pushed screens the design draws without one, which is the defect R13 was written for.
-bool useSmileIDSampleShowsNavBar(String location) =>
-    UseSmileIDSampleRoutes.tabRoots.contains(location);
+bool useSmileIDSampleShowsNavBar(String location) => UseSmileIDSampleRoutes
+    .tabRoots
+    .contains(useSmileIDSamplePageBehind(location));
+
+/// The destination a sheet route is layered over, which is itself for every other route.
+///
+/// The picker paths nest under the form they cover, so they resolve to themselves and get no bar.
+/// The drawer's path does not nest under settings, so the owner is declared rather than derived —
+/// without it, dismissing the drawer leaves settings sitting there with its tab bar gone.
+String useSmileIDSamplePageBehind(String location) =>
+    location == UseSmileIDSampleRoutes.scenarioDrawer
+    ? UseSmileIDSampleRoutes.settings
+    : location;
 
 /// The navigation host: one indexed stack of three branches, which is R7 without hand-rolling it.
 ///
@@ -128,6 +143,26 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
             GoRoute(
               path: UseSmileIDSampleRoutes.settings,
               builder: (_, _) => const UseSmileIDSampleSettingsTab(),
+              routes: <RouteBase>[
+                // A CHILD of the tab root: the notices belong to this tab's stack, so back
+                // returns to settings rather than to the start destination.
+                GoRoute(
+                  path: 'licenses',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      UseSmileIDSampleLicensesTab(
+                        onBack: () =>
+                            context.go(UseSmileIDSampleRoutes.settings),
+                      ),
+                ),
+              ],
+            ),
+            // A sheet is a LAYER over its owner, never a destination that replaces it (R12), so
+            // this path resolves to SETTINGS with the drawer already open. It sits in this branch
+            // rather than above the shell because the page behind the scrim is this tab.
+            GoRoute(
+              path: UseSmileIDSampleRoutes.scenarioDrawer,
+              builder: (_, _) =>
+                  const UseSmileIDSampleSettingsTab(openDrawer: true),
             ),
           ],
         ),

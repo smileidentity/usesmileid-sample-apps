@@ -58,14 +58,43 @@ void main() {
   // R13's defect in one assertion: testing a tab's BRANCH instead of its destination put a bar on
   // pushed screens the design draws without one. Verification details is the case that found it —
   // it lives in the verifications branch and still has no bar.
-  test('the nav bar is drawn on nothing else the spec routes to', () {
-    final List<String> elsewhere = pathsWhere(
-      (Map<String, Object?> route) => route['presentation'] != 'tab',
+  test('the nav bar is drawn on no pushed route', () {
+    final List<String> pushed = pathsWhere(
+      (Map<String, Object?> route) => route['presentation'] == 'push',
     );
-    expect(elsewhere, isNotEmpty);
-    for (final String path in elsewhere) {
+    expect(pushed, isNotEmpty);
+    for (final String path in pushed) {
       expect(useSmileIDSampleShowsNavBar(path), isFalse, reason: path);
     }
+  });
+
+  // A sheet is a layer over its owner, so the bar belongs to the page behind the scrim rather than
+  // to the sheet. The pickers cover a form and keep no bar; the drawer covers settings and keeps
+  // its own — and without that, dismissing the drawer strands settings with its tab bar gone.
+  test('a sheet takes the bar of the page it is layered over', () {
+    final List<String> sheets = pathsWhere(
+      (Map<String, Object?> route) => route['presentation'] == 'modalSheet',
+    );
+    expect(sheets, isNotEmpty);
+    for (final String path in sheets) {
+      expect(
+        useSmileIDSampleShowsNavBar(path),
+        UseSmileIDSampleRoutes.tabRoots.contains(
+          useSmileIDSamplePageBehind(path),
+        ),
+        reason: path,
+      );
+    }
+    expect(
+      useSmileIDSampleShowsNavBar(UseSmileIDSampleRoutes.scenarioDrawer),
+      isTrue,
+    );
+    expect(
+      useSmileIDSampleShowsNavBar(
+        UseSmileIDSampleRoutes.countryPicker('biometric_kyc'),
+      ),
+      isFalse,
+    );
   });
 
   test('the component gallery is a dev route the spec deliberately omits', () {

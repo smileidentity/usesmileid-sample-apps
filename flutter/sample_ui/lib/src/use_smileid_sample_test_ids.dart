@@ -231,6 +231,31 @@ abstract final class UseSmileIDSampleTestIds {
   /// What the ID type picker shows with no country, and with no match.
   static const String idTypeEmpty = 'sample_idtype_empty';
 
+  /// The scenario drawer, a debug affordance the design does not cover.
+  static const String scenarioDrawer = 'sample_scenario_drawer';
+
+  /// The settings row that opens it.
+  static const String scenarioDrawerButton = 'sample_scenario_drawer_button';
+
+  /// One flow-scenario row, suffixed with the scenario id.
+  static String scenarioItem(String scenarioId) =>
+      'sample_scenario_item_$scenarioId';
+
+  /// One theme-scenario row, suffixed with the theme id.
+  static String themeItem(String themeId) => 'sample_theme_item_$themeId';
+
+  /// The third-party notices screen.
+  static const String licensesScreen = 'sample_licenses_screen';
+
+  /// One notice row, suffixed with its package name.
+  static String licenseRow(String package) => 'sample_license_row_$package';
+
+  /// The expanded licence body, suffixed with its package name.
+  static String licenseText(String package) => 'sample_license_text_$package';
+
+  /// What the screen says when the notices did not ship.
+  static const String licensesEmpty = 'sample_licenses_empty';
+
   /// The selection bar shown instead of the nav bar.
   static const String selectionBar = 'sample_selection_bar';
 
@@ -302,6 +327,10 @@ abstract final class UseSmileIDSampleTestIds {
     idTypeSheet,
     idTypeSearch,
     idTypeEmpty,
+    scenarioDrawer,
+    scenarioDrawerButton,
+    licensesScreen,
+    licensesEmpty,
     selectionBar,
     selectionCount,
     selectionRemove,

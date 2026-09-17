@@ -136,6 +136,32 @@ void main() {
     expect(byId(UseSmileIDSampleTestIds.navProducts), findsNothing);
     expect(byId(UseSmileIDSampleTestIds.navToken), findsNothing);
   });
+
+  // The bar FLOATS over the page, so a screen that reserved no room ends with its last control
+  // under it — present, painted, and untappable. The reserve is asserted on the rendered foot of
+  // the real screen rather than on the bar alone: a golden of a short page never reaches the
+  // bottom, and the component's own clearance test cannot see whether a screen applied it.
+  testWidgets('the last control of settings clears the floating bar', (
+    WidgetTester tester,
+  ) async {
+    await pumpShell(tester, at: UseSmileIDSampleRoutes.settings);
+    for (int i = 0; i < 15; i++) {
+      await tester.drag(find.byType(Scrollable), const Offset(0, -400));
+      await tester.pumpAndSettle();
+    }
+
+    final double lastControl = tester
+        .getRect(byId(UseSmileIDSampleTestIds.signOut))
+        .bottom;
+    final double barTop = tester
+        .getRect(find.byType(UseSmileIDSampleNavBar))
+        .top;
+    expect(
+      lastControl,
+      lessThanOrEqualTo(barTop),
+      reason: 'sign out is $lastControl, the bar starts at $barTop',
+    );
+  });
 }
 
 /// The token affordance's 58, which is the tallest thing in the bar and so the floor a page clears.
