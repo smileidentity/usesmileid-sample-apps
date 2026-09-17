@@ -24,9 +24,13 @@ import sync_design_tokens as gen  # noqa: E402
 
 
 def design_system_or_skip(case: unittest.TestCase) -> str:
-    """The design system, or a stated skip: it is a private repo, so CI and fork PRs have no copy."""
+    """The design system, or a stated skip: it is a private repo, so CI and fork PRs have no copy.
+
+    `SMILE_DESIGN_SYSTEM` is read because that is where CI puts its checkout, which is not one of
+    the default skill paths — without it this would skip on the very runner the secret exists for.
+    """
     try:
-        return gen.find_design_system(None)
+        return gen.find_design_system(os.environ.get("SMILE_DESIGN_SYSTEM") or None)
     except SystemExit:
         case.skipTest(
             "no design system on this machine, so this assertion cannot run. It compares the emitters "
