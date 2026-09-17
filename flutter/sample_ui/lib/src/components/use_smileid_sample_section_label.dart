@@ -8,7 +8,11 @@ import '../theme/use_smileid_sample_typography.dart';
 /// upper-casing can turn a Turkish i into something the design never drew.
 class UseSmileIDSampleSectionLabel extends StatelessWidget {
   /// Takes the text as it should render.
-  const UseSmileIDSampleSectionLabel({required this.text, this.testId, super.key});
+  const UseSmileIDSampleSectionLabel({
+    required this.text,
+    this.testId,
+    super.key,
+  });
 
   /// The heading, already cased.
   final String text;

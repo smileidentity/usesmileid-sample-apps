@@ -11,7 +11,11 @@ import '../tokens/smile_tokens.dart';
 /// the design system's saturated `badge.*` pairs.
 class UseSmileIDSampleStatusBadge extends StatelessWidget {
   /// Takes the status, not a colour pair: four platforms must map the four statuses identically.
-  const UseSmileIDSampleStatusBadge({required this.status, this.testId, super.key});
+  const UseSmileIDSampleStatusBadge({
+    required this.status,
+    this.testId,
+    super.key,
+  });
 
   /// Which of the four statuses to draw.
   final UseSmileIDSampleStatus status;
@@ -21,12 +25,26 @@ class UseSmileIDSampleStatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final UseSmileIDSampleBadgeTokens badge = UseSmileIDSampleTheme.colorsOf(context).badge;
+    final UseSmileIDSampleBadgeTokens badge = UseSmileIDSampleTheme.colorsOf(
+      context,
+    ).badge;
     final (Color background, Color foreground) = switch (status) {
-      UseSmileIDSampleStatus.clear => (badge.successBackground, badge.successText),
-      UseSmileIDSampleStatus.attention => (badge.warningBackground, badge.warningText),
-      UseSmileIDSampleStatus.blocked => (badge.errorBackground, badge.errorText),
-      UseSmileIDSampleStatus.processing => (badge.infoBackground, badge.infoText),
+      UseSmileIDSampleStatus.clear => (
+        badge.successBackground,
+        badge.successText,
+      ),
+      UseSmileIDSampleStatus.attention => (
+        badge.warningBackground,
+        badge.warningText,
+      ),
+      UseSmileIDSampleStatus.blocked => (
+        badge.errorBackground,
+        badge.errorText,
+      ),
+      UseSmileIDSampleStatus.processing => (
+        badge.infoBackground,
+        badge.infoText,
+      ),
     };
     return Semantics(
       identifier: testId,

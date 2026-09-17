@@ -89,6 +89,7 @@ enum UseSmileIDSampleThemeScenario {
   final String description;
 
   /// Resolves an id from a launch argument, falling back rather than throwing on a rename.
-  static UseSmileIDSampleThemeScenario? byId(String? id) =>
-      values.where((UseSmileIDSampleThemeScenario it) => it.id == id).firstOrNull;
+  static UseSmileIDSampleThemeScenario? byId(String? id) => values
+      .where((UseSmileIDSampleThemeScenario it) => it.id == id)
+      .firstOrNull;
 }

@@ -9,46 +9,66 @@ const String useSmileIDSampleFontFamily = 'packages/sample_ui/DM Sans';
 /// display styles and it is not shipped, so they resolve to DM Sans exactly as the Compose twin does.
 abstract final class UseSmileIDSampleType {
   /// The largest display style.
-  static final TextStyle textStyleDisplayLg = _bundled(SmileType.textStyleDisplayLg);
+  static final TextStyle textStyleDisplayLg = _bundled(
+    SmileType.textStyleDisplayLg,
+  );
 
   /// The medium display style.
-  static final TextStyle textStyleDisplayMd = _bundled(SmileType.textStyleDisplayMd);
+  static final TextStyle textStyleDisplayMd = _bundled(
+    SmileType.textStyleDisplayMd,
+  );
 
   /// A page heading.
-  static final TextStyle textStyleHeadingPage = _bundled(SmileType.textStyleHeadingPage);
+  static final TextStyle textStyleHeadingPage = _bundled(
+    SmileType.textStyleHeadingPage,
+  );
 
   /// A card heading.
-  static final TextStyle textStyleHeadingCard = _bundled(SmileType.textStyleHeadingCard);
+  static final TextStyle textStyleHeadingCard = _bundled(
+    SmileType.textStyleHeadingCard,
+  );
 
   /// A section heading.
-  static final TextStyle textStyleHeadingSection = _bundled(SmileType.textStyleHeadingSection);
+  static final TextStyle textStyleHeadingSection = _bundled(
+    SmileType.textStyleHeadingSection,
+  );
 
   /// A title.
   static final TextStyle textStyleTitle = _bundled(SmileType.textStyleTitle);
 
   /// A subtitle.
-  static final TextStyle textStyleSubtitle = _bundled(SmileType.textStyleSubtitle);
+  static final TextStyle textStyleSubtitle = _bundled(
+    SmileType.textStyleSubtitle,
+  );
 
   /// Body prose.
   static final TextStyle textStyleBody = _bundled(SmileType.textStyleBody);
 
   /// Body prose, emphasised.
-  static final TextStyle textStyleBodyStrong = _bundled(SmileType.textStyleBodyStrong);
+  static final TextStyle textStyleBodyStrong = _bundled(
+    SmileType.textStyleBodyStrong,
+  );
 
   /// Small body prose.
   static final TextStyle textStyleBodySm = _bundled(SmileType.textStyleBodySm);
 
   /// A caption, and a field's error message.
-  static final TextStyle textStyleCaption = _bundled(SmileType.textStyleCaption);
+  static final TextStyle textStyleCaption = _bundled(
+    SmileType.textStyleCaption,
+  );
 
   /// The all-caps overline the section label and the badges build on.
-  static final TextStyle textStyleOverline = _bundled(SmileType.textStyleOverline);
+  static final TextStyle textStyleOverline = _bundled(
+    SmileType.textStyleOverline,
+  );
 
   /// A button label.
   static final TextStyle textStyleButton = _bundled(SmileType.textStyleButton);
 
   /// A small button label.
-  static final TextStyle textStyleButtonSm = _bundled(SmileType.textStyleButtonSm);
+  static final TextStyle textStyleButtonSm = _bundled(
+    SmileType.textStyleButtonSm,
+  );
 
   /// The avatar's initials.
   static final TextStyle avatarFont = _bundled(SmileType.avatarFont);
@@ -69,10 +89,14 @@ abstract final class UseSmileIDSampleType {
   static final TextStyle cardTitleFont = _bundled(SmileType.cardTitleFont);
 
   /// A label/value row's label.
-  static final TextStyle dataFieldLabelFont = _bundled(SmileType.dataFieldLabelFont);
+  static final TextStyle dataFieldLabelFont = _bundled(
+    SmileType.dataFieldLabelFont,
+  );
 
   /// A label/value row's value.
-  static final TextStyle dataFieldValueFont = _bundled(SmileType.dataFieldValueFont);
+  static final TextStyle dataFieldValueFont = _bundled(
+    SmileType.dataFieldValueFont,
+  );
 
   /// A filter chip's label.
   static final TextStyle filterChipFont = _bundled(SmileType.filterChipFont);
@@ -94,7 +118,6 @@ abstract final class UseSmileIDSampleType {
 
   /// A tab label.
   static final TextStyle tabFont = _bundled(SmileType.tabFont);
-
 }
 
 TextStyle _bundled(TextStyle style) =>

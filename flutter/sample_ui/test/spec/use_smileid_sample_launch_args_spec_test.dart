@@ -31,7 +31,8 @@ void main() {
       UseSmileIDSampleLaunchArgs.noticeWindowArg: defaults.noticeWindow,
     };
     final Map<String, Object?> theirs = <String, Object?>{
-      for (final Map<String, Object?> arg in args) arg['name']! as String: arg['default'],
+      for (final Map<String, Object?> arg in args)
+        arg['name']! as String: arg['default'],
     };
     expect(ours, theirs);
   });
@@ -52,20 +53,19 @@ void main() {
   });
 
   test('every argument is read from its canonical name', () {
-    final UseSmileIDSampleLaunchArgs parsed = UseSmileIDSampleLaunchArgs.from(
-      const <String, Object?>{
-        UseSmileIDSampleLaunchArgs.scenarioArg: 'expiredToken',
-        UseSmileIDSampleLaunchArgs.themeArg: 'clashingHost',
-        UseSmileIDSampleLaunchArgs.routeArg: 'shell',
-        UseSmileIDSampleLaunchArgs.autostartArg: 'biometricKyc',
-        UseSmileIDSampleLaunchArgs.seedJobsArg: true,
-        UseSmileIDSampleLaunchArgs.seedProfilesArg: true,
-        UseSmileIDSampleLaunchArgs.probesArg: true,
-        UseSmileIDSampleLaunchArgs.appLocaleArg: 'fr-FR',
-        UseSmileIDSampleLaunchArgs.holdCameraArg: 'keep',
-        UseSmileIDSampleLaunchArgs.noticeWindowArg: '60',
-      },
-    );
+    final UseSmileIDSampleLaunchArgs parsed =
+        UseSmileIDSampleLaunchArgs.from(const <String, Object?>{
+          UseSmileIDSampleLaunchArgs.scenarioArg: 'expiredToken',
+          UseSmileIDSampleLaunchArgs.themeArg: 'clashingHost',
+          UseSmileIDSampleLaunchArgs.routeArg: 'shell',
+          UseSmileIDSampleLaunchArgs.autostartArg: 'biometricKyc',
+          UseSmileIDSampleLaunchArgs.seedJobsArg: true,
+          UseSmileIDSampleLaunchArgs.seedProfilesArg: true,
+          UseSmileIDSampleLaunchArgs.probesArg: true,
+          UseSmileIDSampleLaunchArgs.appLocaleArg: 'fr-FR',
+          UseSmileIDSampleLaunchArgs.holdCameraArg: 'keep',
+          UseSmileIDSampleLaunchArgs.noticeWindowArg: '60',
+        });
     expect(parsed.scenario, UseSmileIDSampleScenario.expiredToken);
     expect(parsed.theme, UseSmileIDSampleThemeScenario.clashingHost);
     expect(parsed.route, UseSmileIDSampleFlowRoute.shell);
@@ -78,19 +78,26 @@ void main() {
     expect(parsed.noticeWindow, 60);
   });
 
-  test('a cold-start link carries the same nine names through its query string', () {
-    final UseSmileIDSampleLaunchArgs parsed = UseSmileIDSampleLaunchArgs.fromUri(
-      Uri.parse('usesmileid-sample-flutter://run?scenario=badRefresh&route=shell&seedJobs=true'),
-    );
-    expect(parsed.scenario, UseSmileIDSampleScenario.badRefresh);
-    expect(parsed.route, UseSmileIDSampleFlowRoute.shell);
-    expect(parsed.seedJobs, isTrue);
-    expect(parsed.seedProfiles, isFalse);
-  });
+  test(
+    'a cold-start link carries the same nine names through its query string',
+    () {
+      final UseSmileIDSampleLaunchArgs
+      parsed = UseSmileIDSampleLaunchArgs.fromUri(
+        Uri.parse(
+          'usesmileid-sample-flutter://run?scenario=badRefresh&route=shell&seedJobs=true',
+        ),
+      );
+      expect(parsed.scenario, UseSmileIDSampleScenario.badRefresh);
+      expect(parsed.route, UseSmileIDSampleFlowRoute.shell);
+      expect(parsed.seedJobs, isTrue);
+      expect(parsed.seedProfiles, isFalse);
+    },
+  );
 
   test('the boolean arguments read either form a launch can deliver', () {
-    bool seeds(Object? value) =>
-        UseSmileIDSampleLaunchArgs.from(<String, Object?>{'seedJobs': value}).seedJobs;
+    bool seeds(Object? value) => UseSmileIDSampleLaunchArgs.from(
+      <String, Object?>{'seedJobs': value},
+    ).seedJobs;
     expect(seeds(true), isTrue);
     expect(seeds('TRUE'), isTrue);
     expect(seeds('false'), isFalse);
@@ -98,8 +105,9 @@ void main() {
   });
 
   test('notice window takes positive seconds only', () {
-    int? window(String value) =>
-        UseSmileIDSampleLaunchArgs.from(<String, Object?>{'noticeWindow': value}).noticeWindow;
+    int? window(String value) => UseSmileIDSampleLaunchArgs.from(
+      <String, Object?>{'noticeWindow': value},
+    ).noticeWindow;
     expect(window('60'), 60);
     expect(window('soon'), isNull);
     expect(window('0'), isNull);
@@ -108,11 +116,15 @@ void main() {
 
   test('hold camera accepts milliseconds as well as keep', () {
     expect(
-      UseSmileIDSampleLaunchArgs.from(const <String, Object?>{'holdCamera': '1500'}).holdCamera,
+      UseSmileIDSampleLaunchArgs.from(const <String, Object?>{
+        'holdCamera': '1500',
+      }).holdCamera,
       const UseSmileIDSampleHoldCameraMillis(1500),
     );
     expect(
-      UseSmileIDSampleLaunchArgs.from(const <String, Object?>{'holdCamera': 'soon'}).holdCamera,
+      UseSmileIDSampleLaunchArgs.from(const <String, Object?>{
+        'holdCamera': 'soon',
+      }).holdCamera,
       isNull,
     );
   });
@@ -128,7 +140,9 @@ void main() {
   test('the retired sandbox argument is neither declared nor read', () {
     expect(UseSmileIDSampleLaunchArgs.names, isNot(contains('sandbox')));
     expect(
-      UseSmileIDSampleLaunchArgs.from(const <String, Object?>{'sandbox': false}),
+      UseSmileIDSampleLaunchArgs.from(const <String, Object?>{
+        'sandbox': false,
+      }),
       const UseSmileIDSampleLaunchArgs(),
     );
   });

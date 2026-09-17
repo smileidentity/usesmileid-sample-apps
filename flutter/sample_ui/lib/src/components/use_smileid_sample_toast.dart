@@ -29,7 +29,9 @@ class UseSmileIDSampleToast extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(context);
+    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
+      context,
+    );
     final String? label = actionLabel;
     final VoidCallback? action = onAction;
     final bool hasAction = label != null && action != null;
@@ -42,7 +44,9 @@ class UseSmileIDSampleToast extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           color: colors.textTitle,
-          borderRadius: const BorderRadius.all(Radius.circular(SmileDimens.radiusMd)),
+          borderRadius: const BorderRadius.all(
+            Radius.circular(SmileDimens.radiusMd),
+          ),
           boxShadow: const <BoxShadow>[SmileShadows.elevationFloating],
         ),
         child: ConstrainedBox(
@@ -84,7 +88,11 @@ class UseSmileIDSampleToast extends StatelessWidget {
 
   /// Widened, not squared off: a 48-high action inflates the 46 bar to 72, so the bar's own height
   /// is the vertical target and the minimum width carries the rest.
-  Widget _action(UseSmileIDSampleColors colors, String label, VoidCallback action) => Semantics(
+  Widget _action(
+    UseSmileIDSampleColors colors,
+    String label,
+    VoidCallback action,
+  ) => Semantics(
     identifier: UseSmileIDSampleTestIds.toastUndo,
     button: true,
     child: GestureDetector(
@@ -93,7 +101,9 @@ class UseSmileIDSampleToast extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(minWidth: SmileDimens.sizeControlMd),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: SmileDimens.spacingXs),
+          padding: const EdgeInsets.symmetric(
+            horizontal: SmileDimens.spacingXs,
+          ),
           child: Text(
             label,
             textAlign: TextAlign.center,

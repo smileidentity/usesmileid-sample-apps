@@ -25,7 +25,8 @@ final class UseSmileIDSampleHoldCameraKeep extends UseSmileIDSampleHoldCamera {
 
 /// Hold the camera for a bounded number of milliseconds.
 @immutable
-final class UseSmileIDSampleHoldCameraMillis extends UseSmileIDSampleHoldCamera {
+final class UseSmileIDSampleHoldCameraMillis
+    extends UseSmileIDSampleHoldCamera {
   /// Takes positive milliseconds; the parser rejects anything else.
   const UseSmileIDSampleHoldCameraMillis(this.value);
 
@@ -138,9 +139,15 @@ class UseSmileIDSampleLaunchArgs {
   static UseSmileIDSampleLaunchArgs from(Map<String, Object?> raw) {
     const UseSmileIDSampleLaunchArgs defaults = UseSmileIDSampleLaunchArgs();
     return UseSmileIDSampleLaunchArgs(
-      scenario: UseSmileIDSampleScenario.byId(_string(raw, scenarioArg)) ?? defaults.scenario,
-      theme: UseSmileIDSampleThemeScenario.byId(_string(raw, themeArg)) ?? defaults.theme,
-      route: UseSmileIDSampleFlowRoute.byId(_string(raw, routeArg)) ?? defaults.route,
+      scenario:
+          UseSmileIDSampleScenario.byId(_string(raw, scenarioArg)) ??
+          defaults.scenario,
+      theme:
+          UseSmileIDSampleThemeScenario.byId(_string(raw, themeArg)) ??
+          defaults.theme,
+      route:
+          UseSmileIDSampleFlowRoute.byId(_string(raw, routeArg)) ??
+          defaults.route,
       autostart: UseSmileIDSampleProduct.byId(_string(raw, autostartArg)),
       seedJobs: _boolean(raw, seedJobsArg) ?? defaults.seedJobs,
       seedProfiles: _boolean(raw, seedProfilesArg) ?? defaults.seedProfiles,
@@ -189,7 +196,9 @@ class UseSmileIDSampleLaunchArgs {
       return const UseSmileIDSampleHoldCameraKeep();
     }
     final int? millis = int.tryParse(value);
-    return millis != null && millis > 0 ? UseSmileIDSampleHoldCameraMillis(millis) : null;
+    return millis != null && millis > 0
+        ? UseSmileIDSampleHoldCameraMillis(millis)
+        : null;
   }
 
   @override

@@ -27,7 +27,9 @@ class UseSmileIDSampleAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(context);
+    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
+      context,
+    );
     final bool hasInitials = initials.trim().isNotEmpty;
     // The square grows with text, because wrapping the initials renders an ellipse at 2x.
     final double side = MediaQuery.textScalerOf(context).scale(size);
@@ -45,7 +47,9 @@ class UseSmileIDSampleAvatar extends StatelessWidget {
         hasInitials ? initials : '?',
         textAlign: TextAlign.center,
         style: UseSmileIDSampleType.avatarFont.copyWith(
-          color: hasInitials ? colors.avatar.text : colors.avatar.placeholderIcon,
+          color: hasInitials
+              ? colors.avatar.text
+              : colors.avatar.placeholderIcon,
         ),
       ),
     );
@@ -56,4 +60,5 @@ class UseSmileIDSampleAvatar extends StatelessWidget {
 ///
 /// Position, not a hash of the initials, which reproduces no design order and differs per platform.
 Color avatarColorForProfile(int profileIndex) =>
-    smileProfileHues[(profileIndex < 0 ? 0 : profileIndex) % smileProfileHues.length];
+    smileProfileHues[(profileIndex < 0 ? 0 : profileIndex) %
+        smileProfileHues.length];

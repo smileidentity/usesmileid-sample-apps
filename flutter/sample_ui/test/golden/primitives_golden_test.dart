@@ -28,7 +28,9 @@ void main() {
     await goldens(tester, 'text_input_states', _textInputs);
   });
 
-  testWidgets('text inputs survive max text scale', (WidgetTester tester) async {
+  testWidgets('text inputs survive max text scale', (
+    WidgetTester tester,
+  ) async {
     await assertSurvivesMaxTextScale(tester, _textInputs());
   });
 
@@ -36,7 +38,9 @@ void main() {
     await goldens(tester, 'search_field', _searchFields);
   });
 
-  testWidgets('search fields survive max text scale', (WidgetTester tester) async {
+  testWidgets('search fields survive max text scale', (
+    WidgetTester tester,
+  ) async {
     await assertSurvivesMaxTextScale(tester, _searchFields());
   });
 
@@ -48,7 +52,9 @@ void main() {
     await goldens(tester, 'status_badges', _statusBadges);
   });
 
-  testWidgets('status badges survive max text scale', (WidgetTester tester) async {
+  testWidgets('status badges survive max text scale', (
+    WidgetTester tester,
+  ) async {
     await assertSurvivesMaxTextScale(tester, _statusBadges());
   });
 
@@ -56,7 +62,9 @@ void main() {
     await goldens(tester, 'section_label', _sectionLabels);
   });
 
-  testWidgets('section labels survive max text scale', (WidgetTester tester) async {
+  testWidgets('section labels survive max text scale', (
+    WidgetTester tester,
+  ) async {
     await assertSurvivesMaxTextScale(tester, _sectionLabels());
   });
 
@@ -86,7 +94,10 @@ Widget _avatars() => _column(<Widget>[
     children: <Widget>[
       for (int index = 0; index < 4; index++) ...<Widget>[
         if (index > 0) const SizedBox(width: SmileDimens.spacingXs),
-        UseSmileIDSampleAvatar(initials: 'P${index + 1}', containerColor: avatarColorForProfile(index)),
+        UseSmileIDSampleAvatar(
+          initials: 'P${index + 1}',
+          containerColor: avatarColorForProfile(index),
+        ),
       ],
     ],
   ),
@@ -107,13 +118,22 @@ Widget _avatars() => _column(<Widget>[
 Widget _buttons({bool loading = false}) => _column(<Widget>[
   UseSmileIDSampleButton(text: 'Continue', onPressed: () {}),
   UseSmileIDSampleButton(text: 'Continue', onPressed: () {}, enabled: false),
-  if (loading) UseSmileIDSampleButton(text: 'Continue', onPressed: () {}, loading: true),
+  if (loading)
+    UseSmileIDSampleButton(text: 'Continue', onPressed: () {}, loading: true),
   UseSmileIDSampleButton(text: 'SmartSelfie Authentication', onPressed: () {}),
 ]);
 
 Widget _textInputs() => _column(<Widget>[
-  UseSmileIDSampleTextInput(value: '', onChanged: _ignore, placeholder: 'ID number'),
-  UseSmileIDSampleTextInput(value: '22222222', onChanged: _ignore, placeholder: 'ID number'),
+  UseSmileIDSampleTextInput(
+    value: '',
+    onChanged: _ignore,
+    placeholder: 'ID number',
+  ),
+  UseSmileIDSampleTextInput(
+    value: '22222222',
+    onChanged: _ignore,
+    placeholder: 'ID number',
+  ),
   UseSmileIDSampleTextInput(
     value: '22',
     onChanged: _ignore,
@@ -129,13 +149,22 @@ Widget _textInputs() => _column(<Widget>[
   UseSmileIDSampleTextInput(
     value: 'Kobo Bank',
     onChanged: _ignore,
-    leading: (Color tint) => Icon(Icons.business, size: SmileDimens.sizeIconSm, color: tint),
+    leading: (Color tint) =>
+        Icon(Icons.business, size: SmileDimens.sizeIconSm, color: tint),
   ),
 ]);
 
 Widget _searchFields() => _column(<Widget>[
-  UseSmileIDSampleSearchField(query: '', onQueryChanged: _ignore, placeholder: 'Search country'),
-  UseSmileIDSampleSearchField(query: 'Kenya', onQueryChanged: _ignore, placeholder: 'Search country'),
+  UseSmileIDSampleSearchField(
+    query: '',
+    onQueryChanged: _ignore,
+    placeholder: 'Search country',
+  ),
+  UseSmileIDSampleSearchField(
+    query: 'Kenya',
+    onQueryChanged: _ignore,
+    placeholder: 'Search country',
+  ),
 ]);
 
 /// Four states in one shot, which is what makes a tint regression visible rather than plausible.
@@ -173,8 +202,16 @@ Widget _sectionLabels() => _column(const <Widget>[
 /// The long message is the harder case the other platforms take too, so the pair can be read.
 Widget _toasts() => _column(<Widget>[
   const UseSmileIDSampleToast(message: 'Kobo Bank created'),
-  UseSmileIDSampleToast(message: '1 verification hidden from App list', actionLabel: 'Undo', onAction: () {}),
-  UseSmileIDSampleToast(message: 'Kobo Bank created', actionLabel: 'Make active', onAction: () {}),
+  UseSmileIDSampleToast(
+    message: '1 verification hidden from App list',
+    actionLabel: 'Undo',
+    onAction: () {},
+  ),
+  UseSmileIDSampleToast(
+    message: 'Kobo Bank created',
+    actionLabel: 'Make active',
+    onAction: () {},
+  ),
 ]);
 
 void _ignore(String value) {}

@@ -7,7 +7,9 @@ import 'use_smileid_sample_typography.dart';
 /// One shape per named surface; the radius comes from the tokens and this fixes where it is applied.
 abstract final class UseSmileIDSampleShapes {
   /// A card, and the form's section surfaces.
-  static final BorderRadius card = BorderRadius.circular(SmileDimens.radiusSurface);
+  static final BorderRadius card = BorderRadius.circular(
+    SmileDimens.radiusSurface,
+  );
 
   /// A square tile.
   static final BorderRadius tile = BorderRadius.circular(SmileDimens.radiusLg);
@@ -16,13 +18,19 @@ abstract final class UseSmileIDSampleShapes {
   static const BorderRadius rowTile = BorderRadius.all(Radius.circular(10));
 
   /// A text field or a search field.
-  static final BorderRadius field = BorderRadius.circular(SmileDimens.radiusField);
+  static final BorderRadius field = BorderRadius.circular(
+    SmileDimens.radiusField,
+  );
 
   /// A pill: the primary button, the status badges and the nav bar.
-  static final BorderRadius pill = BorderRadius.circular(SmileDimens.radiusControl);
+  static final BorderRadius pill = BorderRadius.circular(
+    SmileDimens.radiusControl,
+  );
 
   /// A chip.
-  static final BorderRadius chip = BorderRadius.circular(SmileDimens.radiusChip);
+  static final BorderRadius chip = BorderRadius.circular(
+    SmileDimens.radiusChip,
+  );
 
   /// A bottom sheet, rounded at the top only.
   static final BorderRadius sheet = BorderRadius.vertical(
@@ -36,10 +44,12 @@ abstract final class UseSmileIDSampleShapes {
 /// The app's theme, built entirely from the vendored design-system tokens.
 abstract final class UseSmileIDSampleTheme {
   /// The light theme.
-  static ThemeData light() => _themeFor(Brightness.light, UseSmileIDSampleColorSchemes.light);
+  static ThemeData light() =>
+      _themeFor(Brightness.light, UseSmileIDSampleColorSchemes.light);
 
   /// The dark theme.
-  static ThemeData dark() => _themeFor(Brightness.dark, UseSmileIDSampleColorSchemes.dark);
+  static ThemeData dark() =>
+      _themeFor(Brightness.dark, UseSmileIDSampleColorSchemes.dark);
 
   /// The component tokens for the active mode; every widget reads colours through this.
   static UseSmileIDSampleColors colorsOf(BuildContext context) =>

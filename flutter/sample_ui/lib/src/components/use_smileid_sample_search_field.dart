@@ -30,11 +30,15 @@ class UseSmileIDSampleSearchField extends StatefulWidget {
   final String? testId;
 
   @override
-  State<UseSmileIDSampleSearchField> createState() => _UseSmileIDSampleSearchFieldState();
+  State<UseSmileIDSampleSearchField> createState() =>
+      _UseSmileIDSampleSearchFieldState();
 }
 
-class _UseSmileIDSampleSearchFieldState extends State<UseSmileIDSampleSearchField> {
-  late final TextEditingController _controller = TextEditingController(text: widget.query);
+class _UseSmileIDSampleSearchFieldState
+    extends State<UseSmileIDSampleSearchField> {
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.query,
+  );
   late final FocusNode _focusNode = FocusNode()..addListener(_onFocusChanged);
   bool _focused = false;
 
@@ -63,7 +67,9 @@ class _UseSmileIDSampleSearchFieldState extends State<UseSmileIDSampleSearchFiel
 
   @override
   Widget build(BuildContext context) {
-    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(context);
+    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
+      context,
+    );
     return ConstrainedBox(
       constraints: const BoxConstraints(minHeight: SmileDimens.sizeControlMd),
       child: DecoratedBox(
@@ -72,7 +78,9 @@ class _UseSmileIDSampleSearchFieldState extends State<UseSmileIDSampleSearchFiel
           borderRadius: UseSmileIDSampleShapes.field,
           border: Border.all(
             color: _focused ? colors.search.borderFocus : colors.search.border,
-            width: _focused ? SmileDimens.borderWidthThin : SmileDimens.borderWidthHairline,
+            width: _focused
+                ? SmileDimens.borderWidthThin
+                : SmileDimens.borderWidthHairline,
           ),
         ),
         child: Padding(
@@ -82,7 +90,11 @@ class _UseSmileIDSampleSearchFieldState extends State<UseSmileIDSampleSearchFiel
           ),
           child: Row(
             children: <Widget>[
-              Icon(Icons.search, size: SmileDimens.sizeIconMd, color: colors.search.icon),
+              Icon(
+                Icons.search,
+                size: SmileDimens.sizeIconMd,
+                color: colors.search.icon,
+              ),
               const SizedBox(width: SmileDimens.spacingXs),
               Expanded(
                 child: Semantics(
@@ -94,7 +106,9 @@ class _UseSmileIDSampleSearchFieldState extends State<UseSmileIDSampleSearchFiel
                     onChanged: widget.onQueryChanged,
                     maxLines: 1,
                     cursorColor: colors.search.borderFocus,
-                    style: UseSmileIDSampleType.searchFont.copyWith(color: colors.search.text),
+                    style: UseSmileIDSampleType.searchFont.copyWith(
+                      color: colors.search.text,
+                    ),
                     decoration: InputDecoration.collapsed(
                       hintText: widget.placeholder,
                       hintStyle: UseSmileIDSampleType.searchFont.copyWith(

@@ -35,7 +35,9 @@ class UseSmileIDSampleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(context);
+    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
+      context,
+    );
     final bool tappable = enabled && !loading;
     final Color background = tappable || loading
         ? colors.button.primaryBackground
@@ -55,7 +57,9 @@ class UseSmileIDSampleButton extends StatelessWidget {
           onTap: tappable ? onPressed : null,
           borderRadius: UseSmileIDSampleShapes.pill,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: SmileDimens.sizeControlLg),
+            constraints: const BoxConstraints(
+              minHeight: SmileDimens.sizeControlLg,
+            ),
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: SmileDimens.spacingLg,
@@ -74,7 +78,9 @@ class UseSmileIDSampleButton extends StatelessWidget {
                     : Text(
                         text,
                         textAlign: TextAlign.center,
-                        style: UseSmileIDSampleType.buttonFont.copyWith(color: foreground),
+                        style: UseSmileIDSampleType.buttonFont.copyWith(
+                          color: foreground,
+                        ),
                       ),
               ),
             ),

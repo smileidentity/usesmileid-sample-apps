@@ -30,7 +30,9 @@ class UseSmileIDSampleSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(context);
+    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
+      context,
+    );
     // `adaptive` is what makes this native on both hosts: Material on Android, Cupertino on iOS,
     // which is also why only the on-track colour survives on iOS — the same divergence that app has.
     return Semantics(
@@ -38,24 +40,29 @@ class UseSmileIDSampleSwitch extends StatelessWidget {
       child: Switch.adaptive(
         value: value,
         onChanged: enabled ? onChanged : null,
-        thumbColor: WidgetStateProperty<Color>.fromMap(<WidgetStatesConstraint, Color>{
-          WidgetState.disabled & WidgetState.selected: colors.surface,
-          WidgetState.disabled: colors.surfaceMuted,
-          WidgetState.any: colors.surface,
-        }),
-        trackColor: WidgetStateProperty<Color>.fromMap(<WidgetStatesConstraint, Color>{
-          WidgetState.disabled & WidgetState.selected: colors.textMuted,
-          WidgetState.disabled: colors.border,
-          WidgetState.selected: colors.primary,
-          WidgetState.any: colors.border,
-        }),
-        trackOutlineColor: WidgetStateProperty<Color>.fromMap(<WidgetStatesConstraint, Color>{
-          WidgetState.disabled & WidgetState.selected: colors.textMuted,
-          WidgetState.disabled: colors.border,
-          WidgetState.selected: colors.primary,
-          WidgetState.any: colors.border,
-        }),
-        trackOutlineWidth: const WidgetStatePropertyAll<double>(SmileDimens.borderWidthThin),
+        thumbColor:
+            WidgetStateProperty<Color>.fromMap(<WidgetStatesConstraint, Color>{
+              WidgetState.disabled & WidgetState.selected: colors.surface,
+              WidgetState.disabled: colors.surfaceMuted,
+              WidgetState.any: colors.surface,
+            }),
+        trackColor:
+            WidgetStateProperty<Color>.fromMap(<WidgetStatesConstraint, Color>{
+              WidgetState.disabled & WidgetState.selected: colors.textMuted,
+              WidgetState.disabled: colors.border,
+              WidgetState.selected: colors.primary,
+              WidgetState.any: colors.border,
+            }),
+        trackOutlineColor:
+            WidgetStateProperty<Color>.fromMap(<WidgetStatesConstraint, Color>{
+              WidgetState.disabled & WidgetState.selected: colors.textMuted,
+              WidgetState.disabled: colors.border,
+              WidgetState.selected: colors.primary,
+              WidgetState.any: colors.border,
+            }),
+        trackOutlineWidth: const WidgetStatePropertyAll<double>(
+          SmileDimens.borderWidthThin,
+        ),
       ),
     );
   }

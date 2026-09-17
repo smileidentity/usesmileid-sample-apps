@@ -14,7 +14,8 @@ void main() {
       .toList();
 
   List<Map<String, Object?>> products() {
-    final Map<String, Object?> grid = scenarios['products']! as Map<String, Object?>;
+    final Map<String, Object?> grid =
+        scenarios['products']! as Map<String, Object?>;
     return objects(grid['sections'])
         .expand((Map<String, Object?> section) => objects(section['items']))
         .toList();
@@ -24,7 +25,9 @@ void main() {
     final List<String> expected = idsOf('flow');
     expect(expected, isNotEmpty, reason: 'extracted no flow scenarios');
     expect(
-      UseSmileIDSampleScenario.values.map((UseSmileIDSampleScenario it) => it.id),
+      UseSmileIDSampleScenario.values.map(
+        (UseSmileIDSampleScenario it) => it.id,
+      ),
       expected,
     );
   });
@@ -33,7 +36,9 @@ void main() {
     final List<String> expected = idsOf('theme');
     expect(expected, isNotEmpty, reason: 'extracted no theme scenarios');
     expect(
-      UseSmileIDSampleThemeScenario.values.map((UseSmileIDSampleThemeScenario it) => it.id),
+      UseSmileIDSampleThemeScenario.values.map(
+        (UseSmileIDSampleThemeScenario it) => it.id,
+      ),
       expected,
     );
   });
@@ -43,14 +48,23 @@ void main() {
         .map((Map<String, Object?> it) => it['id']! as String)
         .toList();
     expect(expected, isNotEmpty, reason: 'extracted no products');
-    expect(UseSmileIDSampleProduct.values.map((UseSmileIDSampleProduct it) => it.id), expected);
+    expect(
+      UseSmileIDSampleProduct.values.map((UseSmileIDSampleProduct it) => it.id),
+      expected,
+    );
   });
 
   test('labels, card titles and card families match the spec', () {
     // Four platforms must abbreviate identically: "Enhanced Doc." and "Enh. Doc" are both reasonable.
     expect(
       UseSmileIDSampleProduct.values
-          .map((UseSmileIDSampleProduct it) => <String>[it.label, it.cardTitle, it.cardFamily])
+          .map(
+            (UseSmileIDSampleProduct it) => <String>[
+              it.label,
+              it.cardTitle,
+              it.cardFamily,
+            ],
+          )
           .toList(),
       products()
           .map(
@@ -67,7 +81,13 @@ void main() {
   test('the capture and ID-details flags match the spec', () {
     expect(
       UseSmileIDSampleProduct.values
-          .map((UseSmileIDSampleProduct it) => <bool>[it.capture, it.needsIdDetails, it.needsUserDetails])
+          .map(
+            (UseSmileIDSampleProduct it) => <bool>[
+              it.capture,
+              it.needsIdDetails,
+              it.needsUserDetails,
+            ],
+          )
           .toList(),
       products()
           .map(
@@ -84,7 +104,10 @@ void main() {
   test('the SmartSelfie products carry the mark', () {
     expect(
       UseSmileIDSampleProduct.values
-          .where((UseSmileIDSampleProduct it) => it.cardFamily == UseSmileIDSampleMarks.smartSelfie)
+          .where(
+            (UseSmileIDSampleProduct it) =>
+                it.cardFamily == UseSmileIDSampleMarks.smartSelfie,
+          )
           .map((UseSmileIDSampleProduct it) => it.id),
       <String>['smartSelfieEnrollment', 'smartSelfieAuth'],
     );
@@ -101,14 +124,18 @@ void main() {
 
   test('the two section headings are the ones the ruling settled', () {
     expect(
-      UseSmileIDSampleProductSection.values.map((UseSmileIDSampleProductSection it) => it.label),
+      UseSmileIDSampleProductSection.values.map(
+        (UseSmileIDSampleProductSection it) => it.label,
+      ),
       <String>['Authentication', 'Onboarding'],
     );
   });
 
   test('the four statuses are Title case, not upper-cased', () {
     expect(
-      UseSmileIDSampleStatus.values.map((UseSmileIDSampleStatus it) => it.label),
+      UseSmileIDSampleStatus.values.map(
+        (UseSmileIDSampleStatus it) => it.label,
+      ),
       <String>['Clear', 'Attention', 'Blocked', 'Processing'],
     );
   });

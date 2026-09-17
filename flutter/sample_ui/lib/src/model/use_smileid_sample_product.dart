@@ -110,8 +110,11 @@ enum UseSmileIDSampleProduct {
   bool get needsUserDetails => true;
 
   /// The products in one section, in design order.
-  static List<UseSmileIDSampleProduct> of(UseSmileIDSampleProductSection section) =>
-      values.where((UseSmileIDSampleProduct it) => it.section == section).toList();
+  static List<UseSmileIDSampleProduct> of(
+    UseSmileIDSampleProductSection section,
+  ) => values
+      .where((UseSmileIDSampleProduct it) => it.section == section)
+      .toList();
 
   /// Resolves an id from a launch argument, falling back rather than throwing on a rename.
   static UseSmileIDSampleProduct? byId(String? id) =>

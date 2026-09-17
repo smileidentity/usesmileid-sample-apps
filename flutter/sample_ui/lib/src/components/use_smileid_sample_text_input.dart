@@ -59,11 +59,14 @@ class UseSmileIDSampleTextInput extends StatefulWidget {
   final Widget Function(Color tint)? trailing;
 
   @override
-  State<UseSmileIDSampleTextInput> createState() => _UseSmileIDSampleTextInputState();
+  State<UseSmileIDSampleTextInput> createState() =>
+      _UseSmileIDSampleTextInputState();
 }
 
 class _UseSmileIDSampleTextInputState extends State<UseSmileIDSampleTextInput> {
-  late final TextEditingController _controller = TextEditingController(text: widget.value);
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.value,
+  );
   late final FocusNode _focusNode = FocusNode()..addListener(_onFocusChanged);
   bool _focused = false;
 
@@ -92,7 +95,9 @@ class _UseSmileIDSampleTextInputState extends State<UseSmileIDSampleTextInput> {
 
   @override
   Widget build(BuildContext context) {
-    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(context);
+    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
+      context,
+    );
     final Color borderColor = widget.isError
         ? colors.input.borderError
         : _focused
@@ -107,10 +112,14 @@ class _UseSmileIDSampleTextInputState extends State<UseSmileIDSampleTextInput> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: SmileDimens.sizeControlMd),
+          constraints: const BoxConstraints(
+            minHeight: SmileDimens.sizeControlMd,
+          ),
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: widget.enabled ? colors.input.background : colors.surfaceMuted,
+              color: widget.enabled
+                  ? colors.input.background
+                  : colors.surfaceMuted,
               borderRadius: UseSmileIDSampleShapes.field,
               border: Border.all(color: borderColor, width: borderWidth),
             ),
@@ -125,7 +134,9 @@ class _UseSmileIDSampleTextInputState extends State<UseSmileIDSampleTextInput> {
                     SizedBox(
                       width: _leadingSide,
                       height: _leadingSide,
-                      child: Center(child: widget.leading!(colors.input.placeholder)),
+                      child: Center(
+                        child: widget.leading!(colors.input.placeholder),
+                      ),
                     ),
                     const SizedBox(width: SmileDimens.spacingXs),
                   ],
@@ -167,7 +178,9 @@ class _UseSmileIDSampleTextInputState extends State<UseSmileIDSampleTextInput> {
       obscureText: widget.masked,
       autocorrect: !widget.masked,
       enableSuggestions: !widget.masked,
-      keyboardType: widget.masked ? TextInputType.visiblePassword : widget.keyboardType,
+      keyboardType: widget.masked
+          ? TextInputType.visiblePassword
+          : widget.keyboardType,
       maxLines: 1,
       cursorColor: colors.input.borderFocus,
       style: UseSmileIDSampleType.inputFont.copyWith(
@@ -175,7 +188,9 @@ class _UseSmileIDSampleTextInputState extends State<UseSmileIDSampleTextInput> {
       ),
       decoration: InputDecoration.collapsed(
         hintText: widget.placeholder,
-        hintStyle: UseSmileIDSampleType.inputFont.copyWith(color: colors.input.placeholder),
+        hintStyle: UseSmileIDSampleType.inputFont.copyWith(
+          color: colors.input.placeholder,
+        ),
       ),
     ),
   );

@@ -29,7 +29,13 @@ const Key goldenRoot = Key('golden_root');
 /// a baseline that cannot draw a mark is not coverage of it.
 Future<void> loadSampleFonts() async {
   final FontLoader faces = FontLoader(useSmileIDSampleFontFamily);
-  for (final String face in <String>['Regular', 'Medium', 'SemiBold', 'Bold', 'ExtraBold']) {
+  for (final String face in <String>[
+    'Regular',
+    'Medium',
+    'SemiBold',
+    'Bold',
+    'ExtraBold',
+  ]) {
     final File file = File('assets/fonts/DMSans-$face.ttf');
     faces.addFont(file.readAsBytes().then<ByteData>(ByteData.sublistView));
   }
@@ -49,8 +55,16 @@ Future<void> goldens(
 }) async {
   for (final (String suffix, ThemeData theme, UseSmileIDSampleColors colors)
       in <(String, ThemeData, UseSmileIDSampleColors)>[
-        ('light', UseSmileIDSampleTheme.light(), UseSmileIDSampleColorSchemes.light),
-        ('dark', UseSmileIDSampleTheme.dark(), UseSmileIDSampleColorSchemes.dark),
+        (
+          'light',
+          UseSmileIDSampleTheme.light(),
+          UseSmileIDSampleColorSchemes.light,
+        ),
+        (
+          'dark',
+          UseSmileIDSampleTheme.dark(),
+          UseSmileIDSampleColorSchemes.dark,
+        ),
       ]) {
     await _host(tester, theme, colors, textScale, build());
     await expectLater(
@@ -86,7 +100,11 @@ Future<void> assertSurvivesMaxTextScale(
   }
 
   collect(tester.renderObject(find.byKey(goldenRoot)));
-  expect(paragraphs, isNotEmpty, reason: 'collected no text to check at ${textScale}x');
+  expect(
+    paragraphs,
+    isNotEmpty,
+    reason: 'collected no text to check at ${textScale}x',
+  );
 
   final List<String> truncated = <String>[];
   final List<String> split = <String>[];
@@ -107,8 +125,16 @@ Future<void> assertSurvivesMaxTextScale(
     painter.dispose();
   }
 
-  expect(truncated, isEmpty, reason: 'text clipped or ellipsised at ${textScale}x text scale');
-  expect(split, isEmpty, reason: 'a word broke across lines at ${textScale}x text scale');
+  expect(
+    truncated,
+    isEmpty,
+    reason: 'text clipped or ellipsised at ${textScale}x text scale',
+  );
+  expect(
+    split,
+    isEmpty,
+    reason: 'a word broke across lines at ${textScale}x text scale',
+  );
 }
 
 /// Each break that landed between two non-space characters, reported as the two halves it made.
@@ -125,7 +151,9 @@ List<String> _midWordBreaks(TextPainter painter, String text) {
         end < text.length &&
         !_isWhitespace(text[end - 1]) &&
         !_isWhitespace(text[end])) {
-      breaks.add('${text.substring(range.start, end)} | ${text.substring(end)}');
+      breaks.add(
+        '${text.substring(range.start, end)} | ${text.substring(end)}',
+      );
     }
   }
   return breaks;

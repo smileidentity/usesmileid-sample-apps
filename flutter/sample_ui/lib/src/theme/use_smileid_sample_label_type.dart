@@ -12,6 +12,8 @@ TextStyle useSmileIDSampleLabelStyle(TextStyle base) {
   return base.copyWith(
     fontSize: smileLabelSize,
     letterSpacing: smileLabelTracking,
-    height: size == null || ratio == null ? ratio : size * ratio / smileLabelSize,
+    height: size == null || ratio == null
+        ? ratio
+        : size * ratio / smileLabelSize,
   );
 }
