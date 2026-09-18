@@ -6,6 +6,7 @@ import {
   smileLightColors,
   useSmileIDSampleJobStore,
   useSmileIDSampleProfileStore,
+  useSmileIDSampleSettingsStore,
 } from '@smileid/sample-ui';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
@@ -22,7 +23,11 @@ export const unstable_settings = { initialRouteName: '(tabs)' };
 /// The navigation host. Every route is a file under app/, matching the expo column of spec/routes.json.
 export default function RootLayout() {
   const scheme = useColorScheme();
-  const dark = scheme === 'dark';
+  const darkMode = useSmileIDSampleSettingsStore((state) => state.settings.darkMode);
+  const settingsLoaded = useSmileIDSampleSettingsStore((state) => state.loaded);
+  const loadSettings = useSmileIDSampleSettingsStore((state) => state.load);
+  // The switch OVERRIDES to dark and off follows the device, which is the twin's themeMode, not a preference.
+  const dark = (settingsLoaded && darkMode) || scheme === 'dark';
   const colors = dark ? smileDarkColors : smileLightColors;
   const args = useLaunchArgs();
   const resetProfiles = useSmileIDSampleProfileStore((state) => state.reset);
@@ -30,6 +35,10 @@ export default function RootLayout() {
 
   // The five faces are bundled rather than fetched: a provider would make text depend on the network.
   const [fontsLoaded] = useFonts(smileFontAssets);
+
+  useEffect(() => {
+    void loadSettings();
+  }, [loadSettings]);
 
   useEffect(() => {
     resetProfiles(smileIDSampleProfilesForLaunch(args));

@@ -1,16 +1,30 @@
-import { useSmileIDSampleJobStore } from '@smileid/sample-ui';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  useSmileIDSampleJobStore,
+  useSmileIDSampleSettingsStore,
+  useSmileIDSampleTheme,
+} from '@smileid/sample-ui';
 import { act, render, waitFor } from '@testing-library/react-native';
 import * as Linking from 'expo-linking';
+import { Text, useColorScheme } from 'react-native';
 
 import RootLayout from '../app/_layout';
 
 jest.mock('expo-linking', () => ({ getInitialURL: jest.fn() }));
+jest.mock('react-native/Libraries/Utilities/useColorScheme');
 jest.mock('expo-font', () => ({ useFonts: () => [true] }));
-jest.mock('expo-status-bar', () => ({ StatusBar: () => null }));
-// The router owns navigation, which none of this wiring is about; passing children through renders the tree.
-jest.mock('expo-router', () => {
-  function Stack({ children }: { children?: unknown }) {
+jest.mock('expo-status-bar', () => ({ StatusBar: function StatusBar() { return null; } }));
+// Without pinned metrics the real provider withholds its children until it has measured, so nothing renders.
+jest.mock('react-native-safe-area-context', () => ({
+  SafeAreaProvider: function SafeAreaProvider({ children }: { children?: unknown }) {
     return children;
+  },
+  useSafeAreaInsets: () => ({ top: 44, bottom: 34, left: 0, right: 0 }),
+}));
+// The router owns navigation; the stand-in renders the probe, which reads the theme from inside the provider.
+jest.mock('expo-router', () => {
+  function Stack() {
+    return <MockSchemeProbe />;
   }
   Stack.Screen = function StackScreen() {
     return null;
@@ -33,8 +47,34 @@ const launch = async (url: string | null) => {
 
 const jobs = () => useSmileIDSampleJobStore.getState().jobs ?? [];
 
-beforeEach(() => {
+const systemScheme = useColorScheme as jest.MockedFunction<typeof useColorScheme>;
+
+/// Reads the theme the provider actually resolved, rather than inferring it from a colour.
+const MockSchemeProbe = () => (
+  <Text testID="scheme">{useSmileIDSampleTheme().dark ? 'dark' : 'light'}</Text>
+);
+
+const resolvedScheme = async ({
+  darkMode,
+  system,
+}: {
+  darkMode: boolean;
+  system: 'light' | 'dark';
+}) => {
+  systemScheme.mockReturnValue(system);
+  // Seeded in storage, not in the store: the root's own load() runs and would overwrite a set state.
+  await AsyncStorage.setItem('sample.setting.darkMode', String(darkMode));
+  getInitialURL.mockResolvedValue(null);
+  const { getByTestId } = await render(<RootLayout />);
+  await waitFor(() => expect(useSmileIDSampleSettingsStore.getState().loaded).toBe(true));
+  return getByTestId('scheme');
+};
+
+beforeEach(async () => {
+  await AsyncStorage.clear();
   useSmileIDSampleJobStore.getState().reset();
+  useSmileIDSampleSettingsStore.getState().reset();
+  systemScheme.mockReturnValue('light');
 });
 
 describe('seedJobs decides whether the verifications list has anything in it', () => {
@@ -52,5 +92,26 @@ describe('seedJobs decides whether the verifications list has anything in it', (
   it('seeds nothing on a plain cold start, so a partner sees only their own data', async () => {
     await launch(null);
     expect(jobs()).toEqual([]);
+  });
+});
+
+describe('the Dark Mode switch reaches the theme', () => {
+  it('overrides a light device to dark when the switch is on', async () => {
+    expect(await resolvedScheme({ darkMode: true, system: 'light' })).toHaveTextContent('dark');
+  });
+
+  it('follows a dark device when the switch is off, rather than forcing light', async () => {
+    expect(await resolvedScheme({ darkMode: false, system: 'dark' })).toHaveTextContent('dark');
+  });
+
+  it('stays light when neither asks for dark', async () => {
+    expect(await resolvedScheme({ darkMode: false, system: 'light' })).toHaveTextContent('light');
+  });
+
+  it('loads the stored settings at root, or the switch has nothing to read', async () => {
+    const load = jest.spyOn(useSmileIDSampleSettingsStore.getState(), 'load');
+    getInitialURL.mockResolvedValue(null);
+    await render(<RootLayout />);
+    await waitFor(() => expect(load).toHaveBeenCalled());
   });
 });
