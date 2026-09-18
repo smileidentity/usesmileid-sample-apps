@@ -18,7 +18,7 @@
 - **Depends on**: none
 - **Category**: bug
 - **Planned at**: commit `2d9ba17`, 2026-09-17
-- **Landed so far**: step 6 (#107), step 1 (#107 lane, #108 test), step 2 (#109), step 4 (#110), step 5 (#111). Only step 3's test remains.
+- **Landed so far**: every step. Step 6 (#107), step 1 (#107 lane, #108 test), step 2 (#109), step 4 (#110), step 5 (#111), step 3's owed test (#112).
 
 ## Why this matters
 
@@ -297,7 +297,7 @@ second that renders it with no URL and asserts `jobs` is empty. Both pass.
 
 **Commit**: `fix: seed the Expo verification fixtures from seedJobs`
 
-### Step 3: show the removal confirmation and offer Undo
+### Step 3: show the removal confirmation and offer Undo — LANDED (code earlier, test #112)
 
 **Done on this branch** (`1b199cf`, `67a6b2b`), except the test under **Verify**, which needs step 1's
 lane. Read the rest of this step as the description of what to test, not what to build.

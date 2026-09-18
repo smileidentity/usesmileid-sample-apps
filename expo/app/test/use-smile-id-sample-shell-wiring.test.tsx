@@ -1,17 +1,20 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   SMILE_ID_SAMPLE_NOTICE_WINDOW_MS,
+  UseSmileIDSampleThemeProvider,
   UseSmileIDSampleTransientNoticeHost,
   useSmileIDSampleJobStore,
   useSmileIDSampleTransientNotice,
   useSmileIDSampleSettingsStore,
   useSmileIDSampleTheme,
 } from '@smileid/sample-ui';
-import { act, render, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import * as Linking from 'expo-linking';
+import { BottomTabBarHeightContext } from 'expo-router/tabs';
 import { useEffect } from 'react';
 import { Text, useColorScheme } from 'react-native';
 
+import Verifications from '../app/(tabs)/verifications';
 import RootLayout from '../app/_layout';
 
 jest.mock('expo-linking', () => ({ getInitialURL: jest.fn() }));
@@ -27,6 +30,7 @@ jest.mock('react-native-safe-area-context', () => ({
 }));
 // The router owns navigation; the stand-in renders the probe, which reads the theme from inside the provider.
 jest.mock('expo-router', () => {
+  const useRouter = () => ({ push: jest.fn(), back: jest.fn(), replace: jest.fn() });
   function Stack() {
     const Probe = mockProbe;
     return <Probe />;
@@ -34,7 +38,7 @@ jest.mock('expo-router', () => {
   Stack.Screen = function StackScreen() {
     return null;
   };
-  return { Stack };
+  return { Stack, useRouter };
 });
 
 const getInitialURL = Linking.getInitialURL as jest.MockedFunction<typeof Linking.getInitialURL>;
@@ -176,5 +180,47 @@ describe('noticeWindow decides how long a transient notice stays', () => {
       jest.advanceTimersByTime(SMILE_ID_SAMPLE_NOTICE_WINDOW_MS + 1);
     });
     expect(screen.queryByText(/hidden from App list/)).toBeNull();
+  });
+});
+
+describe('hiding a verification is confirmed and can be undone', () => {
+  const renderList = async () => {
+    await useSmileIDSampleJobStore.getState().seedFixtures(Date.now());
+    return render(
+      <UseSmileIDSampleThemeProvider dark={false}>
+        <BottomTabBarHeightContext.Provider value={100}>
+          <Verifications />
+        </BottomTabBarHeightContext.Provider>
+      </UseSmileIDSampleThemeProvider>,
+    );
+  };
+
+  it('confirms the removal and puts the row back when Undo is pressed', async () => {
+    const screen = await renderList();
+    const before = useSmileIDSampleJobStore.getState().jobs ?? [];
+    expect(before.length).toBeGreaterThan(0);
+
+    await act(async () => {
+      await useSmileIDSampleJobStore.getState().remove([before[0]!.id]);
+    });
+    await waitFor(() => expect(screen.queryByText('1 verification removed')).not.toBeNull());
+    expect(useSmileIDSampleJobStore.getState().jobs).toHaveLength(before.length - 1);
+
+    await act(async () => {
+      fireEvent.press(screen.getByText('Undo'));
+    });
+    await waitFor(() =>
+      expect(useSmileIDSampleJobStore.getState().jobs).toHaveLength(before.length),
+    );
+  });
+
+  it('consumes the confirmation on sight, so returning cannot replay one already acted on', async () => {
+    const screen = await renderList();
+    const before = useSmileIDSampleJobStore.getState().jobs ?? [];
+    await act(async () => {
+      await useSmileIDSampleJobStore.getState().remove([before[0]!.id]);
+    });
+    await waitFor(() => expect(screen.queryByText('1 verification removed')).not.toBeNull());
+    expect(useSmileIDSampleJobStore.getState().removals).toEqual([]);
   });
 });
