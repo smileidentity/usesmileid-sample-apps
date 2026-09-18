@@ -30,6 +30,9 @@ class UseSmileIDSampleShell extends ConsumerWidget {
     final UseSmileIDSampleSelection selection = ref.watch(
       useSmileIDSampleSelectionProvider,
     );
+    final bool showsSelectionBar = _showsSelectionBar(selection);
+    final bool showsNavBar =
+        useSmileIDSampleShowsNavBar(location) && !showsSelectionBar;
     // Back from a tab that is not the first returns to products rather than leaving the app.
     return PopScope(
       canPop: shell.currentIndex == _productsBranch,
@@ -40,34 +43,26 @@ class UseSmileIDSampleShell extends ConsumerWidget {
       },
       child: Scaffold(
         backgroundColor: colors.background,
+        // The body runs under the floating bar, which is what publishes the bar's laid-out height
+        // as the body's bottom padding for `useSmileIDSampleNavBarClearance` to read.
+        extendBody: showsNavBar,
         // The exception that proves R13's rule: the selection bar is opaque with a top edge, so it
         // REPLACES the bottom chrome and the content does stop above it.
-        bottomNavigationBar: _showsSelectionBar(selection)
+        bottomNavigationBar: showsSelectionBar
             ? UseSmileIDSampleSelectionBar(
                 selectedCount: selection.ids.length,
                 onRemove: () => useSmileIDSampleRemoveJobs(ref, selection.ids),
               )
+            : showsNavBar
+            ? UseSmileIDSampleNavBar(
+                selected: UseSmileIDSampleNavItem.values[shell.currentIndex],
+                onSelect: (UseSmileIDSampleNavItem item) => _select(item.index),
+                onTokenTap: () {},
+              )
             : null,
-        body: Stack(
-          children: <Widget>[
-            // Top only: the bar draws over the bottom inset itself, and insetting here as well
-            // would lift it by the system bar twice.
-            SafeArea(bottom: false, child: shell),
-            if (useSmileIDSampleShowsNavBar(location) &&
-                !_showsSelectionBar(selection))
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: UseSmileIDSampleNavBar(
-                  selected: UseSmileIDSampleNavItem.values[shell.currentIndex],
-                  onSelect: (UseSmileIDSampleNavItem item) =>
-                      _select(item.index),
-                  onTokenTap: () {},
-                ),
-              ),
-          ],
-        ),
+        // Top only: the bar draws over the bottom inset itself, and insetting here as well
+        // would lift it by the system bar twice.
+        body: SafeArea(bottom: false, child: shell),
       ),
     );
   }

@@ -37,21 +37,17 @@ Future<void> _chromeGoldens(
   fillsHost: true,
 );
 
-/// The shell's own layout: the page, then the bar over it, anchored to the bottom.
-Widget _shell(UseSmileIDSampleNavItem selected, Widget page) => Stack(
-  children: <Widget>[
-    page,
-    Positioned(
-      left: 0,
-      right: 0,
-      bottom: 0,
-      child: UseSmileIDSampleNavBar(
-        selected: selected,
-        onSelect: _ignoreNavItem,
-        onTokenTap: () {},
-      ),
-    ),
-  ],
+/// The shell's own layout, slot for slot: only this reserves the room the app reserves.
+Widget _shell(UseSmileIDSampleNavItem selected, Widget page) => Scaffold(
+  // Transparent, so the host's page colour still reaches the capture.
+  backgroundColor: Colors.transparent,
+  extendBody: true,
+  bottomNavigationBar: UseSmileIDSampleNavBar(
+    selected: selected,
+    onSelect: _ignoreNavItem,
+    onTokenTap: () {},
+  ),
+  body: page,
 );
 
 Widget _overProducts() => Builder(

@@ -300,8 +300,6 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
               ),
             ),
           ),
-          // The bar floats over the content, so the last row needs its own room to scroll clear.
-          const SizedBox(height: _navBarClearance),
         ],
       ),
     );
@@ -381,6 +379,3 @@ class _Section extends StatelessWidget {
 /// The mark is one constant, so a row that stops carrying it fails a test rather than on a device.
 const String _enhancedSmartSelfieTitle =
     'Enhanced ${UseSmileIDSampleMarks.smartSelfie}';
-
-/// The floating bar's own height plus its margins; the screen is not inset by it.
-const double _navBarClearance = 96;

@@ -296,12 +296,9 @@ class _NavBarTab extends StatelessWidget {
   }
 }
 
-/// The room a screen leaves below its last row so it can scroll clear of the floating bar.
+/// The bar's height, which the shell's `extendBody` bottom slot measures into the body's padding, plus a gap.
 double useSmileIDSampleNavBarClearance(BuildContext context) =>
-    SmileDimens.spacingSm * 2 +
-    MediaQuery.textScalerOf(context).scale(_tokenSize) +
-    MediaQuery.viewPaddingOf(context).bottom +
-    SmileDimens.spacingMd;
+    MediaQuery.paddingOf(context).bottom + SmileDimens.spacingMd;
 
 /// A spacing token standing in for an elevation, because no token carries one — see the
 /// `floatingElevation` delta. It matches the design's 8 y-offset, which is the reproducible half.
