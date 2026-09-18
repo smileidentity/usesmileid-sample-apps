@@ -369,6 +369,12 @@ library already owns. Leave the two `href: null` rows at `:37-38` exactly as the
 
 Read the component's props before writing the call — do not assume the signature.
 
+**Clearance**: reserve the bar's *measured* height, never a computed one. Flutter now takes it from
+the laid-out bar (`flutter/app/lib/src/use_smileid_sample_shell.dart`: the bar sits in Scaffold's
+bottom slot under `extendBody`, which publishes its height to the body as bottom padding in the same
+frame), matching Android's `onSizeChanged` and iOS's `.safeAreaInset`. A formula over the token's
+`minHeight` cannot see the label wrap and left the last row under the bar at 320dp.
+
 **Verify**: `cd expo && pnpm exec eslint . && pnpm --filter usesmileid-sample-expo exec tsc --noEmit`
 → both exit 0. Then `cd expo && pnpm --filter @smileid/sample-ui exec jest --ci` → all pass with **no
 new obsolete or written snapshots**. If any golden changes, STOP (see STOP conditions).

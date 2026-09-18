@@ -29,7 +29,12 @@ void main() {
   testWidgets('data field rows survive max text scale', (
     WidgetTester tester,
   ) async {
-    await assertSurvivesMaxTextScale(tester, _dataFieldRows());
+    await assertSurvivesMaxTextScale(
+      tester,
+      _dataFieldRows(),
+      // A 36-character job id fits no value column at 2x, so where it breaks is not a layout call.
+      knownOpenWords: const <String>{'7d2f01aa-4c1e'},
+    );
   });
 
   testWidgets('key value edit row', (WidgetTester tester) async {

@@ -37,72 +37,60 @@ Future<void> _chromeGoldens(
   fillsHost: true,
 );
 
-/// The shell's own layout: the page, then the bar over it, anchored to the bottom.
-Widget _shell(UseSmileIDSampleNavItem selected, Widget page) => Stack(
-  children: <Widget>[
-    page,
-    Positioned(
-      left: 0,
-      right: 0,
-      bottom: 0,
-      child: UseSmileIDSampleNavBar(
-        selected: selected,
-        onSelect: _ignoreNavItem,
-        onTokenTap: () {},
-      ),
-    ),
-  ],
+/// The shell's own layout, slot for slot; [page] builds in the body, where the bar's height reaches.
+Widget _shell(UseSmileIDSampleNavItem selected, WidgetBuilder page) => Scaffold(
+  // Transparent, so the host's page colour still reaches the capture.
+  backgroundColor: Colors.transparent,
+  extendBody: true,
+  bottomNavigationBar: UseSmileIDSampleNavBar(
+    selected: selected,
+    onSelect: _ignoreNavItem,
+    onTokenTap: () {},
+  ),
+  body: Builder(builder: page),
 );
 
-Widget _overProducts() => Builder(
-  builder: (BuildContext context) => _shell(
-    UseSmileIDSampleNavItem.products,
-    UseSmileIDSampleProductsScreen(
-      state: UseSmileIDSampleProductsState(
-        initials: 'KB',
-        avatarColor: avatarColorForProfile(0),
-      ),
-      onProductTap: _ignoreProduct,
-      onProfileTap: () {},
-      onScanTap: () {},
-      bottomInset: useSmileIDSampleNavBarClearance(context),
+Widget _overProducts() => _shell(
+  UseSmileIDSampleNavItem.products,
+  (BuildContext context) => UseSmileIDSampleProductsScreen(
+    state: UseSmileIDSampleProductsState(
+      initials: 'KB',
+      avatarColor: avatarColorForProfile(0),
     ),
+    onProductTap: _ignoreProduct,
+    onProfileTap: () {},
+    onScanTap: () {},
+    bottomInset: useSmileIDSampleNavBarClearance(context),
   ),
 );
 
-Widget _overVerifications() => Builder(
-  builder: (BuildContext context) => _shell(
-    UseSmileIDSampleNavItem.verifications,
-    ListView(
-      padding: EdgeInsets.only(
-        bottom: useSmileIDSampleNavBarClearance(context),
+Widget _overVerifications() => _shell(
+  UseSmileIDSampleNavItem.verifications,
+  (BuildContext context) => ListView(
+    padding: EdgeInsets.only(bottom: useSmileIDSampleNavBarClearance(context)),
+    children: const <Widget>[
+      UseSmileIDSampleEmptyState(
+        text: 'No verifications yet',
+        supportingText: 'Start a product above and the job lands here.',
       ),
-      children: const <Widget>[
-        UseSmileIDSampleEmptyState(
-          text: 'No verifications yet',
-          supportingText: 'Start a product above and the job lands here.',
-        ),
-      ],
-    ),
+    ],
   ),
 );
 
-Widget _overSettings() => Builder(
-  builder: (BuildContext context) => _shell(
-    UseSmileIDSampleNavItem.settings,
-    UseSmileIDSampleSettingsScreen(
-      state: const UseSmileIDSampleSettingsState(
-        settings: UseSmileIDSampleSettings(),
-        organisation: 'Default profile',
-        initials: 'DP',
-        versionLabel: 'Smile ID · 1.0.0',
-      ),
-      onSettingChanged: _ignoreSetting,
-      onProfileTap: () {},
-      onNavRowTap: _ignoreNavRow,
-      onSignOut: () {},
-      bottomInset: useSmileIDSampleNavBarClearance(context),
+Widget _overSettings() => _shell(
+  UseSmileIDSampleNavItem.settings,
+  (BuildContext context) => UseSmileIDSampleSettingsScreen(
+    state: const UseSmileIDSampleSettingsState(
+      settings: UseSmileIDSampleSettings(),
+      organisation: 'Default profile',
+      initials: 'DP',
+      versionLabel: 'Smile ID · 1.0.0',
     ),
+    onSettingChanged: _ignoreSetting,
+    onProfileTap: () {},
+    onNavRowTap: _ignoreNavRow,
+    onSignOut: () {},
+    bottomInset: useSmileIDSampleNavBarClearance(context),
   ),
 );
 

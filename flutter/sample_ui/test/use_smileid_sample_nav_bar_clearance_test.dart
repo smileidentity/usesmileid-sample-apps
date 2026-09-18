@@ -6,42 +6,92 @@ import 'golden/golden_harness.dart';
 
 /// The bar floats over the page and insets nothing, so each screen reserves its own room.
 void main() {
-  for (final double scale in <double>[1, 1.3, 1.5, 1.75, maxTextScale]) {
-    testWidgets('the reserved clearance covers the bar at text scale $scale', (
-      WidgetTester tester,
-    ) async {
-      late double clearance;
-      await tester.pumpWidget(
-        MediaQuery(
-          data: MediaQueryData(textScaler: TextScaler.linear(scale)),
-          child: MaterialApp(
-            theme: UseSmileIDSampleTheme.light(),
-            home: Builder(
-              builder: (BuildContext context) {
-                clearance = useSmileIDSampleNavBarClearance(context);
-                return Align(
-                  alignment: Alignment.bottomCenter,
-                  child: UseSmileIDSampleNavBar(
-                    selected: UseSmileIDSampleNavItem.products,
-                    onSelect: (UseSmileIDSampleNavItem item) {},
-                    onTokenTap: () {},
+  setUpAll(loadSampleTextFonts);
+
+  for (final double width in <double>[_smallestPhone, goldenWidth]) {
+    for (final double scale in <double>[1, 1.3, 1.5, 1.75, maxTextScale]) {
+      testWidgets('the last row clears the bar at ${width}dp and scale $scale', (
+        WidgetTester tester,
+      ) async {
+        tester.view
+          ..devicePixelRatio = 1
+          ..physicalSize = Size(width, _hostHeight)
+          ..viewPadding = const FakeViewPadding(bottom: _gestureInset)
+          ..padding = const FakeViewPadding(bottom: _gestureInset);
+        addTearDown(tester.view.reset);
+
+        final ScrollController controller = ScrollController();
+        addTearDown(controller.dispose);
+
+        await tester.pumpWidget(
+          MediaQuery(
+            // Copied onto the view's data: a bare MediaQueryData zeroes the inset on both sides.
+            data: MediaQueryData.fromView(
+              tester.view,
+            ).copyWith(textScaler: TextScaler.linear(scale)),
+            child: MaterialApp(
+              theme: UseSmileIDSampleTheme.light(),
+              home: Scaffold(
+                extendBody: true,
+                bottomNavigationBar: UseSmileIDSampleNavBar(
+                  // The longest label, which is the one that wraps and grows the bar.
+                  selected: UseSmileIDSampleNavItem.verifications,
+                  onSelect: _ignoreItem,
+                  onTokenTap: () {},
+                ),
+                body: Builder(
+                  builder: (BuildContext context) => ListView(
+                    controller: controller,
+                    padding: EdgeInsets.only(
+                      bottom: useSmileIDSampleNavBarClearance(context),
+                    ),
+                    children: <Widget>[
+                      for (int row = 0; row < _rows; row++)
+                        SizedBox(
+                          key: ValueKey<int>(row),
+                          height: _rowHeight,
+                          child: Text('row $row'),
+                        ),
+                    ],
                   ),
-                );
-              },
+                ),
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      final double barHeight = tester
-          .getSize(find.byType(UseSmileIDSampleNavBar))
-          .height;
-      expect(
-        clearance,
-        greaterThanOrEqualTo(barHeight),
-        reason:
-            'a screen reserving $clearance leaves its last row under a bar $barHeight tall',
-      );
-    });
+        controller.jumpTo(controller.position.maxScrollExtent);
+        await tester.pump();
+
+        final double lastRow = tester
+            .getRect(find.byKey(const ValueKey<int>(_rows - 1)))
+            .bottom;
+        final double barTop = tester
+            .getRect(find.byType(UseSmileIDSampleNavBar))
+            .top;
+        expect(
+          lastRow,
+          lessThanOrEqualTo(barTop),
+          reason:
+              'scrolled to the end, the last row ends at $lastRow with the bar starting at $barTop',
+        );
+      });
+    }
   }
 }
+
+void _ignoreItem(UseSmileIDSampleNavItem item) {}
+
+/// The narrowest phone both floors support: iOS 15's first-generation SE, Android's small bucket.
+const double _smallestPhone = 320;
+
+/// A gesture-navigation inset, so the bar's own bottom padding is not zero on both sides.
+const double _gestureInset = 34;
+
+/// Shorter than the rows stacked, so the list has somewhere to scroll.
+const double _hostHeight = 900;
+
+/// Enough of them, at [_rowHeight] each, to outrun the host so the end is reachable.
+const int _rows = 20;
+
+const double _rowHeight = 80;
