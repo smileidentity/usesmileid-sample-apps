@@ -211,6 +211,7 @@ if [ "$PHASE" = archive ]; then
   # A lane with no credentials can still prove the shipped configuration builds and declares what
   # an upload is rejected for; only a real upload needs an identity.
   SIGNING_ARGS=()
+  AUTH=()
   if [ -n "${ARCHIVE_UNSIGNED:-}" ]; then
     SIGNING_ARGS=(CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="")
     DEVELOPMENT_TEAM="${DEVELOPMENT_TEAM:-}"
@@ -220,6 +221,16 @@ if [ "$PHASE" = archive ]; then
     fi
   else
     : "${DEVELOPMENT_TEAM:?archive needs DEVELOPMENT_TEAM — it is never committed, see docs/plan/app-store-release-ios.md §3}"
+    # A runner has no Xcode account, so the key signs the archive too; a workflow env: `~` is literal, so derive the path (§3).
+    if [ -n "${APP_STORE_CONNECT_KEY_ID:-}" ]; then
+      KEY_PATH="${APP_STORE_CONNECT_KEY_PATH:-$HOME/.appstoreconnect/private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8}"
+      [ -f "$KEY_PATH" ] || { echo "no App Store Connect key at $KEY_PATH" >&2; exit 2; }
+      AUTH=(
+        -authenticationKeyPath "$KEY_PATH"
+        -authenticationKeyID "$APP_STORE_CONNECT_KEY_ID"
+        -authenticationKeyIssuerID "${APP_STORE_CONNECT_ISSUER_ID:?an API key needs its issuer id}"
+      )
+    fi
   fi
   case "${BUILD_NUMBER:-}" in
     "" | *[!0-9]*)
@@ -248,20 +259,6 @@ if [ "$PHASE" = archive ]; then
   ARCHIVE="${ARCHIVE_PATH:-build/UseSmileIDSample.xcarchive}"
   EXPORT_DIR="${EXPORT_PATH:-build/export}"
   rm -rf "$ARCHIVE" "$EXPORT_DIR"
-
-  # The API key is what automatic signing uses on a runner with no Xcode account, so the archive
-  # needs it as much as the upload does; without it the archive fails with "No Accounts". The path
-  # is derived rather than passed: a workflow `env:` value is not a shell, so a `~` stays literal.
-  AUTH=()
-  if [ -n "${APP_STORE_CONNECT_KEY_ID:-}" ]; then
-    KEY_PATH="${APP_STORE_CONNECT_KEY_PATH:-$HOME/.appstoreconnect/private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8}"
-    [ -f "$KEY_PATH" ] || { echo "no App Store Connect key at $KEY_PATH" >&2; exit 2; }
-    AUTH=(
-      -authenticationKeyPath "$KEY_PATH"
-      -authenticationKeyID "$APP_STORE_CONNECT_KEY_ID"
-      -authenticationKeyIssuerID "${APP_STORE_CONNECT_ISSUER_ID:?an API key needs its issuer id}"
-    )
-  fi
 
   # The identity is the target's own Release setting, never an argument: a command-line one is
   # global and reaches SampleUI's resource bundle, which has no team and fails the whole archive.

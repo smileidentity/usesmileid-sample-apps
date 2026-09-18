@@ -268,9 +268,11 @@ argument that put `-PREQUIRE_UPLOAD_SIGNING` in Android's Gradle file rather tha
   TestFlight later is a one-line change — and it needs a **path filter**, or a docs-only merge ships
   a build. That is Android's §7.4 finding, inherited before it is earned.
 - **Both lanes compute the build number with the same command**, per §3.1.
-- **Secrets reach `xcodebuild` as environment variables, never as command-line arguments**, so the
-  team id and key never appear in the runner's process list. The `.p8` is written to
-  `~/.appstoreconnect/private_keys/` and deleted in an `always()` step.
+- **The key material never reaches `xcodebuild`'s argv.** The `.p8` is written to
+  `~/.appstoreconnect/private_keys/` and deleted in an `always()` step; only its path is an argument.
+  The team id, key id and issuer id do reach argv, on both the archive and the export, and
+  `xcodebuild` echoes its invocation into the log — they are repository secrets, so the log masks
+  them, and they vanish with the runner.
 - **Neither lane can be reached from a fork PR**, because neither has a `pull_request` trigger.
 
 ## 4. The icon — already done, and deliberately untouched
@@ -520,7 +522,7 @@ fails the day the hook is removed, and it still proves the run survives the atte
 
 | # | Blocker | State |
 |---|---|---|
-| 1 | No distribution signing path | Closed by REL-I5, and proved as far as this machine can prove it: `xcodebuild archive` succeeds, and `exportArchive` fails with *No signing certificate "iOS Distribution" found* and *No Accounts* — the two things the API key secret supplies and nothing else in the pipeline is missing |
+| 1 | No distribution signing path | Closed by REL-I5, and proved as far as this machine can prove it: `xcodebuild archive` succeeds, and `exportArchive` fails with *No signing certificate "iOS Distribution" found* and *No Accounts* — the two things the API key secret supplies and nothing else in the pipeline is missing. That held on a signed-in machine; a runner also needs the key at the archive step (§3, wired 2026-09-18) |
 | 2 | Identity permanent from the first upload | Unchanged and unchangeable; it is why both lanes are dispatch-only and why §1 of `docs/app-store-manual-steps.md` says read the values before typing them |
 | 3 | No `ITSAppUsesNonExemptEncryption` | Closed by REL-I1; `false` in the archived app's own Info.plist, not only in the source |
 | 4 | No privacy manifest | Closed by REL-I2; `PrivacyInfo.xcprivacy` is in the archived app bundle, and §6.3 records what the graph does and does not declare |
