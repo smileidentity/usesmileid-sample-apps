@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import '../state/use_smileid_sample_providers.dart';
+import 'use_smileid_sample_above_shell_page.dart';
 
 /// One profile's own page, which saves and activates in a single act.
 class UseSmileIDSampleProfileConfigTab extends ConsumerStatefulWidget {
@@ -36,34 +37,30 @@ class _UseSmileIDSampleProfileConfigTabState
     final UseSmileIDSampleProfile? profile = profiles.find(widget.profileId);
     final UseSmileIDSampleUserDetails details =
         _edited ?? profile?.defaults ?? const UseSmileIDSampleUserDetails();
-    // Its own chrome: this route sits ABOVE the shell, so it inherits no Scaffold and the material
-    // an editable row needs would be missing.
-    return Scaffold(
-      backgroundColor: UseSmileIDSampleTheme.colorsOf(context).background,
-      body: SafeArea(
-        child: UseSmileIDSampleProfileConfigScreen(
-          // The raw id when the profile is unknown, so a stale link says which one it looked for
-          // rather than showing an empty title.
-          organisation: profile?.organisation ?? widget.profileId,
-          details: details,
-          isActive: profile != null && profile.id == profiles.activeId,
-          onBack: widget.onBack,
-          onFieldChanged: (UseSmileIDSampleUserField field, String value) =>
-              setState(() => _edited = field.apply(details, value)),
-          // Guarded on the profile existing: a stale link can reach this page with an id no
-          // profile holds, and saving would then activate an id that resolves to nothing.
-          onSave: profile == null
-              ? widget.onBack
-              : () {
-                  ref
-                      .read(useSmileIDSampleProfilesProvider.notifier)
-                      .setDefaults(widget.profileId, details);
-                  ref
-                      .read(useSmileIDSampleProfilesProvider.notifier)
-                      .setActive(widget.profileId);
-                  widget.onBack();
-                },
-        ),
+    return UseSmileIDSampleAboveShellPage(
+      onBack: widget.onBack,
+      child: UseSmileIDSampleProfileConfigScreen(
+        // The raw id when the profile is unknown, so a stale link says which one it looked for
+        // rather than showing an empty title.
+        organisation: profile?.organisation ?? widget.profileId,
+        details: details,
+        isActive: profile != null && profile.id == profiles.activeId,
+        onBack: widget.onBack,
+        onFieldChanged: (UseSmileIDSampleUserField field, String value) =>
+            setState(() => _edited = field.apply(details, value)),
+        // Guarded on the profile existing: a stale link can reach this page with an id no
+        // profile holds, and saving would then activate an id that resolves to nothing.
+        onSave: profile == null
+            ? widget.onBack
+            : () {
+                ref
+                    .read(useSmileIDSampleProfilesProvider.notifier)
+                    .setDefaults(widget.profileId, details);
+                ref
+                    .read(useSmileIDSampleProfilesProvider.notifier)
+                    .setActive(widget.profileId);
+                widget.onBack();
+              },
       ),
     );
   }

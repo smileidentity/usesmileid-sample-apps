@@ -104,6 +104,7 @@ export {
   UseSmileIDSampleTopAppBar,
   UseSmileIDSampleTopAppBarButton,
 } from './components/use-smile-id-sample-top-app-bar';
+export { smileIDSampleRemovalNotice } from './model/use-smile-id-sample-removal-notice';
 export { UseSmileIDSampleTopAppBarEmphasis } from './model/use-smile-id-sample-app-bar-emphasis';
 export {
   smileIDSampleProductHue,

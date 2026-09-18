@@ -8,9 +8,6 @@ import '../use_smileid_sample_test_ids.dart';
 import 'use_smileid_sample_glyphs.dart';
 
 /// Replaces the nav bar in select mode, full-bleed at the bottom with a top edge only.
-///
-/// The action reads Hide from List, never Remove or Delete: the row is hidden from this app's list
-/// and nothing is deleted at the API.
 class UseSmileIDSampleSelectionBar extends StatelessWidget {
   /// The count is its own node, so a flow asserts equality rather than parsing prose.
   const UseSmileIDSampleSelectionBar({

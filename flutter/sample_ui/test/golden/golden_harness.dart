@@ -27,9 +27,6 @@ const double maxTextScale = 2;
 const Key goldenRoot = Key('golden_root');
 
 /// Loads the bundled faces, which the test harness otherwise replaces with a blank placeholder.
-///
-/// Material Icons goes with them: without it the search field's glyph records as an empty box, and
-/// a baseline that cannot draw a mark is not coverage of it.
 Future<void> loadSampleFonts() async {
   final FontLoader faces = FontLoader(useSmileIDSampleFontFamily);
   for (final String face in <String>[
@@ -80,9 +77,6 @@ Future<void> goldens(
   bool fillsHost = false,
 
   /// Drives the widget into a state only interaction reaches, before each scheme is captured.
-  ///
-  /// A widget that holds its own state cannot be handed one, and lifting that state out so a
-  /// golden can pose it would distort the component for the test's benefit.
   Future<void> Function(WidgetTester tester)? afterPump,
 }) async {
   // A disabled shadow records as a SOLID block; restored inline, as the framework checks flags before tear-down.
@@ -122,19 +116,13 @@ Future<void> goldens(
 }
 
 /// What the text-scale pass found: text ellipsised where it could have wrapped, and words broken
-/// where the text offered no break.
-///
-/// Returned rather than asserted so the rule itself is testable — `flutter_test` marks a test
-/// failed by a nested `expect` even when the caller catches it.
+/// where the text offered no break. Returned, not asserted, so the rule itself can be tested.
 typedef UseSmileIDSampleTextScaleFindings = ({
   List<String> truncated,
   List<String> split,
 });
 
 /// Pumps the widget at [textScale] and fails on truncated text or a mid-word break.
-///
-/// Flutter throws on a layout overflow by itself, so this adds the two it does not see: text
-/// ellipsised inside its own box, and a word broken where nothing offered a break.
 Future<void> assertSurvivesMaxTextScale(
   WidgetTester tester,
   Widget widget, {
@@ -249,8 +237,6 @@ List<String> _midWordBreaks(TextPainter painter, String text) {
 }
 
 /// Whether a break at [index] is one the text itself offered, which is what UAX#14 decides.
-///
-/// Whitespace always offers one.
 bool _breaksCleanly(String text, int index) {
   if (_isSpace(text[index - 1]) || _isSpace(text[index])) {
     return true;

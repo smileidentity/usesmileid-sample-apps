@@ -7,8 +7,6 @@ import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// A snackbar: a dark bar with a message and an underlined action, spanning the width it is given.
-///
-/// Keeps the `sample_toast*` ids — the design node is named "toast", and renaming churns four apps.
 class UseSmileIDSampleToast extends StatelessWidget {
   /// An action needs both halves; either one alone draws the message-only variant.
   const UseSmileIDSampleToast({

@@ -144,8 +144,6 @@ class UseSmileIDSampleProductCard extends StatelessWidget {
 }
 
 /// One text node with two runs, not two stacked widgets, which drift apart at large font scales.
-///
-/// The Compose twin steps the title down before wrapping, which Flutter cannot do here.
 class _CardLabel extends StatelessWidget {
   const _CardLabel({
     required this.title,

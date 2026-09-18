@@ -4,9 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'golden_harness.dart';
 
 /// The text-scale rule's own behaviour, pinned because it has been narrowed three times.
-///
-/// Each narrowing was principled and each could have made it toothless, so both directions are
-/// asserted: what it must still catch, and what it must stop reporting.
 void main() {
   setUpAll(loadSampleFonts);
 

@@ -71,9 +71,6 @@ class UseSmileIDSampleJob {
   String get shortUserId => _elide(userId);
 
   /// The submission instant, as the detail page shows it: ISO 8601 in UTC, to the millisecond.
-  ///
-  /// UTC and not local, unlike the list's clock: a job id travels to support with its timestamp,
-  /// and a local one cannot be compared against a server log without knowing the phone's zone.
   String get createdAtLabel {
     final DateTime at = DateTime.fromMillisecondsSinceEpoch(
       createdAtMillis,
@@ -94,16 +91,10 @@ class UseSmileIDSampleJob {
   };
 
   /// Whether the transport succeeded, which is what colours the status row.
-  ///
-  /// Null is neither: a job that never reached the API has no transport outcome to report, and
-  /// colouring it red would accuse the server of refusing a request it never saw.
   bool? get httpSucceeded =>
       httpStatus == null ? null : httpStatus! >= 200 && httpStatus! < 300;
 
   /// Why this job cannot be refreshed, or null when it can be.
-  ///
-  /// A fixture ran under no session, so it can never refresh — which is most of what this app has
-  /// until the scanner lands, and the reason the affordance reports rather than fails silently.
   String? get refreshBlockedReason =>
       sessionId == null ? 'Not submitted under a scanned token' : null;
 
@@ -122,10 +113,8 @@ class UseSmileIDSampleJob {
   };
 }
 
-/// The chips above the list, in the order they are drawn.
-///
-/// There is no Processing chip, deliberately: a processing job is reachable only under All, and a
-/// port that adds a fourth chip has invented a filter the design does not have.
+/// The chips above the list, in the order they are drawn. There is deliberately no Processing chip:
+/// a fourth chip would be a filter the design does not have.
 enum UseSmileIDSampleJobFilter {
   /// Everything.
   all('all', 'All', null),

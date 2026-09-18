@@ -3,14 +3,9 @@ import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// The settings store that survives a restart.
-///
-/// It lives in the shell rather than in `sample_ui` because the plugin is a platform binding.
 class UseSmileIDSamplePreferencesSettingsRepository
     implements UseSmileIDSampleSettingsRepository {
   /// Takes the already-opened preferences, so a caller cannot forget to await them.
-  ///
-  /// Not const: the write queue below is per-store mutable state, and every caller reaches this
-  /// through [open] rather than constructing a constant.
   UseSmileIDSamplePreferencesSettingsRepository(this._preferences);
 
   final SharedPreferences _preferences;

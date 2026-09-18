@@ -1,6 +1,4 @@
 /// The accessibility ids this package attaches. Stable forever: deprecate, never rename.
-///
-/// Ids a screen assigns per row arrive with that screen; these are the ones a component owns.
 abstract final class UseSmileIDSampleTestIds {
   /// Bottom nav destination: products.
   static const String navProducts = 'sample_nav_products';

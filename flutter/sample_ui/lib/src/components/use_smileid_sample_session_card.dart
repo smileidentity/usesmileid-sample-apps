@@ -8,8 +8,6 @@ import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// The active token session and its m:ss countdown.
-///
-/// [remaining] arrives formatted, because the deadline is absolute and the ticking is the screen's.
 class UseSmileIDSampleSessionCard extends StatelessWidget {
   /// Takes the formatted countdown rather than a duration, so no component holds a clock.
   const UseSmileIDSampleSessionCard({
@@ -159,8 +157,6 @@ class UseSmileIDSampleSessionEndedBanner extends StatelessWidget {
 }
 
 /// The shape both cards take, so the two swap without the layout moving.
-///
-/// A flexible leading column, not a wrap: the card grows rather than the action sliding under the text.
 class _SessionSurface extends StatelessWidget {
   const _SessionSurface({
     required this.decoration,

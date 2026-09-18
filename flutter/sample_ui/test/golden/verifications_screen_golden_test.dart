@@ -5,8 +5,6 @@ import 'package:sample_ui/sample_ui.dart';
 import 'golden_harness.dart';
 
 /// The four states `spec/screens.json` lists for verifications, light and dark.
-///
-/// Every timestamp is built from LOCAL wall-clock components and rendered back to local ones.
 void main() {
   setUpAll(loadSampleFonts);
 

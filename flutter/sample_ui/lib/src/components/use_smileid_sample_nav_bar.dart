@@ -46,11 +46,7 @@ enum UseSmileIDSampleNavItem {
   final String icon;
 }
 
-/// A floating pill of three tabs, plus a detached token button that navigates rather than
-/// switching tab.
-///
-/// The bar FLOATS over the content: the list scrolls underneath it and the background stays
-/// continuous, so a screen's own trailing spacer is what lets its last row scroll clear.
+/// A floating pill of three tabs, plus a detached token button that navigates rather than switching tab.
 class UseSmileIDSampleNavBar extends StatelessWidget {
   /// [sessionProgress] drives the ring, 1 fresh to 0 expired, from the deadline not an animation.
   const UseSmileIDSampleNavBar({
@@ -301,8 +297,6 @@ class _NavBarTab extends StatelessWidget {
 }
 
 /// The room a screen leaves below its last row so it can scroll clear of the floating bar.
-///
-/// The bar is not a bottom-bar slot and insets nothing (R13).
 double useSmileIDSampleNavBarClearance(BuildContext context) =>
     SmileDimens.spacingSm * 2 +
     MediaQuery.textScalerOf(context).scale(_tokenSize) +

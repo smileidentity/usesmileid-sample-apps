@@ -8,9 +8,6 @@ import '../use_smileid_sample_routes.dart';
 import '../use_smileid_sample_version.dart';
 
 /// The settings tab, whose six switches survive a restart.
-///
-/// Nothing here holds the values: the notifier writes through the repository and takes back what
-/// was stored, which is how the capture mutex reaches both persistence paths rather than one.
 class UseSmileIDSampleSettingsTab extends ConsumerStatefulWidget {
   /// [openDrawer] is set by the deep link, which opens this page with the drawer already up.
   const UseSmileIDSampleSettingsTab({this.openDrawer = false, super.key});

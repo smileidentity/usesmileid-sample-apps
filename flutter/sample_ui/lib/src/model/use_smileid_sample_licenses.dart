@@ -40,9 +40,6 @@ class UseSmileIDSampleLicenses {
   bool get isEmpty => components.isEmpty;
 
   /// Reads the notices Flutter's own build step collected into the bundle.
-  ///
-  /// The toolchain regenerates them from the resolved graph on every build, so unlike a committed
-  /// asset they cannot go stale, and they already cover the engine's C++ dependencies.
   static Future<UseSmileIDSampleLicenses> bundled({
     Stream<LicenseEntry>? licenses,
   }) async => from(await (licenses ?? LicenseRegistry.licenses).toList());

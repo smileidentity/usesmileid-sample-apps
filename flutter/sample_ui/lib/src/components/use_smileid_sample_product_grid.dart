@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import '../tokens/smile_tokens.dart';
 
 /// Two columns of product cards, an odd count leaving its last cell empty.
-///
-/// Rows rather than a lazy grid, because the host screen already scrolls; each row takes its
-/// tallest card's height so a two-line title beside a one-line one still yields two equal cards.
 class UseSmileIDSampleProductGrid extends StatelessWidget {
   /// The empty cell an odd count leaves is a layout affordance, not a placeholder card.
   const UseSmileIDSampleProductGrid({

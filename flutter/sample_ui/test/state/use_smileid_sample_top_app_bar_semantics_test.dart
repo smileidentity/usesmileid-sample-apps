@@ -4,8 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 /// The app bar's controls have to be reachable one at a time, which a golden cannot show.
-///
-/// Found when the detail page became the app bar's first caller.
 void main() {
   /// Every labelled node in the tree, with the flags that decide how it is announced.
   List<({String label, bool button, bool header})> labelledNodes(

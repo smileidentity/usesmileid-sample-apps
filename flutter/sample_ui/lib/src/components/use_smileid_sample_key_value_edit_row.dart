@@ -6,8 +6,6 @@ import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
 
 /// A label and a value that edits in place with a caret, rather than pushing a form.
-///
-/// The field NAME is title-coloured and only the PLACEHOLDER is muted; Android had that inverted.
 class UseSmileIDSampleKeyValueEditRow extends StatefulWidget {
   /// [required] appends an asterisk to the label, which is how the design marks a required field.
   const UseSmileIDSampleKeyValueEditRow({

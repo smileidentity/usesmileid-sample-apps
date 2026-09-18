@@ -5,9 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'spec_file.dart';
 
 /// Every state `spec/screens.json` lists is either goldened or exempted in writing.
-///
-/// A coverage claim nobody checks drifts the moment a state is added to the spec, and the drift is
-/// invisible: the suite stays green because the missing state has no test to fail.
 void main() {
   late List<Map<String, Object?>> screens;
 

@@ -12,9 +12,6 @@ import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// The third-party notices, opened from the LEGAL section of settings.
-///
-/// A flat list rather than the rounded section cards the rest of the app uses: two hundred rows
-/// inside one card compose all of them at once.
 class UseSmileIDSampleLicensesScreen extends StatefulWidget {
   /// An empty [licenses] means the notices did not reach this build, which the screen says rather
   /// than showing a blank page.

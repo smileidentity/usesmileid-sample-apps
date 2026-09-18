@@ -8,9 +8,6 @@ import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 
 /// The two surfaces the design does not draw: reaching them, and the act each performs.
-///
-/// A route and a screen that exist separately prove nothing about each other, which is how a
-/// component sat goldened and uncalled for eight months earlier in this port.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -52,9 +49,6 @@ void main() {
   Finder byId(String id) => find.bySemanticsIdentifier(id);
 
   /// Both rows sit at the foot of settings, so the list is taken all the way down before a tap.
-  ///
-  /// Stopping as soon as the row enters the viewport is not enough: the nav bar FLOATS over the
-  /// list, so a row that has only just appeared is under it and the tap lands on the bar.
   Future<void> tapRow(WidgetTester tester, Finder row) async {
     for (int i = 0; i < 15; i++) {
       await tester.drag(find.byType(Scrollable), const Offset(0, -400));

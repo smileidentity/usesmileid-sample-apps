@@ -126,6 +126,37 @@ describe('a state reached by interaction', () => {
   });
 });
 
+/// Two states whose trees match in one scheme are one baseline posing as two: the fixture or the
+/// renderer is blind to the axis the state varies, so a regression on that axis cannot fail.
+const identicalStatesOnPurpose: Record<string, string> = {};
+
+describe('two states in one scheme', () => {
+  const pairs = readPairs();
+  const twins = (): string[] => {
+    const found: string[] = [];
+    for (const scheme of ['light', 'dark'] as const) {
+      const seen = new Map<string, string>();
+      for (const [id, pair] of [...pairs.entries()].sort(([a], [b]) => a.localeCompare(b))) {
+        const tree = pair[scheme];
+        if (tree === undefined) continue;
+        const first = seen.get(tree);
+        if (first === undefined) seen.set(tree, id);
+        else found.push(`${first} == ${id}`);
+      }
+    }
+    return [...new Set(found)].sort();
+  };
+
+  it('never share a tree unless the pair is explained', () => {
+    expect(twins().filter((twin) => !(twin in identicalStatesOnPurpose))).toEqual([]);
+  });
+
+  it('has no explained pair that has since started differing, which would make the note stale', () => {
+    const live = new Set(twins());
+    expect(Object.keys(identicalStatesOnPurpose).filter((twin) => !live.has(twin))).toEqual([]);
+  });
+});
+
 describe('the theme provider', () => {
   it('reaches the components with the scheme the harness pins, not the runner default', () => {
     // Asserted directly rather than inferred from the baselines: this is the one fact that makes

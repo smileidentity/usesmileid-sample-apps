@@ -30,9 +30,6 @@ class UseSmileIDSampleVerificationsState {
   final List<UseSmileIDSampleJob>? jobs;
 
   /// The clock the day headers are read against.
-  ///
-  /// Midnight is what actually matters, so a caller ticking every second must round this down or
-  /// the grouping is rebuilt sixty times a minute for a header that changes once a day.
   final int nowMillis;
 
   /// The active chip.
@@ -57,9 +54,6 @@ class UseSmileIDSampleVerificationsState {
 }
 
 /// The verifications list: the title, the chips, and the rows grouped by day.
-///
-/// There is no app bar and no search field on this screen; the title is the list's first row and
-/// scrolls with it, which is what the design draws.
 class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
   /// [bottomInset] is the room the floating nav bar needs; the screen is not inset by it.
   const UseSmileIDSampleVerificationsScreen({

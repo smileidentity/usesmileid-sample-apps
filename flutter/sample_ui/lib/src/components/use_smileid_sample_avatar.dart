@@ -57,8 +57,6 @@ class UseSmileIDSampleAvatar extends StatelessWidget {
 }
 
 /// The avatar fill for a profile at [profileIndex], cycled by list position.
-///
-/// Position, not a hash of the initials, which reproduces no design order and differs per platform.
 Color avatarColorForProfile(int profileIndex) =>
     smileProfileHues[(profileIndex < 0 ? 0 : profileIndex) %
         smileProfileHues.length];

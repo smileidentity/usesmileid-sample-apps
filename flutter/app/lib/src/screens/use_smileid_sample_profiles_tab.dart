@@ -5,11 +5,9 @@ import 'package:sample_ui/sample_ui.dart';
 
 import '../state/use_smileid_sample_providers.dart';
 import '../use_smileid_sample_routes.dart';
+import 'use_smileid_sample_above_shell_page.dart';
 
 /// The profiles list, and the sheet that creates another.
-///
-/// The created confirmation is shown HERE rather than in the sheet, because the sheet is gone by
-/// the time there is anything to confirm.
 class UseSmileIDSampleProfilesTab extends ConsumerStatefulWidget {
   /// [onBack] leaves the list.
   const UseSmileIDSampleProfilesTab({required this.onBack, super.key});
@@ -34,28 +32,24 @@ class _UseSmileIDSampleProfilesTabState
     final UseSmileIDSampleProfile? created = _createdId == null
         ? null
         : profiles.find(_createdId!);
-    // Its own chrome: this route sits ABOVE the shell, so it inherits no Scaffold and the material
-    // the create row's ink needs would be missing.
-    return Scaffold(
-      backgroundColor: UseSmileIDSampleTheme.colorsOf(context).background,
-      body: SafeArea(
-        child: UseSmileIDSampleProfilesScreen(
-          profiles: profiles.all,
-          activeId: profiles.activeId,
-          onBack: widget.onBack,
-          onProfileTap: (UseSmileIDSampleProfile profile) =>
-              context.go(UseSmileIDSampleRoutes.profileConfig(profile.id)),
-          onCreate: _create,
-          createdNotice: created?.organisation,
-          onMakeCreatedActive: created == null
-              ? null
-              : () {
-                  ref
-                      .read(useSmileIDSampleProfilesProvider.notifier)
-                      .setActive(created.id);
-                  setState(() => _createdId = null);
-                },
-        ),
+    return UseSmileIDSampleAboveShellPage(
+      onBack: widget.onBack,
+      child: UseSmileIDSampleProfilesScreen(
+        profiles: profiles.all,
+        activeId: profiles.activeId,
+        onBack: widget.onBack,
+        onProfileTap: (UseSmileIDSampleProfile profile) =>
+            context.go(UseSmileIDSampleRoutes.profileConfig(profile.id)),
+        onCreate: _create,
+        createdNotice: created?.organisation,
+        onMakeCreatedActive: created == null
+            ? null
+            : () {
+                ref
+                    .read(useSmileIDSampleProfilesProvider.notifier)
+                    .setActive(created.id);
+                setState(() => _createdId = null);
+              },
       ),
     );
   }

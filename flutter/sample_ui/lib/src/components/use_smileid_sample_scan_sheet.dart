@@ -32,9 +32,6 @@ class UseSmileIDSampleScanSheetState {
 }
 
 /// The sheet under the scanner: manual entry, and a simulated scan.
-///
-/// Simulate is a product feature, not scaffolding — it is how a flow reaches the session states
-/// with no QR source.
 class UseSmileIDSampleScanSheet extends StatelessWidget {
   /// The Link action appears only once there is something to link, so the default sheet keeps the
   /// design's two rows.

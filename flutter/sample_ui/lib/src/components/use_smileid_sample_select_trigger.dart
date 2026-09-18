@@ -22,8 +22,6 @@ class UseSmileIDSampleTriggerEmoji extends StatelessWidget {
 }
 
 /// Looks like an input, behaves like a button.
-///
-/// Disabled is load-bearing: the ID-type trigger stays greyed until a country is chosen.
 class UseSmileIDSampleSelectTrigger extends StatelessWidget {
   /// A null [value] draws [placeholder] in the placeholder colour.
   const UseSmileIDSampleSelectTrigger({

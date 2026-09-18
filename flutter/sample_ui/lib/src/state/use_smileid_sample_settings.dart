@@ -29,9 +29,6 @@ enum UseSmileIDSampleSetting {
 }
 
 /// The Settings state. Three of these decide whether a step is composed into the SDK flow at all.
-///
-/// The capture mutex lives in [withSetting] and [normalised], not the constructor: a stored state
-/// can predate the rule, so refusing the pair here would crash an app that already saved it.
 @immutable
 class UseSmileIDSampleSettings {
   /// Enhanced SmartSelfie is ON by default, which is the state the design draws.

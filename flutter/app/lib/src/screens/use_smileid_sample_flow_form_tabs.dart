@@ -6,6 +6,7 @@ import 'package:sample_ui/sample_ui.dart';
 import '../state/use_smileid_sample_forms.dart';
 import '../use_smileid_sample_journey.dart';
 import '../use_smileid_sample_routes.dart';
+import 'use_smileid_sample_above_shell_page.dart';
 
 /// The details every product collects before its flow.
 class UseSmileIDSampleUserDetailsTab extends ConsumerWidget {
@@ -21,13 +22,15 @@ class UseSmileIDSampleUserDetailsTab extends ConsumerWidget {
     final UseSmileIDSampleForms forms = ref.watch(
       useSmileIDSampleFormsProvider,
     );
-    return _Page(
+    void back() => context.go(UseSmileIDSampleRoutes.products);
+    return UseSmileIDSampleAboveShellPage(
+      onBack: back,
       child: UseSmileIDSampleUserDetailsScreen(
         // The raw id for a product this build does not know, so a stale link names what it looked
         // for rather than showing an empty title.
         title: product?.label ?? productId,
         details: forms.userDetails,
-        onBack: () => context.pop(),
+        onBack: back,
         onFieldChanged: ref
             .read(useSmileIDSampleFormsProvider.notifier)
             .setUserField,
@@ -90,11 +93,14 @@ class _UseSmileIDSampleKycFormTabState
     final UseSmileIDSampleIdDetails details = ref
         .watch(useSmileIDSampleFormsProvider)
         .idDetails;
-    return _Page(
+    void back() =>
+        context.go(UseSmileIDSampleRoutes.consentDetailsForm(widget.productId));
+    return UseSmileIDSampleAboveShellPage(
+      onBack: back,
       child: UseSmileIDSampleKycFormScreen(
         title: product?.label ?? widget.productId,
         details: details,
-        onBack: () => context.pop(),
+        onBack: back,
         onPickCountry: _pickCountry,
         onPickIdType: _pickIdType,
         onIdNumberChanged: ref
@@ -144,19 +150,6 @@ enum UseSmileIDSamplePicker {
 
   /// The ID type picker.
   idType,
-}
-
-/// The chrome a route above the shell has to bring itself.
-class _Page extends StatelessWidget {
-  const _Page({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    backgroundColor: UseSmileIDSampleTheme.colorsOf(context).background,
-    body: SafeArea(child: child),
-  );
 }
 
 /// The product with this id, or null for one this build does not know.

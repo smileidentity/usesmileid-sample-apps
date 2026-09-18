@@ -1,8 +1,6 @@
 import '../state/use_smileid_sample_settings.dart';
 
 /// Where the six switches are kept, so the screen never knows what is doing the keeping.
-///
-/// The seam exists because this package runs under eight hosts.
 abstract interface class UseSmileIDSampleSettingsRepository {
   /// The stored settings, or the plain defaults on a first launch.
   Future<UseSmileIDSampleSettings> read();
@@ -15,11 +13,9 @@ abstract interface class UseSmileIDSampleSettingsRepository {
 }
 
 /// The keys the store writes, shared across all four apps so a device carries one set, not four.
-///
-/// `enhanced_smart_selfie` is a NEW key, never the old one reused: `smile_to_capture = true` meant
-/// the opposite, so a reused key would read every upgraded install backwards.
 abstract final class UseSmileIDSampleSettingsKeys {
-  /// The head-turn challenge.
+  /// The head-turn challenge, under a NEW key: `smile_to_capture = true` meant the opposite, so a
+  /// reused key would read every upgraded install backwards.
   static const String enhancedSmartSelfie = 'enhanced_smart_selfie';
 
   /// Operator capture.

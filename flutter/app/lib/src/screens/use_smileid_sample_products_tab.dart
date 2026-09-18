@@ -7,9 +7,6 @@ import '../state/use_smileid_sample_providers.dart';
 import '../use_smileid_sample_journey.dart';
 
 /// The products tab: the grid every flow starts from.
-///
-/// No session yet, so the header shows the active profile and nothing else; the session card and
-/// the scan it leads to arrive with the token store.
 class UseSmileIDSampleProductsTab extends ConsumerWidget {
   /// Takes nothing; what it shows comes from the profile store.
   const UseSmileIDSampleProductsTab({super.key});

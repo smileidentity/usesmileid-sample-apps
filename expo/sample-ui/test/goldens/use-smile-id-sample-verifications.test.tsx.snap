@@ -3686,9 +3686,9 @@ exports[`verificationDetails dark processing 1`] = `
                 "lineHeight": 16,
               },
               {
-                "backgroundColor": "#dbf5e4",
+                "backgroundColor": "#e5edff",
                 "borderRadius": 32,
-                "color": "#04713a",
+                "color": "#151f72",
                 "fontSize": 11,
                 "letterSpacing": 0.88,
                 "overflow": "hidden",
@@ -3700,7 +3700,7 @@ exports[`verificationDetails dark processing 1`] = `
           }
           testID="sample_status_badge"
         >
-          Clear
+          Processing
         </Text>
         <Text
           style={
@@ -3721,7 +3721,7 @@ exports[`verificationDetails dark processing 1`] = `
             ]
           }
         >
-          Approved
+          Submitted, awaiting result
         </Text>
       </View>
       <View
@@ -3830,7 +3830,7 @@ exports[`verificationDetails dark processing 1`] = `
                 ]
               }
             >
-              job_00ky…
+              job_01ky…
             </Text>
             <View
               accessibilityLabel="Copy Job_id"
@@ -4002,7 +4002,7 @@ exports[`verificationDetails dark processing 1`] = `
                 ]
               }
             >
-              user_00k…
+              user_01k…
             </Text>
             <View
               accessibilityLabel="Copy User_id"
@@ -4174,7 +4174,7 @@ exports[`verificationDetails dark processing 1`] = `
                 ]
               }
             >
-              SmartSelfie Enrollment
+              SmartSelfie Authentication
             </Text>
           </View>
           <View
@@ -4244,7 +4244,7 @@ exports[`verificationDetails dark processing 1`] = `
                 ]
               }
             >
-              200 OK
+              202 Accepted
             </Text>
           </View>
           <View
@@ -4314,7 +4314,7 @@ exports[`verificationDetails dark processing 1`] = `
                 ]
               }
             >
-              2026-07-16T13:03:41.000Z
+              2026-07-16T08:03:41.000Z
             </Text>
           </View>
           <View
@@ -9131,9 +9131,9 @@ exports[`verificationDetails light processing 1`] = `
                 "lineHeight": 16,
               },
               {
-                "backgroundColor": "#dbf5e4",
+                "backgroundColor": "#e5edff",
                 "borderRadius": 32,
-                "color": "#04713a",
+                "color": "#151f72",
                 "fontSize": 11,
                 "letterSpacing": 0.88,
                 "overflow": "hidden",
@@ -9145,7 +9145,7 @@ exports[`verificationDetails light processing 1`] = `
           }
           testID="sample_status_badge"
         >
-          Clear
+          Processing
         </Text>
         <Text
           style={
@@ -9166,7 +9166,7 @@ exports[`verificationDetails light processing 1`] = `
             ]
           }
         >
-          Approved
+          Submitted, awaiting result
         </Text>
       </View>
       <View
@@ -9275,7 +9275,7 @@ exports[`verificationDetails light processing 1`] = `
                 ]
               }
             >
-              job_00ky…
+              job_01ky…
             </Text>
             <View
               accessibilityLabel="Copy Job_id"
@@ -9447,7 +9447,7 @@ exports[`verificationDetails light processing 1`] = `
                 ]
               }
             >
-              user_00k…
+              user_01k…
             </Text>
             <View
               accessibilityLabel="Copy User_id"
@@ -9619,7 +9619,7 @@ exports[`verificationDetails light processing 1`] = `
                 ]
               }
             >
-              SmartSelfie Enrollment
+              SmartSelfie Authentication
             </Text>
           </View>
           <View
@@ -9689,7 +9689,7 @@ exports[`verificationDetails light processing 1`] = `
                 ]
               }
             >
-              200 OK
+              202 Accepted
             </Text>
           </View>
           <View
@@ -9759,7 +9759,7 @@ exports[`verificationDetails light processing 1`] = `
                 ]
               }
             >
-              2026-07-16T13:03:41.000Z
+              2026-07-16T08:03:41.000Z
             </Text>
           </View>
           <View
