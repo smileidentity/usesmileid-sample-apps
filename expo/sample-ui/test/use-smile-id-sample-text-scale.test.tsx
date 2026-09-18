@@ -27,8 +27,11 @@ const envelopes = [
 /// The words the Flutter twin also records as an open design question, not a defect this port may fix.
 const tabOpenWords = ['Products', 'Verifications', 'Settings'];
 
-/// The job id the Flutter twin records for the same row; a column too narrow for one hex id is the design's.
-const jobIdOpenWords = ['7d2f01aa-4b1c'];
+/// Per state, not global: an exemption recorded for one row must not mute the same word in another.
+/// The job id is what the Flutter twin records for this row — a column too narrow for one hex id.
+const openWords: Record<string, readonly string[]> = {
+  data_field_row_with_copy: ['7d2f01aa-4b1c'],
+};
 
 /// A column too narrow for one word, which is the smallest tree either half of the rule can fire on.
 const NARROW_COLUMN = { width: 60 };
@@ -141,8 +144,20 @@ describe('every scale-sensitive state survives both frames at both scales', () =
   it.each(Object.keys(scaleSensitive))('%s', async (state) => {
     for (const [width, fontScale] of envelopes) {
       const tree = await renderForLayout(scaleSensitive[state]!(), { fontScale });
-      assertSurvivesTextScale(tree, { width, fontScale, knownOpenWords: jobIdOpenWords });
+      assertSurvivesTextScale(tree, { width, fontScale, knownOpenWords: openWords[state] });
     }
+  });
+});
+
+describe('every recorded exemption still names a defect that is present', () => {
+  it.each(Object.entries(openWords))('%s', async (state, words) => {
+    // Without this, fixing the row leaves the exemption inert and silently muting the next regression.
+    const broken: string[] = [];
+    for (const [width, fontScale] of envelopes) {
+      const tree = await renderForLayout(scaleSensitive[state]!(), { fontScale });
+      broken.push(...textScaleFindings(tree, { width, fontScale }).split.map((it) => it.word));
+    }
+    expect(words.filter((word) => !broken.some((it) => it.includes(word)))).toEqual([]);
   });
 });
 

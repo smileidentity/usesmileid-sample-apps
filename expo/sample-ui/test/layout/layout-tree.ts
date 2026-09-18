@@ -71,6 +71,15 @@ type Style = ViewStyle & TextStyle & Record<string, unknown>;
 
 const flatten = (style: unknown): Style => (StyleSheet.flatten(style as never) ?? {}) as Style;
 
+/// A style value the engine has no constant for would otherwise coerce to 0 and lay out silently wrong.
+const pick = (table: Record<string, number>, value: unknown, where: string, name: string): number => {
+  const mapped = table[String(value)];
+  if (mapped === undefined) {
+    throw new Error(`${where}: "${name}: ${String(value)}" is not a value this harness maps`);
+  }
+  return mapped;
+};
+
 const ALIGN = (Y: Yoga) =>
   ({
     'flex-start': Y.ALIGN_FLEX_START,
@@ -159,32 +168,39 @@ const applyStyle = (node: YogaNode, style: Style, where: string): void => {
       }
       case 'flexDirection':
         node.setFlexDirection(
-          {
-            row: Y.FLEX_DIRECTION_ROW,
-            column: Y.FLEX_DIRECTION_COLUMN,
-            'row-reverse': Y.FLEX_DIRECTION_ROW_REVERSE,
-            'column-reverse': Y.FLEX_DIRECTION_COLUMN_REVERSE,
-          }[value as string]!,
+          pick(
+            {
+              row: Y.FLEX_DIRECTION_ROW,
+              column: Y.FLEX_DIRECTION_COLUMN,
+              'row-reverse': Y.FLEX_DIRECTION_ROW_REVERSE,
+              'column-reverse': Y.FLEX_DIRECTION_COLUMN_REVERSE,
+            },
+            value, where, name,
+          ),
         );
         break;
       case 'flexWrap':
         node.setFlexWrap(
-          { wrap: Y.WRAP_WRAP, nowrap: Y.WRAP_NO_WRAP, 'wrap-reverse': Y.WRAP_WRAP_REVERSE }[
-            value as string
-          ]!,
+          pick(
+            { wrap: Y.WRAP_WRAP, nowrap: Y.WRAP_NO_WRAP, 'wrap-reverse': Y.WRAP_WRAP_REVERSE },
+            value, where, name,
+          ),
         );
         break;
-      case 'justifyContent': node.setJustifyContent(justify[value as string]!); break;
-      case 'alignItems': node.setAlignItems(align[value as string]!); break;
-      case 'alignSelf': node.setAlignSelf(align[value as string]!); break;
-      case 'alignContent': node.setAlignContent(align[value as string]!); break;
+      case 'justifyContent': node.setJustifyContent(pick(justify, value, where, name)); break;
+      case 'alignItems': node.setAlignItems(pick(align, value, where, name)); break;
+      case 'alignSelf': node.setAlignSelf(pick(align, value, where, name)); break;
+      case 'alignContent': node.setAlignContent(pick(align, value, where, name)); break;
       case 'position':
         node.setPositionType(
-          {
-            absolute: Y.POSITION_TYPE_ABSOLUTE,
-            relative: Y.POSITION_TYPE_RELATIVE,
-            static: Y.POSITION_TYPE_STATIC,
-          }[value as string]!,
+          pick(
+            {
+              absolute: Y.POSITION_TYPE_ABSOLUTE,
+              relative: Y.POSITION_TYPE_RELATIVE,
+              static: Y.POSITION_TYPE_STATIC,
+            },
+            value, where, name,
+          ),
         );
         break;
       case 'top': case 'right': case 'bottom': case 'left': case 'start': case 'end': {
@@ -200,11 +216,14 @@ const applyStyle = (node: YogaNode, style: Style, where: string): void => {
         break;
       case 'overflow':
         node.setOverflow(
-          {
-            visible: Y.OVERFLOW_VISIBLE,
-            hidden: Y.OVERFLOW_HIDDEN,
-            scroll: Y.OVERFLOW_SCROLL,
-          }[value as string]!,
+          pick(
+            {
+              visible: Y.OVERFLOW_VISIBLE,
+              hidden: Y.OVERFLOW_HIDDEN,
+              scroll: Y.OVERFLOW_SCROLL,
+            },
+            value, where, name,
+          ),
         );
         break;
       case 'direction':
@@ -233,6 +252,8 @@ const applyStyle = (node: YogaNode, style: Style, where: string): void => {
         } else if (name.startsWith('border') && name.endsWith('Width')) {
           const edge = edges[name.slice('border'.length, -'Width'.length)]!;
           node.setBorder(edge, value as number);
+        } else {
+          throw new Error(`${where}: "${name}" is listed as a layout property but nothing applies it`);
         }
       }
     }
