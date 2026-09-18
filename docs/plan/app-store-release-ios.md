@@ -220,7 +220,13 @@ question.
 upload and — crucially — for `-allowProvisioningUpdates`, which is what lets the runner fetch a
 distribution certificate and profile instead of having them baked into a keychain the repository
 would have to carry. That is the whole reason a fastlane match-style credential store is not needed:
-Xcode's own cloud signing does the job, given a key.
+Xcode's own cloud signing does the job, given a key. The key has to reach the **archive** step, not
+only the export: a runner has no Xcode account, so `xcodebuild archive -allowProvisioningUpdates`
+without the `-authenticationKey*` flags fails with *No Accounts* before any profile is looked up. A
+machine with a signed-in Xcode never shows this, which is how the first dispatch of
+`publish-testflight.yml` (2026-09-17) failed a step every local archive had passed. **The fix is unproven
+until a runner archives with it.** Owed: a manual dispatch of `publish-testflight.yml` on `main` once this
+change and the taller store panels have both merged — the upload is real, so it is an owner action.
 
 **The export-options plist is committed** (`ios/store/ExportOptions.plist`) and carries no team:
 `teamID` is substituted at export time from the secret. It declares `app-store-connect` as the
@@ -266,9 +272,11 @@ argument that put `-PREQUIRE_UPLOAD_SIGNING` in Android's Gradle file rather tha
   TestFlight later is a one-line change — and it needs a **path filter**, or a docs-only merge ships
   a build. That is Android's §7.4 finding, inherited before it is earned.
 - **Both lanes compute the build number with the same command**, per §3.1.
-- **Secrets reach `xcodebuild` as environment variables, never as command-line arguments**, so the
-  team id and key never appear in the runner's process list. The `.p8` is written to
-  `~/.appstoreconnect/private_keys/` and deleted in an `always()` step.
+- **The key material never reaches `xcodebuild`'s argv.** The `.p8` is written to
+  `~/.appstoreconnect/private_keys/` and deleted in an `always()` step; only its path is an argument.
+  The team id, key id and issuer id do reach argv, on both the archive and the export, and
+  `xcodebuild` echoes its invocation into the log — they are repository secrets, so the log masks
+  them, and they vanish with the runner.
 - **Neither lane can be reached from a fork PR**, because neither has a `pull_request` trigger.
 
 ## 4. The icon — already done, and deliberately untouched
@@ -518,7 +526,7 @@ fails the day the hook is removed, and it still proves the run survives the atte
 
 | # | Blocker | State |
 |---|---|---|
-| 1 | No distribution signing path | Closed by REL-I5, and proved as far as this machine can prove it: `xcodebuild archive` succeeds, and `exportArchive` fails with *No signing certificate "iOS Distribution" found* and *No Accounts* — the two things the API key secret supplies and nothing else in the pipeline is missing |
+| 1 | No distribution signing path | Closed by REL-I5, and proved as far as this machine can prove it: `xcodebuild archive` succeeds, and `exportArchive` fails with *No signing certificate "iOS Distribution" found* and *No Accounts* — the two things the API key secret supplies and nothing else in the pipeline is missing. That held on a signed-in machine; a runner also needs the key at the archive step (§3, wired 2026-09-18) |
 | 2 | Identity permanent from the first upload | Unchanged and unchangeable; it is why both lanes are dispatch-only and why §1 of `docs/app-store-manual-steps.md` says read the values before typing them |
 | 3 | No `ITSAppUsesNonExemptEncryption` | Closed by REL-I1; `false` in the archived app's own Info.plist, not only in the source |
 | 4 | No privacy manifest | Closed by REL-I2; `PrivacyInfo.xcprivacy` is in the archived app bundle, and §6.3 records what the graph does and does not declare |
@@ -548,14 +556,19 @@ release lane's assertions all pass `-o -`, with a comment saying why.
 
 ### 7.2 What is owed, and what it does not block
 
-- **The shorter description is in the repository; pushing it to Apple is queued.** Play dropped the
-  per-product paragraphs on 2026-09-14 and kept the six names (its §5); `ios/store/description.txt` now
-  carries that same text, so the two files are byte-identical again. What is **not** done is the App
-  Store side: description is per-version metadata, and metadata must not move while a review
-  conversation is open on the version. **First action once the submission clears** (approved, or Apple
-  asks for a resubmission): `scripts/asc_publish.py apply`, which carries this description and the
-  wordless screenshots together, then `submit` on the owner's word. Nothing else in the listing is
-  waiting on anything.
+- ~~**The shorter description is in the repository; pushing it to Apple is queued.**~~ **Pushed and
+  resubmitted 2026-09-18.** Play dropped the per-product paragraphs on 2026-09-14 and kept the six
+  names (its §5); `ios/store/description.txt` carries that same text, so the two files are
+  byte-identical. It waited because description is per-version metadata, and metadata must not move
+  while a review conversation is open. After four business days with no answer to the TrueDepth reply,
+  `scripts/asc_publish.py apply --build 103` carried the description, the wordless screenshots and the
+  ARKit review notes onto the rejected version, and `submit` re-queued it with the same build. The
+  resubmit confirmed one thing the script already allowed — a rejected version is editable again
+  (`REJECTED` → `PREPARE_FOR_SUBMISSION` on the first edit) — and taught it one: the rejected
+  **review-submission item must be PATCHed `resolved: true` before the submission is
+  re-`submitted`**, otherwise Apple answers 409 *Version is not ready to be submitted yet, please try
+  again later*, which reads as a timing problem and is not one. `scripts/test_asc_publish.py` pins
+  that order. Nothing else in the listing is waiting on anything.
 - ~~**Guideline 2.1: App Review asked what the app does with the TrueDepth API.**~~ **Answered
   2026-09-16.** Worth knowing before anyone denies it: the SDK does use it. The selfie screen runs an
   `ARFaceTrackingConfiguration` session and reads two blend shapes, `mouthSmileLeft` and

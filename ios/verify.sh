@@ -91,6 +91,7 @@ if runs checks; then
   # Apache-2.0 §4 asks the notice to travel with the distribution, so the app ships the list rather
   # than linking it. Walked from the products the app links, which needs the graph resolved first.
   python3 "$REPO_ROOT/scripts/test_generate_ios_licenses.py" >/dev/null
+  python3 "$REPO_ROOT/scripts/test_asc_publish.py" >/dev/null
   python3 "$REPO_ROOT/scripts/generate_ios_licenses.py" \
     --out SampleUI/Sources/SampleUI/Resources/licenses.json --check
 fi
@@ -210,6 +211,7 @@ if [ "$PHASE" = archive ]; then
   # A lane with no credentials can still prove the shipped configuration builds and declares what
   # an upload is rejected for; only a real upload needs an identity.
   SIGNING_ARGS=()
+  AUTH=()
   if [ -n "${ARCHIVE_UNSIGNED:-}" ]; then
     SIGNING_ARGS=(CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="")
     DEVELOPMENT_TEAM="${DEVELOPMENT_TEAM:-}"
@@ -219,6 +221,16 @@ if [ "$PHASE" = archive ]; then
     fi
   else
     : "${DEVELOPMENT_TEAM:?archive needs DEVELOPMENT_TEAM — it is never committed, see docs/plan/app-store-release-ios.md §3}"
+    # A runner has no Xcode account, so the key signs the archive too; a workflow env: `~` is literal, so derive the path (§3).
+    if [ -n "${APP_STORE_CONNECT_KEY_ID:-}" ]; then
+      KEY_PATH="${APP_STORE_CONNECT_KEY_PATH:-$HOME/.appstoreconnect/private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8}"
+      [ -f "$KEY_PATH" ] || { echo "no App Store Connect key at $KEY_PATH" >&2; exit 2; }
+      AUTH=(
+        -authenticationKeyPath "$KEY_PATH"
+        -authenticationKeyID "$APP_STORE_CONNECT_KEY_ID"
+        -authenticationKeyIssuerID "${APP_STORE_CONNECT_ISSUER_ID:?an API key needs its issuer id}"
+      )
+    fi
   fi
   case "${BUILD_NUMBER:-}" in
     "" | *[!0-9]*)
@@ -257,6 +269,7 @@ if [ "$PHASE" = archive ]; then
     -destination "generic/platform=iOS" \
     -archivePath "$ARCHIVE" \
     -allowProvisioningUpdates \
+    ${AUTH[@]+"${AUTH[@]}"} \
     DEVELOPMENT_TEAM="$DEVELOPMENT_TEAM" \
     CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
     "${VERSION_ARGS[@]}" \
@@ -278,21 +291,6 @@ if [ "$PHASE" = archive ]; then
   cp store/ExportOptions.plist "$OPTIONS"
   plutil -replace teamID -string "$DEVELOPMENT_TEAM" "$OPTIONS"
   plutil -replace destination -string "${EXPORT_DESTINATION:-export}" "$OPTIONS"
-
-  # The API key authenticates the upload and lets automatic signing fetch a distribution profile,
-  # which is what replaces a keychain this repository would otherwise have to carry. The path is
-  # derived rather than passed: a workflow `env:` value is not a shell, so a `~` in one stays a
-  # literal and xcodebuild reports a missing key that is sitting where it was put.
-  AUTH=()
-  if [ -n "${APP_STORE_CONNECT_KEY_ID:-}" ]; then
-    KEY_PATH="${APP_STORE_CONNECT_KEY_PATH:-$HOME/.appstoreconnect/private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8}"
-    [ -f "$KEY_PATH" ] || { echo "no App Store Connect key at $KEY_PATH" >&2; exit 2; }
-    AUTH=(
-      -authenticationKeyPath "$KEY_PATH"
-      -authenticationKeyID "$APP_STORE_CONNECT_KEY_ID"
-      -authenticationKeyIssuerID "${APP_STORE_CONNECT_ISSUER_ID:?an API key needs its issuer id}"
-    )
-  fi
 
   xcodebuild -exportArchive \
     -archivePath "$ARCHIVE" \

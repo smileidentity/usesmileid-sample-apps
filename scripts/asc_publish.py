@@ -7,7 +7,7 @@ signed with the openssl every Mac and runner already has, so nothing is installe
 
     scripts/asc_publish.py plan                 # read-only: what would change, against what is live
     scripts/asc_publish.py apply --build 103    # write the listing and attach that build
-    scripts/asc_publish.py submit               # create and submit the review submission
+    scripts/asc_publish.py submit               # create or reuse the review submission, clear a rejected item, submit
     scripts/asc_publish.py status               # where the version is in review
 
 Environment: APP_STORE_CONNECT_KEY_ID, APP_STORE_CONNECT_ISSUER_ID, and the .p8 at
@@ -393,8 +393,13 @@ def status(asc: ASC, args=None):
         print(f"  review submission {s['attributes']['state']} {s['attributes'].get('submittedDate') or ''}")
 
 
+def item_version(item: dict) -> str | None:
+    """The app store version a review-submission item points at, when the response carried the relationship."""
+    return (item.get("relationships", {}).get("appStoreVersion", {}).get("data") or {}).get("id")
+
+
 def submit(asc: ASC, args):
-    """A draft submission first: Apple validates completeness when the version is added, before anything is sent."""
+    """A draft submission first: Apple validates completeness when the version is added; a rejected item is resolved before the resubmit."""
     a = app(asc)
     v = editable_version(asc, a["id"])
     if not v:
@@ -412,8 +417,9 @@ def submit(asc: ASC, args):
             sys.exit(1)
         sub = created["data"]
     # The relationship has to be named in the sparse field set, or it is absent from the response.
-    items = asc.get(f"reviewSubmissions/{sub['id']}/items", **{"fields[reviewSubmissionItems]": "state,appStoreVersion", "include": "appStoreVersion"})["data"]
-    if not any((i.get("relationships", {}).get("appStoreVersion", {}).get("data") or {}).get("id") == v["id"] for i in items):
+    item_fields = {"fields[reviewSubmissionItems]": "state,appStoreVersion", "include": "appStoreVersion"}
+    items = asc.get(f"reviewSubmissions/{sub['id']}/items", **item_fields)["data"]
+    if not any(item_version(i) == v["id"] for i in items):
         code, out = asc.call("POST", "reviewSubmissionItems", {"data": {"type": "reviewSubmissionItems",
                              "relationships": {"reviewSubmission": {"data": {"type": "reviewSubmissions", "id": sub["id"]}},
                                                "appStoreVersion": {"data": {"type": "appStoreVersions", "id": v["id"]}}}}})
@@ -421,12 +427,24 @@ def submit(asc: ASC, args):
         print(f"  {'ok ' if code == 201 or already else 'ERR'} add version {v['attributes']['versionString']} to the draft ({code}{' — already in it' if already else ('' if code == 201 else ': ' + errors(out))})")
         if code != 201 and not already:
             sys.exit("Apple refused the version as an item — the message above says what is missing")
-        items = asc.get(f"reviewSubmissions/{sub['id']}/items", **{"fields[reviewSubmissionItems]": "state"})["data"]
+        items = asc.get(f"reviewSubmissions/{sub['id']}/items", **item_fields)["data"]
     print("  items: " + ", ".join(i["attributes"]["state"] for i in items))
     if args.dry_run:
         print("dry run: the draft is complete as far as Apple validates at this step; nothing was submitted")
         return
-    asc.write("PATCH", f"reviewSubmissions/{sub['id']}", {"data": {"type": "reviewSubmissions", "id": sub["id"], "attributes": {"submitted": True}}}, "submit for review")
+    # Apple answers a timing-sounding 409 until the rejected item is resolved — docs/plan/app-store-release-ios.md §7.2.
+    for i in items:
+        if i["attributes"]["state"] != "REJECTED":
+            continue
+        if item_version(i) != v["id"]:
+            print(f"  left alone: rejected item {i['id']} belongs to another version")
+            continue
+        body = {"data": {"type": "reviewSubmissionItems", "id": i["id"], "attributes": {"resolved": True}}}
+        if asc.write("PATCH", f"reviewSubmissionItems/{i['id']}", body, "resolve rejected item") is None:
+            sys.exit("Apple refused to mark the rejected item resolved — the message above says why")
+    body = {"data": {"type": "reviewSubmissions", "id": sub["id"], "attributes": {"submitted": True}}}
+    if asc.write("PATCH", f"reviewSubmissions/{sub['id']}", body, "submit for review") is None:
+        sys.exit("Apple refused the submission — the message above says why")
     status(asc)
 
 
