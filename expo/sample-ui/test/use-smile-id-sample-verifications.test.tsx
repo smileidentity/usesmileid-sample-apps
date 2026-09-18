@@ -61,8 +61,12 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
   {
     screen: 'verificationDetails',
     states: {
-      // One state per status the design draws, since the badge and the message both move.
-      processing: { element: () => details() },
+      // One state per status the design draws, since the badge and the message both move. The
+      // default fixture is Clear, so Processing has to be posed with the fixture that is one.
+      processing: {
+        element: () =>
+          details({ state: { job: fixtures[1]!, jobId: fixtures[1]!.id, refreshing: false } }),
+      },
       clear: {
         element: () =>
           details({
