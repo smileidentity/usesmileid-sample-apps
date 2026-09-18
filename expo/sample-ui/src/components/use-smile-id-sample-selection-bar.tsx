@@ -49,7 +49,7 @@ export const UseSmileIDSampleSelectionBar = ({ selectedCount, onRemove, style }:
           },
         ]}
       >
-        <View style={[styles.text, { rowGap: theme.dimens.spacing.xxs }]}>
+        <View style={{ rowGap: theme.dimens.spacing.xxs }}>
           <Text
             testID={UseSmileIDSampleTestIds.SELECTION_COUNT}
             style={[
@@ -111,7 +111,13 @@ const RemoveAction = ({ enabled, onRemove }: { enabled: boolean; onRemove: () =>
 
 const styles = StyleSheet.create({
   bar: { width: '100%' },
-  row: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', width: '100%' },
-  text: { flex: 1 },
+  // Both children keep their natural width, so a row too narrow for them wraps instead of crushing the text.
+  row: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
   remove: { alignItems: 'center', flexDirection: 'row' },
 });

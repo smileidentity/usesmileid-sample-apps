@@ -9,6 +9,8 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { useSmileIDSampleListInset } from '../../src/use-smile-id-sample-list-inset';
+
 export default function Verifications() {
   const router = useRouter();
   const notice = useSmileIDSampleTransientNotice();
@@ -21,6 +23,7 @@ export default function Verifications() {
   // Read once rather than on every render: the day headers derive from the rows and this value, and
   // a clock read in render would recompute them on every pass and make the render impure.
   const [nowMillis] = useState(() => Date.now());
+  const bottomInset = useSmileIDSampleListInset();
   const { show } = notice;
 
   useEffect(() => {
@@ -42,14 +45,15 @@ export default function Verifications() {
         onJobPress={(job) => router.push(`/verifications/${job.id}`)}
         // The write outlives this screen: a removal must land even if the reader navigates at once.
         onRemove={(ids) => void remove(ids)}
+        bottomInset={bottomInset}
       />
-      <UseSmileIDSampleTransientNoticeHost state={notice} style={styles.notice} />
+      <UseSmileIDSampleTransientNoticeHost state={notice} style={[styles.notice, { bottom: bottomInset }]} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   host: { flex: 1 },
-  // Clears the tab bar, which this route sits inside and the profiles list does not.
-  notice: { bottom: 88, paddingHorizontal: 16, position: 'absolute' },
+  // The bar it clears is measured, so this route's notice rides the same reserve the list does.
+  notice: { paddingHorizontal: 16, position: 'absolute' },
 });

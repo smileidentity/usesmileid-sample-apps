@@ -9,7 +9,8 @@
     "ios": "expo run:ios",
     "start": "expo start",
     "bundle": "expo export --platform android --platform ios --output-dir dist",
-    "prebuild": "expo prebuild --clean"
+    "prebuild": "expo prebuild --clean",
+    "test": "jest"
   },
   "dependencies": {
     "@expo/ui": "~57.0.18",
@@ -51,20 +52,30 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@react-native/jest-preset": "0.86.3",
+    "@testing-library/react-native": "14.0.1",
+    "@types/jest": "29.5.14",
     "expo-doctor": "1.20.4",
+    "jest": "29.7.0",
+    "jest-expo": "57.0.5",
+    "test-renderer": "1.2.0",
     "typescript": "6.0.3"
   },
   "pinRationale": {
+    "@react-native/jest-preset": "Required by peer from both react-native and jest-expo, and matched to the react-native version.",
     "@react-native/metro-config": "Exactly 0.86.3: react-native-worklets requires it at the react-native version, and Expo's map offers 0.87 which fails that peer.",
-    "@smileid/sample-ui": "The shared UI, by workspace link. Never published, and this is the only workspace: range in the app — the SDK below is always a registry version.",
+    "@smileid/sample-ui": "The shared UI, by workspace link. Never published, and this is the only workspace: range in the app \u2014 the SDK below is always a registry version.",
     "@smileid/usesmileid": "The SDK, pinned exactly from the npm registry so every bump arrives as a PR and is therefore a free consumption test.",
     "@smileid/usesmileid_mlkit_document": "Document analyzer for Android targets with Google services; ships the config plugin that sets the Kotlin and KSP versions its AAR needs.",
     "@smileid/usesmileid_mlkit_face": "Face analyzer for Android targets with Google services; same config-plugin requirement.",
     "@smileid/usesmileid_vision_document": "Document analyzer for iOS, backed by the Vision framework.",
     "@smileid/usesmileid_vision_face": "Face analyzer for iOS, backed by the Vision framework.",
+    "@testing-library/react-native": "Renders the shell wiring the three tab screens depend on, which tsc and eslint cannot check.",
+    "@types/jest": "Matched to the jest 29 family below.",
     "expo": "SDK 57, which the SDK release notes name as the version 12.1.1 is built and verified against.",
     "expo-brightness": "Required SDK peer: capture raises screen brightness so a face is lit evenly.",
     "expo-constants": "Reads the app manifest, which is where the shell gets its own version for the Settings footer.",
+    "expo-doctor": "Pinned so the gate cannot start failing on a check that appeared between runs; it is what keeps continuous native generation and the SDK's expected dependency versions honest.",
     "expo-file-system": "Required SDK peer: captured images are written to disk before submission.",
     "expo-font": "Loads the five bundled DM Sans faces the type ramp resolves against.",
     "expo-haptics": "Required SDK peer: capture feedback.",
@@ -76,6 +87,8 @@
     "expo-screen-orientation": "Required SDK peer: document capture locks orientation.",
     "expo-status-bar": "Status-bar style per theme, which the contrast predicate asserts in both presentations.",
     "expo-system-ui": "Sets the window background so dark mode has no white flash behind a translucent screen.",
+    "jest": "29.7.0, not 30: jest-expo 57 depends on the jest 29 family, and the library package pins the same pair.",
+    "jest-expo": "Versioned with the Expo SDK; supplies the React Native transform and module mocks.",
     "lottie-react-native": "Required SDK peer: the capture instruction animations.",
     "react": "Exactly 19.2.3, the floor react-native 0.86.3 declares; 19.2.0 fails that peer.",
     "react-native": "0.86.3, the version the SDK release notes pair with Expo SDK 57.",
@@ -88,8 +101,8 @@
     "react-native-screens": "expo-router peer; gives each route a native container so the back affordance stays the platform's.",
     "react-native-svg": "Required SDK peer, and what the design's own marks are drawn as.",
     "react-native-worklets": "Reanimated 4's worklets runtime, and the reason babel.config.js carries its plugin last.",
-    "zustand": "The app-lifetime stores, per the navigation plan's per-platform choice; screen state stays in hooks.",
-    "typescript": "6.0.3, the version Expo SDK 57 expects. It also satisfies typescript-eslint 8's `>=4.8.4 <6.1.0`, so type-aware linting stays on — 7.x would not.",
-    "expo-doctor": "Pinned so the gate cannot start failing on a check that appeared between runs; it is what keeps continuous native generation and the SDK's expected dependency versions honest."
+    "test-renderer": "The modern replacement react-test-renderer became; @testing-library/react-native 14 requires it by peer.",
+    "typescript": "6.0.3, the version Expo SDK 57 expects. It also satisfies typescript-eslint 8's `>=4.8.4 <6.1.0`, so type-aware linting stays on \u2014 7.x would not.",
+    "zustand": "The app-lifetime stores, per the navigation plan's per-platform choice; screen state stays in hooks."
   }
 }

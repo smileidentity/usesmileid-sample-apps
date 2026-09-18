@@ -7,10 +7,13 @@ import {
 } from '@smileid/sample-ui';
 import { useRouter } from 'expo-router';
 
+import { useSmileIDSampleListInset } from '../../src/use-smile-id-sample-list-inset';
+
 export default function Products() {
   const router = useRouter();
   const profile = useSmileIDSampleActiveProfile();
   const index = useSmileIDSampleActiveProfileIndex();
+  const bottomInset = useSmileIDSampleListInset();
 
   return (
     <ProductsScreen
@@ -22,6 +25,7 @@ export default function Products() {
       onProductPress={(product) => router.push(`/flow/${product.id}/details`)}
       onProfilePress={() => router.push('/profiles/switch')}
       onScanPress={() => router.push('/token/scan')}
+      bottomInset={bottomInset}
     />
   );
 }

@@ -720,6 +720,7 @@ exports[`at the largest content size, dark selection_bar 1`] = `
           "alignItems": "center",
           "flexDirection": "row",
           "flexWrap": "wrap",
+          "justifyContent": "space-between",
           "width": "100%",
         },
         {
@@ -734,14 +735,9 @@ exports[`at the largest content size, dark selection_bar 1`] = `
   >
     <View
       style={
-        [
-          {
-            "flex": 1,
-          },
-          {
-            "rowGap": 4,
-          },
-        ]
+        {
+          "rowGap": 4,
+        }
       }
     >
       <Text
@@ -1944,6 +1940,7 @@ exports[`at the largest content size, light selection_bar 1`] = `
           "alignItems": "center",
           "flexDirection": "row",
           "flexWrap": "wrap",
+          "justifyContent": "space-between",
           "width": "100%",
         },
         {
@@ -1958,14 +1955,9 @@ exports[`at the largest content size, light selection_bar 1`] = `
   >
     <View
       style={
-        [
-          {
-            "flex": 1,
-          },
-          {
-            "rowGap": 4,
-          },
-        ]
+        {
+          "rowGap": 4,
+        }
       }
     >
       <Text

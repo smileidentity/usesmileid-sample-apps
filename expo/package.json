@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "eslint .",
     "typecheck": "pnpm -r --workspace-concurrency=1 exec tsc --noEmit",
-    "test": "pnpm --filter @smileid/sample-ui test",
+    "test": "pnpm -r --workspace-concurrency=1 exec jest --ci",
     "bundle": "pnpm --filter usesmileid-sample-expo bundle"
   },
   "devDependencies": {

@@ -32,14 +32,23 @@ export type Interaction = (rendered: Rendered) => Promise<void> | void;
 
 /// Renders one component at a pinned scheme and font scale, so a golden depends on neither the
 /// runner's appearance nor the preset's idea of a font scale.
-export const renderInTheme = (element: ReactElement, dark: boolean, fontScale = DESIGN_FONT_SCALE) => {
+export const renderInTheme = (
+  element: ReactElement,
+  dark: boolean,
+  fontScale = DESIGN_FONT_SCALE,
+  insets?: Partial<Metrics['insets']>,
+) => {
   jest.spyOn(PixelRatio, 'getFontScale').mockReturnValue(fontScale);
+  const pinned: Metrics = insets ? { ...metrics, insets: { ...metrics.insets, ...insets } } : metrics;
   return render(
-    <SafeAreaProvider initialMetrics={metrics}>
+    <SafeAreaProvider initialMetrics={pinned}>
       <UseSmileIDSampleThemeProvider dark={dark}>{element}</UseSmileIDSampleThemeProvider>
     </SafeAreaProvider>,
   );
 };
+
+/// The gesture inset the pinned frame carries, which a clearance must contain exactly once.
+export const PINNED_BOTTOM_INSET = metrics.insets.bottom;
 
 /// The rendered tree with its resolved styles, which is what a token or metric regression changes.
 export const styleTree = async (
@@ -75,8 +84,8 @@ const withoutElementProps = <T,>(tree: T): T => {
 type Json = ReturnType<Rendered['toJSON']>;
 
 /// Records the component rather than the harness: the inset provider is a host element, and leaving
-/// it in put twelve lines of framing at the top of every baseline.
-const withoutHarness = (tree: Json): Json => {
+/// it in put twelve lines of framing at the top of every baseline. Shared, so a golden and a laid-out tree agree.
+export const withoutHarness = (tree: Json): Json => {
   if (tree === null || Array.isArray(tree) || tree.type !== 'RNCSafeAreaProvider') return tree;
   const only = (tree.children ?? [])[0];
   // Anything but a single child keeps the wrapper, so unwrapping can never drop content.

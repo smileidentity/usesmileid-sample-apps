@@ -18,6 +18,7 @@
 - **Depends on**: none
 - **Category**: bug
 - **Planned at**: commit `2d9ba17`, 2026-09-17
+- **Landed so far**: step 6 (#107). Steps 1, 2, 4 and 5 remain.
 
 ## Why this matters
 
@@ -355,7 +356,7 @@ removal, advances jest fake timers past 50 ms, and asserts the toast is gone. Pa
 
 **Commit**: `fix: honour the Expo noticeWindow launch argument`
 
-### Step 6: mount the floating nav bar
+### Step 6: mount the floating nav bar — LANDED (#107)
 
 `expo/sample-ui/src/components/use-smile-id-sample-nav-bar.tsx:26` exports
 `UseSmileIDSampleNavBar`, which the other three apps mount and Expo does not. `expo/app/app/(tabs)/_layout.tsx:4`

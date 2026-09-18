@@ -31,7 +31,7 @@ module.exports = tseslint.config(
   },
   {
     // CommonJS by necessity: eslint and jest both load their config before any ESM loader exists.
-    files: ['eslint.config.js', '**/jest.config.js', '**/metro.config.js', 'sample-ui/test/snapshot-resolver.js', 'sample-ui/test/setup.ts'],
+    files: ['eslint.config.js', '**/jest.config.js', '**/metro.config.js', 'sample-ui/test/snapshot-resolver.js', '**/test/setup.ts'],
     rules: { '@typescript-eslint/no-require-imports': 'off' },
   },
   {
@@ -46,7 +46,7 @@ module.exports = tseslint.config(
   },
   {
     // The pinned goldens name the states whose two schemes match, which is prose, not colour.
-    files: ['sample-ui/test/**'],
+    files: ['**/test/**'],
     rules: { '@typescript-eslint/no-non-null-assertion': 'off' },
   },
 );

@@ -12,13 +12,15 @@ import { UseSmileIDSampleSessionCard } from '../src/components/use-smile-id-samp
 import { UseSmileIDSampleSessionEndedBanner } from '../src/components/use-smile-id-sample-session-ended-banner';
 import { UseSmileIDSampleSwipeAction } from '../src/components/use-smile-id-sample-swipe-action';
 import { UseSmileIDSampleTokenRing } from '../src/components/use-smile-id-sample-token-ring';
+import { smileIDSampleNavItems } from '../src/model/use-smile-id-sample-nav-item';
 import {
   smileIDSampleProductHue,
   smileIDSampleProductIcon,
   smileIDSampleProducts,
 } from '../src/model/use-smile-id-sample-product';
 import { UseSmileIDSampleStatus } from '../src/model/use-smile-id-sample-status';
-import { schemes, styleTree } from './render-in-theme';
+import { UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
+import { renderInTheme, schemes, styleTree } from './render-in-theme';
 
 const noop = () => {};
 
@@ -217,6 +219,26 @@ describe('the product card', () => {
 });
 
 describe('the nav bar', () => {
+  it('carries every nav id itself, because a custom bar gets no tabBarButtonTestID', async () => {
+    const rendered = await renderInTheme(
+      <UseSmileIDSampleNavBar selectedId="products" onSelect={noop} onTokenPress={noop} />,
+      false,
+    );
+    const reached = [...smileIDSampleNavItems.map((item) => item.testID), UseSmileIDSampleTestIds.NAV_TOKEN];
+    expect(reached.filter((id) => rendered.queryByTestId(id) === null)).toEqual([]);
+  });
+
+  it('marks only the selected tab as selected, which is what drives the tint', async () => {
+    const rendered = await renderInTheme(
+      <UseSmileIDSampleNavBar selectedId="settings" onSelect={noop} onTokenPress={noop} />,
+      false,
+    );
+    const selected = smileIDSampleNavItems.filter(
+      (item) => rendered.getByTestId(item.testID).props.accessibilityState?.selected === true,
+    );
+    expect(selected.map((item) => item.id)).toEqual(['settings']);
+  });
+
   it('draws an icon above every label, which is the trap a port falls into', async () => {
     const tree = JSON.stringify(await styleTree(
       <UseSmileIDSampleNavBar selectedId="products" onSelect={noop} onTokenPress={noop} />,
