@@ -15,7 +15,8 @@ import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
-/// The details every product collects before its flow starts.
+/// The details every product collects before its flow starts. It opens EMPTY even for a profile
+/// with saved defaults, as the twin does; whether it should is an open product question.
 class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
   /// [requirement] is what a token has not already covered; its default asks for everything.
   const UseSmileIDSampleUserDetailsScreen({

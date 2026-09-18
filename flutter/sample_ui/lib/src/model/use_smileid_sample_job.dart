@@ -113,7 +113,8 @@ class UseSmileIDSampleJob {
   };
 }
 
-/// The chips above the list, in the order they are drawn.
+/// The chips above the list, in the order they are drawn. There is deliberately no Processing chip:
+/// a fourth chip would be a filter the design does not have.
 enum UseSmileIDSampleJobFilter {
   /// Everything.
   all('all', 'All', null),

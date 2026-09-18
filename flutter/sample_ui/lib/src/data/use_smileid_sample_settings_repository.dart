@@ -14,7 +14,8 @@ abstract interface class UseSmileIDSampleSettingsRepository {
 
 /// The keys the store writes, shared across all four apps so a device carries one set, not four.
 abstract final class UseSmileIDSampleSettingsKeys {
-  /// The head-turn challenge.
+  /// The head-turn challenge, under a NEW key: `smile_to_capture = true` meant the opposite, so a
+  /// reused key would read every upgraded install backwards.
   static const String enhancedSmartSelfie = 'enhanced_smart_selfie';
 
   /// Operator capture.

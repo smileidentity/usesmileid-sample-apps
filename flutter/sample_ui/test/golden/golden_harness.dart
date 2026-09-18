@@ -115,7 +115,8 @@ Future<void> goldens(
   debugDisableShadows = true;
 }
 
-/// What the text-scale pass found: text ellipsised where it could have wrapped.
+/// What the text-scale pass found: text ellipsised where it could have wrapped, and words broken
+/// where the text offered no break. Returned, not asserted, so the rule itself can be tested.
 typedef UseSmileIDSampleTextScaleFindings = ({
   List<String> truncated,
   List<String> split,
