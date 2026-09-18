@@ -1,11 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
+  SMILE_ID_SAMPLE_NOTICE_WINDOW_MS,
+  UseSmileIDSampleTransientNoticeHost,
   useSmileIDSampleJobStore,
+  useSmileIDSampleTransientNotice,
   useSmileIDSampleSettingsStore,
   useSmileIDSampleTheme,
 } from '@smileid/sample-ui';
 import { act, render, waitFor } from '@testing-library/react-native';
 import * as Linking from 'expo-linking';
+import { useEffect } from 'react';
 import { Text, useColorScheme } from 'react-native';
 
 import RootLayout from '../app/_layout';
@@ -24,7 +28,8 @@ jest.mock('react-native-safe-area-context', () => ({
 // The router owns navigation; the stand-in renders the probe, which reads the theme from inside the provider.
 jest.mock('expo-router', () => {
   function Stack() {
-    return <MockSchemeProbe />;
+    const Probe = mockProbe;
+    return <Probe />;
   }
   Stack.Screen = function StackScreen() {
     return null;
@@ -49,10 +54,23 @@ const jobs = () => useSmileIDSampleJobStore.getState().jobs ?? [];
 
 const systemScheme = useColorScheme as jest.MockedFunction<typeof useColorScheme>;
 
+/// Whatever the router would have rendered, so a test can observe the tree from inside every provider.
+let mockProbe: () => React.ReactElement;
+
 /// Reads the theme the provider actually resolved, rather than inferring it from a colour.
-const MockSchemeProbe = () => (
+const SchemeProbe = () => (
   <Text testID="scheme">{useSmileIDSampleTheme().dark ? 'dark' : 'light'}</Text>
 );
+
+/// Shows one notice on mount and hosts it, so the auto-dismiss window is the thing under test.
+const NoticeProbe = () => {
+  const notice = useSmileIDSampleTransientNotice();
+  const { show } = notice;
+  useEffect(() => {
+    show({ message: '1 verification hidden from App list' });
+  }, [show]);
+  return <UseSmileIDSampleTransientNoticeHost state={notice} />;
+};
 
 const resolvedScheme = async ({
   darkMode,
@@ -71,6 +89,7 @@ const resolvedScheme = async ({
 };
 
 beforeEach(async () => {
+  mockProbe = SchemeProbe;
   await AsyncStorage.clear();
   useSmileIDSampleJobStore.getState().reset();
   useSmileIDSampleSettingsStore.getState().reset();
@@ -115,5 +134,45 @@ describe('the Dark Mode switch reaches the theme', () => {
     await waitFor(() => expect(load).toHaveBeenCalled());
     // Installed on the live store action, so leaving it patched would follow every later test.
     load.mockRestore();
+  });
+});
+
+describe('noticeWindow decides how long a transient notice stays', () => {
+  const showNotice = async (url: string | null) => {
+    mockProbe = NoticeProbe;
+    getInitialURL.mockResolvedValue(url);
+    const screen = await render(<RootLayout />);
+    await waitFor(() => expect(screen.queryByText(/hidden from App list/)).not.toBeNull());
+    return screen;
+  };
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('holds the notice for the window the launch asked for, to the second', async () => {
+    // 60 SECONDS. Read as milliseconds it is 60ms, and the notice is gone long before the first edge.
+    const screen = await showNotice(`${LAUNCH}?noticeWindow=60`);
+    await act(async () => {
+      jest.advanceTimersByTime(60_000 - 1);
+    });
+    expect(screen.queryByText(/hidden from App list/)).not.toBeNull();
+
+    await act(async () => {
+      jest.advanceTimersByTime(2);
+    });
+    expect(screen.queryByText(/hidden from App list/)).toBeNull();
+  });
+
+  it('falls back to the product\'s own window when the launch says nothing', async () => {
+    const screen = await showNotice(null);
+    await act(async () => {
+      jest.advanceTimersByTime(SMILE_ID_SAMPLE_NOTICE_WINDOW_MS + 1);
+    });
+    expect(screen.queryByText(/hidden from App list/)).toBeNull();
   });
 });

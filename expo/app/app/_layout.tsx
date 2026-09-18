@@ -1,4 +1,6 @@
 import {
+  SMILE_ID_SAMPLE_NOTICE_WINDOW_MS,
+  UseSmileIDSampleNoticeWindowProvider,
   UseSmileIDSampleThemeProvider,
   smileDarkColors,
   smileFontAssets,
@@ -32,6 +34,9 @@ export default function RootLayout() {
   const args = useLaunchArgs();
   const resetProfiles = useSmileIDSampleProfileStore((state) => state.reset);
   const seedFixtures = useSmileIDSampleJobStore((state) => state.seedFixtures);
+  // spec/launch-args.json states the argument in SECONDS; the library's window is milliseconds.
+  const noticeWindowMs =
+    args.noticeWindow === null ? SMILE_ID_SAMPLE_NOTICE_WINDOW_MS : args.noticeWindow * 1_000;
 
   // The five faces are bundled rather than fetched: a provider would make text depend on the network.
   const [fontsLoaded] = useFonts(smileFontAssets);
@@ -54,23 +59,25 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <UseSmileIDSampleThemeProvider dark={dark}>
-        <StatusBar style={dark ? 'light' : 'dark'} />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: colors.background },
-          }}
-        >
-          {/* Transparent, so products stays visible behind the sheet rather than being replaced. */}
-          <Stack.Screen
-            name="(products)/profiles/switch"
-            options={{
-              presentation: 'transparentModal',
-              animation: 'none',
-              contentStyle: { backgroundColor: 'transparent' },
+        <UseSmileIDSampleNoticeWindowProvider value={noticeWindowMs}>
+          <StatusBar style={dark ? 'light' : 'dark'} />
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: colors.background },
             }}
-          />
-        </Stack>
+          >
+            {/* Transparent, so products stays visible behind the sheet rather than being replaced. */}
+            <Stack.Screen
+              name="(products)/profiles/switch"
+              options={{
+                presentation: 'transparentModal',
+                animation: 'none',
+                contentStyle: { backgroundColor: 'transparent' },
+              }}
+            />
+          </Stack>
+        </UseSmileIDSampleNoticeWindowProvider>
       </UseSmileIDSampleThemeProvider>
     </SafeAreaProvider>
   );
