@@ -7,7 +7,6 @@ import { ProductsScreen } from '../src/screens/products-screen';
 import { SettingsScreen } from '../src/screens/settings-screen';
 import { VerificationsScreen } from '../src/screens/verifications-screen';
 import { smileIDSampleSettingsDefaults } from '../src/state/use-smile-id-sample-settings';
-import { smileDimens } from '../src/theme/smile-dimens';
 import { flattenLayout, layoutTree } from './layout/layout-tree';
 import { loadLayoutEngine, renderForLayout } from './layout/render-for-layout';
 import { NARROW_WIDTH, WIDE_WIDTH } from './layout/text-scale';
@@ -23,9 +22,6 @@ const barHeight = async (width: number, fontScale: number, selectedId = 'product
   const tree = await renderForLayout(bar(selectedId), { fontScale });
   return layoutTree(tree, { width, fontScale }).height;
 };
-
-/// The reserve a host owes the list under the bar, which is the bar itself plus one gap.
-const reserveFor = (height: number) => height + smileDimens.spacing.md;
 
 const screens = {
   products: (bottomInset?: number) => (
@@ -123,60 +119,33 @@ describe('the gesture inset is inside the reserve exactly once', () => {
     }
   });
 
-  it('reserves the bar and one gap, and nothing else', async () => {
-    const height = await barHeight(NARROW_WIDTH, DESIGN_FONT_SCALE);
-    const reserved = await reservedBottom(
-      screens.products(reserveFor(height)),
-      NARROW_WIDTH,
-      DESIGN_FONT_SCALE,
-    );
-    expect(reserved).toBe(height + smileDimens.spacing.md);
-  });
 });
 
-describe('a measured reserve holds past the scale the predicate is written against', () => {
-  it('still clears the bar at 3x, which iOS Dynamic Type reaches and a recorded number would not', async () => {
-    // Recorded rather than asserted as a constant: the point is that the reserve FOLLOWS the measurement.
+describe('the bar keeps growing past the scale the predicate is written against', () => {
+  it('is taller again at 3x, which iOS Dynamic Type reaches and a recorded number would not follow', async () => {
+    // Only the growth is assertable here: whether a host's reserve tracks it is the shell's own test.
     for (const width of [NARROW_WIDTH, WIDE_WIDTH]) {
       const enlarged = await barHeight(width, ENLARGED_FONT_SCALE);
-      const beyond = await barHeight(width, 3);
-      const reserved = await reservedBottom(screens.products(reserveFor(beyond)), width, 3);
-      expect({ width, grew: beyond > enlarged, clears: reserved >= beyond }).toEqual({
-        width,
-        grew: true,
-        clears: true,
-      });
+      expect({ width, grew: (await barHeight(width, 3)) > enlarged }).toEqual({ width, grew: true });
     }
   });
 });
 
-describe('a host that passes nothing reserves nothing', () => {
+describe('a screen reserves exactly what its host passes, and nothing by itself', () => {
+  // Comparing a reserve DERIVED from the bar against the bar proves only that a gap is positive, so
+  // these assert the forwarding contract instead; whether the shipped reserve clears the bar is
+  // expo/app/test/use-smile-id-sample-nav-bar-host.test.tsx, against the real hook.
   it.each(Object.keys(screens) as (keyof typeof screens)[])(
-    'leaves the %s list running under the bar by default',
+    'leaves the %s list running under the bar when the host passes nothing',
     async (screen) => {
       expect(await reservedBottom(screens[screen](), NARROW_WIDTH, DESIGN_FONT_SCALE)).toBe(0);
     },
   );
 
   it.each(Object.keys(screens) as (keyof typeof screens)[])(
-    'clears the measured bar on %s once the host passes it',
+    'forwards the host inset into the %s scroll content untouched',
     async (screen) => {
-      for (const width of [NARROW_WIDTH, WIDE_WIDTH]) {
-        for (const fontScale of [DESIGN_FONT_SCALE, ENLARGED_FONT_SCALE]) {
-          const height = await barHeight(width, fontScale);
-          const reserved = await reservedBottom(
-            screens[screen](reserveFor(height)),
-            width,
-            fontScale,
-          );
-          expect({ screen, width, fontScale, clears: reserved >= height }).toEqual({
-            screen,
-            width,
-            fontScale,
-            clears: true,
-          });
-        }
-      }
+      expect(await reservedBottom(screens[screen](207), NARROW_WIDTH, DESIGN_FONT_SCALE)).toBe(207);
     },
   );
 });

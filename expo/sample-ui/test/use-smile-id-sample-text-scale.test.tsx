@@ -123,8 +123,17 @@ describe('the nav bar survives every frame the apps draw on', () => {
     assertSurvivesTextScale(tree, { width, fontScale, knownOpenWords: tabOpenWords });
   });
 
-  it('records only the three tab labels, and only because the Flutter twin records them', () => {
-    expect(tabOpenWords).toEqual(['Products', 'Verifications', 'Settings']);
+  it('still needs every word it exempts, so the exemption cannot outlive the defect', async () => {
+    // Comparing the set against a copy of itself would pin nothing: this asks whether each word still breaks.
+    const tree = await renderForLayout(
+      <UseSmileIDSampleNavBar selectedId="products" onSelect={noop} onTokenPress={noop} />,
+      { fontScale: ENLARGED_FONT_SCALE },
+    );
+    const broken = textScaleFindings(tree, {
+      width: NARROW_WIDTH,
+      fontScale: ENLARGED_FONT_SCALE,
+    }).split.map((it) => it.word);
+    expect(tabOpenWords.filter((word) => !broken.some((it) => it.includes(word)))).toEqual([]);
   });
 });
 
