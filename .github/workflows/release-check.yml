@@ -51,12 +51,14 @@ jobs:
       - name: Store art is present and store-legal
         run: |
           FRAMES=android/sample-ui/src/test/store-art
-          test -d "$FRAMES" || { echo "::error::no store-art directory"; exit 1; }
+          shopt -s nullglob
+          frames=("$FRAMES"/*.png)
+          [ ${#frames[@]} -gt 0 ] || { echo "::error::no store-art frames in $FRAMES"; exit 1; }
           fail=0
-          for f in "$FRAMES"/*.png; do
-            dim=$(python3 -c "import struct,sys;d=open('$f','rb').read(33);print(f'{struct.unpack(\">I\",d[16:20])[0]}x{struct.unpack(\">I\",d[20:24])[0]}')")
-            if [ "$dim" != "1080x1920" ]; then
-              echo "::error file=$f::$dim, expected 1080x1920 (the android-phone preset)"
+          for f in "${frames[@]}"; do
+            dim=$(python3 -c "import struct,sys;d=open(sys.argv[1],'rb').read(33);print(f'{struct.unpack(\">I\",d[16:20])[0]}x{struct.unpack(\">I\",d[20:24])[0]}')" "$f")
+            if [ "$dim" != "1080x2400" ]; then
+              echo "::error file=$f::$dim, expected 1080x2400 (a 20:9 phone)"
               fail=1
             else
               echo "  $(basename "$f") $dim"

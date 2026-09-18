@@ -36,11 +36,23 @@ const sharp = (await import(pathToFileURL(sharpPath).href)).default;
 
 const preset = getPreset(values.preset);
 const bg = normalizeHex(values.bg);
-let { buffer, width: deviceW, height: deviceH } = await renderDevice(preset, values.screenshot);
 
-// The whole device, centred: with no headline to sit under, there is nothing for it to bleed away from.
-// Fitted on both axes, or an overhang on either one centres to a negative offset and sharp throws.
+// storeshots sizes the device for a headline and shapes its screen like the canvas; a wordless panel wants neither.
+const shot = await sharp(values.screenshot).metadata();
+if (!shot.width || !shot.height) {
+  console.error(`cannot read the dimensions of ${values.screenshot}`);
+  process.exit(2);
+}
+const screenAspect = shot.height / shot.width;
 const margin = Math.round(preset.height * 0.03);
+const heightPerWidth = (1 - 2 * preset.device.bezelRatio) * screenAspect + 2 * preset.device.bezelRatio;
+const fitRatio = Math.min(0.9, (preset.height - 2 * margin) / heightPerWidth / preset.width);
+let { buffer, width: deviceW, height: deviceH } = await renderDevice(
+  { ...preset, screenAspect, deviceWidthRatio: fitRatio },
+  values.screenshot,
+);
+
+// Centred whole; an overhang on either axis centres to a negative offset and sharp throws.
 const scale = Math.min(1, (preset.height - 2 * margin) / deviceH, (preset.width - 2 * margin) / deviceW);
 if (scale < 1) {
   deviceW = Math.round(deviceW * scale);

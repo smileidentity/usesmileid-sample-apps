@@ -199,13 +199,19 @@ background, gradient and frame with the whole device centred, composed by `scrip
 because storeshots refuses an empty headline, then validated by storeshots as before. The listing copy
 carries the words, so the two rules above now govern that copy rather than the art.
 
+**The phone got taller on 2026-09-18.** The frames were recorded at `w360dp-h640dp`, a 16:9 device that
+cut the products grid at its third row; `StoreArtTest` now records at `w360dp-h800dp` (1080×2400, 20:9).
+And storeshots shapes the drawn screen like the canvas — 16:9 here — and sizes it for a headline; the
+composer now keeps the capture's aspect and fills the panel (90% of the width or a 3% vertical margin),
+on both stores.
+
 ### 2.7 What building the pipeline changed
 
 Three corrections, all found by running it rather than by reading:
 
 - **Gradle Managed Devices cannot host the camera capture.** GMD starts and stops its emulator around a
   Gradle *test task*, and Maestro is not one, so a GMD block would declare an image nothing uses. The
-  image is pinned in the flow's header instead — a Pixel-class AVD on API 34, at 1080x1920 so the frame
+  image is pinned in the flow's header instead — a Pixel-class AVD on API 34, at 1080x2400 so the frame
   needs no rescaling next to the five rendered panels.
 - **The capture flow lives in `android/maestro/store/`, not beside the suite.** Folder runs are
   non-recursive, which is how `subflows/` stays out of the suite; a top-level `store-shots.yaml` would
@@ -601,6 +607,9 @@ None of these blocks anything, and none of them belongs to Android's critical pa
   `seedProfiles` launch argument mirroring `seedJobs`, and a unit test holds both the default and the
   launch choice. REL-A10 audited what the flows *seed* and what the frames *show*; the profile store's
   constructor default was neither, which is how it passed — see §8.
+- **The taller panels owe a Console upload.** `android/play/screenshots/` (five panels) and
+  `android/play/feature-graphic.png` were re-rendered on 2026-09-18 from 20:9 frames (§2.6); the live
+  listing still serves the 16:9 set until the owner replaces those six files by hand.
 - **The camera panel (REL-A9)** needs a device. The flow and its output path are written; five panels
   are published and the sixth drops in without rework.
 - **The `verification_details` panel is the weak one.** Hiding the debug result card left that screen

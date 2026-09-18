@@ -172,7 +172,9 @@ over all five.
 - **One layout variant for the whole set.** Every panel is `text-top`, so the device sits at the same
   height throughout. Variety comes from the headlines and the screens. *Since 2026-09-14 there is no
   headline: the panels are the screen alone, whole device centred, on both platforms — see the Android
-  plan's §2.6 for the ruling and `scripts/compose-store-panel.mjs` for how.*
+  plan's §2.6 for the ruling and `scripts/compose-store-panel.mjs` for how. Since 2026-09-18 the device
+  fills the panel — 90% of the width or a 3% vertical margin, whichever binds — because storeshots' 78%
+  was sized to sit under a headline.*
 - **No headline states a count**, and the nouns come from `docs-v3` — *verification result*, and its
   *status* and *message*, which are also the words on the app's own status pills. *The rule now
   governs the listing copy, the panels having no words.*
@@ -563,6 +565,12 @@ release lane's assertions all pass `-o -`, with a comment saying why.
   on every device. The answer now ships in `review-notes.txt`, so the question should not recur here or
   in the Flutter and Expo ports. The published App Privacy form already declares Sensitive Info on the
   reasoning that the selfie is biometric, which is the cross-check a reviewer makes.
+- **The taller panels are in the repository; App Store Connect gets them on the review decision.** The
+  five wordless panels in `ios/store/screenshots/` were re-rendered on 2026-09-18 with the device filling
+  the panel (§2.5), while version 20260913.1211.103 sat in the review queue, where its screenshots are
+  locked. Rejected → the version is editable again: `scripts/asc_publish.py apply --build 103` carries them,
+  then `submit`. Approved → they ride the next version's `apply`. Either way nothing is re-rendered; the
+  files are final.
 - **The camera panel** needs a device, exactly as Android's REL-A9 does. The composer already has its
   slot; five panels are rendered and Apple requires one, so it blocks nothing.
 - **The `verification_details` panel is the weak one**, and it is weak for precisely the reason Android
