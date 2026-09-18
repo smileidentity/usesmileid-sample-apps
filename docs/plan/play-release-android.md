@@ -199,13 +199,22 @@ background, gradient and frame with the whole device centred, composed by `scrip
 because storeshots refuses an empty headline, then validated by storeshots as before. The listing copy
 carries the words, so the two rules above now govern that copy rather than the art.
 
+**The phone got taller on 2026-09-18.** Two things made the wordless panels read as a short phone. The
+frames were recorded at `w360dp-h640dp`, a 16:9 device, so the capture itself was squat and cut the
+products grid at its third row; `StoreArtTest` now records at `w360dp-h800dp` (1080×2400, 20:9), the
+shape of the phones partners hold. And storeshots gives the drawn screen the panel's aspect — 16:9 on
+Play — and sizes the device at 72% of the width to leave room for a headline; the composer now keeps
+the capture's own aspect and lets the device take up to 90% of the panel's width, or as much height as
+a 3% margin allows, which on Play's 16:9 canvas is the height. The same composer rule sizes the iOS
+panels, so the two stores move together.
+
 ### 2.7 What building the pipeline changed
 
 Three corrections, all found by running it rather than by reading:
 
 - **Gradle Managed Devices cannot host the camera capture.** GMD starts and stops its emulator around a
   Gradle *test task*, and Maestro is not one, so a GMD block would declare an image nothing uses. The
-  image is pinned in the flow's header instead — a Pixel-class AVD on API 34, at 1080x1920 so the frame
+  image is pinned in the flow's header instead — a Pixel-class AVD on API 34, at 1080x2400 so the frame
   needs no rescaling next to the five rendered panels.
 - **The capture flow lives in `android/maestro/store/`, not beside the suite.** Folder runs are
   non-recursive, which is how `subflows/` stays out of the suite; a top-level `store-shots.yaml` would

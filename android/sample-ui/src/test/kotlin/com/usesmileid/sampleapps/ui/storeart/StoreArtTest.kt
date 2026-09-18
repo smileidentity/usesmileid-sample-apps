@@ -134,4 +134,4 @@ class StoreArtTest {
     }
 }
 
-internal const val STORE_PHONE_QUALIFIERS = "w360dp-h640dp-xxhdpi"
+internal const val STORE_PHONE_QUALIFIERS = "w360dp-h800dp-xxhdpi"

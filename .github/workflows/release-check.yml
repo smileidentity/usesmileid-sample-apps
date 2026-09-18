@@ -55,8 +55,8 @@ jobs:
           fail=0
           for f in "$FRAMES"/*.png; do
             dim=$(python3 -c "import struct,sys;d=open('$f','rb').read(33);print(f'{struct.unpack(\">I\",d[16:20])[0]}x{struct.unpack(\">I\",d[20:24])[0]}')")
-            if [ "$dim" != "1080x1920" ]; then
-              echo "::error file=$f::$dim, expected 1080x1920 (the android-phone preset)"
+            if [ "$dim" != "1080x2400" ]; then
+              echo "::error file=$f::$dim, expected 1080x2400 (a 20:9 phone; the 16:9 preset canvas cropped the screen)"
               fail=1
             else
               echo "  $(basename "$f") $dim"
