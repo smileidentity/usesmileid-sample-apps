@@ -113,5 +113,7 @@ describe('the Dark Mode switch reaches the theme', () => {
     getInitialURL.mockResolvedValue(null);
     await render(<RootLayout />);
     await waitFor(() => expect(load).toHaveBeenCalled());
+    // Installed on the live store action, so leaving it patched would follow every later test.
+    load.mockRestore();
   });
 });
