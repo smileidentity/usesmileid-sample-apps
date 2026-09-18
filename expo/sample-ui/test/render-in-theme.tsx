@@ -15,7 +15,7 @@ export const schemes = [
 /// enlarged type and left the layout the design draws with no coverage at all.
 export const DESIGN_FONT_SCALE = 1;
 
-/// What the no-clipping predicate is written against; a scale-sensitive state records here as well.
+/// What the text-scale predicate is written against; a scale-sensitive state records here as well.
 export const ENLARGED_FONT_SCALE = 2;
 
 /// Pinned insets and a 393-wide frame: all four platforms render 393 logical units wide, so a crop
@@ -84,8 +84,9 @@ const withoutElementProps = <T,>(tree: T): T => {
 type Json = ReturnType<Rendered['toJSON']>;
 
 /// Records the component rather than the harness: the inset provider is a host element, and leaving
-/// it in put twelve lines of framing at the top of every baseline.
-const withoutHarness = (tree: Json): Json => {
+/// it in put twelve lines of framing at the top of every baseline. Shared, so a golden and a laid-out
+/// tree cannot disagree about which node the component is.
+export const withoutHarness = (tree: Json): Json => {
   if (tree === null || Array.isArray(tree) || tree.type !== 'RNCSafeAreaProvider') return tree;
   const only = (tree.children ?? [])[0];
   // Anything but a single child keeps the wrapper, so unwrapping can never drop content.
