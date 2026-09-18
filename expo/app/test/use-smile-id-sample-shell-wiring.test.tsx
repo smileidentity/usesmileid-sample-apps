@@ -142,7 +142,9 @@ describe('noticeWindow decides how long a transient notice stays', () => {
     mockProbe = NoticeProbe;
     getInitialURL.mockResolvedValue(url);
     const screen = await render(<RootLayout />);
-    await waitFor(() => expect(screen.queryByText(/hidden from App list/)).not.toBeNull());
+    // Flushed, not awaited: waitFor advances fake timers in steps and would eat part of the window.
+    await act(async () => {});
+    expect(screen.queryByText(/hidden from App list/)).not.toBeNull();
     return screen;
   };
 
