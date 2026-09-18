@@ -18,7 +18,7 @@
 - **Depends on**: none
 - **Category**: bug
 - **Planned at**: commit `2d9ba17`, 2026-09-17
-- **Landed so far**: step 6 (#107). Steps 1, 2, 4 and 5 remain.
+- **Landed so far**: step 6 (#107), step 1 (#107 lane, #108 test), step 2 (#109), step 4 (#110), step 5 (#111). Only step 3's test remains.
 
 ## Why this matters
 
@@ -240,7 +240,7 @@ Run from the repo root. `expo/verify.sh` expects pnpm 9 and will exit 1 on anyth
 
 ## Steps
 
-### Step 1: give `expo/app` a test lane
+### Step 1: give `expo/app` a test lane — LANDED (lane #107, launch-args test #108)
 
 Create `expo/app/jest.config.js` modelled on `expo/sample-ui/jest.config.js` quoted above. It needs:
 
@@ -281,7 +281,7 @@ tests pass. Then `cd expo && pnpm exec eslint .` → exit 0.
 
 **Commit**: `test: give the Expo shell its own jest lane`
 
-### Step 2: apply `seedJobs` at cold start
+### Step 2: apply `seedJobs` at cold start — LANDED (#109)
 
 In `expo/app/app/_layout.tsx`, read `seedFixtures` off the job store and call it once when
 `args.seedJobs` is true, in the same effect that already resets the profile store. It must run before
@@ -325,7 +325,7 @@ jest --ci` → passes.
 
 **Commit**: `fix: confirm and allow undo of a hidden Expo verification`
 
-### Step 4: make the Dark Mode setting drive the theme
+### Step 4: make the Dark Mode setting drive the theme — LANDED (#110)
 
 In `expo/app/app/_layout.tsx`, read `darkMode` and the load flag off
 `useSmileIDSampleSettingsStore`, call the settings store's `load()` once at root, and pass the
@@ -342,7 +342,7 @@ light system scheme, and asserts the resolved theme is the dark one; and its inv
 
 **Commit**: `fix: let the Expo Dark Mode switch reach the theme`
 
-### Step 5: honour `noticeWindow`
+### Step 5: honour `noticeWindow` — LANDED (#111)
 
 Wrap the tree in `_layout.tsx` with
 `<UseSmileIDSampleNoticeWindowProvider value={...}>`, taking the value from `args.noticeWindow` and
