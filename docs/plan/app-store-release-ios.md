@@ -173,9 +173,8 @@ over all five.
   height throughout. Variety comes from the headlines and the screens. *Since 2026-09-14 there is no
   headline: the panels are the screen alone, whole device centred, on both platforms — see the Android
   plan's §2.6 for the ruling and `scripts/compose-store-panel.mjs` for how. Since 2026-09-18 the device
-  fills the panel: up to 90% of its width, or as tall as a 3% margin allows, and the screen keeps the
-  capture's own aspect. storeshots' 78% was sized to sit under a headline, and with none a phone at
-  three-quarters of the panel's height floated in the middle of it.*
+  fills the panel — 90% of the width or a 3% vertical margin, whichever binds — because storeshots' 78%
+  was sized to sit under a headline.*
 - **No headline states a count**, and the nouns come from `docs-v3` — *verification result*, and its
   *status* and *message*, which are also the words on the app's own status pills. *The rule now
   governs the listing copy, the panels having no words.*
