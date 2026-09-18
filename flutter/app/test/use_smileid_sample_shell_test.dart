@@ -80,18 +80,34 @@ void main() {
     expect(agentMode(), isTrue);
   });
 
-  // The bar insets nothing, so a tab screen wired without this has its last row under the pill.
+  // Against the bar's MEASURED height, not a constant: the token affordance's 58 is a floor the
+  // real bar clears by 30dp, so a reserve wired back to a formula would still pass.
   testWidgets('every tab root reserves room for the bar it floats under', (
     WidgetTester tester,
   ) async {
     await pumpShell(tester);
+    final double barHeight = tester
+        .getSize(find.byType(UseSmileIDSampleNavBar))
+        .height;
+
     expect(
       tester
           .widget<UseSmileIDSampleProductsScreen>(
             find.byType(UseSmileIDSampleProductsScreen),
           )
           .bottomInset,
-      greaterThanOrEqualTo(_barHeight),
+      greaterThanOrEqualTo(barHeight),
+    );
+
+    await tester.tap(byId(UseSmileIDSampleTestIds.navVerifications));
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<UseSmileIDSampleVerificationsScreen>(
+            find.byType(UseSmileIDSampleVerificationsScreen),
+          )
+          .bottomInset,
+      greaterThanOrEqualTo(barHeight),
     );
 
     await tester.tap(byId(UseSmileIDSampleTestIds.navSettings));
@@ -102,7 +118,7 @@ void main() {
             find.byType(UseSmileIDSampleSettingsScreen),
           )
           .bottomInset,
-      greaterThanOrEqualTo(_barHeight),
+      greaterThanOrEqualTo(barHeight),
     );
   });
 
@@ -156,6 +172,3 @@ void main() {
     );
   });
 }
-
-/// The token affordance's 58, which is the tallest thing in the bar and so the floor a page clears.
-const double _barHeight = 58;

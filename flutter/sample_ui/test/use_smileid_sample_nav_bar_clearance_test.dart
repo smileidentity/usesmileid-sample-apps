@@ -6,7 +6,7 @@ import 'golden/golden_harness.dart';
 
 /// The bar floats over the page and insets nothing, so each screen reserves its own room.
 void main() {
-  setUpAll(loadSampleFonts);
+  setUpAll(loadSampleTextFonts);
 
   for (final double width in <double>[_smallestPhone, goldenWidth]) {
     for (final double scale in <double>[1, 1.3, 1.5, 1.75, maxTextScale]) {
@@ -93,6 +93,8 @@ const double _gestureInset = 34;
 /// Taller than the rows are, so there is something to scroll past the bar.
 const double _hostHeight = 900;
 
+/// Enough rows that the content outruns the host and the end of the list is reachable.
 const int _rows = 20;
 
+/// Tall enough to read in a failure, small enough that the rows outrun the host.
 const double _rowHeight = 80;
