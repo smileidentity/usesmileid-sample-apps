@@ -1,0 +1,18 @@
+name: Auto Author Assign
+
+# The same workflow the SDK repos run, so a PR here has an owner from the moment it opens.
+on:
+  pull_request_target:
+    types: [opened, reopened]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  assign-author:
+    if: ${{ join(github.event.pull_request.assignees.*.login, '') == '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: toshimaru/auto-author-assign@a78a94b219445cece8ccf0d45fec60af449f212a # v3.1.0
