@@ -248,6 +248,20 @@ if [ "$PHASE" = archive ]; then
   EXPORT_DIR="${EXPORT_PATH:-build/export}"
   rm -rf "$ARCHIVE" "$EXPORT_DIR"
 
+  # The API key is what automatic signing uses on a runner with no Xcode account, so the archive
+  # needs it as much as the upload does; without it the archive fails with "No Accounts". The path
+  # is derived rather than passed: a workflow `env:` value is not a shell, so a `~` stays literal.
+  AUTH=()
+  if [ -n "${APP_STORE_CONNECT_KEY_ID:-}" ]; then
+    KEY_PATH="${APP_STORE_CONNECT_KEY_PATH:-$HOME/.appstoreconnect/private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8}"
+    [ -f "$KEY_PATH" ] || { echo "no App Store Connect key at $KEY_PATH" >&2; exit 2; }
+    AUTH=(
+      -authenticationKeyPath "$KEY_PATH"
+      -authenticationKeyID "$APP_STORE_CONNECT_KEY_ID"
+      -authenticationKeyIssuerID "${APP_STORE_CONNECT_ISSUER_ID:?an API key needs its issuer id}"
+    )
+  fi
+
   # The identity is the target's own Release setting, never an argument: a command-line one is
   # global and reaches SampleUI's resource bundle, which has no team and fails the whole archive.
   xcodebuild archive \
@@ -257,6 +271,7 @@ if [ "$PHASE" = archive ]; then
     -destination "generic/platform=iOS" \
     -archivePath "$ARCHIVE" \
     -allowProvisioningUpdates \
+    ${AUTH[@]+"${AUTH[@]}"} \
     DEVELOPMENT_TEAM="$DEVELOPMENT_TEAM" \
     CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
     "${VERSION_ARGS[@]}" \
@@ -278,21 +293,6 @@ if [ "$PHASE" = archive ]; then
   cp store/ExportOptions.plist "$OPTIONS"
   plutil -replace teamID -string "$DEVELOPMENT_TEAM" "$OPTIONS"
   plutil -replace destination -string "${EXPORT_DESTINATION:-export}" "$OPTIONS"
-
-  # The API key authenticates the upload and lets automatic signing fetch a distribution profile,
-  # which is what replaces a keychain this repository would otherwise have to carry. The path is
-  # derived rather than passed: a workflow `env:` value is not a shell, so a `~` in one stays a
-  # literal and xcodebuild reports a missing key that is sitting where it was put.
-  AUTH=()
-  if [ -n "${APP_STORE_CONNECT_KEY_ID:-}" ]; then
-    KEY_PATH="${APP_STORE_CONNECT_KEY_PATH:-$HOME/.appstoreconnect/private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8}"
-    [ -f "$KEY_PATH" ] || { echo "no App Store Connect key at $KEY_PATH" >&2; exit 2; }
-    AUTH=(
-      -authenticationKeyPath "$KEY_PATH"
-      -authenticationKeyID "$APP_STORE_CONNECT_KEY_ID"
-      -authenticationKeyIssuerID "${APP_STORE_CONNECT_ISSUER_ID:?an API key needs its issuer id}"
-    )
-  fi
 
   xcodebuild -exportArchive \
     -archivePath "$ARCHIVE" \
