@@ -34,7 +34,8 @@ export default function RootLayout() {
   useEffect(() => {
     resetProfiles(smileIDSampleProfilesForLaunch(args));
     // Before the verifications route's first load, or its own read wins and the list opens empty.
-    if (args.seedJobs) void seedFixtures(Date.now());
+    // Caught, not voided: a failed write must degrade to an empty list, never an unhandled rejection.
+    if (args.seedJobs) seedFixtures(Date.now()).catch(() => undefined);
   }, [args, resetProfiles, seedFixtures]);
 
   if (!fontsLoaded) {

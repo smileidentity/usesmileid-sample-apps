@@ -1,5 +1,5 @@
 import { useSmileIDSampleJobStore } from '@smileid/sample-ui';
-import { render, waitFor } from '@testing-library/react-native';
+import { act, render, waitFor } from '@testing-library/react-native';
 import * as Linking from 'expo-linking';
 
 import RootLayout from '../app/_layout';
@@ -27,6 +27,8 @@ const launch = async (url: string | null) => {
   getInitialURL.mockResolvedValue(url);
   await render(<RootLayout />);
   await waitFor(() => expect(getInitialURL).toHaveBeenCalled());
+  // Seeding is fire-and-forget, so a negative case has to outlast it or it asserts on an unfinished seed.
+  await act(async () => {});
 };
 
 const jobs = () => useSmileIDSampleJobStore.getState().jobs ?? [];
