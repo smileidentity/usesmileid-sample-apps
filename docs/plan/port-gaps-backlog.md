@@ -17,11 +17,19 @@ to reverse if the call was wrong.
 | 1 | Flutter cold-start deep link: the `app_links` package, which the navigation plan names, or the platform's own initial route | Platform initial route | It *is* the link, it is available before the first frame, it needs no dependency, and it satisfies the ruling's stated reason — that a Dart-first SDK should not need a native shim. The plan named a package; its rationale described an outcome. |
 | 2 | Re-selecting the already-active tab | Pops that tab to its root | Matches iOS. Android does nothing today. Unobservable until a pushed screen exists to re-select from. |
 | 3 | Which tab owns the non-root routes (profiles, scanner, flow) | Above the tabs, as Android does | It gives a cold deep link a simpler synthesised back stack than iOS's per-tab assignment. iOS is the outlier and is listed in §2. |
-| 4 | Nav-bar clearance when the bar grows with the text scale | Scale the token term, pinned by a test that measures the rendered bar | A constant reserve was 39pt short of the bar at 2x and clipped the row it exists to protect. Bounded at the harness's declared `maxTextScale`; 3x still fails, and would need the bar measured and published rather than computed. |
+| 4 | Nav-bar clearance when the bar grows with the text scale | **Measure the bar** — reversed; see below | Scaling the token term scaled the one term that is constant and omitted the one that varies, the label's line count. The row sat under the bar at 320dp at default text size. |
 | 5 | Where Flutter's preference store lives | Interface in `sample_ui`, plugin-backed implementation in the shell | A plugin is a platform binding and `sample_ui` runs under eight hosts. Android keeps the whole store in its UI module; that does not port. The keys are Android's, so a device carries one set of preferences, not four. |
 | 6 | The job row's secondary line | The board's caption | Spec-directed: the spec records this as an open divergence and says a port should take the board while Android follows. Android now owes the change (§2). |
 | 7 | The literal backticks in `Tap \`Hide from List\` to confirm` | Removed on Flutter | They render as backticks to a user. Android and iOS carry the same string and now owe the same fix (§2). |
 | 8 | Merging a stacked PR set in a squash-only repo | Collapse the remainder into the top PR | Squash rewrites the commit, so the branch above loses ancestry with `main` — producing both a conflict and an inflated diff. The base retarget then dismisses the approval. Re-approval per PR is unavoidable; collapsing spends one instead of four. |
+
+**Decision 4, reversed.** The shell mounts the bar in Scaffold's bottom slot under `extendBody`,
+which publishes the laid-out height to the body as bottom padding in the same frame; a screen
+reserves that plus `spacingMd`. This matches Android's `onSizeChanged` and iOS's `.safeAreaInset`
+rather than diverging from both. Measured on the widget lane: the computed formula left the last row
+7dp under the bar at 320dp × 1.0, 15.5dp at 1.75× and 13dp at 2×, and was 99dp short at 3×. The
+measured reserve clears the bar at every one of those, 3× included, so the ceiling the old decision
+recorded no longer applies.
 
 ## 2. Owed by Android and iOS
 
