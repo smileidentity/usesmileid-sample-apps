@@ -78,9 +78,9 @@ fi
 
 if runs checks; then
   echo "==> the project is still a well-formed Expo app"
-  # The cheapest check that continuous native generation still holds and that every dependency version
-  # agrees with the installed SDK — otherwise only a human noticing catches either.
-  "$PNPM" --filter usesmileid-sample-expo exec expo-doctor
+  # The cheapest check that continuous native generation still holds. The registry's newest patch is
+  # a dependency bump's business, not this gate's: it would red every PR the day Expo publishes one.
+  EXPO_DOCTOR_SKIP_DEPENDENCY_VERSION_CHECK=1 "$PNPM" --filter usesmileid-sample-expo exec expo-doctor
 fi
 
 if runs checks; then
