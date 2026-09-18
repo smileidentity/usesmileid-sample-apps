@@ -36,11 +36,23 @@ const sharp = (await import(pathToFileURL(sharpPath).href)).default;
 
 const preset = getPreset(values.preset);
 const bg = normalizeHex(values.bg);
-let { buffer, width: deviceW, height: deviceH } = await renderDevice(preset, values.screenshot);
+
+// The screen keeps the capture's own aspect: storeshots' default is the canvas aspect, which crops a
+// 20:9 capture to Play's 16:9 panel and draws a phone no one makes. The device then takes up to 90% of
+// the panel's width, or as much as fits the height with a 3% margin, in place of storeshots' 78% under
+// a headline — with no headline, a 76%-tall phone floats in the middle of the panel.
+const shot = await sharp(values.screenshot).metadata();
+const screenAspect = shot.height / shot.width;
+const margin = Math.round(preset.height * 0.03);
+const heightPerWidth = (1 - 2 * preset.device.bezelRatio) * screenAspect + 2 * preset.device.bezelRatio;
+const fitRatio = Math.min(0.9, (preset.height - 2 * margin) / heightPerWidth / preset.width);
+let { buffer, width: deviceW, height: deviceH } = await renderDevice(
+  { ...preset, screenAspect, deviceWidthRatio: fitRatio },
+  values.screenshot,
+);
 
 // The whole device, centred: with no headline to sit under, there is nothing for it to bleed away from.
 // Fitted on both axes, or an overhang on either one centres to a negative offset and sharp throws.
-const margin = Math.round(preset.height * 0.03);
 const scale = Math.min(1, (preset.height - 2 * margin) / deviceH, (preset.width - 2 * margin) / deviceW);
 if (scale < 1) {
   deviceW = Math.round(deviceW * scale);
