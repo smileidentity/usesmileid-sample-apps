@@ -222,7 +222,9 @@ Xcode's own cloud signing does the job, given a key. The key has to reach the **
 only the export: a runner has no Xcode account, so `xcodebuild archive -allowProvisioningUpdates`
 without the `-authenticationKey*` flags fails with *No Accounts* before any profile is looked up. A
 machine with a signed-in Xcode never shows this, which is how the first dispatch of
-`publish-testflight.yml` (2026-09-17) failed a step every local archive had passed.
+`publish-testflight.yml` (2026-09-17) failed a step every local archive had passed. **The fix is unproven
+until a runner archives with it.** Owed: a manual dispatch of `publish-testflight.yml` on `main` once this
+change and the taller store panels have both merged — the upload is real, so it is an owner action.
 
 **The export-options plist is committed** (`ios/store/ExportOptions.plist`) and carries no team:
 `teamID` is substituted at export time from the secret. It declares `app-store-connect` as the
