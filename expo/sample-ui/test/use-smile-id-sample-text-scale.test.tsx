@@ -2,6 +2,7 @@ import { Text } from 'react-native';
 
 import { UseSmileIDSampleNavBar } from '../src/components/use-smile-id-sample-nav-bar';
 import { UseSmileIDSampleSelectionBar } from '../src/components/use-smile-id-sample-selection-bar';
+import { flattenLayout, layoutTree } from './layout/layout-tree';
 import { loadLayoutEngine, renderForLayout } from './layout/render-for-layout';
 import { measureRun } from './layout/smile-font';
 import {
@@ -28,9 +29,6 @@ const tabOpenWords = ['Products', 'Verifications', 'Settings'];
 
 /// The job id the Flutter twin records for the same row; a column too narrow for one hex id is the design's.
 const jobIdOpenWords = ['7d2f01aa-4b1c'];
-
-/// Still broken, so its entry cannot quietly outlive the defect: the pairing test below reds when it is fixed.
-const stillBroken = ['selection_bar'];
 
 /// A column too narrow for one word, which is the smallest tree either half of the rule can fire on.
 const NARROW_COLUMN = { width: 60 };
@@ -131,9 +129,7 @@ describe('the nav bar survives every frame the apps draw on', () => {
 });
 
 describe('every scale-sensitive state survives both frames at both scales', () => {
-  const states = Object.keys(scaleSensitive).filter((state) => !stillBroken.includes(state));
-
-  it.each(states)('%s', async (state) => {
+  it.each(Object.keys(scaleSensitive))('%s', async (state) => {
     for (const [width, fontScale] of envelopes) {
       const tree = await renderForLayout(scaleSensitive[state]!(), { fontScale });
       assertSurvivesTextScale(tree, { width, fontScale, knownOpenWords: jobIdOpenWords });
@@ -141,17 +137,16 @@ describe('every scale-sensitive state survives both frames at both scales', () =
   });
 });
 
-describe('the selection bar is excluded because it is still broken, not because it is exempt', () => {
-  it('crushes its own hint rather than wrapping, which the Flutter twin does not', async () => {
-    // `flex: 1` sets flexBasis 0, so the wrapping row never wraps: the text collapses beside the button.
+describe('the selection bar wraps its action rather than crushing its own hint', () => {
+  it('keeps the hint wider than the button it sits beside, at the narrowest frame and largest type', async () => {
+    // A row whose text takes flexBasis 0 never wraps: it collapses instead, and the hint broke mid-word.
     const tree = await renderForLayout(
       <UseSmileIDSampleSelectionBar selectedCount={3} onRemove={noop} />,
       { fontScale: ENLARGED_FONT_SCALE },
     );
-    const found = textScaleFindings(tree, {
-      width: NARROW_WIDTH,
-      fontScale: ENLARGED_FONT_SCALE,
-    });
-    expect(found.split.map((it) => it.word)).toContain('selected');
+    const boxes = flattenLayout(layoutTree(tree, { width: NARROW_WIDTH, fontScale: ENLARGED_FONT_SCALE }));
+    const hint = boxes.find((box) => box.text === 'Tap `Hide from List` to confirm');
+    const action = boxes.find((box) => box.text === 'Hide from List');
+    expect(hint!.width).toBeGreaterThan(action!.width);
   });
 });

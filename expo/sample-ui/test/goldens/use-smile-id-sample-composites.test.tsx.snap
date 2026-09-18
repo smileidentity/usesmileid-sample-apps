@@ -6854,6 +6854,7 @@ exports[`SelectionBar dark noneSelected 1`] = `
           "alignItems": "center",
           "flexDirection": "row",
           "flexWrap": "wrap",
+          "justifyContent": "space-between",
           "width": "100%",
         },
         {
@@ -6868,14 +6869,9 @@ exports[`SelectionBar dark noneSelected 1`] = `
   >
     <View
       style={
-        [
-          {
-            "flex": 1,
-          },
-          {
-            "rowGap": 4,
-          },
-        ]
+        {
+          "rowGap": 4,
+        }
       }
     >
       <Text
@@ -7076,6 +7072,7 @@ exports[`SelectionBar dark someSelected 1`] = `
           "alignItems": "center",
           "flexDirection": "row",
           "flexWrap": "wrap",
+          "justifyContent": "space-between",
           "width": "100%",
         },
         {
@@ -7090,14 +7087,9 @@ exports[`SelectionBar dark someSelected 1`] = `
   >
     <View
       style={
-        [
-          {
-            "flex": 1,
-          },
-          {
-            "rowGap": 4,
-          },
-        ]
+        {
+          "rowGap": 4,
+        }
       }
     >
       <Text
@@ -7298,6 +7290,7 @@ exports[`SelectionBar light noneSelected 1`] = `
           "alignItems": "center",
           "flexDirection": "row",
           "flexWrap": "wrap",
+          "justifyContent": "space-between",
           "width": "100%",
         },
         {
@@ -7312,14 +7305,9 @@ exports[`SelectionBar light noneSelected 1`] = `
   >
     <View
       style={
-        [
-          {
-            "flex": 1,
-          },
-          {
-            "rowGap": 4,
-          },
-        ]
+        {
+          "rowGap": 4,
+        }
       }
     >
       <Text
@@ -7520,6 +7508,7 @@ exports[`SelectionBar light someSelected 1`] = `
           "alignItems": "center",
           "flexDirection": "row",
           "flexWrap": "wrap",
+          "justifyContent": "space-between",
           "width": "100%",
         },
         {
@@ -7534,14 +7523,9 @@ exports[`SelectionBar light someSelected 1`] = `
   >
     <View
       style={
-        [
-          {
-            "flex": 1,
-          },
-          {
-            "rowGap": 4,
-          },
-        ]
+        {
+          "rowGap": 4,
+        }
       }
     >
       <Text
