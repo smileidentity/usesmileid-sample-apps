@@ -47,7 +47,7 @@ const LAYOUT_PROPS = new Set([
   'paddingBottom', 'paddingLeft', 'paddingStart', 'paddingEnd',
   'borderWidth', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth',
   'borderLeftWidth', 'borderStartWidth', 'borderEndWidth',
-  'gap', 'rowGap', 'columnGap', 'aspectRatio', 'display', 'overflow', 'direction',
+  'gap', 'rowGap', 'columnGap', 'aspectRatio', 'display', 'overflow', 'direction', 'boxSizing',
 ]);
 
 /// Style props that paint rather than lay out, listed so an unrecognised one can fail instead of vanish.
@@ -64,7 +64,7 @@ const PAINT_PROPS = new Set([
   'textDecorationStyle', 'textShadowColor', 'textShadowOffset', 'textShadowRadius',
   'textTransform', 'includeFontPadding', 'writingDirection', 'verticalAlign', 'userSelect',
   'tintColor', 'resizeMode', 'objectFit', 'pointerEvents', 'cursor', 'backfaceVisibility',
-  'boxSizing', 'isolation', 'mixBlendMode', 'filter', 'experimental_backgroundImage',
+  'isolation', 'mixBlendMode', 'filter', 'experimental_backgroundImage',
 ]);
 
 type Style = ViewStyle & TextStyle & Record<string, unknown>;
@@ -209,6 +209,11 @@ const applyStyle = (node: YogaNode, style: Style, where: string): void => {
         break;
       case 'direction':
         node.setDirection(value === 'rtl' ? Y.DIRECTION_RTL : Y.DIRECTION_LTR);
+        break;
+      case 'boxSizing':
+        node.setBoxSizing(
+          value === 'content-box' ? Y.BOX_SIZING_CONTENT_BOX : Y.BOX_SIZING_BORDER_BOX,
+        );
         break;
       case 'gap': node.setGap(Y.GUTTER_ALL, value as number); break;
       case 'rowGap': node.setGap(Y.GUTTER_ROW, value as number); break;

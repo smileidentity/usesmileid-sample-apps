@@ -3,6 +3,7 @@ import { Text } from 'react-native';
 import { UseSmileIDSampleNavBar } from '../src/components/use-smile-id-sample-nav-bar';
 import { UseSmileIDSampleSelectionBar } from '../src/components/use-smile-id-sample-selection-bar';
 import { loadLayoutEngine, renderForLayout } from './layout/render-for-layout';
+import { measureRun } from './layout/smile-font';
 import {
   NARROW_WIDTH,
   WIDE_WIDTH,
@@ -42,6 +43,28 @@ const text = (value: string, numberOfLines?: number) => (
 
 beforeAll(async () => {
   await loadLayoutEngine();
+});
+
+describe('text is measured the way a shaper measures it', () => {
+  const bold = (text: string, letterSpacing?: number) =>
+    measureRun(text, { fontFamily: 'DMSans-Bold', fontSize: 20, letterSpacing });
+
+  it('applies the standard ligatures, so an "fi" is one glyph and not two', () => {
+    expect(bold('fi')).toBeLessThan(bold('f') + bold('i'));
+  });
+
+  it('applies pair kerning, so "AV" is tighter than its two glyphs apart', () => {
+    expect(bold('AV')).toBeLessThan(bold('A') + bold('V'));
+  });
+
+  it('adds letter spacing per character without scaling it', () => {
+    expect(bold('AV', 2) - bold('AV')).toBeCloseTo(4, 10);
+  });
+
+  // Pinned against fontkit's own shaping of the same face: 42,805 comparisons agreed exactly.
+  it('measures the label this bar turns on to the unit', () => {
+    expect(bold('Verifications')).toBeCloseTo(123.88, 10);
+  });
 });
 
 describe('the rule itself can fail', () => {

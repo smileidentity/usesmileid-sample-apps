@@ -1,11 +1,15 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-/// The advance widths and kern pairs of one bundled face, in font units.
+/// One ligature: the glyphs that must follow the first, and the single glyph they all become.
+type Ligature = { readonly rest: readonly number[]; readonly glyph: number };
+
+/// The advance widths, ligatures and kern pairs of one bundled face, in font units.
 type Face = {
   readonly unitsPerEm: number;
   readonly glyphForCodePoint: ReadonlyMap<number, number>;
   readonly advances: readonly number[];
+  readonly ligatures: ReadonlyMap<number, readonly Ligature[]>;
   readonly kerning: ReadonlyMap<number, number>;
 };
 
@@ -203,6 +207,65 @@ const readPairKerning = (data: Buffer, gposOffset: number): Map<number, number> 
   return kerning;
 };
 
+/// The lookups one feature tag drives, across every script the face declares it for.
+const lookupsForFeature = (data: Buffer, tableOffset: number, wanted: string): number[] => {
+  const featureList = tableOffset + data.readUInt16BE(tableOffset + 6);
+  const features = data.readUInt16BE(featureList);
+  const indices = new Set<number>();
+  for (let index = 0; index < features; index++) {
+    const record = featureList + 2 + 6 * index;
+    if (data.toString('ascii', record, record + 4) !== wanted) continue;
+    const feature = featureList + data.readUInt16BE(record + 4);
+    const count = data.readUInt16BE(feature + 2);
+    for (let at = 0; at < count; at++) indices.add(data.readUInt16BE(feature + 4 + 2 * at));
+  }
+  return [...indices];
+};
+
+/// The standard ligatures a shaper applies by default, which both platforms turn on for Latin.
+const readLigatures = (data: Buffer, gsubOffset: number): Map<number, Ligature[]> => {
+  const ligatures = new Map<number, Ligature[]>();
+  const lookupList = gsubOffset + data.readUInt16BE(gsubOffset + 8);
+  for (const index of lookupsForFeature(data, gsubOffset, 'liga')) {
+    const lookup = lookupList + data.readUInt16BE(lookupList + 2 + 2 * index);
+    const declaredType = data.readUInt16BE(lookup);
+    const subtables = data.readUInt16BE(lookup + 4);
+    for (let sub = 0; sub < subtables; sub++) {
+      let offset = lookup + data.readUInt16BE(lookup + 6 + 2 * sub);
+      let type = declaredType;
+      if (type === 7) {
+        type = data.readUInt16BE(offset + 2);
+        offset += data.readUInt32BE(offset + 4);
+      }
+      if (type !== 4 || data.readUInt16BE(offset) !== 1) continue;
+      const coverage = readCoverage(data, offset + data.readUInt16BE(offset + 2));
+      const byIndex = new Map<number, number>();
+      for (const [glyph, at] of coverage) byIndex.set(at, glyph);
+      const sets = data.readUInt16BE(offset + 4);
+      for (let set = 0; set < sets; set++) {
+        const first = byIndex.get(set);
+        if (first === undefined) continue;
+        const setOffset = offset + data.readUInt16BE(offset + 6 + 2 * set);
+        const count = data.readUInt16BE(setOffset);
+        const found = ligatures.get(first) ?? [];
+        for (let entry = 0; entry < count; entry++) {
+          const table = setOffset + data.readUInt16BE(setOffset + 2 + 2 * entry);
+          const components = data.readUInt16BE(table + 2);
+          const rest: number[] = [];
+          for (let part = 1; part < components; part++) {
+            rest.push(data.readUInt16BE(table + 2 + 2 * part));
+          }
+          found.push({ rest, glyph: data.readUInt16BE(table) });
+        }
+        // Longest first, so a two-glyph ligature never wins over the three-glyph one that also matches.
+        found.sort((left, right) => right.rest.length - left.rest.length);
+        ligatures.set(first, found);
+      }
+    }
+  }
+  return ligatures;
+};
+
 const loadFace = (family: string): Face => {
   const cached = faces.get(family);
   if (cached) return cached;
@@ -219,10 +282,12 @@ const loadFace = (family: string): Face => {
   const advances: number[] = [];
   for (let index = 0; index < metrics; index++) advances.push(data.readUInt16BE(hmtx + 4 * index));
   const gpos = offsets.get('GPOS');
+  const gsub = offsets.get('GSUB');
   const face: Face = {
     unitsPerEm: data.readUInt16BE(head + 18),
     glyphForCodePoint: readCmap(data, cmap),
     advances,
+    ligatures: gsub === undefined ? new Map() : readLigatures(data, gsub),
     kerning: gpos === undefined ? new Map() : readPairKerning(data, gpos),
   };
   faces.set(family, face);
@@ -233,11 +298,30 @@ const loadFace = (family: string): Face => {
 const glyphsOf = (face: Face, text: string): number[] =>
   [...text].map((character) => face.glyphForCodePoint.get(character.codePointAt(0) ?? 0) ?? 0);
 
+/// Applies the face's standard ligatures, which narrow a pair like "fi" into one glyph before it is measured.
+const ligate = (face: Face, glyphs: readonly number[]): number[] => {
+  const out: number[] = [];
+  for (let index = 0; index < glyphs.length; ) {
+    const candidates = face.ligatures.get(glyphs[index]!);
+    const match = candidates?.find((ligature) =>
+      ligature.rest.every((glyph, part) => glyphs[index + 1 + part] === glyph),
+    );
+    if (match) {
+      out.push(match.glyph);
+      index += match.rest.length + 1;
+    } else {
+      out.push(glyphs[index]!);
+      index++;
+    }
+  }
+  return out;
+};
+
 /// The width one unbroken run of text occupies, kerned as a shaper would kern it.
 export const measureRun = (text: string, run: SmileFontRun): number => {
   if (text.length === 0) return 0;
   const face = loadFace(run.fontFamily);
-  const glyphs = glyphsOf(face, text);
+  const glyphs = ligate(face, glyphsOf(face, text));
   let units = 0;
   for (let index = 0; index < glyphs.length; index++) {
     const glyph = glyphs[index]!;
