@@ -7,9 +7,6 @@ import '../state/use_smileid_sample_providers.dart';
 import '../use_smileid_sample_routes.dart';
 
 /// The profiles list, and the sheet that creates another.
-///
-/// The created confirmation is shown HERE rather than in the sheet, because the sheet is gone by
-/// the time there is anything to confirm.
 class UseSmileIDSampleProfilesTab extends ConsumerStatefulWidget {
   /// [onBack] leaves the list.
   const UseSmileIDSampleProfilesTab({required this.onBack, super.key});

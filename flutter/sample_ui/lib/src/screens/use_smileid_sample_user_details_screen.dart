@@ -16,9 +16,6 @@ import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// The details every product collects before its flow starts.
-///
-/// It opens EMPTY, including for a profile that has defaults saved: the twin asks for them every
-/// time rather than assuming, and `docs/plan/port-gaps-backlog.md` carries the open question.
 class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
   /// [requirement] is what a token has not already covered; its default asks for everything.
   const UseSmileIDSampleUserDetailsScreen({

@@ -3,11 +3,6 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Every id `sample_ui` declares is actually rendered by something.
-///
-/// The spec test checks the other direction — that a declared id exists in `spec/`.
-///
-/// It lives in the app rather than in `sample_ui` because the sheet ids are supplied by whichever
-/// host PRESENTS the sheet, so only a host sees both halves.
 void main() {
   test('every declared id is referenced by a screen, component or host', () {
     final File declarations = File(

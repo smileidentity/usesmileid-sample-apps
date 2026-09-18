@@ -14,9 +14,6 @@ import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// Switches the active profile: one tap, no confirm, and the sheet closes itself.
-///
-/// The selected row takes a fill and a check here, where the profiles LIST marks the active one in
-/// its caption instead — two surfaces, two conventions, both from the design.
 class UseSmileIDSampleProfileSwitchSheet extends StatelessWidget {
   /// Takes the whole list, because the hue is the profile's POSITION in it.
   const UseSmileIDSampleProfileSwitchSheet({

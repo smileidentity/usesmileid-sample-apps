@@ -9,9 +9,6 @@ import 'use_smileid_sample_avatar.dart';
 import 'use_smileid_sample_glyphs.dart';
 
 /// An organisation and a supporting line, with a check on the active profile.
-///
-/// The avatar fill is the caller's to pass, and its default is the same value [UseSmileIDSampleAvatar]
-/// defaults to: two different defaults drew one profile navy in the list and blue in the summary.
 class UseSmileIDSampleProfileRow extends StatelessWidget {
   /// [avatarColor] comes from `smileProfileHues` by list position, never from a hash of the name.
   const UseSmileIDSampleProfileRow({

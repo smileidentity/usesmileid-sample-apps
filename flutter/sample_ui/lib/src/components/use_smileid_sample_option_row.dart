@@ -7,8 +7,6 @@ import '../tokens/smile_tokens.dart';
 import 'use_smileid_sample_glyphs.dart';
 
 /// One row in the country or ID-type picker; country rows lead with a flag.
-///
-/// An unselected row is TRANSPARENT over the sheet, not white; only the selected one takes a fill.
 class UseSmileIDSampleOptionRow extends StatelessWidget {
   /// [leadingText] is the flag emoji, which is text rather than an asset and so needs no icon set.
   const UseSmileIDSampleOptionRow({

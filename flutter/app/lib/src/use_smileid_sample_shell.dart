@@ -8,8 +8,6 @@ import 'use_smileid_sample_remove_jobs.dart';
 import 'use_smileid_sample_routes.dart';
 
 /// The three-tab host: the branch's content, with the nav bar floating over it.
-///
-/// It floats rather than sitting in `bottomNavigationBar`, which is R13.
 class UseSmileIDSampleShell extends ConsumerWidget {
   /// [location] is the current destination, which alone decides whether the bar is drawn.
   const UseSmileIDSampleShell({

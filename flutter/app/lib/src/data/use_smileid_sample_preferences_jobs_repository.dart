@@ -4,8 +4,6 @@ import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// The verifications that survive a restart.
-///
-/// One JSON array under one key: the twin's database buys query and scale this sample never needs.
 class UseSmileIDSamplePreferencesJobsRepository
     implements UseSmileIDSampleJobsRepository {
   /// Takes the already-opened preferences, so a caller cannot forget to await them.

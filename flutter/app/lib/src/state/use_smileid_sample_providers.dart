@@ -18,9 +18,6 @@ useSmileIDSampleSettingsRepositoryProvider =
     );
 
 /// What the store held when the app started.
-///
-/// Overridden with a value already read, so the first frame is the stored appearance rather than
-/// the default one, which would flash light before it settled dark (R9's cold start).
 final Provider<UseSmileIDSampleSettings>
 useSmileIDSampleStoredSettingsProvider = Provider<UseSmileIDSampleSettings>(
   (Ref ref) => const UseSmileIDSampleSettings(),
@@ -71,9 +68,6 @@ useSmileIDSampleProfilesProvider =
     >(UseSmileIDSampleProfilesNotifier.new);
 
 /// Holds the store and tells its readers when it has changed.
-///
-/// The store is mutable and keeps its identity across a switch, so a new state object would say
-/// nothing; this notifies instead, rather than duplicating the store's rules in a second shape.
 class UseSmileIDSampleProfilesNotifier
     extends Notifier<UseSmileIDSampleProfiles> {
   @override
@@ -123,9 +117,6 @@ useSmileIDSampleJobsRepositoryProvider =
     );
 
 /// The stored verifications, null until the store has answered.
-///
-/// Asynchronous on purpose: the list's third state is NOT LOADED YET, and collapsing it to an
-/// empty list makes a first frame claim there is nothing stored before anything has been read.
 final AsyncNotifierProvider<
   UseSmileIDSampleJobsNotifier,
   List<UseSmileIDSampleJob>
@@ -319,9 +310,6 @@ class UseSmileIDSampleScenarioNotifier
 }
 
 /// The third-party notices Flutter's build step collected, read once per launch.
-///
-/// Asynchronous because the registry streams them: the list is a megabyte of text and parsing it
-/// on the first frame would stall the launch the notices are not part of.
 final FutureProvider<UseSmileIDSampleLicenses>
 useSmileIDSampleLicensesProvider = FutureProvider<UseSmileIDSampleLicenses>(
   (Ref ref) => UseSmileIDSampleLicenses.bundled(),

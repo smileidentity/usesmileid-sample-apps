@@ -13,9 +13,6 @@ import 'use_smileid_sample_component_gallery.dart';
 import 'use_smileid_sample_shell.dart';
 
 /// Every path in `spec/routes.json`, written once so no call site spells one.
-///
-/// The three tab roots are the only ones with a screen today; the rest are here because the paths
-/// are the contract four apps share, and a route helper that arrives with its screen arrives late.
 abstract final class UseSmileIDSampleRoutes {
   /// The products grid, and the app's start destination.
   static const String products = '/products';
@@ -72,25 +69,17 @@ abstract final class UseSmileIDSampleRoutes {
 }
 
 /// Whether [location] is a tab root, which is the whole of R13's nav-bar predicate.
-///
-/// It takes the destination and nothing else. Testing membership of a tab's branch instead put a
-/// bar on pushed screens the design draws without one, which is the defect R13 was written for.
 bool useSmileIDSampleShowsNavBar(String location) => UseSmileIDSampleRoutes
     .tabRoots
     .contains(useSmileIDSamplePageBehind(location));
 
 /// The destination a sheet route is layered over, which is itself for every other route.
-///
-/// The picker paths nest under the form they cover, so they resolve to themselves and get no bar.
 String useSmileIDSamplePageBehind(String location) =>
     location == UseSmileIDSampleRoutes.scenarioDrawer
     ? UseSmileIDSampleRoutes.settings
     : location;
 
 /// The navigation host: one indexed stack of three branches, which is R7 without hand-rolling it.
-///
-/// Routes pushed inside a branch keep that tab's stack; the flow and profile routes will sit above
-/// the shell so they cover the bar, and arrive with the screens they show.
 GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
   initialLocation: initialLocation ?? UseSmileIDSampleRoutes.products,
   // Measured on a device: without this the platform's raw route WINS over initialLocation.

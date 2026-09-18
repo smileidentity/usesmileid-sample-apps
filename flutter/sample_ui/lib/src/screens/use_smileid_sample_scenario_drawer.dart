@@ -10,9 +10,6 @@ import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// The flow and theme scenarios, as a sheet over whatever asked for it.
-///
-/// A debug affordance the design does not cover, and a shipped feature rather than scaffolding:
-/// it is how a human and an automated flow both say what the environment should do.
 class UseSmileIDSampleScenarioDrawer extends StatelessWidget {
   /// Both selections are shown at once, because a run carries one of each.
   const UseSmileIDSampleScenarioDrawer({

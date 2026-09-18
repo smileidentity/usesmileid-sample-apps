@@ -8,8 +8,6 @@ import 'use_smileid_sample_glyphs.dart';
 import 'use_smileid_sample_top_app_bar.dart';
 
 /// The partial sheet: a grab handle over a scrim, sized to its content.
-///
-/// The owning screen presents this and holds the boolean; a sheet is never a route of its own.
 Future<T?> showUseSmileIDSampleSheet<T>({
   required BuildContext context,
   required WidgetBuilder builder,

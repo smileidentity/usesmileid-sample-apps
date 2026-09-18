@@ -12,9 +12,6 @@ import 'use_smileid_sample_icon.dart';
 import 'use_smileid_sample_status_badge.dart';
 
 /// One verification: a product tile, its name, a secondary line of job id and time, and the badge.
-///
-/// Select mode's checkbox is not a slot — the design puts it beside the card, and inside it cost
-/// the title its width.
 class UseSmileIDSampleJobRow extends StatelessWidget {
   /// [statusTestId] is defaulted rather than attached by the caller; a list overrides it per row.
   const UseSmileIDSampleJobRow({

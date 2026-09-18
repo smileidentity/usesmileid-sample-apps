@@ -39,8 +39,6 @@ class UseSmileIDSampleUserDetails {
 }
 
 /// The four fields a profile carries, in the order the design lists them.
-///
-/// The ids are camelCase because they suffix the test ids, and a device flow keys off those.
 enum UseSmileIDSampleUserField {
   /// Given name; required.
   firstName('firstName', 'First name', 'Add first name', true),
@@ -166,9 +164,6 @@ class UseSmileIDSampleProfile {
 }
 
 /// The profiles the app can act as, and which one is active.
-///
-/// In memory, like the twin: profiles are not an account concern yet, so nothing here is persisted
-/// and a launch with no arguments starts from one empty starter.
 class UseSmileIDSampleProfiles {
   /// [seed] must not be empty; an empty list would surface far from here, as the products screen
   /// throwing on its first read of the active profile.

@@ -66,9 +66,6 @@ class _UseSmileIDSampleVerificationDetailsTabState
   }
 
   /// Re-reads the job, or says why it cannot be re-read.
-  ///
-  /// Every job this app can hold today ran under no session, so this always reports rather than
-  /// fetches; the request itself arrives with the scanner that mints a session.
   Future<void> _refresh() async {
     final String notice =
         _stored()?.refreshBlockedReason ?? 'Nothing stored to refresh';

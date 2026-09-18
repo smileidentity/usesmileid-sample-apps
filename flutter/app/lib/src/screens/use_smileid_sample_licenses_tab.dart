@@ -5,8 +5,6 @@ import 'package:sample_ui/sample_ui.dart';
 import '../state/use_smileid_sample_providers.dart';
 
 /// The third-party notices, pushed inside the settings tab.
-///
-/// Reads Flutter's own licence registry rather than a committed asset.
 class UseSmileIDSampleLicensesTab extends ConsumerWidget {
   /// [onBack] leaves the screen, which the route supplies.
   const UseSmileIDSampleLicensesTab({required this.onBack, super.key});

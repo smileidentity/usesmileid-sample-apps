@@ -7,9 +7,6 @@ import '../state/use_smileid_sample_id_details.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// Picks a country, filtering on the NAME and never the ISO code.
-///
-/// The query is this sheet's own and resets on every open: a stale filter would hide the option a
-/// reader came back for.
 class UseSmileIDSampleCountryPickerSheet extends StatefulWidget {
   /// [onSelect] both chooses and dismisses; there is no confirm.
   const UseSmileIDSampleCountryPickerSheet({

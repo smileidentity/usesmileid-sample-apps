@@ -1,9 +1,6 @@
 import 'use_smileid_sample_profiles.dart';
 
 /// What the consent form still has to collect, which a token can narrow.
-///
-/// The default asks for everything, and that is the only shape reachable until a token session
-/// exists: a token that binds a field lifts its clause and disables its row.
 class UseSmileIDSampleUserDetailsRequirement {
   /// Everything required, which is what a launch with no token gets.
   const UseSmileIDSampleUserDetailsRequirement({
@@ -38,9 +35,6 @@ class UseSmileIDSampleUserDetailsRequirement {
   };
 
   /// What this requirement still asks for; the SCREEN decides when nothing is outstanding.
-  ///
-  /// This cannot answer that on its own: a requirement asking for three fields says so whether or
-  /// not they have been typed, and only the screen holds what was typed.
   String get prompt {
     final List<String> outstanding = <String>[
       if (firstName) 'first name',

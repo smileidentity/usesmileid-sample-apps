@@ -15,9 +15,6 @@ import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// One verification, or an honest account of why there is nothing to show.
-///
-/// A missing job is a reachable state rather than an error: a deep link can name a job this build
-/// never stored, and the page says which id it looked for.
 class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
   /// A null [job] draws the empty state for [jobId], which is what a stale link lands on.
   const UseSmileIDSampleVerificationDetailsScreen({
@@ -187,9 +184,6 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
 }
 
 /// One store lookup: a job that may be absent, so a caller cannot pass "not loaded" and "not stored" as one value.
-///
-/// A plain nullable cannot tell those apart, and the difference decides whether the page shows the
-/// empty state or nothing at all.
 class UseSmileIDSampleJobLookup {
   /// The store has answered and found one.
   const UseSmileIDSampleJobLookup.found(UseSmileIDSampleJob job) : value = job;

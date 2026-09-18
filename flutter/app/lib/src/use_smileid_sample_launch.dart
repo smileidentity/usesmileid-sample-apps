@@ -3,8 +3,6 @@ import 'package:sample_ui/sample_ui.dart';
 import 'use_smileid_sample_routes.dart';
 
 /// The link the platform launched this process at, or '/' when it was launched from the icon.
-///
-/// The cold-start link the engine hands over before the first frame, so no plugin or native shim is involved.
 class UseSmileIDSampleLaunch {
   /// Takes the platform's raw route, which on Android is the launching intent's data.
   UseSmileIDSampleLaunch(String platformRoute)
@@ -13,8 +11,6 @@ class UseSmileIDSampleLaunch {
   final Uri _uri;
 
   /// Where the router should open, with the scheme and host folded back into the path.
-  ///
-  /// A custom-scheme link arrives whole — `usesmileid-sample-flutter://settings`.
   String get location {
     final String path = _uri.hasAuthority
         ? '/${_uri.authority}${_uri.path}'
@@ -40,9 +36,6 @@ class UseSmileIDSampleLaunch {
 }
 
 /// Everything a launch does to the stores before the first frame.
-///
-/// One function rather than a few lines in `main`, so a test drives the SAME path the app does. A
-/// test that seeds by hand proves its own arrangement rather than the app's.
 Future<void> useSmileIDSampleApplyLaunch(
   UseSmileIDSampleLaunchArgs args,
   UseSmileIDSampleJobsRepository jobs, {

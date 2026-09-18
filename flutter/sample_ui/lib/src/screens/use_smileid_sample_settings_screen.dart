@@ -44,9 +44,6 @@ class UseSmileIDSampleNavRow {
   final String? url;
 
   /// False for a destination the in-app browser cannot render.
-  ///
-  /// Both legal pages wrap their document in an embedded PDF, which a mobile browser shows as a
-  /// stub rather than the document, so those two hand off to the browser instead.
   final bool opensInApp;
 }
 

@@ -5,9 +5,6 @@ import 'package:sample_ui/sample_ui.dart';
 import 'golden_harness.dart';
 
 /// The two states `spec/screens.json` lists for the detail page, light and dark.
-///
-/// Timestamps are built in UTC and rendered in UTC, so the baselines are identical in any zone —
-/// the list's own goldens use local wall-clock components for the same reason.
 void main() {
   setUpAll(loadSampleFonts);
 

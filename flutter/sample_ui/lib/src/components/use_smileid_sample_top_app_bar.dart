@@ -19,8 +19,6 @@ enum UseSmileIDSampleTopAppBarEmphasis {
 }
 
 /// The pushed-screen app bar: a dark-filled circular back control, a title, and an optional action.
-///
-/// The system back gesture stays the platform's regardless of this visual.
 class UseSmileIDSampleTopAppBar extends StatelessWidget {
   /// [action] is optional, but its 40 slot is reserved either way so the title cannot shift.
   const UseSmileIDSampleTopAppBar({

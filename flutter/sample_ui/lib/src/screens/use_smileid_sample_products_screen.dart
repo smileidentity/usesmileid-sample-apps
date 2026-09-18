@@ -125,9 +125,6 @@ class UseSmileIDSampleProductsScreen extends StatelessWidget {
 }
 
 /// The page title, the avatar button and the subtitle.
-///
-/// The environment chip is deliberately absent — node 5447:1705 keeps it hidden, because the
-/// environment is a property of the session token and the result card is what publishes it.
 class _Header extends StatelessWidget {
   const _Header({
     required this.state,

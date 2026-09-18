@@ -8,9 +8,6 @@ import '../use_smileid_sample_remove_jobs.dart';
 import '../use_smileid_sample_routes.dart';
 
 /// The verifications tab: the stored jobs, grouped by day, under the four chips.
-///
-/// A launch with no arguments shows the empty state, because fixtures reach a screen only through
-/// `seedJobs` and never as the store's default.
 class UseSmileIDSampleVerificationsTab extends ConsumerWidget {
   /// Takes nothing; the jobs, the chip and the selection all come from their providers.
   const UseSmileIDSampleVerificationsTab({super.key});

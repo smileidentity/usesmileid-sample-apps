@@ -5,9 +5,6 @@ import '../tokens/smile_tokens.dart';
 import 'use_smileid_sample_icon.dart';
 
 /// The design's own stroke-based marks, and the Material Symbols the design supplies nowhere.
-///
-/// The two families are deliberately not interchangeable — `spec/components.json` → conventions.
-/// All decorative: the enclosing control supplies the label.
 abstract final class UseSmileIDSampleGlyphs {
   /// The list chevron, which points RIGHT.
   static Widget chevronRight(

@@ -7,9 +7,6 @@ import '../tokens/smile_tokens.dart';
 import 'use_smileid_sample_glyphs.dart';
 
 /// Wraps a row in the platform swipe gesture; the design fixes only the revealed treatment.
-///
-/// Labelled Hide, matching the selection bar — both paths hide the row from this app's list
-/// rather than deleting anything at the API.
 class UseSmileIDSampleSwipeAction extends StatelessWidget {
   /// [dismissKey] is the row's own identity, which the platform needs to animate one row out.
   const UseSmileIDSampleSwipeAction({

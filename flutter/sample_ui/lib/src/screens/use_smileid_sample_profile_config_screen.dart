@@ -13,9 +13,6 @@ import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// One profile's own page: its four user details, and the act that makes it active.
-///
-/// The title is the PROFILE'S NAME rather than a static heading, so a reader who arrived by deep
-/// link knows which profile they are editing.
 class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
   /// [isActive] disables the only write on the page, which is what the twin does.
   const UseSmileIDSampleProfileConfigScreen({

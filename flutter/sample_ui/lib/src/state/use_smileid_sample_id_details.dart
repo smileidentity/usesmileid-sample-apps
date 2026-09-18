@@ -1,7 +1,4 @@
 /// The seven countries the picker offers, in the order it draws them.
-///
-/// Hardcoded here rather than taken from the SDK or `spec/`: no spec file carries the table, and
-/// declaration order IS display order, so it is not alphabetical by accident.
 enum UseSmileIDSampleCountry {
   /// Nigeria.
   ng('NG', 'Nigeria', '🇳🇬'),

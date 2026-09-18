@@ -3,8 +3,6 @@ import '../model/use_smileid_sample_product.dart';
 import '../model/use_smileid_sample_status.dart';
 
 /// Where the verifications are kept, so the screen never knows what is doing the keeping.
-///
-/// Read returns null for NOT LOADED YET, which is a third state and not an empty list.
 abstract interface class UseSmileIDSampleJobsRepository {
   /// Every stored job, newest first, or null while the store has not answered.
   Future<List<UseSmileIDSampleJob>?> read();
@@ -68,9 +66,6 @@ class UseSmileIDSampleMemoryJobsRepository
 }
 
 /// The design's eleven, which only `seedJobs` reaches.
-///
-/// Five hours apart, so the eleven span three calendar day groups and the header's TODAY,
-/// YESTERDAY and dated forms are all exercised by one seeded launch.
 List<UseSmileIDSampleJob> useSmileIDSampleJobFixtures(
   int nowMillis,
 ) => <UseSmileIDSampleJob>[
