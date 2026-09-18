@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 
 import { openNavRow } from '../../src/use-smile-id-sample-links';
+import { useSmileIDSampleListInset } from '../../src/use-smile-id-sample-list-inset';
 
 /// The Settings footer names the product and the host's own version, which only a shell can read.
 const versionLabel = () => `Smile ID · ${Constants.expoConfig?.version ?? '0.0.0'}`;
@@ -25,6 +26,7 @@ export default function Settings() {
   const settings = useSmileIDSampleSettingsStore((state) => state.settings);
   const setSetting = useSmileIDSampleSettingsStore((state) => state.setSetting);
   const load = useSmileIDSampleSettingsStore((state) => state.load);
+  const bottomInset = useSmileIDSampleListInset();
 
   useEffect(() => {
     void load();
@@ -52,6 +54,7 @@ export default function Settings() {
       onProfilePress={() => router.push('/profiles')}
       onNavRowPress={onNavRowPress}
       onSignOut={() => undefined}
+      bottomInset={bottomInset}
     />
   );
 }
