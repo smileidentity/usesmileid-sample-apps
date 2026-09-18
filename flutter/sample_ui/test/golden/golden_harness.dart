@@ -26,8 +26,14 @@ const double maxTextScale = 2;
 /// The key the capture is taken from, so the shot is the component and its padding, not the window.
 const Key goldenRoot = Key('golden_root');
 
-/// Loads the bundled faces, which the test harness otherwise replaces with a blank placeholder.
+/// The text faces plus the emoji face: what every baseline needs.
 Future<void> loadSampleFonts() async {
+  await loadSampleTextFonts();
+  await _loadEmoji();
+}
+
+/// The measured faces alone, for a test that reads text metrics and captures nothing.
+Future<void> loadSampleTextFonts() async {
   final FontLoader faces = FontLoader(useSmileIDSampleFontFamily);
   for (final String face in <String>[
     'Regular',
@@ -44,8 +50,6 @@ Future<void> loadSampleFonts() async {
   final FontLoader icons = FontLoader('MaterialIcons')
     ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'));
   await icons.load();
-
-  await _loadEmoji();
 }
 
 /// Required, not skipped: a baseline drawing tofu instead of emoji is how a picker ships with no flags.
@@ -115,11 +119,14 @@ Future<void> goldens(
   debugDisableShadows = true;
 }
 
+/// One break the text never offered: the word it landed inside, and how that word read across the two lines.
+typedef UseSmileIDSampleTextBreak = ({String word, String detail});
+
 /// What the text-scale pass found: text ellipsised where it could have wrapped, and words broken
 /// where the text offered no break. Returned, not asserted, so the rule itself can be tested.
 typedef UseSmileIDSampleTextScaleFindings = ({
   List<String> truncated,
-  List<String> split,
+  List<UseSmileIDSampleTextBreak> split,
 });
 
 /// Pumps the widget at [textScale] and fails on truncated text or a mid-word break.
@@ -130,8 +137,11 @@ Future<void> assertSurvivesMaxTextScale(
   double hostHeight = goldenHostHeight,
   bool ownsScrolling = false,
 
-  /// Text whose breaking or ellipsis is a RECORDED open design question, not a defect this port may fix.
+  /// Words whose breaking is a RECORDED open design question, not a defect this port may fix.
   Set<String> knownOpenWords = const <String>{},
+
+  /// Text whose ellipsis is a RECORDED open question; kept apart so neither half mutes the other.
+  Set<String> knownEllipsised = const <String>{},
 }) async {
   final UseSmileIDSampleTextScaleFindings findings = await textScaleFindings(
     tester,
@@ -140,13 +150,16 @@ Future<void> assertSurvivesMaxTextScale(
     hostHeight: hostHeight,
     ownsScrolling: ownsScrolling,
   );
+  // Matched against the broken word alone: against the whole paragraph, recording one word would
+  // mute every other break in any string that merely contains it.
   final List<String> split = findings.split
       .where(
-        (String it) => !knownOpenWords.any(it.replaceAll(' | ', '').contains),
+        (UseSmileIDSampleTextBreak it) => !knownOpenWords.any(it.word.contains),
       )
+      .map((UseSmileIDSampleTextBreak it) => it.detail)
       .toList();
   final List<String> truncated = findings.truncated
-      .where((String it) => !knownOpenWords.any(it.contains))
+      .where((String it) => !knownEllipsised.any(it.contains))
       .toList();
   expect(
     truncated,
@@ -196,7 +209,7 @@ Future<UseSmileIDSampleTextScaleFindings> textScaleFindings(
   );
 
   final List<String> truncated = <String>[];
-  final List<String> split = <String>[];
+  final List<UseSmileIDSampleTextBreak> split = <UseSmileIDSampleTextBreak>[];
   for (final RenderParagraph paragraph in paragraphs) {
     final String text = paragraph.text.toPlainText();
     final TextPainter painter = TextPainter(
@@ -218,9 +231,12 @@ Future<UseSmileIDSampleTextScaleFindings> textScaleFindings(
 }
 
 /// Every break the text did not offer, a single word included: a column too narrow for its word is the finding.
-List<String> _midWordBreaks(TextPainter painter, String text) {
+List<UseSmileIDSampleTextBreak> _midWordBreaks(
+  TextPainter painter,
+  String text,
+) {
   final List<ui.LineMetrics> lines = painter.computeLineMetrics();
-  final List<String> breaks = <String>[];
+  final List<UseSmileIDSampleTextBreak> breaks = <UseSmileIDSampleTextBreak>[];
   for (int line = 0; line < lines.length - 1; line++) {
     final TextPosition position = painter.getPositionForOffset(
       Offset(lines[line].width, lines[line].baseline),
@@ -230,13 +246,25 @@ List<String> _midWordBreaks(TextPainter painter, String text) {
     if (end <= 0 || end >= text.length || _breaksCleanly(text, end)) {
       continue;
     }
-    // Prefixed with the whole string: a word that breaks twice reports two findings, and only the
-    // first of them would otherwise carry what the caller recorded.
-    breaks.add(
-      '$text: ${text.substring(range.start, end)} | ${text.substring(end)}',
-    );
+    breaks.add((
+      word: _wordAround(text, end),
+      detail: '${text.substring(range.start, end)} | ${text.substring(end)}',
+    ));
   }
   return breaks;
+}
+
+/// The whitespace-delimited word [index] falls inside, which is what a caller records rather than the line.
+String _wordAround(String text, int index) {
+  int start = index;
+  while (start > 0 && !_isSpace(text[start - 1])) {
+    start--;
+  }
+  int end = index;
+  while (end < text.length && !_isSpace(text[end])) {
+    end++;
+  }
+  return text.substring(start, end);
 }
 
 /// Whether a break at [index] is one the text itself offered, which is what UAX#14 decides.

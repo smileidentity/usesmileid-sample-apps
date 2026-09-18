@@ -62,7 +62,7 @@ void main() {
     // without a space could not see a label that is one word.
     final UseSmileIDSampleTextScaleFindings found = await textScaleFindings(
       tester,
-      narrow('score-4goals'),
+      narrow('Verifications'),
     );
     expect(found.split, isNotEmpty);
   });
@@ -116,7 +116,43 @@ void main() {
     await assertSurvivesMaxTextScale(
       tester,
       narrow('Or enter token manually', width: 80, maxLines: 1),
-      knownOpenWords: const <String>{'Or enter token manually'},
+      knownEllipsised: const <String>{'Or enter token manually'},
     );
+  });
+
+  testWidgets('records one word without muting the rest of its line', (
+    WidgetTester tester,
+  ) async {
+    // A record naming the paragraph rather than the word switched the rule off for every other
+    // word in any string that contained it.
+    Object? thrown;
+    try {
+      await assertSurvivesMaxTextScale(
+        tester,
+        narrow('Settings unbreakablelongword', width: 120),
+        knownOpenWords: const <String>{'Settings'},
+      );
+    } on TestFailure catch (failure) {
+      thrown = failure;
+    }
+    expect(thrown, isA<TestFailure>());
+  });
+
+  testWidgets('a recorded break does not also excuse an ellipsis', (
+    WidgetTester tester,
+  ) async {
+    // One set across both halves would have let the nav bar's labels be capped, which is the very
+    // thing recording them as breaking says not to do.
+    Object? thrown;
+    try {
+      await assertSurvivesMaxTextScale(
+        tester,
+        narrow('Verifications', width: 60, maxLines: 1),
+        knownOpenWords: const <String>{'Verifications'},
+      );
+    } on TestFailure catch (failure) {
+      thrown = failure;
+    }
+    expect(thrown, isA<TestFailure>());
   });
 }

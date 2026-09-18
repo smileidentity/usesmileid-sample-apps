@@ -25,9 +25,7 @@ void main() {
       // The screen owns its scroll view, and at 2x it needs far more than one host to lay out.
       ownsScrolling: true,
       hostHeight: goldenScreenHeight * 2,
-      // The row's title carries the mark, and the word is wider than the row's text column at 2x.
-      // Same open question as the product cards: `ui-work-plan.md` §5 item 3a.
-      // The nav row's title and the URL under it are each one word wider than the row at 2x.
+      // Each is one word wider than the row's text column at 2x: `ui-work-plan.md` §5 item 3a.
       knownOpenWords: const <String>{
         'SmartSelfie\u2122',
         'Documentation',

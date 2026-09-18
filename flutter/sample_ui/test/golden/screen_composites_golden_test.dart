@@ -87,7 +87,7 @@ void main() {
       tester,
       _scanSheets(),
       // A single-line field cannot wrap, so whether its placeholder fits at 2x is a copy question.
-      knownOpenWords: const <String>{'Or enter token manually'},
+      knownEllipsised: const <String>{'Or enter token manually'},
     );
   });
 
@@ -247,15 +247,14 @@ void _ignore(String value) {}
 
 void _ignoreItem(UseSmileIDSampleNavItem item) {}
 
-/// The words `ui-work-plan.md` §5 item 3a records as breaking at 2x in the design's own grid.
-/// Each tab label is one word wider than a third of the pill at 2x; capping them ellipsises
-/// "Verifications" from 1.3x, which the same rule forbids — `port-adversarial-review.md` C5.
+/// Each tab label is wider than a third of the pill at 2x — `port-adversarial-review.md` C5.
 const Set<String> _tabOpenWords = <String>{
   'Products',
   'Verifications',
   'Settings',
 };
 
+/// The words `ui-work-plan.md` §5 item 3a records as breaking at 2x in the design's own grid.
 const Set<String> _gridOpenWords = <String>{
   'Registration',
   'Document',
