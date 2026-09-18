@@ -6,11 +6,18 @@ process.env.TZ = 'UTC';
 // grouped baseline. Android pins the same pair on its own test JVM for the same reason.
 process.env.LC_ALL = 'en_US.UTF-8';
 
+const preset = require('jest-expo/jest-preset');
+
 /** Test config for the shared UI package: the Expo preset supplies the React Native transform. */
 module.exports = {
   preset: 'jest-expo',
   testEnvironment: 'node',
   roots: ['<rootDir>/test'],
+  // The layout engine ships as ESM, so the preset's first pattern has to let it reach Babel like a source file.
+  transformIgnorePatterns: [
+    preset.transformIgnorePatterns[0].replace('(?!(', '(?!(yoga-layout|'),
+    ...preset.transformIgnorePatterns.slice(1),
+  ],
   // The SDK is a peer the tests never call; stubbing it keeps a unit run off the native modules.
   moduleNameMapper: { '^@smileid/usesmileid$': '<rootDir>/test/stubs/usesmileid.ts' },
   snapshotResolver: '<rootDir>/test/snapshot-resolver.js',
