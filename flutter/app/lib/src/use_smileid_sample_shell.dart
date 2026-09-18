@@ -46,24 +46,43 @@ class UseSmileIDSampleShell extends ConsumerWidget {
         // The body runs under the floating bar, which is what publishes the bar's laid-out height
         // as the body's bottom padding for `useSmileIDSampleNavBarClearance` to read.
         extendBody: showsNavBar,
-        // The exception that proves R13's rule: the selection bar is opaque with a top edge, so it
-        // REPLACES the bottom chrome and the content does stop above it.
-        bottomNavigationBar: showsSelectionBar
-            ? UseSmileIDSampleSelectionBar(
-                selectedCount: selection.ids.length,
-                onRemove: () => useSmileIDSampleRemoveJobs(ref, selection.ids),
-              )
-            : showsNavBar
-            ? UseSmileIDSampleNavBar(
-                selected: UseSmileIDSampleNavItem.values[shell.currentIndex],
-                onSelect: (UseSmileIDSampleNavItem item) => _select(item.index),
-                onTokenTap: () {},
-              )
-            : null,
+        bottomNavigationBar: _bottomBar(
+          ref,
+          shell,
+          selection,
+          showsSelectionBar: showsSelectionBar,
+          showsNavBar: showsNavBar,
+        ),
         // Top only: the bar draws over the bottom inset itself, and insetting here as well
         // would lift it by the system bar twice.
         body: SafeArea(bottom: false, child: shell),
       ),
+    );
+  }
+
+  /// Whichever bar owns the bottom slot, which is what the body's padding is then measured from.
+  Widget? _bottomBar(
+    WidgetRef ref,
+    StatefulNavigationShell shell,
+    UseSmileIDSampleSelection selection, {
+    required bool showsSelectionBar,
+    required bool showsNavBar,
+  }) {
+    // The exception that proves R13's rule: the selection bar is opaque with a top edge, so it
+    // REPLACES the bottom chrome and the content does stop above it.
+    if (showsSelectionBar) {
+      return UseSmileIDSampleSelectionBar(
+        selectedCount: selection.ids.length,
+        onRemove: () => useSmileIDSampleRemoveJobs(ref, selection.ids),
+      );
+    }
+    if (!showsNavBar) {
+      return null;
+    }
+    return UseSmileIDSampleNavBar(
+      selected: UseSmileIDSampleNavItem.values[shell.currentIndex],
+      onSelect: (UseSmileIDSampleNavItem item) => _select(item.index),
+      onTokenTap: () {},
     );
   }
 
