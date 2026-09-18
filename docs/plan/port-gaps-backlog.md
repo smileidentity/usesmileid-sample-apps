@@ -67,7 +67,8 @@ currently the odd ones out in each case, which is a parity divergence until the 
   two packages, and assert each declared name appears somewhere other than its own declaration. It has
   to span both packages, because a sheet's id is supplied by whichever host PRESENTS the sheet, and
   only a host sees both halves — scoped to the shared UI package alone it reports four false
-  positives. Android and iOS should both be checked; neither has this assertion today.
+  positives. iOS already has this assertion (`TestIdUsageTest` greps every declared id in source);
+  Android and Expo do not, and both should.
 
 ## 3. Design-system and spec debt
 

@@ -44,7 +44,9 @@ unverifiable and the next one will regress the same way.
 
 - `expo/app/app/_layout.tsx` — the root layout. Reads launch args, resets the profile store, provides
   the theme. The only place a cold-start argument can be applied before the first screen mounts.
-- `expo/app/app/(tabs)/verifications.tsx` — the verifications route. Calls `remove` and nothing else.
+- `expo/app/app/(tabs)/verifications.tsx` — the verifications route. Since `1b199cf` and `67a6b2b`
+  on this branch it consumes removals into the transient notice with Undo, so step 3 below is done
+  and only its test is owed.
 - `expo/app/app/(tabs)/_layout.tsx` — the tab bar. Uses `expo-router`'s stock `<Tabs>` bar.
 - `expo/app/app/profiles/index.tsx` — **the working exemplar.** It already does, correctly, the exact
   pattern steps 3 and 4 need: consume a one-shot store signal in an effect, show a transient notice
@@ -76,8 +78,8 @@ export default function RootLayout() {
   }, [args, resetProfiles]);
 ```
 
-`expo/app/app/(tabs)/verifications.tsx:18-25` — note the comment, which claims a property the code
-does not deliver: there is no confirmation and no undo:
+`expo/app/app/(tabs)/verifications.tsx:18-25` as it stood when this plan was surveyed, before the
+branch wired the notice. The comment claimed a property the code did not then deliver:
 
 ```tsx
     <VerificationsScreen
@@ -295,6 +297,9 @@ second that renders it with no URL and asserts `jobs` is empty. Both pass.
 **Commit**: `fix: seed the Expo verification fixtures from seedJobs`
 
 ### Step 3: show the removal confirmation and offer Undo
+
+**Done on this branch** (`1b199cf`, `67a6b2b`), except the test under **Verify**, which needs step 1's
+lane. Read the rest of this step as the description of what to test, not what to build.
 
 In `expo/app/app/(tabs)/verifications.tsx`, follow the `expo/app/app/profiles/index.tsx` pattern
 exactly:

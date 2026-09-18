@@ -26,7 +26,8 @@ assert a property of the code rather than of a rendered picture — exist on Flu
 platform:
 
 1. **Every declared accessibility id is actually attached to something.** Flutter's is
-   `flutter/app/test/use_smileid_sample_test_id_call_sites_test.dart`, 38 lines. It exists because
+   `flutter/app/test/use_smileid_sample_test_id_call_sites_test.dart`, 38 lines; iOS has the same
+   check as `TestIdUsageTest`, and Android and Expo have none. It exists because
    a declared id can sit in the spec, pass the spec test, and be set on no widget at all: the spec
    test asserts the *other* direction, and a screenshot cannot see an accessibility id. The first
    thing to find such an id is a device flow keying off the spec, at which point it looks like a

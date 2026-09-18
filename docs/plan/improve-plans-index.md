@@ -5,7 +5,7 @@ survey was deliberately scoped to what a **diff cannot show** — divergence bet
 between them and `android/`/`ios/`, architecture that will fight the next feature, and capabilities
 that are structurally missing rather than individually broken.
 
-It does **not** re-survey what `docs/plan/port-review-findings.md` already records (57 findings from
+It does **not** re-survey what `docs/plan/port-review-findings.md` already records (56 findings from
 a multi-perspective review of both ports' merged diffs, with a status column separating verified from
 asserted), `docs/plan/port-gaps-backlog.md` (decisions taken and debt surfaced),
 `docs/plan/after-the-ports.md` (the phased plan) or `docs/plan/stacked-pr-sequencing.md`. Where a
@@ -17,10 +17,10 @@ Each executor: read the plan fully before starting, honour its STOP conditions, 
 
 | # | Plan | What it addresses | Priority | Effort | Depends on | Status |
 |---|---|---|---|---|---|---|
-| 1 | [`improve-expo-shell-wiring.md`](improve-expo-shell-wiring.md) | `expo/app` has no test lane at all, and five things `expo/sample-ui` implements and tests are reached by nothing in the shell — seeding, the removal confirmation and undo, the dark-mode setting, the notice window, the floating nav bar | P1 | M | none | TODO |
-| 2 | [`improve-flutter-job-store-contract.md`](improve-flutter-job-store-contract.md) | Flutter's job store has four of the eight operations Android, iOS and Expo each own. No `add`, `find`, `applyStatus` or `refresh`, no status-source seam, no outcome type; the detail page's refresh does no work and reports the wrong message for a stored row | P1 | L | none | TODO |
-| 3 | [`improve-port-store-restore-tolerance.md`](improve-port-store-restore-tolerance.md) | One unreadable stored row silently erases **every** verification on Flutter, where Expo drops the row and keeps the rest. Neither port tests the path | P1 | S | none | TODO |
-| 4 | [`improve-expo-structural-checks.md`](improve-expo-structural-checks.md) | The two checks that assert code properties rather than pictures — declared ids are attached to something, and a container does not absorb its children's semantics — exist on Flutter only. Expo's app-bar title carries no header role | P2 | M | none | TODO |
+| 1 | [`improve-expo-shell-wiring.md`](improve-expo-shell-wiring.md) | `expo/app` has no test lane at all, and four things `expo/sample-ui` implements and tests are reached by nothing in the shell — seeding, the dark-mode setting, the notice window, the floating nav bar. The removal confirmation and undo (its step 3) landed on this branch; only that step's test is still owed | P1 | M | none | TODO |
+| 2 | [`improve-flutter-job-store-contract.md`](improve-flutter-job-store-contract.md) | Flutter's job store has four of the eight operations Android, iOS and Expo each own. No `add`, `find`, `applyStatus` or `refresh`, no status-source seam, no outcome type; the detail page's refresh does no work and reports the wrong message for a stored row | P1 | L | the flow host, as the first caller of every operation it adds (`port-priority-cut.md` item 9) | TODO |
+| 3 | [`improve-port-store-restore-tolerance.md`](improve-port-store-restore-tolerance.md) | One unreadable stored row silently erases **every** verification on Flutter, where Expo drops the row and keeps the rest. Neither port tests the path. Only a write-back (`seedFixtures`, the future `add`) makes the erase permanent; a read alone hides | P1 | S | plan 2's `add`; substitute a default as Android and iOS do, rather than drop as Expo does (`port-priority-cut.md`) | TODO |
+| 4 | [`improve-expo-structural-checks.md`](improve-expo-structural-checks.md) | The two checks that assert code properties rather than pictures — declared ids are attached to something, and a container does not absorb its children's semantics — exist on Flutter, and the first on iOS (`TestIdUsageTest`); Expo has neither. Expo's app-bar title carries no header role | P2 | M | none | TODO |
 
 Status values: TODO | IN PROGRESS | DONE | BLOCKED (with one-line reason) | REJECTED (with one-line
 rationale).
@@ -37,8 +37,9 @@ rationale).
   not, so the two ports are a stub swap and a tranche apart respectively.
 - **3 — new.** Not in either document. Latent today, live on the first shape change.
 - **4 — partial overlap.** `port-gaps-backlog.md` §2 and §7 record both checks as owed by **Android
-  and iOS**; neither names Expo, because Flutter wrote them after the Expo tranche landed. The
-  missing header role on Expo's app-bar title is new.
+  and iOS**, though iOS already has the first as `TestIdUsageTest`; neither names Expo, because
+  Flutter wrote them after the Expo tranche landed. The missing header role on Expo's app-bar title is
+  new.
 
 ## Dependency notes
 

@@ -14,9 +14,10 @@ dispatched a cross-model pass, because that would have sent this repo's source t
 
 | # | Finding | Status |
 |---|---|---|
-| 1 | Back threw `GoError: There is nothing to pop` on the consent form, the ID form and the profiles list. All four handlers now navigate explicitly, matching the nested routes' existing pattern | verified, reproduced on all three routes, regression test proved to red |
+| 1 | Back threw `GoError: There is nothing to pop` on the consent form, the ID form and the profiles list. All four handlers now navigate explicitly, matching the nested routes' existing pattern. The profile editor is a child route and never threw. System back on the same routes left the app, since a `go`-entered page is the root stack's only page; it now runs through the same handler | verified, reproduced on three routes, regression test proved to red for both backs |
 | 2 | Removal copy lived in the Expo shell, so four shells could word it differently | verified, moved to `sample-ui` |
 | 3 | The consume-once contract behind the removal confirmation had no test | verified, four tests added |
+| 11 | 86 multi-paragraph doc comments broke the one-line rule, across 60 Flutter files | relocated to `port-comment-rationale.md` by `00834b2`; five one-liners restored where the paragraph carried an invariant the code cannot say. 40 wrapped single sentences remain and are not the rule's target |
 
 ## 2. Verified and open — highest value first
 
@@ -29,7 +30,6 @@ dispatched a cross-model pass, because that would have sent this repo's source t
 | 8 | The **truncation** half of the text-scale predicate cannot fail. `didExceedMaxLines && maxLines != 1` excludes exactly the paragraphs able to report, because every `maxLines` in the app is `1` or `null` | `flutter/sample_ui/test/golden/golden_harness.dart:220` | A different half of the function repaired earlier — that repair covered `split`, not `truncated`. A sheet header truncating at 2x is live and undetectable |
 | 9 | The app bar's back control and title **merge into one semantics node** inside a screen's `Semantics(identifier:)` wrapper | `flutter/sample_ui/lib/src/screens/use_smileid_sample_profiles_screen.dart:57` | The component-level fix works in isolation; in situ the screen wrapper absorbs it again. Found while writing finding 1's test, reported by neither reviewer |
 | 10 | The Expo shell ships the stock tab bar and never mounts the designed floating nav bar, which exists in `sample-ui` with zero call sites | `expo/app/app/(tabs)/_layout.tsx:9` | Flutter mounts its floating bar; Expo mounts it zero times. The file's comment stages this for "U2", so it was a decision — but it is now an undocumented divergence between the two new apps |
-| 11 | 74 multi-paragraph doc comments break the one-line rule, across 57 files | repo-wide | A retrospective trim missed them: its pattern required `///` plus content, and a bare `///` separator line broke the run |
 | 12 | The clearance test added yesterday sweeps five text scales against **one** tab root | `flutter/sample_ui/test/use_smileid_sample_nav_bar_clearance_test.dart` | The bar's height depends on the selected tab's label, which is the term the fix was about. My own test, and the reviewer caught it |
 
 ## 3. Asserted, not yet re-checked
@@ -80,19 +80,23 @@ job list five times per build; the licences screen mounts all 74 rows and their 
 Kept so nobody re-opens them.
 
 - **`consumeRemoval` read-write race.** The claim was that two consumers in one tick double-consume,
-  latent until the function gained a caller. The function is fully synchronous — no await between the
-  read and the write, no async middleware on that path — and JavaScript does not preempt synchronous
-  code, so the second call always observes the first's write. The fix was written and reverted before
-  shipping; a comment asserting a race that cannot happen is worse than no comment.
+  latent until the function gained a caller. There is one consumer, it runs in an effect rather than
+  in render, and it guards on `consumeRemoval()` returning null, so a second run (StrictMode included)
+  is a no-op. The function is also synchronous with no middleware, which is necessary but is not what
+  protects it: a second consumer or an `await` would break the first two safeguards and the guard would
+  still hold. The fix was written and reverted before shipping; a comment asserting a race that cannot
+  happen is worse than no comment.
 - **The notice overlay's missing `left`/`right`.** The host component already sets `width: '100%'`, and
   the identical pattern is merged in `profiles/index.tsx`. Fixing one call site would diverge from its
   sibling; if explicit insets are wanted they belong in the host, not duplicated at two call sites.
+  The placement rests on the parent having no horizontal padding, not on the width, so a padded parent
+  is the day they are wanted.
 
 ## 5. What the five patterns say about the next port
 
 The individual findings are cheap to fix. The patterns are what to change:
 
-1. **A test's green says nothing until you know what it exercises.** Twelve of these are tests that
+1. **A test's green says nothing until you know what it exercises.** Eleven of these are tests that
    cannot fail. Three separate mechanisms produced them: a predicate narrowed until every case is
    exempt, a one-directional set assertion, and a fixture asserted against a copy of itself.
 2. **A component's test passing says nothing about the component in its caller.** Three instances:
