@@ -77,8 +77,7 @@ const screenIds = {
   settings: UseSmileIDSampleTestIds.SETTINGS_SCREEN,
 } as const;
 
-/// What the scrolled-to-end list actually clears: the padding the content container reserves.
-/// Read off the rendered tree, not a laid-out box — no width or scale can change what the prop says.
+/// What the scrolled-to-end list clears, read off the rendered tree: no width or scale changes a prop.
 const reservedBottom = async (element: React.ReactElement, testID: string) => {
   const scroll = byTestID(await renderForLayout(element), testID);
   if (!scroll) throw new Error(`no scrolling list is tagged ${testID} to read a reserve from`);
@@ -150,9 +149,7 @@ describe('the bar keeps growing past the scale the predicate is written against'
 });
 
 describe('a screen reserves exactly what its host passes, and nothing by itself', () => {
-  // Comparing a reserve DERIVED from the bar against the bar proves only that a gap is positive, so
-  // these assert the forwarding contract instead; whether the shipped reserve clears the bar is
-  // expo/app/test/use-smile-id-sample-nav-bar-host.test.tsx, against the real hook.
+  // A reserve derived from the bar only proves a gap is positive, so the shipped one is the shell's own test.
   it.each(Object.keys(screens) as (keyof typeof screens)[])(
     'leaves the %s list running under the bar when the host passes nothing',
     async (screen) => {

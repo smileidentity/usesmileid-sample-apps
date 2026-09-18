@@ -1,5 +1,4 @@
-// Set before the config is exported, so every worker inherits it: Node reads the zone once at
-// startup and a date rendered by a shell test would otherwise pin the machine that ran it.
+// Set before the config is exported, so every worker inherits it: Node reads the zone once, at startup.
 process.env.TZ = 'UTC';
 process.env.LC_ALL = 'en_US.UTF-8';
 

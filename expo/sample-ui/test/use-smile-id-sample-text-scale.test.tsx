@@ -27,8 +27,7 @@ const envelopes = [
 /// The words the Flutter twin also records as an open design question, not a defect this port may fix.
 const tabOpenWords = ['Products', 'Verifications', 'Settings'];
 
-/// Per state, not global: an exemption recorded for one row must not mute the same word in another.
-/// The job id is what the Flutter twin records for this row — a column too narrow for one hex id.
+/// Per state, not global: the job id the twin records for this row must not mute the same word elsewhere.
 const openWords: Record<string, readonly string[]> = {
   data_field_row_with_copy: ['7d2f01aa-4b1c'],
 };

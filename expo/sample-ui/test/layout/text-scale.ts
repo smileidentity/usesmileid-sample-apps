@@ -25,9 +25,7 @@ type Options = {
   readonly knownEllipsised?: readonly string[];
 };
 
-/// Lays the tree out and reports every mid-word break and every paragraph the line cap clips.
-/// Not yet a full no-clipping rule: text overflowing a fixed height or an `overflow: 'hidden'`
-/// ancestor is invisible to this, as it is to the Flutter twin these two rules come from.
+/// Reports mid-word breaks and line-cap ellipsis only: text clipped by a fixed height is invisible here, as on the twin.
 export const textScaleFindings = (
   rendered: RenderedNode,
   { width = WIDE_WIDTH, fontScale = 1 }: Options = {},
