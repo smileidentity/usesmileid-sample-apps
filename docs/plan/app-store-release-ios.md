@@ -565,6 +565,12 @@ release lane's assertions all pass `-o -`, with a comment saying why.
   on every device. The answer now ships in `review-notes.txt`, so the question should not recur here or
   in the Flutter and Expo ports. The published App Privacy form already declares Sensitive Info on the
   reasoning that the selfie is biometric, which is the cross-check a reviewer makes.
+- **The taller panels are in the repository; App Store Connect gets them on the review decision.** The
+  five wordless panels in `ios/store/screenshots/` were re-rendered on 2026-09-18 with the device filling
+  the panel (§2.4), while version 20260913.1211.103 sat in the review queue, where its screenshots are
+  locked. Rejected → the version is editable again: `scripts/asc_publish.py apply --build 103` carries them,
+  then `submit`. Approved → they ride the next version's `apply`. Either way nothing is re-rendered; the
+  files are final.
 - **The camera panel** needs a device, exactly as Android's REL-A9 does. The composer already has its
   slot; five panels are rendered and Apple requires one, so it blocks nothing.
 - **The `verification_details` panel is the weak one**, and it is weak for precisely the reason Android

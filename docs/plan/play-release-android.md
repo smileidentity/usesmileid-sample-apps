@@ -607,6 +607,9 @@ None of these blocks anything, and none of them belongs to Android's critical pa
   `seedProfiles` launch argument mirroring `seedJobs`, and a unit test holds both the default and the
   launch choice. REL-A10 audited what the flows *seed* and what the frames *show*; the profile store's
   constructor default was neither, which is how it passed — see §8.
+- **The taller panels owe a Console upload.** `android/play/screenshots/` (five panels) and
+  `android/play/feature-graphic.png` were re-rendered on 2026-09-18 from 20:9 frames (§2.6); the live
+  listing still serves the 16:9 set until the owner replaces those six files by hand.
 - **The camera panel (REL-A9)** needs a device. The flow and its output path are written; five panels
   are published and the sixth drops in without rework.
 - **The `verification_details` panel is the weak one.** Hiding the debug result card left that screen
