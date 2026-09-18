@@ -546,14 +546,18 @@ release lane's assertions all pass `-o -`, with a comment saying why.
 
 ### 7.2 What is owed, and what it does not block
 
-- **The shorter description is in the repository; pushing it to Apple is queued.** Play dropped the
-  per-product paragraphs on 2026-09-14 and kept the six names (its §5); `ios/store/description.txt` now
-  carries that same text, so the two files are byte-identical again. What is **not** done is the App
-  Store side: description is per-version metadata, and metadata must not move while a review
-  conversation is open on the version. **First action once the submission clears** (approved, or Apple
-  asks for a resubmission): `scripts/asc_publish.py apply`, which carries this description and the
-  wordless screenshots together, then `submit` on the owner's word. Nothing else in the listing is
-  waiting on anything.
+- ~~**The shorter description is in the repository; pushing it to Apple is queued.**~~ **Pushed and
+  resubmitted 2026-09-18.** Play dropped the per-product paragraphs on 2026-09-14 and kept the six
+  names (its §5); `ios/store/description.txt` carries that same text, so the two files are
+  byte-identical. It waited because description is per-version metadata, and metadata must not move
+  while a review conversation is open. After four business days with no answer to the TrueDepth reply,
+  `scripts/asc_publish.py apply --build 103` carried the description, the wordless screenshots and the
+  ARKit review notes onto the rejected version, and `submit` re-queued it with the same build. Two
+  things the resubmit taught the script: a rejected version becomes editable again (`REJECTED` →
+  `PREPARE_FOR_SUBMISSION` on the first edit), and the rejected **review-submission item must be
+  PATCHed `resolved: true` before the submission is re-`submitted`** — otherwise Apple answers 409
+  *Version is not ready to be submitted yet, please try again later*, which reads as a timing problem
+  and is not one. Nothing else in the listing is waiting on anything.
 - ~~**Guideline 2.1: App Review asked what the app does with the TrueDepth API.**~~ **Answered
   2026-09-16.** Worth knowing before anyone denies it: the SDK does use it. The selfie screen runs an
   `ARFaceTrackingConfiguration` session and reads two blend shapes, `mouthSmileLeft` and

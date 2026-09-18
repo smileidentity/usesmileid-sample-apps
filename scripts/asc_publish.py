@@ -426,6 +426,12 @@ def submit(asc: ASC, args):
     if args.dry_run:
         print("dry run: the draft is complete as far as Apple validates at this step; nothing was submitted")
         return
+    for i in items:
+        if i["attributes"]["state"] == "REJECTED":
+            code, out = asc.call("PATCH", f"reviewSubmissionItems/{i['id']}", {"data": {"type": "reviewSubmissionItems", "id": i["id"], "attributes": {"resolved": True}}})
+            print(f"  {'ok ' if code in (200, 204) else 'ERR'} resolve rejected item ({code}{'' if code in (200, 204) else ': ' + errors(out)})")
+            if code not in (200, 204):
+                sys.exit("Apple refused to mark the rejected item resolved — the message above says why")
     asc.write("PATCH", f"reviewSubmissions/{sub['id']}", {"data": {"type": "reviewSubmissions", "id": sub["id"], "attributes": {"submitted": True}}}, "submit for review")
     status(asc)
 
