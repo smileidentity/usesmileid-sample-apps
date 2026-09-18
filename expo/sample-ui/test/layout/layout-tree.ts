@@ -316,12 +316,14 @@ const build = (
   if (rendered.type === 'Text') {
     const spans = internRuns(spansOf(rendered, style, rendered.props, fontScale, where));
     const height = lineHeightOf(spans);
+    const cap = lineCapOf(rendered.props);
     node.setMeasureFunc((available, widthMode) => {
       const bound = widthMode === Y.MEASURE_MODE_UNDEFINED ? Number.POSITIVE_INFINITY : available;
       const lines = layoutSpans(spans, bound);
       return {
         width: Math.min(bound, Math.max(...lines.map((line) => line.width), 0)),
-        height: lines.length * height,
+        // A capped paragraph occupies its cap, not the height the overflow would have taken.
+        height: Math.min(lines.length, cap ?? lines.length) * height,
       };
     });
     return { node, rendered, style, children: [] };
@@ -340,6 +342,21 @@ const build = (
   return { node, rendered, style, children };
 };
 
+/// React Native reads 0 as "no cap", which is not the same as one line.
+const lineCapOf = (props: Record<string, unknown>): number | undefined => {
+  const cap = props.numberOfLines as number | undefined;
+  return cap === 0 ? undefined : cap;
+};
+
+/// The width the text itself was given: padding and border come out of the box before it wraps.
+const contentWidth = (built: Built): number => {
+  const Y = engine();
+  const box = built.node.getComputedLayout();
+  const inset = (edge: number) =>
+    built.node.getComputedPadding(edge) + built.node.getComputedBorder(edge);
+  return Math.max(box.width - inset(Y.EDGE_LEFT) - inset(Y.EDGE_RIGHT), 0);
+};
+
 const harvest = (built: Built, fontScale: number): LaidOutNode => {
   const box = built.node.getComputedLayout();
   const { style } = built;
@@ -356,12 +373,11 @@ const harvest = (built: Built, fontScale: number): LaidOutNode => {
   const spans = internRuns(
     spansOf(built.rendered, style, built.rendered.props, fontScale, built.rendered.type),
   );
-  const cap = built.rendered.props.numberOfLines as number | undefined;
   return {
     ...base,
     text: spans.map((span) => span.text).join(''),
-    lines: layoutSpans(spans, box.width),
-    numberOfLines: cap === 0 ? undefined : cap,
+    lines: layoutSpans(spans, contentWidth(built)),
+    numberOfLines: lineCapOf(built.rendered.props),
   };
 };
 
