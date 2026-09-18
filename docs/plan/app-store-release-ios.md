@@ -567,7 +567,7 @@ release lane's assertions all pass `-o -`, with a comment saying why.
   reasoning that the selfie is biometric, which is the cross-check a reviewer makes.
 - **The taller panels are in the repository; App Store Connect gets them on the review decision.** The
   five wordless panels in `ios/store/screenshots/` were re-rendered on 2026-09-18 with the device filling
-  the panel (§2.4), while version 20260913.1211.103 sat in the review queue, where its screenshots are
+  the panel (§2.5), while version 20260913.1211.103 sat in the review queue, where its screenshots are
   locked. Rejected → the version is editable again: `scripts/asc_publish.py apply --build 103` carries them,
   then `submit`. Approved → they ride the next version's `apply`. Either way nothing is re-rendered; the
   files are final.
