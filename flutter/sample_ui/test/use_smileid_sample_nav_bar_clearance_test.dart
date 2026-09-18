@@ -25,8 +25,7 @@ void main() {
 
         await tester.pumpWidget(
           MediaQuery(
-            // Copied onto the view's own data: a bare MediaQueryData zeroes the gesture inset on
-            // both sides of the comparison, which is the value that makes any formula look right.
+            // Copied onto the view's data: a bare MediaQueryData zeroes the inset on both sides.
             data: MediaQueryData.fromView(
               tester.view,
             ).copyWith(textScaler: TextScaler.linear(scale)),
@@ -83,18 +82,16 @@ void main() {
 
 void _ignoreItem(UseSmileIDSampleNavItem item) {}
 
-/// The narrowest phone either original supports: the iOS 15 floor's first-generation SE, and
-/// Android's smallest phone bucket.
+/// The narrowest phone both floors support: iOS 15's first-generation SE, Android's small bucket.
 const double _smallestPhone = 320;
 
 /// A gesture-navigation inset, so the bar's own bottom padding is not zero on both sides.
 const double _gestureInset = 34;
 
-/// Taller than the rows are, so there is something to scroll past the bar.
+/// Shorter than the rows stacked, so the list has somewhere to scroll.
 const double _hostHeight = 900;
 
-/// Enough rows that the content outruns the host and the end of the list is reachable.
+/// Enough of them, at [_rowHeight] each, to outrun the host so the end is reachable.
 const int _rows = 20;
 
-/// Tall enough to read in a failure, small enough that the rows outrun the host.
 const double _rowHeight = 80;

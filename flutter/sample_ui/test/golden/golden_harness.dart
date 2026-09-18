@@ -122,8 +122,7 @@ Future<void> goldens(
 /// One break the text never offered: the word it landed inside, and how that word read across the two lines.
 typedef UseSmileIDSampleTextBreak = ({String word, String detail});
 
-/// What the text-scale pass found: text ellipsised where it could have wrapped, and words broken
-/// where the text offered no break. Returned, not asserted, so the rule itself can be tested.
+/// What the pass found, returned rather than asserted so the rule itself can be tested.
 typedef UseSmileIDSampleTextScaleFindings = ({
   List<String> truncated,
   List<UseSmileIDSampleTextBreak> split,
@@ -150,8 +149,7 @@ Future<void> assertSurvivesMaxTextScale(
     hostHeight: hostHeight,
     ownsScrolling: ownsScrolling,
   );
-  // Matched against the broken word alone: against the whole paragraph, recording one word would
-  // mute every other break in any string that merely contains it.
+  // The broken word alone: a paragraph match mutes every other break in any string holding it.
   final List<String> split = findings.split
       .where(
         (UseSmileIDSampleTextBreak it) => !knownOpenWords.any(it.word.contains),

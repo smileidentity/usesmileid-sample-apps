@@ -43,8 +43,7 @@ class UseSmileIDSampleShell extends ConsumerWidget {
       },
       child: Scaffold(
         backgroundColor: colors.background,
-        // The body runs under the floating bar, which is what publishes the bar's laid-out height
-        // as the body's bottom padding for `useSmileIDSampleNavBarClearance` to read.
+        // What publishes the bar's measured height to the body as its bottom padding.
         extendBody: showsNavBar,
         bottomNavigationBar: _bottomBar(
           ref,
@@ -53,8 +52,7 @@ class UseSmileIDSampleShell extends ConsumerWidget {
           showsSelectionBar: showsSelectionBar,
           showsNavBar: showsNavBar,
         ),
-        // Top only: the bar draws over the bottom inset itself, and insetting here as well
-        // would lift it by the system bar twice.
+        // Top only: the bar insets the bottom itself, and doing it here too lifts it twice.
         body: SafeArea(bottom: false, child: shell),
       ),
     );
@@ -68,8 +66,7 @@ class UseSmileIDSampleShell extends ConsumerWidget {
     required bool showsSelectionBar,
     required bool showsNavBar,
   }) {
-    // The exception that proves R13's rule: the selection bar is opaque with a top edge, so it
-    // REPLACES the bottom chrome and the content does stop above it.
+    // The exception that proves R13's rule: this one is opaque, so content does stop above it.
     if (showsSelectionBar) {
       return UseSmileIDSampleSelectionBar(
         selectedCount: selection.ids.length,

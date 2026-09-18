@@ -80,8 +80,7 @@ void main() {
     expect(agentMode(), isTrue);
   });
 
-  // Against the bar's MEASURED height, not a constant: the token affordance's 58 is a floor the
-  // real bar clears by 30dp, so a reserve wired back to a formula would still pass.
+  // The MEASURED height, not 58: the real bar clears that floor by 30dp, so a formula still passes.
   testWidgets('every tab root reserves room for the bar it floats under', (
     WidgetTester tester,
   ) async {

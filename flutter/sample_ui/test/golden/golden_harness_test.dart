@@ -34,8 +34,7 @@ void main() {
   testWidgets('accepts a break the hyphen itself offered', (
     WidgetTester tester,
   ) async {
-    // Wide enough that the hyphen's break is the one taken; at 44 the word breaks everywhere and
-    // the case under test never arises.
+    // Wide enough that the hyphen's break is the one taken; at 44 every position breaks.
     final UseSmileIDSampleTextScaleFindings found = await textScaleFindings(
       tester,
       narrow('head-turns', width: 110),
@@ -58,8 +57,7 @@ void main() {
   testWidgets('catches a lone word broken by a column too narrow for it', (
     WidgetTester tester,
   ) async {
-    // The nav bar shipped "Verifi / cations" through a green lane: a rule that skipped any text
-    // without a space could not see a label that is one word.
+    // The nav bar shipped "Verifi / cations" green: a rule skipping space-free text cannot see it.
     final UseSmileIDSampleTextScaleFindings found = await textScaleFindings(
       tester,
       narrow('Verifications'),
@@ -70,8 +68,7 @@ void main() {
   testWidgets('records a token no column can take, rather than exempting it', (
     WidgetTester tester,
   ) async {
-    // A hex job id has to break somewhere, which is a caller's judgement about its column and not
-    // something the rule can decide for every string in the app.
+    // Where a hex id breaks is the caller's judgement about its column, not the rule's.
     await assertSurvivesMaxTextScale(
       tester,
       narrow('7d2f01aa-4c1e-4b0a-9f2c-1e7b9a3d8c55'),
@@ -123,8 +120,7 @@ void main() {
   testWidgets('records one word without muting the rest of its line', (
     WidgetTester tester,
   ) async {
-    // A record naming the paragraph rather than the word switched the rule off for every other
-    // word in any string that contained it.
+    // Naming the paragraph rather than the word switched the rule off for every other word in it.
     Object? thrown;
     try {
       await assertSurvivesMaxTextScale(
@@ -141,8 +137,7 @@ void main() {
   testWidgets('a recorded break does not also excuse an ellipsis', (
     WidgetTester tester,
   ) async {
-    // One set across both halves would have let the nav bar's labels be capped, which is the very
-    // thing recording them as breaking says not to do.
+    // One set across both halves would let the labels be capped, which recording them forbids.
     Object? thrown;
     try {
       await assertSurvivesMaxTextScale(

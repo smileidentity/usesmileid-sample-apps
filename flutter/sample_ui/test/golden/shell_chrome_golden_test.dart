@@ -37,8 +37,7 @@ Future<void> _chromeGoldens(
   fillsHost: true,
 );
 
-/// The shell's own layout, slot for slot; [page] builds inside the body, which is the only context
-/// the bar's measured height reaches.
+/// The shell's own layout, slot for slot; [page] builds in the body, where the bar's height reaches.
 Widget _shell(UseSmileIDSampleNavItem selected, WidgetBuilder page) => Scaffold(
   // Transparent, so the host's page colour still reaches the capture.
   backgroundColor: Colors.transparent,
