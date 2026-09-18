@@ -27,6 +27,8 @@ const FloatingNavBar = ({ state, navigation }: BottomTabBarProps) => {
   const router = useRouter();
   const onHeightChange = use(BottomTabBarHeightCallbackContext);
   const selected = state.routes[state.index];
+  // The design draws no bar on a pushed screen, even one inside a tab's graph; empty, it publishes 0.
+  const onTabRoot = smileIDSampleNavItems.some((item) => item.id === selected?.name);
 
   return (
     <View
@@ -34,23 +36,25 @@ const FloatingNavBar = ({ state, navigation }: BottomTabBarProps) => {
       style={styles.bar}
       onLayout={(event) => onHeightChange?.(event.nativeEvent.layout.height)}
     >
-      <UseSmileIDSampleNavBar
-        selectedId={selected?.name ?? ''}
-        onSelect={(item) => {
-          const route = state.routes.find((candidate) => candidate.name === item.id);
-          if (!route) return;
-          // The stock bar's own sequence: a listener that prevents the default must still win.
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-            canPreventDefault: true,
-          });
-          if (route.key !== selected?.key && !event.defaultPrevented) {
-            navigation.navigate(route.name);
-          }
-        }}
-        onTokenPress={() => router.push('/token/scan')}
-      />
+      {onTabRoot ? (
+        <UseSmileIDSampleNavBar
+          selectedId={selected?.name ?? ''}
+          onSelect={(item) => {
+            const route = state.routes.find((candidate) => candidate.name === item.id);
+            if (!route) return;
+            // The stock bar's own sequence: a listener that prevents the default must still win.
+            const event = navigation.emit({
+              type: 'tabPress',
+              target: route.key,
+              canPreventDefault: true,
+            });
+            if (route.key !== selected?.key && !event.defaultPrevented) {
+              navigation.navigate(route.name);
+            }
+          }}
+          onTokenPress={() => router.push('/token/scan')}
+        />
+      ) : null}
     </View>
   );
 };
