@@ -34,10 +34,11 @@ void main() {
   testWidgets('accepts a break the hyphen itself offered', (
     WidgetTester tester,
   ) async {
-    // "head-turns" wrapping after its hyphen is what a hyphen is for.
+    // Wide enough that the hyphen's break is the one taken; at 44 the word breaks everywhere and
+    // the case under test never arises.
     final UseSmileIDSampleTextScaleFindings found = await textScaleFindings(
       tester,
-      narrow('head-turns'),
+      narrow('head-turns', width: 110),
     );
     expect(found.split, isEmpty);
   });
@@ -54,27 +55,28 @@ void main() {
     expect(found.split, isNotEmpty);
   });
 
-  testWidgets('accepts one unbreakable token, whatever its hyphens', (
+  testWidgets('catches a lone word broken by a column too narrow for it', (
     WidgetTester tester,
   ) async {
-    // One token in a column too narrow for it has nowhere else to go.
+    // The nav bar shipped "Verifi / cations" through a green lane: a rule that skipped any text
+    // without a space could not see a label that is one word.
     final UseSmileIDSampleTextScaleFindings found = await textScaleFindings(
       tester,
       narrow('score-4goals'),
     );
-    expect(found.split, isEmpty);
+    expect(found.split, isNotEmpty);
   });
 
-  testWidgets('accepts a token too wide for the whole column', (
+  testWidgets('records a token no column can take, rather than exempting it', (
     WidgetTester tester,
   ) async {
-    // A hex job id has to break somewhere: none of its hyphens offers a break, and no column can
-    // take it whole, so breaking it is unavoidable rather than a defect.
-    final UseSmileIDSampleTextScaleFindings found = await textScaleFindings(
+    // A hex job id has to break somewhere, which is a caller's judgement about its column and not
+    // something the rule can decide for every string in the app.
+    await assertSurvivesMaxTextScale(
       tester,
       narrow('7d2f01aa-4c1e-4b0a-9f2c-1e7b9a3d8c55'),
+      knownOpenWords: const <String>{'7d2f01aa-4c1e'},
     );
-    expect(found.split, isEmpty);
   });
 
   testWidgets('accepts text that wraps between words', (
@@ -97,14 +99,24 @@ void main() {
     expect(found.truncated, isNotEmpty);
   });
 
-  testWidgets('accepts a single-line field that ellipsises by declaration', (
+  testWidgets('catches a single-line field ellipsised at scale', (
     WidgetTester tester,
   ) async {
-    // A single-line field cannot wrap, so whether its placeholder fits at 2x is a copy question.
+    // `maxLines != 1` excluded every Text in the app, so this half of the rule could not fail.
     final UseSmileIDSampleTextScaleFindings found = await textScaleFindings(
       tester,
       narrow('Or enter token manually', width: 80, maxLines: 1),
     );
-    expect(found.truncated, isEmpty);
+    expect(found.truncated, isNotEmpty);
+  });
+
+  testWidgets('records a single-line field whose copy is the open question', (
+    WidgetTester tester,
+  ) async {
+    await assertSurvivesMaxTextScale(
+      tester,
+      narrow('Or enter token manually', width: 80, maxLines: 1),
+      knownOpenWords: const <String>{'Or enter token manually'},
+    );
   });
 }

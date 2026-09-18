@@ -130,7 +130,7 @@ Future<void> assertSurvivesMaxTextScale(
   double hostHeight = goldenHostHeight,
   bool ownsScrolling = false,
 
-  /// Words whose breaking is a RECORDED open design question rather than a defect this port may fix.
+  /// Text whose breaking or ellipsis is a RECORDED open design question, not a defect this port may fix.
   Set<String> knownOpenWords = const <String>{},
 }) async {
   final UseSmileIDSampleTextScaleFindings findings = await textScaleFindings(
@@ -145,8 +145,11 @@ Future<void> assertSurvivesMaxTextScale(
         (String it) => !knownOpenWords.any(it.replaceAll(' | ', '').contains),
       )
       .toList();
+  final List<String> truncated = findings.truncated
+      .where((String it) => !knownOpenWords.any(it.contains))
+      .toList();
   expect(
-    findings.truncated,
+    truncated,
     isEmpty,
     reason: 'text clipped or ellipsised at ${textScale}x text scale',
   );
@@ -204,8 +207,7 @@ Future<UseSmileIDSampleTextScaleFindings> textScaleFindings(
       textScaler: paragraph.textScaler,
       ellipsis: paragraph.overflow == TextOverflow.ellipsis ? '…' : null,
     )..layout(maxWidth: paragraph.size.width);
-    // Only where the paragraph is allowed to wrap.
-    if (painter.didExceedMaxLines && paragraph.maxLines != 1) {
+    if (painter.didExceedMaxLines) {
       truncated.add(text);
     }
     split.addAll(_midWordBreaks(painter, text));
@@ -215,11 +217,8 @@ Future<UseSmileIDSampleTextScaleFindings> textScaleFindings(
   return (truncated: truncated, split: split);
 }
 
-/// Measuring the token and exempting one too wide would exempt every case, since a breaker only splits what cannot fit.
+/// Every break the text did not offer, a single word included: a column too narrow for its word is the finding.
 List<String> _midWordBreaks(TextPainter painter, String text) {
-  if (!text.trim().contains(RegExp(r'\s'))) {
-    return const <String>[];
-  }
   final List<ui.LineMetrics> lines = painter.computeLineMetrics();
   final List<String> breaks = <String>[];
   for (int line = 0; line < lines.length - 1; line++) {
@@ -231,7 +230,11 @@ List<String> _midWordBreaks(TextPainter painter, String text) {
     if (end <= 0 || end >= text.length || _breaksCleanly(text, end)) {
       continue;
     }
-    breaks.add('${text.substring(range.start, end)} | ${text.substring(end)}');
+    // Prefixed with the whole string: a word that breaks twice reports two findings, and only the
+    // first of them would otherwise carry what the caller recorded.
+    breaks.add(
+      '$text: ${text.substring(range.start, end)} | ${text.substring(end)}',
+    );
   }
   return breaks;
 }
