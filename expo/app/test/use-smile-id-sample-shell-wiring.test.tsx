@@ -30,7 +30,9 @@ jest.mock('react-native-safe-area-context', () => ({
 }));
 // The router owns navigation; the stand-in renders the probe, which reads the theme from inside the provider.
 jest.mock('expo-router', () => {
-  const useRouter = () => ({ push: jest.fn(), back: jest.fn(), replace: jest.fn() });
+  // One instance, not one per render: a component keying an effect on the router would loop.
+  const router = { push: jest.fn(), back: jest.fn(), replace: jest.fn() };
+  const useRouter = () => router;
   function Stack() {
     const Probe = mockProbe;
     return <Probe />;
