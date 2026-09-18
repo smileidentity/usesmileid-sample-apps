@@ -4,6 +4,7 @@ import {
   smileFontAssets,
   smileIDSampleProfilesForLaunch,
   smileLightColors,
+  useSmileIDSampleJobStore,
   useSmileIDSampleProfileStore,
 } from '@smileid/sample-ui';
 import { useFonts } from 'expo-font';
@@ -25,13 +26,16 @@ export default function RootLayout() {
   const colors = dark ? smileDarkColors : smileLightColors;
   const args = useLaunchArgs();
   const resetProfiles = useSmileIDSampleProfileStore((state) => state.reset);
+  const seedFixtures = useSmileIDSampleJobStore((state) => state.seedFixtures);
 
   // The five faces are bundled rather than fetched: a provider would make text depend on the network.
   const [fontsLoaded] = useFonts(smileFontAssets);
 
   useEffect(() => {
     resetProfiles(smileIDSampleProfilesForLaunch(args));
-  }, [args, resetProfiles]);
+    // Before the verifications route's first load, or its own read wins and the list opens empty.
+    if (args.seedJobs) void seedFixtures(Date.now());
+  }, [args, resetProfiles, seedFixtures]);
 
   if (!fontsLoaded) {
     return <View style={{ backgroundColor: colors.background, flex: 1 }} />;
