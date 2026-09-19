@@ -1,0 +1,46 @@
+appId: ${APP_ID}
+---
+# What the shell wires to the library it ships: the cold-start seeding, the floating nav bar, and the
+# removal confirmation with its undo. Each assertion here stands for something that reached nothing
+# before — `seedJobs` opened an empty list, and the pill was never mounted.
+#
+# Launch arguments arrive as a LINK on this platform, not as intent extras: the shell reads them from
+# `Linking.getInitialURL()` once at cold start, so `launchApp: arguments:` would be ignored entirely.
+# APP_ID must be passed — a flow-level `env:` default wins over `-e` in Maestro 2.8, which would
+# silently pin every run to one variant.
+#
+#   maestro --device <serial> test -e APP_ID=com.usesmileid.sample.expo expo/maestro
+
+- stopApp
+- openLink: "usesmileid-sample-expo://?seedJobs=true"
+- runFlow: subflows/warm-start.yaml
+
+# The pill, mounted over the products grid rather than the stock tab bar it replaced.
+- assertVisible:
+    id: "sample_nav_products"
+- assertVisible:
+    id: "sample_nav_token"
+
+- tapOn:
+    id: "sample_nav_verifications"
+- assertVisible:
+    id: "sample_verifications_screen"
+
+# Seeded by the link. Without the argument reaching `seedFixtures` this list is empty and every
+# assertion below it has nothing to act on.
+- assertVisible:
+    id: "sample_job_row_0"
+
+# Select mode replaces the bottom chrome. The Android twin also asserts the pill is GONE here, which
+# Expo cannot claim yet: select mode is local state inside the screen and the pill is the shell's
+# tabBar, so nothing tells the shell. Device-confirmed and recorded as ledger f156 — the assertion
+# lands here once selection state is something a host can read.
+- tapOn:
+    id: "sample_select_toggle"
+- assertVisible:
+    id: "sample_selection_bar"
+
+# STOPS HERE. Removing a selected row cannot be driven on this platform yet: the pill is mounted as
+# the shell's tabBar with a full-width root, so it intercepts every touch in the bottom strip and
+# 'Hide from List' never receives the tap — measured on device, ledger f156. The steps that follow on
+# the Android twin (checkbox, remove, toast, undo) land here once the bar is suppressed in select mode.
