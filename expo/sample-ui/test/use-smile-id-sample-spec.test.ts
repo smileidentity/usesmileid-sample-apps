@@ -97,9 +97,11 @@ describe('flow routes match the result card schema', () => {
 });
 
 describe('the removal notice copy', () => {
-  it('is singular for one and plural for more, from the shared package', () => {
-    expect(smileIDSampleRemovalNotice(1).message).toBe('1 verification removed');
-    expect(smileIDSampleRemovalNotice(3).message).toBe('3 verifications removed');
+  // Pinned to the wording Android, iOS and Flutter ship, not to this port's own: it read
+  // "N verifications removed" here alone, and only a sibling comparison could see that.
+  it('is singular for one and plural for more, worded as the other three shells word it', () => {
+    expect(smileIDSampleRemovalNotice(1).message).toBe('1 verification hidden from App list');
+    expect(smileIDSampleRemovalNotice(3).message).toBe('3 verifications hidden from App list');
     expect(smileIDSampleRemovalNotice(2).actionLabel).toBe('Undo');
   });
 });

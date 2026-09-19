@@ -205,7 +205,7 @@ describe('hiding a verification is confirmed and can be undone', () => {
     await act(async () => {
       await useSmileIDSampleJobStore.getState().remove([before[0]!.id]);
     });
-    await waitFor(() => expect(screen.queryByText('1 verification removed')).not.toBeNull());
+    await waitFor(() => expect(screen.queryByText('1 verification hidden from App list')).not.toBeNull());
     expect(useSmileIDSampleJobStore.getState().jobs).toHaveLength(before.length - 1);
 
     await act(async () => {
@@ -222,7 +222,7 @@ describe('hiding a verification is confirmed and can be undone', () => {
     await act(async () => {
       await useSmileIDSampleJobStore.getState().remove([before[0]!.id]);
     });
-    await waitFor(() => expect(screen.queryByText('1 verification removed')).not.toBeNull());
+    await waitFor(() => expect(screen.queryByText('1 verification hidden from App list')).not.toBeNull());
     expect(useSmileIDSampleJobStore.getState().removals).toEqual([]);
   });
 });
