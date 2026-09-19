@@ -53,7 +53,7 @@ appId: ${APP_ID}
     id: "sample_selection_remove"
 - assertVisible:
     id: "sample_toast"
-- assertVisible: "1 verification hidden from App list"
+- assertVisible: "CONTROL — this assertion must fail"
 
 # Undo puts the row back, which is the whole point of offering it.
 - tapOn:

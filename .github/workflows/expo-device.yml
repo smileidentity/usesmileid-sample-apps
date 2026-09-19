@@ -63,6 +63,19 @@ jobs:
         run: pnpm install --frozen-lockfile
         working-directory: expo
 
+      # The 22 minutes is openssl, quick-crypto, nitro-modules and worklets compiling from source.
+      # setup-gradle caches ~/.gradle, which these are not in: they build inside each package's own
+      # android directory, and pnpm relinks those from the store on every run. Keyed on the lockfile,
+      # because that is the only thing that changes what the native build produces.
+      - name: Cache the native build outputs
+        uses: actions/cache@v4
+        with:
+          path: |
+            expo/node_modules/**/android/.cxx
+            expo/node_modules/**/android/build
+          key: expo-native-${{ runner.os }}-${{ hashFiles('expo/pnpm-lock.yaml') }}
+          restore-keys: expo-native-${{ runner.os }}-
+
       # Regenerated rather than committed, which is what stops a hand-patched Gradle file surviving.
       - name: Prebuild
         run: pnpm --filter usesmileid-sample-expo exec expo prebuild --platform android --clean
