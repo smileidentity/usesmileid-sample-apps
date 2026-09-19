@@ -5,8 +5,8 @@ import {
   useSmileIDSampleJobStore,
   useSmileIDSampleTransientNotice,
 } from '@smileid/sample-ui';
-import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useSmileIDSampleListInset } from '../../src/use-smile-id-sample-list-inset';
@@ -26,6 +26,9 @@ export default function Verifications() {
   const [nowMillis] = useState(() => Date.now());
   const bottomInset = useSmileIDSampleListInset();
   const setSelecting = useSmileIDSampleSetSelectMode();
+
+  // A tab stays mounted when you leave it, so select mode left on would hide the bar on every tab.
+  useFocusEffect(useCallback(() => () => setSelecting(false), [setSelecting]));
   const { show } = notice;
 
   useEffect(() => {

@@ -60,3 +60,13 @@ appId: ${APP_ID}
     id: "sample_toast_undo"
 - assertVisible:
     id: "sample_job_row_0"
+
+# Backing out while still selecting must give the bar back. A tab stays mounted when you leave it,
+# so a select mode left set hid the pill on every tab and left no way to navigate at all.
+- tapOn:
+    id: "sample_select_toggle"
+- assertNotVisible:
+    id: "sample_nav_products"
+- back
+- assertVisible:
+    id: "sample_nav_products"
