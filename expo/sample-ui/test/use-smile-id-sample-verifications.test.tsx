@@ -344,3 +344,44 @@ describe('the details screen', () => {
     expect(rendered.queryByText('sandbox')).not.toBeNull();
   });
 });
+
+describe('select mode is reported to whatever draws the bottom chrome', () => {
+  // The shell hides its floating bar on this signal; without it the bar covers Hide from List.
+  it('reports entering and leaving, and nothing before the first tap', async () => {
+    const reported: boolean[] = [];
+    const rendered = await renderInTheme(
+      <VerificationsScreen
+        state={{ jobs: smileIDSampleJobFixtures(0), nowMillis: 0 }}
+        onJobPress={() => {}}
+        onRemove={() => {}}
+        onSelectingChange={(selecting) => reported.push(selecting)}
+      />,
+      false,
+    );
+    expect(reported).toEqual([false]);
+
+    await fireEvent.press(rendered.getByTestId(UseSmileIDSampleTestIds.SELECT_TOGGLE));
+    expect(reported).toEqual([false, true]);
+
+    await fireEvent.press(rendered.getByTestId(UseSmileIDSampleTestIds.SELECT_TOGGLE));
+    expect(reported).toEqual([false, true, false]);
+  });
+
+  it('reports false on the way out, so leaving while selecting cannot strand the host', async () => {
+    const reported: boolean[] = [];
+    const rendered = await renderInTheme(
+      <VerificationsScreen
+        state={{ jobs: smileIDSampleJobFixtures(0), nowMillis: 0 }}
+        onJobPress={() => {}}
+        onRemove={() => {}}
+        onSelectingChange={(selecting) => reported.push(selecting)}
+      />,
+      false,
+    );
+    await fireEvent.press(rendered.getByTestId(UseSmileIDSampleTestIds.SELECT_TOGGLE));
+    expect(reported).toEqual([false, true]);
+
+    await rendered.unmount();
+    expect(reported).toEqual([false, true, false]);
+  });
+});

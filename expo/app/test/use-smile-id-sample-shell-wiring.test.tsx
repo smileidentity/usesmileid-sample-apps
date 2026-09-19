@@ -29,6 +29,9 @@ jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: () => ({ top: 44, bottom: 34, left: 0, right: 0 }),
 }));
 // The router owns navigation; the stand-in renders the probe, which reads the theme from inside the provider.
+/// Held for the router mock: a hook must be named use*, and jest only lets a factory reach a mock*.
+const mockReact = { useEffect };
+
 jest.mock('expo-router', () => {
   // One instance, not one per render: a component keying an effect on the router would loop.
   const router = { push: jest.fn(), back: jest.fn(), replace: jest.fn() };
@@ -40,7 +43,10 @@ jest.mock('expo-router', () => {
   Stack.Screen = function StackScreen() {
     return null;
   };
-  return { Stack, useRouter };
+  // Runs the effect and its cleanup as the real one does, so the focus teardown is not stubbed inert.
+  const useFocusEffect = (effect: () => void | (() => void)) =>
+    mockReact.useEffect(effect, [effect]);
+  return { Stack, useRouter, useFocusEffect };
 });
 
 const getInitialURL = Linking.getInitialURL as jest.MockedFunction<typeof Linking.getInitialURL>;

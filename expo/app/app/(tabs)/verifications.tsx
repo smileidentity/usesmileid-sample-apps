@@ -5,11 +5,12 @@ import {
   useSmileIDSampleJobStore,
   useSmileIDSampleTransientNotice,
 } from '@smileid/sample-ui';
-import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useSmileIDSampleListInset } from '../../src/use-smile-id-sample-list-inset';
+import { useSmileIDSampleSetSelectMode } from '../../src/use-smile-id-sample-select-mode';
 
 export default function Verifications() {
   const router = useRouter();
@@ -24,6 +25,10 @@ export default function Verifications() {
   // a clock read in render would recompute them on every pass and make the render impure.
   const [nowMillis] = useState(() => Date.now());
   const bottomInset = useSmileIDSampleListInset();
+  const setSelecting = useSmileIDSampleSetSelectMode();
+
+  // A tab stays mounted when you leave it, so select mode left on would hide the bar on every tab.
+  useFocusEffect(useCallback(() => () => setSelecting(false), [setSelecting]));
   const { show } = notice;
 
   useEffect(() => {
@@ -45,6 +50,7 @@ export default function Verifications() {
         onJobPress={(job) => router.push(`/verifications/${job.id}`)}
         // The write outlives this screen: a removal must land even if the reader navigates at once.
         onRemove={(ids) => void remove(ids)}
+        onSelectingChange={setSelecting}
         bottomInset={bottomInset}
       />
       <UseSmileIDSampleTransientNoticeHost state={notice} style={[styles.notice, { bottom: bottomInset }]} />

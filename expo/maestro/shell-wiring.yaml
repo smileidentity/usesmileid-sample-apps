@@ -31,16 +31,42 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_job_row_0"
 
-# Select mode replaces the bottom chrome. The Android twin also asserts the pill is GONE here, which
-# Expo cannot claim yet: select mode is local state inside the screen and the pill is the shell's
-# tabBar, so nothing tells the shell. Device-confirmed and recorded as ledger f156 — the assertion
-# lands here once selection state is something a host can read.
+# Select mode replaces the bottom chrome: the design draws no nav bar behind the selection bar, and
+# the Android twin asserts the same thing because it shipped that defect once. A pill left here
+# covers Hide from List and eats its tap, so everything below this point was unreachable (f156).
 - tapOn:
     id: "sample_select_toggle"
 - assertVisible:
     id: "sample_selection_bar"
+- assertNotVisible:
+    id: "sample_nav_products"
+- assertNotVisible:
+    id: "sample_nav_token"
 
-# STOPS HERE. Removing a selected row cannot be driven on this platform yet: the pill is mounted as
-# the shell's tabBar with a full-width root, so it intercepts every touch in the bottom strip and
-# 'Hide from List' never receives the tap — measured on device, ledger f156. The steps that follow on
-# the Android twin (checkbox, remove, toast, undo) land here once the bar is suppressed in select mode.
+- tapOn:
+    id: "sample_selection_checkbox_0"
+- assertVisible: "1 selected"
+
+# Hide from List, and the confirmation offers the undo. The wording is the contract the other three
+# shells ship, not this one's own: a library that words it differently is the drift it exists to stop.
+- tapOn:
+    id: "sample_selection_remove"
+- assertVisible:
+    id: "sample_toast"
+- assertVisible: "1 verification hidden from App list"
+
+# Undo puts the row back, which is the whole point of offering it.
+- tapOn:
+    id: "sample_toast_undo"
+- assertVisible:
+    id: "sample_job_row_0"
+
+# Backing out while still selecting must give the bar back. A tab stays mounted when you leave it,
+# so a select mode left set hid the pill on every tab and left no way to navigate at all.
+- tapOn:
+    id: "sample_select_toggle"
+- assertNotVisible:
+    id: "sample_nav_products"
+- back
+- assertVisible:
+    id: "sample_nav_products"

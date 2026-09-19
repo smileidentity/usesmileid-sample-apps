@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -36,6 +36,8 @@ type Props = {
   onJobPress: (job: UseSmileIDSampleJob) => void;
   /// One handler for both removal paths, so a rule added to one cannot miss the other.
   onRemove: (ids: readonly string[]) => void;
+  /// Select mode replaces the bottom chrome, so a host drawing its own must be told to stand down.
+  onSelectingChange?: (selecting: boolean) => void;
   bottomInset?: number;
   style?: StyleProp<ViewStyle>;
 };
@@ -45,6 +47,7 @@ export const VerificationsScreen = ({
   state,
   onJobPress,
   onRemove,
+  onSelectingChange,
   bottomInset = 0,
   style,
 }: Props) => {
@@ -53,6 +56,21 @@ export const VerificationsScreen = ({
   const [filterId, setFilterId] = useState(smileIDSampleJobFilters[0]!.id);
   const [selecting, setSelecting] = useState(false);
   const [selected, setSelected] = useState<readonly string[]>([]);
+
+  // Held in a ref so an inline callback does not re-fire this, and so unmount can still report.
+  const reportSelecting = useRef(onSelectingChange);
+
+  // Declared first, so the report below always reads the callback this render was given.
+  useEffect(() => {
+    reportSelecting.current = onSelectingChange;
+  }, [onSelectingChange]);
+
+  useEffect(() => {
+    reportSelecting.current?.(selecting);
+  }, [selecting]);
+
+  // Leaving while selecting would otherwise strand a host that had stood its own chrome down.
+  useEffect(() => () => reportSelecting.current?.(false), []);
 
   const jobs = state.jobs;
   const filter =
