@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useSmileIDSampleListInset } from '../../src/use-smile-id-sample-list-inset';
+import { useSmileIDSampleSetSelectMode } from '../../src/use-smile-id-sample-select-mode';
 
 export default function Verifications() {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function Verifications() {
   // a clock read in render would recompute them on every pass and make the render impure.
   const [nowMillis] = useState(() => Date.now());
   const bottomInset = useSmileIDSampleListInset();
+  const setSelecting = useSmileIDSampleSetSelectMode();
   const { show } = notice;
 
   useEffect(() => {
@@ -45,6 +47,7 @@ export default function Verifications() {
         onJobPress={(job) => router.push(`/verifications/${job.id}`)}
         // The write outlives this screen: a removal must land even if the reader navigates at once.
         onRemove={(ids) => void remove(ids)}
+        onSelectingChange={setSelecting}
         bottomInset={bottomInset}
       />
       <UseSmileIDSampleTransientNoticeHost state={notice} style={[styles.notice, { bottom: bottomInset }]} />

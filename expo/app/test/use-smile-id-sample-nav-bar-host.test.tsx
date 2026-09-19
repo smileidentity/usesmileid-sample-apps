@@ -1,15 +1,20 @@
 import { UseSmileIDSampleTestIds, UseSmileIDSampleThemeProvider, smileDimens } from '@smileid/sample-ui';
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import {
   BottomTabBarHeightCallbackContext,
   BottomTabBarHeightContext,
   type BottomTabBarProps,
 } from 'expo-router/tabs';
+import { useEffect } from 'react';
 import { Text } from 'react-native';
 import { SafeAreaProvider, type Metrics } from 'react-native-safe-area-context';
 
 import { useSmileIDSampleListInset } from '../src/use-smile-id-sample-list-inset';
 import { UseSmileIDSampleNavBarHost } from '../src/use-smile-id-sample-nav-bar-host';
+import {
+  UseSmileIDSampleSelectModeProvider,
+  useSmileIDSampleSetSelectMode,
+} from '../src/use-smile-id-sample-select-mode';
 
 const metrics: Metrics = {
   frame: { x: 0, y: 0, width: 393, height: 852 },
@@ -95,5 +100,41 @@ describe('a tab screen reserves what the bar published', () => {
     await renderReserve(MEASURED_BAR);
     const reserved = Number(screen.getByTestId('reserve').props.children);
     expect(reserved - MEASURED_BAR).toBeGreaterThanOrEqual(smileDimens.spacing.md);
+  });
+});
+
+describe('the pill stands down while a screen owns the bottom chrome', () => {
+  /// Drives the context the verifications route drives, so the test enters select mode the same way.
+  const Enter = ({ selecting }: { selecting: boolean }) => {
+    const set = useSmileIDSampleSetSelectMode();
+    useEffect(() => set(selecting), [set, selecting]);
+    return null;
+  };
+
+  const barIn = (selecting: boolean) =>
+    render(
+      <SafeAreaProvider initialMetrics={metrics}>
+        <UseSmileIDSampleThemeProvider dark={false}>
+          <UseSmileIDSampleSelectModeProvider>
+            <Enter selecting={selecting} />
+            <BottomTabBarHeightCallbackContext.Provider value={() => undefined}>
+              <UseSmileIDSampleNavBarHost {...barProps('verifications')} />
+            </BottomTabBarHeightCallbackContext.Provider>
+          </UseSmileIDSampleSelectModeProvider>
+        </UseSmileIDSampleThemeProvider>
+      </SafeAreaProvider>,
+    );
+
+  it('draws the pill when nothing else owns the bottom', async () => {
+    await barIn(false);
+    expect(screen.queryByTestId(UseSmileIDSampleTestIds.NAV_PRODUCTS)).not.toBeNull();
+  });
+
+  it('draws no pill in select mode, which is where it covered Hide from List', async () => {
+    await barIn(true);
+    await waitFor(() =>
+      expect(screen.queryByTestId(UseSmileIDSampleTestIds.NAV_PRODUCTS)).toBeNull(),
+    );
+    expect(screen.queryByTestId(UseSmileIDSampleTestIds.NAV_TOKEN)).toBeNull();
   });
 });

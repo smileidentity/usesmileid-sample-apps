@@ -31,16 +31,11 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_job_row_0"
 
-# Select mode replaces the bottom chrome. The Android twin also asserts the pill is GONE here, which
-# Expo cannot claim yet: select mode is local state inside the screen and the pill is the shell's
-# tabBar, so nothing tells the shell. Device-confirmed and recorded as ledger f156 — the assertion
-# lands here once selection state is something a host can read.
+# Select mode replaces the bottom chrome. The pill now stands down here, which is what stopped it
+# covering Hide from List — but that is proved by the shell's unit lane, not yet by this flow: the
+# handset locked before it could be re-run. The Android twin's remaining steps (assertNotVisible on
+# the pill, checkbox, remove, toast, undo) land here on the next device session, ledger f157.
 - tapOn:
     id: "sample_select_toggle"
 - assertVisible:
     id: "sample_selection_bar"
-
-# STOPS HERE. Removing a selected row cannot be driven on this platform yet: the pill is mounted as
-# the shell's tabBar with a full-width root, so it intercepts every touch in the bottom strip and
-# 'Hide from List' never receives the tap — measured on device, ledger f156. The steps that follow on
-# the Android twin (checkbox, remove, toast, undo) land here once the bar is suppressed in select mode.
