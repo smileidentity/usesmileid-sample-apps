@@ -59,9 +59,15 @@ jobs:
 
       # Release, because that is the configuration a consumption defect surfaces in. The bundle is
       # forced: a release APK can otherwise ship the previous JS while reporting that it rebuilt one.
+      #
+      # One ABI, not four. Building all of them compiled openssl and quick-crypto four times over and
+      # the runner was killed mid-compile with no Gradle error at all — the log simply stops. The
+      # emulator is x86_64, so the other three were never going to be loaded here. Minification and
+      # resource shrinking, which are what this configuration exists to exercise, are unaffected.
       - name: Build the release APK
         run: |
           ./gradlew :app:createBundleReleaseJsAndAssets --rerun :app:assembleRelease \
+            -PreactNativeArchitectures=x86_64 \
             -Pandroid.enableMinifyInReleaseBuilds=true \
             -Pandroid.enableShrinkResourcesInReleaseBuilds=true
         working-directory: expo/app/android
