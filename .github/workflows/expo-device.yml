@@ -30,6 +30,17 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # The build fills this runner and the emulator package then has nowhere to land — the third
+      # attempt died on "No space left on device" installing it. None of these are used here; the
+      # Android SDK and NDK are deliberately untouched, because the native build needs both.
+      - name: Free disk space
+        run: |
+          df -h / | tail -1
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/share/swift \
+            /usr/local/share/powershell /usr/local/lib/node_modules \
+            /opt/hostedtoolcache/CodeQL
+          df -h / | tail -1
+
       - uses: pnpm/action-setup@v4
         with:
           version: 9.15.9
@@ -86,6 +97,9 @@ jobs:
       - name: Stop the Gradle daemon
         run: ./gradlew --stop
         working-directory: expo/app/android
+
+      - name: Report the disk left for the emulator
+        run: df -h / | tail -1
 
       - name: Install Maestro
         run: |
