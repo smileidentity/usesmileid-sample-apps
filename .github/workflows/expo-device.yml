@@ -1,0 +1,111 @@
+name: Expo device
+
+# The first lane in this repo that runs a flow against a running app. Everything else proves the
+# library in a hostless runner, which cannot see touch layering, overlap or launch-argument plumbing
+# — the two defects #113 and #114 fixed were both invisible to every other gate here.
+#
+# Separate from the Expo gate on purpose: this builds a release APK and boots an emulator, so it is
+# minutes rather than seconds, and a fast gate is worth keeping fast.
+on:
+  pull_request:
+    paths:
+      - 'expo/**'
+      - 'spec/**'
+      - '.github/workflows/expo-device.yml'
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: expo-device-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  flows:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: expo/pnpm-lock.yaml
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          # AGP 9 lint calls JDK 21 APIs, matching the Android lane.
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: expo
+
+      # Regenerated rather than committed, which is what stops a hand-patched Gradle file surviving.
+      - name: Prebuild
+        run: pnpm --filter usesmileid-sample-expo exec expo prebuild --platform android --clean
+        working-directory: expo
+
+      # Release, because that is the configuration a consumption defect surfaces in. The bundle is
+      # forced: a release APK can otherwise ship the previous JS while reporting that it rebuilt one.
+      - name: Build the release APK
+        run: |
+          ./gradlew :app:createBundleReleaseJsAndAssets --rerun :app:assembleRelease \
+            -Pandroid.enableMinifyInReleaseBuilds=true \
+            -Pandroid.enableShrinkResourcesInReleaseBuilds=true
+        working-directory: expo/app/android
+
+      # The daemon holds a heap this runner needs back before an emulator will fit beside it.
+      - name: Stop the Gradle daemon
+        run: ./gradlew --stop
+        working-directory: expo/app/android
+
+      - name: Install Maestro
+        run: |
+          curl -fsSL https://get.maestro.mobile.dev | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      # The emulator needs nested virtualisation, which is not granted to the runner user by default.
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run the device flows
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          MAESTRO_CLI_NO_ANALYTICS: '1'
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_5
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: |
+            adb shell locksettings set-disabled true
+            adb install -r expo/app/android/app/build/outputs/apk/release/app-release.apk
+            maestro test -e APP_ID=com.usesmileid.sample.expo expo/maestro
+
+      # A red here is a screen recording and a hierarchy, which is what makes it readable at all.
+      - name: Upload the Maestro debug output
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: expo-device-debug
+          path: ~/.maestro/tests/**
+          if-no-files-found: ignore
+          retention-days: 7
