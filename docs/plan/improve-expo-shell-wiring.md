@@ -18,7 +18,7 @@
 - **Depends on**: none
 - **Category**: bug
 - **Planned at**: commit `2d9ba17`, 2026-09-17
-- **Landed so far**: every step. Step 6 (#107), step 1 (#107 lane, #108 test), step 2 (#109), step 4 (#110), step 5 (#111), step 3's owed test (#112).
+- **Landed so far**: every step. Step 6 and the test lane in #107; steps 1, 2, 3's owed test, 4 and 5 in #108.
 
 ## Why this matters
 
@@ -281,7 +281,7 @@ tests pass. Then `cd expo && pnpm exec eslint .` → exit 0.
 
 **Commit**: `test: give the Expo shell its own jest lane`
 
-### Step 2: apply `seedJobs` at cold start — LANDED (#109)
+### Step 2: apply `seedJobs` at cold start — LANDED (#108)
 
 In `expo/app/app/_layout.tsx`, read `seedFixtures` off the job store and call it once when
 `args.seedJobs` is true, in the same effect that already resets the profile store. It must run before
@@ -297,7 +297,7 @@ second that renders it with no URL and asserts `jobs` is empty. Both pass.
 
 **Commit**: `fix: seed the Expo verification fixtures from seedJobs`
 
-### Step 3: show the removal confirmation and offer Undo — LANDED (code earlier, test #112)
+### Step 3: show the removal confirmation and offer Undo — LANDED (code earlier, test #108)
 
 **Done on this branch** (`1b199cf`, `67a6b2b`), except the test under **Verify**, which needs step 1's
 lane. Read the rest of this step as the description of what to test, not what to build.
@@ -325,7 +325,7 @@ jest --ci` → passes.
 
 **Commit**: `fix: confirm and allow undo of a hidden Expo verification`
 
-### Step 4: make the Dark Mode setting drive the theme — LANDED (#110)
+### Step 4: make the Dark Mode setting drive the theme — LANDED (#108)
 
 In `expo/app/app/_layout.tsx`, read `darkMode` and the load flag off
 `useSmileIDSampleSettingsStore`, call the settings store's `load()` once at root, and pass the
@@ -342,7 +342,7 @@ light system scheme, and asserts the resolved theme is the dark one; and its inv
 
 **Commit**: `fix: let the Expo Dark Mode switch reach the theme`
 
-### Step 5: honour `noticeWindow` — LANDED (#111)
+### Step 5: honour `noticeWindow` — LANDED (#108)
 
 Wrap the tree in `_layout.tsx` with
 `<UseSmileIDSampleNoticeWindowProvider value={...}>`, taking the value from `args.noticeWindow` and
