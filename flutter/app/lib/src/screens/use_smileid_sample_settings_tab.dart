@@ -74,9 +74,11 @@ class _UseSmileIDSampleSettingsTabState
   /// Hands the route back on dismiss, or the link is one-shot: go_router would still be at
   /// `/debug/scenarios`, so re-delivering it rebuilds nothing and the drawer never reopens.
   Future<void> _openScenarioDrawer() async {
+    // Read before the await: an inherited lookup across the gap is what `mounted` does not cover.
+    final GoRouter router = GoRouter.of(context);
     await _showScenarioDrawer();
-    if (mounted && GoRouterState.of(context).uri.path == _drawerRoute) {
-      context.go(UseSmileIDSampleRoutes.settings);
+    if (router.routerDelegate.currentConfiguration.uri.path == _drawerRoute) {
+      router.go(UseSmileIDSampleRoutes.settings);
     }
   }
 
