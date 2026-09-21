@@ -150,10 +150,6 @@ abstract final class UseSmileIDSampleTestIds {
   static String profileConfigField(String field) =>
       'sample_profile_config_field_$field';
 
-  /// The profile's callback URL; empty means the partner's portal default.
-  static const String profileConfigCallbackUrl =
-      'sample_profile_config_callback_url';
-
   /// The page's only write: it saves the details AND makes the profile active.
   static const String profileConfigSave = 'sample_profile_config_save';
 
@@ -310,7 +306,6 @@ abstract final class UseSmileIDSampleTestIds {
     profilesScreen,
     createProfile,
     profileConfigScreen,
-    profileConfigCallbackUrl,
     profileConfigSave,
     profileSwitchSheet,
     newProfileSheet,
