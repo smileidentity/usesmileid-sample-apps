@@ -70,4 +70,14 @@ class UseSmileIDSampleProfilesTest {
         profiles.setDefaults(created.id, UseSmileIDSampleUserDetails(firstName = "Someone", lastName = "Else"))
         assertEquals("Amani Otieno", profiles.find(created.id)?.person)
     }
+
+    @Test
+    fun saving_details_without_a_callback_url_leaves_the_saved_one_alone() {
+        val profiles = UseSmileIDSampleProfiles()
+        profiles.setDefaults("p-1", UseSmileIDSampleUserDetails(), callbackUrl = "https://partner.example/hook")
+
+        profiles.setDefaults("p-1", UseSmileIDSampleUserDetails(firstName = "Njeri"))
+
+        assertEquals("https://partner.example/hook", profiles.active.callbackUrl)
+    }
 }

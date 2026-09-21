@@ -93,6 +93,7 @@ export const UseSmileIDSampleTestIds = {
   NEW_PROFILE_SAVE: 'sample_new_profile_save',
   PROFILE_CONFIG_SCREEN: 'sample_profile_config_screen',
   PROFILE_CONFIG_FIELD: 'sample_profile_config_field',
+  PROFILE_CONFIG_CALLBACK_URL: 'sample_profile_config_callback_url',
   PROFILE_CONFIG_SAVE: 'sample_profile_config_save',
   // token
   SCAN_TOKEN_SCREEN: 'sample_scan_token_screen',

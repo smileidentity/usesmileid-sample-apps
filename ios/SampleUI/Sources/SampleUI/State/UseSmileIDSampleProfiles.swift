@@ -104,14 +104,17 @@ public struct UseSmileIDSampleProfiles: Equatable, Sendable {
     return profile
   }
 
+  /// A nil `callbackUrl` leaves the stored one alone; only a caller that edited it passes a value.
   public mutating func setDefaults(
     _ id: String,
     _ defaults: UseSmileIDSampleUserDetails,
-    callbackUrl: String = ""
+    callbackUrl: String? = nil
   ) {
     guard let index = items.firstIndex(where: { $0.id == id }) else { return }
     items[index].defaults = defaults
-    items[index].callbackUrl = callbackUrl
+    if let callbackUrl {
+      items[index].callbackUrl = callbackUrl
+    }
     // The starter names nobody until its details are saved; a created profile keeps the name its sheet gave it.
     if items[index].person.isBlank {
       items[index].person = "\(defaults.firstName) \(defaults.lastName)".trimmingCharacters(in: .whitespaces)

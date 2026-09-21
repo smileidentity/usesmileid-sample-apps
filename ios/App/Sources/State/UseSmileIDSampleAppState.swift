@@ -273,7 +273,11 @@ final class UseSmileIDSampleAppState: ObservableObject {
 
   /// The CTA reads "Make this profile active", so it has to do both.
   func saveProfile(_ id: String) {
-    profiles.setDefaults(id, profileDraft(for: id), callbackUrl: profileCallbackDraft(for: id))
+    profiles.setDefaults(
+      id,
+      profileDraft(for: id),
+      callbackUrl: profileCallbackDraft(for: id).trimmingCharacters(in: .whitespacesAndNewlines)
+    )
     profiles.setActive(id)
     profileDrafts[id] = nil
     profileCallbackDrafts[id] = nil

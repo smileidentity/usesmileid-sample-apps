@@ -86,13 +86,14 @@ class UseSmileIDSampleProfiles(seed: List<UseSmileIDSampleProfile> = starter()) 
         return profile
     }
 
-    fun setDefaults(id: String, defaults: UseSmileIDSampleUserDetails, callbackUrl: String = "") {
+    /** A null [callbackUrl] leaves the stored one alone; only a caller that edited it passes a value. */
+    fun setDefaults(id: String, defaults: UseSmileIDSampleUserDetails, callbackUrl: String? = null) {
         val index = items.indexOfFirst { it.id == id }
         if (index < 0) return
         val current = items[index]
         // The starter names nobody until its details are saved; a created profile keeps the name its sheet gave it.
         val person = current.person.ifBlank { "${defaults.firstName} ${defaults.lastName}".trim() }
-        items[index] = current.copy(defaults = defaults, person = person, callbackUrl = callbackUrl)
+        items[index] = current.copy(defaults = defaults, person = person, callbackUrl = callbackUrl ?: current.callbackUrl)
     }
 
     companion object {

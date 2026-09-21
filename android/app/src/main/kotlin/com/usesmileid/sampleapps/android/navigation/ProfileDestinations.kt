@@ -103,7 +103,7 @@ fun ProfileConfigScreen(profileId: String, navigator: DestinationsNavigator) {
         onBack = { navigator.navigateUp() },
         onSave = {
             // The CTA reads "Make this profile active", so it has to do both.
-            app.profiles.setDefaults(profileId, defaults, callbackUrl)
+            app.profiles.setDefaults(profileId, defaults, callbackUrl.trim())
             app.profiles.setActive(profileId)
             navigator.navigateUp()
         },

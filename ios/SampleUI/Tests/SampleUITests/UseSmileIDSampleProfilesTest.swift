@@ -140,4 +140,13 @@ final class UseSmileIDSampleProfilesTest: XCTestCase {
   private func profile(id: String) -> UseSmileIDSampleProfile {
     profile(id: id, person: "Kwame Asante")
   }
+
+  func testSavingDetailsWithoutACallbackUrlLeavesTheSavedOneAlone() {
+    var profiles = UseSmileIDSampleProfiles()
+    profiles.setDefaults("p-1", UseSmileIDSampleUserDetails(), callbackUrl: "https://partner.example/hook")
+
+    profiles.setDefaults("p-1", UseSmileIDSampleUserDetails(firstName: "Njeri"))
+
+    XCTAssertEqual(profiles.active.callbackUrl, "https://partner.example/hook")
+  }
 }
