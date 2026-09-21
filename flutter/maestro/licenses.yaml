@@ -1,12 +1,7 @@
 appId: ${APP_ID}
 ---
-# The third-party notices, which no hostless test can see: this screen reads Flutter's own
-# `LicenseRegistry`, and the registry is EMPTY under `flutter test` by design. A widget test can
-# only prove the screen renders whatever it is handed; only a real build ships NOTICES.Z and only a
-# running app decompresses it. The Android twin covers this inside its settings.yaml; here it is
-# the screen the lane exists for, so it gets its own flow.
-#
-# APP_ID must be passed — see ../README.md "Traps" for why it has no default.
+# `LicenseRegistry` is empty under `flutter test` by design, so only a running app can see this
+# screen with content in it. APP_ID must be passed — see ../README.md "Traps".
 
 - runFlow:
     file: subflows/cold-start.yaml
@@ -30,15 +25,14 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_licenses_screen"
 
-# Engine dependencies, which is the half that proves the registry rather than the screen: these are
-# C++ components of the Flutter engine, so they exist in NOTICES.Z and in no package graph. The
-# toolchain pin is what makes naming a component safe.
+# Engine C++ components: in NOTICES.Z and in no package graph, which is what proves the registry
+# rather than the screen. Naming them is safe only because the toolchain is pinned.
 - assertVisible:
     id: "sample_license_row_abseil_cpp"
 - assertVisible:
     id: "sample_license_row_angle"
 
-# And one Dart package, so the assertion covers both halves of what the registry merges.
+# One Dart package too, so the assertion covers both halves of what the registry merges.
 - assertVisible:
     id: "sample_license_row_battery_plus"
 
@@ -48,7 +42,7 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_license_text_abseil_cpp"
 
-# Back belongs to the settings tab, not to the app: the notices screen is pushed INSIDE the branch.
+# Pushed INSIDE the settings branch, so back belongs to the tab rather than to the app.
 - back
 - assertVisible:
     id: "sample_settings_screen"

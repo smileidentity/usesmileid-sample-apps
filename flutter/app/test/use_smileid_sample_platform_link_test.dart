@@ -22,7 +22,7 @@ void main() {
     await tester.pump();
   }
 
-  /// What the platform does with a link delivered to a running app: the raw URI, scheme and all.
+  /// What the platform delivers to a running app: the raw URI, scheme and all.
   Future<void> deliver(WidgetTester tester, String link) async {
     await router.routeInformationProvider.didPushRouteInformation(
       RouteInformation(uri: Uri.parse(link)),
@@ -45,7 +45,6 @@ void main() {
     expect(byId(UseSmileIDSampleTestIds.licensesScreen), findsOne);
   });
 
-  // The automation entry itself: `spec/routes.json` says a flow deep-links mid-run to the drawer.
   testWidgets('a mid-run link opens the scenario drawer over settings', (
     WidgetTester tester,
   ) async {
@@ -56,8 +55,7 @@ void main() {
     expect(byId(UseSmileIDSampleTestIds.scenarioDrawer), findsOne);
   });
 
-  // Dismissing must hand the route back, or a second delivery rebuilds nothing and the drawer
-  // never reopens — measured on a device before it was fixed.
+  // Measured on a device: without the hand-back the second delivery reopened nothing.
   testWidgets('the drawer link can be delivered twice in one session', (
     WidgetTester tester,
   ) async {
@@ -76,8 +74,6 @@ void main() {
     expect(byId(UseSmileIDSampleTestIds.scenarioDrawer), findsOne);
   });
 
-  // Where the defect showed: go_router matched the whole URI against a path table and served its
-  // error page, so a mid-run link stranded the app.
   testWidgets('a mid-run link lands on the route rather than the error page', (
     WidgetTester tester,
   ) async {
@@ -89,8 +85,6 @@ void main() {
     expect(byId(UseSmileIDSampleTestIds.verificationsScreen), findsOne);
   });
 
-  // The query is arguments, and `spec/routes.json` says they resolve with the route — so the fold
-  // keeps them. Nothing re-seeds: that runs once in main(), before the first frame.
   testWidgets('a mid-run link keeps the query its route was given', (
     WidgetTester tester,
   ) async {

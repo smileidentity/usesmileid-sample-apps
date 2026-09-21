@@ -85,13 +85,11 @@ String? useSmileIDSampleFoldPlatformLink(
   BuildContext context,
   GoRouterState state,
 ) {
-  // Measured on a device: only the COLD start goes through UseSmileIDSampleLaunch, so a link into
-  // a live app reached the router whole and served go_router's error page.
+  // Measured on a device: only the cold start parses the link, so a warm one arrives whole.
   if (!state.uri.hasScheme) {
     return null;
   }
-  // The query rides along: `spec/routes.json` says a link's arguments resolve with its route, and
-  // nothing re-seeds from it because seeding runs once in main(), before the first frame.
+  // The query rides along per spec/routes.json; seeding runs once in main() and cannot re-fire.
   final String path = UseSmileIDSampleLaunch(state.uri.toString()).location;
   return state.uri.hasQuery ? '$path?${state.uri.query}' : path;
 }

@@ -1,4 +1,4 @@
-/// A coordinate carries characters an id may not, so the suffix is folded the same way on every platform.
+/// A coordinate carries characters an id may not, folded the same way on every platform.
 String _idSafe(String value) => value.replaceAll(RegExp('[^A-Za-z0-9]'), '_');
 
 /// The accessibility ids this package attaches. Stable forever: deprecate, never rename.

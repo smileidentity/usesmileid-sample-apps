@@ -1,13 +1,10 @@
 appId: ${APP_ID}
 ---
-# The three behaviours PR #101 shipped with widget tests only, because the handset's keyguard
-# blocked its device pass: the detail page opening from a row, back landing on the LIST rather than
-# on products, and the delete confirming on the list.
+# The three behaviours #101 shipped with widget tests only: the detail page opening from a row,
+# back landing on the LIST, and the delete confirming on the list.
 #
-# `clearState` first — the job store is SharedPreferences and `seedJobs` is idempotent by id, so a
-# re-seed never brings back a row a previous run removed. See ../README.md "Traps".
-#
-# APP_ID must be passed — see ../README.md "Traps" for why it has no default.
+# `clearState` first, because the job store survives the run — see ../README.md "Traps", which
+# also says why APP_ID has no default.
 
 - clearState
 - runFlow:
@@ -23,8 +20,8 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_job_row_0"
 
-# The count is its own node so this reads a number rather than parsing the list's prose. It is also
-# what makes each removal below provable rather than merely non-crashing.
+# Its own node, so this reads a number rather than the list's prose — and it is what makes each
+# removal below provable rather than merely non-crashing.
 - assertVisible:
     id: "sample_filter_count_all"
     text: "11"
@@ -34,26 +31,22 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_verification_details_screen"
 
-# The badge reports the VERDICT and the Status row reports the TRANSPORT, so the two disagree by
-# design on a job the server accepted and the check did not clear.
+# The badge reports the verdict and Status reports the transport, so the two disagree by design.
 - assertVisible:
     id: "sample_status_badge"
 - assertVisible:
     id: "sample_detail_field_status"
 
-# The pushed page has no nav bar: the pill belongs to the tab roots, and a detail page is not one.
+# The pill belongs to the tab roots, and a pushed detail page is not one.
 - assertNotVisible:
     id: "sample_nav_products"
 
-# Back lands on the LIST, not on products.
 - back
 - assertVisible:
     id: "sample_verifications_screen"
 - assertVisible:
     id: "sample_job_row_0"
 
-# The delete leaves the page and confirms on the list, which is the third owed behaviour. The
-# confirmation withdraws itself after five seconds, so this pass reads the count and lets it go.
 - tapOn:
     id: "sample_job_row_0"
 - assertVisible:
@@ -68,9 +61,8 @@ appId: ${APP_ID}
     id: "sample_filter_count_all"
     text: "10"
 
-# A second removal, to take Undo inside the five-second window with ONE hierarchy dump in front of
-# it: four of them raced the timer, and a withdrawn toast reds as a missing element rather than as
-# the timing failure it is. The count returning to 10 rather than staying at 9 is what proves it.
+# A second removal, to take Undo with ONE hierarchy dump in front of it: the toast has five
+# seconds — see ../README.md "Traps". Returning to 10 rather than staying at 9 is the proof.
 - tapOn:
     id: "sample_job_row_0"
 - assertVisible:

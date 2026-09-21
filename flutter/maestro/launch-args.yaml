@@ -1,11 +1,8 @@
 appId: ${APP_ID}
 ---
-# The launch-argument plumbing, which no hostless test reaches: every widget test overrides the
-# launch-args provider directly, so `seedJobs` stayed wired to nothing while they all passed
-# (PR #101). Only a real launch proves the argument travels.
-#
-# Arguments arrive as a cold-start LINK here, and `am start --ez seedJobs true` does nothing — see
-# ../README.md "Traps". APP_ID must be passed, for the reason recorded there too.
+# Every widget test overrides the launch-args provider directly, which is how `seedJobs` stayed
+# wired to nothing while all of them passed (#101). Only a real launch proves an argument travels.
+# Arguments arrive as a cold-start link — see ../README.md "Traps", and why APP_ID has no default.
 
 - clearState
 - runFlow:
@@ -30,9 +27,8 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_job_row_0"
 
-# A non-boolean name, so the lane covers the parser rather than one boolean: the drawer writes the
-# same state the argument seeds, and the selected row is what reports which scenario is live. Seven
-# of the ten canonical names reached nothing until the shell read the whole table.
+# A non-boolean name, so the lane covers the parser rather than one flag: seven of the ten
+# canonical names reached nothing until the shell read the whole table.
 - runFlow:
     file: subflows/cold-start.yaml
     env:

@@ -7,9 +7,6 @@ import '../state/use_smileid_sample_providers.dart';
 import '../use_smileid_sample_routes.dart';
 import '../use_smileid_sample_version.dart';
 
-/// The route the drawer is layered over settings at, which dismissing must leave.
-const String _drawerRoute = UseSmileIDSampleRoutes.scenarioDrawer;
-
 /// The settings tab, whose six switches survive a restart.
 class UseSmileIDSampleSettingsTab extends ConsumerStatefulWidget {
   /// [openDrawer] is set by the deep link, which opens this page with the drawer already up.
@@ -71,13 +68,13 @@ class _UseSmileIDSampleSettingsTabState
     }
   }
 
-  /// Hands the route back on dismiss, or the link is one-shot: go_router would still be at
-  /// `/debug/scenarios`, so re-delivering it rebuilds nothing and the drawer never reopens.
+  /// Hands the route back on dismiss, or a second delivery of the link reopens nothing.
   Future<void> _openScenarioDrawer() async {
     // Read before the await: an inherited lookup across the gap is what `mounted` does not cover.
     final GoRouter router = GoRouter.of(context);
     await _showScenarioDrawer();
-    if (router.routerDelegate.currentConfiguration.uri.path == _drawerRoute) {
+    if (router.routerDelegate.currentConfiguration.uri.path ==
+        UseSmileIDSampleRoutes.scenarioDrawer) {
       router.go(UseSmileIDSampleRoutes.settings);
     }
   }

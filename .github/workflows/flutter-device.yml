@@ -1,9 +1,8 @@
 name: Flutter device
 
-# Separate from the Flutter gate, and on ubuntu rather than the macOS runner that gate uses: a
-# Flutter golden is host-rasterised, which is why `flutter.yml` runs on a Mac, and a macOS runner
-# has no KVM. Nothing here rasterises anything — it drives a running app on an emulator, which is
-# the only place the launch-argument plumbing and the bundled licence registry can be seen at all.
+# Ubuntu, not the macOS runner `flutter.yml` needs for host-rasterised goldens: a Mac has no KVM.
+# Nothing here rasterises anything — it drives a running app, which is the only place the
+# launch-argument plumbing and the bundled licence registry can be seen at all.
 on:
   pull_request:
     paths:
@@ -45,21 +44,19 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          # The same pin flutter.yml carries. The notices flow names engine components by id, and
-          # the toolchain is what decides which ones the bundle carries.
+          # The pin flutter.yml carries: it decides which engine components the bundle carries,
+          # and licenses.yaml names two of them by id.
           flutter-version: 3.44.0
           channel: stable
           cache: true
 
       - uses: gradle/actions/setup-gradle@v6
 
-      # One ABI for the engine and the AOT snapshot, which is the part that is compiled — the
-      # emulator is x86_64 and building all four is what killed the Expo runner mid-compile. The
-      # plugin AARs still ship their own prebuilt slices; those cost megabytes, not minutes.
+      # One ABI for the engine and AOT snapshot, the part that is compiled: the emulator is x86_64
+      # and building all four is what killed the Expo runner mid-compile.
       #
-      # Release, not debug: minified and resource-shrunk with no app-side keep rules, so a tree
-      # shake or a shrink that breaks the app fails here. It is NOT consumption evidence yet — no
-      # Dart file imports `usesmileid`, so nothing in this APK calls the SDK (see the lane README).
+      # Release, so a shrink that breaks the app fails here. Not consumption evidence yet — no Dart
+      # file imports `usesmileid`, so nothing in this APK calls the SDK (see the lane README).
       - name: Build the release APK
         run: flutter build apk --release --target-platform android-x64
         working-directory: flutter/app
@@ -96,12 +93,9 @@ jobs:
           profile: pixel_5
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
-          # Each line runs as its own `sh -c`, so nothing carries between them — no shell variable,
-          # and no `SECONDS`, which dash does not have. Maestro prints its own total, and the step
-          # duration minus that total is what the emulator cost.
-          #
-          # A device that locks mid-session fails the opening assertion against lock-screen
-          # content, which reads as an ordinary assertion failure rather than as infrastructure.
+          # Each line runs as its own `sh -c`, so no variable carries between them and dash has no
+          # `SECONDS`; Maestro's own total, against the step duration, is what times the emulator.
+          # A device that locks mid-session reds the opening assertion as if the app were at fault.
           script: |
             adb shell locksettings set-disabled true
             adb install -r flutter/app/build/app/outputs/flutter-apk/app-release.apk
