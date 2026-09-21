@@ -10,6 +10,7 @@ import 'screens/use_smileid_sample_settings_tab.dart';
 import 'screens/use_smileid_sample_verification_details_tab.dart';
 import 'screens/use_smileid_sample_verifications_tab.dart';
 import 'use_smileid_sample_component_gallery.dart';
+import 'use_smileid_sample_launch.dart';
 import 'use_smileid_sample_shell.dart';
 
 /// Every path in `spec/routes.json`, written once so no call site spells one.
@@ -79,11 +80,26 @@ String useSmileIDSamplePageBehind(String location) =>
     ? UseSmileIDSampleRoutes.settings
     : location;
 
+/// Folds a whole custom-scheme link back into a path, or null to leave an in-app route alone.
+String? useSmileIDSampleFoldPlatformLink(
+  BuildContext context,
+  GoRouterState state,
+) {
+  // Only the COLD start goes through UseSmileIDSampleLaunch; a link into a live app reaches the
+  // router whole, scheme and all, and matches nothing in a path table. Measured on a device: the
+  // mid-run drawer link spec/routes.json documents served go_router's error page instead.
+  final String location = state.uri.toString();
+  return location.startsWith('/')
+      ? null
+      : UseSmileIDSampleLaunch(location).location;
+}
+
 /// The navigation host: one indexed stack of three branches, which is R7 without hand-rolling it.
 GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
   initialLocation: initialLocation ?? UseSmileIDSampleRoutes.products,
   // Measured on a device: without this the platform's raw route WINS over initialLocation.
   overridePlatformDefaultLocation: true,
+  redirect: useSmileIDSampleFoldPlatformLink,
   routes: <RouteBase>[
     StatefulShellRoute.indexedStack(
       builder:
