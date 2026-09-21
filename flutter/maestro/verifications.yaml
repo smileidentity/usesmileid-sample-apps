@@ -1,0 +1,78 @@
+appId: ${APP_ID}
+---
+# The three behaviours #101 shipped with widget tests only: the detail page opening from a row,
+# back landing on the LIST, and the delete confirming on the list.
+#
+# `clearState` first, because the job store survives the run — see ../README.md "Traps", which
+# also says why APP_ID has no default.
+
+- clearState
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://?seedJobs=true"
+      LANDS_ON: "sample_products_screen"
+
+- tapOn:
+    id: "sample_nav_verifications"
+- assertVisible:
+    id: "sample_verifications_screen"
+- assertVisible:
+    id: "sample_job_row_0"
+
+# Its own node, so this reads a number rather than the list's prose — and it is what makes each
+# removal below provable rather than merely non-crashing.
+- assertVisible:
+    id: "sample_filter_count_all"
+    text: "11"
+
+- tapOn:
+    id: "sample_job_row_0"
+- assertVisible:
+    id: "sample_verification_details_screen"
+
+# The badge reports the verdict and Status reports the transport, so the two disagree by design.
+- assertVisible:
+    id: "sample_status_badge"
+- assertVisible:
+    id: "sample_detail_field_status"
+
+# The pill belongs to the tab roots, and a pushed detail page is not one.
+- assertNotVisible:
+    id: "sample_nav_products"
+
+- back
+- assertVisible:
+    id: "sample_verifications_screen"
+- assertVisible:
+    id: "sample_job_row_0"
+
+- tapOn:
+    id: "sample_job_row_0"
+- assertVisible:
+    id: "sample_verification_details_screen"
+- tapOn:
+    id: "sample_details_delete"
+- assertVisible:
+    id: "sample_verifications_screen"
+- assertVisible:
+    id: "sample_toast"
+- assertVisible:
+    id: "sample_filter_count_all"
+    text: "10"
+
+# A second removal, to take Undo with ONE hierarchy dump in front of it: the toast has five
+# seconds — see ../README.md "Traps". Returning to 10 rather than staying at 9 is the proof.
+- tapOn:
+    id: "sample_job_row_0"
+- assertVisible:
+    id: "sample_verification_details_screen"
+- tapOn:
+    id: "sample_details_delete"
+- assertVisible:
+    id: "sample_toast"
+- tapOn:
+    id: "sample_toast_undo"
+- assertVisible:
+    id: "sample_filter_count_all"
+    text: "10"

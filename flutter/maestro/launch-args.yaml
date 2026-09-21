@@ -1,0 +1,42 @@
+appId: ${APP_ID}
+---
+# Every widget test overrides the launch-args provider directly, which is how `seedJobs` stayed
+# wired to nothing while all of them passed (#101). Only a real launch proves an argument travels.
+# Arguments arrive as a cold-start link — see ../README.md "Traps", and why APP_ID has no default.
+
+- clearState
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://"
+      LANDS_ON: "sample_products_screen"
+
+# A launch with no arguments shows a partner nothing that is not theirs.
+- tapOn:
+    id: "sample_nav_verifications"
+- assertVisible:
+    id: "sample_verifications_empty"
+
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://?seedJobs=true"
+      LANDS_ON: "sample_products_screen"
+- tapOn:
+    id: "sample_nav_verifications"
+- assertVisible:
+    id: "sample_job_row_0"
+
+# A non-boolean name, so the lane covers the parser rather than one flag: seven of the ten
+# canonical names reached nothing until the shell read the whole table.
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://debug/scenarios?scenario=expiredToken"
+      LANDS_ON: "sample_scenario_drawer"
+- assertVisible:
+    id: "sample_scenario_item_expiredToken"
+    selected: true
+- assertVisible:
+    id: "sample_scenario_item_normal"
+    selected: false

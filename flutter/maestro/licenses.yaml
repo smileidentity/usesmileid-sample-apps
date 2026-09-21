@@ -1,0 +1,48 @@
+appId: ${APP_ID}
+---
+# `LicenseRegistry` is empty under `flutter test` by design, so only a running app can see this
+# screen with content in it. APP_ID must be passed — see ../README.md "Traps".
+
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://"
+      LANDS_ON: "sample_products_screen"
+
+- tapOn:
+    id: "sample_nav_settings"
+- assertVisible:
+    id: "sample_settings_screen"
+
+# `centerElement` is load-bearing — see ../README.md "Traps".
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_nav_licenses"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "sample_setting_nav_licenses"
+- assertVisible:
+    id: "sample_licenses_screen"
+
+# Engine C++ components: in NOTICES.Z and in no package graph, which is what proves the registry
+# rather than the screen. Naming them is safe only because the toolchain is pinned.
+- assertVisible:
+    id: "sample_license_row_abseil_cpp"
+- assertVisible:
+    id: "sample_license_row_angle"
+
+# One Dart package too, so the assertion covers both halves of what the registry merges.
+- assertVisible:
+    id: "sample_license_row_battery_plus"
+
+# The body is decompressed on demand; a row that expands to nothing is the failure this catches.
+- tapOn:
+    id: "sample_license_row_abseil_cpp"
+- assertVisible:
+    id: "sample_license_text_abseil_cpp"
+
+# Pushed INSIDE the settings branch, so back belongs to the tab rather than to the app.
+- back
+- assertVisible:
+    id: "sample_settings_screen"

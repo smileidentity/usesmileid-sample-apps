@@ -1,3 +1,6 @@
+/// A coordinate carries characters an id may not, folded the same way on every platform.
+String _idSafe(String value) => value.replaceAll(RegExp('[^A-Za-z0-9]'), '_');
+
 /// The accessibility ids this package attaches. Stable forever: deprecate, never rename.
 abstract final class UseSmileIDSampleTestIds {
   /// Bottom nav destination: products.
@@ -246,10 +249,12 @@ abstract final class UseSmileIDSampleTestIds {
   static const String licensesScreen = 'sample_licenses_screen';
 
   /// One notice row, suffixed with its package name.
-  static String licenseRow(String package) => 'sample_license_row_$package';
+  static String licenseRow(String package) =>
+      'sample_license_row_${_idSafe(package)}';
 
   /// The expanded licence body, suffixed with its package name.
-  static String licenseText(String package) => 'sample_license_text_$package';
+  static String licenseText(String package) =>
+      'sample_license_text_${_idSafe(package)}';
 
   /// What the screen says when the notices did not ship.
   static const String licensesEmpty = 'sample_licenses_empty';

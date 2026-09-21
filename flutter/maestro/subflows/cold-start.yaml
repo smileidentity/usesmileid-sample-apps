@@ -1,0 +1,12 @@
+appId: ${APP_ID}
+---
+# Arguments arrive as a cold-start link, so every case is a stopApp and an openLink — see
+# ../README.md "Traps". LANDS_ON is the link's own destination: unlike the sibling lanes, not
+# every flow here starts at the products root. The tolerance is CI-emulator headroom, not this
+# app, which cold-starts in ~0.7s.
+- stopApp
+- openLink: ${LINK}
+- extendedWaitUntil:
+    visible:
+      id: ${LANDS_ON}
+    timeout: 30000

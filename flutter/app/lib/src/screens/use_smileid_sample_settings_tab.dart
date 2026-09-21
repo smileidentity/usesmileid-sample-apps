@@ -68,7 +68,18 @@ class _UseSmileIDSampleSettingsTabState
     }
   }
 
-  Future<void> _openScenarioDrawer() => showUseSmileIDSampleSheet<void>(
+  /// Hands the route back on dismiss, or a second delivery of the link reopens nothing.
+  Future<void> _openScenarioDrawer() async {
+    // Read before the await: an inherited lookup across the gap is what `mounted` does not cover.
+    final GoRouter router = GoRouter.of(context);
+    await _showScenarioDrawer();
+    if (router.routerDelegate.currentConfiguration.uri.path ==
+        UseSmileIDSampleRoutes.scenarioDrawer) {
+      router.go(UseSmileIDSampleRoutes.settings);
+    }
+  }
+
+  Future<void> _showScenarioDrawer() => showUseSmileIDSampleSheet<void>(
     context: context,
     testId: UseSmileIDSampleTestIds.scenarioDrawer,
     // A Consumer INSIDE the sheet: the outer `ref.watch` registers on this tab, so a selection

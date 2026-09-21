@@ -1,0 +1,52 @@
+appId: ${APP_ID}
+---
+# `spec/routes.json` requires every route to open cold AND warm; the warm half served go_router's
+# error page until the router learned to fold a whole link. APP_ID — see ../README.md "Traps".
+
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://settings"
+      LANDS_ON: "sample_settings_screen"
+
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://settings/licenses"
+      LANDS_ON: "sample_licenses_screen"
+
+# Mid-run, which is the entry spec/routes.json documents for reaching the drawer from a flow.
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://"
+      LANDS_ON: "sample_products_screen"
+- openLink: "usesmileid-sample-flutter://debug/scenarios"
+- assertVisible:
+    id: "sample_scenario_drawer"
+
+# The bar belongs to the page behind the scrim. Its last two theme rows sit UNDER that bar and
+# cannot be tapped — an open defect (docs/plan/port-priority-cut.md item 8), so this reds when
+# that ruling lands.
+- assertVisible:
+    id: "sample_nav_settings"
+- back
+- assertVisible:
+    id: "sample_settings_screen"
+
+# Dismissing left the router at /debug/scenarios, so a second delivery reopened nothing.
+- openLink: "usesmileid-sample-flutter://debug/scenarios"
+- assertVisible:
+    id: "sample_scenario_drawer"
+- back
+
+# A mid-run link navigates but never re-seeds: arguments are read once, before the first frame.
+- clearState
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://"
+      LANDS_ON: "sample_products_screen"
+- openLink: "usesmileid-sample-flutter://verifications?seedJobs=true"
+- assertVisible:
+    id: "sample_verifications_empty"

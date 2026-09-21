@@ -72,14 +72,20 @@ small. All are in `port-gaps-backlog.md` §2.
 baseline can catch it, and the portable predicate is written out in `port-gaps-backlog.md` §7. The id
 spec test is second: a one-directional set assertion is why the missing-id gap survived at all.
 
-## Phase 3 — the device passes, once the handset is unlocked
+## Phase 3 — the device passes — SUPERSEDED by item 8, and now LANDED for Flutter
 
-Twelve behaviours across three Flutter branches have widget tests only, listed per branch in their PR
+Twelve behaviours across three Flutter branches had widget tests only, listed per branch in their PR
 bodies. They were blocked by a keyguard demanding authentication, which no adb command bypasses.
 
-Worth doing as one pass rather than three, and worth doing before the flow host lands, because the
-notices screen is the only way to see the licence registry populated — it is empty under `flutter test`
-by design, so no test can stand in for it.
+The keyguard is no longer the way through. `port-priority-cut.md` item 8 replaced this phase with a
+lane, and an emulator needs no human unlock: `flutter/maestro/` covers the behaviours that a hostless
+lane structurally cannot see, and `.github/workflows/flutter-device.yml` runs them on every PR. The
+notices screen was the reason to do this before the flow host lands — `LicenseRegistry` is empty under
+`flutter test` by design — and it is the first flow.
+
+Not every one of the twelve became a flow, deliberately: the ones a widget test already covers stayed
+where they are, per the cycle-time doc's finding that the Android suite returned zero findings across
+four runs of 36–53 minutes. This phase is closed; item 8 records what the lane found on its first run.
 
 ## Phase 4 — the rest of the port: the flow host, then the token session
 
