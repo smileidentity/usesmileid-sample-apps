@@ -85,8 +85,7 @@ notices screen was the reason to do this before the flow host lands — `License
 
 Not every one of the twelve became a flow, deliberately: the ones a widget test already covers stayed
 where they are, per the cycle-time doc's finding that the Android suite returned zero findings across
-four runs of 36–53 minutes. What is left of this phase is the same lane for Expo, which item 8 still
-owns.
+four runs of 36–53 minutes. This phase is closed; item 8 records what the lane found on its first run.
 
 ## Phase 4 — the rest of the port: the flow host, then the token session
 
