@@ -27,14 +27,19 @@ void main() {
 
   Future<void> pumpList(
     WidgetTester tester,
-    List<UseSmileIDSampleJob> jobs,
-  ) async {
+    List<UseSmileIDSampleJob> jobs, {
+    int? noticeWindow,
+  }) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           useSmileIDSampleJobsRepositoryProvider.overrideWithValue(
             UseSmileIDSampleMemoryJobsRepository(jobs),
           ),
+          if (noticeWindow != null)
+            useSmileIDSampleLaunchArgsProvider.overrideWithValue(
+              UseSmileIDSampleLaunchArgs(noticeWindow: noticeWindow),
+            ),
         ],
         child: MaterialApp.router(
           theme: UseSmileIDSampleTheme.light(),
@@ -223,6 +228,33 @@ void main() {
     await tester.pump(useSmileIDSampleNoticeWindow);
     await tester.pumpAndSettle();
 
+    expect(byId(UseSmileIDSampleTestIds.toast), findsNothing);
+  });
+
+  // The lane widens the window so a loaded runner cannot lose the Undo tap to the withdrawal.
+  testWidgets('a launch argument sets the window the confirmation stands for', (
+    WidgetTester tester,
+  ) async {
+    const int longer = 30;
+    await pumpList(tester, <UseSmileIDSampleJob>[
+      job('a', UseSmileIDSampleStatus.clear),
+    ], noticeWindow: longer);
+    await tester.tap(byId(UseSmileIDSampleTestIds.selectToggle));
+    await tester.pumpAndSettle();
+    await tester.tap(byId(UseSmileIDSampleTestIds.selectionCheckbox(0)));
+    await tester.pumpAndSettle();
+    await tester.tap(byId(UseSmileIDSampleTestIds.selectionRemove));
+    await tester.pumpAndSettle();
+
+    // Past the product's window: with the argument ignored the confirmation is already gone here.
+    await tester.pump(
+      useSmileIDSampleNoticeWindow + const Duration(seconds: 1),
+    );
+    await tester.pumpAndSettle();
+    expect(byId(UseSmileIDSampleTestIds.toast), findsOne);
+
+    await tester.pump(const Duration(seconds: longer));
+    await tester.pumpAndSettle();
     expect(byId(UseSmileIDSampleTestIds.toast), findsNothing);
   });
 

@@ -245,7 +245,17 @@ class UseSmileIDSampleRemovalNoticeNotifier extends Notifier<int?> {
   void show(int count) {
     _timer?.cancel();
     state = count;
-    _timer = Timer(useSmileIDSampleNoticeWindow, dismiss);
+    _timer = Timer(_window, dismiss);
+  }
+
+  /// Only automation passes one; without it this is the product's window.
+  Duration get _window {
+    final int? seconds = ref
+        .read(useSmileIDSampleLaunchArgsProvider)
+        .noticeWindow;
+    return seconds == null
+        ? useSmileIDSampleNoticeWindow
+        : Duration(seconds: seconds);
   }
 
   /// Withdraws the confirmation, which is what taking its action also does.
