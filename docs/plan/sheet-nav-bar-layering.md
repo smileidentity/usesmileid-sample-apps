@@ -73,6 +73,16 @@ answers true for `/debug/scenarios`, because the page behind it still has a bar.
 y136, because the root navigator sits above the shell's `SafeArea`. The picker sheets already
 looked like this; the two in-shell sheets were the odd ones out.
 
+## What pins it
+
+Two lanes, because no baseline can see it. In the widget lane, a shell test opens the drawer at
+393x852, asserts the last row and the bar actually overlap — otherwise the tap below proves nothing
+— then taps the row's centre and reads its selected flag. Reverting the fix reds it with "the tap
+reached the bar and switched tab"; a no-op `selectTheme` reds the other half; pointing the
+precondition at the first theme row reds the precondition. On the device, `deep-links.yaml` asserts
+the bar is out of reach while the sheet is up, taps the last row, reads `selected: true`, and
+asserts the bar is back after dismissing.
+
 ## Found here, not fixed here
 
 `/profiles/switch` and `/profiles/new` are not deep-linkable on Flutter. Both match
