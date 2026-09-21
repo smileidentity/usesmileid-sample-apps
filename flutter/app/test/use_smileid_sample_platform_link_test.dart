@@ -30,6 +30,8 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  Uri landedOn() => router.routerDelegate.currentConfiguration.uri;
+
   Finder byId(String id) => find.bySemanticsIdentifier(id);
 
   testWidgets('a mid-run link reaches the route its path names', (
@@ -54,21 +56,42 @@ void main() {
     expect(byId(UseSmileIDSampleTestIds.scenarioDrawer), findsOne);
   });
 
+  // Dismissing must hand the route back, or a second delivery rebuilds nothing and the drawer
+  // never reopens — measured on a device before it was fixed.
+  testWidgets('the drawer link can be delivered twice in one session', (
+    WidgetTester tester,
+  ) async {
+    await pumpApp(tester);
+    await deliver(tester, 'usesmileid-sample-flutter://debug/scenarios');
+    expect(byId(UseSmileIDSampleTestIds.scenarioDrawer), findsOne);
+
+    Navigator.of(
+      tester.element(byId(UseSmileIDSampleTestIds.scenarioDrawer)),
+    ).pop();
+    await tester.pumpAndSettle();
+    expect(landedOn().path, UseSmileIDSampleRoutes.settings);
+
+    await deliver(tester, 'usesmileid-sample-flutter://debug/scenarios');
+
+    expect(byId(UseSmileIDSampleTestIds.scenarioDrawer), findsOne);
+  });
+
   // Where the defect showed: go_router matched the whole URI against a path table and served its
-  // error page, so a mid-run link stranded the app on Page Not Found.
-  testWidgets('a mid-run link never lands on the router error page', (
+  // error page, so a mid-run link stranded the app.
+  testWidgets('a mid-run link lands on the route rather than the error page', (
     WidgetTester tester,
   ) async {
     await pumpApp(tester);
 
     await deliver(tester, 'usesmileid-sample-flutter://verifications');
 
-    expect(find.textContaining('Page Not Found'), findsNothing);
+    expect(landedOn().path, UseSmileIDSampleRoutes.verifications);
     expect(byId(UseSmileIDSampleTestIds.verificationsScreen), findsOne);
   });
 
-  // The query is arguments, not a destination, and arguments are read once before the first frame.
-  testWidgets('a mid-run link carrying arguments still seeds nothing', (
+  // The query is arguments, and `spec/routes.json` says they resolve with the route — so the fold
+  // keeps them. Nothing re-seeds: that runs once in main(), before the first frame.
+  testWidgets('a mid-run link keeps the query its route was given', (
     WidgetTester tester,
   ) async {
     await pumpApp(tester);
@@ -78,7 +101,20 @@ void main() {
       'usesmileid-sample-flutter://verifications?seedJobs=true',
     );
 
-    expect(byId(UseSmileIDSampleTestIds.verificationsEmpty), findsOne);
+    expect(landedOn().path, UseSmileIDSampleRoutes.verifications);
+    expect(landedOn().queryParameters['seedJobs'], 'true');
+  });
+
+  testWidgets('an in-app route keeps its own query', (
+    WidgetTester tester,
+  ) async {
+    await pumpApp(tester);
+
+    router.go('${UseSmileIDSampleRoutes.verifications}?filter=blocked');
+    await tester.pumpAndSettle();
+
+    expect(landedOn().path, UseSmileIDSampleRoutes.verifications);
+    expect(landedOn().queryParameters['filter'], 'blocked');
   });
 
   testWidgets('an in-app route is left exactly as it was', (

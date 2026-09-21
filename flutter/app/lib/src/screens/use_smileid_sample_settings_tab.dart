@@ -7,6 +7,9 @@ import '../state/use_smileid_sample_providers.dart';
 import '../use_smileid_sample_routes.dart';
 import '../use_smileid_sample_version.dart';
 
+/// The route the drawer is layered over settings at, which dismissing must leave.
+const String _drawerRoute = UseSmileIDSampleRoutes.scenarioDrawer;
+
 /// The settings tab, whose six switches survive a restart.
 class UseSmileIDSampleSettingsTab extends ConsumerStatefulWidget {
   /// [openDrawer] is set by the deep link, which opens this page with the drawer already up.
@@ -68,7 +71,16 @@ class _UseSmileIDSampleSettingsTabState
     }
   }
 
-  Future<void> _openScenarioDrawer() => showUseSmileIDSampleSheet<void>(
+  /// Hands the route back on dismiss, or the link is one-shot: go_router would still be at
+  /// `/debug/scenarios`, so re-delivering it rebuilds nothing and the drawer never reopens.
+  Future<void> _openScenarioDrawer() async {
+    await _showScenarioDrawer();
+    if (mounted && GoRouterState.of(context).uri.path == _drawerRoute) {
+      context.go(UseSmileIDSampleRoutes.settings);
+    }
+  }
+
+  Future<void> _showScenarioDrawer() => showUseSmileIDSampleSheet<void>(
     context: context,
     testId: UseSmileIDSampleTestIds.scenarioDrawer,
     // A Consumer INSIDE the sheet: the outer `ref.watch` registers on this tab, so a selection

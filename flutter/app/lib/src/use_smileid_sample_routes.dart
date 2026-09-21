@@ -85,13 +85,15 @@ String? useSmileIDSampleFoldPlatformLink(
   BuildContext context,
   GoRouterState state,
 ) {
-  // Only the COLD start goes through UseSmileIDSampleLaunch; a link into a live app reaches the
-  // router whole, scheme and all, and matches nothing in a path table. Measured on a device: the
-  // mid-run drawer link spec/routes.json documents served go_router's error page instead.
-  final String location = state.uri.toString();
-  return location.startsWith('/')
-      ? null
-      : UseSmileIDSampleLaunch(location).location;
+  // Measured on a device: only the COLD start goes through UseSmileIDSampleLaunch, so a link into
+  // a live app reached the router whole and served go_router's error page.
+  if (!state.uri.hasScheme) {
+    return null;
+  }
+  // The query rides along: `spec/routes.json` says a link's arguments resolve with its route, and
+  // nothing re-seeds from it because seeding runs once in main(), before the first frame.
+  final String path = UseSmileIDSampleLaunch(state.uri.toString()).location;
+  return state.uri.hasQuery ? '$path?${state.uri.query}' : path;
 }
 
 /// The navigation host: one indexed stack of three branches, which is R7 without hand-rolling it.

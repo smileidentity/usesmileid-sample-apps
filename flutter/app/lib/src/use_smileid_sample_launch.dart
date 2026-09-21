@@ -24,15 +24,8 @@ class UseSmileIDSampleLaunch {
   }
 
   /// The arguments the link carried, defaulted where it carried none.
-  UseSmileIDSampleLaunchArgs get args => UseSmileIDSampleLaunchArgs(
-    seedJobs: _flag('seedJobs'),
-    seedProfiles: _flag('seedProfiles'),
-    probes: _flag('probes'),
-  );
-
-  /// One boolean argument, true only for an explicit true; anything else is the default.
-  bool _flag(String name) =>
-      _uri.queryParameters[name]?.trim().toLowerCase() == 'true';
+  UseSmileIDSampleLaunchArgs get args =>
+      UseSmileIDSampleLaunchArgs.fromUri(_uri);
 }
 
 /// Everything a launch does to the stores before the first frame.
