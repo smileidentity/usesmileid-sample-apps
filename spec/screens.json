@@ -518,7 +518,7 @@
           "node": "5206-3525"
         }
       ],
-      "note": "USER DETAILS — ATTACHED TO EVERY JOB. This is the per-profile default that seeds the userDetails screen. The app bar title is the PROFILE'S NAME. The CTA has two states: on any other profile it reads \"Make this profile active\" and both saves and activates; on the profile that is already active it is DISABLED and reads \"Active profile\". Screen spacing is 14 between the header, the section label, the card and the CTA — not the 8 used inside a card.",
+      "note": "USER DETAILS — ATTACHED TO EVERY JOB. This is the per-profile default that seeds the userDetails screen. The app bar title is the PROFILE'S NAME. The CTA has two states: on any other profile it reads \"Make this profile active\" and both saves and activates; on the profile that is already active it is DISABLED and reads \"Active profile\". Screen spacing is 14 between the header, the section label, the card and the CTA — not the 8 used inside a card. A second section, CALLBACK URL, sits below the user-details card and carries one row, empty by default, placeholder \"Uses your portal default\". It is its own section because a webhook URL is not a user detail. A profile is a partner here, so the URL has to travel with the profile — anywhere else and switching profile carries one partner's webhook into another's job. While a token session is live the row is disabled and reads as overridden: the token's partner owns the job, so the profile's URL is not sent. The section has no design frame; it reuses the SectionLabel, section surface and KeyValueEditRow this screen already uses.",
       "components": [
         "SectionLabel",
         "KeyValueEditRow",
@@ -527,6 +527,7 @@
       "testIds": [
         "sample_profile_config_screen",
         "sample_profile_config_field",
+        "sample_profile_config_callback_url",
         "sample_profile_config_save"
       ]
     },

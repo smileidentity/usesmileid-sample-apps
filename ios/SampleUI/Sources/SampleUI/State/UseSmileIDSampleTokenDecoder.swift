@@ -12,6 +12,8 @@ public struct UseSmileIDSampleTokenBindings: Equatable, Sendable, CustomStringCo
   public var idType: String?
   /// The vault reference standing in for the ID number, which is the only form a token carries it in.
   public var idNumberReference: String?
+  /// A webhook URL or a `callback_` id; the server injects it over whatever the body carried.
+  public var callbackUrl: String?
 
   public init(
     givenNames: Bool = false,
@@ -21,7 +23,8 @@ public struct UseSmileIDSampleTokenBindings: Equatable, Sendable, CustomStringCo
     consent: UseSmileIDSampleTokenConsent? = nil,
     country: String? = nil,
     idType: String? = nil,
-    idNumberReference: String? = nil
+    idNumberReference: String? = nil,
+    callbackUrl: String? = nil
   ) {
     self.givenNames = givenNames
     self.lastName = lastName
@@ -31,13 +34,15 @@ public struct UseSmileIDSampleTokenBindings: Equatable, Sendable, CustomStringCo
     self.country = country
     self.idType = idType
     self.idNumberReference = idNumberReference
+    self.callbackUrl = callbackUrl
   }
 
   /// Redacted like the session's: every one of these is a claim value, and one is a vault reference.
   public var description: String {
     "UseSmileIDSampleTokenBindings(givenNames=\(givenNames), lastName=\(lastName), email=\(email), "
       + "phoneNumber=\(phoneNumber), consent=\(consent != nil), country=\(country != nil), "
-      + "idType=\(idType != nil), idNumberReference=\(idNumberReference != nil))"
+      + "idType=\(idType != nil), idNumberReference=\(idNumberReference != nil), "
+      + "callbackUrl=\(callbackUrl != nil))"
   }
 
   /// Both names plus one contact field: a documented duplicate of the SDK's internal rule, pinned by the unit tests.
@@ -175,7 +180,8 @@ public enum UseSmileIDSampleTokenDecoder {
       // Blank-checked, unlike the presence flags: these are read as values, and a blank one would win.
       country: payload.string("country").flatMap { $0.isBlank ? nil : $0 },
       idType: payload.string("id_type").flatMap { $0.isBlank ? nil : $0 },
-      idNumberReference: payload.string("id_number").flatMap { $0.isBlank ? nil : $0 }
+      idNumberReference: payload.string("id_number").flatMap { $0.isBlank ? nil : $0 },
+      callbackUrl: payload.string("callback_url").flatMap { $0.isBlank ? nil : $0 }
     )
   }
 

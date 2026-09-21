@@ -67,7 +67,7 @@ func useSmileIDSampleApply(
       config.partnerConfig { partner in
         // The token wins over the local profile: a signed token under another id comes back 401.
         partner.partnerId = scanned?.partnerId ?? snapshot.partnerId
-        partner.callbackUrl = callbackUrl
+        partner.callbackUrl = snapshot.resolvedCallbackUrl
         partner.useSandbox = snapshot.sandbox
       }
     }
@@ -299,4 +299,3 @@ extension UseSmileIDSampleProduct {
 }
 
 private let privacyPolicyUrl = URL(string: "https://smile.id/privacy-policy")!
-private let callbackUrl = "https://your-callback-url.com"

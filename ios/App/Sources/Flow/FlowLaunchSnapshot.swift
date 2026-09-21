@@ -18,6 +18,8 @@ struct FlowLaunchSnapshot: Equatable {
   let userId: String
   let partnerId: String
   let partnerName: String
+  /// The active profile's webhook URL; empty means their portal default.
+  let callbackUrl: String
   /// Live at entry only: an expired session is the gate's business, never the builder's.
   let session: UseSmileIDSampleTokenSession?
   /// The one thing that routes back to the scanner.
@@ -39,6 +41,7 @@ struct FlowLaunchSnapshot: Equatable {
     userId: String = "",
     partnerId: String = "",
     partnerName: String = "",
+    callbackUrl: String = "",
     session: UseSmileIDSampleTokenSession? = nil,
     sessionExpired: Bool = false
   ) {
@@ -57,6 +60,7 @@ struct FlowLaunchSnapshot: Equatable {
     self.userId = userId
     self.partnerId = partnerId
     self.partnerName = partnerName
+    self.callbackUrl = callbackUrl
     self.session = session
     self.sessionExpired = sessionExpired
   }
@@ -93,6 +97,7 @@ func buildSnapshot(
     userId: userId,
     partnerId: app.profiles.active.id,
     partnerName: app.profiles.active.organisation,
+    callbackUrl: app.profiles.active.callbackUrl,
     session: session.flatMap { $0.hasExpired(at: entry) ? nil : $0 },
     sessionExpired: app.endedSession != nil || session?.hasExpired(at: entry) == true
   )

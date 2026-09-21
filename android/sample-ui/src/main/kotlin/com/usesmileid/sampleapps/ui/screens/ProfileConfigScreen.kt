@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.screens
 
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.input.KeyboardType
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowDivider
 import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
@@ -33,6 +35,10 @@ fun ProfileConfigScreen(
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
     isActive: Boolean = false,
+    callbackUrl: String = "",
+    onCallbackUrlChange: (String) -> Unit = {},
+    /** Non-null while a token session is live: its text replaces the value, and the row stops editing. */
+    callbackOverride: String? = null,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
     Column(
@@ -63,6 +69,19 @@ fun ProfileConfigScreen(
                         testId = UseSmileIDSampleTestIds.profileConfigField(field.id),
                     )
                 }
+            }
+            // Its own section, not a row in the card above: a webhook URL is not a user detail.
+            UseSmileIDSampleSectionLabel(text = "CALLBACK URL")
+            UseSmileIDSampleSectionSurface {
+                UseSmileIDSampleKeyValueEditRow(
+                    label = "Webhook URL",
+                    value = if (callbackOverride == null) callbackUrl else "",
+                    onValueChange = onCallbackUrlChange,
+                    placeholder = callbackOverride ?: "Uses your portal default",
+                    enabled = callbackOverride == null,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                    testId = UseSmileIDSampleTestIds.PROFILE_CONFIG_CALLBACK_URL,
+                )
             }
         }
         UseSmileIDSampleButton(

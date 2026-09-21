@@ -7,6 +7,11 @@ extension FlowLaunchSnapshot {
   var liveSession: UseSmileIDSampleTokenSession? {
     scenario.startsExpired ? nil : session
   }
+
+  /// Dropped under a live session, as the partner id already is: the token's partner owns the job.
+  var resolvedCallbackUrl: String {
+    liveSession != nil ? "" : callbackUrl
+  }
 }
 
 extension UseSmileIDSampleScenario {
