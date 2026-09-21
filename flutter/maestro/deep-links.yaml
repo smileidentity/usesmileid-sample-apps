@@ -1,0 +1,56 @@
+appId: ${APP_ID}
+---
+# Every route opens cold on its own destination, and a link into a LIVE app resolves rather than
+# stranding the app — `spec/routes.json` requires both ("openable cold and warm"), and the warm
+# half served go_router's error page until the router learned to fold a whole link into a path.
+#
+# APP_ID must be passed — see ../README.md "Traps" for why it has no default.
+
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://settings"
+      LANDS_ON: "sample_settings_screen"
+
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://settings/licenses"
+      LANDS_ON: "sample_licenses_screen"
+
+# Mid-run, which is the entry `spec/routes.json` documents for reaching the drawer from a flow.
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://"
+      LANDS_ON: "sample_products_screen"
+- openLink: "usesmileid-sample-flutter://debug/scenarios"
+- assertVisible:
+    id: "sample_scenario_drawer"
+
+# The bar belongs to the page behind the scrim, so dismissing cannot strand settings. Its last two
+# theme rows sit UNDER that bar and cannot be tapped — an open defect, recorded in
+# docs/plan/port-priority-cut.md item 8, so this reds when that ruling lands.
+- assertVisible:
+    id: "sample_nav_settings"
+- back
+- assertVisible:
+    id: "sample_settings_screen"
+
+# Re-delivering the same link must reopen it. Dismissing left the router at /debug/scenarios, so a
+# second delivery rebuilt nothing and the drawer silently never came back.
+- openLink: "usesmileid-sample-flutter://debug/scenarios"
+- assertVisible:
+    id: "sample_scenario_drawer"
+- back
+
+# A mid-run link navigates but never re-seeds: arguments are read once, before the first frame.
+- clearState
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://"
+      LANDS_ON: "sample_products_screen"
+- openLink: "usesmileid-sample-flutter://verifications?seedJobs=true"
+- assertVisible:
+    id: "sample_verifications_empty"

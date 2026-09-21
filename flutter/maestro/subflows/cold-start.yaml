@@ -1,0 +1,14 @@
+appId: ${APP_ID}
+---
+# Shared opening: arguments arrive as a cold-start LINK on this platform, so every case is a
+# `stopApp` and an `openLink` — see ../README.md "Traps". LANDS_ON is the link's own destination,
+# because unlike the sibling lanes not every flow here starts at the products root.
+#
+# The tolerance is headroom for a CI emulator, not this app: a Flutter release cold start measures
+# ~0.7s, where Expo's needs 60s while ART warms its minified bundle.
+- stopApp
+- openLink: ${LINK}
+- extendedWaitUntil:
+    visible:
+      id: ${LANDS_ON}
+    timeout: 30000

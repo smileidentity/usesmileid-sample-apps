@@ -3,29 +3,23 @@ appId: ${APP_ID}
 # The third-party notices, which no hostless test can see: this screen reads Flutter's own
 # `LicenseRegistry`, and the registry is EMPTY under `flutter test` by design. A widget test can
 # only prove the screen renders whatever it is handed; only a real build ships NOTICES.Z and only a
-# running app decompresses it.
+# running app decompresses it. The Android twin covers this inside its settings.yaml; here it is
+# the screen the lane exists for, so it gets its own flow.
 #
-# APP_ID must be passed — the debug variant suffixes its application id and both variants claim the
-# same URL scheme, so a defaulted id runs the flow against whichever app answers.
-#
-#   maestro --device <serial> test -e APP_ID=com.usesmileid.sample.flutter flutter/maestro
+# APP_ID must be passed — see ../README.md "Traps" for why it has no default.
 
-- stopApp
-- openLink: "usesmileid-sample-flutter://"
-- extendedWaitUntil:
-    visible:
-      id: "sample_products_screen"
-    timeout: 30000
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://"
+      LANDS_ON: "sample_products_screen"
 
 - tapOn:
     id: "sample_nav_settings"
 - assertVisible:
     id: "sample_settings_screen"
 
-# `centerElement` is load-bearing: `scrollUntilVisible` stops the moment a row enters the viewport,
-# and the floating nav bar is drawn OVER the bottom of the list, so the tap lands on the pill and
-# switches tab instead. Measured here before it was written down (the same trap PR #102 recorded
-# against its own test driver).
+# `centerElement` is load-bearing — see ../README.md "Traps".
 - scrollUntilVisible:
     element:
       id: "sample_setting_nav_licenses"
@@ -38,9 +32,9 @@ appId: ${APP_ID}
 
 # Engine dependencies, which is the half that proves the registry rather than the screen: these are
 # C++ components of the Flutter engine, so they exist in NOTICES.Z and in no package graph. The
-# toolchain is pinned in flutter.yml, which is what makes naming a component safe.
+# toolchain pin is what makes naming a component safe.
 - assertVisible:
-    id: "sample_license_row_abseil-cpp"
+    id: "sample_license_row_abseil_cpp"
 - assertVisible:
     id: "sample_license_row_angle"
 
@@ -50,9 +44,9 @@ appId: ${APP_ID}
 
 # The body is decompressed on demand; a row that expands to nothing is the failure this catches.
 - tapOn:
-    id: "sample_license_row_abseil-cpp"
+    id: "sample_license_row_abseil_cpp"
 - assertVisible:
-    id: "sample_license_text_abseil-cpp"
+    id: "sample_license_text_abseil_cpp"
 
 # Back belongs to the settings tab, not to the app: the notices screen is pushed INSIDE the branch.
 - back

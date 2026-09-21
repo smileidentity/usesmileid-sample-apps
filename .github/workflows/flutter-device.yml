@@ -57,13 +57,11 @@ jobs:
       # emulator is x86_64 and building all four is what killed the Expo runner mid-compile. The
       # plugin AARs still ship their own prebuilt slices; those cost megabytes, not minutes.
       #
-      # Release, not debug: minified and resource-shrunk with no app-side keep rules, which is the
-      # configuration a consumption defect in the published SDK surfaces in.
+      # Release, not debug: minified and resource-shrunk with no app-side keep rules, so a tree
+      # shake or a shrink that breaks the app fails here. It is NOT consumption evidence yet — no
+      # Dart file imports `usesmileid`, so nothing in this APK calls the SDK (see the lane README).
       - name: Build the release APK
-        run: |
-          start=$SECONDS
-          flutter build apk --release --target-platform android-x64
-          echo "::notice title=Build::release APK in $((SECONDS - start))s"
+        run: flutter build apk --release --target-platform android-x64
         working-directory: flutter/app
 
       # The daemon holds a heap this runner needs back before an emulator will fit beside it.
@@ -98,15 +96,16 @@ jobs:
           profile: pixel_5
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
+          # Each line runs as its own `sh -c`, so nothing carries between them — no shell variable,
+          # and no `SECONDS`, which dash does not have. Maestro prints its own total, and the step
+          # duration minus that total is what the emulator cost.
+          #
           # A device that locks mid-session fails the opening assertion against lock-screen
           # content, which reads as an ordinary assertion failure rather than as infrastructure.
           script: |
-            echo "::notice title=Emulator::booted $((SECONDS))s into this step"
             adb shell locksettings set-disabled true
             adb install -r flutter/app/build/app/outputs/flutter-apk/app-release.apk
-            start=$SECONDS
             maestro test -e APP_ID=com.usesmileid.sample.flutter flutter/maestro
-            echo "::notice title=Flows::3 flows in $((SECONDS - start))s"
 
       # A red here is a screen recording and a hierarchy, which is what makes it readable at all.
       - name: Upload the Maestro debug output

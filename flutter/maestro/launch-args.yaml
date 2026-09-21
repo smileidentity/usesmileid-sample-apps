@@ -1,21 +1,18 @@
 appId: ${APP_ID}
 ---
-# The launch-argument plumbing, which is the other thing no hostless test reaches: every widget
-# test overrides the launch-args provider directly, so `seedJobs` stayed wired to nothing while
-# they all passed (PR #101). Only a real launch proves the argument travels.
+# The launch-argument plumbing, which no hostless test reaches: every widget test overrides the
+# launch-args provider directly, so `seedJobs` stayed wired to nothing while they all passed
+# (PR #101). Only a real launch proves the argument travels.
 #
-# Arguments arrive as a COLD-START LINK on this platform — `main()` reads
-# `PlatformDispatcher.defaultRouteName` once, before the first frame. `am start --ez seedJobs true`
-# does nothing, and Maestro's `launchApp: arguments:` is ignored, so each case is a `stopApp` and
-# an `openLink`.
+# Arguments arrive as a cold-start LINK here, and `am start --ez seedJobs true` does nothing — see
+# ../README.md "Traps". APP_ID must be passed, for the reason recorded there too.
 
 - clearState
-- stopApp
-- openLink: "usesmileid-sample-flutter://"
-- extendedWaitUntil:
-    visible:
-      id: "sample_products_screen"
-    timeout: 30000
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://"
+      LANDS_ON: "sample_products_screen"
 
 # A launch with no arguments shows a partner nothing that is not theirs.
 - tapOn:
@@ -23,47 +20,27 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_verifications_empty"
 
-- stopApp
-- openLink: "usesmileid-sample-flutter://?seedJobs=true"
-- extendedWaitUntil:
-    visible:
-      id: "sample_products_screen"
-    timeout: 30000
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://?seedJobs=true"
+      LANDS_ON: "sample_products_screen"
 - tapOn:
     id: "sample_nav_verifications"
 - assertVisible:
     id: "sample_job_row_0"
 
-# The link's own path decides the destination, and the router folds the scheme and host back into
-# one — the whole URI reaches it, because only the cold start goes through the launch parser.
-- stopApp
-- openLink: "usesmileid-sample-flutter://settings"
-- extendedWaitUntil:
-    visible:
-      id: "sample_settings_screen"
-    timeout: 30000
-
-# Mid-run, which is the entry `spec/routes.json` documents for reaching the drawer from a flow.
-# This served go_router's Page Not Found until the router learned to fold a platform link.
-- openLink: "usesmileid-sample-flutter://debug/scenarios"
+# A non-boolean name, so the lane covers the parser rather than one boolean: the drawer writes the
+# same state the argument seeds, and the selected row is what reports which scenario is live. Seven
+# of the ten canonical names reached nothing until the shell read the whole table.
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://debug/scenarios?scenario=expiredToken"
+      LANDS_ON: "sample_scenario_drawer"
 - assertVisible:
-    id: "sample_scenario_drawer"
-
-# The bar belongs to the page behind the scrim, so dismissing the sheet cannot strand settings.
+    id: "sample_scenario_item_expiredToken"
+    selected: true
 - assertVisible:
-    id: "sample_nav_settings"
-- back
-- assertVisible:
-    id: "sample_settings_screen"
-
-# A mid-run link navigates but never re-seeds: arguments are read once, before the first frame.
-- clearState
-- stopApp
-- openLink: "usesmileid-sample-flutter://"
-- extendedWaitUntil:
-    visible:
-      id: "sample_products_screen"
-    timeout: 30000
-- openLink: "usesmileid-sample-flutter://verifications?seedJobs=true"
-- assertVisible:
-    id: "sample_verifications_empty"
+    id: "sample_scenario_item_normal"
+    selected: false
