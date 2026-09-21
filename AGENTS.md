@@ -157,7 +157,10 @@ repo's job; there is nothing here to publish.
 `flutter.yml`, `expo.yml`). Each workflow runs that platform's `verify.sh` itself rather than
 repeating its steps, so the local contract and the gate cannot drift apart. The Flutter lane runs on
 macOS because a Flutter golden is host-rasterised, so a baseline recorded on a Mac and verified on
-Linux reds the lane for reasons unrelated to the UI.
+Linux reds the lane for reasons unrelated to the UI. Which Mac matters too — glyph edges differ
+between macOS versions and the comparator has no tolerance, so **record Flutter baselines on the
+runner**: let the lane red and take the PNGs from its `flutter-goldens-recorded` artifact. A local
+`--update-goldens` writes files that red in CI.
 
 `expo/verify.sh` takes a phase, as `ios/verify.sh` does: `all` (the default) is checks plus the
 production bundle, and `native` builds the minified release APK on top of a regenerated prebuild. The
