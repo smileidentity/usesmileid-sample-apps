@@ -17,7 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -60,7 +63,9 @@ fun UseSmileIDSampleTopAppBar(
             color = UseSmileIDSampleTheme.colors.textTitle,
             textAlign = TextAlign.Center,
             // Wraps rather than caps: ellipsising a title is the clipping the predicate forbids.
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .semantics { heading() },
         )
 
         // Holds the action's width even with no action, so the title sits identically either way.
@@ -91,7 +96,11 @@ fun UseSmileIDSampleTopAppBarButton(
         onClick = onClick,
         modifier = modifier
             .size(SmileDimens.space40)
-            .semantics { this.contentDescription = contentDescription }
+            .semantics {
+                this.contentDescription = contentDescription
+                // Material's clickable Surface carries the action but no role, so nothing says "button".
+                role = Role.Button
+            }
             .tagged(testId),
         shape = CircleShape,
         color = container,
