@@ -25,14 +25,20 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_scenario_drawer"
 
-# The bar belongs to the page behind the scrim. Its last two theme rows sit UNDER that bar and
-# cannot be tapped — an open defect (docs/plan/port-priority-cut.md item 8), so this reds when
-# that ruling lands.
-- assertVisible:
+# Presented above the shell: the bar is out of reach, and the last row takes its own tap.
+- assertNotVisible:
     id: "sample_nav_settings"
+- tapOn:
+    id: "sample_theme_item_partnerOverride"
+- assertVisible:
+    id: "sample_theme_item_partnerOverride"
+    selected: true
 - back
 - assertVisible:
     id: "sample_settings_screen"
+# The bar belongs to the page behind the scrim, so dismissing gives it back.
+- assertVisible:
+    id: "sample_nav_settings"
 
 # Dismissing left the router at /debug/scenarios, so a second delivery reopened nothing.
 - openLink: "usesmileid-sample-flutter://debug/scenarios"

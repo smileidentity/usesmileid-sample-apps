@@ -128,6 +128,16 @@ These need an owner's answer rather than an engineer's. Neither blocks anything.
   always-enabled Save, or the CTA needs to change its label and meaning when the profile is already
   active. Worth deciding before a partner hits it, since the failure is silent.
 
+  The callback URL added to this screen makes it worse. The active profile's id is what becomes
+  `partnerId` on every job, and its callback URL is what becomes `callbackUrl` — so the active
+  profile is the only one whose URL is ever sent. The field writes to screen state alone (a
+  `rememberSaveable` on Android, a draft dictionary on iOS that `onBack` explicitly discards); the
+  disabled CTA is the only thing that persists it. So a partner opens the active profile, types
+  their webhook URL, leaves, and it is dropped — on the one profile where the value would have
+  reached anything. The user-details fields at least get re-entered on the job form; the callback
+  URL has no second chance. The two options above are unchanged, but the cost of deferring is now
+  a silently unsent webhook rather than a re-typed name.
+
 ## 5. Harness and environment notes
 
 Worth having written down before the next port run rather than rediscovered.

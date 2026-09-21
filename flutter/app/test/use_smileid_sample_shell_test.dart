@@ -148,6 +148,46 @@ void main() {
     expect(byId(UseSmileIDSampleTestIds.navToken), findsNothing);
   });
 
+  // Measured on a device: on the tab's navigator this tap landed on the bar and switched tab.
+  testWidgets('a sheet row under the bar takes its own tap', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(393, 852);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    await pumpShell(tester, at: UseSmileIDSampleRoutes.scenarioDrawer);
+    await tester.pumpAndSettle();
+
+    final Finder lastRow = byId(
+      UseSmileIDSampleTestIds.themeItem(
+        UseSmileIDSampleThemeScenario.values.last.id,
+      ),
+    );
+    final Rect row = tester.getRect(lastRow);
+    final Rect bar = tester.getRect(find.byType(UseSmileIDSampleNavBar));
+    // Asserted, not assumed: where they miss, the tap below proves nothing.
+    expect(
+      row.overlaps(bar),
+      isTrue,
+      reason: 'row $row does not meet the bar at $bar',
+    );
+
+    await tester.tapAt(row.center);
+    await tester.pumpAndSettle();
+
+    expect(
+      lastRow,
+      findsOne,
+      reason: 'the tap reached the bar and switched tab',
+    );
+    expect(
+      tester.widget<Semantics>(lastRow).properties.selected,
+      isTrue,
+      reason: 'the tap landed on the sheet but not on the row',
+    );
+  });
+
   // The bar FLOATS over the page, so a screen that reserved no room ends with its last control under it.
   testWidgets('the last control of settings clears the floating bar', (
     WidgetTester tester,

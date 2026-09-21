@@ -75,3 +75,18 @@ jobs:
           path: flutter/sample_ui/test/golden/failures/**
           if-no-files-found: ignore
           retention-days: 7
+
+      # Where a baseline gets recorded: a golden is rasterised by the host, so a developer Mac on
+      # another macOS writes baselines that red here. Re-run, because a MISSING one writes no image.
+      - name: Re-record goldens on this runner
+        if: failure()
+        run: cd flutter/sample_ui && flutter test --update-goldens test/golden || true
+
+      - name: Upload re-recorded goldens
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: flutter-goldens-recorded
+          path: flutter/sample_ui/test/goldens/**
+          if-no-files-found: ignore
+          retention-days: 7

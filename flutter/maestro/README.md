@@ -83,7 +83,3 @@ registration — but a green here says nothing about the published SDK until the
 assertions inside a device flow, so both stay golden-lane concerns.
 
 **The SDK flow itself.** `/flow/:productId/run` is claimed by no route yet.
-
-**The scenario drawer's last two theme rows.** The floating nav bar is drawn over the bottom of
-the sheet and eats their taps — a defect, recorded in `docs/plan/port-priority-cut.md` item 8, not
-a limit of the lane.
