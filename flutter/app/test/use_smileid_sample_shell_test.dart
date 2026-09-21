@@ -148,8 +148,7 @@ void main() {
     expect(byId(UseSmileIDSampleTestIds.navToken), findsNothing);
   });
 
-  // Measured on a device: the sheet was pushed on the TAB's navigator, inside the body the bar is
-  // painted over, so this tap landed on the bar and switched tab instead of choosing the row.
+  // Measured on a device: on the tab's navigator this tap landed on the bar and switched tab.
   testWidgets('a sheet row under the bar takes its own tap', (
     WidgetTester tester,
   ) async {
@@ -167,7 +166,7 @@ void main() {
     );
     final Rect row = tester.getRect(lastRow);
     final Rect bar = tester.getRect(find.byType(UseSmileIDSampleNavBar));
-    // Asserted, not assumed: on a geometry where they miss, the tap below proves nothing.
+    // Asserted, not assumed: where they miss, the tap below proves nothing.
     expect(
       row.overlaps(bar),
       isTrue,

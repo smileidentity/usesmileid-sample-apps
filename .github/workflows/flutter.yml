@@ -76,9 +76,8 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-      # Where a baseline gets recorded. A golden is rasterised by the host, so a developer Mac on a
-      # different macOS writes baselines that red here — measured, 75 of 126. Commit these PNGs
-      # instead. It re-runs the suite because a MISSING baseline writes no failure image above.
+      # Where a baseline gets recorded: a golden is rasterised by the host, so a developer Mac on
+      # another macOS writes baselines that red here. Re-run, because a MISSING one writes no image.
       - name: Re-record goldens on this runner
         if: failure()
         run: cd flutter/sample_ui && flutter test --update-goldens test/golden || true

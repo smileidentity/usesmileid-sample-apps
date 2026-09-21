@@ -25,8 +25,7 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_scenario_drawer"
 
-# Presented above the shell, so the bar is behind the sheet rather than over it: out of reach, and
-# the last row — which it used to cover — takes its own tap instead of switching tab.
+# Presented above the shell: the bar is out of reach, and the last row takes its own tap.
 - assertNotVisible:
     id: "sample_nav_settings"
 - tapOn:
@@ -37,7 +36,7 @@ appId: ${APP_ID}
 - back
 - assertVisible:
     id: "sample_settings_screen"
-# The bar belongs to the page behind the scrim, so dismissing has to give it back.
+# The bar belongs to the page behind the scrim, so dismissing gives it back.
 - assertVisible:
     id: "sample_nav_settings"
 
