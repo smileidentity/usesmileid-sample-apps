@@ -21,6 +21,8 @@ Future<T?> showUseSmileIDSampleSheet<T>({
     // sheet clipped its last field and put its CTA below the fold.
     isScrollControlled: true,
     useSafeArea: true,
+    // The ROOT navigator: inside the shell's body the nav bar is painted over the sheet and takes its taps.
+    useRootNavigator: true,
     backgroundColor: colors.surface,
     barrierColor: colors.overlayScrim,
     shape: RoundedRectangleBorder(borderRadius: UseSmileIDSampleShapes.sheet),
@@ -77,6 +79,7 @@ Future<T?> showUseSmileIDSampleFullHeightSheet<T>({
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
+    useRootNavigator: true,
     backgroundColor: colors.surface,
     barrierColor: colors.overlayScrim,
     shape: RoundedRectangleBorder(borderRadius: UseSmileIDSampleShapes.sheet),
