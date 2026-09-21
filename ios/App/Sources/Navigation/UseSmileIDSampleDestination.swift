@@ -65,9 +65,12 @@ struct UseSmileIDSampleDestination: View {
         state: .init(
           organisation: app.profiles.find(profileId)?.organisation ?? profileId,
           defaults: app.profileDraft(for: profileId),
-          isActive: profileId == app.profiles.activeId
+          isActive: profileId == app.profiles.activeId,
+          callbackUrl: app.profileCallbackDraft(for: profileId),
+          callbackOverride: app.session?.callbackOverrideCaption
         ),
         onFieldChange: { field, value in app.editProfileDraft(profileId, field, to: value) },
+        onCallbackUrlChange: { value in app.editProfileCallbackDraft(profileId, to: value) },
         onBack: { app.discardProfileDraft(profileId)
           router.pop() },
         onSave: { app.saveProfile(profileId)

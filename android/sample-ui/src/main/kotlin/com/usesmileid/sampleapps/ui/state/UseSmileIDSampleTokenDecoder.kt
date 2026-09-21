@@ -23,12 +23,14 @@ data class UseSmileIDSampleTokenBindings(
     val idType: String? = null,
     /** The vault reference standing in for the ID number, which is the only form a token carries it in. */
     val idNumberReference: String? = null,
+    /** A webhook URL or a `callback_` id; the server injects it over whatever the body carried. */
+    val callbackUrl: String? = null,
 ) {
     /** Redacted like the session's: every one of these is a claim value, and one is a vault reference. */
     override fun toString(): String = "UseSmileIDSampleTokenBindings(" +
         "givenNames=$givenNames, lastName=$lastName, email=$email, phoneNumber=$phoneNumber, " +
         "consent=${consent != null}, country=${country != null}, idType=${idType != null}, " +
-        "idNumberReference=${idNumberReference != null})"
+        "idNumberReference=${idNumberReference != null}, callbackUrl=${callbackUrl != null})"
 }
 
 /**
@@ -148,6 +150,7 @@ object UseSmileIDSampleTokenDecoder {
         country = string("country")?.takeIf { it.isNotBlank() },
         idType = string("id_type")?.takeIf { it.isNotBlank() },
         idNumberReference = string("id_number")?.takeIf { it.isNotBlank() },
+        callbackUrl = string("callback_url")?.takeIf { it.isNotBlank() },
     )
 
     /** An empty consent object is no consent, and a non-boolean `granted` never counts toward one. */

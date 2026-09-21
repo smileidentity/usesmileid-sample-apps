@@ -146,6 +146,7 @@ public enum UseSmileIDSampleTestIds {
   public static let profilesScreen = "sample_profiles_screen"
   public static let createProfile = "sample_create_profile"
   public static let profileConfigScreen = "sample_profile_config_screen"
+  public static let profileConfigCallbackUrl = "sample_profile_config_callback_url"
   public static let profileConfigSave = "sample_profile_config_save"
   public static let profileSwitchSheet = "sample_profile_switch_sheet"
   public static let newProfileSheet = "sample_new_profile_sheet"
@@ -220,7 +221,7 @@ public enum UseSmileIDSampleTestIds {
     idTypeSheet, idTypeSearch, idTypeEmpty, idTypeOptionPrefix,
     profileAvatarButton, profileSummary,
     profilesScreen, profileRowPrefix, createProfile,
-    profileConfigScreen, profileConfigFieldPrefix, profileConfigSave,
+    profileConfigScreen, profileConfigFieldPrefix, profileConfigCallbackUrl, profileConfigSave,
     profileSwitchSheet, newProfileSheet, newProfileName, newProfileFirstName, newProfileLastName,
     newProfileEmail, newProfilePhone, newProfileSave,
     sessionCard, sessionCountdown, sessionEndedBanner,

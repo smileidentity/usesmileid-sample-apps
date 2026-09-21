@@ -360,6 +360,10 @@
         "description": "One user-details default; suffixed with the field."
       },
       {
+        "id": "sample_profile_config_callback_url",
+        "description": "The profile's callback URL; empty means the partner's portal default. Disabled while a token session is live \u2014 that session's partner owns the job, so the profile's URL is not sent."
+      },
+      {
         "id": "sample_profile_config_save",
         "description": "Saves the defaults AND makes the profile active — the design labels it \"Make this profile active\"."
       }

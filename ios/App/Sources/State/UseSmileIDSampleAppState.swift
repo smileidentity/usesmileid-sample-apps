@@ -26,6 +26,9 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// The config screen's unsaved edits, keyed by profile, so a tab switch cannot lose them.
   @Published var profileDrafts: [String: UseSmileIDSampleUserDetails] = [:]
 
+  /// Kept beside the user-details draft so both are discarded together when the screen is left.
+  @Published var profileCallbackDrafts: [String: String] = [:]
+
   /// Nil is "not loaded yet", not "empty": the store's first emission resolves it.
   @Published private(set) var jobs: [UseSmileIDSampleJob]?
 
@@ -255,15 +258,29 @@ final class UseSmileIDSampleAppState: ObservableObject {
     profileDrafts[id] = field.write(profileDraft(for: id), value)
   }
 
+  func profileCallbackDraft(for id: String) -> String {
+    profileCallbackDrafts[id] ?? profiles.find(id)?.callbackUrl ?? ""
+  }
+
+  func editProfileCallbackDraft(_ id: String, to value: String) {
+    profileCallbackDrafts[id] = value
+  }
+
   func discardProfileDraft(_ id: String) {
     profileDrafts[id] = nil
+    profileCallbackDrafts[id] = nil
   }
 
   /// The CTA reads "Make this profile active", so it has to do both.
   func saveProfile(_ id: String) {
-    profiles.setDefaults(id, profileDraft(for: id))
+    profiles.setDefaults(
+      id,
+      profileDraft(for: id),
+      callbackUrl: profileCallbackDraft(for: id).trimmingCharacters(in: .whitespacesAndNewlines)
+    )
     profiles.setActive(id)
     profileDrafts[id] = nil
+    profileCallbackDrafts[id] = nil
   }
 
   func createProfile() {

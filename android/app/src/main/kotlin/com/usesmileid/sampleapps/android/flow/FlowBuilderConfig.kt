@@ -87,7 +87,7 @@ fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshe
                 // token submitted under a different id comes back 401. Verified on device with a real
                 // Portal token, where the sample's fixture profile id produced exactly that.
                 partnerId = scanned?.partnerId ?: snapshot.partnerId
-                callbackUrl = CALLBACK_URL
+                callbackUrl = resolveCallbackUrl(snapshot)
                 useSandbox = snapshot.sandbox
             }
         }
@@ -232,4 +232,3 @@ private val UseSmileIDSampleProduct.needsDocumentCapture: Boolean
 
 // The same host the Settings privacy row opens.
 private val PRIVACY_POLICY_URL = URL("https://smile.id/privacy-policy")
-private const val CALLBACK_URL = "https://your-callback-url.com"

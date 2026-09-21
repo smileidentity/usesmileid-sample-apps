@@ -293,6 +293,7 @@ class SdkFlowPreflightTest {
         userId = "sample-user",
         partnerId = "p-1",
         partnerName = "UpTech Finance",
+        callbackUrl = "",
     )
 
     private companion object {

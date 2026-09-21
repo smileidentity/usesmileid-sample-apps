@@ -29,6 +29,8 @@ data class FlowLaunchSnapshot(
     val userId: String,
     val partnerId: String,
     val partnerName: String,
+    /** The active profile's webhook URL; empty means their portal default. */
+    val callbackUrl: String,
     /** Live at entry only: a session that has run out is the gate's business, never the builder's. */
     val session: UseSmileIDSampleTokenSession? = null,
     /** Run out — the one thing that routes back to the scanner (TOK-A5). Usually true with no [session]. */
@@ -65,6 +67,7 @@ fun buildSnapshot(
         userId = userId,
         partnerId = app.profiles.active.id,
         partnerName = app.profiles.active.organisation,
+        callbackUrl = app.profiles.active.callbackUrl,
         session = session?.takeUnless { it.hasExpired(entryMillis) },
         sessionExpired = app.endedSession != null || (session != null && session.hasExpired(entryMillis)),
     )

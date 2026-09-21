@@ -60,6 +60,7 @@ object UseSmileIDSampleTestIds {
     const val NEW_PROFILE_EMAIL = "sample_new_profile_email"
     const val NEW_PROFILE_PHONE = "sample_new_profile_phone"
     const val NEW_PROFILE_SAVE = "sample_new_profile_save"
+    const val PROFILE_CONFIG_CALLBACK_URL = "sample_profile_config_callback_url"
     const val PROFILE_CONFIG_SAVE = "sample_profile_config_save"
 
     // Attached by the component itself: the spec assigns these to it, not to a screen.
@@ -162,6 +163,7 @@ object UseSmileIDSampleTestIds {
         NEW_PROFILE_EMAIL,
         NEW_PROFILE_PHONE,
         NEW_PROFILE_SAVE,
+        PROFILE_CONFIG_CALLBACK_URL,
         PROFILE_CONFIG_SAVE,
         RESULT_CARD,
         RESULT_ACTIVE_SCENARIO,

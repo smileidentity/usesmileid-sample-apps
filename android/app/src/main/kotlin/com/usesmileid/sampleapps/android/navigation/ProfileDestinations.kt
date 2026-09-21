@@ -22,6 +22,7 @@ import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTransientNoticeHost
 import com.usesmileid.sampleapps.ui.components.rememberTransientNotice
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
+import com.usesmileid.sampleapps.ui.state.callbackOverrideCaption
 import com.usesmileid.sampleapps.ui.screens.NewProfileSheet as NewProfileContent
 import com.usesmileid.sampleapps.ui.screens.ProfileConfigScreen as ProfileConfigContent
 import com.usesmileid.sampleapps.ui.screens.ProfileSwitchSheet as ProfileSwitchContent
@@ -90,15 +91,19 @@ fun ProfileConfigScreen(profileId: String, navigator: DestinationsNavigator) {
     var defaults by rememberSaveable(profileId, saver = UseSmileIDSampleUserDetails.Saver) {
         mutableStateOf(profile?.defaults ?: UseSmileIDSampleUserDetails())
     }
+    var callbackUrl by rememberSaveable(profileId) { mutableStateOf(profile?.callbackUrl.orEmpty()) }
     ProfileConfigContent(
         organisation = profile?.organisation ?: profileId,
         isActive = profileId == app.profiles.activeId,
         defaults = defaults,
         onFieldChange = { field, value -> defaults = field.write(defaults, value) },
+        callbackUrl = callbackUrl,
+        onCallbackUrlChange = { callbackUrl = it },
+        callbackOverride = app.session?.callbackOverrideCaption(),
         onBack = { navigator.navigateUp() },
         onSave = {
             // The CTA reads "Make this profile active", so it has to do both.
-            app.profiles.setDefaults(profileId, defaults)
+            app.profiles.setDefaults(profileId, defaults, callbackUrl.trim())
             app.profiles.setActive(profileId)
             navigator.navigateUp()
         },

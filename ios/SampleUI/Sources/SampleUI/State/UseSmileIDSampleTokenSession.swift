@@ -51,6 +51,15 @@ public struct UseSmileIDSampleTokenSession: Equatable, Sendable, CustomStringCon
   }
 }
 
+public extension UseSmileIDSampleTokenSession {
+  /// What the row reads instead of the profile's URL while this session runs.
+  var callbackOverrideCaption: String {
+    bindings.callbackUrl != nil
+      ? "Set by the scanned token"
+      : "The scanned token's partner default applies"
+  }
+}
+
 /// `m:ss`, growing an hours part when the span needs one (7:59:12, not 479:12); floors, so it never shows time that has gone.
 public func useSmileIDSampleCountdown(_ remaining: TimeInterval) -> String {
   let total = Int(max(0, remaining).rounded(.down))

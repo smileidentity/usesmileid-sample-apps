@@ -13,6 +13,8 @@ data class UseSmileIDSampleProfile(
     val organisation: String,
     val person: String,
     val defaults: UseSmileIDSampleUserDetails = UseSmileIDSampleUserDetails(),
+    /** Empty means the partner's portal default. */
+    val callbackUrl: String = "",
 ) {
     /** The person's initials, as the design has them, falling back to the organisation for a new profile. */
     val initials: String
@@ -84,13 +86,14 @@ class UseSmileIDSampleProfiles(seed: List<UseSmileIDSampleProfile> = starter()) 
         return profile
     }
 
-    fun setDefaults(id: String, defaults: UseSmileIDSampleUserDetails) {
+    /** A null [callbackUrl] leaves the stored one alone; only a caller that edited it passes a value. */
+    fun setDefaults(id: String, defaults: UseSmileIDSampleUserDetails, callbackUrl: String? = null) {
         val index = items.indexOfFirst { it.id == id }
         if (index < 0) return
         val current = items[index]
         // The starter names nobody until its details are saved; a created profile keeps the name its sheet gave it.
         val person = current.person.ifBlank { "${defaults.firstName} ${defaults.lastName}".trim() }
-        items[index] = current.copy(defaults = defaults, person = person)
+        items[index] = current.copy(defaults = defaults, person = person, callbackUrl = callbackUrl ?: current.callbackUrl)
     }
 
     companion object {

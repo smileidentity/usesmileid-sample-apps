@@ -20,6 +20,10 @@ import com.usesmileid.sampleapps.ui.state.userDetailsRequirement
 internal val FlowLaunchSnapshot.liveSession: UseSmileIDSampleTokenSession?
     get() = session?.takeUnless { scenario.startsExpired }
 
+/** Dropped under a live session, as the partner id already is: the token's partner owns the job. */
+internal fun resolveCallbackUrl(snapshot: FlowLaunchSnapshot): String =
+    if (snapshot.liveSession != null) "" else snapshot.callbackUrl
+
 /** The live-session rule, in one place, so nothing disagrees about whether a token is live. */
 internal fun UseSmileIDSampleTokenSession?.liveAt(
     scenario: UseSmileIDSampleScenario,

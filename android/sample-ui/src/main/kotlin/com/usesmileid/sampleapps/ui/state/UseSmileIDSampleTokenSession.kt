@@ -49,6 +49,13 @@ data class UseSmileIDSampleTokenSession(
         "UseSmileIDSampleTokenSession(id=$id, environment=$environment, expiresAtMillis=$expiresAtMillis)"
 }
 
+/** What the row reads instead of the profile's URL while this session runs. */
+fun UseSmileIDSampleTokenSession.callbackOverrideCaption(): String =
+    if (bindings.callbackUrl != null) SESSION_BINDS_CALLBACK else SESSION_PARTNER_DEFAULT
+
+private const val SESSION_BINDS_CALLBACK = "Set by the scanned token"
+private const val SESSION_PARTNER_DEFAULT = "The scanned token's partner default applies"
+
 /** `m:ss`, growing an hours part when the span needs one — an 8h token reads 7:59:12, not 479:12. */
 fun Duration.toCountdown(): String {
     val total = inWholeSeconds

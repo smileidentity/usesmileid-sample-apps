@@ -6,17 +6,21 @@ public struct UseSmileIDSampleProfile: Equatable, Identifiable, Sendable {
   public var organisation: String
   public var person: String
   public var defaults: UseSmileIDSampleUserDetails
+  /// Empty means the partner's portal default.
+  public var callbackUrl: String
 
   public init(
     id: String,
     organisation: String,
     person: String,
-    defaults: UseSmileIDSampleUserDetails = UseSmileIDSampleUserDetails()
+    defaults: UseSmileIDSampleUserDetails = UseSmileIDSampleUserDetails(),
+    callbackUrl: String = ""
   ) {
     self.id = id
     self.organisation = organisation
     self.person = person
     self.defaults = defaults
+    self.callbackUrl = callbackUrl
   }
 
   /// The person's initials, as the design has them, falling back to the organisation for a new profile.
@@ -100,9 +104,17 @@ public struct UseSmileIDSampleProfiles: Equatable, Sendable {
     return profile
   }
 
-  public mutating func setDefaults(_ id: String, _ defaults: UseSmileIDSampleUserDetails) {
+  /// A nil `callbackUrl` leaves the stored one alone; only a caller that edited it passes a value.
+  public mutating func setDefaults(
+    _ id: String,
+    _ defaults: UseSmileIDSampleUserDetails,
+    callbackUrl: String? = nil
+  ) {
     guard let index = items.firstIndex(where: { $0.id == id }) else { return }
     items[index].defaults = defaults
+    if let callbackUrl {
+      items[index].callbackUrl = callbackUrl
+    }
     // The starter names nobody until its details are saved; a created profile keeps the name its sheet gave it.
     if items[index].person.isBlank {
       items[index].person = "\(defaults.firstName) \(defaults.lastName)".trimmingCharacters(in: .whitespaces)
