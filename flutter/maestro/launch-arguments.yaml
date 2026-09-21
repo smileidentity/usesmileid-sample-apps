@@ -1,0 +1,69 @@
+appId: ${APP_ID}
+---
+# The launch-argument plumbing, which is the other thing no hostless test reaches: every widget
+# test overrides the launch-args provider directly, so `seedJobs` stayed wired to nothing while
+# they all passed (PR #101). Only a real launch proves the argument travels.
+#
+# Arguments arrive as a COLD-START LINK on this platform — `main()` reads
+# `PlatformDispatcher.defaultRouteName` once, before the first frame. `am start --ez seedJobs true`
+# does nothing, and Maestro's `launchApp: arguments:` is ignored, so each case is a `stopApp` and
+# an `openLink`.
+
+- clearState
+- stopApp
+- openLink: "usesmileid-sample-flutter://"
+- extendedWaitUntil:
+    visible:
+      id: "sample_products_screen"
+    timeout: 30000
+
+# A launch with no arguments shows a partner nothing that is not theirs.
+- tapOn:
+    id: "sample_nav_verifications"
+- assertVisible:
+    id: "sample_verifications_empty"
+
+- stopApp
+- openLink: "usesmileid-sample-flutter://?seedJobs=true"
+- extendedWaitUntil:
+    visible:
+      id: "sample_products_screen"
+    timeout: 30000
+- tapOn:
+    id: "sample_nav_verifications"
+- assertVisible:
+    id: "sample_job_row_0"
+
+# The link's own path decides the destination, and the router folds the scheme and host back into
+# one — the whole URI reaches it, because only the cold start goes through the launch parser.
+- stopApp
+- openLink: "usesmileid-sample-flutter://settings"
+- extendedWaitUntil:
+    visible:
+      id: "sample_settings_screen"
+    timeout: 30000
+
+# Mid-run, which is the entry `spec/routes.json` documents for reaching the drawer from a flow.
+# This served go_router's Page Not Found until the router learned to fold a platform link.
+- openLink: "usesmileid-sample-flutter://debug/scenarios"
+- assertVisible:
+    id: "sample_scenario_drawer"
+
+# The bar belongs to the page behind the scrim, so dismissing the sheet cannot strand settings.
+- assertVisible:
+    id: "sample_nav_settings"
+- back
+- assertVisible:
+    id: "sample_settings_screen"
+
+# A mid-run link navigates but never re-seeds: arguments are read once, before the first frame.
+- clearState
+- stopApp
+- openLink: "usesmileid-sample-flutter://"
+- extendedWaitUntil:
+    visible:
+      id: "sample_products_screen"
+    timeout: 30000
+- openLink: "usesmileid-sample-flutter://verifications?seedJobs=true"
+- assertVisible:
+    id: "sample_verifications_empty"

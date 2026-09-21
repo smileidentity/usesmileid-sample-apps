@@ -1,0 +1,76 @@
+appId: ${APP_ID}
+---
+# The three behaviours PR #101 shipped with widget tests only, because the handset's keyguard
+# blocked the device pass: the detail page opening from a row, back landing on the LIST rather than
+# on products, and the delete confirming on the list.
+#
+# `clearState` first, and Undo at the end: the job store is SharedPreferences, so a removal
+# survives the run and `seedJobs` is idempotent by id — a re-seed never brings a removed row back.
+# A flow that removes without restoring passes once and then asserts against a shorter list.
+
+- clearState
+- stopApp
+- openLink: "usesmileid-sample-flutter://?seedJobs=true"
+- extendedWaitUntil:
+    visible:
+      id: "sample_products_screen"
+    timeout: 30000
+
+- tapOn:
+    id: "sample_nav_verifications"
+- assertVisible:
+    id: "sample_verifications_screen"
+- assertVisible:
+    id: "sample_job_row_0"
+
+# The count is its own node so this reads a number rather than parsing the list's prose. It is also
+# what makes the removal below provable rather than merely non-crashing.
+- assertVisible:
+    id: "sample_filter_count_all"
+    text: "11"
+
+- tapOn:
+    id: "sample_job_row_0"
+- assertVisible:
+    id: "sample_verification_details_screen"
+
+# The badge reports the VERDICT and the Status row reports the TRANSPORT, so the two disagree by
+# design on a job the server accepted and the check did not clear.
+- assertVisible:
+    id: "sample_status_badge"
+- assertVisible:
+    id: "sample_detail_field_status"
+
+# The pushed page has no nav bar: the pill belongs to the tab roots, and a detail page is not one.
+- assertNotVisible:
+    id: "sample_nav_products"
+
+# Back lands on the LIST. It reached products before #101, because the branch's navigator had
+# nothing to pop and back went to the system instead.
+- back
+- assertVisible:
+    id: "sample_verifications_screen"
+- assertVisible:
+    id: "sample_job_row_0"
+
+# The delete leaves the page and confirms on the list, which is the third owed behaviour.
+- tapOn:
+    id: "sample_job_row_0"
+- assertVisible:
+    id: "sample_verification_details_screen"
+- tapOn:
+    id: "sample_details_delete"
+- assertVisible:
+    id: "sample_verifications_screen"
+- assertVisible:
+    id: "sample_toast"
+- assertVisible:
+    id: "sample_filter_count_all"
+    text: "10"
+
+# Undo, which both proves the confirmation's action and leaves the store as the flow found it.
+- tapOn:
+    id: "sample_toast_undo"
+- assertVisible:
+    id: "sample_filter_count_all"
+    text: "11"

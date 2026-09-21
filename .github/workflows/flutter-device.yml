@@ -1,0 +1,119 @@
+name: Flutter device
+
+# Separate from the Flutter gate, and on ubuntu rather than the macOS runner that gate uses: a
+# Flutter golden is host-rasterised, which is why `flutter.yml` runs on a Mac, and a macOS runner
+# has no KVM. Nothing here rasterises anything — it drives a running app on an emulator, which is
+# the only place the launch-argument plumbing and the bundled licence registry can be seen at all.
+on:
+  pull_request:
+    paths:
+      - 'flutter/**'
+      - 'spec/**'
+      - '.github/workflows/flutter-device.yml'
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: flutter-device-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  flows:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      # The build fills this runner and the emulator package then has nowhere to land. The Android
+      # SDK and NDK are deliberately untouched: the Flutter build needs both.
+      - name: Free disk space
+        run: |
+          df -h / | tail -1
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/share/swift \
+            /usr/local/share/powershell /usr/local/lib/node_modules \
+            /opt/hostedtoolcache/CodeQL
+          df -h / | tail -1
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          # The same pin flutter.yml carries. The notices flow names engine components by id, and
+          # the toolchain is what decides which ones the bundle carries.
+          flutter-version: 3.44.0
+          channel: stable
+          cache: true
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      # One ABI for the engine and the AOT snapshot, which is the part that is compiled — the
+      # emulator is x86_64 and building all four is what killed the Expo runner mid-compile. The
+      # plugin AARs still ship their own prebuilt slices; those cost megabytes, not minutes.
+      #
+      # Release, not debug: minified and resource-shrunk with no app-side keep rules, which is the
+      # configuration a consumption defect in the published SDK surfaces in.
+      - name: Build the release APK
+        run: |
+          start=$SECONDS
+          flutter build apk --release --target-platform android-x64
+          echo "::notice title=Build::release APK in $((SECONDS - start))s"
+        working-directory: flutter/app
+
+      # The daemon holds a heap this runner needs back before an emulator will fit beside it.
+      - name: Stop the Gradle daemon
+        run: ./gradlew --stop
+        working-directory: flutter/app/android
+
+      - name: Report the disk left for the emulator
+        run: df -h / | tail -1
+
+      - name: Install Maestro
+        run: |
+          curl -fsSL https://get.maestro.mobile.dev | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      # The emulator needs nested virtualisation, which is not granted to the runner user by default.
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run the device flows
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          MAESTRO_CLI_NO_ANALYTICS: '1'
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_5
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          # A device that locks mid-session fails the opening assertion against lock-screen
+          # content, which reads as an ordinary assertion failure rather than as infrastructure.
+          script: |
+            echo "::notice title=Emulator::booted $((SECONDS))s into this step"
+            adb shell locksettings set-disabled true
+            adb install -r flutter/app/build/app/outputs/flutter-apk/app-release.apk
+            start=$SECONDS
+            maestro test -e APP_ID=com.usesmileid.sample.flutter flutter/maestro
+            echo "::notice title=Flows::3 flows in $((SECONDS - start))s"
+
+      # A red here is a screen recording and a hierarchy, which is what makes it readable at all.
+      - name: Upload the Maestro debug output
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: flutter-device-debug
+          path: ~/.maestro/tests/**
+          if-no-files-found: ignore
+          retention-days: 7
