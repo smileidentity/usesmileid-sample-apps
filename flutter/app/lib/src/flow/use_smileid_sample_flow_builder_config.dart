@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:usesmileid/usesmileid.dart';
 import 'package:usesmileid_mlkit_face/usesmileid_mlkit_face.dart';
@@ -138,6 +139,8 @@ void _journeyFor(
       case UseSmileIDSampleFlowJourneyStep.consent:
         screens.consent((ConsentConfigBuilder consent) {
           consent.partnerName = snapshot.partnerName;
+          // Omitting it fails build() while validate() still reports Valid, so no gate catches it.
+          consent.partnerIcon = const _UseSmileIDSamplePartnerMark();
           consent.partnerPrivacyPolicyUrl = _privacyPolicyUrl;
         });
       case UseSmileIDSampleFlowJourneyStep.instructions:
@@ -265,6 +268,16 @@ extension on UseSmileIDSampleProduct {
   bool get needsDocumentCapture =>
       this == UseSmileIDSampleProduct.documentVerification ||
       this == UseSmileIDSampleProduct.enhancedDocumentVerification;
+}
+
+/// The partner mark the consent screen draws, resolving its colour where the SDK mounts it.
+class _UseSmileIDSamplePartnerMark extends StatelessWidget {
+  const _UseSmileIDSamplePartnerMark();
+
+  @override
+  Widget build(BuildContext context) => UseSmileIDSampleGlyphs.productMark(
+    UseSmileIDSampleTheme.colorsOf(context).textTitle,
+  );
 }
 
 void _ignore() {}

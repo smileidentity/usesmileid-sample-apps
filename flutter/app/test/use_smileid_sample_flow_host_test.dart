@@ -214,6 +214,31 @@ void main() {
       );
     });
 
+    // The gate can only call `validate()`, which the SDK documents as far weaker than `build()` —
+    // a missing consent icon passes one and fails the other, and a rejected build renders nothing.
+    // `build()`'s result type is not exported, so the assertion reads the runtime type by name.
+    test('every product builds a configuration the SDK accepts', () {
+      for (final UseSmileIDSampleProduct product
+          in UseSmileIDSampleProduct.values) {
+        final dynamic result = builderFor(
+          snapshotFor(
+            product,
+            idDetails: const UseSmileIDSampleIdDetails(
+              country: UseSmileIDSampleCountry.ke,
+              idType: UseSmileIDSampleIdType.nationalId,
+              idNumber: '11111111',
+            ),
+          ),
+        ).build();
+
+        expect(
+          result.runtimeType.toString(),
+          contains('Success'),
+          reason: '${product.id}: ${_issuesOf(result)}',
+        );
+      }
+    });
+
     test(
       'an unselected document type stays absent rather than becoming a rejected empty string',
       () {
@@ -324,4 +349,15 @@ void main() {
       );
     });
   });
+}
+
+/// The rejected build's own words, so a red names the rule rather than only the product.
+String _issuesOf(dynamic result) {
+  try {
+    return (result.validation.issues as List<dynamic>)
+        .map((dynamic issue) => '${issue.runtimeType}: ${issue.message}')
+        .join('; ');
+  } on Object {
+    return 'no issues reported';
+  }
 }
