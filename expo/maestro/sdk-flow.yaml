@@ -1,0 +1,90 @@
+appId: ${APP_ID}
+---
+# The SDK flow handoff, which no hostless lane can see at all: the wizard stacking above the tabs,
+# the gate turning an incomplete form back, and the SDK's own first screen mounting — the assertion a
+# packaging failure fails on, conclusively. Flows stop at the capture screen, which needs a camera.
+#
+# The SDK publishes only two semantics identifiers on this platform, `si_preview_screen` and
+# `si_processing_screen`, where the Android SDK also publishes `si_consent_screen`. The consent
+# screen is therefore asserted by its own text, which is what the Android twin taps anyway; this
+# repo references the SDK's ids and never invents one. There is no result card here yet either, so
+# the terminal-result count that twin reads has no home — see ../../docs/plan/after-the-ports.md.
+#
+# Launch arguments arrive as a LINK on this platform — see ./README.md "Traps".
+
+- stopApp
+- openLink: "usesmileid-sample-expo://?noticeWindow=60"
+- runFlow: subflows/warm-start.yaml
+
+# The wizard covers the tabs, and back returns to the grid rather than stranding on the form.
+- tapOn:
+    id: "sample_product_card_smartSelfieEnrollment"
+- assertVisible:
+    id: "sample_user_details_screen"
+- assertNotVisible:
+    id: "sample_nav_products"
+- back
+- assertVisible:
+    id: "sample_products_screen"
+
+# Continue on an empty form cannot reach the SDK: the gate reads the SDK's own validators and sends
+# the journey back to the form that can still fix it.
+- tapOn:
+    id: "sample_product_card_smartSelfieEnrollment"
+- assertVisible:
+    id: "sample_user_details_screen"
+- tapOn:
+    id: "sample_user_details_field_firstName"
+- inputText: "Ada"
+- tapOn:
+    id: "sample_user_details_field_lastName"
+- inputText: "Okafor"
+# The SDK requires a contact field even though the form labels both optional.
+- tapOn:
+    id: "sample_user_details_field_email"
+- inputText: "ada.okafor@example.com"
+- hideKeyboard
+- tapOn:
+    id: "sample_user_details_continue"
+
+# The SDK's consent screen: the flow host mounted, the published artifact linked, and the journey
+# reached the SDK. The host draws no chrome over it.
+- extendedWaitUntil:
+    visible: "Deny"
+    timeout: 60000
+- assertVisible: "Allow"
+- assertNotVisible:
+    id: "sample_nav_products"
+
+# Deny is the failure exit and the back gesture is the cancel one; both return to the grid rather
+# than into the wizard beneath, which is what replacing past the stack buys.
+- tapOn: "Deny"
+- extendedWaitUntil:
+    visible:
+      id: "sample_products_screen"
+    timeout: 60000
+
+- tapOn:
+    id: "sample_product_card_smartSelfieEnrollment"
+- assertVisible:
+    id: "sample_user_details_screen"
+# The form kept what it collected: the stores outlive the wizard being replaced.
+- tapOn:
+    id: "sample_user_details_continue"
+- extendedWaitUntil:
+    visible: "Deny"
+    timeout: 60000
+- back
+- extendedWaitUntil:
+    visible:
+      id: "sample_products_screen"
+    timeout: 60000
+
+# Nothing was submitted, so nothing was stored: a cancelled run must not leave a row behind.
+- tapOn:
+    id: "sample_nav_verifications"
+- assertVisible:
+    id: "sample_verifications_screen"
+- assertVisible:
+    id: "sample_filter_count_all"
+    text: "0"

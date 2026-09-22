@@ -1,4 +1,8 @@
-import { smileIDSampleProductFrom, type UseSmileIDSampleProduct } from './use-smile-id-sample-product';
+import {
+  smileIDSampleProductFrom,
+  smileIDSampleProducts,
+  type UseSmileIDSampleProduct,
+} from './use-smile-id-sample-product';
 import { UseSmileIDSampleStatus, smileIDSampleStatusFrom } from './use-smile-id-sample-status';
 
 const SHORT_ID_LENGTH = 8;
@@ -31,12 +35,16 @@ export const smileIDSampleJobShortUserId = (job: UseSmileIDSampleJob) => short(j
 
 /// Rebuilds a row read back from storage, resolving both enums by lookup so a rename cannot crash a restore.
 export const smileIDSampleJobFrom = (raw: Record<string, unknown>): UseSmileIDSampleJob | null => {
-  const product = smileIDSampleProductFrom(typeof raw.product === 'string' ? raw.product : null);
-  if (product === null || typeof raw.id !== 'string' || raw.id.length === 0) return null;
+  // The id is the one field with no sensible substitute: a row nothing can address is not a row.
+  if (typeof raw.id !== 'string' || raw.id.length === 0) return null;
   return {
     id: raw.id,
     userId: typeof raw.userId === 'string' ? raw.userId : '',
-    product,
+    // Substituted rather than dropped, as Android and iOS do: a removed product must not take a
+    // user's history with it, and the row still says everything else it recorded.
+    product:
+      smileIDSampleProductFrom(typeof raw.product === 'string' ? raw.product : null) ??
+      smileIDSampleProducts[0]!,
     status: smileIDSampleStatusFrom(typeof raw.status === 'string' ? raw.status : null),
     createdAtMillis: typeof raw.createdAtMillis === 'number' ? raw.createdAtMillis : 0,
     message: typeof raw.message === 'string' ? raw.message : '',
