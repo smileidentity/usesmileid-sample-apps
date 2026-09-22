@@ -3,18 +3,13 @@ import { RefreshControl, ScrollView, StyleSheet, Text, View, type StyleProp, typ
 import { UseSmileIDSampleDataFieldRow } from '../components/use-smile-id-sample-data-field-row';
 import { UseSmileIDSampleEmptyState } from '../components/use-smile-id-sample-empty-state';
 import { UseSmileIDSampleIcon } from '../components/use-smile-id-sample-icon';
-import {
-  UseSmileIDSampleRowDivider,
-  UseSmileIDSampleSectionSurface,
-} from '../components/use-smile-id-sample-section-surface';
+import { UseSmileIDSampleSectionSurface } from '../components/use-smile-id-sample-section-surface';
 import { UseSmileIDSampleStatusBadge } from '../components/use-smile-id-sample-status-badge';
 import {
   UseSmileIDSampleTopAppBar,
   UseSmileIDSampleTopAppBarButton,
 } from '../components/use-smile-id-sample-top-app-bar';
-import {
-  smileIDSampleCreatedAtLabel,
-} from '../model/use-smile-id-sample-job-dates';
+import { smileIDSampleCreatedAtLabel } from '../model/use-smile-id-sample-job-dates';
 import {
   smileIDSampleHttpLabel,
   smileIDSampleJobShortId,
@@ -78,7 +73,7 @@ export const VerificationDetailsScreen = ({
       <ScrollView
         testID={UseSmileIDSampleTestIds.VERIFICATION_DETAILS_SCREEN}
         contentContainerStyle={{
-          padding: theme.dimens.spacing.md,
+          paddingHorizontal: theme.dimens.spacing.md,
           rowGap: theme.dimens.spacing.sm,
         }}
         // Present in every state, not only processing: an outcome that cannot succeed says why.
@@ -93,21 +88,26 @@ export const VerificationDetailsScreen = ({
       >
         {job === null ? (
           <UseSmileIDSampleEmptyState
-            text="No verification stored for this id"
+            text="No verification here"
             // The id asked for is the whole diagnostic, which a deep link is how you reach.
-            supportingText={state.jobId}
+            supportingText={`Nothing stored for jobId = ${state.jobId}`}
             testID={UseSmileIDSampleTestIds.DETAILS_EMPTY}
           />
         ) : (
           <>
-            <View style={[styles.status, { columnGap: theme.dimens.spacing.sm }]}>
+            <View
+              style={[
+                styles.title,
+                { columnGap: theme.dimens.spacing.xs, paddingVertical: theme.dimens.spacing.xs },
+              ]}
+            >
+              <Text style={[theme.type.textStyleTitle, styles.titleText, { color: theme.colors.textTitle }]}>
+                {job.product.label}
+              </Text>
               <UseSmileIDSampleStatusBadge
                 status={job.status}
                 testID={UseSmileIDSampleTestIds.STATUS_BADGE}
               />
-              <Text style={[theme.type.textStyleBodySm, styles.message, { color: theme.colors.textBody }]}>
-                {job.message}
-              </Text>
             </View>
 
             {state.refreshNotice != null ? (
@@ -118,13 +118,29 @@ export const VerificationDetailsScreen = ({
 
             <UseSmileIDSampleSectionSurface label="DETAILS">
               <UseSmileIDSampleDataFieldRow
+                label="Created_at"
+                value={smileIDSampleCreatedAtLabel(job)}
+                testID={UseSmileIDSampleSuffixedTestIds.detailField('createdAt')}
+              />
+              <UseSmileIDSampleDataFieldRow
                 label="Job_id"
                 value={smileIDSampleJobShortId(job)}
                 onCopy={() => onCopy('jobId', job.id)}
                 testID={UseSmileIDSampleSuffixedTestIds.detailField('jobId')}
                 copyTestID={UseSmileIDSampleSuffixedTestIds.detailCopy('jobId')}
               />
-              <UseSmileIDSampleRowDivider />
+              <UseSmileIDSampleDataFieldRow
+                label="Message"
+                value={job.message}
+                testID={UseSmileIDSampleSuffixedTestIds.detailField('message')}
+              />
+              <UseSmileIDSampleDataFieldRow
+                label="Status"
+                value={smileIDSampleHttpLabel(job.httpStatus) ?? ''}
+                // Coloured by the HTTP outcome, not the verdict: a blocked job still shows a green 200.
+                valueColor={httpStatusColour(job.httpStatus, theme.colors.badge)}
+                testID={UseSmileIDSampleSuffixedTestIds.detailField('status')}
+              />
               <UseSmileIDSampleDataFieldRow
                 label="User_id"
                 value={smileIDSampleJobShortUserId(job)}
@@ -132,29 +148,9 @@ export const VerificationDetailsScreen = ({
                 testID={UseSmileIDSampleSuffixedTestIds.detailField('userId')}
                 copyTestID={UseSmileIDSampleSuffixedTestIds.detailCopy('userId')}
               />
-              <UseSmileIDSampleRowDivider />
-              <UseSmileIDSampleDataFieldRow
-                label="Product"
-                value={job.product.label}
-                testID={UseSmileIDSampleSuffixedTestIds.detailField('product')}
-              />
-              <UseSmileIDSampleRowDivider />
-              <UseSmileIDSampleDataFieldRow
-                label="Status"
-                // The code is stored; the reason phrase is composed here, where the row is drawn.
-                value={smileIDSampleHttpLabel(job.httpStatus) ?? '—'}
-                testID={UseSmileIDSampleSuffixedTestIds.detailField('httpStatus')}
-              />
-              <UseSmileIDSampleRowDivider />
-              <UseSmileIDSampleDataFieldRow
-                label="Submitted"
-                value={smileIDSampleCreatedAtLabel(job)}
-                testID={UseSmileIDSampleSuffixedTestIds.detailField('createdAt')}
-              />
-              <UseSmileIDSampleRowDivider />
               <UseSmileIDSampleDataFieldRow
                 label="Environment"
-                // The only surface besides the result card that says where a row went.
+                // Android publishes this on the result card, which this port does not have yet.
                 value={job.sandbox ? 'sandbox' : 'production'}
                 testID={UseSmileIDSampleSuffixedTestIds.detailField('environment')}
               />
@@ -166,8 +162,17 @@ export const VerificationDetailsScreen = ({
   );
 };
 
+/// Green while the call succeeded, red once it did not; no code is neither, since red would invent a failure.
+const httpStatusColour = (
+  code: number | null,
+  badge: { successText: string; errorText: string },
+): string | undefined => {
+  if (code === null) return undefined;
+  return code >= 200 && code <= 299 ? badge.successText : badge.errorText;
+};
+
 const styles = StyleSheet.create({
   screen: { flex: 1 },
-  status: { alignItems: 'center', flexDirection: 'row', width: '100%' },
-  message: { flex: 1 },
+  title: { alignItems: 'center', flexDirection: 'row' },
+  titleText: { flex: 1 },
 });
