@@ -116,7 +116,6 @@ class _UseSmileIDSampleKycFormTabState
               ? UseSmileIDSampleRoutes.sdkFlow(widget.productId)
               : UseSmileIDSampleJourney.afterIdDetails(product),
         ),
-        // Inert like the nav bar's token button until the scan screen is ported.
         onScanToken: () {},
       ),
     );
