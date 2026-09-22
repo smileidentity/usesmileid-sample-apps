@@ -126,7 +126,7 @@ which of the two their platform behaves like rather than assume Android's limita
    - **The sheet is a second window on Android.** Material 3 derives its bars from the sheet's
      `contentColor`, which is a theme token here, so it was already right — the predicate asserts
      it anyway, because one presentation proves nothing about the other.
-   - **The SDK's capture screen sets its own bars and restores the host's on the way out.** The
+   - **The SDK's capture screen sets its own status-bar icons and restores the host's on the way out.** The
      Android SDK forces light icons there over a surface it pins light, so the clock is white on
      near-white while the SDK owns the screen; the Flutter and React Native SDKs draw dark icons.
      That is the SDK's defect and is not worked around here.

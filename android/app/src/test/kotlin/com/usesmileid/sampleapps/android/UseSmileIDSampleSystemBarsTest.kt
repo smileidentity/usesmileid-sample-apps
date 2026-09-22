@@ -5,11 +5,14 @@ import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.core.graphics.ColorUtils
 import androidx.core.view.WindowCompat
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleBottomSheet
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -18,7 +21,7 @@ import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowDialog
 import org.robolectric.shadows.ShadowLooper
 
-/** Status-bar contrast in both presentations: dark icons on a light app and light on a dark one, whatever the device says. */
+/** System-bar contrast in both presentations: dark icons on a light app and light on a dark one, whatever the device says. */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [36])
 class UseSmileIDSampleSystemBarsTest {
@@ -35,6 +38,22 @@ class UseSmileIDSampleSystemBarsTest {
         assertIcons(window = shell(darkMode = true), dark = true)
     }
 
+    @Test
+    @Config(qualifiers = "night")
+    fun `the shipped activity keeps a light app's icons dark on a dark device`() {
+        val activity = Robolectric.buildActivity(UseSmileIDSampleActivity::class.java).setup().get()
+        ShadowLooper.idleMainLooper()
+        assertIcons(window = activity.window, dark = false)
+    }
+
+    @Test
+    @Config(sdk = [25], qualifiers = "notnight")
+    fun `below API 26 a light app keeps a navigation bar its white buttons show on`() {
+        val window = compose(darkMode = false) { }.window
+        assertTrue("a dark bar", ColorUtils.calculateLuminance(window.navigationBarColor) < 0.5)
+    }
+
+    // The sheet is its own window, whose bars Material 3 takes from the sheet's content colour, not from this app.
     @Test
     @Config(qualifiers = "night")
     fun `a light app on a dark device draws dark icons over a sheet`() {
@@ -56,7 +75,7 @@ class UseSmileIDSampleSystemBarsTest {
         return dialog!!.window!!
     }
 
-    private fun compose(darkMode: Boolean, content: @androidx.compose.runtime.Composable () -> Unit): ComponentActivity {
+    private fun compose(darkMode: Boolean, content: @Composable () -> Unit): ComponentActivity {
         val activity = Robolectric.buildActivity(ComponentActivity::class.java).setup().get()
         activity.setContent {
             UseSmileIDSampleTheme(darkTheme = darkMode) {

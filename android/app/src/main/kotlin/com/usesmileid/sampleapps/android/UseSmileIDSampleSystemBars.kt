@@ -6,7 +6,7 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.LocalActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.graphics.toArgb
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -14,13 +14,17 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 @Composable
 fun UseSmileIDSampleSystemBars(darkMode: Boolean) {
     val activity = LocalActivity.current as? ComponentActivity ?: return
-    // Only drawn below API 29; from 29 the system enforces the navigation bar's contrast itself.
-    val scrim = UseSmileIDSampleTheme.colors.background.toArgb()
-    LaunchedEffect(activity, darkMode, scrim) {
-        // `auto` without a detector reads the device's night mode, so a dark phone drew white icons on the light app.
+    val colors = UseSmileIDSampleTheme.colors
+    // Only drawn below API 29, and below 26 the dark one always is, because its buttons cannot turn dark.
+    val lightScrim = colors.background.toArgb()
+    val darkScrim = colors.overlayScrim.toArgb()
+    // Applied in composition order, not a frame later: the SDK's capture screen saves this value to restore it.
+    DisposableEffect(activity, darkMode, lightScrim, darkScrim) {
+        // Without a detector, `auto` reads the device's night mode rather than the app's.
         activity.enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) { darkMode },
-            navigationBarStyle = SystemBarStyle.auto(scrim, scrim) { darkMode },
+            navigationBarStyle = SystemBarStyle.auto(lightScrim, darkScrim) { darkMode },
         )
+        onDispose { }
     }
 }
