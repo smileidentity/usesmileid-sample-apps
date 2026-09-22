@@ -596,12 +596,12 @@ exports[`at the largest content size, dark job_row 1`] = `
         style={
           [
             {
-              "fontFamily": "DMSans-Regular",
-              "fontSize": 14,
+              "fontFamily": "DMSans-Medium",
+              "fontSize": 12,
               "letterSpacing": 0,
-              "lineHeight": 20,
-              "marginBottom": -0.8859999999999992,
-              "marginTop": -0.8859999999999992,
+              "lineHeight": 16,
+              "marginBottom": -0.18799999999999972,
+              "marginTop": -0.18799999999999972,
             },
             {
               "color": "#848282",
@@ -1834,12 +1834,12 @@ exports[`at the largest content size, light job_row 1`] = `
         style={
           [
             {
-              "fontFamily": "DMSans-Regular",
-              "fontSize": 14,
+              "fontFamily": "DMSans-Medium",
+              "fontSize": 12,
               "letterSpacing": 0,
-              "lineHeight": 20,
-              "marginBottom": -0.8859999999999992,
-              "marginTop": -0.8859999999999992,
+              "lineHeight": 16,
+              "marginBottom": -0.18799999999999972,
+              "marginTop": -0.18799999999999972,
             },
             {
               "color": "#848282",

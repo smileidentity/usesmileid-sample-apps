@@ -122,7 +122,7 @@ const JobRowText = ({
       </Text>
       <Text
         numberOfLines={lines}
-        style={[theme.type.textStyleBodySm, { color: theme.colors.textMuted }]}
+        style={[theme.type.textStyleCaption, { color: theme.colors.textMuted }]}
       >
         {`${jobId} · ${time}`}
       </Text>

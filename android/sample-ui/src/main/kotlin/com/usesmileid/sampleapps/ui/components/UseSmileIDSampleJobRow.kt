@@ -133,7 +133,7 @@ private fun JobRowText(
         )
         Text(
             text = "$jobId · $time",
-            style = UseSmileIDSampleTheme.type.textStyleBodySm,
+            style = UseSmileIDSampleTheme.type.textStyleCaption,
             color = colors.textMuted,
             // Ellipsised like the title, so every row is the same height at the design's scale.
             maxLines = if (stacks) Int.MAX_VALUE else 1,
