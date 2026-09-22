@@ -89,6 +89,28 @@ four runs of 36–53 minutes. This phase is closed; item 8 records what the lane
 
 ## Phase 4 — the rest of the port: the flow host, then the token session
 
+**Status: the flow host has LANDED on Flutter**, taking SmartSelfie Enrollment end to end — product
+tap, form, `/flow/:productId/run`, the SDK's own screens, and back to the originating tab on either
+exit. The job-store contract landed inside it, so `addJob` has a caller and the detail page's refresh
+reports what the store decided instead of a sentence stored on the row. Expo follows in its own
+tranche; the token session and the scanner are still the second half.
+
+Four things the Flutter half found that the phase did not predict, each recorded rather than
+"aligned":
+
+- **This SDK publishes two semantics identifiers**, `si_preview_screen` and `si_processing_screen`,
+  where the Android SDK also publishes `si_consent_screen` and `si_instructions_screen`. The device
+  flow asserts the consent screen by its own text; this repo never invents an `si_*` id.
+- **`validate()` is not the gate `build()` is.** A consent screen with no `partnerIcon` passes one
+  and fails the other, and a rejected build renders an empty frame with no error — the host sees
+  nothing. `FlowBuildResult` is not exported from the Dart SDK's public library, so a host cannot
+  pattern-match on it as the SDK's own doc comment instructs. Both belong in the SDK repo.
+- **Neither port has a result card**, so the terminal-result count the Android flow reads has no
+  home. Until one exists, a cancel or a denial is observable only as "landed back on the tab".
+- **A profile here carries no callback URL** — #118 landed that on Android and iOS only — so the run
+  submits with the partner's portal default, and the environment is sandbox until a scanned session
+  says otherwise.
+
 This is the larger half of the remaining work and the only phase that makes the apps do what they
 exist to do. Both journeys stop at `/flow/:productId/run`, a route neither app claims. Neither port
 invented a placeholder, deliberately — a page that is not in the design and says "not yet" gets
