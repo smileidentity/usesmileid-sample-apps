@@ -47,12 +47,12 @@ takes the whole JS bundle down — the app exits to the launcher with no crash l
 rather than importing both, and `sdk-flow.yaml`'s cold link at `/flow/:productId/run` is what
 catches a regression: it is the only assertion that loads that import graph.
 
-**Maestro cannot drive this app's text inputs.** Once a field is focused its driver stops reporting
-the app's hierarchy, and it does not recover when the keyboard closes; `uiautomator` still sees every
-field, and it reproduces on `main`'s APK, so it is the runner rather than the app. `hideKeyboard` is
-a back press on Android and will pop the route when the keyboard is already down. `sdk-flow.yaml`
-therefore reaches the flow host by a cold link rather than by filling the form, and the SDK-screen
-assertions live in the Flutter twin.
+**One emulator stopped reporting any app's hierarchy once a text field was focused**, and did not
+recover when the keyboard closed — `uiautomator` still saw every field. It hit the Flutter sample
+too, and `main`'s own APK, so it was that machine rather than either app; the same flows type
+correctly on a handset. `sdk-flow.yaml` reaches the flow host by a cold link rather than by filling
+the form, which needs no keyboard at all and so cannot meet it. `hideKeyboard` is a back press on
+Android and will pop the route when the keyboard is already down.
 
 **`uiautomator dump` is unreliable on the ColorOS handset** — it is killed silently and serves
 whatever a previous run left at that path. Maestro drives its own on-device driver and is unaffected,
