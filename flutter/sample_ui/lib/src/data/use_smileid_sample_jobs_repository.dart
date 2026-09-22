@@ -1,6 +1,7 @@
 import '../model/use_smileid_sample_job.dart';
 import '../model/use_smileid_sample_product.dart';
 import '../model/use_smileid_sample_status.dart';
+import 'use_smileid_sample_job_status_source.dart';
 
 /// Where the verifications are kept, so the screen never knows what is doing the keeping.
 abstract interface class UseSmileIDSampleJobsRepository {
@@ -15,10 +16,100 @@ abstract interface class UseSmileIDSampleJobsRepository {
 
   /// Puts the last removal back, once. A second call restores nothing.
   Future<void> undoRemove();
+
+  /// Records a verification. A no-op on an id already stored, so a repeated result delivery is harmless.
+  Future<void> add(UseSmileIDSampleJob job);
+
+  /// One row by id, or null when this build never stored it.
+  Future<UseSmileIDSampleJob?> find(String jobId);
+
+  /// The one write that overwrites, reporting whether the row was still there.
+  Future<bool> applyStatus({
+    required String jobId,
+    required UseSmileIDSampleStatus status,
+    required String message,
+    required int httpStatus,
+  });
+
+  /// The whole refresh sequence. Null means one is already in flight for this row.
+  Future<UseSmileIDSampleStatusRefresh?> refresh({
+    required String jobId,
+    required UseSmileIDSampleRefreshSession? session,
+    required int nowMillis,
+    required UseSmileIDSampleJobStatusSource source,
+  });
+}
+
+/// The refresh sequence, written once: it is the part that encodes the contract, and two copies drift.
+mixin UseSmileIDSampleJobRefreshMixin
+    implements UseSmileIDSampleJobsRepository {
+  final Set<String> _inFlight = <String>{};
+
+  @override
+  Future<UseSmileIDSampleStatusRefresh?> refresh({
+    required String jobId,
+    required UseSmileIDSampleRefreshSession? session,
+    required int nowMillis,
+    required UseSmileIDSampleJobStatusSource source,
+  }) async {
+    if (!_inFlight.add(jobId)) {
+      return null;
+    }
+    try {
+      final UseSmileIDSampleJob? row = await find(jobId);
+      if (row == null) {
+        return const UseSmileIDSampleStatusFailed(_gone);
+      }
+      if (row.sessionId == null) {
+        return const UseSmileIDSampleStatusNoServerJob();
+      }
+      if (session == null || session.expiresAtMillis <= nowMillis) {
+        return const UseSmileIDSampleStatusNoSession();
+      }
+      // The partner, not the session: tokens expire and the same partner holds a newer one.
+      if (session.partnerId != row.partnerId) {
+        return const UseSmileIDSampleStatusPartnerMismatch();
+      }
+
+      final UseSmileIDSampleStatusRefresh outcome;
+      try {
+        // The row's environment, never the toggle: a row outlives the toggle that produced it.
+        outcome = await source.check(
+          jobId: jobId,
+          token: session.token,
+          sandbox: row.sandbox,
+        );
+      } on Object catch (error) {
+        // The type, never the message: this text goes on screen and a client error carries the URL.
+        return UseSmileIDSampleStatusFailed(
+          'Unexpected error: ${error.runtimeType}',
+        );
+      }
+      if (outcome is! UseSmileIDSampleStatusUpdated) {
+        return outcome;
+      }
+
+      final bool written = await applyStatus(
+        jobId: jobId,
+        status: outcome.status,
+        message: outcome.message,
+        httpStatus: outcome.httpCode,
+      );
+      return written ? outcome : const UseSmileIDSampleStatusFailed(_gone);
+    } finally {
+      // Released even when the caller was cancelled, or the row is silently unrefreshable for the
+      // rest of the process — which is what a `finally` buys that an early return does not.
+      _inFlight.remove(jobId);
+    }
+  }
+
+  /// A delete landing mid-refresh wins, so the sequence says so rather than resurrecting the row.
+  static const String _gone = 'The verification is no longer stored';
 }
 
 /// Jobs that live as long as the process, which is what a test and a preview want.
 class UseSmileIDSampleMemoryJobsRepository
+    with UseSmileIDSampleJobRefreshMixin
     implements UseSmileIDSampleJobsRepository {
   /// [initial] is taken as stored, so a test can start from any list including an empty one.
   UseSmileIDSampleMemoryJobsRepository([
@@ -62,6 +153,45 @@ class UseSmileIDSampleMemoryJobsRepository
   Future<void> undoRemove() async {
     _jobs.addAll(_lastRemoved);
     _lastRemoved = const <UseSmileIDSampleJob>[];
+  }
+
+  @override
+  Future<void> add(UseSmileIDSampleJob job) async {
+    if (_jobs.any((UseSmileIDSampleJob stored) => stored.id == job.id)) {
+      return;
+    }
+    _jobs.add(job);
+  }
+
+  @override
+  Future<UseSmileIDSampleJob?> find(String jobId) async {
+    for (final UseSmileIDSampleJob job in _jobs) {
+      if (job.id == jobId) {
+        return job;
+      }
+    }
+    return null;
+  }
+
+  @override
+  Future<bool> applyStatus({
+    required String jobId,
+    required UseSmileIDSampleStatus status,
+    required String message,
+    required int httpStatus,
+  }) async {
+    final int at = _jobs.indexWhere(
+      (UseSmileIDSampleJob job) => job.id == jobId,
+    );
+    if (at < 0) {
+      return false;
+    }
+    _jobs[at] = _jobs[at].withStatus(
+      status: status,
+      message: message,
+      httpStatus: httpStatus,
+    );
+    return true;
   }
 }
 

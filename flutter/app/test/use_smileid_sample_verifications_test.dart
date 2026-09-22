@@ -178,7 +178,9 @@ void main() {
 }
 
 /// A store that answers only when told to, so the not-yet-answered frame can be looked at.
-class _HeldJobsRepository implements UseSmileIDSampleJobsRepository {
+class _HeldJobsRepository
+    with UseSmileIDSampleJobRefreshMixin
+    implements UseSmileIDSampleJobsRepository {
   final Completer<List<UseSmileIDSampleJob>> _answer =
       Completer<List<UseSmileIDSampleJob>>();
 
@@ -196,4 +198,18 @@ class _HeldJobsRepository implements UseSmileIDSampleJobsRepository {
 
   @override
   Future<void> undoRemove() async {}
+
+  @override
+  Future<void> add(UseSmileIDSampleJob job) async {}
+
+  @override
+  Future<UseSmileIDSampleJob?> find(String jobId) async => null;
+
+  @override
+  Future<bool> applyStatus({
+    required String jobId,
+    required UseSmileIDSampleStatus status,
+    required String message,
+    required int httpStatus,
+  }) async => false;
 }
