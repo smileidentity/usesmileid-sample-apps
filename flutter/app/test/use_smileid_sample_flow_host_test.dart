@@ -153,6 +153,24 @@ void main() {
       );
     });
 
+    // The issues the gate carries are what a future surface reports, so they are held to naming the
+    // field rather than merely being non-empty.
+    test('names the fields an empty form left for the form to fix', () {
+      final UseSmileIDSampleFlowPreflight outcome = useSmileIDSamplePreflight(
+        snapshotFor(
+          UseSmileIDSampleProduct.smartSelfieEnrollment,
+          userDetails: const UseSmileIDSampleUserDetails(),
+        ),
+      );
+
+      final String reported = (outcome as UseSmileIDSampleFlowNeedsDetails)
+          .issues
+          .map((UseSmileIDValidationException issue) => issue.message)
+          .join('; ');
+      expect(reported, contains('givenNames'));
+      expect(reported, contains('lastName'));
+    });
+
     test('sends a KYC product with no country back to the form', () {
       expect(
         useSmileIDSamplePreflight(
@@ -220,16 +238,21 @@ void main() {
     test('every product builds a configuration the SDK accepts', () {
       for (final UseSmileIDSampleProduct product
           in UseSmileIDSampleProduct.values) {
-        final dynamic result = builderFor(
-          snapshotFor(
-            product,
-            idDetails: const UseSmileIDSampleIdDetails(
-              country: UseSmileIDSampleCountry.ke,
-              idType: UseSmileIDSampleIdType.nationalId,
-              idNumber: '11111111',
-            ),
-          ),
-        ).build();
+        final dynamic result =
+            builderFor(
+                  snapshotFor(
+                    product,
+                    idDetails: const UseSmileIDSampleIdDetails(
+                      country: UseSmileIDSampleCountry.ke,
+                      idType: UseSmileIDSampleIdType.nationalId,
+                      idNumber: '11111111',
+                    ),
+                  ),
+                )
+                // The SDK's own doc comment tells partners to inspect this result, and then marks the
+                // method internal and leaves its result type unexported. Both belong in the SDK.
+                // ignore: invalid_use_of_internal_member
+                .build();
 
         expect(
           result.runtimeType.toString(),

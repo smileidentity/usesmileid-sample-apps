@@ -13,9 +13,8 @@ import 'use_smileid_sample_flow_tokens.dart';
 /// The one place that decides what the SDK is handed.
 void useSmileIDSampleApplying(
   UseSmileIDFlowBuilder builder,
-  UseSmileIDSampleFlowLaunchSnapshot snapshot, {
-  void Function() onTokenRefreshed = _ignore,
-}) {
+  UseSmileIDSampleFlowLaunchSnapshot snapshot,
+) {
   builder.userDetails = UserDetails(
     givenNames: snapshot.userDetails.firstName,
     lastName: snapshot.userDetails.lastName,
@@ -54,7 +53,6 @@ void useSmileIDSampleApplying(
         nowMillis: DateTime.now().millisecondsSinceEpoch,
       );
       config.onTokenExpired = (String previous) async {
-        onTokenRefreshed();
         return snapshot.scenario == UseSmileIDSampleScenario.badRefresh
             ? UseSmileIDSampleFlowTokens.malformed()
             : UseSmileIDSampleFlowTokens.token(
@@ -84,6 +82,9 @@ void useSmileIDSampleApplying(
       theme.secondaryColor = palette.secondaryColor;
       theme.accentColor = palette.accentColor;
       theme.buttonShape = palette.buttonShape;
+      if (palette.fontFamily case final String family) {
+        theme.fontFamily = family;
+      }
     });
   }
 }
@@ -279,8 +280,6 @@ class _UseSmileIDSamplePartnerMark extends StatelessWidget {
     UseSmileIDSampleTheme.colorsOf(context).textTitle,
   );
 }
-
-void _ignore() {}
 
 // The same host the Settings privacy row opens.
 const String _privacyPolicyUrl = 'https://smile.id/privacy-policy';

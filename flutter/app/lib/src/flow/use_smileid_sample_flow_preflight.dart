@@ -30,15 +30,6 @@ class UseSmileIDSampleFlowMisconfigured extends UseSmileIDSampleFlowPreflight {
 
   /// What the builder validator rejected.
   final List<UseSmileIDValidationException> issues;
-
-  /// The issues as one line, which is what a blocked run reports.
-  String get summary {
-    final String joined = issues
-        .map((UseSmileIDValidationException issue) => issue.message)
-        .where((String message) => message.trim().isNotEmpty)
-        .join('; ');
-    return joined.isEmpty ? 'The flow did not validate' : joined;
-  }
 }
 
 /// The entry gate: the SDK's non-throwing pre-flight plus its per-payload validators.
