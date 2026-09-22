@@ -3,6 +3,8 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { smileDarkColors, smileLightColors } from '../src/theme/smile-colors';
+import { schemes } from './render-in-theme';
+import { scaleSensitive } from './scale-sensitive-states';
 
 /// Two states whose baselines are byte-identical are not two baselines, so each pair that is
 /// identical on purpose is named here and a new one fails — the cheapest dark-mode miss to ship.
@@ -191,6 +193,7 @@ const readPixelPairs = (files: readonly string[]) => {
   return pairs;
 };
 
+/// Every pair of distinct states that painted the same picture in one scheme, as `first == second`.
 const twinsIn = (pairs: ReadonlyMap<string, { light?: string; dark?: string }>): string[] => {
   const found: string[] = [];
   for (const scheme of ['light', 'dark'] as const) {
@@ -256,7 +259,9 @@ describe('the recorded pixel goldens', () => {
 
   it('paint every enlarged state in both schemes, one picture per recorded tree', () => {
     const enlarged = readdirSync(join(__dirname, 'goldens', 'use-smile-id-sample-font-scale'));
-    expect(enlarged.filter((name) => name.endsWith('.png')).length).toBe(18);
+    expect(enlarged.filter((name) => name.endsWith('.png')).length).toBe(
+      Object.keys(scaleSensitive).length * schemes.length,
+    );
   });
 });
 
