@@ -24,14 +24,14 @@ exports[`DataFieldRow dark plain 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 12,
-          "fontWeight": "500",
+          "fontSize": 13,
           "letterSpacing": 0,
           "lineHeight": 16,
+          "marginBottom": -0,
+          "marginTop": -0,
         },
         {
           "color": "#848282",
-          "fontSize": 13,
         },
       ]
     }
@@ -43,10 +43,11 @@ exports[`DataFieldRow dark plain 1`] = `
       [
         {
           "fontFamily": "DMSans-SemiBold",
-          "fontSize": 14,
-          "fontWeight": "600",
+          "fontSize": 13,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.536999999999999,
+          "marginTop": -1.536999999999999,
         },
         {
           "flex": 1,
@@ -54,7 +55,6 @@ exports[`DataFieldRow dark plain 1`] = `
         },
         {
           "color": "#f2f2f2",
-          "fontSize": 13,
         },
       ]
     }
@@ -88,14 +88,14 @@ exports[`DataFieldRow dark withCopy 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 12,
-          "fontWeight": "500",
+          "fontSize": 13,
           "letterSpacing": 0,
           "lineHeight": 16,
+          "marginBottom": -0,
+          "marginTop": -0,
         },
         {
           "color": "#848282",
-          "fontSize": 13,
         },
       ]
     }
@@ -107,10 +107,11 @@ exports[`DataFieldRow dark withCopy 1`] = `
       [
         {
           "fontFamily": "DMSans-SemiBold",
-          "fontSize": 14,
-          "fontWeight": "600",
+          "fontSize": 13,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.536999999999999,
+          "marginTop": -1.536999999999999,
         },
         {
           "flex": 1,
@@ -118,7 +119,6 @@ exports[`DataFieldRow dark withCopy 1`] = `
         },
         {
           "color": "#f2f2f2",
-          "fontSize": 13,
         },
       ]
     }
@@ -253,14 +253,14 @@ exports[`DataFieldRow dark withStatusValue 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 12,
-          "fontWeight": "500",
+          "fontSize": 13,
           "letterSpacing": 0,
           "lineHeight": 16,
+          "marginBottom": -0,
+          "marginTop": -0,
         },
         {
           "color": "#848282",
-          "fontSize": 13,
         },
       ]
     }
@@ -272,10 +272,11 @@ exports[`DataFieldRow dark withStatusValue 1`] = `
       [
         {
           "fontFamily": "DMSans-Bold",
-          "fontSize": 14,
-          "fontWeight": "700",
+          "fontSize": 13,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.536999999999999,
+          "marginTop": -1.536999999999999,
         },
         {
           "flex": 1,
@@ -283,7 +284,6 @@ exports[`DataFieldRow dark withStatusValue 1`] = `
         },
         {
           "color": "#151f72",
-          "fontSize": 13,
         },
       ]
     }
@@ -317,14 +317,14 @@ exports[`DataFieldRow light plain 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 12,
-          "fontWeight": "500",
+          "fontSize": 13,
           "letterSpacing": 0,
           "lineHeight": 16,
+          "marginBottom": -0,
+          "marginTop": -0,
         },
         {
           "color": "#848282",
-          "fontSize": 13,
         },
       ]
     }
@@ -336,10 +336,11 @@ exports[`DataFieldRow light plain 1`] = `
       [
         {
           "fontFamily": "DMSans-SemiBold",
-          "fontSize": 14,
-          "fontWeight": "600",
+          "fontSize": 13,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.536999999999999,
+          "marginTop": -1.536999999999999,
         },
         {
           "flex": 1,
@@ -347,7 +348,6 @@ exports[`DataFieldRow light plain 1`] = `
         },
         {
           "color": "#21232c",
-          "fontSize": 13,
         },
       ]
     }
@@ -381,14 +381,14 @@ exports[`DataFieldRow light withCopy 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 12,
-          "fontWeight": "500",
+          "fontSize": 13,
           "letterSpacing": 0,
           "lineHeight": 16,
+          "marginBottom": -0,
+          "marginTop": -0,
         },
         {
           "color": "#848282",
-          "fontSize": 13,
         },
       ]
     }
@@ -400,10 +400,11 @@ exports[`DataFieldRow light withCopy 1`] = `
       [
         {
           "fontFamily": "DMSans-SemiBold",
-          "fontSize": 14,
-          "fontWeight": "600",
+          "fontSize": 13,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.536999999999999,
+          "marginTop": -1.536999999999999,
         },
         {
           "flex": 1,
@@ -411,7 +412,6 @@ exports[`DataFieldRow light withCopy 1`] = `
         },
         {
           "color": "#21232c",
-          "fontSize": 13,
         },
       ]
     }
@@ -546,14 +546,14 @@ exports[`DataFieldRow light withStatusValue 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 12,
-          "fontWeight": "500",
+          "fontSize": 13,
           "letterSpacing": 0,
           "lineHeight": 16,
+          "marginBottom": -0,
+          "marginTop": -0,
         },
         {
           "color": "#848282",
-          "fontSize": 13,
         },
       ]
     }
@@ -565,10 +565,11 @@ exports[`DataFieldRow light withStatusValue 1`] = `
       [
         {
           "fontFamily": "DMSans-Bold",
-          "fontSize": 14,
-          "fontWeight": "700",
+          "fontSize": 13,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.536999999999999,
+          "marginTop": -1.536999999999999,
         },
         {
           "flex": 1,
@@ -576,7 +577,6 @@ exports[`DataFieldRow light withStatusValue 1`] = `
         },
         {
           "color": "#151f72",
-          "fontSize": 13,
         },
       ]
     }
@@ -592,14 +592,14 @@ exports[`DateGroupHeader dark absoluteOnly 1`] = `
     [
       {
         "fontFamily": "DMSans-Bold",
-        "fontSize": 10,
-        "fontWeight": "700",
+        "fontSize": 11,
         "letterSpacing": 0,
         "lineHeight": 16,
+        "marginBottom": -0.8389999999999995,
+        "marginTop": -0.8389999999999995,
       },
       {
         "color": "#848282",
-        "fontSize": 11,
         "letterSpacing": 0.88,
         "paddingVertical": 8,
         "width": "100%",
@@ -618,14 +618,14 @@ exports[`DateGroupHeader dark withRelativeWord 1`] = `
     [
       {
         "fontFamily": "DMSans-Bold",
-        "fontSize": 10,
-        "fontWeight": "700",
+        "fontSize": 11,
         "letterSpacing": 0,
         "lineHeight": 16,
+        "marginBottom": -0.8389999999999995,
+        "marginTop": -0.8389999999999995,
       },
       {
         "color": "#848282",
-        "fontSize": 11,
         "letterSpacing": 0.88,
         "paddingVertical": 8,
         "width": "100%",
@@ -644,14 +644,14 @@ exports[`DateGroupHeader light absoluteOnly 1`] = `
     [
       {
         "fontFamily": "DMSans-Bold",
-        "fontSize": 10,
-        "fontWeight": "700",
+        "fontSize": 11,
         "letterSpacing": 0,
         "lineHeight": 16,
+        "marginBottom": -0.8389999999999995,
+        "marginTop": -0.8389999999999995,
       },
       {
         "color": "#848282",
-        "fontSize": 11,
         "letterSpacing": 0.88,
         "paddingVertical": 8,
         "width": "100%",
@@ -670,14 +670,14 @@ exports[`DateGroupHeader light withRelativeWord 1`] = `
     [
       {
         "fontFamily": "DMSans-Bold",
-        "fontSize": 10,
-        "fontWeight": "700",
+        "fontSize": 11,
         "letterSpacing": 0,
         "lineHeight": 16,
+        "marginBottom": -0.8389999999999995,
+        "marginTop": -0.8389999999999995,
       },
       {
         "color": "#848282",
-        "fontSize": 11,
         "letterSpacing": 0.88,
         "paddingVertical": 8,
         "width": "100%",
@@ -713,9 +713,10 @@ exports[`EmptyState dark text 1`] = `
         {
           "fontFamily": "DMSans-SemiBold",
           "fontSize": 16,
-          "fontWeight": "600",
           "letterSpacing": 0,
           "lineHeight": 24,
+          "marginBottom": -1.5839999999999996,
+          "marginTop": -1.5839999999999996,
         },
         {
           "textAlign": "center",
@@ -754,9 +755,10 @@ exports[`EmptyState dark textWithSupporting 1`] = `
         {
           "fontFamily": "DMSans-SemiBold",
           "fontSize": 16,
-          "fontWeight": "600",
           "letterSpacing": 0,
           "lineHeight": 24,
+          "marginBottom": -1.5839999999999996,
+          "marginTop": -1.5839999999999996,
         },
         {
           "textAlign": "center",
@@ -775,9 +777,10 @@ exports[`EmptyState dark textWithSupporting 1`] = `
         {
           "fontFamily": "DMSans-Medium",
           "fontSize": 12,
-          "fontWeight": "500",
           "letterSpacing": 0,
           "lineHeight": 16,
+          "marginBottom": -0.18799999999999972,
+          "marginTop": -0.18799999999999972,
         },
         {
           "textAlign": "center",
@@ -816,9 +819,10 @@ exports[`EmptyState light text 1`] = `
         {
           "fontFamily": "DMSans-SemiBold",
           "fontSize": 16,
-          "fontWeight": "600",
           "letterSpacing": 0,
           "lineHeight": 24,
+          "marginBottom": -1.5839999999999996,
+          "marginTop": -1.5839999999999996,
         },
         {
           "textAlign": "center",
@@ -857,9 +861,10 @@ exports[`EmptyState light textWithSupporting 1`] = `
         {
           "fontFamily": "DMSans-SemiBold",
           "fontSize": 16,
-          "fontWeight": "600",
           "letterSpacing": 0,
           "lineHeight": 24,
+          "marginBottom": -1.5839999999999996,
+          "marginTop": -1.5839999999999996,
         },
         {
           "textAlign": "center",
@@ -878,9 +883,10 @@ exports[`EmptyState light textWithSupporting 1`] = `
         {
           "fontFamily": "DMSans-Medium",
           "fontSize": 12,
-          "fontWeight": "500",
           "letterSpacing": 0,
           "lineHeight": 16,
+          "marginBottom": -0.18799999999999972,
+          "marginTop": -0.18799999999999972,
         },
         {
           "textAlign": "center",
@@ -919,7 +925,6 @@ exports[`FilterChip dark active 1`] = `
   accessible={true}
   collapsable={false}
   focusable={true}
-  hitSlop={7}
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -932,63 +937,76 @@ exports[`FilterChip dark active 1`] = `
   style={
     [
       {
-        "alignItems": "center",
         "alignSelf": "flex-start",
-        "flexDirection": "row",
+        "justifyContent": "center",
       },
       {
-        "backgroundColor": "#4d88ff",
-        "borderColor": "transparent",
-        "borderRadius": 999,
-        "borderWidth": 0,
-        "columnGap": 4,
-        "minHeight": 32,
-        "paddingHorizontal": 12,
-        "paddingVertical": 8,
+        "minHeight": 44,
       },
       undefined,
     ]
   }
 >
-  <Text
+  <View
     style={
       [
         {
-          "fontFamily": "DMSans-Bold",
-          "fontSize": 14,
-          "fontWeight": "700",
-          "letterSpacing": 0,
-          "lineHeight": 20,
+          "alignItems": "center",
+          "flexDirection": "row",
         },
         {
-          "color": "#ffffff",
-          "fontSize": 12.5,
+          "backgroundColor": "#4d88ff",
+          "borderColor": "transparent",
+          "borderRadius": 999,
+          "borderWidth": 0,
+          "columnGap": 4,
+          "minHeight": 32,
+          "paddingHorizontal": 12,
+          "paddingVertical": 8,
         },
       ]
     }
   >
-    All
-  </Text>
-  <Text
-    style={
-      [
-        {
-          "fontFamily": "DMSans-Bold",
-          "fontSize": 10,
-          "fontWeight": "700",
-          "letterSpacing": 0,
-          "lineHeight": 16,
-        },
-        {
-          "color": "#ffffff",
-          "fontSize": 11,
-          "letterSpacing": 0.88,
-        },
-      ]
-    }
-  >
-    11
-  </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 12.5,
+            "letterSpacing": 0,
+            "lineHeight": 20,
+            "marginBottom": -1.862499999999999,
+            "marginTop": -1.862499999999999,
+          },
+          {
+            "color": "#ffffff",
+          },
+        ]
+      }
+    >
+      All
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 11,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.8389999999999995,
+            "marginTop": -0.8389999999999995,
+          },
+          {
+            "color": "#ffffff",
+            "letterSpacing": 0.88,
+          },
+        ]
+      }
+    >
+      11
+    </Text>
+  </View>
 </View>
 `;
 
@@ -1015,7 +1033,6 @@ exports[`FilterChip dark default 1`] = `
   accessible={true}
   collapsable={false}
   focusable={true}
-  hitSlop={7}
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -1028,63 +1045,76 @@ exports[`FilterChip dark default 1`] = `
   style={
     [
       {
-        "alignItems": "center",
         "alignSelf": "flex-start",
-        "flexDirection": "row",
+        "justifyContent": "center",
       },
       {
-        "backgroundColor": "#272a35",
-        "borderColor": "#2d3748",
-        "borderRadius": 999,
-        "borderWidth": 0.5,
-        "columnGap": 4,
-        "minHeight": 32,
-        "paddingHorizontal": 12,
-        "paddingVertical": 8,
+        "minHeight": 44,
       },
       undefined,
     ]
   }
 >
-  <Text
+  <View
     style={
       [
         {
-          "fontFamily": "DMSans-Bold",
-          "fontSize": 14,
-          "fontWeight": "700",
-          "letterSpacing": 0,
-          "lineHeight": 20,
+          "alignItems": "center",
+          "flexDirection": "row",
         },
         {
-          "color": "#c2c5cb",
-          "fontSize": 12.5,
+          "backgroundColor": "#272a35",
+          "borderColor": "#2d3748",
+          "borderRadius": 999,
+          "borderWidth": 0.5,
+          "columnGap": 4,
+          "minHeight": 32,
+          "paddingHorizontal": 11.5,
+          "paddingVertical": 7.5,
         },
       ]
     }
   >
-    Clear
-  </Text>
-  <Text
-    style={
-      [
-        {
-          "fontFamily": "DMSans-Bold",
-          "fontSize": 10,
-          "fontWeight": "700",
-          "letterSpacing": 0,
-          "lineHeight": 16,
-        },
-        {
-          "color": "#848282",
-          "fontSize": 11,
-          "letterSpacing": 0.88,
-        },
-      ]
-    }
-  >
-    6
-  </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 12.5,
+            "letterSpacing": 0,
+            "lineHeight": 20,
+            "marginBottom": -1.862499999999999,
+            "marginTop": -1.862499999999999,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+        ]
+      }
+    >
+      Clear
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 11,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.8389999999999995,
+            "marginTop": -0.8389999999999995,
+          },
+          {
+            "color": "#848282",
+            "letterSpacing": 0.88,
+          },
+        ]
+      }
+    >
+      6
+    </Text>
+  </View>
 </View>
 `;
 
@@ -1111,7 +1141,6 @@ exports[`FilterChip dark pressed 1`] = `
   accessible={true}
   collapsable={false}
   focusable={true}
-  hitSlop={7}
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -1124,64 +1153,77 @@ exports[`FilterChip dark pressed 1`] = `
   style={
     [
       {
-        "alignItems": "center",
         "alignSelf": "flex-start",
-        "flexDirection": "row",
+        "justifyContent": "center",
       },
       {
-        "backgroundColor": "#272a35",
-        "borderColor": "#2d3748",
-        "borderRadius": 999,
-        "borderWidth": 0.5,
-        "columnGap": 4,
-        "minHeight": 32,
-        "paddingHorizontal": 12,
-        "paddingVertical": 8,
+        "minHeight": 44,
       },
       undefined,
     ]
   }
   testID="golden_chip"
 >
-  <Text
+  <View
     style={
       [
         {
-          "fontFamily": "DMSans-Bold",
-          "fontSize": 14,
-          "fontWeight": "700",
-          "letterSpacing": 0,
-          "lineHeight": 20,
+          "alignItems": "center",
+          "flexDirection": "row",
         },
         {
-          "color": "#c2c5cb",
-          "fontSize": 12.5,
+          "backgroundColor": "#272a35",
+          "borderColor": "#2d3748",
+          "borderRadius": 999,
+          "borderWidth": 0.5,
+          "columnGap": 4,
+          "minHeight": 32,
+          "paddingHorizontal": 11.5,
+          "paddingVertical": 7.5,
         },
       ]
     }
   >
-    Attention
-  </Text>
-  <Text
-    style={
-      [
-        {
-          "fontFamily": "DMSans-Bold",
-          "fontSize": 10,
-          "fontWeight": "700",
-          "letterSpacing": 0,
-          "lineHeight": 16,
-        },
-        {
-          "color": "#848282",
-          "fontSize": 11,
-          "letterSpacing": 0.88,
-        },
-      ]
-    }
-  >
-    2
-  </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 12.5,
+            "letterSpacing": 0,
+            "lineHeight": 20,
+            "marginBottom": -1.862499999999999,
+            "marginTop": -1.862499999999999,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+        ]
+      }
+    >
+      Attention
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 11,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.8389999999999995,
+            "marginTop": -0.8389999999999995,
+          },
+          {
+            "color": "#848282",
+            "letterSpacing": 0.88,
+          },
+        ]
+      }
+    >
+      2
+    </Text>
+  </View>
 </View>
 `;
 
@@ -1208,7 +1250,6 @@ exports[`FilterChip light active 1`] = `
   accessible={true}
   collapsable={false}
   focusable={true}
-  hitSlop={7}
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -1221,63 +1262,76 @@ exports[`FilterChip light active 1`] = `
   style={
     [
       {
-        "alignItems": "center",
         "alignSelf": "flex-start",
-        "flexDirection": "row",
+        "justifyContent": "center",
       },
       {
-        "backgroundColor": "#151f72",
-        "borderColor": "transparent",
-        "borderRadius": 999,
-        "borderWidth": 0,
-        "columnGap": 4,
-        "minHeight": 32,
-        "paddingHorizontal": 12,
-        "paddingVertical": 8,
+        "minHeight": 44,
       },
       undefined,
     ]
   }
 >
-  <Text
+  <View
     style={
       [
         {
-          "fontFamily": "DMSans-Bold",
-          "fontSize": 14,
-          "fontWeight": "700",
-          "letterSpacing": 0,
-          "lineHeight": 20,
+          "alignItems": "center",
+          "flexDirection": "row",
         },
         {
-          "color": "#ffffff",
-          "fontSize": 12.5,
+          "backgroundColor": "#151f72",
+          "borderColor": "transparent",
+          "borderRadius": 999,
+          "borderWidth": 0,
+          "columnGap": 4,
+          "minHeight": 32,
+          "paddingHorizontal": 12,
+          "paddingVertical": 8,
         },
       ]
     }
   >
-    All
-  </Text>
-  <Text
-    style={
-      [
-        {
-          "fontFamily": "DMSans-Bold",
-          "fontSize": 10,
-          "fontWeight": "700",
-          "letterSpacing": 0,
-          "lineHeight": 16,
-        },
-        {
-          "color": "#ffffff",
-          "fontSize": 11,
-          "letterSpacing": 0.88,
-        },
-      ]
-    }
-  >
-    11
-  </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 12.5,
+            "letterSpacing": 0,
+            "lineHeight": 20,
+            "marginBottom": -1.862499999999999,
+            "marginTop": -1.862499999999999,
+          },
+          {
+            "color": "#ffffff",
+          },
+        ]
+      }
+    >
+      All
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 11,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.8389999999999995,
+            "marginTop": -0.8389999999999995,
+          },
+          {
+            "color": "#ffffff",
+            "letterSpacing": 0.88,
+          },
+        ]
+      }
+    >
+      11
+    </Text>
+  </View>
 </View>
 `;
 
@@ -1304,7 +1358,6 @@ exports[`FilterChip light default 1`] = `
   accessible={true}
   collapsable={false}
   focusable={true}
-  hitSlop={7}
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -1317,63 +1370,76 @@ exports[`FilterChip light default 1`] = `
   style={
     [
       {
-        "alignItems": "center",
         "alignSelf": "flex-start",
-        "flexDirection": "row",
+        "justifyContent": "center",
       },
       {
-        "backgroundColor": "#ffffff",
-        "borderColor": "#eaecf0",
-        "borderRadius": 999,
-        "borderWidth": 0.5,
-        "columnGap": 4,
-        "minHeight": 32,
-        "paddingHorizontal": 12,
-        "paddingVertical": 8,
+        "minHeight": 44,
       },
       undefined,
     ]
   }
 >
-  <Text
+  <View
     style={
       [
         {
-          "fontFamily": "DMSans-Bold",
-          "fontSize": 14,
-          "fontWeight": "700",
-          "letterSpacing": 0,
-          "lineHeight": 20,
+          "alignItems": "center",
+          "flexDirection": "row",
         },
         {
-          "color": "#5e646e",
-          "fontSize": 12.5,
+          "backgroundColor": "#ffffff",
+          "borderColor": "#eaecf0",
+          "borderRadius": 999,
+          "borderWidth": 0.5,
+          "columnGap": 4,
+          "minHeight": 32,
+          "paddingHorizontal": 11.5,
+          "paddingVertical": 7.5,
         },
       ]
     }
   >
-    Clear
-  </Text>
-  <Text
-    style={
-      [
-        {
-          "fontFamily": "DMSans-Bold",
-          "fontSize": 10,
-          "fontWeight": "700",
-          "letterSpacing": 0,
-          "lineHeight": 16,
-        },
-        {
-          "color": "#848282",
-          "fontSize": 11,
-          "letterSpacing": 0.88,
-        },
-      ]
-    }
-  >
-    6
-  </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 12.5,
+            "letterSpacing": 0,
+            "lineHeight": 20,
+            "marginBottom": -1.862499999999999,
+            "marginTop": -1.862499999999999,
+          },
+          {
+            "color": "#5e646e",
+          },
+        ]
+      }
+    >
+      Clear
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 11,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.8389999999999995,
+            "marginTop": -0.8389999999999995,
+          },
+          {
+            "color": "#848282",
+            "letterSpacing": 0.88,
+          },
+        ]
+      }
+    >
+      6
+    </Text>
+  </View>
 </View>
 `;
 
@@ -1400,7 +1466,6 @@ exports[`FilterChip light pressed 1`] = `
   accessible={true}
   collapsable={false}
   focusable={true}
-  hitSlop={7}
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -1413,64 +1478,77 @@ exports[`FilterChip light pressed 1`] = `
   style={
     [
       {
-        "alignItems": "center",
         "alignSelf": "flex-start",
-        "flexDirection": "row",
+        "justifyContent": "center",
       },
       {
-        "backgroundColor": "#ffffff",
-        "borderColor": "#eaecf0",
-        "borderRadius": 999,
-        "borderWidth": 0.5,
-        "columnGap": 4,
-        "minHeight": 32,
-        "paddingHorizontal": 12,
-        "paddingVertical": 8,
+        "minHeight": 44,
       },
       undefined,
     ]
   }
   testID="golden_chip"
 >
-  <Text
+  <View
     style={
       [
         {
-          "fontFamily": "DMSans-Bold",
-          "fontSize": 14,
-          "fontWeight": "700",
-          "letterSpacing": 0,
-          "lineHeight": 20,
+          "alignItems": "center",
+          "flexDirection": "row",
         },
         {
-          "color": "#5e646e",
-          "fontSize": 12.5,
+          "backgroundColor": "#ffffff",
+          "borderColor": "#eaecf0",
+          "borderRadius": 999,
+          "borderWidth": 0.5,
+          "columnGap": 4,
+          "minHeight": 32,
+          "paddingHorizontal": 11.5,
+          "paddingVertical": 7.5,
         },
       ]
     }
   >
-    Attention
-  </Text>
-  <Text
-    style={
-      [
-        {
-          "fontFamily": "DMSans-Bold",
-          "fontSize": 10,
-          "fontWeight": "700",
-          "letterSpacing": 0,
-          "lineHeight": 16,
-        },
-        {
-          "color": "#848282",
-          "fontSize": 11,
-          "letterSpacing": 0.88,
-        },
-      ]
-    }
-  >
-    2
-  </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 12.5,
+            "letterSpacing": 0,
+            "lineHeight": 20,
+            "marginBottom": -1.862499999999999,
+            "marginTop": -1.862499999999999,
+          },
+          {
+            "color": "#5e646e",
+          },
+        ]
+      }
+    >
+      Attention
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 11,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.8389999999999995,
+            "marginTop": -0.8389999999999995,
+          },
+          {
+            "color": "#848282",
+            "letterSpacing": 0.88,
+          },
+        ]
+      }
+    >
+      2
+    </Text>
+  </View>
 </View>
 `;
 
@@ -1498,7 +1576,9 @@ exports[`JobRow dark blocked 1`] = `
         {
           "alignItems": "center",
           "flexDirection": "row",
-          "width": "100%",
+        },
+        {
+          "margin": -0.5,
         },
         {
           "columnGap": 12,
@@ -1628,9 +1708,10 @@ exports[`JobRow dark blocked 1`] = `
             {
               "fontFamily": "DMSans-SemiBold",
               "fontSize": 16,
-              "fontWeight": "600",
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
             },
             {
               "color": "#f2f2f2",
@@ -1647,9 +1728,10 @@ exports[`JobRow dark blocked 1`] = `
             {
               "fontFamily": "DMSans-Regular",
               "fontSize": 14,
-              "fontWeight": "400",
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -0.8859999999999992,
+              "marginTop": -0.8859999999999992,
             },
             {
               "color": "#848282",
@@ -1665,20 +1747,20 @@ exports[`JobRow dark blocked 1`] = `
         [
           {
             "fontFamily": "DMSans-Bold",
-            "fontSize": 10,
-            "fontWeight": "700",
+            "fontSize": 11,
             "letterSpacing": 0,
             "lineHeight": 16,
+            "marginBottom": 0,
+            "marginTop": 0,
           },
           {
             "backgroundColor": "#fde4e1",
             "borderRadius": 32,
             "color": "#a11209",
-            "fontSize": 11,
             "letterSpacing": 0.88,
             "overflow": "hidden",
             "paddingHorizontal": 8,
-            "paddingVertical": 4,
+            "paddingVertical": 3.1610000000000005,
           },
           undefined,
         ]
@@ -1715,7 +1797,9 @@ exports[`JobRow dark default 1`] = `
         {
           "alignItems": "center",
           "flexDirection": "row",
-          "width": "100%",
+        },
+        {
+          "margin": -0.5,
         },
         {
           "columnGap": 12,
@@ -1868,9 +1952,10 @@ exports[`JobRow dark default 1`] = `
             {
               "fontFamily": "DMSans-SemiBold",
               "fontSize": 16,
-              "fontWeight": "600",
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
             },
             {
               "color": "#f2f2f2",
@@ -1887,9 +1972,10 @@ exports[`JobRow dark default 1`] = `
             {
               "fontFamily": "DMSans-Regular",
               "fontSize": 14,
-              "fontWeight": "400",
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -0.8859999999999992,
+              "marginTop": -0.8859999999999992,
             },
             {
               "color": "#848282",
@@ -1905,20 +1991,20 @@ exports[`JobRow dark default 1`] = `
         [
           {
             "fontFamily": "DMSans-Bold",
-            "fontSize": 10,
-            "fontWeight": "700",
+            "fontSize": 11,
             "letterSpacing": 0,
             "lineHeight": 16,
+            "marginBottom": 0,
+            "marginTop": 0,
           },
           {
             "backgroundColor": "#dbf5e4",
             "borderRadius": 32,
             "color": "#04713a",
-            "fontSize": 11,
             "letterSpacing": 0.88,
             "overflow": "hidden",
             "paddingHorizontal": 8,
-            "paddingVertical": 4,
+            "paddingVertical": 3.1610000000000005,
           },
           undefined,
         ]
@@ -1985,7 +2071,9 @@ exports[`JobRow dark processing 1`] = `
         {
           "alignItems": "center",
           "flexDirection": "row",
-          "width": "100%",
+        },
+        {
+          "margin": -0.5,
         },
         {
           "columnGap": 12,
@@ -2115,9 +2203,10 @@ exports[`JobRow dark processing 1`] = `
             {
               "fontFamily": "DMSans-SemiBold",
               "fontSize": 16,
-              "fontWeight": "600",
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
             },
             {
               "color": "#f2f2f2",
@@ -2134,9 +2223,10 @@ exports[`JobRow dark processing 1`] = `
             {
               "fontFamily": "DMSans-Regular",
               "fontSize": 14,
-              "fontWeight": "400",
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -0.8859999999999992,
+              "marginTop": -0.8859999999999992,
             },
             {
               "color": "#848282",
@@ -2152,20 +2242,20 @@ exports[`JobRow dark processing 1`] = `
         [
           {
             "fontFamily": "DMSans-Bold",
-            "fontSize": 10,
-            "fontWeight": "700",
+            "fontSize": 11,
             "letterSpacing": 0,
             "lineHeight": 16,
+            "marginBottom": 0,
+            "marginTop": 0,
           },
           {
             "backgroundColor": "#e5edff",
             "borderRadius": 32,
             "color": "#151f72",
-            "fontSize": 11,
             "letterSpacing": 0.88,
             "overflow": "hidden",
             "paddingHorizontal": 8,
-            "paddingVertical": 4,
+            "paddingVertical": 3.1610000000000005,
           },
           undefined,
         ]
@@ -2202,7 +2292,9 @@ exports[`JobRow light blocked 1`] = `
         {
           "alignItems": "center",
           "flexDirection": "row",
-          "width": "100%",
+        },
+        {
+          "margin": -0.5,
         },
         {
           "columnGap": 12,
@@ -2332,9 +2424,10 @@ exports[`JobRow light blocked 1`] = `
             {
               "fontFamily": "DMSans-SemiBold",
               "fontSize": 16,
-              "fontWeight": "600",
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
             },
             {
               "color": "#21232c",
@@ -2351,9 +2444,10 @@ exports[`JobRow light blocked 1`] = `
             {
               "fontFamily": "DMSans-Regular",
               "fontSize": 14,
-              "fontWeight": "400",
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -0.8859999999999992,
+              "marginTop": -0.8859999999999992,
             },
             {
               "color": "#848282",
@@ -2369,20 +2463,20 @@ exports[`JobRow light blocked 1`] = `
         [
           {
             "fontFamily": "DMSans-Bold",
-            "fontSize": 10,
-            "fontWeight": "700",
+            "fontSize": 11,
             "letterSpacing": 0,
             "lineHeight": 16,
+            "marginBottom": 0,
+            "marginTop": 0,
           },
           {
             "backgroundColor": "#fde4e1",
             "borderRadius": 32,
             "color": "#a11209",
-            "fontSize": 11,
             "letterSpacing": 0.88,
             "overflow": "hidden",
             "paddingHorizontal": 8,
-            "paddingVertical": 4,
+            "paddingVertical": 3.1610000000000005,
           },
           undefined,
         ]
@@ -2419,7 +2513,9 @@ exports[`JobRow light default 1`] = `
         {
           "alignItems": "center",
           "flexDirection": "row",
-          "width": "100%",
+        },
+        {
+          "margin": -0.5,
         },
         {
           "columnGap": 12,
@@ -2572,9 +2668,10 @@ exports[`JobRow light default 1`] = `
             {
               "fontFamily": "DMSans-SemiBold",
               "fontSize": 16,
-              "fontWeight": "600",
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
             },
             {
               "color": "#21232c",
@@ -2591,9 +2688,10 @@ exports[`JobRow light default 1`] = `
             {
               "fontFamily": "DMSans-Regular",
               "fontSize": 14,
-              "fontWeight": "400",
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -0.8859999999999992,
+              "marginTop": -0.8859999999999992,
             },
             {
               "color": "#848282",
@@ -2609,20 +2707,20 @@ exports[`JobRow light default 1`] = `
         [
           {
             "fontFamily": "DMSans-Bold",
-            "fontSize": 10,
-            "fontWeight": "700",
+            "fontSize": 11,
             "letterSpacing": 0,
             "lineHeight": 16,
+            "marginBottom": 0,
+            "marginTop": 0,
           },
           {
             "backgroundColor": "#dbf5e4",
             "borderRadius": 32,
             "color": "#04713a",
-            "fontSize": 11,
             "letterSpacing": 0.88,
             "overflow": "hidden",
             "paddingHorizontal": 8,
-            "paddingVertical": 4,
+            "paddingVertical": 3.1610000000000005,
           },
           undefined,
         ]
@@ -2689,7 +2787,9 @@ exports[`JobRow light processing 1`] = `
         {
           "alignItems": "center",
           "flexDirection": "row",
-          "width": "100%",
+        },
+        {
+          "margin": -0.5,
         },
         {
           "columnGap": 12,
@@ -2819,9 +2919,10 @@ exports[`JobRow light processing 1`] = `
             {
               "fontFamily": "DMSans-SemiBold",
               "fontSize": 16,
-              "fontWeight": "600",
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
             },
             {
               "color": "#21232c",
@@ -2838,9 +2939,10 @@ exports[`JobRow light processing 1`] = `
             {
               "fontFamily": "DMSans-Regular",
               "fontSize": 14,
-              "fontWeight": "400",
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -0.8859999999999992,
+              "marginTop": -0.8859999999999992,
             },
             {
               "color": "#848282",
@@ -2856,20 +2958,20 @@ exports[`JobRow light processing 1`] = `
         [
           {
             "fontFamily": "DMSans-Bold",
-            "fontSize": 10,
-            "fontWeight": "700",
+            "fontSize": 11,
             "letterSpacing": 0,
             "lineHeight": 16,
+            "marginBottom": 0,
+            "marginTop": 0,
           },
           {
             "backgroundColor": "#e5edff",
             "borderRadius": 32,
             "color": "#151f72",
-            "fontSize": 11,
             "letterSpacing": 0.88,
             "overflow": "hidden",
             "paddingHorizontal": 8,
-            "paddingVertical": 4,
+            "paddingVertical": 3.1610000000000005,
           },
           undefined,
         ]
@@ -2909,14 +3011,14 @@ exports[`KeyValueEditRow dark disabled 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "color": "#f2f2f2",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -2933,10 +3035,11 @@ exports[`KeyValueEditRow dark disabled 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "padding": 0,
@@ -2944,7 +3047,6 @@ exports[`KeyValueEditRow dark disabled 1`] = `
         },
         {
           "color": "#848282",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -2980,14 +3082,14 @@ exports[`KeyValueEditRow dark empty 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "color": "#f2f2f2",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -3004,10 +3106,11 @@ exports[`KeyValueEditRow dark empty 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "padding": 0,
@@ -3015,7 +3118,6 @@ exports[`KeyValueEditRow dark empty 1`] = `
         },
         {
           "color": "#f2f2f2",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -3051,14 +3153,14 @@ exports[`KeyValueEditRow dark filled 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "color": "#f2f2f2",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -3075,10 +3177,11 @@ exports[`KeyValueEditRow dark filled 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "padding": 0,
@@ -3086,7 +3189,6 @@ exports[`KeyValueEditRow dark filled 1`] = `
         },
         {
           "color": "#f2f2f2",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -3122,14 +3224,14 @@ exports[`KeyValueEditRow dark focused 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "color": "#f2f2f2",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -3146,10 +3248,11 @@ exports[`KeyValueEditRow dark focused 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "padding": 0,
@@ -3157,7 +3260,6 @@ exports[`KeyValueEditRow dark focused 1`] = `
         },
         {
           "color": "#f2f2f2",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -3194,14 +3296,14 @@ exports[`KeyValueEditRow light disabled 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "color": "#21232c",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -3218,10 +3320,11 @@ exports[`KeyValueEditRow light disabled 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "padding": 0,
@@ -3229,7 +3332,6 @@ exports[`KeyValueEditRow light disabled 1`] = `
         },
         {
           "color": "#848282",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -3265,14 +3367,14 @@ exports[`KeyValueEditRow light empty 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "color": "#21232c",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -3289,10 +3391,11 @@ exports[`KeyValueEditRow light empty 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "padding": 0,
@@ -3300,7 +3403,6 @@ exports[`KeyValueEditRow light empty 1`] = `
         },
         {
           "color": "#21232c",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -3336,14 +3438,14 @@ exports[`KeyValueEditRow light filled 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "color": "#21232c",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -3360,10 +3462,11 @@ exports[`KeyValueEditRow light filled 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "padding": 0,
@@ -3371,7 +3474,6 @@ exports[`KeyValueEditRow light filled 1`] = `
         },
         {
           "color": "#21232c",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -3407,14 +3509,14 @@ exports[`KeyValueEditRow light focused 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "color": "#21232c",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -3431,10 +3533,11 @@ exports[`KeyValueEditRow light focused 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "padding": 0,
@@ -3442,7 +3545,6 @@ exports[`KeyValueEditRow light focused 1`] = `
         },
         {
           "color": "#21232c",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -3508,17 +3610,17 @@ exports[`OptionRow dark plain 1`] = `
       [
         {
           "fontFamily": "DMSans-SemiBold",
-          "fontSize": 16,
-          "fontWeight": "600",
+          "fontSize": 14,
           "letterSpacing": 0,
           "lineHeight": 24,
+          "marginBottom": -2.8859999999999992,
+          "marginTop": -2.8859999999999992,
         },
         {
           "flex": 1,
         },
         {
           "color": "#f2f2f2",
-          "fontSize": 14,
         },
       ]
     }
@@ -3581,18 +3683,14 @@ exports[`OptionRow dark selected 1`] = `
 >
   <Text
     style={
-      [
-        {
-          "fontFamily": "DMSans-Regular",
-          "fontSize": 16,
-          "fontWeight": "400",
-          "letterSpacing": 0,
-          "lineHeight": 24,
-        },
-        {
-          "fontSize": 19,
-        },
-      ]
+      {
+        "fontFamily": "DMSans-Regular",
+        "fontSize": 19,
+        "letterSpacing": 0,
+        "lineHeight": 24,
+        "marginBottom": -0,
+        "marginTop": -0,
+      }
     }
   >
     🇰🇪
@@ -3602,17 +3700,17 @@ exports[`OptionRow dark selected 1`] = `
       [
         {
           "fontFamily": "DMSans-SemiBold",
-          "fontSize": 16,
-          "fontWeight": "600",
+          "fontSize": 14,
           "letterSpacing": 0,
           "lineHeight": 24,
+          "marginBottom": -2.8859999999999992,
+          "marginTop": -2.8859999999999992,
         },
         {
           "flex": 1,
         },
         {
           "color": "#f2f2f2",
-          "fontSize": 14,
         },
       ]
     }
@@ -3742,18 +3840,14 @@ exports[`OptionRow dark withLeadingFlag 1`] = `
 >
   <Text
     style={
-      [
-        {
-          "fontFamily": "DMSans-Regular",
-          "fontSize": 16,
-          "fontWeight": "400",
-          "letterSpacing": 0,
-          "lineHeight": 24,
-        },
-        {
-          "fontSize": 19,
-        },
-      ]
+      {
+        "fontFamily": "DMSans-Regular",
+        "fontSize": 19,
+        "letterSpacing": 0,
+        "lineHeight": 24,
+        "marginBottom": -0,
+        "marginTop": -0,
+      }
     }
   >
     🇰🇪
@@ -3763,17 +3857,17 @@ exports[`OptionRow dark withLeadingFlag 1`] = `
       [
         {
           "fontFamily": "DMSans-SemiBold",
-          "fontSize": 16,
-          "fontWeight": "600",
+          "fontSize": 14,
           "letterSpacing": 0,
           "lineHeight": 24,
+          "marginBottom": -2.8859999999999992,
+          "marginTop": -2.8859999999999992,
         },
         {
           "flex": 1,
         },
         {
           "color": "#f2f2f2",
-          "fontSize": 14,
         },
       ]
     }
@@ -3839,17 +3933,17 @@ exports[`OptionRow light plain 1`] = `
       [
         {
           "fontFamily": "DMSans-SemiBold",
-          "fontSize": 16,
-          "fontWeight": "600",
+          "fontSize": 14,
           "letterSpacing": 0,
           "lineHeight": 24,
+          "marginBottom": -2.8859999999999992,
+          "marginTop": -2.8859999999999992,
         },
         {
           "flex": 1,
         },
         {
           "color": "#21232c",
-          "fontSize": 14,
         },
       ]
     }
@@ -3912,18 +4006,14 @@ exports[`OptionRow light selected 1`] = `
 >
   <Text
     style={
-      [
-        {
-          "fontFamily": "DMSans-Regular",
-          "fontSize": 16,
-          "fontWeight": "400",
-          "letterSpacing": 0,
-          "lineHeight": 24,
-        },
-        {
-          "fontSize": 19,
-        },
-      ]
+      {
+        "fontFamily": "DMSans-Regular",
+        "fontSize": 19,
+        "letterSpacing": 0,
+        "lineHeight": 24,
+        "marginBottom": -0,
+        "marginTop": -0,
+      }
     }
   >
     🇰🇪
@@ -3933,17 +4023,17 @@ exports[`OptionRow light selected 1`] = `
       [
         {
           "fontFamily": "DMSans-SemiBold",
-          "fontSize": 16,
-          "fontWeight": "600",
+          "fontSize": 14,
           "letterSpacing": 0,
           "lineHeight": 24,
+          "marginBottom": -2.8859999999999992,
+          "marginTop": -2.8859999999999992,
         },
         {
           "flex": 1,
         },
         {
           "color": "#21232c",
-          "fontSize": 14,
         },
       ]
     }
@@ -4073,18 +4163,14 @@ exports[`OptionRow light withLeadingFlag 1`] = `
 >
   <Text
     style={
-      [
-        {
-          "fontFamily": "DMSans-Regular",
-          "fontSize": 16,
-          "fontWeight": "400",
-          "letterSpacing": 0,
-          "lineHeight": 24,
-        },
-        {
-          "fontSize": 19,
-        },
-      ]
+      {
+        "fontFamily": "DMSans-Regular",
+        "fontSize": 19,
+        "letterSpacing": 0,
+        "lineHeight": 24,
+        "marginBottom": -0,
+        "marginTop": -0,
+      }
     }
   >
     🇰🇪
@@ -4094,17 +4180,17 @@ exports[`OptionRow light withLeadingFlag 1`] = `
       [
         {
           "fontFamily": "DMSans-SemiBold",
-          "fontSize": 16,
-          "fontWeight": "600",
+          "fontSize": 14,
           "letterSpacing": 0,
           "lineHeight": 24,
+          "marginBottom": -2.8859999999999992,
+          "marginTop": -2.8859999999999992,
         },
         {
           "flex": 1,
         },
         {
           "color": "#21232c",
-          "fontSize": 14,
         },
       ]
     }
@@ -4149,8 +4235,8 @@ exports[`ProfileRow dark default 1`] = `
   style={
     [
       {
+        "alignSelf": "stretch",
         "overflow": "hidden",
-        "width": "100%",
       },
       {
         "backgroundColor": "#272a35",
@@ -4168,7 +4254,9 @@ exports[`ProfileRow dark default 1`] = `
         {
           "alignItems": "center",
           "flexDirection": "row",
-          "width": "100%",
+        },
+        {
+          "margin": -0.5,
         },
         {
           "columnGap": 12,
@@ -4203,9 +4291,10 @@ exports[`ProfileRow dark default 1`] = `
             {
               "fontFamily": "DMSans-Medium",
               "fontSize": 14,
-              "fontWeight": "500",
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -0.8859999999999992,
+              "marginTop": -0.8859999999999992,
             },
             {
               "color": "#ffffff",
@@ -4236,14 +4325,14 @@ exports[`ProfileRow dark default 1`] = `
           [
             {
               "fontFamily": "DMSans-SemiBold",
-              "fontSize": 16,
-              "fontWeight": "600",
+              "fontSize": 14.5,
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -2.5604999999999993,
+              "marginTop": -2.5604999999999993,
             },
             {
               "color": "#f2f2f2",
-              "fontSize": 14.5,
             },
           ]
         }
@@ -4256,9 +4345,10 @@ exports[`ProfileRow dark default 1`] = `
             {
               "fontFamily": "DMSans-Medium",
               "fontSize": 12,
-              "fontWeight": "500",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -0.18799999999999972,
+              "marginTop": -0.18799999999999972,
             },
             {
               "color": "#848282",
@@ -4308,8 +4398,8 @@ exports[`ProfileRow dark selected 1`] = `
   style={
     [
       {
+        "alignSelf": "stretch",
         "overflow": "hidden",
-        "width": "100%",
       },
       {
         "backgroundColor": "#1a1c23",
@@ -4327,7 +4417,9 @@ exports[`ProfileRow dark selected 1`] = `
         {
           "alignItems": "center",
           "flexDirection": "row",
-          "width": "100%",
+        },
+        {
+          "margin": -0.5,
         },
         {
           "columnGap": 12,
@@ -4362,9 +4454,10 @@ exports[`ProfileRow dark selected 1`] = `
             {
               "fontFamily": "DMSans-Medium",
               "fontSize": 14,
-              "fontWeight": "500",
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -0.8859999999999992,
+              "marginTop": -0.8859999999999992,
             },
             {
               "color": "#ffffff",
@@ -4395,14 +4488,14 @@ exports[`ProfileRow dark selected 1`] = `
           [
             {
               "fontFamily": "DMSans-SemiBold",
-              "fontSize": 16,
-              "fontWeight": "600",
+              "fontSize": 14.5,
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -2.5604999999999993,
+              "marginTop": -2.5604999999999993,
             },
             {
               "color": "#f2f2f2",
-              "fontSize": 14.5,
             },
           ]
         }
@@ -4415,9 +4508,10 @@ exports[`ProfileRow dark selected 1`] = `
             {
               "fontFamily": "DMSans-Medium",
               "fontSize": 12,
-              "fontWeight": "500",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -0.18799999999999972,
+              "marginTop": -0.18799999999999972,
             },
             {
               "color": "#848282",
@@ -4534,8 +4628,8 @@ exports[`ProfileRow dark summary 1`] = `
   style={
     [
       {
+        "alignSelf": "stretch",
         "overflow": "hidden",
-        "width": "100%",
       },
       {
         "backgroundColor": "#272a35",
@@ -4553,7 +4647,9 @@ exports[`ProfileRow dark summary 1`] = `
         {
           "alignItems": "center",
           "flexDirection": "row",
-          "width": "100%",
+        },
+        {
+          "margin": -0.5,
         },
         {
           "columnGap": 12,
@@ -4588,9 +4684,10 @@ exports[`ProfileRow dark summary 1`] = `
             {
               "fontFamily": "DMSans-Medium",
               "fontSize": 14,
-              "fontWeight": "500",
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -0.8859999999999992,
+              "marginTop": -0.8859999999999992,
             },
             {
               "color": "#ffffff",
@@ -4621,14 +4718,14 @@ exports[`ProfileRow dark summary 1`] = `
           [
             {
               "fontFamily": "DMSans-SemiBold",
-              "fontSize": 16,
-              "fontWeight": "600",
+              "fontSize": 14.5,
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -2.5604999999999993,
+              "marginTop": -2.5604999999999993,
             },
             {
               "color": "#f2f2f2",
-              "fontSize": 14.5,
             },
           ]
         }
@@ -4641,9 +4738,10 @@ exports[`ProfileRow dark summary 1`] = `
             {
               "fontFamily": "DMSans-Medium",
               "fontSize": 12,
-              "fontWeight": "500",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -0.18799999999999972,
+              "marginTop": -0.18799999999999972,
             },
             {
               "color": "#848282",
@@ -4753,8 +4851,8 @@ exports[`ProfileRow light default 1`] = `
   style={
     [
       {
+        "alignSelf": "stretch",
         "overflow": "hidden",
-        "width": "100%",
       },
       {
         "backgroundColor": "#ffffff",
@@ -4772,7 +4870,9 @@ exports[`ProfileRow light default 1`] = `
         {
           "alignItems": "center",
           "flexDirection": "row",
-          "width": "100%",
+        },
+        {
+          "margin": -0.5,
         },
         {
           "columnGap": 12,
@@ -4807,9 +4907,10 @@ exports[`ProfileRow light default 1`] = `
             {
               "fontFamily": "DMSans-Medium",
               "fontSize": 14,
-              "fontWeight": "500",
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -0.8859999999999992,
+              "marginTop": -0.8859999999999992,
             },
             {
               "color": "#ffffff",
@@ -4840,14 +4941,14 @@ exports[`ProfileRow light default 1`] = `
           [
             {
               "fontFamily": "DMSans-SemiBold",
-              "fontSize": 16,
-              "fontWeight": "600",
+              "fontSize": 14.5,
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -2.5604999999999993,
+              "marginTop": -2.5604999999999993,
             },
             {
               "color": "#21232c",
-              "fontSize": 14.5,
             },
           ]
         }
@@ -4860,9 +4961,10 @@ exports[`ProfileRow light default 1`] = `
             {
               "fontFamily": "DMSans-Medium",
               "fontSize": 12,
-              "fontWeight": "500",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -0.18799999999999972,
+              "marginTop": -0.18799999999999972,
             },
             {
               "color": "#848282",
@@ -4912,8 +5014,8 @@ exports[`ProfileRow light selected 1`] = `
   style={
     [
       {
+        "alignSelf": "stretch",
         "overflow": "hidden",
-        "width": "100%",
       },
       {
         "backgroundColor": "#eaecf0",
@@ -4931,7 +5033,9 @@ exports[`ProfileRow light selected 1`] = `
         {
           "alignItems": "center",
           "flexDirection": "row",
-          "width": "100%",
+        },
+        {
+          "margin": -0.5,
         },
         {
           "columnGap": 12,
@@ -4966,9 +5070,10 @@ exports[`ProfileRow light selected 1`] = `
             {
               "fontFamily": "DMSans-Medium",
               "fontSize": 14,
-              "fontWeight": "500",
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -0.8859999999999992,
+              "marginTop": -0.8859999999999992,
             },
             {
               "color": "#ffffff",
@@ -4999,14 +5104,14 @@ exports[`ProfileRow light selected 1`] = `
           [
             {
               "fontFamily": "DMSans-SemiBold",
-              "fontSize": 16,
-              "fontWeight": "600",
+              "fontSize": 14.5,
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -2.5604999999999993,
+              "marginTop": -2.5604999999999993,
             },
             {
               "color": "#21232c",
-              "fontSize": 14.5,
             },
           ]
         }
@@ -5019,9 +5124,10 @@ exports[`ProfileRow light selected 1`] = `
             {
               "fontFamily": "DMSans-Medium",
               "fontSize": 12,
-              "fontWeight": "500",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -0.18799999999999972,
+              "marginTop": -0.18799999999999972,
             },
             {
               "color": "#848282",
@@ -5138,8 +5244,8 @@ exports[`ProfileRow light summary 1`] = `
   style={
     [
       {
+        "alignSelf": "stretch",
         "overflow": "hidden",
-        "width": "100%",
       },
       {
         "backgroundColor": "#ffffff",
@@ -5157,7 +5263,9 @@ exports[`ProfileRow light summary 1`] = `
         {
           "alignItems": "center",
           "flexDirection": "row",
-          "width": "100%",
+        },
+        {
+          "margin": -0.5,
         },
         {
           "columnGap": 12,
@@ -5192,9 +5300,10 @@ exports[`ProfileRow light summary 1`] = `
             {
               "fontFamily": "DMSans-Medium",
               "fontSize": 14,
-              "fontWeight": "500",
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -0.8859999999999992,
+              "marginTop": -0.8859999999999992,
             },
             {
               "color": "#ffffff",
@@ -5225,14 +5334,14 @@ exports[`ProfileRow light summary 1`] = `
           [
             {
               "fontFamily": "DMSans-SemiBold",
-              "fontSize": 16,
-              "fontWeight": "600",
+              "fontSize": 14.5,
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -2.5604999999999993,
+              "marginTop": -2.5604999999999993,
             },
             {
               "color": "#21232c",
-              "fontSize": 14.5,
             },
           ]
         }
@@ -5245,9 +5354,10 @@ exports[`ProfileRow light summary 1`] = `
             {
               "fontFamily": "DMSans-Medium",
               "fontSize": 12,
-              "fontWeight": "500",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -0.18799999999999972,
+              "marginTop": -0.18799999999999972,
             },
             {
               "color": "#848282",
@@ -5338,14 +5448,14 @@ exports[`SectionSurface dark labelled 1`] = `
       [
         {
           "fontFamily": "DMSans-Bold",
-          "fontSize": 10,
-          "fontWeight": "700",
+          "fontSize": 11,
           "letterSpacing": 0,
           "lineHeight": 16,
+          "marginBottom": -0.8389999999999995,
+          "marginTop": -0.8389999999999995,
         },
         {
           "color": "#848282",
-          "fontSize": 11,
           "letterSpacing": 0.88,
         },
         undefined,
@@ -5372,64 +5482,72 @@ exports[`SectionSurface dark labelled 1`] = `
   >
     <View
       style={
-        [
-          {
-            "alignItems": "center",
-            "flexDirection": "row",
-            "width": "100%",
-          },
-          {
-            "columnGap": 8,
-            "minHeight": 40,
-            "paddingHorizontal": 16,
-            "paddingVertical": 12,
-          },
-          undefined,
-        ]
+        {
+          "margin": -0.5,
+        }
       }
     >
-      <Text
+      <View
         style={
           [
             {
-              "fontFamily": "DMSans-Medium",
-              "fontSize": 12,
-              "fontWeight": "500",
-              "letterSpacing": 0,
-              "lineHeight": 16,
+              "alignItems": "center",
+              "flexDirection": "row",
+              "width": "100%",
             },
             {
-              "color": "#848282",
-              "fontSize": 13,
+              "columnGap": 8,
+              "minHeight": 40,
+              "paddingHorizontal": 16,
+              "paddingVertical": 12,
             },
+            undefined,
           ]
         }
       >
-        Job_id
-      </Text>
-      <Text
-        style={
-          [
-            {
-              "fontFamily": "DMSans-SemiBold",
-              "fontSize": 14,
-              "fontWeight": "600",
-              "letterSpacing": 0,
-              "lineHeight": 20,
-            },
-            {
-              "flex": 1,
-              "textAlign": "right",
-            },
-            {
-              "color": "#f2f2f2",
-              "fontSize": 13,
-            },
-          ]
-        }
-      >
-        7d2f01aa
-      </Text>
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Medium",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 16,
+                "marginBottom": -0,
+                "marginTop": -0,
+              },
+              {
+                "color": "#848282",
+              },
+            ]
+          }
+        >
+          Job_id
+        </Text>
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-SemiBold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "flex": 1,
+                "textAlign": "right",
+              },
+              {
+                "color": "#f2f2f2",
+              },
+            ]
+          }
+        >
+          7d2f01aa
+        </Text>
+      </View>
     </View>
   </View>
 </View>
@@ -5464,133 +5582,141 @@ exports[`SectionSurface dark unlabelled 1`] = `
   >
     <View
       style={
-        [
-          {
-            "alignItems": "center",
-            "flexDirection": "row",
-            "width": "100%",
-          },
-          {
-            "columnGap": 8,
-            "minHeight": 40,
-            "paddingHorizontal": 16,
-            "paddingVertical": 12,
-          },
-          undefined,
-        ]
-      }
-    >
-      <Text
-        style={
-          [
-            {
-              "fontFamily": "DMSans-Medium",
-              "fontSize": 12,
-              "fontWeight": "500",
-              "letterSpacing": 0,
-              "lineHeight": 16,
-            },
-            {
-              "color": "#848282",
-              "fontSize": 13,
-            },
-          ]
-        }
-      >
-        Job_id
-      </Text>
-      <Text
-        style={
-          [
-            {
-              "fontFamily": "DMSans-SemiBold",
-              "fontSize": 14,
-              "fontWeight": "600",
-              "letterSpacing": 0,
-              "lineHeight": 20,
-            },
-            {
-              "flex": 1,
-              "textAlign": "right",
-            },
-            {
-              "color": "#f2f2f2",
-              "fontSize": 13,
-            },
-          ]
-        }
-      >
-        7d2f01aa
-      </Text>
-    </View>
-    <View
-      style={
         {
-          "backgroundColor": "#2d3748",
-          "height": 0.5,
+          "margin": -0.5,
         }
-      }
-    />
-    <View
-      style={
-        [
-          {
-            "alignItems": "center",
-            "flexDirection": "row",
-            "width": "100%",
-          },
-          {
-            "columnGap": 8,
-            "minHeight": 40,
-            "paddingHorizontal": 16,
-            "paddingVertical": 12,
-          },
-          undefined,
-        ]
       }
     >
-      <Text
+      <View
         style={
           [
             {
-              "fontFamily": "DMSans-Medium",
-              "fontSize": 12,
-              "fontWeight": "500",
-              "letterSpacing": 0,
-              "lineHeight": 16,
+              "alignItems": "center",
+              "flexDirection": "row",
+              "width": "100%",
             },
             {
-              "color": "#848282",
-              "fontSize": 13,
+              "columnGap": 8,
+              "minHeight": 40,
+              "paddingHorizontal": 16,
+              "paddingVertical": 12,
             },
+            undefined,
           ]
         }
       >
-        User_id
-      </Text>
-      <Text
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Medium",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 16,
+                "marginBottom": -0,
+                "marginTop": -0,
+              },
+              {
+                "color": "#848282",
+              },
+            ]
+          }
+        >
+          Job_id
+        </Text>
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-SemiBold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "flex": 1,
+                "textAlign": "right",
+              },
+              {
+                "color": "#f2f2f2",
+              },
+            ]
+          }
+        >
+          7d2f01aa
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "backgroundColor": "#2d3748",
+            "height": 0.5,
+          }
+        }
+      />
+      <View
         style={
           [
             {
-              "fontFamily": "DMSans-SemiBold",
-              "fontSize": 14,
-              "fontWeight": "600",
-              "letterSpacing": 0,
-              "lineHeight": 20,
+              "alignItems": "center",
+              "flexDirection": "row",
+              "width": "100%",
             },
             {
-              "flex": 1,
-              "textAlign": "right",
+              "columnGap": 8,
+              "minHeight": 40,
+              "paddingHorizontal": 16,
+              "paddingVertical": 12,
             },
-            {
-              "color": "#f2f2f2",
-              "fontSize": 13,
-            },
+            undefined,
           ]
         }
       >
-        u-8891
-      </Text>
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Medium",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 16,
+                "marginBottom": -0,
+                "marginTop": -0,
+              },
+              {
+                "color": "#848282",
+              },
+            ]
+          }
+        >
+          User_id
+        </Text>
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-SemiBold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "flex": 1,
+                "textAlign": "right",
+              },
+              {
+                "color": "#f2f2f2",
+              },
+            ]
+          }
+        >
+          u-8891
+        </Text>
+      </View>
     </View>
   </View>
 </View>
@@ -5612,14 +5738,14 @@ exports[`SectionSurface light labelled 1`] = `
       [
         {
           "fontFamily": "DMSans-Bold",
-          "fontSize": 10,
-          "fontWeight": "700",
+          "fontSize": 11,
           "letterSpacing": 0,
           "lineHeight": 16,
+          "marginBottom": -0.8389999999999995,
+          "marginTop": -0.8389999999999995,
         },
         {
           "color": "#848282",
-          "fontSize": 11,
           "letterSpacing": 0.88,
         },
         undefined,
@@ -5646,64 +5772,72 @@ exports[`SectionSurface light labelled 1`] = `
   >
     <View
       style={
-        [
-          {
-            "alignItems": "center",
-            "flexDirection": "row",
-            "width": "100%",
-          },
-          {
-            "columnGap": 8,
-            "minHeight": 40,
-            "paddingHorizontal": 16,
-            "paddingVertical": 12,
-          },
-          undefined,
-        ]
+        {
+          "margin": -0.5,
+        }
       }
     >
-      <Text
+      <View
         style={
           [
             {
-              "fontFamily": "DMSans-Medium",
-              "fontSize": 12,
-              "fontWeight": "500",
-              "letterSpacing": 0,
-              "lineHeight": 16,
+              "alignItems": "center",
+              "flexDirection": "row",
+              "width": "100%",
             },
             {
-              "color": "#848282",
-              "fontSize": 13,
+              "columnGap": 8,
+              "minHeight": 40,
+              "paddingHorizontal": 16,
+              "paddingVertical": 12,
             },
+            undefined,
           ]
         }
       >
-        Job_id
-      </Text>
-      <Text
-        style={
-          [
-            {
-              "fontFamily": "DMSans-SemiBold",
-              "fontSize": 14,
-              "fontWeight": "600",
-              "letterSpacing": 0,
-              "lineHeight": 20,
-            },
-            {
-              "flex": 1,
-              "textAlign": "right",
-            },
-            {
-              "color": "#21232c",
-              "fontSize": 13,
-            },
-          ]
-        }
-      >
-        7d2f01aa
-      </Text>
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Medium",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 16,
+                "marginBottom": -0,
+                "marginTop": -0,
+              },
+              {
+                "color": "#848282",
+              },
+            ]
+          }
+        >
+          Job_id
+        </Text>
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-SemiBold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "flex": 1,
+                "textAlign": "right",
+              },
+              {
+                "color": "#21232c",
+              },
+            ]
+          }
+        >
+          7d2f01aa
+        </Text>
+      </View>
     </View>
   </View>
 </View>
@@ -5738,133 +5872,141 @@ exports[`SectionSurface light unlabelled 1`] = `
   >
     <View
       style={
-        [
-          {
-            "alignItems": "center",
-            "flexDirection": "row",
-            "width": "100%",
-          },
-          {
-            "columnGap": 8,
-            "minHeight": 40,
-            "paddingHorizontal": 16,
-            "paddingVertical": 12,
-          },
-          undefined,
-        ]
-      }
-    >
-      <Text
-        style={
-          [
-            {
-              "fontFamily": "DMSans-Medium",
-              "fontSize": 12,
-              "fontWeight": "500",
-              "letterSpacing": 0,
-              "lineHeight": 16,
-            },
-            {
-              "color": "#848282",
-              "fontSize": 13,
-            },
-          ]
-        }
-      >
-        Job_id
-      </Text>
-      <Text
-        style={
-          [
-            {
-              "fontFamily": "DMSans-SemiBold",
-              "fontSize": 14,
-              "fontWeight": "600",
-              "letterSpacing": 0,
-              "lineHeight": 20,
-            },
-            {
-              "flex": 1,
-              "textAlign": "right",
-            },
-            {
-              "color": "#21232c",
-              "fontSize": 13,
-            },
-          ]
-        }
-      >
-        7d2f01aa
-      </Text>
-    </View>
-    <View
-      style={
         {
-          "backgroundColor": "#eaecf0",
-          "height": 0.5,
+          "margin": -0.5,
         }
-      }
-    />
-    <View
-      style={
-        [
-          {
-            "alignItems": "center",
-            "flexDirection": "row",
-            "width": "100%",
-          },
-          {
-            "columnGap": 8,
-            "minHeight": 40,
-            "paddingHorizontal": 16,
-            "paddingVertical": 12,
-          },
-          undefined,
-        ]
       }
     >
-      <Text
+      <View
         style={
           [
             {
-              "fontFamily": "DMSans-Medium",
-              "fontSize": 12,
-              "fontWeight": "500",
-              "letterSpacing": 0,
-              "lineHeight": 16,
+              "alignItems": "center",
+              "flexDirection": "row",
+              "width": "100%",
             },
             {
-              "color": "#848282",
-              "fontSize": 13,
+              "columnGap": 8,
+              "minHeight": 40,
+              "paddingHorizontal": 16,
+              "paddingVertical": 12,
             },
+            undefined,
           ]
         }
       >
-        User_id
-      </Text>
-      <Text
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Medium",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 16,
+                "marginBottom": -0,
+                "marginTop": -0,
+              },
+              {
+                "color": "#848282",
+              },
+            ]
+          }
+        >
+          Job_id
+        </Text>
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-SemiBold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "flex": 1,
+                "textAlign": "right",
+              },
+              {
+                "color": "#21232c",
+              },
+            ]
+          }
+        >
+          7d2f01aa
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "backgroundColor": "#eaecf0",
+            "height": 0.5,
+          }
+        }
+      />
+      <View
         style={
           [
             {
-              "fontFamily": "DMSans-SemiBold",
-              "fontSize": 14,
-              "fontWeight": "600",
-              "letterSpacing": 0,
-              "lineHeight": 20,
+              "alignItems": "center",
+              "flexDirection": "row",
+              "width": "100%",
             },
             {
-              "flex": 1,
-              "textAlign": "right",
+              "columnGap": 8,
+              "minHeight": 40,
+              "paddingHorizontal": 16,
+              "paddingVertical": 12,
             },
-            {
-              "color": "#21232c",
-              "fontSize": 13,
-            },
+            undefined,
           ]
         }
       >
-        u-8891
-      </Text>
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Medium",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 16,
+                "marginBottom": -0,
+                "marginTop": -0,
+              },
+              {
+                "color": "#848282",
+              },
+            ]
+          }
+        >
+          User_id
+        </Text>
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-SemiBold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "flex": 1,
+                "textAlign": "right",
+              },
+              {
+                "color": "#21232c",
+              },
+            ]
+          }
+        >
+          u-8891
+        </Text>
+      </View>
     </View>
   </View>
 </View>
@@ -5916,8 +6058,8 @@ exports[`SelectTrigger dark disabled 1`] = `
         "borderWidth": 1.5,
         "columnGap": 8,
         "minHeight": 44,
-        "paddingHorizontal": 16,
-        "paddingVertical": 12,
+        "paddingHorizontal": 14.5,
+        "paddingVertical": 10.5,
       },
       undefined,
     ]
@@ -5928,17 +6070,17 @@ exports[`SelectTrigger dark disabled 1`] = `
       [
         {
           "fontFamily": "DMSans-SemiBold",
-          "fontSize": 14,
-          "fontWeight": "600",
+          "fontSize": 15,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -0.23499999999999943,
+          "marginTop": -0.23499999999999943,
         },
         {
           "flex": 1,
         },
         {
           "color": "#848282",
-          "fontSize": 15,
         },
       ]
     }
@@ -6054,8 +6196,8 @@ exports[`SelectTrigger dark empty 1`] = `
         "borderWidth": 1.5,
         "columnGap": 8,
         "minHeight": 44,
-        "paddingHorizontal": 16,
-        "paddingVertical": 12,
+        "paddingHorizontal": 14.5,
+        "paddingVertical": 10.5,
       },
       undefined,
     ]
@@ -6077,18 +6219,14 @@ exports[`SelectTrigger dark empty 1`] = `
   >
     <Text
       style={
-        [
-          {
-            "fontFamily": "DMSans-Regular",
-            "fontSize": 14,
-            "fontWeight": "400",
-            "letterSpacing": 0,
-            "lineHeight": 20,
-          },
-          {
-            "fontSize": 18,
-          },
-        ]
+        {
+          "fontFamily": "DMSans-Regular",
+          "fontSize": 18,
+          "letterSpacing": 0,
+          "lineHeight": 20,
+          "marginBottom": -0,
+          "marginTop": -0,
+        }
       }
     >
       🌍
@@ -6099,17 +6237,17 @@ exports[`SelectTrigger dark empty 1`] = `
       [
         {
           "fontFamily": "DMSans-SemiBold",
-          "fontSize": 14,
-          "fontWeight": "600",
+          "fontSize": 15,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -0.23499999999999943,
+          "marginTop": -0.23499999999999943,
         },
         {
           "flex": 1,
         },
         {
           "color": "#848282",
-          "fontSize": 15,
         },
       ]
     }
@@ -6225,8 +6363,8 @@ exports[`SelectTrigger dark selected 1`] = `
         "borderWidth": 1.5,
         "columnGap": 8,
         "minHeight": 44,
-        "paddingHorizontal": 16,
-        "paddingVertical": 12,
+        "paddingHorizontal": 14.5,
+        "paddingVertical": 10.5,
       },
       undefined,
     ]
@@ -6248,18 +6386,14 @@ exports[`SelectTrigger dark selected 1`] = `
   >
     <Text
       style={
-        [
-          {
-            "fontFamily": "DMSans-Regular",
-            "fontSize": 14,
-            "fontWeight": "400",
-            "letterSpacing": 0,
-            "lineHeight": 20,
-          },
-          {
-            "fontSize": 18,
-          },
-        ]
+        {
+          "fontFamily": "DMSans-Regular",
+          "fontSize": 18,
+          "letterSpacing": 0,
+          "lineHeight": 20,
+          "marginBottom": -0,
+          "marginTop": -0,
+        }
       }
     >
       🇰🇪
@@ -6270,17 +6404,17 @@ exports[`SelectTrigger dark selected 1`] = `
       [
         {
           "fontFamily": "DMSans-SemiBold",
-          "fontSize": 14,
-          "fontWeight": "600",
+          "fontSize": 15,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -0.23499999999999943,
+          "marginTop": -0.23499999999999943,
         },
         {
           "flex": 1,
         },
         {
           "color": "#f2f2f2",
-          "fontSize": 15,
         },
       ]
     }
@@ -6396,8 +6530,8 @@ exports[`SelectTrigger light disabled 1`] = `
         "borderWidth": 1.5,
         "columnGap": 8,
         "minHeight": 44,
-        "paddingHorizontal": 16,
-        "paddingVertical": 12,
+        "paddingHorizontal": 14.5,
+        "paddingVertical": 10.5,
       },
       undefined,
     ]
@@ -6408,17 +6542,17 @@ exports[`SelectTrigger light disabled 1`] = `
       [
         {
           "fontFamily": "DMSans-SemiBold",
-          "fontSize": 14,
-          "fontWeight": "600",
+          "fontSize": 15,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -0.23499999999999943,
+          "marginTop": -0.23499999999999943,
         },
         {
           "flex": 1,
         },
         {
           "color": "#848282",
-          "fontSize": 15,
         },
       ]
     }
@@ -6534,8 +6668,8 @@ exports[`SelectTrigger light empty 1`] = `
         "borderWidth": 1.5,
         "columnGap": 8,
         "minHeight": 44,
-        "paddingHorizontal": 16,
-        "paddingVertical": 12,
+        "paddingHorizontal": 14.5,
+        "paddingVertical": 10.5,
       },
       undefined,
     ]
@@ -6557,18 +6691,14 @@ exports[`SelectTrigger light empty 1`] = `
   >
     <Text
       style={
-        [
-          {
-            "fontFamily": "DMSans-Regular",
-            "fontSize": 14,
-            "fontWeight": "400",
-            "letterSpacing": 0,
-            "lineHeight": 20,
-          },
-          {
-            "fontSize": 18,
-          },
-        ]
+        {
+          "fontFamily": "DMSans-Regular",
+          "fontSize": 18,
+          "letterSpacing": 0,
+          "lineHeight": 20,
+          "marginBottom": -0,
+          "marginTop": -0,
+        }
       }
     >
       🌍
@@ -6579,17 +6709,17 @@ exports[`SelectTrigger light empty 1`] = `
       [
         {
           "fontFamily": "DMSans-SemiBold",
-          "fontSize": 14,
-          "fontWeight": "600",
+          "fontSize": 15,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -0.23499999999999943,
+          "marginTop": -0.23499999999999943,
         },
         {
           "flex": 1,
         },
         {
           "color": "#848282",
-          "fontSize": 15,
         },
       ]
     }
@@ -6705,8 +6835,8 @@ exports[`SelectTrigger light selected 1`] = `
         "borderWidth": 1.5,
         "columnGap": 8,
         "minHeight": 44,
-        "paddingHorizontal": 16,
-        "paddingVertical": 12,
+        "paddingHorizontal": 14.5,
+        "paddingVertical": 10.5,
       },
       undefined,
     ]
@@ -6728,18 +6858,14 @@ exports[`SelectTrigger light selected 1`] = `
   >
     <Text
       style={
-        [
-          {
-            "fontFamily": "DMSans-Regular",
-            "fontSize": 14,
-            "fontWeight": "400",
-            "letterSpacing": 0,
-            "lineHeight": 20,
-          },
-          {
-            "fontSize": 18,
-          },
-        ]
+        {
+          "fontFamily": "DMSans-Regular",
+          "fontSize": 18,
+          "letterSpacing": 0,
+          "lineHeight": 20,
+          "marginBottom": -0,
+          "marginTop": -0,
+        }
       }
     >
       🇰🇪
@@ -6750,17 +6876,17 @@ exports[`SelectTrigger light selected 1`] = `
       [
         {
           "fontFamily": "DMSans-SemiBold",
-          "fontSize": 14,
-          "fontWeight": "600",
+          "fontSize": 15,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -0.23499999999999943,
+          "marginTop": -0.23499999999999943,
         },
         {
           "flex": 1,
         },
         {
           "color": "#21232c",
-          "fontSize": 15,
         },
       ]
     }
@@ -6879,14 +7005,14 @@ exports[`SelectionBar dark noneSelected 1`] = `
           [
             {
               "fontFamily": "DMSans-Bold",
-              "fontSize": 16,
-              "fontWeight": "700",
+              "fontSize": 14,
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -2.8859999999999992,
+              "marginTop": -2.8859999999999992,
             },
             {
               "color": "#f2f2f2",
-              "fontSize": 14,
             },
           ]
         }
@@ -6899,14 +7025,14 @@ exports[`SelectionBar dark noneSelected 1`] = `
           [
             {
               "fontFamily": "DMSans-Regular",
-              "fontSize": 14,
-              "fontWeight": "400",
+              "fontSize": 11.5,
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -2.5134999999999996,
+              "marginTop": -2.5134999999999996,
             },
             {
               "color": "#848282",
-              "fontSize": 11.5,
             },
           ]
         }
@@ -7029,14 +7155,14 @@ exports[`SelectionBar dark noneSelected 1`] = `
           [
             {
               "fontFamily": "DMSans-Bold",
-              "fontSize": 16,
-              "fontWeight": "700",
+              "fontSize": 13.5,
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -3.211499999999999,
+              "marginTop": -3.211499999999999,
             },
             {
               "color": "#a11209",
-              "fontSize": 13.5,
             },
           ]
         }
@@ -7097,14 +7223,14 @@ exports[`SelectionBar dark someSelected 1`] = `
           [
             {
               "fontFamily": "DMSans-Bold",
-              "fontSize": 16,
-              "fontWeight": "700",
+              "fontSize": 14,
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -2.8859999999999992,
+              "marginTop": -2.8859999999999992,
             },
             {
               "color": "#f2f2f2",
-              "fontSize": 14,
             },
           ]
         }
@@ -7117,14 +7243,14 @@ exports[`SelectionBar dark someSelected 1`] = `
           [
             {
               "fontFamily": "DMSans-Regular",
-              "fontSize": 14,
-              "fontWeight": "400",
+              "fontSize": 11.5,
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -2.5134999999999996,
+              "marginTop": -2.5134999999999996,
             },
             {
               "color": "#848282",
-              "fontSize": 11.5,
             },
           ]
         }
@@ -7247,14 +7373,14 @@ exports[`SelectionBar dark someSelected 1`] = `
           [
             {
               "fontFamily": "DMSans-Bold",
-              "fontSize": 16,
-              "fontWeight": "700",
+              "fontSize": 13.5,
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -3.211499999999999,
+              "marginTop": -3.211499999999999,
             },
             {
               "color": "#a11209",
-              "fontSize": 13.5,
             },
           ]
         }
@@ -7315,14 +7441,14 @@ exports[`SelectionBar light noneSelected 1`] = `
           [
             {
               "fontFamily": "DMSans-Bold",
-              "fontSize": 16,
-              "fontWeight": "700",
+              "fontSize": 14,
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -2.8859999999999992,
+              "marginTop": -2.8859999999999992,
             },
             {
               "color": "#21232c",
-              "fontSize": 14,
             },
           ]
         }
@@ -7335,14 +7461,14 @@ exports[`SelectionBar light noneSelected 1`] = `
           [
             {
               "fontFamily": "DMSans-Regular",
-              "fontSize": 14,
-              "fontWeight": "400",
+              "fontSize": 11.5,
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -2.5134999999999996,
+              "marginTop": -2.5134999999999996,
             },
             {
               "color": "#848282",
-              "fontSize": 11.5,
             },
           ]
         }
@@ -7465,14 +7591,14 @@ exports[`SelectionBar light noneSelected 1`] = `
           [
             {
               "fontFamily": "DMSans-Bold",
-              "fontSize": 16,
-              "fontWeight": "700",
+              "fontSize": 13.5,
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -3.211499999999999,
+              "marginTop": -3.211499999999999,
             },
             {
               "color": "#a11209",
-              "fontSize": 13.5,
             },
           ]
         }
@@ -7533,14 +7659,14 @@ exports[`SelectionBar light someSelected 1`] = `
           [
             {
               "fontFamily": "DMSans-Bold",
-              "fontSize": 16,
-              "fontWeight": "700",
+              "fontSize": 14,
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -2.8859999999999992,
+              "marginTop": -2.8859999999999992,
             },
             {
               "color": "#21232c",
-              "fontSize": 14,
             },
           ]
         }
@@ -7553,14 +7679,14 @@ exports[`SelectionBar light someSelected 1`] = `
           [
             {
               "fontFamily": "DMSans-Regular",
-              "fontSize": 14,
-              "fontWeight": "400",
+              "fontSize": 11.5,
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -2.5134999999999996,
+              "marginTop": -2.5134999999999996,
             },
             {
               "color": "#848282",
-              "fontSize": 11.5,
             },
           ]
         }
@@ -7683,14 +7809,14 @@ exports[`SelectionBar light someSelected 1`] = `
           [
             {
               "fontFamily": "DMSans-Bold",
-              "fontSize": 16,
-              "fontWeight": "700",
+              "fontSize": 13.5,
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -3.211499999999999,
+              "marginTop": -3.211499999999999,
             },
             {
               "color": "#a11209",
-              "fontSize": 13.5,
             },
           ]
         }
@@ -7725,7 +7851,6 @@ exports[`SelectionCheckbox dark checked 1`] = `
   accessible={true}
   collapsable={false}
   focusable={true}
-  hitSlop={12}
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -7736,10 +7861,16 @@ exports[`SelectionCheckbox dark checked 1`] = `
   onResponderTerminationRequest={[Function]}
   onStartShouldSetResponder={[Function]}
   style={
-    {
-      "alignItems": "center",
-      "justifyContent": "center",
-    }
+    [
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+      },
+      {
+        "minHeight": 44,
+        "minWidth": 44,
+      },
+    ]
   }
 >
   <View
@@ -7840,7 +7971,6 @@ exports[`SelectionCheckbox dark unchecked 1`] = `
   accessible={true}
   collapsable={false}
   focusable={true}
-  hitSlop={12}
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -7851,10 +7981,16 @@ exports[`SelectionCheckbox dark unchecked 1`] = `
   onResponderTerminationRequest={[Function]}
   onStartShouldSetResponder={[Function]}
   style={
-    {
-      "alignItems": "center",
-      "justifyContent": "center",
-    }
+    [
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+      },
+      {
+        "minHeight": 44,
+        "minWidth": 44,
+      },
+    ]
   }
 >
   <View
@@ -7902,7 +8038,6 @@ exports[`SelectionCheckbox light checked 1`] = `
   accessible={true}
   collapsable={false}
   focusable={true}
-  hitSlop={12}
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -7913,10 +8048,16 @@ exports[`SelectionCheckbox light checked 1`] = `
   onResponderTerminationRequest={[Function]}
   onStartShouldSetResponder={[Function]}
   style={
-    {
-      "alignItems": "center",
-      "justifyContent": "center",
-    }
+    [
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+      },
+      {
+        "minHeight": 44,
+        "minWidth": 44,
+      },
+    ]
   }
 >
   <View
@@ -8017,7 +8158,6 @@ exports[`SelectionCheckbox light unchecked 1`] = `
   accessible={true}
   collapsable={false}
   focusable={true}
-  hitSlop={12}
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -8028,10 +8168,16 @@ exports[`SelectionCheckbox light unchecked 1`] = `
   onResponderTerminationRequest={[Function]}
   onStartShouldSetResponder={[Function]}
   style={
-    {
-      "alignItems": "center",
-      "justifyContent": "center",
-    }
+    [
+      {
+        "alignItems": "center",
+        "justifyContent": "center",
+      },
+      {
+        "minHeight": 44,
+        "minWidth": 44,
+      },
+    ]
   }
 >
   <View
@@ -8091,43 +8237,57 @@ exports[`SettingRow dark destructive 1`] = `
   style={
     [
       {
-        "alignItems": "center",
+        "alignSelf": "stretch",
         "justifyContent": "center",
-        "width": "100%",
       },
       {
-        "backgroundColor": "#272a35",
-        "borderColor": "#2d3748",
-        "borderRadius": 16,
-        "borderWidth": 0.5,
         "minHeight": 44,
-        "padding": 12,
       },
       undefined,
     ]
   }
 >
-  <Text
+  <View
     style={
       [
         {
-          "fontFamily": "DMSans-Bold",
-          "fontSize": 16,
-          "fontWeight": "700",
-          "letterSpacing": 0,
-          "lineHeight": 24,
+          "alignItems": "center",
+          "justifyContent": "center",
         },
         {
-          "textAlign": "center",
-        },
-        {
-          "color": "#a11209",
+          "backgroundColor": "#272a35",
+          "borderColor": "#2d3748",
+          "borderRadius": 16,
+          "borderWidth": 0.5,
+          "minHeight": 44,
+          "padding": 11.5,
         },
       ]
     }
   >
-    Sign out
-  </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 16,
+            "letterSpacing": 0,
+            "lineHeight": 24,
+            "marginBottom": -1.5839999999999996,
+            "marginTop": -1.5839999999999996,
+          },
+          {
+            "textAlign": "center",
+          },
+          {
+            "color": "#a11209",
+          },
+        ]
+      }
+    >
+      Sign out
+    </Text>
+  </View>
 </View>
 `;
 
@@ -8298,9 +8458,10 @@ exports[`SettingRow dark navigation 1`] = `
           {
             "fontFamily": "DMSans-SemiBold",
             "fontSize": 16,
-            "fontWeight": "600",
             "letterSpacing": 0,
             "lineHeight": 24,
+            "marginBottom": -1.5839999999999996,
+            "marginTop": -1.5839999999999996,
           },
           {
             "color": "#f2f2f2",
@@ -8518,9 +8679,10 @@ exports[`SettingRow dark noSupportingLine 1`] = `
           {
             "fontFamily": "DMSans-SemiBold",
             "fontSize": 16,
-            "fontWeight": "600",
             "letterSpacing": 0,
             "lineHeight": 24,
+            "marginBottom": -1.5839999999999996,
+            "marginTop": -1.5839999999999996,
           },
           {
             "color": "#f2f2f2",
@@ -8731,9 +8893,10 @@ exports[`SettingRow dark withSwitch 1`] = `
           {
             "fontFamily": "DMSans-SemiBold",
             "fontSize": 16,
-            "fontWeight": "600",
             "letterSpacing": 0,
             "lineHeight": 24,
+            "marginBottom": -1.5839999999999996,
+            "marginTop": -1.5839999999999996,
           },
           {
             "color": "#f2f2f2",
@@ -8749,9 +8912,10 @@ exports[`SettingRow dark withSwitch 1`] = `
           {
             "fontFamily": "DMSans-Medium",
             "fontSize": 12,
-            "fontWeight": "500",
             "letterSpacing": 0,
             "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
           },
           {
             "color": "#848282",
@@ -8774,10 +8938,18 @@ exports[`SettingRow dark withSwitch 1`] = `
         {
           "alignSelf": "flex-start",
         },
-        {
-          "backgroundColor": "#eaecf0",
-          "borderRadius": 16,
-        },
+        [
+          [
+            {
+              "alignSelf": "center",
+            },
+            undefined,
+          ],
+          {
+            "backgroundColor": "#eaecf0",
+            "borderRadius": 16,
+          },
+        ],
       ]
     }
     thumbTintColor="#272a35"
@@ -8822,43 +8994,57 @@ exports[`SettingRow light destructive 1`] = `
   style={
     [
       {
-        "alignItems": "center",
+        "alignSelf": "stretch",
         "justifyContent": "center",
-        "width": "100%",
       },
       {
-        "backgroundColor": "#ffffff",
-        "borderColor": "#eaecf0",
-        "borderRadius": 16,
-        "borderWidth": 0.5,
         "minHeight": 44,
-        "padding": 12,
       },
       undefined,
     ]
   }
 >
-  <Text
+  <View
     style={
       [
         {
-          "fontFamily": "DMSans-Bold",
-          "fontSize": 16,
-          "fontWeight": "700",
-          "letterSpacing": 0,
-          "lineHeight": 24,
+          "alignItems": "center",
+          "justifyContent": "center",
         },
         {
-          "textAlign": "center",
-        },
-        {
-          "color": "#a11209",
+          "backgroundColor": "#ffffff",
+          "borderColor": "#eaecf0",
+          "borderRadius": 16,
+          "borderWidth": 0.5,
+          "minHeight": 44,
+          "padding": 11.5,
         },
       ]
     }
   >
-    Sign out
-  </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 16,
+            "letterSpacing": 0,
+            "lineHeight": 24,
+            "marginBottom": -1.5839999999999996,
+            "marginTop": -1.5839999999999996,
+          },
+          {
+            "textAlign": "center",
+          },
+          {
+            "color": "#a11209",
+          },
+        ]
+      }
+    >
+      Sign out
+    </Text>
+  </View>
 </View>
 `;
 
@@ -9029,9 +9215,10 @@ exports[`SettingRow light navigation 1`] = `
           {
             "fontFamily": "DMSans-SemiBold",
             "fontSize": 16,
-            "fontWeight": "600",
             "letterSpacing": 0,
             "lineHeight": 24,
+            "marginBottom": -1.5839999999999996,
+            "marginTop": -1.5839999999999996,
           },
           {
             "color": "#21232c",
@@ -9249,9 +9436,10 @@ exports[`SettingRow light noSupportingLine 1`] = `
           {
             "fontFamily": "DMSans-SemiBold",
             "fontSize": 16,
-            "fontWeight": "600",
             "letterSpacing": 0,
             "lineHeight": 24,
+            "marginBottom": -1.5839999999999996,
+            "marginTop": -1.5839999999999996,
           },
           {
             "color": "#21232c",
@@ -9462,9 +9650,10 @@ exports[`SettingRow light withSwitch 1`] = `
           {
             "fontFamily": "DMSans-SemiBold",
             "fontSize": 16,
-            "fontWeight": "600",
             "letterSpacing": 0,
             "lineHeight": 24,
+            "marginBottom": -1.5839999999999996,
+            "marginTop": -1.5839999999999996,
           },
           {
             "color": "#21232c",
@@ -9480,9 +9669,10 @@ exports[`SettingRow light withSwitch 1`] = `
           {
             "fontFamily": "DMSans-Medium",
             "fontSize": 12,
-            "fontWeight": "500",
             "letterSpacing": 0,
             "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
           },
           {
             "color": "#848282",
@@ -9505,10 +9695,18 @@ exports[`SettingRow light withSwitch 1`] = `
         {
           "alignSelf": "flex-start",
         },
-        {
-          "backgroundColor": "#eaecf0",
-          "borderRadius": 16,
-        },
+        [
+          [
+            {
+              "alignSelf": "center",
+            },
+            undefined,
+          ],
+          {
+            "backgroundColor": "#eaecf0",
+            "borderRadius": 16,
+          },
+        ],
       ]
     }
     thumbTintColor="#ffffff"
@@ -9664,10 +9862,11 @@ exports[`TopAppBar dark backOnly 1`] = `
         [
           {
             "fontFamily": "DMSans-Bold",
-            "fontSize": 16,
-            "fontWeight": "700",
+            "fontSize": 15,
             "letterSpacing": 0,
             "lineHeight": 24,
+            "marginBottom": -2.2349999999999994,
+            "marginTop": -2.2349999999999994,
           },
           {
             "flex": 1,
@@ -9675,7 +9874,6 @@ exports[`TopAppBar dark backOnly 1`] = `
           },
           {
             "color": "#f2f2f2",
-            "fontSize": 15,
           },
         ]
       }
@@ -9839,10 +10037,11 @@ exports[`TopAppBar dark backWithDelete 1`] = `
         [
           {
             "fontFamily": "DMSans-Bold",
-            "fontSize": 16,
-            "fontWeight": "700",
+            "fontSize": 15,
             "letterSpacing": 0,
             "lineHeight": 24,
+            "marginBottom": -2.2349999999999994,
+            "marginTop": -2.2349999999999994,
           },
           {
             "flex": 1,
@@ -9850,7 +10049,6 @@ exports[`TopAppBar dark backWithDelete 1`] = `
           },
           {
             "color": "#f2f2f2",
-            "fontSize": 15,
           },
         ]
       }
@@ -10116,10 +10314,11 @@ exports[`TopAppBar dark backWithTorch 1`] = `
         [
           {
             "fontFamily": "DMSans-Bold",
-            "fontSize": 16,
-            "fontWeight": "700",
+            "fontSize": 15,
             "letterSpacing": 0,
             "lineHeight": 24,
+            "marginBottom": -2.2349999999999994,
+            "marginTop": -2.2349999999999994,
           },
           {
             "flex": 1,
@@ -10127,7 +10326,6 @@ exports[`TopAppBar dark backWithTorch 1`] = `
           },
           {
             "color": "#f2f2f2",
-            "fontSize": 15,
           },
         ]
       }
@@ -10393,10 +10591,11 @@ exports[`TopAppBar dark wrappingTitle 1`] = `
         [
           {
             "fontFamily": "DMSans-Bold",
-            "fontSize": 16,
-            "fontWeight": "700",
+            "fontSize": 15,
             "letterSpacing": 0,
             "lineHeight": 24,
+            "marginBottom": -2.2349999999999994,
+            "marginTop": -2.2349999999999994,
           },
           {
             "flex": 1,
@@ -10404,7 +10603,6 @@ exports[`TopAppBar dark wrappingTitle 1`] = `
           },
           {
             "color": "#f2f2f2",
-            "fontSize": 15,
           },
         ]
       }
@@ -10568,10 +10766,11 @@ exports[`TopAppBar light backOnly 1`] = `
         [
           {
             "fontFamily": "DMSans-Bold",
-            "fontSize": 16,
-            "fontWeight": "700",
+            "fontSize": 15,
             "letterSpacing": 0,
             "lineHeight": 24,
+            "marginBottom": -2.2349999999999994,
+            "marginTop": -2.2349999999999994,
           },
           {
             "flex": 1,
@@ -10579,7 +10778,6 @@ exports[`TopAppBar light backOnly 1`] = `
           },
           {
             "color": "#21232c",
-            "fontSize": 15,
           },
         ]
       }
@@ -10743,10 +10941,11 @@ exports[`TopAppBar light backWithDelete 1`] = `
         [
           {
             "fontFamily": "DMSans-Bold",
-            "fontSize": 16,
-            "fontWeight": "700",
+            "fontSize": 15,
             "letterSpacing": 0,
             "lineHeight": 24,
+            "marginBottom": -2.2349999999999994,
+            "marginTop": -2.2349999999999994,
           },
           {
             "flex": 1,
@@ -10754,7 +10953,6 @@ exports[`TopAppBar light backWithDelete 1`] = `
           },
           {
             "color": "#21232c",
-            "fontSize": 15,
           },
         ]
       }
@@ -11020,10 +11218,11 @@ exports[`TopAppBar light backWithTorch 1`] = `
         [
           {
             "fontFamily": "DMSans-Bold",
-            "fontSize": 16,
-            "fontWeight": "700",
+            "fontSize": 15,
             "letterSpacing": 0,
             "lineHeight": 24,
+            "marginBottom": -2.2349999999999994,
+            "marginTop": -2.2349999999999994,
           },
           {
             "flex": 1,
@@ -11031,7 +11230,6 @@ exports[`TopAppBar light backWithTorch 1`] = `
           },
           {
             "color": "#21232c",
-            "fontSize": 15,
           },
         ]
       }
@@ -11297,10 +11495,11 @@ exports[`TopAppBar light wrappingTitle 1`] = `
         [
           {
             "fontFamily": "DMSans-Bold",
-            "fontSize": 16,
-            "fontWeight": "700",
+            "fontSize": 15,
             "letterSpacing": 0,
             "lineHeight": 24,
+            "marginBottom": -2.2349999999999994,
+            "marginTop": -2.2349999999999994,
           },
           {
             "flex": 1,
@@ -11308,7 +11507,6 @@ exports[`TopAppBar light wrappingTitle 1`] = `
           },
           {
             "color": "#21232c",
-            "fontSize": 15,
           },
         ]
       }
