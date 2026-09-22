@@ -95,9 +95,10 @@ jobs:
           disable-animations: true
           # Each line runs as its own `sh -c`, so no variable carries between them and dash has no
           # `SECONDS`; Maestro's own total, against the step duration, is what times the emulator.
-          # A device that locks mid-session reds the opening assertion as if the app were at fault.
+          # A lock or a system ANR dialog reds every flow as the app's fault; an app crash still lands in logs/crash-report.txt.
           script: |
             adb shell locksettings set-disabled true
+            adb shell settings put global hide_error_dialogs 1
             adb install -r flutter/app/build/app/outputs/flutter-apk/app-release.apk
             maestro test -e APP_ID=com.usesmileid.sample.flutter flutter/maestro
 

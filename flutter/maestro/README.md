@@ -37,13 +37,20 @@ does nothing and Maestro's `launchApp: arguments:` is ignored entirely, so every
 `stopApp` followed by an `openLink` — `subflows/cold-start.yaml`. A link delivered to a *live* app
 navigates and carries its query, but re-seeds nothing, by design.
 
-**`scrollUntilVisible` needs `centerElement: true`.** It stops the moment a row enters the
-viewport, and the floating nav bar is drawn *over* the bottom of every tab root, so the tap lands
-on the pill and switches tab instead. The failure looks like a missing screen, not a missed tap.
+**`scrollUntilVisible` needs `centerElement: true` and a raised timeout.** It otherwise stops the
+moment the row counts as visible, and `visibilityPercentage` measures screen bounds, not occlusion:
+on the pixel_5 geometry the first swipe parks the row exactly behind the floating nav bar (row
+y 2068–2244, pill 2073–2230), Maestro logs it 100% visible, and the centre tap lands on the pill's
+Verifications segment. The Android twin's `visibilityPercentage: 80` is not a substitute — measured
+0/5 here for that reason; centring moves the row clear of the pill. The default 20s budget is what a
+loaded runner outruns: on 35720237160 the scroll ran out and the flow had already been swiped onto
+products (locally the scroll takes ~3s). Assert the tab root again after any scroll, or a swipe that
+reached the pill arrives as a missing row two steps later.
 
-**Undo has five seconds.** `useSmileIDSampleNoticeWindow` withdraws the removal confirmation on a
-timer, and every assertion in front of the tap costs a hierarchy dump. Keep one dump inside the
-window; four raced it, and a withdrawn toast reds as a missing element rather than as a timer.
+**Undo has five seconds unless the link widens it.** `useSmileIDSampleNoticeWindow` withdraws the
+removal confirmation on a timer, and every assertion in front of the tap costs a hierarchy dump, so
+on a loaded runner the tap lands after the withdrawal and reds as a missing element rather than as a
+timer. Pass `noticeWindow` in the cold-start link, as `verifications.yaml` does.
 
 **The job store survives the run.** It is `SharedPreferences`, and `seedJobs` is idempotent by id,
 so a re-seed never brings back a row a previous run removed. Flows that remove open with
@@ -57,7 +64,11 @@ is passed explicitly rather than defaulted because the debug variant suffixes it
 while both variants claim the same URL scheme, so a deep link with both installed raises a chooser
 and the run hangs on a dialog no flow asserts.
 
-**On an emulator, disable the keyguard first** (`adb shell locksettings set-disabled true`).
+**On an emulator, disable the keyguard first** (`adb shell locksettings set-disabled true`), and
+hide error dialogs (`adb shell settings put global hide_error_dialogs 1`): a system ANR dialog
+covered all four flows on one runner. That hides this app's crash dialog too, not its evidence — a
+red whose app crashed carries `logs/crash-report.txt` beside `device-logcat.txt`, and Maestro's own
+message only says the element was missing.
 
 **The toolchain pin is load-bearing here.** `licenses.yaml` names engine components by id, and
 which ones the bundle carries is decided by the Flutter version — pinned in `flutter.yml` and

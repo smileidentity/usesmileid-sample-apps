@@ -119,6 +119,7 @@ public struct UseSmileIDSampleTopAppBar<Action: View>: View {
     UseSmileIDSampleText(title, style: UseSmileIDSampleTheme.type.textStyleTitle.with(size: 15))
       .foregroundColor(colors.textTitle)
       .multilineTextAlignment(alignment)
+      .accessibilityAddTraits(.isHeader)
   }
 
   /// Holds the action's width even with none, so the title sits identically either way.

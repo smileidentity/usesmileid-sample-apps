@@ -264,6 +264,25 @@ ordered. It also says nothing about a container that merges correctly but labels
   verifies no handle is live before its tear-downs run, so a deferred dispose fails the test it was
   meant to clean up after. This is the same shape as the painting-flag trap already in these notes.
 
+**What each platform's predicate reaches.** Flutter walks `semanticsOwner` and Android walks
+`SemanticsNode`; both assert order, the two traits and the joined-label signature, and all three
+are proved failable. What joins depends on what merges: a container that absorbs a clickable child
+folds that child's words into its own label — on Flutter `Back\nVerification details` for the
+no-action bar (with an action Flutter keeps the two buttons as children and reorders, which the
+order assertion catches); on Android only when the bar itself is the clickable, because a clickable
+child is its own merge boundary and a bar-level `mergeDescendants` merely hoists the title and
+reorders the walk. Android's walker therefore joins ContentDescription with Text — reading one
+property drops the other half of a merge. **iOS has no tree to walk in a unit test**: a
+`UIHostingController` returns an empty `accessibilityElements` until an assistive technology runs.
+It asserts through XCUITest instead: `buttons`/`staticTexts` for how a control is announced,
+`frame.minX` for order, the snapshot's `traits` for the header (a property of the private
+`XCElementSnapshot`, read by key-value coding behind a `responds(to:)` guard, since `XCUIElement`
+exposes none), and element counts for a merge — `.accessibilityElement(children: .combine)` never
+hides the children from XCUITest, it ADDS a wrapper that repeats the title's label and takes a
+child's identifier, and `.ignore` plus a label adds a wrapper carrying the joined words, so a second
+match on the title's words or on a control's id is the signature. `.contain` is a grouping, not a
+merge, and changes nothing a label rule can see.
+
 **Why a golden cannot stand in for it.** The Flutter fix moved no pixel and no baseline changed, so
 every screenshot on every platform is green either side of the defect. That is the whole reason this
 needs its own test rather than a look.

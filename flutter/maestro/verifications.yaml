@@ -4,13 +4,13 @@ appId: ${APP_ID}
 # back landing on the LIST, and the delete confirming on the list.
 #
 # `clearState` first, because the job store survives the run — see ../README.md "Traps", which
-# also says why APP_ID has no default.
+# also says why APP_ID has no default and why the link widens `noticeWindow`.
 
 - clearState
 - runFlow:
     file: subflows/cold-start.yaml
     env:
-      LINK: "usesmileid-sample-flutter://?seedJobs=true"
+      LINK: "usesmileid-sample-flutter://?seedJobs=true&noticeWindow=60"
       LANDS_ON: "sample_products_screen"
 
 - tapOn:

@@ -115,6 +115,38 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
     XCTAssertTrue(app.staticTexts["Other filters still have verifications."].exists)
   }
 
+  /// Separable, in visual order, the title a header and nothing merged — none of which a snapshot can show.
+  @MainActor
+  func testTheAppBarsControlsAreSeparatelyReachable() throws {
+    element("sample_job_row_0").tap()
+    XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
+
+    // `buttons` and `staticTexts` are trait-backed, so these assert how each control is announced.
+    let back = app.buttons["Back"]
+    let title = app.staticTexts["Verification details"]
+    let delete = app.buttons["Hide verification from the app list"]
+    XCTAssertTrue(back.exists, "the back control is not announced as a button")
+    XCTAssertTrue(title.exists, "the title is not its own element")
+    XCTAssertFalse(
+      app.buttons["Verification details"].exists,
+      "a title announced as a button offers an action it does not have"
+    )
+    XCTAssertTrue(delete.exists)
+
+    // A merge adds a wrapper repeating the title's words or a control's id; checked first, it makes every query below ambiguous.
+    let any = app.descendants(matching: .any)
+    XCTAssertEqual(
+      any.matching(NSPredicate(format: "label CONTAINS %@", "Verification details")).count, 1,
+      "a container repeats the title's words"
+    )
+    XCTAssertEqual(any.matching(identifier: "sample_details_delete").count, 1, "a container took the delete control's id")
+
+    // Traversal follows layout, so left to right is the order VoiceOver reads.
+    XCTAssertLessThan(back.frame.minX, title.frame.minX, "the title is read before the back control")
+    XCTAssertLessThan(title.frame.minX, delete.frame.minX, "the action is read before the title")
+    XCTAssertNotEqual(try traits(of: title) & UIAccessibilityTraits.header.rawValue, 0, "the title is not a header")
+  }
+
   /// Opening a verification and coming back used to replay a confirmation already spent.
   func testASpentConfirmationDoesNotComeBackWithYou() {
     element("sample_select_toggle").tap()
@@ -203,6 +235,14 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
 
   private func element(_ id: String) -> XCUIElement {
     app.descendants(matching: .any).matching(identifier: id).firstMatch
+  }
+
+  /// Traits live on the private class behind the snapshot; the guard fails loudly if an Xcode drops them.
+  @MainActor
+  private func traits(of element: XCUIElement) throws -> UInt64 {
+    let snapshot = try element.snapshot() as AnyObject
+    XCTAssertTrue(snapshot.responds(to: NSSelectorFromString("traits")), "the snapshot carries no traits")
+    return try XCTUnwrap((snapshot.value(forKey: "traits") as? NSNumber)?.uint64Value)
   }
 
   private func open(_ path: String) {

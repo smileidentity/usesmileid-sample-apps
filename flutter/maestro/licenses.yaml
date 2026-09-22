@@ -14,12 +14,16 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_settings_screen"
 
-# `centerElement` is load-bearing — see ../README.md "Traps".
+# `centerElement` and the timeout are load-bearing — see ../README.md "Traps".
 - scrollUntilVisible:
     element:
       id: "sample_setting_nav_licenses"
     direction: DOWN
     centerElement: true
+    timeout: 45000
+# A swipe that reached the pill switched tab; caught here rather than as a missing row later.
+- assertVisible:
+    id: "sample_settings_screen"
 - tapOn:
     id: "sample_setting_nav_licenses"
 - assertVisible:
