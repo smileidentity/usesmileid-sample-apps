@@ -12,9 +12,8 @@ import {
   type UseSmileIDFlowBuilder,
   type UseSmileIDResult,
 } from '@smileid/usesmileid';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useId, useMemo, useRef } from 'react';
-import { View } from 'react-native';
+import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
+import { useId, useMemo, useRef } from 'react';
 
 import { smileIDSampleApplying } from '../../../src/flow/use-smile-id-sample-flow-builder-config';
 import type { UseSmileIDSampleFlowLaunchSnapshot } from '../../../src/flow/use-smile-id-sample-flow-launch-snapshot';
@@ -78,26 +77,14 @@ export default function SdkFlowRun() {
     router.replace('/products');
   };
 
-  useEffect(() => {
-    if (preflight === null) {
-      leave();
-      return;
-    }
-    if (preflight.kind === 'needsDetails') {
-      left.current = true;
-      router.replace(`/flow/${productId}/details`);
-      return;
-    }
-    // No form fixes a misconfigured builder, and it must still never reach the SDK.
-    if (preflight.kind === 'misconfigured') leave();
-    // Runs once for the entry the gate decided on.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [preflight]);
-
-  if (snapshot === null || preflight?.kind !== 'ready') {
-    // An empty frame: the effect above is already leaving this route.
-    return <View style={{ flex: 1 }} />;
+  // Declared rather than pushed from an effect: on a cold link this route is the only entry, and
+  // replacing it imperatively as it mounts took the whole app off screen.
+  if (snapshot === null) return <Redirect href="/products" />;
+  if (preflight?.kind === 'needsDetails') {
+    return <Redirect href={`/flow/${productId}/details`} />;
   }
+  // No form fixes a misconfigured builder, and it must still never reach the SDK.
+  if (preflight?.kind !== 'ready') return <Redirect href="/products" />;
 
   return (
     <UseSmileIDBuilder
