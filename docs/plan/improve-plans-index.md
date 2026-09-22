@@ -64,7 +64,9 @@ operations a flow host will later call, which is a different thing and is scoped
 
 Kept so nobody re-audits them.
 
-- **Expo records no pixel baselines.** Superseded: every one of its 268 style-tree states now also
+- **Expo records no pixel baselines.** REVERSED 2026-09-22: pixel baselines on iOS exposed gaps no other
+  gate saw, and small Android differences were still being found by eye, so Expo now needs the same
+  artefact. Every one of its 268 style-tree states now also
   records a PNG, painted by `expo/sample-ui/test/paint/` over the jest lane's yoga layout at 2×
   (786 wide) and content height. The style trees stay beside them: they are platform-independent,
   so a token or metric regression fails identically on any machine, while a PNG is host-rasterised

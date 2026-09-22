@@ -115,7 +115,7 @@ Each with the reason, so it is not raised again.
 | **Phase 3 as a phase** | Superseded by item 8. Twelve behaviours become flows in a lane, not a pass on a handset. |
 | **Plans 2 and 3 as standalone plans** | Folded into item 9. Building a store contract with no caller is the pattern `port-review-findings.md` §5 warns about. |
 | **The two shell ids and `sample_env_chip`** as separate items | Into the owner table above. Decide after item 9 shows whether a nested launch exists. |
-| **Expo recording style trees rather than pixels** | The improve index already rejects this correctly. Item 8's lane is where layout outcomes get seen on Expo; the style trees stay for what they can see. |
+| **Expo recording style trees rather than pixels** | REVERSED 2026-09-22 — Expo now paints every state to a PNG beside its style tree; see `improve-plans-index.md`. Kept here so the earlier closure is not re-read as current. |
 | **The component gallery on two of four platforms** | Not a four-way contract. A product call, not a defect. |
 | **iOS as the "outlier" on cold-link back-stack shape** (backlog decision 3, §2) | Stack shape is a platform idiom. Specify where back lands; let iOS build the stack iOS users expect. Review §5.3. |
 | **A shared `maxTextScale` for all four platforms** | iOS Dynamic Type exceeds it; the backlog already says 3× fails. Declare the ceiling per platform rather than pinning iOS to Android's. Review §5.3. |
