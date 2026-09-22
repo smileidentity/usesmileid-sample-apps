@@ -20,17 +20,11 @@ struct UseSmileIDSampleShell: View {
     UseSmileIDSampleStack(tab: router.selectedTab) { bottomChrome }
       .environmentObject(router)
       .environmentObject(app)
-      // Pinned both ways, not nil: following the system leaves a dark device rendering dark while Settings reads off.
-      .preferredColorScheme(app.settings.darkMode ? .dark : .light)
-      // `preferredColorScheme` moves the system's controls; only this maps the scheme onto our tokens.
-      .useSmileIDSampleTheme()
-      // Reaches `\.locale` in the shell's own views only; the SDK's strings follow `-AppleLanguages`.
-      .modifier(UseSmileIDSampleLocaleOverride(locale: app.launchArguments.locale))
-      // Only automation passes one; without it the environment default is the product's.
-      .modifier(UseSmileIDSampleNoticeWindowOverride(seconds: app.launchArguments.noticeWindow))
+      .modifier(UseSmileIDSampleShellEnvironment(app: app))
       // At the root, over whichever route is showing; a link opens the owner first, so it layers.
       .sheet(item: $router.sheet) { sheet in
-        sheetContent(sheet)
+        // A sheet is its own presentation and inherits none of the environment set above it.
+        sheetContent(sheet).modifier(UseSmileIDSampleShellEnvironment(app: app))
       }
       .onOpenURL { url in
         guard let link = UseSmileIDSampleLinks.resolve(url) else { return }
@@ -162,6 +156,22 @@ struct UseSmileIDSampleShell: View {
     } else {
       router.selectedTab = tab
     }
+  }
+}
+
+/// The appearance, locale and notice window the shell imposes, on the stack and on every sheet it presents.
+private struct UseSmileIDSampleShellEnvironment: ViewModifier {
+  @ObservedObject var app: UseSmileIDSampleAppState
+
+  func body(content: Content) -> some View {
+    content
+      // Pinned both ways, not nil: following the system leaves a dark device rendering dark while Settings reads off.
+      .preferredColorScheme(app.settings.darkMode ? .dark : .light)
+      // `preferredColorScheme` moves the system's controls; only this maps the scheme onto our tokens.
+      .useSmileIDSampleTheme()
+      // Reaches `\.locale` in the shell's own views only; the SDK's strings follow `-AppleLanguages`.
+      .modifier(UseSmileIDSampleLocaleOverride(locale: app.launchArguments.locale))
+      .modifier(UseSmileIDSampleNoticeWindowOverride(seconds: app.launchArguments.noticeWindow))
   }
 }
 
