@@ -3,12 +3,9 @@ import { ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } fr
 
 import { UseSmileIDSampleEmptyState } from '../components/use-smile-id-sample-empty-state';
 import { UseSmileIDSampleSectionLabel } from '../components/use-smile-id-sample-section-label';
-import {
-  UseSmileIDSampleSettingRow,
-  UseSmileIDSampleSettingRowChevron,
-} from '../components/use-smile-id-sample-setting-row';
+import { UseSmileIDSampleRowDivider } from '../components/use-smile-id-sample-section-surface';
+import { UseSmileIDSampleSettingRow } from '../components/use-smile-id-sample-setting-row';
 import { UseSmileIDSampleTopAppBar } from '../components/use-smile-id-sample-top-app-bar';
-import { smileCardStrokeWidth } from '../smile-product-hues';
 import {
   UseSmileIDSampleSuffixedTestIds,
   UseSmileIDSampleTestIds,
@@ -46,25 +43,25 @@ export const LicensesScreen = ({ licences, onBack, style }: Props) => {
         {licences.length === 0 ? (
           // Generated into the bundle at build time, so an empty list means the asset did not ship.
           <UseSmileIDSampleEmptyState
-            text="No notices shipped"
-            supportingText="The generated licence asset is missing from this build"
+            text="No notices bundled"
+            supportingText="The generated licenses.json is missing from this build"
             testID={UseSmileIDSampleTestIds.LICENSES_EMPTY}
           />
         ) : (
           <View>
             <UseSmileIDSampleSectionLabel
-              text="OPEN-SOURCE COMPONENTS"
-              style={{ padding: theme.dimens.spacing.md }}
+              text={`OPEN-SOURCE COMPONENTS — ${licences.length}`}
+              style={{ paddingHorizontal: theme.dimens.spacing.md, paddingVertical: theme.dimens.spacing.xs }}
             />
             {licences.map((licence) => (
-              <View key={licence.component}>
+              // No leading tile and no chevron: the coordinate is the content, and the row expands.
+              <View key={licence.component} style={{ backgroundColor: theme.colors.surface }}>
                 <UseSmileIDSampleSettingRow
                   title={licence.component}
                   supportingText={`${licence.version} · ${licence.declared}`}
                   onPress={() =>
                     setExpanded((current) => (current === licence.component ? null : licence.component))
                   }
-                  trailing={<UseSmileIDSampleSettingRowChevron />}
                   testID={UseSmileIDSampleSuffixedTestIds.licenseRow(licence.component)}
                 />
                 {expanded === licence.component ? (
@@ -73,9 +70,9 @@ export const LicensesScreen = ({ licences, onBack, style }: Props) => {
                     style={[
                       theme.type.textStyleCaption,
                       {
-                        color: theme.colors.textBody,
+                        color: theme.colors.textMuted,
                         paddingHorizontal: theme.dimens.spacing.md,
-                        paddingBottom: theme.dimens.spacing.md,
+                        paddingBottom: theme.dimens.spacing.sm,
                       },
                     ]}
                   >
@@ -84,9 +81,7 @@ export const LicensesScreen = ({ licences, onBack, style }: Props) => {
                       : `${licence.text}\n\n${licence.notice}`}
                   </Text>
                 ) : null}
-                <View
-                  style={{ backgroundColor: theme.colors.cardStroke, height: smileCardStrokeWidth }}
-                />
+                <UseSmileIDSampleRowDivider />
               </View>
             ))}
           </View>
