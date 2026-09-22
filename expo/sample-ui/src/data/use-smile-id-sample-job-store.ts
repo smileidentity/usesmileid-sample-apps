@@ -89,8 +89,7 @@ export const useSmileIDSampleJobStore = create<State & Actions>((set, get) => ({
     }
     const rows = Array.isArray(parsed) ? parsed : [];
     const jobs = rows
-      // Per row, not per store, and the shape is checked first: a `null` entry read as a record
-      // throws out of `load` itself, which leaves the list null rather than merely short.
+      // Shape first: a `null` entry read as a record throws out of `load` and leaves the list null.
       .map((row) =>
         typeof row === 'object' && row !== null
           ? smileIDSampleJobFrom(row as Record<string, unknown>)

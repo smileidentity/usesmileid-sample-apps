@@ -40,8 +40,7 @@ export const smileIDSampleJobFrom = (raw: Record<string, unknown>): UseSmileIDSa
   return {
     id: raw.id,
     userId: typeof raw.userId === 'string' ? raw.userId : '',
-    // Substituted rather than dropped, as Android and iOS do: a removed product must not take a
-    // user's history with it, and the row still says everything else it recorded.
+    // Substituted as Android and iOS do: a removed product must not take the row with it.
     product:
       smileIDSampleProductFrom(typeof raw.product === 'string' ? raw.product : null) ??
       smileIDSampleProducts[0]!,

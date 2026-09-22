@@ -22,8 +22,7 @@ export const smileIDSamplePreflight = (
   const builder = new UseSmileIDFlowBuilder();
   smileIDSampleApplying(builder, snapshot);
 
-  // A form can fix what the user typed but not how the host built the flow, so the payloads are
-  // reported before the builder's own verdict.
+  // Payloads before the builder's verdict: a form can fix what was typed, not how this built it.
   const checks: ValidationState[] = [];
   if (builder.userDetails !== undefined) checks.push(builder.validateUserDetails(builder.userDetails));
   if (builder.biometricKYCParams !== undefined)

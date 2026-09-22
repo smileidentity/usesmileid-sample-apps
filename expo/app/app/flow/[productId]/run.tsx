@@ -30,15 +30,12 @@ export default function SdkFlowRun() {
   const idDetails = useSmileIDSampleFormsStore((state) => state.idDetails);
   const settings = useSmileIDSampleSettingsStore((state) => state.settings);
   const addJob = useSmileIDSampleJobStore((state) => state.add);
-  // React's own per-mount id rather than a clock: stable across re-renders, and reading a clock
-  // during render is the impurity that makes a value change when nothing asked it to.
+  // React's own per-mount id: reading a clock during render is the impurity that makes it drift.
   const runUserId = `user_${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
-  /// A teardown-delivered cancel arrives after the route is gone, where leaving again would act on
-  /// whatever replaced it.
+  /// A cancel delivered after teardown would otherwise act on whatever replaced this route.
   const left = useRef(false);
 
-  // Read once at entry and never while the run is in flight: the SDK builds its configuration when
-  // the component mounts, and remounting it tears the run down.
+  // Once at entry: the SDK builds on mount, and remounting it tears the run down.
   const snapshot = useMemo<UseSmileIDSampleFlowLaunchSnapshot | null>(() => {
     const product = smileIDSampleProductFrom(productId);
     if (product === null) return null;
@@ -62,7 +59,7 @@ export default function SdkFlowRun() {
       // A profile here carries no webhook URL yet, and empty means the partner's portal default.
       callbackUrl: '',
     };
-    // Deliberately entry-only: every dependency is read once, and re-reading one rebuilds the flow.
+    // Entry-only: re-reading any dependency rebuilds the flow.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -77,8 +74,7 @@ export default function SdkFlowRun() {
     router.replace('/products');
   };
 
-  // Declared rather than pushed from an effect: on a cold link this route is the only entry, and
-  // replacing it imperatively as it mounts took the whole app off screen.
+  // Declared, not replaced from an effect: on a cold link that took the whole app off screen.
   if (snapshot === null) return <Redirect href="/products" />;
   if (preflight?.kind === 'needsDetails') {
     return <Redirect href={`/flow/${productId}/details`} />;
@@ -99,8 +95,7 @@ export default function SdkFlowRun() {
             leave();
             return;
           }
-          // Not awaited and held by the store rather than this screen: a result the SDK delivers
-          // exactly once must be written even if the route is torn down in the same frame.
+          // Held by the store, not this screen: the write must outlive a same-frame teardown.
           void addJob({
             id: result.value.jobId,
             userId: result.value.userId,

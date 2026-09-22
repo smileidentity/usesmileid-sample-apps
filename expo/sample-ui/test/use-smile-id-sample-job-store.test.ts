@@ -389,8 +389,7 @@ describe('a row read back from storage', () => {
     expect(store().jobs?.[0]?.product.id).toBe(smileIDSampleProducts[0]!.id);
   });
 
-  // Substituted rather than dropped, which is the majority behaviour: a removed product must not
-  // take the row, and everything else the row recorded is still true.
+  // Substituted rather than dropped, which is the majority behaviour across the four apps.
   it('substitutes a product that no longer exists rather than dropping the row', async () => {
     await AsyncStorage.setItem(
       'sample.jobs.v3',

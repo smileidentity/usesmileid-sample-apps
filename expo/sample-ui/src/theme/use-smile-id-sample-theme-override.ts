@@ -14,8 +14,7 @@ export type UseSmileIDSampleThemeOverride = {
 /// What each theme scenario overrides, or null for the ship state.
 export const smileIDSampleThemeOverride = (themeId: string): UseSmileIDSampleThemeOverride | null => {
   switch (themeId) {
-    // Named CSS colours, never a token and never a hex literal: a plausible partner palette has to
-    // be nobody's brand, and reading one out of the design system would make it Smile ID's.
+    // Named CSS colours, never a token: a partner palette has to be nobody's brand.
     case 'partnerOverride':
       return {
         primaryColor: { light: 'slateblue', dark: 'mediumpurple' },
@@ -24,8 +23,7 @@ export const smileIDSampleThemeOverride = (themeId: string): UseSmileIDSampleThe
         accentColor: { light: 'coral', dark: 'coral' },
         buttonShape: partnerButtonRadius,
       };
-    // Deliberately outside every palette: this scenario exists to collide. Monospace is the one
-    // family every platform resolves without bundling a font.
+    // Outside every palette, to collide; monospace resolves everywhere without bundling a font.
     case 'clashingHost':
       return {
         primaryColor: { light: 'magenta', dark: 'magenta' },

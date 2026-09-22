@@ -9,8 +9,7 @@ import {
 import type { UseSmileIDSampleFlowLaunchSnapshot } from '../src/flow/use-smile-id-sample-flow-launch-snapshot';
 import { smileIDSamplePreflight } from '../src/flow/use-smile-id-sample-flow-preflight';
 
-// Each provider resolves its native module on import, which no jest runtime has. Mocked rather than
-// avoided, because the host requiring exactly one of them is the thing under test.
+// Mocked, not avoided: the host requiring exactly one provider is the thing under test.
 jest.mock('@smileid/usesmileid_mlkit_face', () => ({ useSmileIDMlkitFace: { key: 'mlkit' } }));
 jest.mock('@smileid/usesmileid_vision_face', () => ({ useSmileIDVisionFace: { key: 'vision' } }));
 
@@ -137,8 +136,7 @@ describe('what the SDK is handed', () => {
     expect(built(snapshot()).userId).toBeUndefined();
   });
 
-  // The gate can only call `validate()`, which the SDK documents as far weaker than its build: a
-  // missing consent icon passes one and fails the other, and a rejected build renders nothing.
+  // `validate()` is weaker than the build: a missing consent icon passes one and fails the other.
   it('every product builds a configuration the SDK accepts', () => {
     for (const product of smileIDSampleProducts) {
       const result = built(
@@ -156,8 +154,7 @@ describe('what the SDK is handed', () => {
     }
   });
 
-  // The regression check for the defect that took the whole JS bundle down on Android: naming the
-  // other platform's provider resolves its native module at import time.
+  // The regression check for the import that took the whole JS bundle down on Android.
   it('requires only the platform whose analyzer it asks for', () => {
     jest.isolateModules(() => {
       const vision = jest.requireMock('@smileid/usesmileid_vision_face');

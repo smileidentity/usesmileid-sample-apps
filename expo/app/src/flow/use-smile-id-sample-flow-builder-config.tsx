@@ -72,8 +72,7 @@ export const smileIDSampleApplying = (
         snapshot.scenario === 'badRefresh'
           ? smileIDSampleMalformedToken()
           : smileIDSampleFlowToken({ expired: false, nowMillis: Date.now() });
-      // Debug builds only: a sample that shows a partner what the SDK put on the wire is a real
-      // probe affordance, but release must never log traffic.
+      // Debug only: a release build must never log traffic.
       config.logging((logging) => {
         logging.enabled = __DEV__;
         // Headers, not body: a logged body carries the user details this repo forbids in logs.
@@ -193,8 +192,7 @@ const applyIdParams = (
   }
 };
 
-/// The platform's own face backend, required rather than imported: each provider resolves its native
-/// module at import time, so naming the other platform's here takes the whole JS bundle down.
+/// Required, not imported: a provider resolves its native module on import and would take the bundle down.
 const selfieAnalyzer = (): FaceAnalyzer =>
   Platform.OS === 'android'
     ? // eslint-disable-next-line @typescript-eslint/no-require-imports
