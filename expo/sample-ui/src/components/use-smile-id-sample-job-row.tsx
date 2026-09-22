@@ -10,6 +10,7 @@ import {
 import type { UseSmileIDSampleStatus } from '../model/use-smile-id-sample-status';
 import { smileCardStrokeWidth } from '../smile-product-hues';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import { smileStrokeOverlap } from './use-smile-id-sample-section-surface';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 /// Both read off the verifications board rather than the scale; no token carries either.
@@ -62,6 +63,7 @@ export const UseSmileIDSampleJobRow = ({
       <View
         style={[
           stacks ? styles.stacked : styles.inline,
+          smileStrokeOverlap,
           {
             minHeight: theme.dimens.space[64],
             padding: theme.dimens.spacing.sm,
@@ -130,8 +132,8 @@ const JobRowText = ({
 
 const styles = StyleSheet.create({
   card: { overflow: 'hidden', width: '100%' },
-  inline: { alignItems: 'center', flexDirection: 'row', width: '100%' },
-  stacked: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', width: '100%' },
+  inline: { alignItems: 'center', flexDirection: 'row' },
+  stacked: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap' },
   text: { flex: 1 },
   tile: { alignItems: 'center', justifyContent: 'center' },
 });

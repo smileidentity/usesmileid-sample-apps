@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
-import { atWeight } from '../theme/smile-type';
+import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 const FIELD_TEXT_SIZE = 13;
@@ -45,8 +45,8 @@ export const UseSmileIDSampleDataFieldRow = ({
     >
       <Text
         style={[
-          theme.type.dataFieldLabelFont,
-          { fontSize: FIELD_TEXT_SIZE, color: theme.colors.dataField.label },
+          atSize(theme.type.dataFieldLabelFont, FIELD_TEXT_SIZE),
+          { color: theme.colors.dataField.label },
         ]}
       >
         {label}
@@ -54,9 +54,9 @@ export const UseSmileIDSampleDataFieldRow = ({
       {/* A column of its own, wrapping inside it: a wrapping row sent long values below the label. */}
       <Text
         style={[
-          atWeight(theme.type.dataFieldValueFont, valueColor === undefined ? 600 : 700),
+          atSize(atWeight(theme.type.dataFieldValueFont, valueColor === undefined ? 600 : 700), FIELD_TEXT_SIZE),
           styles.value,
-          { fontSize: FIELD_TEXT_SIZE, color: valueColor ?? theme.colors.dataField.value },
+          { color: valueColor ?? theme.colors.dataField.value },
         ]}
       >
         {value}

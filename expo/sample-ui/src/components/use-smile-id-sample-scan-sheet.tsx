@@ -52,7 +52,8 @@ export const UseSmileIDSampleScanSheet = ({ onPaste, onSimulate, style }: Props)
           testID={UseSmileIDSampleTestIds.TOKEN_PASTE}
           accessibilityRole="button"
           onPress={onPaste}
-          hitSlop={12}
+          // Laid out at the platform's touch target, as Compose's minimum size does.
+          style={[styles.action, { minHeight: theme.dimens.touchTarget, minWidth: theme.dimens.touchTarget, paddingHorizontal: theme.dimens.spacing.xs }]}
         >
           <Text style={[theme.type.textStyleButtonSm, { color: theme.colors.primary }]}>Paste</Text>
         </Pressable>
@@ -71,4 +72,5 @@ const styles = StyleSheet.create({
   sheet: { width: '100%' },
   row: { alignItems: 'center', flexDirection: 'row', width: '100%' },
   label: { flex: 1 },
+  action: { alignItems: 'center', justifyContent: 'center' },
 });

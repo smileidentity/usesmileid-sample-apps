@@ -85,7 +85,7 @@ export const UseSmileIDSampleButton = ({
 const PRESSED_OPACITY = 0.85;
 
 const styles = StyleSheet.create({
-  container: { alignItems: 'center', justifyContent: 'center', width: '100%' },
+  container: { alignItems: 'center', alignSelf: 'stretch', justifyContent: 'center' },
   content: { alignItems: 'center', justifyContent: 'center' },
   label: { textAlign: 'center' },
 });

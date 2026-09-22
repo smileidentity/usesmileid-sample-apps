@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 import { tokens } from '../tokens';
 
 /// Strips the CSS unit the token source carries, because React Native sizes are unitless numbers.
@@ -61,6 +63,8 @@ export const smileDimens = {
     gap: px(tokens.search.gap),
     height: px(tokens.search.height),
   },
+  /// The platform's minimum touch target, Material's 48 or Apple's 44, which Compose applies to every clickable.
+  touchTarget: Platform.OS === 'android' ? px(tokens.space['48']) : px(tokens.size['control-md']),
   elevation: {
     card: shadow(tokens.elevation.card),
     floating: shadow(tokens.elevation.floating),

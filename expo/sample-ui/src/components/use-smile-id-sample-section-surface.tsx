@@ -5,6 +5,9 @@ import { UseSmileIDSampleSectionLabel } from './use-smile-id-sample-section-labe
 import { smileCardStrokeWidth } from '../smile-product-hues';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
+/// Pulls a card's content over its stroke, because Compose draws a Surface border over the content it does not inset.
+export const smileStrokeOverlap: ViewStyle = { margin: -smileCardStrokeWidth };
+
 type Props = {
   label?: string;
   children: ReactNode;
@@ -29,7 +32,7 @@ export const UseSmileIDSampleSectionSurface = ({ label, children, style }: Props
           },
         ]}
       >
-        {children}
+        <View style={smileStrokeOverlap}>{children}</View>
       </View>
     </View>
   );

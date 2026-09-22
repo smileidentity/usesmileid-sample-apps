@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 import type { UseSmileIDSampleTopAppBarEmphasis } from '../model/use-smile-id-sample-app-bar-emphasis';
+import { atSize } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 /// Pinned, not a minimum: a longer title growing the bar drops the header lower on some screens than others.
@@ -101,9 +102,9 @@ export const UseSmileIDSampleTopAppBar = ({
         <Text
           // Wraps rather than caps: ellipsising a title is the clipping the predicate forbids.
           style={[
-            theme.type.textStyleTitle,
+            atSize(theme.type.textStyleTitle, TITLE_SIZE),
             styles.title,
-            { fontSize: TITLE_SIZE, color: theme.colors.textTitle },
+            { color: theme.colors.textTitle },
           ]}
         >
           {title}

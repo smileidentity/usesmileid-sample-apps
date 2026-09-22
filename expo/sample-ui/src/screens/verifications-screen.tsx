@@ -115,10 +115,15 @@ export const VerificationsScreen = ({
           paddingTop: insets.top,
           // In select mode the selection bar replaces the nav bar, so the inset does not change.
           paddingBottom: bottomInset,
-          rowGap: theme.dimens.spacing.sm,
+          rowGap: theme.dimens.spacing.xs,
         }}
       >
-        <View style={[styles.header, { paddingHorizontal: theme.dimens.spacing.md }]}>
+        <View
+          style={[
+            styles.header,
+            { paddingHorizontal: theme.dimens.spacing.md, paddingVertical: theme.dimens.spacing.xs },
+          ]}
+        >
           <Text style={[theme.type.textStyleHeadingPage, styles.title, { color: theme.colors.textTitle }]}>
             Verifications
           </Text>
@@ -130,7 +135,11 @@ export const VerificationsScreen = ({
                 setSelecting((current) => !current);
                 setSelected([]);
               }}
-              hitSlop={12}
+              // The platform's own minimum target, which is what sets the header row's height.
+              style={[
+                styles.selectToggle,
+                { minHeight: theme.dimens.touchTarget, minWidth: theme.dimens.touchTarget, paddingHorizontal: theme.dimens.spacing.xs },
+              ]}
             >
               <Text style={[theme.type.textStyleButtonSm, { color: theme.colors.primary }]}>
                 {selecting ? 'Cancel' : 'Select'}
@@ -274,6 +283,7 @@ export type { UseSmileIDSampleJobFilter };
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   header: { alignItems: 'center', flexDirection: 'row', width: '100%' },
+  selectToggle: { alignItems: 'center', justifyContent: 'center' },
   title: { flex: 1 },
   selectRow: { alignItems: 'center', flexDirection: 'row', width: '100%' },
   selectRowCard: { flex: 1 },

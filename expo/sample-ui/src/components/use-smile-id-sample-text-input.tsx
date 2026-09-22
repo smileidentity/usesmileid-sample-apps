@@ -59,6 +59,8 @@ export const UseSmileIDSampleTextInput = ({
       ? theme.colors.input.borderFocus
       : theme.colors.input.border;
 
+  const borderWidth = focused || isError ? theme.dimens.borderWidth.thin : theme.dimens.borderWidth.hairline;
+
   return (
     <View style={style}>
       <View
@@ -68,11 +70,11 @@ export const UseSmileIDSampleTextInput = ({
             minHeight: theme.dimens.size['control-md'],
             backgroundColor: enabled ? theme.colors.input.background : theme.colors.surfaceMuted,
             borderRadius: theme.dimens.radius.field,
-            borderWidth:
-              focused || isError ? theme.dimens.borderWidth.thin : theme.dimens.borderWidth.hairline,
+            borderWidth,
             borderColor,
-            paddingHorizontal: theme.dimens.spacing.md,
-            paddingVertical: theme.dimens.spacing.sm,
+            // Compose draws the border over the padding; here it sits inside the box, so it comes off the padding.
+            paddingHorizontal: theme.dimens.spacing.md - borderWidth,
+            paddingVertical: theme.dimens.spacing.sm - borderWidth,
             columnGap: theme.dimens.spacing.xs,
           },
         ]}
@@ -111,7 +113,7 @@ export const UseSmileIDSampleTextInput = ({
             {
               color: theme.colors.input.borderError,
               marginStart: theme.dimens.spacing.md,
-              marginTop: theme.dimens.space[4],
+              marginTop: theme.dimens.space[4] + theme.type.textStyleCaption.marginTop,
             },
           ]}
         >

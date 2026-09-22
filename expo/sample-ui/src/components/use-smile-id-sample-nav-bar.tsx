@@ -5,6 +5,7 @@ import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 import { UseSmileIDSampleTokenRing } from './use-smile-id-sample-token-ring';
 import { smileIDSampleNavItems, type UseSmileIDSampleNavItem } from '../model/use-smile-id-sample-nav-item';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import { atSize } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 const TAB_ICON_SIZE = 21;
@@ -136,7 +137,7 @@ const TokenAffordance = ({ progress, onPress }: { progress: number | null; onPre
           size={theme.dimens.size['icon-sm']}
         />
         <Text
-          style={[theme.type.textStyleOverline, { fontSize: TOKEN_LABEL_SIZE, color: theme.colors.offBlack }]}
+          style={[atSize(theme.type.textStyleOverline, TOKEN_LABEL_SIZE), { color: theme.colors.offBlack }]}
         >
           Token
         </Text>

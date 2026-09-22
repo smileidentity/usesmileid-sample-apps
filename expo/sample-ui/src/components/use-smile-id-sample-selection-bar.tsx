@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } fro
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
-import { atWeight } from '../theme/smile-type';
+import { atSize, atWeight } from '../theme/smile-type';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
@@ -53,13 +53,13 @@ export const UseSmileIDSampleSelectionBar = ({ selectedCount, onRemove, style }:
           <Text
             testID={UseSmileIDSampleTestIds.SELECTION_COUNT}
             style={[
-              atWeight(theme.type.textStyleBodyStrong, 700),
-              { fontSize: COUNT_SIZE, color: theme.colors.textTitle },
+              atSize(atWeight(theme.type.textStyleBodyStrong, 700), COUNT_SIZE),
+              { color: theme.colors.textTitle },
             ]}
           >
             {`${selectedCount} selected`}
           </Text>
-          <Text style={[theme.type.textStyleBodySm, { fontSize: HINT_SIZE, color: theme.colors.textMuted }]}>
+          <Text style={[atSize(theme.type.textStyleBodySm, HINT_SIZE), { color: theme.colors.textMuted }]}>
             {selectedCount === 0 ? 'Tap rows to select' : 'Tap `Hide from List` to confirm'}
           </Text>
         </View>
@@ -99,8 +99,8 @@ const RemoveAction = ({ enabled, onRemove }: { enabled: boolean; onRemove: () =>
       />
       <Text
         style={[
-          atWeight(theme.type.textStyleBodyStrong, 700),
-          { fontSize: REMOVE_SIZE, color: theme.colors.badge.errorText },
+          atSize(atWeight(theme.type.textStyleBodyStrong, 700), REMOVE_SIZE),
+          { color: theme.colors.badge.errorText },
         ]}
       >
         Hide from List

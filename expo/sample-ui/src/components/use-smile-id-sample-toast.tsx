@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
-import { atWeight } from '../theme/smile-type';
+import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 /// The snackbar's own metrics, which land between the scale steps — spec/components.json → Toast.
@@ -43,9 +43,9 @@ export const UseSmileIDSampleToast = ({ message, actionLabel, onAction, style }:
     >
       <Text
         style={[
-          atWeight(theme.type.bannerTextFont, 500),
+          atSize(atWeight(theme.type.bannerTextFont, 500), SNACKBAR_TEXT_SIZE),
           styles.message,
-          { fontSize: SNACKBAR_TEXT_SIZE, color: theme.colors.background },
+          { color: theme.colors.background },
         ]}
       >
         {message}
@@ -65,9 +65,9 @@ export const UseSmileIDSampleToast = ({ message, actionLabel, onAction, style }:
           <Text
             numberOfLines={1}
             style={[
-              atWeight(theme.type.linkFont, 600),
+              atSize(atWeight(theme.type.linkFont, 600), SNACKBAR_ACTION_SIZE),
               styles.actionLabel,
-              { fontSize: SNACKBAR_ACTION_SIZE, color: theme.colors.background },
+              { color: theme.colors.background },
             ]}
           >
             {actionLabel}

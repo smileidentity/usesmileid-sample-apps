@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
+import { atSize } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 const FLAG_SIZE = 19;
@@ -47,13 +48,13 @@ export const UseSmileIDSampleOptionRow = ({
       ]}
     >
       {leadingText !== undefined ? (
-        <Text style={[theme.type.textStyleBody, { fontSize: FLAG_SIZE }]}>{leadingText}</Text>
+        <Text style={atSize(theme.type.textStyleBody, FLAG_SIZE)}>{leadingText}</Text>
       ) : null}
       <Text
         style={[
-          theme.type.textStyleBodyStrong,
+          atSize(theme.type.textStyleBodyStrong, OPTION_LABEL_SIZE),
           styles.label,
-          { fontSize: OPTION_LABEL_SIZE, color: theme.colors.textTitle },
+          { color: theme.colors.textTitle },
         ]}
       >
         {label}

@@ -22,6 +22,7 @@ export const UseSmileIDSampleSearchField = ({
 }: Props) => {
   const theme = useSmileIDSampleTheme();
   const [focused, setFocused] = useState(false);
+  const borderWidth = focused ? theme.dimens.borderWidth.thin : theme.dimens.borderWidth.hairline;
 
   return (
     <View
@@ -31,10 +32,11 @@ export const UseSmileIDSampleSearchField = ({
           minHeight: theme.dimens.size['control-md'],
           backgroundColor: theme.colors.search.background,
           borderRadius: theme.dimens.radius.field,
-          borderWidth: focused ? theme.dimens.borderWidth.thin : theme.dimens.borderWidth.hairline,
+          borderWidth,
           borderColor: focused ? theme.colors.search.borderFocus : theme.colors.search.border,
-          paddingHorizontal: theme.dimens.spacing.md,
-          paddingVertical: theme.dimens.spacing.sm,
+          // Compose draws the border over the padding; here it sits inside the box, so it comes off the padding.
+          paddingHorizontal: theme.dimens.spacing.md - borderWidth,
+          paddingVertical: theme.dimens.spacing.sm - borderWidth,
           columnGap: theme.dimens.spacing.xs,
         },
         style,

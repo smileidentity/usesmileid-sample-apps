@@ -1,5 +1,6 @@
 import { StyleSheet, Text, TextInput, View, type KeyboardTypeOptions, type StyleProp, type ViewStyle } from 'react-native';
 
+import { atSize } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 /// The design's own row metrics, which land between the scale steps — spec/components.json → KeyValueEditRow.
@@ -49,7 +50,7 @@ export const UseSmileIDSampleKeyValueEditRow = ({
     >
       <Text
         // The field name is title-coloured and only the placeholder is muted; Android had that inverted.
-        style={[theme.type.textStyleSubtitle, { fontSize: ROW_TEXT_SIZE, color: theme.colors.textTitle }]}
+        style={[atSize(theme.type.textStyleSubtitle, ROW_TEXT_SIZE), { color: theme.colors.textTitle }]}
       >
         {required ? `${label} *` : label}
       </Text>
@@ -63,9 +64,9 @@ export const UseSmileIDSampleKeyValueEditRow = ({
         keyboardType={keyboardType}
         selectionColor={theme.colors.primary}
         style={[
-          theme.type.textStyleSubtitle,
+          atSize(theme.type.textStyleSubtitle, ROW_TEXT_SIZE),
           styles.field,
-          { fontSize: ROW_TEXT_SIZE, color: enabled ? theme.colors.textTitle : theme.colors.textMuted },
+          { color: enabled ? theme.colors.textTitle : theme.colors.textMuted },
         ]}
       />
     </View>

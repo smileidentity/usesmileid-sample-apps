@@ -23,9 +23,8 @@ export const UseSmileIDSampleSelectionCheckbox = ({ checked, onCheckedChange, te
       accessibilityRole="checkbox"
       accessibilityState={{ checked }}
       onPress={() => onCheckedChange(!checked)}
-      // 24 drawn, expanded to the platform 48 minimum with slop rather than by growing the row.
-      hitSlop={12}
-      style={styles.target}
+      // 24 drawn and laid out at the platform's touch target, as Compose's minimum size does.
+      style={[styles.target, { minHeight: theme.dimens.touchTarget, minWidth: theme.dimens.touchTarget }]}
     >
       <View
         style={[

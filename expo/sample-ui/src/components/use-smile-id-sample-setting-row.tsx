@@ -96,24 +96,29 @@ export const UseSmileIDSampleDestructiveRow = ({
       testID={testID}
       accessibilityRole="button"
       onPress={onPress}
-      style={[
-        styles.destructive,
-        {
-          minHeight: theme.dimens.size['control-md'],
-          padding: theme.dimens.spacing.sm,
-          borderRadius: theme.shapes.card,
-          backgroundColor: theme.colors.surface,
-          borderWidth: smileCardStrokeWidth,
-          borderColor: theme.colors.cardStroke,
-        },
-        style,
-      ]}
+      // Laid out at the platform's touch target with the row centred in it, as Compose's minimum size does.
+      style={[styles.target, { minHeight: theme.dimens.touchTarget }, style]}
     >
-      <Text
-        style={[theme.type.textStyleButton, styles.centred, { color: theme.colors.badge.errorText }]}
+      <View
+        style={[
+          styles.destructive,
+          {
+            minHeight: theme.dimens.size['control-md'],
+            // Compose draws the stroke over the padding; here it sits inside the box, so it comes off the padding.
+            padding: theme.dimens.spacing.sm - smileCardStrokeWidth,
+            borderRadius: theme.shapes.card,
+            backgroundColor: theme.colors.surface,
+            borderWidth: smileCardStrokeWidth,
+            borderColor: theme.colors.cardStroke,
+          },
+        ]}
       >
-        {text}
-      </Text>
+        <Text
+          style={[theme.type.textStyleButton, styles.centred, { color: theme.colors.badge.errorText }]}
+        >
+          {text}
+        </Text>
+      </View>
     </Pressable>
   );
 };
@@ -122,6 +127,7 @@ const styles = StyleSheet.create({
   row: { alignItems: 'center', flexDirection: 'row', width: '100%' },
   tile: { alignItems: 'center', justifyContent: 'center' },
   text: { flex: 1 },
-  destructive: { alignItems: 'center', justifyContent: 'center', width: '100%' },
+  target: { alignSelf: 'stretch', justifyContent: 'center' },
+  destructive: { alignItems: 'center', justifyContent: 'center' },
   centred: { textAlign: 'center' },
 });

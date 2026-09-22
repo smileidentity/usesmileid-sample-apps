@@ -25,7 +25,8 @@ export const UseSmileIDSampleSessionEndedBanner = ({ onScan, style }: Props) => 
           backgroundColor: theme.colors.surfaceMuted,
           borderWidth: smileCardStrokeWidth,
           borderColor: theme.colors.cardStroke,
-          padding: theme.dimens.spacing.md,
+          // Compose draws the stroke over the padding; here it sits inside the box, so it comes off the padding.
+          padding: theme.dimens.spacing.md - smileCardStrokeWidth,
           columnGap: theme.dimens.spacing.sm,
           rowGap: theme.dimens.spacing.xs,
         },
@@ -43,8 +44,8 @@ export const UseSmileIDSampleSessionEndedBanner = ({ onScan, style }: Props) => 
       <Pressable
         accessibilityRole="button"
         onPress={onScan}
-        // A text action, expanded to the platform target with slop rather than a taller banner.
-        hitSlop={12}
+        // Laid out at the platform's touch target, as Compose's minimum size does.
+        style={[styles.action, { minHeight: theme.dimens.touchTarget, minWidth: theme.dimens.touchTarget, paddingHorizontal: theme.dimens.spacing.xs }]}
       >
         <Text style={[theme.type.textStyleButtonSm, { color: theme.colors.primary }]}>Scan</Text>
       </Pressable>
@@ -53,6 +54,7 @@ export const UseSmileIDSampleSessionEndedBanner = ({ onScan, style }: Props) => 
 };
 
 const styles = StyleSheet.create({
-  card: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', width: '100%' },
+  card: { alignItems: 'center', alignSelf: 'stretch', flexDirection: 'row', flexWrap: 'wrap' },
   text: { flex: 1 },
+  action: { alignItems: 'center', justifyContent: 'center' },
 });
