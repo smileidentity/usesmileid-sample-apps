@@ -41,6 +41,19 @@ product window is short enough not to outlive its cause, and on a loaded runner 
 hierarchy poll after `Hide from List` landed after the toast had dismissed itself. The offer is
 consumed on dismissal, so there is no second chance to retry.
 
+**Each ML provider resolves its native module at import time**, so importing the other platform's
+takes the whole JS bundle down — the app exits to the launcher with no crash log and only a single
+`ReactNativeJS: Cannot find native module …` line. The flow host requires the platform's provider
+rather than importing both, and `sdk-flow.yaml`'s cold link at `/flow/:productId/run` is what
+catches a regression: it is the only assertion that loads that import graph.
+
+**Maestro cannot drive this app's text inputs.** Once a field is focused its driver stops reporting
+the app's hierarchy, and it does not recover when the keyboard closes; `uiautomator` still sees every
+field, and it reproduces on `main`'s APK, so it is the runner rather than the app. `hideKeyboard` is
+a back press on Android and will pop the route when the keyboard is already down. `sdk-flow.yaml`
+therefore reaches the flow host by a cold link rather than by filling the form, and the SDK-screen
+assertions live in the Flutter twin.
+
 **`uiautomator dump` is unreliable on the ColorOS handset** — it is killed silently and serves
 whatever a previous run left at that path. Maestro drives its own on-device driver and is unaffected,
 which is a second reason the contract routes id assertions through it rather than through a dump.
