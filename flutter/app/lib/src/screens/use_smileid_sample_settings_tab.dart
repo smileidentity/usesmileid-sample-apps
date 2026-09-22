@@ -37,6 +37,19 @@ class _UseSmileIDSampleSettingsTabState
     }
   }
 
+  /// A warm link arrives as an update: the page is shared with settings, so it is not recreated.
+  @override
+  void didUpdateWidget(UseSmileIDSampleSettingsTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.openDrawer && !oldWidget.openDrawer) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _openScenarioDrawer();
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final UseSmileIDSampleProfiles profiles = ref.watch(

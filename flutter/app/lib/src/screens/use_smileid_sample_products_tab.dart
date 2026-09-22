@@ -35,6 +35,19 @@ class _UseSmileIDSampleProductsTabState
     }
   }
 
+  /// A warm link arrives as an update: the page is shared with products, so it is not recreated.
+  @override
+  void didUpdateWidget(UseSmileIDSampleProductsTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.openSwitch && !oldWidget.openSwitch) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _openSwitchFromLink();
+        }
+      });
+    }
+  }
+
   /// Hands the route back on dismiss, or a second delivery of the link reopens nothing.
   Future<void> _openSwitchFromLink() async {
     // Read before the await: an inherited lookup across the gap is what `mounted` does not cover.
