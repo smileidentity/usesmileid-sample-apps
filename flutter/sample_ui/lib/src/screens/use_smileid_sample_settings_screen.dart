@@ -4,6 +4,7 @@ import '../components/use_smileid_sample_icon.dart';
 import '../components/use_smileid_sample_profile_row.dart';
 import '../components/use_smileid_sample_section_label.dart';
 import '../components/use_smileid_sample_setting_row.dart';
+import '../components/use_smileid_sample_spaced.dart';
 import '../components/use_smileid_sample_switch.dart';
 import '../state/use_smileid_sample_settings.dart';
 import '../theme/use_smileid_sample_colors.dart';
@@ -176,7 +177,7 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
       identifier: UseSmileIDSampleTestIds.settingsScreen,
       child: ListView(
         padding: EdgeInsets.only(bottom: bottomInset),
-        children: _spaced(<Widget>[
+        children: useSmileIDSampleSpaced(<Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: SmileDimens.spacingMd,
@@ -336,14 +337,6 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
       onChanged: (bool enabled) => onSettingChanged(setting, enabled),
     ),
   );
-
-  /// The list's items with one gap between every pair, the title and footer included.
-  static List<Widget> _spaced(List<Widget> items) => <Widget>[
-    for (int index = 0; index < items.length; index++) ...<Widget>[
-      if (index > 0) const SizedBox(height: SmileDimens.spacingXs),
-      items[index],
-    ],
-  ];
 
   List<Widget> _navRows(List<UseSmileIDSampleNavRow> rows) => <Widget>[
     for (int index = 0; index < rows.length; index++) ...<Widget>[

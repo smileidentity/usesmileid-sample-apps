@@ -5,6 +5,7 @@ import '../components/use_smileid_sample_empty_state.dart';
 import '../components/use_smileid_sample_filter_chip.dart';
 import '../components/use_smileid_sample_job_row.dart';
 import '../components/use_smileid_sample_selection_checkbox.dart';
+import '../components/use_smileid_sample_spaced.dart';
 import '../components/use_smileid_sample_swipe_action.dart';
 import '../components/use_smileid_sample_toast.dart';
 import '../model/use_smileid_sample_job.dart';
@@ -108,7 +109,7 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
       identifier: UseSmileIDSampleTestIds.verificationsScreen,
       child: ListView(
         padding: EdgeInsets.only(bottom: bottomInset),
-        children: _spaced(<Widget>[
+        children: useSmileIDSampleSpaced(<Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: SmileDimens.spacingMd,
@@ -240,14 +241,6 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
     );
   }
 }
-
-/// The list's items with one gap between every pair, headers and rows alike.
-List<Widget> _spaced(List<Widget> items) => <Widget>[
-  for (int index = 0; index < items.length; index++) ...<Widget>[
-    if (index > 0) const SizedBox(height: SmileDimens.spacingXs),
-    items[index],
-  ],
-];
 
 /// One row, with the treatment select mode and the swipe each ask for.
 class _Row extends StatelessWidget {

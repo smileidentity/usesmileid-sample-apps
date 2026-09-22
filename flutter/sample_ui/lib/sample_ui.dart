@@ -28,6 +28,7 @@ export 'src/components/use_smileid_sample_selection_bar.dart';
 export 'src/components/use_smileid_sample_selection_checkbox.dart';
 export 'src/components/use_smileid_sample_session_card.dart';
 export 'src/components/use_smileid_sample_setting_row.dart';
+export 'src/components/use_smileid_sample_spaced.dart';
 export 'src/components/use_smileid_sample_status_badge.dart';
 export 'src/components/use_smileid_sample_swipe_action.dart';
 export 'src/components/use_smileid_sample_switch.dart';
