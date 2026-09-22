@@ -78,6 +78,12 @@ covered all four flows on one runner. That hides this app's crash dialog too, no
 red whose app crashed carries `logs/crash-report.txt` beside `device-logcat.txt`, and Maestro's own
 message only says the element was missing.
 
+**The first tap after a cold start can land before the window takes input.** On a starved
+runner the engine publishes its semantics tree while the activity is still behind its splash window,
+so Maestro sees `sample_products_screen`, taps, and the system drops the touch
+(`InputDispatcher: … NO_INPUT_CHANNEL`, measured 7.6s to Displayed). That tap therefore carries
+`retryTapIfNoChange: true`: it retries only when nothing changed, and each one is idempotent.
+
 **The toolchain pin is load-bearing here.** `licenses.yaml` names engine components by id, and
 which ones the bundle carries is decided by the Flutter version — pinned in `flutter.yml` and
 `flutter-device.yml`, which must agree.
@@ -92,13 +98,9 @@ emulator rather than for this app.
 
 ## What this lane does not cover
 
-**The SDK.** Nothing here is consumption evidence yet: `usesmileid` is declared in
-`flutter/app/pubspec.yaml` and imported by no Dart file, so the release APK this lane builds
-contains no call into it and there is no `si_*` id to assert. The release configuration still
-catches a shrink or a tree shake that breaks the app, and the launch still runs plugin
-registration — but a green here says nothing about the published SDK until the flow host lands.
+**Anything past the SDK's consent screen.** `sdk-flow.yaml` asserts the flow host mounted the SDK and
+stops there; a capture needs a camera, which no public flow in this repo drives.
 
-**Dark mode's appearance, and layout.** The testing contract forbids screenshot and coordinate
-assertions inside a device flow, so both stay golden-lane concerns.
-
-**The SDK flow itself.** `/flow/:productId/run` is claimed by no route yet.
+**Dark mode's appearance, the system bars, and layout.** The testing contract forbids screenshot and
+coordinate assertions inside a device flow, so the appearance stays with the goldens and the bar
+contrast with `use_smileid_sample_system_bars_test.dart`.

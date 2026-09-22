@@ -21,6 +21,7 @@ appId: ${APP_ID}
 # hard-coded location. Both halves were `go` before, which left one page in the root stack.
 - tapOn:
     id: "sample_product_card_smartSelfieEnrollment"
+    retryTapIfNoChange: true
 # Extended, not a bare assert: the first push after a cold start outlives the default timeout on a
 # CI emulator, where it is comfortably inside it on a warm handset.
 - extendedWaitUntil:

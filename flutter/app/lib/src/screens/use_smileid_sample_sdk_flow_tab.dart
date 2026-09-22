@@ -74,6 +74,16 @@ class _UseSmileIDSampleSdkFlowTabState
         child: const SizedBox.expand(),
       );
     }
+    // The SDK themes itself from the platform brightness, so the Dark mode switch reaches it only through this.
+    return MediaQuery(
+      data: MediaQuery.of(
+        context,
+      ).copyWith(platformBrightness: Theme.of(context).brightness),
+      child: _sdk(snapshot),
+    );
+  }
+
+  Widget _sdk(UseSmileIDSampleFlowLaunchSnapshot snapshot) {
     return UseSmileIDBuilder(
       builder: (UseSmileIDFlowBuilder builder) {
         useSmileIDSampleApplying(builder, snapshot);

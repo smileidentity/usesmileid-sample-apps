@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
 
@@ -13,6 +14,8 @@ import 'src/use_smileid_sample_launch.dart';
 /// Reads the store BEFORE the first frame, or the default appearance flashes before the saved one.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Draws under both bars as the Android app does; Android 15 imposes this, earlier versions opt in.
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   final UseSmileIDSamplePreferencesSettingsRepository settings =
       await UseSmileIDSamplePreferencesSettingsRepository.open();
   final UseSmileIDSampleSettings stored = await settings.read();

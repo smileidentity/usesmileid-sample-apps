@@ -36,10 +36,11 @@ Future<T?> showUseSmileIDSampleSheet<T>({
           Flexible(
             child: SingleChildScrollView(
               // Scrolls rather than clips, so enlarged type cannot push a CTA out of reach.
-              padding: const EdgeInsets.only(
+              padding: EdgeInsets.only(
                 left: _sheetMargin,
                 right: _sheetMargin,
-                bottom: SmileDimens.spacingLg,
+                bottom:
+                    SmileDimens.spacingLg + _navigationBarInset(sheetContext),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -95,7 +96,11 @@ Future<T?> showUseSmileIDSampleFullHeightSheet<T>({
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: _sheetMargin),
+              padding: EdgeInsets.only(
+                left: _sheetMargin,
+                right: _sheetMargin,
+                bottom: _navigationBarInset(sheetContext),
+              ),
               child: builder(sheetContext),
             ),
           ),
@@ -167,6 +172,10 @@ class _GrabHandle extends StatelessWidget {
     ),
   );
 }
+
+/// `useSafeArea` leaves the bottom to the content, so edge to edge the last row sat under the navigation bar.
+double _navigationBarInset(BuildContext context) =>
+    MediaQuery.paddingOf(context).bottom;
 
 /// The design's sheet margins, wider than spacing.md.
 const double _sheetMargin = 20;

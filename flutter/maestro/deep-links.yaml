@@ -30,6 +30,7 @@ appId: ${APP_ID}
     id: "sample_nav_settings"
 - tapOn:
     id: "sample_theme_item_partnerOverride"
+    retryTapIfNoChange: true
 - assertVisible:
     id: "sample_theme_item_partnerOverride"
     selected: true
