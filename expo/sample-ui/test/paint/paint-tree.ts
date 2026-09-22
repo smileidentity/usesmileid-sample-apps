@@ -357,7 +357,7 @@ const paintText = (ctx: SKRSContext2D, node: LaidOutNode, style: Style, x: numbe
       const last = spans[owner[Math.max(end - 1, line.start)] ?? 0]!;
       suffix = ELLIPSIS;
       const room = width - measureRun(ELLIPSIS, last.run);
-      while (end > line.start && measureText(text, owner, spans, line.start, end) > room) end--;
+      end = longestFitting(text, owner, spans, line.start, end, room);
       while (end > line.start && text[end - 1]!.trim().length === 0) end--;
       lineWidth = measureText(text, owner, spans, line.start, end) + measureRun(ELLIPSIS, last.run);
     }
@@ -374,6 +374,25 @@ const paintText = (ctx: SKRSContext2D, node: LaidOutNode, style: Style, x: numbe
     }
     if (suffix) drawRun(ctx, suffix, spans[owner[Math.max(end - 1, line.start)] ?? 0]!, cursor, baseline);
   });
+};
+
+/// The largest end in [start, end] whose run from start fits [room], found by halving since widths only grow.
+const longestFitting = (
+  text: string,
+  owner: readonly number[],
+  spans: readonly LaidOutSpan[],
+  start: number,
+  end: number,
+  room: number,
+): number => {
+  let low = start;
+  let high = end;
+  while (low < high) {
+    const mid = Math.ceil((low + high) / 2);
+    if (measureText(text, owner, spans, start, mid) <= room) low = mid;
+    else high = mid - 1;
+  }
+  return low;
 };
 
 /// The measured width of [start, end) across spans.
@@ -423,8 +442,13 @@ const paintTextInput = (ctx: SKRSContext2D, node: LaidOutNode, style: Style, x: 
   ctx.restore();
 };
 
-/// Harness ink, not a design colour, so no token applies.
-const PLACEHOLDER_INK = 'rgb(138, 138, 138)';
+/// Every colour a stand-in is drawn in: harness ink, not the design's, so no token applies.
+const PLACEHOLDER_COLOURS = {
+  ink: 'rgb(138, 138, 138)',
+  hatch: 'rgba(138, 138, 138, 0.18)',
+  labelBackground: 'rgba(255, 255, 255, 0.85)',
+  label: 'rgb(58, 58, 58)',
+} as const;
 
 /// A hatched, outlined, labelled stand-in for something the painter cannot draw.
 export const paintPlaceholder = (ctx: SKRSContext2D, label: string, x: number, y: number, width: number, height: number) => {
@@ -432,9 +456,9 @@ export const paintPlaceholder = (ctx: SKRSContext2D, label: string, x: number, y
   ctx.beginPath();
   ctx.rect(x, y, width, height);
   ctx.clip();
-  ctx.fillStyle = 'rgba(138, 138, 138, 0.18)';
+  ctx.fillStyle = PLACEHOLDER_COLOURS.hatch;
   ctx.fillRect(x, y, width, height);
-  ctx.strokeStyle = PLACEHOLDER_INK;
+  ctx.strokeStyle = PLACEHOLDER_COLOURS.ink;
   ctx.lineWidth = 0.5;
   for (let offset = -height; offset < width; offset += 4) {
     ctx.beginPath();
@@ -448,15 +472,15 @@ export const paintPlaceholder = (ctx: SKRSContext2D, label: string, x: number, y
     const run = { fontFamily: 'DMSans-Bold', fontSize: 6, letterSpacing: 0, lineHeight: undefined };
     const textWidth = measureRun(label, run);
     if (textWidth + 4 <= width && height >= 8) {
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.fillStyle = PLACEHOLDER_COLOURS.labelBackground;
       ctx.fillRect(x + (width - textWidth) / 2 - 2, y + height / 2 - 4, textWidth + 4, 8);
-      drawRun(ctx, label, { text: label, run, style: { color: 'rgb(58, 58, 58)' } }, x + (width - textWidth) / 2, y + height / 2 + 2);
+      drawRun(ctx, label, { text: label, run, style: { color: PLACEHOLDER_COLOURS.label } }, x + (width - textWidth) / 2, y + height / 2 + 2);
     }
   }
   ctx.restore();
 };
 
-/// The target canvas, and its size for opacity layers.
+/// The target canvas, and its size, which bounds an opacity layer.
 type Paint = { ctx: SKRSContext2D; canvasWidth: number; canvasHeight: number };
 
 /// Paints one laid-out box and its subtree.
@@ -516,15 +540,63 @@ const paintNode = (paint: Paint, node: LaidOutNode, parentX: number, parentY: nu
     return;
   }
   // Group opacity composites the subtree once, so overlapping children do not show through.
-  const layer = createCanvas(paint.canvasWidth, paint.canvasHeight);
+  const box = layerBounds(paint, node, style, x, y, ctx.getTransform());
+  if (box.width <= 0 || box.height <= 0) return;
+  const layer = createCanvas(box.width, box.height);
   const layerCtx = layer.getContext('2d');
-  layerCtx.setTransform(ctx.getTransform());
+  const base = ctx.getTransform();
+  layerCtx.setTransform(base.a, base.b, base.c, base.d, base.e - box.left, base.f - box.top);
   draw(layerCtx);
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.globalAlpha *= opacity;
-  ctx.drawImage(layer, 0, 0);
+  ctx.drawImage(layer, box.left, box.top);
   ctx.restore();
+};
+
+/// How far a box's shadow can reach past it, in layout units: the blur twice over, plus its offset.
+const shadowReach = (style: Style): number => {
+  if (((style.shadowOpacity as number | undefined) ?? 0) <= 0) return 0;
+  const offset = (style.shadowOffset as { width?: number; height?: number } | undefined) ?? {};
+  const blur = (style.shadowRadius as number | undefined) ?? 3;
+  return 2 * blur + Math.max(Math.abs(offset.width ?? 0), Math.abs(offset.height ?? 0));
+};
+
+/// The layout-space rectangle a subtree can paint into, including every shadow in it.
+const subtreeExtent = (node: LaidOutNode, x: number, y: number) => {
+  const reach = shadowReach(flatten(node.props.style));
+  let extent = { left: x - reach, top: y - reach, right: x + node.width + reach, bottom: y + node.height + reach };
+  for (const child of node.children) {
+    const inner = subtreeExtent(child, x + child.left, y + child.top);
+    extent = {
+      left: Math.min(extent.left, inner.left),
+      top: Math.min(extent.top, inner.top),
+      right: Math.max(extent.right, inner.right),
+      bottom: Math.max(extent.bottom, inner.bottom),
+    };
+  }
+  return extent;
+};
+
+/// The device-pixel box an opacity layer needs: the subtree's reach, or the whole canvas under a transform.
+const layerBounds = (
+  paint: Paint,
+  node: LaidOutNode,
+  style: Style,
+  x: number,
+  y: number,
+  matrix: { a: number; b: number; c: number; d: number; e: number; f: number },
+) => {
+  const whole = { left: 0, top: 0, width: paint.canvasWidth, height: paint.canvasHeight };
+  if (((style.transform ?? []) as unknown[]).length > 0 || matrix.b !== 0 || matrix.c !== 0) return whole;
+  const extent = subtreeExtent(node, x, y);
+  const xs = [extent.left, extent.right].map((px) => matrix.a * px + matrix.e);
+  const ys = [extent.top, extent.bottom].map((py) => matrix.d * py + matrix.f);
+  const left = Math.max(0, Math.floor(Math.min(...xs)));
+  const top = Math.max(0, Math.floor(Math.min(...ys)));
+  const right = Math.min(paint.canvasWidth, Math.ceil(Math.max(...xs)));
+  const bottom = Math.min(paint.canvasHeight, Math.ceil(Math.max(...ys)));
+  return { left, top, width: right - left, height: bottom - top };
 };
 
 /// The bottom edge of everything in the tree.
