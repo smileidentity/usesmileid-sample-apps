@@ -2,7 +2,7 @@ import { StyleSheet, type TextStyle, type ViewStyle } from 'react-native';
 import { loadYoga, type Config as YogaConfig, type Node as YogaNode, type Yoga } from 'yoga-layout/load';
 
 import { layoutSpans, type SmileTextLine, type SmileTextSpan } from './measure-text';
-import { isBundledFace } from './smile-font';
+import { isBundledFace, measureRun } from './smile-font';
 
 /// What `render(...).toJSON()` hands back: a host element, or the text inside one.
 export type RenderedNode =
@@ -369,7 +369,10 @@ const build = (
   const leaf = measuredLeaf(rendered, style, fontScale, where);
   if (leaf) {
     node.setMeasureFunc((available, widthMode) => ({
-      width: leaf.width ?? (widthMode === Y.MEASURE_MODE_UNDEFINED ? 0 : available),
+      width:
+        leaf.width === undefined
+          ? widthMode === Y.MEASURE_MODE_UNDEFINED ? 0 : available
+          : widthMode === Y.MEASURE_MODE_UNDEFINED ? leaf.width : Math.min(available, leaf.width),
       height: leaf.height,
     }));
     return { node, rendered, style, children: [] };
@@ -399,7 +402,7 @@ const build = (
 /// UISwitch's fixed size, which a hostless runner reports as zero.
 const NATIVE_SWITCH_SIZE = { width: 51, height: 31 } as const;
 
-/// The on-device size of a self-measuring native leaf; no width means it fills the column.
+/// The on-device size of a self-measuring native leaf, which a stretching column still widens to fill it.
 const measuredLeaf = (
   rendered: Exclude<RenderedNode, string>,
   style: Style,
@@ -415,7 +418,9 @@ const measuredLeaf = (
     throw new Error(`${where}: the field is drawn in "${style.fontFamily}", which is not a bundled face`);
   }
   const run = fontRun(style, fontScale, rendered.props);
-  return { height: run.lineHeight ?? run.fontSize * 1.2 };
+  // Fabric measures a field by its text, or its placeholder when empty, so a row does not hand it the whole line.
+  const shown = String(rendered.props.value || rendered.props.placeholder || '');
+  return { width: measureRun(shown, run), height: run.lineHeight ?? run.fontSize * 1.2 };
 };
 
 /// React Native reads 0 as "no cap", which is not the same as one line.

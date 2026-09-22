@@ -20,7 +20,7 @@ import { expectGoldens } from './paint/pixel-golden';
 const noop = () => {};
 
 /// A fixed clock, so a day header never depends on when the suite runs.
-const NOW = new Date('2026-07-16T13:03:41.000Z').getTime();
+const NOW = new Date('2026-07-16T11:50:12.000Z').getTime();
 const fixtures = smileIDSampleJobFixtures(NOW);
 
 const list = (
@@ -268,6 +268,11 @@ describe('the day grouping', () => {
     expect(day?.absolute).toMatch(/^[A-Z]{3}, \d{2} [A-Z]{3} \d{4}$/);
   });
 
+  it("keeps Android's day-month order in a locale whose own order is month first", () => {
+    const [day] = smileIDSampleGroupByDay([fixtures[0]!], NOW, 'en-US');
+    expect(day?.absolute).toMatch(/^[A-Z]{3}, \d{2} [A-Z]{3} \d{4}$/);
+  });
+
   it('buckets by calendar day, so two rows hours apart can still share a header', () => {
     const start = smileIDSampleStartOfDay(NOW);
     const days = smileIDSampleGroupByDay(
@@ -319,7 +324,7 @@ describe('the details screen', () => {
       details({ state: { job: null, jobId: 'job_99ky31za00', refreshing: false } }),
       false,
     );
-    expect(rendered.queryByText('job_99ky31za00')).not.toBeNull();
+    expect(rendered.queryByText('Nothing stored for jobId = job_99ky31za00')).not.toBeNull();
   });
 
   it('offers no delete for a row it does not hold', async () => {
