@@ -108,7 +108,7 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
       identifier: UseSmileIDSampleTestIds.verificationsScreen,
       child: ListView(
         padding: EdgeInsets.only(bottom: bottomInset),
-        children: <Widget>[
+        children: _spaced(<Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: SmileDimens.spacingMd,
@@ -130,12 +130,26 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
                     button: true,
                     child: InkWell(
                       onTap: () => onSelectModeChanged!(!state.selectMode),
-                      child: Padding(
-                        padding: const EdgeInsets.all(SmileDimens.spacingXs),
-                        child: Text(
-                          state.selectMode ? 'Cancel' : 'Select',
-                          style: UseSmileIDSampleType.textStyleBodyStrong
-                              .copyWith(color: colors.primary),
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          minWidth: kMinInteractiveDimension,
+                          minHeight: kMinInteractiveDimension,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: SmileDimens.spacingXs,
+                          ),
+                          child: Center(
+                            widthFactor: 1,
+                            child: Text(
+                              state.selectMode ? 'Cancel' : 'Select',
+                              softWrap: false,
+                              style: UseSmileIDSampleType.linkFont.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: colors.primary,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -199,7 +213,7 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
                 onRemove: onRemove,
               ),
           ],
-        ],
+        ]),
       ),
     );
     if (state.removedCount == null) {
@@ -226,6 +240,14 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
     );
   }
 }
+
+/// The list's items with one gap between every pair, headers and rows alike.
+List<Widget> _spaced(List<Widget> items) => <Widget>[
+  for (int index = 0; index < items.length; index++) ...<Widget>[
+    if (index > 0) const SizedBox(height: SmileDimens.spacingXs),
+    items[index],
+  ],
+];
 
 /// One row, with the treatment select mode and the swipe each ask for.
 class _Row extends StatelessWidget {
@@ -258,12 +280,7 @@ class _Row extends StatelessWidget {
       testId: UseSmileIDSampleTestIds.jobRow(index),
     );
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        SmileDimens.spacingMd,
-        0,
-        SmileDimens.spacingMd,
-        SmileDimens.spacingXs,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: SmileDimens.spacingMd),
       child: state.selectMode
           ? Row(
               children: <Widget>[
