@@ -18,15 +18,16 @@ export const smileIDSampleStartOfDay = (millis: number): number => {
 
 /// Android's `EEE, dd MMM yyyy`: the locale names the weekday and month, never the field order.
 const dayFormat = (locale?: string) => {
-  const parts = new Intl.DateTimeFormat(locale, {
+  const formatter = new Intl.DateTimeFormat(locale, {
     weekday: 'short',
     day: '2-digit',
     month: 'short',
     year: 'numeric',
   });
   return (date: Date): string => {
+    const parts = formatter.formatToParts(date);
     const field = (type: Intl.DateTimeFormatPartTypes) =>
-      parts.formatToParts(date).find((part) => part.type === type)?.value ?? '';
+      parts.find((part) => part.type === type)?.value ?? '';
     return `${field('weekday')}, ${field('day')} ${field('month')} ${field('year')}`;
   };
 };
