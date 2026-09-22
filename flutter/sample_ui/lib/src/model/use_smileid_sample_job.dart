@@ -17,22 +17,32 @@ class UseSmileIDSampleJob {
     this.partnerId,
   });
 
-  /// Rebuilds a job from what the store wrote, defaulting anything an older write omitted.
-  factory UseSmileIDSampleJob.fromJson(Map<String, Object?> json) =>
-      UseSmileIDSampleJob(
-        id: json['id']! as String,
-        userId: json['userId']! as String,
-        product: UseSmileIDSampleProduct.values.byName(
-          json['product']! as String,
-        ),
-        status: UseSmileIDSampleStatus.values.byName(json['status']! as String),
-        createdAtMillis: json['createdAtMillis']! as int,
-        message: json['message'] as String? ?? '',
-        httpStatus: json['httpStatus'] as int?,
-        sandbox: json['sandbox'] as bool? ?? true,
-        sessionId: json['sessionId'] as String?,
-        partnerId: json['partnerId'] as String?,
-      );
+  /// Rebuilds a row read back from storage, resolving both enums by lookup so a rename cannot crash a restore.
+  static UseSmileIDSampleJob? fromStored(Map<String, Object?> json) {
+    final Object? id = json['id'];
+    // The one field with no sensible substitute: a row nothing can address is not a row.
+    if (id is! String || id.isEmpty) {
+      return null;
+    }
+    return UseSmileIDSampleJob(
+      id: id,
+      userId: json['userId'] is String ? json['userId']! as String : '',
+      product: _productNamed(json['product']),
+      status: _statusNamed(json['status']),
+      createdAtMillis: json['createdAtMillis'] is int
+          ? json['createdAtMillis']! as int
+          : 0,
+      message: json['message'] is String ? json['message']! as String : '',
+      httpStatus: json['httpStatus'] is int ? json['httpStatus']! as int : null,
+      sandbox: json['sandbox'] != false,
+      sessionId: json['sessionId'] is String
+          ? json['sessionId']! as String
+          : null,
+      partnerId: json['partnerId'] is String
+          ? json['partnerId']! as String
+          : null,
+    );
+  }
 
   /// The job id the API returned.
   final String id;
@@ -64,6 +74,24 @@ class UseSmileIDSampleJob {
   /// The partner it ran under, absent on a fixture.
   final String? partnerId;
 
+  /// The same row carrying a refreshed verdict; every other field is what the run recorded.
+  UseSmileIDSampleJob withStatus({
+    required UseSmileIDSampleStatus status,
+    required String message,
+    required int httpStatus,
+  }) => UseSmileIDSampleJob(
+    id: id,
+    userId: userId,
+    product: product,
+    status: status,
+    createdAtMillis: createdAtMillis,
+    message: message,
+    httpStatus: httpStatus,
+    sandbox: sandbox,
+    sessionId: sessionId,
+    partnerId: partnerId,
+  );
+
   /// The id as a row shows it.
   String get shortId => _elide(id);
 
@@ -94,10 +122,6 @@ class UseSmileIDSampleJob {
   bool? get httpSucceeded =>
       httpStatus == null ? null : httpStatus! >= 200 && httpStatus! < 300;
 
-  /// Why this job cannot be refreshed, or null when it can be.
-  String? get refreshBlockedReason =>
-      sessionId == null ? 'Not submitted under a scanned token' : null;
-
   /// What the store writes.
   Map<String, Object?> toJson() => <String, Object?>{
     'id': id,
@@ -111,6 +135,27 @@ class UseSmileIDSampleJob {
     'sessionId': sessionId,
     'partnerId': partnerId,
   };
+}
+
+/// A stored product name, substituting the first as Android and iOS do rather than dropping the row.
+UseSmileIDSampleProduct _productNamed(Object? name) {
+  for (final UseSmileIDSampleProduct product
+      in UseSmileIDSampleProduct.values) {
+    if (product.name == name) {
+      return product;
+    }
+  }
+  return UseSmileIDSampleProduct.values.first;
+}
+
+/// A stored status name, substituting Processing as Android and iOS do.
+UseSmileIDSampleStatus _statusNamed(Object? name) {
+  for (final UseSmileIDSampleStatus status in UseSmileIDSampleStatus.values) {
+    if (status.name == name) {
+      return status;
+    }
+  }
+  return UseSmileIDSampleStatus.processing;
 }
 
 /// The chips above the list, in the order they are drawn. There is deliberately no Processing chip:
