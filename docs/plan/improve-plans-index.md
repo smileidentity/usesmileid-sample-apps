@@ -64,17 +64,13 @@ operations a flow host will later call, which is a different thing and is scoped
 
 Kept so nobody re-audits them.
 
-- **Expo records no pixel baselines, where Flutter has 187, Android 191 and iOS 207.** Expo's 268
-  baselines are serialised style trees, not pictures. This is a decided scope, stated in the code
-  that produces them: `expo/sample-ui/test/render-in-theme.tsx` pins the scheme, the font scale and
-  a 393-wide frame with real insets, strips the harness, and its own doc comment says the artefact is
-  "the rendered tree with its resolved styles, which is what a token or metric regression changes".
-  A style tree genuinely cannot catch a layout outcome — overlap, clipping, a control ending up under
-  a floating bar — but that is a known boundary rather than an oversight, and changing it means
-  adding a device or emulator renderer to a jest lane. **The one live consequence worth tracking:**
-  Flutter's nav-bar clearance test measures the rendered bar, and Expo cannot write that test in
-  jest. Once plan 1's step 6 mounts Expo's floating nav bar, the clearance assertion is owed and has
-  to go to the device suite. Recorded in plan 1's maintenance notes rather than made a plan.
+- **Expo records no pixel baselines.** Superseded: every one of its 268 style-tree states now also
+  records a PNG, painted by `expo/sample-ui/test/paint/` over the jest lane's yoga layout at 2×
+  (786 wide) and content height. The style trees stay beside them: they are platform-independent,
+  so a token or metric regression fails identically on any machine, while a PNG is host-rasterised
+  and is recorded on the runner (`expo-goldens-recorded`). What the painter cannot draw — the native
+  switch, the spinner, a sheet's grabber, glyphs the bundled face lacks — is a labelled placeholder
+  listed in `PLACEHOLDERS`.
 - **Expo presenting the five spec'd sheet paths as `expo-router` routes.** It looked like Android's
   old sheet-as-destination defect (`port-patterns.md` §2, R12). It is not: every sheet route sets
   `presentation: 'transparentModal'` with `animation: 'none'` and a transparent `contentStyle`, and
