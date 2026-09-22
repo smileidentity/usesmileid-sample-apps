@@ -18,7 +18,6 @@ type State = {
 type Actions = {
   setUserField: (field: UseSmileIDSampleUserField, value: string) => void;
   setRememberDetails: (enabled: boolean) => void;
-  seedUserDetails: (details: UseSmileIDSampleUserDetails) => void;
   setCountry: (country: UseSmileIDSampleCountry) => void;
   setIdType: (idType: UseSmileIDSampleIdType) => void;
   setIdNumber: (value: string) => void;
@@ -35,17 +34,6 @@ export const useSmileIDSampleFormsStore = create<State & Actions>((set) => ({
     set((state) => ({ userDetails: smileIDSampleUserFieldWrite(field, state.userDetails, value) })),
 
   setRememberDetails: (enabled) => set({ rememberDetails: enabled }),
-
-  // Only into rows the partner has not typed into, so seeding cannot overwrite an edit.
-  seedUserDetails: (details) =>
-    set((state) => ({
-      userDetails: {
-        firstName: state.userDetails.firstName || details.firstName,
-        lastName: state.userDetails.lastName || details.lastName,
-        email: state.userDetails.email || details.email,
-        phone: state.userDetails.phone || details.phone,
-      },
-    })),
 
   /// Choosing a country clears the ID type, because the types it offered may not apply to the new one.
   setCountry: (country) =>

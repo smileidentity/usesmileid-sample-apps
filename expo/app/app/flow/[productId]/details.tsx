@@ -8,7 +8,6 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { useSmileIDSampleBack } from '../../../src/use-smile-id-sample-back';
-import { useEffect } from 'react';
 
 export default function ConsentDetailsForm() {
   const router = useRouter();
@@ -20,13 +19,7 @@ export default function ConsentDetailsForm() {
   const rememberDetails = useSmileIDSampleFormsStore((state) => state.rememberDetails);
   const setUserField = useSmileIDSampleFormsStore((state) => state.setUserField);
   const setRememberDetails = useSmileIDSampleFormsStore((state) => state.setRememberDetails);
-  const seedUserDetails = useSmileIDSampleFormsStore((state) => state.seedUserDetails);
   const setDefaults = useSmileIDSampleProfileStore((state) => state.setDefaults);
-
-  // The design labels these "attached to every job", so the active profile's defaults seed the form.
-  useEffect(() => {
-    seedUserDetails(profile.defaults);
-  }, [profile.defaults, seedUserDetails]);
 
   return (
     <UserDetailsScreen
