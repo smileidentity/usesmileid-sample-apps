@@ -28,7 +28,7 @@ jest.mock('expo-status-bar', () => ({
     return null;
   },
 }));
-/// The style each NavigationBar mount asked for; 'dark' is a dark bar with light buttons.
+/// The style each NavigationBar mount asked for; like StatusBar's, it names the button colour.
 const mockNavigationBarStyles: string[] = [];
 jest.mock('expo-navigation-bar', () => ({
   NavigationBar: function NavigationBar({ style }: { style: string }) {
@@ -152,14 +152,14 @@ describe('the Dark Mode switch reaches the theme and the system bars', () => {
     expect(await resolvedScheme({ darkMode: true, system: 'light' })).toHaveTextContent('dark');
     expect(imposedScheme).toHaveBeenLastCalledWith('dark');
     expect(mockStatusBarStyles.at(-1)).toBe('light');
-    expect(mockNavigationBarStyles.at(-1)).toBe('dark');
+    expect(mockNavigationBarStyles.at(-1)).toBe('light');
   });
 
   it('overrides a dark device to light when the switch is off, as Android and iOS do', async () => {
     expect(await resolvedScheme({ darkMode: false, system: 'dark' })).toHaveTextContent('light');
     expect(imposedScheme).toHaveBeenLastCalledWith('light');
     expect(mockStatusBarStyles.at(-1)).toBe('dark');
-    expect(mockNavigationBarStyles.at(-1)).toBe('light');
+    expect(mockNavigationBarStyles.at(-1)).toBe('dark');
   });
 
   it('stays light when neither asks for dark', async () => {

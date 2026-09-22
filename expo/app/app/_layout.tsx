@@ -67,7 +67,8 @@ export default function RootLayout() {
       <UseSmileIDSampleThemeProvider dark={dark}>
         <UseSmileIDSampleNoticeWindowProvider value={noticeWindowMs}>
           <StatusBar style={dark ? 'light' : 'dark'} />
-          <NavigationBar style={dark ? 'dark' : 'light'} />
+          {/* Names the button colour, as StatusBar does, despite the type's doc saying the bar's. */}
+          <NavigationBar style={dark ? 'light' : 'dark'} />
           <Stack
             screenOptions={{
               headerShown: false,
