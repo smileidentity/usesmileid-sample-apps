@@ -98,7 +98,7 @@ fun UseSmileIDSampleTopAppBarButton(
             .size(SmileDimens.space40)
             .semantics {
                 this.contentDescription = contentDescription
-                // Material's clickable Surface carries the action but no role, so nothing says "button".
+                // Surface(onClick) sets no role of its own.
                 role = Role.Button
             }
             .tagged(testId),

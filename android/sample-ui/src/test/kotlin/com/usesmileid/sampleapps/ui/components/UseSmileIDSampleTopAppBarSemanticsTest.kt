@@ -40,11 +40,12 @@ class UseSmileIDSampleTopAppBarSemanticsTest {
     private fun SemanticsNode.labelled(): List<Announced> {
         val found = mutableListOf<Announced>()
         fun walk(node: SemanticsNode) {
-            // Joined, not first: a merged node carries every child's value, and taking one would
-            // hide the merge this is here to catch.
-            val label = node.config.getOrNull(SemanticsProperties.ContentDescription)?.joinToString("\n")
-                ?: node.config.getOrNull(SemanticsProperties.Text)?.joinToString("\n") { it.text }
-            if (!label.isNullOrEmpty()) {
+            // Joined across both properties: a merged node carries every absorbed child's words.
+            val label = (
+                node.config.getOrNull(SemanticsProperties.ContentDescription).orEmpty() +
+                    node.config.getOrNull(SemanticsProperties.Text).orEmpty().map { it.text }
+                ).joinToString("\n")
+            if (label.isNotEmpty()) {
                 found += Announced(
                     label = label,
                     button = node.config.getOrNull(SemanticsProperties.Role) == Role.Button,
@@ -57,8 +58,7 @@ class UseSmileIDSampleTopAppBarSemanticsTest {
         return found
     }
 
-    // The configuration most screens use. A merge reds both of these, because it changes the
-    // labels the walk returns — proved by adding `mergeDescendants` to the bar.
+    // The configuration most screens use; a merge reorders the walk and reds both lists.
     @Test
     fun `with no action the back control and the title stay apart`() {
         val nodes = bar(action = null)
@@ -78,6 +78,17 @@ class UseSmileIDSampleTopAppBarSemanticsTest {
         val nodes = bar(action = { UseSmileIDSampleTopAppBarButton(DELETE, onClick = {}) { TrashGlyph(it) } })
 
         assertEquals(listOf(BACK, TITLE, DELETE), nodes.map { it.label })
+    }
+
+    // The merge's own signature: a bar that is itself the clickable folds "Back" into the title's node.
+    @Test
+    fun `no node carries more than one label`() {
+        val merged = listOf(
+            bar(action = null),
+            bar(action = { UseSmileIDSampleTopAppBarButton(DELETE, onClick = {}) { TrashGlyph(it) } }),
+        ).flatten().filter { it.label.contains('\n') }.map { it.label.replace("\n", " + ") }
+
+        assertEquals(emptyList<String>(), merged)
     }
 
     private companion object {
