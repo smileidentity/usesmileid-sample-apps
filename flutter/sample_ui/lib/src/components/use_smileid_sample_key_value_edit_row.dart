@@ -93,41 +93,45 @@ class _UseSmileIDSampleKeyValueEditRowState
             vertical: _rowPaddingY,
           ),
           // The value sits at the right edge and drops below the label at 2x, matching DataFieldRow.
-          child: Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            runSpacing: SmileDimens.spacingXxs,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: <Widget>[
-              Text(
-                widget.required ? '${widget.label} *' : widget.label,
-                style: rowStyle.copyWith(color: colors.textTitle),
-              ),
-              Semantics(
-                identifier: widget.testId,
-                textField: true,
-                child: IntrinsicWidth(
-                  child: TextField(
-                    controller: _controller,
-                    enabled: widget.enabled,
-                    onChanged: widget.onChanged,
-                    keyboardType: widget.keyboardType,
-                    maxLines: 1,
-                    textAlign: TextAlign.end,
-                    cursorColor: colors.primary,
-                    // Muted when disabled, so a row that cannot be edited does not look editable.
-                    style: rowStyle.copyWith(
-                      color: widget.enabled
-                          ? colors.textTitle
-                          : colors.textMuted,
-                    ),
-                    decoration: InputDecoration.collapsed(
-                      hintText: widget.placeholder,
-                      hintStyle: rowStyle.copyWith(color: colors.textMuted),
+          // Full width, because a Wrap shrinks to its run and a loose parent then centres both.
+          child: SizedBox(
+            width: double.infinity,
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              runSpacing: SmileDimens.spacingXxs,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: <Widget>[
+                Text(
+                  widget.required ? '${widget.label} *' : widget.label,
+                  style: rowStyle.copyWith(color: colors.textTitle),
+                ),
+                Semantics(
+                  identifier: widget.testId,
+                  textField: true,
+                  child: IntrinsicWidth(
+                    child: TextField(
+                      controller: _controller,
+                      enabled: widget.enabled,
+                      onChanged: widget.onChanged,
+                      keyboardType: widget.keyboardType,
+                      maxLines: 1,
+                      textAlign: TextAlign.end,
+                      cursorColor: colors.primary,
+                      // Muted when disabled, so a row that cannot be edited does not look editable.
+                      style: rowStyle.copyWith(
+                        color: widget.enabled
+                            ? colors.textTitle
+                            : colors.textMuted,
+                      ),
+                      decoration: InputDecoration.collapsed(
+                        hintText: widget.placeholder,
+                        hintStyle: rowStyle.copyWith(color: colors.textMuted),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

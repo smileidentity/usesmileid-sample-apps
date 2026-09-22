@@ -131,14 +131,16 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                 // Offered only once the form is satisfied, which is the same predicate Continue
                 // uses: there is nothing to remember until there is something complete.
                 if (satisfied) ...<Widget>[
-                  const SizedBox(height: SmileDimens.spacingMd),
+                  const SizedBox(height: SmileDimens.spacingXs),
                   _RememberCard(
                     remember: remember,
                     onChanged: onRememberChanged,
                     colors: colors,
                   ),
                 ],
-                const SizedBox(height: SmileDimens.spacingMd),
+                const SizedBox(
+                  height: SmileDimens.spacingXs + SmileDimens.spacingLg,
+                ),
               ],
             ),
           ),
@@ -177,17 +179,20 @@ class _RememberCard extends StatelessWidget {
       border: Border.all(color: colors.cardStroke, width: smileCardStrokeWidth),
     ),
     child: Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: SmileDimens.spacingMd,
-        vertical: SmileDimens.spacingSm,
+      padding: const EdgeInsets.fromLTRB(
+        SmileDimens.spacingMd,
+        SmileDimens.spacingSm,
+        SmileDimens.spacingSm,
+        SmileDimens.spacingSm,
       ),
       child: Row(
         children: <Widget>[
           Expanded(
             child: Text(
               'Remember these details for next time',
-              style: UseSmileIDSampleType.textStyleBody.copyWith(
-                color: colors.textTitle,
+              style: UseSmileIDSampleType.textStyleSubtitle.copyWith(
+                fontSize: _rememberTextSize,
+                color: colors.textBody,
               ),
             ),
           ),
@@ -202,3 +207,6 @@ class _RememberCard extends StatelessWidget {
     ),
   );
 }
+
+/// The remember line's run, the edit rows' size rather than body's.
+const double _rememberTextSize = 13.5;
