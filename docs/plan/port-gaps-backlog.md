@@ -265,7 +265,8 @@ ordered. It also says nothing about a container that merges correctly but labels
   meant to clean up after. This is the same shape as the painting-flag trap already in these notes.
 
 **What each platform's predicate reaches.** Flutter walks `semanticsOwner` and Android walks
-`SemanticsNode`, both asserting all three properties. **iOS asserts only separability**, because it
+`SemanticsNode`, both asserting order and traits; a merge reds those rather than a rule of its
+own, because neither toolkit reports a joined label where the walk can see it. **iOS asserts only separability**, because it
 has no tree to walk: hosting the bar in a `UIHostingController` returns an empty
 `accessibilityElements`, since UIKit builds that tree only while an assistive technology runs. What
 is left is XCUITest, which exposes no trait accessor for the header, and which does not collapse —
