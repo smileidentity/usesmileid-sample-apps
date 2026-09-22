@@ -28,9 +28,18 @@ minified APK, so every flow opens with `runFlow: subflows/warm-start.yaml`.
 leftover sibling in the foreground can satisfy an assertion meant for this app. Force-stop them and
 confirm with `tools/verify/foreground.sh <serial> com.usesmileid.sample.expo`.
 
-**On an emulator, disable the keyguard first** (`adb shell locksettings set-disabled true`). A device
-that locks mid-session fails the opening assertion against lock-screen content, which reads as an
-ordinary assertion failure rather than as infrastructure.
+**On an emulator, disable the keyguard first** (`adb shell locksettings set-disabled true`), and hide
+error dialogs (`adb shell settings put global hide_error_dialogs 1`). A device that locks mid-session
+fails the opening assertion against lock-screen content, and a SystemUI "isn't responding" dialog sits
+over the app and fails it the same way — both read as an ordinary assertion failure rather than as
+infrastructure. Two `main` runs died on the second of those with the app already `Displayed` in
+logcat. Hiding error dialogs hides this app's crash dialog too, not its evidence: a red whose app
+crashed carries `logs/crash-report.txt` beside `device-logcat.txt`.
+
+**The undo offer is a race, so the flow widens the window.** `noticeWindow` exists for this: the
+product window is short enough not to outlive its cause, and on a loaded runner Maestro's first
+hierarchy poll after `Hide from List` landed after the toast had dismissed itself. The offer is
+consumed on dismissal, so there is no second chance to retry.
 
 **`uiautomator dump` is unreliable on the ColorOS handset** — it is killed silently and serves
 whatever a previous run left at that path. Maestro drives its own on-device driver and is unaffected,

@@ -138,8 +138,10 @@ jobs:
           profile: pixel_5
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
+          # A lock or a system ANR dialog reds every flow as the app's fault; an app crash still lands in logs/crash-report.txt.
           script: |
             adb shell locksettings set-disabled true
+            adb shell settings put global hide_error_dialogs 1
             adb install -r expo/app/android/app/build/outputs/apk/release/app-release.apk
             maestro test -e APP_ID=com.usesmileid.sample.expo expo/maestro
 

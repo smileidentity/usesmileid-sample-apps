@@ -12,7 +12,8 @@ appId: ${APP_ID}
 #   maestro --device <serial> test -e APP_ID=com.usesmileid.sample.expo expo/maestro
 
 - stopApp
-- openLink: "usesmileid-sample-expo://?seedJobs=true"
+# `noticeWindow` because the undo offer below outlives its own window on a loaded runner (README).
+- openLink: "usesmileid-sample-expo://?seedJobs=true&noticeWindow=60"
 - runFlow: subflows/warm-start.yaml
 
 # The pill, mounted over the products grid rather than the stock tab bar it replaced.
