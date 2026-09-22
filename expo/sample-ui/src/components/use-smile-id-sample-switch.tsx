@@ -1,4 +1,4 @@
-import { Switch, type StyleProp, type ViewStyle } from 'react-native';
+import { StyleSheet, Switch, type StyleProp, type ViewStyle } from 'react-native';
 
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
@@ -33,7 +33,12 @@ export const UseSmileIDSampleSwitch = ({
       // The off track is settable here where SwiftUI's Toggle cannot set it, so this mapping follows
       // Android rather than iOS and carries the upstream darkBorder defect with it, deliberately.
       ios_backgroundColor={theme.colors.border}
-      style={style}
+      // React Native pins the iOS switch to flex-start, which lifts it off a row's centre line.
+      style={[styles.centred, style]}
     />
   );
 };
+
+const styles = StyleSheet.create({
+  centred: { alignSelf: 'center' },
+});
