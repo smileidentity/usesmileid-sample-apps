@@ -192,6 +192,12 @@ again — but every platform renders **393 logical units wide**, so a crop expre
 lands on the same content on each, and a profile of where ink starts and stops down the frame turns
 "this looks loose" into a number. Eight of the divergences below were invisible until measured.
 
+**Then measure on one device, not in the goldens.** Every Android-built app publishes the same
+`sample_*` ids as resource ids, so cold-linking the three apps to the same route on one emulator and
+reading each id's bounds in dp compares placement directly, with no harness framing in between. Treat
+a delta as a lead and confirm it on a side-by-side capture: Flutter often tags a whole row where
+Android tags the control. Items 12 to 17 were found this way on 2026-09-22.
+
 1. **A component that exists and has no call site is a defect, not a spare part.** The full-height
    sheet header was built on iOS, matched the spec, and was never called — both picker sheets used
    the partial sheet's chrome instead, so they shipped with no back control. Grep each component for
@@ -273,3 +279,9 @@ lands on the same content on each, and a profile of where ink starts and stops d
     height (72 against about 64). Expo's Android switch is `@expo/ui`'s Compose `Switch`, with
     `SwitchDefaults.colors` mapped the same way as Android. iOS keeps `UISwitch`, but it has to be
     re-centred, because React Native pins it to `alignSelf: 'flex-start'`.
+17. **A golden renders a screen outside its shell, so a shell defect is invisible to every baseline.**
+    Android's `Scaffold` padded its content by the window insets without consuming them, so each tab
+    root and the top app bar padded the status bar a second time: every Android screen sat 24 low and
+    a pushed screen's back control at 48. The ports matched the design and looked wrong beside
+    Android. Fixed with `consumeWindowInsets(contentPadding)` on the host; only the device measurement
+    above could see it, which is why the reference is measured too, not assumed.
