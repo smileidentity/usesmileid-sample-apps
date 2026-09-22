@@ -37,9 +37,13 @@ does nothing and Maestro's `launchApp: arguments:` is ignored entirely, so every
 `stopApp` followed by an `openLink` — `subflows/cold-start.yaml`. A link delivered to a *live* app
 navigates and carries its query, but re-seeds nothing, by design.
 
-**`scrollUntilVisible` needs `centerElement: true`.** It stops the moment a row enters the
-viewport, and the floating nav bar is drawn *over* the bottom of every tab root, so the tap lands
-on the pill and switches tab instead. The failure looks like a missing screen, not a missed tap.
+**`scrollUntilVisible` needs `centerElement: true` and a raised timeout.** It otherwise stops the
+moment a row enters the viewport, and the floating nav bar is drawn *over* the bottom of every tab
+root, so the tap lands on the pill and switches tab instead. The Android twin's
+`visibilityPercentage: 80` is not a substitute — measured 0/5 here, because the remaining fifth is
+the part under the bar. The default 20s budget is what a loaded runner outruns: on 35720237160 the
+scroll ran out and the flow had already been swiped onto products. Assert the tab root again after
+any scroll, or a swipe that reached the pill arrives as a missing row two steps later.
 
 **Undo has five seconds unless the link widens it.** `useSmileIDSampleNoticeWindow` withdraws the
 removal confirmation on a timer, and every assertion in front of the tap costs a hierarchy dump, so
