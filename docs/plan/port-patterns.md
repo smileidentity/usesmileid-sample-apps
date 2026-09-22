@@ -243,3 +243,33 @@ lands on the same content on each, and a profile of where ink starts and stops d
     icons with the stand-ins, and re-recorded goldens hid it. Before generating over an existing
     asset, read its header for a source the record lacks, and read the re-recorded baseline for every
     mark that changed, not only the ones you meant to change.
+12. **Compose trims a text's outer leading; Flutter and React Native do not.** Compose's default
+    `LineHeightStyle` (proportional, `Trim.Both`) drops the leading above a text's first line and
+    below its last, so a single 16/24 DM Sans line is 20.8 tall there (hhea 992 + 310 over 1000, so
+    1.302em) and 24 on the other two. Every row whose height comes from its text came out taller:
+    job rows by 5, settings rows by 4, the key-value form by about 2.4 a row. Flutter matches it with
+    `TextHeightBehavior(applyHeightToFirstAscent: false, applyHeightToLastDescent: false)`. Expo
+    gives every type style a negative top and bottom margin of half the excess, which is recomputed
+    by `atSize` when a call site changes the size. A Text that paints its own box, like the status
+    badge, takes the trim off its padding instead (`untrimmed`).
+13. **A Compose border does not inset content; a React Native border does.** `Modifier.border` and
+    `Surface(border = …)` draw over the padding, while `borderWidth` sits inside the box and pushes
+    the content in. That made each bordered control one stroke taller on every side: 47 against 44
+    for the select trigger, 46 against 44 for the text input, and 1 more for every 0.5-stroked card.
+    Take the stroke off the padding on the same element, or pull a card's content over its stroke
+    with `smileStrokeOverlap`.
+14. **`minimumInteractiveComponentSize()` is layout, not slop.** The filter chips, the Select and
+    Scan text actions, the selection checkbox, the products avatar and Sign out are all laid out at 48
+    on Android, with the visual centred inside. A `hitSlop` reserves no space, so the chips sat 12
+    higher than Android's. Lay these out at `theme.dimens.touchTarget` instead. That is 48 on Android and 44 on iOS,
+    and the 44 is platform-native, so an iOS golden stays 2 to 4 short of Android's here.
+15. **On Android, a bold `fontWeight` on a loaded font swaps it for the system font.** expo-font
+    registers each face under its own family at normal style. `fontWeight: '700'` asks for the bold
+    style, which that family does not have, so Android falls back to the system sans. That is why
+    the app-bar titles looked like Roboto. The family names the face, so type styles set no
+    `fontWeight`, and a weight change goes through `atWeight`.
+16. **Use the switch the platform's own apps draw.** React Native's Android `Switch` is the AppCompat
+    control, not the Material 3 one the Compose app draws, and the gap is visible in size and row
+    height (72 against about 64). Expo's Android switch is `@expo/ui`'s Compose `Switch`, with
+    `SwitchDefaults.colors` mapped the same way as Android. iOS keeps `UISwitch`, but it has to be
+    re-centred, because React Native pins it to `alignSelf: 'flex-start'`.
