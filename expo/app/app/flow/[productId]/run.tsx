@@ -13,7 +13,7 @@ import {
   type UseSmileIDResult,
 } from '@smileid/usesmileid';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
-import { useId, useMemo, useRef } from 'react';
+import { useEffect, useId, useMemo, useRef } from 'react';
 
 import { smileIDSampleApplying } from '../../../src/flow/use-smile-id-sample-flow-builder-config';
 import type { UseSmileIDSampleFlowLaunchSnapshot } from '../../../src/flow/use-smile-id-sample-flow-launch-snapshot';
@@ -34,6 +34,14 @@ export default function SdkFlowRun() {
   const runUserId = `user_${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
   /// A cancel delivered after teardown would otherwise act on whatever replaced this route.
   const left = useRef(false);
+
+  // Set on unmount too, or a teardown-delivered cancel navigates whatever replaced this route.
+  useEffect(
+    () => () => {
+      left.current = true;
+    },
+    [],
+  );
 
   // Once at entry: the SDK builds on mount, and remounting it tears the run down.
   const snapshot = useMemo<UseSmileIDSampleFlowLaunchSnapshot | null>(() => {
