@@ -34,6 +34,7 @@ export 'src/components/use_smileid_sample_switch.dart';
 export 'src/components/use_smileid_sample_text_input.dart';
 export 'src/components/use_smileid_sample_toast.dart';
 export 'src/components/use_smileid_sample_top_app_bar.dart';
+export 'src/data/use_smileid_sample_job_status_source.dart';
 export 'src/data/use_smileid_sample_jobs_repository.dart';
 export 'src/data/use_smileid_sample_settings_repository.dart';
 export 'src/model/use_smileid_sample_environment.dart';
