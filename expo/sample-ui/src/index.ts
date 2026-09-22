@@ -27,8 +27,12 @@ export {
   UseSmileIDSampleThemeProvider,
   smileShapes,
   useSmileIDSampleTheme,
-  type UseSmileIDSampleTheme,
 } from './theme/use-smile-id-sample-theme';
+export { type UseSmileIDSampleTheme } from './theme/use-smile-id-sample-theme';
+export {
+  smileIDSampleThemeOverride,
+  type UseSmileIDSampleThemeOverride,
+} from './theme/use-smile-id-sample-theme-override';
 
 export { UseSmileIDSampleMarks } from './use-smile-id-sample-marks';
 export {

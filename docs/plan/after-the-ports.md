@@ -89,11 +89,12 @@ four runs of 36–53 minutes. This phase is closed; item 8 records what the lane
 
 ## Phase 4 — the rest of the port: the flow host, then the token session
 
-**Status: the flow host has LANDED on Flutter**, taking SmartSelfie Enrollment end to end — product
-tap, form, `/flow/:productId/run`, the SDK's own screens, and back to the originating tab on either
-exit. The job-store contract landed inside it, so `addJob` has a caller and the detail page's refresh
-reports what the store decided instead of a sentence stored on the row. Expo follows in its own
-tranche; the token session and the scanner are still the second half.
+**Status: the flow host has LANDED on Flutter and Expo**, taking SmartSelfie Enrollment end to end —
+product tap, form, `/flow/:productId/run`, the SDK's own screens, and back to the originating tab on
+either exit. On Flutter the job-store contract landed inside it, so `addJob` has a caller and the
+detail page's refresh reports what the store decided instead of a sentence stored on the row; Expo
+already had that contract and gains the caller. The token session and the scanner are still the
+second half.
 
 Four things the Flutter half found that the phase did not predict, each recorded rather than
 "aligned":

@@ -19,7 +19,6 @@ const expoRoutes = routes.filter((route) => typeof route.platform.expo === 'stri
 
 /// The routes this tranche has not built yet, each named so a finished one cannot stay listed.
 const notBuiltYet: Record<string, string> = {
-  sdkFlow: 'the SDK flow host lands with the flow tranche',
   scanToken: 'the token scanner lands with the token tranche',
   scenarioDrawer: 'the dev scenario drawer lands with the shell tranche',
 };

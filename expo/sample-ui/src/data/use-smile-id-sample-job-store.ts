@@ -89,7 +89,12 @@ export const useSmileIDSampleJobStore = create<State & Actions>((set, get) => ({
     }
     const rows = Array.isArray(parsed) ? parsed : [];
     const jobs = rows
-      .map((row) => smileIDSampleJobFrom(row as Record<string, unknown>))
+      // Shape first: a `null` entry read as a record throws out of `load` and leaves the list null.
+      .map((row) =>
+        typeof row === 'object' && row !== null
+          ? smileIDSampleJobFrom(row as Record<string, unknown>)
+          : null,
+      )
       .filter((job): job is UseSmileIDSampleJob => job !== null);
     set({ jobs: ordered(jobs) });
   },

@@ -289,6 +289,60 @@ describe('refresh', () => {
   });
 });
 
+describe('load', () => {
+  const stored = (overrides: Record<string, unknown> = {}) => ({
+    id: 'job_1',
+    userId: 'user_1',
+    product: 'smartSelfieEnrollment',
+    status: 'Clear',
+    createdAtMillis: NOW,
+    message: 'Approved',
+    httpStatus: 200,
+    ...overrides,
+  });
+
+  const loadWith = async (raw: string) => {
+    await AsyncStorage.setItem('sample.jobs.v3', raw);
+    await store().load();
+    return store().jobs ?? [];
+  };
+
+  // The whole reason the per-row filter exists: an erased history reads as "I have run nothing".
+  it('keeps the readable rows when one cannot be read at all', async () => {
+    const rows = await loadWith(
+      JSON.stringify([stored({ id: 'job_1' }), null, stored({ id: 'job_3' })]),
+    );
+
+    expect(rows.map((row) => row.id).sort()).toEqual(['job_1', 'job_3']);
+  });
+
+  // Substituted, not dropped, which is what Android and iOS do and what Flutter now does too.
+  it('substitutes a product it no longer has', async () => {
+    const rows = await loadWith(JSON.stringify([stored({ product: 'somethingRemoved' })]));
+
+    expect(rows[0]?.product).toEqual(smileIDSampleProducts[0]);
+  });
+
+  it('substitutes a status it no longer has', async () => {
+    const rows = await loadWith(JSON.stringify([stored({ status: 'somethingNew' })]));
+
+    expect(rows[0]?.status).toBe(UseSmileIDSampleStatus.Processing);
+  });
+
+  // The one field with no substitute: everything else defaults, an unaddressable row cannot.
+  it('drops a row with no id and keeps the rest', async () => {
+    const rows = await loadWith(
+      JSON.stringify([stored({ id: undefined }), stored({ id: 'job_2' })]),
+    );
+
+    expect(rows.map((row) => row.id)).toEqual(['job_2']);
+  });
+
+  it('reads a store that is not JSON as empty rather than throwing', async () => {
+    expect(await loadWith('not json')).toEqual([]);
+  });
+});
+
 describe('the fixtures', () => {
   it('are reached only by seeding, never by a plain load', async () => {
     expect(store().jobs).toEqual([]);
@@ -335,14 +389,16 @@ describe('a row read back from storage', () => {
     expect(store().jobs?.[0]?.product.id).toBe(smileIDSampleProducts[0]!.id);
   });
 
-  it('drops a row whose product no longer exists rather than crashing the restore', async () => {
+  // Substituted rather than dropped, which is the majority behaviour across the four apps.
+  it('substitutes a product that no longer exists rather than dropping the row', async () => {
     await AsyncStorage.setItem(
       'sample.jobs.v3',
       JSON.stringify([{ ...job(), product: 'aProductThatWasRenamed' }]),
     );
     store().reset();
     await store().load();
-    expect(store().jobs).toEqual([]);
+    expect(store().jobs?.[0]?.id).toBe('job_1');
+    expect(store().jobs?.[0]?.product).toEqual(smileIDSampleProducts[0]);
   });
 
   it('falls back on a status that no longer exists rather than throwing', async () => {
