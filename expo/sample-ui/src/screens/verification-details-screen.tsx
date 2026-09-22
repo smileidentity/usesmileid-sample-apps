@@ -20,6 +20,7 @@ import {
   UseSmileIDSampleSuffixedTestIds,
   UseSmileIDSampleTestIds,
 } from '../use-smile-id-sample-test-ids';
+import type { BadgeTokens } from '../theme/smile-colors';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 /// Everything the details screen renders. `job` is null for a deep link naming a row this build has no copy of.
@@ -150,7 +151,7 @@ export const VerificationDetailsScreen = ({
               />
               <UseSmileIDSampleDataFieldRow
                 label="Environment"
-                // Android publishes this on the result card, which this port does not have yet.
+                // The only surface here that says where a row went: Android's is its result card.
                 value={job.sandbox ? 'sandbox' : 'production'}
                 testID={UseSmileIDSampleSuffixedTestIds.detailField('environment')}
               />
@@ -165,7 +166,7 @@ export const VerificationDetailsScreen = ({
 /// Green while the call succeeded, red once it did not; no code is neither, since red would invent a failure.
 const httpStatusColour = (
   code: number | null,
-  badge: { successText: string; errorText: string },
+  badge: Pick<BadgeTokens, 'successText' | 'errorText'>,
 ): string | undefined => {
   if (code === null) return undefined;
   return code >= 200 && code <= 299 ? badge.successText : badge.errorText;
