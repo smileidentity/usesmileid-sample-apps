@@ -303,7 +303,7 @@ exports[`NavBar dark products 1`] = `
       },
       {
         "columnGap": 8,
-        "paddingBottom": 34,
+        "paddingBottom": 46,
         "paddingHorizontal": 16,
         "paddingTop": 12,
       },
@@ -953,7 +953,7 @@ exports[`NavBar dark settings 1`] = `
       },
       {
         "columnGap": 8,
-        "paddingBottom": 34,
+        "paddingBottom": 46,
         "paddingHorizontal": 16,
         "paddingTop": 12,
       },
@@ -1603,7 +1603,7 @@ exports[`NavBar dark withSessionRing 1`] = `
       },
       {
         "columnGap": 8,
-        "paddingBottom": 34,
+        "paddingBottom": 46,
         "paddingHorizontal": 16,
         "paddingTop": 12,
       },
@@ -2365,7 +2365,7 @@ exports[`NavBar light products 1`] = `
       },
       {
         "columnGap": 8,
-        "paddingBottom": 34,
+        "paddingBottom": 46,
         "paddingHorizontal": 16,
         "paddingTop": 12,
       },
@@ -3015,7 +3015,7 @@ exports[`NavBar light settings 1`] = `
       },
       {
         "columnGap": 8,
-        "paddingBottom": 34,
+        "paddingBottom": 46,
         "paddingHorizontal": 16,
         "paddingTop": 12,
       },
@@ -3665,7 +3665,7 @@ exports[`NavBar light withSessionRing 1`] = `
       },
       {
         "columnGap": 8,
-        "paddingBottom": 34,
+        "paddingBottom": 46,
         "paddingHorizontal": 16,
         "paddingTop": 12,
       },

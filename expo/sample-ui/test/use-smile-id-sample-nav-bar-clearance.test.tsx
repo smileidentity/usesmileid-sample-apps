@@ -94,10 +94,10 @@ beforeAll(async () => {
 
 describe('the nav bar is taller than any formula over its token predicts', () => {
   it.each([
-    [NARROW_WIDTH, DESIGN_FONT_SCALE, 124],
-    [NARROW_WIDTH, ENLARGED_FONT_SCALE, 188],
-    [WIDE_WIDTH, DESIGN_FONT_SCALE, 108],
-    [WIDE_WIDTH, ENLARGED_FONT_SCALE, 156],
+    [NARROW_WIDTH, DESIGN_FONT_SCALE, 136],
+    [NARROW_WIDTH, ENLARGED_FONT_SCALE, 200],
+    [WIDE_WIDTH, DESIGN_FONT_SCALE, 120],
+    [WIDE_WIDTH, ENLARGED_FONT_SCALE, 168],
   ])('measures %ipt wide at %ix as %ipt tall', async (width, fontScale, expected) => {
     expect(await barHeight(width, fontScale)).toBe(expected);
   });

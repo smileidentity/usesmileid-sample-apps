@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
@@ -24,6 +24,10 @@ type Props = {
 };
 
 /// A floating pill of three tabs, plus a detached token button that navigates rather than switching tab.
+/// Compose's `shadowElevation` of 8 on Android, where a tinted token shadow draws almost nothing; the token on iOS.
+const floatingShadow = (theme: ReturnType<typeof useSmileIDSampleTheme>): ViewStyle =>
+  Platform.OS === 'android' ? { elevation: theme.dimens.space[8] } : theme.dimens.elevation.floating;
+
 export const UseSmileIDSampleNavBar = ({
   selectedId,
   onSelect,
@@ -39,7 +43,7 @@ export const UseSmileIDSampleNavBar = ({
       style={[
         styles.bar,
         {
-          paddingBottom: insets.bottom,
+          paddingBottom: insets.bottom + theme.dimens.spacing.sm,
           paddingHorizontal: theme.dimens.spacing.md,
           paddingTop: theme.dimens.spacing.sm,
           columnGap: theme.dimens.spacing.xs,
@@ -51,7 +55,7 @@ export const UseSmileIDSampleNavBar = ({
         // Takes all the space the token button leaves, so the three tabs are equal thirds of it.
         style={[
           styles.pill,
-          theme.dimens.elevation.floating,
+          floatingShadow(theme),
           {
             backgroundColor: theme.colors.navBar,
             borderRadius: theme.shapes.pill,
@@ -122,7 +126,7 @@ const TokenAffordance = ({ progress, onPress }: { progress: number | null; onPre
         // A minimum rather than a fixed box, so enlarged type grows it instead of clipping "Token".
         style={[
           styles.tokenButton,
-          theme.dimens.elevation.floating,
+          floatingShadow(theme),
           {
             minWidth: TOKEN_SIZE,
             minHeight: TOKEN_SIZE,
