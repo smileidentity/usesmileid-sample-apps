@@ -129,6 +129,11 @@ beforeEach(async () => {
   systemScheme.mockReturnValue('light');
 });
 
+// Installed on the real Appearance module, so leaving it patched would follow into the next file's tests.
+afterEach(() => {
+  imposedScheme.mockRestore();
+});
+
 describe('seedJobs decides whether the verifications list has anything in it', () => {
   it('seeds the design fixtures when the launch carries the argument', async () => {
     await launch(`${LAUNCH}?seedJobs=true`);
