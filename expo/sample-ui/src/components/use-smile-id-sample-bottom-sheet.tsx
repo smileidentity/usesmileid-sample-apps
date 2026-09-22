@@ -13,6 +13,8 @@ const SHEET_PADDING_X = 20;
 const SHEET_HEADER_GAP = 10;
 /// Material's own drag handle is 48 tall where the Compose app draws a 28-tall pill, so Android draws that pill here.
 const DRAWS_OWN_HANDLE = Platform.OS === 'android';
+/// The Compose app's grab handle, 44×4: a design pill that no size token names, only matches by value.
+const GRAB_HANDLE = { width: 44, height: 4 } as const;
 const PARTIAL_TITLE_SIZE = 18;
 const FULL_TITLE_SIZE = 16;
 
@@ -93,15 +95,15 @@ export const UseSmileIDSampleBottomSheet = ({
   );
 };
 
-/// The 44x4 pill the design puts on partial sheets, drawn where the platform's own handle is not that pill.
+/// The pill the design puts on partial sheets, drawn where the platform's own handle is not that pill.
 const GrabHandle = () => {
   const theme = useSmileIDSampleTheme();
   return (
     <View style={[styles.handle, { paddingVertical: theme.dimens.spacing.sm }]}>
       <View
         style={{
-          width: theme.dimens.size['control-md'],
-          height: theme.dimens.space[4],
+          width: GRAB_HANDLE.width,
+          height: GRAB_HANDLE.height,
           borderRadius: theme.dimens.radius.chip,
           backgroundColor: theme.colors.border,
         }}
