@@ -153,8 +153,7 @@ void main() {
       );
     });
 
-    // The issues the gate carries are what a future surface reports, so they are held to naming the
-    // field rather than merely being non-empty.
+    // Held to naming the field, because the issues are what a future surface reports.
     test('names the fields an empty form left for the form to fix', () {
       final UseSmileIDSampleFlowPreflight outcome = useSmileIDSamplePreflight(
         snapshotFor(
@@ -232,9 +231,7 @@ void main() {
       );
     });
 
-    // The gate can only call `validate()`, which the SDK documents as far weaker than `build()` —
-    // a missing consent icon passes one and fails the other, and a rejected build renders nothing.
-    // `build()`'s result type is not exported, so the assertion reads the runtime type by name.
+    // `validate()` is weaker than `build()`, whose result type is unexported — hence the name read.
     test('every product builds a configuration the SDK accepts', () {
       for (final UseSmileIDSampleProduct product
           in UseSmileIDSampleProduct.values) {
@@ -249,8 +246,7 @@ void main() {
                     ),
                   ),
                 )
-                // The SDK's own doc comment tells partners to inspect this result, and then marks the
-                // method internal and leaves its result type unexported. Both belong in the SDK.
+                // The SDK says to inspect this, then marks it internal — a finding for the SDK.
                 // ignore: invalid_use_of_internal_member
                 .build();
 
@@ -308,13 +304,11 @@ void main() {
         find.bySemanticsIdentifier(UseSmileIDSampleTestIds.userDetailsScreen),
         findsOne,
       );
-      // A stack, not a replacement: the shell is still underneath, so back is a pop. An imperative
-      // push leaves `currentConfiguration.uri` on the base match, so the stack is what is asserted.
+      // An imperative push leaves `currentConfiguration.uri` on the base match, so assert the stack.
       expect(router.routerDelegate.canPop(), isTrue);
     });
 
-    // Every form was reached with `go` before, which left one page in the root stack and made every
-    // back a hard-coded location that a second entry point could disagree with.
+    // `go` left one page in the root stack, which made every back a hard-coded location.
     testWidgets('system back from a stacked form pops to the shell', (
       WidgetTester tester,
     ) async {

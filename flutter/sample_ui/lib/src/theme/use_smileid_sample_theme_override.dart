@@ -43,8 +43,7 @@ extension UseSmileIDSampleThemeScenarioOverride
     UseSmileIDSampleThemeScenario.brandDefault => null,
     // Baseline Material 3: a plausible partner palette that is nobody's brand, and no raw hex.
     UseSmileIDSampleThemeScenario.partnerOverride => _partnerOverride(),
-    // Named Material colours, deliberately outside every palette: this scenario exists to collide.
-    // Purple where the twins use magenta, which Flutter's palette does not name.
+    // Named colours outside every palette; purple where the twins use the magenta Flutter lacks.
     UseSmileIDSampleThemeScenario.clashingHost => UseSmileIDSampleThemeOverride(
       primaryColor: const AdaptiveColor(
         light: Colors.purple,

@@ -44,25 +44,21 @@ class _UseSmileIDSampleSdkFlowTabState
   UseSmileIDSampleFlowLaunchSnapshot? _snapshot;
   UseSmileIDSampleFlowPreflight? _preflight;
 
-  /// A teardown-delivered cancel arrives after the route is gone, where leaving again would act on
-  /// whatever replaced it.
+  /// A cancel delivered after teardown would otherwise act on whatever replaced this route.
   bool _left = false;
 
-  /// Held from entry, because `ref.read` throws once this element is disposed — which is exactly
-  /// the same-frame teardown the write below has to survive.
+  /// Held from entry: `ref.read` throws once disposed, which is the teardown the write must survive.
   late final UseSmileIDSampleJobsNotifier _jobs;
 
   @override
   void initState() {
     super.initState();
     _jobs = ref.read(useSmileIDSampleJobsProvider.notifier);
-    // Read once at entry and never while the run is in flight: the SDK answers a rebuilt
-    // configuration by re-running build() and tearing the run down.
+    // Once at entry: the SDK answers a rebuilt configuration by tearing the run down.
     final UseSmileIDSampleFlowLaunchSnapshot? snapshot = _buildSnapshot();
     _snapshot = snapshot;
     _preflight = snapshot == null ? null : useSmileIDSamplePreflight(snapshot);
-    // Off the frame entirely, not merely after it: leaving this route rebuilds the shell, and
-    // doing that while the tree is still being finalised re-creates its navigator's global key.
+    // Off the frame, not merely after it: re-adding the shell mid-finalise duplicates its key.
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => scheduleMicrotask(_actOnPreflight),
     );
@@ -165,8 +161,7 @@ class _UseSmileIDSampleSdkFlowTabState
       case UseSmileIDSuccess<JobSubmissionResponse>(
         :final JobSubmissionResponse value,
       ):
-        // Awaited by nobody and scoped to the provider rather than this widget: a result the SDK
-        // delivers exactly once must be written even if the route is torn down in the same frame.
+        // Held by the provider, not this widget: the write must outlive a same-frame teardown.
         unawaited(_jobs.addJob(_processingJob(snapshot, value)));
         if (!_left) {
           _left = true;

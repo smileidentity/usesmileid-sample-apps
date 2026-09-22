@@ -71,10 +71,7 @@ abstract final class UseSmileIDSampleRoutes {
   ];
 }
 
-/// Back one level, or to the screen that owns this one when there is nothing to go back to.
-///
-/// Every route above the shell is deep-linkable, so any of them can be the stack's only page, where
-/// a pop throws rather than landing anywhere.
+/// Back one level, or to the screen that owns this one when a deep link left nothing to pop.
 void useSmileIDSampleBack(BuildContext context, String fallback) {
   if (context.canPop()) {
     context.pop();
@@ -179,9 +176,7 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
         ),
       ],
     ),
-    // The flow's forms and the flow itself, above the shell so they cover the tab bar. They are
-    // siblings rather than nested because `spec/routes.json` fixes the three paths; the STACK comes
-    // from pushing each one, which is what makes back a pop rather than a hard-coded location.
+    // Siblings because `spec/routes.json` fixes the paths; pushing them is what makes the stack.
     GoRoute(
       path: '/flow/:productId/details',
       builder: (BuildContext context, GoRouterState state) =>
@@ -191,8 +186,7 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
     ),
     GoRoute(
       path: '/flow/:productId/run',
-      // Turned back before it mounts, rather than by the host on its first frame: leaving a route
-      // that has just replaced the shell re-adds the shell's keyed navigator mid-frame.
+      // Turned back before it mounts: leaving a route that replaced the shell duplicates its key.
       redirect: (BuildContext context, GoRouterState state) =>
           UseSmileIDSampleProduct.values.any(
             (UseSmileIDSampleProduct it) =>

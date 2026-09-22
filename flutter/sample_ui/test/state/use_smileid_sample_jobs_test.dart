@@ -261,8 +261,7 @@ void main() {
       expect(at(DateTime(2026)).httpSucceeded, isNull);
     });
 
-    // The reason itself is the refresh outcome's business now; what the row still owes is the fact
-    // the outcome reads, and a fixture that carried a session would reach the network in a test.
+    // The reason is the outcome's now; the row owes only the fact the outcome reads.
     test('no fixture carries a session', () {
       expect(at(DateTime(2026)).sessionId, isNull);
       expect(

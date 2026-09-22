@@ -39,8 +39,7 @@ UseSmileIDSampleFlowPreflight useSmileIDSamplePreflight(
   final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
   useSmileIDSampleApplying(builder, snapshot);
 
-  // A form can fix what the user typed but not how the host built the flow, so the payloads are
-  // reported before the builder's own verdict.
+  // Payloads before the builder's verdict: a form can fix what was typed, not how this built it.
   final List<ValidationState> payloadChecks = <ValidationState>[
     if (builder.userDetails case final UserDetails details)
       builder.validateUserDetails(details),

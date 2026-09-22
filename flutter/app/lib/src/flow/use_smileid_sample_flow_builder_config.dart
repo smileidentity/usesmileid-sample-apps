@@ -38,8 +38,7 @@ void useSmileIDSampleApplying(
           c.detectorMode = FaceDetectorMode.standard;
         });
         if (snapshot.product.needsDocumentCapture) {
-          // Registered with no factory because this SDK's `add` takes a face factory only and
-          // documents its own document routing as a no-op; the RN sibling has a document scope.
+          // No factory: this SDK's `add` takes a face one and no-ops for documents.
           a.forCaptureType(CaptureType.document);
         }
       }),
@@ -62,8 +61,7 @@ void useSmileIDSampleApplying(
                 nowMillis: DateTime.now().millisecondsSinceEpoch,
               );
       };
-      // Debug builds only: a sample that shows a partner what the SDK put on the wire is a real
-      // probe affordance, but release must never log traffic.
+      // Debug only: a release build must never log traffic.
       config.logging((LoggingConfigBuilder logging) {
         logging.enabled = !kReleaseMode;
         // HEADERS, not BODY: a logged body carries the user details this repo forbids in logs.

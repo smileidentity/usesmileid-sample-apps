@@ -218,8 +218,7 @@ void main() {
     );
   });
 
-  // The fall-through the store replaced: a row that IS stored and DOES carry a session used to be
-  // told nothing was stored to refresh, which was false of the only rows a real run writes.
+  // The fall-through the store replaced: a stored row was told nothing was stored to refresh.
   testWidgets('a pull on a submitted row asks for a session, not for a row', (
     WidgetTester tester,
   ) async {

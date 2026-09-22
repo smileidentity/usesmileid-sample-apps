@@ -97,8 +97,7 @@ mixin UseSmileIDSampleJobRefreshMixin
       );
       return written ? outcome : const UseSmileIDSampleStatusFailed(_gone);
     } finally {
-      // Released even when the caller was cancelled, or the row is silently unrefreshable for the
-      // rest of the process — which is what a `finally` buys that an early return does not.
+      // Released on a cancelled caller too, or the row is unrefreshable for the process.
       _inFlight.remove(jobId);
     }
   }

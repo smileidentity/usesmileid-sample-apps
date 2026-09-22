@@ -91,8 +91,7 @@ class UseSmileIDSamplePreferencesJobsRepository
     required String message,
     required int httpStatus,
   }) async {
-    // Read and derive with no await between the two: a remove landing in that window is already
-    // absent from what this writes, where a list captured earlier would resurrect the row.
+    // No await between the read and the derived write, or a remove landing in it is resurrected.
     final List<UseSmileIDSampleJob> stored = _stored();
     final int at = stored.indexWhere(
       (UseSmileIDSampleJob job) => job.id == jobId,
