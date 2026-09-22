@@ -65,12 +65,32 @@ class _UseSmileIDSampleVerificationDetailsTabState
     return null;
   }
 
-  /// Re-reads the job, or says why it cannot be re-read.
+  /// Asks the store what became of the job, and says whatever it decided.
   Future<void> _refresh() async {
-    final String notice =
-        _stored()?.refreshBlockedReason ?? 'Nothing stored to refresh';
-    if (mounted) {
-      setState(() => _refreshNotice = notice);
+    final UseSmileIDSampleStatusRefresh? outcome = await ref
+        .read(useSmileIDSampleJobsProvider.notifier)
+        .refreshJob(
+          jobId: widget.jobId,
+          session: null,
+          nowMillis: DateTime.now().millisecondsSinceEpoch,
+          source: const _NoSessionStatusSource(),
+        );
+    // Already in flight: the notice standing is the one this refresh would have repeated.
+    if (outcome == null || !mounted) {
+      return;
     }
+    setState(() => _refreshNotice = useSmileIDSampleRefreshLabel(outcome));
   }
+}
+
+/// No scanned session exists yet, so every refresh reports why rather than doing nothing.
+class _NoSessionStatusSource implements UseSmileIDSampleJobStatusSource {
+  const _NoSessionStatusSource();
+
+  @override
+  Future<UseSmileIDSampleStatusRefresh> check({
+    required String jobId,
+    required String token,
+    required bool sandbox,
+  }) async => const UseSmileIDSampleStatusNoSession();
 }

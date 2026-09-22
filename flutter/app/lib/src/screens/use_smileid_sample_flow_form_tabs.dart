@@ -22,7 +22,8 @@ class UseSmileIDSampleUserDetailsTab extends ConsumerWidget {
     final UseSmileIDSampleForms forms = ref.watch(
       useSmileIDSampleFormsProvider,
     );
-    void back() => context.go(UseSmileIDSampleRoutes.products);
+    void back() =>
+        useSmileIDSampleBack(context, UseSmileIDSampleRoutes.products);
     return UseSmileIDSampleAboveShellPage(
       onBack: back,
       child: UseSmileIDSampleUserDetailsScreen(
@@ -34,7 +35,7 @@ class UseSmileIDSampleUserDetailsTab extends ConsumerWidget {
         onFieldChanged: ref
             .read(useSmileIDSampleFormsProvider.notifier)
             .setUserField,
-        onContinue: () => context.go(
+        onContinue: () => context.push(
           product == null
               ? UseSmileIDSampleRoutes.sdkFlow(productId)
               : UseSmileIDSampleJourney.afterUserDetails(product),
@@ -93,8 +94,10 @@ class _UseSmileIDSampleKycFormTabState
     final UseSmileIDSampleIdDetails details = ref
         .watch(useSmileIDSampleFormsProvider)
         .idDetails;
-    void back() =>
-        context.go(UseSmileIDSampleRoutes.consentDetailsForm(widget.productId));
+    void back() => useSmileIDSampleBack(
+      context,
+      UseSmileIDSampleRoutes.consentDetailsForm(widget.productId),
+    );
     return UseSmileIDSampleAboveShellPage(
       onBack: back,
       child: UseSmileIDSampleKycFormScreen(
@@ -108,7 +111,7 @@ class _UseSmileIDSampleKycFormTabState
             .setIdNumber,
         // Through the journey, not straight to the route: the helper is the single place the
         // order lives, and a second copy is how two entry points come to disagree about it.
-        onContinue: () => context.go(
+        onContinue: () => context.push(
           product == null
               ? UseSmileIDSampleRoutes.sdkFlow(widget.productId)
               : UseSmileIDSampleJourney.afterIdDetails(product),

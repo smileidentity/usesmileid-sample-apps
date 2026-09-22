@@ -55,7 +55,15 @@ timer. Pass `noticeWindow` in the cold-start link, as `verifications.yaml` does.
 **The job store survives the run.** It is `SharedPreferences`, and `seedJobs` is idempotent by id,
 so a re-seed never brings back a row a previous run removed. Flows that remove open with
 `clearState` — which on a handset also wipes the settings switches and the profile list, so a local
-run costs whatever you had configured in the app.
+run costs whatever you had configured in the app. **ColorOS refuses `pm clear`**, which is what
+`clearState` runs, so every one of those flows dies on its first command there; reset the handset
+arm with an uninstall and reinstall instead, and drop the command for a local run.
+
+**The SDK's own screens are not all addressable here.** This SDK publishes two semantics
+identifiers — `si_preview_screen` and `si_processing_screen` — where the Android SDK also publishes
+`si_consent_screen` and `si_instructions_screen`. `sdk-flow.yaml` therefore asserts the consent
+screen by its own text. The SDK's camera permission is requested when the CAPTURE screen mounts,
+not on the way out of consent, so a conditional grant belongs after the instructions step.
 
 **Four sibling sample apps implement the same `sample_*` ids**, and this app additionally shares
 its application id with the Flutter SDK repo's own development sample (`spec/app-identity.json`,

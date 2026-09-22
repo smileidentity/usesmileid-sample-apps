@@ -131,10 +131,35 @@ useSmileIDSampleJobsProvider =
 class UseSmileIDSampleJobsNotifier
     extends AsyncNotifier<List<UseSmileIDSampleJob>> {
   @override
-  Future<List<UseSmileIDSampleJob>> build() async {
-    // READ ONLY.
-    return await ref.watch(useSmileIDSampleJobsRepositoryProvider).read() ??
-        const <UseSmileIDSampleJob>[];
+  Future<List<UseSmileIDSampleJob>> build() async =>
+      await ref.watch(useSmileIDSampleJobsRepositoryProvider).read() ??
+      const <UseSmileIDSampleJob>[];
+
+  /// Records a verification, which is the first thing a finished run does.
+  Future<void> addJob(UseSmileIDSampleJob job) async {
+    await ref.read(useSmileIDSampleJobsRepositoryProvider).add(job);
+    ref.invalidateSelf();
+  }
+
+  /// Refreshes one row's status, returning what the store decided; null means one is already running.
+  Future<UseSmileIDSampleStatusRefresh?> refreshJob({
+    required String jobId,
+    required UseSmileIDSampleRefreshSession? session,
+    required int nowMillis,
+    required UseSmileIDSampleJobStatusSource source,
+  }) async {
+    final UseSmileIDSampleStatusRefresh? outcome = await ref
+        .read(useSmileIDSampleJobsRepositoryProvider)
+        .refresh(
+          jobId: jobId,
+          session: session,
+          nowMillis: nowMillis,
+          source: source,
+        );
+    if (outcome is UseSmileIDSampleStatusUpdated) {
+      ref.invalidateSelf();
+    }
+    return outcome;
   }
 
   /// Hides rows and returns how many were taken, which is what the confirmation reports.

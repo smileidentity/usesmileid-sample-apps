@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// The verifications that survive a restart.
 class UseSmileIDSamplePreferencesJobsRepository
+    with UseSmileIDSampleJobRefreshMixin
     implements UseSmileIDSampleJobsRepository {
   /// Takes the already-opened preferences, so a caller cannot forget to await them.
   UseSmileIDSamplePreferencesJobsRepository(this._preferences);
@@ -64,6 +65,50 @@ class UseSmileIDSamplePreferencesJobsRepository
     _lastRemoved = const <UseSmileIDSampleJob>[];
   }
 
+  @override
+  Future<void> add(UseSmileIDSampleJob job) async {
+    final List<UseSmileIDSampleJob> stored = _stored();
+    if (stored.any((UseSmileIDSampleJob each) => each.id == job.id)) {
+      return;
+    }
+    await _write(<UseSmileIDSampleJob>[...stored, job]);
+  }
+
+  @override
+  Future<UseSmileIDSampleJob?> find(String jobId) async {
+    for (final UseSmileIDSampleJob job in _stored()) {
+      if (job.id == jobId) {
+        return job;
+      }
+    }
+    return null;
+  }
+
+  @override
+  Future<bool> applyStatus({
+    required String jobId,
+    required UseSmileIDSampleStatus status,
+    required String message,
+    required int httpStatus,
+  }) async {
+    // No await between the read and the derived write, or a remove landing in it is resurrected.
+    final List<UseSmileIDSampleJob> stored = _stored();
+    final int at = stored.indexWhere(
+      (UseSmileIDSampleJob job) => job.id == jobId,
+    );
+    if (at < 0) {
+      return false;
+    }
+    final List<UseSmileIDSampleJob> next = List<UseSmileIDSampleJob>.of(stored);
+    next[at] = next[at].withStatus(
+      status: status,
+      message: message,
+      httpStatus: httpStatus,
+    );
+    await _write(next);
+    return true;
+  }
+
   List<UseSmileIDSampleJob> _stored() {
     final String? raw = _preferences.getString(useSmileIDSampleJobsKey);
     if (raw == null) {
@@ -71,17 +116,20 @@ class UseSmileIDSamplePreferencesJobsRepository
     }
     // A store this build cannot read is treated as no store: a sample must not refuse to start
     // because an older write left a shape it no longer understands.
+    final List<Object?> rows;
     try {
-      return <UseSmileIDSampleJob>[
-        for (final Object? each in jsonDecode(raw) as List<Object?>)
-          UseSmileIDSampleJob.fromJson(each! as Map<String, Object?>),
-      ]..sort(
-        (UseSmileIDSampleJob a, UseSmileIDSampleJob b) =>
-            b.createdAtMillis.compareTo(a.createdAtMillis),
-      );
+      rows = jsonDecode(raw) as List<Object?>;
     } on Object {
       return const <UseSmileIDSampleJob>[];
     }
+    return <UseSmileIDSampleJob>[
+      for (final Object? each in rows)
+        // Per row, not per store: one row this build cannot read must not take the history with it.
+        if (each is Map<String, Object?>) ?UseSmileIDSampleJob.fromStored(each),
+    ]..sort(
+      (UseSmileIDSampleJob a, UseSmileIDSampleJob b) =>
+          b.createdAtMillis.compareTo(a.createdAtMillis),
+    );
   }
 
   Future<void> _write(List<UseSmileIDSampleJob> jobs) => _preferences.setString(

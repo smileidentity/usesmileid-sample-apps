@@ -261,15 +261,13 @@ void main() {
       expect(at(DateTime(2026)).httpSucceeded, isNull);
     });
 
-    test('a job under no session says why it cannot refresh', () {
-      expect(
-        at(DateTime(2026)).refreshBlockedReason,
-        'Not submitted under a scanned token',
-      );
+    // The reason is the outcome's now; the row owes only the fact the outcome reads.
+    test('no fixture carries a session', () {
+      expect(at(DateTime(2026)).sessionId, isNull);
       expect(
         useSmileIDSampleJobFixtures(
           DateTime(2026).millisecondsSinceEpoch,
-        ).every((UseSmileIDSampleJob j) => j.refreshBlockedReason != null),
+        ).every((UseSmileIDSampleJob j) => j.sessionId == null),
         isTrue,
         reason: 'every fixture ran under no session',
       );

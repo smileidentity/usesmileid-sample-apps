@@ -18,6 +18,14 @@ dependencies:
   # no PR ever exercised. Registry-only, permanently: no path dependency, no dependency_overrides.
   usesmileid: 12.1.1
 
+  # The federated ML providers, pinned exactly for the same reason as the SDK above. A capture
+  # screen with none of these registered falls back to a Pigeon call no plugin answers, so the flow
+  # dies on the device; the four are what the Expo app and the SDK's own sample both carry.
+  usesmileid_mlkit_face: 12.1.1
+  usesmileid_mlkit_document: 12.1.1
+  usesmileid_vision_face: 12.1.1
+  usesmileid_vision_document: 12.1.1
+
   # The shared journey, by path. Never published, and the SDK repo maps the same source into its
   # own development sample.
   sample_ui:

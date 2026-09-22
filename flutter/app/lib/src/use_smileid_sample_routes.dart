@@ -1,11 +1,13 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sample_ui/sample_ui.dart';
 
 import 'screens/use_smileid_sample_flow_form_tabs.dart';
 import 'screens/use_smileid_sample_licenses_tab.dart';
 import 'screens/use_smileid_sample_products_tab.dart';
 import 'screens/use_smileid_sample_profile_config_tab.dart';
 import 'screens/use_smileid_sample_profiles_tab.dart';
+import 'screens/use_smileid_sample_sdk_flow_tab.dart';
 import 'screens/use_smileid_sample_settings_tab.dart';
 import 'screens/use_smileid_sample_verification_details_tab.dart';
 import 'screens/use_smileid_sample_verifications_tab.dart';
@@ -67,6 +69,15 @@ abstract final class UseSmileIDSampleRoutes {
     verifications,
     settings,
   ];
+}
+
+/// Back one level, or to the screen that owns this one when a deep link left nothing to pop.
+void useSmileIDSampleBack(BuildContext context, String fallback) {
+  if (context.canPop()) {
+    context.pop();
+    return;
+  }
+  context.go(fallback);
 }
 
 /// Whether [location] is a tab root, which is the whole of R13's nav-bar predicate.
@@ -165,13 +176,36 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
         ),
       ],
     ),
-    // The flow's forms, above the shell so they cover the tab bar.
+    // Siblings because `spec/routes.json` fixes the paths; pushing them is what makes the stack.
     GoRoute(
       path: '/flow/:productId/details',
       builder: (BuildContext context, GoRouterState state) =>
           UseSmileIDSampleUserDetailsTab(
             productId: state.pathParameters['productId']!,
           ),
+    ),
+    GoRoute(
+      path: '/flow/:productId/run',
+      // Turned back before it mounts: leaving a route that replaced the shell duplicates its key.
+      redirect: (BuildContext context, GoRouterState state) =>
+          UseSmileIDSampleProduct.values.any(
+            (UseSmileIDSampleProduct it) =>
+                it.id == state.pathParameters['productId'],
+          )
+          ? null
+          : UseSmileIDSampleRoutes.products,
+      builder: (BuildContext context, GoRouterState state) {
+        final String productId = state.pathParameters['productId']!;
+        return UseSmileIDSampleSdkFlowTab(
+          productId: productId,
+          onLeave: () => context.go(UseSmileIDSampleRoutes.products),
+          onNeedsDetails: () =>
+              context.go(UseSmileIDSampleRoutes.consentDetailsForm(productId)),
+          // `go`, not a pop: the wizard beneath must not be reachable back INTO from the result.
+          onResult: (String jobId) =>
+              context.go(UseSmileIDSampleRoutes.verificationDetails(jobId)),
+        );
+      },
     ),
     GoRoute(
       path: '/flow/:productId/id-details',
@@ -205,7 +239,8 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
       path: UseSmileIDSampleRoutes.profiles,
       builder: (BuildContext context, GoRouterState state) =>
           UseSmileIDSampleProfilesTab(
-            onBack: () => context.go(UseSmileIDSampleRoutes.settings),
+            onBack: () =>
+                useSmileIDSampleBack(context, UseSmileIDSampleRoutes.settings),
           ),
       routes: <RouteBase>[
         GoRoute(
@@ -213,7 +248,10 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
           builder: (BuildContext context, GoRouterState state) =>
               UseSmileIDSampleProfileConfigTab(
                 profileId: state.pathParameters['profileId']!,
-                onBack: () => context.go(UseSmileIDSampleRoutes.profiles),
+                onBack: () => useSmileIDSampleBack(
+                  context,
+                  UseSmileIDSampleRoutes.profiles,
+                ),
               ),
         ),
       ],

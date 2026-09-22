@@ -900,11 +900,43 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.6"
+  usesmileid_mlkit_document:
+    dependency: "direct main"
+    description:
+      name: usesmileid_mlkit_document
+      sha256: "5bcb6d7c3b63ec0144520eda6edbe1e43a98f04f83c10e2b6bb7412ebaaba022"
+      url: "https://pub.dev"
+    source: hosted
+    version: "12.1.1"
+  usesmileid_mlkit_face:
+    dependency: "direct main"
+    description:
+      name: usesmileid_mlkit_face
+      sha256: eac192015088a31923e7c2564b19e6552849f74ae5a1d1f6e37dcee0720d2bb9
+      url: "https://pub.dev"
+    source: hosted
+    version: "12.1.1"
   usesmileid_platform_interface:
     dependency: transitive
     description:
       name: usesmileid_platform_interface
       sha256: f0af10550ac1602cf888a12e11092f25acd81bece7440f290172778706892729
+      url: "https://pub.dev"
+    source: hosted
+    version: "12.1.1"
+  usesmileid_vision_document:
+    dependency: "direct main"
+    description:
+      name: usesmileid_vision_document
+      sha256: "416988f2f7b83c928e0998d8060fc2b442892e5d0e50f5dff2d49f1d0df48050"
+      url: "https://pub.dev"
+    source: hosted
+    version: "12.1.1"
+  usesmileid_vision_face:
+    dependency: "direct main"
+    description:
+      name: usesmileid_vision_face
+      sha256: "9e3fcca2a8b59ebc2c896b80a8065da22f8054bd4e9e4bb39bc18176a12a2efb"
       url: "https://pub.dev"
     source: hosted
     version: "12.1.1"
