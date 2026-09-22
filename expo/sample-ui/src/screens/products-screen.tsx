@@ -27,6 +27,7 @@ import {
   UseSmileIDSampleSuffixedTestIds,
   UseSmileIDSampleTestIds,
 } from '../use-smile-id-sample-test-ids';
+import { touchTargetStyle } from '../theme/smile-compose-layout';
 import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
@@ -102,8 +103,7 @@ export const ProductsScreen = ({
             accessibilityRole="button"
             accessibilityLabel="Switch profile"
             onPress={onProfilePress}
-            // Laid out at the platform's touch target, as Compose's minimum size does.
-            style={[styles.avatar, { minHeight: theme.dimens.touchTarget, minWidth: theme.dimens.touchTarget }]}
+            style={[styles.avatar, touchTargetStyle(theme)]}
           >
             <UseSmileIDSampleAvatar
               initials={state.initials}

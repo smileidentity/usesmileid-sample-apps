@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
+import { insetForBorder } from '../theme/smile-compose-layout';
 import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
@@ -58,9 +59,8 @@ export const UseSmileIDSampleSelectTrigger = ({
           borderWidth: theme.dimens.borderWidth.thin,
           borderColor: enabled ? theme.colors.primary : theme.colors.input.border,
           minHeight: theme.dimens.size['control-md'],
-          // Compose draws its border over the padding; a React Native border sits inside the box and pushes it.
-          paddingHorizontal: theme.dimens.spacing.md - theme.dimens.borderWidth.thin,
-          paddingVertical: theme.dimens.spacing.sm - theme.dimens.borderWidth.thin,
+          paddingHorizontal: insetForBorder(theme.dimens.spacing.md, theme.dimens.borderWidth.thin),
+          paddingVertical: insetForBorder(theme.dimens.spacing.sm, theme.dimens.borderWidth.thin),
           columnGap: theme.dimens.spacing.xs,
         },
         style,

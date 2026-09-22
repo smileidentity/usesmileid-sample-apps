@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } fro
 
 import { smileCardStrokeWidth } from '../smile-product-hues';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import { insetForBorder, touchTargetStyle } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 type Props = {
@@ -25,8 +26,7 @@ export const UseSmileIDSampleSessionEndedBanner = ({ onScan, style }: Props) => 
           backgroundColor: theme.colors.surfaceMuted,
           borderWidth: smileCardStrokeWidth,
           borderColor: theme.colors.cardStroke,
-          // Compose draws the stroke over the padding; here it sits inside the box, so it comes off the padding.
-          padding: theme.dimens.spacing.md - smileCardStrokeWidth,
+          padding: insetForBorder(theme.dimens.spacing.md, smileCardStrokeWidth),
           columnGap: theme.dimens.spacing.sm,
           rowGap: theme.dimens.spacing.xs,
         },
@@ -44,8 +44,7 @@ export const UseSmileIDSampleSessionEndedBanner = ({ onScan, style }: Props) => 
       <Pressable
         accessibilityRole="button"
         onPress={onScan}
-        // Laid out at the platform's touch target, as Compose's minimum size does.
-        style={[styles.action, { minHeight: theme.dimens.touchTarget, minWidth: theme.dimens.touchTarget, paddingHorizontal: theme.dimens.spacing.xs }]}
+        style={[styles.action, touchTargetStyle(theme), { paddingHorizontal: theme.dimens.spacing.xs }]}
       >
         <Text style={[theme.type.textStyleButtonSm, { color: theme.colors.primary }]}>Scan</Text>
       </Pressable>

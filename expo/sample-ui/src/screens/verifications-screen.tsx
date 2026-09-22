@@ -23,6 +23,7 @@ import {
   UseSmileIDSampleSuffixedTestIds,
   UseSmileIDSampleTestIds,
 } from '../use-smile-id-sample-test-ids';
+import { touchTargetStyle } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 /// What the list renders. `jobs` is null until the store's first read: not loaded is not empty.
@@ -135,11 +136,7 @@ export const VerificationsScreen = ({
                 setSelecting((current) => !current);
                 setSelected([]);
               }}
-              // The platform's own minimum target, which is what sets the header row's height.
-              style={[
-                styles.selectToggle,
-                { minHeight: theme.dimens.touchTarget, minWidth: theme.dimens.touchTarget, paddingHorizontal: theme.dimens.spacing.xs },
-              ]}
+              style={[styles.selectToggle, touchTargetStyle(theme), { paddingHorizontal: theme.dimens.spacing.xs }]}
             >
               <Text style={[theme.type.textStyleButtonSm, { color: theme.colors.primary }]}>
                 {selecting ? 'Cancel' : 'Select'}

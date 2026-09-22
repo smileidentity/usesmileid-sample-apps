@@ -10688,6 +10688,8 @@ exports[`verifications dark default 1`] = `
               {
                 "minHeight": 44,
                 "minWidth": 44,
+              },
+              {
                 "paddingHorizontal": 8,
               },
             ]
@@ -16977,6 +16979,8 @@ exports[`verifications light default 1`] = `
               {
                 "minHeight": 44,
                 "minWidth": 44,
+              },
+              {
                 "paddingHorizontal": 8,
               },
             ]

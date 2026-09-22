@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 import { smileBorderStrong } from '../smile-product-hues';
+import { touchTargetStyle } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 const CHECK_SIZE = 11;
@@ -23,8 +24,7 @@ export const UseSmileIDSampleSelectionCheckbox = ({ checked, onCheckedChange, te
       accessibilityRole="checkbox"
       accessibilityState={{ checked }}
       onPress={() => onCheckedChange(!checked)}
-      // 24 drawn and laid out at the platform's touch target, as Compose's minimum size does.
-      style={[styles.target, { minHeight: theme.dimens.touchTarget, minWidth: theme.dimens.touchTarget }]}
+      style={[styles.target, touchTargetStyle(theme)]}
     >
       <View
         style={[

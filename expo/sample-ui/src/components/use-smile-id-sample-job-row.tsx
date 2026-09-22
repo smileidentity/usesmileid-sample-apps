@@ -10,7 +10,7 @@ import {
 import type { UseSmileIDSampleStatus } from '../model/use-smile-id-sample-status';
 import { smileCardStrokeWidth } from '../smile-product-hues';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
-import { smileStrokeOverlap } from './use-smile-id-sample-section-surface';
+import { smileStrokeOverlap } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 /// Both read off the verifications board rather than the scale; no token carries either.

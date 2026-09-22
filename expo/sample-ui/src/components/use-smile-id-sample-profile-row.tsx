@@ -4,8 +4,8 @@ import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } fro
 import { UseSmileIDSampleAvatar } from './use-smile-id-sample-avatar';
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 import { smileCardStrokeWidth, smileProfileHues } from '../smile-product-hues';
+import { smileStrokeOverlap } from '../theme/smile-compose-layout';
 import { atSize } from '../theme/smile-type';
-import { smileStrokeOverlap } from './use-smile-id-sample-section-surface';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 const ROW_PADDING_X = 14;

@@ -11,6 +11,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 
+import { insetForBorder } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 /// The design's leading glyph box — 17, which no scale token carries.
@@ -72,9 +73,8 @@ export const UseSmileIDSampleTextInput = ({
             borderRadius: theme.dimens.radius.field,
             borderWidth,
             borderColor,
-            // Compose draws the border over the padding; here it sits inside the box, so it comes off the padding.
-            paddingHorizontal: theme.dimens.spacing.md - borderWidth,
-            paddingVertical: theme.dimens.spacing.sm - borderWidth,
+            paddingHorizontal: insetForBorder(theme.dimens.spacing.md, borderWidth),
+            paddingVertical: insetForBorder(theme.dimens.spacing.sm, borderWidth),
             columnGap: theme.dimens.spacing.xs,
           },
         ]}

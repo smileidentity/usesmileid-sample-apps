@@ -9,10 +9,10 @@ import {
   smileCardTitleTracking,
   type SmileProductHue,
 } from '../smile-product-hues';
+import { smileStrokeOverlap } from '../theme/smile-compose-layout';
 import { smileInkOn, smileMix, smileWithAlpha } from '../theme/smile-color-math';
 import { lightColors } from '../tokens';
 import { atWeight } from '../theme/smile-type';
-import { smileStrokeOverlap } from './use-smile-id-sample-section-surface';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 /// The smallest size the two-line label may shrink to, as Compose's autosize floor.

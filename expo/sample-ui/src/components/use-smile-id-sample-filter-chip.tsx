@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { smileCardStrokeWidth, smileLabelSize, smileLabelTracking } from '../smile-product-hues';
+import { insetForBorder, touchTargetStyle } from '../theme/smile-compose-layout';
 import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
@@ -34,8 +35,7 @@ export const UseSmileIDSampleFilterChip = ({
       accessibilityRole="tab"
       accessibilityState={{ selected }}
       onPress={onPress}
-      // Laid out at the platform's touch target with the chip centred in it, as Compose's minimum size does.
-      style={[styles.target, { minHeight: theme.dimens.touchTarget }, style]}
+      style={[styles.target, touchTargetStyle(theme, 'height'), style]}
     >
       <View
         style={[
@@ -46,9 +46,8 @@ export const UseSmileIDSampleFilterChip = ({
             borderWidth: selected ? 0 : smileCardStrokeWidth,
             borderColor: selected ? 'transparent' : theme.colors.cardStroke,
             minHeight: theme.dimens.space[32],
-            // Compose draws the stroke over the padding; here it sits inside the box, so it comes off the padding.
-            paddingHorizontal: theme.dimens.spacing.sm - (selected ? 0 : smileCardStrokeWidth),
-            paddingVertical: theme.dimens.spacing.xs - (selected ? 0 : smileCardStrokeWidth),
+            paddingHorizontal: insetForBorder(theme.dimens.spacing.sm, selected ? 0 : smileCardStrokeWidth),
+            paddingVertical: insetForBorder(theme.dimens.spacing.xs, selected ? 0 : smileCardStrokeWidth),
             columnGap: theme.dimens.spacing.xxs,
           },
         ]}

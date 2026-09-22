@@ -3,6 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { UseSmileIDSampleButton } from './use-smile-id-sample-button';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import { touchTargetStyle } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 type Props = {
@@ -52,8 +53,7 @@ export const UseSmileIDSampleScanSheet = ({ onPaste, onSimulate, style }: Props)
           testID={UseSmileIDSampleTestIds.TOKEN_PASTE}
           accessibilityRole="button"
           onPress={onPaste}
-          // Laid out at the platform's touch target, as Compose's minimum size does.
-          style={[styles.action, { minHeight: theme.dimens.touchTarget, minWidth: theme.dimens.touchTarget, paddingHorizontal: theme.dimens.spacing.xs }]}
+          style={[styles.action, touchTargetStyle(theme), { paddingHorizontal: theme.dimens.spacing.xs }]}
         >
           <Text style={[theme.type.textStyleButtonSm, { color: theme.colors.primary }]}>Paste</Text>
         </Pressable>

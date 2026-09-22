@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { StyleSheet, TextInput, View, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Circle, Line } from 'react-native-svg';
 
+import { insetForBorder } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 type Props = {
@@ -34,9 +35,8 @@ export const UseSmileIDSampleSearchField = ({
           borderRadius: theme.dimens.radius.field,
           borderWidth,
           borderColor: focused ? theme.colors.search.borderFocus : theme.colors.search.border,
-          // Compose draws the border over the padding; here it sits inside the box, so it comes off the padding.
-          paddingHorizontal: theme.dimens.spacing.md - borderWidth,
-          paddingVertical: theme.dimens.spacing.sm - borderWidth,
+          paddingHorizontal: insetForBorder(theme.dimens.spacing.md, borderWidth),
+          paddingVertical: insetForBorder(theme.dimens.spacing.sm, borderWidth),
           columnGap: theme.dimens.spacing.xs,
         },
         style,

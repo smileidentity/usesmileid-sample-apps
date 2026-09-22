@@ -4996,6 +4996,8 @@ exports[`products dark tokenExpired 1`] = `
             {
               "minHeight": 44,
               "minWidth": 44,
+            },
+            {
               "paddingHorizontal": 8,
             },
           ]
@@ -18545,6 +18547,8 @@ exports[`products light tokenExpired 1`] = `
             {
               "minHeight": 44,
               "minWidth": 44,
+            },
+            {
               "paddingHorizontal": 8,
             },
           ]

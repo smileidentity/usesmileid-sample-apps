@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } fro
 
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 import { smileCardStrokeWidth } from '../smile-product-hues';
+import { insetForBorder, touchTargetStyle } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 /// The design's tile is 38 at radius 11 and the chevron 14, none of which the scale carries.
@@ -96,16 +97,14 @@ export const UseSmileIDSampleDestructiveRow = ({
       testID={testID}
       accessibilityRole="button"
       onPress={onPress}
-      // Laid out at the platform's touch target with the row centred in it, as Compose's minimum size does.
-      style={[styles.target, { minHeight: theme.dimens.touchTarget }, style]}
+      style={[styles.target, touchTargetStyle(theme, 'height'), style]}
     >
       <View
         style={[
           styles.destructive,
           {
             minHeight: theme.dimens.size['control-md'],
-            // Compose draws the stroke over the padding; here it sits inside the box, so it comes off the padding.
-            padding: theme.dimens.spacing.sm - smileCardStrokeWidth,
+            padding: insetForBorder(theme.dimens.spacing.sm, smileCardStrokeWidth),
             borderRadius: theme.shapes.card,
             backgroundColor: theme.colors.surface,
             borderWidth: smileCardStrokeWidth,

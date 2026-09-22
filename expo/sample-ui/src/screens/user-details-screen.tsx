@@ -24,6 +24,7 @@ import {
   type UseSmileIDSampleUserField,
 } from '../model/use-smile-id-sample-user-fields';
 import { smileCardStrokeWidth } from '../smile-product-hues';
+import { insetForBorder } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 import { atSize, atWeight } from '../theme/smile-type';
 import {
@@ -123,11 +124,10 @@ export const UserDetailsScreen = ({
                 borderWidth: smileCardStrokeWidth,
                 columnGap: theme.dimens.spacing.sm,
                 marginHorizontal: theme.dimens.spacing.md,
-                // Compose draws the stroke over the padding; here it sits inside the box, so it comes off the padding.
-                paddingBottom: theme.dimens.spacing.sm - smileCardStrokeWidth,
-                paddingLeft: theme.dimens.spacing.md - smileCardStrokeWidth,
-                paddingRight: theme.dimens.spacing.sm - smileCardStrokeWidth,
-                paddingTop: theme.dimens.spacing.sm - smileCardStrokeWidth,
+                paddingBottom: insetForBorder(theme.dimens.spacing.sm, smileCardStrokeWidth),
+                paddingLeft: insetForBorder(theme.dimens.spacing.md, smileCardStrokeWidth),
+                paddingRight: insetForBorder(theme.dimens.spacing.sm, smileCardStrokeWidth),
+                paddingTop: insetForBorder(theme.dimens.spacing.sm, smileCardStrokeWidth),
               },
             ]}
           >

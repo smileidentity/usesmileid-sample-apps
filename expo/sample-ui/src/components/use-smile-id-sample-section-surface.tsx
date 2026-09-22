@@ -3,10 +3,8 @@ import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { UseSmileIDSampleSectionLabel } from './use-smile-id-sample-section-label';
 import { smileCardStrokeWidth } from '../smile-product-hues';
+import { smileStrokeOverlap } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
-
-/// Pulls a card's content over its stroke, because Compose draws a Surface border over the content it does not inset.
-export const smileStrokeOverlap: ViewStyle = { margin: -smileCardStrokeWidth };
 
 type Props = {
   label?: string;

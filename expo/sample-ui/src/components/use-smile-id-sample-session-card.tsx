@@ -9,8 +9,8 @@ import {
 } from '../smile-product-hues';
 import { lightColors } from '../tokens';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import { smileStrokeOverlap } from '../theme/smile-compose-layout';
 import { atSize, atWeight } from '../theme/smile-type';
-import { smileStrokeOverlap } from './use-smile-id-sample-section-surface';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 const LABEL_TRACKING = 1;
