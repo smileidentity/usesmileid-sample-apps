@@ -32,6 +32,9 @@ abstract final class UseSmileIDSampleRoutes {
   /// The profiles list, above the tabs rather than inside one.
   static const String profiles = '/profiles';
 
+  /// The profile-switch sheet, a LAYER over products: its path sits under profiles, its owner does not.
+  static const String profileSwitch = '/profiles/switch';
+
   /// The scenario drawer, a LAYER over settings rather than a page of its own.
   static const String scenarioDrawer = '/debug/scenarios';
 
@@ -86,10 +89,11 @@ bool useSmileIDSampleShowsNavBar(String location) => UseSmileIDSampleRoutes
     .contains(useSmileIDSamplePageBehind(location));
 
 /// The destination a sheet route is layered over, which is itself for every other route.
-String useSmileIDSamplePageBehind(String location) =>
-    location == UseSmileIDSampleRoutes.scenarioDrawer
-    ? UseSmileIDSampleRoutes.settings
-    : location;
+String useSmileIDSamplePageBehind(String location) => switch (location) {
+  UseSmileIDSampleRoutes.scenarioDrawer => UseSmileIDSampleRoutes.settings,
+  UseSmileIDSampleRoutes.profileSwitch => UseSmileIDSampleRoutes.products,
+  _ => location,
+};
 
 /// Folds a whole custom-scheme link back into a path, or null to leave an in-app route alone.
 String? useSmileIDSampleFoldPlatformLink(
@@ -125,6 +129,12 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
             GoRoute(
               path: UseSmileIDSampleRoutes.products,
               builder: (_, _) => const UseSmileIDSampleProductsTab(),
+            ),
+            // A sheet is a LAYER over its owner, and matched here before /profiles/:profileId can.
+            GoRoute(
+              path: UseSmileIDSampleRoutes.profileSwitch,
+              builder: (_, _) =>
+                  const UseSmileIDSampleProductsTab(openSwitch: true),
             ),
           ],
         ),

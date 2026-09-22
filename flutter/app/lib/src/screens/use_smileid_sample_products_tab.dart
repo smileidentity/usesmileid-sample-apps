@@ -5,36 +5,70 @@ import 'package:sample_ui/sample_ui.dart';
 
 import '../state/use_smileid_sample_providers.dart';
 import '../use_smileid_sample_journey.dart';
+import '../use_smileid_sample_routes.dart';
 
 /// The products tab: the grid every flow starts from.
-class UseSmileIDSampleProductsTab extends ConsumerWidget {
-  /// Takes nothing; what it shows comes from the profile store.
-  const UseSmileIDSampleProductsTab({super.key});
+class UseSmileIDSampleProductsTab extends ConsumerStatefulWidget {
+  /// [openSwitch] is set by the deep link, which opens this page with the switch sheet up.
+  const UseSmileIDSampleProductsTab({this.openSwitch = false, super.key});
 
-  /// Opens the switch sheet, which PRODUCTS owns rather than the profiles list.
-  Future<void> _switchProfile(BuildContext context, WidgetRef ref) =>
-      showUseSmileIDSampleSheet<void>(
-        context: context,
-        testId: UseSmileIDSampleTestIds.profileSwitchSheet,
-        builder: (BuildContext sheetContext) {
-          final UseSmileIDSampleProfiles profiles = ref.read(
-            useSmileIDSampleProfilesProvider,
-          );
-          return UseSmileIDSampleProfileSwitchSheet(
-            profiles: profiles.all,
-            activeId: profiles.activeId,
-            onSelect: (UseSmileIDSampleProfile profile) {
-              ref
-                  .read(useSmileIDSampleProfilesProvider.notifier)
-                  .setActive(profile.id);
-              Navigator.of(sheetContext).pop();
-            },
-          );
-        },
-      );
+  /// Whether a link asked for the profile-switch sheet.
+  final bool openSwitch;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<UseSmileIDSampleProductsTab> createState() =>
+      _UseSmileIDSampleProductsTabState();
+}
+
+class _UseSmileIDSampleProductsTabState
+    extends ConsumerState<UseSmileIDSampleProductsTab> {
+  @override
+  void initState() {
+    super.initState();
+    // After the first frame, because a sheet cannot be presented while this is still building.
+    if (widget.openSwitch) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _openSwitchFromLink();
+        }
+      });
+    }
+  }
+
+  /// Hands the route back on dismiss, or a second delivery of the link reopens nothing.
+  Future<void> _openSwitchFromLink() async {
+    // Read before the await: an inherited lookup across the gap is what `mounted` does not cover.
+    final GoRouter router = GoRouter.of(context);
+    await _switchProfile();
+    if (router.routerDelegate.currentConfiguration.uri.path ==
+        UseSmileIDSampleRoutes.profileSwitch) {
+      router.go(UseSmileIDSampleRoutes.products);
+    }
+  }
+
+  /// Opens the switch sheet, which PRODUCTS owns rather than the profiles list.
+  Future<void> _switchProfile() => showUseSmileIDSampleSheet<void>(
+    context: context,
+    testId: UseSmileIDSampleTestIds.profileSwitchSheet,
+    builder: (BuildContext sheetContext) {
+      final UseSmileIDSampleProfiles profiles = ref.read(
+        useSmileIDSampleProfilesProvider,
+      );
+      return UseSmileIDSampleProfileSwitchSheet(
+        profiles: profiles.all,
+        activeId: profiles.activeId,
+        onSelect: (UseSmileIDSampleProfile profile) {
+          ref
+              .read(useSmileIDSampleProfilesProvider.notifier)
+              .setActive(profile.id);
+          Navigator.of(sheetContext).pop();
+        },
+      );
+    },
+  );
+
+  @override
+  Widget build(BuildContext context) {
     final UseSmileIDSampleProfiles profiles = ref.watch(
       useSmileIDSampleProfilesProvider,
     );
@@ -47,7 +81,7 @@ class UseSmileIDSampleProductsTab extends ConsumerWidget {
       ),
       onProductTap: (UseSmileIDSampleProduct product) =>
           context.push(UseSmileIDSampleJourney.firstStepFor(product)),
-      onProfileTap: () => _switchProfile(context, ref),
+      onProfileTap: _switchProfile,
       onScanTap: () {},
       bottomInset: useSmileIDSampleNavBarClearance(context),
     );
