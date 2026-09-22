@@ -19,6 +19,17 @@ void main() {
 
   setUp(() => SharedPreferences.setMockInitialValues(<String, Object>{}));
 
+  /// A style no screen draws: `latestStyle` is static, so each case writes over this or fails.
+  const SystemUiOverlayStyle unset = SystemUiOverlayStyle(
+    statusBarColor: Colors.red,
+  );
+
+  Future<void> forgetBars(WidgetTester tester) async {
+    SystemChrome.setSystemUIOverlayStyle(unset);
+    await tester.idle();
+    expect(SystemChrome.latestStyle, unset);
+  }
+
   Future<void> pumpApp(
     WidgetTester tester, {
     required bool darkMode,
@@ -27,6 +38,7 @@ void main() {
   }) async {
     tester.platformDispatcher.platformBrightnessTestValue = device;
     addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
+    await forgetBars(tester);
     final UseSmileIDSamplePreferencesSettingsRepository settings =
         await UseSmileIDSamplePreferencesSettingsRepository.open();
     final UseSmileIDSamplePreferencesJobsRepository jobs =
@@ -51,10 +63,8 @@ void main() {
   Brightness themeBrightness(WidgetTester tester) =>
       Theme.of(tester.element(find.byType(Navigator).first)).brightness;
 
-  /// The page follows the switch and both platforms' icons contrast with it.
-  void expectBars(WidgetTester tester, {required bool dark}) {
-    expect(themeBrightness(tester), dark ? Brightness.dark : Brightness.light);
-    final SystemUiOverlayStyle? style = SystemChrome.latestStyle;
+  /// Both platforms' icons contrast with a page of this brightness.
+  void expectStyle(SystemUiOverlayStyle? style, {required bool dark}) {
     expect(style, isNotNull);
     expect(
       style!.statusBarIconBrightness,
@@ -69,6 +79,12 @@ void main() {
       dark ? Brightness.light : Brightness.dark,
     );
     expect(style.statusBarColor, Colors.transparent);
+  }
+
+  /// The page follows the switch and the bars last drawn contrast with it.
+  void expectBars(WidgetTester tester, {required bool dark}) {
+    expect(themeBrightness(tester), dark ? Brightness.dark : Brightness.light);
+    expectStyle(SystemChrome.latestStyle, dark: dark);
   }
 
   testWidgets('a light app on a dark device draws dark icons at a tab root', (
@@ -132,6 +148,8 @@ void main() {
       ..setUserField(UseSmileIDSampleUserField.firstName, 'Ada')
       ..setUserField(UseSmileIDSampleUserField.lastName, 'Lovelace')
       ..setUserField(UseSmileIDSampleUserField.email, 'ada@example.com');
+    // Forgotten after the products tab drew dark, so only the SDK route's frame can draw it again.
+    await forgetBars(tester);
     GoRouter.of(context).go(
       UseSmileIDSampleRoutes.sdkFlow(
         UseSmileIDSampleProduct.smartSelfieEnrollment.id,
@@ -140,11 +158,15 @@ void main() {
     await tester.pumpAndSettle();
 
     // The SDK renders nothing under `flutter test`, so this asserts what it is handed.
-    expect(
-      MediaQuery.platformBrightnessOf(
-        tester.element(find.byType(UseSmileIDBuilder)),
-      ),
-      Brightness.dark,
+    final BuildContext sdk = tester.element(find.byType(UseSmileIDBuilder));
+    expect(MediaQuery.platformBrightnessOf(sdk), Brightness.dark);
+    expectStyle(
+      sdk
+          .findAncestorWidgetOfExactType<
+            AnnotatedRegion<SystemUiOverlayStyle>
+          >()
+          ?.value,
+      dark: true,
     );
     expectBars(tester, dark: true);
   });
