@@ -331,9 +331,11 @@ In `expo/app/app/_layout.tsx`, read `darkMode` and the load flag off
 `useSmileIDSampleSettingsStore`, call the settings store's `load()` once at root, and pass the
 provider `dark={darkMode || scheme === 'dark'}`.
 
-That expression is deliberate and matches Flutter: `flutter/app/lib/src/use_smileid_sample_app.dart:42`
-is `themeMode: darkMode ? ThemeMode.dark : ThemeMode.system` — the switch **overrides** to dark, and
-off means follow the device. Do not implement it as a plain preference that can force light.
+**REVERSED 2026-09-22.** That expression matched Flutter's `ThemeMode.system`, and both disagreed
+with the two shipped apps: Android and iOS pin the switch both ways, so off is light on a dark phone.
+The ruling and the per-platform API are `port-patterns.md` §3 rule 9; the root now passes
+`dark={settingsLoaded ? darkMode : scheme === 'dark'}` and imposes it with `Appearance.setColorScheme`,
+which is what the SDK's own `useColorScheme` and the native bars read.
 
 Keep `useColorScheme()` as the value used before the store has loaded.
 

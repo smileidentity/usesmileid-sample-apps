@@ -12,7 +12,7 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import * as Linking from 'expo-linking';
 import { BottomTabBarHeightContext } from 'expo-router/tabs';
 import { useEffect } from 'react';
-import { Text, useColorScheme } from 'react-native';
+import { Appearance, Text, useColorScheme } from 'react-native';
 
 import Verifications from '../app/(tabs)/verifications';
 import RootLayout from '../app/_layout';
@@ -20,7 +20,14 @@ import RootLayout from '../app/_layout';
 jest.mock('expo-linking', () => ({ getInitialURL: jest.fn() }));
 jest.mock('react-native/Libraries/Utilities/useColorScheme');
 jest.mock('expo-font', () => ({ useFonts: () => [true] }));
-jest.mock('expo-status-bar', () => ({ StatusBar: function StatusBar() { return null; } }));
+/// The style each mount asked for, so the icon colour is read rather than assumed.
+const mockStatusBarStyles: string[] = [];
+jest.mock('expo-status-bar', () => ({
+  StatusBar: function StatusBar({ style }: { style: string }) {
+    mockStatusBarStyles.push(style);
+    return null;
+  },
+}));
 // Without pinned metrics the real provider withholds its children until it has measured, so nothing renders.
 jest.mock('react-native-safe-area-context', () => ({
   SafeAreaProvider: function SafeAreaProvider({ children }: { children?: unknown }) {
@@ -100,8 +107,13 @@ const resolvedScheme = async ({
   return getByTestId('scheme');
 };
 
+/// The scheme the app last imposed on the window, which is what the SDK and the native bars read.
+let imposedScheme: jest.SpyInstance;
+
 beforeEach(async () => {
   mockProbe = SchemeProbe;
+  mockStatusBarStyles.length = 0;
+  imposedScheme = jest.spyOn(Appearance, 'setColorScheme').mockImplementation(() => undefined);
   await AsyncStorage.clear();
   useSmileIDSampleJobStore.getState().reset();
   useSmileIDSampleSettingsStore.getState().reset();
@@ -126,13 +138,17 @@ describe('seedJobs decides whether the verifications list has anything in it', (
   });
 });
 
-describe('the Dark Mode switch reaches the theme', () => {
+describe('the Dark Mode switch reaches the theme and the system bars', () => {
   it('overrides a light device to dark when the switch is on', async () => {
     expect(await resolvedScheme({ darkMode: true, system: 'light' })).toHaveTextContent('dark');
+    expect(imposedScheme).toHaveBeenLastCalledWith('dark');
+    expect(mockStatusBarStyles.at(-1)).toBe('light');
   });
 
-  it('follows a dark device when the switch is off, rather than forcing light', async () => {
-    expect(await resolvedScheme({ darkMode: false, system: 'dark' })).toHaveTextContent('dark');
+  it('overrides a dark device to light when the switch is off, as Android and iOS do', async () => {
+    expect(await resolvedScheme({ darkMode: false, system: 'dark' })).toHaveTextContent('light');
+    expect(imposedScheme).toHaveBeenLastCalledWith('light');
+    expect(mockStatusBarStyles.at(-1)).toBe('dark');
   });
 
   it('stays light when neither asks for dark', async () => {

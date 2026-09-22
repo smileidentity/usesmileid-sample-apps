@@ -14,7 +14,7 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { useColorScheme, View } from 'react-native';
+import { Appearance, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useLaunchArgs } from '../src/use-smile-id-sample-launch';
@@ -28,8 +28,8 @@ export default function RootLayout() {
   const darkMode = useSmileIDSampleSettingsStore((state) => state.settings.darkMode);
   const settingsLoaded = useSmileIDSampleSettingsStore((state) => state.loaded);
   const loadSettings = useSmileIDSampleSettingsStore((state) => state.load);
-  // The switch OVERRIDES to dark and off follows the device, which is the twin's themeMode, not a preference.
-  const dark = (settingsLoaded && darkMode) || scheme === 'dark';
+  // Pinned both ways once the switch is read, as Android and iOS are; until then the device's guess avoids a flash.
+  const dark = settingsLoaded ? darkMode : scheme === 'dark';
   const colors = dark ? smileDarkColors : smileLightColors;
   const args = useLaunchArgs();
   const resetProfiles = useSmileIDSampleProfileStore((state) => state.reset);
@@ -44,6 +44,11 @@ export default function RootLayout() {
   useEffect(() => {
     void loadSettings();
   }, [loadSettings]);
+
+  // The SDK reads useColorScheme and the native bars read the window, so both follow the switch only through this.
+  useEffect(() => {
+    if (settingsLoaded) Appearance.setColorScheme(dark ? 'dark' : 'light');
+  }, [settingsLoaded, dark]);
 
   useEffect(() => {
     resetProfiles(smileIDSampleProfilesForLaunch(args));
