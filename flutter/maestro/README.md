@@ -82,7 +82,9 @@ message only says the element was missing.
 runner the engine publishes its semantics tree while the activity is still behind its splash window,
 so Maestro sees `sample_products_screen`, taps, and the system drops the touch
 (`InputDispatcher: … NO_INPUT_CHANNEL`, measured 7.6s to Displayed). That tap therefore carries
-`retryTapIfNoChange: true`: it retries only when nothing changed, and each one is idempotent.
+`retryTapIfNoChange: true`, which retries only when nothing changed. A tab tap is idempotent; the one
+push that carries it, the product card in `sdk-flow.yaml`, is followed by a single back that must land
+on products, so a slow runner that pushes the wizard twice fails there instead of passing.
 
 **The toolchain pin is load-bearing here.** `licenses.yaml` names engine components by id, and
 which ones the bundle carries is decided by the Flutter version — pinned in `flutter.yml` and

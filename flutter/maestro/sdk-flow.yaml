@@ -30,9 +30,12 @@ appId: ${APP_ID}
     timeout: 30000
 - assertNotVisible:
     id: "sample_nav_products"
+# One back lands on products: a retried tap that pushed the wizard twice leaves a form here instead.
 - back
 - assertVisible:
     id: "sample_products_screen"
+- assertNotVisible:
+    id: "sample_user_details_screen"
 
 # Continue on an empty form cannot reach the SDK: the gate reads the SDK's own validators and sends
 # the journey back to the form that can still fix it.
