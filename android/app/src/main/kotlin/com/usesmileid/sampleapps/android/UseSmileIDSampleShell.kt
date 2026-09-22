@@ -25,6 +25,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.onSizeChanged
@@ -125,7 +126,8 @@ fun UseSmileIDSampleShell() {
                         navGraph = NavGraphs.root,
                         navController = navController,
                         defaultTransitions = UseSmileIDSampleNavTransitions,
-                        modifier = Modifier.padding(contentPadding),
+                        // Consumed, or every screen and the SDK under the shell route pad the same inset again.
+                        modifier = Modifier.padding(contentPadding).consumeWindowInsets(contentPadding),
                     )
                 }
             }
