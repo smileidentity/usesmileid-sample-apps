@@ -41,9 +41,10 @@ navigates and carries its query, but re-seeds nothing, by design.
 viewport, and the floating nav bar is drawn *over* the bottom of every tab root, so the tap lands
 on the pill and switches tab instead. The failure looks like a missing screen, not a missed tap.
 
-**Undo has five seconds.** `useSmileIDSampleNoticeWindow` withdraws the removal confirmation on a
-timer, and every assertion in front of the tap costs a hierarchy dump. Keep one dump inside the
-window; four raced it, and a withdrawn toast reds as a missing element rather than as a timer.
+**Undo has five seconds unless the link widens it.** `useSmileIDSampleNoticeWindow` withdraws the
+removal confirmation on a timer, and every assertion in front of the tap costs a hierarchy dump, so
+on a loaded runner the tap lands after the withdrawal and reds as a missing element rather than as a
+timer. Pass `noticeWindow` in the cold-start link, as `verifications.yaml` does.
 
 **The job store survives the run.** It is `SharedPreferences`, and `seedJobs` is idempotent by id,
 so a re-seed never brings back a row a previous run removed. Flows that remove open with
