@@ -1,5 +1,5 @@
 import { StyleSheet, type TextStyle, type ViewStyle } from 'react-native';
-import { loadYoga, type Node as YogaNode, type Yoga } from 'yoga-layout/load';
+import { loadYoga, type Config as YogaConfig, type Node as YogaNode, type Yoga } from 'yoga-layout/load';
 
 import { layoutSpans, type SmileTextLine, type SmileTextSpan } from './measure-text';
 import { isBundledFace } from './smile-font';
@@ -9,6 +9,12 @@ export type RenderedNode =
   | string
   | { readonly type: string; readonly props: Record<string, unknown>; readonly children: RenderedNode[] | null };
 
+/// One styled stretch of a laid-out paragraph, with its resolved style.
+export type LaidOutSpan = { readonly text: string; readonly run: TextRun; readonly style: Style };
+
+/// A box's four resolved padding or border edges.
+export type LaidOutEdges = { readonly top: number; readonly right: number; readonly bottom: number; readonly left: number };
+
 /// One laid-out box, plus the lines if the box was text.
 export type LaidOutNode = {
   readonly type: string;
@@ -17,13 +23,21 @@ export type LaidOutNode = {
   readonly top: number;
   readonly width: number;
   readonly height: number;
+  readonly padding: LaidOutEdges;
+  readonly border: LaidOutEdges;
   readonly text?: string;
   readonly lines?: readonly SmileTextLine[];
+  readonly spans?: readonly LaidOutSpan[];
+  /// The scaled run a single-line field draws its value in.
+  readonly field?: TextRun;
   readonly numberOfLines?: number;
   readonly children: readonly LaidOutNode[];
 };
 
 let yoga: Yoga | undefined;
+
+/// The grid of the layout pass in progress, set only during one [layoutTree] call.
+let activeConfig: YogaConfig | undefined;
 
 /// Loads the WASM engine once per worker; every later pass is synchronous.
 export const loadLayoutEngine = async (): Promise<void> => {
@@ -51,7 +65,7 @@ const LAYOUT_PROPS = new Set([
 ]);
 
 /// Style props that paint rather than lay out, listed so an unrecognised one can fail instead of vanish.
-const PAINT_PROPS = new Set([
+export const PAINT_PROPS: ReadonlySet<string> = new Set([
   'backgroundColor', 'color', 'opacity', 'transform', 'transformOrigin', 'zIndex', 'elevation',
   'borderRadius', 'borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius',
   'borderBottomRightRadius', 'borderTopStartRadius', 'borderTopEndRadius',
@@ -67,9 +81,11 @@ const PAINT_PROPS = new Set([
   'isolation', 'mixBlendMode', 'filter', 'experimental_backgroundImage',
 ]);
 
-type Style = ViewStyle & TextStyle & Record<string, unknown>;
+/// A flattened React Native style.
+export type Style = ViewStyle & TextStyle & Record<string, unknown>;
 
-const flatten = (style: unknown): Style => (StyleSheet.flatten(style as never) ?? {}) as Style;
+/// Flattens a host element's style prop into one object.
+export const flatten = (style: unknown): Style => (StyleSheet.flatten(style as never) ?? {}) as Style;
 
 /// A style value the engine has no constant for would otherwise coerce to 0 and lay out silently wrong.
 const pick = (table: Record<string, number>, value: unknown, where: string, name: string): number => {
@@ -282,13 +298,13 @@ const spansOf = (
   props: Record<string, unknown>,
   fontScale: number,
   where: string,
-): SmileTextSpan[] => {
+): LaidOutSpan[] => {
   if (node === null) return [];
   if (typeof node === 'string') {
     if (!isBundledFace(style.fontFamily)) {
       throw new Error(`${where}: text is drawn in "${style.fontFamily}", which is not a bundled face`);
     }
-    return [{ text: node, run: fontRun(style, fontScale, props) }];
+    return [{ text: node, run: fontRun(style, fontScale, props), style }];
   }
   const inner = node.type === 'Text' ? { ...style, ...flatten(node.props.style) } : style;
   const innerProps = node.type === 'Text' ? { ...props, ...node.props } : props;
@@ -298,13 +314,13 @@ const spansOf = (
 };
 
 /// One run per span, deduplicated so a paragraph never measures the same style as two faces.
-const internRuns = (spans: SmileTextSpan[]): SmileTextSpan[] => {
+const internRuns = (spans: LaidOutSpan[]): LaidOutSpan[] => {
   const seen = new Map<string, TextRun>();
   return spans.map((span) => {
     const key = JSON.stringify(span.run);
     const run = seen.get(key) ?? (span.run as TextRun);
     seen.set(key, run);
-    return { text: span.text, run };
+    return { ...span, run };
   });
 };
 
@@ -330,7 +346,7 @@ const build = (
   if (rendered === null || typeof rendered === 'string') return undefined;
   const Y = engine();
   const where = `${path} > ${rendered.type}`;
-  const node = Y.Node.create();
+  const node = Y.Node.create(activeConfig);
   const style = { ...inherited, ...flatten(rendered.props.style) };
   applyStyle(node, style, where);
 
@@ -350,17 +366,56 @@ const build = (
     return { node, rendered, style, children: [] };
   }
 
-  // A scroll view styles its content container through a prop, so the padding is not on the child itself.
+  const leaf = measuredLeaf(rendered, style, fontScale, where);
+  if (leaf) {
+    node.setMeasureFunc((available, widthMode) => ({
+      width: leaf.width ?? (widthMode === Y.MEASURE_MODE_UNDEFINED ? 0 : available),
+      height: leaf.height,
+    }));
+    return { node, rendered, style, children: [] };
+  }
+
+  // The jest mock drops the row direction React Native gives a horizontal scroll view.
+  const horizontal = rendered.type === 'RCTScrollView' && rendered.props.horizontal === true;
+  if (horizontal && style.flexDirection === undefined) node.setFlexDirection(Y.FLEX_DIRECTION_ROW);
   const contentStyle =
-    rendered.type === 'RCTScrollView' ? flatten(rendered.props.contentContainerStyle) : undefined;
+    rendered.type === 'RCTScrollView'
+      ? { ...(horizontal ? { flexDirection: 'row' as const } : {}), ...flatten(rendered.props.contentContainerStyle) }
+      : undefined;
   const children: Built[] = [];
+  let container = contentStyle;
   for (const child of rendered.children ?? []) {
-    const built = build(child, fontScale, where, children.length === 0 ? contentStyle : undefined);
+    // The refresh control precedes the content container and is never it.
+    const isContainer = typeof child === 'object' && child !== null && child.type !== 'RCTRefreshControl';
+    const built = build(child, fontScale, where, isContainer ? container : undefined);
+    if (isContainer) container = undefined;
     if (!built) continue;
     node.insertChild(built.node, children.length);
     children.push(built);
   }
   return { node, rendered, style, children };
+};
+
+/// UISwitch's fixed size, which a hostless runner reports as zero.
+const NATIVE_SWITCH_SIZE = { width: 51, height: 31 } as const;
+
+/// The on-device size of a self-measuring native leaf; no width means it fills the column.
+const measuredLeaf = (
+  rendered: Exclude<RenderedNode, string>,
+  style: Style,
+  fontScale: number,
+  where: string,
+): { width?: number; height: number } | undefined => {
+  if (rendered.type === 'RCTSwitch') return NATIVE_SWITCH_SIZE;
+  if (rendered.type !== 'TextInput') return undefined;
+  if (rendered.props.multiline === true) {
+    throw new Error(`${where}: a multiline field measures its content, which this harness does not`);
+  }
+  if (!isBundledFace(style.fontFamily)) {
+    throw new Error(`${where}: the field is drawn in "${style.fontFamily}", which is not a bundled face`);
+  }
+  const run = fontRun(style, fontScale, rendered.props);
+  return { height: run.lineHeight ?? run.fontSize * 1.2 };
 };
 
 /// React Native reads 0 as "no cap", which is not the same as one line.
@@ -378,6 +433,12 @@ const contentWidth = (built: Built): number => {
   return Math.max(box.width - inset(Y.EDGE_LEFT) - inset(Y.EDGE_RIGHT), 0);
 };
 
+/// A node's four computed edges of one kind.
+const edgesOf = (read: (edge: number) => number): LaidOutEdges => {
+  const Y = engine();
+  return { top: read(Y.EDGE_TOP), right: read(Y.EDGE_RIGHT), bottom: read(Y.EDGE_BOTTOM), left: read(Y.EDGE_LEFT) };
+};
+
 const harvest = (built: Built, fontScale: number): LaidOutNode => {
   const box = built.node.getComputedLayout();
   const { style } = built;
@@ -388,8 +449,11 @@ const harvest = (built: Built, fontScale: number): LaidOutNode => {
     top: box.top,
     width: box.width,
     height: box.height,
+    padding: edgesOf((edge) => built.node.getComputedPadding(edge)),
+    border: edgesOf((edge) => built.node.getComputedBorder(edge)),
     children: built.children.map((child) => harvest(child, fontScale)),
   };
+  if (built.rendered.type === 'TextInput') return { ...base, field: fontRun(style, fontScale, built.rendered.props) };
   if (built.rendered.type !== 'Text') return base;
   const spans = internRuns(
     spansOf(built.rendered, style, built.rendered.props, fontScale, built.rendered.type),
@@ -398,6 +462,7 @@ const harvest = (built: Built, fontScale: number): LaidOutNode => {
     ...base,
     text: spans.map((span) => span.text).join(''),
     lines: layoutSpans(spans, contentWidth(built)),
+    spans,
     numberOfLines: lineCapOf(built.rendered.props),
   };
 };
@@ -405,16 +470,24 @@ const harvest = (built: Built, fontScale: number): LaidOutNode => {
 /// Lays a rendered tree out at [width], as the engine React Native itself uses would lay it out.
 export const layoutTree = (
   rendered: RenderedNode,
-  { width, fontScale = 1 }: { width: number; fontScale?: number },
+  { width, fontScale = 1, pixelRatio }: { width: number; fontScale?: number; pixelRatio?: number },
 ): LaidOutNode => {
   const Y = engine();
-  const built = build(rendered, fontScale, 'root');
-  if (!built) throw new Error('nothing was rendered to lay out');
-  built.node.setWidth(width);
-  built.node.calculateLayout(width, undefined, Y.DIRECTION_LTR);
-  const laidOut = harvest(built, fontScale);
-  built.node.freeRecursive();
-  return laidOut;
+  // Without the device grid the engine rounds 0.5 hairlines to zero.
+  activeConfig = pixelRatio === undefined ? undefined : Y.Config.create();
+  activeConfig?.setPointScaleFactor(pixelRatio ?? 1);
+  try {
+    const built = build(rendered, fontScale, 'root');
+    if (!built) throw new Error('nothing was rendered to lay out');
+    built.node.setWidth(width);
+    built.node.calculateLayout(width, undefined, Y.DIRECTION_LTR);
+    const laidOut = harvest(built, fontScale);
+    built.node.freeRecursive();
+    return laidOut;
+  } finally {
+    if (activeConfig) Y.Config.destroy(activeConfig);
+    activeConfig = undefined;
+  }
 };
 
 /// Every box in the tree, parents before children.
