@@ -13,9 +13,9 @@ module.exports = {
   preset: 'jest-expo',
   testEnvironment: 'node',
   roots: ['<rootDir>/test'],
-  // The layout engine ships as ESM, so the preset's first pattern has to let it reach Babel like a source file.
+  // The layout engine and pixelmatch ship as ESM, so they must reach Babel.
   transformIgnorePatterns: [
-    preset.transformIgnorePatterns[0].replace('(?!(', '(?!(yoga-layout|'),
+    preset.transformIgnorePatterns[0].replace('(?!(', '(?!(yoga-layout|pixelmatch|'),
     ...preset.transformIgnorePatterns.slice(1),
   ],
   // The SDK is a peer the tests never call; stubbing it keeps a unit run off the native modules.

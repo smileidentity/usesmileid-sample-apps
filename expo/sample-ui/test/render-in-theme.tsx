@@ -47,6 +47,9 @@ export const renderInTheme = (
   );
 };
 
+/// The pinned frame a screen fills.
+export const PINNED_FRAME = metrics.frame;
+
 /// The gesture inset the pinned frame carries, which a clearance must contain exactly once.
 export const PINNED_BOTTOM_INSET = metrics.insets.bottom;
 
@@ -63,7 +66,7 @@ export const styleTree = async (
 };
 
 /// A React element held in a PROP rather than in children — `refreshControl` is the one that does this.
-const withoutElementProps = <T,>(tree: T): T => {
+export const withoutElementProps = <T,>(tree: T): T => {
   if (tree === null || typeof tree !== 'object') return tree;
   if (Array.isArray(tree)) return tree.map((entry) => withoutElementProps(entry)) as T;
   const node = tree as { props?: Record<string, unknown>; children?: unknown[] };

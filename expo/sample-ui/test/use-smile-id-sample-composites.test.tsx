@@ -33,6 +33,7 @@ import { smileIDSampleProducts } from '../src/model/use-smile-id-sample-product'
 import { UseSmileIDSampleStatus } from '../src/model/use-smile-id-sample-status';
 import { smileLightColors } from '../src/theme/smile-colors';
 import { focusField, pressIn, schemes, styleTree, type Interaction } from './render-in-theme';
+import { expectGoldens } from './paint/pixel-golden';
 
 const noop = () => {};
 
@@ -405,7 +406,7 @@ describe.each(cases)('$component', ({ states }) => {
   describe.each(schemes)('$name', ({ dark }) => {
     it.each(Object.keys(states))('%s', async (state) => {
       const entry = states[state]!;
-      expect(await styleTree(entry.element(), dark, entry.interact)).toMatchSnapshot();
+      await expectGoldens(entry.element(), dark, { interact: entry.interact });
     });
   });
 });

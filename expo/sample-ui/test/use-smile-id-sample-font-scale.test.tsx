@@ -1,10 +1,13 @@
 import { DESIGN_FONT_SCALE, ENLARGED_FONT_SCALE, schemes, styleTree } from './render-in-theme';
 import { scaleSensitive } from './scale-sensitive-states';
+import { expectGoldens } from './paint/pixel-golden';
 
-describe.each(schemes)('at the largest content size, $name', ({ dark }) => {
+describe.each(schemes)('at the largest content size, $name', ({ name, dark }) => {
   it.each(Object.keys(scaleSensitive))('%s', async (state) => {
-    const tree = await styleTree(scaleSensitive[state]!(), dark, undefined, ENLARGED_FONT_SCALE);
-    expect(tree).toMatchSnapshot();
+    await expectGoldens(scaleSensitive[state]!(), dark, {
+      fontScale: ENLARGED_FONT_SCALE,
+      name: `enlarged.${name}.${state}`,
+    });
   });
 });
 

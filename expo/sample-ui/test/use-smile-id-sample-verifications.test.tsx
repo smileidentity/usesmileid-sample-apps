@@ -14,7 +14,8 @@ import {
   smileIDSampleFilterCounts,
 } from '../src/screens/verifications-screen';
 import { UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
-import { renderInTheme, schemes, styleTree } from './render-in-theme';
+import { renderInTheme, schemes } from './render-in-theme';
+import { expectGoldens } from './paint/pixel-golden';
 
 const noop = () => {};
 
@@ -124,7 +125,7 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
 describe.each(cases)('$screen', ({ states }) => {
   describe.each(schemes)('$name', ({ dark }) => {
     it.each(Object.keys(states))('%s', async (state) => {
-      expect(await styleTree(states[state]!.element(), dark)).toMatchSnapshot();
+      await expectGoldens(states[state]!.element(), dark);
     });
   });
 });
