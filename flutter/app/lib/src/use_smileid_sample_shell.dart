@@ -53,7 +53,10 @@ class UseSmileIDSampleShell extends ConsumerWidget {
           showsNavBar: showsNavBar,
         ),
         // Top only: the bar insets the bottom itself, and doing it here too lifts it twice.
-        body: SafeArea(bottom: false, child: shell),
+        body: SafeArea(
+          bottom: false,
+          child: UseSmileIDSampleTextMetrics(child: shell),
+        ),
       ),
     );
   }

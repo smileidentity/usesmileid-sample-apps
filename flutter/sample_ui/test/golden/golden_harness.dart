@@ -311,22 +311,27 @@ Future<void> _host(
         key: ValueKey<Brightness>(theme.brightness),
         theme: theme,
         debugShowCheckedModeBanner: false,
-        home: Align(
-          alignment: Alignment.topLeft,
-          // The boundary is what crops the capture to the component and its padding; without one
-          // the shot is the whole window, with bare host either side of a 393-wide column.
-          child: RepaintBoundary(
-            key: goldenRoot,
-            child: Container(
-              width: goldenWidth,
-              height: fillsHost ? hostHeight : null,
-              color: colors.background,
-              padding: const EdgeInsets.all(SmileDimens.spacingMd),
-              // Every real screen sits on a Scaffold, and a text field asserts on the ancestor it
-              // provides; transparency supplies it without painting over the page colour.
-              child: Material(
-                type: MaterialType.transparency,
-                child: scrollable ? SingleChildScrollView(child: child) : child,
+        // The metrics every screen gets from its host, so a baseline's text boxes are the app's.
+        home: UseSmileIDSampleTextMetrics(
+          child: Align(
+            alignment: Alignment.topLeft,
+            // The boundary is what crops the capture to the component and its padding; without one
+            // the shot is the whole window, with bare host either side of a 393-wide column.
+            child: RepaintBoundary(
+              key: goldenRoot,
+              child: Container(
+                width: goldenWidth,
+                height: fillsHost ? hostHeight : null,
+                color: colors.background,
+                padding: const EdgeInsets.all(SmileDimens.spacingMd),
+                // Every real screen sits on a Scaffold, and a text field asserts on the ancestor it
+                // provides; transparency supplies it without painting over the page colour.
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: scrollable
+                      ? SingleChildScrollView(child: child)
+                      : child,
+                ),
               ),
             ),
           ),

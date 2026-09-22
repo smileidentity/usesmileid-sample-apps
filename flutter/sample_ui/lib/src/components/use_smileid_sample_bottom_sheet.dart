@@ -26,43 +26,45 @@ Future<T?> showUseSmileIDSampleSheet<T>({
     backgroundColor: colors.surface,
     barrierColor: colors.overlayScrim,
     shape: RoundedRectangleBorder(borderRadius: UseSmileIDSampleShapes.sheet),
-    builder: (BuildContext sheetContext) => Semantics(
-      identifier: testId,
-      container: true,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const _GrabHandle(),
-          Flexible(
-            child: SingleChildScrollView(
-              // Scrolls rather than clips, so enlarged type cannot push a CTA out of reach.
-              padding: EdgeInsets.only(
-                left: _sheetMargin,
-                right: _sheetMargin,
-                bottom:
-                    SmileDimens.spacingLg + _navigationBarInset(sheetContext),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  if (title != null) ...<Widget>[
-                    Text(
-                      title,
-                      style: UseSmileIDSampleType.textStyleHeadingSection
-                          .copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: colors.textTitle,
-                          ),
-                    ),
-                    const SizedBox(height: SmileDimens.spacingSm),
+    builder: (BuildContext sheetContext) => UseSmileIDSampleTextMetrics(
+      child: Semantics(
+        identifier: testId,
+        container: true,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const _GrabHandle(),
+            Flexible(
+              child: SingleChildScrollView(
+                // Scrolls rather than clips, so enlarged type cannot push a CTA out of reach.
+                padding: EdgeInsets.only(
+                  left: _sheetMargin,
+                  right: _sheetMargin,
+                  bottom:
+                      SmileDimens.spacingLg + _navigationBarInset(sheetContext),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    if (title != null) ...<Widget>[
+                      Text(
+                        title,
+                        style: UseSmileIDSampleType.textStyleHeadingSection
+                            .copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: colors.textTitle,
+                            ),
+                      ),
+                      const SizedBox(height: SmileDimens.spacingSm),
+                    ],
+                    builder(sheetContext),
                   ],
-                  builder(sheetContext),
-                ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ),
   );
@@ -85,26 +87,28 @@ Future<T?> showUseSmileIDSampleFullHeightSheet<T>({
     barrierColor: colors.overlayScrim,
     shape: RoundedRectangleBorder(borderRadius: UseSmileIDSampleShapes.sheet),
     constraints: const BoxConstraints.expand(),
-    builder: (BuildContext sheetContext) => Semantics(
-      identifier: testId,
-      container: true,
-      child: Column(
-        children: <Widget>[
-          UseSmileIDSampleSheetHeader(
-            title: title,
-            onClose: () => Navigator.of(sheetContext).pop(),
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: _sheetMargin,
-                right: _sheetMargin,
-                bottom: _navigationBarInset(sheetContext),
-              ),
-              child: builder(sheetContext),
+    builder: (BuildContext sheetContext) => UseSmileIDSampleTextMetrics(
+      child: Semantics(
+        identifier: testId,
+        container: true,
+        child: Column(
+          children: <Widget>[
+            UseSmileIDSampleSheetHeader(
+              title: title,
+              onClose: () => Navigator.of(sheetContext).pop(),
             ),
-          ),
-        ],
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: _sheetMargin,
+                  right: _sheetMargin,
+                  bottom: _navigationBarInset(sheetContext),
+                ),
+                child: builder(sheetContext),
+              ),
+            ),
+          ],
+        ),
       ),
     ),
   );
