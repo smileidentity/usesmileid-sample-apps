@@ -65,12 +65,22 @@ jobs:
           SMILE_TOKENS_OPTIONAL: ${{ steps.design-system.outcome == 'skipped' && '1' || '' }}
         run: expo/verify.sh
 
-      # The goldens are style trees rather than pixels, so a failure is a readable diff.
+      # The style-tree goldens are text, so a failure is a readable diff.
       - name: Upload golden diffs
         if: failure()
         uses: actions/upload-artifact@v7
         with:
           name: expo-golden-diffs
           path: expo/sample-ui/test/goldens/**
+          if-no-files-found: ignore
+          retention-days: 7
+
+      # Pixel goldens are host-rasterised, so baselines are recorded on the runner.
+      - name: Upload recorded pixel goldens
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: expo-goldens-recorded
+          path: expo/sample-ui/test/golden-output/**
           if-no-files-found: ignore
           retention-days: 7
