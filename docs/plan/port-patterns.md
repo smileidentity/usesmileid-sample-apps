@@ -106,6 +106,33 @@ which of the two their platform behaves like rather than assume Android's limita
    a unit test on each platform asserts both the plain default and the launch choice. Profiles
    are in memory, so that argument is per launch and a cold start by link shows the starter.
    Why the rule exists: `play-release-android.md` §7.4.
+9. **The Dark mode switch overrides the device's appearance, both ways, and the system bars obey
+   the switch.** Off is light on a dark phone; on is dark on a light one. Following the device
+   when the switch is off leaves a dark phone rendering dark while Settings reads off, so it is
+   not an option. Ruled 2026-09-22 with Android as the tie-breaker; iOS already pinned both ways.
+   Each platform uses its own API rather than drawing a coloured strip (Flutter and Expo land in
+   their own pull requests):
+
+   | Android | iOS | Flutter | Expo |
+   |---|---|---|---|
+   | `enableEdgeToEdge` with `SystemBarStyle.auto(…) { darkMode }` | `.preferredColorScheme(darkMode ? .dark : .light)` on the window's root | `themeMode: dark / light` + one `AnnotatedRegion<SystemUiOverlayStyle>` above the router | `Appearance.setColorScheme` + `expo-status-bar` |
+
+   What each had wrong before the ruling, because none of it was visible on a phone whose
+   appearance matched the switch: Android's `enableEdgeToEdge()` with no arguments reads the
+   **device**, so a dark phone drew white icons on the light app; Flutter set no overlay style at
+   all; Flutter and Expo followed the device when the switch was off. Two things are the
+   platform's and not ours, so check them rather than assume them:
+
+   - **The sheet is a second window on Android.** Material 3 derives its bars from the sheet's
+     `contentColor`, which is a theme token here, so it was already right — the predicate asserts
+     it anyway, because one presentation proves nothing about the other.
+   - **The SDK's capture screen sets its own bars and restores the host's on the way out.** The
+     Android SDK forces light icons there over a surface it pins light, so the clock is white on
+     near-white while the SDK owns the screen; the Flutter and React Native SDKs draw dark icons.
+     That is the SDK's defect and is not worked around here.
+
+   The predicate on each platform runs the four crossings — device dark with the switch off and
+   device light with it on, pushed and modal — and asserts the icon appearance, not a pixel.
 
 ## 4. Discipline that travels
 

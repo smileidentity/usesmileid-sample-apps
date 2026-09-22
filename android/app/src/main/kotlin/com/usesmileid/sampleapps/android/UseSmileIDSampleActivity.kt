@@ -22,6 +22,7 @@ class UseSmileIDSampleActivity : ComponentActivity() {
                 val appState = rememberUseSmileIDSampleAppState(launchArgs)
                 CompositionLocalProvider(LocalUseSmileIDSampleAppState provides appState) {
                     UseSmileIDSampleTheme(darkTheme = appState.settings.darkMode) {
+                        UseSmileIDSampleSystemBars(appState.settings.darkMode)
                         UseSmileIDSampleShell()
                     }
                 }
