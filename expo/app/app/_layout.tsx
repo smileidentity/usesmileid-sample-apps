@@ -11,6 +11,7 @@ import {
   useSmileIDSampleSettingsStore,
 } from '@smileid/sample-ui';
 import { useFonts } from 'expo-font';
+import { NavigationBar } from 'expo-navigation-bar';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -66,6 +67,7 @@ export default function RootLayout() {
       <UseSmileIDSampleThemeProvider dark={dark}>
         <UseSmileIDSampleNoticeWindowProvider value={noticeWindowMs}>
           <StatusBar style={dark ? 'light' : 'dark'} />
+          <NavigationBar style={dark ? 'dark' : 'light'} />
           <Stack
             screenOptions={{
               headerShown: false,

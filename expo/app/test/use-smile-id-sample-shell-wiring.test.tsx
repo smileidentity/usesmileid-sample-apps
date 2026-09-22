@@ -28,6 +28,14 @@ jest.mock('expo-status-bar', () => ({
     return null;
   },
 }));
+/// The navigation-bar style each mount asked for; 'dark' is a dark bar with light buttons.
+const mockNavigationBarStyles: string[] = [];
+jest.mock('expo-navigation-bar', () => ({
+  NavigationBar: function NavigationBar({ style }: { style: string }) {
+    mockNavigationBarStyles.push(style);
+    return null;
+  },
+}));
 // Without pinned metrics the real provider withholds its children until it has measured, so nothing renders.
 jest.mock('react-native-safe-area-context', () => ({
   SafeAreaProvider: function SafeAreaProvider({ children }: { children?: unknown }) {
@@ -113,6 +121,7 @@ let imposedScheme: jest.SpyInstance;
 beforeEach(async () => {
   mockProbe = SchemeProbe;
   mockStatusBarStyles.length = 0;
+  mockNavigationBarStyles.length = 0;
   imposedScheme = jest.spyOn(Appearance, 'setColorScheme').mockImplementation(() => undefined);
   await AsyncStorage.clear();
   useSmileIDSampleJobStore.getState().reset();
@@ -143,12 +152,14 @@ describe('the Dark Mode switch reaches the theme and the system bars', () => {
     expect(await resolvedScheme({ darkMode: true, system: 'light' })).toHaveTextContent('dark');
     expect(imposedScheme).toHaveBeenLastCalledWith('dark');
     expect(mockStatusBarStyles.at(-1)).toBe('light');
+    expect(mockNavigationBarStyles.at(-1)).toBe('dark');
   });
 
   it('overrides a dark device to light when the switch is off, as Android and iOS do', async () => {
     expect(await resolvedScheme({ darkMode: false, system: 'dark' })).toHaveTextContent('light');
     expect(imposedScheme).toHaveBeenLastCalledWith('light');
     expect(mockStatusBarStyles.at(-1)).toBe('dark');
+    expect(mockNavigationBarStyles.at(-1)).toBe('light');
   });
 
   it('stays light when neither asks for dark', async () => {
