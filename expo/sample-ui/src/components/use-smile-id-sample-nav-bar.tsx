@@ -23,11 +23,14 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
-/// A floating pill of three tabs, plus a detached token button that navigates rather than switching tab.
-/// Compose's `shadowElevation` of 8 on Android, where a tinted token shadow draws almost nothing; the token on iOS.
-const floatingShadow = (theme: ReturnType<typeof useSmileIDSampleTheme>): ViewStyle =>
-  Platform.OS === 'android' ? { elevation: theme.dimens.space[8] } : theme.dimens.elevation.floating;
+/// Android's BAR_ELEVATION: the Compose bar's `shadowElevation`, 8dp, since a tinted token shadow draws almost nothing there.
+export const SMILE_NAV_BAR_ELEVATION = 8;
 
+/// The Compose elevation on Android and the design's floating shadow token on iOS.
+const floatingShadow = (theme: ReturnType<typeof useSmileIDSampleTheme>): ViewStyle =>
+  Platform.OS === 'android' ? { elevation: SMILE_NAV_BAR_ELEVATION } : theme.dimens.elevation.floating;
+
+/// A floating pill of three tabs, plus a detached token button that navigates rather than switching tab.
 export const UseSmileIDSampleNavBar = ({
   selectedId,
   onSelect,
