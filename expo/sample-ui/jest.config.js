@@ -8,19 +8,41 @@ process.env.LC_ALL = 'en_US.UTF-8';
 
 const preset = require('jest-expo/jest-preset');
 
-/** Test config for the shared UI package: the Expo preset supplies the React Native transform. */
+const BABEL = '\\.[jt]sx?$';
+
+/// A platform preset, with the base preset's Babel root so this package's sources still transform.
+const forPlatform = (platform) => {
+  const platformPreset = { ...require(`jest-expo/${platform}/jest-preset`) };
+  // A root-only option, so a project that inherits it warns on every run.
+  delete platformPreset.watchPlugins;
+  const [, baseOptions] = preset.transform[BABEL];
+  const [, platformOptions] = platformPreset.transform[BABEL];
+  return {
+    ...platformPreset,
+    transform: { ...platformPreset.transform, [BABEL]: ['babel-jest', { ...baseOptions, caller: platformOptions.caller }] },
+    testEnvironment: 'node',
+    roots: ['<rootDir>/test'],
+    // The layout engine and pixelmatch ship as ESM, so they must reach Babel.
+    transformIgnorePatterns: [
+      platformPreset.transformIgnorePatterns[0].replace('(?!(', '(?!(yoga-layout|pixelmatch|'),
+      ...platformPreset.transformIgnorePatterns.slice(1),
+    ],
+    // The SDK is a peer the tests never call; stubbing it keeps a unit run off the native modules.
+    moduleNameMapper: {
+      ...platformPreset.moduleNameMapper,
+      '^@smileid/usesmileid$': '<rootDir>/test/stubs/usesmileid.ts',
+    },
+    snapshotResolver: '<rootDir>/test/snapshot-resolver.js',
+    setupFiles: [...platformPreset.setupFiles, '<rootDir>/test/setup.ts'],
+    clearMocks: true,
+  };
+};
+
+/** Test config for the shared UI package: the goldens under iOS resolution, and Android's own branches under Android's. */
 module.exports = {
-  preset: 'jest-expo',
-  testEnvironment: 'node',
-  roots: ['<rootDir>/test'],
-  // The layout engine and pixelmatch ship as ESM, so they must reach Babel.
-  transformIgnorePatterns: [
-    preset.transformIgnorePatterns[0].replace('(?!(', '(?!(yoga-layout|pixelmatch|'),
-    ...preset.transformIgnorePatterns.slice(1),
+  projects: [
+    { ...forPlatform('ios'), displayName: 'ios', testPathIgnorePatterns: ['\\.android\\.test\\.tsx?$'] },
+    // Android-only files and Platform.OS branches never resolve under the iOS preset, so they get a project of their own.
+    { ...forPlatform('android'), displayName: 'android', testMatch: ['<rootDir>/test/**/*.android.test.ts?(x)'] },
   ],
-  // The SDK is a peer the tests never call; stubbing it keeps a unit run off the native modules.
-  moduleNameMapper: { '^@smileid/usesmileid$': '<rootDir>/test/stubs/usesmileid.ts' },
-  snapshotResolver: '<rootDir>/test/snapshot-resolver.js',
-  setupFiles: ['<rootDir>/test/setup.ts'],
-  clearMocks: true,
 };
