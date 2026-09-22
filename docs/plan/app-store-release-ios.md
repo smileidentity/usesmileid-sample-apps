@@ -1,6 +1,6 @@
 # Shipping the iOS sample to the App Store
 
-**Status:** SUBMITTED FOR REVIEW 2026-09-14. Version `20260913.1211.103` (build 103) is *Waiting for Review* with manual release; §7.3 records what the upload and the submission proved. What is left is Apple's review, the owner pressing Release, and the merge — `docs/app-store-manual-steps.md` is that sequence. This is the plan `ios-port-hardening.md` "Where to pick up" item 8 says does
+**Status:** IN REVIEW CONVERSATION 2026-09-22. Version `20260913.1211.103` (build 103) has been asked twice under Guideline 2.1 for information about the TrueDepth API — answered both times in Resolution Center and in `review-notes.txt`, and re-queued each time with the same build (§7.2); release is manual; §7.3 records what the upload and the submission proved. What is left is Apple's review, the owner pressing Release, and the merge — `docs/app-store-manual-steps.md` is that sequence. This is the plan `ios-port-hardening.md` "Where to pick up" item 8 says does
 not exist yet, and it closes that half of the item — the device lane is the other half and has its own
 doc. Scope: the App Store Connect listing for `com.usesmileid.sample.ios`, the archive that backs it,
 the store-art pipeline, and a TestFlight lane with an App Store lane behind it. Not the app's
@@ -577,7 +577,16 @@ release lane's assertions all pass `-o -`, with a comment saying why.
   value is cleared when the screen closes, and the upload is the same JPEG selfie and liveness frames
   on every device. The answer now ships in `review-notes.txt`, so the question should not recur here or
   in the Flutter and Expo ports. The published App Privacy form already declares Sensitive Info on the
-  reasoning that the selfie is biometric, which is the cross-check a reviewer makes.
+  reasoning that the selfie is biometric, which is the cross-check a reviewer makes. **A second
+  information request arrived 2026-09-22** — which features use the TrueDepth API, and who the app's
+  audience is. Both answers went into the thread and into `review-notes.txt`: the selfie step of five
+  products (Enhanced KYC has no camera step), and business users — developers and decision makers at
+  Smile ID's enterprise customers evaluating the SDK, and Smile ID's own sales and solutions teams
+  demonstrating it. The audience answer had to be reconciled with §6.5 before it went out: the product
+  owner's wording was that every user needs Portal access, but the notes on the version already declare
+  that no account is needed and `demoAccountRequired` is false, so the reply says the Portal session
+  code is optional and the sandbox default needs no sign-in. The same build 103 goes back through
+  `apply --build 103` (carries the notes) and `submit`.
 - **The taller panels are in the repository; App Store Connect gets them on the review decision.** The
   five wordless panels in `ios/store/screenshots/` were re-rendered on 2026-09-18 with the device filling
   the panel (§2.5), while version 20260913.1211.103 sat in the review queue, where its screenshots are
