@@ -11,14 +11,27 @@ appId: ${APP_ID}
 #
 # Launch arguments arrive as a LINK on this platform — see ./README.md "Traps".
 
+# The job store survives the run, and a sibling flow in the same suite seeds it, so the empty-list
+# assertion below needs the slate cleared rather than merely a fresh launch.
+- clearState
 - stopApp
 # A cold link straight at the flow: the route resolves, the host reads its snapshot, and the gate
 # refuses an empty form rather than handing the SDK a payload its own validators reject.
 - openLink: "usesmileid-sample-expo:///flow/smartSelfieEnrollment/run"
+# The form, not the grid: the gate reads the SDK's own validators, finds the details missing and
+# sends the journey to the step that can still supply them.
 - extendedWaitUntil:
     visible:
-      id: "sample_products_screen"
+      id: "sample_user_details_screen"
     timeout: 60000
+- assertNotVisible:
+    id: "sample_nav_products"
+
+# Relaunched rather than backed out of: on a cold link the form is the stack's only entry, so the
+# system back leaves the app rather than reaching the grid.
+- stopApp
+- openLink: "usesmileid-sample-expo://?noticeWindow=60"
+- runFlow: subflows/warm-start.yaml
 
 # Nothing was submitted, so nothing was stored: a refused run must not leave a row behind.
 - tapOn:

@@ -20,8 +20,7 @@ import {
   type UseSmileIDMLBuilder,
   type UseSmileIDNetworkBuilder,
 } from '@smileid/usesmileid';
-import { useSmileIDMlkitFace } from '@smileid/usesmileid_mlkit_face';
-import { useSmileIDVisionFace } from '@smileid/usesmileid_vision_face';
+import type { FaceAnalyzer } from '@smileid/usesmileid_platform_interface';
 import { Platform } from 'react-native';
 
 import { smileIDSampleFlowToken, smileIDSampleMalformedToken } from './use-smile-id-sample-flow-tokens';
@@ -57,7 +56,7 @@ export const smileIDSampleApplying = (
     builder.ml((ml: UseSmileIDMLBuilder) =>
       ml.analyzers((analyzers: AnalyzerRegistryBuilder) => {
         analyzers.forCaptureType(CaptureType.selfie, (face) => {
-          face.add(Platform.OS === 'android' ? useSmileIDMlkitFace : useSmileIDVisionFace);
+          face.add(selfieAnalyzer());
         });
       }),
     );
@@ -193,6 +192,17 @@ const applyIdParams = (
       break;
   }
 };
+
+/// The platform's own face backend, required rather than imported: each provider resolves its native
+/// module at import time, so naming the other platform's here takes the whole JS bundle down.
+const selfieAnalyzer = (): FaceAnalyzer =>
+  Platform.OS === 'android'
+    ? // eslint-disable-next-line @typescript-eslint/no-require-imports
+      (require('@smileid/usesmileid_mlkit_face') as { useSmileIDMlkitFace: FaceAnalyzer })
+        .useSmileIDMlkitFace
+    : // eslint-disable-next-line @typescript-eslint/no-require-imports
+      (require('@smileid/usesmileid_vision_face') as { useSmileIDVisionFace: FaceAnalyzer })
+        .useSmileIDVisionFace;
 
 /// The partner mark the consent screen draws, resolving its colour where the SDK mounts it.
 const PartnerMark = () => {
