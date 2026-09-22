@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -55,7 +56,8 @@ class _UseSmileIDSampleSettingsTabState
       // The LIST, not the active profile's own page: the twin's row is a way into every profile.
       onProfileTap: () => context.go(UseSmileIDSampleRoutes.profiles),
       onNavRowTap: _openNavRow,
-      onOpenScenarioDrawer: _openScenarioDrawer,
+      // Debug builds only; every flow reaches the drawer by its deep link instead.
+      onOpenScenarioDrawer: kDebugMode ? _openScenarioDrawer : null,
       onSignOut: () {},
       bottomInset: useSmileIDSampleNavBarClearance(context),
     );
@@ -81,6 +83,7 @@ class _UseSmileIDSampleSettingsTabState
 
   Future<void> _showScenarioDrawer() => showUseSmileIDSampleSheet<void>(
     context: context,
+    title: 'Scenarios',
     testId: UseSmileIDSampleTestIds.scenarioDrawer,
     // A Consumer INSIDE the sheet: the outer `ref.watch` registers on this tab, so a selection
     // rebuilt the page behind the scrim while the open drawer kept its old checkmarks.

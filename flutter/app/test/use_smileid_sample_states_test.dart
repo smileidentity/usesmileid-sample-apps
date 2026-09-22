@@ -48,12 +48,14 @@ void main() {
 
   Finder byId(String id) => find.bySemanticsIdentifier(id);
 
-  /// Both rows sit at the foot of settings, so the list is taken all the way down before a tap.
+  /// Both rows sit below the fold of settings, so the list is scrolled to the row before a tap.
   Future<void> tapRow(WidgetTester tester, Finder row) async {
-    for (int i = 0; i < 15; i++) {
-      await tester.drag(find.byType(Scrollable), const Offset(0, -400));
-      await tester.pumpAndSettle();
-    }
+    await tester.scrollUntilVisible(
+      row,
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
     await tester.tap(row);
     await tester.pumpAndSettle();
   }

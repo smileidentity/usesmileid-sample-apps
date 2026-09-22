@@ -175,13 +175,23 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
     return Semantics(
       identifier: UseSmileIDSampleTestIds.settingsScreen,
       child: ListView(
-        padding: EdgeInsets.fromLTRB(
-          SmileDimens.spacingMd,
-          SmileDimens.spacingSm,
-          SmileDimens.spacingMd,
-          SmileDimens.spacingSm + bottomInset,
-        ),
-        children: <Widget>[
+        padding: EdgeInsets.only(bottom: bottomInset),
+        children: _spaced(<Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: SmileDimens.spacingMd,
+              vertical: SmileDimens.spacingXs,
+            ),
+            child: Semantics(
+              header: true,
+              child: Text(
+                'Settings',
+                style: UseSmileIDSampleType.textStyleHeadingPage.copyWith(
+                  color: colors.textTitle,
+                ),
+              ),
+            ),
+          ),
           _Section(
             label: 'PROFILE',
             children: <Widget>[
@@ -258,14 +268,6 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
               ),
             ],
           ),
-          _Section(
-            label: 'ABOUT',
-            children: _navRows(useSmileIDSampleAboutRows),
-          ),
-          _Section(
-            label: 'LEGAL',
-            children: _navRows(useSmileIDSampleLegalRows),
-          ),
           if (onOpenScenarioDrawer != null)
             _Section(
               label: 'DEBUG',
@@ -283,24 +285,38 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
                 ),
               ],
             ),
-          const SizedBox(height: SmileDimens.spacingSm),
-          UseSmileIDSampleDestructiveRow(
-            text: 'Sign out',
-            onTap: onSignOut,
-            testId: UseSmileIDSampleTestIds.signOut,
+          _Section(
+            label: 'ABOUT',
+            children: _navRows(useSmileIDSampleAboutRows),
           ),
-          const SizedBox(height: SmileDimens.spacingSm),
+          _Section(
+            label: 'LEGAL',
+            children: _navRows(useSmileIDSampleLegalRows),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: SmileDimens.spacingMd,
+            ),
+            child: UseSmileIDSampleDestructiveRow(
+              text: 'Sign out',
+              onTap: onSignOut,
+              testId: UseSmileIDSampleTestIds.signOut,
+            ),
+          ),
           Semantics(
             identifier: UseSmileIDSampleTestIds.versionLabel,
-            child: Text(
-              state.versionLabel,
-              textAlign: TextAlign.center,
-              style: UseSmileIDSampleType.textStyleCaption.copyWith(
-                color: colors.textMuted,
+            child: Padding(
+              padding: const EdgeInsets.all(SmileDimens.spacingMd),
+              child: Text(
+                state.versionLabel,
+                textAlign: TextAlign.center,
+                style: UseSmileIDSampleType.textStyleCaption.copyWith(
+                  color: colors.textMuted,
+                ),
               ),
             ),
           ),
-        ],
+        ]),
       ),
     );
   }
@@ -320,6 +336,14 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
       onChanged: (bool enabled) => onSettingChanged(setting, enabled),
     ),
   );
+
+  /// The list's items with one gap between every pair, the title and footer included.
+  static List<Widget> _spaced(List<Widget> items) => <Widget>[
+    for (int index = 0; index < items.length; index++) ...<Widget>[
+      if (index > 0) const SizedBox(height: SmileDimens.spacingXs),
+      items[index],
+    ],
+  ];
 
   List<Widget> _navRows(List<UseSmileIDSampleNavRow> rows) => <Widget>[
     for (int index = 0; index < rows.length; index++) ...<Widget>[
@@ -350,7 +374,7 @@ class _Section extends StatelessWidget {
       context,
     );
     return Padding(
-      padding: const EdgeInsets.only(bottom: SmileDimens.spacingLg),
+      padding: const EdgeInsets.symmetric(horizontal: SmileDimens.spacingMd),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
