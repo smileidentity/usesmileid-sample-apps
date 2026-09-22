@@ -153,7 +153,7 @@ void main() {
       int hour, {
       String? id = 'job_1',
     }) => <String, Object?>{
-      if (id != null) 'id': id,
+      if (id case final String value) 'id': value,
       'userId': 'user_1',
       'product': 'smartSelfieEnrollment',
       'status': 'clear',

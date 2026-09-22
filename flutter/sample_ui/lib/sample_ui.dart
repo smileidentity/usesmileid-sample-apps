@@ -64,6 +64,7 @@ export 'src/state/use_smileid_sample_user_details_requirement.dart';
 export 'src/theme/use_smileid_sample_colors.dart';
 export 'src/theme/use_smileid_sample_label_type.dart';
 export 'src/theme/use_smileid_sample_theme.dart';
+export 'src/theme/use_smileid_sample_theme_override.dart';
 export 'src/theme/use_smileid_sample_typography.dart';
 export 'src/tokens/smile_icons.dart';
 export 'src/tokens/smile_product_hues.dart';

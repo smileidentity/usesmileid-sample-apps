@@ -1,11 +1,13 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sample_ui/sample_ui.dart';
 
 import 'screens/use_smileid_sample_flow_form_tabs.dart';
 import 'screens/use_smileid_sample_licenses_tab.dart';
 import 'screens/use_smileid_sample_products_tab.dart';
 import 'screens/use_smileid_sample_profile_config_tab.dart';
 import 'screens/use_smileid_sample_profiles_tab.dart';
+import 'screens/use_smileid_sample_sdk_flow_tab.dart';
 import 'screens/use_smileid_sample_settings_tab.dart';
 import 'screens/use_smileid_sample_verification_details_tab.dart';
 import 'screens/use_smileid_sample_verifications_tab.dart';
@@ -67,6 +69,18 @@ abstract final class UseSmileIDSampleRoutes {
     verifications,
     settings,
   ];
+}
+
+/// Back one level, or to the screen that owns this one when there is nothing to go back to.
+///
+/// Every route above the shell is deep-linkable, so any of them can be the stack's only page, where
+/// a pop throws rather than landing anywhere.
+void useSmileIDSampleBack(BuildContext context, String fallback) {
+  if (context.canPop()) {
+    context.pop();
+    return;
+  }
+  context.go(fallback);
 }
 
 /// Whether [location] is a tab root, which is the whole of R13's nav-bar predicate.
@@ -165,13 +179,39 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
         ),
       ],
     ),
-    // The flow's forms, above the shell so they cover the tab bar.
+    // The flow's forms and the flow itself, above the shell so they cover the tab bar. They are
+    // siblings rather than nested because `spec/routes.json` fixes the three paths; the STACK comes
+    // from pushing each one, which is what makes back a pop rather than a hard-coded location.
     GoRoute(
       path: '/flow/:productId/details',
       builder: (BuildContext context, GoRouterState state) =>
           UseSmileIDSampleUserDetailsTab(
             productId: state.pathParameters['productId']!,
           ),
+    ),
+    GoRoute(
+      path: '/flow/:productId/run',
+      // Turned back before it mounts, rather than by the host on its first frame: leaving a route
+      // that has just replaced the shell re-adds the shell's keyed navigator mid-frame.
+      redirect: (BuildContext context, GoRouterState state) =>
+          UseSmileIDSampleProduct.values.any(
+            (UseSmileIDSampleProduct it) =>
+                it.id == state.pathParameters['productId'],
+          )
+          ? null
+          : UseSmileIDSampleRoutes.products,
+      builder: (BuildContext context, GoRouterState state) {
+        final String productId = state.pathParameters['productId']!;
+        return UseSmileIDSampleSdkFlowTab(
+          productId: productId,
+          onLeave: () => context.go(UseSmileIDSampleRoutes.products),
+          onNeedsDetails: () =>
+              context.go(UseSmileIDSampleRoutes.consentDetailsForm(productId)),
+          // `go`, not a pop: the wizard beneath must not be reachable back INTO from the result.
+          onResult: (String jobId) =>
+              context.go(UseSmileIDSampleRoutes.verificationDetails(jobId)),
+        );
+      },
     ),
     GoRoute(
       path: '/flow/:productId/id-details',
@@ -205,7 +245,8 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
       path: UseSmileIDSampleRoutes.profiles,
       builder: (BuildContext context, GoRouterState state) =>
           UseSmileIDSampleProfilesTab(
-            onBack: () => context.go(UseSmileIDSampleRoutes.settings),
+            onBack: () =>
+                useSmileIDSampleBack(context, UseSmileIDSampleRoutes.settings),
           ),
       routes: <RouteBase>[
         GoRoute(
@@ -213,7 +254,10 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
           builder: (BuildContext context, GoRouterState state) =>
               UseSmileIDSampleProfileConfigTab(
                 profileId: state.pathParameters['profileId']!,
-                onBack: () => context.go(UseSmileIDSampleRoutes.profiles),
+                onBack: () => useSmileIDSampleBack(
+                  context,
+                  UseSmileIDSampleRoutes.profiles,
+                ),
               ),
         ),
       ],

@@ -46,7 +46,7 @@ class UseSmileIDSampleProductsTab extends ConsumerWidget {
         avatarColor: avatarColorForProfile(profiles.activeIndex),
       ),
       onProductTap: (UseSmileIDSampleProduct product) =>
-          context.go(UseSmileIDSampleJourney.firstStepFor(product)),
+          context.push(UseSmileIDSampleJourney.firstStepFor(product)),
       onProfileTap: () => _switchProfile(context, ref),
       onScanTap: () {},
       bottomInset: useSmileIDSampleNavBarClearance(context),
