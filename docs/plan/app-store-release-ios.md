@@ -585,8 +585,10 @@ release lane's assertions all pass `-o -`, with a comment saying why.
   demonstrating it. The audience answer had to be reconciled with §6.5 before it went out: the product
   owner's wording was that every user needs Portal access, but the notes on the version already declare
   that no account is needed and `demoAccountRequired` is false, so the reply says the Portal session
-  code is optional and the sandbox default needs no sign-in. The same build 103 goes back through
-  `apply --build 103` (carries the notes) and `submit`.
+  code is optional and the sandbox default needs no sign-in. The same build 103 went back through
+  `apply --build 103` (carries the notes) and `submit` on 2026-09-22 14:20Z — *Waiting for Review* again.
+  One lesson from the first attempt: the `!` lines must be pasted as one block, because each line
+  otherwise runs in its own shell and the exported credentials never reach the script.
 - **The taller panels are in the repository; App Store Connect gets them on the review decision.** The
   five wordless panels in `ios/store/screenshots/` were re-rendered on 2026-09-18 with the device filling
   the panel (§2.5), while version 20260913.1211.103 sat in the review queue, where its screenshots are
