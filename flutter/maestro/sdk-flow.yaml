@@ -21,8 +21,12 @@ appId: ${APP_ID}
 # hard-coded location. Both halves were `go` before, which left one page in the root stack.
 - tapOn:
     id: "sample_product_card_smartSelfieEnrollment"
-- assertVisible:
-    id: "sample_user_details_screen"
+# Extended, not a bare assert: the first push after a cold start outlives the default timeout on a
+# CI emulator, where it is comfortably inside it on a warm handset.
+- extendedWaitUntil:
+    visible:
+      id: "sample_user_details_screen"
+    timeout: 30000
 - assertNotVisible:
     id: "sample_nav_products"
 - back
@@ -33,8 +37,10 @@ appId: ${APP_ID}
 # the journey back to the form that can still fix it.
 - tapOn:
     id: "sample_product_card_smartSelfieEnrollment"
-- assertVisible:
-    id: "sample_user_details_screen"
+- extendedWaitUntil:
+    visible:
+      id: "sample_user_details_screen"
+    timeout: 30000
 - tapOn:
     id: "sample_user_details_field_firstName"
 - inputText: "Ada"
@@ -68,8 +74,10 @@ appId: ${APP_ID}
 
 - tapOn:
     id: "sample_product_card_smartSelfieEnrollment"
-- assertVisible:
-    id: "sample_user_details_screen"
+- extendedWaitUntil:
+    visible:
+      id: "sample_user_details_screen"
+    timeout: 30000
 # The form kept what it collected: the stores outlive the wizard being replaced.
 - tapOn:
     id: "sample_user_details_continue"
