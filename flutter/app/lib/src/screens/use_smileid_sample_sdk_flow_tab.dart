@@ -48,9 +48,14 @@ class _UseSmileIDSampleSdkFlowTabState
   /// whatever replaced it.
   bool _left = false;
 
+  /// Held from entry, because `ref.read` throws once this element is disposed — which is exactly
+  /// the same-frame teardown the write below has to survive.
+  late final UseSmileIDSampleJobsNotifier _jobs;
+
   @override
   void initState() {
     super.initState();
+    _jobs = ref.read(useSmileIDSampleJobsProvider.notifier);
     // Read once at entry and never while the run is in flight: the SDK answers a rebuilt
     // configuration by re-running build() and tearing the run down.
     final UseSmileIDSampleFlowLaunchSnapshot? snapshot = _buildSnapshot();
@@ -162,11 +167,7 @@ class _UseSmileIDSampleSdkFlowTabState
       ):
         // Awaited by nobody and scoped to the provider rather than this widget: a result the SDK
         // delivers exactly once must be written even if the route is torn down in the same frame.
-        unawaited(
-          ref
-              .read(useSmileIDSampleJobsProvider.notifier)
-              .addJob(_processingJob(snapshot, value)),
-        );
+        unawaited(_jobs.addJob(_processingJob(snapshot, value)));
         if (!_left) {
           _left = true;
           widget.onResult(value.jobId);

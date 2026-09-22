@@ -38,6 +38,8 @@ void useSmileIDSampleApplying(
           c.detectorMode = FaceDetectorMode.standard;
         });
         if (snapshot.product.needsDocumentCapture) {
+          // Registered with no factory because this SDK's `add` takes a face factory only and
+          // documents its own document routing as a no-op; the RN sibling has a document scope.
           a.forCaptureType(CaptureType.document);
         }
       }),
