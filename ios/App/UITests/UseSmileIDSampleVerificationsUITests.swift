@@ -115,7 +115,8 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
     XCTAssertTrue(app.staticTexts["Other filters still have verifications."].exists)
   }
 
-  /// The bar's controls have to be reachable one at a time, which no snapshot can show.
+  /// Each control announced separately, which no snapshot can show. A MERGE is not covered here:
+  /// XCUITest keeps enumerating children that `.accessibilityElement(children: .ignore)` hides.
   func testTheAppBarsControlsAreSeparatelyReachable() {
     element("sample_job_row_0").tap()
     XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
@@ -128,15 +129,6 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
       "a title announced as a button offers an action it does not have"
     )
     XCTAssertTrue(app.buttons["Hide verification from the app list"].exists)
-
-    // A merge arrives as one element carrying two controls' words, whatever those words are.
-    // Written as a loop because `label` is main-actor isolated, so no key path can reach it.
-    var merged: [String] = []
-    for control in app.buttons.allElementsBoundByIndex + app.staticTexts.allElementsBoundByIndex
-      where control.label.contains("\n") {
-      merged.append(control.label)
-    }
-    XCTAssertEqual(merged, [], "labels merged onto one element")
   }
 
   /// Opening a verification and coming back used to replay a confirmation already spent.

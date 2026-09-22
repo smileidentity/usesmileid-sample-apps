@@ -95,9 +95,8 @@ jobs:
           disable-animations: true
           # Each line runs as its own `sh -c`, so no variable carries between them and dash has no
           # `SECONDS`; Maestro's own total, against the step duration, is what times the emulator.
-          # A device that locks mid-session reds the opening assertion as if the app were at fault,
-          # and so does a system dialog: a SystemUI ANR covered all four flows on 10850467. Hiding
-          # error dialogs hides this app's too, so a hang here reads as a missing element plus logcat.
+          # A locked device or a system dialog reds the opening assertion as if the app were at
+          # fault: a SystemUI ANR covered all four flows on 10850467. This hides this app's too.
           script: |
             adb shell locksettings set-disabled true
             adb shell settings put global hide_error_dialogs 1
