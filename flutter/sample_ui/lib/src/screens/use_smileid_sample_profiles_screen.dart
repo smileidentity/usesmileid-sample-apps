@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/use_smileid_sample_avatar.dart';
-import '../components/use_smileid_sample_icon.dart';
+import '../components/use_smileid_sample_glyphs.dart';
 import '../components/use_smileid_sample_profile_row.dart';
 import '../components/use_smileid_sample_setting_row.dart';
 import '../components/use_smileid_sample_toast.dart';
@@ -10,7 +10,6 @@ import '../state/use_smileid_sample_profiles.dart';
 import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
-import '../tokens/smile_icons.dart';
 import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
@@ -63,7 +62,6 @@ class UseSmileIDSampleProfilesScreen extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(
                 horizontal: SmileDimens.spacingMd,
-                vertical: SmileDimens.spacingXs,
               ),
               children: <Widget>[
                 for (
@@ -132,7 +130,7 @@ class _CreateRow extends StatelessWidget {
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: SmileDimens.spacingSm,
+          horizontal: _createPaddingX,
           vertical: SmileDimens.spacingSm,
         ),
         child: Row(
@@ -142,14 +140,9 @@ class _CreateRow extends StatelessWidget {
               height: _tileSize,
               decoration: BoxDecoration(
                 color: colors.badge.infoBackground,
-                borderRadius: BorderRadius.circular(SmileDimens.radiusSm),
+                borderRadius: BorderRadius.circular(SmileDimens.radiusMd),
               ),
-              child: Center(
-                child: UseSmileIDSampleIcon(
-                  asset: SmileIcons.materialPlus,
-                  tint: colors.badge.infoText,
-                ),
-              ),
+              child: Center(child: UseSmileIDSampleGlyphs.plus(colors.primary)),
             ),
             const SizedBox(width: SmileDimens.spacingSm),
             Expanded(
@@ -159,9 +152,11 @@ class _CreateRow extends StatelessWidget {
                   Text(
                     'Create new profile',
                     style: UseSmileIDSampleType.textStyleBodyStrong.copyWith(
+                      fontSize: _createTitleSize,
                       color: colors.textTitle,
                     ),
                   ),
+                  const SizedBox(height: SmileDimens.spacingXxs),
                   Text(
                     'Its user details will live under it',
                     style: UseSmileIDSampleType.textStyleCaption.copyWith(
@@ -183,3 +178,7 @@ const String _activeSuffix = ' · active';
 
 /// The create row's tile, read off the board rather than the icon scale.
 const double _tileSize = 44;
+
+/// The create row's own inset and title run, which no scale token carries.
+const double _createPaddingX = 14;
+const double _createTitleSize = 14.5;
