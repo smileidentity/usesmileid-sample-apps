@@ -113,13 +113,19 @@ const pixelsOf = (canvas: Canvas): PNG => {
   return png;
 };
 
-/// The jest snapshot-state field that says whether this run may write.
-type SnapshotState = { _updateSnapshot: 'all' | 'new' | 'none' };
+/// The modes jest's snapshot state can be in, which is private to jest and so is checked, not assumed.
+const RECORDING_MODES = ['all', 'new', 'none'] as const;
 
-/// `jest -u` or UPDATE_GOLDENS=1 re-records; `--ci` never writes.
-const recordingMode = (): 'all' | 'new' | 'none' => {
+type RecordingMode = (typeof RECORDING_MODES)[number];
+
+/// UPDATE_GOLDENS=1 re-records; otherwise the run follows `jest -u` or `--ci` through jest's private snapshot state.
+const recordingMode = (): RecordingMode => {
   if (process.env.UPDATE_GOLDENS === '1') return 'all';
-  return (expect.getState().snapshotState as unknown as SnapshotState)._updateSnapshot;
+  const mode = (expect.getState().snapshotState as unknown as { _updateSnapshot?: unknown })._updateSnapshot;
+  if (!RECORDING_MODES.includes(mode as RecordingMode)) {
+    throw new Error(`jest's snapshot state no longer says whether to record (got ${String(mode)}); use UPDATE_GOLDENS=1`);
+  }
+  return mode as RecordingMode;
 };
 
 /// Writes [bytes], creating the directory.
