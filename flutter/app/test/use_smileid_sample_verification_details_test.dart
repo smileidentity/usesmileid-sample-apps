@@ -29,14 +29,33 @@ void main() {
     httpStatus: 200,
   );
 
+  /// A row a real run would write: stored, and carrying the session it submitted under.
+  final UseSmileIDSampleJob submitted = UseSmileIDSampleJob(
+    id: 'job_00ky31za77',
+    userId: 'user_00ky31za77',
+    product: UseSmileIDSampleProduct.values.first,
+    status: UseSmileIDSampleStatus.processing,
+    createdAtMillis: DateTime.utc(2026, 7, 16, 14).millisecondsSinceEpoch,
+    message: 'Submitted, awaiting result',
+    httpStatus: 202,
+    sessionId: 'session-1',
+    partnerId: 'partner-1',
+  );
+
   late ProviderContainer container;
 
-  Future<void> pumpAt(WidgetTester tester, String location) async {
+  Future<void> pumpAt(
+    WidgetTester tester,
+    String location, {
+    List<UseSmileIDSampleJob>? stored,
+  }) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           useSmileIDSampleJobsRepositoryProvider.overrideWithValue(
-            UseSmileIDSampleMemoryJobsRepository(<UseSmileIDSampleJob>[job]),
+            UseSmileIDSampleMemoryJobsRepository(
+              stored ?? <UseSmileIDSampleJob>[job],
+            ),
           ),
         ],
         child: MaterialApp.router(
@@ -177,18 +196,55 @@ void main() {
     expect(container.read(useSmileIDSampleJobsProvider).value, isEmpty);
   });
 
-  testWidgets('a pull says why the job cannot be re-read', (
-    WidgetTester tester,
-  ) async {
-    await pumpAt(tester, UseSmileIDSampleRoutes.verificationDetails(job.id));
-
+  Future<void> pull(WidgetTester tester) async {
     await tester.fling(
       byId(UseSmileIDSampleTestIds.detailsRefresh),
       const Offset(0, 300),
       1000,
     );
     await tester.pumpAndSettle();
+  }
 
-    expect(find.text('Not submitted under a scanned token'), findsOne);
+  testWidgets('a pull on a row that never submitted says so', (
+    WidgetTester tester,
+  ) async {
+    await pumpAt(tester, UseSmileIDSampleRoutes.verificationDetails(job.id));
+
+    await pull(tester);
+
+    expect(
+      find.text('Never submitted, so there is nothing to check'),
+      findsOne,
+    );
+  });
+
+  // The fall-through the store replaced: a row that IS stored and DOES carry a session used to be
+  // told nothing was stored to refresh, which was false of the only rows a real run writes.
+  testWidgets('a pull on a submitted row asks for a session, not for a row', (
+    WidgetTester tester,
+  ) async {
+    await pumpAt(
+      tester,
+      UseSmileIDSampleRoutes.verificationDetails(submitted.id),
+      stored: <UseSmileIDSampleJob>[submitted],
+    );
+
+    await pull(tester);
+
+    expect(find.text('No live token session to check with'), findsOne);
+    expect(find.text('Nothing stored to refresh'), findsNothing);
+  });
+
+  testWidgets('a job added through the notifier reaches the list', (
+    WidgetTester tester,
+  ) async {
+    await pumpAt(tester, UseSmileIDSampleRoutes.verifications);
+
+    await container
+        .read(useSmileIDSampleJobsProvider.notifier)
+        .addJob(submitted);
+    await tester.pumpAndSettle();
+
+    expect(byId(UseSmileIDSampleTestIds.jobRow(1)), findsOne);
   });
 }
