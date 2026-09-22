@@ -11,6 +11,8 @@ appId: ${APP_ID}
 - launchApp:
     arguments:
       seedJobs: true
+      # The undo offer below is a race: a loaded handset polls after the toast has dismissed itself.
+      noticeWindow: 60
 
 - runFlow: subflows/warm-start.yaml
 - tapOn:
