@@ -246,7 +246,6 @@ void main() {
     await tester.tap(byId(UseSmileIDSampleTestIds.selectionRemove));
     await tester.pumpAndSettle();
 
-    // Past the product's window: with the argument ignored the confirmation is already gone here.
     await tester.pump(
       useSmileIDSampleNoticeWindow + const Duration(seconds: 1),
     );

@@ -4,8 +4,7 @@ appId: ${APP_ID}
 # back landing on the LIST, and the delete confirming on the list.
 #
 # `clearState` first, because the job store survives the run — see ../README.md "Traps", which
-# also says why APP_ID has no default. `noticeWindow` widens the confirmation past the run, because
-# at five seconds a loaded runner loses the tap after it to the withdrawal.
+# also says why APP_ID has no default and why the link widens `noticeWindow`.
 
 - clearState
 - runFlow:
