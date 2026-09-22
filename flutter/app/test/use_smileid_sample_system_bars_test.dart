@@ -13,7 +13,7 @@ import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_app.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 
-/// Status-bar contrast in both presentations: the switch decides the icons, whatever the device says.
+/// Status-bar contrast in both presentations, whatever the device's brightness.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -51,7 +51,7 @@ void main() {
   Brightness themeBrightness(WidgetTester tester) =>
       Theme.of(tester.element(find.byType(Navigator).first)).brightness;
 
-  /// The page follows the switch, and Android's icon brightness and iOS's bar brightness contrast with it.
+  /// The page follows the switch and both platforms' icons contrast with it.
   void expectBars(WidgetTester tester, {required bool dark}) {
     expect(themeBrightness(tester), dark ? Brightness.dark : Brightness.light);
     final SystemUiOverlayStyle? style = SystemChrome.latestStyle;
@@ -120,7 +120,6 @@ void main() {
     expectBars(tester, dark: true);
   });
 
-  // The SDK themes itself from the platform brightness, so a dark app on a light phone once drew it light.
   testWidgets('a dark app on a light device hands the SDK the dark theme', (
     WidgetTester tester,
   ) async {
@@ -140,7 +139,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // What the SDK is handed; it renders nothing under `flutter test`, so its own screens are the device's to prove.
+    // The SDK renders nothing under `flutter test`, so this asserts what it is handed.
     expect(
       MediaQuery.platformBrightnessOf(
         tester.element(find.byType(UseSmileIDBuilder)),

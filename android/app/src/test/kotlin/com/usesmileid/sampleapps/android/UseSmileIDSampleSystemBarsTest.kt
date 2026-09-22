@@ -21,7 +21,7 @@ import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowDialog
 import org.robolectric.shadows.ShadowLooper
 
-/** System-bar contrast in both presentations: dark icons on a light app and light on a dark one, whatever the device says. */
+/** System-bar contrast in both presentations, whatever the device's night mode. */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [36])
 class UseSmileIDSampleSystemBarsTest {
@@ -53,7 +53,7 @@ class UseSmileIDSampleSystemBarsTest {
         assertTrue("a dark bar", ColorUtils.calculateLuminance(window.navigationBarColor) < 0.5)
     }
 
-    // The sheet is its own window, whose bars Material 3 takes from the sheet's content colour, not from this app.
+    // Material 3 derives the sheet window's bars from its content colour.
     @Test
     @Config(qualifiers = "night")
     fun `a light app on a dark device draws dark icons over a sheet`() {

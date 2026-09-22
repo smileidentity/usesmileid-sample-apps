@@ -29,7 +29,7 @@ export default function RootLayout() {
   const darkMode = useSmileIDSampleSettingsStore((state) => state.settings.darkMode);
   const settingsLoaded = useSmileIDSampleSettingsStore((state) => state.loaded);
   const loadSettings = useSmileIDSampleSettingsStore((state) => state.load);
-  // Pinned both ways once the switch is read, as Android and iOS are; until then the device's guess avoids a flash.
+  // Until the switch loads, the device's guess avoids a flash.
   const dark = settingsLoaded ? darkMode : scheme === 'dark';
   const colors = dark ? smileDarkColors : smileLightColors;
   const args = useLaunchArgs();
@@ -46,7 +46,7 @@ export default function RootLayout() {
     void loadSettings();
   }, [loadSettings]);
 
-  // The SDK reads useColorScheme and the native bars read the window, so both follow the switch only through this.
+  // The SDK's useColorScheme and the native bars read this, not the theme provider.
   useEffect(() => {
     if (settingsLoaded) Appearance.setColorScheme(dark ? 'dark' : 'light');
   }, [settingsLoaded, dark]);

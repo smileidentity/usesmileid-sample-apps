@@ -38,7 +38,7 @@ class _UseSmileIDSampleAppState extends ConsumerState<UseSmileIDSampleApp> {
       debugShowCheckedModeBanner: false,
       theme: UseSmileIDSampleTheme.light(),
       darkTheme: UseSmileIDSampleTheme.dark(),
-      // Pinned both ways, as Android and iOS are: following the device left a dark phone dark while Settings read off.
+      // Pinned both ways: the switch overrides the device.
       themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
       routerConfig: _router,
       builder: (BuildContext context, Widget? child) =>

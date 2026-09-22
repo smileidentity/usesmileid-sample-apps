@@ -20,7 +20,7 @@ import RootLayout from '../app/_layout';
 jest.mock('expo-linking', () => ({ getInitialURL: jest.fn() }));
 jest.mock('react-native/Libraries/Utilities/useColorScheme');
 jest.mock('expo-font', () => ({ useFonts: () => [true] }));
-/// The style each mount asked for, so the icon colour is read rather than assumed.
+/// The style each StatusBar mount asked for.
 const mockStatusBarStyles: string[] = [];
 jest.mock('expo-status-bar', () => ({
   StatusBar: function StatusBar({ style }: { style: string }) {
@@ -28,7 +28,7 @@ jest.mock('expo-status-bar', () => ({
     return null;
   },
 }));
-/// The navigation-bar style each mount asked for; 'dark' is a dark bar with light buttons.
+/// The style each NavigationBar mount asked for; 'dark' is a dark bar with light buttons.
 const mockNavigationBarStyles: string[] = [];
 jest.mock('expo-navigation-bar', () => ({
   NavigationBar: function NavigationBar({ style }: { style: string }) {
@@ -115,7 +115,7 @@ const resolvedScheme = async ({
   return getByTestId('scheme');
 };
 
-/// The scheme the app last imposed on the window, which is what the SDK and the native bars read.
+/// What the root imposed through Appearance.
 let imposedScheme: jest.SpyInstance;
 
 beforeEach(async () => {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 
-/// Drawn edge to edge, a sheet's background runs under the navigation bar and its content must not.
+/// Edge to edge, a sheet's content must end above the navigation bar.
 void main() {
   Future<void> openSheet(
     WidgetTester tester,
@@ -68,7 +68,7 @@ void main() {
   });
 }
 
-/// Three-button navigation, which is the tallest bar Android draws.
+/// Three-button navigation, the tallest bar Android draws.
 const double _navigationBar = 48;
 
 const String _lastRow = 'last row';

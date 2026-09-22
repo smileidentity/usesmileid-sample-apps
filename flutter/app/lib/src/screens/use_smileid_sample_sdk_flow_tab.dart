@@ -74,7 +74,7 @@ class _UseSmileIDSampleSdkFlowTabState
         child: const SizedBox.expand(),
       );
     }
-    // The SDK themes itself from the platform brightness, so the Dark mode switch reaches it only through this.
+    // The SDK themes itself from the platform brightness, not the host theme.
     return MediaQuery(
       data: MediaQuery.of(
         context,

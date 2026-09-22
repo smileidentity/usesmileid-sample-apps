@@ -173,7 +173,7 @@ class _GrabHandle extends StatelessWidget {
   );
 }
 
-/// `useSafeArea` leaves the bottom to the content, so edge to edge the last row sat under the navigation bar.
+/// `useSafeArea` leaves the bottom inset to the content.
 double _navigationBarInset(BuildContext context) =>
     MediaQuery.paddingOf(context).bottom;
 
