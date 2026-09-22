@@ -119,6 +119,8 @@ public struct UseSmileIDSampleTopAppBar<Action: View>: View {
     UseSmileIDSampleText(title, style: UseSmileIDSampleTheme.type.textStyleTitle.with(size: 15))
       .foregroundColor(colors.textTitle)
       .multilineTextAlignment(alignment)
+      // Parity with the twins' heading flag; XCUITest cannot read traits, so no test sees it here.
+      .accessibilityAddTraits(.isHeader)
   }
 
   /// Holds the action's width even with none, so the title sits identically either way.

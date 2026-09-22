@@ -264,6 +264,14 @@ ordered. It also says nothing about a container that merges correctly but labels
   verifies no handle is live before its tear-downs run, so a deferred dispose fails the test it was
   meant to clean up after. This is the same shape as the painting-flag trap already in these notes.
 
+**What each platform's predicate reaches, now all three are written.** Flutter walks
+`semanticsOwner`, Android walks `SemanticsNode`, and both assert all three properties. **iOS asserts
+four of the five and cannot assert the header.** XCUITest exposes no trait accessor, so `buttons`
+and `staticTexts` carry the button half while `isHeader` has no query; hosting the bar in a
+`UIHostingController` and walking `accessibilityElements` was tried and returns an empty tree,
+because UIKit only builds one while an assistive technology is running. The trait is set on the iOS
+title for parity and is unasserted there — owed, not missing.
+
 **Why a golden cannot stand in for it.** The Flutter fix moved no pixel and no baseline changed, so
 every screenshot on every platform is green either side of the defect. That is the whole reason this
 needs its own test rather than a look.
