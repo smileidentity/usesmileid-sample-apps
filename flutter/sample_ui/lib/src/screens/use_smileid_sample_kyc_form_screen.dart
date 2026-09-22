@@ -67,7 +67,7 @@ class UseSmileIDSampleKycFormScreen extends StatelessWidget {
                   ),
                   children: <Widget>[
                     const UseSmileIDSampleSectionLabel(text: 'COUNTRY'),
-                    const SizedBox(height: SmileDimens.spacingXs),
+                    const SizedBox(height: SmileDimens.spacingSm),
                     UseSmileIDSampleSelectTrigger(
                       value: details.country?.label,
                       placeholder: 'Select country',
@@ -77,9 +77,9 @@ class UseSmileIDSampleKycFormScreen extends StatelessWidget {
                       ),
                       testId: UseSmileIDSampleTestIds.countryTrigger,
                     ),
-                    const SizedBox(height: SmileDimens.spacingMd),
+                    const SizedBox(height: SmileDimens.spacingSm),
                     const UseSmileIDSampleSectionLabel(text: 'ID TYPE'),
-                    const SizedBox(height: SmileDimens.spacingXs),
+                    const SizedBox(height: SmileDimens.spacingSm),
                     UseSmileIDSampleSelectTrigger(
                       value: details.idType?.label,
                       // Names the missing step rather than the missing value: a reader who has
@@ -96,9 +96,9 @@ class UseSmileIDSampleKycFormScreen extends StatelessWidget {
                       ),
                       testId: UseSmileIDSampleTestIds.idTypeTrigger,
                     ),
-                    const SizedBox(height: SmileDimens.spacingMd),
+                    const SizedBox(height: SmileDimens.spacingSm),
                     const UseSmileIDSampleSectionLabel(text: 'ID NUMBER'),
-                    const SizedBox(height: SmileDimens.spacingXs),
+                    const SizedBox(height: SmileDimens.spacingSm),
                     UseSmileIDSampleTextInput(
                       value: details.idNumber,
                       onChanged: onIdNumberChanged,
