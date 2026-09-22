@@ -98,7 +98,15 @@ export const focusField = (testID: string): Interaction => async (rendered) => {
   await fireEvent(rendered.getByTestId(testID), 'focus');
 };
 
+/// A touch that is never released.
+const heldTouch = {
+  nativeEvent: { timestamp: 0, pageX: 0, pageY: 0, locationX: 0, locationY: 0, touches: [], changedTouches: [] },
+  persist: () => {},
+  currentTarget: { measure: () => {} },
+};
+
 /// A press held down, which a style function only reports while the finger is on the control.
 export const pressIn = (testID: string): Interaction => async (rendered) => {
-  await fireEvent(rendered.getByTestId(testID), 'pressIn');
+  // A synthetic `pressIn` never reaches a Pressable, which listens to the responder system.
+  await fireEvent(rendered.getByTestId(testID), 'responderGrant', heldTouch);
 };
