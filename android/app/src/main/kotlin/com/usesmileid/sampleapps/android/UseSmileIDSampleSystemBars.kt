@@ -18,7 +18,7 @@ fun UseSmileIDSampleSystemBars(darkMode: Boolean) {
     // Below API 26 the dark scrim is always drawn, because the buttons cannot turn dark.
     val lightScrim = colors.background.toArgb()
     val darkScrim = colors.overlayScrim.toArgb()
-    // In composition order, so it is set before the SDK's capture screen saves it.
+    // A DisposableEffect runs in the apply pass, before the SDK capture screen's own effect saves this value.
     DisposableEffect(activity, darkMode, lightScrim, darkScrim) {
         activity.enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) { darkMode },

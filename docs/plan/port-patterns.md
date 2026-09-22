@@ -110,12 +110,11 @@ which of the two their platform behaves like rather than assume Android's limita
    the switch.** Off is light on a dark phone; on is dark on a light one. Following the device
    when the switch is off leaves a dark phone rendering dark while Settings reads off, so it is
    not an option. Ruled 2026-09-22 with Android as the tie-breaker; iOS already pinned both ways.
-   Each platform uses its own API rather than drawing a coloured strip (Flutter and Expo land in
-   their own pull requests):
+   Each platform uses its own API rather than drawing a coloured strip:
 
    | Android | iOS | Flutter | Expo |
    |---|---|---|---|
-   | `enableEdgeToEdge` with `SystemBarStyle.auto(…) { darkMode }` | `.preferredColorScheme(darkMode ? .dark : .light)` on the window's root | `themeMode: dark / light` + one `AnnotatedRegion<SystemUiOverlayStyle>` above the router | `Appearance.setColorScheme` + `expo-status-bar` |
+   | `enableEdgeToEdge` with `SystemBarStyle.auto(…) { darkMode }` | `.preferredColorScheme(darkMode ? .dark : .light)` on the window's root | `themeMode: dark / light` + one `AnnotatedRegion<SystemUiOverlayStyle>` above the router | `Appearance.setColorScheme` + `expo-status-bar` + `expo-navigation-bar` |
 
    What each had wrong before the ruling, because none of it was visible on a phone whose
    appearance matched the switch: Android's `enableEdgeToEdge()` with no arguments reads the
@@ -131,8 +130,10 @@ which of the two their platform behaves like rather than assume Android's limita
      near-white while the SDK owns the screen; the Flutter and React Native SDKs draw dark icons.
      That is the SDK's defect and is not worked around here.
 
-   The predicate on each platform runs the four crossings — device dark with the switch off and
-   device light with it on, pushed and modal — and asserts the icon appearance, not a pixel.
+   Android and Flutter each assert the four crossings — device dark with the switch off and device
+   light with it on, pushed and modal — on the icon appearance, not a pixel. Expo asserts the styles
+   the root imposes, which every route and sheet inherits; iOS has no predicate, because XCUITest
+   cannot read a bar's appearance, so its sheets were proven on a simulator.
 
 ## 4. Discipline that travels
 

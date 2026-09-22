@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.android
 
 import android.app.Dialog
+import android.graphics.Color
 import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -50,7 +51,9 @@ class UseSmileIDSampleSystemBarsTest {
     @Config(sdk = [25], qualifiers = "notnight")
     fun `below API 26 a light app keeps a navigation bar its white buttons show on`() {
         val window = compose(darkMode = false) { }.window
-        assertTrue("a dark bar", ColorUtils.calculateLuminance(window.navigationBarColor) < 0.5)
+        // Over a white page, so a translucent light scrim cannot pass for a dark one.
+        val drawn = ColorUtils.compositeColors(window.navigationBarColor, Color.WHITE)
+        assertTrue("a dark bar", ColorUtils.calculateLuminance(drawn) < 0.5)
     }
 
     // Material 3 derives the sheet window's bars from its content colour.
