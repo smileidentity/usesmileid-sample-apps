@@ -8,23 +8,32 @@ import 'package:usesmileid_mlkit_face/usesmileid_mlkit_face.dart';
 import 'package:usesmileid_vision_face/usesmileid_vision_face.dart';
 
 import 'use_smileid_sample_flow_launch_snapshot.dart';
+import 'use_smileid_sample_flow_plan.dart';
 import 'use_smileid_sample_flow_tokens.dart';
+import 'use_smileid_sample_token_binding_rules.dart';
 
 /// The one place that decides what the SDK is handed.
 void useSmileIDSampleApplying(
   UseSmileIDFlowBuilder builder,
   UseSmileIDSampleFlowLaunchSnapshot snapshot,
 ) {
-  builder.userDetails = UserDetails(
-    givenNames: snapshot.userDetails.firstName,
-    lastName: snapshot.userDetails.lastName,
-    email: snapshot.userDetails.email.isEmpty
-        ? null
-        : snapshot.userDetails.email,
-    phoneNumber: snapshot.userDetails.phone.isEmpty
-        ? null
-        : snapshot.userDetails.phone,
+  final UseSmileIDSampleFlowPlan plan = useSmileIDSampleFlowPlan(
+    snapshot.liveSession?.bindings,
+    snapshot.product,
   );
+  // Omitted when the token binds what the SDK requires: the forms were skipped, so these would be blanks.
+  builder.userDetails = plan.passUserDetails
+      ? UserDetails(
+          givenNames: snapshot.userDetails.firstName,
+          lastName: snapshot.userDetails.lastName,
+          email: snapshot.userDetails.email.isEmpty
+              ? null
+              : snapshot.userDetails.email,
+          phoneNumber: snapshot.userDetails.phone.isEmpty
+              ? null
+              : snapshot.userDetails.phone,
+        )
+      : null;
   if (snapshot.product == UseSmileIDSampleProduct.smartSelfieAuth) {
     builder.userId = snapshot.userId;
   }
@@ -49,11 +58,18 @@ void useSmileIDSampleApplying(
       ConfigBuilder config,
     ) {
       config.jobType = snapshot.product.jobType;
-      config.token = UseSmileIDSampleFlowTokens.token(
-        expired: snapshot.scenario == UseSmileIDSampleScenario.expiredToken,
-        nowMillis: DateTime.now().millisecondsSinceEpoch,
-      );
+      final UseSmileIDSampleTokenSession? scanned = snapshot.liveSession;
+      config.token =
+          scanned?.token ??
+          UseSmileIDSampleFlowTokens.token(
+            expired: useSmileIDSampleStartsExpired(snapshot.scenario),
+            nowMillis: DateTime.now().millisecondsSinceEpoch,
+          );
       config.onTokenExpired = (String previous) async {
+        // The Portal mints by hand and nothing here may call it, so the auth failure must surface.
+        if (scanned != null) {
+          return previous;
+        }
         return snapshot.scenario == UseSmileIDSampleScenario.badRefresh
             ? UseSmileIDSampleFlowTokens.malformed()
             : UseSmileIDSampleFlowTokens.token(
@@ -68,8 +84,10 @@ void useSmileIDSampleApplying(
         logging.level = LogLevel.headers;
       });
       config.partnerConfig((PartnerConfigBuilder partner) {
-        partner.partnerId = snapshot.partnerId;
-        partner.callbackUrl = snapshot.callbackUrl;
+        // The token wins over the local profile: a signed token under a different partner id is a 401.
+        partner.partnerId = scanned?.partnerId ?? snapshot.partnerId;
+        // Dropped under a live session, as the partner id is: the token's partner owns the job.
+        partner.callbackUrl = scanned == null ? snapshot.callbackUrl : '';
         partner.useSandbox = snapshot.sandbox;
       });
     }),
@@ -99,9 +117,12 @@ void _applyIdParams(
   UseSmileIDSampleFlowLaunchSnapshot snapshot,
 ) {
   final UseSmileIDSampleIdDetails details = snapshot.idDetails;
-  final String country = details.country?.code ?? '';
-  final String idType = details.idType?.id ?? '';
-  final String idNumber = details.idNumber;
+  // Per field, the token beats the form: the server overwrites these from its claims regardless.
+  final UseSmileIDSampleTokenBindings? bound = snapshot.liveSession?.bindings;
+  final String country = bound?.country ?? details.country?.code ?? '';
+  final String idType = bound?.idType ?? details.idType?.id ?? '';
+  // The SDK asks only that this be non-blank, and the server substitutes the same claim anyway.
+  final String idNumber = bound?.idNumberReference ?? details.idNumber;
   switch (snapshot.product) {
     case UseSmileIDSampleProduct.biometricKyc:
       builder.biometricKYCParams = BiometricKYCParams(
@@ -119,7 +140,7 @@ void _applyIdParams(
     case UseSmileIDSampleProduct.documentVerification:
       builder.documentVerificationParams = DocumentVerificationParams(
         country: country,
-        idType: details.idType?.id,
+        idType: bound?.idType ?? details.idType?.id,
       );
     case UseSmileIDSampleProduct.enhancedDocumentVerification:
       builder.enhancedDocumentVerificationParams =
@@ -192,13 +213,17 @@ enum UseSmileIDSampleFlowJourneyStep {
   processing,
 }
 
-/// The journey, as the three step switches decide it.
+/// The journey, as the three step switches and the token's consent binding decide it.
 List<UseSmileIDSampleFlowJourneyStep> useSmileIDSampleJourneyStepsFor(
   UseSmileIDSampleFlowLaunchSnapshot snapshot,
 ) {
   final List<UseSmileIDSampleFlowJourneyStep> steps =
       <UseSmileIDSampleFlowJourneyStep>[];
-  if (snapshot.consentStep) {
+  final bool declareConsent = useSmileIDSampleFlowPlan(
+    snapshot.liveSession?.bindings,
+    snapshot.product,
+  ).declareConsentScreen;
+  if (declareConsent && snapshot.consentStep) {
     steps.add(UseSmileIDSampleFlowJourneyStep.consent);
   }
   // Enhanced KYC is the one journey without capture: consent and processing only, per its validator.

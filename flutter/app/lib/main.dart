@@ -6,7 +6,9 @@ import 'package:sample_ui/sample_ui.dart';
 
 import 'src/data/use_smileid_sample_preferences_jobs_repository.dart';
 import 'src/data/use_smileid_sample_preferences_settings_repository.dart';
+import 'src/data/use_smileid_sample_secure_session_repository.dart';
 import 'src/state/use_smileid_sample_providers.dart';
+import 'src/state/use_smileid_sample_session_providers.dart';
 import 'src/use_smileid_sample_app.dart';
 import 'src/use_smileid_sample_launch.dart';
 
@@ -18,6 +20,10 @@ Future<void> main() async {
   final UseSmileIDSamplePreferencesSettingsRepository settings =
       await UseSmileIDSamplePreferencesSettingsRepository.open();
   final UseSmileIDSampleSettings stored = await settings.read();
+  final UseSmileIDSampleSecureSessionRepository sessions =
+      UseSmileIDSampleSecureSessionRepository();
+  // Before the first frame too, or a live session's card flashes in a frame late.
+  final UseSmileIDSampleSessionRecord session = await _readSession(sessions);
   final UseSmileIDSamplePreferencesJobsRepository jobs =
       await UseSmileIDSamplePreferencesJobsRepository.open();
   // Read BEFORE the first frame and exactly once, which is the whole of the cold-start rule: a
@@ -33,6 +39,8 @@ Future<void> main() async {
       useSmileIDSampleSettingsRepositoryProvider.overrideWithValue(settings),
       useSmileIDSampleStoredSettingsProvider.overrideWithValue(stored),
       useSmileIDSampleJobsRepositoryProvider.overrideWithValue(jobs),
+      useSmileIDSampleSessionRepositoryProvider.overrideWithValue(sessions),
+      useSmileIDSampleStoredSessionProvider.overrideWithValue(session),
       useSmileIDSampleLaunchArgsOverride(launch.args),
     ],
   );
@@ -57,4 +65,15 @@ Future<void> main() async {
       child: UseSmileIDSampleApp(initialLocation: launch.location),
     ),
   );
+}
+
+/// A Keychain or Keystore that refuses the read is no session, never a failed launch.
+Future<UseSmileIDSampleSessionRecord> _readSession(
+  UseSmileIDSampleSecureSessionRepository sessions,
+) async {
+  try {
+    return await sessions.read();
+  } on Object {
+    return const UseSmileIDSampleSessionRecord();
+  }
 }

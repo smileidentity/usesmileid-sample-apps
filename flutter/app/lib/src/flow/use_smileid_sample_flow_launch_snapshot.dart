@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:sample_ui/sample_ui.dart';
 
+import 'use_smileid_sample_token_binding_rules.dart';
+
 /// Read once at flow entry; never re-read while the flow runs.
 @immutable
 class UseSmileIDSampleFlowLaunchSnapshot {
@@ -22,6 +24,8 @@ class UseSmileIDSampleFlowLaunchSnapshot {
     required this.partnerId,
     required this.partnerName,
     required this.callbackUrl,
+    this.session,
+    this.sessionExpired = false,
   });
 
   /// The product this run submits.
@@ -71,6 +75,16 @@ class UseSmileIDSampleFlowLaunchSnapshot {
 
   /// The active profile's webhook URL; empty means their portal default.
   final String callbackUrl;
+
+  /// Live at entry only: a session that has run out is the gate's business, never the builder's.
+  final UseSmileIDSampleTokenSession? session;
+
+  /// Run out, which is the one thing that routes back to the scanner; usually true with no [session].
+  final bool sessionExpired;
+
+  /// The session a run submits under, absent for the two scenarios that are about refresh.
+  UseSmileIDSampleTokenSession? get liveSession =>
+      useSmileIDSampleStartsExpired(scenario) ? null : session;
 
   /// Where the run submitted, which is the only thing that publishes it.
   UseSmileIDSampleEnvironment get environment => sandbox

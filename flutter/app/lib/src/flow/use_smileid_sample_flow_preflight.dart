@@ -1,7 +1,9 @@
+import 'package:sample_ui/sample_ui.dart';
 import 'package:usesmileid/usesmileid.dart';
 
 import 'use_smileid_sample_flow_builder_config.dart';
 import 'use_smileid_sample_flow_launch_snapshot.dart';
+import 'use_smileid_sample_token_binding_rules.dart';
 
 /// What the gate decided, and so where the journey goes instead of the SDK.
 sealed class UseSmileIDSampleFlowPreflight {
@@ -23,6 +25,12 @@ class UseSmileIDSampleFlowNeedsDetails extends UseSmileIDSampleFlowPreflight {
   final List<UseSmileIDValidationException> issues;
 }
 
+/// Only a new token resolves it, so the journey goes back to the scanner rather than to a form.
+class UseSmileIDSampleFlowNeedsSession extends UseSmileIDSampleFlowPreflight {
+  /// No fields: the session's own state says what ran out.
+  const UseSmileIDSampleFlowNeedsSession();
+}
+
 /// No form can resolve it, and it must still never reach the SDK.
 class UseSmileIDSampleFlowMisconfigured extends UseSmileIDSampleFlowPreflight {
   /// [issues] is what `validate()` reported about the builder itself.
@@ -36,13 +44,23 @@ class UseSmileIDSampleFlowMisconfigured extends UseSmileIDSampleFlowPreflight {
 UseSmileIDSampleFlowPreflight useSmileIDSamplePreflight(
   UseSmileIDSampleFlowLaunchSnapshot snapshot,
 ) {
+  // Ahead of the payloads, because no form fixes a session that has run out.
+  if (snapshot.sessionExpired) {
+    return const UseSmileIDSampleFlowNeedsSession();
+  }
   final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
   useSmileIDSampleApplying(builder, snapshot);
 
   // Payloads before the builder's verdict: a form can fix what was typed, not how this built it.
+  // The SDK's overload that takes a token payload is not public, so the bindings are subtracted instead.
+  final UseSmileIDSampleUserDetailsRequirement requirement =
+      useSmileIDSampleUserDetailsRequirement(snapshot.liveSession?.bindings);
   final List<ValidationState> payloadChecks = <ValidationState>[
     if (builder.userDetails case final UserDetails details)
-      builder.validateUserDetails(details),
+      useSmileIDSampleMinusRequirement(
+        builder.validateUserDetails(details),
+        requirement,
+      ),
     if (builder.biometricKYCParams case final BiometricKYCParams params)
       builder.validateBiometricKYCParams(params),
     if (builder.enhancedKYCParams case final EnhancedKYCParams params)

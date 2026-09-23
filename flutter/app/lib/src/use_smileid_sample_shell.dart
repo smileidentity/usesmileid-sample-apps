@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import 'state/use_smileid_sample_providers.dart';
+import 'state/use_smileid_sample_session_providers.dart';
 import 'use_smileid_sample_remove_jobs.dart';
 import 'use_smileid_sample_routes.dart';
 
@@ -46,6 +47,7 @@ class UseSmileIDSampleShell extends ConsumerWidget {
         // What publishes the bar's measured height to the body as its bottom padding.
         extendBody: showsNavBar,
         bottomNavigationBar: _bottomBar(
+          context,
           ref,
           shell,
           selection,
@@ -63,6 +65,7 @@ class UseSmileIDSampleShell extends ConsumerWidget {
 
   /// Whichever bar owns the bottom slot, which is what the body's padding is then measured from.
   Widget? _bottomBar(
+    BuildContext context,
     WidgetRef ref,
     StatefulNavigationShell shell,
     UseSmileIDSampleSelection selection, {
@@ -79,10 +82,14 @@ class UseSmileIDSampleShell extends ConsumerWidget {
     if (!showsNavBar) {
       return null;
     }
+    final UseSmileIDSampleTokenSession? live = ref
+        .watch(useSmileIDSampleSessionProvider)
+        .live;
     return UseSmileIDSampleNavBar(
       selected: UseSmileIDSampleNavItem.values[shell.currentIndex],
       onSelect: (UseSmileIDSampleNavItem item) => _select(item.index),
-      onTokenTap: () {},
+      onTokenTap: () => context.push(UseSmileIDSampleRoutes.scanToken),
+      sessionProgress: live?.progress(ref.watch(useSmileIDSampleClockProvider)),
     );
   }
 
