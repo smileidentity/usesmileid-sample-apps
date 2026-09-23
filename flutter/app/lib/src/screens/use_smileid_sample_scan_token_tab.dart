@@ -62,6 +62,10 @@ class _UseSmileIDSampleScanTokenTabState
       }
       return;
     }
+    // Left during the write: the person chose not to resume.
+    if (!mounted) {
+      return;
+    }
     router.go(UseSmileIDSampleRoutes.sdkFlow(resuming.productId));
   }
 

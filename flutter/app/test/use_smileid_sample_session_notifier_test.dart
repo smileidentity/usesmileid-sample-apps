@@ -129,6 +129,33 @@ void main() {
       expect((await repository.read()).ended?.id, stale.id);
     },
   );
+
+  test(
+    'a link the store refuses still links for this run, rather than failing silently',
+    () async {
+      final _RefusingOnce repository = _RefusingOnce(
+        const UseSmileIDSampleSessionRecord(),
+      );
+      final ProviderContainer container = ProviderContainer(
+        overrides: [
+          useSmileIDSampleSessionRepositoryProvider.overrideWithValue(
+            repository,
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+      final UseSmileIDSampleTokenSession fresh = _mint(
+        UseSmileIDSampleSimulatedSpan.fifteenMinutes,
+      );
+
+      await container
+          .read(useSmileIDSampleSessionProvider.notifier)
+          .link(fresh);
+
+      expect(repository.refusals, 1);
+      expect(container.read(useSmileIDSampleSessionProvider).live, fresh);
+    },
+  );
 }
 
 /// A Keystore that refuses the first write, as a locked device can.

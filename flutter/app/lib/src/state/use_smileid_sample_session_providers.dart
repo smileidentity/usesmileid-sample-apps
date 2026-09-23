@@ -62,9 +62,12 @@ class UseSmileIDSampleSessionNotifier
     }
   }
 
-  /// Links a decoded session, replacing any live one or ended marker.
-  Future<void> link(UseSmileIDSampleTokenSession session) =>
-      _enqueue(() => _write(() => _repository.link(session)));
+  /// Links a decoded session, replacing any live one or ended marker; live for this run even if the store refuses it.
+  Future<void> link(UseSmileIDSampleTokenSession session) {
+    state = UseSmileIDSampleSessionRecord(live: session);
+    _schedule(session);
+    return _enqueue(() => _write(() => _repository.link(session)));
+  }
 
   /// Sign out: no ended marker, which would send the next run to the scanner.
   Future<void> clear() => _enqueue(() => _write(_repository.clear));

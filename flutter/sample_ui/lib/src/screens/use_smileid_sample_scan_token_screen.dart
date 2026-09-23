@@ -161,7 +161,13 @@ class _UseSmileIDSampleScanTokenScreenState
   }
 
   Future<void> _paste() async {
-    final String? pasted = await widget.onPaste();
+    String? pasted;
+    try {
+      pasted = await widget.onPaste();
+    } on Object {
+      // A clipboard the platform refuses to read is, to the person holding the phone, an empty one.
+      pasted = null;
+    }
     if (!mounted) {
       return;
     }
