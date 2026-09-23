@@ -82,7 +82,7 @@ class UseSmileIDSampleShell extends ConsumerWidget {
     if (!showsNavBar) {
       return null;
     }
-    // Its own Consumer, so the ring's tick rebuilds the bar and not the shell around it.
+    // Its own Consumer, so the tick rebuilds only the bar.
     return Consumer(
       builder: (BuildContext context, WidgetRef ref, Widget? _) {
         final UseSmileIDSampleTokenSession? live = ref

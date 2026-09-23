@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:sample_ui/sample_ui.dart';
 
-/// Everything a token's bindings decide, resolved once so no call site re-derives part of it.
+/// Everything a token's bindings decide for one product.
 @immutable
 class UseSmileIDSampleFlowPlan {
-  /// Built by [useSmileIDSampleFlowPlan]; public so the truth table can name what it expects.
+  /// Built by [useSmileIDSampleFlowPlan].
   const UseSmileIDSampleFlowPlan({
     required this.userDetailsGap,
     required this.showIdDetailsForm,
@@ -12,16 +12,16 @@ class UseSmileIDSampleFlowPlan {
     required this.passUserDetails,
   });
 
-  /// Which user-details rows the host must still collect; satisfied means skip the form.
+  /// The user-details rows still to collect; satisfied skips the form.
   final UseSmileIDSampleUserDetailsRequirement userDetailsGap;
 
   /// Whether the host's ID form appears.
   final bool showIdDetailsForm;
 
-  /// Whether `consent` is declared: a bound consent lifts the requirement, and declaring it anyway ends the run.
+  /// Whether the consent screen is declared; a bound consent omits it.
   final bool declareConsentScreen;
 
-  /// False means pass null, never blanks: a non-null `userDetails` silences the SDK's per-field errors.
+  /// Whether to pass `userDetails`; false passes null, never blanks.
   final bool passUserDetails;
 
   @override
@@ -47,7 +47,7 @@ class UseSmileIDSampleFlowPlan {
       'userDetails: $passUserDetails)';
 }
 
-/// The bindings' whole decision for [product], each field traceable to one SDK rule.
+/// The plan the bindings make for [product].
 UseSmileIDSampleFlowPlan useSmileIDSampleFlowPlan(
   UseSmileIDSampleTokenBindings? bindings,
   UseSmileIDSampleProduct product,

@@ -7,9 +7,9 @@ import 'state/use_smileid_sample_providers.dart';
 import 'state/use_smileid_sample_session_providers.dart';
 import 'use_smileid_sample_routes.dart';
 
-/// Where a product tap goes first, and where each form goes next; a form is skipped only when the token carries all of it.
+/// Where a product tap goes first, and where each form goes next.
 abstract final class UseSmileIDSampleJourney {
-  /// The first step for [product]: the user-details form unless the live token binds what it collects.
+  /// The first step for [product], skipping forms the live token covers.
   static String firstStepFor(
     UseSmileIDSampleProduct product,
     UseSmileIDSampleTokenBindings? live,
@@ -30,7 +30,7 @@ abstract final class UseSmileIDSampleJourney {
       UseSmileIDSampleRoutes.sdkFlow(product.id);
 }
 
-/// The bindings a run may read, through the same live-session rule the gate uses; clock-free, read at the tap.
+/// The live token's bindings, read once at the tap.
 UseSmileIDSampleTokenBindings? useSmileIDSampleLiveBindings(WidgetRef ref) =>
     useSmileIDSampleLiveSession(
       ref.read(useSmileIDSampleSessionProvider).live,

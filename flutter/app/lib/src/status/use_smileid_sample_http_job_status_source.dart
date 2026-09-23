@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:sample_ui/sample_ui.dart';
 
-/// `GET /v3/status/{jobId}` over `dart:io`, so the shell carries no HTTP dependency of its own.
+/// `GET /v3/status/{jobId}` over `dart:io`.
 class UseSmileIDSampleHttpJobStatusSource
     implements UseSmileIDSampleJobStatusSource {
-  /// [client] and [timeout] are injectable so a test can stall without a network.
+  /// [client] and [timeout] are injectable for tests.
   UseSmileIDSampleHttpJobStatusSource({
     HttpClient? client,
     this.timeout = const Duration(seconds: 10),
@@ -14,7 +14,7 @@ class UseSmileIDSampleHttpJobStatusSource
 
   final HttpClient _client;
 
-  /// How long each step may take before the refresh gives up and reports a failure.
+  /// How long each step may take.
   final Duration timeout;
 
   @override
@@ -26,7 +26,6 @@ class UseSmileIDSampleHttpJobStatusSource
     final UseSmileIDSampleEnvironment environment = sandbox
         ? UseSmileIDSampleEnvironment.sandbox
         : UseSmileIDSampleEnvironment.production;
-    // Every step is bounded: a stalled network must throw, so the store reports it and releases its guard.
     final HttpClientRequest request = await _client
         .getUrl(
           Uri.parse(
@@ -34,7 +33,7 @@ class UseSmileIDSampleHttpJobStatusSource
           ),
         )
         .timeout(timeout);
-    // The session's own JWT. Never logged.
+    // Never logged.
     request.headers.set('SmileID-Token', token);
     final HttpClientResponse response = await request.close().timeout(timeout);
     final String body = await response
@@ -45,7 +44,7 @@ class UseSmileIDSampleHttpJobStatusSource
   }
 }
 
-/// The HTTP code and body onto an outcome; pure, so the branch table is unit-testable.
+/// The HTTP code and body onto an outcome.
 UseSmileIDSampleStatusRefresh useSmileIDSampleStatusOutcome(
   int code,
   String body,
@@ -56,7 +55,6 @@ UseSmileIDSampleStatusRefresh useSmileIDSampleStatusOutcome(
   } on FormatException {
     return UseSmileIDSampleStatusFailed('HTTP $code');
   }
-  // Unknown keys ignored: a field added server-side must not turn a good response into a failure.
   if (code < 200 ||
       code > 299 ||
       json is! Map<String, Object?> ||
@@ -71,7 +69,7 @@ UseSmileIDSampleStatusRefresh useSmileIDSampleStatusOutcome(
   final UseSmileIDSampleStatus? badge = switch (status) {
     'clear' => UseSmileIDSampleStatus.clear,
     'attention' => UseSmileIDSampleStatus.attention,
-    // Five API states onto four badges: `error` lands on Blocked and leans on the server's message.
+    // `error` lands on Blocked, as on Android.
     'block' || 'error' => UseSmileIDSampleStatus.blocked,
     _ => null,
   };

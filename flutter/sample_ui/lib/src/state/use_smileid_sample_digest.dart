@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-/// SHA-256 of [text] as lowercase hex, cut to [bytes]; a display handle, so no crypto package is pulled in.
+/// SHA-256 of [text] as lowercase hex, cut to [bytes].
 String useSmileIDSampleDigest(String text, {int bytes = 4}) {
   final Uint8List digest = _sha256(utf8.encode(text));
   return <String>[

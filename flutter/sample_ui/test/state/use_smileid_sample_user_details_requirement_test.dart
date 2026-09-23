@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 
-/// The SDK's rule minus what the token binds, which is what every form row and the skip read from.
+/// The SDK's rule minus what the token binds.
 void main() {
   test('no token asks for everything', () {
     expect(
@@ -24,7 +24,6 @@ void main() {
       expect(requirement.isSatisfied, isTrue);
       expect(requirement.supplies(UseSmileIDSampleUserField.firstName), isTrue);
       expect(requirement.supplies(UseSmileIDSampleUserField.lastName), isTrue);
-      // "One of", so neither contact row is individually supplied.
       expect(requirement.supplies(UseSmileIDSampleUserField.email), isFalse);
       expect(requirement.supplies(UseSmileIDSampleUserField.phone), isFalse);
     },

@@ -94,7 +94,7 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                           i++
                         ) ...<Widget>[
                           if (i > 0) const UseSmileIDSampleSettingRowDivider(),
-                          // Shown as provided, not asked again: the value is vaulted, so it cannot be prefilled.
+                          // Vaulted, so it cannot be prefilled.
                           UseSmileIDSampleKeyValueEditRow(
                             label: requirement.labelFor(
                               UseSmileIDSampleUserField.values[i],

@@ -1,13 +1,7 @@
 appId: ${APP_ID}
 ---
-# The token session on a locally minted fixture token: a simulated scan links it, the countdown reads
-# the token's own span, bound details skip both host forms, an expired session turns the journey back
-# at the gate and says why, and relinking resumes the run it interrupted. A fixture token cannot
-# prove a server accepting it, nor reading a QR off a screen; those still need a Portal token by hand.
-#
-# The token is never asserted on, and the scan screen's field is masked, because a failed run dumps
-# the hierarchy. The consent screen is asserted by its own text, as in sdk-flow.yaml: this SDK
-# publishes no `si_consent_screen`.
+# The token session, on locally minted fixture tokens; nothing asserts on the token itself.
+# The consent screen is matched by its text: this SDK publishes no `si_consent_screen`.
 
 - clearState
 - runFlow:
@@ -16,7 +10,6 @@ appId: ${APP_ID}
       LINK: "usesmileid-sample-flutter://"
       LANDS_ON: "sample_products_screen"
 
-# The host owns a camera now, so the first permission prompt in this app is the scanner's.
 - tapOn:
     id: "sample_nav_token"
 - runFlow: subflows/grant-camera.yaml
@@ -30,12 +23,10 @@ appId: ${APP_ID}
     visible:
       id: "sample_session_card"
     timeout: 30000
-# The decoded 15m span, which a hard-coded five minutes could not produce.
 - assertVisible:
     id: "sample_session_countdown"
     text: "1[45]:[0-9]{2}"
 
-# An 8h token, which is where an m:ss countdown overflows.
 - tapOn:
     id: "sample_nav_token"
 - extendedWaitUntil:
@@ -54,7 +45,6 @@ appId: ${APP_ID}
     id: "sample_session_countdown"
     text: "[78]:[0-9]{2}:[0-9]{2}"
 
-# A token carrying the identity skips both host forms: the SDK's consent screen is the first thing seen.
 - tapOn:
     id: "sample_nav_token"
 - extendedWaitUntil:
@@ -84,7 +74,6 @@ appId: ${APP_ID}
       id: "sample_products_screen"
     timeout: 30000
 
-# An expired session is the one outcome no form can fix, so the gate routes to the scanner.
 - tapOn:
     id: "sample_nav_token"
 - extendedWaitUntil:
@@ -115,7 +104,7 @@ appId: ${APP_ID}
     id: "sample_user_details_field_email"
 - inputText: "ada.okafor@example.com"
 - hideKeyboard
-# `hideKeyboard` is a back press on Android, which pops the form when the keyboard is already down.
+# `hideKeyboard` is a back press on Android and pops the form if the keyboard is already down.
 - assertVisible:
     id: "sample_user_details_screen"
 - tapOn:
@@ -124,10 +113,8 @@ appId: ${APP_ID}
     visible:
       id: "sample_scan_token_screen"
     timeout: 30000
-# The redirect has to say why it moved you, asserted on the shipped sentence.
 - assertVisible: ".*Token session ended.*"
 
-# Manual entry: a rejection carries its reason and links nothing.
 - tapOn:
     id: "sample_token_manual_entry"
 - inputText: "not-a-jwt"
@@ -137,7 +124,6 @@ appId: ${APP_ID}
 - tapOn: "Link token"
 - assertVisible: ".*three dot-separated base64url segments.*"
 
-# Relinking resumes the interrupted run rather than stranding the person on the product list.
 - tapOn: "SIMULATED SCAN"
 - tapOn: "8h"
 - tapOn:
@@ -152,11 +138,10 @@ appId: ${APP_ID}
     visible:
       id: "sample_products_screen"
     timeout: 30000
-# A live span is what makes this flow safe to leave behind on a handset where clearState is refused.
+# Ends on a live span: an ended one would send the next flow to the scanner.
 - assertVisible:
     id: "sample_session_card"
 
-# Opening the scanner deliberately explains nothing, because nothing sent you there.
 - tapOn:
     id: "sample_nav_token"
 - extendedWaitUntil:

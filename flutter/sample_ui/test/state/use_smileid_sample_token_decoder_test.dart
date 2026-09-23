@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:sample_ui/src/state/use_smileid_sample_digest.dart';
 
-/// The decode rules, held against the SDK's own: the same cases Android and iOS pin theirs to.
+/// The decode rules, on the cases Android and iOS pin theirs to.
 void main() {
   test('a token is three base64url segments or it is not a token', () {
     for (final String candidate in <String>[
@@ -288,7 +288,6 @@ void main() {
         UseSmileIDSampleProduct.enhancedDocumentVerification,
       ]) {
         expect(bound.bindsIdDetails(product), isTrue);
-        // The validator accepts a null idType, but the form is where the document type is chosen.
         expect(
           const UseSmileIDSampleTokenBindings(
             country: 'KE',

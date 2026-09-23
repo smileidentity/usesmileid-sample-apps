@@ -18,14 +18,13 @@ import 'package:usesmileid_sample_flutter/src/status/use_smileid_sample_http_job
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_journey.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 
-/// The token session end to end on the host side: minting, the plan, the gate, the builder and the journey.
+/// The token session on the host side.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() => SharedPreferences.setMockInitialValues(<String, Object>{}));
 
   group('the flow plan, as a truth table', () {
-    // Consent × user details × ID claims × product, each axis independent: enumerated, not sampled.
     const Map<String, UseSmileIDSampleTokenConsent?> consents =
         <String, UseSmileIDSampleTokenConsent?>{
           'absent': null,
@@ -219,7 +218,7 @@ void main() {
             isA<ValidationStateValid>(),
             reason: product.id,
           );
-          // `build()` is stricter than `validate()`, and its result type is unexported, so only its name is readable.
+          // `build()`'s result type is unexported, so only its name is readable.
           // ignore: invalid_use_of_internal_member
           final Object result = builder.build();
           expect(
@@ -266,7 +265,6 @@ void main() {
                 ),
               ),
             );
-        // The narrowest legal flow, and the one that broke on Android.
         expect(steps, <UseSmileIDSampleFlowJourneyStep>[
           UseSmileIDSampleFlowJourneyStep.processing,
         ]);
@@ -308,7 +306,6 @@ void main() {
       final UseSmileIDSampleTokenSession production = _mint(
         environment: UseSmileIDSampleEnvironment.production,
       );
-      // The snapshot reads it scenario-free, so the environment stays the token's.
       expect(useSmileIDSampleLiveSession(production, _now), production);
       expect(
         useSmileIDSampleLiveSession(
@@ -457,7 +454,6 @@ void main() {
       int Function()? clock,
     }) async {
       final GoRouter router = useSmileIDSampleRouter(initialLocation: at);
-      // Owned by the tree, so its timers go when the tree does.
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -650,7 +646,6 @@ void main() {
         router.routerDelegate.currentConfiguration.uri.path,
         UseSmileIDSampleRoutes.scanToken,
       );
-      // Claimed by the visit, so a later deliberate scan resumes nothing.
       expect(container.read(useSmileIDSampleInterruptedRunProvider), isNull);
     });
 
@@ -726,5 +721,5 @@ UseSmileIDSampleFlowLaunchSnapshot _snapshot(
   sessionExpired: sessionExpired,
 );
 
-/// The wall clock, since the gate and the ended span both measure against it.
+/// The wall clock the fixtures are minted against.
 final int _now = DateTime.now().millisecondsSinceEpoch;

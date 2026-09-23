@@ -296,7 +296,6 @@ void main() {
       });
     });
 
-    // Read off disk rather than restated: Android is the baseline, and a label worded apart is the defect.
     test('are the strings the Android twin ships', () {
       final String android = File(
         '../../android/app/src/main/kotlin/com/usesmileid/sampleapps/android/navigation/VerificationsDestinations.kt',

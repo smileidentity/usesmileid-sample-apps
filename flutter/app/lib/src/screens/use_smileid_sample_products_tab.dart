@@ -90,7 +90,7 @@ class _UseSmileIDSampleProductsTabState
     final UseSmileIDSampleSessionRecord session = ref.watch(
       useSmileIDSampleSessionProvider,
     );
-    // Read, not watched: the deadline lands as a retirement, which the session watch above sees.
+    // Read, not watched: expiry lands as a retirement, which the watch above sees.
     final bool ended = useSmileIDSampleSessionEnded(
       session,
       ref.read(useSmileIDSampleWallClockProvider)(),
@@ -103,7 +103,6 @@ class _UseSmileIDSampleProductsTabState
         // showing the same profile has to agree on it.
         avatarColor: avatarColorForProfile(profiles.activeIndex),
         sessionId: ended ? null : live?.id,
-        // Only this rebuilds on the tick, so the grid is not rebuilt every second.
         sessionCountdown: ended || live == null
             ? null
             : Consumer(

@@ -5,7 +5,7 @@ import '../model/use_smileid_sample_result.dart';
 /// A run the expiry gate sent away, carrying the presentation it was launched in.
 @immutable
 class UseSmileIDSampleRunIntent {
-  /// [productId] is the run's product; [route] its presentation.
+  /// [productId] and [route] are the run's.
   const UseSmileIDSampleRunIntent({
     required this.productId,
     required this.route,

@@ -19,7 +19,7 @@ abstract final class UseSmileIDSampleFlowTokens {
   /// What `badRefresh` hands back, so the failure path has something unusable to reject.
   static String malformed() => 'sample-not-a-jwt';
 
-  /// What a simulated scan links: the same unsigned shape over the chosen span and bindings, with nonsense PII.
+  /// A simulated scan's token over the chosen span, bindings and environment.
   static String session({
     required UseSmileIDSampleSimulatedSpan span,
     required UseSmileIDSampleSimulatedBindings bindings,
@@ -27,14 +27,13 @@ abstract final class UseSmileIDSampleFlowTokens {
     required int nowMillis,
   }) {
     final int nowSeconds = nowMillis ~/ _millisPerSecond;
-    // An ended span is minted wholly in the past, which is the only way to reach the expiry gate.
     final int issuedAt = span.inPast
         ? nowSeconds - span.span.inSeconds - _endedLagSeconds
         : nowSeconds;
     final List<String> claims = <String>[
       '"iat":$issuedAt',
       '"exp":${issuedAt + span.span.inSeconds}',
-      // With the path a real claim carries, so the fixture exercises the host match.
+      // With the /v3 path a real claim carries.
       '"api_url":"${environment.baseUrl}$_apiPath"',
       if (bindings.binds) _payloadClaim(bindings, issuedAt),
     ];
@@ -52,7 +51,6 @@ abstract final class UseSmileIDSampleFlowTokens {
     final List<String> fields = <String>[
       if (bindings.userDetails) ...<String>[
         for (final String field in _vaultedFields) '"$field":"vault_$field"',
-        // The two the Portal leaves in plaintext, so a decode can read them back.
         '"country":"${UseSmileIDSampleCountry.ke.code}"',
         '"id_type":"${UseSmileIDSampleIdType.nationalId.id}"',
       ],
@@ -61,7 +59,7 @@ abstract final class UseSmileIDSampleFlowTokens {
     return '"payload":{${fields.join(',')}}';
   }
 
-  /// All four subfields: the SDK treats a partial binding as a build error, not a partial relaxation.
+  /// All four subfields: a partial binding fails the build.
   static String _consentClaim(int issuedAtSeconds) {
     final String grantedAt =
         '${DateTime.fromMillisecondsSinceEpoch(issuedAtSeconds * _millisPerSecond, isUtc: true).toIso8601String().split('.').first}Z';

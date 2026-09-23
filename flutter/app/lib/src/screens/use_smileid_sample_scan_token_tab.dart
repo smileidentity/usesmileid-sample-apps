@@ -11,9 +11,9 @@ import '../scan/use_smileid_sample_qr_scanner.dart';
 import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_routes.dart';
 
-/// The token-scanning route: links a session, and resumes the run the expiry gate sent here.
+/// The token-scanning route.
 class UseSmileIDSampleScanTokenTab extends ConsumerStatefulWidget {
-  /// Takes nothing from the route: continuation state lives on app state, never in a path.
+  /// No route arguments: a pending run lives on app state.
   const UseSmileIDSampleScanTokenTab({super.key});
 
   @override
@@ -23,7 +23,7 @@ class UseSmileIDSampleScanTokenTab extends ConsumerStatefulWidget {
 
 class _UseSmileIDSampleScanTokenTabState
     extends ConsumerState<UseSmileIDSampleScanTokenTab> {
-  /// Owned by this visit, so leaving by any route drops it and a later scan cannot resurrect it.
+  /// The run this visit was sent to resume.
   late final UseSmileIDSampleRunIntent? _resuming;
 
   @override
@@ -39,7 +39,7 @@ class _UseSmileIDSampleScanTokenTabState
 
   bool _torchOn = false;
 
-  /// Guards a second link: two quick taps mint two tokens and must not start two runs.
+  /// Guards a second link from a double tap.
   bool _linking = false;
 
   void _back() =>
@@ -50,11 +50,10 @@ class _UseSmileIDSampleScanTokenTabState
       return;
     }
     _linking = true;
-    // Read before the await: the notifier outlives this route, the context may not.
     final GoRouter router = GoRouter.of(context);
     await ref.read(useSmileIDSampleSessionProvider.notifier).link(session);
     final UseSmileIDSampleRunIntent? resuming = _resuming;
-    // An already-expired relink cannot start the run, so it leaves rather than freezing on "linked".
+    // An expired relink cannot start the run.
     if (resuming == null ||
         session.hasExpired(DateTime.now().millisecondsSinceEpoch)) {
       if (mounted) {
@@ -62,7 +61,6 @@ class _UseSmileIDSampleScanTokenTabState
       }
       return;
     }
-    // Left during the write: the person chose not to resume.
     if (!mounted) {
       return;
     }
@@ -80,7 +78,6 @@ class _UseSmileIDSampleScanTokenTabState
       environment: environment,
       nowMillis: DateTime.now().millisecondsSinceEpoch,
     );
-    // A fixture that no longer decodes is a defect, never something to paper over with a made-up session.
     final UseSmileIDSampleTokenSession? session =
         UseSmileIDSampleTokenDecoder.session(minted);
     if (session != null) {
@@ -101,12 +98,11 @@ class _UseSmileIDSampleScanTokenTabState
     },
     child: Scaffold(
       backgroundColor: UseSmileIDSampleTheme.colorsOf(context).background,
-      // Top only: the sheet insets its own bottom, so a second inset here would lift it twice.
+      // Top only: the sheet insets its own bottom.
       body: SafeArea(
         bottom: false,
         child: UseSmileIDSampleTextMetrics(
           child: UseSmileIDSampleScanTokenScreen(
-            // Why the screen opened, which belongs to the screen the redirect arrives at.
             reason: _resuming == null
                 ? null
                 : UseSmileIDSampleScanReason.sessionEnded,
@@ -117,7 +113,6 @@ class _UseSmileIDSampleScanTokenTabState
             onPaste: _paste,
             torchOn: _torchOn,
             onTorchToggle: () => setState(() => _torchOn = !_torchOn),
-            // The camera lives in the shell: `sample_ui` runs under hosts that carry none.
             viewfinder:
                 (
                   BuildContext context, {

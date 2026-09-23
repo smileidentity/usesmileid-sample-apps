@@ -5,27 +5,27 @@ import 'package:sample_ui/sample_ui.dart';
 
 import '../status/use_smileid_sample_http_job_status_source.dart';
 
-/// Where the token session is kept; the shell overrides this with the secure store.
+/// Where the token session is kept.
 final Provider<UseSmileIDSampleSessionRepository>
 useSmileIDSampleSessionRepositoryProvider =
     Provider<UseSmileIDSampleSessionRepository>(
       (Ref ref) => UseSmileIDSampleMemorySessionRepository(),
     );
 
-/// What the store held when the app started, read before the first frame.
+/// The session record read before the first frame.
 final Provider<UseSmileIDSampleSessionRecord>
 useSmileIDSampleStoredSessionProvider = Provider<UseSmileIDSampleSessionRecord>(
   (Ref ref) => const UseSmileIDSampleSessionRecord(),
 );
 
-/// The wall clock the deadline is read against; a test moves it without firing any timer.
+/// The wall clock deadlines are read against.
 final Provider<int Function()> useSmileIDSampleWallClockProvider =
     Provider<int Function()>(
       (Ref ref) =>
           () => DateTime.now().millisecondsSinceEpoch,
     );
 
-/// The linked session or its ended marker, and the only writer of either.
+/// The linked session or its ended marker.
 final NotifierProvider<
   UseSmileIDSampleSessionNotifier,
   UseSmileIDSampleSessionRecord
@@ -36,7 +36,7 @@ useSmileIDSampleSessionProvider =
       UseSmileIDSampleSessionRecord
     >(UseSmileIDSampleSessionNotifier.new);
 
-/// Holds the record, and retires the token the moment its deadline passes.
+/// Holds the record and retires the token at its deadline.
 class UseSmileIDSampleSessionNotifier
     extends Notifier<UseSmileIDSampleSessionRecord> {
   Timer? _deadline;
@@ -51,10 +51,10 @@ class UseSmileIDSampleSessionNotifier
     return stored;
   }
 
-  /// Every write, in call order: an overlapping retire once landed a marker over a newer link.
+  /// Every write, serialised in call order.
   Future<void> _writes = Future<void>.value();
 
-  /// Retires the live session when the wall clock is past its deadline; the timer alone misses a sleeping device.
+  /// Retires the live session once the wall clock passes its deadline.
   Future<void> checkDeadline() async {
     final UseSmileIDSampleTokenSession? live = state.live;
     if (live != null && live.hasExpired(_now())) {
@@ -62,30 +62,29 @@ class UseSmileIDSampleSessionNotifier
     }
   }
 
-  /// Links a decoded session, replacing any live one or ended marker; live for this run even if the store refuses it.
+  /// Links a decoded session, live for this run even if the store refuses it.
   Future<void> link(UseSmileIDSampleTokenSession session) {
     state = UseSmileIDSampleSessionRecord(live: session);
     _schedule(session);
     return _enqueue(() => _write(() => _repository.link(session)));
   }
 
-  /// Sign out: no ended marker, which would send the next run to the scanner; gone for this run even if the store refuses it.
+  /// Sign out: clears the session without an ended marker.
   Future<void> clear() {
     state = const UseSmileIDSampleSessionRecord();
     _schedule(null);
     return _enqueue(() => _write(_repository.clear));
   }
 
-  /// Past the deadline the token is useless, so it goes; that a session ended stays.
-  Future<void> _retire(
-    UseSmileIDSampleTokenSession session,
-  ) => _enqueue(() async {
-    // Checked once earlier writes have landed, so a link made meanwhile is never retired.
-    if (state.live != session) {
-      return;
-    }
-    await _write(() => _repository.retire(session));
-  });
+  /// Retires [session] if it is still the live one.
+  Future<void> _retire(UseSmileIDSampleTokenSession session) =>
+      _enqueue(() async {
+        // Re-checked at its turn, so a link made meanwhile is never retired.
+        if (state.live != session) {
+          return;
+        }
+        await _write(() => _repository.retire(session));
+      });
 
   Future<void> _enqueue(Future<void> Function() write) {
     final Future<void> next = _writes.then((_) => write());
@@ -101,11 +100,11 @@ class UseSmileIDSampleSessionNotifier
       state = record;
       _schedule(record.live);
     } on Object {
-      // The platform store can refuse a write; the record on screen stays the stored one.
+      // The platform store can refuse a write.
     }
   }
 
-  /// A cold start after expiry takes the same path, the timer firing at once.
+  /// Arms the deadline timer for [live].
   void _schedule(UseSmileIDSampleTokenSession? live) {
     _deadline?.cancel();
     _deadline = null;
@@ -125,14 +124,14 @@ class UseSmileIDSampleSessionNotifier
   int _now() => ref.read(useSmileIDSampleWallClockProvider)();
 }
 
-/// The wall clock, ticking once a second only while a session is live, so nothing else rebuilds on it.
+/// The wall clock, ticking once a second while a session is live.
 final NotifierProvider<UseSmileIDSampleClockNotifier, int>
 useSmileIDSampleClockProvider =
     NotifierProvider<UseSmileIDSampleClockNotifier, int>(
       UseSmileIDSampleClockNotifier.new,
     );
 
-/// Starts and stops with the live session; the deadline is absolute, so a restart needs no recomputing.
+/// Ticks while a session is live, re-checking its deadline.
 class UseSmileIDSampleClockNotifier extends Notifier<int> {
   @override
   int build() {
@@ -147,7 +146,6 @@ class UseSmileIDSampleClockNotifier extends Notifier<int> {
     if (live) {
       final Timer tick = Timer.periodic(_tick, (_) {
         state = now();
-        // Each tick also re-reads the deadline, which retries a retirement the store refused.
         unawaited(
           ref.read(useSmileIDSampleSessionProvider.notifier).checkDeadline(),
         );
@@ -158,7 +156,7 @@ class UseSmileIDSampleClockNotifier extends Notifier<int> {
   }
 }
 
-/// The run the expiry gate sent to the scanner, held on app state so no route carries continuation state.
+/// The run the expiry gate sent to the scanner.
 final NotifierProvider<
   UseSmileIDSampleInterruptedRunNotifier,
   UseSmileIDSampleRunIntent?
@@ -169,7 +167,7 @@ useSmileIDSampleInterruptedRunProvider =
       UseSmileIDSampleRunIntent?
     >(UseSmileIDSampleInterruptedRunNotifier.new);
 
-/// One pending run at most; the scanner claims it on arrival, so leaving drops it.
+/// Holds at most one pending run.
 class UseSmileIDSampleInterruptedRunNotifier
     extends Notifier<UseSmileIDSampleRunIntent?> {
   @override
@@ -178,7 +176,7 @@ class UseSmileIDSampleInterruptedRunNotifier
   /// Hands a run to the scanner.
   void send(UseSmileIDSampleRunIntent intent) => state = intent;
 
-  /// Drops [claimed] once the scanner has read it, leaving a run sent since then in place.
+  /// Drops [claimed], leaving any run sent since.
   void release(UseSmileIDSampleRunIntent? claimed) {
     if (state == claimed) {
       state = null;
@@ -186,16 +184,16 @@ class UseSmileIDSampleInterruptedRunNotifier
   }
 }
 
-/// Where a status refresh asks; a test overrides it so no refresh reaches a network.
+/// Where a status refresh asks.
 final Provider<UseSmileIDSampleJobStatusSource>
 useSmileIDSampleJobStatusSourceProvider =
     Provider<UseSmileIDSampleJobStatusSource>(
       (Ref ref) => UseSmileIDSampleHttpJobStatusSource(),
     );
 
-/// The only place the environment is decided: the linked session owns it, and no session is sandbox.
+/// Whether a run goes to sandbox: only a production session says otherwise.
 bool useSmileIDSampleUseSandbox(UseSmileIDSampleTokenSession? session) =>
     session?.environment != UseSmileIDSampleEnvironment.production;
 
-/// Tick once a second: the countdown's resolution.
+/// The countdown's resolution.
 const Duration _tick = Duration(seconds: 1);

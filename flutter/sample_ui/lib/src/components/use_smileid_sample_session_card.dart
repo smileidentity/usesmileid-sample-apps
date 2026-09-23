@@ -9,7 +9,7 @@ import '../use_smileid_sample_test_ids.dart';
 
 /// The active token session and its m:ss countdown.
 class UseSmileIDSampleSessionCard extends StatelessWidget {
-  /// Takes the formatted countdown, or a [countdown] widget the host ticks on its own, so no component holds a clock.
+  /// Takes a formatted countdown, or a [countdown] widget the host ticks.
   const UseSmileIDSampleSessionCard({
     required this.sessionId,
     this.remaining,
@@ -23,7 +23,7 @@ class UseSmileIDSampleSessionCard extends StatelessWidget {
   /// The countdown, already formatted as m:ss.
   final String? remaining;
 
-  /// Stands in for [remaining] when only the countdown should rebuild on the tick.
+  /// Replaces [remaining], so only the countdown rebuilds on the tick.
   final Widget? countdown;
 
   @override
@@ -74,7 +74,7 @@ class UseSmileIDSampleSessionCard extends StatelessWidget {
   }
 }
 
-/// The card's countdown on its own, so a host can rebuild it on the tick without rebuilding the card.
+/// The session card's countdown on its own.
 class UseSmileIDSampleSessionCountdown extends StatelessWidget {
   /// [remaining] arrives formatted.
   const UseSmileIDSampleSessionCountdown({required this.remaining, super.key});

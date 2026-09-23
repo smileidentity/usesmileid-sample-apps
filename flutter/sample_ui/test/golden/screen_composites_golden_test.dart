@@ -234,7 +234,6 @@ Widget _scanSheets() => _stack(<Widget>[
     onBindingsChanged: (_) {},
     onSimulate: () {},
   ),
-  // The mint controls open, with a non-default choice in each row so selection reads.
   UseSmileIDSampleScanSheet(
     state: const UseSmileIDSampleScanSheetState(
       span: UseSmileIDSampleSimulatedSpan.eightHours,

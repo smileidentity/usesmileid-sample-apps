@@ -34,7 +34,7 @@ class UseSmileIDSampleSdkFlowTab extends ConsumerStatefulWidget {
   /// Where a run the forms can still fix goes instead of the SDK.
   final VoidCallback onNeedsDetails;
 
-  /// Where a run whose session has run out goes: the scanner, which no form can stand in for.
+  /// Where a run whose session has ended goes.
   final VoidCallback onNeedsSession;
 
   /// Where a delivered result lands, by the job id the server issued.
@@ -122,12 +122,12 @@ class _UseSmileIDSampleSdkFlowTabState
     final UseSmileIDSampleProfile profile = ref
         .read(useSmileIDSampleProfilesProvider)
         .active;
-    // The clock is read here, not through the ticking provider: the snapshot is taken once at entry.
+    // Read once, not through the ticking clock: a rebuilt config tears the run down.
     final int entryMillis = DateTime.now().millisecondsSinceEpoch;
     final UseSmileIDSampleSessionRecord record = ref.read(
       useSmileIDSampleSessionProvider,
     );
-    // Scenario-free on purpose: the environment is the token's even under the two refresh scenarios.
+    // Scenario-free: the environment is the token's even under the refresh scenarios.
     final UseSmileIDSampleTokenSession? session = useSmileIDSampleLiveSession(
       record.live,
       entryMillis,

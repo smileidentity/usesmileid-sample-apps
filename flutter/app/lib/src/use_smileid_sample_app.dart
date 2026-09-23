@@ -29,7 +29,7 @@ class _UseSmileIDSampleAppState extends ConsumerState<UseSmileIDSampleApp> {
     initialLocation: widget.initialLocation,
   );
 
-  /// A device asleep past a deadline wakes with no timer having fired, so resuming re-reads it.
+  /// Re-reads the deadline on resume, since no timer fires while the device sleeps.
   late final AppLifecycleListener _lifecycle;
 
   @override

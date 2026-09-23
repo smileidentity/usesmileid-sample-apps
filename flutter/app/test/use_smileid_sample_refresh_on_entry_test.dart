@@ -9,7 +9,7 @@ import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_session_providers.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 
-/// A processing row refreshes when its page opens, as Android's does, and says so only when something happened.
+/// Refreshing a processing row when its page opens.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -89,7 +89,7 @@ class _Answering implements UseSmileIDSampleJobStatusSource {
   }) async => answer;
 }
 
-/// A live fixture session minted for the row's own partner, so the store's partner guard lets it ask.
+/// A live fixture session minted for the row's partner.
 final UseSmileIDSampleTokenSession
 _session = UseSmileIDSampleTokenDecoder.session(
   <String>[

@@ -39,7 +39,7 @@ abstract final class UseSmileIDSampleTestIds {
   /// The scan token screen root.
   static const String scanTokenScreen = 'sample_scan_token_screen';
 
-  /// One environment chip in the simulated-scan controls, suffixed with the environment id.
+  /// One environment chip, suffixed with the environment id.
   static String tokenEnvironment(String environmentId) =>
       'sample_token_environment_$environmentId';
 

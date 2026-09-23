@@ -67,7 +67,6 @@ class _UseSmileIDSampleSettingsTabState
         initials: profiles.active.initials,
         versionLabel: useSmileIDSampleVersionLabel,
         avatarColor: avatarColorForProfile(profiles.activeIndex),
-        // Clock-free, as Android reads it: Settings must not rebuild on the tick.
         consentBoundByToken:
             ref.watch(useSmileIDSampleSessionProvider).live?.bindings.consent !=
                 null &&

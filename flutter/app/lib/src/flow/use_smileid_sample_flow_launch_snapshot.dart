@@ -76,13 +76,13 @@ class UseSmileIDSampleFlowLaunchSnapshot {
   /// The active profile's webhook URL; empty means their portal default.
   final String callbackUrl;
 
-  /// Live at entry only: a session that has run out is the gate's business, never the builder's.
+  /// The session, live at entry only.
   final UseSmileIDSampleTokenSession? session;
 
-  /// Run out, which is the one thing that routes back to the scanner; usually true with no [session].
+  /// Whether the session has run out, which routes to the scanner.
   final bool sessionExpired;
 
-  /// The session a run submits under, absent for the two scenarios that are about refresh.
+  /// The session a run submits under; absent under the refresh scenarios.
   UseSmileIDSampleTokenSession? get liveSession =>
       useSmileIDSampleStartsExpired(scenario) ? null : session;
 

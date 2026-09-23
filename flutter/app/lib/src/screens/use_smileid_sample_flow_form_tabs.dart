@@ -32,7 +32,6 @@ class UseSmileIDSampleUserDetailsTab extends ConsumerWidget {
         // for rather than showing an empty title.
         title: product?.label ?? productId,
         details: forms.userDetails,
-        // Watched so a relink or an expiry mid-form moves the rows at once.
         requirement: useSmileIDSampleUserDetailsRequirement(
           ref.watch(useSmileIDSampleSessionProvider).live == null
               ? null

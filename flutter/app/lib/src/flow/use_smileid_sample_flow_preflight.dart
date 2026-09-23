@@ -25,9 +25,9 @@ class UseSmileIDSampleFlowNeedsDetails extends UseSmileIDSampleFlowPreflight {
   final List<UseSmileIDValidationException> issues;
 }
 
-/// Only a new token resolves it, so the journey goes back to the scanner rather than to a form.
+/// Only a new token resolves it, so the journey goes to the scanner.
 class UseSmileIDSampleFlowNeedsSession extends UseSmileIDSampleFlowPreflight {
-  /// No fields: the session's own state says what ran out.
+  /// No fields.
   const UseSmileIDSampleFlowNeedsSession();
 }
 
@@ -44,7 +44,7 @@ class UseSmileIDSampleFlowMisconfigured extends UseSmileIDSampleFlowPreflight {
 UseSmileIDSampleFlowPreflight useSmileIDSamplePreflight(
   UseSmileIDSampleFlowLaunchSnapshot snapshot,
 ) {
-  // Ahead of the payloads, because no form fixes a session that has run out.
+  // Ahead of the payloads: no form fixes an ended session.
   if (snapshot.sessionExpired) {
     return const UseSmileIDSampleFlowNeedsSession();
   }
@@ -52,7 +52,7 @@ UseSmileIDSampleFlowPreflight useSmileIDSamplePreflight(
   useSmileIDSampleApplying(builder, snapshot);
 
   // Payloads before the builder's verdict: a form can fix what was typed, not how this built it.
-  // The SDK's overload that takes a token payload is not public, so the bindings are subtracted instead.
+  // The SDK's token-aware overload is not public, so the bindings are subtracted.
   final UseSmileIDSampleUserDetailsRequirement requirement =
       useSmileIDSampleUserDetailsRequirement(snapshot.liveSession?.bindings);
   final List<ValidationState> payloadChecks = <ValidationState>[

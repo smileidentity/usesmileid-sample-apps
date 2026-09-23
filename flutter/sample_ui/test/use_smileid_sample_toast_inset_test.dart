@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 
-/// Every screen's toast clears the chrome at the bottom: the system bar under edge to edge, and the nav pill on a tab root.
+/// Every screen's toast clears the chrome at the bottom.
 void main() {
-  /// A 48 bottom inset, the height of a three-button Android navigation bar.
+  /// A three-button Android navigation bar.
   const double systemBar = 48;
   const Size screen = Size(393, 852);
 
@@ -70,7 +70,6 @@ void main() {
   testWidgets('the removal notice sits above the nav pill a tab root draws', (
     WidgetTester tester,
   ) async {
-    // What the shell publishes: the pill's measured height, system bar included.
     const double pill = 96 + systemBar;
     final Rect toast = await toastIn(
       tester,

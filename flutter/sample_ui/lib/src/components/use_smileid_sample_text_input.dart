@@ -117,7 +117,7 @@ class _UseSmileIDSampleTextInputState extends State<UseSmileIDSampleTextInput> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        // The whole bordered field carries the id, as Android tags the BasicTextField its decoration wraps.
+        // The whole field carries the id, as Android tags the BasicTextField.
         Semantics(
           identifier: widget.testId,
           container: true,

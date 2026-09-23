@@ -103,7 +103,6 @@ class UseSmileIDSampleProfilesScreen extends StatelessWidget {
         Positioned(
           left: SmileDimens.spacingMd,
           right: SmileDimens.spacingMd,
-          // Zero inside a host's SafeArea; the system bar's height in a host that has none.
           bottom: MediaQuery.paddingOf(context).bottom + SmileDimens.spacingLg,
           child: UseSmileIDSampleToast(
             message: '$createdNotice created',

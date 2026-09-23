@@ -7,7 +7,7 @@ import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
 import 'use_smileid_sample_glyphs.dart';
 
-/// The scanner's state over the viewfinder, in one pill; only a rejection offers an action.
+/// The scanner's state over the viewfinder.
 class UseSmileIDSampleScanStatus extends StatelessWidget {
   /// [onRetry] re-enables the scanner after a rejection.
   const UseSmileIDSampleScanStatus({
@@ -36,7 +36,7 @@ class UseSmileIDSampleScanStatus extends StatelessWidget {
     final String? detail = switch (state) {
       UseSmileIDSampleScanSearching() => null,
       UseSmileIDSampleScanFound() => 'Reading it now',
-      // The handle and the time left: never the token, which no surface here may show.
+      // Never the token.
       UseSmileIDSampleScanLinked(
         :final String handle,
         :final String remaining,

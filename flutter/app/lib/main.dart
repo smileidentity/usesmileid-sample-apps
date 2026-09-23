@@ -22,7 +22,7 @@ Future<void> main() async {
   final UseSmileIDSampleSettings stored = await settings.read();
   final UseSmileIDSampleSecureSessionRepository sessions =
       UseSmileIDSampleSecureSessionRepository();
-  // Before the first frame too, or a live session's card flashes in a frame late.
+  // Before the first frame, or the session card flashes in late.
   final UseSmileIDSampleSessionRecord session = await _readSession(sessions);
   final UseSmileIDSamplePreferencesJobsRepository jobs =
       await UseSmileIDSamplePreferencesJobsRepository.open();
@@ -44,7 +44,7 @@ Future<void> main() async {
       useSmileIDSampleLaunchArgsOverride(launch.args),
     ],
   );
-  // Built now, not by the first screen that reads it: a session past its deadline retires before any draws.
+  // Eager, so a lapsed session retires before any screen draws.
   container.read(useSmileIDSampleSessionProvider);
   // iOS's scene lifecycle launches at '/' and pushes the link after the first frame; Android never does.
   if (defaultTargetPlatform == TargetPlatform.iOS &&
@@ -69,7 +69,7 @@ Future<void> main() async {
   );
 }
 
-/// A Keychain or Keystore that refuses the read is no session, never a failed launch.
+/// A store that refuses the read yields no session, never a failed launch.
 Future<UseSmileIDSampleSessionRecord> _readSession(
   UseSmileIDSampleSecureSessionRepository sessions,
 ) async {

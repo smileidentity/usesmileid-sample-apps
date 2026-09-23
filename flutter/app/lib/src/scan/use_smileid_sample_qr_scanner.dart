@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-/// The shell's QR camera; it releases the camera when it leaves the tree, so the SDK gets it back.
+/// The shell's QR camera, released when it leaves the tree.
 class UseSmileIDSampleQrScanner extends StatefulWidget {
-  /// [enabled] is false while the screen shows what it just found, so frames are not read behind it.
+  /// [enabled] is false while the screen shows a result.
   const UseSmileIDSampleQrScanner({
     required this.onCode,
     required this.torchOn,
@@ -30,12 +30,12 @@ class UseSmileIDSampleQrScanner extends StatefulWidget {
 class _UseSmileIDSampleQrScannerState extends State<UseSmileIDSampleQrScanner> {
   late final MobileScannerController _controller = MobileScannerController(
     formats: const <BarcodeFormat>[BarcodeFormat.qrCode],
-    // Android's default is 640x480, at which a v3 token QR decodes only once it overflows the reticle.
+    // Android defaults to 640x480, too coarse for a dense token QR.
     cameraResolution: _analysisSize,
     torchEnabled: widget.torchOn,
   );
 
-  /// Keyed on the last value reported, so a retry re-reads the same QR without re-reporting it mid-result.
+  /// The last value reported, cleared on retry.
   String? _lastReported;
 
   @override
@@ -53,7 +53,7 @@ class _UseSmileIDSampleQrScannerState extends State<UseSmileIDSampleQrScanner> {
     try {
       await _controller.toggleTorch();
     } on Object {
-      // A lens with no torch; the control has nothing to switch.
+      // A lens with no torch.
     }
   }
 
@@ -81,11 +81,10 @@ class _UseSmileIDSampleQrScannerState extends State<UseSmileIDSampleQrScanner> {
   Widget build(BuildContext context) => MobileScanner(
     controller: _controller,
     onDetect: _detect,
-    // A denied permission renders nothing: the sheet's manual entry still links a token.
     errorBuilder: (BuildContext context, MobileScannerException error) =>
         const SizedBox.shrink(),
   );
 }
 
-/// Pinned, in the 16:9 the native app negotiates, and flipped by the plugin in portrait.
+/// The analysis resolution, pinned.
 const Size _analysisSize = Size(1920, 1080);

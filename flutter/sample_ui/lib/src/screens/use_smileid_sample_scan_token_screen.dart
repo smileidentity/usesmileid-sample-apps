@@ -18,7 +18,7 @@ import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
-/// The host's camera preview, handed whether to scan and the one handler every candidate goes through.
+/// The host's camera preview.
 typedef UseSmileIDSampleViewfinder =
     Widget Function(
       BuildContext context, {
@@ -26,7 +26,7 @@ typedef UseSmileIDSampleViewfinder =
       required ValueChanged<String> onCandidate,
     });
 
-/// Why the scanner opened, so the eight hosts cannot word it differently.
+/// Why the scanner opened.
 enum UseSmileIDSampleScanReason {
   /// The expiry gate sent a run here.
   sessionEnded('Token session ended. Scan to continue where you left off.');
@@ -37,9 +37,9 @@ enum UseSmileIDSampleScanReason {
   final String caption;
 }
 
-/// Scan token: from the camera, by hand, or simulated, a session is linked only after the token decodes.
+/// Scan token: links a session from the camera, by hand, or simulated.
 class UseSmileIDSampleScanTokenScreen extends StatefulWidget {
-  /// [viewfinder] absent (a golden, an SDK repo's sample) keeps the glyph in its place.
+  /// [viewfinder] absent keeps the glyph.
   const UseSmileIDSampleScanTokenScreen({
     required this.onBack,
     required this.onLink,
@@ -70,7 +70,7 @@ class UseSmileIDSampleScanTokenScreen extends StatefulWidget {
   /// The host's clipboard, null when it holds no text.
   final Future<String?> Function() onPaste;
 
-  /// Why the screen opened when something sent the user here; null when opened deliberately.
+  /// Why the screen opened; null when opened deliberately.
   final UseSmileIDSampleScanReason? reason;
 
   /// Whether the host's torch is on.
@@ -82,7 +82,7 @@ class UseSmileIDSampleScanTokenScreen extends StatefulWidget {
   /// The host's camera.
   final UseSmileIDSampleViewfinder? viewfinder;
 
-  /// A fixed clock for a golden; the wall clock otherwise.
+  /// A fixed clock for a golden.
   final int Function()? nowMillis;
 
   @override
@@ -92,7 +92,7 @@ class UseSmileIDSampleScanTokenScreen extends StatefulWidget {
 
 class _UseSmileIDSampleScanTokenScreenState
     extends State<UseSmileIDSampleScanTokenScreen> {
-  /// The typed token and the mint choices survive a rebuild, not process death, as a typed field does elsewhere.
+  /// Survives a rebuild, not process death.
   String _token = '';
   String? _rejection;
   UseSmileIDSampleSimulatedSpan _span =
@@ -103,7 +103,7 @@ class _UseSmileIDSampleScanTokenScreenState
       const UseSmileIDSampleSimulatedBindings();
   bool _expanded = false;
 
-  /// Not kept past this visit: a returning scanner starts searching again.
+  /// Not kept past this visit.
   UseSmileIDSampleScanState _scan = const UseSmileIDSampleScanSearching();
   Timer? _dwell;
 
@@ -116,7 +116,7 @@ class _UseSmileIDSampleScanTokenScreenState
   int _now() =>
       widget.nowMillis?.call() ?? DateTime.now().millisecondsSinceEpoch;
 
-  /// Scanned, pasted or typed, a candidate is judged here and nowhere else; decoding is not verification.
+  /// Judges every candidate, scanned, pasted or typed.
   void _judge(String candidate, {required bool fromField}) {
     final UseSmileIDSampleTokenDecode decoded =
         UseSmileIDSampleTokenDecoder.decode(candidate);
@@ -132,14 +132,14 @@ class _UseSmileIDSampleScanTokenScreenState
             remaining: useSmileIDSampleCountdown(session.remaining(_now())),
           );
         });
-        // Held long enough to be read: leaving on the decode's frame looked like nothing happening.
+        // Held long enough to read: leaving on the decode's frame looked like nothing happened.
         _dwell?.cancel();
         _dwell = Timer(_linkedDwell, () {
           if (mounted) {
             widget.onLink(session);
           }
         });
-      // A field's error sits under the field; a scanned code has no field, so the pill answers. Never both.
+      // A field's error sits under the field; a scanned code answers in the pill.
       case UseSmileIDSampleTokenRejected(:final String reason):
         unawaited(HapticFeedback.heavyImpact());
         setState(() {
@@ -156,7 +156,6 @@ class _UseSmileIDSampleScanTokenScreenState
     if (_scan is! UseSmileIDSampleScanSearching) {
       return;
     }
-    // One haptic per scan, played by the verdict: the siblings do not tick on the find as well.
     setState(() => _scan = const UseSmileIDSampleScanFound());
     _judge(candidate, fromField: false);
   }
@@ -166,7 +165,6 @@ class _UseSmileIDSampleScanTokenScreenState
     try {
       pasted = await widget.onPaste();
     } on Object {
-      // A clipboard the platform refuses to read is, to the person holding the phone, an empty one.
       pasted = null;
     }
     if (!mounted) {
@@ -246,7 +244,7 @@ class _UseSmileIDSampleScanTokenScreenState
     );
   }
 
-  /// Centred and scrolling in one: at 2x the fixed glyph's copy no longer fits above the sheet.
+  /// Centred and scrolling, so the copy fits at 2x.
   Widget _placeholder(
     UseSmileIDSampleColors colors,
     String caption,
@@ -281,7 +279,6 @@ class _UseSmileIDSampleScanTokenScreenState
     BoxConstraints constraints,
   ) {
     final bool searching = _scan is UseSmileIDSampleScanSearching;
-    // Sized to the space, not the design's fixed 279: the sheet takes the lower half here.
     final double reticle =
         _reticleWidth * constraints.maxWidth <
             _reticleHeight * constraints.maxHeight
@@ -313,7 +310,7 @@ class _UseSmileIDSampleScanTokenScreenState
                 ),
               ),
               const SizedBox(height: SmileDimens.spacingMd),
-              // Straight on the camera: a container here was a white slab over the preview.
+              // No container: one was a white slab over the preview.
               if (searching) ...<Widget>[
                 _copy(
                   _scanTitle,
@@ -331,7 +328,6 @@ class _UseSmileIDSampleScanTokenScreenState
               ] else
                 UseSmileIDSampleScanStatus(
                   state: _scan,
-                  // Re-enables the scanner, so the same QR reads again.
                   onRetry: () => setState(() {
                     _rejection = null;
                     _scan = const UseSmileIDSampleScanSearching();
@@ -362,10 +358,10 @@ const String _scanTitle = 'Point at a Smile token QR';
 const String _scanCaption =
     'Line up the code inside the frame to link this device to a verification session.';
 
-/// Long enough to read "Session linked" and its handle, short enough not to feel like a wait.
+/// How long "Session linked" stays readable.
 const Duration _linkedDwell = Duration(milliseconds: 900);
 
-/// The design's own reticle opacity, which keeps it from competing with the preview.
+/// The design's reticle opacity at rest.
 const double _reticleIdleAlpha = 0.45;
 const double _reticleWidth = 0.72;
 const double _reticleHeight = 0.52;

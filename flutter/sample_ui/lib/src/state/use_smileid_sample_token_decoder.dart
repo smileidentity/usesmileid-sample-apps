@@ -7,10 +7,10 @@ import '../model/use_smileid_sample_product.dart';
 import 'use_smileid_sample_digest.dart';
 import 'use_smileid_sample_token_session.dart';
 
-/// What a v3 token binds; every PII value is a vault reference, so only presence is read for those.
+/// What a v3 token binds; PII fields are read for presence only.
 @immutable
 class UseSmileIDSampleTokenBindings {
-  /// Everything unbound, which is what a token with no `payload` claim carries.
+  /// Everything unbound.
   const UseSmileIDSampleTokenBindings({
     this.givenNames = false,
     this.lastName = false,
@@ -44,13 +44,13 @@ class UseSmileIDSampleTokenBindings {
   /// The plaintext ID type.
   final String? idType;
 
-  /// The vault reference standing in for the ID number, the only form a token carries it in.
+  /// The vault reference standing in for the ID number.
   final String? idNumberReference;
 
-  /// A webhook URL or a `callback_` id; the server injects it over whatever the body carried.
+  /// A webhook URL or a `callback_` id.
   final String? callbackUrl;
 
-  /// Whether the token carries every ID parameter [product] submits, stricter than Document Verification's validator.
+  /// Whether the token carries every ID parameter [product] submits.
   bool bindsIdDetails(UseSmileIDSampleProduct product) => switch (product) {
     UseSmileIDSampleProduct.enhancedKyc ||
     UseSmileIDSampleProduct.biometricKyc =>
@@ -88,7 +88,7 @@ class UseSmileIDSampleTokenBindings {
     callbackUrl,
   );
 
-  /// Presence only: every one of these is a claim value, and one is a vault reference.
+  /// Presence only, never claim values.
   @override
   String toString() =>
       'UseSmileIDSampleTokenBindings(givenNames: $givenNames, lastName: $lastName, '
@@ -99,10 +99,10 @@ class UseSmileIDSampleTokenBindings {
 
 bool _present(String? value) => value != null && value.trim().isNotEmpty;
 
-/// The consent record bound into the token; `granted` is true or absent, as the SDK reads `false` as no binding.
+/// The consent record bound into the token.
 @immutable
 class UseSmileIDSampleTokenConsent {
-  /// All four subfields optional, so an incomplete binding can be represented and reported.
+  /// All four subfields optional, so a partial binding can be reported.
   const UseSmileIDSampleTokenConsent({
     this.granted,
     this.grantedAt,
@@ -122,7 +122,7 @@ class UseSmileIDSampleTokenConsent {
   /// The notice's privacy policy.
   final String? noticePrivacyPolicyUrl;
 
-  /// True when the token alone satisfies consent, which is when the SDK drops its consent screen.
+  /// True when the token alone satisfies consent.
   bool get isComplete =>
       granted == true &&
       _present(grantedAt) &&
@@ -147,7 +147,7 @@ sealed class UseSmileIDSampleTokenDecode {
   const UseSmileIDSampleTokenDecode();
 }
 
-/// Decoded only, never verified: the sample holds no signing key.
+/// Decoded only, never verified.
 class UseSmileIDSampleTokenDecoded extends UseSmileIDSampleTokenDecode {
   /// [session] is what the claims describe.
   const UseSmileIDSampleTokenDecoded(this.session);
@@ -156,7 +156,7 @@ class UseSmileIDSampleTokenDecoded extends UseSmileIDSampleTokenDecode {
   final UseSmileIDSampleTokenSession session;
 }
 
-/// Names the claim or structure that failed; never a value, bar the `api_url` host, which is public.
+/// Why a token was refused, naming a claim, never a value.
 class UseSmileIDSampleTokenRejected extends UseSmileIDSampleTokenDecode {
   /// [reason] is shown to the person who entered the token.
   const UseSmileIDSampleTokenRejected(this.reason);
@@ -165,9 +165,9 @@ class UseSmileIDSampleTokenRejected extends UseSmileIDSampleTokenDecode {
   final String reason;
 }
 
-/// Reads the claims a session is made of: a documented duplicate of the SDK's binding rules, whose payload accessor is internal.
+/// Reads the claims a session is made of.
 abstract final class UseSmileIDSampleTokenDecoder {
-  /// Decoded when the segments, the iat/exp pair and the api_url all read; otherwise the first failure.
+  /// The session, or the first failure.
   static UseSmileIDSampleTokenDecode decode(String token) {
     final String trimmed = token.trim();
     final List<String> segments = trimmed.split('.');
@@ -196,7 +196,7 @@ abstract final class UseSmileIDSampleTokenDecoder {
     if (expires <= issuedAt) {
       return _reject("The token's exp claim is not after its iat claim.");
     }
-    // Refused rather than defaulted: a silent sandbox fallback sends a production token to the wrong host.
+    // Refused, not defaulted: a sandbox fallback misroutes a production token.
     final String? apiUrl = _string(parsed['api_url']);
     if (apiUrl == null || apiUrl.trim().isEmpty) {
       return _reject(
@@ -231,7 +231,7 @@ abstract final class UseSmileIDSampleTokenDecoder {
     );
   }
 
-  /// The session a token describes, or null: a stored token that no longer decodes is no session.
+  /// The session a token describes, or null.
   static UseSmileIDSampleTokenSession? session(String token) => switch (decode(
     token,
   )) {
@@ -240,28 +240,27 @@ abstract final class UseSmileIDSampleTokenDecoder {
     UseSmileIDSampleTokenRejected() => null,
   };
 
-  /// A display handle, never a prefix of the credential: the token's own `jti`, else a digest of it.
+  /// The token's `jti`, else a digest; never a prefix.
   static String _handle(String token, String? jti) =>
       jti != null && jti.trim().isNotEmpty
       ? jti
       : useSmileIDSampleDigest(token);
 
-  static UseSmileIDSampleTokenBindings _bindings(
-    Map<String, Object?> json,
-  ) => UseSmileIDSampleTokenBindings(
-    givenNames: _binds(json['given_names']),
-    lastName: _binds(json['last_name']),
-    email: _binds(json['email']),
-    phoneNumber: _binds(json['phone_number']),
-    consent: _consent(json['consent']),
-    // Non-blank, unlike the presence flags: these are read as values, and a blank one would win.
-    country: _value(json['country']),
-    idType: _value(json['id_type']),
-    idNumberReference: _value(json['id_number']),
-    callbackUrl: _value(json['callback_url']),
-  );
+  static UseSmileIDSampleTokenBindings _bindings(Map<String, Object?> json) =>
+      UseSmileIDSampleTokenBindings(
+        givenNames: _binds(json['given_names']),
+        lastName: _binds(json['last_name']),
+        email: _binds(json['email']),
+        phoneNumber: _binds(json['phone_number']),
+        consent: _consent(json['consent']),
+        // Non-blank, unlike the presence flags: a blank value would win.
+        country: _value(json['country']),
+        idType: _value(json['id_type']),
+        idNumberReference: _value(json['id_number']),
+        callbackUrl: _value(json['callback_url']),
+      );
 
-  /// An empty consent object is no consent, and a non-boolean `granted` never counts toward one.
+  /// An empty consent object is no consent.
   static UseSmileIDSampleTokenConsent? _consent(Object? claim) {
     if (claim is! Map<String, Object?> || claim.isEmpty) {
       return null;
@@ -274,7 +273,7 @@ abstract final class UseSmileIDSampleTokenDecoder {
     );
   }
 
-  /// A field is token-bound iff the claim carries it as a non-empty string.
+  /// Bound iff a non-empty string.
   static bool _binds(Object? claim) => claim is String && claim.isNotEmpty;
 
   static String? _string(Object? claim) => claim is String ? claim : null;
@@ -282,11 +281,11 @@ abstract final class UseSmileIDSampleTokenDecoder {
   static String? _value(Object? claim) =>
       claim is String && claim.trim().isNotEmpty ? claim : null;
 
-  /// RFC 7519 allows a non-integer NumericDate, so it truncates; a string is never a time.
+  /// Epoch seconds, truncated; a string is never a time.
   static int? _seconds(Object? claim) =>
       claim is num && claim.isFinite ? claim.truncate() : null;
 
-  /// Padding-optional: JWT segments are minted without it, and a pasted one may carry it.
+  /// Decodes a segment, padded or not.
   static String? _decodeSegment(String segment) {
     try {
       return utf8.decode(base64Url.decode(base64Url.normalize(segment)));
@@ -295,7 +294,7 @@ abstract final class UseSmileIDSampleTokenDecoder {
     }
   }
 
-  /// Null on anything malformed or nested past the cap, as untrusted input from a clipboard or a QR.
+  /// Null on malformed JSON or nesting past the cap.
   static Object? _parse(String text) {
     try {
       final Object? value = jsonDecode(text);

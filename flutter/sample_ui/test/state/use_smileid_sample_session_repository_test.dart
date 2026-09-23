@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 
-/// The one record: a live token or its ended marker, never both, under the keys every platform reads.
+/// The session record's keys and halves.
 void main() {
   test('a fresh store holds neither half', () async {
     final UseSmileIDSampleSessionRecord record =

@@ -4,11 +4,11 @@ import 'package:sample_ui/sample_ui.dart';
 
 import 'golden_harness.dart';
 
-/// Scan token without a camera, as a golden and an SDK repo's sample both render it, plus the scanner's pills.
+/// Scan token without a camera, and the scanner's pills.
 void main() {
   setUpAll(loadSampleFonts);
 
-  // Ahead of the goldens: a baseline that fails to match leaves a debug flag set for the next test.
+  // Ahead of the goldens: a failed match leaves a debug flag set for the next test.
   testWidgets('scan token survives max text scale', (
     WidgetTester tester,
   ) async {
@@ -17,7 +17,6 @@ void main() {
       _screen(),
       ownsScrolling: true,
       hostHeight: goldenScreenHeight * 2,
-      // The sheet's own recorded question: a single-line field cannot wrap its placeholder.
       knownEllipsised: const <String>{'Or enter token manually'},
     );
   });
@@ -38,7 +37,7 @@ void main() {
     );
   });
 
-  /// Sent here by the expiry gate: the caption says why, and nothing else moves.
+  /// Sent here by the expiry gate.
   testWidgets('scan token redirected', (WidgetTester tester) async {
     await goldens(
       tester,
@@ -63,7 +62,7 @@ Widget _screen({UseSmileIDSampleScanReason? reason}) =>
       onPaste: () async => null,
     );
 
-/// Every state but searching, which draws no pill: found, linked and a rejection with its retry.
+/// Every pill state: found, linked and rejected.
 Widget _statuses() => Column(
   mainAxisSize: MainAxisSize.min,
   children: <Widget>[

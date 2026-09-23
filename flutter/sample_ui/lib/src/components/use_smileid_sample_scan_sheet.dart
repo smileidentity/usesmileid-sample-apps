@@ -59,9 +59,9 @@ class UseSmileIDSampleScanSheetState {
       Object.hash(token, rejection, span, environment, bindings, expanded);
 }
 
-/// The sheet under the scanner: manual entry, and a simulated scan that mints its own fixture token.
+/// The sheet under the scanner: manual entry and a simulated scan.
 class UseSmileIDSampleScanSheet extends StatelessWidget {
-  /// Link token appears only once there is something to link, so the default sheet keeps the design's rows.
+  /// Link token appears only once there is something to link.
   const UseSmileIDSampleScanSheet({
     required this.state,
     required this.onTokenChanged,
@@ -145,7 +145,6 @@ class UseSmileIDSampleScanSheet extends StatelessWidget {
               UseSmileIDSampleButton(text: 'Link token', onPressed: onLink),
             ],
             const SizedBox(height: SmileDimens.spacingSm),
-            // Collapsed by default: this is a scanner, and the mint controls are a probe affordance.
             Semantics(
               button: true,
               expanded: state.expanded,
@@ -187,7 +186,6 @@ class UseSmileIDSampleScanSheet extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: SmileDimens.spacingSm),
-              // Minting is where a run picks an environment, because no app-side control is left.
               _ChipRow(
                 children: <Widget>[
                   for (final UseSmileIDSampleEnvironment environment
@@ -253,7 +251,7 @@ class _ChipRow extends StatelessWidget {
   );
 }
 
-/// The filter chip's shape without its count, because what a simulated scan mints has no count.
+/// A selectable chip with no count.
 class _SheetChip extends StatelessWidget {
   const _SheetChip({
     required this.label,
@@ -350,7 +348,7 @@ class _SheetAction extends StatelessWidget {
     child: GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      // Laid out at the tap target, as Compose's minimumInteractiveComponentSize is: it sets the field's height.
+      // At the tap target, as Compose's minimum size: it sets the field's height.
       child: ConstrainedBox(
         constraints: BoxConstraints(
           minWidth: SmileDimens.sizeControlMd,

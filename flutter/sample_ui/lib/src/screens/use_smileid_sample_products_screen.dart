@@ -39,7 +39,7 @@ class UseSmileIDSampleProductsState {
   /// The countdown, already formatted as m:ss.
   final String? sessionRemaining;
 
-  /// A countdown the host ticks itself, in place of [sessionRemaining], so the grid does not rebuild every second.
+  /// A host-ticked countdown in place of [sessionRemaining].
   final Widget? sessionCountdown;
 
   /// Whether the session has expired, which replaces the card with the neutral banner.

@@ -22,11 +22,11 @@ class UseSmileIDSampleUserDetailsRequirement {
   /// Nothing left to ask, so the form has no reason to appear.
   bool get isSatisfied => !firstName && !lastName && !contact;
 
-  /// Whether [field] is one the token already supplied, which is why it renders as provided.
+  /// Whether the token supplied [field].
   bool supplies(UseSmileIDSampleUserField field) => switch (field) {
     UseSmileIDSampleUserField.firstName => !firstName,
     UseSmileIDSampleUserField.lastName => !lastName,
-    // Contact is "one of", so a bound email leaves phone askable: only the requirement lifts.
+    // Contact is one of two, so neither row is supplied on its own.
     UseSmileIDSampleUserField.email || UseSmileIDSampleUserField.phone => false,
   };
 
@@ -74,7 +74,7 @@ class UseSmileIDSampleUserDetailsRequirement {
   }
 }
 
-/// The requirement a token leaves behind: the SDK's union rule, field for field.
+/// The requirement a token leaves behind.
 UseSmileIDSampleUserDetailsRequirement useSmileIDSampleUserDetailsRequirement(
   UseSmileIDSampleTokenBindings? bindings,
 ) => UseSmileIDSampleUserDetailsRequirement(
@@ -83,7 +83,7 @@ UseSmileIDSampleUserDetailsRequirement useSmileIDSampleUserDetailsRequirement(
   contact: !(bindings?.email == true || bindings?.phoneNumber == true),
 );
 
-/// A duplicate of the SDK's internal `bindsRequiredUserDetails`: both names plus one contact field.
+/// Mirrors the SDK's internal `bindsRequiredUserDetails`.
 extension UseSmileIDSampleRequiredUserDetails on UseSmileIDSampleTokenBindings {
   /// Whether the token binds enough for the SDK to stop requiring `userDetails`.
   bool get bindsRequiredUserDetails =>

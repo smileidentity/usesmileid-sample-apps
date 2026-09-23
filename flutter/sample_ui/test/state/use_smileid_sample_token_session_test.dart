@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 
-/// The countdown and the ring over the Portal's three spans, cheaper than watching a device for eight hours.
+/// The countdown and the ring over the Portal's three spans.
 void main() {
   test("the ring measures the token's own span, not a fixed five minutes", () {
     for (final Duration span in _spans) {

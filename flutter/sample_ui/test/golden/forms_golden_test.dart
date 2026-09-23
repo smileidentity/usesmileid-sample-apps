@@ -34,7 +34,7 @@ void main() {
     );
   });
 
-  /// Both names bound by a token: those rows read as provided and cannot be edited.
+  /// Both names bound by a token.
   testWidgets('user details with names bound', (WidgetTester tester) async {
     await _screenGoldens(
       tester,

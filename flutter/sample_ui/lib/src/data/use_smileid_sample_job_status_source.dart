@@ -94,7 +94,7 @@ abstract interface class UseSmileIDSampleJobStatusSource {
   });
 }
 
-/// What each outcome says on screen, in Android's and iOS's words: a flow keys off these strings.
+/// What each outcome says on screen, in Android's words.
 String useSmileIDSampleRefreshLabel(
   UseSmileIDSampleStatusRefresh outcome,
 ) => switch (outcome) {

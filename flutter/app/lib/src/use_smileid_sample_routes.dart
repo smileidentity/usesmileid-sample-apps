@@ -39,7 +39,7 @@ abstract final class UseSmileIDSampleRoutes {
   /// The scenario drawer, a LAYER over settings rather than a page of its own.
   static const String scenarioDrawer = '/debug/scenarios';
 
-  /// The token scanner, above the shell: a push from any tab or form, never a tab of its own.
+  /// The token scanner, pushed above the shell.
   static const String scanToken = '/token/scan';
 
   /// The component gallery, a dev surface that is deliberately absent from `spec/routes.json`.
@@ -225,7 +225,6 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
           onLeave: () => context.go(UseSmileIDSampleRoutes.products),
           onNeedsDetails: () =>
               context.go(UseSmileIDSampleRoutes.consentDetailsForm(productId)),
-          // Back to the scanner, not to a form: the run needs a token, and no form holds one.
           onNeedsSession: () => context.go(UseSmileIDSampleRoutes.scanToken),
           // `go`, not a pop: the wizard beneath must not be reachable back INTO from the result.
           onResult: (String jobId) =>

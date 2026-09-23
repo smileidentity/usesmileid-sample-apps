@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-/// How long a simulated scan's token lasts: the Portal's own allow-list, plus [ended] to reach the expiry gate without waiting.
+/// How long a simulated scan's token lasts.
 enum UseSmileIDSampleSimulatedSpan {
   /// Fifteen minutes.
   fifteenMinutes('15m', Duration(minutes: 15)),
@@ -30,7 +30,7 @@ enum UseSmileIDSampleSimulatedSpan {
   final bool inPast;
 }
 
-/// What a simulated scan's token binds; both off by default, so a simulated session never silently changes the screen set.
+/// What a simulated scan's token binds; both off by default.
 @immutable
 class UseSmileIDSampleSimulatedBindings {
   /// Nothing bound.
@@ -42,7 +42,7 @@ class UseSmileIDSampleSimulatedBindings {
   /// A complete consent record, which removes the SDK's consent screen.
   final bool consent;
 
-  /// Every user detail plus the ID parameters, which removes both host forms.
+  /// Every user detail plus the ID parameters.
   final bool userDetails;
 
   /// Whether a `payload` claim is minted at all.
@@ -67,7 +67,7 @@ class UseSmileIDSampleSimulatedBindings {
   int get hashCode => Object.hash(consent, userDetails);
 }
 
-/// What the scanner is doing, said out loud: found before linked, and a rejection that names itself and can be retried.
+/// What the scanner is doing, as shown on screen.
 sealed class UseSmileIDSampleScanState {
   const UseSmileIDSampleScanState();
 }
@@ -84,9 +84,9 @@ class UseSmileIDSampleScanFound extends UseSmileIDSampleScanState {
   const UseSmileIDSampleScanFound();
 }
 
-/// Decoded, and held on screen long enough to be read before the screen leaves.
+/// Decoded, and shown before the screen leaves.
 class UseSmileIDSampleScanLinked extends UseSmileIDSampleScanState {
-  /// [handle] and [remaining] only; never the token.
+  /// Handle and countdown only, never the token.
   const UseSmileIDSampleScanLinked({
     required this.handle,
     required this.remaining,
@@ -99,7 +99,7 @@ class UseSmileIDSampleScanLinked extends UseSmileIDSampleScanState {
   final String remaining;
 }
 
-/// Decoded into something that is not a session; the reason names a claim, never a value.
+/// Decoded into something that is not a session.
 class UseSmileIDSampleScanRejected extends UseSmileIDSampleScanState {
   /// [reason] is the decoder's.
   const UseSmileIDSampleScanRejected(this.reason);

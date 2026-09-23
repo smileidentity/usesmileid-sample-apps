@@ -5,13 +5,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:usesmileid_sample_flutter/src/status/use_smileid_sample_http_job_status_source.dart';
 
-/// The status fetch gives up on a server that never answers, so a refresh cannot hang the page.
+/// The status fetch under a server that never answers.
 void main() {
   late ServerSocket silent;
   final List<Socket> held = <Socket>[];
 
   setUp(() async {
-    // Accepts every connection and says nothing, as a stalled network does.
     silent = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
     silent.listen(held.add);
   });

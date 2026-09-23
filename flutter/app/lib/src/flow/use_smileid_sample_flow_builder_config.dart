@@ -21,7 +21,6 @@ void useSmileIDSampleApplying(
     snapshot.liveSession?.bindings,
     snapshot.product,
   );
-  // Omitted when the token binds what the SDK requires: the forms were skipped, so these would be blanks.
   builder.userDetails = plan.passUserDetails
       ? UserDetails(
           givenNames: snapshot.userDetails.firstName,
@@ -66,7 +65,7 @@ void useSmileIDSampleApplying(
             nowMillis: DateTime.now().millisecondsSinceEpoch,
           );
       config.onTokenExpired = (String previous) async {
-        // The Portal mints by hand and nothing here may call it, so the auth failure must surface.
+        // No refresh endpoint exists for a scanned token, so its auth failure must surface.
         if (scanned != null) {
           return previous;
         }
@@ -84,9 +83,8 @@ void useSmileIDSampleApplying(
         logging.level = LogLevel.headers;
       });
       config.partnerConfig((PartnerConfigBuilder partner) {
-        // The token wins over the local profile: a signed token under a different partner id is a 401.
+        // A signed token under a different partner id is a 401.
         partner.partnerId = scanned?.partnerId ?? snapshot.partnerId;
-        // Dropped under a live session, as the partner id is: the token's partner owns the job.
         partner.callbackUrl = scanned == null ? snapshot.callbackUrl : '';
         partner.useSandbox = snapshot.sandbox;
       });
@@ -117,11 +115,10 @@ void _applyIdParams(
   UseSmileIDSampleFlowLaunchSnapshot snapshot,
 ) {
   final UseSmileIDSampleIdDetails details = snapshot.idDetails;
-  // Per field, the token beats the form: the server overwrites these from its claims regardless.
+  // The server overwrites these from the token's claims regardless.
   final UseSmileIDSampleTokenBindings? bound = snapshot.liveSession?.bindings;
   final String country = bound?.country ?? details.country?.code ?? '';
   final String idType = bound?.idType ?? details.idType?.id ?? '';
-  // The SDK asks only that this be non-blank, and the server substitutes the same claim anyway.
   final String idNumber = bound?.idNumberReference ?? details.idNumber;
   switch (snapshot.product) {
     case UseSmileIDSampleProduct.biometricKyc:

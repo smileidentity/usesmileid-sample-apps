@@ -30,7 +30,7 @@ class UseSmileIDSampleEndedSession {
   int get hashCode => Object.hash(id, endedAtMillis);
 }
 
-/// At most one half is ever set: retiring replaces the token with its marker in a single write.
+/// At most one half is ever set.
 @immutable
 class UseSmileIDSampleSessionRecord {
   /// Neither half, which is a fresh install.
@@ -42,14 +42,14 @@ class UseSmileIDSampleSessionRecord {
   /// The session that ran out, once its token has been deleted.
   final UseSmileIDSampleEndedSession? ended;
 
-  /// The Android store's three keys, so a record reads the same on every platform.
+  /// Encodes under the Android store's keys.
   String encode() => jsonEncode(<String, Object?>{
     if (live != null) _token: live!.token,
     if (ended != null) _endedId: ended!.id,
     if (ended != null) _endedAt: ended!.endedAtMillis,
   });
 
-  /// A record that fails to read is no record; a stored token that no longer decodes is no session.
+  /// Decodes a stored record; an unreadable one is no record.
   static UseSmileIDSampleSessionRecord decode(String? stored) {
     if (stored == null) {
       return const UseSmileIDSampleSessionRecord();
@@ -93,26 +93,26 @@ class UseSmileIDSampleSessionRecord {
   static const String _endedAt = 'ended_session_at';
 }
 
-/// Where the token session is kept: a credential, so never beside the switches.
+/// Where the token session is kept, apart from the switches.
 abstract interface class UseSmileIDSampleSessionRepository {
   /// Both halves from one read.
   Future<UseSmileIDSampleSessionRecord> read();
 
-  /// Takes the session rather than the raw token, so only a decoded one can be linked; clears any ended marker.
+  /// Links a decoded session, clearing any ended marker.
   Future<UseSmileIDSampleSessionRecord> link(
     UseSmileIDSampleTokenSession session,
   );
 
-  /// Deletes the credential at its deadline, keeping only that the session ended.
+  /// Replaces the token with its ended marker.
   Future<UseSmileIDSampleSessionRecord> retire(
     UseSmileIDSampleTokenSession session,
   );
 
-  /// Sign out: no ended marker, which would send the next run to the scanner.
+  /// Sign out: clears the session with no ended marker.
   Future<UseSmileIDSampleSessionRecord> clear();
 }
 
-/// The one record's bytes, written whole: a secure store in an app, memory in a test.
+/// Stores the record whole: a secure store in an app, memory in a test.
 abstract class UseSmileIDSampleRecordSessionRepository
     implements UseSmileIDSampleSessionRepository {
   /// Reads the stored record, null when there is none.
