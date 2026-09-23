@@ -9,18 +9,22 @@ import '../use_smileid_sample_test_ids.dart';
 
 /// The active token session and its m:ss countdown.
 class UseSmileIDSampleSessionCard extends StatelessWidget {
-  /// Takes the formatted countdown rather than a duration, so no component holds a clock.
+  /// Takes the formatted countdown, or a [countdown] widget the host ticks on its own, so no component holds a clock.
   const UseSmileIDSampleSessionCard({
     required this.sessionId,
-    required this.remaining,
+    this.remaining,
+    this.countdown,
     super.key,
-  });
+  }) : assert(remaining != null || countdown != null);
 
   /// The linked session's id.
   final String sessionId;
 
   /// The countdown, already formatted as m:ss.
-  final String remaining;
+  final String? remaining;
+
+  /// Stands in for [remaining] when only the countdown should rebuild on the tick.
+  final Widget? countdown;
 
   @override
   Widget build(BuildContext context) {
@@ -62,21 +66,36 @@ class UseSmileIDSampleSessionCard extends StatelessWidget {
             ),
           ],
         ),
-        trail: Semantics(
-          identifier: UseSmileIDSampleTestIds.sessionCountdown,
-          child: Text(
-            remaining,
-            // The one value on this card that must stay whole; the text beside it yields.
-            softWrap: false,
-            style: UseSmileIDSampleType.textStyleHeadingCard.copyWith(
-              fontSize: _countdownSize,
-              color: ink,
-            ),
-          ),
-        ),
+        trail:
+            countdown ??
+            UseSmileIDSampleSessionCountdown(remaining: remaining!),
       ),
     );
   }
+}
+
+/// The card's countdown on its own, so a host can rebuild it on the tick without rebuilding the card.
+class UseSmileIDSampleSessionCountdown extends StatelessWidget {
+  /// [remaining] arrives formatted.
+  const UseSmileIDSampleSessionCountdown({required this.remaining, super.key});
+
+  /// The countdown, already formatted as m:ss.
+  final String remaining;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    identifier: UseSmileIDSampleTestIds.sessionCountdown,
+    child: Text(
+      remaining,
+      // The one value on this card that must stay whole; the text beside it yields.
+      softWrap: false,
+      style: UseSmileIDSampleType.textStyleHeadingCard.copyWith(
+        fontSize: _countdownSize,
+        // The gradient is scheme-independent, so its ink is too.
+        color: SmileColorLight.colorTextInverse,
+      ),
+    ),
+  );
 }
 
 /// Replaces the session card on expiry: a neutral card, not a warning-accented one.

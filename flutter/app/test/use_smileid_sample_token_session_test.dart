@@ -449,6 +449,7 @@ void main() {
       UseSmileIDSampleSessionRecord stored =
           const UseSmileIDSampleSessionRecord(),
       String? at,
+      int Function()? clock,
     }) async {
       final GoRouter router = useSmileIDSampleRouter(initialLocation: at);
       // Owned by the tree, so its timers go when the tree does.
@@ -459,6 +460,8 @@ void main() {
               UseSmileIDSampleMemorySessionRepository(stored),
             ),
             useSmileIDSampleStoredSessionProvider.overrideWithValue(stored),
+            if (clock != null)
+              useSmileIDSampleWallClockProvider.overrideWithValue(clock),
           ],
           child: MaterialApp.router(
             theme: UseSmileIDSampleTheme.light(),
@@ -524,6 +527,64 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(find.text('Ask permission before KYC checks'), findsOne);
+      },
+    );
+
+    testWidgets(
+      'only the countdown and the ring follow the clock, not the grid or the shell',
+      (WidgetTester tester) async {
+        int now = _now;
+        await pump(
+          tester,
+          stored: UseSmileIDSampleSessionRecord(live: _mint()),
+          clock: () => now,
+        );
+        String countdown() => tester
+            .widget<Text>(
+              find.descendant(
+                of: find.bySemanticsIdentifier(
+                  UseSmileIDSampleTestIds.sessionCountdown,
+                ),
+                matching: find.byType(Text),
+              ),
+            )
+            .data!;
+        final Widget grid = tester.widget(
+          find.byType(UseSmileIDSampleProductsScreen),
+        );
+        final String before = countdown();
+        Widget shellScaffold() => tester.widget(
+          find
+              .ancestor(
+                of: find.byType(UseSmileIDSampleNavBar),
+                matching: find.byType(Scaffold),
+              )
+              .first,
+        );
+        final Widget shell = shellScaffold();
+        double ring() => tester
+            .widget<UseSmileIDSampleNavBar>(find.byType(UseSmileIDSampleNavBar))
+            .sessionProgress!;
+        final double ringBefore = ring();
+
+        now += 2000;
+        await tester.pump(const Duration(seconds: 2));
+
+        expect(countdown(), isNot(before), reason: 'the countdown stopped');
+        expect(
+          identical(
+            tester.widget(find.byType(UseSmileIDSampleProductsScreen)),
+            grid,
+          ),
+          isTrue,
+          reason: 'the products screen was rebuilt by the tick',
+        );
+        expect(ring(), lessThan(ringBefore), reason: 'the ring stopped');
+        expect(
+          identical(shellScaffold(), shell),
+          isTrue,
+          reason: 'the shell was rebuilt by the tick',
+        );
       },
     );
 

@@ -82,14 +82,21 @@ class UseSmileIDSampleShell extends ConsumerWidget {
     if (!showsNavBar) {
       return null;
     }
-    final UseSmileIDSampleTokenSession? live = ref
-        .watch(useSmileIDSampleSessionProvider)
-        .live;
-    return UseSmileIDSampleNavBar(
-      selected: UseSmileIDSampleNavItem.values[shell.currentIndex],
-      onSelect: (UseSmileIDSampleNavItem item) => _select(item.index),
-      onTokenTap: () => context.push(UseSmileIDSampleRoutes.scanToken),
-      sessionProgress: live?.progress(ref.watch(useSmileIDSampleClockProvider)),
+    // Its own Consumer, so the ring's tick rebuilds the bar and not the shell around it.
+    return Consumer(
+      builder: (BuildContext context, WidgetRef ref, Widget? _) {
+        final UseSmileIDSampleTokenSession? live = ref
+            .watch(useSmileIDSampleSessionProvider)
+            .live;
+        return UseSmileIDSampleNavBar(
+          selected: UseSmileIDSampleNavItem.values[shell.currentIndex],
+          onSelect: (UseSmileIDSampleNavItem item) => _select(item.index),
+          onTokenTap: () => context.push(UseSmileIDSampleRoutes.scanToken),
+          sessionProgress: live?.progress(
+            ref.watch(useSmileIDSampleClockProvider),
+          ),
+        );
+      },
     );
   }
 

@@ -90,9 +90,12 @@ class _UseSmileIDSampleProductsTabState
     final UseSmileIDSampleSessionRecord session = ref.watch(
       useSmileIDSampleSessionProvider,
     );
-    final int now = ref.watch(useSmileIDSampleClockProvider);
+    // Read, not watched: the deadline lands as a retirement, which the session watch above sees.
+    final bool ended = useSmileIDSampleSessionEnded(
+      session,
+      ref.read(useSmileIDSampleWallClockProvider)(),
+    );
     final UseSmileIDSampleTokenSession? live = session.live;
-    final bool ended = useSmileIDSampleSessionEnded(session, now);
     return UseSmileIDSampleProductsScreen(
       state: UseSmileIDSampleProductsState(
         initials: profiles.active.initials,
@@ -100,9 +103,19 @@ class _UseSmileIDSampleProductsTabState
         // showing the same profile has to agree on it.
         avatarColor: avatarColorForProfile(profiles.activeIndex),
         sessionId: ended ? null : live?.id,
-        sessionRemaining: ended || live == null
+        // Only this rebuilds on the tick, so the grid is not rebuilt every second.
+        sessionCountdown: ended || live == null
             ? null
-            : useSmileIDSampleCountdown(live.remaining(now)),
+            : Consumer(
+                builder: (BuildContext context, WidgetRef ref, Widget? _) =>
+                    UseSmileIDSampleSessionCountdown(
+                      remaining: useSmileIDSampleCountdown(
+                        live.remaining(
+                          ref.watch(useSmileIDSampleClockProvider),
+                        ),
+                      ),
+                    ),
+              ),
         sessionEnded: ended,
       ),
       onProductTap: (UseSmileIDSampleProduct product) => context.push(
