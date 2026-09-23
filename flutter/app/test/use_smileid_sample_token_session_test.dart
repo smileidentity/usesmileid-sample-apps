@@ -214,9 +214,14 @@ void main() {
           final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
           useSmileIDSampleApplying(builder, snapshot);
           expect(builder.userDetails, isNull, reason: product.id);
-          // `validate()` is weaker than `build()`, whose result type is unexported — hence the name read.
+          expect(
+            builder.validate(),
+            isA<ValidationStateValid>(),
+            reason: product.id,
+          );
+          // `build()` is stricter than `validate()`, and its result type is unexported, so only its name is readable.
           // ignore: invalid_use_of_internal_member
-          final dynamic result = builder.build();
+          final Object? result = builder.build();
           expect(
             result.runtimeType.toString(),
             contains('Success'),
