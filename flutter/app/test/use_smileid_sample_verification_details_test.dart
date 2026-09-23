@@ -212,10 +212,7 @@ void main() {
 
     await pull(tester);
 
-    expect(
-      find.text('Never submitted, so there is nothing to check'),
-      findsOne,
-    );
+    expect(find.text('Not submitted under a scanned token'), findsOne);
   });
 
   // The fall-through the store replaced: a stored row was told nothing was stored to refresh.
@@ -230,7 +227,7 @@ void main() {
 
     await pull(tester);
 
-    expect(find.text('No live token session to check with'), findsOne);
+    expect(find.text('Scan a token first'), findsOne);
     expect(find.text('Nothing stored to refresh'), findsNothing);
   });
 

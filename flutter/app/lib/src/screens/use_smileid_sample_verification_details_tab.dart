@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,6 +33,30 @@ class UseSmileIDSampleVerificationDetailsTab extends ConsumerStatefulWidget {
 class _UseSmileIDSampleVerificationDetailsTabState
     extends ConsumerState<UseSmileIDSampleVerificationDetailsTab> {
   String? _refreshNotice;
+
+  @override
+  void initState() {
+    super.initState();
+    // Only a processing row can change, and a just-submitted job lands here processing.
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => unawaited(_refreshOnEntry()),
+    );
+  }
+
+  Future<void> _refreshOnEntry() async {
+    // Waits for the store's first answer, so a cold link cannot read an empty list and skip.
+    final List<UseSmileIDSampleJob> jobs = await ref.read(
+      useSmileIDSampleJobsProvider.future,
+    );
+    final bool processing = jobs.any(
+      (UseSmileIDSampleJob it) =>
+          it.id == widget.jobId &&
+          it.status == UseSmileIDSampleStatus.processing,
+    );
+    if (processing && mounted) {
+      await _refresh(onEntry: true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +94,7 @@ class _UseSmileIDSampleVerificationDetailsTabState
   }
 
   /// Asks the store what became of the job, and says whatever it decided.
-  Future<void> _refresh() async {
+  Future<void> _refresh({bool onEntry = false}) async {
     final int now = DateTime.now().millisecondsSinceEpoch;
     // The live session, not the row's: the store matches on partner, so a new session reads old rows.
     final UseSmileIDSampleTokenSession? live = useSmileIDSampleLiveSession(
@@ -92,6 +118,10 @@ class _UseSmileIDSampleVerificationDetailsTabState
         );
     // Already in flight: the notice standing is the one this refresh would have repeated.
     if (outcome == null || !mounted) {
+      return;
+    }
+    // Silent unless something happened: "still processing" on every visit is noise.
+    if (onEntry && outcome is UseSmileIDSampleStatusStillProcessing) {
       return;
     }
     setState(() => _refreshNotice = useSmileIDSampleRefreshLabel(outcome));

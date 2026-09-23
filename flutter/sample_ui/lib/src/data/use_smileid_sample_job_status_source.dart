@@ -94,15 +94,16 @@ abstract interface class UseSmileIDSampleJobStatusSource {
   });
 }
 
-/// What each outcome says on screen. Kept beside the type so four apps cannot word them differently.
+/// What each outcome says on screen, in Android's and iOS's words: a flow keys off these strings.
 String useSmileIDSampleRefreshLabel(
   UseSmileIDSampleStatusRefresh outcome,
 ) => switch (outcome) {
-  final UseSmileIDSampleStatusUpdated updated => updated.message,
+  final UseSmileIDSampleStatusUpdated updated =>
+    '${updated.status.label} — ${updated.message}',
   UseSmileIDSampleStatusStillProcessing() => 'Still processing',
-  UseSmileIDSampleStatusNoSession() => 'No live token session to check with',
-  UseSmileIDSampleStatusNoServerJob() =>
-    'Never submitted, so there is nothing to check',
+  UseSmileIDSampleStatusNoSession() => 'Scan a token first',
+  UseSmileIDSampleStatusNoServerJob() => 'Not submitted under a scanned token',
   UseSmileIDSampleStatusPartnerMismatch() => 'Submitted by a different partner',
-  final UseSmileIDSampleStatusFailed failed => failed.reason,
+  final UseSmileIDSampleStatusFailed failed =>
+    'Could not check status: ${failed.reason}',
 };
