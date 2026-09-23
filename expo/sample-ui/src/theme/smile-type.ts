@@ -94,3 +94,11 @@ export const atSize = (base: SmileTextStyle, fontSize: number, lineHeight = base
 
 /// A style for a Text that paints its own box, whose trim has to come off its padding instead.
 export const untrimmed = (base: SmileTextStyle): SmileTextStyle => ({ ...base, marginTop: 0, marginBottom: 0 });
+
+/// One line at the face's own height, the box a native iOS text field draws whatever line height it is given.
+export const atFontLine = (base: SmileTextStyle): SmileTextStyle => ({
+  ...base,
+  lineHeight: base.fontSize * SMILE_FONT_HEIGHT_EM,
+  marginTop: 0,
+  marginBottom: 0,
+});
