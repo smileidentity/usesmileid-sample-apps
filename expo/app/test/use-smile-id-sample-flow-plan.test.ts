@@ -1,9 +1,10 @@
-import { smileIDSampleProducts } from '../src/model/use-smile-id-sample-product';
-import { smileIDSampleFlowPlan } from '../src/state/use-smile-id-sample-flow-plan';
-import type {
-  UseSmileIDSampleTokenBindings,
-  UseSmileIDSampleTokenConsent,
-} from '../src/state/use-smile-id-sample-token-decoder';
+import {
+  smileIDSampleProducts,
+  type UseSmileIDSampleTokenBindings,
+  type UseSmileIDSampleTokenConsent,
+} from '@smileid/sample-ui';
+
+import { smileIDSampleFlowPlan } from '../src/flow/use-smile-id-sample-flow-plan';
 
 /// The truth table from token-binding-matrix-android.md §7, enumerated rather than sampled.
 const complete: UseSmileIDSampleTokenConsent = {

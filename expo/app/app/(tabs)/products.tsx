@@ -12,7 +12,8 @@ import {
 } from '@smileid/sample-ui';
 import { useRouter } from 'expo-router';
 
-import { smileIDSampleFirstStepFor, useSmileIDSampleLiveBindings } from '../../src/flow/use-smile-id-sample-flow-journey';
+import { smileIDSampleFirstStepFor } from '../../src/flow/use-smile-id-sample-flow-journey';
+import { useSmileIDSampleLiveBindings } from '../../src/flow/use-smile-id-sample-token-binding-rules';
 import { useSmileIDSampleListInset } from '../../src/use-smile-id-sample-list-inset';
 
 export default function Products() {

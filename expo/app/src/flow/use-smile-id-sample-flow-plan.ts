@@ -1,13 +1,11 @@
-import type { UseSmileIDSampleProduct } from '../model/use-smile-id-sample-product';
 import {
   smileIDSampleBindsIdDetails,
   smileIDSampleBindsRequiredUserDetails,
-  type UseSmileIDSampleTokenBindings,
-} from './use-smile-id-sample-token-decoder';
-import {
   smileIDSampleRequirementFrom,
+  type UseSmileIDSampleProduct,
+  type UseSmileIDSampleTokenBindings,
   type UseSmileIDSampleUserDetailsRequirement,
-} from './use-smile-id-sample-user-details-requirement';
+} from '@smileid/sample-ui';
 
 /// Everything a token's bindings decide about a run, resolved once at entry (token-binding-matrix-android.md §4).
 export type UseSmileIDSampleFlowPlan = {

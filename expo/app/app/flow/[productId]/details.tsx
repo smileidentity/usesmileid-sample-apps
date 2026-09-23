@@ -8,10 +8,8 @@ import {
 } from '@smileid/sample-ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import {
-  smileIDSampleStepAfterUserDetails,
-  useSmileIDSampleLiveBindings,
-} from '../../../src/flow/use-smile-id-sample-flow-journey';
+import { smileIDSampleStepAfterUserDetails } from '../../../src/flow/use-smile-id-sample-flow-journey';
+import { useSmileIDSampleLiveBindings } from '../../../src/flow/use-smile-id-sample-token-binding-rules';
 import { useSmileIDSampleBack } from '../../../src/use-smile-id-sample-back';
 
 export default function ConsentDetailsForm() {

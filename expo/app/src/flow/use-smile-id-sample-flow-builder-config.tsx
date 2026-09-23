@@ -1,6 +1,5 @@
 import {
   UseSmileIDSampleIcon,
-  smileIDSampleFlowPlan,
   smileIDSampleThemeOverride,
   useSmileIDSampleTheme,
 } from '@smileid/sample-ui';
@@ -27,9 +26,10 @@ import { Platform } from 'react-native';
 import { smileIDSampleFlowToken, smileIDSampleMalformedToken } from './use-smile-id-sample-flow-tokens';
 import {
   smileIDSampleSnapshotSession,
-  smileIDSampleStartsExpired,
   type UseSmileIDSampleFlowLaunchSnapshot,
 } from './use-smile-id-sample-flow-launch-snapshot';
+import { smileIDSampleFlowPlan } from './use-smile-id-sample-flow-plan';
+import { smileIDSampleStartsExpired } from './use-smile-id-sample-token-binding-rules';
 
 /// One SDK screen the host composes. Named so the journey can be asserted: the builder's list is private.
 export const smileIDSampleFlowJourneySteps = [

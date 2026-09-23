@@ -1,7 +1,4 @@
-import {
-  smileIDSampleRequirementFrom,
-  type UseSmileIDSampleUserDetailsRequirement,
-} from '@smileid/sample-ui';
+import { smileIDSampleRequirementFrom } from '@smileid/sample-ui';
 import {
   UseSmileIDFlowBuilder,
   type ValidationState,
@@ -13,6 +10,7 @@ import {
   smileIDSampleSnapshotSession,
   type UseSmileIDSampleFlowLaunchSnapshot,
 } from './use-smile-id-sample-flow-launch-snapshot';
+import { smileIDSampleMinusRequirement } from './use-smile-id-sample-token-binding-rules';
 
 /// What the gate decided, and so where the journey goes instead of the SDK.
 export type UseSmileIDSampleFlowPreflight =
@@ -38,7 +36,7 @@ export const smileIDSamplePreflight = (
   const checks: ValidationState[] = [];
   if (builder.userDetails !== undefined) {
     // The public validator takes no token, so the bindings come off what it reports instead.
-    checks.push(minus(builder.validateUserDetails(builder.userDetails), requirement));
+    checks.push(smileIDSampleMinusRequirement(builder.validateUserDetails(builder.userDetails), requirement));
   }
   if (builder.biometricKYCParams !== undefined)
     checks.push(builder.validateBiometricKYCParams(builder.biometricKYCParams));
@@ -56,26 +54,4 @@ export const smileIDSamplePreflight = (
 
   const verdict = builder.validate();
   return verdict.valid ? { kind: 'ready' } : { kind: 'misconfigured', issues: verdict.issues };
-};
-
-/// Drops the issues the token already answers; every other rule the SDK applies still stands.
-const minus = (state: ValidationState, requirement: UseSmileIDSampleUserDetailsRequirement): ValidationState => {
-  if (state.valid) return state;
-  const outstanding = state.issues.filter((issue) => !covers(requirement, issue));
-  return outstanding.length === 0 ? { valid: true } : { ...state, issues: outstanding };
-};
-
-const covers = (requirement: UseSmileIDSampleUserDetailsRequirement, issue: UseSmileIDValidationException): boolean => {
-  const details = issue.errorDetails as { fieldName?: unknown; reason?: unknown } | undefined;
-  switch (details?.fieldName) {
-    case 'userDetails.givenNames':
-      return !requirement.firstName;
-    case 'userDetails.lastName':
-      return !requirement.lastName;
-    // The contact rule is reported against the object, so its reason is what identifies it.
-    case 'userDetails':
-      return !requirement.contact && String(details.reason).toLowerCase().includes('email');
-    default:
-      return false;
-  }
 };

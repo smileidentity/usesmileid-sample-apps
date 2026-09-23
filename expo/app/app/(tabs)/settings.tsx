@@ -14,7 +14,7 @@ import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 
-import { smileIDSampleStartsExpired } from '../../src/flow/use-smile-id-sample-flow-launch-snapshot';
+import { smileIDSampleStartsExpired } from '../../src/flow/use-smile-id-sample-token-binding-rules';
 import { useLaunchArgs } from '../../src/use-smile-id-sample-launch';
 import { openNavRow } from '../../src/use-smile-id-sample-links';
 import { useSmileIDSampleListInset } from '../../src/use-smile-id-sample-list-inset';

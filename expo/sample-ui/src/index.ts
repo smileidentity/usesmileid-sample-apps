@@ -305,4 +305,3 @@ export {
   type UseSmileIDSampleRunIntent,
   type UseSmileIDSampleSessionStorage,
 } from './state/use-smile-id-sample-session-store';
-export { smileIDSampleFlowPlan, type UseSmileIDSampleFlowPlan } from './state/use-smile-id-sample-flow-plan';

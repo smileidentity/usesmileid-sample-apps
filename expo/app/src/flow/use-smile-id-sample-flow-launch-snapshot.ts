@@ -6,6 +6,8 @@ import type {
   UseSmileIDSampleUserDetails,
 } from '@smileid/sample-ui';
 
+import { smileIDSampleStartsExpired } from './use-smile-id-sample-token-binding-rules';
+
 /// Read once at flow entry; never re-read while the flow runs.
 export type UseSmileIDSampleFlowLaunchSnapshot = {
   readonly product: UseSmileIDSampleProduct;
@@ -39,10 +41,6 @@ export type UseSmileIDSampleFlowLaunchSnapshot = {
 export const smileIDSampleFlowEnvironment = (
   snapshot: UseSmileIDSampleFlowLaunchSnapshot,
 ): 'sandbox' | 'production' => (snapshot.sandbox ? 'sandbox' : 'production');
-
-/// The two scenarios that are about refresh, which a scanned token has no journey for, so they keep the fixtures.
-export const smileIDSampleStartsExpired = (scenario: string): boolean =>
-  scenario === 'expiredToken' || scenario === 'badRefresh';
 
 /// The session a run actually submits under.
 export const smileIDSampleSnapshotSession = (
