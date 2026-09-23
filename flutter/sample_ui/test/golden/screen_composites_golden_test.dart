@@ -214,6 +214,10 @@ Widget _scanSheets() => _stack(<Widget>[
     onTokenChanged: _ignore,
     onPaste: () {},
     onLink: () {},
+    onExpandToggle: () {},
+    onSpanSelect: (_) {},
+    onEnvironmentSelect: (_) {},
+    onBindingsChanged: (_) {},
     onSimulate: () {},
   ),
   UseSmileIDSampleScanSheet(
@@ -224,6 +228,10 @@ Widget _scanSheets() => _stack(<Widget>[
     onTokenChanged: _ignore,
     onPaste: () {},
     onLink: () {},
+    onExpandToggle: () {},
+    onSpanSelect: (_) {},
+    onEnvironmentSelect: (_) {},
+    onBindingsChanged: (_) {},
     onSimulate: () {},
   ),
 ]);

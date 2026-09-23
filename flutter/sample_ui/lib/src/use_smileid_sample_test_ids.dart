@@ -36,6 +36,13 @@ abstract final class UseSmileIDSampleTestIds {
   /// Simulate a successful scan, which makes token flows testable with no QR source.
   static const String tokenSimulate = 'sample_token_simulate';
 
+  /// The scan token screen root.
+  static const String scanTokenScreen = 'sample_scan_token_screen';
+
+  /// One environment chip in the simulated-scan controls, suffixed with the environment id.
+  static String tokenEnvironment(String environmentId) =>
+      'sample_token_environment_$environmentId';
+
   /// The products screen root.
   static const String productsScreen = 'sample_products_screen';
 
@@ -281,6 +288,7 @@ abstract final class UseSmileIDSampleTestIds {
     tokenManualEntry,
     tokenPaste,
     tokenSimulate,
+    scanTokenScreen,
     productsScreen,
     profileAvatarButton,
     settingsScreen,

@@ -94,19 +94,34 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                           i++
                         ) ...<Widget>[
                           if (i > 0) const UseSmileIDSampleSettingRowDivider(),
+                          // Shown as provided, not asked again: the value is vaulted, so it cannot be prefilled.
                           UseSmileIDSampleKeyValueEditRow(
                             label: requirement.labelFor(
                               UseSmileIDSampleUserField.values[i],
                             ),
-                            value: UseSmileIDSampleUserField.values[i].valueOf(
-                              details,
-                            ),
+                            value:
+                                requirement.supplies(
+                                  UseSmileIDSampleUserField.values[i],
+                                )
+                                ? ''
+                                : UseSmileIDSampleUserField.values[i].valueOf(
+                                    details,
+                                  ),
                             onChanged: (String value) => onFieldChanged(
                               UseSmileIDSampleUserField.values[i],
                               value,
                             ),
                             placeholder:
-                                UseSmileIDSampleUserField.values[i].placeholder,
+                                requirement.supplies(
+                                  UseSmileIDSampleUserField.values[i],
+                                )
+                                ? 'Provided by token'
+                                : UseSmileIDSampleUserField
+                                      .values[i]
+                                      .placeholder,
+                            enabled: !requirement.supplies(
+                              UseSmileIDSampleUserField.values[i],
+                            ),
                             testId: UseSmileIDSampleTestIds.userDetailsField(
                               UseSmileIDSampleUserField.values[i].id,
                             ),
