@@ -4872,11 +4872,11 @@ exports[`ProductCard dark auth 1`] = `
       >
         <RNSVGSvgView
           align="xMidYMid"
-          bbHeight={20}
-          bbWidth={20}
+          bbHeight={16}
+          bbWidth={16}
           fill="none"
           focusable={false}
-          height={20}
+          height={16}
           meetOrSlice={0}
           minX={0}
           minY={0}
@@ -4888,14 +4888,14 @@ exports[`ProductCard dark auth 1`] = `
               },
               {
                 "flex": 0,
-                "height": 20,
-                "width": 20,
+                "height": 16,
+                "width": 16,
               },
             ]
           }
           vbHeight={9}
           vbWidth={9}
-          width={20}
+          width={16}
         >
           <RNSVGGroup
             fill={null}
@@ -5149,11 +5149,11 @@ exports[`ProductCard dark disabled 1`] = `
       >
         <RNSVGSvgView
           align="xMidYMid"
-          bbHeight={20}
-          bbWidth={20}
+          bbHeight={16}
+          bbWidth={16}
           fill="none"
           focusable={false}
-          height={20}
+          height={16}
           meetOrSlice={0}
           minX={0}
           minY={0}
@@ -5165,14 +5165,14 @@ exports[`ProductCard dark disabled 1`] = `
               },
               {
                 "flex": 0,
-                "height": 20,
-                "width": 20,
+                "height": 16,
+                "width": 16,
               },
             ]
           }
           vbHeight={9}
           vbWidth={9}
-          width={20}
+          width={16}
         >
           <RNSVGGroup
             fill={null}
@@ -5611,11 +5611,11 @@ exports[`ProductCard dark enhancedDocument 1`] = `
       >
         <RNSVGSvgView
           align="xMidYMid"
-          bbHeight={20}
-          bbWidth={20}
+          bbHeight={16}
+          bbWidth={16}
           fill="none"
           focusable={false}
-          height={20}
+          height={16}
           meetOrSlice={0}
           minX={0}
           minY={0}
@@ -5627,14 +5627,14 @@ exports[`ProductCard dark enhancedDocument 1`] = `
               },
               {
                 "flex": 0,
-                "height": 20,
-                "width": 20,
+                "height": 16,
+                "width": 16,
               },
             ]
           }
           vbHeight={9}
           vbWidth={9}
-          width={20}
+          width={16}
         >
           <RNSVGGroup
             fill={null}
@@ -6119,11 +6119,11 @@ exports[`ProductCard dark registration 1`] = `
       >
         <RNSVGSvgView
           align="xMidYMid"
-          bbHeight={20}
-          bbWidth={20}
+          bbHeight={16}
+          bbWidth={16}
           fill="none"
           focusable={false}
-          height={20}
+          height={16}
           meetOrSlice={0}
           minX={0}
           minY={0}
@@ -6135,14 +6135,14 @@ exports[`ProductCard dark registration 1`] = `
               },
               {
                 "flex": 0,
-                "height": 20,
-                "width": 20,
+                "height": 16,
+                "width": 16,
               },
             ]
           }
           vbHeight={9}
           vbWidth={9}
-          width={20}
+          width={16}
         >
           <RNSVGGroup
             fill={null}
@@ -6627,11 +6627,11 @@ exports[`ProductCard light auth 1`] = `
       >
         <RNSVGSvgView
           align="xMidYMid"
-          bbHeight={20}
-          bbWidth={20}
+          bbHeight={16}
+          bbWidth={16}
           fill="none"
           focusable={false}
-          height={20}
+          height={16}
           meetOrSlice={0}
           minX={0}
           minY={0}
@@ -6643,14 +6643,14 @@ exports[`ProductCard light auth 1`] = `
               },
               {
                 "flex": 0,
-                "height": 20,
-                "width": 20,
+                "height": 16,
+                "width": 16,
               },
             ]
           }
           vbHeight={9}
           vbWidth={9}
-          width={20}
+          width={16}
         >
           <RNSVGGroup
             fill={null}
@@ -6904,11 +6904,11 @@ exports[`ProductCard light disabled 1`] = `
       >
         <RNSVGSvgView
           align="xMidYMid"
-          bbHeight={20}
-          bbWidth={20}
+          bbHeight={16}
+          bbWidth={16}
           fill="none"
           focusable={false}
-          height={20}
+          height={16}
           meetOrSlice={0}
           minX={0}
           minY={0}
@@ -6920,14 +6920,14 @@ exports[`ProductCard light disabled 1`] = `
               },
               {
                 "flex": 0,
-                "height": 20,
-                "width": 20,
+                "height": 16,
+                "width": 16,
               },
             ]
           }
           vbHeight={9}
           vbWidth={9}
-          width={20}
+          width={16}
         >
           <RNSVGGroup
             fill={null}
@@ -7366,11 +7366,11 @@ exports[`ProductCard light enhancedDocument 1`] = `
       >
         <RNSVGSvgView
           align="xMidYMid"
-          bbHeight={20}
-          bbWidth={20}
+          bbHeight={16}
+          bbWidth={16}
           fill="none"
           focusable={false}
-          height={20}
+          height={16}
           meetOrSlice={0}
           minX={0}
           minY={0}
@@ -7382,14 +7382,14 @@ exports[`ProductCard light enhancedDocument 1`] = `
               },
               {
                 "flex": 0,
-                "height": 20,
-                "width": 20,
+                "height": 16,
+                "width": 16,
               },
             ]
           }
           vbHeight={9}
           vbWidth={9}
-          width={20}
+          width={16}
         >
           <RNSVGGroup
             fill={null}
@@ -7874,11 +7874,11 @@ exports[`ProductCard light registration 1`] = `
       >
         <RNSVGSvgView
           align="xMidYMid"
-          bbHeight={20}
-          bbWidth={20}
+          bbHeight={16}
+          bbWidth={16}
           fill="none"
           focusable={false}
-          height={20}
+          height={16}
           meetOrSlice={0}
           minX={0}
           minY={0}
@@ -7890,14 +7890,14 @@ exports[`ProductCard light registration 1`] = `
               },
               {
                 "flex": 0,
-                "height": 20,
-                "width": 20,
+                "height": 16,
+                "width": 16,
               },
             ]
           }
           vbHeight={9}
           vbWidth={9}
-          width={20}
+          width={16}
         >
           <RNSVGGroup
             fill={null}
@@ -8414,11 +8414,11 @@ exports[`ProductGrid dark evenCount 1`] = `
             >
               <RNSVGSvgView
                 align="xMidYMid"
-                bbHeight={20}
-                bbWidth={20}
+                bbHeight={16}
+                bbWidth={16}
                 fill="none"
                 focusable={false}
-                height={20}
+                height={16}
                 meetOrSlice={0}
                 minX={0}
                 minY={0}
@@ -8430,14 +8430,14 @@ exports[`ProductGrid dark evenCount 1`] = `
                     },
                     {
                       "flex": 0,
-                      "height": 20,
-                      "width": 20,
+                      "height": 16,
+                      "width": 16,
                     },
                   ]
                 }
                 vbHeight={9}
                 vbWidth={9}
-                width={20}
+                width={16}
               >
                 <RNSVGGroup
                   fill={null}
@@ -8927,11 +8927,11 @@ exports[`ProductGrid dark evenCount 1`] = `
             >
               <RNSVGSvgView
                 align="xMidYMid"
-                bbHeight={20}
-                bbWidth={20}
+                bbHeight={16}
+                bbWidth={16}
                 fill="none"
                 focusable={false}
-                height={20}
+                height={16}
                 meetOrSlice={0}
                 minX={0}
                 minY={0}
@@ -8943,14 +8943,14 @@ exports[`ProductGrid dark evenCount 1`] = `
                     },
                     {
                       "flex": 0,
-                      "height": 20,
-                      "width": 20,
+                      "height": 16,
+                      "width": 16,
                     },
                   ]
                 }
                 vbHeight={9}
                 vbWidth={9}
-                width={20}
+                width={16}
               >
                 <RNSVGGroup
                   fill={null}
@@ -9470,11 +9470,11 @@ exports[`ProductGrid dark oddCount 1`] = `
             >
               <RNSVGSvgView
                 align="xMidYMid"
-                bbHeight={20}
-                bbWidth={20}
+                bbHeight={16}
+                bbWidth={16}
                 fill="none"
                 focusable={false}
-                height={20}
+                height={16}
                 meetOrSlice={0}
                 minX={0}
                 minY={0}
@@ -9486,14 +9486,14 @@ exports[`ProductGrid dark oddCount 1`] = `
                     },
                     {
                       "flex": 0,
-                      "height": 20,
-                      "width": 20,
+                      "height": 16,
+                      "width": 16,
                     },
                   ]
                 }
                 vbHeight={9}
                 vbWidth={9}
-                width={20}
+                width={16}
               >
                 <RNSVGGroup
                   fill={null}
@@ -10020,11 +10020,11 @@ exports[`ProductGrid light evenCount 1`] = `
             >
               <RNSVGSvgView
                 align="xMidYMid"
-                bbHeight={20}
-                bbWidth={20}
+                bbHeight={16}
+                bbWidth={16}
                 fill="none"
                 focusable={false}
-                height={20}
+                height={16}
                 meetOrSlice={0}
                 minX={0}
                 minY={0}
@@ -10036,14 +10036,14 @@ exports[`ProductGrid light evenCount 1`] = `
                     },
                     {
                       "flex": 0,
-                      "height": 20,
-                      "width": 20,
+                      "height": 16,
+                      "width": 16,
                     },
                   ]
                 }
                 vbHeight={9}
                 vbWidth={9}
-                width={20}
+                width={16}
               >
                 <RNSVGGroup
                   fill={null}
@@ -10533,11 +10533,11 @@ exports[`ProductGrid light evenCount 1`] = `
             >
               <RNSVGSvgView
                 align="xMidYMid"
-                bbHeight={20}
-                bbWidth={20}
+                bbHeight={16}
+                bbWidth={16}
                 fill="none"
                 focusable={false}
-                height={20}
+                height={16}
                 meetOrSlice={0}
                 minX={0}
                 minY={0}
@@ -10549,14 +10549,14 @@ exports[`ProductGrid light evenCount 1`] = `
                     },
                     {
                       "flex": 0,
-                      "height": 20,
-                      "width": 20,
+                      "height": 16,
+                      "width": 16,
                     },
                   ]
                 }
                 vbHeight={9}
                 vbWidth={9}
-                width={20}
+                width={16}
               >
                 <RNSVGGroup
                   fill={null}
@@ -11076,11 +11076,11 @@ exports[`ProductGrid light oddCount 1`] = `
             >
               <RNSVGSvgView
                 align="xMidYMid"
-                bbHeight={20}
-                bbWidth={20}
+                bbHeight={16}
+                bbWidth={16}
                 fill="none"
                 focusable={false}
-                height={20}
+                height={16}
                 meetOrSlice={0}
                 minX={0}
                 minY={0}
@@ -11092,14 +11092,14 @@ exports[`ProductGrid light oddCount 1`] = `
                     },
                     {
                       "flex": 0,
-                      "height": 20,
-                      "width": 20,
+                      "height": 16,
+                      "width": 16,
                     },
                   ]
                 }
                 vbHeight={9}
                 vbWidth={9}
-                width={20}
+                width={16}
               >
                 <RNSVGGroup
                   fill={null}

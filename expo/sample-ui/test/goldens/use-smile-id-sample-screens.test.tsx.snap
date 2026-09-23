@@ -2135,11 +2135,11 @@ exports[`products dark default 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -2151,14 +2151,14 @@ exports[`products dark default 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -2649,11 +2649,11 @@ exports[`products dark default 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -2665,14 +2665,14 @@ exports[`products dark default 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -3175,11 +3175,11 @@ exports[`products dark default 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -3191,14 +3191,14 @@ exports[`products dark default 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -3643,11 +3643,11 @@ exports[`products dark default 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -3659,14 +3659,14 @@ exports[`products dark default 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -4172,11 +4172,11 @@ exports[`products dark default 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -4188,14 +4188,14 @@ exports[`products dark default 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -4640,11 +4640,11 @@ exports[`products dark default 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -4656,14 +4656,14 @@ exports[`products dark default 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -5538,11 +5538,11 @@ exports[`products dark tokenExpired 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -5554,14 +5554,14 @@ exports[`products dark tokenExpired 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -6052,11 +6052,11 @@ exports[`products dark tokenExpired 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -6068,14 +6068,14 @@ exports[`products dark tokenExpired 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -6578,11 +6578,11 @@ exports[`products dark tokenExpired 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -6594,14 +6594,14 @@ exports[`products dark tokenExpired 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -7046,11 +7046,11 @@ exports[`products dark tokenExpired 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -7062,14 +7062,14 @@ exports[`products dark tokenExpired 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -7575,11 +7575,11 @@ exports[`products dark tokenExpired 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -7591,14 +7591,14 @@ exports[`products dark tokenExpired 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -8043,11 +8043,11 @@ exports[`products dark tokenExpired 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -8059,14 +8059,14 @@ exports[`products dark tokenExpired 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -8983,11 +8983,11 @@ exports[`products dark tokenLinked 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -8999,14 +8999,14 @@ exports[`products dark tokenLinked 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -9497,11 +9497,11 @@ exports[`products dark tokenLinked 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -9513,14 +9513,14 @@ exports[`products dark tokenLinked 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -10023,11 +10023,11 @@ exports[`products dark tokenLinked 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -10039,14 +10039,14 @@ exports[`products dark tokenLinked 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -10491,11 +10491,11 @@ exports[`products dark tokenLinked 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -10507,14 +10507,14 @@ exports[`products dark tokenLinked 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -11020,11 +11020,11 @@ exports[`products dark tokenLinked 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -11036,14 +11036,14 @@ exports[`products dark tokenLinked 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -11488,11 +11488,11 @@ exports[`products dark tokenLinked 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -11504,14 +11504,14 @@ exports[`products dark tokenLinked 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -12428,11 +12428,11 @@ exports[`products dark tokenLinkedLate 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -12444,14 +12444,14 @@ exports[`products dark tokenLinkedLate 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -12942,11 +12942,11 @@ exports[`products dark tokenLinkedLate 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -12958,14 +12958,14 @@ exports[`products dark tokenLinkedLate 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -13468,11 +13468,11 @@ exports[`products dark tokenLinkedLate 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -13484,14 +13484,14 @@ exports[`products dark tokenLinkedLate 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -13936,11 +13936,11 @@ exports[`products dark tokenLinkedLate 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -13952,14 +13952,14 @@ exports[`products dark tokenLinkedLate 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -14465,11 +14465,11 @@ exports[`products dark tokenLinkedLate 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -14481,14 +14481,14 @@ exports[`products dark tokenLinkedLate 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -14933,11 +14933,11 @@ exports[`products dark tokenLinkedLate 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -14949,14 +14949,14 @@ exports[`products dark tokenLinkedLate 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -15686,11 +15686,11 @@ exports[`products light default 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -15702,14 +15702,14 @@ exports[`products light default 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -16200,11 +16200,11 @@ exports[`products light default 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -16216,14 +16216,14 @@ exports[`products light default 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -16726,11 +16726,11 @@ exports[`products light default 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -16742,14 +16742,14 @@ exports[`products light default 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -17194,11 +17194,11 @@ exports[`products light default 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -17210,14 +17210,14 @@ exports[`products light default 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -17723,11 +17723,11 @@ exports[`products light default 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -17739,14 +17739,14 @@ exports[`products light default 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -18191,11 +18191,11 @@ exports[`products light default 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -18207,14 +18207,14 @@ exports[`products light default 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -19089,11 +19089,11 @@ exports[`products light tokenExpired 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -19105,14 +19105,14 @@ exports[`products light tokenExpired 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -19603,11 +19603,11 @@ exports[`products light tokenExpired 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -19619,14 +19619,14 @@ exports[`products light tokenExpired 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -20129,11 +20129,11 @@ exports[`products light tokenExpired 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -20145,14 +20145,14 @@ exports[`products light tokenExpired 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -20597,11 +20597,11 @@ exports[`products light tokenExpired 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -20613,14 +20613,14 @@ exports[`products light tokenExpired 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -21126,11 +21126,11 @@ exports[`products light tokenExpired 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -21142,14 +21142,14 @@ exports[`products light tokenExpired 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -21594,11 +21594,11 @@ exports[`products light tokenExpired 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -21610,14 +21610,14 @@ exports[`products light tokenExpired 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -22534,11 +22534,11 @@ exports[`products light tokenLinked 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -22550,14 +22550,14 @@ exports[`products light tokenLinked 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -23048,11 +23048,11 @@ exports[`products light tokenLinked 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -23064,14 +23064,14 @@ exports[`products light tokenLinked 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -23574,11 +23574,11 @@ exports[`products light tokenLinked 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -23590,14 +23590,14 @@ exports[`products light tokenLinked 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -24042,11 +24042,11 @@ exports[`products light tokenLinked 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -24058,14 +24058,14 @@ exports[`products light tokenLinked 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -24571,11 +24571,11 @@ exports[`products light tokenLinked 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -24587,14 +24587,14 @@ exports[`products light tokenLinked 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -25039,11 +25039,11 @@ exports[`products light tokenLinked 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -25055,14 +25055,14 @@ exports[`products light tokenLinked 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -25979,11 +25979,11 @@ exports[`products light tokenLinkedLate 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -25995,14 +25995,14 @@ exports[`products light tokenLinkedLate 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -26493,11 +26493,11 @@ exports[`products light tokenLinkedLate 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -26509,14 +26509,14 @@ exports[`products light tokenLinkedLate 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -27019,11 +27019,11 @@ exports[`products light tokenLinkedLate 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -27035,14 +27035,14 @@ exports[`products light tokenLinkedLate 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -27487,11 +27487,11 @@ exports[`products light tokenLinkedLate 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -27503,14 +27503,14 @@ exports[`products light tokenLinkedLate 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -28016,11 +28016,11 @@ exports[`products light tokenLinkedLate 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -28032,14 +28032,14 @@ exports[`products light tokenLinkedLate 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
@@ -28484,11 +28484,11 @@ exports[`products light tokenLinkedLate 1`] = `
                   >
                     <RNSVGSvgView
                       align="xMidYMid"
-                      bbHeight={20}
-                      bbWidth={20}
+                      bbHeight={16}
+                      bbWidth={16}
                       fill="none"
                       focusable={false}
-                      height={20}
+                      height={16}
                       meetOrSlice={0}
                       minX={0}
                       minY={0}
@@ -28500,14 +28500,14 @@ exports[`products light tokenLinkedLate 1`] = `
                           },
                           {
                             "flex": 0,
-                            "height": 20,
-                            "width": 20,
+                            "height": 16,
+                            "width": 16,
                           },
                         ]
                       }
                       vbHeight={9}
                       vbWidth={9}
-                      width={20}
+                      width={16}
                     >
                       <RNSVGGroup
                         fill={null}
