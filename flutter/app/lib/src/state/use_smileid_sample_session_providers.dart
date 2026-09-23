@@ -69,8 +69,12 @@ class UseSmileIDSampleSessionNotifier
     return _enqueue(() => _write(() => _repository.link(session)));
   }
 
-  /// Sign out: no ended marker, which would send the next run to the scanner.
-  Future<void> clear() => _enqueue(() => _write(_repository.clear));
+  /// Sign out: no ended marker, which would send the next run to the scanner; gone for this run even if the store refuses it.
+  Future<void> clear() {
+    state = const UseSmileIDSampleSessionRecord();
+    _schedule(null);
+    return _enqueue(() => _write(_repository.clear));
+  }
 
   /// Past the deadline the token is useless, so it goes; that a session ended stays.
   Future<void> _retire(

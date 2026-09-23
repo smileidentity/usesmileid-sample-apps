@@ -156,6 +156,33 @@ void main() {
       expect(container.read(useSmileIDSampleSessionProvider).live, fresh);
     },
   );
+
+  test(
+    'a sign out the store refuses still drops the token from this run',
+    () async {
+      final UseSmileIDSampleTokenSession live = _mint(
+        UseSmileIDSampleSimulatedSpan.fifteenMinutes,
+      );
+      final UseSmileIDSampleSessionRecord stored =
+          UseSmileIDSampleSessionRecord(live: live);
+      final _RefusingOnce repository = _RefusingOnce(stored);
+      final ProviderContainer container = ProviderContainer(
+        overrides: [
+          useSmileIDSampleSessionRepositoryProvider.overrideWithValue(
+            repository,
+          ),
+          useSmileIDSampleStoredSessionProvider.overrideWithValue(stored),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await container.read(useSmileIDSampleSessionProvider.notifier).clear();
+
+      expect(repository.refusals, 1);
+      expect(container.read(useSmileIDSampleSessionProvider).live, isNull);
+      expect(container.read(useSmileIDSampleSessionProvider).ended, isNull);
+    },
+  );
 }
 
 /// A Keystore that refuses the first write, as a locked device can.
