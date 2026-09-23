@@ -22,11 +22,11 @@ export type UseSmileIDSampleRunIntent = {
   readonly route: UseSmileIDSampleFlowRoute;
 };
 
-/// The whole persisted record, one item so the token and the ended marker can never come from different writes.
+/// The whole persisted record, one item so the token and the ended marker can never come from different writes. The keys are Android's.
 type StoredRecord = {
-  readonly token?: string;
-  readonly endedId?: string;
-  readonly endedAt?: number;
+  readonly token_session_token?: string;
+  readonly ended_session_id?: string;
+  readonly ended_session_at?: number;
 };
 
 type State = {
@@ -81,10 +81,13 @@ const recordFrom = (text: string | null): Pick<State, 'live' | 'ended'> => {
   if (text === null) return { live: null, ended: null };
   try {
     const record = JSON.parse(text) as StoredRecord;
-    const live = typeof record.token === 'string' ? smileIDSampleTokenSession(record.token) : null;
+    const token = record.token_session_token;
+    const live = typeof token === 'string' ? smileIDSampleTokenSession(token) : null;
+    const endedId = record.ended_session_id;
+    const endedAt = record.ended_session_at;
     const ended =
-      live === null && typeof record.endedId === 'string'
-        ? { id: record.endedId, endedAtMillis: typeof record.endedAt === 'number' ? record.endedAt : 0 }
+      live === null && typeof endedId === 'string'
+        ? { id: endedId, endedAtMillis: typeof endedAt === 'number' ? endedAt : 0 }
         : null;
     return { live, ended };
   } catch {
@@ -114,14 +117,14 @@ export const useSmileIDSampleSessionStore = create<State & Actions>((set, get) =
 
   link: async (session) => {
     set({ live: session, ended: null, nowMillis: Date.now() });
-    await persist({ token: session.token });
+    await persist({ token_session_token: session.token });
   },
 
   retire: async (session) => {
     // Checked and written in one synchronous step, so a tick queued before a relink cannot end the new session.
     if (get().live?.token !== session.token) return;
     set({ live: null, ended: { id: session.id, endedAtMillis: session.expiresAtMillis } });
-    await persist({ endedId: session.id, endedAt: session.expiresAtMillis });
+    await persist({ ended_session_id: session.id, ended_session_at: session.expiresAtMillis });
   },
 
   clear: async () => {

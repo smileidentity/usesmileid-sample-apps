@@ -46,7 +46,7 @@ describe('the session store', () => {
     const { storage, stored } = recordingStorage();
     await useSmileIDSampleSessionStore.getState().load(storage);
     await useSmileIDSampleSessionStore.getState().link(smileIDSampleTokenSession(liveToken)!);
-    expect(JSON.parse(stored()!)).toEqual({ token: liveToken });
+    expect(JSON.parse(stored()!)).toEqual({ token_session_token: liveToken });
 
     useSmileIDSampleSessionStore.getState().reset();
     await useSmileIDSampleSessionStore.getState().load(recordingStorage(stored()).storage);
@@ -60,7 +60,7 @@ describe('the session store', () => {
     await useSmileIDSampleSessionStore.getState().link(session);
     await useSmileIDSampleSessionStore.getState().retire(session);
     expect(stored()).not.toContain(liveToken);
-    expect(JSON.parse(stored()!)).toEqual({ endedId: session.id, endedAt: session.expiresAtMillis });
+    expect(JSON.parse(stored()!)).toEqual({ ended_session_id: session.id, ended_session_at: session.expiresAtMillis });
     expect(smileIDSampleSessionExpired(useSmileIDSampleSessionStore.getState(), now)).toBe(true);
   });
 
@@ -78,7 +78,7 @@ describe('the session store', () => {
   it('reads an unreadable or undecodable record as no session rather than a degraded one', async () => {
     await useSmileIDSampleSessionStore.getState().load(recordingStorage('{not json').storage);
     expect(useSmileIDSampleSessionStore.getState().live).toBeNull();
-    await useSmileIDSampleSessionStore.getState().load(recordingStorage('{"token":"sample-not-a-jwt"}').storage);
+    await useSmileIDSampleSessionStore.getState().load(recordingStorage('{"token_session_token":"sample-not-a-jwt"}').storage);
     expect(useSmileIDSampleSessionStore.getState().live).toBeNull();
   });
 
@@ -90,7 +90,7 @@ describe('the session store', () => {
 
   it('retires a session whose deadline passed while the app was closed, on the first tick', async () => {
     const expired = tokenFor(Math.floor(now / 1000) - 1000, Math.floor(now / 1000) - 100);
-    const { storage, stored } = recordingStorage(JSON.stringify({ token: expired }));
+    const { storage, stored } = recordingStorage(JSON.stringify({ token_session_token: expired }));
     await useSmileIDSampleSessionStore.getState().load(storage);
     renderHook(() => useSmileIDSampleSessionClock());
     await act(async () => {
@@ -122,7 +122,7 @@ describe('the session store', () => {
         ),
     };
     const stale = smileIDSampleTokenSession(tokenFor(Math.floor(now / 1000) - 1000, Math.floor(now / 1000) - 100))!;
-    stored = JSON.stringify({ token: stale.token });
+    stored = JSON.stringify({ token_session_token: stale.token });
     await useSmileIDSampleSessionStore.getState().load(slow);
 
     const fresh = smileIDSampleTokenSession(liveToken)!;
@@ -133,7 +133,7 @@ describe('the session store', () => {
 
     expect(useSmileIDSampleSessionStore.getState().live?.id).toBe(fresh.id);
     expect(useSmileIDSampleSessionStore.getState().ended).toBeNull();
-    expect(JSON.parse(stored!)).toEqual({ token: fresh.token });
+    expect(JSON.parse(stored!)).toEqual({ token_session_token: fresh.token });
   });
 
   it('retires a stale stored session before a first link on a cold start, and the link then wins', async () => {
@@ -143,7 +143,7 @@ describe('the session store', () => {
       write: (next) => new Promise((resolve) => setTimeout(() => ((stored = next), resolve()), 20)),
     };
     const stale = tokenFor(Math.floor(now / 1000) - 1000, Math.floor(now / 1000) - 100);
-    stored = JSON.stringify({ token: stale });
+    stored = JSON.stringify({ token_session_token: stale });
     await useSmileIDSampleSessionStore.getState().load(slow);
     renderHook(() => useSmileIDSampleSessionClock());
     const fresh = smileIDSampleTokenSession(liveToken)!;
@@ -151,7 +151,7 @@ describe('the session store', () => {
       await useSmileIDSampleSessionStore.getState().link(fresh);
     });
     expect(useSmileIDSampleSessionStore.getState().live?.id).toBe(fresh.id);
-    expect(JSON.parse(stored!)).toEqual({ token: fresh.token });
+    expect(JSON.parse(stored!)).toEqual({ token_session_token: fresh.token });
   });
 });
 
