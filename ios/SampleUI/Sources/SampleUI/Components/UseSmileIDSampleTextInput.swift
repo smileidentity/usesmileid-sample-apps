@@ -76,7 +76,7 @@ public struct UseSmileIDSampleTextInput<Leading: View, Trailing: View>: View {
   }
 
   private var field: some View {
-    // Sized by a line of text, not the field: UITextField pads itself, which made the input 2 taller than Compose's.
+    // Sized by a line of text, since UITextField's own padding runs taller than Compose's field.
     UseSmileIDSampleText(value.isEmpty ? placeholder : " ", style: UseSmileIDSampleTheme.type.inputFont)
       .foregroundColor(value.isEmpty ? colors.input.placeholder : .clear)
       .accessibilityHidden(!value.isEmpty)

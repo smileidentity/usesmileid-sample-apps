@@ -71,7 +71,7 @@ public struct UseSmileIDSampleSelectTrigger<Leading: View>: View {
           )
       )
     }
-    // Not `.plain`: it fades a disabled label on top of the disabled pair, which Compose does not.
+    // Not `.plain`, which fades a disabled label on top of its disabled colours.
     .buttonStyle(UseSmileIDSampleUndimmedButtonStyle())
     .disabled(!enabled)
     .useSmileIDSampleTestId(testId)

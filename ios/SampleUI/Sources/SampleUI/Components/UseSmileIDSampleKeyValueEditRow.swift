@@ -66,7 +66,7 @@ public struct UseSmileIDSampleKeyValueEditRow: View {
   private var field: some View {
     // A text field fills its column, so the row's own alignment cannot place the text: this does.
     let stacked = sizeCategory.isAccessibilityCategory
-    // Sized by a line of text, not the field: UITextField pads itself, which made each row 4 taller than Compose's.
+    // Sized by a line of text, since UITextField's own padding runs taller than Compose's field.
     return UseSmileIDSampleText(value.isEmpty ? placeholder : " ", style: rowStyle)
       .foregroundColor(value.isEmpty ? colors.textMuted : .clear)
       .accessibilityHidden(!value.isEmpty)

@@ -50,7 +50,7 @@ public enum UseSmileIDSampleFonts {
     return nearest.flatMap { faces[$0] } ?? "DMSans-Regular"
   }
 
-  /// The gap that makes the line pitch the token's height: a line is already the face's own height, so `lineHeight - size` overshoots.
+  /// The gap that makes the line pitch the token's height, over the face's own line height.
   public static func lineSpacing(_ style: SmileTextStyle) -> CGFloat {
     let natural = UIFont(name: face(weight: style.weight), size: style.size)?.lineHeight ?? style.size
     return max(0, style.lineHeight - natural)
@@ -61,7 +61,7 @@ public enum UseSmileIDSampleFonts {
     .custom(face(weight: style.weight), size: style.size, relativeTo: .body)
   }
 
-  /// The font at a caller's own Dynamic Type factor; `relativeTo` rounds a fractional size to a whole point, so 13.5 drew at 14.
+  /// The font at a caller's Dynamic Type factor, since `relativeTo` rounds fractional sizes to whole points.
   public static func font(_ style: SmileTextStyle, scale: CGFloat) -> Font {
     .custom(face(weight: style.weight), fixedSize: style.size * scale)
   }
