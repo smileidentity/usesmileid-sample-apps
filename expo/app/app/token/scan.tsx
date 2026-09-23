@@ -26,13 +26,9 @@ const Viewfinder = (props: UseSmileIDSampleViewfinderProps) => (
 
 /// Acknowledged in the hand as well as on screen, which is where a silent success feels like a freeze.
 const feedback = (kind: UseSmileIDSampleScanFeedback) => {
-  const played =
-    kind === 'found'
-      ? Haptics.selectionAsync()
-      : Haptics.notificationAsync(
-          kind === 'linked' ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Error,
-        );
-  played.catch(() => undefined);
+  Haptics.notificationAsync(
+    kind === 'linked' ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Error,
+  ).catch(() => undefined);
 };
 
 /// The token-scanning route, which a relink resumes the interrupted run from.

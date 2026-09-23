@@ -47,7 +47,7 @@ export type UseSmileIDSampleViewfinderProps = {
 };
 
 /// A moment the host may acknowledge in the hand, since a silent success at a scanner feels like a freeze.
-export type UseSmileIDSampleScanFeedback = 'found' | 'linked' | 'rejected';
+export type UseSmileIDSampleScanFeedback = 'linked' | 'rejected';
 
 type Props = {
   onBack: () => void;
@@ -95,7 +95,6 @@ export const ScanTokenScreen = ({
 
   // Scanned, pasted or typed, a candidate is judged here and nowhere else — proving it parses, never that it is valid.
   const judge = (candidate: string, fromField: boolean) => {
-    if (!fromField) setScan({ kind: 'found' });
     const decoded = smileIDSampleDecodeToken(candidate);
     if (decoded.kind === 'decoded') {
       setLinked(decoded.session);
@@ -113,7 +112,7 @@ export const ScanTokenScreen = ({
   };
 
   useEffect(() => {
-    if (scan.kind === 'searching') return undefined;
+    if (scan.kind !== 'linked' && scan.kind !== 'rejected') return undefined;
     announce(scan.kind);
     if (scan.kind !== 'linked') return undefined;
     // Held long enough to be read, then the screen leaves: navigating on the decode frame looked like nothing happened.

@@ -20,7 +20,6 @@ jest.mock('@smileid/usesmileid_vision_face', () => ({ useSmileIDVisionFace: { ke
 let mockLaunchUrl: string | null = null;
 jest.mock('expo-linking', () => ({ getInitialURL: jest.fn(async () => mockLaunchUrl) }));
 jest.mock('expo-haptics', () => ({
-  selectionAsync: jest.fn(async () => undefined),
   notificationAsync: jest.fn(async () => undefined),
   NotificationFeedbackType: { Success: 'success', Error: 'error' },
 }));
