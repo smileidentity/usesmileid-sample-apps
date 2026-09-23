@@ -4192,8 +4192,11 @@ exports[`profileConfig dark activeProfile 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -4271,8 +4274,11 @@ exports[`profileConfig dark activeProfile 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -4350,8 +4356,11 @@ exports[`profileConfig dark activeProfile 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -4429,8 +4438,11 @@ exports[`profileConfig dark activeProfile 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -4845,8 +4857,11 @@ exports[`profileConfig dark newlyCreated 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -4924,8 +4939,11 @@ exports[`profileConfig dark newlyCreated 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -5003,8 +5021,11 @@ exports[`profileConfig dark newlyCreated 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -5082,8 +5103,11 @@ exports[`profileConfig dark newlyCreated 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -5498,8 +5522,11 @@ exports[`profileConfig dark otherProfile 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -5577,8 +5604,11 @@ exports[`profileConfig dark otherProfile 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -5656,8 +5686,11 @@ exports[`profileConfig dark otherProfile 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -5735,8 +5768,11 @@ exports[`profileConfig dark otherProfile 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -6151,8 +6187,11 @@ exports[`profileConfig light activeProfile 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -6230,8 +6269,11 @@ exports[`profileConfig light activeProfile 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -6309,8 +6351,11 @@ exports[`profileConfig light activeProfile 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -6388,8 +6433,11 @@ exports[`profileConfig light activeProfile 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -6804,8 +6852,11 @@ exports[`profileConfig light newlyCreated 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -6883,8 +6934,11 @@ exports[`profileConfig light newlyCreated 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -6962,8 +7016,11 @@ exports[`profileConfig light newlyCreated 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -7041,8 +7098,11 @@ exports[`profileConfig light newlyCreated 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -7457,8 +7517,11 @@ exports[`profileConfig light otherProfile 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -7536,8 +7599,11 @@ exports[`profileConfig light otherProfile 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -7615,8 +7681,11 @@ exports[`profileConfig light otherProfile 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,
@@ -7694,8 +7763,11 @@ exports[`profileConfig light otherProfile 1`] = `
                         "fontSize": 13.5,
                         "letterSpacing": 0,
                         "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
                         "marginBottom": 0,
-                        "marginTop": 0,
                       },
                       {
                         "padding": 0,

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
-import { insetForBorder } from '../theme/smile-compose-layout';
+import { insetForBorder, touchTargetStyle } from '../theme/smile-compose-layout';
 import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
@@ -45,53 +45,56 @@ export const UseSmileIDSampleSelectTrigger = ({
       : theme.colors.input.placeholder;
 
   return (
-    <Pressable
-      testID={testID}
-      accessibilityRole="button"
-      accessibilityState={{ disabled: !enabled }}
-      disabled={!enabled}
-      onPress={onPress}
-      style={[
-        styles.trigger,
-        {
-          borderRadius: theme.dimens.radius.field,
-          backgroundColor: enabled ? theme.colors.input.background : theme.colors.button.disabledBackground,
-          borderWidth: theme.dimens.borderWidth.thin,
-          borderColor: enabled ? theme.colors.primary : theme.colors.input.border,
-          minHeight: theme.dimens.size['control-md'],
-          paddingHorizontal: insetForBorder(theme.dimens.spacing.md, theme.dimens.borderWidth.thin),
-          paddingVertical: insetForBorder(theme.dimens.spacing.sm, theme.dimens.borderWidth.thin),
-          columnGap: theme.dimens.spacing.xs,
-        },
-        style,
-      ]}
-    >
-      {leading ? (
-        // A minimum, not a fixed size: the leading slot may hold an emoji, which grows with font scale.
-        <View
-          style={[
-            styles.leading,
-            { minWidth: theme.dimens.size['icon-md'], minHeight: theme.dimens.size['icon-md'] },
-          ]}
-        >
-          {leading(contentColor)}
-        </View>
-      ) : null}
-      <Text
+    // A clickable Compose Surface lays out at the minimum target, with the 44 control centred in it.
+    <View style={[touchTargetStyle(theme, 'height'), styles.slot, style]}>
+      <Pressable
+        testID={testID}
+        accessibilityRole="button"
+        accessibilityState={{ disabled: !enabled }}
+        disabled={!enabled}
+        onPress={onPress}
         style={[
-          atSize(atWeight(theme.type.inputFont, 600), TRIGGER_TEXT_SIZE),
-          styles.label,
-          { color: contentColor },
+          styles.trigger,
+          {
+            borderRadius: theme.dimens.radius.field,
+            backgroundColor: enabled ? theme.colors.input.background : theme.colors.button.disabledBackground,
+            borderWidth: theme.dimens.borderWidth.thin,
+            borderColor: enabled ? theme.colors.primary : theme.colors.input.border,
+            minHeight: theme.dimens.size['control-md'],
+            paddingHorizontal: insetForBorder(theme.dimens.spacing.md, theme.dimens.borderWidth.thin),
+            paddingVertical: insetForBorder(theme.dimens.spacing.sm, theme.dimens.borderWidth.thin),
+            columnGap: theme.dimens.spacing.xs,
+          },
         ]}
       >
-        {value ?? placeholder}
-      </Text>
-      <UseSmileIDSampleIcon name="chevronDown" tint={contentColor} size={CHEVRON_SIZE} />
-    </Pressable>
+        {leading ? (
+          // A minimum, not a fixed size: the leading slot may hold an emoji, which grows with font scale.
+          <View
+            style={[
+              styles.leading,
+              { minWidth: theme.dimens.size['icon-md'], minHeight: theme.dimens.size['icon-md'] },
+            ]}
+          >
+            {leading(contentColor)}
+          </View>
+        ) : null}
+        <Text
+          style={[
+            atSize(atWeight(theme.type.inputFont, 600), TRIGGER_TEXT_SIZE),
+            styles.label,
+            { color: contentColor },
+          ]}
+        >
+          {value ?? placeholder}
+        </Text>
+        <UseSmileIDSampleIcon name="chevronDown" tint={contentColor} size={CHEVRON_SIZE} />
+      </Pressable>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  slot: { justifyContent: 'center' },
   trigger: { alignItems: 'center', flexDirection: 'row', width: '100%' },
   leading: { alignItems: 'center', justifyContent: 'center' },
   label: { flex: 1 },
