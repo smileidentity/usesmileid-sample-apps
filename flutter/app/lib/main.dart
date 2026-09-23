@@ -44,6 +44,8 @@ Future<void> main() async {
       useSmileIDSampleLaunchArgsOverride(launch.args),
     ],
   );
+  // Built now, not by the first screen that reads it: a session past its deadline retires before any draws.
+  container.read(useSmileIDSampleSessionProvider);
   // iOS's scene lifecycle launches at '/' and pushes the link after the first frame; Android never does.
   if (defaultTargetPlatform == TargetPlatform.iOS &&
       PlatformDispatcher.instance.defaultRouteName == '/') {

@@ -31,7 +31,9 @@ class _UseSmileIDSampleScanTokenTabState
     super.initState();
     _resuming = ref.read(useSmileIDSampleInterruptedRunProvider);
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) => ref.read(useSmileIDSampleInterruptedRunProvider.notifier).clear(),
+      (_) => ref
+          .read(useSmileIDSampleInterruptedRunProvider.notifier)
+          .release(_resuming),
     );
   }
 

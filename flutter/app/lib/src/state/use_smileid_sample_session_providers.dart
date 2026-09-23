@@ -44,19 +44,31 @@ class UseSmileIDSampleSessionNotifier
     return stored;
   }
 
+  /// Every write, in call order: an overlapping retire once landed a marker over a newer link.
+  Future<void> _writes = Future<void>.value();
+
   /// Links a decoded session, replacing any live one or ended marker.
   Future<void> link(UseSmileIDSampleTokenSession session) =>
-      _write(() => _repository.link(session));
+      _enqueue(() => _write(() => _repository.link(session)));
 
   /// Sign out: no ended marker, which would send the next run to the scanner.
-  Future<void> clear() => _write(_repository.clear);
+  Future<void> clear() => _enqueue(() => _write(_repository.clear));
 
   /// Past the deadline the token is useless, so it goes; that a session ended stays.
-  Future<void> _retire(UseSmileIDSampleTokenSession session) async {
+  Future<void> _retire(
+    UseSmileIDSampleTokenSession session,
+  ) => _enqueue(() async {
+    // Checked once earlier writes have landed, so a link made meanwhile is never retired.
     if (state.live != session) {
       return;
     }
     await _write(() => _repository.retire(session));
+  });
+
+  Future<void> _enqueue(Future<void> Function() write) {
+    final Future<void> next = _writes.then((_) => write());
+    _writes = next;
+    return next;
   }
 
   Future<void> _write(
@@ -139,8 +151,12 @@ class UseSmileIDSampleInterruptedRunNotifier
   /// Hands a run to the scanner.
   void send(UseSmileIDSampleRunIntent intent) => state = intent;
 
-  /// Drops the pending run; called after the scanner's first frame, never while it builds.
-  void clear() => state = null;
+  /// Drops [claimed] once the scanner has read it, leaving a run sent since then in place.
+  void release(UseSmileIDSampleRunIntent? claimed) {
+    if (state == claimed) {
+      state = null;
+    }
+  }
 }
 
 /// Where a status refresh asks; a test overrides it so no refresh reaches a network.
