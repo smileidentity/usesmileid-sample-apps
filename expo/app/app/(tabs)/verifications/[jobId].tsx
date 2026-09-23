@@ -10,7 +10,7 @@ import { useLocalSearchParams } from 'expo-router';
 
 import { smileIDSampleStatusApi } from '../../../src/status/use-smile-id-sample-status-api';
 import { useSmileIDSampleBack } from '../../../src/use-smile-id-sample-back';
-import { useSmileIDSampleNoticeInset } from '../../../src/use-smile-id-sample-notice-inset';
+import { useSmileIDSampleNoticeStyle } from '../../../src/use-smile-id-sample-notice-inset';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -22,7 +22,7 @@ export default function VerificationDetails() {
   const remove = useSmileIDSampleJobStore((state) => state.remove);
   const [refreshing, setRefreshing] = useState(false);
   const notice = useSmileIDSampleTransientNotice();
-  const noticeInset = useSmileIDSampleNoticeInset();
+  const noticeStyle = useSmileIDSampleNoticeStyle();
   const { show } = notice;
   /// The entry refresh runs once per row, so its own state write cannot re-trigger it.
   const refreshedOnEntry = useRef<string | null>(null);
@@ -72,12 +72,11 @@ export default function VerificationDetails() {
         onCopy={() => undefined}
       />
       {/* Past the system bar, which edge-to-edge draws over this route; a pushed screen has no nav bar to clear. */}
-      <UseSmileIDSampleTransientNoticeHost state={notice} style={[styles.notice, { bottom: noticeInset }]} />
+      <UseSmileIDSampleTransientNoticeHost state={notice} style={noticeStyle} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   host: { flex: 1 },
-  notice: { paddingHorizontal: 16, position: 'absolute' },
 });
