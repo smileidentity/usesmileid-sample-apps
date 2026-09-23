@@ -150,8 +150,8 @@ flutter/verify.sh     # format + analyze + test + release build
 expo/verify.sh        # eslint + tsc --noEmit + test + release build
 ```
 
-Until then, state plainly in the PR what you could and could not run. Publishing is not this
-repo's job; there is nothing here to publish.
+When a script cannot run on your machine, state plainly in the PR what you could and could not
+run. Publishing is not this repo's job; there is nothing here to publish.
 
 **All four platforms run in CI on every PR** (`.github/workflows/android.yml`, `ios.yml`,
 `flutter.yml`, `expo.yml`). Each workflow runs that platform's `verify.sh` itself rather than
