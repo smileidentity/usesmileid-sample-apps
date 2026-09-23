@@ -61,8 +61,7 @@ class UseSmileIDSampleScanSheetState {
 
 /// The sheet under the scanner: manual entry, and a simulated scan that mints its own fixture token.
 class UseSmileIDSampleScanSheet extends StatelessWidget {
-  /// The Link action appears only once there is something to link, so the default sheet keeps the
-  /// design's rows.
+  /// Link token appears only once there is something to link, so the default sheet keeps the design's rows.
   const UseSmileIDSampleScanSheet({
     required this.state,
     required this.onTokenChanged,

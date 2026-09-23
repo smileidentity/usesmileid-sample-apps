@@ -4,8 +4,6 @@ import 'package:flutter/widgets.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 /// The shell's QR camera; it releases the camera when it leaves the tree, so the SDK gets it back.
-///
-/// A denied permission renders nothing: the sheet's manual entry still links a token.
 class UseSmileIDSampleQrScanner extends StatefulWidget {
   /// [enabled] is false while the screen shows what it just found, so frames are not read behind it.
   const UseSmileIDSampleQrScanner({
@@ -83,6 +81,7 @@ class _UseSmileIDSampleQrScannerState extends State<UseSmileIDSampleQrScanner> {
   Widget build(BuildContext context) => MobileScanner(
     controller: _controller,
     onDetect: _detect,
+    // A denied permission renders nothing: the sheet's manual entry still links a token.
     errorBuilder: (BuildContext context, MobileScannerException error) =>
         const SizedBox.shrink(),
   );

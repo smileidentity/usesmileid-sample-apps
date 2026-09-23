@@ -38,8 +38,6 @@ enum UseSmileIDSampleScanReason {
 }
 
 /// Scan token: from the camera, by hand, or simulated, a session is linked only after the token decodes.
-///
-/// Entry state lives in this widget, so it survives a rebuild but not process death, as a typed field does elsewhere.
 class UseSmileIDSampleScanTokenScreen extends StatefulWidget {
   /// [viewfinder] absent (a golden, an SDK repo's sample) keeps the glyph in its place.
   const UseSmileIDSampleScanTokenScreen({
@@ -94,6 +92,7 @@ class UseSmileIDSampleScanTokenScreen extends StatefulWidget {
 
 class _UseSmileIDSampleScanTokenScreenState
     extends State<UseSmileIDSampleScanTokenScreen> {
+  /// The typed token and the mint choices survive a rebuild, not process death, as a typed field does elsewhere.
   String _token = '';
   String? _rejection;
   UseSmileIDSampleSimulatedSpan _span =
@@ -103,6 +102,8 @@ class _UseSmileIDSampleScanTokenScreenState
   UseSmileIDSampleSimulatedBindings _bindings =
       const UseSmileIDSampleSimulatedBindings();
   bool _expanded = false;
+
+  /// Not kept past this visit: a returning scanner starts searching again.
   UseSmileIDSampleScanState _scan = const UseSmileIDSampleScanSearching();
   Timer? _dwell;
 
