@@ -3,16 +3,19 @@ import 'dart:io';
 
 import 'package:sample_ui/sample_ui.dart';
 
-/// `GET /v3/status/{jobId}`, the partner's own call: the SDK stops at the 202 that creates the job.
-///
-/// `dart:io` rather than a client package, so the shell carries no HTTP dependency of its own.
+/// `GET /v3/status/{jobId}` over `dart:io`, so the shell carries no HTTP dependency of its own.
 class UseSmileIDSampleHttpJobStatusSource
     implements UseSmileIDSampleJobStatusSource {
-  /// [client] is injectable so a test can answer without a network.
-  UseSmileIDSampleHttpJobStatusSource({HttpClient? client})
-    : _client = client ?? HttpClient();
+  /// [client] and [timeout] are injectable so a test can stall without a network.
+  UseSmileIDSampleHttpJobStatusSource({
+    HttpClient? client,
+    this.timeout = const Duration(seconds: 10),
+  }) : _client = client ?? (HttpClient()..connectionTimeout = timeout);
 
   final HttpClient _client;
+
+  /// How long each step may take before the refresh gives up and reports a failure.
+  final Duration timeout;
 
   @override
   Future<UseSmileIDSampleStatusRefresh> check({
@@ -23,15 +26,21 @@ class UseSmileIDSampleHttpJobStatusSource
     final UseSmileIDSampleEnvironment environment = sandbox
         ? UseSmileIDSampleEnvironment.sandbox
         : UseSmileIDSampleEnvironment.production;
-    final HttpClientRequest request = await _client.getUrl(
-      Uri.parse(
-        '${environment.baseUrl}v3/status/${Uri.encodeComponent(jobId)}',
-      ),
-    );
+    // Every step is bounded: a stalled network must throw, so the store reports it and releases its guard.
+    final HttpClientRequest request = await _client
+        .getUrl(
+          Uri.parse(
+            '${environment.baseUrl}v3/status/${Uri.encodeComponent(jobId)}',
+          ),
+        )
+        .timeout(timeout);
     // The session's own JWT. Never logged.
     request.headers.set('SmileID-Token', token);
-    final HttpClientResponse response = await request.close();
-    final String body = await response.transform(utf8.decoder).join();
+    final HttpClientResponse response = await request.close().timeout(timeout);
+    final String body = await response
+        .transform(utf8.decoder)
+        .join()
+        .timeout(timeout);
     return useSmileIDSampleStatusOutcome(response.statusCode, body);
   }
 }
