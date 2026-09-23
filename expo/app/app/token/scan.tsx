@@ -7,6 +7,7 @@ import {
   type UseSmileIDSampleTokenSession,
   type UseSmileIDSampleViewfinderProps,
 } from '@smileid/sample-ui';
+import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import { createContext, use, useEffect, useRef, useState } from 'react';
@@ -75,6 +76,7 @@ export default function ScanToken() {
         reason={resuming === null ? null : 'sessionEnded'}
         onBack={back}
         onLink={onLink}
+        onPaste={() => Clipboard.getStringAsync()}
         onSimulate={(span, bindings, environment) => {
           const minted = smileIDSampleSimulatedToken({ span, bindings, environment, nowMillis: Date.now() });
           // The minter and the decoder have to agree; a fixture that no longer decodes is a defect, not a session.
