@@ -156,7 +156,7 @@ class _UseSmileIDSampleScanTokenScreenState
     if (_scan is! UseSmileIDSampleScanSearching) {
       return;
     }
-    unawaited(HapticFeedback.selectionClick());
+    // One haptic per scan, played by the verdict: the siblings do not tick on the find as well.
     setState(() => _scan = const UseSmileIDSampleScanFound());
     _judge(candidate, fromField: false);
   }
