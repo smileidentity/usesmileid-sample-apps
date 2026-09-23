@@ -1,5 +1,4 @@
-import 'dart:ui';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,14 +28,32 @@ Future<void> main() async {
   // Once, before the first frame: a seed inside the provider re-ran on every invalidation and put
   // a just-removed row back. Idempotent by id, so a second seeded launch adds nothing.
   await useSmileIDSampleApplyLaunch(launch.args, jobs);
+  final ProviderContainer container = ProviderContainer(
+    overrides: [
+      useSmileIDSampleSettingsRepositoryProvider.overrideWithValue(settings),
+      useSmileIDSampleStoredSettingsProvider.overrideWithValue(stored),
+      useSmileIDSampleJobsRepositoryProvider.overrideWithValue(jobs),
+      useSmileIDSampleLaunchArgsOverride(launch.args),
+    ],
+  );
+  // iOS's scene lifecycle launches at '/' and pushes the link after the first frame; Android never does.
+  if (defaultTargetPlatform == TargetPlatform.iOS &&
+      PlatformDispatcher.instance.defaultRouteName == '/') {
+    UseSmileIDSampleColdLink(
+      onLink: (Uri link) async {
+        final UseSmileIDSampleLaunchArgs args =
+            UseSmileIDSampleLaunchArgs.fromUri(link);
+        await useSmileIDSampleApplyLaunch(args, jobs);
+        container
+            .read(useSmileIDSampleColdLinkArgsProvider.notifier)
+            .adopt(args);
+        container.invalidate(useSmileIDSampleJobsProvider);
+      },
+    ).listen();
+  }
   runApp(
-    ProviderScope(
-      overrides: [
-        useSmileIDSampleSettingsRepositoryProvider.overrideWithValue(settings),
-        useSmileIDSampleStoredSettingsProvider.overrideWithValue(stored),
-        useSmileIDSampleJobsRepositoryProvider.overrideWithValue(jobs),
-        useSmileIDSampleLaunchArgsProvider.overrideWithValue(launch.args),
-      ],
+    UncontrolledProviderScope(
+      container: container,
       child: UseSmileIDSampleApp(initialLocation: launch.location),
     ),
   );

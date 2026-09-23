@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:sample_ui/sample_ui.dart';
 
 /// The launch arguments, overridden once at app start so automation needs no test-only build.
@@ -9,6 +10,34 @@ final Provider<UseSmileIDSampleLaunchArgs> useSmileIDSampleLaunchArgsProvider =
     Provider<UseSmileIDSampleLaunchArgs>(
       (Ref ref) => const UseSmileIDSampleLaunchArgs(),
     );
+
+/// A cold link's arguments when the platform handed the link over after the first frame, as iOS does.
+final NotifierProvider<
+  UseSmileIDSampleColdLinkArgsNotifier,
+  UseSmileIDSampleLaunchArgs?
+>
+useSmileIDSampleColdLinkArgsProvider =
+    NotifierProvider<
+      UseSmileIDSampleColdLinkArgsNotifier,
+      UseSmileIDSampleLaunchArgs?
+    >(UseSmileIDSampleColdLinkArgsNotifier.new);
+
+/// Null until a cold link is adopted, which happens at most once per process.
+class UseSmileIDSampleColdLinkArgsNotifier
+    extends Notifier<UseSmileIDSampleLaunchArgs?> {
+  @override
+  UseSmileIDSampleLaunchArgs? build() => null;
+
+  /// Takes the arguments of the link the process was launched at.
+  void adopt(UseSmileIDSampleLaunchArgs args) => state = args;
+}
+
+/// The startup arguments, replaced by a late-delivered cold link's once it arrives.
+Override useSmileIDSampleLaunchArgsOverride(
+  UseSmileIDSampleLaunchArgs startup,
+) => useSmileIDSampleLaunchArgsProvider.overrideWith(
+  (Ref ref) => ref.watch(useSmileIDSampleColdLinkArgsProvider) ?? startup,
+);
 
 /// Where the switches are kept; the shell overrides this with the store that survives a restart.
 final Provider<UseSmileIDSampleSettingsRepository>
