@@ -1,7 +1,8 @@
-import { Pressable, StyleSheet, Text, type StyleProp, type ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { smileCardStrokeWidth, smileLabelSize, smileLabelTracking } from '../smile-product-hues';
-import { atWeight } from '../theme/smile-type';
+import { insetForBorder, touchTargetStyle } from '../theme/smile-compose-layout';
+import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 const CHIP_LABEL_SIZE = 12.5;
@@ -34,49 +35,50 @@ export const UseSmileIDSampleFilterChip = ({
       accessibilityRole="tab"
       accessibilityState={{ selected }}
       onPress={onPress}
-      // The design draws 34 tall; the platform minimum is reached with slop rather than a taller chip.
-      hitSlop={7}
-      style={[
-        styles.chip,
-        {
-          borderRadius: theme.dimens.radius.chip,
-          backgroundColor: selected ? theme.colors.primary : theme.colors.filterChip.background,
-          borderWidth: selected ? 0 : smileCardStrokeWidth,
-          borderColor: selected ? 'transparent' : theme.colors.cardStroke,
-          minHeight: theme.dimens.space[32],
-          paddingHorizontal: theme.dimens.spacing.sm,
-          paddingVertical: theme.dimens.spacing.xs,
-          columnGap: theme.dimens.spacing.xxs,
-        },
-        style,
-      ]}
+      style={[styles.target, touchTargetStyle(theme, 'height'), style]}
     >
-      <Text
+      <View
         style={[
-          atWeight(theme.type.filterChipFont, 700),
-          { fontSize: CHIP_LABEL_SIZE, color: selected ? theme.colors.onPrimary : theme.colors.filterChip.label },
-        ]}
-      >
-        {label}
-      </Text>
-      <Text
-        testID={countTestID}
-        // The design file's muted grey, deliberately not filter.chip-value's blue.
-        style={[
-          theme.type.textStyleOverline,
+          styles.chip,
           {
-            fontSize: smileLabelSize,
-            letterSpacing: smileLabelTracking,
-            color: selected ? theme.colors.onPrimary : theme.colors.textMuted,
+            borderRadius: theme.dimens.radius.chip,
+            backgroundColor: selected ? theme.colors.primary : theme.colors.filterChip.background,
+            borderWidth: selected ? 0 : smileCardStrokeWidth,
+            borderColor: selected ? 'transparent' : theme.colors.cardStroke,
+            minHeight: theme.dimens.space[32],
+            paddingHorizontal: insetForBorder(theme.dimens.spacing.sm, selected ? 0 : smileCardStrokeWidth),
+            paddingVertical: insetForBorder(theme.dimens.spacing.xs, selected ? 0 : smileCardStrokeWidth),
+            columnGap: theme.dimens.spacing.xxs,
           },
         ]}
       >
-        {count}
-      </Text>
+        <Text
+          style={[
+            atSize(atWeight(theme.type.filterChipFont, 700), CHIP_LABEL_SIZE),
+            { color: selected ? theme.colors.onPrimary : theme.colors.filterChip.label },
+          ]}
+        >
+          {label}
+        </Text>
+        <Text
+          testID={countTestID}
+          // The design file's muted grey, deliberately not filter.chip-value's blue.
+          style={[
+            atSize(theme.type.textStyleOverline, smileLabelSize),
+            {
+              letterSpacing: smileLabelTracking,
+              color: selected ? theme.colors.onPrimary : theme.colors.textMuted,
+            },
+          ]}
+        >
+          {count}
+        </Text>
+      </View>
     </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
-  chip: { alignItems: 'center', alignSelf: 'flex-start', flexDirection: 'row' },
+  target: { alignSelf: 'flex-start', justifyContent: 'center' },
+  chip: { alignItems: 'center', flexDirection: 'row' },
 });

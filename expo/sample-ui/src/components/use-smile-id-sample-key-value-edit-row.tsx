@@ -1,5 +1,6 @@
-import { StyleSheet, Text, TextInput, View, type KeyboardTypeOptions, type StyleProp, type ViewStyle } from 'react-native';
+import { Platform, StyleSheet, Text, TextInput, View, type KeyboardTypeOptions, type StyleProp, type ViewStyle } from 'react-native';
 
+import { atFontLine, atSize } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 /// The design's own row metrics, which land between the scale steps — spec/components.json → KeyValueEditRow.
@@ -49,7 +50,7 @@ export const UseSmileIDSampleKeyValueEditRow = ({
     >
       <Text
         // The field name is title-coloured and only the placeholder is muted; Android had that inverted.
-        style={[theme.type.textStyleSubtitle, { fontSize: ROW_TEXT_SIZE, color: theme.colors.textTitle }]}
+        style={[atSize(theme.type.textStyleSubtitle, ROW_TEXT_SIZE), { color: theme.colors.textTitle }]}
       >
         {required ? `${label} *` : label}
       </Text>
@@ -63,9 +64,12 @@ export const UseSmileIDSampleKeyValueEditRow = ({
         keyboardType={keyboardType}
         selectionColor={theme.colors.primary}
         style={[
-          theme.type.textStyleSubtitle,
+          // iOS RN measures a field at its full line height where UITextField uses the font's, a point taller per row.
+          Platform.OS === 'ios'
+            ? atFontLine(atSize(theme.type.textStyleSubtitle, ROW_TEXT_SIZE))
+            : [atSize(theme.type.textStyleSubtitle, ROW_TEXT_SIZE), styles.keepBottomLeading],
           styles.field,
-          { fontSize: ROW_TEXT_SIZE, color: enabled ? theme.colors.textTitle : theme.colors.textMuted },
+          { color: enabled ? theme.colors.textTitle : theme.colors.textMuted },
         ]}
       />
     </View>
@@ -76,4 +80,6 @@ const styles = StyleSheet.create({
   // Wrapping so the value drops below the label at 2x, the same way the data-field row does.
   row: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', width: '100%' },
   field: { padding: 0, textAlign: 'right' },
+  // A Compose text field trims only the top of its line, so the bottom half-leading stays.
+  keepBottomLeading: { marginBottom: 0 },
 });

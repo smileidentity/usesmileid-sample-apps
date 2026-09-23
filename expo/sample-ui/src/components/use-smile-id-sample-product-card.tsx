@@ -9,10 +9,14 @@ import {
   smileCardTitleTracking,
   type SmileProductHue,
 } from '../smile-product-hues';
+import { smileStrokeOverlap } from '../theme/smile-compose-layout';
 import { smileInkOn, smileMix, smileWithAlpha } from '../theme/smile-color-math';
 import { lightColors } from '../tokens';
+import { atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
+/// The smallest size the two-line label may shrink to, as Compose's autosize floor.
+const CARD_LABEL_MIN = 13;
 const SCRIM_ALPHA = 0.16;
 const GHOST_ALPHA = 0.1;
 
@@ -85,7 +89,7 @@ export const UseSmileIDSampleProductCard = ({
           {ghost(smileWithAlpha(ghostInk, GHOST_ALPHA))}
         </View>
       ) : null}
-      <View style={[styles.content, { padding: theme.dimens.spacing.md, rowGap: theme.dimens.spacing.lg }]}>
+      <View style={[smileStrokeOverlap, { padding: theme.dimens.spacing.md, rowGap: theme.dimens.spacing.lg }]}>
         <View
           style={[
             styles.tile,
@@ -140,6 +144,9 @@ const CardLabel = ({ title, family, color }: { title: string; family: string; co
   return (
     <Text
       numberOfLines={fitsTwoLines ? 2 : undefined}
+      // Compose's step-based autosize: the title shrinks towards 13 before either run is cut.
+      adjustsFontSizeToFit={fitsTwoLines}
+      minimumFontScale={CARD_LABEL_MIN / theme.type.textStyleBodyStrong.fontSize}
       style={[
         theme.type.textStyleBodyStrong,
         styles.label,
@@ -150,8 +157,8 @@ const CardLabel = ({ title, family, color }: { title: string; family: string; co
       {'\n'}
       <Text
         style={[
-          theme.type.textStyleCaption,
-          { color, fontWeight: String(smileCardFamilyWeight) as never },
+          atWeight(theme.type.textStyleCaption, smileCardFamilyWeight),
+          { color },
         ]}
       >
         {family}
@@ -164,7 +171,6 @@ const styles = StyleSheet.create({
   // Clipped, so the ghost watermark bleeds off the corner rather than growing the card.
   card: { overflow: 'hidden', width: '100%' },
   ghost: { position: 'absolute' },
-  content: { width: '100%' },
   tile: { alignItems: 'center', justifyContent: 'center' },
   footer: { alignItems: 'flex-end', flexDirection: 'row', justifyContent: 'space-between', width: '100%' },
   label: { flex: 1 },

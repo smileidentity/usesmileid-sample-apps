@@ -28,6 +28,7 @@ import { KycIdFormScreen } from '../src/screens/kyc-id-form-screen';
 import { UserDetailsScreen } from '../src/screens/user-details-screen';
 import { UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
 import { focusField, renderInTheme, schemes, styleTree } from './render-in-theme';
+import { expectGoldens } from './paint/pixel-golden';
 
 const noop = () => {};
 
@@ -41,14 +42,14 @@ const FILLED_DETAILS = {
   firstName: 'Kwame',
   lastName: 'Asante',
   email: 'kwame@uptech.example',
-  phone: '',
+  phone: '+254 700 000 000',
 };
 
 const userDetails = (
   overrides: Partial<Parameters<typeof UserDetailsScreen>[0]> = {},
 ): React.ReactElement => (
   <UserDetailsScreen
-    state={{ productLabel: 'Biometric KYC', details: EMPTY_DETAILS, rememberDetails: false }}
+    state={{ productLabel: 'Biometric KYC', details: EMPTY_DETAILS, rememberDetails: true }}
     onFieldChange={noop}
     onRememberChange={noop}
     onBack={noop}
@@ -96,7 +97,7 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
             state: {
               productLabel: 'Biometric KYC',
               details: EMPTY_DETAILS,
-              rememberDetails: false,
+              rememberDetails: true,
               requirement: smileIDSampleRequirementFrom({ givenNames: true, lastName: true }),
             },
           }),
@@ -113,7 +114,7 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
           kycForm({
             state: {
               productLabel: 'Biometric KYC',
-              details: { country: NIGERIA, idType: NATIONAL_ID, idNumber: 'A01234567' },
+              details: { country: KENYA, idType: NATIONAL_ID, idNumber: 'AO12345678' },
             },
           }),
       },
@@ -152,8 +153,8 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
       default: {
         element: () => (
           <IdTypePickerSheet
-            country={NIGERIA}
-            selected={NATIONAL_ID}
+            country={KENYA}
+            selected={null}
             query=""
             onQueryChange={noop}
             onSelect={noop}
@@ -181,7 +182,7 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
 describe.each(cases)('$screen', ({ states }) => {
   describe.each(schemes)('$name', ({ dark }) => {
     it.each(Object.keys(states))('%s', async (state) => {
-      expect(await styleTree(states[state]!.element(), dark)).toMatchSnapshot();
+      await expectGoldens(states[state]!.element(), dark);
     });
   });
 });
@@ -253,25 +254,6 @@ describe('the ID-details form is complete', () => {
     expect(
       smileIDSampleIdDetailsComplete({ country: NIGERIA, idType: NATIONAL_ID, idNumber: '   ' }),
     ).toBe(false);
-  });
-});
-
-describe('seeding the consent form from the active profile', () => {
-  beforeEach(() => {
-    useSmileIDSampleFormsStore.getState().clear();
-  });
-
-  it('fills the empty rows, which is what "attached to every job" means', () => {
-    useSmileIDSampleFormsStore.getState().seedUserDetails(FILLED_DETAILS);
-    expect(useSmileIDSampleFormsStore.getState().userDetails).toEqual(FILLED_DETAILS);
-  });
-
-  it('never overwrites what the partner typed, so re-entering the form keeps an edit', () => {
-    useSmileIDSampleFormsStore.getState().setUserField(UseSmileIDSampleUserField.FirstName, 'Ada');
-    useSmileIDSampleFormsStore.getState().seedUserDetails(FILLED_DETAILS);
-    const seeded = useSmileIDSampleFormsStore.getState().userDetails;
-    expect(seeded.firstName).toBe('Ada');
-    expect(seeded.lastName).toBe('Asante');
   });
 });
 

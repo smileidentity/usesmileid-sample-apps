@@ -11,10 +11,11 @@ import {
   useSmileIDSampleSettingsStore,
 } from '@smileid/sample-ui';
 import { useFonts } from 'expo-font';
+import { NavigationBar } from 'expo-navigation-bar';
 import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import { setStatusBarStyle, StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { useColorScheme, View } from 'react-native';
+import { Appearance, Platform, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useLaunchArgs } from '../src/use-smile-id-sample-launch';
@@ -22,14 +23,21 @@ import { useLaunchArgs } from '../src/use-smile-id-sample-launch';
 /// Every pushed route and sheet layers over the tabs, so a cold deep link lands with its owner beneath (routes.json R12).
 export const unstable_settings = { initialRouteName: '(tabs)' };
 
+/// Re-sends both bar styles, past the navigation-bar module's cache.
+const reassertSystemBars = (dark: boolean) => {
+  setStatusBarStyle(dark ? 'light' : 'dark');
+  NavigationBar.setStyle(dark ? 'dark' : 'light');
+  NavigationBar.setStyle(dark ? 'light' : 'dark');
+};
+
 /// The navigation host. Every route is a file under app/, matching the expo column of spec/routes.json.
 export default function RootLayout() {
   const scheme = useColorScheme();
   const darkMode = useSmileIDSampleSettingsStore((state) => state.settings.darkMode);
   const settingsLoaded = useSmileIDSampleSettingsStore((state) => state.loaded);
   const loadSettings = useSmileIDSampleSettingsStore((state) => state.load);
-  // The switch OVERRIDES to dark and off follows the device, which is the twin's themeMode, not a preference.
-  const dark = (settingsLoaded && darkMode) || scheme === 'dark';
+  // Until the switch loads, the device's guess avoids a flash.
+  const dark = settingsLoaded ? darkMode : scheme === 'dark';
   const colors = dark ? smileDarkColors : smileLightColors;
   const args = useLaunchArgs();
   const resetProfiles = useSmileIDSampleProfileStore((state) => state.reset);
@@ -44,6 +52,20 @@ export default function RootLayout() {
   useEffect(() => {
     void loadSettings();
   }, [loadSettings]);
+
+  // The SDK's useColorScheme and the native bars read this, not the theme provider.
+  useEffect(() => {
+    if (settingsLoaded) Appearance.setColorScheme(dark ? 'dark' : 'light');
+  }, [settingsLoaded, dark]);
+
+  // Android re-applies the window's bars after a night-mode change, so ours go again.
+  useEffect(() => {
+    if (Platform.OS !== 'android') return undefined;
+    const subscription = Appearance.addChangeListener(() =>
+      requestAnimationFrame(() => reassertSystemBars(dark)),
+    );
+    return () => subscription.remove();
+  }, [dark]);
 
   useEffect(() => {
     resetProfiles(smileIDSampleProfilesForLaunch(args));
@@ -61,6 +83,8 @@ export default function RootLayout() {
       <UseSmileIDSampleThemeProvider dark={dark}>
         <UseSmileIDSampleNoticeWindowProvider value={noticeWindowMs}>
           <StatusBar style={dark ? 'light' : 'dark'} />
+          {/* Names the button colour, as StatusBar does, despite the type's doc saying the bar's. */}
+          <NavigationBar style={dark ? 'light' : 'dark'} />
           <Stack
             screenOptions={{
               headerShown: false,

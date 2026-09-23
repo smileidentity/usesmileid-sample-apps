@@ -2,6 +2,7 @@ import { Text, type StyleProp, type TextStyle } from 'react-native';
 
 import { type UseSmileIDSampleStatus, smileIDSampleStatusRole } from '../model/use-smile-id-sample-status';
 import { smileLabelSize, smileLabelTracking } from '../smile-product-hues';
+import { atSize, untrimmed } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 import type { BadgeTokens } from '../theme/smile-colors';
 
@@ -29,20 +30,22 @@ export const UseSmileIDSampleStatusBadge = ({ status, testID, style }: Props) =>
   const theme = useSmileIDSampleTheme();
   const { background, foreground } = pairFor(theme.colors.badge, smileIDSampleStatusRole(status));
 
+  const label = atSize(theme.type.textStyleOverline, smileLabelSize);
+
   return (
     <Text
       testID={testID}
       style={[
-        theme.type.textStyleOverline,
+        // The pill is this Text's own box, so its trim comes off the padding rather than the margins.
+        untrimmed(label),
         {
-          fontSize: smileLabelSize,
           letterSpacing: smileLabelTracking,
           color: foreground,
           backgroundColor: background,
           borderRadius: theme.dimens.radius.control,
           overflow: 'hidden',
           paddingHorizontal: theme.dimens.spacing.xs,
-          paddingVertical: theme.dimens.space[4],
+          paddingVertical: theme.dimens.space[4] + label.marginTop,
         },
         style,
       ]}

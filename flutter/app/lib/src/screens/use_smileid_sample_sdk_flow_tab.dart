@@ -44,6 +44,9 @@ class _UseSmileIDSampleSdkFlowTabState
   UseSmileIDSampleFlowLaunchSnapshot? _snapshot;
   UseSmileIDSampleFlowPreflight? _preflight;
 
+  /// Built once: an identical child is not rebuilt when the brightness wrapper above it is.
+  Widget? _sdkHost;
+
   /// A cancel delivered after teardown would otherwise act on whatever replaced this route.
   bool _left = false;
 
@@ -74,6 +77,10 @@ class _UseSmileIDSampleSdkFlowTabState
         child: const SizedBox.expand(),
       );
     }
+    return _SdkBrightness(child: _sdkHost ??= _sdk(snapshot));
+  }
+
+  Widget _sdk(UseSmileIDSampleFlowLaunchSnapshot snapshot) {
     return UseSmileIDBuilder(
       builder: (UseSmileIDFlowBuilder builder) {
         useSmileIDSampleApplying(builder, snapshot);
@@ -198,4 +205,19 @@ class _UseSmileIDSampleSdkFlowTabState
   );
 
   static const int _acceptedCode = 202;
+}
+
+/// The SDK themes itself from the platform brightness, so this hands it the host theme's instead.
+class _SdkBrightness extends StatelessWidget {
+  const _SdkBrightness({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => MediaQuery(
+    data: MediaQuery.of(
+      context,
+    ).copyWith(platformBrightness: Theme.of(context).brightness),
+    child: child,
+  );
 }

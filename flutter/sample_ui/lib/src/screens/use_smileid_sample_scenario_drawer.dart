@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import '../components/use_smileid_sample_option_row.dart';
 import '../components/use_smileid_sample_section_label.dart';
 import '../model/use_smileid_sample_scenario.dart';
-import '../theme/use_smileid_sample_colors.dart';
-import '../theme/use_smileid_sample_theme.dart';
-import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
@@ -33,41 +30,31 @@ class UseSmileIDSampleScenarioDrawer extends StatelessWidget {
   final ValueChanged<UseSmileIDSampleThemeScenario> onThemeSelected;
 
   @override
-  Widget build(BuildContext context) {
-    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
-      context,
-    );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Text(
-          'Scenarios',
-          style: UseSmileIDSampleType.textStyleHeadingSection.copyWith(
-            color: colors.textTitle,
-          ),
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      const UseSmileIDSampleSectionLabel(text: 'FLOW'),
+      const SizedBox(height: SmileDimens.spacingSm),
+      for (final UseSmileIDSampleScenario option
+          in UseSmileIDSampleScenario.values)
+        UseSmileIDSampleOptionRow(
+          label: option.label,
+          selected: option == scenario,
+          onTap: () => onScenarioSelected(option),
+          testId: UseSmileIDSampleTestIds.scenarioItem(option.id),
         ),
-        const SizedBox(height: SmileDimens.spacingSm),
-        const UseSmileIDSampleSectionLabel(text: 'FLOW SCENARIOS'),
-        for (final UseSmileIDSampleScenario option
-            in UseSmileIDSampleScenario.values)
-          UseSmileIDSampleOptionRow(
-            label: option.label,
-            selected: option == scenario,
-            onTap: () => onScenarioSelected(option),
-            testId: UseSmileIDSampleTestIds.scenarioItem(option.id),
-          ),
-        const SizedBox(height: SmileDimens.spacingSm),
-        const UseSmileIDSampleSectionLabel(text: 'THEME SCENARIOS'),
-        for (final UseSmileIDSampleThemeScenario option
-            in UseSmileIDSampleThemeScenario.values)
-          UseSmileIDSampleOptionRow(
-            label: option.label,
-            selected: option == theme,
-            onTap: () => onThemeSelected(option),
-            testId: UseSmileIDSampleTestIds.themeItem(option.id),
-          ),
-      ],
-    );
-  }
+      const SizedBox(height: SmileDimens.spacingSm),
+      const UseSmileIDSampleSectionLabel(text: 'THEME'),
+      const SizedBox(height: SmileDimens.spacingSm),
+      for (final UseSmileIDSampleThemeScenario option
+          in UseSmileIDSampleThemeScenario.values)
+        UseSmileIDSampleOptionRow(
+          label: option.label,
+          selected: option == theme,
+          onTap: () => onThemeSelected(option),
+          testId: UseSmileIDSampleTestIds.themeItem(option.id),
+        ),
+    ],
+  );
 }

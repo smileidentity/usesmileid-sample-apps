@@ -15,10 +15,23 @@ class UseSmileIDSampleTriggerEmoji extends StatelessWidget {
   final String emoji;
 
   @override
-  Widget build(BuildContext context) => Text(
-    emoji,
-    style: UseSmileIDSampleType.inputFont.copyWith(fontSize: _emojiSize),
-  );
+  Widget build(BuildContext context) {
+    final TextStyle style = UseSmileIDSampleType.inputFont.copyWith(
+      fontSize: _emojiSize,
+    );
+    if (Theme.of(context).platform != TargetPlatform.iOS) {
+      return Text(emoji, style: style);
+    }
+    // Apple Color Emoji's tall ascent would grow the trigger past 44, so iOS pins it to the icon slot.
+    return Text(
+      emoji,
+      style: style.copyWith(
+        height: SmileDimens.sizeIconMd / _emojiSize,
+        leadingDistribution: TextLeadingDistribution.even,
+      ),
+      textHeightBehavior: const TextHeightBehavior(),
+    );
+  }
 }
 
 /// Looks like an input, behaves like a button.
@@ -63,63 +76,72 @@ class UseSmileIDSampleSelectTrigger extends StatelessWidget {
         : value != null
         ? colors.textTitle
         : colors.input.placeholder;
+    // The field keeps its own height; the platform minimum is added around it, as a button's is.
     return Semantics(
       identifier: testId,
       button: true,
       enabled: enabled,
-      child: Material(
-        color: enabled
-            ? colors.input.background
-            : colors.button.disabledBackground,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(SmileDimens.radiusField),
-          // Outlined in PRIMARY when actionable, which is what says it can be tapped.
-          side: BorderSide(
-            color: enabled ? colors.primary : colors.input.border,
-            width: SmileDimens.borderWidthThin,
-          ),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: useSmileIDSampleTapTarget(context),
         ),
-        child: InkWell(
-          onTap: enabled ? onTap : null,
-          borderRadius: BorderRadius.circular(SmileDimens.radiusField),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              minHeight: SmileDimens.sizeControlMd,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: SmileDimens.spacingMd,
-                vertical: SmileDimens.spacingSm,
+        child: Center(
+          heightFactor: 1,
+          child: Material(
+            color: enabled
+                ? colors.input.background
+                : colors.button.disabledBackground,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(SmileDimens.radiusField),
+              // Outlined in PRIMARY when actionable, which is what says it can be tapped.
+              side: BorderSide(
+                color: enabled ? colors.primary : colors.input.border,
+                width: SmileDimens.borderWidthThin,
               ),
-              child: Row(
-                children: <Widget>[
-                  if (leading != null) ...<Widget>[
-                    // A minimum, not a fixed box: an emoji grows with the font scale and clips.
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        minWidth: SmileDimens.sizeIconMd,
-                        minHeight: SmileDimens.sizeIconMd,
-                      ),
-                      child: Center(child: leading!(content)),
-                    ),
-                    const SizedBox(width: SmileDimens.spacingXs),
-                  ],
-                  Expanded(
-                    child: Text(
-                      value ?? placeholder,
-                      style: UseSmileIDSampleType.inputFont.copyWith(
-                        fontSize: _triggerTextSize,
-                        fontWeight: FontWeight.w600,
-                        color: content,
-                      ),
-                    ),
+            ),
+            child: InkWell(
+              onTap: enabled ? onTap : null,
+              borderRadius: BorderRadius.circular(SmileDimens.radiusField),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: SmileDimens.sizeControlMd,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: SmileDimens.spacingMd,
+                    vertical: SmileDimens.spacingSm,
                   ),
-                  const SizedBox(width: SmileDimens.spacingXs),
-                  UseSmileIDSampleGlyphs.chevronDown(
-                    content,
-                    size: _chevronSize,
+                  child: Row(
+                    children: <Widget>[
+                      if (leading != null) ...<Widget>[
+                        // A minimum, not a fixed box: an emoji grows with the font scale and clips.
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minWidth: SmileDimens.sizeIconMd,
+                            minHeight: SmileDimens.sizeIconMd,
+                          ),
+                          child: Center(child: leading!(content)),
+                        ),
+                        const SizedBox(width: SmileDimens.spacingXs),
+                      ],
+                      Expanded(
+                        child: Text(
+                          value ?? placeholder,
+                          style: UseSmileIDSampleType.inputFont.copyWith(
+                            fontSize: _triggerTextSize,
+                            fontWeight: FontWeight.w600,
+                            color: content,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: SmileDimens.spacingXs),
+                      UseSmileIDSampleGlyphs.chevronDown(
+                        content,
+                        size: _chevronSize,
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),

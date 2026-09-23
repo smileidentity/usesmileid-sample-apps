@@ -1,17 +1,14 @@
-import type { TextStyle } from 'react-native';
-
 import { smileFontFamily } from './smile-fonts';
 import { tokens } from '../tokens';
-
-type FontWeight = NonNullable<TextStyle['fontWeight']>;
 
 /// One resolved text style, as the props a React Native Text reads directly.
 export type SmileTextStyle = {
   readonly fontFamily: string;
-  readonly fontWeight: FontWeight;
   readonly fontSize: number;
   readonly lineHeight: number;
   readonly letterSpacing: number;
+  readonly marginTop: number;
+  readonly marginBottom: number;
 };
 
 type TokenTextStyle = {
@@ -24,14 +21,24 @@ type TokenTextStyle = {
 
 const px = (value: string): number => Number.parseFloat(value);
 
-/// Resolves one token style. The display ramp names Epilogue first and it is not shipped, so every
-/// style takes its DM Sans fallback — the same substitution the Compose and SwiftUI twins make.
+/// DM Sans's hhea ascent plus descent, 992 + 310 over 1000 units, the same in all five weights.
+const SMILE_FONT_HEIGHT_EM = 1.302;
+
+/// Compose trims the leading above a text's first line and below its last; the negative margins do the same here.
+const trimmed = (fontSize: number, lineHeight: number) => {
+  // Half each way, because React Native centres the glyphs in the line as Compose's trimmed box does.
+  const half = Math.max(0, lineHeight - fontSize * SMILE_FONT_HEIGHT_EM) / 2;
+  return { marginTop: -half, marginBottom: -half };
+};
+
+/// Resolves a token style in DM Sans, which also stands in for the unshipped Epilogue.
 const style = (token: TokenTextStyle): SmileTextStyle => ({
+  // No fontWeight: the family names the face, and a bold weight on Android swaps a loaded face for the system font.
   fontFamily: smileFontFamily(token.fontWeight),
-  fontWeight: String(token.fontWeight) as FontWeight,
   fontSize: px(token.fontSize),
   lineHeight: px(token.lineHeight),
   letterSpacing: px(token.letterSpacing),
+  ...trimmed(px(token.fontSize), px(token.lineHeight)),
 });
 
 const ramp = tokens['text-style'];
@@ -75,5 +82,23 @@ export type SmileType = typeof smileType;
 export const atWeight = (base: SmileTextStyle, weight: number): SmileTextStyle => ({
   ...base,
   fontFamily: smileFontFamily(weight),
-  fontWeight: String(weight) as FontWeight,
+});
+
+/// Re-resolves a style at a different size, keeping its line height unless told otherwise, so the trim follows.
+export const atSize = (base: SmileTextStyle, fontSize: number, lineHeight = base.lineHeight): SmileTextStyle => ({
+  ...base,
+  fontSize,
+  lineHeight,
+  ...trimmed(fontSize, lineHeight),
+});
+
+/// A style for a Text that paints its own box, whose trim has to come off its padding instead.
+export const untrimmed = (base: SmileTextStyle): SmileTextStyle => ({ ...base, marginTop: 0, marginBottom: 0 });
+
+/// One line at the face's own height, the box a native iOS text field draws whatever line height it is given.
+export const atFontLine = (base: SmileTextStyle): SmileTextStyle => ({
+  ...base,
+  lineHeight: base.fontSize * SMILE_FONT_HEIGHT_EM,
+  marginTop: 0,
+  marginBottom: 0,
 });

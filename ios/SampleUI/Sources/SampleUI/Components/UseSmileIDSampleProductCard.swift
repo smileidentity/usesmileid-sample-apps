@@ -52,7 +52,7 @@ public struct UseSmileIDSampleProductCard<Ghost: View>: View {
         }
       }
       .padding(SmileSpacing.spacingMd)
-      .frame(maxWidth: .infinity, minHeight: minHeight, alignment: .leading)
+      .frame(maxWidth: .infinity, minHeight: minHeight, alignment: .topLeading)
       .background(fill)
       .overlay(alignment: .topTrailing) {
         // The ink goes IN, because the mark colours itself and would ignore a foreground style.

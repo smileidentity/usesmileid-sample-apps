@@ -88,36 +88,42 @@ class _UseSmileIDSampleLicensesScreenState
   }
 
   Widget _row(UseSmileIDSampleNotice notice, UseSmileIDSampleColors colors) =>
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          UseSmileIDSampleSettingRow(
-            title: notice.component,
-            supportingText: notice.licenseName,
-            onTap: () => setState(
-              () => _expanded = _expanded == notice.component
-                  ? null
-                  : notice.component,
+      ColoredBox(
+        color: colors.surface,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            UseSmileIDSampleSettingRow(
+              title: notice.component,
+              supportingText: notice.licenseName,
+              onTap: () => setState(
+                () => _expanded = _expanded == notice.component
+                    ? null
+                    : notice.component,
+              ),
+              testId: UseSmileIDSampleTestIds.licenseRow(notice.component),
             ),
-            testId: UseSmileIDSampleTestIds.licenseRow(notice.component),
-          ),
-          if (_expanded == notice.component)
-            Semantics(
-              identifier: UseSmileIDSampleTestIds.licenseText(notice.component),
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: SmileDimens.spacingMd,
-                  right: SmileDimens.spacingMd,
-                  bottom: SmileDimens.spacingSm,
+            if (_expanded == notice.component)
+              Semantics(
+                identifier: UseSmileIDSampleTestIds.licenseText(
+                  notice.component,
                 ),
-                child: Text(
-                  notice.text,
-                  style: UseSmileIDSampleType.textStyleCaption.copyWith(
-                    color: colors.textMuted,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: SmileDimens.spacingMd,
+                    right: SmileDimens.spacingMd,
+                    bottom: SmileDimens.spacingSm,
+                  ),
+                  child: Text(
+                    notice.text,
+                    style: UseSmileIDSampleType.textStyleCaption.copyWith(
+                      color: colors.textMuted,
+                    ),
                   ),
                 ),
               ),
-            ),
-        ],
+            const UseSmileIDSampleSettingRowDivider(),
+          ],
+        ),
       );
 }

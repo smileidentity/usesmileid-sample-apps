@@ -78,23 +78,26 @@ class UseSmileIDSampleProductsScreen extends StatelessWidget {
       identifier: UseSmileIDSampleTestIds.productsScreen,
       child: ListView(
         padding: EdgeInsets.only(
-          top: MediaQuery.viewPaddingOf(context).top + SmileDimens.spacingSm,
+          top: MediaQuery.viewPaddingOf(context).top,
           bottom: bottomInset,
         ),
         children: <Widget>[
           _Header(state: state, onProfileTap: onProfileTap, colors: colors),
-          const SizedBox(height: SmileDimens.spacingSm),
           if (state.sessionEnded)
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: SmileDimens.spacingMd,
+              padding: const EdgeInsets.only(
+                left: SmileDimens.spacingMd,
+                right: SmileDimens.spacingMd,
+                top: SmileDimens.spacingSm,
               ),
               child: UseSmileIDSampleSessionEndedBanner(onScan: onScanTap),
             )
           else if (state.sessionId != null && state.sessionRemaining != null)
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: SmileDimens.spacingMd,
+              padding: const EdgeInsets.only(
+                left: SmileDimens.spacingMd,
+                right: SmileDimens.spacingMd,
+                top: SmileDimens.spacingSm,
               ),
               child: UseSmileIDSampleSessionCard(
                 sessionId: state.sessionId!,
@@ -166,9 +169,21 @@ class _Header extends StatelessWidget {
               child: InkResponse(
                 onTap: onProfileTap,
                 radius: SmileDimens.sizeControlMd / 2,
-                child: UseSmileIDSampleAvatar(
-                  initials: state.initials,
-                  containerColor: state.avatarColor ?? smileProfileHues.first,
+                // The platform minimum around the 40 avatar, which is also what sets the row's height.
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minWidth: useSmileIDSampleTapTarget(context),
+                    minHeight: useSmileIDSampleTapTarget(context),
+                  ),
+                  child: Center(
+                    widthFactor: 1,
+                    heightFactor: 1,
+                    child: UseSmileIDSampleAvatar(
+                      initials: state.initials,
+                      containerColor:
+                          state.avatarColor ?? smileProfileHues.first,
+                    ),
+                  ),
                 ),
               ),
             ),

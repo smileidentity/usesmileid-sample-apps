@@ -60,7 +60,6 @@ public struct UserDetailsScreen: View {
           }
         }
         .padding(.horizontal, SmileSpacing.spacingMd)
-        .padding(.vertical, SmileSpacing.spacingXs)
       }
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.userDetailsScreen)
       UseSmileIDSampleButton(

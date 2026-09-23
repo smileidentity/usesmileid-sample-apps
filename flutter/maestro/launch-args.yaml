@@ -14,6 +14,7 @@ appId: ${APP_ID}
 # A launch with no arguments shows a partner nothing that is not theirs.
 - tapOn:
     id: "sample_nav_verifications"
+    retryTapIfNoChange: true
 - assertVisible:
     id: "sample_verifications_empty"
 
@@ -24,6 +25,7 @@ appId: ${APP_ID}
       LANDS_ON: "sample_products_screen"
 - tapOn:
     id: "sample_nav_verifications"
+    retryTapIfNoChange: true
 - assertVisible:
     id: "sample_job_row_0"
 

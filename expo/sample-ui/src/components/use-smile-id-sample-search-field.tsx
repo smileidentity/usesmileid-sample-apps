@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { StyleSheet, TextInput, View, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Circle, Line } from 'react-native-svg';
 
+import { insetForBorder } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 type Props = {
@@ -22,6 +23,7 @@ export const UseSmileIDSampleSearchField = ({
 }: Props) => {
   const theme = useSmileIDSampleTheme();
   const [focused, setFocused] = useState(false);
+  const borderWidth = focused ? theme.dimens.borderWidth.thin : theme.dimens.borderWidth.hairline;
 
   return (
     <View
@@ -31,10 +33,10 @@ export const UseSmileIDSampleSearchField = ({
           minHeight: theme.dimens.size['control-md'],
           backgroundColor: theme.colors.search.background,
           borderRadius: theme.dimens.radius.field,
-          borderWidth: focused ? theme.dimens.borderWidth.thin : theme.dimens.borderWidth.hairline,
+          borderWidth,
           borderColor: focused ? theme.colors.search.borderFocus : theme.colors.search.border,
-          paddingHorizontal: theme.dimens.spacing.md,
-          paddingVertical: theme.dimens.spacing.sm,
+          paddingHorizontal: insetForBorder(theme.dimens.spacing.md, borderWidth),
+          paddingVertical: insetForBorder(theme.dimens.spacing.sm, borderWidth),
           columnGap: theme.dimens.spacing.xs,
         },
         style,

@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
@@ -31,6 +31,9 @@ abstract final class UseSmileIDSampleRoutes {
 
   /// The profiles list, above the tabs rather than inside one.
   static const String profiles = '/profiles';
+
+  /// The profile-switch sheet, a LAYER over products: its path sits under profiles, its owner does not.
+  static const String profileSwitch = '/profiles/switch';
 
   /// The scenario drawer, a LAYER over settings rather than a page of its own.
   static const String scenarioDrawer = '/debug/scenarios';
@@ -86,10 +89,11 @@ bool useSmileIDSampleShowsNavBar(String location) => UseSmileIDSampleRoutes
     .contains(useSmileIDSamplePageBehind(location));
 
 /// The destination a sheet route is layered over, which is itself for every other route.
-String useSmileIDSamplePageBehind(String location) =>
-    location == UseSmileIDSampleRoutes.scenarioDrawer
-    ? UseSmileIDSampleRoutes.settings
-    : location;
+String useSmileIDSamplePageBehind(String location) => switch (location) {
+  UseSmileIDSampleRoutes.scenarioDrawer => UseSmileIDSampleRoutes.settings,
+  UseSmileIDSampleRoutes.profileSwitch => UseSmileIDSampleRoutes.products,
+  _ => location,
+};
 
 /// Folds a whole custom-scheme link back into a path, or null to leave an in-app route alone.
 String? useSmileIDSampleFoldPlatformLink(
@@ -124,7 +128,18 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
           routes: <RouteBase>[
             GoRoute(
               path: UseSmileIDSampleRoutes.products,
-              builder: (_, _) => const UseSmileIDSampleProductsTab(),
+              pageBuilder: (_, _) => _ownerPage(
+                UseSmileIDSampleRoutes.products,
+                const UseSmileIDSampleProductsTab(),
+              ),
+            ),
+            // A sheet is a LAYER over its owner, and matched here before /profiles/:profileId can.
+            GoRoute(
+              path: UseSmileIDSampleRoutes.profileSwitch,
+              pageBuilder: (_, _) => _ownerPage(
+                UseSmileIDSampleRoutes.products,
+                const UseSmileIDSampleProductsTab(openSwitch: true),
+              ),
             ),
           ],
         ),
@@ -152,7 +167,10 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
           routes: <RouteBase>[
             GoRoute(
               path: UseSmileIDSampleRoutes.settings,
-              builder: (_, _) => const UseSmileIDSampleSettingsTab(),
+              pageBuilder: (_, _) => _ownerPage(
+                UseSmileIDSampleRoutes.settings,
+                const UseSmileIDSampleSettingsTab(),
+              ),
               routes: <RouteBase>[
                 // A CHILD of the tab root: the notices belong to this tab's stack, so back
                 // returns to settings rather than to the start destination.
@@ -169,8 +187,10 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
             // A sheet is a LAYER over its owner, never a destination that replaces it (R12).
             GoRoute(
               path: UseSmileIDSampleRoutes.scenarioDrawer,
-              builder: (_, _) =>
-                  const UseSmileIDSampleSettingsTab(openDrawer: true),
+              pageBuilder: (_, _) => _ownerPage(
+                UseSmileIDSampleRoutes.settings,
+                const UseSmileIDSampleSettingsTab(openDrawer: true),
+              ),
             ),
           ],
         ),
@@ -261,4 +281,11 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
       builder: (_, _) => const UseSmileIDSampleComponentGallery(),
     ),
   ],
+);
+
+/// One page for an owner and its sheet link: keyed by the owner, so moving between them updates it.
+Page<void> _ownerPage(String owner, Widget child) => MaterialPage<void>(
+  key: ValueKey<String>(owner),
+  restorationId: owner,
+  child: child,
 );

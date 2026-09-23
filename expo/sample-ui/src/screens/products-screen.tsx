@@ -27,6 +27,8 @@ import {
   UseSmileIDSampleSuffixedTestIds,
   UseSmileIDSampleTestIds,
 } from '../use-smile-id-sample-test-ids';
+import { touchTargetStyle } from '../theme/smile-compose-layout';
+import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 /// The design draws the ghost watermark bleeding off the corner at this size.
@@ -81,13 +83,14 @@ export const ProductsScreen = ({
         <View style={[styles.header, { columnGap: theme.dimens.spacing.xs }]}>
           <Text
             style={[
-              theme.type.textStyleHeadingPage,
+              atSize(
+                atWeight(theme.type.textStyleHeadingPage, smileHeadingPageWeight),
+                smileHeadingPageSize,
+                smileHeadingPageLineHeight,
+              ),
               styles.title,
               {
-                fontSize: smileHeadingPageSize,
-                lineHeight: smileHeadingPageLineHeight,
                 letterSpacing: smileHeadingPageTracking,
-                fontWeight: String(smileHeadingPageWeight) as never,
                 color: theme.colors.offBlack,
               },
             ]}
@@ -100,7 +103,7 @@ export const ProductsScreen = ({
             accessibilityRole="button"
             accessibilityLabel="Switch profile"
             onPress={onProfilePress}
-            hitSlop={8}
+            style={[styles.avatar, touchTargetStyle(theme)]}
           >
             <UseSmileIDSampleAvatar
               initials={state.initials}
@@ -167,4 +170,5 @@ const styles = StyleSheet.create({
   screen: { flex: 1 },
   header: { alignItems: 'center', flexDirection: 'row', width: '100%' },
   title: { flex: 1 },
+  avatar: { alignItems: 'center', justifyContent: 'center' },
 });

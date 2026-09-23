@@ -106,6 +106,41 @@ which of the two their platform behaves like rather than assume Android's limita
    a unit test on each platform asserts both the plain default and the launch choice. Profiles
    are in memory, so that argument is per launch and a cold start by link shows the starter.
    Why the rule exists: `play-release-android.md` §7.4.
+9. **The Dark mode switch overrides the device's appearance, both ways, and the system bars obey
+   the switch.** Off is light on a dark phone; on is dark on a light one. Following the device
+   when the switch is off leaves a dark phone rendering dark while Settings reads off, so it is
+   not an option. Ruled 2026-09-22 with Android as the tie-breaker; iOS already pinned both ways.
+   Each platform uses its own API rather than drawing a coloured strip:
+
+   | Android | iOS | Flutter | Expo |
+   |---|---|---|---|
+   | `enableEdgeToEdge` with `SystemBarStyle.auto(…) { darkMode }` | `.preferredColorScheme(darkMode ? .dark : .light)` on the window's root | `themeMode: dark / light` + one `AnnotatedRegion<SystemUiOverlayStyle>` above the router | `Appearance.setColorScheme` + `expo-status-bar` + `expo-navigation-bar` |
+
+   What each had wrong before the ruling, because none of it was visible on a phone whose
+   appearance matched the switch: Android's `enableEdgeToEdge()` with no arguments reads the
+   **device**, so a dark phone drew white icons on the light app; Flutter set no overlay style at
+   all; Flutter and Expo followed the device when the switch was off. Two things are the
+   platform's and not ours, so check them rather than assume them:
+
+   - **The sheet is a second window on Android.** Material 3 derives its bars from the sheet's
+     `contentColor`, which is a theme token here, so it was already right — the predicate asserts
+     it anyway, because one presentation proves nothing about the other.
+   - **The SDK's capture screen sets its own status-bar icons and restores the host's on the way out.** The
+     Android SDK forces light icons there over a surface it pins light, so the clock is white on
+     near-white while the SDK owns the screen; the Flutter and React Native SDKs draw dark icons.
+     That is the SDK's defect and is not worked around here.
+   - **Expo's Android navigation bar does not follow the switch on Android 12 to 14.** React Native's
+     status-bar module sets the status appearance through `InsetsController` directly, which puts the
+     window in `APPEARANCE_CONTROLLED`; from then on the legacy flag `expo-navigation-bar` writes (androidx
+     routes it that way below API 35) is ignored. It works on Android 15 and later. Known gap, ruled
+     2026-09-23 rather than adding a native module; the fix belongs upstream.
+   - **A night-mode change re-applies Expo's bars after the app's own call**, so the root re-sends both
+     styles once `Appearance` reports the change.
+
+   Android and Flutter each assert the four crossings — device dark with the switch off and device
+   light with it on, pushed and modal — on the icon appearance, not a pixel. Expo asserts the styles
+   the root imposes, which every route and sheet inherits; iOS has no predicate, because XCUITest
+   cannot read a bar's appearance, so its sheets were proven on a simulator.
 
 ## 4. Discipline that travels
 
@@ -165,6 +200,12 @@ again — but every platform renders **393 logical units wide**, so a crop expre
 lands on the same content on each, and a profile of where ink starts and stops down the frame turns
 "this looks loose" into a number. Eight of the divergences below were invisible until measured.
 
+**Then measure on one device, not in the goldens.** Every Android-built app publishes the same
+`sample_*` ids as resource ids, so cold-linking the three apps to the same route on one emulator and
+reading each id's bounds in dp compares placement directly, with no harness framing in between. Treat
+a delta as a lead and confirm it on a side-by-side capture: Flutter often tags a whole row where
+Android tags the control. Items 12 to 17 were found this way on 2026-09-22.
+
 1. **A component that exists and has no call site is a defect, not a spare part.** The full-height
    sheet header was built on iOS, matched the spec, and was never called — both picker sheets used
    the partial sheet's chrome instead, so they shipped with no back control. Grep each component for
@@ -216,3 +257,39 @@ lands on the same content on each, and a profile of where ink starts and stops d
     icons with the stand-ins, and re-recorded goldens hid it. Before generating over an existing
     asset, read its header for a source the record lacks, and read the re-recorded baseline for every
     mark that changed, not only the ones you meant to change.
+12. **Compose trims a text's outer leading; Flutter and React Native do not.** Compose's default
+    `LineHeightStyle` (proportional, `Trim.Both`) drops the leading above a text's first line and
+    below its last, so a single 16/24 DM Sans line is 20.8 tall there (hhea 992 + 310 over 1000, so
+    1.302em) and 24 on the other two. Every row whose height comes from its text came out taller:
+    job rows by 5, settings rows by 4, the key-value form by about 2.4 a row. Flutter matches it with
+    `TextHeightBehavior(applyHeightToFirstAscent: false, applyHeightToLastDescent: false)`. Expo
+    gives every type style a negative top and bottom margin of half the excess, which is recomputed
+    by `atSize` when a call site changes the size. A Text that paints its own box, like the status
+    badge, takes the trim off its padding instead (`untrimmed`).
+13. **A Compose border does not inset content; a React Native border does.** `Modifier.border` and
+    `Surface(border = …)` draw over the padding, while `borderWidth` sits inside the box and pushes
+    the content in. That made each bordered control one stroke taller on every side: 47 against 44
+    for the select trigger, 46 against 44 for the text input, and 1 more for every 0.5-stroked card.
+    Take the stroke off the padding on the same element, or pull a card's content over its stroke
+    with `smileStrokeOverlap`.
+14. **`minimumInteractiveComponentSize()` is layout, not slop.** The filter chips, the Select and
+    Scan text actions, the selection checkbox, the products avatar and Sign out are all laid out at 48
+    on Android, with the visual centred inside. A `hitSlop` reserves no space, so the chips sat 12
+    higher than Android's. Lay these out at `theme.dimens.touchTarget` instead. That is 48 on Android and 44 on iOS,
+    and the 44 is platform-native, so an iOS golden stays 2 to 4 short of Android's here.
+15. **On Android, a bold `fontWeight` on a loaded font swaps it for the system font.** expo-font
+    registers each face under its own family at normal style. `fontWeight: '700'` asks for the bold
+    style, which that family does not have, so Android falls back to the system sans. That is why
+    the app-bar titles looked like Roboto. The family names the face, so type styles set no
+    `fontWeight`, and a weight change goes through `atWeight`.
+16. **Use the switch the platform's own apps draw.** React Native's Android `Switch` is the AppCompat
+    control, not the Material 3 one the Compose app draws, and the gap is visible in size and row
+    height (72 against about 64). Expo's Android switch is `@expo/ui`'s Compose `Switch`, with
+    `SwitchDefaults.colors` mapped the same way as Android. iOS keeps `UISwitch`, but it has to be
+    re-centred, because React Native pins it to `alignSelf: 'flex-start'`.
+17. **A golden renders a screen outside its shell, so a shell defect is invisible to every baseline.**
+    Android's `Scaffold` padded its content by the window insets without consuming them, so each tab
+    root and the top app bar padded the status bar a second time: every Android screen sat 24 low and
+    a pushed screen's back control at 48. The ports matched the design and looked wrong beside
+    Android. Fixed with `consumeWindowInsets(contentPadding)` on the host; only the device measurement
+    above could see it, which is why the reference is measured too, not assumed.

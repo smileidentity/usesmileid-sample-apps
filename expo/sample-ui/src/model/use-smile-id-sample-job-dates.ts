@@ -16,13 +16,21 @@ export const smileIDSampleStartOfDay = (millis: number): number => {
   return date.getTime();
 };
 
-const dayFormat = (locale?: string) =>
-  new Intl.DateTimeFormat(locale, {
+/// Android's `EEE, dd MMM yyyy`: the locale names the weekday and month, never the field order.
+const dayFormat = (locale?: string) => {
+  const formatter = new Intl.DateTimeFormat(locale, {
     weekday: 'short',
     day: '2-digit',
     month: 'short',
     year: 'numeric',
   });
+  return (date: Date): string => {
+    const parts = formatter.formatToParts(date);
+    const field = (type: Intl.DateTimeFormatPartTypes) =>
+      parts.find((part) => part.type === type)?.value ?? '';
+    return `${field('weekday')}, ${field('day')} ${field('month')} ${field('year')}`;
+  };
+};
 
 /// Groups jobs by calendar day, newest first. Locale-formatted, so it must not be a hardcoded string.
 export const smileIDSampleGroupByDay = (
@@ -44,7 +52,7 @@ export const smileIDSampleGroupByDay = (
     .map(([day, rows]) => ({
       // A day with no relative word renders the absolute date alone; the header adds no second copy.
       relative: day === today ? 'TODAY' : day === today - MILLIS_PER_DAY ? 'YESTERDAY' : '',
-      absolute: format.format(new Date(day)).toUpperCase(),
+      absolute: format(new Date(day)).toUpperCase(),
       jobs: rows,
     }));
 };

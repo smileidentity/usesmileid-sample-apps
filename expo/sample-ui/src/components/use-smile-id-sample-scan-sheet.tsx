@@ -3,6 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { UseSmileIDSampleButton } from './use-smile-id-sample-button';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import { touchTargetStyle } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 type Props = {
@@ -52,7 +53,7 @@ export const UseSmileIDSampleScanSheet = ({ onPaste, onSimulate, style }: Props)
           testID={UseSmileIDSampleTestIds.TOKEN_PASTE}
           accessibilityRole="button"
           onPress={onPaste}
-          hitSlop={12}
+          style={[styles.action, touchTargetStyle(theme), { paddingHorizontal: theme.dimens.spacing.xs }]}
         >
           <Text style={[theme.type.textStyleButtonSm, { color: theme.colors.primary }]}>Paste</Text>
         </Pressable>
@@ -71,4 +72,5 @@ const styles = StyleSheet.create({
   sheet: { width: '100%' },
   row: { alignItems: 'center', flexDirection: 'row', width: '100%' },
   label: { flex: 1 },
+  action: { alignItems: 'center', justifyContent: 'center' },
 });

@@ -11,7 +11,7 @@ import {
   type UseSmileIDSampleProfile,
 } from '../state/use-smile-id-sample-profiles';
 import { smileProfileHues } from '../smile-product-hues';
-import { atWeight } from '../theme/smile-type';
+import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 import {
   UseSmileIDSampleSuffixedTestIds,
@@ -38,6 +38,7 @@ const CreateProfileRow = ({ onPress }: { onPress: () => void }) => {
       style={[
         styles.createRow,
         {
+          marginHorizontal: theme.dimens.spacing.md,
           columnGap: theme.dimens.spacing.sm,
           paddingHorizontal: CREATE_PADDING_X,
           paddingVertical: theme.dimens.spacing.sm,
@@ -60,8 +61,8 @@ const CreateProfileRow = ({ onPress }: { onPress: () => void }) => {
       <View style={{ rowGap: theme.dimens.spacing.xxs }}>
         <Text
           style={[
-            atWeight(theme.type.textStyleBodyStrong, 600),
-            { color: theme.colors.textTitle, fontSize: CREATE_TITLE_SIZE },
+            atSize(atWeight(theme.type.textStyleBodyStrong, 600), CREATE_TITLE_SIZE),
+            { color: theme.colors.textTitle },
           ]}
         >
           Create new profile

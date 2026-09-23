@@ -4,6 +4,7 @@ import '../components/use_smileid_sample_icon.dart';
 import '../components/use_smileid_sample_profile_row.dart';
 import '../components/use_smileid_sample_section_label.dart';
 import '../components/use_smileid_sample_setting_row.dart';
+import '../components/use_smileid_sample_spaced.dart';
 import '../components/use_smileid_sample_switch.dart';
 import '../state/use_smileid_sample_settings.dart';
 import '../theme/use_smileid_sample_colors.dart';
@@ -175,13 +176,23 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
     return Semantics(
       identifier: UseSmileIDSampleTestIds.settingsScreen,
       child: ListView(
-        padding: EdgeInsets.fromLTRB(
-          SmileDimens.spacingMd,
-          SmileDimens.spacingSm,
-          SmileDimens.spacingMd,
-          SmileDimens.spacingSm + bottomInset,
-        ),
-        children: <Widget>[
+        padding: EdgeInsets.only(bottom: bottomInset),
+        children: useSmileIDSampleSpaced(<Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: SmileDimens.spacingMd,
+              vertical: SmileDimens.spacingXs,
+            ),
+            child: Semantics(
+              header: true,
+              child: Text(
+                'Settings',
+                style: UseSmileIDSampleType.textStyleHeadingPage.copyWith(
+                  color: colors.textTitle,
+                ),
+              ),
+            ),
+          ),
           _Section(
             label: 'PROFILE',
             children: <Widget>[
@@ -258,14 +269,6 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
               ),
             ],
           ),
-          _Section(
-            label: 'ABOUT',
-            children: _navRows(useSmileIDSampleAboutRows),
-          ),
-          _Section(
-            label: 'LEGAL',
-            children: _navRows(useSmileIDSampleLegalRows),
-          ),
           if (onOpenScenarioDrawer != null)
             _Section(
               label: 'DEBUG',
@@ -283,24 +286,38 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
                 ),
               ],
             ),
-          const SizedBox(height: SmileDimens.spacingSm),
-          UseSmileIDSampleDestructiveRow(
-            text: 'Sign out',
-            onTap: onSignOut,
-            testId: UseSmileIDSampleTestIds.signOut,
+          _Section(
+            label: 'ABOUT',
+            children: _navRows(useSmileIDSampleAboutRows),
           ),
-          const SizedBox(height: SmileDimens.spacingSm),
+          _Section(
+            label: 'LEGAL',
+            children: _navRows(useSmileIDSampleLegalRows),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: SmileDimens.spacingMd,
+            ),
+            child: UseSmileIDSampleDestructiveRow(
+              text: 'Sign out',
+              onTap: onSignOut,
+              testId: UseSmileIDSampleTestIds.signOut,
+            ),
+          ),
           Semantics(
             identifier: UseSmileIDSampleTestIds.versionLabel,
-            child: Text(
-              state.versionLabel,
-              textAlign: TextAlign.center,
-              style: UseSmileIDSampleType.textStyleCaption.copyWith(
-                color: colors.textMuted,
+            child: Padding(
+              padding: const EdgeInsets.all(SmileDimens.spacingMd),
+              child: Text(
+                state.versionLabel,
+                textAlign: TextAlign.center,
+                style: UseSmileIDSampleType.textStyleCaption.copyWith(
+                  color: colors.textMuted,
+                ),
               ),
             ),
           ),
-        ],
+        ]),
       ),
     );
   }
@@ -350,7 +367,7 @@ class _Section extends StatelessWidget {
       context,
     );
     return Padding(
-      padding: const EdgeInsets.only(bottom: SmileDimens.spacingLg),
+      padding: const EdgeInsets.symmetric(horizontal: SmileDimens.spacingMd),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[

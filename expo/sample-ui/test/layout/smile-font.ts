@@ -336,3 +336,7 @@ export const measureRun = (text: string, run: SmileFontRun): number => {
 /// Whether a face is one of the bundled DM Sans weights, so an unmeasurable family fails loudly.
 export const isBundledFace = (family: string | undefined): family is string =>
   family !== undefined && family.startsWith('DMSans-');
+
+/// Whether the bundled face has a glyph for [character].
+export const hasGlyph = (family: string, character: string): boolean =>
+  loadFace(family).glyphForCodePoint.has(character.codePointAt(0) ?? 0);

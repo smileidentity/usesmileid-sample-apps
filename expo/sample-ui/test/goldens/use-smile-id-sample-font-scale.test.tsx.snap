@@ -25,9 +25,10 @@ exports[`at the largest content size, dark avatar 1`] = `
         {
           "fontFamily": "DMSans-Medium",
           "fontSize": 14,
-          "fontWeight": "500",
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -0.8859999999999992,
+          "marginTop": -0.8859999999999992,
         },
         {
           "color": "#ffffff",
@@ -79,8 +80,8 @@ exports[`at the largest content size, dark button_wrapping 1`] = `
     [
       {
         "alignItems": "center",
+        "alignSelf": "stretch",
         "justifyContent": "center",
-        "width": "100%",
       },
       {
         "backgroundColor": "#4d88ff",
@@ -107,9 +108,10 @@ exports[`at the largest content size, dark button_wrapping 1`] = `
           {
             "fontFamily": "DMSans-Bold",
             "fontSize": 16,
-            "fontWeight": "700",
             "letterSpacing": 0,
             "lineHeight": 24,
+            "marginBottom": -1.5839999999999996,
+            "marginTop": -1.5839999999999996,
           },
           {
             "textAlign": "center",
@@ -151,14 +153,14 @@ exports[`at the largest content size, dark data_field_row_with_copy 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 12,
-          "fontWeight": "500",
+          "fontSize": 13,
           "letterSpacing": 0,
           "lineHeight": 16,
+          "marginBottom": -0,
+          "marginTop": -0,
         },
         {
           "color": "#848282",
-          "fontSize": 13,
         },
       ]
     }
@@ -170,10 +172,11 @@ exports[`at the largest content size, dark data_field_row_with_copy 1`] = `
       [
         {
           "fontFamily": "DMSans-SemiBold",
-          "fontSize": 14,
-          "fontWeight": "600",
+          "fontSize": 13,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.536999999999999,
+          "marginTop": -1.536999999999999,
         },
         {
           "flex": 1,
@@ -181,7 +184,6 @@ exports[`at the largest content size, dark data_field_row_with_copy 1`] = `
         },
         {
           "color": "#f2f2f2",
-          "fontSize": 13,
         },
       ]
     }
@@ -315,7 +317,6 @@ exports[`at the largest content size, dark filter_chip 1`] = `
   accessible={true}
   collapsable={false}
   focusable={true}
-  hitSlop={7}
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -328,63 +329,76 @@ exports[`at the largest content size, dark filter_chip 1`] = `
   style={
     [
       {
-        "alignItems": "center",
         "alignSelf": "flex-start",
-        "flexDirection": "row",
+        "justifyContent": "center",
       },
       {
-        "backgroundColor": "#272a35",
-        "borderColor": "#2d3748",
-        "borderRadius": 999,
-        "borderWidth": 0.5,
-        "columnGap": 4,
-        "minHeight": 32,
-        "paddingHorizontal": 12,
-        "paddingVertical": 8,
+        "minHeight": 44,
       },
       undefined,
     ]
   }
 >
-  <Text
+  <View
     style={
       [
         {
-          "fontFamily": "DMSans-Bold",
-          "fontSize": 14,
-          "fontWeight": "700",
-          "letterSpacing": 0,
-          "lineHeight": 20,
+          "alignItems": "center",
+          "flexDirection": "row",
         },
         {
-          "color": "#c2c5cb",
-          "fontSize": 12.5,
+          "backgroundColor": "#272a35",
+          "borderColor": "#2d3748",
+          "borderRadius": 999,
+          "borderWidth": 0.5,
+          "columnGap": 4,
+          "minHeight": 32,
+          "paddingHorizontal": 11.5,
+          "paddingVertical": 7.5,
         },
       ]
     }
   >
-    Attention
-  </Text>
-  <Text
-    style={
-      [
-        {
-          "fontFamily": "DMSans-Bold",
-          "fontSize": 10,
-          "fontWeight": "700",
-          "letterSpacing": 0,
-          "lineHeight": 16,
-        },
-        {
-          "color": "#848282",
-          "fontSize": 11,
-          "letterSpacing": 0.88,
-        },
-      ]
-    }
-  >
-    2
-  </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 12.5,
+            "letterSpacing": 0,
+            "lineHeight": 20,
+            "marginBottom": -1.862499999999999,
+            "marginTop": -1.862499999999999,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+        ]
+      }
+    >
+      Attention
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 11,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.8389999999999995,
+            "marginTop": -0.8389999999999995,
+          },
+          {
+            "color": "#848282",
+            "letterSpacing": 0.88,
+          },
+        ]
+      }
+    >
+      2
+    </Text>
+  </View>
 </View>
 `;
 
@@ -413,7 +427,9 @@ exports[`at the largest content size, dark job_row 1`] = `
           "alignItems": "center",
           "flexDirection": "row",
           "flexWrap": "wrap",
-          "width": "100%",
+        },
+        {
+          "margin": -0.5,
         },
         {
           "columnGap": 12,
@@ -563,9 +579,10 @@ exports[`at the largest content size, dark job_row 1`] = `
             {
               "fontFamily": "DMSans-SemiBold",
               "fontSize": 16,
-              "fontWeight": "600",
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
             },
             {
               "color": "#f2f2f2",
@@ -579,11 +596,12 @@ exports[`at the largest content size, dark job_row 1`] = `
         style={
           [
             {
-              "fontFamily": "DMSans-Regular",
-              "fontSize": 14,
-              "fontWeight": "400",
+              "fontFamily": "DMSans-Medium",
+              "fontSize": 12,
               "letterSpacing": 0,
-              "lineHeight": 20,
+              "lineHeight": 16,
+              "marginBottom": -0.18799999999999972,
+              "marginTop": -0.18799999999999972,
             },
             {
               "color": "#848282",
@@ -599,20 +617,20 @@ exports[`at the largest content size, dark job_row 1`] = `
         [
           {
             "fontFamily": "DMSans-Bold",
-            "fontSize": 10,
-            "fontWeight": "700",
+            "fontSize": 11,
             "letterSpacing": 0,
             "lineHeight": 16,
+            "marginBottom": 0,
+            "marginTop": 0,
           },
           {
             "backgroundColor": "#dbf5e4",
             "borderRadius": 32,
             "color": "#04713a",
-            "fontSize": 11,
             "letterSpacing": 0.88,
             "overflow": "hidden",
             "paddingHorizontal": 8,
-            "paddingVertical": 4,
+            "paddingVertical": 3.1610000000000005,
           },
           undefined,
         ]
@@ -652,14 +670,14 @@ exports[`at the largest content size, dark key_value_edit_row 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "color": "#f2f2f2",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -676,10 +694,11 @@ exports[`at the largest content size, dark key_value_edit_row 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
-          "lineHeight": 20,
+          "lineHeight": 17.577,
+          "marginBottom": 0,
+          "marginTop": 0,
         },
         {
           "padding": 0,
@@ -687,7 +706,6 @@ exports[`at the largest content size, dark key_value_edit_row 1`] = `
         },
         {
           "color": "#f2f2f2",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -745,14 +763,14 @@ exports[`at the largest content size, dark selection_bar 1`] = `
           [
             {
               "fontFamily": "DMSans-Bold",
-              "fontSize": 16,
-              "fontWeight": "700",
+              "fontSize": 14,
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -2.8859999999999992,
+              "marginTop": -2.8859999999999992,
             },
             {
               "color": "#f2f2f2",
-              "fontSize": 14,
             },
           ]
         }
@@ -765,14 +783,14 @@ exports[`at the largest content size, dark selection_bar 1`] = `
           [
             {
               "fontFamily": "DMSans-Regular",
-              "fontSize": 14,
-              "fontWeight": "400",
+              "fontSize": 11.5,
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -2.5134999999999996,
+              "marginTop": -2.5134999999999996,
             },
             {
               "color": "#848282",
-              "fontSize": 11.5,
             },
           ]
         }
@@ -895,14 +913,14 @@ exports[`at the largest content size, dark selection_bar 1`] = `
           [
             {
               "fontFamily": "DMSans-Bold",
-              "fontSize": 16,
-              "fontWeight": "700",
+              "fontSize": 13.5,
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -3.211499999999999,
+              "marginTop": -3.211499999999999,
             },
             {
               "color": "#a11209",
-              "fontSize": 13.5,
             },
           ]
         }
@@ -953,10 +971,11 @@ exports[`at the largest content size, dark toast_with_action 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "flexBasis": "auto",
@@ -965,7 +984,6 @@ exports[`at the largest content size, dark toast_with_action 1`] = `
         },
         {
           "color": "#1a1c23",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -1024,9 +1042,10 @@ exports[`at the largest content size, dark toast_with_action 1`] = `
           {
             "fontFamily": "DMSans-SemiBold",
             "fontSize": 14,
-            "fontWeight": "600",
             "letterSpacing": 0,
             "lineHeight": 20,
+            "marginBottom": -0.8859999999999992,
+            "marginTop": -0.8859999999999992,
           },
           {
             "textAlign": "center",
@@ -1034,7 +1053,6 @@ exports[`at the largest content size, dark toast_with_action 1`] = `
           },
           {
             "color": "#1a1c23",
-            "fontSize": 14,
           },
         ]
       }
@@ -1191,10 +1209,11 @@ exports[`at the largest content size, dark top_app_bar_wrapping_title 1`] = `
         [
           {
             "fontFamily": "DMSans-Bold",
-            "fontSize": 16,
-            "fontWeight": "700",
+            "fontSize": 15,
             "letterSpacing": 0,
             "lineHeight": 24,
+            "marginBottom": -2.2349999999999994,
+            "marginTop": -2.2349999999999994,
           },
           {
             "flex": 1,
@@ -1202,7 +1221,6 @@ exports[`at the largest content size, dark top_app_bar_wrapping_title 1`] = `
           },
           {
             "color": "#f2f2f2",
-            "fontSize": 15,
           },
         ]
       }
@@ -1245,9 +1263,10 @@ exports[`at the largest content size, light avatar 1`] = `
         {
           "fontFamily": "DMSans-Medium",
           "fontSize": 14,
-          "fontWeight": "500",
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -0.8859999999999992,
+          "marginTop": -0.8859999999999992,
         },
         {
           "color": "#ffffff",
@@ -1299,8 +1318,8 @@ exports[`at the largest content size, light button_wrapping 1`] = `
     [
       {
         "alignItems": "center",
+        "alignSelf": "stretch",
         "justifyContent": "center",
-        "width": "100%",
       },
       {
         "backgroundColor": "#151f72",
@@ -1327,9 +1346,10 @@ exports[`at the largest content size, light button_wrapping 1`] = `
           {
             "fontFamily": "DMSans-Bold",
             "fontSize": 16,
-            "fontWeight": "700",
             "letterSpacing": 0,
             "lineHeight": 24,
+            "marginBottom": -1.5839999999999996,
+            "marginTop": -1.5839999999999996,
           },
           {
             "textAlign": "center",
@@ -1371,14 +1391,14 @@ exports[`at the largest content size, light data_field_row_with_copy 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 12,
-          "fontWeight": "500",
+          "fontSize": 13,
           "letterSpacing": 0,
           "lineHeight": 16,
+          "marginBottom": -0,
+          "marginTop": -0,
         },
         {
           "color": "#848282",
-          "fontSize": 13,
         },
       ]
     }
@@ -1390,10 +1410,11 @@ exports[`at the largest content size, light data_field_row_with_copy 1`] = `
       [
         {
           "fontFamily": "DMSans-SemiBold",
-          "fontSize": 14,
-          "fontWeight": "600",
+          "fontSize": 13,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.536999999999999,
+          "marginTop": -1.536999999999999,
         },
         {
           "flex": 1,
@@ -1401,7 +1422,6 @@ exports[`at the largest content size, light data_field_row_with_copy 1`] = `
         },
         {
           "color": "#21232c",
-          "fontSize": 13,
         },
       ]
     }
@@ -1535,7 +1555,6 @@ exports[`at the largest content size, light filter_chip 1`] = `
   accessible={true}
   collapsable={false}
   focusable={true}
-  hitSlop={7}
   onBlur={[Function]}
   onClick={[Function]}
   onFocus={[Function]}
@@ -1548,63 +1567,76 @@ exports[`at the largest content size, light filter_chip 1`] = `
   style={
     [
       {
-        "alignItems": "center",
         "alignSelf": "flex-start",
-        "flexDirection": "row",
+        "justifyContent": "center",
       },
       {
-        "backgroundColor": "#ffffff",
-        "borderColor": "#eaecf0",
-        "borderRadius": 999,
-        "borderWidth": 0.5,
-        "columnGap": 4,
-        "minHeight": 32,
-        "paddingHorizontal": 12,
-        "paddingVertical": 8,
+        "minHeight": 44,
       },
       undefined,
     ]
   }
 >
-  <Text
+  <View
     style={
       [
         {
-          "fontFamily": "DMSans-Bold",
-          "fontSize": 14,
-          "fontWeight": "700",
-          "letterSpacing": 0,
-          "lineHeight": 20,
+          "alignItems": "center",
+          "flexDirection": "row",
         },
         {
-          "color": "#5e646e",
-          "fontSize": 12.5,
+          "backgroundColor": "#ffffff",
+          "borderColor": "#eaecf0",
+          "borderRadius": 999,
+          "borderWidth": 0.5,
+          "columnGap": 4,
+          "minHeight": 32,
+          "paddingHorizontal": 11.5,
+          "paddingVertical": 7.5,
         },
       ]
     }
   >
-    Attention
-  </Text>
-  <Text
-    style={
-      [
-        {
-          "fontFamily": "DMSans-Bold",
-          "fontSize": 10,
-          "fontWeight": "700",
-          "letterSpacing": 0,
-          "lineHeight": 16,
-        },
-        {
-          "color": "#848282",
-          "fontSize": 11,
-          "letterSpacing": 0.88,
-        },
-      ]
-    }
-  >
-    2
-  </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 12.5,
+            "letterSpacing": 0,
+            "lineHeight": 20,
+            "marginBottom": -1.862499999999999,
+            "marginTop": -1.862499999999999,
+          },
+          {
+            "color": "#5e646e",
+          },
+        ]
+      }
+    >
+      Attention
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 11,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.8389999999999995,
+            "marginTop": -0.8389999999999995,
+          },
+          {
+            "color": "#848282",
+            "letterSpacing": 0.88,
+          },
+        ]
+      }
+    >
+      2
+    </Text>
+  </View>
 </View>
 `;
 
@@ -1633,7 +1665,9 @@ exports[`at the largest content size, light job_row 1`] = `
           "alignItems": "center",
           "flexDirection": "row",
           "flexWrap": "wrap",
-          "width": "100%",
+        },
+        {
+          "margin": -0.5,
         },
         {
           "columnGap": 12,
@@ -1783,9 +1817,10 @@ exports[`at the largest content size, light job_row 1`] = `
             {
               "fontFamily": "DMSans-SemiBold",
               "fontSize": 16,
-              "fontWeight": "600",
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
             },
             {
               "color": "#21232c",
@@ -1799,11 +1834,12 @@ exports[`at the largest content size, light job_row 1`] = `
         style={
           [
             {
-              "fontFamily": "DMSans-Regular",
-              "fontSize": 14,
-              "fontWeight": "400",
+              "fontFamily": "DMSans-Medium",
+              "fontSize": 12,
               "letterSpacing": 0,
-              "lineHeight": 20,
+              "lineHeight": 16,
+              "marginBottom": -0.18799999999999972,
+              "marginTop": -0.18799999999999972,
             },
             {
               "color": "#848282",
@@ -1819,20 +1855,20 @@ exports[`at the largest content size, light job_row 1`] = `
         [
           {
             "fontFamily": "DMSans-Bold",
-            "fontSize": 10,
-            "fontWeight": "700",
+            "fontSize": 11,
             "letterSpacing": 0,
             "lineHeight": 16,
+            "marginBottom": 0,
+            "marginTop": 0,
           },
           {
             "backgroundColor": "#dbf5e4",
             "borderRadius": 32,
             "color": "#04713a",
-            "fontSize": 11,
             "letterSpacing": 0.88,
             "overflow": "hidden",
             "paddingHorizontal": 8,
-            "paddingVertical": 4,
+            "paddingVertical": 3.1610000000000005,
           },
           undefined,
         ]
@@ -1872,14 +1908,14 @@ exports[`at the largest content size, light key_value_edit_row 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "color": "#21232c",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -1896,10 +1932,11 @@ exports[`at the largest content size, light key_value_edit_row 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
-          "lineHeight": 20,
+          "lineHeight": 17.577,
+          "marginBottom": 0,
+          "marginTop": 0,
         },
         {
           "padding": 0,
@@ -1907,7 +1944,6 @@ exports[`at the largest content size, light key_value_edit_row 1`] = `
         },
         {
           "color": "#21232c",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -1965,14 +2001,14 @@ exports[`at the largest content size, light selection_bar 1`] = `
           [
             {
               "fontFamily": "DMSans-Bold",
-              "fontSize": 16,
-              "fontWeight": "700",
+              "fontSize": 14,
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -2.8859999999999992,
+              "marginTop": -2.8859999999999992,
             },
             {
               "color": "#21232c",
-              "fontSize": 14,
             },
           ]
         }
@@ -1985,14 +2021,14 @@ exports[`at the largest content size, light selection_bar 1`] = `
           [
             {
               "fontFamily": "DMSans-Regular",
-              "fontSize": 14,
-              "fontWeight": "400",
+              "fontSize": 11.5,
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -2.5134999999999996,
+              "marginTop": -2.5134999999999996,
             },
             {
               "color": "#848282",
-              "fontSize": 11.5,
             },
           ]
         }
@@ -2115,14 +2151,14 @@ exports[`at the largest content size, light selection_bar 1`] = `
           [
             {
               "fontFamily": "DMSans-Bold",
-              "fontSize": 16,
-              "fontWeight": "700",
+              "fontSize": 13.5,
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -3.211499999999999,
+              "marginTop": -3.211499999999999,
             },
             {
               "color": "#a11209",
-              "fontSize": 13.5,
             },
           ]
         }
@@ -2173,10 +2209,11 @@ exports[`at the largest content size, light toast_with_action 1`] = `
       [
         {
           "fontFamily": "DMSans-Medium",
-          "fontSize": 14,
-          "fontWeight": "500",
+          "fontSize": 13.5,
           "letterSpacing": 0,
           "lineHeight": 20,
+          "marginBottom": -1.2114999999999991,
+          "marginTop": -1.2114999999999991,
         },
         {
           "flexBasis": "auto",
@@ -2185,7 +2222,6 @@ exports[`at the largest content size, light toast_with_action 1`] = `
         },
         {
           "color": "#f9fafb",
-          "fontSize": 13.5,
         },
       ]
     }
@@ -2244,9 +2280,10 @@ exports[`at the largest content size, light toast_with_action 1`] = `
           {
             "fontFamily": "DMSans-SemiBold",
             "fontSize": 14,
-            "fontWeight": "600",
             "letterSpacing": 0,
             "lineHeight": 20,
+            "marginBottom": -0.8859999999999992,
+            "marginTop": -0.8859999999999992,
           },
           {
             "textAlign": "center",
@@ -2254,7 +2291,6 @@ exports[`at the largest content size, light toast_with_action 1`] = `
           },
           {
             "color": "#f9fafb",
-            "fontSize": 14,
           },
         ]
       }
@@ -2411,10 +2447,11 @@ exports[`at the largest content size, light top_app_bar_wrapping_title 1`] = `
         [
           {
             "fontFamily": "DMSans-Bold",
-            "fontSize": 16,
-            "fontWeight": "700",
+            "fontSize": 15,
             "letterSpacing": 0,
             "lineHeight": 24,
+            "marginBottom": -2.2349999999999994,
+            "marginTop": -2.2349999999999994,
           },
           {
             "flex": 1,
@@ -2422,7 +2459,6 @@ exports[`at the largest content size, light top_app_bar_wrapping_title 1`] = `
           },
           {
             "color": "#21232c",
-            "fontSize": 15,
           },
         ]
       }

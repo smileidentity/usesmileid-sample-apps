@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } fro
 
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 import { smileCardStrokeWidth } from '../smile-product-hues';
+import { insetForBorder, touchTargetStyle } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 /// The design's tile is 38 at radius 11 and the chevron 14, none of which the scale carries.
@@ -96,24 +97,27 @@ export const UseSmileIDSampleDestructiveRow = ({
       testID={testID}
       accessibilityRole="button"
       onPress={onPress}
-      style={[
-        styles.destructive,
-        {
-          minHeight: theme.dimens.size['control-md'],
-          padding: theme.dimens.spacing.sm,
-          borderRadius: theme.shapes.card,
-          backgroundColor: theme.colors.surface,
-          borderWidth: smileCardStrokeWidth,
-          borderColor: theme.colors.cardStroke,
-        },
-        style,
-      ]}
+      style={[styles.target, touchTargetStyle(theme, 'height'), style]}
     >
-      <Text
-        style={[theme.type.textStyleButton, styles.centred, { color: theme.colors.badge.errorText }]}
+      <View
+        style={[
+          styles.destructive,
+          {
+            minHeight: theme.dimens.size['control-md'],
+            padding: insetForBorder(theme.dimens.spacing.sm, smileCardStrokeWidth),
+            borderRadius: theme.shapes.card,
+            backgroundColor: theme.colors.surface,
+            borderWidth: smileCardStrokeWidth,
+            borderColor: theme.colors.cardStroke,
+          },
+        ]}
       >
-        {text}
-      </Text>
+        <Text
+          style={[theme.type.textStyleButton, styles.centred, { color: theme.colors.badge.errorText }]}
+        >
+          {text}
+        </Text>
+      </View>
     </Pressable>
   );
 };
@@ -122,6 +126,7 @@ const styles = StyleSheet.create({
   row: { alignItems: 'center', flexDirection: 'row', width: '100%' },
   tile: { alignItems: 'center', justifyContent: 'center' },
   text: { flex: 1 },
-  destructive: { alignItems: 'center', justifyContent: 'center', width: '100%' },
+  target: { alignSelf: 'stretch', justifyContent: 'center' },
+  destructive: { alignItems: 'center', justifyContent: 'center' },
   centred: { textAlign: 'center' },
 });

@@ -15,6 +15,7 @@ appId: ${APP_ID}
 
 - tapOn:
     id: "sample_nav_verifications"
+    retryTapIfNoChange: true
 - assertVisible:
     id: "sample_verifications_screen"
 - assertVisible:

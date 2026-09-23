@@ -11,6 +11,7 @@ appId: ${APP_ID}
 
 - tapOn:
     id: "sample_nav_settings"
+    retryTapIfNoChange: true
 - assertVisible:
     id: "sample_settings_screen"
 

@@ -65,7 +65,7 @@ public struct ProductsScreen: View {
         }
       }
       .padding(.horizontal, SmileSpacing.spacingMd)
-      .padding(.vertical, SmileSpacing.spacingSm)
+      .padding(.bottom, SmileSpacing.spacingSm)
     }
     .background(colors.background)
     .useSmileIDSampleTestId(UseSmileIDSampleTestIds.productsScreen)
@@ -79,7 +79,10 @@ public struct ProductsScreen: View {
           .frame(maxWidth: .infinity, alignment: .leading)
         // The environment chip is hidden here (node 5447:1705); the result card publishes it.
         Button(action: onProfile) {
+          // Laid out at the touch target, as Compose lays out its minimum interactive size.
           UseSmileIDSampleAvatar(initials: state.initials, containerColor: state.avatarColor)
+            .frame(minWidth: SmileSpacing.sizeControlMd, minHeight: SmileSpacing.sizeControlMd)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Switch profile")

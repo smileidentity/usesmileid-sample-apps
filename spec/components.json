@@ -532,7 +532,7 @@
       "usedBy": [
         "verifications"
       ],
-      "notes": "CORRECTED 2026-08-12: the row carries a SECONDARY LINE with the truncated job id and time (e.g. '7d2f01aa… · 13:03:41') — not title-plus-badge only. 68 tall. In select mode it shifts right for a checkbox; in swipe mode it reveals Hide. OPEN 2026-08-26: the secondary line is text-style.body-sm (14/20/400) where the board draws Type/Caption (12/16/500). Android is the only implementation, so a port should take the board and Android should follow — a row-height change with its own goldens, which is why it did not ride along with the tint correction.",
+      "notes": "CORRECTED 2026-08-12: the row carries a SECONDARY LINE with the truncated job id and time (e.g. '7d2f01aa… · 13:03:41') — not title-plus-badge only. 68 tall. In select mode it shifts right for a checkbox; in swipe mode it reveals Hide. CLOSED 2026-09-22: the secondary line is Type/Caption (12/16/500) on all four platforms, as the board draws it.",
       "anatomy": [
         "leading icon tile (product hue, soft tint)",
         "title (product name, truncates)",

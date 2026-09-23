@@ -45,69 +45,74 @@ class UseSmileIDSampleFilterChip extends StatelessWidget {
       context,
     );
     final Color content = selected ? colors.onPrimary : colors.filterChip.label;
+    // The pill stays the design's size; the platform minimum is added around it and taps too.
     return Semantics(
       identifier: testId,
       selected: selected,
       button: true,
-      child: Material(
-        color: selected ? colors.primary : colors.filterChip.background,
-        // A stadium, not a 999 radius: radius.chip is the design's way of saying fully rounded.
-        shape: StadiumBorder(
-          side: selected
-              ? BorderSide.none
-              : BorderSide(
-                  color: colors.cardStroke,
-                  width: smileCardStrokeWidth,
-                ),
-        ),
-        child: InkWell(
-          onTap: onTap,
-          customBorder: const StadiumBorder(),
-          child: ConstrainedBox(
-            // The platform interactive minimum, around the design's 34-tall chip.
-            constraints: const BoxConstraints(
-              minHeight: SmileDimens.sizeControlLg - SmileDimens.spacingXs,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: SmileDimens.spacingSm,
-                vertical: SmileDimens.spacingXs,
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    label,
-                    style: UseSmileIDSampleType.filterChipFont.copyWith(
-                      fontSize: _labelSize,
-                      fontWeight: FontWeight.w700,
-                      color: content,
-                    ),
-                  ),
-                  const SizedBox(width: SmileDimens.spacingXxs),
-                  Semantics(
-                    identifier: countTestId,
-                    child: Text(
-                      '$count',
-                      style:
-                          useSmileIDSampleLabelStyle(
-                            UseSmileIDSampleType.textStyleOverline,
-                            // The design file's muted grey, deliberately not filter-chip.value's blue.
-                          ).copyWith(
-                            color: selected
-                                ? colors.onPrimary
-                                : colors.textMuted,
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: useSmileIDSampleTapTarget(context),
+          ),
+          child: Align(
+            widthFactor: 1,
+            heightFactor: 1,
+            child: _pill(colors, content),
           ),
         ),
       ),
     );
   }
+
+  Widget _pill(UseSmileIDSampleColors colors, Color content) => Material(
+    color: selected ? colors.primary : colors.filterChip.background,
+    // A stadium, not a 999 radius: radius.chip is the design's way of saying fully rounded.
+    shape: StadiumBorder(
+      side: selected
+          ? BorderSide.none
+          : BorderSide(color: colors.cardStroke, width: smileCardStrokeWidth),
+    ),
+    child: InkWell(
+      onTap: onTap,
+      customBorder: const StadiumBorder(),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: SmileDimens.space32),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: SmileDimens.spacingSm,
+            vertical: SmileDimens.spacingXs,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                label,
+                style: UseSmileIDSampleType.filterChipFont.copyWith(
+                  fontSize: _labelSize,
+                  fontWeight: FontWeight.w700,
+                  color: content,
+                ),
+              ),
+              const SizedBox(width: SmileDimens.spacingXxs),
+              Semantics(
+                identifier: countTestId,
+                child: Text(
+                  '$count',
+                  style: useSmileIDSampleLabelStyle(
+                    UseSmileIDSampleType.textStyleOverline,
+                    // The design file's muted grey, deliberately not filter-chip.value's blue.
+                  ).copyWith(color: selected ? colors.onPrimary : colors.textMuted),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 /// The chip's label run, which the generated filter-chip font does not match.

@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 import { tokens } from '../tokens';
 
 /// Strips the CSS unit the token source carries, because React Native sizes are unitless numbers.
@@ -16,6 +18,11 @@ const mapPx = <T extends object>(group: T): { [K in keyof T]: number } => {
   }
   return out;
 };
+
+/// Material's minimum touch target, which Compose's `minimumInteractiveComponentSize` enforces.
+const MATERIAL_TOUCH_TARGET = 48;
+/// Apple's Human Interface Guidelines minimum hit target.
+const APPLE_TOUCH_TARGET = 44;
 
 /// A shadow the token source expresses in CSS, as the props React Native's two platforms each read.
 const shadow = (value: { color: string; offsetY: string; blur: string }) => ({
@@ -61,6 +68,8 @@ export const smileDimens = {
     gap: px(tokens.search.gap),
     height: px(tokens.search.height),
   },
+  /// The platform's own minimum touch target.
+  touchTarget: Platform.OS === 'android' ? MATERIAL_TOUCH_TARGET : APPLE_TOUCH_TARGET,
   elevation: {
     card: shadow(tokens.elevation.card),
     floating: shadow(tokens.elevation.floating),

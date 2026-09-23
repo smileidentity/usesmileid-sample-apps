@@ -5,6 +5,7 @@ import 'package:sample_ui/sample_ui.dart';
 
 import 'state/use_smileid_sample_providers.dart';
 import 'use_smileid_sample_routes.dart';
+import 'use_smileid_sample_system_bars.dart';
 
 /// The app: the shared theme, and the router that hosts every route the journey adds.
 class UseSmileIDSampleApp extends ConsumerStatefulWidget {
@@ -37,10 +38,14 @@ class _UseSmileIDSampleAppState extends ConsumerState<UseSmileIDSampleApp> {
       debugShowCheckedModeBanner: false,
       theme: UseSmileIDSampleTheme.light(),
       darkTheme: UseSmileIDSampleTheme.dark(),
-      // The switch is an override, not a preference for the system: off means follow the device,
-      // which is what the SDK does, and on means dark whatever the device says.
-      themeMode: darkMode ? ThemeMode.dark : ThemeMode.system,
+      // Pinned both ways: the switch overrides the device.
+      themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
       routerConfig: _router,
+      builder: (BuildContext context, Widget? child) =>
+          UseSmileIDSampleSystemBars(
+            darkMode: darkMode,
+            child: child ?? const SizedBox.shrink(),
+          ),
     );
   }
 }

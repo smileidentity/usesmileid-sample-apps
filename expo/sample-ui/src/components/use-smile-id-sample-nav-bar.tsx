@@ -1,10 +1,11 @@
-import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 import { UseSmileIDSampleTokenRing } from './use-smile-id-sample-token-ring';
 import { smileIDSampleNavItems, type UseSmileIDSampleNavItem } from '../model/use-smile-id-sample-nav-item';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import { atSize } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 const TAB_ICON_SIZE = 21;
@@ -22,6 +23,13 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
+/// The Compose bar's 8dp `shadowElevation`; a tinted token shadow draws almost nothing on Android.
+export const SMILE_NAV_BAR_ELEVATION = 8;
+
+/// The Compose elevation on Android and the design's floating shadow token on iOS.
+const floatingShadow = (theme: ReturnType<typeof useSmileIDSampleTheme>): ViewStyle =>
+  Platform.OS === 'android' ? { elevation: SMILE_NAV_BAR_ELEVATION } : theme.dimens.elevation.floating;
+
 /// A floating pill of three tabs, plus a detached token button that navigates rather than switching tab.
 export const UseSmileIDSampleNavBar = ({
   selectedId,
@@ -38,7 +46,7 @@ export const UseSmileIDSampleNavBar = ({
       style={[
         styles.bar,
         {
-          paddingBottom: insets.bottom,
+          paddingBottom: insets.bottom + theme.dimens.spacing.sm,
           paddingHorizontal: theme.dimens.spacing.md,
           paddingTop: theme.dimens.spacing.sm,
           columnGap: theme.dimens.spacing.xs,
@@ -50,7 +58,7 @@ export const UseSmileIDSampleNavBar = ({
         // Takes all the space the token button leaves, so the three tabs are equal thirds of it.
         style={[
           styles.pill,
-          theme.dimens.elevation.floating,
+          floatingShadow(theme),
           {
             backgroundColor: theme.colors.navBar,
             borderRadius: theme.shapes.pill,
@@ -121,7 +129,7 @@ const TokenAffordance = ({ progress, onPress }: { progress: number | null; onPre
         // A minimum rather than a fixed box, so enlarged type grows it instead of clipping "Token".
         style={[
           styles.tokenButton,
-          theme.dimens.elevation.floating,
+          floatingShadow(theme),
           {
             minWidth: TOKEN_SIZE,
             minHeight: TOKEN_SIZE,
@@ -136,7 +144,7 @@ const TokenAffordance = ({ progress, onPress }: { progress: number | null; onPre
           size={theme.dimens.size['icon-sm']}
         />
         <Text
-          style={[theme.type.textStyleOverline, { fontSize: TOKEN_LABEL_SIZE, color: theme.colors.offBlack }]}
+          style={[atSize(theme.type.textStyleOverline, TOKEN_LABEL_SIZE), { color: theme.colors.offBlack }]}
         >
           Token
         </Text>

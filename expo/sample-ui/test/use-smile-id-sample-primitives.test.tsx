@@ -7,7 +7,8 @@ import { UseSmileIDSampleSwitch } from '../src/components/use-smile-id-sample-sw
 import { UseSmileIDSampleTextInput } from '../src/components/use-smile-id-sample-text-input';
 import { UseSmileIDSampleToast } from '../src/components/use-smile-id-sample-toast';
 import { UseSmileIDSampleStatus } from '../src/model/use-smile-id-sample-status';
-import { focusField, pressIn, schemes, styleTree, type Interaction } from './render-in-theme';
+import { focusField, pressIn, schemes, type Interaction } from './render-in-theme';
+import { expectGoldens } from './paint/pixel-golden';
 
 const noop = () => {};
 
@@ -141,7 +142,7 @@ describe.each(cases)('$component', ({ states }) => {
   describe.each(schemes)('$name', ({ dark }) => {
     it.each(Object.keys(states))('%s', async (state) => {
       const entry = states[state]!;
-      expect(await styleTree(entry.element(), dark, entry.interact)).toMatchSnapshot();
+      await expectGoldens(entry.element(), dark, { interact: entry.interact });
     });
   });
 });

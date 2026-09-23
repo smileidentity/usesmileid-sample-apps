@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } fro
 
 import { smileCardStrokeWidth } from '../smile-product-hues';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import { insetForBorder, touchTargetStyle } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 type Props = {
@@ -25,7 +26,7 @@ export const UseSmileIDSampleSessionEndedBanner = ({ onScan, style }: Props) => 
           backgroundColor: theme.colors.surfaceMuted,
           borderWidth: smileCardStrokeWidth,
           borderColor: theme.colors.cardStroke,
-          padding: theme.dimens.spacing.md,
+          padding: insetForBorder(theme.dimens.spacing.md, smileCardStrokeWidth),
           columnGap: theme.dimens.spacing.sm,
           rowGap: theme.dimens.spacing.xs,
         },
@@ -43,8 +44,7 @@ export const UseSmileIDSampleSessionEndedBanner = ({ onScan, style }: Props) => 
       <Pressable
         accessibilityRole="button"
         onPress={onScan}
-        // A text action, expanded to the platform target with slop rather than a taller banner.
-        hitSlop={12}
+        style={[styles.action, touchTargetStyle(theme), { paddingHorizontal: theme.dimens.spacing.xs }]}
       >
         <Text style={[theme.type.textStyleButtonSm, { color: theme.colors.primary }]}>Scan</Text>
       </Pressable>
@@ -53,6 +53,7 @@ export const UseSmileIDSampleSessionEndedBanner = ({ onScan, style }: Props) => 
 };
 
 const styles = StyleSheet.create({
-  card: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', width: '100%' },
+  card: { alignItems: 'center', alignSelf: 'stretch', flexDirection: 'row', flexWrap: 'wrap' },
   text: { flex: 1 },
+  action: { alignItems: 'center', justifyContent: 'center' },
 });

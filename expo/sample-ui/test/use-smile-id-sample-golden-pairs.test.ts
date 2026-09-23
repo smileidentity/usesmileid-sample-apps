@@ -1,7 +1,10 @@
-import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { smileDarkColors, smileLightColors } from '../src/theme/smile-colors';
+import { schemes } from './render-in-theme';
+import { scaleSensitive } from './scale-sensitive-states';
 
 /// Two states whose baselines are byte-identical are not two baselines, so each pair that is
 /// identical on purpose is named here and a new one fails — the cheapest dark-mode miss to ship.
@@ -154,6 +157,111 @@ describe('two states in one scheme', () => {
   it('has no explained pair that has since started differing, which would make the note stale', () => {
     const live = new Set(twins());
     expect(Object.keys(identicalStatesOnPurpose).filter((twin) => !live.has(twin))).toEqual([]);
+  });
+});
+
+/// Light and dark pictures that match although their trees differ.
+const identicalInPixelsOnPurpose: Record<string, string> = {
+  'Switch/on': 'the native switch is drawn as a placeholder, so its tint never reaches the picture',
+  'Switch/off': 'the native switch is drawn as a placeholder, so its tint never reaches the picture',
+  'Switch/disabled_on': 'the native switch is drawn as a placeholder, so its tint never reaches the picture',
+  'Switch/disabled_off': 'the native switch is drawn as a placeholder, so its tint never reaches the picture',
+};
+
+/// Two states whose pictures match although their trees differ.
+const pixelTwinsOnPurpose: Record<string, string> = {
+  'JobRow/default == SwipeAction/closed': 'a closed swipe draws the row alone; only the gesture wrapper differs',
+  'KeyValueEditRow/filled == KeyValueEditRow/focused':
+    'the edit row draws no focus state, so the focused tree differs only by the testID the interaction needs',
+  'TextInput/error == TextInput/error_focused':
+    'the error border outranks focus by design, so the focused tree differs only by the testID the interaction needs',
+};
+
+/// Each suite's PNGs, read as `component/state` pairs.
+const readPixelPairs = (files: readonly string[]) => {
+  const pairs = new Map<string, { light?: string; dark?: string }>();
+  for (const file of files) {
+    const dir = join(__dirname, 'goldens', file.replace(/\.test\.tsx\.snap$/, ''));
+    for (const png of readdirSync(dir).filter((name) => name.endsWith('.png'))) {
+      const parsed = png.match(/^([^.]+)\.(light|dark)\.(.+)\.png$/);
+      if (!parsed) throw new Error(`${png} is not named <component>.<light|dark>.<state>.png`);
+      const id = `${parsed[1]}/${parsed[3]}`;
+      const digest = createHash('sha256').update(readFileSync(join(dir, png))).digest('hex');
+      pairs.set(id, { ...pairs.get(id), [parsed[2] as 'light' | 'dark']: digest });
+    }
+  }
+  return pairs;
+};
+
+/// Every pair of distinct states that painted the same picture in one scheme, as `first == second`.
+const twinsIn = (pairs: ReadonlyMap<string, { light?: string; dark?: string }>): string[] => {
+  const found: string[] = [];
+  for (const scheme of ['light', 'dark'] as const) {
+    const seen = new Map<string, string>();
+    for (const [id, pair] of [...pairs.entries()].sort(([a], [b]) => a.localeCompare(b))) {
+      const digest = pair[scheme];
+      if (digest === undefined) continue;
+      const first = seen.get(digest);
+      if (first === undefined) seen.set(digest, id);
+      else found.push(`${first} == ${id}`);
+    }
+  }
+  return [...new Set(found)].sort();
+};
+
+describe('the recorded pixel goldens', () => {
+  const trees = readPairs();
+  const pixels = readPixelPairs(snapshotFiles);
+
+  it('paint exactly the states the style trees record, in both schemes', () => {
+    const halves = (map: ReadonlyMap<string, { light?: string; dark?: string }>) =>
+      [...map.entries()].filter(([, v]) => v.light !== undefined && v.dark !== undefined).map(([id]) => id).sort();
+    expect(halves(pixels)).toEqual(halves(trees));
+    expect(pixels.size).toBe(expectedStates);
+  });
+
+  it('paint a light and dark pair alike only where the trees match or the painter is explained', () => {
+    const identical = [...pixels.entries()].filter(([, v]) => v.light === v.dark).map(([id]) => id).sort();
+    expect(identical).toEqual(
+      [...Object.keys(identicalOnPurpose), ...Object.keys(identicalInPixelsOnPurpose)].sort(),
+    );
+  });
+
+  it('explain a pixel-only light and dark match that the trees really do tell apart', () => {
+    const stale = Object.keys(identicalInPixelsOnPurpose).filter((id) => {
+      const tree = trees.get(id);
+      return tree === undefined || tree.light === tree.dark;
+    });
+    expect(stale).toEqual([]);
+  });
+
+  it('never paint two states alike unless the pair is explained', () => {
+    const explained = { ...identicalStatesOnPurpose, ...pixelTwinsOnPurpose };
+    expect(twinsIn(pixels).filter((twin) => !(twin in explained))).toEqual([]);
+  });
+
+  it('has no explained pixel twin that has since started differing, which would make the note stale', () => {
+    const live = new Set(twinsIn(pixels));
+    expect(Object.keys(pixelTwinsOnPurpose).filter((twin) => !live.has(twin))).toEqual([]);
+  });
+
+  it('paint every interaction state differently from its base, unless the pair is explained', () => {
+    const unchanged = interactionStates
+      .filter(([base, reached]) => !(`${base} == ${reached}` in pixelTwinsOnPurpose))
+      .filter(([base, reached]) => {
+        const from = pixels.get(base);
+        const to = pixels.get(reached);
+        return from?.light === to?.light || from?.dark === to?.dark;
+      })
+      .map(([, reached]) => reached);
+    expect(unchanged).toEqual([]);
+  });
+
+  it('paint every enlarged state in both schemes, one picture per recorded tree', () => {
+    const enlarged = readdirSync(join(__dirname, 'goldens', 'use-smile-id-sample-font-scale'));
+    expect(enlarged.filter((name) => name.endsWith('.png')).length).toBe(
+      Object.keys(scaleSensitive).length * schemes.length,
+    );
   });
 });
 

@@ -3,6 +3,7 @@ import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { UseSmileIDSampleSectionLabel } from './use-smile-id-sample-section-label';
 import { smileCardStrokeWidth } from '../smile-product-hues';
+import { smileStrokeOverlap } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 type Props = {
@@ -29,7 +30,7 @@ export const UseSmileIDSampleSectionSurface = ({ label, children, style }: Props
           },
         ]}
       >
-        {children}
+        <View style={smileStrokeOverlap}>{children}</View>
       </View>
     </View>
   );

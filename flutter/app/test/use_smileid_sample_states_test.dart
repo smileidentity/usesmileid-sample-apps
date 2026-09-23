@@ -2,8 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:usesmileid_sample_flutter/src/screens/use_smileid_sample_products_tab.dart';
+import 'package:usesmileid_sample_flutter/src/screens/use_smileid_sample_settings_tab.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 
@@ -48,12 +51,14 @@ void main() {
 
   Finder byId(String id) => find.bySemanticsIdentifier(id);
 
-  /// Both rows sit at the foot of settings, so the list is taken all the way down before a tap.
+  /// Both rows sit below the fold of settings, so the list is scrolled to the row before a tap.
   Future<void> tapRow(WidgetTester tester, Finder row) async {
-    for (int i = 0; i < 15; i++) {
-      await tester.drag(find.byType(Scrollable), const Offset(0, -400));
-      await tester.pumpAndSettle();
-    }
+    await tester.scrollUntilVisible(
+      row,
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
     await tester.tap(row);
     await tester.pumpAndSettle();
   }
@@ -165,6 +170,62 @@ void main() {
       );
       expect(selection.scenario, UseSmileIDSampleScenario.badRefresh);
       expect(selection.theme, UseSmileIDSampleThemeScenario.clashingHost);
+    });
+  });
+
+  /// Dismissing a sheet link hands the route to its owner, which must update in place, not rebuild.
+  group('a sheet link and its owner are one page', () {
+    Future<void> dismissKeepsOwner(
+      WidgetTester tester, {
+      required String link,
+      required String sheetId,
+      required Finder owner,
+      required String ownerPath,
+    }) async {
+      await pumpAt(tester, link);
+      final State<StatefulWidget> before = tester.state(owner);
+
+      Navigator.of(tester.element(byId(sheetId))).pop();
+      await tester.pumpAndSettle();
+
+      final GoRouter router = GoRouter.of(tester.element(owner));
+      expect(router.routerDelegate.currentConfiguration.uri.path, ownerPath);
+      expect(identical(tester.state(owner), before), isTrue);
+    }
+
+    testWidgets(
+      'the profile switch hands back to the same products page',
+      (WidgetTester tester) => dismissKeepsOwner(
+        tester,
+        link: UseSmileIDSampleRoutes.profileSwitch,
+        sheetId: UseSmileIDSampleTestIds.profileSwitchSheet,
+        owner: find.byType(UseSmileIDSampleProductsTab),
+        ownerPath: UseSmileIDSampleRoutes.products,
+      ),
+    );
+
+    testWidgets(
+      'the scenario drawer hands back to the same settings page',
+      (WidgetTester tester) => dismissKeepsOwner(
+        tester,
+        link: UseSmileIDSampleRoutes.scenarioDrawer,
+        sheetId: UseSmileIDSampleTestIds.scenarioDrawer,
+        owner: find.byType(UseSmileIDSampleSettingsTab),
+        ownerPath: UseSmileIDSampleRoutes.settings,
+      ),
+    );
+
+    /// The shared page is updated rather than recreated, so a link arriving warm still opens the sheet.
+    testWidgets('a warm profile-switch link still opens the sheet', (
+      WidgetTester tester,
+    ) async {
+      await pumpAt(tester, UseSmileIDSampleRoutes.products);
+      GoRouter.of(
+        tester.element(find.byType(UseSmileIDSampleProductsTab)),
+      ).go(UseSmileIDSampleRoutes.profileSwitch);
+      await tester.pumpAndSettle();
+
+      expect(byId(UseSmileIDSampleTestIds.profileSwitchSheet), findsOneWidget);
     });
   });
 }

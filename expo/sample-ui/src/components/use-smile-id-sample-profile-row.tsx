@@ -4,6 +4,8 @@ import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } fro
 import { UseSmileIDSampleAvatar } from './use-smile-id-sample-avatar';
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 import { smileCardStrokeWidth, smileProfileHues } from '../smile-product-hues';
+import { smileStrokeOverlap } from '../theme/smile-compose-layout';
+import { atSize } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 const ROW_PADDING_X = 14;
@@ -56,6 +58,7 @@ export const UseSmileIDSampleProfileRow = ({
       <View
         style={[
           styles.row,
+          smileStrokeOverlap,
           {
             minHeight: theme.dimens.space[64],
             paddingHorizontal: ROW_PADDING_X,
@@ -72,8 +75,8 @@ export const UseSmileIDSampleProfileRow = ({
         <View style={[styles.text, { rowGap: theme.dimens.spacing.xxs }]}>
           <Text
             style={[
-              theme.type.textStyleBodyStrong,
-              { fontSize: ROW_TITLE_SIZE, color: theme.colors.textTitle },
+              atSize(theme.type.textStyleBodyStrong, ROW_TITLE_SIZE),
+              { color: theme.colors.textTitle },
             ]}
           >
             {organisation}
@@ -99,8 +102,8 @@ export const UseSmileIDSampleProfileRow = ({
 };
 
 const styles = StyleSheet.create({
-  card: { overflow: 'hidden', width: '100%' },
-  row: { alignItems: 'center', flexDirection: 'row', width: '100%' },
+  card: { alignSelf: 'stretch', overflow: 'hidden' },
+  row: { alignItems: 'center', flexDirection: 'row' },
   text: { flex: 1 },
   check: { alignItems: 'center', justifyContent: 'center' },
 });

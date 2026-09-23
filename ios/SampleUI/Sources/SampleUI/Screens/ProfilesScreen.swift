@@ -95,7 +95,7 @@ public struct ProfilesScreen: View {
 private struct UseSmileIDSampleCreateProfileRow: View {
   let action: () -> Void
 
-  @ScaledMetric(relativeTo: .body) private var tileSize: CGFloat = SmileSpacing.space40
+  @ScaledMetric(relativeTo: .body) private var tileSize: CGFloat = SmileSpacing.sizeControlMd
   @Environment(\.useSmileIDSampleColors) private var colors
 
   var body: some View {

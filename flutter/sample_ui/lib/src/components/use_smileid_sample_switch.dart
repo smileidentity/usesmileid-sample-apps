@@ -40,6 +40,10 @@ class UseSmileIDSampleSwitch extends StatelessWidget {
       child: Switch.adaptive(
         value: value,
         onChanged: enabled ? onChanged : null,
+        // UISwitch reserves no 48 target, where Compose's switch does, so only Android pads it.
+        materialTapTargetSize: Theme.of(context).platform == TargetPlatform.iOS
+            ? MaterialTapTargetSize.shrinkWrap
+            : MaterialTapTargetSize.padded,
         thumbColor:
             WidgetStateProperty<Color>.fromMap(<WidgetStatesConstraint, Color>{
               WidgetState.disabled & WidgetState.selected: colors.surface,

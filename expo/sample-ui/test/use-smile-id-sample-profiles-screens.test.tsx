@@ -21,24 +21,25 @@ import {
   smileIDSampleUserDetailsDefaults,
 } from '../src/state/use-smile-id-sample-profiles';
 import { UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
-import { renderInTheme, schemes, styleTree } from './render-in-theme';
+import { renderInTheme, schemes } from './render-in-theme';
+import { expectGoldens } from './paint/pixel-golden';
 
 const noop = () => {};
 
 const three = smileIDSampleFixtureProfiles();
 const created = {
   id: 'p-4',
-  organisation: 'Zuri Health',
-  person: 'Ada Nwosu',
-  defaults: { ...smileIDSampleUserDetailsDefaults, firstName: 'Ada', lastName: 'Nwosu' },
+  organisation: 'Sahara Pay',
+  person: 'Ngozi Eze',
+  defaults: { ...smileIDSampleUserDetailsDefaults, firstName: 'Ngozi', lastName: 'Eze' },
 };
 const four = [...three, created];
 
 const FILLED_DRAFT = {
-  name: 'Zuri Health',
-  firstName: 'Ada',
-  lastName: 'Nwosu',
-  email: 'ada@zuri.example',
+  name: 'Sahara Pay',
+  firstName: 'Ngozi',
+  lastName: 'Eze',
+  email: 'ngozi@saharapay.example',
   phone: '',
 };
 
@@ -112,7 +113,7 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
       newlyCreated: {
         element: () => (
           <ProfileConfigScreen
-            state={{ organisation: 'Zuri Health', defaults: created.defaults, isActive: false }}
+            state={{ organisation: created.organisation, defaults: created.defaults, isActive: false }}
             onFieldChange={noop}
             onBack={noop}
             onSave={noop}
@@ -153,7 +154,7 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
         element: () => (
           <ProfileSwitchSheet
             profiles={three}
-            activeId="p-2"
+            activeId="p-1"
             onSelect={noop}
             onDismiss={noop}
           />
@@ -166,7 +167,7 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
 describe.each(cases)('$screen', ({ states }) => {
   describe.each(schemes)('$name', ({ dark }) => {
     it.each(Object.keys(states))('%s', async (state) => {
-      expect(await styleTree(states[state]!.element(), dark)).toMatchSnapshot();
+      await expectGoldens(states[state]!.element(), dark);
     });
   });
 });

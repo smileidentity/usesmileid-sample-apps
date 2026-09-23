@@ -11,7 +11,7 @@ public struct UseSmileIDSampleJobRow: View {
   private let onTap: (() -> Void)?
 
   @ScaledMetric(relativeTo: .body) private var minHeight: CGFloat = SmileSpacing.space64
-  @ScaledMetric(relativeTo: .body) private var tileSize: CGFloat = SmileSpacing.space40
+  @ScaledMetric(relativeTo: .body) private var tileSize: CGFloat = 36
   @Environment(\.useSmileIDSampleColors) private var colors
   @Environment(\.sizeCategory) private var sizeCategory
 
@@ -75,7 +75,7 @@ public struct UseSmileIDSampleJobRow: View {
   }
 
   private var tile: some View {
-    UseSmileIDSampleIcon(product.icon, tint: product.hue?.icon ?? colors.textMuted, size: SmileSpacing.sizeIconMd)
+    UseSmileIDSampleIcon(product.icon, tint: product.hue?.icon ?? colors.textMuted, size: Self.tileIconSize)
       .frame(width: tileSize, height: tileSize)
       .background(
         RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.rowTile, style: .continuous)
@@ -85,13 +85,18 @@ public struct UseSmileIDSampleJobRow: View {
 
   private var text: some View {
     VStack(alignment: .leading, spacing: SmileSpacing.spacingXxs) {
-      UseSmileIDSampleText(product.label, style: UseSmileIDSampleTheme.type.textStyleBodyStrong.with(size: 14))
-        .foregroundColor(colors.textTitle)
-      UseSmileIDSampleText("\(jobId)  ·  \(time)", style: UseSmileIDSampleTheme.type.textStyleCaption)
+      UseSmileIDSampleText(product.label, style: UseSmileIDSampleTheme.type.textStyleBodyStrong)
+        .foregroundColor(colors.card.title)
+      UseSmileIDSampleText("\(jobId) · \(time)", style: UseSmileIDSampleTheme.type.textStyleCaption)
         .foregroundColor(colors.textMuted)
     }
     // One line each at the design's scale, as the design draws it; unlimited once the badge stacks.
     .lineLimit(sizeCategory.isAccessibilityCategory ? nil : 1)
     .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  /// The board's 18 glyph in its 36 tile; no icon token carries it.
+  private static var tileIconSize: CGFloat {
+    18
   }
 }

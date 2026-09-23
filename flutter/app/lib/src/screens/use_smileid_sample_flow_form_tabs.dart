@@ -116,6 +116,7 @@ class _UseSmileIDSampleKycFormTabState
               ? UseSmileIDSampleRoutes.sdkFlow(widget.productId)
               : UseSmileIDSampleJourney.afterIdDetails(product),
         ),
+        onScanToken: () {},
       ),
     );
   }

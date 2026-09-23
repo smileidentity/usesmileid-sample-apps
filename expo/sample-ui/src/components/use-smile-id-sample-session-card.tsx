@@ -9,6 +9,8 @@ import {
 } from '../smile-product-hues';
 import { lightColors } from '../tokens';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import { smileStrokeOverlap } from '../theme/smile-compose-layout';
+import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 const LABEL_TRACKING = 1;
@@ -60,6 +62,7 @@ export const UseSmileIDSampleSessionCard = ({ sessionId, remaining, style }: Pro
       <View
         style={[
           styles.row,
+          smileStrokeOverlap,
           {
             minHeight: theme.dimens.space[64],
             padding: theme.dimens.spacing.md,
@@ -74,8 +77,8 @@ export const UseSmileIDSampleSessionCard = ({ sessionId, remaining, style }: Pro
           </Text>
           <Text
             style={[
-              theme.type.textStyleCaption,
-              { fontWeight: String(smileCardFamilyWeight) as never, color: ink },
+              atWeight(theme.type.textStyleCaption, smileCardFamilyWeight),
+              { color: ink },
             ]}
           >
             {`Linked to session ${sessionId}`}
@@ -85,7 +88,7 @@ export const UseSmileIDSampleSessionCard = ({ sessionId, remaining, style }: Pro
           testID={UseSmileIDSampleTestIds.SESSION_COUNTDOWN}
           // The one value that must stay whole, so the text beside it yields instead.
           numberOfLines={1}
-          style={[theme.type.textStyleHeadingCard, { fontSize: COUNTDOWN_SIZE, color: ink }]}
+          style={[atSize(theme.type.textStyleHeadingCard, COUNTDOWN_SIZE), { color: ink }]}
         >
           {remaining}
         </Text>
@@ -95,7 +98,7 @@ export const UseSmileIDSampleSessionCard = ({ sessionId, remaining, style }: Pro
 };
 
 const styles = StyleSheet.create({
-  card: { overflow: 'hidden', width: '100%' },
-  row: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', width: '100%' },
+  card: { alignSelf: 'stretch', overflow: 'hidden' },
+  row: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap' },
   text: { flex: 1 },
 });

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart' show kMinInteractiveDimensionCupertino;
 import 'package:flutter/material.dart';
 
 import '../tokens/smile_tokens.dart';
@@ -39,6 +40,34 @@ abstract final class UseSmileIDSampleShapes {
 
   /// The avatar's rounded square — a square at radius 12, not a circle (node 5206:2904).
   static const BorderRadius avatar = BorderRadius.all(Radius.circular(12));
+}
+
+/// Line height between lines only, not above the first or below the last, as Compose trims it.
+const TextHeightBehavior useSmileIDSampleTextHeightBehavior =
+    TextHeightBehavior(
+      applyHeightToFirstAscent: false,
+      applyHeightToLastDescent: false,
+    );
+
+/// The platform's minimum touch target: Compose's 48 on Android, the 44 UIKit controls keep on iOS.
+double useSmileIDSampleTapTarget(BuildContext context) =>
+    Theme.of(context).platform == TargetPlatform.iOS
+    ? kMinInteractiveDimensionCupertino
+    : kMinInteractiveDimension;
+
+/// Gives this app's screens their text metrics; the SDK's own screens sit outside it and keep theirs.
+class UseSmileIDSampleTextMetrics extends StatelessWidget {
+  /// Wraps [child], which is every sample screen or sheet but never an SDK flow.
+  const UseSmileIDSampleTextMetrics({required this.child, super.key});
+
+  /// The screen.
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => DefaultTextHeightBehavior(
+    textHeightBehavior: useSmileIDSampleTextHeightBehavior,
+    child: child,
+  );
 }
 
 /// The app's theme, built entirely from the vendored design-system tokens.

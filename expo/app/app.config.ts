@@ -1,4 +1,5 @@
 import type { ExpoConfig } from 'expo/config';
+import { withAppDelegate, withInfoPlist, type ConfigPlugin } from 'expo/config-plugins';
 
 import identity from '../../spec/app-identity.json';
 
@@ -17,6 +18,39 @@ if (!applicationId || !bundleIdentifier || !displayName || !urlScheme) {
 
 /// Capture is the SDK's, but no @smileid package ships a purpose string, so the host declares it.
 const cameraUsage = 'Smile ID uses the camera to capture your selfie and your ID document.';
+
+const templateWindow = /\n#if os\(iOS\) \|\| os\(tvOS\)\n\s*window = UIWindow\(frame: UIScreen\.main\.bounds\)\n\s*factory\.startReactNative\([^)]*\)\n#endif\n/;
+
+const templateClass = 'class AppDelegate: ExpoAppDelegate {';
+
+/// iOS 27 stops an app built on its SDK at launch unless it adopts scenes, so Expo's delegate starts React Native.
+const withSceneLifecycle: ConfigPlugin = (base) =>
+  withAppDelegate(
+    withInfoPlist(base, (plist) => {
+      plist.modResults.UIApplicationSceneManifest = {
+        UIApplicationSupportsMultipleScenes: false,
+        UISceneConfigurations: {
+          UIWindowSceneSessionRoleApplication: [
+            {
+              UISceneConfigurationName: 'Default Configuration',
+              UISceneDelegateClassName: 'EXExpoAppSceneDelegate',
+            },
+          ],
+        },
+      };
+      return plist;
+    }),
+    (delegate) => {
+      const source = delegate.modResults.contents;
+      if (!templateWindow.test(source) || !source.includes(templateClass)) {
+        throw new Error('The AppDelegate template changed; update withSceneLifecycle.');
+      }
+      delegate.modResults.contents = source
+        .replace(templateWindow, '\n')
+        .replace(templateClass, 'class AppDelegate: ExpoAppDelegate, ExpoReactNativeFactoryProvider {');
+      return delegate;
+    },
+  );
 
 const config: ExpoConfig = {
   name: displayName,
@@ -55,4 +89,4 @@ const config: ExpoConfig = {
   },
 };
 
-export default config;
+export default withSceneLifecycle(config);

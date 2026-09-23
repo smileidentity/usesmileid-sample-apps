@@ -5,6 +5,7 @@ import '../components/use_smileid_sample_empty_state.dart';
 import '../components/use_smileid_sample_filter_chip.dart';
 import '../components/use_smileid_sample_job_row.dart';
 import '../components/use_smileid_sample_selection_checkbox.dart';
+import '../components/use_smileid_sample_spaced.dart';
 import '../components/use_smileid_sample_swipe_action.dart';
 import '../components/use_smileid_sample_toast.dart';
 import '../model/use_smileid_sample_job.dart';
@@ -108,7 +109,7 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
       identifier: UseSmileIDSampleTestIds.verificationsScreen,
       child: ListView(
         padding: EdgeInsets.only(bottom: bottomInset),
-        children: <Widget>[
+        children: useSmileIDSampleSpaced(<Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: SmileDimens.spacingMd,
@@ -130,12 +131,26 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
                     button: true,
                     child: InkWell(
                       onTap: () => onSelectModeChanged!(!state.selectMode),
-                      child: Padding(
-                        padding: const EdgeInsets.all(SmileDimens.spacingXs),
-                        child: Text(
-                          state.selectMode ? 'Cancel' : 'Select',
-                          style: UseSmileIDSampleType.textStyleBodyStrong
-                              .copyWith(color: colors.primary),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minWidth: useSmileIDSampleTapTarget(context),
+                          minHeight: useSmileIDSampleTapTarget(context),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: SmileDimens.spacingXs,
+                          ),
+                          child: Center(
+                            widthFactor: 1,
+                            child: Text(
+                              state.selectMode ? 'Cancel' : 'Select',
+                              softWrap: false,
+                              style: UseSmileIDSampleType.linkFont.copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: colors.primary,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -199,7 +214,7 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
                 onRemove: onRemove,
               ),
           ],
-        ],
+        ]),
       ),
     );
     if (state.removedCount == null) {
@@ -258,12 +273,7 @@ class _Row extends StatelessWidget {
       testId: UseSmileIDSampleTestIds.jobRow(index),
     );
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        SmileDimens.spacingMd,
-        0,
-        SmileDimens.spacingMd,
-        SmileDimens.spacingXs,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: SmileDimens.spacingMd),
       child: state.selectMode
           ? Row(
               children: <Widget>[

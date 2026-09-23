@@ -50,8 +50,10 @@ exports[`FloatingTokenButton dark default 1`] = `
         "shadowRadius": 12,
       },
       {
-        "backgroundColor": "#4d88ff",
+        "backgroundColor": "#272a35",
+        "borderColor": "#eaecf0",
         "borderRadius": 24,
+        "borderWidth": 1.5,
         "height": 48,
         "width": 48,
       },
@@ -110,7 +112,7 @@ exports[`FloatingTokenButton dark default 1`] = `
         }
         stroke={
           {
-            "payload": 4294967295,
+            "payload": 4294111986,
             "type": 0,
           }
         }
@@ -133,7 +135,7 @@ exports[`FloatingTokenButton dark default 1`] = `
         }
         stroke={
           {
-            "payload": 4294967295,
+            "payload": 4294111986,
             "type": 0,
           }
         }
@@ -196,8 +198,10 @@ exports[`FloatingTokenButton light default 1`] = `
         "shadowRadius": 12,
       },
       {
-        "backgroundColor": "#151f72",
+        "backgroundColor": "#ffffff",
+        "borderColor": "#eaecf0",
         "borderRadius": 24,
+        "borderWidth": 1.5,
         "height": 48,
         "width": 48,
       },
@@ -256,7 +260,7 @@ exports[`FloatingTokenButton light default 1`] = `
         }
         stroke={
           {
-            "payload": 4294967295,
+            "payload": 4280361772,
             "type": 0,
           }
         }
@@ -279,7 +283,7 @@ exports[`FloatingTokenButton light default 1`] = `
         }
         stroke={
           {
-            "payload": 4294967295,
+            "payload": 4280361772,
             "type": 0,
           }
         }
@@ -303,7 +307,7 @@ exports[`NavBar dark products 1`] = `
       },
       {
         "columnGap": 8,
-        "paddingBottom": 34,
+        "paddingBottom": 46,
         "paddingHorizontal": 16,
         "paddingTop": 12,
       },
@@ -449,9 +453,10 @@ exports[`NavBar dark products 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "textAlign": "center",
@@ -599,9 +604,10 @@ exports[`NavBar dark products 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "textAlign": "center",
@@ -749,9 +755,10 @@ exports[`NavBar dark products 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "textAlign": "center",
@@ -920,14 +927,14 @@ exports[`NavBar dark products 1`] = `
           [
             {
               "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "fontWeight": "700",
+              "fontSize": 8.5,
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -2.4665,
+              "marginTop": -2.4665,
             },
             {
               "color": "#f9f0e7",
-              "fontSize": 8.5,
             },
           ]
         }
@@ -950,7 +957,7 @@ exports[`NavBar dark settings 1`] = `
       },
       {
         "columnGap": 8,
-        "paddingBottom": 34,
+        "paddingBottom": 46,
         "paddingHorizontal": 16,
         "paddingTop": 12,
       },
@@ -1096,9 +1103,10 @@ exports[`NavBar dark settings 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "textAlign": "center",
@@ -1246,9 +1254,10 @@ exports[`NavBar dark settings 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "textAlign": "center",
@@ -1396,9 +1405,10 @@ exports[`NavBar dark settings 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "textAlign": "center",
@@ -1567,14 +1577,14 @@ exports[`NavBar dark settings 1`] = `
           [
             {
               "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "fontWeight": "700",
+              "fontSize": 8.5,
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -2.4665,
+              "marginTop": -2.4665,
             },
             {
               "color": "#f9f0e7",
-              "fontSize": 8.5,
             },
           ]
         }
@@ -1597,7 +1607,7 @@ exports[`NavBar dark withSessionRing 1`] = `
       },
       {
         "columnGap": 8,
-        "paddingBottom": 34,
+        "paddingBottom": 46,
         "paddingHorizontal": 16,
         "paddingTop": 12,
       },
@@ -1743,9 +1753,10 @@ exports[`NavBar dark withSessionRing 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "textAlign": "center",
@@ -1893,9 +1904,10 @@ exports[`NavBar dark withSessionRing 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "textAlign": "center",
@@ -2043,9 +2055,10 @@ exports[`NavBar dark withSessionRing 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "textAlign": "center",
@@ -2326,14 +2339,14 @@ exports[`NavBar dark withSessionRing 1`] = `
           [
             {
               "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "fontWeight": "700",
+              "fontSize": 8.5,
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -2.4665,
+              "marginTop": -2.4665,
             },
             {
               "color": "#f9f0e7",
-              "fontSize": 8.5,
             },
           ]
         }
@@ -2356,7 +2369,7 @@ exports[`NavBar light products 1`] = `
       },
       {
         "columnGap": 8,
-        "paddingBottom": 34,
+        "paddingBottom": 46,
         "paddingHorizontal": 16,
         "paddingTop": 12,
       },
@@ -2502,9 +2515,10 @@ exports[`NavBar light products 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "textAlign": "center",
@@ -2652,9 +2666,10 @@ exports[`NavBar light products 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "textAlign": "center",
@@ -2802,9 +2817,10 @@ exports[`NavBar light products 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "textAlign": "center",
@@ -2973,14 +2989,14 @@ exports[`NavBar light products 1`] = `
           [
             {
               "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "fontWeight": "700",
+              "fontSize": 8.5,
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -2.4665,
+              "marginTop": -2.4665,
             },
             {
               "color": "#2d2b2a",
-              "fontSize": 8.5,
             },
           ]
         }
@@ -3003,7 +3019,7 @@ exports[`NavBar light settings 1`] = `
       },
       {
         "columnGap": 8,
-        "paddingBottom": 34,
+        "paddingBottom": 46,
         "paddingHorizontal": 16,
         "paddingTop": 12,
       },
@@ -3149,9 +3165,10 @@ exports[`NavBar light settings 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "textAlign": "center",
@@ -3299,9 +3316,10 @@ exports[`NavBar light settings 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "textAlign": "center",
@@ -3449,9 +3467,10 @@ exports[`NavBar light settings 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "textAlign": "center",
@@ -3620,14 +3639,14 @@ exports[`NavBar light settings 1`] = `
           [
             {
               "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "fontWeight": "700",
+              "fontSize": 8.5,
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -2.4665,
+              "marginTop": -2.4665,
             },
             {
               "color": "#2d2b2a",
-              "fontSize": 8.5,
             },
           ]
         }
@@ -3650,7 +3669,7 @@ exports[`NavBar light withSessionRing 1`] = `
       },
       {
         "columnGap": 8,
-        "paddingBottom": 34,
+        "paddingBottom": 46,
         "paddingHorizontal": 16,
         "paddingTop": 12,
       },
@@ -3796,9 +3815,10 @@ exports[`NavBar light withSessionRing 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "textAlign": "center",
@@ -3946,9 +3966,10 @@ exports[`NavBar light withSessionRing 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "textAlign": "center",
@@ -4096,9 +4117,10 @@ exports[`NavBar light withSessionRing 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "textAlign": "center",
@@ -4379,14 +4401,14 @@ exports[`NavBar light withSessionRing 1`] = `
           [
             {
               "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "fontWeight": "700",
+              "fontSize": 8.5,
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -2.4665,
+              "marginTop": -2.4665,
             },
             {
               "color": "#2d2b2a",
-              "fontSize": 8.5,
             },
           ]
         }
@@ -4643,7 +4665,7 @@ exports[`ProductCard dark auth 1`] = `
     style={
       [
         {
-          "width": "100%",
+          "margin": -0.5,
         },
         {
           "padding": 16,
@@ -4786,15 +4808,18 @@ exports[`ProductCard dark auth 1`] = `
       }
     >
       <Text
+        adjustsFontSizeToFit={true}
+        minimumFontScale={0.8125}
         numberOfLines={2}
         style={
           [
             {
               "fontFamily": "DMSans-SemiBold",
               "fontSize": 16,
-              "fontWeight": "600",
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
             },
             {
               "flex": 1,
@@ -4813,15 +4838,15 @@ exports[`ProductCard dark auth 1`] = `
           style={
             [
               {
-                "fontFamily": "DMSans-Medium",
+                "fontFamily": "DMSans-Regular",
                 "fontSize": 12,
-                "fontWeight": "500",
                 "letterSpacing": 0,
                 "lineHeight": 16,
+                "marginBottom": -0.18799999999999972,
+                "marginTop": -0.18799999999999972,
               },
               {
                 "color": "#ffffff",
-                "fontWeight": "400",
               },
             ]
           }
@@ -4971,7 +4996,7 @@ exports[`ProductCard dark disabled 1`] = `
     style={
       [
         {
-          "width": "100%",
+          "margin": -0.5,
         },
         {
           "padding": 16,
@@ -5060,15 +5085,18 @@ exports[`ProductCard dark disabled 1`] = `
       }
     >
       <Text
+        adjustsFontSizeToFit={true}
+        minimumFontScale={0.8125}
         numberOfLines={2}
         style={
           [
             {
               "fontFamily": "DMSans-SemiBold",
               "fontSize": 16,
-              "fontWeight": "600",
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
             },
             {
               "flex": 1,
@@ -5087,15 +5115,15 @@ exports[`ProductCard dark disabled 1`] = `
           style={
             [
               {
-                "fontFamily": "DMSans-Medium",
+                "fontFamily": "DMSans-Regular",
                 "fontSize": 12,
-                "fontWeight": "500",
                 "letterSpacing": 0,
                 "lineHeight": 16,
+                "marginBottom": -0.18799999999999972,
+                "marginTop": -0.18799999999999972,
               },
               {
                 "color": "#848282",
-                "fontWeight": "400",
               },
             ]
           }
@@ -5399,7 +5427,7 @@ exports[`ProductCard dark enhancedDocument 1`] = `
     style={
       [
         {
-          "width": "100%",
+          "margin": -0.5,
         },
         {
           "padding": 16,
@@ -5519,15 +5547,18 @@ exports[`ProductCard dark enhancedDocument 1`] = `
       }
     >
       <Text
+        adjustsFontSizeToFit={true}
+        minimumFontScale={0.8125}
         numberOfLines={2}
         style={
           [
             {
               "fontFamily": "DMSans-SemiBold",
               "fontSize": 16,
-              "fontWeight": "600",
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
             },
             {
               "flex": 1,
@@ -5546,15 +5577,15 @@ exports[`ProductCard dark enhancedDocument 1`] = `
           style={
             [
               {
-                "fontFamily": "DMSans-Medium",
+                "fontFamily": "DMSans-Regular",
                 "fontSize": 12,
-                "fontWeight": "500",
                 "letterSpacing": 0,
                 "lineHeight": 16,
+                "marginBottom": -0.18799999999999972,
+                "marginTop": -0.18799999999999972,
               },
               {
                 "color": "#ffffff",
-                "fontWeight": "400",
               },
             ]
           }
@@ -5881,7 +5912,7 @@ exports[`ProductCard dark registration 1`] = `
     style={
       [
         {
-          "width": "100%",
+          "margin": -0.5,
         },
         {
           "padding": 16,
@@ -6024,15 +6055,18 @@ exports[`ProductCard dark registration 1`] = `
       }
     >
       <Text
+        adjustsFontSizeToFit={true}
+        minimumFontScale={0.8125}
         numberOfLines={2}
         style={
           [
             {
               "fontFamily": "DMSans-SemiBold",
               "fontSize": 16,
-              "fontWeight": "600",
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
             },
             {
               "flex": 1,
@@ -6051,15 +6085,15 @@ exports[`ProductCard dark registration 1`] = `
           style={
             [
               {
-                "fontFamily": "DMSans-Medium",
+                "fontFamily": "DMSans-Regular",
                 "fontSize": 12,
-                "fontWeight": "500",
                 "letterSpacing": 0,
                 "lineHeight": 16,
+                "marginBottom": -0.18799999999999972,
+                "marginTop": -0.18799999999999972,
               },
               {
                 "color": "#ffffff",
-                "fontWeight": "400",
               },
             ]
           }
@@ -6386,7 +6420,7 @@ exports[`ProductCard light auth 1`] = `
     style={
       [
         {
-          "width": "100%",
+          "margin": -0.5,
         },
         {
           "padding": 16,
@@ -6529,15 +6563,18 @@ exports[`ProductCard light auth 1`] = `
       }
     >
       <Text
+        adjustsFontSizeToFit={true}
+        minimumFontScale={0.8125}
         numberOfLines={2}
         style={
           [
             {
               "fontFamily": "DMSans-SemiBold",
               "fontSize": 16,
-              "fontWeight": "600",
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
             },
             {
               "flex": 1,
@@ -6556,15 +6593,15 @@ exports[`ProductCard light auth 1`] = `
           style={
             [
               {
-                "fontFamily": "DMSans-Medium",
+                "fontFamily": "DMSans-Regular",
                 "fontSize": 12,
-                "fontWeight": "500",
                 "letterSpacing": 0,
                 "lineHeight": 16,
+                "marginBottom": -0.18799999999999972,
+                "marginTop": -0.18799999999999972,
               },
               {
                 "color": "#ffffff",
-                "fontWeight": "400",
               },
             ]
           }
@@ -6714,7 +6751,7 @@ exports[`ProductCard light disabled 1`] = `
     style={
       [
         {
-          "width": "100%",
+          "margin": -0.5,
         },
         {
           "padding": 16,
@@ -6803,15 +6840,18 @@ exports[`ProductCard light disabled 1`] = `
       }
     >
       <Text
+        adjustsFontSizeToFit={true}
+        minimumFontScale={0.8125}
         numberOfLines={2}
         style={
           [
             {
               "fontFamily": "DMSans-SemiBold",
               "fontSize": 16,
-              "fontWeight": "600",
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
             },
             {
               "flex": 1,
@@ -6830,15 +6870,15 @@ exports[`ProductCard light disabled 1`] = `
           style={
             [
               {
-                "fontFamily": "DMSans-Medium",
+                "fontFamily": "DMSans-Regular",
                 "fontSize": 12,
-                "fontWeight": "500",
                 "letterSpacing": 0,
                 "lineHeight": 16,
+                "marginBottom": -0.18799999999999972,
+                "marginTop": -0.18799999999999972,
               },
               {
                 "color": "#848282",
-                "fontWeight": "400",
               },
             ]
           }
@@ -7142,7 +7182,7 @@ exports[`ProductCard light enhancedDocument 1`] = `
     style={
       [
         {
-          "width": "100%",
+          "margin": -0.5,
         },
         {
           "padding": 16,
@@ -7262,15 +7302,18 @@ exports[`ProductCard light enhancedDocument 1`] = `
       }
     >
       <Text
+        adjustsFontSizeToFit={true}
+        minimumFontScale={0.8125}
         numberOfLines={2}
         style={
           [
             {
               "fontFamily": "DMSans-SemiBold",
               "fontSize": 16,
-              "fontWeight": "600",
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
             },
             {
               "flex": 1,
@@ -7289,15 +7332,15 @@ exports[`ProductCard light enhancedDocument 1`] = `
           style={
             [
               {
-                "fontFamily": "DMSans-Medium",
+                "fontFamily": "DMSans-Regular",
                 "fontSize": 12,
-                "fontWeight": "500",
                 "letterSpacing": 0,
                 "lineHeight": 16,
+                "marginBottom": -0.18799999999999972,
+                "marginTop": -0.18799999999999972,
               },
               {
                 "color": "#ffffff",
-                "fontWeight": "400",
               },
             ]
           }
@@ -7624,7 +7667,7 @@ exports[`ProductCard light registration 1`] = `
     style={
       [
         {
-          "width": "100%",
+          "margin": -0.5,
         },
         {
           "padding": 16,
@@ -7767,15 +7810,18 @@ exports[`ProductCard light registration 1`] = `
       }
     >
       <Text
+        adjustsFontSizeToFit={true}
+        minimumFontScale={0.8125}
         numberOfLines={2}
         style={
           [
             {
               "fontFamily": "DMSans-SemiBold",
               "fontSize": 16,
-              "fontWeight": "600",
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
             },
             {
               "flex": 1,
@@ -7794,15 +7840,15 @@ exports[`ProductCard light registration 1`] = `
           style={
             [
               {
-                "fontFamily": "DMSans-Medium",
+                "fontFamily": "DMSans-Regular",
                 "fontSize": 12,
-                "fontWeight": "500",
                 "letterSpacing": 0,
                 "lineHeight": 16,
+                "marginBottom": -0.18799999999999972,
+                "marginTop": -0.18799999999999972,
               },
               {
                 "color": "#ffffff",
-                "fontWeight": "400",
               },
             ]
           }
@@ -8161,7 +8207,7 @@ exports[`ProductGrid dark evenCount 1`] = `
           style={
             [
               {
-                "width": "100%",
+                "margin": -0.5,
               },
               {
                 "padding": 16,
@@ -8304,15 +8350,18 @@ exports[`ProductGrid dark evenCount 1`] = `
             }
           >
             <Text
+              adjustsFontSizeToFit={true}
+              minimumFontScale={0.8125}
               numberOfLines={2}
               style={
                 [
                   {
                     "fontFamily": "DMSans-SemiBold",
                     "fontSize": 16,
-                    "fontWeight": "600",
                     "letterSpacing": 0,
                     "lineHeight": 24,
+                    "marginBottom": -1.5839999999999996,
+                    "marginTop": -1.5839999999999996,
                   },
                   {
                     "flex": 1,
@@ -8331,15 +8380,15 @@ exports[`ProductGrid dark evenCount 1`] = `
                 style={
                   [
                     {
-                      "fontFamily": "DMSans-Medium",
+                      "fontFamily": "DMSans-Regular",
                       "fontSize": 12,
-                      "fontWeight": "500",
                       "letterSpacing": 0,
                       "lineHeight": 16,
+                      "marginBottom": -0.18799999999999972,
+                      "marginTop": -0.18799999999999972,
                     },
                     {
                       "color": "#ffffff",
-                      "fontWeight": "400",
                     },
                   ]
                 }
@@ -8671,7 +8720,7 @@ exports[`ProductGrid dark evenCount 1`] = `
           style={
             [
               {
-                "width": "100%",
+                "margin": -0.5,
               },
               {
                 "padding": 16,
@@ -8814,15 +8863,18 @@ exports[`ProductGrid dark evenCount 1`] = `
             }
           >
             <Text
+              adjustsFontSizeToFit={true}
+              minimumFontScale={0.8125}
               numberOfLines={2}
               style={
                 [
                   {
                     "fontFamily": "DMSans-SemiBold",
                     "fontSize": 16,
-                    "fontWeight": "600",
                     "letterSpacing": 0,
                     "lineHeight": 24,
+                    "marginBottom": -1.5839999999999996,
+                    "marginTop": -1.5839999999999996,
                   },
                   {
                     "flex": 1,
@@ -8841,15 +8893,15 @@ exports[`ProductGrid dark evenCount 1`] = `
                 style={
                   [
                     {
-                      "fontFamily": "DMSans-Medium",
+                      "fontFamily": "DMSans-Regular",
                       "fontSize": 12,
-                      "fontWeight": "500",
                       "letterSpacing": 0,
                       "lineHeight": 16,
+                      "marginBottom": -0.18799999999999972,
+                      "marginTop": -0.18799999999999972,
                     },
                     {
                       "color": "#ffffff",
-                      "fontWeight": "400",
                     },
                   ]
                 }
@@ -9211,7 +9263,7 @@ exports[`ProductGrid dark oddCount 1`] = `
           style={
             [
               {
-                "width": "100%",
+                "margin": -0.5,
               },
               {
                 "padding": 16,
@@ -9354,15 +9406,18 @@ exports[`ProductGrid dark oddCount 1`] = `
             }
           >
             <Text
+              adjustsFontSizeToFit={true}
+              minimumFontScale={0.8125}
               numberOfLines={2}
               style={
                 [
                   {
                     "fontFamily": "DMSans-SemiBold",
                     "fontSize": 16,
-                    "fontWeight": "600",
                     "letterSpacing": 0,
                     "lineHeight": 24,
+                    "marginBottom": -1.5839999999999996,
+                    "marginTop": -1.5839999999999996,
                   },
                   {
                     "flex": 1,
@@ -9381,15 +9436,15 @@ exports[`ProductGrid dark oddCount 1`] = `
                 style={
                   [
                     {
-                      "fontFamily": "DMSans-Medium",
+                      "fontFamily": "DMSans-Regular",
                       "fontSize": 12,
-                      "fontWeight": "500",
                       "letterSpacing": 0,
                       "lineHeight": 16,
+                      "marginBottom": -0.18799999999999972,
+                      "marginTop": -0.18799999999999972,
                     },
                     {
                       "color": "#ffffff",
-                      "fontWeight": "400",
                     },
                   ]
                 }
@@ -9758,7 +9813,7 @@ exports[`ProductGrid light evenCount 1`] = `
           style={
             [
               {
-                "width": "100%",
+                "margin": -0.5,
               },
               {
                 "padding": 16,
@@ -9901,15 +9956,18 @@ exports[`ProductGrid light evenCount 1`] = `
             }
           >
             <Text
+              adjustsFontSizeToFit={true}
+              minimumFontScale={0.8125}
               numberOfLines={2}
               style={
                 [
                   {
                     "fontFamily": "DMSans-SemiBold",
                     "fontSize": 16,
-                    "fontWeight": "600",
                     "letterSpacing": 0,
                     "lineHeight": 24,
+                    "marginBottom": -1.5839999999999996,
+                    "marginTop": -1.5839999999999996,
                   },
                   {
                     "flex": 1,
@@ -9928,15 +9986,15 @@ exports[`ProductGrid light evenCount 1`] = `
                 style={
                   [
                     {
-                      "fontFamily": "DMSans-Medium",
+                      "fontFamily": "DMSans-Regular",
                       "fontSize": 12,
-                      "fontWeight": "500",
                       "letterSpacing": 0,
                       "lineHeight": 16,
+                      "marginBottom": -0.18799999999999972,
+                      "marginTop": -0.18799999999999972,
                     },
                     {
                       "color": "#ffffff",
-                      "fontWeight": "400",
                     },
                   ]
                 }
@@ -10268,7 +10326,7 @@ exports[`ProductGrid light evenCount 1`] = `
           style={
             [
               {
-                "width": "100%",
+                "margin": -0.5,
               },
               {
                 "padding": 16,
@@ -10411,15 +10469,18 @@ exports[`ProductGrid light evenCount 1`] = `
             }
           >
             <Text
+              adjustsFontSizeToFit={true}
+              minimumFontScale={0.8125}
               numberOfLines={2}
               style={
                 [
                   {
                     "fontFamily": "DMSans-SemiBold",
                     "fontSize": 16,
-                    "fontWeight": "600",
                     "letterSpacing": 0,
                     "lineHeight": 24,
+                    "marginBottom": -1.5839999999999996,
+                    "marginTop": -1.5839999999999996,
                   },
                   {
                     "flex": 1,
@@ -10438,15 +10499,15 @@ exports[`ProductGrid light evenCount 1`] = `
                 style={
                   [
                     {
-                      "fontFamily": "DMSans-Medium",
+                      "fontFamily": "DMSans-Regular",
                       "fontSize": 12,
-                      "fontWeight": "500",
                       "letterSpacing": 0,
                       "lineHeight": 16,
+                      "marginBottom": -0.18799999999999972,
+                      "marginTop": -0.18799999999999972,
                     },
                     {
                       "color": "#ffffff",
-                      "fontWeight": "400",
                     },
                   ]
                 }
@@ -10808,7 +10869,7 @@ exports[`ProductGrid light oddCount 1`] = `
           style={
             [
               {
-                "width": "100%",
+                "margin": -0.5,
               },
               {
                 "padding": 16,
@@ -10951,15 +11012,18 @@ exports[`ProductGrid light oddCount 1`] = `
             }
           >
             <Text
+              adjustsFontSizeToFit={true}
+              minimumFontScale={0.8125}
               numberOfLines={2}
               style={
                 [
                   {
                     "fontFamily": "DMSans-SemiBold",
                     "fontSize": 16,
-                    "fontWeight": "600",
                     "letterSpacing": 0,
                     "lineHeight": 24,
+                    "marginBottom": -1.5839999999999996,
+                    "marginTop": -1.5839999999999996,
                   },
                   {
                     "flex": 1,
@@ -10978,15 +11042,15 @@ exports[`ProductGrid light oddCount 1`] = `
                 style={
                   [
                     {
-                      "fontFamily": "DMSans-Medium",
+                      "fontFamily": "DMSans-Regular",
                       "fontSize": 12,
-                      "fontWeight": "500",
                       "letterSpacing": 0,
                       "lineHeight": 16,
+                      "marginBottom": -0.18799999999999972,
+                      "marginTop": -0.18799999999999972,
                     },
                     {
                       "color": "#ffffff",
-                      "fontWeight": "400",
                     },
                   ]
                 }
@@ -11391,9 +11455,10 @@ exports[`ScanSheet dark default 1`] = `
           {
             "fontFamily": "DMSans-Regular",
             "fontSize": 14,
-            "fontWeight": "400",
             "letterSpacing": 0,
             "lineHeight": 20,
+            "marginBottom": -0.8859999999999992,
+            "marginTop": -0.8859999999999992,
           },
           {
             "flex": 1,
@@ -11428,7 +11493,6 @@ exports[`ScanSheet dark default 1`] = `
       accessible={true}
       collapsable={false}
       focusable={true}
-      hitSlop={12}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -11438,6 +11502,21 @@ exports[`ScanSheet dark default 1`] = `
       onResponderTerminate={[Function]}
       onResponderTerminationRequest={[Function]}
       onStartShouldSetResponder={[Function]}
+      style={
+        [
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+          {
+            "minHeight": 44,
+            "minWidth": 44,
+          },
+          {
+            "paddingHorizontal": 8,
+          },
+        ]
+      }
       testID="sample_token_paste"
     >
       <Text
@@ -11446,9 +11525,10 @@ exports[`ScanSheet dark default 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 14,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -0.8859999999999992,
+              "marginTop": -0.8859999999999992,
             },
             {
               "color": "#4d88ff",
@@ -11495,8 +11575,8 @@ exports[`ScanSheet dark default 1`] = `
       [
         {
           "alignItems": "center",
+          "alignSelf": "stretch",
           "justifyContent": "center",
-          "width": "100%",
         },
         {
           "backgroundColor": "#4d88ff",
@@ -11524,9 +11604,10 @@ exports[`ScanSheet dark default 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 16,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
             },
             {
               "textAlign": "center",
@@ -11590,9 +11671,10 @@ exports[`ScanSheet light default 1`] = `
           {
             "fontFamily": "DMSans-Regular",
             "fontSize": 14,
-            "fontWeight": "400",
             "letterSpacing": 0,
             "lineHeight": 20,
+            "marginBottom": -0.8859999999999992,
+            "marginTop": -0.8859999999999992,
           },
           {
             "flex": 1,
@@ -11627,7 +11709,6 @@ exports[`ScanSheet light default 1`] = `
       accessible={true}
       collapsable={false}
       focusable={true}
-      hitSlop={12}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -11637,6 +11718,21 @@ exports[`ScanSheet light default 1`] = `
       onResponderTerminate={[Function]}
       onResponderTerminationRequest={[Function]}
       onStartShouldSetResponder={[Function]}
+      style={
+        [
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+          {
+            "minHeight": 44,
+            "minWidth": 44,
+          },
+          {
+            "paddingHorizontal": 8,
+          },
+        ]
+      }
       testID="sample_token_paste"
     >
       <Text
@@ -11645,9 +11741,10 @@ exports[`ScanSheet light default 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 14,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 20,
+              "marginBottom": -0.8859999999999992,
+              "marginTop": -0.8859999999999992,
             },
             {
               "color": "#151f72",
@@ -11694,8 +11791,8 @@ exports[`ScanSheet light default 1`] = `
       [
         {
           "alignItems": "center",
+          "alignSelf": "stretch",
           "justifyContent": "center",
-          "width": "100%",
         },
         {
           "backgroundColor": "#151f72",
@@ -11723,9 +11820,10 @@ exports[`ScanSheet light default 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 16,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
             },
             {
               "textAlign": "center",
@@ -11749,17 +11847,15 @@ exports[`SectionHeader dark default 1`] = `
   style={
     [
       {
-        "fontFamily": "DMSans-SemiBold",
-        "fontSize": 18,
-        "fontWeight": "600",
+        "fontFamily": "DMSans-Bold",
+        "fontSize": 15,
         "letterSpacing": 0,
-        "lineHeight": 24,
+        "lineHeight": 19.5,
+        "marginBottom": -0,
+        "marginTop": -0,
       },
       {
         "color": "#f9f0e7",
-        "fontSize": 15,
-        "fontWeight": "700",
-        "lineHeight": 19.5,
         "paddingVertical": 8,
         "width": "100%",
       },
@@ -11776,17 +11872,15 @@ exports[`SectionHeader light default 1`] = `
   style={
     [
       {
-        "fontFamily": "DMSans-SemiBold",
-        "fontSize": 18,
-        "fontWeight": "600",
+        "fontFamily": "DMSans-Bold",
+        "fontSize": 15,
         "letterSpacing": 0,
-        "lineHeight": 24,
+        "lineHeight": 19.5,
+        "marginBottom": -0,
+        "marginTop": -0,
       },
       {
         "color": "#2d2b2a",
-        "fontSize": 15,
-        "fontWeight": "700",
-        "lineHeight": 19.5,
         "paddingVertical": 8,
         "width": "100%",
       },
@@ -11803,8 +11897,8 @@ exports[`SessionCard dark default 1`] = `
   style={
     [
       {
+        "alignSelf": "stretch",
         "overflow": "hidden",
-        "width": "100%",
       },
       {
         "borderColor": "#2d3748",
@@ -11896,7 +11990,9 @@ exports[`SessionCard dark default 1`] = `
           "alignItems": "center",
           "flexDirection": "row",
           "flexWrap": "wrap",
-          "width": "100%",
+        },
+        {
+          "margin": -0.5,
         },
         {
           "columnGap": 12,
@@ -11925,9 +12021,10 @@ exports[`SessionCard dark default 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "color": "#ffffff",
@@ -11942,15 +12039,15 @@ exports[`SessionCard dark default 1`] = `
         style={
           [
             {
-              "fontFamily": "DMSans-Medium",
+              "fontFamily": "DMSans-Regular",
               "fontSize": 12,
-              "fontWeight": "500",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -0.18799999999999972,
+              "marginTop": -0.18799999999999972,
             },
             {
               "color": "#ffffff",
-              "fontWeight": "400",
             },
           ]
         }
@@ -11964,14 +12061,14 @@ exports[`SessionCard dark default 1`] = `
         [
           {
             "fontFamily": "DMSans-ExtraBold",
-            "fontSize": 20,
-            "fontWeight": "800",
+            "fontSize": 24,
             "letterSpacing": -0.4,
             "lineHeight": 26,
+            "marginBottom": -0,
+            "marginTop": -0,
           },
           {
             "color": "#ffffff",
-            "fontSize": 24,
           },
         ]
       }
@@ -11988,8 +12085,8 @@ exports[`SessionCard light default 1`] = `
   style={
     [
       {
+        "alignSelf": "stretch",
         "overflow": "hidden",
-        "width": "100%",
       },
       {
         "borderColor": "#eaecf0",
@@ -12081,7 +12178,9 @@ exports[`SessionCard light default 1`] = `
           "alignItems": "center",
           "flexDirection": "row",
           "flexWrap": "wrap",
-          "width": "100%",
+        },
+        {
+          "margin": -0.5,
         },
         {
           "columnGap": 12,
@@ -12110,9 +12209,10 @@ exports[`SessionCard light default 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "color": "#ffffff",
@@ -12127,15 +12227,15 @@ exports[`SessionCard light default 1`] = `
         style={
           [
             {
-              "fontFamily": "DMSans-Medium",
+              "fontFamily": "DMSans-Regular",
               "fontSize": 12,
-              "fontWeight": "500",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -0.18799999999999972,
+              "marginTop": -0.18799999999999972,
             },
             {
               "color": "#ffffff",
-              "fontWeight": "400",
             },
           ]
         }
@@ -12149,14 +12249,14 @@ exports[`SessionCard light default 1`] = `
         [
           {
             "fontFamily": "DMSans-ExtraBold",
-            "fontSize": 20,
-            "fontWeight": "800",
+            "fontSize": 24,
             "letterSpacing": -0.4,
             "lineHeight": 26,
+            "marginBottom": -0,
+            "marginTop": -0,
           },
           {
             "color": "#ffffff",
-            "fontSize": 24,
           },
         ]
       }
@@ -12174,9 +12274,9 @@ exports[`SessionEndedBanner dark default 1`] = `
     [
       {
         "alignItems": "center",
+        "alignSelf": "stretch",
         "flexDirection": "row",
         "flexWrap": "wrap",
-        "width": "100%",
       },
       {
         "backgroundColor": "#1a1c23",
@@ -12185,7 +12285,7 @@ exports[`SessionEndedBanner dark default 1`] = `
         "borderWidth": 0.5,
         "columnGap": 12,
         "minHeight": 64,
-        "padding": 16,
+        "padding": 15.5,
         "rowGap": 8,
       },
       undefined,
@@ -12211,9 +12311,10 @@ exports[`SessionEndedBanner dark default 1`] = `
           {
             "fontFamily": "DMSans-Bold",
             "fontSize": 10,
-            "fontWeight": "700",
             "letterSpacing": 0,
             "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
           },
           {
             "color": "#f2f2f2",
@@ -12229,9 +12330,10 @@ exports[`SessionEndedBanner dark default 1`] = `
           {
             "fontFamily": "DMSans-Medium",
             "fontSize": 12,
-            "fontWeight": "500",
             "letterSpacing": 0,
             "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
           },
           {
             "color": "#848282",
@@ -12264,7 +12366,6 @@ exports[`SessionEndedBanner dark default 1`] = `
     accessible={true}
     collapsable={false}
     focusable={true}
-    hitSlop={12}
     onBlur={[Function]}
     onClick={[Function]}
     onFocus={[Function]}
@@ -12274,6 +12375,21 @@ exports[`SessionEndedBanner dark default 1`] = `
     onResponderTerminate={[Function]}
     onResponderTerminationRequest={[Function]}
     onStartShouldSetResponder={[Function]}
+    style={
+      [
+        {
+          "alignItems": "center",
+          "justifyContent": "center",
+        },
+        {
+          "minHeight": 44,
+          "minWidth": 44,
+        },
+        {
+          "paddingHorizontal": 8,
+        },
+      ]
+    }
   >
     <Text
       style={
@@ -12281,9 +12397,10 @@ exports[`SessionEndedBanner dark default 1`] = `
           {
             "fontFamily": "DMSans-Bold",
             "fontSize": 14,
-            "fontWeight": "700",
             "letterSpacing": 0,
             "lineHeight": 20,
+            "marginBottom": -0.8859999999999992,
+            "marginTop": -0.8859999999999992,
           },
           {
             "color": "#4d88ff",
@@ -12303,9 +12420,9 @@ exports[`SessionEndedBanner light default 1`] = `
     [
       {
         "alignItems": "center",
+        "alignSelf": "stretch",
         "flexDirection": "row",
         "flexWrap": "wrap",
-        "width": "100%",
       },
       {
         "backgroundColor": "#f9fafb",
@@ -12314,7 +12431,7 @@ exports[`SessionEndedBanner light default 1`] = `
         "borderWidth": 0.5,
         "columnGap": 12,
         "minHeight": 64,
-        "padding": 16,
+        "padding": 15.5,
         "rowGap": 8,
       },
       undefined,
@@ -12340,9 +12457,10 @@ exports[`SessionEndedBanner light default 1`] = `
           {
             "fontFamily": "DMSans-Bold",
             "fontSize": 10,
-            "fontWeight": "700",
             "letterSpacing": 0,
             "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
           },
           {
             "color": "#21232c",
@@ -12358,9 +12476,10 @@ exports[`SessionEndedBanner light default 1`] = `
           {
             "fontFamily": "DMSans-Medium",
             "fontSize": 12,
-            "fontWeight": "500",
             "letterSpacing": 0,
             "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
           },
           {
             "color": "#848282",
@@ -12393,7 +12512,6 @@ exports[`SessionEndedBanner light default 1`] = `
     accessible={true}
     collapsable={false}
     focusable={true}
-    hitSlop={12}
     onBlur={[Function]}
     onClick={[Function]}
     onFocus={[Function]}
@@ -12403,6 +12521,21 @@ exports[`SessionEndedBanner light default 1`] = `
     onResponderTerminate={[Function]}
     onResponderTerminationRequest={[Function]}
     onStartShouldSetResponder={[Function]}
+    style={
+      [
+        {
+          "alignItems": "center",
+          "justifyContent": "center",
+        },
+        {
+          "minHeight": 44,
+          "minWidth": 44,
+        },
+        {
+          "paddingHorizontal": 8,
+        },
+      ]
+    }
   >
     <Text
       style={
@@ -12410,9 +12543,10 @@ exports[`SessionEndedBanner light default 1`] = `
           {
             "fontFamily": "DMSans-Bold",
             "fontSize": 14,
-            "fontWeight": "700",
             "letterSpacing": 0,
             "lineHeight": 20,
+            "marginBottom": -0.8859999999999992,
+            "marginTop": -0.8859999999999992,
           },
           {
             "color": "#151f72",
@@ -12540,9 +12674,10 @@ exports[`SwipeAction dark closed 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "color": "#ffffff",
@@ -12598,7 +12733,9 @@ exports[`SwipeAction dark closed 1`] = `
             {
               "alignItems": "center",
               "flexDirection": "row",
-              "width": "100%",
+            },
+            {
+              "margin": -0.5,
             },
             {
               "columnGap": 12,
@@ -12751,9 +12888,10 @@ exports[`SwipeAction dark closed 1`] = `
                 {
                   "fontFamily": "DMSans-SemiBold",
                   "fontSize": 16,
-                  "fontWeight": "600",
                   "letterSpacing": 0,
                   "lineHeight": 24,
+                  "marginBottom": -1.5839999999999996,
+                  "marginTop": -1.5839999999999996,
                 },
                 {
                   "color": "#f2f2f2",
@@ -12768,11 +12906,12 @@ exports[`SwipeAction dark closed 1`] = `
             style={
               [
                 {
-                  "fontFamily": "DMSans-Regular",
-                  "fontSize": 14,
-                  "fontWeight": "400",
+                  "fontFamily": "DMSans-Medium",
+                  "fontSize": 12,
                   "letterSpacing": 0,
-                  "lineHeight": 20,
+                  "lineHeight": 16,
+                  "marginBottom": -0.18799999999999972,
+                  "marginTop": -0.18799999999999972,
                 },
                 {
                   "color": "#848282",
@@ -12788,20 +12927,20 @@ exports[`SwipeAction dark closed 1`] = `
             [
               {
                 "fontFamily": "DMSans-Bold",
-                "fontSize": 10,
-                "fontWeight": "700",
+                "fontSize": 11,
                 "letterSpacing": 0,
                 "lineHeight": 16,
+                "marginBottom": 0,
+                "marginTop": 0,
               },
               {
                 "backgroundColor": "#dbf5e4",
                 "borderRadius": 32,
                 "color": "#04713a",
-                "fontSize": 11,
                 "letterSpacing": 0.88,
                 "overflow": "hidden",
                 "paddingHorizontal": 8,
-                "paddingVertical": 4,
+                "paddingVertical": 3.1610000000000005,
               },
               undefined,
             ]
@@ -12930,9 +13069,10 @@ exports[`SwipeAction light closed 1`] = `
             {
               "fontFamily": "DMSans-Bold",
               "fontSize": 10,
-              "fontWeight": "700",
               "letterSpacing": 0,
               "lineHeight": 16,
+              "marginBottom": -1.4900000000000002,
+              "marginTop": -1.4900000000000002,
             },
             {
               "color": "#ffffff",
@@ -12988,7 +13128,9 @@ exports[`SwipeAction light closed 1`] = `
             {
               "alignItems": "center",
               "flexDirection": "row",
-              "width": "100%",
+            },
+            {
+              "margin": -0.5,
             },
             {
               "columnGap": 12,
@@ -13141,9 +13283,10 @@ exports[`SwipeAction light closed 1`] = `
                 {
                   "fontFamily": "DMSans-SemiBold",
                   "fontSize": 16,
-                  "fontWeight": "600",
                   "letterSpacing": 0,
                   "lineHeight": 24,
+                  "marginBottom": -1.5839999999999996,
+                  "marginTop": -1.5839999999999996,
                 },
                 {
                   "color": "#21232c",
@@ -13158,11 +13301,12 @@ exports[`SwipeAction light closed 1`] = `
             style={
               [
                 {
-                  "fontFamily": "DMSans-Regular",
-                  "fontSize": 14,
-                  "fontWeight": "400",
+                  "fontFamily": "DMSans-Medium",
+                  "fontSize": 12,
                   "letterSpacing": 0,
-                  "lineHeight": 20,
+                  "lineHeight": 16,
+                  "marginBottom": -0.18799999999999972,
+                  "marginTop": -0.18799999999999972,
                 },
                 {
                   "color": "#848282",
@@ -13178,20 +13322,20 @@ exports[`SwipeAction light closed 1`] = `
             [
               {
                 "fontFamily": "DMSans-Bold",
-                "fontSize": 10,
-                "fontWeight": "700",
+                "fontSize": 11,
                 "letterSpacing": 0,
                 "lineHeight": 16,
+                "marginBottom": 0,
+                "marginTop": 0,
               },
               {
                 "backgroundColor": "#dbf5e4",
                 "borderRadius": 32,
                 "color": "#04713a",
-                "fontSize": 11,
                 "letterSpacing": 0.88,
                 "overflow": "hidden",
                 "paddingHorizontal": 8,
-                "paddingVertical": 4,
+                "paddingVertical": 3.1610000000000005,
               },
               undefined,
             ]

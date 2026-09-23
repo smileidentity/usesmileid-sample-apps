@@ -4,12 +4,16 @@ import SwiftUI
 public struct UseSmileIDSampleTriggerEmoji: View {
   private let emoji: String
 
+  /// The label's line height, so the emoji's taller fallback line cannot push the trigger past 44.
+  @ScaledMetric(relativeTo: .body) private var lineHeight: CGFloat = SmileSpacing.sizeIconMd
+
   public init(_ emoji: String) {
     self.emoji = emoji
   }
 
   public var body: some View {
     UseSmileIDSampleText(emoji, style: UseSmileIDSampleTheme.type.inputFont.with(size: 18))
+      .frame(height: lineHeight)
   }
 }
 
@@ -20,7 +24,7 @@ public struct UseSmileIDSampleSelectTrigger<Leading: View>: View {
   private let enabled: Bool
   private let testId: String?
   private let onTap: () -> Void
-  private let leading: Leading
+  private let leading: (Color) -> Leading
 
   @ScaledMetric(relativeTo: .body) private var minHeight: CGFloat = SmileSpacing.sizeControlMd
   @Environment(\.useSmileIDSampleColors) private var colors
@@ -31,14 +35,14 @@ public struct UseSmileIDSampleSelectTrigger<Leading: View>: View {
     enabled: Bool = true,
     testId: String? = nil,
     onTap: @escaping () -> Void,
-    @ViewBuilder leading: () -> Leading = { EmptyView() }
+    @ViewBuilder leading: @escaping (Color) -> Leading = { _ in EmptyView() }
   ) {
     self.value = value
     self.placeholder = placeholder
     self.enabled = enabled
     self.testId = testId
     self.onTap = onTap
-    self.leading = leading()
+    self.leading = leading
   }
 
   public var body: some View {
@@ -46,11 +50,11 @@ public struct UseSmileIDSampleSelectTrigger<Leading: View>: View {
       HStack(spacing: SmileSpacing.spacingXs) {
         if Leading.self != EmptyView.self {
           // A minimum, not a fixed size: an emoji in the slot grows with Dynamic Type.
-          leading.frame(minWidth: SmileSpacing.sizeIconMd, minHeight: SmileSpacing.sizeIconMd)
+          leading(contentColor).frame(minWidth: SmileSpacing.sizeIconMd, minHeight: SmileSpacing.sizeIconMd)
         }
         UseSmileIDSampleText(
           value ?? placeholder,
-          style: UseSmileIDSampleTheme.type.inputFont.with(size: 15)
+          style: UseSmileIDSampleTheme.type.inputFont.with(size: 15, weight: 600)
         )
         .foregroundColor(contentColor)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -71,7 +75,8 @@ public struct UseSmileIDSampleSelectTrigger<Leading: View>: View {
           )
       )
     }
-    .buttonStyle(.plain)
+    // Not `.plain`, which fades a disabled label on top of its disabled colours.
+    .buttonStyle(UseSmileIDSampleUndimmedButtonStyle())
     .disabled(!enabled)
     .useSmileIDSampleTestId(testId)
   }
@@ -82,5 +87,12 @@ public struct UseSmileIDSampleSelectTrigger<Leading: View>: View {
       return colors.button.disabledText
     }
     return value != nil ? colors.textTitle : colors.input.placeholder
+  }
+}
+
+/// Draws the label as given in every state, so a disabled control shows only the colours it chose.
+private struct UseSmileIDSampleUndimmedButtonStyle: ButtonStyle {
+  func makeBody(configuration: Configuration) -> some View {
+    configuration.label
   }
 }

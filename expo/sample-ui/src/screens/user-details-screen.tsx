@@ -24,8 +24,9 @@ import {
   type UseSmileIDSampleUserField,
 } from '../model/use-smile-id-sample-user-fields';
 import { smileCardStrokeWidth } from '../smile-product-hues';
+import { insetForBorder } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
-import { atWeight } from '../theme/smile-type';
+import { atSize, atWeight } from '../theme/smile-type';
 import {
   UseSmileIDSampleSuffixedTestIds,
   UseSmileIDSampleTestIds,
@@ -123,19 +124,19 @@ export const UserDetailsScreen = ({
                 borderWidth: smileCardStrokeWidth,
                 columnGap: theme.dimens.spacing.sm,
                 marginHorizontal: theme.dimens.spacing.md,
-                paddingBottom: theme.dimens.spacing.sm,
-                paddingLeft: theme.dimens.spacing.md,
-                paddingRight: theme.dimens.spacing.sm,
-                paddingTop: theme.dimens.spacing.sm,
+                paddingBottom: insetForBorder(theme.dimens.spacing.sm, smileCardStrokeWidth),
+                paddingLeft: insetForBorder(theme.dimens.spacing.md, smileCardStrokeWidth),
+                paddingRight: insetForBorder(theme.dimens.spacing.sm, smileCardStrokeWidth),
+                paddingTop: insetForBorder(theme.dimens.spacing.sm, smileCardStrokeWidth),
               },
             ]}
           >
             {/* One line of body text beside the switch: no icon and no supporting line, so not a SettingRow. */}
             <Text
               style={[
-                atWeight(theme.type.textStyleSubtitle, 500),
+                atSize(atWeight(theme.type.textStyleSubtitle, 500), REMEMBER_TEXT_SIZE),
                 styles.rememberText,
-                { color: theme.colors.textBody, fontSize: REMEMBER_TEXT_SIZE },
+                { color: theme.colors.textBody },
               ]}
             >
               Remember these details for next time

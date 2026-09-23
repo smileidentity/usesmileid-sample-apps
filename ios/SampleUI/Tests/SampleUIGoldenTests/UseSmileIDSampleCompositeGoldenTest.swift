@@ -152,7 +152,7 @@ private struct OptionRows: View {
 private struct SelectTriggers: View {
   var body: some View {
     VStack(spacing: SmileSpacing.spacingSm) {
-      UseSmileIDSampleSelectTrigger(value: "Nigeria", placeholder: "Select country", onTap: {}) {
+      UseSmileIDSampleSelectTrigger(value: "Nigeria", placeholder: "Select country", onTap: {}) { _ in
         UseSmileIDSampleTriggerEmoji("🇳🇬")
       }
       UseSmileIDSampleSelectTrigger(value: nil, placeholder: "Select country", onTap: {})

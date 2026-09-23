@@ -27,7 +27,7 @@ class UseSmileIDSampleAboveShellPage extends StatelessWidget {
     },
     child: Scaffold(
       backgroundColor: UseSmileIDSampleTheme.colorsOf(context).background,
-      body: SafeArea(child: child),
+      body: SafeArea(child: UseSmileIDSampleTextMetrics(child: child)),
     ),
   );
 }

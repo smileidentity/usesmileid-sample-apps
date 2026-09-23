@@ -11,6 +11,7 @@ public struct UseSmileIDSampleKeyValueEditRow: View {
   private let testId: String?
 
   @ScaledMetric(relativeTo: .body) private var minHeight: CGFloat = SmileSpacing.sizeControlMd
+  @ScaledMetric(relativeTo: .body) private var scale: CGFloat = 1
   @Environment(\.useSmileIDSampleColors) private var colors
   @Environment(\.sizeCategory) private var sizeCategory
 
@@ -65,20 +66,21 @@ public struct UseSmileIDSampleKeyValueEditRow: View {
   private var field: some View {
     // A text field fills its column, so the row's own alignment cannot place the text: this does.
     let stacked = sizeCategory.isAccessibilityCategory
-    return ZStack(alignment: stacked ? .leading : .trailing) {
-      if value.isEmpty {
-        UseSmileIDSampleText(placeholder, style: rowStyle)
-          .foregroundColor(colors.textMuted)
+    // Sized by a line of text, since UITextField's own padding runs taller than Compose's field.
+    return UseSmileIDSampleText(value.isEmpty ? placeholder : " ", style: rowStyle)
+      .foregroundColor(value.isEmpty ? colors.textMuted : .clear)
+      .accessibilityHidden(!value.isEmpty)
+      .frame(maxWidth: .infinity, alignment: stacked ? .leading : .trailing)
+      .overlay(alignment: stacked ? .leading : .trailing) {
+        TextField("", text: $value)
+          .multilineTextAlignment(stacked ? .leading : .trailing)
+          .font(UseSmileIDSampleFonts.font(rowStyle, scale: scale))
+          .foregroundColor(enabled ? colors.textTitle : colors.textMuted)
+          .keyboardType(keyboardType)
+          .accentColor(colors.primary)
+          .disabled(!enabled)
+          .useSmileIDSampleTestId(testId)
       }
-      TextField("", text: $value)
-        .multilineTextAlignment(stacked ? .leading : .trailing)
-        .font(UseSmileIDSampleFonts.font(rowStyle))
-        .foregroundColor(enabled ? colors.textTitle : colors.textMuted)
-        .keyboardType(keyboardType)
-        .accentColor(colors.primary)
-        .disabled(!enabled)
-        .useSmileIDSampleTestId(testId)
-    }
   }
 
   private var rowStyle: SmileTextStyle {

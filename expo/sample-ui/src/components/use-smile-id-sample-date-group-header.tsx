@@ -1,6 +1,7 @@
 import { Text, type StyleProp, type TextStyle } from 'react-native';
 
 import { smileLabelSize, smileLabelTracking } from '../smile-product-hues';
+import { atSize } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 type Props = {
@@ -20,9 +21,8 @@ export const UseSmileIDSampleDateGroupHeader = ({ relative, absolute, testID, st
     <Text
       testID={testID}
       style={[
-        theme.type.textStyleOverline,
+        atSize(theme.type.textStyleOverline, smileLabelSize),
         {
-          fontSize: smileLabelSize,
           letterSpacing: smileLabelTracking,
           color: theme.colors.textMuted,
           paddingVertical: theme.dimens.spacing.xs,

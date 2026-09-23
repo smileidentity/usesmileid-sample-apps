@@ -5,6 +5,7 @@ import {
   smileSectionHeaderSize,
   smileSectionHeaderWeight,
 } from '../smile-product-hues';
+import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 type Props = {
@@ -20,11 +21,12 @@ export const UseSmileIDSampleSectionHeader = ({ text, testID, style }: Props) =>
     <Text
       testID={testID}
       style={[
-        theme.type.textStyleHeadingSection,
+        atSize(
+          atWeight(theme.type.textStyleHeadingSection, smileSectionHeaderWeight),
+          smileSectionHeaderSize,
+          smileSectionHeaderLineHeight,
+        ),
         {
-          fontSize: smileSectionHeaderSize,
-          lineHeight: smileSectionHeaderLineHeight,
-          fontWeight: String(smileSectionHeaderWeight) as never,
           color: theme.colors.offBlack,
           paddingVertical: theme.dimens.spacing.xs,
           width: '100%',
