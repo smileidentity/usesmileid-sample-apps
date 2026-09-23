@@ -129,6 +129,13 @@ which of the two their platform behaves like rather than assume Android's limita
      Android SDK forces light icons there over a surface it pins light, so the clock is white on
      near-white while the SDK owns the screen; the Flutter and React Native SDKs draw dark icons.
      That is the SDK's defect and is not worked around here.
+   - **Expo's Android navigation bar does not follow the switch on Android 12 to 14.** React Native's
+     status-bar module sets the status appearance through `InsetsController` directly, which puts the
+     window in `APPEARANCE_CONTROLLED`; from then on the legacy flag `expo-navigation-bar` writes (androidx
+     routes it that way below API 35) is ignored. It works on Android 15 and later. Known gap, ruled
+     2026-09-23 rather than adding a native module; the fix belongs upstream.
+   - **A night-mode change re-applies Expo's bars after the app's own call**, so the root re-sends both
+     styles once `Appearance` reports the change.
 
    Android and Flutter each assert the four crossings — device dark with the switch off and device
    light with it on, pushed and modal — on the icon appearance, not a pixel. Expo asserts the styles

@@ -159,21 +159,73 @@ class _CardLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextStyle titleStyle = UseSmileIDSampleType.textStyleBodyStrong;
     final TextStyle familyStyle = UseSmileIDSampleType.textStyleCaption;
-    return Text.rich(
-      _label(
-        title: title,
-        family: family,
-        titleStyle: titleStyle,
-        familyStyle: familyStyle,
-        size: titleStyle.fontSize!,
-      ),
-      style: titleStyle.copyWith(
-        color: color,
-        letterSpacing: smileCardTitleTracking,
-      ),
+    final TextScaler scaler = MediaQuery.textScalerOf(context);
+    final TextStyle base = titleStyle.copyWith(
+      color: color,
+      letterSpacing: smileCardTitleTracking,
+    );
+    TextSpan labelAt(double size) => _label(
+      title: title,
+      family: family,
+      titleStyle: titleStyle,
+      familyStyle: familyStyle,
+      size: size,
+    );
+    // Above the default scale the label wraps instead, as Android's does, because a capped count clips.
+    if (scaler.scale(1) > 1) {
+      return Text.rich(labelAt(titleStyle.fontSize!), style: base);
+    }
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final double size = _fittingSize(
+          span: labelAt,
+          style: base,
+          maxWidth: constraints.maxWidth,
+          scaler: scaler,
+          largest: titleStyle.fontSize!,
+        );
+        return Text.rich(
+          labelAt(size),
+          style: base.copyWith(fontSize: size),
+          maxLines: 2,
+        );
+      },
     );
   }
 }
+
+/// Compose's `TextAutoSize.StepBased`: the largest size, in its 0.25 steps down to [_cardLabelMin], that fits two lines.
+double _fittingSize({
+  required TextSpan Function(double size) span,
+  required TextStyle style,
+  required double maxWidth,
+  required TextScaler scaler,
+  required double largest,
+}) {
+  for (double size = largest; size > _cardLabelMin; size -= _cardLabelStep) {
+    final TextPainter painter = TextPainter(
+      text: TextSpan(
+        style: style.copyWith(fontSize: size),
+        children: <InlineSpan>[span(size)],
+      ),
+      maxLines: 2,
+      textDirection: TextDirection.ltr,
+      textScaler: scaler,
+    )..layout(maxWidth: maxWidth);
+    final bool fits = !painter.didExceedMaxLines;
+    painter.dispose();
+    if (fits) {
+      return size;
+    }
+  }
+  return _cardLabelMin;
+}
+
+/// Android's `CARD_LABEL_MIN`.
+const double _cardLabelMin = 13;
+
+/// Compose's default `StepBased` step.
+const double _cardLabelStep = 0.25;
 
 /// The two runs, the family scaled in proportion to the title.
 TextSpan _label({
