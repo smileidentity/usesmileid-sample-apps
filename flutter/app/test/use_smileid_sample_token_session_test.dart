@@ -24,7 +24,7 @@ void main() {
   setUp(() => SharedPreferences.setMockInitialValues(<String, Object>{}));
 
   group('the flow plan, as a truth table', () {
-    // Every consent shape by every user-details shape by every product: enumerated, not sampled.
+    // Consent × user details × ID claims × product, each axis independent: enumerated, not sampled.
     const Map<String, UseSmileIDSampleTokenConsent?> consents =
         <String, UseSmileIDSampleTokenConsent?>{
           'absent': null,
@@ -36,48 +36,80 @@ void main() {
           ),
           'partial': UseSmileIDSampleTokenConsent(granted: true),
         };
-    const Map<String, List<bool>> details = <String, List<bool>>{
-      'none': <bool>[false, false, false],
-      'names only': <bool>[true, true, false],
-      'contact only': <bool>[false, false, true],
-      'names and contact': <bool>[true, true, true],
+    const Map<String, UseSmileIDSampleTokenBindings> details =
+        <String, UseSmileIDSampleTokenBindings>{
+          'none': UseSmileIDSampleTokenBindings(),
+          'given name only': UseSmileIDSampleTokenBindings(givenNames: true),
+          'names only': UseSmileIDSampleTokenBindings(
+            givenNames: true,
+            lastName: true,
+          ),
+          'email only': UseSmileIDSampleTokenBindings(email: true),
+          'phone only': UseSmileIDSampleTokenBindings(phoneNumber: true),
+          'names and email': UseSmileIDSampleTokenBindings(
+            givenNames: true,
+            lastName: true,
+            email: true,
+          ),
+          'names and phone': UseSmileIDSampleTokenBindings(
+            givenNames: true,
+            lastName: true,
+            phoneNumber: true,
+          ),
+        };
+    const Map<String, List<String?>> ids = <String, List<String?>>{
+      'no ID claims': <String?>[null, null, null],
+      'country and type': <String?>['KE', 'NATIONAL_ID', null],
+      'all three': <String?>['KE', 'NATIONAL_ID', 'vault_id_number'],
     };
 
     for (final MapEntry<String, UseSmileIDSampleTokenConsent?> consent
         in consents.entries) {
-      for (final MapEntry<String, List<bool>> detail in details.entries) {
-        for (final UseSmileIDSampleProduct product
-            in UseSmileIDSampleProduct.values) {
-          test(
-            'consent ${consent.key}, details ${detail.key}, ${product.id}',
-            () {
-              final bool names = detail.value[0];
-              final bool contact = detail.value[2];
-              final UseSmileIDSampleTokenBindings bindings =
-                  UseSmileIDSampleTokenBindings(
-                    givenNames: names,
-                    lastName: names,
-                    email: contact,
-                    consent: consent.value,
-                    country: names ? 'KE' : null,
-                    idType: names ? 'NATIONAL_ID' : null,
-                    idNumberReference: names ? 'vault_id_number' : null,
-                  );
-              expect(
-                useSmileIDSampleFlowPlan(bindings, product),
-                UseSmileIDSampleFlowPlan(
-                  userDetailsGap: UseSmileIDSampleUserDetailsRequirement(
-                    firstName: !names,
-                    lastName: !names,
-                    contact: !contact,
+      for (final MapEntry<String, UseSmileIDSampleTokenBindings> detail
+          in details.entries) {
+        for (final MapEntry<String, List<String?>> id in ids.entries) {
+          for (final UseSmileIDSampleProduct product
+              in UseSmileIDSampleProduct.values) {
+            test(
+              'consent ${consent.key}, ${detail.key}, ${id.key}, ${product.id}',
+              () {
+                final UseSmileIDSampleTokenBindings d = detail.value;
+                final UseSmileIDSampleTokenBindings bindings =
+                    UseSmileIDSampleTokenBindings(
+                      givenNames: d.givenNames,
+                      lastName: d.lastName,
+                      email: d.email,
+                      phoneNumber: d.phoneNumber,
+                      consent: consent.value,
+                      country: id.value[0],
+                      idType: id.value[1],
+                      idNumberReference: id.value[2],
+                    );
+                final bool contact = d.email || d.phoneNumber;
+                final bool bindsId = switch (product) {
+                  UseSmileIDSampleProduct.biometricKyc ||
+                  UseSmileIDSampleProduct.enhancedKyc => id.value[2] != null,
+                  UseSmileIDSampleProduct.documentVerification ||
+                  UseSmileIDSampleProduct.enhancedDocumentVerification =>
+                    id.value[1] != null,
+                  _ => true,
+                };
+                expect(
+                  useSmileIDSampleFlowPlan(bindings, product),
+                  UseSmileIDSampleFlowPlan(
+                    userDetailsGap: UseSmileIDSampleUserDetailsRequirement(
+                      firstName: !d.givenNames,
+                      lastName: !d.lastName,
+                      contact: !contact,
+                    ),
+                    showIdDetailsForm: product.needsIdDetails && !bindsId,
+                    declareConsentScreen: consent.value == null,
+                    passUserDetails: !(d.givenNames && d.lastName && contact),
                   ),
-                  showIdDetailsForm: product.needsIdDetails && !names,
-                  declareConsentScreen: consent.value == null,
-                  passUserDetails: !(names && contact),
-                ),
-              );
-            },
-          );
+                );
+              },
+            );
+          }
         }
       }
     }
