@@ -234,6 +234,23 @@ Widget _scanSheets() => _stack(<Widget>[
     onBindingsChanged: (_) {},
     onSimulate: () {},
   ),
+  // The mint controls open, with a non-default choice in each row so selection reads.
+  UseSmileIDSampleScanSheet(
+    state: const UseSmileIDSampleScanSheetState(
+      span: UseSmileIDSampleSimulatedSpan.eightHours,
+      environment: UseSmileIDSampleEnvironment.production,
+      bindings: UseSmileIDSampleSimulatedBindings(consent: true),
+      expanded: true,
+    ),
+    onTokenChanged: _ignore,
+    onPaste: () {},
+    onLink: () {},
+    onExpandToggle: () {},
+    onSpanSelect: (_) {},
+    onEnvironmentSelect: (_) {},
+    onBindingsChanged: (_) {},
+    onSimulate: () {},
+  ),
 ]);
 
 /// The revealed action, which is the only part of the gesture the design fixes.
