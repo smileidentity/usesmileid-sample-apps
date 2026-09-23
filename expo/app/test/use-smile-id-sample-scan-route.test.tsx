@@ -70,7 +70,9 @@ beforeEach(() => {
 describe('the expiry gate', () => {
   it('sends a run whose session ended to the scanner, holding the run it interrupted', async () => {
     await act(async () => {
-      await useSmileIDSampleSessionStore.getState().retire(endedSession());
+      const ended = endedSession();
+      await useSmileIDSampleSessionStore.getState().link(ended);
+      await useSmileIDSampleSessionStore.getState().retire(ended);
     });
     await inTheme(<SdkFlowRun />);
     expect(mockRedirects).toEqual(['/token/scan']);
@@ -82,7 +84,9 @@ describe('the expiry gate', () => {
     mockLaunchUrl = 'usesmileid-sample-expo:///flow/enhancedKyc/run?route=shell';
     await act(async () => {
       await smileIDSampleLoadLaunchArgs();
-      await useSmileIDSampleSessionStore.getState().retire(endedSession());
+      const ended = endedSession();
+      await useSmileIDSampleSessionStore.getState().link(ended);
+      await useSmileIDSampleSessionStore.getState().retire(ended);
     });
     await inTheme(<SdkFlowRun />);
     expect(useSmileIDSampleSessionStore.getState().pendingRun).toEqual({ productId: 'enhancedKyc', route: 'shell' });

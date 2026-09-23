@@ -45,7 +45,7 @@ type Actions = {
   load: (storage: UseSmileIDSampleSessionStorage) => Promise<void>;
   /// Takes the session rather than the raw token, so only a decoded one can ever be linked.
   link: (session: UseSmileIDSampleTokenSession) => Promise<void>;
-  /// Deletes the credential at its deadline, keeping only that the session ended.
+  /// Deletes the credential at its deadline, keeping only that the session ended; a no-op once another is live.
   retire: (session: UseSmileIDSampleTokenSession) => Promise<void>;
   /// Sign out: no ended marker, which would send the next run to the scanner.
   clear: () => Promise<void>;
@@ -94,7 +94,7 @@ const recordFrom = (text: string | null): Pick<State, 'live' | 'ended'> => {
 };
 
 /// The token session. The token is the whole live record: every other field decodes from it.
-export const useSmileIDSampleSessionStore = create<State & Actions>((set) => ({
+export const useSmileIDSampleSessionStore = create<State & Actions>((set, get) => ({
   live: null,
   ended: null,
   loaded: false,
@@ -118,6 +118,8 @@ export const useSmileIDSampleSessionStore = create<State & Actions>((set) => ({
   },
 
   retire: async (session) => {
+    // Checked and written in one synchronous step, so a tick queued before a relink cannot end the new session.
+    if (get().live?.token !== session.token) return;
     set({ live: null, ended: { id: session.id, endedAtMillis: session.expiresAtMillis } });
     await persist({ endedId: session.id, endedAt: session.expiresAtMillis });
   },

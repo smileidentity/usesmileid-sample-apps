@@ -57,6 +57,7 @@ describe('the session store', () => {
     const { storage, stored } = recordingStorage();
     await useSmileIDSampleSessionStore.getState().load(storage);
     const session = smileIDSampleTokenSession(liveToken)!;
+    await useSmileIDSampleSessionStore.getState().link(session);
     await useSmileIDSampleSessionStore.getState().retire(session);
     expect(stored()).not.toContain(liveToken);
     expect(JSON.parse(stored()!)).toEqual({ endedId: session.id, endedAt: session.expiresAtMillis });
@@ -66,7 +67,9 @@ describe('the session store', () => {
   it('clears both halves on sign out, so the next run is not sent to the scanner', async () => {
     const { storage, stored } = recordingStorage();
     await useSmileIDSampleSessionStore.getState().load(storage);
-    await useSmileIDSampleSessionStore.getState().retire(smileIDSampleTokenSession(liveToken)!);
+    const session = smileIDSampleTokenSession(liveToken)!;
+    await useSmileIDSampleSessionStore.getState().link(session);
+    await useSmileIDSampleSessionStore.getState().retire(session);
     await useSmileIDSampleSessionStore.getState().clear();
     expect(stored()).toBeNull();
     expect(smileIDSampleSessionExpired(useSmileIDSampleSessionStore.getState(), now)).toBe(false);
@@ -104,4 +107,51 @@ describe('the session store', () => {
     useSmileIDSampleSessionStore.getState().clearRun();
     expect(useSmileIDSampleSessionStore.getState().pendingRun).toBeNull();
   });
+
+  it('never lets a late retirement of a stale session end a fresher one linked before it', async () => {
+    // Writes that take a while to land, as the platform secure store's do.
+    let stored: string | null = null;
+    const slow: UseSmileIDSampleSessionStorage = {
+      read: async () => stored,
+      write: (next) =>
+        new Promise((resolve) =>
+          setTimeout(() => {
+            stored = next;
+            resolve();
+          }, 20),
+        ),
+    };
+    const stale = smileIDSampleTokenSession(tokenFor(Math.floor(now / 1000) - 1000, Math.floor(now / 1000) - 100))!;
+    stored = JSON.stringify({ token: stale.token });
+    await useSmileIDSampleSessionStore.getState().load(slow);
+
+    const fresh = smileIDSampleTokenSession(liveToken)!;
+    const linking = useSmileIDSampleSessionStore.getState().link(fresh);
+    // The tick that saw the stale session fires after the link, as a timer queued before it would.
+    const retiring = useSmileIDSampleSessionStore.getState().retire(stale);
+    await Promise.all([linking, retiring]);
+
+    expect(useSmileIDSampleSessionStore.getState().live?.id).toBe(fresh.id);
+    expect(useSmileIDSampleSessionStore.getState().ended).toBeNull();
+    expect(JSON.parse(stored!)).toEqual({ token: fresh.token });
+  });
+
+  it('retires a stale stored session before a first link on a cold start, and the link then wins', async () => {
+    let stored: string | null = null;
+    const slow: UseSmileIDSampleSessionStorage = {
+      read: async () => stored,
+      write: (next) => new Promise((resolve) => setTimeout(() => ((stored = next), resolve()), 20)),
+    };
+    const stale = tokenFor(Math.floor(now / 1000) - 1000, Math.floor(now / 1000) - 100);
+    stored = JSON.stringify({ token: stale });
+    await useSmileIDSampleSessionStore.getState().load(slow);
+    renderHook(() => useSmileIDSampleSessionClock());
+    const fresh = smileIDSampleTokenSession(liveToken)!;
+    await act(async () => {
+      await useSmileIDSampleSessionStore.getState().link(fresh);
+    });
+    expect(useSmileIDSampleSessionStore.getState().live?.id).toBe(fresh.id);
+    expect(JSON.parse(stored!)).toEqual({ token: fresh.token });
+  });
 });
+
