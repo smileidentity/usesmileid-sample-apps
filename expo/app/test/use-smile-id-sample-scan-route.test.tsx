@@ -1,12 +1,14 @@
 import {
   UseSmileIDSampleTestIds,
   UseSmileIDSampleThemeProvider,
+  smileIDSampleBase64UrlEncode,
   smileIDSampleTokenSession,
   useSmileIDSampleSessionStore,
 } from '@smileid/sample-ui';
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
 
+import Products from '../app/(tabs)/products';
 import SdkFlowRun from '../app/flow/[productId]/run';
 import ScanToken from '../app/token/scan';
 import { smileIDSampleSimulatedToken } from '../src/flow/use-smile-id-sample-flow-tokens';
@@ -42,12 +44,23 @@ jest.mock('expo-router', () => ({
     return null;
   },
 }));
+jest.mock('expo-router/tabs', () => ({ useBottomTabBarHeight: () => 0 }));
 jest.mock('@smileid/usesmileid', () => ({
   ...jest.requireActual('@smileid/usesmileid'),
   UseSmileIDBuilder: () => null,
 }));
 
 const inTheme = async (element: ReactElement) => await render(<UseSmileIDSampleThemeProvider dark={false}>{element}</UseSmileIDSampleThemeProvider>);
+
+/// A details-bound session lasting `spanMillis`, so a test can let it lapse without the clock ticking.
+const shortSession = (spanMillis: number) => {
+  const nowSeconds = Math.floor(Date.now() / 1000);
+  const claims = `{"iat":${nowSeconds - 1},"exp":${Math.ceil((Date.now() + spanMillis) / 1000)},"api_url":"https://testapi.smileidentity.com/v3","payload":{"given_names":"v","last_name":"v","email":"v","country":"KE","id_type":"NATIONAL_ID","id_number":"v"}}`;
+  return smileIDSampleTokenSession(['{"alg":"none"}', claims, 's'].map(smileIDSampleBase64UrlEncode).join('.'))!;
+};
+
+const lapse = (session: { expiresAtMillis: number }) =>
+  new Promise((resolve) => setTimeout(resolve, session.expiresAtMillis - Date.now() + 20));
 
 const endedSession = () =>
   smileIDSampleTokenSession(
@@ -90,6 +103,28 @@ describe('the expiry gate', () => {
     });
     await inTheme(<SdkFlowRun />);
     expect(useSmileIDSampleSessionStore.getState().pendingRun).toEqual({ productId: 'enhancedKyc', route: 'shell' });
+  });
+
+  // The clock ticks once a second, so a session can lapse between the last tick and the tap.
+  it('reads the clock at entry, so a session that lapsed since the last tick is sent to the scanner', async () => {
+    const session = shortSession(300);
+    await act(async () => {
+      await useSmileIDSampleSessionStore.getState().link(session);
+    });
+    await lapse(session);
+    await inTheme(<SdkFlowRun />);
+    expect(mockRedirects).toEqual(['/token/scan']);
+  });
+
+  it('decides whether to skip the form from the clock at the tap, not the last tick', async () => {
+    const session = shortSession(300);
+    await act(async () => {
+      await useSmileIDSampleSessionStore.getState().link(session);
+    });
+    const screen = await inTheme(<Products />);
+    await lapse(session);
+    await fireEvent.press(screen.getByTestId('sample_product_card_biometricKyc'));
+    expect(mockRouter.push).toHaveBeenCalledWith('/flow/biometricKyc/details');
   });
 
   it('lets a run with no session at all through to the SDK on the fixture path', async () => {

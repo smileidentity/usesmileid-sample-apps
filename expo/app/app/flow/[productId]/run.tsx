@@ -56,8 +56,9 @@ export default function SdkFlowRun() {
     if (product === null) return null;
     // Read, not subscribed: the once-a-second tick would re-render the host, and the SDK tears a remounted run down.
     const sessions = useSmileIDSampleSessionStore.getState();
-    // The store's own tick rather than a clock read in render; it runs whenever a session is live.
-    const entryMillis = sessions.nowMillis;
+    // The clock itself, not the last tick: a session can lapse in the second between the two.
+    // eslint-disable-next-line react-hooks/purity -- read once, inside the entry-only memo
+    const entryMillis = Date.now();
     const session = smileIDSampleLiveSession(sessions, entryMillis);
     return {
       product,
