@@ -14,9 +14,14 @@ export const UseSmileIDSampleQrScanner = ({ enabled, onCandidate, torchOn }: Pro
   // A code is reported once, but a different one still gets through; a one-shot latch would kill the scanner.
   const lastReported = useRef<string | null>(null);
 
+  // Asked once per visit: a denial that still allows asking arrives as a new permission object.
+  const asked = useRef(false);
+
   useEffect(() => {
     // A denial is not a dead end: the sheet's manual entry still links a token.
-    if (permission !== null && !permission.granted && permission.canAskAgain) void requestPermission();
+    if (asked.current || permission === null || permission.granted || !permission.canAskAgain) return;
+    asked.current = true;
+    void requestPermission();
   }, [permission, requestPermission]);
 
   useEffect(() => {
