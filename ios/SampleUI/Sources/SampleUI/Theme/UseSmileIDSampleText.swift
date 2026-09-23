@@ -6,7 +6,7 @@ public struct UseSmileIDSampleText: View {
   private let style: SmileTextStyle
   private let underlined: Bool
 
-  /// Tracking and line spacing are point values and need scaling by hand; only the font size follows Dynamic Type.
+  /// The Dynamic Type factor, applied by hand to size, tracking and line spacing alike.
   @ScaledMetric(relativeTo: .body) private var scale: CGFloat = 1
 
   /// `underlined` belongs here for the same reason tracking does: the decoration goes on while the value is still a `Text`.
@@ -18,9 +18,9 @@ public struct UseSmileIDSampleText: View {
 
   public var body: some View {
     Text(content)
-      .font(UseSmileIDSampleFonts.font(style))
+      .font(UseSmileIDSampleFonts.font(style, scale: scale))
       .tracking(style.tracking * scale)
       .underline(underlined)
-      .lineSpacing(style.lineSpacing * scale)
+      .lineSpacing(UseSmileIDSampleFonts.lineSpacing(style) * scale)
   }
 }

@@ -76,31 +76,31 @@ public struct UseSmileIDSampleTextInput<Leading: View, Trailing: View>: View {
   }
 
   private var field: some View {
-    ZStack(alignment: .leading) {
-      if value.isEmpty {
-        UseSmileIDSampleText(placeholder, style: UseSmileIDSampleTheme.type.inputFont)
-          .foregroundColor(colors.input.placeholder)
-      }
-      // SecureField rather than a masking transform: it stops the system offering to learn the value.
-      Group {
-        if masked {
-          SecureField("", text: $value)
-        } else {
-          TextField("", text: $value)
+    // Sized by a line of text, not the field: UITextField pads itself, which made the input 2 taller than Compose's.
+    UseSmileIDSampleText(value.isEmpty ? placeholder : " ", style: UseSmileIDSampleTheme.type.inputFont)
+      .foregroundColor(value.isEmpty ? colors.input.placeholder : .clear)
+      .accessibilityHidden(!value.isEmpty)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .overlay(alignment: .leading) {
+        // SecureField rather than a masking transform: it stops the system offering to learn the value.
+        Group {
+          if masked {
+            SecureField("", text: $value)
+          } else {
+            TextField("", text: $value)
+          }
         }
+        .font(UseSmileIDSampleFonts.font(UseSmileIDSampleTheme.type.inputFont))
+        .foregroundColor(enabled ? colors.input.text : colors.textMuted)
+        .keyboardType(masked ? .default : keyboardType)
+        .autocorrectionDisabled(masked)
+        // A capitalised first character silently corrupts a credential the user typed correctly.
+        .textInputAutocapitalization(masked ? .never : nil)
+        .accentColor(colors.input.borderFocus)
+        .focused($focused)
+        .disabled(!enabled)
+        .useSmileIDSampleTestId(testId)
       }
-      .font(UseSmileIDSampleFonts.font(UseSmileIDSampleTheme.type.inputFont))
-      .foregroundColor(enabled ? colors.input.text : colors.textMuted)
-      .keyboardType(masked ? .default : keyboardType)
-      .autocorrectionDisabled(masked)
-      // A capitalised first character silently corrupts a credential the user typed correctly.
-      .textInputAutocapitalization(masked ? .never : nil)
-      .accentColor(colors.input.borderFocus)
-      .focused($focused)
-      .disabled(!enabled)
-      .useSmileIDSampleTestId(testId)
-    }
-    .frame(maxWidth: .infinity, alignment: .leading)
   }
 
   private var borderColor: Color {

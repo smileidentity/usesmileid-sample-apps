@@ -35,8 +35,10 @@ public struct UseSmileIDSampleTokenRing: View {
 
   public var body: some View {
     ZStack {
-      Circle().stroke(smileTokenRing.opacity(smileTokenRingTrackOpacity), lineWidth: Self.width)
+      // Inset by half the stroke so the ring stays inside its bounds, as Compose draws it.
+      Circle().inset(by: Self.width / 2).stroke(smileTokenRing.opacity(smileTokenRingTrackOpacity), lineWidth: Self.width)
       Circle()
+        .inset(by: Self.width / 2)
         .trim(from: 0, to: min(max(progress, 0), 1))
         .stroke(smileTokenRing, style: StrokeStyle(lineWidth: Self.width, lineCap: .round))
         .rotationEffect(.degrees(-90))
@@ -44,7 +46,7 @@ public struct UseSmileIDSampleTokenRing: View {
   }
 
   private static var width: CGFloat {
-    3
+    4
   }
 }
 
@@ -55,7 +57,7 @@ public struct UseSmileIDSampleNavBar: View {
   private let onSelect: (UseSmileIDSampleNavItem) -> Void
   private let onToken: () -> Void
 
-  @ScaledMetric(relativeTo: .body) private var tokenSize: CGFloat = 56
+  @ScaledMetric(relativeTo: .body) private var tokenSize: CGFloat = 58
   @Environment(\.useSmileIDSampleColors) private var colors
 
   public init(
@@ -92,13 +94,13 @@ public struct UseSmileIDSampleNavBar: View {
     return Button { onSelect(item) } label: {
       VStack(spacing: SmileSpacing.spacingXxs) {
         UseSmileIDSampleIcon(item.icon, tint: tint, size: Self.tabIconSize)
-        UseSmileIDSampleText(item.label, style: UseSmileIDSampleTheme.type.tabFont)
+        UseSmileIDSampleText(item.label, style: UseSmileIDSampleTheme.type.textStyleOverline)
           .foregroundColor(tint)
           .multilineTextAlignment(.center)
       }
       // Padded, not floored at `sizeControlMd`: 44 is shorter than the content, so it shrank the pill.
+      .padding(SmileSpacing.spacingXs)
       .frame(maxWidth: .infinity)
-      .padding(.vertical, SmileSpacing.spacingXs)
       .contentShape(Rectangle())
     }
     .buttonStyle(.plain)
@@ -111,7 +113,7 @@ public struct UseSmileIDSampleNavBar: View {
     Button(action: onToken) {
       VStack(spacing: 0) {
         UseSmileIDSampleIcon(SmileIcons.tokenScan, tint: colors.foreground, size: SmileSpacing.sizeIconSm)
-        UseSmileIDSampleText("Token", style: UseSmileIDSampleTheme.type.textStyleOverline.with(size: 9))
+        UseSmileIDSampleText("Token", style: UseSmileIDSampleTheme.type.textStyleOverline.with(size: 8.5))
           .foregroundColor(colors.foreground)
       }
       .frame(minWidth: tokenSize, minHeight: tokenSize)
@@ -131,7 +133,7 @@ public struct UseSmileIDSampleNavBar: View {
   }
 
   private static var ringBleed: CGFloat {
-    3
+    5
   }
 
   /// 21 on every platform; no scale token carries it.

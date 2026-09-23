@@ -53,7 +53,6 @@ public struct KycIdFormScreen: View {
           idNumberInput
         }
         .padding(.horizontal, SmileSpacing.spacingMd)
-        .padding(.vertical, SmileSpacing.spacingSm)
       }
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.kycFormScreen)
       // An inset rather than an overlay: the button grows with Dynamic Type and would cover the last field.
@@ -79,7 +78,7 @@ public struct KycIdFormScreen: View {
       placeholder: "Select country",
       testId: UseSmileIDSampleTestIds.countryTrigger,
       onTap: onCountryTap
-    ) {
+    ) { _ in
       UseSmileIDSampleTriggerEmoji(state.details.country?.flag ?? "\u{1F30D}")
     }
   }
@@ -91,13 +90,9 @@ public struct KycIdFormScreen: View {
       enabled: state.details.country != nil,
       testId: UseSmileIDSampleTestIds.idTypeTrigger,
       onTap: onIdTypeTap
-    ) {
+    ) { tint in
       // Not the design's ID-card emoji, whose glyph is unavailable on older runtimes; changing it is a design call.
-      UseSmileIDSampleIcon(
-        SmileIcons.biometricKyc,
-        tint: state.details.country == nil ? colors.textMuted : colors.textTitle,
-        size: SmileSpacing.sizeIconMd
-      )
+      UseSmileIDSampleIcon(SmileIcons.biometricKyc, tint: tint, size: SmileSpacing.sizeIconMd)
     }
   }
 

@@ -108,7 +108,7 @@ public struct VerificationsScreen: View {
           }
         }
       }
-      .padding(.vertical, SmileSpacing.spacingXs)
+      .padding(.bottom, SmileSpacing.spacingXs)
     }
     .background(colors.background)
     // On the scroll view: on the stack inside it the id would override every child's.

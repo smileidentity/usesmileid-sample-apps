@@ -102,7 +102,7 @@ public struct UseSmileIDSampleDestructiveRow: View {
       UseSmileIDSampleText(text, style: UseSmileIDSampleTheme.type.textStyleButton)
         .foregroundColor(colors.badge.errorText)
         .multilineTextAlignment(.center)
-        .frame(maxWidth: .infinity, minHeight: SmileSpacing.sizeControlMd)
+        .frame(maxWidth: .infinity)
         .padding(SmileSpacing.spacingSm)
         .background(
           RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.card, style: .continuous)
@@ -112,6 +112,7 @@ public struct UseSmileIDSampleDestructiveRow: View {
           RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.card, style: .continuous)
             .strokeBorder(colors.cardStroke, lineWidth: smileCardStrokeWidth)
         )
+        .frame(minHeight: SmileSpacing.sizeControlMd)
     }
     .buttonStyle(.plain)
     .useSmileIDSampleTestId(testId)
