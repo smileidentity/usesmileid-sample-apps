@@ -4,12 +4,16 @@ import SwiftUI
 public struct UseSmileIDSampleTriggerEmoji: View {
   private let emoji: String
 
+  /// The label's line height, so the emoji's taller fallback line cannot push the trigger past 44.
+  @ScaledMetric(relativeTo: .body) private var lineHeight: CGFloat = SmileSpacing.sizeIconMd
+
   public init(_ emoji: String) {
     self.emoji = emoji
   }
 
   public var body: some View {
     UseSmileIDSampleText(emoji, style: UseSmileIDSampleTheme.type.inputFont.with(size: 18))
+      .frame(height: lineHeight)
   }
 }
 
