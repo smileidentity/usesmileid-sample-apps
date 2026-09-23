@@ -2,20 +2,77 @@ import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } fro
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { UseSmileIDSampleButton } from './use-smile-id-sample-button';
-import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
-import { touchTargetStyle } from '../theme/smile-compose-layout';
+import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
+import { UseSmileIDSampleSectionLabel } from './use-smile-id-sample-section-label';
+import { UseSmileIDSampleTextInput } from './use-smile-id-sample-text-input';
+import { smileIDSampleEnvironmentLabels } from '../model/use-smile-id-sample-environment';
+import { smileIDSampleEnvironments, type UseSmileIDSampleEnvironment } from '../model/use-smile-id-sample-result';
+import {
+  smileIDSampleSimulatedBindingsDefaults,
+  smileIDSampleSimulatedSpans,
+  type UseSmileIDSampleSimulatedBindings,
+  type UseSmileIDSampleSimulatedSpan,
+} from '../model/use-smile-id-sample-simulated-scan';
+import { smileCardStrokeWidth } from '../smile-product-hues';
+import { insetForBorder, touchTargetStyle } from '../theme/smile-compose-layout';
+import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { UseSmileIDSampleSuffixedTestIds, UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+
+const SHEET_ACTION_SIZE = 13;
+
+/// What the sheet renders, so the screen owns the entry state and the sheet stays stateless.
+export type UseSmileIDSampleScanSheetState = {
+  readonly token: string;
+  /// Why the entered token is not a session — shown under the field, never the token itself.
+  readonly rejection: string | null;
+  readonly span: UseSmileIDSampleSimulatedSpan;
+  /// Which host the minted token's `api_url` will name.
+  readonly environment: UseSmileIDSampleEnvironment;
+  readonly bindings: UseSmileIDSampleSimulatedBindings;
+  /// The mint controls start closed so the viewfinder keeps its height.
+  readonly expanded: boolean;
+};
+
+export const smileIDSampleScanSheetDefaults: UseSmileIDSampleScanSheetState = {
+  token: '',
+  rejection: null,
+  span: smileIDSampleSimulatedSpans[0]!,
+  environment: 'sandbox',
+  bindings: smileIDSampleSimulatedBindingsDefaults,
+  expanded: false,
+};
 
 type Props = {
-  onPaste: () => void;
+  state: UseSmileIDSampleScanSheetState;
+  onTokenChange: (token: string) => void;
+  /// Absent when the host has no clipboard reader, which drops the action rather than showing a dead one.
+  onPaste?: () => void;
+  onLink: () => void;
+  onExpandToggle: () => void;
+  onSpanSelect: (span: UseSmileIDSampleSimulatedSpan) => void;
+  onEnvironmentSelect: (environment: UseSmileIDSampleEnvironment) => void;
+  onBindingsChange: (bindings: UseSmileIDSampleSimulatedBindings) => void;
   onSimulate: () => void;
   style?: StyleProp<ViewStyle>;
 };
 
-/// The scan screen's bottom sheet: a manual-entry row above the primary simulate action.
-export const UseSmileIDSampleScanSheet = ({ onPaste, onSimulate, style }: Props) => {
+/// The sheet under the scanner: manual entry, and a simulated scan that mints its own fixture token.
+export const UseSmileIDSampleScanSheet = ({
+  state,
+  onTokenChange,
+  onPaste,
+  onLink,
+  onExpandToggle,
+  onSpanSelect,
+  onEnvironmentSelect,
+  onBindingsChange,
+  onSimulate,
+  style,
+}: Props) => {
   const theme = useSmileIDSampleTheme();
   const insets = useSafeAreaInsets();
+  const actionFont = atSize(atWeight(theme.type.linkFont, 700), SHEET_ACTION_SIZE);
 
   return (
     <View
@@ -23,8 +80,8 @@ export const UseSmileIDSampleScanSheet = ({ onPaste, onSimulate, style }: Props)
         styles.sheet,
         {
           backgroundColor: theme.colors.surface,
-          borderTopLeftRadius: theme.shapes.card,
-          borderTopRightRadius: theme.shapes.card,
+          borderTopLeftRadius: theme.shapes.sheet,
+          borderTopRightRadius: theme.shapes.sheet,
           padding: theme.dimens.spacing.md,
           paddingBottom: theme.dimens.spacing.md + insets.bottom,
           rowGap: theme.dimens.spacing.sm,
@@ -32,33 +89,90 @@ export const UseSmileIDSampleScanSheet = ({ onPaste, onSimulate, style }: Props)
         style,
       ]}
     >
-      <View
+      <UseSmileIDSampleTextInput
+        value={state.token}
+        onValueChange={onTokenChange}
+        placeholder="Or enter token manually"
+        isError={state.rejection !== null}
+        errorMessage={state.rejection}
+        // A 900-character bearer credential nobody proofreads, kept out of screenshots and hierarchy dumps.
+        masked
         testID={UseSmileIDSampleTestIds.TOKEN_MANUAL_ENTRY}
-        style={[
-          styles.row,
-          {
-            minHeight: theme.dimens.size['control-md'],
-            borderRadius: theme.dimens.radius.field,
-            backgroundColor: theme.colors.surfaceAlt,
-            paddingHorizontal: theme.dimens.spacing.md,
-            paddingVertical: theme.dimens.spacing.xs,
-            columnGap: theme.dimens.spacing.sm,
-          },
-        ]}
+        leading={(tint) => <UseSmileIDSampleIcon name="tokenScan" tint={tint} size={theme.dimens.size['icon-md']} />}
+        trailing={
+          onPaste === undefined
+            ? undefined
+            : () => (
+                <Pressable
+                  testID={UseSmileIDSampleTestIds.TOKEN_PASTE}
+                  accessibilityRole="button"
+                  onPress={onPaste}
+                  style={[styles.action, touchTargetStyle(theme), { paddingHorizontal: theme.dimens.spacing.xs }]}
+                >
+                  <Text numberOfLines={1} style={[actionFont, { color: theme.colors.primary }]}>
+                    Paste
+                  </Text>
+                </Pressable>
+              )
+        }
+      />
+      {/* Only once there is something to link, so the default sheet keeps the design's two rows. */}
+      {state.token.trim().length > 0 ? <UseSmileIDSampleButton text="Link token" onPress={onLink} /> : null}
+      <Pressable
+        accessibilityRole="button"
+        accessibilityState={{ expanded: state.expanded }}
+        onPress={onExpandToggle}
+        style={[styles.row, { columnGap: theme.dimens.spacing.xs, paddingVertical: theme.dimens.spacing.xxs }]}
       >
-        <Text style={[theme.type.textStyleBodySm, styles.label, { color: theme.colors.textTitle }]}>
-          Or enter token manually
-        </Text>
-        <Pressable
-          testID={UseSmileIDSampleTestIds.TOKEN_PASTE}
-          accessibilityRole="button"
-          onPress={onPaste}
-          style={[styles.action, touchTargetStyle(theme), { paddingHorizontal: theme.dimens.spacing.xs }]}
-        >
-          <Text style={[theme.type.textStyleButtonSm, { color: theme.colors.primary }]}>Paste</Text>
-        </Pressable>
-      </View>
-      {/* A first-class feature, not debug scaffolding: it is what makes token flows testable with no QR source. */}
+        <UseSmileIDSampleSectionLabel text="SIMULATED SCAN" style={styles.grow} />
+        <UseSmileIDSampleIcon
+          name={state.expanded ? 'chevronDown' : 'chevron'}
+          tint={theme.colors.textMuted}
+          size={theme.dimens.size['icon-md']}
+        />
+      </Pressable>
+      {state.expanded ? (
+        <>
+          <View style={[styles.flow, { gap: theme.dimens.spacing.xs }]}>
+            {smileIDSampleSimulatedSpans.map((span) => (
+              <ScanSheetChip
+                key={span.id}
+                label={span.label}
+                selected={state.span.id === span.id}
+                role="radio"
+                onPress={() => onSpanSelect(span)}
+              />
+            ))}
+          </View>
+          {/* Minting is where a run picks an environment, because there is no app-side control left. */}
+          <View style={[styles.flow, { gap: theme.dimens.spacing.xs }]}>
+            {smileIDSampleEnvironments.map((environment) => (
+              <ScanSheetChip
+                key={environment}
+                label={smileIDSampleEnvironmentLabels[environment]}
+                selected={state.environment === environment}
+                role="radio"
+                onPress={() => onEnvironmentSelect(environment)}
+                testID={UseSmileIDSampleSuffixedTestIds.tokenEnvironment(environment)}
+              />
+            ))}
+          </View>
+          <View style={[styles.flow, { gap: theme.dimens.spacing.xs }]}>
+            <ScanSheetChip
+              label="Binds consent"
+              selected={state.bindings.consent}
+              role="checkbox"
+              onPress={() => onBindingsChange({ ...state.bindings, consent: !state.bindings.consent })}
+            />
+            <ScanSheetChip
+              label="Binds details"
+              selected={state.bindings.userDetails}
+              role="checkbox"
+              onPress={() => onBindingsChange({ ...state.bindings, userDetails: !state.bindings.userDetails })}
+            />
+          </View>
+        </>
+      ) : null}
       <UseSmileIDSampleButton
         text="Simulate a successful scan"
         onPress={onSimulate}
@@ -68,9 +182,59 @@ export const UseSmileIDSampleScanSheet = ({ onPaste, onSimulate, style }: Props)
   );
 };
 
+type ChipProps = {
+  label: string;
+  selected: boolean;
+  role: 'radio' | 'checkbox';
+  onPress: () => void;
+  testID?: string;
+};
+
+/// The filter chip's shape without its count, because what a simulated scan mints has no count.
+const ScanSheetChip = ({ label, selected, role, onPress, testID }: ChipProps) => {
+  const theme = useSmileIDSampleTheme();
+  const stroke = selected ? 0 : smileCardStrokeWidth;
+  return (
+    <Pressable
+      testID={testID}
+      accessibilityRole={role}
+      accessibilityState={{ checked: selected }}
+      onPress={onPress}
+      style={[styles.target, touchTargetStyle(theme)]}
+    >
+      <View
+        style={[
+          styles.chip,
+          {
+            borderRadius: theme.shapes.chip,
+            backgroundColor: selected ? theme.colors.primary : theme.colors.filterChip.background,
+            borderWidth: stroke,
+            borderColor: selected ? 'transparent' : theme.colors.filterChip.border,
+            minHeight: theme.dimens.space[32],
+            paddingHorizontal: insetForBorder(theme.dimens.spacing.sm, stroke),
+            paddingVertical: insetForBorder(theme.dimens.spacing.xs, stroke),
+          },
+        ]}
+      >
+        <Text
+          style={[
+            atSize(atWeight(theme.type.filterChipFont, 700), SHEET_ACTION_SIZE),
+            { color: selected ? theme.colors.onPrimary : theme.colors.filterChip.label },
+          ]}
+        >
+          {label}
+        </Text>
+      </View>
+    </Pressable>
+  );
+};
+
 const styles = StyleSheet.create({
   sheet: { width: '100%' },
   row: { alignItems: 'center', flexDirection: 'row', width: '100%' },
-  label: { flex: 1 },
+  grow: { flex: 1 },
+  flow: { flexDirection: 'row', flexWrap: 'wrap', width: '100%' },
   action: { alignItems: 'center', justifyContent: 'center' },
+  target: { alignItems: 'center', justifyContent: 'center' },
+  chip: { alignItems: 'center', justifyContent: 'center' },
 });

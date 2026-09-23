@@ -42,7 +42,7 @@ export type SearchTokens = InputTokens & { readonly icon: string };
 export type DataFieldTokens = { readonly label: string; readonly value: string };
 
 /// A filter chip's unselected paint; selected takes color.primary with its on-colour.
-export type FilterChipTokens = { readonly background: string; readonly label: string };
+export type FilterChipTokens = { readonly background: string; readonly label: string; readonly border: string };
 
 /// Colours the cards draw, the section surfaces among them.
 export type CardTokens = {
@@ -82,6 +82,11 @@ export type SmileColors = {
   readonly textLink: string;
   readonly errorFill: string;
   readonly onError: string;
+  /// The scanner's feedback fills: informational while decoding, success once linked.
+  readonly infoFill: string;
+  readonly onInfo: string;
+  readonly successFill: string;
+  readonly onSuccess: string;
   readonly avatar: AvatarTokens;
   readonly button: ButtonTokens;
   readonly input: InputTokens;
@@ -140,7 +145,11 @@ type SmileColorSource = {
       readonly inverse: string;
       readonly link: string;
     };
-    readonly feedback: { readonly error: { readonly fill: string; readonly on: string } };
+    readonly feedback: {
+      readonly error: { readonly fill: string; readonly on: string };
+      readonly info: { readonly fill: string; readonly on: string };
+      readonly success: { readonly fill: string; readonly on: string };
+    };
   };
   readonly avatar: {
     readonly bg: string;
@@ -169,7 +178,7 @@ type SmileColorSource = {
     readonly 'border-focus': string;
   };
   readonly 'data-field': { readonly label: string; readonly value: string };
-  readonly filter: { readonly 'chip-bg': string; readonly 'chip-label': string };
+  readonly filter: { readonly 'chip-bg': string; readonly 'chip-label': string; readonly 'chip-border': string };
   readonly card: {
     readonly background: string;
     readonly border: string;
@@ -202,6 +211,10 @@ const group = (
   textLink: source.color.text.link,
   errorFill: source.color.feedback.error.fill,
   onError: source.color.feedback.error.on,
+  infoFill: source.color.feedback.info.fill,
+  onInfo: source.color.feedback.info.on,
+  successFill: source.color.feedback.success.fill,
+  onSuccess: source.color.feedback.success.on,
   avatar: {
     background: source.avatar.bg,
     text: source.avatar.text,
@@ -239,6 +252,7 @@ const group = (
   filterChip: {
     background: source.filter['chip-bg'],
     label: source.filter['chip-label'],
+    border: source.filter['chip-border'],
   },
   card: {
     background: source.card.background,

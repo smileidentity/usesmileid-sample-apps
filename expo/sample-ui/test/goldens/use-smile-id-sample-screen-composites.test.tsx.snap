@@ -11145,21 +11145,17 @@ exports[`ProductGrid light oddCount 1`] = `
 exports[`ScanGlyph dark default 1`] = `
 <View
   pointerEvents="none"
-  style={
-    [
-      {
-        "height": 256,
-        "width": 256,
-      },
-      undefined,
-    ]
-  }
 >
   <RNSVGSvgView
-    bbHeight={256}
-    bbWidth={256}
+    align="xMidYMid"
+    bbHeight={279}
+    bbWidth={279}
+    fill="none"
     focusable={false}
-    height={256}
+    height={279}
+    meetOrSlice={0}
+    minX={0}
+    minY={0}
     style={
       [
         {
@@ -11168,24 +11164,27 @@ exports[`ScanGlyph dark default 1`] = `
         },
         {
           "flex": 0,
-          "height": 256,
-          "width": 256,
+          "height": 279,
+          "width": 279,
         },
       ]
     }
-    width={256}
+    vbHeight={280}
+    vbWidth={279}
+    width={279}
   >
     <RNSVGGroup
-      fill={
-        {
-          "payload": 4278190080,
-          "type": 0,
-        }
+      fill={null}
+      propList={
+        [
+          "fill",
+        ]
       }
     >
       <RNSVGPath
-        d="M3 59.32 L3 3 L59.32 3"
+        d="M58.125 140H220.875"
         fill={null}
+        opacity={0.45}
         propList={
           [
             "fill",
@@ -11197,17 +11196,18 @@ exports[`ScanGlyph dark default 1`] = `
         }
         stroke={
           {
-            "payload": 4283271423,
+            "payload": 4294111986,
             "type": 0,
           }
         }
         strokeLinecap={1}
         strokeLinejoin={1}
-        strokeWidth={3}
+        strokeWidth={6}
       />
       <RNSVGPath
-        d="M196.68 3 L253 3 L253 59.32"
+        d="M34.875 81.6667V58.3333C34.875 52.1449 37.3245 46.21 41.6848 41.8342C46.045 37.4583 51.9587 35 58.125 35H81.375"
         fill={null}
+        opacity={0.45}
         propList={
           [
             "fill",
@@ -11219,17 +11219,18 @@ exports[`ScanGlyph dark default 1`] = `
         }
         stroke={
           {
-            "payload": 4283271423,
+            "payload": 4294111986,
             "type": 0,
           }
         }
         strokeLinecap={1}
         strokeLinejoin={1}
-        strokeWidth={3}
+        strokeWidth={6}
       />
       <RNSVGPath
-        d="M253 196.68 L253 253 L196.68 253"
+        d="M34.875 198.333V221.667C34.875 227.855 37.3245 233.79 41.6848 238.166C46.045 242.542 51.9587 245 58.125 245H81.375"
         fill={null}
+        opacity={0.45}
         propList={
           [
             "fill",
@@ -11241,17 +11242,18 @@ exports[`ScanGlyph dark default 1`] = `
         }
         stroke={
           {
-            "payload": 4283271423,
+            "payload": 4294111986,
             "type": 0,
           }
         }
         strokeLinecap={1}
         strokeLinejoin={1}
-        strokeWidth={3}
+        strokeWidth={6}
       />
       <RNSVGPath
-        d="M59.32 253 L3 253 L3 196.68"
+        d="M197.625 35H220.875C227.041 35 232.955 37.4583 237.315 41.8342C241.675 46.21 244.125 52.1449 244.125 58.3333V81.6667"
         fill={null}
+        opacity={0.45}
         propList={
           [
             "fill",
@@ -11263,13 +11265,36 @@ exports[`ScanGlyph dark default 1`] = `
         }
         stroke={
           {
-            "payload": 4283271423,
+            "payload": 4294111986,
             "type": 0,
           }
         }
         strokeLinecap={1}
         strokeLinejoin={1}
-        strokeWidth={3}
+        strokeWidth={6}
+      />
+      <RNSVGPath
+        d="M197.625 245H220.875C227.041 245 232.955 242.542 237.315 238.166C241.675 233.79 244.125 227.855 244.125 221.667V198.333"
+        fill={null}
+        opacity={0.45}
+        propList={
+          [
+            "fill",
+            "stroke",
+            "strokeWidth",
+            "strokeLinecap",
+            "strokeLinejoin",
+          ]
+        }
+        stroke={
+          {
+            "payload": 4294111986,
+            "type": 0,
+          }
+        }
+        strokeLinecap={1}
+        strokeLinejoin={1}
+        strokeWidth={6}
       />
     </RNSVGGroup>
   </RNSVGSvgView>
@@ -11279,21 +11304,17 @@ exports[`ScanGlyph dark default 1`] = `
 exports[`ScanGlyph light default 1`] = `
 <View
   pointerEvents="none"
-  style={
-    [
-      {
-        "height": 256,
-        "width": 256,
-      },
-      undefined,
-    ]
-  }
 >
   <RNSVGSvgView
-    bbHeight={256}
-    bbWidth={256}
+    align="xMidYMid"
+    bbHeight={279}
+    bbWidth={279}
+    fill="none"
     focusable={false}
-    height={256}
+    height={279}
+    meetOrSlice={0}
+    minX={0}
+    minY={0}
     style={
       [
         {
@@ -11302,24 +11323,27 @@ exports[`ScanGlyph light default 1`] = `
         },
         {
           "flex": 0,
-          "height": 256,
-          "width": 256,
+          "height": 279,
+          "width": 279,
         },
       ]
     }
-    width={256}
+    vbHeight={280}
+    vbWidth={279}
+    width={279}
   >
     <RNSVGGroup
-      fill={
-        {
-          "payload": 4278190080,
-          "type": 0,
-        }
+      fill={null}
+      propList={
+        [
+          "fill",
+        ]
       }
     >
       <RNSVGPath
-        d="M3 59.32 L3 3 L59.32 3"
+        d="M58.125 140H220.875"
         fill={null}
+        opacity={0.45}
         propList={
           [
             "fill",
@@ -11331,17 +11355,18 @@ exports[`ScanGlyph light default 1`] = `
         }
         stroke={
           {
-            "payload": 4279574386,
+            "payload": 4280361772,
             "type": 0,
           }
         }
         strokeLinecap={1}
         strokeLinejoin={1}
-        strokeWidth={3}
+        strokeWidth={6}
       />
       <RNSVGPath
-        d="M196.68 3 L253 3 L253 59.32"
+        d="M34.875 81.6667V58.3333C34.875 52.1449 37.3245 46.21 41.6848 41.8342C46.045 37.4583 51.9587 35 58.125 35H81.375"
         fill={null}
+        opacity={0.45}
         propList={
           [
             "fill",
@@ -11353,17 +11378,18 @@ exports[`ScanGlyph light default 1`] = `
         }
         stroke={
           {
-            "payload": 4279574386,
+            "payload": 4280361772,
             "type": 0,
           }
         }
         strokeLinecap={1}
         strokeLinejoin={1}
-        strokeWidth={3}
+        strokeWidth={6}
       />
       <RNSVGPath
-        d="M253 196.68 L253 253 L196.68 253"
+        d="M34.875 198.333V221.667C34.875 227.855 37.3245 233.79 41.6848 238.166C46.045 242.542 51.9587 245 58.125 245H81.375"
         fill={null}
+        opacity={0.45}
         propList={
           [
             "fill",
@@ -11375,17 +11401,18 @@ exports[`ScanGlyph light default 1`] = `
         }
         stroke={
           {
-            "payload": 4279574386,
+            "payload": 4280361772,
             "type": 0,
           }
         }
         strokeLinecap={1}
         strokeLinejoin={1}
-        strokeWidth={3}
+        strokeWidth={6}
       />
       <RNSVGPath
-        d="M59.32 253 L3 253 L3 196.68"
+        d="M197.625 35H220.875C227.041 35 232.955 37.4583 237.315 41.8342C241.675 46.21 244.125 52.1449 244.125 58.3333V81.6667"
         fill={null}
+        opacity={0.45}
         propList={
           [
             "fill",
@@ -11397,13 +11424,36 @@ exports[`ScanGlyph light default 1`] = `
         }
         stroke={
           {
-            "payload": 4279574386,
+            "payload": 4280361772,
             "type": 0,
           }
         }
         strokeLinecap={1}
         strokeLinejoin={1}
-        strokeWidth={3}
+        strokeWidth={6}
+      />
+      <RNSVGPath
+        d="M197.625 245H220.875C227.041 245 232.955 242.542 237.315 238.166C241.675 233.79 244.125 227.855 244.125 221.667V198.333"
+        fill={null}
+        opacity={0.45}
+        propList={
+          [
+            "fill",
+            "stroke",
+            "strokeWidth",
+            "strokeLinecap",
+            "strokeLinejoin",
+          ]
+        }
+        stroke={
+          {
+            "payload": 4280361772,
+            "type": 0,
+          }
+        }
+        strokeLinecap={1}
+        strokeLinejoin={1}
+        strokeWidth={6}
       />
     </RNSVGGroup>
   </RNSVGSvgView>
@@ -11419,8 +11469,8 @@ exports[`ScanSheet dark default 1`] = `
       },
       {
         "backgroundColor": "#272a35",
-        "borderTopLeftRadius": 16,
-        "borderTopRightRadius": 16,
+        "borderTopLeftRadius": 20,
+        "borderTopRightRadius": 20,
         "padding": 16,
         "paddingBottom": 50,
         "rowGap": 12,
@@ -11429,7 +11479,257 @@ exports[`ScanSheet dark default 1`] = `
     ]
   }
 >
+  <View>
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "width": "100%",
+          },
+          {
+            "backgroundColor": "#272a35",
+            "borderColor": "#eaecf0",
+            "borderRadius": 12,
+            "borderWidth": 1,
+            "columnGap": 8,
+            "minHeight": 44,
+            "paddingHorizontal": 15,
+            "paddingVertical": 11,
+          },
+        ]
+      }
+    >
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+            "minHeight": 17,
+            "minWidth": 17,
+          }
+        }
+      >
+        <RNSVGSvgView
+          align="xMidYMid"
+          bbHeight={20}
+          bbWidth={20}
+          fill="none"
+          focusable={false}
+          height={20}
+          meetOrSlice={0}
+          minX={0}
+          minY={0}
+          style={
+            [
+              {
+                "backgroundColor": "transparent",
+                "borderWidth": 0,
+              },
+              {
+                "flex": 0,
+                "height": 20,
+                "width": 20,
+              },
+            ]
+          }
+          vbHeight={16}
+          vbWidth={16}
+          width={20}
+        >
+          <RNSVGGroup
+            fill={null}
+            propList={
+              [
+                "fill",
+              ]
+            }
+          >
+            <RNSVGPath
+              d="M2.66667 5.33333V4C2.66667 3.64638 2.80714 3.30724 3.05719 3.05719C3.30724 2.80714 3.64638 2.66667 4 2.66667H5.33333M10.6667 2.66667H12C12.3536 2.66667 12.6928 2.80714 12.9428 3.05719C13.1929 3.30724 13.3333 3.64638 13.3333 4V5.33333M13.3333 10.6667V12C13.3333 12.3536 13.1929 12.6928 12.9428 12.9428C12.6928 13.1929 12.3536 13.3333 12 13.3333H10.6667M5.33333 13.3333H4C3.64638 13.3333 3.30724 13.1929 3.05719 12.9428C2.80714 12.6928 2.66667 12.3536 2.66667 12V10.6667"
+              fill={null}
+              opacity={1}
+              propList={
+                [
+                  "fill",
+                  "stroke",
+                  "strokeWidth",
+                  "strokeLinecap",
+                  "strokeLinejoin",
+                ]
+              }
+              stroke={
+                {
+                  "payload": 4286874242,
+                  "type": 0,
+                }
+              }
+              strokeLinecap={1}
+              strokeLinejoin={1}
+              strokeWidth={1.83333}
+            />
+            <RNSVGPath
+              d="M2.66667 8H13.3333"
+              fill={null}
+              opacity={1}
+              propList={
+                [
+                  "fill",
+                  "stroke",
+                  "strokeWidth",
+                  "strokeLinecap",
+                  "strokeLinejoin",
+                ]
+              }
+              stroke={
+                {
+                  "payload": 4286874242,
+                  "type": 0,
+                }
+              }
+              strokeLinecap={1}
+              strokeLinejoin={1}
+              strokeWidth={1.83333}
+            />
+          </RNSVGGroup>
+        </RNSVGSvgView>
+      </View>
+      <TextInput
+        autoCorrect={false}
+        editable={true}
+        onBlur={[Function]}
+        onChangeText={[Function]}
+        onFocus={[Function]}
+        placeholder="Or enter token manually"
+        placeholderTextColor="#848282"
+        secureTextEntry={true}
+        selectionColor="#4d88ff"
+        style={
+          [
+            {
+              "fontFamily": "DMSans-Regular",
+              "fontSize": 14,
+              "letterSpacing": 0,
+              "lineHeight": 20,
+              "marginBottom": -0.8859999999999992,
+              "marginTop": -0.8859999999999992,
+            },
+            {
+              "flex": 1,
+              "padding": 0,
+            },
+            {
+              "color": "#f2f2f2",
+            },
+            null,
+          ]
+        }
+        testID="sample_token_manual_entry"
+        value=""
+      />
+      <View
+        accessibilityRole="button"
+        accessibilityState={
+          {
+            "busy": undefined,
+            "checked": undefined,
+            "disabled": undefined,
+            "expanded": undefined,
+            "selected": undefined,
+          }
+        }
+        accessibilityValue={
+          {
+            "max": undefined,
+            "min": undefined,
+            "now": undefined,
+            "text": undefined,
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        focusable={true}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          [
+            {
+              "alignItems": "center",
+              "justifyContent": "center",
+            },
+            {
+              "minHeight": 44,
+              "minWidth": 44,
+            },
+            {
+              "paddingHorizontal": 8,
+            },
+          ]
+        }
+        testID="sample_token_paste"
+      >
+        <Text
+          numberOfLines={1}
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#4d88ff",
+              },
+            ]
+          }
+        >
+          Paste
+        </Text>
+      </View>
+    </View>
+  </View>
   <View
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": false,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
       [
         {
@@ -11438,45 +11738,570 @@ exports[`ScanSheet dark default 1`] = `
           "width": "100%",
         },
         {
-          "backgroundColor": "#2d3748",
-          "borderRadius": 12,
-          "columnGap": 12,
-          "minHeight": 44,
-          "paddingHorizontal": 16,
-          "paddingVertical": 8,
+          "columnGap": 8,
+          "paddingVertical": 4,
         },
       ]
     }
-    testID="sample_token_manual_entry"
   >
     <Text
       style={
         [
           {
-            "fontFamily": "DMSans-Regular",
-            "fontSize": 14,
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 11,
             "letterSpacing": 0,
-            "lineHeight": 20,
-            "marginBottom": -0.8859999999999992,
-            "marginTop": -0.8859999999999992,
+            "lineHeight": 16,
+            "marginBottom": -0.8389999999999995,
+            "marginTop": -0.8389999999999995,
+          },
+          {
+            "color": "#848282",
+            "letterSpacing": 0.88,
           },
           {
             "flex": 1,
           },
+        ]
+      }
+    >
+      SIMULATED SCAN
+    </Text>
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={20}
+      bbWidth={20}
+      fill="none"
+      focusable={false}
+      height={20}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
           {
-            "color": "#f2f2f2",
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 20,
+            "width": 20,
+          },
+        ]
+      }
+      vbHeight={14}
+      vbWidth={14}
+      width={20}
+    >
+      <RNSVGGroup
+        fill={null}
+        propList={
+          [
+            "fill",
+          ]
+        }
+      >
+        <RNSVGPath
+          d="M5.25 3.5L8.75 7L5.25 10.5"
+          fill={null}
+          opacity={1}
+          propList={
+            [
+              "fill",
+              "stroke",
+              "strokeWidth",
+              "strokeLinecap",
+              "strokeLinejoin",
+            ]
+          }
+          stroke={
+            {
+              "payload": 4286874242,
+              "type": 0,
+            }
+          }
+          strokeLinecap={1}
+          strokeLinejoin={1}
+          strokeWidth={1.16667}
+        />
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+  <View
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": false,
+        "checked": undefined,
+        "disabled": false,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      [
+        {
+          "alignItems": "center",
+          "alignSelf": "stretch",
+          "justifyContent": "center",
+        },
+        {
+          "backgroundColor": "#4d88ff",
+          "borderRadius": 32,
+          "minHeight": 52,
+          "opacity": 1,
+          "paddingHorizontal": 24,
+        },
+        undefined,
+      ]
+    }
+    testID="sample_token_simulate"
+  >
+    <View
+      style={
+        {
+          "alignItems": "center",
+          "justifyContent": "center",
+        }
+      }
+    >
+      <Text
+        style={
+          [
+            {
+              "fontFamily": "DMSans-Bold",
+              "fontSize": 16,
+              "letterSpacing": 0,
+              "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
+            },
+            {
+              "textAlign": "center",
+            },
+            {
+              "color": "#ffffff",
+              "paddingVertical": 4,
+            },
+          ]
+        }
+      >
+        Simulate a successful scan
+      </Text>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`ScanSheet dark expanded 1`] = `
+<View
+  style={
+    [
+      {
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#272a35",
+        "borderTopLeftRadius": 20,
+        "borderTopRightRadius": 20,
+        "padding": 16,
+        "paddingBottom": 50,
+        "rowGap": 12,
+      },
+      undefined,
+    ]
+  }
+>
+  <View>
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "width": "100%",
+          },
+          {
+            "backgroundColor": "#272a35",
+            "borderColor": "#eaecf0",
+            "borderRadius": 12,
+            "borderWidth": 1,
+            "columnGap": 8,
+            "minHeight": 44,
+            "paddingHorizontal": 15,
+            "paddingVertical": 11,
           },
         ]
       }
     >
-      Or enter token manually
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+            "minHeight": 17,
+            "minWidth": 17,
+          }
+        }
+      >
+        <RNSVGSvgView
+          align="xMidYMid"
+          bbHeight={20}
+          bbWidth={20}
+          fill="none"
+          focusable={false}
+          height={20}
+          meetOrSlice={0}
+          minX={0}
+          minY={0}
+          style={
+            [
+              {
+                "backgroundColor": "transparent",
+                "borderWidth": 0,
+              },
+              {
+                "flex": 0,
+                "height": 20,
+                "width": 20,
+              },
+            ]
+          }
+          vbHeight={16}
+          vbWidth={16}
+          width={20}
+        >
+          <RNSVGGroup
+            fill={null}
+            propList={
+              [
+                "fill",
+              ]
+            }
+          >
+            <RNSVGPath
+              d="M2.66667 5.33333V4C2.66667 3.64638 2.80714 3.30724 3.05719 3.05719C3.30724 2.80714 3.64638 2.66667 4 2.66667H5.33333M10.6667 2.66667H12C12.3536 2.66667 12.6928 2.80714 12.9428 3.05719C13.1929 3.30724 13.3333 3.64638 13.3333 4V5.33333M13.3333 10.6667V12C13.3333 12.3536 13.1929 12.6928 12.9428 12.9428C12.6928 13.1929 12.3536 13.3333 12 13.3333H10.6667M5.33333 13.3333H4C3.64638 13.3333 3.30724 13.1929 3.05719 12.9428C2.80714 12.6928 2.66667 12.3536 2.66667 12V10.6667"
+              fill={null}
+              opacity={1}
+              propList={
+                [
+                  "fill",
+                  "stroke",
+                  "strokeWidth",
+                  "strokeLinecap",
+                  "strokeLinejoin",
+                ]
+              }
+              stroke={
+                {
+                  "payload": 4286874242,
+                  "type": 0,
+                }
+              }
+              strokeLinecap={1}
+              strokeLinejoin={1}
+              strokeWidth={1.83333}
+            />
+            <RNSVGPath
+              d="M2.66667 8H13.3333"
+              fill={null}
+              opacity={1}
+              propList={
+                [
+                  "fill",
+                  "stroke",
+                  "strokeWidth",
+                  "strokeLinecap",
+                  "strokeLinejoin",
+                ]
+              }
+              stroke={
+                {
+                  "payload": 4286874242,
+                  "type": 0,
+                }
+              }
+              strokeLinecap={1}
+              strokeLinejoin={1}
+              strokeWidth={1.83333}
+            />
+          </RNSVGGroup>
+        </RNSVGSvgView>
+      </View>
+      <TextInput
+        autoCorrect={false}
+        editable={true}
+        onBlur={[Function]}
+        onChangeText={[Function]}
+        onFocus={[Function]}
+        placeholder="Or enter token manually"
+        placeholderTextColor="#848282"
+        secureTextEntry={true}
+        selectionColor="#4d88ff"
+        style={
+          [
+            {
+              "fontFamily": "DMSans-Regular",
+              "fontSize": 14,
+              "letterSpacing": 0,
+              "lineHeight": 20,
+              "marginBottom": -0.8859999999999992,
+              "marginTop": -0.8859999999999992,
+            },
+            {
+              "flex": 1,
+              "padding": 0,
+            },
+            {
+              "color": "#f2f2f2",
+            },
+            null,
+          ]
+        }
+        testID="sample_token_manual_entry"
+        value=""
+      />
+      <View
+        accessibilityRole="button"
+        accessibilityState={
+          {
+            "busy": undefined,
+            "checked": undefined,
+            "disabled": undefined,
+            "expanded": undefined,
+            "selected": undefined,
+          }
+        }
+        accessibilityValue={
+          {
+            "max": undefined,
+            "min": undefined,
+            "now": undefined,
+            "text": undefined,
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        focusable={true}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          [
+            {
+              "alignItems": "center",
+              "justifyContent": "center",
+            },
+            {
+              "minHeight": 44,
+              "minWidth": 44,
+            },
+            {
+              "paddingHorizontal": 8,
+            },
+          ]
+        }
+        testID="sample_token_paste"
+      >
+        <Text
+          numberOfLines={1}
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#4d88ff",
+              },
+            ]
+          }
+        >
+          Paste
+        </Text>
+      </View>
+    </View>
+  </View>
+  <View
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": true,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "width": "100%",
+        },
+        {
+          "columnGap": 8,
+          "paddingVertical": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 11,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.8389999999999995,
+            "marginTop": -0.8389999999999995,
+          },
+          {
+            "color": "#848282",
+            "letterSpacing": 0.88,
+          },
+          {
+            "flex": 1,
+          },
+        ]
+      }
+    >
+      SIMULATED SCAN
     </Text>
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={20}
+      bbWidth={20}
+      fill="none"
+      focusable={false}
+      height={20}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 20,
+            "width": 20,
+          },
+        ]
+      }
+      vbHeight={12}
+      vbWidth={12}
+      width={20}
+    >
+      <RNSVGGroup
+        fill={null}
+        propList={
+          [
+            "fill",
+          ]
+        }
+      >
+        <RNSVGPath
+          d="M2 4L6 8L10 4"
+          fill={null}
+          opacity={1}
+          propList={
+            [
+              "fill",
+              "stroke",
+              "strokeWidth",
+              "strokeLinecap",
+              "strokeLinejoin",
+            ]
+          }
+          stroke={
+            {
+              "payload": 4286874242,
+              "type": 0,
+            }
+          }
+          strokeLinecap={1}
+          strokeLinejoin={1}
+          strokeWidth={2}
+        />
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+  <View
+    style={
+      [
+        {
+          "flexDirection": "row",
+          "flexWrap": "wrap",
+          "width": "100%",
+        },
+        {
+          "gap": 8,
+        },
+      ]
+    }
+  >
     <View
-      accessibilityRole="button"
+      accessibilityRole="radio"
       accessibilityState={
         {
           "busy": undefined,
-          "checked": undefined,
+          "checked": true,
           "disabled": undefined,
           "expanded": undefined,
           "selected": undefined,
@@ -11512,32 +12337,668 @@ exports[`ScanSheet dark default 1`] = `
             "minHeight": 44,
             "minWidth": 44,
           },
-          {
-            "paddingHorizontal": 8,
-          },
         ]
       }
-      testID="sample_token_paste"
     >
-      <Text
+      <View
         style={
           [
             {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 14,
-              "letterSpacing": 0,
-              "lineHeight": 20,
-              "marginBottom": -0.8859999999999992,
-              "marginTop": -0.8859999999999992,
+              "alignItems": "center",
+              "justifyContent": "center",
             },
             {
-              "color": "#4d88ff",
+              "backgroundColor": "#4d88ff",
+              "borderColor": "transparent",
+              "borderRadius": 999,
+              "borderWidth": 0,
+              "minHeight": 32,
+              "paddingHorizontal": 12,
+              "paddingVertical": 8,
             },
           ]
         }
       >
-        Paste
-      </Text>
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#ffffff",
+              },
+            ]
+          }
+        >
+          15m
+        </Text>
+      </View>
+    </View>
+    <View
+      accessibilityRole="radio"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": false,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        [
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+          {
+            "minHeight": 44,
+            "minWidth": 44,
+          },
+        ]
+      }
+    >
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "justifyContent": "center",
+            },
+            {
+              "backgroundColor": "#272a35",
+              "borderColor": "#eaecf0",
+              "borderRadius": 999,
+              "borderWidth": 0.5,
+              "minHeight": 32,
+              "paddingHorizontal": 11.5,
+              "paddingVertical": 7.5,
+            },
+          ]
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#c2c5cb",
+              },
+            ]
+          }
+        >
+          1h
+        </Text>
+      </View>
+    </View>
+    <View
+      accessibilityRole="radio"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": false,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        [
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+          {
+            "minHeight": 44,
+            "minWidth": 44,
+          },
+        ]
+      }
+    >
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "justifyContent": "center",
+            },
+            {
+              "backgroundColor": "#272a35",
+              "borderColor": "#eaecf0",
+              "borderRadius": 999,
+              "borderWidth": 0.5,
+              "minHeight": 32,
+              "paddingHorizontal": 11.5,
+              "paddingVertical": 7.5,
+            },
+          ]
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#c2c5cb",
+              },
+            ]
+          }
+        >
+          8h
+        </Text>
+      </View>
+    </View>
+    <View
+      accessibilityRole="radio"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": false,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        [
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+          {
+            "minHeight": 44,
+            "minWidth": 44,
+          },
+        ]
+      }
+    >
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "justifyContent": "center",
+            },
+            {
+              "backgroundColor": "#272a35",
+              "borderColor": "#eaecf0",
+              "borderRadius": 999,
+              "borderWidth": 0.5,
+              "minHeight": 32,
+              "paddingHorizontal": 11.5,
+              "paddingVertical": 7.5,
+            },
+          ]
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#c2c5cb",
+              },
+            ]
+          }
+        >
+          Expired
+        </Text>
+      </View>
+    </View>
+  </View>
+  <View
+    style={
+      [
+        {
+          "flexDirection": "row",
+          "flexWrap": "wrap",
+          "width": "100%",
+        },
+        {
+          "gap": 8,
+        },
+      ]
+    }
+  >
+    <View
+      accessibilityRole="radio"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": true,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        [
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+          {
+            "minHeight": 44,
+            "minWidth": 44,
+          },
+        ]
+      }
+      testID="sample_token_environment_sandbox"
+    >
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "justifyContent": "center",
+            },
+            {
+              "backgroundColor": "#4d88ff",
+              "borderColor": "transparent",
+              "borderRadius": 999,
+              "borderWidth": 0,
+              "minHeight": 32,
+              "paddingHorizontal": 12,
+              "paddingVertical": 8,
+            },
+          ]
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#ffffff",
+              },
+            ]
+          }
+        >
+          Sandbox
+        </Text>
+      </View>
+    </View>
+    <View
+      accessibilityRole="radio"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": false,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        [
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+          {
+            "minHeight": 44,
+            "minWidth": 44,
+          },
+        ]
+      }
+      testID="sample_token_environment_production"
+    >
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "justifyContent": "center",
+            },
+            {
+              "backgroundColor": "#272a35",
+              "borderColor": "#eaecf0",
+              "borderRadius": 999,
+              "borderWidth": 0.5,
+              "minHeight": 32,
+              "paddingHorizontal": 11.5,
+              "paddingVertical": 7.5,
+            },
+          ]
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#c2c5cb",
+              },
+            ]
+          }
+        >
+          Production
+        </Text>
+      </View>
+    </View>
+  </View>
+  <View
+    style={
+      [
+        {
+          "flexDirection": "row",
+          "flexWrap": "wrap",
+          "width": "100%",
+        },
+        {
+          "gap": 8,
+        },
+      ]
+    }
+  >
+    <View
+      accessibilityRole="checkbox"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": false,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        [
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+          {
+            "minHeight": 44,
+            "minWidth": 44,
+          },
+        ]
+      }
+    >
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "justifyContent": "center",
+            },
+            {
+              "backgroundColor": "#272a35",
+              "borderColor": "#eaecf0",
+              "borderRadius": 999,
+              "borderWidth": 0.5,
+              "minHeight": 32,
+              "paddingHorizontal": 11.5,
+              "paddingVertical": 7.5,
+            },
+          ]
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#c2c5cb",
+              },
+            ]
+          }
+        >
+          Binds consent
+        </Text>
+      </View>
+    </View>
+    <View
+      accessibilityRole="checkbox"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": false,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        [
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+          {
+            "minHeight": 44,
+            "minWidth": 44,
+          },
+        ]
+      }
+    >
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "justifyContent": "center",
+            },
+            {
+              "backgroundColor": "#272a35",
+              "borderColor": "#eaecf0",
+              "borderRadius": 999,
+              "borderWidth": 0.5,
+              "minHeight": 32,
+              "paddingHorizontal": 11.5,
+              "paddingVertical": 7.5,
+            },
+          ]
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#c2c5cb",
+              },
+            ]
+          }
+        >
+          Binds details
+        </Text>
+      </View>
     </View>
   </View>
   <View
@@ -11635,8 +13096,8 @@ exports[`ScanSheet light default 1`] = `
       },
       {
         "backgroundColor": "#ffffff",
-        "borderTopLeftRadius": 16,
-        "borderTopRightRadius": 16,
+        "borderTopLeftRadius": 20,
+        "borderTopRightRadius": 20,
         "padding": 16,
         "paddingBottom": 50,
         "rowGap": 12,
@@ -11645,7 +13106,257 @@ exports[`ScanSheet light default 1`] = `
     ]
   }
 >
+  <View>
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "width": "100%",
+          },
+          {
+            "backgroundColor": "#ffffff",
+            "borderColor": "#eaecf0",
+            "borderRadius": 12,
+            "borderWidth": 1,
+            "columnGap": 8,
+            "minHeight": 44,
+            "paddingHorizontal": 15,
+            "paddingVertical": 11,
+          },
+        ]
+      }
+    >
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+            "minHeight": 17,
+            "minWidth": 17,
+          }
+        }
+      >
+        <RNSVGSvgView
+          align="xMidYMid"
+          bbHeight={20}
+          bbWidth={20}
+          fill="none"
+          focusable={false}
+          height={20}
+          meetOrSlice={0}
+          minX={0}
+          minY={0}
+          style={
+            [
+              {
+                "backgroundColor": "transparent",
+                "borderWidth": 0,
+              },
+              {
+                "flex": 0,
+                "height": 20,
+                "width": 20,
+              },
+            ]
+          }
+          vbHeight={16}
+          vbWidth={16}
+          width={20}
+        >
+          <RNSVGGroup
+            fill={null}
+            propList={
+              [
+                "fill",
+              ]
+            }
+          >
+            <RNSVGPath
+              d="M2.66667 5.33333V4C2.66667 3.64638 2.80714 3.30724 3.05719 3.05719C3.30724 2.80714 3.64638 2.66667 4 2.66667H5.33333M10.6667 2.66667H12C12.3536 2.66667 12.6928 2.80714 12.9428 3.05719C13.1929 3.30724 13.3333 3.64638 13.3333 4V5.33333M13.3333 10.6667V12C13.3333 12.3536 13.1929 12.6928 12.9428 12.9428C12.6928 13.1929 12.3536 13.3333 12 13.3333H10.6667M5.33333 13.3333H4C3.64638 13.3333 3.30724 13.1929 3.05719 12.9428C2.80714 12.6928 2.66667 12.3536 2.66667 12V10.6667"
+              fill={null}
+              opacity={1}
+              propList={
+                [
+                  "fill",
+                  "stroke",
+                  "strokeWidth",
+                  "strokeLinecap",
+                  "strokeLinejoin",
+                ]
+              }
+              stroke={
+                {
+                  "payload": 4286874242,
+                  "type": 0,
+                }
+              }
+              strokeLinecap={1}
+              strokeLinejoin={1}
+              strokeWidth={1.83333}
+            />
+            <RNSVGPath
+              d="M2.66667 8H13.3333"
+              fill={null}
+              opacity={1}
+              propList={
+                [
+                  "fill",
+                  "stroke",
+                  "strokeWidth",
+                  "strokeLinecap",
+                  "strokeLinejoin",
+                ]
+              }
+              stroke={
+                {
+                  "payload": 4286874242,
+                  "type": 0,
+                }
+              }
+              strokeLinecap={1}
+              strokeLinejoin={1}
+              strokeWidth={1.83333}
+            />
+          </RNSVGGroup>
+        </RNSVGSvgView>
+      </View>
+      <TextInput
+        autoCorrect={false}
+        editable={true}
+        onBlur={[Function]}
+        onChangeText={[Function]}
+        onFocus={[Function]}
+        placeholder="Or enter token manually"
+        placeholderTextColor="#848282"
+        secureTextEntry={true}
+        selectionColor="#4d88ff"
+        style={
+          [
+            {
+              "fontFamily": "DMSans-Regular",
+              "fontSize": 14,
+              "letterSpacing": 0,
+              "lineHeight": 20,
+              "marginBottom": -0.8859999999999992,
+              "marginTop": -0.8859999999999992,
+            },
+            {
+              "flex": 1,
+              "padding": 0,
+            },
+            {
+              "color": "#21232c",
+            },
+            null,
+          ]
+        }
+        testID="sample_token_manual_entry"
+        value=""
+      />
+      <View
+        accessibilityRole="button"
+        accessibilityState={
+          {
+            "busy": undefined,
+            "checked": undefined,
+            "disabled": undefined,
+            "expanded": undefined,
+            "selected": undefined,
+          }
+        }
+        accessibilityValue={
+          {
+            "max": undefined,
+            "min": undefined,
+            "now": undefined,
+            "text": undefined,
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        focusable={true}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          [
+            {
+              "alignItems": "center",
+              "justifyContent": "center",
+            },
+            {
+              "minHeight": 44,
+              "minWidth": 44,
+            },
+            {
+              "paddingHorizontal": 8,
+            },
+          ]
+        }
+        testID="sample_token_paste"
+      >
+        <Text
+          numberOfLines={1}
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#151f72",
+              },
+            ]
+          }
+        >
+          Paste
+        </Text>
+      </View>
+    </View>
+  </View>
   <View
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": false,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
       [
         {
@@ -11654,45 +13365,570 @@ exports[`ScanSheet light default 1`] = `
           "width": "100%",
         },
         {
-          "backgroundColor": "#f9f0e7",
-          "borderRadius": 12,
-          "columnGap": 12,
-          "minHeight": 44,
-          "paddingHorizontal": 16,
-          "paddingVertical": 8,
+          "columnGap": 8,
+          "paddingVertical": 4,
         },
       ]
     }
-    testID="sample_token_manual_entry"
   >
     <Text
       style={
         [
           {
-            "fontFamily": "DMSans-Regular",
-            "fontSize": 14,
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 11,
             "letterSpacing": 0,
-            "lineHeight": 20,
-            "marginBottom": -0.8859999999999992,
-            "marginTop": -0.8859999999999992,
+            "lineHeight": 16,
+            "marginBottom": -0.8389999999999995,
+            "marginTop": -0.8389999999999995,
+          },
+          {
+            "color": "#848282",
+            "letterSpacing": 0.88,
           },
           {
             "flex": 1,
           },
+        ]
+      }
+    >
+      SIMULATED SCAN
+    </Text>
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={20}
+      bbWidth={20}
+      fill="none"
+      focusable={false}
+      height={20}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
           {
-            "color": "#21232c",
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 20,
+            "width": 20,
+          },
+        ]
+      }
+      vbHeight={14}
+      vbWidth={14}
+      width={20}
+    >
+      <RNSVGGroup
+        fill={null}
+        propList={
+          [
+            "fill",
+          ]
+        }
+      >
+        <RNSVGPath
+          d="M5.25 3.5L8.75 7L5.25 10.5"
+          fill={null}
+          opacity={1}
+          propList={
+            [
+              "fill",
+              "stroke",
+              "strokeWidth",
+              "strokeLinecap",
+              "strokeLinejoin",
+            ]
+          }
+          stroke={
+            {
+              "payload": 4286874242,
+              "type": 0,
+            }
+          }
+          strokeLinecap={1}
+          strokeLinejoin={1}
+          strokeWidth={1.16667}
+        />
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+  <View
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": false,
+        "checked": undefined,
+        "disabled": false,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      [
+        {
+          "alignItems": "center",
+          "alignSelf": "stretch",
+          "justifyContent": "center",
+        },
+        {
+          "backgroundColor": "#151f72",
+          "borderRadius": 32,
+          "minHeight": 52,
+          "opacity": 1,
+          "paddingHorizontal": 24,
+        },
+        undefined,
+      ]
+    }
+    testID="sample_token_simulate"
+  >
+    <View
+      style={
+        {
+          "alignItems": "center",
+          "justifyContent": "center",
+        }
+      }
+    >
+      <Text
+        style={
+          [
+            {
+              "fontFamily": "DMSans-Bold",
+              "fontSize": 16,
+              "letterSpacing": 0,
+              "lineHeight": 24,
+              "marginBottom": -1.5839999999999996,
+              "marginTop": -1.5839999999999996,
+            },
+            {
+              "textAlign": "center",
+            },
+            {
+              "color": "#ffffff",
+              "paddingVertical": 4,
+            },
+          ]
+        }
+      >
+        Simulate a successful scan
+      </Text>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`ScanSheet light expanded 1`] = `
+<View
+  style={
+    [
+      {
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#ffffff",
+        "borderTopLeftRadius": 20,
+        "borderTopRightRadius": 20,
+        "padding": 16,
+        "paddingBottom": 50,
+        "rowGap": 12,
+      },
+      undefined,
+    ]
+  }
+>
+  <View>
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "width": "100%",
+          },
+          {
+            "backgroundColor": "#ffffff",
+            "borderColor": "#eaecf0",
+            "borderRadius": 12,
+            "borderWidth": 1,
+            "columnGap": 8,
+            "minHeight": 44,
+            "paddingHorizontal": 15,
+            "paddingVertical": 11,
           },
         ]
       }
     >
-      Or enter token manually
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+            "minHeight": 17,
+            "minWidth": 17,
+          }
+        }
+      >
+        <RNSVGSvgView
+          align="xMidYMid"
+          bbHeight={20}
+          bbWidth={20}
+          fill="none"
+          focusable={false}
+          height={20}
+          meetOrSlice={0}
+          minX={0}
+          minY={0}
+          style={
+            [
+              {
+                "backgroundColor": "transparent",
+                "borderWidth": 0,
+              },
+              {
+                "flex": 0,
+                "height": 20,
+                "width": 20,
+              },
+            ]
+          }
+          vbHeight={16}
+          vbWidth={16}
+          width={20}
+        >
+          <RNSVGGroup
+            fill={null}
+            propList={
+              [
+                "fill",
+              ]
+            }
+          >
+            <RNSVGPath
+              d="M2.66667 5.33333V4C2.66667 3.64638 2.80714 3.30724 3.05719 3.05719C3.30724 2.80714 3.64638 2.66667 4 2.66667H5.33333M10.6667 2.66667H12C12.3536 2.66667 12.6928 2.80714 12.9428 3.05719C13.1929 3.30724 13.3333 3.64638 13.3333 4V5.33333M13.3333 10.6667V12C13.3333 12.3536 13.1929 12.6928 12.9428 12.9428C12.6928 13.1929 12.3536 13.3333 12 13.3333H10.6667M5.33333 13.3333H4C3.64638 13.3333 3.30724 13.1929 3.05719 12.9428C2.80714 12.6928 2.66667 12.3536 2.66667 12V10.6667"
+              fill={null}
+              opacity={1}
+              propList={
+                [
+                  "fill",
+                  "stroke",
+                  "strokeWidth",
+                  "strokeLinecap",
+                  "strokeLinejoin",
+                ]
+              }
+              stroke={
+                {
+                  "payload": 4286874242,
+                  "type": 0,
+                }
+              }
+              strokeLinecap={1}
+              strokeLinejoin={1}
+              strokeWidth={1.83333}
+            />
+            <RNSVGPath
+              d="M2.66667 8H13.3333"
+              fill={null}
+              opacity={1}
+              propList={
+                [
+                  "fill",
+                  "stroke",
+                  "strokeWidth",
+                  "strokeLinecap",
+                  "strokeLinejoin",
+                ]
+              }
+              stroke={
+                {
+                  "payload": 4286874242,
+                  "type": 0,
+                }
+              }
+              strokeLinecap={1}
+              strokeLinejoin={1}
+              strokeWidth={1.83333}
+            />
+          </RNSVGGroup>
+        </RNSVGSvgView>
+      </View>
+      <TextInput
+        autoCorrect={false}
+        editable={true}
+        onBlur={[Function]}
+        onChangeText={[Function]}
+        onFocus={[Function]}
+        placeholder="Or enter token manually"
+        placeholderTextColor="#848282"
+        secureTextEntry={true}
+        selectionColor="#4d88ff"
+        style={
+          [
+            {
+              "fontFamily": "DMSans-Regular",
+              "fontSize": 14,
+              "letterSpacing": 0,
+              "lineHeight": 20,
+              "marginBottom": -0.8859999999999992,
+              "marginTop": -0.8859999999999992,
+            },
+            {
+              "flex": 1,
+              "padding": 0,
+            },
+            {
+              "color": "#21232c",
+            },
+            null,
+          ]
+        }
+        testID="sample_token_manual_entry"
+        value=""
+      />
+      <View
+        accessibilityRole="button"
+        accessibilityState={
+          {
+            "busy": undefined,
+            "checked": undefined,
+            "disabled": undefined,
+            "expanded": undefined,
+            "selected": undefined,
+          }
+        }
+        accessibilityValue={
+          {
+            "max": undefined,
+            "min": undefined,
+            "now": undefined,
+            "text": undefined,
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        focusable={true}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          [
+            {
+              "alignItems": "center",
+              "justifyContent": "center",
+            },
+            {
+              "minHeight": 44,
+              "minWidth": 44,
+            },
+            {
+              "paddingHorizontal": 8,
+            },
+          ]
+        }
+        testID="sample_token_paste"
+      >
+        <Text
+          numberOfLines={1}
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#151f72",
+              },
+            ]
+          }
+        >
+          Paste
+        </Text>
+      </View>
+    </View>
+  </View>
+  <View
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": true,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "width": "100%",
+        },
+        {
+          "columnGap": 8,
+          "paddingVertical": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 11,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.8389999999999995,
+            "marginTop": -0.8389999999999995,
+          },
+          {
+            "color": "#848282",
+            "letterSpacing": 0.88,
+          },
+          {
+            "flex": 1,
+          },
+        ]
+      }
+    >
+      SIMULATED SCAN
     </Text>
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={20}
+      bbWidth={20}
+      fill="none"
+      focusable={false}
+      height={20}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 20,
+            "width": 20,
+          },
+        ]
+      }
+      vbHeight={12}
+      vbWidth={12}
+      width={20}
+    >
+      <RNSVGGroup
+        fill={null}
+        propList={
+          [
+            "fill",
+          ]
+        }
+      >
+        <RNSVGPath
+          d="M2 4L6 8L10 4"
+          fill={null}
+          opacity={1}
+          propList={
+            [
+              "fill",
+              "stroke",
+              "strokeWidth",
+              "strokeLinecap",
+              "strokeLinejoin",
+            ]
+          }
+          stroke={
+            {
+              "payload": 4286874242,
+              "type": 0,
+            }
+          }
+          strokeLinecap={1}
+          strokeLinejoin={1}
+          strokeWidth={2}
+        />
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+  <View
+    style={
+      [
+        {
+          "flexDirection": "row",
+          "flexWrap": "wrap",
+          "width": "100%",
+        },
+        {
+          "gap": 8,
+        },
+      ]
+    }
+  >
     <View
-      accessibilityRole="button"
+      accessibilityRole="radio"
       accessibilityState={
         {
           "busy": undefined,
-          "checked": undefined,
+          "checked": true,
           "disabled": undefined,
           "expanded": undefined,
           "selected": undefined,
@@ -11728,32 +13964,668 @@ exports[`ScanSheet light default 1`] = `
             "minHeight": 44,
             "minWidth": 44,
           },
-          {
-            "paddingHorizontal": 8,
-          },
         ]
       }
-      testID="sample_token_paste"
     >
-      <Text
+      <View
         style={
           [
             {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 14,
-              "letterSpacing": 0,
-              "lineHeight": 20,
-              "marginBottom": -0.8859999999999992,
-              "marginTop": -0.8859999999999992,
+              "alignItems": "center",
+              "justifyContent": "center",
             },
             {
-              "color": "#151f72",
+              "backgroundColor": "#151f72",
+              "borderColor": "transparent",
+              "borderRadius": 999,
+              "borderWidth": 0,
+              "minHeight": 32,
+              "paddingHorizontal": 12,
+              "paddingVertical": 8,
             },
           ]
         }
       >
-        Paste
-      </Text>
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#ffffff",
+              },
+            ]
+          }
+        >
+          15m
+        </Text>
+      </View>
+    </View>
+    <View
+      accessibilityRole="radio"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": false,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        [
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+          {
+            "minHeight": 44,
+            "minWidth": 44,
+          },
+        ]
+      }
+    >
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "justifyContent": "center",
+            },
+            {
+              "backgroundColor": "#ffffff",
+              "borderColor": "#eaecf0",
+              "borderRadius": 999,
+              "borderWidth": 0.5,
+              "minHeight": 32,
+              "paddingHorizontal": 11.5,
+              "paddingVertical": 7.5,
+            },
+          ]
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#5e646e",
+              },
+            ]
+          }
+        >
+          1h
+        </Text>
+      </View>
+    </View>
+    <View
+      accessibilityRole="radio"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": false,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        [
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+          {
+            "minHeight": 44,
+            "minWidth": 44,
+          },
+        ]
+      }
+    >
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "justifyContent": "center",
+            },
+            {
+              "backgroundColor": "#ffffff",
+              "borderColor": "#eaecf0",
+              "borderRadius": 999,
+              "borderWidth": 0.5,
+              "minHeight": 32,
+              "paddingHorizontal": 11.5,
+              "paddingVertical": 7.5,
+            },
+          ]
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#5e646e",
+              },
+            ]
+          }
+        >
+          8h
+        </Text>
+      </View>
+    </View>
+    <View
+      accessibilityRole="radio"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": false,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        [
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+          {
+            "minHeight": 44,
+            "minWidth": 44,
+          },
+        ]
+      }
+    >
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "justifyContent": "center",
+            },
+            {
+              "backgroundColor": "#ffffff",
+              "borderColor": "#eaecf0",
+              "borderRadius": 999,
+              "borderWidth": 0.5,
+              "minHeight": 32,
+              "paddingHorizontal": 11.5,
+              "paddingVertical": 7.5,
+            },
+          ]
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#5e646e",
+              },
+            ]
+          }
+        >
+          Expired
+        </Text>
+      </View>
+    </View>
+  </View>
+  <View
+    style={
+      [
+        {
+          "flexDirection": "row",
+          "flexWrap": "wrap",
+          "width": "100%",
+        },
+        {
+          "gap": 8,
+        },
+      ]
+    }
+  >
+    <View
+      accessibilityRole="radio"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": true,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        [
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+          {
+            "minHeight": 44,
+            "minWidth": 44,
+          },
+        ]
+      }
+      testID="sample_token_environment_sandbox"
+    >
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "justifyContent": "center",
+            },
+            {
+              "backgroundColor": "#151f72",
+              "borderColor": "transparent",
+              "borderRadius": 999,
+              "borderWidth": 0,
+              "minHeight": 32,
+              "paddingHorizontal": 12,
+              "paddingVertical": 8,
+            },
+          ]
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#ffffff",
+              },
+            ]
+          }
+        >
+          Sandbox
+        </Text>
+      </View>
+    </View>
+    <View
+      accessibilityRole="radio"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": false,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        [
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+          {
+            "minHeight": 44,
+            "minWidth": 44,
+          },
+        ]
+      }
+      testID="sample_token_environment_production"
+    >
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "justifyContent": "center",
+            },
+            {
+              "backgroundColor": "#ffffff",
+              "borderColor": "#eaecf0",
+              "borderRadius": 999,
+              "borderWidth": 0.5,
+              "minHeight": 32,
+              "paddingHorizontal": 11.5,
+              "paddingVertical": 7.5,
+            },
+          ]
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#5e646e",
+              },
+            ]
+          }
+        >
+          Production
+        </Text>
+      </View>
+    </View>
+  </View>
+  <View
+    style={
+      [
+        {
+          "flexDirection": "row",
+          "flexWrap": "wrap",
+          "width": "100%",
+        },
+        {
+          "gap": 8,
+        },
+      ]
+    }
+  >
+    <View
+      accessibilityRole="checkbox"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": false,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        [
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+          {
+            "minHeight": 44,
+            "minWidth": 44,
+          },
+        ]
+      }
+    >
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "justifyContent": "center",
+            },
+            {
+              "backgroundColor": "#ffffff",
+              "borderColor": "#eaecf0",
+              "borderRadius": 999,
+              "borderWidth": 0.5,
+              "minHeight": 32,
+              "paddingHorizontal": 11.5,
+              "paddingVertical": 7.5,
+            },
+          ]
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#5e646e",
+              },
+            ]
+          }
+        >
+          Binds consent
+        </Text>
+      </View>
+    </View>
+    <View
+      accessibilityRole="checkbox"
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": false,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        [
+          {
+            "alignItems": "center",
+            "justifyContent": "center",
+          },
+          {
+            "minHeight": 44,
+            "minWidth": 44,
+          },
+        ]
+      }
+    >
+      <View
+        style={
+          [
+            {
+              "alignItems": "center",
+              "justifyContent": "center",
+            },
+            {
+              "backgroundColor": "#ffffff",
+              "borderColor": "#eaecf0",
+              "borderRadius": 999,
+              "borderWidth": 0.5,
+              "minHeight": 32,
+              "paddingHorizontal": 11.5,
+              "paddingVertical": 7.5,
+            },
+          ]
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "fontFamily": "DMSans-Bold",
+                "fontSize": 13,
+                "letterSpacing": 0,
+                "lineHeight": 20,
+                "marginBottom": -1.536999999999999,
+                "marginTop": -1.536999999999999,
+              },
+              {
+                "color": "#5e646e",
+              },
+            ]
+          }
+        >
+          Binds details
+        </Text>
+      </View>
     </View>
   </View>
   <View
@@ -11838,6 +14710,832 @@ exports[`ScanSheet light default 1`] = `
         Simulate a successful scan
       </Text>
     </View>
+  </View>
+</View>
+`;
+
+exports[`ScanStatus dark found 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+      },
+      {
+        "backgroundColor": "#4d88ff",
+        "borderRadius": 16,
+        "paddingHorizontal": 16,
+        "paddingVertical": 12,
+        "rowGap": 4,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-SemiBold",
+            "fontSize": 16,
+            "letterSpacing": 0,
+            "lineHeight": 24,
+            "marginBottom": -1.5839999999999996,
+            "marginTop": -1.5839999999999996,
+          },
+          {
+            "textAlign": "center",
+          },
+          {
+            "color": "#2d2b2a",
+          },
+        ]
+      }
+    >
+      Token found
+    </Text>
+  </View>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 12.5,
+          "letterSpacing": 0,
+          "lineHeight": 16,
+          "marginBottom": -0,
+          "marginTop": -0,
+        },
+        {
+          "textAlign": "center",
+        },
+        {
+          "color": "#2d2b2a",
+        },
+      ]
+    }
+  >
+    Reading it now
+  </Text>
+</View>
+`;
+
+exports[`ScanStatus dark linked 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+      },
+      {
+        "backgroundColor": "#00e676",
+        "borderRadius": 16,
+        "paddingHorizontal": 16,
+        "paddingVertical": 12,
+        "rowGap": 4,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+        },
+      ]
+    }
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={20}
+      bbWidth={20}
+      fill="none"
+      focusable={false}
+      height={20}
+      meetOrSlice={0}
+      minX={0}
+      minY={-960}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 20,
+            "width": 20,
+          },
+        ]
+      }
+      vbHeight={960}
+      vbWidth={960}
+      width={20}
+    >
+      <RNSVGGroup
+        fill={null}
+        propList={
+          [
+            "fill",
+          ]
+        }
+      >
+        <RNSVGPath
+          d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"
+          fill={
+            {
+              "payload": 4281150250,
+              "type": 0,
+            }
+          }
+          opacity={1}
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+      </RNSVGGroup>
+    </RNSVGSvgView>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-SemiBold",
+            "fontSize": 16,
+            "letterSpacing": 0,
+            "lineHeight": 24,
+            "marginBottom": -1.5839999999999996,
+            "marginTop": -1.5839999999999996,
+          },
+          {
+            "textAlign": "center",
+          },
+          {
+            "color": "#2d2b2a",
+          },
+        ]
+      }
+    >
+      Session linked
+    </Text>
+  </View>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 12.5,
+          "letterSpacing": 0,
+          "lineHeight": 16,
+          "marginBottom": -0,
+          "marginTop": -0,
+        },
+        {
+          "textAlign": "center",
+        },
+        {
+          "color": "#2d2b2a",
+        },
+      ]
+    }
+  >
+    a1b2c3d4 · 7:59:12 left
+  </Text>
+</View>
+`;
+
+exports[`ScanStatus dark rejected 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+      },
+      {
+        "backgroundColor": "#ea2d2d",
+        "borderRadius": 16,
+        "paddingHorizontal": 16,
+        "paddingVertical": 12,
+        "rowGap": 4,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-SemiBold",
+            "fontSize": 16,
+            "letterSpacing": 0,
+            "lineHeight": 24,
+            "marginBottom": -1.5839999999999996,
+            "marginTop": -1.5839999999999996,
+          },
+          {
+            "textAlign": "center",
+          },
+          {
+            "color": "#ffffff",
+          },
+        ]
+      }
+    >
+      That is not a token
+    </Text>
+  </View>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 12.5,
+          "letterSpacing": 0,
+          "lineHeight": 16,
+          "marginBottom": -0,
+          "marginTop": -0,
+        },
+        {
+          "textAlign": "center",
+        },
+        {
+          "color": "#ffffff",
+        },
+      ]
+    }
+  >
+    A token is three dot-separated base64url segments; this is not.
+  </Text>
+  <View
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      [
+        {
+          "alignItems": "center",
+          "justifyContent": "center",
+        },
+        {
+          "minHeight": 44,
+          "minWidth": 44,
+        },
+        {
+          "paddingHorizontal": 8,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 14,
+            "letterSpacing": 0,
+            "lineHeight": 20,
+            "marginBottom": -0.8859999999999992,
+            "marginTop": -0.8859999999999992,
+          },
+          {
+            "color": "#ffffff",
+          },
+        ]
+      }
+    >
+      Try again
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`ScanStatus dark searching 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+      },
+      {
+        "backgroundColor": "#272a35",
+        "borderRadius": 16,
+        "paddingHorizontal": 16,
+        "paddingVertical": 12,
+        "rowGap": 4,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-SemiBold",
+            "fontSize": 16,
+            "letterSpacing": 0,
+            "lineHeight": 24,
+            "marginBottom": -1.5839999999999996,
+            "marginTop": -1.5839999999999996,
+          },
+          {
+            "textAlign": "center",
+          },
+          {
+            "color": "#f2f2f2",
+          },
+        ]
+      }
+    >
+      Point at a Smile token QR
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`ScanStatus light found 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+      },
+      {
+        "backgroundColor": "#4d88ff",
+        "borderRadius": 16,
+        "paddingHorizontal": 16,
+        "paddingVertical": 12,
+        "rowGap": 4,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-SemiBold",
+            "fontSize": 16,
+            "letterSpacing": 0,
+            "lineHeight": 24,
+            "marginBottom": -1.5839999999999996,
+            "marginTop": -1.5839999999999996,
+          },
+          {
+            "textAlign": "center",
+          },
+          {
+            "color": "#ffffff",
+          },
+        ]
+      }
+    >
+      Token found
+    </Text>
+  </View>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 12.5,
+          "letterSpacing": 0,
+          "lineHeight": 16,
+          "marginBottom": -0,
+          "marginTop": -0,
+        },
+        {
+          "textAlign": "center",
+        },
+        {
+          "color": "#ffffff",
+        },
+      ]
+    }
+  >
+    Reading it now
+  </Text>
+</View>
+`;
+
+exports[`ScanStatus light linked 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+      },
+      {
+        "backgroundColor": "#00c853",
+        "borderRadius": 16,
+        "paddingHorizontal": 16,
+        "paddingVertical": 12,
+        "rowGap": 4,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+        },
+      ]
+    }
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={20}
+      bbWidth={20}
+      fill="none"
+      focusable={false}
+      height={20}
+      meetOrSlice={0}
+      minX={0}
+      minY={-960}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 20,
+            "width": 20,
+          },
+        ]
+      }
+      vbHeight={960}
+      vbWidth={960}
+      width={20}
+    >
+      <RNSVGGroup
+        fill={null}
+        propList={
+          [
+            "fill",
+          ]
+        }
+      >
+        <RNSVGPath
+          d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"
+          fill={
+            {
+              "payload": 4294967295,
+              "type": 0,
+            }
+          }
+          opacity={1}
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+      </RNSVGGroup>
+    </RNSVGSvgView>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-SemiBold",
+            "fontSize": 16,
+            "letterSpacing": 0,
+            "lineHeight": 24,
+            "marginBottom": -1.5839999999999996,
+            "marginTop": -1.5839999999999996,
+          },
+          {
+            "textAlign": "center",
+          },
+          {
+            "color": "#ffffff",
+          },
+        ]
+      }
+    >
+      Session linked
+    </Text>
+  </View>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 12.5,
+          "letterSpacing": 0,
+          "lineHeight": 16,
+          "marginBottom": -0,
+          "marginTop": -0,
+        },
+        {
+          "textAlign": "center",
+        },
+        {
+          "color": "#ffffff",
+        },
+      ]
+    }
+  >
+    a1b2c3d4 · 7:59:12 left
+  </Text>
+</View>
+`;
+
+exports[`ScanStatus light rejected 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+      },
+      {
+        "backgroundColor": "#ef4343",
+        "borderRadius": 16,
+        "paddingHorizontal": 16,
+        "paddingVertical": 12,
+        "rowGap": 4,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-SemiBold",
+            "fontSize": 16,
+            "letterSpacing": 0,
+            "lineHeight": 24,
+            "marginBottom": -1.5839999999999996,
+            "marginTop": -1.5839999999999996,
+          },
+          {
+            "textAlign": "center",
+          },
+          {
+            "color": "#ffffff",
+          },
+        ]
+      }
+    >
+      That is not a token
+    </Text>
+  </View>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 12.5,
+          "letterSpacing": 0,
+          "lineHeight": 16,
+          "marginBottom": -0,
+          "marginTop": -0,
+        },
+        {
+          "textAlign": "center",
+        },
+        {
+          "color": "#ffffff",
+        },
+      ]
+    }
+  >
+    A token is three dot-separated base64url segments; this is not.
+  </Text>
+  <View
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      [
+        {
+          "alignItems": "center",
+          "justifyContent": "center",
+        },
+        {
+          "minHeight": 44,
+          "minWidth": 44,
+        },
+        {
+          "paddingHorizontal": 8,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 14,
+            "letterSpacing": 0,
+            "lineHeight": 20,
+            "marginBottom": -0.8859999999999992,
+            "marginTop": -0.8859999999999992,
+          },
+          {
+            "color": "#ffffff",
+          },
+        ]
+      }
+    >
+      Try again
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`ScanStatus light searching 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+      },
+      {
+        "backgroundColor": "#ffffff",
+        "borderRadius": 16,
+        "paddingHorizontal": 16,
+        "paddingVertical": 12,
+        "rowGap": 4,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-SemiBold",
+            "fontSize": 16,
+            "letterSpacing": 0,
+            "lineHeight": 24,
+            "marginBottom": -1.5839999999999996,
+            "marginTop": -1.5839999999999996,
+          },
+          {
+            "textAlign": "center",
+          },
+          {
+            "color": "#21232c",
+          },
+        ]
+      }
+    >
+      Point at a Smile token QR
+    </Text>
   </View>
 </View>
 `;

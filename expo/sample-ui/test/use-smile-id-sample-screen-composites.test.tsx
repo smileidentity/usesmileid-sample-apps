@@ -6,7 +6,12 @@ import { UseSmileIDSampleNavBar } from '../src/components/use-smile-id-sample-na
 import { UseSmileIDSampleProductCard } from '../src/components/use-smile-id-sample-product-card';
 import { UseSmileIDSampleProductGrid } from '../src/components/use-smile-id-sample-product-grid';
 import { UseSmileIDSampleScanGlyph } from '../src/components/use-smile-id-sample-scan-glyph';
-import { UseSmileIDSampleScanSheet } from '../src/components/use-smile-id-sample-scan-sheet';
+import {
+  UseSmileIDSampleScanSheet,
+  smileIDSampleScanSheetDefaults,
+  type UseSmileIDSampleScanSheetState,
+} from '../src/components/use-smile-id-sample-scan-sheet';
+import { UseSmileIDSampleScanStatus } from '../src/components/use-smile-id-sample-scan-status';
 import { UseSmileIDSampleSectionHeader } from '../src/components/use-smile-id-sample-section-header';
 import { UseSmileIDSampleSessionCard } from '../src/components/use-smile-id-sample-session-card';
 import { UseSmileIDSampleSessionEndedBanner } from '../src/components/use-smile-id-sample-session-ended-banner';
@@ -38,6 +43,20 @@ const card = (index: number) => {
     />
   );
 };
+
+const scanSheet = (state: UseSmileIDSampleScanSheetState) => (
+  <UseSmileIDSampleScanSheet
+    state={state}
+    onTokenChange={noop}
+    onPaste={noop}
+    onLink={noop}
+    onExpandToggle={noop}
+    onSpanSelect={noop}
+    onEnvironmentSelect={noop}
+    onBindingsChange={noop}
+    onSimulate={noop}
+  />
+);
 
 type Case = { element: () => React.ReactElement };
 
@@ -125,11 +144,14 @@ const cases: { component: string; states: Record<string, Case> }[] = [
   },
   {
     component: 'ScanGlyph',
-    states: { default: { element: () => <UseSmileIDSampleScanGlyph size={256} /> } },
+    states: { default: { element: () => <UseSmileIDSampleScanGlyph /> } },
   },
   {
     component: 'ScanSheet',
-    states: { default: { element: () => <UseSmileIDSampleScanSheet onPaste={noop} onSimulate={noop} /> } },
+    states: {
+      default: { element: () => scanSheet(smileIDSampleScanSheetDefaults) },
+      expanded: { element: () => scanSheet({ ...smileIDSampleScanSheetDefaults, expanded: true }) },
+    },
   },
   {
     component: 'SwipeAction',
@@ -158,6 +180,33 @@ describe.each(cases)('$component', ({ states }) => {
   });
 });
 
+/// The scanner's status pill, which Android goldens per state and spec/components.json does not yet list.
+const statusCases: Record<string, Case> = {
+  searching: { element: () => <UseSmileIDSampleScanStatus state={{ kind: 'searching' }} onRetry={noop} /> },
+  found: { element: () => <UseSmileIDSampleScanStatus state={{ kind: 'found' }} onRetry={noop} /> },
+  linked: {
+    element: () => (
+      <UseSmileIDSampleScanStatus state={{ kind: 'linked', handle: 'a1b2c3d4', remaining: '7:59:12' }} onRetry={noop} />
+    ),
+  },
+  rejected: {
+    element: () => (
+      <UseSmileIDSampleScanStatus
+        state={{ kind: 'rejected', reason: 'A token is three dot-separated base64url segments; this is not.' }}
+        onRetry={noop}
+      />
+    ),
+  },
+};
+
+describe('ScanStatus', () => {
+  describe.each(schemes)('$name', ({ dark }) => {
+    it.each(Object.keys(statusCases))('%s', async (state) => {
+      await expectGoldens(statusCases[state]!.element(), dark);
+    });
+  });
+});
+
 describe('screen-composite coverage', () => {
   it('covers every screen composite the buildOrder names', () => {
     expect(cases.map((entry) => entry.component)).toEqual([
@@ -177,7 +226,7 @@ describe('screen-composite coverage', () => {
 
   it('records both schemes for every state', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(38);
+    expect(total * schemes.length).toBe(40);
   });
 });
 
