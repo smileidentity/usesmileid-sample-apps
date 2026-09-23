@@ -15,10 +15,23 @@ class UseSmileIDSampleTriggerEmoji extends StatelessWidget {
   final String emoji;
 
   @override
-  Widget build(BuildContext context) => Text(
-    emoji,
-    style: UseSmileIDSampleType.inputFont.copyWith(fontSize: _emojiSize),
-  );
+  Widget build(BuildContext context) {
+    final TextStyle style = UseSmileIDSampleType.inputFont.copyWith(
+      fontSize: _emojiSize,
+    );
+    if (Theme.of(context).platform != TargetPlatform.iOS) {
+      return Text(emoji, style: style);
+    }
+    // Apple Color Emoji's tall ascent would grow the trigger past 44, so iOS pins it to the icon slot.
+    return Text(
+      emoji,
+      style: style.copyWith(
+        height: SmileDimens.sizeIconMd / _emojiSize,
+        leadingDistribution: TextLeadingDistribution.even,
+      ),
+      textHeightBehavior: const TextHeightBehavior(),
+    );
+  }
 }
 
 /// Looks like an input, behaves like a button.
@@ -69,7 +82,9 @@ class UseSmileIDSampleSelectTrigger extends StatelessWidget {
       button: true,
       enabled: enabled,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: kMinInteractiveDimension),
+        constraints: BoxConstraints(
+          minHeight: useSmileIDSampleTapTarget(context),
+        ),
         child: Center(
           heightFactor: 1,
           child: Material(
@@ -88,7 +103,7 @@ class UseSmileIDSampleSelectTrigger extends StatelessWidget {
               onTap: enabled ? onTap : null,
               borderRadius: BorderRadius.circular(SmileDimens.radiusField),
               child: ConstrainedBox(
-                constraints: const BoxConstraints(
+                constraints: BoxConstraints(
                   minHeight: SmileDimens.sizeControlMd,
                 ),
                 child: Padding(
@@ -101,7 +116,7 @@ class UseSmileIDSampleSelectTrigger extends StatelessWidget {
                       if (leading != null) ...<Widget>[
                         // A minimum, not a fixed box: an emoji grows with the font scale and clips.
                         ConstrainedBox(
-                          constraints: const BoxConstraints(
+                          constraints: BoxConstraints(
                             minWidth: SmileDimens.sizeIconMd,
                             minHeight: SmileDimens.sizeIconMd,
                           ),

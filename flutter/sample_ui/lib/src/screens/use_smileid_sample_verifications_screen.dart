@@ -132,9 +132,9 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
                     child: InkWell(
                       onTap: () => onSelectModeChanged!(!state.selectMode),
                       child: ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          minWidth: kMinInteractiveDimension,
-                          minHeight: kMinInteractiveDimension,
+                        constraints: BoxConstraints(
+                          minWidth: useSmileIDSampleTapTarget(context),
+                          minHeight: useSmileIDSampleTapTarget(context),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(

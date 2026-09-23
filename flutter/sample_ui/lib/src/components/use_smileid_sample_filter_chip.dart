@@ -54,8 +54,8 @@ class UseSmileIDSampleFilterChip extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            minHeight: kMinInteractiveDimension,
+          constraints: BoxConstraints(
+            minHeight: useSmileIDSampleTapTarget(context),
           ),
           child: Align(
             widthFactor: 1,
@@ -79,7 +79,7 @@ class UseSmileIDSampleFilterChip extends StatelessWidget {
       onTap: onTap,
       customBorder: const StadiumBorder(),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: SmileDimens.space32),
+        constraints: BoxConstraints(minHeight: SmileDimens.space32),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: SmileDimens.spacingSm,

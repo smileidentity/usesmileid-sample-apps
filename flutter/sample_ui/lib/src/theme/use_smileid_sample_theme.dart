@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart' show kMinInteractiveDimensionCupertino;
 import 'package:flutter/material.dart';
 
 import '../tokens/smile_tokens.dart';
@@ -47,6 +48,12 @@ const TextHeightBehavior useSmileIDSampleTextHeightBehavior =
       applyHeightToFirstAscent: false,
       applyHeightToLastDescent: false,
     );
+
+/// The platform's minimum touch target: Compose's 48 on Android, the 44 UIKit controls keep on iOS.
+double useSmileIDSampleTapTarget(BuildContext context) =>
+    Theme.of(context).platform == TargetPlatform.iOS
+    ? kMinInteractiveDimensionCupertino
+    : kMinInteractiveDimension;
 
 /// Gives this app's screens their text metrics; the SDK's own screens sit outside it and keep theirs.
 class UseSmileIDSampleTextMetrics extends StatelessWidget {

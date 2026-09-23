@@ -171,9 +171,9 @@ class _Header extends StatelessWidget {
                 radius: SmileDimens.sizeControlMd / 2,
                 // The platform minimum around the 40 avatar, which is also what sets the row's height.
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    minWidth: kMinInteractiveDimension,
-                    minHeight: kMinInteractiveDimension,
+                  constraints: BoxConstraints(
+                    minWidth: useSmileIDSampleTapTarget(context),
+                    minHeight: useSmileIDSampleTapTarget(context),
                   ),
                   child: Center(
                     widthFactor: 1,
