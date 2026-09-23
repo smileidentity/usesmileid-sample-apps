@@ -99,7 +99,6 @@ class _UseSmileIDSampleVerificationDetailsTabState
     // The live session, not the row's: the store matches on partner, so a new session reads old rows.
     final UseSmileIDSampleTokenSession? live = useSmileIDSampleLiveSession(
       ref.read(useSmileIDSampleSessionProvider).live,
-      UseSmileIDSampleScenario.normal,
       now,
     );
     final UseSmileIDSampleStatusRefresh? outcome = await ref

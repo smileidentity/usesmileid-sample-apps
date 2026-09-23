@@ -34,6 +34,6 @@ abstract final class UseSmileIDSampleJourney {
 UseSmileIDSampleTokenBindings? useSmileIDSampleLiveBindings(WidgetRef ref) =>
     useSmileIDSampleLiveSession(
       ref.read(useSmileIDSampleSessionProvider).live,
-      ref.read(useSmileIDSampleScenarioProvider).scenario,
       DateTime.now().millisecondsSinceEpoch,
+      scenario: ref.read(useSmileIDSampleScenarioProvider).scenario,
     )?.bindings;

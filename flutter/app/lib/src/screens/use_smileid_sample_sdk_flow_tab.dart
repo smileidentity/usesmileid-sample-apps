@@ -8,6 +8,7 @@ import 'package:usesmileid/usesmileid.dart';
 import '../flow/use_smileid_sample_flow_builder_config.dart';
 import '../flow/use_smileid_sample_flow_launch_snapshot.dart';
 import '../flow/use_smileid_sample_flow_preflight.dart';
+import '../flow/use_smileid_sample_token_binding_rules.dart';
 import '../state/use_smileid_sample_forms.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
@@ -126,9 +127,11 @@ class _UseSmileIDSampleSdkFlowTabState
     final UseSmileIDSampleSessionRecord record = ref.read(
       useSmileIDSampleSessionProvider,
     );
-    final UseSmileIDSampleTokenSession? live = record.live;
-    final UseSmileIDSampleTokenSession? session =
-        live != null && !live.hasExpired(entryMillis) ? live : null;
+    // Scenario-free on purpose: the environment is the token's even under the two refresh scenarios.
+    final UseSmileIDSampleTokenSession? session = useSmileIDSampleLiveSession(
+      record.live,
+      entryMillis,
+    );
     return UseSmileIDSampleFlowLaunchSnapshot(
       product: product,
       route: ref.read(useSmileIDSampleLaunchArgsProvider).route,
@@ -148,9 +151,7 @@ class _UseSmileIDSampleSdkFlowTabState
       // A profile here carries no webhook URL yet, and empty means the partner's portal default.
       callbackUrl: '',
       session: session,
-      sessionExpired:
-          record.ended != null ||
-          (live != null && live.hasExpired(entryMillis)),
+      sessionExpired: useSmileIDSampleSessionEnded(record, entryMillis),
     );
   }
 

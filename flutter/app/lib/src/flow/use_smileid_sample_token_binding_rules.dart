@@ -6,17 +6,23 @@ bool useSmileIDSampleStartsExpired(UseSmileIDSampleScenario scenario) =>
     scenario == UseSmileIDSampleScenario.expiredToken ||
     scenario == UseSmileIDSampleScenario.badRefresh;
 
-/// The live-session rule in one place, so nothing disagrees about whether a token is live.
+/// The live-session rule in one place; the two refresh scenarios drop the token, and a plain read passes none.
 UseSmileIDSampleTokenSession? useSmileIDSampleLiveSession(
   UseSmileIDSampleTokenSession? session,
-  UseSmileIDSampleScenario scenario,
-  int nowMillis,
-) =>
+  int nowMillis, {
+  UseSmileIDSampleScenario scenario = UseSmileIDSampleScenario.normal,
+}) =>
     session != null &&
         !session.hasExpired(nowMillis) &&
         !useSmileIDSampleStartsExpired(scenario)
     ? session
     : null;
+
+/// Whether a session ran out: its marker is stored, or the live token is past its deadline and not yet retired.
+bool useSmileIDSampleSessionEnded(
+  UseSmileIDSampleSessionRecord record,
+  int nowMillis,
+) => record.ended != null || (record.live?.hasExpired(nowMillis) ?? false);
 
 /// Drops the issues the token already answers; every other rule the SDK applies still stands.
 ValidationState useSmileIDSampleMinusRequirement(

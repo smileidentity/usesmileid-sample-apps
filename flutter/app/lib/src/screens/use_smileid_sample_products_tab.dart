@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
+import '../flow/use_smileid_sample_token_binding_rules.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_journey.dart';
@@ -91,8 +92,7 @@ class _UseSmileIDSampleProductsTabState
     );
     final int now = ref.watch(useSmileIDSampleClockProvider);
     final UseSmileIDSampleTokenSession? live = session.live;
-    final bool ended =
-        session.ended != null || (live != null && live.hasExpired(now));
+    final bool ended = useSmileIDSampleSessionEnded(session, now);
     return UseSmileIDSampleProductsScreen(
       state: UseSmileIDSampleProductsState(
         initials: profiles.active.initials,

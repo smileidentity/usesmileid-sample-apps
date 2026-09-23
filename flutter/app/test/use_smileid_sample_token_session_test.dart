@@ -12,6 +12,7 @@ import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_launc
 import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_plan.dart';
 import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_preflight.dart';
 import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_tokens.dart';
+import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_token_binding_rules.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_session_providers.dart';
 import 'package:usesmileid_sample_flutter/src/status/use_smileid_sample_http_job_status_source.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_journey.dart';
@@ -291,6 +292,58 @@ void main() {
       expect(
         useSmileIDSampleUseSandbox(
           _mint(environment: UseSmileIDSampleEnvironment.production),
+        ),
+        isFalse,
+      );
+    });
+  });
+
+  group('the live and ended rules', () {
+    test('a refresh scenario drops the token only when asked to', () {
+      final UseSmileIDSampleTokenSession production = _mint(
+        environment: UseSmileIDSampleEnvironment.production,
+      );
+      // The snapshot reads it scenario-free, so the environment stays the token's.
+      expect(useSmileIDSampleLiveSession(production, _now), production);
+      expect(
+        useSmileIDSampleLiveSession(
+          production,
+          _now,
+          scenario: UseSmileIDSampleScenario.expiredToken,
+        ),
+        isNull,
+      );
+    });
+
+    test('a session has ended by its marker or by its deadline', () {
+      final UseSmileIDSampleTokenSession live = _mint();
+      expect(
+        useSmileIDSampleSessionEnded(
+          UseSmileIDSampleSessionRecord(live: live),
+          _now,
+        ),
+        isFalse,
+      );
+      expect(
+        useSmileIDSampleSessionEnded(
+          UseSmileIDSampleSessionRecord(live: live),
+          live.expiresAtMillis,
+        ),
+        isTrue,
+      );
+      expect(
+        useSmileIDSampleSessionEnded(
+          const UseSmileIDSampleSessionRecord(
+            ended: UseSmileIDSampleEndedSession(id: 'a', endedAtMillis: 1),
+          ),
+          _now,
+        ),
+        isTrue,
+      );
+      expect(
+        useSmileIDSampleSessionEnded(
+          const UseSmileIDSampleSessionRecord(),
+          _now,
         ),
         isFalse,
       );
