@@ -102,8 +102,10 @@ native imports. The shell injects the preview into the scan screen.
   does not model (`country`, `id_type`, `id_number`, `api_url`, `partner_id`). An Expo test asserts
   that our presence flags equal `decodeSmileIDToken(...).tokenPayload`, so the SDK cannot move its
   rules under us unnoticed.
-- **Flutter computes the handle digest in `sample_ui`.** A short SHA-256, checked against the
-  standard test vector, rather than declaring `crypto` for one call.
+- **Both ports compute the handle digest themselves.** Flutter in `sample_ui` and Expo in
+  `use-smile-id-sample-token-bytes.ts`, the latter with its own base64url and UTF-8 too, because
+  `sample-ui` has no native imports. A short SHA-256, checked against the standard test vector, rather
+  than declaring a crypto package for one call.
 - **Flutter's status refresh is real now.** The detail page's refresh used a stub that always
   reported no session. It is now a `GET /v3/status` source on `dart:io`'s `HttpClient`, so there is
   no HTTP package. It refreshes when the partner ids match (`port-patterns.md` §5).
@@ -128,7 +130,9 @@ native imports. The shell injects the preview into the scan screen.
   (`granted: false` is not a binding, a non-string is not a binding, an empty consent object is no
   consent, and malformed, unsigned or `exp`-less tokens are rejected at entry); the environment host
   map; the handle; retirement; the countdown and progress at 15m, 1h and 8h; the `flowPlan` truth
-  table; and the session store's secure/plain split.
+  table; and the session record's link, retire and clear semantics, including a retirement racing a
+  fresh link. The stores run against in-memory doubles, so which platform store holds the token is
+  proven by the code and the device runs, not by a unit test.
 - **Goldens, light and dark:** the scan screen in its default and redirected states, the scan status
   pill in each state, the expanded Simulate controls, and the user-details form with names bound.
   Flutter and Expo baselines come from the runner's `flutter-goldens-recorded` and
