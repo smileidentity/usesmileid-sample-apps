@@ -18,6 +18,13 @@ useSmileIDSampleStoredSessionProvider = Provider<UseSmileIDSampleSessionRecord>(
   (Ref ref) => const UseSmileIDSampleSessionRecord(),
 );
 
+/// The wall clock the deadline is read against; a test moves it without firing any timer.
+final Provider<int Function()> useSmileIDSampleWallClockProvider =
+    Provider<int Function()>(
+      (Ref ref) =>
+          () => DateTime.now().millisecondsSinceEpoch,
+    );
+
 /// The linked session or its ended marker, and the only writer of either.
 final NotifierProvider<
   UseSmileIDSampleSessionNotifier,
@@ -46,6 +53,14 @@ class UseSmileIDSampleSessionNotifier
 
   /// Every write, in call order: an overlapping retire once landed a marker over a newer link.
   Future<void> _writes = Future<void>.value();
+
+  /// Retires the live session when the wall clock is past its deadline; the timer alone misses a sleeping device.
+  Future<void> checkDeadline() async {
+    final UseSmileIDSampleTokenSession? live = state.live;
+    if (live != null && live.hasExpired(_now())) {
+      await _retire(live);
+    }
+  }
 
   /// Links a decoded session, replacing any live one or ended marker.
   Future<void> link(UseSmileIDSampleTokenSession session) =>
@@ -90,8 +105,7 @@ class UseSmileIDSampleSessionNotifier
     if (live == null) {
       return;
     }
-    final int wait =
-        live.expiresAtMillis - DateTime.now().millisecondsSinceEpoch;
+    final int wait = live.expiresAtMillis - _now();
     _deadline = Timer(
       Duration(milliseconds: wait < 0 ? 0 : wait),
       () => unawaited(_retire(live)),
@@ -100,6 +114,8 @@ class UseSmileIDSampleSessionNotifier
 
   UseSmileIDSampleSessionRepository get _repository =>
       ref.read(useSmileIDSampleSessionRepositoryProvider);
+
+  int _now() => ref.read(useSmileIDSampleWallClockProvider)();
 }
 
 /// The wall clock, ticking once a second only while a session is live, so nothing else rebuilds on it.
@@ -120,14 +136,18 @@ class UseSmileIDSampleClockNotifier extends Notifier<int> {
           ),
         ) !=
         null;
+    final int Function() now = ref.read(useSmileIDSampleWallClockProvider);
     if (live) {
-      final Timer tick = Timer.periodic(
-        _tick,
-        (_) => state = DateTime.now().millisecondsSinceEpoch,
-      );
+      final Timer tick = Timer.periodic(_tick, (_) {
+        state = now();
+        // Each tick also re-reads the deadline, which retries a retirement the store refused.
+        unawaited(
+          ref.read(useSmileIDSampleSessionProvider.notifier).checkDeadline(),
+        );
+      });
       ref.onDispose(tick.cancel);
     }
-    return DateTime.now().millisecondsSinceEpoch;
+    return now();
   }
 }
 

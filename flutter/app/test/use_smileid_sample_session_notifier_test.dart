@@ -63,6 +63,93 @@ void main() {
     expect(container.read(useSmileIDSampleSessionProvider).ended?.id, stale.id);
     expect((await repository.read()).ended?.id, stale.id);
   });
+  test(
+    'a wall clock past the deadline retires the token, though the timer has not fired',
+    () async {
+      int now = DateTime.now().millisecondsSinceEpoch;
+      final UseSmileIDSampleTokenSession live = _mint(
+        UseSmileIDSampleSimulatedSpan.fifteenMinutes,
+      );
+      final UseSmileIDSampleSessionRecord stored =
+          UseSmileIDSampleSessionRecord(live: live);
+      final ProviderContainer container = ProviderContainer(
+        overrides: [
+          useSmileIDSampleSessionRepositoryProvider.overrideWithValue(
+            UseSmileIDSampleMemorySessionRepository(stored),
+          ),
+          useSmileIDSampleStoredSessionProvider.overrideWithValue(stored),
+          useSmileIDSampleWallClockProvider.overrideWithValue(() => now),
+        ],
+      );
+      addTearDown(container.dispose);
+      container.read(useSmileIDSampleSessionProvider);
+
+      // A device asleep past the deadline: wall time moved, the monotonic timer did not fire.
+      now = live.expiresAtMillis + 1;
+      await container
+          .read(useSmileIDSampleSessionProvider.notifier)
+          .checkDeadline();
+
+      expect(container.read(useSmileIDSampleSessionProvider).live, isNull);
+      expect(
+        container.read(useSmileIDSampleSessionProvider).ended?.id,
+        live.id,
+      );
+    },
+  );
+
+  test(
+    'a retirement the store refused is tried again on the next check',
+    () async {
+      final UseSmileIDSampleTokenSession stale = _mint(
+        UseSmileIDSampleSimulatedSpan.ended,
+      );
+      final UseSmileIDSampleSessionRecord stored =
+          UseSmileIDSampleSessionRecord(live: stale);
+      final _RefusingOnce repository = _RefusingOnce(stored);
+      final ProviderContainer container = ProviderContainer(
+        overrides: [
+          useSmileIDSampleSessionRepositoryProvider.overrideWithValue(
+            repository,
+          ),
+          useSmileIDSampleStoredSessionProvider.overrideWithValue(stored),
+        ],
+      );
+      addTearDown(container.dispose);
+      container.read(useSmileIDSampleSessionProvider);
+      await Future<void>.delayed(_settle);
+      expect(repository.refusals, 1);
+      expect(container.read(useSmileIDSampleSessionProvider).live, stale);
+
+      await container
+          .read(useSmileIDSampleSessionProvider.notifier)
+          .checkDeadline();
+
+      expect(container.read(useSmileIDSampleSessionProvider).live, isNull);
+      expect((await repository.read()).ended?.id, stale.id);
+    },
+  );
+}
+
+/// A Keystore that refuses the first write, as a locked device can.
+class _RefusingOnce extends UseSmileIDSampleRecordSessionRepository {
+  _RefusingOnce(UseSmileIDSampleSessionRecord initial)
+    : _record = initial.encode();
+
+  String? _record;
+  int refusals = 0;
+
+  @override
+  Future<String?> readRecord() async => _record;
+
+  @override
+  Future<void> writeRecord(String? record) async {
+    if (refusals == 0) {
+      refusals++;
+      throw StateError('refused');
+    }
+    _record = record;
+  }
 }
 
 /// Every write takes a while, as a Keystore or Keychain write does, so writes can overlap.
