@@ -2,17 +2,13 @@ import {
   VerificationDetailsScreen,
   smileIDSampleRefreshLabel,
   useSmileIDSampleJobStore,
-  type UseSmileIDSampleJobStatusSource,
+  useSmileIDSampleSessionStore,
 } from '@smileid/sample-ui';
 import { useLocalSearchParams } from 'expo-router';
 
+import { smileIDSampleStatusApi } from '../../../src/status/use-smile-id-sample-status-api';
 import { useSmileIDSampleBack } from '../../../src/use-smile-id-sample-back';
 import { useCallback, useEffect, useRef, useState } from 'react';
-
-/// No scanned session exists yet, so every refresh reports why rather than doing nothing.
-const source: UseSmileIDSampleJobStatusSource = {
-  check: async () => ({ kind: 'noSession' }),
-};
 
 export default function VerificationDetails() {
   const back = useSmileIDSampleBack('/verifications');
@@ -31,7 +27,13 @@ export default function VerificationDetails() {
     async (silent: boolean) => {
       if (jobId === undefined) return;
       if (!silent) setRefreshing(true);
-      const outcome = await refresh(jobId, null, Date.now(), source);
+      // The store decides whether the session may ask, including for a row another partner submitted.
+      const outcome = await refresh(
+        jobId,
+        useSmileIDSampleSessionStore.getState().live,
+        Date.now(),
+        smileIDSampleStatusApi,
+      );
       // Only the call that raised the spinner lowers it: the on-entry refresh is silent and shows
       // none, so clearing it there ended a pull-to-refresh the reader had started moments before.
       if (!silent) setRefreshing(false);

@@ -8,6 +8,8 @@ import {
   smileLightColors,
   useSmileIDSampleJobStore,
   useSmileIDSampleProfileStore,
+  useSmileIDSampleSessionClock,
+  useSmileIDSampleSessionStore,
   useSmileIDSampleSettingsStore,
 } from '@smileid/sample-ui';
 import { useFonts } from 'expo-font';
@@ -19,6 +21,7 @@ import { Appearance, Platform, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useLaunchArgs } from '../src/use-smile-id-sample-launch';
+import { smileIDSampleSecureSessionStorage } from '../src/use-smile-id-sample-secure-session-storage';
 
 /// Every pushed route and sheet layers over the tabs, so a cold deep link lands with its owner beneath (routes.json R12).
 export const unstable_settings = { initialRouteName: '(tabs)' };
@@ -53,6 +56,13 @@ export default function RootLayout() {
     void loadSettings();
   }, [loadSettings]);
 
+  const sessionLoaded = useSmileIDSampleSessionStore((state) => state.loaded);
+  const loadSession = useSmileIDSampleSessionStore((state) => state.load);
+  useEffect(() => {
+    void loadSession(smileIDSampleSecureSessionStorage);
+  }, [loadSession]);
+  useSmileIDSampleSessionClock();
+
   // The SDK's useColorScheme and the native bars read this, not the theme provider.
   useEffect(() => {
     if (settingsLoaded) Appearance.setColorScheme(dark ? 'dark' : 'light');
@@ -74,7 +84,8 @@ export default function RootLayout() {
     if (args.seedJobs) seedFixtures(Date.now()).catch(() => undefined);
   }, [args, resetProfiles, seedFixtures]);
 
-  if (!fontsLoaded) {
+  // Held for the session too: a cold link into a run must not take its snapshot before the stored token is read.
+  if (!fontsLoaded || !sessionLoaded) {
     return <View style={{ backgroundColor: colors.background, flex: 1 }} />;
   }
 

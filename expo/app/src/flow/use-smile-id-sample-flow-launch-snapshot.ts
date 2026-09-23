@@ -2,6 +2,7 @@ import type {
   UseSmileIDSampleFlowRoute,
   UseSmileIDSampleIdDetails,
   UseSmileIDSampleProduct,
+  UseSmileIDSampleTokenSession,
   UseSmileIDSampleUserDetails,
 } from '@smileid/sample-ui';
 
@@ -14,7 +15,7 @@ export type UseSmileIDSampleFlowLaunchSnapshot = {
   /// The scenario ids, which on this platform arrive by launch argument rather than from a drawer.
   readonly scenario: string;
   readonly theme: string;
-  /// Whether the run submits against sandbox, which a scanned session will decide once one exists.
+  /// Whether the run submits against sandbox; the linked session decides, and no session is sandbox.
   readonly sandbox: boolean;
   /// The five settings, not the settings object: the read happens once.
   readonly allowAgentMode: boolean;
@@ -28,9 +29,23 @@ export type UseSmileIDSampleFlowLaunchSnapshot = {
   readonly partnerName: string;
   /// The active profile's webhook URL; empty means their portal default.
   readonly callbackUrl: string;
+  /// Live at entry only: a session that has run out is the gate's business, never the builder's.
+  readonly session: UseSmileIDSampleTokenSession | null;
+  /// Run out — the one thing that routes back to the scanner. Usually true with no session.
+  readonly sessionExpired: boolean;
 };
 
 /// Where the run submitted, which is the only thing that publishes it.
 export const smileIDSampleFlowEnvironment = (
   snapshot: UseSmileIDSampleFlowLaunchSnapshot,
 ): 'sandbox' | 'production' => (snapshot.sandbox ? 'sandbox' : 'production');
+
+/// The two scenarios that are about refresh, which a scanned token has no journey for, so they keep the fixtures.
+export const smileIDSampleStartsExpired = (scenario: string): boolean =>
+  scenario === 'expiredToken' || scenario === 'badRefresh';
+
+/// The session a run actually submits under.
+export const smileIDSampleSnapshotSession = (
+  snapshot: UseSmileIDSampleFlowLaunchSnapshot,
+): UseSmileIDSampleTokenSession | null =>
+  smileIDSampleStartsExpired(snapshot.scenario) ? null : snapshot.session;

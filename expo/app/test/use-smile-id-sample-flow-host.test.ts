@@ -40,6 +40,8 @@ const snapshot = (
   partnerId: 'p-1',
   partnerName: 'Kobo Bank',
   callbackUrl: '',
+  session: null,
+  sessionExpired: false,
   ...overrides,
 });
 
@@ -116,7 +118,7 @@ describe('the gate', () => {
       snapshot({ userDetails: { firstName: '', lastName: '', email: '', phone: '' } }),
     );
     const reported =
-      outcome.kind === 'ready' ? '' : outcome.issues.map((issue) => issue.message).join('; ');
+      outcome.kind === 'ready' || outcome.kind === 'needsSession' ? '' : outcome.issues.map((issue) => issue.message).join('; ');
     expect(reported).toContain('givenNames');
     expect(reported).toContain('lastName');
   });

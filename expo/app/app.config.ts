@@ -17,7 +17,7 @@ if (!applicationId || !bundleIdentifier || !displayName || !urlScheme) {
 }
 
 /// Capture is the SDK's, but no @smileid package ships a purpose string, so the host declares it.
-const cameraUsage = 'Smile ID uses the camera to capture your selfie and your ID document.';
+const cameraUsage = 'Smile ID uses the camera to scan a session QR code and to capture your selfie and your ID document.';
 
 const templateWindow = /\n#if os\(iOS\) \|\| os\(tvOS\)\n\s*window = UIWindow\(frame: UIScreen\.main\.bounds\)\n\s*factory\.startReactNative\([^)]*\)\n#endif\n/;
 
@@ -77,6 +77,8 @@ const config: ExpoConfig = {
     'expo-status-bar',
     'expo-font',
     'react-native-quick-crypto',
+    // The token scanner reads QR only: no microphone, so neither platform asks for one.
+    ['expo-camera', { cameraPermission: cameraUsage, microphonePermission: false, recordAudioAndroid: false }],
     // kspVersion is deliberately not passed: the plugin rejects it without kotlinVersion, and its
     // own Kotlin default is what the published AARs were compiled against.
     '@smileid/usesmileid_mlkit_face',
