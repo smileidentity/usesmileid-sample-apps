@@ -126,7 +126,6 @@ class UseSmileIDSampleProductCard extends StatelessWidget {
                                 color: content,
                               ),
                             ),
-                            const SizedBox(width: SmileDimens.spacingXs),
                             _GoAffordance(tint: content, scrim: goScrim),
                           ],
                         ),
