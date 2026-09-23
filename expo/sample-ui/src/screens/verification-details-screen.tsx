@@ -29,8 +29,6 @@ export type UseSmileIDSampleVerificationDetailsState = {
   /// The id the route asked for, which is the whole diagnostic when there is no row.
   readonly jobId: string;
   readonly refreshing: boolean;
-  /// What the last refresh said, shown as the transient notice rather than stored on the row.
-  readonly refreshNotice?: string | null;
 };
 
 type Props = {
@@ -110,12 +108,6 @@ export const VerificationDetailsScreen = ({
                 testID={UseSmileIDSampleTestIds.STATUS_BADGE}
               />
             </View>
-
-            {state.refreshNotice != null ? (
-              <Text style={[theme.type.textStyleCaption, { color: theme.colors.textMuted }]}>
-                {state.refreshNotice}
-              </Text>
-            ) : null}
 
             <UseSmileIDSampleSectionSurface label="DETAILS">
               <UseSmileIDSampleDataFieldRow

@@ -7,6 +7,7 @@ import {
 import { useRouter } from 'expo-router';
 
 import { useSmileIDSampleBack } from '../../src/use-smile-id-sample-back';
+import { useSmileIDSampleNoticeInset } from '../../src/use-smile-id-sample-notice-inset';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -14,6 +15,7 @@ export default function Profiles() {
   const router = useRouter();
   const back = useSmileIDSampleBack('/settings');
   const notice = useSmileIDSampleTransientNotice();
+  const noticeInset = useSmileIDSampleNoticeInset();
   const profiles = useSmileIDSampleProfileStore((state) => state.items);
   const activeId = useSmileIDSampleProfileStore((state) => state.activeId);
   const lastCreatedId = useSmileIDSampleProfileStore((state) => state.lastCreatedId);
@@ -43,13 +45,12 @@ export default function Profiles() {
         onCreate={() => router.push('/profiles/new')}
         onBack={() => back()}
       />
-      <UseSmileIDSampleTransientNoticeHost state={notice} style={styles.notice} />
+      <UseSmileIDSampleTransientNoticeHost state={notice} style={[styles.notice, { bottom: noticeInset }]} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   host: { flex: 1 },
-  // The route is already inset past the system bar; insetting again lifts the toast into the list.
-  notice: { bottom: 24, paddingHorizontal: 16, position: 'absolute' },
+  notice: { paddingHorizontal: 16, position: 'absolute' },
 });
