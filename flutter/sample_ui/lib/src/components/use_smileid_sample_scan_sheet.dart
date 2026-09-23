@@ -351,20 +351,27 @@ class _SheetAction extends StatelessWidget {
     child: GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
+      // Laid out at the tap target, as Compose's minimumInteractiveComponentSize is: it sets the field's height.
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: SmileDimens.sizeControlMd),
+        constraints: BoxConstraints(
+          minWidth: SmileDimens.sizeControlMd,
+          minHeight: useSmileIDSampleTapTarget(context),
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: SmileDimens.spacingXs,
           ),
-          child: Text(
-            label,
-            softWrap: false,
-            textAlign: TextAlign.center,
-            style: UseSmileIDSampleType.linkFont.copyWith(
-              fontSize: _sheetActionSize,
-              fontWeight: FontWeight.w700,
-              color: colors.primary,
+          child: Center(
+            widthFactor: 1,
+            child: Text(
+              label,
+              softWrap: false,
+              textAlign: TextAlign.center,
+              style: UseSmileIDSampleType.linkFont.copyWith(
+                fontSize: _sheetActionSize,
+                fontWeight: FontWeight.w700,
+                color: colors.primary,
+              ),
             ),
           ),
         ),
