@@ -10,15 +10,21 @@ import type { ReactElement } from 'react';
 import SdkFlowRun from '../app/flow/[productId]/run';
 import ScanToken from '../app/token/scan';
 import { smileIDSampleSimulatedToken } from '../src/flow/use-smile-id-sample-flow-tokens';
+import { smileIDSampleLoadLaunchArgs, smileIDSampleResetLaunchArgs } from '../src/use-smile-id-sample-launch';
 
 jest.mock('@smileid/usesmileid_mlkit_face', () => ({ useSmileIDMlkitFace: { key: 'mlkit' } }));
 jest.mock('@smileid/usesmileid_vision_face', () => ({ useSmileIDVisionFace: { key: 'vision' } }));
-jest.mock('expo-linking', () => ({ getInitialURL: jest.fn(async () => null) }));
+/// The cold-start link, which carries the launch arguments on this platform.
+let mockLaunchUrl: string | null = null;
+jest.mock('expo-linking', () => ({ getInitialURL: jest.fn(async () => mockLaunchUrl) }));
 jest.mock('expo-haptics', () => ({
   selectionAsync: jest.fn(async () => undefined),
   notificationAsync: jest.fn(async () => undefined),
   NotificationFeedbackType: { Success: 'success', Error: 'error' },
 }));
+/// What the clipboard holds for the Paste test; empty elsewhere.
+let mockClipboard = '';
+jest.mock('expo-clipboard', () => ({ getStringAsync: jest.fn(async () => mockClipboard) }));
 jest.mock('expo-camera', () => ({ CameraView: () => null, useCameraPermissions: () => [null, jest.fn()] }));
 jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: () => ({ top: 44, bottom: 34, left: 0, right: 0 }),
@@ -54,6 +60,8 @@ const endedSession = () =>
   )!;
 
 beforeEach(() => {
+  mockLaunchUrl = null;
+  smileIDSampleResetLaunchArgs();
   useSmileIDSampleSessionStore.getState().reset();
   mockRedirects.length = 0;
   jest.clearAllMocks();
@@ -67,6 +75,17 @@ describe('the expiry gate', () => {
     await inTheme(<SdkFlowRun />);
     expect(mockRedirects).toEqual(['/token/scan']);
     expect(useSmileIDSampleSessionStore.getState().pendingRun).toEqual({ productId: 'enhancedKyc', route: 'fullscreen' });
+  });
+
+  // The root waits on the link before any route renders; the entry snapshot must then see it, not the defaults.
+  it('takes its snapshot from the launch arguments the cold link carried', async () => {
+    mockLaunchUrl = 'usesmileid-sample-expo:///flow/enhancedKyc/run?route=shell';
+    await act(async () => {
+      await smileIDSampleLoadLaunchArgs();
+      await useSmileIDSampleSessionStore.getState().retire(endedSession());
+    });
+    await inTheme(<SdkFlowRun />);
+    expect(useSmileIDSampleSessionStore.getState().pendingRun).toEqual({ productId: 'enhancedKyc', route: 'shell' });
   });
 
   it('lets a run with no session at all through to the SDK on the fixture path', async () => {
@@ -104,7 +123,14 @@ describe('the scanner', () => {
     expect(useSmileIDSampleSessionStore.getState().live).toBeNull();
   });
 
-  it('offers no Paste action, since this host has no clipboard reader', async () => {
-    expect((await inTheme(<ScanToken />)).queryByTestId(UseSmileIDSampleTestIds.TOKEN_PASTE)).toBeNull();
+  it('pastes the clipboard into the field, and says so when it holds nothing', async () => {
+    const screen = await inTheme(<ScanToken />);
+    mockClipboard = '';
+    await fireEvent.press(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_PASTE));
+    await waitFor(() => expect(screen.queryByText('The clipboard holds no text to paste.')).not.toBeNull());
+    mockClipboard = 'pasted.token.value';
+    await fireEvent.press(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_PASTE));
+    await waitFor(() => expect(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_MANUAL_ENTRY).props.value).toBe('pasted.token.value'));
+    expect(screen.queryByText('Link token')).not.toBeNull();
   });
 });

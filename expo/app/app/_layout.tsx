@@ -20,7 +20,7 @@ import { useEffect } from 'react';
 import { Appearance, Platform, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { useLaunchArgs } from '../src/use-smile-id-sample-launch';
+import { useLaunchArgs, useLaunchArgsLoaded } from '../src/use-smile-id-sample-launch';
 import { smileIDSampleSecureSessionStorage } from '../src/use-smile-id-sample-secure-session-storage';
 
 /// Every pushed route and sheet layers over the tabs, so a cold deep link lands with its owner beneath (routes.json R12).
@@ -43,6 +43,7 @@ export default function RootLayout() {
   const dark = settingsLoaded ? darkMode : scheme === 'dark';
   const colors = dark ? smileDarkColors : smileLightColors;
   const args = useLaunchArgs();
+  const argsLoaded = useLaunchArgsLoaded();
   const resetProfiles = useSmileIDSampleProfileStore((state) => state.reset);
   const seedFixtures = useSmileIDSampleJobStore((state) => state.seedFixtures);
   // spec/launch-args.json states the argument in SECONDS; the library's window is milliseconds.
@@ -84,8 +85,8 @@ export default function RootLayout() {
     if (args.seedJobs) seedFixtures(Date.now()).catch(() => undefined);
   }, [args, resetProfiles, seedFixtures]);
 
-  // Held for the session too: a cold link into a run must not take its snapshot before the stored token is read.
-  if (!fontsLoaded || !sessionLoaded) {
+  // Held for the session and the link too: a cold link into a run snapshots both once, at entry.
+  if (!fontsLoaded || !sessionLoaded || !argsLoaded) {
     return <View style={{ backgroundColor: colors.background, flex: 1 }} />;
   }
 
