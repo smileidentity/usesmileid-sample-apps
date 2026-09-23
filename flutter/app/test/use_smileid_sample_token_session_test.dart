@@ -221,7 +221,7 @@ void main() {
           );
           // `build()` is stricter than `validate()`, and its result type is unexported, so only its name is readable.
           // ignore: invalid_use_of_internal_member
-          final Object? result = builder.build();
+          final Object result = builder.build();
           expect(
             result.runtimeType.toString(),
             contains('Success'),
