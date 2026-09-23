@@ -129,7 +129,7 @@ beforeEach(async () => {
   systemScheme.mockReturnValue('light');
 });
 
-// Installed on the real Appearance module, so leaving it patched would follow into the next file's tests.
+// Patched on the real module, so restored before the next file runs.
 afterEach(() => {
   imposedScheme.mockRestore();
 });

@@ -31,7 +31,7 @@ const trimmed = (fontSize: number, lineHeight: number) => {
   return { marginTop: -half, marginBottom: -half };
 };
 
-/// Resolves one token style in DM Sans, the fallback the display ramp's unshipped Epilogue takes on every twin.
+/// Resolves a token style in DM Sans, which also stands in for the unshipped Epilogue.
 const style = (token: TokenTextStyle): SmileTextStyle => ({
   // No fontWeight: the family names the face, and a bold weight on Android swaps a loaded face for the system font.
   fontFamily: smileFontFamily(token.fontWeight),

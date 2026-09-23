@@ -14,7 +14,7 @@ import { useFonts } from 'expo-font';
 import { NavigationBar } from 'expo-navigation-bar';
 import { Stack } from 'expo-router';
 import { setStatusBarStyle, StatusBar } from 'expo-status-bar';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { Appearance, Platform, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -23,7 +23,7 @@ import { useLaunchArgs } from '../src/use-smile-id-sample-launch';
 /// Every pushed route and sheet layers over the tabs, so a cold deep link lands with its owner beneath (routes.json R12).
 export const unstable_settings = { initialRouteName: '(tabs)' };
 
-/// Sends both bar styles to the window again, past the navigation-bar module's cache of what it last sent.
+/// Re-sends both bar styles, past the navigation-bar module's cache.
 const reassertSystemBars = (dark: boolean) => {
   setStatusBarStyle(dark ? 'light' : 'dark');
   NavigationBar.setStyle(dark ? 'dark' : 'light');
@@ -58,16 +58,14 @@ export default function RootLayout() {
     if (settingsLoaded) Appearance.setColorScheme(dark ? 'dark' : 'light');
   }, [settingsLoaded, dark]);
 
-  const darkRef = useRef(dark);
-  darkRef.current = dark;
-  // Android re-applies the window's bars once a night-mode change lands, after ours, so ours go again.
+  // Android re-applies the window's bars after a night-mode change, so ours go again.
   useEffect(() => {
     if (Platform.OS !== 'android') return undefined;
     const subscription = Appearance.addChangeListener(() =>
-      requestAnimationFrame(() => reassertSystemBars(darkRef.current)),
+      requestAnimationFrame(() => reassertSystemBars(dark)),
     );
     return () => subscription.remove();
-  }, []);
+  }, [dark]);
 
   useEffect(() => {
     resetProfiles(smileIDSampleProfilesForLaunch(args));

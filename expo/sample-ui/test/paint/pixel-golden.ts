@@ -118,7 +118,7 @@ const RECORDING_MODES = ['all', 'new', 'none'] as const;
 
 type RecordingMode = (typeof RECORDING_MODES)[number];
 
-/// UPDATE_GOLDENS=1 re-records; otherwise the run follows `jest -u` or `--ci` through jest's private snapshot state.
+/// UPDATE_GOLDENS=1 re-records; otherwise the run follows `jest -u` or `--ci`.
 const recordingMode = (): RecordingMode => {
   if (process.env.UPDATE_GOLDENS === '1') return 'all';
   const mode = (expect.getState().snapshotState as unknown as { _updateSnapshot?: unknown })._updateSnapshot;

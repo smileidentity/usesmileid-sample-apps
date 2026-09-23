@@ -23,7 +23,7 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
-/// Android's BAR_ELEVATION: the Compose bar's `shadowElevation`, 8dp, since a tinted token shadow draws almost nothing there.
+/// The Compose bar's 8dp `shadowElevation`; a tinted token shadow draws almost nothing on Android.
 export const SMILE_NAV_BAR_ELEVATION = 8;
 
 /// The Compose elevation on Android and the design's floating shadow token on iOS.

@@ -376,7 +376,7 @@ const paintText = (ctx: SKRSContext2D, node: LaidOutNode, style: Style, x: numbe
   });
 };
 
-/// The largest end in [start, end] whose run from start fits [room], found by halving since widths only grow.
+/// The largest end in [start, end] whose run fits [room], found by halving.
 const longestFitting = (
   text: string,
   owner: readonly number[],

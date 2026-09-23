@@ -163,7 +163,7 @@ export const VerificationDetailsScreen = ({
   );
 };
 
-/// Green while the call succeeded, red once it did not; no code is neither, since red would invent a failure.
+/// Green on success, red on failure, and neither without a code.
 const httpStatusColour = (
   code: number | null,
   badge: Pick<BadgeTokens, 'successText' | 'errorText'>,

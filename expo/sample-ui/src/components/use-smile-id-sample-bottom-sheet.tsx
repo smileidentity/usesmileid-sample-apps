@@ -11,9 +11,9 @@ import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 const SHEET_PADDING_X = 20;
 /// The gap between a full-height sheet's back control and its title, which no spacing token carries.
 const SHEET_HEADER_GAP = 10;
-/// Material's own drag handle is 48 tall where the Compose app draws a 28-tall pill, so Android draws that pill here.
+/// Android draws the Compose app's 28-tall pill here, since Material's own handle is 48 tall.
 const DRAWS_OWN_HANDLE = Platform.OS === 'android';
-/// The Compose app's grab handle, 44×4: a design pill that no size token names, only matches by value.
+/// The Compose app's 44×4 grab handle, which no size token names.
 const GRAB_HANDLE = { width: 44, height: 4 } as const;
 const PARTIAL_TITLE_SIZE = 18;
 const FULL_TITLE_SIZE = 16;

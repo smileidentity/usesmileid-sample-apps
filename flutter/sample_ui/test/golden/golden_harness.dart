@@ -315,8 +315,7 @@ Future<void> _host(
         home: UseSmileIDSampleTextMetrics(
           child: Align(
             alignment: Alignment.topLeft,
-            // The boundary is what crops the capture to the component and its padding; without one
-            // the shot is the whole window, with bare host either side of a 393-wide column.
+            // Crops the capture to the component; without it the shot is the whole window.
             child: RepaintBoundary(
               key: goldenRoot,
               child: Container(
@@ -324,8 +323,7 @@ Future<void> _host(
                 height: fillsHost ? hostHeight : null,
                 color: colors.background,
                 padding: const EdgeInsets.all(SmileDimens.spacingMd),
-                // Every real screen sits on a Scaffold, and a text field asserts on the ancestor it
-                // provides; transparency supplies it without painting over the page colour.
+                // A text field needs a Scaffold ancestor; a transparent one keeps the page colour.
                 child: Material(
                   type: MaterialType.transparency,
                   child: scrollable

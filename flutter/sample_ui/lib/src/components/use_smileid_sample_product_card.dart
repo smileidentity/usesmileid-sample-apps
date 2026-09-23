@@ -193,7 +193,7 @@ class _CardLabel extends StatelessWidget {
   }
 }
 
-/// Compose's `TextAutoSize.StepBased`: the largest size, in its 0.25 steps down to [_cardLabelMin], that fits two lines.
+/// Compose's `TextAutoSize.StepBased`: the largest 0.25 step down to [_cardLabelMin] that fits two lines.
 double _fittingSize({
   required TextSpan Function(double size) span,
   required TextStyle style,
