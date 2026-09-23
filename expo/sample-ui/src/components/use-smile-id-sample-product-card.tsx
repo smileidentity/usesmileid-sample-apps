@@ -111,7 +111,7 @@ export const UseSmileIDSampleProductCard = ({
               },
             ]}
           >
-            <UseSmileIDSampleIcon name="arrowForward" tint={content} />
+            <UseSmileIDSampleIcon name="arrowForward" tint={content} size={theme.dimens.size['icon-sm']} />
           </View>
         </View>
       </View>
