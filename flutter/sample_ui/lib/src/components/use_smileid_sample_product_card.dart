@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
@@ -174,50 +175,184 @@ class _CardLabel extends StatelessWidget {
     if (scaler.scale(1) > 1) {
       return Text.rich(labelAt(titleStyle.fontSize!), style: base);
     }
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        final double size = _fittingSize(
-          span: labelAt,
-          style: base,
-          maxWidth: constraints.maxWidth,
-          scaler: scaler,
-          largest: titleStyle.fontSize!,
-        );
-        return Text.rich(
-          labelAt(size),
-          style: base.copyWith(fontSize: size),
-          maxLines: 2,
-        );
-      },
+    // Not a LayoutBuilder: the grid sizes each row by its intrinsic height, which one cannot report.
+    return _StepFitLabel(
+      span: labelAt,
+      style: DefaultTextStyle.of(context).style.merge(base),
+      scaler: scaler,
+      largest: titleStyle.fontSize!,
+      textDirection: Directionality.of(context),
+      textHeightBehavior: DefaultTextHeightBehavior.maybeOf(context),
     );
   }
 }
 
-/// Compose's `TextAutoSize.StepBased`: the largest 0.25 step down to [_cardLabelMin] that fits two lines.
-double _fittingSize({
-  required TextSpan Function(double size) span,
-  required TextStyle style,
-  required double maxWidth,
-  required TextScaler scaler,
-  required double largest,
-}) {
-  for (double size = largest; size > _cardLabelMin; size -= _cardLabelStep) {
-    final TextPainter painter = TextPainter(
-      text: TextSpan(
-        style: style.copyWith(fontSize: size),
-        children: <InlineSpan>[span(size)],
-      ),
-      maxLines: 2,
-      textDirection: TextDirection.ltr,
-      textScaler: scaler,
-    )..layout(maxWidth: maxWidth);
-    final bool fits = !painter.didExceedMaxLines;
-    painter.dispose();
-    if (fits) {
-      return size;
-    }
+/// Two lines of text at the largest step that fits the width it is offered, intrinsics included.
+class _StepFitLabel extends LeafRenderObjectWidget {
+  const _StepFitLabel({
+    required this.span,
+    required this.style,
+    required this.scaler,
+    required this.largest,
+    required this.textDirection,
+    required this.textHeightBehavior,
+  });
+
+  final TextSpan Function(double size) span;
+  final TextStyle style;
+  final TextScaler scaler;
+  final double largest;
+  final TextDirection textDirection;
+  final TextHeightBehavior? textHeightBehavior;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) => _RenderStepFitLabel(
+    span: span,
+    style: style,
+    scaler: scaler,
+    largest: largest,
+    textDirection: textDirection,
+    textHeightBehavior: textHeightBehavior,
+  );
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenderStepFitLabel renderObject,
+  ) => renderObject.update(
+    span: span,
+    style: style,
+    scaler: scaler,
+    largest: largest,
+    textDirection: textDirection,
+    textHeightBehavior: textHeightBehavior,
+  );
+}
+
+class _RenderStepFitLabel extends RenderBox {
+  _RenderStepFitLabel({
+    required TextSpan Function(double size) span,
+    required TextStyle style,
+    required TextScaler scaler,
+    required double largest,
+    required TextDirection textDirection,
+    required TextHeightBehavior? textHeightBehavior,
+  }) : _span = span,
+       _style = style,
+       _scaler = scaler,
+       _largest = largest,
+       _textDirection = textDirection,
+       _textHeightBehavior = textHeightBehavior;
+
+  TextSpan Function(double size) _span;
+  TextStyle _style;
+  TextScaler _scaler;
+  double _largest;
+  TextDirection _textDirection;
+  TextHeightBehavior? _textHeightBehavior;
+  TextPainter? _painter;
+
+  void update({
+    required TextSpan Function(double size) span,
+    required TextStyle style,
+    required TextScaler scaler,
+    required double largest,
+    required TextDirection textDirection,
+    required TextHeightBehavior? textHeightBehavior,
+  }) {
+    _span = span;
+    _style = style;
+    _scaler = scaler;
+    _largest = largest;
+    _textDirection = textDirection;
+    _textHeightBehavior = textHeightBehavior;
+    markNeedsLayout();
+    markNeedsSemanticsUpdate();
   }
-  return _cardLabelMin;
+
+  TextPainter _painterAt(double size, double maxWidth) => TextPainter(
+    text: TextSpan(
+      style: _style.copyWith(fontSize: size),
+      children: <InlineSpan>[_span(size)],
+    ),
+    maxLines: 2,
+    textDirection: _textDirection,
+    textScaler: _scaler,
+    textHeightBehavior: _textHeightBehavior,
+  )..layout(maxWidth: maxWidth);
+
+  /// The painter at the largest step, down to [_cardLabelMin], that fits two lines in [maxWidth].
+  TextPainter _fit(double maxWidth) {
+    for (double size = _largest; size > _cardLabelMin; size -= _cardLabelStep) {
+      final TextPainter painter = _painterAt(size, maxWidth);
+      if (!painter.didExceedMaxLines) {
+        return painter;
+      }
+      painter.dispose();
+    }
+    return _painterAt(_cardLabelMin, maxWidth);
+  }
+
+  double _heightFor(double width) {
+    final TextPainter painter = _fit(width);
+    final double height = painter.height;
+    painter.dispose();
+    return height;
+  }
+
+  double _widthAtLargest({required bool max}) {
+    final TextPainter painter = _painterAt(_largest, double.infinity);
+    final double width = max
+        ? painter.maxIntrinsicWidth
+        : painter.minIntrinsicWidth;
+    painter.dispose();
+    return width;
+  }
+
+  @override
+  double computeMinIntrinsicWidth(double height) => _widthAtLargest(max: false);
+
+  @override
+  double computeMaxIntrinsicWidth(double height) => _widthAtLargest(max: true);
+
+  @override
+  double computeMinIntrinsicHeight(double width) => _heightFor(width);
+
+  @override
+  double computeMaxIntrinsicHeight(double width) => _heightFor(width);
+
+  @override
+  Size computeDryLayout(covariant BoxConstraints constraints) {
+    final TextPainter painter = _fit(constraints.maxWidth);
+    final Size fitted = constraints.constrain(painter.size);
+    painter.dispose();
+    return fitted;
+  }
+
+  @override
+  void performLayout() {
+    _painter?.dispose();
+    _painter = _fit(constraints.maxWidth);
+    size = constraints.constrain(_painter!.size);
+  }
+
+  @override
+  void paint(PaintingContext context, Offset offset) =>
+      _painter?.paint(context.canvas, offset);
+
+  @override
+  void describeSemanticsConfiguration(SemanticsConfiguration config) {
+    super.describeSemanticsConfiguration(config);
+    config
+      ..label = _span(_largest).toPlainText()
+      ..textDirection = _textDirection;
+  }
+
+  @override
+  void dispose() {
+    _painter?.dispose();
+    super.dispose();
+  }
 }
 
 /// Android's `CARD_LABEL_MIN`.
