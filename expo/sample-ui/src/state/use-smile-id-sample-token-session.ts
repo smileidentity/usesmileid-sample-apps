@@ -35,13 +35,17 @@ export const smileIDSampleSessionProgress = (session: UseSmileIDSampleTokenSessi
   return Math.min(Math.max(smileIDSampleSessionRemaining(session, nowMillis) / span, 0), 1);
 };
 
+const MILLIS_PER_SECOND = 1000;
+const SECONDS_PER_MINUTE = 60;
+const SECONDS_PER_HOUR = 3600;
+
 const pad = (value: number) => String(value).padStart(2, '0');
 
 /// `m:ss`, growing an hours part when the span needs one — an 8h token reads 7:59:12, not 479:12.
 export const smileIDSampleCountdown = (remainingMillis: number): string => {
-  const total = Math.floor(Math.max(remainingMillis, 0) / 1000);
-  const hours = Math.floor(total / 3600);
-  const minutes = Math.floor((total % 3600) / 60);
-  const seconds = total % 60;
+  const total = Math.floor(Math.max(remainingMillis, 0) / MILLIS_PER_SECOND);
+  const hours = Math.floor(total / SECONDS_PER_HOUR);
+  const minutes = Math.floor((total % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
+  const seconds = total % SECONDS_PER_MINUTE;
   return hours > 0 ? `${hours}:${pad(minutes)}:${pad(seconds)}` : `${minutes}:${pad(seconds)}`;
 };
