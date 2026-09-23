@@ -18,10 +18,10 @@ So both journeys walk a user to the door and stop. A sample app exists to demons
 and on these two you cannot yet run one. **Phase 4 below is the remaining half of the port, not
 follow-on work** — the phases before it are debt and rulings that happen to be cheaper.
 
-The same gap explains two things that look like omissions elsewhere: there is no token session or
-scanner, which is why the session card, the countdown ring and four product states have goldens and no
-way to be reached; and the verification detail page has no status refresh, because a refresh is a call
-under a scanned session and no session exists.
+The same gap explained two things that looked like omissions elsewhere: there was no token session or
+scanner, so the session card, the countdown ring and four product states had goldens and no way to be
+reached; and the verification detail page had no status refresh, because a refresh is a call under a
+scanned session. Both are closed now (Phase 4).
 
 `port-gaps-backlog.md` holds the detail of every item referenced here. `stacked-pr-sequencing.md` holds
 the measured cost of the branching friction this session hit. Neither is repeated here.
@@ -93,8 +93,8 @@ four runs of 36–53 minutes. This phase is closed; item 8 records what the lane
 product tap, form, `/flow/:productId/run`, the SDK's own screens, and back to the originating tab on
 either exit. On Flutter the job-store contract landed inside it, so `addJob` has a caller and the
 detail page's refresh reports what the store decided instead of a sentence stored on the row; Expo
-already had that contract and gains the caller. The token session and the scanner are still the
-second half.
+already had that contract and gains the caller. **The second half, the token session and the scanner,
+landed on both ports 2026-09-23**; `token-session-ports.md` records what the ports did differently.
 
 Four things the Flutter half found that the phase did not predict, each recorded rather than
 "aligned":

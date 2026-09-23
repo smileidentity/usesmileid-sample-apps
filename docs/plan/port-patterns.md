@@ -36,7 +36,7 @@ File names are the unit ports mirror, so the current Android inventory is the co
 | "Not loaded yet" is not "empty" | nullable list, null until the first store emission | `Optional` | nullable | `T[] \| null` |
 | Bottom-chrome clearance | measured chrome height via `contentPadding` | real safe-area/chrome insets | ditto | ditto |
 | List derivations recompute on data change, never on a clock tick | `remember(keys)` + one coarse `derivedStateOf` day-bucket | computed + `onChange` | `select` | `useMemo` |
-| Persisted app state: a credential and a preference do not share a home | DataStore, both records | Keychain for the token, `UserDefaults` for the switches | the port's call, same rule | the port's call, same rule |
+| Persisted app state: a credential and a preference do not share a home | DataStore, both records | Keychain for the token, `UserDefaults` for the switches | `flutter_secure_storage` for the token, `shared_preferences` for the switches | `expo-secure-store` for the token, AsyncStorage for the switches |
 | **A sheet is a layer over the screen that owns it, never a destination** (R12) | boolean the owner holds + `ModalBottomSheet`, removed from composition when hidden | `.sheet(isPresented:)` on the owning view | `showModalBottomSheet` from the owning route | owner-held state + the platform sheet |
 | **A sheet's deep link resolves to its OWNER's link plus a sheet request** | `UseSmileIDSampleSheetLinks` maps path → owner URI + enum; owner consumes it | same mapping, presenting view consumes | ditto | ditto |
 
