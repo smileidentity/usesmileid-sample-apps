@@ -10341,6 +10341,7 @@ exports[`profiles dark created 1`] = `
               },
               {
                 "columnGap": 12,
+                "marginHorizontal": 16,
                 "paddingHorizontal": 14,
                 "paddingVertical": 12,
               },
@@ -11513,6 +11514,7 @@ exports[`profiles dark default 1`] = `
             },
             {
               "columnGap": 12,
+              "marginHorizontal": 16,
               "paddingHorizontal": 14,
               "paddingVertical": 12,
             },
@@ -12778,6 +12780,7 @@ exports[`profiles light created 1`] = `
               },
               {
                 "columnGap": 12,
+                "marginHorizontal": 16,
                 "paddingHorizontal": 14,
                 "paddingVertical": 12,
               },
@@ -13950,6 +13953,7 @@ exports[`profiles light default 1`] = `
             },
             {
               "columnGap": 12,
+              "marginHorizontal": 16,
               "paddingHorizontal": 14,
               "paddingVertical": 12,
             },

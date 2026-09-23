@@ -5700,8 +5700,10 @@ exports[`kycIdForm dark empty 1`] = `
             "shadowRadius": 12,
           },
           {
-            "backgroundColor": "#4d88ff",
+            "backgroundColor": "#272a35",
+            "borderColor": "#eaecf0",
             "borderRadius": 24,
+            "borderWidth": 1.5,
             "height": 48,
             "width": 48,
           },
@@ -5768,7 +5770,7 @@ exports[`kycIdForm dark empty 1`] = `
             }
             stroke={
               {
-                "payload": 4294967295,
+                "payload": 4294111986,
                 "type": 0,
               }
             }
@@ -5791,7 +5793,7 @@ exports[`kycIdForm dark empty 1`] = `
             }
             stroke={
               {
-                "payload": 4294967295,
+                "payload": 4294111986,
                 "type": 0,
               }
             }
@@ -6717,8 +6719,10 @@ exports[`kycIdForm dark selected 1`] = `
             "shadowRadius": 12,
           },
           {
-            "backgroundColor": "#4d88ff",
+            "backgroundColor": "#272a35",
+            "borderColor": "#eaecf0",
             "borderRadius": 24,
+            "borderWidth": 1.5,
             "height": 48,
             "width": 48,
           },
@@ -6785,7 +6789,7 @@ exports[`kycIdForm dark selected 1`] = `
             }
             stroke={
               {
-                "payload": 4294967295,
+                "payload": 4294111986,
                 "type": 0,
               }
             }
@@ -6808,7 +6812,7 @@ exports[`kycIdForm dark selected 1`] = `
             }
             stroke={
               {
-                "payload": 4294967295,
+                "payload": 4294111986,
                 "type": 0,
               }
             }
@@ -7734,8 +7738,10 @@ exports[`kycIdForm light empty 1`] = `
             "shadowRadius": 12,
           },
           {
-            "backgroundColor": "#151f72",
+            "backgroundColor": "#ffffff",
+            "borderColor": "#eaecf0",
             "borderRadius": 24,
+            "borderWidth": 1.5,
             "height": 48,
             "width": 48,
           },
@@ -7802,7 +7808,7 @@ exports[`kycIdForm light empty 1`] = `
             }
             stroke={
               {
-                "payload": 4294967295,
+                "payload": 4280361772,
                 "type": 0,
               }
             }
@@ -7825,7 +7831,7 @@ exports[`kycIdForm light empty 1`] = `
             }
             stroke={
               {
-                "payload": 4294967295,
+                "payload": 4280361772,
                 "type": 0,
               }
             }
@@ -8751,8 +8757,10 @@ exports[`kycIdForm light selected 1`] = `
             "shadowRadius": 12,
           },
           {
-            "backgroundColor": "#151f72",
+            "backgroundColor": "#ffffff",
+            "borderColor": "#eaecf0",
             "borderRadius": 24,
+            "borderWidth": 1.5,
             "height": 48,
             "width": 48,
           },
@@ -8819,7 +8827,7 @@ exports[`kycIdForm light selected 1`] = `
             }
             stroke={
               {
-                "payload": 4294967295,
+                "payload": 4280361772,
                 "type": 0,
               }
             }
@@ -8842,7 +8850,7 @@ exports[`kycIdForm light selected 1`] = `
             }
             stroke={
               {
-                "payload": 4294967295,
+                "payload": 4280361772,
                 "type": 0,
               }
             }

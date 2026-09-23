@@ -38,6 +38,7 @@ const CreateProfileRow = ({ onPress }: { onPress: () => void }) => {
       style={[
         styles.createRow,
         {
+          marginHorizontal: theme.dimens.spacing.md,
           columnGap: theme.dimens.spacing.sm,
           paddingHorizontal: CREATE_PADDING_X,
           paddingVertical: theme.dimens.spacing.sm,
