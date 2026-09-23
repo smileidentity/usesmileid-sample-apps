@@ -82,7 +82,7 @@ export type SmileColors = {
   readonly textLink: string;
   readonly errorFill: string;
   readonly onError: string;
-  /// The scanner's feedback fills: informational while decoding, success once linked.
+  /// The scanner's feedback fills.
   readonly infoFill: string;
   readonly onInfo: string;
   readonly successFill: string;

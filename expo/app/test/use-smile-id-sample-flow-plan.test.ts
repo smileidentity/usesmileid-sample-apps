@@ -6,7 +6,7 @@ import {
 
 import { smileIDSampleFlowPlan } from '../src/flow/use-smile-id-sample-flow-plan';
 
-/// The truth table from token-binding-matrix-android.md §7, enumerated rather than sampled.
+/// The truth table, enumerated rather than sampled.
 const complete: UseSmileIDSampleTokenConsent = {
   granted: true,
   grantedAt: '2026-08-18T09:00:00Z',
@@ -39,7 +39,6 @@ describe('the flow plan', () => {
     'consent $consentName, details $detailName, id bound $bindsId, $product.id',
     ({ consent, detail, detailName, bindsId, product }) => {
       const plan = smileIDSampleFlowPlan({ ...detail, ...(bindsId ? idClaims : {}), consent }, product);
-      // A partial binding is still a binding: the SDK fails the build naming what is missing (case 7).
       expect(plan.declareConsentScreen).toBe(consent === null);
       expect(plan.passUserDetails).toBe(detailName !== 'namesAndContact');
       expect(plan.userDetailsGap).toEqual({

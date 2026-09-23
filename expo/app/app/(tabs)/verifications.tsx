@@ -26,7 +26,6 @@ export default function Verifications() {
   // a clock read in render would recompute them on every pass and make the render impure.
   const [nowMillis] = useState(() => Date.now());
   const bottomInset = useSmileIDSampleListInset();
-  // The bar it clears is measured, so this route's notice rides the same reserve the list does.
   const noticeStyle = useSmileIDSampleNoticeStyle(bottomInset);
   const setSelecting = useSmileIDSampleSetSelectMode();
 

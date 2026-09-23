@@ -9,7 +9,7 @@ const token = ['{"alg":"none"}', `{"iat":${now},"exp":${now + 900},"api_url":"ht
   .map(base64Url)
   .join('.');
 
-/// The scanned code, delivered the way the host's camera delivers one.
+/// The scanned code, delivered as the camera delivers one.
 let deliver: ((candidate: string) => void) | null = null;
 const Viewfinder = ({ onCandidate }: UseSmileIDSampleViewfinderProps) => {
   deliver = onCandidate;

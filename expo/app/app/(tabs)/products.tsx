@@ -23,7 +23,6 @@ export default function Products() {
   const index = useSmileIDSampleActiveProfileIndex();
   const bottomInset = useSmileIDSampleListInset();
   const { scenario } = useLaunchArgs();
-  // The one screen that reads the tick, because it is the one that shows the countdown.
   const live = useSmileIDSampleSessionStore((state) => smileIDSampleLiveSession(state, state.nowMillis));
   const nowMillis = useSmileIDSampleSessionStore((state) => state.nowMillis);
   const ended = useSmileIDSampleSessionStore((state) => smileIDSampleSessionExpired(state, state.nowMillis));
@@ -37,7 +36,6 @@ export default function Products() {
         sessionRemaining: live === null ? null : smileIDSampleCountdown(smileIDSampleSessionRemaining(live, nowMillis)),
         sessionEnded: ended,
       }}
-      // Past the forms when the token binds everything they would collect, judged at the tap.
       onProductPress={(product) => router.push(smileIDSampleFirstStepFor(product, smileIDSampleLiveBindingsNow(scenario)))}
       onProfilePress={() => router.push('/profiles/switch')}
       onScanPress={() => router.push('/token/scan')}

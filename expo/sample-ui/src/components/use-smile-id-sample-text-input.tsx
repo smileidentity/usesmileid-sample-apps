@@ -30,7 +30,7 @@ type Props = {
   masked?: boolean;
   textAlign?: TextStyle['textAlign'];
   testID?: string;
-  /// Puts the id on the whole field, as Compose tags a field whose box is its decoration, so a placement check measures the field.
+  /// Tags the whole field rather than the input, as Compose does.
   testIDOnField?: boolean;
   leading?: (tint: string) => ReactNode;
   trailing?: (tint: string) => ReactNode;

@@ -7,18 +7,18 @@ import {
   type UseSmileIDSampleUserDetailsRequirement,
 } from '@smileid/sample-ui';
 
-/// Everything a token's bindings decide about a run, resolved once at entry (token-binding-matrix-android.md §4).
+/// Everything a token's bindings decide about a run.
 export type UseSmileIDSampleFlowPlan = {
-  /// Which user-details rows the host must still collect; nothing outstanding means skip the form.
+  /// The rows the host must still collect; none outstanding skips the form.
   readonly userDetailsGap: UseSmileIDSampleUserDetailsRequirement;
   readonly showIdDetailsForm: boolean;
-  /// False once the token carries consent: declaring the screen anyway ends the run before it starts.
+  /// False once the token carries consent.
   readonly declareConsentScreen: boolean;
-  /// False means pass no `userDetails` at all — never blanks, which silence the SDK's per-field errors.
+  /// False means pass no `userDetails`, never blanks.
   readonly passUserDetails: boolean;
 };
 
-/// The one decision the forms, the gate and the builder all read, so none of them re-derives it.
+/// The one decision the forms, the gate and the builder read.
 export const smileIDSampleFlowPlan = (
   bindings: UseSmileIDSampleTokenBindings | null | undefined,
   product: UseSmileIDSampleProduct,

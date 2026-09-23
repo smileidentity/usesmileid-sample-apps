@@ -180,7 +180,7 @@ describe.each(cases)('$component', ({ states }) => {
   });
 });
 
-/// The scanner's status pill, which Android goldens per state and spec/components.json does not yet list.
+/// The scanner's status pill, per state.
 const statusCases: Record<string, Case> = {
   searching: { element: () => <UseSmileIDSampleScanStatus state={{ kind: 'searching' }} onRetry={noop} /> },
   found: { element: () => <UseSmileIDSampleScanStatus state={{ kind: 'found' }} onRetry={noop} /> },

@@ -10,7 +10,7 @@ import {
 
 type State = {
   readonly args: UseSmileIDSampleLaunchArgs;
-  /// False until the cold-start link is read, which the root waits on so no route snapshots the defaults.
+  /// False until the cold-start link is read; the root waits on it.
   readonly loaded: boolean;
 };
 
@@ -18,7 +18,7 @@ const useLaunchStore = create<State>(() => ({ args: smileIDSampleLaunchArgDefaul
 
 let reading: Promise<void> | null = null;
 
-/// Reads the cold-start link once per process: a link delivered to a live app must never re-seed the arguments.
+/// Reads the cold-start link once per process, so a live link never re-seeds.
 export const smileIDSampleLoadLaunchArgs = (): Promise<void> => {
   reading ??= Linking.getInitialURL()
     .then((url) => smileIDSampleLaunchArgsFromUrl(url))
@@ -27,7 +27,7 @@ export const smileIDSampleLoadLaunchArgs = (): Promise<void> => {
   return reading;
 };
 
-/// The launch arguments, the same value on every screen from the first frame the root lets through.
+/// The launch arguments.
 export const useLaunchArgs = (): UseSmileIDSampleLaunchArgs => {
   useEffect(() => {
     void smileIDSampleLoadLaunchArgs();
@@ -38,7 +38,7 @@ export const useLaunchArgs = (): UseSmileIDSampleLaunchArgs => {
 /// Whether the cold-start link has been read.
 export const useLaunchArgsLoaded = (): boolean => useLaunchStore((state) => state.loaded);
 
-/// Forgets the read, so each test starts as a cold start does.
+/// Forgets the read, for tests.
 export const smileIDSampleResetLaunchArgs = (): void => {
   reading = null;
   useLaunchStore.setState({ args: smileIDSampleLaunchArgDefaults, loaded: false });

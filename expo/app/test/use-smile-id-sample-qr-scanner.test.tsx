@@ -2,7 +2,7 @@ import { render } from '@testing-library/react-native';
 
 import { UseSmileIDSampleQrScanner } from '../src/scan/use-smile-id-sample-qr-scanner';
 
-/// The permission the next render reports, and the request the scanner may make.
+/// The permission the next render reports.
 let mockPermission: { granted: boolean; canAskAgain: boolean; status: string } | null = null;
 const mockRequest = jest.fn(async () => mockPermission);
 jest.mock('expo-camera', () => ({
@@ -19,7 +19,6 @@ describe('the scanner camera permission', () => {
   it('asks once per visit, so a denial is not answered with the same dialog again', async () => {
     mockPermission = { granted: false, canAskAgain: true, status: 'undetermined' };
     const screen = await render(<UseSmileIDSampleQrScanner enabled onCandidate={() => undefined} torchOn={false} />);
-    // A denial that still lets the app ask arrives as a new permission object.
     mockPermission = { granted: false, canAskAgain: true, status: 'denied' };
     await screen.rerender(<UseSmileIDSampleQrScanner enabled onCandidate={() => undefined} torchOn={false} />);
     mockPermission = { granted: false, canAskAgain: true, status: 'denied' };

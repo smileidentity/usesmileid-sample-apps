@@ -9,20 +9,20 @@ import {
   type UseSmileIDSampleTokenSession,
 } from './use-smile-id-sample-token-session';
 
-/// Where the session record's bytes live: the platform's secure store in an app, memory in a test.
+/// Where the session record's bytes live.
 export type UseSmileIDSampleSessionStorage = {
   read: () => Promise<string | null>;
   /// Null deletes the record.
   write: (value: string | null) => Promise<void>;
 };
 
-/// A run the expiry gate sent away, carrying the presentation it was launched in.
+/// A run the expiry gate sent to the scanner.
 export type UseSmileIDSampleRunIntent = {
   readonly productId: string;
   readonly route: UseSmileIDSampleFlowRoute;
 };
 
-/// The whole persisted record, one item so the token and the ended marker can never come from different writes. The keys are Android's.
+/// The persisted record, one item so token and marker never come from different writes.
 type StoredRecord = {
   readonly token_session_token?: string;
   readonly ended_session_id?: string;
@@ -30,24 +30,24 @@ type StoredRecord = {
 };
 
 type State = {
-  /// At most one of `live` and `ended` is ever set: retiring swaps the token for its marker in one write.
+  /// At most one of `live` and `ended` is set.
   readonly live: UseSmileIDSampleTokenSession | null;
   readonly ended: UseSmileIDSampleEndedSession | null;
   readonly loaded: boolean;
-  /// Ticks once a second while a session is live; only what shows the countdown reads it.
+  /// Ticks once a second while a session is live.
   readonly nowMillis: number;
-  /// The expiry gate's hand-off to the scanner — app state, never a route argument.
+  /// The expiry gate's hand-off to the scanner, never a route argument.
   readonly pendingRun: UseSmileIDSampleRunIntent | null;
 };
 
 type Actions = {
-  /// Adopts the shell's storage and reads the record it holds.
+  /// Adopts the shell's storage and reads its record.
   load: (storage: UseSmileIDSampleSessionStorage) => Promise<void>;
-  /// Takes the session rather than the raw token, so only a decoded one can ever be linked.
+  /// Links a decoded session.
   link: (session: UseSmileIDSampleTokenSession) => Promise<void>;
-  /// Deletes the credential at its deadline, keeping only that the session ended; a no-op once another is live.
+  /// Deletes the credential at its deadline, keeping a marker; a no-op once another is live.
   retire: (session: UseSmileIDSampleTokenSession) => Promise<void>;
-  /// Sign out: no ended marker, which would send the next run to the scanner.
+  /// Sign out: no ended marker.
   clear: () => Promise<void>;
   tick: (nowMillis: number) => void;
   sendRun: (intent: UseSmileIDSampleRunIntent) => void;
@@ -66,7 +66,7 @@ const memoryStorage = (): UseSmileIDSampleSessionStorage => {
 };
 
 let storage: UseSmileIDSampleSessionStorage = memoryStorage();
-/// Writes land in the order they were made, so a quick link-then-retire cannot persist backwards.
+/// Writes land in call order.
 let writes: Promise<void> = Promise.resolve();
 
 const persist = (record: StoredRecord | null): Promise<void> => {
@@ -91,12 +91,11 @@ const recordFrom = (text: string | null): Pick<State, 'live' | 'ended'> => {
         : null;
     return { live, ended };
   } catch {
-    // An unreadable record is no session rather than a degraded one.
     return { live: null, ended: null };
   }
 };
 
-/// The token session. The token is the whole live record: every other field decodes from it.
+/// The token session; the token is the whole live record.
 export const useSmileIDSampleSessionStore = create<State & Actions>((set, get) => ({
   live: null,
   ended: null,
@@ -121,7 +120,7 @@ export const useSmileIDSampleSessionStore = create<State & Actions>((set, get) =
   },
 
   retire: async (session) => {
-    // Checked and written in one synchronous step, so a tick queued before a relink cannot end the new session.
+    // Checked and written in one step, so a tick queued before a relink cannot end it.
     if (get().live?.token !== session.token) return;
     set({ live: null, ended: { id: session.id, endedAtMillis: session.expiresAtMillis } });
     await persist({ ended_session_id: session.id, ended_session_at: session.expiresAtMillis });
@@ -143,7 +142,7 @@ export const useSmileIDSampleSessionStore = create<State & Actions>((set, get) =
   },
 }));
 
-/// True from the deadline on; reads the marker too, since the token is deleted at expiry.
+/// True from the deadline on, the marker included.
 export const smileIDSampleSessionExpired = (
   state: Pick<State, 'live' | 'ended'>,
   nowMillis: number,
@@ -156,7 +155,7 @@ export const smileIDSampleLiveSession = (
 ): UseSmileIDSampleTokenSession | null =>
   state.live !== null && !smileIDSampleSessionHasExpired(state.live, nowMillis) ? state.live : null;
 
-/// Ticks once a second while a session is live, and retires it at its deadline — a cold start after expiry included.
+/// Ticks while a session is live and retires it at its deadline, cold starts included.
 export const useSmileIDSampleSessionClock = (): void => {
   const live = useSmileIDSampleSessionStore((state) => state.live);
   useEffect(() => {

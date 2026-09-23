@@ -17,7 +17,7 @@ export type UseSmileIDSampleFlowPreflight =
   | { readonly kind: 'ready' }
   /// The forms can resolve it.
   | { readonly kind: 'needsDetails'; readonly issues: readonly UseSmileIDValidationException[] }
-  /// Only a new token resolves it, so the journey goes back to the scanner rather than to a form.
+  /// Only a new token resolves it.
   | { readonly kind: 'needsSession' }
   /// No form can resolve it, and it must still never reach the SDK.
   | { readonly kind: 'misconfigured'; readonly issues: readonly UseSmileIDValidationException[] };
@@ -26,7 +26,7 @@ export type UseSmileIDSampleFlowPreflight =
 export const smileIDSamplePreflight = (
   snapshot: UseSmileIDSampleFlowLaunchSnapshot,
 ): UseSmileIDSampleFlowPreflight => {
-  // Ahead of the payloads, because no form fixes a session that has run out.
+  // Ahead of the payloads: no form fixes a lapsed session.
   if (snapshot.sessionExpired) return { kind: 'needsSession' };
   const builder = new UseSmileIDFlowBuilder();
   smileIDSampleApplying(builder, snapshot);
@@ -35,7 +35,7 @@ export const smileIDSamplePreflight = (
   // Payloads before the builder's verdict: a form can fix what was typed, not how this built it.
   const checks: ValidationState[] = [];
   if (builder.userDetails !== undefined) {
-    // The public validator takes no token, so the bindings come off what it reports instead.
+    // The public validator takes no token, so the bindings are subtracted.
     checks.push(smileIDSampleMinusRequirement(builder.validateUserDetails(builder.userDetails), requirement));
   }
   if (builder.biometricKYCParams !== undefined)

@@ -21,7 +21,6 @@ export const UseSmileIDSampleNavBarHost = ({ state, navigation }: BottomTabBarPr
   const onTabRoot = smileIDSampleNavItems.some((item) => item.id === selected?.name);
   // Select mode owns the bottom chrome; a bar left here covers Hide from List and eats its tap.
   const selecting = useSmileIDSampleSelectMode();
-  // The ring measures the token's own span, so it drains from full whatever the Portal's expiry.
   const sessionProgress = useSmileIDSampleSessionStore((state) => {
     const live = smileIDSampleLiveSession(state, state.nowMillis);
     return live === null ? null : smileIDSampleSessionProgress(live, state.nowMillis);

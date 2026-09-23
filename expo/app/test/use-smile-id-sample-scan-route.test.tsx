@@ -16,14 +16,14 @@ import { smileIDSampleLoadLaunchArgs, smileIDSampleResetLaunchArgs } from '../sr
 
 jest.mock('@smileid/usesmileid_mlkit_face', () => ({ useSmileIDMlkitFace: { key: 'mlkit' } }));
 jest.mock('@smileid/usesmileid_vision_face', () => ({ useSmileIDVisionFace: { key: 'vision' } }));
-/// The cold-start link, which carries the launch arguments on this platform.
+/// The cold-start link.
 let mockLaunchUrl: string | null = null;
 jest.mock('expo-linking', () => ({ getInitialURL: jest.fn(async () => mockLaunchUrl) }));
 jest.mock('expo-haptics', () => ({
   notificationAsync: jest.fn(async () => undefined),
   NotificationFeedbackType: { Success: 'success', Error: 'error' },
 }));
-/// What the clipboard holds for the Paste test; empty elsewhere.
+/// The clipboard's text.
 let mockClipboard = '';
 jest.mock('expo-clipboard', () => ({ getStringAsync: jest.fn(async () => mockClipboard) }));
 jest.mock('expo-camera', () => ({ CameraView: () => null, useCameraPermissions: () => [null, jest.fn()] }));
@@ -31,7 +31,7 @@ jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: () => ({ top: 44, bottom: 34, left: 0, right: 0 }),
 }));
 
-/// The redirect the route declared, which is how it leaves; recorded rather than navigated.
+/// The redirects a route declared.
 const mockRedirects: string[] = [];
 const mockRouter = { back: jest.fn(), replace: jest.fn(), push: jest.fn(), canGoBack: () => true };
 jest.mock('expo-router', () => ({
@@ -51,7 +51,7 @@ jest.mock('@smileid/usesmileid', () => ({
 
 const inTheme = async (element: ReactElement) => await render(<UseSmileIDSampleThemeProvider dark={false}>{element}</UseSmileIDSampleThemeProvider>);
 
-/// A details-bound session lasting `spanMillis`, so a test can let it lapse without the clock ticking.
+/// A details-bound session lasting `spanMillis`.
 const shortSession = (spanMillis: number) => {
   const nowSeconds = Math.floor(Date.now() / 1000);
   const claims = `{"iat":${nowSeconds - 1},"exp":${Math.ceil((Date.now() + spanMillis) / 1000)},"api_url":"https://testapi.smileidentity.com/v3","payload":{"given_names":"v","last_name":"v","email":"v","country":"KE","id_type":"NATIONAL_ID","id_number":"v"}}`;
@@ -91,7 +91,6 @@ describe('the expiry gate', () => {
     expect(useSmileIDSampleSessionStore.getState().pendingRun).toEqual({ productId: 'enhancedKyc', route: 'fullscreen' });
   });
 
-  // The root waits on the link before any route renders; the entry snapshot must then see it, not the defaults.
   it('takes its snapshot from the launch arguments the cold link carried', async () => {
     mockLaunchUrl = 'usesmileid-sample-expo:///flow/enhancedKyc/run?route=shell';
     await act(async () => {
@@ -104,7 +103,6 @@ describe('the expiry gate', () => {
     expect(useSmileIDSampleSessionStore.getState().pendingRun).toEqual({ productId: 'enhancedKyc', route: 'shell' });
   });
 
-  // The clock ticks once a second, so a session can lapse between the last tick and the tap.
   it('reads the clock at entry, so a session that lapsed since the last tick is sent to the scanner', async () => {
     const session = shortSession(300);
     await act(async () => {
@@ -170,7 +168,6 @@ describe('the scanner', () => {
     await fireEvent.press(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_PASTE));
     await waitFor(() => expect(screen.getByPlaceholderText('Or enter token manually').props.value).toBe('pasted.token.value'));
     expect(screen.queryByText('Link token')).not.toBeNull();
-    // The id is the whole field, Paste inside it, as the Compose field is tagged.
     expect(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_MANUAL_ENTRY)).toContainElement(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_PASTE));
   });
 });

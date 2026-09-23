@@ -1,8 +1,8 @@
-/// Byte helpers the decoder needs, in plain TypeScript: Hermes has no Buffer and no synchronous digest.
+/// Byte helpers in plain TypeScript: Hermes has no Buffer or synchronous digest.
 
 const BASE64_URL_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 
-/// Padding-optional base64url to bytes; null when the length cannot be a base64 encoding.
+/// Padding-optional base64url to bytes, or null.
 export const smileIDSampleBase64UrlBytes = (segment: string): Uint8Array | null => {
   const text = segment.replace(/=+$/, '');
   if (text.length % 4 === 1) return null;
@@ -37,7 +37,7 @@ export const smileIDSampleBase64UrlEncode = (text: string): string => {
   return out;
 };
 
-/// UTF-8 bytes to text, replacing a malformed sequence the way Kotlin's decoder does.
+/// UTF-8 bytes to text, replacing a malformed sequence as Kotlin does.
 export const smileIDSampleUtf8Text = (bytes: Uint8Array): string => {
   let out = '';
   let at = 0;
@@ -91,7 +91,7 @@ const ROUND = Uint32Array.from([
 
 const rotate = (value: number, by: number) => (value >>> by) | (value << (32 - by));
 
-/// SHA-256, so the session handle matches the other three apps byte for byte.
+/// SHA-256, so the handle matches the other apps.
 export const smileIDSampleSha256 = (message: Uint8Array): Uint8Array => {
   const length = message.length;
   const padded = new Uint8Array(Math.ceil((length + 9) / 64) * 64);

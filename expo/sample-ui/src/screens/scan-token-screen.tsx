@@ -32,21 +32,21 @@ import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
 const SCAN_TITLE = 'Point at a Smile token QR';
 const SCAN_CAPTION = 'Line up the code inside the frame to link this device to a verification session.';
 const SCAN_BODY_SIZE = 12.5;
-/// Long enough to read "Session linked" and its handle, short enough not to feel like a wait.
+/// Long enough to read "Session linked".
 const LINKED_DWELL_MILLIS = 900;
-/// The design's own reticle opacity, which keeps it from competing with the preview.
+/// The design's reticle opacity at rest.
 const RETICLE_IDLE_ALPHA = 0.45;
 const RETICLE_WIDTH_FRACTION = 0.72;
 const RETICLE_HEIGHT_FRACTION = 0.52;
 const COPY_SHADOW_BLUR = 8;
 
-/// What the host's camera preview is handed: whether to read frames, and where to send a code.
+/// What the host's camera preview is handed.
 export type UseSmileIDSampleViewfinderProps = {
   readonly enabled: boolean;
   readonly onCandidate: (candidate: string) => void;
 };
 
-/// A moment the host may acknowledge in the hand, since a silent success at a scanner feels like a freeze.
+/// A moment the host may acknowledge in the hand.
 export type UseSmileIDSampleScanFeedback = 'linked' | 'rejected';
 
 type Props = {
@@ -57,19 +57,19 @@ type Props = {
     bindings: UseSmileIDSampleSimulatedBindings,
     environment: UseSmileIDSampleEnvironment,
   ) => void;
-  /// The host's clipboard, since reading it is platform-owned; absent drops the Paste action.
+  /// The host's clipboard; absent drops Paste.
   onPaste?: () => Promise<string | null>;
-  /// Why the screen opened when something sent the user here; absent when opened deliberately.
+  /// Why the screen opened, when something sent the user here.
   reason?: UseSmileIDSampleScanReason | null;
   torchOn?: boolean;
   onTorchToggle?: () => void;
-  /// The host's camera preview. Absent — in a golden, or a host without a camera — the screen keeps the glyph.
+  /// The host's camera preview; absent keeps the glyph.
   Viewfinder?: ComponentType<UseSmileIDSampleViewfinderProps>;
   onFeedback?: (feedback: UseSmileIDSampleScanFeedback) => void;
   style?: StyleProp<ViewStyle>;
 };
 
-/// Scan token. A token arrives from the host's camera, by hand, or from a simulated scan, and links only once it decodes.
+/// Scan token: from the camera, by hand or simulated, linked only once it decodes.
 export const ScanTokenScreen = ({
   onBack,
   onLink,
@@ -86,14 +86,13 @@ export const ScanTokenScreen = ({
   const [sheet, setSheet] = useState<UseSmileIDSampleScanSheetState>(smileIDSampleScanSheetDefaults);
   const [scan, setScan] = useState<UseSmileIDSampleScanState>({ kind: 'searching' });
   const [area, setArea] = useState({ width: 0, height: 0 });
-  // Held apart from the display state: the credential has no business in something a pill renders.
   const [linked, setLinked] = useState<UseSmileIDSampleTokenSession | null>(null);
   const announce = useEffectEvent((feedback: UseSmileIDSampleScanFeedback) => onFeedback?.(feedback));
   const leave = useEffectEvent(() => {
     if (linked !== null) onLink(linked);
   });
 
-  // Scanned, pasted or typed, a candidate is judged here and nowhere else — proving it parses, never that it is valid.
+  // Proves a candidate parses, never that it is valid.
   const judge = (candidate: string, fromField: boolean) => {
     const decoded = smileIDSampleDecodeToken(candidate);
     if (decoded.kind === 'decoded') {
@@ -106,7 +105,7 @@ export const ScanTokenScreen = ({
       });
       return;
     }
-    // The field's error sits under the field; a scanned code has no field, so it answers in the pill. Never both.
+    // A scanned code has no field, so its rejection goes in the pill.
     if (fromField) setSheet((current) => ({ ...current, rejection: decoded.reason }));
     else setScan({ kind: 'rejected', reason: decoded.reason });
   };
@@ -115,7 +114,7 @@ export const ScanTokenScreen = ({
     if (scan.kind !== 'linked' && scan.kind !== 'rejected') return undefined;
     announce(scan.kind);
     if (scan.kind !== 'linked') return undefined;
-    // Held long enough to be read, then the screen leaves: navigating on the decode frame looked like nothing happened.
+    // Held to be read: leaving on the decode frame looked like nothing happened.
     const timer = setTimeout(leave, LINKED_DWELL_MILLIS);
     return () => clearTimeout(timer);
   }, [scan]);
@@ -159,7 +158,7 @@ export const ScanTokenScreen = ({
         onLayout={(event) => setArea({ width: event.nativeEvent.layout.width, height: event.nativeEvent.layout.height })}
       >
         {Viewfinder === undefined ? (
-          // Centring and scrolling are one requirement: at 2x the copy no longer fits above the sheet.
+          // Scrolls: at 2x the copy no longer fits above the sheet.
           <ScrollView
             contentContainerStyle={[
               styles.placeholder,
@@ -186,7 +185,7 @@ export const ScanTokenScreen = ({
                   style={{ opacity: searching ? RETICLE_IDLE_ALPHA : 1 }}
                 />
               ) : null}
-              {/* Straight on the camera: a container here was a white slab over the preview. */}
+              {/* Straight on the camera: a container was a white slab over the preview. */}
               {searching ? (
                 <>
                   <Text style={[titleStyle, styles.copy, overCamera]}>{SCAN_TITLE}</Text>
@@ -195,7 +194,6 @@ export const ScanTokenScreen = ({
               ) : (
                 <UseSmileIDSampleScanStatus
                   state={scan}
-                  // Re-enables the scanner, whose last-seen code clears with it so the same QR reads.
                   onRetry={() => {
                     setSheet((current) => ({ ...current, rejection: null }));
                     setScan({ kind: 'searching' });
@@ -240,6 +238,6 @@ const styles = StyleSheet.create({
   area: { flex: 1, width: '100%' },
   placeholder: { alignItems: 'center', flexGrow: 1, justifyContent: 'center' },
   overlay: { alignItems: 'center', flex: 1, justifyContent: 'center' },
-  // Width-bound, because centred copy that is not wraps past both edges instead.
+  // Width-bound, or centred copy wraps past both edges.
   copy: { textAlign: 'center', width: '100%' },
 });

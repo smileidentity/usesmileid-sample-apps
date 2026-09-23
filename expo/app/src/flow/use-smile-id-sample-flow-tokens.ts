@@ -21,7 +21,7 @@ export const smileIDSampleFlowToken = ({
 /// What `badRefresh` hands back, so the failure path has something unusable to reject.
 export const smileIDSampleMalformedToken = (): string => 'sample-not-a-jwt';
 
-/// What a simulated scan links: the same unsigned shape over the chosen span and bindings. The PII values are deliberate nonsense.
+/// A simulated scan's unsigned token over the chosen span and bindings, with nonsense PII.
 export const smileIDSampleSimulatedToken = ({
   span,
   bindings,
@@ -35,12 +35,12 @@ export const smileIDSampleSimulatedToken = ({
 }): string => {
   const nowSeconds = Math.floor(nowMillis / millisPerSecond);
   const spanSeconds = span.spanMillis / millisPerSecond;
-  // An ended span is minted wholly in the past, which is the only way to reach the expiry gate.
+  // An ended span is minted in the past, the only way to reach the expiry gate.
   const issuedAt = span.ended ? nowSeconds - spanSeconds - endedLagSeconds : nowSeconds;
   const claims = [
     `"iat":${issuedAt}`,
     `"exp":${issuedAt + spanSeconds}`,
-    // With the path a real claim carries, so the fixture exercises the host match.
+    // With a real claim's path, so the host match is exercised.
     `"api_url":"${smileIDSampleEnvironmentBaseUrl(environment)}${apiPath}"`,
   ];
   if (bindings.consent || bindings.userDetails) claims.push(payloadClaim(bindings, issuedAt));
@@ -51,14 +51,14 @@ const payloadClaim = (bindings: UseSmileIDSampleSimulatedBindings, issuedAtSecon
   const fields: string[] = [];
   if (bindings.userDetails) {
     for (const field of vaultedFields) fields.push(`"${field}":"vault_${field}"`);
-    // The two the Portal leaves in plaintext, so a decode can read them back.
+    // Plaintext on a Portal token too.
     fields.push('"country":"KE"', '"id_type":"NATIONAL_ID"');
   }
   if (bindings.consent) fields.push(consentClaim(issuedAtSeconds));
   return `"payload":{${fields.join(',')}}`;
 };
 
-/// All four subfields: the SDK treats a partial binding as a build error, not a partial relaxation.
+/// All four subfields: a partial binding is a build error.
 const consentClaim = (issuedAtSeconds: number): string => {
   const grantedAt = new Date(issuedAtSeconds * millisPerSecond).toISOString().replace(/\.\d{3}Z$/, 'Z');
   return (

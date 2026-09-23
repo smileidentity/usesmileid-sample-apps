@@ -17,7 +17,7 @@ import {
   type UseSmileIDSampleTokenBindings,
 } from '../src/state/use-smile-id-sample-token-decoder';
 
-/// The same cases as Android's and iOS's decoder tests, so no platform can quietly disagree about what "bound" means.
+/// The same cases as Android's and iOS's decoder tests.
 const IAT = 1_755_500_000;
 const EXP = 1_755_500_900;
 const GRANTED_AT = '2026-08-18T09:00:00Z';
@@ -103,7 +103,6 @@ describe('the token decoder', () => {
     expect(candidate.startsWith(decoded.id)).toBe(false);
     expect(candidate).not.toContain(decoded.id);
     expect(session(candidate)!.id).toBe(decoded.id);
-    // The first four bytes of SHA-256, so the handle matches the other three apps for the same token.
     expect(decoded.id).toBe(createHash('sha256').update(candidate).digest('hex').slice(0, 8));
   });
 

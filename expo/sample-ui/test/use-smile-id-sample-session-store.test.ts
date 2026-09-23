@@ -15,7 +15,7 @@ const tokenFor = (iatSeconds: number, expSeconds: number) =>
     .map(base64Url)
     .join('.');
 
-/// A storage whose bytes the test can read, standing in for the platform secure store.
+/// A storage whose bytes the test can read.
 const recordingStorage = (initial: string | null = null) => {
   let value = initial;
   const storage: UseSmileIDSampleSessionStorage = {
@@ -109,7 +109,6 @@ describe('the session store', () => {
   });
 
   it('never lets a late retirement of a stale session end a fresher one linked before it', async () => {
-    // Writes that take a while to land, as the platform secure store's do.
     let stored: string | null = null;
     const slow: UseSmileIDSampleSessionStorage = {
       read: async () => stored,
@@ -127,7 +126,6 @@ describe('the session store', () => {
 
     const fresh = smileIDSampleTokenSession(liveToken)!;
     const linking = useSmileIDSampleSessionStore.getState().link(fresh);
-    // The tick that saw the stale session fires after the link, as a timer queued before it would.
     const retiring = useSmileIDSampleSessionStore.getState().retire(stale);
     await Promise.all([linking, retiring]);
 

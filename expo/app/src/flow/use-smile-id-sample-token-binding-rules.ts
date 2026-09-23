@@ -9,11 +9,11 @@ import type { UseSmileIDValidationException, ValidationState } from '@smileid/us
 
 import { useLaunchArgs } from '../use-smile-id-sample-launch';
 
-/// The two scenarios that are about refresh, which a scanned token has no journey for, so they keep the fixtures.
+/// The two refresh scenarios, which keep the fixture tokens.
 export const smileIDSampleStartsExpired = (scenario: string): boolean =>
   scenario === 'expiredToken' || scenario === 'badRefresh';
 
-/// The live-session rule in one place, so nothing disagrees about whether a token is live.
+/// The live-session rule in one place.
 export const smileIDSampleLiveSessionFor = (
   session: UseSmileIDSampleTokenSession | null,
   scenario: string,
@@ -21,12 +21,12 @@ export const smileIDSampleLiveSessionFor = (
 ): UseSmileIDSampleTokenSession | null =>
   smileIDSampleStartsExpired(scenario) ? null : smileIDSampleLiveSession({ live: session }, nowMillis);
 
-/// The bindings a run starting now may read: the clock is read here, never the last tick.
+/// The bindings a run starting now may read, from the clock rather than the last tick.
 export const smileIDSampleLiveBindingsNow = (scenario: string): UseSmileIDSampleTokenBindings | null =>
   smileIDSampleLiveSessionFor(useSmileIDSampleSessionStore.getState().live, scenario, Date.now())?.bindings ??
   null;
 
-/// The bindings a form renders from, through the same rule; the tick re-renders it when the session lapses.
+/// The bindings a form renders from, re-read on each tick.
 export const useSmileIDSampleLiveBindings = (): UseSmileIDSampleTokenBindings | null => {
   const { scenario } = useLaunchArgs();
   const live = useSmileIDSampleSessionStore((state) => state.live);
@@ -51,7 +51,7 @@ const covers = (requirement: UseSmileIDSampleUserDetailsRequirement, issue: UseS
       return !requirement.firstName;
     case 'userDetails.lastName':
       return !requirement.lastName;
-    // The contact rule is reported against the object, so its reason is what identifies it.
+    // The contact rule is reported against the object; its reason identifies it.
     case 'userDetails':
       return !requirement.contact && String(details.reason).toLowerCase().includes('email');
     default:

@@ -5,17 +5,17 @@ import {
   type UseSmileIDSampleStatusRefresh,
 } from '@smileid/sample-ui';
 
-/// Ten seconds, the same on every platform, so a dead network ends the spinner rather than holding it.
+/// Ten seconds, the same on every platform.
 const TIMEOUT_MILLIS = 10_000;
 
-/// Percent-encoded as one path segment, or a `/`, `?` or `#` would change which request the token is sent with.
+/// One path segment, or a `/`, `?` or `#` would change the request.
 export const smileIDSampleStatusUrl = (jobId: string, sandbox: boolean): string | null => {
   const segment = encodeURIComponent(jobId);
   if (segment.length === 0) return null;
   return `${smileIDSampleEnvironmentBaseUrl(sandbox ? 'sandbox' : 'production')}v3/status/${segment}`;
 };
 
-/// The HTTP code and body onto an outcome. Pure, so the branch table is unit-testable.
+/// The HTTP code and body onto an outcome.
 export const smileIDSampleStatusOutcome = (code: number, body: unknown): UseSmileIDSampleStatusRefresh => {
   const response = body as { status?: unknown; message?: unknown } | null;
   if (response === null || typeof response !== 'object' || code < 200 || code >= 300) {
@@ -30,7 +30,7 @@ export const smileIDSampleStatusOutcome = (code: number, body: unknown): UseSmil
   return { kind: 'updated', status, message: response.message, httpCode: code };
 };
 
-/// Five API states onto the four badges the design draws: `error` lands on Blocked and leans on the server's message.
+/// Five API states onto four badges; `error` is Blocked.
 const statusFor = (status: string): UseSmileIDSampleStatus | null => {
   switch (status) {
     case 'clear':
@@ -45,7 +45,7 @@ const statusFor = (status: string): UseSmileIDSampleStatus | null => {
   }
 };
 
-/// `GET /v3/status/{jobId}` — the partner's own call: the SDK stops at the 202 that creates the job.
+/// `GET /v3/status/{jobId}`, the partner's own call.
 export const smileIDSampleStatusApi: UseSmileIDSampleJobStatusSource = {
   check: async (jobId, token, sandbox) => {
     const url = smileIDSampleStatusUrl(jobId, sandbox);
@@ -53,7 +53,7 @@ export const smileIDSampleStatusApi: UseSmileIDSampleJobStatusSource = {
     const abort = new AbortController();
     const timer = setTimeout(() => abort.abort(), TIMEOUT_MILLIS);
     try {
-      // The session's own JWT. Never logged.
+      // The session's JWT; never logged.
       const response = await fetch(url, { headers: { 'SmileID-Token': token }, signal: abort.signal });
       const body: unknown = await response.json().catch(() => null);
       return smileIDSampleStatusOutcome(response.status, body);

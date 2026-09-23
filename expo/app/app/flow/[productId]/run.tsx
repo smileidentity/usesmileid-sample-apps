@@ -54,9 +54,9 @@ export default function SdkFlowRun() {
   const snapshot = useMemo<UseSmileIDSampleFlowLaunchSnapshot | null>(() => {
     const product = smileIDSampleProductFrom(productId);
     if (product === null) return null;
-    // Read, not subscribed: the once-a-second tick would re-render the host, and the SDK tears a remounted run down.
+    // Read, not subscribed: a tick re-render would tear the SDK run down.
     const sessions = useSmileIDSampleSessionStore.getState();
-    // The clock itself, not the last tick: a session can lapse in the second between the two.
+    // The clock, not the last tick: a session can lapse between ticks.
     // eslint-disable-next-line react-hooks/purity -- read once, inside the entry-only memo
     const entryMillis = Date.now();
     const session = smileIDSampleLiveSession(sessions, entryMillis);
@@ -67,7 +67,6 @@ export default function SdkFlowRun() {
       idDetails,
       scenario: args.scenario,
       theme: args.theme,
-      // The linked session owns the environment; no session is sandbox, which is every automated run.
       sandbox: session?.environment !== 'production',
       allowAgentMode: settings.agentMode,
       enableEnhancedLiveness: settings.enhancedSmartSelfie,
@@ -99,7 +98,6 @@ export default function SdkFlowRun() {
 
   // Declared, not replaced from an effect: on a cold link that took the whole app off screen.
   if (snapshot === null) return <Redirect href="/products" />;
-  // Back to the scanner, not to a form: the run needs a token, and no form holds one.
   if (preflight?.kind === 'needsSession') {
     return <SendToScanner intent={{ productId: snapshot.product.id, route: snapshot.route }} />;
   }
@@ -149,12 +147,11 @@ export default function SdkFlowRun() {
 
 const acceptedCode = 202;
 
-/// Hands the run to the scanner so a relink resumes it; a layout effect runs before the redirect's own effect.
+/// Hands the run to the scanner; a layout effect runs before the redirect's.
 const SendToScanner = ({ intent }: { intent: UseSmileIDSampleRunIntent }) => {
   const sendRun = useSmileIDSampleSessionStore((state) => state.sendRun);
   useLayoutEffect(() => {
     sendRun(intent);
-    // Once: the intent is this entry's, and re-sending would outlive the scanner's claim.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return <Redirect href="/token/scan" />;

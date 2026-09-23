@@ -33,7 +33,6 @@ export default function VerificationDetails() {
     async (silent: boolean) => {
       if (jobId === undefined) return;
       if (!silent) setRefreshing(true);
-      // The store decides whether the session may ask, including for a row another partner submitted.
       const outcome = await refresh(
         jobId,
         useSmileIDSampleSessionStore.getState().live,
@@ -43,7 +42,7 @@ export default function VerificationDetails() {
       // Only the call that raised the spinner lowers it: the on-entry refresh is silent and shows
       // none, so clearing it there ended a pull-to-refresh the reader had started moments before.
       if (!silent) setRefreshing(false);
-      // The entry refresh is silent only about "still processing", which every visit would otherwise repeat.
+      // Silent on entry only about "still processing", which every visit would repeat.
       if (outcome !== null && (!silent || outcome.kind !== 'stillProcessing')) {
         show({ message: smileIDSampleRefreshLabel(outcome) });
       }
@@ -71,7 +70,6 @@ export default function VerificationDetails() {
         onRefresh={() => void run(false)}
         onCopy={() => undefined}
       />
-      {/* Past the system bar, which edge-to-edge draws over this route; a pushed screen has no nav bar to clear. */}
       <UseSmileIDSampleTransientNoticeHost state={notice} style={noticeStyle} />
     </View>
   );

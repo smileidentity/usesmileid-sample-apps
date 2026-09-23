@@ -1,6 +1,6 @@
 import { smileIDSampleEnvironments, type UseSmileIDSampleEnvironment } from './use-smile-id-sample-result';
 
-/// The host each environment names; the SDK's own `SmileIDUrls` resolves to the same two.
+/// The host each environment names.
 export const smileIDSampleEnvironmentHosts: Readonly<Record<UseSmileIDSampleEnvironment, string>> = {
   sandbox: 'testapi.smileidentity.com',
   production: 'api.smileidentity.com',
@@ -16,14 +16,14 @@ export const smileIDSampleEnvironmentLabels: Readonly<Record<UseSmileIDSampleEnv
 export const smileIDSampleEnvironmentBaseUrl = (environment: UseSmileIDSampleEnvironment): string =>
   `https://${smileIDSampleEnvironmentHosts[environment]}/`;
 
-// Scheme then authority, as java.net.URI reads it; a value without `//` names no host.
+// Scheme then authority, as java.net.URI reads it.
 const AUTHORITY = /^[a-z][a-z0-9+.-]*:\/\/([^/?#]*)/i;
 const HOST = /^[a-z0-9.-]+$/i;
 
-/// The host an `api_url` names, so a rejection can say which one it saw. Null when the value carries none.
+/// The host an `api_url` names, or null.
 export const smileIDSampleApiUrlHost = (apiUrl: string | null | undefined): string | null => {
   const trimmed = apiUrl?.trim() ?? '';
-  // Whitespace inside is not a URL at all, which is where java.net.URI throws.
+  // Whitespace inside is where java.net.URI throws.
   if (trimmed.length === 0 || /\s/.test(trimmed)) return null;
   const authority = AUTHORITY.exec(trimmed)?.[1];
   if (authority === undefined) return null;
@@ -31,7 +31,7 @@ export const smileIDSampleApiUrlHost = (apiUrl: string | null | undefined): stri
   return HOST.test(host) ? host.toLowerCase() : null;
 };
 
-/// A token's `api_url` onto an environment, on the parsed host: a real claim carries a `/v3` path, so a string compare misses silently.
+/// A token's `api_url` onto an environment, by its parsed host.
 export const smileIDSampleEnvironmentFor = (
   apiUrl: string | null | undefined,
 ): UseSmileIDSampleEnvironment | null => {

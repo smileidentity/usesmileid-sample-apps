@@ -32,7 +32,7 @@ export default function Settings() {
   const load = useSmileIDSampleSettingsStore((state) => state.load);
   const bottomInset = useSmileIDSampleListInset();
   const { scenario } = useLaunchArgs();
-  // Clock-free, so Settings does not re-render on the tick.
+  // Clock-free: Settings must not re-render on the tick.
   const consentBound = useSmileIDSampleSessionStore((state) => state.live?.bindings.consent != null);
   const clearSession = useSmileIDSampleSessionStore((state) => state.clear);
   const clearForms = useSmileIDSampleFormsStore((state) => state.clear);
@@ -63,7 +63,6 @@ export default function Settings() {
       onSettingChange={(setting, enabled) => void setSetting(setting, enabled)}
       onProfilePress={() => router.push('/profiles')}
       onNavRowPress={onNavRowPress}
-      // There is no auth to leave, so signing out is the local state a partner would expect gone.
       onSignOut={() => {
         clearSession().catch(() => undefined);
         clearForms();

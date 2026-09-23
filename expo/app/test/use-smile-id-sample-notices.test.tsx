@@ -14,7 +14,7 @@ import { StyleSheet } from 'react-native';
 import VerificationDetails from '../app/(tabs)/verifications/[jobId]';
 import Profiles from '../app/profiles/index';
 
-/// A three-button nav bar's height, which edge-to-edge draws over the route.
+/// A three-button nav bar's height.
 const BOTTOM_INSET = 48;
 
 jest.mock('react-native-safe-area-context', () => ({
@@ -29,7 +29,7 @@ jest.mock('expo-router', () => ({
 const inTheme = async (element: ReactElement) =>
   await render(<UseSmileIDSampleThemeProvider dark={false}>{element}</UseSmileIDSampleThemeProvider>);
 
-/// The notice host is the only absolutely positioned view either route draws.
+/// The notice host is the only absolutely positioned view.
 const noticeBottom = (screen: Awaited<ReturnType<typeof inTheme>>, message: string): number | undefined => {
   let node = screen.getByText(message).parent;
   while (node !== null) {
@@ -61,7 +61,6 @@ describe('a notice on a screen with no nav bar', () => {
       partnerId: null,
     });
     const screen = await inTheme(<VerificationDetails />);
-    // A pull-to-refresh, which the scroll view hands to its refresh control.
     const scroll = screen.getByTestId('sample_verification_details_screen');
     await act(async () => {
       scroll.props.refreshControl.props.onRefresh();

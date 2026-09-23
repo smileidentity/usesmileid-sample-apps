@@ -1,4 +1,4 @@
-/// How long a simulated scan's token lasts: the Portal's own allow-list, plus Ended, the only way a flow reaches the expiry gate without waiting.
+/// How long a simulated scan's token lasts; Ended reaches the expiry gate without waiting.
 export type UseSmileIDSampleSimulatedSpan = {
   readonly id: 'fifteenMinutes' | 'oneHour' | 'eightHours' | 'ended';
   readonly label: string;
@@ -15,7 +15,7 @@ export const smileIDSampleSimulatedSpans: readonly UseSmileIDSampleSimulatedSpan
   { id: 'ended', label: 'Expired', spanMillis: 15 * MINUTE, ended: true },
 ];
 
-/// What a simulated scan's token binds. Both off by default, so a simulated session never silently changes the screen set.
+/// What a simulated scan's token binds; both off by default.
 export type UseSmileIDSampleSimulatedBindings = {
   readonly consent: boolean;
   readonly userDetails: boolean;

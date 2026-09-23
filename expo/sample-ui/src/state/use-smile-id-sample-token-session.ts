@@ -1,17 +1,17 @@
 import type { UseSmileIDSampleEnvironment } from '../model/use-smile-id-sample-result';
 import type { UseSmileIDSampleTokenBindings } from './use-smile-id-sample-token-decoder';
 
-/// A linked session, held as an absolute deadline because a counter restarts wrong after process death. Only the decoder builds one.
+/// A linked session, held as an absolute deadline; only the decoder builds one.
 export type UseSmileIDSampleTokenSession = {
-  /// A display handle — the token's `jti`, else a digest of it. Never a prefix of the credential.
+  /// A display handle: the `jti`, else a digest; never a prefix.
   readonly id: string;
   readonly token: string;
   readonly issuedAtMillis: number;
   readonly expiresAtMillis: number;
   readonly bindings: UseSmileIDSampleTokenBindings;
-  /// From the token's own `partner_id`, which wins over the profile. Never logged.
+  /// From the token's `partner_id`, which wins over the profile; never logged.
   readonly partnerId: string | null;
-  /// From the token's own `api_url`; the decoder refuses a token it cannot place.
+  /// From the token's `api_url`.
   readonly environment: UseSmileIDSampleEnvironment;
 };
 
@@ -29,7 +29,7 @@ export const smileIDSampleSessionRemaining = (session: UseSmileIDSampleTokenSess
 export const smileIDSampleSessionHasExpired = (session: UseSmileIDSampleTokenSession, nowMillis: number): boolean =>
   nowMillis >= session.expiresAtMillis;
 
-/// 1 fresh to 0 expired over the token's own span; a zero span reads as spent rather than NaN.
+/// 1 fresh to 0 expired over the token's own span.
 export const smileIDSampleSessionProgress = (session: UseSmileIDSampleTokenSession, nowMillis: number): number => {
   const span = Math.max(session.expiresAtMillis - session.issuedAtMillis, 1);
   return Math.min(Math.max(smileIDSampleSessionRemaining(session, nowMillis) / span, 0), 1);
@@ -41,7 +41,7 @@ const SECONDS_PER_HOUR = 3600;
 
 const pad = (value: number) => String(value).padStart(2, '0');
 
-/// `m:ss`, growing an hours part when the span needs one — an 8h token reads 7:59:12, not 479:12.
+/// `m:ss`, with an hours part past an hour.
 export const smileIDSampleCountdown = (remainingMillis: number): string => {
   const total = Math.floor(Math.max(remainingMillis, 0) / MILLIS_PER_SECOND);
   const hours = Math.floor(total / SECONDS_PER_HOUR);

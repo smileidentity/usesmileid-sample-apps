@@ -21,16 +21,16 @@ import { UseSmileIDSampleSuffixedTestIds, UseSmileIDSampleTestIds } from '../use
 
 const SHEET_ACTION_SIZE = 13;
 
-/// What the sheet renders, so the screen owns the entry state and the sheet stays stateless.
+/// What the sheet renders; the screen owns the state.
 export type UseSmileIDSampleScanSheetState = {
   readonly token: string;
-  /// Why the entered token is not a session — shown under the field, never the token itself.
+  /// Why the entered token is not a session; never the token.
   readonly rejection: string | null;
   readonly span: UseSmileIDSampleSimulatedSpan;
   /// Which host the minted token's `api_url` will name.
   readonly environment: UseSmileIDSampleEnvironment;
   readonly bindings: UseSmileIDSampleSimulatedBindings;
-  /// The mint controls start closed so the viewfinder keeps its height.
+  /// The mint controls, closed by default.
   readonly expanded: boolean;
 };
 
@@ -46,7 +46,7 @@ export const smileIDSampleScanSheetDefaults: UseSmileIDSampleScanSheetState = {
 type Props = {
   state: UseSmileIDSampleScanSheetState;
   onTokenChange: (token: string) => void;
-  /// Absent when the host has no clipboard reader, which drops the action rather than showing a dead one.
+  /// Absent drops the Paste action.
   onPaste?: () => void;
   onLink: () => void;
   onExpandToggle: () => void;
@@ -57,7 +57,7 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
-/// The sheet under the scanner: manual entry, and a simulated scan that mints its own fixture token.
+/// The sheet under the scanner: manual entry and a simulated scan.
 export const UseSmileIDSampleScanSheet = ({
   state,
   onTokenChange,
@@ -95,7 +95,7 @@ export const UseSmileIDSampleScanSheet = ({
         placeholder="Or enter token manually"
         isError={state.rejection !== null}
         errorMessage={state.rejection}
-        // A 900-character bearer credential nobody proofreads, kept out of screenshots and hierarchy dumps.
+        // Masked: a bearer credential, kept out of screenshots and hierarchy dumps.
         masked
         testID={UseSmileIDSampleTestIds.TOKEN_MANUAL_ENTRY}
         testIDOnField
@@ -117,7 +117,6 @@ export const UseSmileIDSampleScanSheet = ({
               )
         }
       />
-      {/* Only once there is something to link, so the default sheet keeps the design's two rows. */}
       {state.token.trim().length > 0 ? <UseSmileIDSampleButton text="Link token" onPress={onLink} /> : null}
       <Pressable
         accessibilityRole="button"
@@ -145,7 +144,6 @@ export const UseSmileIDSampleScanSheet = ({
               />
             ))}
           </View>
-          {/* Minting is where a run picks an environment, because there is no app-side control left. */}
           <View style={[styles.flow, { gap: theme.dimens.spacing.xs }]}>
             {smileIDSampleEnvironments.map((environment) => (
               <ScanSheetChip
@@ -191,7 +189,7 @@ type ChipProps = {
   testID?: string;
 };
 
-/// The filter chip's shape without its count, because what a simulated scan mints has no count.
+/// The filter chip's shape without its count.
 const ScanSheetChip = ({ label, selected, role, onPress, testID }: ChipProps) => {
   const theme = useSmileIDSampleTheme();
   const stroke = selected ? 0 : smileCardStrokeWidth;

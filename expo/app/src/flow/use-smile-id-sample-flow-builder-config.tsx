@@ -49,7 +49,7 @@ export const smileIDSampleApplying = (
   snapshot: UseSmileIDSampleFlowLaunchSnapshot,
 ): void => {
   const scanned = smileIDSampleSnapshotSession(snapshot);
-  // Omitted, never blanked, when the token binds what the SDK requires: a blank silences its per-field errors.
+  // Omitted, never blanked: a blank silences the SDK's per-field errors.
   if (smileIDSampleFlowPlan(scanned?.bindings, snapshot.product).passUserDetails) {
     builder.userDetails = {
       givenNames: snapshot.userDetails.firstName,
@@ -79,7 +79,7 @@ export const smileIDSampleApplying = (
           expired: smileIDSampleStartsExpired(snapshot.scenario),
           nowMillis: Date.now(),
         });
-      // The Portal mints by hand and nothing here may call it, so a scanned token's auth failure surfaces.
+      // Nothing here may mint a replacement, so a scanned token's auth failure surfaces.
       config.onTokenExpired = async () =>
         scanned !== null
           ? scanned.token
@@ -93,7 +93,7 @@ export const smileIDSampleApplying = (
         logging.level = LogLevel.headers;
       });
       config.partnerConfig((partner) => {
-        // The token wins over the profile: a signed token submitted under another partner id comes back 401.
+        // A signed token under another partner id comes back 401.
         partner.partnerId = scanned?.partnerId ?? snapshot.partnerId;
         partner.callbackUrl = scanned === null ? snapshot.callbackUrl : '';
         partner.useSandbox = snapshot.sandbox;
@@ -119,7 +119,7 @@ export const smileIDSampleJourneyStepsFor = (
 ): UseSmileIDSampleFlowJourneyStep[] => {
   const steps: UseSmileIDSampleFlowJourneyStep[] = [];
   const plan = smileIDSampleFlowPlan(smileIDSampleSnapshotSession(snapshot)?.bindings, snapshot.product);
-  // A consent binding lifts the SDK's requirement, and declaring the screen anyway ends the run before it starts.
+  // Declaring consent under a consent binding ends the run before it starts.
   if (plan.declareConsentScreen && snapshot.consentStep) steps.push('consent');
   // Enhanced KYC is the one journey without capture: consent and processing only, per its validator.
   if (!snapshot.product.capture) return [...steps, 'processing'];
@@ -183,11 +183,11 @@ const applyIdParams = (
   builder: UseSmileIDFlowBuilder,
   snapshot: UseSmileIDSampleFlowLaunchSnapshot,
 ): void => {
-  // Per field the token beats the form, since the server overwrites these from its claims regardless.
+  // The token beats the form: the server overwrites these from its claims.
   const bound = smileIDSampleSnapshotSession(snapshot)?.bindings;
   const country = bound?.country ?? snapshot.idDetails.country?.code ?? '';
   const idType = bound?.idType ?? snapshot.idDetails.idType?.id ?? '';
-  // The SDK asks only that this be non-blank, and the server substitutes the same claim anyway.
+  // The SDK asks only for non-blank, and the server substitutes the claim.
   const idNumber = bound?.idNumberReference ?? snapshot.idDetails.idNumber;
   switch (snapshot.product.id) {
     case 'biometricKyc':

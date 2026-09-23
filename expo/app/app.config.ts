@@ -77,7 +77,7 @@ const config: ExpoConfig = {
     'expo-status-bar',
     'expo-font',
     'react-native-quick-crypto',
-    // The token scanner reads QR only: no microphone, so neither platform asks for one.
+    // QR only, so neither platform asks for the microphone.
     ['expo-camera', { cameraPermission: cameraUsage, microphonePermission: false, recordAudioAndroid: false }],
     // kspVersion is deliberately not passed: the plugin rejects it without kotlinVersion, and its
     // own Kotlin default is what the published AARs were compiled against.

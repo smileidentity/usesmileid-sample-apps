@@ -8,7 +8,7 @@ import {
 } from './use-smile-id-sample-token-bytes';
 import type { UseSmileIDSampleTokenSession } from './use-smile-id-sample-token-session';
 
-/// The consent record bound into the token; `granted` is true or absent, as the SDK reads `false` as no binding.
+/// The consent bound into the token; `granted` is true or absent.
 export type UseSmileIDSampleTokenConsent = {
   readonly granted: boolean | null;
   readonly grantedAt: string | null;
@@ -16,7 +16,7 @@ export type UseSmileIDSampleTokenConsent = {
   readonly noticePrivacyPolicyUrl: string | null;
 };
 
-/// What a v3 token binds. Presence only for the vaulted PII; `country` and `idType` arrive in plaintext.
+/// What a v3 token binds: presence for vaulted PII, plaintext `country` and `idType`.
 export type UseSmileIDSampleTokenBindings = {
   readonly givenNames?: boolean;
   readonly lastName?: boolean;
@@ -25,19 +25,19 @@ export type UseSmileIDSampleTokenBindings = {
   readonly consent?: UseSmileIDSampleTokenConsent | null;
   readonly country?: string | null;
   readonly idType?: string | null;
-  /// The vault reference standing in for the ID number, the only form a token carries it in.
+  /// The vault reference standing in for the ID number.
   readonly idNumberReference?: string | null;
-  /// A webhook URL or a `callback_` id; the server injects it over whatever the body carried.
+  /// A webhook URL or `callback_` id the server injects.
   readonly callbackUrl?: string | null;
 };
 
 /// Either the session a token describes, or why it is not one.
 export type UseSmileIDSampleTokenDecode =
   | { readonly kind: 'decoded'; readonly session: UseSmileIDSampleTokenSession }
-  /// Names the claim or structure that failed; never a value, bar the `api_url` host, which is public.
+  /// Names what failed; never a value, bar the public `api_url` host.
   | { readonly kind: 'rejected'; readonly reason: string };
 
-/// True when the token alone satisfies consent — which is when the SDK drops its consent screen.
+/// True when the token alone satisfies consent.
 export const smileIDSampleConsentIsComplete = (consent: UseSmileIDSampleTokenConsent | null | undefined): boolean =>
   consent != null &&
   consent.granted === true &&
@@ -45,13 +45,13 @@ export const smileIDSampleConsentIsComplete = (consent: UseSmileIDSampleTokenCon
   nonBlank(consent.noticeLanguage) &&
   nonBlank(consent.noticePrivacyPolicyUrl);
 
-/// A duplicate of the SDK's `bindsRequiredUserDetails`, which is internal: both names plus one contact.
+/// The SDK's internal `bindsRequiredUserDetails`: both names plus one contact.
 export const smileIDSampleBindsRequiredUserDetails = (
   bindings: UseSmileIDSampleTokenBindings | null | undefined,
 ): boolean =>
   bindings?.givenNames === true && bindings.lastName === true && (bindings.email === true || bindings.phoneNumber === true);
 
-/// Whether the token carries every ID parameter `product` submits; stricter than Document Verification's validator.
+/// Whether the token carries every ID parameter `product` submits.
 export const smileIDSampleBindsIdDetails = (
   bindings: UseSmileIDSampleTokenBindings | null | undefined,
   product: UseSmileIDSampleProduct,
@@ -68,7 +68,7 @@ export const smileIDSampleBindsIdDetails = (
   }
 };
 
-/// Reads the claims a session is made of. Decoding is not verification: the sample holds no signing key.
+/// Reads a token's claims; decoding is not verification.
 export const smileIDSampleDecodeToken = (token: string): UseSmileIDSampleTokenDecode => {
   const trimmed = token.trim();
   const segments = trimmed.split('.');
@@ -84,7 +84,7 @@ export const smileIDSampleDecodeToken = (token: string): UseSmileIDSampleTokenDe
   const expires = seconds(claims.exp);
   if (expires === null) return reject('The token carries no numeric exp claim.');
   if (expires <= issuedAt) return reject("The token's exp claim is not after its iat claim.");
-  // Refused rather than defaulted: a silent sandbox fallback sends a production token to the wrong host.
+  // Refused, not defaulted: a sandbox fallback sends a production token to the wrong host.
   const apiUrl = valueOf(claims.api_url);
   if (apiUrl === null) {
     return reject('The token carries no api_url claim, so nothing says which environment it was minted for.');
@@ -107,12 +107,12 @@ export const smileIDSampleDecodeToken = (token: string): UseSmileIDSampleTokenDe
     partnerId: valueOf(claims.partner_id),
     environment,
   };
-  // Not enumerable, so a session that reaches JSON or a log never carries the credential.
+  // Not enumerable, so JSON or a log never carries the credential.
   Object.defineProperty(session, 'token', { value: trimmed, enumerable: false });
   return { kind: 'decoded', session };
 };
 
-/// The session a token describes, or null. A stored token that no longer decodes is no session.
+/// The session a token describes, or null.
 export const smileIDSampleTokenSession = (token: string): UseSmileIDSampleTokenSession | null => {
   const decoded = smileIDSampleDecodeToken(token);
   return decoded.kind === 'decoded' ? decoded.session : null;
@@ -124,7 +124,7 @@ type JsonObject = { [key: string]: Json };
 const SEGMENTS = 3;
 const MILLIS_PER_SECOND = 1000;
 const HANDLE_BYTES = 4;
-/// The Android reader's cap, so an untrusted payload is refused at the same depth on every app.
+/// Android's reader cap, so every app refuses the same depth.
 const MAX_DEPTH = 32;
 const BASE64_URL = /^[A-Za-z0-9_-]+$/;
 
@@ -154,14 +154,14 @@ const parseObject = (text: string): JsonObject | null => {
 const seconds = (value: Json | undefined): number | null =>
   typeof value === 'number' && Number.isFinite(value) ? Math.trunc(value) : null;
 
-/// A value claim, read as absent when blank: a blank one would otherwise win.
+/// A value claim, absent when blank.
 const valueOf = (value: Json | undefined): string | null => (typeof value === 'string' && nonBlank(value) ? value : null);
 
-/// A field is token-bound iff the claim carries it as a non-empty string.
+/// Bound iff a non-empty string.
 const binds = (value: Json | undefined): boolean => typeof value === 'string' && value.length > 0;
 
 const bindingsOf = (payload: Json | undefined): UseSmileIDSampleTokenBindings => {
-  // A payload of the wrong shape leaves the token usable and unbound, as the SDK degrades it.
+  // A payload of the wrong shape leaves the token unbound, as the SDK degrades it.
   if (!isObject(payload)) return {};
   return {
     givenNames: binds(payload.given_names),
@@ -176,7 +176,7 @@ const bindingsOf = (payload: Json | undefined): UseSmileIDSampleTokenBindings =>
   };
 };
 
-/// An empty consent object is no consent, and a non-boolean `granted` never counts toward one.
+/// An empty consent object is no consent.
 const consentOf = (value: Json | undefined): UseSmileIDSampleTokenConsent | null => {
   if (!isObject(value) || Object.keys(value).length === 0) return null;
   const text = (field: Json | undefined) => (typeof field === 'string' ? field : null);
@@ -188,7 +188,7 @@ const consentOf = (value: Json | undefined): UseSmileIDSampleTokenConsent | null
   };
 };
 
-/// A display handle, never a prefix of the credential: the first bytes of its SHA-256, in hex.
+/// A display handle: the first bytes of its SHA-256, never a prefix.
 const digest = (token: string): string =>
   Array.from(smileIDSampleSha256(smileIDSampleUtf8Bytes(token)).subarray(0, HANDLE_BYTES))
     .map((byte) => byte.toString(16).padStart(2, '0'))

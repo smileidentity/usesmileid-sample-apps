@@ -124,7 +124,6 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
     screen: 'scanToken',
     states: {
       default: { element: () => scanToken() },
-      // Sent here by the expiry gate, so the caption says why rather than leaving a scanner nobody asked for.
       redirected: { element: () => scanToken('sessionEnded') },
     },
   },

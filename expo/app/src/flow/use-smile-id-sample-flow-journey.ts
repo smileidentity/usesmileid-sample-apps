@@ -7,7 +7,7 @@ import type { Href } from 'expo-router';
 
 import { smileIDSampleFlowPlan } from './use-smile-id-sample-flow-plan';
 
-/// What follows user details, shared with that form's own Continue so the two routes cannot drift.
+/// What follows user details, shared with that form's Continue.
 export const smileIDSampleStepAfterUserDetails = (
   product: UseSmileIDSampleProduct,
   bindings: UseSmileIDSampleTokenBindings | null,
@@ -16,7 +16,7 @@ export const smileIDSampleStepAfterUserDetails = (
     ? `/flow/${product.id}/id-details`
     : `/flow/${product.id}/run`;
 
-/// A product's first step: past the form when the token binds everything it would collect.
+/// A product's first step, past the form when the token binds all it collects.
 export const smileIDSampleFirstStepFor = (
   product: UseSmileIDSampleProduct,
   bindings: UseSmileIDSampleTokenBindings | null,

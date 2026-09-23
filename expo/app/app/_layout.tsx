@@ -85,7 +85,7 @@ export default function RootLayout() {
     if (args.seedJobs) seedFixtures(Date.now()).catch(() => undefined);
   }, [args, resetProfiles, seedFixtures]);
 
-  // Held for the session and the link too: a cold link into a run snapshots both once, at entry.
+  // Held for the session and the link: a cold link into a run snapshots both at entry.
   if (!fontsLoaded || !sessionLoaded || !argsLoaded) {
     return <View style={{ backgroundColor: colors.background, flex: 1 }} />;
   }

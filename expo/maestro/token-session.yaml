@@ -1,26 +1,17 @@
 appId: ${APP_ID}
 ---
-# The token session on a locally minted fixture token: a simulated scan links it, the countdown reads
-# the token's own span, a bound token skips the host's forms and drives a real SDK run, and an ended
-# session turns a run back at the gate and resumes it once relinked.
-#
-# What a fixture token cannot prove, and what still needs a Portal token by hand: a server accepting
-# it, and reading the QR itself off a screen. The token is never asserted on, and the field is masked,
-# because Maestro dumps the hierarchy on failure.
-#
-# Every run below binds the user details rather than typing them: this runner stops reporting the
-# app's hierarchy once a text field is focused (./README.md "Traps").
+# The token session on fixture tokens: Simulate, the countdown, bound runs, and the expiry gate's resume.
+# Details are bound, not typed: this runner loses the hierarchy once a field is focused (README "Traps").
 
-# The session lives in the secure store, which only clearing the app's data removes.
+# Only clearing the app's data removes the stored session.
 - clearState
 - stopApp
 - openLink: "usesmileid-sample-expo://?noticeWindow=60"
 - runFlow: subflows/warm-start.yaml
 
-# A 15m simulated scan: the countdown is the decoded span, not a fixed five minutes.
 - tapOn:
     id: "sample_nav_token"
-# The host owns a camera, so the first permission prompt in this app is ours rather than the SDK's.
+# The host's own camera prompt comes before the SDK's.
 - runFlow:
     when:
       visible:
@@ -40,7 +31,6 @@ appId: ${APP_ID}
     id: "sample_session_countdown"
     text: "1[45]:[0-9]{2}"
 
-# An 8h token, where an m:ss countdown would overflow.
 - tapOn:
     id: "sample_nav_token"
 - assertVisible:
@@ -55,7 +45,6 @@ appId: ${APP_ID}
       text: "[78]:[0-9]{2}:[0-9]{2}"
     timeout: 10000
 
-# Details bound, consent not: both host forms are skipped and the SDK's own consent screen is first.
 - tapOn:
     id: "sample_nav_token"
 - tapOn: "SIMULATED SCAN"
@@ -66,7 +55,7 @@ appId: ${APP_ID}
     visible:
       id: "sample_session_card"
     timeout: 10000
-# Not a bottom-row product: the nav bar floats over the last row's centre.
+# Not a bottom-row card: the nav bar floats over that row.
 - tapOn:
     id: "sample_product_card_documentVerification"
 - extendedWaitUntil:
@@ -81,8 +70,6 @@ appId: ${APP_ID}
       id: "sample_products_screen"
     timeout: 30000
 
-# Details and consent bound: Enhanced KYC has nothing left to ask, so the run lands on processing and
-# submits under the scanned token — which a locally minted token deserves to have refused.
 - tapOn:
     id: "sample_nav_token"
 - tapOn: "SIMULATED SCAN"
@@ -94,8 +81,7 @@ appId: ${APP_ID}
     visible:
       id: "sample_session_card"
     timeout: 10000
-# The bottom-row card sits under the floating nav bar, which counts as visible to Maestro, so the
-# grid is scrolled to its end rather than only until the card appears.
+# Scrolled to the end: the card under the floating bar still counts as visible.
 - scroll
 - tapOn:
     id: "sample_product_card_enhancedKyc"
@@ -114,7 +100,6 @@ appId: ${APP_ID}
       id: "sample_products_screen"
     timeout: 30000
 
-# An ended session: the token is retired at its deadline and the products header says so.
 - tapOn:
     id: "sample_nav_token"
 - tapOn: "SIMULATED SCAN"
@@ -126,7 +111,6 @@ appId: ${APP_ID}
       id: "sample_session_ended_banner"
     timeout: 10000
 
-# The gate: a cold link straight at a run, which no form can fix, lands on the scanner saying why.
 - stopApp
 - openLink: "usesmileid-sample-expo:///flow/enhancedKyc/run"
 - extendedWaitUntil:
@@ -135,7 +119,6 @@ appId: ${APP_ID}
     timeout: 60000
 - assertVisible: "Token session ended. Scan to continue where you left off."
 
-# A relink resumes the run it interrupted instead of stranding the reader on the product list.
 - tapOn: "SIMULATED SCAN"
 - tapOn: "Binds details"
 - tapOn: "Binds consent"
@@ -146,7 +129,7 @@ appId: ${APP_ID}
       id: "si_processing_screen"
     timeout: 30000
 
-# Leaves a live session behind, so the next flow in the folder is not sent to the scanner.
+# Leaves a live session, so the next flow is not sent to the scanner.
 - extendedWaitUntil:
     visible: "Exit"
     timeout: 30000

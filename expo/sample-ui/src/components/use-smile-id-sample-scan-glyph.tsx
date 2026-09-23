@@ -3,17 +3,17 @@ import { View, type StyleProp, type ViewStyle } from 'react-native';
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
-/// The design's own glyph box, as the Compose app draws it.
+/// The design's glyph box.
 const SCAN_GLYPH_SIZE = 279;
 
 type Props = {
   size?: number;
-  /// The reticle carries the scanner's state over a live camera, so its tint is the caller's.
+  /// The caller's tint, which carries the scanner's state.
   tint?: string;
   style?: StyleProp<ViewStyle>;
 };
 
-/// The design's scan glyph — corner brackets and a faint sweep line — standing in for a live reticle.
+/// The design's scan glyph, standing in for a live reticle.
 export const UseSmileIDSampleScanGlyph = ({ size = SCAN_GLYPH_SIZE, tint, style }: Props) => {
   const theme = useSmileIDSampleTheme();
   return (

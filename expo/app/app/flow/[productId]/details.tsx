@@ -36,7 +36,6 @@ export default function ConsentDetailsForm() {
         productLabel: product?.label ?? productId ?? '',
         details,
         rememberDetails,
-        // Bound rows read "Provided by token" and never prefill: the value is vaulted and the host does not have it.
         requirement: smileIDSampleRequirementFrom(bindings),
       }}
       onFieldChange={setUserField}
