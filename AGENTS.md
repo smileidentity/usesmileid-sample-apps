@@ -159,7 +159,9 @@ repeating its steps, so the local contract and the gate cannot drift apart. The 
 macOS because a Flutter golden is host-rasterised, so a baseline recorded on a Mac and verified on
 Linux reds the lane for reasons unrelated to the UI. Which Mac matters too: glyph edges differ
 between macOS versions and the comparator has no tolerance, so **record Flutter baselines on the
-runner** — let the lane red and take the PNGs from its `flutter-goldens-recorded` artifact.
+runner** — let the lane red and take the PNGs from its `flutter-goldens-recorded` artifact. Expo's pixel
+goldens are host-rasterised too (Skia on the Linux runner), so the same rule holds: take them from
+`expo-goldens-recorded`; a Mac recording is only provisional.
 
 `expo/verify.sh` takes a phase, as `ios/verify.sh` does: `all` (the default) is checks plus the
 production bundle, and `native` builds the minified release APK on top of a regenerated prebuild. The
