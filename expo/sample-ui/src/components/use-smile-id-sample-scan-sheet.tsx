@@ -98,6 +98,7 @@ export const UseSmileIDSampleScanSheet = ({
         // A 900-character bearer credential nobody proofreads, kept out of screenshots and hierarchy dumps.
         masked
         testID={UseSmileIDSampleTestIds.TOKEN_MANUAL_ENTRY}
+        testIDOnField
         leading={(tint) => <UseSmileIDSampleIcon name="tokenScan" tint={tint} size={theme.dimens.size['icon-md']} />}
         trailing={
           onPaste === undefined

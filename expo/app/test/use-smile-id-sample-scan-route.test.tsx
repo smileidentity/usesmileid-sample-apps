@@ -117,7 +117,7 @@ describe('the scanner', () => {
 
   it('refuses a typed token that does not decode, under the field, and links nothing', async () => {
     const screen = await inTheme(<ScanToken />);
-    await fireEvent.changeText(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_MANUAL_ENTRY), 'not-a-jwt');
+    await fireEvent.changeText(screen.getByPlaceholderText('Or enter token manually'), 'not-a-jwt');
     await fireEvent.press(screen.getByText('Link token'));
     expect(screen.queryByText('A token is three dot-separated base64url segments; this is not.')).not.toBeNull();
     expect(useSmileIDSampleSessionStore.getState().live).toBeNull();
@@ -130,7 +130,9 @@ describe('the scanner', () => {
     await waitFor(() => expect(screen.queryByText('The clipboard holds no text to paste.')).not.toBeNull());
     mockClipboard = 'pasted.token.value';
     await fireEvent.press(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_PASTE));
-    await waitFor(() => expect(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_MANUAL_ENTRY).props.value).toBe('pasted.token.value'));
+    await waitFor(() => expect(screen.getByPlaceholderText('Or enter token manually').props.value).toBe('pasted.token.value'));
     expect(screen.queryByText('Link token')).not.toBeNull();
+    // The id is the whole field, Paste inside it, as the Compose field is tagged.
+    expect(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_MANUAL_ENTRY)).toContainElement(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_PASTE));
   });
 });

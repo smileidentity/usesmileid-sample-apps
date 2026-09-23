@@ -11500,6 +11500,7 @@ exports[`ScanSheet dark default 1`] = `
           },
         ]
       }
+      testID="sample_token_manual_entry"
     >
       <View
         style={
@@ -11625,7 +11626,6 @@ exports[`ScanSheet dark default 1`] = `
             null,
           ]
         }
-        testID="sample_token_manual_entry"
         value=""
       />
       <View
@@ -11954,6 +11954,7 @@ exports[`ScanSheet dark expanded 1`] = `
           },
         ]
       }
+      testID="sample_token_manual_entry"
     >
       <View
         style={
@@ -12079,7 +12080,6 @@ exports[`ScanSheet dark expanded 1`] = `
             null,
           ]
         }
-        testID="sample_token_manual_entry"
         value=""
       />
       <View
@@ -13127,6 +13127,7 @@ exports[`ScanSheet light default 1`] = `
           },
         ]
       }
+      testID="sample_token_manual_entry"
     >
       <View
         style={
@@ -13252,7 +13253,6 @@ exports[`ScanSheet light default 1`] = `
             null,
           ]
         }
-        testID="sample_token_manual_entry"
         value=""
       />
       <View
@@ -13581,6 +13581,7 @@ exports[`ScanSheet light expanded 1`] = `
           },
         ]
       }
+      testID="sample_token_manual_entry"
     >
       <View
         style={
@@ -13706,7 +13707,6 @@ exports[`ScanSheet light expanded 1`] = `
             null,
           ]
         }
-        testID="sample_token_manual_entry"
         value=""
       />
       <View

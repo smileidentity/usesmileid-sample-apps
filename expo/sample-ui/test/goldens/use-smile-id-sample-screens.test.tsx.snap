@@ -29104,6 +29104,7 @@ exports[`scanToken dark default 1`] = `
             },
           ]
         }
+        testID="sample_token_manual_entry"
       >
         <View
           style={
@@ -29229,7 +29230,6 @@ exports[`scanToken dark default 1`] = `
               null,
             ]
           }
-          testID="sample_token_manual_entry"
           value=""
         />
         <View
@@ -30077,6 +30077,7 @@ exports[`scanToken dark redirected 1`] = `
             },
           ]
         }
+        testID="sample_token_manual_entry"
       >
         <View
           style={
@@ -30202,7 +30203,6 @@ exports[`scanToken dark redirected 1`] = `
               null,
             ]
           }
-          testID="sample_token_manual_entry"
           value=""
         />
         <View
@@ -31050,6 +31050,7 @@ exports[`scanToken light default 1`] = `
             },
           ]
         }
+        testID="sample_token_manual_entry"
       >
         <View
           style={
@@ -31175,7 +31176,6 @@ exports[`scanToken light default 1`] = `
               null,
             ]
           }
-          testID="sample_token_manual_entry"
           value=""
         />
         <View
@@ -32023,6 +32023,7 @@ exports[`scanToken light redirected 1`] = `
             },
           ]
         }
+        testID="sample_token_manual_entry"
       >
         <View
           style={
@@ -32148,7 +32149,6 @@ exports[`scanToken light redirected 1`] = `
               null,
             ]
           }
-          testID="sample_token_manual_entry"
           value=""
         />
         <View
