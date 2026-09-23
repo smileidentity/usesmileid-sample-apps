@@ -94,6 +94,9 @@ appId: ${APP_ID}
     visible:
       id: "sample_session_card"
     timeout: 10000
+# The bottom-row card sits under the floating nav bar, which counts as visible to Maestro, so the
+# grid is scrolled to its end rather than only until the card appears.
+- scroll
 - tapOn:
     id: "sample_product_card_enhancedKyc"
 - extendedWaitUntil:
@@ -102,7 +105,10 @@ appId: ${APP_ID}
     timeout: 30000
 - assertNotVisible:
     id: "si_consent_screen"
-- back
+- extendedWaitUntil:
+    visible: "Exit"
+    timeout: 30000
+- tapOn: "Exit"
 - extendedWaitUntil:
     visible:
       id: "sample_products_screen"
@@ -141,7 +147,10 @@ appId: ${APP_ID}
     timeout: 30000
 
 # Leaves a live session behind, so the next flow in the folder is not sent to the scanner.
-- back
+- extendedWaitUntil:
+    visible: "Exit"
+    timeout: 30000
+- tapOn: "Exit"
 - extendedWaitUntil:
     visible:
       id: "sample_products_screen"
