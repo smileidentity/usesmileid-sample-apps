@@ -15,7 +15,7 @@ and the AOT snapshot for all four ABIs is wasted minutes when only one of them i
 
 ## What this lane is for
 
-Four flows, not a port of the Android suite — that one was measured at 36–53 minutes returning
+Six flows, not a port of the Android suite — that one was measured at 36–53 minutes returning
 nothing across four runs. These cover what a **hostless** Flutter test structurally cannot reach:
 
 - **`licenses.yaml`** — `LicenseRegistry` is empty under `flutter test` by design, so no widget test
@@ -28,6 +28,9 @@ nothing across four runs. These cover what a **hostless** Flutter test structura
 - **`deep-links.yaml`** — `spec/routes.json` requires every route to open cold **and** warm.
 - **`verifications.yaml`** — the three behaviours #101 shipped with widget tests only, because the
   handset's keyguard blocked its device pass.
+- **`token-session.yaml`** — the scanner owns a camera and a secure store, neither of which a widget
+  test has: a simulated scan, the countdown at 15m and 8h, bound details skipping both forms, the
+  expiry redirect stating its reason, and a relink resuming the run it interrupted.
 
 ## Traps
 

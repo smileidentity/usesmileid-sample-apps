@@ -1,0 +1,10 @@
+appId: ${APP_ID}
+---
+# Conditional because a grant outlives the run, and ColorOS refuses `pm grant`.
+- runFlow:
+    when:
+      visible:
+        id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+    commands:
+      - tapOn:
+          id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
