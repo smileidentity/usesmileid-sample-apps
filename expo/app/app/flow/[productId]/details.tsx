@@ -1,12 +1,19 @@
 import {
   UserDetailsScreen,
   smileIDSampleProductFrom,
+  smileIDSampleRequirementFrom,
   useSmileIDSampleActiveProfile,
   useSmileIDSampleFormsStore,
   useSmileIDSampleProfileStore,
 } from '@smileid/sample-ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
+import { smileIDSampleStepAfterUserDetails } from '../../../src/flow/use-smile-id-sample-flow-journey';
+import {
+  smileIDSampleLiveBindingsNow,
+  useSmileIDSampleLiveBindings,
+} from '../../../src/flow/use-smile-id-sample-token-binding-rules';
+import { useLaunchArgs } from '../../../src/use-smile-id-sample-launch';
 import { useSmileIDSampleBack } from '../../../src/use-smile-id-sample-back';
 
 export default function ConsentDetailsForm() {
@@ -20,6 +27,8 @@ export default function ConsentDetailsForm() {
   const setUserField = useSmileIDSampleFormsStore((state) => state.setUserField);
   const setRememberDetails = useSmileIDSampleFormsStore((state) => state.setRememberDetails);
   const setDefaults = useSmileIDSampleProfileStore((state) => state.setDefaults);
+  const bindings = useSmileIDSampleLiveBindings();
+  const { scenario } = useLaunchArgs();
 
   return (
     <UserDetailsScreen
@@ -27,6 +36,7 @@ export default function ConsentDetailsForm() {
         productLabel: product?.label ?? productId ?? '',
         details,
         rememberDetails,
+        requirement: smileIDSampleRequirementFrom(bindings),
       }}
       onFieldChange={setUserField}
       onRememberChange={setRememberDetails}
@@ -34,11 +44,11 @@ export default function ConsentDetailsForm() {
       onContinue={() => {
         // The switch says "remember these for next time", and the profile's defaults are where next time reads.
         if (rememberDetails) setDefaults(profile.id, details);
-        if (product?.needsIdDetails === true) {
-          router.push(`/flow/${productId}/id-details`);
-          return;
-        }
-        router.push(`/flow/${productId}/run`);
+        router.push(
+          product === null
+            ? `/flow/${productId}/run`
+            : smileIDSampleStepAfterUserDetails(product, smileIDSampleLiveBindingsNow(scenario)),
+        );
       }}
     />
   );

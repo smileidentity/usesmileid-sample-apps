@@ -108,7 +108,8 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
         Positioned(
           left: SmileDimens.spacingMd,
           right: SmileDimens.spacingMd,
-          bottom: SmileDimens.spacingMd,
+          // Past the system bar: under edge to edge this page reaches the bottom edge.
+          bottom: MediaQuery.paddingOf(context).bottom + SmileDimens.spacingMd,
           child: UseSmileIDSampleToast(message: refreshNotice!),
         ),
       ],

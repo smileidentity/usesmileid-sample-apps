@@ -30,6 +30,8 @@ type Props = {
   masked?: boolean;
   textAlign?: TextStyle['textAlign'];
   testID?: string;
+  /// Tags the whole field rather than the input, as Compose does.
+  testIDOnField?: boolean;
   leading?: (tint: string) => ReactNode;
   trailing?: (tint: string) => ReactNode;
   style?: StyleProp<ViewStyle>;
@@ -48,6 +50,7 @@ export const UseSmileIDSampleTextInput = ({
   masked = false,
   textAlign,
   testID,
+  testIDOnField = false,
   leading,
   trailing,
   style,
@@ -65,6 +68,7 @@ export const UseSmileIDSampleTextInput = ({
   return (
     <View style={style}>
       <View
+        testID={testIDOnField ? testID : undefined}
         style={[
           styles.field,
           {
@@ -83,7 +87,7 @@ export const UseSmileIDSampleTextInput = ({
           <View style={styles.leading}>{leading(theme.colors.input.placeholder)}</View>
         ) : null}
         <TextInput
-          testID={testID}
+          testID={testIDOnField ? undefined : testID}
           value={value}
           onChangeText={onValueChange}
           editable={enabled}

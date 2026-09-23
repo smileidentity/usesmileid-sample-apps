@@ -8,8 +8,10 @@ import 'package:usesmileid/usesmileid.dart';
 import '../flow/use_smileid_sample_flow_builder_config.dart';
 import '../flow/use_smileid_sample_flow_launch_snapshot.dart';
 import '../flow/use_smileid_sample_flow_preflight.dart';
+import '../flow/use_smileid_sample_token_binding_rules.dart';
 import '../state/use_smileid_sample_forms.dart';
 import '../state/use_smileid_sample_providers.dart';
+import '../state/use_smileid_sample_session_providers.dart';
 
 /// The single route hosting the SDK flow. The SDK owns everything inside it: no host chrome, no host back.
 class UseSmileIDSampleSdkFlowTab extends ConsumerStatefulWidget {
@@ -18,6 +20,7 @@ class UseSmileIDSampleSdkFlowTab extends ConsumerStatefulWidget {
     required this.productId,
     required this.onLeave,
     required this.onNeedsDetails,
+    required this.onNeedsSession,
     required this.onResult,
     super.key,
   });
@@ -30,6 +33,9 @@ class UseSmileIDSampleSdkFlowTab extends ConsumerStatefulWidget {
 
   /// Where a run the forms can still fix goes instead of the SDK.
   final VoidCallback onNeedsDetails;
+
+  /// Where a run whose session has ended goes.
+  final VoidCallback onNeedsSession;
 
   /// Where a delivered result lands, by the job id the server issued.
   final void Function(String jobId) onResult;
@@ -116,6 +122,16 @@ class _UseSmileIDSampleSdkFlowTabState
     final UseSmileIDSampleProfile profile = ref
         .read(useSmileIDSampleProfilesProvider)
         .active;
+    // Read once, not through the ticking clock: a rebuilt config tears the run down.
+    final int entryMillis = DateTime.now().millisecondsSinceEpoch;
+    final UseSmileIDSampleSessionRecord record = ref.read(
+      useSmileIDSampleSessionProvider,
+    );
+    // Scenario-free: the environment is the token's even under the refresh scenarios.
+    final UseSmileIDSampleTokenSession? session = useSmileIDSampleLiveSession(
+      record.live,
+      entryMillis,
+    );
     return UseSmileIDSampleFlowLaunchSnapshot(
       product: product,
       route: ref.read(useSmileIDSampleLaunchArgsProvider).route,
@@ -123,8 +139,7 @@ class _UseSmileIDSampleSdkFlowTabState
       idDetails: forms.idDetails,
       scenario: scenarios.scenario,
       theme: scenarios.theme,
-      // Sandbox until a scanned session says otherwise, because the environment is the token's.
-      sandbox: true,
+      sandbox: useSmileIDSampleUseSandbox(session),
       allowAgentMode: settings.agentMode,
       enableEnhancedLiveness: settings.enhancedSmartSelfie,
       consentStep: settings.consentStep,
@@ -135,6 +150,8 @@ class _UseSmileIDSampleSdkFlowTabState
       partnerName: profile.organisation,
       // A profile here carries no webhook URL yet, and empty means the partner's portal default.
       callbackUrl: '',
+      session: session,
+      sessionExpired: useSmileIDSampleSessionEnded(record, entryMillis),
     );
   }
 
@@ -154,6 +171,17 @@ class _UseSmileIDSampleSdkFlowTabState
       case UseSmileIDSampleFlowNeedsDetails():
         _left = true;
         widget.onNeedsDetails();
+      case UseSmileIDSampleFlowNeedsSession():
+        _left = true;
+        ref
+            .read(useSmileIDSampleInterruptedRunProvider.notifier)
+            .send(
+              UseSmileIDSampleRunIntent(
+                productId: _snapshot!.product.id,
+                route: _snapshot!.route,
+              ),
+            );
+        widget.onNeedsSession();
       // No form fixes this, and it must still never reach the SDK.
       case UseSmileIDSampleFlowMisconfigured():
         _leave();
@@ -202,6 +230,8 @@ class _UseSmileIDSampleSdkFlowTabState
     httpStatus: _acceptedCode,
     // From the snapshot, not re-read: by the time a result lands the toggles may have moved on.
     sandbox: snapshot.sandbox,
+    sessionId: snapshot.liveSession?.id,
+    partnerId: snapshot.liveSession?.partnerId,
   );
 
   static const int _acceptedCode = 202;

@@ -24,7 +24,12 @@ import type { FaceAnalyzer } from '@smileid/usesmileid_platform_interface';
 import { Platform } from 'react-native';
 
 import { smileIDSampleFlowToken, smileIDSampleMalformedToken } from './use-smile-id-sample-flow-tokens';
-import type { UseSmileIDSampleFlowLaunchSnapshot } from './use-smile-id-sample-flow-launch-snapshot';
+import {
+  smileIDSampleSnapshotSession,
+  type UseSmileIDSampleFlowLaunchSnapshot,
+} from './use-smile-id-sample-flow-launch-snapshot';
+import { smileIDSampleFlowPlan } from './use-smile-id-sample-flow-plan';
+import { smileIDSampleStartsExpired } from './use-smile-id-sample-token-binding-rules';
 
 /// One SDK screen the host composes. Named so the journey can be asserted: the builder's list is private.
 export const smileIDSampleFlowJourneySteps = [
@@ -43,12 +48,16 @@ export const smileIDSampleApplying = (
   builder: UseSmileIDFlowBuilder,
   snapshot: UseSmileIDSampleFlowLaunchSnapshot,
 ): void => {
-  builder.userDetails = {
-    givenNames: snapshot.userDetails.firstName,
-    lastName: snapshot.userDetails.lastName,
-    ...(snapshot.userDetails.email.length > 0 ? { email: snapshot.userDetails.email } : {}),
-    ...(snapshot.userDetails.phone.length > 0 ? { phoneNumber: snapshot.userDetails.phone } : {}),
-  };
+  const scanned = smileIDSampleSnapshotSession(snapshot);
+  // Omitted, never blanked: a blank silences the SDK's per-field errors.
+  if (smileIDSampleFlowPlan(scanned?.bindings, snapshot.product).passUserDetails) {
+    builder.userDetails = {
+      givenNames: snapshot.userDetails.firstName,
+      lastName: snapshot.userDetails.lastName,
+      ...(snapshot.userDetails.email.length > 0 ? { email: snapshot.userDetails.email } : {}),
+      ...(snapshot.userDetails.phone.length > 0 ? { phoneNumber: snapshot.userDetails.phone } : {}),
+    };
+  }
   if (snapshot.product.id === 'smartSelfieAuth') builder.userId = snapshot.userId;
   applyIdParams(builder, snapshot);
   builder.screens((screens: ScreensBuilder) => journeyFor(screens, snapshot));
@@ -64,14 +73,19 @@ export const smileIDSampleApplying = (
   builder.network((network: UseSmileIDNetworkBuilder) =>
     network.config((config: ConfigBuilder) => {
       config.jobType = jobTypeFor(snapshot.product.id);
-      config.token = smileIDSampleFlowToken({
-        expired: snapshot.scenario === 'expiredToken',
-        nowMillis: Date.now(),
-      });
+      config.token =
+        scanned?.token ??
+        smileIDSampleFlowToken({
+          expired: smileIDSampleStartsExpired(snapshot.scenario),
+          nowMillis: Date.now(),
+        });
+      // Nothing here may mint a replacement, so a scanned token's auth failure surfaces.
       config.onTokenExpired = async () =>
-        snapshot.scenario === 'badRefresh'
-          ? smileIDSampleMalformedToken()
-          : smileIDSampleFlowToken({ expired: false, nowMillis: Date.now() });
+        scanned !== null
+          ? scanned.token
+          : snapshot.scenario === 'badRefresh'
+            ? smileIDSampleMalformedToken()
+            : smileIDSampleFlowToken({ expired: false, nowMillis: Date.now() });
       // Debug only: a release build must never log traffic.
       config.logging((logging) => {
         logging.enabled = __DEV__;
@@ -79,8 +93,9 @@ export const smileIDSampleApplying = (
         logging.level = LogLevel.headers;
       });
       config.partnerConfig((partner) => {
-        partner.partnerId = snapshot.partnerId;
-        partner.callbackUrl = snapshot.callbackUrl;
+        // A signed token under another partner id comes back 401.
+        partner.partnerId = scanned?.partnerId ?? snapshot.partnerId;
+        partner.callbackUrl = scanned === null ? snapshot.callbackUrl : '';
         partner.useSandbox = snapshot.sandbox;
       });
     }),
@@ -98,12 +113,14 @@ export const smileIDSampleApplying = (
   }
 };
 
-/// The journey, as the three step switches decide it.
+/// The journey, as the three step switches and the token's bindings decide it.
 export const smileIDSampleJourneyStepsFor = (
   snapshot: UseSmileIDSampleFlowLaunchSnapshot,
 ): UseSmileIDSampleFlowJourneyStep[] => {
   const steps: UseSmileIDSampleFlowJourneyStep[] = [];
-  if (snapshot.consentStep) steps.push('consent');
+  const plan = smileIDSampleFlowPlan(smileIDSampleSnapshotSession(snapshot)?.bindings, snapshot.product);
+  // Declaring consent under a consent binding ends the run before it starts.
+  if (plan.declareConsentScreen && snapshot.consentStep) steps.push('consent');
   // Enhanced KYC is the one journey without capture: consent and processing only, per its validator.
   if (!snapshot.product.capture) return [...steps, 'processing'];
   if (snapshot.instructionsStep) steps.push('instructions');
@@ -166,9 +183,12 @@ const applyIdParams = (
   builder: UseSmileIDFlowBuilder,
   snapshot: UseSmileIDSampleFlowLaunchSnapshot,
 ): void => {
-  const country = snapshot.idDetails.country?.code ?? '';
-  const idType = snapshot.idDetails.idType?.id ?? '';
-  const idNumber = snapshot.idDetails.idNumber;
+  // The token beats the form: the server overwrites these from its claims.
+  const bound = smileIDSampleSnapshotSession(snapshot)?.bindings;
+  const country = bound?.country ?? snapshot.idDetails.country?.code ?? '';
+  const idType = bound?.idType ?? snapshot.idDetails.idType?.id ?? '';
+  // The SDK asks only for non-blank, and the server substitutes the claim.
+  const idNumber = bound?.idNumberReference ?? snapshot.idDetails.idNumber;
   switch (snapshot.product.id) {
     case 'biometricKyc':
       // Capture still runs either way; false is the plain path a sample demonstrates.
@@ -181,7 +201,7 @@ const applyIdParams = (
     case 'documentVerification':
       builder.documentVerificationParams = {
         country,
-        ...(snapshot.idDetails.idType === null ? {} : { idType }),
+        ...(bound?.idType == null && snapshot.idDetails.idType === null ? {} : { idType }),
       };
       break;
     case 'enhancedDocumentVerification':

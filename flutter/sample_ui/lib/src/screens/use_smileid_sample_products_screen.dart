@@ -23,6 +23,7 @@ class UseSmileIDSampleProductsState {
     this.avatarColor,
     this.sessionId,
     this.sessionRemaining,
+    this.sessionCountdown,
     this.sessionEnded = false,
   });
 
@@ -37,6 +38,9 @@ class UseSmileIDSampleProductsState {
 
   /// The countdown, already formatted as m:ss.
   final String? sessionRemaining;
+
+  /// A host-ticked countdown in place of [sessionRemaining].
+  final Widget? sessionCountdown;
 
   /// Whether the session has expired, which replaces the card with the neutral banner.
   final bool sessionEnded;
@@ -92,7 +96,9 @@ class UseSmileIDSampleProductsScreen extends StatelessWidget {
               ),
               child: UseSmileIDSampleSessionEndedBanner(onScan: onScanTap),
             )
-          else if (state.sessionId != null && state.sessionRemaining != null)
+          else if (state.sessionId != null &&
+              (state.sessionRemaining != null ||
+                  state.sessionCountdown != null))
             Padding(
               padding: const EdgeInsets.only(
                 left: SmileDimens.spacingMd,
@@ -101,7 +107,8 @@ class UseSmileIDSampleProductsScreen extends StatelessWidget {
               ),
               child: UseSmileIDSampleSessionCard(
                 sessionId: state.sessionId!,
-                remaining: state.sessionRemaining!,
+                remaining: state.sessionRemaining,
+                countdown: state.sessionCountdown,
               ),
             ),
           for (final UseSmileIDSampleProductSection section

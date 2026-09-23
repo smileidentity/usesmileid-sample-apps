@@ -253,3 +253,55 @@ export {
   type UseSmileIDSampleNewProfileDraft,
 } from './screens/new-profile-sheet';
 export { ProfileSwitchSheet } from './screens/profile-switch-sheet';
+
+export {
+  ScanTokenScreen,
+  type UseSmileIDSampleScanFeedback,
+  type UseSmileIDSampleViewfinderProps,
+} from './screens/scan-token-screen';
+export { UseSmileIDSampleScanStatus } from './components/use-smile-id-sample-scan-status';
+export {
+  smileIDSampleScanSheetDefaults,
+  type UseSmileIDSampleScanSheetState,
+} from './components/use-smile-id-sample-scan-sheet';
+export { UseSmileIDSampleScanReason, type UseSmileIDSampleScanState } from './model/use-smile-id-sample-scan-state';
+export {
+  smileIDSampleSimulatedBindingsDefaults,
+  smileIDSampleSimulatedSpans,
+  type UseSmileIDSampleSimulatedBindings,
+  type UseSmileIDSampleSimulatedSpan,
+} from './model/use-smile-id-sample-simulated-scan';
+export { smileIDSampleEnvironments, type UseSmileIDSampleEnvironment } from './model/use-smile-id-sample-result';
+export {
+  smileIDSampleApiUrlHost,
+  smileIDSampleEnvironmentBaseUrl,
+  smileIDSampleEnvironmentFor,
+  smileIDSampleEnvironmentHosts,
+  smileIDSampleEnvironmentLabels,
+} from './model/use-smile-id-sample-environment';
+export {
+  smileIDSampleBindsIdDetails,
+  smileIDSampleBindsRequiredUserDetails,
+  smileIDSampleConsentIsComplete,
+  smileIDSampleDecodeToken,
+  smileIDSampleTokenSession,
+  type UseSmileIDSampleTokenConsent,
+  type UseSmileIDSampleTokenDecode,
+} from './state/use-smile-id-sample-token-decoder';
+export { smileIDSampleBase64UrlEncode } from './state/use-smile-id-sample-token-bytes';
+export {
+  smileIDSampleCountdown,
+  smileIDSampleSessionHasExpired,
+  smileIDSampleSessionProgress,
+  smileIDSampleSessionRemaining,
+  type UseSmileIDSampleEndedSession,
+  type UseSmileIDSampleTokenSession,
+} from './state/use-smile-id-sample-token-session';
+export {
+  smileIDSampleLiveSession,
+  smileIDSampleSessionExpired,
+  useSmileIDSampleSessionClock,
+  useSmileIDSampleSessionStore,
+  type UseSmileIDSampleRunIntent,
+  type UseSmileIDSampleSessionStorage,
+} from './state/use-smile-id-sample-session-store';

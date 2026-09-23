@@ -117,41 +117,46 @@ class _UseSmileIDSampleTextInputState extends State<UseSmileIDSampleTextInput> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        ConstrainedBox(
-          constraints: const BoxConstraints(
-            minHeight: SmileDimens.sizeControlMd,
-          ),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: widget.enabled
-                  ? colors.input.background
-                  : colors.surfaceMuted,
-              borderRadius: UseSmileIDSampleShapes.field,
-              border: Border.all(color: borderColor, width: borderWidth),
+        // The whole field carries the id, as Android tags the BasicTextField.
+        Semantics(
+          identifier: widget.testId,
+          container: true,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              minHeight: SmileDimens.sizeControlMd,
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: SmileDimens.spacingMd,
-                vertical: SmileDimens.spacingSm,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: widget.enabled
+                    ? colors.input.background
+                    : colors.surfaceMuted,
+                borderRadius: UseSmileIDSampleShapes.field,
+                border: Border.all(color: borderColor, width: borderWidth),
               ),
-              child: Row(
-                children: <Widget>[
-                  if (widget.leading != null) ...<Widget>[
-                    SizedBox(
-                      width: _leadingSide,
-                      height: _leadingSide,
-                      child: Center(
-                        child: widget.leading!(colors.input.placeholder),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: SmileDimens.spacingMd,
+                  vertical: SmileDimens.spacingSm,
+                ),
+                child: Row(
+                  children: <Widget>[
+                    if (widget.leading != null) ...<Widget>[
+                      SizedBox(
+                        width: _leadingSide,
+                        height: _leadingSide,
+                        child: Center(
+                          child: widget.leading!(colors.input.placeholder),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: SmileDimens.spacingXs),
+                      const SizedBox(width: SmileDimens.spacingXs),
+                    ],
+                    Expanded(child: _field(colors)),
+                    if (widget.trailing != null) ...<Widget>[
+                      const SizedBox(width: SmileDimens.spacingXs),
+                      widget.trailing!(colors.input.placeholder),
+                    ],
                   ],
-                  Expanded(child: _field(colors)),
-                  if (widget.trailing != null) ...<Widget>[
-                    const SizedBox(width: SmileDimens.spacingXs),
-                    widget.trailing!(colors.input.placeholder),
-                  ],
-                ],
+                ),
               ),
             ),
           ),
@@ -174,7 +179,6 @@ class _UseSmileIDSampleTextInputState extends State<UseSmileIDSampleTextInput> {
   }
 
   Widget _field(UseSmileIDSampleColors colors) => Semantics(
-    identifier: widget.testId,
     textField: true,
     child: TextField(
       controller: _controller,

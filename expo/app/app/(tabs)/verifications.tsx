@@ -10,6 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useSmileIDSampleListInset } from '../../src/use-smile-id-sample-list-inset';
+import { useSmileIDSampleNoticeStyle } from '../../src/use-smile-id-sample-notice-inset';
 import { useSmileIDSampleSetSelectMode } from '../../src/use-smile-id-sample-select-mode';
 
 export default function Verifications() {
@@ -25,6 +26,7 @@ export default function Verifications() {
   // a clock read in render would recompute them on every pass and make the render impure.
   const [nowMillis] = useState(() => Date.now());
   const bottomInset = useSmileIDSampleListInset();
+  const noticeStyle = useSmileIDSampleNoticeStyle(bottomInset);
   const setSelecting = useSmileIDSampleSetSelectMode();
 
   // A tab stays mounted when you leave it, so select mode left on would hide the bar on every tab.
@@ -53,13 +55,11 @@ export default function Verifications() {
         onSelectingChange={setSelecting}
         bottomInset={bottomInset}
       />
-      <UseSmileIDSampleTransientNoticeHost state={notice} style={[styles.notice, { bottom: bottomInset }]} />
+      <UseSmileIDSampleTransientNoticeHost state={notice} style={noticeStyle} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   host: { flex: 1 },
-  // The bar it clears is measured, so this route's notice rides the same reserve the list does.
-  notice: { paddingHorizontal: 16, position: 'absolute' },
 });

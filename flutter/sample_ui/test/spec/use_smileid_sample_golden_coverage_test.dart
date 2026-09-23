@@ -110,6 +110,8 @@ const Map<String, String> useSmileIDSampleGoldenFor = <String, String>{
   'licenses.empty': 'screen_licenses_empty',
   'scenarioDrawer.flowScenarios': 'sheet_scenario_drawer',
   'scenarioDrawer.themeScenarios': 'sheet_scenario_drawer_themes',
+  'scanToken.default': 'screen_scan_token',
+  'scanToken.redirected': 'screen_scan_token_redirected',
 };
 
 /// States with no baseline, each with the reason it has none.
@@ -122,9 +124,4 @@ const Map<String, String> useSmileIDSampleGoldenExempt = <String, String>{
   'verifications.refreshing':
       'Pull-to-refresh on the LIST needs the status call, which needs a scanned '
       'session; the list has no refresh affordance yet.',
-  'scanToken.default':
-      'The scanner needs a camera and a token session, neither of which this app '
-      'has; the screen is not built.',
-  'scanToken.redirected':
-      'Same screen, and the redirect is driven by a flow preflight that needs the SDK.',
 };

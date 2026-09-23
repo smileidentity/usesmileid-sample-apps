@@ -1,4 +1,5 @@
 import 'use_smileid_sample_profiles.dart';
+import 'use_smileid_sample_token_decoder.dart';
 
 /// What the consent form still has to collect, which a token can narrow.
 class UseSmileIDSampleUserDetailsRequirement {
@@ -17,6 +18,27 @@ class UseSmileIDSampleUserDetailsRequirement {
 
   /// Whether an email OR a phone is still needed; one of, never both.
   final bool contact;
+
+  /// Nothing left to ask, so the form has no reason to appear.
+  bool get isSatisfied => !firstName && !lastName && !contact;
+
+  /// Whether the token supplied [field].
+  bool supplies(UseSmileIDSampleUserField field) => switch (field) {
+    UseSmileIDSampleUserField.firstName => !firstName,
+    UseSmileIDSampleUserField.lastName => !lastName,
+    // Contact is one of two, so neither row is supplied on its own.
+    UseSmileIDSampleUserField.email || UseSmileIDSampleUserField.phone => false,
+  };
+
+  @override
+  bool operator ==(Object other) =>
+      other is UseSmileIDSampleUserDetailsRequirement &&
+      other.firstName == firstName &&
+      other.lastName == lastName &&
+      other.contact == contact;
+
+  @override
+  int get hashCode => Object.hash(firstName, lastName, contact);
 
   /// Whether [details] satisfies what is still outstanding.
   bool isSatisfiedBy(UseSmileIDSampleUserDetails details) =>
@@ -50,4 +72,20 @@ class UseSmileIDSampleUserDetailsRequirement {
     }
     return 'Required: ${outstanding.join(', ')}.';
   }
+}
+
+/// The requirement a token leaves behind.
+UseSmileIDSampleUserDetailsRequirement useSmileIDSampleUserDetailsRequirement(
+  UseSmileIDSampleTokenBindings? bindings,
+) => UseSmileIDSampleUserDetailsRequirement(
+  firstName: bindings?.givenNames != true,
+  lastName: bindings?.lastName != true,
+  contact: !(bindings?.email == true || bindings?.phoneNumber == true),
+);
+
+/// Mirrors the SDK's internal `bindsRequiredUserDetails`.
+extension UseSmileIDSampleRequiredUserDetails on UseSmileIDSampleTokenBindings {
+  /// Whether the token binds enough for the SDK to stop requiring `userDetails`.
+  bool get bindsRequiredUserDetails =>
+      useSmileIDSampleUserDetailsRequirement(this).isSatisfied;
 }

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import '../state/use_smileid_sample_forms.dart';
+import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_journey.dart';
 import '../use_smileid_sample_routes.dart';
 import 'use_smileid_sample_above_shell_page.dart';
@@ -31,6 +32,11 @@ class UseSmileIDSampleUserDetailsTab extends ConsumerWidget {
         // for rather than showing an empty title.
         title: product?.label ?? productId,
         details: forms.userDetails,
+        requirement: useSmileIDSampleUserDetailsRequirement(
+          ref.watch(useSmileIDSampleSessionProvider).live == null
+              ? null
+              : useSmileIDSampleLiveBindings(ref),
+        ),
         onBack: back,
         onFieldChanged: ref
             .read(useSmileIDSampleFormsProvider.notifier)
@@ -38,7 +44,10 @@ class UseSmileIDSampleUserDetailsTab extends ConsumerWidget {
         onContinue: () => context.push(
           product == null
               ? UseSmileIDSampleRoutes.sdkFlow(productId)
-              : UseSmileIDSampleJourney.afterUserDetails(product),
+              : UseSmileIDSampleJourney.afterUserDetails(
+                  product,
+                  useSmileIDSampleLiveBindings(ref),
+                ),
         ),
         remember: forms.rememberDetails,
         onRememberChanged: ref
@@ -116,7 +125,7 @@ class _UseSmileIDSampleKycFormTabState
               ? UseSmileIDSampleRoutes.sdkFlow(widget.productId)
               : UseSmileIDSampleJourney.afterIdDetails(product),
         ),
-        onScanToken: () {},
+        onScanToken: () => context.push(UseSmileIDSampleRoutes.scanToken),
       ),
     );
   }

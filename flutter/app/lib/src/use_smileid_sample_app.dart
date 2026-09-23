@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import 'state/use_smileid_sample_providers.dart';
+import 'state/use_smileid_sample_session_providers.dart';
 import 'use_smileid_sample_routes.dart';
 import 'use_smileid_sample_system_bars.dart';
 
@@ -25,6 +28,25 @@ class _UseSmileIDSampleAppState extends ConsumerState<UseSmileIDSampleApp> {
   late final GoRouter _router = useSmileIDSampleRouter(
     initialLocation: widget.initialLocation,
   );
+
+  /// Re-reads the deadline on resume, since no timer fires while the device sleeps.
+  late final AppLifecycleListener _lifecycle;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle = AppLifecycleListener(
+      onResume: () => unawaited(
+        ref.read(useSmileIDSampleSessionProvider.notifier).checkDeadline(),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _lifecycle.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -2,8 +2,11 @@ import type {
   UseSmileIDSampleFlowRoute,
   UseSmileIDSampleIdDetails,
   UseSmileIDSampleProduct,
+  UseSmileIDSampleTokenSession,
   UseSmileIDSampleUserDetails,
 } from '@smileid/sample-ui';
+
+import { smileIDSampleStartsExpired } from './use-smile-id-sample-token-binding-rules';
 
 /// Read once at flow entry; never re-read while the flow runs.
 export type UseSmileIDSampleFlowLaunchSnapshot = {
@@ -14,7 +17,7 @@ export type UseSmileIDSampleFlowLaunchSnapshot = {
   /// The scenario ids, which on this platform arrive by launch argument rather than from a drawer.
   readonly scenario: string;
   readonly theme: string;
-  /// Whether the run submits against sandbox, which a scanned session will decide once one exists.
+  /// Whether the run submits to sandbox; no session is sandbox.
   readonly sandbox: boolean;
   /// The five settings, not the settings object: the read happens once.
   readonly allowAgentMode: boolean;
@@ -28,9 +31,19 @@ export type UseSmileIDSampleFlowLaunchSnapshot = {
   readonly partnerName: string;
   /// The active profile's webhook URL; empty means their portal default.
   readonly callbackUrl: string;
+  /// Live at entry only; a lapsed one is the gate's business.
+  readonly session: UseSmileIDSampleTokenSession | null;
+  /// Run out, which routes the run back to the scanner.
+  readonly sessionExpired: boolean;
 };
 
 /// Where the run submitted, which is the only thing that publishes it.
 export const smileIDSampleFlowEnvironment = (
   snapshot: UseSmileIDSampleFlowLaunchSnapshot,
 ): 'sandbox' | 'production' => (snapshot.sandbox ? 'sandbox' : 'production');
+
+/// The session a run submits under.
+export const smileIDSampleSnapshotSession = (
+  snapshot: UseSmileIDSampleFlowLaunchSnapshot,
+): UseSmileIDSampleTokenSession | null =>
+  smileIDSampleStartsExpired(snapshot.scenario) ? null : snapshot.session;

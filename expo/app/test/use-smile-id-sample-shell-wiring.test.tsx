@@ -16,6 +16,7 @@ import { Appearance, Text, useColorScheme } from 'react-native';
 
 import Verifications from '../app/(tabs)/verifications';
 import RootLayout from '../app/_layout';
+import { smileIDSampleResetLaunchArgs } from '../src/use-smile-id-sample-launch';
 
 jest.mock('expo-linking', () => ({ getInitialURL: jest.fn() }));
 jest.mock('react-native/Libraries/Utilities/useColorScheme');
@@ -119,6 +120,7 @@ const resolvedScheme = async ({
 let imposedScheme: jest.SpyInstance;
 
 beforeEach(async () => {
+  smileIDSampleResetLaunchArgs();
   mockProbe = SchemeProbe;
   mockStatusBarStyles.length = 0;
   mockNavigationBarStyles.length = 0;

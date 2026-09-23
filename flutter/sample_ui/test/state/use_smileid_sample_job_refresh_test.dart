@@ -279,35 +279,40 @@ void main() {
   group('the outcome labels', () {
     const Map<UseSmileIDSampleStatusRefresh, String> expected =
         <UseSmileIDSampleStatusRefresh, String>{
-          updated: 'Approved',
+          updated: 'Clear — Approved',
           UseSmileIDSampleStatusStillProcessing(): 'Still processing',
-          UseSmileIDSampleStatusNoSession():
-              'No live token session to check with',
+          UseSmileIDSampleStatusNoSession(): 'Scan a token first',
           UseSmileIDSampleStatusNoServerJob():
-              'Never submitted, so there is nothing to check',
+              'Not submitted under a scanned token',
           UseSmileIDSampleStatusPartnerMismatch():
               'Submitted by a different partner',
-          UseSmileIDSampleStatusFailed('Unexpected error: StateError'):
-              'Unexpected error: StateError',
+          UseSmileIDSampleStatusFailed('HTTP 401'):
+              'Could not check status: HTTP 401',
         };
 
-    test('say what the four apps agreed they say', () {
+    test('say what Android says', () {
       expected.forEach((UseSmileIDSampleStatusRefresh outcome, String label) {
         expect(useSmileIDSampleRefreshLabel(outcome), label);
       });
     });
 
-    // Read off disk rather than restated: a label these two word differently is the whole defect.
-    test('are the same strings the Expo sibling ships', () {
-      final String expo = File(
-        '../../expo/sample-ui/src/data/use-smile-id-sample-job-status-source.ts',
+    test('are the strings the Android twin ships', () {
+      final String android = File(
+        '../../android/app/src/main/kotlin/com/usesmileid/sampleapps/android/navigation/VerificationsDestinations.kt',
       ).readAsStringSync();
-
-      for (final String label in expected.values) {
-        if (label == 'Approved' || label.startsWith('Unexpected error')) {
-          continue;
-        }
-        expect(expo, contains(label), reason: 'Expo does not word it this way');
+      for (final String literal in <String>[
+        r'"${status.label} — $message"',
+        '"Still processing"',
+        '"Scan a token first"',
+        '"Not submitted under a scanned token"',
+        '"Submitted by a different partner"',
+        r'"Could not check status: $reason"',
+      ]) {
+        expect(
+          android,
+          contains(literal),
+          reason: 'Android no longer says $literal',
+        );
       }
     });
   });

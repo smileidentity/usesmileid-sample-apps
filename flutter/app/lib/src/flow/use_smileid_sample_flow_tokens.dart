@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:sample_ui/sample_ui.dart';
+
 /// Structurally valid unsigned JWTs — fixtures the scenarios demand, never credentials.
 abstract final class UseSmileIDSampleFlowTokens {
   /// A token whose `exp` is an hour away, or an hour past when [expired].
@@ -17,6 +19,54 @@ abstract final class UseSmileIDSampleFlowTokens {
   /// What `badRefresh` hands back, so the failure path has something unusable to reject.
   static String malformed() => 'sample-not-a-jwt';
 
+  /// A simulated scan's token over the chosen span, bindings and environment.
+  static String session({
+    required UseSmileIDSampleSimulatedSpan span,
+    required UseSmileIDSampleSimulatedBindings bindings,
+    required UseSmileIDSampleEnvironment environment,
+    required int nowMillis,
+  }) {
+    final int nowSeconds = nowMillis ~/ _millisPerSecond;
+    final int issuedAt = span.inPast
+        ? nowSeconds - span.span.inSeconds - _endedLagSeconds
+        : nowSeconds;
+    final List<String> claims = <String>[
+      '"iat":$issuedAt',
+      '"exp":${issuedAt + span.span.inSeconds}',
+      // With the /v3 path a real claim carries.
+      '"api_url":"${environment.baseUrl}$_apiPath"',
+      if (bindings.binds) _payloadClaim(bindings, issuedAt),
+    ];
+    return <String>[
+      _header,
+      '{${claims.join(',')}}',
+      _signature,
+    ].map(_base64Url).join('.');
+  }
+
+  static String _payloadClaim(
+    UseSmileIDSampleSimulatedBindings bindings,
+    int issuedAtSeconds,
+  ) {
+    final List<String> fields = <String>[
+      if (bindings.userDetails) ...<String>[
+        for (final String field in _vaultedFields) '"$field":"vault_$field"',
+        '"country":"${UseSmileIDSampleCountry.ke.code}"',
+        '"id_type":"${UseSmileIDSampleIdType.nationalId.id}"',
+      ],
+      if (bindings.consent) _consentClaim(issuedAtSeconds),
+    ];
+    return '"payload":{${fields.join(',')}}';
+  }
+
+  /// All four subfields: a partial binding fails the build.
+  static String _consentClaim(int issuedAtSeconds) {
+    final String grantedAt =
+        '${DateTime.fromMillisecondsSinceEpoch(issuedAtSeconds * _millisPerSecond, isUtc: true).toIso8601String().split('.').first}Z';
+    return '"consent":{"granted":true,"granted_at":"$grantedAt",'
+        '"notice_language":"en","notice_privacy_policy_url":"$_privacyPolicyUrl"}';
+  }
+
   static String _base64Url(String value) =>
       base64Url.encode(utf8.encode(value)).replaceAll('=', '');
 
@@ -24,4 +74,14 @@ abstract final class UseSmileIDSampleFlowTokens {
   static const String _signature = 'sample-signature';
   static const int _millisPerSecond = 1000;
   static const int _validitySeconds = 3600;
+  static const int _endedLagSeconds = 60;
+  static const String _apiPath = 'v3';
+  static const String _privacyPolicyUrl = 'https://smile.id/privacy-policy';
+  static const List<String> _vaultedFields = <String>[
+    'given_names',
+    'last_name',
+    'email',
+    'phone_number',
+    'id_number',
+  ];
 }

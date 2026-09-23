@@ -1,0 +1,156 @@
+appId: ${APP_ID}
+---
+# The token session, on locally minted fixture tokens; nothing asserts on the token itself.
+# The consent screen is matched by its text: this SDK publishes no `si_consent_screen`.
+
+- clearState
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://"
+      LANDS_ON: "sample_products_screen"
+
+- tapOn:
+    id: "sample_nav_token"
+- runFlow: subflows/grant-camera.yaml
+- extendedWaitUntil:
+    visible:
+      id: "sample_scan_token_screen"
+    timeout: 30000
+- tapOn:
+    id: "sample_token_simulate"
+- extendedWaitUntil:
+    visible:
+      id: "sample_session_card"
+    timeout: 30000
+- assertVisible:
+    id: "sample_session_countdown"
+    text: "1[45]:[0-9]{2}"
+
+- tapOn:
+    id: "sample_nav_token"
+- extendedWaitUntil:
+    visible:
+      id: "sample_scan_token_screen"
+    timeout: 30000
+- tapOn: "SIMULATED SCAN"
+- tapOn: "8h"
+- tapOn:
+    id: "sample_token_simulate"
+- extendedWaitUntil:
+    visible:
+      id: "sample_session_card"
+    timeout: 30000
+- assertVisible:
+    id: "sample_session_countdown"
+    text: "[78]:[0-9]{2}:[0-9]{2}"
+
+- tapOn:
+    id: "sample_nav_token"
+- extendedWaitUntil:
+    visible:
+      id: "sample_scan_token_screen"
+    timeout: 30000
+- tapOn: "SIMULATED SCAN"
+- tapOn: "Binds details"
+- tapOn:
+    id: "sample_token_simulate"
+- extendedWaitUntil:
+    visible:
+      id: "sample_session_card"
+    timeout: 30000
+- tapOn:
+    id: "sample_product_card_documentVerification"
+- extendedWaitUntil:
+    visible: "Deny"
+    timeout: 30000
+- assertNotVisible:
+    id: "sample_user_details_screen"
+- assertNotVisible:
+    id: "sample_kyc_form_screen"
+- back
+- extendedWaitUntil:
+    visible:
+      id: "sample_products_screen"
+    timeout: 30000
+
+- tapOn:
+    id: "sample_nav_token"
+- extendedWaitUntil:
+    visible:
+      id: "sample_scan_token_screen"
+    timeout: 30000
+- tapOn: "SIMULATED SCAN"
+- tapOn: "Expired"
+- tapOn:
+    id: "sample_token_simulate"
+- extendedWaitUntil:
+    visible:
+      id: "sample_session_ended_banner"
+    timeout: 30000
+- tapOn:
+    id: "sample_product_card_smartSelfieEnrollment"
+- extendedWaitUntil:
+    visible:
+      id: "sample_user_details_screen"
+    timeout: 30000
+- tapOn:
+    id: "sample_user_details_field_firstName"
+- inputText: "Ada"
+- tapOn:
+    id: "sample_user_details_field_lastName"
+- inputText: "Okafor"
+- tapOn:
+    id: "sample_user_details_field_email"
+- inputText: "ada.okafor@example.com"
+- hideKeyboard
+# `hideKeyboard` is a back press on Android and pops the form if the keyboard is already down.
+- assertVisible:
+    id: "sample_user_details_screen"
+- tapOn:
+    id: "sample_user_details_continue"
+- extendedWaitUntil:
+    visible:
+      id: "sample_scan_token_screen"
+    timeout: 30000
+- assertVisible: ".*Token session ended.*"
+
+- tapOn:
+    id: "sample_token_manual_entry"
+- inputText: "not-a-jwt"
+- hideKeyboard
+- assertVisible:
+    id: "sample_scan_token_screen"
+- tapOn: "Link token"
+- assertVisible: ".*three dot-separated base64url segments.*"
+
+- tapOn: "SIMULATED SCAN"
+- tapOn: "8h"
+- tapOn:
+    id: "sample_token_simulate"
+- extendedWaitUntil:
+    visible: "Deny"
+    timeout: 30000
+- assertNotVisible:
+    id: "sample_scan_token_screen"
+- back
+- extendedWaitUntil:
+    visible:
+      id: "sample_products_screen"
+    timeout: 30000
+# Ends on a live span: an ended one would send the next flow to the scanner.
+- assertVisible:
+    id: "sample_session_card"
+
+- tapOn:
+    id: "sample_nav_token"
+- extendedWaitUntil:
+    visible:
+      id: "sample_scan_token_screen"
+    timeout: 30000
+- assertNotVisible: ".*Token session ended.*"
+- back
+- extendedWaitUntil:
+    visible:
+      id: "sample_products_screen"
+    timeout: 30000

@@ -411,6 +411,8 @@ class _GoAffordance extends StatelessWidget {
 /// The design runs the outer stop past the card's edge and a gradient stop must land inside 0..1,
 /// so the last stop is the colour the gradient has actually reached by the edge.
 LinearGradient _fill(SmileProductHue hue) => LinearGradient(
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
   colors: <Color>[_gradientStart(hue), _gradientEnd(hue)],
   stops: <double>[hue.stopStart, math.min(hue.stopEnd, 1)],
 );

@@ -1,5 +1,6 @@
 import { LicensesScreen, type UseSmileIDSampleLicence } from '../src/screens/licenses-screen';
 import { ProductsScreen } from '../src/screens/products-screen';
+import { ScanTokenScreen } from '../src/screens/scan-token-screen';
 import { SettingsScreen } from '../src/screens/settings-screen';
 import { smileIDSampleSettingsDefaults } from '../src/state/use-smile-id-sample-settings';
 import { UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
@@ -32,6 +33,10 @@ const settings = (
     onSignOut={noop}
     {...overrides}
   />
+);
+
+const scanToken = (reason?: 'sessionEnded') => (
+  <ScanTokenScreen onBack={noop} onLink={noop} onSimulate={noop} onPaste={async () => null} reason={reason} />
 );
 
 type Case = { element: () => React.ReactElement };
@@ -115,6 +120,13 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
       empty: { element: () => <LicensesScreen licences={[]} onBack={noop} /> },
     },
   },
+  {
+    screen: 'scanToken',
+    states: {
+      default: { element: () => scanToken() },
+      redirected: { element: () => scanToken('sessionEnded') },
+    },
+  },
 ];
 
 describe.each(cases)('$screen', ({ states }) => {
@@ -126,9 +138,9 @@ describe.each(cases)('$screen', ({ states }) => {
 });
 
 describe('screen coverage', () => {
-  it('records both schemes for every state spec/screens.json lists for these three', () => {
+  it('records both schemes for every state spec/screens.json lists for these four', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(20);
+    expect(total * schemes.length).toBe(24);
   });
 });
 

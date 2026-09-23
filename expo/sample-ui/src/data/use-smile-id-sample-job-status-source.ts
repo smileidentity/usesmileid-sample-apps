@@ -23,16 +23,16 @@ export type UseSmileIDSampleJobStatusSource = {
 export const smileIDSampleRefreshLabel = (outcome: UseSmileIDSampleStatusRefresh): string => {
   switch (outcome.kind) {
     case 'updated':
-      return outcome.message;
+      return `${outcome.status} — ${outcome.message}`;
     case 'stillProcessing':
       return 'Still processing';
     case 'noSession':
-      return 'No live token session to check with';
+      return 'Scan a token first';
     case 'noServerJob':
-      return 'Never submitted, so there is nothing to check';
+      return 'Not submitted under a scanned token';
     case 'partnerMismatch':
       return 'Submitted by a different partner';
     case 'failed':
-      return outcome.reason;
+      return `Could not check status: ${outcome.reason}`;
   }
 };

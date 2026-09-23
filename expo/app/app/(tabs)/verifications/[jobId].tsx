@@ -1,18 +1,18 @@
 import {
+  UseSmileIDSampleTransientNoticeHost,
   VerificationDetailsScreen,
   smileIDSampleRefreshLabel,
   useSmileIDSampleJobStore,
-  type UseSmileIDSampleJobStatusSource,
+  useSmileIDSampleSessionStore,
+  useSmileIDSampleTransientNotice,
 } from '@smileid/sample-ui';
 import { useLocalSearchParams } from 'expo-router';
 
+import { smileIDSampleStatusApi } from '../../../src/status/use-smile-id-sample-status-api';
 import { useSmileIDSampleBack } from '../../../src/use-smile-id-sample-back';
+import { useSmileIDSampleNoticeStyle } from '../../../src/use-smile-id-sample-notice-inset';
 import { useCallback, useEffect, useRef, useState } from 'react';
-
-/// No scanned session exists yet, so every refresh reports why rather than doing nothing.
-const source: UseSmileIDSampleJobStatusSource = {
-  check: async () => ({ kind: 'noSession' }),
-};
+import { StyleSheet, View } from 'react-native';
 
 export default function VerificationDetails() {
   const back = useSmileIDSampleBack('/verifications');
@@ -21,7 +21,9 @@ export default function VerificationDetails() {
   const refresh = useSmileIDSampleJobStore((state) => state.refresh);
   const remove = useSmileIDSampleJobStore((state) => state.remove);
   const [refreshing, setRefreshing] = useState(false);
-  const [notice, setNotice] = useState<string | null>(null);
+  const notice = useSmileIDSampleTransientNotice();
+  const noticeStyle = useSmileIDSampleNoticeStyle();
+  const { show } = notice;
   /// The entry refresh runs once per row, so its own state write cannot re-trigger it.
   const refreshedOnEntry = useRef<string | null>(null);
 
@@ -31,16 +33,21 @@ export default function VerificationDetails() {
     async (silent: boolean) => {
       if (jobId === undefined) return;
       if (!silent) setRefreshing(true);
-      const outcome = await refresh(jobId, null, Date.now(), source);
+      const outcome = await refresh(
+        jobId,
+        useSmileIDSampleSessionStore.getState().live,
+        Date.now(),
+        smileIDSampleStatusApi,
+      );
       // Only the call that raised the spinner lowers it: the on-entry refresh is silent and shows
       // none, so clearing it there ended a pull-to-refresh the reader had started moments before.
       if (!silent) setRefreshing(false);
-      // A silent refresh says nothing unless something actually changed.
-      if (outcome !== null && (!silent || outcome.kind === 'updated')) {
-        setNotice(smileIDSampleRefreshLabel(outcome));
+      // Silent on entry only about "still processing", which every visit would repeat.
+      if (outcome !== null && (!silent || outcome.kind !== 'stillProcessing')) {
+        show({ message: smileIDSampleRefreshLabel(outcome) });
       }
     },
-    [jobId, refresh],
+    [jobId, refresh, show],
   );
 
   useEffect(() => {
@@ -52,15 +59,22 @@ export default function VerificationDetails() {
   }, [job, run]);
 
   return (
-    <VerificationDetailsScreen
-      state={{ job, jobId: jobId ?? '', refreshing, refreshNotice: notice }}
-      onBack={() => back()}
-      onDelete={() => {
-        if (job !== null) void remove([job.id]);
-        back();
-      }}
-      onRefresh={() => void run(false)}
-      onCopy={() => undefined}
-    />
+    <View style={styles.host}>
+      <VerificationDetailsScreen
+        state={{ job, jobId: jobId ?? '', refreshing }}
+        onBack={() => back()}
+        onDelete={() => {
+          if (job !== null) void remove([job.id]);
+          back();
+        }}
+        onRefresh={() => void run(false)}
+        onCopy={() => undefined}
+      />
+      <UseSmileIDSampleTransientNoticeHost state={notice} style={noticeStyle} />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  host: { flex: 1 },
+});

@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
+import '../flow/use_smileid_sample_token_binding_rules.dart';
 import '../state/use_smileid_sample_providers.dart';
+import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_journey.dart';
 import '../use_smileid_sample_routes.dart';
 
@@ -85,17 +87,44 @@ class _UseSmileIDSampleProductsTabState
     final UseSmileIDSampleProfiles profiles = ref.watch(
       useSmileIDSampleProfilesProvider,
     );
+    final UseSmileIDSampleSessionRecord session = ref.watch(
+      useSmileIDSampleSessionProvider,
+    );
+    // Read, not watched: expiry lands as a retirement, which the watch above sees.
+    final bool ended = useSmileIDSampleSessionEnded(
+      session,
+      ref.read(useSmileIDSampleWallClockProvider)(),
+    );
+    final UseSmileIDSampleTokenSession? live = session.live;
     return UseSmileIDSampleProductsScreen(
       state: UseSmileIDSampleProductsState(
         initials: profiles.active.initials,
         // By POSITION, not by id: the hue is the profile's place in the list, and every screen
         // showing the same profile has to agree on it.
         avatarColor: avatarColorForProfile(profiles.activeIndex),
+        sessionId: ended ? null : live?.id,
+        sessionCountdown: ended || live == null
+            ? null
+            : Consumer(
+                builder: (BuildContext context, WidgetRef ref, Widget? _) =>
+                    UseSmileIDSampleSessionCountdown(
+                      remaining: useSmileIDSampleCountdown(
+                        live.remaining(
+                          ref.watch(useSmileIDSampleClockProvider),
+                        ),
+                      ),
+                    ),
+              ),
+        sessionEnded: ended,
       ),
-      onProductTap: (UseSmileIDSampleProduct product) =>
-          context.push(UseSmileIDSampleJourney.firstStepFor(product)),
+      onProductTap: (UseSmileIDSampleProduct product) => context.push(
+        UseSmileIDSampleJourney.firstStepFor(
+          product,
+          useSmileIDSampleLiveBindings(ref),
+        ),
+      ),
       onProfileTap: _switchProfile,
-      onScanTap: () {},
+      onScanTap: () => context.push(UseSmileIDSampleRoutes.scanToken),
       bottomInset: useSmileIDSampleNavBarClearance(context),
     );
   }

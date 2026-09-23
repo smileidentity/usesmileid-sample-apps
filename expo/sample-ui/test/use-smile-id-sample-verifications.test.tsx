@@ -103,17 +103,6 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
             },
           }),
       },
-      refreshNotice: {
-        element: () =>
-          details({
-            state: {
-              job: fixtures[0]!,
-              jobId: fixtures[0]!.id,
-              refreshing: false,
-              refreshNotice: 'Never submitted, so there is nothing to check',
-            },
-          }),
-      },
       // A deep link can name a row this build has no copy of, and the id is the whole diagnostic.
       noRow: {
         element: () => details({ state: { job: null, jobId: 'job_99ky31za00', refreshing: false } }),
@@ -142,7 +131,7 @@ describe('the recording environment', () => {
 describe('verifications coverage', () => {
   it('records both schemes for every state', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(18);
+    expect(total * schemes.length).toBe(16);
   });
 });
 

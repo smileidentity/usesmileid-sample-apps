@@ -7,6 +7,7 @@ import 'screens/use_smileid_sample_licenses_tab.dart';
 import 'screens/use_smileid_sample_products_tab.dart';
 import 'screens/use_smileid_sample_profile_config_tab.dart';
 import 'screens/use_smileid_sample_profiles_tab.dart';
+import 'screens/use_smileid_sample_scan_token_tab.dart';
 import 'screens/use_smileid_sample_sdk_flow_tab.dart';
 import 'screens/use_smileid_sample_settings_tab.dart';
 import 'screens/use_smileid_sample_verification_details_tab.dart';
@@ -37,6 +38,9 @@ abstract final class UseSmileIDSampleRoutes {
 
   /// The scenario drawer, a LAYER over settings rather than a page of its own.
   static const String scenarioDrawer = '/debug/scenarios';
+
+  /// The token scanner, pushed above the shell.
+  static const String scanToken = '/token/scan';
 
   /// The component gallery, a dev surface that is deliberately absent from `spec/routes.json`.
   static const String components = '/debug/components';
@@ -221,6 +225,7 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
           onLeave: () => context.go(UseSmileIDSampleRoutes.products),
           onNeedsDetails: () =>
               context.go(UseSmileIDSampleRoutes.consentDetailsForm(productId)),
+          onNeedsSession: () => context.go(UseSmileIDSampleRoutes.scanToken),
           // `go`, not a pop: the wizard beneath must not be reachable back INTO from the result.
           onResult: (String jobId) =>
               context.go(UseSmileIDSampleRoutes.verificationDetails(jobId)),
@@ -275,6 +280,10 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
               ),
         ),
       ],
+    ),
+    GoRoute(
+      path: UseSmileIDSampleRoutes.scanToken,
+      builder: (_, _) => const UseSmileIDSampleScanTokenTab(),
     ),
     GoRoute(
       path: UseSmileIDSampleRoutes.components,

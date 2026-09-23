@@ -2,11 +2,16 @@ import { smileIDSampleLaunchArgDefaults } from '@smileid/sample-ui';
 import { renderHook, waitFor } from '@testing-library/react-native';
 import * as Linking from 'expo-linking';
 
-import { useLaunchArgs } from '../src/use-smile-id-sample-launch';
+import { smileIDSampleResetLaunchArgs, useLaunchArgs } from '../src/use-smile-id-sample-launch';
 
 jest.mock('expo-linking', () => ({ getInitialURL: jest.fn() }));
 
 const getInitialURL = Linking.getInitialURL as jest.MockedFunction<typeof Linking.getInitialURL>;
+
+beforeEach(() => {
+  getInitialURL.mockReset();
+  smileIDSampleResetLaunchArgs();
+});
 
 /// The scheme spec/app-identity.json reserves for this app, which is what a cold start arrives on.
 const LAUNCH = 'usesmileid-sample-expo://';

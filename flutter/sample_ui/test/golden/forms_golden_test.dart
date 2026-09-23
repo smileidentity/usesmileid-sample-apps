@@ -34,6 +34,20 @@ void main() {
     );
   });
 
+  /// Both names bound by a token.
+  testWidgets('user details with names bound', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_user_details_names_bound',
+      () => _userDetails(
+        requirement: const UseSmileIDSampleUserDetailsRequirement(
+          firstName: false,
+          lastName: false,
+        ),
+      ),
+    );
+  });
+
   /// Part-typed: what the form looks like while it is being filled in.
   testWidgets('user details editing', (WidgetTester tester) async {
     await _screenGoldens(

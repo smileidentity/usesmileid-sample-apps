@@ -1,4 +1,10 @@
-import { UseSmileIDSampleNavBar, smileIDSampleNavItems } from '@smileid/sample-ui';
+import {
+  UseSmileIDSampleNavBar,
+  smileIDSampleLiveSession,
+  smileIDSampleNavItems,
+  smileIDSampleSessionProgress,
+  useSmileIDSampleSessionStore,
+} from '@smileid/sample-ui';
 import { useRouter } from 'expo-router';
 import { BottomTabBarHeightCallbackContext, type BottomTabBarProps } from 'expo-router/tabs';
 import { use } from 'react';
@@ -15,6 +21,10 @@ export const UseSmileIDSampleNavBarHost = ({ state, navigation }: BottomTabBarPr
   const onTabRoot = smileIDSampleNavItems.some((item) => item.id === selected?.name);
   // Select mode owns the bottom chrome; a bar left here covers Hide from List and eats its tap.
   const selecting = useSmileIDSampleSelectMode();
+  const sessionProgress = useSmileIDSampleSessionStore((state) => {
+    const live = smileIDSampleLiveSession(state, state.nowMillis);
+    return live === null ? null : smileIDSampleSessionProgress(live, state.nowMillis);
+  });
 
   return (
     <View
@@ -41,6 +51,7 @@ export const UseSmileIDSampleNavBarHost = ({ state, navigation }: BottomTabBarPr
             }
           }}
           onTokenPress={() => router.push('/token/scan')}
+          sessionProgress={sessionProgress}
         />
       ) : null}
     </View>

@@ -41,6 +41,12 @@ dependencies:
   # The settings store, named in the same plan. Already in the graph transitively via the SDK.
   shared_preferences: ^2.5.3
 
+  # The token scanner: bundled ML Kit on Android like the native app, Apple Vision on iOS.
+  mobile_scanner: ^7.4.2
+
+  # The token is a bearer credential, so it lives in the Keychain / Keystore, never beside the switches.
+  flutter_secure_storage: ^11.2.0
+
   # The template's own. Switch.adaptive puts Cupertino widgets in the tree, and without this the
   # icon tree-shaker warns that it cannot find the family they reference.
   cupertino_icons: ^1.0.8

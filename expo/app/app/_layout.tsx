@@ -8,6 +8,8 @@ import {
   smileLightColors,
   useSmileIDSampleJobStore,
   useSmileIDSampleProfileStore,
+  useSmileIDSampleSessionClock,
+  useSmileIDSampleSessionStore,
   useSmileIDSampleSettingsStore,
 } from '@smileid/sample-ui';
 import { useFonts } from 'expo-font';
@@ -18,7 +20,8 @@ import { useEffect } from 'react';
 import { Appearance, Platform, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { useLaunchArgs } from '../src/use-smile-id-sample-launch';
+import { useLaunchArgs, useLaunchArgsLoaded } from '../src/use-smile-id-sample-launch';
+import { smileIDSampleSecureSessionStorage } from '../src/use-smile-id-sample-secure-session-storage';
 
 /// Every pushed route and sheet layers over the tabs, so a cold deep link lands with its owner beneath (routes.json R12).
 export const unstable_settings = { initialRouteName: '(tabs)' };
@@ -40,6 +43,7 @@ export default function RootLayout() {
   const dark = settingsLoaded ? darkMode : scheme === 'dark';
   const colors = dark ? smileDarkColors : smileLightColors;
   const args = useLaunchArgs();
+  const argsLoaded = useLaunchArgsLoaded();
   const resetProfiles = useSmileIDSampleProfileStore((state) => state.reset);
   const seedFixtures = useSmileIDSampleJobStore((state) => state.seedFixtures);
   // spec/launch-args.json states the argument in SECONDS; the library's window is milliseconds.
@@ -52,6 +56,13 @@ export default function RootLayout() {
   useEffect(() => {
     void loadSettings();
   }, [loadSettings]);
+
+  const sessionLoaded = useSmileIDSampleSessionStore((state) => state.loaded);
+  const loadSession = useSmileIDSampleSessionStore((state) => state.load);
+  useEffect(() => {
+    void loadSession(smileIDSampleSecureSessionStorage);
+  }, [loadSession]);
+  useSmileIDSampleSessionClock();
 
   // The SDK's useColorScheme and the native bars read this, not the theme provider.
   useEffect(() => {
@@ -74,7 +85,8 @@ export default function RootLayout() {
     if (args.seedJobs) seedFixtures(Date.now()).catch(() => undefined);
   }, [args, resetProfiles, seedFixtures]);
 
-  if (!fontsLoaded) {
+  // Held for the session and the link: a cold link into a run snapshots both at entry.
+  if (!fontsLoaded || !sessionLoaded || !argsLoaded) {
     return <View style={{ backgroundColor: colors.background, flex: 1 }} />;
   }
 

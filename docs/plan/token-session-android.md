@@ -457,10 +457,11 @@ Three boundaries, each deliberate:
   null `idType`, so a token binding country alone would build — but the form is where the document type
   is chosen, and skipping on a partial binding would quietly submit without one instead of failing. So
   both must be bound.
-- **A skipped form has to be visible as a skip.** The session card names the field groups the token
-  covers — `Supplies name, contact, ID` — in field names and never values, because device flows dump
-  that screen's hierarchy on failure. A form that vanishes with no explanation is indistinguishable
-  from a form the app lost.
+- **A skipped form has to be visible as a skip.** The session card once named the field groups the
+  token covers, `Supplies name, contact, ID`. **Corrected 2026-09-23:** the card has not drawn that
+  line since the composites pass, on Android or iOS, and the ports follow the code. What a partner
+  sees instead is the `Provided by token` row on any form that does appear. Names, never values,
+  because device flows dump the hierarchy on failure.
 
 ### 4.3 Partial bindings, which the Portal does not prevent
 
