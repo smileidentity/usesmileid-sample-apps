@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
+import '../flow/use_smileid_sample_token_binding_rules.dart';
 import '../state/use_smileid_sample_forms.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
@@ -66,6 +67,13 @@ class _UseSmileIDSampleSettingsTabState
         initials: profiles.active.initials,
         versionLabel: useSmileIDSampleVersionLabel,
         avatarColor: avatarColorForProfile(profiles.activeIndex),
+        // Clock-free, as Android reads it: Settings must not rebuild on the tick.
+        consentBoundByToken:
+            ref.watch(useSmileIDSampleSessionProvider).live?.bindings.consent !=
+                null &&
+            !useSmileIDSampleStartsExpired(
+              ref.watch(useSmileIDSampleScenarioProvider).scenario,
+            ),
       ),
       onSettingChanged: (UseSmileIDSampleSetting setting, bool enabled) => ref
           .read(useSmileIDSampleSettingsProvider.notifier)

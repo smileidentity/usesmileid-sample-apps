@@ -410,6 +410,38 @@ void main() {
       },
     );
 
+    testWidgets('Settings says so when a live token binds consent', (
+      WidgetTester tester,
+    ) async {
+      await pump(
+        tester,
+        stored: UseSmileIDSampleSessionRecord(
+          live: _mint(
+            bindings: const UseSmileIDSampleSimulatedBindings(consent: true),
+          ),
+        ),
+        at: UseSmileIDSampleRoutes.settings,
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.text('The token grants consent, so the screen is skipped'),
+        findsOne,
+      );
+    });
+
+    testWidgets(
+      'Settings keeps its own wording under a token that binds no consent',
+      (WidgetTester tester) async {
+        await pump(
+          tester,
+          stored: UseSmileIDSampleSessionRecord(live: _mint()),
+          at: UseSmileIDSampleRoutes.settings,
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('Ask permission before KYC checks'), findsOne);
+      },
+    );
+
     testWidgets('a stored ended marker shows the ended banner, not a card', (
       WidgetTester tester,
     ) async {
