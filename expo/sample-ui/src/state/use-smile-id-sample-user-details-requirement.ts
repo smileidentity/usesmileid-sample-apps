@@ -1,13 +1,8 @@
+import type { UseSmileIDSampleTokenBindings } from './use-smile-id-sample-token-decoder';
 import type { UseSmileIDSampleUserDetails } from './use-smile-id-sample-profiles';
 import { UseSmileIDSampleUserField, type UseSmileIDSampleUserFieldSpec } from '../model/use-smile-id-sample-user-fields';
 
-/// What a token already binds. Mirrors the SDK's union rule field for field.
-export type UseSmileIDSampleTokenBindings = {
-  readonly givenNames?: boolean;
-  readonly lastName?: boolean;
-  readonly email?: boolean;
-  readonly phoneNumber?: boolean;
-};
+export type { UseSmileIDSampleTokenBindings };
 
 /// What the form must still collect: the SDK's rule minus what the token binds.
 export type UseSmileIDSampleUserDetailsRequirement = {
