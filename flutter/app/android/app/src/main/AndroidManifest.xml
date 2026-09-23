@@ -1,4 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The token scanner asks for it here; the SDK asks again for its own capture. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Scanning degrades to manual token entry rather than failing, so a camera is not required. -->
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="false" />
     <application
         android:label="UseSmileID Sample (F)"
         android:name="${applicationName}"
