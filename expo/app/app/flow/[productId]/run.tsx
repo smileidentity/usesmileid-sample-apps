@@ -6,6 +6,7 @@ import {
   useSmileIDSampleActiveProfile,
   useSmileIDSampleFormsStore,
   useSmileIDSampleJobStore,
+  smileIDSampleRunRecorder,
   useSmileIDSampleResultStore,
   useSmileIDSampleSessionStore,
   useSmileIDSampleSettingsStore,
@@ -91,8 +92,10 @@ export default function SdkFlowRun() {
     [snapshot],
   );
 
+  const recorder = useMemo(() => (snapshot === null ? null : smileIDSampleRunRecorder(runOf(snapshot))), [snapshot]);
+
   useEffect(() => {
-    if (snapshot !== null && preflight?.kind === 'ready') useSmileIDSampleResultStore.getState().start(runOf(snapshot));
+    if (preflight?.kind === 'ready') recorder?.ensureStarted();
     // Entry-only, like the snapshot it records.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -125,7 +128,7 @@ export default function SdkFlowRun() {
         if (snapshot.scenario === 'noCallback') return;
         builder.onResult = (result: UseSmileIDResult<JobSubmissionResponse>) => {
           // Before the throw: the throwing scenario still delivered, and the count must say so.
-          recordResult(result);
+          if (recorder !== null) recordResult(recorder, result);
           if (snapshot.scenario === 'throwingCallback') {
             throw new Error('throwingCallback scenario: the host result callback throws');
           }
@@ -167,19 +170,21 @@ const runOf = (snapshot: UseSmileIDSampleFlowLaunchSnapshot): UseSmileIDSampleRu
   environment: snapshot.sandbox ? 'sandbox' : 'production',
 });
 
-const recordResult = (result: UseSmileIDResult<JobSubmissionResponse>): void => {
-  const { record } = useSmileIDSampleResultStore.getState();
+const recordResult = (
+  recorder: ReturnType<typeof smileIDSampleRunRecorder>,
+  result: UseSmileIDResult<JobSubmissionResponse>,
+): void => {
   switch (result.status) {
     case 'success':
-      record('succeeded', { jobId: result.value.jobId, userId: result.value.userId });
+      recorder.deliver('succeeded', { jobId: result.value.jobId, userId: result.value.userId });
       return;
     case 'failure':
-      record('failed', {
+      recorder.deliver('failed', {
         error: result.error instanceof Error ? result.error.message : String(result.error),
       });
       return;
     case 'cancelled':
-      record('cancelled');
+      recorder.deliver('cancelled');
   }
 };
 

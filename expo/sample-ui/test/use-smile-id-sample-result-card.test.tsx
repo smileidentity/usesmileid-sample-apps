@@ -9,7 +9,7 @@ import {
   smileIDSampleResultSelecting,
   type UseSmileIDSampleRunContext,
 } from '../src/model/use-smile-id-sample-result';
-import { useSmileIDSampleResultStore } from '../src/state/use-smile-id-sample-result-store';
+import { smileIDSampleRunRecorder, useSmileIDSampleResultStore } from '../src/state/use-smile-id-sample-result-store';
 import { UseSmileIDSampleThemeProvider } from '../src/theme/use-smile-id-sample-theme';
 import { UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
 
@@ -110,5 +110,22 @@ describe('the tree', () => {
       expect(screen.getByTestId(id)).toBeTruthy();
     }
     expect(screen.queryByTestId(UseSmileIDSampleTestIds.RESULT_ENVIRONMENT)).toBeNull();
+  });
+});
+
+describe('a run recorder', () => {
+  it('keeps a delivery made on the SDK first frame when the host starts the run after it', () => {
+    const recorder = smileIDSampleRunRecorder(run);
+    recorder.deliver('failed', { error: 'no camera' });
+    recorder.ensureStarted();
+    expect(store().result).toMatchObject({ resultCallbackCount: 1, jobStatus: 'failed', environment: 'production' });
+  });
+
+  it('counts one delivery once when the host starts first', () => {
+    const recorder = smileIDSampleRunRecorder(run);
+    recorder.ensureStarted();
+    recorder.deliver('cancelled');
+    recorder.ensureStarted();
+    expect(store().result).toMatchObject({ resultCallbackCount: 1, jobStatus: 'cancelled' });
   });
 });

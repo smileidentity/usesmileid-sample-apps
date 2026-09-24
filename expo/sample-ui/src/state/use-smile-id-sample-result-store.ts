@@ -33,3 +33,21 @@ export const useSmileIDSampleResultStore = create<State & Actions>((set, get) =>
     set({ result: { ...get().result, refreshCallbackCount: get().result.refreshCallbackCount + 1 } }),
   reset: () => set({ result: smileIDSampleResultDefaults }),
 }));
+
+/// One run's link to the card: started exactly once, before its first delivery, whichever comes first.
+export const smileIDSampleRunRecorder = (run: UseSmileIDSampleRunContext) => {
+  let started = false;
+  /// Starts the run unless a delivery already did: a child's effects run before its host's.
+  const ensureStarted = () => {
+    if (started) return;
+    started = true;
+    useSmileIDSampleResultStore.getState().start(run);
+  };
+  return {
+    ensureStarted,
+    deliver: (...args: Parameters<Actions['record']>) => {
+      ensureStarted();
+      useSmileIDSampleResultStore.getState().record(...args);
+    },
+  };
+};

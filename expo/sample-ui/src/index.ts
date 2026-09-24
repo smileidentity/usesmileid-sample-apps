@@ -280,7 +280,7 @@ export {
   type UseSmileIDSampleResult,
   type UseSmileIDSampleRunContext,
 } from './model/use-smile-id-sample-result';
-export { useSmileIDSampleResultStore } from './state/use-smile-id-sample-result-store';
+export { smileIDSampleRunRecorder, useSmileIDSampleResultStore } from './state/use-smile-id-sample-result-store';
 export { UseSmileIDSampleResultCard, UseSmileIDSampleResultLine } from './components/use-smile-id-sample-result-card';
 export {
   smileIDSampleApiUrlHost,
