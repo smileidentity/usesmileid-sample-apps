@@ -164,4 +164,34 @@ void main() {
       );
     });
   });
+
+  group('a callback URL', () {
+    test('starts empty, which is the partner portal default', () {
+      expect(UseSmileIDSampleProfiles().active.callbackUrl, isEmpty);
+    });
+
+    test('is stored with the details when the page edited it', () {
+      final UseSmileIDSampleProfiles profiles = UseSmileIDSampleProfiles();
+      profiles.setDefaults(
+        'p-1',
+        const UseSmileIDSampleUserDetails(firstName: 'Ada'),
+        callbackUrl: 'https://kobo.example/hooks',
+      );
+      expect(profiles.active.callbackUrl, 'https://kobo.example/hooks');
+    });
+
+    test('is left alone by a save that did not edit it', () {
+      final UseSmileIDSampleProfiles profiles = UseSmileIDSampleProfiles();
+      profiles.setDefaults(
+        'p-1',
+        const UseSmileIDSampleUserDetails(),
+        callbackUrl: 'https://kobo.example/hooks',
+      );
+      profiles.setDefaults(
+        'p-1',
+        const UseSmileIDSampleUserDetails(firstName: 'Ada'),
+      );
+      expect(profiles.active.callbackUrl, 'https://kobo.example/hooks');
+    });
+  });
 }

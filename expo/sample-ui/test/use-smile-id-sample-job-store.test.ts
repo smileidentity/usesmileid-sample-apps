@@ -453,3 +453,23 @@ describe('the removal confirmation', () => {
     expect(store().jobs?.map((row) => row.id)).not.toContain('job_a');
   });
 });
+
+describe('storage that fails', () => {
+  afterEach(() => jest.restoreAllMocks());
+
+  it('reads as an empty list rather than one stuck loading', async () => {
+    useSmileIDSampleJobStore.getState().reset();
+    jest.spyOn(AsyncStorage, 'getItem').mockRejectedValueOnce(new Error('disk'));
+    await useSmileIDSampleJobStore.getState().load();
+    expect(useSmileIDSampleJobStore.getState().jobs).toEqual([]);
+  });
+
+  it('keeps a row it could not write, for this launch', async () => {
+    useSmileIDSampleJobStore.getState().reset();
+    await useSmileIDSampleJobStore.getState().load();
+    jest.spyOn(AsyncStorage, 'setItem').mockRejectedValueOnce(new Error('disk'));
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    await expect(useSmileIDSampleJobStore.getState().add(job({ id: 'job_unwritten' }))).resolves.toBeUndefined();
+    expect(useSmileIDSampleJobStore.getState().jobs?.map((row) => row.id)).toContain('job_unwritten');
+  });
+});

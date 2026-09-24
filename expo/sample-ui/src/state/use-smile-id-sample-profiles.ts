@@ -21,6 +21,8 @@ export type UseSmileIDSampleProfile = {
   readonly organisation: string;
   readonly person: string;
   readonly defaults: UseSmileIDSampleUserDetails;
+  /// The webhook URL this profile's jobs report to; absent or empty means the partner's portal default.
+  readonly callbackUrl?: string;
 };
 
 /// Shown on the consent screen as the partner until a profile is created, so it must read as a placeholder.

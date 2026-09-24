@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import '../components/use_smileid_sample_data_field_row.dart';
 import '../components/use_smileid_sample_empty_state.dart';
 import '../components/use_smileid_sample_glyphs.dart';
+import '../components/use_smileid_sample_result_card.dart';
 import '../components/use_smileid_sample_section_label.dart';
 import '../components/use_smileid_sample_status_badge.dart';
 import '../components/use_smileid_sample_toast.dart';
 import '../components/use_smileid_sample_top_app_bar.dart';
 import '../model/use_smileid_sample_job.dart';
+import '../model/use_smileid_sample_result.dart';
 import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
@@ -25,6 +27,7 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
     this.onRefresh,
     this.onCopy,
     this.refreshNotice,
+    this.result,
     super.key,
   });
 
@@ -48,6 +51,9 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
 
   /// Why the last pull could not re-read the job, shown until it is withdrawn.
   final String? refreshNotice;
+
+  /// The last run's result card; null hides it, which is the host's probes decision.
+  final UseSmileIDSampleResult? result;
 
   @override
   Widget build(BuildContext context) {
@@ -81,15 +87,23 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
                 onRefresh: onRefresh ?? _nothingToRefresh,
                 child: ListView(
                   padding: const EdgeInsets.all(SmileDimens.spacingMd),
-                  children: found == null
-                      ? <Widget>[
-                          UseSmileIDSampleEmptyState(
-                            text: 'No verification here',
-                            supportingText: 'Nothing stored for jobId = $jobId',
-                            testId: UseSmileIDSampleTestIds.detailsEmpty,
-                          ),
-                        ]
-                      : _fields(found, colors),
+                  children: <Widget>[
+                    if (job.pending)
+                      const SizedBox.shrink()
+                    else if (found == null)
+                      UseSmileIDSampleEmptyState(
+                        text: 'No verification here',
+                        supportingText: 'Nothing stored for jobId = $jobId',
+                        testId: UseSmileIDSampleTestIds.detailsEmpty,
+                      )
+                    else
+                      ..._fields(found, colors),
+                    // Rendered even with no job: a flow that failed before submission has nothing else to show.
+                    if (result != null) ...<Widget>[
+                      const SizedBox(height: SmileDimens.spacingSm),
+                      UseSmileIDSampleResultCard(result: result!),
+                    ],
+                  ],
                 ),
               ),
             ),
@@ -187,11 +201,19 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
 /// One store lookup: a job that may be absent, so a caller cannot pass "not loaded" and "not stored" as one value.
 class UseSmileIDSampleJobLookup {
   /// The store has answered and found one.
-  const UseSmileIDSampleJobLookup.found(UseSmileIDSampleJob job) : value = job;
+  const UseSmileIDSampleJobLookup.found(UseSmileIDSampleJob job)
+    : value = job,
+      pending = false;
 
   /// The store has answered and there is none.
-  const UseSmileIDSampleJobLookup.none() : value = null;
+  const UseSmileIDSampleJobLookup.none() : value = null, pending = false;
 
-  /// The job, or null when the store had none.
+  /// The store has not answered yet, which a cold link reaches before its first read.
+  const UseSmileIDSampleJobLookup.pending() : value = null, pending = true;
+
+  /// The job, or null when the store had none or has not answered.
   final UseSmileIDSampleJob? value;
+
+  /// Whether the store has yet to answer; the page then claims neither a job nor its absence.
+  final bool pending;
 }

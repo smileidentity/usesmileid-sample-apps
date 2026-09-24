@@ -3,6 +3,7 @@ import { UseSmileIDSampleButton } from '../components/use-smile-id-sample-button
 import { UseSmileIDSampleIcon } from '../components/use-smile-id-sample-icon';
 import { UseSmileIDSampleSectionLabel } from '../components/use-smile-id-sample-section-label';
 import { UseSmileIDSampleTextInput } from '../components/use-smile-id-sample-text-input';
+import { smileIDSampleUserFieldSpec, UseSmileIDSampleUserField } from '../model/use-smile-id-sample-user-fields';
 import type { SmileIconName } from '../smile-icons';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
 
@@ -47,25 +48,25 @@ const NAME_FIELD: Field = {
 const DETAIL_FIELDS: readonly Field[] = [
   {
     key: 'firstName',
-    placeholder: 'First name',
+    placeholder: smileIDSampleUserFieldSpec(UseSmileIDSampleUserField.FirstName).label,
     icon: 'fieldPerson',
     testID: UseSmileIDSampleTestIds.NEW_PROFILE_FIRST_NAME,
   },
   {
     key: 'lastName',
-    placeholder: 'Last name',
+    placeholder: smileIDSampleUserFieldSpec(UseSmileIDSampleUserField.LastName).label,
     icon: 'fieldPerson',
     testID: UseSmileIDSampleTestIds.NEW_PROFILE_LAST_NAME,
   },
   {
     key: 'email',
-    placeholder: 'Email (optional)',
+    placeholder: smileIDSampleUserFieldSpec(UseSmileIDSampleUserField.Email).label,
     icon: 'fieldEmail',
     testID: UseSmileIDSampleTestIds.NEW_PROFILE_EMAIL,
   },
   {
     key: 'phone',
-    placeholder: 'Phone (optional)',
+    placeholder: smileIDSampleUserFieldSpec(UseSmileIDSampleUserField.Phone).label,
     icon: 'fieldPhone',
     testID: UseSmileIDSampleTestIds.NEW_PROFILE_PHONE,
   },

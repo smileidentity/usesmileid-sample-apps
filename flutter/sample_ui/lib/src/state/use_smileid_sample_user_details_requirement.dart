@@ -49,12 +49,8 @@ class UseSmileIDSampleUserDetailsRequirement {
           details.phone.trim().isNotEmpty);
 
   /// The row's label, which gains "(optional)" only once a token has covered contact.
-  String labelFor(UseSmileIDSampleUserField field) => switch (field) {
-    UseSmileIDSampleUserField.firstName => 'First name',
-    UseSmileIDSampleUserField.lastName => 'Last name',
-    UseSmileIDSampleUserField.email => contact ? 'Email' : 'Email (optional)',
-    UseSmileIDSampleUserField.phone => contact ? 'Phone' : 'Phone (optional)',
-  };
+  String labelFor(UseSmileIDSampleUserField field) =>
+      contact && !field.isRequired ? field.title : field.label;
 
   /// What this requirement still asks for; the SCREEN decides when nothing is outstanding.
   String get prompt {

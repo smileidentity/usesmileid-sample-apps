@@ -14,18 +14,32 @@ export type UseSmileIDSampleUserField =
 /// A row's own copy, which both the consent form and the profile defaults draw from.
 export type UseSmileIDSampleUserFieldSpec = {
   readonly id: UseSmileIDSampleUserField;
+  /// The field's title, the one source every screen's label is built from.
+  readonly title: string;
+  /// The title, marked optional where the design does; the row appends any asterisk.
   readonly label: string;
   readonly placeholder: string;
   readonly required: boolean;
 };
 
 /// The four rows in the order both forms draw them.
+const field = (
+  id: UseSmileIDSampleUserField,
+  title: string,
+  placeholder: string,
+  required: boolean,
+): UseSmileIDSampleUserFieldSpec => ({ id, title, label: required ? title : `${title} (optional)`, placeholder, required });
+
 export const smileIDSampleUserFields: readonly UseSmileIDSampleUserFieldSpec[] = [
-  { id: UseSmileIDSampleUserField.FirstName, label: 'First name', placeholder: 'Add first name', required: true },
-  { id: UseSmileIDSampleUserField.LastName, label: 'Last name', placeholder: 'Add last name', required: true },
-  { id: UseSmileIDSampleUserField.Email, label: 'Email (optional)', placeholder: 'name@company.com', required: false },
-  { id: UseSmileIDSampleUserField.Phone, label: 'Phone (optional)', placeholder: '+254 700 000 000', required: false },
+  field(UseSmileIDSampleUserField.FirstName, 'First name', 'Add first name', true),
+  field(UseSmileIDSampleUserField.LastName, 'Last name', 'Add last name', true),
+  field(UseSmileIDSampleUserField.Email, 'Email', 'name@company.com', false),
+  field(UseSmileIDSampleUserField.Phone, 'Phone', '+254 700 000 000', false),
 ];
+
+/// One field's spec by id; every id has one.
+export const smileIDSampleUserFieldSpec = (id: UseSmileIDSampleUserField): UseSmileIDSampleUserFieldSpec =>
+  smileIDSampleUserFields.find((spec) => spec.id === id)!;
 
 export const smileIDSampleUserFieldRead = (
   field: UseSmileIDSampleUserField,

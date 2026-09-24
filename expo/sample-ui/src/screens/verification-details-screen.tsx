@@ -2,6 +2,8 @@ import { RefreshControl, ScrollView, StyleSheet, Text, View, type StyleProp, typ
 
 import { UseSmileIDSampleDataFieldRow } from '../components/use-smile-id-sample-data-field-row';
 import { UseSmileIDSampleEmptyState } from '../components/use-smile-id-sample-empty-state';
+import { UseSmileIDSampleResultCard } from '../components/use-smile-id-sample-result-card';
+import type { UseSmileIDSampleResult } from '../model/use-smile-id-sample-result';
 import { UseSmileIDSampleIcon } from '../components/use-smile-id-sample-icon';
 import { UseSmileIDSampleSectionSurface } from '../components/use-smile-id-sample-section-surface';
 import { UseSmileIDSampleStatusBadge } from '../components/use-smile-id-sample-status-badge';
@@ -29,6 +31,10 @@ export type UseSmileIDSampleVerificationDetailsState = {
   /// The id the route asked for, which is the whole diagnostic when there is no row.
   readonly jobId: string;
   readonly refreshing: boolean;
+  /// True until the store has answered, which a cold link reaches first; the page then claims neither a job nor its absence.
+  readonly pending?: boolean;
+  /// The last run's result card; absent hides it, which is the host's probes decision.
+  readonly result?: UseSmileIDSampleResult | null;
 };
 
 type Props = {
@@ -36,7 +42,7 @@ type Props = {
   onBack: () => void;
   onDelete: () => void;
   onRefresh: () => void;
-  onCopy: (field: string, value: string) => void;
+  onCopy: (label: string, value: string) => void;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -85,7 +91,7 @@ export const VerificationDetailsScreen = ({
           />
         }
       >
-        {job === null ? (
+        {state.pending === true ? null : job === null ? (
           <UseSmileIDSampleEmptyState
             text="No verification here"
             // The id asked for is the whole diagnostic, which a deep link is how you reach.
@@ -118,7 +124,7 @@ export const VerificationDetailsScreen = ({
               <UseSmileIDSampleDataFieldRow
                 label="Job_id"
                 value={smileIDSampleJobShortId(job)}
-                onCopy={() => onCopy('jobId', job.id)}
+                onCopy={() => onCopy('Job ID', job.id)}
                 testID={UseSmileIDSampleSuffixedTestIds.detailField('jobId')}
                 copyTestID={UseSmileIDSampleSuffixedTestIds.detailCopy('jobId')}
               />
@@ -137,7 +143,7 @@ export const VerificationDetailsScreen = ({
               <UseSmileIDSampleDataFieldRow
                 label="User_id"
                 value={smileIDSampleJobShortUserId(job)}
-                onCopy={() => onCopy('userId', job.userId)}
+                onCopy={() => onCopy('User ID', job.userId)}
                 testID={UseSmileIDSampleSuffixedTestIds.detailField('userId')}
                 copyTestID={UseSmileIDSampleSuffixedTestIds.detailCopy('userId')}
               />
@@ -150,6 +156,10 @@ export const VerificationDetailsScreen = ({
             </UseSmileIDSampleSectionSurface>
           </>
         )}
+        {/* Rendered even with no job: a flow that failed before submission has nothing else to show. */}
+        {state.result != null ? (
+          <UseSmileIDSampleResultCard result={state.result} style={{ marginTop: theme.dimens.spacing.sm }} />
+        ) : null}
       </ScrollView>
     </View>
   );

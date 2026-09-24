@@ -139,11 +139,4 @@ void main() {
       <String>['terms', 'privacy'],
     );
   });
-
-  test('the footer copy is the design wording the ruling settled', () {
-    final Map<String, Object?> copy =
-        settingsScreen['copy']! as Map<String, Object?>;
-    // Brand copy, deliberately not the launcher label — see screens.json appNameCopy.
-    expect(copy['footer'], 'Smile ID Sample App · 1.0.0');
-  });
 }

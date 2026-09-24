@@ -47,14 +47,14 @@ enum UseSmileIDSampleUserField {
   lastName('lastName', 'Last name', 'Add last name', true),
 
   /// Email; never gates anything.
-  email('email', 'Email (optional)', 'name@company.com', false),
+  email('email', 'Email', 'name@company.com', false),
 
   /// Phone; never gates anything.
-  phone('phone', 'Phone (optional)', '+254 700 000 000', false);
+  phone('phone', 'Phone', '+254 700 000 000', false);
 
   const UseSmileIDSampleUserField(
     this.id,
-    this.label,
+    this.title,
     this.placeholder,
     this.isRequired,
   );
@@ -62,8 +62,11 @@ enum UseSmileIDSampleUserField {
   /// The id that suffixes this field's test id.
   final String id;
 
-  /// The row's label; the asterisk is appended by the row, not written here.
-  final String label;
+  /// The field's title, the one source every screen's label is built from.
+  final String title;
+
+  /// The row's label: the title, marked optional where the design does; the row appends any asterisk.
+  String get label => isRequired ? title : '$title (optional)';
 
   /// Shown while the value is empty.
   final String placeholder;
@@ -119,6 +122,7 @@ class UseSmileIDSampleProfile {
     required this.organisation,
     required this.person,
     this.defaults = const UseSmileIDSampleUserDetails(),
+    this.callbackUrl = '',
   });
 
   /// The stable id, which also suffixes this profile's test ids.
@@ -132,6 +136,9 @@ class UseSmileIDSampleProfile {
 
   /// What the forms pre-fill from.
   final UseSmileIDSampleUserDetails defaults;
+
+  /// The webhook URL this profile's jobs report to; empty means the partner's portal default.
+  final String callbackUrl;
 
   /// The person's initials, as the design has them, falling back to the organisation.
   String get initials {
@@ -149,10 +156,11 @@ class UseSmileIDSampleProfile {
   /// What a row says under the organisation: the person, or a placeholder until details are saved.
   String get caption => person.trim().isEmpty ? _noUserDetailsCaption : person;
 
-  /// A copy with [defaults] replaced, naming the person from them where none was given.
+  /// A copy with [defaults] replaced, and [callbackUrl] when given; names the person where none was.
   UseSmileIDSampleProfile withDefaults(
-    UseSmileIDSampleUserDetails details,
-  ) => UseSmileIDSampleProfile(
+    UseSmileIDSampleUserDetails details, {
+    String? callbackUrl,
+  }) => UseSmileIDSampleProfile(
     id: id,
     organisation: organisation,
     // The starter names nobody until its details are saved; a created profile keeps its own name.
@@ -160,6 +168,7 @@ class UseSmileIDSampleProfile {
         ? '${details.firstName} ${details.lastName}'.trim()
         : person,
     defaults: details,
+    callbackUrl: callbackUrl ?? this.callbackUrl,
   );
 }
 
@@ -246,12 +255,19 @@ class UseSmileIDSampleProfiles {
   }
 
   /// Saves a profile's form defaults, ignoring an id this store does not hold.
-  void setDefaults(String id, UseSmileIDSampleUserDetails defaults) {
+  void setDefaults(
+    String id,
+    UseSmileIDSampleUserDetails defaults, {
+    String? callbackUrl,
+  }) {
     final int index = _items.indexWhere(
       (UseSmileIDSampleProfile p) => p.id == id,
     );
     if (index >= 0) {
-      _items[index] = _items[index].withDefaults(defaults);
+      _items[index] = _items[index].withDefaults(
+        defaults,
+        callbackUrl: callbackUrl,
+      );
     }
   }
 

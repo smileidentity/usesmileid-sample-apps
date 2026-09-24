@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import '../flow/use_smileid_sample_token_binding_rules.dart';
+import '../state/use_smileid_sample_flow_result_provider.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_journey.dart';
@@ -99,6 +100,7 @@ class _UseSmileIDSampleProductsTabState
     return UseSmileIDSampleProductsScreen(
       state: UseSmileIDSampleProductsState(
         initials: profiles.active.initials,
+        result: ref.watch(useSmileIDSampleFlowResultProvider),
         // By POSITION, not by id: the hue is the profile's place in the list, and every screen
         // showing the same profile has to agree on it.
         avatarColor: avatarColorForProfile(profiles.activeIndex),

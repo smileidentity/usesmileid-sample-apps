@@ -14296,7 +14296,7 @@ exports[`verifications dark empty 1`] = `
             ]
           }
         >
-          Nothing submitted yet
+          No verifications yet
         </Text>
         <Text
           style={
@@ -14318,7 +14318,7 @@ exports[`verifications dark empty 1`] = `
             ]
           }
         >
-          Start a verification from the Products tab
+          Start a product above and the job lands here.
         </Text>
       </View>
     </View>
@@ -20587,7 +20587,7 @@ exports[`verifications light empty 1`] = `
             ]
           }
         >
-          Nothing submitted yet
+          No verifications yet
         </Text>
         <Text
           style={
@@ -20609,7 +20609,7 @@ exports[`verifications light empty 1`] = `
             ]
           }
         >
-          Start a verification from the Products tab
+          Start a product above and the job lands here.
         </Text>
       </View>
     </View>

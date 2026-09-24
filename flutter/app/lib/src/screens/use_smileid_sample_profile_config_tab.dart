@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import '../state/use_smileid_sample_providers.dart';
+import '../state/use_smileid_sample_session_providers.dart';
 import 'use_smileid_sample_above_shell_page.dart';
 
 /// One profile's own page, which saves and activates in a single act.
@@ -29,6 +30,8 @@ class _UseSmileIDSampleProfileConfigTabState
     extends ConsumerState<UseSmileIDSampleProfileConfigTab> {
   UseSmileIDSampleUserDetails? _edited;
 
+  String? _editedCallbackUrl;
+
   @override
   Widget build(BuildContext context) {
     final UseSmileIDSampleProfiles profiles = ref.watch(
@@ -37,6 +40,9 @@ class _UseSmileIDSampleProfileConfigTabState
     final UseSmileIDSampleProfile? profile = profiles.find(widget.profileId);
     final UseSmileIDSampleUserDetails details =
         _edited ?? profile?.defaults ?? const UseSmileIDSampleUserDetails();
+    final UseSmileIDSampleTokenSession? live = ref
+        .watch(useSmileIDSampleSessionProvider)
+        .live;
     return UseSmileIDSampleAboveShellPage(
       onBack: widget.onBack,
       child: UseSmileIDSampleProfileConfigScreen(
@@ -48,6 +54,10 @@ class _UseSmileIDSampleProfileConfigTabState
         onBack: widget.onBack,
         onFieldChanged: (UseSmileIDSampleUserField field, String value) =>
             setState(() => _edited = field.apply(details, value)),
+        callbackUrl: _editedCallbackUrl ?? profile?.callbackUrl ?? '',
+        onCallbackUrlChanged: (String value) =>
+            setState(() => _editedCallbackUrl = value),
+        callbackOverride: live?.callbackOverrideCaption,
         // Guarded on the profile existing: a stale link can reach this page with an id no
         // profile holds, and saving would then activate an id that resolves to nothing.
         onSave: profile == null
@@ -55,7 +65,11 @@ class _UseSmileIDSampleProfileConfigTabState
             : () {
                 ref
                     .read(useSmileIDSampleProfilesProvider.notifier)
-                    .setDefaults(widget.profileId, details);
+                    .setDefaults(
+                      widget.profileId,
+                      details,
+                      callbackUrl: _editedCallbackUrl?.trim(),
+                    );
                 ref
                     .read(useSmileIDSampleProfilesProvider.notifier)
                     .setActive(widget.profileId);

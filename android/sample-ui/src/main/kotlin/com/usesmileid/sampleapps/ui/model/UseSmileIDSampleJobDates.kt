@@ -16,13 +16,18 @@ fun List<UseSmileIDSampleJob>.groupByDay(
 ): List<UseSmileIDSampleJobDay> {
     val dayFormat = SimpleDateFormat("EEE, dd MMM yyyy", locale)
     val today = nowMillis.startOfDay()
+    // A calendar step, not a day of milliseconds: a clock-change day is 23 or 25 hours long.
+    val yesterday = Calendar.getInstance().apply {
+        timeInMillis = today
+        add(Calendar.DAY_OF_MONTH, -1)
+    }.timeInMillis.startOfDay()
     return sortedByDescending { it.createdAtMillis }
         .groupBy { it.createdAtMillis.startOfDay() }
         .map { (day, jobs) ->
             UseSmileIDSampleJobDay(
                 relative = when (day) {
                     today -> "TODAY"
-                    today - MILLIS_PER_DAY -> "YESTERDAY"
+                    yesterday -> "YESTERDAY"
                     else -> ""
                 },
                 absolute = dayFormat.format(Date(day)).uppercase(locale),
@@ -56,4 +61,3 @@ private fun Long.startOfDay(): Long = Calendar.getInstance().apply {
     set(Calendar.MILLISECOND, 0)
 }.timeInMillis
 
-private const val MILLIS_PER_DAY = 24L * 60L * 60L * 1000L

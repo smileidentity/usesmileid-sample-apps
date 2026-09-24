@@ -144,6 +144,26 @@ void main() {
       expect(profiles().find('p-2')!.defaults.email, 'amina@kazi.example');
     });
 
+    testWidgets('saving stores a trimmed callback URL the run then reads', (
+      WidgetTester tester,
+    ) async {
+      await pumpAt(
+        tester,
+        UseSmileIDSampleRoutes.profileConfig('p-2'),
+        seedProfiles: true,
+      );
+
+      await tester.enterText(
+        byId(UseSmileIDSampleTestIds.profileConfigCallbackUrl),
+        '  https://kazi.example/hooks ',
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(byId(UseSmileIDSampleTestIds.profileConfigSave));
+      await tester.pumpAndSettle();
+
+      expect(profiles().active.callbackUrl, 'https://kazi.example/hooks');
+    });
+
     // What the twin ships and what this port keeps: the page's only write is disabled on the
     // profile that is already active, so an edit there cannot be persisted.
     testWidgets('the already-active profile cannot be saved', (

@@ -68,6 +68,26 @@ void main() {
         contains('android:scheme="${flutterApp['urlScheme']}"'),
       );
       expect(plist(), contains('<string>${flutterApp['urlScheme']}</string>'));
+      expect(
+        RegExp(
+          r'android:scheme="([^"]+)"',
+        ).allMatches(manifest()).map((Match m) => m[1]).toSet(),
+        <String?>{flutterApp['urlScheme'] as String?},
+      );
+      final RegExp schemes = RegExp(
+        r'<key>CFBundleURLSchemes</key>\s*<array>([\s\S]*?)</array>',
+      );
+      expect(
+        schemes
+            .allMatches(plist())
+            .expand(
+              (Match m) => RegExp(
+                r'<string>([^<]+)</string>',
+              ).allMatches(m[1]!).map((Match s) => s[1]),
+            )
+            .toList(),
+        <String?>[flutterApp['urlScheme'] as String?],
+      );
     },
   );
 

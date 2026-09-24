@@ -4449,6 +4449,133 @@ exports[`profileConfig dark activeProfile 1`] = `
           </View>
         </View>
       </View>
+      <Text
+        style={
+          [
+            {
+              "fontFamily": "DMSans-Bold",
+              "fontSize": 11,
+              "letterSpacing": 0,
+              "lineHeight": 16,
+              "marginBottom": -0.8389999999999995,
+              "marginTop": -0.8389999999999995,
+            },
+            {
+              "color": "#848282",
+              "letterSpacing": 0.88,
+            },
+            undefined,
+          ]
+        }
+      >
+        CALLBACK URL
+      </Text>
+      <View
+        style={
+          [
+            {
+              "rowGap": 8,
+            },
+            undefined,
+          ]
+        }
+      >
+        <View
+          style={
+            [
+              {
+                "overflow": "hidden",
+                "width": "100%",
+              },
+              {
+                "backgroundColor": "#272a35",
+                "borderColor": "#2d3748",
+                "borderRadius": 16,
+                "borderWidth": 0.5,
+              },
+            ]
+          }
+        >
+          <View
+            style={
+              {
+                "margin": -0.5,
+              }
+            }
+          >
+            <View
+              style={
+                [
+                  {
+                    "alignItems": "center",
+                    "flexDirection": "row",
+                    "flexWrap": "wrap",
+                    "justifyContent": "space-between",
+                    "width": "100%",
+                  },
+                  {
+                    "backgroundColor": "#272a35",
+                    "minHeight": 44,
+                    "paddingHorizontal": 15,
+                    "paddingVertical": 14,
+                    "rowGap": 4,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <Text
+                style={
+                  [
+                    {
+                      "fontFamily": "DMSans-Medium",
+                      "fontSize": 13.5,
+                      "letterSpacing": 0,
+                      "lineHeight": 20,
+                      "marginBottom": -1.2114999999999991,
+                      "marginTop": -1.2114999999999991,
+                    },
+                    {
+                      "color": "#f2f2f2",
+                    },
+                  ]
+                }
+              >
+                Webhook URL
+              </Text>
+              <TextInput
+                editable={true}
+                keyboardType="url"
+                onChangeText={[Function]}
+                placeholder="Uses your portal default"
+                placeholderTextColor="#848282"
+                selectionColor="#4d88ff"
+                style={
+                  [
+                    {
+                      "fontFamily": "DMSans-Medium",
+                      "fontSize": 13.5,
+                      "letterSpacing": 0,
+                      "lineHeight": 17.577,
+                      "marginBottom": 0,
+                      "marginTop": 0,
+                    },
+                    {
+                      "padding": 0,
+                      "textAlign": "right",
+                    },
+                    {
+                      "color": "#f2f2f2",
+                    },
+                  ]
+                }
+                testID="sample_profile_config_callback_url"
+                value=""
+              />
+            </View>
+          </View>
+        </View>
+      </View>
     </View>
   </RCTScrollView>
   <View
@@ -5098,6 +5225,133 @@ exports[`profileConfig dark newlyCreated 1`] = `
                   value=""
                 />
               </View>
+            </View>
+          </View>
+        </View>
+      </View>
+      <Text
+        style={
+          [
+            {
+              "fontFamily": "DMSans-Bold",
+              "fontSize": 11,
+              "letterSpacing": 0,
+              "lineHeight": 16,
+              "marginBottom": -0.8389999999999995,
+              "marginTop": -0.8389999999999995,
+            },
+            {
+              "color": "#848282",
+              "letterSpacing": 0.88,
+            },
+            undefined,
+          ]
+        }
+      >
+        CALLBACK URL
+      </Text>
+      <View
+        style={
+          [
+            {
+              "rowGap": 8,
+            },
+            undefined,
+          ]
+        }
+      >
+        <View
+          style={
+            [
+              {
+                "overflow": "hidden",
+                "width": "100%",
+              },
+              {
+                "backgroundColor": "#272a35",
+                "borderColor": "#2d3748",
+                "borderRadius": 16,
+                "borderWidth": 0.5,
+              },
+            ]
+          }
+        >
+          <View
+            style={
+              {
+                "margin": -0.5,
+              }
+            }
+          >
+            <View
+              style={
+                [
+                  {
+                    "alignItems": "center",
+                    "flexDirection": "row",
+                    "flexWrap": "wrap",
+                    "justifyContent": "space-between",
+                    "width": "100%",
+                  },
+                  {
+                    "backgroundColor": "#272a35",
+                    "minHeight": 44,
+                    "paddingHorizontal": 15,
+                    "paddingVertical": 14,
+                    "rowGap": 4,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <Text
+                style={
+                  [
+                    {
+                      "fontFamily": "DMSans-Medium",
+                      "fontSize": 13.5,
+                      "letterSpacing": 0,
+                      "lineHeight": 20,
+                      "marginBottom": -1.2114999999999991,
+                      "marginTop": -1.2114999999999991,
+                    },
+                    {
+                      "color": "#f2f2f2",
+                    },
+                  ]
+                }
+              >
+                Webhook URL
+              </Text>
+              <TextInput
+                editable={true}
+                keyboardType="url"
+                onChangeText={[Function]}
+                placeholder="Uses your portal default"
+                placeholderTextColor="#848282"
+                selectionColor="#4d88ff"
+                style={
+                  [
+                    {
+                      "fontFamily": "DMSans-Medium",
+                      "fontSize": 13.5,
+                      "letterSpacing": 0,
+                      "lineHeight": 17.577,
+                      "marginBottom": 0,
+                      "marginTop": 0,
+                    },
+                    {
+                      "padding": 0,
+                      "textAlign": "right",
+                    },
+                    {
+                      "color": "#f2f2f2",
+                    },
+                  ]
+                }
+                testID="sample_profile_config_callback_url"
+                value=""
+              />
             </View>
           </View>
         </View>
@@ -5755,6 +6009,133 @@ exports[`profileConfig dark otherProfile 1`] = `
           </View>
         </View>
       </View>
+      <Text
+        style={
+          [
+            {
+              "fontFamily": "DMSans-Bold",
+              "fontSize": 11,
+              "letterSpacing": 0,
+              "lineHeight": 16,
+              "marginBottom": -0.8389999999999995,
+              "marginTop": -0.8389999999999995,
+            },
+            {
+              "color": "#848282",
+              "letterSpacing": 0.88,
+            },
+            undefined,
+          ]
+        }
+      >
+        CALLBACK URL
+      </Text>
+      <View
+        style={
+          [
+            {
+              "rowGap": 8,
+            },
+            undefined,
+          ]
+        }
+      >
+        <View
+          style={
+            [
+              {
+                "overflow": "hidden",
+                "width": "100%",
+              },
+              {
+                "backgroundColor": "#272a35",
+                "borderColor": "#2d3748",
+                "borderRadius": 16,
+                "borderWidth": 0.5,
+              },
+            ]
+          }
+        >
+          <View
+            style={
+              {
+                "margin": -0.5,
+              }
+            }
+          >
+            <View
+              style={
+                [
+                  {
+                    "alignItems": "center",
+                    "flexDirection": "row",
+                    "flexWrap": "wrap",
+                    "justifyContent": "space-between",
+                    "width": "100%",
+                  },
+                  {
+                    "backgroundColor": "#272a35",
+                    "minHeight": 44,
+                    "paddingHorizontal": 15,
+                    "paddingVertical": 14,
+                    "rowGap": 4,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <Text
+                style={
+                  [
+                    {
+                      "fontFamily": "DMSans-Medium",
+                      "fontSize": 13.5,
+                      "letterSpacing": 0,
+                      "lineHeight": 20,
+                      "marginBottom": -1.2114999999999991,
+                      "marginTop": -1.2114999999999991,
+                    },
+                    {
+                      "color": "#f2f2f2",
+                    },
+                  ]
+                }
+              >
+                Webhook URL
+              </Text>
+              <TextInput
+                editable={true}
+                keyboardType="url"
+                onChangeText={[Function]}
+                placeholder="Uses your portal default"
+                placeholderTextColor="#848282"
+                selectionColor="#4d88ff"
+                style={
+                  [
+                    {
+                      "fontFamily": "DMSans-Medium",
+                      "fontSize": 13.5,
+                      "letterSpacing": 0,
+                      "lineHeight": 17.577,
+                      "marginBottom": 0,
+                      "marginTop": 0,
+                    },
+                    {
+                      "padding": 0,
+                      "textAlign": "right",
+                    },
+                    {
+                      "color": "#f2f2f2",
+                    },
+                  ]
+                }
+                testID="sample_profile_config_callback_url"
+                value=""
+              />
+            </View>
+          </View>
+        </View>
+      </View>
     </View>
   </RCTScrollView>
   <View
@@ -6404,6 +6785,133 @@ exports[`profileConfig light activeProfile 1`] = `
                   value=""
                 />
               </View>
+            </View>
+          </View>
+        </View>
+      </View>
+      <Text
+        style={
+          [
+            {
+              "fontFamily": "DMSans-Bold",
+              "fontSize": 11,
+              "letterSpacing": 0,
+              "lineHeight": 16,
+              "marginBottom": -0.8389999999999995,
+              "marginTop": -0.8389999999999995,
+            },
+            {
+              "color": "#848282",
+              "letterSpacing": 0.88,
+            },
+            undefined,
+          ]
+        }
+      >
+        CALLBACK URL
+      </Text>
+      <View
+        style={
+          [
+            {
+              "rowGap": 8,
+            },
+            undefined,
+          ]
+        }
+      >
+        <View
+          style={
+            [
+              {
+                "overflow": "hidden",
+                "width": "100%",
+              },
+              {
+                "backgroundColor": "#ffffff",
+                "borderColor": "#eaecf0",
+                "borderRadius": 16,
+                "borderWidth": 0.5,
+              },
+            ]
+          }
+        >
+          <View
+            style={
+              {
+                "margin": -0.5,
+              }
+            }
+          >
+            <View
+              style={
+                [
+                  {
+                    "alignItems": "center",
+                    "flexDirection": "row",
+                    "flexWrap": "wrap",
+                    "justifyContent": "space-between",
+                    "width": "100%",
+                  },
+                  {
+                    "backgroundColor": "#ffffff",
+                    "minHeight": 44,
+                    "paddingHorizontal": 15,
+                    "paddingVertical": 14,
+                    "rowGap": 4,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <Text
+                style={
+                  [
+                    {
+                      "fontFamily": "DMSans-Medium",
+                      "fontSize": 13.5,
+                      "letterSpacing": 0,
+                      "lineHeight": 20,
+                      "marginBottom": -1.2114999999999991,
+                      "marginTop": -1.2114999999999991,
+                    },
+                    {
+                      "color": "#21232c",
+                    },
+                  ]
+                }
+              >
+                Webhook URL
+              </Text>
+              <TextInput
+                editable={true}
+                keyboardType="url"
+                onChangeText={[Function]}
+                placeholder="Uses your portal default"
+                placeholderTextColor="#848282"
+                selectionColor="#151f72"
+                style={
+                  [
+                    {
+                      "fontFamily": "DMSans-Medium",
+                      "fontSize": 13.5,
+                      "letterSpacing": 0,
+                      "lineHeight": 17.577,
+                      "marginBottom": 0,
+                      "marginTop": 0,
+                    },
+                    {
+                      "padding": 0,
+                      "textAlign": "right",
+                    },
+                    {
+                      "color": "#21232c",
+                    },
+                  ]
+                }
+                testID="sample_profile_config_callback_url"
+                value=""
+              />
             </View>
           </View>
         </View>
@@ -7061,6 +7569,133 @@ exports[`profileConfig light newlyCreated 1`] = `
           </View>
         </View>
       </View>
+      <Text
+        style={
+          [
+            {
+              "fontFamily": "DMSans-Bold",
+              "fontSize": 11,
+              "letterSpacing": 0,
+              "lineHeight": 16,
+              "marginBottom": -0.8389999999999995,
+              "marginTop": -0.8389999999999995,
+            },
+            {
+              "color": "#848282",
+              "letterSpacing": 0.88,
+            },
+            undefined,
+          ]
+        }
+      >
+        CALLBACK URL
+      </Text>
+      <View
+        style={
+          [
+            {
+              "rowGap": 8,
+            },
+            undefined,
+          ]
+        }
+      >
+        <View
+          style={
+            [
+              {
+                "overflow": "hidden",
+                "width": "100%",
+              },
+              {
+                "backgroundColor": "#ffffff",
+                "borderColor": "#eaecf0",
+                "borderRadius": 16,
+                "borderWidth": 0.5,
+              },
+            ]
+          }
+        >
+          <View
+            style={
+              {
+                "margin": -0.5,
+              }
+            }
+          >
+            <View
+              style={
+                [
+                  {
+                    "alignItems": "center",
+                    "flexDirection": "row",
+                    "flexWrap": "wrap",
+                    "justifyContent": "space-between",
+                    "width": "100%",
+                  },
+                  {
+                    "backgroundColor": "#ffffff",
+                    "minHeight": 44,
+                    "paddingHorizontal": 15,
+                    "paddingVertical": 14,
+                    "rowGap": 4,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <Text
+                style={
+                  [
+                    {
+                      "fontFamily": "DMSans-Medium",
+                      "fontSize": 13.5,
+                      "letterSpacing": 0,
+                      "lineHeight": 20,
+                      "marginBottom": -1.2114999999999991,
+                      "marginTop": -1.2114999999999991,
+                    },
+                    {
+                      "color": "#21232c",
+                    },
+                  ]
+                }
+              >
+                Webhook URL
+              </Text>
+              <TextInput
+                editable={true}
+                keyboardType="url"
+                onChangeText={[Function]}
+                placeholder="Uses your portal default"
+                placeholderTextColor="#848282"
+                selectionColor="#151f72"
+                style={
+                  [
+                    {
+                      "fontFamily": "DMSans-Medium",
+                      "fontSize": 13.5,
+                      "letterSpacing": 0,
+                      "lineHeight": 17.577,
+                      "marginBottom": 0,
+                      "marginTop": 0,
+                    },
+                    {
+                      "padding": 0,
+                      "textAlign": "right",
+                    },
+                    {
+                      "color": "#21232c",
+                    },
+                  ]
+                }
+                testID="sample_profile_config_callback_url"
+                value=""
+              />
+            </View>
+          </View>
+        </View>
+      </View>
     </View>
   </RCTScrollView>
   <View
@@ -7710,6 +8345,133 @@ exports[`profileConfig light otherProfile 1`] = `
                   value=""
                 />
               </View>
+            </View>
+          </View>
+        </View>
+      </View>
+      <Text
+        style={
+          [
+            {
+              "fontFamily": "DMSans-Bold",
+              "fontSize": 11,
+              "letterSpacing": 0,
+              "lineHeight": 16,
+              "marginBottom": -0.8389999999999995,
+              "marginTop": -0.8389999999999995,
+            },
+            {
+              "color": "#848282",
+              "letterSpacing": 0.88,
+            },
+            undefined,
+          ]
+        }
+      >
+        CALLBACK URL
+      </Text>
+      <View
+        style={
+          [
+            {
+              "rowGap": 8,
+            },
+            undefined,
+          ]
+        }
+      >
+        <View
+          style={
+            [
+              {
+                "overflow": "hidden",
+                "width": "100%",
+              },
+              {
+                "backgroundColor": "#ffffff",
+                "borderColor": "#eaecf0",
+                "borderRadius": 16,
+                "borderWidth": 0.5,
+              },
+            ]
+          }
+        >
+          <View
+            style={
+              {
+                "margin": -0.5,
+              }
+            }
+          >
+            <View
+              style={
+                [
+                  {
+                    "alignItems": "center",
+                    "flexDirection": "row",
+                    "flexWrap": "wrap",
+                    "justifyContent": "space-between",
+                    "width": "100%",
+                  },
+                  {
+                    "backgroundColor": "#ffffff",
+                    "minHeight": 44,
+                    "paddingHorizontal": 15,
+                    "paddingVertical": 14,
+                    "rowGap": 4,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <Text
+                style={
+                  [
+                    {
+                      "fontFamily": "DMSans-Medium",
+                      "fontSize": 13.5,
+                      "letterSpacing": 0,
+                      "lineHeight": 20,
+                      "marginBottom": -1.2114999999999991,
+                      "marginTop": -1.2114999999999991,
+                    },
+                    {
+                      "color": "#21232c",
+                    },
+                  ]
+                }
+              >
+                Webhook URL
+              </Text>
+              <TextInput
+                editable={true}
+                keyboardType="url"
+                onChangeText={[Function]}
+                placeholder="Uses your portal default"
+                placeholderTextColor="#848282"
+                selectionColor="#151f72"
+                style={
+                  [
+                    {
+                      "fontFamily": "DMSans-Medium",
+                      "fontSize": 13.5,
+                      "letterSpacing": 0,
+                      "lineHeight": 17.577,
+                      "marginBottom": 0,
+                      "marginTop": 0,
+                    },
+                    {
+                      "padding": 0,
+                      "textAlign": "right",
+                    },
+                    {
+                      "color": "#21232c",
+                    },
+                  ]
+                }
+                testID="sample_profile_config_callback_url"
+                value=""
+              />
             </View>
           </View>
         </View>

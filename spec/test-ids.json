@@ -107,7 +107,7 @@
       },
       {
         "id": "sample_job_row",
-        "description": "One verification row; suffixed with index."
+        "description": "One verification row, suffixed with N: its position in the list as drawn, with the active filter applied and the days newest first, counting from 0. A filter renumbers the rows it leaves."
       },
       {
         "id": "sample_job_row_status",
@@ -119,7 +119,7 @@
       },
       {
         "id": "sample_selection_checkbox",
-        "description": "Row checkbox in select mode; suffixed with index."
+        "description": "Row checkbox in select mode, suffixed with the same N as its sample_job_row."
       },
       {
         "id": "sample_selection_bar",

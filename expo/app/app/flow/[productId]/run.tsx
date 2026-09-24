@@ -6,8 +6,11 @@ import {
   useSmileIDSampleActiveProfile,
   useSmileIDSampleFormsStore,
   useSmileIDSampleJobStore,
+  smileIDSampleRunRecorder,
+  useSmileIDSampleResultStore,
   useSmileIDSampleSessionStore,
   useSmileIDSampleSettingsStore,
+  type UseSmileIDSampleRunContext,
   type UseSmileIDSampleRunIntent,
 } from '@smileid/sample-ui';
 import {
@@ -76,8 +79,7 @@ export default function SdkFlowRun() {
       userId: runUserId,
       partnerId: profile.id,
       partnerName: profile.organisation,
-      // A profile here carries no webhook URL yet, and empty means the partner's portal default.
-      callbackUrl: '',
+      callbackUrl: profile.callbackUrl ?? '',
       session,
       sessionExpired: smileIDSampleSessionExpired(sessions, entryMillis),
     };
@@ -89,6 +91,14 @@ export default function SdkFlowRun() {
     () => (snapshot === null ? null : smileIDSamplePreflight(snapshot)),
     [snapshot],
   );
+
+  const recorder = useMemo(() => (snapshot === null ? null : smileIDSampleRunRecorder(runOf(snapshot))), [snapshot]);
+
+  useEffect(() => {
+    if (preflight?.kind === 'ready') recorder?.ensureStarted();
+    // Entry-only, like the snapshot it records.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const leave = () => {
     if (left.current) return;
@@ -105,14 +115,20 @@ export default function SdkFlowRun() {
     return <Redirect href={`/flow/${productId}/details`} />;
   }
   // No form fixes a misconfigured builder, and it must still never reach the SDK.
+  if (preflight?.kind === 'misconfigured') {
+    const reason = preflight.issues.map((issue) => issue.message).join('; ') || 'The flow did not validate';
+    return <RecordBlocked reason={reason} run={runOf(snapshot)} />;
+  }
   if (preflight?.kind !== 'ready') return <Redirect href="/products" />;
 
   return (
     <UseSmileIDBuilder
       builder={(builder: UseSmileIDFlowBuilder) => {
-        smileIDSampleApplying(builder, snapshot);
+        smileIDSampleApplying(builder, snapshot, useSmileIDSampleResultStore.getState().refreshed);
         if (snapshot.scenario === 'noCallback') return;
         builder.onResult = (result: UseSmileIDResult<JobSubmissionResponse>) => {
+          // Before the throw: the throwing scenario still delivered, and the count must say so.
+          if (recorder !== null) recordResult(recorder, result);
           if (snapshot.scenario === 'throwingCallback') {
             throw new Error('throwingCallback scenario: the host result callback throws');
           }
@@ -146,6 +162,40 @@ export default function SdkFlowRun() {
 }
 
 const acceptedCode = 202;
+
+const runOf = (snapshot: UseSmileIDSampleFlowLaunchSnapshot): UseSmileIDSampleRunContext => ({
+  scenario: snapshot.scenario,
+  theme: snapshot.theme,
+  route: snapshot.route,
+  environment: snapshot.sandbox ? 'sandbox' : 'production',
+});
+
+const recordResult = (
+  recorder: ReturnType<typeof smileIDSampleRunRecorder>,
+  result: UseSmileIDResult<JobSubmissionResponse>,
+): void => {
+  switch (result.status) {
+    case 'success':
+      recorder.deliver('succeeded', { jobId: result.value.jobId, userId: result.value.userId });
+      return;
+    case 'failure':
+      recorder.deliver('failed', {
+        error: result.error instanceof Error ? result.error.message : String(result.error),
+      });
+      return;
+    case 'cancelled':
+      recorder.deliver('cancelled');
+  }
+};
+
+/// Records the refusal before leaving; a layout effect runs before the redirect's.
+const RecordBlocked = ({ reason, run }: { reason: string; run: UseSmileIDSampleRunContext }) => {
+  useLayoutEffect(() => {
+    useSmileIDSampleResultStore.getState().block(reason, run);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return <Redirect href="/products" />;
+};
 
 /// Hands the run to the scanner; a layout effect runs before the redirect's.
 const SendToScanner = ({ intent }: { intent: UseSmileIDSampleRunIntent }) => {

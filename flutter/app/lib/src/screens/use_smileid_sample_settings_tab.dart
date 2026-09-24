@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../flow/use_smileid_sample_token_binding_rules.dart';
 import '../state/use_smileid_sample_forms.dart';
@@ -93,9 +94,12 @@ class _UseSmileIDSampleSettingsTabState
 
   /// A row with no url is one this app renders, which today is the notices screen alone.
   void _openNavRow(UseSmileIDSampleNavRow row) {
-    if (row.url == null) {
+    final String? url = row.url;
+    if (url == null) {
       context.go(UseSmileIDSampleRoutes.licenses);
+      return;
     }
+    unawaited(useSmileIDSampleOpenLink(Uri.parse(url), inApp: row.opensInApp));
   }
 
   /// Hands the route back on dismiss, or a second delivery of the link reopens nothing.
@@ -133,4 +137,27 @@ class _UseSmileIDSampleSettingsTabState
       },
     ),
   );
+}
+
+/// Opens a link row: in-app browser, never a WebView, except the legal PDFs an in-app browser shows as a stub.
+Future<void> useSmileIDSampleOpenLink(
+  Uri url, {
+  required bool inApp,
+  Future<bool> Function(Uri, {LaunchMode mode}) launch = launchUrl,
+}) async {
+  try {
+    final bool opened = await launch(
+      url,
+      mode: inApp
+          ? LaunchMode.inAppBrowserView
+          : LaunchMode.externalApplication,
+    );
+    // A device with no in-app browser answers false rather than throwing.
+    if (!opened && inApp) {
+      await launch(url, mode: LaunchMode.externalApplication);
+    }
+  } on Object catch (error) {
+    // No browser, or a scheme nothing claims: a release build would crash on the unawaited throw.
+    debugPrint('could not open $url: $error');
+  }
 }

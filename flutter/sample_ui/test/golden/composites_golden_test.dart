@@ -22,6 +22,17 @@ void main() {
     await assertSurvivesMaxTextScale(tester, _topAppBars());
   });
 
+  testWidgets('result card', (WidgetTester tester) async {
+    // Five expanded cards outgrow the default host.
+    await goldens(tester, 'result_card', _resultCards, hostHeight: 2000);
+  });
+
+  testWidgets('result cards survive max text scale', (
+    WidgetTester tester,
+  ) async {
+    await assertSurvivesMaxTextScale(tester, _resultCards(), hostHeight: 4000);
+  });
+
   testWidgets('data field row', (WidgetTester tester) async {
     await goldens(tester, 'data_field_row', _dataFieldRows);
   });
@@ -484,3 +495,43 @@ Widget _sheetChrome() => Builder(
 void _ignore(String value) {}
 
 void _ignoreBool(bool value) {}
+
+/// The spec's five states, with the fixtures Android records, so a pair of platforms can be read side by side.
+Widget _resultCards() => _stack(<Widget>[
+  const UseSmileIDSampleResultCard(result: UseSmileIDSampleResult.idle),
+  UseSmileIDSampleResultLine(result: _resultRunning),
+  UseSmileIDSampleResultCard(
+    result: UseSmileIDSampleResult.idle.recorded(
+      UseSmileIDSampleFlowStatus.succeeded,
+      jobId: 'job_9f3a2c7104e8',
+      userId: 'user_5b1ec4d2',
+    ),
+  ),
+  UseSmileIDSampleResultCard(
+    result: UseSmileIDSampleResult.idle.recorded(
+      UseSmileIDSampleFlowStatus.cancelled,
+    ),
+  ),
+  UseSmileIDSampleResultCard(
+    result: UseSmileIDSampleResult.idle
+        .selecting(
+          UseSmileIDSampleScenario.badRefresh,
+          UseSmileIDSampleThemeScenario.brandDefault,
+        )
+        .recorded(
+          UseSmileIDSampleFlowStatus.failed,
+          error:
+              '2213: authentication failed \u2014 refresh returned an expired token',
+        )
+        .refreshed()
+        .refreshed(),
+  ),
+]);
+
+final UseSmileIDSampleResult _resultRunning = UseSmileIDSampleResult.idle
+    .started(
+      scenario: UseSmileIDSampleScenario.normal,
+      theme: UseSmileIDSampleThemeScenario.brandDefault,
+      route: UseSmileIDSampleFlowRoute.shell,
+      environment: UseSmileIDSampleEnvironment.sandbox,
+    );

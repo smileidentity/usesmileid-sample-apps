@@ -30,17 +30,22 @@ export type UseSmileIDSampleProfileConfigState = {
   readonly organisation: string;
   readonly defaults: UseSmileIDSampleUserDetails;
   readonly isActive: boolean;
+  /// The webhook URL as edited so far; empty means the partner's portal default.
+  readonly callbackUrl: string;
+  /// Non-null while a token session is live: its text replaces the value, and the row stops editing.
+  readonly callbackOverride: string | null;
 };
 
 type Props = {
   state: UseSmileIDSampleProfileConfigState;
   onFieldChange: (field: UseSmileIDSampleUserField, value: string) => void;
+  onCallbackUrlChange: (value: string) => void;
   onBack: () => void;
   onSave: () => void;
 };
 
 /// A profile's user-details defaults, which is what seeds the Consent Details Form for its jobs.
-export const ProfileConfigScreen = ({ state, onFieldChange, onBack, onSave }: Props) => {
+export const ProfileConfigScreen = ({ state, onFieldChange, onCallbackUrlChange, onBack, onSave }: Props) => {
   const theme = useSmileIDSampleTheme();
   const insets = useSafeAreaInsets();
 
@@ -73,6 +78,19 @@ export const ProfileConfigScreen = ({ state, onFieldChange, onBack, onSave }: Pr
               />
             </View>
           ))}
+        </UseSmileIDSampleSectionSurface>
+        {/* Its own section, not a row in the card above: a webhook URL is not a user detail. */}
+        <UseSmileIDSampleSectionLabel text="CALLBACK URL" />
+        <UseSmileIDSampleSectionSurface>
+          <UseSmileIDSampleKeyValueEditRow
+            label="Webhook URL"
+            value={state.callbackOverride === null ? state.callbackUrl : ''}
+            onValueChange={onCallbackUrlChange}
+            placeholder={state.callbackOverride ?? 'Uses your portal default'}
+            enabled={state.callbackOverride === null}
+            keyboardType="url"
+            testID={UseSmileIDSampleTestIds.PROFILE_CONFIG_CALLBACK_URL}
+          />
         </UseSmileIDSampleSectionSurface>
       </ScrollView>
       <UseSmileIDSampleButton

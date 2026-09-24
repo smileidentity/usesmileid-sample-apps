@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_flow_result_provider.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 
@@ -48,14 +49,16 @@ void main() {
     WidgetTester tester,
     String location, {
     List<UseSmileIDSampleJob>? stored,
+    UseSmileIDSampleJobsRepository? repository,
   }) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           useSmileIDSampleJobsRepositoryProvider.overrideWithValue(
-            UseSmileIDSampleMemoryJobsRepository(
-              stored ?? <UseSmileIDSampleJob>[job],
-            ),
+            repository ??
+                UseSmileIDSampleMemoryJobsRepository(
+                  stored ?? <UseSmileIDSampleJob>[job],
+                ),
           ),
         ],
         child: MaterialApp.router(
@@ -196,6 +199,45 @@ void main() {
     expect(container.read(useSmileIDSampleJobsProvider).value, isEmpty);
   });
 
+  testWidgets('a cold link claims no absence before the store has answered', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          useSmileIDSampleJobsRepositoryProvider.overrideWithValue(
+            _SlowReadRepository(<UseSmileIDSampleJob>[job]),
+          ),
+        ],
+        child: MaterialApp.router(
+          theme: UseSmileIDSampleTheme.light(),
+          routerConfig: useSmileIDSampleRouter(
+            initialLocation: UseSmileIDSampleRoutes.verificationDetails(job.id),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(byId(UseSmileIDSampleTestIds.verificationDetailsScreen), findsOne);
+    expect(byId(UseSmileIDSampleTestIds.detailsEmpty), findsNothing);
+
+    await tester.pump(_SlowReadRepository.delay);
+    await tester.pumpAndSettle();
+    expect(find.text('Approved'), findsOne);
+  });
+
+  testWidgets('a failed store read says the job is missing, not a blank page', (
+    WidgetTester tester,
+  ) async {
+    await pumpAt(
+      tester,
+      UseSmileIDSampleRoutes.verificationDetails(job.id),
+      repository: _FailingReadRepository(),
+    );
+    expect(byId(UseSmileIDSampleTestIds.detailsEmpty), findsOne);
+  });
+
   Future<void> pull(WidgetTester tester) async {
     await tester.fling(
       byId(UseSmileIDSampleTestIds.detailsRefresh),
@@ -243,4 +285,45 @@ void main() {
 
     expect(byId(UseSmileIDSampleTestIds.jobRow(1)), findsOne);
   });
+
+  // Debug builds show probes, which is what `flutter test` runs as.
+  testWidgets('the last run is on the page, even for a job never stored', (
+    WidgetTester tester,
+  ) async {
+    await pumpAt(
+      tester,
+      UseSmileIDSampleRoutes.verificationDetails('job_none'),
+    );
+    container
+        .read(useSmileIDSampleFlowResultProvider.notifier)
+        .record(UseSmileIDSampleFlowStatus.cancelled);
+    await tester.pumpAndSettle();
+
+    expect(byId(UseSmileIDSampleTestIds.detailsEmpty), findsOne);
+    expect(byId(UseSmileIDSampleTestIds.resultCard), findsOne);
+    expect(
+      find.descendant(
+        of: byId(UseSmileIDSampleTestIds.resultResultCount),
+        matching: find.text('1'),
+      ),
+      findsOne,
+    );
+  });
+}
+
+class _SlowReadRepository extends UseSmileIDSampleMemoryJobsRepository {
+  _SlowReadRepository(super.initial);
+
+  static const Duration delay = Duration(milliseconds: 300);
+
+  @override
+  Future<List<UseSmileIDSampleJob>?> read() async {
+    await Future<void>.delayed(delay);
+    return super.read();
+  }
+}
+
+class _FailingReadRepository extends UseSmileIDSampleMemoryJobsRepository {
+  @override
+  Future<List<UseSmileIDSampleJob>?> read() async => throw StateError('disk');
 }

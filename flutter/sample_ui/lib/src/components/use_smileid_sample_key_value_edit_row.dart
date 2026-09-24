@@ -126,6 +126,8 @@ class _UseSmileIDSampleKeyValueEditRowState
                       decoration: InputDecoration.collapsed(
                         hintText: widget.placeholder,
                         hintStyle: rowStyle.copyWith(color: colors.textMuted),
+                        // A sentence-long placeholder wraps at 2x; the typed value stays one line.
+                        hintMaxLines: 3,
                       ),
                     ),
                   ),

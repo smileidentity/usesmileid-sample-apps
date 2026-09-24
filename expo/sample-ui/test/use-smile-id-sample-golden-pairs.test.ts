@@ -1,9 +1,12 @@
+import { createElement } from 'react';
+import { Text } from 'react-native';
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { smileDarkColors, smileLightColors } from '../src/theme/smile-colors';
-import { schemes } from './render-in-theme';
+import { useSmileIDSampleTheme } from '../src/theme/use-smile-id-sample-theme';
+import { renderInTheme, schemes } from './render-in-theme';
 import { scaleSensitive } from './scale-sensitive-states';
 
 /// Two states whose baselines are byte-identical are not two baselines, so each pair that is
@@ -40,7 +43,7 @@ const snapshotFiles = [
   'use-smile-id-sample-profiles-screens.test.tsx.snap',
 ];
 
-const expectedStates = 131;
+const expectedStates = 136;
 
 const readPairs = () => {
   const pairs = new Map<string, { light?: string; dark?: string }>();
@@ -266,10 +269,16 @@ describe('the recorded pixel goldens', () => {
 });
 
 describe('the theme provider', () => {
-  it('reaches the components with the scheme the harness pins, not the runner default', () => {
-    // Asserted directly rather than inferred from the baselines: this is the one fact that makes
-    // every dark golden above trustworthy, and it needs no colour guessing to check.
+  it('reaches the components with the scheme the harness pins, not the runner default', async () => {
+    // Through the provider: comparing the two palettes passes with the provider ignoring `dark`.
+    for (const { dark } of schemes) {
+      const rendered = await renderInTheme(createElement(BackgroundProbe), dark);
+      expect(rendered.getByTestId('probe').props.children).toBe(
+        (dark ? smileDarkColors : smileLightColors).background,
+      );
+    }
     expect(smileLightColors.background).not.toEqual(smileDarkColors.background);
-    expect(smileLightColors.surface).not.toEqual(smileDarkColors.surface);
   });
 });
+
+const BackgroundProbe = () => createElement(Text, { testID: 'probe' }, useSmileIDSampleTheme().colors.background);

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import '../flow/use_smileid_sample_token_binding_rules.dart';
+import '../state/use_smileid_sample_flow_result_provider.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_remove_jobs.dart';
@@ -43,9 +44,13 @@ class _UseSmileIDSampleVerificationDetailsTabState
   }
 
   Future<void> _refreshOnEntry() async {
-    final List<UseSmileIDSampleJob> jobs = await ref.read(
-      useSmileIDSampleJobsProvider.future,
-    );
+    final List<UseSmileIDSampleJob> jobs;
+    try {
+      jobs = await ref.read(useSmileIDSampleJobsProvider.future);
+    } on Object {
+      // A failed read already shows as the empty state; there is nothing to refresh.
+      return;
+    }
     final bool processing = jobs.any(
       (UseSmileIDSampleJob it) =>
           it.id == widget.jobId &&
@@ -61,9 +66,24 @@ class _UseSmileIDSampleVerificationDetailsTabState
     final UseSmileIDSampleJob? found = _stored();
     return UseSmileIDSampleVerificationDetailsScreen(
       jobId: widget.jobId,
-      job: found == null
-          ? const UseSmileIDSampleJobLookup.none()
-          : UseSmileIDSampleJobLookup.found(found),
+      result: ref.watch(useSmileIDSampleShowProbesProvider)
+          ? ref.watch(useSmileIDSampleFlowResultProvider)
+          : null,
+      job: switch ((found, ref.watch(useSmileIDSampleJobsProvider))) {
+        (final UseSmileIDSampleJob job, _) => UseSmileIDSampleJobLookup.found(
+          job,
+        ),
+        // Pending only while the first read runs; a failed read answers "none", not a blank page.
+        (
+          null,
+          AsyncValue<List<UseSmileIDSampleJob>>(
+            hasValue: false,
+            hasError: false,
+          ),
+        ) =>
+          const UseSmileIDSampleJobLookup.pending(),
+        (null, _) => const UseSmileIDSampleJobLookup.none(),
+      },
       onBack: widget.onBack,
       // Deleting here leaves the page first, and the LIST shows the confirmation once it rebuilds:
       // the same handler, so the undo offer and the filter fallback are not lost with the page.

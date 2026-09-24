@@ -22,6 +22,25 @@ class UseSmileIDSampleTestIdsSpecTest {
     }
 
     @Test
+    fun every_spec_id_is_declared_or_excused() {
+        val excused = mapOf(
+            "sample_home_start_fullscreen" to "no app implements the shell start ids yet",
+            "sample_home_start_shell" to "no app implements the shell start ids yet",
+        )
+        val declared = UseSmileIDSampleTestIds.all.toSet() + with(UseSmileIDSampleTestIds) {
+            listOf(
+                productCard("x"), tokenEnvironment("x"), settingNav("x"), licenseRow("x"), licenseText("x"),
+                licenseLink("x"), scenarioItem("x"), themeItem("x"), filterChip("x"), filterCount("x"),
+                jobRow(0).replace("_0", "_x"), selectionCheckbox(0).replace("_0", "_x"), detailField("x"),
+                detailCopy("x"), userDetailsField("x"), countryOption("x"), idTypeOption("x"), profileRow("x"),
+                profileConfigField("x"),
+            ).map { it.removeSuffix("_x") }
+        }
+        assertEquals("spec ids nothing declares", emptyList<String>(), specIds.filterNot { it in declared || it in excused })
+        assertEquals("excused ids now declared", emptyList<String>(), excused.keys.filter { it in declared })
+    }
+
+    @Test
     fun every_declared_id_carries_the_sample_prefix() {
         assertEquals(UseSmileIDSampleTestIds.all, UseSmileIDSampleTestIds.all.filter { it.startsWith("sample_") })
     }

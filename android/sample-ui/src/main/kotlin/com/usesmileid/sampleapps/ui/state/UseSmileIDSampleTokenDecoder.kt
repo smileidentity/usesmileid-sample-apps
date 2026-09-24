@@ -116,7 +116,7 @@ object UseSmileIDSampleTokenDecoder {
         )
         return UseSmileIDSampleTokenDecode.Decoded(
             UseSmileIDSampleTokenSession(
-                id = handle(token, json.string("jti")),
+                id = handle(token.trim(), json.string("jti")),
                 token = token.trim(),
                 issuedAtMillis = issuedAt * MILLIS_PER_SECOND,
                 expiresAtMillis = expires * MILLIS_PER_SECOND,

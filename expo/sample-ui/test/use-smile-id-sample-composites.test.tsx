@@ -10,6 +10,11 @@ import { UseSmileIDSampleKeyValueEditRow } from '../src/components/use-smile-id-
 import { UseSmileIDSampleOptionRow } from '../src/components/use-smile-id-sample-option-row';
 import { UseSmileIDSampleProfileRow } from '../src/components/use-smile-id-sample-profile-row';
 import {
+  UseSmileIDSampleResultCard,
+  UseSmileIDSampleResultLine,
+} from '../src/components/use-smile-id-sample-result-card';
+import { smileIDSampleResultDefaults } from '../src/model/use-smile-id-sample-result';
+import {
   UseSmileIDSampleRowDivider,
   UseSmileIDSampleSectionSurface,
 } from '../src/components/use-smile-id-sample-section-surface';
@@ -400,6 +405,52 @@ const cases: { component: string; states: Record<string, Case> }[] = [
       },
     },
   },
+  {
+    // The spec's five states, with the fixtures Android records.
+    component: 'ResultCard',
+    states: {
+      idle: { element: () => <UseSmileIDSampleResultCard result={smileIDSampleResultDefaults} /> },
+      running: {
+        element: () => (
+          <UseSmileIDSampleResultLine result={{ ...smileIDSampleResultDefaults, route: 'shell', jobStatus: 'running' }} />
+        ),
+      },
+      succeeded: {
+        element: () => (
+          <UseSmileIDSampleResultCard
+            result={{
+              ...smileIDSampleResultDefaults,
+              jobStatus: 'succeeded',
+              jobId: 'job_9f3a2c7104e8',
+              userId: 'user_5b1ec4d2',
+              resultCallbackCount: 1,
+            }}
+          />
+        ),
+      },
+      cancelled: {
+        element: () => (
+          <UseSmileIDSampleResultCard
+            result={{ ...smileIDSampleResultDefaults, jobStatus: 'cancelled', resultCallbackCount: 1 }}
+          />
+        ),
+      },
+      failed: {
+        element: () => (
+          <UseSmileIDSampleResultCard
+            result={{
+              ...smileIDSampleResultDefaults,
+              activeScenario: 'badRefresh',
+              jobStatus: 'failed',
+              resultCallbackCount: 1,
+              refreshCallbackCount: 2,
+              lastError: '2213: authentication failed \u2014 refresh returned an expired token',
+            }}
+          />
+        ),
+      },
+    },
+  },
 ];
 
 describe.each(cases)('$component', ({ states }) => {
@@ -428,12 +479,13 @@ describe('composite coverage', () => {
       'SelectionCheckbox',
       'SelectionBar',
       'EmptyState',
+      'ResultCard',
     ]);
   });
 
   it('records both schemes for every state', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(80);
+    expect(total * schemes.length).toBe(90);
   });
 
   it('uses one fixture set, so a pair of platforms can be read against each other', () => {

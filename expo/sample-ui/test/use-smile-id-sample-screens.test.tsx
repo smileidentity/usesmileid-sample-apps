@@ -1,3 +1,5 @@
+import { act, fireEvent } from '@testing-library/react-native';
+
 import { LicensesScreen, type UseSmileIDSampleLicence } from '../src/screens/licenses-screen';
 import { ProductsScreen } from '../src/screens/products-screen';
 import { ScanTokenScreen } from '../src/screens/scan-token-screen';
@@ -276,8 +278,16 @@ describe('licenses', () => {
     expect(rendered.queryByTestId('sample_license_row_zustand')).not.toBeNull();
   });
 
-  it('shows a licence text only once its row is opened', async () => {
+  it('shows a licence text only once its row is opened, and hides it again', async () => {
     const rendered = await renderInTheme(<LicensesScreen licences={licences} onBack={noop} />, false);
+    expect(rendered.queryByTestId('sample_license_text_zustand')).toBeNull();
+    await act(async () => {
+      fireEvent.press(rendered.getByTestId('sample_license_row_zustand'));
+    });
+    expect(rendered.queryByTestId('sample_license_text_zustand')).not.toBeNull();
+    await act(async () => {
+      fireEvent.press(rendered.getByTestId('sample_license_row_zustand'));
+    });
     expect(rendered.queryByTestId('sample_license_text_zustand')).toBeNull();
   });
 });

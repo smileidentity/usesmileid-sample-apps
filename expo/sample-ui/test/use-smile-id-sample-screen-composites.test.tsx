@@ -3,7 +3,11 @@ import { UseSmileIDSampleFloatingTokenButton } from '../src/components/use-smile
 import { UseSmileIDSampleIcon } from '../src/components/use-smile-id-sample-icon';
 import { UseSmileIDSampleJobRow } from '../src/components/use-smile-id-sample-job-row';
 import { UseSmileIDSampleNavBar } from '../src/components/use-smile-id-sample-nav-bar';
-import { UseSmileIDSampleProductCard } from '../src/components/use-smile-id-sample-product-card';
+import {
+  UseSmileIDSampleProductCard,
+  smileIDSampleGoPillFill,
+  smileIDSampleGoPillInk,
+} from '../src/components/use-smile-id-sample-product-card';
 import { UseSmileIDSampleProductGrid } from '../src/components/use-smile-id-sample-product-grid';
 import { UseSmileIDSampleScanGlyph } from '../src/components/use-smile-id-sample-scan-glyph';
 import {
@@ -262,9 +266,13 @@ describe('the product card', () => {
   });
 
   it('adapts the go pill rather than fixing it, which would leave it invisible on the darkest card', async () => {
-    const one = JSON.stringify(await styleTree(card(0), false));
-    const two = JSON.stringify(await styleTree(card(3), false));
-    expect(one).not.toEqual(two);
+    // The pill itself: whole cards always differ. Enrollment takes dark ink, Authentication white.
+    const hues = [0, 1].map((index) => smileIDSampleProductHue(smileIDSampleProducts[index]!));
+    expect(smileIDSampleGoPillInk(hues[0]!)).not.toEqual(smileIDSampleGoPillInk(hues[1]!));
+    for (const [position, index] of [0, 1].entries()) {
+      const tree = JSON.stringify(await styleTree(card(index), false));
+      expect(tree).toContain(`"backgroundColor":"${smileIDSampleGoPillFill(hues[position]!)}"`);
+    }
   });
 });
 

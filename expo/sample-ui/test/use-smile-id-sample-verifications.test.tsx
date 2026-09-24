@@ -1,4 +1,5 @@
-import { fireEvent } from '@testing-library/react-native';
+import { act, fireEvent } from '@testing-library/react-native';
+import { useState } from 'react';
 
 import { smileIDSampleJobFixtures } from '../src/data/use-smile-id-sample-job-fixtures';
 import {
@@ -163,22 +164,42 @@ describe('the filter counts', () => {
   });
 });
 
+describe('row ids', () => {
+  it('number the list as drawn, so a filter renumbers from 0 as on the other three apps', async () => {
+    const rendered = await renderInTheme(list(), false);
+    await fireEvent.press(rendered.getByTestId('sample_filter_chip_blocked'));
+    const blocked = fixtures.filter((job) => job.status === UseSmileIDSampleStatus.Blocked);
+    expect(rendered.queryByTestId('sample_job_row_0')).not.toBeNull();
+    expect(rendered.queryByTestId(`sample_job_row_${blocked.length}`)).toBeNull();
+  });
+});
+
 describe('removing the last row of the active filter', () => {
   it('falls back to All rather than leaving a blank screen under a chip reading 0', async () => {
     const blocked = fixtures.filter((job) => job.status === UseSmileIDSampleStatus.Blocked);
     const removed: string[] = [];
-    const rendered = await renderInTheme(
-      list({ onRemove: (ids) => removed.push(...ids) }),
-      false,
-    );
+    // The rows really go, or Blocked still shows them and the fallback goes untested.
+    const Host = () => {
+      const [jobs, setJobs] = useState(fixtures);
+      return list({
+        state: { jobs, nowMillis: NOW },
+        onRemove: (ids) => {
+          removed.push(...ids);
+          setJobs((rows) => rows.filter((job) => !ids.includes(job.id)));
+        },
+      });
+    };
+    const rendered = await renderInTheme(<Host />, false);
     await fireEvent.press(rendered.getByTestId('sample_filter_chip_blocked'));
     await fireEvent.press(rendered.getByTestId(UseSmileIDSampleTestIds.SELECT_TOGGLE));
     // Select both blocked rows, then hide them: the filter has nothing left to show.
-    for (const job of blocked) {
-      const index = fixtures.indexOf(job);
+    // Under the Blocked filter the blocked rows are the list, so they are rows 0 and 1.
+    for (const index of blocked.map((_, position) => position)) {
       await fireEvent.press(rendered.getByTestId(`sample_selection_checkbox_${index}`));
     }
-    await fireEvent.press(rendered.getByTestId(UseSmileIDSampleTestIds.SELECTION_REMOVE));
+    await act(async () => {
+      fireEvent.press(rendered.getByTestId(UseSmileIDSampleTestIds.SELECTION_REMOVE));
+    });
     expect(removed.sort()).toEqual(blocked.map((job) => job.id).sort());
     // Back on All, so the rows that remain are visible rather than hidden behind an empty filter.
     expect(rendered.queryByTestId(UseSmileIDSampleTestIds.VERIFICATIONS_EMPTY)).toBeNull();
@@ -217,19 +238,19 @@ describe('select mode', () => {
 });
 
 describe('the empty list', () => {
-  it('says nothing submitted yet on a first launch', async () => {
+  it('says no verifications yet on a first launch', async () => {
     const rendered = await renderInTheme(list({ state: { jobs: [], nowMillis: NOW } }), false);
-    expect(rendered.queryByText('Nothing submitted yet')).not.toBeNull();
-    expect(rendered.queryByText('No verifications match this filter')).toBeNull();
+    expect(rendered.queryByText('No verifications yet')).not.toBeNull();
+    expect(rendered.queryByText('Nothing blocked')).toBeNull();
   });
 
   it('says nothing matches when a filter hides everything', async () => {
     const clearOnly = fixtures.filter((job) => job.status === UseSmileIDSampleStatus.Clear);
     const rendered = await renderInTheme(list({ state: { jobs: clearOnly, nowMillis: NOW } }), false);
     await fireEvent.press(rendered.getByTestId('sample_filter_chip_blocked'));
-    expect(rendered.queryByText('No verifications match this filter')).not.toBeNull();
+    expect(rendered.queryByText('Nothing blocked')).not.toBeNull();
     // The two texts share one id, so the wrong one showing is a defect a count cannot catch.
-    expect(rendered.queryByText('Nothing submitted yet')).toBeNull();
+    expect(rendered.queryByText('No verifications yet')).toBeNull();
   });
 
   it('draws neither message before the store has read', async () => {

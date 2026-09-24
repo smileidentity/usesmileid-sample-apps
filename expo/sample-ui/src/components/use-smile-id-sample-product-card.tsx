@@ -53,7 +53,7 @@ export const UseSmileIDSampleProductCard = ({
   // The two marks the design draws at a fixed colour DO adapt, because one fixed value leaves the
   // go pill invisible on the darkest card and the ghost invisible on the lightest.
   const ghostInk = smileInkOn(hue.from);
-  const goScrim = enabled ? smileInkOn(gradientEnd(hue)) : theme.colors.textMuted;
+  const goScrim = enabled ? smileIDSampleGoPillInk(hue) : theme.colors.textMuted;
   const minHeight = theme.dimens.space[64] * 2 + theme.dimens.space[20];
 
   return (
@@ -121,6 +121,13 @@ export const UseSmileIDSampleProductCard = ({
 
 /// The design runs the outer stop past the card's edge, and an SVG stop must land inside 0..1 — so the
 /// last stop is the colour the gradient has actually reached by the edge, not the one it never gets to.
+/// The go pill's ink on an enabled card, chosen against the gradient's end so it reads on every hue.
+export const smileIDSampleGoPillInk = (hue: SmileProductHue): string => smileInkOn(gradientEnd(hue));
+
+/// The pill's fill as drawn, which a test can look for in the tree.
+export const smileIDSampleGoPillFill = (hue: SmileProductHue): string =>
+  smileWithAlpha(smileIDSampleGoPillInk(hue), SCRIM_ALPHA);
+
 const gradientEnd = (hue: SmileProductHue): string =>
   hue.stopEnd > 1 ? smileMix(hue.from, hue.to, (1 - hue.stopStart) / (hue.stopEnd - hue.stopStart)) : hue.to;
 

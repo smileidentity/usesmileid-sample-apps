@@ -9,6 +9,7 @@ import '../flow/use_smileid_sample_flow_builder_config.dart';
 import '../flow/use_smileid_sample_flow_launch_snapshot.dart';
 import '../flow/use_smileid_sample_flow_preflight.dart';
 import '../flow/use_smileid_sample_token_binding_rules.dart';
+import '../state/use_smileid_sample_flow_result_provider.dart';
 import '../state/use_smileid_sample_forms.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
@@ -59,13 +60,23 @@ class _UseSmileIDSampleSdkFlowTabState
   /// Held from entry: `ref.read` throws once disposed, which is the teardown the write must survive.
   late final UseSmileIDSampleJobsNotifier _jobs;
 
+  /// Held from entry for the same reason as [_jobs]: a teardown-delivered result still counts.
+  late final UseSmileIDSampleFlowResultNotifier _result;
+
+  /// Null until the snapshot exists; a run with none never reaches the SDK.
+  UseSmileIDSampleRunRecorder? _run;
+
   @override
   void initState() {
     super.initState();
     _jobs = ref.read(useSmileIDSampleJobsProvider.notifier);
+    _result = ref.read(useSmileIDSampleFlowResultProvider.notifier);
     // Once at entry: the SDK answers a rebuilt configuration by tearing the run down.
     final UseSmileIDSampleFlowLaunchSnapshot? snapshot = _buildSnapshot();
     _snapshot = snapshot;
+    _run = snapshot == null
+        ? null
+        : UseSmileIDSampleRunRecorder(_result, snapshot);
     _preflight = snapshot == null ? null : useSmileIDSamplePreflight(snapshot);
     // Off the frame, not merely after it: re-adding the shell mid-finalise duplicates its key.
     WidgetsBinding.instance.addPostFrameCallback(
@@ -89,11 +100,17 @@ class _UseSmileIDSampleSdkFlowTabState
   Widget _sdk(UseSmileIDSampleFlowLaunchSnapshot snapshot) {
     return UseSmileIDBuilder(
       builder: (UseSmileIDFlowBuilder builder) {
-        useSmileIDSampleApplying(builder, snapshot);
+        useSmileIDSampleApplying(
+          builder,
+          snapshot,
+          onTokenRefreshed: _result.refreshed,
+        );
         if (snapshot.scenario == UseSmileIDSampleScenario.noCallback) {
           return;
         }
         builder.onResult = (UseSmileIDResult<JobSubmissionResponse> result) {
+          // Before the throw: the throwing scenario still delivered, and the count must say so.
+          _record(result);
           if (snapshot.scenario == UseSmileIDSampleScenario.throwingCallback) {
             throw StateError(
               'throwingCallback scenario: the host result callback throws',
@@ -148,8 +165,7 @@ class _UseSmileIDSampleSdkFlowTabState
       userId: _runUserId(),
       partnerId: profile.id,
       partnerName: profile.organisation,
-      // A profile here carries no webhook URL yet, and empty means the partner's portal default.
-      callbackUrl: '',
+      callbackUrl: profile.callbackUrl,
       session: session,
       sessionExpired: useSmileIDSampleSessionEnded(record, entryMillis),
     );
@@ -167,7 +183,7 @@ class _UseSmileIDSampleSdkFlowTabState
       case null:
         _leave();
       case UseSmileIDSampleFlowReady():
-        break;
+        _run!.ensureStarted();
       case UseSmileIDSampleFlowNeedsDetails():
         _left = true;
         widget.onNeedsDetails();
@@ -183,7 +199,17 @@ class _UseSmileIDSampleSdkFlowTabState
             );
         widget.onNeedsSession();
       // No form fixes this, and it must still never reach the SDK.
-      case UseSmileIDSampleFlowMisconfigured():
+      case UseSmileIDSampleFlowMisconfigured(
+        :final List<UseSmileIDValidationException> issues,
+      ):
+        _result.block(
+          _snapshot!,
+          issues.isEmpty
+              ? 'The flow did not validate'
+              : issues
+                    .map((UseSmileIDValidationException it) => it.message)
+                    .join('; '),
+        );
         _leave();
     }
   }
@@ -205,6 +231,27 @@ class _UseSmileIDSampleSdkFlowTabState
       case UseSmileIDFailure<JobSubmissionResponse>():
       case UseSmileIDCancelled<JobSubmissionResponse>():
         _leave();
+    }
+  }
+
+  void _record(UseSmileIDResult<JobSubmissionResponse> result) {
+    final UseSmileIDSampleRunRecorder run = _run!;
+    switch (result) {
+      case UseSmileIDSuccess<JobSubmissionResponse>(
+        :final JobSubmissionResponse value,
+      ):
+        run.deliver(
+          UseSmileIDSampleFlowStatus.succeeded,
+          jobId: value.jobId,
+          userId: value.userId,
+        );
+      case UseSmileIDFailure<JobSubmissionResponse>(:final Exception error):
+        run.deliver(
+          UseSmileIDSampleFlowStatus.failed,
+          error: error is UseSmileIDException ? error.message : '$error',
+        );
+      case UseSmileIDCancelled<JobSubmissionResponse>():
+        run.deliver(UseSmileIDSampleFlowStatus.cancelled);
     }
   }
 

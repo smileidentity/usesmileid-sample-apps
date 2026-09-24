@@ -98,6 +98,8 @@ if runs checks; then
   echo "==> unit tests (spec validation, fixture defaults, and the goldens in light and dark)"
   # --ci so an unrecorded golden fails instead of being written, which is how a missing state passes.
   "$PNPM" --filter @smileid/sample-ui exec jest --ci
+  # Again under a zone with a clock change, which UTC has none of: the 23-hour-day test runs only here.
+  SAMPLE_TEST_TZ=Europe/London "$PNPM" --filter @smileid/sample-ui exec jest --ci test/use-smile-id-sample-job-dates-dst.test.ts
   # The shell has its own lane: the nav bar's height publish and the reserve behind it live here, and
   # neither tsc nor eslint can see whether they still agree.
   "$PNPM" --filter usesmileid-sample-expo exec jest --ci

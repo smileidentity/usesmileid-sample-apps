@@ -6,8 +6,10 @@ import {
   smileIDSampleRefreshLabel,
   useSmileIDSampleJobStore,
   useSmileIDSampleProfileStore,
+  useSmileIDSampleResultStore,
 } from '@smileid/sample-ui';
-import { act, render, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
+import * as Clipboard from 'expo-clipboard';
 import type { ReactElement } from 'react';
 import { StyleSheet } from 'react-native';
 
@@ -25,6 +27,8 @@ jest.mock('expo-router', () => ({
   useRouter: () => mockRouter,
   useLocalSearchParams: () => ({ jobId: 'job_notice' }),
 }));
+
+jest.mock('expo-clipboard', () => ({ setStringAsync: jest.fn(async () => true) }));
 
 const inTheme = async (element: ReactElement) =>
   await render(<UseSmileIDSampleThemeProvider dark={false}>{element}</UseSmileIDSampleThemeProvider>);
@@ -68,6 +72,87 @@ describe('a notice on a screen with no nav bar', () => {
     const message = 'Not submitted under a scanned token';
     await waitFor(() => expect(screen.queryByText(message)).not.toBeNull());
     expect(noticeBottom(screen, message)).toBe(BOTTOM_INSET + 16);
+  });
+
+  it('copies the full job id, not the shortened label, on verification details', async () => {
+    await useSmileIDSampleJobStore.getState().load();
+    await useSmileIDSampleJobStore.getState().add({
+      id: 'job_notice',
+      userId: 'user_1',
+      product: smileIDSampleProducts[0]!,
+      status: UseSmileIDSampleStatus.Clear,
+      createdAtMillis: Date.now(),
+      message: 'Job completed',
+      httpStatus: 200,
+      sandbox: true,
+      sessionId: null,
+      partnerId: null,
+    });
+    const screen = await inTheme(<VerificationDetails />);
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('sample_detail_copy_jobId'));
+    });
+    expect(Clipboard.setStringAsync).toHaveBeenCalledWith('job_notice');
+  });
+
+  it('says so when the clipboard refuses a copy, rather than failing silently', async () => {
+    await useSmileIDSampleJobStore.getState().load();
+    await useSmileIDSampleJobStore.getState().add({
+      id: 'job_notice',
+      userId: 'user_1',
+      product: smileIDSampleProducts[0]!,
+      status: UseSmileIDSampleStatus.Clear,
+      createdAtMillis: Date.now(),
+      message: 'Job completed',
+      httpStatus: 200,
+      sandbox: true,
+      sessionId: null,
+      partnerId: null,
+    });
+    (Clipboard.setStringAsync as jest.Mock).mockRejectedValueOnce(new Error('denied'));
+    const screen = await inTheme(<VerificationDetails />);
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('sample_detail_copy_jobId'));
+    });
+    await waitFor(() => expect(screen.queryByText('Job ID could not be copied')).not.toBeNull());
+  });
+
+  it('shows the last run on verification details, even for a job never stored', async () => {
+    await useSmileIDSampleJobStore.getState().load();
+    useSmileIDSampleResultStore.getState().reset();
+    useSmileIDSampleResultStore.getState().record('cancelled');
+    const screen = await inTheme(<VerificationDetails />);
+    expect(screen.getByTestId('sample_details_empty')).toBeTruthy();
+    expect(screen.getByTestId('sample_result_result_count').props.children).toBe('1');
+  });
+
+  it('loads the store itself on a cold link, so a stored job is found without the list', async () => {
+    await useSmileIDSampleJobStore.getState().load();
+    await useSmileIDSampleJobStore.getState().add({
+      id: 'job_notice',
+      userId: 'user_1',
+      product: smileIDSampleProducts[0]!,
+      status: UseSmileIDSampleStatus.Clear,
+      createdAtMillis: Date.now(),
+      message: 'Job completed',
+      httpStatus: 200,
+      sandbox: true,
+      sessionId: null,
+      partnerId: null,
+    });
+    useSmileIDSampleJobStore.getState().reset();
+    const screen = await inTheme(<VerificationDetails />);
+    await waitFor(() => expect(screen.queryByText('Job completed')).not.toBeNull());
+  });
+
+  it('claims no missing job before the store has answered', async () => {
+    useSmileIDSampleJobStore.getState().reset();
+    // A read that never answers holds the page in the window a cold link lands in.
+    const read = jest.spyOn(AsyncStorage, 'getItem').mockReturnValueOnce(new Promise(() => undefined));
+    const screen = await inTheme(<VerificationDetails />);
+    expect(screen.queryByTestId('sample_verification_details_screen')).not.toBeNull();
+    expect(screen.queryByTestId('sample_details_empty')).toBeNull();
+    read.mockRestore();
   });
 
   it('sits past the system bar on the profiles list too', async () => {

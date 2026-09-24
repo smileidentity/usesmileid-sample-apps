@@ -3,25 +3,33 @@ import {
   VerificationDetailsScreen,
   smileIDSampleRefreshLabel,
   useSmileIDSampleJobStore,
+  smileIDSampleResultSelecting,
+  useSmileIDSampleResultStore,
   useSmileIDSampleSessionStore,
   useSmileIDSampleTransientNotice,
 } from '@smileid/sample-ui';
+import * as Clipboard from 'expo-clipboard';
 import { useLocalSearchParams } from 'expo-router';
 
 import { smileIDSampleStatusApi } from '../../../src/status/use-smile-id-sample-status-api';
+import { useLaunchArgs } from '../../../src/use-smile-id-sample-launch';
 import { useSmileIDSampleBack } from '../../../src/use-smile-id-sample-back';
 import { useSmileIDSampleNoticeStyle } from '../../../src/use-smile-id-sample-notice-inset';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
 export default function VerificationDetails() {
   const back = useSmileIDSampleBack('/verifications');
   const { jobId } = useLocalSearchParams<{ jobId: string }>();
   const jobs = useSmileIDSampleJobStore((state) => state.jobs);
+  const load = useSmileIDSampleJobStore((state) => state.load);
   const refresh = useSmileIDSampleJobStore((state) => state.refresh);
   const remove = useSmileIDSampleJobStore((state) => state.remove);
   const [refreshing, setRefreshing] = useState(false);
   const notice = useSmileIDSampleTransientNotice();
+  const args = useLaunchArgs();
+  const result = useSmileIDSampleResultStore((state) => state.result);
+  const showProbes = __DEV__ || args.probes;
   const noticeStyle = useSmileIDSampleNoticeStyle();
   const { show } = notice;
   /// The entry refresh runs once per row, so its own state write cannot re-trigger it.
@@ -51,6 +59,12 @@ export default function VerificationDetails() {
   );
 
   useEffect(() => {
+    // A cold link lands here without the list, which is otherwise the only screen that loads the store.
+    if (jobs === null) void load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     // Only a processing row can change, so only that one is refreshed on entry.
     if (job === null || job.status !== 'Processing') return;
     if (refreshedOnEntry.current === job.id) return;
@@ -61,14 +75,29 @@ export default function VerificationDetails() {
   return (
     <View style={styles.host}>
       <VerificationDetailsScreen
-        state={{ job, jobId: jobId ?? '', refreshing }}
+        state={{
+          job,
+          jobId: jobId ?? '',
+          refreshing,
+          pending: jobs === null,
+          result: showProbes ? smileIDSampleResultSelecting(result, args.scenario, args.theme) : null,
+        }}
         onBack={() => back()}
         onDelete={() => {
           if (job !== null) void remove([job.id]);
           back();
         }}
         onRefresh={() => void run(false)}
-        onCopy={() => undefined}
+        onCopy={(label, value) => {
+          Clipboard.setStringAsync(value)
+            .then(() => {
+              // Android 13 shows its own confirmation; below it there is none, and iOS shows none natively.
+              if (Platform.OS === 'android' && Number(Platform.Version) < 33) {
+                show({ message: `${label} copied` });
+              }
+            })
+            .catch(() => show({ message: `${label} could not be copied` }));
+        }}
       />
       <UseSmileIDSampleTransientNoticeHost state={notice} style={noticeStyle} />
     </View>

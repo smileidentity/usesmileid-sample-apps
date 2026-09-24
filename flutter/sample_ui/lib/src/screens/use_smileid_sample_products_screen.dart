@@ -4,9 +4,11 @@ import '../components/use_smileid_sample_avatar.dart';
 import '../components/use_smileid_sample_icon.dart';
 import '../components/use_smileid_sample_product_card.dart';
 import '../components/use_smileid_sample_product_grid.dart';
+import '../components/use_smileid_sample_result_card.dart';
 import '../components/use_smileid_sample_section_header.dart';
 import '../components/use_smileid_sample_session_card.dart';
 import '../model/use_smileid_sample_product.dart';
+import '../model/use_smileid_sample_result.dart';
 import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
@@ -25,6 +27,7 @@ class UseSmileIDSampleProductsState {
     this.sessionRemaining,
     this.sessionCountdown,
     this.sessionEnded = false,
+    this.result,
   });
 
   /// The active profile's initials.
@@ -44,6 +47,9 @@ class UseSmileIDSampleProductsState {
 
   /// Whether the session has expired, which replaces the card with the neutral banner.
   final bool sessionEnded;
+
+  /// The last run's result; its compact line shows only while that run is in flight.
+  final UseSmileIDSampleResult? result;
 }
 
 /// The products grid, the entry point every flow starts from.
@@ -87,6 +93,16 @@ class UseSmileIDSampleProductsScreen extends StatelessWidget {
         ),
         children: <Widget>[
           _Header(state: state, onProfileTap: onProfileTap, colors: colors),
+          if (state.result case final UseSmileIDSampleResult result
+              when result.inFlight)
+            Padding(
+              padding: const EdgeInsets.only(
+                left: SmileDimens.spacingMd,
+                right: SmileDimens.spacingMd,
+                top: SmileDimens.spacingSm,
+              ),
+              child: UseSmileIDSampleResultLine(result: result),
+            ),
           if (state.sessionEnded)
             Padding(
               padding: const EdgeInsets.only(

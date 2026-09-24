@@ -60,3 +60,18 @@ appId: ${APP_ID}
     visible:
       id: "sample_products_screen"
     timeout: 30000
+
+# With probes, a release build puts the card in the tree even for a job id that resolves to nothing.
+- stopApp
+- openLink: "usesmileid-sample-expo:///verifications/job-missing?probes=true"
+- extendedWaitUntil:
+    visible:
+      id: "sample_result_card"
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      id: "sample_result_result_count"
+    direction: DOWN
+- assertVisible:
+    id: "sample_result_result_count"
+    text: "0"

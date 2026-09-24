@@ -453,7 +453,7 @@
         "sample_sign_out"
       ],
       "copy": {
-        "footer": "Smile ID Sample App · 1.0.0",
+        "footer": "Smile ID · 1.0.0",
         "aboutDocs": "docs.usesmileid.com"
       },
       "links": {
@@ -681,7 +681,7 @@
       "question": "The Settings footer reads 'Smile ID Sample App · 1.0.0' while the agreed app identity is 'UseSmileID Sample' (spec/app-identity.json). Which string ships?",
       "blocks": "settings screen copy, store metadata",
       "recommendation": "Use the agreed display name in the footer so the app matches its launcher label.",
-      "status": "OWNER DECISION 2026-08-13 — RESOLVED: 'UseSmileID Sample' everywhere. SUPERSEDED 2026-08-25 (ruled 2026-08-24, 'go with the design'): the footer follows node 5206:2898 and reads 'Smile ID Sample App · 1.0.0'. This does NOT change app-identity.json, whose 'UseSmileID Sample' is the launcher label and store identity, settled against the ids the SDK repos reserve. The footer is brand copy and the launcher label is identity; after this change they legitimately differ, so do not 'fix' one to match the other. sample-ui takes versionLabel as a parameter precisely because the module runs under eight identities. UPDATED 2026-09-13: the iOS launcher label and store name became 'Smile ID' (owner ruling, app-identity.json); the iOS footer, which had never followed the 2026-08-25 design wording and still carried the old label, now reads 'Smile ID <version>'. Android follows after the iOS release. UPDATED 2026-09-14: Android followed — launcher label and Play title 'Smile ID', footer 'Smile ID · <version>', Settings goldens re-recorded with it; the 2026-08-25 design wording is superseded on both platforms."
+      "status": "OWNER DECISION 2026-08-13 — RESOLVED: 'UseSmileID Sample' everywhere. SUPERSEDED 2026-08-25 (ruled 2026-08-24, 'go with the design'): the footer follows node 5206:2898 and reads 'Smile ID Sample App · 1.0.0'. This does NOT change app-identity.json, whose 'UseSmileID Sample' is the launcher label and store identity, settled against the ids the SDK repos reserve. The footer is brand copy and the launcher label is identity; after this change they legitimately differ, so do not 'fix' one to match the other. sample-ui takes versionLabel as a parameter precisely because the module runs under eight identities. UPDATED 2026-09-13: the iOS launcher label and store name became 'Smile ID' (owner ruling, app-identity.json); the iOS footer, which had never followed the 2026-08-25 design wording and still carried the old label, now reads 'Smile ID <version>'. Android follows after the iOS release. UPDATED 2026-09-14: Android followed — launcher label and Play title 'Smile ID', footer 'Smile ID · <version>', Settings goldens re-recorded with it; the 2026-08-25 design wording is superseded on both platforms. UPDATED 2026-09-24: Flutter and Expo already read 'Smile ID · <version>'; this screen's copy.footer, which still carried the superseded wording, now says so too."
     },
     {
       "id": "docsDomain",

@@ -125,9 +125,13 @@ class UseSmileIDSampleProfilesNotifier
     return created;
   }
 
-  /// Saves a profile's form defaults.
-  void setDefaults(String id, UseSmileIDSampleUserDetails defaults) {
-    state.setDefaults(id, defaults);
+  /// Saves a profile's form defaults, and its callback URL when one was edited.
+  void setDefaults(
+    String id,
+    UseSmileIDSampleUserDetails defaults, {
+    String? callbackUrl,
+  }) {
+    state.setDefaults(id, defaults, callbackUrl: callbackUrl);
     ref.notifyListeners();
   }
 

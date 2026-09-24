@@ -1,7 +1,8 @@
 // Set before the config is exported, so every worker inherits it: Node reads the zone once at
 // startup and a baseline holding a clock time otherwise pins the machine that recorded it.
 // It also moves a job across a day boundary, which regroups the list and moves a date header.
-process.env.TZ = 'UTC';
+// SAMPLE_TEST_TZ swaps it for the one run that needs a clock change; verify.sh makes that run.
+process.env.TZ = process.env.SAMPLE_TEST_TZ ?? 'UTC';
 // The day header is formatted by locale, so en-GB would render "Wed, 15 Jul 2026" and red every
 // grouped baseline. Android pins the same pair on its own test JVM for the same reason.
 process.env.LC_ALL = 'en_US.UTF-8';

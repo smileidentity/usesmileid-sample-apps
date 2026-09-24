@@ -63,3 +63,68 @@ export const smileIDSampleResultDefaults: UseSmileIDSampleResult = {
   lastError: null,
   sdkVersion: null,
 };
+
+/// What a run was entered with; the card records it rather than re-reading the settings.
+export type UseSmileIDSampleRunContext = {
+  readonly scenario: string;
+  readonly theme: string;
+  readonly route: UseSmileIDSampleFlowRoute;
+  readonly environment: UseSmileIDSampleEnvironment;
+};
+
+const entered = (result: UseSmileIDSampleResult, run: UseSmileIDSampleRunContext) => ({
+  ...result,
+  activeScenario: run.scenario,
+  activeTheme: run.theme,
+  route: run.route,
+  environment: run.environment,
+});
+
+/// A run starting; both counts reset, so "exactly once" holds per run rather than per launch.
+export const smileIDSampleResultStarted = (
+  result: UseSmileIDSampleResult,
+  run: UseSmileIDSampleRunContext,
+): UseSmileIDSampleResult => ({
+  ...entered(result, run),
+  jobStatus: 'running',
+  resultCallbackCount: 0,
+  refreshCallbackCount: 0,
+  jobId: null,
+  userId: null,
+  lastError: null,
+});
+
+/// One host result callback; `userId` must be the server's, never a local placeholder.
+export const smileIDSampleResultRecorded = (
+  result: UseSmileIDSampleResult,
+  status: UseSmileIDSampleFlowStatus,
+  outcome: { readonly jobId?: string; readonly userId?: string; readonly error?: string } = {},
+): UseSmileIDSampleResult => ({
+  ...result,
+  jobStatus: status,
+  resultCallbackCount: result.resultCallbackCount + 1,
+  jobId: outcome.jobId ?? null,
+  userId: outcome.userId ?? null,
+  lastError: outcome.error ?? null,
+});
+
+/// The gate refused the run, so the SDK never mounted; not a result callback.
+export const smileIDSampleResultBlocked = (
+  result: UseSmileIDSampleResult,
+  reason: string,
+  run: UseSmileIDSampleRunContext,
+): UseSmileIDSampleResult => ({
+  ...entered(result, run),
+  jobStatus: 'failed',
+  jobId: null,
+  userId: null,
+  lastError: reason,
+});
+
+/// The launch's selection, shown until a run records the one it actually got.
+export const smileIDSampleResultSelecting = (
+  result: UseSmileIDSampleResult,
+  scenario: string,
+  theme: string,
+): UseSmileIDSampleResult =>
+  result.jobStatus === 'idle' ? { ...result, activeScenario: scenario, activeTheme: theme } : result;

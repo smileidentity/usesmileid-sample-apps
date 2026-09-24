@@ -1,5 +1,7 @@
 import {
   ProductsScreen,
+  smileIDSampleResultSelecting,
+  useSmileIDSampleResultStore,
   avatarColorForProfile,
   smileIDSampleCountdown,
   smileIDSampleLiveSession,
@@ -22,7 +24,8 @@ export default function Products() {
   const profile = useSmileIDSampleActiveProfile();
   const index = useSmileIDSampleActiveProfileIndex();
   const bottomInset = useSmileIDSampleListInset();
-  const { scenario } = useLaunchArgs();
+  const { scenario, theme } = useLaunchArgs();
+  const result = useSmileIDSampleResultStore((state) => state.result);
   const live = useSmileIDSampleSessionStore((state) => smileIDSampleLiveSession(state, state.nowMillis));
   const nowMillis = useSmileIDSampleSessionStore((state) => state.nowMillis);
   const ended = useSmileIDSampleSessionStore((state) => smileIDSampleSessionExpired(state, state.nowMillis));
@@ -31,6 +34,7 @@ export default function Products() {
     <ProductsScreen
       state={{
         initials: smileIDSampleProfileInitials(profile),
+        result: smileIDSampleResultSelecting(result, scenario, theme),
         avatarColor: avatarColorForProfile(index),
         sessionId: live?.id ?? null,
         sessionRemaining: live === null ? null : smileIDSampleCountdown(smileIDSampleSessionRemaining(live, nowMillis)),
