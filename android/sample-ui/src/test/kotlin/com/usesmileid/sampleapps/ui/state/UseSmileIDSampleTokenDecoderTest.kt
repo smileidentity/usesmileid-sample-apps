@@ -84,6 +84,12 @@ class UseSmileIDSampleTokenDecoderTest {
     }
 
     @Test
+    fun `a pasted token with surrounding whitespace keeps the handle of the bare token`() {
+        val token = token()
+        assertEquals(session(token)?.id, session("  $token\n")?.id)
+    }
+
+    @Test
     fun `toString redacts the token, because that is how a credential reaches a log`() {
         val session = requireNotNull(session(token()))
         assertFalse(session.toString().contains(session.token))
