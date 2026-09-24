@@ -25,18 +25,28 @@ type Actions = {
 
 const key = (setting: UseSmileIDSampleSetting) => `${KEY_PREFIX}${setting}`;
 
+/// Settings the user moved while `load` was reading, which the read must not undo.
+const movedDuringLoad = new Set<UseSmileIDSampleSetting>();
+
 /// A preference, never a credential: the token session has its own home, per port-patterns.md §2.
 export const useSmileIDSampleSettingsStore = create<State & Actions>((set, get) => ({
   settings: smileIDSampleSettingsDefaults,
   loaded: false,
 
   load: async () => {
-    const pairs = await AsyncStorage.multiGet(smileIDSampleSettings.map(key));
     const stored = { ...smileIDSampleSettingsDefaults } as Record<string, boolean>;
-    for (const [storedKey, value] of pairs) {
-      if (value === null) continue;
-      stored[storedKey.slice(KEY_PREFIX.length)] = value === 'true';
+    try {
+      const pairs = await AsyncStorage.multiGet(smileIDSampleSettings.map(key));
+      for (const [storedKey, value] of pairs) {
+        if (value === null) continue;
+        stored[storedKey.slice(KEY_PREFIX.length)] = value === 'true';
+      }
+    } catch {
+      // Unreadable storage leaves the defaults, rather than a store that never reports loaded.
     }
+    const live = get().settings;
+    for (const setting of movedDuringLoad) stored[setting] = live[setting];
+    movedDuringLoad.clear();
     // Normalised on read, because a device may already hold the pair the SDK refuses.
     set({ settings: smileIDSampleSettingsNormalised(stored as UseSmileIDSampleSettings), loaded: true });
   },
@@ -47,10 +57,14 @@ export const useSmileIDSampleSettingsStore = create<State & Actions>((set, get) 
     set({ settings: updated });
     // Only what moved: writing all six would freeze today's defaults onto the device.
     const moved = smileIDSampleSettings.filter((name) => updated[name] !== current[name]);
+    if (!get().loaded) for (const name of moved) movedDuringLoad.add(name);
     if (moved.length > 0) {
       await AsyncStorage.multiSet(moved.map((name) => [key(name), String(updated[name])]));
     }
   },
 
-  reset: () => set({ settings: smileIDSampleSettingsDefaults, loaded: false }),
+  reset: () => {
+    movedDuringLoad.clear();
+    set({ settings: smileIDSampleSettingsDefaults, loaded: false });
+  },
 }));
