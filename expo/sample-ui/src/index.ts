@@ -290,6 +290,7 @@ export {
 } from './state/use-smile-id-sample-token-decoder';
 export { smileIDSampleBase64UrlEncode } from './state/use-smile-id-sample-token-bytes';
 export {
+  smileIDSampleCallbackOverrideCaption,
   smileIDSampleCountdown,
   smileIDSampleSessionHasExpired,
   smileIDSampleSessionProgress,

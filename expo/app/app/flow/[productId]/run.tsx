@@ -76,8 +76,7 @@ export default function SdkFlowRun() {
       userId: runUserId,
       partnerId: profile.id,
       partnerName: profile.organisation,
-      // A profile here carries no webhook URL yet, and empty means the partner's portal default.
-      callbackUrl: '',
+      callbackUrl: profile.callbackUrl ?? '',
       session,
       sessionExpired: smileIDSampleSessionExpired(sessions, entryMillis),
     };

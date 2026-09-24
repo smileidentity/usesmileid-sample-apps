@@ -89,8 +89,15 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
       activeProfile: {
         element: () => (
           <ProfileConfigScreen
-            state={{ organisation: 'UpTech Finance', defaults: three[0]!.defaults, isActive: true }}
+            state={{
+              organisation: 'UpTech Finance',
+              defaults: three[0]!.defaults,
+              isActive: true,
+              callbackUrl: '',
+              callbackOverride: null,
+            }}
             onFieldChange={noop}
+            onCallbackUrlChange={noop}
             onBack={noop}
             onSave={noop}
           />
@@ -103,8 +110,11 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
               organisation: 'Kazi Microlending',
               defaults: three[1]!.defaults,
               isActive: false,
+              callbackUrl: '',
+              callbackOverride: null,
             }}
             onFieldChange={noop}
+            onCallbackUrlChange={noop}
             onBack={noop}
             onSave={noop}
           />
@@ -113,8 +123,15 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
       newlyCreated: {
         element: () => (
           <ProfileConfigScreen
-            state={{ organisation: created.organisation, defaults: created.defaults, isActive: false }}
+            state={{
+              organisation: created.organisation,
+              defaults: created.defaults,
+              isActive: false,
+              callbackUrl: '',
+              callbackOverride: null,
+            }}
             onFieldChange={noop}
+            onCallbackUrlChange={noop}
             onBack={noop}
             onSave={noop}
           />

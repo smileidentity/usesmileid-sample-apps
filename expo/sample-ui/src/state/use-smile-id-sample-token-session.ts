@@ -49,3 +49,7 @@ export const smileIDSampleCountdown = (remainingMillis: number): string => {
   const seconds = total % SECONDS_PER_MINUTE;
   return hours > 0 ? `${hours}:${pad(minutes)}:${pad(seconds)}` : `${minutes}:${pad(seconds)}`;
 };
+
+/// What the profile's callback URL row reads instead of its value while this session runs.
+export const smileIDSampleCallbackOverrideCaption = (session: UseSmileIDSampleTokenSession): string =>
+  session.bindings.callbackUrl != null ? 'Set by the scanned token' : "The scanned token's partner default applies";

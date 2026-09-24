@@ -19,7 +19,8 @@ type Actions = {
   setActive: (id: string) => void;
   clearLastCreated: () => void;
   add: (organisation: string, person: string, defaults?: UseSmileIDSampleUserDetails) => string;
-  setDefaults: (id: string, defaults: UseSmileIDSampleUserDetails) => void;
+  /// An undefined `callbackUrl` leaves the stored one alone; only a caller that edited it passes a value.
+  setDefaults: (id: string, defaults: UseSmileIDSampleUserDetails, callbackUrl?: string) => void;
 };
 
 const starter = smileIDSampleStarterProfiles();
@@ -58,13 +59,14 @@ export const useSmileIDSampleProfileStore = create<State & Actions>((set, get) =
     return id;
   },
 
-  setDefaults: (id, defaults) => {
+  setDefaults: (id, defaults, callbackUrl) => {
     set({
       items: get().items.map((item) =>
         item.id === id
           ? {
               ...item,
               defaults,
+              callbackUrl: callbackUrl ?? item.callbackUrl,
               // The starter names nobody until its details are saved; a created profile keeps its sheet's name.
               person: item.person.trim() || `${defaults.firstName} ${defaults.lastName}`.trim(),
             }
