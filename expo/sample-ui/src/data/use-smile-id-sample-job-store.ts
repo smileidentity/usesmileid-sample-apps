@@ -62,10 +62,15 @@ const ordered = (jobs: readonly UseSmileIDSampleJob[]) =>
   [...jobs].sort((a, b) => b.createdAtMillis - a.createdAtMillis);
 
 const persist = async (jobs: readonly UseSmileIDSampleJob[]) => {
-  await AsyncStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(jobs.map((job) => ({ ...job, product: job.product.id }))),
-  );
+  try {
+    await AsyncStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(jobs.map((job) => ({ ...job, product: job.product.id }))),
+    );
+  } catch (error) {
+    // The row stays in memory for this launch; callers `void` the write, so a throw would go unheard.
+    console.warn('could not persist verifications', error);
+  }
 };
 
 /// The submitted verifications, on disk: the SDK delivers a result once, and there is nowhere else to get it from.
@@ -74,7 +79,14 @@ export const useSmileIDSampleJobStore = create<State & Actions>((set, get) => ({
   removals: [],
 
   load: async () => {
-    const raw = await AsyncStorage.getItem(STORAGE_KEY);
+    let raw: string | null;
+    try {
+      raw = await AsyncStorage.getItem(STORAGE_KEY);
+    } catch {
+      // Unreadable storage reads as empty, as an unparseable one does, rather than a list stuck loading.
+      set({ jobs: [] });
+      return;
+    }
     if (raw === null) {
       set({ jobs: [] });
       return;
