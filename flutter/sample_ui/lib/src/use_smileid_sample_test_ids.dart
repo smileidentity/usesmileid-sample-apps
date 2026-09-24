@@ -347,6 +347,8 @@ abstract final class UseSmileIDSampleTestIds {
     jobRowStatus,
     selectToggle,
     verificationDetailsScreen,
+    verificationsScreen,
+    verificationsEmpty,
     statusBadge,
     detailsDelete,
     detailsRefresh,
