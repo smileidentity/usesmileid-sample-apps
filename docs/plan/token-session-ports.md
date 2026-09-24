@@ -28,7 +28,7 @@ could tell apart and the storage split iOS already made.
 | TOK-A9 the scanner | `mobile_scanner`, in the shell | `expo-camera`, in the shell |
 | TOK-A10 | deleted on Android as unreachable; not ported | not ported |
 | TOK-A11 redirect reason and resume | built | built |
-| TOK-A12 `holdCamera` | **not built** (§6) | **not built** (§6) |
+| TOK-A12 `holdCamera` | **closed unfixed** (§6) | **closed unfixed** (§6) |
 | ENV-A1 environment from `api_url` | built | built |
 
 Everything in `token-session-android.md` §9 holds on both ports: bound user details are known by
@@ -117,7 +117,9 @@ native imports. The shell injects the preview into the scan screen.
 - **`holdCamera`** has no consumer on either port. On Android it counts frames delivered to a
   host-bound analyser alongside the SDK's own camera (`token-session-android.md` §7.1). Neither
   scanner package exposes a bind that outlives its own view, so a port would need a host camera
-  session of its own. Owed if the argument earns a device lane.
+  session of its own. **Closed unfixed 2026-09-24**: no lane on either port needs contention, and a
+  host camera session built only to hold the camera would be the camera code `AGENTS.md` keeps out of
+  this repo. Both ports still parse the argument, as `spec/launch-args.json` requires.
 - **A result card** still exists on neither port (`after-the-ports.md` Phase 4). So "exactly one
   terminal result" is observable only as where the run lands.
 - **Flutter's release APK is 116.6 MB.** Bundled ML Kit ships a native library per ABI, and the APK
