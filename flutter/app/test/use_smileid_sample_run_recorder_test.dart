@@ -4,7 +4,6 @@ import 'package:sample_ui/sample_ui.dart';
 import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_launch_snapshot.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_flow_result_provider.dart';
 
-/// The run's start and its first delivery can land in either order; the count must not care.
 void main() {
   const UseSmileIDSampleFlowLaunchSnapshot snapshot =
       UseSmileIDSampleFlowLaunchSnapshot(

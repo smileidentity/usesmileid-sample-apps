@@ -21,7 +21,6 @@ class UseSmileIDSampleTestIdsSpecTest {
         assertEquals("ids not present in spec/test-ids.json", emptyList<String>(), unknown)
     }
 
-    // The direction an omission fails: every spec id is declared here, or excused with its reason.
     @Test
     fun every_spec_id_is_declared_or_excused() {
         val excused = mapOf(
@@ -38,7 +37,6 @@ class UseSmileIDSampleTestIdsSpecTest {
             ).map { it.removeSuffix("_x") }
         }
         assertEquals("spec ids nothing declares", emptyList<String>(), specIds.filterNot { it in declared || it in excused })
-        // An excuse that stops being true has to go, or it hides the next omission.
         assertEquals("excused ids now declared", emptyList<String>(), excused.keys.filter { it in declared })
     }
 

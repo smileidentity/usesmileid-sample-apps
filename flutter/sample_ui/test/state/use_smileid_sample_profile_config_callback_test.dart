@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 
-/// The callback URL row, which a live token session takes over.
 void main() {
   Future<void> pump(WidgetTester tester, {String? override}) =>
       tester.pumpWidget(

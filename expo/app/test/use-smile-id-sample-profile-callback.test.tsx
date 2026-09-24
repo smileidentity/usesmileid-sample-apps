@@ -21,7 +21,6 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ profileId: 'p-2' }),
 }));
 
-/// A live session whose token binds `payload` as given.
 const liveSession = (payload: string) => {
   const nowSeconds = Math.floor(Date.now() / 1000);
   const claims = `{"iat":${nowSeconds - 1},"exp":${nowSeconds + 900},"api_url":"https://testapi.smileidentity.com/v3","payload":${payload}}`;

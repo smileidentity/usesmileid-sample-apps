@@ -22,7 +22,7 @@ export default function ProfileConfig() {
   const setDefaults = useSmileIDSampleProfileStore((state) => state.setDefaults);
   const setActive = useSmileIDSampleProfileStore((state) => state.setActive);
   const [edit, setEdit] = useState<UseSmileIDSampleProfileEdit | null>(null);
-  /// Keyed by profile like `edit`, so an unsaved URL never carries over to another profile's page.
+  // Keyed by profile like `edit`, so an unsaved URL never reaches another profile's page.
   const [callbackEdit, setCallbackEdit] = useState<{ profileId: string; value: string } | null>(null);
   const live = useSmileIDSampleSessionStore((state) => state.live);
   const editedCallbackUrl = callbackEdit?.profileId === profileId ? callbackEdit.value : undefined;

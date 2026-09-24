@@ -30,8 +30,6 @@ void main() {
     );
   });
 
-  // The other direction, which is the one an omission fails: every spec id is declared here, or is
-  // one this platform cannot render, each with its reason.
   test('every spec id is declared, or excused with its reason', () {
     const Map<String, String> excused = <String, String>{
       'sample_home_start_fullscreen':
@@ -70,7 +68,6 @@ void main() {
       ),
       isEmpty,
     );
-    // An excuse that stops being true has to go, or it hides the next omission.
     expect(excused.keys.where(declared.contains), isEmpty);
   });
 

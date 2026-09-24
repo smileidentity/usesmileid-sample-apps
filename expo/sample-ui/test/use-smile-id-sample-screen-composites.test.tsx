@@ -266,8 +266,7 @@ describe('the product card', () => {
   });
 
   it('adapts the go pill rather than fixing it, which would leave it invisible on the darkest card', async () => {
-    // Two whole cards always differ, so the pill itself is compared. Enrollment takes dark ink and
-    // Authentication, the darkest fill, takes white: a fixed ink is invisible on one of the two.
+    // The pill itself: whole cards always differ. Enrollment takes dark ink, Authentication white.
     const hues = [0, 1].map((index) => smileIDSampleProductHue(smileIDSampleProducts[index]!));
     expect(smileIDSampleGoPillInk(hues[0]!)).not.toEqual(smileIDSampleGoPillInk(hues[1]!));
     for (const [position, index] of [0, 1].entries()) {

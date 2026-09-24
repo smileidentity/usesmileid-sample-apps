@@ -103,8 +103,7 @@ appId: ${APP_ID}
     id: "sample_filter_count_all"
     text: "0"
 
-# Exactly one terminal result for the last run: the counts reset when it started, so a second
-# delivery of its cancel would read 2. A warm link keeps the process, and with it the card's state.
+# Exactly one result for the last run; a warm link keeps the process, and with it the card.
 - openLink: "usesmileid-sample-flutter://verifications/job-missing"
 - extendedWaitUntil:
     visible:

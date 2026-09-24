@@ -23,7 +23,7 @@ type Actions = {
   reset: () => void;
 };
 
-/// What the SDK did on the last run. Held outside any route, so a count survives the flow's own teardown.
+/// What the SDK did on the last run, held outside any route so a count survives the flow's teardown.
 export const useSmileIDSampleResultStore = create<State & Actions>((set, get) => ({
   result: smileIDSampleResultDefaults,
   start: (run) => set({ result: smileIDSampleResultStarted(get().result, run) }),

@@ -4,7 +4,6 @@ import 'package:sample_ui/sample_ui.dart';
 
 import '../spec/spec_file.dart';
 
-/// The card is the evidence channel, so what it counts and what reaches the tree are both tested.
 void main() {
   final UseSmileIDSampleResult running = UseSmileIDSampleResult.idle.started(
     scenario: UseSmileIDSampleScenario.normal,

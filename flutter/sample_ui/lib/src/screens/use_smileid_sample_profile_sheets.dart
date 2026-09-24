@@ -138,7 +138,6 @@ class _UseSmileIDSampleNewProfileSheetState
   }
 }
 
-/// The sheet's placeholders are the fields' labels, shorter than the config page's prompts.
 /// The sheet's ids, which are snake_case where the config page's are camelCase.
 const Map<UseSmileIDSampleUserField, String> _sheetTestIds =
     <UseSmileIDSampleUserField, String>{

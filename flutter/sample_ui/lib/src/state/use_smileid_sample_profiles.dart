@@ -156,9 +156,7 @@ class UseSmileIDSampleProfile {
   /// What a row says under the organisation: the person, or a placeholder until details are saved.
   String get caption => person.trim().isEmpty ? _noUserDetailsCaption : person;
 
-  /// A copy with [defaults] replaced, naming the person from them where none was given.
-  ///
-  /// A null [callbackUrl] keeps the stored one; only a caller that edited it passes a value.
+  /// A copy with [defaults] replaced, and [callbackUrl] when given; names the person where none was.
   UseSmileIDSampleProfile withDefaults(
     UseSmileIDSampleUserDetails details, {
     String? callbackUrl,

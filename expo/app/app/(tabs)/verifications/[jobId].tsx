@@ -29,7 +29,6 @@ export default function VerificationDetails() {
   const notice = useSmileIDSampleTransientNotice();
   const args = useLaunchArgs();
   const result = useSmileIDSampleResultStore((state) => state.result);
-  /// Debug builds, or a release launched with `probes`, show the full card.
   const showProbes = __DEV__ || args.probes;
   const noticeStyle = useSmileIDSampleNoticeStyle();
   const { show } = notice;

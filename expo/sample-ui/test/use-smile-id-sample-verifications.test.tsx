@@ -178,8 +178,7 @@ describe('removing the last row of the active filter', () => {
   it('falls back to All rather than leaving a blank screen under a chip reading 0', async () => {
     const blocked = fixtures.filter((job) => job.status === UseSmileIDSampleStatus.Blocked);
     const removed: string[] = [];
-    // The rows really go, as the store removes them: with the rows kept, Blocked still shows them
-    // and the fallback could be deleted without this test noticing.
+    // The rows really go, or Blocked still shows them and the fallback goes untested.
     const Host = () => {
       const [jobs, setJobs] = useState(fixtures);
       return list({

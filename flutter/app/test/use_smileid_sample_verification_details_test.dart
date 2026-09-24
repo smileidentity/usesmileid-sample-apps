@@ -199,7 +199,6 @@ void main() {
     expect(container.read(useSmileIDSampleJobsProvider).value, isEmpty);
   });
 
-  // A cold link reaches the page before the store's first read; "not stored" would be a lie then.
   testWidgets('a cold link claims no absence before the store has answered', (
     WidgetTester tester,
   ) async {
@@ -301,7 +300,6 @@ void main() {
   });
 }
 
-/// Answers its first read after a delay, as a cold start's disk read does.
 class _SlowReadRepository extends UseSmileIDSampleMemoryJobsRepository {
   _SlowReadRepository(super.initial);
 

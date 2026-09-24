@@ -68,7 +68,6 @@ void main() {
         contains('android:scheme="${flutterApp['urlScheme']}"'),
       );
       expect(plist(), contains('<string>${flutterApp['urlScheme']}</string>'));
-      // The second clause: a stray scheme is how a link opens the wrong app or a chooser.
       expect(
         RegExp(
           r'android:scheme="([^"]+)"',

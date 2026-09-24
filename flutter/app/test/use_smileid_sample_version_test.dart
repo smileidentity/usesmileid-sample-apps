@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_version.dart';
 
-/// The footer the app ships, against the spec and the build's own version, never a copy of either.
 void main() {
   test(
     'the settings footer is the spec copy, carrying the pubspec version',
