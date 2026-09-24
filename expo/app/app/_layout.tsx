@@ -79,11 +79,13 @@ export default function RootLayout() {
   }, [dark]);
 
   useEffect(() => {
+    // Once, off the link's own arguments: the defaults before it resolves are no launch at all.
+    if (!argsLoaded) return;
     resetProfiles(smileIDSampleProfilesForLaunch(args));
     // Before the verifications route's first load, or its own read wins and the list opens empty.
     // Caught, not voided: a failed write must degrade to an empty list, never an unhandled rejection.
     if (args.seedJobs) seedFixtures(Date.now()).catch(() => undefined);
-  }, [args, resetProfiles, seedFixtures]);
+  }, [args, argsLoaded, resetProfiles, seedFixtures]);
 
   // Held for the session and the link: a cold link into a run snapshots both at entry.
   if (!fontsLoaded || !sessionLoaded || !argsLoaded) {

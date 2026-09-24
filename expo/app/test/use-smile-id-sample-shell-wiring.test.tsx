@@ -7,6 +7,7 @@ import {
   useSmileIDSampleTransientNotice,
   useSmileIDSampleSettingsStore,
   useSmileIDSampleTheme,
+  useSmileIDSampleProfileStore,
 } from '@smileid/sample-ui';
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import * as Linking from 'expo-linking';
@@ -146,6 +147,15 @@ describe('seedJobs decides whether the verifications list has anything in it', (
     await launch(`${LAUNCH}?seedProfiles=true`);
     await waitFor(() => expect(getInitialURL).toHaveBeenCalled());
     expect(jobs()).toEqual([]);
+  });
+
+  it('builds the profile store once, from the link rather than the defaults before it', async () => {
+    const reset = jest.spyOn(useSmileIDSampleProfileStore.getState(), 'reset');
+    await launch(`${LAUNCH}?seedProfiles=true`);
+    await waitFor(() => expect(reset).toHaveBeenCalled());
+    expect(reset).toHaveBeenCalledTimes(1);
+    expect(useSmileIDSampleProfileStore.getState().items.length).toBeGreaterThan(1);
+    reset.mockRestore();
   });
 
   it('seeds nothing on a plain cold start, so a partner sees only their own data', async () => {
