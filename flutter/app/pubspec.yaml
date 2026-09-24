@@ -51,6 +51,9 @@ dependencies:
   # icon tree-shaker warns that it cannot find the family they reference.
   cupertino_icons: ^1.0.8
 
+  # Settings' link rows: Custom Tabs / SFSafariViewController in app, the system browser for PDFs.
+  url_launcher: ^6.3.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
