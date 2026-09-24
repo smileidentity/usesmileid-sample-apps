@@ -63,10 +63,7 @@ export const smileIDSampleRequirementLabel = (
   requirement: UseSmileIDSampleUserDetailsRequirement,
   field: UseSmileIDSampleUserFieldSpec,
 ): string => {
-  if (!requirement.contact) return field.label;
-  if (field.id === UseSmileIDSampleUserField.Email) return 'Email';
-  if (field.id === UseSmileIDSampleUserField.Phone) return 'Phone';
-  return field.label;
+  return requirement.contact && !field.required ? field.title : field.label;
 };
 
 const titlecase = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
