@@ -157,8 +157,6 @@ from it is used:
 
 | Constant | Value | What it is |
 |---|---|---|
-| `HOME_START_FULLSCREEN` | `sample_home_start_fullscreen` | one of the two shell ids `docs/plan/port-gaps-backlog.md` §3 records as implemented by **no app** — owed feature or owed deletion, undecided |
-| `HOME_START_SHELL` | `sample_home_start_shell` | the other of that pair |
 | `SCAN_TOKEN_SCREEN` | `sample_scan_token_screen` | the QR scanner, deliberately absent from this repo |
 | `TOKEN_ENVIRONMENT` | `sample_token_environment` | the token session, deliberately absent |
 | `RESULT_CARD` | `sample_result_card` | shown after an SDK flow, which no app in this repo runs yet |

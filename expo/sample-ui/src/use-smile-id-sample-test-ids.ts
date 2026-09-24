@@ -5,8 +5,6 @@ export const UseSmileIDSampleTestIds = {
   NAV_VERIFICATIONS: 'sample_nav_verifications',
   NAV_SETTINGS: 'sample_nav_settings',
   NAV_TOKEN: 'sample_nav_token',
-  HOME_START_FULLSCREEN: 'sample_home_start_fullscreen',
-  HOME_START_SHELL: 'sample_home_start_shell',
   SCENARIO_DRAWER: 'sample_scenario_drawer',
   SCENARIO_DRAWER_BUTTON: 'sample_scenario_drawer_button',
   SCENARIO_ITEM: 'sample_scenario_item',

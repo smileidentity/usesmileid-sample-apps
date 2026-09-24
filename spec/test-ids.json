@@ -21,14 +21,6 @@
         "description": "Bottom nav token affordance, carries the countdown ring."
       },
       {
-        "id": "sample_home_start_fullscreen",
-        "description": "Starts a flow as a full-screen presentation."
-      },
-      {
-        "id": "sample_home_start_shell",
-        "description": "Starts a flow nested inside the navigation shell."
-      },
-      {
         "id": "sample_scenario_drawer",
         "description": "The scenario drawer's own root, matching every other sheet.",
         "resolved": "RESOLVED 2026-08-14. This id stays on the drawer root: screens.json already lists it among the drawer's own testIds, every other sheet names its root the same way (sample_country_sheet, sample_profile_switch_sheet), and Android already attaches it there — so nothing is renamed, which the stability rule forbids. The control that opens it takes sample_scenario_drawer_button, matching every other opener (sample_country_trigger opens sample_country_sheet). Only this description was wrong."
