@@ -89,12 +89,14 @@ export default function VerificationDetails() {
         }}
         onRefresh={() => void run(false)}
         onCopy={(label, value) => {
-          void Clipboard.setStringAsync(value).then(() => {
-            // Android 13 shows its own confirmation; below it there is none, and iOS shows none natively.
-            if (Platform.OS === 'android' && Number(Platform.Version) < 33) {
-              show({ message: `${label} copied` });
-            }
-          });
+          Clipboard.setStringAsync(value)
+            .then(() => {
+              // Android 13 shows its own confirmation; below it there is none, and iOS shows none natively.
+              if (Platform.OS === 'android' && Number(Platform.Version) < 33) {
+                show({ message: `${label} copied` });
+              }
+            })
+            .catch(() => show({ message: `${label} could not be copied` }));
         }}
       />
       <UseSmileIDSampleTransientNoticeHost state={notice} style={noticeStyle} />

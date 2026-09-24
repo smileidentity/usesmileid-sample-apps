@@ -95,6 +95,28 @@ describe('a notice on a screen with no nav bar', () => {
     expect(Clipboard.setStringAsync).toHaveBeenCalledWith('job_notice');
   });
 
+  it('says so when the clipboard refuses a copy, rather than failing silently', async () => {
+    await useSmileIDSampleJobStore.getState().load();
+    await useSmileIDSampleJobStore.getState().add({
+      id: 'job_notice',
+      userId: 'user_1',
+      product: smileIDSampleProducts[0]!,
+      status: UseSmileIDSampleStatus.Clear,
+      createdAtMillis: Date.now(),
+      message: 'Job completed',
+      httpStatus: 200,
+      sandbox: true,
+      sessionId: null,
+      partnerId: null,
+    });
+    (Clipboard.setStringAsync as jest.Mock).mockRejectedValueOnce(new Error('denied'));
+    const screen = await inTheme(<VerificationDetails />);
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('sample_detail_copy_jobId'));
+    });
+    await waitFor(() => expect(screen.queryByText('Job ID could not be copied')).not.toBeNull());
+  });
+
   it('shows the last run on verification details, even for a job never stored', async () => {
     await useSmileIDSampleJobStore.getState().load();
     useSmileIDSampleResultStore.getState().reset();
