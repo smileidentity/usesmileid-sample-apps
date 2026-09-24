@@ -101,7 +101,7 @@ Widget _settings({
     settings: settings,
     organisation: organisation,
     initials: initials,
-    versionLabel: 'Smile ID Sample App · 1.0.0',
+    versionLabel: 'Smile ID · 1.0.0',
     consentBoundByToken: consentBoundByToken,
     avatarColor: avatarColorForProfile(avatarIndex),
   ),
