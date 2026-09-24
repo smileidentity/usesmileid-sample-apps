@@ -104,6 +104,25 @@ describe('a notice on a screen with no nav bar', () => {
     expect(screen.getByTestId('sample_result_result_count').props.children).toBe('1');
   });
 
+  it('loads the store itself on a cold link, so a stored job is found without the list', async () => {
+    await useSmileIDSampleJobStore.getState().load();
+    await useSmileIDSampleJobStore.getState().add({
+      id: 'job_notice',
+      userId: 'user_1',
+      product: smileIDSampleProducts[0]!,
+      status: UseSmileIDSampleStatus.Clear,
+      createdAtMillis: Date.now(),
+      message: 'Job completed',
+      httpStatus: 200,
+      sandbox: true,
+      sessionId: null,
+      partnerId: null,
+    });
+    useSmileIDSampleJobStore.getState().reset();
+    const screen = await inTheme(<VerificationDetails />);
+    await waitFor(() => expect(screen.queryByText('Job completed')).not.toBeNull());
+  });
+
   it('sits past the system bar on the profiles list too', async () => {
     useSmileIDSampleProfileStore.getState().add('Kobo Bank', 'Ada Okafor');
     const screen = await inTheme(<Profiles />);

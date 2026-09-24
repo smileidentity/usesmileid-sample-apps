@@ -22,6 +22,7 @@ export default function VerificationDetails() {
   const back = useSmileIDSampleBack('/verifications');
   const { jobId } = useLocalSearchParams<{ jobId: string }>();
   const jobs = useSmileIDSampleJobStore((state) => state.jobs);
+  const load = useSmileIDSampleJobStore((state) => state.load);
   const refresh = useSmileIDSampleJobStore((state) => state.refresh);
   const remove = useSmileIDSampleJobStore((state) => state.remove);
   const [refreshing, setRefreshing] = useState(false);
@@ -57,6 +58,12 @@ export default function VerificationDetails() {
     },
     [jobId, refresh, show],
   );
+
+  useEffect(() => {
+    // A cold link lands here without the list, which is otherwise the only screen that loads the store.
+    if (jobs === null) void load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     // Only a processing row can change, so only that one is refreshed on entry.
