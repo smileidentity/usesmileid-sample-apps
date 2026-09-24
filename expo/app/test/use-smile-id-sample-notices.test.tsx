@@ -7,7 +7,8 @@ import {
   useSmileIDSampleJobStore,
   useSmileIDSampleProfileStore,
 } from '@smileid/sample-ui';
-import { act, render, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
+import * as Clipboard from 'expo-clipboard';
 import type { ReactElement } from 'react';
 import { StyleSheet } from 'react-native';
 
@@ -25,6 +26,8 @@ jest.mock('expo-router', () => ({
   useRouter: () => mockRouter,
   useLocalSearchParams: () => ({ jobId: 'job_notice' }),
 }));
+
+jest.mock('expo-clipboard', () => ({ setStringAsync: jest.fn(async () => true) }));
 
 const inTheme = async (element: ReactElement) =>
   await render(<UseSmileIDSampleThemeProvider dark={false}>{element}</UseSmileIDSampleThemeProvider>);
@@ -68,6 +71,27 @@ describe('a notice on a screen with no nav bar', () => {
     const message = 'Not submitted under a scanned token';
     await waitFor(() => expect(screen.queryByText(message)).not.toBeNull());
     expect(noticeBottom(screen, message)).toBe(BOTTOM_INSET + 16);
+  });
+
+  it('copies the full job id, not the shortened label, on verification details', async () => {
+    await useSmileIDSampleJobStore.getState().load();
+    await useSmileIDSampleJobStore.getState().add({
+      id: 'job_notice',
+      userId: 'user_1',
+      product: smileIDSampleProducts[0]!,
+      status: UseSmileIDSampleStatus.Clear,
+      createdAtMillis: Date.now(),
+      message: 'Job completed',
+      httpStatus: 200,
+      sandbox: true,
+      sessionId: null,
+      partnerId: null,
+    });
+    const screen = await inTheme(<VerificationDetails />);
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('sample_detail_copy_jobId'));
+    });
+    expect(Clipboard.setStringAsync).toHaveBeenCalledWith('job_notice');
   });
 
   it('sits past the system bar on the profiles list too', async () => {

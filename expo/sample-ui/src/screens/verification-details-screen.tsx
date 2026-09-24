@@ -36,7 +36,7 @@ type Props = {
   onBack: () => void;
   onDelete: () => void;
   onRefresh: () => void;
-  onCopy: (field: string, value: string) => void;
+  onCopy: (label: string, value: string) => void;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -118,7 +118,7 @@ export const VerificationDetailsScreen = ({
               <UseSmileIDSampleDataFieldRow
                 label="Job_id"
                 value={smileIDSampleJobShortId(job)}
-                onCopy={() => onCopy('jobId', job.id)}
+                onCopy={() => onCopy('Job ID', job.id)}
                 testID={UseSmileIDSampleSuffixedTestIds.detailField('jobId')}
                 copyTestID={UseSmileIDSampleSuffixedTestIds.detailCopy('jobId')}
               />
@@ -137,7 +137,7 @@ export const VerificationDetailsScreen = ({
               <UseSmileIDSampleDataFieldRow
                 label="User_id"
                 value={smileIDSampleJobShortUserId(job)}
-                onCopy={() => onCopy('userId', job.userId)}
+                onCopy={() => onCopy('User ID', job.userId)}
                 testID={UseSmileIDSampleSuffixedTestIds.detailField('userId')}
                 copyTestID={UseSmileIDSampleSuffixedTestIds.detailCopy('userId')}
               />

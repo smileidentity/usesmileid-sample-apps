@@ -6,13 +6,14 @@ import {
   useSmileIDSampleSessionStore,
   useSmileIDSampleTransientNotice,
 } from '@smileid/sample-ui';
+import * as Clipboard from 'expo-clipboard';
 import { useLocalSearchParams } from 'expo-router';
 
 import { smileIDSampleStatusApi } from '../../../src/status/use-smile-id-sample-status-api';
 import { useSmileIDSampleBack } from '../../../src/use-smile-id-sample-back';
 import { useSmileIDSampleNoticeStyle } from '../../../src/use-smile-id-sample-notice-inset';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
 export default function VerificationDetails() {
   const back = useSmileIDSampleBack('/verifications');
@@ -68,7 +69,14 @@ export default function VerificationDetails() {
           back();
         }}
         onRefresh={() => void run(false)}
-        onCopy={() => undefined}
+        onCopy={(label, value) => {
+          void Clipboard.setStringAsync(value).then(() => {
+            // Android 13 shows its own confirmation; below it there is none, and iOS shows none natively.
+            if (Platform.OS === 'android' && Number(Platform.Version) < 33) {
+              show({ message: `${label} copied` });
+            }
+          });
+        }}
       />
       <UseSmileIDSampleTransientNoticeHost state={notice} style={noticeStyle} />
     </View>
