@@ -495,40 +495,42 @@ void _ignore(String value) {}
 
 void _ignoreBool(bool value) {}
 
-/// A run in flight on products, a finished run with every field, and a failure that never submitted.
+/// The spec's five states, with the fixtures Android records, so a pair of platforms can be read side by side.
 Widget _resultCards() => _stack(<Widget>[
-  UseSmileIDSampleResultLine(
-    result: UseSmileIDSampleResult.idle.started(
-      scenario: UseSmileIDSampleScenario.normal,
-      theme: UseSmileIDSampleThemeScenario.brandDefault,
-      route: UseSmileIDSampleFlowRoute.fullscreen,
-      environment: UseSmileIDSampleEnvironment.sandbox,
+  const UseSmileIDSampleResultCard(result: UseSmileIDSampleResult.idle),
+  UseSmileIDSampleResultLine(result: _resultRunning),
+  UseSmileIDSampleResultCard(
+    result: UseSmileIDSampleResult.idle.recorded(
+      UseSmileIDSampleFlowStatus.succeeded,
+      jobId: 'job_9f3a2c7104e8',
+      userId: 'user_5b1ec4d2',
     ),
   ),
-  const UseSmileIDSampleResultCard(
-    result: UseSmileIDSampleResult(
-      activeScenario: UseSmileIDSampleScenario.normal,
-      activeTheme: UseSmileIDSampleThemeScenario.brandDefault,
-      route: UseSmileIDSampleFlowRoute.fullscreen,
-      environment: UseSmileIDSampleEnvironment.production,
-      jobStatus: UseSmileIDSampleFlowStatus.succeeded,
-      resultCallbackCount: 1,
-      refreshCallbackCount: 0,
-      jobId: 'job-7d2f01aa',
-      userId: 'user-3b9c',
-      sdkVersion: '12.1.1',
+  UseSmileIDSampleResultCard(
+    result: UseSmileIDSampleResult.idle.recorded(
+      UseSmileIDSampleFlowStatus.cancelled,
     ),
   ),
-  const UseSmileIDSampleResultCard(
-    result: UseSmileIDSampleResult(
-      activeScenario: UseSmileIDSampleScenario.normal,
-      activeTheme: UseSmileIDSampleThemeScenario.brandDefault,
-      route: UseSmileIDSampleFlowRoute.fullscreen,
-      environment: UseSmileIDSampleEnvironment.sandbox,
-      jobStatus: UseSmileIDSampleFlowStatus.failed,
-      resultCallbackCount: 1,
-      refreshCallbackCount: 1,
-      lastError: 'Network error',
-    ),
+  UseSmileIDSampleResultCard(
+    result: UseSmileIDSampleResult.idle
+        .selecting(
+          UseSmileIDSampleScenario.badRefresh,
+          UseSmileIDSampleThemeScenario.brandDefault,
+        )
+        .recorded(
+          UseSmileIDSampleFlowStatus.failed,
+          error:
+              '2213: authentication failed \u2014 refresh returned an expired token',
+        )
+        .refreshed()
+        .refreshed(),
   ),
 ]);
+
+final UseSmileIDSampleResult _resultRunning = UseSmileIDSampleResult.idle
+    .started(
+      scenario: UseSmileIDSampleScenario.normal,
+      theme: UseSmileIDSampleThemeScenario.brandDefault,
+      route: UseSmileIDSampleFlowRoute.shell,
+      environment: UseSmileIDSampleEnvironment.sandbox,
+    );
