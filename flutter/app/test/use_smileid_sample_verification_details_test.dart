@@ -227,6 +227,17 @@ void main() {
     expect(find.text('Approved'), findsOne);
   });
 
+  testWidgets('a failed store read says the job is missing, not a blank page', (
+    WidgetTester tester,
+  ) async {
+    await pumpAt(
+      tester,
+      UseSmileIDSampleRoutes.verificationDetails(job.id),
+      repository: _FailingReadRepository(),
+    );
+    expect(byId(UseSmileIDSampleTestIds.detailsEmpty), findsOne);
+  });
+
   Future<void> pull(WidgetTester tester) async {
     await tester.fling(
       byId(UseSmileIDSampleTestIds.detailsRefresh),
@@ -310,4 +321,9 @@ class _SlowReadRepository extends UseSmileIDSampleMemoryJobsRepository {
     await Future<void>.delayed(delay);
     return super.read();
   }
+}
+
+class _FailingReadRepository extends UseSmileIDSampleMemoryJobsRepository {
+  @override
+  Future<List<UseSmileIDSampleJob>?> read() async => throw StateError('disk');
 }

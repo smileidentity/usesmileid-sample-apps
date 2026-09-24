@@ -146,12 +146,16 @@ Future<void> useSmileIDSampleOpenLink(
   Future<bool> Function(Uri, {LaunchMode mode}) launch = launchUrl,
 }) async {
   try {
-    await launch(
+    final bool opened = await launch(
       url,
       mode: inApp
           ? LaunchMode.inAppBrowserView
           : LaunchMode.externalApplication,
     );
+    // A device with no in-app browser answers false rather than throwing.
+    if (!opened && inApp) {
+      await launch(url, mode: LaunchMode.externalApplication);
+    }
   } on Object catch (error) {
     // No browser, or a scheme nothing claims: a release build would crash on the unawaited throw.
     debugPrint('could not open $url: $error');

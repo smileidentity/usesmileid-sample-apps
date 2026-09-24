@@ -55,4 +55,24 @@ void main() {
       );
     },
   );
+
+  test(
+    'an in-app link nothing can show falls back to the system browser',
+    () async {
+      final List<LaunchMode> modes = <LaunchMode>[];
+      await useSmileIDSampleOpenLink(
+        Uri.parse('https://usesmileid.com'),
+        inApp: true,
+        launch:
+            (Uri url, {LaunchMode mode = LaunchMode.platformDefault}) async {
+              modes.add(mode);
+              return mode == LaunchMode.externalApplication;
+            },
+      );
+      expect(modes, <LaunchMode>[
+        LaunchMode.inAppBrowserView,
+        LaunchMode.externalApplication,
+      ]);
+    },
+  );
 }

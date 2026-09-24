@@ -44,9 +44,13 @@ class _UseSmileIDSampleVerificationDetailsTabState
   }
 
   Future<void> _refreshOnEntry() async {
-    final List<UseSmileIDSampleJob> jobs = await ref.read(
-      useSmileIDSampleJobsProvider.future,
-    );
+    final List<UseSmileIDSampleJob> jobs;
+    try {
+      jobs = await ref.read(useSmileIDSampleJobsProvider.future);
+    } on Object {
+      // A failed read already shows as the empty state; there is nothing to refresh.
+      return;
+    }
     final bool processing = jobs.any(
       (UseSmileIDSampleJob it) =>
           it.id == widget.jobId &&
@@ -65,12 +69,20 @@ class _UseSmileIDSampleVerificationDetailsTabState
       result: ref.watch(useSmileIDSampleShowProbesProvider)
           ? ref.watch(useSmileIDSampleFlowResultProvider)
           : null,
-      job: switch ((found, ref.watch(useSmileIDSampleJobsProvider).hasValue)) {
+      job: switch ((found, ref.watch(useSmileIDSampleJobsProvider))) {
         (final UseSmileIDSampleJob job, _) => UseSmileIDSampleJobLookup.found(
           job,
         ),
-        (null, false) => const UseSmileIDSampleJobLookup.pending(),
-        (null, true) => const UseSmileIDSampleJobLookup.none(),
+        // Pending only while the first read runs; a failed read answers "none", not a blank page.
+        (
+          null,
+          AsyncValue<List<UseSmileIDSampleJob>>(
+            hasValue: false,
+            hasError: false,
+          ),
+        ) =>
+          const UseSmileIDSampleJobLookup.pending(),
+        (null, _) => const UseSmileIDSampleJobLookup.none(),
       },
       onBack: widget.onBack,
       // Deleting here leaves the page first, and the LIST shows the confirmation once it rebuilds:
