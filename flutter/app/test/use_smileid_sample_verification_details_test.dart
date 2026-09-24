@@ -238,6 +238,25 @@ void main() {
     expect(byId(UseSmileIDSampleTestIds.detailsEmpty), findsOne);
   });
 
+  testWidgets(
+    'the detail rows sit on the section surface, as on Android and iOS',
+    (WidgetTester tester) async {
+      await pumpAt(tester, UseSmileIDSampleRoutes.verificationDetails(job.id));
+      final Iterable<DecoratedBox> cards = tester.widgetList<DecoratedBox>(
+        find.ancestor(
+          of: byId(UseSmileIDSampleTestIds.detailField('createdAt')),
+          matching: find.byType(DecoratedBox),
+        ),
+      );
+      expect(
+        cards.map(
+          (DecoratedBox box) => (box.decoration as BoxDecoration?)?.color,
+        ),
+        contains(UseSmileIDSampleColorSchemes.light.surface),
+      );
+    },
+  );
+
   Future<void> pull(WidgetTester tester) async {
     await tester.fling(
       byId(UseSmileIDSampleTestIds.detailsRefresh),
