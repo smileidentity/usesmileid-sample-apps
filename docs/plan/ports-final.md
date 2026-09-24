@@ -28,13 +28,19 @@ Verdicts from the code, 2026-09-24:
 | Expo never loads the job store on a cold link | **Fixed here**: a cold link to `/verifications/:jobId` showed "No verification here" for a stored job, because only the list loaded the store. The details route loads it itself; the test failed first. |
 | AsyncStorage failures unhandled | **Fixed here**: an unreadable store now reads as empty instead of leaving the list loading, and a failed write keeps the row for the launch. Both tests failed first. |
 | Expo empty-state copy | **Fixed here**: now "No verifications yet" / "Nothing {filter}", as Android, iOS and Flutter say. |
-| Settings store's `loaded` flag never read | Fixed on `main` (`expo/app/app/_layout.tsx`). |
+| A settings write during the load window is undone | **Fixed here**: a toggle made while the stored values were being read kept its new value on disk but reverted on screen. Moved settings now survive the read, and an unreadable store still reports loaded. Both tests failed first. Flutter reads settings before the first frame, so it has no window. |
 | `continueEnabled` ignores its test id | Fixed on `main`: the prop no longer exists. |
 | Four Expo weight overrides bypass `atWeight` | Fixed on `main`: no `fontWeight` literal remains. |
 | Flutter pickers partial against `fullSheet` | Fixed on `main`: pickers use the full-sheet helper. |
 | `WidgetRef` used across an await | **Closed, not reproducible**: a delete whose write outlives the page completes cleanly on the old code, so no test can fail on it. |
 | Notice overlay `width: '100%'` (C8) | **Closed**: it spans the same box as `left: 0, right: 0` when absolutely positioned, and the change would only churn snapshots. |
-| Flutter cold link paints the empty state first; profile store resets twice; the wrapped profile row drops its check; two sources for the four field labels; the nine tests that cannot fail; `sample_job_row_N` wording in `spec/test-ids.json` | **Carried** to `port-priority-cut.md` §2, not re-checked here. The last is a `spec/` wording change, which is ask-first. |
+| Flutter cold link paints the empty state first | **Fixed here**, on Expo too: the page now waits for the store instead of claiming "No verification here" for a job it has not read. |
+| Profile store reset a second time when the cold-start link resolves | **Fixed here** (Expo): the store is built once, from the link's own arguments. Flutter builds it once from a provider already. |
+| The wrapped profile row drops the selected check | **Fixed here** (Flutter): both layouts draw one trailing mark. Expo has a single layout. |
+| Two sources of truth for the four field labels | **Fixed here**: each port takes every label from its field spec, which holds the title once. No rendered text moved. |
+| `sample_job_row_N` indexing | **Fixed here**: Expo numbered rows by store position, so a filter gave it different ids from the other three. It now numbers the list as drawn, and `spec/test-ids.json` says so. |
+| The nine tests that cannot fail | **All fixed or confirmed**, each proved by breaking the code it names: the settings-footer test now reads the shipped footer (and found `screens.json` still carrying the superseded wording); the test-id spec test asserts both directions on Flutter and Android (and found two ids missing from Flutter's catalogue); the URL-scheme test asserts "only that one"; the 23-hour-day test runs in a zone with a clock change (and found the bug live on Flutter, Expo and Android); the cold-start link test was already fixed on `main`; the Expo filter-fallback, go-pill, licence and theme-provider tests now fail without the behaviour they name. Flutter's filter-fallback and licence tests could already fail. |
+| SDK findings for the Flutter repo | Drafted, not filed: two missing `si_*` ids, `validate()` weaker than `build()` with a silent blank frame, and no document analyzer. |
 
 ## 3. Out of scope: owner rulings
 
