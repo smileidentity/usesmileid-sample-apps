@@ -53,6 +53,18 @@ class UseSmileIDSampleProfileRow extends StatelessWidget {
       context,
     );
     final bool stacks = MediaQuery.textScalerOf(context).scale(1) > 1;
+    // One trailing mark for both layouts, so the wrapped one cannot drop the check.
+    final Widget? end =
+        trailing ??
+        (selected
+            ? SizedBox(
+                width: SmileDimens.sizeIconMd,
+                height: SmileDimens.sizeIconMd,
+                child: Center(
+                  child: UseSmileIDSampleGlyphs.check(colors.primary),
+                ),
+              )
+            : null);
     return Semantics(
       identifier: testId,
       selected: selected,
@@ -92,7 +104,7 @@ class UseSmileIDSampleProfileRow extends StatelessWidget {
                           supportingText: supportingText,
                           colors: colors,
                         ),
-                        ?trailing,
+                        ?end,
                       ],
                     )
                   : Row(
@@ -110,20 +122,9 @@ class UseSmileIDSampleProfileRow extends StatelessWidget {
                             colors: colors,
                           ),
                         ),
-                        if (trailing != null) ...<Widget>[
+                        if (end != null) ...<Widget>[
                           const SizedBox(width: SmileDimens.spacingSm),
-                          trailing!,
-                        ] else if (selected) ...<Widget>[
-                          const SizedBox(width: SmileDimens.spacingSm),
-                          SizedBox(
-                            width: SmileDimens.sizeIconMd,
-                            height: SmileDimens.sizeIconMd,
-                            child: Center(
-                              child: UseSmileIDSampleGlyphs.check(
-                                colors.primary,
-                              ),
-                            ),
-                          ),
+                          end,
                         ],
                       ],
                     ),
