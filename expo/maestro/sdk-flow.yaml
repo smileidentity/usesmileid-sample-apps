@@ -60,3 +60,19 @@ appId: ${APP_ID}
     visible:
       id: "sample_products_screen"
     timeout: 30000
+
+# The result card reaches the tree on a release build when the link asks for probes, and renders
+# even for a job id that resolves to nothing. The gate's redirect above is not a result callback.
+- stopApp
+- openLink: "usesmileid-sample-expo:///verifications/job-missing?probes=true"
+- extendedWaitUntil:
+    visible:
+      id: "sample_result_card"
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      id: "sample_result_result_count"
+    direction: DOWN
+- assertVisible:
+    id: "sample_result_result_count"
+    text: "0"

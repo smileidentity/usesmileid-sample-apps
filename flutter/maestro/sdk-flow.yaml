@@ -7,14 +7,14 @@ appId: ${APP_ID}
 # The Flutter SDK publishes only two semantics identifiers — `si_preview_screen` and
 # `si_processing_screen` — where the Android SDK also publishes `si_consent_screen` and
 # `si_instructions_screen`. The consent screen is therefore asserted by its own text, which is what
-# the Android twin taps anyway; this repo never invents an `si_*` id of its own. There is no result
-# card on this platform yet either, so the terminal-result count the twin reads has no home here.
+# the Android twin taps anyway; this repo never invents an `si_*` id of its own.
 
 - clearState
 - runFlow:
     file: subflows/cold-start.yaml
     env:
-      LINK: "usesmileid-sample-flutter://?noticeWindow=60"
+      # `probes` puts the result card on a release build, which is what this lane installs.
+      LINK: "usesmileid-sample-flutter://?noticeWindow=60&probes=true"
       LANDS_ON: "sample_products_screen"
 
 # The wizard is PUSHED over the shell, so the nav bar is gone and back is a pop rather than a
@@ -102,3 +102,21 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_filter_count_all"
     text: "0"
+
+# Exactly one terminal result for the last run: the counts reset when it started, so a second
+# delivery of its cancel would read 2. A warm link keeps the process, and with it the card's state.
+- openLink: "usesmileid-sample-flutter://verifications/job-missing"
+- extendedWaitUntil:
+    visible:
+      id: "sample_details_empty"
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      id: "sample_result_result_count"
+    direction: DOWN
+- assertVisible:
+    id: "sample_result_result_count"
+    text: "1"
+- assertVisible:
+    id: "sample_result_job_status"
+    text: "cancelled"
