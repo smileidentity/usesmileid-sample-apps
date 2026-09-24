@@ -87,6 +87,11 @@ export const VerificationsScreen = ({
     [visible, state.nowMillis],
   );
   const times = useMemo(() => smileIDSampleTimeLabels(visible), [visible]);
+  // A row's id is its position in the list as drawn, filter and day order applied, as on the other three.
+  const positions = useMemo(
+    () => new Map(days.flatMap((day) => day.jobs).map((job, position) => [job.id, position])),
+    [days],
+  );
   const counts = useMemo(() => countsFor(jobs ?? []), [jobs]);
 
   /// Both removal paths run this: the swipe and the selection bar, so neither can miss a rule.
@@ -189,7 +194,7 @@ export const VerificationsScreen = ({
               <JobEntry
                 key={job.id}
                 job={job}
-                index={(jobs ?? []).indexOf(job)}
+                index={positions.get(job.id) ?? 0}
                 time={times[job.id] ?? ''}
                 selecting={selecting}
                 checked={selected.includes(job.id)}

@@ -164,6 +164,16 @@ describe('the filter counts', () => {
   });
 });
 
+describe('row ids', () => {
+  it('number the list as drawn, so a filter renumbers from 0 as on the other three apps', async () => {
+    const rendered = await renderInTheme(list(), false);
+    await fireEvent.press(rendered.getByTestId('sample_filter_chip_blocked'));
+    const blocked = fixtures.filter((job) => job.status === UseSmileIDSampleStatus.Blocked);
+    expect(rendered.queryByTestId('sample_job_row_0')).not.toBeNull();
+    expect(rendered.queryByTestId(`sample_job_row_${blocked.length}`)).toBeNull();
+  });
+});
+
 describe('removing the last row of the active filter', () => {
   it('falls back to All rather than leaving a blank screen under a chip reading 0', async () => {
     const blocked = fixtures.filter((job) => job.status === UseSmileIDSampleStatus.Blocked);
@@ -184,8 +194,8 @@ describe('removing the last row of the active filter', () => {
     await fireEvent.press(rendered.getByTestId('sample_filter_chip_blocked'));
     await fireEvent.press(rendered.getByTestId(UseSmileIDSampleTestIds.SELECT_TOGGLE));
     // Select both blocked rows, then hide them: the filter has nothing left to show.
-    for (const job of blocked) {
-      const index = fixtures.indexOf(job);
+    // Under the Blocked filter the blocked rows are the list, so they are rows 0 and 1.
+    for (const index of blocked.map((_, position) => position)) {
       await fireEvent.press(rendered.getByTestId(`sample_selection_checkbox_${index}`));
     }
     await act(async () => {
