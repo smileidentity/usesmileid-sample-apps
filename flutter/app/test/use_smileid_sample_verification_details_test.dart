@@ -254,6 +254,23 @@ void main() {
         ),
         contains(UseSmileIDSampleColorSchemes.light.surface),
       );
+      // Full width inside the card, not centred at the row's content width.
+      final double card = tester
+          .getSize(
+            find
+                .ancestor(
+                  of: byId(UseSmileIDSampleTestIds.detailField('createdAt')),
+                  matching: find.byType(ClipRRect),
+                )
+                .first,
+          )
+          .width;
+      expect(
+        tester
+            .getSize(byId(UseSmileIDSampleTestIds.detailField('createdAt')))
+            .width,
+        card,
+      );
     },
   );
 

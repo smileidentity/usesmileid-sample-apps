@@ -167,7 +167,10 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: UseSmileIDSampleShapes.card,
-        child: Column(children: _rows(found, colors)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: _rows(found, colors),
+        ),
       ),
     ),
   ];
