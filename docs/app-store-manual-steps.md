@@ -133,7 +133,7 @@ release found.
 Ten minutes on a phone, from the TestFlight install and not from Xcode — a TestFlight build is signed
 and provisioned the way the App Store build will be, and an Xcode install is not.
 
-- Launch → products grid, no fixture profiles, one *Default profile* in Settings
+- Launch → products grid, no fixture profiles, and Settings says *No profile yet*
 - Camera prompt fires on the first capture, with the Smile ID wording, and **no** location or photo
   prompt ever appears — the strings exist for the upload check, the SDK never asks
 - Scan sheet → *Simulate a successful scan* → session card counts down → start a flow → reach the

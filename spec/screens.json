@@ -143,8 +143,10 @@
       ],
       "testIds": [
         "sample_profile_switch_sheet",
-        "sample_profile_row"
-      ]
+        "sample_profile_row",
+        "sample_profile_switch_new"
+      ],
+      "note": "Its last row, 'New profile', is not in the design: the profile it creates becomes active at once, because whoever opened the sheet was choosing who to run as. Opened from the details form, the new-profile sheet starts from what was typed. Picking a profile refills the form from it."
     },
     {
       "id": "verifications",
@@ -255,7 +257,7 @@
         "POST-SUBMISSION: the app lands here in the processing state once a job is submitted (observed 202 Accepted straight after the ID form's Continue)"
       ],
       "additions": [
-        "CORRECTED 2026-09-08: pull-to-refresh, not the 'Check status' button that once stood in for it \u2014 Android replaced the button when GET /v3/status landed, and the stale entry named an id (sample_details_check_status) that is in no test-ids file. The gesture is present in every state, not only processing: an outcome that cannot succeed says why (no live scanned session, or a row never submitted under one, which is every fixture-token run) rather than doing nothing. A row still processing is also refreshed automatically on entry, since that is the only status that can change, and that refresh is silent unless something changed. The LIST's own pull is a different thing and is still deferred (docs/plan/sample-apps-plan.md 8.1)."
+        "CORRECTED 2026-09-08: pull-to-refresh, not the 'Check status' button that once stood in for it — Android replaced the button when GET /v3/status landed, and the stale entry named an id (sample_details_check_status) that is in no test-ids file. The gesture is present in every state, not only processing: an outcome that cannot succeed says why (no live scanned session, or a row never submitted under one, which is every fixture-token run) rather than doing nothing. A row still processing is also refreshed automatically on entry, since that is the only status that can change, and that refresh is silent unless something changed. The LIST's own pull is a different thing and is still deferred (docs/plan/sample-apps-plan.md 8.1)."
       ],
       "note": "The details screen doubles as the result screen, which is why the result card belongs here rather than needing a new home. NO NAV BAR: it is a pushed screen, even though its route lives in the verifications graph. You leave it by going back, not by switching tab. The RESULT CARD and its callback counters are hidden on a release build unless the `probes` launch argument asks for them, and always shown in debug (2026-08-25): the affordance still ships on the release classpath, minified and shrunk, because that is where consumption defects surface — compiling it out with a debug-only source set would also make the argument impossible. The rest of the screen is unchanged either way, so a partner sees the design's screen and automation sees the card."
     },
@@ -270,7 +272,7 @@
         {
           "state": "empty",
           "node": "5206-3804",
-          "note": "Placeholders; 'First and last name are required.'"
+          "note": "Placeholders; 'First and last name are required.' With no profile, the profile row reads 'No profile yet' and an 'Organisation (optional)' row leads the card."
         },
         {
           "state": "editing",
@@ -280,7 +282,7 @@
         {
           "state": "complete",
           "node": "5206-3777",
-          "note": "Values filled; 'Tap any field to edit.' + remember-details switch."
+          "note": "Values filled; 'Tap any field to edit.' + the save switch, 'Save to <profile>' or, with no profile, 'Save as a new profile'. The switch shows only while the typed details differ from the profile's."
         }
       ],
       "components": [
@@ -293,13 +295,14 @@
       ],
       "testIds": [
         "sample_user_details_screen",
+        "sample_user_details_profile",
         "sample_user_details_field",
         "sample_remember_details_switch",
         "sample_user_details_continue"
       ],
       "aka": "Consent Details Form (the owner's term)",
       "prefilledFrom": "profileConfig — the design labels those fields 'USER DETAILS — ATTACHED TO EVERY JOB', so every product shows this form seeded from the active profile.",
-      "note": "OWNER RULING 2026-08-13 (restated): product → Consent Details Form → SDK flow. The prototype shows the SDK consent screen BEFORE this form; that wiring is stale and is not being updated, so do not implement the prototype's order."
+      "note": "OWNER RULING 2026-08-13 (restated): product → Consent Details Form → SDK flow. The prototype shows the SDK consent screen BEFORE this form; that wiring is stale and is not being updated, so do not implement the prototype's order. Not in the design (owner ruling 2026-09-25, docs/plan/profiles-ux.md): the form fills from the active profile, and a profile row above the card opens the switch sheet. Continue with the save switch on writes the typed details back to the active profile, or creates one and makes it active when there is none; a field the token supplies is never stored."
     },
     {
       "id": "consent",
@@ -450,7 +453,8 @@
         "sample_setting_consent_step",
         "sample_setting_instructions_step",
         "sample_setting_preview_step",
-        "sample_sign_out"
+        "sample_sign_out",
+        "sample_sign_out_confirm"
       ],
       "copy": {
         "footer": "Smile ID · 1.0.0",
@@ -464,7 +468,7 @@
         "licenses": "in-app, the licenses screen — not a URL"
       },
       "linkPresentation": "Per row, and split on what the destination can render (measured 2026-08-25). ABOUT — Documentation and Support open IN-APP: Custom Tabs on Android (androidx.browser), SFSafariViewController on iOS, url_launcher inAppBrowserView on Flutter, expo-web-browser on React Native. A WebView is deliberately NOT the pattern on any platform: the page would lose the user's session, autofill and password manager, and this is code partners copy. LEGAL — Terms of Service and Privacy Policy EJECT to the system browser, because both pages serve their document as an embedded PDF (a Webflow CDN asset, hash in the filename) and a mobile browser renders an embedded PDF as a stub with an Open button rather than the document; framing that inside the app makes the app look like it failed. The canonical page URLs stay as they are — linking the CDN asset directly would show the document but hard-codes a path that changes on every re-upload, and the same canonical URL is what the SDK consent screen uses. The in-app toolbar takes a colour PER SCHEME from the design tokens (primary in light, surface in dark); one shared colour left a white bar on a white page. Android warms the browser while Settings is open but does NOT pre-fetch: speculatively downloading a 649 KB docs page on a partner's mobile data is the wrong trade.",
-      "note": "The PROFILE row opens the profiles LIST, not the active profile's own page — configuring any profile and creating one are both reached from there. Its avatar takes the ACTIVE profile's hue from design-tokens.json profileHues, indexed by list position, so the summary, the list and the products header never draw the same profile in three colours. The ENVIRONMENT section was removed on 2026-08-24: it was never in the design, and it existed only because the sandbox launch argument was an override rather than a source. Both are gone — the token's api_url decides the environment, and a run reports it on sample_result_environment. The three SDK-step switches include or omit their screen (see components.json settingsToSdkMapping), and the CONSENT row carries one overridden supporting line: when the linked token binds consent it reads 'The token grants consent, so the screen is skipped', because a switch reading ON while the token has taken the decision away is a lie the screen tells. The switch stays live — it still decides the next run made without a bound token. The DEBUG section holding the Scenarios row renders on debug builds only (see drawerPresentation): the screen takes it as a nullable slot the host fills, because sample-ui runs under eight identities and may not read a host's BuildConfig."
+      "note": "The PROFILE row opens the profiles LIST, not the active profile's own page — configuring any profile and creating one are both reached from there. Its avatar takes the ACTIVE profile's hue from design-tokens.json profileHues, indexed by list position, so the summary, the list and the products header never draw the same profile in three colours. The ENVIRONMENT section was removed on 2026-08-24: it was never in the design, and it existed only because the sandbox launch argument was an override rather than a source. Both are gone — the token's api_url decides the environment, and a run reports it on sample_result_environment. The three SDK-step switches include or omit their screen (see components.json settingsToSdkMapping), and the CONSENT row carries one overridden supporting line: when the linked token binds consent it reads 'The token grants consent, so the screen is skipped', because a switch reading ON while the token has taken the decision away is a lie the screen tells. The switch stays live — it still decides the next run made without a bound token. The DEBUG section holding the Scenarios row renders on debug builds only (see drawerPresentation): the screen takes it as a nullable slot the host fills, because sample-ui runs under eight identities and may not read a host's BuildConfig. Sign out asks first (owner ruling 2026-09-25): it ends the session and deletes every profile on the device. With no profile, the PROFILE row reads 'No profile yet' and 'Tap to create one'."
     },
     {
       "id": "profiles",
@@ -495,7 +499,7 @@
         "sample_toast",
         "sample_toast_undo"
       ],
-      "note": "Creating a profile does NOT make it active: the confirmation carries the offer. The created state shows a toast reading \"<organisation> created\" with action \"Make active\", placed 24 above the safe area — the host already insets a pushed route past the system bar, so adding that inset again lifts the toast into the list. Each row's avatar hue is its position in the list, cycled."
+      "note": "Creating a profile does NOT make it active: the confirmation carries the offer. The one exception is the first profile, which is active at once and gets no offer. A plain launch has no profile, so the list shows only Create. The created state shows a toast reading \"<organisation> created\" with action \"Make active\", placed 24 above the safe area — the host already insets a pushed route past the system bar, so adding that inset again lifts the toast into the list. Each row's avatar hue is its position in the list, cycled."
     },
     {
       "id": "profileConfig",
@@ -507,18 +511,19 @@
         {
           "state": "activeProfile",
           "node": "5206-3295",
-          "note": "CTA disabled and reading \"Active profile\"."
+          "note": "CTA reads \"Save changes\", enabled once something differs from what is stored."
         },
         {
           "state": "otherProfile",
-          "node": "5206-3317"
+          "node": "5206-3317",
+          "note": "CTA reads \"Use this profile\": saves any edits and makes it active."
         },
         {
           "state": "newlyCreated",
           "node": "5206-3525"
         }
       ],
-      "note": "USER DETAILS — ATTACHED TO EVERY JOB. This is the per-profile default that seeds the userDetails screen. The app bar title is the PROFILE'S NAME. The CTA has two states: on any other profile it reads \"Make this profile active\" and both saves and activates; on the profile that is already active it is DISABLED and reads \"Active profile\". Screen spacing is 14 between the header, the section label, the card and the CTA — not the 8 used inside a card. A second section, CALLBACK URL, sits below the user-details card and carries one row, empty by default, placeholder \"Uses your portal default\". It is its own section because a webhook URL is not a user detail. A profile is a partner here, so the URL has to travel with the profile — anywhere else and switching profile carries one partner's webhook into another's job. While a token session is live the row is disabled and reads as overridden: the token's partner owns the job, so the profile's URL is not sent. The section has no design frame; it reuses the SectionLabel, section surface and KeyValueEditRow this screen already uses.",
+      "note": "USER DETAILS — ATTACHED TO EVERY JOB. This is the per-profile default that seeds the userDetails screen. The app bar title is the PROFILE'S NAME. The CTA has two states (owner ruling 2026-09-25, replacing the design's disabled \"Active profile\"): on the active profile it reads \"Save changes\" and is enabled once something changed; on any other it reads \"Use this profile\" and both saves and activates. A PROFILE section above the user details carries the Organisation row, optional, which the SDK's consent screen names as the partner; blank names the app itself. A \"Delete profile\" row sits below the sections and asks first. A link to a profile the device does not hold goes back. Screen spacing is 14 between the header, the section label, the card and the CTA — not the 8 used inside a card. A second section, CALLBACK URL, sits below the user-details card and carries one row, empty by default, placeholder \"Uses your portal default\". It is its own section because a webhook URL is not a user detail. A profile is a partner here, so the URL has to travel with the profile — anywhere else and switching profile carries one partner's webhook into another's job. While a token session is live the row is disabled and reads as overridden: the token's partner owns the job, so the profile's URL is not sent. The section has no design frame; it reuses the SectionLabel, section surface and KeyValueEditRow this screen already uses.",
       "components": [
         "SectionLabel",
         "KeyValueEditRow",
@@ -526,8 +531,11 @@
       ],
       "testIds": [
         "sample_profile_config_screen",
+        "sample_profile_config_name",
         "sample_profile_config_field",
         "sample_profile_config_callback_url",
+        "sample_profile_config_delete",
+        "sample_profile_delete_confirm",
         "sample_profile_config_save"
       ]
     },

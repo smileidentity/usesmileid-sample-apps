@@ -82,8 +82,8 @@ Widget _overSettings() => _shell(
   (BuildContext context) => UseSmileIDSampleSettingsScreen(
     state: const UseSmileIDSampleSettingsState(
       settings: UseSmileIDSampleSettings(),
-      organisation: 'Default profile',
-      initials: 'DP',
+      organisation: 'No profile yet',
+      initials: '',
       versionLabel: 'Smile ID · 1.0.0',
     ),
     onSettingChanged: _ignoreSetting,

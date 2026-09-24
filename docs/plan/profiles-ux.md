@@ -38,7 +38,9 @@ A profile and the job form are **two unrelated stores**, and the job only ever r
     that profile.
   - With no profile, it reads **"Save as a profile"**. On Continue, it creates a profile from the
     draft and makes it active.
-  - Switched off, the draft runs once and nothing is stored.
+  - Switched off, the draft runs once and nothing is stored. With a profile, the next run fills
+    from the profile again. With none, the typing stays for the rest of the session and is gone
+    after a restart.
   - It replaces "Remember these details", which did nothing (P3, P5). It keeps that switch's test id,
     because ids are stable.
 - **Profiles are stored on the device.** The list, the active id and each profile's callback URL use
@@ -109,7 +111,7 @@ A profile and the job form are **two unrelated stores**, and the job only ever r
 - **The profiles list keeps today's behaviour**: creating a profile there doesn't activate it, and the
   "created" toast offers "Make active".
 
-**Profile config page.**
+**Profile config page.** This is the build: one button, in the design's slot, rather than two.
 - **An "Organisation" row** (`sample_profile_config_name`), in its own "PROFILE" section above the
   user details. It's optional, with the placeholder "Shown on the consent screen". This fixes P7.
 - **One button, in the design's single slot** (`sample_profile_config_save`, as today):
@@ -194,7 +196,8 @@ profile, since profiles were kept in memory only. An update is therefore safe on
    - Corrupt or missing data reads as no profiles.
    - A `seedProfiles` launch writes nothing.
    - Sign-out needs confirming, and clears everything.
-7. **Automation that types details** switches the save switch off, after asserting it's on, so a run
+7. **Automation that types details** (as built: iOS UI tests replace a field's text instead,
+   because the switch shows only once the details differ, and they sign out between classes) switches the save switch off, after asserting it's on, so a run
    stores nothing and a second pass doesn't find a prefilled form. These change by name:
    - Android Maestro: `sdk-flow`, `token-session`, `profiles`, `settings`, `deep-links`.
    - iOS: `UseSmileIDSampleNavigationUITests`, `…LaunchArgumentUITests`, `…FlowUITests`.

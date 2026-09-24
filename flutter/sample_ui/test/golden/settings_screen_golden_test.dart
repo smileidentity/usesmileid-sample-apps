@@ -53,8 +53,8 @@ void main() {
       tester,
       'screen_settings_new_profile',
       () => _settings(
-        organisation: 'Default profile',
-        initials: '',
+        organisation: 'Sahara Pay',
+        initials: 'NE',
         avatarIndex: 3,
       ),
       hostHeight: goldenScreenHeight,
