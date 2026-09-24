@@ -47,14 +47,14 @@ enum UseSmileIDSampleUserField {
   lastName('lastName', 'Last name', 'Add last name', true),
 
   /// Email; never gates anything.
-  email('email', 'Email (optional)', 'name@company.com', false),
+  email('email', 'Email', 'name@company.com', false),
 
   /// Phone; never gates anything.
-  phone('phone', 'Phone (optional)', '+254 700 000 000', false);
+  phone('phone', 'Phone', '+254 700 000 000', false);
 
   const UseSmileIDSampleUserField(
     this.id,
-    this.label,
+    this.title,
     this.placeholder,
     this.isRequired,
   );
@@ -62,8 +62,11 @@ enum UseSmileIDSampleUserField {
   /// The id that suffixes this field's test id.
   final String id;
 
-  /// The row's label; the asterisk is appended by the row, not written here.
-  final String label;
+  /// The field's title, the one source every screen's label is built from.
+  final String title;
+
+  /// The row's label: the title, marked optional where the design does; the row appends any asterisk.
+  String get label => isRequired ? title : '$title (optional)';
 
   /// Shown while the value is empty.
   final String placeholder;

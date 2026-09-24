@@ -122,7 +122,7 @@ class _UseSmileIDSampleNewProfileSheetState
             value: field.valueOf(_details),
             onChanged: (String value) =>
                 setState(() => _details = field.apply(_details, value)),
-            placeholder: _sheetPlaceholders[field]!,
+            placeholder: field.label,
             testId: _sheetTestIds[field]!,
           ),
           const SizedBox(height: SmileDimens.spacingSm),
@@ -138,15 +138,7 @@ class _UseSmileIDSampleNewProfileSheetState
   }
 }
 
-/// The sheet's own placeholders, which are shorter than the config page's prompts.
-const Map<UseSmileIDSampleUserField, String> _sheetPlaceholders =
-    <UseSmileIDSampleUserField, String>{
-      UseSmileIDSampleUserField.firstName: 'First name',
-      UseSmileIDSampleUserField.lastName: 'Last name',
-      UseSmileIDSampleUserField.email: 'Email (optional)',
-      UseSmileIDSampleUserField.phone: 'Phone (optional)',
-    };
-
+/// The sheet's placeholders are the fields' labels, shorter than the config page's prompts.
 /// The sheet's ids, which are snake_case where the config page's are camelCase.
 const Map<UseSmileIDSampleUserField, String> _sheetTestIds =
     <UseSmileIDSampleUserField, String>{
