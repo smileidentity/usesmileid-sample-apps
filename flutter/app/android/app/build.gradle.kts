@@ -39,6 +39,13 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
         }
     }
+
+    // Matches the native app: an app bundle delivers each device only its own ABI's ML Kit libraries.
+    bundle {
+        abi { enableSplit = true }
+        density { enableSplit = true }
+        language { enableSplit = false }
+    }
 }
 
 kotlin {

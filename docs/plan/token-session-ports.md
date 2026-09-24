@@ -122,9 +122,9 @@ native imports. The shell injects the preview into the scan screen.
   this repo. Both ports still parse the argument, as `spec/launch-args.json` requires.
 - **A result card** still exists on neither port (`after-the-ports.md` Phase 4). So "exactly one
   terminal result" is observable only as where the run lands.
-- **Flutter's release APK is 116.6 MB.** Bundled ML Kit ships a native library per ABI, and the APK
-  packages four. Android's owner ruling of 2026-08-27 (ABI splits or an app bundle) applies here too,
-  and is owed.
+- **Flutter's release APK was 116.6 MB.** Bundled ML Kit ships a native library per ABI, and the APK
+  packaged four. Fixed 2026-09-24 as on Android: an ABI-split bundle config, and `verify.sh` builds one
+  APK per ABI. arm64 is now 45.2 MB, armeabi-v7a 37.2 MB, x86_64 48.9 MB.
 
 ## 7. Testing
 

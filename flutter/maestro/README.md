@@ -7,7 +7,7 @@ maestro --device <serial> test -e APP_ID=com.usesmileid.sample.flutter flutter/m
 Run against the release APK, which is minified and resource-shrunk with no app-side keep rules:
 
 ```bash
-cd flutter/app && flutter build apk --release
+cd flutter/app && flutter build apk --release --split-per-abi
 ```
 
 On an emulator, add `--target-platform android-x64`; the CI lane does, because compiling the engine
