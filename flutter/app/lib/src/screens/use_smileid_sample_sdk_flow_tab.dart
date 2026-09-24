@@ -63,6 +63,9 @@ class _UseSmileIDSampleSdkFlowTabState
   /// Held from entry for the same reason as [_jobs]: a teardown-delivered result still counts.
   late final UseSmileIDSampleFlowResultNotifier _result;
 
+  /// Null until the snapshot exists; a run with none never reaches the SDK.
+  UseSmileIDSampleRunRecorder? _run;
+
   @override
   void initState() {
     super.initState();
@@ -71,6 +74,9 @@ class _UseSmileIDSampleSdkFlowTabState
     // Once at entry: the SDK answers a rebuilt configuration by tearing the run down.
     final UseSmileIDSampleFlowLaunchSnapshot? snapshot = _buildSnapshot();
     _snapshot = snapshot;
+    _run = snapshot == null
+        ? null
+        : UseSmileIDSampleRunRecorder(_result, snapshot);
     _preflight = snapshot == null ? null : useSmileIDSamplePreflight(snapshot);
     // Off the frame, not merely after it: re-adding the shell mid-finalise duplicates its key.
     WidgetsBinding.instance.addPostFrameCallback(
@@ -177,7 +183,7 @@ class _UseSmileIDSampleSdkFlowTabState
       case null:
         _leave();
       case UseSmileIDSampleFlowReady():
-        _result.start(_snapshot!);
+        _run!.ensureStarted();
       case UseSmileIDSampleFlowNeedsDetails():
         _left = true;
         widget.onNeedsDetails();
@@ -229,22 +235,23 @@ class _UseSmileIDSampleSdkFlowTabState
   }
 
   void _record(UseSmileIDResult<JobSubmissionResponse> result) {
+    final UseSmileIDSampleRunRecorder run = _run!;
     switch (result) {
       case UseSmileIDSuccess<JobSubmissionResponse>(
         :final JobSubmissionResponse value,
       ):
-        _result.record(
+        run.deliver(
           UseSmileIDSampleFlowStatus.succeeded,
           jobId: value.jobId,
           userId: value.userId,
         );
       case UseSmileIDFailure<JobSubmissionResponse>(:final Exception error):
-        _result.record(
+        run.deliver(
           UseSmileIDSampleFlowStatus.failed,
           error: error is UseSmileIDException ? error.message : '$error',
         );
       case UseSmileIDCancelled<JobSubmissionResponse>():
-        _result.record(UseSmileIDSampleFlowStatus.cancelled);
+        run.deliver(UseSmileIDSampleFlowStatus.cancelled);
     }
   }
 

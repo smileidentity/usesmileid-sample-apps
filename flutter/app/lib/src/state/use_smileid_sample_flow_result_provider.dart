@@ -83,3 +83,35 @@ class UseSmileIDSampleFlowResultNotifier
       ? UseSmileIDSampleEnvironment.sandbox
       : UseSmileIDSampleEnvironment.production;
 }
+
+/// One run's link to the card: started exactly once, before its first delivery, whichever comes first.
+class UseSmileIDSampleRunRecorder {
+  /// Records [snapshot]'s run into [result].
+  UseSmileIDSampleRunRecorder(this._result, this._snapshot);
+
+  final UseSmileIDSampleFlowResultNotifier _result;
+
+  final UseSmileIDSampleFlowLaunchSnapshot _snapshot;
+
+  bool _started = false;
+
+  /// Starts the run unless a delivery already did: the SDK can answer on its own first frame.
+  void ensureStarted() {
+    if (_started) {
+      return;
+    }
+    _started = true;
+    _result.start(_snapshot);
+  }
+
+  /// One host result callback, counted against this run.
+  void deliver(
+    UseSmileIDSampleFlowStatus status, {
+    String? jobId,
+    String? userId,
+    String? error,
+  }) {
+    ensureStarted();
+    _result.record(status, jobId: jobId, userId: userId, error: error);
+  }
+}
