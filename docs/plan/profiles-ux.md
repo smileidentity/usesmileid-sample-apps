@@ -32,7 +32,8 @@ A profile and the job form are **two unrelated stores**, and the job only ever r
   "No profile yet", in words. This replaces the "Default profile" starter (P8).
 - **The active profile is the only source of the user's details.** Opening the form fills it from the
   active profile. What you type is a draft for this run only.
-- **One switch decides whether the draft is kept.** It's on by default.
+- **One switch decides whether the draft is kept.** It's on by default, and it only shows once there
+  is something to keep: no profile yet, or a draft that differs from the profile.
   - With a profile active, it reads **"Save to {name}"**. On Continue, the draft is written back to
     that profile.
   - With no profile, it reads **"Save as a profile"**. On Continue, it creates a profile from the
@@ -51,19 +52,36 @@ A profile and the job form are **two unrelated stores**, and the job only ever r
   | Expo | AsyncStorage |
 
   This fixes P4.
-  - Profiles are per install, with nothing synced. Each colleague builds their own personas.
+  - Profiles are per device, with nothing synced. They go with an iOS device backup, but no Android
+    app backs them up, because `allowBackup` is `false` on all three Android apps. Each colleague
+    builds their own personas.
   - Profiles are one JSON value under one new key, `sample_profiles`. It holds `{version: 1,
     activeId, profiles: [...]}`.
   - A value that is missing or can't be decoded reads as **no profiles**. It never throws, and it
     never falls back to fixtures.
+- **Loading is its own state.** Nothing that reads the profiles runs before they have loaded:
+  - the form's fill
+  - the flow's launch snapshot, which after a process death is rebuilt, not restored
+  - the config page
+  - a new profile's id
+
+  So a cold deep link, an `autostart` launch or a restore behind the camera can't run as
+  "no profile" or overwrite a stored one.
 - **Fixtures are never stored.** A `seedProfiles` launch uses the three fixtures in memory only and
   writes nothing, so an automation run can't leave made-up people in a colleague's list.
 - **A token that binds user details still wins.** A bound field shows as provided, and is never
   written back or stored. When the token binds everything, the form is skipped and nothing is stored.
+- **A profile has an organisation and a person, kept apart.**
+  - The organisation is the partner the consent screen names, and it may be blank.
+  - The person comes from the details.
+  - A row's title is the organisation, or the person when there isn't one.
 - **What the consent screen names as the partner:**
-  - The active profile's name.
-  - With no profile, or a profile with a blank name, it's **"Smile ID"**. The app is Smile ID's own,
-    so that is true, unlike a placeholder.
+  - The active profile's organisation.
+  - With no profile, or a blank organisation, it's **"Smile ID"**, never the person being verified.
+    The app is Smile ID's own, so that is true, unlike a placeholder.
+- **When a persona reaches the Portal.** Without a token the app sends an unsigned fixture token, so
+  no job reaches the Portal. A persona's details show on the Portal only for a run in a token
+  session that doesn't bind the user details itself.
 - **The partner id without a token** stays the active profile's id. With no profile it's `p-1`, the
   id the first profile gets and the value a plain launch sends today, so nothing changes on the wire.
   A token's partner id still wins, as before.
@@ -72,17 +90,19 @@ A profile and the job form are **two unrelated stores**, and the job only ever r
 
 **User-details form.**
 - **A profile row at the top of the card**, labelled "Profile" (`sample_user_details_profile`). It
-  shows "[avatar] {name} ⌄", or "No profile yet ⌄" when there is none. Tapping it opens the switch
+  shows "[avatar] {title} ⌄", or "No profile yet ⌄" when there is none. Tapping it opens the switch
   sheet.
 - **Picking another profile refills the form** from that profile and discards the typing (D2).
 - **With no profile, an extra first row appears: "Organisation (optional)"**, with the placeholder
   "Shown on the consent screen" (`sample_user_details_field_organisation`). What's typed there becomes
-  the new profile's name. If it's left blank, the profile takes the person's name.
+  the new profile's organisation. If it's left blank, the organisation stays blank: the row shows
+  the person, and consent shows "Smile ID".
 - **The save switch** sits where "Remember" was, shown once the form is valid, as today.
 
 **Switch sheet.**
 - **It gains a last row, "+ New profile"** (`sample_profile_switch_new`). That row opens the
-  new-profile sheet.
+  new-profile sheet. Opened from the form, the sheet is prefilled with what was typed, so nothing is
+  typed twice.
 - **A profile created from the sheet becomes active immediately**, because the person was choosing who
   to run as.
 - **With no profiles**, the sheet shows only that row.
@@ -90,13 +110,16 @@ A profile and the job form are **two unrelated stores**, and the job only ever r
   "created" toast offers "Make active".
 
 **Profile config page.**
-- **A "Name" row** (`sample_profile_config_name`) in its own "PROFILE" section, above the user
-  details. This fixes P7.
-- **Save** (`sample_profile_config_save`, as today) is the primary button, on every profile, including
-  the active one. It's enabled only when something changed. It saves and goes back (P2).
-- **"Use this profile"** (`sample_profile_config_use`) is secondary and appears only on a profile that
-  isn't active. It saves any edits, activates the profile and goes back.
-- **An "Active" caption** replaces that button on the active profile.
+- **An "Organisation" row** (`sample_profile_config_name`), in its own "PROFILE" section above the
+  user details. It's optional, with the placeholder "Shown on the consent screen". This fixes P7.
+- **One button, in the design's single slot** (`sample_profile_config_save`, as today):
+  - On the active profile it reads **"Save changes"**, and it's enabled once something changed (P2).
+  - On any other profile it reads **"Use this profile"**. It saves any edits and activates the
+    profile.
+- **A "Delete profile" row** (`sample_profile_config_delete`) sits below the sections and asks
+  first. Deleting the active profile activates the first one left, or no profile when none are left.
+  A mistaken persona no longer costs a sign-out.
+- **A link to a profile that doesn't exist** goes back, rather than showing an empty page.
 
 **Products header avatar and settings profile card.** With no profile, they show a neutral "+" avatar
 and read "No profile yet". The avatar opens the switch sheet, which offers "+ New profile". The card
@@ -122,9 +145,11 @@ profile, since profiles were kept in memory only. An update is therefore safe on
   released keys (settings and a token), and checks that it reads as no profiles, with the settings
   intact. Another test feeds each platform corrupt `sample_profiles` JSON and checks that it reads as
   no profiles.
-- **Backup is not an issue on Android.** Its `allowBackup` is already `false`, so nothing is
-  restored after a reinstall. The Expo Android app restores AsyncStorage after a reinstall; its
-  `allowBackup` is set to `false` to match.
+- **Backup:**
+  - The native Android app already has `allowBackup="false"`.
+  - The Flutter and Expo Android apps don't. Both restore their storage after a reinstall, so both
+    are set to `false` to match.
+  - Device-to-device transfer on Android 12+ is out of scope.
 
 ## 5. Decisions
 
@@ -137,7 +162,8 @@ profile, since profiles were kept in memory only. An update is therefore safe on
 | D2: switching profile with unsaved typing | **The typing is discarded** (approved). |
 | D3: a first launch's profile | **None (null)**, not an empty "Default profile" (approved). |
 | D4: the partner name with no profile | **"Smile ID"**. |
-| The two shell ids no app implements | **Deleted** (approved). |
+| The two shell ids no app implements | **Deleted** (approved). This is the deliberate sweep `spec/README.md` asks for. |
+| D5: single-profile delete | **In scope**, on the config page, after a confirmation (from the adversarial review). |
 | Button height 48 vs 52, glyph 21 vs 20 | **Read from Figma** (`5206-3776` for the button, `5206-4036` for the glyph) if it's connected. If not, the apps keep what they ship now, and the PR says so. |
 
 ## 6. Build order (one branch, Android first as the reference)
@@ -168,8 +194,16 @@ profile, since profiles were kept in memory only. An update is therefore safe on
    - Corrupt or missing data reads as no profiles.
    - A `seedProfiles` launch writes nothing.
    - Sign-out needs confirming, and clears everything.
-7. **Goldens:** the changed screens, light and dark, recorded on the runner.
-8. **Emulator and simulator pass:** an Android emulator and an iOS simulator run all four apps.
+7. **Automation that types details** switches the save switch off, after asserting it's on, so a run
+   stores nothing and a second pass doesn't find a prefilled form. These change by name:
+   - Android Maestro: `sdk-flow`, `token-session`, `profiles`, `settings`, `deep-links`.
+   - iOS: `UseSmileIDSampleNavigationUITests`, `…LaunchArgumentUITests`, `…FlowUITests`.
+   - Flutter and Expo: their flows.
+
+   Sign-out cleanup confirms the dialog. The iOS "What's new" text and
+   `docs/app-store-manual-steps.md` stop describing "Default profile".
+8. **Goldens:** the changed screens, light and dark, recorded on the runner.
+9. **Emulator and simulator pass:** an Android emulator and an iOS simulator run all four apps.
    - The steps: a fresh install shows no profile → run a job, typing once → restart → the form is
      filled → switch to a new profile from the form → run as it → edit the active profile and save
      it → sign out, confirm, and see no profile.
@@ -178,7 +212,8 @@ profile, since profiles were kept in memory only. An update is therefore safe on
 
 ## 7. Out of scope
 
-- **Deleting a single profile.** Sign-out clears them all.
+- **ID details in a persona** (country, type and number). They're per product and per run, so
+  storing them adds a form's worth of state for one step. Revisit it if demos need it.
 - **Syncing profiles** between devices.
 - **A profile per environment.**
 - **Copying a token's details into a profile.** The token carries its own details, and merging the
