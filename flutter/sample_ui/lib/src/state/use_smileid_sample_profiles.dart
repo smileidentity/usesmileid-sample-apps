@@ -119,6 +119,7 @@ class UseSmileIDSampleProfile {
     required this.organisation,
     required this.person,
     this.defaults = const UseSmileIDSampleUserDetails(),
+    this.callbackUrl = '',
   });
 
   /// The stable id, which also suffixes this profile's test ids.
@@ -132,6 +133,9 @@ class UseSmileIDSampleProfile {
 
   /// What the forms pre-fill from.
   final UseSmileIDSampleUserDetails defaults;
+
+  /// The webhook URL this profile's jobs report to; empty means the partner's portal default.
+  final String callbackUrl;
 
   /// The person's initials, as the design has them, falling back to the organisation.
   String get initials {
@@ -150,9 +154,12 @@ class UseSmileIDSampleProfile {
   String get caption => person.trim().isEmpty ? _noUserDetailsCaption : person;
 
   /// A copy with [defaults] replaced, naming the person from them where none was given.
+  ///
+  /// A null [callbackUrl] keeps the stored one; only a caller that edited it passes a value.
   UseSmileIDSampleProfile withDefaults(
-    UseSmileIDSampleUserDetails details,
-  ) => UseSmileIDSampleProfile(
+    UseSmileIDSampleUserDetails details, {
+    String? callbackUrl,
+  }) => UseSmileIDSampleProfile(
     id: id,
     organisation: organisation,
     // The starter names nobody until its details are saved; a created profile keeps its own name.
@@ -160,6 +167,7 @@ class UseSmileIDSampleProfile {
         ? '${details.firstName} ${details.lastName}'.trim()
         : person,
     defaults: details,
+    callbackUrl: callbackUrl ?? this.callbackUrl,
   );
 }
 
@@ -246,12 +254,19 @@ class UseSmileIDSampleProfiles {
   }
 
   /// Saves a profile's form defaults, ignoring an id this store does not hold.
-  void setDefaults(String id, UseSmileIDSampleUserDetails defaults) {
+  void setDefaults(
+    String id,
+    UseSmileIDSampleUserDetails defaults, {
+    String? callbackUrl,
+  }) {
     final int index = _items.indexWhere(
       (UseSmileIDSampleProfile p) => p.id == id,
     );
     if (index >= 0) {
-      _items[index] = _items[index].withDefaults(defaults);
+      _items[index] = _items[index].withDefaults(
+        defaults,
+        callbackUrl: callbackUrl,
+      );
     }
   }
 

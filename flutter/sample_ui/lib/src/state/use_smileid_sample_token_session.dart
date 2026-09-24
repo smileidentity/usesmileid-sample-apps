@@ -84,3 +84,11 @@ String useSmileIDSampleCountdown(Duration remaining) {
       ? '$hours:${minutes.toString().padLeft(2, '0')}:$seconds'
       : '$minutes:$seconds';
 }
+
+/// What the profile's callback URL row reads instead of its value while this session runs.
+extension UseSmileIDSampleCallbackOverride on UseSmileIDSampleTokenSession {
+  /// The token's own URL wins when it binds one; otherwise the token's partner default applies.
+  String get callbackOverrideCaption => bindings.callbackUrl != null
+      ? 'Set by the scanned token'
+      : "The scanned token's partner default applies";
+}

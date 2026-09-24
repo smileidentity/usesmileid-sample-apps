@@ -12,7 +12,7 @@ import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
-/// One profile's own page: its four user details, and the act that makes it active.
+/// One profile's own page: its four user details, its callback URL, and the act that makes it active.
 class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
   /// [isActive] disables the only write on the page, which is what the twin does.
   const UseSmileIDSampleProfileConfigScreen({
@@ -22,6 +22,9 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
     required this.onBack,
     required this.onFieldChanged,
     required this.onSave,
+    this.callbackUrl = '',
+    this.onCallbackUrlChanged,
+    this.callbackOverride,
     super.key,
   });
 
@@ -43,6 +46,15 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
 
   /// Saves the details AND makes this profile active; the two are one act.
   final VoidCallback onSave;
+
+  /// The webhook URL as edited so far; empty means the partner's portal default.
+  final String callbackUrl;
+
+  /// Called on every keystroke in the callback URL row.
+  final ValueChanged<String>? onCallbackUrlChanged;
+
+  /// Non-null while a token session is live: its text replaces the value, and the row stops editing.
+  final String? callbackOverride;
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +114,33 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
                           ),
                         ],
                       ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: SmileDimens.spacingSm),
+                // Its own section, not a row in the card above: a webhook URL is not a user detail.
+                const UseSmileIDSampleSectionLabel(text: 'CALLBACK URL'),
+                const SizedBox(height: SmileDimens.spacingSm),
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: colors.surface,
+                    borderRadius: UseSmileIDSampleShapes.card,
+                    border: Border.all(
+                      color: colors.cardStroke,
+                      width: smileCardStrokeWidth,
+                    ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: UseSmileIDSampleShapes.card,
+                    child: UseSmileIDSampleKeyValueEditRow(
+                      label: 'Webhook URL',
+                      value: callbackOverride == null ? callbackUrl : '',
+                      onChanged: onCallbackUrlChanged ?? (String _) {},
+                      placeholder:
+                          callbackOverride ?? 'Uses your portal default',
+                      enabled: callbackOverride == null,
+                      keyboardType: TextInputType.url,
+                      testId: UseSmileIDSampleTestIds.profileConfigCallbackUrl,
                     ),
                   ),
                 ),
