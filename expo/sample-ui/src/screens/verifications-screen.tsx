@@ -169,13 +169,11 @@ export const VerificationsScreen = ({
         {jobs !== null && visible.length === 0 ? (
           <UseSmileIDSampleEmptyState
             // Two texts behind one id: nothing submitted yet, versus nothing matching this filter.
-            text={
-              jobs.length === 0
-                ? 'Nothing submitted yet'
-                : 'No verifications match this filter'
-            }
+            text={jobs.length === 0 ? 'No verifications yet' : `Nothing ${filter.label.toLowerCase()}`}
             supportingText={
-              jobs.length === 0 ? 'Start a verification from the Products tab' : undefined
+              jobs.length === 0
+                ? 'Start a product above and the job lands here.'
+                : 'Other filters still have verifications.'
             }
             testID={UseSmileIDSampleTestIds.VERIFICATIONS_EMPTY}
           />

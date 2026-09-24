@@ -217,19 +217,19 @@ describe('select mode', () => {
 });
 
 describe('the empty list', () => {
-  it('says nothing submitted yet on a first launch', async () => {
+  it('says no verifications yet on a first launch', async () => {
     const rendered = await renderInTheme(list({ state: { jobs: [], nowMillis: NOW } }), false);
-    expect(rendered.queryByText('Nothing submitted yet')).not.toBeNull();
-    expect(rendered.queryByText('No verifications match this filter')).toBeNull();
+    expect(rendered.queryByText('No verifications yet')).not.toBeNull();
+    expect(rendered.queryByText('Nothing blocked')).toBeNull();
   });
 
   it('says nothing matches when a filter hides everything', async () => {
     const clearOnly = fixtures.filter((job) => job.status === UseSmileIDSampleStatus.Clear);
     const rendered = await renderInTheme(list({ state: { jobs: clearOnly, nowMillis: NOW } }), false);
     await fireEvent.press(rendered.getByTestId('sample_filter_chip_blocked'));
-    expect(rendered.queryByText('No verifications match this filter')).not.toBeNull();
+    expect(rendered.queryByText('Nothing blocked')).not.toBeNull();
     // The two texts share one id, so the wrong one showing is a defect a count cannot catch.
-    expect(rendered.queryByText('Nothing submitted yet')).toBeNull();
+    expect(rendered.queryByText('No verifications yet')).toBeNull();
   });
 
   it('draws neither message before the store has read', async () => {
