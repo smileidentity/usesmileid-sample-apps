@@ -23,13 +23,14 @@ void main() {
   });
 
   testWidgets('result card', (WidgetTester tester) async {
-    await goldens(tester, 'result_card', _resultCards);
+    // Five expanded cards outgrow the default host.
+    await goldens(tester, 'result_card', _resultCards, hostHeight: 2000);
   });
 
   testWidgets('result cards survive max text scale', (
     WidgetTester tester,
   ) async {
-    await assertSurvivesMaxTextScale(tester, _resultCards());
+    await assertSurvivesMaxTextScale(tester, _resultCards(), hostHeight: 4000);
   });
 
   testWidgets('data field row', (WidgetTester tester) async {
