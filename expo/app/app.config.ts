@@ -55,7 +55,7 @@ const withSceneLifecycle: ConfigPlugin = (base) =>
 const config: ExpoConfig = {
   name: displayName,
   slug: 'usesmileid-sample-expo',
-  version: '0.0.0',
+  version: '1.0.0',
   scheme: urlScheme,
   orientation: 'portrait',
   userInterfaceStyle: 'automatic',
