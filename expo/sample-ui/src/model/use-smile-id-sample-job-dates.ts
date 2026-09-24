@@ -1,6 +1,5 @@
 import type { UseSmileIDSampleJob } from './use-smile-id-sample-job';
 
-const MILLIS_PER_DAY = 24 * 60 * 60 * 1000;
 
 /// A day of jobs under one header, which is the shape the verifications list renders.
 export type UseSmileIDSampleJobDay = {
@@ -40,6 +39,9 @@ export const smileIDSampleGroupByDay = (
 ): readonly UseSmileIDSampleJobDay[] => {
   const format = dayFormat(locale);
   const today = smileIDSampleStartOfDay(nowMillis);
+  const midnight = new Date(today);
+  // A calendar step, not a day of milliseconds: a clock-change day is 23 or 25 hours long.
+  const yesterday = new Date(midnight.getFullYear(), midnight.getMonth(), midnight.getDate() - 1).getTime();
   const buckets = new Map<number, UseSmileIDSampleJob[]>();
   for (const job of [...jobs].sort((a, b) => b.createdAtMillis - a.createdAtMillis)) {
     const day = smileIDSampleStartOfDay(job.createdAtMillis);
@@ -51,7 +53,7 @@ export const smileIDSampleGroupByDay = (
     .sort(([a], [b]) => b - a)
     .map(([day, rows]) => ({
       // A day with no relative word renders the absolute date alone; the header adds no second copy.
-      relative: day === today ? 'TODAY' : day === today - MILLIS_PER_DAY ? 'YESTERDAY' : '',
+      relative: day === today ? 'TODAY' : day === yesterday ? 'YESTERDAY' : '',
       absolute: format(new Date(day)).toUpperCase(),
       jobs: rows,
     }));

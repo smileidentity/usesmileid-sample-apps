@@ -244,13 +244,12 @@ String useSmileIDSampleRelativeDay(int dayStartMillis, int nowMillis) {
   }
   // Calendar arithmetic, not a fixed 86_400_000: a daylight-saving day is 23 or 25 hours long, and
   // subtracting a day of milliseconds lands inside the wrong day on both of those.
-  final DateTime yesterday = DateTime.fromMillisecondsSinceEpoch(
-    today,
-  ).subtract(const Duration(days: 1));
+  final DateTime at = DateTime.fromMillisecondsSinceEpoch(today);
+  // Day 0 normalises to the previous month's last, so the first of a month needs no special case.
   final int start = DateTime(
-    yesterday.year,
-    yesterday.month,
-    yesterday.day,
+    at.year,
+    at.month,
+    at.day - 1,
   ).millisecondsSinceEpoch;
   return dayStartMillis == start ? 'YESTERDAY' : '';
 }

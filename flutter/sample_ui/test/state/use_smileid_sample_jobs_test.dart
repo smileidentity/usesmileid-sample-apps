@@ -80,6 +80,12 @@ void main() {
         30,
         12,
       ).millisecondsSinceEpoch;
+      // Only a zone that changes clock that night has a 23-hour day; UTC would pass the bug this forbids.
+      expect(
+        DateTime(2026, 3, 30).difference(DateTime(2026, 3, 29)).inHours,
+        23,
+        reason: 'run under TZ=Europe/London, as flutter/verify.sh does',
+      );
       expect(
         useSmileIDSampleRelativeDay(
           startOf(DateTime(2026, 3, 29, 12)),

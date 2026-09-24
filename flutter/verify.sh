@@ -46,7 +46,8 @@ for package in "${PACKAGES[@]}"; do
   (cd "$package" && flutter analyze)
 
   echo "==> $package: tests (spec validation, goldens light and dark, text-scale predicates)"
-  (cd "$package" && flutter test)
+  # A zone with a clock change, or the 23-hour-day test passes the bug it exists to catch.
+  (cd "$package" && TZ=Europe/London flutter test)
 done
 
 echo "==> release APKs, one per ABI (minified, resource-shrunk, no app-side keep rules)"
