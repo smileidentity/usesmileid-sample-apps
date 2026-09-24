@@ -39,6 +39,7 @@ object UseSmileIDSampleTestIds {
     const val SETTING_INSTRUCTIONS_STEP = "sample_setting_instructions_step"
     const val SETTING_PREVIEW_STEP = "sample_setting_preview_step"
     const val SIGN_OUT = "sample_sign_out"
+    const val SIGN_OUT_CONFIRM = "sample_sign_out_confirm"
     const val VERSION_LABEL = "sample_version_label"
     const val SELECT_TOGGLE = "sample_select_toggle"
     const val STATUS_BADGE = "sample_status_badge"
@@ -46,6 +47,7 @@ object UseSmileIDSampleTestIds {
     const val DETAILS_DELETE = "sample_details_delete"
     const val USER_DETAILS_HINT = "sample_user_details_hint"
     const val REMEMBER_DETAILS_SWITCH = "sample_remember_details_switch"
+    const val USER_DETAILS_PROFILE = "sample_user_details_profile"
     const val USER_DETAILS_CONTINUE = "sample_user_details_continue"
     const val COUNTRY_TRIGGER = "sample_country_trigger"
     const val ID_TYPE_TRIGGER = "sample_idtype_trigger"
@@ -62,6 +64,10 @@ object UseSmileIDSampleTestIds {
     const val NEW_PROFILE_SAVE = "sample_new_profile_save"
     const val PROFILE_CONFIG_CALLBACK_URL = "sample_profile_config_callback_url"
     const val PROFILE_CONFIG_SAVE = "sample_profile_config_save"
+    const val PROFILE_CONFIG_NAME = "sample_profile_config_name"
+    const val PROFILE_CONFIG_DELETE = "sample_profile_config_delete"
+    const val PROFILE_DELETE_CONFIRM = "sample_profile_delete_confirm"
+    const val PROFILE_SWITCH_NEW = "sample_profile_switch_new"
 
     // Attached by the component itself: the spec assigns these to it, not to a screen.
     const val TOAST = "sample_toast"
@@ -142,6 +148,7 @@ object UseSmileIDSampleTestIds {
         SETTING_INSTRUCTIONS_STEP,
         SETTING_PREVIEW_STEP,
         SIGN_OUT,
+        SIGN_OUT_CONFIRM,
         VERSION_LABEL,
         SELECT_TOGGLE,
         STATUS_BADGE,
@@ -149,6 +156,7 @@ object UseSmileIDSampleTestIds {
         DETAILS_DELETE,
         USER_DETAILS_HINT,
         REMEMBER_DETAILS_SWITCH,
+        USER_DETAILS_PROFILE,
         USER_DETAILS_CONTINUE,
         COUNTRY_TRIGGER,
         ID_TYPE_TRIGGER,
@@ -165,6 +173,10 @@ object UseSmileIDSampleTestIds {
         NEW_PROFILE_SAVE,
         PROFILE_CONFIG_CALLBACK_URL,
         PROFILE_CONFIG_SAVE,
+        PROFILE_CONFIG_NAME,
+        PROFILE_CONFIG_DELETE,
+        PROFILE_DELETE_CONFIRM,
+        PROFILE_SWITCH_NEW,
         RESULT_CARD,
         RESULT_ACTIVE_SCENARIO,
         RESULT_ACTIVE_THEME,

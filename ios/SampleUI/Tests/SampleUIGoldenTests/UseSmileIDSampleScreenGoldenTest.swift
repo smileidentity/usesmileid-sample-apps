@@ -109,7 +109,20 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   }
 
   func testUserDetailsEmpty() {
-    goldens("user_details_empty") { userDetails(UseSmileIDSampleUserDetails()) }
+    goldens("user_details_empty") { userDetails(UseSmileIDSampleUserDetails(), profile: nil) }
+  }
+
+  /// The first run with something typed: the organisation row and "Save as a new profile" both show.
+  func testUserDetailsNoProfile() {
+    goldens("user_details_no_profile") {
+      userDetails(Self.completeDetails, profile: nil, organisation: "Sahara Pay")
+    }
+  }
+
+  func testUserDetailsNoProfileSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) {
+      userDetails(Self.completeDetails, profile: nil, organisation: "Sahara Pay", height: 1400)
+    }
   }
 
   /// Mid-entry. The caret is the first responder's, which an unhosted render has none of.
@@ -147,17 +160,22 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   private func userDetails(
     _ details: UseSmileIDSampleUserDetails,
     requirement: UseSmileIDSampleUserDetailsRequirement = .init(),
+    profile: UseSmileIDSampleProfile? = UseSmileIDSampleScreenGoldenTest.seededProfiles.active,
+    organisation: String = "",
     height: CGFloat = 700
   ) -> some View {
     UserDetailsScreen(
       state: .init(
         productLabel: "Biometric KYC",
         details: details,
-        rememberDetails: true,
+        profile: profile,
+        saveToProfile: true,
+        organisation: organisation,
         requirement: requirement
       ),
       onFieldChange: { _, _ in },
-      onRememberChange: { _ in },
+      onSaveToProfileChange: { _ in },
+      onProfileTap: {},
       onBack: {},
       onContinue: {}
     )
@@ -392,7 +410,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("profiles") { profiles(Self.seededProfiles) }
   }
 
-  /// A plain launch: the one empty starter, its caption a placeholder until details are saved.
+  /// A plain launch: no profile at all, so the list offers only Create.
   func testProfilesFirstRun() {
     goldens("profiles_first_run") { profiles(UseSmileIDSampleProfiles()) }
   }
@@ -409,7 +427,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   }
 
   func testProfileConfigActiveProfile() {
-    goldens("profile_config_active") { profileConfig(Self.seededProfiles.active, isActive: true) }
+    goldens("profile_config_active") { profileConfig(Self.seededProfiles.all[0], isActive: true) }
   }
 
   func testProfileConfigOtherProfile() {
@@ -423,7 +441,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
 
   func testProfileConfigSurvivesMaxDynamicType() {
     assertSurvivesMaxDynamicType(growsWithContentSize: false) {
-      profileConfig(Self.seededProfiles.active, isActive: true, height: 1400)
+      profileConfig(Self.seededProfiles.all[0], isActive: true, height: 1400)
     }
   }
 
@@ -466,10 +484,16 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     height: CGFloat = 700
   ) -> some View {
     ProfileConfigScreen(
-      state: .init(organisation: profile.organisation, defaults: profile.defaults, isActive: isActive),
+      state: .init(
+        title: profile.title,
+        organisation: profile.organisation,
+        defaults: profile.defaults,
+        isActive: isActive
+      ),
       onFieldChange: { _, _ in },
       onBack: {},
-      onSave: {}
+      onSave: {},
+      onDelete: {}
     )
     .frame(height: height)
   }
@@ -479,7 +503,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
       .frame(height: height)
   }
 
-  private static let seededProfiles = UseSmileIDSampleProfiles(seed: UseSmileIDSampleProfiles.fixtures())
+  private static let seededProfiles = UseSmileIDSampleProfiles(UseSmileIDSampleProfiles.fixtures())
 
   func testScenarioDrawer() {
     goldens("scenario_drawer") { scenarioDrawer() }
@@ -589,10 +613,9 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   ])
 
   private static let profilesWithACreatedOne: UseSmileIDSampleProfiles = {
-    var profiles = UseSmileIDSampleProfiles(seed: UseSmileIDSampleProfiles.fixtures())
+    var profiles = UseSmileIDSampleProfiles(UseSmileIDSampleProfiles.fixtures())
     profiles.add(
       organisation: "Sahara Pay",
-      person: "Ngozi Eze",
       defaults: UseSmileIDSampleUserDetails(firstName: "Ngozi", lastName: "Eze")
     )
     return profiles

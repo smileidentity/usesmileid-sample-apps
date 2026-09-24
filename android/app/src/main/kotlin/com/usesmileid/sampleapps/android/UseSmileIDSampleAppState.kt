@@ -26,6 +26,10 @@ import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleSessionRecord
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import androidx.compose.runtime.staticCompositionLocalOf
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesRecord
 import kotlinx.coroutines.launch
 
 /** Everything the shell hoists: persisted settings, the token session, and the clock that ticks it. */
@@ -88,7 +92,14 @@ fun rememberUseSmileIDSampleAppState(
         if (launchArgs.seedJobs) jobStore.seedFixtures(System.currentTimeMillis())
     }
     val forms = rememberSaveable(saver = UseSmileIDSampleForms.Saver) { UseSmileIDSampleForms() }
-    val profiles = remember { UseSmileIDSampleProfiles.forLaunch(launchArgs) }
+    // Latest record wins: a conflating flow drained on the app scope, so writes land in order and outlive the screen.
+    val profileWrites = remember(store) {
+        MutableStateFlow<UseSmileIDSampleProfilesRecord?>(null).also { writes ->
+            UseSmileIDSampleJobStore.writeScope.launch { writes.filterNotNull().collect(store::setProfiles) }
+        }
+    }
+    val profiles = remember { UseSmileIDSampleProfiles.forLaunch(launchArgs) { profileWrites.value = it } }
+    LaunchedEffect(profiles) { if (!profiles.loaded) profiles.restore(store.profiles.first()) }
     // Not saveable: the scanner claims it into its own saveable state, which survives a rotation.
     val interruptedRun = remember { UseSmileIDSampleInterruptedRun() }
     // Saveable, so the arguments seed the first launch only and a recreation keeps the drawer's choice.

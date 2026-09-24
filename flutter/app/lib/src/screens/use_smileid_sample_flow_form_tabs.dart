@@ -4,13 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import '../state/use_smileid_sample_forms.dart';
+import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_journey.dart';
 import '../use_smileid_sample_routes.dart';
 import 'use_smileid_sample_above_shell_page.dart';
+import 'use_smileid_sample_profile_switcher.dart';
 
-/// The details every product collects before its flow.
-class UseSmileIDSampleUserDetailsTab extends ConsumerWidget {
+/// The details every product collects before its flow, filled from the profile the run is for.
+class UseSmileIDSampleUserDetailsTab extends ConsumerStatefulWidget {
   /// [productId] comes from the route and titles the page.
   const UseSmileIDSampleUserDetailsTab({required this.productId, super.key});
 
@@ -18,10 +20,45 @@ class UseSmileIDSampleUserDetailsTab extends ConsumerWidget {
   final String productId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<UseSmileIDSampleUserDetailsTab> createState() =>
+      _UseSmileIDSampleUserDetailsTabState();
+}
+
+class _UseSmileIDSampleUserDetailsTabState
+    extends ConsumerState<UseSmileIDSampleUserDetailsTab> {
+  @override
+  void initState() {
+    super.initState();
+    // A cold link arrives without the product tap that fills the form; after the first frame,
+    // because a provider cannot change while this is still building.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final UseSmileIDSampleProfile? active = ref
+          .read(useSmileIDSampleProfilesProvider)
+          .active;
+      if (mounted && active != null) {
+        ref.read(useSmileIDSampleFormsProvider.notifier).fillFrom(active);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final String productId = widget.productId;
     final UseSmileIDSampleProduct? product = _productFor(productId);
     final UseSmileIDSampleForms forms = ref.watch(
       useSmileIDSampleFormsProvider,
+    );
+    final UseSmileIDSampleProfiles profiles = ref.watch(
+      useSmileIDSampleProfilesProvider,
+    );
+    final UseSmileIDSampleUserDetailsRequirement requirement =
+        useSmileIDSampleUserDetailsRequirement(
+          ref.watch(useSmileIDSampleSessionProvider).live == null
+              ? null
+              : useSmileIDSampleLiveBindings(ref),
+        );
+    final UseSmileIDSampleFormsNotifier edits = ref.read(
+      useSmileIDSampleFormsProvider.notifier,
     );
     void back() =>
         useSmileIDSampleBack(context, UseSmileIDSampleRoutes.products);
@@ -32,27 +69,36 @@ class UseSmileIDSampleUserDetailsTab extends ConsumerWidget {
         // for rather than showing an empty title.
         title: product?.label ?? productId,
         details: forms.userDetails,
-        requirement: useSmileIDSampleUserDetailsRequirement(
-          ref.watch(useSmileIDSampleSessionProvider).live == null
-              ? null
-              : useSmileIDSampleLiveBindings(ref),
-        ),
+        requirement: requirement,
         onBack: back,
-        onFieldChanged: ref
-            .read(useSmileIDSampleFormsProvider.notifier)
-            .setUserField,
-        onContinue: () => context.push(
-          product == null
-              ? UseSmileIDSampleRoutes.sdkFlow(productId)
-              : UseSmileIDSampleJourney.afterUserDetails(
-                  product,
-                  useSmileIDSampleLiveBindings(ref),
-                ),
-        ),
-        remember: forms.rememberDetails,
-        onRememberChanged: ref
-            .read(useSmileIDSampleFormsProvider.notifier)
-            .setRemember,
+        onFieldChanged: edits.setUserField,
+        onContinue: () {
+          if (forms.saveToProfile) {
+            ref
+                .read(useSmileIDSampleProfilesProvider.notifier)
+                .keep(
+                  forms.userDetails,
+                  organisation: forms.organisation,
+                  requirement: requirement,
+                );
+          }
+          context.push(
+            product == null
+                ? UseSmileIDSampleRoutes.sdkFlow(productId)
+                : UseSmileIDSampleJourney.afterUserDetails(
+                    product,
+                    useSmileIDSampleLiveBindings(ref),
+                  ),
+          );
+        },
+        profile: profiles.active,
+        profileIndex: profiles.activeIndex,
+        onProfileTap: () =>
+            showUseSmileIDSampleProfileSwitch(context, ref, overForm: true),
+        saveToProfile: forms.saveToProfile,
+        onSaveToProfileChanged: edits.setSaveToProfile,
+        organisation: forms.organisation,
+        onOrganisationChanged: edits.setOrganisation,
       ),
     );
   }

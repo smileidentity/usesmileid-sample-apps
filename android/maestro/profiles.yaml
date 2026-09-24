@@ -73,7 +73,7 @@ appId: ${APP_ID}
 - assertVisible: "Njeri"
 - assertVisible: "Wanjiku"
 
-# The CTA says "Make this profile active", so it has to activate as well as save.
+# On a profile that is not active the one CTA reads "Use this profile", so it saves and activates.
 - tapOn:
     id: "sample_profile_config_save"
 - assertVisible:

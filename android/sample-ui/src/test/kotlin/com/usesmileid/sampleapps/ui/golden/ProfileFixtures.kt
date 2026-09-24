@@ -2,6 +2,7 @@ package com.usesmileid.sampleapps.ui.golden
 
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfile
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesRecord
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 
 /** Shared because the settings row and the profiles list must draw the same profile in the same hue. */
@@ -11,14 +12,13 @@ internal object ProfileFixtures {
     val Created = UseSmileIDSampleProfile(
         id = "p-4",
         organisation = "Sahara Pay",
-        person = "Ngozi Eze",
         defaults = UseSmileIDSampleUserDetails(firstName = "Ngozi", lastName = "Eze"),
     )
 
-    /** The design's three, so these goldens stay the Figma boards; a plain launch is [Starter]. */
-    val Seeded = UseSmileIDSampleProfiles(UseSmileIDSampleProfiles.fixtures())
+    /** The design's three, so these goldens stay the Figma boards; a plain launch is [None]. */
+    val Seeded = UseSmileIDSampleProfiles(UseSmileIDSampleProfilesRecord(UseSmileIDSampleProfiles.fixtures()))
 
-    val Starter = UseSmileIDSampleProfiles()
+    val None = UseSmileIDSampleProfiles()
 
-    val WithCreated = UseSmileIDSampleProfiles(UseSmileIDSampleProfiles.fixtures() + Created)
+    val WithCreated = UseSmileIDSampleProfiles(UseSmileIDSampleProfilesRecord(UseSmileIDSampleProfiles.fixtures() + Created))
 }

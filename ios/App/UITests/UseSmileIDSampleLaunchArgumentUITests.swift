@@ -66,14 +66,21 @@ final class UseSmileIDSampleLaunchArgumentUITests: XCTestCase {
     }
   }
 
-  /// A plain launch carries one empty profile whose row reads as a placeholder, never a fixture.
-  func testAPlainLaunchCarriesOneEmptyProfile() {
+  /// A plain launch has no profile at all, never a fixture. Signed out first, since profiles persist between runs.
+  func testAPlainLaunchHasNoProfile() {
+    launch([])
+    element("sample_nav_settings").tap()
+    let signOut = element("sample_sign_out")
+    XCTAssertTrue(signOut.waitForExistence(timeout: 10))
+    for _ in 0..<4 where !signOut.isHittable {
+      app.swipeUp()
+    }
+    signOut.tap()
+    app.alerts.buttons["Sign out"].tap()
     launch([])
     open("profiles")
-    XCTAssertTrue(element("sample_profile_row_p-1").waitForExistence(timeout: 10))
-    XCTAssertTrue(app.staticTexts["Default profile"].exists)
-    XCTAssertTrue(app.staticTexts["No user details yet \u{00B7} active"].exists)
-    XCTAssertFalse(element("sample_profile_row_p-2").exists, "a fixture arrived without seedProfiles")
+    XCTAssertTrue(element("sample_profiles_screen").waitForExistence(timeout: 10))
+    XCTAssertFalse(element("sample_profile_row_p-1").exists, "a profile arrived on a plain launch")
     XCTAssertFalse(app.staticTexts["PesaLink"].exists)
   }
 
@@ -83,7 +90,6 @@ final class UseSmileIDSampleLaunchArgumentUITests: XCTestCase {
     XCTAssertTrue(element("sample_profile_row_p-3").waitForExistence(timeout: 10))
     XCTAssertTrue(app.staticTexts["PesaLink"].exists)
     XCTAssertTrue(app.staticTexts["Kwame Asante \u{00B7} active"].exists)
-    XCTAssertFalse(app.staticTexts["Default profile"].exists, "the starter must not sit among the fixtures")
   }
 
   /// Rows persist, so the plain-empty default is a unit test on the store rather than a flow here.

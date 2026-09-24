@@ -12,12 +12,12 @@ void main() {
     await _screenGoldens(tester, 'screen_profiles', _list);
   });
 
-  /// A plain launch: one starter with no person, so the caption is the placeholder.
+  /// A plain launch: no profile at all, so the list offers only Create.
   testWidgets('profiles list on a plain launch', (WidgetTester tester) async {
     await _screenGoldens(
       tester,
       'screen_profiles_starter',
-      () => _list(profiles: UseSmileIDSampleProfiles.starter()),
+      () => _list(profiles: const <UseSmileIDSampleProfile>[]),
     );
   });
 
@@ -50,6 +50,7 @@ void main() {
       'screen_profile_config_new',
       () => UseSmileIDSampleProfileConfigScreen(
         organisation: 'Karibu Pay',
+        onDelete: () {},
         details: const UseSmileIDSampleUserDetails(
           firstName: 'Njeri',
           lastName: 'Wanjiku',
@@ -70,6 +71,7 @@ void main() {
         profiles: UseSmileIDSampleProfiles.fixtures(),
         activeId: 'p-1',
         onSelect: _ignoreProfile,
+        onCreate: () {},
       ),
     );
   });
@@ -143,7 +145,7 @@ Widget _list({List<UseSmileIDSampleProfile>? profiles, String? createdNotice}) {
       profiles ?? UseSmileIDSampleProfiles.fixtures();
   return UseSmileIDSampleProfilesScreen(
     profiles: shown,
-    activeId: shown.first.id,
+    activeId: shown.isEmpty ? null : shown.first.id,
     onBack: () {},
     onProfileTap: _ignoreProfile,
     onCreate: () {},
@@ -163,6 +165,7 @@ Widget _config({bool isActive = false}) => UseSmileIDSampleProfileConfigScreen(
   onBack: () {},
   onFieldChanged: _ignoreField,
   onSave: () {},
+  onDelete: () {},
 );
 
 void _ignoreProfile(UseSmileIDSampleProfile profile) {}

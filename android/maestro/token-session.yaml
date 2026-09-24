@@ -86,6 +86,7 @@ appId: ${APP_ID}
 # Continue button; this makes it fail where it happens instead.
 - assertVisible:
     id: "sample_user_details_screen"
+- runFlow: subflows/keep-nothing.yaml
 - tapOn:
     id: "sample_user_details_continue"
 - assertVisible:
@@ -171,6 +172,7 @@ appId: ${APP_ID}
     id: "sample_product_card_smartSelfieEnrollment"
 - assertVisible:
     id: "sample_user_details_screen"
+- runFlow: subflows/keep-nothing.yaml
 - tapOn:
     id: "sample_user_details_continue"
 - assertVisible:
@@ -203,6 +205,7 @@ appId: ${APP_ID}
     id: "sample_product_card_smartSelfieEnrollment"
 - assertVisible:
     id: "sample_user_details_screen"
+- runFlow: subflows/keep-nothing.yaml
 - tapOn:
     id: "sample_user_details_continue"
 - assertVisible:

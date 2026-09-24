@@ -347,12 +347,22 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
       app.swipeUp()
     }
     signOut.tap()
+    // It asks first, because it also deletes every profile on the device.
+    let confirm = app.alerts.buttons["Sign out"]
+    XCTAssertTrue(confirm.waitForExistence(timeout: 5))
+    confirm.tap()
   }
 
+  /// Replaces rather than appends: a profile kept by an earlier test prefills the form.
   private func type(_ id: String, _ text: String) {
     let field = app.textFields[id]
     XCTAssertTrue(field.waitForExistence(timeout: 5), id)
     field.tap()
+    let current = (field.value as? String) ?? ""
+    // An empty field reports its placeholder as its value.
+    if !current.isEmpty, current != field.placeholderValue {
+      field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count))
+    }
     field.typeText(text)
   }
 

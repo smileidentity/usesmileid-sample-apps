@@ -64,10 +64,12 @@ class _UseSmileIDSampleSettingsTabState
     return UseSmileIDSampleSettingsScreen(
       state: UseSmileIDSampleSettingsState(
         settings: ref.watch(useSmileIDSampleSettingsProvider),
-        organisation: profiles.active.organisation,
-        initials: profiles.active.initials,
+        organisation:
+            profiles.active?.title ?? UseSmileIDSampleProfiles.noProfileLabel,
+        initials: profiles.active?.initials ?? '',
         versionLabel: useSmileIDSampleVersionLabel,
         avatarColor: avatarColorForProfile(profiles.activeIndex),
+        hasProfile: profiles.active != null,
         consentBoundByToken:
             ref.watch(useSmileIDSampleSessionProvider).live?.bindings.consent !=
                 null &&
@@ -86,6 +88,7 @@ class _UseSmileIDSampleSettingsTabState
       onSignOut: () {
         unawaited(ref.read(useSmileIDSampleSessionProvider.notifier).clear());
         ref.read(useSmileIDSampleFormsProvider.notifier).clear();
+        ref.read(useSmileIDSampleProfilesProvider.notifier).clear();
         context.go(UseSmileIDSampleRoutes.products);
       },
       bottomInset: useSmileIDSampleNavBarClearance(context),

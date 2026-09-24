@@ -97,11 +97,12 @@ appId: ${APP_ID}
 
 - stopApp
 - openLink: "usesmileid-sample-android://profiles/p-1"
-- assertVisible:
-    id: "sample_profile_config_screen"
-# The screen resolves the id to its profile, so the organisation is what proves the argument parsed. A
-# cold start by link carries no arguments, so p-1 is the one empty profile a partner sees — not a fixture.
-- assertVisible: "Default profile"
+# A cold start by link carries no arguments, so no profile exists: the page goes back rather than
+# showing an empty profile that saves nothing.
+- extendedWaitUntil:
+    notVisible:
+      id: "sample_profile_config_screen"
+    timeout: 5000
 
 - stopApp
 - openLink: "usesmileid-sample-android://token/scan"

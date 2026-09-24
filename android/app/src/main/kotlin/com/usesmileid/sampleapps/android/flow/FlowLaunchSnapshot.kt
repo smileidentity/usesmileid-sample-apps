@@ -65,9 +65,9 @@ fun buildSnapshot(
         instructionsStep = app.settings.instructionsStep,
         previewStep = app.settings.previewStep,
         userId = userId,
-        partnerId = app.profiles.active.id,
-        partnerName = app.profiles.active.organisation,
-        callbackUrl = app.profiles.active.callbackUrl,
+        partnerId = app.profiles.partnerId,
+        partnerName = app.profiles.partnerName,
+        callbackUrl = app.profiles.active?.callbackUrl.orEmpty(),
         session = session?.takeUnless { it.hasExpired(entryMillis) },
         sessionExpired = app.endedSession != null || (session != null && session.hasExpired(entryMillis)),
     )

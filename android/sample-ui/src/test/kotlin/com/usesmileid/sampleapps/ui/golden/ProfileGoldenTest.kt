@@ -54,7 +54,7 @@ class ProfileGoldenTest : GoldenTest() {
     fun profile_config_max_font_scale() = assertSurvivesMaxFontScale { Config(PROFILES.all[1]) }
 
     @Test
-    fun profile_config_active() = goldens("screen_profile_config_active") { Config(PROFILES.active, isActive = true) }
+    fun profile_config_active() = goldens("screen_profile_config_active") { Config(PROFILES.active!!, isActive = true) }
 
     /** Only the names came from the sheet, so the contact rows show their placeholders. */
     @Test
@@ -72,7 +72,7 @@ class ProfileGoldenTest : GoldenTest() {
 
     private companion object {
         val PROFILES = ProfileFixtures.Seeded
-        val STARTER = ProfileFixtures.Starter
+        val STARTER = ProfileFixtures.None
         val CREATED = ProfileFixtures.Created
         val WITH_CREATED = ProfileFixtures.WithCreated
 
@@ -95,12 +95,15 @@ class ProfileGoldenTest : GoldenTest() {
 
     @Composable
     private fun Config(profile: UseSmileIDSampleProfile, isActive: Boolean = false) = ProfileConfigScreen(
-        organisation = profile.organisation,
+        organisation = profile.title,
         defaults = profile.defaults,
+        name = profile.organisation,
+        onNameChange = {},
         onFieldChange = { _, _ -> },
         onBack = {},
         onSave = {},
         isActive = isActive,
+        onDelete = {},
     )
 
     @Composable

@@ -127,8 +127,7 @@ class CompositeGoldenTest : GoldenTest() {
         /** Read from the sources that supply them, so a new product or a longer profile name is covered. */
         val SHIPPED_TITLES = UseSmileIDSampleProduct.entries.map { it.label } +
             listOf("Verification details", "Scan token", "Profiles", "Open-source licenses") +
-            UseSmileIDSampleProfiles.fixtures().map { it.organisation } +
-            UseSmileIDSampleProfiles.STARTER_ORGANISATION
+            UseSmileIDSampleProfiles.fixtures().map { it.title }
     }
 }
 

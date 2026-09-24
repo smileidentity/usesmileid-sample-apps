@@ -29,6 +29,7 @@ appId: ${APP_ID}
     id: "sample_user_details_field_email"
 - inputText: "ada.okafor@example.com"
 - hideKeyboard
+- runFlow: subflows/keep-nothing.yaml
 - tapOn:
     id: "sample_user_details_continue"
 - assertVisible:
@@ -129,6 +130,7 @@ appId: ${APP_ID}
     id: "sample_user_details_field_email"
 - inputText: "ada.okafor@example.com"
 - hideKeyboard
+- runFlow: subflows/keep-nothing.yaml
 - tapOn:
     id: "sample_user_details_continue"
 - assertVisible:
@@ -147,7 +149,7 @@ appId: ${APP_ID}
     text: "1"
 
 # Allow continues into the SDK's own navigation. The details are re-entered because this section
-# relaunches, and the forms survive recreation but not process death.
+# relaunches, and no profile was kept to prefill them.
 - stopApp
 - launchApp:
     arguments:
@@ -167,6 +169,7 @@ appId: ${APP_ID}
     id: "sample_user_details_field_email"
 - inputText: "ada.okafor@example.com"
 - hideKeyboard
+- runFlow: subflows/keep-nothing.yaml
 - tapOn:
     id: "sample_user_details_continue"
 - assertVisible:

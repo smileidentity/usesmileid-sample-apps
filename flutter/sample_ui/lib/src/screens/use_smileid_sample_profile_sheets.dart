@@ -20,17 +20,21 @@ class UseSmileIDSampleProfileSwitchSheet extends StatelessWidget {
     required this.profiles,
     required this.activeId,
     required this.onSelect,
+    this.onCreate,
     super.key,
   });
 
   /// Every profile, in hue order.
   final List<UseSmileIDSampleProfile> profiles;
 
-  /// Which one is active.
-  final String activeId;
+  /// Which one is active; null while there are none.
+  final String? activeId;
 
   /// Switches to one; the owner closes the sheet.
   final void Function(UseSmileIDSampleProfile profile) onSelect;
+
+  /// Opens the new-profile sheet; null hides the row, for a host that offers no way to create one.
+  final VoidCallback? onCreate;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +54,7 @@ class UseSmileIDSampleProfileSwitchSheet extends StatelessWidget {
         for (int index = 0; index < profiles.length; index++) ...<Widget>[
           if (index > 0) const SizedBox(height: SmileDimens.spacingSm),
           UseSmileIDSampleProfileRow(
-            organisation: profiles[index].organisation,
+            organisation: profiles[index].title,
             supportingText: profiles[index].caption,
             initials: profiles[index].initials,
             selected: profiles[index].id == activeId,
@@ -62,6 +66,18 @@ class UseSmileIDSampleProfileSwitchSheet extends StatelessWidget {
             testId: UseSmileIDSampleTestIds.profileRow(profiles[index].id),
           ),
         ],
+        if (onCreate != null) ...<Widget>[
+          if (profiles.isNotEmpty)
+            const SizedBox(height: SmileDimens.spacingSm),
+          UseSmileIDSampleProfileRow(
+            organisation: 'New profile',
+            supportingText: 'Run jobs as someone else',
+            initials: '',
+            selected: false,
+            onTap: onCreate!,
+            testId: UseSmileIDSampleTestIds.profileSwitchNew,
+          ),
+        ],
       ],
     );
   }
@@ -70,11 +86,22 @@ class UseSmileIDSampleProfileSwitchSheet extends StatelessWidget {
 /// The five fields a new profile needs, of which three gate the confirm.
 class UseSmileIDSampleNewProfileSheet extends StatefulWidget {
   /// [onCreate] receives the organisation and the details; the owner closes the sheet.
-  const UseSmileIDSampleNewProfileSheet({required this.onCreate, super.key});
+  const UseSmileIDSampleNewProfileSheet({
+    required this.onCreate,
+    this.initialName = '',
+    this.initialDetails = const UseSmileIDSampleUserDetails(),
+    super.key,
+  });
 
   /// Creates the profile.
   final void Function(String organisation, UseSmileIDSampleUserDetails details)
   onCreate;
+
+  /// What a form had typed, so a profile created from it is not typed twice.
+  final String initialName;
+
+  /// The form's typed details, for the same reason.
+  final UseSmileIDSampleUserDetails initialDetails;
 
   @override
   State<UseSmileIDSampleNewProfileSheet> createState() =>
@@ -83,8 +110,8 @@ class UseSmileIDSampleNewProfileSheet extends StatefulWidget {
 
 class _UseSmileIDSampleNewProfileSheetState
     extends State<UseSmileIDSampleNewProfileSheet> {
-  String _name = '';
-  UseSmileIDSampleUserDetails _details = const UseSmileIDSampleUserDetails();
+  late String _name = widget.initialName;
+  late UseSmileIDSampleUserDetails _details = widget.initialDetails;
 
   /// Email and phone never gate it, which is the whole of the sheet's validation.
   bool get _canCreate =>

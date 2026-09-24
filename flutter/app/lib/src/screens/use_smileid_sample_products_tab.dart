@@ -5,10 +5,12 @@ import 'package:sample_ui/sample_ui.dart';
 
 import '../flow/use_smileid_sample_token_binding_rules.dart';
 import '../state/use_smileid_sample_flow_result_provider.dart';
+import '../state/use_smileid_sample_forms.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_journey.dart';
 import '../use_smileid_sample_routes.dart';
+import 'use_smileid_sample_profile_switcher.dart';
 
 /// The products tab: the grid every flow starts from.
 class UseSmileIDSampleProductsTab extends ConsumerStatefulWidget {
@@ -63,25 +65,8 @@ class _UseSmileIDSampleProductsTabState
   }
 
   /// Opens the switch sheet, which PRODUCTS owns rather than the profiles list.
-  Future<void> _switchProfile() => showUseSmileIDSampleSheet<void>(
-    context: context,
-    testId: UseSmileIDSampleTestIds.profileSwitchSheet,
-    builder: (BuildContext sheetContext) {
-      final UseSmileIDSampleProfiles profiles = ref.read(
-        useSmileIDSampleProfilesProvider,
-      );
-      return UseSmileIDSampleProfileSwitchSheet(
-        profiles: profiles.all,
-        activeId: profiles.activeId,
-        onSelect: (UseSmileIDSampleProfile profile) {
-          ref
-              .read(useSmileIDSampleProfilesProvider.notifier)
-              .setActive(profile.id);
-          Navigator.of(sheetContext).pop();
-        },
-      );
-    },
-  );
+  Future<void> _switchProfile() =>
+      showUseSmileIDSampleProfileSwitch(context, ref);
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +84,7 @@ class _UseSmileIDSampleProductsTabState
     final UseSmileIDSampleTokenSession? live = session.live;
     return UseSmileIDSampleProductsScreen(
       state: UseSmileIDSampleProductsState(
-        initials: profiles.active.initials,
+        initials: profiles.active?.initials ?? '',
         result: ref.watch(useSmileIDSampleFlowResultProvider),
         // By POSITION, not by id: the hue is the profile's place in the list, and every screen
         // showing the same profile has to agree on it.
@@ -119,12 +104,20 @@ class _UseSmileIDSampleProductsTabState
               ),
         sessionEnded: ended,
       ),
-      onProductTap: (UseSmileIDSampleProduct product) => context.push(
-        UseSmileIDSampleJourney.firstStepFor(
-          product,
-          useSmileIDSampleLiveBindings(ref),
-        ),
-      ),
+      onProductTap: (UseSmileIDSampleProduct product) {
+        // Every run starts from the active profile, including one whose form the token skips; with
+        // none, what this session typed stays, since the person chose not to keep it.
+        final UseSmileIDSampleProfile? active = profiles.active;
+        if (active != null) {
+          ref.read(useSmileIDSampleFormsProvider.notifier).fillFrom(active);
+        }
+        context.push(
+          UseSmileIDSampleJourney.firstStepFor(
+            product,
+            useSmileIDSampleLiveBindings(ref),
+          ),
+        );
+      },
       onProfileTap: _switchProfile,
       onScanTap: () => context.push(UseSmileIDSampleRoutes.scanToken),
       bottomInset: useSmileIDSampleNavBarClearance(context),

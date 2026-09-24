@@ -1,0 +1,12 @@
+# Turns the details form's save switch off, so a run stores no profile and the next pass meets an empty
+# form rather than one prefilled, where `inputText` would append. Asserted on first: it ships on.
+appId: ${APP_ID}
+---
+- assertVisible:
+    id: "sample_remember_details_switch"
+    checked: true
+- tapOn:
+    id: "sample_remember_details_switch"
+- assertVisible:
+    id: "sample_remember_details_switch"
+    checked: false

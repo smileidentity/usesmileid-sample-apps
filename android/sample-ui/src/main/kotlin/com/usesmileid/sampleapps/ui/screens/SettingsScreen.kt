@@ -11,6 +11,10 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
@@ -22,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import com.smileid.designsystem.SmileDimens
 import com.smileid.designsystem.smileProfileHues
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleConfirmDialog
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDestructiveRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProfileRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionSurface
@@ -61,6 +66,8 @@ data class UseSmileIDSampleSettingsState(
     /** The token has taken the consent decision away, so the switch stops claiming to own it. */
     val consentBoundByToken: Boolean = false,
     val avatarColor: Color = smileProfileHues.first(),
+    /** False while there is no profile, when the card invites creating one. */
+    val hasProfile: Boolean = true,
 )
 
 /** Settings, which every other screen's configuration comes from. */
@@ -76,6 +83,7 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
+    var confirmingSignOut by rememberSaveable { mutableStateOf(false) }
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -96,7 +104,7 @@ fun SettingsScreen(
         section("PROFILE") {
             UseSmileIDSampleProfileRow(
                 organisation = state.organisation,
-                supportingText = "Tap to configure",
+                supportingText = if (state.hasProfile) "Tap to configure" else "Tap to create one",
                 initials = state.initials,
                 selected = false,
                 onClick = onProfileClick,
@@ -216,7 +224,7 @@ fun SettingsScreen(
         item {
             UseSmileIDSampleDestructiveRow(
                 text = "Sign out",
-                onClick = onSignOut,
+                onClick = { confirmingSignOut = true },
                 modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
                 testId = UseSmileIDSampleTestIds.SIGN_OUT,
             )
@@ -235,6 +243,20 @@ fun SettingsScreen(
                     .padding(SmileDimens.spacingMd),
             )
         }
+    }
+    // Asked first: signing out deletes every profile, which a stray tap must not cost anyone.
+    if (confirmingSignOut) {
+        UseSmileIDSampleConfirmDialog(
+            title = "Sign out?",
+            text = "This ends the token session and deletes every profile on this device.",
+            confirmLabel = "Sign out",
+            confirmTestId = UseSmileIDSampleTestIds.SIGN_OUT_CONFIRM,
+            onConfirm = {
+                confirmingSignOut = false
+                onSignOut()
+            },
+            onDismissRequest = { confirmingSignOut = false },
+        )
     }
 }
 

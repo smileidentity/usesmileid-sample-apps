@@ -1,5 +1,8 @@
 package com.usesmileid.sampleapps.ui.golden
 
+import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfile
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -27,7 +30,17 @@ import org.junit.Test
 class FormGoldenTest : GoldenTest() {
 
     @Test
-    fun user_details_empty() = goldens("screen_user_details_empty") { UserDetails(UseSmileIDSampleUserDetails()) }
+    fun user_details_empty() = goldens("screen_user_details_empty") { UserDetails(UseSmileIDSampleUserDetails(), profile = null) }
+
+    /** The first run with something typed: the organisation row and "Save as a new profile" both show. */
+    @Test
+    fun user_details_no_profile_complete() = goldens("screen_user_details_no_profile") {
+        UserDetails(COMPLETE, profile = null, organisation = "Sahara Pay")
+    }
+
+    @Test
+    fun user_details_no_profile_max_font_scale() =
+        assertSurvivesMaxFontScale { UserDetails(COMPLETE, profile = null, organisation = "Sahara Pay") }
 
     /** The caret blinks on a 1s cycle, so the clock is held 250ms past focus — inside its visible half. */
     @Test
@@ -126,15 +139,21 @@ class FormGoldenTest : GoldenTest() {
     private fun UserDetails(
         details: UseSmileIDSampleUserDetails,
         requirement: UseSmileIDSampleUserDetailsRequirement = UseSmileIDSampleUserDetailsRequirement(),
+        profile: UseSmileIDSampleProfile? = ProfileFixtures.Seeded.active,
+        organisation: String = "",
     ) = UserDetailsScreen(
         productLabel = "Biometric KYC",
         details = details,
-        rememberDetails = true,
+        profile = profile,
+        profileColor = avatarColorForProfile(0),
+        saveToProfile = true,
         onFieldChange = { _, _ -> },
-        onRememberChange = {},
+        onSaveToProfileChange = {},
+        onProfileClick = {},
         onBack = {},
         onContinue = {},
         requirement = requirement,
+        organisation = organisation,
     )
 
     /** Its own state, so the keystroke the caret follows actually lands in the field. */
@@ -144,9 +163,12 @@ class FormGoldenTest : GoldenTest() {
         UserDetailsScreen(
             productLabel = "Biometric KYC",
             details = details,
-            rememberDetails = true,
+            profile = ProfileFixtures.Seeded.active,
+            profileColor = avatarColorForProfile(0),
+            saveToProfile = true,
             onFieldChange = { field, value -> details = field.write(details, value) },
-            onRememberChange = {},
+            onSaveToProfileChange = {},
+            onProfileClick = {},
             onBack = {},
             onContinue = {},
         )

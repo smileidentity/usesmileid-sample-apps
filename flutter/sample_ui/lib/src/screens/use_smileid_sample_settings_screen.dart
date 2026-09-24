@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../components/use_smileid_sample_confirm_dialog.dart';
 import '../components/use_smileid_sample_icon.dart';
 import '../components/use_smileid_sample_profile_row.dart';
 import '../components/use_smileid_sample_section_label.dart';
@@ -110,6 +111,7 @@ class UseSmileIDSampleSettingsState {
     required this.versionLabel,
     this.consentBoundByToken = false,
     this.avatarColor,
+    this.hasProfile = true,
   });
 
   /// The six switches.
@@ -129,6 +131,9 @@ class UseSmileIDSampleSettingsState {
 
   /// The active profile's hue, by list position; the first when the caller has no position.
   final Color? avatarColor;
+
+  /// False while there is no profile, when the card invites creating one.
+  final bool hasProfile;
 }
 
 /// Settings, which every other screen's configuration comes from.
@@ -198,7 +203,9 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
             children: <Widget>[
               UseSmileIDSampleProfileRow(
                 organisation: state.organisation,
-                supportingText: 'Tap to configure',
+                supportingText: state.hasProfile
+                    ? 'Tap to configure'
+                    : 'Tap to create one',
                 initials: state.initials,
                 selected: false,
                 onTap: onProfileTap,
@@ -300,7 +307,19 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
             ),
             child: UseSmileIDSampleDestructiveRow(
               text: 'Sign out',
-              onTap: onSignOut,
+              // Asked first: signing out deletes every profile, which a stray tap must not cost anyone.
+              onTap: () async {
+                if (await showUseSmileIDSampleConfirmation(
+                  context,
+                  title: 'Sign out?',
+                  message:
+                      'This ends the token session and deletes every profile on this device.',
+                  confirmLabel: 'Sign out',
+                  confirmTestId: UseSmileIDSampleTestIds.signOutConfirm,
+                )) {
+                  onSignOut();
+                }
+              },
               testId: UseSmileIDSampleTestIds.signOut,
             ),
           ),

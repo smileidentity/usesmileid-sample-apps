@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
+import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 
 /// Back on a route ABOVE the shell. Each is entered with `go`, which leaves one page in the root
@@ -12,7 +13,7 @@ import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 void main() {
   for (final (String at, String lands) in <(String, String)>[
     ('/profiles', '/settings'),
-    ('/profiles/profile-1', '/profiles'),
+    ('/profiles/p-1', '/profiles'),
     ('/flow/biometric_kyc/details', '/products'),
     ('/flow/biometric_kyc/id-details', '/flow/biometric_kyc/details'),
   ]) {
@@ -20,6 +21,12 @@ void main() {
       final GoRouter router = useSmileIDSampleRouter(initialLocation: at);
       await tester.pumpWidget(
         ProviderScope(
+          // Seeded, so the editor's profile exists: a link to one this device lacks goes back on its own.
+          overrides: [
+            useSmileIDSampleLaunchArgsProvider.overrideWithValue(
+              const UseSmileIDSampleLaunchArgs(seedProfiles: true),
+            ),
+          ],
           child: MaterialApp.router(
             theme: UseSmileIDSampleTheme.light(),
             routerConfig: router,

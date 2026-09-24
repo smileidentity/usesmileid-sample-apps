@@ -56,6 +56,7 @@ appId: ${APP_ID}
     id: "sample_user_details_field_email"
 - inputText: "ada.okafor@example.com"
 - hideKeyboard
+- runFlow: subflows/keep-nothing.yaml
 - tapOn:
     id: "sample_user_details_continue"
 

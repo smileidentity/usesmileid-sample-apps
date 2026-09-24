@@ -56,6 +56,8 @@ fun SdkFlowScreen(
 ) {
     val app = LocalUseSmileIDSampleAppState.current
     LaunchedEffect(route) { app.flowResult.enterRoute(route) }
+    // A restore behind the camera rebuilds the snapshot, and it must name the stored profile, not none.
+    if (!app.profiles.loaded) return
 
     // Once per entry: the ViewModel and its args are scoped to this back-stack entry, so no key can change.
     val snapshot = remember {

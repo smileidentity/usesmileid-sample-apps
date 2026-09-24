@@ -35,6 +35,7 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.android.flow.tokenBindsConsent
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleLicenses
 import com.usesmileid.sampleapps.ui.model.parseUseSmileIDSampleLicenses
@@ -59,11 +60,12 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
         contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
         state = UseSmileIDSampleSettingsState(
             settings = app.settings,
-            organisation = app.profiles.active.organisation,
-            initials = app.profiles.active.initials,
+            organisation = app.profiles.active?.title ?: UseSmileIDSampleProfiles.NO_PROFILE_LABEL,
+            initials = app.profiles.active?.initials.orEmpty(),
             avatarColor = avatarColorForProfile(app.profiles.activeIndex),
             versionLabel = "$APP_DISPLAY_NAME · ${BuildConfig.VERSION_NAME}",
             consentBoundByToken = app.tokenBindsConsent,
+            hasProfile = app.profiles.active != null,
         ),
         onSettingChange = { setting, enabled -> app.storeScope.launch { app.store.setSetting(setting, enabled) } },
         // The row opens the list: configuring any profile and creating one are both reached from there.
@@ -78,10 +80,11 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
         } else {
             null
         },
-        // There is no auth to leave, so signing out is the local state a partner would expect gone.
+        // There is no auth to leave, so signing out is the local state a partner would expect gone, profiles included.
         onSignOut = {
             app.storeScope.launch { app.store.clearTokenSession() }
             app.forms.clear()
+            app.profiles.clear()
             // The nav bar's own tab switch, so the stack lands where selecting Products would.
             navigator.navigate(ProductsNavGraph) {
                 popUpTo(NavGraphs.root.startDestination) { saveState = true }

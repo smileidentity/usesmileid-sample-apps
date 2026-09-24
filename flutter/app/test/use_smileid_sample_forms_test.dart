@@ -84,7 +84,7 @@ void main() {
   });
 
   group('the consent form', () {
-    testWidgets('it opens empty, even with a profile that has defaults', (
+    testWidgets('with no profile it opens empty and offers to make one', (
       WidgetTester tester,
     ) async {
       await pumpAt(
@@ -93,7 +93,11 @@ void main() {
       );
 
       expect(forms().userDetails.firstName, isEmpty);
-      expect(forms().userDetails.lastName, isEmpty);
+      expect(find.text('No profile yet'), findsOne);
+      expect(
+        byId(UseSmileIDSampleTestIds.userDetailsField('organisation')),
+        findsOne,
+      );
     });
 
     // The SDK needs a contact even though the design labels both contact rows optional, so the
@@ -142,9 +146,8 @@ void main() {
       );
     });
 
-    // The switch and Continue share one predicate: there is nothing to remember until there is
-    // something complete.
-    testWidgets('the remember switch appears only once the form is complete', (
+    // There is nothing to keep until there is something complete.
+    testWidgets('the save switch appears only once the form is complete', (
       WidgetTester tester,
     ) async {
       await pumpAt(

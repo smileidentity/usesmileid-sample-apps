@@ -3,11 +3,12 @@ import 'package:sample_ui/sample_ui.dart';
 
 /// What the two pre-flow forms have collected, held above them so a back and forward keeps it.
 class UseSmileIDSampleForms {
-  /// Everything empty, which is what a cold start shows even for a profile with saved defaults.
+  /// Everything empty; a run fills the user details from its profile.
   const UseSmileIDSampleForms({
     this.userDetails = const UseSmileIDSampleUserDetails(),
     this.idDetails = const UseSmileIDSampleIdDetails(),
-    this.rememberDetails = false,
+    this.saveToProfile = true,
+    this.organisation = '',
   });
 
   /// The consent form's four fields.
@@ -16,18 +17,23 @@ class UseSmileIDSampleForms {
   /// The ID form's three.
   final UseSmileIDSampleIdDetails idDetails;
 
-  /// The remember switch, which persists nothing today.
-  final bool rememberDetails;
+  /// Whether Continue keeps what was typed: into the active profile, or as a new one when there is none.
+  final bool saveToProfile;
+
+  /// The new profile's name, asked only while there is no profile.
+  final String organisation;
 
   /// A copy with one part replaced.
   UseSmileIDSampleForms copyWith({
     UseSmileIDSampleUserDetails? userDetails,
     UseSmileIDSampleIdDetails? idDetails,
-    bool? rememberDetails,
+    bool? saveToProfile,
+    String? organisation,
   }) => UseSmileIDSampleForms(
     userDetails: userDetails ?? this.userDetails,
     idDetails: idDetails ?? this.idDetails,
-    rememberDetails: rememberDetails ?? this.rememberDetails,
+    saveToProfile: saveToProfile ?? this.saveToProfile,
+    organisation: organisation ?? this.organisation,
   );
 }
 
@@ -47,9 +53,20 @@ class UseSmileIDSampleFormsNotifier extends Notifier<UseSmileIDSampleForms> {
   void setUserField(UseSmileIDSampleUserField field, String value) => state =
       state.copyWith(userDetails: field.apply(state.userDetails, value));
 
-  /// Toggles the remember switch.
-  void setRemember(bool remember) =>
-      state = state.copyWith(rememberDetails: remember);
+  /// Toggles the save switch.
+  void setSaveToProfile(bool save) =>
+      state = state.copyWith(saveToProfile: save);
+
+  /// Types the new profile's organisation.
+  void setOrganisation(String organisation) =>
+      state = state.copyWith(organisation: organisation);
+
+  /// A run starts from the profile it runs as; whatever was typed for another is dropped.
+  void fillFrom(UseSmileIDSampleProfile profile) => state = state.copyWith(
+    userDetails: profile.defaults,
+    saveToProfile: true,
+    organisation: '',
+  );
 
   /// Chooses a country, which CLEARS the ID type: the old country's types may not apply.
   void setCountry(UseSmileIDSampleCountry country) =>

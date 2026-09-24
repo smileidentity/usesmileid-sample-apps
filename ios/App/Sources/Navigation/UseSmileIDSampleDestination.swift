@@ -21,7 +21,11 @@ struct UseSmileIDSampleDestination: View {
           sessionEnded: app.sessionExpired,
           result: app.flowResult.snapshot
         ),
-        onProduct: { product in router.open(app.firstStep(for: product)) },
+        onProduct: { product in
+          // Every run starts from the active profile, including one whose form the token skips.
+          app.fillFormForRun()
+          router.open(app.firstStep(for: product))
+        },
         onProfile: { router.sheet = .profileSwitch },
         // Pushed, not opened: linking pops back to where the scan started.
         onScan: { router.pushOnce(.scanToken) }
@@ -33,14 +37,23 @@ struct UseSmileIDSampleDestination: View {
         state: .init(
           productLabel: Self.product(productId)?.label ?? productId,
           details: app.userDetails,
-          rememberDetails: app.rememberDetails,
+          profile: app.profiles.active,
+          profileIndex: app.profiles.activeIndex,
+          saveToProfile: app.saveToProfile,
+          organisation: app.organisationDraft,
           requirement: app.userDetailsRequirement
         ),
         onFieldChange: { field, value in app.setUserField(field, to: value) },
-        onRememberChange: { app.rememberDetails = $0 },
+        onSaveToProfileChange: { app.saveToProfile = $0 },
+        onOrganisationChange: { app.organisationDraft = $0 },
+        onProfileTap: { router.sheet = .profileSwitch },
         onBack: { router.pop() },
         // Pushed once: two quick taps would stack two flow levels, and so two runs.
-        onContinue: { Self.product(productId).map { router.pushOnce(app.stepAfterUserDetails($0)) } }
+        onContinue: {
+          guard let product = Self.product(productId) else { return }
+          app.keepUserDetails()
+          router.pushOnce(app.stepAfterUserDetails(product))
+        }
       )
       .navigationBarHidden(true)
     case .idDetailsForm(let productId):
@@ -61,22 +74,17 @@ struct UseSmileIDSampleDestination: View {
       UseSmileIDSampleProfilesHost()
         .navigationBarHidden(true)
     case .profileConfig(let profileId):
-      ProfileConfigScreen(
-        state: .init(
-          organisation: app.profiles.find(profileId)?.organisation ?? profileId,
-          defaults: app.profileDraft(for: profileId),
-          isActive: profileId == app.profiles.activeId,
-          callbackUrl: app.profileCallbackDraft(for: profileId),
-          callbackOverride: app.session?.callbackOverrideCaption
-        ),
-        onFieldChange: { field, value in app.editProfileDraft(profileId, field, to: value) },
-        onCallbackUrlChange: { value in app.editProfileCallbackDraft(profileId, to: value) },
-        onBack: { app.discardProfileDraft(profileId)
-          router.pop() },
-        onSave: { app.saveProfile(profileId)
-          router.pop() }
-      )
-      .navigationBarHidden(true)
+      if let profile = app.profiles.find(profileId) {
+        profileConfig(profile)
+      } else {
+        // A link to a profile this device does not hold goes back, rather than to an empty page; a delete already went.
+        Color.clear.onAppear {
+          // Only while it is still on top: a delete has already popped it, and a second pop would take the list too.
+          if router.path(router.selectedTab).last == route {
+            router.pop()
+          }
+        }
+      }
     case .sdkFlow(let productId, let presentation):
       SdkFlowScreen(productId: productId, presentation: presentation)
     case .scanToken:
@@ -89,7 +97,8 @@ struct UseSmileIDSampleDestination: View {
           organisation: app.organisation,
           initials: app.initials,
           versionLabel: app.versionLabel,
-          avatarColor: app.avatarColor
+          avatarColor: app.avatarColor,
+          hasProfile: app.profiles.active != nil
         ),
         onSettingChange: { setting, enabled in app.change(setting, to: enabled) },
         onProfile: { router.open(.profiles) },
@@ -112,6 +121,31 @@ struct UseSmileIDSampleDestination: View {
     default:
       UseSmileIDSampleSeat(name: String(describing: route))
     }
+  }
+
+  private func profileConfig(_ profile: UseSmileIDSampleProfile) -> some View {
+    let id = profile.id
+    return ProfileConfigScreen(
+      state: .init(
+        title: profile.title,
+        organisation: app.profileOrganisationDraft(for: id),
+        defaults: app.profileDraft(for: id),
+        isActive: id == app.profiles.activeId,
+        changed: app.profileChanged(id),
+        callbackUrl: app.profileCallbackDraft(for: id),
+        callbackOverride: app.session?.callbackOverrideCaption
+      ),
+      onFieldChange: { field, value in app.editProfileDraft(id, field, to: value) },
+      onOrganisationChange: { app.editProfileOrganisationDraft(id, to: $0) },
+      onCallbackUrlChange: { value in app.editProfileCallbackDraft(id, to: value) },
+      onBack: { app.discardProfileDraft(id)
+        router.pop() },
+      onSave: { app.saveProfile(id)
+        router.pop() },
+      onDelete: { router.pop()
+        app.deleteProfile(id) }
+    )
+    .navigationBarHidden(true)
   }
 
   private static func product(_ id: String) -> UseSmileIDSampleProduct? {
@@ -256,7 +290,7 @@ private struct UseSmileIDSampleProfilesHost: View {
       state: .init(
         profiles: app.profiles.all,
         activeId: app.profiles.activeId,
-        notice: created.map { .init(message: "\($0.organisation) created", actionLabel: "Make active") }
+        notice: created.map { .init(message: "\($0.title) created", actionLabel: "Make active") }
       ),
       onProfileTap: { router.push(.profileConfig(profileId: $0.id)) },
       onCreate: { router.sheet = .newProfile },

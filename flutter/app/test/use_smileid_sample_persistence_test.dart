@@ -127,7 +127,7 @@ void main() {
 
     expect(
       (await profilesFor(const UseSmileIDSampleLaunchArgs())).all,
-      hasLength(1),
+      isEmpty,
     );
     expect(
       (await profilesFor(

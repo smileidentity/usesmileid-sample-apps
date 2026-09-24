@@ -1,5 +1,5 @@
-# Products → the details form, filled and submitted. Every `stopApp` kills the form state and sign out
-# clears it, so the details are typed every time rather than assumed.
+# Products → the details form, filled and submitted without keeping a profile. Every `stopApp` kills the
+# form state and sign out clears it, so the details are typed every time rather than assumed.
 appId: ${APP_ID}
 ---
 - tapOn:
@@ -17,5 +17,6 @@ appId: ${APP_ID}
     id: "sample_user_details_field_email"
 - inputText: "ada.okafor@example.com"
 - hideKeyboard
+- runFlow: keep-nothing.yaml
 - tapOn:
     id: "sample_user_details_continue"

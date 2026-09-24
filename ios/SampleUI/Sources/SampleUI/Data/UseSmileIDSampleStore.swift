@@ -30,7 +30,7 @@ public protocol UseSmileIDSampleRecordStorage: AnyObject {
   func write(_ data: Data?)
 }
 
-/// Everything the sample persists: the settings the SDK flow is composed from, and the token session. Each record has its own home — the token is a credential, the switches are not.
+/// Everything the sample persists: the settings the SDK flow is composed from, the profiles, and the token session. Each record has its own home — the token is a credential, the switches are not.
 public final class UseSmileIDSampleStore {
   private let storage: UseSmileIDSampleRecordStorage
   private let settingsStorage: UseSmileIDSampleSettingsStorage
@@ -68,6 +68,20 @@ public final class UseSmileIDSampleStore {
     settings = updated
     return updated
   }
+
+  /// A missing or unreadable record is no profiles, so an install that never stored one reads as a first launch.
+  public var profiles: UseSmileIDSampleProfiles {
+    UseSmileIDSampleProfilesCodec.decode(settingsStorage.data(Self.profilesKey))
+  }
+
+  /// The whole record in one write, so the list and the active id can never come from different edits.
+  public func setProfiles(_ profiles: UseSmileIDSampleProfiles) {
+    guard let data = UseSmileIDSampleProfilesCodec.encode(profiles) else { return }
+    settingsStorage.setData(Self.profilesKey, data)
+  }
+
+  /// The Android store's key, so a record reads the same in both.
+  static let profilesKey = "sample_profiles"
 
   /// Both halves from one read, so the UI can never hold the token from one write and the marker from the next.
   public var session: UseSmileIDSampleSessionRecord {
@@ -175,6 +189,8 @@ public extension UseSmileIDSampleSetting {
 public protocol UseSmileIDSampleSettingsStorage: AnyObject {
   func flag(_ key: String) -> Bool?
   func setFlag(_ key: String, _ value: Bool)
+  func data(_ key: String) -> Data?
+  func setData(_ key: String, _ value: Data)
 }
 
 public extension UseSmileIDSampleSettingsStorage {
@@ -203,11 +219,21 @@ public final class UseSmileIDSampleDefaultsStorage: UseSmileIDSampleSettingsStor
   public func setFlag(_ key: String, _ value: Bool) {
     defaults.set(value, forKey: key)
   }
+
+  /// Data, not a string: a launch argument lands in the argument domain as a string, so it cannot seed profiles.
+  public func data(_ key: String) -> Data? {
+    defaults.data(forKey: key)
+  }
+
+  public func setData(_ key: String, _ value: Data) {
+    defaults.set(value, forKey: key)
+  }
 }
 
 /// The switches held for one process, for tests and for a host that wants no persistence.
 public final class UseSmileIDSampleMemorySettingsStorage: UseSmileIDSampleSettingsStorage {
   private var flags: [String: Bool] = [:]
+  private var blobs: [String: Data] = [:]
 
   public init() {}
 
@@ -217,6 +243,14 @@ public final class UseSmileIDSampleMemorySettingsStorage: UseSmileIDSampleSettin
 
   public func setFlag(_ key: String, _ value: Bool) {
     flags[key] = value
+  }
+
+  public func data(_ key: String) -> Data? {
+    blobs[key]
+  }
+
+  public func setData(_ key: String, _ value: Data) {
+    blobs[key] = value
   }
 }
 

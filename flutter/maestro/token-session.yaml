@@ -107,6 +107,7 @@ appId: ${APP_ID}
 # `hideKeyboard` is a back press on Android and pops the form if the keyboard is already down.
 - assertVisible:
     id: "sample_user_details_screen"
+- runFlow: subflows/keep-nothing.yaml
 - tapOn:
     id: "sample_user_details_continue"
 - extendedWaitUntil:

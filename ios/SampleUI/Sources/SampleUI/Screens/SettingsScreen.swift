@@ -69,6 +69,8 @@ public struct UseSmileIDSampleSettingsState: Equatable {
   /// The token has taken the consent decision away, so the switch stops claiming to own it.
   public var consentBoundByToken: Bool
   public var avatarColor: Color
+  /// False while there is no profile, when the card invites creating one.
+  public var hasProfile: Bool
 
   public init(
     settings: UseSmileIDSampleSettings,
@@ -76,7 +78,8 @@ public struct UseSmileIDSampleSettingsState: Equatable {
     initials: String,
     versionLabel: String,
     consentBoundByToken: Bool = false,
-    avatarColor: Color = smileProfileHues[0]
+    avatarColor: Color = smileProfileHues[0],
+    hasProfile: Bool = true
   ) {
     self.settings = settings
     self.organisation = organisation
@@ -84,6 +87,7 @@ public struct UseSmileIDSampleSettingsState: Equatable {
     self.versionLabel = versionLabel
     self.consentBoundByToken = consentBoundByToken
     self.avatarColor = avatarColor
+    self.hasProfile = hasProfile
   }
 }
 
@@ -97,6 +101,7 @@ public struct SettingsScreen: View {
   private let onOpenScenarioDrawer: (() -> Void)?
   private let onSignOut: () -> Void
 
+  @State private var confirmingSignOut = false
   @Environment(\.useSmileIDSampleColors) private var colors
 
   public init(
@@ -130,7 +135,9 @@ public struct SettingsScreen: View {
         navSection("ABOUT", rows: aboutRows)
         navSection("LEGAL", rows: legalRows)
 
-        UseSmileIDSampleDestructiveRow(text: "Sign out", testId: UseSmileIDSampleTestIds.signOut, action: onSignOut)
+        UseSmileIDSampleDestructiveRow(text: "Sign out", testId: UseSmileIDSampleTestIds.signOut) {
+          confirmingSignOut = true
+        }
 
         UseSmileIDSampleText(state.versionLabel, style: UseSmileIDSampleTheme.type.textStyleCaption)
           .foregroundColor(colors.textMuted)
@@ -142,13 +149,22 @@ public struct SettingsScreen: View {
     }
     .background(colors.background)
     .useSmileIDSampleTestId(UseSmileIDSampleTestIds.settingsScreen)
+    // Asked first: signing out deletes every profile, which a stray tap must not cost anyone.
+    .useSmileIDSampleConfirmation(
+      isPresented: $confirmingSignOut,
+      title: "Sign out?",
+      message: "This ends the token session and deletes every profile on this device.",
+      confirmLabel: "Sign out",
+      confirmTestId: UseSmileIDSampleTestIds.signOutConfirm,
+      onConfirm: onSignOut
+    )
   }
 
   private var profileSection: some View {
     UseSmileIDSampleSectionSurface(label: "PROFILE") {
       UseSmileIDSampleProfileRow(
         organisation: state.organisation,
-        supportingText: "Tap to configure",
+        supportingText: state.hasProfile ? "Tap to configure" : "Tap to create one",
         initials: state.initials,
         selected: false,
         avatarColor: state.avatarColor,
