@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { smileIDSampleConfirm } from '../components/use-smile-id-sample-confirmation';
 import { ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -42,6 +43,8 @@ export type UseSmileIDSampleSettingsState = {
   /// The token has taken the consent decision away, so the switch stops claiming to own it.
   readonly consentBoundByToken?: boolean;
   readonly avatarColor?: string;
+  /// False while there is no profile, when the card invites creating one.
+  readonly hasProfile?: boolean;
 };
 
 /// A labelled group of rows on one surface, which is how the design draws every settings section.
@@ -177,7 +180,7 @@ export const SettingsScreen = ({
       <Section label="PROFILE">
         <UseSmileIDSampleProfileRow
           organisation={state.organisation}
-          supportingText="Tap to configure"
+          supportingText={state.hasProfile === false ? 'Tap to create one' : 'Tap to configure'}
           initials={state.initials}
           selected={false}
           onPress={onProfilePress}
@@ -282,7 +285,15 @@ export const SettingsScreen = ({
 
       <UseSmileIDSampleDestructiveRow
         text="Sign out"
-        onPress={onSignOut}
+        // Asked first: signing out deletes every profile, which a stray tap must not cost anyone.
+        onPress={() =>
+          smileIDSampleConfirm({
+            title: 'Sign out?',
+            message: 'This ends the token session and deletes every profile on this device.',
+            confirmLabel: 'Sign out',
+            onConfirm: onSignOut,
+          })
+        }
         testID={UseSmileIDSampleTestIds.SIGN_OUT}
         style={{ marginHorizontal: theme.dimens.spacing.md }}
       />

@@ -6,18 +6,28 @@ import {
   type UseSmileIDSampleIdDetails,
   type UseSmileIDSampleIdType,
 } from './use-smile-id-sample-id-details';
-import { smileIDSampleUserDetailsDefaults, type UseSmileIDSampleUserDetails } from './use-smile-id-sample-profiles';
+import {
+  smileIDSampleUserDetailsDefaults,
+  type UseSmileIDSampleProfile,
+  type UseSmileIDSampleUserDetails,
+} from './use-smile-id-sample-profiles';
 import { smileIDSampleUserFieldWrite, type UseSmileIDSampleUserField } from '../model/use-smile-id-sample-user-fields';
 
 type State = {
   readonly userDetails: UseSmileIDSampleUserDetails;
   readonly idDetails: UseSmileIDSampleIdDetails;
-  readonly rememberDetails: boolean;
+  /// Whether Continue keeps what was typed: into the active profile, or as a new one when there is none.
+  readonly saveToProfile: boolean;
+  /// The new profile's name, asked only while there is no profile.
+  readonly organisation: string;
 };
 
 type Actions = {
   setUserField: (field: UseSmileIDSampleUserField, value: string) => void;
-  setRememberDetails: (enabled: boolean) => void;
+  setSaveToProfile: (enabled: boolean) => void;
+  setOrganisation: (value: string) => void;
+  /// A run starts from the profile it runs as; whatever was typed for another is dropped.
+  fillFrom: (profile: UseSmileIDSampleProfile) => void;
   setCountry: (country: UseSmileIDSampleCountry) => void;
   setIdType: (idType: UseSmileIDSampleIdType) => void;
   setIdNumber: (value: string) => void;
@@ -28,12 +38,17 @@ type Actions = {
 export const useSmileIDSampleFormsStore = create<State & Actions>((set) => ({
   userDetails: smileIDSampleUserDetailsDefaults,
   idDetails: smileIDSampleIdDetailsDefaults,
-  rememberDetails: false,
+  saveToProfile: true,
+  organisation: '',
 
   setUserField: (field, value) =>
     set((state) => ({ userDetails: smileIDSampleUserFieldWrite(field, state.userDetails, value) })),
 
-  setRememberDetails: (enabled) => set({ rememberDetails: enabled }),
+  setSaveToProfile: (enabled) => set({ saveToProfile: enabled }),
+
+  setOrganisation: (value) => set({ organisation: value }),
+
+  fillFrom: (profile) => set({ userDetails: profile.defaults, saveToProfile: true, organisation: '' }),
 
   /// Choosing a country clears the ID type, because the types it offered may not apply to the new one.
   setCountry: (country) =>
@@ -43,11 +58,12 @@ export const useSmileIDSampleFormsStore = create<State & Actions>((set) => ({
 
   setIdNumber: (value) => set((state) => ({ idDetails: { ...state.idDetails, idNumber: value } })),
 
-  /// Sign out: what a partner would expect gone, including the choice to keep it.
+  /// Sign out: what a partner would expect gone.
   clear: () =>
     set({
       userDetails: smileIDSampleUserDetailsDefaults,
       idDetails: smileIDSampleIdDetailsDefaults,
-      rememberDetails: false,
+      saveToProfile: true,
+      organisation: '',
     }),
 }));

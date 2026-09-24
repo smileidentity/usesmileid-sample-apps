@@ -1,4 +1,5 @@
 export { UseSmileIDSampleAvatar, avatarColorForProfile } from './components/use-smile-id-sample-avatar';
+export { smileIDSampleConfirm } from './components/use-smile-id-sample-confirmation';
 export { UseSmileIDSampleButton } from './components/use-smile-id-sample-button';
 export { UseSmileIDSampleSearchField } from './components/use-smile-id-sample-search-field';
 export { UseSmileIDSampleSectionLabel } from './components/use-smile-id-sample-section-label';
@@ -59,19 +60,27 @@ export {
   type UseSmileIDSampleLaunchArgs,
 } from './state/use-smile-id-sample-launch-args';
 export {
-  USE_SMILE_ID_SAMPLE_STARTER_ORGANISATION,
+  USE_SMILE_ID_SAMPLE_FIRST_PROFILE_ID,
+  USE_SMILE_ID_SAMPLE_NO_PROFILE_LABEL,
+  USE_SMILE_ID_SAMPLE_NO_PROFILE_PARTNER_NAME,
+  smileIDSampleDecodeProfiles,
+  smileIDSampleEncodeProfiles,
   smileIDSampleFixtureProfiles,
+  smileIDSamplePartnerName,
   smileIDSampleProfileCaption,
   smileIDSampleProfileInitials,
-  smileIDSampleProfilesForLaunch,
-  smileIDSampleStarterProfiles,
+  smileIDSampleProfilePerson,
+  smileIDSampleProfileTitle,
+  smileIDSampleProfilesRecord,
   smileIDSampleEditorDefaults,
   smileIDSampleUserDetailsDefaults,
   type UseSmileIDSampleProfile,
   type UseSmileIDSampleProfileEdit,
+  type UseSmileIDSampleProfilesRecord,
   type UseSmileIDSampleUserDetails,
 } from './state/use-smile-id-sample-profiles';
 export {
+  SMILE_ID_SAMPLE_PROFILES_KEY,
   useSmileIDSampleActiveProfile,
   useSmileIDSampleActiveProfileIndex,
   useSmileIDSampleProfileStore,

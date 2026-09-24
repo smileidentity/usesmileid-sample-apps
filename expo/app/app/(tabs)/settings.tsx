@@ -9,6 +9,9 @@ import {
   useSmileIDSampleTheme,
   avatarColorForProfile,
   type UseSmileIDSampleNavRow,
+  USE_SMILE_ID_SAMPLE_NO_PROFILE_LABEL,
+  smileIDSampleProfileTitle,
+  useSmileIDSampleProfileStore,
 } from '@smileid/sample-ui';
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
@@ -36,6 +39,7 @@ export default function Settings() {
   const consentBound = useSmileIDSampleSessionStore((state) => state.live?.bindings.consent != null);
   const clearSession = useSmileIDSampleSessionStore((state) => state.clear);
   const clearForms = useSmileIDSampleFormsStore((state) => state.clear);
+  const clearProfiles = useSmileIDSampleProfileStore((state) => state.clear);
 
   useEffect(() => {
     void load();
@@ -54,8 +58,9 @@ export default function Settings() {
     <SettingsScreen
       state={{
         settings,
-        organisation: profile.organisation,
-        initials: smileIDSampleProfileInitials(profile),
+        organisation: profile === null ? USE_SMILE_ID_SAMPLE_NO_PROFILE_LABEL : smileIDSampleProfileTitle(profile),
+        initials: profile === null ? '' : smileIDSampleProfileInitials(profile),
+        hasProfile: profile !== null,
         versionLabel: versionLabel(),
         avatarColor: avatarColorForProfile(index),
         consentBoundByToken: consentBound && !smileIDSampleStartsExpired(scenario),
@@ -66,6 +71,7 @@ export default function Settings() {
       onSignOut={() => {
         clearSession().catch(() => undefined);
         clearForms();
+        clearProfiles();
         router.navigate('/products');
       }}
       bottomInset={bottomInset}

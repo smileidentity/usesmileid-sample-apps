@@ -4,7 +4,6 @@ import {
   UseSmileIDSampleThemeProvider,
   smileDarkColors,
   smileFontAssets,
-  smileIDSampleProfilesForLaunch,
   smileLightColors,
   useSmileIDSampleJobStore,
   useSmileIDSampleProfileStore,
@@ -44,7 +43,8 @@ export default function RootLayout() {
   const colors = dark ? smileDarkColors : smileLightColors;
   const args = useLaunchArgs();
   const argsLoaded = useLaunchArgsLoaded();
-  const resetProfiles = useSmileIDSampleProfileStore((state) => state.reset);
+  const loadProfiles = useSmileIDSampleProfileStore((state) => state.load);
+  const profilesLoaded = useSmileIDSampleProfileStore((state) => state.loaded);
   const seedFixtures = useSmileIDSampleJobStore((state) => state.seedFixtures);
   // spec/launch-args.json states the argument in SECONDS; the library's window is milliseconds.
   const noticeWindowMs =
@@ -81,14 +81,15 @@ export default function RootLayout() {
   useEffect(() => {
     // Once, off the link's own arguments: the defaults before it resolves are no launch at all.
     if (!argsLoaded) return;
-    resetProfiles(smileIDSampleProfilesForLaunch(args));
+    // The stored profiles, or the fixtures a seeded launch holds in memory only.
+    void loadProfiles(args);
     // Before the verifications route's first load, or its own read wins and the list opens empty.
     // Caught, not voided: a failed write must degrade to an empty list, never an unhandled rejection.
     if (args.seedJobs) seedFixtures(Date.now()).catch(() => undefined);
-  }, [args, argsLoaded, resetProfiles, seedFixtures]);
+  }, [args, argsLoaded, loadProfiles, seedFixtures]);
 
-  // Held for the session and the link: a cold link into a run snapshots both at entry.
-  if (!fontsLoaded || !sessionLoaded || !argsLoaded) {
+  // Held for the session, the link and the profiles: a cold link into a run snapshots all three at entry.
+  if (!fontsLoaded || !sessionLoaded || !argsLoaded || !profilesLoaded) {
     return <View style={{ backgroundColor: colors.background, flex: 1 }} />;
   }
 

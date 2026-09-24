@@ -17,7 +17,6 @@ import { useSmileIDSampleProfileStore } from '../src/state/use-smile-id-sample-p
 import {
   smileIDSampleEditorDefaults,
   smileIDSampleFixtureProfiles,
-  smileIDSampleStarterProfiles,
   smileIDSampleUserDetailsDefaults,
 } from '../src/state/use-smile-id-sample-profiles';
 import { UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
@@ -297,17 +296,17 @@ describe('the new-profile sheet', () => {
 
 describe('creating a profile', () => {
   beforeEach(() => {
-    useSmileIDSampleProfileStore.getState().reset(smileIDSampleStarterProfiles());
+    useSmileIDSampleProfileStore.getState().reset(smileIDSampleFixtureProfiles());
   });
 
   it('does not make it active, because the confirmation carries that offer instead', () => {
-    const id = useSmileIDSampleProfileStore.getState().add('Zuri Health', 'Ada Nwosu');
+    const id = useSmileIDSampleProfileStore.getState().add('Zuri Health');
     expect(useSmileIDSampleProfileStore.getState().activeId).not.toBe(id);
     expect(useSmileIDSampleProfileStore.getState().lastCreatedId).toBe(id);
   });
 
   it('is announced once, so returning to the list cannot re-show the confirmation', () => {
-    useSmileIDSampleProfileStore.getState().add('Zuri Health', 'Ada Nwosu');
+    useSmileIDSampleProfileStore.getState().add('Zuri Health');
     useSmileIDSampleProfileStore.getState().clearLastCreated();
     expect(useSmileIDSampleProfileStore.getState().lastCreatedId).toBeNull();
   });

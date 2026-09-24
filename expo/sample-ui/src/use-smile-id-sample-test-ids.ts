@@ -18,6 +18,7 @@ export const UseSmileIDSampleTestIds = {
   SESSION_COUNTDOWN: 'sample_session_countdown',
   SESSION_ENDED_BANNER: 'sample_session_ended_banner',
   PROFILE_SWITCH_SHEET: 'sample_profile_switch_sheet',
+  PROFILE_SWITCH_NEW: 'sample_profile_switch_new',
   // verifications
   VERIFICATIONS_SCREEN: 'sample_verifications_screen',
   FILTER_CHIP: 'sample_filter_chip',
@@ -47,6 +48,7 @@ export const UseSmileIDSampleTestIds = {
   USER_DETAILS_FIELD: 'sample_user_details_field',
   USER_DETAILS_HINT: 'sample_user_details_hint',
   REMEMBER_DETAILS_SWITCH: 'sample_remember_details_switch',
+  USER_DETAILS_PROFILE: 'sample_user_details_profile',
   USER_DETAILS_CONTINUE: 'sample_user_details_continue',
   // kyc
   KYC_FORM_SCREEN: 'sample_kyc_form_screen',
@@ -77,6 +79,7 @@ export const UseSmileIDSampleTestIds = {
   LICENSE_TEXT: 'sample_license_text',
   LICENSE_LINK: 'sample_license_link',
   SIGN_OUT: 'sample_sign_out',
+  SIGN_OUT_CONFIRM: 'sample_sign_out_confirm',
   VERSION_LABEL: 'sample_version_label',
   // profiles
   PROFILES_SCREEN: 'sample_profiles_screen',
@@ -93,6 +96,9 @@ export const UseSmileIDSampleTestIds = {
   PROFILE_CONFIG_FIELD: 'sample_profile_config_field',
   PROFILE_CONFIG_CALLBACK_URL: 'sample_profile_config_callback_url',
   PROFILE_CONFIG_SAVE: 'sample_profile_config_save',
+  PROFILE_CONFIG_NAME: 'sample_profile_config_name',
+  PROFILE_CONFIG_DELETE: 'sample_profile_config_delete',
+  PROFILE_DELETE_CONFIRM: 'sample_profile_delete_confirm',
   // token
   SCAN_TOKEN_SCREEN: 'sample_scan_token_screen',
   TOKEN_MANUAL_ENTRY: 'sample_token_manual_entry',

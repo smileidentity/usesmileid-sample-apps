@@ -14,7 +14,6 @@ import {
 } from '../src/state/use-smile-id-sample-profile-store';
 import {
   smileIDSampleFixtureProfiles,
-  smileIDSampleStarterProfiles,
 } from '../src/state/use-smile-id-sample-profiles';
 
 /// These four have no screen yet, so this is the call site that proves them before U2 and U3 arrive.
@@ -49,19 +48,19 @@ describe('the active profile', () => {
   afterEach(async () => {
     // Wrapped, because the store is subscribed by a mounted probe and React warns otherwise.
     await act(async () => {
-      useSmileIDSampleProfileStore.getState().reset(smileIDSampleStarterProfiles());
+      useSmileIDSampleProfileStore.getState().reset([]);
     });
   });
 
   const Probe = () => {
     const profile = useSmileIDSampleActiveProfile();
     const index = useSmileIDSampleActiveProfileIndex();
-    return <Text testID="probe">{`${profile.organisation}|${index}`}</Text>;
+    return <Text testID="probe">{`${profile?.organisation ?? 'none'}|${index}`}</Text>;
   };
 
-  it('is the starter on a plain launch, at position zero', async () => {
+  it('is none on a plain launch, at position zero', async () => {
     const rendered = await render(<Probe />);
-    expect(rendered.getByTestId('probe')).toHaveTextContent('Default profile|0');
+    expect(rendered.getByTestId('probe')).toHaveTextContent('none|0');
   });
 
   it('follows the active id, which is what picks the avatar hue', async () => {

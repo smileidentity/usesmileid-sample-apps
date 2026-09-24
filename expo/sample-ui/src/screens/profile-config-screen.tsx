@@ -2,12 +2,14 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { UseSmileIDSampleButton } from '../components/use-smile-id-sample-button';
+import { smileIDSampleConfirm } from '../components/use-smile-id-sample-confirmation';
 import { UseSmileIDSampleKeyValueEditRow } from '../components/use-smile-id-sample-key-value-edit-row';
 import { UseSmileIDSampleSectionLabel } from '../components/use-smile-id-sample-section-label';
 import {
   UseSmileIDSampleRowDivider,
   UseSmileIDSampleSectionSurface,
 } from '../components/use-smile-id-sample-section-surface';
+import { UseSmileIDSampleDestructiveRow } from '../components/use-smile-id-sample-setting-row';
 import { UseSmileIDSampleTopAppBar } from '../components/use-smile-id-sample-top-app-bar';
 import type { UseSmileIDSampleUserDetails } from '../state/use-smile-id-sample-profiles';
 import {
@@ -26,10 +28,14 @@ const SECTION_GAP = 14;
 
 /// Everything the profile configuration renders; callbacks stay parameters, like every screen.
 export type UseSmileIDSampleProfileConfigState = {
-  /// The app bar title is the profile's name, which is why the screen takes it rather than an id.
+  /// The app bar title: the saved profile's, so it does not change as the name is typed.
+  readonly title?: string;
+  /// The organisation as edited so far, which the SDK's consent screen names as the partner.
   readonly organisation: string;
   readonly defaults: UseSmileIDSampleUserDetails;
   readonly isActive: boolean;
+  /// Whether anything differs from what is stored, which is all the active profile's Save can act on.
+  readonly changed?: boolean;
   /// The webhook URL as edited so far; empty means the partner's portal default.
   readonly callbackUrl: string;
   /// Non-null while a token session is live: its text replaces the value, and the row stops editing.
@@ -40,12 +46,23 @@ type Props = {
   state: UseSmileIDSampleProfileConfigState;
   onFieldChange: (field: UseSmileIDSampleUserField, value: string) => void;
   onCallbackUrlChange: (value: string) => void;
+  onOrganisationChange?: (value: string) => void;
   onBack: () => void;
   onSave: () => void;
+  /// Deletes the profile once confirmed; absent hides the row.
+  onDelete?: () => void;
 };
 
-/// A profile's user-details defaults, which is what seeds the Consent Details Form for its jobs.
-export const ProfileConfigScreen = ({ state, onFieldChange, onCallbackUrlChange, onBack, onSave }: Props) => {
+/// A profile's name and user-details defaults, which is what seeds the Consent Details Form for its jobs.
+export const ProfileConfigScreen = ({
+  state,
+  onFieldChange,
+  onCallbackUrlChange,
+  onOrganisationChange,
+  onBack,
+  onSave,
+  onDelete,
+}: Props) => {
   const theme = useSmileIDSampleTheme();
   const insets = useSafeAreaInsets();
 
@@ -54,7 +71,7 @@ export const ProfileConfigScreen = ({ state, onFieldChange, onCallbackUrlChange,
       testID={UseSmileIDSampleTestIds.PROFILE_CONFIG_SCREEN}
       style={[styles.screen, { backgroundColor: theme.colors.background }]}
     >
-      <UseSmileIDSampleTopAppBar title={state.organisation} onBack={onBack} />
+      <UseSmileIDSampleTopAppBar title={state.title ?? state.organisation} onBack={onBack} />
       <ScrollView
         contentContainerStyle={{
           paddingBottom: theme.dimens.spacing.lg,
@@ -62,6 +79,16 @@ export const ProfileConfigScreen = ({ state, onFieldChange, onCallbackUrlChange,
           rowGap: SECTION_GAP,
         }}
       >
+        <UseSmileIDSampleSectionLabel text="PROFILE" />
+        <UseSmileIDSampleSectionSurface>
+          <UseSmileIDSampleKeyValueEditRow
+            label="Organisation"
+            value={state.organisation}
+            onValueChange={(value) => onOrganisationChange?.(value)}
+            placeholder="Shown on the consent screen"
+            testID={UseSmileIDSampleTestIds.PROFILE_CONFIG_NAME}
+          />
+        </UseSmileIDSampleSectionSurface>
         {/* The label stays here: SECTION_GAP, not the surface's own spacing, separates it from the card. */}
         <UseSmileIDSampleSectionLabel text="USER DETAILS — ATTACHED TO EVERY JOB" />
         <UseSmileIDSampleSectionSurface>
@@ -92,12 +119,26 @@ export const ProfileConfigScreen = ({ state, onFieldChange, onCallbackUrlChange,
             testID={UseSmileIDSampleTestIds.PROFILE_CONFIG_CALLBACK_URL}
           />
         </UseSmileIDSampleSectionSurface>
+        {onDelete === undefined ? null : (
+          <UseSmileIDSampleDestructiveRow
+            text="Delete profile"
+            onPress={() =>
+              smileIDSampleConfirm({
+                title: `Delete ${state.title ?? state.organisation}?`,
+                message: 'Its details and callback URL are removed from this device.',
+                confirmLabel: 'Delete',
+                onConfirm: onDelete,
+              })
+            }
+            testID={UseSmileIDSampleTestIds.PROFILE_CONFIG_DELETE}
+          />
+        )}
       </ScrollView>
       <UseSmileIDSampleButton
-        // The design disables it on the profile that is already active, and says so.
-        text={state.isActive ? 'Active profile' : 'Make this profile active'}
+        // One slot, as the design has it: the active profile saves its edits, any other also becomes active.
+        text={state.isActive ? 'Save changes' : 'Use this profile'}
         onPress={onSave}
-        enabled={!state.isActive}
+        enabled={(state.changed ?? false) || !state.isActive}
         testID={UseSmileIDSampleTestIds.PROFILE_CONFIG_SAVE}
         style={{
           marginBottom: insets.bottom + theme.dimens.spacing.md,

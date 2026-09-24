@@ -76,7 +76,7 @@ final class UseSmileIDSampleLaunchArgumentUITests: XCTestCase {
       app.swipeUp()
     }
     signOut.tap()
-    app.alerts.buttons["Sign out"].tap()
+    app.alerts.buttons["sample_sign_out_confirm"].firstMatch.tap()
     launch([])
     open("profiles")
     XCTAssertTrue(element("sample_profiles_screen").waitForExistence(timeout: 10))

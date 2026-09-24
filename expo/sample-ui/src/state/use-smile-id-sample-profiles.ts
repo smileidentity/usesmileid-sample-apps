@@ -1,5 +1,3 @@
-import type { UseSmileIDSampleLaunchArgs } from './use-smile-id-sample-launch-args';
-
 /// The fields the design labels "attached to every job", which is why every product collects them.
 export type UseSmileIDSampleUserDetails = {
   readonly firstName: string;
@@ -15,24 +13,41 @@ export const smileIDSampleUserDetailsDefaults: UseSmileIDSampleUserDetails = {
   phone: '',
 };
 
-/// One partner profile: who is signed in, and the defaults their jobs are seeded from.
+/// One persona a job runs as: the organisation the SDK's consent screen names, and the details its jobs carry.
 export type UseSmileIDSampleProfile = {
   readonly id: string;
+  /// May be blank, when consent names the app itself rather than the person being verified.
   readonly organisation: string;
-  readonly person: string;
   readonly defaults: UseSmileIDSampleUserDetails;
   /// The webhook URL this profile's jobs report to; absent or empty means the partner's portal default.
   readonly callbackUrl?: string;
 };
 
-/// Shown on the consent screen as the partner until a profile is created, so it must read as a placeholder.
-export const USE_SMILE_ID_SAMPLE_STARTER_ORGANISATION = 'Default profile';
+/// The partner the consent screen names when no profile does.
+export const USE_SMILE_ID_SAMPLE_NO_PROFILE_PARTNER_NAME = 'Smile ID';
+
+/// What a plain launch has always sent as the partner id, so no profile changes nothing on the wire.
+export const USE_SMILE_ID_SAMPLE_FIRST_PROFILE_ID = 'p-1';
+
+/// What the header, settings card and form say while there is no profile.
+export const USE_SMILE_ID_SAMPLE_NO_PROFILE_LABEL = 'No profile yet';
 
 const NO_USER_DETAILS_CAPTION = 'No user details yet';
 
-/// The person's initials, as the design has them, falling back to the organisation for a new profile.
+/// A profile naming neither an organisation nor a person, which only a token binding both names allows.
+const UNNAMED_PROFILE = 'Unnamed profile';
+
+/// The person the details name, so it can never disagree with them.
+export const smileIDSampleProfilePerson = (profile: UseSmileIDSampleProfile): string =>
+  `${profile.defaults.firstName} ${profile.defaults.lastName}`.trim();
+
+/// What a row calls it: the organisation, or the person when it names none.
+export const smileIDSampleProfileTitle = (profile: UseSmileIDSampleProfile): string =>
+  profile.organisation.trim() || smileIDSampleProfilePerson(profile) || UNNAMED_PROFILE;
+
+/// The person's initials, as the design has them, falling back to the organisation.
 export const smileIDSampleProfileInitials = (profile: UseSmileIDSampleProfile): string => {
-  const source = profile.person.trim() || profile.organisation;
+  const source = smileIDSampleProfilePerson(profile) || profile.organisation;
   const initials = source
     .split(' ')
     .filter((part) => part.trim().length > 0)
@@ -44,45 +59,102 @@ export const smileIDSampleProfileInitials = (profile: UseSmileIDSampleProfile): 
 
 /// What a row says under the organisation: the person, or a placeholder until details are saved.
 export const smileIDSampleProfileCaption = (profile: UseSmileIDSampleProfile): string =>
-  profile.person.trim() || NO_USER_DETAILS_CAPTION;
+  smileIDSampleProfilePerson(profile) || NO_USER_DETAILS_CAPTION;
 
-/// A plain launch: one empty profile, never the fixtures — the active organisation names the partner on the SDK's consent screen.
-export const smileIDSampleStarterProfiles = (): readonly UseSmileIDSampleProfile[] => [
-  {
-    id: 'p-1',
-    organisation: USE_SMILE_ID_SAMPLE_STARTER_ORGANISATION,
-    person: '',
-    defaults: smileIDSampleUserDetailsDefaults,
-  },
-];
+/// What the consent screen names as the partner: the app's own name when no profile names one.
+export const smileIDSamplePartnerName = (profile: UseSmileIDSampleProfile | null): string =>
+  profile?.organisation.trim() || USE_SMILE_ID_SAMPLE_NO_PROFILE_PARTNER_NAME;
 
-/// The three the design's sheet shows. Reached only by the `seedProfiles` launch argument — see `spec/launch-args.json`.
+/// The three the design's sheet shows. Reached only by the `seedProfiles` launch argument, and never stored.
 export const smileIDSampleFixtureProfiles = (): readonly UseSmileIDSampleProfile[] => [
   {
     id: 'p-1',
     organisation: 'UpTech Finance',
-    person: 'Kwame Asante',
     defaults: { ...smileIDSampleUserDetailsDefaults, firstName: 'Kwame', lastName: 'Asante' },
   },
   {
     id: 'p-2',
     organisation: 'Kazi Microlending',
-    person: 'Amina Diallo',
     defaults: { ...smileIDSampleUserDetailsDefaults, firstName: 'Amina', lastName: 'Diallo' },
   },
   {
     id: 'p-3',
     organisation: 'PesaLink',
-    person: 'Tunde Okafor',
     defaults: { ...smileIDSampleUserDetailsDefaults, firstName: 'Tunde', lastName: 'Okafor' },
   },
 ];
 
-/// The fixtures only when `seedProfiles` asks, so the shell holds no choice a unit test cannot reach.
-export const smileIDSampleProfilesForLaunch = (
-  args: UseSmileIDSampleLaunchArgs,
-): readonly UseSmileIDSampleProfile[] =>
-  args.seedProfiles ? smileIDSampleFixtureProfiles() : smileIDSampleStarterProfiles();
+/// What is stored: the profiles and which is active. Null `activeId` exactly when there are none.
+export type UseSmileIDSampleProfilesRecord = {
+  readonly profiles: readonly UseSmileIDSampleProfile[];
+  readonly activeId: string | null;
+};
+
+/// A stored active id that names no profile falls back to the first; repeated ids keep the first.
+export const smileIDSampleProfilesRecord = (
+  profiles: readonly UseSmileIDSampleProfile[],
+  activeId: string | null = null,
+): UseSmileIDSampleProfilesRecord => {
+  const seen = new Set<string>();
+  const distinct = profiles.filter((profile) => !seen.has(profile.id) && seen.add(profile.id));
+  const active = distinct.some((profile) => profile.id === activeId) ? activeId : (distinct[0]?.id ?? null);
+  return { profiles: distinct, activeId: active };
+};
+
+const PROFILES_VERSION = 1;
+
+const text = (value: unknown): string => (typeof value === 'string' ? value : '');
+
+/// The stored form, one JSON value shared by all four apps so a record reads the same in each.
+export const smileIDSampleEncodeProfiles = (record: UseSmileIDSampleProfilesRecord): string =>
+  JSON.stringify({
+    version: PROFILES_VERSION,
+    activeId: record.activeId,
+    profiles: record.profiles.map((profile) => ({
+      id: profile.id,
+      organisation: profile.organisation,
+      firstName: profile.defaults.firstName,
+      lastName: profile.defaults.lastName,
+      email: profile.defaults.email,
+      phone: profile.defaults.phone,
+      callbackUrl: profile.callbackUrl ?? '',
+    })),
+  });
+
+/// Anything unreadable, including a version this build does not know, is no profiles: never a crash.
+export const smileIDSampleDecodeProfiles = (raw: string | null): UseSmileIDSampleProfilesRecord => {
+  const none = smileIDSampleProfilesRecord([]);
+  if (raw === null) return none;
+  let root: unknown;
+  try {
+    root = JSON.parse(raw);
+  } catch {
+    return none;
+  }
+  if (typeof root !== 'object' || root === null || Array.isArray(root)) return none;
+  const record = root as Record<string, unknown>;
+  if (record.version !== PROFILES_VERSION || !Array.isArray(record.profiles)) return none;
+  const profiles = record.profiles.flatMap((entry: unknown): UseSmileIDSampleProfile[] => {
+    if (typeof entry !== 'object' || entry === null) return [];
+    const row = entry as Record<string, unknown>;
+    const id = text(row.id);
+    if (id.trim().length === 0) return [];
+    return [
+      {
+        id,
+        organisation: text(row.organisation),
+        defaults: {
+          firstName: text(row.firstName),
+          lastName: text(row.lastName),
+          email: text(row.email),
+          phone: text(row.phone),
+        },
+        callbackUrl: text(row.callbackUrl),
+      },
+    ];
+  });
+  return smileIDSampleProfilesRecord(profiles, typeof record.activeId === 'string' ? record.activeId : null);
+};
 
 /// What the partner has typed into a profile editor, and which profile they typed it into.
 export type UseSmileIDSampleProfileEdit = {

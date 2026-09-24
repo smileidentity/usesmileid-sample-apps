@@ -62,6 +62,8 @@ const config: ExpoConfig = {
   android: {
     package: applicationId,
     permissions: ['android.permission.CAMERA'],
+    // As the native app: a reinstall must not restore profiles someone deliberately removed.
+    allowBackup: false,
   },
   ios: {
     bundleIdentifier,

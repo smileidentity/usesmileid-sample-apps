@@ -49,9 +49,10 @@ const userDetails = (
   overrides: Partial<Parameters<typeof UserDetailsScreen>[0]> = {},
 ): React.ReactElement => (
   <UserDetailsScreen
-    state={{ productLabel: 'Biometric KYC', details: EMPTY_DETAILS, rememberDetails: true }}
+    state={{ productLabel: 'Biometric KYC', details: EMPTY_DETAILS, profile: null, saveToProfile: true }}
     onFieldChange={noop}
-    onRememberChange={noop}
+    onSaveToProfileChange={noop}
+    onProfilePress={noop}
     onBack={noop}
     onContinue={noop}
     {...overrides}
@@ -87,7 +88,7 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
             state: {
               productLabel: 'Biometric KYC',
               details: FILLED_DETAILS,
-              rememberDetails: true,
+              profile: null, saveToProfile: true,
             },
           }),
       },
@@ -97,7 +98,7 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
             state: {
               productLabel: 'Biometric KYC',
               details: EMPTY_DETAILS,
-              rememberDetails: true,
+              profile: null, saveToProfile: true,
               requirement: smileIDSampleRequirementFrom({ givenNames: true, lastName: true }),
             },
           }),
@@ -330,13 +331,13 @@ describe('the consent form is satisfied', () => {
 });
 
 describe('the consent form', () => {
-  it('hides the remember switch until the details are worth remembering', async () => {
+  it('hides the save switch until the details are worth keeping', async () => {
     const empty = await renderInTheme(userDetails(), false);
     expect(empty.queryByTestId(UseSmileIDSampleTestIds.REMEMBER_DETAILS_SWITCH)).toBeNull();
 
     const complete = await renderInTheme(
       userDetails({
-        state: { productLabel: 'Biometric KYC', details: FILLED_DETAILS, rememberDetails: false },
+        state: { productLabel: 'Biometric KYC', details: FILLED_DETAILS, profile: null, saveToProfile: false },
       }),
       false,
     );
@@ -364,7 +365,7 @@ describe('the consent form', () => {
         state: {
           productLabel: 'Biometric KYC',
           details: EMPTY_DETAILS,
-          rememberDetails: false,
+          profile: null, saveToProfile: false,
           requirement: smileIDSampleRequirementFrom({ givenNames: true }),
         },
       }),
