@@ -65,9 +65,13 @@ class _UseSmileIDSampleVerificationDetailsTabState
       result: ref.watch(useSmileIDSampleShowProbesProvider)
           ? ref.watch(useSmileIDSampleFlowResultProvider)
           : null,
-      job: found == null
-          ? const UseSmileIDSampleJobLookup.none()
-          : UseSmileIDSampleJobLookup.found(found),
+      job: switch ((found, ref.watch(useSmileIDSampleJobsProvider).hasValue)) {
+        (final UseSmileIDSampleJob job, _) => UseSmileIDSampleJobLookup.found(
+          job,
+        ),
+        (null, false) => const UseSmileIDSampleJobLookup.pending(),
+        (null, true) => const UseSmileIDSampleJobLookup.none(),
+      },
       onBack: widget.onBack,
       // Deleting here leaves the page first, and the LIST shows the confirmation once it rebuilds:
       // the same handler, so the undo offer and the filter fallback are not lost with the page.

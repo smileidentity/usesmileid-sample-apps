@@ -88,7 +88,9 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
                 child: ListView(
                   padding: const EdgeInsets.all(SmileDimens.spacingMd),
                   children: <Widget>[
-                    if (found == null)
+                    if (job.pending)
+                      const SizedBox.shrink()
+                    else if (found == null)
                       UseSmileIDSampleEmptyState(
                         text: 'No verification here',
                         supportingText: 'Nothing stored for jobId = $jobId',
@@ -199,11 +201,19 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
 /// One store lookup: a job that may be absent, so a caller cannot pass "not loaded" and "not stored" as one value.
 class UseSmileIDSampleJobLookup {
   /// The store has answered and found one.
-  const UseSmileIDSampleJobLookup.found(UseSmileIDSampleJob job) : value = job;
+  const UseSmileIDSampleJobLookup.found(UseSmileIDSampleJob job)
+    : value = job,
+      pending = false;
 
   /// The store has answered and there is none.
-  const UseSmileIDSampleJobLookup.none() : value = null;
+  const UseSmileIDSampleJobLookup.none() : value = null, pending = false;
 
-  /// The job, or null when the store had none.
+  /// The store has not answered yet, which a cold link reaches before its first read.
+  const UseSmileIDSampleJobLookup.pending() : value = null, pending = true;
+
+  /// The job, or null when the store had none or has not answered.
   final UseSmileIDSampleJob? value;
+
+  /// Whether the store has yet to answer; the page then claims neither a job nor its absence.
+  final bool pending;
 }

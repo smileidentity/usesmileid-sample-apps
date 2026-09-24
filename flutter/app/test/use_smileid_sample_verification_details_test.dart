@@ -49,14 +49,16 @@ void main() {
     WidgetTester tester,
     String location, {
     List<UseSmileIDSampleJob>? stored,
+    UseSmileIDSampleJobsRepository? repository,
   }) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           useSmileIDSampleJobsRepositoryProvider.overrideWithValue(
-            UseSmileIDSampleMemoryJobsRepository(
-              stored ?? <UseSmileIDSampleJob>[job],
-            ),
+            repository ??
+                UseSmileIDSampleMemoryJobsRepository(
+                  stored ?? <UseSmileIDSampleJob>[job],
+                ),
           ),
         ],
         child: MaterialApp.router(
@@ -197,6 +199,35 @@ void main() {
     expect(container.read(useSmileIDSampleJobsProvider).value, isEmpty);
   });
 
+  // A cold link reaches the page before the store's first read; "not stored" would be a lie then.
+  testWidgets('a cold link claims no absence before the store has answered', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          useSmileIDSampleJobsRepositoryProvider.overrideWithValue(
+            _SlowReadRepository(<UseSmileIDSampleJob>[job]),
+          ),
+        ],
+        child: MaterialApp.router(
+          theme: UseSmileIDSampleTheme.light(),
+          routerConfig: useSmileIDSampleRouter(
+            initialLocation: UseSmileIDSampleRoutes.verificationDetails(job.id),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(byId(UseSmileIDSampleTestIds.verificationDetailsScreen), findsOne);
+    expect(byId(UseSmileIDSampleTestIds.detailsEmpty), findsNothing);
+
+    await tester.pump(_SlowReadRepository.delay);
+    await tester.pumpAndSettle();
+    expect(find.text('Approved'), findsOne);
+  });
+
   Future<void> pull(WidgetTester tester) async {
     await tester.fling(
       byId(UseSmileIDSampleTestIds.detailsRefresh),
@@ -268,4 +299,17 @@ void main() {
       findsOne,
     );
   });
+}
+
+/// Answers its first read after a delay, as a cold start's disk read does.
+class _SlowReadRepository extends UseSmileIDSampleMemoryJobsRepository {
+  _SlowReadRepository(super.initial);
+
+  static const Duration delay = Duration(milliseconds: 300);
+
+  @override
+  Future<List<UseSmileIDSampleJob>?> read() async {
+    await Future<void>.delayed(delay);
+    return super.read();
+  }
 }
