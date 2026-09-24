@@ -80,6 +80,7 @@ export default function VerificationDetails() {
           job,
           jobId: jobId ?? '',
           refreshing,
+          pending: jobs === null,
           result: showProbes ? smileIDSampleResultSelecting(result, args.scenario, args.theme) : null,
         }}
         onBack={() => back()}

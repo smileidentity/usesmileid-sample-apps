@@ -123,6 +123,16 @@ describe('a notice on a screen with no nav bar', () => {
     await waitFor(() => expect(screen.queryByText('Job completed')).not.toBeNull());
   });
 
+  it('claims no missing job before the store has answered', async () => {
+    useSmileIDSampleJobStore.getState().reset();
+    // A read that never answers holds the page in the window a cold link lands in.
+    const read = jest.spyOn(AsyncStorage, 'getItem').mockReturnValueOnce(new Promise(() => undefined));
+    const screen = await inTheme(<VerificationDetails />);
+    expect(screen.queryByTestId('sample_verification_details_screen')).not.toBeNull();
+    expect(screen.queryByTestId('sample_details_empty')).toBeNull();
+    read.mockRestore();
+  });
+
   it('sits past the system bar on the profiles list too', async () => {
     useSmileIDSampleProfileStore.getState().add('Kobo Bank', 'Ada Okafor');
     const screen = await inTheme(<Profiles />);

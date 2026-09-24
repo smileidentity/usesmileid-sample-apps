@@ -31,6 +31,8 @@ export type UseSmileIDSampleVerificationDetailsState = {
   /// The id the route asked for, which is the whole diagnostic when there is no row.
   readonly jobId: string;
   readonly refreshing: boolean;
+  /// True until the store has answered, which a cold link reaches first; the page then claims neither a job nor its absence.
+  readonly pending?: boolean;
   /// The last run's result card; absent hides it, which is the host's probes decision.
   readonly result?: UseSmileIDSampleResult | null;
 };
@@ -89,7 +91,7 @@ export const VerificationDetailsScreen = ({
           />
         }
       >
-        {job === null ? (
+        {state.pending === true ? null : job === null ? (
           <UseSmileIDSampleEmptyState
             text="No verification here"
             // The id asked for is the whole diagnostic, which a deep link is how you reach.
