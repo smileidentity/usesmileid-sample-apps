@@ -15,8 +15,9 @@ import 'use_smileid_sample_token_binding_rules.dart';
 /// The one place that decides what the SDK is handed.
 void useSmileIDSampleApplying(
   UseSmileIDFlowBuilder builder,
-  UseSmileIDSampleFlowLaunchSnapshot snapshot,
-) {
+  UseSmileIDSampleFlowLaunchSnapshot snapshot, {
+  VoidCallback? onTokenRefreshed,
+}) {
   final UseSmileIDSampleFlowPlan plan = useSmileIDSampleFlowPlan(
     snapshot.liveSession?.bindings,
     snapshot.product,
@@ -65,6 +66,7 @@ void useSmileIDSampleApplying(
             nowMillis: DateTime.now().millisecondsSinceEpoch,
           );
       config.onTokenExpired = (String previous) async {
+        onTokenRefreshed?.call();
         // No refresh endpoint exists for a scanned token, so its auth failure must surface.
         if (scanned != null) {
           return previous;

@@ -22,6 +22,16 @@ void main() {
     await assertSurvivesMaxTextScale(tester, _topAppBars());
   });
 
+  testWidgets('result card', (WidgetTester tester) async {
+    await goldens(tester, 'result_card', _resultCards);
+  });
+
+  testWidgets('result cards survive max text scale', (
+    WidgetTester tester,
+  ) async {
+    await assertSurvivesMaxTextScale(tester, _resultCards());
+  });
+
   testWidgets('data field row', (WidgetTester tester) async {
     await goldens(tester, 'data_field_row', _dataFieldRows);
   });
@@ -484,3 +494,41 @@ Widget _sheetChrome() => Builder(
 void _ignore(String value) {}
 
 void _ignoreBool(bool value) {}
+
+/// A run in flight on products, a finished run with every field, and a failure that never submitted.
+Widget _resultCards() => _stack(<Widget>[
+  UseSmileIDSampleResultLine(
+    result: UseSmileIDSampleResult.idle.started(
+      scenario: UseSmileIDSampleScenario.normal,
+      theme: UseSmileIDSampleThemeScenario.brandDefault,
+      route: UseSmileIDSampleFlowRoute.fullscreen,
+      environment: UseSmileIDSampleEnvironment.sandbox,
+    ),
+  ),
+  const UseSmileIDSampleResultCard(
+    result: UseSmileIDSampleResult(
+      activeScenario: UseSmileIDSampleScenario.normal,
+      activeTheme: UseSmileIDSampleThemeScenario.brandDefault,
+      route: UseSmileIDSampleFlowRoute.fullscreen,
+      environment: UseSmileIDSampleEnvironment.production,
+      jobStatus: UseSmileIDSampleFlowStatus.succeeded,
+      resultCallbackCount: 1,
+      refreshCallbackCount: 0,
+      jobId: 'job-7d2f01aa',
+      userId: 'user-3b9c',
+      sdkVersion: '12.1.1',
+    ),
+  ),
+  const UseSmileIDSampleResultCard(
+    result: UseSmileIDSampleResult(
+      activeScenario: UseSmileIDSampleScenario.normal,
+      activeTheme: UseSmileIDSampleThemeScenario.brandDefault,
+      route: UseSmileIDSampleFlowRoute.fullscreen,
+      environment: UseSmileIDSampleEnvironment.sandbox,
+      jobStatus: UseSmileIDSampleFlowStatus.failed,
+      resultCallbackCount: 1,
+      refreshCallbackCount: 1,
+      lastError: 'Network error',
+    ),
+  ),
+]);

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_flow_result_provider.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 
@@ -242,5 +243,29 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(byId(UseSmileIDSampleTestIds.jobRow(1)), findsOne);
+  });
+
+  // Debug builds show probes, which is what `flutter test` runs as.
+  testWidgets('the last run is on the page, even for a job never stored', (
+    WidgetTester tester,
+  ) async {
+    await pumpAt(
+      tester,
+      UseSmileIDSampleRoutes.verificationDetails('job_none'),
+    );
+    container
+        .read(useSmileIDSampleFlowResultProvider.notifier)
+        .record(UseSmileIDSampleFlowStatus.cancelled);
+    await tester.pumpAndSettle();
+
+    expect(byId(UseSmileIDSampleTestIds.detailsEmpty), findsOne);
+    expect(byId(UseSmileIDSampleTestIds.resultCard), findsOne);
+    expect(
+      find.descendant(
+        of: byId(UseSmileIDSampleTestIds.resultResultCount),
+        matching: find.text('1'),
+      ),
+      findsOne,
+    );
   });
 }

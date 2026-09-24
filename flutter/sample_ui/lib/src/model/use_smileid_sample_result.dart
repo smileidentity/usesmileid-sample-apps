@@ -95,8 +95,112 @@ class UseSmileIDSampleResult {
   /// The SDK version resolved at runtime, which proves which published artifact the run exercised.
   final String? sdkVersion;
 
+  /// Nothing run yet: sandbox, as every tokenless and automated run is.
+  static const UseSmileIDSampleResult idle = UseSmileIDSampleResult(
+    activeScenario: UseSmileIDSampleScenario.normal,
+    activeTheme: UseSmileIDSampleThemeScenario.brandDefault,
+    route: UseSmileIDSampleFlowRoute.fullscreen,
+    environment: UseSmileIDSampleEnvironment.sandbox,
+    jobStatus: UseSmileIDSampleFlowStatus.idle,
+    resultCallbackCount: 0,
+    refreshCallbackCount: 0,
+  );
+
   /// Whether a flow is in flight.
   bool get inFlight => jobStatus == UseSmileIDSampleFlowStatus.running;
+
+  /// A run starting; both counts reset, so "exactly once" holds per run rather than per launch.
+  UseSmileIDSampleResult started({
+    required UseSmileIDSampleScenario scenario,
+    required UseSmileIDSampleThemeScenario theme,
+    required UseSmileIDSampleFlowRoute route,
+    required UseSmileIDSampleEnvironment environment,
+  }) => UseSmileIDSampleResult(
+    activeScenario: scenario,
+    activeTheme: theme,
+    route: route,
+    environment: environment,
+    jobStatus: UseSmileIDSampleFlowStatus.running,
+    resultCallbackCount: 0,
+    refreshCallbackCount: 0,
+    sdkVersion: sdkVersion,
+  );
+
+  /// One host result callback; [userId] must be the server's, never a local placeholder.
+  UseSmileIDSampleResult recorded(
+    UseSmileIDSampleFlowStatus status, {
+    String? jobId,
+    String? userId,
+    String? error,
+  }) => _with(
+    jobStatus: status,
+    resultCallbackCount: resultCallbackCount + 1,
+    jobId: jobId,
+    userId: userId,
+    lastError: error,
+  );
+
+  /// The gate refused the run, so the SDK never mounted; not a result callback.
+  UseSmileIDSampleResult blocked(
+    String reason, {
+    required UseSmileIDSampleScenario scenario,
+    required UseSmileIDSampleThemeScenario theme,
+    required UseSmileIDSampleFlowRoute route,
+    required UseSmileIDSampleEnvironment environment,
+  }) => UseSmileIDSampleResult(
+    activeScenario: scenario,
+    activeTheme: theme,
+    route: route,
+    environment: environment,
+    jobStatus: UseSmileIDSampleFlowStatus.failed,
+    resultCallbackCount: resultCallbackCount,
+    refreshCallbackCount: refreshCallbackCount,
+    lastError: reason,
+    sdkVersion: sdkVersion,
+  );
+
+  /// One token refresh callback.
+  UseSmileIDSampleResult refreshed() =>
+      _with(refreshCallbackCount: refreshCallbackCount + 1);
+
+  /// The drawer's selection, shown until a run records the one it actually got.
+  UseSmileIDSampleResult selecting(
+    UseSmileIDSampleScenario scenario,
+    UseSmileIDSampleThemeScenario theme,
+  ) => jobStatus == UseSmileIDSampleFlowStatus.idle
+      ? UseSmileIDSampleResult(
+          activeScenario: scenario,
+          activeTheme: theme,
+          route: route,
+          environment: environment,
+          jobStatus: jobStatus,
+          resultCallbackCount: resultCallbackCount,
+          refreshCallbackCount: refreshCallbackCount,
+          sdkVersion: sdkVersion,
+        )
+      : this;
+
+  UseSmileIDSampleResult _with({
+    UseSmileIDSampleFlowStatus? jobStatus,
+    int? resultCallbackCount,
+    int? refreshCallbackCount,
+    String? jobId,
+    String? userId,
+    String? lastError,
+  }) => UseSmileIDSampleResult(
+    activeScenario: activeScenario,
+    activeTheme: activeTheme,
+    route: route,
+    environment: environment,
+    jobStatus: jobStatus ?? this.jobStatus,
+    resultCallbackCount: resultCallbackCount ?? this.resultCallbackCount,
+    refreshCallbackCount: refreshCallbackCount ?? this.refreshCallbackCount,
+    // A recorded result replaces all three; a refresh keeps them.
+    jobId: jobStatus == null ? this.jobId : jobId,
+    userId: jobStatus == null ? this.userId : userId,
+    lastError: jobStatus == null ? this.lastError : lastError,
+    sdkVersion: sdkVersion,
+  );
 
   /// What the card renders, keyed by the schema's own field names — the spec test reads these keys,
   /// so a field that never reaches the card cannot pass as present.

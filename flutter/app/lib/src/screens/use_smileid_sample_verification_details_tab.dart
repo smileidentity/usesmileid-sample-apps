@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import '../flow/use_smileid_sample_token_binding_rules.dart';
+import '../state/use_smileid_sample_flow_result_provider.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_remove_jobs.dart';
@@ -61,6 +62,9 @@ class _UseSmileIDSampleVerificationDetailsTabState
     final UseSmileIDSampleJob? found = _stored();
     return UseSmileIDSampleVerificationDetailsScreen(
       jobId: widget.jobId,
+      result: ref.watch(useSmileIDSampleShowProbesProvider)
+          ? ref.watch(useSmileIDSampleFlowResultProvider)
+          : null,
       job: found == null
           ? const UseSmileIDSampleJobLookup.none()
           : UseSmileIDSampleJobLookup.found(found),

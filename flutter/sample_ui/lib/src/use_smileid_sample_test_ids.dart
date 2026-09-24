@@ -164,6 +164,42 @@ abstract final class UseSmileIDSampleTestIds {
   /// The page's only write: it saves the details AND makes the profile active.
   static const String profileConfigSave = 'sample_profile_config_save';
 
+  /// The result card container, and the compact line that stands in for it on products.
+  static const String resultCard = 'sample_result_card';
+
+  /// The scenario the run actually got.
+  static const String resultActiveScenario = 'sample_result_active_scenario';
+
+  /// The theme scenario in effect.
+  static const String resultActiveTheme = 'sample_result_active_theme';
+
+  /// The route hosting the flow.
+  static const String resultRoute = 'sample_result_route';
+
+  /// The environment the run submitted to; the only surface that says so.
+  static const String resultEnvironment = 'sample_result_environment';
+
+  /// The SDK's job id.
+  static const String resultJobId = 'sample_result_job_id';
+
+  /// The server's user id.
+  static const String resultUserId = 'sample_result_user_id';
+
+  /// The run status, cancelled and failed kept apart.
+  static const String resultJobStatus = 'sample_result_job_status';
+
+  /// How many times the host result callback fired.
+  static const String resultResultCount = 'sample_result_result_count';
+
+  /// How many times the token refresh callback fired.
+  static const String resultRefreshCount = 'sample_result_refresh_count';
+
+  /// The last error the host saw.
+  static const String resultLastError = 'sample_result_last_error';
+
+  /// The SDK version the run exercised.
+  static const String resultSdkVersion = 'sample_result_sdk_version';
+
   /// The switch sheet, which Products owns.
   static const String profileSwitchSheet = 'sample_profile_switch_sheet';
 
@@ -320,6 +356,18 @@ abstract final class UseSmileIDSampleTestIds {
     profileConfigScreen,
     profileConfigCallbackUrl,
     profileConfigSave,
+    resultCard,
+    resultActiveScenario,
+    resultActiveTheme,
+    resultRoute,
+    resultEnvironment,
+    resultJobId,
+    resultUserId,
+    resultJobStatus,
+    resultResultCount,
+    resultRefreshCount,
+    resultLastError,
+    resultSdkVersion,
     profileSwitchSheet,
     newProfileSheet,
     newProfileName,
