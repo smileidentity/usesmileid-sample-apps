@@ -3,6 +3,8 @@ import {
   VerificationDetailsScreen,
   smileIDSampleRefreshLabel,
   useSmileIDSampleJobStore,
+  smileIDSampleResultSelecting,
+  useSmileIDSampleResultStore,
   useSmileIDSampleSessionStore,
   useSmileIDSampleTransientNotice,
 } from '@smileid/sample-ui';
@@ -10,6 +12,7 @@ import * as Clipboard from 'expo-clipboard';
 import { useLocalSearchParams } from 'expo-router';
 
 import { smileIDSampleStatusApi } from '../../../src/status/use-smile-id-sample-status-api';
+import { useLaunchArgs } from '../../../src/use-smile-id-sample-launch';
 import { useSmileIDSampleBack } from '../../../src/use-smile-id-sample-back';
 import { useSmileIDSampleNoticeStyle } from '../../../src/use-smile-id-sample-notice-inset';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -23,6 +26,10 @@ export default function VerificationDetails() {
   const remove = useSmileIDSampleJobStore((state) => state.remove);
   const [refreshing, setRefreshing] = useState(false);
   const notice = useSmileIDSampleTransientNotice();
+  const args = useLaunchArgs();
+  const result = useSmileIDSampleResultStore((state) => state.result);
+  /// Debug builds, or a release launched with `probes`, show the full card.
+  const showProbes = __DEV__ || args.probes;
   const noticeStyle = useSmileIDSampleNoticeStyle();
   const { show } = notice;
   /// The entry refresh runs once per row, so its own state write cannot re-trigger it.
@@ -62,7 +69,12 @@ export default function VerificationDetails() {
   return (
     <View style={styles.host}>
       <VerificationDetailsScreen
-        state={{ job, jobId: jobId ?? '', refreshing }}
+        state={{
+          job,
+          jobId: jobId ?? '',
+          refreshing,
+          result: showProbes ? smileIDSampleResultSelecting(result, args.scenario, args.theme) : null,
+        }}
         onBack={() => back()}
         onDelete={() => {
           if (job !== null) void remove([job.id]);

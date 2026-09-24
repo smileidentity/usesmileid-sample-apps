@@ -47,6 +47,7 @@ export type UseSmileIDSampleFlowJourneyStep = (typeof smileIDSampleFlowJourneySt
 export const smileIDSampleApplying = (
   builder: UseSmileIDFlowBuilder,
   snapshot: UseSmileIDSampleFlowLaunchSnapshot,
+  onTokenRefreshed?: () => void,
 ): void => {
   const scanned = smileIDSampleSnapshotSession(snapshot);
   // Omitted, never blanked: a blank silences the SDK's per-field errors.
@@ -80,12 +81,14 @@ export const smileIDSampleApplying = (
           nowMillis: Date.now(),
         });
       // Nothing here may mint a replacement, so a scanned token's auth failure surfaces.
-      config.onTokenExpired = async () =>
-        scanned !== null
+      config.onTokenExpired = async () => {
+        onTokenRefreshed?.();
+        return scanned !== null
           ? scanned.token
           : snapshot.scenario === 'badRefresh'
             ? smileIDSampleMalformedToken()
             : smileIDSampleFlowToken({ expired: false, nowMillis: Date.now() });
+      };
       // Debug only: a release build must never log traffic.
       config.logging((logging) => {
         logging.enabled = __DEV__;

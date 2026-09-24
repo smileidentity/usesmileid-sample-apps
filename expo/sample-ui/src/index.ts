@@ -271,7 +271,17 @@ export {
   type UseSmileIDSampleSimulatedBindings,
   type UseSmileIDSampleSimulatedSpan,
 } from './model/use-smile-id-sample-simulated-scan';
-export { smileIDSampleEnvironments, type UseSmileIDSampleEnvironment } from './model/use-smile-id-sample-result';
+export {
+  smileIDSampleEnvironments,
+  smileIDSampleResultDefaults,
+  smileIDSampleResultSelecting,
+  type UseSmileIDSampleEnvironment,
+  type UseSmileIDSampleFlowStatus,
+  type UseSmileIDSampleResult,
+  type UseSmileIDSampleRunContext,
+} from './model/use-smile-id-sample-result';
+export { useSmileIDSampleResultStore } from './state/use-smile-id-sample-result-store';
+export { UseSmileIDSampleResultCard, UseSmileIDSampleResultLine } from './components/use-smile-id-sample-result-card';
 export {
   smileIDSampleApiUrlHost,
   smileIDSampleEnvironmentBaseUrl,

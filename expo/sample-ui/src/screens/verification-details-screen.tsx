@@ -2,6 +2,8 @@ import { RefreshControl, ScrollView, StyleSheet, Text, View, type StyleProp, typ
 
 import { UseSmileIDSampleDataFieldRow } from '../components/use-smile-id-sample-data-field-row';
 import { UseSmileIDSampleEmptyState } from '../components/use-smile-id-sample-empty-state';
+import { UseSmileIDSampleResultCard } from '../components/use-smile-id-sample-result-card';
+import type { UseSmileIDSampleResult } from '../model/use-smile-id-sample-result';
 import { UseSmileIDSampleIcon } from '../components/use-smile-id-sample-icon';
 import { UseSmileIDSampleSectionSurface } from '../components/use-smile-id-sample-section-surface';
 import { UseSmileIDSampleStatusBadge } from '../components/use-smile-id-sample-status-badge';
@@ -29,6 +31,8 @@ export type UseSmileIDSampleVerificationDetailsState = {
   /// The id the route asked for, which is the whole diagnostic when there is no row.
   readonly jobId: string;
   readonly refreshing: boolean;
+  /// The last run's result card; absent hides it, which is the host's probes decision.
+  readonly result?: UseSmileIDSampleResult | null;
 };
 
 type Props = {
@@ -150,6 +154,10 @@ export const VerificationDetailsScreen = ({
             </UseSmileIDSampleSectionSurface>
           </>
         )}
+        {/* Rendered even with no job: a flow that failed before submission has nothing else to show. */}
+        {state.result != null ? (
+          <UseSmileIDSampleResultCard result={state.result} style={{ marginTop: theme.dimens.spacing.sm }} />
+        ) : null}
       </ScrollView>
     </View>
   );

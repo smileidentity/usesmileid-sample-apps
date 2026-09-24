@@ -5432,6 +5432,6576 @@ exports[`ProfileRow light summary 1`] = `
 </View>
 `;
 
+exports[`ResultCard dark cancelled 1`] = `
+<View
+  style={
+    [
+      {
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#2d3748",
+        "borderRadius": 16,
+        "paddingVertical": 12,
+      },
+      undefined,
+    ]
+  }
+  testID="sample_result_card"
+>
+  <View
+    accessibilityLabel="Collapse SDK result"
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "minHeight": 40,
+          "paddingHorizontal": 16,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "flex": 1,
+          },
+          [
+            {
+              "fontFamily": "DMSans-Bold",
+              "fontSize": 11,
+              "letterSpacing": 0,
+              "lineHeight": 16,
+              "marginBottom": -0.8389999999999995,
+              "marginTop": -0.8389999999999995,
+            },
+            {
+              "color": "#848282",
+              "letterSpacing": 0.88,
+            },
+          ],
+        ]
+      }
+    >
+      SDK RESULT
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#4d88ff",
+          },
+        ]
+      }
+    >
+      Hide
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Scenario
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_active_scenario"
+    >
+      normal
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Theme
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_active_theme"
+    >
+      brandDefault
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Route
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_route"
+    >
+      fullscreen
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Environment
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_environment"
+    >
+      sandbox
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Job id
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_job_id"
+    >
+      —
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      User id
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_user_id"
+    >
+      —
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Job status
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_job_status"
+    >
+      cancelled
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Result callbacks
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_result_count"
+    >
+      1
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Refresh callbacks
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_refresh_count"
+    >
+      0
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Last error
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_last_error"
+    >
+      —
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      SDK version
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_sdk_version"
+    >
+      —
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`ResultCard dark failed 1`] = `
+<View
+  style={
+    [
+      {
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#2d3748",
+        "borderRadius": 16,
+        "paddingVertical": 12,
+      },
+      undefined,
+    ]
+  }
+  testID="sample_result_card"
+>
+  <View
+    accessibilityLabel="Collapse SDK result"
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "minHeight": 40,
+          "paddingHorizontal": 16,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "flex": 1,
+          },
+          [
+            {
+              "fontFamily": "DMSans-Bold",
+              "fontSize": 11,
+              "letterSpacing": 0,
+              "lineHeight": 16,
+              "marginBottom": -0.8389999999999995,
+              "marginTop": -0.8389999999999995,
+            },
+            {
+              "color": "#848282",
+              "letterSpacing": 0.88,
+            },
+          ],
+        ]
+      }
+    >
+      SDK RESULT
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#4d88ff",
+          },
+        ]
+      }
+    >
+      Hide
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Scenario
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_active_scenario"
+    >
+      badRefresh
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Theme
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_active_theme"
+    >
+      brandDefault
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Route
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_route"
+    >
+      fullscreen
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Environment
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_environment"
+    >
+      sandbox
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Job id
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_job_id"
+    >
+      —
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      User id
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_user_id"
+    >
+      —
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Job status
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_job_status"
+    >
+      failed
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Result callbacks
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_result_count"
+    >
+      1
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Refresh callbacks
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_refresh_count"
+    >
+      2
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Last error
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_last_error"
+    >
+      2213: authentication failed — refresh returned an expired token
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      SDK version
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_sdk_version"
+    >
+      —
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`ResultCard dark idle 1`] = `
+<View
+  style={
+    [
+      {
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#2d3748",
+        "borderRadius": 16,
+        "paddingVertical": 12,
+      },
+      undefined,
+    ]
+  }
+  testID="sample_result_card"
+>
+  <View
+    accessibilityLabel="Collapse SDK result"
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "minHeight": 40,
+          "paddingHorizontal": 16,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "flex": 1,
+          },
+          [
+            {
+              "fontFamily": "DMSans-Bold",
+              "fontSize": 11,
+              "letterSpacing": 0,
+              "lineHeight": 16,
+              "marginBottom": -0.8389999999999995,
+              "marginTop": -0.8389999999999995,
+            },
+            {
+              "color": "#848282",
+              "letterSpacing": 0.88,
+            },
+          ],
+        ]
+      }
+    >
+      SDK RESULT
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#4d88ff",
+          },
+        ]
+      }
+    >
+      Hide
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Scenario
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_active_scenario"
+    >
+      normal
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Theme
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_active_theme"
+    >
+      brandDefault
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Route
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_route"
+    >
+      fullscreen
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Environment
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_environment"
+    >
+      sandbox
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Job id
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_job_id"
+    >
+      —
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      User id
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_user_id"
+    >
+      —
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Job status
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_job_status"
+    >
+      idle
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Result callbacks
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_result_count"
+    >
+      0
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Refresh callbacks
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_refresh_count"
+    >
+      0
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Last error
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_last_error"
+    >
+      —
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      SDK version
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_sdk_version"
+    >
+      —
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`ResultCard dark running 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "flexDirection": "row",
+      },
+      {
+        "backgroundColor": "#2d3748",
+        "borderRadius": 16,
+        "columnGap": 8,
+        "minHeight": 40,
+        "paddingHorizontal": 16,
+        "paddingVertical": 8,
+        "rowGap": 4,
+      },
+      undefined,
+    ]
+  }
+  testID="sample_result_card"
+>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 11,
+          "letterSpacing": 0,
+          "lineHeight": 16,
+          "marginBottom": -0.8389999999999995,
+          "marginTop": -0.8389999999999995,
+        },
+        {
+          "color": "#848282",
+          "letterSpacing": 0.88,
+        },
+      ]
+    }
+  >
+    SDK
+  </Text>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 12,
+          "letterSpacing": 0,
+          "lineHeight": 16,
+          "marginBottom": -0.18799999999999972,
+          "marginTop": -0.18799999999999972,
+        },
+        {
+          "color": "#c2c5cb",
+        },
+        {
+          "flex": 1,
+        },
+        null,
+      ]
+    }
+    testID="sample_result_job_status"
+  >
+    running
+  </Text>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 12,
+          "letterSpacing": 0,
+          "lineHeight": 16,
+          "marginBottom": -0.18799999999999972,
+          "marginTop": -0.18799999999999972,
+        },
+        {
+          "color": "#c2c5cb",
+        },
+        null,
+        null,
+      ]
+    }
+    testID="sample_result_active_scenario"
+  >
+    normal
+  </Text>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 12,
+          "letterSpacing": 0,
+          "lineHeight": 16,
+          "marginBottom": -0.18799999999999972,
+          "marginTop": -0.18799999999999972,
+        },
+        {
+          "color": "#c2c5cb",
+        },
+        null,
+        null,
+      ]
+    }
+    testID="sample_result_route"
+  >
+    shell
+  </Text>
+</View>
+`;
+
+exports[`ResultCard dark succeeded 1`] = `
+<View
+  style={
+    [
+      {
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#2d3748",
+        "borderRadius": 16,
+        "paddingVertical": 12,
+      },
+      undefined,
+    ]
+  }
+  testID="sample_result_card"
+>
+  <View
+    accessibilityLabel="Collapse SDK result"
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "minHeight": 40,
+          "paddingHorizontal": 16,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "flex": 1,
+          },
+          [
+            {
+              "fontFamily": "DMSans-Bold",
+              "fontSize": 11,
+              "letterSpacing": 0,
+              "lineHeight": 16,
+              "marginBottom": -0.8389999999999995,
+              "marginTop": -0.8389999999999995,
+            },
+            {
+              "color": "#848282",
+              "letterSpacing": 0.88,
+            },
+          ],
+        ]
+      }
+    >
+      SDK RESULT
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#4d88ff",
+          },
+        ]
+      }
+    >
+      Hide
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Scenario
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_active_scenario"
+    >
+      normal
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Theme
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_active_theme"
+    >
+      brandDefault
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Route
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_route"
+    >
+      fullscreen
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Environment
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_environment"
+    >
+      sandbox
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Job id
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_job_id"
+    >
+      job_9f3a2c7104e8
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      User id
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_user_id"
+    >
+      user_5b1ec4d2
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Job status
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_job_status"
+    >
+      succeeded
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Result callbacks
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_result_count"
+    >
+      1
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Refresh callbacks
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_refresh_count"
+    >
+      0
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Last error
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_last_error"
+    >
+      —
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      SDK version
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#c2c5cb",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_sdk_version"
+    >
+      —
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`ResultCard light cancelled 1`] = `
+<View
+  style={
+    [
+      {
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#f9f0e7",
+        "borderRadius": 16,
+        "paddingVertical": 12,
+      },
+      undefined,
+    ]
+  }
+  testID="sample_result_card"
+>
+  <View
+    accessibilityLabel="Collapse SDK result"
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "minHeight": 40,
+          "paddingHorizontal": 16,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "flex": 1,
+          },
+          [
+            {
+              "fontFamily": "DMSans-Bold",
+              "fontSize": 11,
+              "letterSpacing": 0,
+              "lineHeight": 16,
+              "marginBottom": -0.8389999999999995,
+              "marginTop": -0.8389999999999995,
+            },
+            {
+              "color": "#848282",
+              "letterSpacing": 0.88,
+            },
+          ],
+        ]
+      }
+    >
+      SDK RESULT
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#151f72",
+          },
+        ]
+      }
+    >
+      Hide
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Scenario
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_active_scenario"
+    >
+      normal
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Theme
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_active_theme"
+    >
+      brandDefault
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Route
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_route"
+    >
+      fullscreen
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Environment
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_environment"
+    >
+      sandbox
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Job id
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_job_id"
+    >
+      —
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      User id
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_user_id"
+    >
+      —
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Job status
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_job_status"
+    >
+      cancelled
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Result callbacks
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_result_count"
+    >
+      1
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Refresh callbacks
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_refresh_count"
+    >
+      0
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Last error
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_last_error"
+    >
+      —
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      SDK version
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_sdk_version"
+    >
+      —
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`ResultCard light failed 1`] = `
+<View
+  style={
+    [
+      {
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#f9f0e7",
+        "borderRadius": 16,
+        "paddingVertical": 12,
+      },
+      undefined,
+    ]
+  }
+  testID="sample_result_card"
+>
+  <View
+    accessibilityLabel="Collapse SDK result"
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "minHeight": 40,
+          "paddingHorizontal": 16,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "flex": 1,
+          },
+          [
+            {
+              "fontFamily": "DMSans-Bold",
+              "fontSize": 11,
+              "letterSpacing": 0,
+              "lineHeight": 16,
+              "marginBottom": -0.8389999999999995,
+              "marginTop": -0.8389999999999995,
+            },
+            {
+              "color": "#848282",
+              "letterSpacing": 0.88,
+            },
+          ],
+        ]
+      }
+    >
+      SDK RESULT
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#151f72",
+          },
+        ]
+      }
+    >
+      Hide
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Scenario
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_active_scenario"
+    >
+      badRefresh
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Theme
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_active_theme"
+    >
+      brandDefault
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Route
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_route"
+    >
+      fullscreen
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Environment
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_environment"
+    >
+      sandbox
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Job id
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_job_id"
+    >
+      —
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      User id
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_user_id"
+    >
+      —
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Job status
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_job_status"
+    >
+      failed
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Result callbacks
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_result_count"
+    >
+      1
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Refresh callbacks
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_refresh_count"
+    >
+      2
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Last error
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_last_error"
+    >
+      2213: authentication failed — refresh returned an expired token
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      SDK version
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_sdk_version"
+    >
+      —
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`ResultCard light idle 1`] = `
+<View
+  style={
+    [
+      {
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#f9f0e7",
+        "borderRadius": 16,
+        "paddingVertical": 12,
+      },
+      undefined,
+    ]
+  }
+  testID="sample_result_card"
+>
+  <View
+    accessibilityLabel="Collapse SDK result"
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "minHeight": 40,
+          "paddingHorizontal": 16,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "flex": 1,
+          },
+          [
+            {
+              "fontFamily": "DMSans-Bold",
+              "fontSize": 11,
+              "letterSpacing": 0,
+              "lineHeight": 16,
+              "marginBottom": -0.8389999999999995,
+              "marginTop": -0.8389999999999995,
+            },
+            {
+              "color": "#848282",
+              "letterSpacing": 0.88,
+            },
+          ],
+        ]
+      }
+    >
+      SDK RESULT
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#151f72",
+          },
+        ]
+      }
+    >
+      Hide
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Scenario
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_active_scenario"
+    >
+      normal
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Theme
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_active_theme"
+    >
+      brandDefault
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Route
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_route"
+    >
+      fullscreen
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Environment
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_environment"
+    >
+      sandbox
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Job id
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_job_id"
+    >
+      —
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      User id
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_user_id"
+    >
+      —
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Job status
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_job_status"
+    >
+      idle
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Result callbacks
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_result_count"
+    >
+      0
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Refresh callbacks
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_refresh_count"
+    >
+      0
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Last error
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_last_error"
+    >
+      —
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      SDK version
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_sdk_version"
+    >
+      —
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`ResultCard light running 1`] = `
+<View
+  style={
+    [
+      {
+        "alignItems": "center",
+        "flexDirection": "row",
+      },
+      {
+        "backgroundColor": "#f9f0e7",
+        "borderRadius": 16,
+        "columnGap": 8,
+        "minHeight": 40,
+        "paddingHorizontal": 16,
+        "paddingVertical": 8,
+        "rowGap": 4,
+      },
+      undefined,
+    ]
+  }
+  testID="sample_result_card"
+>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 11,
+          "letterSpacing": 0,
+          "lineHeight": 16,
+          "marginBottom": -0.8389999999999995,
+          "marginTop": -0.8389999999999995,
+        },
+        {
+          "color": "#848282",
+          "letterSpacing": 0.88,
+        },
+      ]
+    }
+  >
+    SDK
+  </Text>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 12,
+          "letterSpacing": 0,
+          "lineHeight": 16,
+          "marginBottom": -0.18799999999999972,
+          "marginTop": -0.18799999999999972,
+        },
+        {
+          "color": "#5e646e",
+        },
+        {
+          "flex": 1,
+        },
+        null,
+      ]
+    }
+    testID="sample_result_job_status"
+  >
+    running
+  </Text>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 12,
+          "letterSpacing": 0,
+          "lineHeight": 16,
+          "marginBottom": -0.18799999999999972,
+          "marginTop": -0.18799999999999972,
+        },
+        {
+          "color": "#5e646e",
+        },
+        null,
+        null,
+      ]
+    }
+    testID="sample_result_active_scenario"
+  >
+    normal
+  </Text>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Medium",
+          "fontSize": 12,
+          "letterSpacing": 0,
+          "lineHeight": 16,
+          "marginBottom": -0.18799999999999972,
+          "marginTop": -0.18799999999999972,
+        },
+        {
+          "color": "#5e646e",
+        },
+        null,
+        null,
+      ]
+    }
+    testID="sample_result_route"
+  >
+    shell
+  </Text>
+</View>
+`;
+
+exports[`ResultCard light succeeded 1`] = `
+<View
+  style={
+    [
+      {
+        "width": "100%",
+      },
+      {
+        "backgroundColor": "#f9f0e7",
+        "borderRadius": 16,
+        "paddingVertical": 12,
+      },
+      undefined,
+    ]
+  }
+  testID="sample_result_card"
+>
+  <View
+    accessibilityLabel="Collapse SDK result"
+    accessibilityRole="button"
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "minHeight": 40,
+          "paddingHorizontal": 16,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "flex": 1,
+          },
+          [
+            {
+              "fontFamily": "DMSans-Bold",
+              "fontSize": 11,
+              "letterSpacing": 0,
+              "lineHeight": 16,
+              "marginBottom": -0.8389999999999995,
+              "marginTop": -0.8389999999999995,
+            },
+            {
+              "color": "#848282",
+              "letterSpacing": 0.88,
+            },
+          ],
+        ]
+      }
+    >
+      SDK RESULT
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#151f72",
+          },
+        ]
+      }
+    >
+      Hide
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Scenario
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_active_scenario"
+    >
+      normal
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Theme
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_active_theme"
+    >
+      brandDefault
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Route
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_route"
+    >
+      fullscreen
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Environment
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_environment"
+    >
+      sandbox
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Job id
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_job_id"
+    >
+      job_9f3a2c7104e8
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      User id
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_user_id"
+    >
+      user_5b1ec4d2
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Job status
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_job_status"
+    >
+      succeeded
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Result callbacks
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_result_count"
+    >
+      1
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Refresh callbacks
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_refresh_count"
+    >
+      0
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      Last error
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_last_error"
+    >
+      —
+    </Text>
+  </View>
+  <View
+    style={
+      [
+        {
+          "alignItems": "baseline",
+          "flexDirection": "row",
+        },
+        {
+          "columnGap": 8,
+          "paddingHorizontal": 16,
+          "paddingVertical": 4,
+          "rowGap": 4,
+        },
+      ]
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#848282",
+          },
+        ]
+      }
+    >
+      SDK version
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "fontFamily": "DMSans-Medium",
+            "fontSize": 12,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -0.18799999999999972,
+            "marginTop": -0.18799999999999972,
+          },
+          {
+            "color": "#5e646e",
+          },
+          {
+            "flex": 1,
+          },
+          {
+            "textAlign": "right",
+          },
+        ]
+      }
+      testID="sample_result_sdk_version"
+    >
+      —
+    </Text>
+  </View>
+</View>
+`;
+
 exports[`SectionSurface dark labelled 1`] = `
 <View
   style={

@@ -7,7 +7,9 @@ import { UseSmileIDSampleProductCard } from '../components/use-smile-id-sample-p
 import { UseSmileIDSampleProductGrid } from '../components/use-smile-id-sample-product-grid';
 import { UseSmileIDSampleSectionHeader } from '../components/use-smile-id-sample-section-header';
 import { UseSmileIDSampleSessionCard } from '../components/use-smile-id-sample-session-card';
+import { UseSmileIDSampleResultLine } from '../components/use-smile-id-sample-result-card';
 import { UseSmileIDSampleSessionEndedBanner } from '../components/use-smile-id-sample-session-ended-banner';
+import type { UseSmileIDSampleResult } from '../model/use-smile-id-sample-result';
 import {
   UseSmileIDSampleProductSection,
   smileIDSampleProductHue,
@@ -44,6 +46,8 @@ export type UseSmileIDSampleProductsState = {
   readonly sessionId?: string | null;
   readonly sessionRemaining?: string | null;
   readonly sessionEnded?: boolean;
+  /// The last run's result; its compact line shows only while that run is in flight.
+  readonly result?: UseSmileIDSampleResult | null;
 };
 
 type Props = {
@@ -115,6 +119,10 @@ export const ProductsScreen = ({
           {PAGE_SUBTITLE}
         </Text>
       </View>
+
+      {state.result?.jobStatus === 'running' ? (
+        <UseSmileIDSampleResultLine result={state.result} style={{ marginHorizontal: theme.dimens.spacing.md }} />
+      ) : null}
 
       {state.sessionEnded === true ? (
         <UseSmileIDSampleSessionEndedBanner

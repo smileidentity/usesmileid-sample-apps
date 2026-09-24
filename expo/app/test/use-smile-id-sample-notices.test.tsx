@@ -6,6 +6,7 @@ import {
   smileIDSampleRefreshLabel,
   useSmileIDSampleJobStore,
   useSmileIDSampleProfileStore,
+  useSmileIDSampleResultStore,
 } from '@smileid/sample-ui';
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import * as Clipboard from 'expo-clipboard';
@@ -92,6 +93,15 @@ describe('a notice on a screen with no nav bar', () => {
       fireEvent.press(screen.getByTestId('sample_detail_copy_jobId'));
     });
     expect(Clipboard.setStringAsync).toHaveBeenCalledWith('job_notice');
+  });
+
+  it('shows the last run on verification details, even for a job never stored', async () => {
+    await useSmileIDSampleJobStore.getState().load();
+    useSmileIDSampleResultStore.getState().reset();
+    useSmileIDSampleResultStore.getState().record('cancelled');
+    const screen = await inTheme(<VerificationDetails />);
+    expect(screen.getByTestId('sample_details_empty')).toBeTruthy();
+    expect(screen.getByTestId('sample_result_result_count').props.children).toBe('1');
   });
 
   it('sits past the system bar on the profiles list too', async () => {
