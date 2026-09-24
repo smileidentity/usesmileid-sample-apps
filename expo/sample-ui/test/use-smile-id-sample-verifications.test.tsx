@@ -1,4 +1,5 @@
-import { fireEvent } from '@testing-library/react-native';
+import { act, fireEvent } from '@testing-library/react-native';
+import { useState } from 'react';
 
 import { smileIDSampleJobFixtures } from '../src/data/use-smile-id-sample-job-fixtures';
 import {
@@ -167,10 +168,19 @@ describe('removing the last row of the active filter', () => {
   it('falls back to All rather than leaving a blank screen under a chip reading 0', async () => {
     const blocked = fixtures.filter((job) => job.status === UseSmileIDSampleStatus.Blocked);
     const removed: string[] = [];
-    const rendered = await renderInTheme(
-      list({ onRemove: (ids) => removed.push(...ids) }),
-      false,
-    );
+    // The rows really go, as the store removes them: with the rows kept, Blocked still shows them
+    // and the fallback could be deleted without this test noticing.
+    const Host = () => {
+      const [jobs, setJobs] = useState(fixtures);
+      return list({
+        state: { jobs, nowMillis: NOW },
+        onRemove: (ids) => {
+          removed.push(...ids);
+          setJobs((rows) => rows.filter((job) => !ids.includes(job.id)));
+        },
+      });
+    };
+    const rendered = await renderInTheme(<Host />, false);
     await fireEvent.press(rendered.getByTestId('sample_filter_chip_blocked'));
     await fireEvent.press(rendered.getByTestId(UseSmileIDSampleTestIds.SELECT_TOGGLE));
     // Select both blocked rows, then hide them: the filter has nothing left to show.
@@ -178,7 +188,9 @@ describe('removing the last row of the active filter', () => {
       const index = fixtures.indexOf(job);
       await fireEvent.press(rendered.getByTestId(`sample_selection_checkbox_${index}`));
     }
-    await fireEvent.press(rendered.getByTestId(UseSmileIDSampleTestIds.SELECTION_REMOVE));
+    await act(async () => {
+      fireEvent.press(rendered.getByTestId(UseSmileIDSampleTestIds.SELECTION_REMOVE));
+    });
     expect(removed.sort()).toEqual(blocked.map((job) => job.id).sort());
     // Back on All, so the rows that remain are visible rather than hidden behind an empty filter.
     expect(rendered.queryByTestId(UseSmileIDSampleTestIds.VERIFICATIONS_EMPTY)).toBeNull();
