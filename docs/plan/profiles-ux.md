@@ -1,6 +1,6 @@
 # Profiles: one source for "who is running this job"
 
-**Status:** approved 2026-09-25, building on `fix/ports-device-findings`. All four apps. These screens
+**Status:** DONE 2026-09-25 on all four apps, and tested by the owner on devices. These screens
 aren't in Figma; the design is here.
 
 **The report.** "I can't save the active profile; when I create a new profile and select it, it
