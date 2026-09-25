@@ -11,6 +11,8 @@ signed with the openssl every Mac and runner already has, so nothing is installe
     scripts/asc_publish.py status               # where the version is in review
     scripts/asc_publish.py next-build           # read-only: one above the highest build number uploaded
     scripts/asc_publish.py wait --build 138     # read-only: block until that build is VALID
+    scripts/asc_publish.py dev-certs            # read-only: the team's Apple Development certificate ids
+    scripts/asc_publish.py revoke-new-dev-certs --before <file>   # revoke the ones this run's signing minted
 
 Environment: APP_STORE_CONNECT_KEY_ID, APP_STORE_CONNECT_ISSUER_ID, and the .p8 at
 ~/.appstoreconnect/private_keys/AuthKey_<id>.p8 (or APP_STORE_CONNECT_KEY_PATH). The review
@@ -274,6 +276,28 @@ def wait(asc: ASC, args):
         time.sleep(args.interval)
 
 
+def dev_certificates(asc: ASC) -> list[dict]:
+    return asc.get("certificates", **{"filter[certificateType]": "DEVELOPMENT", "fields[certificates]": "certificateType,displayName", "limit": "200"})["data"]
+
+
+def dev_certs(asc: ASC, args):
+    for c in dev_certificates(asc):
+        print(c["id"])
+
+
+def revoke_new_dev_certs(asc: ASC, args):
+    """Revokes only certificates that were absent before the run and that the API key created, never a person's."""
+    before = set(Path(args.before).read_text().split())
+    minted = [c for c in dev_certificates(asc) if c["id"] not in before and c["attributes"].get("displayName") == "Created via API"]
+    if not minted:
+        print("no development certificate was minted by this run")
+    for c in minted:
+        code, out = asc.call("DELETE", f"certificates/{c['id']}")
+        print(f"  {'ok ' if code == 204 else 'ERR'} revoke development certificate {c['id']} ({code}{'' if code == 204 else ': ' + errors(out)})")
+        if code != 204:
+            sys.exit("a certificate this run minted could not be revoked; revoke it in the Developer portal")
+
+
 # ---- apply ---------------------------------------------------------------------------------------------
 
 def apply(asc: ASC, args):
@@ -490,9 +514,12 @@ def main(argv=None) -> int:
     sub.add_parser("status")
     sub.add_parser("next-build")
     p = sub.add_parser("wait"); p.add_argument("--build", required=True); p.add_argument("--timeout", type=int, default=1800); p.add_argument("--interval", type=int, default=30)
+    sub.add_parser("dev-certs")
+    p = sub.add_parser("revoke-new-dev-certs"); p.add_argument("--before", required=True)
     args = parser.parse_args(argv)
     asc = ASC()
-    {"plan": plan, "apply": apply, "submit": submit, "status": lambda a, _: status(a), "next-build": next_build, "wait": wait}[args.command](asc, args)
+    {"plan": plan, "apply": apply, "submit": submit, "status": lambda a, _: status(a), "next-build": next_build, "wait": wait,
+     "dev-certs": dev_certs, "revoke-new-dev-certs": revoke_new_dev_certs}[args.command](asc, args)
     return 0
 
 

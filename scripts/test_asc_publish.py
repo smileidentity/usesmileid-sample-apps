@@ -148,5 +148,42 @@ class BuildNumberTests(unittest.TestCase):
             printed(asc_module.wait, PagedBuilds([[]], states=["INVALID"]), build="138", timeout=60, interval=0)
 
 
+class Certificates(asc_module.ASC):
+    """Canned development certificates; deletes are recorded."""
+
+    def __init__(self, certs: list[tuple[str, str]], refuse: bool = False):
+        self.certs = certs
+        self.refuse = refuse
+        self.deleted: list[str] = []
+
+    def call(self, method, path, body=None, raw=None, headers=None, **query):
+        if method == "DELETE":
+            self.deleted.append(path.rsplit("/", 1)[1])
+            return (409, {"errors": [{"title": "refused", "detail": "by the fake"}]}) if self.refuse else (204, {})
+        return 200, {"data": [{"id": i, "attributes": {"certificateType": "DEVELOPMENT", "displayName": n}} for i, n in self.certs]}
+
+
+class CertificateTests(unittest.TestCase):
+    def revoke(self, asc, before: list[str]):
+        import tempfile
+        with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+            f.write("\n".join(before))
+        printed(asc_module.revoke_new_dev_certs, asc, before=f.name)
+
+    def test_revokes_only_what_the_run_minted(self):
+        asc = Certificates([("old", "Created via API"), ("new", "Created via API"), ("person", "Juma Allan")])
+        self.revoke(asc, ["old", "person"])
+        self.assertEqual(asc.deleted, ["new"])
+
+    def test_never_revokes_a_persons_certificate_even_if_new(self):
+        asc = Certificates([("person", "Juma Allan")])
+        self.revoke(asc, [])
+        self.assertEqual(asc.deleted, [])
+
+    def test_a_refused_revoke_fails_the_run(self):
+        with self.assertRaises(SystemExit):
+            self.revoke(Certificates([("new", "Created via API")], refuse=True), [])
+
+
 if __name__ == "__main__":
     unittest.main()

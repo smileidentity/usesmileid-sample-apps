@@ -275,6 +275,19 @@ argument that put `-PREQUIRE_UPLOAD_SIGNING` in Android's Gradle file rather tha
   across every version (`asc_publish.py next-build`), so a TestFlight build and a store build never
   collide. An override below that is refused unless it is already VALID, which is how a re-run skips
   the upload. The commit count stopped working once a build was uploaded from outside a lane.
+- **Each lane revokes the development certificate its signing minted** (ruled 2026-09-25). A runner
+  holds no signing identity, so Xcode's archive step creates an Apple Development certificate through
+  the API key on every run; export then signs for the store with Apple's cloud-managed distribution
+  certificate. The lane notes the team's development certificates before signing and, in an `always()`
+  step, revokes only those that are new and "Created via API", never a person's.
+  - Nothing accumulates on the team, so the lane can never reach Apple's certificate limit.
+  - The build is unaffected: by the time the development certificate goes, the IPA is store-signed.
+  - No certificate or `.p12` is stored as a secret, so there is nothing to rotate or leak.
+  - The lane stays on GitHub Actions and `ios/verify.sh archive`, so the listing gate and the
+    `dry_run` proof still apply; Xcode Cloud, which v11 uses, would need owner setup and could not be
+    proved before a merge.
+  - The alternatives were a stored development certificate imported on the runner (a secret to keep
+    and renew) and letting certificates pile up (harmless only until the limit).
 - **The App Store lane releases end to end** (2026-09-25): upload, `asc_publish.py wait`, `apply`,
   `submit`. Its `dry_run` input, on by default, signs and exports without uploading, which is how a
   change to the lane is proved before it is merged.

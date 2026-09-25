@@ -161,7 +161,8 @@ processing, attaches the build to a new version with the copy in `ios/store/`, a
 review. It starts as a dry run, which signs and exports the IPA and reads App Store Connect but
 uploads nothing; untick **dry_run** to release. A real run needs the `ASC_REVIEW_NAME` and
 `ASC_REVIEW_PHONE` repository secrets (`ASC_REVIEW_EMAIL` is optional). Releasing an approved version
-by hand stays a Console action unless **release** is `after-approval`.
+by hand stays a Console action unless **release** is `after-approval`. Both lanes revoke the development certificate their
+signing creates, at the end of the run, so the team's certificate list stays as it was.
 
 Both lanes are `workflow_dispatch` only. Neither runs on a merge, which is deliberate while the first
 upload is an owner action — adding `push` to the TestFlight lane later needs a path filter, or a

@@ -66,6 +66,14 @@ jobs:
           APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
 
+      # Signing on a runner with no identity makes Xcode mint an Apple Development certificate; note what exists first.
+      - name: Note the team's development certificates
+        id: certs
+        run: python3 scripts/asc_publish.py dev-certs > "$RUNNER_TEMP/dev-certs-before.txt"
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+
       # The key material never reaches xcodebuild's argv; the team and key ids do, and are masked
       # in the log and gone with the runner.
       - name: Archive and upload
@@ -74,6 +82,13 @@ jobs:
           DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
           BUILD_NUMBER: ${{ steps.version.outputs.build }}
           EXPORT_DESTINATION: upload
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+
+      - name: Revoke the development certificate this run minted
+        if: always() && steps.certs.outcome == 'success'
+        run: python3 scripts/asc_publish.py revoke-new-dev-certs --before "$RUNNER_TEMP/dev-certs-before.txt"
+        env:
           APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
 
