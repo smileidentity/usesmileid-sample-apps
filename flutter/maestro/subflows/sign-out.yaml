@@ -26,6 +26,11 @@ appId: ${APP_ID}
     direction: DOWN
     visibilityPercentage: 80
     timeout: 45000
+# To the end of the list, whose padding clears the floating nav bar: stopped at first sight, the row can
+# sit under the bar, which then takes the tap.
+- scroll
+- waitForAnimationToEnd:
+    timeout: 3000
 - tapOn:
     id: "sample_sign_out"
 - tapOn:
