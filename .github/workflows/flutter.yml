@@ -22,7 +22,8 @@ jobs:
   verify:
     # macOS, not ubuntu: a Flutter golden is host-rasterised, so a baseline recorded on a Mac and
     # verified on Linux reds the lane for reasons that have nothing to do with the UI. The same
-    # runner also builds the iOS release, which verify.sh skips loudly anywhere else.
+    # runner also builds the iOS release, which verify.sh skips loudly anywhere else. The Android
+    # release APKs are the one phase that needs neither, so android-release builds them on Linux.
     runs-on: blacksmith-6vcpu-macos-26
     timeout-minutes: 45
     steps:
@@ -64,7 +65,7 @@ jobs:
         env:
           SMILE_DESIGN_SYSTEM: ${{ steps.design-system.outcome == 'success' && format('{0}/.design-system/smile-design-system', github.workspace) || '' }}
           SMILE_TOKENS_OPTIONAL: ${{ steps.design-system.outcome == 'skipped' && '1' || '' }}
-        run: flutter/verify.sh
+        run: flutter/verify.sh checks
 
       # A golden failure writes the actual and the diff next to the baseline; this is what shows why.
       - name: Upload golden failures
@@ -90,3 +91,26 @@ jobs:
           path: flutter/sample_ui/test/goldens/**
           if-no-files-found: ignore
           retention-days: 7
+
+  android-release:
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # Main writes the Gradle cache; branch runs read it.
+      - uses: gradle/actions/setup-gradle@v6
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.44.0
+          channel: stable
+          cache: true
+
+      - name: Build the release APKs
+        run: flutter/verify.sh android
