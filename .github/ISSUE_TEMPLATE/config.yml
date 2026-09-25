@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/smileidentity/usesmileid-sample-apps/security/advisories/new
+    about: Report privately. Never in a public issue.
+  - name: Integration question
+    url: https://docs.smileidentity.com
+    about: How to integrate a Smile ID SDK in your own app.

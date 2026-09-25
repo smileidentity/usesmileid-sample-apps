@@ -4,8 +4,6 @@ version: 2
 updates:
   - package-ecosystem: gradle
     directory: /android
-    assignees:
-      - wangerekaharun
     schedule:
       interval: weekly
       day: monday
@@ -41,8 +39,6 @@ updates:
   - package-ecosystem: swift
     # The only manifest: the app is generated from ios/App/project.yml and depends on this package by path
     directory: /ios/SampleUI
-    assignees:
-      - wangerekaharun
     schedule:
       interval: weekly
       day: monday
@@ -59,8 +55,6 @@ updates:
 
   - package-ecosystem: github-actions
     directory: /
-    assignees:
-      - wangerekaharun
     schedule:
       interval: monthly
       time: "15:00"

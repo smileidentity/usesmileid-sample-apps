@@ -1,0 +1,43 @@
+name: Bug report
+description: A sample app does something wrong, or a documented step does not work.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include tokens, partner ids, API keys or captured images. Security problems go through SECURITY.md.
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      multiple: true
+      options:
+        - Android
+        - iOS
+        - Flutter
+        - React Native (Expo)
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: App and SDK version
+      description: The Settings screen footer shows the app version. The SDK version is in the platform's dependency file.
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and OS version
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Start from launch. Say whether it is a debug or a release build.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected, and what happened
+    validations:
+      required: true

@@ -220,7 +220,7 @@ def plan(asc: ASC, args):
     notes = read(REVIEW_NOTES_FILE)
     print(f"  review notes       {len(notes)}/4000  {notes.splitlines()[0][:70]!r}…")
     name, phone, email = review_contact(required=False)
-    print(f"  review contact     {name or '<ASC_REVIEW_NAME missing>'} · {phone or '<ASC_REVIEW_PHONE missing>'} · {email}")
+    print(f"  review contact     {name or '<ASC_REVIEW_NAME missing>'} · {phone or '<ASC_REVIEW_PHONE missing>'} · {email or '<ASC_REVIEW_EMAIL missing>'}")
     print(f"  screenshots ({SCREENSHOT_DISPLAY_TYPE}):")
     for panel in PANELS:
         p = STORE / "screenshots" / f"{panel}.png"
@@ -229,10 +229,9 @@ def plan(asc: ASC, args):
 
 
 def review_contact(required: bool):
-    name, phone = os.environ.get("ASC_REVIEW_NAME"), os.environ.get("ASC_REVIEW_PHONE")
-    email = os.environ.get("ASC_REVIEW_EMAIL") or "harun@smileidentity.com"
-    if required and not (name and phone):
-        sys.exit("ASC_REVIEW_NAME and ASC_REVIEW_PHONE are required to apply review details")
+    name, phone, email = (os.environ.get(k) for k in ("ASC_REVIEW_NAME", "ASC_REVIEW_PHONE", "ASC_REVIEW_EMAIL"))
+    if required and not (name and phone and email):
+        sys.exit("ASC_REVIEW_NAME, ASC_REVIEW_PHONE and ASC_REVIEW_EMAIL are required to apply review details")
     return name, phone, email
 
 

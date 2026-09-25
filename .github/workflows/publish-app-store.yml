@@ -52,7 +52,7 @@ jobs:
             [ -n "$(printenv "S_$name")" ] || missing="$missing $name"
           done
           if [ "$DRY_RUN" != "true" ]; then
-            for name in ASC_REVIEW_NAME ASC_REVIEW_PHONE; do
+            for name in ASC_REVIEW_NAME ASC_REVIEW_PHONE ASC_REVIEW_EMAIL; do
               [ -n "$(printenv "S_$name")" ] || missing="$missing $name"
             done
           fi
@@ -67,6 +67,7 @@ jobs:
           S_APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
           S_ASC_REVIEW_NAME: ${{ secrets.ASC_REVIEW_NAME }}
           S_ASC_REVIEW_PHONE: ${{ secrets.ASC_REVIEW_PHONE }}
+          S_ASC_REVIEW_EMAIL: ${{ secrets.ASC_REVIEW_EMAIL }}
 
       - name: Select Xcode
         run: |
