@@ -5,8 +5,8 @@
 #   maestro --device <serial> test -e APP_ID=com.usesmileid.sample.android android/maestro
 appId: ${APP_ID}
 ---
-# The fixtures are a precondition, not the subject: a plain launch carries one empty profile, and the
-# assertions below name the design's three. Profiles are in memory, so every launch that needs them asks.
+# The fixtures are a precondition, not the subject: a plain launch carries no profile, and the
+# assertions below name the design's three. A seeded launch never stores them, so every launch that needs them asks.
 - stopApp
 - launchApp:
     arguments:

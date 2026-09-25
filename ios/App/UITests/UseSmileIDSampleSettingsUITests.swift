@@ -96,6 +96,31 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
     )
   }
 
+  /// The first run's typing becomes the active profile, and after a relaunch the next form fills from it.
+  func testAFirstRunKeepsItsDetailsAsAProfileTheNextRunFillsFrom() {
+    launch()
+    signOut()
+    element("sample_product_card_smartSelfieEnrollment").tap()
+    XCTAssertTrue(element("sample_user_details_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(app.staticTexts["No profile yet"].exists)
+    type("sample_user_details_field_organisation", "Kobo")
+    type("sample_user_details_field_firstName", "Kwame")
+    type("sample_user_details_field_lastName", "Asante")
+    type("sample_user_details_field_email", "kwame@uptech.example")
+    XCTAssertTrue(app.staticTexts["Save as a new profile"].waitForExistence(timeout: 5))
+    app.buttons["sample_user_details_continue"].tap()
+    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20))
+
+    relaunch(arguments: useSmileIDSampleSettingsSeed)
+    XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
+    element("sample_product_card_smartSelfieEnrollment").tap()
+    XCTAssertTrue(element("sample_user_details_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(app.staticTexts["Kobo"].waitForExistence(timeout: 5), "the stored profile did not name the form")
+    XCTAssertEqual(app.textFields["sample_user_details_field_firstName"].value as? String, "Kwame")
+    app.buttons["Back"].tap()
+    signOut()
+  }
+
   // MARK: - Harness
 
   private func launch(arguments: [String] = []) {

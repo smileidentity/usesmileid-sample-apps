@@ -21,6 +21,10 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     signOut()
     element("sample_nav_products").tap()
     XCTAssertTrue(element("sample_session_card").waitForNonExistence(timeout: 5))
+    // Sign-out deletes every profile, the seeded ones too, so a relaunch brings the fixtures back.
+    app.terminate()
+    app.launch()
+    XCTAssertTrue(element("sample_nav_settings").waitForExistence(timeout: 10))
   }
 
   /// Reached from the settings root; the row sits below the fold on the pinned simulator.

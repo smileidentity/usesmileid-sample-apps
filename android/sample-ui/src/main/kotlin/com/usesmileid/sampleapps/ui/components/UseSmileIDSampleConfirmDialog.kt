@@ -20,6 +20,7 @@ fun UseSmileIDSampleConfirmDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
+        modifier = Modifier.publishTestTags(),
         title = { Text(title) },
         text = { Text(text) },
         confirmButton = {
