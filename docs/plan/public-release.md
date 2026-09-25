@@ -226,7 +226,7 @@ row's distil target exists and its §6 items are closed.
 | `profiles-ux.md` | drop | — | — (done) |
 | `public-release.md` | this plan | — | deleted in T11 |
 | `registry-consumption-e2e.md` | carry, distil | `docs/testing.md`: what the registry lane must prove | A21 · **deleted 2026-09-25**, open items in `backlog.md` |
-| `sample-apps-plan.md` | distil, carry | `docs/architecture.md`, decisions: registry-only, the `sample-ui` split, `spec/` as data, flows stop at the capture screen (Maestro flows point at its §6) | A22, A23 |
+| `sample-apps-plan.md` | distil, carry | `docs/architecture.md`: registry-only, the `sample-ui` split, `spec/` as data, flows stop at the capture screen (Maestro flows point at its §6) | A22, A23 |
 | `sdk-size-story.md` | carry | — | S3 |
 | `sheet-nav-bar-layering.md` | distil, drop | `docs/architecture.md`: a sheet belongs to the root navigator | — |
 | `stacked-pr-sequencing.md` | drop | — | — · **deleted 2026-09-25**, open items in `backlog.md` |

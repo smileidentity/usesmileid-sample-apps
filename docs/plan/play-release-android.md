@@ -289,10 +289,9 @@ Three deliberate changes, beyond dropping the release-notes generation §5 rejec
 Both lanes set `-PREQUIRE_UPLOAD_SIGNING=true`, so a run whose keystore secret failed to materialise
 fails at the bundle step instead of producing a debug-signed artefact that only Play would reject.
 
-Note on the marker convention: these workflow files name their secrets in the clear, because a workflow
-cannot reference a secret without naming it and the names are not themselves sensitive. The
-section above is about a different thing — it points at a sibling repository's
-file layout, which is what must not survive the flip.
+These workflow files name their secrets in the clear, because a workflow cannot reference a secret
+without naming it and the names are not themselves sensitive. Only secret values must never be
+committed.
 
 **The rule that survives the flip:** v12 uses one monotonic `versionCode` scheme across every track,
 derived from a single source, because Play compares each upload against every prior upload for the app
