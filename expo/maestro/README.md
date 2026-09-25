@@ -26,7 +26,7 @@ minified APK, so every flow opens with `runFlow: subflows/warm-start.yaml`.
 
 **Four sibling sample apps implement the same `sample_*` ids** and render the same SDK screens, so a
 leftover sibling in the foreground can satisfy an assertion meant for this app. Force-stop them and
-confirm with `tools/verify/foreground.sh <serial> com.usesmileid.sample.expo`.
+confirm with `adb -s <serial> shell dumpsys activity activities | grep -m1 topResumedActivity`.
 
 **On an emulator, disable the keyguard first** (`adb shell locksettings set-disabled true`), and hide
 error dialogs (`adb shell settings put global hide_error_dialogs 1`). A device that locks mid-session
