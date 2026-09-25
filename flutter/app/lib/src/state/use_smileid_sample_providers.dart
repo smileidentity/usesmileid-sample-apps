@@ -150,8 +150,17 @@ class UseSmileIDSampleProfilesNotifier
   /// Deletes a profile; the active one hands over to the first left.
   void delete(String id) => _change(() => state.delete(id));
 
-  /// Sign out: every profile goes.
-  void clear() => _change(state.clear);
+  /// Sign out: every profile goes, stored ones a seeded launch was hiding included.
+  void clear() {
+    _change(state.clear);
+    if (ref.read(useSmileIDSampleLaunchArgsProvider).seedProfiles) {
+      unawaited(
+        ref
+            .read(useSmileIDSampleProfilesRepositoryProvider)
+            .write(UseSmileIDSampleProfiles()),
+      );
+    }
+  }
 
   /// Continue's write-back from the details form.
   void keep(

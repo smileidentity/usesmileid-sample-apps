@@ -194,6 +194,29 @@ void main() {
     expect(stored.read().all, isEmpty);
   });
 
+  testWidgets(
+    'a sign-out from a seeded launch still deletes the stored profiles',
+    (WidgetTester tester) async {
+      await pumpAt(
+        tester,
+        UseSmileIDSampleRoutes.settings,
+        seedProfiles: true,
+        existing: UseSmileIDSampleProfiles(UseSmileIDSampleProfiles.fixtures()),
+      );
+      await tester.scrollUntilVisible(
+        byId(UseSmileIDSampleTestIds.signOut),
+        400,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.tap(byId(UseSmileIDSampleTestIds.signOut));
+      await tester.pumpAndSettle();
+      await tester.tap(byId(UseSmileIDSampleTestIds.signOutConfirm));
+      await tester.pumpAndSettle();
+
+      expect(stored.read().all, isEmpty);
+    },
+  );
+
   group('the preferences store', () {
     test('profiles written by one store are read by the next', () async {
       final UseSmileIDSampleProfiles profiles = UseSmileIDSampleProfiles(

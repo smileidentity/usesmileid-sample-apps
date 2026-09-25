@@ -36,6 +36,7 @@ import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.android.flow.tokenBindsConsent
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesRecord
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleLicenses
 import com.usesmileid.sampleapps.ui.model.parseUseSmileIDSampleLicenses
@@ -85,6 +86,8 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
             app.storeScope.launch { app.store.clearTokenSession() }
             app.forms.clear()
             app.profiles.clear()
+            // Straight to the store too: a seeded launch writes nothing, and the dialog promises every profile goes.
+            app.storeScope.launch { app.store.setProfiles(UseSmileIDSampleProfilesRecord()) }
             // The nav bar's own tab switch, so the stack lands where selecting Products would.
             navigator.navigate(ProductsNavGraph) {
                 popUpTo(NavGraphs.root.startDestination) { saveState = true }

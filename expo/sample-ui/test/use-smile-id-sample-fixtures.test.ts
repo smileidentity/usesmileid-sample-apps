@@ -152,6 +152,18 @@ describe('the store', () => {
     expect(store().activeId).toBeNull();
   });
 
+  it('deletes the stored profiles on a sign-out from a seeded launch', async () => {
+    store().add('Kobo Bank', ada);
+    await settle();
+    relaunch();
+    await store().load(smileIDSampleLaunchArgsFrom({ seedProfiles: true }));
+
+    store().clear();
+    await settle();
+
+    expect((await stored()).profiles).toEqual([]);
+  });
+
   it('stores sign-out as no profiles', async () => {
     store().add('Kobo Bank', ada);
     store().clear();

@@ -207,6 +207,8 @@ final class UseSmileIDSampleAppState: ObservableObject {
     fillForm(from: nil)
     idDetails = UseSmileIDSampleIdDetails()
     profiles.clear()
+    // Straight to the store too: a seeded launch writes nothing, and the dialog promises every profile goes.
+    store.setProfiles(UseSmileIDSampleProfiles())
     // Ids are reused once the list is empty, so an unsaved edit would reach the next person's p-1.
     profileDrafts = [:]
     profileCallbackDrafts = [:]

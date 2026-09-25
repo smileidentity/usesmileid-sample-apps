@@ -169,7 +169,13 @@ export const useSmileIDSampleProfileStore = create<State & Actions>((set, get) =
       });
     },
 
-    clear: () => change({ items: [], activeId: null, lastCreatedId: null }),
+    clear: () => {
+      change({ items: [], activeId: null, lastCreatedId: null });
+      // Sign-out promises every profile on the device goes, stored ones a seeded launch hid included.
+      if (get().seeded) {
+        writes = writes.then(() => AsyncStorage.removeItem(SMILE_ID_SAMPLE_PROFILES_KEY)).catch(() => undefined);
+      }
+    },
 
     keep: (details, organisation, requirement = smileIDSampleRequirementDefaults) => {
       const { items, activeId } = get();
