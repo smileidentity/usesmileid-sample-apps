@@ -1,15 +1,16 @@
 name: Publish to the App Store
 
-# Dispatch only, permanently. It gates the listing, archives, uploads, waits for processing, attaches
-# the build to a new version with the copy in ios/store/, and submits it for review. A dry run signs
-# and exports the IPA and reads App Store Connect, so the whole lane is proved without publishing.
+# Dispatch releases, as Play's lanes do: it gates the listing, archives, uploads, waits for processing,
+# attaches the build to a new version with the copy in ios/store/, and submits it for review. Tick
+# dry_run to sign and export the IPA and read App Store Connect without publishing, which is how a
+# change to the lane is proved before it is merged.
 on:
   workflow_dispatch:
     inputs:
       dry_run:
         description: Sign and export only, then read App Store Connect; nothing is uploaded or submitted
         type: boolean
-        default: true
+        default: false
       build_number:
         description: Override the build number; empty takes one above the highest App Store Connect holds
         required: false
@@ -34,6 +35,8 @@ jobs:
     runs-on: blacksmith-6vcpu-macos-26
     timeout-minutes: 90
     env:
+      DRY_RUN: ${{ inputs.dry_run }}
+      RELEASE: ${{ inputs.release }}
       APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
       APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
     steps:
@@ -58,7 +61,6 @@ jobs:
             exit 1
           fi
         env:
-          DRY_RUN: ${{ inputs.dry_run }}
           S_APPLE_DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
           S_APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           S_APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
@@ -114,37 +116,35 @@ jobs:
           echo "build $build"
         env:
           OVERRIDE: ${{ inputs.build_number }}
-          DRY_RUN: ${{ inputs.dry_run }}
 
       # Signing on a runner with no identity makes Xcode mint an Apple Development certificate; note what exists first.
       - name: Note the team's development certificates
         id: certs
         run: python3 scripts/asc_publish.py dev-certs > "$RUNNER_TEMP/dev-certs-before.txt"
 
-      - name: Archive, sign and ${{ inputs.dry_run && 'export' || 'upload' }}
+      - name: Archive, sign and ${{ env.DRY_RUN == 'true' && 'export' || 'upload' }}
         if: steps.version.outputs.uploaded != 'true'
         run: ios/verify.sh archive
         env:
           DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
           BUILD_NUMBER: ${{ steps.version.outputs.build }}
           MARKETING_VERSION: ${{ inputs.marketing_version }}
-          EXPORT_DESTINATION: ${{ inputs.dry_run && 'export' || 'upload' }}
+          EXPORT_DESTINATION: ${{ env.DRY_RUN == 'true' && 'export' || 'upload' }}
 
       - name: Read App Store Connect (dry run)
-        if: inputs.dry_run
+        if: env.DRY_RUN == 'true'
         run: |
           python3 scripts/asc_publish.py status
           python3 scripts/asc_publish.py plan --build "$BUILD" --release "$RELEASE"
           echo "::notice::Dry run: build $BUILD signed and exported; nothing was uploaded or submitted."
         env:
           BUILD: ${{ steps.version.outputs.build }}
-          RELEASE: ${{ inputs.release }}
           ASC_REVIEW_NAME: ${{ secrets.ASC_REVIEW_NAME }}
           ASC_REVIEW_PHONE: ${{ secrets.ASC_REVIEW_PHONE }}
           ASC_REVIEW_EMAIL: ${{ secrets.ASC_REVIEW_EMAIL }}
 
       - name: Wait for processing, attach the build, submit for review
-        if: ${{ !inputs.dry_run }}
+        if: env.DRY_RUN != 'true'
         run: |
           python3 scripts/asc_publish.py wait --build "$BUILD" --timeout 2400
           python3 scripts/asc_publish.py apply --build "$BUILD" --release "$RELEASE"
@@ -152,7 +152,6 @@ jobs:
           echo "::notice::Build $BUILD submitted for review, release $RELEASE."
         env:
           BUILD: ${{ steps.version.outputs.build }}
-          RELEASE: ${{ inputs.release }}
           ASC_REVIEW_NAME: ${{ secrets.ASC_REVIEW_NAME }}
           ASC_REVIEW_PHONE: ${{ secrets.ASC_REVIEW_PHONE }}
           ASC_REVIEW_EMAIL: ${{ secrets.ASC_REVIEW_EMAIL }}

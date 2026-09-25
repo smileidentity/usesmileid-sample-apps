@@ -158,12 +158,12 @@ and provisioned the way the App Store build will be, and an Xcode install is not
 Once 1 and 2 are done, **Actions → Publish to TestFlight → Run workflow** archives, signs, uploads and
 the build appears in TestFlight. **Publish to the App Store** gates the listing, uploads, waits for
 processing, attaches the build to a new version with the copy in `ios/store/`, and submits it for
-review. It starts as a dry run, which signs and exports the IPA and reads App Store Connect but
-uploads nothing; untick **dry_run** to release. A real run needs the `ASC_REVIEW_NAME` and
+review. Ticking **dry_run** instead signs and exports the IPA and reads App Store Connect, and
+uploads nothing. A real run needs the `ASC_REVIEW_NAME` and
 `ASC_REVIEW_PHONE` repository secrets (`ASC_REVIEW_EMAIL` is optional). Releasing an approved version
 by hand stays a Console action unless **release** is `after-approval`. Both lanes revoke the development certificate their
 signing creates, at the end of the run, so the team's certificate list stays as it was.
 
-Both lanes are `workflow_dispatch` only. Neither runs on a merge, which is deliberate while the first
-upload is an owner action — adding `push` to the TestFlight lane later needs a path filter, or a
-docs-only merge ships a build.
+Both lanes are `workflow_dispatch` only, as Play's are: running **Publish to the App Store** releases,
+and ticking **dry_run** proves the lane without publishing. Neither runs on a merge, since a docs-only
+merge would otherwise ship a build.
