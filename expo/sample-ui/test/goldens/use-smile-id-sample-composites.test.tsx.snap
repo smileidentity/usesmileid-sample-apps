@@ -4669,7 +4669,7 @@ exports[`ProfileRow dark summary 1`] = `
             "overflow": "hidden",
           },
           {
-            "backgroundColor": "#151f72",
+            "backgroundColor": "#1a1c23",
             "borderRadius": 12,
             "height": 44,
             "width": 44,
@@ -4690,7 +4690,7 @@ exports[`ProfileRow dark summary 1`] = `
               "marginTop": -0.8859999999999992,
             },
             {
-              "color": "#ffffff",
+              "color": "#848282",
             },
             {
               "textAlign": "center",
@@ -4698,7 +4698,7 @@ exports[`ProfileRow dark summary 1`] = `
           ]
         }
       >
-        DP
+        +
       </Text>
     </View>
     <View
@@ -4730,7 +4730,7 @@ exports[`ProfileRow dark summary 1`] = `
           ]
         }
       >
-        Default profile
+        No profile yet
       </Text>
       <Text
         style={
@@ -4749,7 +4749,7 @@ exports[`ProfileRow dark summary 1`] = `
           ]
         }
       >
-        Tap to configure
+        Tap to create one
       </Text>
     </View>
     <RNSVGSvgView
@@ -5285,7 +5285,7 @@ exports[`ProfileRow light summary 1`] = `
             "overflow": "hidden",
           },
           {
-            "backgroundColor": "#151f72",
+            "backgroundColor": "#f9fafb",
             "borderRadius": 12,
             "height": 44,
             "width": 44,
@@ -5306,7 +5306,7 @@ exports[`ProfileRow light summary 1`] = `
               "marginTop": -0.8859999999999992,
             },
             {
-              "color": "#ffffff",
+              "color": "#848282",
             },
             {
               "textAlign": "center",
@@ -5314,7 +5314,7 @@ exports[`ProfileRow light summary 1`] = `
           ]
         }
       >
-        DP
+        +
       </Text>
     </View>
     <View
@@ -5346,7 +5346,7 @@ exports[`ProfileRow light summary 1`] = `
           ]
         }
       >
-        Default profile
+        No profile yet
       </Text>
       <Text
         style={
@@ -5365,7 +5365,7 @@ exports[`ProfileRow light summary 1`] = `
           ]
         }
       >
-        Tap to configure
+        Tap to create one
       </Text>
     </View>
     <RNSVGSvgView

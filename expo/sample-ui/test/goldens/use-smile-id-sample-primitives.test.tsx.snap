@@ -83,7 +83,7 @@ exports[`Avatar dark placeholder 1`] = `
       ]
     }
   >
-    ?
+    +
   </Text>
 </View>
 `;
@@ -215,7 +215,7 @@ exports[`Avatar light placeholder 1`] = `
       ]
     }
   >
-    ?
+    +
   </Text>
 </View>
 `;
