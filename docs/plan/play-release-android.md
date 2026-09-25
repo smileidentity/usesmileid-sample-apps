@@ -266,24 +266,12 @@ uploading it would burn versionCode 1 permanently. Putting both checks in the bu
 workflow step covers a bundle built by hand as well.
 
 
-<!-- INTERNAL-ONLY:START reason=defect-in-a-sibling-repo-not-yet-reported -->
-### 3.1 One thing in the v11 workflows not to copy
+### 3.1 One versionCode scheme across every track
 
-The two publish workflows compute `versionCode` differently, and the combination is broken:
-
-- `publish_play_store_internal.yaml` — `VERSION_CODE=$(date +%s)`, epoch seconds, currently ≈1.79 billion
-- `publish_play_store_production.yaml` — `VERSION_CODE=$(git rev-list --count HEAD)`, a few thousand
-
-Play requires versionCode to exceed every previously uploaded artefact **for the app, across all
-tracks**. So once an internal build lands with an epoch-second code, a production build computing a
-commit count can never be accepted — it is smaller by six orders of magnitude. Separately, `date +%s`
-crosses Play's hard ceiling of 2,100,000,000 in **early 2036** and the app becomes unpublishable.
-
-v12 uses **one** monotonic scheme across every track. `git rev-list --count HEAD` is fine and
-human-meaningful, provided it is the only source. v11's plumbing is worth keeping —
-`versionCode = findProperty("VERSION_CODE")?.toString()?.toInt() ?: 1` — it is only the two callers that
-disagree. Worth telling the v11 owners; it is latent there today.
-<!-- INTERNAL-ONLY:END -->
+Play requires each upload's `versionCode` to exceed every earlier upload for the app, **across all
+tracks**. So the internal and production workflows must derive it the same way: two schemes that
+disagree in magnitude make one track unpublishable. v12 uses `git rev-list --count HEAD` in both, read by
+`versionCode = findProperty("VERSION_CODE")?.toString()?.toInt() ?: 1`.
 
 ### 3.2 What the two publish workflows do differently from v11
 
@@ -303,7 +291,7 @@ fails at the bundle step instead of producing a debug-signed artefact that only 
 
 Note on the marker convention: these workflow files name their secrets in the clear, because a workflow
 cannot reference a secret without naming it and the names are not themselves sensitive. The
-`INTERNAL-ONLY` block above is marked for a different reason — it points at a sibling repository's
+section above is about a different thing — it points at a sibling repository's
 file layout, which is what must not survive the flip.
 
 **The rule that survives the flip:** v12 uses one monotonic `versionCode` scheme across every track,

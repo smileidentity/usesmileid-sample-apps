@@ -300,7 +300,7 @@ Everything `ports-final.md` §1 and §2 lists is built, fixed or closed there.
 
 | # | Finding | Source | State |
 |---|---|---|---|
-| C1 | The defect in a sibling repo recorded under `INTERNAL-ONLY reason=defect-in-a-sibling-repo-not-yet-reported` | `play-release-android.md` §3.1 | not filed. Filing it is what closes the block |
+| C1 | A v11 workflow defect noted while reading v11 for reference | `play-release-android.md` §3.1 | **closed, not filed** (2026-09-25): v11 is reference material only and this repo changes nothing in it. The v12 lesson (one `versionCode` scheme across tracks) stays in §3.1 |
 | C2 | Flutter SDK: two `si_*` ids missing against Android, `validate()` weaker than `build()` with a silent blank frame, `FlowBuildResult` not exported, and no document analyzer | `ports-final.md` §2, `after-the-ports.md` Phase 4 | drafted, not filed |
 
 ### O. Owner and account actions
