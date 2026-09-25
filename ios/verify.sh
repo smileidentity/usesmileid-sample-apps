@@ -13,7 +13,7 @@
 #
 # `archive` is out of `all` because it needs a signing identity a fresh clone does not have, and
 # because it is the only phase that leaves a publishable artefact. See
-# docs/plan/app-store-release-ios.md §3.
+# docs/releasing.md.
 set -euo pipefail
 
 cd "$(dirname "$0")"
@@ -50,7 +50,7 @@ if [ "$PHASE" != archive ]; then
     *"iOS Simulator"*) ;;
     *)
       echo "verify.sh runs on a simulator; '$DESTINATION' is not one." >&2
-      echo "For a device see docs/plan/ios-device-verification.md §2.3 — it needs its own reset." >&2
+      echo "For a device see docs/testing.md §4 — it needs its own reset." >&2
       exit 2
       ;;
   esac
@@ -220,7 +220,7 @@ if [ "$PHASE" = archive ]; then
       exit 2
     fi
   else
-    : "${DEVELOPMENT_TEAM:?archive needs DEVELOPMENT_TEAM — it is never committed, see docs/plan/app-store-release-ios.md §3}"
+    : "${DEVELOPMENT_TEAM:?archive needs DEVELOPMENT_TEAM — it is never committed, see docs/releasing.md}"
     # A runner has no Xcode account, so the key signs the archive too; a workflow env: `~` is literal, so derive the path (§3).
     if [ -n "${APP_STORE_CONNECT_KEY_ID:-}" ]; then
       KEY_PATH="${APP_STORE_CONNECT_KEY_PATH:-$HOME/.appstoreconnect/private_keys/AuthKey_$APP_STORE_CONNECT_KEY_ID.p8}"

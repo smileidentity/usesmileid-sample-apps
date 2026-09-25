@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<!-- This app's own declaration only. Xcode merges the SDK's and Sentry's manifests into the
-	     privacy report, so what they declare is not repeated here — docs/app-store-privacy.md
+	     privacy report, so what they declare is not repeated here — docs/releasing.md
 	     derives every answer below and lists theirs; update the two together. -->
 	<key>NSPrivacyTracking</key>
 	<false/>

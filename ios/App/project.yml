@@ -3,7 +3,7 @@ name: UseSmileIDSample
 options:
   bundleIdPrefix: com.usesmileid.sample
   deploymentTarget:
-    # Follows the library's floor, which SwiftData sets — see docs/plan/offline-storage.md D1.
+    # Follows the library's floor, which SwiftData sets — see docs/architecture.md §5.
     iOS: "17.0"
   createIntermediateGroups: true
 

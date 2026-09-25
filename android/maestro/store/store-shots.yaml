@@ -1,5 +1,5 @@
 # The one store panel that needs a device: the SDK's live camera preview. Run from the repo root,
-# because the output path is relative to the working directory. See docs/plan/play-release-android.md.
+# because the output path is relative to the working directory. See docs/releasing.md.
 appId: ${APP_ID}
 ---
 - stopApp

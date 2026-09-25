@@ -121,6 +121,18 @@ nothing stops an unprefixed resource from colliding with a host's. The same libr
 repos' development samples, so a collision there is silent. Set `resourcePrefix = "sample_"` in
 `android/sample-ui/build.gradle.kts` and rename whatever lint then flags.
 
+### List the bundled font and icons on the licences screens
+
+The four licences screens list the registry dependencies, but not the assets bundled in the tree: DM Sans
+(SIL Open Font License 1.1) and the Material Symbols stand-ins (Apache 2.0). `NOTICE` records both. Add
+them to each app's licences screen, from one shared source so the four do not drift.
+
+### Android: store the token session encrypted
+
+Android keeps the linked session's token in DataStore unencrypted, where iOS, Flutter and Expo use
+the platform's secure storage. The trade was made when only sandbox tokens could be scanned. Production
+tokens can be scanned now, so seal it with an Android Keystore key, as the profiles already are.
+
 ## Device suite and CI
 
 ### Make the device suite fast enough to run on every PR

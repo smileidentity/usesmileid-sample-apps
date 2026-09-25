@@ -108,7 +108,7 @@
         "sample_session_ended_banner"
       ],
       "canonicalLayoutUrl": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5447-1701",
-      "ruling": "OWNER RULING 2026-08-13: build the EXPRESSIVE GRID (5206-4037). SUPERSEDED 2026-08-24 by 'use Figma as truth' — the canonical layout is now 5447-1701, with 5487-1351 its light twin. The 2026-08-13 ruling is kept rather than deleted because it is why the app was built on 5206-4037 at all. OWNER RULING 2026-08-24: the header no longer renders the environment chip — node 5447:1705 keeps the profile-env instance in the frame with hidden=true. The component and its sample_env_chip id survive in components.json and test-ids.json; the environment is a property of the session token now, and the result card is what publishes it. The `production` screen state goes with it: no production state is reachable from the app.",
+      "ruling": "DECIDED 2026-08-13: build the EXPRESSIVE GRID (5206-4037). SUPERSEDED 2026-08-24 by 'use Figma as truth' — the canonical layout is now 5447-1701, with 5487-1351 its light twin. The 2026-08-13 ruling is kept rather than deleted because it is why the app was built on 5206-4037 at all. DECIDED 2026-08-24: the header no longer renders the environment chip — node 5447:1705 keeps the profile-env instance in the frame with hidden=true. The component and its sample_env_chip id survive in components.json and test-ids.json; the environment is a property of the session token now, and the result card is what publishes it. The `production` screen state goes with it: no production state is reachable from the app.",
       "designAsks": [
         "normalise the card glyph boxes in Figma: five export at 21x21 and Biometric at 13.44x12.95 inside the same 40dp tile (Android already ships all six at 21x21, so this is a design-file task)",
         "promote the product card's two label runs to composite type styles — both are composed from primitives today (see the cardLabelRuns delta)",
@@ -120,9 +120,9 @@
       "canonicalLayoutLightUrl": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5487-1351",
       "designVersion": "2026-08-25",
       "frameOmitsTheAvatar": "Neither frame draws the header avatar button and the app KEEPS it (plan §7.5): its absence is a drawing omission, not a removal, and without it the screen has no profile switch at all. sample_profile_avatar_button keeps its target and profiles.yaml keeps working. Recorded here so the next conformance pass does not report it as an extra.",
-      "pageBackgroundOpenQuestion": "OPEN 2026-08-25. Both frames paint the PAGE with `Card BG` and the nav pill with `Main BG` — the opposite of what those two variables are named for, and the opposite of what the app ships (page color.background, pill color.surface). The separation is the same one step either way, just inverted. The pill cannot move on its own: with the page left as it is, pill and page become the same colour and the bar loses its edge on every tab. Moving the page instead repaints Verifications and Settings, which this frame does not draw. Needs an owner ruling; until then the app keeps its current mapping and PVR-A7 ships without the pill-fill change. See docs/plan/products-visual-refresh-android.md §3.4.",
-      "sectionRename": "Now 'Authentication' and 'Onboarding' by owner ruling 2026-08-26, superseding the 'Biometric Authentication' the frame draws at node 5487:1364; the page subtitle is unchanged at '...powered by our Anti-Fraud SDKs' (5487:1356). A products section and the Verifications tab shared one name before.",
-      "divergesFromTheFrameByRuling": "designVersion 2026-08-25 records the frame this screen was BUILT from; three things now diverge from it deliberately, and a conformance pass should not 'correct' them. (1) The section headings are 'Authentication' and 'Onboarding' — the frame draws 'Biometric Authentication', and the second heading collided with the Verifications tab (see sectionRename). (2) The card stroke is 0.5dp in a light/dark pair, not the frame's 0.2px Off_black (see the cardStroke delta and docs/plan/products-visual-refresh-android.md §7.6, superseded in place). (3) The profile-switch sheet is a layer this screen owns, not a route. Everything else still matches the frame."
+      "pageBackgroundOpenQuestion": "OPEN 2026-08-25. Both frames paint the PAGE with `Card BG` and the nav pill with `Main BG` — the opposite of what those two variables are named for, and the opposite of what the app ships (page color.background, pill color.surface). The separation is the same one step either way, just inverted. The pill cannot move on its own: with the page left as it is, pill and page become the same colour and the bar loses its edge on every tab. Moving the page instead repaints Verifications and Settings, which this frame does not draw. Needs a product decision; until then the app keeps its current mapping and the visual refresh ships without the pill-fill change. See",
+      "sectionRename": "Now 'Authentication' and 'Onboarding' by decision 2026-08-26, superseding the 'Biometric Authentication' the frame draws at node 5487:1364; the page subtitle is unchanged at '...powered by our Anti-Fraud SDKs' (5487:1356). A products section and the Verifications tab shared one name before.",
+      "divergesFromTheFrameByRuling": "designVersion 2026-08-25 records the frame this screen was BUILT from; three things now diverge from it deliberately, and a conformance pass should not 'correct' them. (1) The section headings are 'Authentication' and 'Onboarding' — the frame draws 'Biometric Authentication', and the second heading collided with the Verifications tab (see sectionRename). (2) The card stroke is 0.5dp in a light/dark pair, not the frame's 0.2px Off_black (see the cardStroke delta, superseded in place). (3) The profile-switch sheet is a layer this screen owns, not a route. Everything else still matches the frame."
     },
     {
       "id": "profileSwitchSheet",
@@ -257,7 +257,7 @@
         "POST-SUBMISSION: the app lands here in the processing state once a job is submitted (observed 202 Accepted straight after the ID form's Continue)"
       ],
       "additions": [
-        "CORRECTED 2026-09-08: pull-to-refresh, not the 'Check status' button that once stood in for it — Android replaced the button when GET /v3/status landed, and the stale entry named an id (sample_details_check_status) that is in no test-ids file. The gesture is present in every state, not only processing: an outcome that cannot succeed says why (no live scanned session, or a row never submitted under one, which is every fixture-token run) rather than doing nothing. A row still processing is also refreshed automatically on entry, since that is the only status that can change, and that refresh is silent unless something changed. The LIST's own pull is a different thing and is still deferred (docs/plan/sample-apps-plan.md 8.1)."
+        "CORRECTED 2026-09-08: pull-to-refresh, not the 'Check status' button that once stood in for it — Android replaced the button when GET /v3/status landed, and the stale entry named an id (sample_details_check_status) that is in no test-ids file. The gesture is present in every state, not only processing: an outcome that cannot succeed says why (no live scanned session, or a row never submitted under one, which is every fixture-token run) rather than doing nothing. A row still processing is also refreshed automatically on entry, since that is the only status that can change, and that refresh is silent unless something changed. The LIST's own pull is a different thing and is still deferred 8.1)."
       ],
       "note": "The details screen doubles as the result screen, which is why the result card belongs here rather than needing a new home. NO NAV BAR: it is a pushed screen, even though its route lives in the verifications graph. You leave it by going back, not by switching tab. The RESULT CARD and its callback counters are hidden on a release build unless the `probes` launch argument asks for them, and always shown in debug (2026-08-25): the affordance still ships on the release classpath, minified and shrunk, because that is where consumption defects surface — compiling it out with a debug-only source set would also make the argument impossible. The rest of the screen is unchanged either way, so a partner sees the design's screen and automation sees the card."
     },
@@ -302,7 +302,7 @@
       ],
       "aka": "Consent Details Form (the owner's term)",
       "prefilledFrom": "profileConfig — the design labels those fields 'USER DETAILS — ATTACHED TO EVERY JOB', so every product shows this form seeded from the active profile.",
-      "note": "OWNER RULING 2026-08-13 (restated): product → Consent Details Form → SDK flow. The prototype shows the SDK consent screen BEFORE this form; that wiring is stale and is not being updated, so do not implement the prototype's order. Not in the design (owner ruling 2026-09-25, docs/plan/profiles-ux.md): the form fills from the active profile, and a profile row above the card opens the switch sheet. Continue with the save switch on writes the typed details back to the active profile, or creates one and makes it active when there is none; a field the token supplies is never stored."
+      "note": "DECIDED 2026-08-13: product → Consent Details Form → SDK flow. The prototype shows the SDK consent screen BEFORE this form; that wiring is stale and is not being updated, so do not implement the prototype's order. Not in the design (decided 2026-09-25): the form fills from the active profile, and a profile row above the card opens the switch sheet. Continue with the save switch on writes the typed details back to the active profile, or creates one and makes it active when there is none; a field the token supplies is never stored."
     },
     {
       "id": "consent",
@@ -468,7 +468,7 @@
         "licenses": "in-app, the licenses screen — not a URL"
       },
       "linkPresentation": "Per row, and split on what the destination can render (measured 2026-08-25). ABOUT — Documentation and Support open IN-APP: Custom Tabs on Android (androidx.browser), SFSafariViewController on iOS, url_launcher inAppBrowserView on Flutter, expo-web-browser on React Native. A WebView is deliberately NOT the pattern on any platform: the page would lose the user's session, autofill and password manager, and this is code partners copy. LEGAL — Terms of Service and Privacy Policy EJECT to the system browser, because both pages serve their document as an embedded PDF (a Webflow CDN asset, hash in the filename) and a mobile browser renders an embedded PDF as a stub with an Open button rather than the document; framing that inside the app makes the app look like it failed. The canonical page URLs stay as they are — linking the CDN asset directly would show the document but hard-codes a path that changes on every re-upload, and the same canonical URL is what the SDK consent screen uses. The in-app toolbar takes a colour PER SCHEME from the design tokens (primary in light, surface in dark); one shared colour left a white bar on a white page. Android warms the browser while Settings is open but does NOT pre-fetch: speculatively downloading a 649 KB docs page on a partner's mobile data is the wrong trade.",
-      "note": "The PROFILE row opens the profiles LIST, not the active profile's own page — configuring any profile and creating one are both reached from there. Its avatar takes the ACTIVE profile's hue from design-tokens.json profileHues, indexed by list position, so the summary, the list and the products header never draw the same profile in three colours. The ENVIRONMENT section was removed on 2026-08-24: it was never in the design, and it existed only because the sandbox launch argument was an override rather than a source. Both are gone — the token's api_url decides the environment, and a run reports it on sample_result_environment. The three SDK-step switches include or omit their screen (see components.json settingsToSdkMapping), and the CONSENT row carries one overridden supporting line: when the linked token binds consent it reads 'The token grants consent, so the screen is skipped', because a switch reading ON while the token has taken the decision away is a lie the screen tells. The switch stays live — it still decides the next run made without a bound token. The DEBUG section holding the Scenarios row renders on debug builds only (see drawerPresentation): the screen takes it as a nullable slot the host fills, because sample-ui runs under eight identities and may not read a host's BuildConfig. Sign out asks first (owner ruling 2026-09-25): it ends the session and deletes every profile on the device. With no profile, the PROFILE row reads 'No profile yet' and 'Tap to create one'."
+      "note": "The PROFILE row opens the profiles LIST, not the active profile's own page — configuring any profile and creating one are both reached from there. Its avatar takes the ACTIVE profile's hue from design-tokens.json profileHues, indexed by list position, so the summary, the list and the products header never draw the same profile in three colours. The ENVIRONMENT section was removed on 2026-08-24: it was never in the design, and it existed only because the sandbox launch argument was an override rather than a source. Both are gone — the token's api_url decides the environment, and a run reports it on sample_result_environment. The three SDK-step switches include or omit their screen (see components.json settingsToSdkMapping), and the CONSENT row carries one overridden supporting line: when the linked token binds consent it reads 'The token grants consent, so the screen is skipped', because a switch reading ON while the token has taken the decision away is a lie the screen tells. The switch stays live — it still decides the next run made without a bound token. The DEBUG section holding the Scenarios row renders on debug builds only (see drawerPresentation): the screen takes it as a nullable slot the host fills, because sample-ui runs under eight identities and may not read a host's BuildConfig. Sign out asks first (Decision 2026-09-25): it ends the session and deletes every profile on the device. With no profile, the PROFILE row reads 'No profile yet' and 'Tap to create one'."
     },
     {
       "id": "profiles",
@@ -523,7 +523,7 @@
           "node": "5206-3525"
         }
       ],
-      "note": "USER DETAILS — ATTACHED TO EVERY JOB. This is the per-profile default that seeds the userDetails screen. The app bar title is the PROFILE'S NAME. The CTA has two states (owner ruling 2026-09-25, replacing the design's disabled \"Active profile\"): on the active profile it reads \"Save changes\" and is enabled once something changed; on any other it reads \"Use this profile\" and both saves and activates. A PROFILE section above the user details carries the Organisation row, optional, which the SDK's consent screen names as the partner; blank names the app itself. A \"Delete profile\" row sits below the sections and asks first. A link to a profile the device does not hold goes back. Screen spacing is 14 between the header, the section label, the card and the CTA — not the 8 used inside a card. A second section, CALLBACK URL, sits below the user-details card and carries one row, empty by default, placeholder \"Uses your portal default\". It is its own section because a webhook URL is not a user detail. A profile is a partner here, so the URL has to travel with the profile — anywhere else and switching profile carries one partner's webhook into another's job. While a token session is live the row is disabled and reads as overridden: the token's partner owns the job, so the profile's URL is not sent. The section has no design frame; it reuses the SectionLabel, section surface and KeyValueEditRow this screen already uses.",
+      "note": "USER DETAILS — ATTACHED TO EVERY JOB. This is the per-profile default that seeds the userDetails screen. The app bar title is the PROFILE'S NAME. The CTA has two states (Decision 2026-09-25, replacing the design's disabled \"Active profile\"): on the active profile it reads \"Save changes\" and is enabled once something changed; on any other it reads \"Use this profile\" and both saves and activates. A PROFILE section above the user details carries the Organisation row, optional, which the SDK's consent screen names as the partner; blank names the app itself. A \"Delete profile\" row sits below the sections and asks first. A link to a profile the device does not hold goes back. Screen spacing is 14 between the header, the section label, the card and the CTA — not the 8 used inside a card. A second section, CALLBACK URL, sits below the user-details card and carries one row, empty by default, placeholder \"Uses your portal default\". It is its own section because a webhook URL is not a user detail. A profile is a partner here, so the URL has to travel with the profile — anywhere else and switching profile carries one partner's webhook into another's job. While a token session is live the row is disabled and reads as overridden: the token's partner owns the job, so the profile's URL is not sent. The section has no design frame; it reuses the SectionLabel, section surface and KeyValueEditRow this screen already uses.",
       "components": [
         "SectionLabel",
         "KeyValueEditRow",
@@ -668,7 +668,7 @@
       "question": "The chosen products layout (board 01b, expressive grid) has ONE state. The token-session, token-expired and production states exist only on the superseded list layout (boards 01 and 07). Should those states be re-drawn on the grid layout, or may engineering transpose the session card / env chip / token ring onto it?",
       "blocks": "products screen states beyond default",
       "recommendation": "Engineering transposes; the header, session card and nav bar are unchanged between the two layouts, so only the card grid differs. Confirm rather than assume, since it changes vertical space above the grid.",
-      "status": "RESOLVED 2026-08-13 — owner ruled the grid is the build target and the prototype will not be updated, so engineering transposes the session card, environment chip and token ring onto the grid. Design may re-draw the states later."
+      "status": "RESOLVED 2026-08-13 — it was decided the grid is the build target and the prototype will not be updated, so engineering transposes the session card, environment chip and token ring onto the grid. Design may re-draw the states later."
     },
     {
       "id": "productCoverage",
@@ -676,26 +676,26 @@
       "blocks": "final product list; consumption lanes can only exercise what the sample exposes",
       "recommendation": "Decide explicitly. Both missing types are form/API-shaped rather than capture-shaped, so leaving them out is defensible — but then the sample never exercises them and no CI lane can.",
       "sdkEvidence": "iOS `buildJobRequest()` states the BVN job type is NOT SUPPORTED and throws. Leaving BVN out of the grid is therefore the defensible default; EnhancedKyc remains a genuine product decision.",
-      "status": "OWNER DECISION 2026-08-13 — RESOLVED: ADD Enhanced KYC (6 products, slot filled). BVN stays out — iOS throws on it. Design ask: one more product card (icon + hue)."
+      "status": "DECIDED 2026-08-13 — RESOLVED: ADD Enhanced KYC (6 products, slot filled). BVN stays out — iOS throws on it. Design ask: one more product card (icon + hue)."
     },
     {
       "id": "boardNaming",
       "question": "Board 05 is titled 'Consent & KYC' but contains no consent screen — the consent frames live in board 04 ('Consent & user details'). Rename 05 to 'KYC / ID details' to avoid a wrong-board lookup?",
       "blocks": "nothing; documentation hygiene",
-      "status": "OWNER DECISION 2026-08-13 — housekeeping only; ask design to rename board 05 to 'KYC / ID details' when convenient."
+      "status": "DECIDED 2026-08-13 — housekeeping only; ask design to rename board 05 to 'KYC / ID details' when convenient."
     },
     {
       "id": "appNameCopy",
       "question": "The Settings footer reads 'Smile ID Sample App · 1.0.0' while the agreed app identity is 'UseSmileID Sample' (spec/app-identity.json). Which string ships?",
       "blocks": "settings screen copy, store metadata",
       "recommendation": "Use the agreed display name in the footer so the app matches its launcher label.",
-      "status": "OWNER DECISION 2026-08-13 — RESOLVED: 'UseSmileID Sample' everywhere. SUPERSEDED 2026-08-25 (ruled 2026-08-24, 'go with the design'): the footer follows node 5206:2898 and reads 'Smile ID Sample App · 1.0.0'. This does NOT change app-identity.json, whose 'UseSmileID Sample' is the launcher label and store identity, settled against the ids the SDK repos reserve. The footer is brand copy and the launcher label is identity; after this change they legitimately differ, so do not 'fix' one to match the other. sample-ui takes versionLabel as a parameter precisely because the module runs under eight identities. UPDATED 2026-09-13: the iOS launcher label and store name became 'Smile ID' (owner ruling, app-identity.json); the iOS footer, which had never followed the 2026-08-25 design wording and still carried the old label, now reads 'Smile ID <version>'. Android follows after the iOS release. UPDATED 2026-09-14: Android followed — launcher label and Play title 'Smile ID', footer 'Smile ID · <version>', Settings goldens re-recorded with it; the 2026-08-25 design wording is superseded on both platforms. UPDATED 2026-09-24: Flutter and Expo already read 'Smile ID · <version>'; this screen's copy.footer, which still carried the superseded wording, now says so too."
+      "status": "DECIDED 2026-08-13 — RESOLVED: 'UseSmileID Sample' everywhere. SUPERSEDED 2026-08-25 (ruled 2026-08-24, 'go with the design'): the footer follows node 5206:2898 and reads 'Smile ID Sample App · 1.0.0'. This does NOT change app-identity.json, whose 'UseSmileID Sample' is the launcher label and store identity, settled against the ids the SDK repos reserve. The footer is brand copy and the launcher label is identity; after this change they legitimately differ, so do not 'fix' one to match the other. sample-ui takes versionLabel as a parameter precisely because the module runs under eight identities. UPDATED 2026-09-13: the iOS launcher label and store name became 'Smile ID' (decision, app-identity.json); the iOS footer, which had never followed the 2026-08-25 design wording and still carried the old label, now reads 'Smile ID <version>'. Android follows after the iOS release. UPDATED 2026-09-14: Android followed — launcher label and Play title 'Smile ID', footer 'Smile ID · <version>', Settings goldens re-recorded with it; the 2026-08-25 design wording is superseded on both platforms. UPDATED 2026-09-24: Flutter and Expo already read 'Smile ID · <version>'; this screen's copy.footer, which still carried the superseded wording, now says so too."
     },
     {
       "id": "docsDomain",
       "question": "The ABOUT section links 'docs.usesmileid.com'. Confirm that domain is live, or point it at the current documentation host.",
       "blocks": "settings ABOUT rows",
-      "status": "OWNER DECISION 2026-08-13 — RESOLVED: link to docs.smileidentity.com. CORRECTED 2026-08-25: both hosts are CNAMEs to the same GitBook site and https://docs.smileidentity.com/ answers 307 → https://docs.usesmileid.com/, so the design's own copy is the current one and the spec was carrying the legacy host. The row's supporting line and its URL are both docs.usesmileid.com. The apex domains agree the same way: smileidentity.com 301s to usesmileid.com."
+      "status": "DECIDED 2026-08-13 — RESOLVED: link to docs.smileidentity.com. CORRECTED 2026-08-25: both hosts are CNAMEs to the same GitBook site and https://docs.smileidentity.com/ answers 307 → https://docs.usesmileid.com/, so the design's own copy is the current one and the spec was carrying the legacy host. The row's supporting line and its URL are both docs.usesmileid.com. The apex domains agree the same way: smileidentity.com 301s to usesmileid.com."
     },
     {
       "id": "smileToCaptureMapping",
@@ -703,7 +703,7 @@
       "blocks": "the CAPTURE section and any flow it configures",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2898",
       "recommendation": "Get an SDK answer rather than inferring; the two switches must not silently set the same field.",
-      "status": "OWNER DECISION 2026-08-13 — RESOLVED: ON → enableEnhancedLiveness = false. SUPERSEDED 2026-08-25: node 5206:2898 renames the row to 'Enhanced SmartSelfie™ / Face capture uses head-turns' and draws it ON, so the mapping is direct rather than inverted and the default capture behaviour is the head-turn challenge. The question is answered and closed; the current mapping lives in components.json settingsToSdkMapping and the renamed id in test-ids.json."
+      "status": "DECIDED 2026-08-13 — RESOLVED: ON → enableEnhancedLiveness = false. SUPERSEDED 2026-08-25: node 5206:2898 renames the row to 'Enhanced SmartSelfie™ / Face capture uses head-turns' and draws it ON, so the mapping is direct rather than inverted and the default capture behaviour is the head-turn challenge. The question is answered and closed; the current mapping lives in components.json settingsToSdkMapping and the renamed id in test-ids.json."
     },
     {
       "id": "softBadgeVariant",
@@ -711,42 +711,42 @@
       "blocks": "StatusBadge",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2410",
       "recommendation": "Add soft variants to the system — the design applies them consistently across all four roles, so this is a system gap rather than a one-off.",
-      "status": "OWNER DECISION 2026-08-13 — RESOLVED: keep the design's soft pills; add soft variants to the design system."
+      "status": "DECIDED 2026-08-13 — RESOLVED: keep the design's soft pills; add soft variants to the design system."
     },
     {
       "id": "docvIdFormVariant",
       "question": "The ID-details form is only drawn for Biometric KYC (country / ID type / ID number). What does it look like for Document Verification and Enhanced Document Verification — country plus document type, no ID number?",
       "blocks": "kycIdForm for the document products and Enhanced KYC",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2797",
-      "status": "OWNER DECISION 2026-08-13 — RESOLVED: one identical form for every product needing details — Country, ID type, ID number — including both document products and Enhanced KYC. Simplest to build and test."
+      "status": "DECIDED 2026-08-13 — RESOLVED: one identical form for every product needing details — Country, ID type, ID number — including both document products and Enhanced KYC. Simplest to build and test."
     },
     {
       "id": "profileAndProductHues",
       "question": "Product cards and profile avatars both use per-item colours (5 product hues, 3 profile hues observed). Which decorative token does each product and each profile get?",
       "blocks": "ProductCard and Avatar rendering identically across four platforms",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-4037",
-      "status": "OWNER DECISION 2026-08-13 — DECIDED: the designer supplies the mapping list once; stored in design-tokens.json. Still awaiting the list."
+      "status": "DECIDED 2026-08-13 — DECIDED: the designer supplies the mapping list once; stored in design-tokens.json. Still awaiting the list."
     },
     {
       "id": "labelCopy",
       "question": "The products list shows 'SmartSelfie Authentication' in some frames and 'SmartSelfie Auth' in others (the grid uses 'SmartSelfie Auth'). Which string ships?",
       "blocks": "product labels and their derived test ids",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-4037",
-      "status": "OWNER DECISION 2026-08-13 — RESOLVED: 'SmartSelfie Authentication' everywhere, matching the SDK's job-type name. Note it wraps to two lines on the grid card."
+      "status": "DECIDED 2026-08-13 — RESOLVED: 'SmartSelfie Authentication' everywhere, matching the SDK's job-type name. Note it wraps to two lines on the grid card."
     },
     {
       "id": "switchProfileTrigger",
       "question": "Which element on the products screen opens the Switch profile sheet — the environment chip, or something else? The recording shows the sheet but not the trigger.",
       "blocks": "products screen wiring",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2348",
-      "status": "OWNER DECISION 2026-08-13 — RESOLVED: add a header AVATAR BUTTON next to the environment chip; it opens the sheet. The chip becomes display-only. Small design addition needed."
+      "status": "DECIDED 2026-08-13 — RESOLVED: add a header AVATAR BUTTON next to the environment chip; it opens the sheet. The chip becomes display-only. Small design addition needed."
     },
     {
       "id": "drawerPresentation",
       "question": "The scenario drawer is required by AGENTS.md and has test ids, but the design set has no frame for it. How should it present, and what opens it — a long-press on the header, a hidden gesture, or a row at the bottom of Settings?",
       "blocks": "the drawer's build only; every scenario is already reachable by launch argument",
       "recommendation": "A bottom sheet opened by a long-press on the environment chip, so it stays out of a partner's way while remaining reachable on a release build.",
-      "status": "OWNER DECISION 2026-08-24 — RESOLVED: a 'Scenarios' row in a DEBUG section at the bottom of Settings, presented as a modal sheet, and the section is DEBUG-ONLY on every platform. Recorded as a deliberate addition: the design draws no DEBUG section, and this is the one place the app adds one. The earlier recommendation is withdrawn — the environment chip it hung off is now hidden (a token's api_url decides the environment), and a hidden long-press is undiscoverable to a partner reading the app. No launch argument reveals the row, deliberately: every device flow reaches the drawer by deep link (usesmileid-sample-android://debug/scenarios), so hiding it on release costs nothing testable, and a partner should never find a scenario picker in Settings on any build. This closes the last OPEN question in screens.json."
+      "status": "DECIDED 2026-08-24 — RESOLVED: a 'Scenarios' row in a DEBUG section at the bottom of Settings, presented as a modal sheet, and the section is DEBUG-ONLY on every platform. Recorded as a deliberate addition: the design draws no DEBUG section, and this is the one place the app adds one. The earlier recommendation is withdrawn — the environment chip it hung off is now hidden (a token's api_url decides the environment), and a hidden long-press is undiscoverable to a partner reading the app. No launch argument reveals the row, deliberately: every device flow reaches the drawer by deep link (usesmileid-sample-android://debug/scenarios), so hiding it on release costs nothing testable, and a partner should never find a scenario picker in Settings on any build. This closes the last OPEN question in screens.json."
     }
   ],
   "verification": {
@@ -779,7 +779,7 @@
         "products → header chip → profileSwitchSheet over a scrim"
       ],
       "correctionsApplied": 12,
-      "supersededByOwner": "The recording's product → consent → userDetails order. Owner ruling 2026-08-13 keeps product → Consent Details Form → SDK flow (consent stays inside the SDK).",
+      "supersededByOwner": "The recording's product → consent → userDetails order. Decision 2026-08-13 keeps product → Consent Details Form → SDK flow (consent stays inside the SDK).",
       "notExercised": [
         "dark mode (the switch stayed off throughout)",
         "the expressive products grid (prototype uses the list layout)",

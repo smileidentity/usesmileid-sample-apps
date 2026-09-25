@@ -63,10 +63,8 @@ the checklist telling you which four app PRs are now owed.
 
 ## Where UI work starts
 
-`docs/plan/ui-work-plan.md` sequences the build (tokens → primitives → composites → screens, Android
-first as the reference for the other three) and carries the flags the design set raised.
-`docs/plan/navigation-plan.md` covers routing and state per platform and shares the same unit of
-work — a screen and its route land in one PR. Read both before opening a UI PR.
+`docs/architecture.md` covers the build order (tokens → primitives → composites → screens), and
+routing and state per platform. A screen and its route land in one PR. Read it before opening a UI PR.
 
 ## Consuming `spec/` from an app
 

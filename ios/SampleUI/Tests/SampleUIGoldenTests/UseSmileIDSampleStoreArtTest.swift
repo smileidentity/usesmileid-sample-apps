@@ -10,7 +10,7 @@ final class UseSmileIDSampleStoreArtTest: XCTestCase {
   /// 440 × 956 pt is the ios-phone preset's 1320 × 2868 at the recorder's 3× scale.
   private static let size = CGSize(width: 440, height: 956)
 
-  /// Clears the frame's 153 px corner radius and matches the phone's status bar — see docs/plan/app-store-release-ios.md §2.4.
+  /// Clears the frame's 153 px corner radius and matches the phone's status bar — see docs/releasing.md, Store art.
   private static let statusBarInset: CGFloat = 62
 
   /// Its own directory, so a store-art change can never quietly repaint a golden.

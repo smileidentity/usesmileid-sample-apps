@@ -13,8 +13,8 @@ import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 
 /**
- * A sheet is a LAYER over the screen that owns it, never a destination that replaces it — R12 in
- * `docs/plan/navigation-plan.md`, because a destination leaves the scrim covering a grey void. The five
+ * A sheet is a LAYER over the screen that owns it, never a destination that replaces it (see
+ * `docs/architecture.md` §4), because a destination leaves the scrim covering a grey void. The five
  * sheet paths in `spec/routes.json` stay deep-linkable: each resolves to its owner's own link plus a
  * request the owner picks up.
  */

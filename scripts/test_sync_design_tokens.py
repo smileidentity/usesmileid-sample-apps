@@ -651,7 +651,7 @@ class TestTsStopgaps(unittest.TestCase):
 class TestThemeParity(unittest.TestCase):
     """The two theme layers are hand-written, not generated, so nothing else holds them together.
 
-    `docs/plan/port-patterns.md` treats a field resolving to a different token on one platform as a
+    The parity contract treats a field resolving to a different token on one platform as a
     defect, and the failure is invisible: both apps compile and only the colour is wrong.
     """
 

@@ -83,6 +83,6 @@ echo "==> lock"
 
 if [ -n "$skipped" ]; then
   echo "skipped, no frame yet:$skipped"
-  echo "The camera panel needs a device: ios/App/UITests, see docs/plan/app-store-release-ios.md §2.3"
+  echo "The camera panel needs a device: ios/App/UITests, see docs/releasing.md"
 fi
 echo "OK — $OUT"
