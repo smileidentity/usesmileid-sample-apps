@@ -488,7 +488,7 @@ def submit(asc: ASC, args):
     if args.dry_run:
         print("dry run: the draft is complete as far as Apple validates at this step; nothing was submitted")
         return
-    # Apple answers a timing-sounding 409 until the rejected item is resolved — docs/plan/app-store-release-ios.md §7.2.
+    # Apple answers a timing-sounding 409 until the rejected item is resolved — docs/releasing.md.
     for i in items:
         if i["attributes"]["state"] != "REJECTED":
             continue

@@ -251,7 +251,5 @@ Run the `nm -u` check on the built app, not on your source. Dependencies decide 
 
 ## Next step
 
-This repository's own answers, and how its apps reach both stores, are in
-[`app-store-privacy.md`](app-store-privacy.md), [`play-data-safety.md`](play-data-safety.md) and
-[`app-store-manual-steps.md`](app-store-manual-steps.md). Read them as a worked example: your app's
-collection decides your answers.
+This repository's own answers, and how its apps reach both stores, are in [`releasing.md`](releasing.md).
+Read them as a worked example: your app's collection decides your answers.

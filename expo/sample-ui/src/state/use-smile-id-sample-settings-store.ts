@@ -28,7 +28,7 @@ const key = (setting: UseSmileIDSampleSetting) => `${KEY_PREFIX}${setting}`;
 /// Settings the user moved while `load` was reading, which the read must not undo.
 const movedDuringLoad = new Set<UseSmileIDSampleSetting>();
 
-/// A preference, never a credential: the token session has its own home, per port-patterns.md §2.
+/// A preference, never a credential: the token session has its own home (docs/architecture.md §5).
 export const useSmileIDSampleSettingsStore = create<State & Actions>((set, get) => ({
   settings: smileIDSampleSettingsDefaults,
   loaded: false,

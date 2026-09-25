@@ -13,19 +13,15 @@ An SDK repo's own sample resolves the SDK by path, so it can never catch a defec
 fail under release minification. These apps can, because they consume the published form. Treat a
 change that weakens that property as a defect, not a convenience.
 
-## Repo Status — internal now, public later
+## Repo Status — public
 
-This repository is **internal today** so the foundations can land, and is intended to **go public**
-once the four apps are complete.
+This repository is **public**, and so is its entire git history. Everything you commit is published
+the moment it is pushed, and deleting it later does not unpublish it. So:
 
-Two consequences that must shape what you commit *now*, not at flip time:
-
-1. **Making a repo public publishes its entire git history.** Deleting a file before the flip does
-   not unpublish it. Anything that must never be public must never be committed here at all — see
-   the never-commit list in *Security & Credentials*.
-2. **Internal-only context is allowed, but must be marked** so it can be found and removed before
-   the flip. Use the flag convention in *Going Public* below. An unmarked internal reference is a
-   bug: it will either leak or block the flip while someone audits by hand.
+1. **Nothing on the never-commit list, ever** — see *Security & Credentials*.
+2. **No internal-only context.** Write every file, comment, commit and PR for an outside reader: no
+   internal repository, tracker or tool names, no staff names, no roadmap dates, no team shorthand.
+   Context the team needs but partners must not see belongs in the team's private planning, not here.
 
 ## Golden Rules
 
@@ -84,7 +80,7 @@ Two consequences that must shape what you commit *now*, not at flip time:
 
 ```
 spec/                  the cross-app contract as data (see spec/README.md)
-docs/plan/             architecture, phases and roadmap for this repo
+docs/                  partner guides; docs/plan/ holds backlog.md and plans for work in progress
 android/  app/         shell: entry point, navigation host, DI, SDK dependency
           sample-ui/   every screen a partner sees (Gradle library module)
 ios/      App/         shell
@@ -189,13 +185,12 @@ that variable locally — a silent pass is how vendored tokens drift from their 
 - **PR titles lead with an emoji and describe the outcome**, matching the SDK repos:
   `<emoji> <scope>: <what changed — why it matters>`. Vary the emoji per change (🧰 tooling,
   📝 docs, 🐛 fix, 🎨 UI, 🔌 wiring, 📦 packaging, ♿ accessibility, 🔒 hardening).
-- **Agents: open and update PRs through the `create-pr` skill, never by hand.** It runs the pre-PR
-  review, takes the description's rationale from the author rather than the diff, and keeps internal
-  context out of what reviewers read.
+- **Review your own diff before opening a PR**, and write the description from the reason for the
+  change, not from the diff and not from who asked. Keep internal context out of what reviewers read.
 - **A PR is not finished when it is opened.** Pull its review comments and fix what is real. Who
   left the comment decides what happens next, and this gets skipped often enough to be worth
   spelling out:
-  - **A review bot** (`prfectionist`) — fix the valid findings, ignore the false positives, and
+  - **A review bot** — fix the valid findings, ignore the false positives, and
     resolve every thread once done. **Do not reply**: nobody reads it, and a thread left open reads
     as unaddressed work. Say in your own summary which findings you rejected and why.
   - **A person** — reply saying what changed and how you verified it, then resolve the thread. Say
@@ -208,9 +203,11 @@ that variable locally — a silent pass is how vendored tokens drift from their 
   arbitrary and is not, a value that must not change and why. "What this line does" is never a
   reason; if a comment would restate the code, delete it or rename the code instead.
 - **One line, and the long form goes elsewhere.** No multi-line commentary anywhere. The reasoning
-  behind a decision belongs in `docs/plan/`, which is reviewed, searchable and read on purpose — a
-  paragraph above a function is none of those and goes stale where nobody looks. This applies to
-  what you add *and* to what you touch: trim a verbose comment on the way past.
+  behind a decision belongs in the `docs/` page that owns the subject, which is reviewed, searchable
+  and read on purpose — a paragraph above a function is none of those and goes stale where nobody
+  looks. This applies to what you add *and* to what you touch: trim a verbose comment on the way past.
+- **Open work goes in `docs/plan/backlog.md`.** Add an item when you find a gap you are not fixing,
+  and remove it in the PR that fixes it.
 - Mirror structure across the four platforms. Same screen, same file name adjusted only for
   platform casing conventions, same relative folder. If you add a screen to one app, add it to the
   other three or explain in the PR why it is platform-specific.
@@ -244,7 +241,7 @@ deterministic.
 
 ## Security & Credentials
 
-**Never commit, in any branch, at any time** — this list survives the public flip because history
+**Never commit, in any branch, at any time** — this repository is public, and its history
 does:
 
 - partner IDs, API keys, tokens, `.env` files, signing keys or keystores
@@ -257,55 +254,25 @@ Sandbox credentials reach CI as repository secrets, never as tree contents. Beca
 no secrets, lanes that need them run on schedule, on release dispatch, or manually — never on
 `pull_request` from a fork.
 
-## Going Public — the pre-flip checklist
+## Publishing rules — every change
 
-**The flag convention.** Anything committed that must not survive the flip gets a marker so it is
-greppable:
+Because every commit is public, each PR holds to these:
 
-```markdown
-<!-- INTERNAL-ONLY:START reason=roadmap-dates -->
-...internal-only prose...
-<!-- INTERNAL-ONLY:END -->
-```
-
-Inline, prefix the item: `- **[INTERNAL-ONLY]** references the internal CI repository`.
-In code or config, use a line comment containing `INTERNAL-ONLY` and the reason.
-
-Use it for internal *context* — roadmap and dates, internal repository or tool names, plans for
-unreleased SDK features, internal process notes. Do **not** use it as a way to commit anything on
-the never-commit list above; no marker can unpublish history.
-
-**Before flipping visibility to public, all of these must be true:**
-
-- [ ] `grep -rn "INTERNAL-ONLY" --exclude-dir=.git --exclude=AGENTS.md .` returns nothing, every
-      hit having been removed or rewritten for a public audience. `AGENTS.md` is excluded because it
-      documents the convention itself — it is the one expected match, and the section stays.
-- [ ] no reference remains to internal-only repositories, internal planning documents, or internal
-      tracker items — this repo's docs must stand alone
-- [ ] **jargon sweep** — the `INTERNAL-ONLY` grep cannot catch internal shorthand nobody marked, so
-      grep explicitly for the terms that mean nothing to a partner: internal probe-app and codename
-      references, private repo names, internal tracker prefixes, and any team-only abbreviation. One
-      such leak (an internal probe codename used to justify a library choice) was caught in review
-      rather than by the marker grep, which is why this line exists
-- [ ] history audit: no secret, credential, fixture, biometric media or internal playbook appears
-      in **any** commit (`git log --all --stat` for suspicious paths, plus a secret scan). If one
-      does, the flip waits on a history rewrite or a fresh-history re-publish
-- [ ] all four apps build from the registry with no override, in debug **and** release
-- [x] `LICENSE` chosen and added — **MIT**, matching all five sibling repos (2026-08-13). Third-party
-      asset licences still to be confirmed as redistributable
-- [ ] every credential in CI is sandbox-scoped, and no workflow exposes a secret to a fork PR
-- [ ] README, `docs/plan/` and `AGENTS.md` read correctly to an outside partner engineer — no
-      unexplained internal shorthand
-- [ ] issue templates and repo settings reviewed (branch protection, who can push, discussions)
-- [ ] a colleague other than the author has re-read the diff of everything the flip publishes
+- [ ] no reference to an internal-only repository, planning document, tracker item, tool or person
+- [ ] no internal shorthand: grep your diff for private repo names, tracker prefixes and team-only
+      abbreviations before you push; review has caught one that nothing else would have
+- [ ] no secret, credential, fixture, biometric media or internal playbook, in any commit — rewriting
+      history after a push does not unpublish what was already fetched
+- [ ] every credential in CI is sandbox-scoped or held in the `release` environment, and no workflow
+      exposes a secret to a fork PR
+- [ ] bundled third-party assets are listed in `NOTICE` with their licence
 
 ## Definition of Done
 
 - ⚠️ **Ask first:** adding a new dependency to any app; changing an SDK version; changing anything
   in `spec/` that four apps already implement; adding a native module.
 - 🚫 **Never:** commit secrets or fixtures; add a path/override SDK dependency; publish
-  `sample-ui`; skip the release lane because debug worked; reference an internal planning doc in a
-  committed file without an `INTERNAL-ONLY` marker.
+  `sample-ui`; skip the release lane because debug worked; commit internal-only context.
 
 Before finishing any change:
 
@@ -313,7 +280,7 @@ Before finishing any change:
 - [ ] `spec/` and the four apps still agree, or the PR says which platform follows and when
 - [ ] UI change → goldens updated, light and dark, plus the font-scale and contrast predicates
 - [ ] New scenario, screen or affordance → `spec/` updated in the same PR, IDs stable
-- [ ] Nothing added to the never-commit list; anything internal-only carries the marker
+- [ ] Nothing added to the never-commit list, and nothing internal-only
 - [ ] Declarations carry a one-line doc comment; inline comments are gone unless the code cannot
       say what they say
 - [ ] The PR's bot findings are fixed or explicitly rejected, and every thread is resolved
@@ -332,5 +299,4 @@ Before finishing any change:
 - Do not introduce camera, ML or networking libraries of your own; the SDK owns capture and
   submission, and a sample that reimplements them stops being a sample.
 - Do not add capture-completion tooling, frame injection or fixtures here.
-- Do not flip repository visibility, or relax a workflow's secret handling, without the checklist
-  above being complete.
+- Do not relax a workflow's secret handling, or expose a secret to a fork PR.

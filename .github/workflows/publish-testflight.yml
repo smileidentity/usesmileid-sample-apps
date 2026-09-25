@@ -19,6 +19,8 @@ permissions:
 jobs:
   publish:
     runs-on: blacksmith-6vcpu-macos-26
+    # Store credentials are scoped to this environment, and its reviewers approve every run.
+    environment: release
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7

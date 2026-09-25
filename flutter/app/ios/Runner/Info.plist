@@ -4,6 +4,10 @@
 <dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Smile ID uses the camera to capture your selfie and documents.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Smile ID uses your location to help prevent fraud.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Smile ID uses your photo library to import a document image.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

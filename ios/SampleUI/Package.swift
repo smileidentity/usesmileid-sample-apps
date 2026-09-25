@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
   name: "SampleUI",
-  // Above the SDK's own floor of 15 so the store can be SwiftData; see docs/plan/offline-storage.md D1.
+  // Above the SDK's own floor of 15 so the store can be SwiftData; see docs/architecture.md §5.
   platforms: [.iOS(.v17)],
   products: [
     .library(name: "SampleUI", targets: ["SampleUI"])

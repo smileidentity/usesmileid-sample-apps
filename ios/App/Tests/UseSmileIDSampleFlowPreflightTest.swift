@@ -63,7 +63,7 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
     }
   }
 
-  /// By owner ruling no host's gate checks consent; pinned so no platform diverges alone.
+  /// By design no host's gate checks consent; pinned so no platform diverges alone.
   func testAJourneyWithNoConsentAtAllStillReachesTheSdk() {
     let neither = snapshot(.smartSelfieEnrollment, userDetails: complete, consentStep: false)
     XCTAssertEqual(useSmileIDSamplePreflight(neither), .ready)

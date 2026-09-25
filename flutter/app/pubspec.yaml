@@ -31,10 +31,10 @@ dependencies:
   sample_ui:
     path: ../sample_ui
 
-  # Chosen in docs/plan/navigation-plan.md for StatefulShellRoute's per-tab back stacks.
+  # See docs/architecture.md §4: StatefulShellRoute gives per-tab back stacks.
   go_router: ^17.5.0
 
-  # Chosen in docs/plan/navigation-plan.md: ProviderScope overrides turn the launch arguments into
+  # See docs/architecture.md §4: ProviderScope overrides turn the launch arguments into
   # provider overrides at app start, so automation gets deterministic state with no test-only build.
   flutter_riverpod: ^3.1.0
 

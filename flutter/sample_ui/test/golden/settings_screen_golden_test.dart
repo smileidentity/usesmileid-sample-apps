@@ -25,7 +25,7 @@ void main() {
       // The screen owns its scroll view, and at 2x it needs far more than one host to lay out.
       ownsScrolling: true,
       hostHeight: goldenScreenHeight * 2,
-      // Each is one word wider than the row's text column at 2x: `ui-work-plan.md` §5 item 3a.
+      // Each is one word wider than the row's text column at 2x.
       knownOpenWords: const <String>{
         'SmartSelfie\u2122',
         'Documentation',

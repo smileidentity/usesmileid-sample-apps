@@ -1,0 +1,28 @@
+Smile ID sample apps
+Copyright (c) 2026 Smile ID
+
+The source code in this repository is licensed under the MIT License (see LICENSE). The following
+bundled assets are not covered by that licence and keep their own terms.
+
+DM Sans
+  Files:   android/sample-ui/src/main/res/font/dm_sans_*.ttf
+           ios/SampleUI/Sources/SampleUI/Resources/Fonts/DMSans-*.ttf
+           flutter/sample_ui/assets/fonts/DMSans-*.ttf
+           expo/sample-ui/assets/fonts/DMSans-*.ttf
+  Licence: SIL Open Font License, Version 1.1
+  Source:  https://github.com/googlefonts/dm-fonts
+
+Material Symbols (Outlined)
+  Files:   design/icons/material-symbols/*.svg, and the app icons generated from them
+  Licence: Apache License, Version 2.0
+  Source:  https://github.com/google/material-design-icons
+
+Smile ID marks, app icons and store art
+  Files:   svgs/, design/icons/ (other than material-symbols/), the launcher icons generated from
+           them, android/play/, ios/store/
+  The Smile ID name, logo and marks are trademarks of Smile ID and are not licensed for reuse under
+  the MIT License. They are included so the apps build and ship as published. Replace them in any
+  app of your own.
+
+Every other third-party dependency is resolved from its package registry at build time, and each app
+lists them on its open-source licences screen.

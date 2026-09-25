@@ -27,12 +27,13 @@ jobs:
       # --check needs the design system, which is private; a fork PR gets no secret, so this skips and says so.
       - name: Check out the design system
         id: design-system
-        if: env.DESIGN_SYSTEM_TOKEN != ''
+        if: env.DESIGN_SYSTEM_TOKEN != '' && env.DESIGN_SYSTEM_REPOSITORY != ''
         env:
           DESIGN_SYSTEM_TOKEN: ${{ secrets.DESIGN_SYSTEM_TOKEN }}
+          DESIGN_SYSTEM_REPOSITORY: ${{ vars.DESIGN_SYSTEM_REPOSITORY }}
         uses: actions/checkout@v7
         with:
-          repository: smileidentity/claude-skills
+          repository: ${{ vars.DESIGN_SYSTEM_REPOSITORY }}
           token: ${{ secrets.DESIGN_SYSTEM_TOKEN }}
           path: .design-system
           sparse-checkout: smile-design-system
@@ -41,7 +42,7 @@ jobs:
       - name: Note a skipped token check
         if: steps.design-system.outcome == 'skipped'
         run: |
-          echo "::warning title=Design tokens not verified::No DESIGN_SYSTEM_TOKEN available, so the \
+          echo "::warning title=Design tokens not verified::No DESIGN_SYSTEM_TOKEN or DESIGN_SYSTEM_REPOSITORY available, so the \
           vendored token output was not compared against the design system. Everything else ran."
 
       # The workspace pins pnpm 9; the sibling SDK repo needs 10.x and resolves its own through npx.

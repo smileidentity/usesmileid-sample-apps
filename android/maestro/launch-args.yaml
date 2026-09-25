@@ -4,7 +4,7 @@
 #
 # This flow taps its way to the card and never deep-links to it. A deep link delivered by `am start`
 # carries FLAG_ACTIVITY_NEW_TASK and rebuilds the Activity, which discards the launch arguments along
-# with every other in-memory hoist — see R9 in docs/plan/navigation-plan.md. Deep-linking here would
+# with every other in-memory hoist — see docs/architecture.md §4. Deep-linking here would
 # read defaults and look like a parsing bug.
 #
 # The screen assertions between taps are synchronisation, not decoration: Maestro will happily tap

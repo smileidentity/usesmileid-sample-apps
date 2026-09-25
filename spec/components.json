@@ -43,7 +43,7 @@
       "notes": "CORRECTED 2026-08-12: the background colour varies PER PROFILE rather than being one avatar.bg. Needs a documented profile→hue rule so all four platforms colour the same profile identically (same gap as the product→hue mapping). CORRECTED 2026-08-17: a ROUNDED SQUARE at radius 12, not a circle (node 5206:2904). RESOLVED 2026-08-18: the profile→hue rule is settled — design-tokens.json profileHues lists the four fills the design draws and every platform indexes it by the profile's POSITION in the list, cycling beyond four. Hashing the initials is wrong: it gives a different colour per platform and per profile name. One default for the whole app, so the settings summary, the products header, the profiles list and the switch sheet cannot disagree about one profile.",
       "colouring": "per-profile hue (observed navy / green / amber across the three profiles), white initials",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2348",
-      "decision": "OWNER DECISION 2026-08-13: a header avatar BUTTON is added next to the environment chip on products, and it is what opens the profile-switch sheet. Small design addition. Per-profile hues come from the designer's list."
+      "decision": "DECIDED 2026-08-13: a header avatar BUTTON is added next to the environment chip on products, and it is what opens the profile-switch sheet. Small design addition. Per-profile hues come from the designer's list."
     },
     {
       "name": "Button",
@@ -182,7 +182,7 @@
       "notes": "CORRECTED 2026-08-12 from the prototype recording, RESOLVED 2026-08-17 against nodes 5206:2429–2433. The design uses soft tinted pills, not the design system's saturated badge fills, and the four exact pairs now live in design-tokens.json → softBadgeFills.fills, generated per platform. Do not reach for the current badge.* tokens. Vocabulary maps to roles: Clear→success, Attention→warning, Blocked→error, Processing→info. TWO THINGS A PORT GETS WRONG: the label is Title case, NOT upper-cased (the same 11/700 label style IS upper-cased for date and section headers, which is how Android came to upper-case this too); and the pill takes radius.control, not radius.chip.",
       "fillTreatment": "SOFT — a pale tinted fill with a dark same-hue label, for ALL FOUR statuses (pale green Clear, pale amber Attention, pale red Blocked, pale blue Processing).",
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2410",
-      "decision": "OWNER DECISION 2026-08-13: ship the design's SOFT tinted pills for all four statuses. Implemented by adding soft variants to the design system (never by hardcoding the Figma hexes), so it stays token-driven."
+      "decision": "DECIDED 2026-08-13: ship the design's SOFT tinted pills for all four statuses. Implemented by adding soft variants to the design system (never by hardcoding the Figma hexes), so it stays token-driven."
     },
     {
       "name": "SectionLabel",
@@ -362,7 +362,7 @@
         "RememberDetailsRow — switch variant used on userDetails"
       ],
       "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2898",
-      "decision": "SUPERSEDED 2026-08-25 by node 5206:2898 (re-read 2026-08-24). The 2026-08-13 owner decision read: 'Smile to capture' ON means enhanced liveness OFF. That frame renames the row to 'Enhanced SmartSelfie™ / Face capture uses head-turns' and draws it ON, so the polarity is now DIRECT — ON means enableEnhancedLiveness = true — and the app's default capture behaviour is the head-turn challenge rather than passive smile capture. See settingsToSdkMapping for the field and test-ids.json for the renamed id."
+      "decision": "SUPERSEDED 2026-08-25 by node 5206:2898 (re-read 2026-08-24). The 2026-08-13 decision read: 'Smile to capture' ON means enhanced liveness OFF. That frame renames the row to 'Enhanced SmartSelfie™ / Face capture uses head-turns' and draws it ON, so the polarity is now DIRECT — ON means enableEnhancedLiveness = true — and the app's default capture behaviour is the head-turn challenge rather than passive smile capture. See settingsToSdkMapping for the field and test-ids.json for the renamed id."
     },
     {
       "name": "ProfileRow",
@@ -420,7 +420,7 @@
       ],
       "usedBy": [],
       "notes": "VERIFIED against a render 2026-08-12. It is an ENVIRONMENT pill — a status dot plus the environment name ('Sandbox') on a pale fill. There is no avatar in it; the profile avatar lives in Settings. The production variant is wider, so do not fix its width.",
-      "decision": "OWNER DECISION 2026-08-13: the chip DISPLAYS environment only and is no longer the profile-switch trigger — the new header avatar button owns that. OWNER RULING 2026-08-24: HIDDEN, not deleted — node 5447:1705 keeps the instance in the products frame with hidden=true. The component, its tokens, its sample_env_chip id and its composite golden all survive; usedBy is empty because no shipped screen renders it. The environment stopped being an app-level property — a token's api_url claim decides it — so a header chip reading 'this app submits here' would no longer be true, and sample_result_environment on the result card publishes it instead. Read this before reporting the component missing; reinstating it needs a design change."
+      "decision": "DECIDED 2026-08-13: the chip DISPLAYS environment only and is no longer the profile-switch trigger — the new header avatar button owns that. DECIDED 2026-08-24: HIDDEN, not deleted — node 5447:1705 keeps the instance in the products frame with hidden=true. The component, its tokens, its sample_env_chip id and its composite golden all survive; usedBy is empty because no shipped screen renders it. The environment stopped being an app-level property — a token's api_url claim decides it — so a header chip reading 'this app submits here' would no longer be true, and sample_result_environment on the result card publishes it instead. Read this before reporting the component missing; reinstating it needs a design change."
     },
     {
       "name": "ProductCard",
@@ -461,7 +461,7 @@
         "products"
       ],
       "notes": "VERIFIED against a render 2026-08-12. The WHOLE CARD is filled with a decorative colour (green, indigo, amber, near-black, indigo across the products) with inverse text — not a white card with a coloured accent. Anatomy: white rounded icon tile top-left, a same-hue ghost glyph watermark bleeding off the top-right, title bottom-left in inverse text (may wrap to two lines), and a circular outlined arrow bottom-right. 174x148 in a 2-up grid, 12 gap.",
-      "decision": "OWNER DECISION 2026-08-13: six products now (Enhanced KYC fills the empty slot). The label is 'SmartSelfie Authentication' in full, which WRAPS TO TWO LINES on a 174-wide card — verify the card's two-line footer still fits at large font scales, and raise it with design if it clips.",
+      "decision": "DECIDED 2026-08-13: six products now (Enhanced KYC fills the empty slot). The label is 'SmartSelfie Authentication' in full, which WRAPS TO TWO LINES on a 174-wide card — verify the card's two-line footer still fits at large font scales, and raise it with design if it clips.",
       "designRef": "Re-read 2026-08-25 off node 5487:1351 (light) and 5447:1701 (dark), which are identical apart from the variables they resolve."
     },
     {
@@ -515,7 +515,7 @@
       ],
       "metrics": {
         "rowHeight": "68 in the design; space64 minimum here, content-driven",
-        "iconTile": "36 at radius 10, both taken from the board rather than the scale: no token carries either, and PVR-A13's move to 16 deliberately left verifications out. The glyph is 18, its stroke 1.857, and the two document products share one mark told apart by the tint alone — as on the card, but in the row's own colours.",
+        "iconTile": "36 at radius 10, both taken from the board rather than the scale: no token carries either, and the visual refresh's move to 16 deliberately left verifications out. The glyph is 18, its stroke 1.857, and the two document products share one mark told apart by the tint alone — as on the card, but in the row's own colours.",
         "gap": "12 (spacing.sm)",
         "secondaryLine": "'<truncated job id> · HH:MM:SS'",
         "wrapping": "the tile, text block and badge are a FlowRow, so the badge drops below the title at 2x",
@@ -733,7 +733,7 @@
         "countryPickerSheet",
         "idTypePickerSheet"
       ],
-      "notes": "Country rows lead with a flag; ID-type rows do not. Selected rows carry a check. CORRECTED 2026-08-12: the selected row takes a pale-blue fill as well as the check. CORRECTED 2026-08-17 against node 5206:2835. The selected row takes SURFACE-2 as its fill plus a 20 check; an UNSELECTED row is TRANSPARENT, not white — this is the selected-surface treatment that ui-work-plan.md §5 recorded as having no token. Label is Body Strong at its real 14; a country row leads with a 19 flag emoji.",
+      "notes": "Country rows lead with a flag; ID-type rows do not. Selected rows carry a check. CORRECTED 2026-08-12: the selected row takes a pale-blue fill as well as the check. CORRECTED 2026-08-17 against node 5206:2835. The selected row takes SURFACE-2 as its fill plus a 20 check; an UNSELECTED row is TRANSPARENT, not white — this is the selected-surface treatment that has no token. Label is Body Strong at its real 14; a country row leads with a 19 flag emoji.",
       "selectedTreatment": "pale-blue FILLED row highlight + trailing check (not check-only)"
     },
     {
@@ -754,7 +754,7 @@
         "ownership": "The screen beneath owns the sheet — a boolean it holds — and the sheet is REMOVED FROM COMPOSITION when hidden, which is M3's own guidance. Never a route of its own: a sheet destination replaces the screen it should be covering, so the scrim covers nothing. spec/routes.json keeps the sheet paths and resolves each to its owner plus the sheet it opens.",
         "openHeight": "content height, NOT the platform's half-screen partial state: the five-field new-profile sheet clipped its last field and put its CTA below the fold at half height",
         "overflow": "the content scrolls rather than clips, so enlarged type cannot strand a CTA",
-        "radius": "radius.surface (16) on the top corners. Was radius.sheet (20); PVR-A13 rules one radius value wherever a radius is chosen. A slightly squarer sheet than Android users see elsewhere, which is why §7.8 asks for a device look rather than a golden diff."
+        "radius": "radius.surface (16) on the top corners. Was radius.sheet (20); one rule sets one radius value wherever a radius is chosen. A slightly squarer sheet than Android users see elsewhere, which is why §7.8 asks for a device look rather than a golden diff."
       },
       "variants": [
         "partialWithHandle",
@@ -772,7 +772,7 @@
         "SheetHeader — back + title for full-height sheets",
         "GrabHandle — 44x5 pill on partial sheets"
       ],
-      "designRef": "Scale ruled 2026-08-24, migrated 2026-08-26 (PVR-A13)."
+      "designRef": "Scale ruled 2026-08-24, migrated 2026-08-26."
     },
     {
       "name": "NavBar",
@@ -948,7 +948,7 @@
         "size": "393x160, full-bleed at the bottom with radius.sheet top corners",
         "manualEntryRow": "353x46; size.control-md minimum, radius.field, surface-alt fill",
         "simulateButton": "353x48 full-width primary — a first-class feature, not debug scaffolding: it is what makes token-session flows testable with no QR source",
-        "radius": "radius.surface (16) on the top corners. Was radius.sheet (20); PVR-A13 rules one radius value wherever a radius is chosen. A slightly squarer sheet than Android users see elsewhere, which is why §7.8 asks for a device look rather than a golden diff."
+        "radius": "radius.surface (16) on the top corners. Was radius.sheet (20); one rule sets one radius value wherever a radius is chosen. A slightly squarer sheet than Android users see elsewhere, which is why §7.8 asks for a device look rather than a golden diff."
       },
       "rows": [
         "manualEntryWithPaste"
@@ -962,7 +962,7 @@
         "SimulateRow — 'Simulate a successful scan'"
       ],
       "primaryAction": "'Simulate a successful scan' — a full-width PRIMARY BUTTON, not a row",
-      "designRef": "Scale ruled 2026-08-24, migrated 2026-08-26 (PVR-A13)."
+      "designRef": "Scale ruled 2026-08-24, migrated 2026-08-26."
     },
     {
       "name": "ResultCard",
@@ -1082,7 +1082,7 @@
     "Consent screen": "include or omit consent() in the flow builder — there is NO showConsent boolean",
     "Instruction screen": "include or omit instructions() in the flow builder",
     "Preview screen": "include or omit preview() in the flow builder (allowRetake configures it once present)",
-    "Enhanced SmartSelfie™": "ON → `SelfieCaptureConfig.enableEnhancedLiveness = true` (the head-turn challenge); OFF → `false` (passive smile capture). Direct, not inverted, and ON by default for every product. SUPERSEDED the 2026-08-13 owner decision on 2026-08-25: that named the row 'Smile to capture' and had ON mean `enableEnhancedLiveness = false`, and node 5206:2898 renamed the row and drew it ON, which inverted both the label and the meaning. It and Agent mode write different fields and they CAN fight — the SDK refuses the pair with BUILDER_AGENT_MODE_WITH_ENHANCED_LIVENESS at ERROR severity — so each platform holds a mutex where it persists settings: turning either on turns the other off. The screen is the wrong place for it, because both persistence paths have to inherit the same rule."
+    "Enhanced SmartSelfie™": "ON → `SelfieCaptureConfig.enableEnhancedLiveness = true` (the head-turn challenge); OFF → `false` (passive smile capture). Direct, not inverted, and ON by default for every product. SUPERSEDED the 2026-08-13 decision on 2026-08-25: that named the row 'Smile to capture' and had ON mean `enableEnhancedLiveness = false`, and node 5206:2898 renamed the row and drew it ON, which inverted both the label and the meaning. It and Agent mode write different fields and they CAN fight — the SDK refuses the pair with BUILDER_AGENT_MODE_WITH_ENHANCED_LIVENESS at ERROR severity — so each platform holds a mutex where it persists settings: turning either on turns the other off. The screen is the wrong place for it, because both persistence paths have to inherit the same rule."
   },
   "buildOrder": [
     "1. Tokens: generate the platform token source and wire light/dark (nothing else can start).",

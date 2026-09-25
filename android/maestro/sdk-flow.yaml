@@ -1,7 +1,7 @@
 # The SDK flow handoff: mount, then exactly one terminal result on both exits this repo can drive —
 # Deny and the back gesture — including immediate re-entry. Card assertions read the
 # verification-details card, because the products line renders only while a run is in flight.
-# Flows stop at the capture screen (docs/plan/sample-apps-plan.md §6).
+# Flows stop at the capture screen (docs/testing.md §4).
 # APP_ID must be passed — see shell-navigation.yaml for why it has no default.
 appId: ${APP_ID}
 ---

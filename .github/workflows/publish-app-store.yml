@@ -33,6 +33,8 @@ permissions:
 jobs:
   publish:
     runs-on: blacksmith-6vcpu-macos-26
+    # Store credentials are scoped to this environment, and its reviewers approve every run.
+    environment: release
     timeout-minutes: 90
     env:
       DRY_RUN: ${{ inputs.dry_run }}

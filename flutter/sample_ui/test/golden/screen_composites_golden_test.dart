@@ -271,14 +271,14 @@ void _ignore(String value) {}
 
 void _ignoreItem(UseSmileIDSampleNavItem item) {}
 
-/// Each tab label is wider than a third of the pill at 2x — `port-adversarial-review.md` C5.
+/// Each tab label is wider than a third of the pill at 2x.
 const Set<String> _tabOpenWords = <String>{
   'Products',
   'Verifications',
   'Settings',
 };
 
-/// The words `ui-work-plan.md` §5 item 3a records as breaking at 2x in the design's own grid.
+/// The words that break at 2x in the design's own grid.
 const Set<String> _gridOpenWords = <String>{
   'Registration',
   'Document',

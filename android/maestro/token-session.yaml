@@ -57,7 +57,7 @@ appId: ${APP_ID}
     text: "[78]:[0-9]{2}:[0-9]{2}"
 
 # The scanned token drives a real SDK run with no bindings — the baseline where the host collects it all.
-# The consent-bound case is covered below; see docs/plan/token-session-android.md §3 for why it once was not.
+# The consent-bound case is covered below; docs/token-session.md §3 has the binding rules.
 - tapOn:
     id: "sample_nav_token"
 - assertVisible:

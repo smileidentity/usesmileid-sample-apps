@@ -174,7 +174,7 @@
             "capture": false,
             "needsUserDetails": true,
             "needsIdDetails": true,
-            "note": "OWNER DECISION 2026-08-13: added to fill the grid's empty slot. No camera step — the SDK flow composes consent() + processing() only, which needs no SDK change and makes this the one journey proving the flow works without capture(). Needs a 6th product card designed (icon + hue)."
+            "note": "DECIDED 2026-08-13: added to fill the grid's empty slot. No camera step — the SDK flow composes consent() + processing() only, which needs no SDK change and makes this the one journey proving the flow works without capture(). Needs a 6th product card designed (icon + hue)."
           }
         ]
       }
@@ -186,9 +186,9 @@
       ]
     },
     "flowOrder": "product tapped → Consent Details Form (sample-owned user details, seeded from the active profile — the design labels these fields 'ATTACHED TO EVERY JOB', so every product shows it) → ID details form (sample-owned, only when needsIdDetails) → SDK flow [consent → instructions → capture → preview → processing] → verification details in the processing state. Everything before the SDK flow is sample-owned, which is why no SDK change is needed.",
-    "flowOrderRuling": "OWNER RULING 2026-08-13: e.g. SmartSelfie Enrollment → Consent Details Form → SDK flow. The Figma prototype still shows the SDK consent screen first; that wiring is stale and is not being updated.",
+    "flowOrderRuling": "DECIDED 2026-08-13: e.g. SmartSelfie Enrollment → Consent Details Form → SDK flow. The Figma prototype still shows the SDK consent screen first; that wiring is stale and is not being updated.",
     "needsUserDetailsNote": "Set true for every product on the evidence of the design's own label 'USER DETAILS — ATTACHED TO EVERY JOB' (board 06 profile config) plus the owner's SmartSelfie Enrollment example.",
     "captureless": "Products with capture=false (enhancedKyc) compose the SDK flow WITHOUT capture() or preview(): consent() + processing(). Everything before the SDK flow is unchanged.",
-    "sectionRename": "OWNER RULING 2026-08-26, superseding the 2026-08-25 rename off node 5487:1364: the two headings are 'Authentication' and 'Onboarding'. The second stops colliding with the Verifications TAB, which named a products section and a destination the same thing. The section KEYS in each app's enum are unchanged — only the displayed labels moved, so Verifications stays the enum constant for the Onboarding heading."
+    "sectionRename": "DECIDED 2026-08-26, superseding the 2026-08-25 rename off node 5487:1364: the two headings are 'Authentication' and 'Onboarding'. The second stops colliding with the Verifications TAB, which named a products section and a destination the same thing. The section KEYS in each app's enum are unchanged — only the displayed labels moved, so Verifications stays the enum constant for the Onboarding heading."
   }
 }

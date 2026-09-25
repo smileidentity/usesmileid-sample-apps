@@ -188,7 +188,7 @@ void _ignoreIds(Set<String> ids) {}
 
 void _ignoreJob(UseSmileIDSampleJob job) {}
 
-/// The words `ui-work-plan.md` §5 item 3a records as breaking at 2x.
+/// The words that break at 2x.
 const Set<String> _rowOpenWords = <String>{
   'Enrollment',
   'Authentication',

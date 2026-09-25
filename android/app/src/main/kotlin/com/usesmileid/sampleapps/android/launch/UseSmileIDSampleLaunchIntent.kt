@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleLaunchArgs
 
-/** Force-stop before sending: an intent to a live task rebuilds the Activity and resets these — R9 in `docs/plan/navigation-plan.md`. */
+/** Force-stop before sending: an intent to a live task rebuilds the Activity and resets these — see `docs/architecture.md` §4. */
 internal fun Intent?.useSmileIDSampleLaunchArgs(): UseSmileIDSampleLaunchArgs {
     val intent = this ?: return UseSmileIDSampleLaunchArgs()
     val extras = intent.extras
