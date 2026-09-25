@@ -159,8 +159,8 @@ Once 1 and 2 are done, **Actions → Publish to TestFlight → Run workflow** ar
 the build appears in TestFlight. **Publish to the App Store** gates the listing, uploads, waits for
 processing, attaches the build to a new version with the copy in `ios/store/`, and submits it for
 review. Ticking **dry_run** instead signs and exports the IPA and reads App Store Connect, and
-uploads nothing. A real run needs the `ASC_REVIEW_NAME` and
-`ASC_REVIEW_PHONE` repository secrets (`ASC_REVIEW_EMAIL` is optional). Releasing an approved version
+uploads nothing. A real run needs the `ASC_REVIEW_NAME`,
+`ASC_REVIEW_PHONE` and `ASC_REVIEW_EMAIL` repository secrets. Releasing an approved version
 by hand stays a Console action unless **release** is `after-approval`. Both lanes revoke the development certificate their
 signing creates, at the end of the run, so the team's certificate list stays as it was.
 
