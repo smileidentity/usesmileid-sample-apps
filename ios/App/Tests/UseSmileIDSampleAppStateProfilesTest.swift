@@ -59,6 +59,21 @@ final class UseSmileIDSampleAppStateProfilesTest: XCTestCase {
     XCTAssertEqual(store.profiles, UseSmileIDSampleProfiles())
   }
 
+  func testAnEntryAfterTheActiveProfileChangedFillsFromTheNewOne() {
+    let amina = UseSmileIDSampleUserDetails(firstName: "Amina", lastName: "Diallo")
+    store.setProfiles(UseSmileIDSampleProfiles([
+      UseSmileIDSampleProfile(id: "p-1", organisation: "Kobo", defaults: UseSmileIDSampleUserDetails(firstName: "Ada")),
+      UseSmileIDSampleProfile(id: "p-2", organisation: "Kazi", defaults: amina)
+    ]))
+    let app = appState()
+    app.fillFormForRun()
+
+    app.saveProfile("p-2")
+    app.fillFormOnEntry()
+
+    XCTAssertEqual(app.userDetails, amina, "the form kept the previous profile's details under the new one")
+  }
+
   func testTheSwitchOffKeepsNothing() {
     let app = appState()
     app.userDetails = UseSmileIDSampleUserDetails(firstName: "Ada", lastName: "Okafor", email: "ada@kobo.example")

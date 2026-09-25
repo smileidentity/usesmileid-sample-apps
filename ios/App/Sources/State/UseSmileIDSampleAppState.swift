@@ -357,22 +357,24 @@ final class UseSmileIDSampleAppState: ObservableObject {
 
   /// A run starts from the profile it runs as; with none, what this session typed stays, since the person chose not to keep it.
   func fillFormForRun() {
-    formFilledThisLaunch = true
+    formFilledFor = .some(profiles.activeId)
     if let active = profiles.active {
       fillForm(from: active)
     }
   }
 
-  /// The form's entry: a cold link skips the product tap that fills it, so the first entry of a launch fills it too.
+  /// The form's entry: a cold link skips the product tap that fills it, so an entry fills it unless it already holds this profile's run.
   func fillFormOnEntry() {
-    if !formFilledThisLaunch {
+    if formFilledFor != .some(profiles.activeId) {
       fillFormForRun()
     }
   }
 
-  private var formFilledThisLaunch = false
+  /// Which active profile the form was last filled for; nil until the first fill of a launch.
+  private var formFilledFor: String??
 
   private func fillForm(from profile: UseSmileIDSampleProfile?) {
+    formFilledFor = .some(profile?.id)
     userDetails = profile?.defaults ?? UseSmileIDSampleUserDetails()
     organisationDraft = ""
     saveToProfile = true
