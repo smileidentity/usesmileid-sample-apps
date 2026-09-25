@@ -46,7 +46,7 @@ jobs:
     # own snapshot gate. Goldens are pixel comparisons, so recording and verifying have to happen on
     # one runtime — a runner or simulator that drifts from the local default reds the lane for
     # reasons that have nothing to do with the UI.
-    runs-on: macos-26
+    runs-on: blacksmith-6vcpu-macos-26
     # The UI tests drive a cross-process system alert, which can hang where the earlier programmatic
     # steps could not; without this a wedged run holds the branch's concurrency group for hours.
     # Back to 45 now the suite is split: the headroom was for one serial job that had reached 44
@@ -104,7 +104,8 @@ jobs:
         env:
           SMILE_DESIGN_SYSTEM: ${{ steps.design-system.outcome == 'success' && format('{0}/.design-system/smile-design-system', github.workspace) || '' }}
           SMILE_TOKENS_OPTIONAL: ${{ steps.design-system.outcome == 'skipped' && '1' || '' }}
-          DESTINATION: platform=iOS Simulator,name=iPhone 17 Pro
+          # OS pinned because the Blacksmith image also ships an iOS 27.0 runtime; baselines are on 26.5.
+          DESTINATION: platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5
         run: ios/verify.sh ${{ matrix.phase }} ${{ matrix.class }}
 
       - name: Keep the UI test result bundle when the lane reds
