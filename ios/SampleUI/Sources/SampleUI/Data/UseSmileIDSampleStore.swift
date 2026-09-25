@@ -220,9 +220,12 @@ public final class UseSmileIDSampleDefaultsStorage: UseSmileIDSampleSettingsStor
     defaults.set(value, forKey: key)
   }
 
-  /// Data, not a string: a launch argument lands in the argument domain as a string, so it cannot seed profiles.
+  /// Never from a launch argument: a `<hex>` argument arrives as data, and fixtures reach a launch only through `seedProfiles`.
   public func data(_ key: String) -> Data? {
-    defaults.data(forKey: key)
+    if UserDefaults.standard.volatileDomain(forName: UserDefaults.argumentDomain)[key] != nil {
+      return nil
+    }
+    return defaults.data(forKey: key)
   }
 
   public func setData(_ key: String, _ value: Data) {

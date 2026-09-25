@@ -36,11 +36,11 @@ export default function ConsentDetailsForm() {
   const { scenario } = useLaunchArgs();
   const requirement = smileIDSampleRequirementFrom(bindings);
 
-  // A cold link arrives without the product tap that fills the form, so entry fills it too.
+  // A cold link arrives without the product tap that fills the form, so entry fills it too; once, on mount.
+  const fillFrom = useSmileIDSampleFormsStore((state) => state.fillFrom);
   useEffect(() => {
-    const active = useSmileIDSampleProfileStore.getState();
-    const current = active.items.find((item) => item.id === active.activeId);
-    if (current !== undefined) useSmileIDSampleFormsStore.getState().fillFrom(current);
+    if (profile !== null) fillFrom(profile);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

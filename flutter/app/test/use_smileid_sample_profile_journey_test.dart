@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usesmileid_sample_flutter/src/data/use_smileid_sample_preferences_profiles_repository.dart';
+import 'package:usesmileid_sample_flutter/src/data/use_smileid_sample_preferences_settings_repository.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_forms.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
@@ -222,6 +223,10 @@ void main() {
               .all,
           isEmpty,
         );
+        final UseSmileIDSampleSettings settings =
+            await (await UseSmileIDSamplePreferencesSettingsRepository.open())
+                .read();
+        expect(settings.darkMode, isTrue, reason: 'released settings survive');
       },
     );
 

@@ -16,6 +16,7 @@ import {
   USE_SMILE_ID_SAMPLE_NO_PROFILE_LABEL,
   smileIDSampleProfileInitials,
   smileIDSampleProfileTitle,
+  smileIDSampleUserDetailsEqual,
   type UseSmileIDSampleProfile,
   type UseSmileIDSampleUserDetails,
 } from '../state/use-smile-id-sample-profiles';
@@ -96,11 +97,7 @@ export const UserDetailsScreen = ({
   // Only once there is something to keep: valid details that no profile holds yet.
   const offersSave =
     satisfied &&
-    (profile === null ||
-      smileIDSampleUserFields.some(
-        (field) =>
-          smileIDSampleUserFieldRead(field.id, state.details) !== smileIDSampleUserFieldRead(field.id, profile.defaults),
-      ));
+    (profile === null || !smileIDSampleUserDetailsEqual(state.details, profile.defaults));
 
   return (
     <View

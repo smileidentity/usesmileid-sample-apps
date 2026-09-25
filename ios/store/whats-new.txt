@@ -1,0 +1,3 @@
+Profiles no longer come with example partners.
+
+Profiles are saved on your device. A fresh install has no profile: the details you type for your first job create one, and the form fills itself from it next time. Switch or add a profile straight from the details form, so each demo runs as the right person.

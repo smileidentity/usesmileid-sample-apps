@@ -126,12 +126,12 @@ fun ProfileConfigScreen(profileId: String, navigator: DestinationsNavigator) {
     }
     var callbackUrl by rememberSaveable(profileId) { mutableStateOf(profile.callbackUrl) }
     ProfileConfigContent(
-        organisation = profile.title,
+        title = profile.title,
         isActive = profileId == app.profiles.activeId,
         changed = name.trim() != profile.organisation || defaults != profile.defaults ||
             callbackUrl.trim() != profile.callbackUrl,
-        name = name,
-        onNameChange = { name = it },
+        organisation = name,
+        onOrganisationChange = { name = it },
         defaults = defaults,
         onFieldChange = { field, value -> defaults = field.write(defaults, value) },
         callbackUrl = callbackUrl,

@@ -92,13 +92,7 @@ fun rememberUseSmileIDSampleAppState(
         if (launchArgs.seedJobs) jobStore.seedFixtures(System.currentTimeMillis())
     }
     val forms = rememberSaveable(saver = UseSmileIDSampleForms.Saver) { UseSmileIDSampleForms() }
-    // Latest record wins: a conflating flow drained on the app scope, so writes land in order and outlive the screen.
-    val profileWrites = remember(store) {
-        MutableStateFlow<UseSmileIDSampleProfilesRecord?>(null).also { writes ->
-            UseSmileIDSampleJobStore.writeScope.launch { writes.filterNotNull().collect(store::setProfiles) }
-        }
-    }
-    val profiles = remember { UseSmileIDSampleProfiles.forLaunch(launchArgs) { profileWrites.value = it } }
+    val profiles = remember(launchArgs) { UseSmileIDSampleProfilesHolder.profilesFor(launchArgs, store) }
     LaunchedEffect(profiles) { if (!profiles.loaded) profiles.restore(store.profiles.first()) }
     // Not saveable: the scanner claims it into its own saveable state, which survives a rotation.
     val interruptedRun = remember { UseSmileIDSampleInterruptedRun() }
@@ -145,3 +139,20 @@ val LocalUseSmileIDSampleAppState = staticCompositionLocalOf<UseSmileIDSampleApp
 }
 
 private const val TICK_MILLIS = 1000L
+
+/** Process-wide, so a recreated activity reuses the loaded profiles and one ordered writer instead of starting another. */
+private object UseSmileIDSampleProfilesHolder {
+    private val writes = MutableStateFlow<Pair<UseSmileIDSampleStore, UseSmileIDSampleProfilesRecord>?>(null)
+    private var current: Pair<UseSmileIDSampleLaunchArgs, UseSmileIDSampleProfiles>? = null
+
+    init {
+        // Conflated, so the latest record wins and writes land in order.
+        UseSmileIDSampleJobStore.writeScope.launch {
+            writes.filterNotNull().collect { (store, record) -> store.setProfiles(record) }
+        }
+    }
+
+    fun profilesFor(args: UseSmileIDSampleLaunchArgs, store: UseSmileIDSampleStore): UseSmileIDSampleProfiles =
+        current?.takeIf { it.first == args }?.second
+            ?: UseSmileIDSampleProfiles.forLaunch(args) { writes.value = store to it }.also { current = args to it }
+}

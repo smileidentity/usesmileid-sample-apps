@@ -310,11 +310,6 @@ public struct UseSmileIDSampleNewProfile: Equatable, Sendable {
     !name.isBlank && !firstName.isBlank && !lastName.isBlank
   }
 
-  /// The person is the two required names; all four seed the details its jobs start from.
-  public var person: String {
-    "\(firstName) \(lastName)".trimmingCharacters(in: .whitespaces)
-  }
-
   public var defaults: UseSmileIDSampleUserDetails {
     UseSmileIDSampleUserDetails(firstName: firstName, lastName: lastName, email: email, phone: phone)
   }

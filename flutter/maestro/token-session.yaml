@@ -96,12 +96,15 @@ appId: ${APP_ID}
     timeout: 30000
 - tapOn:
     id: "sample_user_details_field_firstName"
+- eraseText
 - inputText: "Ada"
 - tapOn:
     id: "sample_user_details_field_lastName"
+- eraseText
 - inputText: "Okafor"
 - tapOn:
     id: "sample_user_details_field_email"
+- eraseText
 - inputText: "ada.okafor@example.com"
 - hideKeyboard
 # `hideKeyboard` is a back press on Android and pops the form if the keyboard is already down.

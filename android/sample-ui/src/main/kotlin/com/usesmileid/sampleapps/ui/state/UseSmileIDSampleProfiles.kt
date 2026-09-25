@@ -41,12 +41,7 @@ data class UseSmileIDSampleProfilesRecord(
     val activeId: String? = profiles.firstOrNull()?.id,
 )
 
-/**
- * The profiles the app can act as, and which one is active. A plain first launch has none: no profile
- * is a state of its own, never an empty placeholder that reads as one already set up.
- *
- * @param onChange receives every change so the shell can store it; null for a launch that must write nothing.
- */
+/** The profiles the app can act as, and which one is active; a plain first launch has none. [onChange] stores each change, null for a launch that writes nothing. */
 class UseSmileIDSampleProfiles(
     seed: UseSmileIDSampleProfilesRecord = UseSmileIDSampleProfilesRecord(),
     loaded: Boolean = true,
@@ -81,14 +76,21 @@ class UseSmileIDSampleProfiles(
 
     val record: UseSmileIDSampleProfilesRecord get() = UseSmileIDSampleProfilesRecord(items.toList(), activeId)
 
-    /** Adopts what the store read, once; a change made before it arrived is not overwritten. */
+    /** Adopts what the store read, once; a sign-out tapped before it arrived still wins. */
     fun restore(stored: UseSmileIDSampleProfilesRecord) {
         if (loaded) return
         items.clear()
+        activeId = null
+        loaded = true
+        if (clearedBeforeLoad) {
+            changed()
+            return
+        }
         items.addAll(stored.profiles)
         activeId = stored.validActiveId()
-        loaded = true
     }
+
+    private var clearedBeforeLoad = false
 
     fun setActive(id: String) {
         if (items.none { it.id == id } || id == activeId) return
@@ -149,6 +151,7 @@ class UseSmileIDSampleProfiles(
 
     /** Sign out: every profile goes, which is how a phone is handed to the next person. */
     fun clear() {
+        if (!loaded) clearedBeforeLoad = true
         if (items.isEmpty()) return
         items.clear()
         activeId = null
@@ -156,8 +159,9 @@ class UseSmileIDSampleProfiles(
         changed()
     }
 
+    /** Nothing is stored before the store has answered, or a partial list would replace what it holds. */
     private fun changed() {
-        onChange?.invoke(record)
+        if (loaded) onChange?.invoke(record)
     }
 
     companion object {

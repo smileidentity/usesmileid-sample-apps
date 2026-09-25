@@ -13,8 +13,7 @@ import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
-/// One profile's own page: its organisation, four user details and callback URL, and one CTA that
-/// saves the active profile's edits or saves and activates any other.
+/// One profile's page: organisation, details and callback URL, and one CTA that saves or saves and activates.
 class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
   /// [changed] is all the active profile's Save can act on.
   const UseSmileIDSampleProfileConfigScreen({

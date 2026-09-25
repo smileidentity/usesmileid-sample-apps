@@ -95,10 +95,10 @@ class ProfileGoldenTest : GoldenTest() {
 
     @Composable
     private fun Config(profile: UseSmileIDSampleProfile, isActive: Boolean = false) = ProfileConfigScreen(
-        organisation = profile.title,
+        title = profile.title,
         defaults = profile.defaults,
-        name = profile.organisation,
-        onNameChange = {},
+        organisation = profile.organisation,
+        onOrganisationChange = {},
         onFieldChange = { _, _ -> },
         onBack = {},
         onSave = {},

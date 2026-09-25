@@ -74,6 +74,7 @@ export {
   smileIDSampleProfilesRecord,
   smileIDSampleEditorDefaults,
   smileIDSampleUserDetailsDefaults,
+  smileIDSampleUserDetailsEqual,
   type UseSmileIDSampleProfile,
   type UseSmileIDSampleProfileEdit,
   type UseSmileIDSampleProfilesRecord,

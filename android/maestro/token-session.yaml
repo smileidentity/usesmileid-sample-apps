@@ -72,13 +72,16 @@ appId: ${APP_ID}
     id: "sample_user_details_screen"
 - tapOn:
     id: "sample_user_details_field_firstName"
+- eraseText
 - inputText: "Ada"
 - tapOn:
     id: "sample_user_details_field_lastName"
+- eraseText
 - inputText: "Okafor"
 # The SDK requires a contact field even though the form labels both optional.
 - tapOn:
     id: "sample_user_details_field_email"
+- eraseText
 - inputText: "ada.okafor@example.com"
 - hideKeyboard
 # `hideKeyboard` presses Back on Android, so when the IME is already down the Back reaches the app and

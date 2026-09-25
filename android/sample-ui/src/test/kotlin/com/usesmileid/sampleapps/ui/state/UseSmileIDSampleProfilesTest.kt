@@ -130,6 +130,28 @@ class UseSmileIDSampleProfilesTest {
     }
 
     @Test
+    fun a_change_before_the_store_answers_writes_nothing_over_it() {
+        val profiles = UseSmileIDSampleProfiles(loaded = false, onChange = { writes += it })
+        profiles.add("Early")
+
+        profiles.restore(UseSmileIDSampleProfilesRecord(UseSmileIDSampleProfiles.fixtures()))
+
+        assertTrue("a partial list must not reach the store", writes.isEmpty())
+        assertEquals(3, profiles.all.size)
+    }
+
+    @Test
+    fun a_sign_out_before_the_store_answers_still_deletes_every_profile() {
+        val profiles = UseSmileIDSampleProfiles(loaded = false, onChange = { writes += it })
+        profiles.clear()
+
+        profiles.restore(UseSmileIDSampleProfilesRecord(UseSmileIDSampleProfiles.fixtures()))
+
+        assertTrue(profiles.all.isEmpty())
+        assertEquals(UseSmileIDSampleProfilesRecord(), writes.single())
+    }
+
+    @Test
     fun a_stored_active_id_that_names_no_profile_falls_back_to_the_first() {
         val profiles = stored(UseSmileIDSampleProfilesRecord(UseSmileIDSampleProfiles.fixtures(), activeId = "p-9"))
 

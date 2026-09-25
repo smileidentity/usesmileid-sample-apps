@@ -43,8 +43,7 @@ export default function Products() {
         sessionEnded: ended,
       }}
       onProductPress={(product) => {
-        // Every run starts from the active profile, including one whose form the token skips; with none,
-        // what this session typed stays, since the person chose not to keep it.
+        // With no profile the session's typing stays: the person chose not to keep it.
         if (profile !== null) fillFrom(profile);
         router.push(smileIDSampleFirstStepFor(product, smileIDSampleLiveBindingsNow(scenario)));
       }}

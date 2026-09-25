@@ -8,6 +8,7 @@ import {
   smileIDSampleFixtureProfiles,
   smileIDSampleProfilesRecord,
   smileIDSampleUserDetailsDefaults,
+  smileIDSampleUserDetailsEqual,
   type UseSmileIDSampleProfile,
   type UseSmileIDSampleUserDetails,
 } from './use-smile-id-sample-profiles';
@@ -94,12 +95,16 @@ export const useSmileIDSampleProfileStore = create<State & Actions>((set, get) =
     seeded: false,
 
     load: async (args) => {
+      // Once per launch: a remount must not replace profiles already in use with an older read.
+      if (get().loaded) return;
       if (args.seedProfiles) {
         get().reset(smileIDSampleFixtureProfiles());
         return;
       }
       let raw: string | null = null;
       try {
+        // After any queued write, so the read is never older than the last change.
+        await writes;
         raw = await AsyncStorage.getItem(SMILE_ID_SAMPLE_PROFILES_KEY);
       } catch {
         // Unreadable storage is no profiles, rather than a store that never reports loaded.
@@ -134,20 +139,23 @@ export const useSmileIDSampleProfileStore = create<State & Actions>((set, get) =
 
     update: (id, edit) => {
       const { items, activeId } = get();
-      if (!items.some((item) => item.id === id)) return;
-      change({
-        activeId,
-        items: items.map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                organisation: edit.organisation?.trim() ?? item.organisation,
-                defaults: edit.defaults ?? item.defaults,
-                callbackUrl: edit.callbackUrl?.trim() ?? item.callbackUrl,
-              }
-            : item,
-        ),
-      });
+      const current = items.find((item) => item.id === id);
+      if (current === undefined) return;
+      const updated = {
+        ...current,
+        organisation: edit.organisation?.trim() ?? current.organisation,
+        defaults: edit.defaults ?? current.defaults,
+        callbackUrl: edit.callbackUrl?.trim() ?? current.callbackUrl,
+      };
+      // Nothing moved, so nothing is written, as on Android and iOS.
+      if (
+        updated.organisation === current.organisation &&
+        smileIDSampleUserDetailsEqual(updated.defaults, current.defaults) &&
+        updated.callbackUrl === current.callbackUrl
+      ) {
+        return;
+      }
+      change({ activeId, items: items.map((item) => (item.id === id ? updated : item)) });
     },
 
     delete: (id) => {

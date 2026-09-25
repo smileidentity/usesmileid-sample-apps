@@ -38,8 +38,7 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
             result = app.flowResult.snapshot,
         ),
         onProductClick = {
-            // Every run starts from the active profile, including one whose form the token skips; with none,
-            // what this session typed stays, since the person chose not to keep it as a profile.
+            // With no profile the session's typing stays: the person chose not to keep it.
             app.profiles.active?.let(app.forms::fillFrom)
             navigator.navigate(app.firstStepFor(it))
         },

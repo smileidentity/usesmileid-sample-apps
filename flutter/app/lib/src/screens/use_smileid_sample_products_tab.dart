@@ -105,8 +105,7 @@ class _UseSmileIDSampleProductsTabState
         sessionEnded: ended,
       ),
       onProductTap: (UseSmileIDSampleProduct product) {
-        // Every run starts from the active profile, including one whose form the token skips; with
-        // none, what this session typed stays, since the person chose not to keep it.
+        // With no profile the session's typing stays: the person chose not to keep it.
         final UseSmileIDSampleProfile? active = profiles.active;
         if (active != null) {
           ref.read(useSmileIDSampleFormsProvider.notifier).fillFrom(active);

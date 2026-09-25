@@ -13,6 +13,10 @@ export const smileIDSampleUserDetailsDefaults: UseSmileIDSampleUserDetails = {
   phone: '',
 };
 
+/// Field by field, so key order never makes two equal sets of details read as different.
+export const smileIDSampleUserDetailsEqual = (a: UseSmileIDSampleUserDetails, b: UseSmileIDSampleUserDetails): boolean =>
+  a.firstName === b.firstName && a.lastName === b.lastName && a.email === b.email && a.phone === b.phone;
+
 /// One persona a job runs as: the organisation the SDK's consent screen names, and the details its jobs carry.
 export type UseSmileIDSampleProfile = {
   readonly id: string;

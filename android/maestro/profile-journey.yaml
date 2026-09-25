@@ -111,6 +111,15 @@ appId: ${APP_ID}
     id: "sample_profile_config_save"
 - assertVisible:
     id: "sample_profiles_screen"
+# Reopened, the page has nothing left to save: the edit was stored, not just navigated away from.
+- tapOn:
+    id: "sample_profile_row_p-2"
+- assertVisible:
+    id: "sample_profile_config_save"
+    enabled: false
+- back
+- assertVisible:
+    id: "sample_profiles_screen"
 - back
 
 # --- sign out asks, then leaves no profile --------------------------------------------------------

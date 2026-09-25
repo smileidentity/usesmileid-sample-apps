@@ -86,3 +86,7 @@ cannot help and `sdk-flow` answers the prompt on screen. Two consequences:
 adb -s <serial> shell input keyevent KEYCODE_BACK   # dismisses without granting
 adb -s <serial> shell dumpsys activity activities | grep mResumedActivity
 ```
+
+**These flows delete stored profiles.** `profile-journey` and `settings` confirm sign-out, which ends
+the token session and deletes every profile on the device. Run them on a test device, never on a
+phone someone uses for demos.

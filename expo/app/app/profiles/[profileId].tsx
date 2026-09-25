@@ -3,6 +3,7 @@ import {
   smileIDSampleCallbackOverrideCaption,
   smileIDSampleEditorDefaults,
   smileIDSampleProfileTitle,
+  smileIDSampleUserDetailsEqual,
   smileIDSampleUserFieldWrite,
   useSmileIDSampleProfileStore,
   useSmileIDSampleSessionStore,
@@ -47,7 +48,7 @@ export default function ProfileConfig() {
   const callbackUrl = editedCallbackUrl ?? profile.callbackUrl ?? '';
   const changed =
     organisation.trim() !== profile.organisation ||
-    JSON.stringify(defaults) !== JSON.stringify(profile.defaults) ||
+    !smileIDSampleUserDetailsEqual(defaults, profile.defaults) ||
     callbackUrl.trim() !== (profile.callbackUrl ?? '');
 
   return (

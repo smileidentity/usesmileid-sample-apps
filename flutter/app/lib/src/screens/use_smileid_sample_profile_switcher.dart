@@ -5,8 +5,7 @@ import 'package:sample_ui/sample_ui.dart';
 import '../state/use_smileid_sample_forms.dart';
 import '../state/use_smileid_sample_providers.dart';
 
-/// The switch sheet, shared by Products and the details form. A pick refills the form, and
-/// "New profile" makes one active at once, since whoever opened this was choosing who to run as.
+/// The switch sheet over Products or the form; a pick refills the form, and "New profile" is active at once.
 Future<void> showUseSmileIDSampleProfileSwitch(
   BuildContext context,
   WidgetRef ref, {

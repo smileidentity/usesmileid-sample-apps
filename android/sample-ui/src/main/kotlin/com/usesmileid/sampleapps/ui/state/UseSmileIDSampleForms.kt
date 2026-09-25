@@ -104,10 +104,7 @@ class UseSmileIDSampleForms(
     }
 }
 
-/**
- * Continue's write-back: the typed details go to the active profile, or become a new active one when
- * there is none. A field the token supplies is never stored, since its value belongs to the token.
- */
+/** Continue's write-back into the active profile, or a new active one; a field the token supplies is never stored. */
 fun UseSmileIDSampleProfiles.keep(
     forms: UseSmileIDSampleForms,
     requirement: UseSmileIDSampleUserDetailsRequirement = UseSmileIDSampleUserDetailsRequirement(),

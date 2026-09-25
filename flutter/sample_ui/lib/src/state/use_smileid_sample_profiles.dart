@@ -189,8 +189,7 @@ class UseSmileIDSampleProfile {
   int get hashCode => Object.hash(id, organisation, defaults, callbackUrl);
 }
 
-/// The profiles the app can act as, and which is active. A plain first launch has none: no profile is
-/// a state of its own, never an empty placeholder that reads as one already set up.
+/// The profiles the app can act as, and which is active; a plain first launch has none.
 class UseSmileIDSampleProfiles {
   /// A stored [activeId] that names no profile falls back to the first; repeated ids keep the first.
   UseSmileIDSampleProfiles([
@@ -327,8 +326,7 @@ class UseSmileIDSampleProfiles {
     _lastCreatedId = null;
   }
 
-  /// Continue's write-back: the typed details go to the active profile, or become a new active one when
-  /// there is none. A field the token supplies is never stored, since its value belongs to the token.
+  /// Continue's write-back into the active profile, or a new active one; a token-supplied field is never stored.
   void keep(
     UseSmileIDSampleUserDetails details, {
     required String organisation,

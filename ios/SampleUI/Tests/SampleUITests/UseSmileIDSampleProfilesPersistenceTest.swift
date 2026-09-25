@@ -35,15 +35,20 @@ final class UseSmileIDSampleProfilesPersistenceTest: XCTestCase {
     XCTAssertEqual(makeStore().profiles, UseSmileIDSampleProfiles())
   }
 
-  func testALaunchArgumentStringCannotSeedProfiles() throws {
-    let suite = "UseSmileIDSampleProfilesPersistenceTest"
-    let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
-    defer { defaults.removePersistentDomain(forName: suite) }
-    defaults.set(#"{"version":1,"profiles":[{"id":"p-1","organisation":"Injected"}]}"#, forKey: "sample_profiles")
+  func testALaunchArgumentCannotSeedProfiles() throws {
+    let key = "sample_profiles"
+    let injected = try XCTUnwrap(UseSmileIDSampleProfilesCodec.encode(UseSmileIDSampleProfiles([
+      UseSmileIDSampleProfile(id: "p-1", organisation: "Injected")
+    ])))
+    let arguments = UserDefaults.standard.volatileDomain(forName: UserDefaults.argumentDomain)
+    defer { UserDefaults.standard.setVolatileDomain(arguments, forName: UserDefaults.argumentDomain) }
+    // What `-sample_profiles <hex>` becomes: data in the argument domain, which reads shadow.
+    UserDefaults.standard.setVolatileDomain(arguments.merging([key: injected]) { $1 }, forName: UserDefaults.argumentDomain)
+    XCTAssertEqual(UserDefaults.standard.data(forKey: key), injected, "the argument did not reach the defaults")
 
     let store = UseSmileIDSampleStore(
       storage: UseSmileIDSampleMemoryStorage(),
-      settingsStorage: UseSmileIDSampleDefaultsStorage(defaults: defaults)
+      settingsStorage: UseSmileIDSampleDefaultsStorage(defaults: .standard)
     )
 
     XCTAssertEqual(store.profiles, UseSmileIDSampleProfiles())

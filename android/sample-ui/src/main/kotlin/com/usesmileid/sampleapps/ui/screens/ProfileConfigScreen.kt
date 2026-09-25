@@ -34,10 +34,11 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserField
 /** A profile's name and user-details defaults, which is what seeds the Consent Details Form for its jobs. */
 @Composable
 fun ProfileConfigScreen(
-    organisation: String,
+    /** The saved profile's name, so the bar does not change as the organisation is typed. */
+    title: String,
     defaults: UseSmileIDSampleUserDetails,
-    name: String,
-    onNameChange: (String) -> Unit,
+    organisation: String,
+    onOrganisationChange: (String) -> Unit,
     onFieldChange: (UseSmileIDSampleUserField, String) -> Unit,
     onBack: () -> Unit,
     onSave: () -> Unit,
@@ -59,7 +60,7 @@ fun ProfileConfigScreen(
             .fillMaxSize()
             .testTag(UseSmileIDSampleTestIds.PROFILE_CONFIG_SCREEN),
     ) {
-        UseSmileIDSampleTopAppBar(title = organisation, onBack = onBack)
+        UseSmileIDSampleTopAppBar(title = title, onBack = onBack)
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -72,8 +73,8 @@ fun ProfileConfigScreen(
             UseSmileIDSampleSectionSurface {
                 UseSmileIDSampleKeyValueEditRow(
                     label = "Organisation",
-                    value = name,
-                    onValueChange = onNameChange,
+                    value = organisation,
+                    onValueChange = onOrganisationChange,
                     placeholder = "Shown on the consent screen",
                     required = false,
                     testId = UseSmileIDSampleTestIds.PROFILE_CONFIG_NAME,
@@ -126,7 +127,7 @@ fun ProfileConfigScreen(
     }
     if (confirmingDelete && onDelete != null) {
         UseSmileIDSampleConfirmDialog(
-            title = "Delete $organisation?",
+            title = "Delete $title?",
             text = "Its details and callback URL are removed from this device.",
             confirmLabel = "Delete",
             confirmTestId = UseSmileIDSampleTestIds.PROFILE_DELETE_CONFIRM,

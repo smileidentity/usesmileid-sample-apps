@@ -56,6 +56,7 @@ struct UseSmileIDSampleDestination: View {
         }
       )
       .navigationBarHidden(true)
+      .onAppear { app.fillFormOnEntry() }
     case .idDetailsForm(let productId):
       KycIdFormScreen(
         state: .init(productLabel: Self.product(productId)?.label ?? productId, details: app.idDetails),

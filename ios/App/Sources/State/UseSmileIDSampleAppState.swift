@@ -207,6 +207,11 @@ final class UseSmileIDSampleAppState: ObservableObject {
     fillForm(from: nil)
     idDetails = UseSmileIDSampleIdDetails()
     profiles.clear()
+    // Ids are reused once the list is empty, so an unsaved edit would reach the next person's p-1.
+    profileDrafts = [:]
+    profileCallbackDrafts = [:]
+    profileOrganisationDrafts = [:]
+    newProfile = UseSmileIDSampleNewProfile()
     reload()
   }
 
@@ -350,10 +355,20 @@ final class UseSmileIDSampleAppState: ObservableObject {
 
   /// A run starts from the profile it runs as; with none, what this session typed stays, since the person chose not to keep it.
   func fillFormForRun() {
+    formFilledThisLaunch = true
     if let active = profiles.active {
       fillForm(from: active)
     }
   }
+
+  /// The form's entry: a cold link skips the product tap that fills it, so the first entry of a launch fills it too.
+  func fillFormOnEntry() {
+    if !formFilledThisLaunch {
+      fillFormForRun()
+    }
+  }
+
+  private var formFilledThisLaunch = false
 
   private func fillForm(from profile: UseSmileIDSampleProfile?) {
     userDetails = profile?.defaults ?? UseSmileIDSampleUserDetails()

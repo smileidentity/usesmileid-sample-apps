@@ -173,8 +173,13 @@ class UseSmileIDSampleProfilesNotifier
   }
 
   void _change(void Function() change) {
+    final String before = UseSmileIDSampleProfilesCodec.encode(state);
     change();
     ref.notifyListeners();
+    // Nothing moved, so nothing is written, as on Android and iOS.
+    if (UseSmileIDSampleProfilesCodec.encode(state) == before) {
+      return;
+    }
     // Fixtures are never stored: an automation run must not leave made-up people behind.
     if (!ref.read(useSmileIDSampleLaunchArgsProvider).seedProfiles) {
       unawaited(
