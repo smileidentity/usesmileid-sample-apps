@@ -301,7 +301,7 @@ Everything `ports-final.md` §1 and §2 lists is built, fixed or closed there.
 | # | Finding | Source | State |
 |---|---|---|---|
 | C1 | A v11 workflow defect noted while reading v11 for reference | `play-release-android.md` §3.1 | **closed, not filed** (2026-09-25): v11 is reference material only and this repo changes nothing in it. The v12 lesson (one `versionCode` scheme across tracks) stays in §3.1 |
-| C2 | Flutter SDK: two `si_*` ids missing against Android, `validate()` weaker than `build()` with a silent blank frame, `FlowBuildResult` not exported, and no document analyzer | `ports-final.md` §2, `after-the-ports.md` Phase 4 | drafted, not filed |
+| C2 | Flutter SDK: two `si_*` ids missing against Android, `validate()` weaker than `build()` with a silent blank frame, `FlowBuildResult` not exported, and no document analyzer | `ports-final.md` §2, `after-the-ports.md` Phase 4 | drafted, not filed · ✅ carried to the team's private planning, 2026-09-25, re-checked against the SDK's `main`: two still hold, two need re-checking |
 
 ### O. Owner and account actions
 
@@ -331,7 +331,7 @@ Everything `ports-final.md` §1 and §2 lists is built, fixed or closed there.
    readiness, readable by an agent, link integrity); no page ships below 4. `docs/store-submission.md`
    is done on this branch.
 4. **T3 Carry §6 (done 2026-09-25).** A rows are in `backlog.md`, B rows in the private tracker, and the
-   O rows are with the owner. C1 and C2 are filed in their SDK repos. Each row records where it went.
+   O rows are with the owner. C1 is closed (v11 is reference only), and C2 is in the team's private planning. Each row records where it went.
 5. **T4 Distil, then delete, one page at a time.** 17 documents with nothing left to distil are gone.
    Each remaining one is deleted by the PR that writes its §5 target page, which also re-points the
    references (P12) that name it. `git grep docs/plan` returns only `README.md`, `backlog.md` and this
