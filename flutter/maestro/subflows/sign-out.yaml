@@ -9,8 +9,6 @@ appId: ${APP_ID}
       id: "sample_sign_out"
     direction: DOWN
     visibilityPercentage: 80
-    # Centred: left at the bottom edge the row sits in the system gesture area, which eats the tap.
-    centerElement: true
     timeout: 45000
 - tapOn:
     id: "sample_sign_out"

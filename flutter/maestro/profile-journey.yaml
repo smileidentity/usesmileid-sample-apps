@@ -1,5 +1,7 @@
 # A profile is who a job runs as: the first run's typing becomes one, it survives a restart and fills
 # the next form, a new one is made and used from the form, and sign-out asks before deleting them all.
+# Flutter merges a row's texts into one label, so text is matched by id with a DOTALL regex, and it
+# exposes no field value at all: a filled form is proved by the save switch staying hidden.
 # Opens and closes signed out, because this is the one flow that stores a profile on purpose.
 # APP_ID has no default: in Maestro 2.8 a flow-level `env:` default wins over `-e`.
 appId: ${APP_ID}
@@ -17,7 +19,9 @@ appId: ${APP_ID}
     id: "sample_product_card_smartSelfieEnrollment"
 - assertVisible:
     id: "sample_user_details_screen"
-- assertVisible: "No profile yet"
+- assertVisible:
+    id: "sample_user_details_profile"
+    text: "(?s).*No profile yet.*"
 - tapOn:
     id: "sample_user_details_field_organisation"
 - inputText: "Kobo"
@@ -31,7 +35,7 @@ appId: ${APP_ID}
     id: "sample_user_details_field_email"
 - inputText: "ada@kobo.example"
 - hideKeyboard
-- assertVisible: "Save as a new profile"
+- assertVisible: "(?s).*Save as a new profile.*"
 - assertVisible:
     id: "sample_remember_details_switch"
     checked: true
@@ -57,10 +61,9 @@ appId: ${APP_ID}
     id: "sample_product_card_smartSelfieEnrollment"
 - assertVisible:
     id: "sample_user_details_profile"
-- assertVisible: "Kobo"
 - assertVisible:
-    id: "sample_user_details_field_firstName"
-    text: "Ada"
+    id: "sample_user_details_profile"
+    text: "(?s).*Kobo.*"
 # Nothing typed differs from the profile, so there is nothing to keep and no switch.
 - assertNotVisible:
     id: "sample_remember_details_switch"
@@ -77,14 +80,13 @@ appId: ${APP_ID}
 - tapOn:
     id: "sample_new_profile_name"
 - inputText: "Kazi"
+- hideKeyboard
 # The sheet starts from what the form had typed, so the names are replaced rather than appended to.
-- assertVisible:
-    id: "sample_new_profile_first_name"
-    text: "Ada"
 - tapOn:
     id: "sample_new_profile_first_name"
 - eraseText
 - inputText: "Amina"
+- hideKeyboard
 - tapOn:
     id: "sample_new_profile_last_name"
 - eraseText
@@ -94,10 +96,11 @@ appId: ${APP_ID}
     id: "sample_new_profile_save"
 - assertVisible:
     id: "sample_user_details_screen"
-- assertVisible: "Kazi"
 - assertVisible:
-    id: "sample_user_details_field_firstName"
-    text: "Amina"
+    id: "sample_user_details_profile"
+    text: "(?s).*Kazi.*"
+- assertNotVisible:
+    id: "sample_remember_details_switch"
 - back
 
 # --- edit the active profile from its own page --------------------------------------------------
@@ -109,7 +112,9 @@ appId: ${APP_ID}
     id: "sample_profiles_screen"
 - tapOn:
     id: "sample_profile_row_p-2"
-- assertVisible: "Save changes"
+- assertVisible:
+    id: "sample_profile_config_save"
+    text: "(?s).*Save changes.*"
 - tapOn:
     id: "sample_profile_config_field_phone"
 - inputText: "+254700000001"
@@ -124,4 +129,6 @@ appId: ${APP_ID}
 - runFlow: subflows/sign-out.yaml
 - tapOn:
     id: "sample_product_card_smartSelfieEnrollment"
-- assertVisible: "No profile yet"
+- assertVisible:
+    id: "sample_user_details_profile"
+    text: "(?s).*No profile yet.*"
