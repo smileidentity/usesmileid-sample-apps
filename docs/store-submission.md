@@ -113,8 +113,10 @@ submission with *"You must have published answers to your app's data usages."*
 ### 5. What App Review asks about face capture
 
 On devices with a TrueDepth camera, the **native iOS SDK** runs an ARKit face-tracking session during
-the selfie step. Its face orientation and expression are processed on the device, and nothing
-depth-derived is stored or transmitted: the upload is the same JPEG images on every device. App Review
+the selfie step. It reads two blend shape coefficients, `mouthSmileLeft` and `mouthSmileRight`,
+averaged into one smile probability that times the shutter. The value is held in memory and cleared
+when the screen closes, and nothing depth-derived is stored or transmitted: the upload is the same
+JPEG images on every device. This app's accepted wording is in `ios/store/review-notes.txt`. App Review
 notices the TrueDepth API and asks about it under **Guideline 2.1, Information Needed**.
 
 Two rounds of questions reached us, and both are worth answering before they are asked:

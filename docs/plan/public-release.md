@@ -73,7 +73,7 @@ First pass 2026-09-24 (tree, full history, 127 PRs, 149 comments). Re-verified a
 | P20 | **Not a public-release defect, but found here.** The Flutter iOS release binary references `CLLocationManager` and the Photos picker, because the Flutter SDK depends on `geolocator` and `image_picker`. `flutter/app/ios/Runner/Info.plist` declares only the camera string, so an App Store upload would fail ITMS-90683, as the native app's first upload nearly did. The native iOS app carries both strings | `flutter/app/ios/Runner/Info.plist` | A separate fix before any Flutter iOS submission. Expo is unverified: `expo-location` is an optional peer, so `nm -u` a release build before its first upload | HIGH for the port |
 | P21 | **Partner docs overstate the TrueDepth declaration.** They say it applies to Flutter and React Native iOS targets. The Flutter 12.1.1 release binary links no ARKit (checked with `otool -L`), and neither SDK's iOS sources reference ARKit | the partner docs' mobile setup page | Corrected in docs-v3#39, with the store guide's mirror | MEDIUM |
 | P22 | **The SDK repos are internal.** Only `ios`, `ios-spm` and `kamera-spm` are public, so a public page cannot link `android`, `ios-v12`, `flutter` or `react-native-expo`. The tree links only the public ones today, and SECURITY.md routes SDK reports through this repo | `AGENTS.md` prose, the docs set | Keep every public link on a registry page or a public repo. Add it to T5's sweep | MEDIUM |
-| P24 | **The App Review notes go public with the tree**, and they describe the selfie step's face tracking in more detail than the partner docs do | `ios/store/review-notes.txt`, and its history | The owner rules (§2). If the detail must stay private, trim the file before the flip, and reopen D2 for its history | HIGH until ruled |
+| P24 | The App Review notes go public with the tree, including the selfie step's face-tracking detail | `ios/store/review-notes.txt` | **Closed 2026-09-25**: ruled public (§2), since partners submit the same wording | — |
 | P25 | Two moderate Dependabot alerts on `main`, both transitive npm packages in the Expo lockfile (`decode-uri-component`, `uuid`) | `expo/pnpm-lock.yaml` | Alerts stay private after the flip, but a public repo is judged by them. Bump or override before T11 | LOW |
 | P23 | Commit author emails are public with history | git metadata | Accepted, as on every public repo. Stated so it is a decision, not an oversight | INFO |
 
@@ -133,11 +133,9 @@ Approved 2026-09-24 unless marked. **D1 is revised and needs the owner's approva
   them (`docs/store-submission.md`) and mirrored on the partner docs' mobile section. This app's own
   answers are the worked example, not the instructions.
 
-**One question for the owner, not decided here.** The App Review notes in `ios/store/review-notes.txt`
-describe the selfie step's face tracking in more detail than the partner docs publish. The public
-guide keeps the published level (face orientation and expression, processed on the device, nothing
-depth-derived stored or transmitted). The file is in the tree and in history, so the ruling decides
-P24 as well.
+**Ruled 2026-09-25: the face-tracking detail is public.** Partners submit the same review-notes
+wording to App Review for their own apps, so the blend-shape description in `ios/store/review-notes.txt`
+is partner guidance, not a defence detail. The store guides carry it, and P24 closes with no change.
 
 ## 3. The documentation set
 
