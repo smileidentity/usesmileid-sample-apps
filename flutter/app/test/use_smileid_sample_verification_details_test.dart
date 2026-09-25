@@ -254,7 +254,6 @@ void main() {
         ),
         contains(UseSmileIDSampleColorSchemes.light.surface),
       );
-      // Full width inside the card, not centred at the row's content width.
       final double card = tester
           .getSize(
             find

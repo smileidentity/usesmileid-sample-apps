@@ -39,7 +39,6 @@ Future<void> showUseSmileIDSampleProfileSwitch(
   if (!creating || !context.mounted) {
     return;
   }
-  // What the form had typed, so a profile created from it is not typed twice.
   final UseSmileIDSampleForms forms = ref.read(useSmileIDSampleFormsProvider);
   await showUseSmileIDSampleSheet<void>(
     context: context,

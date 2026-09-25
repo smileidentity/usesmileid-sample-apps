@@ -94,7 +94,6 @@ export const UserDetailsScreen = ({
   const requirement = state.requirement ?? smileIDSampleRequirementDefaults;
   const satisfied = smileIDSampleDetailsSatisfy(state.details, requirement);
   const { profile } = state;
-  // Only once there is something to keep: valid details that no profile holds yet.
   const offersSave =
     satisfied &&
     (profile === null || !smileIDSampleUserDetailsEqual(state.details, profile.defaults));

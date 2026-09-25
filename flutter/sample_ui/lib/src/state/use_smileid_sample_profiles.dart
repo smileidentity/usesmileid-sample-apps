@@ -201,7 +201,7 @@ class UseSmileIDSampleProfiles {
         : (_items.isEmpty ? null : _items.first.id);
   }
 
-  /// The fixtures only when `seedProfiles` asks; the shell never stores them, so an automation run leaves nobody behind.
+  /// The fixtures only when `seedProfiles` asks; never stored.
   factory UseSmileIDSampleProfiles.forLaunch(
     UseSmileIDSampleLaunchArgs args, {
     required UseSmileIDSampleProfiles stored,

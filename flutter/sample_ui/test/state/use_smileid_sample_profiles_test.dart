@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 
-/// A plain launch has no profile at all; the design's three are fixtures reached only by `seedProfiles`, and never stored.
 void main() {
   const UseSmileIDSampleUserDetails ada = UseSmileIDSampleUserDetails(
     firstName: 'Ada',

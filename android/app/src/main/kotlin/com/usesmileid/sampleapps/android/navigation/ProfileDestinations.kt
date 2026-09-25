@@ -46,7 +46,6 @@ internal fun ProfileSwitchSheet(
     // Not before the store answers: a profile made then would vanish when the stored list arrives.
     if (!app.profiles.loaded) return
     if (creating) {
-        // Active at once: whoever opened this sheet was choosing who to run as.
         NewProfileSheet(
             onDismissRequest = onDismissRequest,
             activate = true,
@@ -118,7 +117,6 @@ fun ProfileConfigScreen(profileId: String, navigator: DestinationsNavigator) {
     if (!app.profiles.loaded) return
     val profile = app.profiles.find(profileId)
     if (profile == null) {
-        // A link to a profile this device does not hold goes back, rather than to an empty page; a delete already went.
         if (!deleted) LaunchedEffect(Unit) { navigator.navigateUp() }
         return
     }
@@ -141,7 +139,6 @@ fun ProfileConfigScreen(profileId: String, navigator: DestinationsNavigator) {
         callbackOverride = app.session?.callbackOverrideCaption(),
         onBack = { navigator.navigateUp() },
         onSave = {
-            // On another profile the one action reads "Use this profile", so it saves and activates.
             app.profiles.update(profileId, organisation = name, defaults = defaults, callbackUrl = callbackUrl)
             app.profiles.setActive(profileId)
             navigator.navigateUp()
@@ -183,7 +180,6 @@ internal fun NewProfileSheet(
         onEmailChange = { email = it },
         onPhoneChange = { phone = it },
         onSave = {
-            // All four seed the details its jobs start from; the two names are also who the profile names.
             val created = app.profiles.add(
                 organisation = name,
                 defaults = UseSmileIDSampleUserDetails(

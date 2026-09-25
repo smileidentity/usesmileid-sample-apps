@@ -361,7 +361,6 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
       app.swipeUp()
     }
     signOut.tap()
-    // It asks first, because it also deletes every profile on the device.
     let confirm = app.alerts.buttons["sample_sign_out_confirm"].firstMatch
     XCTAssertTrue(confirm.waitForExistence(timeout: 5))
     confirm.tap()

@@ -3,7 +3,6 @@ package com.usesmileid.sampleapps.ui.state
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** The stored record round-trips, and anything unreadable is no profiles rather than a crash. */
 class UseSmileIDSampleProfilesCodecTest {
 
     @Test

@@ -63,7 +63,6 @@ class _UseSmileIDSampleProfilesTabState
           final UseSmileIDSampleProfile added = ref
               .read(useSmileIDSampleProfilesProvider.notifier)
               .add(organisation: organisation, defaults: details);
-          // Only a profile left inactive gets the "Make active" offer; the first one made is active already.
           final bool offer =
               ref.read(useSmileIDSampleProfilesProvider).lastCreatedId ==
               added.id;

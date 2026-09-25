@@ -30,7 +30,7 @@ public protocol UseSmileIDSampleRecordStorage: AnyObject {
   func write(_ data: Data?)
 }
 
-/// Everything the sample persists: the settings the SDK flow is composed from, the profiles, and the token session. Each record has its own home — the token is a credential, the switches are not.
+/// Everything the sample persists: settings, profiles and the token session, each in its own store.
 public final class UseSmileIDSampleStore {
   private let storage: UseSmileIDSampleRecordStorage
   private let settingsStorage: UseSmileIDSampleSettingsStorage
@@ -233,7 +233,7 @@ public final class UseSmileIDSampleDefaultsStorage: UseSmileIDSampleSettingsStor
     defaults.set(value, forKey: key)
   }
 
-  /// Never from a launch argument: a `<hex>` argument arrives as data, and fixtures reach a launch only through `seedProfiles`.
+  /// Never from a launch argument, which would arrive as data; fixtures come only from `seedProfiles`.
   public func data(_ key: String) -> Data? {
     if UserDefaults.standard.volatileDomain(forName: UserDefaults.argumentDomain)[key] != nil {
       return nil

@@ -81,7 +81,6 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
         } else {
             null
         },
-        // There is no auth to leave, so signing out is the local state a partner would expect gone, profiles included.
         onSignOut = {
             app.storeScope.launch { app.store.clearTokenSession() }
             app.forms.clear()

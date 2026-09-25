@@ -71,7 +71,6 @@ fun UserDetailsScreen(
             verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
         ) {
             item {
-                // Says whose details these are, and switches in one tap: the whole reason profiles exist.
                 UseSmileIDSampleProfileRow(
                     organisation = profile?.title ?: UseSmileIDSampleProfiles.NO_PROFILE_LABEL,
                     supportingText = if (profile == null) "Your details below will create one" else "Tap to switch profile",
@@ -127,7 +126,6 @@ fun UserDetailsScreen(
                         .padding(horizontal = SmileDimens.spacingMd),
                 )
             }
-            // Only once there is something to keep: valid details that no profile holds yet.
             if (details.satisfies(requirement) && (profile == null || details != profile.defaults)) {
                 item {
                     Surface(

@@ -1,7 +1,6 @@
 @testable import SampleUI
 import XCTest
 
-/// A plain launch has no profile at all; the design's three are fixtures reached only by `seedProfiles`, and never stored.
 final class UseSmileIDSampleProfilesTest: XCTestCase {
   private let ada = UseSmileIDSampleUserDetails(firstName: "Ada", lastName: "Okafor", email: "ada@kobo.example")
 

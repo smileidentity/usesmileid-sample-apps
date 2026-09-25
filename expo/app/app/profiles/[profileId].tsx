@@ -31,7 +31,6 @@ export default function ProfileConfig() {
   const leaving = useRef(false);
   const live = useSmileIDSampleSessionStore((state) => state.live);
 
-  // A link to a profile this device does not hold goes back, rather than to an empty page; a delete already went.
   useEffect(() => {
     if (profile === undefined && !leaving.current) {
       leaving.current = true;
@@ -67,7 +66,6 @@ export default function ProfileConfig() {
       onOrganisationChange={(value) => setOrganisationEdit({ profileId, value })}
       onBack={() => back()}
       onSave={() => {
-        // On another profile the one CTA reads "Use this profile", so it saves and activates.
         update(profileId, { organisation, defaults, callbackUrl });
         setActive(profileId);
         back();

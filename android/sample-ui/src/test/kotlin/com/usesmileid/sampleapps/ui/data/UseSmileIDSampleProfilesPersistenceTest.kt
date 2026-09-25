@@ -22,7 +22,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-/** Profiles survive a restart, and an install updated from a build that never stored them reads as a first launch. */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [ROBOLECTRIC_SDK])
 class UseSmileIDSampleProfilesPersistenceTest {
@@ -30,7 +29,7 @@ class UseSmileIDSampleProfilesPersistenceTest {
     private lateinit var file: File
     private lateinit var prefs: DataStore<Preferences>
 
-    /** Robolectric has no Android Keystore, so a reversible stand-in seals here; the device run proves the real one. */
+    /** Robolectric has no Android Keystore, so a reversible stand-in seals here. */
     private val cipher = object : UseSmileIDSampleProfilesCipher {
         override fun seal(plain: String) = "sealed:" + plain.reversed()
         override fun open(sealed: String) = sealed.removePrefix("sealed:").takeIf { it != sealed }?.reversed()

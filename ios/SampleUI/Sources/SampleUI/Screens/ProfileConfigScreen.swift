@@ -105,7 +105,6 @@ public struct ProfileConfigScreen: View {
         .padding(.bottom, Self.sectionGap)
       }
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.profileConfigScreen)
-      // One slot, as the design has it: the active profile saves its edits, any other also becomes active.
       UseSmileIDSampleButton(
         text: state.isActive ? "Save changes" : "Use this profile",
         enabled: state.changed || !state.isActive,

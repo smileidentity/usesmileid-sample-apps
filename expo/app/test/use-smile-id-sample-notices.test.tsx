@@ -157,7 +157,6 @@ describe('a notice on a screen with no nav bar', () => {
   });
 
   it('sits past the system bar on the profiles list too', async () => {
-    // Onto profiles already there: the first one made is active, so it has no Make active offer.
     useSmileIDSampleProfileStore.getState().reset(smileIDSampleFixtureProfiles());
     useSmileIDSampleProfileStore.getState().add('Kobo Bank');
     const screen = await inTheme(<Profiles />);

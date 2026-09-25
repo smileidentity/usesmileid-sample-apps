@@ -117,7 +117,6 @@ fun ProfileConfigScreen(
             }
         }
         UseSmileIDSampleButton(
-            // One slot, as the design has it: the active profile saves its edits, any other also becomes active.
             text = if (isActive) "Save changes" else "Use this profile",
             onClick = onSave,
             enabled = changed || !isActive,

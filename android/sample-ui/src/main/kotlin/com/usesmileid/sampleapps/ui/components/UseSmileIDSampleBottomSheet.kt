@@ -128,7 +128,7 @@ fun UseSmileIDSampleFullHeightBottomSheet(
     }
 }
 
-/** A sheet or dialog is its own window, outside where the shell publishes tags, so without this none of its ids reach automation. */
+/** A sheet or dialog is its own window, so its test tags must be published here to reach automation. */
 @OptIn(ExperimentalComposeUiApi::class)
 internal fun Modifier.publishTestTags(): Modifier = semantics { testTagsAsResourceId = true }
 

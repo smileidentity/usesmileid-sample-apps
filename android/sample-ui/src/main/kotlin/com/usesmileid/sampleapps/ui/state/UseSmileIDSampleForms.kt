@@ -110,7 +110,7 @@ class UseSmileIDSampleForms(
     }
 }
 
-/** Continue's write-back into the active profile, or a new active one; a field the token supplies is never stored. */
+/** Continue's write-back to the active profile, or a new one; token-supplied fields are never stored. */
 fun UseSmileIDSampleProfiles.keep(
     forms: UseSmileIDSampleForms,
     requirement: UseSmileIDSampleUserDetailsRequirement = UseSmileIDSampleUserDetailsRequirement(),

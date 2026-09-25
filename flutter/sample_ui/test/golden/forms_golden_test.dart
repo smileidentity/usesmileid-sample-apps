@@ -8,7 +8,6 @@ import 'golden_harness.dart';
 void main() {
   setUpAll(loadSampleFonts);
 
-  /// A first run: no profile, so the organisation row shows and the header says so.
   testWidgets('user details empty', (WidgetTester tester) async {
     await _screenGoldens(
       tester,
@@ -17,7 +16,6 @@ void main() {
     );
   });
 
-  /// The first run once typed: "Save as a new profile" is offered.
   testWidgets('user details with no profile', (WidgetTester tester) async {
     await _screenGoldens(
       tester,
@@ -45,7 +43,6 @@ void main() {
     );
   });
 
-  /// Complete: the hint changes and "Save to" the profile appears, since the details differ from it.
   testWidgets('user details complete', (WidgetTester tester) async {
     await _screenGoldens(
       tester,

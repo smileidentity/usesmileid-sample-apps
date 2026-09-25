@@ -185,7 +185,6 @@ class UseSmileIDSampleProfilesNotifier
     final String before = UseSmileIDSampleProfilesCodec.encode(state);
     change();
     ref.notifyListeners();
-    // Nothing moved, so nothing is written, as on Android and iOS.
     if (UseSmileIDSampleProfilesCodec.encode(state) == before) {
       return;
     }

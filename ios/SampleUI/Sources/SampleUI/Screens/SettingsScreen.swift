@@ -149,7 +149,6 @@ public struct SettingsScreen: View {
     }
     .background(colors.background)
     .useSmileIDSampleTestId(UseSmileIDSampleTestIds.settingsScreen)
-    // Asked first: signing out deletes every profile, which a stray tap must not cost anyone.
     .useSmileIDSampleConfirmation(
       isPresented: $confirmingSignOut,
       title: "Sign out?",

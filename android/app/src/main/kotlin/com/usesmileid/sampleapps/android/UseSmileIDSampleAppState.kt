@@ -140,7 +140,7 @@ val LocalUseSmileIDSampleAppState = staticCompositionLocalOf<UseSmileIDSampleApp
 
 private const val TICK_MILLIS = 1000L
 
-/** Process-wide, so a recreated activity reuses the loaded profiles and one ordered writer instead of starting another. */
+/** Process-wide, so a recreated activity keeps the loaded profiles and their one writer. */
 private object UseSmileIDSampleProfilesHolder {
     private val writes = MutableStateFlow<Pair<UseSmileIDSampleStore, UseSmileIDSampleProfilesRecord>?>(null)
     private var current: Pair<UseSmileIDSampleLaunchArgs, UseSmileIDSampleProfiles>? = null

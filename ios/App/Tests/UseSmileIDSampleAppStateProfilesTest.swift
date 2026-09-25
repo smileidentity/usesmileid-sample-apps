@@ -2,7 +2,6 @@ import SampleUI
 @testable import UseSmileIDSample
 import XCTest
 
-/// The profile rules that live in the app state: a seeded launch stores nothing, sign-out clears the record, and the switch off keeps nothing.
 @MainActor
 final class UseSmileIDSampleAppStateProfilesTest: XCTestCase {
   private var settings: UseSmileIDSampleMemorySettingsStorage!
@@ -117,7 +116,6 @@ final class UseSmileIDSampleAppStateProfilesTest: XCTestCase {
   }
 }
 
-/// A status source that is never reached here.
 private struct NoNetwork: UseSmileIDSampleJobStatusSource {
   func check(jobId _: String, token _: String, sandbox _: Bool) async throws -> UseSmileIDSampleStatusRefresh {
     .stillProcessing

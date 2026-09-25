@@ -214,7 +214,6 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(SmileDimens.spacingMd),
             child: UseSmileIDSampleButton(
-              // One slot, as the design has it: the active profile saves its edits, any other also becomes active.
               text: isActive ? 'Save changes' : 'Use this profile',
               onPressed: onSave,
               enabled: changed || !isActive,

@@ -112,7 +112,6 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("user_details_empty") { userDetails(UseSmileIDSampleUserDetails(), profile: nil) }
   }
 
-  /// The first run with something typed: the organisation row and "Save as a new profile" both show.
   func testUserDetailsNoProfile() {
     goldens("user_details_no_profile") {
       userDetails(Self.completeDetails, profile: nil, organisation: "Sahara Pay")
@@ -410,7 +409,6 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("profiles") { profiles(Self.seededProfiles) }
   }
 
-  /// A plain launch: no profile at all, so the list offers only Create.
   func testProfilesFirstRun() {
     goldens("profiles_first_run") { profiles(UseSmileIDSampleProfiles()) }
   }

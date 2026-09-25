@@ -244,7 +244,6 @@ fun SettingsScreen(
             )
         }
     }
-    // Asked first: signing out deletes every profile, which a stray tap must not cost anyone.
     if (confirmingSignOut) {
         UseSmileIDSampleConfirmDialog(
             title = "Sign out?",

@@ -43,7 +43,6 @@ class _UseSmileIDSampleProfileConfigTabState
     );
     final UseSmileIDSampleProfile? profile = profiles.find(widget.profileId);
     if (profile == null) {
-      // A link to a profile this device does not hold goes back, rather than to an empty page; a delete already went.
       if (!_leaving) {
         _leaving = true;
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -83,7 +82,6 @@ class _UseSmileIDSampleProfileConfigTabState
         onCallbackUrlChanged: (String value) =>
             setState(() => _editedCallbackUrl = value),
         callbackOverride: live?.callbackOverrideCaption,
-        // On another profile the one CTA reads "Use this profile", so it saves and activates.
         onSave: () {
           edits
             ..update(

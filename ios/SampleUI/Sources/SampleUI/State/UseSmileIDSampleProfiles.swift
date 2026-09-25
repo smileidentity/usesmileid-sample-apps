@@ -83,7 +83,7 @@ public struct UseSmileIDSampleProfile: Equatable, Identifiable, Sendable, Codabl
   }
 }
 
-/// The profiles the app can act as, and which is active. A plain first launch has none: no profile is a state of its own, never an empty placeholder that reads as one already set up.
+/// The profiles the app can act as and the active one; a first launch has none.
 public struct UseSmileIDSampleProfiles: Equatable, Sendable {
   public private(set) var all: [UseSmileIDSampleProfile]
   /// Nil exactly when there are no profiles.
@@ -193,7 +193,7 @@ public struct UseSmileIDSampleProfiles: Equatable, Sendable {
     self = UseSmileIDSampleProfiles()
   }
 
-  /// The fixtures only when `seedProfiles` asks; the shell never stores them, so an automation run leaves nobody behind.
+  /// The fixtures only when `seedProfiles` asks; never stored.
   public static func forLaunch(seedProfiles: Bool, stored: UseSmileIDSampleProfiles) -> UseSmileIDSampleProfiles {
     seedProfiles ? UseSmileIDSampleProfiles(fixtures()) : stored
   }
@@ -230,7 +230,7 @@ public struct UseSmileIDSampleProfiles: Equatable, Sendable {
 }
 
 public extension UseSmileIDSampleProfiles {
-  /// Continue's write-back: the typed details go to the active profile, or become a new active one when there is none. A field the token supplies is never stored, since its value belongs to the token.
+  /// Continue's write-back to the active profile, or a new one; token-supplied fields are never stored.
   mutating func keep(
     _ details: UseSmileIDSampleUserDetails,
     organisation: String,

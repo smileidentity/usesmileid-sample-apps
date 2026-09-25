@@ -82,7 +82,6 @@ export default function RootLayout() {
   useEffect(() => {
     // Once, off the link's own arguments: the defaults before it resolves are no launch at all.
     if (!argsLoaded) return;
-    // The stored profiles, or the fixtures a seeded launch holds in memory only.
     void loadProfiles(args, smileIDSampleSecureProfilesStorage);
     // Before the verifications route's first load, or its own read wins and the list opens empty.
     // Caught, not voided: a failed write must degrade to an empty list, never an unhandled rejection.

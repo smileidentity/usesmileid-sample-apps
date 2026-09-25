@@ -135,7 +135,6 @@ export const ProfileConfigScreen = ({
         )}
       </ScrollView>
       <UseSmileIDSampleButton
-        // One slot, as the design has it: the active profile saves its edits, any other also becomes active.
         text={state.isActive ? 'Save changes' : 'Use this profile'}
         onPress={onSave}
         enabled={(state.changed ?? false) || !state.isActive}

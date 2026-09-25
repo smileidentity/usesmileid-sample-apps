@@ -78,7 +78,6 @@ struct UseSmileIDSampleDestination: View {
       if let profile = app.profiles.find(profileId) {
         profileConfig(profile)
       } else {
-        // A link to a profile this device does not hold goes back, rather than to an empty page; a delete already went.
         Color.clear.onAppear {
           // Only while it is still on top: a delete has already popped it, and a second pop would take the list too.
           if router.path(router.selectedTab).last == route {

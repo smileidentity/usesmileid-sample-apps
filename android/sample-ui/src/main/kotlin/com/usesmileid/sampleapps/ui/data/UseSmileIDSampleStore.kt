@@ -17,7 +17,7 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-/** Everything the sample persists: the settings the SDK flow is composed from, the profiles, and the token session. */
+/** Everything the sample persists: settings, profiles and the token session. */
 class UseSmileIDSampleStore(
     private val store: DataStore<Preferences>,
     private val profilesCipher: UseSmileIDSampleProfilesCipher = UseSmileIDSampleKeystoreProfilesCipher(),

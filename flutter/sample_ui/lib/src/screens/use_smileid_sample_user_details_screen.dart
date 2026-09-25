@@ -96,7 +96,6 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                 horizontal: SmileDimens.spacingMd,
               ),
               children: <Widget>[
-                // Says whose details these are, and switches in one tap: the whole reason profiles exist.
                 UseSmileIDSampleProfileRow(
                   organisation:
                       profile?.title ?? UseSmileIDSampleProfiles.noProfileLabel,
@@ -195,7 +194,6 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Only once there is something to keep: valid details that no profile holds yet.
                 if (satisfied && details != profile?.defaults) ...<Widget>[
                   const SizedBox(height: SmileDimens.spacingXs),
                   _RememberCard(

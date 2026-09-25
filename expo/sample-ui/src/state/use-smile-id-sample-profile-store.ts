@@ -167,7 +167,6 @@ export const useSmileIDSampleProfileStore = create<State & Actions>((set, get) =
         defaults: edit.defaults ?? current.defaults,
         callbackUrl: edit.callbackUrl?.trim() ?? current.callbackUrl,
       };
-      // Nothing moved, so nothing is written, as on Android and iOS.
       if (
         updated.organisation === current.organisation &&
         smileIDSampleUserDetailsEqual(updated.defaults, current.defaults) &&

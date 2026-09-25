@@ -4,7 +4,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Continue keeps the typed details in the active profile, or makes one; the switch off keeps nothing. */
 class UseSmileIDSampleFormsTest {
 
     private val ada = UseSmileIDSampleUserDetails(firstName = "Ada", lastName = "Okafor", email = "ada@kobo.example")

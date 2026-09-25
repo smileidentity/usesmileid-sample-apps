@@ -285,7 +285,6 @@ export const SettingsScreen = ({
 
       <UseSmileIDSampleDestructiveRow
         text="Sign out"
-        // Asked first: signing out deletes every profile, which a stray tap must not cost anyone.
         onPress={() =>
           smileIDSampleConfirm({
             title: 'Sign out?',

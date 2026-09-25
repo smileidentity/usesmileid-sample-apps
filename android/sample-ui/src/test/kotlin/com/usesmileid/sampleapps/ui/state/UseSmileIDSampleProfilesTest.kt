@@ -6,7 +6,6 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** A plain launch has no profile at all; the design's three are fixtures reached only by `seedProfiles`, and never stored. */
 class UseSmileIDSampleProfilesTest {
 
     private val writes = mutableListOf<UseSmileIDSampleProfilesRecord>()

@@ -62,7 +62,6 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
     if (switchingProfile) {
         ProfileSwitchSheet(
             onDismissRequest = { switchingProfile = false },
-            // Another profile's details replace the typing: the run is now for them.
             onPicked = app.forms::fillFrom,
             draft = app.forms.userDetails,
             draftOrganisation = app.forms.organisation,

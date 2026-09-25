@@ -12,7 +12,6 @@ void main() {
     await _screenGoldens(tester, 'screen_profiles', _list);
   });
 
-  /// A plain launch: no profile at all, so the list offers only Create.
   testWidgets('profiles list on a plain launch', (WidgetTester tester) async {
     await _screenGoldens(
       tester,

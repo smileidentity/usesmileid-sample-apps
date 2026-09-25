@@ -36,7 +36,6 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
       app.swipeUp()
     }
     signOut.tap()
-    // It asks first, because it also deletes every profile on the device.
     let confirm = app.alerts.buttons["sample_sign_out_confirm"].firstMatch
     XCTAssertTrue(confirm.waitForExistence(timeout: 5))
     confirm.tap()
@@ -196,7 +195,6 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_toast").waitForNonExistence(timeout: 5))
   }
 
-  /// The one CTA saves the active profile's edits, so it waits for one; on another profile it reads "Use this profile" and activates it.
   func testTheConfigCtaIsDisabledOnTheActiveProfileAndActivatesAnother() {
     open("profiles")
     XCTAssertTrue(element("sample_profiles_screen").waitForExistence(timeout: 10))

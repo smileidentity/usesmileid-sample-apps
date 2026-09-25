@@ -10,7 +10,6 @@ import { renderInTheme } from './render-in-theme';
 
 const noop = () => {};
 
-/// The buttons the last alert offered, so a test presses them as a person would.
 const lastAlertButtons = (alert: jest.SpyInstance): AlertButton[] => alert.mock.calls.at(-1)?.[2] ?? [];
 
 afterEach(() => jest.restoreAllMocks());

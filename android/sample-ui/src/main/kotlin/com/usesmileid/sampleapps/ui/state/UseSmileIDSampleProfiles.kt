@@ -41,7 +41,7 @@ data class UseSmileIDSampleProfilesRecord(
     val activeId: String? = profiles.firstOrNull()?.id,
 )
 
-/** The profiles the app can act as, and which one is active; a plain first launch has none. [onChange] stores each change, null for a launch that writes nothing. */
+/** The profiles the app can act as and the active one; [onChange] stores each change, null when nothing is stored. */
 class UseSmileIDSampleProfiles(
     seed: UseSmileIDSampleProfilesRecord = UseSmileIDSampleProfilesRecord(),
     loaded: Boolean = true,
@@ -165,7 +165,7 @@ class UseSmileIDSampleProfiles(
     }
 
     companion object {
-        /** The fixtures only when `seedProfiles` asks, and never stored: an automation run must not leave people behind. */
+        /** The fixtures only when `seedProfiles` asks; never stored. */
         fun forLaunch(
             args: UseSmileIDSampleLaunchArgs,
             onChange: (UseSmileIDSampleProfilesRecord) -> Unit,

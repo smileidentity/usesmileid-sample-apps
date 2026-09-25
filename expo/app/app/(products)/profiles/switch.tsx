@@ -7,7 +7,6 @@ import { useSmileIDSampleBack } from '../../../src/use-smile-id-sample-back';
 export default function ProfileSwitch() {
   const back = useSmileIDSampleBack('/products');
   const router = useRouter();
-  // Set when the details form opened it, whose typing a new profile should start from.
   const { fromForm } = useLocalSearchParams<{ fromForm?: string }>();
   const fillFrom = useSmileIDSampleFormsStore((state) => state.fillFrom);
   const profiles = useSmileIDSampleProfileStore((state) => state.items);
@@ -20,11 +19,9 @@ export default function ProfileSwitch() {
       activeId={activeId}
       onSelect={(profile) => {
         setActive(profile.id);
-        // Picking a profile makes it the run's: the form refills from it, dropping what was typed for another.
         fillFrom(profile);
         back();
       }}
-      // Active at once: whoever opened this sheet was choosing who to run as.
       onCreate={() => router.replace(`/profiles/new?activate=1${fromForm === '1' ? '&fromForm=1' : ''}`)}
       onDismiss={() => back()}
     />

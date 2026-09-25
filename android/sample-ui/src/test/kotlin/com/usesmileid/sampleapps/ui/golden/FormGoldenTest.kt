@@ -32,7 +32,6 @@ class FormGoldenTest : GoldenTest() {
     @Test
     fun user_details_empty() = goldens("screen_user_details_empty") { UserDetails(UseSmileIDSampleUserDetails(), profile = null) }
 
-    /** The first run with something typed: the organisation row and "Save as a new profile" both show. */
     @Test
     fun user_details_no_profile_complete() = goldens("screen_user_details_no_profile") {
         UserDetails(COMPLETE, profile = null, organisation = "Sahara Pay")

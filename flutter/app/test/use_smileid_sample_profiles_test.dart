@@ -121,7 +121,6 @@ void main() {
       }
     });
 
-    // On a profile that is not active the one CTA reads "Use this profile", so it saves and activates.
     testWidgets('saving stores the details and makes the profile active', (
       WidgetTester tester,
     ) async {

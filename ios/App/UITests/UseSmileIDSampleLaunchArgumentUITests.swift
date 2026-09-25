@@ -66,7 +66,7 @@ final class UseSmileIDSampleLaunchArgumentUITests: XCTestCase {
     }
   }
 
-  /// A plain launch has no profile at all, never a fixture. Signed out first, since profiles persist between runs.
+  /// Signed out first, since profiles persist between runs.
   func testAPlainLaunchHasNoProfile() {
     launch([])
     element("sample_nav_settings").tap()

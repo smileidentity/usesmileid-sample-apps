@@ -155,7 +155,6 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
     const SizedBox(height: SmileDimens.spacingMd),
     const UseSmileIDSampleSectionLabel(text: 'DETAILS'),
     const SizedBox(height: SmileDimens.spacingXs),
-    // The section surface Android and iOS draw; bare rows read as floating text on the page.
     DecoratedBox(
       decoration: BoxDecoration(
         color: colors.surface,

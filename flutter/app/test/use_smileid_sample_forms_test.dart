@@ -146,7 +146,6 @@ void main() {
       );
     });
 
-    // There is nothing to keep until there is something complete.
     testWidgets('the save switch appears only once the form is complete', (
       WidgetTester tester,
     ) async {

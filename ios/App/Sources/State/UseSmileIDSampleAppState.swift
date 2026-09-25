@@ -17,7 +17,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// Seeded from the store at launch and written back through it, so the six switches survive the process deaths the camera causes.
   @Published private(set) var settings: UseSmileIDSampleSettings
 
-  /// The profiles the app can act as; the active one names the products header and the settings summary. Every change is stored, unless the launch seeded fixtures.
+  /// The profiles the app can act as; every change is stored unless the launch seeded fixtures.
   @Published var profiles: UseSmileIDSampleProfiles {
     didSet {
       if !launchArguments.seedProfiles, profiles != oldValue {
@@ -26,7 +26,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     }
   }
 
-  /// Whether the new-profile sheet makes its profile active: yes from the switch sheet, where someone was choosing who to run as.
+  /// Whether the new-profile sheet activates its profile, as it does from the switch sheet.
   @Published var newProfileActivates = false
 
   /// The new-profile sheet's fields, cleared with the sheet so it opens empty each time.
@@ -201,7 +201,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     reload()
   }
 
-  /// Sign out: the session goes with no ended marker, which would send the next run to the scanner, and the forms and every profile go with it because they hold PII.
+  /// Sign out: clears the session without an ended marker, the forms, and every profile.
   func signOut() {
     store.clearTokenSession()
     fillForm(from: nil)
@@ -335,7 +335,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     }
   }
 
-  /// The switch sheet's "New profile": active once made, and prefilled from the form when that is what it was opened over.
+  /// The switch sheet's "New profile": active once made, prefilled from the form it was opened over.
   func beginProfileFromSwitch(overForm: Bool) {
     newProfileActivates = true
     if overForm {
@@ -355,13 +355,13 @@ final class UseSmileIDSampleAppState: ObservableObject {
     fillForm(from: profiles.active)
   }
 
-  /// A run starts from the profile it runs as, and never with the last run's ID details; with no profile, the typing stays.
+  /// A product tap: fills from the active profile and clears the last run's ID details.
   func fillFormForRun() {
     fillFromActive()
     idDetails = UseSmileIDSampleIdDetails()
   }
 
-  /// The form's entry: a cold link skips the product tap that fills it, so an entry fills it unless it already holds this profile's run.
+  /// The form's entry: fills it for a cold link, which skips the product tap.
   func fillFormOnEntry() {
     if formFilledFor != .some(profiles.activeId) {
       fillFromActive()
