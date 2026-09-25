@@ -11,7 +11,7 @@ import Foundation
 final class LoupeDiagnostics: @unchecked Sendable {
   static let shared = LoupeDiagnostics()
 
-  struct Snapshot: Sendable {
+  struct Snapshot {
     var instrumentedSessions = 0
     var offered = 0
     var declined = 0
