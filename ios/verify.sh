@@ -50,7 +50,7 @@ if [ "$PHASE" != archive ]; then
     *"iOS Simulator"*) ;;
     *)
       echo "verify.sh runs on a simulator; '$DESTINATION' is not one." >&2
-      echo "For a device see docs/testing.md §4 — it needs its own reset." >&2
+      echo "Device flows run through ios/App/UITests on a device; see docs/testing.md §4." >&2
       exit 2
       ;;
   esac
