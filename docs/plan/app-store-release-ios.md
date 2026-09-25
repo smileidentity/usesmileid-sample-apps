@@ -609,8 +609,8 @@ release lane's assertions all pass `-o -`, with a comment saying why.
   both (§6.1, `docs/app-store-privacy.md`); `ios/App/PrivacyInfo.xcprivacy` declares them from this
   branch onward, so the first build after 103 ships a manifest that agrees with the form. Review is not
   affected — the form is what Apple reads — but the next TestFlight build closes the gap.
-- **Play's Data safety form owes Email address and Phone number** — the same finding, on the other
-  store; `docs/play-data-safety.md` marks the rows owed and the Android plan carries the follow-up.
+- ~~**Play's Data safety form owes Email address and Phone number.**~~ **Done 2026-09-17** — the Android
+  plan's §7.4 records the published page declaring both, and `docs/play-data-safety.md` carries the rows.
 - ~~The description's first sentence diverges from Play's (§5) until Android renames to "Smile ID".~~
   **Closed 2026-09-14** by the Android rename, which moved the Play title and that sentence together.
 - ~~The two stores show different demo data for the same app.~~ **Ruled 2026-09-13: iOS takes
