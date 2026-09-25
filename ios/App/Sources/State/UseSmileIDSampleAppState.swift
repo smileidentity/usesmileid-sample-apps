@@ -355,18 +355,23 @@ final class UseSmileIDSampleAppState: ObservableObject {
     fillForm(from: profiles.active)
   }
 
-  /// A run starts from the profile it runs as; with none, what this session typed stays, since the person chose not to keep it.
+  /// A run starts from the profile it runs as, and never with the last run's ID details; with no profile, the typing stays.
   func fillFormForRun() {
-    formFilledFor = .some(profiles.activeId)
-    if let active = profiles.active {
-      fillForm(from: active)
-    }
+    fillFromActive()
+    idDetails = UseSmileIDSampleIdDetails()
   }
 
   /// The form's entry: a cold link skips the product tap that fills it, so an entry fills it unless it already holds this profile's run.
   func fillFormOnEntry() {
     if formFilledFor != .some(profiles.activeId) {
-      fillFormForRun()
+      fillFromActive()
+    }
+  }
+
+  private func fillFromActive() {
+    formFilledFor = .some(profiles.activeId)
+    if let active = profiles.active {
+      fillForm(from: active)
     }
   }
 

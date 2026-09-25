@@ -39,7 +39,7 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
         ),
         onProductClick = {
             // With no profile the session's typing stays: the person chose not to keep it.
-            app.profiles.active?.let(app.forms::fillFrom)
+            app.forms.startRun(app.profiles.active)
             navigator.navigate(app.firstStepFor(it))
         },
         onProfileClick = { switchingProfile = true },

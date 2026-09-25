@@ -69,4 +69,18 @@ class UseSmileIDSampleFormsTest {
         assertEquals("", forms.organisation)
         assertTrue(forms.saveToProfile)
     }
+
+    @Test
+    fun a_new_run_never_carries_the_last_runs_id_details() {
+        val forms = typed(ada).apply {
+            setCountry(UseSmileIDSampleCountry.entries.first())
+            setIdType(UseSmileIDSampleIdType.NationalId)
+            setIdNumber("12345678")
+        }
+
+        forms.startRun(null)
+
+        assertEquals(UseSmileIDSampleIdDetails(), forms.idDetails)
+        assertEquals(ada, forms.userDetails)
+    }
 }

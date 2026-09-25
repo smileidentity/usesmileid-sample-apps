@@ -46,6 +46,12 @@ class UseSmileIDSampleForms(
         saveToProfile = true
     }
 
+    /** A product tap: fills from the active profile, and never carries the last run's ID details into this one. */
+    fun startRun(profile: UseSmileIDSampleProfile?) {
+        profile?.let(::fillFrom)
+        idDetails = UseSmileIDSampleIdDetails()
+    }
+
     /** Choosing a country clears the ID type, because the types it offered may not apply to the new one. */
     fun setCountry(country: UseSmileIDSampleCountry) {
         idDetails = idDetails.copy(country = country, idType = null)

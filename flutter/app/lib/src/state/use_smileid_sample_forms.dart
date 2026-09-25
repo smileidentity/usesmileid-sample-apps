@@ -62,11 +62,20 @@ class UseSmileIDSampleFormsNotifier extends Notifier<UseSmileIDSampleForms> {
       state = state.copyWith(organisation: organisation);
 
   /// A run starts from the profile it runs as; whatever was typed for another is dropped.
-  void fillFrom(UseSmileIDSampleProfile profile) => state = state.copyWith(
-    userDetails: profile.defaults,
-    saveToProfile: true,
-    organisation: '',
-  );
+  void fillFrom(UseSmileIDSampleProfile profile) => state = _filled(profile);
+
+  UseSmileIDSampleForms _filled(UseSmileIDSampleProfile profile) =>
+      state.copyWith(
+        userDetails: profile.defaults,
+        saveToProfile: true,
+        organisation: '',
+      );
+
+  /// A product tap: fills from the active profile, and never carries the last run's ID details into this one.
+  void startRun(UseSmileIDSampleProfile? profile) =>
+      state = (profile == null ? state : _filled(profile)).copyWith(
+        idDetails: const UseSmileIDSampleIdDetails(),
+      );
 
   /// Chooses a country, which CLEARS the ID type: the old country's types may not apply.
   void setCountry(UseSmileIDSampleCountry country) =>

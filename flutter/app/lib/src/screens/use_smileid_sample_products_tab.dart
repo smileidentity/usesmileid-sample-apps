@@ -106,10 +106,9 @@ class _UseSmileIDSampleProductsTabState
       ),
       onProductTap: (UseSmileIDSampleProduct product) {
         // With no profile the session's typing stays: the person chose not to keep it.
-        final UseSmileIDSampleProfile? active = profiles.active;
-        if (active != null) {
-          ref.read(useSmileIDSampleFormsProvider.notifier).fillFrom(active);
-        }
+        ref
+            .read(useSmileIDSampleFormsProvider.notifier)
+            .startRun(profiles.active);
         context.push(
           UseSmileIDSampleJourney.firstStepFor(
             product,

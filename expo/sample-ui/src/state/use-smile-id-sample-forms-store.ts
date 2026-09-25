@@ -28,6 +28,8 @@ type Actions = {
   setOrganisation: (value: string) => void;
   /// A run starts from the profile it runs as; whatever was typed for another is dropped.
   fillFrom: (profile: UseSmileIDSampleProfile) => void;
+  /// A product tap: fills from the active profile, and never carries the last run's ID details into this one.
+  startRun: (profile: UseSmileIDSampleProfile | null) => void;
   setCountry: (country: UseSmileIDSampleCountry) => void;
   setIdType: (idType: UseSmileIDSampleIdType) => void;
   setIdNumber: (value: string) => void;
@@ -49,6 +51,12 @@ export const useSmileIDSampleFormsStore = create<State & Actions>((set) => ({
   setOrganisation: (value) => set({ organisation: value }),
 
   fillFrom: (profile) => set({ userDetails: profile.defaults, saveToProfile: true, organisation: '' }),
+
+  startRun: (profile) =>
+    set({
+      ...(profile === null ? {} : { userDetails: profile.defaults, saveToProfile: true, organisation: '' }),
+      idDetails: smileIDSampleIdDetailsDefaults,
+    }),
 
   /// Choosing a country clears the ID type, because the types it offered may not apply to the new one.
   setCountry: (country) =>

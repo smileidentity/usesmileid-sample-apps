@@ -163,6 +163,27 @@ void main() {
     });
   });
 
+  test('a new run never carries the last run\'s ID details', () {
+    final ProviderContainer container = ProviderContainer();
+    addTearDown(container.dispose);
+    final UseSmileIDSampleFormsNotifier notifier = container.read(
+      useSmileIDSampleFormsProvider.notifier,
+    );
+    notifier
+      ..setCountry(UseSmileIDSampleCountry.ke)
+      ..setIdType(UseSmileIDSampleIdType.nationalId)
+      ..setIdNumber('12345678');
+
+    notifier.startRun(null);
+
+    final UseSmileIDSampleIdDetails details = container
+        .read(useSmileIDSampleFormsProvider)
+        .idDetails;
+    expect(details.country, isNull);
+    expect(details.idType, isNull);
+    expect(details.idNumber, isEmpty);
+  });
+
   group('the ID form', () {
     Future<void> openForm(WidgetTester tester) =>
         pumpAt(tester, UseSmileIDSampleRoutes.idDetailsForm('biometricKyc'));

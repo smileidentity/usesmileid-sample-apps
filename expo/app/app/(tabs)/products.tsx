@@ -24,7 +24,7 @@ export default function Products() {
   const router = useRouter();
   const profile = useSmileIDSampleActiveProfile();
   const index = useSmileIDSampleActiveProfileIndex();
-  const fillFrom = useSmileIDSampleFormsStore((state) => state.fillFrom);
+  const startRun = useSmileIDSampleFormsStore((state) => state.startRun);
   const bottomInset = useSmileIDSampleListInset();
   const { scenario, theme } = useLaunchArgs();
   const result = useSmileIDSampleResultStore((state) => state.result);
@@ -44,7 +44,7 @@ export default function Products() {
       }}
       onProductPress={(product) => {
         // With no profile the session's typing stays: the person chose not to keep it.
-        if (profile !== null) fillFrom(profile);
+        startRun(profile);
         router.push(smileIDSampleFirstStepFor(product, smileIDSampleLiveBindingsNow(scenario)));
       }}
       onProfilePress={() => router.push('/profiles/switch')}

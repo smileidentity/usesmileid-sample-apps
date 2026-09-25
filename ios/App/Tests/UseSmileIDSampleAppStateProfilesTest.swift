@@ -63,6 +63,16 @@ final class UseSmileIDSampleAppStateProfilesTest: XCTestCase {
     XCTAssertEqual(store.profiles, UseSmileIDSampleProfiles())
   }
 
+  func testANewRunNeverCarriesTheLastRunsIdDetails() {
+    let app = appState()
+    app.selectCountry(.kenya)
+    app.idDetails.idNumber = "12345678"
+
+    app.fillFormForRun()
+
+    XCTAssertEqual(app.idDetails, UseSmileIDSampleIdDetails())
+  }
+
   func testAnEntryAfterTheActiveProfileChangedFillsFromTheNewOne() {
     let amina = UseSmileIDSampleUserDetails(firstName: "Amina", lastName: "Diallo")
     store.setProfiles(UseSmileIDSampleProfiles([
