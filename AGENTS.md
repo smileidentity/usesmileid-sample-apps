@@ -168,6 +168,9 @@ production bundle, and `native` builds the minified release APK on top of a rege
 prebuild output is never committed, which is what keeps a hand-patched Podfile or Gradle file from
 surviving a run.
 
+`flutter/verify.sh` takes a phase too: `all` (the default) runs everything, and CI splits it into
+`checks` on the Mac and `android` (the release APKs only) on Linux, which is cheaper per minute.
+
 The iOS project is generated from `ios/App/project.yml` by XcodeGen, so the bundle id, URL scheme and
 deployment target stay reviewable and no `.pbxproj` is ever hand-edited; `ios/verify.sh` regenerates
 before it builds, and the generated project is not committed.
