@@ -104,5 +104,49 @@ class SubmitTests(unittest.TestCase):
         self.assertEqual(asc.writes, [])
 
 
+class PagedBuilds(asc_module.ASC):
+    """Canned build pages and processing states, for the read-only helpers."""
+
+    def __init__(self, pages: list[list[str]], states: list[str] = ()):
+        self.pages = pages
+        self.states = list(states)
+
+    def call(self, method, path, body=None, raw=None, headers=None, **query):
+        if path == "apps":
+            return 200, {"data": [APP]}
+        if path == "builds" and "filter[version]" in query:
+            state = self.states.pop(0) if len(self.states) > 1 else self.states[0]
+            return 200, {"data": [{"id": "b1", "attributes": {"version": query["filter[version]"], "processingState": state}}] if state else []}
+        if path.startswith("builds/") and path.endswith("/preReleaseVersion"):
+            return 200, {"data": {"attributes": {"version": "20260925.1211.138"}}}
+        index = 0 if path == "builds" else int(path.rsplit("=", 1)[1])
+        more = {"next": f"builds?page={index + 1}"} if index + 1 < len(self.pages) else {}
+        return 200, {"data": [{"attributes": {"version": v}} for v in self.pages[index]], "links": more}
+
+
+def printed(fn, asc, **args) -> str:
+    out = io.StringIO()
+    with contextlib.redirect_stdout(out):
+        fn(asc, argparse.Namespace(**args))
+    return out.getvalue()
+
+
+class BuildNumberTests(unittest.TestCase):
+    def test_next_build_is_one_above_the_highest_across_pages(self):
+        asc = PagedBuilds([["103", "9"], ["137", "1.0.2"]])
+        self.assertEqual(printed(asc_module.next_build, asc).strip(), "138")
+
+    def test_next_build_on_an_app_with_no_builds_is_one(self):
+        self.assertEqual(printed(asc_module.next_build, PagedBuilds([[]])).strip(), "1")
+
+    def test_wait_returns_once_the_build_is_valid(self):
+        asc = PagedBuilds([[]], states=[None, "PROCESSING", "VALID"])
+        self.assertIn("VALID", printed(asc_module.wait, asc, build="138", timeout=60, interval=0))
+
+    def test_wait_fails_on_an_invalid_build(self):
+        with self.assertRaises(SystemExit):
+            printed(asc_module.wait, PagedBuilds([[]], states=["INVALID"]), build="138", timeout=60, interval=0)
+
+
 if __name__ == "__main__":
     unittest.main()

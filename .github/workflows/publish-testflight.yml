@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       build_number:
-        description: Override the build number; the commit count is used when this is empty
+        description: Override the build number; empty takes one above the highest App Store Connect holds
         required: false
 
 concurrency:
@@ -57,13 +57,14 @@ jobs:
           KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
           KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
 
-      # App Store Connect rejects a number it has already seen for a marketing version, and HEAD
-      # does not move between this lane and the App Store one, so the override is how a re-run wins.
+      # One above what App Store Connect holds, across every version, so this lane and the App Store one never collide.
       - name: Build number
         id: version
-        run: echo "build=${OVERRIDE:-$(git rev-list --count HEAD)}" >> "$GITHUB_OUTPUT"
+        run: echo "build=${OVERRIDE:-$(python3 scripts/asc_publish.py next-build)}" >> "$GITHUB_OUTPUT"
         env:
           OVERRIDE: ${{ inputs.build_number }}
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
 
       # The key material never reaches xcodebuild's argv; the team and key ids do, and are masked
       # in the log and gone with the runner.

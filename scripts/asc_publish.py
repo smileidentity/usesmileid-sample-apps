@@ -9,6 +9,8 @@ signed with the openssl every Mac and runner already has, so nothing is installe
     scripts/asc_publish.py apply --build 103    # write the listing and attach that build
     scripts/asc_publish.py submit               # create or reuse the review submission, clear a rejected item, submit
     scripts/asc_publish.py status               # where the version is in review
+    scripts/asc_publish.py next-build           # read-only: one above the highest build number uploaded
+    scripts/asc_publish.py wait --build 138     # read-only: block until that build is VALID
 
 Environment: APP_STORE_CONNECT_KEY_ID, APP_STORE_CONNECT_ISSUER_ID, and the .p8 at
 ~/.appstoreconnect/private_keys/AuthKey_<id>.p8 (or APP_STORE_CONNECT_KEY_PATH). The review
@@ -241,6 +243,37 @@ def build_by_number(asc: ASC, app_id: str, number: str) -> dict | None:
     return None
 
 
+def build_numbers(asc: ASC, app_id: str) -> list[int]:
+    """Every numeric build number the app has uploaded, across all versions."""
+    numbers, page = [], asc.get("builds", **{"filter[app]": app_id, "fields[builds]": "version", "limit": "200"})
+    while True:
+        numbers += [int(b["attributes"]["version"]) for b in page.get("data", []) if b["attributes"]["version"].isdigit()]
+        nxt = (page.get("links") or {}).get("next")
+        if not nxt:
+            return numbers
+        page = asc.get(nxt)
+
+
+def next_build(asc: ASC, args):
+    print(max(build_numbers(asc, app(asc)["id"]), default=0) + 1)
+
+
+def wait(asc: ASC, args):
+    app_id = app(asc)["id"]
+    deadline = time.time() + args.timeout
+    while True:
+        b = build_by_number(asc, app_id, args.build)
+        state = b["attributes"]["processingState"] if b else "NOT_UPLOADED_YET"
+        print(f"build {args.build}: {state}", flush=True)
+        if state == "VALID":
+            return
+        if state in ("FAILED", "INVALID"):
+            sys.exit(f"build {args.build} is {state}")
+        if time.time() > deadline:
+            sys.exit(f"build {args.build} still {state} after {args.timeout}s")
+        time.sleep(args.interval)
+
+
 # ---- apply ---------------------------------------------------------------------------------------------
 
 def apply(asc: ASC, args):
@@ -455,9 +488,11 @@ def main(argv=None) -> int:
     p = sub.add_parser("apply"); p.add_argument("--build", required=True); p.add_argument("--release", choices=["manual", "after-approval"], default="manual")
     p = sub.add_parser("submit"); p.add_argument("--dry-run", action="store_true", help="create the draft and add the version, but do not submit")
     sub.add_parser("status")
+    sub.add_parser("next-build")
+    p = sub.add_parser("wait"); p.add_argument("--build", required=True); p.add_argument("--timeout", type=int, default=1800); p.add_argument("--interval", type=int, default=30)
     args = parser.parse_args(argv)
     asc = ASC()
-    {"plan": plan, "apply": apply, "submit": submit, "status": lambda a, _: status(a)}[args.command](asc, args)
+    {"plan": plan, "apply": apply, "submit": submit, "status": lambda a, _: status(a), "next-build": next_build, "wait": wait}[args.command](asc, args)
     return 0
 
 
