@@ -2,8 +2,24 @@
 # flow that stores a profile starts and ends from, since `clearState` is unusable on some OEMs.
 appId: ${APP_ID}
 ---
+# Settled first: straight after a cold start the tab bar can take the tap before it answers it.
+- waitForAnimationToEnd:
+    timeout: 5000
 - tapOn:
     id: "sample_nav_settings"
+- waitForAnimationToEnd:
+    timeout: 3000
+- runFlow:
+    when:
+      notVisible:
+        id: "sample_settings_screen"
+    commands:
+      - tapOn:
+          id: "sample_nav_settings"
+- extendedWaitUntil:
+    visible:
+      id: "sample_settings_screen"
+    timeout: 10000
 - scrollUntilVisible:
     element:
       id: "sample_sign_out"
