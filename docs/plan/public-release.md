@@ -20,7 +20,7 @@ item in `docs/plan/` has a named destination before the folder is deleted.
   documents, so the register was built by reading every status line and every work-item, follow-up and
   owed section. Items the code has since closed are marked closed, and the others are marked
   verified-open or unverified.
-- **Twelve findings the first audit missed** (P12 to P23), two of them real defects outside this
+- **Thirteen findings the first audit missed** (P12 to P24), two of them real defects outside this
   plan's scope (P20, P21).
 - **T1 ran.** gitleaks found no secret, and the publish-lane logs are clean. D2 stands.
 - **The store-submission guide is a partner deliverable** (§3, D9), written here and mirrored in the
@@ -54,7 +54,7 @@ First pass 2026-09-24 (tree, full history, 127 PRs, 149 comments). Re-verified a
 | P1 | `docs/plan/` is 38 internal working documents: owner rulings by name, device models, sibling-SDK defects not yet filed, process retrospectives | `docs/plan/*` | D1 and §5 | HIGH |
 | P2 | Ten `INTERNAL-ONLY` blocks in seven files, not five in six as first counted | `integration-skill.md`, `ios-device-verification.md`, `play-release-android.md` ×3, `sample-apps-plan.md` ×2, `sdk-size-story.md`, `ui-feedback-pass.md`, this doc | Close each by doing what it describes (file the defect, rename the repo) or by deleting it. The checklist grep must return nothing | HIGH |
 | P3 | A personal email as a script default | `scripts/asc_publish.py:233` | Require `ASC_REVIEW_EMAIL`, with no default. **Done on this branch** | MEDIUM |
-| P4 | Anyone with write access can dispatch the publish workflows, and none uses an `environment:`. An **unused `GH_PAT` repository secret** is also stored. No workflow reads it | `publish-*.yml` ×4, repo secrets | Add a `release` environment with required reviewers and move the store secrets into it. Delete `GH_PAT` | MEDIUM |
+| P4 | Anyone with write access can dispatch the publish workflows, and none uses an `environment:`. An unused repository secret is also stored, read by no workflow | `publish-*.yml` ×4, repo secrets | Add a `release` environment with required reviewers and move the store secrets into it. Delete the unused secret | MEDIUM |
 | P5 | Machine-local tooling referenced | `tools/verify/…` in `expo/maestro/README.md:29` and four plans | Replace with the in-repo command, or drop the line. **README done on this branch** | LOW |
 | P6 | A staff first name in prose | `android-u4-screen-state-goldens.md:173`, `ui-work-plan.md:359`, `ios-port-hardening.md:1093` | Goes with D1 | LOW |
 | P7 | Dependabot assigns every PR to a personal login | `.github/dependabot.yaml` ×3 | Drop the `assignees:` blocks and add `CODEOWNERS` → `@smileidentity/mobile`, as the SDK repos do, so review goes to the team. **Done on this branch** | LOW |
@@ -73,6 +73,7 @@ First pass 2026-09-24 (tree, full history, 127 PRs, 149 comments). Re-verified a
 | P20 | **Not a public-release defect, but found here.** The Flutter iOS release binary references `CLLocationManager` and the Photos picker, because the Flutter SDK depends on `geolocator` and `image_picker`. `flutter/app/ios/Runner/Info.plist` declares only the camera string, so an App Store upload would fail ITMS-90683, as the native app's first upload nearly did. The native iOS app carries both strings | `flutter/app/ios/Runner/Info.plist` | A separate fix before any Flutter iOS submission. Expo is unverified: `expo-location` is an optional peer, so `nm -u` a release build before its first upload | HIGH for the port |
 | P21 | **Partner docs overstate the TrueDepth declaration.** They say it applies to Flutter and React Native iOS targets. The Flutter 12.1.1 release binary links no ARKit (checked with `otool -L`), and neither SDK's iOS sources reference ARKit | the partner docs' mobile setup page | Corrected in docs-v3#39, with the store guide's mirror | MEDIUM |
 | P22 | **The SDK repos are internal.** Only `ios`, `ios-spm` and `kamera-spm` are public, so a public page cannot link `android`, `ios-v12`, `flutter` or `react-native-expo`. The tree links only the public ones today, and SECURITY.md routes SDK reports through this repo | `AGENTS.md` prose, the docs set | Keep every public link on a registry page or a public repo. Add it to T5's sweep | MEDIUM |
+| P24 | **The App Review notes go public with the tree**, and they describe the selfie step's face tracking in more detail than the partner docs do | `ios/store/review-notes.txt`, and its history | The owner rules (§2). If the detail must stay private, trim the file before the flip, and reopen D2 for its history | HIGH until ruled |
 | P23 | Commit author emails are public with history | git metadata | Accepted, as on every public repo. Stated so it is a decision, not an oversight | INFO |
 
 **Not run yet:** the PR-lane log sweep (P14), and `trufflehog` as a second scanner. gitleaks is one
@@ -131,12 +132,11 @@ Approved 2026-09-24 unless marked. **D1 is revised and needs the owner's approva
   them (`docs/store-submission.md`) and mirrored on the partner docs' mobile section. This app's own
   answers are the worked example, not the instructions.
 
-**One question for the owner, not decided here.** The App Review notes on file describe the selfie
-step's face tracking at blend-shape level: which two coefficients are read, and that the value times
-the shutter. That is what a reviewer needed, but it describes the capture trigger. The public guide
-keeps the level the partner docs already publish (face orientation and expression, processed on the
-device, nothing depth-derived stored or transmitted), and leaves the coefficient detail out. Confirm,
-or rule that the detail may be published.
+**One question for the owner, not decided here.** The App Review notes in `ios/store/review-notes.txt`
+describe the selfie step's face tracking in more detail than the partner docs publish. The public
+guide keeps the published level (face orientation and expression, processed on the device, nothing
+depth-derived stored or transmitted). The file is in the tree and in history, so the ruling decides
+P24 as well.
 
 ## 3. The documentation set
 
@@ -311,8 +311,8 @@ Everything `ports-final.md` §1 and §2 lists is built, fixed or closed there.
 | O1 | Upload the taller store panels and feature graphic to the Play Console by hand | `play-release-android.md` §7.4 |
 | O2 | The next App Store version carries the taller panels and the manifest with the email and phone rows | `app-store-release-ios.md` §7.2 |
 | O3 | The `targetSdk` floor check is due each August; last done 2026-08-28 | `play-release-android.md` §7.4 |
-| O5 | This app's published Play form marks the crash and diagnostics rows *shared, not collected*. The partner guide and Play's own definition read them as *collected*, and a service provider acting on the app's behalf as *not sharing*. Decide, then correct the form or the guide | `docs/play-data-safety.md`, `docs/store-submission.md` |
-| O4 | Create `DESIGN_SYSTEM_TOKEN` (P9), delete `GH_PAT` (P4), and allow merge commits (`after-the-ports.md` Phase 0; squash-only merging is what cost the stacked PRs their approvals) | P4, P9, `after-the-ports.md` |
+| O5 | This app's published Play form marks the crash and diagnostics rows *shared, not collected*. The partner guide and Play's own definition read them as *collected*, and a service provider acting on the app's behalf as *not sharing*. Decide, then correct the form or the guide. The same applies to App Store **Device ID**: the published form says not linked, and the guide says linked, because it travels in the same job as the user's id | `docs/play-data-safety.md`, `docs/store-submission.md` |
+| O4 | Create `DESIGN_SYSTEM_TOKEN` (P9), delete the unused secret (P4), and allow merge commits (`after-the-ports.md` Phase 0; squash-only merging is what cost the stacked PRs their approvals) | P4, P9, `after-the-ports.md` |
 
 ### S. Cross-SDK planning, not this repo
 

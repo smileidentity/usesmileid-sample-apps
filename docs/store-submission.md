@@ -99,7 +99,7 @@ These are the rows the SDK adds. Add them to whatever your app already declares.
 | User Content → Photos or Videos | Yes | No | App Functionality | Selfie and document images |
 | **Sensitive Info** | Yes | No | App Functionality | The selfie is biometric data. Declaring it only as a photo understates what is sent |
 | Identifiers → User ID | Yes | No | App Functionality | Server-issued user id, and the ID number if you pass one |
-| Identifiers → Device ID | No | No | App Functionality, Analytics | Device metadata for fraud prevention, and the SDK's crash reports |
+| Identifiers → Device ID | Yes | No | App Functionality, Analytics | Device metadata for fraud prevention, sent in the same job as the user's id. Fraud prevention counts as App Functionality |
 | Usage Data → Product Interaction | No | No | Analytics | The SDK's crash reports carry the steps leading up to an error |
 | Location → Precise Location | Yes | No | App Functionality | The SDK's manifest declares it. Declare it even when your app holds no location permission, because the privacy report shows it |
 | Diagnostics → Crash Data, Performance Data, Other Diagnostic Data | No | No | App Functionality | The SDK's bundled Sentry |
@@ -129,8 +129,17 @@ Put both answers in the version's **App Review notes** before you submit, so the
 arrives.
 
 **Flutter builds do not link ARKit** (checked on a 12.1.1 release build), and the React Native (Expo)
-SDK's 12.1.1 sources reference none. Check your own build with
-`otool -L YourApp.app/YourApp | grep ARKit`. If App Review asks anyway, say so.
+SDK's 12.1.1 sources reference none. Check your own archive, executable and every embedded framework,
+because a plugin built as a dynamic framework does not show up in the executable:
+
+```bash
+EXE=$(/usr/libexec/PlistBuddy -c 'Print CFBundleExecutable' "$APP/Info.plist")
+for bin in "$APP/$EXE" "$APP"/Frameworks/*.framework/*; do
+  [ -f "$bin" ] && otool -L "$bin" 2>/dev/null | grep -q ARKit && echo "$(basename "$bin") links ARKit"
+done
+```
+
+If nothing prints and App Review asks anyway, say so.
 
 ### 6. iPad
 
@@ -215,7 +224,7 @@ Run the `nm -u` check on the built app, not on your source. Dependencies decide 
 
 ## Verify your submission
 
-- [ ] `nm -u` over the release app binary and its frameworks prints nothing without a matching usage string
+- [ ] `nm -u` over the release app binary and its frameworks: every `CLLocationManager` or `PHPhotoLibrary` reference has its usage string (`PHPickerViewController` and `LAContext` need none)
 - [ ] `ITSAppUsesNonExemptEncryption` is set, or you have answered export compliance
 - [ ] Xcode's privacy report and your App Privacy answers name the same data types, and the form is **published**
 - [ ] The Data safety form includes the SDK's rows, including Location if your app holds a location permission
