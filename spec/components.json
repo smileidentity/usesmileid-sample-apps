@@ -733,7 +733,7 @@
         "countryPickerSheet",
         "idTypePickerSheet"
       ],
-      "notes": "Country rows lead with a flag; ID-type rows do not. Selected rows carry a check. CORRECTED 2026-08-12: the selected row takes a pale-blue fill as well as the check. CORRECTED 2026-08-17 against node 5206:2835. The selected row takes SURFACE-2 as its fill plus a 20 check; an UNSELECTED row is TRANSPARENT, not white — this is the selected-surface treatment that ui-work-plan.md §5 recorded as having no token. Label is Body Strong at its real 14; a country row leads with a 19 flag emoji.",
+      "notes": "Country rows lead with a flag; ID-type rows do not. Selected rows carry a check. CORRECTED 2026-08-12: the selected row takes a pale-blue fill as well as the check. CORRECTED 2026-08-17 against node 5206:2835. The selected row takes SURFACE-2 as its fill plus a 20 check; an UNSELECTED row is TRANSPARENT, not white — this is the selected-surface treatment that has no token. Label is Body Strong at its real 14; a country row leads with a 19 flag emoji.",
       "selectedTreatment": "pale-blue FILLED row highlight + trailing check (not check-only)"
     },
     {

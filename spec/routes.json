@@ -81,7 +81,7 @@
         "flutter": "/verifications/:jobId",
         "expo": "app/(tabs)/verifications/[jobId].tsx"
       },
-      "notes": "Also the post-submission landing route — see navigation-plan.md rule R4 (replace, don't stack)."
+      "notes": "Also the post-submission landing route — replace, don't stack (docs/architecture.md §4)."
     },
     {
       "id": "consentDetailsForm",

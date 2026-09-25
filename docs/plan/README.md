@@ -10,6 +10,3 @@ This folder records the work that is not done yet, and the reasoning behind chan
 
 Everything here is written for a public reader from its first line: no internal names, no credentials,
 nothing that only makes sense to someone who was in the room.
-
-Some older documents in this folder predate that rule. They are being folded into the `docs/` pages and
-deleted one by one, and they stay only until their page exists.

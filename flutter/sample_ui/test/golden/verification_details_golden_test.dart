@@ -142,7 +142,7 @@ final int _createdAt = DateTime.utc(
 
 void _ignoreCopy(String label, String value) {}
 
-/// The words `ui-work-plan.md` §5 item 3a records as breaking at 2x.
+/// The words that break at 2x.
 const Set<String> _openWords = <String>{
   // An ISO timestamp is one unbreakable token wider than its value column at 2x.
   '2026-07-16T13',

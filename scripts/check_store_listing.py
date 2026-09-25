@@ -92,7 +92,7 @@ def check_copy(problems: list[str]) -> None:
     if "SmartSelfie™ Enrollment" not in description:
         problems.append("description.txt must name the first product as the app's own list does")
     if "SmartSelfie™ Registration" in description:
-        problems.append("description.txt uses docs-v3's name; the listing takes the app's, by owner ruling")
+        problems.append("description.txt uses docs-v3's name; the listing takes the app's")
     # Play's copy is the short list and this one is not, until the next version takes it (plan section 5).
     # What must not drift is the product set: one store naming a product the other omits is a listing defect.
     play_description = ROOT / "android" / "play" / "full-description.txt"

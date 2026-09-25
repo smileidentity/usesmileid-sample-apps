@@ -55,7 +55,7 @@ targets:
     info:
       path: Info.plist
       properties:
-        # The product's name, by owner ruling 2026-09-13; Android renames after this release.
+        # The product's name, as on the store listing.
         CFBundleDisplayName: Smile ID
         # Placeholders, or XcodeGen bakes the numbers in and every upload carries build 1.
         CFBundleShortVersionString: $(MARKETING_VERSION)

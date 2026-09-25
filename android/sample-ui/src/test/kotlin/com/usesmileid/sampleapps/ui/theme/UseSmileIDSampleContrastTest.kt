@@ -49,7 +49,7 @@ class UseSmileIDSampleContrastTest {
      * The gradient-backed cards, which no token pair above describes — which is how the session card
      * shipped near-black ink on its own fill in dark.
      *
-     * Held to [DESIGN_INK_FLOOR], not AA. The label is white on every card by owner ruling
+     * Held to [DESIGN_INK_FLOOR], not AA. The label is white on every card by design decision
      * 2026-08-26, so on the three light fills it sits below AA and no ink choice here can lift it —
      * the fix belongs in the fill. This guards against getting WORSE; see the `cardInkContrast` delta.
      */

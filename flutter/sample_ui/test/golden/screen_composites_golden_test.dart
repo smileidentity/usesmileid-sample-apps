@@ -278,7 +278,7 @@ const Set<String> _tabOpenWords = <String>{
   'Settings',
 };
 
-/// The words `ui-work-plan.md` §5 item 3a records as breaking at 2x in the design's own grid.
+/// The words that break at 2x in the design's own grid.
 const Set<String> _gridOpenWords = <String>{
   'Registration',
   'Document',

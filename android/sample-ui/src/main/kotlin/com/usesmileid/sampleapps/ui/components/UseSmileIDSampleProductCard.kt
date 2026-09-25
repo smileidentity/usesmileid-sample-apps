@@ -62,7 +62,7 @@ fun UseSmileIDSampleProductCard(
     val colors = UseSmileIDSampleTheme.colors
     // A hue is the same in both schemes, so anything drawn on it resolves from the light one.
     val tile = if (enabled) SmileColorLight.colorSurface else colors.surface
-    // Every card's text and arrow are white, per the frame. Owner ruling 2026-08-26: consistency
+    // Every card's text and arrow are white, per the frame. Decided 2026-08-26: consistency
     // across the six beats per-card contrast, and the fix for the light fills belongs in the fill.
     val content = if (enabled) SmileColorLight.colorTextInverse else colors.textMuted
     // Six of these scroll; neither the fill nor the ink depends on anything that changes per frame.

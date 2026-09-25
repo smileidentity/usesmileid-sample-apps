@@ -18,8 +18,8 @@ void main() {
       _products(),
       ownsScrolling: true,
       hostHeight: goldenScreenHeight * 2,
-      // Every product word is wider than the card's text column at 2x — `ui-work-plan.md` §5
-      // item 3a, an open design question this port must not answer.
+      // Every product word is wider than the card's text column at 2x, an open design question
+      // this port must not answer.
       knownOpenWords: _gridOpenWords,
     );
   });
@@ -81,7 +81,7 @@ Widget _products({
 
 void _ignoreProduct(UseSmileIDSampleProduct product) {}
 
-/// The words `ui-work-plan.md` §5 item 3a records as breaking at 2x in the design's own grid.
+/// The words that break at 2x in the design's own grid.
 const Set<String> _gridOpenWords = <String>{
   'Registration',
   'Document',
