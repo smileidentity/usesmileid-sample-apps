@@ -307,7 +307,7 @@
       },
       {
         "id": "sample_sign_out_confirm",
-        "description": "The confirmation's destructive action: ends the session and deletes every profile on the device."
+        "description": "The confirmation's destructive action: ends the session and deletes every profile on the device. Expo shows the platform's own Alert, whose buttons take no id, so automation taps its label there."
       },
       {
         "id": "sample_version_label",
@@ -381,7 +381,7 @@
       },
       {
         "id": "sample_profile_delete_confirm",
-        "description": "The delete confirmation's destructive action."
+        "description": "The delete confirmation's destructive action. Expo shows the platform's own Alert, whose buttons take no id, so automation taps its label there."
       }
     ],
     "token": [
