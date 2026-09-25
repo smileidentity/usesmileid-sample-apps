@@ -232,10 +232,6 @@ The key v11 already uses is an **upload key**, and the name is the important par
 **Play App Signing** — Google holds the app signing key, and the repository only ever holds what
 authenticates an upload.
 
-<!-- INTERNAL-ONLY:START reason=sibling-repo-path-and-signing-material-names -->
-Where to read it: the v11 Android repository's sample Gradle file declares a keystore named `upload.jks`
-with alias `upload`, taking its password from the `uploadKeystorePassword` Gradle property.
-<!-- INTERNAL-ONLY:END -->
 
 **So reusing it is correct, and it is the low-friction answer.** Play permits one upload key across many
 apps in an account, and enrolls each new app with its own freshly generated app signing key, so
@@ -269,12 +265,6 @@ It also requires `VERSION_CODE`, because the `?: 1` default is otherwise reachab
 uploading it would burn versionCode 1 permanently. Putting both checks in the build rather than in a
 workflow step covers a bundle built by hand as well.
 
-<!-- INTERNAL-ONLY:START reason=ci-secret-names-and-sibling-repo-paths -->
-Specifics for whoever wires it: the source is `sample/sample.gradle.kts` in the v11 Android repository,
-decoded by `timheuer/base64-to-file` from `secrets.UPLOAD_KEYSTORE` with the password in
-`secrets.UPLOAD_KEYSTORE_PASSWORD`, and uploaded by `r0adkll/upload-google-play` using
-`secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON`.
-<!-- INTERNAL-ONLY:END -->
 
 <!-- INTERNAL-ONLY:START reason=defect-in-a-sibling-repo-not-yet-reported -->
 ### 3.1 One thing in the v11 workflows not to copy

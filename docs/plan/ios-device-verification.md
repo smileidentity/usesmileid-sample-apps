@@ -151,13 +151,6 @@ An iOS run currently leaves no trace beyond its exit code, so nothing can say wh
 pass rate is, which of its reds were environmental, or which finding is still owed a regression
 check — all of which the Android lane can answer.
 
-<!-- INTERNAL-ONLY:START reason=machine-local-tooling -->
-The machine-local harness at `v12/tools/verify/` already has the pieces: `run.sh` is
-runner-agnostic (`run.sh <label> <device> -- xcodebuild test …`) and classifies an infrastructure
-red, and `fresh-install.sh` already fingerprints an iOS bundle container for §2.3's install proof.
-What is missing is an iOS call site for `run.sh` and an iOS counterpart to `foreground.sh`, which
-reads the Android activity manager and has no equivalent. Tracked in that harness's own idea ledger.
-<!-- INTERNAL-ONLY:END -->
 
 ## 3. What stays out, and why
 

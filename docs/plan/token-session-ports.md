@@ -120,7 +120,7 @@ native imports. The shell injects the preview into the scan screen.
   session of its own. **Closed unfixed 2026-09-24**: no lane on either port needs contention, and a
   host camera session built only to hold the camera would be the camera code `AGENTS.md` keeps out of
   this repo. Both ports still parse the argument, as `spec/launch-args.json` requires.
-- **A result card** still exists on neither port (`after-the-ports.md` Phase 4). So "exactly one
+- **A result card** still exists on neither port . So "exactly one
   terminal result" is observable only as where the run lands.
 - **Flutter's release APK was 116.6 MB.** Bundled ML Kit ships a native library per ABI, and the APK
   packaged four. Fixed 2026-09-24 as on Android: an ABI-split bundle config, and `verify.sh` builds one

@@ -271,7 +271,7 @@ void _ignore(String value) {}
 
 void _ignoreItem(UseSmileIDSampleNavItem item) {}
 
-/// Each tab label is wider than a third of the pill at 2x — `port-adversarial-review.md` C5.
+/// Each tab label is wider than a third of the pill at 2x.
 const Set<String> _tabOpenWords = <String>{
   'Products',
   'Verifications',

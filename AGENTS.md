@@ -84,7 +84,7 @@ Two consequences that must shape what you commit *now*, not at flip time:
 
 ```
 spec/                  the cross-app contract as data (see spec/README.md)
-docs/plan/             architecture, phases and roadmap for this repo
+docs/                  partner guides; docs/plan/ holds backlog.md and plans for work in progress
 android/  app/         shell: entry point, navigation host, DI, SDK dependency
           sample-ui/   every screen a partner sees (Gradle library module)
 ios/      App/         shell
@@ -208,9 +208,11 @@ that variable locally — a silent pass is how vendored tokens drift from their 
   arbitrary and is not, a value that must not change and why. "What this line does" is never a
   reason; if a comment would restate the code, delete it or rename the code instead.
 - **One line, and the long form goes elsewhere.** No multi-line commentary anywhere. The reasoning
-  behind a decision belongs in `docs/plan/`, which is reviewed, searchable and read on purpose — a
-  paragraph above a function is none of those and goes stale where nobody looks. This applies to
-  what you add *and* to what you touch: trim a verbose comment on the way past.
+  behind a decision belongs in the `docs/` page that owns the subject, which is reviewed, searchable
+  and read on purpose — a paragraph above a function is none of those and goes stale where nobody
+  looks. This applies to what you add *and* to what you touch: trim a verbose comment on the way past.
+- **Open work goes in `docs/plan/backlog.md`.** Add an item when you find a gap you are not fixing,
+  and remove it in the PR that fixes it.
 - Mirror structure across the four platforms. Same screen, same file name adjusted only for
   platform casing conventions, same relative folder. If you add a screen to one app, add it to the
   other three or explain in the PR why it is platform-specific.

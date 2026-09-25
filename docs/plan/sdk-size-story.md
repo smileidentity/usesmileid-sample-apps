@@ -130,12 +130,6 @@ smaller floor exists.
 
 ## 5. Known tail — smaller than it was
 
-<!-- INTERNAL-ONLY:START reason=internal-ci-history-and-dates -->
-Two of the three things this plan originally listed here are **already closed, verified 2026-08-11**: the
-upload-quota pressure was retired by moving the lane from per-PR to weekly across all four repos, and the
-stale `automation/size-analysis-{android,ios}` branches were deleted, leaving only the live one. The Expo
-test-APK R8 rule also landed as a config plugin.
-<!-- INTERNAL-ONLY:END -->
 
 What remains is one genuinely open CI item: a **reusable size-report workflow with budget gates**. Today a
 regression is visible in a trend line nobody is required to look at. A budget gate is what turns the

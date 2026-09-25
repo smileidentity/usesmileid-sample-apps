@@ -165,12 +165,6 @@ is quota-limited upstream, which is why it is release-plus-weekly rather than pe
   canaries belong to the SDK repos, next to the thing being published.
 - **Release notes.** Nothing here is published to a registry.
 
-<!-- INTERNAL-ONLY:START reason=dependency-status-of-unreleased-tooling -->
-- **[INTERNAL-ONLY]** Capture-completion lanes are sequenced *after* this repo's own milestones:
-  the injection tooling is still being fixed in its own library and those changes are not yet in
-  the SDKs. Plan F2–F5 as if capture completion does not exist; adopt it later as an additive lane
-  in the private CI repo, not here.
-<!-- INTERNAL-ONLY:END -->
 
 ---
 
@@ -189,59 +183,6 @@ is quota-limited upstream, which is why it is release-plus-weekly rather than pe
 | iOS walking skeleton (§9.1 spike, shell + `SampleUI`, `verify.sh`, spec validation, U0 tokens, N1) | done — registry-only against the stable tag, iOS 15 floor, per-tab stacks and deep links |
 | iOS U1 → U4, then Flutter and Expo | **in progress** — iOS first: SwiftUI is the nearest idiom to Compose so it validates the translation table most cheaply, it is the parity sibling, it is the only port carrying a structural unknown (§9.1) and better to hit that now than after two ports assume it away, and under §9.2 it needs no new argument mechanism |
 
-<!-- INTERNAL-ONLY:START reason=roadmap-dates-and-work-in-progress -->
-
-### Resume point — paused 2026-08-15
-
-**[INTERNAL-ONLY]** Everything below is working state, not a public roadmap. Delete this whole
-subsection before the visibility flip.
-
-Open on `feat/android-result-card`, **PR #12**, nine commits, green and mergeable: the result card,
-the callback counters, all seven launch arguments, the design's icon set, and the product cards in
-their real hues. Consider splitting it before merge — it is coherent as "the products screen and its
-evidence surface", but it is four subjects for one reviewer.
-
-**Pick up here, in this order:**
-
-1. **N2 — the SDK flow handoff: DONE 2026-08-18** (`feat/android-n2-flow-handoff`). Both
-   presentations, replace-don't-stack on result, cancellation, recreation survival, the §7.3 entry
-   gate, `startFlow()` / `recordResultCallback` / `recordRefreshCallback` wired, and `sandbox`
-   consumed by the network handoff. Still owed from step 6's list: consumers for `appLocale` and
-   `holdCamera` — each is its own mechanism (in-app locale override; a camera-contention probe) and
-   neither blocks the ports.
-2. **Port to iOS, Flutter and Expo**, in the same order Android went. `ui-work-plan.md` §4 has the
-   port rules; the decisions a port must copy rather than re-take are recorded in `spec/`, not here.
-3. **The tail Android still owes**: no launcher icon (§5 item 16 of `ui-work-plan.md`), and the
-   `sample-ui` resources have no `resourcePrefix` — the icons are hand-prefixed `sample_ic_*`, which
-   the build does not enforce.
-
-**Needs someone else, and none of it blocks N2:**
-
-- **A `DESIGN_SYSTEM_TOKEN` repository secret.** The token `--check` reads the design system from a
-  private repo. Until the secret exists that one CI step skips with a warning and the vendored token
-  output goes unverified on every run.
-- **From design:** the profile→hue list; confirmation of the Enhanced KYC hue and icon, which are
-  derived here and marked `origin: DERIVED HERE` in `spec/design-tokens.json`; and whether the nav
-  bar takes the three icons that are imported but unused.
-- **From the design system:** six recorded gaps, all in `spec/design-tokens.json` → `deltas`. Soft
-  badge variants, `color.border` and `color.text.muted` not changing in dark,
-  `button.disabled.background` pointing at a primitive, no selected-surface token, the product hues
-  existing nowhere in the token source, and Body Strong being 14px in the design file against 16px
-  in the token source.
-- **From the SDK:** a runtime accessor for its own version, so the result card's `sdkVersion` stops
-  being null. See `sdkVersion.blocked` in `spec/result-card.schema.json`.
-
-**Two traps worth re-reading before resuming.** A deep link delivered by `am start` rebuilds the
-Activity and discards every in-memory hoist, so a warm-start assertion must be on surviving state
-and a flow that wants to observe launch arguments has to tap its way in — R9 in `navigation-plan.md`.
-And the device's adb address is DHCP and moves; read it back rather than trusting a remembered one,
-and prefer USB, because the wireless link dropped four times during one Maestro pass.
-
-**[INTERNAL-ONLY]** This repository is internal until the four apps are complete; the pre-flip
-checklist in `AGENTS.md` gates the visibility change. The private CI repository that adds
-capture-completion lanes on top of these apps is a separate, internal-only home — do not name it in
-anything committed here once this block is removed.
-<!-- INTERNAL-ONLY:END -->
 
 ## 8. Deferred work, with the shape it should take
 

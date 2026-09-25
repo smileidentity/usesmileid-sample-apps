@@ -184,10 +184,6 @@ left alone to do its own job. It also gets an independent release cadence from t
 what makes the append ritual in §4.2 realistic; a gotcha can land the day it is learned rather than
 waiting for a version bump.
 
-<!-- INTERNAL-ONLY:START reason=names-a-private-internal-repository -->
-Concretely: the internal repository is `smileidentity/claude-skills` (private, *"Shared Claude Code skills
-for Smile Identity engineers"*, actively updated). Leave it as-is; do not widen its charter.
-<!-- INTERNAL-ONLY:END -->
 
 ### 7.3 What that leaves, ranked
 

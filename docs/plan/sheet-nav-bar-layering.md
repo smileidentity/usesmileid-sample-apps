@@ -1,6 +1,6 @@
 # Where a Flutter sheet sits relative to the nav bar
 
-Closes the defect left open by `port-priority-cut.md` item 8: the floating nav bar was drawn over
+Closes a defect the Flutter emulator lane found: the floating nav bar was drawn over
 the bottom of a partial sheet and took the taps meant for it.
 
 ## What was measured
