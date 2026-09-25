@@ -22,8 +22,8 @@ your answers, not as the whole form.
 - A **privacy policy URL that serves the policy itself**, not one that redirects to a homepage. It must
   cover face images and biometric data. Both stores check the link, and a redirect reads as a missing
   policy.
-- A way for a reviewer to reach the verification flow **without your production credentials**: a
-  sandbox path, a demo account, or written instructions (see [Reviewer access](#reviewer-access-both-stores)).
+- A way for a reviewer to reach the verification flow **without a real customer's identity**: a
+  review account on your backend, and written instructions (see [Reviewer access](#reviewer-access-both-stores)).
 
 ## What the SDK sends
 
@@ -190,9 +190,11 @@ Do not read a fast internal release as review approval.
 Both stores ask whether any feature needs an account. If a reviewer cannot reach the verification
 flow, they cannot review it.
 
-- **Best:** make the flow reachable with no credentials, for example against the **sandbox**
-  environment, and say so in the review notes.
-- **Otherwise:** give a working demo account and the exact steps to reach the selfie.
+- **Give the reviewer a path your backend supports** that needs no real customer's identity. For
+  example, a review account whose tokens your backend mints for the **sandbox** environment. Keep the
+  environment switch on your backend, never in the app build.
+- **Put the account, and the exact steps to reach the selfie, in the review notes.**
+- **If your app genuinely needs no account**, as this repository's apps do, say so.
 - **Keep the story consistent.** If the review notes say no account is needed, nothing else you tell
   the reviewer, such as a reply about your audience, may imply that one is. A contradiction reads as
   a missing demo account.
