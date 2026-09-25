@@ -12,11 +12,12 @@ struct SdkFlowScreen: View {
   /// Once per entry: the snapshot is read here and never again.
   @StateObject private var run = SdkFlowRun()
 
+  @Environment(\.useSmileIDSampleColors) private var colors
+
   var body: some View {
     // A stack, not a background: the content is empty until the gate runs, and SwiftUI drops an empty view's background.
     ZStack {
-      // The system colour, as a partner host has: capture forces dark, so the preview's safe-area strips read black, not scrim-grey.
-      Color(uiColor: .systemBackground)
+      colors.background
       content
       // The push is over here: `onAppear` fires inside it, and every gate exit is a path change.
       UseSmileIDSampleTransitionEnd(action: enter).frame(width: 0, height: 0)
