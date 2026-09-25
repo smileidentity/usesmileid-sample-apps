@@ -43,20 +43,21 @@ A profile and the job form are **two unrelated stores**, and the job only ever r
     after a restart.
   - It replaces "Remember these details", which did nothing (P3, P5). It keeps that switch's test id,
     because ids are stable.
-- **Profiles are stored on the device.** The list, the active id and each profile's callback URL use
-  each app's existing settings storage:
+- **Profiles are stored on the device, encrypted.** They hold people's names, emails and phone
+  numbers, so each app encrypts them with no new dependency:
 
   | App | Store |
   |---|---|
-  | Android | DataStore, via `UseSmileIDSampleStore` |
-  | iOS | UserDefaults, via `UseSmileIDSampleStore`'s settings storage |
-  | Flutter | shared_preferences |
-  | Expo | AsyncStorage |
+  | Android | DataStore, sealed with an AES-GCM key held in the Android Keystore |
+  | iOS | Keychain, this device only, readable while unlocked |
+  | Flutter | flutter_secure_storage |
+  | Expo | expo-secure-store |
 
   This fixes P4.
-  - Profiles are per device, with nothing synced. They go with an iOS device backup, but no Android
-    app backs them up, because `allowBackup` is `false` on all three Android apps. Each colleague
-    builds their own personas.
+  - Profiles are per device, with nothing synced or backed up: the keys never leave the device, and
+    `allowBackup` is `false` on all three Android apps. Each colleague builds their own personas.
+  - A plain record written by an earlier build of this branch is read once and moved into the
+    encrypted store, then removed from the plain one.
   - Profiles are one JSON value under one new key, `sample_profiles`. It holds `{version: 1,
     activeId, profiles: [...]}`.
   - A value that is missing or can't be decoded reads as **no profiles**. It never throws, and it

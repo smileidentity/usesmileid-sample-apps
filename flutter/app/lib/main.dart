@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import 'src/data/use_smileid_sample_preferences_jobs_repository.dart';
-import 'src/data/use_smileid_sample_preferences_profiles_repository.dart';
 import 'src/data/use_smileid_sample_preferences_settings_repository.dart';
+import 'src/data/use_smileid_sample_secure_profiles_repository.dart';
 import 'src/data/use_smileid_sample_secure_session_repository.dart';
 import 'src/state/use_smileid_sample_providers.dart';
 import 'src/state/use_smileid_sample_session_providers.dart';
@@ -27,8 +27,8 @@ Future<void> main() async {
   final UseSmileIDSampleSessionRecord session = await _readSession(sessions);
   final UseSmileIDSamplePreferencesJobsRepository jobs =
       await UseSmileIDSamplePreferencesJobsRepository.open();
-  final UseSmileIDSamplePreferencesProfilesRepository profiles =
-      await UseSmileIDSamplePreferencesProfilesRepository.open();
+  final UseSmileIDSampleSecureProfilesRepository profiles =
+      await UseSmileIDSampleSecureProfilesRepository.open();
   // Read BEFORE the first frame and exactly once, which is the whole of the cold-start rule: a
   // link delivered to a live app must never re-seed the arguments.
   final UseSmileIDSampleLaunch launch = UseSmileIDSampleLaunch(

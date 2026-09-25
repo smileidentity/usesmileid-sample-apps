@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 
 import type { UseSmileIDSampleLaunchArgs } from './use-smile-id-sample-launch-args';
@@ -26,6 +25,26 @@ import {
 /// The key the record is stored under, the same on all four apps.
 export const SMILE_ID_SAMPLE_PROFILES_KEY = 'sample_profiles';
 
+/// Where the record's bytes live: the host's secure store, since they hold people's details.
+export type UseSmileIDSampleProfilesStorage = {
+  read: () => Promise<string | null>;
+  /// Null deletes the record.
+  write: (value: string | null) => Promise<void>;
+};
+
+/// Holds the record for one process, until a host hands over its own store.
+const memoryStorage = (): UseSmileIDSampleProfilesStorage => {
+  let value: string | null = null;
+  return {
+    read: async () => value,
+    write: async (next) => {
+      value = next;
+    },
+  };
+};
+
+let storage: UseSmileIDSampleProfilesStorage = memoryStorage();
+
 type State = {
   readonly items: readonly UseSmileIDSampleProfile[];
   /// Null exactly when there are no profiles.
@@ -46,7 +65,7 @@ type Edit = {
 
 type Actions = {
   /// The stored profiles, or the fixtures when the launch seeds them; once per launch.
-  load: (args: UseSmileIDSampleLaunchArgs) => Promise<void>;
+  load: (args: UseSmileIDSampleLaunchArgs, into?: UseSmileIDSampleProfilesStorage) => Promise<void>;
   /// Holds these in memory without storing them, for tests and seeded launches.
   reset: (seed: readonly UseSmileIDSampleProfile[], activeId?: string | null) => void;
   setActive: (id: string) => void;
@@ -84,7 +103,7 @@ export const useSmileIDSampleProfileStore = create<State & Actions>((set, get) =
     if (seeded) return;
     const encoded = smileIDSampleEncodeProfiles({ profiles: items, activeId });
     // Caught, not voided: a refused write must never surface as an unhandled rejection.
-    writes = writes.then(() => AsyncStorage.setItem(SMILE_ID_SAMPLE_PROFILES_KEY, encoded)).catch(() => undefined);
+    writes = writes.then(() => storage.write(encoded)).catch(() => undefined);
   };
 
   return {
@@ -94,7 +113,8 @@ export const useSmileIDSampleProfileStore = create<State & Actions>((set, get) =
     loaded: false,
     seeded: false,
 
-    load: async (args) => {
+    load: async (args, into) => {
+      if (into !== undefined) storage = into;
       // Once per launch: a remount must not replace profiles already in use with an older read.
       if (get().loaded) return;
       if (args.seedProfiles) {
@@ -105,7 +125,7 @@ export const useSmileIDSampleProfileStore = create<State & Actions>((set, get) =
       try {
         // After any queued write, so the read is never older than the last change.
         await writes;
-        raw = await AsyncStorage.getItem(SMILE_ID_SAMPLE_PROFILES_KEY);
+        raw = await storage.read();
       } catch {
         // Unreadable storage is no profiles, rather than a store that never reports loaded.
       }
@@ -173,7 +193,7 @@ export const useSmileIDSampleProfileStore = create<State & Actions>((set, get) =
       change({ items: [], activeId: null, lastCreatedId: null });
       // Sign-out promises every profile on the device goes, stored ones a seeded launch hid included.
       if (get().seeded) {
-        writes = writes.then(() => AsyncStorage.removeItem(SMILE_ID_SAMPLE_PROFILES_KEY)).catch(() => undefined);
+        writes = writes.then(() => storage.write(null)).catch(() => undefined);
       }
     },
 

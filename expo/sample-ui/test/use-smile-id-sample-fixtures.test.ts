@@ -1,9 +1,7 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import { smileIDSampleLaunchArgsFrom } from '../src/state/use-smile-id-sample-launch-args';
 import {
-  SMILE_ID_SAMPLE_PROFILES_KEY,
   useSmileIDSampleProfileStore,
+  type UseSmileIDSampleProfilesStorage,
 } from '../src/state/use-smile-id-sample-profile-store';
 import {
   smileIDSampleDecodeProfiles,
@@ -24,7 +22,18 @@ const noDetails = { firstName: '', lastName: '', email: '', phone: '' };
 const settle = async () => {
   for (let turn = 0; turn < 5; turn += 1) await new Promise((resolve) => setTimeout(resolve, 0));
 };
-const stored = async () => smileIDSampleDecodeProfiles(await AsyncStorage.getItem(SMILE_ID_SAMPLE_PROFILES_KEY));
+/// Stands in for the host's secure store; `writes` counts what reached it.
+let saved: string | null = null;
+const writes = jest.fn();
+const secure: UseSmileIDSampleProfilesStorage = {
+  read: async () => saved,
+  write: async (value) => {
+    writes(value);
+    saved = value;
+  },
+};
+const stored = async () => smileIDSampleDecodeProfiles(await secure.read());
+const load = (args = smileIDSampleLaunchArgsFrom({})) => store().load(args, secure);
 
 const profile = (organisation: string, firstName = '', lastName = ''): UseSmileIDSampleProfile => ({
   id: 'p-1',
@@ -38,9 +47,10 @@ const relaunch = () => useSmileIDSampleProfileStore.setState({ items: [], active
 beforeEach(async () => {
   // A write the last test left queued would otherwise land in this one.
   await settle();
-  await AsyncStorage.clear();
+  saved = null;
+  writes.mockClear();
   relaunch();
-  await store().load(smileIDSampleLaunchArgsFrom({}));
+  await load();
 });
 
 describe('a launch', () => {
@@ -53,7 +63,7 @@ describe('a launch', () => {
 
   it('seeds the three design profiles only when seedProfiles asks, and stores nothing', async () => {
     relaunch();
-    await store().load(smileIDSampleLaunchArgsFrom({ seedProfiles: true }));
+    await load(smileIDSampleLaunchArgsFrom({ seedProfiles: true }));
     store().add('Karibu Pay');
     store().setActive('p-2');
     await settle();
@@ -64,7 +74,7 @@ describe('a launch', () => {
       'PesaLink',
       'Karibu Pay',
     ]);
-    expect(await AsyncStorage.getItem(SMILE_ID_SAMPLE_PROFILES_KEY)).toBeNull();
+    expect(saved).toBeNull();
   });
 
   it('reads what an earlier process stored', async () => {
@@ -72,17 +82,16 @@ describe('a launch', () => {
     await settle();
     relaunch();
 
-    await store().load(smileIDSampleLaunchArgsFrom({}));
+    await load();
 
     expect(store().items.map((p) => p.organisation)).toEqual(['Kobo Bank']);
     expect(store().activeId).toBe('p-1');
   });
 
   it('from an install holding only the released keys reads as no profiles', async () => {
-    await AsyncStorage.setItem('sample.setting.darkMode', 'true');
     relaunch();
 
-    await store().load(smileIDSampleLaunchArgsFrom({}));
+    await load();
 
     expect(store().items).toEqual([]);
   });
@@ -91,24 +100,23 @@ describe('a launch', () => {
 describe('the store', () => {
   it('reads the store once per launch, so a remount keeps the profiles in use', async () => {
     store().add('Kobo Bank');
-    await AsyncStorage.clear();
+    await settle();
+    saved = null;
 
-    await store().load(smileIDSampleLaunchArgsFrom({}));
+    await load();
 
     expect(store().items.map((p) => p.organisation)).toEqual(['Kobo Bank']);
   });
 
   it('writes nothing for an update that changes nothing', async () => {
     const id = store().add('Kobo Bank', ada);
-    // The mock's own record, not a spy: restoring a spy on a jest.fn would wipe its implementation.
-    const setItem = AsyncStorage.setItem as jest.Mock;
     await settle();
-    const before = setItem.mock.calls.length;
+    const before = writes.mock.calls.length;
 
     store().update(id, { organisation: 'Kobo Bank', defaults: { ...ada } });
     await settle();
 
-    expect(setItem.mock.calls.length).toBe(before);
+    expect(writes.mock.calls.length).toBe(before);
   });
 
   it('makes the first profile active, and leaves later ones for the offer', () => {
@@ -156,7 +164,7 @@ describe('the store', () => {
     store().add('Kobo Bank', ada);
     await settle();
     relaunch();
-    await store().load(smileIDSampleLaunchArgsFrom({ seedProfiles: true }));
+    await load(smileIDSampleLaunchArgsFrom({ seedProfiles: true }));
 
     store().clear();
     await settle();

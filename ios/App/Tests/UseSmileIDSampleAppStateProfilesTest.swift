@@ -11,7 +11,11 @@ final class UseSmileIDSampleAppStateProfilesTest: XCTestCase {
   override func setUp() {
     super.setUp()
     settings = UseSmileIDSampleMemorySettingsStorage()
-    store = UseSmileIDSampleStore(storage: UseSmileIDSampleMemoryStorage(), settingsStorage: settings)
+    store = UseSmileIDSampleStore(
+      storage: UseSmileIDSampleMemoryStorage(),
+      settingsStorage: settings,
+      profilesStorage: UseSmileIDSampleMemoryStorage()
+    )
   }
 
   func testASeededLaunchStoresNothing() {

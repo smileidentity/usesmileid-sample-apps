@@ -82,6 +82,7 @@ export {
 } from './state/use-smile-id-sample-profiles';
 export {
   SMILE_ID_SAMPLE_PROFILES_KEY,
+  type UseSmileIDSampleProfilesStorage,
   useSmileIDSampleActiveProfile,
   useSmileIDSampleActiveProfileIndex,
   useSmileIDSampleProfileStore,

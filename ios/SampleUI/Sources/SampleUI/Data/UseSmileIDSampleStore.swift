@@ -34,16 +34,19 @@ public protocol UseSmileIDSampleRecordStorage: AnyObject {
 public final class UseSmileIDSampleStore {
   private let storage: UseSmileIDSampleRecordStorage
   private let settingsStorage: UseSmileIDSampleSettingsStorage
+  private let profilesStorage: UseSmileIDSampleRecordStorage
 
   /// The six switches, read once at construction: a value passed at launch outranks the written one for the life of the process, so re-reading would answer a write with the launch's value.
   public private(set) var settings: UseSmileIDSampleSettings
 
   public init(
     storage: UseSmileIDSampleRecordStorage = UseSmileIDSampleKeychainStorage(),
-    settingsStorage: UseSmileIDSampleSettingsStorage = UseSmileIDSampleDefaultsStorage()
+    settingsStorage: UseSmileIDSampleSettingsStorage = UseSmileIDSampleDefaultsStorage(),
+    profilesStorage: UseSmileIDSampleRecordStorage = UseSmileIDSampleKeychainStorage(account: UseSmileIDSampleStore.profilesKey)
   ) {
     self.storage = storage
     self.settingsStorage = settingsStorage
+    self.profilesStorage = profilesStorage
     let defaults = UseSmileIDSampleSettings()
     // Absent rows are today's defaults, so a default the design changes still reaches a device that has used the screen.
     settings = UseSmileIDSampleSettings(
@@ -69,19 +72,26 @@ public final class UseSmileIDSampleStore {
     return updated
   }
 
-  /// A missing or unreadable record is no profiles, so an install that never stored one reads as a first launch.
+  /// In the Keychain, since the record holds people's details; missing or unreadable is no profiles.
   public var profiles: UseSmileIDSampleProfiles {
-    UseSmileIDSampleProfilesCodec.decode(settingsStorage.data(Self.profilesKey))
+    if let sealed = profilesStorage.read() {
+      return UseSmileIDSampleProfilesCodec.decode(sealed)
+    }
+    // A plain record from before the Keychain moves across once, and leaves the defaults.
+    guard let plain = settingsStorage.data(Self.profilesKey) else { return UseSmileIDSampleProfiles() }
+    profilesStorage.write(plain)
+    settingsStorage.setData(Self.profilesKey, nil)
+    return UseSmileIDSampleProfilesCodec.decode(plain)
   }
 
   /// The whole record in one write, so the list and the active id can never come from different edits.
   public func setProfiles(_ profiles: UseSmileIDSampleProfiles) {
     guard let data = UseSmileIDSampleProfilesCodec.encode(profiles) else { return }
-    settingsStorage.setData(Self.profilesKey, data)
+    profilesStorage.write(data)
   }
 
   /// The Android store's key, so a record reads the same in both.
-  static let profilesKey = "sample_profiles"
+  public static let profilesKey = "sample_profiles"
 
   /// Both halves from one read, so the UI can never hold the token from one write and the marker from the next.
   public var session: UseSmileIDSampleSessionRecord {
@@ -134,9 +144,11 @@ public final class UseSmileIDSampleStore {
 /// One generic-password item, unlocked-only; the service is not an application id, so it stays identity-agnostic.
 public final class UseSmileIDSampleKeychainStorage: UseSmileIDSampleRecordStorage {
   private let service: String
+  private let account: String
 
-  public init(service: String = "usesmileid_sample") {
+  public init(service: String = "usesmileid_sample", account: String = "token_session") {
     self.service = service
+    self.account = account
   }
 
   public func read() -> Data? {
@@ -166,7 +178,7 @@ public final class UseSmileIDSampleKeychainStorage: UseSmileIDSampleRecordStorag
     [
       kSecClass as String: kSecClassGenericPassword,
       kSecAttrService as String: service,
-      kSecAttrAccount as String: "token_session"
+      kSecAttrAccount as String: account
     ]
   }
 }
@@ -190,7 +202,8 @@ public protocol UseSmileIDSampleSettingsStorage: AnyObject {
   func flag(_ key: String) -> Bool?
   func setFlag(_ key: String, _ value: Bool)
   func data(_ key: String) -> Data?
-  func setData(_ key: String, _ value: Data)
+  /// Nil removes the value.
+  func setData(_ key: String, _ value: Data?)
 }
 
 public extension UseSmileIDSampleSettingsStorage {
@@ -228,7 +241,7 @@ public final class UseSmileIDSampleDefaultsStorage: UseSmileIDSampleSettingsStor
     return defaults.data(forKey: key)
   }
 
-  public func setData(_ key: String, _ value: Data) {
+  public func setData(_ key: String, _ value: Data?) {
     defaults.set(value, forKey: key)
   }
 }
@@ -252,7 +265,7 @@ public final class UseSmileIDSampleMemorySettingsStorage: UseSmileIDSampleSettin
     blobs[key]
   }
 
-  public func setData(_ key: String, _ value: Data) {
+  public func setData(_ key: String, _ value: Data?) {
     blobs[key] = value
   }
 }

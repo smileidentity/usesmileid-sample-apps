@@ -20,6 +20,7 @@ import { Appearance, Platform, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useLaunchArgs, useLaunchArgsLoaded } from '../src/use-smile-id-sample-launch';
+import { smileIDSampleSecureProfilesStorage } from '../src/use-smile-id-sample-secure-profiles-storage';
 import { smileIDSampleSecureSessionStorage } from '../src/use-smile-id-sample-secure-session-storage';
 
 /// Every pushed route and sheet layers over the tabs, so a cold deep link lands with its owner beneath (routes.json R12).
@@ -82,7 +83,7 @@ export default function RootLayout() {
     // Once, off the link's own arguments: the defaults before it resolves are no launch at all.
     if (!argsLoaded) return;
     // The stored profiles, or the fixtures a seeded launch holds in memory only.
-    void loadProfiles(args);
+    void loadProfiles(args, smileIDSampleSecureProfilesStorage);
     // Before the verifications route's first load, or its own read wins and the list opens empty.
     // Caught, not voided: a failed write must degrade to an empty list, never an unhandled rejection.
     if (args.seedJobs) seedFixtures(Date.now()).catch(() => undefined);

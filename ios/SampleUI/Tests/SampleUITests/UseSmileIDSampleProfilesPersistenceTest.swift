@@ -4,10 +4,13 @@ import XCTest
 /// Profiles survive a restart, and an install updated from a build that never stored them reads as a first launch.
 final class UseSmileIDSampleProfilesPersistenceTest: XCTestCase {
   private var rows: UseSmileIDSampleMemorySettingsStorage!
+  /// Stands in for the Keychain, which an unsigned test host cannot reach.
+  private var keychain: UseSmileIDSampleMemoryStorage!
 
   override func setUp() {
     super.setUp()
     rows = UseSmileIDSampleMemorySettingsStorage()
+    keychain = UseSmileIDSampleMemoryStorage()
   }
 
   func testProfilesWrittenByOneStoreAreReadByTheNext() {
@@ -29,8 +32,24 @@ final class UseSmileIDSampleProfilesPersistenceTest: XCTestCase {
     XCTAssertTrue(store.settings.darkMode)
   }
 
+  func testProfilesGoToTheKeychainNeverTheDefaults() {
+    makeStore().setProfiles(UseSmileIDSampleProfiles([UseSmileIDSampleProfile(id: "p-1", organisation: "Kobo")]))
+
+    XCTAssertNotNil(keychain.read())
+    XCTAssertNil(rows.data("sample_profiles"), "people's details reached UserDefaults")
+  }
+
+  func testAPlainRecordFromBeforeTheKeychainMovesAcrossAndLeavesTheDefaults() {
+    let plain = UseSmileIDSampleProfiles([UseSmileIDSampleProfile(id: "p-1", organisation: "Kobo")])
+    rows.setData("sample_profiles", UseSmileIDSampleProfilesCodec.encode(plain))
+
+    XCTAssertEqual(makeStore().profiles, plain)
+    XCTAssertNil(rows.data("sample_profiles"))
+    XCTAssertEqual(UseSmileIDSampleProfilesCodec.decode(keychain.read()), plain)
+  }
+
   func testAnUnreadableRecordReadsAsNoProfiles() {
-    rows.setData("sample_profiles", Data(#"{"version":1,"profiles":["#.utf8))
+    keychain.write(Data(#"{"version":1,"profiles":["#.utf8))
 
     XCTAssertEqual(makeStore().profiles, UseSmileIDSampleProfiles())
   }
@@ -48,13 +67,14 @@ final class UseSmileIDSampleProfilesPersistenceTest: XCTestCase {
 
     let store = UseSmileIDSampleStore(
       storage: UseSmileIDSampleMemoryStorage(),
-      settingsStorage: UseSmileIDSampleDefaultsStorage(defaults: .standard)
+      settingsStorage: UseSmileIDSampleDefaultsStorage(defaults: .standard),
+      profilesStorage: keychain
     )
 
     XCTAssertEqual(store.profiles, UseSmileIDSampleProfiles())
   }
 
   private func makeStore() -> UseSmileIDSampleStore {
-    UseSmileIDSampleStore(storage: UseSmileIDSampleMemoryStorage(), settingsStorage: rows)
+    UseSmileIDSampleStore(storage: UseSmileIDSampleMemoryStorage(), settingsStorage: rows, profilesStorage: keychain)
   }
 }

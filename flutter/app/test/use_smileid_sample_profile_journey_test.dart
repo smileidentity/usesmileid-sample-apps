@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:usesmileid_sample_flutter/src/data/use_smileid_sample_preferences_profiles_repository.dart';
 import 'package:usesmileid_sample_flutter/src/data/use_smileid_sample_preferences_settings_repository.dart';
+import 'package:usesmileid_sample_flutter/src/data/use_smileid_sample_secure_profiles_repository.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_forms.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
@@ -217,20 +218,32 @@ void main() {
     },
   );
 
-  group('the preferences store', () {
+  group('the secure store', () {
+    setUp(() => FlutterSecureStorage.setMockInitialValues(<String, String>{}));
+
     test('profiles written by one store are read by the next', () async {
       final UseSmileIDSampleProfiles profiles = UseSmileIDSampleProfiles(
         UseSmileIDSampleProfiles.fixtures(),
         'p-2',
       );
-      await (await UseSmileIDSamplePreferencesProfilesRepository.open()).write(
+      await (await UseSmileIDSampleSecureProfilesRepository.open()).write(
         profiles,
       );
 
       final UseSmileIDSampleProfiles read =
-          (await UseSmileIDSamplePreferencesProfilesRepository.open()).read();
+          (await UseSmileIDSampleSecureProfilesRepository.open()).read();
       expect(read.all, profiles.all);
       expect(read.activeId, 'p-2');
+    });
+
+    test('never puts people\'s details in the preferences', () async {
+      await (await UseSmileIDSampleSecureProfilesRepository.open()).write(
+        UseSmileIDSampleProfiles(UseSmileIDSampleProfiles.fixtures()),
+      );
+
+      final SharedPreferences preferences =
+          await SharedPreferences.getInstance();
+      expect(preferences.get(useSmileIDSampleProfilesKey), isNull);
     });
 
     test(
@@ -241,15 +254,37 @@ void main() {
         });
 
         expect(
-          (await UseSmileIDSamplePreferencesProfilesRepository.open())
-              .read()
-              .all,
+          (await UseSmileIDSampleSecureProfilesRepository.open()).read().all,
           isEmpty,
         );
         final UseSmileIDSampleSettings settings =
             await (await UseSmileIDSamplePreferencesSettingsRepository.open())
                 .read();
         expect(settings.darkMode, isTrue, reason: 'released settings survive');
+      },
+    );
+
+    test(
+      'a plain record from before moves across and leaves the preferences',
+      () async {
+        SharedPreferences.setMockInitialValues(<String, Object>{
+          useSmileIDSampleProfilesKey: UseSmileIDSampleProfilesCodec.encode(
+            UseSmileIDSampleProfiles(UseSmileIDSampleProfiles.fixtures()),
+          ),
+        });
+
+        final UseSmileIDSampleProfiles read =
+            (await UseSmileIDSampleSecureProfilesRepository.open()).read();
+
+        expect(read.all, hasLength(3));
+        final SharedPreferences preferences =
+            await SharedPreferences.getInstance();
+        expect(preferences.get(useSmileIDSampleProfilesKey), isNull);
+        expect(
+          (await UseSmileIDSampleSecureProfilesRepository.open()).read().all,
+          hasLength(3),
+          reason: 'the moved record was not stored securely',
+        );
       },
     );
 
@@ -261,9 +296,7 @@ void main() {
         });
 
         expect(
-          (await UseSmileIDSamplePreferencesProfilesRepository.open())
-              .read()
-              .all,
+          (await UseSmileIDSampleSecureProfilesRepository.open()).read().all,
           isEmpty,
         );
       },
