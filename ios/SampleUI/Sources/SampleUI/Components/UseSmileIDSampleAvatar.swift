@@ -24,7 +24,7 @@ public struct UseSmileIDSampleAvatar: View {
   public var body: some View {
     let hasInitials = !initials.trimmingCharacters(in: .whitespaces).isEmpty
     return UseSmileIDSampleText(
-      hasInitials ? initials : "?",
+      hasInitials ? initials : "+",
       style: UseSmileIDSampleTheme.type.avatarFont
     )
     .foregroundColor(hasInitials ? colors.avatar.text : colors.avatar.placeholderIcon)

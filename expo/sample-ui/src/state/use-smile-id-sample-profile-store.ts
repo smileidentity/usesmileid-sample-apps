@@ -1,29 +1,88 @@
 import { create } from 'zustand';
 
+import type { UseSmileIDSampleLaunchArgs } from './use-smile-id-sample-launch-args';
 import {
-  smileIDSampleStarterProfiles,
+  smileIDSampleDecodeProfiles,
+  smileIDSampleEncodeProfiles,
+  smileIDSampleFixtureProfiles,
+  smileIDSampleProfilesRecord,
   smileIDSampleUserDetailsDefaults,
+  smileIDSampleUserDetailsEqual,
   type UseSmileIDSampleProfile,
   type UseSmileIDSampleUserDetails,
 } from './use-smile-id-sample-profiles';
+import {
+  smileIDSampleRequirementDefaults,
+  smileIDSampleRequirementSupplies,
+  type UseSmileIDSampleUserDetailsRequirement,
+} from './use-smile-id-sample-user-details-requirement';
+import {
+  smileIDSampleUserFieldRead,
+  smileIDSampleUserFields,
+  smileIDSampleUserFieldWrite,
+} from '../model/use-smile-id-sample-user-fields';
+
+/// The key the record is stored under, the same on all four apps.
+export const SMILE_ID_SAMPLE_PROFILES_KEY = 'sample_profiles';
+
+/// Where the record's bytes live: the host's secure store, since they hold people's details.
+export type UseSmileIDSampleProfilesStorage = {
+  read: () => Promise<string | null>;
+  /// Null deletes the record.
+  write: (value: string | null) => Promise<void>;
+};
+
+/// Holds the record for one process, until a host hands over its own store.
+const memoryStorage = (): UseSmileIDSampleProfilesStorage => {
+  let value: string | null = null;
+  return {
+    read: async () => value,
+    write: async (next) => {
+      value = next;
+    },
+  };
+};
+
+let storage: UseSmileIDSampleProfilesStorage = memoryStorage();
 
 type State = {
   readonly items: readonly UseSmileIDSampleProfile[];
-  readonly activeId: string;
-  /// The last profile `add` created, until whoever confirmed it calls `clearLastCreated`.
+  /// Null exactly when there are no profiles.
+  readonly activeId: string | null;
+  /// The last profile `add` created without activating, until the list that offers "Make active" consumes it.
   readonly lastCreatedId: string | null;
+  /// False until the store has answered, so nothing reads "no profile" from a list still loading.
+  readonly loaded: boolean;
+  /// A seeded launch holds the fixtures in memory only.
+  readonly seeded: boolean;
+};
+
+type Edit = {
+  readonly organisation?: string;
+  readonly defaults?: UseSmileIDSampleUserDetails;
+  readonly callbackUrl?: string;
 };
 
 type Actions = {
-  reset: (seed: readonly UseSmileIDSampleProfile[]) => void;
+  /// The stored profiles, or the fixtures when the launch seeds them; once per launch.
+  load: (args: UseSmileIDSampleLaunchArgs, into?: UseSmileIDSampleProfilesStorage) => Promise<void>;
+  /// Holds these in memory without storing them, for tests and seeded launches.
+  reset: (seed: readonly UseSmileIDSampleProfile[], activeId?: string | null) => void;
   setActive: (id: string) => void;
   clearLastCreated: () => void;
-  add: (organisation: string, person: string, defaults?: UseSmileIDSampleUserDetails) => string;
-  /// An undefined `callbackUrl` leaves the stored one alone; only a caller that edited it passes a value.
-  setDefaults: (id: string, defaults: UseSmileIDSampleUserDetails, callbackUrl?: string) => void;
+  add: (organisation: string, defaults?: UseSmileIDSampleUserDetails, activate?: boolean) => string;
+  /// An absent part is left alone.
+  update: (id: string, edit: Edit) => void;
+  delete: (id: string) => void;
+  /// Sign out: every profile goes.
+  clear: () => void;
+  /// Continue's write-back from the details form; a field the token supplies is never stored.
+  keep: (
+    details: UseSmileIDSampleUserDetails,
+    organisation: string,
+    requirement?: UseSmileIDSampleUserDetailsRequirement,
+  ) => void;
 };
-
-const starter = smileIDSampleStarterProfiles();
 
 /// First free id, not one derived from the count: duplicate keys crash the list and double a test id.
 const nextId = (items: readonly UseSmileIDSampleProfile[]): string => {
@@ -33,57 +92,126 @@ const nextId = (items: readonly UseSmileIDSampleProfile[]): string => {
   }
 };
 
-/// The profiles the app can act as, and which one is active. In memory until profiles are a real account concern.
-export const useSmileIDSampleProfileStore = create<State & Actions>((set, get) => ({
-  items: starter,
-  activeId: starter[0]?.id ?? 'p-1',
-  lastCreatedId: null,
+/// Serialises the writes, so the last change is the one that lands.
+let writes: Promise<void> = Promise.resolve();
 
-  reset: (seed) => {
-    if (seed.length === 0) {
-      throw new Error('useSmileIDSampleProfileStore needs at least one profile');
-    }
-    set({ items: seed, activeId: seed[0]?.id ?? 'p-1', lastCreatedId: null });
-  },
+/// The profiles the app can act as, and which is active. A plain first launch has none.
+export const useSmileIDSampleProfileStore = create<State & Actions>((set, get) => {
+  const change = (next: Pick<State, 'items' | 'activeId'> & Partial<State>) => {
+    set(next);
+    const { items, activeId, seeded } = get();
+    if (seeded) return;
+    const encoded = smileIDSampleEncodeProfiles({ profiles: items, activeId });
+    writes = writes.then(() => storage.write(encoded)).catch(() => undefined);
+  };
 
-  setActive: (id) => {
-    if (get().items.some((item) => item.id === id)) set({ activeId: id });
-  },
+  return {
+    items: [],
+    activeId: null,
+    lastCreatedId: null,
+    loaded: false,
+    seeded: false,
 
-  clearLastCreated: () => set({ lastCreatedId: null }),
+    load: async (args, into) => {
+      if (into !== undefined) storage = into;
+      if (get().loaded) return;
+      if (args.seedProfiles) {
+        get().reset(smileIDSampleFixtureProfiles());
+        return;
+      }
+      let raw: string | null = null;
+      try {
+        await writes;
+        raw = await storage.read();
+      } catch {
+        // Unreadable storage is no profiles, rather than a store that never reports loaded.
+      }
+      const record = smileIDSampleDecodeProfiles(raw);
+      set({ items: record.profiles, activeId: record.activeId, lastCreatedId: null, loaded: true, seeded: false });
+    },
 
-  add: (organisation, person, defaults = smileIDSampleUserDetailsDefaults) => {
-    const items = get().items;
-    const id = nextId(items);
-    set({ items: [...items, { id, organisation, person, defaults }], lastCreatedId: id });
-    return id;
-  },
+    reset: (seed, activeId = null) => {
+      const record = smileIDSampleProfilesRecord(seed, activeId);
+      set({ items: record.profiles, activeId: record.activeId, lastCreatedId: null, loaded: true, seeded: true });
+    },
 
-  setDefaults: (id, defaults, callbackUrl) => {
-    set({
-      items: get().items.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              defaults,
-              callbackUrl: callbackUrl ?? item.callbackUrl,
-              // The starter names nobody until its details are saved; a created profile keeps its sheet's name.
-              person: item.person.trim() || `${defaults.firstName} ${defaults.lastName}`.trim(),
-            }
-          : item,
-      ),
-    });
-  },
-}));
+    setActive: (id) => {
+      const { items, activeId } = get();
+      if (id !== activeId && items.some((item) => item.id === id)) change({ items, activeId: id });
+    },
 
-/// The active profile, which never returns undefined because the store always holds at least one.
-export const useSmileIDSampleActiveProfile = (): UseSmileIDSampleProfile =>
+    clearLastCreated: () => set({ lastCreatedId: null }),
+
+    add: (organisation, defaults = smileIDSampleUserDetailsDefaults, activate = false) => {
+      const { items, activeId } = get();
+      const id = nextId(items);
+      const activates = activate || activeId === null;
+      change({
+        items: [...items, { id, organisation: organisation.trim(), defaults }],
+        activeId: activates ? id : activeId,
+        lastCreatedId: activates ? null : id,
+      });
+      return id;
+    },
+
+    update: (id, edit) => {
+      const { items, activeId } = get();
+      const current = items.find((item) => item.id === id);
+      if (current === undefined) return;
+      const updated = {
+        ...current,
+        organisation: edit.organisation?.trim() ?? current.organisation,
+        defaults: edit.defaults ?? current.defaults,
+        callbackUrl: edit.callbackUrl?.trim() ?? current.callbackUrl,
+      };
+      if (
+        updated.organisation === current.organisation &&
+        smileIDSampleUserDetailsEqual(updated.defaults, current.defaults) &&
+        updated.callbackUrl === current.callbackUrl
+      ) {
+        return;
+      }
+      change({ activeId, items: items.map((item) => (item.id === id ? updated : item)) });
+    },
+
+    delete: (id) => {
+      const { items, activeId, lastCreatedId } = get();
+      const left = items.filter((item) => item.id !== id);
+      if (left.length === items.length) return;
+      change({
+        items: left,
+        activeId: activeId === id ? (left[0]?.id ?? null) : activeId,
+        lastCreatedId: lastCreatedId === id ? null : lastCreatedId,
+      });
+    },
+
+    clear: () => {
+      change({ items: [], activeId: null, lastCreatedId: null });
+      if (get().seeded) {
+        writes = writes.then(() => storage.write(null)).catch(() => undefined);
+      }
+    },
+
+    keep: (details, organisation, requirement = smileIDSampleRequirementDefaults) => {
+      const { items, activeId } = get();
+      const current = items.find((item) => item.id === activeId);
+      const kept = smileIDSampleUserFields.reduce(
+        (stored, field) =>
+          smileIDSampleRequirementSupplies(requirement, field.id)
+            ? stored
+            : smileIDSampleUserFieldWrite(field.id, stored, smileIDSampleUserFieldRead(field.id, details)),
+        current?.defaults ?? smileIDSampleUserDetailsDefaults,
+      );
+      if (current !== undefined) get().update(current.id, { defaults: kept });
+      else get().add(organisation, kept, true);
+    },
+  };
+});
+
+/// The active profile, or null while there is none.
+export const useSmileIDSampleActiveProfile = (): UseSmileIDSampleProfile | null =>
   // Selector, not the whole store: a bare call subscribes every caller to lastCreatedId too.
-  useSmileIDSampleProfileStore(
-    (state) =>
-      state.items.find((item) => item.id === state.activeId) ??
-      (state.items[0] as UseSmileIDSampleProfile),
-  );
+  useSmileIDSampleProfileStore((state) => state.items.find((item) => item.id === state.activeId) ?? null);
 
 /// Position in the list, which is what picks a profile's avatar hue.
 export const useSmileIDSampleActiveProfileIndex = (): number =>

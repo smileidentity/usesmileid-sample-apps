@@ -1,0 +1,14 @@
+# The switch ships on, but a second pass in one session finds it already off.
+appId: ${APP_ID}
+---
+- runFlow:
+    when:
+      visible:
+        id: "sample_remember_details_switch"
+        checked: true
+    commands:
+      - tapOn:
+          id: "sample_remember_details_switch"
+- assertVisible:
+    id: "sample_remember_details_switch"
+    checked: false

@@ -9,10 +9,40 @@ void main() {
   setUpAll(loadSampleFonts);
 
   testWidgets('user details empty', (WidgetTester tester) async {
-    await _screenGoldens(tester, 'screen_user_details', _userDetails);
+    await _screenGoldens(
+      tester,
+      'screen_user_details',
+      () => _userDetails(withProfile: false),
+    );
   });
 
-  /// Complete: the hint changes and the remember switch appears.
+  testWidgets('user details with no profile', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_user_details_no_profile',
+      () => _userDetails(
+        details: _filled,
+        withProfile: false,
+        organisation: 'Sahara Pay',
+      ),
+    );
+  });
+
+  testWidgets('user details with no profile survives max text scale', (
+    WidgetTester tester,
+  ) async {
+    await assertSurvivesMaxTextScale(
+      tester,
+      _userDetails(
+        details: _filled,
+        withProfile: false,
+        organisation: 'Sahara Pay',
+      ),
+      ownsScrolling: true,
+      hostHeight: goldenScreenHeight * 2,
+    );
+  });
+
   testWidgets('user details complete', (WidgetTester tester) async {
     await _screenGoldens(
       tester,
@@ -158,6 +188,8 @@ Widget _userDetails({
   UseSmileIDSampleUserDetails details = const UseSmileIDSampleUserDetails(),
   UseSmileIDSampleUserDetailsRequirement requirement =
       const UseSmileIDSampleUserDetailsRequirement(),
+  bool withProfile = true,
+  String organisation = '',
 }) => UseSmileIDSampleUserDetailsScreen(
   title: 'Biometric KYC',
   details: details,
@@ -165,7 +197,11 @@ Widget _userDetails({
   onFieldChanged: _ignoreUserField,
   onContinue: () {},
   requirement: requirement,
-  onRememberChanged: _ignoreFlag,
+  profile: withProfile ? UseSmileIDSampleProfiles.fixtures().first : null,
+  onProfileTap: () {},
+  onSaveToProfileChanged: _ignoreFlag,
+  organisation: organisation,
+  onOrganisationChanged: (String _) {},
 );
 
 Widget _kycForm({

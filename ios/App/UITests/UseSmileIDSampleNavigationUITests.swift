@@ -21,6 +21,9 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     signOut()
     element("sample_nav_products").tap()
     XCTAssertTrue(element("sample_session_card").waitForNonExistence(timeout: 5))
+    app.terminate()
+    app.launch()
+    XCTAssertTrue(element("sample_nav_settings").waitForExistence(timeout: 10))
   }
 
   /// Reached from the settings root; the row sits below the fold on the pinned simulator.
@@ -32,6 +35,9 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
       app.swipeUp()
     }
     signOut.tap()
+    let confirm = app.alerts.buttons["sample_sign_out_confirm"].firstMatch
+    XCTAssertTrue(confirm.waitForExistence(timeout: 5))
+    confirm.tap()
   }
 
   func testALinkOpensAScreenInAnotherTab() {
@@ -188,7 +194,6 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_toast").waitForNonExistence(timeout: 5))
   }
 
-  /// The CTA is the one place a profile becomes active from its own page, and is disabled on the one that already is.
   func testTheConfigCtaIsDisabledOnTheActiveProfileAndActivatesAnother() {
     open("profiles")
     XCTAssertTrue(element("sample_profiles_screen").waitForExistence(timeout: 10))
@@ -196,7 +201,7 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_profile_config_screen").waitForExistence(timeout: 10))
     let save = app.buttons["sample_profile_config_save"]
     XCTAssertTrue(save.waitForExistence(timeout: 10))
-    XCTAssertFalse(save.isEnabled, "the active profile cannot be made active again")
+    XCTAssertFalse(save.isEnabled, "nothing changed on the active profile, so there is nothing to save")
     app.buttons["Back"].tap()
 
     XCTAssertTrue(element("sample_profile_row_p-2").waitForExistence(timeout: 10))
@@ -407,10 +412,15 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(element("sample_settings_screen").waitForExistence(timeout: 10))
   }
 
+  /// Replaces rather than appends: a profile kept by an earlier test prefills the form.
   private func type(_ id: String, _ text: String) {
     let field = app.textFields[id]
     XCTAssertTrue(field.waitForExistence(timeout: 5), id)
     field.tap()
+    let current = (field.value as? String) ?? ""
+    if !current.isEmpty, current != field.placeholderValue {
+      field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count))
+    }
     field.typeText(text)
   }
 

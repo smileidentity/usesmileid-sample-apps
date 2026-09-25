@@ -150,6 +150,7 @@ describe('seedJobs decides whether the verifications list has anything in it', (
   });
 
   it('builds the profile store once, from the link rather than the defaults before it', async () => {
+    useSmileIDSampleProfileStore.setState({ loaded: false });
     const reset = jest.spyOn(useSmileIDSampleProfileStore.getState(), 'reset');
     await launch(`${LAUNCH}?seedProfiles=true`);
     await waitFor(() => expect(reset).toHaveBeenCalled());

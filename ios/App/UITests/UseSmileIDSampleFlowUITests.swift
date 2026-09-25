@@ -145,6 +145,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     type("sample_user_details_field_firstName", "Kwame")
     type("sample_user_details_field_lastName", "Asante")
     type("sample_user_details_field_email", "kwame@uptech.example")
+    keepNothing()
     app.buttons["sample_user_details_continue"].tap()
     XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20))
   }
@@ -200,6 +201,18 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     type("sample_user_details_field_firstName", "Kwame")
     type("sample_user_details_field_lastName", "Asante")
     type("sample_user_details_field_email", "kwame@uptech.example")
+    keepNothing()
+  }
+
+  /// Turns the save switch off, as the Maestro flows do, so a run stores no profile on the device it ran on.
+  private func keepNothing() {
+    let toggle = app.switches["sample_remember_details_switch"]
+    guard toggle.waitForExistence(timeout: 3), (toggle.value as? String) == "1" else { return }
+    for _ in 0..<3 where !toggle.isHittable {
+      app.swipeUp()
+    }
+    toggle.tap()
+    XCTAssertEqual(toggle.value as? String, "0", "the save switch did not turn off")
   }
 
   private func linkASessionThatBindsConsent() {
@@ -269,6 +282,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     // A token binding consent and user details makes the app skip both forms and mount the SDK.
     if element("sample_user_details_screen").waitForExistence(timeout: 10) {
       fillAnyEmptyUserFields()
+      keepNothing()
       app.buttons["sample_user_details_continue"].tap()
     }
     if element("sample_kyc_form_screen").waitForExistence(timeout: 10) {
@@ -347,12 +361,20 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
       app.swipeUp()
     }
     signOut.tap()
+    let confirm = app.alerts.buttons["sample_sign_out_confirm"].firstMatch
+    XCTAssertTrue(confirm.waitForExistence(timeout: 5))
+    confirm.tap()
   }
 
+  /// Replaces rather than appends: a profile kept by an earlier test prefills the form.
   private func type(_ id: String, _ text: String) {
     let field = app.textFields[id]
     XCTAssertTrue(field.waitForExistence(timeout: 5), id)
     field.tap()
+    let current = (field.value as? String) ?? ""
+    if !current.isEmpty, current != field.placeholderValue {
+      field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count))
+    }
     field.typeText(text)
   }
 

@@ -1,6 +1,6 @@
 # Shipping the iOS sample to the App Store
 
-**Status:** IN REVIEW CONVERSATION 2026-09-22. Version `20260913.1211.103` (build 103) has been asked twice under Guideline 2.1 for information about the TrueDepth API — answered both times in Resolution Center and in `review-notes.txt`, and re-queued each time with the same build (§7.2); release is manual; §7.3 records what the upload and the submission proved. What is left is Apple's review, the owner pressing Release, and the merge — `docs/app-store-manual-steps.md` is that sequence. This is the plan `ios-port-hardening.md` "Where to pick up" item 8 says does
+**Status:** LIVE. Build 103 was approved and reads Ready for Sale on 2026-09-25; the profiles release is the next version. History: IN REVIEW CONVERSATION 2026-09-22. Version `20260913.1211.103` (build 103) has been asked twice under Guideline 2.1 for information about the TrueDepth API — answered both times in Resolution Center and in `review-notes.txt`, and re-queued each time with the same build (§7.2); release is manual; §7.3 records what the upload and the submission proved. What is left is Apple's review, the owner pressing Release, and the merge — `docs/app-store-manual-steps.md` is that sequence. This is the plan `ios-port-hardening.md` "Where to pick up" item 8 says does
 not exist yet, and it closes that half of the item — the device lane is the other half and has its own
 doc. Scope: the App Store Connect listing for `com.usesmileid.sample.ios`, the archive that backs it,
 the store-art pipeline, and a TestFlight lane with an App Store lane behind it. Not the app's
@@ -271,7 +271,26 @@ argument that put `-PREQUIRE_UPLOAD_SIGNING` in Android's Gradle file rather tha
   identity and creates the listing, and that is an owner action. Adding `push: branches: [main]` to
   TestFlight later is a one-line change — and it needs a **path filter**, or a docs-only merge ships
   a build. That is Android's §7.4 finding, inherited before it is earned.
-- **Both lanes compute the build number with the same command**, per §3.1.
+- **Both lanes take the build number from App Store Connect**: one above the highest build it holds,
+  across every version (`asc_publish.py next-build`), so a TestFlight build and a store build never
+  collide. An override below that is refused unless it is already VALID, which is how a re-run skips
+  the upload. The commit count stopped working once a build was uploaded from outside a lane.
+- **Each lane revokes the development certificate its signing minted** (ruled 2026-09-25). A runner
+  holds no signing identity, so Xcode's archive step creates an Apple Development certificate through
+  the API key on every run; export then signs for the store with Apple's cloud-managed distribution
+  certificate. The lane notes the team's development certificates before signing and, in an `always()`
+  step, revokes only those that are new and "Created via API", never a person's.
+  - Nothing accumulates on the team, so the lane can never reach Apple's certificate limit.
+  - The build is unaffected: by the time the development certificate goes, the IPA is store-signed.
+  - No certificate or `.p12` is stored as a secret, so there is nothing to rotate or leak.
+  - The lane stays on GitHub Actions and `ios/verify.sh archive`, so the listing gate and the
+    `dry_run` proof still apply; Xcode Cloud, which v11 uses, would need owner setup and could not be
+    proved before a merge.
+  - The alternatives were a stored development certificate imported on the runner (a secret to keep
+    and renew) and letting certificates pile up (harmless only until the limit).
+- **The App Store lane releases end to end** (2026-09-25): upload, `asc_publish.py wait`, `apply`,
+  `submit`. Its `dry_run` input, on by default, signs and exports without uploading, which is how a
+  change to the lane is proved before it is merged.
 - **The key material never reaches `xcodebuild`'s argv.** The `.p8` is written to
   `~/.appstoreconnect/private_keys/` and deleted in an `always()` step; only its path is an argument.
   The team id, key id and issuer id do reach argv, on both the archive and the export, and
@@ -609,8 +628,8 @@ release lane's assertions all pass `-o -`, with a comment saying why.
   both (§6.1, `docs/app-store-privacy.md`); `ios/App/PrivacyInfo.xcprivacy` declares them from this
   branch onward, so the first build after 103 ships a manifest that agrees with the form. Review is not
   affected — the form is what Apple reads — but the next TestFlight build closes the gap.
-- **Play's Data safety form owes Email address and Phone number** — the same finding, on the other
-  store; `docs/play-data-safety.md` marks the rows owed and the Android plan carries the follow-up.
+- ~~**Play's Data safety form owes Email address and Phone number.**~~ **Done 2026-09-17** — the Android
+  plan's §7.4 records the published page declaring both, and `docs/play-data-safety.md` carries the rows.
 - ~~The description's first sentence diverges from Play's (§5) until Android renames to "Smile ID".~~
   **Closed 2026-09-14** by the Android rename, which moved the Play title and that sentence together.
 - ~~The two stores show different demo data for the same app.~~ **Ruled 2026-09-13: iOS takes

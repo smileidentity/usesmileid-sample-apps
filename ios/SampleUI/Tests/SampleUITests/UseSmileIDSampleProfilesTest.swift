@@ -2,151 +2,184 @@
 import XCTest
 
 final class UseSmileIDSampleProfilesTest: XCTestCase {
-  func testInitialsTakeTheFirstTwoWordsOfThePerson() {
-    XCTAssertEqual(profile(person: "Kwame Asante").initials, "KA")
-    XCTAssertEqual(profile(person: "Mary Anne Smith").initials, "MA")
-    XCTAssertEqual(profile(person: "amina").initials, "A")
+  private let ada = UseSmileIDSampleUserDetails(firstName: "Ada", lastName: "Okafor", email: "ada@kobo.example")
+
+  func testInitialsComeFromThePersonThenTheOrganisation() {
+    XCTAssertEqual(profile(first: "Kwame", last: "Asante").initials, "KA")
+    XCTAssertEqual(profile(first: "Mary Anne", last: "Smith").initials, "MA")
+    XCTAssertEqual(profile(first: "amina").initials, "A")
+    XCTAssertEqual(profile(organisation: "PesaLink").initials, "P")
+    XCTAssertEqual(profile(organisation: "").initials, "?")
   }
 
-  /// A new profile has an organisation before it has a person, and the avatar still needs letters.
-  func testInitialsFallBackToTheOrganisationThenToAPlaceholder() {
-    XCTAssertEqual(profile(person: "   ", organisation: "PesaLink").initials, "P")
-    XCTAssertEqual(profile(person: "", organisation: "").initials, "?")
+  func testAPlainLaunchHasNoProfile() {
+    let profiles = UseSmileIDSampleProfiles.forLaunch(seedProfiles: false, stored: UseSmileIDSampleProfiles())
+
+    XCTAssertTrue(profiles.all.isEmpty)
+    XCTAssertNil(profiles.active)
+    XCTAssertEqual(profiles.partnerName, "Smile ID")
+    XCTAssertEqual(profiles.partnerId, "p-1")
   }
 
-  func testTheFirstSeededProfileIsActiveUntilOneIsChosen() {
-    var profiles = UseSmileIDSampleProfiles(seed: UseSmileIDSampleProfiles.fixtures())
+  func testASeededLaunchShowsTheFixturesOverWhatWasStored() {
+    let stored = UseSmileIDSampleProfiles([profile(organisation: "Kobo Bank")])
+
+    XCTAssertEqual(UseSmileIDSampleProfiles.forLaunch(seedProfiles: true, stored: stored).all, UseSmileIDSampleProfiles.fixtures())
+    XCTAssertEqual(UseSmileIDSampleProfiles.forLaunch(seedProfiles: false, stored: stored), stored)
+  }
+
+  func testTheFirstProfileBecomesActiveAndLaterOnesWaitForTheOffer() {
+    var profiles = UseSmileIDSampleProfiles()
+
+    let first = profiles.add(organisation: "Karibu Pay")
+    XCTAssertEqual(profiles.activeId, first.id)
+    XCTAssertNil(profiles.lastCreatedId, "the active one needs no Make active offer")
+
+    let second = profiles.add(organisation: "Sahara Pay")
+    XCTAssertEqual(profiles.activeId, first.id)
+    XCTAssertEqual(profiles.lastCreatedId, second.id)
+    XCTAssertEqual(profiles.all.map(\.id), ["p-1", "p-2"])
+  }
+
+  func testIdsSkipOnesAlreadyTaken() {
+    var profiles = UseSmileIDSampleProfiles([profile(id: "p-1"), profile(id: "p-3"), profile(id: "p-4")])
+
+    XCTAssertEqual(profiles.add(organisation: "Acme").id, "p-5")
+    XCTAssertEqual(profiles.add(organisation: "Beta").id, "p-6")
+  }
+
+  func testABlankOrganisationNamesTheAppOnConsentNeverThePerson() {
+    var profiles = UseSmileIDSampleProfiles()
+    profiles.add(organisation: "", defaults: ada)
+
+    XCTAssertEqual(profiles.active?.title, "Ada Okafor")
+    XCTAssertEqual(profiles.partnerName, "Smile ID")
+  }
+
+  func testAnUpdateLeavesWhatItWasNotGiven() {
+    var profiles = UseSmileIDSampleProfiles()
+    let created = profiles.add(organisation: "Karibu Pay")
+    profiles.update(created.id, callbackUrl: " https://partner.example/hook ")
+
+    profiles.update(created.id, defaults: ada)
+
+    XCTAssertEqual(profiles.active?.callbackUrl, "https://partner.example/hook")
+    XCTAssertEqual(profiles.active?.organisation, "Karibu Pay")
+    XCTAssertEqual(profiles.active?.person, "Ada Okafor")
+  }
+
+  func testDeletingTheActiveProfileHandsOverToTheFirstLeftThenToNone() {
+    var profiles = UseSmileIDSampleProfiles(UseSmileIDSampleProfiles.fixtures(), activeId: "p-2")
+
+    profiles.delete("p-2")
     XCTAssertEqual(profiles.activeId, "p-1")
-    XCTAssertEqual(profiles.activeIndex, 0)
-    profiles.setActive("p-3")
-    XCTAssertEqual(profiles.active.organisation, "PesaLink")
-    XCTAssertEqual(profiles.activeIndex, 2)
-    // An id that names nothing leaves the choice alone rather than orphaning the header.
-    profiles.setActive("p-9")
-    XCTAssertEqual(profiles.activeId, "p-3")
+
+    profiles.delete("p-1")
+    profiles.delete("p-3")
+    XCTAssertNil(profiles.activeId)
   }
 
-  func testAddPicksTheFirstFreeIdRatherThanTheCount() {
-    var profiles = UseSmileIDSampleProfiles(seed: [
-      profile(id: "p-1"), profile(id: "p-2"), profile(id: "p-4")
-    ])
-    XCTAssertEqual(profiles.add(organisation: "Acme", person: "Ada Lovelace").id, "p-5")
-    XCTAssertEqual(profiles.add(organisation: "Beta", person: "Bob Ray").id, "p-6")
-    XCTAssertEqual(profiles.all.map(\.id), ["p-1", "p-2", "p-4", "p-5", "p-6"])
+  func testSignOutClearsEveryProfile() {
+    var profiles = UseSmileIDSampleProfiles(UseSmileIDSampleProfiles.fixtures())
+
+    profiles.clear()
+
+    XCTAssertEqual(profiles, UseSmileIDSampleProfiles())
   }
 
-  /// Creating does not activate: the confirmation carries that offer, and it is consumed once.
-  func testAddRecordsTheCreatedProfileWithoutActivatingIt() {
-    var profiles = UseSmileIDSampleProfiles(seed: UseSmileIDSampleProfiles.fixtures())
-    let created = profiles.add(
-      organisation: "Acme Fintech",
-      person: "Ada Lovelace",
-      defaults: UseSmileIDSampleUserDetails(firstName: "Ada", lastName: "Lovelace")
-    )
-    XCTAssertEqual(profiles.lastCreatedId, created.id)
-    XCTAssertEqual(profiles.activeId, "p-1")
-    XCTAssertEqual(profiles.find(created.id)?.defaults.firstName, "Ada")
-    profiles.clearLastCreated()
-    XCTAssertNil(profiles.lastCreatedId)
+  func testAStoredActiveIdThatNamesNoProfileFallsBackToTheFirst() {
+    XCTAssertEqual(UseSmileIDSampleProfiles(UseSmileIDSampleProfiles.fixtures(), activeId: "p-9").activeId, "p-1")
   }
 
-  func testSetDefaultsTouchesOnlyThatProfile() {
-    var profiles = UseSmileIDSampleProfiles(seed: UseSmileIDSampleProfiles.fixtures())
-    let edited = UseSmileIDSampleUserDetails(firstName: "Kwame", lastName: "Asante", email: "k@uptech.example")
-    profiles.setDefaults("p-1", edited)
-    profiles.setDefaults("p-9", edited)
-    XCTAssertEqual(profiles.find("p-1")?.defaults, edited)
-    XCTAssertEqual(profiles.find("p-2")?.defaults, UseSmileIDSampleUserDetails(firstName: "Amina", lastName: "Diallo"))
+  func testTheFirstRunCreatesAnActiveProfileFromWhatWasTyped() {
+    var profiles = UseSmileIDSampleProfiles()
+
+    profiles.keep(ada, organisation: " Kobo Bank ")
+
+    XCTAssertEqual(profiles.active?.organisation, "Kobo Bank")
+    XCTAssertEqual(profiles.active?.defaults, ada)
+  }
+
+  func testAnActiveProfileTakesTheEdits() {
+    var profiles = UseSmileIDSampleProfiles(UseSmileIDSampleProfiles.fixtures())
+
+    profiles.keep(ada, organisation: "")
+
+    XCTAssertEqual(profiles.find("p-1")?.defaults, ada)
+    XCTAssertEqual(profiles.find("p-1")?.organisation, "UpTech Finance")
     XCTAssertEqual(profiles.all.count, 3)
   }
 
-  /// A plain launch carries one empty profile; the design's three are fixtures reached only by `seedProfiles`.
-  func testALaunchCarriesTheFixturesOnlyWhenSeedProfilesAsks() {
-    XCTAssertEqual(UseSmileIDSampleProfiles.forLaunch(seedProfiles: false).all, UseSmileIDSampleProfiles.starter())
-    XCTAssertEqual(UseSmileIDSampleProfiles.forLaunch(seedProfiles: true).all, UseSmileIDSampleProfiles.fixtures())
-  }
-
-  func testAPlainLaunchCarriesOneProfileWithNothingMadeUp() throws {
-    let profiles = UseSmileIDSampleProfiles()
-    let starter = try XCTUnwrap(profiles.all.first)
-    XCTAssertEqual(profiles.all.count, 1)
-    XCTAssertEqual(profiles.activeId, starter.id)
-    XCTAssertEqual(starter.organisation, UseSmileIDSampleProfiles.starterOrganisation)
-    XCTAssertTrue(starter.person.isBlank, "a starter profile names nobody")
-    XCTAssertEqual(starter.defaults, UseSmileIDSampleUserDetails())
-    // The consent screen shows this as the partner, so it must not collide with a fixture.
-    XCTAssertFalse(UseSmileIDSampleProfiles.fixtures().contains { $0.organisation == starter.organisation })
-  }
-
-  func testTheFixturesAreTheDesignsThreeWithDistinctIds() {
-    let fixtures = UseSmileIDSampleProfiles.fixtures()
-    XCTAssertEqual(fixtures.count, 3)
-    XCTAssertEqual(Set(fixtures.map(\.id)).count, 3)
-    XCTAssertEqual(UseSmileIDSampleProfiles(seed: fixtures).activeId, "p-1")
-  }
-
-  func testAProfileCreatedAfterTheStarterTakesTheNextIdAndDoesNotActivate() {
-    var profiles = UseSmileIDSampleProfiles()
-    let created = profiles.add(organisation: "Karibu Pay", person: "Njeri Wanjiku")
-    XCTAssertEqual(created.id, "p-2")
-    XCTAssertEqual(profiles.lastCreatedId, created.id)
-    XCTAssertEqual(profiles.activeId, "p-1")
-  }
-
-  func testAStarterProfileStillHasInitialsForTheAvatar() {
-    XCTAssertEqual(UseSmileIDSampleProfiles().active.initials, "DP")
-  }
-
-  func testSavingDetailsOnTheStarterNamesItAndACreatedProfileKeepsItsName() {
-    var profiles = UseSmileIDSampleProfiles()
-    XCTAssertEqual(profiles.active.caption, "No user details yet")
-
-    profiles.setDefaults("p-1", UseSmileIDSampleUserDetails(firstName: "Njeri", lastName: "Wanjiku"))
-    XCTAssertEqual(profiles.active.person, "Njeri Wanjiku")
-    XCTAssertEqual(profiles.active.caption, "Njeri Wanjiku")
-
-    let created = profiles.add(organisation: "Karibu Pay", person: "Amani Otieno")
-    profiles.setDefaults(created.id, UseSmileIDSampleUserDetails(firstName: "Someone", lastName: "Else"))
-    XCTAssertEqual(profiles.find(created.id)?.person, "Amani Otieno")
-  }
-
-  func testCreateNeedsTheProfileNameAndBothRequiredNames() {
-    XCTAssertFalse(UseSmileIDSampleNewProfile().canCreate)
-    XCTAssertFalse(UseSmileIDSampleNewProfile(name: "Acme", firstName: "Ada").canCreate)
-    XCTAssertFalse(UseSmileIDSampleNewProfile(name: "  ", firstName: "Ada", lastName: "Lovelace").canCreate)
-    XCTAssertTrue(UseSmileIDSampleNewProfile(name: "Acme", firstName: "Ada", lastName: "Lovelace").canCreate)
-  }
-
-  func testTheNewProfileSeedsThePersonAndTheDefaults() {
-    let draft = UseSmileIDSampleNewProfile(
-      name: "Acme",
-      firstName: "Ada",
-      lastName: "Lovelace",
-      email: "ada@acme.example",
-      phone: ""
+  func testAFieldTheTokenSuppliesIsNeverStored() {
+    let stored = UseSmileIDSampleUserDetails(firstName: "Kwame", lastName: "Asante")
+    var profiles = UseSmileIDSampleProfiles([UseSmileIDSampleProfile(id: "p-1", organisation: "UpTech", defaults: stored)])
+    let namesBound = UseSmileIDSampleUserDetailsRequirement(
+      bindings: UseSmileIDSampleTokenBindings(givenNames: true, lastName: true)
     )
-    XCTAssertEqual(draft.person, "Ada Lovelace")
-    XCTAssertEqual(UseSmileIDSampleNewProfile(name: "Acme", firstName: "Ada").person, "Ada")
-    XCTAssertEqual(
-      draft.defaults,
-      UseSmileIDSampleUserDetails(firstName: "Ada", lastName: "Lovelace", email: "ada@acme.example")
+
+    profiles.keep(UseSmileIDSampleUserDetails(email: "ada@kobo.example"), organisation: "", requirement: namesBound)
+
+    XCTAssertEqual(profiles.active?.defaults, UseSmileIDSampleUserDetails(firstName: "Kwame", lastName: "Asante", email: "ada@kobo.example"))
+  }
+
+  func testARecordRoundTripsIncludingCharactersJsonEscapes() {
+    let profiles = UseSmileIDSampleProfiles(
+      [
+        UseSmileIDSampleProfile(
+          id: "p-1",
+          organisation: "Kobo \"Bank\" \\ Ltd\n",
+          defaults: UseSmileIDSampleUserDetails(firstName: "Adá", lastName: "O'Neil", email: "ada@kobo.example", phone: "+254 700"),
+          callbackUrl: "https://kobo.example/hook?a=1&b=2"
+        ),
+        UseSmileIDSampleProfile(id: "p-2", organisation: "")
+      ],
+      activeId: "p-2"
     )
+
+    XCTAssertEqual(UseSmileIDSampleProfilesCodec.decode(UseSmileIDSampleProfilesCodec.encode(profiles)), profiles)
   }
 
-  private func profile(id: String = "p-1", person: String, organisation: String = "UpTech Finance") -> UseSmileIDSampleProfile {
-    UseSmileIDSampleProfile(id: id, organisation: organisation, person: person)
+  func testUnreadableInputIsNoProfiles() {
+    let inputs: [String?] = [
+      nil,
+      "",
+      "not json",
+      "[]",
+      #"{"profiles":[{"id":"p-1"}]}"#,
+      #"{"version":2,"profiles":[{"id":"p-1"}]}"#,
+      #"{"version":1,"profiles":"p-1"}"#,
+      #"{"version":1,"profiles":[{"id":"p-1","organisation":"Kobo""#
+    ]
+    for text in inputs {
+      XCTAssertEqual(UseSmileIDSampleProfilesCodec.decode(text.map { Data($0.utf8) }), UseSmileIDSampleProfiles(), text ?? "nil")
+    }
   }
 
-  private func profile(id: String) -> UseSmileIDSampleProfile {
-    profile(id: id, person: "Kwame Asante")
+  func testAProfileWithoutAnIdOrWithARepeatedOneIsDropped() {
+    let text = #"{"version":1,"activeId":"p-1","profiles":[{"organisation":"No id"},{"id":"p-1","organisation":"First"},{"id":"p-1","organisation":"Again"}]}"#
+
+    XCTAssertEqual(UseSmileIDSampleProfilesCodec.decode(Data(text.utf8)).all.map(\.organisation), ["First"])
   }
 
-  func testSavingDetailsWithoutACallbackUrlLeavesTheSavedOneAlone() {
-    var profiles = UseSmileIDSampleProfiles()
-    profiles.setDefaults("p-1", UseSmileIDSampleUserDetails(), callbackUrl: "https://partner.example/hook")
+  func testTheAndroidShapeReadsTheSame() {
+    let android = #"{"version":1,"activeId":"p-1","profiles":[{"id":"p-1","organisation":"Kobo","firstName":"Ada","lastName":"","email":"","phone":"","callbackUrl":""}]}"#
 
-    profiles.setDefaults("p-1", UseSmileIDSampleUserDetails(firstName: "Njeri"))
+    let profiles = UseSmileIDSampleProfilesCodec.decode(Data(android.utf8))
 
-    XCTAssertEqual(profiles.active.callbackUrl, "https://partner.example/hook")
+    XCTAssertEqual(profiles.active?.organisation, "Kobo")
+    XCTAssertEqual(profiles.active?.defaults.firstName, "Ada")
+  }
+
+  private func profile(
+    id: String = "p-1",
+    organisation: String = "UpTech Finance",
+    first: String = "",
+    last: String = ""
+  ) -> UseSmileIDSampleProfile {
+    UseSmileIDSampleProfile(
+      id: id,
+      organisation: organisation,
+      defaults: UseSmileIDSampleUserDetails(firstName: first, lastName: last)
+    )
   }
 }

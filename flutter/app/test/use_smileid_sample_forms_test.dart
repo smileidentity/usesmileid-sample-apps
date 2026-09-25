@@ -84,7 +84,7 @@ void main() {
   });
 
   group('the consent form', () {
-    testWidgets('it opens empty, even with a profile that has defaults', (
+    testWidgets('with no profile it opens empty and offers to make one', (
       WidgetTester tester,
     ) async {
       await pumpAt(
@@ -93,7 +93,11 @@ void main() {
       );
 
       expect(forms().userDetails.firstName, isEmpty);
-      expect(forms().userDetails.lastName, isEmpty);
+      expect(find.text('No profile yet'), findsOne);
+      expect(
+        byId(UseSmileIDSampleTestIds.userDetailsField('organisation')),
+        findsOne,
+      );
     });
 
     // The SDK needs a contact even though the design labels both contact rows optional, so the
@@ -142,9 +146,7 @@ void main() {
       );
     });
 
-    // The switch and Continue share one predicate: there is nothing to remember until there is
-    // something complete.
-    testWidgets('the remember switch appears only once the form is complete', (
+    testWidgets('the save switch appears only once the form is complete', (
       WidgetTester tester,
     ) async {
       await pumpAt(
@@ -158,6 +160,27 @@ void main() {
       expect(byId(UseSmileIDSampleTestIds.rememberDetailsSwitch), findsOne);
       expect(find.text('Tap any field to edit.'), findsOne);
     });
+  });
+
+  test('a new run never carries the last run\'s ID details', () {
+    final ProviderContainer container = ProviderContainer();
+    addTearDown(container.dispose);
+    final UseSmileIDSampleFormsNotifier notifier = container.read(
+      useSmileIDSampleFormsProvider.notifier,
+    );
+    notifier
+      ..setCountry(UseSmileIDSampleCountry.ke)
+      ..setIdType(UseSmileIDSampleIdType.nationalId)
+      ..setIdNumber('12345678');
+
+    notifier.startRun(null);
+
+    final UseSmileIDSampleIdDetails details = container
+        .read(useSmileIDSampleFormsProvider)
+        .idDetails;
+    expect(details.country, isNull);
+    expect(details.idType, isNull);
+    expect(details.idNumber, isEmpty);
   });
 
   group('the ID form', () {

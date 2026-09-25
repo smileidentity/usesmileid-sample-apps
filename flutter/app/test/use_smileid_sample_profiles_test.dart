@@ -44,13 +44,13 @@ void main() {
       container.read(useSmileIDSampleProfilesProvider);
 
   group('the list', () {
-    testWidgets('a plain launch shows the one starter and the create row', (
+    testWidgets('a plain launch shows no profile, only the create row', (
       WidgetTester tester,
     ) async {
       await pumpAt(tester, UseSmileIDSampleRoutes.profiles);
 
       expect(byId(UseSmileIDSampleTestIds.profilesScreen), findsOne);
-      expect(byId(UseSmileIDSampleTestIds.profileRow('p-1')), findsOne);
+      expect(byId(UseSmileIDSampleTestIds.profileRow('p-1')), findsNothing);
       expect(byId(UseSmileIDSampleTestIds.profileRow('p-2')), findsNothing);
       expect(byId(UseSmileIDSampleTestIds.createProfile), findsOne);
     });
@@ -81,7 +81,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(byId(UseSmileIDSampleTestIds.profileConfigScreen), findsOne);
-      expect(find.text('Kazi Microlending'), findsOne);
+      expect(find.text('Kazi Microlending'), findsWidgets);
     });
   });
 
@@ -95,7 +95,7 @@ void main() {
         seedProfiles: true,
       );
 
-      expect(find.text('PesaLink'), findsOne);
+      expect(find.text('PesaLink'), findsWidgets);
     });
 
     testWidgets('it edits the four fields the design lists', (
@@ -121,7 +121,6 @@ void main() {
       }
     });
 
-    // Saving and activating are one act, which is why the CTA reads as an activation.
     testWidgets('saving stores the details and makes the profile active', (
       WidgetTester tester,
     ) async {
@@ -161,12 +160,10 @@ void main() {
       await tester.tap(byId(UseSmileIDSampleTestIds.profileConfigSave));
       await tester.pumpAndSettle();
 
-      expect(profiles().active.callbackUrl, 'https://kazi.example/hooks');
+      expect(profiles().active?.callbackUrl, 'https://kazi.example/hooks');
     });
 
-    // What the twin ships and what this port keeps: the page's only write is disabled on the
-    // profile that is already active, so an edit there cannot be persisted.
-    testWidgets('the already-active profile cannot be saved', (
+    testWidgets('the active profile saves its edits once there is one', (
       WidgetTester tester,
     ) async {
       await pumpAt(
@@ -174,15 +171,65 @@ void main() {
         UseSmileIDSampleRoutes.profileConfig('p-1'),
         seedProfiles: true,
       );
+      bool canSave() => tester
+          .widget<UseSmileIDSampleButton>(find.byType(UseSmileIDSampleButton))
+          .enabled;
 
-      expect(find.text('Active profile'), findsOne);
-      expect(find.text('Make this profile active'), findsNothing);
+      expect(find.text('Save changes'), findsOne);
+      expect(canSave(), isFalse, reason: 'nothing changed yet');
+
+      await tester.enterText(
+        byId(UseSmileIDSampleTestIds.profileConfigField('email')),
+        'kwame@uptech.example',
+      );
+      await tester.pumpAndSettle();
+      expect(canSave(), isTrue);
+      await tester.tap(byId(UseSmileIDSampleTestIds.profileConfigSave));
+      await tester.pumpAndSettle();
+
+      expect(profiles().find('p-1')!.defaults.email, 'kwame@uptech.example');
+      expect(profiles().activeId, 'p-1');
+    });
+
+    testWidgets('deleting asks first, then removes the profile', (
+      WidgetTester tester,
+    ) async {
+      await pumpAt(
+        tester,
+        UseSmileIDSampleRoutes.profileConfig('p-2'),
+        seedProfiles: true,
+      );
+
+      await tester.ensureVisible(
+        byId(UseSmileIDSampleTestIds.profileConfigDelete),
+      );
+      await tester.tap(byId(UseSmileIDSampleTestIds.profileConfigDelete));
+      await tester.pumpAndSettle();
+      expect(
+        profiles().find('p-2'),
+        isNotNull,
+        reason: 'not before confirming',
+      );
+
+      await tester.tap(byId(UseSmileIDSampleTestIds.profileDeleteConfirm));
+      await tester.pumpAndSettle();
+
+      expect(profiles().find('p-2'), isNull);
+      expect(byId(UseSmileIDSampleTestIds.profileConfigScreen), findsNothing);
+    });
+
+    testWidgets('a link to a profile this device does not hold goes back', (
+      WidgetTester tester,
+    ) async {
+      await pumpAt(tester, UseSmileIDSampleRoutes.profileConfig('p-1'));
+
+      expect(byId(UseSmileIDSampleTestIds.profileConfigScreen), findsNothing);
     });
   });
 
   group('the new-profile sheet', () {
     Future<void> openSheet(WidgetTester tester) async {
-      await pumpAt(tester, UseSmileIDSampleRoutes.profiles);
+      await pumpAt(tester, UseSmileIDSampleRoutes.profiles, seedProfiles: true);
       await tester.tap(byId(UseSmileIDSampleTestIds.createProfile));
       await tester.pumpAndSettle();
     }
@@ -261,7 +308,7 @@ void main() {
       expect(byId(UseSmileIDSampleTestIds.newProfileSheet), findsNothing);
       expect(find.text('Karibu Pay created'), findsOne);
       expect(find.text('Make active'), findsOne);
-      expect(profiles().all, hasLength(2));
+      expect(profiles().all, hasLength(4));
       expect(
         profiles().activeId,
         'p-1',
@@ -271,7 +318,7 @@ void main() {
       await tester.tap(byId(UseSmileIDSampleTestIds.toastUndo));
       await tester.pumpAndSettle();
 
-      expect(profiles().activeId, 'p-2');
+      expect(profiles().activeId, 'p-4');
       expect(find.text('Karibu Pay created'), findsNothing);
     });
   });

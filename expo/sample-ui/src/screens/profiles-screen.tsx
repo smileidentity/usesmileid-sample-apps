@@ -8,6 +8,7 @@ import { UseSmileIDSampleTopAppBar } from '../components/use-smile-id-sample-top
 import {
   smileIDSampleProfileCaption,
   smileIDSampleProfileInitials,
+  smileIDSampleProfileTitle,
   type UseSmileIDSampleProfile,
 } from '../state/use-smile-id-sample-profiles';
 import { smileProfileHues } from '../smile-product-hues';
@@ -78,7 +79,7 @@ const CreateProfileRow = ({ onPress }: { onPress: () => void }) => {
 /// Everything the profiles list renders; callbacks stay parameters, like every screen.
 export type UseSmileIDSampleProfilesState = {
   readonly profiles: readonly UseSmileIDSampleProfile[];
-  readonly activeId: string;
+  readonly activeId: string | null;
 };
 
 type Props = {
@@ -110,7 +111,7 @@ export const ProfilesScreen = ({ state, onProfilePress, onCreate, onBack }: Prop
             key={profile.id}
             // Position in the list, cycled, which is what picks a profile's avatar hue.
             avatarColor={smileProfileHues[index % smileProfileHues.length]}
-            organisation={profile.organisation}
+            organisation={smileIDSampleProfileTitle(profile)}
             supportingText={
               profile.id === state.activeId
                 ? smileIDSampleProfileCaption(profile) + ACTIVE_SUFFIX

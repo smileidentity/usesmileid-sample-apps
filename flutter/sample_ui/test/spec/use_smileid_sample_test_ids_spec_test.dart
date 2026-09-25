@@ -32,9 +32,6 @@ void main() {
 
   test('every spec id is declared, or excused with its reason', () {
     const Map<String, String> excused = <String, String>{
-      'sample_home_start_fullscreen':
-          'no app implements the shell start ids yet',
-      'sample_home_start_shell': 'no app implements the shell start ids yet',
       'sample_env_chip': 'the chip is hidden on every shipped screen',
       'sample_license_link':
           'every Flutter licence ships its text in NOTICES, so none opens a page',

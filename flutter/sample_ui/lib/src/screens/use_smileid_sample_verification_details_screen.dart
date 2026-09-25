@@ -13,6 +13,7 @@ import '../model/use_smileid_sample_result.dart';
 import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
+import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
@@ -154,6 +155,29 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
     const SizedBox(height: SmileDimens.spacingMd),
     const UseSmileIDSampleSectionLabel(text: 'DETAILS'),
     const SizedBox(height: SmileDimens.spacingXs),
+    DecoratedBox(
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: UseSmileIDSampleShapes.card,
+        border: Border.all(
+          color: colors.cardStroke,
+          width: smileCardStrokeWidth,
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: UseSmileIDSampleShapes.card,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: _rows(found, colors),
+        ),
+      ),
+    ),
+  ];
+
+  List<Widget> _rows(
+    UseSmileIDSampleJob found,
+    UseSmileIDSampleColors colors,
+  ) => <Widget>[
     UseSmileIDSampleDataFieldRow(
       label: 'Created_at',
       value: found.createdAtLabel,

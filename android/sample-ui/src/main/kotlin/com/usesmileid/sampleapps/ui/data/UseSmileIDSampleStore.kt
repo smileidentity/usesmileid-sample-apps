@@ -8,6 +8,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesCodec
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesRecord
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSetting
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenDecoder
@@ -15,8 +17,11 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-/** Everything the sample persists: the settings the SDK flow is composed from, and the token session. */
-class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
+/** Everything the sample persists: settings, profiles and the token session. */
+class UseSmileIDSampleStore(
+    private val store: DataStore<Preferences>,
+    private val profilesCipher: UseSmileIDSampleProfilesCipher = UseSmileIDSampleKeystoreProfilesCipher(),
+) {
 
     constructor(context: Context) : this(context.applicationContext.sampleStore)
 
@@ -40,6 +45,18 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
                 UseSmileIDSampleEndedSession(id = id, endedAtMillis = prefs[ENDED_SESSION_AT] ?: 0L)
             },
         )
+    }
+
+    /** Sealed, since the record holds people's details; missing, unopenable or unreadable is no profiles. */
+    val profiles: Flow<UseSmileIDSampleProfilesRecord> = store.data.map { prefs ->
+        val stored = prefs[PROFILES] ?: return@map UseSmileIDSampleProfilesRecord()
+        UseSmileIDSampleProfilesCodec.decode(profilesCipher.open(stored) ?: stored.takeIf { it.startsWith("{") })
+    }
+
+    /** The whole record in one sealed write, so the list and the active id can never come from different edits. */
+    suspend fun setProfiles(record: UseSmileIDSampleProfilesRecord) {
+        val sealed = profilesCipher.seal(UseSmileIDSampleProfilesCodec.encode(record))
+        store.edit { prefs -> prefs[PROFILES] = sealed }
     }
 
     /** Writes through the settings model, so the capture mutex can move the other row in the same edit. */
@@ -114,6 +131,7 @@ class UseSmileIDSampleStore(private val store: DataStore<Preferences>) {
         val SESSION_TOKEN = stringPreferencesKey("token_session_token")
         val ENDED_SESSION_ID = stringPreferencesKey("ended_session_id")
         val ENDED_SESSION_AT = longPreferencesKey("ended_session_at")
+        val PROFILES = stringPreferencesKey("sample_profiles")
     }
 }
 

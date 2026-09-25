@@ -3,10 +3,12 @@ import {
   smileIDSampleProductFrom,
   smileIDSampleRequirementFrom,
   useSmileIDSampleActiveProfile,
+  useSmileIDSampleActiveProfileIndex,
   useSmileIDSampleFormsStore,
   useSmileIDSampleProfileStore,
 } from '@smileid/sample-ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect } from 'react';
 
 import { smileIDSampleStepAfterUserDetails } from '../../../src/flow/use-smile-id-sample-flow-journey';
 import {
@@ -22,28 +24,42 @@ export default function ConsentDetailsForm() {
   const { productId } = useLocalSearchParams<{ productId: string }>();
   const product = smileIDSampleProductFrom(productId);
   const profile = useSmileIDSampleActiveProfile();
+  const profileIndex = useSmileIDSampleActiveProfileIndex();
   const details = useSmileIDSampleFormsStore((state) => state.userDetails);
-  const rememberDetails = useSmileIDSampleFormsStore((state) => state.rememberDetails);
+  const saveToProfile = useSmileIDSampleFormsStore((state) => state.saveToProfile);
+  const organisation = useSmileIDSampleFormsStore((state) => state.organisation);
   const setUserField = useSmileIDSampleFormsStore((state) => state.setUserField);
-  const setRememberDetails = useSmileIDSampleFormsStore((state) => state.setRememberDetails);
-  const setDefaults = useSmileIDSampleProfileStore((state) => state.setDefaults);
+  const setSaveToProfile = useSmileIDSampleFormsStore((state) => state.setSaveToProfile);
+  const setOrganisation = useSmileIDSampleFormsStore((state) => state.setOrganisation);
+  const keep = useSmileIDSampleProfileStore((state) => state.keep);
   const bindings = useSmileIDSampleLiveBindings();
   const { scenario } = useLaunchArgs();
+  const requirement = smileIDSampleRequirementFrom(bindings);
+
+  const fillFrom = useSmileIDSampleFormsStore((state) => state.fillFrom);
+  useEffect(() => {
+    if (profile !== null) fillFrom(profile);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <UserDetailsScreen
       state={{
         productLabel: product?.label ?? productId ?? '',
         details,
-        rememberDetails,
-        requirement: smileIDSampleRequirementFrom(bindings),
+        profile,
+        profileIndex,
+        saveToProfile,
+        organisation,
+        requirement,
       }}
       onFieldChange={setUserField}
-      onRememberChange={setRememberDetails}
+      onSaveToProfileChange={setSaveToProfile}
+      onOrganisationChange={setOrganisation}
+      onProfilePress={() => router.push('/profiles/switch?fromForm=1')}
       onBack={() => back()}
       onContinue={() => {
-        // The switch says "remember these for next time", and the profile's defaults are where next time reads.
-        if (rememberDetails) setDefaults(profile.id, details);
+        if (saveToProfile) keep(details, organisation, requirement);
         router.push(
           product === null
             ? `/flow/${productId}/run`

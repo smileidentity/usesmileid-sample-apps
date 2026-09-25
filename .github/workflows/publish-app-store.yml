@@ -1,18 +1,26 @@
 name: Publish to the App Store
 
-# Dispatch only, permanently. iOS has one upload for both destinations, so what separates this lane
-# from TestFlight is that it gates the listing first: a build that reaches a public release must
-# carry store art and copy App Store Connect will accept. Submitting for review stays a Console
-# action, as Play's production promotion does.
+# Dispatch only, permanently. It gates the listing, archives, uploads, waits for processing, attaches
+# the build to a new version with the copy in ios/store/, and submits it for review. A dry run signs
+# and exports the IPA and reads App Store Connect, so the whole lane is proved without publishing.
 on:
   workflow_dispatch:
     inputs:
+      dry_run:
+        description: Sign and export only, then read App Store Connect; nothing is uploaded or submitted
+        type: boolean
+        default: true
+      build_number:
+        description: Override the build number; empty takes one above the highest App Store Connect holds
+        required: false
       marketing_version:
         description: Override the version; empty derives <yyyyMMdd>.<SDK version>.<build>, e.g. 20260913.1211.90
         required: false
-      build_number:
-        description: Override the build number; the commit count is used when this is empty
-        required: false
+      release:
+        description: Release the approved version by hand, or as soon as review approves it
+        type: choice
+        options: [manual, after-approval]
+        default: manual
 
 concurrency:
   group: publish-ios
@@ -24,11 +32,39 @@ permissions:
 jobs:
   publish:
     runs-on: blacksmith-6vcpu-macos-26
-    timeout-minutes: 60
+    timeout-minutes: 90
+    env:
+      APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+
+      # Before anything slow: a missing secret otherwise surfaces an hour in, after the upload.
+      - name: Preflight
+        run: |
+          missing=""
+          for name in APPLE_DEVELOPMENT_TEAM APP_STORE_CONNECT_KEY_ID APP_STORE_CONNECT_ISSUER_ID APP_STORE_CONNECT_PRIVATE_KEY; do
+            [ -n "$(printenv "S_$name")" ] || missing="$missing $name"
+          done
+          if [ "$DRY_RUN" != "true" ]; then
+            for name in ASC_REVIEW_NAME ASC_REVIEW_PHONE; do
+              [ -n "$(printenv "S_$name")" ] || missing="$missing $name"
+            done
+          fi
+          if [ -n "$missing" ]; then
+            echo "::error::missing repository secrets:$missing"
+            exit 1
+          fi
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+          S_APPLE_DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
+          S_APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          S_APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          S_APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+          S_ASC_REVIEW_NAME: ${{ secrets.ASC_REVIEW_NAME }}
+          S_ASC_REVIEW_PHONE: ${{ secrets.ASC_REVIEW_PHONE }}
 
       - name: Select Xcode
         run: |
@@ -51,42 +87,80 @@ jobs:
       # umask first: the default leaves the private key world-readable on the runner.
       - name: Materialise the App Store Connect API key
         run: |
-          case "$KEY_ID" in
+          case "$APP_STORE_CONNECT_KEY_ID" in
             "" | *[!A-Z0-9]*) echo "::error::APP_STORE_CONNECT_KEY_ID is not a key id"; exit 1 ;;
           esac
           umask 077
           mkdir -p "$HOME/.appstoreconnect/private_keys"
-          printf '%s' "$KEY" > "$HOME/.appstoreconnect/private_keys/AuthKey_${KEY_ID}.p8"
+          printf '%s' "$KEY" > "$HOME/.appstoreconnect/private_keys/AuthKey_${APP_STORE_CONNECT_KEY_ID}.p8"
         env:
           KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
-          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
 
-      # The same commit shipped to TestFlight already carries this number, and App Store Connect
-      # rejects a repeat for a marketing version it has seen, so the override is how that run wins.
+      # One above what App Store Connect holds, across every version, so a TestFlight build never collides.
       - name: Build number
         id: version
-        run: echo "build=${OVERRIDE:-$(git rev-list --count HEAD)}" >> "$GITHUB_OUTPUT"
+        run: |
+          next="$(python3 scripts/asc_publish.py next-build)"
+          build="${OVERRIDE:-$next}"
+          if [ "$build" -lt "$next" ] && ! python3 scripts/asc_publish.py wait --build "$build" --timeout 0 >/dev/null 2>&1; then
+            echo "::error::build $build is taken; App Store Connect's next free number is $next"
+            exit 1
+          fi
+          # A build already VALID is a re-run after the upload: skip straight to attaching it. Never on a dry run, which exists to sign.
+          if [ "$DRY_RUN" != "true" ] && python3 scripts/asc_publish.py wait --build "$build" --timeout 0 >/dev/null 2>&1; then
+            echo "uploaded=true" >> "$GITHUB_OUTPUT"
+          fi
+          echo "build=$build" >> "$GITHUB_OUTPUT"
+          echo "build $build"
         env:
           OVERRIDE: ${{ inputs.build_number }}
+          DRY_RUN: ${{ inputs.dry_run }}
 
-      - name: Archive and upload
+      # Signing on a runner with no identity makes Xcode mint an Apple Development certificate; note what exists first.
+      - name: Note the team's development certificates
+        id: certs
+        run: python3 scripts/asc_publish.py dev-certs > "$RUNNER_TEMP/dev-certs-before.txt"
+
+      - name: Archive, sign and ${{ inputs.dry_run && 'export' || 'upload' }}
+        if: steps.version.outputs.uploaded != 'true'
         run: ios/verify.sh archive
         env:
           DEVELOPMENT_TEAM: ${{ secrets.APPLE_DEVELOPMENT_TEAM }}
           BUILD_NUMBER: ${{ steps.version.outputs.build }}
           MARKETING_VERSION: ${{ inputs.marketing_version }}
-          EXPORT_DESTINATION: upload
-          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
-          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          EXPORT_DESTINATION: ${{ inputs.dry_run && 'export' || 'upload' }}
+
+      - name: Read App Store Connect (dry run)
+        if: inputs.dry_run
+        run: |
+          python3 scripts/asc_publish.py status
+          python3 scripts/asc_publish.py plan --build "$BUILD" --release "$RELEASE"
+          echo "::notice::Dry run: build $BUILD signed and exported; nothing was uploaded or submitted."
+        env:
+          BUILD: ${{ steps.version.outputs.build }}
+          RELEASE: ${{ inputs.release }}
+          ASC_REVIEW_NAME: ${{ secrets.ASC_REVIEW_NAME }}
+          ASC_REVIEW_PHONE: ${{ secrets.ASC_REVIEW_PHONE }}
+          ASC_REVIEW_EMAIL: ${{ secrets.ASC_REVIEW_EMAIL }}
+
+      - name: Wait for processing, attach the build, submit for review
+        if: ${{ !inputs.dry_run }}
+        run: |
+          python3 scripts/asc_publish.py wait --build "$BUILD" --timeout 2400
+          python3 scripts/asc_publish.py apply --build "$BUILD" --release "$RELEASE"
+          python3 scripts/asc_publish.py submit
+          echo "::notice::Build $BUILD submitted for review, release $RELEASE."
+        env:
+          BUILD: ${{ steps.version.outputs.build }}
+          RELEASE: ${{ inputs.release }}
+          ASC_REVIEW_NAME: ${{ secrets.ASC_REVIEW_NAME }}
+          ASC_REVIEW_PHONE: ${{ secrets.ASC_REVIEW_PHONE }}
+          ASC_REVIEW_EMAIL: ${{ secrets.ASC_REVIEW_EMAIL }}
+
+      - name: Revoke the development certificate this run minted
+        if: always() && steps.certs.outcome == 'success'
+        run: python3 scripts/asc_publish.py revoke-new-dev-certs --before "$RUNNER_TEMP/dev-certs-before.txt"
 
       - name: Remove the API key
         if: always()
         run: rm -rf ~/.appstoreconnect/private_keys
-
-      - name: What is still an owner action
-        run: |
-          echo "::notice::Uploaded build $BUILD${VERSION:+ as $VERSION}; the version is in the archive step's log."
-          echo "::notice::Attaching it to a version and submitting for review is a Console action."
-        env:
-          BUILD: ${{ steps.version.outputs.build }}
-          VERSION: ${{ inputs.marketing_version }}

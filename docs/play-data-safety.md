@@ -62,6 +62,10 @@ is outside both definitions. `AndroidManifest.xml` also sets `android:allowBacku
 database has no cloud-backup path off the device either. An earlier draft of the release plan said this
 might change an answer. It does not.
 
+**Stored profiles are not one either.** The names, emails and phone numbers a profile holds sit in a
+DataStore sealed with an Android Keystore key, under the same `allowBackup="false"`, and leave the device
+only inside a job submission — which the Personal info rows already declare. Checked 2026-09-25.
+
 **Sharing is Sentry, and only Sentry.** It is what backs the *shared* column, and it is present in both
 SDK versions, which is why v11's sharing answers carry over. If Sentry is ever removed from the SDK, the
 three shared rows above stop being true and this page has to change before the next release.
@@ -86,7 +90,7 @@ wiring, and `UseSmileIDSampleSimulateAffordanceTest` fails if the scan sheet sto
 | Check | Cadence | Last done |
 |---|---|---|
 | `targetSdk` still meets Play's floor for new releases and updates | Annually — Google raises it around August, with a grace period after | 2026-08-28: `targetSdk = 37` accepted |
-| Data safety answers still match what the app sends | Every release that changes submission, analytics or storage | 2026-08-28 |
+| Data safety answers still match what the app sends | Every release that changes submission, analytics or storage | 2026-09-25 |
 
 `targetSdk` cannot be checked from CI without querying Play, so it is a calendar item rather than a
 gate. What CI does enforce is that the value does not drift downward unnoticed, because `compileSdk`

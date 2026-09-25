@@ -133,7 +133,7 @@ release found.
 Ten minutes on a phone, from the TestFlight install and not from Xcode — a TestFlight build is signed
 and provisioned the way the App Store build will be, and an Xcode install is not.
 
-- Launch → products grid, no fixture profiles, one *Default profile* in Settings
+- Launch → products grid, no fixture profiles, and Settings says *No profile yet*
 - Camera prompt fires on the first capture, with the Smile ID wording, and **no** location or photo
   prompt ever appears — the strings exist for the upload check, the SDK never asks
 - Scan sheet → *Simulate a successful scan* → session card counts down → start a flow → reach the
@@ -156,9 +156,13 @@ and provisioned the way the App Store build will be, and an Xcode install is not
 ## Then the lanes work
 
 Once 1 and 2 are done, **Actions → Publish to TestFlight → Run workflow** archives, signs, uploads and
-the build appears in TestFlight. **Publish to the App Store** does the same and gates the listing
-first; attaching the build to a version and submitting it for review stays a Console action, as Play's
-production promotion does.
+the build appears in TestFlight. **Publish to the App Store** gates the listing, uploads, waits for
+processing, attaches the build to a new version with the copy in `ios/store/`, and submits it for
+review. It starts as a dry run, which signs and exports the IPA and reads App Store Connect but
+uploads nothing; untick **dry_run** to release. A real run needs the `ASC_REVIEW_NAME` and
+`ASC_REVIEW_PHONE` repository secrets (`ASC_REVIEW_EMAIL` is optional). Releasing an approved version
+by hand stays a Console action unless **release** is `after-approval`. Both lanes revoke the development certificate their
+signing creates, at the end of the run, so the team's certificate list stays as it was.
 
 Both lanes are `workflow_dispatch` only. Neither runs on a merge, which is deliberate while the first
 upload is an owner action — adding `push` to the TestFlight lane later needs a path filter, or a

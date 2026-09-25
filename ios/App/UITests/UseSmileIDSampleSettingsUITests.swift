@@ -96,6 +96,30 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
     )
   }
 
+  func testAFirstRunKeepsItsDetailsAsAProfileTheNextRunFillsFrom() {
+    launch()
+    signOut()
+    element("sample_product_card_smartSelfieEnrollment").tap()
+    XCTAssertTrue(element("sample_user_details_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(app.staticTexts["No profile yet"].exists)
+    type("sample_user_details_field_organisation", "Kobo")
+    type("sample_user_details_field_firstName", "Kwame")
+    type("sample_user_details_field_lastName", "Asante")
+    type("sample_user_details_field_email", "kwame@uptech.example")
+    XCTAssertTrue(app.staticTexts["Save as a new profile"].waitForExistence(timeout: 5))
+    app.buttons["sample_user_details_continue"].tap()
+    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20))
+
+    relaunch(arguments: useSmileIDSampleSettingsSeed)
+    XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
+    element("sample_product_card_smartSelfieEnrollment").tap()
+    XCTAssertTrue(element("sample_user_details_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(app.staticTexts["Kobo"].waitForExistence(timeout: 5), "the stored profile did not name the form")
+    XCTAssertEqual(app.textFields["sample_user_details_field_firstName"].value as? String, "Kwame")
+    app.buttons["Back"].tap()
+    signOut()
+  }
+
   // MARK: - Harness
 
   private func launch(arguments: [String] = []) {
@@ -134,6 +158,9 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
       app.swipeUp()
     }
     signOut.tap()
+    let confirm = app.alerts.buttons["sample_sign_out_confirm"].firstMatch
+    XCTAssertTrue(confirm.waitForExistence(timeout: 5))
+    confirm.tap()
   }
 
   private func assertRows(_ expected: [String: Bool], file: StaticString = #filePath, line: UInt = #line) {
@@ -149,10 +176,15 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
     app.switches.matching(identifier: id).firstMatch
   }
 
+  /// Replaces rather than appends: a profile kept by an earlier test prefills the form.
   private func type(_ id: String, _ text: String) {
     let field = app.textFields[id]
     XCTAssertTrue(field.waitForExistence(timeout: 5), id)
     field.tap()
+    let current = (field.value as? String) ?? ""
+    if !current.isEmpty, current != field.placeholderValue {
+      field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count))
+    }
     field.typeText(text)
   }
 

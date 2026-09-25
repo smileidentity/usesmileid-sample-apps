@@ -38,7 +38,7 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfile
 @Composable
 fun ProfilesScreen(
     profiles: List<UseSmileIDSampleProfile>,
-    activeId: String,
+    activeId: String?,
     onProfileClick: (UseSmileIDSampleProfile) -> Unit,
     onCreate: () -> Unit,
     onBack: () -> Unit,
@@ -58,7 +58,7 @@ fun ProfilesScreen(
             itemsIndexed(profiles, key = { _, profile -> profile.id }) { index, profile ->
                 UseSmileIDSampleProfileRow(
                     avatarColor = avatarColorForProfile(index),
-                    organisation = profile.organisation,
+                    organisation = profile.title,
                     supportingText = if (profile.id == activeId) profile.caption + ACTIVE_SUFFIX else profile.caption,
                     initials = profile.initials,
                     selected = false,

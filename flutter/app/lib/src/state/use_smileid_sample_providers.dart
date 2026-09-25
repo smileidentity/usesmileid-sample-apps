@@ -85,7 +85,14 @@ class UseSmileIDSampleSettingsNotifier
   }
 }
 
-/// The profiles the app can act as, seeded from the launch arguments.
+/// Where the profiles are kept; the shell overrides this with the store that survives a restart.
+final Provider<UseSmileIDSampleProfilesRepository>
+useSmileIDSampleProfilesRepositoryProvider =
+    Provider<UseSmileIDSampleProfilesRepository>(
+      (Ref ref) => UseSmileIDSampleMemoryProfilesRepository(),
+    );
+
+/// The profiles the app can act as: the stored ones, or the fixtures when the launch seeds them.
 final NotifierProvider<
   UseSmileIDSampleProfilesNotifier,
   UseSmileIDSampleProfiles
@@ -96,49 +103,96 @@ useSmileIDSampleProfilesProvider =
       UseSmileIDSampleProfiles
     >(UseSmileIDSampleProfilesNotifier.new);
 
-/// Holds the store and tells its readers when it has changed.
+/// Holds the profiles, tells their readers when they change, and stores every change unless seeded.
 class UseSmileIDSampleProfilesNotifier
     extends Notifier<UseSmileIDSampleProfiles> {
   @override
   UseSmileIDSampleProfiles build() => UseSmileIDSampleProfiles.forLaunch(
     ref.watch(useSmileIDSampleLaunchArgsProvider),
+    stored: ref.read(useSmileIDSampleProfilesRepositoryProvider).read(),
   );
 
   /// Switches the active profile.
-  void setActive(String id) {
-    state.setActive(id);
-    ref.notifyListeners();
-  }
+  void setActive(String id) => _change(() => state.setActive(id));
 
   /// Adds a profile and returns it.
   UseSmileIDSampleProfile add({
     required String organisation,
-    required String person,
     UseSmileIDSampleUserDetails defaults = const UseSmileIDSampleUserDetails(),
+    bool activate = false,
   }) {
-    final UseSmileIDSampleProfile created = state.add(
-      organisation: organisation,
-      person: person,
-      defaults: defaults,
+    late UseSmileIDSampleProfile created;
+    _change(
+      () => created = state.add(
+        organisation: organisation,
+        defaults: defaults,
+        activate: activate,
+      ),
     );
-    ref.notifyListeners();
     return created;
   }
 
-  /// Saves a profile's form defaults, and its callback URL when one was edited.
-  void setDefaults(
-    String id,
-    UseSmileIDSampleUserDetails defaults, {
+  /// Replaces the given parts of a profile.
+  void update(
+    String id, {
+    String? organisation,
+    UseSmileIDSampleUserDetails? defaults,
     String? callbackUrl,
-  }) {
-    state.setDefaults(id, defaults, callbackUrl: callbackUrl);
-    ref.notifyListeners();
+  }) => _change(
+    () => state.update(
+      id,
+      organisation: organisation,
+      defaults: defaults,
+      callbackUrl: callbackUrl,
+    ),
+  );
+
+  /// Deletes a profile; the active one hands over to the first left.
+  void delete(String id) => _change(() => state.delete(id));
+
+  /// Sign out: every profile goes, stored ones a seeded launch was hiding included.
+  void clear() {
+    _change(state.clear);
+    if (ref.read(useSmileIDSampleLaunchArgsProvider).seedProfiles) {
+      unawaited(
+        ref
+            .read(useSmileIDSampleProfilesRepositoryProvider)
+            .write(UseSmileIDSampleProfiles()),
+      );
+    }
   }
 
-  /// Forgets the just-created marker.
+  /// Continue's write-back from the details form.
+  void keep(
+    UseSmileIDSampleUserDetails details, {
+    required String organisation,
+    required UseSmileIDSampleUserDetailsRequirement requirement,
+  }) => _change(
+    () => state.keep(
+      details,
+      organisation: organisation,
+      requirement: requirement,
+    ),
+  );
+
+  /// Forgets the just-created marker, which is not stored.
   void clearLastCreated() {
     state.clearLastCreated();
     ref.notifyListeners();
+  }
+
+  void _change(void Function() change) {
+    final String before = UseSmileIDSampleProfilesCodec.encode(state);
+    change();
+    ref.notifyListeners();
+    if (UseSmileIDSampleProfilesCodec.encode(state) == before) {
+      return;
+    }
+    if (!ref.read(useSmileIDSampleLaunchArgsProvider).seedProfiles) {
+      unawaited(
+        ref.read(useSmileIDSampleProfilesRepositoryProvider).write(state),
+      );
+    }
   }
 }
 

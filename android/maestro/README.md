@@ -25,12 +25,16 @@ with `launchApp: arguments: seedJobs: true`. Seed once per file: the rows are in
 the `stopApp`s that follow, and re-seeding is a no-op because the rows are keyed by job id. `deep-links`
 has no `launchApp` of its own, so it takes a seeded launch first and then starts deep-linking.
 
-**The design's three profiles are a precondition too, and they do not persist.** A plain launch carries
-one empty profile named `Default profile`: the active profile's organisation is what the SDK's consent
-screen shows as the partner, so the fixtures never ship by default. A flow that asserts on
-`Kwame Asante · active` or `sample_profile_row_p-4` opens with `launchApp: arguments: seedProfiles: true`,
-and does so on every launch that needs them, unlike `seedJobs`: profiles live in memory, so a `stopApp`
-or a cold start by link resets them to the one.
+**The design's three profiles are a precondition too, and they are never stored.** A plain launch has
+no profile: the active profile's organisation is what the SDK's consent screen shows as the partner, so
+the fixtures never ship by default. A flow that asserts on `Kwame Asante · active` or
+`sample_profile_row_p-4` opens with `launchApp: arguments: seedProfiles: true`, and does so on every
+launch that needs them, unlike `seedJobs`: a seeded launch holds them in memory only, so a `stopApp` or
+a cold start by link returns to what the device stored.
+
+**A flow that types user details stores nothing.** The form's save switch ships on and would keep what
+was typed as a profile, which then prefills the next pass (`inputText` appends) and outlives the run,
+since `clearState` is unusable. So every such flow runs `subflows/keep-nothing.yaml` before Continue.
 
 **`APP_ID` has no default, deliberately.** In Maestro 2.8 a flow-level `env:` default WINS over `-e`
 on the command line, so declaring one here would silently pin every run to a single variant and the
@@ -82,3 +86,7 @@ cannot help and `sdk-flow` answers the prompt on screen. Two consequences:
 adb -s <serial> shell input keyevent KEYCODE_BACK   # dismisses without granting
 adb -s <serial> shell dumpsys activity activities | grep mResumedActivity
 ```
+
+**These flows delete stored profiles.** `profile-journey` and `settings` confirm sign-out, which ends
+the token session and deletes every profile on the device. Run them on a test device, never on a
+phone someone uses for demos.

@@ -932,68 +932,6 @@ exports[`verificationDetails dark attention 1`] = `
                 </RNSVGSvgView>
               </View>
             </View>
-            <View
-              style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                    "width": "100%",
-                  },
-                  {
-                    "columnGap": 8,
-                    "minHeight": 40,
-                    "paddingHorizontal": 16,
-                    "paddingVertical": 12,
-                  },
-                  undefined,
-                ]
-              }
-              testID="sample_detail_field_environment"
-            >
-              <Text
-                style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Medium",
-                      "fontSize": 13,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0,
-                      "marginTop": -0,
-                    },
-                    {
-                      "color": "#848282",
-                    },
-                  ]
-                }
-              >
-                Environment
-              </Text>
-              <Text
-                style={
-                  [
-                    {
-                      "fontFamily": "DMSans-SemiBold",
-                      "fontSize": 13,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.536999999999999,
-                      "marginTop": -1.536999999999999,
-                    },
-                    {
-                      "flex": 1,
-                      "textAlign": "right",
-                    },
-                    {
-                      "color": "#f2f2f2",
-                    },
-                  ]
-                }
-              >
-                sandbox
-              </Text>
-            </View>
           </View>
         </View>
       </View>
@@ -1934,68 +1872,6 @@ exports[`verificationDetails dark blocked 1`] = `
                 </RNSVGSvgView>
               </View>
             </View>
-            <View
-              style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                    "width": "100%",
-                  },
-                  {
-                    "columnGap": 8,
-                    "minHeight": 40,
-                    "paddingHorizontal": 16,
-                    "paddingVertical": 12,
-                  },
-                  undefined,
-                ]
-              }
-              testID="sample_detail_field_environment"
-            >
-              <Text
-                style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Medium",
-                      "fontSize": 13,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0,
-                      "marginTop": -0,
-                    },
-                    {
-                      "color": "#848282",
-                    },
-                  ]
-                }
-              >
-                Environment
-              </Text>
-              <Text
-                style={
-                  [
-                    {
-                      "fontFamily": "DMSans-SemiBold",
-                      "fontSize": 13,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.536999999999999,
-                      "marginTop": -1.536999999999999,
-                    },
-                    {
-                      "flex": 1,
-                      "textAlign": "right",
-                    },
-                    {
-                      "color": "#f2f2f2",
-                    },
-                  ]
-                }
-              >
-                sandbox
-              </Text>
-            </View>
           </View>
         </View>
       </View>
@@ -2935,68 +2811,6 @@ exports[`verificationDetails dark clear 1`] = `
                   </RNSVGGroup>
                 </RNSVGSvgView>
               </View>
-            </View>
-            <View
-              style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                    "width": "100%",
-                  },
-                  {
-                    "columnGap": 8,
-                    "minHeight": 40,
-                    "paddingHorizontal": 16,
-                    "paddingVertical": 12,
-                  },
-                  undefined,
-                ]
-              }
-              testID="sample_detail_field_environment"
-            >
-              <Text
-                style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Medium",
-                      "fontSize": 13,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0,
-                      "marginTop": -0,
-                    },
-                    {
-                      "color": "#848282",
-                    },
-                  ]
-                }
-              >
-                Environment
-              </Text>
-              <Text
-                style={
-                  [
-                    {
-                      "fontFamily": "DMSans-SemiBold",
-                      "fontSize": 13,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.536999999999999,
-                      "marginTop": -1.536999999999999,
-                    },
-                    {
-                      "flex": 1,
-                      "textAlign": "right",
-                    },
-                    {
-                      "color": "#f2f2f2",
-                    },
-                  ]
-                }
-              >
-                sandbox
-              </Text>
             </View>
           </View>
         </View>
@@ -4202,68 +4016,6 @@ exports[`verificationDetails dark processing 1`] = `
                 </RNSVGSvgView>
               </View>
             </View>
-            <View
-              style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                    "width": "100%",
-                  },
-                  {
-                    "columnGap": 8,
-                    "minHeight": 40,
-                    "paddingHorizontal": 16,
-                    "paddingVertical": 12,
-                  },
-                  undefined,
-                ]
-              }
-              testID="sample_detail_field_environment"
-            >
-              <Text
-                style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Medium",
-                      "fontSize": 13,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0,
-                      "marginTop": -0,
-                    },
-                    {
-                      "color": "#848282",
-                    },
-                  ]
-                }
-              >
-                Environment
-              </Text>
-              <Text
-                style={
-                  [
-                    {
-                      "fontFamily": "DMSans-SemiBold",
-                      "fontSize": 13,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.536999999999999,
-                      "marginTop": -1.536999999999999,
-                    },
-                    {
-                      "flex": 1,
-                      "textAlign": "right",
-                    },
-                    {
-                      "color": "#f2f2f2",
-                    },
-                  ]
-                }
-              >
-                sandbox
-              </Text>
-            </View>
           </View>
         </View>
       </View>
@@ -5203,68 +4955,6 @@ exports[`verificationDetails light attention 1`] = `
                   </RNSVGGroup>
                 </RNSVGSvgView>
               </View>
-            </View>
-            <View
-              style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                    "width": "100%",
-                  },
-                  {
-                    "columnGap": 8,
-                    "minHeight": 40,
-                    "paddingHorizontal": 16,
-                    "paddingVertical": 12,
-                  },
-                  undefined,
-                ]
-              }
-              testID="sample_detail_field_environment"
-            >
-              <Text
-                style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Medium",
-                      "fontSize": 13,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0,
-                      "marginTop": -0,
-                    },
-                    {
-                      "color": "#848282",
-                    },
-                  ]
-                }
-              >
-                Environment
-              </Text>
-              <Text
-                style={
-                  [
-                    {
-                      "fontFamily": "DMSans-SemiBold",
-                      "fontSize": 13,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.536999999999999,
-                      "marginTop": -1.536999999999999,
-                    },
-                    {
-                      "flex": 1,
-                      "textAlign": "right",
-                    },
-                    {
-                      "color": "#21232c",
-                    },
-                  ]
-                }
-              >
-                sandbox
-              </Text>
             </View>
           </View>
         </View>
@@ -6206,68 +5896,6 @@ exports[`verificationDetails light blocked 1`] = `
                 </RNSVGSvgView>
               </View>
             </View>
-            <View
-              style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                    "width": "100%",
-                  },
-                  {
-                    "columnGap": 8,
-                    "minHeight": 40,
-                    "paddingHorizontal": 16,
-                    "paddingVertical": 12,
-                  },
-                  undefined,
-                ]
-              }
-              testID="sample_detail_field_environment"
-            >
-              <Text
-                style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Medium",
-                      "fontSize": 13,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0,
-                      "marginTop": -0,
-                    },
-                    {
-                      "color": "#848282",
-                    },
-                  ]
-                }
-              >
-                Environment
-              </Text>
-              <Text
-                style={
-                  [
-                    {
-                      "fontFamily": "DMSans-SemiBold",
-                      "fontSize": 13,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.536999999999999,
-                      "marginTop": -1.536999999999999,
-                    },
-                    {
-                      "flex": 1,
-                      "textAlign": "right",
-                    },
-                    {
-                      "color": "#21232c",
-                    },
-                  ]
-                }
-              >
-                sandbox
-              </Text>
-            </View>
           </View>
         </View>
       </View>
@@ -7207,68 +6835,6 @@ exports[`verificationDetails light clear 1`] = `
                   </RNSVGGroup>
                 </RNSVGSvgView>
               </View>
-            </View>
-            <View
-              style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                    "width": "100%",
-                  },
-                  {
-                    "columnGap": 8,
-                    "minHeight": 40,
-                    "paddingHorizontal": 16,
-                    "paddingVertical": 12,
-                  },
-                  undefined,
-                ]
-              }
-              testID="sample_detail_field_environment"
-            >
-              <Text
-                style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Medium",
-                      "fontSize": 13,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0,
-                      "marginTop": -0,
-                    },
-                    {
-                      "color": "#848282",
-                    },
-                  ]
-                }
-              >
-                Environment
-              </Text>
-              <Text
-                style={
-                  [
-                    {
-                      "fontFamily": "DMSans-SemiBold",
-                      "fontSize": 13,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.536999999999999,
-                      "marginTop": -1.536999999999999,
-                    },
-                    {
-                      "flex": 1,
-                      "textAlign": "right",
-                    },
-                    {
-                      "color": "#21232c",
-                    },
-                  ]
-                }
-              >
-                sandbox
-              </Text>
             </View>
           </View>
         </View>
@@ -8473,68 +8039,6 @@ exports[`verificationDetails light processing 1`] = `
                   </RNSVGGroup>
                 </RNSVGSvgView>
               </View>
-            </View>
-            <View
-              style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                    "width": "100%",
-                  },
-                  {
-                    "columnGap": 8,
-                    "minHeight": 40,
-                    "paddingHorizontal": 16,
-                    "paddingVertical": 12,
-                  },
-                  undefined,
-                ]
-              }
-              testID="sample_detail_field_environment"
-            >
-              <Text
-                style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Medium",
-                      "fontSize": 13,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0,
-                      "marginTop": -0,
-                    },
-                    {
-                      "color": "#848282",
-                    },
-                  ]
-                }
-              >
-                Environment
-              </Text>
-              <Text
-                style={
-                  [
-                    {
-                      "fontFamily": "DMSans-SemiBold",
-                      "fontSize": 13,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.536999999999999,
-                      "marginTop": -1.536999999999999,
-                    },
-                    {
-                      "flex": 1,
-                      "textAlign": "right",
-                    },
-                    {
-                      "color": "#21232c",
-                    },
-                  ]
-                }
-              >
-                sandbox
-              </Text>
             </View>
           </View>
         </View>

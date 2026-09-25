@@ -26,6 +26,10 @@ import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleSessionRecord
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import androidx.compose.runtime.staticCompositionLocalOf
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesRecord
 import kotlinx.coroutines.launch
 
 /** Everything the shell hoists: persisted settings, the token session, and the clock that ticks it. */
@@ -88,7 +92,8 @@ fun rememberUseSmileIDSampleAppState(
         if (launchArgs.seedJobs) jobStore.seedFixtures(System.currentTimeMillis())
     }
     val forms = rememberSaveable(saver = UseSmileIDSampleForms.Saver) { UseSmileIDSampleForms() }
-    val profiles = remember { UseSmileIDSampleProfiles.forLaunch(launchArgs) }
+    val profiles = remember(launchArgs) { UseSmileIDSampleProfilesHolder.profilesFor(launchArgs, store) }
+    LaunchedEffect(profiles) { if (!profiles.loaded) profiles.restore(store.profiles.first()) }
     // Not saveable: the scanner claims it into its own saveable state, which survives a rotation.
     val interruptedRun = remember { UseSmileIDSampleInterruptedRun() }
     // Saveable, so the arguments seed the first launch only and a recreation keeps the drawer's choice.
@@ -134,3 +139,19 @@ val LocalUseSmileIDSampleAppState = staticCompositionLocalOf<UseSmileIDSampleApp
 }
 
 private const val TICK_MILLIS = 1000L
+
+/** Process-wide, so a recreated activity keeps the loaded profiles and their one writer. */
+private object UseSmileIDSampleProfilesHolder {
+    private val writes = MutableStateFlow<Pair<UseSmileIDSampleStore, UseSmileIDSampleProfilesRecord>?>(null)
+    private var current: Pair<UseSmileIDSampleLaunchArgs, UseSmileIDSampleProfiles>? = null
+
+    init {
+        UseSmileIDSampleJobStore.writeScope.launch {
+            writes.filterNotNull().collect { (store, record) -> store.setProfiles(record) }
+        }
+    }
+
+    fun profilesFor(args: UseSmileIDSampleLaunchArgs, store: UseSmileIDSampleStore): UseSmileIDSampleProfiles =
+        current?.takeIf { it.first == args }?.second
+            ?: UseSmileIDSampleProfiles.forLaunch(args) { writes.value = store to it }.also { current = args to it }
+}

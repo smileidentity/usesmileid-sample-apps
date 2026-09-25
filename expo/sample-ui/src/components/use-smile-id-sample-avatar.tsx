@@ -43,7 +43,7 @@ export const UseSmileIDSampleAvatar = ({ initials, size, containerColor, testID,
           styles.label,
         ]}
       >
-        {hasInitials ? initials : '?'}
+        {hasInitials ? initials : '+'}
       </Text>
     </View>
   );

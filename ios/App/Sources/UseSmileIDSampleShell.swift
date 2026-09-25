@@ -56,6 +56,14 @@ struct UseSmileIDSampleShell: View {
       .modifier(UseSmileIDSampleLoupeAccess())
   }
 
+  /// Whether the switch sheet was opened from the details form, whose typing a new profile should start from.
+  private var isOverUserDetailsForm: Bool {
+    if case .consentDetailsForm = router.path(router.selectedTab).last {
+      return true
+    }
+    return false
+  }
+
   @ViewBuilder
   private func sheetContent(_ sheet: Sheet) -> some View {
     switch sheet {
@@ -80,8 +88,12 @@ struct UseSmileIDSampleShell: View {
       ProfileSwitchSheet(
         profiles: app.profiles.all,
         activeId: app.profiles.activeId,
-        onSelect: { app.profiles.setActive($0.id)
-          router.sheet = nil }
+        onSelect: { app.switchProfile(to: $0.id)
+          router.sheet = nil },
+        onCreate: {
+          app.beginProfileFromSwitch(overForm: isOverUserDetailsForm)
+          router.sheet = .newProfile
+        }
       )
     case .newProfile:
       NewProfileSheet(

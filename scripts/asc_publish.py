@@ -9,6 +9,10 @@ signed with the openssl every Mac and runner already has, so nothing is installe
     scripts/asc_publish.py apply --build 103    # write the listing and attach that build
     scripts/asc_publish.py submit               # create or reuse the review submission, clear a rejected item, submit
     scripts/asc_publish.py status               # where the version is in review
+    scripts/asc_publish.py next-build           # read-only: one above the highest build number uploaded
+    scripts/asc_publish.py wait --build 138     # read-only: block until that build is VALID
+    scripts/asc_publish.py dev-certs            # read-only: the team's Apple Development certificate ids
+    scripts/asc_publish.py revoke-new-dev-certs --before <file>   # revoke the ones this run's signing minted
 
 Environment: APP_STORE_CONNECT_KEY_ID, APP_STORE_CONNECT_ISSUER_ID, and the .p8 at
 ~/.appstoreconnect/private_keys/AuthKey_<id>.p8 (or APP_STORE_CONNECT_KEY_PATH). The review
@@ -226,7 +230,7 @@ def plan(asc: ASC, args):
 
 def review_contact(required: bool):
     name, phone = os.environ.get("ASC_REVIEW_NAME"), os.environ.get("ASC_REVIEW_PHONE")
-    email = os.environ.get("ASC_REVIEW_EMAIL", "harun@smileidentity.com")
+    email = os.environ.get("ASC_REVIEW_EMAIL") or "harun@smileidentity.com"
     if required and not (name and phone):
         sys.exit("ASC_REVIEW_NAME and ASC_REVIEW_PHONE are required to apply review details")
     return name, phone, email
@@ -239,6 +243,59 @@ def build_by_number(asc: ASC, app_id: str, number: str) -> dict | None:
         b["attributes"]["version_string"] = pre
         return b
     return None
+
+
+def build_numbers(asc: ASC, app_id: str) -> list[int]:
+    """Every numeric build number the app has uploaded, across all versions."""
+    numbers, page = [], asc.get("builds", **{"filter[app]": app_id, "fields[builds]": "version", "limit": "200"})
+    while True:
+        numbers += [int(b["attributes"]["version"]) for b in page.get("data", []) if b["attributes"]["version"].isdigit()]
+        nxt = (page.get("links") or {}).get("next")
+        if not nxt:
+            return numbers
+        page = asc.get(nxt)
+
+
+def next_build(asc: ASC, args):
+    print(max(build_numbers(asc, app(asc)["id"]), default=0) + 1)
+
+
+def wait(asc: ASC, args):
+    app_id = app(asc)["id"]
+    deadline = time.time() + args.timeout
+    while True:
+        b = build_by_number(asc, app_id, args.build)
+        state = b["attributes"]["processingState"] if b else "NOT_UPLOADED_YET"
+        print(f"build {args.build}: {state}", flush=True)
+        if state == "VALID":
+            return
+        if state in ("FAILED", "INVALID"):
+            sys.exit(f"build {args.build} is {state}")
+        if time.time() > deadline:
+            sys.exit(f"build {args.build} still {state} after {args.timeout}s")
+        time.sleep(args.interval)
+
+
+def dev_certificates(asc: ASC) -> list[dict]:
+    return asc.get("certificates", **{"filter[certificateType]": "DEVELOPMENT", "fields[certificates]": "certificateType,displayName", "limit": "200"})["data"]
+
+
+def dev_certs(asc: ASC, args):
+    for c in dev_certificates(asc):
+        print(c["id"])
+
+
+def revoke_new_dev_certs(asc: ASC, args):
+    """Revokes only certificates that were absent before the run and that the API key created, never a person's."""
+    before = set(Path(args.before).read_text().split())
+    minted = [c for c in dev_certificates(asc) if c["id"] not in before and c["attributes"].get("displayName") == "Created via API"]
+    if not minted:
+        print("no development certificate was minted by this run")
+    for c in minted:
+        code, out = asc.call("DELETE", f"certificates/{c['id']}")
+        print(f"  {'ok ' if code == 204 else 'ERR'} revoke development certificate {c['id']} ({code}{'' if code == 204 else ': ' + errors(out)})")
+        if code != 204:
+            sys.exit("a certificate this run minted could not be revoked; revoke it in the Developer portal")
 
 
 # ---- apply ---------------------------------------------------------------------------------------------
@@ -455,9 +512,14 @@ def main(argv=None) -> int:
     p = sub.add_parser("apply"); p.add_argument("--build", required=True); p.add_argument("--release", choices=["manual", "after-approval"], default="manual")
     p = sub.add_parser("submit"); p.add_argument("--dry-run", action="store_true", help="create the draft and add the version, but do not submit")
     sub.add_parser("status")
+    sub.add_parser("next-build")
+    p = sub.add_parser("wait"); p.add_argument("--build", required=True); p.add_argument("--timeout", type=int, default=1800); p.add_argument("--interval", type=int, default=30)
+    sub.add_parser("dev-certs")
+    p = sub.add_parser("revoke-new-dev-certs"); p.add_argument("--before", required=True)
     args = parser.parse_args(argv)
     asc = ASC()
-    {"plan": plan, "apply": apply, "submit": submit, "status": lambda a, _: status(a)}[args.command](asc, args)
+    {"plan": plan, "apply": apply, "submit": submit, "status": lambda a, _: status(a), "next-build": next_build, "wait": wait,
+     "dev-certs": dev_certs, "revoke-new-dev-certs": revoke_new_dev_certs}[args.command](asc, args)
     return 0
 
 

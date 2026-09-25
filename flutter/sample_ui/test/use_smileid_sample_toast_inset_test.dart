@@ -48,12 +48,8 @@ void main() {
     final Rect toast = await toastIn(
       tester,
       UseSmileIDSampleProfilesScreen(
-        profiles: UseSmileIDSampleProfiles.forLaunch(
-          const UseSmileIDSampleLaunchArgs(),
-        ).all,
-        activeId: UseSmileIDSampleProfiles.forLaunch(
-          const UseSmileIDSampleLaunchArgs(),
-        ).activeId,
+        profiles: UseSmileIDSampleProfiles.fixtures(),
+        activeId: 'p-1',
         onBack: () {},
         onProfileTap: (_) {},
         onCreate: () {},

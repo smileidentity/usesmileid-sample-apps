@@ -1,10 +1,10 @@
 import Foundation
 
-/// One partner profile: who is signed in, and the defaults their jobs are seeded from.
-public struct UseSmileIDSampleProfile: Equatable, Identifiable, Sendable {
+/// One persona a job runs as: the organisation the SDK's consent screen names, and the details its jobs carry.
+public struct UseSmileIDSampleProfile: Equatable, Identifiable, Sendable, Codable {
   public let id: String
+  /// May be blank, when consent names the app itself rather than the person being verified.
   public var organisation: String
-  public var person: String
   public var defaults: UseSmileIDSampleUserDetails
   /// Empty means the partner's portal default.
   public var callbackUrl: String
@@ -12,18 +12,29 @@ public struct UseSmileIDSampleProfile: Equatable, Identifiable, Sendable {
   public init(
     id: String,
     organisation: String,
-    person: String,
     defaults: UseSmileIDSampleUserDetails = UseSmileIDSampleUserDetails(),
     callbackUrl: String = ""
   ) {
     self.id = id
     self.organisation = organisation
-    self.person = person
     self.defaults = defaults
     self.callbackUrl = callbackUrl
   }
 
-  /// The person's initials, as the design has them, falling back to the organisation for a new profile.
+  /// The person the details name, so it can never disagree with them.
+  public var person: String {
+    "\(defaults.firstName) \(defaults.lastName)".trimmingCharacters(in: .whitespaces)
+  }
+
+  /// What a row calls it: the organisation, or the person when it names none.
+  public var title: String {
+    if !organisation.isBlank {
+      return organisation
+    }
+    return person.isBlank ? Self.unnamed : person
+  }
+
+  /// The person's initials, as the design has them, falling back to the organisation.
   public var initials: String {
     let source = person.isBlank ? organisation : person
     let letters = source.split(separator: " ").prefix(2).compactMap { word in
@@ -38,38 +49,77 @@ public struct UseSmileIDSampleProfile: Equatable, Identifiable, Sendable {
   }
 
   static let noUserDetailsCaption = "No user details yet"
+
+  /// A profile naming neither an organisation nor a person, which only a token binding both names allows.
+  static let unnamed = "Unnamed profile"
+
+  enum CodingKeys: String, CodingKey {
+    case id, organisation, firstName, lastName, email, phone, callbackUrl
+  }
+
+  /// Flat, as the other three apps store it; a missing field reads as empty.
+  public init(from decoder: Decoder) throws {
+    let values = try decoder.container(keyedBy: CodingKeys.self)
+    id = try values.decode(String.self, forKey: .id)
+    organisation = try values.decodeIfPresent(String.self, forKey: .organisation) ?? ""
+    defaults = try UseSmileIDSampleUserDetails(
+      firstName: values.decodeIfPresent(String.self, forKey: .firstName) ?? "",
+      lastName: values.decodeIfPresent(String.self, forKey: .lastName) ?? "",
+      email: values.decodeIfPresent(String.self, forKey: .email) ?? "",
+      phone: values.decodeIfPresent(String.self, forKey: .phone) ?? ""
+    )
+    callbackUrl = try values.decodeIfPresent(String.self, forKey: .callbackUrl) ?? ""
+  }
+
+  public func encode(to encoder: Encoder) throws {
+    var values = encoder.container(keyedBy: CodingKeys.self)
+    try values.encode(id, forKey: .id)
+    try values.encode(organisation, forKey: .organisation)
+    try values.encode(defaults.firstName, forKey: .firstName)
+    try values.encode(defaults.lastName, forKey: .lastName)
+    try values.encode(defaults.email, forKey: .email)
+    try values.encode(defaults.phone, forKey: .phone)
+    try values.encode(callbackUrl, forKey: .callbackUrl)
+  }
 }
 
-/// The profiles the app can act as, and which is active; in memory until profiles are a real account concern.
+/// The profiles the app can act as and the active one; a first launch has none.
 public struct UseSmileIDSampleProfiles: Equatable, Sendable {
-  private var items: [UseSmileIDSampleProfile]
-  public private(set) var activeId: String
+  public private(set) var all: [UseSmileIDSampleProfile]
+  /// Nil exactly when there are no profiles.
+  public private(set) var activeId: String?
 
-  /// The last profile `add` created, until whoever confirmed it calls `clearLastCreated`.
+  /// The last profile `add` created without activating, until the list that offers "Make active" consumes it.
   public private(set) var lastCreatedId: String?
 
-  /// `seed` must not be empty, or the failure surfaces far from here as the products screen reading no active profile.
-  public init(seed: [UseSmileIDSampleProfile] = UseSmileIDSampleProfiles.starter()) {
-    precondition(!seed.isEmpty, "UseSmileIDSampleProfiles needs at least one profile")
-    items = seed
-    activeId = seed[0].id
+  public init(_ profiles: [UseSmileIDSampleProfile] = [], activeId: String? = nil) {
+    var seen = Set<String>()
+    all = profiles.filter { seen.insert($0.id).inserted }
+    self.activeId = activeId.flatMap { id in all.contains { $0.id == id } ? id : nil } ?? all.first?.id
   }
 
-  public var all: [UseSmileIDSampleProfile] {
-    items
-  }
-
-  public var active: UseSmileIDSampleProfile {
-    items.first { $0.id == activeId } ?? items[0]
+  public var active: UseSmileIDSampleProfile? {
+    all.first { $0.id == activeId }
   }
 
   /// Position in the list, which is what picks a profile's avatar hue.
   public var activeIndex: Int {
-    items.firstIndex { $0.id == activeId } ?? 0
+    all.firstIndex { $0.id == activeId } ?? 0
+  }
+
+  /// What the consent screen names as the partner: the app's own name when no profile names one.
+  public var partnerName: String {
+    guard let organisation = active?.organisation, !organisation.isBlank else { return Self.noProfilePartnerName }
+    return organisation
+  }
+
+  /// The id a job runs under without a token: the first profile's own id when there is none yet.
+  public var partnerId: String {
+    active?.id ?? Self.firstProfileId
   }
 
   public mutating func setActive(_ id: String) {
-    if items.contains(where: { $0.id == id }) {
+    if all.contains(where: { $0.id == id }) {
       activeId = id
     }
   }
@@ -79,60 +129,83 @@ public struct UseSmileIDSampleProfiles: Equatable, Sendable {
   }
 
   public func find(_ id: String) -> UseSmileIDSampleProfile? {
-    items.first { $0.id == id }
+    all.first { $0.id == id }
   }
 
+  /// The first profile ever made becomes active, so a list with profiles always has one active.
   @discardableResult
   public mutating func add(
     organisation: String,
-    person: String,
-    defaults: UseSmileIDSampleUserDetails = UseSmileIDSampleUserDetails()
+    defaults: UseSmileIDSampleUserDetails = UseSmileIDSampleUserDetails(),
+    activate: Bool = false
   ) -> UseSmileIDSampleProfile {
     // First free id, not one derived from the count: duplicate keys crash the list and double a test id.
-    var number = items.count + 1
-    while items.contains(where: { $0.id == "p-\(number)" }) {
+    var number = all.count + 1
+    while all.contains(where: { $0.id == "p-\(number)" }) {
       number += 1
     }
     let profile = UseSmileIDSampleProfile(
       id: "p-\(number)",
-      organisation: organisation,
-      person: person,
+      organisation: organisation.trimmingCharacters(in: .whitespaces),
       defaults: defaults
     )
-    items.append(profile)
-    lastCreatedId = profile.id
+    all.append(profile)
+    if activate || activeId == nil {
+      activeId = profile.id
+    } else {
+      lastCreatedId = profile.id
+    }
     return profile
   }
 
-  /// A nil `callbackUrl` leaves the stored one alone; only a caller that edited it passes a value.
-  public mutating func setDefaults(
+  /// A nil argument leaves that part alone.
+  public mutating func update(
     _ id: String,
-    _ defaults: UseSmileIDSampleUserDetails,
+    organisation: String? = nil,
+    defaults: UseSmileIDSampleUserDetails? = nil,
     callbackUrl: String? = nil
   ) {
-    guard let index = items.firstIndex(where: { $0.id == id }) else { return }
-    items[index].defaults = defaults
+    guard let index = all.firstIndex(where: { $0.id == id }) else { return }
+    if let organisation {
+      all[index].organisation = organisation.trimmingCharacters(in: .whitespaces)
+    }
+    if let defaults {
+      all[index].defaults = defaults
+    }
     if let callbackUrl {
-      items[index].callbackUrl = callbackUrl
-    }
-    // The starter names nobody until its details are saved; a created profile keeps the name its sheet gave it.
-    if items[index].person.isBlank {
-      items[index].person = "\(defaults.firstName) \(defaults.lastName)".trimmingCharacters(in: .whitespaces)
+      all[index].callbackUrl = callbackUrl.trimmingCharacters(in: .whitespacesAndNewlines)
     }
   }
 
-  /// The fixtures only when `seedProfiles` asks; a Bool rather than the arguments type, which lives in the shell.
-  public static func forLaunch(seedProfiles: Bool) -> UseSmileIDSampleProfiles {
-    UseSmileIDSampleProfiles(seed: seedProfiles ? fixtures() : starter())
+  /// Deleting the active profile hands over to the first one left, so a list with profiles always has one active.
+  public mutating func delete(_ id: String) {
+    all.removeAll { $0.id == id }
+    if activeId == id {
+      activeId = all.first?.id
+    }
+    if lastCreatedId == id {
+      lastCreatedId = nil
+    }
   }
 
-  /// A plain launch: one empty profile, never the fixtures, since the active organisation names the partner on consent.
-  public static func starter() -> [UseSmileIDSampleProfile] {
-    [UseSmileIDSampleProfile(id: "p-1", organisation: starterOrganisation, person: "")]
+  /// Sign out: every profile goes, which is how a phone is handed to the next person.
+  public mutating func clear() {
+    self = UseSmileIDSampleProfiles()
   }
 
-  /// Shown on the consent screen as the partner until a profile is created, so it must read as a placeholder.
-  public static let starterOrganisation = "Default profile"
+  /// The fixtures only when `seedProfiles` asks; never stored.
+  public static func forLaunch(seedProfiles: Bool, stored: UseSmileIDSampleProfiles) -> UseSmileIDSampleProfiles {
+    seedProfiles ? UseSmileIDSampleProfiles(fixtures()) : stored
+  }
+
+  /// The partner the consent screen names when no profile does.
+  public static let noProfilePartnerName = "Smile ID"
+
+  /// What a plain launch has always sent as the partner id, so no profile changes nothing on the wire.
+  public static let firstProfileId = "p-1"
+
+  /// What the header, settings card and form say while there is no profile.
+  public static let noProfileLabel = "No profile yet"
 
   /// The three the design's sheet shows. Reached only by the `seedProfiles` launch argument.
   public static func fixtures() -> [UseSmileIDSampleProfile] {
@@ -140,22 +213,79 @@ public struct UseSmileIDSampleProfiles: Equatable, Sendable {
       UseSmileIDSampleProfile(
         id: "p-1",
         organisation: "UpTech Finance",
-        person: "Kwame Asante",
         defaults: UseSmileIDSampleUserDetails(firstName: "Kwame", lastName: "Asante")
       ),
       UseSmileIDSampleProfile(
         id: "p-2",
         organisation: "Kazi Microlending",
-        person: "Amina Diallo",
         defaults: UseSmileIDSampleUserDetails(firstName: "Amina", lastName: "Diallo")
       ),
       UseSmileIDSampleProfile(
         id: "p-3",
         organisation: "PesaLink",
-        person: "Tunde Okafor",
         defaults: UseSmileIDSampleUserDetails(firstName: "Tunde", lastName: "Okafor")
       )
     ]
+  }
+}
+
+public extension UseSmileIDSampleProfiles {
+  /// Continue's write-back to the active profile, or a new one; token-supplied fields are never stored.
+  mutating func keep(
+    _ details: UseSmileIDSampleUserDetails,
+    organisation: String,
+    requirement: UseSmileIDSampleUserDetailsRequirement = UseSmileIDSampleUserDetailsRequirement()
+  ) {
+    let current = active
+    let kept = UseSmileIDSampleUserField.allCases.reduce(current?.defaults ?? UseSmileIDSampleUserDetails()) { stored, field in
+      requirement.supplies(field) ? stored : field.write(stored, field.read(details))
+    }
+    if let current {
+      update(current.id, defaults: kept)
+    } else {
+      add(organisation: organisation, defaults: kept, activate: true)
+    }
+  }
+}
+
+/// The stored form of the profiles, one JSON value shared by all four apps so a record reads the same in each.
+public enum UseSmileIDSampleProfilesCodec {
+  public static let version = 1
+
+  private struct Record: Encodable {
+    var version: Int
+    var activeId: String?
+    var profiles: [UseSmileIDSampleProfile]
+  }
+
+  /// Read one profile at a time, so a single bad entry drops that entry rather than every profile.
+  private struct StoredRecord: Decodable {
+    var version: Int
+    var activeId: String?
+    var profiles: [Lossy]
+  }
+
+  private struct Lossy: Decodable {
+    var profile: UseSmileIDSampleProfile?
+
+    init(from decoder: Decoder) throws {
+      profile = try? UseSmileIDSampleProfile(from: decoder)
+    }
+  }
+
+  public static func encode(_ profiles: UseSmileIDSampleProfiles) -> Data? {
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = .sortedKeys
+    return try? encoder.encode(Record(version: version, activeId: profiles.activeId, profiles: profiles.all))
+  }
+
+  /// Anything unreadable, including a version this build does not know, is no profiles: never a crash.
+  public static func decode(_ data: Data?) -> UseSmileIDSampleProfiles {
+    guard let data, let record = try? JSONDecoder().decode(StoredRecord.self, from: data), record.version == version else {
+      return UseSmileIDSampleProfiles()
+    }
+    let profiles = record.profiles.compactMap(\.profile).filter { !$0.id.isBlank }
+    return UseSmileIDSampleProfiles(profiles, activeId: record.activeId)
   }
 }
 
@@ -178,11 +308,6 @@ public struct UseSmileIDSampleNewProfile: Equatable, Sendable {
   /// The design's own rule: Create needs the profile name and both required names.
   public var canCreate: Bool {
     !name.isBlank && !firstName.isBlank && !lastName.isBlank
-  }
-
-  /// The person is the two required names; all four seed the details its jobs start from.
-  public var person: String {
-    "\(firstName) \(lastName)".trimmingCharacters(in: .whitespaces)
   }
 
   public var defaults: UseSmileIDSampleUserDetails {

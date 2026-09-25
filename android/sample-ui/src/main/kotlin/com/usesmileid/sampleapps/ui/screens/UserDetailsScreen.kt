@@ -23,11 +23,16 @@ import com.smileid.designsystem.SmileDimens
 import com.smileid.designsystem.smileCardStrokeWidth
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleButton
+import com.usesmileid.sampleapps.ui.components.ChevronDownGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleKeyValueEditRow
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProfileRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionSurface
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowDivider
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwitch
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBar
+import androidx.compose.ui.graphics.Color
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfile
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetailsRequirement
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserField
@@ -38,15 +43,21 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 fun UserDetailsScreen(
     productLabel: String,
     details: UseSmileIDSampleUserDetails,
-    rememberDetails: Boolean,
+    /** Who this run is for; null while there is no profile, when the form offers to create one. */
+    profile: UseSmileIDSampleProfile?,
+    profileColor: Color,
+    saveToProfile: Boolean,
     onFieldChange: (UseSmileIDSampleUserField, String) -> Unit,
-    onRememberChange: (Boolean) -> Unit,
+    onSaveToProfileChange: (Boolean) -> Unit,
+    onProfileClick: () -> Unit,
     onBack: () -> Unit,
     onContinue: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     /** What is still outstanding once the token's own bindings are taken off the SDK's rule. */
     requirement: UseSmileIDSampleUserDetailsRequirement = UseSmileIDSampleUserDetailsRequirement(),
+    organisation: String = "",
+    onOrganisationChange: (String) -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -60,10 +71,34 @@ fun UserDetailsScreen(
             verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
         ) {
             item {
+                UseSmileIDSampleProfileRow(
+                    organisation = profile?.title ?: UseSmileIDSampleProfiles.NO_PROFILE_LABEL,
+                    supportingText = if (profile == null) "Your details below will create one" else "Tap to switch profile",
+                    initials = profile?.initials.orEmpty(),
+                    avatarColor = profileColor,
+                    selected = false,
+                    onClick = onProfileClick,
+                    modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
+                    testId = UseSmileIDSampleTestIds.USER_DETAILS_PROFILE,
+                    trailing = { ChevronDownGlyph(tint = UseSmileIDSampleTheme.colors.textMuted) },
+                )
+            }
+            item {
                 UseSmileIDSampleSectionSurface(
                     modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
                     label = "YOUR DETAILS",
                 ) {
+                    if (profile == null) {
+                        UseSmileIDSampleKeyValueEditRow(
+                            label = "Profile name (optional)",
+                            value = organisation,
+                            onValueChange = onOrganisationChange,
+                            placeholder = "Shown on the consent screen",
+                            required = false,
+                            testId = UseSmileIDSampleTestIds.userDetailsField(ORGANISATION_FIELD_ID),
+                        )
+                        UseSmileIDSampleSettingRowDivider()
+                    }
                     UseSmileIDSampleUserField.entries.forEachIndexed { index, field ->
                         if (index > 0) UseSmileIDSampleSettingRowDivider()
                         // Shown as provided, not asked again — the value is vaulted, so it
@@ -91,8 +126,7 @@ fun UserDetailsScreen(
                         .padding(horizontal = SmileDimens.spacingMd),
                 )
             }
-            // Only once the details are worth remembering, which is how the design shows it.
-            if (details.satisfies(requirement)) {
+            if (details.satisfies(requirement) && (profile == null || details != profile.defaults)) {
                 item {
                     Surface(
                         modifier = Modifier
@@ -114,14 +148,14 @@ fun UserDetailsScreen(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
-                                text = "Remember these details for next time",
+                                text = profile?.let { "Save to ${it.title}" } ?: "Save as a new profile",
                                 style = UseSmileIDSampleTheme.type.textStyleSubtitle.copy(fontSize = REMEMBER_TEXT_SIZE),
                                 color = UseSmileIDSampleTheme.colors.textBody,
                                 modifier = Modifier.weight(1f),
                             )
                             UseSmileIDSampleSwitch(
-                                checked = rememberDetails,
-                                onCheckedChange = onRememberChange,
+                                checked = saveToProfile,
+                                onCheckedChange = onSaveToProfileChange,
                                 testId = UseSmileIDSampleTestIds.REMEMBER_DETAILS_SWITCH,
                             )
                         }
@@ -141,3 +175,6 @@ fun UserDetailsScreen(
 }
 
 private val REMEMBER_TEXT_SIZE = 13.5.sp
+
+/** The organisation row's id suffix, beside the four user fields'. */
+internal const val ORGANISATION_FIELD_ID = "organisation"

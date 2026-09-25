@@ -136,9 +136,9 @@ class _UseSmileIDSampleSdkFlowTabState
     final UseSmileIDSampleScenarioSelection scenarios = ref.read(
       useSmileIDSampleScenarioProvider,
     );
-    final UseSmileIDSampleProfile profile = ref
-        .read(useSmileIDSampleProfilesProvider)
-        .active;
+    final UseSmileIDSampleProfiles profiles = ref.read(
+      useSmileIDSampleProfilesProvider,
+    );
     // Read once, not through the ticking clock: a rebuilt config tears the run down.
     final int entryMillis = DateTime.now().millisecondsSinceEpoch;
     final UseSmileIDSampleSessionRecord record = ref.read(
@@ -163,9 +163,9 @@ class _UseSmileIDSampleSdkFlowTabState
       instructionsStep: settings.instructionsStep,
       previewStep: settings.previewStep,
       userId: _runUserId(),
-      partnerId: profile.id,
-      partnerName: profile.organisation,
-      callbackUrl: profile.callbackUrl,
+      partnerId: profiles.partnerId,
+      partnerName: profiles.partnerName,
+      callbackUrl: profiles.active?.callbackUrl ?? '',
       session: session,
       sessionExpired: useSmileIDSampleSessionEnded(record, entryMillis),
     );

@@ -109,3 +109,7 @@ stops there; a capture needs a camera, which no public flow in this repo drives.
 **Dark mode's appearance, the system bars, and layout.** The testing contract forbids screenshot and
 coordinate assertions inside a device flow, so the appearance stays with the goldens and the bar
 contrast with `use_smileid_sample_system_bars_test.dart`.
+
+**This flow deletes stored profiles.** `profile-journey` confirms sign-out, which ends
+the token session and deletes every profile on the device. Run it on a test device, never on a
+phone someone uses for demos.

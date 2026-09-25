@@ -5,8 +5,7 @@
 #   maestro --device <serial> test -e APP_ID=com.usesmileid.sample.android android/maestro
 appId: ${APP_ID}
 ---
-# The fixtures are a precondition, not the subject: a plain launch carries one empty profile, and the
-# assertions below name the design's three. Profiles are in memory, so every launch that needs them asks.
+# Seeded, since a plain launch has no profile and a seeded one stores nothing.
 - stopApp
 - launchApp:
     arguments:
@@ -73,7 +72,6 @@ appId: ${APP_ID}
 - assertVisible: "Njeri"
 - assertVisible: "Wanjiku"
 
-# The CTA says "Make this profile active", so it has to activate as well as save.
 - tapOn:
     id: "sample_profile_config_save"
 - assertVisible:

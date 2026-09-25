@@ -12,10 +12,12 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfile
 @Composable
 fun ProfileSwitchSheet(
     profiles: List<UseSmileIDSampleProfile>,
-    activeId: String,
+    activeId: String?,
     onSelect: (UseSmileIDSampleProfile) -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    /** Null hides the row, for a host that offers no way to create one. */
+    onCreate: (() -> Unit)? = null,
 ) {
     UseSmileIDSampleBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -26,12 +28,22 @@ fun ProfileSwitchSheet(
         profiles.forEachIndexed { index, profile ->
             UseSmileIDSampleProfileRow(
                 avatarColor = avatarColorForProfile(index),
-                organisation = profile.organisation,
+                organisation = profile.title,
                 supportingText = profile.caption,
                 initials = profile.initials,
                 selected = profile.id == activeId,
                 onClick = { onSelect(profile) },
                 testId = UseSmileIDSampleTestIds.profileRow(profile.id),
+            )
+        }
+        if (onCreate != null) {
+            UseSmileIDSampleProfileRow(
+                organisation = "New profile",
+                supportingText = "Run jobs as someone else",
+                initials = "",
+                selected = false,
+                onClick = onCreate,
+                testId = UseSmileIDSampleTestIds.PROFILE_SWITCH_NEW,
             )
         }
     }

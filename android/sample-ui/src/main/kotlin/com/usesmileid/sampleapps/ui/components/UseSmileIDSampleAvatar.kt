@@ -34,7 +34,7 @@ fun UseSmileIDSampleAvatar(
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(
-                text = if (hasInitials) initials else "?",
+                text = if (hasInitials) initials else "+",
                 style = UseSmileIDSampleTheme.type.avatarFont,
                 color = if (hasInitials) {
                     UseSmileIDSampleTheme.colors.avatar.text

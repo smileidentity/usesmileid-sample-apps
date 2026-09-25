@@ -70,6 +70,9 @@ Declaring it only as Photos or Videos would understate what the app sends.
 **The local job database is not a collection fact.** Apple asks about data transmitted off the
 device. On-device storage that never egresses is outside the definition, exactly as it is outside
 Play's. The verifications list is SwiftData on the device and has no cloud-backup path off it.
+Stored profiles are the same case: the Keychain holds them `WhenUnlockedThisDeviceOnly`, so they neither
+sync nor restore to another device, and they leave it only inside a job submission, which the Contact
+Info rows already declare. Checked 2026-09-25.
 
 **The diagnostic rows are Sentry, and only Sentry.** They come from the SDK's bundled
 `sentry-cocoa`, which declares them in its own privacy manifest. If Sentry is ever removed from the
@@ -127,6 +130,6 @@ reviewer reaches a linked session, its countdown and its expiry.
 
 | Check | Cadence | Last done |
 |---|---|---|
-| Answers still match what the app sends | Every release that changes submission, analytics or storage | 2026-09-11 |
+| Answers still match what the app sends | Every release that changes submission, analytics or storage | 2026-09-25 |
 | The dependency graph still ships the manifests this page assumes | Every SDK version bump | 2026-09-11 |
 | The SDK binaries' privacy-sensitive references still match the usage strings shipped | Every SDK version bump — `nm -u` the device slices | 2026-09-13 |

@@ -95,9 +95,9 @@ func buildSnapshot(
     instructionsStep: app.settings.instructionsStep,
     previewStep: app.settings.previewStep,
     userId: userId,
-    partnerId: app.profiles.active.id,
-    partnerName: app.profiles.active.organisation,
-    callbackUrl: app.profiles.active.callbackUrl,
+    partnerId: app.profiles.partnerId,
+    partnerName: app.profiles.partnerName,
+    callbackUrl: app.profiles.active?.callbackUrl ?? "",
     session: session.flatMap { $0.hasExpired(at: entry) ? nil : $0 },
     sessionExpired: app.endedSession != nil || session?.hasExpired(at: entry) == true
   )

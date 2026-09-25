@@ -31,7 +31,7 @@ class UseSmileIDSampleProfilesScreen extends StatelessWidget {
   final List<UseSmileIDSampleProfile> profiles;
 
   /// Which one is active; the list marks it in the caption rather than with a fill.
-  final String activeId;
+  final String? activeId;
 
   /// Leaves the screen.
   final VoidCallback onBack;
@@ -70,7 +70,7 @@ class UseSmileIDSampleProfilesScreen extends StatelessWidget {
                   index++
                 ) ...<Widget>[
                   UseSmileIDSampleProfileRow(
-                    organisation: profiles[index].organisation,
+                    organisation: profiles[index].title,
                     // The ONLY marker of the active profile on this screen: the design gives the
                     // list no fill and no check, unlike the switch sheet.
                     supportingText: profiles[index].id == activeId

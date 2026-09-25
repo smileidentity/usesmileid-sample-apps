@@ -32,49 +32,72 @@ class _UseSmileIDSampleProfileConfigTabState
 
   String? _editedCallbackUrl;
 
+  String? _editedOrganisation;
+
+  bool _leaving = false;
+
   @override
   Widget build(BuildContext context) {
     final UseSmileIDSampleProfiles profiles = ref.watch(
       useSmileIDSampleProfilesProvider,
     );
     final UseSmileIDSampleProfile? profile = profiles.find(widget.profileId);
-    final UseSmileIDSampleUserDetails details =
-        _edited ?? profile?.defaults ?? const UseSmileIDSampleUserDetails();
+    if (profile == null) {
+      if (!_leaving) {
+        _leaving = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            widget.onBack();
+          }
+        });
+      }
+      return const SizedBox.shrink();
+    }
+    final UseSmileIDSampleUserDetails details = _edited ?? profile.defaults;
+    final String organisation = _editedOrganisation ?? profile.organisation;
+    final String callbackUrl = _editedCallbackUrl ?? profile.callbackUrl;
     final UseSmileIDSampleTokenSession? live = ref
         .watch(useSmileIDSampleSessionProvider)
         .live;
+    final UseSmileIDSampleProfilesNotifier edits = ref.read(
+      useSmileIDSampleProfilesProvider.notifier,
+    );
     return UseSmileIDSampleAboveShellPage(
       onBack: widget.onBack,
       child: UseSmileIDSampleProfileConfigScreen(
-        // The raw id when the profile is unknown, so a stale link says which one it looked for
-        // rather than showing an empty title.
-        organisation: profile?.organisation ?? widget.profileId,
+        title: profile.title,
+        organisation: organisation,
+        onOrganisationChanged: (String value) =>
+            setState(() => _editedOrganisation = value),
         details: details,
-        isActive: profile != null && profile.id == profiles.activeId,
+        isActive: profile.id == profiles.activeId,
+        changed:
+            organisation.trim() != profile.organisation ||
+            details != profile.defaults ||
+            callbackUrl.trim() != profile.callbackUrl,
         onBack: widget.onBack,
         onFieldChanged: (UseSmileIDSampleUserField field, String value) =>
             setState(() => _edited = field.apply(details, value)),
-        callbackUrl: _editedCallbackUrl ?? profile?.callbackUrl ?? '',
+        callbackUrl: callbackUrl,
         onCallbackUrlChanged: (String value) =>
             setState(() => _editedCallbackUrl = value),
         callbackOverride: live?.callbackOverrideCaption,
-        // Guarded on the profile existing: a stale link can reach this page with an id no
-        // profile holds, and saving would then activate an id that resolves to nothing.
-        onSave: profile == null
-            ? widget.onBack
-            : () {
-                ref
-                    .read(useSmileIDSampleProfilesProvider.notifier)
-                    .setDefaults(
-                      widget.profileId,
-                      details,
-                      callbackUrl: _editedCallbackUrl?.trim(),
-                    );
-                ref
-                    .read(useSmileIDSampleProfilesProvider.notifier)
-                    .setActive(widget.profileId);
-                widget.onBack();
-              },
+        onSave: () {
+          edits
+            ..update(
+              profile.id,
+              organisation: organisation,
+              defaults: details,
+              callbackUrl: callbackUrl,
+            )
+            ..setActive(profile.id);
+          widget.onBack();
+        },
+        onDelete: () {
+          _leaving = true;
+          edits.delete(profile.id);
+          widget.onBack();
+        },
       ),
     );
   }

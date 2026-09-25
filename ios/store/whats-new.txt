@@ -1,3 +1,3 @@
-Profiles no longer come with example partners.
+Profiles are saved on your device, encrypted. A fresh install has no profile: the details you type for your first job create one, and the form fills itself from it next time. Switch or add a profile straight from the details form, so each demo runs as the right person.
 
-A fresh install has one blank "Default profile". Create your own from Settings → Profiles and make it active, so the consent screen shows your organisation and your jobs carry your user details.
+Every run now starts with empty ID details, so an ID number never carries over from the last run.

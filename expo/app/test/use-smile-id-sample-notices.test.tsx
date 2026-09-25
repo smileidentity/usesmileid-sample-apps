@@ -7,6 +7,7 @@ import {
   useSmileIDSampleJobStore,
   useSmileIDSampleProfileStore,
   useSmileIDSampleResultStore,
+  smileIDSampleFixtureProfiles,
 } from '@smileid/sample-ui';
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import * as Clipboard from 'expo-clipboard';
@@ -156,7 +157,8 @@ describe('a notice on a screen with no nav bar', () => {
   });
 
   it('sits past the system bar on the profiles list too', async () => {
-    useSmileIDSampleProfileStore.getState().add('Kobo Bank', 'Ada Okafor');
+    useSmileIDSampleProfileStore.getState().reset(smileIDSampleFixtureProfiles());
+    useSmileIDSampleProfileStore.getState().add('Kobo Bank');
     const screen = await inTheme(<Profiles />);
     await waitFor(() => expect(screen.queryByText('Kobo Bank created')).not.toBeNull());
     expect(noticeBottom(screen, 'Kobo Bank created')).toBe(BOTTOM_INSET + 16);

@@ -27,7 +27,7 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
     ProductsContent(
         contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
         state = UseSmileIDSampleProductsState(
-            initials = app.profiles.active.initials,
+            initials = app.profiles.active?.initials.orEmpty(),
             avatarColor = avatarColorForProfile(app.profiles.activeIndex),
             sessionId = app.session?.id?.takeIf { app.sessionActive },
             sessionRemaining = app.session
@@ -37,7 +37,10 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
             sessionEnded = app.sessionExpired,
             result = app.flowResult.snapshot,
         ),
-        onProductClick = { navigator.navigate(app.firstStepFor(it)) },
+        onProductClick = {
+            app.forms.startRun(app.profiles.active)
+            navigator.navigate(app.firstStepFor(it))
+        },
         onProfileClick = { switchingProfile = true },
         onScanClick = { navigator.navigate(ScanTokenScreenDestination) },
     )

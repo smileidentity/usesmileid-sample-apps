@@ -44,7 +44,7 @@ class UseSmileIDSampleAvatar extends StatelessWidget {
         borderRadius: UseSmileIDSampleShapes.avatar,
       ),
       child: Text(
-        hasInitials ? initials : '?',
+        hasInitials ? initials : '+',
         textAlign: TextAlign.center,
         style: UseSmileIDSampleType.avatarFont.copyWith(
           color: hasInitials

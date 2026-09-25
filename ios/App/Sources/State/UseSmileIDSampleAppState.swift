@@ -17,8 +17,17 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// Seeded from the store at launch and written back through it, so the six switches survive the process deaths the camera causes.
   @Published private(set) var settings: UseSmileIDSampleSettings
 
-  /// The profiles the app can act as; the active one names the products header and the settings summary.
-  @Published var profiles: UseSmileIDSampleProfiles
+  /// The profiles the app can act as; every change is stored unless the launch seeded fixtures.
+  @Published var profiles: UseSmileIDSampleProfiles {
+    didSet {
+      if !launchArguments.seedProfiles, profiles != oldValue {
+        store.setProfiles(profiles)
+      }
+    }
+  }
+
+  /// Whether the new-profile sheet activates its profile, as it does from the switch sheet.
+  @Published var newProfileActivates = false
 
   /// The new-profile sheet's fields, cleared with the sheet so it opens empty each time.
   @Published var newProfile = UseSmileIDSampleNewProfile()
@@ -28,6 +37,9 @@ final class UseSmileIDSampleAppState: ObservableObject {
 
   /// Kept beside the user-details draft so both are discarded together when the screen is left.
   @Published var profileCallbackDrafts: [String: String] = [:]
+
+  /// The name the config screen is editing, discarded with the other two drafts.
+  @Published var profileOrganisationDrafts: [String: String] = [:]
 
   /// Nil is "not loaded yet", not "empty": the store's first emission resolves it.
   @Published private(set) var jobs: [UseSmileIDSampleJob]?
@@ -40,7 +52,10 @@ final class UseSmileIDSampleAppState: ObservableObject {
 
   /// The forms live here, not in the screens: one tab is mounted, so a tab switch would lose part-entered input.
   @Published var userDetails = UseSmileIDSampleUserDetails()
-  @Published var rememberDetails = false
+  /// Whether Continue keeps what was typed: into the active profile, or as a new one when there is none.
+  @Published var saveToProfile = true
+  /// The new profile's name, asked only while there is no profile.
+  @Published var organisationDraft = ""
   @Published var idDetails = UseSmileIDSampleIdDetails()
 
   /// The pickers' search text, cleared on open so a sheet never reopens filtered.
@@ -78,7 +93,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     self.jobStore = jobStore
     self.launchArguments = launchArguments
     settings = store.settings
-    profiles = UseSmileIDSampleProfiles.forLaunch(seedProfiles: launchArguments.seedProfiles)
+    profiles = UseSmileIDSampleProfiles.forLaunch(seedProfiles: launchArguments.seedProfiles, stored: store.profiles)
     flowResult = UseSmileIDSampleFlowResult(
       scenario: launchArguments.scenario,
       theme: launchArguments.theme,
@@ -186,12 +201,17 @@ final class UseSmileIDSampleAppState: ObservableObject {
     reload()
   }
 
-  /// Sign out: the session goes with no ended marker, which would send the next run to the scanner, and the forms go with it because they hold PII.
+  /// Sign out: clears the session without an ended marker, the forms, and every profile.
   func signOut() {
     store.clearTokenSession()
-    userDetails = UseSmileIDSampleUserDetails()
-    rememberDetails = false
+    fillForm(from: nil)
     idDetails = UseSmileIDSampleIdDetails()
+    profiles.clear()
+    store.setProfiles(UseSmileIDSampleProfiles())
+    profileDrafts = [:]
+    profileCallbackDrafts = [:]
+    profileOrganisationDrafts = [:]
+    newProfile = UseSmileIDSampleNewProfile()
     reload()
   }
 
@@ -222,11 +242,11 @@ final class UseSmileIDSampleAppState: ObservableObject {
   private static let tickNanoseconds: UInt64 = 1000000000
 
   var organisation: String {
-    profiles.active.organisation
+    profiles.active?.title ?? UseSmileIDSampleProfiles.noProfileLabel
   }
 
   var initials: String {
-    profiles.active.initials
+    profiles.active?.initials ?? ""
   }
 
   var avatarColor: Color {
@@ -247,6 +267,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     countryQuery = ""
     idTypeQuery = ""
     newProfile = UseSmileIDSampleNewProfile()
+    newProfileActivates = false
   }
 
   /// The edits the config screen shows: the draft if one exists, else the profile's saved defaults.
@@ -269,22 +290,103 @@ final class UseSmileIDSampleAppState: ObservableObject {
   func discardProfileDraft(_ id: String) {
     profileDrafts[id] = nil
     profileCallbackDrafts[id] = nil
+    profileOrganisationDrafts[id] = nil
   }
 
-  /// The CTA reads "Make this profile active", so it has to do both.
+  func profileOrganisationDraft(for id: String) -> String {
+    profileOrganisationDrafts[id] ?? profiles.find(id)?.organisation ?? ""
+  }
+
+  func editProfileOrganisationDraft(_ id: String, to value: String) {
+    profileOrganisationDrafts[id] = value
+  }
+
+  /// Whether the config screen holds anything the stored profile does not.
+  func profileChanged(_ id: String) -> Bool {
+    guard let profile = profiles.find(id) else { return false }
+    return profileOrganisationDraft(for: id).trimmingCharacters(in: .whitespaces) != profile.organisation
+      || profileDraft(for: id) != profile.defaults
+      || profileCallbackDraft(for: id).trimmingCharacters(in: .whitespacesAndNewlines) != profile.callbackUrl
+  }
+
+  /// On another profile the one CTA reads "Use this profile", so it saves and activates.
   func saveProfile(_ id: String) {
-    profiles.setDefaults(
+    profiles.update(
       id,
-      profileDraft(for: id),
-      callbackUrl: profileCallbackDraft(for: id).trimmingCharacters(in: .whitespacesAndNewlines)
+      organisation: profileOrganisationDraft(for: id),
+      defaults: profileDraft(for: id),
+      callbackUrl: profileCallbackDraft(for: id)
     )
     profiles.setActive(id)
-    profileDrafts[id] = nil
-    profileCallbackDrafts[id] = nil
+    discardProfileDraft(id)
+  }
+
+  func deleteProfile(_ id: String) {
+    profiles.delete(id)
+    discardProfileDraft(id)
   }
 
   func createProfile() {
-    profiles.add(organisation: newProfile.name, person: newProfile.person, defaults: newProfile.defaults)
+    let created = profiles.add(organisation: newProfile.name, defaults: newProfile.defaults, activate: newProfileActivates)
+    if newProfileActivates {
+      fillForm(from: created)
+    }
+  }
+
+  /// The switch sheet's "New profile": active once made, prefilled from the form it was opened over.
+  func beginProfileFromSwitch(overForm: Bool) {
+    newProfileActivates = true
+    if overForm {
+      newProfile = UseSmileIDSampleNewProfile(
+        name: organisationDraft,
+        firstName: userDetails.firstName,
+        lastName: userDetails.lastName,
+        email: userDetails.email,
+        phone: userDetails.phone
+      )
+    }
+  }
+
+  /// Picking a profile makes it the run's: the form refills from it, dropping what was typed for another.
+  func switchProfile(to id: String) {
+    profiles.setActive(id)
+    fillForm(from: profiles.active)
+  }
+
+  /// A product tap: fills from the active profile and clears the last run's ID details.
+  func fillFormForRun() {
+    fillFromActive()
+    idDetails = UseSmileIDSampleIdDetails()
+  }
+
+  /// The form's entry: fills it for a cold link, which skips the product tap.
+  func fillFormOnEntry() {
+    if formFilledFor != .some(profiles.activeId) {
+      fillFromActive()
+    }
+  }
+
+  private func fillFromActive() {
+    formFilledFor = .some(profiles.activeId)
+    if let active = profiles.active {
+      fillForm(from: active)
+    }
+  }
+
+  /// Which active profile the form was last filled for; nil until the first fill of a launch.
+  private var formFilledFor: String??
+
+  private func fillForm(from profile: UseSmileIDSampleProfile?) {
+    formFilledFor = .some(profile?.id)
+    userDetails = profile?.defaults ?? UseSmileIDSampleUserDetails()
+    organisationDraft = ""
+    saveToProfile = true
+  }
+
+  /// Continue's write-back, skipped when the switch is off.
+  func keepUserDetails() {
+    guard saveToProfile else { return }
+    profiles.keep(userDetails, organisation: organisationDraft, requirement: userDetailsRequirement)
   }
 
   /// The types are country-specific, so a country change drops the ID type with it.

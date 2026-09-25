@@ -52,11 +52,8 @@ void main() {
     await goldens(
       tester,
       'screen_settings_new_profile',
-      () => _settings(
-        organisation: 'Default profile',
-        initials: '',
-        avatarIndex: 3,
-      ),
+      () =>
+          _settings(organisation: 'Sahara Pay', initials: 'NE', avatarIndex: 3),
       hostHeight: goldenScreenHeight,
       fillsHost: true,
     );

@@ -147,12 +147,6 @@ export const VerificationDetailsScreen = ({
                 testID={UseSmileIDSampleSuffixedTestIds.detailField('userId')}
                 copyTestID={UseSmileIDSampleSuffixedTestIds.detailCopy('userId')}
               />
-              <UseSmileIDSampleDataFieldRow
-                label="Environment"
-                // The only surface here that says where a row went: Android's is its result card.
-                value={job.sandbox ? 'sandbox' : 'production'}
-                testID={UseSmileIDSampleSuffixedTestIds.detailField('environment')}
-              />
             </UseSmileIDSampleSectionSurface>
           </>
         )}

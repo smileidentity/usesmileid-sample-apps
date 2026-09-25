@@ -21,6 +21,7 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTransientNoticeHost
 import com.usesmileid.sampleapps.ui.components.rememberTransientNotice
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfile
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 import com.usesmileid.sampleapps.ui.state.callbackOverrideCaption
 import com.usesmileid.sampleapps.ui.screens.NewProfileSheet as NewProfileContent
@@ -30,16 +31,40 @@ import com.usesmileid.sampleapps.ui.screens.ProfilesScreen as ProfilesContent
 
 /** The profile routes. Function names are load-bearing: KSP names each generated `…Destination` after the function. */
 
-/** A layer Products owns; it is not a destination (R12). */
+/** A layer Products and the user-details form own; it is not a destination (R12). */
 @Composable
-internal fun ProfileSwitchSheet(onDismissRequest: () -> Unit) {
+internal fun ProfileSwitchSheet(
+    onDismissRequest: () -> Unit,
+    /** The profile now active, picked or just created, so a form showing its details can refill. */
+    onPicked: (UseSmileIDSampleProfile) -> Unit = {},
+    /** What a form had typed, so a profile created from it is not typed twice. */
+    draft: UseSmileIDSampleUserDetails = UseSmileIDSampleUserDetails(),
+    draftOrganisation: String = "",
+) {
     val app = LocalUseSmileIDSampleAppState.current
-    ProfileSwitchContent(
-        profiles = app.profiles.all,
-        activeId = app.profiles.activeId,
-        onSelect = { app.profiles.setActive(it.id); onDismissRequest() },
-        onDismissRequest = onDismissRequest,
-    )
+    var creating by rememberSaveable { mutableStateOf(false) }
+    if (!app.profiles.loaded) return
+    if (creating) {
+        NewProfileSheet(
+            onDismissRequest = onDismissRequest,
+            activate = true,
+            onCreated = onPicked,
+            draft = draft,
+            draftOrganisation = draftOrganisation,
+        )
+    } else {
+        ProfileSwitchContent(
+            profiles = app.profiles.all,
+            activeId = app.profiles.activeId,
+            onSelect = {
+                app.profiles.setActive(it.id)
+                onPicked(it)
+                onDismissRequest()
+            },
+            onDismissRequest = onDismissRequest,
+            onCreate = { creating = true },
+        )
+    }
 }
 
 @Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.PROFILES)])
@@ -57,7 +82,7 @@ fun ProfilesScreen(navigator: DestinationsNavigator) {
         val created = app.profiles.find(id) ?: return@LaunchedEffect
         // A new profile is not made active by creating it, so the confirmation carries the offer.
         notice.show(
-            message = "${created.organisation} created",
+            message = "${created.title} created",
             actionLabel = "Make active",
             onAction = { app.profiles.setActive(created.id) },
         )
@@ -87,14 +112,25 @@ fun ProfilesScreen(navigator: DestinationsNavigator) {
 @Composable
 fun ProfileConfigScreen(profileId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
+    var deleted by rememberSaveable(profileId) { mutableStateOf(false) }
+    if (!app.profiles.loaded) return
     val profile = app.profiles.find(profileId)
-    var defaults by rememberSaveable(profileId, saver = UseSmileIDSampleUserDetails.Saver) {
-        mutableStateOf(profile?.defaults ?: UseSmileIDSampleUserDetails())
+    if (profile == null) {
+        if (!deleted) LaunchedEffect(Unit) { navigator.navigateUp() }
+        return
     }
-    var callbackUrl by rememberSaveable(profileId) { mutableStateOf(profile?.callbackUrl.orEmpty()) }
+    var name by rememberSaveable(profileId) { mutableStateOf(profile.organisation) }
+    var defaults by rememberSaveable(profileId, saver = UseSmileIDSampleUserDetails.Saver) {
+        mutableStateOf(profile.defaults)
+    }
+    var callbackUrl by rememberSaveable(profileId) { mutableStateOf(profile.callbackUrl) }
     ProfileConfigContent(
-        organisation = profile?.organisation ?: profileId,
+        title = profile.title,
         isActive = profileId == app.profiles.activeId,
+        changed = name.trim() != profile.organisation || defaults != profile.defaults ||
+            callbackUrl.trim() != profile.callbackUrl,
+        organisation = name,
+        onOrganisationChange = { name = it },
         defaults = defaults,
         onFieldChange = { field, value -> defaults = field.write(defaults, value) },
         callbackUrl = callbackUrl,
@@ -102,23 +138,34 @@ fun ProfileConfigScreen(profileId: String, navigator: DestinationsNavigator) {
         callbackOverride = app.session?.callbackOverrideCaption(),
         onBack = { navigator.navigateUp() },
         onSave = {
-            // The CTA reads "Make this profile active", so it has to do both.
-            app.profiles.setDefaults(profileId, defaults, callbackUrl.trim())
+            app.profiles.update(profileId, organisation = name, defaults = defaults, callbackUrl = callbackUrl)
             app.profiles.setActive(profileId)
+            navigator.navigateUp()
+        },
+        onDelete = {
+            deleted = true
+            app.profiles.delete(profileId)
             navigator.navigateUp()
         },
     )
 }
 
-/** A layer the profiles list owns; it is not a destination (R12). */
+/** A layer the profiles list and the switch sheet own; it is not a destination (R12). */
 @Composable
-internal fun NewProfileSheet(onDismissRequest: () -> Unit) {
+internal fun NewProfileSheet(
+    onDismissRequest: () -> Unit,
+    activate: Boolean = false,
+    onCreated: (UseSmileIDSampleProfile) -> Unit = {},
+    draft: UseSmileIDSampleUserDetails = UseSmileIDSampleUserDetails(),
+    draftOrganisation: String = "",
+) {
     val app = LocalUseSmileIDSampleAppState.current
-    var name by rememberSaveable { mutableStateOf("") }
-    var firstName by rememberSaveable { mutableStateOf("") }
-    var lastName by rememberSaveable { mutableStateOf("") }
-    var email by rememberSaveable { mutableStateOf("") }
-    var phone by rememberSaveable { mutableStateOf("") }
+    var name by rememberSaveable { mutableStateOf(draftOrganisation) }
+    if (!app.profiles.loaded) return
+    var firstName by rememberSaveable { mutableStateOf(draft.firstName) }
+    var lastName by rememberSaveable { mutableStateOf(draft.lastName) }
+    var email by rememberSaveable { mutableStateOf(draft.email) }
+    var phone by rememberSaveable { mutableStateOf(draft.phone) }
     NewProfileContent(
         name = name,
         firstName = firstName,
@@ -131,17 +178,17 @@ internal fun NewProfileSheet(onDismissRequest: () -> Unit) {
         onEmailChange = { email = it },
         onPhoneChange = { phone = it },
         onSave = {
-            // The person is the two required names; all four seed the details its jobs start from.
-            app.profiles.add(
+            val created = app.profiles.add(
                 organisation = name,
-                person = "$firstName $lastName".trim(),
                 defaults = UseSmileIDSampleUserDetails(
                     firstName = firstName,
                     lastName = lastName,
                     email = email,
                     phone = phone,
                 ),
+                activate = activate,
             )
+            onCreated(created)
             onDismissRequest()
         },
         onDismissRequest = onDismissRequest,

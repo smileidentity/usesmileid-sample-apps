@@ -42,7 +42,7 @@ android {
             raw.toIntOrNull()?.takeIf { it > 0 }
                 ?: throw GradleException("VERSION_CODE must be a positive integer, got '$raw'")
         } ?: 1
-        versionName = "1.0.1"
+        versionName = "1.0.2"
     }
 
     signingConfigs {

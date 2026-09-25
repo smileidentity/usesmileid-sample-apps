@@ -355,10 +355,6 @@ describe('the details screen', () => {
     expect(copied).toEqual([fixtures[0]!.id]);
   });
 
-  it('publishes the environment, which only this screen and the result card do', async () => {
-    const rendered = await renderInTheme(details(), false);
-    expect(rendered.queryByText('sandbox')).not.toBeNull();
-  });
 });
 
 describe('select mode is reported to whatever draws the bottom chrome', () => {
@@ -399,5 +395,19 @@ describe('select mode is reported to whatever draws the bottom chrome', () => {
 
     await rendered.unmount();
     expect(reported).toEqual([false, true, false]);
+  });
+});
+
+describe('the details rows', () => {
+  it('are the five Android and iOS draw, in their order', async () => {
+    const rendered = await renderInTheme(details(), false);
+    const ids = rendered.queryAllByTestId(/^sample_detail_field_/).map((node) => node.props.testID as string);
+    expect(ids).toEqual([
+      'sample_detail_field_createdAt',
+      'sample_detail_field_jobId',
+      'sample_detail_field_message',
+      'sample_detail_field_status',
+      'sample_detail_field_userId',
+    ]);
   });
 });

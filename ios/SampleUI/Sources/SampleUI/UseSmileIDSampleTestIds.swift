@@ -21,6 +21,7 @@ public enum UseSmileIDSampleTestIds {
   public static let sessionEndedBanner = "sample_session_ended_banner"
   public static let scenarioDrawerButton = "sample_scenario_drawer_button"
   public static let signOut = "sample_sign_out"
+  public static let signOutConfirm = "sample_sign_out_confirm"
   public static let versionLabel = "sample_version_label"
   public static let settingEnhancedSmartSelfie = "sample_setting_enhanced_smart_selfie"
   public static let settingAgentMode = "sample_setting_agent_mode"
@@ -142,12 +143,17 @@ public enum UseSmileIDSampleTestIds {
   public static let userDetailsHint = "sample_user_details_hint"
   public static let userDetailsContinue = "sample_user_details_continue"
   public static let rememberDetailsSwitch = "sample_remember_details_switch"
+  public static let userDetailsProfile = "sample_user_details_profile"
 
   public static let profilesScreen = "sample_profiles_screen"
   public static let createProfile = "sample_create_profile"
   public static let profileConfigScreen = "sample_profile_config_screen"
   public static let profileConfigCallbackUrl = "sample_profile_config_callback_url"
   public static let profileConfigSave = "sample_profile_config_save"
+  public static let profileConfigName = "sample_profile_config_name"
+  public static let profileConfigDelete = "sample_profile_config_delete"
+  public static let profileDeleteConfirm = "sample_profile_delete_confirm"
+  public static let profileSwitchNew = "sample_profile_switch_new"
   public static let profileSwitchSheet = "sample_profile_switch_sheet"
   public static let newProfileSheet = "sample_new_profile_sheet"
   public static let newProfileName = "sample_new_profile_name"
@@ -215,19 +221,20 @@ public enum UseSmileIDSampleTestIds {
     envChip, navToken, productCardPrefix, settingNavPrefix,
     detailFieldPrefix, detailCopyPrefix, statusBadge, detailsDelete, detailsEmpty, detailsRefresh,
     userDetailsScreen, userDetailsFieldPrefix, userDetailsHint, userDetailsContinue,
-    rememberDetailsSwitch,
+    rememberDetailsSwitch, userDetailsProfile,
     kycFormScreen, countryTrigger, idTypeTrigger, idNumberInput, kycContinue, tokenFloat,
     countrySheet, countrySearch, countryEmpty, countryOptionPrefix,
     idTypeSheet, idTypeSearch, idTypeEmpty, idTypeOptionPrefix,
     profileAvatarButton, profileSummary,
     profilesScreen, profileRowPrefix, createProfile,
     profileConfigScreen, profileConfigFieldPrefix, profileConfigCallbackUrl, profileConfigSave,
+    profileConfigName, profileConfigDelete, profileDeleteConfirm, profileSwitchNew,
     profileSwitchSheet, newProfileSheet, newProfileName, newProfileFirstName, newProfileLastName,
     newProfileEmail, newProfilePhone, newProfileSave,
     sessionCard, sessionCountdown, sessionEndedBanner,
     licensesScreen, licensesEmpty, licenseRowPrefix, licenseTextPrefix, licenseLinkPrefix,
     scanTokenScreen, tokenManualEntry, tokenPaste, tokenSimulate, tokenEnvironmentPrefix,
-    scenarioDrawerButton, scenarioDrawer, scenarioItemPrefix, themeItemPrefix, signOut, versionLabel,
+    scenarioDrawerButton, scenarioDrawer, scenarioItemPrefix, themeItemPrefix, signOut, signOutConfirm, versionLabel,
     resultCard, resultActiveScenario, resultActiveTheme, resultRoute, resultEnvironment,
     resultJobId, resultUserId, resultJobStatus, resultResultCount, resultRefreshCount,
     resultLastError, resultSdkVersion,

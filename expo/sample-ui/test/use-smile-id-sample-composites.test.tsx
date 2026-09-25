@@ -241,9 +241,9 @@ const cases: { component: string; states: Record<string, Case> }[] = [
       summary: {
         element: () => (
           <UseSmileIDSampleProfileRow
-            organisation="Default profile"
-            supportingText="Tap to configure"
-            initials="DP"
+            organisation="No profile yet"
+            supportingText="Tap to create one"
+            initials=""
             selected={false}
             onPress={noop}
             trailing={<UseSmileIDSampleSettingRowChevron />}

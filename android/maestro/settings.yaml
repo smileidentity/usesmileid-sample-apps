@@ -14,7 +14,7 @@ appId: ${APP_ID}
 - runFlow: subflows/settings-defaults.yaml
 
 # --- sign out ------------------------------------------------------------------------------------
-# Clears the local session and the saved form details. In a folder run there IS a session to clear —
+# Clears the local session, the form details and every profile. In a folder run there IS a session to clear —
 # launch-args.yaml leaves one — and clearing it is what makes the consent section below deterministic:
 # a token that bound consent would compose the screen this flow expects to be missing.
 - scrollUntilVisible:
@@ -22,10 +22,14 @@ appId: ${APP_ID}
       id: "sample_sign_out"
     direction: DOWN
     visibilityPercentage: 80
+    # Centred: left at the bottom edge the row sits in the system gesture area, which eats the tap.
+    centerElement: true
     # 20s is the default and this list is long enough to outrun it on a warm device.
     timeout: 45000
 - tapOn:
     id: "sample_sign_out"
+- tapOn:
+    id: "sample_sign_out_confirm"
 - assertVisible:
     id: "sample_products_screen"
 - assertNotVisible:

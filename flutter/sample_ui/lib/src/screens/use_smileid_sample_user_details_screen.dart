@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../components/use_smileid_sample_avatar.dart';
 import '../components/use_smileid_sample_button.dart';
+import '../components/use_smileid_sample_glyphs.dart';
 import '../components/use_smileid_sample_key_value_edit_row.dart';
+import '../components/use_smileid_sample_profile_row.dart';
 import '../components/use_smileid_sample_section_label.dart';
 import '../components/use_smileid_sample_setting_row.dart';
 import '../components/use_smileid_sample_switch.dart';
@@ -15,8 +18,7 @@ import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
-/// The details every product collects before its flow starts. It opens EMPTY even for a profile
-/// with saved defaults, as the twin does; whether it should is an open product question.
+/// The details every product collects before its flow starts, filled from the profile the run is for.
 class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
   /// [requirement] is what a token has not already covered; its default asks for everything.
   const UseSmileIDSampleUserDetailsScreen({
@@ -26,8 +28,13 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
     required this.onFieldChanged,
     required this.onContinue,
     this.requirement = const UseSmileIDSampleUserDetailsRequirement(),
-    this.remember = false,
-    this.onRememberChanged,
+    this.profile,
+    this.profileIndex = 0,
+    this.onProfileTap,
+    this.saveToProfile = true,
+    this.onSaveToProfileChanged,
+    this.organisation = '',
+    this.onOrganisationChanged,
     super.key,
   });
 
@@ -50,11 +57,26 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
   /// What is still outstanding.
   final UseSmileIDSampleUserDetailsRequirement requirement;
 
-  /// Whether the remember switch is on; it persists nothing today.
-  final bool remember;
+  /// Who this run is for; null while there is no profile, when the form offers to create one.
+  final UseSmileIDSampleProfile? profile;
+
+  /// The profile's position, which picks its avatar hue.
+  final int profileIndex;
+
+  /// Opens the switch sheet.
+  final VoidCallback? onProfileTap;
+
+  /// Whether Continue keeps what was typed: into the profile, or as a new one when there is none.
+  final bool saveToProfile;
 
   /// Toggles that switch.
-  final ValueChanged<bool>? onRememberChanged;
+  final ValueChanged<bool>? onSaveToProfileChanged;
+
+  /// The new profile's name, asked only while there is no profile.
+  final String organisation;
+
+  /// Called on every keystroke in the organisation row.
+  final ValueChanged<String>? onOrganisationChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +84,7 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
       context,
     );
     final bool satisfied = requirement.isSatisfiedBy(details);
+    final UseSmileIDSampleProfile? profile = this.profile;
     return Semantics(
       identifier: UseSmileIDSampleTestIds.userDetailsScreen,
       child: Column(
@@ -73,6 +96,22 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                 horizontal: SmileDimens.spacingMd,
               ),
               children: <Widget>[
+                UseSmileIDSampleProfileRow(
+                  organisation:
+                      profile?.title ?? UseSmileIDSampleProfiles.noProfileLabel,
+                  supportingText: profile == null
+                      ? 'Your details below will create one'
+                      : 'Tap to switch profile',
+                  initials: profile?.initials ?? '',
+                  selected: false,
+                  avatarColor: avatarColorForProfile(profileIndex),
+                  onTap: onProfileTap ?? () {},
+                  trailing: UseSmileIDSampleGlyphs.chevronDown(
+                    colors.textMuted,
+                  ),
+                  testId: UseSmileIDSampleTestIds.userDetailsProfile,
+                ),
+                const SizedBox(height: SmileDimens.spacingXs),
                 const UseSmileIDSampleSectionLabel(text: 'YOUR DETAILS'),
                 const SizedBox(height: SmileDimens.spacingXs),
                 DecoratedBox(
@@ -88,6 +127,18 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                     borderRadius: UseSmileIDSampleShapes.card,
                     child: Column(
                       children: <Widget>[
+                        if (profile == null) ...<Widget>[
+                          UseSmileIDSampleKeyValueEditRow(
+                            label: 'Profile name (optional)',
+                            value: organisation,
+                            onChanged: onOrganisationChanged ?? (_) {},
+                            placeholder: 'Shown on the consent screen',
+                            testId: UseSmileIDSampleTestIds.userDetailsField(
+                              organisationFieldId,
+                            ),
+                          ),
+                          const UseSmileIDSampleSettingRowDivider(),
+                        ],
                         for (
                           int i = 0;
                           i < UseSmileIDSampleUserField.values.length;
@@ -143,13 +194,14 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Offered only once the form is satisfied, which is the same predicate Continue
-                // uses: there is nothing to remember until there is something complete.
-                if (satisfied) ...<Widget>[
+                if (satisfied && details != profile?.defaults) ...<Widget>[
                   const SizedBox(height: SmileDimens.spacingXs),
                   _RememberCard(
-                    remember: remember,
-                    onChanged: onRememberChanged,
+                    label: profile == null
+                        ? 'Save as a new profile'
+                        : 'Save to ${profile.title}',
+                    remember: saveToProfile,
+                    onChanged: onSaveToProfileChanged,
                     colors: colors,
                   ),
                 ],
@@ -177,11 +229,13 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
 /// One line of text beside a switch; deliberately not a SettingRow, which draws a taller row.
 class _RememberCard extends StatelessWidget {
   const _RememberCard({
+    required this.label,
     required this.remember,
     required this.onChanged,
     required this.colors,
   });
 
+  final String label;
   final bool remember;
   final ValueChanged<bool>? onChanged;
   final UseSmileIDSampleColors colors;
@@ -204,7 +258,7 @@ class _RememberCard extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: Text(
-              'Remember these details for next time',
+              label,
               style: UseSmileIDSampleType.textStyleSubtitle.copyWith(
                 fontSize: _rememberTextSize,
                 color: colors.textBody,
@@ -225,3 +279,6 @@ class _RememberCard extends StatelessWidget {
 
 /// The remember line's run, the edit rows' size rather than body's.
 const double _rememberTextSize = 13.5;
+
+/// The organisation row's id suffix, beside the four user fields'.
+const String organisationFieldId = 'organisation';

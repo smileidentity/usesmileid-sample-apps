@@ -9148,6 +9148,229 @@ exports[`userDetails dark complete 1`] = `
   >
     <View>
       <View
+        accessibilityRole="radio"
+        accessibilityState={
+          {
+            "busy": undefined,
+            "checked": undefined,
+            "disabled": undefined,
+            "expanded": undefined,
+            "selected": false,
+          }
+        }
+        accessibilityValue={
+          {
+            "max": undefined,
+            "min": undefined,
+            "now": undefined,
+            "text": undefined,
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        focusable={true}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          [
+            {
+              "alignSelf": "stretch",
+              "overflow": "hidden",
+            },
+            {
+              "backgroundColor": "#272a35",
+              "borderColor": "#2d3748",
+              "borderRadius": 16,
+              "borderWidth": 0.5,
+            },
+            {
+              "marginHorizontal": 16,
+            },
+          ]
+        }
+        testID="sample_user_details_profile"
+      >
+        <View
+          style={
+            [
+              {
+                "alignItems": "center",
+                "flexDirection": "row",
+              },
+              {
+                "margin": -0.5,
+              },
+              {
+                "columnGap": 12,
+                "minHeight": 64,
+                "paddingHorizontal": 14,
+                "paddingVertical": 12,
+              },
+            ]
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "justifyContent": "center",
+                  "overflow": "hidden",
+                },
+                {
+                  "backgroundColor": "#1a1c23",
+                  "borderRadius": 12,
+                  "height": 44,
+                  "width": 44,
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Medium",
+                    "fontSize": 14,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -0.8859999999999992,
+                    "marginTop": -0.8859999999999992,
+                  },
+                  {
+                    "color": "#848282",
+                  },
+                  {
+                    "textAlign": "center",
+                  },
+                ]
+              }
+            >
+              +
+            </Text>
+          </View>
+          <View
+            style={
+              [
+                {
+                  "flex": 1,
+                },
+                {
+                  "rowGap": 4,
+                },
+              ]
+            }
+          >
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-SemiBold",
+                    "fontSize": 14.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 24,
+                    "marginBottom": -2.5604999999999993,
+                    "marginTop": -2.5604999999999993,
+                  },
+                  {
+                    "color": "#f2f2f2",
+                  },
+                ]
+              }
+            >
+              No profile yet
+            </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Medium",
+                    "fontSize": 12,
+                    "letterSpacing": 0,
+                    "lineHeight": 16,
+                    "marginBottom": -0.18799999999999972,
+                    "marginTop": -0.18799999999999972,
+                  },
+                  {
+                    "color": "#848282",
+                  },
+                ]
+              }
+            >
+              Your details below will create one
+            </Text>
+          </View>
+          <RNSVGSvgView
+            align="xMidYMid"
+            bbHeight={12}
+            bbWidth={12}
+            fill="none"
+            focusable={false}
+            height={12}
+            meetOrSlice={0}
+            minX={0}
+            minY={0}
+            style={
+              [
+                {
+                  "backgroundColor": "transparent",
+                  "borderWidth": 0,
+                },
+                {
+                  "flex": 0,
+                  "height": 12,
+                  "width": 12,
+                },
+              ]
+            }
+            vbHeight={12}
+            vbWidth={12}
+            width={12}
+          >
+            <RNSVGGroup
+              fill={null}
+              propList={
+                [
+                  "fill",
+                ]
+              }
+            >
+              <RNSVGPath
+                d="M2 4L6 8L10 4"
+                fill={null}
+                opacity={1}
+                propList={
+                  [
+                    "fill",
+                    "stroke",
+                    "strokeWidth",
+                    "strokeLinecap",
+                    "strokeLinejoin",
+                  ]
+                }
+                stroke={
+                  {
+                    "payload": 4286874242,
+                    "type": 0,
+                  }
+                }
+                strokeLinecap={1}
+                strokeLinejoin={1}
+                strokeWidth={2}
+              />
+            </RNSVGGroup>
+          </RNSVGSvgView>
+        </View>
+      </View>
+      <View
         style={
           [
             {
@@ -9203,6 +9426,85 @@ exports[`userDetails dark complete 1`] = `
               }
             }
           >
+            <View>
+              <View
+                style={
+                  [
+                    {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "flexWrap": "wrap",
+                      "justifyContent": "space-between",
+                      "width": "100%",
+                    },
+                    {
+                      "backgroundColor": "#272a35",
+                      "minHeight": 44,
+                      "paddingHorizontal": 15,
+                      "paddingVertical": 14,
+                      "rowGap": 4,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    [
+                      {
+                        "fontFamily": "DMSans-Medium",
+                        "fontSize": 13.5,
+                        "letterSpacing": 0,
+                        "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
+                        "color": "#f2f2f2",
+                      },
+                    ]
+                  }
+                >
+                  Profile name (optional)
+                </Text>
+                <TextInput
+                  editable={true}
+                  onChangeText={[Function]}
+                  placeholder="Shown on the consent screen"
+                  placeholderTextColor="#848282"
+                  selectionColor="#4d88ff"
+                  style={
+                    [
+                      {
+                        "fontFamily": "DMSans-Medium",
+                        "fontSize": 13.5,
+                        "letterSpacing": 0,
+                        "lineHeight": 17.577,
+                        "marginBottom": 0,
+                        "marginTop": 0,
+                      },
+                      {
+                        "padding": 0,
+                        "textAlign": "right",
+                      },
+                      {
+                        "color": "#f2f2f2",
+                      },
+                    ]
+                  }
+                  testID="sample_user_details_field_organisation"
+                  value=""
+                />
+              </View>
+              <View
+                style={
+                  {
+                    "backgroundColor": "#2d3748",
+                    "height": 0.5,
+                  }
+                }
+              />
+            </View>
             <View>
               <View
                 style={
@@ -9578,7 +9880,7 @@ exports[`userDetails dark complete 1`] = `
             ]
           }
         >
-          Remember these details for next time
+          Save as a new profile
         </Text>
         <RCTSwitch
           accessibilityRole="switch"
@@ -9900,6 +10202,229 @@ exports[`userDetails dark empty 1`] = `
   >
     <View>
       <View
+        accessibilityRole="radio"
+        accessibilityState={
+          {
+            "busy": undefined,
+            "checked": undefined,
+            "disabled": undefined,
+            "expanded": undefined,
+            "selected": false,
+          }
+        }
+        accessibilityValue={
+          {
+            "max": undefined,
+            "min": undefined,
+            "now": undefined,
+            "text": undefined,
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        focusable={true}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          [
+            {
+              "alignSelf": "stretch",
+              "overflow": "hidden",
+            },
+            {
+              "backgroundColor": "#272a35",
+              "borderColor": "#2d3748",
+              "borderRadius": 16,
+              "borderWidth": 0.5,
+            },
+            {
+              "marginHorizontal": 16,
+            },
+          ]
+        }
+        testID="sample_user_details_profile"
+      >
+        <View
+          style={
+            [
+              {
+                "alignItems": "center",
+                "flexDirection": "row",
+              },
+              {
+                "margin": -0.5,
+              },
+              {
+                "columnGap": 12,
+                "minHeight": 64,
+                "paddingHorizontal": 14,
+                "paddingVertical": 12,
+              },
+            ]
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "justifyContent": "center",
+                  "overflow": "hidden",
+                },
+                {
+                  "backgroundColor": "#1a1c23",
+                  "borderRadius": 12,
+                  "height": 44,
+                  "width": 44,
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Medium",
+                    "fontSize": 14,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -0.8859999999999992,
+                    "marginTop": -0.8859999999999992,
+                  },
+                  {
+                    "color": "#848282",
+                  },
+                  {
+                    "textAlign": "center",
+                  },
+                ]
+              }
+            >
+              +
+            </Text>
+          </View>
+          <View
+            style={
+              [
+                {
+                  "flex": 1,
+                },
+                {
+                  "rowGap": 4,
+                },
+              ]
+            }
+          >
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-SemiBold",
+                    "fontSize": 14.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 24,
+                    "marginBottom": -2.5604999999999993,
+                    "marginTop": -2.5604999999999993,
+                  },
+                  {
+                    "color": "#f2f2f2",
+                  },
+                ]
+              }
+            >
+              No profile yet
+            </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Medium",
+                    "fontSize": 12,
+                    "letterSpacing": 0,
+                    "lineHeight": 16,
+                    "marginBottom": -0.18799999999999972,
+                    "marginTop": -0.18799999999999972,
+                  },
+                  {
+                    "color": "#848282",
+                  },
+                ]
+              }
+            >
+              Your details below will create one
+            </Text>
+          </View>
+          <RNSVGSvgView
+            align="xMidYMid"
+            bbHeight={12}
+            bbWidth={12}
+            fill="none"
+            focusable={false}
+            height={12}
+            meetOrSlice={0}
+            minX={0}
+            minY={0}
+            style={
+              [
+                {
+                  "backgroundColor": "transparent",
+                  "borderWidth": 0,
+                },
+                {
+                  "flex": 0,
+                  "height": 12,
+                  "width": 12,
+                },
+              ]
+            }
+            vbHeight={12}
+            vbWidth={12}
+            width={12}
+          >
+            <RNSVGGroup
+              fill={null}
+              propList={
+                [
+                  "fill",
+                ]
+              }
+            >
+              <RNSVGPath
+                d="M2 4L6 8L10 4"
+                fill={null}
+                opacity={1}
+                propList={
+                  [
+                    "fill",
+                    "stroke",
+                    "strokeWidth",
+                    "strokeLinecap",
+                    "strokeLinejoin",
+                  ]
+                }
+                stroke={
+                  {
+                    "payload": 4286874242,
+                    "type": 0,
+                  }
+                }
+                strokeLinecap={1}
+                strokeLinejoin={1}
+                strokeWidth={2}
+              />
+            </RNSVGGroup>
+          </RNSVGSvgView>
+        </View>
+      </View>
+      <View
         style={
           [
             {
@@ -9955,6 +10480,85 @@ exports[`userDetails dark empty 1`] = `
               }
             }
           >
+            <View>
+              <View
+                style={
+                  [
+                    {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "flexWrap": "wrap",
+                      "justifyContent": "space-between",
+                      "width": "100%",
+                    },
+                    {
+                      "backgroundColor": "#272a35",
+                      "minHeight": 44,
+                      "paddingHorizontal": 15,
+                      "paddingVertical": 14,
+                      "rowGap": 4,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    [
+                      {
+                        "fontFamily": "DMSans-Medium",
+                        "fontSize": 13.5,
+                        "letterSpacing": 0,
+                        "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
+                        "color": "#f2f2f2",
+                      },
+                    ]
+                  }
+                >
+                  Profile name (optional)
+                </Text>
+                <TextInput
+                  editable={true}
+                  onChangeText={[Function]}
+                  placeholder="Shown on the consent screen"
+                  placeholderTextColor="#848282"
+                  selectionColor="#4d88ff"
+                  style={
+                    [
+                      {
+                        "fontFamily": "DMSans-Medium",
+                        "fontSize": 13.5,
+                        "letterSpacing": 0,
+                        "lineHeight": 17.577,
+                        "marginBottom": 0,
+                        "marginTop": 0,
+                      },
+                      {
+                        "padding": 0,
+                        "textAlign": "right",
+                      },
+                      {
+                        "color": "#f2f2f2",
+                      },
+                    ]
+                  }
+                  testID="sample_user_details_field_organisation"
+                  value=""
+                />
+              </View>
+              <View
+                style={
+                  {
+                    "backgroundColor": "#2d3748",
+                    "height": 0.5,
+                  }
+                }
+              />
+            </View>
             <View>
               <View
                 style={
@@ -10575,6 +11179,229 @@ exports[`userDetails dark tokenSuppliedNames 1`] = `
   >
     <View>
       <View
+        accessibilityRole="radio"
+        accessibilityState={
+          {
+            "busy": undefined,
+            "checked": undefined,
+            "disabled": undefined,
+            "expanded": undefined,
+            "selected": false,
+          }
+        }
+        accessibilityValue={
+          {
+            "max": undefined,
+            "min": undefined,
+            "now": undefined,
+            "text": undefined,
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        focusable={true}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          [
+            {
+              "alignSelf": "stretch",
+              "overflow": "hidden",
+            },
+            {
+              "backgroundColor": "#272a35",
+              "borderColor": "#2d3748",
+              "borderRadius": 16,
+              "borderWidth": 0.5,
+            },
+            {
+              "marginHorizontal": 16,
+            },
+          ]
+        }
+        testID="sample_user_details_profile"
+      >
+        <View
+          style={
+            [
+              {
+                "alignItems": "center",
+                "flexDirection": "row",
+              },
+              {
+                "margin": -0.5,
+              },
+              {
+                "columnGap": 12,
+                "minHeight": 64,
+                "paddingHorizontal": 14,
+                "paddingVertical": 12,
+              },
+            ]
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "justifyContent": "center",
+                  "overflow": "hidden",
+                },
+                {
+                  "backgroundColor": "#1a1c23",
+                  "borderRadius": 12,
+                  "height": 44,
+                  "width": 44,
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Medium",
+                    "fontSize": 14,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -0.8859999999999992,
+                    "marginTop": -0.8859999999999992,
+                  },
+                  {
+                    "color": "#848282",
+                  },
+                  {
+                    "textAlign": "center",
+                  },
+                ]
+              }
+            >
+              +
+            </Text>
+          </View>
+          <View
+            style={
+              [
+                {
+                  "flex": 1,
+                },
+                {
+                  "rowGap": 4,
+                },
+              ]
+            }
+          >
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-SemiBold",
+                    "fontSize": 14.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 24,
+                    "marginBottom": -2.5604999999999993,
+                    "marginTop": -2.5604999999999993,
+                  },
+                  {
+                    "color": "#f2f2f2",
+                  },
+                ]
+              }
+            >
+              No profile yet
+            </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Medium",
+                    "fontSize": 12,
+                    "letterSpacing": 0,
+                    "lineHeight": 16,
+                    "marginBottom": -0.18799999999999972,
+                    "marginTop": -0.18799999999999972,
+                  },
+                  {
+                    "color": "#848282",
+                  },
+                ]
+              }
+            >
+              Your details below will create one
+            </Text>
+          </View>
+          <RNSVGSvgView
+            align="xMidYMid"
+            bbHeight={12}
+            bbWidth={12}
+            fill="none"
+            focusable={false}
+            height={12}
+            meetOrSlice={0}
+            minX={0}
+            minY={0}
+            style={
+              [
+                {
+                  "backgroundColor": "transparent",
+                  "borderWidth": 0,
+                },
+                {
+                  "flex": 0,
+                  "height": 12,
+                  "width": 12,
+                },
+              ]
+            }
+            vbHeight={12}
+            vbWidth={12}
+            width={12}
+          >
+            <RNSVGGroup
+              fill={null}
+              propList={
+                [
+                  "fill",
+                ]
+              }
+            >
+              <RNSVGPath
+                d="M2 4L6 8L10 4"
+                fill={null}
+                opacity={1}
+                propList={
+                  [
+                    "fill",
+                    "stroke",
+                    "strokeWidth",
+                    "strokeLinecap",
+                    "strokeLinejoin",
+                  ]
+                }
+                stroke={
+                  {
+                    "payload": 4286874242,
+                    "type": 0,
+                  }
+                }
+                strokeLinecap={1}
+                strokeLinejoin={1}
+                strokeWidth={2}
+              />
+            </RNSVGGroup>
+          </RNSVGSvgView>
+        </View>
+      </View>
+      <View
         style={
           [
             {
@@ -10630,6 +11457,85 @@ exports[`userDetails dark tokenSuppliedNames 1`] = `
               }
             }
           >
+            <View>
+              <View
+                style={
+                  [
+                    {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "flexWrap": "wrap",
+                      "justifyContent": "space-between",
+                      "width": "100%",
+                    },
+                    {
+                      "backgroundColor": "#272a35",
+                      "minHeight": 44,
+                      "paddingHorizontal": 15,
+                      "paddingVertical": 14,
+                      "rowGap": 4,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    [
+                      {
+                        "fontFamily": "DMSans-Medium",
+                        "fontSize": 13.5,
+                        "letterSpacing": 0,
+                        "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
+                        "color": "#f2f2f2",
+                      },
+                    ]
+                  }
+                >
+                  Profile name (optional)
+                </Text>
+                <TextInput
+                  editable={true}
+                  onChangeText={[Function]}
+                  placeholder="Shown on the consent screen"
+                  placeholderTextColor="#848282"
+                  selectionColor="#4d88ff"
+                  style={
+                    [
+                      {
+                        "fontFamily": "DMSans-Medium",
+                        "fontSize": 13.5,
+                        "letterSpacing": 0,
+                        "lineHeight": 17.577,
+                        "marginBottom": 0,
+                        "marginTop": 0,
+                      },
+                      {
+                        "padding": 0,
+                        "textAlign": "right",
+                      },
+                      {
+                        "color": "#f2f2f2",
+                      },
+                    ]
+                  }
+                  testID="sample_user_details_field_organisation"
+                  value=""
+                />
+              </View>
+              <View
+                style={
+                  {
+                    "backgroundColor": "#2d3748",
+                    "height": 0.5,
+                  }
+                }
+              />
+            </View>
             <View>
               <View
                 style={
@@ -11250,6 +12156,229 @@ exports[`userDetails light complete 1`] = `
   >
     <View>
       <View
+        accessibilityRole="radio"
+        accessibilityState={
+          {
+            "busy": undefined,
+            "checked": undefined,
+            "disabled": undefined,
+            "expanded": undefined,
+            "selected": false,
+          }
+        }
+        accessibilityValue={
+          {
+            "max": undefined,
+            "min": undefined,
+            "now": undefined,
+            "text": undefined,
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        focusable={true}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          [
+            {
+              "alignSelf": "stretch",
+              "overflow": "hidden",
+            },
+            {
+              "backgroundColor": "#ffffff",
+              "borderColor": "#eaecf0",
+              "borderRadius": 16,
+              "borderWidth": 0.5,
+            },
+            {
+              "marginHorizontal": 16,
+            },
+          ]
+        }
+        testID="sample_user_details_profile"
+      >
+        <View
+          style={
+            [
+              {
+                "alignItems": "center",
+                "flexDirection": "row",
+              },
+              {
+                "margin": -0.5,
+              },
+              {
+                "columnGap": 12,
+                "minHeight": 64,
+                "paddingHorizontal": 14,
+                "paddingVertical": 12,
+              },
+            ]
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "justifyContent": "center",
+                  "overflow": "hidden",
+                },
+                {
+                  "backgroundColor": "#f9fafb",
+                  "borderRadius": 12,
+                  "height": 44,
+                  "width": 44,
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Medium",
+                    "fontSize": 14,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -0.8859999999999992,
+                    "marginTop": -0.8859999999999992,
+                  },
+                  {
+                    "color": "#848282",
+                  },
+                  {
+                    "textAlign": "center",
+                  },
+                ]
+              }
+            >
+              +
+            </Text>
+          </View>
+          <View
+            style={
+              [
+                {
+                  "flex": 1,
+                },
+                {
+                  "rowGap": 4,
+                },
+              ]
+            }
+          >
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-SemiBold",
+                    "fontSize": 14.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 24,
+                    "marginBottom": -2.5604999999999993,
+                    "marginTop": -2.5604999999999993,
+                  },
+                  {
+                    "color": "#21232c",
+                  },
+                ]
+              }
+            >
+              No profile yet
+            </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Medium",
+                    "fontSize": 12,
+                    "letterSpacing": 0,
+                    "lineHeight": 16,
+                    "marginBottom": -0.18799999999999972,
+                    "marginTop": -0.18799999999999972,
+                  },
+                  {
+                    "color": "#848282",
+                  },
+                ]
+              }
+            >
+              Your details below will create one
+            </Text>
+          </View>
+          <RNSVGSvgView
+            align="xMidYMid"
+            bbHeight={12}
+            bbWidth={12}
+            fill="none"
+            focusable={false}
+            height={12}
+            meetOrSlice={0}
+            minX={0}
+            minY={0}
+            style={
+              [
+                {
+                  "backgroundColor": "transparent",
+                  "borderWidth": 0,
+                },
+                {
+                  "flex": 0,
+                  "height": 12,
+                  "width": 12,
+                },
+              ]
+            }
+            vbHeight={12}
+            vbWidth={12}
+            width={12}
+          >
+            <RNSVGGroup
+              fill={null}
+              propList={
+                [
+                  "fill",
+                ]
+              }
+            >
+              <RNSVGPath
+                d="M2 4L6 8L10 4"
+                fill={null}
+                opacity={1}
+                propList={
+                  [
+                    "fill",
+                    "stroke",
+                    "strokeWidth",
+                    "strokeLinecap",
+                    "strokeLinejoin",
+                  ]
+                }
+                stroke={
+                  {
+                    "payload": 4286874242,
+                    "type": 0,
+                  }
+                }
+                strokeLinecap={1}
+                strokeLinejoin={1}
+                strokeWidth={2}
+              />
+            </RNSVGGroup>
+          </RNSVGSvgView>
+        </View>
+      </View>
+      <View
         style={
           [
             {
@@ -11305,6 +12434,85 @@ exports[`userDetails light complete 1`] = `
               }
             }
           >
+            <View>
+              <View
+                style={
+                  [
+                    {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "flexWrap": "wrap",
+                      "justifyContent": "space-between",
+                      "width": "100%",
+                    },
+                    {
+                      "backgroundColor": "#ffffff",
+                      "minHeight": 44,
+                      "paddingHorizontal": 15,
+                      "paddingVertical": 14,
+                      "rowGap": 4,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    [
+                      {
+                        "fontFamily": "DMSans-Medium",
+                        "fontSize": 13.5,
+                        "letterSpacing": 0,
+                        "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
+                        "color": "#21232c",
+                      },
+                    ]
+                  }
+                >
+                  Profile name (optional)
+                </Text>
+                <TextInput
+                  editable={true}
+                  onChangeText={[Function]}
+                  placeholder="Shown on the consent screen"
+                  placeholderTextColor="#848282"
+                  selectionColor="#151f72"
+                  style={
+                    [
+                      {
+                        "fontFamily": "DMSans-Medium",
+                        "fontSize": 13.5,
+                        "letterSpacing": 0,
+                        "lineHeight": 17.577,
+                        "marginBottom": 0,
+                        "marginTop": 0,
+                      },
+                      {
+                        "padding": 0,
+                        "textAlign": "right",
+                      },
+                      {
+                        "color": "#21232c",
+                      },
+                    ]
+                  }
+                  testID="sample_user_details_field_organisation"
+                  value=""
+                />
+              </View>
+              <View
+                style={
+                  {
+                    "backgroundColor": "#eaecf0",
+                    "height": 0.5,
+                  }
+                }
+              />
+            </View>
             <View>
               <View
                 style={
@@ -11680,7 +12888,7 @@ exports[`userDetails light complete 1`] = `
             ]
           }
         >
-          Remember these details for next time
+          Save as a new profile
         </Text>
         <RCTSwitch
           accessibilityRole="switch"
@@ -12002,6 +13210,229 @@ exports[`userDetails light empty 1`] = `
   >
     <View>
       <View
+        accessibilityRole="radio"
+        accessibilityState={
+          {
+            "busy": undefined,
+            "checked": undefined,
+            "disabled": undefined,
+            "expanded": undefined,
+            "selected": false,
+          }
+        }
+        accessibilityValue={
+          {
+            "max": undefined,
+            "min": undefined,
+            "now": undefined,
+            "text": undefined,
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        focusable={true}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          [
+            {
+              "alignSelf": "stretch",
+              "overflow": "hidden",
+            },
+            {
+              "backgroundColor": "#ffffff",
+              "borderColor": "#eaecf0",
+              "borderRadius": 16,
+              "borderWidth": 0.5,
+            },
+            {
+              "marginHorizontal": 16,
+            },
+          ]
+        }
+        testID="sample_user_details_profile"
+      >
+        <View
+          style={
+            [
+              {
+                "alignItems": "center",
+                "flexDirection": "row",
+              },
+              {
+                "margin": -0.5,
+              },
+              {
+                "columnGap": 12,
+                "minHeight": 64,
+                "paddingHorizontal": 14,
+                "paddingVertical": 12,
+              },
+            ]
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "justifyContent": "center",
+                  "overflow": "hidden",
+                },
+                {
+                  "backgroundColor": "#f9fafb",
+                  "borderRadius": 12,
+                  "height": 44,
+                  "width": 44,
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Medium",
+                    "fontSize": 14,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -0.8859999999999992,
+                    "marginTop": -0.8859999999999992,
+                  },
+                  {
+                    "color": "#848282",
+                  },
+                  {
+                    "textAlign": "center",
+                  },
+                ]
+              }
+            >
+              +
+            </Text>
+          </View>
+          <View
+            style={
+              [
+                {
+                  "flex": 1,
+                },
+                {
+                  "rowGap": 4,
+                },
+              ]
+            }
+          >
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-SemiBold",
+                    "fontSize": 14.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 24,
+                    "marginBottom": -2.5604999999999993,
+                    "marginTop": -2.5604999999999993,
+                  },
+                  {
+                    "color": "#21232c",
+                  },
+                ]
+              }
+            >
+              No profile yet
+            </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Medium",
+                    "fontSize": 12,
+                    "letterSpacing": 0,
+                    "lineHeight": 16,
+                    "marginBottom": -0.18799999999999972,
+                    "marginTop": -0.18799999999999972,
+                  },
+                  {
+                    "color": "#848282",
+                  },
+                ]
+              }
+            >
+              Your details below will create one
+            </Text>
+          </View>
+          <RNSVGSvgView
+            align="xMidYMid"
+            bbHeight={12}
+            bbWidth={12}
+            fill="none"
+            focusable={false}
+            height={12}
+            meetOrSlice={0}
+            minX={0}
+            minY={0}
+            style={
+              [
+                {
+                  "backgroundColor": "transparent",
+                  "borderWidth": 0,
+                },
+                {
+                  "flex": 0,
+                  "height": 12,
+                  "width": 12,
+                },
+              ]
+            }
+            vbHeight={12}
+            vbWidth={12}
+            width={12}
+          >
+            <RNSVGGroup
+              fill={null}
+              propList={
+                [
+                  "fill",
+                ]
+              }
+            >
+              <RNSVGPath
+                d="M2 4L6 8L10 4"
+                fill={null}
+                opacity={1}
+                propList={
+                  [
+                    "fill",
+                    "stroke",
+                    "strokeWidth",
+                    "strokeLinecap",
+                    "strokeLinejoin",
+                  ]
+                }
+                stroke={
+                  {
+                    "payload": 4286874242,
+                    "type": 0,
+                  }
+                }
+                strokeLinecap={1}
+                strokeLinejoin={1}
+                strokeWidth={2}
+              />
+            </RNSVGGroup>
+          </RNSVGSvgView>
+        </View>
+      </View>
+      <View
         style={
           [
             {
@@ -12057,6 +13488,85 @@ exports[`userDetails light empty 1`] = `
               }
             }
           >
+            <View>
+              <View
+                style={
+                  [
+                    {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "flexWrap": "wrap",
+                      "justifyContent": "space-between",
+                      "width": "100%",
+                    },
+                    {
+                      "backgroundColor": "#ffffff",
+                      "minHeight": 44,
+                      "paddingHorizontal": 15,
+                      "paddingVertical": 14,
+                      "rowGap": 4,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    [
+                      {
+                        "fontFamily": "DMSans-Medium",
+                        "fontSize": 13.5,
+                        "letterSpacing": 0,
+                        "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
+                        "color": "#21232c",
+                      },
+                    ]
+                  }
+                >
+                  Profile name (optional)
+                </Text>
+                <TextInput
+                  editable={true}
+                  onChangeText={[Function]}
+                  placeholder="Shown on the consent screen"
+                  placeholderTextColor="#848282"
+                  selectionColor="#151f72"
+                  style={
+                    [
+                      {
+                        "fontFamily": "DMSans-Medium",
+                        "fontSize": 13.5,
+                        "letterSpacing": 0,
+                        "lineHeight": 17.577,
+                        "marginBottom": 0,
+                        "marginTop": 0,
+                      },
+                      {
+                        "padding": 0,
+                        "textAlign": "right",
+                      },
+                      {
+                        "color": "#21232c",
+                      },
+                    ]
+                  }
+                  testID="sample_user_details_field_organisation"
+                  value=""
+                />
+              </View>
+              <View
+                style={
+                  {
+                    "backgroundColor": "#eaecf0",
+                    "height": 0.5,
+                  }
+                }
+              />
+            </View>
             <View>
               <View
                 style={
@@ -12677,6 +14187,229 @@ exports[`userDetails light tokenSuppliedNames 1`] = `
   >
     <View>
       <View
+        accessibilityRole="radio"
+        accessibilityState={
+          {
+            "busy": undefined,
+            "checked": undefined,
+            "disabled": undefined,
+            "expanded": undefined,
+            "selected": false,
+          }
+        }
+        accessibilityValue={
+          {
+            "max": undefined,
+            "min": undefined,
+            "now": undefined,
+            "text": undefined,
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        focusable={true}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          [
+            {
+              "alignSelf": "stretch",
+              "overflow": "hidden",
+            },
+            {
+              "backgroundColor": "#ffffff",
+              "borderColor": "#eaecf0",
+              "borderRadius": 16,
+              "borderWidth": 0.5,
+            },
+            {
+              "marginHorizontal": 16,
+            },
+          ]
+        }
+        testID="sample_user_details_profile"
+      >
+        <View
+          style={
+            [
+              {
+                "alignItems": "center",
+                "flexDirection": "row",
+              },
+              {
+                "margin": -0.5,
+              },
+              {
+                "columnGap": 12,
+                "minHeight": 64,
+                "paddingHorizontal": 14,
+                "paddingVertical": 12,
+              },
+            ]
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "justifyContent": "center",
+                  "overflow": "hidden",
+                },
+                {
+                  "backgroundColor": "#f9fafb",
+                  "borderRadius": 12,
+                  "height": 44,
+                  "width": 44,
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Medium",
+                    "fontSize": 14,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -0.8859999999999992,
+                    "marginTop": -0.8859999999999992,
+                  },
+                  {
+                    "color": "#848282",
+                  },
+                  {
+                    "textAlign": "center",
+                  },
+                ]
+              }
+            >
+              +
+            </Text>
+          </View>
+          <View
+            style={
+              [
+                {
+                  "flex": 1,
+                },
+                {
+                  "rowGap": 4,
+                },
+              ]
+            }
+          >
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-SemiBold",
+                    "fontSize": 14.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 24,
+                    "marginBottom": -2.5604999999999993,
+                    "marginTop": -2.5604999999999993,
+                  },
+                  {
+                    "color": "#21232c",
+                  },
+                ]
+              }
+            >
+              No profile yet
+            </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Medium",
+                    "fontSize": 12,
+                    "letterSpacing": 0,
+                    "lineHeight": 16,
+                    "marginBottom": -0.18799999999999972,
+                    "marginTop": -0.18799999999999972,
+                  },
+                  {
+                    "color": "#848282",
+                  },
+                ]
+              }
+            >
+              Your details below will create one
+            </Text>
+          </View>
+          <RNSVGSvgView
+            align="xMidYMid"
+            bbHeight={12}
+            bbWidth={12}
+            fill="none"
+            focusable={false}
+            height={12}
+            meetOrSlice={0}
+            minX={0}
+            minY={0}
+            style={
+              [
+                {
+                  "backgroundColor": "transparent",
+                  "borderWidth": 0,
+                },
+                {
+                  "flex": 0,
+                  "height": 12,
+                  "width": 12,
+                },
+              ]
+            }
+            vbHeight={12}
+            vbWidth={12}
+            width={12}
+          >
+            <RNSVGGroup
+              fill={null}
+              propList={
+                [
+                  "fill",
+                ]
+              }
+            >
+              <RNSVGPath
+                d="M2 4L6 8L10 4"
+                fill={null}
+                opacity={1}
+                propList={
+                  [
+                    "fill",
+                    "stroke",
+                    "strokeWidth",
+                    "strokeLinecap",
+                    "strokeLinejoin",
+                  ]
+                }
+                stroke={
+                  {
+                    "payload": 4286874242,
+                    "type": 0,
+                  }
+                }
+                strokeLinecap={1}
+                strokeLinejoin={1}
+                strokeWidth={2}
+              />
+            </RNSVGGroup>
+          </RNSVGSvgView>
+        </View>
+      </View>
+      <View
         style={
           [
             {
@@ -12732,6 +14465,85 @@ exports[`userDetails light tokenSuppliedNames 1`] = `
               }
             }
           >
+            <View>
+              <View
+                style={
+                  [
+                    {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "flexWrap": "wrap",
+                      "justifyContent": "space-between",
+                      "width": "100%",
+                    },
+                    {
+                      "backgroundColor": "#ffffff",
+                      "minHeight": 44,
+                      "paddingHorizontal": 15,
+                      "paddingVertical": 14,
+                      "rowGap": 4,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    [
+                      {
+                        "fontFamily": "DMSans-Medium",
+                        "fontSize": 13.5,
+                        "letterSpacing": 0,
+                        "lineHeight": 20,
+                        "marginBottom": -1.2114999999999991,
+                        "marginTop": -1.2114999999999991,
+                      },
+                      {
+                        "color": "#21232c",
+                      },
+                    ]
+                  }
+                >
+                  Profile name (optional)
+                </Text>
+                <TextInput
+                  editable={true}
+                  onChangeText={[Function]}
+                  placeholder="Shown on the consent screen"
+                  placeholderTextColor="#848282"
+                  selectionColor="#151f72"
+                  style={
+                    [
+                      {
+                        "fontFamily": "DMSans-Medium",
+                        "fontSize": 13.5,
+                        "letterSpacing": 0,
+                        "lineHeight": 17.577,
+                        "marginBottom": 0,
+                        "marginTop": 0,
+                      },
+                      {
+                        "padding": 0,
+                        "textAlign": "right",
+                      },
+                      {
+                        "color": "#21232c",
+                      },
+                    ]
+                  }
+                  testID="sample_user_details_field_organisation"
+                  value=""
+                />
+              </View>
+              <View
+                style={
+                  {
+                    "backgroundColor": "#eaecf0",
+                    "height": 0.5,
+                  }
+                }
+              />
+            </View>
             <View>
               <View
                 style={

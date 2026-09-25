@@ -41,7 +41,7 @@ class _UseSmileIDSampleProfilesTabState
         onProfileTap: (UseSmileIDSampleProfile profile) =>
             context.go(UseSmileIDSampleRoutes.profileConfig(profile.id)),
         onCreate: _create,
-        createdNotice: created?.organisation,
+        createdNotice: created?.title,
         onMakeCreatedActive: created == null
             ? null
             : () {
@@ -62,17 +62,16 @@ class _UseSmileIDSampleProfilesTabState
         onCreate: (String organisation, UseSmileIDSampleUserDetails details) {
           final UseSmileIDSampleProfile added = ref
               .read(useSmileIDSampleProfilesProvider.notifier)
-              .add(
-                organisation: organisation,
-                person: '${details.firstName} ${details.lastName}'.trim(),
-                defaults: details,
-              );
+              .add(organisation: organisation, defaults: details);
+          final bool offer =
+              ref.read(useSmileIDSampleProfilesProvider).lastCreatedId ==
+              added.id;
           // Consumed on sight, before the confirmation is shown: returning to this screen later
           // must not replay a confirmation for a profile created minutes ago.
           ref
               .read(useSmileIDSampleProfilesProvider.notifier)
               .clearLastCreated();
-          setState(() => _createdId = added.id);
+          setState(() => _createdId = offer ? added.id : null);
           Navigator.of(sheetContext).pop();
         },
       ),

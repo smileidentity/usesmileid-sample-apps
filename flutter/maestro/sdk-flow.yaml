@@ -47,15 +47,19 @@ appId: ${APP_ID}
     timeout: 30000
 - tapOn:
     id: "sample_user_details_field_firstName"
+- eraseText
 - inputText: "Ada"
 - tapOn:
     id: "sample_user_details_field_lastName"
+- eraseText
 - inputText: "Okafor"
 # The SDK requires a contact field even though the form labels both optional.
 - tapOn:
     id: "sample_user_details_field_email"
+- eraseText
 - inputText: "ada.okafor@example.com"
 - hideKeyboard
+- runFlow: subflows/keep-nothing.yaml
 - tapOn:
     id: "sample_user_details_continue"
 

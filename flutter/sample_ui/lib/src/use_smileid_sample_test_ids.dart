@@ -91,6 +91,9 @@ abstract final class UseSmileIDSampleTestIds {
   /// The sign-out row.
   static const String signOut = 'sample_sign_out';
 
+  /// The sign-out confirmation's destructive action.
+  static const String signOutConfirm = 'sample_sign_out_confirm';
+
   /// The app name and version footer.
   static const String versionLabel = 'sample_version_label';
 
@@ -164,6 +167,15 @@ abstract final class UseSmileIDSampleTestIds {
   /// The page's only write: it saves the details AND makes the profile active.
   static const String profileConfigSave = 'sample_profile_config_save';
 
+  /// The profile's organisation row.
+  static const String profileConfigName = 'sample_profile_config_name';
+
+  /// Deletes the profile after a confirmation.
+  static const String profileConfigDelete = 'sample_profile_config_delete';
+
+  /// The delete confirmation's destructive action.
+  static const String profileDeleteConfirm = 'sample_profile_delete_confirm';
+
   /// The result card container, and the compact line that stands in for it on products.
   static const String resultCard = 'sample_result_card';
 
@@ -203,6 +215,9 @@ abstract final class UseSmileIDSampleTestIds {
   /// The switch sheet, which Products owns.
   static const String profileSwitchSheet = 'sample_profile_switch_sheet';
 
+  /// The switch sheet's last row, which creates a profile and makes it active.
+  static const String profileSwitchNew = 'sample_profile_switch_new';
+
   /// The new-profile sheet, which the profiles list owns.
   static const String newProfileSheet = 'sample_new_profile_sheet';
 
@@ -236,6 +251,9 @@ abstract final class UseSmileIDSampleTestIds {
 
   /// The remember switch, which appears only once the form is satisfied.
   static const String rememberDetailsSwitch = 'sample_remember_details_switch';
+
+  /// Whose details the form shows; opens the switch sheet.
+  static const String userDetailsProfile = 'sample_user_details_profile';
 
   /// The consent form's continue.
   static const String userDetailsContinue = 'sample_user_details_continue';
@@ -341,6 +359,7 @@ abstract final class UseSmileIDSampleTestIds {
     settingPreviewStep,
     settingNav,
     signOut,
+    signOutConfirm,
     versionLabel,
     toast,
     toastUndo,
@@ -358,6 +377,9 @@ abstract final class UseSmileIDSampleTestIds {
     profileConfigScreen,
     profileConfigCallbackUrl,
     profileConfigSave,
+    profileConfigName,
+    profileConfigDelete,
+    profileDeleteConfirm,
     resultCard,
     resultActiveScenario,
     resultActiveTheme,
@@ -371,6 +393,7 @@ abstract final class UseSmileIDSampleTestIds {
     resultLastError,
     resultSdkVersion,
     profileSwitchSheet,
+    profileSwitchNew,
     newProfileSheet,
     newProfileName,
     newProfileFirstName,
@@ -381,6 +404,7 @@ abstract final class UseSmileIDSampleTestIds {
     userDetailsScreen,
     userDetailsHint,
     rememberDetailsSwitch,
+    userDetailsProfile,
     userDetailsContinue,
     kycFormScreen,
     countryTrigger,

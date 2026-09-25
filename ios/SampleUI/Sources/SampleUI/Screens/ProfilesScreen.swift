@@ -3,12 +3,12 @@ import SwiftUI
 /// What the profiles list draws, plus the created confirmation it owns because the sheet is its layer.
 public struct UseSmileIDSampleProfilesState: Equatable {
   public var profiles: [UseSmileIDSampleProfile]
-  public var activeId: String
+  public var activeId: String?
   public var notice: UseSmileIDSampleTransientNotice?
 
   public init(
     profiles: [UseSmileIDSampleProfile],
-    activeId: String,
+    activeId: String?,
     notice: UseSmileIDSampleTransientNotice? = nil
   ) {
     self.profiles = profiles
@@ -51,7 +51,7 @@ public struct ProfilesScreen: View {
         VStack(spacing: SmileSpacing.spacingXs) {
           ForEach(Array(state.profiles.enumerated()), id: \.element.id) { index, profile in
             UseSmileIDSampleProfileRow(
-              organisation: profile.organisation,
+              organisation: profile.title,
               supportingText: supportingText(profile),
               initials: profile.initials,
               selected: false,

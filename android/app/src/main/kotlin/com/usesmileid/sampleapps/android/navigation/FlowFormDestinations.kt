@@ -13,7 +13,10 @@ import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.android.flow.sdkFlow
 import com.usesmileid.sampleapps.android.flow.stepAfterUserDetails
 import com.usesmileid.sampleapps.android.flow.tokenUserDetailsRequirement
+import androidx.compose.runtime.LaunchedEffect
+import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
+import com.usesmileid.sampleapps.ui.state.keep
 import com.usesmileid.sampleapps.ui.screens.CountryPickerSheet as CountryPickerContent
 import com.usesmileid.sampleapps.ui.screens.IdTypePickerSheet as IdTypePickerContent
 import com.usesmileid.sampleapps.ui.screens.KycIdFormScreen as KycIdFormContent
@@ -27,19 +30,41 @@ import com.usesmileid.sampleapps.ui.screens.UserDetailsScreen as UserDetailsCont
 fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     val product = productOf(productId)
+    var filled by rememberSaveable { mutableStateOf(false) }
+    var switchingProfile by rememberSaveable { mutableStateOf(false) }
+    if (!app.profiles.loaded) return
+    LaunchedEffect(Unit) {
+        if (!filled) app.profiles.active?.let(app.forms::fillFrom)
+        filled = true
+    }
+    val profile = app.profiles.active
     UserDetailsContent(
         productLabel = product?.label ?: productId,
         details = app.forms.userDetails,
-        rememberDetails = app.forms.rememberDetails,
+        profile = profile,
+        profileColor = avatarColorForProfile(app.profiles.activeIndex),
+        saveToProfile = app.forms.saveToProfile,
         onFieldChange = app.forms::setUserField,
-        onRememberChange = app.forms::rememberDetails,
+        onSaveToProfileChange = app.forms::saveToProfile,
+        onProfileClick = { switchingProfile = true },
         onBack = { navigator.navigateUp() },
         onContinue = {
+            app.profiles.keep(app.forms, app.tokenUserDetailsRequirement)
             val next = product?.let(app::stepAfterUserDetails) ?: app.sdkFlow(productId)
             navigator.navigate(next) { launchSingleTop = true }
         },
         requirement = app.tokenUserDetailsRequirement,
+        organisation = app.forms.organisation,
+        onOrganisationChange = app.forms::organisation,
     )
+    if (switchingProfile) {
+        ProfileSwitchSheet(
+            onDismissRequest = { switchingProfile = false },
+            onPicked = app.forms::fillFrom,
+            draft = app.forms.userDetails,
+            draftOrganisation = app.forms.organisation,
+        )
+    }
 }
 
 /** Only for products that need ID details. */

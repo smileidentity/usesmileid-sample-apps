@@ -21,14 +21,6 @@
         "description": "Bottom nav token affordance, carries the countdown ring."
       },
       {
-        "id": "sample_home_start_fullscreen",
-        "description": "Starts a flow as a full-screen presentation."
-      },
-      {
-        "id": "sample_home_start_shell",
-        "description": "Starts a flow nested inside the navigation shell."
-      },
-      {
         "id": "sample_scenario_drawer",
         "description": "The scenario drawer's own root, matching every other sheet.",
         "resolved": "RESOLVED 2026-08-14. This id stays on the drawer root: screens.json already lists it among the drawer's own testIds, every other sheet names its root the same way (sample_country_sheet, sample_profile_switch_sheet), and Android already attaches it there — so nothing is renamed, which the stability rule forbids. The control that opens it takes sample_scenario_drawer_button, matching every other opener (sample_country_trigger opens sample_country_sheet). Only this description was wrong."
@@ -78,6 +70,10 @@
       {
         "id": "sample_profile_switch_sheet",
         "description": "Switch-profile sheet root."
+      },
+      {
+        "id": "sample_profile_switch_new",
+        "description": "The switch sheet's last row; the profile it creates becomes active."
       }
     ],
     "verifications": [
@@ -179,7 +175,7 @@
       },
       {
         "id": "sample_user_details_field",
-        "description": "One editable row; suffixed with the field, e.g. sample_user_details_field_firstName."
+        "description": "One editable row; suffixed with the field, e.g. sample_user_details_field_firstName. `_organisation` appears only while there is no profile, and names the one Continue creates."
       },
       {
         "id": "sample_user_details_hint",
@@ -187,7 +183,11 @@
       },
       {
         "id": "sample_remember_details_switch",
-        "description": "Remember-these-details switch."
+        "description": "Whether Continue keeps the typed details: in the active profile, or as a new one when there is none. On by default. Once read \"Remember these details for next time\"; the id stays."
+      },
+      {
+        "id": "sample_user_details_profile",
+        "description": "Whose details these are: the active profile, or \"No profile yet\". Opens the switch sheet."
       },
       {
         "id": "sample_user_details_continue",
@@ -306,6 +306,10 @@
         "description": "Sign out row."
       },
       {
+        "id": "sample_sign_out_confirm",
+        "description": "The confirmation's destructive action: ends the session and deletes every profile on the device. Expo shows the platform's own Alert, whose buttons take no id, so automation taps its label there."
+      },
+      {
         "id": "sample_version_label",
         "description": "App name and version footer."
       }
@@ -365,7 +369,19 @@
       },
       {
         "id": "sample_profile_config_save",
-        "description": "Saves the defaults AND makes the profile active — the design labels it \"Make this profile active\"."
+        "description": "The config page's one action. On the active profile it reads \"Save changes\" and is enabled once something changed; on any other it reads \"Use this profile\", saving any edits and making it active."
+      },
+      {
+        "id": "sample_profile_config_name",
+        "description": "The profile's organisation, which the SDK's consent screen names as the partner. Optional: blank names the app itself, never the person being verified."
+      },
+      {
+        "id": "sample_profile_config_delete",
+        "description": "Deletes the profile after a confirmation; the active one hands over to the first left, or to no profile."
+      },
+      {
+        "id": "sample_profile_delete_confirm",
+        "description": "The delete confirmation's destructive action. Expo shows the platform's own Alert, whose buttons take no id, so automation taps its label there."
       }
     ],
     "token": [

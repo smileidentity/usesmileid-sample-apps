@@ -3,6 +3,7 @@ import { UseSmileIDSampleProfileRow } from '../components/use-smile-id-sample-pr
 import {
   smileIDSampleProfileCaption,
   smileIDSampleProfileInitials,
+  smileIDSampleProfileTitle,
   type UseSmileIDSampleProfile,
 } from '../state/use-smile-id-sample-profiles';
 import { smileProfileHues } from '../smile-product-hues';
@@ -10,13 +11,15 @@ import { UseSmileIDSampleSuffixedTestIds, UseSmileIDSampleTestIds } from '../use
 
 type Props = {
   profiles: readonly UseSmileIDSampleProfile[];
-  activeId: string;
+  activeId: string | null;
   onSelect: (profile: UseSmileIDSampleProfile) => void;
   onDismiss: () => void;
+  /// Absent hides the "New profile" row, for a host that offers no way to create one.
+  onCreate?: () => void;
 };
 
 /// The profile-switch sheet. Selecting one switches immediately, which is why it needs no save action.
-export const ProfileSwitchSheet = ({ profiles, activeId, onSelect, onDismiss }: Props) => (
+export const ProfileSwitchSheet = ({ profiles, activeId, onSelect, onDismiss, onCreate }: Props) => (
   <UseSmileIDSampleBottomSheet
     visible
     title="Switch profile"
@@ -28,7 +31,7 @@ export const ProfileSwitchSheet = ({ profiles, activeId, onSelect, onDismiss }: 
         key={profile.id}
         // Position in the list, cycled, which is what picks a profile's avatar hue.
         avatarColor={smileProfileHues[index % smileProfileHues.length]}
-        organisation={profile.organisation}
+        organisation={smileIDSampleProfileTitle(profile)}
         supportingText={smileIDSampleProfileCaption(profile)}
         initials={smileIDSampleProfileInitials(profile)}
         selected={profile.id === activeId}
@@ -36,5 +39,15 @@ export const ProfileSwitchSheet = ({ profiles, activeId, onSelect, onDismiss }: 
         testID={UseSmileIDSampleSuffixedTestIds.profileRow(profile.id)}
       />
     ))}
+    {onCreate === undefined ? null : (
+      <UseSmileIDSampleProfileRow
+        organisation="New profile"
+        supportingText="Run jobs as someone else"
+        initials=""
+        selected={false}
+        onPress={onCreate}
+        testID={UseSmileIDSampleTestIds.PROFILE_SWITCH_NEW}
+      />
+    )}
   </UseSmileIDSampleBottomSheet>
 );

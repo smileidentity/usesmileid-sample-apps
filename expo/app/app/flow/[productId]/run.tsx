@@ -12,6 +12,8 @@ import {
   useSmileIDSampleSettingsStore,
   type UseSmileIDSampleRunContext,
   type UseSmileIDSampleRunIntent,
+  USE_SMILE_ID_SAMPLE_FIRST_PROFILE_ID,
+  smileIDSamplePartnerName,
 } from '@smileid/sample-ui';
 import {
   UseSmileIDBuilder,
@@ -77,9 +79,9 @@ export default function SdkFlowRun() {
       instructionsStep: settings.instructionsStep,
       previewStep: settings.previewStep,
       userId: runUserId,
-      partnerId: profile.id,
-      partnerName: profile.organisation,
-      callbackUrl: profile.callbackUrl ?? '',
+      partnerId: profile?.id ?? USE_SMILE_ID_SAMPLE_FIRST_PROFILE_ID,
+      partnerName: smileIDSamplePartnerName(profile),
+      callbackUrl: profile?.callbackUrl ?? '',
       session,
       sessionExpired: smileIDSampleSessionExpired(sessions, entryMillis),
     };

@@ -4,23 +4,43 @@ import SwiftUI
 public struct UseSmileIDSampleUserDetailsState: Equatable {
   public var productLabel: String
   public var details: UseSmileIDSampleUserDetails
-  public var rememberDetails: Bool
+  /// Who this run is for; nil while there is no profile, when the form offers to create one.
+  public var profile: UseSmileIDSampleProfile?
+  public var profileIndex: Int
+  public var saveToProfile: Bool
+  /// The new profile's name, asked only while there is no profile.
+  public var organisation: String
   public var requirement: UseSmileIDSampleUserDetailsRequirement
 
   public init(
     productLabel: String,
     details: UseSmileIDSampleUserDetails = UseSmileIDSampleUserDetails(),
-    rememberDetails: Bool = false,
+    profile: UseSmileIDSampleProfile? = nil,
+    profileIndex: Int = 0,
+    saveToProfile: Bool = true,
+    organisation: String = "",
     requirement: UseSmileIDSampleUserDetailsRequirement = UseSmileIDSampleUserDetailsRequirement()
   ) {
     self.productLabel = productLabel
     self.details = details
-    self.rememberDetails = rememberDetails
+    self.profile = profile
+    self.profileIndex = profileIndex
+    self.saveToProfile = saveToProfile
+    self.organisation = organisation
     self.requirement = requirement
   }
 
   var isSatisfied: Bool {
     details.satisfies(requirement)
+  }
+
+  /// Only once there is something to keep: valid details that no profile holds yet.
+  var offersSave: Bool {
+    isSatisfied && details != profile?.defaults
+  }
+
+  var saveLabel: String {
+    profile.map { "Save to \($0.title)" } ?? "Save as a new profile"
   }
 }
 
@@ -28,7 +48,9 @@ public struct UseSmileIDSampleUserDetailsState: Equatable {
 public struct UserDetailsScreen: View {
   private let state: UseSmileIDSampleUserDetailsState
   private let onFieldChange: (UseSmileIDSampleUserField, String) -> Void
-  private let onRememberChange: (Bool) -> Void
+  private let onSaveToProfileChange: (Bool) -> Void
+  private let onOrganisationChange: (String) -> Void
+  private let onProfileTap: () -> Void
   private let onBack: () -> Void
   private let onContinue: () -> Void
 
@@ -37,13 +59,17 @@ public struct UserDetailsScreen: View {
   public init(
     state: UseSmileIDSampleUserDetailsState,
     onFieldChange: @escaping (UseSmileIDSampleUserField, String) -> Void,
-    onRememberChange: @escaping (Bool) -> Void,
+    onSaveToProfileChange: @escaping (Bool) -> Void,
+    onOrganisationChange: @escaping (String) -> Void = { _ in },
+    onProfileTap: @escaping () -> Void,
     onBack: @escaping () -> Void,
     onContinue: @escaping () -> Void
   ) {
     self.state = state
     self.onFieldChange = onFieldChange
-    self.onRememberChange = onRememberChange
+    self.onSaveToProfileChange = onSaveToProfileChange
+    self.onOrganisationChange = onOrganisationChange
+    self.onProfileTap = onProfileTap
     self.onBack = onBack
     self.onContinue = onContinue
   }
@@ -53,9 +79,10 @@ public struct UserDetailsScreen: View {
       UseSmileIDSampleTopAppBar(title: state.productLabel, onBack: onBack)
       ScrollView {
         VStack(alignment: .leading, spacing: SmileSpacing.spacingXs) {
+          profileRow
           fields
           hint
-          if state.isSatisfied {
+          if state.offersSave {
             rememberCard
           }
         }
@@ -73,8 +100,32 @@ public struct UserDetailsScreen: View {
     .background(colors.background)
   }
 
+  /// Says whose details these are, and switches in one tap: the whole reason profiles exist.
+  private var profileRow: some View {
+    UseSmileIDSampleProfileRow(
+      organisation: state.profile?.title ?? UseSmileIDSampleProfiles.noProfileLabel,
+      supportingText: state.profile == nil ? "Your details below will create one" : "Tap to switch profile",
+      initials: state.profile?.initials ?? "",
+      selected: false,
+      avatarColor: useSmileIDSampleAvatarColor(profileIndex: state.profileIndex),
+      testId: UseSmileIDSampleTestIds.userDetailsProfile,
+      onTap: onProfileTap
+    ) {
+      UseSmileIDSampleIcon(SmileIcons.chevronDown, tint: colors.textMuted, size: 12)
+    }
+  }
+
   private var fields: some View {
     UseSmileIDSampleSectionSurface(label: "YOUR DETAILS") {
+      if state.profile == nil {
+        UseSmileIDSampleKeyValueEditRow(
+          label: "Profile name (optional)",
+          value: Binding(get: { state.organisation }, set: onOrganisationChange),
+          placeholder: "Shown on the consent screen",
+          testId: UseSmileIDSampleTestIds.userDetailsField(Self.organisationFieldId)
+        )
+        UseSmileIDSampleRowDivider()
+      }
       ForEach(Array(UseSmileIDSampleUserField.allCases.enumerated()), id: \.element) { index, field in
         if index > 0 {
           UseSmileIDSampleRowDivider()
@@ -113,13 +164,13 @@ public struct UserDetailsScreen: View {
   private var rememberCard: some View {
     HStack(spacing: SmileSpacing.spacingSm) {
       UseSmileIDSampleText(
-        "Remember these details for next time",
+        state.saveLabel,
         style: UseSmileIDSampleTheme.type.textStyleSubtitle.with(size: 13.5)
       )
       .foregroundColor(colors.textBody)
       .frame(maxWidth: .infinity, alignment: .leading)
       UseSmileIDSampleSwitch(
-        isOn: Binding(get: { state.rememberDetails }, set: onRememberChange),
+        isOn: Binding(get: { state.saveToProfile }, set: onSaveToProfileChange),
         testId: UseSmileIDSampleTestIds.rememberDetailsSwitch
       )
     }
@@ -136,6 +187,11 @@ public struct UserDetailsScreen: View {
         .strokeBorder(colors.cardStroke, lineWidth: smileCardStrokeWidth)
     )
   }
+}
+
+extension UserDetailsScreen {
+  /// The organisation row's id suffix, beside the four user fields'.
+  static let organisationFieldId = "organisation"
 }
 
 extension UseSmileIDSampleUserField {

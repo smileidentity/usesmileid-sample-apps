@@ -1,6 +1,6 @@
 {
   "name": "usesmileid-sample-expo",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "description": "The UseSmileID Expo sample app shell: entry point, navigation host, native configuration and the registry SDK dependency.",
   "main": "expo-router/entry",
