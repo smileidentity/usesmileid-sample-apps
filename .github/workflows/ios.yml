@@ -104,7 +104,8 @@ jobs:
         env:
           SMILE_DESIGN_SYSTEM: ${{ steps.design-system.outcome == 'success' && format('{0}/.design-system/smile-design-system', github.workspace) || '' }}
           SMILE_TOKENS_OPTIONAL: ${{ steps.design-system.outcome == 'skipped' && '1' || '' }}
-          DESTINATION: platform=iOS Simulator,name=iPhone 17 Pro
+          # OS pinned because the Blacksmith image also ships an iOS 27.0 runtime; baselines are on 26.5.
+          DESTINATION: platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5
         run: ios/verify.sh ${{ matrix.phase }} ${{ matrix.class }}
 
       - name: Keep the UI test result bundle when the lane reds
