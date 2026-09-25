@@ -1,18 +1,16 @@
 name: Publish to the App Store
 
-# A published GitHub release runs it for real, as it does Play's production lane: it gates the listing,
-# archives, uploads, waits for processing, attaches the build to a new version with the copy in
-# ios/store/, and submits it for review. A dispatch defaults to a dry run, which signs and exports the
-# IPA and reads App Store Connect, so a change to the lane is proved without publishing.
+# Dispatch releases, as Play's lanes do: it gates the listing, archives, uploads, waits for processing,
+# attaches the build to a new version with the copy in ios/store/, and submits it for review. Tick
+# dry_run to sign and export the IPA and read App Store Connect without publishing, which is how a
+# change to the lane is proved before it is merged.
 on:
-  release:
-    types: [published]
   workflow_dispatch:
     inputs:
       dry_run:
         description: Sign and export only, then read App Store Connect; nothing is uploaded or submitted
         type: boolean
-        default: true
+        default: false
       build_number:
         description: Override the build number; empty takes one above the highest App Store Connect holds
         required: false
@@ -37,9 +35,8 @@ jobs:
     runs-on: blacksmith-6vcpu-macos-26
     timeout-minutes: 90
     env:
-      # A release has no inputs, so it always publishes; only a dispatch can ask for a dry run.
-      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
-      RELEASE: ${{ inputs.release || 'manual' }}
+      DRY_RUN: ${{ inputs.dry_run }}
+      RELEASE: ${{ inputs.release }}
       APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
       APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
     steps:

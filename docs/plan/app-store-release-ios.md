@@ -263,12 +263,11 @@ argument that put `-PREQUIRE_UPLOAD_SIGNING` in Android's Gradle file rather tha
 
 ### 3.2 What the two publish workflows do differently
 
-`publish-testflight.yml` and `publish-app-store.yml`, both `concurrency` without
-`cancel-in-progress`, both `permissions: contents: read`.
+`publish-testflight.yml` and `publish-app-store.yml`, both `workflow_dispatch` only, both
+`concurrency` without `cancel-in-progress`, both `permissions: contents: read`.
 
-- **A published GitHub release runs the App Store lane for real** (ruled 2026-09-25), the trigger
-  Play's production lane already has, so one release ships both stores. A dispatch still defaults to
-  a dry run.
+- **A dispatch of the App Store lane releases** (ruled 2026-09-25), as Play's lanes do; `dry_run` is
+  opt-in. Neither iOS lane runs on a GitHub release or a merge.
 - **TestFlight stays dispatch-only for now.** Android's
   internal lane is still dispatch-only for the same reason: the first upload fixes the signing
   identity and creates the listing, and that is an owner action. Adding `push: branches: [main]` to
@@ -292,7 +291,7 @@ argument that put `-PREQUIRE_UPLOAD_SIGNING` in Android's Gradle file rather tha
   - The alternatives were a stored development certificate imported on the runner (a secret to keep
     and renew) and letting certificates pile up (harmless only until the limit).
 - **The App Store lane releases end to end** (2026-09-25): upload, `asc_publish.py wait`, `apply`,
-  `submit`. Its `dry_run` input, on by default, signs and exports without uploading, which is how a
+  `submit`. Its `dry_run` input, off by default, signs and exports without uploading, which is how a
   change to the lane is proved before it is merged.
 - **The key material never reaches `xcodebuild`'s argv.** The `.p8` is written to
   `~/.appstoreconnect/private_keys/` and deleted in an `always()` step; only its path is an argument.
