@@ -228,7 +228,7 @@ def plan(asc: ASC, args):
 
 def review_contact(required: bool):
     name, phone = os.environ.get("ASC_REVIEW_NAME"), os.environ.get("ASC_REVIEW_PHONE")
-    email = os.environ.get("ASC_REVIEW_EMAIL", "harun@smileidentity.com")
+    email = os.environ.get("ASC_REVIEW_EMAIL") or "harun@smileidentity.com"
     if required and not (name and phone):
         sys.exit("ASC_REVIEW_NAME and ASC_REVIEW_PHONE are required to apply review details")
     return name, phone, email
