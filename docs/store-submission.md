@@ -120,7 +120,7 @@ notices the TrueDepth API and asks about it under **Guideline 2.1, Information N
 Two rounds of questions reached us, and both are worth answering before they are asked:
 
 1. **What TrueDepth data the app collects, why, and whether it is shared.** Use the answers in
-   [Submitting to the App Store](https://docs.smileidentity.com/developer-resources/sdks/mobile/setup#submitting-to-the-app-store-ios-only),
+   [Submitting to the App Stores](https://docs.smileidentity.com/developer-resources/sdks/mobile/submitting-to-the-app-stores),
    and cite the sections of your privacy policy that cover face data.
 2. **Which features use it, and who the app is for.** Name the steps of your own flow that capture a
    selfie, and say plainly that the rest do not. Describe your real audience.
@@ -128,7 +128,8 @@ Two rounds of questions reached us, and both are worth answering before they are
 Put both answers in the version's **App Review notes** before you submit, so the question never
 arrives.
 
-**Flutter and React Native (Expo) builds do not link ARKit.** Check with
+**Flutter builds do not link ARKit** (checked on a 12.1.1 release build), and the React Native (Expo)
+SDK's 12.1.1 sources reference none. Check your own build with
 `otool -L YourApp.app/YourApp | grep ARKit`. If App Review asks anyway, say so.
 
 ### 6. iPad
@@ -152,6 +153,7 @@ These are the rows the SDK adds. Add them to your app's own answers.
 |---|---|---|---|
 | Personal info → Name, Email address, Phone number | Yes | App functionality | Only the fields you pass to the builder |
 | Personal info → Other info | Yes | App functionality | ID number and date of birth, if you pass them |
+| Personal info → User IDs | Yes | App functionality | The server-issued user id each job carries |
 | Photos and videos → Photos | Yes | App functionality | Selfie and document images |
 | Device or other IDs | Yes | Fraud prevention, security, and compliance | Device metadata |
 | App activity → Other actions | Yes | Analytics | The SDK's crash reports carry the steps leading up to an error |
@@ -163,7 +165,8 @@ your own process, so answer for it.
 
 Play treats a transfer to a service provider that processes data on your behalf as **not sharing**.
 Decide the "Shared" column by that definition and by your own agreements, not by whether bytes leave
-your servers.
+your servers. The table above follows Play's definitions. This repository's own published form
+answers the crash and diagnostics rows differently, and is being reconciled.
 
 **Read the published page before you trust your notes.** What users see is
 `play.google.com/store/apps/datasafety?id=<your.application.id>`. The Console form is filled by hand,

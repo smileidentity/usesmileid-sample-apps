@@ -70,7 +70,7 @@ First pass 2026-09-24 (tree, full history, 127 PRs, 149 comments). Re-verified a
 | P17 | Wiki and Projects are enabled and empty | repo settings | Disable both (T10) | LOW |
 | P18 | **The store docs speak to our account holder, not to a partner.** They carry owner rulings, dates and plan references, and their answers are this app's, presented as the only answers | `docs/app-store-manual-steps.md`, `docs/app-store-privacy.md`, `docs/play-data-safety.md` | D9: a partner guide (`docs/store-submission.md`, **done on this branch**), plus this app's answers kept as a worked example in `docs/releasing.md` (T2) | HIGH |
 | P19 | **`AGENTS.md` sends rationale to `docs/plan/`** (lines 87, 211, 297), so deleting the folder breaks the repo's own comment rule | `AGENTS.md` | D7, landed with T4 | HIGH |
-| P20 | **Not a public-release defect, but found here.** The Flutter iOS release binary references `CLLocationManager` and the Photos picker, because the Flutter SDK depends on `geolocator` and `image_picker`. `flutter/app/ios/Runner/Info.plist` declares only the camera string, so an App Store upload fails ITMS-90683. The native iOS app carries both strings | `flutter/app/ios/Runner/Info.plist` | A separate fix before any Flutter iOS submission. Expo is unverified: `expo-location` is an optional peer, so `nm -u` a release build before its first upload | HIGH for the port |
+| P20 | **Not a public-release defect, but found here.** The Flutter iOS release binary references `CLLocationManager` and the Photos picker, because the Flutter SDK depends on `geolocator` and `image_picker`. `flutter/app/ios/Runner/Info.plist` declares only the camera string, so an App Store upload would fail ITMS-90683, as the native app's first upload nearly did. The native iOS app carries both strings | `flutter/app/ios/Runner/Info.plist` | A separate fix before any Flutter iOS submission. Expo is unverified: `expo-location` is an optional peer, so `nm -u` a release build before its first upload | HIGH for the port |
 | P21 | **Partner docs overstate the TrueDepth declaration.** They say it applies to Flutter and React Native iOS targets. The Flutter 12.1.1 release binary links no ARKit (checked with `otool -L`), and neither SDK's iOS sources reference ARKit | the partner docs' mobile setup page | Corrected in the partner-docs PR | MEDIUM |
 | P22 | **The SDK repos are internal.** Only `ios`, `ios-spm` and `kamera-spm` are public, so a public page cannot link `android`, `ios-v12`, `flutter` or `react-native-expo`. The tree links only the public ones today, and SECURITY.md routes SDK reports through this repo | `AGENTS.md` prose, the docs set | Keep every public link on a registry page or a public repo. Add it to T5's sweep | MEDIUM |
 | P23 | Commit author emails are public with history | git metadata | Accepted, as on every public repo. Stated so it is a decision, not an oversight | INFO |
@@ -221,7 +221,7 @@ row's distil target exists and its §6 items are closed.
 | `port-comment-rationale.md` | drop | — | — |
 | `port-gaps-backlog.md` | carry | — | A1–A4, A6, B1–B2 |
 | `port-patterns.md` | distil, drop | `docs/architecture.md` (`scripts/test_sync_design_tokens.py` points here) | — |
-| `port-priority-cut.md` | carry | — | A7–A9, B4 |
+| `port-priority-cut.md` | carry | — | A7–A9, B4. Item 6 (fail-closed gates) is P9 and O4 |
 | `port-review-findings.md` | carry | — | A10, A11 |
 | `ports-final.md` | carry | — | C2 |
 | `products-visual-refresh-android.md` | drop | — | — (built) |
@@ -250,6 +250,13 @@ public with the repo. **B** is a product ruling, which goes to the team's privat
 named in a committed file. **C** is a sibling-SDK finding, filed in that SDK's repo, which is how the
 `INTERNAL-ONLY` block that hid it closes. **O** is an owner or account action. **S** belongs to
 cross-SDK planning, not to this repo.
+
+**Checked and closed on 2026-09-25**, so none of these is lost by omission: Sign out is wired on Expo
+(`settings.tsx:71`) and Flutter (`use_smileid_sample_settings_tab.dart:88`), and Flutter's DEBUG section is
+gated on `kDebugMode`. Flutter matches `/profiles/switch` and `/profiles/new` before `/profiles/:profileId`
+(`use_smileid_sample_routes.dart:140`). The active-profile edit (B2) appears fixed. `improve-plans-index.md`'s
+owed `sample_env_chip` is inside A7. ENV-A10's other half went with the visual refresh, which is built.
+Everything `ports-final.md` §1 and §2 lists is built, fixed or closed there.
 
 ### A. Engineering backlog: GitHub issues
 
