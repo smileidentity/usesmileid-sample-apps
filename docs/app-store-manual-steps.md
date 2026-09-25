@@ -164,6 +164,6 @@ uploads nothing; untick **dry_run** to release. A real run needs the `ASC_REVIEW
 by hand stays a Console action unless **release** is `after-approval`. Both lanes revoke the development certificate their
 signing creates, at the end of the run, so the team's certificate list stays as it was.
 
-Both lanes are `workflow_dispatch` only. Neither runs on a merge, which is deliberate while the first
-upload is an owner action — adding `push` to the TestFlight lane later needs a path filter, or a
-docs-only merge ships a build.
+Publishing a GitHub release runs **Publish to the App Store** for real, as it runs Play's production
+lane, so one release ships both stores. TestFlight stays dispatch-only; neither lane runs on a merge,
+since a docs-only merge would otherwise ship a build.

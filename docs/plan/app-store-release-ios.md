@@ -263,10 +263,13 @@ argument that put `-PREQUIRE_UPLOAD_SIGNING` in Android's Gradle file rather tha
 
 ### 3.2 What the two publish workflows do differently
 
-`publish-testflight.yml` and `publish-app-store.yml`, both `workflow_dispatch` only, both
-`concurrency` without `cancel-in-progress`, both `permissions: contents: read`.
+`publish-testflight.yml` and `publish-app-store.yml`, both `concurrency` without
+`cancel-in-progress`, both `permissions: contents: read`.
 
-- **Dispatch only, permanently for the App Store lane and for now for TestFlight.** Android's
+- **A published GitHub release runs the App Store lane for real** (ruled 2026-09-25), the trigger
+  Play's production lane already has, so one release ships both stores. A dispatch still defaults to
+  a dry run.
+- **TestFlight stays dispatch-only for now.** Android's
   internal lane is still dispatch-only for the same reason: the first upload fixes the signing
   identity and creates the listing, and that is an owner action. Adding `push: branches: [main]` to
   TestFlight later is a one-line change — and it needs a **path filter**, or a docs-only merge ships
