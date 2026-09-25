@@ -167,7 +167,7 @@ profile, since profiles were kept in memory only. An update is therefore safe on
 | D4: the partner name with no profile | **"Smile ID"**. |
 | The two shell ids no app implements | **Deleted** (approved). This is the deliberate sweep `spec/README.md` asks for. |
 | D5: single-profile delete | **In scope**, on the config page, after a confirmation (from the adversarial review). |
-| Button height 48 vs 52, glyph 21 vs 20 | **Read from Figma** (`5206-3776` for the button, `5206-4036` for the glyph) if it's connected. If not, the apps keep what they ship now, and the PR says so. |
+| Button height 48 vs 52, glyph 21 vs 20 | **Kept at 52 and 20** (approved). The board draws 48 and 21, but 52 is the design system's `button.height` and 20 is `size.icon-md`; 21 has no token. |
 
 ## 6. Build order (one branch, Android first as the reference)
 
