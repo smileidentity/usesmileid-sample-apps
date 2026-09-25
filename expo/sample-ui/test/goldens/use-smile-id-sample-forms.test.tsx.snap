@@ -9465,7 +9465,7 @@ exports[`userDetails dark complete 1`] = `
                     ]
                   }
                 >
-                  Organisation (optional)
+                  Profile name (optional)
                 </Text>
                 <TextInput
                   editable={true}
@@ -10519,7 +10519,7 @@ exports[`userDetails dark empty 1`] = `
                     ]
                   }
                 >
-                  Organisation (optional)
+                  Profile name (optional)
                 </Text>
                 <TextInput
                   editable={true}
@@ -11496,7 +11496,7 @@ exports[`userDetails dark tokenSuppliedNames 1`] = `
                     ]
                   }
                 >
-                  Organisation (optional)
+                  Profile name (optional)
                 </Text>
                 <TextInput
                   editable={true}
@@ -12473,7 +12473,7 @@ exports[`userDetails light complete 1`] = `
                     ]
                   }
                 >
-                  Organisation (optional)
+                  Profile name (optional)
                 </Text>
                 <TextInput
                   editable={true}
@@ -13527,7 +13527,7 @@ exports[`userDetails light empty 1`] = `
                     ]
                   }
                 >
-                  Organisation (optional)
+                  Profile name (optional)
                 </Text>
                 <TextInput
                   editable={true}
@@ -14504,7 +14504,7 @@ exports[`userDetails light tokenSuppliedNames 1`] = `
                     ]
                   }
                 >
-                  Organisation (optional)
+                  Profile name (optional)
                 </Text>
                 <TextInput
                   editable={true}

@@ -130,7 +130,7 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                       children: <Widget>[
                         if (profile == null) ...<Widget>[
                           UseSmileIDSampleKeyValueEditRow(
-                            label: 'Organisation (optional)',
+                            label: 'Profile name (optional)',
                             value: organisation,
                             onChanged: onOrganisationChanged ?? (_) {},
                             placeholder: 'Shown on the consent screen',

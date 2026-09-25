@@ -96,7 +96,7 @@ A profile and the job form are **two unrelated stores**, and the job only ever r
   shows "[avatar] {title} ⌄", or "No profile yet ⌄" when there is none. Tapping it opens the switch
   sheet.
 - **Picking another profile refills the form** from that profile and discards the typing (D2).
-- **With no profile, an extra first row appears: "Organisation (optional)"**, with the placeholder
+- **With no profile, an extra first row appears: "Profile name (optional)"**, with the placeholder
   "Shown on the consent screen" (`sample_user_details_field_organisation`). What's typed there becomes
   the new profile's organisation. If it's left blank, the organisation stays blank: the row shows
   the person, and consent shows "Smile ID".
@@ -113,7 +113,7 @@ A profile and the job form are **two unrelated stores**, and the job only ever r
   "created" toast offers "Make active".
 
 **Profile config page.** This is the build: one button, in the design's slot, rather than two.
-- **An "Organisation" row** (`sample_profile_config_name`), in its own "PROFILE" section above the
+- **A "Profile name" row** (`sample_profile_config_name`), in its own "PROFILE" section above the
   user details. It's optional, with the placeholder "Shown on the consent screen". This fixes P7.
 - **One button, in the design's single slot** (`sample_profile_config_save`, as today):
   - On the active profile it reads **"Save changes"**, and it's enabled once something changed (P2).

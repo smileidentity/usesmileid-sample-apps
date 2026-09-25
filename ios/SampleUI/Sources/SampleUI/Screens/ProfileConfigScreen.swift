@@ -72,7 +72,7 @@ public struct ProfileConfigScreen: View {
           UseSmileIDSampleSectionLabel("PROFILE")
           UseSmileIDSampleSectionSurface {
             UseSmileIDSampleKeyValueEditRow(
-              label: "Organisation",
+              label: "Profile name",
               value: Binding(get: { state.organisation }, set: onOrganisationChange),
               placeholder: "Shown on the consent screen",
               testId: UseSmileIDSampleTestIds.profileConfigName

@@ -82,7 +82,7 @@ export const ProfileConfigScreen = ({
         <UseSmileIDSampleSectionLabel text="PROFILE" />
         <UseSmileIDSampleSectionSurface>
           <UseSmileIDSampleKeyValueEditRow
-            label="Organisation"
+            label="Profile name"
             value={state.organisation}
             onValueChange={(value) => onOrganisationChange?.(value)}
             placeholder="Shown on the consent screen"

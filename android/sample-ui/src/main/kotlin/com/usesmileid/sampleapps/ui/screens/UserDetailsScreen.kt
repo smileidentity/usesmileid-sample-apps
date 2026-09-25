@@ -91,7 +91,7 @@ fun UserDetailsScreen(
                 ) {
                     if (profile == null) {
                         UseSmileIDSampleKeyValueEditRow(
-                            label = "Organisation (optional)",
+                            label = "Profile name (optional)",
                             value = organisation,
                             onValueChange = onOrganisationChange,
                             placeholder = "Shown on the consent screen",

@@ -272,7 +272,7 @@
         {
           "state": "empty",
           "node": "5206-3804",
-          "note": "Placeholders; 'First and last name are required.' With no profile, the profile row reads 'No profile yet' and an 'Organisation (optional)' row leads the card."
+          "note": "Placeholders; 'First and last name are required.' With no profile, the profile row reads 'No profile yet' and a 'Profile name (optional)' row leads the card."
         },
         {
           "state": "editing",

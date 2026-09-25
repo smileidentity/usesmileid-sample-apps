@@ -119,7 +119,7 @@ public struct UserDetailsScreen: View {
     UseSmileIDSampleSectionSurface(label: "YOUR DETAILS") {
       if state.profile == nil {
         UseSmileIDSampleKeyValueEditRow(
-          label: "Organisation (optional)",
+          label: "Profile name (optional)",
           value: Binding(get: { state.organisation }, set: onOrganisationChange),
           placeholder: "Shown on the consent screen",
           testId: UseSmileIDSampleTestIds.userDetailsField(Self.organisationFieldId)

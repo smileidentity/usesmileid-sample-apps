@@ -4176,7 +4176,7 @@ exports[`profileConfig dark activeProfile 1`] = `
                   ]
                 }
               >
-                Organisation
+                Profile name
               </Text>
               <TextInput
                 editable={true}
@@ -5082,7 +5082,7 @@ exports[`profileConfig dark newlyCreated 1`] = `
                   ]
                 }
               >
-                Organisation
+                Profile name
               </Text>
               <TextInput
                 editable={true}
@@ -5988,7 +5988,7 @@ exports[`profileConfig dark otherProfile 1`] = `
                   ]
                 }
               >
-                Organisation
+                Profile name
               </Text>
               <TextInput
                 editable={true}
@@ -6894,7 +6894,7 @@ exports[`profileConfig light activeProfile 1`] = `
                   ]
                 }
               >
-                Organisation
+                Profile name
               </Text>
               <TextInput
                 editable={true}
@@ -7800,7 +7800,7 @@ exports[`profileConfig light newlyCreated 1`] = `
                   ]
                 }
               >
-                Organisation
+                Profile name
               </Text>
               <TextInput
                 editable={true}
@@ -8706,7 +8706,7 @@ exports[`profileConfig light otherProfile 1`] = `
                   ]
                 }
               >
-                Organisation
+                Profile name
               </Text>
               <TextInput
                 editable={true}

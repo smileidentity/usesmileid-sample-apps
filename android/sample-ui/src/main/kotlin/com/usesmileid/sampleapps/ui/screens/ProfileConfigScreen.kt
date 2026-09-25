@@ -72,7 +72,7 @@ fun ProfileConfigScreen(
             UseSmileIDSampleSectionLabel(text = "PROFILE")
             UseSmileIDSampleSectionSurface {
                 UseSmileIDSampleKeyValueEditRow(
-                    label = "Organisation",
+                    label = "Profile name",
                     value = organisation,
                     onValueChange = onOrganisationChange,
                     placeholder = "Shown on the consent screen",

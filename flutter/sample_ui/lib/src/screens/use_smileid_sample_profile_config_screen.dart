@@ -106,7 +106,7 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: UseSmileIDSampleShapes.card,
                     child: UseSmileIDSampleKeyValueEditRow(
-                      label: 'Organisation',
+                      label: 'Profile name',
                       value: organisation,
                       onChanged: onOrganisationChanged ?? (String _) {},
                       placeholder: 'Shown on the consent screen',

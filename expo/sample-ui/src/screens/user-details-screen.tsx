@@ -130,7 +130,7 @@ export const UserDetailsScreen = ({
           {profile === null ? (
             <View>
               <UseSmileIDSampleKeyValueEditRow
-                label="Organisation (optional)"
+                label="Profile name (optional)"
                 value={state.organisation ?? ''}
                 onValueChange={(value) => onOrganisationChange?.(value)}
                 placeholder="Shown on the consent screen"
