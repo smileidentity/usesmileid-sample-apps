@@ -45,7 +45,6 @@ const profile = (organisation: string, firstName = '', lastName = ''): UseSmileI
 const relaunch = () => useSmileIDSampleProfileStore.setState({ items: [], activeId: null, loaded: false, seeded: false });
 
 beforeEach(async () => {
-  // A write the last test left queued would otherwise land in this one.
   await settle();
   saved = null;
   writes.mockClear();

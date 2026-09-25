@@ -1,5 +1,4 @@
-# Leaves the details form's save switch off, so a run stores no profile. It ships on, but a second
-# pass in the same session finds it already off, since with no profile the form keeps what was typed.
+# The switch ships on, but a second pass in one session finds it already off.
 appId: ${APP_ID}
 ---
 - runFlow:

@@ -86,7 +86,6 @@ class UseSmileIDSampleForms(
                     it.organisation,
                 )
             },
-            // Read defensively: a list saved by an older build is shorter, and indexing past it would crash the restore.
             restore = { saved ->
                 val at = { index: Int -> saved.getOrNull(index).orEmpty() }
                 UseSmileIDSampleForms(

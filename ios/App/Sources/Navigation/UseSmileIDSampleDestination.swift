@@ -22,7 +22,6 @@ struct UseSmileIDSampleDestination: View {
           result: app.flowResult.snapshot
         ),
         onProduct: { product in
-          // Every run starts from the active profile, including one whose form the token skips.
           app.fillFormForRun()
           router.open(app.firstStep(for: product))
         },
@@ -79,7 +78,6 @@ struct UseSmileIDSampleDestination: View {
         profileConfig(profile)
       } else {
         Color.clear.onAppear {
-          // Only while it is still on top: a delete has already popped it, and a second pop would take the list too.
           if router.path(router.selectedTab).last == route {
             router.pop()
           }

@@ -97,8 +97,6 @@ appId: ${APP_ID}
 
 - stopApp
 - openLink: "usesmileid-sample-android://profiles/p-1"
-# A cold start by link carries no arguments, so no profile exists: the page goes back rather than
-# showing an empty profile that saves nothing.
 - extendedWaitUntil:
     notVisible:
       id: "sample_profile_config_screen"

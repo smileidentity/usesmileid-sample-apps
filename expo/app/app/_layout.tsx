@@ -88,7 +88,6 @@ export default function RootLayout() {
     if (args.seedJobs) seedFixtures(Date.now()).catch(() => undefined);
   }, [args, argsLoaded, loadProfiles, seedFixtures]);
 
-  // Held for the session, the link and the profiles: a cold link into a run snapshots all three at entry.
   if (!fontsLoaded || !sessionLoaded || !argsLoaded || !profilesLoaded) {
     return <View style={{ backgroundColor: colors.background, flex: 1 }} />;
   }

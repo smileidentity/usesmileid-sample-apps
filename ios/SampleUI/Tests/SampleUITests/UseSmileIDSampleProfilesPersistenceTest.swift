@@ -61,7 +61,6 @@ final class UseSmileIDSampleProfilesPersistenceTest: XCTestCase {
     ])))
     let arguments = UserDefaults.standard.volatileDomain(forName: UserDefaults.argumentDomain)
     defer { UserDefaults.standard.setVolatileDomain(arguments, forName: UserDefaults.argumentDomain) }
-    // What `-sample_profiles <hex>` becomes: data in the argument domain, which reads shadow.
     UserDefaults.standard.setVolatileDomain(arguments.merging([key: injected]) { $1 }, forName: UserDefaults.argumentDomain)
     XCTAssertEqual(UserDefaults.standard.data(forKey: key), injected, "the argument did not reach the defaults")
 

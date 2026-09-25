@@ -29,7 +29,6 @@ class _UseSmileIDSampleUserDetailsTabState
   @override
   void initState() {
     super.initState();
-    // A cold link skips the product tap that fills the form; post-frame, as a provider cannot change mid-build.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final UseSmileIDSampleProfile? active = ref
           .read(useSmileIDSampleProfilesProvider)

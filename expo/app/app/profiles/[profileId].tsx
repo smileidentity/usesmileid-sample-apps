@@ -25,7 +25,6 @@ export default function ProfileConfig() {
   const setActive = useSmileIDSampleProfileStore((state) => state.setActive);
   const remove = useSmileIDSampleProfileStore((state) => state.delete);
   const [edit, setEdit] = useState<UseSmileIDSampleProfileEdit | null>(null);
-  // Keyed by profile like `edit`, so an unsaved value never reaches another profile's page.
   const [callbackEdit, setCallbackEdit] = useState<{ profileId: string; value: string } | null>(null);
   const [organisationEdit, setOrganisationEdit] = useState<{ profileId: string; value: string } | null>(null);
   const leaving = useRef(false);

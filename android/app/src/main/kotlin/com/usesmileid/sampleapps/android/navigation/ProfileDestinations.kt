@@ -43,7 +43,6 @@ internal fun ProfileSwitchSheet(
 ) {
     val app = LocalUseSmileIDSampleAppState.current
     var creating by rememberSaveable { mutableStateOf(false) }
-    // Not before the store answers: a profile made then would vanish when the stored list arrives.
     if (!app.profiles.loaded) return
     if (creating) {
         NewProfileSheet(
@@ -162,7 +161,6 @@ internal fun NewProfileSheet(
 ) {
     val app = LocalUseSmileIDSampleAppState.current
     var name by rememberSaveable { mutableStateOf(draftOrganisation) }
-    // Not before the store answers: a profile made then would vanish when the stored list arrives.
     if (!app.profiles.loaded) return
     var firstName by rememberSaveable { mutableStateOf(draft.firstName) }
     var lastName by rememberSaveable { mutableStateOf(draft.lastName) }

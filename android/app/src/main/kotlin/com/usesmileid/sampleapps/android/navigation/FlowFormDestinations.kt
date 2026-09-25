@@ -30,11 +30,9 @@ import com.usesmileid.sampleapps.ui.screens.UserDetailsScreen as UserDetailsCont
 fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     val product = productOf(productId)
-    // Saveable, so a restore keeps what was typed instead of refilling over it.
     var filled by rememberSaveable { mutableStateOf(false) }
     var switchingProfile by rememberSaveable { mutableStateOf(false) }
     if (!app.profiles.loaded) return
-    // A cold link arrives without the product tap that fills the form, so entry fills it too.
     LaunchedEffect(Unit) {
         if (!filled) app.profiles.active?.let(app.forms::fillFrom)
         filled = true

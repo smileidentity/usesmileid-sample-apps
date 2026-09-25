@@ -35,7 +35,6 @@ final class UseSmileIDSampleAppStateProfilesTest: XCTestCase {
     app.signOut()
 
     XCTAssertEqual(store.profiles, UseSmileIDSampleProfiles())
-    // The next profile made reuses p-1, and must not inherit the last person's unsaved edits.
     app.profiles.add(organisation: "Kobo")
     XCTAssertEqual(app.profileOrganisationDraft(for: "p-1"), "Kobo")
   }

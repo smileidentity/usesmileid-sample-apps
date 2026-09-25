@@ -1,5 +1,4 @@
-# Products → the details form, filled and submitted without keeping a profile. Each field is erased
-# first: with no profile the form keeps this session's typing, so a second pass would append to it.
+# Each field is erased first: with no profile the form keeps this session's typing.
 appId: ${APP_ID}
 ---
 - tapOn:

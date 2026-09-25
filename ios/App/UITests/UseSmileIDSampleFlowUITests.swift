@@ -372,7 +372,6 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     XCTAssertTrue(field.waitForExistence(timeout: 5), id)
     field.tap()
     let current = (field.value as? String) ?? ""
-    // An empty field reports its placeholder as its value.
     if !current.isEmpty, current != field.placeholderValue {
       field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count))
     }

@@ -85,7 +85,6 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
             app.storeScope.launch { app.store.clearTokenSession() }
             app.forms.clear()
             app.profiles.clear()
-            // Straight to the store too: a seeded launch writes nothing, and the dialog promises every profile goes.
             app.storeScope.launch { app.store.setProfiles(UseSmileIDSampleProfilesRecord()) }
             // The nav bar's own tab switch, so the stack lands where selecting Products would.
             navigator.navigate(ProductsNavGraph) {

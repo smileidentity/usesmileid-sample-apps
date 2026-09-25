@@ -146,7 +146,6 @@ private object UseSmileIDSampleProfilesHolder {
     private var current: Pair<UseSmileIDSampleLaunchArgs, UseSmileIDSampleProfiles>? = null
 
     init {
-        // Conflated, so the latest record wins and writes land in order.
         UseSmileIDSampleJobStore.writeScope.launch {
             writes.filterNotNull().collect { (store, record) -> store.setProfiles(record) }
         }

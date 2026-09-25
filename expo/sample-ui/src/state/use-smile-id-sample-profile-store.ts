@@ -102,7 +102,6 @@ export const useSmileIDSampleProfileStore = create<State & Actions>((set, get) =
     const { items, activeId, seeded } = get();
     if (seeded) return;
     const encoded = smileIDSampleEncodeProfiles({ profiles: items, activeId });
-    // Caught, not voided: a refused write must never surface as an unhandled rejection.
     writes = writes.then(() => storage.write(encoded)).catch(() => undefined);
   };
 
@@ -115,7 +114,6 @@ export const useSmileIDSampleProfileStore = create<State & Actions>((set, get) =
 
     load: async (args, into) => {
       if (into !== undefined) storage = into;
-      // Once per launch: a remount must not replace profiles already in use with an older read.
       if (get().loaded) return;
       if (args.seedProfiles) {
         get().reset(smileIDSampleFixtureProfiles());
@@ -123,7 +121,6 @@ export const useSmileIDSampleProfileStore = create<State & Actions>((set, get) =
       }
       let raw: string | null = null;
       try {
-        // After any queued write, so the read is never older than the last change.
         await writes;
         raw = await storage.read();
       } catch {
@@ -190,7 +187,6 @@ export const useSmileIDSampleProfileStore = create<State & Actions>((set, get) =
 
     clear: () => {
       change({ items: [], activeId: null, lastCreatedId: null });
-      // Sign-out promises every profile on the device goes, stored ones a seeded launch hid included.
       if (get().seeded) {
         writes = writes.then(() => storage.write(null)).catch(() => undefined);
       }

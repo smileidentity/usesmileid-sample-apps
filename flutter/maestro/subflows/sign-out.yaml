@@ -1,5 +1,4 @@
-# Settings → Sign out → confirm, which ends the session and deletes every profile: the clean slate a
-# flow that stores a profile starts and ends from, since `clearState` is unusable on some OEMs.
+# Sign out and confirm: the clean slate, since `clearState` is unusable on some OEMs.
 appId: ${APP_ID}
 ---
 # Settled first: straight after a cold start the tab bar can take the tap before it answers it.
@@ -26,8 +25,7 @@ appId: ${APP_ID}
     direction: DOWN
     visibilityPercentage: 80
     timeout: 45000
-# To the end of the list, whose padding clears the floating nav bar: stopped at first sight, the row can
-# sit under the bar, which then takes the tap.
+# To the list's end, whose padding clears the floating nav bar that would otherwise take the tap.
 - scroll
 - waitForAnimationToEnd:
     timeout: 3000

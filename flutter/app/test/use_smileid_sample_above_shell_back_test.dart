@@ -21,7 +21,6 @@ void main() {
       final GoRouter router = useSmileIDSampleRouter(initialLocation: at);
       await tester.pumpWidget(
         ProviderScope(
-          // Seeded, so the editor's profile exists: a link to one this device lacks goes back on its own.
           overrides: [
             useSmileIDSampleLaunchArgsProvider.overrideWithValue(
               const UseSmileIDSampleLaunchArgs(seedProfiles: true),

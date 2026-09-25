@@ -77,7 +77,6 @@ public final class UseSmileIDSampleStore {
     if let sealed = profilesStorage.read() {
       return UseSmileIDSampleProfilesCodec.decode(sealed)
     }
-    // A plain record from before the Keychain moves across once, and leaves the defaults.
     guard let plain = settingsStorage.data(Self.profilesKey) else { return UseSmileIDSampleProfiles() }
     profilesStorage.write(plain)
     settingsStorage.setData(Self.profilesKey, nil)

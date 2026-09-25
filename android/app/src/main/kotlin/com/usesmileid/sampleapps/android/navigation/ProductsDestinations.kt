@@ -38,7 +38,6 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
             result = app.flowResult.snapshot,
         ),
         onProductClick = {
-            // With no profile the session's typing stays: the person chose not to keep it.
             app.forms.startRun(app.profiles.active)
             navigator.navigate(app.firstStepFor(it))
         },

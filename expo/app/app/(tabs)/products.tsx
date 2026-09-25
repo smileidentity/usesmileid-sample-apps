@@ -43,7 +43,6 @@ export default function Products() {
         sessionEnded: ended,
       }}
       onProductPress={(product) => {
-        // With no profile the session's typing stays: the person chose not to keep it.
         startRun(profile);
         router.push(smileIDSampleFirstStepFor(product, smileIDSampleLiveBindingsNow(scenario)));
       }}

@@ -21,7 +21,6 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     signOut()
     element("sample_nav_products").tap()
     XCTAssertTrue(element("sample_session_card").waitForNonExistence(timeout: 5))
-    // Sign-out deletes every profile, the seeded ones too, so a relaunch brings the fixtures back.
     app.terminate()
     app.launch()
     XCTAssertTrue(element("sample_nav_settings").waitForExistence(timeout: 10))
@@ -419,7 +418,6 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     XCTAssertTrue(field.waitForExistence(timeout: 5), id)
     field.tap()
     let current = (field.value as? String) ?? ""
-    // An empty field reports its placeholder as its value.
     if !current.isEmpty, current != field.placeholderValue {
       field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count))
     }

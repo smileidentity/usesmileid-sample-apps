@@ -1,12 +1,7 @@
-# A profile is who a job runs as: the first run's typing becomes one, it survives a restart and fills
-# the next form, a new one is made and used from the form, and sign-out asks before deleting them all.
-# Flutter merges a row's texts into one label, so text is matched by id with a DOTALL regex, and it
-# exposes no field value at all: a filled form is proved by the save switch staying hidden.
-# Opens and closes signed out, because this is the one flow that stores a profile on purpose.
+# Flutter merges a row's texts into one label, so text is matched by id with a DOTALL regex.
 # APP_ID has no default: in Maestro 2.8 a flow-level `env:` default wins over `-e`.
 appId: ${APP_ID}
 ---
-# `clearState` works on the CI emulator; the sign-out after it is what cleans a phone that refuses it.
 - runFlow:
     file: subflows/cold-start.yaml
     env:
@@ -14,7 +9,6 @@ appId: ${APP_ID}
       LANDS_ON: "sample_products_screen"
 - runFlow: subflows/sign-out.yaml
 
-# --- first run: no profile, and the form offers to make one -------------------------------------
 - tapOn:
     id: "sample_product_card_smartSelfieEnrollment"
 - assertVisible:
@@ -51,7 +45,6 @@ appId: ${APP_ID}
       id: "sample_products_screen"
     timeout: 30000
 
-# --- restart: the profile is stored, and the next run fills from it ------------------------------
 - runFlow:
     file: subflows/cold-start.yaml
     env:
@@ -64,11 +57,9 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_user_details_profile"
     text: "(?s).*Kobo.*"
-# Nothing typed differs from the profile, so there is nothing to keep and no switch.
 - assertNotVisible:
     id: "sample_remember_details_switch"
 
-# --- a second persona, made and used from the form -----------------------------------------------
 - tapOn:
     id: "sample_user_details_profile"
 - assertVisible:
@@ -81,7 +72,6 @@ appId: ${APP_ID}
     id: "sample_new_profile_name"
 - inputText: "Kazi"
 - hideKeyboard
-# The sheet starts from what the form had typed, so the names are replaced rather than appended to.
 - tapOn:
     id: "sample_new_profile_first_name"
 - eraseText
@@ -103,7 +93,6 @@ appId: ${APP_ID}
     id: "sample_remember_details_switch"
 - back
 
-# --- edit the active profile from its own page --------------------------------------------------
 - tapOn:
     id: "sample_nav_settings"
 - tapOn:
@@ -123,7 +112,6 @@ appId: ${APP_ID}
     id: "sample_profile_config_save"
 - assertVisible:
     id: "sample_profiles_screen"
-# Reopened, the page has nothing left to save: the edit was stored, not just navigated away from.
 - tapOn:
     id: "sample_profile_row_p-2"
 - assertVisible:
@@ -134,7 +122,6 @@ appId: ${APP_ID}
     id: "sample_profiles_screen"
 - back
 
-# --- sign out asks, then leaves no profile --------------------------------------------------------
 - runFlow: subflows/sign-out.yaml
 - tapOn:
     id: "sample_product_card_smartSelfieEnrollment"

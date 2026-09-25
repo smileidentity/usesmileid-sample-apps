@@ -28,7 +28,6 @@ appId: ${APP_ID}
     timeout: 45000
 - tapOn:
     id: "sample_sign_out"
-# It asks first, because it also deletes every profile on the device.
 - tapOn:
     id: "sample_sign_out_confirm"
 - assertVisible:

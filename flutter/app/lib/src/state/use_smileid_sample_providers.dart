@@ -188,7 +188,6 @@ class UseSmileIDSampleProfilesNotifier
     if (UseSmileIDSampleProfilesCodec.encode(state) == before) {
       return;
     }
-    // Fixtures are never stored: an automation run must not leave made-up people behind.
     if (!ref.read(useSmileIDSampleLaunchArgsProvider).seedProfiles) {
       unawaited(
         ref.read(useSmileIDSampleProfilesRepositoryProvider).write(state),

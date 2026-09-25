@@ -36,7 +36,6 @@ export default function ConsentDetailsForm() {
   const { scenario } = useLaunchArgs();
   const requirement = smileIDSampleRequirementFrom(bindings);
 
-  // A cold link arrives without the product tap that fills the form, so entry fills it too; once, on mount.
   const fillFrom = useSmileIDSampleFormsStore((state) => state.fillFrom);
   useEffect(() => {
     if (profile !== null) fillFrom(profile);

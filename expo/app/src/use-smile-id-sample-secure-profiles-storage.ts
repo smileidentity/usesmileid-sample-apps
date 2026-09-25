@@ -9,7 +9,6 @@ export const smileIDSampleSecureProfilesStorage: UseSmileIDSampleProfilesStorage
   read: async () => {
     const sealed = await SecureStore.getItemAsync(SMILE_ID_SAMPLE_PROFILES_KEY, options);
     if (sealed !== null) return sealed;
-    // A plain record from before moves across once, and leaves AsyncStorage.
     const plain = await AsyncStorage.getItem(SMILE_ID_SAMPLE_PROFILES_KEY);
     if (plain !== null) {
       await SecureStore.setItemAsync(SMILE_ID_SAMPLE_PROFILES_KEY, plain, options);

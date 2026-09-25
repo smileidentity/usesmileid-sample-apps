@@ -50,7 +50,6 @@ class UseSmileIDSampleStore(
     /** Sealed, since the record holds people's details; missing, unopenable or unreadable is no profiles. */
     val profiles: Flow<UseSmileIDSampleProfilesRecord> = store.data.map { prefs ->
         val stored = prefs[PROFILES] ?: return@map UseSmileIDSampleProfilesRecord()
-        // A plain record from before sealing still reads, and the next change seals it.
         UseSmileIDSampleProfilesCodec.decode(profilesCipher.open(stored) ?: stored.takeIf { it.startsWith("{") })
     }
 

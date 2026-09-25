@@ -1,5 +1,4 @@
-# Settings → Sign out → confirm, which ends the session and deletes every profile: the clean slate a
-# flow that stores a profile starts and ends from, since `clearState` is unusable on some OEMs.
+# Sign out and confirm: the clean slate, since `clearState` is unusable on some OEMs.
 appId: ${APP_ID}
 ---
 # Settled first: straight after a cold start the tab bar can take the tap before it answers it.
