@@ -22,8 +22,7 @@ jobs:
   verify:
     # macOS, not ubuntu: a Flutter golden is host-rasterised, so a baseline recorded on a Mac and
     # verified on Linux reds the lane for reasons that have nothing to do with the UI. The same
-    # runner also builds the iOS release, which verify.sh skips loudly anywhere else. The Android
-    # release APKs are the one phase that needs neither, so android-release builds them on Linux.
+    # runner also builds the iOS release, which verify.sh skips loudly anywhere else.
     runs-on: blacksmith-6vcpu-macos-26
     timeout-minutes: 45
     steps:
@@ -92,6 +91,7 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+  # The release APKs need neither a Mac nor its rasteriser, so they build on the cheaper Linux runner.
   android-release:
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 45
@@ -103,7 +103,6 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      # Main writes the Gradle cache; branch runs read it.
       - uses: gradle/actions/setup-gradle@v6
 
       - uses: subosito/flutter-action@v2

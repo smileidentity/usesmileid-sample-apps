@@ -3,9 +3,7 @@
 #
 # Device flows need a device and are not run here. The app shares its application id with the
 # Flutter SDK repo's development sample (spec/app-identity.json), so install one at a time.
-#
-# Phases: `all` (the default) runs everything. CI splits it in two so the Android release build runs on
-# Linux: `checks` is everything except the release APKs, and `android` is only the release APKs.
+# Phases: all (default) · checks (all but the release APKs) · android (only the release APKs).
 set -euo pipefail
 
 PHASE="${1:-all}"
