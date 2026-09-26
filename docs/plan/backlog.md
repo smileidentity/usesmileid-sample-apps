@@ -87,6 +87,31 @@ envelope at 320 on all four apps and fix what it finds.
 The XCUITest device lane has a counterpart for every Android flow, with the opener and exactly-once
 assertions. The camera permission prompt on a fresh install is the one case it does not yet drive.
 
+### Flutter: assert the SDK's consent screen by id once the SDK ships it
+
+The Flutter SDK now publishes the same screen ids as the other SDKs (smileidentity/flutter#224):
+`si_consent_screen`, `si_instructions_screen`, `si_capture_screen`, `si_document_back_instructions_screen`,
+`si_camera_error_screen`, `si_preview_screen`, `si_document_preview_screen` and `si_processing_screen`.
+
+The Flutter app still pins `usesmileid` 12.1.1 in `flutter/app/pubspec.yaml`, which publishes only
+`si_preview_screen` and `si_processing_screen`. So the Flutter device flows match the consent screen by
+its text:
+
+- `flutter/maestro/sdk-flow.yaml`: the header comment and the consent step
+- `flutter/maestro/profile-journey.yaml:38`
+- `flutter/maestro/token-session.yaml:4`
+- `flutter/maestro/README.md:65-68`, which says the SDK publishes only two ids
+
+iOS (`ios/App/UITests/UseSmileIDSampleFlowUITests.swift`) and Expo (`expo/maestro/token-session.yaml`)
+already assert `si_consent_screen`, so Flutter is the only platform left.
+
+Done looks like:
+
+- The Flutter app is bumped to the first `usesmileid` release that includes that change.
+- The three flows assert the consent screen by id, `si_consent_screen`.
+- The README paragraph and the comments that explain the text match are removed.
+- All three flows pass on a device.
+
 ## Spec and code health
 
 ### One table for spec debt in `spec/README.md`
