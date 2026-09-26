@@ -88,6 +88,9 @@ tasks.withType<Test>().configureEach {
     systemProperty("sampleapps.spec.dir", specDir.asFile.absolutePath)
     // Declared so an edited spec re-runs the task; without it verify passes on a stale contract.
     inputs.dir(specDir).withPropertyName("specContract").withPathSensitivity(PathSensitivity.RELATIVE)
+    // The test-id usage check reads the shell's sources too, which the classpath alone does not track.
+    inputs.dir(layout.projectDirectory.dir("../app/src/main")).withPropertyName("shellSources")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
 
     // Goldens render clock times, so the recorder's own zone and locale would otherwise bake into them.
     systemProperty("user.timezone", "UTC")
