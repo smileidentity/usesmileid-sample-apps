@@ -58,32 +58,29 @@ updates every row the current partner submitted, including rows from an expired 
 - Add the platform binding and test id alongside the `refreshing` frame in `spec/screens.json`, and
   cover it with a device flow, since a refresh that never ends is the likely regression.
 
+### Expo: the scenario drawer is not presented
+
+Expo's Settings screen shows the scenario-drawer button only when a shell passes
+`onOpenScenarioDrawer`, and no Expo route does, so the drawer and its `sample_scenario_drawer`,
+`sample_scenario_item_*` and `sample_theme_item_*` ids exist nowhere on Expo. Present the drawer from
+the Expo shell as the other three apps do, then drop the three excused ids from
+`use-smile-id-sample-test-id-usage.test.ts`.
+
 ## Tests and structural checks
 
-### Test-id and semantics checks are missing on Android and Expo
+### Words that cannot fit the narrowest phone at the largest type
 
-Two structural checks keep a declared test id from silently meaning nothing. Each platform should have both:
+Every Flutter predicate now shares one envelope (largest text scale, the real font, a non-zero inset),
+but it runs at the design's 393 width, as Android's and Expo's do by default. Run at 320, the narrowest
+phone both platform floors support, it finds a word broken mid-word on ten surfaces, among them:
 
-1. **Every declared id is attached to something.** A declared id can be set on no widget while the spec
-   test and the goldens stay green (it happened with Flutter's scenario-drawer button). Read the
-   declarations, read every source file in the shell and in `sample-ui`, and assert that each id appears
-   somewhere other than its own declaration. The check has to span both packages, because a sheet's id
-   is supplied by the host that presents it. iOS (`TestIdUsageTest`) and Flutter have it; Android and
-   Expo do not.
-2. **The id spec test asserts both directions**: nothing undeclared, and nothing declared but missing.
-   A one-directional set check cannot fail on an omission. Expo does both; check Android and Flutter.
+- the top app bar title `Verification details`, and the products `SmartSelfie™` and `Enhanced SmartSelfie™` labels
+- the email placeholder `name@company.com` on the user-details and verification-details screens
+- the licence coordinate `shared_preferences`, and a long organisation name on the details screen
 
-Expo also lacks the second structural check Flutter has: a container must not absorb its children's
-semantics. Its app-bar title also carries no header role.
-
-### Layout predicates that can fail
-
-- **Flutter's truncation predicate cannot fail.** The condition `didExceedMaxLines && maxLines != 1`
-  excludes every paragraph able to report truncation, because every `maxLines` in the app is 1 or unset.
-- **The Flutter nav-bar clearance test sweeps five text scales against one tab root.** The bar's height
-  depends on the tab, so sweep every tab.
-- **A shared envelope helper** would stop each predicate choosing its own conditions. It should pump the
-  narrowest width, the largest text scale, the real font and a non-zero inset.
+A word wider than its column cannot be fixed in code alone: the type steps down before it wraps (as the
+product card title already does), or the break is accepted. Ask for a design ruling, then run the
+envelope at 320 on all four apps and fix what it finds.
 
 ### iOS device lane: handle the camera permission prompt
 
