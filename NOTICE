@@ -5,7 +5,7 @@ The source code in this repository is licensed under the MIT License (see LICENS
 bundled assets are not covered by that licence and keep their own terms.
 
 DM Sans
-  Files:   android/sample-ui/src/main/res/font/dm_sans_*.ttf
+  Files:   android/sample-ui/src/main/res/font/sample_dm_sans_*.ttf
            ios/SampleUI/Sources/SampleUI/Resources/Fonts/DMSans-*.ttf
            flutter/sample_ui/assets/fonts/DMSans-*.ttf
            expo/sample-ui/assets/fonts/DMSans-*.ttf

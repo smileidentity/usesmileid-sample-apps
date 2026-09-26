@@ -108,30 +108,11 @@ and an allowlist. Put them in one owner table in `spec/README.md`, each with a d
 Run `knip` over the Expo workspace, and enable the unused-code lints on Flutter, in each platform's
 `verify.sh` so CI enforces them.
 
-### Android: removing an unknown job id discards the undo
-
-Android's job store silently drops the undo when asked to remove an id it has no row for. iOS guards on
-what the removal actually took. Nothing reachable passes an unknown id today, so this is hardening:
-match iOS, and add a test.
-
-### Android: enforce a resource prefix on `sample-ui`
-
-`android/sample-ui` declares no `resourcePrefix`, so its icons are prefixed `sample_ic_*` by hand and
-nothing stops an unprefixed resource from colliding with a host's. The same library runs inside the SDK
-repos' development samples, so a collision there is silent. Set `resourcePrefix = "sample_"` in
-`android/sample-ui/build.gradle.kts` and rename whatever lint then flags.
-
 ### List the bundled font and icons on the licences screens
 
 The four licences screens list the registry dependencies, but not the assets bundled in the tree: DM Sans
 (SIL Open Font License 1.1) and the Material Symbols stand-ins (Apache 2.0). `NOTICE` records both. Add
 them to each app's licences screen, from one shared source so the four do not drift.
-
-### Android: store the token session encrypted
-
-Android keeps the linked session's token in DataStore unencrypted, where iOS, Flutter and Expo use
-the platform's secure storage. The trade was made when only sandbox tokens could be scanned. Production
-tokens can be scanned now, so seal it with an Android Keystore key, as the profiles already are.
 
 ## Device suite and CI
 

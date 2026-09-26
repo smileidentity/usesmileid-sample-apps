@@ -33,7 +33,7 @@ class UseSmileIDSampleSettingsPersistenceTest {
     fun setUp() {
         file = File.createTempFile("settings", ".preferences_pb").also { it.delete() }
         prefs = PreferenceDataStoreFactory.create { file }
-        store = UseSmileIDSampleStore(prefs)
+        store = UseSmileIDSampleStore(prefs, UseSmileIDSampleTestCipher)
     }
 
     @After

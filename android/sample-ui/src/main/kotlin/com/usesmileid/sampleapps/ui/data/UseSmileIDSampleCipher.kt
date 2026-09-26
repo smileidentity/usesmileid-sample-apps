@@ -9,17 +9,18 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
-/** Seals the stored profiles, which hold names, emails and phone numbers. */
-interface UseSmileIDSampleProfilesCipher {
+/** Seals what the sample stores that must not sit on disk in plain text: the profiles and the token. */
+interface UseSmileIDSampleCipher {
     fun seal(plain: String): String
 
-    /** Null for anything this key did not seal, so a lost or foreign value reads as no profiles. */
+    /** Null for anything this key did not seal, so a lost or foreign value reads as nothing stored. */
     fun open(sealed: String): String?
 }
 
 /** AES-GCM under a key the Android Keystore holds and never releases; the alias is not an application id. */
-class UseSmileIDSampleKeystoreProfilesCipher(private val alias: String = "usesmileid_sample_profiles") :
-    UseSmileIDSampleProfilesCipher {
+// The alias predates the token, and renaming it would orphan every sealed profile.
+class UseSmileIDSampleKeystoreCipher(private val alias: String = "usesmileid_sample_profiles") :
+    UseSmileIDSampleCipher {
 
     override fun seal(plain: String): String {
         val cipher = Cipher.getInstance(TRANSFORMATION).apply { init(Cipher.ENCRYPT_MODE, key()) }

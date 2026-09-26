@@ -94,6 +94,7 @@ fun rememberUseSmileIDSampleAppState(
     val forms = rememberSaveable(saver = UseSmileIDSampleForms.Saver) { UseSmileIDSampleForms() }
     val profiles = remember(launchArgs) { UseSmileIDSampleProfilesHolder.profilesFor(launchArgs, store) }
     LaunchedEffect(profiles) { if (!profiles.loaded) profiles.restore(store.profiles.first()) }
+    LaunchedEffect(store) { store.sealLegacyToken() }
     // Not saveable: the scanner claims it into its own saveable state, which survives a rotation.
     val interruptedRun = remember { UseSmileIDSampleInterruptedRun() }
     // Saveable, so the arguments seed the first launch only and a recreation keeps the drawer's choice.

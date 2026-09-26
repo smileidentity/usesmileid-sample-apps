@@ -15,32 +15,23 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenDecoder
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 /** Everything the sample persists: settings, profiles and the token session. */
 class UseSmileIDSampleStore(
     private val store: DataStore<Preferences>,
-    private val profilesCipher: UseSmileIDSampleProfilesCipher = UseSmileIDSampleKeystoreProfilesCipher(),
+    private val cipher: UseSmileIDSampleCipher = UseSmileIDSampleKeystoreCipher(),
 ) {
 
     constructor(context: Context) : this(context.applicationContext.sampleStore)
 
     val settings: Flow<UseSmileIDSampleSettings> = store.data.map(::settingsIn)
 
-    /**
-     * The token is the whole record: the handle, the deadline and the bindings all decode from it, so
-     * storing them alongside it would only create copies that can disagree with it. A stored token
-     * that no longer decodes reads as no session rather than a degraded one.
-     *
-     * Unencrypted, deliberately: the token is short-lived and sandbox-scoped, and losing the session
-     * on every process death the camera can cause would make the feature unusable.
-     *
-     * Both halves come from one emission: two collectors let the UI hold the token from one write and
-     * the marker from the next, a pair impossible on disk.
-     */
+    /** The sealed token is the whole record, read with its ended marker from one emission; plain pre-sealing tokens still read. */
     val session: Flow<UseSmileIDSampleSessionRecord> = store.data.map { prefs ->
         UseSmileIDSampleSessionRecord(
-            live = prefs[SESSION_TOKEN]?.let(UseSmileIDSampleTokenDecoder::session),
+            live = prefs[SESSION_TOKEN]?.let { stored -> UseSmileIDSampleTokenDecoder.session(cipher.open(stored) ?: stored) },
             ended = prefs[ENDED_SESSION_ID]?.let { id ->
                 UseSmileIDSampleEndedSession(id = id, endedAtMillis = prefs[ENDED_SESSION_AT] ?: 0L)
             },
@@ -50,12 +41,12 @@ class UseSmileIDSampleStore(
     /** Sealed, since the record holds people's details; missing, unopenable or unreadable is no profiles. */
     val profiles: Flow<UseSmileIDSampleProfilesRecord> = store.data.map { prefs ->
         val stored = prefs[PROFILES] ?: return@map UseSmileIDSampleProfilesRecord()
-        UseSmileIDSampleProfilesCodec.decode(profilesCipher.open(stored) ?: stored.takeIf { it.startsWith("{") })
+        UseSmileIDSampleProfilesCodec.decode(cipher.open(stored) ?: stored.takeIf { it.startsWith("{") })
     }
 
     /** The whole record in one sealed write, so the list and the active id can never come from different edits. */
     suspend fun setProfiles(record: UseSmileIDSampleProfilesRecord) {
-        val sealed = profilesCipher.seal(UseSmileIDSampleProfilesCodec.encode(record))
+        val sealed = cipher.seal(UseSmileIDSampleProfilesCodec.encode(record))
         store.edit { prefs -> prefs[PROFILES] = sealed }
     }
 
@@ -71,10 +62,21 @@ class UseSmileIDSampleStore(
         }
     }
 
+    /** Re-seals a token an earlier build stored in plain text, so an upgrade leaves no credential readable on disk. */
+    suspend fun sealLegacyToken() {
+        val stored = store.data.first()[SESSION_TOKEN] ?: return
+        if (cipher.open(stored) != null || UseSmileIDSampleTokenDecoder.session(stored) == null) return
+        // Runs at startup, so a Keystore failure leaves the token as it was rather than crashing the launch.
+        val sealed = runCatching { cipher.seal(stored) }.getOrNull() ?: return
+        // Compared inside the edit, so a link or retirement that landed meanwhile is never overwritten.
+        store.edit { prefs -> if (prefs[SESSION_TOKEN] == stored) prefs[SESSION_TOKEN] = sealed }
+    }
+
     /** Takes the session rather than the raw token, so only a decoded one can ever be linked. */
     suspend fun linkTokenSession(session: UseSmileIDSampleTokenSession) {
+        val sealed = cipher.seal(session.token)
         store.edit { prefs ->
-            prefs[SESSION_TOKEN] = session.token
+            prefs[SESSION_TOKEN] = sealed
             // A new session is not an ended one.
             prefs.remove(ENDED_SESSION_ID)
             prefs.remove(ENDED_SESSION_AT)
