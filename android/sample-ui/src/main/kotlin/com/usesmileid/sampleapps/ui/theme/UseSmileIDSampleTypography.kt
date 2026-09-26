@@ -9,11 +9,11 @@ import com.usesmileid.sampleapps.ui.R
 
 /** DM Sans, bundled rather than downloaded: a provider would make text depend on Play Services and goldens on the network. */
 private val DmSans = FontFamily(
-    Font(R.font.dm_sans_regular, FontWeight.Normal),
-    Font(R.font.dm_sans_medium, FontWeight.Medium),
-    Font(R.font.dm_sans_semibold, FontWeight.SemiBold),
-    Font(R.font.dm_sans_bold, FontWeight.Bold),
-    Font(R.font.dm_sans_extrabold, FontWeight.ExtraBold),
+    Font(R.font.sample_dm_sans_regular, FontWeight.Normal),
+    Font(R.font.sample_dm_sans_medium, FontWeight.Medium),
+    Font(R.font.sample_dm_sans_semibold, FontWeight.SemiBold),
+    Font(R.font.sample_dm_sans_bold, FontWeight.Bold),
+    Font(R.font.sample_dm_sans_extrabold, FontWeight.ExtraBold),
 )
 
 /** Display styles name Epilogue first with DM Sans as their own declared fallback, and it is not shipped. */
