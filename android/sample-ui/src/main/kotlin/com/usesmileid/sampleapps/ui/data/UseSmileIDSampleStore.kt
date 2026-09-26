@@ -15,6 +15,7 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenDecoder
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 /** Everything the sample persists: settings, profiles and the token session. */
@@ -59,6 +60,16 @@ class UseSmileIDSampleStore(
                 .filter { updated[it] != current[it] }
                 .forEach { prefs[it.key()] = updated[it] }
         }
+    }
+
+    /** Re-seals a token an earlier build stored in plain text, so an upgrade leaves no credential readable on disk. */
+    suspend fun sealLegacyToken() {
+        val stored = store.data.first()[SESSION_TOKEN] ?: return
+        if (cipher.open(stored) != null || UseSmileIDSampleTokenDecoder.session(stored) == null) return
+        // Runs at startup, so a Keystore failure leaves the token as it was rather than crashing the launch.
+        val sealed = runCatching { cipher.seal(stored) }.getOrNull() ?: return
+        // Compared inside the edit, so a link or retirement that landed meanwhile is never overwritten.
+        store.edit { prefs -> if (prefs[SESSION_TOKEN] == stored) prefs[SESSION_TOKEN] = sealed }
     }
 
     /** Takes the session rather than the raw token, so only a decoded one can ever be linked. */

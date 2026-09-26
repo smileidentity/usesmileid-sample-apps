@@ -117,6 +117,27 @@ class UseSmileIDSampleSessionRetirementTest {
         assertEquals(TOKEN, store.session.first().live?.token)
     }
 
+    @Test
+    fun `a plain token from before sealing is re-sealed in place, and keeps its session`() = runTest {
+        prefs.edit { it[SESSION_TOKEN] = TOKEN }
+
+        store.sealLegacyToken()
+
+        assertTrue("the plain token is still on disk", prefs.data.first()[SESSION_TOKEN] != TOKEN)
+        assertEquals(TOKEN, store.session.first().live?.token)
+    }
+
+    @Test
+    fun `re-sealing leaves a sealed token and an empty store alone`() = runTest {
+        store.sealLegacyToken()
+        assertNull(prefs.data.first()[SESSION_TOKEN])
+
+        store.linkTokenSession(session())
+        val sealed = prefs.data.first()[SESSION_TOKEN]
+        store.sealLegacyToken()
+        assertEquals(sealed, prefs.data.first()[SESSION_TOKEN])
+    }
+
     private fun session() = UseSmileIDSampleTokenSession(
         id = HANDLE,
         token = TOKEN,
