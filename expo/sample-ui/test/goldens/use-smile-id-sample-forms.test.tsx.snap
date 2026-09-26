@@ -5031,6 +5031,7 @@ exports[`kycIdForm dark empty 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -6050,6 +6051,7 @@ exports[`kycIdForm dark selected 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -7069,6 +7071,7 @@ exports[`kycIdForm light empty 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -8088,6 +8091,7 @@ exports[`kycIdForm light selected 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -9107,6 +9111,7 @@ exports[`userDetails dark complete 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -10161,6 +10166,7 @@ exports[`userDetails dark empty 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -11138,6 +11144,7 @@ exports[`userDetails dark tokenSuppliedNames 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -12115,6 +12122,7 @@ exports[`userDetails light complete 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -13169,6 +13177,7 @@ exports[`userDetails light empty 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -14146,6 +14155,7 @@ exports[`userDetails light tokenSuppliedNames 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
