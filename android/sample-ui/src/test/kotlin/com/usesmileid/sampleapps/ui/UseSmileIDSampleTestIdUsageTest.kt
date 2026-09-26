@@ -20,7 +20,7 @@ class UseSmileIDSampleTestIdUsageTest {
             .flatMap { android.resolve(it).walk().filter { file -> file.extension == "kt" && file != declarations } }
             .joinToString("\n") { it.readText() }
 
-        val unattached = declared.filterNot { callers.contains("UseSmileIDSampleTestIds.$it") }.sorted()
+        val unattached = declared.filterNot { Regex("""\bUseSmileIDSampleTestIds\.$it\b""").containsMatchIn(callers) }.sorted()
         assertEquals("declared, specified and attached to nothing", emptyList<String>(), unattached)
     }
 
