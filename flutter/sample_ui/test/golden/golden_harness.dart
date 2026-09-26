@@ -23,6 +23,12 @@ const double goldenScreenHeight = 1750;
 /// The largest accessibility text scale the no-clipping predicate means.
 const double maxTextScale = 2;
 
+/// The narrowest phone both floors support: iOS 15's first-generation SE, Android's small bucket.
+const double smallestPhoneWidth = 320;
+
+/// A gesture-navigation inset, so a host's bottom padding is never zero on both sides.
+const double gestureInset = 34;
+
 /// The key the capture is taken from, so the shot is the component and its padding, not the window.
 const Key goldenRoot = Key('golden_root');
 
@@ -178,7 +184,10 @@ Future<UseSmileIDSampleTextScaleFindings> textScaleFindings(
   double textScale = maxTextScale,
   double hostHeight = goldenHostHeight,
   bool ownsScrolling = false,
+  double width = goldenWidth,
 }) async {
+  _expectRealFont();
+  // One envelope for every predicate: the largest type, the real font and a non-zero inset.
   await _host(
     tester,
     UseSmileIDSampleTheme.light(),
@@ -189,6 +198,8 @@ Future<UseSmileIDSampleTextScaleFindings> textScaleFindings(
     scrollable: !ownsScrolling,
     hostHeight: hostHeight,
     fillsHost: ownsScrolling,
+    width: width,
+    bottomInset: gestureInset,
   );
 
   final List<RenderParagraph> paragraphs = <RenderParagraph>[];
@@ -289,13 +300,17 @@ Future<void> _host(
   bool scrollable = false,
   double hostHeight = goldenHostHeight,
   bool fillsHost = false,
+  double width = goldenWidth,
+  double bottomInset = 0,
 }) async {
   tester.view
     ..devicePixelRatio = goldenPixelRatio
     ..physicalSize = Size(
-      goldenWidth * goldenPixelRatio,
+      width * goldenPixelRatio,
       hostHeight * goldenPixelRatio,
-    );
+    )
+    ..viewPadding = FakeViewPadding(bottom: bottomInset * goldenPixelRatio)
+    ..padding = FakeViewPadding(bottom: bottomInset * goldenPixelRatio);
   addTearDown(tester.view.reset);
 
   await tester.pumpWidget(
@@ -319,7 +334,7 @@ Future<void> _host(
             child: RepaintBoundary(
               key: goldenRoot,
               child: Container(
-                width: goldenWidth,
+                width: width,
                 height: fillsHost ? hostHeight : null,
                 color: colors.background,
                 padding: const EdgeInsets.all(SmileDimens.spacingMd),
@@ -340,4 +355,22 @@ Future<void> _host(
   // Not pumpAndSettle: the button's loading indicator animates indefinitely, so settling never
   // returns. One extra frame is all static content needs, and no baseline captures the indicator.
   await tester.pump();
+}
+
+/// Fails a predicate run on the test font, whose square glyphs measure nothing a device would draw.
+void _expectRealFont() {
+  final TextPainter probe = TextPainter(
+    text: const TextSpan(
+      text: 'il',
+      style: TextStyle(fontFamily: useSmileIDSampleFontFamily, fontSize: 10),
+    ),
+    textDirection: TextDirection.ltr,
+  )..layout();
+  final double width = probe.width;
+  probe.dispose();
+  expect(
+    width,
+    isNot(20),
+    reason: 'the sample fonts are not loaded; call loadSampleTextFonts first',
+  );
 }
