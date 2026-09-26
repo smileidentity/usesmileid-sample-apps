@@ -1205,6 +1205,7 @@ exports[`at the largest content size, dark top_app_bar_wrapping_title 1`] = `
       </RNSVGSvgView>
     </View>
     <Text
+      accessibilityRole="header"
       style={
         [
           {
@@ -2443,6 +2444,7 @@ exports[`at the largest content size, light top_app_bar_wrapping_title 1`] = `
       </RNSVGSvgView>
     </View>
     <Text
+      accessibilityRole="header"
       style={
         [
           {

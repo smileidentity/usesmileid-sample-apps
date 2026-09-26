@@ -16506,6 +16506,7 @@ exports[`TopAppBar dark backOnly 1`] = `
       </RNSVGSvgView>
     </View>
     <Text
+      accessibilityRole="header"
       style={
         [
           {
@@ -16681,6 +16682,7 @@ exports[`TopAppBar dark backWithDelete 1`] = `
       </RNSVGSvgView>
     </View>
     <Text
+      accessibilityRole="header"
       style={
         [
           {
@@ -16958,6 +16960,7 @@ exports[`TopAppBar dark backWithTorch 1`] = `
       </RNSVGSvgView>
     </View>
     <Text
+      accessibilityRole="header"
       style={
         [
           {
@@ -17235,6 +17238,7 @@ exports[`TopAppBar dark wrappingTitle 1`] = `
       </RNSVGSvgView>
     </View>
     <Text
+      accessibilityRole="header"
       style={
         [
           {
@@ -17410,6 +17414,7 @@ exports[`TopAppBar light backOnly 1`] = `
       </RNSVGSvgView>
     </View>
     <Text
+      accessibilityRole="header"
       style={
         [
           {
@@ -17585,6 +17590,7 @@ exports[`TopAppBar light backWithDelete 1`] = `
       </RNSVGSvgView>
     </View>
     <Text
+      accessibilityRole="header"
       style={
         [
           {
@@ -17862,6 +17868,7 @@ exports[`TopAppBar light backWithTorch 1`] = `
       </RNSVGSvgView>
     </View>
     <Text
+      accessibilityRole="header"
       style={
         [
           {
@@ -18139,6 +18146,7 @@ exports[`TopAppBar light wrappingTitle 1`] = `
       </RNSVGSvgView>
     </View>
     <Text
+      accessibilityRole="header"
       style={
         [
           {

@@ -155,6 +155,7 @@ exports[`licenses dark default 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -615,6 +616,7 @@ exports[`licenses dark empty 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -877,6 +879,7 @@ exports[`licenses light default 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -1337,6 +1340,7 @@ exports[`licenses light empty 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -28702,6 +28706,7 @@ exports[`scanToken dark default 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -29675,6 +29680,7 @@ exports[`scanToken dark redirected 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -30648,6 +30654,7 @@ exports[`scanToken light default 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -31621,6 +31628,7 @@ exports[`scanToken light redirected 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
