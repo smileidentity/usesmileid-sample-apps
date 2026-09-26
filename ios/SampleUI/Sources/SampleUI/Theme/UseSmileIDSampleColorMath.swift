@@ -4,9 +4,15 @@ import SwiftUI
 extension Color {
   /// The standard white-or-dark crossover: above it a fill carries dark ink, below it light.
   var inkOn: Color {
-    var white: CGFloat = 0
-    UIColor(self).getWhite(&white, alpha: nil)
-    return white > 0.179 ? smileOffBlackLight : SmileColorLight.colorTextInverse
+    luminance > 0.179 ? smileOffBlackLight : SmileColorLight.colorTextInverse
+  }
+
+  /// WCAG relative luminance, the measure the other three apps cross over on.
+  var luminance: CGFloat {
+    var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0
+    UIColor(self).getRed(&red, green: &green, blue: &blue, alpha: nil)
+    let linear = { (c: CGFloat) in c <= 0.03928 ? c / 12.92 : pow((c + 0.055) / 1.055, 2.4) }
+    return 0.2126 * linear(red) + 0.7152 * linear(green) + 0.0722 * linear(blue)
   }
 
   func mixed(with other: Color, by fraction: CGFloat) -> Color {

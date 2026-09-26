@@ -76,7 +76,7 @@ fun UseSmileIDSampleSelectionBar(
                     modifier = Modifier.testTag(UseSmileIDSampleTestIds.SELECTION_COUNT),
                 )
                 Text(
-                    text = if (selectedCount == 0) "Tap rows to select" else "Tap `Hide from List` to confirm",
+                    text = if (selectedCount == 0) "Tap rows to select" else "Tap \"Hide from List\" to confirm",
                     style = UseSmileIDSampleTheme.type.textStyleBodySm.copy(fontSize = HINT_SIZE),
                     color = colors.textMuted,
                 )

@@ -14,7 +14,7 @@ import com.smileid.designsystem.smileLabelSize
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/** A status pill. The design wants soft tinted fills; only the saturated `badge.<role>.*` pairs have landed, so the values are pending, not the treatment (spec/design-tokens.json → softBadgeFills). */
+/** A status pill drawn with the design's soft tinted fills (`softBadgeTokens()`, spec/design-tokens.json → softBadgeFills). */
 @Composable
 fun UseSmileIDSampleStatusBadge(
     status: UseSmileIDSampleStatus,

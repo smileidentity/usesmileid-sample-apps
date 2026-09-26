@@ -75,7 +75,7 @@ class UseSmileIDSampleSelectionBar extends StatelessWidget {
                   Text(
                     selectedCount == 0
                         ? 'Tap rows to select'
-                        : 'Tap Hide from List to confirm',
+                        : 'Tap "Hide from List" to confirm',
                     style: UseSmileIDSampleType.textStyleBodySm.copyWith(
                       fontSize: _hintSize,
                       color: colors.textMuted,
