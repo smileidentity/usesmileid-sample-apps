@@ -212,10 +212,10 @@ const applyIdParams = (
   }
 };
 
-/// Required, not imported: a provider resolves its native module on import and would take the bundle down.
 /// The analyzer contract, read off a package the app declares rather than the SDK's transitive one.
 type FaceAnalyzer = typeof useSmileIDMlkitFace;
 
+/// Required, not imported: a provider resolves its native module on import and would take the bundle down.
 const selfieAnalyzer = (): FaceAnalyzer =>
   Platform.OS === 'android'
     ? // eslint-disable-next-line @typescript-eslint/no-require-imports
