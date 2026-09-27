@@ -34,6 +34,7 @@ echo "==> third-party notices are current"
 # Committed into sample-ui's assets, so a dependency change nobody regenerated fails here.
 python3 "$REPO_ROOT/scripts/test_generate_licenses.py" >/dev/null
 python3 "$REPO_ROOT/scripts/test_play_publish.py" >/dev/null
+python3 "$REPO_ROOT/scripts/test_select_android_flows.py" >/dev/null
 ./gradlew :app:checkLicenses
 
 echo "==> icons are current"

@@ -8,6 +8,24 @@ maestro --device <serial> test -e APP_ID=com.usesmileid.sample.android       and
 Both variants must pass. Release is the one that matters most — it is minified and resource-shrunk
 with no app-side keep rules, which is where a consumption defect in the published SDK surfaces.
 
+## In CI
+
+`.github/workflows/android-device.yml` runs this suite on an emulator. A pull request runs only the flows
+its changed paths reach, chosen by `scripts/select_android_flows.py`, against the debug build; a path
+the selector cannot place runs everything, because a flow skipped by mistake is a regression nobody
+sees. A merge to `main`, the nightly run and any pull request that touches packaging (Gradle files, the
+manifest, R8 rules, dependency versions) run every flow against the minified release build. The label
+`device-suite:all` forces the full suite on a pull request. The suite is split over two runners, since
+one runner has no memory for two emulators.
+
+An emulator is the faster transport, not only the cheaper one. Measured on the same flow and build,
+`verifications.yaml` took 37–39 s on an emulator and 76–186 s on a handset over USB, and over wireless adb
+the handset dropped off three times in one session. A handset still earns its place for what an emulator
+cannot show, such as an OEM's own dialogs, but the suite belongs on an emulator.
+
+When you add a flow, add the keywords that reach it to `RULES` in the selector; its test fails on a
+rule that names a flow which does not exist.
+
 ## Traps
 
 **The first cold start after `adb install` outlives Maestro's default timeout.** ART warms the
