@@ -50,8 +50,10 @@ appId: ${APP_ID}
     env:
       LINK: "usesmileid-sample-flutter://?noticeWindow=60"
       LANDS_ON: "sample_products_screen"
+# The first tap after a cold start: see README.md "Traps". Nothing below walks back, so a retried push is harmless.
 - tapOn:
     id: "sample_product_card_smartSelfieEnrollment"
+    retryTapIfNoChange: true
 - assertVisible:
     id: "sample_user_details_profile"
 - assertVisible:
