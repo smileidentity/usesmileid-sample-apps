@@ -2,7 +2,7 @@ import { flattenLayout, layoutTree, type LaidOutNode, type RenderedNode } from '
 import { wordAround } from './measure-text';
 
 /// One break the text never offered: the word it landed inside, and how that word read across the two lines.
-export type SmileTextBreak = { readonly word: string; readonly detail: string };
+type SmileTextBreak = { readonly word: string; readonly detail: string };
 
 /// What the pass found, returned rather than asserted so the rule itself can be tested.
 export type SmileTextScaleFindings = {

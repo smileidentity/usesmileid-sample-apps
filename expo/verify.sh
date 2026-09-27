@@ -89,6 +89,11 @@ if runs checks; then
 fi
 
 if runs checks; then
+  echo "==> dead code (unused files, exports and dependencies)"
+  "$PNPM" exec knip --no-progress
+fi
+
+if runs checks; then
   echo "==> types"
   "$PNPM" --filter @smileid/sample-ui exec tsc --noEmit
   "$PNPM" --filter usesmileid-sample-expo exec tsc --noEmit

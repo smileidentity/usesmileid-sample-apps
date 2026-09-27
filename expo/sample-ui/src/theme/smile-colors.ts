@@ -12,7 +12,7 @@ import {
 import { darkColors, lightColors } from '../tokens';
 
 /// One component's tokens, resolved for the active mode.
-export type AvatarTokens = {
+type AvatarTokens = {
   readonly background: string;
   readonly text: string;
   readonly placeholderBackground: string;
@@ -20,14 +20,14 @@ export type AvatarTokens = {
 };
 
 /// Colours the buttons draw: one background/text pair per enabled state.
-export type ButtonTokens = {
+type ButtonTokens = {
   readonly primaryBackground: string;
   readonly primaryText: string;
   readonly disabledBackground: string;
   readonly disabledText: string;
 };
 
-export type InputTokens = {
+type InputTokens = {
   readonly background: string;
   readonly text: string;
   readonly placeholder: string;
@@ -36,7 +36,7 @@ export type InputTokens = {
   readonly borderError: string;
 };
 
-export type SearchTokens = InputTokens & { readonly icon: string };
+type SearchTokens = InputTokens & { readonly icon: string };
 
 /// The label/value pair on a details card.
 export type DataFieldTokens = { readonly label: string; readonly value: string };

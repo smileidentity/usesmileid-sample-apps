@@ -49,7 +49,7 @@ const REMEMBER_TEXT_SIZE = 13.5;
 const CHEVRON_SIZE = 12;
 
 /// The organisation row's id suffix, beside the four user fields'.
-export const ORGANISATION_FIELD_ID = 'organisation';
+const ORGANISATION_FIELD_ID = 'organisation';
 
 /// Shown when a token supplied the row, which is why it is not asked for again.
 const PROVIDED_BY_TOKEN = 'Provided by token';

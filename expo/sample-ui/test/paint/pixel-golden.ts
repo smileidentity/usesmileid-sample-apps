@@ -18,10 +18,10 @@ import {
 import { paintPlaceholder, paintTree, PIXEL_RATIO, PLACEHOLDERS } from './paint-tree';
 
 /// Where mismatches and would-be baselines are written.
-export const GOLDEN_OUTPUT_DIR = join(__dirname, '..', 'golden-output');
+const GOLDEN_OUTPUT_DIR = join(__dirname, '..', 'golden-output');
 
 /// `component.scheme.state`, from a test named `component scheme state`.
-export const pngNameOf = (testName: string): string => {
+const pngNameOf = (testName: string): string => {
   const parsed = testName.match(/^(\S+) (light|dark) (.+)$/);
   if (!parsed) throw new Error(`"${testName}" is not named "<component> <light|dark> <state>"`);
   return `${parsed[1]}.${parsed[2]}.${parsed[3]}`;
@@ -97,7 +97,7 @@ const inWindow = (tree: RenderedNode): RenderedNode => {
 };
 
 /// Lays [tree] out at the pinned width and content height, and paints it.
-export const paintGolden = async (tree: RenderedNode, fontScale: number): Promise<Canvas> => {
+const paintGolden = async (tree: RenderedNode, fontScale: number): Promise<Canvas> => {
   await loadLayoutEngine();
   const sheet = sheetOf(tree);
   const framed = sheet ? sheet.content : inWindow(tree);
@@ -135,7 +135,7 @@ const write = (path: string, bytes: Buffer) => {
 };
 
 /// Compares [canvas] against its baseline with zero tolerance.
-export const expectPixelGolden = (canvas: Canvas, name: string): void => {
+const expectPixelGolden = (canvas: Canvas, name: string): void => {
   const { testPath } = expect.getState();
   if (!testPath) throw new Error('a pixel golden needs the running test file');
   const suite = basename(testPath).replace(/\.test\.tsx?$/, '');

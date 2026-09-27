@@ -1,4 +1,4 @@
-import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import { View, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
 import { smileTokenRing, smileTokenRingTrackOpacity } from '../smile-product-hues';
@@ -47,9 +47,3 @@ export const UseSmileIDSampleTokenRing = ({ progress, size, style }: Props) => {
     </View>
   );
 };
-
-export const smileTokenRingThickness = RING_THICKNESS;
-
-export const smileTokenRingStyles = StyleSheet.create({
-  behind: { position: 'absolute' },
-});
