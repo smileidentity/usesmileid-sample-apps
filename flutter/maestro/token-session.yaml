@@ -12,6 +12,7 @@ appId: ${APP_ID}
 
 - tapOn:
     id: "sample_nav_token"
+    retryTapIfNoChange: true
 - runFlow: subflows/grant-camera.yaml
 - extendedWaitUntil:
     visible:
