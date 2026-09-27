@@ -228,7 +228,7 @@ def shipping_set(bundle: str) -> dict[str, str]:
     return found
 
 
-def generate(bundle: str) -> str:
+def generate(bundle: str, bundled: list[dict] = ()) -> str:
     packages = shipping_set(bundle)
     if not packages:
         raise LicenceError("nothing shipped: the bundle named no packages and nothing autolinked")
@@ -260,7 +260,22 @@ def generate(bundle: str) -> str:
             f"emitted for them: {missing}"
         )
 
+    components += bundled
     return json.dumps({"components": components}, indent=2, ensure_ascii=False) + "\n"
+
+
+def bundled_components(path: str = os.path.join(REPO, "spec", "bundled-assets.json")) -> list[dict]:
+    """The font and icons bundled in the tree, which no bundle or autolink names, from the shared list."""
+    with open(path, encoding="utf-8") as handle:
+        assets = json.load(handle)["assets"]
+    components = []
+    for asset in assets:
+        with open(os.path.join(REPO, "scripts", "license-texts", asset["textFile"]), encoding="utf-8") as handle:
+            text = handle.read().strip()
+        components.append(
+            {"component": asset["component"], "version": asset["version"], "declared": asset["licenseId"], "text": text}
+        )
+    return components
 
 
 def report_delta(existing: str | None, generated: str) -> None:
@@ -340,7 +355,7 @@ def main(argv=None) -> int:
         return 1
 
     try:
-        content = generate(bundle)
+        content = generate(bundle, bundled_components())
     except LicenceError as error:
         print(f"\n{error}", file=sys.stderr)
         return 1

@@ -268,5 +268,13 @@ class TestTheDeltaReport(unittest.TestCase):
         self.assertIn("only generated: tslib", output)
 
 
+class TestBundledAssets(unittest.TestCase):
+    def test_the_spec_list_ships_with_its_own_text(self):
+        listed = {c["component"]: c for c in gen.bundled_components()}
+        self.assertEqual({"DM Sans", "Material Symbols (Outlined)"}, set(listed))
+        self.assertIn("SIL Open Font License, Version 1.1", listed["DM Sans"]["text"])
+        self.assertEqual("Apache-2.0", listed["Material Symbols (Outlined)"]["declared"])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

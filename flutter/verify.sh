@@ -39,6 +39,10 @@ if [ "$PHASE" != android ]; then
   # Vendored byte for byte from design/icons/, like the Compose drawables and the SwiftUI shapes are
   # generated from it; a hand-edited asset or an unsourced one fails here.
   python3 "$REPO_ROOT/scripts/generate_flutter_icons.py" --check
+
+  echo "==> bundled-asset notices are current"
+  # Flutter collects package licences but not a font or icon a package bundles, so spec/ supplies them.
+  python3 "$REPO_ROOT/scripts/generate_flutter_bundled_notices.py" --check
 fi
 
 for package in "${PACKAGES[@]}"; do

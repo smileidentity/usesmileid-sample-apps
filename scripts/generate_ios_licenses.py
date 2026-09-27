@@ -35,6 +35,17 @@ LICENCE_FILES = ("LICENSE", "LICENSE.md", "LICENSE.txt", "LICENCE", "LICENCE.md"
 # Source copied into the app rather than resolved by SwiftPM, so no checkout carries its licence and
 # the walk below cannot see it. The text lives in scripts/license-texts because nothing else in the
 # tree holds a copy; `version` is the upstream release the port was taken from.
+def _bundled_assets() -> tuple[dict, ...]:
+    """The font and icons bundled in the tree, from the one list every app's licences screen reads."""
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "spec", "bundled-assets.json")
+    with open(path, encoding="utf-8") as handle:
+        assets = json.load(handle)["assets"]
+    return tuple(
+        {"component": a["component"], "version": a["version"], "text_file": a["textFile"], "declared": a["licenseId"]}
+        for a in assets
+    )
+
+
 VENDORED = (
     {
         "component": "netfox",
@@ -42,7 +53,7 @@ VENDORED = (
         "text_file": "netfox.txt",
         "declared": "MIT",
     },
-)
+) + _bundled_assets()
 
 # A component that vendors third-party code carries its own notices file. SwiftPM gives no
 # transitive licence metadata, so this file is the only signal that the notice has to travel.
@@ -56,6 +67,8 @@ SIGNATURES = (
     # The third clause is the only thing separating these two, so it is what the match keys on.
     ("BSD-3-Clause", "BSD 3-Clause License", ("redistributions in binary form", "endorse or promote products derived")),
     ("BSD-2-Clause", "BSD 2-Clause License", ("redistributions in binary form",)),
+    # Ahead of MIT: the OFL grants its permission in MIT's own words.
+    ("OFL-1.1", "SIL Open Font License 1.1", ("sil open font license, version 1.1",)),
     ("MIT", "MIT License", ("permission is hereby granted, free of charge",)),
 )
 

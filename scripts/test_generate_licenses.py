@@ -186,5 +186,19 @@ class TestSections(GeneratorCase):
         self.assertNotIn("Bouncy Castle Licence", notices["licenseTexts"])
 
 
+class TestBundledAssets(GeneratorCase):
+    def test_the_spec_list_is_listed_with_its_own_text(self):
+        with open(os.path.join(self.texts, "dm-sans-ofl.txt"), "w", encoding="utf-8") as handle:
+            handle.write("text of the font\n")
+        notices = gen.build([], self.texts, gen.bundled_assets())
+        listed = {entry["artifact"]: entry["licenses"][0]["id"] for entry in notices["openSource"]}
+        self.assertEqual({"DM Sans": "OFL-1.1", "Material Symbols (Outlined)": "Apache-2.0"}, listed)
+        self.assertEqual("text of the font\n", notices["licenseTexts"]["OFL-1.1"])
+
+    def test_an_asset_with_no_vendored_text_fails_rather_than_shipping_a_bare_name(self):
+        with self.assertRaises(gen.Unidentified):
+            gen.build([], self.texts, gen.bundled_assets())
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

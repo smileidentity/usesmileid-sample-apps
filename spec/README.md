@@ -29,6 +29,7 @@ Rules:
 | `screens.json` | 14 screens, 38 states, each linked to its design node; plus who owns each screen (sample vs SDK) and the open questions the design set raised | **filled 2026-08-12** |
 | `components.json` | All 34 components with owner, design-system contract, tokens, states, reuse, and the build order | **filled 2026-08-12** |
 | `design-tokens.json` | The design-system source, per-platform consumption, and the verified deltas between the design file and the token source | **filled 2026-08-12** |
+| `bundled-assets.json` | Third-party assets bundled in the tree (the DM Sans font, the Material Symbols icons), which every licences screen lists alongside the registry dependencies | settled |
 
 ## `screens.json` entry shape
 
