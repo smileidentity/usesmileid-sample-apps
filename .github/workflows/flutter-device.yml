@@ -96,9 +96,10 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: pixel_5
-          # Pinned rather than the profile's default, so a starved runner fails at boot, not mid-suite.
           ram-size: 3072M
-          emulator-options: -no-window -no-snapshot -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
+          # No guest Vulkan: Impeller's Vulkan path on SwiftShader takes the emulator down mid-flow on
+          # this runner, so Flutter renders through OpenGL ES here, as the React Native lane does.
+          emulator-options: -no-window -no-snapshot -gpu swiftshader_indirect -feature -Vulkan -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
           # Each line runs as its own `sh -c`, so no variable carries between them and dash has no
           # `SECONDS`; Maestro's own total, against the step duration, is what times the emulator.
