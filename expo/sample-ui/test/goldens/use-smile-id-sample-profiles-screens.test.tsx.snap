@@ -4043,6 +4043,7 @@ exports[`profileConfig dark activeProfile 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -4949,6 +4950,7 @@ exports[`profileConfig dark newlyCreated 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -5855,6 +5857,7 @@ exports[`profileConfig dark otherProfile 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -6761,6 +6764,7 @@ exports[`profileConfig light activeProfile 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -7667,6 +7671,7 @@ exports[`profileConfig light newlyCreated 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -8573,6 +8578,7 @@ exports[`profileConfig light otherProfile 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -10816,6 +10822,7 @@ exports[`profiles dark created 1`] = `
           </RNSVGSvgView>
         </View>
         <Text
+          accessibilityRole="header"
           style={
             [
               {
@@ -12212,6 +12219,7 @@ exports[`profiles dark default 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {
@@ -13255,6 +13263,7 @@ exports[`profiles light created 1`] = `
           </RNSVGSvgView>
         </View>
         <Text
+          accessibilityRole="header"
           style={
             [
               {
@@ -14651,6 +14660,7 @@ exports[`profiles light default 1`] = `
         </RNSVGSvgView>
       </View>
       <Text
+        accessibilityRole="header"
         style={
           [
             {

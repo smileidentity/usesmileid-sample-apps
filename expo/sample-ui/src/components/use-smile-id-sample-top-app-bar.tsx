@@ -100,6 +100,7 @@ export const UseSmileIDSampleTopAppBar = ({
           glyph={(tint) => <UseSmileIDSampleIcon name="arrowBack" tint={tint} />}
         />
         <Text
+          accessibilityRole="header"
           // Wraps rather than caps: ellipsising a title is the clipping the predicate forbids.
           style={[
             atSize(theme.type.textStyleTitle, TITLE_SIZE),
