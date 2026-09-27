@@ -265,7 +265,7 @@ Because every commit is public, each PR holds to these:
       history after a push does not unpublish what was already fetched
 - [ ] every credential in CI is sandbox-scoped or held in the `release` environment, and no workflow
       exposes a secret to a fork PR
-- [ ] bundled third-party assets are listed in `NOTICE` with their licence
+- [ ] bundled third-party assets are listed in `NOTICE` and `spec/bundled-assets.json` with their licence
 
 ## Definition of Done
 

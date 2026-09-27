@@ -1,0 +1,21 @@
+{
+  "$comment": "Third-party assets bundled in the tree rather than resolved from a registry, so no licence generator can find them. Every app's licences screen lists these, from this file; NOTICE records the same set.",
+  "assets": [
+    {
+      "component": "DM Sans",
+      "version": "4.004",
+      "licenseId": "OFL-1.1",
+      "licenseName": "SIL Open Font License 1.1",
+      "textFile": "dm-sans-ofl.txt",
+      "url": "https://github.com/googlefonts/dm-fonts"
+    },
+    {
+      "component": "Material Symbols",
+      "version": "Outlined 400",
+      "licenseId": "Apache-2.0",
+      "licenseName": "Apache License, Version 2.0",
+      "textFile": "apache-2.0.txt",
+      "url": "https://github.com/google/material-design-icons"
+    }
+  ]
+}

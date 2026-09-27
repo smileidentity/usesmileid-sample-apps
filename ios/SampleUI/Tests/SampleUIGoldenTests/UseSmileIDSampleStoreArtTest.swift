@@ -4,11 +4,25 @@ import SwiftUI
 import XCTest
 
 /// The App Store panels: frames only, written to ios/store/frames and rendered by ios/store/render-store-art.sh.
-/// The demo organisation, initials and session are Android's `StoreArtTest` values, so the two listings show one app.
+/// The demo organisation, initials and session come from spec/store-art.json, as Android's do, so the two listings show one app.
 @MainActor
 final class UseSmileIDSampleStoreArtTest: XCTestCase {
   /// 440 × 956 pt is the ios-phone preset's 1320 × 2868 at the recorder's 3× scale.
   private static let size = CGSize(width: 440, height: 956)
+
+  /// One of the listing's made-up values, from the spec file every platform's store art reads.
+  private static func demo(_ key: String) -> String {
+    let spec = URL(fileURLWithPath: #filePath)
+      .deletingLastPathComponent() // SampleUIGoldenTests
+      .deletingLastPathComponent() // Tests
+      .deletingLastPathComponent() // SampleUI
+      .deletingLastPathComponent() // ios
+      .deletingLastPathComponent() // the repo root
+      .appendingPathComponent("spec/store-art.json")
+    let values = (try? JSONSerialization.jsonObject(with: Data(contentsOf: spec))) as? [String: Any]
+    guard let value = values?[key] as? String else { preconditionFailure("spec/store-art.json has no \(key)") }
+    return value
+  }
 
   /// Clears the frame's 153 px corner radius and matches the phone's status bar — see docs/releasing.md, Store art.
   private static let statusBarInset: CGFloat = 62
@@ -26,7 +40,7 @@ final class UseSmileIDSampleStoreArtTest: XCTestCase {
 
   func testProducts() {
     panel("products") {
-      ProductsScreen(state: .init(initials: "KA"), onProduct: { _ in }, onProfile: {}, onScan: {})
+      ProductsScreen(state: .init(initials: Self.demo("initials")), onProduct: { _ in }, onProfile: {}, onScan: {})
     }
   }
 
@@ -34,7 +48,11 @@ final class UseSmileIDSampleStoreArtTest: XCTestCase {
   func testTokenSession() {
     panel("token_session") {
       ProductsScreen(
-        state: .init(initials: "KA", sessionId: "9f3a2c71", sessionRemaining: "7:59:12"),
+        state: .init(
+          initials: Self.demo("initials"),
+          sessionId: Self.demo("sessionId"),
+          sessionRemaining: Self.demo("sessionRemaining")
+        ),
         onProduct: { _ in },
         onProfile: {},
         onScan: {}
@@ -90,8 +108,8 @@ final class UseSmileIDSampleStoreArtTest: XCTestCase {
       SettingsScreen(
         state: .init(
           settings: UseSmileIDSampleSettings(),
-          organisation: "UpTech Finance",
-          initials: "KA",
+          organisation: Self.demo("organisation"),
+          initials: Self.demo("initials"),
           versionLabel: "Smile ID 20260716.1211.61",
           consentBoundByToken: false,
           avatarColor: useSmileIDSampleAvatarColor(profileIndex: 0)

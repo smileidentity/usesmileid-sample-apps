@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import 'use_smileid_sample_bundled_notices.g.dart';
+
 /// One component a partner ships, and the licence text it carries.
 @immutable
 class UseSmileIDSampleNotice {
@@ -39,10 +41,15 @@ class UseSmileIDSampleLicenses {
   /// Whether the notices reached this build at all.
   bool get isEmpty => components.isEmpty;
 
-  /// Reads the notices Flutter's own build step collected into the bundle.
+  /// Reads the notices Flutter's own build step collected, plus the font and icons it cannot see.
   static Future<UseSmileIDSampleLicenses> bundled({
     Stream<LicenseEntry>? licenses,
-  }) async => from(await (licenses ?? LicenseRegistry.licenses).toList());
+  }) async => from(<LicenseEntry>[
+    ...await (licenses ?? LicenseRegistry.licenses).toList(),
+    for (final ({String component, String text}) notice
+        in useSmileIDSampleBundledNotices)
+      LicenseEntryWithLineBreaks(<String>[notice.component], notice.text),
+  ]);
 
   /// Groups entries by component, because one entry can name several packages and one package can
   /// appear in several entries.
@@ -128,6 +135,10 @@ const List<_Signature> _signatures = <_Signature>[
   ]),
   _Signature('BSD-2-Clause', 'BSD 2-Clause License', <String>[
     'redistributions in binary form',
+  ]),
+  // Ahead of MIT: the OFL grants its permission in MIT's own words.
+  _Signature('OFL-1.1', 'SIL Open Font License 1.1', <String>[
+    'sil open font license, version 1.1',
   ]),
   _Signature('MIT', 'MIT License', <String>[
     'permission is hereby granted, free of charge',

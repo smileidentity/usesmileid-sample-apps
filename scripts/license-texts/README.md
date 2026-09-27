@@ -9,6 +9,7 @@ binary rather than behind a link — Apache-2.0 §4 asks the notice to travel wi
 | `apache-2.0.txt` | Apache License 2.0, verbatim | The canonical file as distributed with the licence (sha256 `cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30`) |
 | `mit.txt` | MIT, the SPDX template | The copyright line is a placeholder: MIT is parameterised by its holder, and every component's own line is in its own source |
 | `bsd-3-clause.txt` | BSD 3-Clause, the SPDX template | Same — the holder is the component's, not ours to assert |
+| `dm-sans-ofl.txt` | SIL Open Font License 1.1, verbatim from DM Sans | `ofl/dmsans/OFL.txt` in google/fonts, the font's own holder line included (sha256 `9af36190332437f5ecd09974de43c1f7c77a310a996cdd8ceb25628b458840e1`). Every app lists it from `spec/bundled-assets.json` |
 | `netfox.txt` | MIT, verbatim from netfox | Its own `LICENSE`, holder line included — the iOS app vendors a port of it, and no SwiftPM checkout carries the text for `generate_ios_licenses.py` to read |
 | `bouncy-castle.txt` | Bouncy Castle Licence | Not vendored; the text ships inside the jar as `org/bouncycastle/LICENSE.class` and the notices link it instead. Add the file here if that changes |
 

@@ -272,7 +272,7 @@
         {
           "state": "empty",
           "node": "5206-3804",
-          "note": "Placeholders; 'First and last name are required.' With no profile, the profile row reads 'No profile yet' and a 'Profile name (optional)' row leads the card."
+          "note": "Placeholders; 'First and last name are required.' An email or a phone is required too, unless the token binds one: the SDK rejects a submission with neither, so every app enforces it although the design labels both rows optional. With no profile, the profile row reads 'No profile yet' and a 'Profile name (optional)' row leads the card."
         },
         {
           "state": "editing",
@@ -618,7 +618,7 @@
           "note": "The notices are generated into the binary at build time, so an empty list means the asset did not ship. It says that rather than showing nothing."
         }
       ],
-      "note": "Two sections, because not every dependency is open source: 'OPEN-SOURCE COMPONENTS' lists each artifact with its declared licence and expands to the full licence text, and 'UNDER GOOGLE'S OWN TERMS' lists the ML Kit, Play Integrity and Android SDK artifacts, which declare terms-of-service pages rather than a licence — there is no text to ship for those, so the row opens the page. Content comes from scripts/generate_licenses.py, which resolves the RELEASE runtime classpath (the SDK's transitive set plus the app's own, which is what a partner ships), walks parent POMs, keeps more than one licence per artifact, and FAILS the build rather than emitting 'Unknown'. The first-party SDK is excluded: a partner licenses it from Smile ID, so its terms are not a third-party notice. Every platform generates its own file — the classpath differs per platform — and no port hand-maintains a list.",
+      "note": "Every notice ships its full licence text; a notice whose licence cannot travel with the binary opens its page instead, and those rows form a second section only where the platform's graph produces one. On Android that is 'UNDER GOOGLE'S OWN TERMS' (the ML Kit, Play Integrity and Android SDK artifacts, which declare terms-of-service pages rather than a licence); Flutter, iOS and Expo ship no such artifact, so they draw one section and no sample_license_link row. Bundled assets (the font and icons) come from spec/bundled-assets.json on every platform. Content comes from scripts/generate_licenses.py, which resolves the RELEASE runtime classpath (the SDK's transitive set plus the app's own, which is what a partner ships), walks parent POMs, keeps more than one licence per artifact, and FAILS the build rather than emitting 'Unknown'. The first-party SDK is excluded: a partner licenses it from Smile ID, so its terms are not a third-party notice. Every platform generates its own file — the classpath differs per platform — and no port hand-maintains a list.",
       "components": [
         "TopAppBar",
         "SectionLabel",

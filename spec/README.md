@@ -29,6 +29,8 @@ Rules:
 | `screens.json` | 14 screens, 38 states, each linked to its design node; plus who owns each screen (sample vs SDK) and the open questions the design set raised | **filled 2026-08-12** |
 | `components.json` | All 34 components with owner, design-system contract, tokens, states, reuse, and the build order | **filled 2026-08-12** |
 | `design-tokens.json` | The design-system source, per-platform consumption, and the verified deltas between the design file and the token source | **filled 2026-08-12** |
+| `bundled-assets.json` | Third-party assets bundled in the tree (the DM Sans font, the Material Symbols icons), which every licences screen lists alongside the registry dependencies | settled |
+| `store-art.json` | The made-up organisation, initials and session the store screenshots show, read by the Android and iOS store-art tests | settled |
 
 ## `screens.json` entry shape
 
@@ -76,3 +78,19 @@ validation test asserts, at minimum:
 - every ID the app declares is in `test-ids.json`; Expo also asserts the reverse, and iOS that every
   declared ID is applied in source. No app inspects an accessibility tree for them; only a device flow
   keyed off the spec does that
+
+## Spec debt
+
+Every place where the spec, the design and the apps disagree, with what was decided. Add a row when you
+find one, and delete it in the pull request that closes it.
+
+| Item | Today | Decision |
+|---|---|---|
+| `sample_env_chip` in `test-ids.json` | Android and iOS attach it to their chip component, but no shipped screen shows the chip: the result card publishes the environment instead. Flutter and Expo have no chip | Kept, so the chip carries its id if it ever returns. Flutter and Expo excuse it in their id checks |
+| `sample_license_link` in `test-ids.json` | Attached on Android and iOS; Flutter and Expo have no notice that links a page | Present only where the platform's graph yields a notice whose text cannot travel (the `licenses` note in `screens.json` says so). Flutter and Expo excuse it |
+| Licences-screen wording in `screens.json` | Described Android's two sections, which Flutter and Expo cannot produce | Describes the property instead: full text where it travels, a link where it cannot |
+| Consent form's required fields | The spec listed only the two names; the design labels email and phone optional; the SDK rejects a submission with neither | The SDK wins. Every app requires an email or a phone unless the token binds one, and `screens.json` says so. The design labels are owed a correction |
+| Button height 48 against 52 | The design board draws 48; the design system's `button.height` is 52 | 52, the design-system token |
+| Card glyph 21 against 20 | The design board draws 21; `size.icon-md` is 20 | 20, the design-system token |
+| `components.json` | Consumed by nothing but comments in golden tests | Informative: it records owners, tokens and states for a reader, and no test asserts it. A value that must hold belongs in a file an app test reads |
+

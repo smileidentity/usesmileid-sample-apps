@@ -198,7 +198,16 @@ def identify(licence: dict[str, str]) -> tuple[str, bool]:
     )
 
 
-def build(coordinates: list[str], texts_dir: str) -> dict:
+BUNDLED_ASSETS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "spec", "bundled-assets.json")
+
+
+def bundled_assets(path: str = BUNDLED_ASSETS) -> list[dict]:
+    """The assets bundled in the tree, which no classpath carries, from the one list every app reads."""
+    with open(path, encoding="utf-8") as handle:
+        return json.load(handle)["assets"]
+
+
+def build(coordinates: list[str], texts_dir: str, bundled: list[dict] = ()) -> dict:
     open_source: list[dict] = []
     google: list[dict] = []
     used_texts: set[str] = set()
@@ -245,8 +254,21 @@ def build(coordinates: list[str], texts_dir: str) -> dict:
         with open(path, encoding="utf-8") as handle:
             licence_texts[licence_id] = handle.read()
 
+    for asset in bundled:
+        path = os.path.join(texts_dir, asset["textFile"])
+        if not os.path.isfile(path):
+            raise Unidentified(f"no text vendored for {asset['component']} (expected {path})")
+        licence = {"id": asset["licenseId"], "name": asset["licenseName"], "url": asset["url"]}
+        open_source.append({"artifact": asset["component"], "version": asset["version"], "licenses": [licence]})
+        with open(path, encoding="utf-8") as handle:
+            text = handle.read()
+        # Keyed by licence id, so a second asset under one id must carry the same text or its holder is lost.
+        existing = licence_texts.setdefault(asset["licenseId"], text)
+        if existing.strip() != text.strip():
+            raise Unidentified(f"{asset['component']}: a different {asset['licenseId']} text is already listed")
+
     return {
-        "generatedBy": "scripts/generate_licenses.py from the Android app's release runtime classpath",
+        "generatedBy": "scripts/generate_licenses.py from the Android app's release runtime classpath and spec/bundled-assets.json",
         "openSource": open_source,
         "googleServices": google,
         "licenseTexts": licence_texts,
@@ -269,7 +291,7 @@ def main() -> int:
         return 1
 
     try:
-        notices = build(coordinates, args.texts)
+        notices = build(coordinates, args.texts, bundled_assets())
     except Unidentified as error:
         print(f"third-party notices: {error}", file=sys.stderr)
         return 1

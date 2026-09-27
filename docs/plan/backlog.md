@@ -74,27 +74,10 @@ Done looks like:
 
 ## Spec and code health
 
-### One table for spec debt in `spec/README.md`
-
-Spec entries that no app implements, or that disagree with the design, are recorded in several places
-and an allowlist. Put them in one owner table in `spec/README.md`, each with a decision:
-
-- the two shell ids in `spec/test-ids.json` that no app implements, `sample_env_chip` and `sample_license_link`
-- the licences-screen wording, and the consent form's required contact field
-- button height 48 against 52, and the card glyph at 21 against 20
-- the contradiction inside `spec/screens.json`
-- whether `spec/components.json` is informative, or owed a check
-
 ### A dead-code check for Expo and Flutter
 
 Run `knip` over the Expo workspace, and enable the unused-code lints on Flutter, in each platform's
 `verify.sh` so CI enforces them.
-
-### List the bundled font and icons on the licences screens
-
-The four licences screens list the registry dependencies, but not the assets bundled in the tree: DM Sans
-(SIL Open Font License 1.1) and the Material Symbols stand-ins (Apache 2.0). `NOTICE` records both. Add
-them to each app's licences screen, from one shared source so the four do not drift.
 
 ## Device suite and CI
 
@@ -188,11 +171,8 @@ Each needs a `spec/` entry, test ids and goldens, on all four apps.
 
 ## Store listings
 
-### Store art: camera panel, a sparse details panel, shared demo data
+### Store art: the camera panel
 
-- **The camera panel** needs a device run on both platforms. The Android Maestro flow
-  (`android/maestro/store/store-shots.yaml`) and the output paths exist, and the composer has its slot.
-- **The `verification_details` panel is sparse** once the debug result card is hidden, which it must
-  be, because a release install cannot show it. Keep it, drop to four panels, or choose a denser state.
-- **Lift the demo literals into `spec/`**: the organisation, its initials, the session id and the
-  countdown value. Both store-art tests currently carry them separately.
+The camera panel needs a device run on both platforms. The Android Maestro flow
+(`android/maestro/store/store-shots.yaml`) and the output paths exist, and the composer has its slot.
+The other panels are rendered, and their demo values come from `spec/store-art.json`.

@@ -24,5 +24,6 @@ Smile ID marks, app icons and store art
   the MIT License. They are included so the apps build and ship as published. Replace them in any
   app of your own.
 
+Each app's open-source licences screen lists DM Sans and Material Symbols from spec/bundled-assets.json.
 Every other third-party dependency is resolved from its package registry at build time, and each app
-lists them on its open-source licences screen.
+lists them there too.

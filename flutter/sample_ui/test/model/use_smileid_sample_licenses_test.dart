@@ -4,6 +4,24 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 void main() {
+  test('the bundled font and icons are listed beside the registry', () async {
+    final UseSmileIDSampleLicenses licenses =
+        await UseSmileIDSampleLicenses.bundled(
+          licenses: Stream<LicenseEntry>.fromIterable(<LicenseEntry>[
+            LicenseEntryWithLineBreaks(const <String>['go_router'], _mit),
+          ]),
+        );
+    final Map<String, String?> ids = <String, String?>{
+      for (final UseSmileIDSampleNotice it in licenses.components)
+        it.component: it.licenseId,
+    };
+    expect(ids, <String, String?>{
+      'DM Sans': 'OFL-1.1',
+      'Material Symbols': 'Apache-2.0',
+      'go_router': 'MIT',
+    });
+  });
+
   test('one entry naming several packages becomes one notice each', () {
     final UseSmileIDSampleLicenses licenses = UseSmileIDSampleLicenses.from(
       <LicenseEntry>[
