@@ -22,7 +22,9 @@ permissions:
 
 jobs:
   flows:
-    runs-on: ubuntu-latest
+    # Two vCPUs, as a private repo's runner had: on the larger public-repo runner the emulator's software
+    # renderer segfaults drawing this app (every run from 2026-09-26), and on two it passes.
+    runs-on: blacksmith-2vcpu-ubuntu-2404
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
