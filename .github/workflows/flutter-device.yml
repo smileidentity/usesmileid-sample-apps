@@ -114,6 +114,8 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/diag"
           sudo dmesg | tail -80 > "$RUNNER_TEMP/diag/dmesg.txt" || true
+          sudo journalctl --no-pager --since "-40 min" | grep -iE 'oom|killed|qemu|emulator' | tail -60 > "$RUNNER_TEMP/diag/journal.txt" || true
+          systemctl is-active systemd-oomd > "$RUNNER_TEMP/diag/oomd.txt" 2>&1 || true
           free -m > "$RUNNER_TEMP/diag/free.txt"
           cp -r /tmp/android-runner "$RUNNER_TEMP/diag/" 2>/dev/null || true
           cp "$RUNNER_TEMP/logcat.txt" "$RUNNER_TEMP/diag/" 2>/dev/null || true
