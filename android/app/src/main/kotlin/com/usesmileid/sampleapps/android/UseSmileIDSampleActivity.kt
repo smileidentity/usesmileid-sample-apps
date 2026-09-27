@@ -6,12 +6,14 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
 import com.usesmileid.sampleapps.android.launch.UseSmileIDSampleAppLocale
 import com.usesmileid.sampleapps.android.launch.useSmileIDSampleLaunchArgs
+import com.usesmileid.sampleapps.android.navigation.foldUseSmileIDSampleSheetLink
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** Single-activity host: every route, including the SDK flow, is a destination in one graph. */
 class UseSmileIDSampleActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        intent.foldUseSmileIDSampleSheetLink()
         val launchArgs = intent.useSmileIDSampleLaunchArgs()
         setContent {
             // Outermost, so the override reaches the SDK's screens too.

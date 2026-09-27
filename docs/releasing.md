@@ -37,14 +37,11 @@ the lane.
 distribution. Both lanes set `REQUIRE_UPLOAD_SIGNING=true`, so a missing keystore or version code fails the build
 instead of producing a debug-signed bundle that only Play would reject.
 
-**Version code.** Both Play workflows derive `versionCode` from `git rev-list --count HEAD`. Play requires
-each upload's code to exceed every earlier upload across **all** tracks, so both tracks must use the same
-scheme. Two consequences:
-
-- Dispatching both workflows on one commit gives both the same code, and the second upload is refused.
-  After an internal release, **promote it in the Play Console** rather than dispatching production on
-  the same commit.
-- Dispatching from a branch behind `main` gives a lower code, which Play refuses.
+**Version code.** Both Play workflows ask Play for the highest `versionCode` it holds, across every
+uploaded bundle and every track, and upload one more (`scripts/play_publish.py next-version-code`).
+Play refuses any code it has seen, so deriving it from Play rather than from the commit means two
+dispatches on one commit, or a dispatch from a branch behind `main`, still get codes Play accepts. The
+lookup opens an edit only to read it, and deletes it. Dispatch either workflow with `lookup_only` to see the code the next upload would take without building or uploading anything.
 
 **Version name.** Patch bumps only (`1.0.1` → `1.0.2`), set in `android/app/build.gradle.kts`.
 

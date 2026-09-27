@@ -59,6 +59,7 @@ import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleChromeState
 import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleSheetLinks
 import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleSheetRequests
 import com.usesmileid.sampleapps.android.navigation.openUseSmileIDSampleSheet
+import com.usesmileid.sampleapps.android.navigation.pendingUseSmileIDSampleSheet
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
 import com.usesmileid.sampleapps.ui.components.LocalUseSmileIDSampleNoticeWindow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavBar
@@ -90,7 +91,7 @@ fun UseSmileIDSampleShell() {
 
     ForwardNewIntentsTo(navController, sheetRequests)
     AutostartFlowOnce(navigator)
-    OpenSheetLinkOnce(navController, sheetRequests)
+    OpenSheetLinkOnce(sheetRequests)
 
     // The fullscreen flow handles its own insets, so the host contributes none (R3).
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -203,20 +204,15 @@ private fun ForwardNewIntentsTo(navController: NavHostController, sheetRequests:
     }
 }
 
-/**
- * The graph no longer claims the five sheet paths, so androidx's cold handling passes them over and this
- * picks them up. Saveable like [AutostartFlowOnce]: the intent is re-read on recreation, and re-following
- * it would drag a rotated device back to the owner with the sheet reopened.
- */
+/** Asks the owner a cold link reached for its sheet; saveable, so a rotation does not reopen it. */
 @Composable
-private fun OpenSheetLinkOnce(navController: NavHostController, sheetRequests: UseSmileIDSampleSheetRequests) {
+private fun OpenSheetLinkOnce(sheetRequests: UseSmileIDSampleSheetRequests) {
     val activity = LocalActivity.current ?: return
     var followed by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         if (followed) return@LaunchedEffect
         followed = true
-        val link = activity.intent?.data?.toString()?.let(UseSmileIDSampleSheetLinks::resolve)
-        if (link != null) navController.openUseSmileIDSampleSheet(link, sheetRequests)
+        activity.intent?.pendingUseSmileIDSampleSheet()?.let(sheetRequests::request)
     }
 }
 

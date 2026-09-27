@@ -76,33 +76,6 @@ Done looks like:
 
 ## Device suite and CI
 
-### Make the device suite fast enough to run on every PR
-
-Measured on Android: `verify.sh` takes 1.5–3 minutes and CI about 12, but the Maestro suite takes
-36–53 minutes in debug and 36–42 in release, and on the day it was measured it found nothing across
-four runs. In order of payoff:
-
-1. **Measure transport first.** Time one flow on a local emulator against a wireless-adb phone, before
-   buying anything.
-2. **Choose flows by what changed.** Map paths to flows, fall back to the full suite for an unmapped
-   path, and offer a label that forces everything. Run debug on every PR, and release on merge to
-   `main`, nightly, and on PRs that touch packaging (Gradle files, proguard rules, the manifest,
-   dependency versions).
-3. **Shard across two emulator instances** off one AVD, if RAM allows. It costs no disk.
-4. **Run the full suite nightly**, on the physical device or a device cloud, off the PR path.
-5. **Refuse a full-suite run on battery**, which removes the class of runs that collapse part-way.
-
-Move work down the pyramid where a widget or unit test can see the same thing, and batch assertions
-into fewer flows rather than repeating launches.
-
-### Play publishing: an internal build on every merge, and a collision-proof versionCode
-
-- **Run `publish-play-internal.yml` on `push` to `main`**, with a path filter, so a docs-only merge
-  does not publish a build or spend a versionCode.
-- **Derive `versionCode` from Play's highest code plus one**, as the App Store lane does with
-  `asc_publish.py next-build`. The commit count gives two workflows dispatched on one commit the same
-  code, and the second upload is rejected. A branch behind `main` gives a lower one, which Play refuses.
-
 ### A registry-consumption lane that launches and drives the published SDK
 
 These apps exist to consume the SDK exactly as a partner does, but no lane here resolves the published
