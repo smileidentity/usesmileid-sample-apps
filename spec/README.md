@@ -86,7 +86,7 @@ find one, and delete it in the pull request that closes it.
 
 | Item | Today | Decision |
 |---|---|---|
-| `sample_env_chip` in `test-ids.json` | Declared on all four apps, attached by none: the environment chip is hidden on every shipped screen, and the result card publishes the environment instead | Kept as a declared id. Each app's usage check excuses it with that reason, so it fails if the chip ever ships without its id |
+| `sample_env_chip` in `test-ids.json` | Android and iOS attach it to their chip component, but no shipped screen shows the chip: the result card publishes the environment instead. Flutter and Expo have no chip | Kept, so the chip carries its id if it ever returns. Flutter and Expo excuse it in their id checks |
 | `sample_license_link` in `test-ids.json` | Attached on Android and iOS; Flutter and Expo have no notice that links a page | Present only where the platform's graph yields a notice whose text cannot travel (the `licenses` note in `screens.json` says so). Flutter and Expo excuse it |
 | Licences-screen wording in `screens.json` | Described Android's two sections, which Flutter and Expo cannot produce | Describes the property instead: full text where it travels, a link where it cannot |
 | Consent form's required fields | The spec listed only the two names; the design labels email and phone optional; the SDK rejects a submission with neither | The SDK wins. Every app requires an email or a phone unless the token binds one, and `screens.json` says so. The design labels are owed a correction |
