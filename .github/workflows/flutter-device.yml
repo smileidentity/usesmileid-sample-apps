@@ -92,14 +92,13 @@ jobs:
         env:
           MAESTRO_CLI_NO_ANALYTICS: '1'
         with:
-          api-level: 34
+          # 35, not 34: the Flutter app took the API 34 emulator down on its first launch from 2026-09-26.
+          api-level: 35
           target: google_apis
           arch: x86_64
           profile: pixel_5
           ram-size: 3072M
-          # Rendered inside the guest: the host's gfxstream renderer takes the emulator down on the
-          # app's first frame on this runner, with guest Vulkan on or off.
-          emulator-options: -no-window -no-snapshot -gpu guest -noaudio -no-boot-anim -camera-back none -camera-front none
+          emulator-options: -no-window -no-snapshot -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
           # Each line runs as its own `sh -c`, so no variable carries between them and dash has no
           # `SECONDS`; Maestro's own total, against the step duration, is what times the emulator.
