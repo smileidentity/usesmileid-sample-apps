@@ -133,7 +133,8 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: pixel_5
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
+          # Emulated cameras: the token scanner and the SDK's capture screens do not open on a device with none.
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back emulated -camera-front emulated
           disable-animations: true
           # A lock or a system ANR dialog reds every flow as the app's fault; an app crash still lands in logs/crash-report.txt.
           script: |
