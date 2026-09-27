@@ -1,5 +1,5 @@
 /// The five DM Sans weights the ramp resolves against, keyed by the token source's own numbers.
-export const smileFontFaces = {
+const smileFontFaces = {
   400: 'DMSans-Regular',
   500: 'DMSans-Medium',
   600: 'DMSans-SemiBold',
@@ -7,7 +7,7 @@ export const smileFontFaces = {
   800: 'DMSans-ExtraBold',
 } as const;
 
-export type SmileFontWeight = keyof typeof smileFontFaces;
+type SmileFontWeight = keyof typeof smileFontFaces;
 
 /// What the host registers with expo-font: the key is the family a style names, so a rename drops a weight.
 export const smileFontAssets: Readonly<Record<string, number>> = {

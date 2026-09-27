@@ -13,7 +13,7 @@ export type RenderedNode =
 export type LaidOutSpan = { readonly text: string; readonly run: TextRun; readonly style: Style };
 
 /// A box's four resolved padding or border edges.
-export type LaidOutEdges = { readonly top: number; readonly right: number; readonly bottom: number; readonly left: number };
+type LaidOutEdges = { readonly top: number; readonly right: number; readonly bottom: number; readonly left: number };
 
 /// One laid-out box, plus the lines if the box was text.
 export type LaidOutNode = {

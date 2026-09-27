@@ -37,11 +37,6 @@ export type UseSmileIDSampleFlowLaunchSnapshot = {
   readonly sessionExpired: boolean;
 };
 
-/// Where the run submitted, which is the only thing that publishes it.
-export const smileIDSampleFlowEnvironment = (
-  snapshot: UseSmileIDSampleFlowLaunchSnapshot,
-): 'sandbox' | 'production' => (snapshot.sandbox ? 'sandbox' : 'production');
-
 /// The session a run submits under.
 export const smileIDSampleSnapshotSession = (
   snapshot: UseSmileIDSampleFlowLaunchSnapshot,

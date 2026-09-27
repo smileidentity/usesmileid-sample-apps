@@ -20,7 +20,7 @@ import {
   type UseSmileIDMLBuilder,
   type UseSmileIDNetworkBuilder,
 } from '@smileid/usesmileid';
-import type { FaceAnalyzer } from '@smileid/usesmileid_platform_interface';
+import type { useSmileIDMlkitFace } from '@smileid/usesmileid_mlkit_face';
 import { Platform } from 'react-native';
 
 import { smileIDSampleFlowToken, smileIDSampleMalformedToken } from './use-smile-id-sample-flow-tokens';
@@ -32,16 +32,13 @@ import { smileIDSampleFlowPlan } from './use-smile-id-sample-flow-plan';
 import { smileIDSampleStartsExpired } from './use-smile-id-sample-token-binding-rules';
 
 /// One SDK screen the host composes. Named so the journey can be asserted: the builder's list is private.
-export const smileIDSampleFlowJourneySteps = [
-  'consent',
-  'instructions',
-  'selfieCapture',
-  'documentCapture',
-  'preview',
-  'processing',
-] as const;
-
-export type UseSmileIDSampleFlowJourneyStep = (typeof smileIDSampleFlowJourneySteps)[number];
+export type UseSmileIDSampleFlowJourneyStep =
+  | 'consent'
+  | 'instructions'
+  | 'selfieCapture'
+  | 'documentCapture'
+  | 'preview'
+  | 'processing';
 
 /// The one place that decides what the SDK is handed.
 export const smileIDSampleApplying = (
@@ -216,6 +213,9 @@ const applyIdParams = (
 };
 
 /// Required, not imported: a provider resolves its native module on import and would take the bundle down.
+/// The analyzer contract, read off a package the app declares rather than the SDK's transitive one.
+type FaceAnalyzer = typeof useSmileIDMlkitFace;
+
 const selfieAnalyzer = (): FaceAnalyzer =>
   Platform.OS === 'android'
     ? // eslint-disable-next-line @typescript-eslint/no-require-imports

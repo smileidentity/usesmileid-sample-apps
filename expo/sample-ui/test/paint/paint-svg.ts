@@ -58,7 +58,7 @@ const CAPS = ['butt', 'round', 'square'] as const;
 const JOINS = ['miter', 'round', 'bevel'] as const;
 
 /// A packed, possibly signed, ARGB int as a CSS colour.
-export const argb = (packed: number, alpha = 1): string => {
+const argb = (packed: number, alpha = 1): string => {
   const value = packed >>> 0;
   const a = ((value >>> 24) & 0xff) / 255;
   return `rgba(${(value >>> 16) & 0xff}, ${(value >>> 8) & 0xff}, ${value & 0xff}, ${a * alpha})`;

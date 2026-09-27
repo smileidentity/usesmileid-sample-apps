@@ -14,7 +14,7 @@ export const smileIDSampleStartsExpired = (scenario: string): boolean =>
   scenario === 'expiredToken' || scenario === 'badRefresh';
 
 /// The live-session rule in one place.
-export const smileIDSampleLiveSessionFor = (
+const smileIDSampleLiveSessionFor = (
   session: UseSmileIDSampleTokenSession | null,
   scenario: string,
   nowMillis: number,

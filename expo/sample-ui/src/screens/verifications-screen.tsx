@@ -17,7 +17,6 @@ import {
   smileIDSampleJobFilters,
   smileIDSampleJobMatches,
   type UseSmileIDSampleJob,
-  type UseSmileIDSampleJobFilter,
 } from '../model/use-smile-id-sample-job';
 import {
   UseSmileIDSampleSuffixedTestIds,
@@ -278,7 +277,7 @@ const countsFor = (jobs: readonly UseSmileIDSampleJob[]): Readonly<Record<string
 /// Exported for the screen's own tests, which assert the counts the delete flow keys off.
 export const smileIDSampleFilterCounts = countsFor;
 
-export type { UseSmileIDSampleJobFilter };
+;
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },

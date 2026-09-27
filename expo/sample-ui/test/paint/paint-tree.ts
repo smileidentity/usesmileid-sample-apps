@@ -600,7 +600,7 @@ const layerBounds = (
 };
 
 /// The bottom edge of everything in the tree.
-export const contentHeight = (node: LaidOutNode, top = 0): number =>
+const contentHeight = (node: LaidOutNode, top = 0): number =>
   Math.max(top + node.top + node.height, ...node.children.map((child) => contentHeight(child, top + node.top)));
 
 /// Paints a laid-out tree at [PIXEL_RATIO] into a canvas its content height tall.
