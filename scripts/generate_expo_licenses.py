@@ -270,7 +270,10 @@ def bundled_components(path: str = os.path.join(REPO, "spec", "bundled-assets.js
         assets = json.load(handle)["assets"]
     components = []
     for asset in assets:
-        with open(os.path.join(REPO, "scripts", "license-texts", asset["textFile"]), encoding="utf-8") as handle:
+        path = os.path.join(REPO, "scripts", "license-texts", asset["textFile"])
+        if not os.path.isfile(path):
+            raise LicenceError(f"no text vendored for {asset['component']} (expected {path})")
+        with open(path, encoding="utf-8") as handle:
             text = handle.read().strip()
         components.append(
             {"component": asset["component"], "version": asset["version"], "declared": asset["licenseId"], "text": text}

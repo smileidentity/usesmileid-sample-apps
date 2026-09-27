@@ -261,7 +261,11 @@ def build(coordinates: list[str], texts_dir: str, bundled: list[dict] = ()) -> d
         licence = {"id": asset["licenseId"], "name": asset["licenseName"], "url": asset["url"]}
         open_source.append({"artifact": asset["component"], "version": asset["version"], "licenses": [licence]})
         with open(path, encoding="utf-8") as handle:
-            licence_texts.setdefault(asset["licenseId"], handle.read())
+            text = handle.read()
+        # Keyed by licence id, so a second asset under one id must carry the same text or its holder is lost.
+        existing = licence_texts.setdefault(asset["licenseId"], text)
+        if existing.strip() != text.strip():
+            raise Unidentified(f"{asset['component']}: a different {asset['licenseId']} text is already listed")
 
     return {
         "generatedBy": "scripts/generate_licenses.py from the Android app's release runtime classpath and spec/bundled-assets.json",

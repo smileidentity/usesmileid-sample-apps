@@ -269,6 +269,12 @@ class TestTheDeltaReport(unittest.TestCase):
 
 
 class TestBundledAssets(unittest.TestCase):
+    def test_an_asset_with_no_vendored_text_fails_with_the_scripts_own_error(self):
+        with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as spec:
+            json.dump({"assets": [{"component": "X", "version": "1", "licenseId": "MIT", "textFile": "nope.txt"}]}, spec)
+        with self.assertRaises(gen.LicenceError):
+            gen.bundled_components(spec.name)
+
     def test_the_spec_list_ships_with_its_own_text(self):
         listed = {c["component"]: c for c in gen.bundled_components()}
         self.assertEqual({"DM Sans", "Material Symbols"}, set(listed))
