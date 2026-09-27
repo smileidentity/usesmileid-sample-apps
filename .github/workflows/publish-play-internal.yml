@@ -38,9 +38,16 @@ jobs:
           fileDir: ./android/app
           encodedString: ${{ secrets.UPLOAD_KEYSTORE }}
 
+      # One more than anything Play holds on any track, so two runs on one commit, or a branch behind main,
+      # can never upload a code Play has already seen.
       - name: Version code
         id: version
-        run: echo "code=$(git rev-list --count HEAD)" >> "$GITHUB_OUTPUT"
+        # Assigned first: a failed lookup inside `echo "$(...)"` would upload an empty code and not fail.
+        run: |
+          code=$(python3 scripts/play_publish.py next-version-code)
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+        env:
+          PLAY_STORE_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
 
       - name: Bundle
         working-directory: android

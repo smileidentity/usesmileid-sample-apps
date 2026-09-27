@@ -246,7 +246,7 @@ Run the `nm -u` check on the built app, not on your source. Dependencies decide 
 | Submit is blocked: *You must have published answers to your app's data usages* | The App Privacy form was saved but not published | Open App Privacy and press **Publish** | App Store Connect |
 | A reviewer flags that the privacy answers do not match the app | The form omits a type the merged privacy manifest declares, usually Precise Location or Email and Phone | Generate the privacy report from the archive and declare every type it lists | iOS SDK 12.1.1 |
 | The privacy policy link is reported as missing | The URL redirects to a homepage | Use the URL that serves the policy page itself | Both stores |
-| Play upload rejected: *Version code N has already been used* | Two uploads derived the same `versionCode`, for example two workflows run on one commit | Promote the existing release in the Console, or make `versionCode` come from Play's highest code plus one | Google Play |
+| Play upload rejected: *Version code N has already been used* | Two uploads derived the same `versionCode`, for example two workflows run on one commit | Both lanes now take Play's highest code plus one, so this means an upload outside them. Re-run the workflow instead | Google Play |
 | The Data safety form omits Location, but the app holds a location permission | The SDK attaches the last-known location whenever your app is allowed to read it | Declare Location for fraud prevention | Android SDK 12.1.x |
 
 ## Next step

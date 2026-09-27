@@ -117,14 +117,6 @@ four runs. In order of payoff:
 Move work down the pyramid where a widget or unit test can see the same thing, and batch assertions
 into fewer flows rather than repeating launches.
 
-### Play publishing: an internal build on every merge, and a collision-proof versionCode
-
-- **Run `publish-play-internal.yml` on `push` to `main`**, with a path filter, so a docs-only merge
-  does not publish a build or spend a versionCode.
-- **Derive `versionCode` from Play's highest code plus one**, as the App Store lane does with
-  `asc_publish.py next-build`. The commit count gives two workflows dispatched on one commit the same
-  code, and the second upload is rejected. A branch behind `main` gives a lower one, which Play refuses.
-
 ### A registry-consumption lane that launches and drives the published SDK
 
 These apps exist to consume the SDK exactly as a partner does, but no lane here resolves the published
