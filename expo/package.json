@@ -18,6 +18,7 @@
     "@eslint/js": "9.39.5",
     "eslint": "9.39.5",
     "eslint-config-expo": "57.0.2",
+    "knip": "6.38.0",
     "typescript-eslint": "8.70.0"
   },
   "pnpm": {
@@ -33,6 +34,7 @@
     "@eslint/js": "The flat-config base ruleset, matched to the eslint version so the two cannot disagree.",
     "eslint": "9.39.5, not 10: typescript-eslint 8 supports both, and eslint-config-expo is only tested against 9.",
     "eslint-config-expo": "Versioned with the Expo SDK; knows the Metro, JSX and React Native globals.",
+    "knip": "The dead-code check verify.sh runs over both packages: unused files, exports and dependencies fail the gate.",
     "typescript-eslint": "Type-aware linting for both packages; pinned with eslint because the pair must agree."
   }
 }
