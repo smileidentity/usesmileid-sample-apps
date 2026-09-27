@@ -8,10 +8,17 @@ analyzer:
   errors:
     # AGENTS.md makes the one-line doc comment the documentation, so a missing one fails the build.
     public_member_api_docs: error
+    # Dead code fails the build rather than warning, so nothing unused survives review.
+    dead_code: error
+    unused_element: error
+    unused_field: error
+    unused_import: error
+    unused_local_variable: error
 
 linter:
   rules:
     - always_declare_return_types
+    - avoid_unused_constructor_parameters
     - avoid_print
     - directives_ordering
     - prefer_final_locals
