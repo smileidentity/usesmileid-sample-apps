@@ -61,13 +61,18 @@ jobs:
         run: flutter build apk --release --target-platform android-x64
         working-directory: flutter/app
 
-      # The daemon holds a heap this runner needs back before an emulator will fit beside it.
-      - name: Stop the Gradle daemon
-        run: ./gradlew --stop
+      # The daemons hold a heap this runner needs back before an emulator will fit beside it; `--stop`
+      # leaves the Kotlin compiler's own daemon running.
+      - name: Stop the Gradle and Kotlin daemons
+        run: |
+          ./gradlew --stop
+          pkill -f KotlinCompileDaemon || true
         working-directory: flutter/app/android
 
-      - name: Report the disk left for the emulator
-        run: df -h / | tail -1
+      - name: Report the disk and memory left for the emulator
+        run: |
+          df -h / | tail -1
+          free -m
 
       - name: Install Maestro
         run: |
@@ -91,7 +96,9 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: pixel_5
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
+          # Pinned rather than the profile's default, so a starved runner fails at boot, not mid-suite.
+          ram-size: 3072M
+          emulator-options: -no-window -no-snapshot -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
           # Each line runs as its own `sh -c`, so no variable carries between them and dash has no
           # `SECONDS`; Maestro's own total, against the step duration, is what times the emulator.
