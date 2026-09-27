@@ -63,6 +63,19 @@ internal object UseSmileIDSampleSheetLinks {
     }
 }
 
+/** Hands the graph a cold sheet link's owner instead, since it reads `profiles/new` as a profile called "new". */
+internal fun Intent.foldUseSmileIDSampleSheetLink() {
+    val link = data?.toString()?.let(UseSmileIDSampleSheetLinks::resolve) ?: return
+    data = link.ownerUri.toUri().buildUpon().encodedQuery(data?.encodedQuery).build()
+    putExtra(PENDING_SHEET, link.sheet.name)
+}
+
+/** The sheet a cold link asked for, once [foldUseSmileIDSampleSheetLink] has moved it off the path. */
+internal fun Intent.pendingUseSmileIDSampleSheet(): UseSmileIDSampleSheet? =
+    getStringExtra(PENDING_SHEET)?.let { name -> UseSmileIDSampleSheet.entries.firstOrNull { it.name == name } }
+
+private const val PENDING_SHEET = "useSmileIDSamplePendingSheet"
+
 /** Opens the owner exactly as its own link would, then asks it for the sheet. */
 internal fun NavHostController.openUseSmileIDSampleSheet(
     link: UseSmileIDSampleSheetLink,
