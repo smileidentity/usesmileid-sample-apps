@@ -251,6 +251,8 @@ appId: ${APP_ID}
       id: "sample_setting_nav_documentation"
     direction: DOWN
     visibilityPercentage: 80
+    # Centred: left at the bottom the row sits under the floating nav bar, which takes the tap.
+    centerElement: true
     # 20s is the default and this list is long enough to outrun it on a warm device.
     timeout: 45000
 - tapOn:
@@ -267,6 +269,8 @@ appId: ${APP_ID}
       id: "sample_setting_nav_licenses"
     direction: DOWN
     visibilityPercentage: 80
+    # Centred: left at the bottom the row sits under the floating nav bar, which takes the tap.
+    centerElement: true
     # 20s is the default and this list is long enough to outrun it on a warm device.
     timeout: 45000
 - tapOn:
