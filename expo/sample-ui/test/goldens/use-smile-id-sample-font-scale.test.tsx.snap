@@ -795,7 +795,7 @@ exports[`at the largest content size, dark selection_bar 1`] = `
           ]
         }
       >
-        Tap \`Hide from List\` to confirm
+        Tap "Hide from List" to confirm
       </Text>
     </View>
     <View
@@ -2033,7 +2033,7 @@ exports[`at the largest content size, light selection_bar 1`] = `
           ]
         }
       >
-        Tap \`Hide from List\` to confirm
+        Tap "Hide from List" to confirm
       </Text>
     </View>
     <View

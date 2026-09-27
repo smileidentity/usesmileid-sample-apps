@@ -13903,7 +13903,7 @@ exports[`SelectionBar dark someSelected 1`] = `
           ]
         }
       >
-        Tap \`Hide from List\` to confirm
+        Tap "Hide from List" to confirm
       </Text>
     </View>
     <View
@@ -14339,7 +14339,7 @@ exports[`SelectionBar light someSelected 1`] = `
           ]
         }
       >
-        Tap \`Hide from List\` to confirm
+        Tap "Hide from List" to confirm
       </Text>
     </View>
     <View

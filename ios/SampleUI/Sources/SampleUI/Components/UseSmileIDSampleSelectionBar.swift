@@ -85,7 +85,7 @@ public struct UseSmileIDSampleSelectionBar: View {
       .foregroundColor(colors.textTitle)
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.selectionCount)
       UseSmileIDSampleText(
-        selectedCount == 0 ? "Tap rows to select" : "Tap `Hide from List` to confirm",
+        selectedCount == 0 ? "Tap rows to select" : "Tap \"Hide from List\" to confirm",
         style: UseSmileIDSampleTheme.type.textStyleBodySm.with(size: 11.5)
       )
       .foregroundColor(colors.textMuted)

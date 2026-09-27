@@ -168,7 +168,7 @@ describe('the selection bar wraps its action rather than crushing its own hint',
       { fontScale: ENLARGED_FONT_SCALE },
     );
     const boxes = flattenLayout(layoutTree(tree, { width: NARROW_WIDTH, fontScale: ENLARGED_FONT_SCALE }));
-    const hint = boxes.find((box) => box.text === 'Tap `Hide from List` to confirm');
+    const hint = boxes.find((box) => box.text === 'Tap "Hide from List" to confirm');
     const action = boxes.find((box) => box.text === 'Hide from List');
     expect(hint!.width).toBeGreaterThan(action!.width);
   });

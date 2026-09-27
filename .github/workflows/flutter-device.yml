@@ -96,11 +96,36 @@ jobs:
           # Each line runs as its own `sh -c`, so no variable carries between them and dash has no
           # `SECONDS`; Maestro's own total, against the step duration, is what times the emulator.
           # A lock or a system ANR dialog reds every flow as the app's fault; an app crash still lands in logs/crash-report.txt.
+          # The first launch after install compiles the release APK and stalls this two-core emulator long
+          # enough for adb to drop it, which Maestro never recovers from; one launch before the suite takes that.
           script: |
+            nohup adb logcat -v threadtime > "$RUNNER_TEMP/logcat.txt" 2>&1 &
             adb shell locksettings set-disabled true
             adb shell settings put global hide_error_dialogs 1
             adb install -r flutter/app/build/app/outputs/flutter-apk/app-release.apk
+            adb shell am start -a android.intent.action.VIEW -d "usesmileid-sample-flutter://"
+            sleep 90
+            adb shell am force-stop com.usesmileid.sample.flutter
             maestro test -e APP_ID=com.usesmileid.sample.flutter flutter/maestro
+
+      # A device that drops off leaves Maestro nothing to write, so the logcat and the host's view travel too.
+      - name: Collect what the host saw of the emulator
+        if: failure()
+        run: |
+          mkdir -p "$RUNNER_TEMP/diag"
+          sudo dmesg | tail -80 > "$RUNNER_TEMP/diag/dmesg.txt" || true
+          free -m > "$RUNNER_TEMP/diag/free.txt"
+          cp -r /tmp/android-runner "$RUNNER_TEMP/diag/" 2>/dev/null || true
+          cp "$RUNNER_TEMP/logcat.txt" "$RUNNER_TEMP/diag/" 2>/dev/null || true
+
+      - name: Upload the host diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: flutter-device-host
+          path: ${{ runner.temp }}/diag/**
+          if-no-files-found: ignore
+          retention-days: 7
 
       # A red here is a screen recording and a hierarchy, which is what makes it readable at all.
       - name: Upload the Maestro debug output

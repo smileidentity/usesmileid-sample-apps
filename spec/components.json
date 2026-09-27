@@ -657,7 +657,7 @@
       "usedBy": [
         "verifications"
       ],
-      "notes": "Replaces the NavBar in select mode. Copy changes with count: 'Tap rows to select' → 'Tap `Hide from List` to confirm'. The action reads Hide from List, never Remove or Delete: it hides the row from this app's list and nothing is deleted at the API, and the confirmation says so."
+      "notes": "Replaces the NavBar in select mode. Copy changes with count: 'Tap rows to select' → 'Tap \"Hide from List\" to confirm'. The action reads Hide from List, never Remove or Delete: it hides the row from this app's list and nothing is deleted at the API, and the confirmation says so."
     },
     {
       "name": "SwipeAction",

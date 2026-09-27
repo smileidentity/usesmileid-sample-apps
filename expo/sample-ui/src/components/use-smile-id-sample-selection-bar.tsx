@@ -60,7 +60,7 @@ export const UseSmileIDSampleSelectionBar = ({ selectedCount, onRemove, style }:
             {`${selectedCount} selected`}
           </Text>
           <Text style={[atSize(theme.type.textStyleBodySm, HINT_SIZE), { color: theme.colors.textMuted }]}>
-            {selectedCount === 0 ? 'Tap rows to select' : 'Tap `Hide from List` to confirm'}
+            {selectedCount === 0 ? 'Tap rows to select' : 'Tap "Hide from List" to confirm'}
           </Text>
         </View>
         <RemoveAction enabled={selectedCount > 0} onRemove={onRemove} />

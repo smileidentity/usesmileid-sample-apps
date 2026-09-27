@@ -6,46 +6,6 @@ pull request that finishes it.
 
 ## UI and design fidelity
 
-### Literal backticks in the selection bar hint on Android and iOS
-
-With rows selected, the selection bar reads ``Tap `Hide from List` to confirm``, with the backticks
-drawn on screen. Flutter and Expo show `Tap "Hide from List" to confirm` without them.
-
-- Android: `UseSmileIDSampleSelectionBar.kt:79`
-- iOS: `UseSmileIDSampleSelectionBar.swift:88`
-
-Fix the string on both platforms, and re-record the selection-bar goldens in light and dark.
-
-### Android: job row caption and a stale status-badge comment
-
-- The job row's secondary line should use the board's caption style, as `spec/components.json` says
-  for JobRow. The row gets taller, so its goldens move.
-- `UseSmileIDSampleStatusBadge`'s doc comment says only the saturated `badge.<role>.*` pairs have landed
-  and the soft fills are pending. The soft fills are what the app draws (`softBadgeTokens()`). Make the
-  comment say so.
-
-### iOS: pick text colour by WCAG luminance, as the other three apps do
-
-iOS chooses the ink on a fill with `UIColor.getWhite`, a perceptual grey
-(`UseSmileIDSampleColorMath.swift:8`). Android, Flutter and Expo use WCAG relative luminance against the
-0.179 crossover. 12 of the 51 delta colours come out differently, and in each case Android chooses white
-where iOS chooses dark.
-
-Check the 12 pairs against WCAG AA first. If any fails, switch the function to relative luminance, and
-re-record the affected goldens.
-
-### Android: sheets cover a blank window instead of the screen beneath
-
-Every sheet route (`profileSwitch`, `newProfile`, `countryPicker`, `idTypePicker`, `scenarioDrawer`)
-replaces the destination underneath it, so the scrim dims an empty window where the design shows the
-screen it covers.
-
-Present sheet routes as an overlay on the current destination, not a replacement. Navigation 3's
-overlay support is the intended route. The dialog-destination workaround gives the right backdrop but
-changes the keyboard, inset and dismissal behaviour a bottom sheet should keep. iOS, Flutter and Expo
-already present sheets over the current screen: check them rather than change them. Do not paint the
-window to look intentional.
-
 ### Pull to refresh on the verifications list
 
 The design has a pull-to-refresh gesture and a `refreshing` state on the verifications list. Today
