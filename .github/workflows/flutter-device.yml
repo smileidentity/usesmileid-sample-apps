@@ -67,7 +67,9 @@ jobs:
         working-directory: flutter/app/android
 
       - name: Report the disk left for the emulator
-        run: df -h / | tail -1
+        run: |
+          df -h / | tail -1
+          lscpu | grep 'Model name'
 
       - name: Install Maestro
         run: |
@@ -96,8 +98,7 @@ jobs:
           # Each line runs as its own `sh -c`, so no variable carries between them and dash has no
           # `SECONDS`; Maestro's own total, against the step duration, is what times the emulator.
           # A lock or a system ANR dialog reds every flow as the app's fault; an app crash still lands in logs/crash-report.txt.
-          # The first launch after install compiles the release APK and stalls this two-core emulator long
-          # enough for adb to drop it, which Maestro never recovers from; one launch before the suite takes that.
+          # The emulator process has segfaulted while this app renders since 2026-09-26; one launch before the suite lets some runs through.
           script: |
             nohup adb logcat -v threadtime > "$RUNNER_TEMP/logcat.txt" 2>&1 &
             adb shell locksettings set-disabled true
@@ -116,6 +117,11 @@ jobs:
           sudo dmesg | tail -80 > "$RUNNER_TEMP/diag/dmesg.txt" || true
           sudo journalctl --no-pager --since "-40 min" | grep -iE 'oom|killed|qemu|emulator' | tail -60 > "$RUNNER_TEMP/diag/journal.txt" || true
           sudo coredumpctl info --no-pager > "$RUNNER_TEMP/diag/qemu-core.txt" 2>&1 || true
+          command -v gdb >/dev/null || sudo apt-get install -y -qq gdb >/dev/null
+          sudo coredumpctl dump -o "$RUNNER_TEMP/core" >/dev/null 2>&1 || true
+          sudo gdb -batch -ex 'set pagination off' -ex 'info threads' -ex 'thread apply all bt 8' -ex 'x/6i $pc' -ex 'info proc mappings' \
+            /usr/local/lib/android/sdk/emulator/qemu/linux-x86_64/qemu-system-x86_64-headless "$RUNNER_TEMP/core" \
+            > "$RUNNER_TEMP/diag/gdb.txt" 2>&1 || true
           sudo journalctl --no-pager -u systemd-coredump@* --since "-40 min" > "$RUNNER_TEMP/diag/coredump-journal.txt" 2>&1 || true
           free -m > "$RUNNER_TEMP/diag/free.txt"
           cp -r /tmp/android-runner "$RUNNER_TEMP/diag/" 2>/dev/null || true
