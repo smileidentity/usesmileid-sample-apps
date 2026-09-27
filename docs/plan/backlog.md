@@ -74,11 +74,6 @@ Done looks like:
 
 ## Spec and code health
 
-### A dead-code check for Expo and Flutter
-
-Run `knip` over the Expo workspace, and enable the unused-code lints on Flutter, in each platform's
-`verify.sh` so CI enforces them.
-
 ## Device suite and CI
 
 ### Make the device suite fast enough to run on every PR
