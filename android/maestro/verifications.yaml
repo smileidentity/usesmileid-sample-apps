@@ -11,8 +11,9 @@ appId: ${APP_ID}
 - launchApp:
     arguments:
       seedJobs: true
-      # The undo offer below is a race: a loaded handset polls after the toast has dismissed itself.
-      noticeWindow: 60
+      # Long enough that a loaded handset still sees the confirmation, short enough that the flow can
+      # then watch it expire; 60 held it past the expiry wait below, so the flow could never pass.
+      noticeWindow: 8
 
 - runFlow: subflows/warm-start.yaml
 - tapOn:
@@ -60,7 +61,7 @@ appId: ${APP_ID}
 - extendedWaitUntil:
     notVisible:
       id: "sample_toast"
-    timeout: 10000
+    timeout: 20000
 - tapOn:
     id: "sample_job_row_0"
 - assertVisible:
