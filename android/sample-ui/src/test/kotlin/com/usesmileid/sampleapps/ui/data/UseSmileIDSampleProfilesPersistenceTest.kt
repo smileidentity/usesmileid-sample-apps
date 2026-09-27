@@ -29,13 +29,7 @@ class UseSmileIDSampleProfilesPersistenceTest {
     private lateinit var file: File
     private lateinit var prefs: DataStore<Preferences>
 
-    /** Robolectric has no Android Keystore, so a reversible stand-in seals here. */
-    private val cipher = object : UseSmileIDSampleProfilesCipher {
-        override fun seal(plain: String) = "sealed:" + plain.reversed()
-        override fun open(sealed: String) = sealed.removePrefix("sealed:").takeIf { it != sealed }?.reversed()
-    }
-
-    private fun store() = UseSmileIDSampleStore(prefs, cipher)
+    private fun store() = UseSmileIDSampleStore(prefs, UseSmileIDSampleTestCipher)
 
     @Before
     fun setUp() {

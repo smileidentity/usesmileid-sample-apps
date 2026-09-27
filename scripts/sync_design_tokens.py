@@ -96,7 +96,7 @@ SPEC_TOKENS = "spec/design-tokens.json"
 FACES = ["Regular", "Medium", "SemiBold", "Bold", "ExtraBold"]
 
 FONT_COPIES = [
-    (f"assets/fonts/DMSans-{face}.ttf", f"{ANDROID_UI}/src/main/res/font/dm_sans_{face.lower()}.ttf")
+    (f"assets/fonts/DMSans-{face}.ttf", f"{ANDROID_UI}/src/main/res/font/sample_dm_sans_{face.lower()}.ttf")
     for face in FACES
 ]
 
