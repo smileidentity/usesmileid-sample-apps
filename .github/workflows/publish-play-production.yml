@@ -4,6 +4,11 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      lookup_only:
+        description: Only print the versionCode the next upload would take; build and upload nothing
+        type: boolean
+        default: false
 
 concurrency:
   group: publish-play-production
@@ -34,6 +39,7 @@ jobs:
         uses: gradle/actions/wrapper-validation@v6
 
       - name: Materialise the upload keystore
+        if: ${{ !inputs.lookup_only }}
         uses: timheuer/base64-to-file@v2.0.0
         with:
           fileName: upload.jks
@@ -48,10 +54,12 @@ jobs:
         run: |
           code=$(python3 scripts/play_publish.py next-version-code)
           echo "code=$code" >> "$GITHUB_OUTPUT"
+          echo "### Next versionCode: $code" >> "$GITHUB_STEP_SUMMARY"
         env:
           PLAY_STORE_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
 
       - name: Bundle
+        if: ${{ !inputs.lookup_only }}
         working-directory: android
         run: ./gradlew bundleRelease
         env:
@@ -60,6 +68,7 @@ jobs:
           ORG_GRADLE_PROJECT_uploadKeystorePassword: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
 
       - name: Upload to the production track
+        if: ${{ !inputs.lookup_only }}
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}

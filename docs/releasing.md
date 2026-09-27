@@ -41,7 +41,7 @@ instead of producing a debug-signed bundle that only Play would reject.
 uploaded bundle and every track, and upload one more (`scripts/play_publish.py next-version-code`).
 Play refuses any code it has seen, so deriving it from Play rather than from the commit means two
 dispatches on one commit, or a dispatch from a branch behind `main`, still get codes Play accepts. The
-lookup opens an edit only to read it, and deletes it.
+lookup opens an edit only to read it, and deletes it. Dispatch either workflow with `lookup_only` to see the code the next upload would take without building or uploading anything.
 
 **Version name.** Patch bumps only (`1.0.1` → `1.0.2`), set in `android/app/build.gradle.kts`.
 
