@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.v2.runComposeUiTest
+import androidx.compose.ui.unit.dp
 import com.github.takahirom.roborazzi.captureRoboImage
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleJobStore
 import com.usesmileid.sampleapps.ui.golden.ROBOLECTRIC_SDK
@@ -24,6 +24,7 @@ import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleSettingsState
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
 import com.usesmileid.sampleapps.ui.screens.VerificationDetailsScreen
 import com.usesmileid.sampleapps.ui.screens.VerificationsScreen
+import com.usesmileid.sampleapps.ui.spec
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import org.junit.Test
@@ -47,7 +48,7 @@ class StoreArtTest {
     @Test
     fun token_session() = panel("token_session") {
         ProductsScreen(
-            state = PRODUCTS.copy(sessionId = "9f3a2c71", sessionRemaining = "7:59:12"),
+            state = PRODUCTS.copy(sessionId = demo("sessionId"), sessionRemaining = demo("sessionRemaining")),
             onProductClick = {},
             onProfileClick = {},
             onScanClick = {},
@@ -91,8 +92,8 @@ class StoreArtTest {
         SettingsScreen(
             state = UseSmileIDSampleSettingsState(
                 settings = UseSmileIDSampleSettings(),
-                organisation = "UpTech Finance",
-                initials = "KA",
+                organisation = demo("organisation"),
+                initials = demo("initials"),
                 versionLabel = "Smile ID · 1.0.0",
                 consentBoundByToken = false,
             ),
@@ -127,7 +128,12 @@ class StoreArtTest {
 
         const val FIXED_NOW = 1_784_202_612_000L
         val JOBS = UseSmileIDSampleJobStore.fixtures(FIXED_NOW)
-        val PRODUCTS = UseSmileIDSampleProductsState(initials = "KA")
+        val PRODUCTS = UseSmileIDSampleProductsState(initials = demo("initials"))
+
+        /** The listing's made-up values, shared with the iOS store art through spec/store-art.json. */
+        fun demo(key: String): String = requireNotNull(
+            Regex("\"$key\"\\s*:\\s*\"([^\"]*)\"").find(spec("store-art.json"))?.groupValues?.get(1),
+        ) { "spec/store-art.json has no $key" }
 
         /** The device frame's punch-hole ends 32dp down and its corners eat 20dp; content clears both. */
         val STATUS_BAR_INSET = 40.dp
