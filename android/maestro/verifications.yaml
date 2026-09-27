@@ -11,8 +11,7 @@ appId: ${APP_ID}
 - launchApp:
     arguments:
       seedJobs: true
-      # Long enough that a loaded handset still sees the confirmation, short enough that the flow can
-      # then watch it expire; 60 held it past the expiry wait below, so the flow could never pass.
+      # Outlasts a loaded handset's first poll, but expires inside the 20 s wait below; 60 never could.
       noticeWindow: 8
 
 - runFlow: subflows/warm-start.yaml
