@@ -192,7 +192,7 @@ class TestBundledAssets(GeneratorCase):
             handle.write("text of the font\n")
         notices = gen.build([], self.texts, gen.bundled_assets())
         listed = {entry["artifact"]: entry["licenses"][0]["id"] for entry in notices["openSource"]}
-        self.assertEqual({"DM Sans": "OFL-1.1", "Material Symbols (Outlined)": "Apache-2.0"}, listed)
+        self.assertEqual({"DM Sans": "OFL-1.1", "Material Symbols": "Apache-2.0"}, listed)
         self.assertEqual("text of the font\n", notices["licenseTexts"]["OFL-1.1"])
 
     def test_an_asset_with_no_vendored_text_fails_rather_than_shipping_a_bare_name(self):

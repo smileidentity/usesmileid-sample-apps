@@ -17,7 +17,7 @@ void main() {
     };
     expect(ids, <String, String?>{
       'DM Sans': 'OFL-1.1',
-      'Material Symbols (Outlined)': 'Apache-2.0',
+      'Material Symbols': 'Apache-2.0',
       'go_router': 'MIT',
     });
   });

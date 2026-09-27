@@ -102,7 +102,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 ''',
       ),
       (
-        component: 'Material Symbols (Outlined)',
+        component: 'Material Symbols',
         text: r'''
 Apache License
                            Version 2.0, January 2004

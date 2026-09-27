@@ -2274,7 +2274,7 @@
     },
     {
       "artifact": "DM Sans",
-      "version": "",
+      "version": "4.004",
       "licenses": [
         {
           "id": "OFL-1.1",
@@ -2284,8 +2284,8 @@
       ]
     },
     {
-      "artifact": "Material Symbols (Outlined)",
-      "version": "",
+      "artifact": "Material Symbols",
+      "version": "Outlined 400",
       "licenses": [
         {
           "id": "Apache-2.0",

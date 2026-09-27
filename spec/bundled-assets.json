@@ -3,15 +3,15 @@
   "assets": [
     {
       "component": "DM Sans",
-      "version": "",
+      "version": "4.004",
       "licenseId": "OFL-1.1",
       "licenseName": "SIL Open Font License 1.1",
       "textFile": "dm-sans-ofl.txt",
       "url": "https://github.com/googlefonts/dm-fonts"
     },
     {
-      "component": "Material Symbols (Outlined)",
-      "version": "",
+      "component": "Material Symbols",
+      "version": "Outlined 400",
       "licenseId": "Apache-2.0",
       "licenseName": "Apache License, Version 2.0",
       "textFile": "apache-2.0.txt",
