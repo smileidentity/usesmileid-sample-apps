@@ -68,6 +68,7 @@ export default function Settings() {
       onSettingChange={(setting, enabled) => void setSetting(setting, enabled)}
       onProfilePress={() => router.push('/profiles')}
       onNavRowPress={onNavRowPress}
+      onCaptureModePress={() => router.push('/settings/capture-mode')}
       onSignOut={() => {
         clearSession().catch(() => undefined);
         clearForms();

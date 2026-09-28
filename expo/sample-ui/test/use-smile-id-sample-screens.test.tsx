@@ -32,6 +32,7 @@ const settings = (
     onSettingChange={noop}
     onProfilePress={noop}
     onNavRowPress={noop}
+    onCaptureModePress={noop}
     onSignOut={noop}
     {...overrides}
   />

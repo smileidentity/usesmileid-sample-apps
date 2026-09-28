@@ -17,6 +17,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SOURCE = os.path.join(REPO, "spec", "catalogue-fixture.json")
 TARGETS = [
     os.path.join(REPO, "flutter", "app", "assets", "catalogue-fixture.json"),
+    os.path.join(REPO, "expo", "app", "assets", "catalogue-fixture.json"),
 ]
 
 

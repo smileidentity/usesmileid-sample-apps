@@ -1,3 +1,4 @@
+import { UseSmileIDSampleCaptureMode } from '../model/use-smile-id-sample-capture-mode';
 import { UseSmileIDSampleSetting } from '../model/use-smile-id-sample-setting';
 
 /// The Settings state. Three of these decide whether a step is composed into the flow at all.
@@ -9,6 +10,10 @@ export type UseSmileIDSampleSettings = {
   readonly consentStep: boolean;
   readonly instructionsStep: boolean;
   readonly previewStep: boolean;
+  /// DocumentCaptureConfig.allowGalleryUpload; off, as the SDK defaults it.
+  readonly galleryUpload: boolean;
+  /// A typed field rather than one of the switches: three values, not two.
+  readonly captureMode: UseSmileIDSampleCaptureMode;
 };
 
 export const smileIDSampleSettingsDefaults: UseSmileIDSampleSettings = {
@@ -18,6 +23,8 @@ export const smileIDSampleSettingsDefaults: UseSmileIDSampleSettings = {
   consentStep: true,
   instructionsStep: true,
   previewStep: true,
+  galleryUpload: false,
+  captureMode: UseSmileIDSampleCaptureMode.AutoWithFallback,
 };
 
 /// Drops enhanced liveness where a stored state carries both, so the SDK is never handed the pair it refuses.

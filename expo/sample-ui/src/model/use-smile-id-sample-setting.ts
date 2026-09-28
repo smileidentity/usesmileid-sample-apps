@@ -6,12 +6,13 @@ export const UseSmileIDSampleSetting = {
   ConsentStep: 'consentStep',
   InstructionsStep: 'instructionsStep',
   PreviewStep: 'previewStep',
+  GalleryUpload: 'galleryUpload',
 } as const;
 
 export type UseSmileIDSampleSetting =
   (typeof UseSmileIDSampleSetting)[keyof typeof UseSmileIDSampleSetting];
 
-/// The six rows in the order Settings draws them, which the spec test compares against test-ids.json.
+/// The switch rows in the order Settings draws them, which the spec test compares against test-ids.json.
 export const smileIDSampleSettings: readonly UseSmileIDSampleSetting[] = [
   UseSmileIDSampleSetting.EnhancedSmartSelfie,
   UseSmileIDSampleSetting.AgentMode,
@@ -19,4 +20,5 @@ export const smileIDSampleSettings: readonly UseSmileIDSampleSetting[] = [
   UseSmileIDSampleSetting.ConsentStep,
   UseSmileIDSampleSetting.InstructionsStep,
   UseSmileIDSampleSetting.PreviewStep,
+  UseSmileIDSampleSetting.GalleryUpload,
 ];

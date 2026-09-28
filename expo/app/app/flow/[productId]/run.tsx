@@ -78,6 +78,8 @@ export default function SdkFlowRun() {
       consentStep: settings.consentStep,
       instructionsStep: settings.instructionsStep,
       previewStep: settings.previewStep,
+      captureMode: settings.captureMode,
+      galleryUpload: settings.galleryUpload,
       userId: runUserId,
       partnerId: profile?.id ?? USE_SMILE_ID_SAMPLE_FIRST_PROFILE_ID,
       partnerName: smileIDSamplePartnerName(profile),

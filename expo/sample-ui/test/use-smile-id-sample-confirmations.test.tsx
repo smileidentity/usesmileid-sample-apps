@@ -24,6 +24,7 @@ describe('sign-out', () => {
         onSettingChange={noop}
         onProfilePress={noop}
         onNavRowPress={noop}
+        onCaptureModePress={noop}
         onSignOut={signOut}
       />,
       false,

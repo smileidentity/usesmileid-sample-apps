@@ -1,10 +1,15 @@
 import {
+  UseSmileIDSampleCaptureAs,
+  UseSmileIDSampleCaptureMode,
+  smileIDSampleAspectRatios,
+  type UseSmileIDSampleIdDetails,
   UseSmileIDSampleIcon,
   smileIDSampleThemeOverride,
   useSmileIDSampleTheme,
 } from '@smileid/sample-ui';
 import {
   CaptureType,
+  DocumentCaptureMode,
   DocumentType,
   JobType,
   LogLevel,
@@ -163,9 +168,12 @@ const journeyFor = (screens: ScreensBuilder, snapshot: UseSmileIDSampleFlowLaunc
         screens.capture((capture: CaptureConfigBuilder) => {
           capture.captureType = CaptureType.document;
           capture.document((document: DocumentCaptureConfigBuilder) => {
-            document.documentType = documentTypeFor(snapshot.idDetails.idType?.id);
-            document.captureBothSides = true;
+            const shape = smileIDSampleDocumentCaptureFor(snapshot.idDetails);
+            document.documentType = shape.documentType;
+            document.captureBothSides = shape.captureBothSides;
             document.allowSkipBack = true;
+            document.captureMode = smileIDSampleCaptureModeFor(snapshot.captureMode);
+            document.allowGalleryUpload = snapshot.galleryUpload;
           });
         });
         break;
@@ -186,7 +194,9 @@ const applyIdParams = (
   // The token beats the form: the server overwrites these from its claims.
   const bound = smileIDSampleSnapshotSession(snapshot)?.bindings;
   const country = bound?.country ?? snapshot.idDetails.country?.code ?? '';
-  const idType = bound?.idType ?? snapshot.idDetails.idType?.id ?? '';
+  // The API's type, or the document's code: the server never hears which capture shape was chosen.
+  const chosen = snapshot.idDetails.idType?.type ?? snapshot.idDetails.document?.code ?? null;
+  const idType = bound?.idType ?? chosen ?? '';
   // The SDK asks only for non-blank, and the server substitutes the claim.
   const idNumber = bound?.idNumberReference ?? snapshot.idDetails.idNumber;
   switch (snapshot.product.id) {
@@ -201,7 +211,7 @@ const applyIdParams = (
     case 'documentVerification':
       builder.documentVerificationParams = {
         country,
-        ...(bound?.idType == null && snapshot.idDetails.idType === null ? {} : { idType }),
+        ...(bound?.idType == null && chosen === null ? {} : { idType }),
       };
       break;
     case 'enhancedDocumentVerification':
@@ -248,8 +258,65 @@ const jobTypeFor = (productId: string): JobType => {
   }
 };
 
-const documentTypeFor = (idTypeId: string | undefined): DocumentType =>
-  idTypeId === 'PASSPORT' ? DocumentType.Passport : DocumentType.GenericDocument();
+// The API's undocumented `format`: 3 is a passport or seaman's booklet, 7 the Green Book; the rest are cards.
+const FORMAT_BOOKLET = 3;
+const FORMAT_GREEN_BOOK = 7;
+
+/// What the SDK is told to photograph; the server is told the document's code either way.
+export type UseSmileIDSampleDocumentCapture = { readonly documentType: DocumentType; readonly captureBothSides: boolean };
+
+const preset = (documentType: DocumentType): UseSmileIDSampleDocumentCapture => ({
+  documentType,
+  captureBothSides: documentType.hasBackSide,
+});
+
+/// The "Capture as" mapping from `spec/catalogue-rules.json`; pure, so its table is unit-tested.
+export const smileIDSampleDocumentCaptureFor = (details: UseSmileIDSampleIdDetails): UseSmileIDSampleDocumentCapture => {
+  const { document, custom } = details;
+  switch (details.captureAs) {
+    case UseSmileIDSampleCaptureAs.GreenBook:
+      return preset(DocumentType.SouthAfricaGreenBook);
+    case UseSmileIDSampleCaptureAs.Passport:
+      return preset(DocumentType.Passport);
+    case UseSmileIDSampleCaptureAs.Custom: {
+      const ratio = smileIDSampleAspectRatios.find((it) => it.id === custom.aspectRatio)?.ratio ?? null;
+      return preset(
+        DocumentType.GenericDocument({
+          displayName: custom.displayName,
+          hasBackSide: custom.hasBackSide,
+          orientation: custom.orientation === 'portrait' ? 'Portrait' : 'Landscape',
+          ...(ratio === null ? {} : { knownAspectRatio: ratio }),
+        }),
+      );
+    }
+    default:
+      // The API's has_back, not a preset's: the API is the source that says what the document is.
+      return {
+        documentType:
+          document?.format === FORMAT_GREEN_BOOK
+            ? DocumentType.SouthAfricaGreenBook
+            : document?.format === FORMAT_BOOKLET
+              ? DocumentType.Passport
+              : DocumentType.GenericDocument({
+                  displayName: document?.name ?? 'Document',
+                  hasBackSide: document?.hasBack ?? true,
+                }),
+        captureBothSides: document?.hasBack ?? true,
+      };
+  }
+};
+
+/// The three capture modes onto the SDK's; the fallback keeps its 10 seconds.
+export const smileIDSampleCaptureModeFor = (mode: UseSmileIDSampleCaptureMode): DocumentCaptureMode => {
+  switch (mode) {
+    case UseSmileIDSampleCaptureMode.Auto:
+      return DocumentCaptureMode.AutoCapture;
+    case UseSmileIDSampleCaptureMode.Manual:
+      return DocumentCaptureMode.ManualCapture;
+    default:
+      return DocumentCaptureMode.AutoCaptureWithManualFallback();
+  }
+};
 
 // The same host the Settings privacy row opens.
 const privacyPolicyUrl = 'https://smile.id/privacy-policy';

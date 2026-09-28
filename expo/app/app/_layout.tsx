@@ -105,9 +105,17 @@ export default function RootLayout() {
               contentStyle: { backgroundColor: colors.background },
             }}
           >
-            {/* Transparent, so products stays visible behind the sheet rather than being replaced. */}
+            {/* Transparent, so the owner stays visible behind the sheet rather than being replaced. */}
             <Stack.Screen
               name="(products)/profiles/switch"
+              options={{
+                presentation: 'transparentModal',
+                animation: 'none',
+                contentStyle: { backgroundColor: 'transparent' },
+              }}
+            />
+            <Stack.Screen
+              name="(settings)/settings/capture-mode"
               options={{
                 presentation: 'transparentModal',
                 animation: 'none',

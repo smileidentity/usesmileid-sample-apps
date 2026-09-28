@@ -53,6 +53,7 @@ const screens = {
       onSettingChange={noop}
       onProfilePress={noop}
       onNavRowPress={noop}
+      onCaptureModePress={noop}
       onSignOut={noop}
       bottomInset={bottomInset}
     />

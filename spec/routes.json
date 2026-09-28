@@ -73,7 +73,7 @@
         "android": "SettingsScreenDestination + UseSmileIDSampleSheet.CaptureMode",
         "ios": "Sheet.captureMode",
         "flutter": "/settings/capture-mode",
-        "expo": "app/(tabs)/settings/capture-mode.tsx"
+        "expo": "app/(settings)/settings/capture-mode.tsx"
       },
       "notes": "Layers over Settings, the only screen that owns the row that opens it."
     },

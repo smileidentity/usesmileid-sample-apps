@@ -1,0 +1,126 @@
+appId: ${APP_ID}
+---
+# The document products' form against `catalogue=fixture`: the document list, "Capture as" and the
+# custom sheet, then the list failing. Entered by link and never typed into — see ./README.md "Traps"
+# for why a focused field ends a flow here — so it stops at the form rather than at SDK mount.
+
+- clearState
+- stopApp
+- openLink: "usesmileid-sample-expo:///flow/documentVerification/id-details?catalogue=fixture"
+- extendedWaitUntil:
+    visible:
+      id: "sample_kyc_form_screen"
+    timeout: 60000
+
+# The document products ask for a document and how to capture it, never an ID number.
+- assertNotVisible:
+    id: "sample_idnumber_input"
+- tapOn:
+    id: "sample_country_trigger"
+- extendedWaitUntil:
+    visible:
+      id: "sample_country_option_ZA"
+    timeout: 10000
+- tapOn:
+    id: "sample_country_option_ZA"
+
+# The Green Book is its own row after its parent; the API's 'Others', whose code is empty, is not listed.
+- tapOn:
+    id: "sample_document_trigger"
+- extendedWaitUntil:
+    visible:
+      id: "sample_document_option_IDENTITY_CARD_green_book"
+    timeout: 10000
+- assertVisible:
+    id: "sample_document_option_IDENTITY_CARD"
+- assertNotVisible:
+    id: "sample_document_option_"
+- tapOn:
+    id: "sample_document_option_IDENTITY_CARD_green_book"
+# The trigger's text is a child node, so the id and the text cannot sit in one selector.
+- assertVisible:
+    text: ".*Green Book.*"
+    childOf:
+      id: "sample_document_trigger"
+
+# Every choice is on offer; Automatic is the default.
+- tapOn:
+    id: "sample_capture_as_trigger"
+- assertVisible:
+    id: "sample_capture_as_sheet"
+- assertVisible:
+    id: "sample_capture_as_option_automatic"
+    selected: true
+- assertVisible:
+    id: "sample_capture_as_option_greenBook"
+- assertVisible:
+    id: "sample_capture_as_option_passport"
+
+# Custom opens its own sheet, and what it builds is named on the trigger.
+- tapOn:
+    id: "sample_capture_as_option_custom"
+- assertVisible:
+    id: "sample_custom_document_sheet"
+- tapOn:
+    id: "sample_custom_document_orientation_portrait"
+- tapOn:
+    id: "sample_custom_document_aspect_ratio_booklet"
+- tapOn:
+    id: "sample_custom_document_done"
+- assertVisible:
+    text: ".*Custom: Document.*"
+    childOf:
+      id: "sample_capture_as_trigger"
+- assertVisible:
+    id: "sample_kyc_continue"
+    enabled: true
+
+# --- the list failing -------------------------------------------------------------------------------
+# `unreachable` fails every list at once: the picker says so and offers Retry, which fails again.
+- stopApp
+- openLink: "usesmileid-sample-expo:///flow/documentVerification/id-details?catalogue=unreachable"
+- extendedWaitUntil:
+    visible:
+      id: "sample_kyc_form_screen"
+    timeout: 60000
+- tapOn:
+    id: "sample_country_trigger"
+- extendedWaitUntil:
+    visible:
+      id: "sample_catalogue_error"
+    timeout: 10000
+- tapOn:
+    id: "sample_catalogue_retry"
+- extendedWaitUntil:
+    visible:
+      id: "sample_catalogue_error"
+    timeout: 10000
+
+# --- the Settings side ------------------------------------------------------------------------------
+- stopApp
+- openLink: "usesmileid-sample-expo:///settings/capture-mode?catalogue=fixture"
+- extendedWaitUntil:
+    visible:
+      id: "sample_capture_mode_sheet"
+    timeout: 60000
+- assertVisible:
+    id: "sample_capture_mode_option_autoWithFallback"
+    selected: true
+- tapOn:
+    id: "sample_capture_mode_option_manual"
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_capture_mode"
+    direction: DOWN
+- assertVisible:
+    text: "Manual"
+    childOf:
+      id: "sample_setting_capture_mode"
+- tapOn:
+    id: "sample_setting_capture_mode"
+- tapOn:
+    id: "sample_capture_mode_option_autoWithFallback"
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_gallery_upload"
+    direction: DOWN

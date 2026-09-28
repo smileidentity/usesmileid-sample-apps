@@ -89,7 +89,7 @@ describe('the settings rows match spec/test-ids.json', () => {
     group.map((entry) => entry.id),
   );
 
-  it('carries a declared id for every one of the six switches', () => {
+  it('carries a declared id for every switch', () => {
     const switchIds = [
       UseSmileIDSampleTestIds.SETTING_ENHANCED_SMART_SELFIE,
       UseSmileIDSampleTestIds.SETTING_AGENT_MODE,
@@ -97,6 +97,7 @@ describe('the settings rows match spec/test-ids.json', () => {
       UseSmileIDSampleTestIds.SETTING_CONSENT_STEP,
       UseSmileIDSampleTestIds.SETTING_INSTRUCTIONS_STEP,
       UseSmileIDSampleTestIds.SETTING_PREVIEW_STEP,
+      UseSmileIDSampleTestIds.SETTING_GALLERY_UPLOAD,
     ];
     expect(switchIds.length).toBe(smileIDSampleSettings.length);
     expect(switchIds.filter((id) => !specIds.includes(id))).toEqual([]);

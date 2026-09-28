@@ -9,7 +9,8 @@ const CHIP_LABEL_SIZE = 12.5;
 
 type Props = {
   label: string;
-  count: number;
+  /// Null for a chip that picks an option rather than filtering a list.
+  count: number | null;
   selected: boolean;
   onPress: () => void;
   testID?: string;
@@ -60,19 +61,21 @@ export const UseSmileIDSampleFilterChip = ({
         >
           {label}
         </Text>
-        <Text
-          testID={countTestID}
-          // The design file's muted grey, deliberately not filter.chip-value's blue.
-          style={[
-            atSize(theme.type.textStyleOverline, smileLabelSize),
-            {
-              letterSpacing: smileLabelTracking,
-              color: selected ? theme.colors.onPrimary : theme.colors.textMuted,
-            },
-          ]}
-        >
-          {count}
-        </Text>
+        {count === null ? null : (
+          <Text
+            testID={countTestID}
+            // The design file's muted grey, deliberately not filter.chip-value's blue.
+            style={[
+              atSize(theme.type.textStyleOverline, smileLabelSize),
+              {
+                letterSpacing: smileLabelTracking,
+                color: selected ? theme.colors.onPrimary : theme.colors.textMuted,
+              },
+            ]}
+          >
+            {count}
+          </Text>
+        )}
       </View>
     </Pressable>
   );

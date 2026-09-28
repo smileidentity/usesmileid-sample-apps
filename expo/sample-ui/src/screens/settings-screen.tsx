@@ -20,6 +20,7 @@ import {
   smileIDSampleLegalRows,
   type UseSmileIDSampleNavRow,
 } from '../model/use-smile-id-sample-nav-row';
+import { smileIDSampleCaptureModeLabel } from '../model/use-smile-id-sample-capture-mode';
 import { UseSmileIDSampleSetting } from '../model/use-smile-id-sample-setting';
 import type { SmileIconName } from '../smile-icons';
 import { smileProfileHues } from '../smile-product-hues';
@@ -131,6 +132,8 @@ type Props = {
   onSettingChange: (setting: UseSmileIDSampleSetting, enabled: boolean) => void;
   onProfilePress: () => void;
   onNavRowPress: (row: UseSmileIDSampleNavRow) => void;
+  /// Opens the capture-mode sheet.
+  onCaptureModePress: () => void;
   /// Absent hides the DEBUG section: this package may not read a host's build type.
   onOpenScenarioDrawer?: (() => void) | undefined;
   onSignOut: () => void;
@@ -145,6 +148,7 @@ export const SettingsScreen = ({
   onSettingChange,
   onProfilePress,
   onNavRowPress,
+  onCaptureModePress,
   onOpenScenarioDrawer,
   onSignOut,
   bottomInset = 0,
@@ -262,6 +266,28 @@ export const SettingsScreen = ({
           setting={UseSmileIDSampleSetting.PreviewStep}
           checked={settings.previewStep}
           testID={UseSmileIDSampleTestIds.SETTING_PREVIEW_STEP}
+          onSettingChange={onSettingChange}
+        />
+      </Section>
+
+      {/* The design draws no such section either; it sits with the other capture choices. */}
+      <Section label="DOCUMENT CAPTURE">
+        <UseSmileIDSampleSettingRow
+          title="Capture mode"
+          supportingText={smileIDSampleCaptureModeLabel(settings.captureMode)}
+          onPress={onCaptureModePress}
+          leading={(tint) => <UseSmileIDSampleIcon name="documentVerification" tint={tint} />}
+          trailing={<UseSmileIDSampleSettingRowChevron />}
+          testID={UseSmileIDSampleTestIds.SETTING_CAPTURE_MODE}
+        />
+        <UseSmileIDSampleRowDivider />
+        <SwitchRow
+          title="Gallery upload"
+          supportingText="The system picker needs no permission"
+          icon="preview"
+          setting={UseSmileIDSampleSetting.GalleryUpload}
+          checked={settings.galleryUpload}
+          testID={UseSmileIDSampleTestIds.SETTING_GALLERY_UPLOAD}
           onSettingChange={onSettingChange}
         />
       </Section>

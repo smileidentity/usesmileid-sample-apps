@@ -1,4 +1,5 @@
-import { smileIDSampleProducts, type UseSmileIDSampleProduct } from '@smileid/sample-ui';
+import {
+  smileIDSampleIdDetailsDefaults, smileIDSampleProducts, type UseSmileIDSampleProduct } from '@smileid/sample-ui';
 import { UseSmileIDFlowBuilder } from '@smileid/usesmileid';
 
 import {
@@ -27,7 +28,7 @@ const snapshot = (
     email: 'ada.okafor@example.com',
     phone: '',
   },
-  idDetails: { country: null, idType: null, idNumber: '' },
+  idDetails: smileIDSampleIdDetailsDefaults,
   scenario: 'normal',
   theme: 'brandDefault',
   sandbox: true,
@@ -36,6 +37,8 @@ const snapshot = (
   consentStep: true,
   instructionsStep: true,
   previewStep: true,
+  captureMode: 'autoWithFallback',
+  galleryUpload: false,
   userId: 'user_1',
   partnerId: 'p-1',
   partnerName: 'Kobo Bank',
@@ -145,8 +148,9 @@ describe('what the SDK is handed', () => {
         snapshot({
           product,
           idDetails: {
-            country: { code: 'KE', label: 'Kenya', flag: '🇰🇪' },
-            idType: { id: 'NATIONAL_ID', label: 'National ID', countries: ['KE'] },
+            ...smileIDSampleIdDetailsDefaults,
+            country: { code: 'KE', name: 'Kenya' },
+            idType: { id: 'NATIONAL_ID', type: 'NATIONAL_ID', label: 'National ID', regex: '^[0-9]{1,9}$' },
             idNumber: '11111111',
           },
         }),
