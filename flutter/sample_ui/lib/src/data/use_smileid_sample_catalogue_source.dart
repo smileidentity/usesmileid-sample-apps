@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import '../model/use_smileid_sample_environment.dart';
 
-/// The ID form's two lists as raw response bodies, so the network stays in the shell and one decoder reads live and fixture alike.
+/// The ID form's two lists as raw bodies, so the network stays in the shell and one decoder reads live and fixture.
 abstract interface class UseSmileIDSampleCatalogueSource {
   /// `GET /v3/services/supported_id_types`, every country.
   Future<String> supportedIdTypes(UseSmileIDSampleEnvironment environment);

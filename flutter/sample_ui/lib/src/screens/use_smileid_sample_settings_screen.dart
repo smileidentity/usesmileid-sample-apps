@@ -114,7 +114,7 @@ class UseSmileIDSampleSettingsState {
     this.hasProfile = true,
   });
 
-  /// The six switches.
+  /// The switches and the capture mode.
   final UseSmileIDSampleSettings settings;
 
   /// The active profile's organisation.

@@ -1,8 +1,6 @@
 appId: ${APP_ID}
 ---
-# The document products' form against `catalogue=fixture`: the document list, "Capture as" and the
-# custom sheet, then the list failing. Entered by link and never typed into — see ./README.md "Traps"
-# for why a focused field ends a flow here — so it stops at the form rather than at SDK mount.
+# The document form on fixture lists, then the list failing; entered by link and never typed into (./README.md "Traps").
 
 - clearState
 - stopApp

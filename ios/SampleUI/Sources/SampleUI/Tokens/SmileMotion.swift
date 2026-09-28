@@ -1,9 +1,7 @@
 // Smile ID Design System — GENERATED. Do not edit by hand.
 // Regenerate with: scripts/sync_design_tokens.py --all
 //
-// A stopgap: the upstream SwiftUI emitter carries no durations. Names mirror the Dart emitter's
-// SmileMotion. Delete this file once upstream emits them (spec/design-tokens.json
-// motionMissingOnComposeAndSwiftUI).
+// A stopgap until the upstream SwiftUI emitter carries durations (spec/design-tokens.json motionMissingOnComposeAndSwiftUI).
 
 import Foundation
 

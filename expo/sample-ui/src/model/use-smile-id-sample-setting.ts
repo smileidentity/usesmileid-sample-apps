@@ -1,4 +1,4 @@
-/// Which settings row a toggle belongs to, so the screen can report changes without six callbacks.
+/// Which settings row a toggle belongs to, so the screen can report changes through one callback.
 export const UseSmileIDSampleSetting = {
   EnhancedSmartSelfie: 'enhancedSmartSelfie',
   AgentMode: 'agentMode',

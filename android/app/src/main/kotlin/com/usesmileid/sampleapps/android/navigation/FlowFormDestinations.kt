@@ -90,8 +90,6 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     var buildingCustom by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.CustomDocument)
     // A deep link lands here without the product tap that fetches ahead, so the form starts it if nothing has.
     LaunchedEffect(app.environment, app.catalogueLocale) { app.catalogue.ensure(app.environment, app.catalogueLocale) }
-    // A link straight to the custom sheet selects Custom too, so the form never shows a shape it did not choose.
-    LaunchedEffect(buildingCustom) { if (buildingCustom) app.forms.setCaptureAs(UseSmileIDSampleCaptureAs.Custom) }
     val details = app.forms.idDetails
     val countryCode = details.country?.code
     // A link can ask for a second-level sheet before its trigger could open; refused, not held until later.
@@ -142,7 +140,7 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     }
 }
 
-/** A layer the ID-details form owns; it is not a destination (R12). */
+/** A layer the ID-details form owns; it is not a destination (`docs/architecture.md` §4). */
 @Composable
 private fun CountryPickerSheet(family: UseSmileIDSampleCatalogueFamily, onDismissRequest: () -> Unit) {
     val app = LocalUseSmileIDSampleAppState.current
@@ -158,7 +156,7 @@ private fun CountryPickerSheet(family: UseSmileIDSampleCatalogueFamily, onDismis
     )
 }
 
-/** A layer the ID-details form owns; it is not a destination (R12). */
+/** A layer the ID-details form owns; it is not a destination (`docs/architecture.md` §4). */
 @Composable
 private fun IdTypePickerSheet(countryCode: String, onDismissRequest: () -> Unit) {
     val app = LocalUseSmileIDSampleAppState.current
@@ -175,7 +173,7 @@ private fun IdTypePickerSheet(countryCode: String, onDismissRequest: () -> Unit)
     )
 }
 
-/** A layer the ID-details form owns; it is not a destination (R12). */
+/** A layer the ID-details form owns; it is not a destination (`docs/architecture.md` §4). */
 @Composable
 private fun DocumentPickerSheet(countryCode: String, onDismissRequest: () -> Unit) {
     val app = LocalUseSmileIDSampleAppState.current

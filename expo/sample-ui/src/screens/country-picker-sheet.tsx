@@ -15,7 +15,7 @@ type Props = {
   onDismiss: () => void;
 };
 
-/// The country picker, filtering on the name and never the code. Full height, because the list fights the keyboard otherwise.
+/// The country picker, filtering on the name, never the code; full height so the list does not fight the keyboard.
 export const CountryPickerSheet = ({
   catalogue,
   selected,

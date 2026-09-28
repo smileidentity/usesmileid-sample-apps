@@ -14,7 +14,7 @@ import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_routes.dart';
 import '../use_smileid_sample_version.dart';
 
-/// The settings tab, whose six switches survive a restart.
+/// The settings tab, whose switches and capture mode survive a restart.
 class UseSmileIDSampleSettingsTab extends ConsumerStatefulWidget {
   /// [openDrawer] is set by the deep link, which opens this page with the drawer already up.
   const UseSmileIDSampleSettingsTab({

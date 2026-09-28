@@ -12,11 +12,7 @@ internal fun Intent?.useSmileIDSampleLaunchArgs(): UseSmileIDSampleLaunchArgs {
     return UseSmileIDSampleLaunchArgs.from(raw + intent.argsFromLink())
 }
 
-/**
- * `probes` and `catalogue` alone are also read off the launching URI: a deep link carries no extras,
- * and the flows that assert on the card or open the ID form arrive that way. Only these two — letting
- * a link seed the others contradicts R9.
- */
+/** Only `probes` and `catalogue` are read off a link, which carries no extras; the rest stay launch-only. */
 private fun Intent.argsFromLink(): Map<String, Any?> {
     val link = data?.takeIf { it.isHierarchical } ?: return emptyMap()
     return LINK_ARGS.mapNotNull { name -> link.getQueryParameter(name)?.let { name to it } }.toMap()

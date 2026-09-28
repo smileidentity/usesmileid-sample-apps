@@ -1,8 +1,6 @@
 appId: ${APP_ID}
 ---
-# The document products' form: the document list, "Capture as" and the custom sheet, through SDK
-# mount. The lists come from spec/catalogue-fixture.json (`catalogue=fixture`), so nothing here
-# depends on the network. The consent screen is asserted by its text: see sdk-flow.yaml.
+# The document form's list, Capture as and custom sheet on fixture lists, through SDK mount (consent by text: sdk-flow.yaml).
 
 - clearState
 - runFlow:
@@ -116,8 +114,7 @@ appId: ${APP_ID}
     timeout: 30000
 
 # --- the list failing -------------------------------------------------------------------------------
-# `unreachable` fails every list at once: the picker says so and offers Retry, which fails again.
-# Straight to the form by link: a cold start forgets the details, so the consent form's Continue waits.
+# `unreachable` fails every list, and Retry fails again; entered by link, as a cold start forgets the details.
 - runFlow:
     file: subflows/cold-start.yaml
     env:

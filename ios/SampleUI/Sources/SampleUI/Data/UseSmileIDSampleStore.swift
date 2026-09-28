@@ -36,7 +36,7 @@ public final class UseSmileIDSampleStore {
   private let settingsStorage: UseSmileIDSampleSettingsStorage
   private let profilesStorage: UseSmileIDSampleRecordStorage
 
-  /// The six switches, read once at construction: a value passed at launch outranks the written one for the life of the process, so re-reading would answer a write with the launch's value.
+  /// The switches, read once: a launch-passed value outranks the written one for the whole process.
   public private(set) var settings: UseSmileIDSampleSettings
 
   public init(
@@ -209,7 +209,7 @@ public extension UseSmileIDSampleSetting {
   }
 }
 
-/// Where the six switches live: `UserDefaults` in an app, memory in a test. Read per row, since an absent row is today's default rather than `false`.
+/// Where the switches live, `UserDefaults` in an app and memory in a test; an absent row reads as its default.
 public protocol UseSmileIDSampleSettingsStorage: AnyObject {
   func flag(_ key: String) -> Bool?
   func setFlag(_ key: String, _ value: Bool)

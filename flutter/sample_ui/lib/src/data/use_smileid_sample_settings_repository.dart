@@ -1,6 +1,6 @@
 import '../state/use_smileid_sample_settings.dart';
 
-/// Where the six switches are kept, so the screen never knows what is doing the keeping.
+/// Where the settings are kept, so the screen never knows what is doing the keeping.
 abstract interface class UseSmileIDSampleSettingsRepository {
   /// The stored settings, or the plain defaults on a first launch.
   Future<UseSmileIDSampleSettings> read();

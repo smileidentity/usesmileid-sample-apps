@@ -1,7 +1,7 @@
 // The store's own persistence keys, not `spec/launch-args.json` arguments: nothing in the app parses
 // them, and `UserDefaults` gives a launch value precedence over the persisted one for that launch only.
 
-/// The seven switches at their shipped defaults, passed on every launch: they persist, so a test inheriting the last one's settings proves nothing.
+/// The seven switches at their defaults, passed on every launch because they persist from one test to the next.
 let useSmileIDSampleSettingsSeed = [
   "-enhanced_smart_selfie", "true",
   "-agent_mode", "false",

@@ -1,6 +1,6 @@
 import type { UseSmileIDSampleEnvironment } from '../model/use-smile-id-sample-result';
 
-/// The ID form's two lists as raw response bodies, so the network stays in the shell and one decoder reads live and fixture alike.
+/// The ID form's two lists as raw bodies, so the network stays in the shell and one decoder reads live and fixture.
 export type UseSmileIDSampleCatalogueSource = {
   /// `GET /v3/services/supported_id_types`, every country.
   supportedIdTypes: (environment: UseSmileIDSampleEnvironment) => Promise<string>;

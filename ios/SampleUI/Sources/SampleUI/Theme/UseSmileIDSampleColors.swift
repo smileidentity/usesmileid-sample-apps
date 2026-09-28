@@ -103,7 +103,7 @@ public struct UseSmileIDSampleColors: Equatable, Sendable {
   public let cardStroke: Color
   /// A loading row's resting fill, `skeleton.bg`.
   public let skeleton: Color
-  /// What a loading row pulses towards. A PAIR: `skeleton.highlight` is near-white in dark too. See the `skeletonDarkHighlight` delta.
+  /// What a loading row pulses towards; a pair because dark `skeleton.highlight` is near-white (`skeletonDarkHighlight`).
   public let skeletonHighlight: Color
   public let border: Color
   public let overlayScrim: Color

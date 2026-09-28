@@ -56,7 +56,7 @@ class UseSmileIDSampleStore(
         store.edit { prefs ->
             val current = settingsIn(prefs)
             val updated = current.withSetting(setting, enabled)
-            // Only what moved: writing all six would freeze today's defaults onto the device.
+            // Only what moved: writing every row would freeze today's defaults onto the device.
             UseSmileIDSampleSetting.entries
                 .filter { updated[it] != current[it] }
                 .forEach { prefs[it.key()] = updated[it] }

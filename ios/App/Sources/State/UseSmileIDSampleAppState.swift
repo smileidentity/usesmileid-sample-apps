@@ -14,7 +14,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// Read once at launch; `appLocale` reaches the shell's own formatting, not the SDK's strings.
   let launchArguments: UseSmileIDSampleLaunchArguments
 
-  /// Seeded from the store at launch and written back through it, so the six switches survive the process deaths the camera causes.
+  /// Seeded from the store and written back through it, so the settings survive the process deaths the camera causes.
   @Published private(set) var settings: UseSmileIDSampleSettings
 
   /// The profiles the app can act as; every change is stored unless the launch seeded fixtures.

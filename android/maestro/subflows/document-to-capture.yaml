@@ -1,6 +1,5 @@
-# Document Verification with South Africa's Green Book from the fixture, through consent and instructions to
-# the capture screen. Starts from Products. The Green Book is a portrait capture: a
-# landscape one leaves a phone lying flat in landscape, because nothing moves the sensor back.
+# Document Verification on the fixture's Green Book, from Products to the capture screen. Portrait on
+# purpose: a landscape capture leaves a phone lying flat in landscape.
 appId: ${APP_ID}
 ---
 - tapOn:

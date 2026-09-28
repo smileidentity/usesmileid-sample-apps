@@ -245,8 +245,7 @@ appId: ${APP_ID}
     id: "sample_result_active_scenario"
     text: "offlineRetry"
 
-# `catalogue=unreachable` fails every list at once: the form still opens, and its sheet shows the error
-# with Retry, which asks again and fails again. A failure is a state, never a stuck skeleton.
+# `catalogue=unreachable` fails every list at once: the sheet shows the error, and Retry fails again.
 - stopApp
 - openLink: "usesmileid-sample-android://flow/biometricKyc/id-details/country?catalogue=unreachable"
 - assertVisible:
@@ -264,8 +263,7 @@ appId: ${APP_ID}
     id: "sample_idtype_trigger"
     enabled: false
 
-# `catalogue=fixture` reads spec/catalogue-fixture.json: Kenya's National ID takes digits only, so letters
-# show the format error and Continue stays off until the number fits.
+# Fixture lists: Kenya's National ID takes digits only, so letters show the format error and hold Continue.
 - stopApp
 - openLink: "usesmileid-sample-android://flow/biometricKyc/id-details/country?catalogue=fixture"
 - tapOn:

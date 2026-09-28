@@ -1,6 +1,6 @@
 import Foundation
 
-/// The ID form's two lists as raw response bodies, so the network stays in the shell and one decoder reads live and fixture alike.
+/// The ID form's two lists as raw bodies, so the network stays in the shell and one decoder reads live and fixture.
 public protocol UseSmileIDSampleCatalogueSource: Sendable {
   /// `GET /v3/services/supported_id_types`, every country.
   func supportedIdTypes(environment: UseSmileIDSampleEnvironment) async throws -> Data

@@ -47,8 +47,7 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_country_sheet"
 
-# The form lists come from spec/catalogue-fixture.json, so no link here depends on the network.
-# A second-level sheet needs a country first, as its trigger does, so the link shows the form.
+# Fixture lists, so no link depends on the network; a second-level sheet needs a country first, as its trigger does.
 - stopApp
 - openLink: "usesmileid-sample-android://flow/biometricKyc/id-details/id-type?catalogue=fixture"
 - assertVisible:

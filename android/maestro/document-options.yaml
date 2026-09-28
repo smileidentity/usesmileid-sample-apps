@@ -1,6 +1,4 @@
-# The document products' form: the document list, "Capture as" and the custom sheet, through SDK
-# mount. The lists come from spec/catalogue-fixture.json (`catalogue=fixture`), so nothing here
-# depends on the network. Stops at the SDK's instructions screen (docs/testing.md §4).
+# The document form's list, Capture as and custom sheet on fixture lists, through SDK mount (docs/testing.md §4).
 # APP_ID must be passed — see shell-navigation.yaml for why it has no default.
 appId: ${APP_ID}
 ---
@@ -124,8 +122,7 @@ appId: ${APP_ID}
 - runFlow: subflows/leave-sdk-flow.yaml
 
 # --- capture mode → when the shutter shows ---------------------------------------------------------
-# The shutter publishes no id, only its accessibility label, so these match "Capture document" until
-# the SDK publishes one. The mode persists, so this section ends by putting the default back.
+# The shutter has no id, only its label "Capture document"; the mode persists, so the section restores the default.
 - openLink: "usesmileid-sample-android://settings/capture-mode?catalogue=fixture"
 - tapOn:
     id: "sample_capture_mode_option_manual"
@@ -160,8 +157,7 @@ appId: ${APP_ID}
 - tapOn:
     id: "sample_capture_mode_option_auto"
 - runFlow: subflows/document-to-capture.yaml
-# Automatic only: no shutter while the scan runs. Read at 8 seconds, inside the fallback's 10: the SDK
-# shows the shutter under every mode once a scan times out, and a camera facing a desk times out.
+# Auto only, read at 8 s inside the fallback's 10: every mode shows the shutter once a scan times out.
 - extendedWaitUntil:
     visible:
       id: "an_id_nothing_carries"

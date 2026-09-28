@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-/// The form owns its sheets, so a link to one resolves to the form with the sheet over it (routes.json R12).
+/// The form owns its sheets, so a link to one resolves to the form with the sheet over it (`docs/architecture.md` §4).
 export const unstable_settings = { initialRouteName: 'index' };
 
 /// The ID-details form and the sheets that layer over it.

@@ -5,7 +5,7 @@ import com.usesmileid.sampleapps.ui.state.TokenJson
 import com.usesmileid.sampleapps.ui.state.parseTokenJson
 import java.io.IOException
 
-/** The ID form's two lists as raw response bodies, so the network stays in the shell and one decoder reads live and fixture alike. */
+/** The ID form's two lists as raw bodies, so the network stays in the shell and one decoder reads live and fixture. */
 interface UseSmileIDSampleCatalogueSource {
 
     /** `GET /v3/services/supported_id_types`, every country. */

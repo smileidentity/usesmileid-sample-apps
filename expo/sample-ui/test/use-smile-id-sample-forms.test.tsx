@@ -220,7 +220,6 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
   {
     screen: 'kycIdForm',
     states: {
-      // The second trigger is disabled without a country, which is the state the disabled trigger exists for.
       empty: { element: () => kycForm() },
       selected: { element: () => kycForm(kycState(SELECTED)) },
       // Letters where Kenya's National ID takes only digits, so the field explains the format.

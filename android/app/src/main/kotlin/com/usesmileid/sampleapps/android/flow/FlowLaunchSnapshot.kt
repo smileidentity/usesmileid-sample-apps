@@ -21,7 +21,7 @@ data class FlowLaunchSnapshot(
     val scenario: UseSmileIDSampleScenario,
     val theme: UseSmileIDSampleThemeScenario,
     val sandbox: Boolean,
-    /** The five fields, not the settings object: the snapshot is read once at entry (R2). */
+    /** The five fields, not the settings object: the snapshot is read once at entry. */
     val allowAgentMode: Boolean,
     val enableEnhancedLiveness: Boolean,
     val consentStep: Boolean,

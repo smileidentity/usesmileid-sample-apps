@@ -383,7 +383,7 @@ class UseSmileIDSampleColors extends ThemeExtension<UseSmileIDSampleColors> {
   /// A loading row's resting fill, `skeleton.bg`.
   final Color skeleton;
 
-  /// What a loading row pulses towards. A pair: `skeleton.highlight` is near-white in dark too. See `skeletonDarkHighlight`.
+  /// What a loading row pulses towards; a pair because dark `skeleton.highlight` is near-white (`skeletonDarkHighlight`).
   final Color skeletonHighlight;
 
   /// The semantic border, which carries the recorded `darkBorder` defect.

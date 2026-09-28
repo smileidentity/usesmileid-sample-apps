@@ -148,7 +148,7 @@ describe('screen coverage', () => {
 });
 
 describe('settings', () => {
-  it('attaches the id every one of the six switches is driven by', async () => {
+  it('attaches the id every switch is driven by', async () => {
     const rendered = await renderInTheme(settings(), false);
     for (const id of [
       UseSmileIDSampleTestIds.SETTING_ENHANCED_SMART_SELFIE,
@@ -157,6 +157,7 @@ describe('settings', () => {
       UseSmileIDSampleTestIds.SETTING_CONSENT_STEP,
       UseSmileIDSampleTestIds.SETTING_INSTRUCTIONS_STEP,
       UseSmileIDSampleTestIds.SETTING_PREVIEW_STEP,
+      UseSmileIDSampleTestIds.SETTING_GALLERY_UPLOAD,
     ]) {
       expect(rendered.queryByTestId(id)).not.toBeNull();
     }

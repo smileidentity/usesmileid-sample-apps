@@ -57,7 +57,7 @@ class UseSmileIDSampleSettingsPersistenceTest {
 
         val written = prefs.data.first()
         assertEquals(false, written[CONSENT_STEP])
-        // Writing all six would freeze today's defaults onto the device.
+        // Writing every row would freeze today's defaults onto the device.
         assertNull(written[PREVIEW_STEP])
         assertNull(written[AGENT_MODE])
     }
