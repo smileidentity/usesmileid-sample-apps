@@ -259,10 +259,10 @@ func useSmileIDSampleJourneySteps(_ snapshot: FlowLaunchSnapshot) -> [FlowJourne
     steps.append(.instructions)
   }
   switch snapshot.product {
-  case .documentVerification:
-    steps += capture(.documentCapture, snapshot.previewStep) + capture(.selfieCapture, snapshot.previewStep)
-  case .enhancedDocumentVerification:
-    steps += capture(.selfieCapture, snapshot.previewStep) + capture(.documentCapture, snapshot.previewStep)
+  case .documentVerification, .enhancedDocumentVerification:
+    let document = capture(.documentCapture, snapshot.previewStep)
+    let selfie = capture(.selfieCapture, snapshot.previewStep)
+    steps += snapshot.selfieFirst ? selfie + document : document + selfie
   default:
     steps += capture(.selfieCapture, snapshot.previewStep)
   }
@@ -275,49 +275,34 @@ private func capture(_ step: FlowJourneyStep, _ preview: Bool) -> [FlowJourneySt
   preview ? [step, .preview] : [step]
 }
 
-/// What the SDK is told to photograph; the server is told the document's code either way.
+/// Everything the document capture step is handed; the server is told the document's code either way.
 func useSmileIDSampleDocumentCapture(_ snapshot: FlowLaunchSnapshot) -> DocumentCaptureConfig {
-  let (documentType, captureBothSides) = useSmileIDSampleDocumentType(snapshot.idDetails)
-  return DocumentCaptureConfig(
-    documentType: documentType,
+  DocumentCaptureConfig(
+    documentType: useSmileIDSampleDocumentType(snapshot.idDetails),
     captureMode: snapshot.captureMode.sdk,
     allowGalleryUpload: snapshot.galleryUpload,
-    captureBothSides: captureBothSides,
-    allowSkipBack: true
+    captureBothSides: snapshot.captureBothSides,
+    allowSkipBack: snapshot.allowSkipBack
   )
 }
 
-/// The "Capture as" mapping from `spec/catalogue-rules.json` captureAs. Pure, so its table is unit-tested.
-func useSmileIDSampleDocumentType(_ details: UseSmileIDSampleIdDetails) -> (DocumentType, Bool) {
+/// The "Capture as" mapping from `spec/catalogue-rules.json` captureAs: the SDK's own type, nothing read from the API.
+func useSmileIDSampleDocumentType(_ details: UseSmileIDSampleIdDetails) -> DocumentType {
   switch details.captureAs {
   case .greenBook:
-    return (.southAfricaGreenBook, DocumentType.southAfricaGreenBook.hasBackSide)
+    return .southAfricaGreenBook
   case .passport:
-    return (.passport, DocumentType.passport.hasBackSide)
+    return .passport
   case .genericDocument:
     let genericDocument = details.genericDocument
-    let type = DocumentType.genericDocument(
+    return .genericDocument(
       displayName: genericDocument.displayName,
       hasBackSide: genericDocument.hasBackSide,
       orientation: genericDocument.orientation == .portrait ? .portrait : .landscape,
       knownAspectRatio: genericDocument.aspectRatio.ratio
     )
-    return (type, type.hasBackSide)
-  // The API's has_back, not a preset's: the API is the source that says what the document is.
-  case .automatic:
-    let document = details.document
-    let hasBack = document?.hasBack ?? true
-    switch document?.format {
-    case formatGreenBook: return (.southAfricaGreenBook, hasBack)
-    case formatBooklet: return (.passport, hasBack)
-    default: return (.genericDocument(displayName: document?.name ?? "Document", hasBackSide: hasBack), hasBack)
-    }
   }
 }
-
-// The API's undocumented `format`: 3 is a passport or seaman's booklet, 7 the Green Book; the rest are cards.
-private let formatBooklet = 3
-private let formatGreenBook = 7
 
 extension UseSmileIDSampleCaptureMode {
   var sdk: DocumentCaptureMode {

@@ -35,10 +35,10 @@ final class UseSmileIDSampleDocumentOptionsUITests: XCTestCase {
 
     element("sample_capture_as_trigger").tap()
     XCTAssertTrue(element("sample_capture_as_sheet").waitForExistence(timeout: 10))
-    for option in ["automatic", "greenBook", "passport", "genericDocument"] {
+    for option in ["genericDocument", "greenBook", "passport"] {
       XCTAssertTrue(element("sample_capture_as_option_\(option)").exists, option)
     }
-    XCTAssertTrue(element("sample_capture_as_option_automatic").isSelected)
+    XCTAssertTrue(element("sample_capture_as_option_genericDocument").isSelected)
 
     // Generic document opens its own sheet, and what it builds is named on the trigger.
     element("sample_capture_as_option_genericDocument").tap()

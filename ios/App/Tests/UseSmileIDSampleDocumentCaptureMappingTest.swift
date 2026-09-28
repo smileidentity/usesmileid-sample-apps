@@ -9,12 +9,12 @@ final class UseSmileIDSampleDocumentCaptureMappingTest: XCTestCase {
   func testEveryCaseMapsAsTheSpecSays() throws {
     let section = try XCTUnwrap(try UseSmileIDSampleSpec.object("catalogue-rules.json")["captureAs"] as? [String: Any])
     let cases = try XCTUnwrap(section["cases"] as? [[String: Any]])
-    XCTAssertGreaterThanOrEqual(cases.count, 8)
+    XCTAssertGreaterThanOrEqual(cases.count, 6)
     for item in cases {
       let name = item["name"] as? String ?? ""
       let details = try details(item)
       let expected = try XCTUnwrap(item["expected"] as? [String: Any])
-      let (type, bothSides) = useSmileIDSampleDocumentType(details)
+      let type = useSmileIDSampleDocumentType(details)
       switch expected["documentType"] as? String {
       case "passport": XCTAssertEqual(type, .passport, name)
       case "greenBook": XCTAssertEqual(type, .southAfricaGreenBook, name)
@@ -32,8 +32,6 @@ final class UseSmileIDSampleDocumentCaptureMappingTest: XCTestCase {
           XCTAssertEqual(try Double(XCTUnwrap(ratio)), expectedRatio, accuracy: 0.0001, name)
         }
       }
-      let expectedBoth = (expected["captureBothSides"] as? Bool) ?? type.hasBackSide
-      XCTAssertEqual(bothSides, expectedBoth, name)
       let snapshot = FlowLaunchSnapshot(product: .documentVerification, route: .fullscreen, idDetails: details)
       XCTAssertEqual(useSmileIDSampleIdParams(snapshot).documentVerification?.idType, expected["idType"] as? String, name)
     }
@@ -46,11 +44,23 @@ final class UseSmileIDSampleDocumentCaptureMappingTest: XCTestCase {
   }
 
   func testTheSettingsReachTheDocumentConfig() {
-    let snapshot = FlowLaunchSnapshot(product: .documentVerification, route: .fullscreen, captureMode: .manual, galleryUpload: true)
+    let snapshot = FlowLaunchSnapshot(
+      product: .documentVerification,
+      route: .fullscreen,
+      captureMode: .manual,
+      galleryUpload: true,
+      captureBothSides: false,
+      allowSkipBack: true
+    )
     let config = useSmileIDSampleDocumentCapture(snapshot)
     XCTAssertEqual(config.captureMode, .manualCapture)
     XCTAssertTrue(config.allowGalleryUpload)
+    XCTAssertFalse(config.captureBothSides)
     XCTAssertTrue(config.allowSkipBack)
+    let defaults = useSmileIDSampleDocumentCapture(FlowLaunchSnapshot(product: .documentVerification, route: .fullscreen))
+    XCTAssertFalse(defaults.allowGalleryUpload)
+    XCTAssertTrue(defaults.captureBothSides)
+    XCTAssertFalse(defaults.allowSkipBack)
   }
 
   func testADocumentJobSendsTheDocumentEvenWithAnIdTypeLeftInTheForm() {

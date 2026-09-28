@@ -266,6 +266,30 @@ public struct SettingsScreen: View {
         setting: .galleryUpload,
         testId: UseSmileIDSampleTestIds.settingGalleryUpload
       )
+      UseSmileIDSampleRowDivider()
+      switchRow(
+        title: "Capture the back side",
+        icon: SmileIcons.documentVerification,
+        supporting: "Only for a document type that has one",
+        setting: .captureBothSides,
+        testId: UseSmileIDSampleTestIds.settingCaptureBothSides
+      )
+      UseSmileIDSampleRowDivider()
+      switchRow(
+        title: "Skip the back",
+        icon: SmileIcons.instructions,
+        supporting: "A Skip button on the back-side capture",
+        setting: .allowSkipBack,
+        testId: UseSmileIDSampleTestIds.settingAllowSkipBack
+      )
+      UseSmileIDSampleRowDivider()
+      switchRow(
+        title: "Selfie first",
+        icon: SmileIcons.smile,
+        supporting: "The selfie before the document",
+        setting: .selfieFirst,
+        testId: UseSmileIDSampleTestIds.settingSelfieFirst
+      )
     }
   }
 

@@ -13,7 +13,7 @@ public struct UseSmileIDSampleIdDetails: Equatable, Sendable {
     country: UseSmileIDSampleCountry? = nil,
     idType: UseSmileIDSampleKycIdType? = nil,
     document: UseSmileIDSampleDocument? = nil,
-    captureAs: UseSmileIDSampleCaptureAs = .automatic,
+    captureAs: UseSmileIDSampleCaptureAs = .genericDocument,
     genericDocument: UseSmileIDSampleGenericDocument = UseSmileIDSampleGenericDocument(),
     idNumber: String = ""
   ) {
@@ -91,13 +91,12 @@ public struct UseSmileIDSampleDocument: Hashable, Sendable {
   }
 }
 
-/// How the SDK photographs the chosen document; never what the server receives.
+/// How the SDK photographs the chosen document, each the SDK's own type; never what the server receives.
 public enum UseSmileIDSampleCaptureAs: String, CaseIterable, Sendable {
-  case automatic, greenBook, passport, genericDocument
+  case genericDocument, greenBook, passport
 
   public var label: String {
     switch self {
-    case .automatic: "Automatic"
     case .greenBook: "Green Book preset"
     case .passport: "Passport preset"
     case .genericDocument: "Generic document"

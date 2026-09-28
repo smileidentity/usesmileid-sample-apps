@@ -1,7 +1,7 @@
-/// Which settings row a toggle belongs to, so the screen reports changes without six callbacks.
+/// Which settings row a toggle belongs to, so the screen reports changes without a callback per row.
 public enum UseSmileIDSampleSetting: String, CaseIterable, Sendable {
   case enhancedSmartSelfie, agentMode, darkMode, consentStep, instructionsStep, previewStep
-  case galleryUpload
+  case galleryUpload, captureBothSides, allowSkipBack, selfieFirst
 }
 
 /// DocumentCaptureConfig.captureMode, in `spec/test-ids.json`'s vocabulary.
@@ -29,6 +29,12 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
   public var previewStep: Bool
   /// DocumentCaptureConfig.allowGalleryUpload; off, as the SDK defaults it.
   public var galleryUpload: Bool
+  /// DocumentCaptureConfig.captureBothSides; on, as the SDK defaults it.
+  public var captureBothSides: Bool
+  /// DocumentCaptureConfig.allowSkipBack; off, as the SDK defaults it.
+  public var allowSkipBack: Bool
+  /// The document products capture the selfie before the document.
+  public var selfieFirst: Bool
   /// A typed field rather than one of the switches: three values, not two.
   public var captureMode: UseSmileIDSampleCaptureMode
 
@@ -40,6 +46,9 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     instructionsStep: Bool = true,
     previewStep: Bool = true,
     galleryUpload: Bool = false,
+    captureBothSides: Bool = true,
+    allowSkipBack: Bool = false,
+    selfieFirst: Bool = false,
     captureMode: UseSmileIDSampleCaptureMode = .autoWithFallback
   ) {
     self.enhancedSmartSelfie = enhancedSmartSelfie
@@ -49,6 +58,9 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     self.instructionsStep = instructionsStep
     self.previewStep = previewStep
     self.galleryUpload = galleryUpload
+    self.captureBothSides = captureBothSides
+    self.allowSkipBack = allowSkipBack
+    self.selfieFirst = selfieFirst
     self.captureMode = captureMode
   }
 
@@ -61,6 +73,9 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     case .instructionsStep: instructionsStep
     case .previewStep: previewStep
     case .galleryUpload: galleryUpload
+    case .captureBothSides: captureBothSides
+    case .allowSkipBack: allowSkipBack
+    case .selfieFirst: selfieFirst
     }
   }
 
@@ -84,6 +99,9 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     case .instructionsStep: copy.instructionsStep = enabled
     case .previewStep: copy.previewStep = enabled
     case .galleryUpload: copy.galleryUpload = enabled
+    case .captureBothSides: copy.captureBothSides = enabled
+    case .allowSkipBack: copy.allowSkipBack = enabled
+    case .selfieFirst: copy.selfieFirst = enabled
     }
     return copy
   }

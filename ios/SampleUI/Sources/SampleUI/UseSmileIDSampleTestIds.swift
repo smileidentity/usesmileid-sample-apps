@@ -176,6 +176,9 @@ public enum UseSmileIDSampleTestIds {
   public static let settingCaptureMode = "sample_setting_capture_mode"
   public static let captureModeSheet = "sample_capture_mode_sheet"
   public static let settingGalleryUpload = "sample_setting_gallery_upload"
+  public static let settingCaptureBothSides = "sample_setting_capture_both_sides"
+  public static let settingAllowSkipBack = "sample_setting_allow_skip_back"
+  public static let settingSelfieFirst = "sample_setting_selfie_first"
   public static let documentOptionPrefix = "sample_document_option"
   public static let captureAsOptionPrefix = "sample_capture_as_option"
   public static let captureModeOptionPrefix = "sample_capture_mode_option"
@@ -268,7 +271,7 @@ public enum UseSmileIDSampleTestIds {
     kycFormScreen, countryTrigger, idTypeTrigger, idNumberInput, kycContinue, tokenFloat,
     countrySheet, countrySearch, countryEmpty, countryOptionPrefix,
     idTypeSheet, idTypeSearch, idTypeEmpty, idTypeOptionPrefix,
-    documentEmpty, catalogueLoading, catalogueError, catalogueRetry, idNumberError, documentTrigger, captureAsTrigger, documentSheet, documentSearch, captureAsSheet, genericDocumentSheet, genericDocumentName, genericDocumentBackSide, genericDocumentDone, settingCaptureMode, captureModeSheet, settingGalleryUpload, documentOptionPrefix, captureAsOptionPrefix, captureModeOptionPrefix, genericDocumentOrientationPrefix, genericDocumentAspectRatioPrefix,
+    documentEmpty, catalogueLoading, catalogueError, catalogueRetry, idNumberError, documentTrigger, captureAsTrigger, documentSheet, documentSearch, captureAsSheet, genericDocumentSheet, genericDocumentName, genericDocumentBackSide, genericDocumentDone, settingCaptureMode, captureModeSheet, settingGalleryUpload, settingCaptureBothSides, settingAllowSkipBack, settingSelfieFirst, documentOptionPrefix, captureAsOptionPrefix, captureModeOptionPrefix, genericDocumentOrientationPrefix, genericDocumentAspectRatioPrefix,
     profileAvatarButton, profileSummary,
     profilesScreen, profileRowPrefix, createProfile,
     profileConfigScreen, profileConfigFieldPrefix, profileConfigCallbackUrl, profileConfigSave,

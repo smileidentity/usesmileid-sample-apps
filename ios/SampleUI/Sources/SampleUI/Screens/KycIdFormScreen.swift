@@ -154,7 +154,7 @@ public struct KycIdFormScreen: View {
       value: state.details.captureAs == .genericDocument
         ? "Generic document: \(state.details.genericDocument.displayName)"
         : state.details.captureAs.label,
-      placeholder: UseSmileIDSampleCaptureAs.automatic.label,
+      placeholder: UseSmileIDSampleCaptureAs.genericDocument.label,
       enabled: state.details.document != nil,
       testId: UseSmileIDSampleTestIds.captureAsTrigger,
       onTap: onCaptureAsTap

@@ -291,7 +291,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   }
 
   func testCaptureAsSheet() {
-    goldens("capture_as_sheet") { CaptureAsSheet(selected: .automatic, onSelect: { _ in }).frame(height: 700) }
+    goldens("capture_as_sheet") { CaptureAsSheet(selected: .genericDocument, onSelect: { _ in }).frame(height: 700) }
   }
 
   func testGenericDocumentSheet() {

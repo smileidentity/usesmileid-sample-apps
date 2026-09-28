@@ -25,15 +25,19 @@ final class UseSmileIDSampleFlowJourneyTest: XCTestCase {
     )
   }
 
-  func testTheDocumentProductsCaptureInOppositeOrders() {
-    XCTAssertEqual(
-      useSmileIDSampleJourneySteps(snapshot(.documentVerification)),
-      [.consent, .instructions, .documentCapture, .preview, .selfieCapture, .preview, .processing]
-    )
-    XCTAssertEqual(
-      useSmileIDSampleJourneySteps(snapshot(.enhancedDocumentVerification)),
-      [.consent, .instructions, .selfieCapture, .preview, .documentCapture, .preview, .processing]
-    )
+  func testBothDocumentProductsCaptureTheDocumentFirstUnlessSelfieFirstIsOn() {
+    for product in [UseSmileIDSampleProduct.documentVerification, .enhancedDocumentVerification] {
+      XCTAssertEqual(
+        useSmileIDSampleJourneySteps(snapshot(product)),
+        [.consent, .instructions, .documentCapture, .preview, .selfieCapture, .preview, .processing],
+        "\(product)"
+      )
+      XCTAssertEqual(
+        useSmileIDSampleJourneySteps(snapshot(product, selfieFirst: true)),
+        [.consent, .instructions, .selfieCapture, .preview, .documentCapture, .preview, .processing],
+        "\(product)"
+      )
+    }
   }
 
   func testAConsentBindingDropsTheConsentScreenEvenWithTheSwitchOn() {
@@ -101,6 +105,7 @@ final class UseSmileIDSampleFlowJourneyTest: XCTestCase {
     previewStep: Bool = true,
     agentMode: Bool = false,
     enhancedLiveness: Bool = true,
+    selfieFirst: Bool = false,
     session: UseSmileIDSampleTokenSession? = nil
   ) -> FlowLaunchSnapshot {
     FlowLaunchSnapshot(
@@ -112,6 +117,7 @@ final class UseSmileIDSampleFlowJourneyTest: XCTestCase {
       consentStep: consentStep,
       instructionsStep: instructionsStep,
       previewStep: previewStep,
+      selfieFirst: selfieFirst,
       partnerId: "0000",
       partnerName: "UpTech Finance",
       session: session
