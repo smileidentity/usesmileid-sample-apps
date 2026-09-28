@@ -197,7 +197,7 @@ fun SettingsScreen(
         section(CUSTOM_BUTTONS_SECTION) {
             SwitchRow(
                 title = "Custom continue",
-                icon = R.drawable.sample_ic_arrow_forward,
+                icon = R.drawable.sample_ic_custom_continue,
                 supportingText = "Replaces the SDK's continue buttons",
                 checked = state.settings.customContinue,
                 setting = UseSmileIDSampleSetting.CustomContinue,

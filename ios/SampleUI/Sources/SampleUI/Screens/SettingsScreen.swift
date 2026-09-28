@@ -247,7 +247,7 @@ public struct SettingsScreen: View {
     UseSmileIDSampleSectionSurface(label: "CUSTOM BUTTONS — REPLACE THE SDK'S BUTTONS") {
       switchRow(
         title: "Custom continue",
-        icon: SmileIcons.arrowForward,
+        icon: SmileIcons.customContinue,
         supporting: "Replaces the SDK's continue buttons",
         setting: .customContinue,
         testId: UseSmileIDSampleTestIds.settingCustomContinue

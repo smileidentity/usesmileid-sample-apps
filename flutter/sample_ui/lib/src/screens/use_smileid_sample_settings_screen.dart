@@ -282,7 +282,7 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
             children: <Widget>[
               _switchRow(
                 title: 'Custom continue',
-                icon: SmileIcons.arrowForward,
+                icon: SmileIcons.customContinue,
                 supportingText: "Replaces the SDK's continue buttons",
                 setting: UseSmileIDSampleSetting.customContinue,
               ),

@@ -271,7 +271,7 @@ export const SettingsScreen = ({
         <SwitchRow
           title="Custom continue"
           supportingText="Replaces the SDK's continue buttons"
-          icon="arrowForward"
+          icon="customContinue"
           setting={UseSmileIDSampleSetting.CustomContinue}
           checked={settings.customContinue}
           testID={UseSmileIDSampleTestIds.SETTING_CUSTOM_CONTINUE}

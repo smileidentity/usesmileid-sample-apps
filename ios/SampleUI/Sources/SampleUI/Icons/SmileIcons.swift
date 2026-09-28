@@ -258,6 +258,22 @@ public enum SmileIcons {
     ]
   )
 
+  public static let customContinue = SmileIcon(
+    width: 17,
+    height: 17,
+    minX: 0,
+    minY: 0,
+    parts: [
+      SmileIconPart(stroke: .stroke(width: 1.5, round: true), opacity: 1) { path in
+        path.move(to: CGPoint(x: 3.54167, y: 8.5))
+        path.addLine(to: CGPoint(x: 13.4584, y: 8.5))
+        path.move(to: CGPoint(x: 9.20837, y: 12.75))
+        path.addLine(to: CGPoint(x: 13.4584, y: 8.5))
+        path.addLine(to: CGPoint(x: 9.20837, y: 4.25))
+      }
+    ]
+  )
+
   public static let darkMode = SmileIcon(
     width: 19,
     height: 19,

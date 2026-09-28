@@ -34313,8 +34313,8 @@ exports[`settings dark agentModeOn 1`] = `
                     },
                   ]
                 }
-                vbHeight={9}
-                vbWidth={9}
+                vbHeight={17}
+                vbWidth={17}
                 width={20}
               >
                 <RNSVGGroup
@@ -34326,19 +34326,27 @@ exports[`settings dark agentModeOn 1`] = `
                   }
                 >
                   <RNSVGPath
-                    d="M5.66542e-05 4.99203V3.88803H6.69606L3.34806 0.76803L4.10406 2.95639e-05L8.40006 4.09203V4.75203L4.10406 8.85603L3.34806 8.08803L6.67206 4.99203H5.66542e-05Z"
-                    fill={
+                    d="M3.54167 8.5H13.45837M9.20837 12.75L13.45837 8.5L9.20837 4.25"
+                    fill={null}
+                    opacity={1}
+                    propList={
+                      [
+                        "fill",
+                        "stroke",
+                        "strokeWidth",
+                        "strokeLinecap",
+                        "strokeLinejoin",
+                      ]
+                    }
+                    stroke={
                       {
                         "payload": 4294111986,
                         "type": 0,
                       }
                     }
-                    opacity={1}
-                    propList={
-                      [
-                        "fill",
-                      ]
-                    }
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.5}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -37908,8 +37916,8 @@ exports[`settings dark consentBoundByToken 1`] = `
                     },
                   ]
                 }
-                vbHeight={9}
-                vbWidth={9}
+                vbHeight={17}
+                vbWidth={17}
                 width={20}
               >
                 <RNSVGGroup
@@ -37921,19 +37929,27 @@ exports[`settings dark consentBoundByToken 1`] = `
                   }
                 >
                   <RNSVGPath
-                    d="M5.66542e-05 4.99203V3.88803H6.69606L3.34806 0.76803L4.10406 2.95639e-05L8.40006 4.09203V4.75203L4.10406 8.85603L3.34806 8.08803L6.67206 4.99203H5.66542e-05Z"
-                    fill={
+                    d="M3.54167 8.5H13.45837M9.20837 12.75L13.45837 8.5L9.20837 4.25"
+                    fill={null}
+                    opacity={1}
+                    propList={
+                      [
+                        "fill",
+                        "stroke",
+                        "strokeWidth",
+                        "strokeLinecap",
+                        "strokeLinejoin",
+                      ]
+                    }
+                    stroke={
                       {
                         "payload": 4294111986,
                         "type": 0,
                       }
                     }
-                    opacity={1}
-                    propList={
-                      [
-                        "fill",
-                      ]
-                    }
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.5}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -41503,8 +41519,8 @@ exports[`settings dark customButtonsOn 1`] = `
                     },
                   ]
                 }
-                vbHeight={9}
-                vbWidth={9}
+                vbHeight={17}
+                vbWidth={17}
                 width={20}
               >
                 <RNSVGGroup
@@ -41516,19 +41532,27 @@ exports[`settings dark customButtonsOn 1`] = `
                   }
                 >
                   <RNSVGPath
-                    d="M5.66542e-05 4.99203V3.88803H6.69606L3.34806 0.76803L4.10406 2.95639e-05L8.40006 4.09203V4.75203L4.10406 8.85603L3.34806 8.08803L6.67206 4.99203H5.66542e-05Z"
-                    fill={
+                    d="M3.54167 8.5H13.45837M9.20837 12.75L13.45837 8.5L9.20837 4.25"
+                    fill={null}
+                    opacity={1}
+                    propList={
+                      [
+                        "fill",
+                        "stroke",
+                        "strokeWidth",
+                        "strokeLinecap",
+                        "strokeLinejoin",
+                      ]
+                    }
+                    stroke={
                       {
                         "payload": 4294111986,
                         "type": 0,
                       }
                     }
-                    opacity={1}
-                    propList={
-                      [
-                        "fill",
-                      ]
-                    }
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.5}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -45098,8 +45122,8 @@ exports[`settings dark default 1`] = `
                     },
                   ]
                 }
-                vbHeight={9}
-                vbWidth={9}
+                vbHeight={17}
+                vbWidth={17}
                 width={20}
               >
                 <RNSVGGroup
@@ -45111,19 +45135,27 @@ exports[`settings dark default 1`] = `
                   }
                 >
                   <RNSVGPath
-                    d="M5.66542e-05 4.99203V3.88803H6.69606L3.34806 0.76803L4.10406 2.95639e-05L8.40006 4.09203V4.75203L4.10406 8.85603L3.34806 8.08803L6.67206 4.99203H5.66542e-05Z"
-                    fill={
+                    d="M3.54167 8.5H13.45837M9.20837 12.75L13.45837 8.5L9.20837 4.25"
+                    fill={null}
+                    opacity={1}
+                    propList={
+                      [
+                        "fill",
+                        "stroke",
+                        "strokeWidth",
+                        "strokeLinecap",
+                        "strokeLinejoin",
+                      ]
+                    }
+                    stroke={
                       {
                         "payload": 4294111986,
                         "type": 0,
                       }
                     }
-                    opacity={1}
-                    propList={
-                      [
-                        "fill",
-                      ]
-                    }
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.5}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -48693,8 +48725,8 @@ exports[`settings dark withDebugSection 1`] = `
                     },
                   ]
                 }
-                vbHeight={9}
-                vbWidth={9}
+                vbHeight={17}
+                vbWidth={17}
                 width={20}
               >
                 <RNSVGGroup
@@ -48706,19 +48738,27 @@ exports[`settings dark withDebugSection 1`] = `
                   }
                 >
                   <RNSVGPath
-                    d="M5.66542e-05 4.99203V3.88803H6.69606L3.34806 0.76803L4.10406 2.95639e-05L8.40006 4.09203V4.75203L4.10406 8.85603L3.34806 8.08803L6.67206 4.99203H5.66542e-05Z"
-                    fill={
+                    d="M3.54167 8.5H13.45837M9.20837 12.75L13.45837 8.5L9.20837 4.25"
+                    fill={null}
+                    opacity={1}
+                    propList={
+                      [
+                        "fill",
+                        "stroke",
+                        "strokeWidth",
+                        "strokeLinecap",
+                        "strokeLinejoin",
+                      ]
+                    }
+                    stroke={
                       {
                         "payload": 4294111986,
                         "type": 0,
                       }
                     }
-                    opacity={1}
-                    propList={
-                      [
-                        "fill",
-                      ]
-                    }
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.5}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -52577,8 +52617,8 @@ exports[`settings light agentModeOn 1`] = `
                     },
                   ]
                 }
-                vbHeight={9}
-                vbWidth={9}
+                vbHeight={17}
+                vbWidth={17}
                 width={20}
               >
                 <RNSVGGroup
@@ -52590,19 +52630,27 @@ exports[`settings light agentModeOn 1`] = `
                   }
                 >
                   <RNSVGPath
-                    d="M5.66542e-05 4.99203V3.88803H6.69606L3.34806 0.76803L4.10406 2.95639e-05L8.40006 4.09203V4.75203L4.10406 8.85603L3.34806 8.08803L6.67206 4.99203H5.66542e-05Z"
-                    fill={
+                    d="M3.54167 8.5H13.45837M9.20837 12.75L13.45837 8.5L9.20837 4.25"
+                    fill={null}
+                    opacity={1}
+                    propList={
+                      [
+                        "fill",
+                        "stroke",
+                        "strokeWidth",
+                        "strokeLinecap",
+                        "strokeLinejoin",
+                      ]
+                    }
+                    stroke={
                       {
                         "payload": 4280361772,
                         "type": 0,
                       }
                     }
-                    opacity={1}
-                    propList={
-                      [
-                        "fill",
-                      ]
-                    }
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.5}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -56172,8 +56220,8 @@ exports[`settings light consentBoundByToken 1`] = `
                     },
                   ]
                 }
-                vbHeight={9}
-                vbWidth={9}
+                vbHeight={17}
+                vbWidth={17}
                 width={20}
               >
                 <RNSVGGroup
@@ -56185,19 +56233,27 @@ exports[`settings light consentBoundByToken 1`] = `
                   }
                 >
                   <RNSVGPath
-                    d="M5.66542e-05 4.99203V3.88803H6.69606L3.34806 0.76803L4.10406 2.95639e-05L8.40006 4.09203V4.75203L4.10406 8.85603L3.34806 8.08803L6.67206 4.99203H5.66542e-05Z"
-                    fill={
+                    d="M3.54167 8.5H13.45837M9.20837 12.75L13.45837 8.5L9.20837 4.25"
+                    fill={null}
+                    opacity={1}
+                    propList={
+                      [
+                        "fill",
+                        "stroke",
+                        "strokeWidth",
+                        "strokeLinecap",
+                        "strokeLinejoin",
+                      ]
+                    }
+                    stroke={
                       {
                         "payload": 4280361772,
                         "type": 0,
                       }
                     }
-                    opacity={1}
-                    propList={
-                      [
-                        "fill",
-                      ]
-                    }
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.5}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -59767,8 +59823,8 @@ exports[`settings light customButtonsOn 1`] = `
                     },
                   ]
                 }
-                vbHeight={9}
-                vbWidth={9}
+                vbHeight={17}
+                vbWidth={17}
                 width={20}
               >
                 <RNSVGGroup
@@ -59780,19 +59836,27 @@ exports[`settings light customButtonsOn 1`] = `
                   }
                 >
                   <RNSVGPath
-                    d="M5.66542e-05 4.99203V3.88803H6.69606L3.34806 0.76803L4.10406 2.95639e-05L8.40006 4.09203V4.75203L4.10406 8.85603L3.34806 8.08803L6.67206 4.99203H5.66542e-05Z"
-                    fill={
+                    d="M3.54167 8.5H13.45837M9.20837 12.75L13.45837 8.5L9.20837 4.25"
+                    fill={null}
+                    opacity={1}
+                    propList={
+                      [
+                        "fill",
+                        "stroke",
+                        "strokeWidth",
+                        "strokeLinecap",
+                        "strokeLinejoin",
+                      ]
+                    }
+                    stroke={
                       {
                         "payload": 4280361772,
                         "type": 0,
                       }
                     }
-                    opacity={1}
-                    propList={
-                      [
-                        "fill",
-                      ]
-                    }
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.5}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -63362,8 +63426,8 @@ exports[`settings light default 1`] = `
                     },
                   ]
                 }
-                vbHeight={9}
-                vbWidth={9}
+                vbHeight={17}
+                vbWidth={17}
                 width={20}
               >
                 <RNSVGGroup
@@ -63375,19 +63439,27 @@ exports[`settings light default 1`] = `
                   }
                 >
                   <RNSVGPath
-                    d="M5.66542e-05 4.99203V3.88803H6.69606L3.34806 0.76803L4.10406 2.95639e-05L8.40006 4.09203V4.75203L4.10406 8.85603L3.34806 8.08803L6.67206 4.99203H5.66542e-05Z"
-                    fill={
+                    d="M3.54167 8.5H13.45837M9.20837 12.75L13.45837 8.5L9.20837 4.25"
+                    fill={null}
+                    opacity={1}
+                    propList={
+                      [
+                        "fill",
+                        "stroke",
+                        "strokeWidth",
+                        "strokeLinecap",
+                        "strokeLinejoin",
+                      ]
+                    }
+                    stroke={
                       {
                         "payload": 4280361772,
                         "type": 0,
                       }
                     }
-                    opacity={1}
-                    propList={
-                      [
-                        "fill",
-                      ]
-                    }
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.5}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -66957,8 +67029,8 @@ exports[`settings light withDebugSection 1`] = `
                     },
                   ]
                 }
-                vbHeight={9}
-                vbWidth={9}
+                vbHeight={17}
+                vbWidth={17}
                 width={20}
               >
                 <RNSVGGroup
@@ -66970,19 +67042,27 @@ exports[`settings light withDebugSection 1`] = `
                   }
                 >
                   <RNSVGPath
-                    d="M5.66542e-05 4.99203V3.88803H6.69606L3.34806 0.76803L4.10406 2.95639e-05L8.40006 4.09203V4.75203L4.10406 8.85603L3.34806 8.08803L6.67206 4.99203H5.66542e-05Z"
-                    fill={
+                    d="M3.54167 8.5H13.45837M9.20837 12.75L13.45837 8.5L9.20837 4.25"
+                    fill={null}
+                    opacity={1}
+                    propList={
+                      [
+                        "fill",
+                        "stroke",
+                        "strokeWidth",
+                        "strokeLinecap",
+                        "strokeLinejoin",
+                      ]
+                    }
+                    stroke={
                       {
                         "payload": 4280361772,
                         "type": 0,
                       }
                     }
-                    opacity={1}
-                    propList={
-                      [
-                        "fill",
-                      ]
-                    }
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.5}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
