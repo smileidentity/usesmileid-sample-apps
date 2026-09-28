@@ -117,24 +117,12 @@ appId: ${APP_ID}
 
 # --- the list failing -------------------------------------------------------------------------------
 # `unreachable` fails every list at once: the picker says so and offers Retry, which fails again.
+# Straight to the form by link: a cold start forgets the details, so the consent form's Continue waits.
 - runFlow:
     file: subflows/cold-start.yaml
     env:
-      LINK: "usesmileid-sample-flutter://?catalogue=unreachable"
-      LANDS_ON: "sample_products_screen"
-- tapOn:
-    id: "sample_product_card_documentVerification"
-    retryTapIfNoChange: true
-- extendedWaitUntil:
-    visible:
-      id: "sample_user_details_screen"
-    timeout: 30000
-- tapOn:
-    id: "sample_user_details_continue"
-- extendedWaitUntil:
-    visible:
-      id: "sample_kyc_form_screen"
-    timeout: 30000
+      LINK: "usesmileid-sample-flutter://flow/documentVerification/id-details?catalogue=unreachable"
+      LANDS_ON: "sample_kyc_form_screen"
 - tapOn:
     id: "sample_country_trigger"
 - extendedWaitUntil:
@@ -164,12 +152,17 @@ appId: ${APP_ID}
     element:
       id: "sample_setting_capture_mode"
     direction: DOWN
-- assertVisible: "Manual"
+# One node: the row merges its title and value into a single label.
+- assertVisible:
+    id: "sample_setting_capture_mode"
+    text: ".*Manual.*"
 - tapOn:
     id: "sample_setting_capture_mode"
 - tapOn:
     id: "sample_capture_mode_option_autoWithFallback"
-- assertVisible: "Automatic with manual fallback"
+- assertVisible:
+    id: "sample_setting_capture_mode"
+    text: ".*Automatic with manual fallback.*"
 - scrollUntilVisible:
     element:
       id: "sample_setting_gallery_upload"
