@@ -101,6 +101,24 @@ void main() {
     );
   });
 
+  /// Only names are translated under ar-EG, and the app does not flip its own layout, so the rows stay left-to-right.
+  testWidgets('document picker with Arabic names', (WidgetTester tester) async {
+    await goldens(
+      tester,
+      'sheet_document_picker_ar',
+      () => UseSmileIDSampleDocumentPickerSheet(
+        country: const UseSmileIDSampleCountry('KE', 'كينيا'),
+        catalogue:
+            const UseSmileIDSampleCatalogueReady<UseSmileIDSampleDocument>(
+              _arabicDocuments,
+            ),
+        selected: null,
+        onSelect: (UseSmileIDSampleDocument _) {},
+        onRetry: () {},
+      ),
+    );
+  });
+
   testWidgets('document picker loading', (WidgetTester tester) async {
     await goldens(
       tester,
@@ -212,3 +230,25 @@ Widget _document(
   onSelect: (UseSmileIDSampleDocument _) {},
   onRetry: () {},
 );
+
+const List<UseSmileIDSampleDocument> _arabicDocuments =
+    <UseSmileIDSampleDocument>[
+      UseSmileIDSampleDocument(
+        code: 'ALIEN_CARD',
+        name: 'بطاقة الأجانب',
+        hasBack: false,
+        format: 1,
+      ),
+      UseSmileIDSampleDocument(
+        code: 'IDENTITY_CARD',
+        name: 'بطاقة الهوية',
+        hasBack: true,
+        format: 1,
+      ),
+      UseSmileIDSampleDocument(
+        code: 'PASSPORT',
+        name: 'جواز السفر',
+        hasBack: false,
+        format: 3,
+      ),
+    ];
