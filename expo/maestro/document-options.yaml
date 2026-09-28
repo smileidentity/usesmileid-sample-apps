@@ -108,10 +108,11 @@ appId: ${APP_ID}
     selected: true
 - tapOn:
     id: "sample_capture_mode_option_manual"
+# Centred on the row below it: a scroll asking for the capture-mode row itself at 100% never settles.
 - scrollUntilVisible:
     element:
-      id: "sample_setting_capture_mode"
-    direction: DOWN
+      id: "sample_setting_gallery_upload"
+    centerElement: true
 - assertVisible:
     text: "Manual"
     childOf:
@@ -123,4 +124,8 @@ appId: ${APP_ID}
 - scrollUntilVisible:
     element:
       id: "sample_setting_gallery_upload"
-    direction: DOWN
+    centerElement: true
+- assertVisible:
+    text: "Automatic with manual fallback"
+    childOf:
+      id: "sample_setting_capture_mode"
