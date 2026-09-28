@@ -110,7 +110,7 @@ they never see a submission. On an Android debug build a probe on the SDK's publ
 and nothing else, under the `UseSmileIDSampleWire` tag: capture a real document on sandbox and read
 `adb logcat -s UseSmileIDSampleWire`. On iOS the request shows in Loupe. Release logs no traffic. A
 release run checks what the screen does instead: under `manual` the shutter shows at once, under the
-default after 10 seconds, and under `auto` not at all.
+default after 10 seconds, and under `auto` not while the scan runs. Every mode shows it once a scan times out.
 
 ## 5. The release build is where consumption defects show
 
