@@ -12,6 +12,12 @@ export type UseSmileIDSampleSettings = {
   readonly previewStep: boolean;
   /// DocumentCaptureConfig.allowGalleryUpload; off, as the SDK defaults it.
   readonly galleryUpload: boolean;
+  /// DocumentCaptureConfig.captureBothSides; on, as the SDK defaults it.
+  readonly captureBothSides: boolean;
+  /// DocumentCaptureConfig.allowSkipBack; off, as the SDK defaults it.
+  readonly allowSkipBack: boolean;
+  /// The document products capture the selfie before the document.
+  readonly selfieFirst: boolean;
   /// A typed field rather than one of the switches: three values, not two.
   readonly captureMode: UseSmileIDSampleCaptureMode;
 };
@@ -24,6 +30,9 @@ export const smileIDSampleSettingsDefaults: UseSmileIDSampleSettings = {
   instructionsStep: true,
   previewStep: true,
   galleryUpload: false,
+  captureBothSides: true,
+  allowSkipBack: false,
+  selfieFirst: false,
   captureMode: UseSmileIDSampleCaptureMode.AutoWithFallback,
 };
 

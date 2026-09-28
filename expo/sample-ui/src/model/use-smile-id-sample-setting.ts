@@ -7,6 +7,9 @@ export const UseSmileIDSampleSetting = {
   InstructionsStep: 'instructionsStep',
   PreviewStep: 'previewStep',
   GalleryUpload: 'galleryUpload',
+  CaptureBothSides: 'captureBothSides',
+  AllowSkipBack: 'allowSkipBack',
+  SelfieFirst: 'selfieFirst',
 } as const;
 
 export type UseSmileIDSampleSetting =
@@ -21,4 +24,7 @@ export const smileIDSampleSettings: readonly UseSmileIDSampleSetting[] = [
   UseSmileIDSampleSetting.InstructionsStep,
   UseSmileIDSampleSetting.PreviewStep,
   UseSmileIDSampleSetting.GalleryUpload,
+  UseSmileIDSampleSetting.CaptureBothSides,
+  UseSmileIDSampleSetting.AllowSkipBack,
+  UseSmileIDSampleSetting.SelfieFirst,
 ];

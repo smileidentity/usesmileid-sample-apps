@@ -158,6 +158,9 @@ describe('settings', () => {
       UseSmileIDSampleTestIds.SETTING_INSTRUCTIONS_STEP,
       UseSmileIDSampleTestIds.SETTING_PREVIEW_STEP,
       UseSmileIDSampleTestIds.SETTING_GALLERY_UPLOAD,
+      UseSmileIDSampleTestIds.SETTING_CAPTURE_BOTH_SIDES,
+      UseSmileIDSampleTestIds.SETTING_ALLOW_SKIP_BACK,
+      UseSmileIDSampleTestIds.SETTING_SELFIE_FIRST,
     ]) {
       expect(rendered.queryByTestId(id)).not.toBeNull();
     }

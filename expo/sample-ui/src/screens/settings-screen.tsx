@@ -290,6 +290,36 @@ export const SettingsScreen = ({
           testID={UseSmileIDSampleTestIds.SETTING_GALLERY_UPLOAD}
           onSettingChange={onSettingChange}
         />
+        <UseSmileIDSampleRowDivider />
+        <SwitchRow
+          title="Capture the back side"
+          supportingText="Only for a document type that has one"
+          icon="documentVerification"
+          setting={UseSmileIDSampleSetting.CaptureBothSides}
+          checked={settings.captureBothSides}
+          testID={UseSmileIDSampleTestIds.SETTING_CAPTURE_BOTH_SIDES}
+          onSettingChange={onSettingChange}
+        />
+        <UseSmileIDSampleRowDivider />
+        <SwitchRow
+          title="Skip the back"
+          supportingText="A Skip button on the back-side capture"
+          icon="instructions"
+          setting={UseSmileIDSampleSetting.AllowSkipBack}
+          checked={settings.allowSkipBack}
+          testID={UseSmileIDSampleTestIds.SETTING_ALLOW_SKIP_BACK}
+          onSettingChange={onSettingChange}
+        />
+        <UseSmileIDSampleRowDivider />
+        <SwitchRow
+          title="Selfie first"
+          supportingText="The selfie before the document"
+          icon="smile"
+          setting={UseSmileIDSampleSetting.SelfieFirst}
+          checked={settings.selfieFirst}
+          testID={UseSmileIDSampleTestIds.SETTING_SELFIE_FIRST}
+          onSettingChange={onSettingChange}
+        />
       </Section>
 
       {/* The design draws no control for the drawer, so this placement is ours, and debug-only. */}

@@ -1,9 +1,8 @@
-/// How the SDK photographs the chosen document; never what the server receives.
+/// How the SDK photographs the chosen document, each the SDK's own type; never what the server receives.
 export const UseSmileIDSampleCaptureAs = {
-  Automatic: 'automatic',
+  GenericDocument: 'genericDocument',
   GreenBook: 'greenBook',
   Passport: 'passport',
-  GenericDocument: 'genericDocument',
 } as const;
 
 export type UseSmileIDSampleCaptureAs = (typeof UseSmileIDSampleCaptureAs)[keyof typeof UseSmileIDSampleCaptureAs];
@@ -13,8 +12,7 @@ export const smileIDSampleCaptureAsOptions: readonly {
   readonly id: UseSmileIDSampleCaptureAs;
   readonly label: string;
 }[] = [
-  { id: UseSmileIDSampleCaptureAs.Automatic, label: 'Automatic' },
+  { id: UseSmileIDSampleCaptureAs.GenericDocument, label: 'Generic document' },
   { id: UseSmileIDSampleCaptureAs.GreenBook, label: 'Green Book preset' },
   { id: UseSmileIDSampleCaptureAs.Passport, label: 'Passport preset' },
-  { id: UseSmileIDSampleCaptureAs.GenericDocument, label: 'Generic document' },
 ];

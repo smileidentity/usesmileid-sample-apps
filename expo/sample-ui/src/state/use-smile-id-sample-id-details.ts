@@ -98,7 +98,7 @@ export const smileIDSampleIdDetailsDefaults: UseSmileIDSampleIdDetails = {
   country: null,
   idType: null,
   document: null,
-  captureAs: UseSmileIDSampleCaptureAs.Automatic,
+  captureAs: UseSmileIDSampleCaptureAs.GenericDocument,
   genericDocument: smileIDSampleGenericDocumentDefaults,
   idNumber: '',
 };

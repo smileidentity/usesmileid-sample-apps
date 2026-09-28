@@ -50,6 +50,18 @@ describe('the document capture settings', () => {
     expect(store().settings.galleryUpload).toBe(true);
   });
 
+  it('keep the back side, skip and order switches across a reload', async () => {
+    await store().setSetting(UseSmileIDSampleSetting.CaptureBothSides, false);
+    await store().setSetting(UseSmileIDSampleSetting.AllowSkipBack, true);
+    await store().setSetting(UseSmileIDSampleSetting.SelfieFirst, true);
+
+    store().reset();
+    await store().load();
+    expect(store().settings.captureBothSides).toBe(false);
+    expect(store().settings.allowSkipBack).toBe(true);
+    expect(store().settings.selfieFirst).toBe(true);
+  });
+
   it('read an unknown stored capture mode as the default', async () => {
     await AsyncStorage.setItem('sample.setting.captureMode', 'sometimes');
     await store().load();

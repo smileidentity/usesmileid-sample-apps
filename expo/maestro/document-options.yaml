@@ -41,13 +41,13 @@ appId: ${APP_ID}
     childOf:
       id: "sample_document_trigger"
 
-# Every choice is on offer; Automatic is the default.
+# Three choices, each the SDK's own type; Generic document is the default.
 - tapOn:
     id: "sample_capture_as_trigger"
 - assertVisible:
     id: "sample_capture_as_sheet"
 - assertVisible:
-    id: "sample_capture_as_option_automatic"
+    id: "sample_capture_as_option_genericDocument"
     selected: true
 - assertVisible:
     id: "sample_capture_as_option_greenBook"

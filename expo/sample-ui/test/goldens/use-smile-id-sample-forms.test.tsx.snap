@@ -152,7 +152,7 @@ exports[`captureAsSheet dark default 1`] = `
                       undefined,
                     ]
                   }
-                  testID="sample_capture_as_option_automatic"
+                  testID="sample_capture_as_option_genericDocument"
                 >
                   <Text
                     style={
@@ -174,7 +174,7 @@ exports[`captureAsSheet dark default 1`] = `
                       ]
                     }
                   >
-                    Automatic
+                    Generic document
                   </Text>
                   <View
                     style={
@@ -392,80 +392,6 @@ exports[`captureAsSheet dark default 1`] = `
                     Passport preset
                   </Text>
                 </View>
-                <View
-                  accessibilityRole="radio"
-                  accessibilityState={
-                    {
-                      "busy": undefined,
-                      "checked": undefined,
-                      "disabled": undefined,
-                      "expanded": undefined,
-                      "selected": false,
-                    }
-                  }
-                  accessibilityValue={
-                    {
-                      "max": undefined,
-                      "min": undefined,
-                      "now": undefined,
-                      "text": undefined,
-                    }
-                  }
-                  accessible={true}
-                  collapsable={false}
-                  focusable={true}
-                  onBlur={[Function]}
-                  onClick={[Function]}
-                  onFocus={[Function]}
-                  onResponderGrant={[Function]}
-                  onResponderMove={[Function]}
-                  onResponderRelease={[Function]}
-                  onResponderTerminate={[Function]}
-                  onResponderTerminationRequest={[Function]}
-                  onStartShouldSetResponder={[Function]}
-                  style={
-                    [
-                      {
-                        "alignItems": "center",
-                        "flexDirection": "row",
-                        "width": "100%",
-                      },
-                      {
-                        "backgroundColor": "transparent",
-                        "borderRadius": 12,
-                        "columnGap": 12,
-                        "minHeight": 44,
-                        "paddingHorizontal": 12,
-                        "paddingVertical": 8,
-                      },
-                      undefined,
-                    ]
-                  }
-                  testID="sample_capture_as_option_genericDocument"
-                >
-                  <Text
-                    style={
-                      [
-                        {
-                          "fontFamily": "DMSans-SemiBold",
-                          "fontSize": 14,
-                          "letterSpacing": 0,
-                          "lineHeight": 24,
-                          "marginBottom": -2.8859999999999992,
-                          "marginTop": -2.8859999999999992,
-                        },
-                        {
-                          "flex": 1,
-                        },
-                        {
-                          "color": "#f2f2f2",
-                        },
-                      ]
-                    }
-                  >
-                    Generic document
-                  </Text>
-                </View>
               </View>
             </RCTScrollView>
           </View>
@@ -628,7 +554,7 @@ exports[`captureAsSheet light default 1`] = `
                       undefined,
                     ]
                   }
-                  testID="sample_capture_as_option_automatic"
+                  testID="sample_capture_as_option_genericDocument"
                 >
                   <Text
                     style={
@@ -650,7 +576,7 @@ exports[`captureAsSheet light default 1`] = `
                       ]
                     }
                   >
-                    Automatic
+                    Generic document
                   </Text>
                   <View
                     style={
@@ -866,80 +792,6 @@ exports[`captureAsSheet light default 1`] = `
                     }
                   >
                     Passport preset
-                  </Text>
-                </View>
-                <View
-                  accessibilityRole="radio"
-                  accessibilityState={
-                    {
-                      "busy": undefined,
-                      "checked": undefined,
-                      "disabled": undefined,
-                      "expanded": undefined,
-                      "selected": false,
-                    }
-                  }
-                  accessibilityValue={
-                    {
-                      "max": undefined,
-                      "min": undefined,
-                      "now": undefined,
-                      "text": undefined,
-                    }
-                  }
-                  accessible={true}
-                  collapsable={false}
-                  focusable={true}
-                  onBlur={[Function]}
-                  onClick={[Function]}
-                  onFocus={[Function]}
-                  onResponderGrant={[Function]}
-                  onResponderMove={[Function]}
-                  onResponderRelease={[Function]}
-                  onResponderTerminate={[Function]}
-                  onResponderTerminationRequest={[Function]}
-                  onStartShouldSetResponder={[Function]}
-                  style={
-                    [
-                      {
-                        "alignItems": "center",
-                        "flexDirection": "row",
-                        "width": "100%",
-                      },
-                      {
-                        "backgroundColor": "transparent",
-                        "borderRadius": 12,
-                        "columnGap": 12,
-                        "minHeight": 44,
-                        "paddingHorizontal": 12,
-                        "paddingVertical": 8,
-                      },
-                      undefined,
-                    ]
-                  }
-                  testID="sample_capture_as_option_genericDocument"
-                >
-                  <Text
-                    style={
-                      [
-                        {
-                          "fontFamily": "DMSans-SemiBold",
-                          "fontSize": 14,
-                          "letterSpacing": 0,
-                          "lineHeight": 24,
-                          "marginBottom": -2.8859999999999992,
-                          "marginTop": -2.8859999999999992,
-                        },
-                        {
-                          "flex": 1,
-                        },
-                        {
-                          "color": "#21232c",
-                        },
-                      ]
-                    }
-                  >
-                    Generic document
                   </Text>
                 </View>
               </View>
@@ -20556,7 +20408,7 @@ exports[`kycIdForm dark documentSelected 1`] = `
                 ]
               }
             >
-              Automatic
+              Generic document: Document
             </Text>
             <RNSVGSvgView
               align="xMidYMid"
@@ -26864,7 +26716,7 @@ exports[`kycIdForm light documentSelected 1`] = `
                 ]
               }
             >
-              Automatic
+              Generic document: Document
             </Text>
             <RNSVGSvgView
               align="xMidYMid"

@@ -74,7 +74,7 @@ export const KycIdFormScreen = ({
   const captureAsLabel =
     captureAs === UseSmileIDSampleCaptureAs.GenericDocument
       ? `Generic document: ${genericDocument.displayName}`
-      : (smileIDSampleCaptureAsOptions.find((option) => option.id === captureAs)?.label ?? 'Automatic');
+      : (smileIDSampleCaptureAsOptions.find((option) => option.id === captureAs)?.label ?? 'Generic document');
 
   return (
     <View

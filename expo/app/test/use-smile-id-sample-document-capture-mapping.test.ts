@@ -15,7 +15,7 @@ import {
 
 import {
   smileIDSampleCaptureModeFor,
-  smileIDSampleDocumentCaptureFor,
+  smileIDSampleDocumentTypeFor,
 } from '../src/flow/use-smile-id-sample-flow-builder-config';
 
 type Case = {
@@ -34,7 +34,6 @@ type Case = {
     hasBackSide?: boolean;
     orientation?: string;
     knownAspectRatio?: number;
-    captureBothSides: boolean | 'preset';
   };
 };
 
@@ -55,8 +54,7 @@ const detailsOf = (c: Case): UseSmileIDSampleIdDetails => ({
 /// spec/catalogue-rules.json captureAs: what "Capture as" hands the SDK.
 describe('capture as', () => {
   it.each(captureAs.cases.map((c) => [c.name, c] as const))('%s', (_, c) => {
-    const capture = smileIDSampleDocumentCaptureFor(detailsOf(c));
-    const type = capture.documentType;
+    const type = smileIDSampleDocumentTypeFor(detailsOf(c));
     if (c.expected.documentType === 'passport') expect(type).toEqual(DocumentType.Passport);
     else if (c.expected.documentType === 'greenBook') expect(type).toEqual(DocumentType.SouthAfricaGreenBook);
     else {
@@ -66,12 +64,10 @@ describe('capture as', () => {
       if (c.expected.orientation) expect(type.orientation.toLowerCase()).toBe(c.expected.orientation);
       if (c.expected.knownAspectRatio !== undefined) expect(type.knownAspectRatio).toBeCloseTo(c.expected.knownAspectRatio);
     }
-    const both = c.expected.captureBothSides;
-    expect(capture.captureBothSides).toBe(both === 'preset' ? type.hasBackSide : both);
   });
 
   it('has the spec\'s cases and aspect ratios', () => {
-    expect(captureAs.cases.length).toBeGreaterThanOrEqual(8);
+    expect(captureAs.cases.length).toBeGreaterThanOrEqual(6);
     for (const ratio of smileIDSampleAspectRatios) expect(ratio.ratio).toBe(captureAs.aspectRatios[ratio.id] ?? null);
   });
 

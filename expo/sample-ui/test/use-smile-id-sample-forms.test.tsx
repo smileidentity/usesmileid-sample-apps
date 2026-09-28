@@ -285,7 +285,7 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
     states: {
       default: {
         element: () => (
-          <CaptureAsSheet selected={UseSmileIDSampleCaptureAs.Automatic} onSelect={noop} onDismiss={noop} />
+          <CaptureAsSheet selected={UseSmileIDSampleCaptureAs.GenericDocument} onSelect={noop} onDismiss={noop} />
         ),
       },
     },

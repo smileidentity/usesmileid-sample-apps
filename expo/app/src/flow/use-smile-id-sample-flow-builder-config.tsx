@@ -136,9 +136,11 @@ export const smileIDSampleJourneyStepsFor = (
   const document: UseSmileIDSampleFlowJourneyStep[] = snapshot.previewStep
     ? ['documentCapture', 'preview']
     : ['documentCapture'];
-  if (snapshot.product.id === 'documentVerification') steps.push(...document, ...selfie);
-  else if (snapshot.product.id === 'enhancedDocumentVerification') steps.push(...selfie, ...document);
-  else steps.push(...selfie);
+  const documentProduct =
+    snapshot.product.id === 'documentVerification' || snapshot.product.id === 'enhancedDocumentVerification';
+  if (!documentProduct) steps.push(...selfie);
+  else if (snapshot.selfieFirst) steps.push(...selfie, ...document);
+  else steps.push(...document, ...selfie);
   return [...steps, 'processing'];
 };
 
@@ -169,10 +171,9 @@ const journeyFor = (screens: ScreensBuilder, snapshot: UseSmileIDSampleFlowLaunc
         screens.capture((capture: CaptureConfigBuilder) => {
           capture.captureType = CaptureType.document;
           capture.document((document: DocumentCaptureConfigBuilder) => {
-            const shape = smileIDSampleDocumentCaptureFor(snapshot.idDetails);
-            document.documentType = shape.documentType;
-            document.captureBothSides = shape.captureBothSides;
-            document.allowSkipBack = true;
+            document.documentType = smileIDSampleDocumentTypeFor(snapshot.idDetails);
+            document.captureBothSides = snapshot.captureBothSides;
+            document.allowSkipBack = snapshot.allowSkipBack;
             document.captureMode = smileIDSampleCaptureModeFor(snapshot.captureMode);
             document.allowGalleryUpload = snapshot.galleryUpload;
           });
@@ -265,51 +266,23 @@ const jobTypeFor = (productId: string): JobType => {
   }
 };
 
-// The API's undocumented `format`: 3 is a passport or seaman's booklet, 7 the Green Book; the rest are cards.
-const FORMAT_BOOKLET = 3;
-const FORMAT_GREEN_BOOK = 7;
-
-/// What the SDK is told to photograph; the server is told the document's code either way.
-export type UseSmileIDSampleDocumentCapture = { readonly documentType: DocumentType; readonly captureBothSides: boolean };
-
-const preset = (documentType: DocumentType): UseSmileIDSampleDocumentCapture => ({
-  documentType,
-  captureBothSides: documentType.hasBackSide,
-});
-
-/// The "Capture as" mapping from `spec/catalogue-rules.json`; pure, so its table is unit-tested.
-export const smileIDSampleDocumentCaptureFor = (details: UseSmileIDSampleIdDetails): UseSmileIDSampleDocumentCapture => {
-  const { document, genericDocument } = details;
+/// The "Capture as" mapping from `spec/catalogue-rules.json`: the SDK's own type, nothing read from the API.
+export const smileIDSampleDocumentTypeFor = (details: UseSmileIDSampleIdDetails): DocumentType => {
+  const { genericDocument } = details;
   switch (details.captureAs) {
     case UseSmileIDSampleCaptureAs.GreenBook:
-      return preset(DocumentType.SouthAfricaGreenBook);
+      return DocumentType.SouthAfricaGreenBook;
     case UseSmileIDSampleCaptureAs.Passport:
-      return preset(DocumentType.Passport);
+      return DocumentType.Passport;
     case UseSmileIDSampleCaptureAs.GenericDocument: {
       const ratio = smileIDSampleAspectRatios.find((it) => it.id === genericDocument.aspectRatio)?.ratio ?? null;
-      return preset(
-        DocumentType.GenericDocument({
-          displayName: genericDocument.displayName,
-          hasBackSide: genericDocument.hasBackSide,
-          orientation: genericDocument.orientation === 'portrait' ? 'Portrait' : 'Landscape',
-          ...(ratio === null ? {} : { knownAspectRatio: ratio }),
-        }),
-      );
+      return DocumentType.GenericDocument({
+        displayName: genericDocument.displayName,
+        hasBackSide: genericDocument.hasBackSide,
+        orientation: genericDocument.orientation === 'portrait' ? 'Portrait' : 'Landscape',
+        ...(ratio === null ? {} : { knownAspectRatio: ratio }),
+      });
     }
-    default:
-      // The API's has_back, not a preset's: the API is the source that says what the document is.
-      return {
-        documentType:
-          document?.format === FORMAT_GREEN_BOOK
-            ? DocumentType.SouthAfricaGreenBook
-            : document?.format === FORMAT_BOOKLET
-              ? DocumentType.Passport
-              : DocumentType.GenericDocument({
-                  displayName: document?.name ?? 'Document',
-                  hasBackSide: document?.hasBack ?? true,
-                }),
-        captureBothSides: document?.hasBack ?? true,
-      };
   }
 };
 

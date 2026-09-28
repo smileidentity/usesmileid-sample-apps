@@ -1,4 +1,9 @@
-import { smileIDSampleIdDetailsDefaults, smileIDSampleProducts, type UseSmileIDSampleProduct } from '@smileid/sample-ui';
+import {
+  UseSmileIDSampleCaptureAs,
+  smileIDSampleIdDetailsDefaults,
+  smileIDSampleProducts,
+  type UseSmileIDSampleProduct,
+} from '@smileid/sample-ui';
 import { UseSmileIDFlowBuilder } from '@smileid/usesmileid';
 
 import {
@@ -38,6 +43,9 @@ const snapshot = (
   previewStep: true,
   captureMode: 'autoWithFallback',
   galleryUpload: false,
+  captureBothSides: true,
+  allowSkipBack: false,
+  selfieFirst: false,
   userId: 'user_1',
   partnerId: 'p-1',
   partnerName: 'Kobo Bank',
@@ -79,26 +87,16 @@ describe('the journey the switches compose', () => {
     ).toEqual<UseSmileIDSampleFlowJourneyStep[]>(['consent', 'processing']);
   });
 
-  it('puts the document products captures in opposite orders', () => {
+  it('captures the document first for both document products unless selfie first is on', () => {
     const plain = { consentStep: false, instructionsStep: false, previewStep: false };
-    expect(
-      smileIDSampleJourneyStepsFor(
-        snapshot({ product: productFor('documentVerification'), ...plain }),
-      ),
-    ).toEqual<UseSmileIDSampleFlowJourneyStep[]>([
-      'documentCapture',
-      'selfieCapture',
-      'processing',
-    ]);
-    expect(
-      smileIDSampleJourneyStepsFor(
-        snapshot({ product: productFor('enhancedDocumentVerification'), ...plain }),
-      ),
-    ).toEqual<UseSmileIDSampleFlowJourneyStep[]>([
-      'selfieCapture',
-      'documentCapture',
-      'processing',
-    ]);
+    for (const id of ['documentVerification', 'enhancedDocumentVerification']) {
+      expect(smileIDSampleJourneyStepsFor(snapshot({ product: productFor(id), ...plain }))).toEqual<
+        UseSmileIDSampleFlowJourneyStep[]
+      >(['documentCapture', 'selfieCapture', 'processing']);
+      expect(
+        smileIDSampleJourneyStepsFor(snapshot({ product: productFor(id), ...plain, selfieFirst: true })),
+      ).toEqual<UseSmileIDSampleFlowJourneyStep[]>(['selfieCapture', 'documentCapture', 'processing']);
+    }
   });
 });
 
@@ -158,6 +156,31 @@ describe('what the SDK is handed', () => {
       ).build();
 
       expect(result.kind).toBe('success');
+    }
+  });
+
+  it('every document setting builds, except the Green Book the SDK refuses on Enhanced Document Verification', () => {
+    for (const id of ['documentVerification', 'enhancedDocumentVerification']) {
+      for (const captureAs of Object.values(UseSmileIDSampleCaptureAs)) {
+        for (const flag of [true, false]) {
+          const result = built(
+            snapshot({
+              product: productFor(id),
+              idDetails: {
+                ...smileIDSampleIdDetailsDefaults,
+                country: { code: 'ZA', name: 'South Africa' },
+                document: { code: 'IDENTITY_CARD', subType: null, name: 'Identity Card', hasBack: true, format: 1 },
+                captureAs,
+              },
+              captureBothSides: flag,
+              allowSkipBack: !flag,
+              selfieFirst: flag,
+            }),
+          ).build();
+          const refused = id === 'enhancedDocumentVerification' && captureAs === UseSmileIDSampleCaptureAs.GreenBook;
+          expect([id, captureAs, flag, result.kind]).toEqual([id, captureAs, flag, refused ? 'invalid' : 'success']);
+        }
+      }
     }
   });
 
