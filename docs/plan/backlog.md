@@ -6,18 +6,6 @@ pull request that finishes it.
 
 ## UI and design fidelity
 
-### Pull to refresh on the verifications list
-
-The design has a pull-to-refresh gesture and a `refreshing` state on the verifications list. Today
-refresh exists only on a verification's detail screen, on all four platforms. A list-wide refresh
-updates every row the current partner submitted, including rows from an expired session.
-
-- The screen renders `refreshing` and calls the store. The store owns the refresh, not the screen.
-- It is idempotent and cancellable: leaving the tab cancels it.
-- Failure is a state, not a silent no-op. The design has no error frame yet, so ask for one.
-- Add the platform binding and test id alongside the `refreshing` frame in `spec/screens.json`, and
-  cover it with a device flow, since a refresh that never ends is the likely regression.
-
 ### Expo: the scenario drawer is not presented
 
 Expo's Settings screen shows the scenario-drawer button only when a shell passes

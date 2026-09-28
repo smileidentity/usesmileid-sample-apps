@@ -92,5 +92,6 @@ find one, and delete it in the pull request that closes it.
 | Consent form's required fields | The spec listed only the two names; the design labels email and phone optional; the SDK rejects a submission with neither | The SDK wins. Every app requires an email or a phone unless the token binds one, and `screens.json` says so. The design labels are owed a correction |
 | Button height 48 against 52 | The design board draws 48; the design system's `button.height` is 52 | 52, the design-system token |
 | Card glyph 21 against 20 | The design board draws 21; `size.icon-md` is 20 | 20, the design-system token |
+| Verifications list `refreshing` state in `screens.json` | The design draws a pull-to-refresh on the list (node 5206-2608); no app builds it. Refresh exists only on a verification's detail screen | Not built. Jobs are stored on the device, and no endpoint lists a partner's jobs, so a list-wide pull has nothing to ask. The state stays in `screens.json` because the design has it |
 | `components.json` | Consumed by nothing but comments in golden tests | Informative: it records owners, tokens and states for a reader, and no test asserts it. A value that must hold belongs in a file an app test reads |
 
