@@ -24,7 +24,7 @@ import org.junit.Before
 import org.junit.Test
 import org.robolectric.RuntimeEnvironment
 
-/** The fetching sheets in every state D9 names, and the three sheets the document features add. */
+/** The fetching sheets while loading, failed and empty, and the three sheets the document features add. */
 class CatalogueGoldenTest : GoldenTest() {
 
     /** A pulsing skeleton never lets the test idle, so these record the reduced-motion rows the platform also draws. */
