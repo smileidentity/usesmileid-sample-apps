@@ -106,7 +106,7 @@ asset list and Metro cannot reach outside their app, so each ships a copy, and
 
 **What the capture options send is checked by hand.** The public flows stop at the capture screen, so
 they never see a submission. On an Android debug build a probe on the SDK's public interceptor hook logs
-`auto_capture_enabled`, `capture_both_sides` and `allow_gallery_upload` from the submission metadata,
+`auto_capture_enabled`, `capture_both_sides`, `allow_skip_back` and `allow_gallery_upload` from the submission metadata,
 and nothing else, under the `UseSmileIDSampleWire` tag: capture a real document on sandbox and read
 `adb logcat -s UseSmileIDSampleWire`. On iOS the request shows in Loupe. Release logs no traffic. A
 release run checks what the screen does instead: under `manual` the shutter shows at once, under the

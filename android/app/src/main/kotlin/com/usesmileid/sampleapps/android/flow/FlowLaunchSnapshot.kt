@@ -21,7 +21,7 @@ data class FlowLaunchSnapshot(
     val scenario: UseSmileIDSampleScenario,
     val theme: UseSmileIDSampleThemeScenario,
     val sandbox: Boolean,
-    /** The five fields, not the settings object: the snapshot is read once at entry. */
+    /** The settings as fields, not the settings object: the snapshot is read once at entry. */
     val allowAgentMode: Boolean,
     val enableEnhancedLiveness: Boolean,
     val consentStep: Boolean,
@@ -29,6 +29,9 @@ data class FlowLaunchSnapshot(
     val previewStep: Boolean,
     val captureMode: UseSmileIDSampleCaptureMode = UseSmileIDSampleCaptureMode.AutoWithFallback,
     val galleryUpload: Boolean = false,
+    val captureBothSides: Boolean = true,
+    val allowSkipBack: Boolean = false,
+    val selfieFirst: Boolean = false,
     val userId: String,
     val partnerId: String,
     val partnerName: String,
@@ -69,6 +72,9 @@ fun buildSnapshot(
         previewStep = app.settings.previewStep,
         captureMode = app.settings.captureMode,
         galleryUpload = app.settings.galleryUpload,
+        captureBothSides = app.settings.captureBothSides,
+        allowSkipBack = app.settings.allowSkipBack,
+        selfieFirst = app.settings.selfieFirst,
         userId = userId,
         partnerId = app.profiles.partnerId,
         partnerName = app.profiles.partnerName,

@@ -14,9 +14,9 @@ internal fun wireKeysIn(body: String): List<String> = WIRE_KEYS.mapNotNull { key
         ?.let { "$key=${it.groupValues[1].replace("\\", "")}" }
 }
 
-private val WIRE_KEYS = listOf("auto_capture_enabled", "capture_both_sides", "allow_gallery_upload")
+private val WIRE_KEYS = listOf("auto_capture_enabled", "capture_both_sides", "allow_skip_back", "allow_gallery_upload")
 
-/** Logs the submission's `auto_capture_enabled`, `capture_both_sides` and `allow_gallery_upload`, and nothing else. */
+/** Logs the submission's `auto_capture_enabled`, `capture_both_sides`, `allow_skip_back` and `allow_gallery_upload`, and nothing else. */
 private object UseSmileIDSampleWireProbe : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {

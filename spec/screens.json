@@ -519,7 +519,7 @@
         {
           "state": "default",
           "design": "in-repo",
-          "note": "Four rows: Automatic (the default: the document shape follows the API's format and has_back), Green Book preset, Passport preset, Generic document. Choosing Generic document opens genericDocumentSheet."
+          "note": "Three rows, each the SDK's own type and nothing inferred from the API: Generic document (the default, the SDK's GenericDocument defaults), Green Book preset, Passport preset. Choosing Generic document opens genericDocumentSheet."
         }
       ],
       "components": [
@@ -586,7 +586,7 @@
         "CAPTURE (two rows: Enhanced SmartSelfie™, Agent mode — mutually exclusive)",
         "APPEARANCE",
         "SDK SCREENS — SHOW OR SKIP FLOW STEPS",
-        "DOCUMENT CAPTURE (two rows: Capture mode, Gallery upload; placed by the sample, the design draws no such section)",
+        "DOCUMENT CAPTURE (five rows: Capture mode, Gallery upload, Capture the back side, Skip the back, Selfie first; placed by the sample, the design draws no such section)",
         "ABOUT",
         "LEGAL",
         "sign out",
@@ -610,6 +610,9 @@
         "sample_setting_preview_step",
         "sample_setting_capture_mode",
         "sample_setting_gallery_upload",
+        "sample_setting_capture_both_sides",
+        "sample_setting_allow_skip_back",
+        "sample_setting_selfie_first",
         "sample_sign_out",
         "sample_sign_out_confirm"
       ],

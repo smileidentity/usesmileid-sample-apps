@@ -17,6 +17,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureAs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCountry
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocument
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
@@ -244,6 +245,25 @@ class SdkFlowPreflightTest {
                     FlowPreflight.Ready,
                     preflight(snapshot),
                 )
+            }
+        }
+    }
+
+    // The SDK refuses the Green Book on Enhanced Document Verification inside `screens { }`, which validate() cannot see.
+    @Test
+    fun `every document setting passes preflight`() {
+        listOf(UseSmileIDSampleProduct.DocumentVerification, UseSmileIDSampleProduct.EnhancedDocumentVerification).forEach { product ->
+            UseSmileIDSampleCaptureAs.entries.forEach { captureAs ->
+                listOf(true, false).forEach { flag ->
+                    val base = snapshotFor(product)
+                    val snapshot = base.copy(
+                        idDetails = base.idDetails.copy(captureAs = captureAs),
+                        captureBothSides = flag,
+                        allowSkipBack = !flag,
+                        selfieFirst = flag,
+                    )
+                    assertEquals("$product $captureAs flag=$flag", FlowPreflight.Ready, preflight(snapshot))
+                }
             }
         }
     }

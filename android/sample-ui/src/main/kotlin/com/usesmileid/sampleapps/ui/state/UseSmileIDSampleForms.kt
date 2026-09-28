@@ -128,7 +128,7 @@ class UseSmileIDSampleForms(
                             UseSmileIDSampleDocument(code, subType.ifEmpty { null }, name, hasBack == "true", format.toIntOrNull() ?: 1)
                         },
                         captureAs = UseSmileIDSampleCaptureAs.entries.firstOrNull { it.name == at(11) }
-                            ?: UseSmileIDSampleCaptureAs.Automatic,
+                            ?: UseSmileIDSampleCaptureAs.GenericDocument,
                         genericDocument = parts(12).takeIf { it.size == 4 }?.let { (name, back, orientation, ratio) ->
                             UseSmileIDSampleGenericDocument(
                                 displayName = name,

@@ -171,15 +171,15 @@ trigger under it. "Capture as" changes only how the SDK photographs the document
 receives the document's code as `idType`, which is why the override can exist without sending a wrong
 type.
 
-| Choice | `documentType` | `captureBothSides` |
-|---|---|---|
-| Automatic (the default) | From the API's `format`: 7 is the Green Book preset, 3 the Passport preset, anything else a `GenericDocument` named after the row with the API's `has_back` | The API's `has_back` |
-| Green Book preset | `SouthAfricaGreenBook` | The preset's own back side |
-| Passport preset | `Passport` | The preset's own back side |
-| Generic document | A `GenericDocument` from a sheet: display name, back side, orientation, and an aspect ratio of off, 1.586, 1.309 or 0.748 | The sheet's back side |
+| Choice | `documentType` |
+|---|---|
+| Generic document (the default) | A `GenericDocument`, with the SDK's defaults until the sheet changes its display name, back side, orientation, or aspect ratio (off, 1.586, 1.309 or 0.748) |
+| Green Book preset | `SouthAfricaGreenBook` |
+| Passport preset | `Passport` |
 
-`format` is matched rather than `code`, because a seaman's ID is `format` 3 without being a passport, and
-the Green Book shares its code with the card.
+Each choice is the SDK's own type, and nothing is read from the API's `format` or `has_back`: a flow sees
+exactly the type that was picked, so a scenario can pair any document with any shape, including a pair
+the SDK refuses, such as the Green Book on Enhanced Document Verification.
 
 **The ID-number hint.** The API gives a regex, never an example, so the hint is computed from the regex:
 the first alternative, a class as the first of `A`, `0`, `a` that it accepts, and each part repeated to
@@ -189,9 +189,11 @@ example. A regex the device cannot compile checks nothing and leaves the server 
 `spec/id-number-hints.json` holds the cases, and every platform checks that each example matches its own
 regex under that platform's engine.
 
-**Capture mode and gallery upload** are Settings rows. Capture mode is a typed field of its own, three
-values rather than a switch, defaulting to automatic with the SDK's 10-second manual fallback. Gallery
-upload is a switch, off as the SDK defaults it.
+**The DOCUMENT CAPTURE settings.** Capture mode is a typed field of its own, three values rather than a
+switch, defaulting to automatic with the SDK's 10-second manual fallback. The rest are switches, each at
+the SDK's default: gallery upload off, capture the back side on (`captureBothSides`, which the SDK ANDs
+with the type's own back side), and skip the back off (`allowSkipBack`). Selfie first, off by default,
+orders the two captures: both document products run document then selfie unless it is on.
 
 **Loading.** The lists have no design frames, so this is the design of record, built from components the
 app already has. The form never waits: while a country's list is still arriving, its second trigger stays

@@ -156,7 +156,7 @@ private fun DocumentFields(
             UseSmileIDSampleCaptureAs.GenericDocument -> "Generic document: ${details.genericDocument.displayName}"
             else -> details.captureAs.label
         },
-        placeholder = UseSmileIDSampleCaptureAs.Automatic.label,
+        placeholder = UseSmileIDSampleCaptureAs.GenericDocument.label,
         onClick = onCaptureAsClick,
         enabled = details.document != null,
         testId = UseSmileIDSampleTestIds.CAPTURE_AS_TRIGGER,

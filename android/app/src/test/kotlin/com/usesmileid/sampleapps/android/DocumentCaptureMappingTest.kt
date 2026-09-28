@@ -7,7 +7,7 @@ import com.usesmileid.presentation.flow.config.DocumentVerificationParams
 import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.sampleapps.android.flow.FlowLaunchSnapshot
 import com.usesmileid.sampleapps.android.flow.applying
-import com.usesmileid.sampleapps.android.flow.documentCaptureFor
+import com.usesmileid.sampleapps.android.flow.documentTypeFor
 import com.usesmileid.sampleapps.android.flow.documentOptionsFor
 import com.usesmileid.sampleapps.android.flow.toSdk
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
@@ -27,7 +27,6 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.boolean
-import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.float
 import kotlinx.serialization.json.int
@@ -48,13 +47,12 @@ class DocumentCaptureMappingTest {
 
     @Test
     fun every_case_maps_as_the_spec_says() {
-        assertTrue(cases.size >= 8)
+        assertTrue(cases.size >= 6)
         cases.forEach { case ->
             val name = case.getValue("name").jsonPrimitive.content
             val details = detailsOf(case)
             val expected = case.getValue("expected").jsonObject
-            val capture = documentCaptureFor(details)
-            val type = capture.documentType
+            val type = documentTypeFor(details)
             when (expected.getValue("documentType").jsonPrimitive.content) {
                 "passport" -> assertEquals(name, DocumentType.Passport, type)
                 "greenBook" -> assertEquals(name, DocumentType.SouthAfricaGreenBook, type)
@@ -70,8 +68,6 @@ class DocumentCaptureMappingTest {
                     }
                 }
             }
-            val both = expected.getValue("captureBothSides").jsonPrimitive
-            assertEquals(name, both.booleanOrNull ?: type.hasBackSide, capture.captureBothSides)
             assertEquals(name, expected.getValue("idType").jsonPrimitive.content, submittedIdType(details))
         }
     }
@@ -94,10 +90,10 @@ class DocumentCaptureMappingTest {
     }
 
     @Test
-    fun a_custom_portrait_document_keeps_its_orientation() {
+    fun a_portrait_generic_document_keeps_its_orientation() {
         val genericDocument = UseSmileIDSampleGenericDocument(orientation = UseSmileIDSampleDocumentOrientation.Portrait)
-        val type = documentCaptureFor(UseSmileIDSampleIdDetails(captureAs = UseSmileIDSampleCaptureAs.GenericDocument, genericDocument = genericDocument))
-            .documentType as DocumentType.GenericDocument
+        val type = documentTypeFor(UseSmileIDSampleIdDetails(captureAs = UseSmileIDSampleCaptureAs.GenericDocument, genericDocument = genericDocument))
+            as DocumentType.GenericDocument
         assertEquals(DocumentOrientation.Portrait, type.orientation)
     }
 
@@ -126,11 +122,19 @@ class DocumentCaptureMappingTest {
     }
 
     @Test
-    fun capture_mode_and_gallery_upload_reach_the_document_step() {
-        val options = documentOptionsFor(snapshotOf(UseSmileIDSampleIdDetails(), captureMode = UseSmileIDSampleCaptureMode.Manual, galleryUpload = true))
+    fun the_document_settings_reach_the_document_step() {
+        val options = documentOptionsFor(
+            snapshotOf(UseSmileIDSampleIdDetails(), captureMode = UseSmileIDSampleCaptureMode.Manual, galleryUpload = true)
+                .copy(captureBothSides = false, allowSkipBack = true),
+        )
         assertEquals(DocumentCaptureMode.ManualCapture, options.captureMode)
         assertTrue(options.allowGalleryUpload)
-        assertEquals(false, documentOptionsFor(snapshotOf(UseSmileIDSampleIdDetails())).allowGalleryUpload)
+        assertEquals(false, options.captureBothSides)
+        assertTrue(options.allowSkipBack)
+        val defaults = documentOptionsFor(snapshotOf(UseSmileIDSampleIdDetails()))
+        assertEquals(false, defaults.allowGalleryUpload)
+        assertTrue(defaults.captureBothSides)
+        assertEquals(false, defaults.allowSkipBack)
     }
 
     @Test

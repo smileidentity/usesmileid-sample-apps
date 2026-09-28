@@ -981,11 +981,11 @@
     ]
   },
   "captureAs": {
-    "rule": "How a chosen document and a 'Capture as' choice become DocumentCaptureConfig. The server always receives the document's code as idType; 'Capture as' changes only how the photo is taken.",
+    "rule": "How a 'Capture as' choice becomes DocumentCaptureConfig.documentType: each choice is the SDK's own type, and nothing is inferred from the API's format or has_back. The server always receives the document's code as idType; 'Capture as' changes only how the photo is taken. Whether a back is captured is the Settings switch, captureBothSides, which the SDK ANDs with the type's hasBackSide.",
     "cases": [
       {
-        "name": "Automatic, a two-sided card",
-        "captureAs": "automatic",
+        "name": "Generic document, untouched, is the SDK's GenericDocument defaults",
+        "captureAs": "genericDocument",
         "document": {
           "code": "IDENTITY_CARD",
           "name": "Identity Card",
@@ -994,47 +994,15 @@
         },
         "expected": {
           "documentType": "generic",
-          "displayName": "Identity Card",
+          "displayName": "Document",
           "hasBackSide": true,
-          "captureBothSides": true,
+          "orientation": "landscape",
           "idType": "IDENTITY_CARD"
         }
       },
       {
-        "name": "Automatic, a one-sided card is not asked for a back",
-        "captureAs": "automatic",
-        "document": {
-          "code": "ALIEN_CARD",
-          "name": "Alien ID",
-          "hasBack": false,
-          "format": 1
-        },
-        "expected": {
-          "documentType": "generic",
-          "displayName": "Alien ID",
-          "hasBackSide": false,
-          "captureBothSides": false,
-          "idType": "ALIEN_CARD"
-        }
-      },
-      {
-        "name": "Automatic, format 3 is the Passport preset with the API's has_back",
-        "captureAs": "automatic",
-        "document": {
-          "code": "PASSPORT",
-          "name": "Passport",
-          "hasBack": false,
-          "format": 3
-        },
-        "expected": {
-          "documentType": "passport",
-          "captureBothSides": false,
-          "idType": "PASSPORT"
-        }
-      },
-      {
-        "name": "Automatic, format 7 is the Green Book preset, submitting the parent code",
-        "captureAs": "automatic",
+        "name": "Nothing is inferred from the API: a Green Book row under Generic document stays generic, submitting the parent code",
+        "captureAs": "genericDocument",
         "document": {
           "code": "IDENTITY_CARD",
           "subType": "green_book",
@@ -1043,30 +1011,32 @@
           "format": 7
         },
         "expected": {
-          "documentType": "greenBook",
-          "captureBothSides": false,
+          "documentType": "generic",
+          "displayName": "Document",
+          "hasBackSide": true,
+          "orientation": "landscape",
           "idType": "IDENTITY_CARD"
         }
       },
       {
-        "name": "Automatic, an unknown format is a generic card",
-        "captureAs": "automatic",
+        "name": "Nothing is inferred from the API: a passport row under Generic document stays generic",
+        "captureAs": "genericDocument",
         "document": {
-          "code": "IDENTITY_CARD",
-          "name": "Identity Card",
-          "hasBack": true,
-          "format": 5
+          "code": "PASSPORT",
+          "name": "Passport",
+          "hasBack": false,
+          "format": 3
         },
         "expected": {
           "documentType": "generic",
-          "displayName": "Identity Card",
+          "displayName": "Document",
           "hasBackSide": true,
-          "captureBothSides": true,
-          "idType": "IDENTITY_CARD"
+          "orientation": "landscape",
+          "idType": "PASSPORT"
         }
       },
       {
-        "name": "Passport preset keeps the preset's own back side",
+        "name": "Passport preset, whatever the document",
         "captureAs": "passport",
         "document": {
           "code": "IDENTITY_CARD",
@@ -1076,12 +1046,11 @@
         },
         "expected": {
           "documentType": "passport",
-          "captureBothSides": "preset",
           "idType": "IDENTITY_CARD"
         }
       },
       {
-        "name": "Green Book preset keeps the preset's own back side",
+        "name": "Green Book preset, whatever the document",
         "captureAs": "greenBook",
         "document": {
           "code": "PASSPORT",
@@ -1091,7 +1060,6 @@
         },
         "expected": {
           "documentType": "greenBook",
-          "captureBothSides": "preset",
           "idType": "PASSPORT"
         }
       },
@@ -1116,7 +1084,6 @@
           "hasBackSide": true,
           "orientation": "portrait",
           "knownAspectRatio": 0.748,
-          "captureBothSides": true,
           "idType": "PASSPORT"
         }
       }

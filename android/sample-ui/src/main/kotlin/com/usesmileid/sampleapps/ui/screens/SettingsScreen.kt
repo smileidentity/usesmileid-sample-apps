@@ -214,6 +214,36 @@ fun SettingsScreen(
                 testId = UseSmileIDSampleTestIds.SETTING_GALLERY_UPLOAD,
                 onSettingChange = onSettingChange,
             )
+            UseSmileIDSampleSettingRowDivider()
+            SwitchRow(
+                title = "Capture the back side",
+                icon = R.drawable.sample_ic_document_verification,
+                supportingText = "Only for a document type that has one",
+                checked = state.settings.captureBothSides,
+                setting = UseSmileIDSampleSetting.CaptureBothSides,
+                testId = UseSmileIDSampleTestIds.SETTING_CAPTURE_BOTH_SIDES,
+                onSettingChange = onSettingChange,
+            )
+            UseSmileIDSampleSettingRowDivider()
+            SwitchRow(
+                title = "Skip the back",
+                icon = R.drawable.sample_ic_setting_instructions,
+                supportingText = "A Skip button on the back-side capture",
+                checked = state.settings.allowSkipBack,
+                setting = UseSmileIDSampleSetting.AllowSkipBack,
+                testId = UseSmileIDSampleTestIds.SETTING_ALLOW_SKIP_BACK,
+                onSettingChange = onSettingChange,
+            )
+            UseSmileIDSampleSettingRowDivider()
+            SwitchRow(
+                title = "Selfie first",
+                icon = R.drawable.sample_ic_setting_smile,
+                supportingText = "The selfie before the document",
+                checked = state.settings.selfieFirst,
+                setting = UseSmileIDSampleSetting.SelfieFirst,
+                testId = UseSmileIDSampleTestIds.SETTING_SELFIE_FIRST,
+                onSettingChange = onSettingChange,
+            )
         }
 
         // The design draws no control for the drawer, so this placement is ours, and debug-only.

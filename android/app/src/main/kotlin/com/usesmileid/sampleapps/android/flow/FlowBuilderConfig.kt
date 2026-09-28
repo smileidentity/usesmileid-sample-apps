@@ -175,9 +175,9 @@ private fun ScreensBuilder.journeyFor(snapshot: FlowLaunchSnapshot) {
                 captureType = CaptureType.DOCUMENT
                 document {
                     val options = documentOptionsFor(snapshot)
-                    documentType = options.capture.documentType
-                    captureBothSides = options.capture.captureBothSides
-                    allowSkipBack = true
+                    documentType = options.documentType
+                    captureBothSides = options.captureBothSides
+                    allowSkipBack = options.allowSkipBack
                     captureMode = options.captureMode
                     allowGalleryUpload = options.allowGalleryUpload
                 }
@@ -204,14 +204,14 @@ internal fun journeyStepsFor(snapshot: FlowLaunchSnapshot): List<FlowJourneyStep
     }
     if (snapshot.instructionsStep) add(FlowJourneyStep.Instructions)
     when (snapshot.product) {
-        UseSmileIDSampleProduct.DocumentVerification -> {
-            documentCapture(snapshot.previewStep)
-            selfieCapture(snapshot.previewStep)
-        }
-        UseSmileIDSampleProduct.EnhancedDocumentVerification -> {
-            selfieCapture(snapshot.previewStep)
-            documentCapture(snapshot.previewStep)
-        }
+        UseSmileIDSampleProduct.DocumentVerification, UseSmileIDSampleProduct.EnhancedDocumentVerification ->
+            if (snapshot.selfieFirst) {
+                selfieCapture(snapshot.previewStep)
+                documentCapture(snapshot.previewStep)
+            } else {
+                documentCapture(snapshot.previewStep)
+                selfieCapture(snapshot.previewStep)
+            }
         else -> selfieCapture(snapshot.previewStep)
     }
     add(FlowJourneyStep.Processing)
@@ -228,67 +228,45 @@ private fun MutableList<FlowJourneyStep>.documentCapture(preview: Boolean) {
     if (preview) add(FlowJourneyStep.Preview)
 }
 
-/** What the SDK is told to photograph; the server is told the document's code either way. */
-internal data class DocumentCapture(val documentType: DocumentType, val captureBothSides: Boolean)
-
 /** Everything the document capture step is handed, read from the snapshot so it can be tested without the SDK's builder. */
 internal data class DocumentOptions(
-    val capture: DocumentCapture,
+    val documentType: DocumentType,
+    val captureBothSides: Boolean,
+    val allowSkipBack: Boolean,
     val captureMode: DocumentCaptureMode,
     val allowGalleryUpload: Boolean,
 )
 
 internal fun documentOptionsFor(snapshot: FlowLaunchSnapshot): DocumentOptions = DocumentOptions(
-    capture = documentCaptureFor(snapshot.idDetails),
+    documentType = documentTypeFor(snapshot.idDetails),
+    captureBothSides = snapshot.captureBothSides,
+    allowSkipBack = snapshot.allowSkipBack,
     captureMode = snapshot.captureMode.toSdk(),
     allowGalleryUpload = snapshot.galleryUpload,
 )
 
-/** The "Capture as" mapping from `spec/catalogue-rules.json` captureAs. Pure, so its table is unit-tested. */
-internal fun documentCaptureFor(details: UseSmileIDSampleIdDetails): DocumentCapture {
-    val document = details.document
-    return when (details.captureAs) {
-        UseSmileIDSampleCaptureAs.GreenBook -> preset(DocumentType.SouthAfricaGreenBook)
-        UseSmileIDSampleCaptureAs.Passport -> preset(DocumentType.Passport)
-        UseSmileIDSampleCaptureAs.GenericDocument -> with(details.genericDocument) {
-            preset(
-                DocumentType.GenericDocument(
-                    displayName = displayName,
-                    hasBackSide = hasBackSide,
-                    orientation = when (orientation) {
-                        UseSmileIDSampleDocumentOrientation.Landscape -> DocumentOrientation.Landscape
-                        UseSmileIDSampleDocumentOrientation.Portrait -> DocumentOrientation.Portrait
-                    },
-                    knownAspectRatio = aspectRatio.ratio,
-                ),
-            )
-        }
-        // The API's has_back, not a preset's: the API is the source that says what the document is.
-        UseSmileIDSampleCaptureAs.Automatic -> DocumentCapture(
-            documentType = when (document?.format) {
-                FORMAT_GREEN_BOOK -> DocumentType.SouthAfricaGreenBook
-                FORMAT_BOOKLET -> DocumentType.Passport
-                else -> DocumentType.GenericDocument(
-                    displayName = document?.name ?: "Document",
-                    hasBackSide = document?.hasBack ?: true,
-                )
+/** The "Capture as" mapping from `spec/catalogue-rules.json` captureAs: the SDK's own type, nothing read from the API. */
+internal fun documentTypeFor(details: UseSmileIDSampleIdDetails): DocumentType = when (details.captureAs) {
+    UseSmileIDSampleCaptureAs.GreenBook -> DocumentType.SouthAfricaGreenBook
+    UseSmileIDSampleCaptureAs.Passport -> DocumentType.Passport
+    UseSmileIDSampleCaptureAs.GenericDocument -> with(details.genericDocument) {
+        DocumentType.GenericDocument(
+            displayName = displayName,
+            hasBackSide = hasBackSide,
+            orientation = when (orientation) {
+                UseSmileIDSampleDocumentOrientation.Landscape -> DocumentOrientation.Landscape
+                UseSmileIDSampleDocumentOrientation.Portrait -> DocumentOrientation.Portrait
             },
-            captureBothSides = document?.hasBack ?: true,
+            knownAspectRatio = aspectRatio.ratio,
         )
     }
 }
-
-private fun preset(type: DocumentType) = DocumentCapture(type, captureBothSides = type.hasBackSide)
 
 internal fun UseSmileIDSampleCaptureMode.toSdk(): DocumentCaptureMode = when (this) {
     UseSmileIDSampleCaptureMode.Auto -> DocumentCaptureMode.AutoCapture
     UseSmileIDSampleCaptureMode.Manual -> DocumentCaptureMode.ManualCapture
     UseSmileIDSampleCaptureMode.AutoWithFallback -> DocumentCaptureMode.AutoCaptureWithManualFallback()
 }
-
-// The API's undocumented `format`: 3 is a passport or seaman's booklet, 7 the Green Book; the rest are cards.
-private const val FORMAT_BOOKLET = 3
-private const val FORMAT_GREEN_BOOK = 7
 
 private val UseSmileIDSampleProduct.jobType: JobType
     get() = when (this) {

@@ -99,7 +99,7 @@ class CatalogueGoldenTest : GoldenTest() {
 
     @Test
     fun capture_as_sheet() = goldens("sheet_capture_as", fullWindow = true) {
-        CaptureAsSheet(selected = UseSmileIDSampleCaptureAs.Automatic, onSelect = {}, onDismissRequest = {})
+        CaptureAsSheet(selected = UseSmileIDSampleCaptureAs.GenericDocument, onSelect = {}, onDismissRequest = {})
     }
 
     @Test

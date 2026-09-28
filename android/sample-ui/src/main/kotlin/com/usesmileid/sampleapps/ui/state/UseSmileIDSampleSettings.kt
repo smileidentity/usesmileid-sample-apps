@@ -19,10 +19,16 @@ data class UseSmileIDSampleSettings(
     val previewStep: Boolean = true,
     /** DocumentCaptureConfig.allowGalleryUpload; off, as the SDK defaults it. */
     val galleryUpload: Boolean = false,
+    /** DocumentCaptureConfig.captureBothSides; on, as the SDK defaults it. */
+    val captureBothSides: Boolean = true,
+    /** DocumentCaptureConfig.allowSkipBack; off, as the SDK defaults it. */
+    val allowSkipBack: Boolean = false,
+    /** The document products capture the selfie before the document. */
+    val selfieFirst: Boolean = false,
     /** A typed field rather than one of the switches: three values, not two. */
     val captureMode: UseSmileIDSampleCaptureMode = UseSmileIDSampleCaptureMode.AutoWithFallback,
 ) {
-    /** Reads one row, so a caller can diff two states without naming six fields. */
+    /** Reads one row, so a caller can diff two states without naming every field. */
     operator fun get(setting: UseSmileIDSampleSetting): Boolean = when (setting) {
         UseSmileIDSampleSetting.EnhancedSmartSelfie -> enhancedSmartSelfie
         UseSmileIDSampleSetting.AgentMode -> agentMode
@@ -31,6 +37,9 @@ data class UseSmileIDSampleSettings(
         UseSmileIDSampleSetting.InstructionsStep -> instructionsStep
         UseSmileIDSampleSetting.PreviewStep -> previewStep
         UseSmileIDSampleSetting.GalleryUpload -> galleryUpload
+        UseSmileIDSampleSetting.CaptureBothSides -> captureBothSides
+        UseSmileIDSampleSetting.AllowSkipBack -> allowSkipBack
+        UseSmileIDSampleSetting.SelfieFirst -> selfieFirst
     }
 
     /** Drops enhanced liveness where a stored state carries both, so the SDK is never handed the pair it refuses. */
@@ -49,6 +58,9 @@ data class UseSmileIDSampleSettings(
             UseSmileIDSampleSetting.InstructionsStep -> copy(instructionsStep = enabled)
             UseSmileIDSampleSetting.PreviewStep -> copy(previewStep = enabled)
             UseSmileIDSampleSetting.GalleryUpload -> copy(galleryUpload = enabled)
+            UseSmileIDSampleSetting.CaptureBothSides -> copy(captureBothSides = enabled)
+            UseSmileIDSampleSetting.AllowSkipBack -> copy(allowSkipBack = enabled)
+            UseSmileIDSampleSetting.SelfieFirst -> copy(selfieFirst = enabled)
         }
 }
 
@@ -61,6 +73,9 @@ enum class UseSmileIDSampleSetting {
     InstructionsStep,
     PreviewStep,
     GalleryUpload,
+    CaptureBothSides,
+    AllowSkipBack,
+    SelfieFirst,
 }
 
 /** DocumentCaptureConfig.captureMode, in `spec/test-ids.json`'s vocabulary. */

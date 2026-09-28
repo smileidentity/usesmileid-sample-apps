@@ -39,12 +39,11 @@ data class UseSmileIDSampleDocument(
     val id: String get() = subType?.let { "${code}_$it" } ?: code
 }
 
-/** How the SDK photographs the chosen document; never what the server receives. */
+/** How the SDK photographs the chosen document, each the SDK's own type; never what the server receives. */
 enum class UseSmileIDSampleCaptureAs(val id: String, val label: String) {
-    Automatic("automatic", "Automatic"),
+    GenericDocument("genericDocument", "Generic document"),
     GreenBook("greenBook", "Green Book preset"),
     Passport("passport", "Passport preset"),
-    GenericDocument("genericDocument", "Generic document"),
 }
 
 enum class UseSmileIDSampleDocumentOrientation(val id: String, val label: String) {
@@ -75,7 +74,7 @@ data class UseSmileIDSampleIdDetails(
     val country: UseSmileIDSampleCountry? = null,
     val idType: UseSmileIDSampleKycIdType? = null,
     val document: UseSmileIDSampleDocument? = null,
-    val captureAs: UseSmileIDSampleCaptureAs = UseSmileIDSampleCaptureAs.Automatic,
+    val captureAs: UseSmileIDSampleCaptureAs = UseSmileIDSampleCaptureAs.GenericDocument,
     val genericDocument: UseSmileIDSampleGenericDocument = UseSmileIDSampleGenericDocument(),
     val idNumber: String = "",
 ) {
