@@ -116,8 +116,6 @@ class UseSmileIDSampleStore(
             consentStep = prefs[CONSENT_STEP] ?: defaults.consentStep,
             instructionsStep = prefs[INSTRUCTIONS_STEP] ?: defaults.instructionsStep,
             previewStep = prefs[PREVIEW_STEP] ?: defaults.previewStep,
-            customContinue = prefs[CUSTOM_CONTINUE] ?: defaults.customContinue,
-            customCancel = prefs[CUSTOM_CANCEL] ?: defaults.customCancel,
             galleryUpload = prefs[GALLERY_UPLOAD] ?: defaults.galleryUpload,
             captureMode = UseSmileIDSampleCaptureMode.entries.firstOrNull { it.id == prefs[CAPTURE_MODE] }
                 ?: defaults.captureMode,
@@ -131,8 +129,6 @@ class UseSmileIDSampleStore(
         UseSmileIDSampleSetting.ConsentStep -> CONSENT_STEP
         UseSmileIDSampleSetting.InstructionsStep -> INSTRUCTIONS_STEP
         UseSmileIDSampleSetting.PreviewStep -> PREVIEW_STEP
-        UseSmileIDSampleSetting.CustomContinue -> CUSTOM_CONTINUE
-        UseSmileIDSampleSetting.CustomCancel -> CUSTOM_CANCEL
         UseSmileIDSampleSetting.GalleryUpload -> GALLERY_UPLOAD
     }
 
@@ -144,8 +140,6 @@ class UseSmileIDSampleStore(
         val CONSENT_STEP = booleanPreferencesKey("consent_step")
         val INSTRUCTIONS_STEP = booleanPreferencesKey("instructions_step")
         val PREVIEW_STEP = booleanPreferencesKey("preview_step")
-        val CUSTOM_CONTINUE = booleanPreferencesKey("custom_continue")
-        val CUSTOM_CANCEL = booleanPreferencesKey("custom_cancel")
         val GALLERY_UPLOAD = booleanPreferencesKey("gallery_upload")
         val CAPTURE_MODE = stringPreferencesKey("capture_mode")
         val SESSION_TOKEN = stringPreferencesKey("token_session_token")

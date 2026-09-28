@@ -587,7 +587,6 @@
         "APPEARANCE",
         "SDK SCREENS — SHOW OR SKIP FLOW STEPS",
         "DOCUMENT CAPTURE (two rows: Capture mode, Gallery upload; placed by the sample, the design draws no such section)",
-        "CUSTOM BUTTONS — REPLACE THE SDK'S BUTTONS (two rows: Custom continue, Custom cancel; placed by the sample, the design draws no such section)",
         "ABOUT",
         "LEGAL",
         "sign out",
@@ -611,8 +610,6 @@
         "sample_setting_preview_step",
         "sample_setting_capture_mode",
         "sample_setting_gallery_upload",
-        "sample_setting_custom_continue",
-        "sample_setting_custom_cancel",
         "sample_sign_out",
         "sample_sign_out_confirm"
       ],

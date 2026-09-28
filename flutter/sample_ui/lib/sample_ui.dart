@@ -5,7 +5,6 @@ export 'src/components/use_smileid_sample_avatar.dart';
 export 'src/components/use_smileid_sample_bottom_sheet.dart';
 export 'src/components/use_smileid_sample_button.dart';
 export 'src/components/use_smileid_sample_confirm_dialog.dart';
-export 'src/components/use_smileid_sample_custom_button.dart';
 export 'src/components/use_smileid_sample_data_field_row.dart';
 export 'src/components/use_smileid_sample_date_group_header.dart';
 export 'src/components/use_smileid_sample_empty_state.dart';

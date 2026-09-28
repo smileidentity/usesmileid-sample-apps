@@ -33,12 +33,6 @@ abstract final class UseSmileIDSampleSettingsKeys {
   /// Whether the flow includes the SDK's preview step.
   static const String previewStep = 'preview_step';
 
-  /// Whether the SDK's continue buttons are the sample's.
-  static const String customContinue = 'custom_continue';
-
-  /// Whether the SDK's cancel buttons are the sample's.
-  static const String customCancel = 'custom_cancel';
-
   /// The key one switch is stored under.
   static String of(UseSmileIDSampleSetting setting) => switch (setting) {
     UseSmileIDSampleSetting.enhancedSmartSelfie => enhancedSmartSelfie,
@@ -47,8 +41,6 @@ abstract final class UseSmileIDSampleSettingsKeys {
     UseSmileIDSampleSetting.consentStep => consentStep,
     UseSmileIDSampleSetting.instructionsStep => instructionsStep,
     UseSmileIDSampleSetting.previewStep => previewStep,
-    UseSmileIDSampleSetting.customContinue => customContinue,
-    UseSmileIDSampleSetting.customCancel => customCancel,
   };
 }
 

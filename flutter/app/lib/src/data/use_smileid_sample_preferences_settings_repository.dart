@@ -48,14 +48,6 @@ class UseSmileIDSamplePreferencesSettingsRepository
         UseSmileIDSampleSettingsKeys.previewStep,
         defaults.previewStep,
       ),
-      customContinue: stored(
-        UseSmileIDSampleSettingsKeys.customContinue,
-        defaults.customContinue,
-      ),
-      customCancel: stored(
-        UseSmileIDSampleSettingsKeys.customCancel,
-        defaults.customCancel,
-      ),
     ).normalised();
   }
 

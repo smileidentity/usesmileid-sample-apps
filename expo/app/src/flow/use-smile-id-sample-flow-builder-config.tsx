@@ -1,8 +1,6 @@
 import {
   UseSmileIDSampleIcon,
   smileIDSampleThemeOverride,
-  useSmileIDSampleCustomCancelSlot,
-  useSmileIDSampleCustomContinueSlot,
   useSmileIDSampleTheme,
 } from '@smileid/sample-ui';
 import {
@@ -15,8 +13,6 @@ import {
   type ConfigBuilder,
   type ConsentConfigBuilder,
   type DocumentCaptureConfigBuilder,
-  type InstructionsConfigBuilder,
-  type ProcessingConfigBuilder,
   type ScreensBuilder,
   type SelfieCaptureConfigBuilder,
   type ThemeConfigBuilder,
@@ -149,14 +145,10 @@ const journeyFor = (screens: ScreensBuilder, snapshot: UseSmileIDSampleFlowLaunc
           // Omitting it fails the build while validate() still reports valid, so no gate catches it.
           consent.partnerIcon = <PartnerMark />;
           consent.partnerPrivacyPolicyUrl = privacyPolicyUrl;
-          if (snapshot.customContinue) consent.allowButton = useSmileIDSampleCustomContinueSlot;
-          if (snapshot.customCancel) consent.denyButton = useSmileIDSampleCustomCancelSlot;
         });
         break;
       case 'instructions':
-        screens.instructions((instructions: InstructionsConfigBuilder) => {
-          if (snapshot.customContinue) instructions.continueButton = useSmileIDSampleCustomContinueSlot;
-        });
+        screens.instructions();
         break;
       case 'selfieCapture':
         screens.capture((capture: CaptureConfigBuilder) => {
@@ -180,12 +172,8 @@ const journeyFor = (screens: ScreensBuilder, snapshot: UseSmileIDSampleFlowLaunc
       case 'preview':
         screens.preview();
         break;
-      // Retry is neither continue nor cancel, so it stays the SDK's (spec/components.json).
       case 'processing':
-        screens.processing((processing: ProcessingConfigBuilder) => {
-          if (snapshot.customContinue) processing.continueButton = useSmileIDSampleCustomContinueSlot;
-          if (snapshot.customCancel) processing.exitButton = useSmileIDSampleCustomCancelSlot;
-        });
+        screens.processing();
         break;
     }
   }

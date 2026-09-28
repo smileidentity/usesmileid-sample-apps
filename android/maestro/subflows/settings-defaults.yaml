@@ -88,32 +88,6 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_setting_gallery_upload"
     checked: false
-# The custom-button rows sit below the first screen, so they are scrolled to before they are read.
-- scrollUntilVisible:
-    element:
-      id: "sample_setting_custom_cancel"
-- runFlow:
-    when:
-      visible:
-        id: "sample_setting_custom_continue"
-        checked: true
-    commands:
-      - tapOn:
-          id: "sample_setting_custom_continue"
-- runFlow:
-    when:
-      visible:
-        id: "sample_setting_custom_cancel"
-        checked: true
-    commands:
-      - tapOn:
-          id: "sample_setting_custom_cancel"
-- assertVisible:
-    id: "sample_setting_custom_continue"
-    checked: false
-- assertVisible:
-    id: "sample_setting_custom_cancel"
-    checked: false
 # Back to the top, where the flows that follow expect the list.
 - scrollUntilVisible:
     element:

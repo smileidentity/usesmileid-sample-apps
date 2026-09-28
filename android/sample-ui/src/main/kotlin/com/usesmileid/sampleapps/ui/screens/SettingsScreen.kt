@@ -216,29 +216,6 @@ fun SettingsScreen(
             )
         }
 
-        // The design draws no such section, so this placement is ours, like DEBUG's.
-        section(CUSTOM_BUTTONS_SECTION) {
-            SwitchRow(
-                title = "Custom continue",
-                icon = R.drawable.sample_ic_custom_continue,
-                supportingText = "Replaces the SDK's continue buttons",
-                checked = state.settings.customContinue,
-                setting = UseSmileIDSampleSetting.CustomContinue,
-                testId = UseSmileIDSampleTestIds.SETTING_CUSTOM_CONTINUE,
-                onSettingChange = onSettingChange,
-            )
-            UseSmileIDSampleSettingRowDivider()
-            SwitchRow(
-                title = "Custom cancel",
-                icon = R.drawable.sample_ic_arrow_back,
-                supportingText = "Replaces the SDK's cancel buttons",
-                checked = state.settings.customCancel,
-                setting = UseSmileIDSampleSetting.CustomCancel,
-                testId = UseSmileIDSampleTestIds.SETTING_CUSTOM_CANCEL,
-                onSettingChange = onSettingChange,
-            )
-        }
-
         // The design draws no control for the drawer, so this placement is ours, and debug-only.
         if (onOpenScenarioDrawer != null) {
             section("DEBUG") {
@@ -356,9 +333,6 @@ private fun NavRow(row: UseSmileIDSampleNavRow, onClick: (UseSmileIDSampleNavRow
 
 /** The document-capture section's label, which the design does not draw. */
 internal const val DOCUMENT_CAPTURE_SECTION = "DOCUMENT CAPTURE"
-
-/** The custom-buttons section's label, which the design does not draw. */
-internal const val CUSTOM_BUTTONS_SECTION = "CUSTOM BUTTONS — REPLACE THE SDK'S BUTTONS"
 
 // The design marks the trademark here and nowhere else on this screen (node 5206:2898).
 private const val ENHANCED_SMART_SELFIE_TITLE = "Enhanced SmartSelfie\u2122"

@@ -56,8 +56,6 @@ const snapshot = (overrides: Partial<UseSmileIDSampleFlowLaunchSnapshot> = {}): 
   consentStep: true,
   instructionsStep: true,
   previewStep: true,
-  customContinue: false,
-  customCancel: false,
   userId: 'user_1',
   partnerId: 'p-1',
   partnerName: 'Kobo Bank',

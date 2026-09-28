@@ -17,16 +17,12 @@ data class UseSmileIDSampleSettings(
     val consentStep: Boolean = true,
     val instructionsStep: Boolean = true,
     val previewStep: Boolean = true,
-    /** The SDK's continue buttons (consent allow, instructions, processing continue) become "Custom continue". */
-    val customContinue: Boolean = false,
-    /** The SDK's cancel buttons (consent deny, processing exit) become "Custom cancel". */
-    val customCancel: Boolean = false,
     /** DocumentCaptureConfig.allowGalleryUpload; off, as the SDK defaults it. */
     val galleryUpload: Boolean = false,
     /** A typed field rather than one of the switches: three values, not two. */
     val captureMode: UseSmileIDSampleCaptureMode = UseSmileIDSampleCaptureMode.AutoWithFallback,
 ) {
-    /** Reads one row, so a caller can diff two states without naming eight fields. */
+    /** Reads one row, so a caller can diff two states without naming six fields. */
     operator fun get(setting: UseSmileIDSampleSetting): Boolean = when (setting) {
         UseSmileIDSampleSetting.EnhancedSmartSelfie -> enhancedSmartSelfie
         UseSmileIDSampleSetting.AgentMode -> agentMode
@@ -34,8 +30,6 @@ data class UseSmileIDSampleSettings(
         UseSmileIDSampleSetting.ConsentStep -> consentStep
         UseSmileIDSampleSetting.InstructionsStep -> instructionsStep
         UseSmileIDSampleSetting.PreviewStep -> previewStep
-        UseSmileIDSampleSetting.CustomContinue -> customContinue
-        UseSmileIDSampleSetting.CustomCancel -> customCancel
         UseSmileIDSampleSetting.GalleryUpload -> galleryUpload
     }
 
@@ -54,13 +48,11 @@ data class UseSmileIDSampleSettings(
             UseSmileIDSampleSetting.ConsentStep -> copy(consentStep = enabled)
             UseSmileIDSampleSetting.InstructionsStep -> copy(instructionsStep = enabled)
             UseSmileIDSampleSetting.PreviewStep -> copy(previewStep = enabled)
-            UseSmileIDSampleSetting.CustomContinue -> copy(customContinue = enabled)
-            UseSmileIDSampleSetting.CustomCancel -> copy(customCancel = enabled)
             UseSmileIDSampleSetting.GalleryUpload -> copy(galleryUpload = enabled)
         }
 }
 
-/** Which settings row a toggle belongs to, so the screen can report changes without eight callbacks. */
+/** Which settings row a toggle belongs to, so the screen can report changes without six callbacks. */
 enum class UseSmileIDSampleSetting {
     EnhancedSmartSelfie,
     AgentMode,
@@ -68,8 +60,6 @@ enum class UseSmileIDSampleSetting {
     ConsentStep,
     InstructionsStep,
     PreviewStep,
-    CustomContinue,
-    CustomCancel,
     GalleryUpload,
 }
 

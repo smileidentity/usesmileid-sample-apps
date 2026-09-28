@@ -1,14 +1,6 @@
 export { UseSmileIDSampleAvatar, avatarColorForProfile } from './components/use-smile-id-sample-avatar';
 export { smileIDSampleConfirm } from './components/use-smile-id-sample-confirmation';
 export { UseSmileIDSampleButton } from './components/use-smile-id-sample-button';
-export {
-  CUSTOM_CANCEL_LABEL,
-  CUSTOM_CONTINUE_LABEL,
-  UseSmileIDSampleCustomCancelButton,
-  UseSmileIDSampleCustomContinueButton,
-  useSmileIDSampleCustomCancelSlot,
-  useSmileIDSampleCustomContinueSlot,
-} from './components/use-smile-id-sample-custom-button';
 export { UseSmileIDSampleSearchField } from './components/use-smile-id-sample-search-field';
 export { UseSmileIDSampleSectionLabel } from './components/use-smile-id-sample-section-label';
 export { UseSmileIDSampleStatusBadge } from './components/use-smile-id-sample-status-badge';

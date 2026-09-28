@@ -69,19 +69,6 @@ class UseSmileIDSampleSettingsPersistenceTest {
         assertNull(prefs.data.first()[PREVIEW_STEP])
     }
 
-    @Test
-    fun `the custom button rows persist under their own keys, and read back`() = runTest {
-        store.setSetting(UseSmileIDSampleSetting.CustomContinue, true)
-        store.setSetting(UseSmileIDSampleSetting.CustomCancel, true)
-
-        val written = prefs.data.first()
-        assertEquals(true, written[CUSTOM_CONTINUE])
-        assertEquals(true, written[CUSTOM_CANCEL])
-        val settings = store.settings.first()
-        assertTrue(settings.customContinue)
-        assertTrue(settings.customCancel)
-    }
-
     /** Preferences predate the mutex, so a stored pair has to be corrected on read. */
     @Test
     fun `a stored pair the SDK refuses is normalised on read`() = runTest {
@@ -100,7 +87,5 @@ class UseSmileIDSampleSettingsPersistenceTest {
         val AGENT_MODE = booleanPreferencesKey("agent_mode")
         val CONSENT_STEP = booleanPreferencesKey("consent_step")
         val PREVIEW_STEP = booleanPreferencesKey("preview_step")
-        val CUSTOM_CONTINUE = booleanPreferencesKey("custom_continue")
-        val CUSTOM_CANCEL = booleanPreferencesKey("custom_cancel")
     }
 }

@@ -16,9 +16,6 @@ const identicalOnPurpose: Record<string, string> = {
   'Avatar/row_size': 'same as Avatar/initials, at the size the profile row passes',
   'Button/disabled':
     'button.disabled.background points at a primitive so it cannot re-resolve for dark — the buttonDisabledBypassesSemanticTier delta',
-  'CustomButton/continueDisabled': 'it is the primary button disabled, so it inherits the Button/disabled note',
-  'CustomButton/cancelDisabled':
-    'its border and label are the button.disabled pair — the buttonDisabledBypassesSemanticTier delta',
   'SectionLabel/default': 'color.text.muted is the same grey in both schemes — the darkMuted delta',
   'StatusBadge/clear': 'the soft badge fills are specified as one pair per role, not per scheme',
   'StatusBadge/attention': 'the soft badge fills are specified as one pair per role, not per scheme',
@@ -46,7 +43,7 @@ const snapshotFiles = [
   'use-smile-id-sample-profiles-screens.test.tsx.snap',
 ];
 
-const expectedStates = 141;
+const expectedStates = 136;
 
 const readPairs = () => {
   const pairs = new Map<string, { light?: string; dark?: string }>();

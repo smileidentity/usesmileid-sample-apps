@@ -1,4 +1,4 @@
-/// Which settings row a toggle belongs to, so the screen can report changes without eight callbacks.
+/// Which settings row a toggle belongs to, so the screen can report changes without six callbacks.
 export const UseSmileIDSampleSetting = {
   EnhancedSmartSelfie: 'enhancedSmartSelfie',
   AgentMode: 'agentMode',
@@ -6,14 +6,12 @@ export const UseSmileIDSampleSetting = {
   ConsentStep: 'consentStep',
   InstructionsStep: 'instructionsStep',
   PreviewStep: 'previewStep',
-  CustomContinue: 'customContinue',
-  CustomCancel: 'customCancel',
 } as const;
 
 export type UseSmileIDSampleSetting =
   (typeof UseSmileIDSampleSetting)[keyof typeof UseSmileIDSampleSetting];
 
-/// The eight rows in the order Settings draws them, which the spec test compares against test-ids.json.
+/// The six rows in the order Settings draws them, which the spec test compares against test-ids.json.
 export const smileIDSampleSettings: readonly UseSmileIDSampleSetting[] = [
   UseSmileIDSampleSetting.EnhancedSmartSelfie,
   UseSmileIDSampleSetting.AgentMode,
@@ -21,6 +19,4 @@ export const smileIDSampleSettings: readonly UseSmileIDSampleSetting[] = [
   UseSmileIDSampleSetting.ConsentStep,
   UseSmileIDSampleSetting.InstructionsStep,
   UseSmileIDSampleSetting.PreviewStep,
-  UseSmileIDSampleSetting.CustomContinue,
-  UseSmileIDSampleSetting.CustomCancel,
 ];

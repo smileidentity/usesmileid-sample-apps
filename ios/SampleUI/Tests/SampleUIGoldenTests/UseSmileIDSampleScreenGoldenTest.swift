@@ -54,13 +54,6 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     }
   }
 
-  /// Both custom buttons on, so the section's switches are recorded ON.
-  func testSettingsCustomButtons() {
-    goldens("settings_custom_buttons") {
-      settings(UseSmileIDSampleSettings(customContinue: true, customCancel: true))
-    }
-  }
-
   /// A second seeded profile active: the PROFILE row is the only thing the frame changes.
   func testSettingsAltProfile() {
     goldens("settings_alt_profile") {

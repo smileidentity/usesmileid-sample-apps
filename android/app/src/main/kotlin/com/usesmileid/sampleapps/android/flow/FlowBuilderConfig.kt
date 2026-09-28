@@ -16,8 +16,6 @@ import com.usesmileid.presentation.flow.config.EnhancedKYCParams
 import com.usesmileid.presentation.flow.dsl.ScreensBuilder
 import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.sampleapps.android.BuildConfig
-import com.usesmileid.sampleapps.ui.components.useSmileIDSampleCustomCancelSlot
-import com.usesmileid.sampleapps.ui.components.useSmileIDSampleCustomContinueSlot
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.presentation.flow.config.DocumentCaptureMode
@@ -159,12 +157,8 @@ private fun ScreensBuilder.journeyFor(snapshot: FlowLaunchSnapshot) {
                 // Omitting it fails build() while validate() still reports Valid.
                 partnerIcon = SampleUiR.drawable.sample_ic_product_mark
                 partnerPrivacyPolicyUrl = PRIVACY_POLICY_URL
-                if (snapshot.customContinue) allowButton = useSmileIDSampleCustomContinueSlot
-                if (snapshot.customCancel) denyButton = useSmileIDSampleCustomCancelSlot
             }
-            FlowJourneyStep.Instructions -> instructions {
-                if (snapshot.customContinue) continueButton = useSmileIDSampleCustomContinueSlot
-            }
+            FlowJourneyStep.Instructions -> instructions { }
             FlowJourneyStep.SelfieCapture -> capture {
                 captureType = CaptureType.SELFIE
                 selfie {
@@ -184,11 +178,7 @@ private fun ScreensBuilder.journeyFor(snapshot: FlowLaunchSnapshot) {
                 }
             }
             FlowJourneyStep.Preview -> preview { }
-            // Retry is neither continue nor cancel, so it stays the SDK's (spec/components.json).
-            FlowJourneyStep.Processing -> processing {
-                if (snapshot.customContinue) continueButton = useSmileIDSampleCustomContinueSlot
-                if (snapshot.customCancel) exitButton = useSmileIDSampleCustomCancelSlot
-            }
+            FlowJourneyStep.Processing -> processing { }
         }
     }
 }

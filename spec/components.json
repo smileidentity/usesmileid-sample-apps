@@ -1012,34 +1012,6 @@
       "notes": "Required by spec/result-card.schema.json and not present in the design set. It is the evidence channel automation asserts on. Placement still needs a design decision — see openItems in spec/README.md; built on the honest default, which Android implemented on 2026-08-14: a collapsible panel on verification details, plus a compact line on products while a job is in flight. Two decisions a port must copy rather than re-take. It defaults to expanded, because a collapsed field is absent from the accessibility tree and every flow would otherwise have to tap the card open before asserting on anything. And it renders on verification details whether or not the job resolved, because a flow that failed before submission has no job to show and that is exactly when its error and counts are the only evidence there is. A null field renders as an em dash, which flows assert on to prove a value was absent. It gained a required `environment` field on 2026-08-24: with the chip hidden and the Settings row gone, it is the only surface saying where a run submitted."
     },
     {
-      "name": "CustomButton",
-      "tier": "composite",
-      "owner": "sample",
-      "dsContract": "components/button.md",
-      "tokens": [
-        "button.primary.background",
-        "button.primary.text",
-        "button.radius",
-        "button.height",
-        "button.font",
-        "button.disabled.background",
-        "button.disabled.text",
-        "border-width.thin"
-      ],
-      "variants": [
-        "continue",
-        "cancel"
-      ],
-      "states": [
-        "enabled",
-        "disabled"
-      ],
-      "usedBy": [
-        "sdkFlow (the SDK's continue and cancel button slots)"
-      ],
-      "notes": "The sample's own buttons, labelled 'Custom continue' and 'Custom cancel', which the flow builder hands to the SDK's button slots while the matching Settings switch is on (see settingsToSdkMapping). Continue is the Button; cancel is its outlined twin, its border and label in the primary background. Both take the slot scope's onClick and enabled, so the SDK's gating still holds. The design draws neither: they exist so a demo shows a partner's buttons in the SDK's place."
-    },
-    {
       "name": "ScenarioDrawer",
       "tier": "composite",
       "owner": "sample",
@@ -1124,8 +1096,6 @@
     "Consent screen": "include or omit consent() in the flow builder — there is NO showConsent boolean",
     "Instruction screen": "include or omit instructions() in the flow builder",
     "Preview screen": "include or omit preview() in the flow builder (allowRetake configures it once present)",
-    "Custom continue": "ON → the builder hands the sample's 'Custom continue' button (sample_custom_continue) to every slot that moves the flow forward: consent `allowButton`, instructions `continueButton` and processing `continueButton`. OFF → those slots keep the SDK's defaults. A slot is set only on a screen the journey includes. The button calls the slot scope's `onClick` and honours its `enabled`, so the SDK's own gating still holds. It exists to show a partner, live, that the SDK's buttons are theirs to replace.",
-    "Custom cancel": "ON → the builder hands the sample's 'Custom cancel' button (sample_custom_cancel) to every slot that leaves the flow: consent `denyButton` and processing `exitButton`. OFF → the SDK's defaults. Processing's `retryButton` is neither continue nor cancel, so it always stays the SDK's.",
     "Enhanced SmartSelfie™": "ON → `SelfieCaptureConfig.enableEnhancedLiveness = true` (the head-turn challenge); OFF → `false` (passive smile capture). Direct, not inverted, and ON by default for every product. SUPERSEDED the 2026-08-13 decision on 2026-08-25: that named the row 'Smile to capture' and had ON mean `enableEnhancedLiveness = false`, and node 5206:2898 renamed the row and drew it ON, which inverted both the label and the meaning. It and Agent mode write different fields and they CAN fight — the SDK refuses the pair with BUILDER_AGENT_MODE_WITH_ENHANCED_LIVENESS at ERROR severity — so each platform holds a mutex where it persists settings: turning either on turns the other off. The screen is the wrong place for it, because both persistence paths have to inherit the same rule.",
     "Capture mode": "DocumentCaptureConfig.captureMode: auto → DocumentCaptureMode.AutoCapture (wire `auto_capture_only`), manual → ManualCapture (`manual`), autoWithFallback → AutoCaptureWithManualFallback with the SDK's 10 seconds (`autocapture_default`), the default. A typed field of its own, not one of the true/false settings.",
     "Gallery upload": "DocumentCaptureConfig.allowGalleryUpload = true. OFF by default, the SDK's default. Every platform's picker is the system one, which asks for no runtime permission; the iOS targets already declare NSPhotoLibraryUsageDescription."
@@ -1133,7 +1103,7 @@
   "buildOrder": [
     "1. Tokens: generate the platform token source and wire light/dark (nothing else can start).",
     "2. Primitives: Avatar, Button, TextInput, SearchField, Switch, StatusBadge, SectionLabel, Toast.",
-    "3. Composites, cheapest first: TopAppBar, DataFieldRow, KeyValueEditRow, SettingRow, ProfileRow, OptionRow, SelectTrigger, BottomSheet, FilterChip, DateGroupHeader, JobRow, SelectionCheckbox, SelectionBar, CustomButton.",
+    "3. Composites, cheapest first: TopAppBar, DataFieldRow, KeyValueEditRow, SettingRow, ProfileRow, OptionRow, SelectTrigger, BottomSheet, FilterChip, DateGroupHeader, JobRow, SelectionCheckbox, SelectionBar.",
     "4. Screen-specific composites: ProductCard, ProductGrid, SectionHeader, ProfileEnvChip, NavBar, TokenRing, SessionCard, SessionEndedBanner, FloatingTokenButton, ScanGlyph, ScanSheet, SwipeAction.",
     "5. Screens, in this order — settings, products, verifications, verificationDetails, userDetails, kycIdForm, pickers, profiles/profileConfig/newProfile, scanToken. Settings first because it drives every other screen's configuration, and products second because it is the entry point every flow starts from.",
     "6. ResultCard and the automation affordances (launch arguments, deep link) once screens exist."
@@ -1174,6 +1144,6 @@
     "androidU2ScreenSpecific": "The twelve screen-specific composites were built on Android 2026-08-13 against the products, token-session and Scan token nodes. NavBar extends the component PR #2 landed rather than replacing it, and TokenRing is the ring it now carries. Product and profile hues stay on the token palette in order until the designer's hue list lands; Enhanced KYC has no icon yet and uses the shared product mark."
   },
   "conventions": {
-    "iconFamilies": "TWO icon families, deliberately not interchangeable. (1) THE DESIGN'S OWN, stroke-based (Lucide/Feather; 1.583 stroke at 19px, 1.167 at 14px, round caps): the six product marks, the three tab marks, the token scan mark, the two arrows, the down chevron, the right chevron, and ALL THIRTEEN settings-row icons — the Custom continue row's is custom_continue.svg, arrow_back mirrored, because the design's only forward arrow is the product card's filled glyph. Sources live in design/icons/ as SVG and every platform converts from those files — never re-export per platform, never hand-draw. (2) MATERIAL SYMBOLS OUTLINED 400 (Apache-2.0, sources in design/icons/material-symbols/) for the seven glyphs the design supplies nowhere: check, trash, torch, copy, plus, the Enhanced-KYC product stand-in, and the scenario-drawer row (a debug affordance the design has no frame for). CORRECTION 2026-08-17/18: Android first substituted Material Symbols for the settings rows on the assumption that the design named no icons. It does — get_design_context lists an exported asset per row, and download_assets retrieves them. Read the node's assets before concluding an icon is missing. The designer's choices are not always the obvious ones: his APPEARANCE icon is a SUN, not a moon. Emoji are a third case: the design uses them for country flags and the two picker leads, but anything above Emoji 12 is unsafe at minSdk 26 — 🪪 is Emoji 14 and renders as tofu below Android 13, so it is replaced with the design's own ID mark. CORRECTION 2026-09-11: trash and torch are the design's own as well (nodes 5206-2756 and 5206-3668; 1.5 stroke at 17px, butt caps) — Android exported them from those nodes and wrote the drawables by hand without committing the exports to design/icons/, so the Material stand-ins sat in design/icons/material-symbols/ and iOS drew those, so the two platforms differed on every delete affordance and the scan screen's flash. Both now generate from design/icons/trash.svg and flash.svg; the Material set is the five that remain."
+    "iconFamilies": "TWO icon families, deliberately not interchangeable. (1) THE DESIGN'S OWN, stroke-based (Lucide/Feather; 1.583 stroke at 19px, 1.167 at 14px, round caps): the six product marks, the three tab marks, the token scan mark, the two arrows, the down chevron, the right chevron, and ALL ELEVEN settings-row icons. Sources live in design/icons/ as SVG and every platform converts from those files — never re-export per platform, never hand-draw. (2) MATERIAL SYMBOLS OUTLINED 400 (Apache-2.0, sources in design/icons/material-symbols/) for the seven glyphs the design supplies nowhere: check, trash, torch, copy, plus, the Enhanced-KYC product stand-in, and the scenario-drawer row (a debug affordance the design has no frame for). CORRECTION 2026-08-17/18: Android first substituted Material Symbols for the settings rows on the assumption that the design named no icons. It does — get_design_context lists an exported asset per row, and download_assets retrieves them. Read the node's assets before concluding an icon is missing. The designer's choices are not always the obvious ones: his APPEARANCE icon is a SUN, not a moon. Emoji are a third case: the design uses them for country flags and the two picker leads, but anything above Emoji 12 is unsafe at minSdk 26 — 🪪 is Emoji 14 and renders as tofu below Android 13, so it is replaced with the design's own ID mark. CORRECTION 2026-09-11: trash and torch are the design's own as well (nodes 5206-2756 and 5206-3668; 1.5 stroke at 17px, butt caps) — Android exported them from those nodes and wrote the drawables by hand without committing the exports to design/icons/, so the Material stand-ins sat in design/icons/material-symbols/ and iOS drew those, so the two platforms differed on every delete affordance and the scan screen's flash. Both now generate from design/icons/trash.svg and flash.svg; the Material set is the five that remain."
   }
 }

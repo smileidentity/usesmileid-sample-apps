@@ -11,10 +11,6 @@ card's hue, which is already what tints the icon, so there is no second file to 
 Enhanced KYC has no icon yet and falls back to the shared product mark; see
 `spec/components.json` → `ProductCard`.
 
-`custom_continue.svg` is `arrow_back.svg` mirrored, so the Custom continue and Custom cancel rows draw
-one arrow: the design's only forward arrow is the product card's small filled glyph, which fills its
-box edge to edge and reads a size heavier than every stroked row icon beside it.
-
 `material-symbols/` holds the Material Symbols Outlined stand-ins for the glyphs the design supplies
 nowhere. Check the design node's exported assets before adding one, and commit the export here the
 day it is used: `trash` and `flash` sat there for a month while Android drew the design's own from

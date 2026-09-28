@@ -85,18 +85,6 @@ abstract final class UseSmileIDSampleTestIds {
   /// The Preview screen switch, which includes or omits preview().
   static const String settingPreviewStep = 'sample_setting_preview_step';
 
-  /// The Custom continue switch, which hands the SDK's continue slots the sample's button.
-  static const String settingCustomContinue = 'sample_setting_custom_continue';
-
-  /// The Custom cancel switch, which hands the SDK's cancel slots the sample's button.
-  static const String settingCustomCancel = 'sample_setting_custom_cancel';
-
-  /// The sample's own continue button, drawn by the SDK inside a continue slot.
-  static const String customContinue = 'sample_custom_continue';
-
-  /// The sample's own cancel button, drawn by the SDK inside a cancel slot.
-  static const String customCancel = 'sample_custom_cancel';
-
   /// One ABOUT or LEGAL navigation row; suffixed with the row id.
   static const String settingNav = 'sample_setting_nav';
 
@@ -369,10 +357,6 @@ abstract final class UseSmileIDSampleTestIds {
     settingConsentStep,
     settingInstructionsStep,
     settingPreviewStep,
-    settingCustomContinue,
-    settingCustomCancel,
-    customContinue,
-    customCancel,
     settingNav,
     signOut,
     signOutConfirm,

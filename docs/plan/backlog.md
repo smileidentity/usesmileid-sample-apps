@@ -62,23 +62,6 @@ Done looks like:
 
 ## Spec and code health
 
-### Flutter: share the custom-button slots once the SDK exports their scope
-
-Android, iOS and Expo keep their Custom continue and Custom cancel slots in `sample-ui`, beside the
-buttons. Flutter cannot: `usesmileid` 12.1.1 does not export the slot's scope type, so a shared slot
-constant has no type to name, and the app's flow builder writes each slot as a closure instead. Once
-the SDK exports it, move the slots into `sample_ui` next to `UseSmileIDSampleCustomContinueButton` and
-have the builder assign them, as the other three do.
-
-### Expo: the consent and processing screens ignore the custom buttons on 12.1.1
-
-`@smileid/usesmileid` 12.1.1 accepts consent's `allowButton` and `denyButton` and processing's
-`continueButton` and `exitButton` on its builders, but does not pass them to the screens, so the
-Expo app shows the SDK's own buttons there while Custom continue and Custom cancel are on. Only the
-instructions screen shows "Custom continue". The Expo builder already sets every slot, as the other
-three apps do. Once an SDK release draws them, bump to it and check the consent screen on a device;
-nothing else in this app needs to change.
-
 ## Device suite and CI
 
 ### A registry-consumption lane that launches and drives the published SDK

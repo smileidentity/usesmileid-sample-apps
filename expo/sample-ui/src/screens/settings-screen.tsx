@@ -266,29 +266,6 @@ export const SettingsScreen = ({
         />
       </Section>
 
-      {/* The design draws no such section, so this placement is ours, like DEBUG's. */}
-      <Section label="CUSTOM BUTTONS — REPLACE THE SDK'S BUTTONS">
-        <SwitchRow
-          title="Custom continue"
-          supportingText="Replaces the SDK's continue buttons"
-          icon="customContinue"
-          setting={UseSmileIDSampleSetting.CustomContinue}
-          checked={settings.customContinue}
-          testID={UseSmileIDSampleTestIds.SETTING_CUSTOM_CONTINUE}
-          onSettingChange={onSettingChange}
-        />
-        <UseSmileIDSampleRowDivider />
-        <SwitchRow
-          title="Custom cancel"
-          supportingText="Replaces the SDK's cancel buttons"
-          icon="arrowBack"
-          setting={UseSmileIDSampleSetting.CustomCancel}
-          checked={settings.customCancel}
-          testID={UseSmileIDSampleTestIds.SETTING_CUSTOM_CANCEL}
-          onSettingChange={onSettingChange}
-        />
-      </Section>
-
       {/* The design draws no control for the drawer, so this placement is ours, and debug-only. */}
       {onOpenScenarioDrawer ? (
         <Section label="DEBUG">
