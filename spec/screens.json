@@ -432,6 +432,7 @@
         "CAPTURE (two rows: Enhanced SmartSelfie™, Agent mode — mutually exclusive)",
         "APPEARANCE",
         "SDK SCREENS — SHOW OR SKIP FLOW STEPS",
+    "CUSTOM BUTTONS — REPLACE THE SDK'S BUTTONS (two rows: Custom continue, Custom cancel; placed by the sample, the design draws no such section)",
         "ABOUT",
         "LEGAL",
         "sign out",
@@ -453,6 +454,8 @@
         "sample_setting_consent_step",
         "sample_setting_instructions_step",
         "sample_setting_preview_step",
+    "sample_setting_custom_continue",
+    "sample_setting_custom_cancel",
         "sample_sign_out",
         "sample_sign_out_confirm"
       ],

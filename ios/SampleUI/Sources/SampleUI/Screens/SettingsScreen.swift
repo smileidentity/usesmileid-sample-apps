@@ -131,6 +131,7 @@ public struct SettingsScreen: View {
         captureSection
         appearanceSection
         sdkScreensSection
+        customButtonsSection
         debugSection
         navSection("ABOUT", rows: aboutRows)
         navSection("LEGAL", rows: legalRows)
@@ -237,6 +238,27 @@ public struct SettingsScreen: View {
         supporting: "Confirm or retake after capture",
         setting: .previewStep,
         testId: UseSmileIDSampleTestIds.settingPreviewStep
+      )
+    }
+  }
+
+  /// The design draws no such section, so this placement is ours, like DEBUG's.
+  private var customButtonsSection: some View {
+    UseSmileIDSampleSectionSurface(label: "CUSTOM BUTTONS — REPLACE THE SDK'S BUTTONS") {
+      switchRow(
+        title: "Custom continue",
+        icon: SmileIcons.customContinue,
+        supporting: "Replaces the SDK's continue buttons",
+        setting: .customContinue,
+        testId: UseSmileIDSampleTestIds.settingCustomContinue
+      )
+      UseSmileIDSampleRowDivider()
+      switchRow(
+        title: "Custom cancel",
+        icon: SmileIcons.arrowBack,
+        supporting: "Replaces the SDK's cancel buttons",
+        setting: .customCancel,
+        testId: UseSmileIDSampleTestIds.settingCustomCancel
       )
     }
   }

@@ -14,6 +14,12 @@ class UseSmileIDSampleSettingsTest {
     }
 
     @Test
+    fun `the custom buttons ship off, so a fresh install shows the SDK's own`() {
+        assertFalse(UseSmileIDSampleSettings().customContinue)
+        assertFalse(UseSmileIDSampleSettings().customCancel)
+    }
+
+    @Test
     fun `turning agent mode on from the default state turns enhanced off`() {
         val updated = UseSmileIDSampleSettings().withSetting(UseSmileIDSampleSetting.AgentMode, true)
         assertTrue(updated.agentMode)
@@ -59,12 +65,14 @@ class UseSmileIDSampleSettingsTest {
     }
 
     @Test
-    fun `the other four rows move nothing but themselves`() {
+    fun `the other six rows move nothing but themselves`() {
         val others = listOf(
             UseSmileIDSampleSetting.DarkMode,
             UseSmileIDSampleSetting.ConsentStep,
             UseSmileIDSampleSetting.InstructionsStep,
             UseSmileIDSampleSetting.PreviewStep,
+            UseSmileIDSampleSetting.CustomContinue,
+            UseSmileIDSampleSetting.CustomCancel,
         )
         others.forEach { setting ->
             val defaults = UseSmileIDSampleSettings()

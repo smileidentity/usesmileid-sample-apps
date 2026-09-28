@@ -77,6 +77,8 @@ export default function SdkFlowRun() {
       enableEnhancedLiveness: settings.enhancedSmartSelfie,
       consentStep: settings.consentStep,
       instructionsStep: settings.instructionsStep,
+      customContinue: settings.customContinue,
+      customCancel: settings.customCancel,
       previewStep: settings.previewStep,
       userId: runUserId,
       partnerId: profile?.id ?? USE_SMILE_ID_SAMPLE_FIRST_PROFILE_ID,

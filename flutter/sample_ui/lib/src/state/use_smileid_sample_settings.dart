@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../use_smileid_sample_test_ids.dart';
 
-/// Which settings row a toggle belongs to, so a caller can name one without naming six fields.
+/// Which settings row a toggle belongs to, so a caller can name one without naming eight fields.
 enum UseSmileIDSampleSetting {
   /// ON is the head-turn challenge, and it fights agent mode.
   enhancedSmartSelfie(UseSmileIDSampleTestIds.settingEnhancedSmartSelfie),
@@ -20,7 +20,13 @@ enum UseSmileIDSampleSetting {
   instructionsStep(UseSmileIDSampleTestIds.settingInstructionsStep),
 
   /// Includes or omits `preview()`.
-  previewStep(UseSmileIDSampleTestIds.settingPreviewStep);
+  previewStep(UseSmileIDSampleTestIds.settingPreviewStep),
+
+  /// Hands the SDK's continue slots the sample's "Custom continue" button.
+  customContinue(UseSmileIDSampleTestIds.settingCustomContinue),
+
+  /// Hands the SDK's cancel slots the sample's "Custom cancel" button.
+  customCancel(UseSmileIDSampleTestIds.settingCustomCancel);
 
   const UseSmileIDSampleSetting(this.testId);
 
@@ -39,6 +45,8 @@ class UseSmileIDSampleSettings {
     this.consentStep = true,
     this.instructionsStep = true,
     this.previewStep = true,
+    this.customContinue = false,
+    this.customCancel = false,
   });
 
   /// The head-turn challenge.
@@ -59,7 +67,13 @@ class UseSmileIDSampleSettings {
   /// Whether the flow includes the SDK's preview step.
   final bool previewStep;
 
-  /// Reads one row, so a caller can diff two states without naming six fields.
+  /// Whether the SDK's continue buttons (consent allow, instructions, processing continue) are the sample's.
+  final bool customContinue;
+
+  /// Whether the SDK's cancel buttons (consent deny, processing exit) are the sample's.
+  final bool customCancel;
+
+  /// Reads one row, so a caller can diff two states without naming eight fields.
   bool operator [](UseSmileIDSampleSetting setting) => switch (setting) {
     UseSmileIDSampleSetting.enhancedSmartSelfie => enhancedSmartSelfie,
     UseSmileIDSampleSetting.agentMode => agentMode,
@@ -67,6 +81,8 @@ class UseSmileIDSampleSettings {
     UseSmileIDSampleSetting.consentStep => consentStep,
     UseSmileIDSampleSetting.instructionsStep => instructionsStep,
     UseSmileIDSampleSetting.previewStep => previewStep,
+    UseSmileIDSampleSetting.customContinue => customContinue,
+    UseSmileIDSampleSetting.customCancel => customCancel,
   };
 
   /// Drops enhanced liveness where a stored state carries both, so the SDK is never handed the pair.
@@ -94,6 +110,8 @@ class UseSmileIDSampleSettings {
       instructionsStep: enabled,
     ),
     UseSmileIDSampleSetting.previewStep => _copy(previewStep: enabled),
+    UseSmileIDSampleSetting.customContinue => _copy(customContinue: enabled),
+    UseSmileIDSampleSetting.customCancel => _copy(customCancel: enabled),
   };
 
   UseSmileIDSampleSettings _copy({
@@ -103,6 +121,8 @@ class UseSmileIDSampleSettings {
     bool? consentStep,
     bool? instructionsStep,
     bool? previewStep,
+    bool? customContinue,
+    bool? customCancel,
   }) => UseSmileIDSampleSettings(
     enhancedSmartSelfie: enhancedSmartSelfie ?? this.enhancedSmartSelfie,
     agentMode: agentMode ?? this.agentMode,
@@ -110,6 +130,8 @@ class UseSmileIDSampleSettings {
     consentStep: consentStep ?? this.consentStep,
     instructionsStep: instructionsStep ?? this.instructionsStep,
     previewStep: previewStep ?? this.previewStep,
+    customContinue: customContinue ?? this.customContinue,
+    customCancel: customCancel ?? this.customCancel,
   );
 
   @override
@@ -120,7 +142,9 @@ class UseSmileIDSampleSettings {
       other.darkMode == darkMode &&
       other.consentStep == consentStep &&
       other.instructionsStep == instructionsStep &&
-      other.previewStep == previewStep;
+      other.previewStep == previewStep &&
+      other.customContinue == customContinue &&
+      other.customCancel == customCancel;
 
   @override
   int get hashCode => Object.hash(
@@ -130,5 +154,7 @@ class UseSmileIDSampleSettings {
     consentStep,
     instructionsStep,
     previewStep,
+    customContinue,
+    customCancel,
   );
 }

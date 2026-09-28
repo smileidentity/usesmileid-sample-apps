@@ -20,6 +20,8 @@ class UseSmileIDSampleFlowLaunchSnapshot {
     required this.consentStep,
     required this.instructionsStep,
     required this.previewStep,
+    this.customContinue = false,
+    this.customCancel = false,
     required this.userId,
     required this.partnerId,
     required this.partnerName,
@@ -63,6 +65,12 @@ class UseSmileIDSampleFlowLaunchSnapshot {
 
   /// Whether a preview follows each capture.
   final bool previewStep;
+
+  /// Whether the SDK's continue slots take the sample's "Custom continue" button.
+  final bool customContinue;
+
+  /// Whether the SDK's cancel slots take the sample's "Custom cancel" button.
+  final bool customCancel;
 
   /// The id this run submits under.
   final String userId;

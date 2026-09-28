@@ -22,6 +22,13 @@ describe('the settings defaults', () => {
     ]).toEqual([true, true, true]);
   });
 
+  it("keeps the SDK's own buttons, so a demo swaps them on purpose", () => {
+    expect([smileIDSampleSettingsDefaults.customContinue, smileIDSampleSettingsDefaults.customCancel]).toEqual([
+      false,
+      false,
+    ]);
+  });
+
   it('never carries the pair the SDK refuses', () => {
     const { agentMode, enhancedSmartSelfie } = smileIDSampleSettingsDefaults;
     expect(agentMode && enhancedSmartSelfie).toBe(false);
@@ -89,7 +96,7 @@ describe('the settings rows match spec/test-ids.json', () => {
     group.map((entry) => entry.id),
   );
 
-  it('carries a declared id for every one of the six switches', () => {
+  it('carries a declared id for every one of the eight switches', () => {
     const switchIds = [
       UseSmileIDSampleTestIds.SETTING_ENHANCED_SMART_SELFIE,
       UseSmileIDSampleTestIds.SETTING_AGENT_MODE,
@@ -97,6 +104,8 @@ describe('the settings rows match spec/test-ids.json', () => {
       UseSmileIDSampleTestIds.SETTING_CONSENT_STEP,
       UseSmileIDSampleTestIds.SETTING_INSTRUCTIONS_STEP,
       UseSmileIDSampleTestIds.SETTING_PREVIEW_STEP,
+      UseSmileIDSampleTestIds.SETTING_CUSTOM_CONTINUE,
+      UseSmileIDSampleTestIds.SETTING_CUSTOM_CANCEL,
     ];
     expect(switchIds.length).toBe(smileIDSampleSettings.length);
     expect(switchIds.filter((id) => !specIds.includes(id))).toEqual([]);

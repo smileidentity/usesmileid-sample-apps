@@ -3,6 +3,14 @@ import SwiftUI
 import XCTest
 
 final class UseSmileIDSampleCompositeGoldenTest: UseSmileIDSampleGoldenTest {
+  func testCustomButtons() {
+    goldens("custom_buttons") { CustomButtons() }
+  }
+
+  func testCustomButtonsSurviveMaxDynamicType() {
+    assertSurvivesMaxDynamicType { CustomButtons() }
+  }
+
   func testTopAppBar() {
     goldens("top_app_bar") { TopAppBars() }
   }
@@ -169,6 +177,18 @@ private struct KeyValueEditRows: View {
       UseSmileIDSampleKeyValueEditRow(label: "Email", value: .constant(""), placeholder: "Add an email")
       UseSmileIDSampleRowDivider()
       UseSmileIDSampleKeyValueEditRow(label: "Partner ID", value: .constant("1234"), enabled: false)
+    }
+  }
+}
+
+/// The sample's own continue and cancel buttons, enabled and disabled, as the SDK's slots draw them.
+private struct CustomButtons: View {
+  var body: some View {
+    VStack(spacing: SmileSpacing.spacingXs) {
+      UseSmileIDSampleCustomContinueButton {}
+      UseSmileIDSampleCustomContinueButton(enabled: false) {}
+      UseSmileIDSampleCustomCancelButton {}
+      UseSmileIDSampleCustomCancelButton(enabled: false) {}
     }
   }
 }

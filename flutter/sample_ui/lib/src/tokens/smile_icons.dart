@@ -18,6 +18,7 @@ abstract final class SmileIcons {
   static const String chevron = '$_base/chevron.svg';
   static const String chevronDown = '$_base/chevron_down.svg';
   static const String consent = '$_base/consent.svg';
+  static const String customContinue = '$_base/custom_continue.svg';
   static const String darkMode = '$_base/dark_mode.svg';
   static const String docs = '$_base/docs.svg';
   static const String documentVerification = '$_base/document_verification.svg';
@@ -59,6 +60,7 @@ abstract final class SmileIcons {
     chevron,
     chevronDown,
     consent,
+    customContinue,
     darkMode,
     docs,
     documentVerification,

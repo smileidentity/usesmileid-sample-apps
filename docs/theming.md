@@ -47,7 +47,35 @@ The iOS, Flutter and Expo equivalents are in each app's `FlowBuilderConfig` file
 [`architecture.md`](architecture.md) §6). The palettes are stated once in `sample-ui`, in the SDK's own
 types.
 
-## 2. One token source, generated per platform
+## 2. Replace the SDK's buttons through its button slots
+
+The SDK draws its own buttons, and each screen that has them also takes a partner's button in their
+place. Settings' **CUSTOM BUTTONS** section switches the sample's own two on, so a demo shows it live:
+
+| Switch | Slots it fills | The button |
+|---|---|---|
+| Custom continue | consent `allowButton`, instructions `continueButton`, processing `continueButton` | "Custom continue", the sample's filled button |
+| Custom cancel | consent `denyButton`, processing `exitButton` | "Custom cancel", its outlined twin |
+
+Processing's `retryButton` is neither, so it stays the SDK's. A slot hands your button the SDK's
+`onClick` and `enabled`: call the one and honour the other, and the SDK's own rules still hold, such as
+the consent button waiting for the checkbox. The Android builder, from the same file as the override:
+
+```kotlin
+FlowJourneyStep.Consent -> consent {
+    // …
+    if (snapshot.customContinue) allowButton = useSmileIDSampleCustomContinueSlot
+    if (snapshot.customCancel) denyButton = useSmileIDSampleCustomCancelSlot
+}
+```
+
+The slots' content lives in `sample-ui`, beside the buttons, so all four platforms draw the same two.
+Flutter 12.1.1 does not export the slot's scope type, so its builder writes each slot as a closure
+whose parameter type is inferred rather than as a shared constant. The React Native SDK 12.1.1 draws
+only the instructions slot, so on Expo the consent and processing screens keep the SDK's own buttons
+until a release passes those slots through (see `docs/plan/backlog.md`).
+
+## 3. One token source, generated per platform
 
 Colours, the type ramp, spacing, radii and shadows come from one design-token set.
 `scripts/sync_design_tokens.py` vendors it into Kotlin, Swift, TypeScript and Dart:
@@ -60,13 +88,13 @@ scripts/sync_design_tokens.py --check    # fail if a vendored file is stale
 Never hand-edit generated tokens: change the generator instead. Where the design needs a value the
 token set lacks, it is recorded as a delta in `spec/design-tokens.json`, not written as a literal.
 
-## 3. Semantic roles, never raw values
+## 4. Semantic roles, never raw values
 
 Screens read semantic tokens such as `primary`, `surface` and `onSurface`, never a primitive, and never a
 hex value. A hex literal in app code fails review. Light and dark are paired per role, so dark mode is a
 lookup, not a second stylesheet.
 
-## 4. Dark mode reaches the SDK too
+## 5. Dark mode reaches the SDK too
 
 Dark mode is the **Appearance** switch in Settings. Each app hands the same choice to the SDK's screens,
 so the flow never changes theme halfway through the journey:
@@ -80,23 +108,23 @@ so the flow never changes theme halfway through the journey:
 
 The system bars follow the same choice. A dark screen with light status-bar icons is the classic miss.
 
-## 5. Contrast is computed
+## 6. Contrast is computed
 
 The ink on a fill is chosen by WCAG relative luminance, and a test checks it. iOS still picks by a
 perceptual grey, which disagrees on a few colours, and is in the [backlog](plan/backlog.md).
 
-## 6. Text scales
+## 7. Text scales
 
 Layouts are tested at the largest font scale and the narrowest width, and must not clip or ellipsise.
 Measure chrome such as the floating nav bar rather than hard-coding its height.
 
-## 7. Fonts are bundled and licensed
+## 8. Fonts are bundled and licensed
 
 The apps bundle DM Sans, under the SIL Open Font License, and [`NOTICE`](../NOTICE) records it. The
 in-app licences screens list registry dependencies only, so adding the bundled font there is in the
 [backlog](plan/backlog.md).
 
-## 8. Prove it with goldens
+## 9. Prove it with goldens
 
 Every themed state is recorded in light and dark. Flutter and Expo baselines are recorded on CI, never on
 a laptop (see [`testing.md`](testing.md)).

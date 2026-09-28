@@ -27,7 +27,7 @@ void main() {
     },
   );
 
-  test('the six switches are the ones the SDK mapping names', () {
+  test('the eight switches are the ones the SDK mapping names', () {
     expect(
       UseSmileIDSampleSetting.values.map(
         (UseSmileIDSampleSetting it) => it.testId,
@@ -39,6 +39,8 @@ void main() {
         'sample_setting_consent_step',
         'sample_setting_instructions_step',
         'sample_setting_preview_step',
+        'sample_setting_custom_continue',
+        'sample_setting_custom_cancel',
       ],
     );
   });
@@ -54,8 +56,28 @@ void main() {
       expect(plain.instructionsStep, isTrue);
       expect(plain.previewStep, isTrue);
       expect(plain.darkMode, isFalse);
+      // The SDK's own buttons, until a demo swaps them.
+      expect(plain.customContinue, isFalse);
+      expect(plain.customCancel, isFalse);
     },
   );
+
+  test('the custom button rows move nothing but themselves', () {
+    const UseSmileIDSampleSettings plain = UseSmileIDSampleSettings();
+    for (final UseSmileIDSampleSetting setting in <UseSmileIDSampleSetting>[
+      UseSmileIDSampleSetting.customContinue,
+      UseSmileIDSampleSetting.customCancel,
+    ]) {
+      final UseSmileIDSampleSettings changed = plain.withSetting(setting, true);
+      expect(changed[setting], isTrue);
+      for (final UseSmileIDSampleSetting other
+          in UseSmileIDSampleSetting.values.where(
+            (UseSmileIDSampleSetting it) => it != setting,
+          )) {
+        expect(changed[other], plain[other], reason: '$setting moved $other');
+      }
+    }
+  });
 
   test('turning either capture mode on turns the other off', () {
     // The SDK refuses the pair with BUILDER_AGENT_MODE_WITH_ENHANCED_LIVENESS at ERROR severity.

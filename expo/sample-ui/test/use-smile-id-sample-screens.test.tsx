@@ -63,6 +63,15 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
             },
           }),
       },
+      customButtonsOn: {
+        element: () =>
+          settings({
+            state: {
+              ...settingsState,
+              settings: { ...smileIDSampleSettingsDefaults, customContinue: true, customCancel: true },
+            },
+          }),
+      },
       // A switch reading ON while the token has taken the decision away is a lie the screen tells.
       consentBoundByToken: {
         element: () => settings({ state: { ...settingsState, consentBoundByToken: true } }),
@@ -142,7 +151,7 @@ describe.each(cases)('$screen', ({ states }) => {
 describe('screen coverage', () => {
   it('records both schemes for every state spec/screens.json lists for these four', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(24);
+    expect(total * schemes.length).toBe(26);
   });
 });
 
