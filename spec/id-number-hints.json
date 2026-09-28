@@ -1,0 +1,186 @@
+{
+  "description": "Test cases for the ID-number hint, which is computed from the ID type's regex because the API returns no example. Taken once from the 2026-09-28 sandbox responses to cover the syntax the server uses, plus synthetic cases outside the subset; they test the algorithm, so they change only when it does. Each platform asserts that its hint equals `hint`, that every non-null hint fully matches its own regex, and that every regex compiles on that platform's engine.",
+  "algorithm": [
+    "Strip a leading ^ and a trailing $.",
+    "Take the first alternative, at the top level and inside every group; (?: … ) is a group too.",
+    "A character class becomes the first of A, 0 and a that it accepts, otherwise its first member; \\d becomes 0 and \\w becomes A; an escaped or plain literal stays as it is.",
+    "Repeat each part: {m} uses m, {m,n} uses n, {m,} uses m (at least one), * and ? use none, + uses one.",
+    "Anything else — ., a negated class, a lookaround, a backreference, \\S and other escaped letters, a lazy or possessive quantifier — is outside the subset: `hint` is null."
+  ],
+  "display": {
+    "hint": "e.g. {hint}",
+    "fallback": "Enter your {label}",
+    "untilTypeChosen": "Choose an ID type first"
+  },
+  "check": "The number is trimmed and must match the whole regex before Continue enables. A regex that fails to compile on the device shows the fallback and checks nothing, leaving the server to judge the number.",
+  "cases": [
+    {
+      "regex": "^[0-9]{11}$",
+      "hint": "00000000000"
+    },
+    {
+      "regex": "^[A-Za-z0-9_-]{1,64}$",
+      "hint": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    {
+      "regex": "^[a-zA-Z0-9!-]{6,18}$",
+      "hint": "AAAAAAAAAAAAAAAAAA"
+    },
+    {
+      "regex": "^[A-Za-z]{3}(-\\d{9}-\\d|\\d{9}\\d)$",
+      "hint": "AAA-000000000-0"
+    },
+    {
+      "regex": "^[0-9]{10,12}$",
+      "hint": "000000000000"
+    },
+    {
+      "regex": "^[A-Za-z]{1,2}[0-9]{6,7}$",
+      "hint": "AA0000000"
+    },
+    {
+      "regex": "^(\\+?233(24|25|54|55|59)|0(24|25|54|55|59))\\d{7}$",
+      "hint": "233240000000"
+    },
+    {
+      "regex": "^(\\+?233(20|50)|0(20|50))\\d{7}$",
+      "hint": "233200000000"
+    },
+    {
+      "regex": "^(\\+?233(26|27|56)|0(26|27|56))\\d{7}$",
+      "hint": "233260000000"
+    },
+    {
+      "regex": "^[A-Za-z]{1}[A-Za-z0-9]{12,14}$",
+      "hint": "AAAAAAAAAAAAAAA"
+    },
+    {
+      "regex": "^[0-9]{6,9}$",
+      "hint": "000000000"
+    },
+    {
+      "regex": "^[0-9]{1,9}$",
+      "hint": "000000000"
+    },
+    {
+      "regex": "^[A-Z0-9]{7,9}$",
+      "hint": "AAAAAAAAA"
+    },
+    {
+      "regex": "^(\\+?254|0)?\\d{9}$",
+      "hint": "000000000"
+    },
+    {
+      "regex": "^[Aa]\\d{9}[a-zA-Z]$",
+      "hint": "A000000000A"
+    },
+    {
+      "regex": "^[0-9]{10}$",
+      "hint": "0000000000"
+    },
+    {
+      "regex": "^[a-zA-Z]{3}([ -]{1})?[A-Za-z0-9]{6,12}$",
+      "hint": "AAAAAAAAAAAAAAA"
+    },
+    {
+      "regex": "^[A-Za-z]{1}( )?[0-9]{8}$",
+      "hint": "A00000000"
+    },
+    {
+      "regex": "^(234|0)\\d{10}$",
+      "hint": "2340000000000"
+    },
+    {
+      "regex": "^[a-zA-Z0-9 ]{9,29}$",
+      "hint": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    {
+      "regex": "^(255|0)\\d{9}$",
+      "hint": "255000000000"
+    },
+    {
+      "regex": "^[A-Za-z0-9]{14}$",
+      "hint": "AAAAAAAAAAAAAA"
+    },
+    {
+      "regex": "^(256|0)\\d{9}$",
+      "hint": "256000000000"
+    },
+    {
+      "regex": "^[0-9]{13}$",
+      "hint": "0000000000000"
+    },
+    {
+      "regex": "^(27|0)\\d{9}$",
+      "hint": "27000000000"
+    },
+    {
+      "regex": "^[A-Za-z]{3,6}\\d{7,12}$",
+      "hint": "AAAAAA000000000000"
+    },
+    {
+      "regex": "^[0-9]{7,16}$",
+      "hint": "0000000000000000"
+    },
+    {
+      "regex": "^[0-9]{7,13}$",
+      "hint": "0000000000000"
+    },
+    {
+      "regex": "^((260[9|7][7]\\d{7})|(0[9|7][7]\\d{7})|([9|7][7]\\d{7}))$",
+      "hint": "260970000000"
+    },
+    {
+      "regex": "^[0-9]{7,14}$",
+      "hint": "00000000000000"
+    },
+    {
+      "regex": "^[0-9]{7,15}$",
+      "hint": "000000000000000"
+    },
+    {
+      "regex": "^((260[9|7][6]\\d{7})|(0[9|7][6]\\d{7})|([9|7][6]\\d{7}))$",
+      "hint": "260960000000"
+    },
+    {
+      "regex": "^01\\d{11}$",
+      "hint": "0100000000000"
+    },
+    {
+      "regex": "^((260[9|7][5-8]\\d{7})|(0[9|7][5-8]\\d{7})|([9|7][5-8]\\d{7}))$",
+      "hint": "260950000000"
+    },
+    {
+      "regex": "^((260[9|7][5]\\d{7})|(0[9|7][5]\\d{7})|([9|7][5]\\d{7}))$",
+      "hint": "260950000000"
+    },
+    {
+      "regex": "^[A-Za-z0-9]{7,13}$",
+      "hint": "AAAAAAAAAAAAA"
+    },
+    {
+      "regex": "^[0-9]{8,9}[A-Za-z]\\d{2}$",
+      "hint": "000000000A00"
+    },
+    {
+      "regex": "^(?=.*\\d)[A-Z0-9]{8}$",
+      "hint": null
+    },
+    {
+      "regex": "^.{6,10}$",
+      "hint": null
+    },
+    {
+      "regex": "^\\S+$",
+      "hint": null
+    },
+    {
+      "regex": "^[^0-9]{4}$",
+      "hint": null
+    },
+    {
+      "regex": "^(\\d)\\1{3}$",
+      "hint": null
+    }
+  ]
+}

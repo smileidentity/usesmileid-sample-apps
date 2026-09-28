@@ -580,15 +580,17 @@
       ],
       "variants": [
         "text",
-        "textWithSupporting"
+        "textWithSupporting",
+        "textWithSupportingAndRetry"
       ],
       "usedBy": [
         "verifications",
         "verificationDetails",
         "countryPicker",
-        "idTypePicker"
+        "idTypePicker",
+        "documentPicker"
       ],
-      "notes": "NOT IN THE DESIGN — the app's own convention, added 2026-08-20 because four surfaces can render nothing and each had invented its own treatment. Muted and centred, never a loud frame: an empty list is a normal state, not a failure. The supporting line is only for surfaces where the reader can act on it — a search that matched nothing needs no advice, so the pickers pass text alone."
+      "notes": "NOT IN THE DESIGN — the app's own convention, added 2026-08-20 because four surfaces can render nothing and each had invented its own treatment. Muted and centred, never a loud frame: an empty list is a normal state, not a failure. The supporting line is only for surfaces where the reader can act on it — a search that matched nothing needs no advice, so a picker passes text alone for an empty search, and text plus supporting line when the country has nothing to list. A list that failed to load is the one case with an action: textWithSupportingAndRetry adds a Retry text action under the lines, because retrying can change that answer and nothing else here can."
     },
     {
       "name": "DateGroupHeader",
@@ -697,14 +699,18 @@
       "states": [
         "empty",
         "selected",
-        "disabled"
+        "disabled",
+        "loading"
       ],
       "usedBy": [
-        "kycIdForm"
+        "kycIdForm",
+        "settings",
+        "customDocumentSheet"
       ],
       "notes": "CORRECTED 2026-08-12: looks like an input, behaves like a button, and has a disabled state — the ID-type trigger stays greyed until a country is chosen. Each trigger carries a leading icon. CORRECTED 2026-08-17 against node 5206:2797. Leads with an EMOJI before the label — the chosen country's flag, or a globe as placeholder — then the label at 15/600, then a DOWN chevron at 12 (the list chevron points right). An actionable trigger is outlined in PRIMARY at 1.5; a disabled one takes the button-disabled pair, not surface-muted with muted text, which does not read as disabled. A leading slot must take a MINIMUM size, not a fixed one: an emoji grows with font scale and clips in a fixed box.",
       "dependency": "ID TYPE is DISABLED until a country is selected.",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2797"
+      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2797",
+      "loading": "While its list is still arriving the trigger stays ENABLED and shows 'Loading ID types…' (or 'Loading documents…') in the muted placeholder style, with no spinner: it is a control, not a status. Tapping it opens the sheet at once."
     },
     {
       "name": "OptionRow",
@@ -714,7 +720,10 @@
         "color.surface",
         "color.text.title",
         "color.primary",
-        "radius.field"
+        "radius.field",
+        "skeleton.bg",
+        "skeleton.highlight",
+        "skeletonDuration"
       ],
       "metrics": {
         "rowHeight": "42 in the design, size.control-md (44) here",
@@ -727,14 +736,19 @@
       ],
       "states": [
         "default",
-        "selected"
+        "selected",
+        "skeleton"
       ],
       "usedBy": [
         "countryPickerSheet",
-        "idTypePickerSheet"
+        "idTypePickerSheet",
+        "documentPickerSheet",
+        "captureAsSheet",
+        "captureModeSheet"
       ],
       "notes": "Country rows lead with a flag; ID-type rows do not. Selected rows carry a check. CORRECTED 2026-08-12: the selected row takes a pale-blue fill as well as the check. CORRECTED 2026-08-17 against node 5206:2835. The selected row takes SURFACE-2 as its fill plus a 20 check; an UNSELECTED row is TRANSPARENT, not white — this is the selected-surface treatment that has no token. Label is Body Strong at its real 14; a country row leads with a 19 flag emoji.",
-      "selectedTreatment": "pale-blue FILLED row highlight + trailing check (not check-only)"
+      "selectedTreatment": "pale-blue FILLED row highlight + trailing check (not check-only)",
+      "skeleton": "A placeholder row at the row's own 44 height while a sheet's list loads: a label bar (72, 48, 64, 56, 80 or 40 per cent of the row, one per row, so six rows do not read as a table), and a 19 circle where a country row's flag goes. Pulses between skeleton.bg and skeleton.highlight every skeletonDuration, with no sweep; static when the platform asks for reduced motion. Hidden from the accessibility tree: the container announces what is loading. In dark mode it pulses skeleton.bg against color.surface-alt instead, see design-tokens.json skeletonDarkHighlight."
     },
     {
       "name": "BottomSheet",
@@ -1112,7 +1126,9 @@
     "Preview screen": "include or omit preview() in the flow builder (allowRetake configures it once present)",
     "Custom continue": "ON → the builder hands the sample's 'Custom continue' button (sample_custom_continue) to every slot that moves the flow forward: consent `allowButton`, instructions `continueButton` and processing `continueButton`. OFF → those slots keep the SDK's defaults. A slot is set only on a screen the journey includes. The button calls the slot scope's `onClick` and honours its `enabled`, so the SDK's own gating still holds. It exists to show a partner, live, that the SDK's buttons are theirs to replace.",
     "Custom cancel": "ON → the builder hands the sample's 'Custom cancel' button (sample_custom_cancel) to every slot that leaves the flow: consent `denyButton` and processing `exitButton`. OFF → the SDK's defaults. Processing's `retryButton` is neither continue nor cancel, so it always stays the SDK's.",
-    "Enhanced SmartSelfie™": "ON → `SelfieCaptureConfig.enableEnhancedLiveness = true` (the head-turn challenge); OFF → `false` (passive smile capture). Direct, not inverted, and ON by default for every product. SUPERSEDED the 2026-08-13 decision on 2026-08-25: that named the row 'Smile to capture' and had ON mean `enableEnhancedLiveness = false`, and node 5206:2898 renamed the row and drew it ON, which inverted both the label and the meaning. It and Agent mode write different fields and they CAN fight — the SDK refuses the pair with BUILDER_AGENT_MODE_WITH_ENHANCED_LIVENESS at ERROR severity — so each platform holds a mutex where it persists settings: turning either on turns the other off. The screen is the wrong place for it, because both persistence paths have to inherit the same rule."
+    "Enhanced SmartSelfie™": "ON → `SelfieCaptureConfig.enableEnhancedLiveness = true` (the head-turn challenge); OFF → `false` (passive smile capture). Direct, not inverted, and ON by default for every product. SUPERSEDED the 2026-08-13 decision on 2026-08-25: that named the row 'Smile to capture' and had ON mean `enableEnhancedLiveness = false`, and node 5206:2898 renamed the row and drew it ON, which inverted both the label and the meaning. It and Agent mode write different fields and they CAN fight — the SDK refuses the pair with BUILDER_AGENT_MODE_WITH_ENHANCED_LIVENESS at ERROR severity — so each platform holds a mutex where it persists settings: turning either on turns the other off. The screen is the wrong place for it, because both persistence paths have to inherit the same rule.",
+    "Capture mode": "DocumentCaptureConfig.captureMode: auto → DocumentCaptureMode.AutoCapture (wire `auto_capture_only`), manual → ManualCapture (`manual`), autoWithFallback → AutoCaptureWithManualFallback with the SDK's 10 seconds (`autocapture_default`), the default. A typed field of its own, not one of the true/false settings.",
+    "Gallery upload": "DocumentCaptureConfig.allowGalleryUpload = true. OFF by default, the SDK's default. Every platform's picker is the system one, which asks for no runtime permission; the iOS targets already declare NSPhotoLibraryUsageDescription."
   },
   "buildOrder": [
     "1. Tokens: generate the platform token source and wire light/dark (nothing else can start).",

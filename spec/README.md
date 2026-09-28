@@ -26,11 +26,14 @@ Rules:
 | `test-ids.json` | The `sample_*` accessibility IDs flows assert on | scaffold: grows with each screen |
 | `app-identity.json` | Application ids, display names and URL schemes per platform, plus the ids reserved by the SDK repos' development samples | settled |
 | `routes.json` | The shared route table — ids, deep-link paths, typed arguments and the per-platform binding | **added 2026-08-13** |
-| `screens.json` | 14 screens, 38 states, each linked to its design node; plus who owns each screen (sample vs SDK) and the open questions the design set raised | **filled 2026-08-12** |
+| `screens.json` | 20 screens, 57 states, each linked to its design node or marked `"design": "in-repo"` where the design has no frame; plus who owns each screen (sample vs SDK) and the open questions the design set raised | **filled 2026-08-12**; document features added 2026-09-28 |
 | `components.json` | All 34 components with owner, design-system contract, tokens, states, reuse, and the build order | **filled 2026-08-12** |
 | `design-tokens.json` | The design-system source, per-platform consumption, and the verified deltas between the design file and the token source | **filled 2026-08-12** |
 | `bundled-assets.json` | Third-party assets bundled in the tree (the DM Sans font, the Material Symbols icons), which every licences screen lists alongside the registry dependencies | settled |
 | `store-art.json` | The made-up organisation, initials and session the store screenshots show, read by the Android and iOS store-art tests | settled |
+| `catalogue-fixture.json` | The country, ID-type and document lists a device flow sees under `catalogue=fixture`, in the API's response shape. A UI test input of about a dozen rows, not a copy of the API | added 2026-09-28 |
+| `catalogue-rules.json` | Test cases for turning an API response into the form's rows: which ID types the form can satisfy, repeated types, sub-types, the countries each product offers, and how "Capture as" becomes `DocumentCaptureConfig` | added 2026-09-28 |
+| `id-number-hints.json` | Test cases for the ID-number hint computed from a type's regex, and the regexes every platform's engine must compile | added 2026-09-28 |
 
 ## `screens.json` entry shape
 
