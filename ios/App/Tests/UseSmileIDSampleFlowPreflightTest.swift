@@ -94,6 +94,8 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
         idDetails: UseSmileIDSampleIdDetails(
           country: UseSmileIDSampleCountry(code: "KE", name: "Kenya"),
           idType: UseSmileIDSampleKycIdType(id: "NATIONAL_ID", type: "NATIONAL_ID", label: "National ID", regex: "^[0-9]{1,9}$"),
+          // Both families filled, so each product finds the field it submits.
+          document: UseSmileIDSampleDocument(code: "PASSPORT", name: "Passport", hasBack: false, format: 3),
           idNumber: "1234567"
         )
       )

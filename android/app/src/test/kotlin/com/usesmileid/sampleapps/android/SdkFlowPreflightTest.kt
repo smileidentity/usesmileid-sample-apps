@@ -18,6 +18,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCountry
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocument
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleKycIdType
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenDecoder
@@ -283,6 +284,7 @@ class SdkFlowPreflightTest {
             country = UseSmileIDSampleCountry("KE", "Kenya"),
             idType = UseSmileIDSampleKycIdType("NATIONAL_ID", "NATIONAL_ID", "National ID", "^[0-9]{1,9}$"),
             idNumber = "0000000",
+            document = UseSmileIDSampleDocument(code = "PASSPORT", name = "Passport", hasBack = false, format = 3),
         ),
         scenario = UseSmileIDSampleScenario.Normal,
         theme = UseSmileIDSampleThemeScenario.BrandDefault,

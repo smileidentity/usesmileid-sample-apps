@@ -53,6 +53,26 @@ final class UseSmileIDSampleDocumentCaptureMappingTest: XCTestCase {
     XCTAssertTrue(config.allowSkipBack)
   }
 
+  func testADocumentJobSendsTheDocumentEvenWithAnIdTypeLeftInTheForm() {
+    let details = UseSmileIDSampleIdDetails(
+      country: UseSmileIDSampleCountry(code: "KE", name: "Kenya"),
+      idType: UseSmileIDSampleKycIdType(id: "NATIONAL_ID", type: "NATIONAL_ID", label: "National ID", regex: "^[0-9]{1,9}$"),
+      document: UseSmileIDSampleDocument(code: "PASSPORT", name: "Passport", hasBack: false, format: 3)
+    )
+    let snapshot = FlowLaunchSnapshot(product: .documentVerification, route: .fullscreen, idDetails: details)
+    XCTAssertEqual(useSmileIDSampleIdParams(snapshot).documentVerification?.idType, "PASSPORT")
+  }
+
+  func testAKycJobSendsTheNumberTrimmedAsTheFormCheckedIt() {
+    let details = UseSmileIDSampleIdDetails(
+      country: UseSmileIDSampleCountry(code: "KE", name: "Kenya"),
+      idType: UseSmileIDSampleKycIdType(id: "NATIONAL_ID", type: "NATIONAL_ID", label: "National ID", regex: "^[0-9]{1,9}$"),
+      idNumber: " 12345678 "
+    )
+    let snapshot = FlowLaunchSnapshot(product: .biometricKyc, route: .fullscreen, idDetails: details)
+    XCTAssertEqual(useSmileIDSampleIdParams(snapshot).biometricKyc?.idNumber, "12345678")
+  }
+
   private func details(_ item: [String: Any]) throws -> UseSmileIDSampleIdDetails {
     let document = try XCTUnwrap(item["document"] as? [String: Any])
     var details = try UseSmileIDSampleIdDetails(

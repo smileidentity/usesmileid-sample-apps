@@ -46,8 +46,10 @@ const snapshot = (overrides: Partial<UseSmileIDSampleFlowLaunchSnapshot> = {}): 
   userDetails: { firstName: 'Ada', lastName: 'Okafor', email: 'ada.okafor@example.com', phone: '' },
   idDetails: {
     ...smileIDSampleIdDetailsDefaults,
-            country: { code: 'KE', name: 'Kenya' },
+    country: { code: 'KE', name: 'Kenya' },
     idType: { id: 'NATIONAL_ID', type: 'NATIONAL_ID', label: 'National ID', regex: '^[0-9]{1,9}$' },
+    // Both families filled, so each product finds the field it submits.
+    document: { code: 'PASSPORT', subType: null, name: 'Passport', hasBack: false, format: 3 },
     idNumber: '11111111',
   },
   scenario: 'normal',

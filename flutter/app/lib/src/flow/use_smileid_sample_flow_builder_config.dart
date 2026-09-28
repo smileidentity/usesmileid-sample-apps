@@ -120,10 +120,17 @@ void _applyIdParams(
   // The server overwrites these from the token's claims regardless.
   final UseSmileIDSampleTokenBindings? bound = snapshot.liveSession?.bindings;
   final String country = bound?.country ?? details.country?.code ?? '';
-  // The API's type, or the document's code: the server never hears which capture shape was chosen.
-  final String? chosen = details.idType?.type ?? details.document?.code;
+  // By family, so a field left over from another product's form is never sent.
+  final String? chosen = switch (useSmileIDSampleCatalogueFamily(
+    snapshot.product,
+  )) {
+    UseSmileIDSampleCatalogueFamily.kyc => details.idType?.type,
+    UseSmileIDSampleCatalogueFamily.document => details.document?.code,
+    null => null,
+  };
   final String idType = bound?.idType ?? chosen ?? '';
-  final String idNumber = bound?.idNumberReference ?? details.idNumber;
+  // Trimmed, as the form checked it.
+  final String idNumber = bound?.idNumberReference ?? details.idNumber.trim();
   switch (snapshot.product) {
     case UseSmileIDSampleProduct.biometricKyc:
       builder.biometricKYCParams = BiometricKYCParams(

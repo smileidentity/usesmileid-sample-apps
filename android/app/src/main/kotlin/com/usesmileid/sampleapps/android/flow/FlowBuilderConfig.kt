@@ -21,10 +21,12 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.presentation.flow.config.DocumentCaptureMode
 import com.usesmileid.presentation.flow.config.DocumentOrientation
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureAs
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueFamily
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureMode
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocumentOrientation
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
 import com.usesmileid.sampleapps.ui.state.bindsRequiredUserDetails
+import com.usesmileid.sampleapps.ui.state.catalogueFamily
 import com.usesmileid.sampleapps.ui.theme.override
 import java.net.URL
 import com.usesmileid.sampleapps.ui.R as SampleUiR
@@ -118,12 +120,15 @@ private fun UseSmileIDFlowBuilder.applyIdParams(snapshot: FlowLaunchSnapshot) {
     // Per field, the token beats the form — the server overwrites these from its claims regardless.
     val bound = snapshot.liveSession?.bindings
     val country = bound?.country ?: details.country?.code.orEmpty()
-    // The KYC products submit the API's `type`, the document products the document's `code`; a
-    // standalone sub-type row carries its parent's code, which is all the server reads.
-    val chosen = details.idType?.type ?: details.document?.code
+    // By family, so a field left over from another product's form is never sent.
+    val chosen = when (snapshot.product.catalogueFamily) {
+        UseSmileIDSampleCatalogueFamily.Kyc -> details.idType?.type
+        UseSmileIDSampleCatalogueFamily.Document -> details.document?.code
+        null -> null
+    }
     val idType = bound?.idType ?: chosen.orEmpty()
-    // The SDK asks only that this be non-blank, and the server substitutes the same claim anyway.
-    val idNumber = bound?.idNumberReference ?: details.idNumber
+    // Trimmed, as the form checked it.
+    val idNumber = bound?.idNumberReference ?: details.idNumber.trim()
     when (snapshot.product) {
         UseSmileIDSampleProduct.BiometricKyc -> biometricKYCParams = BiometricKYCParams(
             idType = idType,
@@ -169,12 +174,12 @@ private fun ScreensBuilder.journeyFor(snapshot: FlowLaunchSnapshot) {
             FlowJourneyStep.DocumentCapture -> capture {
                 captureType = CaptureType.DOCUMENT
                 document {
-                    val capture = documentCaptureFor(snapshot.idDetails)
-                    documentType = capture.documentType
-                    captureBothSides = capture.captureBothSides
+                    val options = documentOptionsFor(snapshot)
+                    documentType = options.capture.documentType
+                    captureBothSides = options.capture.captureBothSides
                     allowSkipBack = true
-                    captureMode = snapshot.captureMode.toSdk()
-                    allowGalleryUpload = snapshot.galleryUpload
+                    captureMode = options.captureMode
+                    allowGalleryUpload = options.allowGalleryUpload
                 }
             }
             FlowJourneyStep.Preview -> preview { }
@@ -225,6 +230,19 @@ private fun MutableList<FlowJourneyStep>.documentCapture(preview: Boolean) {
 
 /** What the SDK is told to photograph; the server is told the document's code either way. */
 internal data class DocumentCapture(val documentType: DocumentType, val captureBothSides: Boolean)
+
+/** Everything the document capture step is handed, read from the snapshot so it can be tested without the SDK's builder. */
+internal data class DocumentOptions(
+    val capture: DocumentCapture,
+    val captureMode: DocumentCaptureMode,
+    val allowGalleryUpload: Boolean,
+)
+
+internal fun documentOptionsFor(snapshot: FlowLaunchSnapshot): DocumentOptions = DocumentOptions(
+    capture = documentCaptureFor(snapshot.idDetails),
+    captureMode = snapshot.captureMode.toSdk(),
+    allowGalleryUpload = snapshot.galleryUpload,
+)
 
 /** The "Capture as" mapping from `spec/catalogue-rules.json` captureAs. Pure, so its table is unit-tested. */
 internal fun documentCaptureFor(details: UseSmileIDSampleIdDetails): DocumentCapture {

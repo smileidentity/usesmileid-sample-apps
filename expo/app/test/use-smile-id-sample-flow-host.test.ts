@@ -1,5 +1,4 @@
-import {
-  smileIDSampleIdDetailsDefaults, smileIDSampleProducts, type UseSmileIDSampleProduct } from '@smileid/sample-ui';
+import { smileIDSampleIdDetailsDefaults, smileIDSampleProducts, type UseSmileIDSampleProduct } from '@smileid/sample-ui';
 import { UseSmileIDFlowBuilder } from '@smileid/usesmileid';
 
 import {
@@ -151,6 +150,8 @@ describe('what the SDK is handed', () => {
             ...smileIDSampleIdDetailsDefaults,
             country: { code: 'KE', name: 'Kenya' },
             idType: { id: 'NATIONAL_ID', type: 'NATIONAL_ID', label: 'National ID', regex: '^[0-9]{1,9}$' },
+            // Both families filled, so each product finds the field it submits.
+            document: { code: 'PASSPORT', subType: null, name: 'Passport', hasBack: false, format: 3 },
             idNumber: '11111111',
           },
         }),
@@ -167,5 +168,31 @@ describe('what the SDK is handed', () => {
       expect(vision).toBeDefined();
     });
     expect(() => built(snapshot())).not.toThrow();
+  });
+});
+
+describe('the ID parameters', () => {
+  const kenya = { code: 'KE', name: 'Kenya' };
+  const nationalId = { id: 'NATIONAL_ID', type: 'NATIONAL_ID', label: 'National ID', regex: '^[0-9]{1,9}$' };
+
+  it('sends a document job the document, even with an ID type left in the form', () => {
+    const value = snapshot({
+      product: productFor('documentVerification'),
+      idDetails: {
+        ...smileIDSampleIdDetailsDefaults,
+        country: kenya,
+        idType: nationalId,
+        document: { code: 'PASSPORT', subType: null, name: 'Passport', hasBack: false, format: 3 },
+      },
+    });
+    expect(built(value).documentVerificationParams?.idType).toBe('PASSPORT');
+  });
+
+  it('sends a KYC job the number trimmed, as the form checked it', () => {
+    const value = snapshot({
+      product: productFor('biometricKyc'),
+      idDetails: { ...smileIDSampleIdDetailsDefaults, country: kenya, idType: nationalId, idNumber: ' 12345678 ' },
+    });
+    expect(built(value).biometricKYCParams?.idNumber).toBe('12345678');
   });
 });

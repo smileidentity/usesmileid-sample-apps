@@ -8,6 +8,7 @@ import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.sampleapps.android.flow.FlowLaunchSnapshot
 import com.usesmileid.sampleapps.android.flow.applying
 import com.usesmileid.sampleapps.android.flow.documentCaptureFor
+import com.usesmileid.sampleapps.android.flow.documentOptionsFor
 import com.usesmileid.sampleapps.android.flow.toSdk
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
@@ -21,6 +22,7 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCustomDocument
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocument
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocumentOrientation
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleKycIdType
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -123,27 +125,66 @@ class DocumentCaptureMappingTest {
         )
     }
 
+    @Test
+    fun capture_mode_and_gallery_upload_reach_the_document_step() {
+        val options = documentOptionsFor(snapshotOf(UseSmileIDSampleIdDetails(), captureMode = UseSmileIDSampleCaptureMode.Manual, galleryUpload = true))
+        assertEquals(DocumentCaptureMode.ManualCapture, options.captureMode)
+        assertTrue(options.allowGalleryUpload)
+        assertEquals(false, documentOptionsFor(snapshotOf(UseSmileIDSampleIdDetails())).allowGalleryUpload)
+    }
+
+    @Test
+    fun a_document_job_sends_the_document_even_with_an_id_type_left_in_the_form() {
+        val details = UseSmileIDSampleIdDetails(
+            country = UseSmileIDSampleCountry("KE", "Kenya"),
+            idType = UseSmileIDSampleKycIdType("NATIONAL_ID", "NATIONAL_ID", "National ID", "^[0-9]{1,9}$"),
+            document = UseSmileIDSampleDocument(code = "PASSPORT", name = "Passport", hasBack = false, format = 3),
+        )
+        assertEquals("PASSPORT", submittedIdType(details))
+    }
+
+    @Test
+    fun a_kyc_job_sends_the_number_trimmed_as_the_form_checked_it() {
+        val details = UseSmileIDSampleIdDetails(
+            country = UseSmileIDSampleCountry("KE", "Kenya"),
+            idType = UseSmileIDSampleKycIdType("NATIONAL_ID", "NATIONAL_ID", "National ID", "^[0-9]{1,9}$"),
+            idNumber = " 12345678 ",
+        )
+        val params = UseSmileIDFlowBuilder().apply {
+            applying(snapshotOf(details, product = UseSmileIDSampleProduct.BiometricKyc))
+        }.biometricKYCParams
+        assertEquals("12345678", params?.idNumber)
+    }
+
     /** What the builder puts in DocumentVerificationParams, whatever "Capture as" chose. */
     private fun submittedIdType(details: UseSmileIDSampleIdDetails): String? {
-        val snapshot = FlowLaunchSnapshot(
-            product = UseSmileIDSampleProduct.DocumentVerification,
-            route = UseSmileIDSampleFlowRoute.Fullscreen,
-            userDetails = UseSmileIDSampleUserDetails(firstName = "Ada", lastName = "Okafor", email = "ada@example.com"),
-            idDetails = details,
-            scenario = UseSmileIDSampleScenario.Normal,
-            theme = UseSmileIDSampleThemeScenario.BrandDefault,
-            sandbox = true,
-            allowAgentMode = false,
-            enableEnhancedLiveness = true,
-            consentStep = true,
-            instructionsStep = true,
-            previewStep = true,
-            userId = "user",
-            partnerId = "p-1",
-            partnerName = "Test",
-            callbackUrl = "",
-        )
-        val params: DocumentVerificationParams? = UseSmileIDFlowBuilder().apply { applying(snapshot) }.documentVerificationParams
+        val params: DocumentVerificationParams? = UseSmileIDFlowBuilder().apply { applying(snapshotOf(details)) }.documentVerificationParams
         return params?.idType
     }
+
+    private fun snapshotOf(
+        details: UseSmileIDSampleIdDetails,
+        product: UseSmileIDSampleProduct = UseSmileIDSampleProduct.DocumentVerification,
+        captureMode: UseSmileIDSampleCaptureMode = UseSmileIDSampleCaptureMode.AutoWithFallback,
+        galleryUpload: Boolean = false,
+    ) = FlowLaunchSnapshot(
+        product = product,
+        route = UseSmileIDSampleFlowRoute.Fullscreen,
+        userDetails = UseSmileIDSampleUserDetails(firstName = "Ada", lastName = "Okafor", email = "ada@example.com"),
+        idDetails = details,
+        scenario = UseSmileIDSampleScenario.Normal,
+        theme = UseSmileIDSampleThemeScenario.BrandDefault,
+        sandbox = true,
+        allowAgentMode = false,
+        enableEnhancedLiveness = true,
+        consentStep = true,
+        instructionsStep = true,
+        previewStep = true,
+        userId = "user",
+        partnerId = "p-1",
+        partnerName = "Test",
+        callbackUrl = "",
+        captureMode = captureMode,
+        galleryUpload = galleryUpload,
+    )
 }

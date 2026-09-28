@@ -206,6 +206,42 @@ void main() {
     }
 
     test(
+      'a document job sends the document, even with an ID type left in the form',
+      () {
+        final UseSmileIDFlowBuilder builder = builderFor(
+          snapshotFor(
+            UseSmileIDSampleProduct.documentVerification,
+            idDetails: const UseSmileIDSampleIdDetails(
+              country: kenya,
+              idType: kenyaNationalId,
+              document: UseSmileIDSampleDocument(
+                code: 'PASSPORT',
+                name: 'Passport',
+                hasBack: false,
+                format: 3,
+              ),
+            ),
+          ),
+        );
+        expect(builder.documentVerificationParams?.idType, 'PASSPORT');
+      },
+    );
+
+    test('a KYC job sends the number trimmed, as the form checked it', () {
+      final UseSmileIDFlowBuilder builder = builderFor(
+        snapshotFor(
+          UseSmileIDSampleProduct.biometricKyc,
+          idDetails: const UseSmileIDSampleIdDetails(
+            country: kenya,
+            idType: kenyaNationalId,
+            idNumber: ' 12345678 ',
+          ),
+        ),
+      );
+      expect(builder.biometricKYCParams?.idNumber, '12345678');
+    });
+
+    test(
       'the user details the form collected, with an absent field left absent',
       () {
         final UserDetails details = builderFor(
@@ -241,9 +277,16 @@ void main() {
             builderFor(
                   snapshotFor(
                     product,
+                    // Both families filled, so each product finds the field it submits.
                     idDetails: const UseSmileIDSampleIdDetails(
                       country: kenya,
                       idType: kenyaNationalId,
+                      document: UseSmileIDSampleDocument(
+                        code: 'PASSPORT',
+                        name: 'Passport',
+                        hasBack: false,
+                        format: 3,
+                      ),
                       idNumber: '11111111',
                     ),
                   ),

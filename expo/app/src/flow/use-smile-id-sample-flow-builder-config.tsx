@@ -2,6 +2,7 @@ import {
   UseSmileIDSampleCaptureAs,
   UseSmileIDSampleCaptureMode,
   smileIDSampleAspectRatios,
+  smileIDSampleCatalogueFamily,
   type UseSmileIDSampleIdDetails,
   UseSmileIDSampleIcon,
   smileIDSampleThemeOverride,
@@ -194,11 +195,17 @@ const applyIdParams = (
   // The token beats the form: the server overwrites these from its claims.
   const bound = smileIDSampleSnapshotSession(snapshot)?.bindings;
   const country = bound?.country ?? snapshot.idDetails.country?.code ?? '';
-  // The API's type, or the document's code: the server never hears which capture shape was chosen.
-  const chosen = snapshot.idDetails.idType?.type ?? snapshot.idDetails.document?.code ?? null;
+  // By family, so a field left over from another product's form is never sent.
+  const family = smileIDSampleCatalogueFamily(snapshot.product);
+  const chosen =
+    family === 'kyc'
+      ? (snapshot.idDetails.idType?.type ?? null)
+      : family === 'document'
+        ? (snapshot.idDetails.document?.code ?? null)
+        : null;
   const idType = bound?.idType ?? chosen ?? '';
-  // The SDK asks only for non-blank, and the server substitutes the claim.
-  const idNumber = bound?.idNumberReference ?? snapshot.idDetails.idNumber;
+  // Trimmed, as the form checked it.
+  const idNumber = bound?.idNumberReference ?? snapshot.idDetails.idNumber.trim();
   switch (snapshot.product.id) {
     case 'biometricKyc':
       // Capture still runs either way; false is the plain path a sample demonstrates.

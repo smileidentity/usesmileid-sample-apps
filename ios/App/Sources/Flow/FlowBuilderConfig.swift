@@ -114,12 +114,15 @@ func useSmileIDSampleIdParams(_ snapshot: FlowLaunchSnapshot) -> FlowIdParams {
   // Per field, the token beats the form; the server overwrites these from its claims anyway.
   let bound = snapshot.liveSession?.bindings
   let country = bound?.country ?? details.country?.code ?? ""
-  // The KYC products submit the API's `type`, the document products the document's `code`; a
-  // standalone sub-type row carries its parent's code, which is all the server reads.
-  let chosen = details.idType?.type ?? details.document?.code
+  // By family, so a field left over from another product's form is never sent.
+  let chosen: String? = switch snapshot.product.catalogueFamily {
+  case .kyc: details.idType?.type
+  case .document: details.document?.code
+  case nil: nil
+  }
   let idType = bound?.idType ?? chosen ?? ""
-  // The SDK asks only that this be non-blank.
-  let idNumber = bound?.idNumberReference ?? details.idNumber
+  // Trimmed, as the form checked it.
+  let idNumber = bound?.idNumberReference ?? details.idNumber.trimmingCharacters(in: .whitespacesAndNewlines)
   var params = FlowIdParams()
   switch snapshot.product {
   case .biometricKyc:
