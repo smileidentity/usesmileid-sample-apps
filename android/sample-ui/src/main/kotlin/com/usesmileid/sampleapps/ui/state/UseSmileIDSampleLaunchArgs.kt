@@ -36,6 +36,8 @@ data class UseSmileIDSampleLaunchArgs(
     val holdCamera: UseSmileIDSampleHoldCamera? = null,
     /** Seconds a transient notice stays — see `spec/launch-args.json`. Automation only. */
     val noticeWindow: Int? = null,
+    /** Where the ID form's lists come from — see `spec/launch-args.json`. */
+    val catalogue: UseSmileIDSampleCatalogueMode = UseSmileIDSampleCatalogueMode.Live,
 ) {
     companion object {
         const val SCENARIO = "scenario"
@@ -48,9 +50,13 @@ data class UseSmileIDSampleLaunchArgs(
         const val APP_LOCALE = "appLocale"
         const val HOLD_CAMERA = "holdCamera"
         const val NOTICE_WINDOW = "noticeWindow"
+        const val CATALOGUE = "catalogue"
 
         val names =
-            listOf(SCENARIO, THEME, ROUTE, AUTOSTART, SEED_JOBS, SEED_PROFILES, PROBES, APP_LOCALE, HOLD_CAMERA, NOTICE_WINDOW)
+            listOf(
+                SCENARIO, THEME, ROUTE, AUTOSTART, SEED_JOBS, SEED_PROFILES, PROBES, APP_LOCALE, HOLD_CAMERA, NOTICE_WINDOW,
+                CATALOGUE,
+            )
 
         internal const val HOLD_CAMERA_KEEP = "keep"
 
@@ -71,6 +77,8 @@ data class UseSmileIDSampleLaunchArgs(
                 appLocale = raw.string(APP_LOCALE),
                 holdCamera = raw.holdCamera(),
                 noticeWindow = raw.noticeWindow(),
+                catalogue = UseSmileIDSampleCatalogueMode.entries.firstOrNull { it.id == raw.string(CATALOGUE) }
+                    ?: defaults.catalogue,
             )
         }
 
@@ -95,4 +103,11 @@ data class UseSmileIDSampleLaunchArgs(
                 ?.let { UseSmileIDSampleHoldCamera.Millis(it) }
         }
     }
+}
+
+/** The `catalogue` argument's values: the live API, the spec fixture, or a source that always fails. */
+enum class UseSmileIDSampleCatalogueMode(val id: String) {
+    Live("live"),
+    Fixture("fixture"),
+    Unreachable("unreachable"),
 }

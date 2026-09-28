@@ -44,6 +44,8 @@ fun UseSmileIDSampleTextInput(
      *  out of the view hierarchy an automated run dumps on failure. */
     masked: Boolean = false,
     testId: String? = null,
+    /** The error line's own id, so a flow can assert the message rather than the border. */
+    errorTestId: String? = null,
     /** The leading glyph the new-profile fields carry. */
     leading: @Composable ((Color) -> Unit)? = null,
     /** An action inside the field's border, which is where the design draws the scan sheet's Paste. */
@@ -132,10 +134,9 @@ fun UseSmileIDSampleTextInput(
                 text = errorMessage,
                 style = UseSmileIDSampleTheme.type.textStyleCaption,
                 color = colors.input.borderError,
-                modifier = Modifier.padding(
-                    start = SmileDimens.spacingMd,
-                    top = SmileDimens.space4,
-                ),
+                modifier = Modifier
+                    .tagged(errorTestId)
+                    .padding(start = SmileDimens.spacingMd, top = SmileDimens.space4),
             )
         }
     }

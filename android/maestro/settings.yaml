@@ -337,6 +337,51 @@ appId: ${APP_ID}
           id: "sample_scenario_drawer"
       - back
 
+# --- document capture: both rows persist, and the sheet shows the one chosen -----------------------
+- stopApp
+- launchApp:
+    arguments:
+      probes: true
+- runFlow: subflows/warm-start.yaml
+- tapOn:
+    id: "sample_nav_settings"
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_gallery_upload"
+    centerElement: true
+- assertVisible: "Automatic with manual fallback"
+- assertVisible:
+    id: "sample_setting_gallery_upload"
+    checked: false
+- tapOn:
+    id: "sample_setting_capture_mode"
+- assertVisible:
+    id: "sample_capture_mode_sheet"
+- assertVisible:
+    id: "sample_capture_mode_option_autoWithFallback"
+    selected: true
+- tapOn:
+    id: "sample_capture_mode_option_manual"
+- assertNotVisible:
+    id: "sample_capture_mode_sheet"
+- tapOn:
+    id: "sample_setting_gallery_upload"
+- stopApp
+- launchApp:
+    arguments:
+      probes: true
+- runFlow: subflows/warm-start.yaml
+- tapOn:
+    id: "sample_nav_settings"
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_gallery_upload"
+    centerElement: true
+- assertVisible: "Manual"
+- assertVisible:
+    id: "sample_setting_gallery_upload"
+    checked: true
+
 # --- leave the suite as it was found -------------------------------------------------------------
 - stopApp
 - launchApp:

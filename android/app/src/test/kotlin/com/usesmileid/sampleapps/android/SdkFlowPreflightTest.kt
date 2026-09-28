@@ -2,6 +2,8 @@ package com.usesmileid.sampleapps.android
 
 import com.usesmileid.core.exception.InvalidFieldValueException
 import com.usesmileid.core.exception.UseSmileIDValidationException
+import com.usesmileid.sampleapps.android.flow.BOUND_COUNTRY
+import com.usesmileid.sampleapps.android.flow.BOUND_ID_TYPE
 import com.usesmileid.sampleapps.android.flow.FlowLaunchSnapshot
 import com.usesmileid.sampleapps.android.flow.FlowPreflight
 import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleFlowTokens
@@ -17,7 +19,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCountry
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdType
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleKycIdType
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenDecoder
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
@@ -146,15 +148,15 @@ class SdkFlowPreflightTest {
     fun `the token's ID parameters beat the form's, which is the rule the server applies`() {
         val snapshot = snapshotFor(UseSmileIDSampleProduct.EnhancedKyc).copy(
             idDetails = UseSmileIDSampleIdDetails(
-                country = UseSmileIDSampleCountry.Nigeria,
-                idType = UseSmileIDSampleIdType.Passport,
+                country = UseSmileIDSampleCountry("NG", "Nigeria"),
+                idType = UseSmileIDSampleKycIdType("NIN", "NIN", "National ID", "^[0-9]{11}$"),
                 idNumber = "form-typed-number",
             ),
             session = session(UseSmileIDSampleSimulatedBindings(userDetails = true)),
         )
         val params = requireNotNull(UseSmileIDFlowBuilder().apply { applying(snapshot) }.enhancedKYCParams)
-        assertEquals(UseSmileIDSampleCountry.Kenya.code, params.country)
-        assertEquals(UseSmileIDSampleIdType.NationalId.id, params.idType)
+        assertEquals(BOUND_COUNTRY, params.country)
+        assertEquals(BOUND_ID_TYPE, params.idType)
         assertEquals("the vault reference is the only ID number a token session has", "vault_id_number", params.idNumber)
     }
 
@@ -174,7 +176,7 @@ class SdkFlowPreflightTest {
     fun `without a session the form still decides the ID parameters`() {
         val snapshot = snapshotFor(UseSmileIDSampleProduct.EnhancedKyc).copy(session = null)
         val params = requireNotNull(UseSmileIDFlowBuilder().apply { applying(snapshot) }.enhancedKYCParams)
-        assertEquals(UseSmileIDSampleCountry.Kenya.code, params.country)
+        assertEquals("KE", params.country)
         assertEquals("0000000", params.idNumber)
     }
 
@@ -278,8 +280,8 @@ class SdkFlowPreflightTest {
             email = "ada.okafor@example.com",
         ),
         idDetails = UseSmileIDSampleIdDetails(
-            country = UseSmileIDSampleCountry.Kenya,
-            idType = UseSmileIDSampleIdType.NationalId,
+            country = UseSmileIDSampleCountry("KE", "Kenya"),
+            idType = UseSmileIDSampleKycIdType("NATIONAL_ID", "NATIONAL_ID", "National ID", "^[0-9]{1,9}$"),
             idNumber = "0000000",
         ),
         scenario = UseSmileIDSampleScenario.Normal,

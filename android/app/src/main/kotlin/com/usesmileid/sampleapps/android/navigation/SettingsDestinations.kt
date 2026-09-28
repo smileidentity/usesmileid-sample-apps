@@ -45,6 +45,7 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.usesmileid.sampleapps.ui.screens.CaptureModeSheet as CaptureModeContent
 import com.usesmileid.sampleapps.ui.screens.LicensesScreen as LicensesContent
 import com.usesmileid.sampleapps.ui.screens.SettingsScreen as SettingsContent
 
@@ -57,6 +58,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
     val chrome = LocalUseSmileIDSampleChrome.current
     val openUrl = LocalUseSmileIDSampleUrlOpener.current
     var showScenarios by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.ScenarioDrawer)
+    var pickingCaptureMode by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.CaptureMode)
     SettingsContent(
         contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
         state = UseSmileIDSampleSettingsState(
@@ -71,6 +73,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
         onSettingChange = { setting, enabled -> app.storeScope.launch { app.store.setSetting(setting, enabled) } },
         // The row opens the list: configuring any profile and creating one are both reached from there.
         onProfileClick = { navigator.navigate(ProfilesScreenDestination) },
+        onCaptureModeClick = { pickingCaptureMode = true },
         // Every row but Open-source licenses opens externally; that one is a screen in this app.
         onNavRowClick = { row ->
             row.url?.let { openUrl(it, row.id, row.opensInApp) } ?: navigator.navigate(LicensesScreenDestination)
@@ -95,6 +98,16 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
         },
     )
     if (showScenarios) ScenarioDrawerSheet(onDismissRequest = { showScenarios = false })
+    if (pickingCaptureMode) {
+        CaptureModeContent(
+            selected = app.settings.captureMode,
+            onSelect = { mode ->
+                app.storeScope.launch { app.store.setCaptureMode(mode) }
+                pickingCaptureMode = false
+            },
+            onDismissRequest = { pickingCaptureMode = false },
+        )
+    }
 }
 
 /** The notices screen. Its asset is read here and handed in, so the screen stays a function of its arguments. */

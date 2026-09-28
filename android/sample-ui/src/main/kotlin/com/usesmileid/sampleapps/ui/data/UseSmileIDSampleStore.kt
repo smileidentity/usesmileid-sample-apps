@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureMode
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesCodec
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesRecord
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSetting
@@ -62,6 +63,11 @@ class UseSmileIDSampleStore(
         }
     }
 
+    /** Stored by id, so a renamed constant still reads the device's choice. */
+    suspend fun setCaptureMode(mode: UseSmileIDSampleCaptureMode) {
+        store.edit { prefs -> prefs[CAPTURE_MODE] = mode.id }
+    }
+
     /** Re-seals a token an earlier build stored in plain text, so an upgrade leaves no credential readable on disk. */
     suspend fun sealLegacyToken() {
         val stored = store.data.first()[SESSION_TOKEN] ?: return
@@ -112,6 +118,9 @@ class UseSmileIDSampleStore(
             previewStep = prefs[PREVIEW_STEP] ?: defaults.previewStep,
             customContinue = prefs[CUSTOM_CONTINUE] ?: defaults.customContinue,
             customCancel = prefs[CUSTOM_CANCEL] ?: defaults.customCancel,
+            galleryUpload = prefs[GALLERY_UPLOAD] ?: defaults.galleryUpload,
+            captureMode = UseSmileIDSampleCaptureMode.entries.firstOrNull { it.id == prefs[CAPTURE_MODE] }
+                ?: defaults.captureMode,
         ).normalised()
     }
 
@@ -124,6 +133,7 @@ class UseSmileIDSampleStore(
         UseSmileIDSampleSetting.PreviewStep -> PREVIEW_STEP
         UseSmileIDSampleSetting.CustomContinue -> CUSTOM_CONTINUE
         UseSmileIDSampleSetting.CustomCancel -> CUSTOM_CANCEL
+        UseSmileIDSampleSetting.GalleryUpload -> GALLERY_UPLOAD
     }
 
     private companion object {
@@ -136,6 +146,8 @@ class UseSmileIDSampleStore(
         val PREVIEW_STEP = booleanPreferencesKey("preview_step")
         val CUSTOM_CONTINUE = booleanPreferencesKey("custom_continue")
         val CUSTOM_CANCEL = booleanPreferencesKey("custom_cancel")
+        val GALLERY_UPLOAD = booleanPreferencesKey("gallery_upload")
+        val CAPTURE_MODE = stringPreferencesKey("capture_mode")
         val SESSION_TOKEN = stringPreferencesKey("token_session_token")
         val ENDED_SESSION_ID = stringPreferencesKey("ended_session_id")
         val ENDED_SESSION_AT = longPreferencesKey("ended_session_at")

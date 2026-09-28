@@ -52,13 +52,25 @@ class UseSmileIDSampleForms(
         idDetails = UseSmileIDSampleIdDetails()
     }
 
-    /** Choosing a country clears the ID type, because the types it offered may not apply to the new one. */
+    /** Choosing a country clears the ID type and document, which may not apply to it, and keeps the typed number. */
     fun setCountry(country: UseSmileIDSampleCountry) {
-        idDetails = idDetails.copy(country = country, idType = null)
+        idDetails = idDetails.copy(country = country, idType = null, document = null)
     }
 
-    fun setIdType(idType: UseSmileIDSampleIdType) {
+    fun setIdType(idType: UseSmileIDSampleKycIdType) {
         idDetails = idDetails.copy(idType = idType)
+    }
+
+    fun setDocument(document: UseSmileIDSampleDocument) {
+        idDetails = idDetails.copy(document = document)
+    }
+
+    fun setCaptureAs(captureAs: UseSmileIDSampleCaptureAs) {
+        idDetails = idDetails.copy(captureAs = captureAs)
+    }
+
+    fun setCustomDocument(custom: UseSmileIDSampleCustomDocument) {
+        idDetails = idDetails.copy(custom = custom, captureAs = UseSmileIDSampleCaptureAs.Custom)
     }
 
     fun setIdNumber(value: String) {
@@ -74,20 +86,28 @@ class UseSmileIDSampleForms(
     companion object {
         val Saver: Saver<UseSmileIDSampleForms, Any> = listSaver<UseSmileIDSampleForms, String>(
             save = {
+                val id = it.idDetails
                 listOf(
                     it.userDetails.firstName,
                     it.userDetails.lastName,
                     it.userDetails.email,
                     it.userDetails.phone,
-                    it.idDetails.country?.name.orEmpty(),
-                    it.idDetails.idType?.name.orEmpty(),
-                    it.idDetails.idNumber,
                     it.saveToProfile.toString(),
                     it.organisation,
+                    id.idNumber,
+                    id.country?.code.orEmpty(),
+                    id.country?.name.orEmpty(),
+                    id.idType?.let { t -> listOf(t.id, t.type, t.label, t.regex).joinToString(FIELD) }.orEmpty(),
+                    id.document?.let { d ->
+                        listOf(d.code, d.subType.orEmpty(), d.name, d.hasBack.toString(), d.format.toString()).joinToString(FIELD)
+                    }.orEmpty(),
+                    id.captureAs.name,
+                    with(id.custom) { listOf(displayName, hasBackSide.toString(), orientation.name, aspectRatio.name).joinToString(FIELD) },
                 )
             },
             restore = { saved ->
                 val at = { index: Int -> saved.getOrNull(index).orEmpty() }
+                val parts = { index: Int -> at(index).split(FIELD) }
                 UseSmileIDSampleForms(
                     userDetails = UseSmileIDSampleUserDetails(
                         firstName = at(0),
@@ -95,17 +115,37 @@ class UseSmileIDSampleForms(
                         email = at(2),
                         phone = at(3),
                     ),
-                    // Looked up rather than valueOf: this is restored after process death, where a rename would throw.
+                    saveToProfile = at(4) != "false",
+                    organisation = at(5),
+                    // Whole rows, looked up by name rather than valueOf: a rename must not throw after process death.
                     idDetails = UseSmileIDSampleIdDetails(
-                        country = UseSmileIDSampleCountry.entries.firstOrNull { it.name == at(4) },
-                        idType = UseSmileIDSampleIdType.entries.firstOrNull { it.name == at(5) },
                         idNumber = at(6),
+                        country = at(7).takeIf { it.isNotEmpty() }?.let { UseSmileIDSampleCountry(it, at(8)) },
+                        idType = parts(9).takeIf { it.size == 4 }?.let { (id, type, label, regex) ->
+                            UseSmileIDSampleKycIdType(id, type, label, regex)
+                        },
+                        document = parts(10).takeIf { it.size == 5 }?.let { (code, subType, name, hasBack, format) ->
+                            UseSmileIDSampleDocument(code, subType.ifEmpty { null }, name, hasBack == "true", format.toIntOrNull() ?: 1)
+                        },
+                        captureAs = UseSmileIDSampleCaptureAs.entries.firstOrNull { it.name == at(11) }
+                            ?: UseSmileIDSampleCaptureAs.Automatic,
+                        custom = parts(12).takeIf { it.size == 4 }?.let { (name, back, orientation, ratio) ->
+                            UseSmileIDSampleCustomDocument(
+                                displayName = name,
+                                hasBackSide = back != "false",
+                                orientation = UseSmileIDSampleDocumentOrientation.entries.firstOrNull { it.name == orientation }
+                                    ?: UseSmileIDSampleDocumentOrientation.Landscape,
+                                aspectRatio = UseSmileIDSampleAspectRatio.entries.firstOrNull { it.name == ratio }
+                                    ?: UseSmileIDSampleAspectRatio.Off,
+                            )
+                        } ?: UseSmileIDSampleCustomDocument(),
                     ),
-                    saveToProfile = at(7) != "false",
-                    organisation = at(8),
                 )
             },
         )
+
+        // A unit separator, which no API label, regex or typed name contains.
+        private const val FIELD = "\u001F"
     }
 }
 

@@ -20,7 +20,12 @@ import com.usesmileid.sampleapps.ui.components.useSmileIDSampleCustomCancelSlot
 import com.usesmileid.sampleapps.ui.components.useSmileIDSampleCustomContinueSlot
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdType
+import com.usesmileid.presentation.flow.config.DocumentCaptureMode
+import com.usesmileid.presentation.flow.config.DocumentOrientation
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureAs
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureMode
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocumentOrientation
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
 import com.usesmileid.sampleapps.ui.state.bindsRequiredUserDetails
 import com.usesmileid.sampleapps.ui.theme.override
 import java.net.URL
@@ -58,6 +63,8 @@ fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshe
         }
     }
     network {
+        // Debug builds only: logs the three document-capture keys of the submission metadata, nothing else.
+        wireProbe()?.let { probe -> interceptors { +probe } }
         config {
             jobType = snapshot.product.jobType
             val scanned = snapshot.liveSession
@@ -113,7 +120,10 @@ private fun UseSmileIDFlowBuilder.applyIdParams(snapshot: FlowLaunchSnapshot) {
     // Per field, the token beats the form — the server overwrites these from its claims regardless.
     val bound = snapshot.liveSession?.bindings
     val country = bound?.country ?: details.country?.code.orEmpty()
-    val idType = bound?.idType ?: details.idType?.id.orEmpty()
+    // The KYC products submit the API's `type`, the document products the document's `code`; a
+    // standalone sub-type row carries its parent's code, which is all the server reads.
+    val chosen = details.idType?.type ?: details.document?.code
+    val idType = bound?.idType ?: chosen.orEmpty()
     // The SDK asks only that this be non-blank, and the server substitutes the same claim anyway.
     val idNumber = bound?.idNumberReference ?: details.idNumber
     when (snapshot.product) {
@@ -130,7 +140,7 @@ private fun UseSmileIDFlowBuilder.applyIdParams(snapshot: FlowLaunchSnapshot) {
         // Nullable here: an unbound, unselected type stays absent rather than becoming a rejected "".
         UseSmileIDSampleProduct.DocumentVerification -> documentVerificationParams = DocumentVerificationParams(
             country = country,
-            idType = bound?.idType ?: details.idType?.id,
+            idType = bound?.idType ?: chosen,
         )
         UseSmileIDSampleProduct.EnhancedDocumentVerification -> enhancedDocumentVerificationParams =
             EnhancedDocumentVerificationParams(
@@ -165,9 +175,12 @@ private fun ScreensBuilder.journeyFor(snapshot: FlowLaunchSnapshot) {
             FlowJourneyStep.DocumentCapture -> capture {
                 captureType = CaptureType.DOCUMENT
                 document {
-                    documentType = snapshot.idDetails.idType.toDocumentType()
-                    captureBothSides = true
+                    val capture = documentCaptureFor(snapshot.idDetails)
+                    documentType = capture.documentType
+                    captureBothSides = capture.captureBothSides
                     allowSkipBack = true
+                    captureMode = snapshot.captureMode.toSdk()
+                    allowGalleryUpload = snapshot.galleryUpload
                 }
             }
             FlowJourneyStep.Preview -> preview { }
@@ -220,11 +233,54 @@ private fun MutableList<FlowJourneyStep>.documentCapture(preview: Boolean) {
     if (preview) add(FlowJourneyStep.Preview)
 }
 
-private fun UseSmileIDSampleIdType?.toDocumentType(): DocumentType = when (this) {
-    UseSmileIDSampleIdType.Passport -> DocumentType.Passport
-    null -> DocumentType.GenericDocument()
-    else -> DocumentType.GenericDocument(displayName = label)
+/** What the SDK is told to photograph; the server is told the document's code either way. */
+internal data class DocumentCapture(val documentType: DocumentType, val captureBothSides: Boolean)
+
+/** The "Capture as" mapping from `spec/catalogue-rules.json` captureAs. Pure, so its table is unit-tested. */
+internal fun documentCaptureFor(details: UseSmileIDSampleIdDetails): DocumentCapture {
+    val document = details.document
+    return when (details.captureAs) {
+        UseSmileIDSampleCaptureAs.GreenBook -> preset(DocumentType.SouthAfricaGreenBook)
+        UseSmileIDSampleCaptureAs.Passport -> preset(DocumentType.Passport)
+        UseSmileIDSampleCaptureAs.Custom -> with(details.custom) {
+            preset(
+                DocumentType.GenericDocument(
+                    displayName = displayName,
+                    hasBackSide = hasBackSide,
+                    orientation = when (orientation) {
+                        UseSmileIDSampleDocumentOrientation.Landscape -> DocumentOrientation.Landscape
+                        UseSmileIDSampleDocumentOrientation.Portrait -> DocumentOrientation.Portrait
+                    },
+                    knownAspectRatio = aspectRatio.ratio,
+                ),
+            )
+        }
+        // The API's has_back, not a preset's: the API is the source that says what the document is.
+        UseSmileIDSampleCaptureAs.Automatic -> DocumentCapture(
+            documentType = when (document?.format) {
+                FORMAT_GREEN_BOOK -> DocumentType.SouthAfricaGreenBook
+                FORMAT_BOOKLET -> DocumentType.Passport
+                else -> DocumentType.GenericDocument(
+                    displayName = document?.name ?: "Document",
+                    hasBackSide = document?.hasBack ?: true,
+                )
+            },
+            captureBothSides = document?.hasBack ?: true,
+        )
+    }
 }
+
+private fun preset(type: DocumentType) = DocumentCapture(type, captureBothSides = type.hasBackSide)
+
+internal fun UseSmileIDSampleCaptureMode.toSdk(): DocumentCaptureMode = when (this) {
+    UseSmileIDSampleCaptureMode.Auto -> DocumentCaptureMode.AutoCapture
+    UseSmileIDSampleCaptureMode.Manual -> DocumentCaptureMode.ManualCapture
+    UseSmileIDSampleCaptureMode.AutoWithFallback -> DocumentCaptureMode.AutoCaptureWithManualFallback()
+}
+
+// The API's undocumented `format`: 3 is a passport or seaman's booklet, 7 the Green Book; the rest are cards.
+private const val FORMAT_BOOKLET = 3
+private const val FORMAT_GREEN_BOOK = 7
 
 private val UseSmileIDSampleProduct.jobType: JobType
     get() = when (this) {

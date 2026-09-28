@@ -16,6 +16,9 @@ internal object UseSmileIDSampleDeepLinks {
     const val ID_DETAILS_FORM = "$SCHEME://flow/{productId}/id-details"
     const val COUNTRY_PICKER = "$SCHEME://flow/{productId}/id-details/country"
     const val ID_TYPE_PICKER = "$SCHEME://flow/{productId}/id-details/id-type"
+    const val DOCUMENT_PICKER = "$SCHEME://flow/{productId}/id-details/document"
+    const val CAPTURE_AS = "$SCHEME://flow/{productId}/id-details/capture-as"
+    const val CUSTOM_DOCUMENT = "$SCHEME://flow/{productId}/id-details/custom-document"
     const val SDK_FLOW = "$SCHEME://flow/{productId}/run?route={route}"
 
     const val PROFILES = "$SCHEME://profiles"
@@ -25,6 +28,7 @@ internal object UseSmileIDSampleDeepLinks {
     const val PROFILE_CONFIG = "$SCHEME://profiles/{profileId}"
 
     const val LICENSES = "$SCHEME://settings/licenses"
+    const val CAPTURE_MODE = "$SCHEME://settings/capture-mode"
 
     const val SCAN_TOKEN = "$SCHEME://token/scan"
     const val SCENARIO_DRAWER = "$SCHEME://debug/scenarios"

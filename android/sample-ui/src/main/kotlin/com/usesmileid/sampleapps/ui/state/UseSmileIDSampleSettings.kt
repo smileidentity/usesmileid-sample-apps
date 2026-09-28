@@ -21,6 +21,10 @@ data class UseSmileIDSampleSettings(
     val customContinue: Boolean = false,
     /** The SDK's cancel buttons (consent deny, processing exit) become "Custom cancel". */
     val customCancel: Boolean = false,
+    /** DocumentCaptureConfig.allowGalleryUpload; off, as the SDK defaults it. */
+    val galleryUpload: Boolean = false,
+    /** A typed field rather than one of the switches: three values, not two. */
+    val captureMode: UseSmileIDSampleCaptureMode = UseSmileIDSampleCaptureMode.AutoWithFallback,
 ) {
     /** Reads one row, so a caller can diff two states without naming eight fields. */
     operator fun get(setting: UseSmileIDSampleSetting): Boolean = when (setting) {
@@ -32,6 +36,7 @@ data class UseSmileIDSampleSettings(
         UseSmileIDSampleSetting.PreviewStep -> previewStep
         UseSmileIDSampleSetting.CustomContinue -> customContinue
         UseSmileIDSampleSetting.CustomCancel -> customCancel
+        UseSmileIDSampleSetting.GalleryUpload -> galleryUpload
     }
 
     /** Drops enhanced liveness where a stored state carries both, so the SDK is never handed the pair it refuses. */
@@ -51,6 +56,7 @@ data class UseSmileIDSampleSettings(
             UseSmileIDSampleSetting.PreviewStep -> copy(previewStep = enabled)
             UseSmileIDSampleSetting.CustomContinue -> copy(customContinue = enabled)
             UseSmileIDSampleSetting.CustomCancel -> copy(customCancel = enabled)
+            UseSmileIDSampleSetting.GalleryUpload -> copy(galleryUpload = enabled)
         }
 }
 
@@ -64,4 +70,12 @@ enum class UseSmileIDSampleSetting {
     PreviewStep,
     CustomContinue,
     CustomCancel,
+    GalleryUpload,
+}
+
+/** DocumentCaptureConfig.captureMode, in `spec/test-ids.json`'s vocabulary. */
+enum class UseSmileIDSampleCaptureMode(val id: String, val label: String, val supportingText: String) {
+    Auto("auto", "Automatic", "Captures when the document is held steady"),
+    Manual("manual", "Manual", "The shutter shows at once"),
+    AutoWithFallback("autoWithFallback", "Automatic with manual fallback", "The shutter shows after 10 seconds"),
 }

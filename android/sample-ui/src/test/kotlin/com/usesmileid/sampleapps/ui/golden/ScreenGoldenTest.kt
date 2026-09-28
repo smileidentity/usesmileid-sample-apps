@@ -232,6 +232,7 @@ private fun Settings(
     onSettingChange = { _, _ -> },
     onProfileClick = {},
     onNavRowClick = {},
+    onCaptureModeClick = {},
     onOpenScenarioDrawer = if (debug) ({ }) else null,
     onSignOut = {},
 )

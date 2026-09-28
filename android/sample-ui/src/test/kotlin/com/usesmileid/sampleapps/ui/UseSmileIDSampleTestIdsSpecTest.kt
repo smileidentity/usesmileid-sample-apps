@@ -29,7 +29,8 @@ class UseSmileIDSampleTestIdsSpecTest {
                 licenseLink("x"), scenarioItem("x"), themeItem("x"), filterChip("x"), filterCount("x"),
                 jobRow(0).replace("_0", "_x"), selectionCheckbox(0).replace("_0", "_x"), detailField("x"),
                 detailCopy("x"), userDetailsField("x"), countryOption("x"), idTypeOption("x"), profileRow("x"),
-                profileConfigField("x"),
+                profileConfigField("x"), documentOption("x"), captureAsOption("x"), captureModeOption("x"),
+                customDocumentOrientation("x"), customDocumentAspectRatio("x"),
             ).map { it.removeSuffix("_x") }
         }
         assertEquals("spec ids nothing declares", emptyList<String>(), specIds.filterNot { it in declared })

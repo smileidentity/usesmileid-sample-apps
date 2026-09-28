@@ -13,6 +13,23 @@ object UseSmileIDSampleTestIds {
     const val DETAILS_EMPTY = "sample_details_empty"
     const val COUNTRY_EMPTY = "sample_country_empty"
     const val ID_TYPE_EMPTY = "sample_idtype_empty"
+    const val DOCUMENT_EMPTY = "sample_document_empty"
+    const val CATALOGUE_LOADING = "sample_catalogue_loading"
+    const val CATALOGUE_ERROR = "sample_catalogue_error"
+    const val CATALOGUE_RETRY = "sample_catalogue_retry"
+    const val ID_NUMBER_ERROR = "sample_idnumber_error"
+    const val DOCUMENT_TRIGGER = "sample_document_trigger"
+    const val CAPTURE_AS_TRIGGER = "sample_capture_as_trigger"
+    const val DOCUMENT_SHEET = "sample_document_sheet"
+    const val DOCUMENT_SEARCH = "sample_document_search"
+    const val CAPTURE_AS_SHEET = "sample_capture_as_sheet"
+    const val CUSTOM_DOCUMENT_SHEET = "sample_custom_document_sheet"
+    const val CUSTOM_DOCUMENT_NAME = "sample_custom_document_name"
+    const val CUSTOM_DOCUMENT_BACK_SIDE = "sample_custom_document_back_side"
+    const val CUSTOM_DOCUMENT_DONE = "sample_custom_document_done"
+    const val SETTING_CAPTURE_MODE = "sample_setting_capture_mode"
+    const val CAPTURE_MODE_SHEET = "sample_capture_mode_sheet"
+    const val SETTING_GALLERY_UPLOAD = "sample_setting_gallery_upload"
     const val VERIFICATION_DETAILS_SCREEN = "sample_verification_details_screen"
     const val SETTINGS_SCREEN = "sample_settings_screen"
     const val USER_DETAILS_SCREEN = "sample_user_details_screen"
@@ -116,6 +133,23 @@ object UseSmileIDSampleTestIds {
         DETAILS_EMPTY,
         COUNTRY_EMPTY,
         ID_TYPE_EMPTY,
+        DOCUMENT_EMPTY,
+        CATALOGUE_LOADING,
+        CATALOGUE_ERROR,
+        CATALOGUE_RETRY,
+        ID_NUMBER_ERROR,
+        DOCUMENT_TRIGGER,
+        CAPTURE_AS_TRIGGER,
+        DOCUMENT_SHEET,
+        DOCUMENT_SEARCH,
+        CAPTURE_AS_SHEET,
+        CUSTOM_DOCUMENT_SHEET,
+        CUSTOM_DOCUMENT_NAME,
+        CUSTOM_DOCUMENT_BACK_SIDE,
+        CUSTOM_DOCUMENT_DONE,
+        SETTING_CAPTURE_MODE,
+        CAPTURE_MODE_SHEET,
+        SETTING_GALLERY_UPLOAD,
         VERIFICATION_DETAILS_SCREEN,
         SETTINGS_SCREEN,
         USER_DETAILS_SCREEN,
@@ -236,6 +270,17 @@ object UseSmileIDSampleTestIds {
     fun countryOption(isoCode: String) = "sample_country_option_$isoCode"
 
     fun idTypeOption(typeId: String) = "sample_idtype_option_$typeId"
+
+    /** Suffixed with the code, and `_<subType>` on a standalone sub-type row. */
+    fun documentOption(documentId: String) = "sample_document_option_$documentId"
+
+    fun captureAsOption(optionId: String) = "sample_capture_as_option_$optionId"
+
+    fun captureModeOption(modeId: String) = "sample_capture_mode_option_$modeId"
+
+    fun customDocumentOrientation(orientationId: String) = "sample_custom_document_orientation_$orientationId"
+
+    fun customDocumentAspectRatio(ratioId: String) = "sample_custom_document_aspect_ratio_$ratioId"
 
     fun profileRow(profileId: String) = "sample_profile_row_$profileId"
 

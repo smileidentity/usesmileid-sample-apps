@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +20,9 @@ fun UseSmileIDSampleEmptyState(
     modifier: Modifier = Modifier,
     supportingText: String? = null,
     testId: String? = null,
+    /** Only for a list that failed to load: retrying can change that answer, and nothing else here can. */
+    onRetry: (() -> Unit)? = null,
+    retryTestId: String? = null,
 ) {
     Column(
         modifier = modifier
@@ -41,6 +45,15 @@ fun UseSmileIDSampleEmptyState(
                 color = UseSmileIDSampleTheme.colors.textMuted,
                 textAlign = TextAlign.Center,
             )
+        }
+        if (onRetry != null) {
+            TextButton(onClick = onRetry, modifier = Modifier.tagged(retryTestId)) {
+                Text(
+                    text = "Retry",
+                    style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
+                    color = UseSmileIDSampleTheme.colors.textLink,
+                )
+            }
         }
     }
 }

@@ -3,8 +3,6 @@ package com.usesmileid.sampleapps.android.flow
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleSimulatedBindings
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleSimulatedSpan
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCountry
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdType
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -57,8 +55,8 @@ object UseSmileIDSampleFlowTokens {
             if (bindings.userDetails) {
                 VAULTED_FIELDS.forEach { field -> add(""""$field":"vault_$field"""") }
                 // The two the Portal leaves in plaintext, so a decode can read them back.
-                add(""""country":"${UseSmileIDSampleCountry.Kenya.code}"""")
-                add(""""id_type":"${UseSmileIDSampleIdType.NationalId.id}"""")
+                add(""""country":"$BOUND_COUNTRY"""")
+                add(""""id_type":"$BOUND_ID_TYPE"""")
             }
             if (bindings.consent) add(consentClaim(issuedAtSeconds))
         }
@@ -87,3 +85,7 @@ object UseSmileIDSampleFlowTokens {
     private const val PRIVACY_POLICY_URL = "https://smile.id/privacy-policy"
     private val VAULTED_FIELDS = listOf("given_names", "last_name", "email", "phone_number", "id_number")
 }
+
+/** What a simulated binding names: Kenya's National ID, a type the form offers. */
+internal const val BOUND_COUNTRY = "KE"
+internal const val BOUND_ID_TYPE = "NATIONAL_ID"

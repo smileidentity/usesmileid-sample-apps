@@ -7,6 +7,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureMode
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
@@ -28,6 +29,8 @@ data class FlowLaunchSnapshot(
     val previewStep: Boolean,
     val customContinue: Boolean = false,
     val customCancel: Boolean = false,
+    val captureMode: UseSmileIDSampleCaptureMode = UseSmileIDSampleCaptureMode.AutoWithFallback,
+    val galleryUpload: Boolean = false,
     val userId: String,
     val partnerId: String,
     val partnerName: String,
@@ -68,6 +71,8 @@ fun buildSnapshot(
         previewStep = app.settings.previewStep,
         customContinue = app.settings.customContinue,
         customCancel = app.settings.customCancel,
+        captureMode = app.settings.captureMode,
+        galleryUpload = app.settings.galleryUpload,
         userId = userId,
         partnerId = app.profiles.partnerId,
         partnerName = app.profiles.partnerName,

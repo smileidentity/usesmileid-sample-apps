@@ -77,6 +77,7 @@ fun SettingsScreen(
     onSettingChange: (UseSmileIDSampleSetting, Boolean) -> Unit,
     onProfileClick: () -> Unit,
     onNavRowClick: (UseSmileIDSampleNavRow) -> Unit,
+    onCaptureModeClick: () -> Unit,
     /** Null hides the DEBUG section: `sample-ui` may not read a host's BuildConfig. */
     onOpenScenarioDrawer: (() -> Unit)?,
     onSignOut: () -> Unit,
@@ -189,6 +190,28 @@ fun SettingsScreen(
                 checked = state.settings.previewStep,
                 setting = UseSmileIDSampleSetting.PreviewStep,
                 testId = UseSmileIDSampleTestIds.SETTING_PREVIEW_STEP,
+                onSettingChange = onSettingChange,
+            )
+        }
+
+        // The design draws no such section either; it sits with the other capture choices.
+        section(DOCUMENT_CAPTURE_SECTION) {
+            UseSmileIDSampleSettingRow(
+                title = "Capture mode",
+                supportingText = state.settings.captureMode.label,
+                onClick = onCaptureModeClick,
+                leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_document_verification, tint = tint) },
+                trailing = { UseSmileIDSampleSettingRowChevron() },
+                testId = UseSmileIDSampleTestIds.SETTING_CAPTURE_MODE,
+            )
+            UseSmileIDSampleSettingRowDivider()
+            SwitchRow(
+                title = "Gallery upload",
+                icon = R.drawable.sample_ic_setting_preview,
+                supportingText = "The system picker needs no permission",
+                checked = state.settings.galleryUpload,
+                setting = UseSmileIDSampleSetting.GalleryUpload,
+                testId = UseSmileIDSampleTestIds.SETTING_GALLERY_UPLOAD,
                 onSettingChange = onSettingChange,
             )
         }
@@ -330,6 +353,9 @@ private fun NavRow(row: UseSmileIDSampleNavRow, onClick: (UseSmileIDSampleNavRow
         testId = UseSmileIDSampleTestIds.settingNav(row.id),
     )
 }
+
+/** The document-capture section's label, which the design does not draw. */
+internal const val DOCUMENT_CAPTURE_SECTION = "DOCUMENT CAPTURE"
 
 /** The custom-buttons section's label, which the design does not draw. */
 internal const val CUSTOM_BUTTONS_SECTION = "CUSTOM BUTTONS — REPLACE THE SDK'S BUTTONS"

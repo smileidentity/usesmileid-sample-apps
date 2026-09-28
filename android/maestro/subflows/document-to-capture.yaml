@@ -1,0 +1,33 @@
+# Document Verification with Kenya's passport from the fixture, through consent and instructions to
+# the capture screen. Starts from Products.
+appId: ${APP_ID}
+---
+- tapOn:
+    id: "sample_nav_products"
+- tapOn:
+    id: "sample_product_card_documentVerification"
+- tapOn:
+    id: "sample_user_details_continue"
+- tapOn:
+    id: "sample_country_trigger"
+- tapOn:
+    id: "sample_country_option_KE"
+- tapOn:
+    id: "sample_document_trigger"
+- tapOn:
+    id: "sample_document_option_PASSPORT"
+- tapOn:
+    id: "sample_kyc_continue"
+- tapOn: "Allow"
+- waitForAnimationToEnd:
+    timeout: 5000
+- runFlow:
+    when:
+      visible:
+        id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+    commands:
+      - tapOn:
+          id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+- assertVisible:
+    id: "si_instructions_screen"
+- tapOn: "Next"

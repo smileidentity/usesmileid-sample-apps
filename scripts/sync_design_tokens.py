@@ -78,11 +78,13 @@ DART_HUES_OUT = f"{FLUTTER_UI}/lib/src/tokens/smile_product_hues.dart"
 ANDROID_UI = "android/sample-ui"
 KOTLIN_TYPE_OUT = f"{ANDROID_UI}/src/main/kotlin/com/usesmileid/sampleapps/ui/tokens/SmileTypeStyles.kt"
 KOTLIN_HUES_OUT = f"{ANDROID_UI}/src/main/kotlin/com/usesmileid/sampleapps/ui/tokens/SmileProductHues.kt"
+KOTLIN_MOTION_OUT = f"{ANDROID_UI}/src/main/kotlin/com/usesmileid/sampleapps/ui/tokens/SmileMotion.kt"
 
 IOS_UI = "ios/SampleUI"
 IOS_TOKENS = f"{IOS_UI}/Sources/SampleUI/Tokens"
 SWIFT_TYPE_OUT = f"{IOS_TOKENS}/SmileTypeStyles.swift"
 SWIFT_HUES_OUT = f"{IOS_TOKENS}/SmileProductHues.swift"
+SWIFT_MOTION_OUT = f"{IOS_TOKENS}/SmileMotion.swift"
 
 EXPO_UI = "expo/sample-ui"
 # No type-ramp stopgap: unlike the Compose and SwiftUI emitters, dist/ts carries text-style and
@@ -173,6 +175,28 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+"""
+
+KOTLIN_MOTION_HEADER = """// Smile ID Design System — GENERATED. Do not edit by hand.
+// Regenerate with: scripts/sync_design_tokens.py --all
+//
+// A stopgap: the upstream Compose emitter carries no durations. Names mirror the Dart emitter's
+// SmileMotion. Delete this file once upstream emits them (spec/design-tokens.json
+// motionMissingOnComposeAndSwiftUI).
+
+package com.smileid.designsystem
+
+import kotlin.time.Duration
+"""
+
+SWIFT_MOTION_HEADER = """// Smile ID Design System — GENERATED. Do not edit by hand.
+// Regenerate with: scripts/sync_design_tokens.py --all
+//
+// A stopgap: the upstream SwiftUI emitter carries no durations. Names mirror the Dart emitter's
+// SmileMotion. Delete this file once upstream emits them (spec/design-tokens.json
+// motionMissingOnComposeAndSwiftUI).
+
+import Foundation
 """
 
 KOTLIN_HUES_HEADER = """// Smile ID product hues — GENERATED. Do not edit by hand.
@@ -467,6 +491,47 @@ def dart_duration(value) -> str:
     if micros % 1000 == 0:
         return f"Duration(milliseconds: {micros // 1000})"
     return f"Duration(microseconds: {micros})"
+
+
+def duration_millis(value) -> float:
+    """'300ms' / '0.3s' / 300 -> milliseconds, the one conversion every motion emitter shares."""
+    text = str(value).strip()
+    if text.endswith("ms"):
+        return float(text[:-2])
+    if text.endswith("s"):
+        return float(text[:-1]) * 1000
+    return float(text)
+
+
+def kotlin_duration(value) -> str:
+    """A kotlin.time Duration; sub-millisecond values fall back to microseconds, as Dart's do."""
+    micros = round(duration_millis(value) * 1000)
+    if micros % 1000 == 0:
+        return f"{micros // 1000}.milliseconds"
+    return f"{micros}.microseconds"
+
+
+def swift_duration(value) -> str:
+    """Seconds as a TimeInterval, which is what SwiftUI's animations take below iOS 16."""
+    return f"{duration_millis(value) / 1000:g}"
+
+
+def emit_kotlin_motion(tokens: dict) -> str:
+    lines = ["object SmileMotion {"]
+    for path, value in walk(tokens):
+        if classify(value) == "duration":
+            lines.append(f"    val {camel(path)}: Duration = {kotlin_duration(value)}")
+    lines.append("}")
+    return "\n".join(lines)
+
+
+def emit_swift_motion(tokens: dict) -> str:
+    lines = ["public enum SmileMotion {"]
+    for path, value in walk(tokens):
+        if classify(value) == "duration":
+            lines.append(f"    public static let {camel(path)}: TimeInterval = {swift_duration(value)}")
+    lines.append("}")
+    return "\n".join(lines)
 
 
 def dart_font_weight(weight) -> str:
@@ -1708,6 +1773,24 @@ def generate_kotlin_product_hues() -> str:
     )
 
 
+def read_flat_tokens(ds: str) -> dict:
+    tokens_path = os.path.join(ds, "dist", "json", "tokens.flat.json")
+    with io.open(tokens_path, encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def generate_kotlin_motion(ds: str) -> str:
+    body = emit_kotlin_motion(read_flat_tokens(ds)["light"])
+    # Only the units the values use, so the generated file never carries an unused import.
+    units = sorted({unit for unit in ("microseconds", "milliseconds") if f".{unit}" in body})
+    imports = "".join(f"import kotlin.time.Duration.Companion.{unit}\n" for unit in units)
+    return KOTLIN_MOTION_HEADER + imports + "\n" + body + "\n"
+
+
+def generate_swift_motion(ds: str) -> str:
+    return swift_formatted(SWIFT_MOTION_HEADER + "\n" + emit_swift_motion(read_flat_tokens(ds)["light"]) + "\n")
+
+
 def generate_kotlin_type(ds: str) -> str:
     tokens_path = os.path.join(ds, "dist", "json", "tokens.flat.json")
     with io.open(tokens_path, encoding="utf-8") as handle:
@@ -1941,6 +2024,7 @@ def main(argv=None) -> int:
         if os.path.isdir(os.path.join(REPO, ANDROID_UI)):
             ok = write(KOTLIN_TYPE_OUT, generate_kotlin_type(ds), args.check) and ok
             ok = write(KOTLIN_HUES_OUT, generate_kotlin_product_hues(), args.check) and ok
+            ok = write(KOTLIN_MOTION_OUT, generate_kotlin_motion(ds), args.check) and ok
             ok = copy_fonts(ds, args.check) and ok
         else:
             print(f"  skipped    {KOTLIN_TYPE_OUT} ({ANDROID_UI} does not exist yet)")
@@ -1948,6 +2032,7 @@ def main(argv=None) -> int:
         if os.path.isdir(os.path.join(REPO, IOS_UI)):
             ok = write(SWIFT_TYPE_OUT, generate_swift_type(ds), args.check) and ok
             ok = write(SWIFT_HUES_OUT, generate_swift_product_hues(), args.check) and ok
+            ok = write(SWIFT_MOTION_OUT, generate_swift_motion(ds), args.check) and ok
             ok = copy_fonts(ds, args.check, IOS_FONT_COPIES) and ok
         else:
             print(f"  skipped    {SWIFT_TYPE_OUT} ({IOS_UI} does not exist yet)")

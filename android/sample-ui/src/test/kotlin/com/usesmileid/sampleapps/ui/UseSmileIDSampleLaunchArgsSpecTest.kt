@@ -3,6 +3,7 @@ package com.usesmileid.sampleapps.ui
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueMode
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleHoldCamera
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleLaunchArgs
 import org.junit.Assert.assertEquals
@@ -41,8 +42,21 @@ class UseSmileIDSampleLaunchArgsSpecTest {
                 UseSmileIDSampleLaunchArgs.APP_LOCALE to defaults.appLocale,
                 UseSmileIDSampleLaunchArgs.HOLD_CAMERA to defaults.holdCamera?.toString(),
                 UseSmileIDSampleLaunchArgs.NOTICE_WINDOW to defaults.noticeWindow?.toString(),
+                UseSmileIDSampleLaunchArgs.CATALOGUE to defaults.catalogue.id,
             ),
         )
+    }
+
+    @Test
+    fun catalogue_takes_the_three_spec_values_and_falls_back_to_live() {
+        UseSmileIDSampleCatalogueMode.entries.forEach {
+            assertEquals(it, UseSmileIDSampleLaunchArgs.from(mapOf(UseSmileIDSampleLaunchArgs.CATALOGUE to it.id)).catalogue)
+        }
+        assertEquals(
+            UseSmileIDSampleCatalogueMode.Live,
+            UseSmileIDSampleLaunchArgs.from(mapOf(UseSmileIDSampleLaunchArgs.CATALOGUE to "offline")).catalogue,
+        )
+        assertTrue(spec("launch-args.json").contains("\"live\",\n        \"fixture\",\n        \"unreachable\""))
     }
 
     @Test

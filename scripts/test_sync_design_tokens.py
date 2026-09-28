@@ -99,6 +99,24 @@ class TestDurations(unittest.TestCase):
             self.assertTrue(argument.isdigit(), f"{emitted} has a non-integer argument")
 
 
+class TestNativeMotion(unittest.TestCase):
+    TOKENS = {"skeleton": {"duration": "350ms"}, "motion": {"progress": "0.3s"}, "color": {"primary": "#151f72"}}
+
+    def test_kotlin_emits_every_duration_as_a_kotlin_time_duration(self):
+        emitted = gen.emit_kotlin_motion(self.TOKENS)
+        self.assertIn("val skeletonDuration: Duration = 350.milliseconds", emitted)
+        self.assertIn("val motionProgress: Duration = 300.milliseconds", emitted)
+        self.assertNotIn("primary", emitted)
+
+    def test_kotlin_keeps_sub_millisecond_values(self):
+        self.assertEqual(gen.kotlin_duration("0.5ms"), "500.microseconds")
+
+    def test_swift_emits_seconds(self):
+        emitted = gen.emit_swift_motion(self.TOKENS)
+        self.assertIn("public static let skeletonDuration: TimeInterval = 0.35", emitted)
+        self.assertIn("public static let motionProgress: TimeInterval = 0.3", emitted)
+
+
 class TestClassification(unittest.TestCase):
     def test_recognises_every_kind_in_the_current_source(self):
         cases = [

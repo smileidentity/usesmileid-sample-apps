@@ -10,7 +10,15 @@ import kotlinx.coroutines.CoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.saveable.rememberSaveable
+import android.content.Context
+import com.usesmileid.sampleapps.android.catalogue.RetrofitCatalogueSource
 import com.usesmileid.sampleapps.android.status.RetrofitJobStatusSource
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleCatalogueSource
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleCatalogueStore
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleFixtureCatalogueSource
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleUnreachableCatalogueSource
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueMode
+import java.util.Locale
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleFlowResult
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
@@ -48,6 +56,8 @@ class UseSmileIDSampleAppState(
     val launchArgs: UseSmileIDSampleLaunchArgs,
     val flowResult: UseSmileIDSampleFlowResult,
     val interruptedRun: UseSmileIDSampleInterruptedRun,
+    /** The ID form's lists for the current run; the `catalogue` launch argument picks where they come from. */
+    val catalogue: UseSmileIDSampleCatalogueStore,
     /**
      * Read through [State] rather than held as a value, so the once-a-second tick recomposes only
      * what reads the clock. Held as a value it changed this object's identity every second, and
@@ -73,6 +83,13 @@ class UseSmileIDSampleAppState(
 
     /** The only place the environment is decided. The linked session owns it; no session is sandbox, which is every automation run. */
     val useSandbox: Boolean get() = session?.environment != UseSmileIDSampleEnvironment.Production
+
+    /** Where the catalogue asks: the session's environment, as status refresh chooses it. */
+    val environment: UseSmileIDSampleEnvironment
+        get() = if (useSandbox) UseSmileIDSampleEnvironment.Sandbox else UseSmileIDSampleEnvironment.Production
+
+    /** The API translates document and country names; an unsupported locale comes back in en-GB. */
+    val catalogueLocale: String get() = Locale.getDefault().toLanguageTag()
 }
 
 /** Ticks once a second while a session is live. The deadline is absolute, so a restored session needs no recomputing. */
@@ -95,6 +112,9 @@ fun rememberUseSmileIDSampleAppState(
     val profiles = remember(launchArgs) { UseSmileIDSampleProfilesHolder.profilesFor(launchArgs, store) }
     LaunchedEffect(profiles) { if (!profiles.loaded) profiles.restore(store.profiles.first()) }
     LaunchedEffect(store) { store.sealLegacyToken() }
+    val catalogue = remember(context, launchArgs.catalogue) {
+        UseSmileIDSampleCatalogueStore(catalogueSource(context, launchArgs.catalogue), UseSmileIDSampleJobStore.writeScope)
+    }
     // Not saveable: the scanner claims it into its own saveable state, which survives a rotation.
     val interruptedRun = remember { UseSmileIDSampleInterruptedRun() }
     // Saveable, so the arguments seed the first launch only and a recreation keeps the drawer's choice.
@@ -130,6 +150,7 @@ fun rememberUseSmileIDSampleAppState(
         launchArgs = launchArgs,
         flowResult = flowResult,
         interruptedRun = interruptedRun,
+        catalogue = catalogue,
         now = now,
     )
 }
@@ -140,6 +161,18 @@ val LocalUseSmileIDSampleAppState = staticCompositionLocalOf<UseSmileIDSampleApp
 }
 
 private const val TICK_MILLIS = 1000L
+
+/** `fixture` reads the copy of spec/catalogue-fixture.json the build bundles, so no flow touches the network. */
+private fun catalogueSource(context: Context, mode: UseSmileIDSampleCatalogueMode): UseSmileIDSampleCatalogueSource =
+    when (mode) {
+        UseSmileIDSampleCatalogueMode.Live -> RetrofitCatalogueSource()
+        UseSmileIDSampleCatalogueMode.Unreachable -> UseSmileIDSampleUnreachableCatalogueSource
+        UseSmileIDSampleCatalogueMode.Fixture -> UseSmileIDSampleFixtureCatalogueSource(
+            context.assets.open(CATALOGUE_FIXTURE_ASSET).bufferedReader().use { it.readText() },
+        )
+    }
+
+private const val CATALOGUE_FIXTURE_ASSET = "catalogue-fixture.json"
 
 /** Process-wide, so a recreated activity keeps the loaded profiles and their one writer. */
 private object UseSmileIDSampleProfilesHolder {
