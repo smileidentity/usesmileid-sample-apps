@@ -411,7 +411,7 @@ void main() {
       expect(byId(UseSmileIDSampleTestIds.idTypeSheet), findsNothing);
     });
 
-    testWidgets('a custom-document link selects Custom', (
+    testWidgets('a custom-document link keeps nothing until Done', (
       WidgetTester tester,
     ) async {
       await pumpAt(
@@ -420,6 +420,10 @@ void main() {
       );
 
       expect(byId(UseSmileIDSampleTestIds.customDocumentSheet), findsOne);
+      expect(forms().idDetails.captureAs, UseSmileIDSampleCaptureAs.automatic);
+
+      await tester.tap(byId(UseSmileIDSampleTestIds.customDocumentDone));
+      await tester.pumpAndSettle();
       expect(forms().idDetails.captureAs, UseSmileIDSampleCaptureAs.custom);
     });
 

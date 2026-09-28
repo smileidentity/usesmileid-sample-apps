@@ -38,7 +38,6 @@ struct UseSmileIDSampleShell: View {
           case .idTypePicker where app.idDetails.country == nil: return
           case .documentPicker where app.idDetails.country == nil: return
           case .captureAs where app.idDetails.document == nil: return
-          case .customDocument: app.idDetails.captureAs = .custom
           default: break
           }
           router.sheet = sheet

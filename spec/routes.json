@@ -260,7 +260,7 @@
         "flutter": "/flow/:productId/id-details/custom-document",
         "expo": "app/flow/[productId]/id-details/custom-document.tsx"
       },
-      "notes": "Opened by choosing Custom in captureAs; a link straight here selects Custom as well, so the form never shows a custom shape it did not choose."
+      "notes": "Opened by choosing Custom in captureAs. Nothing is kept until Done, so dismissing it, or a link straight here that is dismissed, leaves the form's choice as it was."
     },
     {
       "id": "profileSwitch",

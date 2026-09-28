@@ -190,10 +190,6 @@ class _UseSmileIDSampleKycFormTabState
           _pickCaptureAs();
         }
       case UseSmileIDSamplePicker.customDocument:
-        // Selects Custom too, so the form never shows a shape it did not choose.
-        ref
-            .read(useSmileIDSampleFormsProvider.notifier)
-            .setCaptureAs(UseSmileIDSampleCaptureAs.custom);
         _buildCustom();
     }
   }
@@ -235,8 +231,7 @@ class _UseSmileIDSampleKycFormTabState
             onPickDocument: _pickDocument,
             onPickCaptureAs: _pickCaptureAs,
             onIdNumberChanged: edits.setIdNumber,
-            // Through the journey, not straight to the route: the helper is the single place the
-            // order lives, and a second copy is how two entry points come to disagree about it.
+            // Through the journey, the one place the step order lives.
             onContinue: () => context.push(
               product == null
                   ? UseSmileIDSampleRoutes.sdkFlow(widget.productId)
