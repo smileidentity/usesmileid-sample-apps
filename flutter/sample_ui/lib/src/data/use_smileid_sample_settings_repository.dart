@@ -10,6 +10,11 @@ abstract interface class UseSmileIDSampleSettingsRepository {
     UseSmileIDSampleSetting setting,
     bool enabled,
   );
+
+  /// Stores the capture mode and returns what was stored.
+  Future<UseSmileIDSampleSettings> setCaptureMode(
+    UseSmileIDSampleCaptureMode mode,
+  );
 }
 
 /// The keys the store writes, shared across all four apps so a device carries one set, not four.
@@ -33,6 +38,12 @@ abstract final class UseSmileIDSampleSettingsKeys {
   /// Whether the flow includes the SDK's preview step.
   static const String previewStep = 'preview_step';
 
+  /// Whether the SDK offers the gallery on document capture.
+  static const String galleryUpload = 'gallery_upload';
+
+  /// The capture mode, stored by its id.
+  static const String captureMode = 'capture_mode';
+
   /// The key one switch is stored under.
   static String of(UseSmileIDSampleSetting setting) => switch (setting) {
     UseSmileIDSampleSetting.enhancedSmartSelfie => enhancedSmartSelfie,
@@ -41,6 +52,7 @@ abstract final class UseSmileIDSampleSettingsKeys {
     UseSmileIDSampleSetting.consentStep => consentStep,
     UseSmileIDSampleSetting.instructionsStep => instructionsStep,
     UseSmileIDSampleSetting.previewStep => previewStep,
+    UseSmileIDSampleSetting.galleryUpload => galleryUpload,
   };
 }
 
@@ -62,4 +74,9 @@ class UseSmileIDSampleMemorySettingsRepository
     UseSmileIDSampleSetting setting,
     bool enabled,
   ) async => _settings = _settings.withSetting(setting, enabled);
+
+  @override
+  Future<UseSmileIDSampleSettings> setCaptureMode(
+    UseSmileIDSampleCaptureMode mode,
+  ) async => _settings = _settings.withCaptureMode(mode);
 }

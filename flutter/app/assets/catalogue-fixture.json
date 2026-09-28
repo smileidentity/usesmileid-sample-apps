@@ -1,0 +1,255 @@
+{
+  "description": "The lists a device flow sees under the `catalogue=fixture` launch argument, in the API's own response shape so one decoder reads both. A UI test input, not a copy of the API: about a dozen rows, each here for a case the form has to handle, and it changes only when the form gains a case — never because the API did. Live runs read GET /v3/services/supported_id_types and GET /v3/services/supported_documents?continent=AFRICA instead.",
+  "cases": {
+    "KE IDENTITY_CARD": "a two-sided card",
+    "KE PASSPORT": "a passport (format 3), one-sided",
+    "KE ALIEN_CARD": "a one-sided card, which a GenericDocument must not ask a back side of",
+    "ZA IDENTITY_CARD green_book": "a standalone sub-type: its own row, submitting the parent code",
+    "the '' code (Others)": "left out of the list",
+    "KE NATIONAL_ID": "a type with a simple regex",
+    "GH GHANA_CARD": "a regex with groups and alternation",
+    "GH PHONE_NUMBER": "needs a field the form cannot collect, so it is not listed",
+    "NG NATIONAL_ID": "needs dob, so it is not listed",
+    "ET": "a country whose only type is not listed, so ET is not offered for KYC"
+  },
+  "supported_id_types": {
+    "id_types": [
+      {
+        "country": "ET",
+        "label": "National ID",
+        "regex": "^[A-Za-z0-9_-]{1,64}$",
+        "required_fields": [
+          "country",
+          "id_number",
+          "id_type",
+          "openid_state",
+          "partner_id",
+          "partner_params",
+          "timestamp"
+        ],
+        "type": "NATIONAL_ID"
+      },
+      {
+        "country": "GH",
+        "label": "GHANA CARD",
+        "regex": "^[A-Za-z]{3}(-\\d{9}-\\d|\\d{9}\\d)$",
+        "required_fields": [
+          "country",
+          "id_number",
+          "id_type",
+          "partner_id",
+          "partner_params",
+          "timestamp"
+        ],
+        "type": "GHANA_CARD"
+      },
+      {
+        "country": "GH",
+        "label": "Phone Number",
+        "regex": "^(\\+?233(20|50)|0(20|50))\\d{7}$",
+        "required_fields": [
+          "country",
+          "id_number",
+          "id_type",
+          "operator",
+          "partner_id",
+          "partner_params",
+          "timestamp"
+        ],
+        "type": "PHONE_NUMBER"
+      },
+      {
+        "country": "KE",
+        "label": "National ID",
+        "regex": "^[0-9]{1,9}$",
+        "required_fields": [
+          "country",
+          "id_number",
+          "id_type",
+          "partner_id",
+          "partner_params",
+          "timestamp"
+        ],
+        "type": "NATIONAL_ID"
+      },
+      {
+        "country": "KE",
+        "label": "Passport",
+        "regex": "^[A-Z0-9]{7,9}$",
+        "required_fields": [
+          "country",
+          "id_number",
+          "id_type",
+          "partner_id",
+          "partner_params",
+          "timestamp"
+        ],
+        "type": "PASSPORT"
+      },
+      {
+        "country": "NG",
+        "label": "National ID",
+        "regex": "^[0-9]{10}$",
+        "required_fields": [
+          "country",
+          "dob",
+          "first_name",
+          "id_number",
+          "id_type",
+          "last_name",
+          "partner_id",
+          "partner_params",
+          "timestamp"
+        ],
+        "type": "NATIONAL_ID"
+      },
+      {
+        "country": "NG",
+        "label": "National ID",
+        "regex": "^[0-9]{11}$",
+        "required_fields": [
+          "country",
+          "id_number",
+          "id_type",
+          "partner_id",
+          "partner_params",
+          "timestamp"
+        ],
+        "type": "NIN"
+      }
+    ]
+  },
+  "supported_documents": {
+    "valid_documents": [
+      {
+        "country": {
+          "code": "GH",
+          "continent": "AFRICA",
+          "name": "Ghana"
+        },
+        "id_types": [
+          {
+            "code": "PASSPORT",
+            "example": [
+              "Passports"
+            ],
+            "format": 3,
+            "has_back": false,
+            "name": "Passport"
+          }
+        ]
+      },
+      {
+        "country": {
+          "code": "KE",
+          "continent": "AFRICA",
+          "name": "Kenya"
+        },
+        "id_types": [
+          {
+            "code": "ALIEN_CARD",
+            "example": [
+              "Alien Identity Card"
+            ],
+            "format": 1,
+            "has_back": false,
+            "name": "Alien ID"
+          },
+          {
+            "code": "IDENTITY_CARD",
+            "example": [
+              "National IDs"
+            ],
+            "format": 1,
+            "has_back": true,
+            "name": "Identity Card"
+          },
+          {
+            "code": "PASSPORT",
+            "example": [
+              "Passports"
+            ],
+            "format": 3,
+            "has_back": false,
+            "name": "Passport"
+          },
+          {
+            "code": "",
+            "example": [
+              "My document is not listed"
+            ],
+            "format": 1,
+            "has_back": true,
+            "name": "Others"
+          }
+        ]
+      },
+      {
+        "country": {
+          "code": "NG",
+          "continent": "AFRICA",
+          "name": "Nigeria"
+        },
+        "id_types": [
+          {
+            "code": "PASSPORT",
+            "example": [
+              "Passports"
+            ],
+            "format": 3,
+            "has_back": false,
+            "name": "Passport"
+          }
+        ]
+      },
+      {
+        "country": {
+          "code": "ZA",
+          "continent": "AFRICA",
+          "name": "South Africa"
+        },
+        "id_types": [
+          {
+            "code": "IDENTITY_CARD",
+            "example": [
+              "National IDs"
+            ],
+            "format": 1,
+            "has_back": true,
+            "name": "Identity Card",
+            "sub_types": [
+              {
+                "display_standalone": true,
+                "example": [
+                  "Green Book"
+                ],
+                "format": 7,
+                "has_back": false,
+                "id": "green_book",
+                "name": "Green Book"
+              }
+            ]
+          },
+          {
+            "code": "PASSPORT",
+            "example": [
+              "Passports"
+            ],
+            "format": 3,
+            "has_back": false,
+            "name": "Passport"
+          },
+          {
+            "code": "",
+            "example": [
+              "My document is not listed"
+            ],
+            "format": 1,
+            "has_back": true,
+            "name": "Others"
+          }
+        ]
+      }
+    ]
+  }
+}

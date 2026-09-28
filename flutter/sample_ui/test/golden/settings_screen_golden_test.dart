@@ -104,6 +104,7 @@ Widget _settings({
   ),
   onSettingChanged: _ignoreSetting,
   onProfileTap: () {},
+  onCaptureModeTap: () {},
   onNavRowTap: _ignoreRow,
   onSignOut: () {},
   // The DEBUG section is shown so the baseline records it; the host hides it on release.

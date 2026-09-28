@@ -322,6 +322,8 @@ class UseSmileIDSampleColors extends ThemeExtension<UseSmileIDSampleColors> {
     required this.foreground,
     required this.navBar,
     required this.cardStroke,
+    required this.skeleton,
+    required this.skeletonHighlight,
     required this.border,
     required this.overlayScrim,
     required this.textTitle,
@@ -377,6 +379,12 @@ class UseSmileIDSampleColors extends ThemeExtension<UseSmileIDSampleColors> {
 
   /// One outline for every card and row. A pair, because `color.border` does not change per mode.
   final Color cardStroke;
+
+  /// A loading row's resting fill, `skeleton.bg`.
+  final Color skeleton;
+
+  /// What a loading row pulses towards. A pair: `skeleton.highlight` is near-white in dark too. See `skeletonDarkHighlight`.
+  final Color skeletonHighlight;
 
   /// The semantic border, which carries the recorded `darkBorder` defect.
   final Color border;
@@ -514,6 +522,8 @@ abstract final class UseSmileIDSampleColorSchemes {
     foreground: smileOffBlackLight,
     navBar: smileNavBarLight,
     cardStroke: smileCardStrokeLight,
+    skeleton: SmileColorLight.skeletonBg,
+    skeletonHighlight: SmileColorLight.skeletonHighlight,
     border: SmileColorLight.colorBorder,
     overlayScrim: SmileColorLight.colorOverlayScrim,
     textTitle: SmileColorLight.colorTextTitle,
@@ -610,6 +620,8 @@ abstract final class UseSmileIDSampleColorSchemes {
     foreground: smileOffBlackDark,
     navBar: smileNavBarDark,
     cardStroke: smileCardStrokeDark,
+    skeleton: SmileColorDark.skeletonBg,
+    skeletonHighlight: SmileColorDark.colorSurfaceAlt,
     border: SmileColorDark.colorBorder,
     overlayScrim: SmileColorDark.colorOverlayScrim,
     textTitle: SmileColorDark.colorTextTitle,

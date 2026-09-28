@@ -162,6 +162,8 @@ class _UseSmileIDSampleSdkFlowTabState
       consentStep: settings.consentStep,
       instructionsStep: settings.instructionsStep,
       previewStep: settings.previewStep,
+      captureMode: settings.captureMode,
+      galleryUpload: settings.galleryUpload,
       userId: _runUserId(),
       partnerId: profiles.partnerId,
       partnerName: profiles.partnerName,

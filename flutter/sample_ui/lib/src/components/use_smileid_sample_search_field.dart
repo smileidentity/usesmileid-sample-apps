@@ -14,6 +14,7 @@ class UseSmileIDSampleSearchField extends StatefulWidget {
     required this.onQueryChanged,
     this.placeholder = '',
     this.testId,
+    this.enabled = true,
     super.key,
   });
 
@@ -28,6 +29,9 @@ class UseSmileIDSampleSearchField extends StatefulWidget {
 
   /// The `sample_*` id the sheet supplies.
   final String? testId;
+
+  /// Off while a list is still loading: there is nothing to filter yet.
+  final bool enabled;
 
   @override
   State<UseSmileIDSampleSearchField> createState() =>
@@ -105,6 +109,7 @@ class _UseSmileIDSampleSearchFieldState
                   child: TextField(
                     controller: _controller,
                     focusNode: _focusNode,
+                    enabled: widget.enabled,
                     onChanged: widget.onQueryChanged,
                     maxLines: 1,
                     cursorColor: colors.search.borderFocus,

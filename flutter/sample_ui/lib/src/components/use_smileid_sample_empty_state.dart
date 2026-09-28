@@ -13,6 +13,8 @@ class UseSmileIDSampleEmptyState extends StatelessWidget {
     required this.text,
     this.supportingText,
     this.testId,
+    this.onRetry,
+    this.retryTestId,
     super.key,
   });
 
@@ -24,6 +26,12 @@ class UseSmileIDSampleEmptyState extends StatelessWidget {
 
   /// The `sample_*` id the screen supplies.
   final String? testId;
+
+  /// Only for a list that failed to load: retrying can change that answer, and nothing else here can.
+  final VoidCallback? onRetry;
+
+  /// The Retry action's own id.
+  final String? retryTestId;
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +66,20 @@ class UseSmileIDSampleEmptyState extends StatelessWidget {
                 ),
               ),
             ],
+            if (onRetry != null)
+              Semantics(
+                identifier: retryTestId,
+                button: true,
+                child: TextButton(
+                  onPressed: onRetry,
+                  child: Text(
+                    'Retry',
+                    style: UseSmileIDSampleType.textStyleBodyStrong.copyWith(
+                      color: colors.textLink,
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),

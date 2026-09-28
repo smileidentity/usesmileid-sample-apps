@@ -14,7 +14,7 @@ class UseSmileIDSampleForms {
   /// The consent form's four fields.
   final UseSmileIDSampleUserDetails userDetails;
 
-  /// The ID form's three.
+  /// The ID form's fields.
   final UseSmileIDSampleIdDetails idDetails;
 
   /// Whether Continue keeps what was typed: into the active profile, or as a new one when there is none.
@@ -77,17 +77,37 @@ class UseSmileIDSampleFormsNotifier extends Notifier<UseSmileIDSampleForms> {
         idDetails: const UseSmileIDSampleIdDetails(),
       );
 
-  /// Chooses a country, which CLEARS the ID type: the old country's types may not apply.
+  /// Chooses a country, which clears the ID type and document and keeps the typed number.
   void setCountry(UseSmileIDSampleCountry country) =>
       state = state.copyWith(idDetails: state.idDetails.withCountry(country));
 
   /// Chooses an ID type.
-  void setIdType(UseSmileIDSampleIdType idType) =>
-      state = state.copyWith(idDetails: state.idDetails.withIdType(idType));
+  void setIdType(UseSmileIDSampleKycIdType idType) => state = state.copyWith(
+    idDetails: state.idDetails.copyWith(idType: idType),
+  );
+
+  /// Chooses a document.
+  void setDocument(UseSmileIDSampleDocument document) => state = state.copyWith(
+    idDetails: state.idDetails.copyWith(document: document),
+  );
+
+  /// Chooses how the SDK photographs the document.
+  void setCaptureAs(UseSmileIDSampleCaptureAs captureAs) => state = state
+      .copyWith(idDetails: state.idDetails.copyWith(captureAs: captureAs));
+
+  /// Keeps what the custom-document sheet built, which also selects Custom.
+  void setCustomDocument(UseSmileIDSampleCustomDocument custom) =>
+      state = state.copyWith(
+        idDetails: state.idDetails.copyWith(
+          custom: custom,
+          captureAs: UseSmileIDSampleCaptureAs.custom,
+        ),
+      );
 
   /// Types the ID number.
-  void setIdNumber(String idNumber) =>
-      state = state.copyWith(idDetails: state.idDetails.withIdNumber(idNumber));
+  void setIdNumber(String idNumber) => state = state.copyWith(
+    idDetails: state.idDetails.copyWith(idNumber: idNumber),
+  );
 
   /// Forgets everything, which is what signing out does.
   void clear() => state = const UseSmileIDSampleForms();

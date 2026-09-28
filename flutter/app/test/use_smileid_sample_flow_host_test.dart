@@ -10,6 +10,8 @@ import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_launc
 import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_preflight.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 
+import 'support/use_smileid_sample_catalogue_fixture.dart';
+
 /// The flow host: what it hands the SDK, what it refuses to hand over, and where the wizard stacks.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -185,8 +187,8 @@ void main() {
           snapshotFor(
             UseSmileIDSampleProduct.biometricKyc,
             idDetails: const UseSmileIDSampleIdDetails(
-              country: UseSmileIDSampleCountry.ke,
-              idType: UseSmileIDSampleIdType.nationalId,
+              country: kenya,
+              idType: kenyaNationalId,
               idNumber: '11111111',
             ),
           ),
@@ -240,8 +242,8 @@ void main() {
                   snapshotFor(
                     product,
                     idDetails: const UseSmileIDSampleIdDetails(
-                      country: UseSmileIDSampleCountry.ke,
-                      idType: UseSmileIDSampleIdType.nationalId,
+                      country: kenya,
+                      idType: kenyaNationalId,
                       idNumber: '11111111',
                     ),
                   ),

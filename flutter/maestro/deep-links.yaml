@@ -6,20 +6,20 @@ appId: ${APP_ID}
 - runFlow:
     file: subflows/cold-start.yaml
     env:
-      LINK: "usesmileid-sample-flutter://settings"
+      LINK: "usesmileid-sample-flutter://settings?catalogue=fixture"
       LANDS_ON: "sample_settings_screen"
 
 - runFlow:
     file: subflows/cold-start.yaml
     env:
-      LINK: "usesmileid-sample-flutter://settings/licenses"
+      LINK: "usesmileid-sample-flutter://settings/licenses?catalogue=fixture"
       LANDS_ON: "sample_licenses_screen"
 
 # Mid-run, which is the entry spec/routes.json documents for reaching the drawer from a flow.
 - runFlow:
     file: subflows/cold-start.yaml
     env:
-      LINK: "usesmileid-sample-flutter://"
+      LINK: "usesmileid-sample-flutter://?catalogue=fixture"
       LANDS_ON: "sample_products_screen"
 - openLink: "usesmileid-sample-flutter://debug/scenarios"
 - assertVisible:
@@ -52,7 +52,7 @@ appId: ${APP_ID}
 - runFlow:
     file: subflows/cold-start.yaml
     env:
-      LINK: "usesmileid-sample-flutter://"
+      LINK: "usesmileid-sample-flutter://?catalogue=fixture"
       LANDS_ON: "sample_products_screen"
 - openLink: "usesmileid-sample-flutter://verifications?seedJobs=true"
 - assertVisible:

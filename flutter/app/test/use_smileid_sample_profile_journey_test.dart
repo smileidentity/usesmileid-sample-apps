@@ -179,11 +179,7 @@ void main() {
       UseSmileIDSampleRoutes.settings,
       existing: UseSmileIDSampleProfiles(UseSmileIDSampleProfiles.fixtures()),
     );
-    await tester.scrollUntilVisible(
-      byId(UseSmileIDSampleTestIds.signOut),
-      400,
-      scrollable: find.byType(Scrollable).first,
-    );
+    await _scrollToEnd(tester);
     await tester.tap(byId(UseSmileIDSampleTestIds.signOut));
     await tester.pumpAndSettle();
     expect(stored.read().all, hasLength(3), reason: 'not before confirming');
@@ -203,11 +199,7 @@ void main() {
         seedProfiles: true,
         existing: UseSmileIDSampleProfiles(UseSmileIDSampleProfiles.fixtures()),
       );
-      await tester.scrollUntilVisible(
-        byId(UseSmileIDSampleTestIds.signOut),
-        400,
-        scrollable: find.byType(Scrollable).first,
-      );
+      await _scrollToEnd(tester);
       await tester.tap(byId(UseSmileIDSampleTestIds.signOut));
       await tester.pumpAndSettle();
       await tester.tap(byId(UseSmileIDSampleTestIds.signOutConfirm));
@@ -301,4 +293,10 @@ void main() {
       },
     );
   });
+}
+
+/// To the list's end, past the floating bar's clearance, so the bar cannot sit over Sign out.
+Future<void> _scrollToEnd(WidgetTester tester) async {
+  await tester.drag(find.byType(Scrollable).first, const Offset(0, -3000));
+  await tester.pumpAndSettle();
 }

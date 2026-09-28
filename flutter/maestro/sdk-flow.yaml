@@ -14,7 +14,7 @@ appId: ${APP_ID}
     file: subflows/cold-start.yaml
     env:
       # `probes` puts the result card on a release build, which is what this lane installs.
-      LINK: "usesmileid-sample-flutter://?noticeWindow=60&probes=true"
+      LINK: "usesmileid-sample-flutter://?noticeWindow=60&probes=true&catalogue=fixture"
       LANDS_ON: "sample_products_screen"
 
 # The wizard is PUSHED over the shell, so the nav bar is gone and back is a pop rather than a

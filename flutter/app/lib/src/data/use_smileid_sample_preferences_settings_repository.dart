@@ -48,6 +48,21 @@ class UseSmileIDSamplePreferencesSettingsRepository
         UseSmileIDSampleSettingsKeys.previewStep,
         defaults.previewStep,
       ),
+      galleryUpload: stored(
+        UseSmileIDSampleSettingsKeys.galleryUpload,
+        defaults.galleryUpload,
+      ),
+      captureMode:
+          UseSmileIDSampleCaptureMode.values
+              .where(
+                (UseSmileIDSampleCaptureMode mode) =>
+                    mode.id ==
+                    _preferences.getString(
+                      UseSmileIDSampleSettingsKeys.captureMode,
+                    ),
+              )
+              .firstOrNull ??
+          defaults.captureMode,
     ).normalised();
   }
 
@@ -77,6 +92,26 @@ class UseSmileIDSamplePreferencesSettingsRepository
           }
           done.complete(updated);
           // Never rethrown into the chain: one failed write must not stop every later one.
+        })
+        .catchError((Object error, StackTrace stack) {
+          if (!done.isCompleted) done.completeError(error, stack);
+        });
+    return done.future;
+  }
+
+  @override
+  Future<UseSmileIDSampleSettings> setCaptureMode(
+    UseSmileIDSampleCaptureMode mode,
+  ) {
+    final Completer<UseSmileIDSampleSettings> done =
+        Completer<UseSmileIDSampleSettings>();
+    _writes = _writes
+        .then((_) async {
+          await _preferences.setString(
+            UseSmileIDSampleSettingsKeys.captureMode,
+            mode.id,
+          );
+          done.complete(await read());
         })
         .catchError((Object error, StackTrace stack) {
           if (!done.isCompleted) done.completeError(error, stack);

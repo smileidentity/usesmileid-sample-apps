@@ -297,6 +297,78 @@ abstract final class UseSmileIDSampleTestIds {
   /// What the ID type picker shows with no country, and with no match.
   static const String idTypeEmpty = 'sample_idtype_empty';
 
+  /// The line under an ID number that does not fit its type.
+  static const String idNumberError = 'sample_idnumber_error';
+
+  /// The document select trigger, for the document products.
+  static const String documentTrigger = 'sample_document_trigger';
+
+  /// The capture-as select trigger, disabled until a document is chosen.
+  static const String captureAsTrigger = 'sample_capture_as_trigger';
+
+  /// The document picker sheet.
+  static const String documentSheet = 'sample_document_sheet';
+
+  /// Its search field.
+  static const String documentSearch = 'sample_document_search';
+
+  /// Suffixed with the code, and `_<subType>` on a standalone sub-type row.
+  static String documentOption(String documentId) =>
+      'sample_document_option_$documentId';
+
+  /// What the document picker shows with nothing to list, and with no match.
+  static const String documentEmpty = 'sample_document_empty';
+
+  /// The skeleton rows a picker shows while its list is still arriving.
+  static const String catalogueLoading = 'sample_catalogue_loading';
+
+  /// What a picker shows when its list failed to arrive.
+  static const String catalogueError = 'sample_catalogue_error';
+
+  /// That state's Retry.
+  static const String catalogueRetry = 'sample_catalogue_retry';
+
+  /// The capture-as sheet.
+  static const String captureAsSheet = 'sample_capture_as_sheet';
+
+  /// One capture-as row, suffixed with its id.
+  static String captureAsOption(String optionId) =>
+      'sample_capture_as_option_$optionId';
+
+  /// The custom-document sheet.
+  static const String customDocumentSheet = 'sample_custom_document_sheet';
+
+  /// Its display-name field.
+  static const String customDocumentName = 'sample_custom_document_name';
+
+  /// Its back-side switch.
+  static const String customDocumentBackSide =
+      'sample_custom_document_back_side';
+
+  /// One orientation chip, suffixed with its id.
+  static String customDocumentOrientation(String orientationId) =>
+      'sample_custom_document_orientation_$orientationId';
+
+  /// One aspect-ratio chip, suffixed with its id.
+  static String customDocumentAspectRatio(String ratioId) =>
+      'sample_custom_document_aspect_ratio_$ratioId';
+
+  /// Its Done, the only way the draft is kept.
+  static const String customDocumentDone = 'sample_custom_document_done';
+
+  /// The Settings row that opens the capture-mode sheet.
+  static const String settingCaptureMode = 'sample_setting_capture_mode';
+
+  /// The capture-mode sheet.
+  static const String captureModeSheet = 'sample_capture_mode_sheet';
+
+  /// One capture-mode row, suffixed with its id.
+  static String captureModeOption(String modeId) =>
+      'sample_capture_mode_option_$modeId';
+
+  /// The gallery-upload switch.
+  static const String settingGalleryUpload = 'sample_setting_gallery_upload';
+
   /// The scenario drawer, a debug affordance the design does not cover.
   static const String scenarioDrawer = 'sample_scenario_drawer';
 
@@ -417,6 +489,23 @@ abstract final class UseSmileIDSampleTestIds {
     idTypeSheet,
     idTypeSearch,
     idTypeEmpty,
+    idNumberError,
+    documentTrigger,
+    captureAsTrigger,
+    documentSheet,
+    documentSearch,
+    documentEmpty,
+    catalogueLoading,
+    catalogueError,
+    catalogueRetry,
+    captureAsSheet,
+    customDocumentSheet,
+    customDocumentName,
+    customDocumentBackSide,
+    customDocumentDone,
+    settingCaptureMode,
+    captureModeSheet,
+    settingGalleryUpload,
     scenarioDrawer,
     scenarioDrawerButton,
     licensesScreen,

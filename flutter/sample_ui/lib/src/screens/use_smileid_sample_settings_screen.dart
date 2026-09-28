@@ -146,6 +146,7 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
     required this.onProfileTap,
     required this.onNavRowTap,
     required this.onSignOut,
+    required this.onCaptureModeTap,
     this.onOpenScenarioDrawer,
     this.bottomInset = 0,
     super.key,
@@ -166,6 +167,9 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
 
   /// Signs out.
   final VoidCallback onSignOut;
+
+  /// Opens the capture-mode sheet.
+  final VoidCallback onCaptureModeTap;
 
   /// Opens the scenario drawer; null hides the DEBUG section entirely.
   final VoidCallback? onOpenScenarioDrawer;
@@ -273,6 +277,30 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
                 icon: SmileIcons.preview,
                 supportingText: 'Confirm or retake after capture',
                 setting: UseSmileIDSampleSetting.previewStep,
+              ),
+            ],
+          ),
+          // The design draws no such section either; it sits with the other capture choices.
+          _Section(
+            label: 'DOCUMENT CAPTURE',
+            children: <Widget>[
+              UseSmileIDSampleSettingRow(
+                title: 'Capture mode',
+                supportingText: state.settings.captureMode.label,
+                onTap: onCaptureModeTap,
+                leading: (Color tint) => UseSmileIDSampleIcon(
+                  asset: SmileIcons.documentVerification,
+                  tint: tint,
+                ),
+                trailing: const UseSmileIDSampleSettingRowChevron(),
+                testId: UseSmileIDSampleTestIds.settingCaptureMode,
+              ),
+              const UseSmileIDSampleSettingRowDivider(),
+              _switchRow(
+                title: 'Gallery upload',
+                icon: SmileIcons.preview,
+                supportingText: 'The system picker needs no permission',
+                setting: UseSmileIDSampleSetting.galleryUpload,
               ),
             ],
           ),

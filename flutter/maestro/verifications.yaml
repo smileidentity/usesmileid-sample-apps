@@ -10,7 +10,7 @@ appId: ${APP_ID}
 - runFlow:
     file: subflows/cold-start.yaml
     env:
-      LINK: "usesmileid-sample-flutter://?seedJobs=true&noticeWindow=60"
+      LINK: "usesmileid-sample-flutter://?seedJobs=true&noticeWindow=60&catalogue=fixture"
       LANDS_ON: "sample_products_screen"
 
 - tapOn:

@@ -39,6 +39,9 @@ abstract final class UseSmileIDSampleRoutes {
   /// The scenario drawer, a LAYER over settings rather than a page of its own.
   static const String scenarioDrawer = '/debug/scenarios';
 
+  /// The capture-mode sheet, a LAYER over settings.
+  static const String captureMode = '/settings/capture-mode';
+
   /// The token scanner, pushed above the shell.
   static const String scanToken = '/token/scan';
 
@@ -66,6 +69,18 @@ abstract final class UseSmileIDSampleRoutes {
   /// The ID type picker, the same.
   static String idTypePicker(String productId) =>
       '/flow/$productId/id-details/id-type';
+
+  /// The document picker, the same.
+  static String documentPicker(String productId) =>
+      '/flow/$productId/id-details/document';
+
+  /// The capture-as sheet, the same.
+  static String captureAs(String productId) =>
+      '/flow/$productId/id-details/capture-as';
+
+  /// The custom-document sheet, the same.
+  static String customDocument(String productId) =>
+      '/flow/$productId/id-details/custom-document';
 
   /// The SDK flow itself.
   static String sdkFlow(String productId) => '/flow/$productId/run';
@@ -95,6 +110,7 @@ bool useSmileIDSampleShowsNavBar(String location) => UseSmileIDSampleRoutes
 /// The destination a sheet route is layered over, which is itself for every other route.
 String useSmileIDSamplePageBehind(String location) => switch (location) {
   UseSmileIDSampleRoutes.scenarioDrawer => UseSmileIDSampleRoutes.settings,
+  UseSmileIDSampleRoutes.captureMode => UseSmileIDSampleRoutes.settings,
   UseSmileIDSampleRoutes.profileSwitch => UseSmileIDSampleRoutes.products,
   _ => location,
 };
@@ -196,6 +212,13 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
                 const UseSmileIDSampleSettingsTab(openDrawer: true),
               ),
             ),
+            GoRoute(
+              path: UseSmileIDSampleRoutes.captureMode,
+              pageBuilder: (_, _) => _ownerPage(
+                UseSmileIDSampleRoutes.settings,
+                const UseSmileIDSampleSettingsTab(openCaptureMode: true),
+              ),
+            ),
           ],
         ),
       ],
@@ -254,6 +277,30 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
               UseSmileIDSampleKycFormTab(
                 productId: state.pathParameters['productId']!,
                 openSheet: UseSmileIDSamplePicker.idType,
+              ),
+        ),
+        GoRoute(
+          path: 'document',
+          builder: (BuildContext context, GoRouterState state) =>
+              UseSmileIDSampleKycFormTab(
+                productId: state.pathParameters['productId']!,
+                openSheet: UseSmileIDSamplePicker.document,
+              ),
+        ),
+        GoRoute(
+          path: 'capture-as',
+          builder: (BuildContext context, GoRouterState state) =>
+              UseSmileIDSampleKycFormTab(
+                productId: state.pathParameters['productId']!,
+                openSheet: UseSmileIDSamplePicker.captureAs,
+              ),
+        ),
+        GoRoute(
+          path: 'custom-document',
+          builder: (BuildContext context, GoRouterState state) =>
+              UseSmileIDSampleKycFormTab(
+                productId: state.pathParameters['productId']!,
+                openSheet: UseSmileIDSamplePicker.customDocument,
               ),
         ),
       ],

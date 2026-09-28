@@ -27,7 +27,7 @@ void main() {
     },
   );
 
-  test('the six switches are the ones the SDK mapping names', () {
+  test('the switches are the ones the SDK mapping names', () {
     expect(
       UseSmileIDSampleSetting.values.map(
         (UseSmileIDSampleSetting it) => it.testId,
@@ -39,6 +39,7 @@ void main() {
         'sample_setting_consent_step',
         'sample_setting_instructions_step',
         'sample_setting_preview_step',
+        'sample_setting_gallery_upload',
       ],
     );
   });

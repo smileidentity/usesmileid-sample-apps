@@ -20,12 +20,35 @@ enum UseSmileIDSampleSetting {
   instructionsStep(UseSmileIDSampleTestIds.settingInstructionsStep),
 
   /// Includes or omits `preview()`.
-  previewStep(UseSmileIDSampleTestIds.settingPreviewStep);
+  previewStep(UseSmileIDSampleTestIds.settingPreviewStep),
+
+  /// DocumentCaptureConfig.allowGalleryUpload; off, as the SDK defaults it.
+  galleryUpload(UseSmileIDSampleTestIds.settingGalleryUpload);
 
   const UseSmileIDSampleSetting(this.testId);
 
   /// The `sample_*` id the row carries, which is spec data rather than the screen's choice.
   final String testId;
+}
+
+/// DocumentCaptureConfig.captureMode, in `spec/test-ids.json`'s vocabulary.
+enum UseSmileIDSampleCaptureMode {
+  /// Captures when the document is held steady.
+  auto('auto', 'Automatic'),
+
+  /// The shutter shows at once.
+  manual('manual', 'Manual'),
+
+  /// Automatic, with the shutter after the SDK's 10 seconds.
+  autoWithFallback('autoWithFallback', 'Automatic with manual fallback');
+
+  const UseSmileIDSampleCaptureMode(this.id, this.label);
+
+  /// The id that suffixes this row's test id and is what the store keeps.
+  final String id;
+
+  /// What the row and the Settings line say.
+  final String label;
 }
 
 /// The Settings state. Three of these decide whether a step is composed into the SDK flow at all.
@@ -39,6 +62,8 @@ class UseSmileIDSampleSettings {
     this.consentStep = true,
     this.instructionsStep = true,
     this.previewStep = true,
+    this.galleryUpload = false,
+    this.captureMode = UseSmileIDSampleCaptureMode.autoWithFallback,
   });
 
   /// The head-turn challenge.
@@ -59,6 +84,12 @@ class UseSmileIDSampleSettings {
   /// Whether the flow includes the SDK's preview step.
   final bool previewStep;
 
+  /// Whether the SDK offers the gallery on document capture.
+  final bool galleryUpload;
+
+  /// A typed field rather than one of the switches: three values, not two.
+  final UseSmileIDSampleCaptureMode captureMode;
+
   /// Reads one row, so a caller can diff two states without naming six fields.
   bool operator [](UseSmileIDSampleSetting setting) => switch (setting) {
     UseSmileIDSampleSetting.enhancedSmartSelfie => enhancedSmartSelfie,
@@ -67,6 +98,7 @@ class UseSmileIDSampleSettings {
     UseSmileIDSampleSetting.consentStep => consentStep,
     UseSmileIDSampleSetting.instructionsStep => instructionsStep,
     UseSmileIDSampleSetting.previewStep => previewStep,
+    UseSmileIDSampleSetting.galleryUpload => galleryUpload,
   };
 
   /// Drops enhanced liveness where a stored state carries both, so the SDK is never handed the pair.
@@ -94,7 +126,13 @@ class UseSmileIDSampleSettings {
       instructionsStep: enabled,
     ),
     UseSmileIDSampleSetting.previewStep => _copy(previewStep: enabled),
+    UseSmileIDSampleSetting.galleryUpload => _copy(galleryUpload: enabled),
   };
+
+  /// A copy with [captureMode] chosen.
+  UseSmileIDSampleSettings withCaptureMode(
+    UseSmileIDSampleCaptureMode captureMode,
+  ) => _copy(captureMode: captureMode);
 
   UseSmileIDSampleSettings _copy({
     bool? enhancedSmartSelfie,
@@ -103,6 +141,8 @@ class UseSmileIDSampleSettings {
     bool? consentStep,
     bool? instructionsStep,
     bool? previewStep,
+    bool? galleryUpload,
+    UseSmileIDSampleCaptureMode? captureMode,
   }) => UseSmileIDSampleSettings(
     enhancedSmartSelfie: enhancedSmartSelfie ?? this.enhancedSmartSelfie,
     agentMode: agentMode ?? this.agentMode,
@@ -110,6 +150,8 @@ class UseSmileIDSampleSettings {
     consentStep: consentStep ?? this.consentStep,
     instructionsStep: instructionsStep ?? this.instructionsStep,
     previewStep: previewStep ?? this.previewStep,
+    galleryUpload: galleryUpload ?? this.galleryUpload,
+    captureMode: captureMode ?? this.captureMode,
   );
 
   @override
@@ -120,7 +162,9 @@ class UseSmileIDSampleSettings {
       other.darkMode == darkMode &&
       other.consentStep == consentStep &&
       other.instructionsStep == instructionsStep &&
-      other.previewStep == previewStep;
+      other.previewStep == previewStep &&
+      other.galleryUpload == galleryUpload &&
+      other.captureMode == captureMode;
 
   @override
   int get hashCode => Object.hash(
@@ -130,5 +174,7 @@ class UseSmileIDSampleSettings {
     consentStep,
     instructionsStep,
     previewStep,
+    galleryUpload,
+    captureMode,
   );
 }

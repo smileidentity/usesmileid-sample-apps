@@ -6,7 +6,7 @@ import 'use_smileid_sample_token_binding_rules.dart';
 /// Read once at flow entry; never re-read while the flow runs.
 @immutable
 class UseSmileIDSampleFlowLaunchSnapshot {
-  /// Takes the five settings rather than the settings object, because the read happens once.
+  /// Takes the settings one by one rather than the settings object, because the read happens once.
   const UseSmileIDSampleFlowLaunchSnapshot({
     required this.product,
     required this.route,
@@ -24,6 +24,8 @@ class UseSmileIDSampleFlowLaunchSnapshot {
     required this.partnerId,
     required this.partnerName,
     required this.callbackUrl,
+    this.captureMode = UseSmileIDSampleCaptureMode.autoWithFallback,
+    this.galleryUpload = false,
     this.session,
     this.sessionExpired = false,
   });
@@ -63,6 +65,12 @@ class UseSmileIDSampleFlowLaunchSnapshot {
 
   /// Whether a preview follows each capture.
   final bool previewStep;
+
+  /// How the document capture shutter behaves.
+  final UseSmileIDSampleCaptureMode captureMode;
+
+  /// Whether document capture offers the gallery.
+  final bool galleryUpload;
 
   /// The id this run submits under.
   final String userId;

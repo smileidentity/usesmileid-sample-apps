@@ -29,6 +29,7 @@ void main() {
       UseSmileIDSampleLaunchArgs.appLocaleArg: defaults.appLocale,
       UseSmileIDSampleLaunchArgs.holdCameraArg: defaults.holdCamera,
       UseSmileIDSampleLaunchArgs.noticeWindowArg: defaults.noticeWindow,
+      UseSmileIDSampleLaunchArgs.catalogueArg: defaults.catalogue.id,
     };
     final Map<String, Object?> theirs = <String, Object?>{
       for (final Map<String, Object?> arg in args)
@@ -145,5 +146,15 @@ void main() {
       }),
       const UseSmileIDSampleLaunchArgs(),
     );
+  });
+
+  test('catalogue takes its three values and falls back to live', () {
+    UseSmileIDSampleCatalogueMode mode(String value) =>
+        UseSmileIDSampleLaunchArgs.from(<String, Object?>{
+          'catalogue': value,
+        }).catalogue;
+    expect(mode('fixture'), UseSmileIDSampleCatalogueMode.fixture);
+    expect(mode('unreachable'), UseSmileIDSampleCatalogueMode.unreachable);
+    expect(mode('offline'), UseSmileIDSampleCatalogueMode.live);
   });
 }

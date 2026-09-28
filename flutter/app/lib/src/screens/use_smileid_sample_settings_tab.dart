@@ -17,10 +17,17 @@ import '../use_smileid_sample_version.dart';
 /// The settings tab, whose six switches survive a restart.
 class UseSmileIDSampleSettingsTab extends ConsumerStatefulWidget {
   /// [openDrawer] is set by the deep link, which opens this page with the drawer already up.
-  const UseSmileIDSampleSettingsTab({this.openDrawer = false, super.key});
+  const UseSmileIDSampleSettingsTab({
+    this.openDrawer = false,
+    this.openCaptureMode = false,
+    super.key,
+  });
 
   /// Whether a link asked for the scenario drawer.
   final bool openDrawer;
+
+  /// Whether a link asked for the capture-mode sheet.
+  final bool openCaptureMode;
 
   @override
   ConsumerState<UseSmileIDSampleSettingsTab> createState() =>
@@ -34,10 +41,12 @@ class _UseSmileIDSampleSettingsTabState
     super.initState();
     // After the first frame, because a sheet cannot be presented while this is still building —
     // and once only, so returning here later does not replay the link's sheet.
-    if (widget.openDrawer) {
+    if (widget.openDrawer || widget.openCaptureMode) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          _openScenarioDrawer();
+          widget.openDrawer
+              ? _openScenarioDrawer()
+              : _openCaptureModeFromLink();
         }
       });
     }
@@ -51,6 +60,13 @@ class _UseSmileIDSampleSettingsTabState
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           _openScenarioDrawer();
+        }
+      });
+    }
+    if (widget.openCaptureMode && !oldWidget.openCaptureMode) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _openCaptureModeFromLink();
         }
       });
     }
@@ -83,6 +99,7 @@ class _UseSmileIDSampleSettingsTabState
       // The LIST, not the active profile's own page: the twin's row is a way into every profile.
       onProfileTap: () => context.go(UseSmileIDSampleRoutes.profiles),
       onNavRowTap: _openNavRow,
+      onCaptureModeTap: _showCaptureMode,
       // Debug builds only; every flow reaches the drawer by its deep link instead.
       onOpenScenarioDrawer: kDebugMode ? _openScenarioDrawer : null,
       onSignOut: () {
@@ -115,6 +132,36 @@ class _UseSmileIDSampleSettingsTabState
       router.go(UseSmileIDSampleRoutes.settings);
     }
   }
+
+  /// Hands the route back on dismiss, as the drawer's link does.
+  Future<void> _openCaptureModeFromLink() async {
+    final GoRouter router = GoRouter.of(context);
+    await _showCaptureMode();
+    if (router.routerDelegate.currentConfiguration.uri.path ==
+        UseSmileIDSampleRoutes.captureMode) {
+      router.go(UseSmileIDSampleRoutes.settings);
+    }
+  }
+
+  Future<void> _showCaptureMode() => showUseSmileIDSampleSheet<void>(
+    context: context,
+    title: 'Capture mode',
+    testId: UseSmileIDSampleTestIds.captureModeSheet,
+    builder: (BuildContext sheetContext) => Consumer(
+      builder: (BuildContext context, WidgetRef ref, Widget? _) =>
+          UseSmileIDSampleCaptureModeSheet(
+            selected: ref.watch(useSmileIDSampleSettingsProvider).captureMode,
+            onSelect: (UseSmileIDSampleCaptureMode mode) {
+              unawaited(
+                ref
+                    .read(useSmileIDSampleSettingsProvider.notifier)
+                    .setCaptureMode(mode),
+              );
+              Navigator.of(sheetContext).pop();
+            },
+          ),
+    ),
+  );
 
   Future<void> _showScenarioDrawer() => showUseSmileIDSampleSheet<void>(
     context: context,

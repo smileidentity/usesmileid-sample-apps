@@ -120,7 +120,9 @@ void _applyIdParams(
   // The server overwrites these from the token's claims regardless.
   final UseSmileIDSampleTokenBindings? bound = snapshot.liveSession?.bindings;
   final String country = bound?.country ?? details.country?.code ?? '';
-  final String idType = bound?.idType ?? details.idType?.id ?? '';
+  // The API's type, or the document's code: the server never hears which capture shape was chosen.
+  final String? chosen = details.idType?.type ?? details.document?.code;
+  final String idType = bound?.idType ?? chosen ?? '';
   final String idNumber = bound?.idNumberReference ?? details.idNumber;
   switch (snapshot.product) {
     case UseSmileIDSampleProduct.biometricKyc:
@@ -139,7 +141,7 @@ void _applyIdParams(
     case UseSmileIDSampleProduct.documentVerification:
       builder.documentVerificationParams = DocumentVerificationParams(
         country: country,
-        idType: bound?.idType ?? details.idType?.id,
+        idType: bound?.idType ?? chosen,
       );
     case UseSmileIDSampleProduct.enhancedDocumentVerification:
       builder.enhancedDocumentVerificationParams =
@@ -178,9 +180,13 @@ void _journeyFor(
         screens.capture((CaptureConfigBuilder capture) {
           capture.captureType = CaptureType.document;
           capture.document((DocumentCaptureConfigBuilder document) {
-            document.documentType = _documentTypeFor(snapshot.idDetails.idType);
-            document.captureBothSides = true;
+            final UseSmileIDSampleDocumentCapture shape =
+                useSmileIDSampleDocumentCaptureFor(snapshot.idDetails);
+            document.documentType = shape.documentType;
+            document.captureBothSides = shape.captureBothSides;
             document.allowSkipBack = true;
+            document.captureMode = snapshot.captureMode.sdk;
+            document.allowGalleryUpload = snapshot.galleryUpload;
           });
         });
       case UseSmileIDSampleFlowJourneyStep.preview:
@@ -266,14 +272,66 @@ void _documentCapture(
   }
 }
 
-DocumentType _documentTypeFor(UseSmileIDSampleIdType? idType) =>
-    switch (idType) {
-      UseSmileIDSampleIdType.passport => DocumentType.passport,
-      null => const GenericDocument(),
-      final UseSmileIDSampleIdType other => GenericDocument(
-        displayName: other.label,
+/// What the SDK is told to photograph; the server is told the document's code either way.
+typedef UseSmileIDSampleDocumentCapture = ({
+  DocumentType documentType,
+  bool captureBothSides,
+});
+
+/// The "Capture as" mapping from `spec/catalogue-rules.json`; pure, so its table is unit-tested.
+@visibleForTesting
+UseSmileIDSampleDocumentCapture useSmileIDSampleDocumentCaptureFor(
+  UseSmileIDSampleIdDetails details,
+) {
+  final UseSmileIDSampleDocument? document = details.document;
+  return switch (details.captureAs) {
+    UseSmileIDSampleCaptureAs.greenBook => _preset(
+      DocumentType.southAfricaGreenBook,
+    ),
+    UseSmileIDSampleCaptureAs.passport => _preset(DocumentType.passport),
+    UseSmileIDSampleCaptureAs.custom => _preset(
+      GenericDocument(
+        displayName: details.custom.displayName,
+        hasBackSide: details.custom.hasBackSide,
+        orientation: switch (details.custom.orientation) {
+          UseSmileIDSampleDocumentOrientation.landscape =>
+            DocumentOrientation.landscape,
+          UseSmileIDSampleDocumentOrientation.portrait =>
+            DocumentOrientation.portrait,
+        },
+        knownAspectRatio: details.custom.aspectRatio.ratio,
       ),
-    };
+    ),
+    // The API's has_back, not a preset's: the API is the source that says what the document is.
+    UseSmileIDSampleCaptureAs.automatic => (
+      documentType: switch (document?.format) {
+        _formatGreenBook => DocumentType.southAfricaGreenBook,
+        _formatBooklet => DocumentType.passport,
+        _ => GenericDocument(
+          displayName: document?.name ?? 'Document',
+          hasBackSide: document?.hasBack ?? true,
+        ),
+      },
+      captureBothSides: document?.hasBack ?? true,
+    ),
+  };
+}
+
+UseSmileIDSampleDocumentCapture _preset(DocumentType type) =>
+    (documentType: type, captureBothSides: type.hasBackSide);
+
+// The API's undocumented `format`: 3 is a passport or seaman's booklet, 7 the Green Book; the rest are cards.
+const int _formatBooklet = 3;
+const int _formatGreenBook = 7;
+
+extension on UseSmileIDSampleCaptureMode {
+  DocumentCaptureMode get sdk => switch (this) {
+    UseSmileIDSampleCaptureMode.auto => const AutoCapture(),
+    UseSmileIDSampleCaptureMode.manual => const ManualCapture(),
+    UseSmileIDSampleCaptureMode.autoWithFallback =>
+      const AutoCaptureWithManualFallback(),
+  };
+}
 
 /// The SDK's own job type for each product.
 extension on UseSmileIDSampleProduct {

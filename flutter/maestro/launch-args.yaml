@@ -8,7 +8,7 @@ appId: ${APP_ID}
 - runFlow:
     file: subflows/cold-start.yaml
     env:
-      LINK: "usesmileid-sample-flutter://"
+      LINK: "usesmileid-sample-flutter://?catalogue=fixture"
       LANDS_ON: "sample_products_screen"
 
 # A launch with no arguments shows a partner nothing that is not theirs.
@@ -21,7 +21,7 @@ appId: ${APP_ID}
 - runFlow:
     file: subflows/cold-start.yaml
     env:
-      LINK: "usesmileid-sample-flutter://?seedJobs=true"
+      LINK: "usesmileid-sample-flutter://?seedJobs=true&catalogue=fixture"
       LANDS_ON: "sample_products_screen"
 - tapOn:
     id: "sample_nav_verifications"
@@ -34,7 +34,7 @@ appId: ${APP_ID}
 - runFlow:
     file: subflows/cold-start.yaml
     env:
-      LINK: "usesmileid-sample-flutter://debug/scenarios?scenario=expiredToken"
+      LINK: "usesmileid-sample-flutter://debug/scenarios?scenario=expiredToken&catalogue=fixture"
       LANDS_ON: "sample_scenario_drawer"
 - assertVisible:
     id: "sample_scenario_item_expiredToken"

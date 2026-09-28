@@ -1,0 +1,114 @@
+import 'dart:convert';
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:sample_ui/sample_ui.dart';
+
+import '../support/catalogue_fixtures.dart';
+import 'spec_file.dart';
+
+/// spec/catalogue-rules.json: the pure rules that turn the two responses into picker rows.
+void main() {
+  final Map<String, Object?> rules = spec('catalogue-rules.json');
+  List<Map<String, Object?>> cases(String section) =>
+      objects((rules[section]! as Map<String, Object?>)['cases']);
+
+  test('the allowed required fields are the spec\'s', () {
+    expect(
+      UseSmileIDSampleCatalogueRules.allowedRequiredFields,
+      ((rules['idTypes']! as Map<String, Object?>)['allowedRequiredFields']!
+              as List<Object?>)
+          .toSet(),
+    );
+  });
+
+  test('every section has cases', () {
+    for (final String section in <String>[
+      'idTypes',
+      'documents',
+      'countries',
+      'captureAs',
+    ]) {
+      expect(cases(section), isNotEmpty, reason: section);
+    }
+  });
+
+  test('id type cases', () {
+    for (final Map<String, Object?> c in cases('idTypes')) {
+      final List<UseSmileIDSampleApiIdType> all =
+          UseSmileIDSampleCatalogueJson.idTypes(
+            jsonEncode(<String, Object?>{'id_types': c['input']}),
+          )!;
+      final List<UseSmileIDSampleKycIdType> got =
+          UseSmileIDSampleCatalogueRules.idTypes(all, c['country']! as String);
+      expect(
+        <Map<String, String>>[
+          for (final UseSmileIDSampleKycIdType it in got)
+            <String, String>{'id': it.id, 'type': it.type, 'label': it.label},
+        ],
+        c['expected'],
+        reason: c['name']! as String,
+      );
+    }
+  });
+
+  test('document cases', () {
+    for (final Map<String, Object?> c in cases('documents')) {
+      final List<UseSmileIDSampleApiCountryDocuments> all =
+          UseSmileIDSampleCatalogueJson.documents(
+            jsonEncode(<String, Object?>{'valid_documents': c['input']}),
+          )!;
+      final List<UseSmileIDSampleDocument> got =
+          UseSmileIDSampleCatalogueRules.documents(
+            all,
+            c['country']! as String,
+          );
+      expect(
+        <Map<String, Object?>>[
+          for (final UseSmileIDSampleDocument it in got)
+            <String, Object?>{
+              'id': it.id,
+              'code': it.code,
+              'subType': it.subType,
+              'name': it.name,
+              'hasBack': it.hasBack,
+              'format': it.format,
+            },
+        ],
+        c['expected'],
+        reason: c['name']! as String,
+      );
+    }
+  });
+
+  test('country cases', () {
+    for (final Map<String, Object?> c in cases('countries')) {
+      final Object? input = c['input'];
+      final UseSmileIDSampleCatalogueData data =
+          input == 'catalogue-fixture.json'
+          ? CatalogueFixtures.data
+          : UseSmileIDSampleCatalogueData(
+              UseSmileIDSampleCatalogueJson.idTypes(
+                jsonEncode(
+                  (input! as Map<String, Object?>)['supported_id_types'],
+                ),
+              )!,
+              UseSmileIDSampleCatalogueJson.documents(
+                jsonEncode(
+                  (input as Map<String, Object?>)['supported_documents'],
+                ),
+              )!,
+            );
+      final UseSmileIDSampleCatalogueFamily family =
+          UseSmileIDSampleCatalogueFamily.values.byName(c['family']! as String);
+      expect(
+        <Map<String, String>>[
+          for (final UseSmileIDSampleCountry it
+              in UseSmileIDSampleCatalogueRules.countries(data, family))
+            <String, String>{'code': it.code, 'name': it.name},
+        ],
+        c['expected'],
+        reason: c['name']! as String,
+      );
+    }
+  });
+}

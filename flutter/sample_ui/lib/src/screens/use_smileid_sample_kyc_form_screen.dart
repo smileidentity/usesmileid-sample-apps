@@ -7,20 +7,26 @@ import '../components/use_smileid_sample_section_label.dart';
 import '../components/use_smileid_sample_select_trigger.dart';
 import '../components/use_smileid_sample_text_input.dart';
 import '../components/use_smileid_sample_top_app_bar.dart';
+import '../state/use_smileid_sample_catalogue.dart';
 import '../state/use_smileid_sample_id_details.dart';
+import '../state/use_smileid_sample_id_number_hint.dart';
 import '../tokens/smile_icons.dart';
 import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
-/// Country, ID type and number, for the products that need a document.
+/// The ID-details form: an ID type and number for KYC, a document and how to capture it otherwise.
 class UseSmileIDSampleKycFormScreen extends StatelessWidget {
   /// [onScanToken] is offered because a pushed form covers the nav bar's own token affordance.
   const UseSmileIDSampleKycFormScreen({
     required this.title,
+    required this.family,
     required this.details,
+    required this.countryListLoading,
     required this.onBack,
     required this.onPickCountry,
     required this.onPickIdType,
+    required this.onPickDocument,
+    required this.onPickCaptureAs,
     required this.onIdNumberChanged,
     required this.onContinue,
     this.onScanToken,
@@ -30,8 +36,14 @@ class UseSmileIDSampleKycFormScreen extends StatelessWidget {
   /// The product's own label.
   final String title;
 
+  /// Which list the second trigger reads.
+  final UseSmileIDSampleCatalogueFamily family;
+
   /// What has been chosen so far.
   final UseSmileIDSampleIdDetails details;
+
+  /// Whether the chosen country's list is still arriving, which the second trigger says.
+  final bool countryListLoading;
 
   /// Leaves the form.
   final VoidCallback onBack;
@@ -41,6 +53,12 @@ class UseSmileIDSampleKycFormScreen extends StatelessWidget {
 
   /// Opens the ID type picker.
   final VoidCallback onPickIdType;
+
+  /// Opens the document picker.
+  final VoidCallback onPickDocument;
+
+  /// Opens the capture-as sheet.
+  final VoidCallback onPickCaptureAs;
 
   /// Called on every keystroke of the number.
   final ValueChanged<String> onIdNumberChanged;
@@ -69,7 +87,7 @@ class UseSmileIDSampleKycFormScreen extends StatelessWidget {
                     const UseSmileIDSampleSectionLabel(text: 'COUNTRY'),
                     const SizedBox(height: SmileDimens.spacingSm),
                     UseSmileIDSampleSelectTrigger(
-                      value: details.country?.label,
+                      value: details.country?.name,
                       placeholder: 'Select country',
                       onTap: onPickCountry,
                       leading: (Color tint) => UseSmileIDSampleTriggerEmoji(
@@ -78,36 +96,11 @@ class UseSmileIDSampleKycFormScreen extends StatelessWidget {
                       testId: UseSmileIDSampleTestIds.countryTrigger,
                     ),
                     const SizedBox(height: SmileDimens.spacingSm),
-                    const UseSmileIDSampleSectionLabel(text: 'ID TYPE'),
-                    const SizedBox(height: SmileDimens.spacingSm),
-                    UseSmileIDSampleSelectTrigger(
-                      value: details.idType?.label,
-                      // Names the missing step rather than the missing value: a reader who has
-                      // chosen no country needs to know why this is closed.
-                      placeholder: details.country == null
-                          ? 'Choose a country first'
-                          : 'Select ID type',
-                      onTap: onPickIdType,
-                      enabled: details.country != null,
-                      // A glyph, not the design's 🪪: that emoji is tofu on older Androids.
-                      leading: (Color tint) => UseSmileIDSampleIcon(
-                        asset: SmileIcons.biometricKyc,
-                        tint: tint,
-                      ),
-                      testId: UseSmileIDSampleTestIds.idTypeTrigger,
-                    ),
-                    const SizedBox(height: SmileDimens.spacingSm),
-                    const UseSmileIDSampleSectionLabel(text: 'ID NUMBER'),
-                    const SizedBox(height: SmileDimens.spacingSm),
-                    UseSmileIDSampleTextInput(
-                      value: details.idNumber,
-                      onChanged: onIdNumberChanged,
-                      placeholder: 'Enter ID number',
-                      // The only rule on this field: a capitalisation HINT to the keyboard. A
-                      // pasted lowercase value stays lowercase, exactly as the twin leaves it.
-                      textCapitalization: TextCapitalization.characters,
-                      testId: UseSmileIDSampleTestIds.idNumberInput,
-                    ),
+                    ...switch (family) {
+                      UseSmileIDSampleCatalogueFamily.kyc => _kycFields(),
+                      UseSmileIDSampleCatalogueFamily.document =>
+                        _documentFields(),
+                    },
                     const SizedBox(height: SmileDimens.spacingXl),
                   ],
                 ),
@@ -127,12 +120,85 @@ class UseSmileIDSampleKycFormScreen extends StatelessWidget {
             child: UseSmileIDSampleButton(
               text: 'Continue',
               onPressed: onContinue,
-              enabled: details.isComplete,
+              enabled: details.isComplete(family),
               testId: UseSmileIDSampleTestIds.kycContinue,
             ),
           ),
         ],
       ),
     );
+  }
+
+  List<Widget> _kycFields() {
+    final String? error = UseSmileIDSampleIdNumberHint.error(
+      details.idType,
+      details.idNumber,
+    );
+    return <Widget>[
+      const UseSmileIDSampleSectionLabel(text: 'ID TYPE'),
+      const SizedBox(height: SmileDimens.spacingSm),
+      UseSmileIDSampleSelectTrigger(
+        value: details.idType?.label,
+        placeholder: _secondPlaceholder('Loading ID types…', 'Select ID type'),
+        onTap: onPickIdType,
+        enabled: details.country != null,
+        // A glyph, not the design's 🪪: that emoji is tofu on older Androids.
+        leading: (Color tint) =>
+            UseSmileIDSampleIcon(asset: SmileIcons.biometricKyc, tint: tint),
+        testId: UseSmileIDSampleTestIds.idTypeTrigger,
+      ),
+      const SizedBox(height: SmileDimens.spacingSm),
+      const UseSmileIDSampleSectionLabel(text: 'ID NUMBER'),
+      const SizedBox(height: SmileDimens.spacingSm),
+      UseSmileIDSampleTextInput(
+        value: details.idNumber,
+        onChanged: onIdNumberChanged,
+        placeholder: UseSmileIDSampleIdNumberHint.placeholder(details.idType),
+        enabled: details.idType != null,
+        isError: error != null,
+        errorMessage: error,
+        textCapitalization: TextCapitalization.characters,
+        testId: UseSmileIDSampleTestIds.idNumberInput,
+        errorTestId: UseSmileIDSampleTestIds.idNumberError,
+      ),
+    ];
+  }
+
+  List<Widget> _documentFields() => <Widget>[
+    const UseSmileIDSampleSectionLabel(text: 'DOCUMENT'),
+    const SizedBox(height: SmileDimens.spacingSm),
+    UseSmileIDSampleSelectTrigger(
+      value: details.document?.name,
+      placeholder: _secondPlaceholder('Loading documents…', 'Select document'),
+      onTap: onPickDocument,
+      enabled: details.country != null,
+      leading: (Color tint) => UseSmileIDSampleIcon(
+        asset: SmileIcons.documentVerification,
+        tint: tint,
+      ),
+      testId: UseSmileIDSampleTestIds.documentTrigger,
+    ),
+    const SizedBox(height: SmileDimens.spacingSm),
+    const UseSmileIDSampleSectionLabel(text: 'CAPTURE AS'),
+    const SizedBox(height: SmileDimens.spacingSm),
+    UseSmileIDSampleSelectTrigger(
+      value: details.captureAs == UseSmileIDSampleCaptureAs.custom
+          ? 'Custom: ${details.custom.displayName}'
+          : details.captureAs.label,
+      placeholder: UseSmileIDSampleCaptureAs.automatic.label,
+      onTap: onPickCaptureAs,
+      enabled: details.document != null,
+      leading: (Color tint) =>
+          UseSmileIDSampleIcon(asset: SmileIcons.preview, tint: tint),
+      testId: UseSmileIDSampleTestIds.captureAsTrigger,
+    ),
+  ];
+
+  /// Enabled while loading, with "Loading…" in place of the prompt, so the form never looks stuck.
+  String _secondPlaceholder(String loading, String ready) {
+    if (details.country == null) {
+      return 'Choose a country first';
+    }
+    return countryListLoading ? loading : ready;
   }
 }

@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
+import '../catalogue/use_smileid_sample_catalogue_providers.dart';
 import '../state/use_smileid_sample_forms.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
@@ -102,9 +105,9 @@ class _UseSmileIDSampleUserDetailsTabState
   }
 }
 
-/// Country, ID type and number, with both pickers as layers over it.
+/// The ID-details form, with its pickers and capture sheets as layers over it.
 class UseSmileIDSampleKycFormTab extends ConsumerStatefulWidget {
-  /// [openSheet] names a picker a deep link asked for, so the link opens this page with it up.
+  /// [openSheet] names a sheet a deep link asked for, so the link opens this page with it up.
   const UseSmileIDSampleKycFormTab({
     required this.productId,
     this.openSheet,
@@ -114,7 +117,7 @@ class UseSmileIDSampleKycFormTab extends ConsumerStatefulWidget {
   /// The product whose flow this precedes.
   final String productId;
 
-  /// Which picker to open on arrival, if any.
+  /// Which sheet to open on arrival, if any.
   final UseSmileIDSamplePicker? openSheet;
 
   @override
@@ -124,20 +127,74 @@ class UseSmileIDSampleKycFormTab extends ConsumerStatefulWidget {
 
 class _UseSmileIDSampleKycFormTabState
     extends ConsumerState<UseSmileIDSampleKycFormTab> {
+  late final UseSmileIDSampleCatalogueStore _catalogue = ref.read(
+    useSmileIDSampleCatalogueStoreProvider,
+  );
+
+  UseSmileIDSampleCatalogueFamily get _family {
+    final UseSmileIDSampleProduct? product = _productFor(widget.productId);
+    return (product == null
+            ? null
+            : useSmileIDSampleCatalogueFamily(product)) ??
+        UseSmileIDSampleCatalogueFamily.kyc;
+  }
+
   @override
   void initState() {
     super.initState();
     // After the first frame, because a sheet cannot be presented while this is still building —
     // and once only, so returning here later does not replay the link's sheet.
-    final UseSmileIDSamplePicker? asked = widget.openSheet;
-    if (asked != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          asked == UseSmileIDSamplePicker.country
-              ? _pickCountry()
-              : _pickIdType();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      // A deep link lands here without the product tap that fetches ahead, so the form starts it.
+      _catalogue.ensure(
+        useSmileIDSampleCatalogueEnvironment(
+          ref.read(useSmileIDSampleSessionProvider).live,
+        ),
+        useSmileIDSampleCatalogueLocale(),
+      );
+      final UseSmileIDSamplePicker? asked = widget.openSheet;
+      if (asked != null) {
+        _openFromLink(asked);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // After the frame: stopping notifies, and nothing may rebuild while this tree is torn down.
+    scheduleMicrotask(_catalogue.stop);
+    super.dispose();
+  }
+
+  /// A link can ask for a second-level sheet before its trigger could open; refused, not held until later.
+  void _openFromLink(UseSmileIDSamplePicker asked) {
+    final UseSmileIDSampleIdDetails details = ref
+        .read(useSmileIDSampleFormsProvider)
+        .idDetails;
+    switch (asked) {
+      case UseSmileIDSamplePicker.country:
+        _pickCountry();
+      case UseSmileIDSamplePicker.idType:
+        if (details.country != null) {
+          _pickIdType();
         }
-      });
+      case UseSmileIDSamplePicker.document:
+        if (details.country != null) {
+          _pickDocument();
+        }
+      case UseSmileIDSamplePicker.captureAs:
+        if (details.document != null) {
+          _pickCaptureAs();
+        }
+      case UseSmileIDSamplePicker.customDocument:
+        // Selects Custom too, so the form never shows a shape it did not choose.
+        ref
+            .read(useSmileIDSampleFormsProvider.notifier)
+            .setCaptureAs(UseSmileIDSampleCaptureAs.custom);
+        _buildCustom();
     }
   }
 
@@ -147,66 +204,178 @@ class _UseSmileIDSampleKycFormTabState
     final UseSmileIDSampleIdDetails details = ref
         .watch(useSmileIDSampleFormsProvider)
         .idDetails;
+    final UseSmileIDSampleFormsNotifier edits = ref.read(
+      useSmileIDSampleFormsProvider.notifier,
+    );
     void back() => useSmileIDSampleBack(
       context,
       UseSmileIDSampleRoutes.consentDetailsForm(widget.productId),
     );
     return UseSmileIDSampleAboveShellPage(
       onBack: back,
-      child: UseSmileIDSampleKycFormScreen(
-        title: product?.label ?? widget.productId,
-        details: details,
-        onBack: back,
-        onPickCountry: _pickCountry,
-        onPickIdType: _pickIdType,
-        onIdNumberChanged: ref
-            .read(useSmileIDSampleFormsProvider.notifier)
-            .setIdNumber,
-        // Through the journey, not straight to the route: the helper is the single place the
-        // order lives, and a second copy is how two entry points come to disagree about it.
-        onContinue: () => context.push(
-          product == null
-              ? UseSmileIDSampleRoutes.sdkFlow(widget.productId)
-              : UseSmileIDSampleJourney.afterIdDetails(product),
-        ),
-        onScanToken: () => context.push(UseSmileIDSampleRoutes.scanToken),
+      child: ListenableBuilder(
+        listenable: _catalogue,
+        builder: (BuildContext context, Widget? _) {
+          final String? country = details.country?.code;
+          return UseSmileIDSampleKycFormScreen(
+            title: product?.label ?? widget.productId,
+            family: _family,
+            details: details,
+            countryListLoading:
+                country != null &&
+                switch (_family) {
+                  UseSmileIDSampleCatalogueFamily.kyc =>
+                    _catalogue.idTypes(country).isLoading,
+                  UseSmileIDSampleCatalogueFamily.document =>
+                    _catalogue.documents(country).isLoading,
+                },
+            onBack: back,
+            onPickCountry: _pickCountry,
+            onPickIdType: _pickIdType,
+            onPickDocument: _pickDocument,
+            onPickCaptureAs: _pickCaptureAs,
+            onIdNumberChanged: edits.setIdNumber,
+            // Through the journey, not straight to the route: the helper is the single place the
+            // order lives, and a second copy is how two entry points come to disagree about it.
+            onContinue: () => context.push(
+              product == null
+                  ? UseSmileIDSampleRoutes.sdkFlow(widget.productId)
+                  : UseSmileIDSampleJourney.afterIdDetails(product),
+            ),
+            onScanToken: () => context.push(UseSmileIDSampleRoutes.scanToken),
+          );
+        },
       ),
     );
   }
 
-  Future<void> _pickCountry() => showUseSmileIDSampleSheet<void>(
+  /// A sheet whose list may still be arriving, so it rebuilds as the store and the form change.
+  Future<void> _catalogueSheet(
+    String testId,
+    Widget Function(
+      BuildContext sheetContext,
+      UseSmileIDSampleIdDetails details,
+    )
+    body,
+  ) => showUseSmileIDSampleSheet<void>(
     context: context,
-    testId: UseSmileIDSampleTestIds.countrySheet,
-    builder: (BuildContext sheetContext) => UseSmileIDSampleCountryPickerSheet(
-      selected: ref.read(useSmileIDSampleFormsProvider).idDetails.country,
-      onSelect: (UseSmileIDSampleCountry country) {
-        ref.read(useSmileIDSampleFormsProvider.notifier).setCountry(country);
-        Navigator.of(sheetContext).pop();
-      },
+    testId: testId,
+    builder: (BuildContext sheetContext) => ListenableBuilder(
+      listenable: _catalogue,
+      builder: (BuildContext _, Widget? _) => Consumer(
+        builder: (BuildContext _, WidgetRef ref, Widget? _) => body(
+          sheetContext,
+          ref.watch(useSmileIDSampleFormsProvider).idDetails,
+        ),
+      ),
     ),
   );
 
-  Future<void> _pickIdType() => showUseSmileIDSampleSheet<void>(
+  Future<void> _pickCountry() => _catalogueSheet(
+    UseSmileIDSampleTestIds.countrySheet,
+    (BuildContext sheetContext, UseSmileIDSampleIdDetails details) =>
+        UseSmileIDSampleCountryPickerSheet(
+          catalogue: _catalogue.countries(_family),
+          selected: details.country,
+          onRetry: _catalogue.retry,
+          onSelect: (UseSmileIDSampleCountry country) {
+            ref
+                .read(useSmileIDSampleFormsProvider.notifier)
+                .setCountry(country);
+            Navigator.of(sheetContext).pop();
+          },
+        ),
+  );
+
+  Future<void> _pickIdType() => _catalogueSheet(
+    UseSmileIDSampleTestIds.idTypeSheet,
+    (BuildContext sheetContext, UseSmileIDSampleIdDetails details) =>
+        UseSmileIDSampleIdTypePickerSheet(
+          country: details.country,
+          catalogue: _catalogue.idTypes(details.country?.code ?? ''),
+          selected: details.idType,
+          onRetry: _catalogue.retry,
+          onSelect: (UseSmileIDSampleKycIdType idType) {
+            ref.read(useSmileIDSampleFormsProvider.notifier).setIdType(idType);
+            Navigator.of(sheetContext).pop();
+          },
+        ),
+  );
+
+  Future<void> _pickDocument() => _catalogueSheet(
+    UseSmileIDSampleTestIds.documentSheet,
+    (BuildContext sheetContext, UseSmileIDSampleIdDetails details) =>
+        UseSmileIDSampleDocumentPickerSheet(
+          country: details.country,
+          catalogue: _catalogue.documents(details.country?.code ?? ''),
+          selected: details.document,
+          onRetry: _catalogue.retry,
+          onSelect: (UseSmileIDSampleDocument document) {
+            ref
+                .read(useSmileIDSampleFormsProvider.notifier)
+                .setDocument(document);
+            Navigator.of(sheetContext).pop();
+          },
+        ),
+  );
+
+  Future<void> _pickCaptureAs() async {
+    UseSmileIDSampleCaptureAs? chosen;
+    await showUseSmileIDSampleSheet<void>(
+      context: context,
+      title: 'Capture as',
+      testId: UseSmileIDSampleTestIds.captureAsSheet,
+      builder: (BuildContext sheetContext) => UseSmileIDSampleCaptureAsSheet(
+        selected: ref.read(useSmileIDSampleFormsProvider).idDetails.captureAs,
+        onSelect: (UseSmileIDSampleCaptureAs option) {
+          chosen = option;
+          Navigator.of(sheetContext).pop();
+        },
+      ),
+    );
+    if (!mounted || chosen == null) {
+      return;
+    }
+    // Custom hands over to its own sheet, which is what keeps it; the others are kept at once.
+    if (chosen == UseSmileIDSampleCaptureAs.custom) {
+      await _buildCustom();
+    } else {
+      ref.read(useSmileIDSampleFormsProvider.notifier).setCaptureAs(chosen!);
+    }
+  }
+
+  Future<void> _buildCustom() => showUseSmileIDSampleSheet<void>(
     context: context,
-    testId: UseSmileIDSampleTestIds.idTypeSheet,
-    builder: (BuildContext sheetContext) => UseSmileIDSampleIdTypePickerSheet(
-      country: ref.read(useSmileIDSampleFormsProvider).idDetails.country,
-      selected: ref.read(useSmileIDSampleFormsProvider).idDetails.idType,
-      onSelect: (UseSmileIDSampleIdType idType) {
-        ref.read(useSmileIDSampleFormsProvider.notifier).setIdType(idType);
+    title: 'Custom document',
+    testId: UseSmileIDSampleTestIds.customDocumentSheet,
+    builder: (BuildContext sheetContext) => UseSmileIDSampleCustomDocumentSheet(
+      initial: ref.read(useSmileIDSampleFormsProvider).idDetails.custom,
+      onDone: (UseSmileIDSampleCustomDocument custom) {
+        ref
+            .read(useSmileIDSampleFormsProvider.notifier)
+            .setCustomDocument(custom);
         Navigator.of(sheetContext).pop();
       },
     ),
   );
 }
 
-/// Which picker a deep link asked for.
+/// Which sheet a deep link asked for.
 enum UseSmileIDSamplePicker {
   /// The country picker.
   country,
 
   /// The ID type picker.
   idType,
+
+  /// The document picker.
+  document,
+
+  /// The capture-as sheet.
+  captureAs,
+
+  /// The custom-document sheet.
+  customDocument,
 }
 
 /// The product with this id, or null for one this build does not know.

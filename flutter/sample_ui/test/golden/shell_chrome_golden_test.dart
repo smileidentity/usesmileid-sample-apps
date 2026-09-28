@@ -89,6 +89,7 @@ Widget _overSettings() => _shell(
     onSettingChanged: _ignoreSetting,
     onProfileTap: () {},
     onNavRowTap: _ignoreNavRow,
+    onCaptureModeTap: () {},
     onSignOut: () {},
     bottomInset: useSmileIDSampleNavBarClearance(context),
   ),
