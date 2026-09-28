@@ -57,10 +57,15 @@ class UseSmileIDSampleAssetCatalogueSource
   /// The asset key pubspec.yaml declares.
   static const String asset = 'assets/catalogue-fixture.json';
 
+  /// Forgotten on failure, so Retry reads the asset again rather than replaying the error.
   Future<UseSmileIDSampleFixtureCatalogueSource> get _source =>
       _fixture ??= _bundle
           .loadString(asset)
-          .then(UseSmileIDSampleFixtureCatalogueSource.new);
+          .then(UseSmileIDSampleFixtureCatalogueSource.new)
+          .catchError((Object error) {
+            _fixture = null;
+            throw error;
+          });
 
   @override
   Future<String> supportedIdTypes(UseSmileIDSampleEnvironment environment) =>

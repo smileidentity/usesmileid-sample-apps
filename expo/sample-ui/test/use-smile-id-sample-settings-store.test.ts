@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { UseSmileIDSampleCaptureMode } from '../src/model/use-smile-id-sample-capture-mode';
 import { UseSmileIDSampleSetting } from '../src/model/use-smile-id-sample-setting';
 import { useSmileIDSampleSettingsStore } from '../src/state/use-smile-id-sample-settings-store';
 
@@ -34,5 +35,24 @@ describe('the load window', () => {
     jest.spyOn(AsyncStorage, 'multiGet').mockRejectedValueOnce(new Error('disk'));
     await store().load();
     expect(store().loaded).toBe(true);
+  });
+});
+
+describe('the document capture settings', () => {
+  it('keep the capture mode and gallery upload across a reload', async () => {
+    await store().setCaptureMode(UseSmileIDSampleCaptureMode.Manual);
+    await store().setSetting(UseSmileIDSampleSetting.GalleryUpload, true);
+    expect(await AsyncStorage.getItem('sample.setting.captureMode')).toBe('manual');
+
+    store().reset();
+    await store().load();
+    expect(store().settings.captureMode).toBe(UseSmileIDSampleCaptureMode.Manual);
+    expect(store().settings.galleryUpload).toBe(true);
+  });
+
+  it('read an unknown stored capture mode as the default', async () => {
+    await AsyncStorage.setItem('sample.setting.captureMode', 'sometimes');
+    await store().load();
+    expect(store().settings.captureMode).toBe(UseSmileIDSampleCaptureMode.AutoWithFallback);
   });
 });

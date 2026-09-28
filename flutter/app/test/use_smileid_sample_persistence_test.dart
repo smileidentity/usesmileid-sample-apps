@@ -50,7 +50,30 @@ void main() {
         UseSmileIDSampleSettingsKeys.consentStep,
         UseSmileIDSampleSettingsKeys.instructionsStep,
         UseSmileIDSampleSettingsKeys.previewStep,
+        UseSmileIDSampleSettingsKeys.galleryUpload,
       ]),
+    );
+  });
+
+  test('the capture mode and gallery upload survive a restart', () async {
+    final UseSmileIDSamplePreferencesSettingsRepository store = await restart();
+    await store.setCaptureMode(UseSmileIDSampleCaptureMode.manual);
+    await store.setSetting(UseSmileIDSampleSetting.galleryUpload, true);
+
+    final SharedPreferences raw = await SharedPreferences.getInstance();
+    expect(raw.getString(UseSmileIDSampleSettingsKeys.captureMode), 'manual');
+    final UseSmileIDSampleSettings reread = await (await restart()).read();
+    expect(reread.captureMode, UseSmileIDSampleCaptureMode.manual);
+    expect(reread.galleryUpload, isTrue);
+  });
+
+  test('an unknown stored capture mode reads as the default', () async {
+    SharedPreferences.setMockInitialValues(<String, Object>{
+      UseSmileIDSampleSettingsKeys.captureMode: 'sometimes',
+    });
+    expect(
+      (await (await restart()).read()).captureMode,
+      UseSmileIDSampleCaptureMode.autoWithFallback,
     );
   });
 
@@ -254,12 +277,14 @@ void main() {
   });
 }
 
-/// Compares two settings by their six switches, which is all a settings value is.
+/// Compares two settings by their switches and capture mode, which is all a settings value is.
 Matcher equalsSettings(UseSmileIDSampleSettings expected) =>
     predicate<UseSmileIDSampleSettings>(
-      (UseSmileIDSampleSettings actual) => UseSmileIDSampleSetting.values.every(
-        (UseSmileIDSampleSetting setting) =>
-            actual[setting] == expected[setting],
-      ),
-      'the same six switches',
+      (UseSmileIDSampleSettings actual) =>
+          actual.captureMode == expected.captureMode &&
+          UseSmileIDSampleSetting.values.every(
+            (UseSmileIDSampleSetting setting) =>
+                actual[setting] == expected[setting],
+          ),
+      'the same switches and capture mode',
     );

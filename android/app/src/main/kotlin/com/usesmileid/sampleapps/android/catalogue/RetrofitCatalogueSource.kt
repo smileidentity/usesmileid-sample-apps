@@ -49,7 +49,10 @@ class RetrofitCatalogueSource : UseSmileIDSampleCatalogueSource {
 
     private fun Response<ResponseBody>.bodyOrThrow(): String {
         val body = body()
-        if (!isSuccessful || body == null) throw IOException("HTTP ${code()}")
+        if (!isSuccessful || body == null) {
+            errorBody()?.close()
+            throw IOException("HTTP ${code()}")
+        }
         return body.use { it.string() }
     }
 
