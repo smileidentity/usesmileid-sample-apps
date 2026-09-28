@@ -59,6 +59,13 @@ class ScreenGoldenTest : GoldenTest() {
     @Config(qualifiers = TALL)
     fun settings_alt_profile() = goldens("screen_settings_alt_profile") { Settings(profileIndex = 1) }
 
+    /** Both custom buttons on, so the section's switches are recorded ON. */
+    @Test
+    @Config(qualifiers = TALL)
+    fun settings_custom_buttons_on() = goldens("screen_settings_custom_buttons") {
+        Settings(settings = UseSmileIDSampleSettings(customContinue = true, customCancel = true))
+    }
+
     /** The fourth hue, which is where the profile palette runs out and starts again. */
     @Test
     @Config(qualifiers = TALL)

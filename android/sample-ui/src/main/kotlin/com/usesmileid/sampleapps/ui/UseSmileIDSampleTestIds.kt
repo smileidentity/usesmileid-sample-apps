@@ -38,6 +38,12 @@ object UseSmileIDSampleTestIds {
     const val SETTING_CONSENT_STEP = "sample_setting_consent_step"
     const val SETTING_INSTRUCTIONS_STEP = "sample_setting_instructions_step"
     const val SETTING_PREVIEW_STEP = "sample_setting_preview_step"
+    const val SETTING_CUSTOM_CONTINUE = "sample_setting_custom_continue"
+    const val SETTING_CUSTOM_CANCEL = "sample_setting_custom_cancel"
+
+    // The sample's own buttons, drawn by the SDK inside its button slots.
+    const val CUSTOM_CONTINUE = "sample_custom_continue"
+    const val CUSTOM_CANCEL = "sample_custom_cancel"
     const val SIGN_OUT = "sample_sign_out"
     const val SIGN_OUT_CONFIRM = "sample_sign_out_confirm"
     const val VERSION_LABEL = "sample_version_label"
@@ -147,6 +153,10 @@ object UseSmileIDSampleTestIds {
         SETTING_CONSENT_STEP,
         SETTING_INSTRUCTIONS_STEP,
         SETTING_PREVIEW_STEP,
+        SETTING_CUSTOM_CONTINUE,
+        SETTING_CUSTOM_CANCEL,
+        CUSTOM_CONTINUE,
+        CUSTOM_CANCEL,
         SIGN_OUT,
         SIGN_OUT_CONFIRM,
         VERSION_LABEL,

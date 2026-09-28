@@ -55,7 +55,7 @@ export const useSmileIDSampleSettingsStore = create<State & Actions>((set, get) 
     const current = get().settings;
     const updated = smileIDSampleSettingsWith(current, setting, enabled);
     set({ settings: updated });
-    // Only what moved: writing all six would freeze today's defaults onto the device.
+    // Only what moved: writing every row would freeze today's defaults onto the device.
     const moved = smileIDSampleSettings.filter((name) => updated[name] !== current[name]);
     if (!get().loaded) for (const name of moved) movedDuringLoad.add(name);
     if (moved.length > 0) {

@@ -276,6 +276,25 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
               ),
             ],
           ),
+          // The design draws no such section, so this placement is ours, like DEBUG's.
+          _Section(
+            label: "CUSTOM BUTTONS — REPLACE THE SDK'S BUTTONS",
+            children: <Widget>[
+              _switchRow(
+                title: 'Custom continue',
+                icon: SmileIcons.arrowForward,
+                supportingText: "Replaces the SDK's continue buttons",
+                setting: UseSmileIDSampleSetting.customContinue,
+              ),
+              const UseSmileIDSampleSettingRowDivider(),
+              _switchRow(
+                title: 'Custom cancel',
+                icon: SmileIcons.arrowBack,
+                supportingText: "Replaces the SDK's cancel buttons",
+                setting: UseSmileIDSampleSetting.customCancel,
+              ),
+            ],
+          ),
           if (onOpenScenarioDrawer != null)
             _Section(
               label: 'DEBUG',

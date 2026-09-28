@@ -29,6 +29,11 @@ public enum UseSmileIDSampleTestIds {
   public static let settingConsentStep = "sample_setting_consent_step"
   public static let settingInstructionsStep = "sample_setting_instructions_step"
   public static let settingPreviewStep = "sample_setting_preview_step"
+  public static let settingCustomContinue = "sample_setting_custom_continue"
+  public static let settingCustomCancel = "sample_setting_custom_cancel"
+  /// The sample's own buttons, drawn by the SDK inside its button slots.
+  public static let customContinue = "sample_custom_continue"
+  public static let customCancel = "sample_custom_cancel"
 
   /// Per-item ids the screens build; the spec lists the prefixes rather than every value.
   public static func productCard(_ product: String) -> String {
@@ -239,7 +244,8 @@ public enum UseSmileIDSampleTestIds {
     resultJobId, resultUserId, resultJobStatus, resultResultCount, resultRefreshCount,
     resultLastError, resultSdkVersion,
     settingEnhancedSmartSelfie, settingAgentMode, settingDarkMode,
-    settingConsentStep, settingInstructionsStep, settingPreviewStep,
+    settingConsentStep, settingInstructionsStep, settingPreviewStep, settingCustomContinue, settingCustomCancel,
+    customContinue, customCancel,
     jobRowPrefix, jobRowStatus, filterChipPrefix, filterCountPrefix, verificationsEmpty,
     selectToggle, selectionBar, selectionCheckboxPrefix, selectionCount, selectionRemove
   ]

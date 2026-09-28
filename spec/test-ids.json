@@ -278,6 +278,22 @@
         "description": "Preview screen switch → include/omit preview()."
       },
       {
+        "id": "sample_setting_custom_continue",
+        "description": "Custom continue switch → the SDK's continue slots (consent allowButton, instructions continueButton, processing continueButton) render sample_custom_continue instead of the SDK's own button. OFF by default."
+      },
+      {
+        "id": "sample_setting_custom_cancel",
+        "description": "Custom cancel switch → the SDK's cancel slots (consent denyButton, processing exitButton) render sample_custom_cancel instead of the SDK's own button. OFF by default."
+      },
+      {
+        "id": "sample_custom_continue",
+        "description": "The sample's own button, labelled 'Custom continue', drawn by the SDK inside a continue slot while sample_setting_custom_continue is ON. Tapping it calls the slot's onClick; it is disabled while the slot is."
+      },
+      {
+        "id": "sample_custom_cancel",
+        "description": "The sample's own button, labelled 'Custom cancel', drawn by the SDK inside a cancel slot while sample_setting_custom_cancel is ON. Tapping it calls the slot's onClick."
+      },
+      {
         "id": "sample_setting_nav",
         "description": "One ABOUT/LEGAL navigation row; suffixed with the row id."
       },

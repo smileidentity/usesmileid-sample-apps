@@ -59,7 +59,7 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
       store.setSetting(setting, !UseSmileIDSampleSettings()[setting])
     }
 
-    // Read back through a second store, all six at once: two rows sharing a key pass row by row and fail here.
+    // Read back through a second store, all eight at once: two rows sharing a key pass row by row and fail here.
     XCTAssertEqual(
       makeStore().settings,
       UseSmileIDSampleSettings(
@@ -68,7 +68,9 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
         darkMode: true,
         consentStep: false,
         instructionsStep: false,
-        previewStep: false
+        previewStep: false,
+        customContinue: true,
+        customCancel: true
       )
     )
     XCTAssertEqual(Self.keys.count, UseSmileIDSampleSetting.allCases.count, "a row was added with no key here")
@@ -128,6 +130,7 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
   }
 
   private static let keys = [
-    "enhanced_smart_selfie", "agent_mode", "dark_mode", "consent_step", "instructions_step", "preview_step"
+    "enhanced_smart_selfie", "agent_mode", "dark_mode", "consent_step", "instructions_step", "preview_step",
+    "custom_continue", "custom_cancel"
   ]
 }

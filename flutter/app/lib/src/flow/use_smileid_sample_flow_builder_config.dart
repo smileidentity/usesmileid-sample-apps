@@ -163,9 +163,31 @@ void _journeyFor(
           // Omitting it fails build() while validate() still reports Valid, so no gate catches it.
           consent.partnerIcon = const _UseSmileIDSamplePartnerMark();
           consent.partnerPrivacyPolicyUrl = _privacyPolicyUrl;
+          // The slot's scope type is not exported in 12.1.1, so each slot is a closure it is inferred for.
+          if (snapshot.customContinue) {
+            consent.allowButton = (scope) =>
+                UseSmileIDSampleCustomContinueButton(
+                  onPressed: scope.onClick,
+                  enabled: scope.enabled,
+                );
+          }
+          if (snapshot.customCancel) {
+            consent.denyButton = (scope) => UseSmileIDSampleCustomCancelButton(
+              onPressed: scope.onClick,
+              enabled: scope.enabled,
+            );
+          }
         });
       case UseSmileIDSampleFlowJourneyStep.instructions:
-        screens.instructions();
+        screens.instructions((InstructionsConfigBuilder instructions) {
+          if (snapshot.customContinue) {
+            instructions.continueButton = (scope) =>
+                UseSmileIDSampleCustomContinueButton(
+                  onPressed: scope.onClick,
+                  enabled: scope.enabled,
+                );
+          }
+        });
       case UseSmileIDSampleFlowJourneyStep.selfieCapture:
         screens.capture((CaptureConfigBuilder capture) {
           capture.captureType = CaptureType.selfie;
@@ -185,8 +207,24 @@ void _journeyFor(
         });
       case UseSmileIDSampleFlowJourneyStep.preview:
         screens.preview();
+      // Retry is neither continue nor cancel, so it stays the SDK's (spec/components.json).
       case UseSmileIDSampleFlowJourneyStep.processing:
-        screens.processing();
+        screens.processing((ProcessingConfigBuilder processing) {
+          if (snapshot.customContinue) {
+            processing.continueButton = (scope) =>
+                UseSmileIDSampleCustomContinueButton(
+                  onPressed: scope.onClick,
+                  enabled: scope.enabled,
+                );
+          }
+          if (snapshot.customCancel) {
+            processing.exitButton = (scope) =>
+                UseSmileIDSampleCustomCancelButton(
+                  onPressed: scope.onClick,
+                  enabled: scope.enabled,
+                );
+          }
+        });
     }
   }
 }

@@ -110,6 +110,8 @@ class UseSmileIDSampleStore(
             consentStep = prefs[CONSENT_STEP] ?: defaults.consentStep,
             instructionsStep = prefs[INSTRUCTIONS_STEP] ?: defaults.instructionsStep,
             previewStep = prefs[PREVIEW_STEP] ?: defaults.previewStep,
+            customContinue = prefs[CUSTOM_CONTINUE] ?: defaults.customContinue,
+            customCancel = prefs[CUSTOM_CANCEL] ?: defaults.customCancel,
         ).normalised()
     }
 
@@ -120,6 +122,8 @@ class UseSmileIDSampleStore(
         UseSmileIDSampleSetting.ConsentStep -> CONSENT_STEP
         UseSmileIDSampleSetting.InstructionsStep -> INSTRUCTIONS_STEP
         UseSmileIDSampleSetting.PreviewStep -> PREVIEW_STEP
+        UseSmileIDSampleSetting.CustomContinue -> CUSTOM_CONTINUE
+        UseSmileIDSampleSetting.CustomCancel -> CUSTOM_CANCEL
     }
 
     private companion object {
@@ -130,6 +134,8 @@ class UseSmileIDSampleStore(
         val CONSENT_STEP = booleanPreferencesKey("consent_step")
         val INSTRUCTIONS_STEP = booleanPreferencesKey("instructions_step")
         val PREVIEW_STEP = booleanPreferencesKey("preview_step")
+        val CUSTOM_CONTINUE = booleanPreferencesKey("custom_continue")
+        val CUSTOM_CANCEL = booleanPreferencesKey("custom_cancel")
         val SESSION_TOKEN = stringPreferencesKey("token_session_token")
         val ENDED_SESSION_ID = stringPreferencesKey("ended_session_id")
         val ENDED_SESSION_AT = longPreferencesKey("ended_session_at")

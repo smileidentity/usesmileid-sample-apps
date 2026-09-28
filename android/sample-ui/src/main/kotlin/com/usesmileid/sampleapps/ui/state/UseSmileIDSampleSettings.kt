@@ -17,8 +17,12 @@ data class UseSmileIDSampleSettings(
     val consentStep: Boolean = true,
     val instructionsStep: Boolean = true,
     val previewStep: Boolean = true,
+    /** The SDK's continue buttons (consent allow, instructions, processing continue) become "Custom continue". */
+    val customContinue: Boolean = false,
+    /** The SDK's cancel buttons (consent deny, processing exit) become "Custom cancel". */
+    val customCancel: Boolean = false,
 ) {
-    /** Reads one row, so a caller can diff two states without naming six fields. */
+    /** Reads one row, so a caller can diff two states without naming eight fields. */
     operator fun get(setting: UseSmileIDSampleSetting): Boolean = when (setting) {
         UseSmileIDSampleSetting.EnhancedSmartSelfie -> enhancedSmartSelfie
         UseSmileIDSampleSetting.AgentMode -> agentMode
@@ -26,6 +30,8 @@ data class UseSmileIDSampleSettings(
         UseSmileIDSampleSetting.ConsentStep -> consentStep
         UseSmileIDSampleSetting.InstructionsStep -> instructionsStep
         UseSmileIDSampleSetting.PreviewStep -> previewStep
+        UseSmileIDSampleSetting.CustomContinue -> customContinue
+        UseSmileIDSampleSetting.CustomCancel -> customCancel
     }
 
     /** Drops enhanced liveness where a stored state carries both, so the SDK is never handed the pair it refuses. */
@@ -43,10 +49,12 @@ data class UseSmileIDSampleSettings(
             UseSmileIDSampleSetting.ConsentStep -> copy(consentStep = enabled)
             UseSmileIDSampleSetting.InstructionsStep -> copy(instructionsStep = enabled)
             UseSmileIDSampleSetting.PreviewStep -> copy(previewStep = enabled)
+            UseSmileIDSampleSetting.CustomContinue -> copy(customContinue = enabled)
+            UseSmileIDSampleSetting.CustomCancel -> copy(customCancel = enabled)
         }
 }
 
-/** Which settings row a toggle belongs to, so the screen can report changes without six callbacks. */
+/** Which settings row a toggle belongs to, so the screen can report changes without eight callbacks. */
 enum class UseSmileIDSampleSetting {
     EnhancedSmartSelfie,
     AgentMode,
@@ -54,4 +62,6 @@ enum class UseSmileIDSampleSetting {
     ConsentStep,
     InstructionsStep,
     PreviewStep,
+    CustomContinue,
+    CustomCancel,
 }

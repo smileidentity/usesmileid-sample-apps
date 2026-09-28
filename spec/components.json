@@ -998,6 +998,34 @@
       "notes": "Required by spec/result-card.schema.json and not present in the design set. It is the evidence channel automation asserts on. Placement still needs a design decision — see openItems in spec/README.md; built on the honest default, which Android implemented on 2026-08-14: a collapsible panel on verification details, plus a compact line on products while a job is in flight. Two decisions a port must copy rather than re-take. It defaults to expanded, because a collapsed field is absent from the accessibility tree and every flow would otherwise have to tap the card open before asserting on anything. And it renders on verification details whether or not the job resolved, because a flow that failed before submission has no job to show and that is exactly when its error and counts are the only evidence there is. A null field renders as an em dash, which flows assert on to prove a value was absent. It gained a required `environment` field on 2026-08-24: with the chip hidden and the Settings row gone, it is the only surface saying where a run submitted."
     },
     {
+      "name": "CustomButton",
+      "tier": "composite",
+      "owner": "sample",
+      "dsContract": "components/button.md",
+      "tokens": [
+        "button.primary.background",
+        "button.primary.text",
+        "button.radius",
+        "button.height",
+        "button.font",
+        "button.disabled.background",
+        "button.disabled.text",
+        "border-width.thin"
+      ],
+      "variants": [
+        "continue",
+        "cancel"
+      ],
+      "states": [
+        "enabled",
+        "disabled"
+      ],
+      "usedBy": [
+        "sdkFlow (the SDK's continue and cancel button slots)"
+      ],
+      "notes": "The sample's own buttons, labelled 'Custom continue' and 'Custom cancel', which the flow builder hands to the SDK's button slots while the matching Settings switch is on (see settingsToSdkMapping). Continue is the Button; cancel is its outlined twin, its border and label in the primary background. Both take the slot scope's onClick and enabled, so the SDK's gating still holds. The design draws neither: they exist so a demo shows a partner's buttons in the SDK's place."
+    },
+    {
       "name": "ScenarioDrawer",
       "tier": "composite",
       "owner": "sample",
@@ -1082,12 +1110,14 @@
     "Consent screen": "include or omit consent() in the flow builder — there is NO showConsent boolean",
     "Instruction screen": "include or omit instructions() in the flow builder",
     "Preview screen": "include or omit preview() in the flow builder (allowRetake configures it once present)",
+    "Custom continue": "ON → the builder hands the sample's 'Custom continue' button (sample_custom_continue) to every slot that moves the flow forward: consent `allowButton`, instructions `continueButton` and processing `continueButton`. OFF → those slots keep the SDK's defaults. A slot is set only on a screen the journey includes. The button calls the slot scope's `onClick` and honours its `enabled`, so the SDK's own gating still holds. It exists to show a partner, live, that the SDK's buttons are theirs to replace.",
+    "Custom cancel": "ON → the builder hands the sample's 'Custom cancel' button (sample_custom_cancel) to every slot that leaves the flow: consent `denyButton` and processing `exitButton`. OFF → the SDK's defaults. Processing's `retryButton` is neither continue nor cancel, so it always stays the SDK's.",
     "Enhanced SmartSelfie™": "ON → `SelfieCaptureConfig.enableEnhancedLiveness = true` (the head-turn challenge); OFF → `false` (passive smile capture). Direct, not inverted, and ON by default for every product. SUPERSEDED the 2026-08-13 decision on 2026-08-25: that named the row 'Smile to capture' and had ON mean `enableEnhancedLiveness = false`, and node 5206:2898 renamed the row and drew it ON, which inverted both the label and the meaning. It and Agent mode write different fields and they CAN fight — the SDK refuses the pair with BUILDER_AGENT_MODE_WITH_ENHANCED_LIVENESS at ERROR severity — so each platform holds a mutex where it persists settings: turning either on turns the other off. The screen is the wrong place for it, because both persistence paths have to inherit the same rule."
   },
   "buildOrder": [
     "1. Tokens: generate the platform token source and wire light/dark (nothing else can start).",
     "2. Primitives: Avatar, Button, TextInput, SearchField, Switch, StatusBadge, SectionLabel, Toast.",
-    "3. Composites, cheapest first: TopAppBar, DataFieldRow, KeyValueEditRow, SettingRow, ProfileRow, OptionRow, SelectTrigger, BottomSheet, FilterChip, DateGroupHeader, JobRow, SelectionCheckbox, SelectionBar.",
+    "3. Composites, cheapest first: TopAppBar, DataFieldRow, KeyValueEditRow, SettingRow, ProfileRow, OptionRow, SelectTrigger, BottomSheet, FilterChip, DateGroupHeader, JobRow, SelectionCheckbox, SelectionBar, CustomButton.",
     "4. Screen-specific composites: ProductCard, ProductGrid, SectionHeader, ProfileEnvChip, NavBar, TokenRing, SessionCard, SessionEndedBanner, FloatingTokenButton, ScanGlyph, ScanSheet, SwipeAction.",
     "5. Screens, in this order — settings, products, verifications, verificationDetails, userDetails, kycIdForm, pickers, profiles/profileConfig/newProfile, scanToken. Settings first because it drives every other screen's configuration, and products second because it is the entry point every flow starts from.",
     "6. ResultCard and the automation affordances (launch arguments, deep link) once screens exist."

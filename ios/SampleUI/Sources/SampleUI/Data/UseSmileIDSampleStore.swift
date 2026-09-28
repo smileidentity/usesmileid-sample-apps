@@ -55,7 +55,9 @@ public final class UseSmileIDSampleStore {
       darkMode: settingsStorage.flag(.darkMode) ?? defaults.darkMode,
       consentStep: settingsStorage.flag(.consentStep) ?? defaults.consentStep,
       instructionsStep: settingsStorage.flag(.instructionsStep) ?? defaults.instructionsStep,
-      previewStep: settingsStorage.flag(.previewStep) ?? defaults.previewStep
+      previewStep: settingsStorage.flag(.previewStep) ?? defaults.previewStep,
+      customContinue: settingsStorage.flag(.customContinue) ?? defaults.customContinue,
+      customCancel: settingsStorage.flag(.customCancel) ?? defaults.customCancel
     ).normalised()
   }
 
@@ -192,11 +194,13 @@ public extension UseSmileIDSampleSetting {
     case .consentStep: "consent_step"
     case .instructionsStep: "instructions_step"
     case .previewStep: "preview_step"
+    case .customContinue: "custom_continue"
+    case .customCancel: "custom_cancel"
     }
   }
 }
 
-/// Where the six switches live: `UserDefaults` in an app, memory in a test. Read per row, since an absent row is today's default rather than `false`.
+/// Where the eight switches live: `UserDefaults` in an app, memory in a test. Read per row, since an absent row is today's default rather than `false`.
 public protocol UseSmileIDSampleSettingsStorage: AnyObject {
   func flag(_ key: String) -> Bool?
   func setFlag(_ key: String, _ value: Bool)

@@ -23,7 +23,7 @@ func useSmileIDSampleApply(
   builder.documentVerificationParams = params.documentVerification
   builder.enhancedDocumentVerificationParams = params.enhancedDocumentVerification
   builder.screens { screens in
-    replay(useSmileIDSampleFlowSteps(snapshot), into: screens)
+    replay(useSmileIDSampleFlowSteps(snapshot), into: screens, buttons: snapshot)
   }
   if snapshot.product.capture {
     // Two call sites: `AnalyzersBuilder` declares only `buildBlock`, so an `if` inside will not compile.
@@ -176,9 +176,9 @@ func useSmileIDSampleFlowSteps(_ snapshot: FlowLaunchSnapshot) -> [FlowStep] {
   }
 }
 
-/// The only way to hand the screens over: `UseSmileIDBuilder` takes no `FlowConfiguration`.
+/// The only way to hand the screens over: `UseSmileIDBuilder` takes no `FlowConfiguration`, and a step's button slots are not readable from it, so they come from `buttons`.
 @MainActor
-private func replay(_ steps: [FlowStep], into screens: ScreensBuilder) {
+private func replay(_ steps: [FlowStep], into screens: ScreensBuilder, buttons: FlowLaunchSnapshot) {
   for step in steps {
     switch step {
     case .consent(let config):
@@ -186,9 +186,19 @@ private func replay(_ steps: [FlowStep], into screens: ScreensBuilder) {
         consent.partnerName = config.partnerName
         consent.partnerIcon = config.partnerIcon
         consent.partnerPrivacyPolicyUrl = config.partnerPrivacyPolicyUrl
+        if buttons.customContinue {
+          consent.allowButton(useSmileIDSampleCustomContinueSlot)
+        }
+        if buttons.customCancel {
+          consent.denyButton(useSmileIDSampleCustomCancelSlot)
+        }
       }
     case .instructions:
-      screens.instructions { _ in }
+      screens.instructions { instructions in
+        if buttons.customContinue {
+          instructions.continueButton(useSmileIDSampleCustomContinueSlot)
+        }
+      }
     case .capture(let config):
       screens.capture { capture in
         capture.captureType = config.captureType
@@ -208,8 +218,16 @@ private func replay(_ steps: [FlowStep], into screens: ScreensBuilder) {
       }
     case .preview:
       screens.preview { _ in }
+    // Retry is neither continue nor cancel, so it stays the SDK's (spec/components.json).
     case .processing:
-      screens.processing { _ in }
+      screens.processing { processing in
+        if buttons.customContinue {
+          processing.continueButton(useSmileIDSampleCustomContinueSlot)
+        }
+        if buttons.customCancel {
+          processing.exitButton(useSmileIDSampleCustomCancelSlot)
+        }
+      }
     // Dropping one silently would run a journey the host cannot see.
     @unknown default:
       assertionFailure("unhandled SDK screen type \(step.type)")

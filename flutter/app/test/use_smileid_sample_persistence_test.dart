@@ -27,6 +27,16 @@ void main() {
     );
   });
 
+  test('the custom buttons survive the process that set them', () async {
+    final UseSmileIDSamplePreferencesSettingsRepository store = await restart();
+    await store.setSetting(UseSmileIDSampleSetting.customContinue, true);
+    await store.setSetting(UseSmileIDSampleSetting.customCancel, true);
+
+    final UseSmileIDSampleSettings read = await (await restart()).read();
+    expect(read.customContinue, isTrue);
+    expect(read.customCancel, isTrue);
+  });
+
   test('a switch survives the process that set it', () async {
     await (await restart()).setSetting(
       UseSmileIDSampleSetting.previewStep,
@@ -50,6 +60,8 @@ void main() {
         UseSmileIDSampleSettingsKeys.consentStep,
         UseSmileIDSampleSettingsKeys.instructionsStep,
         UseSmileIDSampleSettingsKeys.previewStep,
+        UseSmileIDSampleSettingsKeys.customContinue,
+        UseSmileIDSampleSettingsKeys.customCancel,
       ]),
     );
   });
@@ -254,12 +266,12 @@ void main() {
   });
 }
 
-/// Compares two settings by their six switches, which is all a settings value is.
+/// Compares two settings by their eight switches, which is all a settings value is.
 Matcher equalsSettings(UseSmileIDSampleSettings expected) =>
     predicate<UseSmileIDSampleSettings>(
       (UseSmileIDSampleSettings actual) => UseSmileIDSampleSetting.values.every(
         (UseSmileIDSampleSetting setting) =>
             actual[setting] == expected[setting],
       ),
-      'the same six switches',
+      'the same eight switches',
     );
