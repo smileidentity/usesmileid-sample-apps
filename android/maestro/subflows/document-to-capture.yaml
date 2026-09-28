@@ -1,5 +1,5 @@
-# Document Verification on the fixture's Green Book, from Products to the capture screen. Portrait on
-# purpose: a landscape capture leaves a phone lying flat in landscape.
+# Document Verification on the fixture's Green Book with its preset, from Products to the capture screen.
+# Portrait on purpose: a landscape capture leaves a phone lying flat in landscape.
 appId: ${APP_ID}
 ---
 - tapOn:
@@ -24,6 +24,10 @@ appId: ${APP_ID}
     id: "sample_document_trigger"
 - tapOn:
     id: "sample_document_option_IDENTITY_CARD_green_book"
+- tapOn:
+    id: "sample_capture_as_trigger"
+- tapOn:
+    id: "sample_capture_as_option_greenBook"
 - scrollUntilVisible:
     element:
       id: "sample_kyc_continue"

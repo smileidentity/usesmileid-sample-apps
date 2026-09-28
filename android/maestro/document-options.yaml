@@ -157,12 +157,7 @@ appId: ${APP_ID}
 - tapOn:
     id: "sample_capture_mode_option_auto"
 - runFlow: subflows/document-to-capture.yaml
-# Auto only, read at 8 s inside the fallback's 10: every mode shows the shutter once a scan times out.
-- extendedWaitUntil:
-    visible:
-      id: "an_id_nothing_carries"
-    timeout: 8000
-    optional: true
+# Auto only, read as the capture opens: a scan that times out shows the shutter in every mode, sooner in the dark.
 - assertNotVisible: "Capture document"
 - runFlow: subflows/leave-sdk-flow.yaml
 
