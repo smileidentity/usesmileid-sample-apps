@@ -11,14 +11,17 @@ public enum UseSmileIDSampleIdNumberHint {
   /// What the empty field shows for the chosen type.
   public static func placeholder(_ type: UseSmileIDSampleKycIdType?) -> String {
     guard let type else { return "Choose an ID type first" }
-    guard compiled(type.regex) != nil, let example = example(type.regex) else { return "Enter your \(type.label)" }
+    guard !type.regex.isBlank, compiled(type.regex) != nil, let example = example(type.regex) else {
+      return "Enter your \(type.label)"
+    }
     return "e.g. \(example)"
   }
 
-  /// The trimmed number against the whole regex; a regex this engine cannot compile checks nothing.
+  /// The trimmed number against the whole regex; a blank regex, or one this engine cannot compile, checks nothing.
   public static func accepts(_ regex: String, _ number: String) -> Bool {
     let trimmed = number.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !trimmed.isEmpty else { return false }
+    guard !regex.isBlank else { return true }
     guard compiled(regex) != nil, let whole = compiled("^(?:\(regex))$") else { return true }
     return whole.firstMatch(in: trimmed, range: NSRange(trimmed.startIndex..., in: trimmed)) != nil
   }
@@ -39,6 +42,9 @@ private struct Unsupported: Error {}
 
 /// A recursive-descent reading of the subset the server's regexes use; anything else throws `Unsupported`.
 private struct HintParser {
+  /// A longer repeat is outside the subset, so an API regex cannot make the hint allocate without limit.
+  static let maxRepeat = 64
+
   private let source: [Character]
   private var at = 0
 
@@ -177,7 +183,12 @@ private struct HintParser {
       if peek() == "," {
         at += 1
         let high = digits()
-        n = high.isEmpty ? max(lower, 1) : (Int(high) ?? lower)
+        if high.isEmpty {
+          n = max(lower, 1)
+        } else {
+          guard let upper = Int(high) else { throw Unsupported() }
+          n = upper
+        }
       } else {
         n = lower
       }
@@ -185,7 +196,7 @@ private struct HintParser {
     default:
       return 1
     }
-    if peek() == "?" || peek() == "+" {
+    if peek() == "?" || peek() == "+" || n > Self.maxRepeat {
       throw Unsupported()
     }
     return n

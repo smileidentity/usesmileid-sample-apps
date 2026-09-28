@@ -79,6 +79,21 @@ void main() {
     expect(UseSmileIDSampleIdNumberHint.error(type, 'anything'), isNull);
   });
 
+  test('a type with no regex checks nothing rather than locking Continue', () {
+    expect(UseSmileIDSampleIdNumberHint.accepts('', '12345'), isTrue);
+    const UseSmileIDSampleKycIdType type = UseSmileIDSampleKycIdType(
+      id: 'X',
+      type: 'X',
+      label: 'Tax number',
+      regex: '',
+    );
+    expect(
+      UseSmileIDSampleIdNumberHint.placeholder(type),
+      'Enter your Tax number',
+    );
+    expect(UseSmileIDSampleIdNumberHint.error(type, '12345'), isNull);
+  });
+
   test('the field waits for a type, then shows the example', () {
     expect(
       UseSmileIDSampleIdNumberHint.placeholder(null),

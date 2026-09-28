@@ -9,11 +9,11 @@ export const smileIDSampleCompiled = (regex: string): RegExp | null => {
   }
 };
 
-/// The trimmed number against the whole regex; a regex this engine cannot compile checks nothing.
+/// The trimmed number against the whole regex; a blank regex, or one this engine cannot compile, checks nothing.
 export const smileIDSampleIdNumberAccepts = (regex: string, number: string): boolean => {
   const trimmed = number.trim();
   if (trimmed.length === 0) return false;
-  if (smileIDSampleCompiled(regex) === null) return true;
+  if (regex.trim().length === 0 || smileIDSampleCompiled(regex) === null) return true;
   return smileIDSampleCompiled(`^(?:${regex})$`)?.test(trimmed) ?? true;
 };
 
@@ -30,7 +30,10 @@ export const smileIDSampleIdNumberExample = (regex: string): string | null => {
 /// What the empty field shows for the chosen type.
 export const smileIDSampleIdNumberPlaceholder = (type: UseSmileIDSampleKycIdType | null): string => {
   if (type === null) return 'Choose an ID type first';
-  const hint = smileIDSampleCompiled(type.regex) === null ? null : smileIDSampleIdNumberExample(type.regex);
+  const hint =
+    type.regex.trim().length === 0 || smileIDSampleCompiled(type.regex) === null
+      ? null
+      : smileIDSampleIdNumberExample(type.regex);
   return hint === null ? `Enter your ${type.label}` : `e.g. ${hint}`;
 };
 
@@ -44,6 +47,9 @@ export const smileIDSampleIdNumberError = (type: UseSmileIDSampleKycIdType | nul
 };
 
 class Unsupported extends Error {}
+
+/// A longer repeat is outside the subset, so an API regex cannot make the hint allocate without limit.
+const MAX_REPEAT = 64;
 
 const isAlnum = (c: string) => /^[A-Za-z0-9]$/.test(c);
 
@@ -192,7 +198,7 @@ class HintParser {
       default:
         return 1;
     }
-    if (this.peek() === '?' || this.peek() === '+') throw new Unsupported();
+    if (this.peek() === '?' || this.peek() === '+' || n > MAX_REPEAT) throw new Unsupported();
     return n;
   }
 }

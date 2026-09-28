@@ -48,6 +48,13 @@ final class UseSmileIDSampleIdNumberHintSpecTest: XCTestCase {
     XCTAssertNil(UseSmileIDSampleIdNumberHint.error(type, "anything"))
   }
 
+  func testATypeWithNoRegexChecksNothingRatherThanLockingContinue() {
+    XCTAssertTrue(UseSmileIDSampleIdNumberHint.accepts("", "12345"))
+    let type = UseSmileIDSampleKycIdType(id: "X", type: "X", label: "Tax number", regex: "")
+    XCTAssertEqual(UseSmileIDSampleIdNumberHint.placeholder(type), "Enter your Tax number")
+    XCTAssertNil(UseSmileIDSampleIdNumberHint.error(type, "12345"))
+  }
+
   func testTheFieldWaitsForATypeThenShowsTheExample() {
     XCTAssertEqual(UseSmileIDSampleIdNumberHint.placeholder(nil), "Choose an ID type first")
     let type = UseSmileIDSampleKycIdType(id: "NIN", type: "NIN", label: "National ID", regex: "^[0-9]{11}$")

@@ -4,7 +4,7 @@
     "Strip a leading ^ and a trailing $.",
     "Take the first alternative, at the top level and inside every group; (?: … ) is a group too.",
     "A character class becomes the first of A, 0 and a that it accepts, otherwise its first member; \\d becomes 0 and \\w becomes A; an escaped or plain literal stays as it is.",
-    "Repeat each part: {m} uses m, {m,n} uses n, {m,} uses m (at least one), * and ? use none, + uses one.",
+    "Repeat each part: {m} uses m, {m,n} uses n, {m,} uses m (at least one), * and ? use none, + uses one. A repeat over 64 is outside the subset, so a server regex cannot make the example allocate without limit.",
     "Anything else — ., a negated class, a lookaround, a backreference, \\S and other escaped letters, a lazy or possessive quantifier — is outside the subset: `hint` is null."
   ],
   "display": {
@@ -12,7 +12,7 @@
     "fallback": "Enter your {label}",
     "untilTypeChosen": "Choose an ID type first"
   },
-  "check": "The number is trimmed and must match the whole regex before Continue enables. A regex that fails to compile on the device shows the fallback and checks nothing, leaving the server to judge the number.",
+  "check": "The number is trimmed and must match the whole regex before Continue enables. A blank regex, or one that fails to compile on the device, shows the fallback and checks nothing, leaving the server to judge the number.",
   "cases": [
     {
       "regex": "^[0-9]{11}$",
@@ -180,6 +180,10 @@
     },
     {
       "regex": "^(\\d)\\1{3}$",
+      "hint": null
+    },
+    {
+      "regex": "^[0-9]{1,65}$",
       "hint": null
     }
   ]

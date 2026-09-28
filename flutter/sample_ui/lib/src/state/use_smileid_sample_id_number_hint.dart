@@ -16,17 +16,21 @@ abstract final class UseSmileIDSampleIdNumberHint {
     if (type == null) {
       return 'Choose an ID type first';
     }
-    final String? hint = compiled(type.regex) == null
+    final String? hint =
+        type.regex.trim().isEmpty || compiled(type.regex) == null
         ? null
         : example(type.regex);
     return hint == null ? 'Enter your ${type.label}' : 'e.g. $hint';
   }
 
-  /// The trimmed number against the whole regex; a regex this engine cannot compile checks nothing.
+  /// The trimmed number against the whole regex; a blank regex, or one this engine cannot compile, checks nothing.
   static bool accepts(String regex, String number) {
     final String trimmed = number.trim();
     if (trimmed.isEmpty) {
       return false;
+    }
+    if (regex.trim().isEmpty) {
+      return true;
     }
     if (compiled(regex) == null) {
       return true;
@@ -56,6 +60,9 @@ abstract final class UseSmileIDSampleIdNumberHint {
 }
 
 class _Unsupported implements Exception {}
+
+/// A longer repeat is outside the subset, so an API regex cannot make the hint allocate without limit.
+const int _maxRepeat = 64;
 
 /// A recursive-descent reading of the subset the server's regexes use; anything else throws [_Unsupported].
 class _HintParser {
@@ -231,7 +238,7 @@ class _HintParser {
       default:
         return 1;
     }
-    if (_peek() == '?' || _peek() == '+') {
+    if (_peek() == '?' || _peek() == '+' || n > _maxRepeat) {
       throw _Unsupported();
     }
     return n;

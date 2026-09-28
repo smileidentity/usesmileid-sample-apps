@@ -35,6 +35,13 @@ describe('ID number hints', () => {
     expect(smileIDSampleIdNumberError(type, 'anything')).toBeNull();
   });
 
+  it('checks nothing for a type with no regex, rather than locking Continue', () => {
+    const type = { id: 'X', type: 'X', label: 'Tax number', regex: '' };
+    expect(smileIDSampleIdNumberAccepts('', '12345')).toBe(true);
+    expect(smileIDSampleIdNumberPlaceholder(type)).toBe('Enter your Tax number');
+    expect(smileIDSampleIdNumberError(type, '12345')).toBeNull();
+  });
+
   it('waits for a type, then shows the example', () => {
     expect(smileIDSampleIdNumberPlaceholder(null)).toBe('Choose an ID type first');
     const type = {

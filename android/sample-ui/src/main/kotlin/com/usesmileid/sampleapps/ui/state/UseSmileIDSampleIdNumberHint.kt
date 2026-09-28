@@ -9,14 +9,15 @@ object UseSmileIDSampleIdNumberHint {
     /** What the empty field shows for the chosen type. */
     fun placeholder(type: UseSmileIDSampleKycIdType?): String = when {
         type == null -> "Choose an ID type first"
-        compiled(type.regex) == null -> "Enter your ${type.label}"
+        type.regex.isBlank() || compiled(type.regex) == null -> "Enter your ${type.label}"
         else -> example(type.regex)?.let { "e.g. $it" } ?: "Enter your ${type.label}"
     }
 
-    /** The trimmed number against the whole regex; a regex this engine cannot compile checks nothing. */
+    /** The trimmed number against the whole regex; a blank regex, or one this engine cannot compile, checks nothing. */
     fun accepts(regex: String, number: String): Boolean {
         val trimmed = number.trim()
         if (trimmed.isEmpty()) return false
+        if (regex.isBlank()) return true
         return compiled(regex)?.matches(trimmed) ?: true
     }
 
@@ -135,11 +136,14 @@ private class HintParser(private val source: String) {
             }
             else -> return 1
         }
-        if (peek() == '?' || peek() == '+') throw Unsupported()
+        if (peek() == '?' || peek() == '+' || n > MAX_REPEAT) throw Unsupported()
         return n
     }
 
     private companion object {
+        /** A longer repeat is outside the subset, so an API regex cannot make the hint allocate without limit. */
+        const val MAX_REPEAT = 64
+
         val BOUNDS = Regex("""\{(\d+)(,(\d*))?\}""")
     }
 }

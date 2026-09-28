@@ -52,6 +52,14 @@ class UseSmileIDSampleIdNumberHintSpecTest {
     }
 
     @Test
+    fun a_type_with_no_regex_checks_nothing_rather_than_locking_continue() {
+        assertTrue(UseSmileIDSampleIdNumberHint.accepts("", "12345"))
+        val type = UseSmileIDSampleKycIdType("X", "X", "Tax number", "")
+        assertEquals("Enter your Tax number", UseSmileIDSampleIdNumberHint.placeholder(type))
+        assertNull(UseSmileIDSampleIdNumberHint.error(type, "12345"))
+    }
+
+    @Test
     fun the_field_waits_for_a_type_then_shows_the_example() {
         assertEquals("Choose an ID type first", UseSmileIDSampleIdNumberHint.placeholder(null))
         val type = UseSmileIDSampleKycIdType("NIN", "NIN", "National ID", "^[0-9]{11}$")
