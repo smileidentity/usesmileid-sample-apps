@@ -96,6 +96,22 @@ The rules every flow follows:
 The token states (linked, counting down, expired) are reached through **Simulate a successful scan**,
 which mints a synthetic token. No flow needs a real token.
 
+**The ID form's lists come from a fixture.** Every flow passes the `catalogue=fixture` launch argument,
+so the lists come from `spec/catalogue-fixture.json` and no flow goes red because of the network or an
+API release. `catalogue=unreachable` fails every list at once, which is how a flow reaches the error
+state and its Retry. The fixture holds about a dozen rows chosen for the UI's cases; it changes when the
+UI gains a case, never because the API changed. Android and iOS bundle it straight from `spec/`. Flutter's
+asset list and Metro cannot reach outside their app, so each ships a copy, and
+`scripts/sync_catalogue_fixture.py --check` fails `verify.sh` if a copy drifts.
+
+**What the capture options send is checked by hand.** The public flows stop at the capture screen, so
+they never see a submission. On an Android debug build a probe on the SDK's public interceptor hook logs
+`auto_capture_enabled`, `capture_both_sides` and `allow_gallery_upload` from the submission metadata,
+and nothing else, under the `UseSmileIDSampleWire` tag: capture a real document on sandbox and read
+`adb logcat -s UseSmileIDSampleWire`. On iOS the request shows in Loupe. Release logs no traffic. A
+release run checks what the screen does instead: under `manual` the shutter shows at once, under the
+default after 10 seconds, and under `auto` not at all.
+
 ## 5. The release build is where consumption defects show
 
 Every platform builds a minified, resource-shrunk release in `verify.sh`, and the device flows also run

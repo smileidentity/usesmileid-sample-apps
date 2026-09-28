@@ -64,6 +64,24 @@ Done looks like:
 
 ## Device suite and CI
 
+### Document capture: the shutter and gallery by id
+
+The capture-mode checks match the manual shutter by its accessibility label, "Capture document", because
+the SDK publishes no `si_*` id for the shutter or the gallery button. When an SDK release publishes them,
+swap the flows over to the ids and add a check that the gallery button appears with gallery upload on.
+
+### iOS: shutter timing on a device
+
+The capture-mode behaviour (shutter at once under manual, after 10 seconds under the default, never under
+auto) is checked by Maestro on Android only. The iOS simulator has no camera, so the XCUITest stops at the
+SDK's mount. Add the same three checks to the iOS device lane.
+
+### Expo: the document form's flow stops before the SDK
+
+`expo/maestro/document-options.yaml` enters the form by link and never types, because a focused field
+ends the Expo flows (see `expo/maestro/README.md`). Once that is solved, drive it through consent to the
+capture screen, as the Android and Flutter flows do.
+
 ### A registry-consumption lane that launches and drives the published SDK
 
 These apps exist to consume the SDK exactly as a partner does, but no lane here resolves the published
@@ -89,41 +107,6 @@ One workflow per platform, in this repo, with four stages:
 - Every run writes the resolved version, the package it drove and the assertions it cleared to the job
   summary, so a green run says what it proved.
 - Android first, then Flutter and Expo. iOS's launch-and-stay-up check is the reference.
-
-## SDK features the sample does not show yet
-
-### Exercise the SDK's document-capture options
-
-`DocumentCaptureConfig` has six fields, and the sample exercises one. The rest ship as public API that
-no reference host shows.
-
-| Field | Default | Sample today |
-|---|---|---|
-| `documentType` | `null` | derived from the ID type, never chosen |
-| `captureBothSides` | `true` | hard-coded `true` |
-| `allowSkipBack` | `false` | `true` |
-| `captureMode` | `AutoCaptureWithManualFallback(10s)` | never set |
-| `allowGalleryUpload` | `false` | never set |
-| `knownIdAspectRatio` | `null` | never set |
-
-In priority order:
-
-1. **Choose the document type directly** (Green Book, Passport, generic), independent of the ID-type
-   field, on the ID-details form. Each case sets `hasBackSide`, `orientation` and `knownAspectRatio`
-   differently, so this one control makes back-side capture, framing and aspect ratio observable.
-   Choosing the generic case exposes its display name, back-side flag and orientation, plus
-   `knownIdAspectRatio`, which exists for exactly that case.
-2. **`captureBothSides` should follow `documentType.hasBackSide`.** Today the Green Book, which has one
-   side, is asked for two. First check what the SDK does with that combination, then make the one-line
-   fix and add a unit test.
-3. **`captureMode` as a three-way Settings control** (auto, manual, auto with manual fallback). Assert
-   it on the wire: it is sent as `auto_capture_enabled` (`auto_capture_only` / `manual` /
-   `autocapture_default`). That assertion is debug-only, because release never logs traffic, so the
-   release lane asserts the on-screen behaviour. Add a device check that the manual shutter appears
-   after the fallback duration.
-4. **`allowGalleryUpload`** as a Settings switch, with its permission consequence.
-
-Each needs a `spec/` entry, test ids and goldens, on all four apps.
 
 ## Store listings
 

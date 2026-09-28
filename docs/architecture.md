@@ -118,7 +118,93 @@ the active profile's organisation is what the SDK's consent screen names as the 
 Paths are relative to each platform's folder. [`docs/token-session.md`](token-session.md) covers the
 token side.
 
-## 7. Porting between platforms
+## 7. The ID form's lists
+
+The countries, ID types and documents on the ID form come from the Smile ID API on every run, as a
+partner's app would get them. A type added on the server appears on the next run with no app update, and
+a type removed disappears. Nothing is bundled, and nothing is cached on disk.
+
+**Two calls, in the shell.** `GET /v3/services/supported_id_types` (every country) and
+`GET /v3/services/supported_documents?continent=AFRICA&locale=…` are both unauthenticated, so no token is
+sent. `sample-ui` defines the seam, `UseSmileIDSampleCatalogueSource`, which returns the raw response
+bodies. Each shell implements it with the HTTP client it already uses for status refresh, so the network
+stays out of the shared UI and no dependency is added. The KYC country picker needs names that only
+`supported_documents` carries, which is why both lists are fetched together rather than per country.
+
+| Platform | Source | Store owner |
+|---|---|---|
+| Android | `app/…/catalogue/RetrofitCatalogueSource.kt` | `UseSmileIDSampleAppState.kt` |
+| iOS | `App/Sources/Catalogue/UseSmileIDSampleCatalogueApi.swift` | `UseSmileIDSampleAppState.swift` |
+| Flutter | `app/lib/src/catalogue/use_smileid_sample_http_catalogue_source.dart` | `use_smileid_sample_catalogue_providers.dart` |
+| Expo | `app/src/catalogue/use-smile-id-sample-catalogue.ts` | the same file |
+
+**The environment follows the token.** With a live session the calls go to that session's environment,
+as status refresh does; with none they go to sandbox. There is no separate switch to disagree with the
+token.
+
+**When it fetches.** Tapping a product that needs ID details starts both calls, so the lists are usually
+there by the time the ID form opens. The form itself starts them if nothing has, which is how a deep link
+reaches it. Leaving the form drops anything in flight, and the next run asks again. A list that fails, or
+takes longer than 10 seconds, is an error state with Retry, never a fallback list: without the network the
+SDK cannot submit the job anyway.
+
+**The rules are data.** Three pure functions run on whatever the server returns, and
+`spec/catalogue-rules.json` holds their cases so all four apps check the same ones:
+
+- **ID types.** A KYC type is listed only when the form can supply every entry in its `required_fields`:
+  the fields the SDK fills in, plus `first_name` and `last_name` from the user-details form. A type that
+  needs `dob`, `citizenship`, `bank_code`, `session_id` or `operator` is left out. The form has no field
+  for any of them, and the SDK's KYC parameters have none for `dob` or `citizenship`: such a job is
+  accepted and then ends Blocked. A type repeated for one country is numbered `_2`, `_3` in API order.
+- **Documents.** The API's "Others" row has an empty code and is left out. A sub-type marked
+  `display_standalone`, such as South Africa's Green Book, is its own row after its parent, and submits
+  the parent's code.
+- **Countries.** The document products offer every country with a listed document. The KYC products offer
+  every country with a listed ID type, named from `supported_documents`; one it does not name is shown by
+  its code, after the named ones.
+
+**What the form holds.** The ID details keep whole rows rather than codes, so a flow rebuilt after process
+death needs no catalogue to resolve them. Profiles do not store ID details.
+
+**Capture as.** The document products show a DOCUMENT trigger in place of the ID type, and a CAPTURE AS
+trigger under it. "Capture as" changes only how the SDK photographs the document. The server always
+receives the document's code as `idType`, which is why the override can exist without sending a wrong
+type.
+
+| Choice | `documentType` | `captureBothSides` |
+|---|---|---|
+| Automatic (the default) | From the API's `format`: 7 is the Green Book preset, 3 the Passport preset, anything else a `GenericDocument` named after the row with the API's `has_back` | The API's `has_back` |
+| Green Book preset | `SouthAfricaGreenBook` | The preset's own back side |
+| Passport preset | `Passport` | The preset's own back side |
+| Custom | A `GenericDocument` from a sheet: display name, back side, orientation, and an aspect ratio of off, 1.586, 1.309 or 0.748 | The sheet's back side |
+
+`format` is matched rather than `code`, because a seaman's ID is `format` 3 without being a passport, and
+the Green Book shares its code with the card.
+
+**The ID-number hint.** The API gives a regex, never an example, so the hint is computed from the regex:
+the first alternative, a class as the first of `A`, `0`, `a` that it accepts, and each part repeated to
+its bound. A regex outside that subset shows "Enter your `<label>`" instead. The number is trimmed and
+must match the whole regex before Continue enables; a number that does not shows an error repeating the
+example. A regex the device cannot compile checks nothing and leaves the server to judge.
+`spec/id-number-hints.json` holds the cases, and every platform checks that each example matches its own
+regex under that platform's engine.
+
+**Capture mode and gallery upload** are Settings rows. Capture mode is a typed field of its own, three
+values rather than a switch, defaulting to automatic with the SDK's 10-second manual fallback. Gallery
+upload is a switch, off as the SDK defaults it.
+
+**Loading.** The lists have no design frames, so this is the design of record, built from components the
+app already has. The form never waits: while a country's list is still arriving, its second trigger stays
+enabled and reads "Loading ID types…" in its muted placeholder style. A sheet opened before its data
+arrives shows six `OptionRow`-shaped skeleton rows, only after 300 ms so a fast answer never flashes, and
+for at least 400 ms once shown. They pulse between `skeleton.bg` and `skeleton.highlight` every
+`skeletonDuration`, and hold still under reduced motion; to a screen reader they are one element that
+says what is loading. A failure is an `EmptyState` with Retry; a list with nothing usable is an
+`EmptyState` with no Retry, because retrying cannot change it. In dark mode `skeleton.highlight` is
+near-white, so the rows pulse towards `surface-alt` instead (`skeletonDarkHighlight` in
+`spec/design-tokens.json`).
+
+## 8. Porting between platforms
 
 The design is the same everywhere, and behaviour stays native: insets, the system back affordance,
 sheet versus dialog, and keyboard avoidance follow each platform. A hand-rolled back button that ignores
