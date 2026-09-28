@@ -187,11 +187,11 @@ void _journeyFor(
         screens.capture((CaptureConfigBuilder capture) {
           capture.captureType = CaptureType.document;
           capture.document((DocumentCaptureConfigBuilder document) {
-            final UseSmileIDSampleDocumentCapture shape =
-                useSmileIDSampleDocumentCaptureFor(snapshot.idDetails);
-            document.documentType = shape.documentType;
-            document.captureBothSides = shape.captureBothSides;
-            document.allowSkipBack = true;
+            document.documentType = useSmileIDSampleDocumentTypeFor(
+              snapshot.idDetails,
+            );
+            document.captureBothSides = snapshot.captureBothSides;
+            document.allowSkipBack = snapshot.allowSkipBack;
             document.captureMode = snapshot.captureMode.sdk;
             document.allowGalleryUpload = snapshot.galleryUpload;
           });
@@ -247,11 +247,14 @@ List<UseSmileIDSampleFlowJourneyStep> useSmileIDSampleJourneyStepsFor(
   }
   switch (snapshot.product) {
     case UseSmileIDSampleProduct.documentVerification:
-      _documentCapture(steps, snapshot.previewStep);
-      _selfieCapture(steps, snapshot.previewStep);
     case UseSmileIDSampleProduct.enhancedDocumentVerification:
-      _selfieCapture(steps, snapshot.previewStep);
-      _documentCapture(steps, snapshot.previewStep);
+      if (snapshot.selfieFirst) {
+        _selfieCapture(steps, snapshot.previewStep);
+        _documentCapture(steps, snapshot.previewStep);
+      } else {
+        _documentCapture(steps, snapshot.previewStep);
+        _selfieCapture(steps, snapshot.previewStep);
+      }
     case UseSmileIDSampleProduct.smartSelfieEnrollment:
     case UseSmileIDSampleProduct.smartSelfieAuth:
     case UseSmileIDSampleProduct.biometricKyc:
@@ -279,57 +282,25 @@ void _documentCapture(
   }
 }
 
-/// What the SDK is told to photograph; the server is told the document's code either way.
-typedef UseSmileIDSampleDocumentCapture = ({
-  DocumentType documentType,
-  bool captureBothSides,
-});
-
-/// The "Capture as" mapping from `spec/catalogue-rules.json`; pure, so its table is unit-tested.
+/// The "Capture as" mapping from `spec/catalogue-rules.json`: the SDK's own type, nothing read from the API.
 @visibleForTesting
-UseSmileIDSampleDocumentCapture useSmileIDSampleDocumentCaptureFor(
+DocumentType useSmileIDSampleDocumentTypeFor(
   UseSmileIDSampleIdDetails details,
-) {
-  final UseSmileIDSampleDocument? document = details.document;
-  return switch (details.captureAs) {
-    UseSmileIDSampleCaptureAs.greenBook => _preset(
-      DocumentType.southAfricaGreenBook,
-    ),
-    UseSmileIDSampleCaptureAs.passport => _preset(DocumentType.passport),
-    UseSmileIDSampleCaptureAs.genericDocument => _preset(
-      GenericDocument(
-        displayName: details.genericDocument.displayName,
-        hasBackSide: details.genericDocument.hasBackSide,
-        orientation: switch (details.genericDocument.orientation) {
-          UseSmileIDSampleDocumentOrientation.landscape =>
-            DocumentOrientation.landscape,
-          UseSmileIDSampleDocumentOrientation.portrait =>
-            DocumentOrientation.portrait,
-        },
-        knownAspectRatio: details.genericDocument.aspectRatio.ratio,
-      ),
-    ),
-    // The API's has_back, not a preset's: the API is the source that says what the document is.
-    UseSmileIDSampleCaptureAs.automatic => (
-      documentType: switch (document?.format) {
-        _formatGreenBook => DocumentType.southAfricaGreenBook,
-        _formatBooklet => DocumentType.passport,
-        _ => GenericDocument(
-          displayName: document?.name ?? 'Document',
-          hasBackSide: document?.hasBack ?? true,
-        ),
-      },
-      captureBothSides: document?.hasBack ?? true,
-    ),
-  };
-}
-
-UseSmileIDSampleDocumentCapture _preset(DocumentType type) =>
-    (documentType: type, captureBothSides: type.hasBackSide);
-
-// The API's undocumented `format`: 3 is a passport or seaman's booklet, 7 the Green Book; the rest are cards.
-const int _formatBooklet = 3;
-const int _formatGreenBook = 7;
+) => switch (details.captureAs) {
+  UseSmileIDSampleCaptureAs.greenBook => DocumentType.southAfricaGreenBook,
+  UseSmileIDSampleCaptureAs.passport => DocumentType.passport,
+  UseSmileIDSampleCaptureAs.genericDocument => GenericDocument(
+    displayName: details.genericDocument.displayName,
+    hasBackSide: details.genericDocument.hasBackSide,
+    orientation: switch (details.genericDocument.orientation) {
+      UseSmileIDSampleDocumentOrientation.landscape =>
+        DocumentOrientation.landscape,
+      UseSmileIDSampleDocumentOrientation.portrait =>
+        DocumentOrientation.portrait,
+    },
+    knownAspectRatio: details.genericDocument.aspectRatio.ratio,
+  ),
+};
 
 extension on UseSmileIDSampleCaptureMode {
   DocumentCaptureMode get sdk => switch (this) {

@@ -157,7 +157,7 @@ void main() {
       tester,
       'sheet_capture_as',
       () => UseSmileIDSampleCaptureAsSheet(
-        selected: UseSmileIDSampleCaptureAs.automatic,
+        selected: UseSmileIDSampleCaptureAs.genericDocument,
         onSelect: (UseSmileIDSampleCaptureAs _) {},
       ),
     );

@@ -51,6 +51,9 @@ void main() {
         UseSmileIDSampleSettingsKeys.instructionsStep,
         UseSmileIDSampleSettingsKeys.previewStep,
         UseSmileIDSampleSettingsKeys.galleryUpload,
+        UseSmileIDSampleSettingsKeys.captureBothSides,
+        UseSmileIDSampleSettingsKeys.allowSkipBack,
+        UseSmileIDSampleSettingsKeys.selfieFirst,
       ]),
     );
   });
@@ -65,6 +68,18 @@ void main() {
     final UseSmileIDSampleSettings reread = await (await restart()).read();
     expect(reread.captureMode, UseSmileIDSampleCaptureMode.manual);
     expect(reread.galleryUpload, isTrue);
+  });
+
+  test('the document switches survive a restart', () async {
+    final UseSmileIDSamplePreferencesSettingsRepository store = await restart();
+    await store.setSetting(UseSmileIDSampleSetting.captureBothSides, false);
+    await store.setSetting(UseSmileIDSampleSetting.allowSkipBack, true);
+    await store.setSetting(UseSmileIDSampleSetting.selfieFirst, true);
+
+    final UseSmileIDSampleSettings reread = await (await restart()).read();
+    expect(reread.captureBothSides, isFalse);
+    expect(reread.allowSkipBack, isTrue);
+    expect(reread.selfieFirst, isTrue);
   });
 
   test('an unknown stored capture mode reads as the default', () async {

@@ -16,16 +16,14 @@ void main() {
 
   test('every case maps as the spec says', () {
     final List<Object?> cases = captureAs['cases']! as List<Object?>;
-    expect(cases.length, greaterThanOrEqualTo(8));
+    expect(cases.length, greaterThanOrEqualTo(6));
     for (final Object? raw in cases) {
       final Map<String, Object?> spec = raw! as Map<String, Object?>;
       final String name = spec['name']! as String;
       final Map<String, Object?> expected =
           spec['expected']! as Map<String, Object?>;
       final UseSmileIDSampleIdDetails details = _detailsOf(spec);
-      final UseSmileIDSampleDocumentCapture capture =
-          useSmileIDSampleDocumentCaptureFor(details);
-      final DocumentType type = capture.documentType;
+      final DocumentType type = useSmileIDSampleDocumentTypeFor(details);
       switch (expected['documentType']) {
         case 'passport':
           expect(type, DocumentType.passport, reason: name);
@@ -42,12 +40,6 @@ void main() {
             expect(generic.knownAspectRatio, closeTo(ratio, 0.0001));
           }
       }
-      final Object? both = expected['captureBothSides'];
-      expect(
-        capture.captureBothSides,
-        both is bool ? both : type.hasBackSide,
-        reason: name,
-      );
       expect(_submittedIdType(details), expected['idType'], reason: name);
     }
   });
@@ -61,7 +53,7 @@ void main() {
     }
   });
 
-  test('capture mode and gallery reach the SDK', () {
+  test('the document settings reach the SDK', () {
     for (final (UseSmileIDSampleCaptureMode mode, DocumentCaptureMode sdk)
         in <(UseSmileIDSampleCaptureMode, DocumentCaptureMode)>[
           (UseSmileIDSampleCaptureMode.auto, const AutoCapture()),
@@ -86,6 +78,8 @@ void main() {
           ),
           captureMode: mode,
           galleryUpload: true,
+          captureBothSides: false,
+          allowSkipBack: true,
         ),
       );
       // The SDK says to inspect this, then marks it internal.
@@ -104,6 +98,8 @@ void main() {
           .documentConfig!;
       expect(document.captureMode, sdk);
       expect(document.allowGalleryUpload, isTrue);
+      expect(document.captureBothSides, isFalse);
+      expect(document.allowSkipBack, isTrue);
     }
   });
 }
@@ -154,6 +150,8 @@ UseSmileIDSampleFlowLaunchSnapshot _snapshot(
   UseSmileIDSampleCaptureMode captureMode =
       UseSmileIDSampleCaptureMode.autoWithFallback,
   bool galleryUpload = false,
+  bool captureBothSides = true,
+  bool allowSkipBack = false,
 }) => UseSmileIDSampleFlowLaunchSnapshot(
   product: UseSmileIDSampleProduct.documentVerification,
   route: UseSmileIDSampleFlowRoute.fullscreen,
@@ -173,6 +171,8 @@ UseSmileIDSampleFlowLaunchSnapshot _snapshot(
   previewStep: true,
   captureMode: captureMode,
   galleryUpload: galleryUpload,
+  captureBothSides: captureBothSides,
+  allowSkipBack: allowSkipBack,
   userId: 'user_1',
   partnerId: 'profile-1',
   partnerName: 'Kobo Bank',

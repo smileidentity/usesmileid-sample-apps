@@ -26,6 +26,9 @@ class UseSmileIDSampleFlowLaunchSnapshot {
     required this.callbackUrl,
     this.captureMode = UseSmileIDSampleCaptureMode.autoWithFallback,
     this.galleryUpload = false,
+    this.captureBothSides = true,
+    this.allowSkipBack = false,
+    this.selfieFirst = false,
     this.session,
     this.sessionExpired = false,
   });
@@ -71,6 +74,15 @@ class UseSmileIDSampleFlowLaunchSnapshot {
 
   /// Whether document capture offers the gallery.
   final bool galleryUpload;
+
+  /// Whether document capture takes a back, for a document type that has one.
+  final bool captureBothSides;
+
+  /// Whether the back-side capture offers Skip.
+  final bool allowSkipBack;
+
+  /// Whether the document products capture the selfie first.
+  final bool selfieFirst;
 
   /// The id this run submits under.
   final String userId;

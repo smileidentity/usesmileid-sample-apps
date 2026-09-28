@@ -369,6 +369,16 @@ abstract final class UseSmileIDSampleTestIds {
   /// The gallery-upload switch.
   static const String settingGalleryUpload = 'sample_setting_gallery_upload';
 
+  /// The Capture the back side switch.
+  static const String settingCaptureBothSides =
+      'sample_setting_capture_both_sides';
+
+  /// The Skip the back switch.
+  static const String settingAllowSkipBack = 'sample_setting_allow_skip_back';
+
+  /// The Selfie first switch.
+  static const String settingSelfieFirst = 'sample_setting_selfie_first';
+
   /// The scenario drawer, a debug affordance the design does not cover.
   static const String scenarioDrawer = 'sample_scenario_drawer';
 
@@ -506,6 +516,9 @@ abstract final class UseSmileIDSampleTestIds {
     settingCaptureMode,
     captureModeSheet,
     settingGalleryUpload,
+    settingCaptureBothSides,
+    settingAllowSkipBack,
+    settingSelfieFirst,
     scenarioDrawer,
     scenarioDrawerButton,
     licensesScreen,

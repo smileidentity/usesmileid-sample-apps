@@ -327,7 +327,7 @@ void main() {
           continueEnabled(tester, UseSmileIDSampleTestIds.kycContinue),
           isTrue,
         );
-        expect(find.text('Automatic'), findsOne);
+        expect(find.text('Generic document: Document'), findsOne);
       },
     );
 
@@ -426,13 +426,20 @@ void main() {
       );
 
       expect(byId(UseSmileIDSampleTestIds.genericDocumentSheet), findsOne);
-      expect(forms().idDetails.captureAs, UseSmileIDSampleCaptureAs.automatic);
+      await tester.tap(
+        byId(UseSmileIDSampleTestIds.genericDocumentOrientation('portrait')),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        forms().idDetails.genericDocument.orientation,
+        UseSmileIDSampleDocumentOrientation.landscape,
+      );
 
       await tester.tap(byId(UseSmileIDSampleTestIds.genericDocumentDone));
       await tester.pumpAndSettle();
       expect(
-        forms().idDetails.captureAs,
-        UseSmileIDSampleCaptureAs.genericDocument,
+        forms().idDetails.genericDocument.orientation,
+        UseSmileIDSampleDocumentOrientation.portrait,
       );
     });
 

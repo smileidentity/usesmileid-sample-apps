@@ -40,6 +40,9 @@ void main() {
         'sample_setting_instructions_step',
         'sample_setting_preview_step',
         'sample_setting_gallery_upload',
+        'sample_setting_capture_both_sides',
+        'sample_setting_allow_skip_back',
+        'sample_setting_selfie_first',
       ],
     );
   });

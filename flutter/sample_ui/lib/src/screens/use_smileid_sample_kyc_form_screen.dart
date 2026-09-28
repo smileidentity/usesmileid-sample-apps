@@ -185,7 +185,7 @@ class UseSmileIDSampleKycFormScreen extends StatelessWidget {
       value: details.captureAs == UseSmileIDSampleCaptureAs.genericDocument
           ? 'Generic document: ${details.genericDocument.displayName}'
           : details.captureAs.label,
-      placeholder: UseSmileIDSampleCaptureAs.automatic.label,
+      placeholder: UseSmileIDSampleCaptureAs.genericDocument.label,
       onTap: onPickCaptureAs,
       enabled: details.document != null,
       leading: (Color tint) =>

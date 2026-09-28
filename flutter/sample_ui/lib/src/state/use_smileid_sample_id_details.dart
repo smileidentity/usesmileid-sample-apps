@@ -109,19 +109,16 @@ class UseSmileIDSampleDocument {
   int get hashCode => Object.hash(code, subType, name, hasBack, format);
 }
 
-/// How the SDK photographs the chosen document; never what the server receives.
+/// How the SDK photographs the chosen document, each the SDK's own type; never what the server receives.
 enum UseSmileIDSampleCaptureAs {
-  /// The document's shape follows the API's `format` and `has_back`.
-  automatic('automatic', 'Automatic'),
+  /// A GenericDocument shaped in its own sheet, the SDK's defaults until then.
+  genericDocument('genericDocument', 'Generic document'),
 
   /// The SDK's Green Book preset.
   greenBook('greenBook', 'Green Book preset'),
 
   /// The SDK's Passport preset.
-  passport('passport', 'Passport preset'),
-
-  /// A GenericDocument shaped in its own sheet.
-  genericDocument('genericDocument', 'Generic document');
+  passport('passport', 'Passport preset');
 
   const UseSmileIDSampleCaptureAs(this.id, this.label);
 
@@ -230,7 +227,7 @@ class UseSmileIDSampleIdDetails {
     this.country,
     this.idType,
     this.document,
-    this.captureAs = UseSmileIDSampleCaptureAs.automatic,
+    this.captureAs = UseSmileIDSampleCaptureAs.genericDocument,
     this.genericDocument = const UseSmileIDSampleGenericDocument(),
     this.idNumber = '',
   });

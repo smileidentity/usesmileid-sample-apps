@@ -29,6 +29,7 @@ void main() {
     bool consentStep = true,
     bool instructionsStep = true,
     bool previewStep = true,
+    bool selfieFirst = false,
   }) => UseSmileIDSampleFlowLaunchSnapshot(
     product: product,
     route: UseSmileIDSampleFlowRoute.fullscreen,
@@ -42,6 +43,7 @@ void main() {
     consentStep: consentStep,
     instructionsStep: instructionsStep,
     previewStep: previewStep,
+    selfieFirst: selfieFirst,
     userId: 'user_1',
     partnerId: 'profile-1',
     partnerName: 'Kobo Bank',
@@ -97,39 +99,37 @@ void main() {
       );
     });
 
-    // The two document products differ only in which capture leads, which is the design's order.
-    test('the document products put their captures in opposite orders', () {
-      expect(
-        useSmileIDSampleJourneyStepsFor(
-          snapshotFor(
-            UseSmileIDSampleProduct.documentVerification,
-            previewStep: false,
-            instructionsStep: false,
-            consentStep: false,
-          ),
-        ),
-        <UseSmileIDSampleFlowJourneyStep>[
-          UseSmileIDSampleFlowJourneyStep.documentCapture,
-          UseSmileIDSampleFlowJourneyStep.selfieCapture,
-          UseSmileIDSampleFlowJourneyStep.processing,
-        ],
-      );
-      expect(
-        useSmileIDSampleJourneyStepsFor(
-          snapshotFor(
-            UseSmileIDSampleProduct.enhancedDocumentVerification,
-            previewStep: false,
-            instructionsStep: false,
-            consentStep: false,
-          ),
-        ),
-        <UseSmileIDSampleFlowJourneyStep>[
-          UseSmileIDSampleFlowJourneyStep.selfieCapture,
-          UseSmileIDSampleFlowJourneyStep.documentCapture,
-          UseSmileIDSampleFlowJourneyStep.processing,
-        ],
-      );
-    });
+    test(
+      'both document products capture the document first unless selfie first is on',
+      () {
+        for (final UseSmileIDSampleProduct product in <UseSmileIDSampleProduct>[
+          UseSmileIDSampleProduct.documentVerification,
+          UseSmileIDSampleProduct.enhancedDocumentVerification,
+        ]) {
+          List<UseSmileIDSampleFlowJourneyStep> steps({
+            required bool selfieFirst,
+          }) => useSmileIDSampleJourneyStepsFor(
+            snapshotFor(
+              product,
+              previewStep: false,
+              instructionsStep: false,
+              consentStep: false,
+              selfieFirst: selfieFirst,
+            ),
+          );
+          expect(steps(selfieFirst: false), <UseSmileIDSampleFlowJourneyStep>[
+            UseSmileIDSampleFlowJourneyStep.documentCapture,
+            UseSmileIDSampleFlowJourneyStep.selfieCapture,
+            UseSmileIDSampleFlowJourneyStep.processing,
+          ], reason: product.id);
+          expect(steps(selfieFirst: true), <UseSmileIDSampleFlowJourneyStep>[
+            UseSmileIDSampleFlowJourneyStep.selfieCapture,
+            UseSmileIDSampleFlowJourneyStep.documentCapture,
+            UseSmileIDSampleFlowJourneyStep.processing,
+          ], reason: product.id);
+        }
+      },
+    );
   });
 
   group('the gate', () {

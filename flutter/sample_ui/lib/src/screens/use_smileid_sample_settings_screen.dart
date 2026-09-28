@@ -302,6 +302,27 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
                 supportingText: 'The system picker needs no permission',
                 setting: UseSmileIDSampleSetting.galleryUpload,
               ),
+              const UseSmileIDSampleSettingRowDivider(),
+              _switchRow(
+                title: 'Capture the back side',
+                icon: SmileIcons.documentVerification,
+                supportingText: 'Only for a document type that has one',
+                setting: UseSmileIDSampleSetting.captureBothSides,
+              ),
+              const UseSmileIDSampleSettingRowDivider(),
+              _switchRow(
+                title: 'Skip the back',
+                icon: SmileIcons.instructions,
+                supportingText: 'A Skip button on the back-side capture',
+                setting: UseSmileIDSampleSetting.allowSkipBack,
+              ),
+              const UseSmileIDSampleSettingRowDivider(),
+              _switchRow(
+                title: 'Selfie first',
+                icon: SmileIcons.smile,
+                supportingText: 'The selfie before the document',
+                setting: UseSmileIDSampleSetting.selfieFirst,
+              ),
             ],
           ),
           if (onOpenScenarioDrawer != null)

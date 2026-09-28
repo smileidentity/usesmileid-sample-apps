@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../use_smileid_sample_test_ids.dart';
 
-/// Which settings row a toggle belongs to, so a caller can name one without naming six fields.
+/// Which settings row a toggle belongs to, so a caller can name one without naming every field.
 enum UseSmileIDSampleSetting {
   /// ON is the head-turn challenge, and it fights agent mode.
   enhancedSmartSelfie(UseSmileIDSampleTestIds.settingEnhancedSmartSelfie),
@@ -23,7 +23,16 @@ enum UseSmileIDSampleSetting {
   previewStep(UseSmileIDSampleTestIds.settingPreviewStep),
 
   /// DocumentCaptureConfig.allowGalleryUpload; off, as the SDK defaults it.
-  galleryUpload(UseSmileIDSampleTestIds.settingGalleryUpload);
+  galleryUpload(UseSmileIDSampleTestIds.settingGalleryUpload),
+
+  /// DocumentCaptureConfig.captureBothSides; on, as the SDK defaults it.
+  captureBothSides(UseSmileIDSampleTestIds.settingCaptureBothSides),
+
+  /// DocumentCaptureConfig.allowSkipBack; off, as the SDK defaults it.
+  allowSkipBack(UseSmileIDSampleTestIds.settingAllowSkipBack),
+
+  /// The document products capture the selfie before the document.
+  selfieFirst(UseSmileIDSampleTestIds.settingSelfieFirst);
 
   const UseSmileIDSampleSetting(this.testId);
 
@@ -63,6 +72,9 @@ class UseSmileIDSampleSettings {
     this.instructionsStep = true,
     this.previewStep = true,
     this.galleryUpload = false,
+    this.captureBothSides = true,
+    this.allowSkipBack = false,
+    this.selfieFirst = false,
     this.captureMode = UseSmileIDSampleCaptureMode.autoWithFallback,
   });
 
@@ -87,10 +99,19 @@ class UseSmileIDSampleSettings {
   /// Whether the SDK offers the gallery on document capture.
   final bool galleryUpload;
 
+  /// Whether the SDK captures a back, for a document type that has one.
+  final bool captureBothSides;
+
+  /// Whether the back-side capture offers Skip.
+  final bool allowSkipBack;
+
+  /// Whether the document products capture the selfie first.
+  final bool selfieFirst;
+
   /// A typed field rather than one of the switches: three values, not two.
   final UseSmileIDSampleCaptureMode captureMode;
 
-  /// Reads one row, so a caller can diff two states without naming six fields.
+  /// Reads one row, so a caller can diff two states without naming every field.
   bool operator [](UseSmileIDSampleSetting setting) => switch (setting) {
     UseSmileIDSampleSetting.enhancedSmartSelfie => enhancedSmartSelfie,
     UseSmileIDSampleSetting.agentMode => agentMode,
@@ -99,6 +120,9 @@ class UseSmileIDSampleSettings {
     UseSmileIDSampleSetting.instructionsStep => instructionsStep,
     UseSmileIDSampleSetting.previewStep => previewStep,
     UseSmileIDSampleSetting.galleryUpload => galleryUpload,
+    UseSmileIDSampleSetting.captureBothSides => captureBothSides,
+    UseSmileIDSampleSetting.allowSkipBack => allowSkipBack,
+    UseSmileIDSampleSetting.selfieFirst => selfieFirst,
   };
 
   /// Drops enhanced liveness where a stored state carries both, so the SDK is never handed the pair.
@@ -127,6 +151,11 @@ class UseSmileIDSampleSettings {
     ),
     UseSmileIDSampleSetting.previewStep => _copy(previewStep: enabled),
     UseSmileIDSampleSetting.galleryUpload => _copy(galleryUpload: enabled),
+    UseSmileIDSampleSetting.captureBothSides => _copy(
+      captureBothSides: enabled,
+    ),
+    UseSmileIDSampleSetting.allowSkipBack => _copy(allowSkipBack: enabled),
+    UseSmileIDSampleSetting.selfieFirst => _copy(selfieFirst: enabled),
   };
 
   /// A copy with [captureMode] chosen.
@@ -142,6 +171,9 @@ class UseSmileIDSampleSettings {
     bool? instructionsStep,
     bool? previewStep,
     bool? galleryUpload,
+    bool? captureBothSides,
+    bool? allowSkipBack,
+    bool? selfieFirst,
     UseSmileIDSampleCaptureMode? captureMode,
   }) => UseSmileIDSampleSettings(
     enhancedSmartSelfie: enhancedSmartSelfie ?? this.enhancedSmartSelfie,
@@ -151,6 +183,9 @@ class UseSmileIDSampleSettings {
     instructionsStep: instructionsStep ?? this.instructionsStep,
     previewStep: previewStep ?? this.previewStep,
     galleryUpload: galleryUpload ?? this.galleryUpload,
+    captureBothSides: captureBothSides ?? this.captureBothSides,
+    allowSkipBack: allowSkipBack ?? this.allowSkipBack,
+    selfieFirst: selfieFirst ?? this.selfieFirst,
     captureMode: captureMode ?? this.captureMode,
   );
 
@@ -164,6 +199,9 @@ class UseSmileIDSampleSettings {
       other.instructionsStep == instructionsStep &&
       other.previewStep == previewStep &&
       other.galleryUpload == galleryUpload &&
+      other.captureBothSides == captureBothSides &&
+      other.allowSkipBack == allowSkipBack &&
+      other.selfieFirst == selfieFirst &&
       other.captureMode == captureMode;
 
   @override
@@ -175,6 +213,9 @@ class UseSmileIDSampleSettings {
     instructionsStep,
     previewStep,
     galleryUpload,
+    captureBothSides,
+    allowSkipBack,
+    selfieFirst,
     captureMode,
   );
 }

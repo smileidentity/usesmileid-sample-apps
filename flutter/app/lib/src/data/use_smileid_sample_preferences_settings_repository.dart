@@ -52,6 +52,18 @@ class UseSmileIDSamplePreferencesSettingsRepository
         UseSmileIDSampleSettingsKeys.galleryUpload,
         defaults.galleryUpload,
       ),
+      captureBothSides: stored(
+        UseSmileIDSampleSettingsKeys.captureBothSides,
+        defaults.captureBothSides,
+      ),
+      allowSkipBack: stored(
+        UseSmileIDSampleSettingsKeys.allowSkipBack,
+        defaults.allowSkipBack,
+      ),
+      selfieFirst: stored(
+        UseSmileIDSampleSettingsKeys.selfieFirst,
+        defaults.selfieFirst,
+      ),
       captureMode:
           UseSmileIDSampleCaptureMode.values
               .where(
