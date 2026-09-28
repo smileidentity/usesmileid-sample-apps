@@ -56,9 +56,11 @@ appId: ${APP_ID}
     id: "sample_document_option_"
 - tapOn:
     id: "sample_document_option_IDENTITY_CARD_green_book"
+# The trigger's text is a child node, so the id and the text cannot sit in one selector.
 - assertVisible:
-    id: "sample_document_trigger"
     text: ".*Green Book.*"
+    childOf:
+      id: "sample_document_trigger"
 
 # Every choice is on offer; Automatic is the default.
 - tapOn:
@@ -67,7 +69,7 @@ appId: ${APP_ID}
     id: "sample_capture_as_sheet"
 - assertVisible:
     id: "sample_capture_as_option_automatic"
-    selected: true
+    checked: true
 - assertVisible:
     id: "sample_capture_as_option_greenBook"
 - assertVisible:
@@ -89,9 +91,11 @@ appId: ${APP_ID}
     id: "sample_custom_document_aspect_ratio_booklet"
 - tapOn:
     id: "sample_custom_document_done"
+# The trigger's text is a child node, so the id and the text cannot sit in one selector.
 - assertVisible:
-    id: "sample_capture_as_trigger"
     text: ".*Booklet.*"
+    childOf:
+      id: "sample_capture_as_trigger"
 
 # Back to Automatic, which captures the Green Book as the API describes it: its preset, front only.
 - tapOn:
@@ -125,7 +129,15 @@ appId: ${APP_ID}
 - openLink: "usesmileid-sample-android://settings/capture-mode?catalogue=fixture"
 - tapOn:
     id: "sample_capture_mode_option_manual"
-- assertVisible: "Manual"
+# Centred on the row below it: a scroll asking for the capture-mode row itself at 100% never settles.
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_gallery_upload"
+    centerElement: true
+- assertVisible:
+    text: "Manual"
+    childOf:
+      id: "sample_setting_capture_mode"
 - runFlow: subflows/document-to-capture.yaml
 # Manual: the shutter is there at once.
 - extendedWaitUntil:
@@ -148,12 +160,12 @@ appId: ${APP_ID}
 - tapOn:
     id: "sample_capture_mode_option_auto"
 - runFlow: subflows/document-to-capture.yaml
-# Automatic only: no shutter, even past the fallback's 10 seconds. The wait names nothing that exists,
-# so it runs its whole timeout, and the assertion after it reads the screen at 15 seconds.
+# Automatic only: no shutter while the scan runs. Read at 8 seconds, inside the fallback's 10: the SDK
+# shows the shutter under every mode once a scan times out, and a camera facing a desk times out.
 - extendedWaitUntil:
     visible:
       id: "an_id_nothing_carries"
-    timeout: 15000
+    timeout: 8000
     optional: true
 - assertNotVisible: "Capture document"
 - runFlow: subflows/leave-sdk-flow.yaml
@@ -161,4 +173,12 @@ appId: ${APP_ID}
 - openLink: "usesmileid-sample-android://settings/capture-mode?catalogue=fixture"
 - tapOn:
     id: "sample_capture_mode_option_autoWithFallback"
-- assertVisible: "Automatic with manual fallback"
+# Centred on the row below it: a scroll asking for the capture-mode row itself at 100% never settles.
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_gallery_upload"
+    centerElement: true
+- assertVisible:
+    text: "Automatic with manual fallback"
+    childOf:
+      id: "sample_setting_capture_mode"

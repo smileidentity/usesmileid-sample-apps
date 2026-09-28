@@ -359,7 +359,7 @@ appId: ${APP_ID}
     id: "sample_capture_mode_sheet"
 - assertVisible:
     id: "sample_capture_mode_option_autoWithFallback"
-    selected: true
+    checked: true
 - tapOn:
     id: "sample_capture_mode_option_manual"
 - assertNotVisible:

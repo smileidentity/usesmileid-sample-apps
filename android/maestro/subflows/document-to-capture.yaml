@@ -1,23 +1,39 @@
-# Document Verification with Kenya's passport from the fixture, through consent and instructions to
-# the capture screen. Starts from Products.
+# Document Verification with South Africa's Green Book from the fixture, through consent and instructions to
+# the capture screen. Starts from Products. The Green Book is a portrait capture: a
+# landscape one leaves a phone lying flat in landscape, because nothing moves the sensor back.
 appId: ${APP_ID}
 ---
 - tapOn:
     id: "sample_nav_products"
+- scrollUntilVisible:
+    element:
+      id: "sample_product_card_documentVerification"
+    direction: DOWN
 - tapOn:
     id: "sample_product_card_documentVerification"
+- scrollUntilVisible:
+    element:
+      id: "sample_user_details_continue"
+    direction: DOWN
 - tapOn:
     id: "sample_user_details_continue"
 - tapOn:
     id: "sample_country_trigger"
 - tapOn:
-    id: "sample_country_option_KE"
+    id: "sample_country_option_ZA"
 - tapOn:
     id: "sample_document_trigger"
 - tapOn:
-    id: "sample_document_option_PASSPORT"
+    id: "sample_document_option_IDENTITY_CARD_green_book"
+- scrollUntilVisible:
+    element:
+      id: "sample_kyc_continue"
+    direction: DOWN
 - tapOn:
     id: "sample_kyc_continue"
+- scrollUntilVisible:
+    element: "Allow"
+    direction: DOWN
 - tapOn: "Allow"
 - waitForAnimationToEnd:
     timeout: 5000
@@ -30,4 +46,7 @@ appId: ${APP_ID}
           id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
 - assertVisible:
     id: "si_instructions_screen"
+- scrollUntilVisible:
+    element: "Next"
+    direction: DOWN
 - tapOn: "Next"
