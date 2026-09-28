@@ -86,12 +86,12 @@ final class UseSmileIDSampleDocumentCaptureMappingTest: XCTestCase {
       ),
       captureAs: XCTUnwrap(UseSmileIDSampleCaptureAs(rawValue: item["captureAs"] as? String ?? ""))
     )
-    if let custom = item["custom"] as? [String: Any] {
-      details.custom = UseSmileIDSampleCustomDocument(
-        displayName: custom["displayName"] as? String ?? "",
-        hasBackSide: custom["hasBackSide"] as? Bool ?? true,
-        orientation: UseSmileIDSampleDocumentOrientation(rawValue: custom["orientation"] as? String ?? "") ?? .landscape,
-        aspectRatio: UseSmileIDSampleAspectRatio(rawValue: custom["aspectRatio"] as? String ?? "") ?? .off
+    if let genericDocument = item["genericDocument"] as? [String: Any] {
+      details.genericDocument = UseSmileIDSampleGenericDocument(
+        displayName: genericDocument["displayName"] as? String ?? "",
+        hasBackSide: genericDocument["hasBackSide"] as? Bool ?? true,
+        orientation: UseSmileIDSampleDocumentOrientation(rawValue: genericDocument["orientation"] as? String ?? "") ?? .landscape,
+        aspectRatio: UseSmileIDSampleAspectRatio(rawValue: genericDocument["aspectRatio"] as? String ?? "") ?? .off
       )
     }
     return details

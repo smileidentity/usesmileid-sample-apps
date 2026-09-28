@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import {
   smileIDSampleIdDetailsDefaults,
   type UseSmileIDSampleCountry,
-  type UseSmileIDSampleCustomDocument,
+  type UseSmileIDSampleGenericDocument,
   type UseSmileIDSampleDocument,
   type UseSmileIDSampleIdDetails,
   type UseSmileIDSampleKycIdType,
@@ -37,8 +37,8 @@ type Actions = {
   setIdType: (idType: UseSmileIDSampleKycIdType) => void;
   setDocument: (document: UseSmileIDSampleDocument) => void;
   setCaptureAs: (captureAs: UseSmileIDSampleCaptureAs) => void;
-  /// Keeps what the custom-document sheet built, which also selects Custom.
-  setCustomDocument: (custom: UseSmileIDSampleCustomDocument) => void;
+  /// Keeps what the generic-document sheet built, which also selects Generic document.
+  setGenericDocument: (genericDocument: UseSmileIDSampleGenericDocument) => void;
   setIdNumber: (value: string) => void;
   clear: () => void;
 };
@@ -75,8 +75,8 @@ export const useSmileIDSampleFormsStore = create<State & Actions>((set) => ({
 
   setCaptureAs: (captureAs) => set((state) => ({ idDetails: { ...state.idDetails, captureAs } })),
 
-  setCustomDocument: (custom) =>
-    set((state) => ({ idDetails: { ...state.idDetails, custom, captureAs: UseSmileIDSampleCaptureAs.Custom } })),
+  setGenericDocument: (genericDocument) =>
+    set((state) => ({ idDetails: { ...state.idDetails, genericDocument, captureAs: UseSmileIDSampleCaptureAs.GenericDocument } })),
 
   setIdNumber: (value) => set((state) => ({ idDetails: { ...state.idDetails, idNumber: value } })),
 

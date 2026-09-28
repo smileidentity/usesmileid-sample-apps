@@ -109,7 +109,7 @@ final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
     .idTypePicker: .idDetailsForm(productId: "sample-productId"),
     .documentPicker: .idDetailsForm(productId: "sample-productId"),
     .captureAs: .idDetailsForm(productId: "sample-productId"),
-    .customDocument: .idDetailsForm(productId: "sample-productId"),
+    .genericDocument: .idDetailsForm(productId: "sample-productId"),
     .captureMode: .settings
   ]
 

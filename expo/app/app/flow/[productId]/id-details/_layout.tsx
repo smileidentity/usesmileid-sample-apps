@@ -13,7 +13,7 @@ export default function IdDetailsLayout() {
       <Stack.Screen name="id-type" options={SHEET_OPTIONS} />
       <Stack.Screen name="document" options={SHEET_OPTIONS} />
       <Stack.Screen name="capture-as" options={SHEET_OPTIONS} />
-      <Stack.Screen name="custom-document" options={SHEET_OPTIONS} />
+      <Stack.Screen name="generic-document" options={SHEET_OPTIONS} />
     </Stack>
   );
 }

@@ -69,8 +69,8 @@ class UseSmileIDSampleForms(
         idDetails = idDetails.copy(captureAs = captureAs)
     }
 
-    fun setCustomDocument(custom: UseSmileIDSampleCustomDocument) {
-        idDetails = idDetails.copy(custom = custom, captureAs = UseSmileIDSampleCaptureAs.Custom)
+    fun setGenericDocument(genericDocument: UseSmileIDSampleGenericDocument) {
+        idDetails = idDetails.copy(genericDocument = genericDocument, captureAs = UseSmileIDSampleCaptureAs.GenericDocument)
     }
 
     fun setIdNumber(value: String) {
@@ -102,7 +102,7 @@ class UseSmileIDSampleForms(
                         listOf(d.code, d.subType.orEmpty(), d.name, d.hasBack.toString(), d.format.toString()).joinToString(FIELD)
                     }.orEmpty(),
                     id.captureAs.name,
-                    with(id.custom) { listOf(displayName, hasBackSide.toString(), orientation.name, aspectRatio.name).joinToString(FIELD) },
+                    with(id.genericDocument) { listOf(displayName, hasBackSide.toString(), orientation.name, aspectRatio.name).joinToString(FIELD) },
                 )
             },
             restore = { saved ->
@@ -129,8 +129,8 @@ class UseSmileIDSampleForms(
                         },
                         captureAs = UseSmileIDSampleCaptureAs.entries.firstOrNull { it.name == at(11) }
                             ?: UseSmileIDSampleCaptureAs.Automatic,
-                        custom = parts(12).takeIf { it.size == 4 }?.let { (name, back, orientation, ratio) ->
-                            UseSmileIDSampleCustomDocument(
+                        genericDocument = parts(12).takeIf { it.size == 4 }?.let { (name, back, orientation, ratio) ->
+                            UseSmileIDSampleGenericDocument(
                                 displayName = name,
                                 hasBackSide = back != "false",
                                 orientation = UseSmileIDSampleDocumentOrientation.entries.firstOrNull { it.name == orientation }
@@ -138,7 +138,7 @@ class UseSmileIDSampleForms(
                                 aspectRatio = UseSmileIDSampleAspectRatio.entries.firstOrNull { it.name == ratio }
                                     ?: UseSmileIDSampleAspectRatio.Off,
                             )
-                        } ?: UseSmileIDSampleCustomDocument(),
+                        } ?: UseSmileIDSampleGenericDocument(),
                     ),
                 )
             },

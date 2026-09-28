@@ -40,7 +40,7 @@ enum UseSmileIDSampleSheetLinks {
     lastSegment(UseSmileIDSampleDeepLinks.idTypePicker): .idTypePicker,
     lastSegment(UseSmileIDSampleDeepLinks.documentPicker): .documentPicker,
     lastSegment(UseSmileIDSampleDeepLinks.captureAs): .captureAs,
-    lastSegment(UseSmileIDSampleDeepLinks.customDocument): .customDocument
+    lastSegment(UseSmileIDSampleDeepLinks.genericDocument): .genericDocument
   ]
 
   /// Built from the constant so a renamed path cannot leave this behind.

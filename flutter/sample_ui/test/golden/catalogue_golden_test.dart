@@ -163,25 +163,25 @@ void main() {
     );
   });
 
-  testWidgets('custom document', (WidgetTester tester) async {
+  testWidgets('generic document', (WidgetTester tester) async {
     await goldens(
       tester,
-      'sheet_custom_document',
-      () => UseSmileIDSampleCustomDocumentSheet(
-        initial: const UseSmileIDSampleCustomDocument(),
-        onDone: (UseSmileIDSampleCustomDocument _) {},
+      'sheet_generic_document',
+      () => UseSmileIDSampleGenericDocumentSheet(
+        initial: const UseSmileIDSampleGenericDocument(),
+        onDone: (UseSmileIDSampleGenericDocument _) {},
       ),
     );
   });
 
-  testWidgets('custom document survives max text scale', (
+  testWidgets('generic document survives max text scale', (
     WidgetTester tester,
   ) async {
     await assertSurvivesMaxTextScale(
       tester,
-      UseSmileIDSampleCustomDocumentSheet(
-        initial: const UseSmileIDSampleCustomDocument(),
-        onDone: (UseSmileIDSampleCustomDocument _) {},
+      UseSmileIDSampleGenericDocumentSheet(
+        initial: const UseSmileIDSampleGenericDocument(),
+        onDone: (UseSmileIDSampleGenericDocument _) {},
       ),
     );
   });

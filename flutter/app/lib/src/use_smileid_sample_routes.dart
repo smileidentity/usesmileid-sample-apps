@@ -78,9 +78,9 @@ abstract final class UseSmileIDSampleRoutes {
   static String captureAs(String productId) =>
       '/flow/$productId/id-details/capture-as';
 
-  /// The custom-document sheet, the same.
-  static String customDocument(String productId) =>
-      '/flow/$productId/id-details/custom-document';
+  /// The generic-document sheet, the same.
+  static String genericDocument(String productId) =>
+      '/flow/$productId/id-details/generic-document';
 
   /// The SDK flow itself.
   static String sdkFlow(String productId) => '/flow/$productId/run';
@@ -296,11 +296,11 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
               ),
         ),
         GoRoute(
-          path: 'custom-document',
+          path: 'generic-document',
           builder: (BuildContext context, GoRouterState state) =>
               UseSmileIDSampleKycFormTab(
                 productId: state.pathParameters['productId']!,
-                openSheet: UseSmileIDSamplePicker.customDocument,
+                openSheet: UseSmileIDSamplePicker.genericDocument,
               ),
         ),
       ],

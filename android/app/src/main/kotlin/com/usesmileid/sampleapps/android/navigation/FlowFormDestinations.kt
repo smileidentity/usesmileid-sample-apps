@@ -22,7 +22,7 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueFamily
 import com.usesmileid.sampleapps.ui.state.catalogueFamily
 import com.usesmileid.sampleapps.ui.screens.CaptureAsSheet as CaptureAsContent
 import com.usesmileid.sampleapps.ui.screens.CountryPickerSheet as CountryPickerContent
-import com.usesmileid.sampleapps.ui.screens.CustomDocumentSheet as CustomDocumentContent
+import com.usesmileid.sampleapps.ui.screens.GenericDocumentSheet as GenericDocumentContent
 import com.usesmileid.sampleapps.ui.screens.DocumentPickerSheet as DocumentPickerContent
 import com.usesmileid.sampleapps.ui.screens.IdTypePickerSheet as IdTypePickerContent
 import com.usesmileid.sampleapps.ui.screens.KycIdFormScreen as KycIdFormContent
@@ -87,7 +87,7 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     var pickingIdType by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.IdTypePicker)
     var pickingDocument by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.DocumentPicker)
     var pickingCaptureAs by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.CaptureAs)
-    var buildingCustom by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.CustomDocument)
+    var buildingGenericDocument by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.GenericDocument)
     // A deep link lands here without the product tap that fetches ahead, so the form starts it if nothing has.
     LaunchedEffect(app.environment, app.catalogueLocale) { app.catalogue.ensure(app.environment, app.catalogueLocale) }
     val details = app.forms.idDetails
@@ -126,16 +126,16 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
             selected = details.captureAs,
             onSelect = { choice ->
                 pickingCaptureAs = false
-                if (choice == UseSmileIDSampleCaptureAs.Custom) buildingCustom = true else app.forms.setCaptureAs(choice)
+                if (choice == UseSmileIDSampleCaptureAs.GenericDocument) buildingGenericDocument = true else app.forms.setCaptureAs(choice)
             },
             onDismissRequest = { pickingCaptureAs = false },
         )
     }
-    if (buildingCustom) {
-        CustomDocumentContent(
-            initial = details.custom,
-            onDone = { app.forms.setCustomDocument(it); buildingCustom = false },
-            onDismissRequest = { buildingCustom = false },
+    if (buildingGenericDocument) {
+        GenericDocumentContent(
+            initial = details.genericDocument,
+            onDone = { app.forms.setGenericDocument(it); buildingGenericDocument = false },
+            onDismissRequest = { buildingGenericDocument = false },
         )
     }
 }

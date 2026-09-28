@@ -11,19 +11,19 @@ import { UseSmileIDSampleTextInput } from '../components/use-smile-id-sample-tex
 import {
   smileIDSampleAspectRatios,
   smileIDSampleOrientations,
-  type UseSmileIDSampleCustomDocument,
+  type UseSmileIDSampleGenericDocument,
 } from '../state/use-smile-id-sample-id-details';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 import { UseSmileIDSampleSuffixedTestIds, UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
 
 type Props = {
-  initial: UseSmileIDSampleCustomDocument;
-  onDone: (custom: UseSmileIDSampleCustomDocument) => void;
+  initial: UseSmileIDSampleGenericDocument;
+  onDone: (genericDocument: UseSmileIDSampleGenericDocument) => void;
   onDismiss: () => void;
 };
 
-/// Builds the generic document "Capture as: Custom" hands the SDK. Nothing is kept until Done.
-export const CustomDocumentSheet = ({ initial, onDone, onDismiss }: Props) => {
+/// Builds the generic document "Capture as: Generic document" hands the SDK. Nothing is kept until Done.
+export const GenericDocumentSheet = ({ initial, onDone, onDismiss }: Props) => {
   const theme = useSmileIDSampleTheme();
   const [draft, setDraft] = useState(initial);
   const chips = {
@@ -34,9 +34,9 @@ export const CustomDocumentSheet = ({ initial, onDone, onDismiss }: Props) => {
   return (
     <UseSmileIDSampleBottomSheet
       visible
-      title="Custom document"
+      title="Generic document"
       onDismiss={onDismiss}
-      testID={UseSmileIDSampleTestIds.CUSTOM_DOCUMENT_SHEET}
+      testID={UseSmileIDSampleTestIds.GENERIC_DOCUMENT_SHEET}
     >
       <View style={{ rowGap: theme.dimens.spacing.sm }}>
         <UseSmileIDSampleSectionLabel text="DISPLAY NAME" />
@@ -44,7 +44,7 @@ export const CustomDocumentSheet = ({ initial, onDone, onDismiss }: Props) => {
           value={draft.displayName}
           onValueChange={(displayName) => setDraft({ ...draft, displayName })}
           placeholder="Document"
-          testID={UseSmileIDSampleTestIds.CUSTOM_DOCUMENT_NAME}
+          testID={UseSmileIDSampleTestIds.GENERIC_DOCUMENT_NAME}
         />
         <UseSmileIDSampleSettingRow
           title="Back side"
@@ -53,7 +53,7 @@ export const CustomDocumentSheet = ({ initial, onDone, onDismiss }: Props) => {
             <UseSmileIDSampleSwitch
               checked={draft.hasBackSide}
               onCheckedChange={(hasBackSide) => setDraft({ ...draft, hasBackSide })}
-              testID={UseSmileIDSampleTestIds.CUSTOM_DOCUMENT_BACK_SIDE}
+              testID={UseSmileIDSampleTestIds.GENERIC_DOCUMENT_BACK_SIDE}
             />
           }
         />
@@ -66,7 +66,7 @@ export const CustomDocumentSheet = ({ initial, onDone, onDismiss }: Props) => {
               count={null}
               selected={orientation.id === draft.orientation}
               onPress={() => setDraft({ ...draft, orientation: orientation.id })}
-              testID={UseSmileIDSampleSuffixedTestIds.customDocumentOrientation(orientation.id)}
+              testID={UseSmileIDSampleSuffixedTestIds.genericDocumentOrientation(orientation.id)}
             />
           ))}
         </View>
@@ -79,7 +79,7 @@ export const CustomDocumentSheet = ({ initial, onDone, onDismiss }: Props) => {
               count={null}
               selected={ratio.id === draft.aspectRatio}
               onPress={() => setDraft({ ...draft, aspectRatio: ratio.id })}
-              testID={UseSmileIDSampleSuffixedTestIds.customDocumentAspectRatio(ratio.id)}
+              testID={UseSmileIDSampleSuffixedTestIds.genericDocumentAspectRatio(ratio.id)}
             />
           ))}
         </View>
@@ -91,7 +91,7 @@ export const CustomDocumentSheet = ({ initial, onDone, onDismiss }: Props) => {
               displayName: draft.displayName.trim() || 'Document',
             })
           }
-          testID={UseSmileIDSampleTestIds.CUSTOM_DOCUMENT_DONE}
+          testID={UseSmileIDSampleTestIds.GENERIC_DOCUMENT_DONE}
         />
       </View>
     </UseSmileIDSampleBottomSheet>

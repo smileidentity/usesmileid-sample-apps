@@ -4,7 +4,7 @@ import { AccessibilityInfo } from 'react-native';
 import { UseSmileIDSampleCaptureMode } from '../src/model/use-smile-id-sample-capture-mode';
 import type { UseSmileIDSampleCatalogue } from '../src/state/use-smile-id-sample-catalogue';
 import {
-  smileIDSampleCustomDocumentDefaults,
+  smileIDSampleGenericDocumentDefaults,
   smileIDSampleIdDetailsComplete,
   smileIDSampleIdDetailsDefaults,
   smileIDSampleOptionMatches,
@@ -29,7 +29,7 @@ import { UseSmileIDSampleCataloguePicker } from '../src/components/use-smile-id-
 import { CaptureAsSheet } from '../src/screens/capture-as-sheet';
 import { CaptureModeSheet } from '../src/screens/capture-mode-sheet';
 import { CountryPickerSheet } from '../src/screens/country-picker-sheet';
-import { CustomDocumentSheet } from '../src/screens/custom-document-sheet';
+import { GenericDocumentSheet } from '../src/screens/generic-document-sheet';
 import { DocumentPickerSheet } from '../src/screens/document-picker-sheet';
 import { IdTypePickerSheet } from '../src/screens/id-type-picker-sheet';
 import { KycIdFormScreen } from '../src/screens/kyc-id-form-screen';
@@ -291,11 +291,11 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
     },
   },
   {
-    screen: 'customDocumentSheet',
+    screen: 'genericDocumentSheet',
     states: {
       default: {
         element: () => (
-          <CustomDocumentSheet initial={smileIDSampleCustomDocumentDefaults} onDone={noop} onDismiss={noop} />
+          <GenericDocumentSheet initial={smileIDSampleGenericDocumentDefaults} onDone={noop} onDismiss={noop} />
         ),
       },
     },
@@ -358,13 +358,13 @@ describe('choosing a country', () => {
     expect(useSmileIDSampleFormsStore.getState().idDetails.idNumber).toBe('A01234567');
   });
 
-  it('keeps what the custom sheet built as Custom', () => {
-    useSmileIDSampleFormsStore.getState().setCustomDocument({
-      ...smileIDSampleCustomDocumentDefaults,
+  it('keeps what the generic-document sheet built as Generic document', () => {
+    useSmileIDSampleFormsStore.getState().setGenericDocument({
+      ...smileIDSampleGenericDocumentDefaults,
       displayName: 'Booklet',
     });
-    expect(useSmileIDSampleFormsStore.getState().idDetails.captureAs).toBe(UseSmileIDSampleCaptureAs.Custom);
-    expect(useSmileIDSampleFormsStore.getState().idDetails.custom.displayName).toBe('Booklet');
+    expect(useSmileIDSampleFormsStore.getState().idDetails.captureAs).toBe(UseSmileIDSampleCaptureAs.GenericDocument);
+    expect(useSmileIDSampleFormsStore.getState().idDetails.genericDocument.displayName).toBe('Booklet');
   });
 });
 

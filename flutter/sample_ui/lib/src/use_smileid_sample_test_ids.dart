@@ -335,26 +335,26 @@ abstract final class UseSmileIDSampleTestIds {
   static String captureAsOption(String optionId) =>
       'sample_capture_as_option_$optionId';
 
-  /// The custom-document sheet.
-  static const String customDocumentSheet = 'sample_custom_document_sheet';
+  /// The generic-document sheet.
+  static const String genericDocumentSheet = 'sample_generic_document_sheet';
 
   /// Its display-name field.
-  static const String customDocumentName = 'sample_custom_document_name';
+  static const String genericDocumentName = 'sample_generic_document_name';
 
   /// Its back-side switch.
-  static const String customDocumentBackSide =
-      'sample_custom_document_back_side';
+  static const String genericDocumentBackSide =
+      'sample_generic_document_back_side';
 
   /// One orientation chip, suffixed with its id.
-  static String customDocumentOrientation(String orientationId) =>
-      'sample_custom_document_orientation_$orientationId';
+  static String genericDocumentOrientation(String orientationId) =>
+      'sample_generic_document_orientation_$orientationId';
 
   /// One aspect-ratio chip, suffixed with its id.
-  static String customDocumentAspectRatio(String ratioId) =>
-      'sample_custom_document_aspect_ratio_$ratioId';
+  static String genericDocumentAspectRatio(String ratioId) =>
+      'sample_generic_document_aspect_ratio_$ratioId';
 
   /// Its Done, the only way the draft is kept.
-  static const String customDocumentDone = 'sample_custom_document_done';
+  static const String genericDocumentDone = 'sample_generic_document_done';
 
   /// The Settings row that opens the capture-mode sheet.
   static const String settingCaptureMode = 'sample_setting_capture_mode';
@@ -499,10 +499,10 @@ abstract final class UseSmileIDSampleTestIds {
     catalogueError,
     catalogueRetry,
     captureAsSheet,
-    customDocumentSheet,
-    customDocumentName,
-    customDocumentBackSide,
-    customDocumentDone,
+    genericDocumentSheet,
+    genericDocumentName,
+    genericDocumentBackSide,
+    genericDocumentDone,
     settingCaptureMode,
     captureModeSheet,
     settingGalleryUpload,

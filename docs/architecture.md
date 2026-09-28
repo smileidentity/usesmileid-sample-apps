@@ -176,7 +176,7 @@ type.
 | Automatic (the default) | From the API's `format`: 7 is the Green Book preset, 3 the Passport preset, anything else a `GenericDocument` named after the row with the API's `has_back` | The API's `has_back` |
 | Green Book preset | `SouthAfricaGreenBook` | The preset's own back side |
 | Passport preset | `Passport` | The preset's own back side |
-| Custom | A `GenericDocument` from a sheet: display name, back side, orientation, and an aspect ratio of off, 1.586, 1.309 or 0.748 | The sheet's back side |
+| Generic document | A `GenericDocument` from a sheet: display name, back side, orientation, and an aspect ratio of off, 1.586, 1.309 or 0.748 | The sheet's back side |
 
 `format` is matched rather than `code`, because a seaman's ID is `format` 3 without being a passport, and
 the Green Book shares its code with the card.

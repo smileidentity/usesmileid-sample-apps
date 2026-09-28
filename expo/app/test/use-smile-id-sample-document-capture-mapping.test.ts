@@ -5,7 +5,7 @@ import { DocumentCaptureMode, DocumentType } from '@smileid/usesmileid';
 import {
   UseSmileIDSampleCaptureMode,
   smileIDSampleAspectRatios,
-  smileIDSampleCustomDocumentDefaults,
+  smileIDSampleGenericDocumentDefaults,
   smileIDSampleIdDetailsDefaults,
   type UseSmileIDSampleAspectRatio,
   type UseSmileIDSampleCaptureAs,
@@ -22,7 +22,7 @@ type Case = {
   name: string;
   captureAs: UseSmileIDSampleCaptureAs;
   document: { code: string; subType?: string; name: string; hasBack: boolean; format: number };
-  custom?: {
+  genericDocument?: {
     displayName: string;
     hasBackSide: boolean;
     orientation: UseSmileIDSampleDocumentOrientation;
@@ -49,7 +49,7 @@ const detailsOf = (c: Case): UseSmileIDSampleIdDetails => ({
   country: { code: 'ZA', name: 'South Africa' },
   document: { ...c.document, subType: c.document.subType ?? null },
   captureAs: c.captureAs,
-  custom: c.custom ?? smileIDSampleCustomDocumentDefaults,
+  genericDocument: c.genericDocument ?? smileIDSampleGenericDocumentDefaults,
 });
 
 /// spec/catalogue-rules.json captureAs: what "Capture as" hands the SDK.

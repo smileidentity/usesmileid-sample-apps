@@ -7,7 +7,7 @@ enum Sheet: String, Identifiable, Hashable {
   case idTypePicker
   case documentPicker
   case captureAs
-  case customDocument
+  case genericDocument
   case captureMode
 
   var id: String {

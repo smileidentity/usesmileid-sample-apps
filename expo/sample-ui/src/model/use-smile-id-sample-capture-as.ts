@@ -3,7 +3,7 @@ export const UseSmileIDSampleCaptureAs = {
   Automatic: 'automatic',
   GreenBook: 'greenBook',
   Passport: 'passport',
-  Custom: 'custom',
+  GenericDocument: 'genericDocument',
 } as const;
 
 export type UseSmileIDSampleCaptureAs = (typeof UseSmileIDSampleCaptureAs)[keyof typeof UseSmileIDSampleCaptureAs];
@@ -16,5 +16,5 @@ export const smileIDSampleCaptureAsOptions: readonly {
   { id: UseSmileIDSampleCaptureAs.Automatic, label: 'Automatic' },
   { id: UseSmileIDSampleCaptureAs.GreenBook, label: 'Green Book preset' },
   { id: UseSmileIDSampleCaptureAs.Passport, label: 'Passport preset' },
-  { id: UseSmileIDSampleCaptureAs.Custom, label: 'Custom' },
+  { id: UseSmileIDSampleCaptureAs.GenericDocument, label: 'Generic document' },
 ];

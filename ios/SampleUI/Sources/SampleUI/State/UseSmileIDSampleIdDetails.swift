@@ -6,7 +6,7 @@ public struct UseSmileIDSampleIdDetails: Equatable, Sendable {
   public var idType: UseSmileIDSampleKycIdType?
   public var document: UseSmileIDSampleDocument?
   public var captureAs: UseSmileIDSampleCaptureAs
-  public var custom: UseSmileIDSampleCustomDocument
+  public var genericDocument: UseSmileIDSampleGenericDocument
   public var idNumber: String
 
   public init(
@@ -14,14 +14,14 @@ public struct UseSmileIDSampleIdDetails: Equatable, Sendable {
     idType: UseSmileIDSampleKycIdType? = nil,
     document: UseSmileIDSampleDocument? = nil,
     captureAs: UseSmileIDSampleCaptureAs = .automatic,
-    custom: UseSmileIDSampleCustomDocument = UseSmileIDSampleCustomDocument(),
+    genericDocument: UseSmileIDSampleGenericDocument = UseSmileIDSampleGenericDocument(),
     idNumber: String = ""
   ) {
     self.country = country
     self.idType = idType
     self.document = document
     self.captureAs = captureAs
-    self.custom = custom
+    self.genericDocument = genericDocument
     self.idNumber = idNumber
   }
 
@@ -93,14 +93,14 @@ public struct UseSmileIDSampleDocument: Hashable, Sendable {
 
 /// How the SDK photographs the chosen document; never what the server receives.
 public enum UseSmileIDSampleCaptureAs: String, CaseIterable, Sendable {
-  case automatic, greenBook, passport, custom
+  case automatic, greenBook, passport, genericDocument
 
   public var label: String {
     switch self {
     case .automatic: "Automatic"
     case .greenBook: "Green Book preset"
     case .passport: "Passport preset"
-    case .custom: "Custom"
+    case .genericDocument: "Generic document"
     }
   }
 }
@@ -113,7 +113,7 @@ public enum UseSmileIDSampleDocumentOrientation: String, CaseIterable, Sendable 
   }
 }
 
-/// The custom frame ratios the sheet offers, as width over height.
+/// The frame ratios the sheet offers, as width over height.
 public enum UseSmileIDSampleAspectRatio: String, CaseIterable, Sendable {
   case off, card, passport, booklet
 
@@ -136,8 +136,8 @@ public enum UseSmileIDSampleAspectRatio: String, CaseIterable, Sendable {
   }
 }
 
-/// What the custom-document sheet builds into a generic document.
-public struct UseSmileIDSampleCustomDocument: Equatable, Sendable {
+/// What the generic-document sheet builds, as the SDK's GenericDocument takes it.
+public struct UseSmileIDSampleGenericDocument: Equatable, Sendable {
   public var displayName: String
   public var hasBackSide: Bool
   public var orientation: UseSmileIDSampleDocumentOrientation

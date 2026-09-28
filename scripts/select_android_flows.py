@@ -24,7 +24,7 @@ RULES: tuple[tuple[str, tuple[str, ...]], ...] = (
     (r"launcharg|seed|environment", ("launch-args", "token-session")),
     (r"profile", ("profiles", "profile-journey")),
     (r"token|qrscanner|camerahold|scan|sessioncard", ("token-session",)),
-    (r"catalogue|document|captureas|capturemode|customdocument|idnumberhint|skeleton|wireprobe|kycid|iddetails|idtype|country",
+    (r"catalogue|document|captureas|capturemode|genericdocument|idnumberhint|skeleton|wireprobe|kycid|iddetails|idtype|country",
      ("document-options", "sdk-flow", "deep-links")),
     (r"sdkflow|flow|preflight|userdetails|product|forms|runintent|result",
      ("sdk-flow", "profile-journey", "launch-args")),

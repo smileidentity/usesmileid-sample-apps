@@ -250,7 +250,7 @@ internal fun documentCaptureFor(details: UseSmileIDSampleIdDetails): DocumentCap
     return when (details.captureAs) {
         UseSmileIDSampleCaptureAs.GreenBook -> preset(DocumentType.SouthAfricaGreenBook)
         UseSmileIDSampleCaptureAs.Passport -> preset(DocumentType.Passport)
-        UseSmileIDSampleCaptureAs.Custom -> with(details.custom) {
+        UseSmileIDSampleCaptureAs.GenericDocument -> with(details.genericDocument) {
             preset(
                 DocumentType.GenericDocument(
                     displayName = displayName,

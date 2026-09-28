@@ -111,7 +111,8 @@ void main() {
 UseSmileIDSampleIdDetails _detailsOf(Map<String, Object?> spec) {
   final Map<String, Object?> document =
       spec['document']! as Map<String, Object?>;
-  final Map<String, Object?>? custom = spec['custom'] as Map<String, Object?>?;
+  final Map<String, Object?>? genericDocument =
+      spec['genericDocument'] as Map<String, Object?>?;
   return UseSmileIDSampleIdDetails(
     country: const UseSmileIDSampleCountry('ZA', 'South Africa'),
     document: UseSmileIDSampleDocument(
@@ -124,18 +125,18 @@ UseSmileIDSampleIdDetails _detailsOf(Map<String, Object?> spec) {
     captureAs: UseSmileIDSampleCaptureAs.values.firstWhere(
       (UseSmileIDSampleCaptureAs it) => it.id == spec['captureAs'],
     ),
-    custom: custom == null
-        ? const UseSmileIDSampleCustomDocument()
-        : UseSmileIDSampleCustomDocument(
-            displayName: custom['displayName']! as String,
-            hasBackSide: custom['hasBackSide']! as bool,
+    genericDocument: genericDocument == null
+        ? const UseSmileIDSampleGenericDocument()
+        : UseSmileIDSampleGenericDocument(
+            displayName: genericDocument['displayName']! as String,
+            hasBackSide: genericDocument['hasBackSide']! as bool,
             orientation: UseSmileIDSampleDocumentOrientation.values.firstWhere(
               (UseSmileIDSampleDocumentOrientation it) =>
-                  it.id == custom['orientation'],
+                  it.id == genericDocument['orientation'],
             ),
             aspectRatio: UseSmileIDSampleAspectRatio.values.firstWhere(
               (UseSmileIDSampleAspectRatio it) =>
-                  it.id == custom['aspectRatio'],
+                  it.id == genericDocument['aspectRatio'],
             ),
           ),
   );

@@ -1,41 +1,41 @@
 import SwiftUI
 
-/// Builds the generic document that "Capture as: Custom" hands the SDK. Nothing is kept until Done.
-public struct CustomDocumentSheet: View {
-  private let onDone: (UseSmileIDSampleCustomDocument) -> Void
-  @State private var draft: UseSmileIDSampleCustomDocument
+/// Builds the generic document that "Capture as: Generic document" hands the SDK. Nothing is kept until Done.
+public struct GenericDocumentSheet: View {
+  private let onDone: (UseSmileIDSampleGenericDocument) -> Void
+  @State private var draft: UseSmileIDSampleGenericDocument
 
-  public init(initial: UseSmileIDSampleCustomDocument, onDone: @escaping (UseSmileIDSampleCustomDocument) -> Void) {
+  public init(initial: UseSmileIDSampleGenericDocument, onDone: @escaping (UseSmileIDSampleGenericDocument) -> Void) {
     _draft = State(initialValue: initial)
     self.onDone = onDone
   }
 
   public var body: some View {
-    UseSmileIDSampleBottomSheet(title: "Custom document", testId: UseSmileIDSampleTestIds.customDocumentSheet) {
+    UseSmileIDSampleBottomSheet(title: "Generic document", testId: UseSmileIDSampleTestIds.genericDocumentSheet) {
       UseSmileIDSampleSectionLabel("DISPLAY NAME")
       UseSmileIDSampleTextInput(
         value: $draft.displayName,
         placeholder: "Document",
-        testId: UseSmileIDSampleTestIds.customDocumentName
+        testId: UseSmileIDSampleTestIds.genericDocumentName
       )
       UseSmileIDSampleSettingRow(title: "Back side", supportingText: "Capture the back after the front") {
         EmptyView()
       } trailing: {
-        UseSmileIDSampleSwitch(isOn: $draft.hasBackSide, testId: UseSmileIDSampleTestIds.customDocumentBackSide)
+        UseSmileIDSampleSwitch(isOn: $draft.hasBackSide, testId: UseSmileIDSampleTestIds.genericDocumentBackSide)
       }
       UseSmileIDSampleSectionLabel("ORIENTATION")
       chips(UseSmileIDSampleDocumentOrientation.allCases, selected: draft.orientation, label: \.label) {
         draft.orientation = $0
       } testId: {
-        UseSmileIDSampleTestIds.customDocumentOrientation($0.rawValue)
+        UseSmileIDSampleTestIds.genericDocumentOrientation($0.rawValue)
       }
       UseSmileIDSampleSectionLabel("ASPECT RATIO")
       chips(UseSmileIDSampleAspectRatio.allCases, selected: draft.aspectRatio, label: \.label) {
         draft.aspectRatio = $0
       } testId: {
-        UseSmileIDSampleTestIds.customDocumentAspectRatio($0.rawValue)
+        UseSmileIDSampleTestIds.genericDocumentAspectRatio($0.rawValue)
       }
-      UseSmileIDSampleButton(text: "Done", testId: UseSmileIDSampleTestIds.customDocumentDone) {
+      UseSmileIDSampleButton(text: "Done", testId: UseSmileIDSampleTestIds.genericDocumentDone) {
         var done = draft
         let trimmed = done.displayName.trimmingCharacters(in: .whitespaces)
         done.displayName = trimmed.isEmpty ? "Document" : trimmed

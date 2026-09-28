@@ -20,31 +20,31 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwitch
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTextInput
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleAspectRatio
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCustomDocument
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleGenericDocument
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocumentOrientation
 
-/** Builds the GenericDocument that "Capture as: Custom" hands the SDK. Nothing is kept until Done. */
+/** Builds the GenericDocument that "Capture as: Generic document" hands the SDK. Nothing is kept until Done. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun CustomDocumentSheet(
-    initial: UseSmileIDSampleCustomDocument,
-    onDone: (UseSmileIDSampleCustomDocument) -> Unit,
+fun GenericDocumentSheet(
+    initial: UseSmileIDSampleGenericDocument,
+    onDone: (UseSmileIDSampleGenericDocument) -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var draft by rememberSaveable(stateSaver = CustomDocumentSaver) { mutableStateOf(initial) }
+    var draft by rememberSaveable(stateSaver = GenericDocumentSaver) { mutableStateOf(initial) }
     UseSmileIDSampleBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = modifier,
-        title = "Custom document",
-        testId = UseSmileIDSampleTestIds.CUSTOM_DOCUMENT_SHEET,
+        title = "Generic document",
+        testId = UseSmileIDSampleTestIds.GENERIC_DOCUMENT_SHEET,
     ) {
         UseSmileIDSampleSectionLabel(text = "DISPLAY NAME")
         UseSmileIDSampleTextInput(
             value = draft.displayName,
             onValueChange = { draft = draft.copy(displayName = it) },
             placeholder = "Document",
-            testId = UseSmileIDSampleTestIds.CUSTOM_DOCUMENT_NAME,
+            testId = UseSmileIDSampleTestIds.GENERIC_DOCUMENT_NAME,
         )
         UseSmileIDSampleSettingRow(
             title = "Back side",
@@ -53,7 +53,7 @@ fun CustomDocumentSheet(
                 UseSmileIDSampleSwitch(
                     checked = draft.hasBackSide,
                     onCheckedChange = { draft = draft.copy(hasBackSide = it) },
-                    testId = UseSmileIDSampleTestIds.CUSTOM_DOCUMENT_BACK_SIDE,
+                    testId = UseSmileIDSampleTestIds.GENERIC_DOCUMENT_BACK_SIDE,
                 )
             },
         )
@@ -65,7 +65,7 @@ fun CustomDocumentSheet(
                     count = null,
                     selected = orientation == draft.orientation,
                     onClick = { draft = draft.copy(orientation = orientation) },
-                    testId = UseSmileIDSampleTestIds.customDocumentOrientation(orientation.id),
+                    testId = UseSmileIDSampleTestIds.genericDocumentOrientation(orientation.id),
                 )
             }
         }
@@ -80,7 +80,7 @@ fun CustomDocumentSheet(
                     count = null,
                     selected = ratio == draft.aspectRatio,
                     onClick = { draft = draft.copy(aspectRatio = ratio) },
-                    testId = UseSmileIDSampleTestIds.customDocumentAspectRatio(ratio.id),
+                    testId = UseSmileIDSampleTestIds.genericDocumentAspectRatio(ratio.id),
                 )
             }
         }
@@ -88,15 +88,15 @@ fun CustomDocumentSheet(
             text = "Done",
             onClick = { onDone(draft.copy(displayName = draft.displayName.trim().ifEmpty { "Document" })) },
             modifier = Modifier.fillMaxWidth(),
-            testId = UseSmileIDSampleTestIds.CUSTOM_DOCUMENT_DONE,
+            testId = UseSmileIDSampleTestIds.GENERIC_DOCUMENT_DONE,
         )
     }
 }
 
-private val CustomDocumentSaver = androidx.compose.runtime.saveable.listSaver<UseSmileIDSampleCustomDocument, String>(
+private val GenericDocumentSaver = androidx.compose.runtime.saveable.listSaver<UseSmileIDSampleGenericDocument, String>(
     save = { listOf(it.displayName, it.hasBackSide.toString(), it.orientation.name, it.aspectRatio.name) },
     restore = { (name, back, orientation, ratio) ->
-        UseSmileIDSampleCustomDocument(
+        UseSmileIDSampleGenericDocument(
             displayName = name,
             hasBackSide = back != "false",
             orientation = UseSmileIDSampleDocumentOrientation.entries.firstOrNull { it.name == orientation }

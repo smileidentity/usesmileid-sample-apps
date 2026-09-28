@@ -151,8 +151,8 @@ public struct KycIdFormScreen: View {
 
   private var captureAsTrigger: some View {
     UseSmileIDSampleSelectTrigger(
-      value: state.details.captureAs == .custom
-        ? "Custom: \(state.details.custom.displayName)"
+      value: state.details.captureAs == .genericDocument
+        ? "Generic document: \(state.details.genericDocument.displayName)"
         : state.details.captureAs.label,
       placeholder: UseSmileIDSampleCaptureAs.automatic.label,
       enabled: state.details.document != nil,

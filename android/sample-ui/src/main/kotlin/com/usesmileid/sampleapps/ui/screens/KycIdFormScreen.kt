@@ -153,7 +153,7 @@ private fun DocumentFields(
     UseSmileIDSampleSectionLabel(text = "CAPTURE AS")
     UseSmileIDSampleSelectTrigger(
         value = when (details.captureAs) {
-            UseSmileIDSampleCaptureAs.Custom -> "Custom: ${details.custom.displayName}"
+            UseSmileIDSampleCaptureAs.GenericDocument -> "Generic document: ${details.genericDocument.displayName}"
             else -> details.captureAs.label
         },
         placeholder = UseSmileIDSampleCaptureAs.Automatic.label,

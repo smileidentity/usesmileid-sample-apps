@@ -182,8 +182,8 @@ class UseSmileIDSampleKycFormScreen extends StatelessWidget {
     const UseSmileIDSampleSectionLabel(text: 'CAPTURE AS'),
     const SizedBox(height: SmileDimens.spacingSm),
     UseSmileIDSampleSelectTrigger(
-      value: details.captureAs == UseSmileIDSampleCaptureAs.custom
-          ? 'Custom: ${details.custom.displayName}'
+      value: details.captureAs == UseSmileIDSampleCaptureAs.genericDocument
+          ? 'Generic document: ${details.genericDocument.displayName}'
           : details.captureAs.label,
       placeholder: UseSmileIDSampleCaptureAs.automatic.label,
       onTap: onPickCaptureAs,

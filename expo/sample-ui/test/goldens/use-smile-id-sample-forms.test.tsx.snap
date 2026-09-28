@@ -441,7 +441,7 @@ exports[`captureAsSheet dark default 1`] = `
                       undefined,
                     ]
                   }
-                  testID="sample_capture_as_option_custom"
+                  testID="sample_capture_as_option_genericDocument"
                 >
                   <Text
                     style={
@@ -463,7 +463,7 @@ exports[`captureAsSheet dark default 1`] = `
                       ]
                     }
                   >
-                    Custom
+                    Generic document
                   </Text>
                 </View>
               </View>
@@ -917,7 +917,7 @@ exports[`captureAsSheet light default 1`] = `
                       undefined,
                     ]
                   }
-                  testID="sample_capture_as_option_custom"
+                  testID="sample_capture_as_option_genericDocument"
                 >
                   <Text
                     style={
@@ -939,7 +939,7 @@ exports[`captureAsSheet light default 1`] = `
                       ]
                     }
                   >
-                    Custom
+                    Generic document
                   </Text>
                 </View>
               </View>
@@ -7086,1948 +7086,6 @@ exports[`countryPickerSheet light noMatch 1`] = `
 </ViewManagerAdapter_ExpoUI>
 `;
 
-exports[`customDocumentSheet dark default 1`] = `
-<ViewManagerAdapter_ExpoUI
-  layoutDirection="leftToRight"
-  pointerEvents="none"
-  style={
-    {
-      "position": "absolute",
-      "width": 750,
-    }
-  }
->
-  <ViewManagerAdapter_ExpoUI
-    fitToContents={true}
-    isPresented={true}
-    onDismiss={[Function]}
-    onIsPresentedChange={[Function]}
-  >
-    <ViewManagerAdapter_ExpoUI
-      modifiers={
-        [
-          {
-            "$type": "presentationSizing",
-            "sizing": "fitted",
-          },
-          {
-            "$type": "presentationDragIndicator",
-            "visibility": "visible",
-          },
-          {
-            "$type": "interactiveDismissDisabled",
-            "isDisabled": false,
-          },
-          {
-            "$type": "presentationBackground",
-            "style": {
-              "color": "#272a35",
-              "type": "color",
-            },
-          },
-        ]
-      }
-      onGlobalEvent={[Function]}
-    >
-      <ViewManagerAdapter_ExpoUI
-        expoInternalSizeFromChildren={true}
-        layoutRoot={true}
-        matchContents={true}
-      >
-        <View
-          style={
-            {
-              "paddingTop": 16,
-              "width": 750,
-            }
-          }
-        >
-          <View
-            style={
-              [
-                {
-                  "width": "100%",
-                },
-                {
-                  "paddingHorizontal": 20,
-                },
-              ]
-            }
-            testID="sample_custom_document_sheet"
-          >
-            <Text
-              style={
-                [
-                  {
-                    "fontFamily": "DMSans-Bold",
-                    "fontSize": 18,
-                    "letterSpacing": 0,
-                    "lineHeight": 24,
-                    "marginBottom": -0.28200000000000003,
-                    "marginTop": -0.28200000000000003,
-                  },
-                  {
-                    "color": "#f2f2f2",
-                    "paddingTop": 12,
-                  },
-                ]
-              }
-            >
-              Custom document
-            </Text>
-            <RCTScrollView
-              contentContainerStyle={
-                {
-                  "paddingBottom": 24,
-                  "rowGap": 12,
-                }
-              }
-              style={
-                {
-                  "marginTop": 12,
-                }
-              }
-            >
-              <View>
-                <View
-                  style={
-                    {
-                      "rowGap": 12,
-                    }
-                  }
-                >
-                  <Text
-                    style={
-                      [
-                        {
-                          "fontFamily": "DMSans-Bold",
-                          "fontSize": 11,
-                          "letterSpacing": 0,
-                          "lineHeight": 16,
-                          "marginBottom": -0.8389999999999995,
-                          "marginTop": -0.8389999999999995,
-                        },
-                        {
-                          "color": "#848282",
-                          "letterSpacing": 0.88,
-                        },
-                        undefined,
-                      ]
-                    }
-                  >
-                    DISPLAY NAME
-                  </Text>
-                  <View>
-                    <View
-                      style={
-                        [
-                          {
-                            "alignItems": "center",
-                            "flexDirection": "row",
-                            "width": "100%",
-                          },
-                          {
-                            "backgroundColor": "#272a35",
-                            "borderColor": "#eaecf0",
-                            "borderRadius": 12,
-                            "borderWidth": 1,
-                            "columnGap": 8,
-                            "minHeight": 44,
-                            "paddingHorizontal": 15,
-                            "paddingVertical": 11,
-                          },
-                        ]
-                      }
-                    >
-                      <TextInput
-                        autoCorrect={true}
-                        editable={true}
-                        onBlur={[Function]}
-                        onChangeText={[Function]}
-                        onFocus={[Function]}
-                        placeholder="Document"
-                        placeholderTextColor="#848282"
-                        secureTextEntry={false}
-                        selectionColor="#4d88ff"
-                        style={
-                          [
-                            {
-                              "fontFamily": "DMSans-Regular",
-                              "fontSize": 14,
-                              "letterSpacing": 0,
-                              "lineHeight": 20,
-                              "marginBottom": -0.8859999999999992,
-                              "marginTop": -0.8859999999999992,
-                            },
-                            {
-                              "flex": 1,
-                              "padding": 0,
-                            },
-                            {
-                              "color": "#f2f2f2",
-                            },
-                            null,
-                          ]
-                        }
-                        testID="sample_custom_document_name"
-                        value="Document"
-                      />
-                    </View>
-                  </View>
-                  <View
-                    style={
-                      [
-                        {
-                          "alignItems": "center",
-                          "flexDirection": "row",
-                          "width": "100%",
-                        },
-                        {
-                          "columnGap": 12,
-                          "minHeight": 64,
-                          "paddingHorizontal": 16,
-                          "paddingVertical": 12,
-                        },
-                        undefined,
-                      ]
-                    }
-                  >
-                    <View
-                      style={
-                        [
-                          {
-                            "flex": 1,
-                          },
-                          {
-                            "rowGap": 4,
-                          },
-                        ]
-                      }
-                    >
-                      <Text
-                        style={
-                          [
-                            {
-                              "fontFamily": "DMSans-SemiBold",
-                              "fontSize": 16,
-                              "letterSpacing": 0,
-                              "lineHeight": 24,
-                              "marginBottom": -1.5839999999999996,
-                              "marginTop": -1.5839999999999996,
-                            },
-                            {
-                              "color": "#f2f2f2",
-                            },
-                          ]
-                        }
-                      >
-                        Back side
-                      </Text>
-                      <Text
-                        style={
-                          [
-                            {
-                              "fontFamily": "DMSans-Medium",
-                              "fontSize": 12,
-                              "letterSpacing": 0,
-                              "lineHeight": 16,
-                              "marginBottom": -0.18799999999999972,
-                              "marginTop": -0.18799999999999972,
-                            },
-                            {
-                              "color": "#848282",
-                            },
-                          ]
-                        }
-                      >
-                        Capture the back after the front
-                      </Text>
-                    </View>
-                    <RCTSwitch
-                      accessibilityRole="switch"
-                      disabled={false}
-                      onChange={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      onTintColor="#4d88ff"
-                      style={
-                        [
-                          {
-                            "alignSelf": "flex-start",
-                          },
-                          [
-                            [
-                              {
-                                "alignSelf": "center",
-                              },
-                              undefined,
-                            ],
-                            {
-                              "backgroundColor": "#eaecf0",
-                              "borderRadius": 16,
-                            },
-                          ],
-                        ]
-                      }
-                      testID="sample_custom_document_back_side"
-                      thumbTintColor="#272a35"
-                      tintColor="#eaecf0"
-                      value={true}
-                    />
-                  </View>
-                  <Text
-                    style={
-                      [
-                        {
-                          "fontFamily": "DMSans-Bold",
-                          "fontSize": 11,
-                          "letterSpacing": 0,
-                          "lineHeight": 16,
-                          "marginBottom": -0.8389999999999995,
-                          "marginTop": -0.8389999999999995,
-                        },
-                        {
-                          "color": "#848282",
-                          "letterSpacing": 0.88,
-                        },
-                        undefined,
-                      ]
-                    }
-                  >
-                    ORIENTATION
-                  </Text>
-                  <View
-                    style={
-                      [
-                        {
-                          "flexDirection": "row",
-                          "flexWrap": "wrap",
-                        },
-                        {
-                          "columnGap": 8,
-                          "rowGap": 8,
-                        },
-                      ]
-                    }
-                  >
-                    <View
-                      accessibilityRole="tab"
-                      accessibilityState={
-                        {
-                          "busy": undefined,
-                          "checked": undefined,
-                          "disabled": undefined,
-                          "expanded": undefined,
-                          "selected": true,
-                        }
-                      }
-                      accessibilityValue={
-                        {
-                          "max": undefined,
-                          "min": undefined,
-                          "now": undefined,
-                          "text": undefined,
-                        }
-                      }
-                      accessible={true}
-                      collapsable={false}
-                      focusable={true}
-                      onBlur={[Function]}
-                      onClick={[Function]}
-                      onFocus={[Function]}
-                      onResponderGrant={[Function]}
-                      onResponderMove={[Function]}
-                      onResponderRelease={[Function]}
-                      onResponderTerminate={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      style={
-                        [
-                          {
-                            "alignSelf": "flex-start",
-                            "justifyContent": "center",
-                          },
-                          {
-                            "minHeight": 44,
-                          },
-                          undefined,
-                        ]
-                      }
-                      testID="sample_custom_document_orientation_landscape"
-                    >
-                      <View
-                        style={
-                          [
-                            {
-                              "alignItems": "center",
-                              "flexDirection": "row",
-                            },
-                            {
-                              "backgroundColor": "#4d88ff",
-                              "borderColor": "transparent",
-                              "borderRadius": 999,
-                              "borderWidth": 0,
-                              "columnGap": 4,
-                              "minHeight": 32,
-                              "paddingHorizontal": 12,
-                              "paddingVertical": 8,
-                            },
-                          ]
-                        }
-                      >
-                        <Text
-                          style={
-                            [
-                              {
-                                "fontFamily": "DMSans-Bold",
-                                "fontSize": 12.5,
-                                "letterSpacing": 0,
-                                "lineHeight": 20,
-                                "marginBottom": -1.862499999999999,
-                                "marginTop": -1.862499999999999,
-                              },
-                              {
-                                "color": "#ffffff",
-                              },
-                            ]
-                          }
-                        >
-                          Landscape
-                        </Text>
-                      </View>
-                    </View>
-                    <View
-                      accessibilityRole="tab"
-                      accessibilityState={
-                        {
-                          "busy": undefined,
-                          "checked": undefined,
-                          "disabled": undefined,
-                          "expanded": undefined,
-                          "selected": false,
-                        }
-                      }
-                      accessibilityValue={
-                        {
-                          "max": undefined,
-                          "min": undefined,
-                          "now": undefined,
-                          "text": undefined,
-                        }
-                      }
-                      accessible={true}
-                      collapsable={false}
-                      focusable={true}
-                      onBlur={[Function]}
-                      onClick={[Function]}
-                      onFocus={[Function]}
-                      onResponderGrant={[Function]}
-                      onResponderMove={[Function]}
-                      onResponderRelease={[Function]}
-                      onResponderTerminate={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      style={
-                        [
-                          {
-                            "alignSelf": "flex-start",
-                            "justifyContent": "center",
-                          },
-                          {
-                            "minHeight": 44,
-                          },
-                          undefined,
-                        ]
-                      }
-                      testID="sample_custom_document_orientation_portrait"
-                    >
-                      <View
-                        style={
-                          [
-                            {
-                              "alignItems": "center",
-                              "flexDirection": "row",
-                            },
-                            {
-                              "backgroundColor": "#272a35",
-                              "borderColor": "#2d3748",
-                              "borderRadius": 999,
-                              "borderWidth": 0.5,
-                              "columnGap": 4,
-                              "minHeight": 32,
-                              "paddingHorizontal": 11.5,
-                              "paddingVertical": 7.5,
-                            },
-                          ]
-                        }
-                      >
-                        <Text
-                          style={
-                            [
-                              {
-                                "fontFamily": "DMSans-Bold",
-                                "fontSize": 12.5,
-                                "letterSpacing": 0,
-                                "lineHeight": 20,
-                                "marginBottom": -1.862499999999999,
-                                "marginTop": -1.862499999999999,
-                              },
-                              {
-                                "color": "#c2c5cb",
-                              },
-                            ]
-                          }
-                        >
-                          Portrait
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-                  <Text
-                    style={
-                      [
-                        {
-                          "fontFamily": "DMSans-Bold",
-                          "fontSize": 11,
-                          "letterSpacing": 0,
-                          "lineHeight": 16,
-                          "marginBottom": -0.8389999999999995,
-                          "marginTop": -0.8389999999999995,
-                        },
-                        {
-                          "color": "#848282",
-                          "letterSpacing": 0.88,
-                        },
-                        undefined,
-                      ]
-                    }
-                  >
-                    ASPECT RATIO
-                  </Text>
-                  <View
-                    style={
-                      [
-                        {
-                          "flexDirection": "row",
-                          "flexWrap": "wrap",
-                        },
-                        {
-                          "columnGap": 8,
-                          "rowGap": 8,
-                        },
-                      ]
-                    }
-                  >
-                    <View
-                      accessibilityRole="tab"
-                      accessibilityState={
-                        {
-                          "busy": undefined,
-                          "checked": undefined,
-                          "disabled": undefined,
-                          "expanded": undefined,
-                          "selected": true,
-                        }
-                      }
-                      accessibilityValue={
-                        {
-                          "max": undefined,
-                          "min": undefined,
-                          "now": undefined,
-                          "text": undefined,
-                        }
-                      }
-                      accessible={true}
-                      collapsable={false}
-                      focusable={true}
-                      onBlur={[Function]}
-                      onClick={[Function]}
-                      onFocus={[Function]}
-                      onResponderGrant={[Function]}
-                      onResponderMove={[Function]}
-                      onResponderRelease={[Function]}
-                      onResponderTerminate={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      style={
-                        [
-                          {
-                            "alignSelf": "flex-start",
-                            "justifyContent": "center",
-                          },
-                          {
-                            "minHeight": 44,
-                          },
-                          undefined,
-                        ]
-                      }
-                      testID="sample_custom_document_aspect_ratio_off"
-                    >
-                      <View
-                        style={
-                          [
-                            {
-                              "alignItems": "center",
-                              "flexDirection": "row",
-                            },
-                            {
-                              "backgroundColor": "#4d88ff",
-                              "borderColor": "transparent",
-                              "borderRadius": 999,
-                              "borderWidth": 0,
-                              "columnGap": 4,
-                              "minHeight": 32,
-                              "paddingHorizontal": 12,
-                              "paddingVertical": 8,
-                            },
-                          ]
-                        }
-                      >
-                        <Text
-                          style={
-                            [
-                              {
-                                "fontFamily": "DMSans-Bold",
-                                "fontSize": 12.5,
-                                "letterSpacing": 0,
-                                "lineHeight": 20,
-                                "marginBottom": -1.862499999999999,
-                                "marginTop": -1.862499999999999,
-                              },
-                              {
-                                "color": "#ffffff",
-                              },
-                            ]
-                          }
-                        >
-                          Off
-                        </Text>
-                      </View>
-                    </View>
-                    <View
-                      accessibilityRole="tab"
-                      accessibilityState={
-                        {
-                          "busy": undefined,
-                          "checked": undefined,
-                          "disabled": undefined,
-                          "expanded": undefined,
-                          "selected": false,
-                        }
-                      }
-                      accessibilityValue={
-                        {
-                          "max": undefined,
-                          "min": undefined,
-                          "now": undefined,
-                          "text": undefined,
-                        }
-                      }
-                      accessible={true}
-                      collapsable={false}
-                      focusable={true}
-                      onBlur={[Function]}
-                      onClick={[Function]}
-                      onFocus={[Function]}
-                      onResponderGrant={[Function]}
-                      onResponderMove={[Function]}
-                      onResponderRelease={[Function]}
-                      onResponderTerminate={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      style={
-                        [
-                          {
-                            "alignSelf": "flex-start",
-                            "justifyContent": "center",
-                          },
-                          {
-                            "minHeight": 44,
-                          },
-                          undefined,
-                        ]
-                      }
-                      testID="sample_custom_document_aspect_ratio_card"
-                    >
-                      <View
-                        style={
-                          [
-                            {
-                              "alignItems": "center",
-                              "flexDirection": "row",
-                            },
-                            {
-                              "backgroundColor": "#272a35",
-                              "borderColor": "#2d3748",
-                              "borderRadius": 999,
-                              "borderWidth": 0.5,
-                              "columnGap": 4,
-                              "minHeight": 32,
-                              "paddingHorizontal": 11.5,
-                              "paddingVertical": 7.5,
-                            },
-                          ]
-                        }
-                      >
-                        <Text
-                          style={
-                            [
-                              {
-                                "fontFamily": "DMSans-Bold",
-                                "fontSize": 12.5,
-                                "letterSpacing": 0,
-                                "lineHeight": 20,
-                                "marginBottom": -1.862499999999999,
-                                "marginTop": -1.862499999999999,
-                              },
-                              {
-                                "color": "#c2c5cb",
-                              },
-                            ]
-                          }
-                        >
-                          Card 1.586
-                        </Text>
-                      </View>
-                    </View>
-                    <View
-                      accessibilityRole="tab"
-                      accessibilityState={
-                        {
-                          "busy": undefined,
-                          "checked": undefined,
-                          "disabled": undefined,
-                          "expanded": undefined,
-                          "selected": false,
-                        }
-                      }
-                      accessibilityValue={
-                        {
-                          "max": undefined,
-                          "min": undefined,
-                          "now": undefined,
-                          "text": undefined,
-                        }
-                      }
-                      accessible={true}
-                      collapsable={false}
-                      focusable={true}
-                      onBlur={[Function]}
-                      onClick={[Function]}
-                      onFocus={[Function]}
-                      onResponderGrant={[Function]}
-                      onResponderMove={[Function]}
-                      onResponderRelease={[Function]}
-                      onResponderTerminate={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      style={
-                        [
-                          {
-                            "alignSelf": "flex-start",
-                            "justifyContent": "center",
-                          },
-                          {
-                            "minHeight": 44,
-                          },
-                          undefined,
-                        ]
-                      }
-                      testID="sample_custom_document_aspect_ratio_passport"
-                    >
-                      <View
-                        style={
-                          [
-                            {
-                              "alignItems": "center",
-                              "flexDirection": "row",
-                            },
-                            {
-                              "backgroundColor": "#272a35",
-                              "borderColor": "#2d3748",
-                              "borderRadius": 999,
-                              "borderWidth": 0.5,
-                              "columnGap": 4,
-                              "minHeight": 32,
-                              "paddingHorizontal": 11.5,
-                              "paddingVertical": 7.5,
-                            },
-                          ]
-                        }
-                      >
-                        <Text
-                          style={
-                            [
-                              {
-                                "fontFamily": "DMSans-Bold",
-                                "fontSize": 12.5,
-                                "letterSpacing": 0,
-                                "lineHeight": 20,
-                                "marginBottom": -1.862499999999999,
-                                "marginTop": -1.862499999999999,
-                              },
-                              {
-                                "color": "#c2c5cb",
-                              },
-                            ]
-                          }
-                        >
-                          Passport 1.309
-                        </Text>
-                      </View>
-                    </View>
-                    <View
-                      accessibilityRole="tab"
-                      accessibilityState={
-                        {
-                          "busy": undefined,
-                          "checked": undefined,
-                          "disabled": undefined,
-                          "expanded": undefined,
-                          "selected": false,
-                        }
-                      }
-                      accessibilityValue={
-                        {
-                          "max": undefined,
-                          "min": undefined,
-                          "now": undefined,
-                          "text": undefined,
-                        }
-                      }
-                      accessible={true}
-                      collapsable={false}
-                      focusable={true}
-                      onBlur={[Function]}
-                      onClick={[Function]}
-                      onFocus={[Function]}
-                      onResponderGrant={[Function]}
-                      onResponderMove={[Function]}
-                      onResponderRelease={[Function]}
-                      onResponderTerminate={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      style={
-                        [
-                          {
-                            "alignSelf": "flex-start",
-                            "justifyContent": "center",
-                          },
-                          {
-                            "minHeight": 44,
-                          },
-                          undefined,
-                        ]
-                      }
-                      testID="sample_custom_document_aspect_ratio_booklet"
-                    >
-                      <View
-                        style={
-                          [
-                            {
-                              "alignItems": "center",
-                              "flexDirection": "row",
-                            },
-                            {
-                              "backgroundColor": "#272a35",
-                              "borderColor": "#2d3748",
-                              "borderRadius": 999,
-                              "borderWidth": 0.5,
-                              "columnGap": 4,
-                              "minHeight": 32,
-                              "paddingHorizontal": 11.5,
-                              "paddingVertical": 7.5,
-                            },
-                          ]
-                        }
-                      >
-                        <Text
-                          style={
-                            [
-                              {
-                                "fontFamily": "DMSans-Bold",
-                                "fontSize": 12.5,
-                                "letterSpacing": 0,
-                                "lineHeight": 20,
-                                "marginBottom": -1.862499999999999,
-                                "marginTop": -1.862499999999999,
-                              },
-                              {
-                                "color": "#c2c5cb",
-                              },
-                            ]
-                          }
-                        >
-                          Booklet 0.748
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-                  <View
-                    accessibilityRole="button"
-                    accessibilityState={
-                      {
-                        "busy": false,
-                        "checked": undefined,
-                        "disabled": false,
-                        "expanded": undefined,
-                        "selected": undefined,
-                      }
-                    }
-                    accessibilityValue={
-                      {
-                        "max": undefined,
-                        "min": undefined,
-                        "now": undefined,
-                        "text": undefined,
-                      }
-                    }
-                    accessible={true}
-                    collapsable={false}
-                    focusable={true}
-                    onBlur={[Function]}
-                    onClick={[Function]}
-                    onFocus={[Function]}
-                    onResponderGrant={[Function]}
-                    onResponderMove={[Function]}
-                    onResponderRelease={[Function]}
-                    onResponderTerminate={[Function]}
-                    onResponderTerminationRequest={[Function]}
-                    onStartShouldSetResponder={[Function]}
-                    style={
-                      [
-                        {
-                          "alignItems": "center",
-                          "alignSelf": "stretch",
-                          "justifyContent": "center",
-                        },
-                        {
-                          "backgroundColor": "#4d88ff",
-                          "borderRadius": 32,
-                          "minHeight": 52,
-                          "opacity": 1,
-                          "paddingHorizontal": 24,
-                        },
-                        undefined,
-                      ]
-                    }
-                    testID="sample_custom_document_done"
-                  >
-                    <View
-                      style={
-                        {
-                          "alignItems": "center",
-                          "justifyContent": "center",
-                        }
-                      }
-                    >
-                      <Text
-                        style={
-                          [
-                            {
-                              "fontFamily": "DMSans-Bold",
-                              "fontSize": 16,
-                              "letterSpacing": 0,
-                              "lineHeight": 24,
-                              "marginBottom": -1.5839999999999996,
-                              "marginTop": -1.5839999999999996,
-                            },
-                            {
-                              "textAlign": "center",
-                            },
-                            {
-                              "color": "#ffffff",
-                              "paddingVertical": 4,
-                            },
-                          ]
-                        }
-                      >
-                        Done
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </RCTScrollView>
-          </View>
-        </View>
-      </ViewManagerAdapter_ExpoUI>
-    </ViewManagerAdapter_ExpoUI>
-  </ViewManagerAdapter_ExpoUI>
-</ViewManagerAdapter_ExpoUI>
-`;
-
-exports[`customDocumentSheet light default 1`] = `
-<ViewManagerAdapter_ExpoUI
-  layoutDirection="leftToRight"
-  pointerEvents="none"
-  style={
-    {
-      "position": "absolute",
-      "width": 750,
-    }
-  }
->
-  <ViewManagerAdapter_ExpoUI
-    fitToContents={true}
-    isPresented={true}
-    onDismiss={[Function]}
-    onIsPresentedChange={[Function]}
-  >
-    <ViewManagerAdapter_ExpoUI
-      modifiers={
-        [
-          {
-            "$type": "presentationSizing",
-            "sizing": "fitted",
-          },
-          {
-            "$type": "presentationDragIndicator",
-            "visibility": "visible",
-          },
-          {
-            "$type": "interactiveDismissDisabled",
-            "isDisabled": false,
-          },
-          {
-            "$type": "presentationBackground",
-            "style": {
-              "color": "#ffffff",
-              "type": "color",
-            },
-          },
-        ]
-      }
-      onGlobalEvent={[Function]}
-    >
-      <ViewManagerAdapter_ExpoUI
-        expoInternalSizeFromChildren={true}
-        layoutRoot={true}
-        matchContents={true}
-      >
-        <View
-          style={
-            {
-              "paddingTop": 16,
-              "width": 750,
-            }
-          }
-        >
-          <View
-            style={
-              [
-                {
-                  "width": "100%",
-                },
-                {
-                  "paddingHorizontal": 20,
-                },
-              ]
-            }
-            testID="sample_custom_document_sheet"
-          >
-            <Text
-              style={
-                [
-                  {
-                    "fontFamily": "DMSans-Bold",
-                    "fontSize": 18,
-                    "letterSpacing": 0,
-                    "lineHeight": 24,
-                    "marginBottom": -0.28200000000000003,
-                    "marginTop": -0.28200000000000003,
-                  },
-                  {
-                    "color": "#21232c",
-                    "paddingTop": 12,
-                  },
-                ]
-              }
-            >
-              Custom document
-            </Text>
-            <RCTScrollView
-              contentContainerStyle={
-                {
-                  "paddingBottom": 24,
-                  "rowGap": 12,
-                }
-              }
-              style={
-                {
-                  "marginTop": 12,
-                }
-              }
-            >
-              <View>
-                <View
-                  style={
-                    {
-                      "rowGap": 12,
-                    }
-                  }
-                >
-                  <Text
-                    style={
-                      [
-                        {
-                          "fontFamily": "DMSans-Bold",
-                          "fontSize": 11,
-                          "letterSpacing": 0,
-                          "lineHeight": 16,
-                          "marginBottom": -0.8389999999999995,
-                          "marginTop": -0.8389999999999995,
-                        },
-                        {
-                          "color": "#848282",
-                          "letterSpacing": 0.88,
-                        },
-                        undefined,
-                      ]
-                    }
-                  >
-                    DISPLAY NAME
-                  </Text>
-                  <View>
-                    <View
-                      style={
-                        [
-                          {
-                            "alignItems": "center",
-                            "flexDirection": "row",
-                            "width": "100%",
-                          },
-                          {
-                            "backgroundColor": "#ffffff",
-                            "borderColor": "#eaecf0",
-                            "borderRadius": 12,
-                            "borderWidth": 1,
-                            "columnGap": 8,
-                            "minHeight": 44,
-                            "paddingHorizontal": 15,
-                            "paddingVertical": 11,
-                          },
-                        ]
-                      }
-                    >
-                      <TextInput
-                        autoCorrect={true}
-                        editable={true}
-                        onBlur={[Function]}
-                        onChangeText={[Function]}
-                        onFocus={[Function]}
-                        placeholder="Document"
-                        placeholderTextColor="#848282"
-                        secureTextEntry={false}
-                        selectionColor="#4d88ff"
-                        style={
-                          [
-                            {
-                              "fontFamily": "DMSans-Regular",
-                              "fontSize": 14,
-                              "letterSpacing": 0,
-                              "lineHeight": 20,
-                              "marginBottom": -0.8859999999999992,
-                              "marginTop": -0.8859999999999992,
-                            },
-                            {
-                              "flex": 1,
-                              "padding": 0,
-                            },
-                            {
-                              "color": "#21232c",
-                            },
-                            null,
-                          ]
-                        }
-                        testID="sample_custom_document_name"
-                        value="Document"
-                      />
-                    </View>
-                  </View>
-                  <View
-                    style={
-                      [
-                        {
-                          "alignItems": "center",
-                          "flexDirection": "row",
-                          "width": "100%",
-                        },
-                        {
-                          "columnGap": 12,
-                          "minHeight": 64,
-                          "paddingHorizontal": 16,
-                          "paddingVertical": 12,
-                        },
-                        undefined,
-                      ]
-                    }
-                  >
-                    <View
-                      style={
-                        [
-                          {
-                            "flex": 1,
-                          },
-                          {
-                            "rowGap": 4,
-                          },
-                        ]
-                      }
-                    >
-                      <Text
-                        style={
-                          [
-                            {
-                              "fontFamily": "DMSans-SemiBold",
-                              "fontSize": 16,
-                              "letterSpacing": 0,
-                              "lineHeight": 24,
-                              "marginBottom": -1.5839999999999996,
-                              "marginTop": -1.5839999999999996,
-                            },
-                            {
-                              "color": "#21232c",
-                            },
-                          ]
-                        }
-                      >
-                        Back side
-                      </Text>
-                      <Text
-                        style={
-                          [
-                            {
-                              "fontFamily": "DMSans-Medium",
-                              "fontSize": 12,
-                              "letterSpacing": 0,
-                              "lineHeight": 16,
-                              "marginBottom": -0.18799999999999972,
-                              "marginTop": -0.18799999999999972,
-                            },
-                            {
-                              "color": "#848282",
-                            },
-                          ]
-                        }
-                      >
-                        Capture the back after the front
-                      </Text>
-                    </View>
-                    <RCTSwitch
-                      accessibilityRole="switch"
-                      disabled={false}
-                      onChange={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      onTintColor="#151f72"
-                      style={
-                        [
-                          {
-                            "alignSelf": "flex-start",
-                          },
-                          [
-                            [
-                              {
-                                "alignSelf": "center",
-                              },
-                              undefined,
-                            ],
-                            {
-                              "backgroundColor": "#eaecf0",
-                              "borderRadius": 16,
-                            },
-                          ],
-                        ]
-                      }
-                      testID="sample_custom_document_back_side"
-                      thumbTintColor="#ffffff"
-                      tintColor="#eaecf0"
-                      value={true}
-                    />
-                  </View>
-                  <Text
-                    style={
-                      [
-                        {
-                          "fontFamily": "DMSans-Bold",
-                          "fontSize": 11,
-                          "letterSpacing": 0,
-                          "lineHeight": 16,
-                          "marginBottom": -0.8389999999999995,
-                          "marginTop": -0.8389999999999995,
-                        },
-                        {
-                          "color": "#848282",
-                          "letterSpacing": 0.88,
-                        },
-                        undefined,
-                      ]
-                    }
-                  >
-                    ORIENTATION
-                  </Text>
-                  <View
-                    style={
-                      [
-                        {
-                          "flexDirection": "row",
-                          "flexWrap": "wrap",
-                        },
-                        {
-                          "columnGap": 8,
-                          "rowGap": 8,
-                        },
-                      ]
-                    }
-                  >
-                    <View
-                      accessibilityRole="tab"
-                      accessibilityState={
-                        {
-                          "busy": undefined,
-                          "checked": undefined,
-                          "disabled": undefined,
-                          "expanded": undefined,
-                          "selected": true,
-                        }
-                      }
-                      accessibilityValue={
-                        {
-                          "max": undefined,
-                          "min": undefined,
-                          "now": undefined,
-                          "text": undefined,
-                        }
-                      }
-                      accessible={true}
-                      collapsable={false}
-                      focusable={true}
-                      onBlur={[Function]}
-                      onClick={[Function]}
-                      onFocus={[Function]}
-                      onResponderGrant={[Function]}
-                      onResponderMove={[Function]}
-                      onResponderRelease={[Function]}
-                      onResponderTerminate={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      style={
-                        [
-                          {
-                            "alignSelf": "flex-start",
-                            "justifyContent": "center",
-                          },
-                          {
-                            "minHeight": 44,
-                          },
-                          undefined,
-                        ]
-                      }
-                      testID="sample_custom_document_orientation_landscape"
-                    >
-                      <View
-                        style={
-                          [
-                            {
-                              "alignItems": "center",
-                              "flexDirection": "row",
-                            },
-                            {
-                              "backgroundColor": "#151f72",
-                              "borderColor": "transparent",
-                              "borderRadius": 999,
-                              "borderWidth": 0,
-                              "columnGap": 4,
-                              "minHeight": 32,
-                              "paddingHorizontal": 12,
-                              "paddingVertical": 8,
-                            },
-                          ]
-                        }
-                      >
-                        <Text
-                          style={
-                            [
-                              {
-                                "fontFamily": "DMSans-Bold",
-                                "fontSize": 12.5,
-                                "letterSpacing": 0,
-                                "lineHeight": 20,
-                                "marginBottom": -1.862499999999999,
-                                "marginTop": -1.862499999999999,
-                              },
-                              {
-                                "color": "#ffffff",
-                              },
-                            ]
-                          }
-                        >
-                          Landscape
-                        </Text>
-                      </View>
-                    </View>
-                    <View
-                      accessibilityRole="tab"
-                      accessibilityState={
-                        {
-                          "busy": undefined,
-                          "checked": undefined,
-                          "disabled": undefined,
-                          "expanded": undefined,
-                          "selected": false,
-                        }
-                      }
-                      accessibilityValue={
-                        {
-                          "max": undefined,
-                          "min": undefined,
-                          "now": undefined,
-                          "text": undefined,
-                        }
-                      }
-                      accessible={true}
-                      collapsable={false}
-                      focusable={true}
-                      onBlur={[Function]}
-                      onClick={[Function]}
-                      onFocus={[Function]}
-                      onResponderGrant={[Function]}
-                      onResponderMove={[Function]}
-                      onResponderRelease={[Function]}
-                      onResponderTerminate={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      style={
-                        [
-                          {
-                            "alignSelf": "flex-start",
-                            "justifyContent": "center",
-                          },
-                          {
-                            "minHeight": 44,
-                          },
-                          undefined,
-                        ]
-                      }
-                      testID="sample_custom_document_orientation_portrait"
-                    >
-                      <View
-                        style={
-                          [
-                            {
-                              "alignItems": "center",
-                              "flexDirection": "row",
-                            },
-                            {
-                              "backgroundColor": "#ffffff",
-                              "borderColor": "#eaecf0",
-                              "borderRadius": 999,
-                              "borderWidth": 0.5,
-                              "columnGap": 4,
-                              "minHeight": 32,
-                              "paddingHorizontal": 11.5,
-                              "paddingVertical": 7.5,
-                            },
-                          ]
-                        }
-                      >
-                        <Text
-                          style={
-                            [
-                              {
-                                "fontFamily": "DMSans-Bold",
-                                "fontSize": 12.5,
-                                "letterSpacing": 0,
-                                "lineHeight": 20,
-                                "marginBottom": -1.862499999999999,
-                                "marginTop": -1.862499999999999,
-                              },
-                              {
-                                "color": "#5e646e",
-                              },
-                            ]
-                          }
-                        >
-                          Portrait
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-                  <Text
-                    style={
-                      [
-                        {
-                          "fontFamily": "DMSans-Bold",
-                          "fontSize": 11,
-                          "letterSpacing": 0,
-                          "lineHeight": 16,
-                          "marginBottom": -0.8389999999999995,
-                          "marginTop": -0.8389999999999995,
-                        },
-                        {
-                          "color": "#848282",
-                          "letterSpacing": 0.88,
-                        },
-                        undefined,
-                      ]
-                    }
-                  >
-                    ASPECT RATIO
-                  </Text>
-                  <View
-                    style={
-                      [
-                        {
-                          "flexDirection": "row",
-                          "flexWrap": "wrap",
-                        },
-                        {
-                          "columnGap": 8,
-                          "rowGap": 8,
-                        },
-                      ]
-                    }
-                  >
-                    <View
-                      accessibilityRole="tab"
-                      accessibilityState={
-                        {
-                          "busy": undefined,
-                          "checked": undefined,
-                          "disabled": undefined,
-                          "expanded": undefined,
-                          "selected": true,
-                        }
-                      }
-                      accessibilityValue={
-                        {
-                          "max": undefined,
-                          "min": undefined,
-                          "now": undefined,
-                          "text": undefined,
-                        }
-                      }
-                      accessible={true}
-                      collapsable={false}
-                      focusable={true}
-                      onBlur={[Function]}
-                      onClick={[Function]}
-                      onFocus={[Function]}
-                      onResponderGrant={[Function]}
-                      onResponderMove={[Function]}
-                      onResponderRelease={[Function]}
-                      onResponderTerminate={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      style={
-                        [
-                          {
-                            "alignSelf": "flex-start",
-                            "justifyContent": "center",
-                          },
-                          {
-                            "minHeight": 44,
-                          },
-                          undefined,
-                        ]
-                      }
-                      testID="sample_custom_document_aspect_ratio_off"
-                    >
-                      <View
-                        style={
-                          [
-                            {
-                              "alignItems": "center",
-                              "flexDirection": "row",
-                            },
-                            {
-                              "backgroundColor": "#151f72",
-                              "borderColor": "transparent",
-                              "borderRadius": 999,
-                              "borderWidth": 0,
-                              "columnGap": 4,
-                              "minHeight": 32,
-                              "paddingHorizontal": 12,
-                              "paddingVertical": 8,
-                            },
-                          ]
-                        }
-                      >
-                        <Text
-                          style={
-                            [
-                              {
-                                "fontFamily": "DMSans-Bold",
-                                "fontSize": 12.5,
-                                "letterSpacing": 0,
-                                "lineHeight": 20,
-                                "marginBottom": -1.862499999999999,
-                                "marginTop": -1.862499999999999,
-                              },
-                              {
-                                "color": "#ffffff",
-                              },
-                            ]
-                          }
-                        >
-                          Off
-                        </Text>
-                      </View>
-                    </View>
-                    <View
-                      accessibilityRole="tab"
-                      accessibilityState={
-                        {
-                          "busy": undefined,
-                          "checked": undefined,
-                          "disabled": undefined,
-                          "expanded": undefined,
-                          "selected": false,
-                        }
-                      }
-                      accessibilityValue={
-                        {
-                          "max": undefined,
-                          "min": undefined,
-                          "now": undefined,
-                          "text": undefined,
-                        }
-                      }
-                      accessible={true}
-                      collapsable={false}
-                      focusable={true}
-                      onBlur={[Function]}
-                      onClick={[Function]}
-                      onFocus={[Function]}
-                      onResponderGrant={[Function]}
-                      onResponderMove={[Function]}
-                      onResponderRelease={[Function]}
-                      onResponderTerminate={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      style={
-                        [
-                          {
-                            "alignSelf": "flex-start",
-                            "justifyContent": "center",
-                          },
-                          {
-                            "minHeight": 44,
-                          },
-                          undefined,
-                        ]
-                      }
-                      testID="sample_custom_document_aspect_ratio_card"
-                    >
-                      <View
-                        style={
-                          [
-                            {
-                              "alignItems": "center",
-                              "flexDirection": "row",
-                            },
-                            {
-                              "backgroundColor": "#ffffff",
-                              "borderColor": "#eaecf0",
-                              "borderRadius": 999,
-                              "borderWidth": 0.5,
-                              "columnGap": 4,
-                              "minHeight": 32,
-                              "paddingHorizontal": 11.5,
-                              "paddingVertical": 7.5,
-                            },
-                          ]
-                        }
-                      >
-                        <Text
-                          style={
-                            [
-                              {
-                                "fontFamily": "DMSans-Bold",
-                                "fontSize": 12.5,
-                                "letterSpacing": 0,
-                                "lineHeight": 20,
-                                "marginBottom": -1.862499999999999,
-                                "marginTop": -1.862499999999999,
-                              },
-                              {
-                                "color": "#5e646e",
-                              },
-                            ]
-                          }
-                        >
-                          Card 1.586
-                        </Text>
-                      </View>
-                    </View>
-                    <View
-                      accessibilityRole="tab"
-                      accessibilityState={
-                        {
-                          "busy": undefined,
-                          "checked": undefined,
-                          "disabled": undefined,
-                          "expanded": undefined,
-                          "selected": false,
-                        }
-                      }
-                      accessibilityValue={
-                        {
-                          "max": undefined,
-                          "min": undefined,
-                          "now": undefined,
-                          "text": undefined,
-                        }
-                      }
-                      accessible={true}
-                      collapsable={false}
-                      focusable={true}
-                      onBlur={[Function]}
-                      onClick={[Function]}
-                      onFocus={[Function]}
-                      onResponderGrant={[Function]}
-                      onResponderMove={[Function]}
-                      onResponderRelease={[Function]}
-                      onResponderTerminate={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      style={
-                        [
-                          {
-                            "alignSelf": "flex-start",
-                            "justifyContent": "center",
-                          },
-                          {
-                            "minHeight": 44,
-                          },
-                          undefined,
-                        ]
-                      }
-                      testID="sample_custom_document_aspect_ratio_passport"
-                    >
-                      <View
-                        style={
-                          [
-                            {
-                              "alignItems": "center",
-                              "flexDirection": "row",
-                            },
-                            {
-                              "backgroundColor": "#ffffff",
-                              "borderColor": "#eaecf0",
-                              "borderRadius": 999,
-                              "borderWidth": 0.5,
-                              "columnGap": 4,
-                              "minHeight": 32,
-                              "paddingHorizontal": 11.5,
-                              "paddingVertical": 7.5,
-                            },
-                          ]
-                        }
-                      >
-                        <Text
-                          style={
-                            [
-                              {
-                                "fontFamily": "DMSans-Bold",
-                                "fontSize": 12.5,
-                                "letterSpacing": 0,
-                                "lineHeight": 20,
-                                "marginBottom": -1.862499999999999,
-                                "marginTop": -1.862499999999999,
-                              },
-                              {
-                                "color": "#5e646e",
-                              },
-                            ]
-                          }
-                        >
-                          Passport 1.309
-                        </Text>
-                      </View>
-                    </View>
-                    <View
-                      accessibilityRole="tab"
-                      accessibilityState={
-                        {
-                          "busy": undefined,
-                          "checked": undefined,
-                          "disabled": undefined,
-                          "expanded": undefined,
-                          "selected": false,
-                        }
-                      }
-                      accessibilityValue={
-                        {
-                          "max": undefined,
-                          "min": undefined,
-                          "now": undefined,
-                          "text": undefined,
-                        }
-                      }
-                      accessible={true}
-                      collapsable={false}
-                      focusable={true}
-                      onBlur={[Function]}
-                      onClick={[Function]}
-                      onFocus={[Function]}
-                      onResponderGrant={[Function]}
-                      onResponderMove={[Function]}
-                      onResponderRelease={[Function]}
-                      onResponderTerminate={[Function]}
-                      onResponderTerminationRequest={[Function]}
-                      onStartShouldSetResponder={[Function]}
-                      style={
-                        [
-                          {
-                            "alignSelf": "flex-start",
-                            "justifyContent": "center",
-                          },
-                          {
-                            "minHeight": 44,
-                          },
-                          undefined,
-                        ]
-                      }
-                      testID="sample_custom_document_aspect_ratio_booklet"
-                    >
-                      <View
-                        style={
-                          [
-                            {
-                              "alignItems": "center",
-                              "flexDirection": "row",
-                            },
-                            {
-                              "backgroundColor": "#ffffff",
-                              "borderColor": "#eaecf0",
-                              "borderRadius": 999,
-                              "borderWidth": 0.5,
-                              "columnGap": 4,
-                              "minHeight": 32,
-                              "paddingHorizontal": 11.5,
-                              "paddingVertical": 7.5,
-                            },
-                          ]
-                        }
-                      >
-                        <Text
-                          style={
-                            [
-                              {
-                                "fontFamily": "DMSans-Bold",
-                                "fontSize": 12.5,
-                                "letterSpacing": 0,
-                                "lineHeight": 20,
-                                "marginBottom": -1.862499999999999,
-                                "marginTop": -1.862499999999999,
-                              },
-                              {
-                                "color": "#5e646e",
-                              },
-                            ]
-                          }
-                        >
-                          Booklet 0.748
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-                  <View
-                    accessibilityRole="button"
-                    accessibilityState={
-                      {
-                        "busy": false,
-                        "checked": undefined,
-                        "disabled": false,
-                        "expanded": undefined,
-                        "selected": undefined,
-                      }
-                    }
-                    accessibilityValue={
-                      {
-                        "max": undefined,
-                        "min": undefined,
-                        "now": undefined,
-                        "text": undefined,
-                      }
-                    }
-                    accessible={true}
-                    collapsable={false}
-                    focusable={true}
-                    onBlur={[Function]}
-                    onClick={[Function]}
-                    onFocus={[Function]}
-                    onResponderGrant={[Function]}
-                    onResponderMove={[Function]}
-                    onResponderRelease={[Function]}
-                    onResponderTerminate={[Function]}
-                    onResponderTerminationRequest={[Function]}
-                    onStartShouldSetResponder={[Function]}
-                    style={
-                      [
-                        {
-                          "alignItems": "center",
-                          "alignSelf": "stretch",
-                          "justifyContent": "center",
-                        },
-                        {
-                          "backgroundColor": "#151f72",
-                          "borderRadius": 32,
-                          "minHeight": 52,
-                          "opacity": 1,
-                          "paddingHorizontal": 24,
-                        },
-                        undefined,
-                      ]
-                    }
-                    testID="sample_custom_document_done"
-                  >
-                    <View
-                      style={
-                        {
-                          "alignItems": "center",
-                          "justifyContent": "center",
-                        }
-                      }
-                    >
-                      <Text
-                        style={
-                          [
-                            {
-                              "fontFamily": "DMSans-Bold",
-                              "fontSize": 16,
-                              "letterSpacing": 0,
-                              "lineHeight": 24,
-                              "marginBottom": -1.5839999999999996,
-                              "marginTop": -1.5839999999999996,
-                            },
-                            {
-                              "textAlign": "center",
-                            },
-                            {
-                              "color": "#ffffff",
-                              "paddingVertical": 4,
-                            },
-                          ]
-                        }
-                      >
-                        Done
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </RCTScrollView>
-          </View>
-        </View>
-      </ViewManagerAdapter_ExpoUI>
-    </ViewManagerAdapter_ExpoUI>
-  </ViewManagerAdapter_ExpoUI>
-</ViewManagerAdapter_ExpoUI>
-`;
-
 exports[`documentPickerSheet dark arabicNames 1`] = `
 <ViewManagerAdapter_ExpoUI
   layoutDirection="leftToRight"
@@ -14513,6 +12571,1948 @@ exports[`documentPickerSheet light loading 1`] = `
                           }
                         }
                       />
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </RCTScrollView>
+          </View>
+        </View>
+      </ViewManagerAdapter_ExpoUI>
+    </ViewManagerAdapter_ExpoUI>
+  </ViewManagerAdapter_ExpoUI>
+</ViewManagerAdapter_ExpoUI>
+`;
+
+exports[`genericDocumentSheet dark default 1`] = `
+<ViewManagerAdapter_ExpoUI
+  layoutDirection="leftToRight"
+  pointerEvents="none"
+  style={
+    {
+      "position": "absolute",
+      "width": 750,
+    }
+  }
+>
+  <ViewManagerAdapter_ExpoUI
+    fitToContents={true}
+    isPresented={true}
+    onDismiss={[Function]}
+    onIsPresentedChange={[Function]}
+  >
+    <ViewManagerAdapter_ExpoUI
+      modifiers={
+        [
+          {
+            "$type": "presentationSizing",
+            "sizing": "fitted",
+          },
+          {
+            "$type": "presentationDragIndicator",
+            "visibility": "visible",
+          },
+          {
+            "$type": "interactiveDismissDisabled",
+            "isDisabled": false,
+          },
+          {
+            "$type": "presentationBackground",
+            "style": {
+              "color": "#272a35",
+              "type": "color",
+            },
+          },
+        ]
+      }
+      onGlobalEvent={[Function]}
+    >
+      <ViewManagerAdapter_ExpoUI
+        expoInternalSizeFromChildren={true}
+        layoutRoot={true}
+        matchContents={true}
+      >
+        <View
+          style={
+            {
+              "paddingTop": 16,
+              "width": 750,
+            }
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "width": "100%",
+                },
+                {
+                  "paddingHorizontal": 20,
+                },
+              ]
+            }
+            testID="sample_generic_document_sheet"
+          >
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 18,
+                    "letterSpacing": 0,
+                    "lineHeight": 24,
+                    "marginBottom": -0.28200000000000003,
+                    "marginTop": -0.28200000000000003,
+                  },
+                  {
+                    "color": "#f2f2f2",
+                    "paddingTop": 12,
+                  },
+                ]
+              }
+            >
+              Generic document
+            </Text>
+            <RCTScrollView
+              contentContainerStyle={
+                {
+                  "paddingBottom": 24,
+                  "rowGap": 12,
+                }
+              }
+              style={
+                {
+                  "marginTop": 12,
+                }
+              }
+            >
+              <View>
+                <View
+                  style={
+                    {
+                      "rowGap": 12,
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      [
+                        {
+                          "fontFamily": "DMSans-Bold",
+                          "fontSize": 11,
+                          "letterSpacing": 0,
+                          "lineHeight": 16,
+                          "marginBottom": -0.8389999999999995,
+                          "marginTop": -0.8389999999999995,
+                        },
+                        {
+                          "color": "#848282",
+                          "letterSpacing": 0.88,
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    DISPLAY NAME
+                  </Text>
+                  <View>
+                    <View
+                      style={
+                        [
+                          {
+                            "alignItems": "center",
+                            "flexDirection": "row",
+                            "width": "100%",
+                          },
+                          {
+                            "backgroundColor": "#272a35",
+                            "borderColor": "#eaecf0",
+                            "borderRadius": 12,
+                            "borderWidth": 1,
+                            "columnGap": 8,
+                            "minHeight": 44,
+                            "paddingHorizontal": 15,
+                            "paddingVertical": 11,
+                          },
+                        ]
+                      }
+                    >
+                      <TextInput
+                        autoCorrect={true}
+                        editable={true}
+                        onBlur={[Function]}
+                        onChangeText={[Function]}
+                        onFocus={[Function]}
+                        placeholder="Document"
+                        placeholderTextColor="#848282"
+                        secureTextEntry={false}
+                        selectionColor="#4d88ff"
+                        style={
+                          [
+                            {
+                              "fontFamily": "DMSans-Regular",
+                              "fontSize": 14,
+                              "letterSpacing": 0,
+                              "lineHeight": 20,
+                              "marginBottom": -0.8859999999999992,
+                              "marginTop": -0.8859999999999992,
+                            },
+                            {
+                              "flex": 1,
+                              "padding": 0,
+                            },
+                            {
+                              "color": "#f2f2f2",
+                            },
+                            null,
+                          ]
+                        }
+                        testID="sample_generic_document_name"
+                        value="Document"
+                      />
+                    </View>
+                  </View>
+                  <View
+                    style={
+                      [
+                        {
+                          "alignItems": "center",
+                          "flexDirection": "row",
+                          "width": "100%",
+                        },
+                        {
+                          "columnGap": 12,
+                          "minHeight": 64,
+                          "paddingHorizontal": 16,
+                          "paddingVertical": 12,
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <View
+                      style={
+                        [
+                          {
+                            "flex": 1,
+                          },
+                          {
+                            "rowGap": 4,
+                          },
+                        ]
+                      }
+                    >
+                      <Text
+                        style={
+                          [
+                            {
+                              "fontFamily": "DMSans-SemiBold",
+                              "fontSize": 16,
+                              "letterSpacing": 0,
+                              "lineHeight": 24,
+                              "marginBottom": -1.5839999999999996,
+                              "marginTop": -1.5839999999999996,
+                            },
+                            {
+                              "color": "#f2f2f2",
+                            },
+                          ]
+                        }
+                      >
+                        Back side
+                      </Text>
+                      <Text
+                        style={
+                          [
+                            {
+                              "fontFamily": "DMSans-Medium",
+                              "fontSize": 12,
+                              "letterSpacing": 0,
+                              "lineHeight": 16,
+                              "marginBottom": -0.18799999999999972,
+                              "marginTop": -0.18799999999999972,
+                            },
+                            {
+                              "color": "#848282",
+                            },
+                          ]
+                        }
+                      >
+                        Capture the back after the front
+                      </Text>
+                    </View>
+                    <RCTSwitch
+                      accessibilityRole="switch"
+                      disabled={false}
+                      onChange={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
+                      onTintColor="#4d88ff"
+                      style={
+                        [
+                          {
+                            "alignSelf": "flex-start",
+                          },
+                          [
+                            [
+                              {
+                                "alignSelf": "center",
+                              },
+                              undefined,
+                            ],
+                            {
+                              "backgroundColor": "#eaecf0",
+                              "borderRadius": 16,
+                            },
+                          ],
+                        ]
+                      }
+                      testID="sample_generic_document_back_side"
+                      thumbTintColor="#272a35"
+                      tintColor="#eaecf0"
+                      value={true}
+                    />
+                  </View>
+                  <Text
+                    style={
+                      [
+                        {
+                          "fontFamily": "DMSans-Bold",
+                          "fontSize": 11,
+                          "letterSpacing": 0,
+                          "lineHeight": 16,
+                          "marginBottom": -0.8389999999999995,
+                          "marginTop": -0.8389999999999995,
+                        },
+                        {
+                          "color": "#848282",
+                          "letterSpacing": 0.88,
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    ORIENTATION
+                  </Text>
+                  <View
+                    style={
+                      [
+                        {
+                          "flexDirection": "row",
+                          "flexWrap": "wrap",
+                        },
+                        {
+                          "columnGap": 8,
+                          "rowGap": 8,
+                        },
+                      ]
+                    }
+                  >
+                    <View
+                      accessibilityRole="tab"
+                      accessibilityState={
+                        {
+                          "busy": undefined,
+                          "checked": undefined,
+                          "disabled": undefined,
+                          "expanded": undefined,
+                          "selected": true,
+                        }
+                      }
+                      accessibilityValue={
+                        {
+                          "max": undefined,
+                          "min": undefined,
+                          "now": undefined,
+                          "text": undefined,
+                        }
+                      }
+                      accessible={true}
+                      collapsable={false}
+                      focusable={true}
+                      onBlur={[Function]}
+                      onClick={[Function]}
+                      onFocus={[Function]}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
+                      style={
+                        [
+                          {
+                            "alignSelf": "flex-start",
+                            "justifyContent": "center",
+                          },
+                          {
+                            "minHeight": 44,
+                          },
+                          undefined,
+                        ]
+                      }
+                      testID="sample_generic_document_orientation_landscape"
+                    >
+                      <View
+                        style={
+                          [
+                            {
+                              "alignItems": "center",
+                              "flexDirection": "row",
+                            },
+                            {
+                              "backgroundColor": "#4d88ff",
+                              "borderColor": "transparent",
+                              "borderRadius": 999,
+                              "borderWidth": 0,
+                              "columnGap": 4,
+                              "minHeight": 32,
+                              "paddingHorizontal": 12,
+                              "paddingVertical": 8,
+                            },
+                          ]
+                        }
+                      >
+                        <Text
+                          style={
+                            [
+                              {
+                                "fontFamily": "DMSans-Bold",
+                                "fontSize": 12.5,
+                                "letterSpacing": 0,
+                                "lineHeight": 20,
+                                "marginBottom": -1.862499999999999,
+                                "marginTop": -1.862499999999999,
+                              },
+                              {
+                                "color": "#ffffff",
+                              },
+                            ]
+                          }
+                        >
+                          Landscape
+                        </Text>
+                      </View>
+                    </View>
+                    <View
+                      accessibilityRole="tab"
+                      accessibilityState={
+                        {
+                          "busy": undefined,
+                          "checked": undefined,
+                          "disabled": undefined,
+                          "expanded": undefined,
+                          "selected": false,
+                        }
+                      }
+                      accessibilityValue={
+                        {
+                          "max": undefined,
+                          "min": undefined,
+                          "now": undefined,
+                          "text": undefined,
+                        }
+                      }
+                      accessible={true}
+                      collapsable={false}
+                      focusable={true}
+                      onBlur={[Function]}
+                      onClick={[Function]}
+                      onFocus={[Function]}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
+                      style={
+                        [
+                          {
+                            "alignSelf": "flex-start",
+                            "justifyContent": "center",
+                          },
+                          {
+                            "minHeight": 44,
+                          },
+                          undefined,
+                        ]
+                      }
+                      testID="sample_generic_document_orientation_portrait"
+                    >
+                      <View
+                        style={
+                          [
+                            {
+                              "alignItems": "center",
+                              "flexDirection": "row",
+                            },
+                            {
+                              "backgroundColor": "#272a35",
+                              "borderColor": "#2d3748",
+                              "borderRadius": 999,
+                              "borderWidth": 0.5,
+                              "columnGap": 4,
+                              "minHeight": 32,
+                              "paddingHorizontal": 11.5,
+                              "paddingVertical": 7.5,
+                            },
+                          ]
+                        }
+                      >
+                        <Text
+                          style={
+                            [
+                              {
+                                "fontFamily": "DMSans-Bold",
+                                "fontSize": 12.5,
+                                "letterSpacing": 0,
+                                "lineHeight": 20,
+                                "marginBottom": -1.862499999999999,
+                                "marginTop": -1.862499999999999,
+                              },
+                              {
+                                "color": "#c2c5cb",
+                              },
+                            ]
+                          }
+                        >
+                          Portrait
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                  <Text
+                    style={
+                      [
+                        {
+                          "fontFamily": "DMSans-Bold",
+                          "fontSize": 11,
+                          "letterSpacing": 0,
+                          "lineHeight": 16,
+                          "marginBottom": -0.8389999999999995,
+                          "marginTop": -0.8389999999999995,
+                        },
+                        {
+                          "color": "#848282",
+                          "letterSpacing": 0.88,
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    ASPECT RATIO
+                  </Text>
+                  <View
+                    style={
+                      [
+                        {
+                          "flexDirection": "row",
+                          "flexWrap": "wrap",
+                        },
+                        {
+                          "columnGap": 8,
+                          "rowGap": 8,
+                        },
+                      ]
+                    }
+                  >
+                    <View
+                      accessibilityRole="tab"
+                      accessibilityState={
+                        {
+                          "busy": undefined,
+                          "checked": undefined,
+                          "disabled": undefined,
+                          "expanded": undefined,
+                          "selected": true,
+                        }
+                      }
+                      accessibilityValue={
+                        {
+                          "max": undefined,
+                          "min": undefined,
+                          "now": undefined,
+                          "text": undefined,
+                        }
+                      }
+                      accessible={true}
+                      collapsable={false}
+                      focusable={true}
+                      onBlur={[Function]}
+                      onClick={[Function]}
+                      onFocus={[Function]}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
+                      style={
+                        [
+                          {
+                            "alignSelf": "flex-start",
+                            "justifyContent": "center",
+                          },
+                          {
+                            "minHeight": 44,
+                          },
+                          undefined,
+                        ]
+                      }
+                      testID="sample_generic_document_aspect_ratio_off"
+                    >
+                      <View
+                        style={
+                          [
+                            {
+                              "alignItems": "center",
+                              "flexDirection": "row",
+                            },
+                            {
+                              "backgroundColor": "#4d88ff",
+                              "borderColor": "transparent",
+                              "borderRadius": 999,
+                              "borderWidth": 0,
+                              "columnGap": 4,
+                              "minHeight": 32,
+                              "paddingHorizontal": 12,
+                              "paddingVertical": 8,
+                            },
+                          ]
+                        }
+                      >
+                        <Text
+                          style={
+                            [
+                              {
+                                "fontFamily": "DMSans-Bold",
+                                "fontSize": 12.5,
+                                "letterSpacing": 0,
+                                "lineHeight": 20,
+                                "marginBottom": -1.862499999999999,
+                                "marginTop": -1.862499999999999,
+                              },
+                              {
+                                "color": "#ffffff",
+                              },
+                            ]
+                          }
+                        >
+                          Off
+                        </Text>
+                      </View>
+                    </View>
+                    <View
+                      accessibilityRole="tab"
+                      accessibilityState={
+                        {
+                          "busy": undefined,
+                          "checked": undefined,
+                          "disabled": undefined,
+                          "expanded": undefined,
+                          "selected": false,
+                        }
+                      }
+                      accessibilityValue={
+                        {
+                          "max": undefined,
+                          "min": undefined,
+                          "now": undefined,
+                          "text": undefined,
+                        }
+                      }
+                      accessible={true}
+                      collapsable={false}
+                      focusable={true}
+                      onBlur={[Function]}
+                      onClick={[Function]}
+                      onFocus={[Function]}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
+                      style={
+                        [
+                          {
+                            "alignSelf": "flex-start",
+                            "justifyContent": "center",
+                          },
+                          {
+                            "minHeight": 44,
+                          },
+                          undefined,
+                        ]
+                      }
+                      testID="sample_generic_document_aspect_ratio_card"
+                    >
+                      <View
+                        style={
+                          [
+                            {
+                              "alignItems": "center",
+                              "flexDirection": "row",
+                            },
+                            {
+                              "backgroundColor": "#272a35",
+                              "borderColor": "#2d3748",
+                              "borderRadius": 999,
+                              "borderWidth": 0.5,
+                              "columnGap": 4,
+                              "minHeight": 32,
+                              "paddingHorizontal": 11.5,
+                              "paddingVertical": 7.5,
+                            },
+                          ]
+                        }
+                      >
+                        <Text
+                          style={
+                            [
+                              {
+                                "fontFamily": "DMSans-Bold",
+                                "fontSize": 12.5,
+                                "letterSpacing": 0,
+                                "lineHeight": 20,
+                                "marginBottom": -1.862499999999999,
+                                "marginTop": -1.862499999999999,
+                              },
+                              {
+                                "color": "#c2c5cb",
+                              },
+                            ]
+                          }
+                        >
+                          Card 1.586
+                        </Text>
+                      </View>
+                    </View>
+                    <View
+                      accessibilityRole="tab"
+                      accessibilityState={
+                        {
+                          "busy": undefined,
+                          "checked": undefined,
+                          "disabled": undefined,
+                          "expanded": undefined,
+                          "selected": false,
+                        }
+                      }
+                      accessibilityValue={
+                        {
+                          "max": undefined,
+                          "min": undefined,
+                          "now": undefined,
+                          "text": undefined,
+                        }
+                      }
+                      accessible={true}
+                      collapsable={false}
+                      focusable={true}
+                      onBlur={[Function]}
+                      onClick={[Function]}
+                      onFocus={[Function]}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
+                      style={
+                        [
+                          {
+                            "alignSelf": "flex-start",
+                            "justifyContent": "center",
+                          },
+                          {
+                            "minHeight": 44,
+                          },
+                          undefined,
+                        ]
+                      }
+                      testID="sample_generic_document_aspect_ratio_passport"
+                    >
+                      <View
+                        style={
+                          [
+                            {
+                              "alignItems": "center",
+                              "flexDirection": "row",
+                            },
+                            {
+                              "backgroundColor": "#272a35",
+                              "borderColor": "#2d3748",
+                              "borderRadius": 999,
+                              "borderWidth": 0.5,
+                              "columnGap": 4,
+                              "minHeight": 32,
+                              "paddingHorizontal": 11.5,
+                              "paddingVertical": 7.5,
+                            },
+                          ]
+                        }
+                      >
+                        <Text
+                          style={
+                            [
+                              {
+                                "fontFamily": "DMSans-Bold",
+                                "fontSize": 12.5,
+                                "letterSpacing": 0,
+                                "lineHeight": 20,
+                                "marginBottom": -1.862499999999999,
+                                "marginTop": -1.862499999999999,
+                              },
+                              {
+                                "color": "#c2c5cb",
+                              },
+                            ]
+                          }
+                        >
+                          Passport 1.309
+                        </Text>
+                      </View>
+                    </View>
+                    <View
+                      accessibilityRole="tab"
+                      accessibilityState={
+                        {
+                          "busy": undefined,
+                          "checked": undefined,
+                          "disabled": undefined,
+                          "expanded": undefined,
+                          "selected": false,
+                        }
+                      }
+                      accessibilityValue={
+                        {
+                          "max": undefined,
+                          "min": undefined,
+                          "now": undefined,
+                          "text": undefined,
+                        }
+                      }
+                      accessible={true}
+                      collapsable={false}
+                      focusable={true}
+                      onBlur={[Function]}
+                      onClick={[Function]}
+                      onFocus={[Function]}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
+                      style={
+                        [
+                          {
+                            "alignSelf": "flex-start",
+                            "justifyContent": "center",
+                          },
+                          {
+                            "minHeight": 44,
+                          },
+                          undefined,
+                        ]
+                      }
+                      testID="sample_generic_document_aspect_ratio_booklet"
+                    >
+                      <View
+                        style={
+                          [
+                            {
+                              "alignItems": "center",
+                              "flexDirection": "row",
+                            },
+                            {
+                              "backgroundColor": "#272a35",
+                              "borderColor": "#2d3748",
+                              "borderRadius": 999,
+                              "borderWidth": 0.5,
+                              "columnGap": 4,
+                              "minHeight": 32,
+                              "paddingHorizontal": 11.5,
+                              "paddingVertical": 7.5,
+                            },
+                          ]
+                        }
+                      >
+                        <Text
+                          style={
+                            [
+                              {
+                                "fontFamily": "DMSans-Bold",
+                                "fontSize": 12.5,
+                                "letterSpacing": 0,
+                                "lineHeight": 20,
+                                "marginBottom": -1.862499999999999,
+                                "marginTop": -1.862499999999999,
+                              },
+                              {
+                                "color": "#c2c5cb",
+                              },
+                            ]
+                          }
+                        >
+                          Booklet 0.748
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                  <View
+                    accessibilityRole="button"
+                    accessibilityState={
+                      {
+                        "busy": false,
+                        "checked": undefined,
+                        "disabled": false,
+                        "expanded": undefined,
+                        "selected": undefined,
+                      }
+                    }
+                    accessibilityValue={
+                      {
+                        "max": undefined,
+                        "min": undefined,
+                        "now": undefined,
+                        "text": undefined,
+                      }
+                    }
+                    accessible={true}
+                    collapsable={false}
+                    focusable={true}
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onFocus={[Function]}
+                    onResponderGrant={[Function]}
+                    onResponderMove={[Function]}
+                    onResponderRelease={[Function]}
+                    onResponderTerminate={[Function]}
+                    onResponderTerminationRequest={[Function]}
+                    onStartShouldSetResponder={[Function]}
+                    style={
+                      [
+                        {
+                          "alignItems": "center",
+                          "alignSelf": "stretch",
+                          "justifyContent": "center",
+                        },
+                        {
+                          "backgroundColor": "#4d88ff",
+                          "borderRadius": 32,
+                          "minHeight": 52,
+                          "opacity": 1,
+                          "paddingHorizontal": 24,
+                        },
+                        undefined,
+                      ]
+                    }
+                    testID="sample_generic_document_done"
+                  >
+                    <View
+                      style={
+                        {
+                          "alignItems": "center",
+                          "justifyContent": "center",
+                        }
+                      }
+                    >
+                      <Text
+                        style={
+                          [
+                            {
+                              "fontFamily": "DMSans-Bold",
+                              "fontSize": 16,
+                              "letterSpacing": 0,
+                              "lineHeight": 24,
+                              "marginBottom": -1.5839999999999996,
+                              "marginTop": -1.5839999999999996,
+                            },
+                            {
+                              "textAlign": "center",
+                            },
+                            {
+                              "color": "#ffffff",
+                              "paddingVertical": 4,
+                            },
+                          ]
+                        }
+                      >
+                        Done
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </RCTScrollView>
+          </View>
+        </View>
+      </ViewManagerAdapter_ExpoUI>
+    </ViewManagerAdapter_ExpoUI>
+  </ViewManagerAdapter_ExpoUI>
+</ViewManagerAdapter_ExpoUI>
+`;
+
+exports[`genericDocumentSheet light default 1`] = `
+<ViewManagerAdapter_ExpoUI
+  layoutDirection="leftToRight"
+  pointerEvents="none"
+  style={
+    {
+      "position": "absolute",
+      "width": 750,
+    }
+  }
+>
+  <ViewManagerAdapter_ExpoUI
+    fitToContents={true}
+    isPresented={true}
+    onDismiss={[Function]}
+    onIsPresentedChange={[Function]}
+  >
+    <ViewManagerAdapter_ExpoUI
+      modifiers={
+        [
+          {
+            "$type": "presentationSizing",
+            "sizing": "fitted",
+          },
+          {
+            "$type": "presentationDragIndicator",
+            "visibility": "visible",
+          },
+          {
+            "$type": "interactiveDismissDisabled",
+            "isDisabled": false,
+          },
+          {
+            "$type": "presentationBackground",
+            "style": {
+              "color": "#ffffff",
+              "type": "color",
+            },
+          },
+        ]
+      }
+      onGlobalEvent={[Function]}
+    >
+      <ViewManagerAdapter_ExpoUI
+        expoInternalSizeFromChildren={true}
+        layoutRoot={true}
+        matchContents={true}
+      >
+        <View
+          style={
+            {
+              "paddingTop": 16,
+              "width": 750,
+            }
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "width": "100%",
+                },
+                {
+                  "paddingHorizontal": 20,
+                },
+              ]
+            }
+            testID="sample_generic_document_sheet"
+          >
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 18,
+                    "letterSpacing": 0,
+                    "lineHeight": 24,
+                    "marginBottom": -0.28200000000000003,
+                    "marginTop": -0.28200000000000003,
+                  },
+                  {
+                    "color": "#21232c",
+                    "paddingTop": 12,
+                  },
+                ]
+              }
+            >
+              Generic document
+            </Text>
+            <RCTScrollView
+              contentContainerStyle={
+                {
+                  "paddingBottom": 24,
+                  "rowGap": 12,
+                }
+              }
+              style={
+                {
+                  "marginTop": 12,
+                }
+              }
+            >
+              <View>
+                <View
+                  style={
+                    {
+                      "rowGap": 12,
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      [
+                        {
+                          "fontFamily": "DMSans-Bold",
+                          "fontSize": 11,
+                          "letterSpacing": 0,
+                          "lineHeight": 16,
+                          "marginBottom": -0.8389999999999995,
+                          "marginTop": -0.8389999999999995,
+                        },
+                        {
+                          "color": "#848282",
+                          "letterSpacing": 0.88,
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    DISPLAY NAME
+                  </Text>
+                  <View>
+                    <View
+                      style={
+                        [
+                          {
+                            "alignItems": "center",
+                            "flexDirection": "row",
+                            "width": "100%",
+                          },
+                          {
+                            "backgroundColor": "#ffffff",
+                            "borderColor": "#eaecf0",
+                            "borderRadius": 12,
+                            "borderWidth": 1,
+                            "columnGap": 8,
+                            "minHeight": 44,
+                            "paddingHorizontal": 15,
+                            "paddingVertical": 11,
+                          },
+                        ]
+                      }
+                    >
+                      <TextInput
+                        autoCorrect={true}
+                        editable={true}
+                        onBlur={[Function]}
+                        onChangeText={[Function]}
+                        onFocus={[Function]}
+                        placeholder="Document"
+                        placeholderTextColor="#848282"
+                        secureTextEntry={false}
+                        selectionColor="#4d88ff"
+                        style={
+                          [
+                            {
+                              "fontFamily": "DMSans-Regular",
+                              "fontSize": 14,
+                              "letterSpacing": 0,
+                              "lineHeight": 20,
+                              "marginBottom": -0.8859999999999992,
+                              "marginTop": -0.8859999999999992,
+                            },
+                            {
+                              "flex": 1,
+                              "padding": 0,
+                            },
+                            {
+                              "color": "#21232c",
+                            },
+                            null,
+                          ]
+                        }
+                        testID="sample_generic_document_name"
+                        value="Document"
+                      />
+                    </View>
+                  </View>
+                  <View
+                    style={
+                      [
+                        {
+                          "alignItems": "center",
+                          "flexDirection": "row",
+                          "width": "100%",
+                        },
+                        {
+                          "columnGap": 12,
+                          "minHeight": 64,
+                          "paddingHorizontal": 16,
+                          "paddingVertical": 12,
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <View
+                      style={
+                        [
+                          {
+                            "flex": 1,
+                          },
+                          {
+                            "rowGap": 4,
+                          },
+                        ]
+                      }
+                    >
+                      <Text
+                        style={
+                          [
+                            {
+                              "fontFamily": "DMSans-SemiBold",
+                              "fontSize": 16,
+                              "letterSpacing": 0,
+                              "lineHeight": 24,
+                              "marginBottom": -1.5839999999999996,
+                              "marginTop": -1.5839999999999996,
+                            },
+                            {
+                              "color": "#21232c",
+                            },
+                          ]
+                        }
+                      >
+                        Back side
+                      </Text>
+                      <Text
+                        style={
+                          [
+                            {
+                              "fontFamily": "DMSans-Medium",
+                              "fontSize": 12,
+                              "letterSpacing": 0,
+                              "lineHeight": 16,
+                              "marginBottom": -0.18799999999999972,
+                              "marginTop": -0.18799999999999972,
+                            },
+                            {
+                              "color": "#848282",
+                            },
+                          ]
+                        }
+                      >
+                        Capture the back after the front
+                      </Text>
+                    </View>
+                    <RCTSwitch
+                      accessibilityRole="switch"
+                      disabled={false}
+                      onChange={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
+                      onTintColor="#151f72"
+                      style={
+                        [
+                          {
+                            "alignSelf": "flex-start",
+                          },
+                          [
+                            [
+                              {
+                                "alignSelf": "center",
+                              },
+                              undefined,
+                            ],
+                            {
+                              "backgroundColor": "#eaecf0",
+                              "borderRadius": 16,
+                            },
+                          ],
+                        ]
+                      }
+                      testID="sample_generic_document_back_side"
+                      thumbTintColor="#ffffff"
+                      tintColor="#eaecf0"
+                      value={true}
+                    />
+                  </View>
+                  <Text
+                    style={
+                      [
+                        {
+                          "fontFamily": "DMSans-Bold",
+                          "fontSize": 11,
+                          "letterSpacing": 0,
+                          "lineHeight": 16,
+                          "marginBottom": -0.8389999999999995,
+                          "marginTop": -0.8389999999999995,
+                        },
+                        {
+                          "color": "#848282",
+                          "letterSpacing": 0.88,
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    ORIENTATION
+                  </Text>
+                  <View
+                    style={
+                      [
+                        {
+                          "flexDirection": "row",
+                          "flexWrap": "wrap",
+                        },
+                        {
+                          "columnGap": 8,
+                          "rowGap": 8,
+                        },
+                      ]
+                    }
+                  >
+                    <View
+                      accessibilityRole="tab"
+                      accessibilityState={
+                        {
+                          "busy": undefined,
+                          "checked": undefined,
+                          "disabled": undefined,
+                          "expanded": undefined,
+                          "selected": true,
+                        }
+                      }
+                      accessibilityValue={
+                        {
+                          "max": undefined,
+                          "min": undefined,
+                          "now": undefined,
+                          "text": undefined,
+                        }
+                      }
+                      accessible={true}
+                      collapsable={false}
+                      focusable={true}
+                      onBlur={[Function]}
+                      onClick={[Function]}
+                      onFocus={[Function]}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
+                      style={
+                        [
+                          {
+                            "alignSelf": "flex-start",
+                            "justifyContent": "center",
+                          },
+                          {
+                            "minHeight": 44,
+                          },
+                          undefined,
+                        ]
+                      }
+                      testID="sample_generic_document_orientation_landscape"
+                    >
+                      <View
+                        style={
+                          [
+                            {
+                              "alignItems": "center",
+                              "flexDirection": "row",
+                            },
+                            {
+                              "backgroundColor": "#151f72",
+                              "borderColor": "transparent",
+                              "borderRadius": 999,
+                              "borderWidth": 0,
+                              "columnGap": 4,
+                              "minHeight": 32,
+                              "paddingHorizontal": 12,
+                              "paddingVertical": 8,
+                            },
+                          ]
+                        }
+                      >
+                        <Text
+                          style={
+                            [
+                              {
+                                "fontFamily": "DMSans-Bold",
+                                "fontSize": 12.5,
+                                "letterSpacing": 0,
+                                "lineHeight": 20,
+                                "marginBottom": -1.862499999999999,
+                                "marginTop": -1.862499999999999,
+                              },
+                              {
+                                "color": "#ffffff",
+                              },
+                            ]
+                          }
+                        >
+                          Landscape
+                        </Text>
+                      </View>
+                    </View>
+                    <View
+                      accessibilityRole="tab"
+                      accessibilityState={
+                        {
+                          "busy": undefined,
+                          "checked": undefined,
+                          "disabled": undefined,
+                          "expanded": undefined,
+                          "selected": false,
+                        }
+                      }
+                      accessibilityValue={
+                        {
+                          "max": undefined,
+                          "min": undefined,
+                          "now": undefined,
+                          "text": undefined,
+                        }
+                      }
+                      accessible={true}
+                      collapsable={false}
+                      focusable={true}
+                      onBlur={[Function]}
+                      onClick={[Function]}
+                      onFocus={[Function]}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
+                      style={
+                        [
+                          {
+                            "alignSelf": "flex-start",
+                            "justifyContent": "center",
+                          },
+                          {
+                            "minHeight": 44,
+                          },
+                          undefined,
+                        ]
+                      }
+                      testID="sample_generic_document_orientation_portrait"
+                    >
+                      <View
+                        style={
+                          [
+                            {
+                              "alignItems": "center",
+                              "flexDirection": "row",
+                            },
+                            {
+                              "backgroundColor": "#ffffff",
+                              "borderColor": "#eaecf0",
+                              "borderRadius": 999,
+                              "borderWidth": 0.5,
+                              "columnGap": 4,
+                              "minHeight": 32,
+                              "paddingHorizontal": 11.5,
+                              "paddingVertical": 7.5,
+                            },
+                          ]
+                        }
+                      >
+                        <Text
+                          style={
+                            [
+                              {
+                                "fontFamily": "DMSans-Bold",
+                                "fontSize": 12.5,
+                                "letterSpacing": 0,
+                                "lineHeight": 20,
+                                "marginBottom": -1.862499999999999,
+                                "marginTop": -1.862499999999999,
+                              },
+                              {
+                                "color": "#5e646e",
+                              },
+                            ]
+                          }
+                        >
+                          Portrait
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                  <Text
+                    style={
+                      [
+                        {
+                          "fontFamily": "DMSans-Bold",
+                          "fontSize": 11,
+                          "letterSpacing": 0,
+                          "lineHeight": 16,
+                          "marginBottom": -0.8389999999999995,
+                          "marginTop": -0.8389999999999995,
+                        },
+                        {
+                          "color": "#848282",
+                          "letterSpacing": 0.88,
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    ASPECT RATIO
+                  </Text>
+                  <View
+                    style={
+                      [
+                        {
+                          "flexDirection": "row",
+                          "flexWrap": "wrap",
+                        },
+                        {
+                          "columnGap": 8,
+                          "rowGap": 8,
+                        },
+                      ]
+                    }
+                  >
+                    <View
+                      accessibilityRole="tab"
+                      accessibilityState={
+                        {
+                          "busy": undefined,
+                          "checked": undefined,
+                          "disabled": undefined,
+                          "expanded": undefined,
+                          "selected": true,
+                        }
+                      }
+                      accessibilityValue={
+                        {
+                          "max": undefined,
+                          "min": undefined,
+                          "now": undefined,
+                          "text": undefined,
+                        }
+                      }
+                      accessible={true}
+                      collapsable={false}
+                      focusable={true}
+                      onBlur={[Function]}
+                      onClick={[Function]}
+                      onFocus={[Function]}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
+                      style={
+                        [
+                          {
+                            "alignSelf": "flex-start",
+                            "justifyContent": "center",
+                          },
+                          {
+                            "minHeight": 44,
+                          },
+                          undefined,
+                        ]
+                      }
+                      testID="sample_generic_document_aspect_ratio_off"
+                    >
+                      <View
+                        style={
+                          [
+                            {
+                              "alignItems": "center",
+                              "flexDirection": "row",
+                            },
+                            {
+                              "backgroundColor": "#151f72",
+                              "borderColor": "transparent",
+                              "borderRadius": 999,
+                              "borderWidth": 0,
+                              "columnGap": 4,
+                              "minHeight": 32,
+                              "paddingHorizontal": 12,
+                              "paddingVertical": 8,
+                            },
+                          ]
+                        }
+                      >
+                        <Text
+                          style={
+                            [
+                              {
+                                "fontFamily": "DMSans-Bold",
+                                "fontSize": 12.5,
+                                "letterSpacing": 0,
+                                "lineHeight": 20,
+                                "marginBottom": -1.862499999999999,
+                                "marginTop": -1.862499999999999,
+                              },
+                              {
+                                "color": "#ffffff",
+                              },
+                            ]
+                          }
+                        >
+                          Off
+                        </Text>
+                      </View>
+                    </View>
+                    <View
+                      accessibilityRole="tab"
+                      accessibilityState={
+                        {
+                          "busy": undefined,
+                          "checked": undefined,
+                          "disabled": undefined,
+                          "expanded": undefined,
+                          "selected": false,
+                        }
+                      }
+                      accessibilityValue={
+                        {
+                          "max": undefined,
+                          "min": undefined,
+                          "now": undefined,
+                          "text": undefined,
+                        }
+                      }
+                      accessible={true}
+                      collapsable={false}
+                      focusable={true}
+                      onBlur={[Function]}
+                      onClick={[Function]}
+                      onFocus={[Function]}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
+                      style={
+                        [
+                          {
+                            "alignSelf": "flex-start",
+                            "justifyContent": "center",
+                          },
+                          {
+                            "minHeight": 44,
+                          },
+                          undefined,
+                        ]
+                      }
+                      testID="sample_generic_document_aspect_ratio_card"
+                    >
+                      <View
+                        style={
+                          [
+                            {
+                              "alignItems": "center",
+                              "flexDirection": "row",
+                            },
+                            {
+                              "backgroundColor": "#ffffff",
+                              "borderColor": "#eaecf0",
+                              "borderRadius": 999,
+                              "borderWidth": 0.5,
+                              "columnGap": 4,
+                              "minHeight": 32,
+                              "paddingHorizontal": 11.5,
+                              "paddingVertical": 7.5,
+                            },
+                          ]
+                        }
+                      >
+                        <Text
+                          style={
+                            [
+                              {
+                                "fontFamily": "DMSans-Bold",
+                                "fontSize": 12.5,
+                                "letterSpacing": 0,
+                                "lineHeight": 20,
+                                "marginBottom": -1.862499999999999,
+                                "marginTop": -1.862499999999999,
+                              },
+                              {
+                                "color": "#5e646e",
+                              },
+                            ]
+                          }
+                        >
+                          Card 1.586
+                        </Text>
+                      </View>
+                    </View>
+                    <View
+                      accessibilityRole="tab"
+                      accessibilityState={
+                        {
+                          "busy": undefined,
+                          "checked": undefined,
+                          "disabled": undefined,
+                          "expanded": undefined,
+                          "selected": false,
+                        }
+                      }
+                      accessibilityValue={
+                        {
+                          "max": undefined,
+                          "min": undefined,
+                          "now": undefined,
+                          "text": undefined,
+                        }
+                      }
+                      accessible={true}
+                      collapsable={false}
+                      focusable={true}
+                      onBlur={[Function]}
+                      onClick={[Function]}
+                      onFocus={[Function]}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
+                      style={
+                        [
+                          {
+                            "alignSelf": "flex-start",
+                            "justifyContent": "center",
+                          },
+                          {
+                            "minHeight": 44,
+                          },
+                          undefined,
+                        ]
+                      }
+                      testID="sample_generic_document_aspect_ratio_passport"
+                    >
+                      <View
+                        style={
+                          [
+                            {
+                              "alignItems": "center",
+                              "flexDirection": "row",
+                            },
+                            {
+                              "backgroundColor": "#ffffff",
+                              "borderColor": "#eaecf0",
+                              "borderRadius": 999,
+                              "borderWidth": 0.5,
+                              "columnGap": 4,
+                              "minHeight": 32,
+                              "paddingHorizontal": 11.5,
+                              "paddingVertical": 7.5,
+                            },
+                          ]
+                        }
+                      >
+                        <Text
+                          style={
+                            [
+                              {
+                                "fontFamily": "DMSans-Bold",
+                                "fontSize": 12.5,
+                                "letterSpacing": 0,
+                                "lineHeight": 20,
+                                "marginBottom": -1.862499999999999,
+                                "marginTop": -1.862499999999999,
+                              },
+                              {
+                                "color": "#5e646e",
+                              },
+                            ]
+                          }
+                        >
+                          Passport 1.309
+                        </Text>
+                      </View>
+                    </View>
+                    <View
+                      accessibilityRole="tab"
+                      accessibilityState={
+                        {
+                          "busy": undefined,
+                          "checked": undefined,
+                          "disabled": undefined,
+                          "expanded": undefined,
+                          "selected": false,
+                        }
+                      }
+                      accessibilityValue={
+                        {
+                          "max": undefined,
+                          "min": undefined,
+                          "now": undefined,
+                          "text": undefined,
+                        }
+                      }
+                      accessible={true}
+                      collapsable={false}
+                      focusable={true}
+                      onBlur={[Function]}
+                      onClick={[Function]}
+                      onFocus={[Function]}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
+                      style={
+                        [
+                          {
+                            "alignSelf": "flex-start",
+                            "justifyContent": "center",
+                          },
+                          {
+                            "minHeight": 44,
+                          },
+                          undefined,
+                        ]
+                      }
+                      testID="sample_generic_document_aspect_ratio_booklet"
+                    >
+                      <View
+                        style={
+                          [
+                            {
+                              "alignItems": "center",
+                              "flexDirection": "row",
+                            },
+                            {
+                              "backgroundColor": "#ffffff",
+                              "borderColor": "#eaecf0",
+                              "borderRadius": 999,
+                              "borderWidth": 0.5,
+                              "columnGap": 4,
+                              "minHeight": 32,
+                              "paddingHorizontal": 11.5,
+                              "paddingVertical": 7.5,
+                            },
+                          ]
+                        }
+                      >
+                        <Text
+                          style={
+                            [
+                              {
+                                "fontFamily": "DMSans-Bold",
+                                "fontSize": 12.5,
+                                "letterSpacing": 0,
+                                "lineHeight": 20,
+                                "marginBottom": -1.862499999999999,
+                                "marginTop": -1.862499999999999,
+                              },
+                              {
+                                "color": "#5e646e",
+                              },
+                            ]
+                          }
+                        >
+                          Booklet 0.748
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                  <View
+                    accessibilityRole="button"
+                    accessibilityState={
+                      {
+                        "busy": false,
+                        "checked": undefined,
+                        "disabled": false,
+                        "expanded": undefined,
+                        "selected": undefined,
+                      }
+                    }
+                    accessibilityValue={
+                      {
+                        "max": undefined,
+                        "min": undefined,
+                        "now": undefined,
+                        "text": undefined,
+                      }
+                    }
+                    accessible={true}
+                    collapsable={false}
+                    focusable={true}
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onFocus={[Function]}
+                    onResponderGrant={[Function]}
+                    onResponderMove={[Function]}
+                    onResponderRelease={[Function]}
+                    onResponderTerminate={[Function]}
+                    onResponderTerminationRequest={[Function]}
+                    onStartShouldSetResponder={[Function]}
+                    style={
+                      [
+                        {
+                          "alignItems": "center",
+                          "alignSelf": "stretch",
+                          "justifyContent": "center",
+                        },
+                        {
+                          "backgroundColor": "#151f72",
+                          "borderRadius": 32,
+                          "minHeight": 52,
+                          "opacity": 1,
+                          "paddingHorizontal": 24,
+                        },
+                        undefined,
+                      ]
+                    }
+                    testID="sample_generic_document_done"
+                  >
+                    <View
+                      style={
+                        {
+                          "alignItems": "center",
+                          "justifyContent": "center",
+                        }
+                      }
+                    >
+                      <Text
+                        style={
+                          [
+                            {
+                              "fontFamily": "DMSans-Bold",
+                              "fontSize": 16,
+                              "letterSpacing": 0,
+                              "lineHeight": 24,
+                              "marginBottom": -1.5839999999999996,
+                              "marginTop": -1.5839999999999996,
+                            },
+                            {
+                              "textAlign": "center",
+                            },
+                            {
+                              "color": "#ffffff",
+                              "paddingVertical": 4,
+                            },
+                          ]
+                        }
+                      >
+                        Done
+                      </Text>
                     </View>
                   </View>
                 </View>

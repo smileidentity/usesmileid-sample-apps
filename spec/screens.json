@@ -519,7 +519,7 @@
         {
           "state": "default",
           "design": "in-repo",
-          "note": "Four rows: Automatic (the default: the document shape follows the API's format and has_back), Green Book preset, Passport preset, Custom. Choosing Custom opens customDocumentSheet."
+          "note": "Four rows: Automatic (the default: the document shape follows the API's format and has_back), Green Book preset, Passport preset, Generic document. Choosing Generic document opens genericDocumentSheet."
         }
       ],
       "components": [
@@ -532,8 +532,8 @@
       ]
     },
     {
-      "id": "customDocumentSheet",
-      "title": "Custom document",
+      "id": "genericDocumentSheet",
+      "title": "Generic document",
       "owner": "sample",
       "board": "05",
       "route": "sheet",
@@ -553,12 +553,12 @@
         "Button"
       ],
       "testIds": [
-        "sample_custom_document_sheet",
-        "sample_custom_document_name",
-        "sample_custom_document_back_side",
-        "sample_custom_document_orientation",
-        "sample_custom_document_aspect_ratio",
-        "sample_custom_document_done"
+        "sample_generic_document_sheet",
+        "sample_generic_document_name",
+        "sample_generic_document_back_side",
+        "sample_generic_document_orientation",
+        "sample_generic_document_aspect_ratio",
+        "sample_generic_document_done"
       ]
     },
     {

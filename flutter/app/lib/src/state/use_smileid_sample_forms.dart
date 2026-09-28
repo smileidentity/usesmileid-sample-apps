@@ -95,12 +95,12 @@ class UseSmileIDSampleFormsNotifier extends Notifier<UseSmileIDSampleForms> {
   void setCaptureAs(UseSmileIDSampleCaptureAs captureAs) => state = state
       .copyWith(idDetails: state.idDetails.copyWith(captureAs: captureAs));
 
-  /// Keeps what the custom-document sheet built, which also selects Custom.
-  void setCustomDocument(UseSmileIDSampleCustomDocument custom) =>
+  /// Keeps what the generic-document sheet built, which also selects Generic document.
+  void setGenericDocument(UseSmileIDSampleGenericDocument genericDocument) =>
       state = state.copyWith(
         idDetails: state.idDetails.copyWith(
-          custom: custom,
-          captureAs: UseSmileIDSampleCaptureAs.custom,
+          genericDocument: genericDocument,
+          captureAs: UseSmileIDSampleCaptureAs.genericDocument,
         ),
       );
 

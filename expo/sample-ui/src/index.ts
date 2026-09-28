@@ -228,7 +228,7 @@ export {
 } from './state/use-smile-id-sample-user-details-requirement';
 export {
   smileIDSampleAspectRatios,
-  smileIDSampleCustomDocumentDefaults,
+  smileIDSampleGenericDocumentDefaults,
   smileIDSampleDocumentId,
   smileIDSampleFlag,
   smileIDSampleIdDetailsComplete,
@@ -238,7 +238,7 @@ export {
   type UseSmileIDSampleAspectRatio,
   type UseSmileIDSampleCatalogueFamily,
   type UseSmileIDSampleCountry,
-  type UseSmileIDSampleCustomDocument,
+  type UseSmileIDSampleGenericDocument,
   type UseSmileIDSampleDocument,
   type UseSmileIDSampleDocumentOrientation,
   type UseSmileIDSampleIdDetails,
@@ -306,7 +306,7 @@ export { IdTypePickerSheet } from './screens/id-type-picker-sheet';
 export { DocumentPickerSheet } from './screens/document-picker-sheet';
 export { CaptureAsSheet } from './screens/capture-as-sheet';
 export { CaptureModeSheet } from './screens/capture-mode-sheet';
-export { CustomDocumentSheet } from './screens/custom-document-sheet';
+export { GenericDocumentSheet } from './screens/generic-document-sheet';
 export { ProfilesScreen, type UseSmileIDSampleProfilesState } from './screens/profiles-screen';
 export {
   ProfileConfigScreen,

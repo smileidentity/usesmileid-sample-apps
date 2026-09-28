@@ -18,9 +18,9 @@ export default function CaptureAs() {
     <CaptureAsSheet
       selected={selected}
       onSelect={(captureAs) => {
-        // Custom hands over to its own sheet, which is what keeps it; the others are kept at once.
-        if (captureAs === UseSmileIDSampleCaptureAs.Custom) {
-          router.replace(`/flow/${productId}/id-details/custom-document`);
+        // Generic document hands over to its own sheet, which is what keeps it; the others are kept at once.
+        if (captureAs === UseSmileIDSampleCaptureAs.GenericDocument) {
+          router.replace(`/flow/${productId}/id-details/generic-document`);
           return;
         }
         setCaptureAs(captureAs);

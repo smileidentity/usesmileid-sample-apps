@@ -110,7 +110,7 @@ const Map<String, String> useSmileIDSampleGoldenFor = <String, String>{
   'documentPickerSheet.error': 'sheet_document_picker_error',
   'documentPickerSheet.empty': 'sheet_document_picker_empty',
   'captureAsSheet.default': 'sheet_capture_as',
-  'customDocumentSheet.default': 'sheet_custom_document',
+  'genericDocumentSheet.default': 'sheet_generic_document',
   'captureModeSheet.default': 'sheet_capture_mode',
   'settings.default': 'screen_settings',
   'settings.altProfile': 'screen_settings_alt_profile',

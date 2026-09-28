@@ -7,7 +7,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleBottomSheet
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleOptionRow
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureAs
 
-/** How the SDK photographs the document; choosing Custom hands over to the custom-document sheet. */
+/** How the SDK photographs the document; choosing Generic document hands over to the generic-document sheet. */
 @Composable
 fun CaptureAsSheet(
     selected: UseSmileIDSampleCaptureAs,

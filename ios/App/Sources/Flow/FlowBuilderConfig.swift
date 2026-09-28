@@ -294,13 +294,13 @@ func useSmileIDSampleDocumentType(_ details: UseSmileIDSampleIdDetails) -> (Docu
     return (.southAfricaGreenBook, DocumentType.southAfricaGreenBook.hasBackSide)
   case .passport:
     return (.passport, DocumentType.passport.hasBackSide)
-  case .custom:
-    let custom = details.custom
+  case .genericDocument:
+    let genericDocument = details.genericDocument
     let type = DocumentType.genericDocument(
-      displayName: custom.displayName,
-      hasBackSide: custom.hasBackSide,
-      orientation: custom.orientation == .portrait ? .portrait : .landscape,
-      knownAspectRatio: custom.aspectRatio.ratio
+      displayName: genericDocument.displayName,
+      hasBackSide: genericDocument.hasBackSide,
+      orientation: genericDocument.orientation == .portrait ? .portrait : .landscape,
+      knownAspectRatio: genericDocument.aspectRatio.ratio
     )
     return (type, type.hasBackSide)
   // The API's has_back, not a preset's: the API is the source that says what the document is.

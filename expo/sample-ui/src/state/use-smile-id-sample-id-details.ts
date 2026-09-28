@@ -39,7 +39,7 @@ export type UseSmileIDSampleDocument = {
 export const smileIDSampleDocumentId = (document: UseSmileIDSampleDocument): string =>
   document.subType === null ? document.code : `${document.code}_${document.subType}`;
 
-/// A custom document's capture orientation.
+/// A generic document's capture orientation.
 export type UseSmileIDSampleDocumentOrientation = 'landscape' | 'portrait';
 
 export const smileIDSampleOrientations: readonly {
@@ -50,7 +50,7 @@ export const smileIDSampleOrientations: readonly {
   { id: 'portrait', label: 'Portrait' },
 ];
 
-/// The custom frame ratios the sheet offers, as width over height; `off` is the SDK's own frame.
+/// The frame ratios the sheet offers, as width over height; `off` is the SDK's own frame.
 export type UseSmileIDSampleAspectRatio = 'off' | 'card' | 'passport' | 'booklet';
 
 export const smileIDSampleAspectRatios: readonly {
@@ -64,8 +64,8 @@ export const smileIDSampleAspectRatios: readonly {
   { id: 'booklet', label: 'Booklet 0.748', ratio: 0.748 },
 ];
 
-/// What the custom-document sheet builds into a generic document.
-export type UseSmileIDSampleCustomDocument = {
+/// What the generic-document sheet builds, as the SDK's GenericDocument takes it.
+export type UseSmileIDSampleGenericDocument = {
   readonly displayName: string;
   readonly hasBackSide: boolean;
   readonly orientation: UseSmileIDSampleDocumentOrientation;
@@ -73,7 +73,7 @@ export type UseSmileIDSampleCustomDocument = {
 };
 
 /// The SDK's own generic defaults.
-export const smileIDSampleCustomDocumentDefaults: UseSmileIDSampleCustomDocument = {
+export const smileIDSampleGenericDocumentDefaults: UseSmileIDSampleGenericDocument = {
   displayName: 'Document',
   hasBackSide: true,
   orientation: 'landscape',
@@ -89,7 +89,7 @@ export type UseSmileIDSampleIdDetails = {
   readonly idType: UseSmileIDSampleKycIdType | null;
   readonly document: UseSmileIDSampleDocument | null;
   readonly captureAs: UseSmileIDSampleCaptureAs;
-  readonly custom: UseSmileIDSampleCustomDocument;
+  readonly genericDocument: UseSmileIDSampleGenericDocument;
   readonly idNumber: string;
 };
 
@@ -99,7 +99,7 @@ export const smileIDSampleIdDetailsDefaults: UseSmileIDSampleIdDetails = {
   idType: null,
   document: null,
   captureAs: UseSmileIDSampleCaptureAs.Automatic,
-  custom: smileIDSampleCustomDocumentDefaults,
+  genericDocument: smileIDSampleGenericDocumentDefaults,
   idNumber: '',
 };
 

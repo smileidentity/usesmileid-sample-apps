@@ -12,7 +12,7 @@ import '../state/use_smileid_sample_settings.dart';
 import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
-/// How the SDK photographs the document; choosing Custom hands over to the custom-document sheet.
+/// How the SDK photographs the document; choosing Generic document hands over to the generic-document sheet.
 class UseSmileIDSampleCaptureAsSheet extends StatelessWidget {
   /// [onSelect] both chooses and dismisses.
   const UseSmileIDSampleCaptureAsSheet({
@@ -76,29 +76,29 @@ class UseSmileIDSampleCaptureModeSheet extends StatelessWidget {
   );
 }
 
-/// Builds the generic document "Capture as: Custom" hands the SDK; nothing is kept until Done.
-class UseSmileIDSampleCustomDocumentSheet extends StatefulWidget {
+/// Builds the generic document "Capture as: Generic document" hands the SDK; nothing is kept until Done.
+class UseSmileIDSampleGenericDocumentSheet extends StatefulWidget {
   /// [initial] seeds the draft.
-  const UseSmileIDSampleCustomDocumentSheet({
+  const UseSmileIDSampleGenericDocumentSheet({
     required this.initial,
     required this.onDone,
     super.key,
   });
 
   /// What the form already holds.
-  final UseSmileIDSampleCustomDocument initial;
+  final UseSmileIDSampleGenericDocument initial;
 
   /// Keeps the draft and dismisses.
-  final ValueChanged<UseSmileIDSampleCustomDocument> onDone;
+  final ValueChanged<UseSmileIDSampleGenericDocument> onDone;
 
   @override
-  State<UseSmileIDSampleCustomDocumentSheet> createState() =>
-      _UseSmileIDSampleCustomDocumentSheetState();
+  State<UseSmileIDSampleGenericDocumentSheet> createState() =>
+      _UseSmileIDSampleGenericDocumentSheetState();
 }
 
-class _UseSmileIDSampleCustomDocumentSheetState
-    extends State<UseSmileIDSampleCustomDocumentSheet> {
-  late UseSmileIDSampleCustomDocument _draft = widget.initial;
+class _UseSmileIDSampleGenericDocumentSheetState
+    extends State<UseSmileIDSampleGenericDocumentSheet> {
+  late UseSmileIDSampleGenericDocument _draft = widget.initial;
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +113,7 @@ class _UseSmileIDSampleCustomDocumentSheetState
           onChanged: (String value) =>
               setState(() => _draft = _draft.copyWith(displayName: value)),
           placeholder: 'Document',
-          testId: UseSmileIDSampleTestIds.customDocumentName,
+          testId: UseSmileIDSampleTestIds.genericDocumentName,
         ),
         const SizedBox(height: SmileDimens.spacingSm),
         UseSmileIDSampleSettingRow(
@@ -123,7 +123,7 @@ class _UseSmileIDSampleCustomDocumentSheetState
             value: _draft.hasBackSide,
             onChanged: (bool value) =>
                 setState(() => _draft = _draft.copyWith(hasBackSide: value)),
-            testId: UseSmileIDSampleTestIds.customDocumentBackSide,
+            testId: UseSmileIDSampleTestIds.genericDocumentBackSide,
           ),
         ),
         const SizedBox(height: SmileDimens.spacingSm),
@@ -142,7 +142,7 @@ class _UseSmileIDSampleCustomDocumentSheetState
                 onTap: () => setState(
                   () => _draft = _draft.copyWith(orientation: orientation),
                 ),
-                testId: UseSmileIDSampleTestIds.customDocumentOrientation(
+                testId: UseSmileIDSampleTestIds.genericDocumentOrientation(
                   orientation.id,
                 ),
               ),
@@ -164,7 +164,7 @@ class _UseSmileIDSampleCustomDocumentSheetState
                 onTap: () => setState(
                   () => _draft = _draft.copyWith(aspectRatio: ratio),
                 ),
-                testId: UseSmileIDSampleTestIds.customDocumentAspectRatio(
+                testId: UseSmileIDSampleTestIds.genericDocumentAspectRatio(
                   ratio.id,
                 ),
               ),
@@ -179,7 +179,7 @@ class _UseSmileIDSampleCustomDocumentSheetState
               _draft.copyWith(displayName: name.isEmpty ? 'Document' : name),
             );
           },
-          testId: UseSmileIDSampleTestIds.customDocumentDone,
+          testId: UseSmileIDSampleTestIds.genericDocumentDone,
         ),
       ],
     );

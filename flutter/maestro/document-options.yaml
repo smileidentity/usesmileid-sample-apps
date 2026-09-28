@@ -1,6 +1,6 @@
 appId: ${APP_ID}
 ---
-# The document form's list, Capture as and custom sheet on fixture lists, through SDK mount (consent by text: sdk-flow.yaml).
+# The document form's list, Capture as and generic-document sheet on fixture lists, through SDK mount (consent by text: sdk-flow.yaml).
 
 - clearState
 - runFlow:
@@ -76,22 +76,22 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_capture_as_option_passport"
 
-# Custom opens its own sheet, and what it builds is named on the trigger.
+# Generic document opens its own sheet, and what it builds is named on the trigger.
 - tapOn:
-    id: "sample_capture_as_option_custom"
+    id: "sample_capture_as_option_genericDocument"
 - assertVisible:
-    id: "sample_custom_document_sheet"
+    id: "sample_generic_document_sheet"
 - tapOn:
-    id: "sample_custom_document_name"
+    id: "sample_generic_document_name"
 - eraseText
 - inputText: "Booklet"
 - hideKeyboard
 - tapOn:
-    id: "sample_custom_document_orientation_portrait"
+    id: "sample_generic_document_orientation_portrait"
 - tapOn:
-    id: "sample_custom_document_aspect_ratio_booklet"
+    id: "sample_generic_document_aspect_ratio_booklet"
 - tapOn:
-    id: "sample_custom_document_done"
+    id: "sample_generic_document_done"
 - assertVisible:
     text: ".*Booklet.*"
     childOf:

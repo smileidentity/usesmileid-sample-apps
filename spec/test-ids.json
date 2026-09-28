@@ -289,31 +289,31 @@
       },
       {
         "id": "sample_capture_as_option",
-        "description": "One 'Capture as' row; suffixed automatic, greenBook, passport or custom."
+        "description": "One 'Capture as' row; suffixed automatic, greenBook, passport or genericDocument."
       },
       {
-        "id": "sample_custom_document_sheet",
-        "description": "The sheet that builds a custom document shape, opened by choosing 'Custom'."
+        "id": "sample_generic_document_sheet",
+        "description": "The sheet that builds a generic document shape, opened by choosing 'Generic document'."
       },
       {
-        "id": "sample_custom_document_name",
-        "description": "Custom document display name."
+        "id": "sample_generic_document_name",
+        "description": "Generic document display name."
       },
       {
-        "id": "sample_custom_document_back_side",
-        "description": "Custom document back-side switch → GenericDocument hasBackSide."
+        "id": "sample_generic_document_back_side",
+        "description": "Generic document back-side switch → GenericDocument hasBackSide."
       },
       {
-        "id": "sample_custom_document_orientation",
-        "description": "Custom document orientation, a row of FilterChips; each chip is suffixed landscape or portrait, e.g. sample_custom_document_orientation_portrait."
+        "id": "sample_generic_document_orientation",
+        "description": "Generic document orientation, a row of FilterChips; each chip is suffixed landscape or portrait, e.g. sample_generic_document_orientation_portrait."
       },
       {
-        "id": "sample_custom_document_aspect_ratio",
-        "description": "Custom document aspect ratio → GenericDocument knownAspectRatio, a row of FilterChips; each chip is suffixed off, card (1.586), passport (1.309) or booklet (0.748)."
+        "id": "sample_generic_document_aspect_ratio",
+        "description": "Generic document aspect ratio → GenericDocument knownAspectRatio, a row of FilterChips; each chip is suffixed off, card (1.586), passport (1.309) or booklet (0.748)."
       },
       {
-        "id": "sample_custom_document_done",
-        "description": "Closes the custom document sheet and keeps what it built."
+        "id": "sample_generic_document_done",
+        "description": "Closes the generic document sheet and keeps what it built."
       }
     ],
     "settings": [

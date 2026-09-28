@@ -189,8 +189,8 @@ class _UseSmileIDSampleKycFormTabState
         if (details.document != null) {
           _pickCaptureAs();
         }
-      case UseSmileIDSamplePicker.customDocument:
-        _buildCustom();
+      case UseSmileIDSamplePicker.genericDocument:
+        _buildGenericDocument();
     }
   }
 
@@ -331,27 +331,31 @@ class _UseSmileIDSampleKycFormTabState
     if (!mounted || chosen == null) {
       return;
     }
-    // Custom hands over to its own sheet, which is what keeps it; the others are kept at once.
-    if (chosen == UseSmileIDSampleCaptureAs.custom) {
-      await _buildCustom();
+    // Generic document hands over to its own sheet, which is what keeps it; the others are kept at once.
+    if (chosen == UseSmileIDSampleCaptureAs.genericDocument) {
+      await _buildGenericDocument();
     } else {
       ref.read(useSmileIDSampleFormsProvider.notifier).setCaptureAs(chosen!);
     }
   }
 
-  Future<void> _buildCustom() => showUseSmileIDSampleSheet<void>(
+  Future<void> _buildGenericDocument() => showUseSmileIDSampleSheet<void>(
     context: context,
-    title: 'Custom document',
-    testId: UseSmileIDSampleTestIds.customDocumentSheet,
-    builder: (BuildContext sheetContext) => UseSmileIDSampleCustomDocumentSheet(
-      initial: ref.read(useSmileIDSampleFormsProvider).idDetails.custom,
-      onDone: (UseSmileIDSampleCustomDocument custom) {
-        ref
-            .read(useSmileIDSampleFormsProvider.notifier)
-            .setCustomDocument(custom);
-        Navigator.of(sheetContext).pop();
-      },
-    ),
+    title: 'Generic document',
+    testId: UseSmileIDSampleTestIds.genericDocumentSheet,
+    builder: (BuildContext sheetContext) =>
+        UseSmileIDSampleGenericDocumentSheet(
+          initial: ref
+              .read(useSmileIDSampleFormsProvider)
+              .idDetails
+              .genericDocument,
+          onDone: (UseSmileIDSampleGenericDocument genericDocument) {
+            ref
+                .read(useSmileIDSampleFormsProvider.notifier)
+                .setGenericDocument(genericDocument);
+            Navigator.of(sheetContext).pop();
+          },
+        ),
   );
 }
 
@@ -369,8 +373,8 @@ enum UseSmileIDSamplePicker {
   /// The capture-as sheet.
   captureAs,
 
-  /// The custom-document sheet.
-  customDocument,
+  /// The generic-document sheet.
+  genericDocument,
 }
 
 /// The product with this id, or null for one this build does not know.

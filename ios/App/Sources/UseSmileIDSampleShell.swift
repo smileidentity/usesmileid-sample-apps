@@ -116,17 +116,17 @@ struct UseSmileIDSampleShell: View {
       )
     case .captureAs:
       CaptureAsSheet(selected: app.idDetails.captureAs) { choice in
-        if choice == .custom {
-          router.sheet = .customDocument
+        if choice == .genericDocument {
+          router.sheet = .genericDocument
         } else {
           app.idDetails.captureAs = choice
           router.sheet = nil
         }
       }
-    case .customDocument:
-      CustomDocumentSheet(initial: app.idDetails.custom) { custom in
-        app.idDetails.custom = custom
-        app.idDetails.captureAs = .custom
+    case .genericDocument:
+      GenericDocumentSheet(initial: app.idDetails.genericDocument) { genericDocument in
+        app.idDetails.genericDocument = genericDocument
+        app.idDetails.captureAs = .genericDocument
         router.sheet = nil
       }
     case .captureMode:

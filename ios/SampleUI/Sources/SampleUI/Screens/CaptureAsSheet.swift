@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// How the SDK photographs the document; choosing Custom hands over to the custom-document sheet.
+/// How the SDK photographs the document; choosing Generic document hands over to the generic-document sheet.
 public struct CaptureAsSheet: View {
   private let selected: UseSmileIDSampleCaptureAs
   private let onSelect: (UseSmileIDSampleCaptureAs) -> Void

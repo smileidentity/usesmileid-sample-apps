@@ -296,17 +296,17 @@ UseSmileIDSampleDocumentCapture useSmileIDSampleDocumentCaptureFor(
       DocumentType.southAfricaGreenBook,
     ),
     UseSmileIDSampleCaptureAs.passport => _preset(DocumentType.passport),
-    UseSmileIDSampleCaptureAs.custom => _preset(
+    UseSmileIDSampleCaptureAs.genericDocument => _preset(
       GenericDocument(
-        displayName: details.custom.displayName,
-        hasBackSide: details.custom.hasBackSide,
-        orientation: switch (details.custom.orientation) {
+        displayName: details.genericDocument.displayName,
+        hasBackSide: details.genericDocument.hasBackSide,
+        orientation: switch (details.genericDocument.orientation) {
           UseSmileIDSampleDocumentOrientation.landscape =>
             DocumentOrientation.landscape,
           UseSmileIDSampleDocumentOrientation.portrait =>
             DocumentOrientation.portrait,
         },
-        knownAspectRatio: details.custom.aspectRatio.ratio,
+        knownAspectRatio: details.genericDocument.aspectRatio.ratio,
       ),
     ),
     // The API's has_back, not a preset's: the API is the source that says what the document is.

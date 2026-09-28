@@ -9,7 +9,7 @@ import com.usesmileid.sampleapps.ui.CatalogueFixtures
 import com.usesmileid.sampleapps.ui.screens.CaptureAsSheet
 import com.usesmileid.sampleapps.ui.screens.CaptureModeSheet
 import com.usesmileid.sampleapps.ui.screens.CountryPickerSheet
-import com.usesmileid.sampleapps.ui.screens.CustomDocumentSheet
+import com.usesmileid.sampleapps.ui.screens.GenericDocumentSheet
 import com.usesmileid.sampleapps.ui.screens.DocumentPickerSheet
 import com.usesmileid.sampleapps.ui.screens.IdTypePickerSheet
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureAs
@@ -17,7 +17,7 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureMode
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogue
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueFamily
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCountry
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCustomDocument
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleGenericDocument
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocument
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleKycIdType
 import org.junit.Before
@@ -103,13 +103,13 @@ class CatalogueGoldenTest : GoldenTest() {
     }
 
     @Test
-    fun custom_document_sheet() = goldens("sheet_custom_document", fullWindow = true) {
-        CustomDocumentSheet(initial = UseSmileIDSampleCustomDocument(), onDone = {}, onDismissRequest = {})
+    fun generic_document_sheet() = goldens("sheet_generic_document", fullWindow = true) {
+        GenericDocumentSheet(initial = UseSmileIDSampleGenericDocument(), onDone = {}, onDismissRequest = {})
     }
 
     @Test
-    fun custom_document_sheet_max_font_scale() = assertSurvivesMaxFontScale {
-        CustomDocumentSheet(initial = UseSmileIDSampleCustomDocument(), onDone = {}, onDismissRequest = {})
+    fun generic_document_sheet_max_font_scale() = assertSurvivesMaxFontScale {
+        GenericDocumentSheet(initial = UseSmileIDSampleGenericDocument(), onDone = {}, onDismissRequest = {})
     }
 
     @Test

@@ -18,7 +18,7 @@ internal object UseSmileIDSampleDeepLinks {
     const val ID_TYPE_PICKER = "$SCHEME://flow/{productId}/id-details/id-type"
     const val DOCUMENT_PICKER = "$SCHEME://flow/{productId}/id-details/document"
     const val CAPTURE_AS = "$SCHEME://flow/{productId}/id-details/capture-as"
-    const val CUSTOM_DOCUMENT = "$SCHEME://flow/{productId}/id-details/custom-document"
+    const val GENERIC_DOCUMENT = "$SCHEME://flow/{productId}/id-details/generic-document"
     const val SDK_FLOW = "$SCHEME://flow/{productId}/run?route={route}"
 
     const val PROFILES = "$SCHEME://profiles"

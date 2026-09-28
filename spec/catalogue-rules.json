@@ -1096,15 +1096,15 @@
         }
       },
       {
-        "name": "Custom builds a GenericDocument from the sheet",
-        "captureAs": "custom",
+        "name": "Generic document builds a GenericDocument from the sheet",
+        "captureAs": "genericDocument",
         "document": {
           "code": "PASSPORT",
           "name": "Passport",
           "hasBack": false,
           "format": 3
         },
-        "custom": {
+        "genericDocument": {
           "displayName": "Booklet",
           "hasBackSide": true,
           "orientation": "portrait",

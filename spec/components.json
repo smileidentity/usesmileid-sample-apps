@@ -705,7 +705,7 @@
       "usedBy": [
         "kycIdForm",
         "settings",
-        "customDocumentSheet"
+        "genericDocumentSheet"
       ],
       "notes": "CORRECTED 2026-08-12: looks like an input, behaves like a button, and has a disabled state — the ID-type trigger stays greyed until a country is chosen. Each trigger carries a leading icon. CORRECTED 2026-08-17 against node 5206:2797. Leads with an EMOJI before the label — the chosen country's flag, or a globe as placeholder — then the label at 15/600, then a DOWN chevron at 12 (the list chevron points right). An actionable trigger is outlined in PRIMARY at 1.5; a disabled one takes the button-disabled pair, not surface-muted with muted text, which does not read as disabled. A leading slot must take a MINIMUM size, not a fixed one: an emoji grows with font scale and clips in a fixed box.",
       "dependency": "ID TYPE is DISABLED until a country is selected.",

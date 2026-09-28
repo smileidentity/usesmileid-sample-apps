@@ -26,7 +26,7 @@ internal enum class UseSmileIDSampleSheet {
     IdTypePicker,
     DocumentPicker,
     CaptureAs,
-    CustomDocument,
+    GenericDocument,
     CaptureMode,
 }
 
@@ -63,7 +63,7 @@ internal object UseSmileIDSampleSheetLinks {
         UseSmileIDSampleDeepLinks.ID_TYPE_PICKER.substringAfterLast('/') to UseSmileIDSampleSheet.IdTypePicker,
         UseSmileIDSampleDeepLinks.DOCUMENT_PICKER.substringAfterLast('/') to UseSmileIDSampleSheet.DocumentPicker,
         UseSmileIDSampleDeepLinks.CAPTURE_AS.substringAfterLast('/') to UseSmileIDSampleSheet.CaptureAs,
-        UseSmileIDSampleDeepLinks.CUSTOM_DOCUMENT.substringAfterLast('/') to UseSmileIDSampleSheet.CustomDocument,
+        UseSmileIDSampleDeepLinks.GENERIC_DOCUMENT.substringAfterLast('/') to UseSmileIDSampleSheet.GenericDocument,
     )
 
     /** Built from the constant so a renamed path cannot leave this behind. */

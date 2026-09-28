@@ -9,7 +9,7 @@ type Props = {
   onDismiss: () => void;
 };
 
-/// How the SDK photographs the document; choosing Custom hands over to the custom-document sheet.
+/// How the SDK photographs the document; choosing Generic document hands over to the generic-document sheet.
 export const CaptureAsSheet = ({ selected, onSelect, onDismiss }: Props) => (
   <UseSmileIDSampleBottomSheet
     visible

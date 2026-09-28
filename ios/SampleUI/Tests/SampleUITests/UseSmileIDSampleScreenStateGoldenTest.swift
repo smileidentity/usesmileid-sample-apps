@@ -39,7 +39,7 @@ final class UseSmileIDSampleScreenStateGoldenTest: XCTestCase {
     "documentPickerSheet.error": "document_picker_error",
     "documentPickerSheet.empty": "document_picker_empty",
     "captureAsSheet.default": "capture_as_sheet",
-    "customDocumentSheet.default": "custom_document_sheet",
+    "genericDocumentSheet.default": "generic_document_sheet",
     "captureModeSheet.default": "capture_mode_sheet",
     "settings.default": "settings",
     "settings.altProfile": "settings_alt_profile",

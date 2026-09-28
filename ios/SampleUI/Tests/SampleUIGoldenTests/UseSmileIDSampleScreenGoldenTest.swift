@@ -294,15 +294,15 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("capture_as_sheet") { CaptureAsSheet(selected: .automatic, onSelect: { _ in }).frame(height: 700) }
   }
 
-  func testCustomDocumentSheet() {
-    goldens("custom_document_sheet") {
-      CustomDocumentSheet(initial: UseSmileIDSampleCustomDocument(), onDone: { _ in }).frame(height: 900)
+  func testGenericDocumentSheet() {
+    goldens("generic_document_sheet") {
+      GenericDocumentSheet(initial: UseSmileIDSampleGenericDocument(), onDone: { _ in }).frame(height: 900)
     }
   }
 
-  func testCustomDocumentSheetSurvivesMaxDynamicType() {
+  func testGenericDocumentSheetSurvivesMaxDynamicType() {
     assertSurvivesMaxDynamicType(growsWithContentSize: false) {
-      CustomDocumentSheet(initial: UseSmileIDSampleCustomDocument(), onDone: { _ in }).frame(height: 1800)
+      GenericDocumentSheet(initial: UseSmileIDSampleGenericDocument(), onDone: { _ in }).frame(height: 1800)
     }
   }
 

@@ -23,10 +23,10 @@ object UseSmileIDSampleTestIds {
     const val DOCUMENT_SHEET = "sample_document_sheet"
     const val DOCUMENT_SEARCH = "sample_document_search"
     const val CAPTURE_AS_SHEET = "sample_capture_as_sheet"
-    const val CUSTOM_DOCUMENT_SHEET = "sample_custom_document_sheet"
-    const val CUSTOM_DOCUMENT_NAME = "sample_custom_document_name"
-    const val CUSTOM_DOCUMENT_BACK_SIDE = "sample_custom_document_back_side"
-    const val CUSTOM_DOCUMENT_DONE = "sample_custom_document_done"
+    const val GENERIC_DOCUMENT_SHEET = "sample_generic_document_sheet"
+    const val GENERIC_DOCUMENT_NAME = "sample_generic_document_name"
+    const val GENERIC_DOCUMENT_BACK_SIDE = "sample_generic_document_back_side"
+    const val GENERIC_DOCUMENT_DONE = "sample_generic_document_done"
     const val SETTING_CAPTURE_MODE = "sample_setting_capture_mode"
     const val CAPTURE_MODE_SHEET = "sample_capture_mode_sheet"
     const val SETTING_GALLERY_UPLOAD = "sample_setting_gallery_upload"
@@ -137,10 +137,10 @@ object UseSmileIDSampleTestIds {
         DOCUMENT_SHEET,
         DOCUMENT_SEARCH,
         CAPTURE_AS_SHEET,
-        CUSTOM_DOCUMENT_SHEET,
-        CUSTOM_DOCUMENT_NAME,
-        CUSTOM_DOCUMENT_BACK_SIDE,
-        CUSTOM_DOCUMENT_DONE,
+        GENERIC_DOCUMENT_SHEET,
+        GENERIC_DOCUMENT_NAME,
+        GENERIC_DOCUMENT_BACK_SIDE,
+        GENERIC_DOCUMENT_DONE,
         SETTING_CAPTURE_MODE,
         CAPTURE_MODE_SHEET,
         SETTING_GALLERY_UPLOAD,
@@ -268,9 +268,9 @@ object UseSmileIDSampleTestIds {
 
     fun captureModeOption(modeId: String) = "sample_capture_mode_option_$modeId"
 
-    fun customDocumentOrientation(orientationId: String) = "sample_custom_document_orientation_$orientationId"
+    fun genericDocumentOrientation(orientationId: String) = "sample_generic_document_orientation_$orientationId"
 
-    fun customDocumentAspectRatio(ratioId: String) = "sample_custom_document_aspect_ratio_$ratioId"
+    fun genericDocumentAspectRatio(ratioId: String) = "sample_generic_document_aspect_ratio_$ratioId"
 
     fun profileRow(profileId: String) = "sample_profile_row_$profileId"
 

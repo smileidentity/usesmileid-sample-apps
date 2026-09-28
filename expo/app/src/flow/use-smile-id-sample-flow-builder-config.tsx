@@ -279,19 +279,19 @@ const preset = (documentType: DocumentType): UseSmileIDSampleDocumentCapture => 
 
 /// The "Capture as" mapping from `spec/catalogue-rules.json`; pure, so its table is unit-tested.
 export const smileIDSampleDocumentCaptureFor = (details: UseSmileIDSampleIdDetails): UseSmileIDSampleDocumentCapture => {
-  const { document, custom } = details;
+  const { document, genericDocument } = details;
   switch (details.captureAs) {
     case UseSmileIDSampleCaptureAs.GreenBook:
       return preset(DocumentType.SouthAfricaGreenBook);
     case UseSmileIDSampleCaptureAs.Passport:
       return preset(DocumentType.Passport);
-    case UseSmileIDSampleCaptureAs.Custom: {
-      const ratio = smileIDSampleAspectRatios.find((it) => it.id === custom.aspectRatio)?.ratio ?? null;
+    case UseSmileIDSampleCaptureAs.GenericDocument: {
+      const ratio = smileIDSampleAspectRatios.find((it) => it.id === genericDocument.aspectRatio)?.ratio ?? null;
       return preset(
         DocumentType.GenericDocument({
-          displayName: custom.displayName,
-          hasBackSide: custom.hasBackSide,
-          orientation: custom.orientation === 'portrait' ? 'Portrait' : 'Landscape',
+          displayName: genericDocument.displayName,
+          hasBackSide: genericDocument.hasBackSide,
+          orientation: genericDocument.orientation === 'portrait' ? 'Portrait' : 'Landscape',
           ...(ratio === null ? {} : { knownAspectRatio: ratio }),
         }),
       );

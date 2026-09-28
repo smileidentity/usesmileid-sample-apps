@@ -69,11 +69,11 @@ export const KycIdFormScreen = ({
 }: Props) => {
   const theme = useSmileIDSampleTheme();
   const insets = useSafeAreaInsets();
-  const { country, idType, document, captureAs, custom, idNumber } = state.details;
+  const { country, idType, document, captureAs, genericDocument, idNumber } = state.details;
   const numberError = smileIDSampleIdNumberError(idType, idNumber);
   const captureAsLabel =
-    captureAs === UseSmileIDSampleCaptureAs.Custom
-      ? `Custom: ${custom.displayName}`
+    captureAs === UseSmileIDSampleCaptureAs.GenericDocument
+      ? `Generic document: ${genericDocument.displayName}`
       : (smileIDSampleCaptureAsOptions.find((option) => option.id === captureAs)?.label ?? 'Automatic');
 
   return (

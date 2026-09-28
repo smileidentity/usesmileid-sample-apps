@@ -331,36 +331,42 @@ void main() {
       },
     );
 
-    testWidgets('choosing Custom hands over to the custom-document sheet', (
-      WidgetTester tester,
-    ) async {
-      await pumpAt(
-        tester,
-        UseSmileIDSampleRoutes.idDetailsForm('documentVerification'),
-      );
-      await tester.tap(byId(UseSmileIDSampleTestIds.countryTrigger));
-      await tester.pumpAndSettle();
-      await _selectOption(tester, 'Kenya');
-      await tester.tap(byId(UseSmileIDSampleTestIds.documentTrigger));
-      await tester.pumpAndSettle();
-      await _selectOption(tester, 'Passport');
-      await tester.tap(byId(UseSmileIDSampleTestIds.captureAsTrigger));
-      await tester.pumpAndSettle();
-      await tester.tap(byId(UseSmileIDSampleTestIds.captureAsOption('custom')));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'choosing Generic document hands over to the generic-document sheet',
+      (WidgetTester tester) async {
+        await pumpAt(
+          tester,
+          UseSmileIDSampleRoutes.idDetailsForm('documentVerification'),
+        );
+        await tester.tap(byId(UseSmileIDSampleTestIds.countryTrigger));
+        await tester.pumpAndSettle();
+        await _selectOption(tester, 'Kenya');
+        await tester.tap(byId(UseSmileIDSampleTestIds.documentTrigger));
+        await tester.pumpAndSettle();
+        await _selectOption(tester, 'Passport');
+        await tester.tap(byId(UseSmileIDSampleTestIds.captureAsTrigger));
+        await tester.pumpAndSettle();
+        await tester.tap(
+          byId(UseSmileIDSampleTestIds.captureAsOption('genericDocument')),
+        );
+        await tester.pumpAndSettle();
 
-      expect(byId(UseSmileIDSampleTestIds.customDocumentSheet), findsOne);
-      await tester.enterText(
-        byId(UseSmileIDSampleTestIds.customDocumentName),
-        'Work permit',
-      );
-      await tester.tap(byId(UseSmileIDSampleTestIds.customDocumentDone));
-      await tester.pumpAndSettle();
+        expect(byId(UseSmileIDSampleTestIds.genericDocumentSheet), findsOne);
+        await tester.enterText(
+          byId(UseSmileIDSampleTestIds.genericDocumentName),
+          'Work permit',
+        );
+        await tester.tap(byId(UseSmileIDSampleTestIds.genericDocumentDone));
+        await tester.pumpAndSettle();
 
-      expect(forms().idDetails.captureAs, UseSmileIDSampleCaptureAs.custom);
-      expect(forms().idDetails.custom.displayName, 'Work permit');
-      expect(find.text('Custom: Work permit'), findsOne);
-    });
+        expect(
+          forms().idDetails.captureAs,
+          UseSmileIDSampleCaptureAs.genericDocument,
+        );
+        expect(forms().idDetails.genericDocument.displayName, 'Work permit');
+        expect(find.text('Generic document: Work permit'), findsOne);
+      },
+    );
   });
 
   group('the pickers', () {
@@ -411,20 +417,23 @@ void main() {
       expect(byId(UseSmileIDSampleTestIds.idTypeSheet), findsNothing);
     });
 
-    testWidgets('a custom-document link keeps nothing until Done', (
+    testWidgets('a generic-document link keeps nothing until Done', (
       WidgetTester tester,
     ) async {
       await pumpAt(
         tester,
-        UseSmileIDSampleRoutes.customDocument('documentVerification'),
+        UseSmileIDSampleRoutes.genericDocument('documentVerification'),
       );
 
-      expect(byId(UseSmileIDSampleTestIds.customDocumentSheet), findsOne);
+      expect(byId(UseSmileIDSampleTestIds.genericDocumentSheet), findsOne);
       expect(forms().idDetails.captureAs, UseSmileIDSampleCaptureAs.automatic);
 
-      await tester.tap(byId(UseSmileIDSampleTestIds.customDocumentDone));
+      await tester.tap(byId(UseSmileIDSampleTestIds.genericDocumentDone));
       await tester.pumpAndSettle();
-      expect(forms().idDetails.captureAs, UseSmileIDSampleCaptureAs.custom);
+      expect(
+        forms().idDetails.captureAs,
+        UseSmileIDSampleCaptureAs.genericDocument,
+      );
     });
 
     // R12: the picker path is a layer over the form, so the form is behind the scrim rather than

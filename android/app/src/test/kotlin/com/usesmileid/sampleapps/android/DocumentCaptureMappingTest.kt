@@ -18,7 +18,7 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleAspectRatio
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureAs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureMode
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCountry
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCustomDocument
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleGenericDocument
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocument
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocumentOrientation
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
@@ -95,15 +95,15 @@ class DocumentCaptureMappingTest {
 
     @Test
     fun a_custom_portrait_document_keeps_its_orientation() {
-        val custom = UseSmileIDSampleCustomDocument(orientation = UseSmileIDSampleDocumentOrientation.Portrait)
-        val type = documentCaptureFor(UseSmileIDSampleIdDetails(captureAs = UseSmileIDSampleCaptureAs.Custom, custom = custom))
+        val genericDocument = UseSmileIDSampleGenericDocument(orientation = UseSmileIDSampleDocumentOrientation.Portrait)
+        val type = documentCaptureFor(UseSmileIDSampleIdDetails(captureAs = UseSmileIDSampleCaptureAs.GenericDocument, genericDocument = genericDocument))
             .documentType as DocumentType.GenericDocument
         assertEquals(DocumentOrientation.Portrait, type.orientation)
     }
 
     private fun detailsOf(case: JsonObject): UseSmileIDSampleIdDetails {
         val document = case.getValue("document").jsonObject
-        val custom = case["custom"]?.jsonObject
+        val genericDocument = case["genericDocument"]?.jsonObject
         return UseSmileIDSampleIdDetails(
             country = UseSmileIDSampleCountry("ZA", "South Africa"),
             document = UseSmileIDSampleDocument(
@@ -114,14 +114,14 @@ class DocumentCaptureMappingTest {
                 format = document.getValue("format").jsonPrimitive.int,
             ),
             captureAs = UseSmileIDSampleCaptureAs.entries.first { it.id == case.getValue("captureAs").jsonPrimitive.content },
-            custom = custom?.let {
-                UseSmileIDSampleCustomDocument(
+            genericDocument = genericDocument?.let {
+                UseSmileIDSampleGenericDocument(
                     displayName = it.getValue("displayName").jsonPrimitive.content,
                     hasBackSide = it.getValue("hasBackSide").jsonPrimitive.boolean,
                     orientation = UseSmileIDSampleDocumentOrientation.entries.first { o -> o.id == it.getValue("orientation").jsonPrimitive.content },
                     aspectRatio = UseSmileIDSampleAspectRatio.entries.first { r -> r.id == it.getValue("aspectRatio").jsonPrimitive.content },
                 )
-            } ?: UseSmileIDSampleCustomDocument(),
+            } ?: UseSmileIDSampleGenericDocument(),
         )
     }
 

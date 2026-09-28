@@ -45,7 +45,7 @@ class ScreenStateGoldenTest {
         "documentPickerSheet.error" to "sheet_document_picker_error",
         "documentPickerSheet.empty" to "sheet_document_picker_empty",
         "captureAsSheet.default" to "sheet_capture_as",
-        "customDocumentSheet.default" to "sheet_custom_document",
+        "genericDocumentSheet.default" to "sheet_generic_document",
         "captureModeSheet.default" to "sheet_capture_mode",
         "settings.default" to "screen_settings",
         "settings.altProfile" to "screen_settings_alt_profile",

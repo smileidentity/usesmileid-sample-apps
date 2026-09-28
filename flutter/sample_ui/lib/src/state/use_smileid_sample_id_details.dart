@@ -120,8 +120,8 @@ enum UseSmileIDSampleCaptureAs {
   /// The SDK's Passport preset.
   passport('passport', 'Passport preset'),
 
-  /// A generic document built in the custom-document sheet.
-  custom('custom', 'Custom');
+  /// A GenericDocument shaped in its own sheet.
+  genericDocument('genericDocument', 'Generic document');
 
   const UseSmileIDSampleCaptureAs(this.id, this.label);
 
@@ -132,7 +132,7 @@ enum UseSmileIDSampleCaptureAs {
   final String label;
 }
 
-/// A custom document's capture orientation.
+/// A generic document's capture orientation.
 enum UseSmileIDSampleDocumentOrientation {
   /// Wider than tall.
   landscape('landscape', 'Landscape'),
@@ -149,7 +149,7 @@ enum UseSmileIDSampleDocumentOrientation {
   final String label;
 }
 
-/// The custom frame ratios the sheet offers, as width over height.
+/// The frame ratios the sheet offers, as width over height.
 enum UseSmileIDSampleAspectRatio {
   /// The SDK's own frame.
   off('off', 'Off', null),
@@ -175,10 +175,10 @@ enum UseSmileIDSampleAspectRatio {
   final double? ratio;
 }
 
-/// What the custom-document sheet builds into a generic document.
-class UseSmileIDSampleCustomDocument {
+/// What the generic-document sheet builds, as the SDK's GenericDocument takes it.
+class UseSmileIDSampleGenericDocument {
   /// The SDK's own generic defaults.
-  const UseSmileIDSampleCustomDocument({
+  const UseSmileIDSampleGenericDocument({
     this.displayName = 'Document',
     this.hasBackSide = true,
     this.orientation = UseSmileIDSampleDocumentOrientation.landscape,
@@ -198,12 +198,12 @@ class UseSmileIDSampleCustomDocument {
   final UseSmileIDSampleAspectRatio aspectRatio;
 
   /// A copy with the given fields replaced.
-  UseSmileIDSampleCustomDocument copyWith({
+  UseSmileIDSampleGenericDocument copyWith({
     String? displayName,
     bool? hasBackSide,
     UseSmileIDSampleDocumentOrientation? orientation,
     UseSmileIDSampleAspectRatio? aspectRatio,
-  }) => UseSmileIDSampleCustomDocument(
+  }) => UseSmileIDSampleGenericDocument(
     displayName: displayName ?? this.displayName,
     hasBackSide: hasBackSide ?? this.hasBackSide,
     orientation: orientation ?? this.orientation,
@@ -212,7 +212,7 @@ class UseSmileIDSampleCustomDocument {
 
   @override
   bool operator ==(Object other) =>
-      other is UseSmileIDSampleCustomDocument &&
+      other is UseSmileIDSampleGenericDocument &&
       other.displayName == displayName &&
       other.hasBackSide == hasBackSide &&
       other.orientation == orientation &&
@@ -231,7 +231,7 @@ class UseSmileIDSampleIdDetails {
     this.idType,
     this.document,
     this.captureAs = UseSmileIDSampleCaptureAs.automatic,
-    this.custom = const UseSmileIDSampleCustomDocument(),
+    this.genericDocument = const UseSmileIDSampleGenericDocument(),
     this.idNumber = '',
   });
 
@@ -247,8 +247,8 @@ class UseSmileIDSampleIdDetails {
   /// How the SDK photographs the document.
   final UseSmileIDSampleCaptureAs captureAs;
 
-  /// What "Capture as: Custom" builds.
-  final UseSmileIDSampleCustomDocument custom;
+  /// What "Capture as: Generic document" builds.
+  final UseSmileIDSampleGenericDocument genericDocument;
 
   /// The typed number.
   final String idNumber;
@@ -268,7 +268,7 @@ class UseSmileIDSampleIdDetails {
       UseSmileIDSampleIdDetails(
         country: country,
         captureAs: captureAs,
-        custom: custom,
+        genericDocument: genericDocument,
         idNumber: idNumber,
       );
 
@@ -277,14 +277,14 @@ class UseSmileIDSampleIdDetails {
     UseSmileIDSampleKycIdType? idType,
     UseSmileIDSampleDocument? document,
     UseSmileIDSampleCaptureAs? captureAs,
-    UseSmileIDSampleCustomDocument? custom,
+    UseSmileIDSampleGenericDocument? genericDocument,
     String? idNumber,
   }) => UseSmileIDSampleIdDetails(
     country: country,
     idType: idType ?? this.idType,
     document: document ?? this.document,
     captureAs: captureAs ?? this.captureAs,
-    custom: custom ?? this.custom,
+    genericDocument: genericDocument ?? this.genericDocument,
     idNumber: idNumber ?? this.idNumber,
   );
 
@@ -295,10 +295,16 @@ class UseSmileIDSampleIdDetails {
       other.idType == idType &&
       other.document == document &&
       other.captureAs == captureAs &&
-      other.custom == custom &&
+      other.genericDocument == genericDocument &&
       other.idNumber == idNumber;
 
   @override
-  int get hashCode =>
-      Object.hash(country, idType, document, captureAs, custom, idNumber);
+  int get hashCode => Object.hash(
+    country,
+    idType,
+    document,
+    captureAs,
+    genericDocument,
+    idNumber,
+  );
 }

@@ -35,18 +35,18 @@ final class UseSmileIDSampleDocumentOptionsUITests: XCTestCase {
 
     element("sample_capture_as_trigger").tap()
     XCTAssertTrue(element("sample_capture_as_sheet").waitForExistence(timeout: 10))
-    for option in ["automatic", "greenBook", "passport", "custom"] {
+    for option in ["automatic", "greenBook", "passport", "genericDocument"] {
       XCTAssertTrue(element("sample_capture_as_option_\(option)").exists, option)
     }
     XCTAssertTrue(element("sample_capture_as_option_automatic").isSelected)
 
-    // Custom opens its own sheet, and what it builds is named on the trigger.
-    element("sample_capture_as_option_custom").tap()
-    XCTAssertTrue(element("sample_custom_document_sheet").waitForExistence(timeout: 10))
-    type("sample_custom_document_name", "Booklet")
-    element("sample_custom_document_orientation_portrait").tap()
-    element("sample_custom_document_aspect_ratio_booklet").tap()
-    element("sample_custom_document_done").tap()
+    // Generic document opens its own sheet, and what it builds is named on the trigger.
+    element("sample_capture_as_option_genericDocument").tap()
+    XCTAssertTrue(element("sample_generic_document_sheet").waitForExistence(timeout: 10))
+    type("sample_generic_document_name", "Booklet")
+    element("sample_generic_document_orientation_portrait").tap()
+    element("sample_generic_document_aspect_ratio_booklet").tap()
+    element("sample_generic_document_done").tap()
     XCTAssertTrue(element("sample_capture_as_trigger").waitForExistence(timeout: 10))
     XCTAssertTrue(element("sample_capture_as_trigger").label.contains("Booklet"))
 

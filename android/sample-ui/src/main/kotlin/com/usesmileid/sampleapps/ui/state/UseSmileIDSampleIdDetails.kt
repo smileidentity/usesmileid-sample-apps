@@ -44,7 +44,7 @@ enum class UseSmileIDSampleCaptureAs(val id: String, val label: String) {
     Automatic("automatic", "Automatic"),
     GreenBook("greenBook", "Green Book preset"),
     Passport("passport", "Passport preset"),
-    Custom("custom", "Custom"),
+    GenericDocument("genericDocument", "Generic document"),
 }
 
 enum class UseSmileIDSampleDocumentOrientation(val id: String, val label: String) {
@@ -52,7 +52,7 @@ enum class UseSmileIDSampleDocumentOrientation(val id: String, val label: String
     Portrait("portrait", "Portrait"),
 }
 
-/** The custom frame ratios the sheet offers, as width over height. */
+/** The frame ratios the sheet offers, as width over height. */
 enum class UseSmileIDSampleAspectRatio(val id: String, val label: String, val ratio: Float?) {
     Off("off", "Off", null),
     Card("card", "Card 1.586", 1.586f),
@@ -60,9 +60,9 @@ enum class UseSmileIDSampleAspectRatio(val id: String, val label: String, val ra
     Booklet("booklet", "Booklet 0.748", 0.748f),
 }
 
-/** What the custom-document sheet builds into a GenericDocument. */
+/** What the generic-document sheet builds, as the SDK's GenericDocument takes it. */
 @Immutable
-data class UseSmileIDSampleCustomDocument(
+data class UseSmileIDSampleGenericDocument(
     val displayName: String = "Document",
     val hasBackSide: Boolean = true,
     val orientation: UseSmileIDSampleDocumentOrientation = UseSmileIDSampleDocumentOrientation.Landscape,
@@ -76,7 +76,7 @@ data class UseSmileIDSampleIdDetails(
     val idType: UseSmileIDSampleKycIdType? = null,
     val document: UseSmileIDSampleDocument? = null,
     val captureAs: UseSmileIDSampleCaptureAs = UseSmileIDSampleCaptureAs.Automatic,
-    val custom: UseSmileIDSampleCustomDocument = UseSmileIDSampleCustomDocument(),
+    val genericDocument: UseSmileIDSampleGenericDocument = UseSmileIDSampleGenericDocument(),
     val idNumber: String = "",
 ) {
     /** Whether Continue can enable for [family]: every field it shows is set, and the number fits its type. */

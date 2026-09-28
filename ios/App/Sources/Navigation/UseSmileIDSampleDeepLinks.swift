@@ -13,7 +13,7 @@ enum UseSmileIDSampleDeepLinks {
   static let idTypePicker = "\(scheme)://flow/{productId}/id-details/id-type"
   static let documentPicker = "\(scheme)://flow/{productId}/id-details/document"
   static let captureAs = "\(scheme)://flow/{productId}/id-details/capture-as"
-  static let customDocument = "\(scheme)://flow/{productId}/id-details/custom-document"
+  static let genericDocument = "\(scheme)://flow/{productId}/id-details/generic-document"
   static let sdkFlow = "\(scheme)://flow/{productId}/run?route={route}"
 
   static let profiles = "\(scheme)://profiles"
