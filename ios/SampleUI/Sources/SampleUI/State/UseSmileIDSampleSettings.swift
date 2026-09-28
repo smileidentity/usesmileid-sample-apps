@@ -1,6 +1,20 @@
 /// Which settings row a toggle belongs to, so the screen reports changes without six callbacks.
 public enum UseSmileIDSampleSetting: String, CaseIterable, Sendable {
   case enhancedSmartSelfie, agentMode, darkMode, consentStep, instructionsStep, previewStep
+  case galleryUpload
+}
+
+/// DocumentCaptureConfig.captureMode, in `spec/test-ids.json`'s vocabulary.
+public enum UseSmileIDSampleCaptureMode: String, CaseIterable, Sendable {
+  case auto, manual, autoWithFallback
+
+  public var label: String {
+    switch self {
+    case .auto: "Automatic"
+    case .manual: "Manual"
+    case .autoWithFallback: "Automatic with manual fallback"
+    }
+  }
 }
 
 /// The Settings state. Three of these decide whether a step is composed into the flow at all.
@@ -13,6 +27,10 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
   public var consentStep: Bool
   public var instructionsStep: Bool
   public var previewStep: Bool
+  /// DocumentCaptureConfig.allowGalleryUpload; off, as the SDK defaults it.
+  public var galleryUpload: Bool
+  /// A typed field rather than one of the switches: three values, not two.
+  public var captureMode: UseSmileIDSampleCaptureMode
 
   public init(
     enhancedSmartSelfie: Bool = true,
@@ -20,7 +38,9 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     darkMode: Bool = false,
     consentStep: Bool = true,
     instructionsStep: Bool = true,
-    previewStep: Bool = true
+    previewStep: Bool = true,
+    galleryUpload: Bool = false,
+    captureMode: UseSmileIDSampleCaptureMode = .autoWithFallback
   ) {
     self.enhancedSmartSelfie = enhancedSmartSelfie
     self.agentMode = agentMode
@@ -28,6 +48,8 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     self.consentStep = consentStep
     self.instructionsStep = instructionsStep
     self.previewStep = previewStep
+    self.galleryUpload = galleryUpload
+    self.captureMode = captureMode
   }
 
   public subscript(setting: UseSmileIDSampleSetting) -> Bool {
@@ -38,6 +60,7 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     case .consentStep: consentStep
     case .instructionsStep: instructionsStep
     case .previewStep: previewStep
+    case .galleryUpload: galleryUpload
     }
   }
 
@@ -60,6 +83,7 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     case .consentStep: copy.consentStep = enabled
     case .instructionsStep: copy.instructionsStep = enabled
     case .previewStep: copy.previewStep = enabled
+    case .galleryUpload: copy.galleryUpload = enabled
     }
     return copy
   }

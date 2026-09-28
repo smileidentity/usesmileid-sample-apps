@@ -43,8 +43,8 @@ enum UseSmileIDSampleFlowTokens {
     if bindings.userDetails {
       fields += vaultedFields.map { "\"\($0)\":\"vault_\($0)\"" }
       // The two the Portal leaves in plaintext, so a decode can read them back.
-      fields.append("\"country\":\"\(UseSmileIDSampleCountry.kenya.code)\"")
-      fields.append("\"id_type\":\"\(UseSmileIDSampleIdType.nationalId.id)\"")
+      fields.append("\"country\":\"\(boundCountry)\"")
+      fields.append("\"id_type\":\"\(boundIdType)\"")
     }
     if bindings.consent {
       fields.append(consentClaim(issuedAt: issuedAt))
@@ -81,4 +81,7 @@ enum UseSmileIDSampleFlowTokens {
   private static let apiPath = "v3"
   private static let privacyPolicyUrl = "https://smile.id/privacy-policy"
   private static let vaultedFields = ["given_names", "last_name", "email", "phone_number", "id_number"]
+  /// What a simulated binding names: Kenya's National ID, a type the form offers.
+  static let boundCountry = "KE"
+  static let boundIdType = "NATIONAL_ID"
 }

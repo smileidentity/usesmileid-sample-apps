@@ -114,7 +114,10 @@ func useSmileIDSampleIdParams(_ snapshot: FlowLaunchSnapshot) -> FlowIdParams {
   // Per field, the token beats the form; the server overwrites these from its claims anyway.
   let bound = snapshot.liveSession?.bindings
   let country = bound?.country ?? details.country?.code ?? ""
-  let idType = bound?.idType ?? details.idType?.id ?? ""
+  // The KYC products submit the API's `type`, the document products the document's `code`; a
+  // standalone sub-type row carries its parent's code, which is all the server reads.
+  let chosen = details.idType?.type ?? details.document?.code
+  let idType = bound?.idType ?? chosen ?? ""
   // The SDK asks only that this be non-blank.
   let idNumber = bound?.idNumberReference ?? details.idNumber
   var params = FlowIdParams()
@@ -127,7 +130,7 @@ func useSmileIDSampleIdParams(_ snapshot: FlowLaunchSnapshot) -> FlowIdParams {
   case .documentVerification:
     params.documentVerification = DocumentVerificationParams(
       country: country,
-      idType: bound?.idType ?? details.idType?.id
+      idType: bound?.idType ?? chosen
     )
   case .enhancedDocumentVerification:
     params.enhancedDocumentVerification = EnhancedDocumentVerificationParams(country: country, idType: idType)
@@ -162,11 +165,7 @@ func useSmileIDSampleFlowSteps(_ snapshot: FlowLaunchSnapshot) -> [FlowStep] {
     case .documentCapture:
       .capture(CaptureScreenConfiguration(
         captureType: .document,
-        document: DocumentCaptureConfig(
-          documentType: snapshot.idDetails.idType.documentType,
-          captureBothSides: true,
-          allowSkipBack: true
-        )
+        document: useSmileIDSampleDocumentCapture(snapshot)
       ))
     case .preview:
       .preview(PreviewScreenConfiguration())
@@ -203,6 +202,8 @@ private func replay(_ steps: [FlowStep], into screens: ScreensBuilder) {
             target.documentType = document.documentType
             target.captureBothSides = document.captureBothSides
             target.allowSkipBack = document.allowSkipBack
+            target.captureMode = document.captureMode
+            target.allowGalleryUpload = document.allowGalleryUpload
           }
         }
       }
@@ -271,12 +272,56 @@ private func capture(_ step: FlowJourneyStep, _ preview: Bool) -> [FlowJourneySt
   preview ? [step, .preview] : [step]
 }
 
-extension UseSmileIDSampleIdType? {
-  var documentType: DocumentType {
+/// What the SDK is told to photograph; the server is told the document's code either way.
+func useSmileIDSampleDocumentCapture(_ snapshot: FlowLaunchSnapshot) -> DocumentCaptureConfig {
+  let (documentType, captureBothSides) = useSmileIDSampleDocumentType(snapshot.idDetails)
+  return DocumentCaptureConfig(
+    documentType: documentType,
+    captureMode: snapshot.captureMode.sdk,
+    allowGalleryUpload: snapshot.galleryUpload,
+    captureBothSides: captureBothSides,
+    allowSkipBack: true
+  )
+}
+
+/// The "Capture as" mapping from `spec/catalogue-rules.json` captureAs. Pure, so its table is unit-tested.
+func useSmileIDSampleDocumentType(_ details: UseSmileIDSampleIdDetails) -> (DocumentType, Bool) {
+  switch details.captureAs {
+  case .greenBook:
+    return (.southAfricaGreenBook, DocumentType.southAfricaGreenBook.hasBackSide)
+  case .passport:
+    return (.passport, DocumentType.passport.hasBackSide)
+  case .custom:
+    let custom = details.custom
+    let type = DocumentType.genericDocument(
+      displayName: custom.displayName,
+      hasBackSide: custom.hasBackSide,
+      orientation: custom.orientation == .portrait ? .portrait : .landscape,
+      knownAspectRatio: custom.aspectRatio.ratio
+    )
+    return (type, type.hasBackSide)
+  // The API's has_back, not a preset's: the API is the source that says what the document is.
+  case .automatic:
+    let document = details.document
+    let hasBack = document?.hasBack ?? true
+    switch document?.format {
+    case formatGreenBook: return (.southAfricaGreenBook, hasBack)
+    case formatBooklet: return (.passport, hasBack)
+    default: return (.genericDocument(displayName: document?.name ?? "Document", hasBackSide: hasBack), hasBack)
+    }
+  }
+}
+
+// The API's undocumented `format`: 3 is a passport or seaman's booklet, 7 the Green Book; the rest are cards.
+private let formatBooklet = 3
+private let formatGreenBook = 7
+
+extension UseSmileIDSampleCaptureMode {
+  var sdk: DocumentCaptureMode {
     switch self {
-    case .passport: .passport
-    case .none: .genericDocument()
-    case .some(let type): .genericDocument(displayName: type.label)
+    case .auto: .autoCapture
+    case .manual: .manualCapture
+    case .autoWithFallback: .autoCaptureWithManualFallback()
     }
   }
 }

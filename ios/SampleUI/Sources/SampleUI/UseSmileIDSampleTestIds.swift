@@ -59,6 +59,27 @@ public enum UseSmileIDSampleTestIds {
     "\(idTypeOptionPrefix)_\(id)"
   }
 
+  /// Suffixed with the code, and `_<subType>` on a standalone sub-type row.
+  public static func documentOption(_ id: String) -> String {
+    "\(documentOptionPrefix)_\(id)"
+  }
+
+  public static func captureAsOption(_ id: String) -> String {
+    "\(captureAsOptionPrefix)_\(id)"
+  }
+
+  public static func captureModeOption(_ id: String) -> String {
+    "\(captureModeOptionPrefix)_\(id)"
+  }
+
+  public static func customDocumentOrientation(_ id: String) -> String {
+    "\(customDocumentOrientationPrefix)_\(id)"
+  }
+
+  public static func customDocumentAspectRatio(_ id: String) -> String {
+    "\(customDocumentAspectRatioPrefix)_\(id)"
+  }
+
   public static func profileRow(_ profileId: String) -> String {
     "\(profileRowPrefix)_\(profileId)"
   }
@@ -138,6 +159,28 @@ public enum UseSmileIDSampleTestIds {
   public static let idTypeSheet = "sample_idtype_sheet"
   public static let idTypeSearch = "sample_idtype_search"
   public static let idTypeEmpty = "sample_idtype_empty"
+  public static let documentEmpty = "sample_document_empty"
+  public static let catalogueLoading = "sample_catalogue_loading"
+  public static let catalogueError = "sample_catalogue_error"
+  public static let catalogueRetry = "sample_catalogue_retry"
+  public static let idNumberError = "sample_idnumber_error"
+  public static let documentTrigger = "sample_document_trigger"
+  public static let captureAsTrigger = "sample_capture_as_trigger"
+  public static let documentSheet = "sample_document_sheet"
+  public static let documentSearch = "sample_document_search"
+  public static let captureAsSheet = "sample_capture_as_sheet"
+  public static let customDocumentSheet = "sample_custom_document_sheet"
+  public static let customDocumentName = "sample_custom_document_name"
+  public static let customDocumentBackSide = "sample_custom_document_back_side"
+  public static let customDocumentDone = "sample_custom_document_done"
+  public static let settingCaptureMode = "sample_setting_capture_mode"
+  public static let captureModeSheet = "sample_capture_mode_sheet"
+  public static let settingGalleryUpload = "sample_setting_gallery_upload"
+  public static let documentOptionPrefix = "sample_document_option"
+  public static let captureAsOptionPrefix = "sample_capture_as_option"
+  public static let captureModeOptionPrefix = "sample_capture_mode_option"
+  public static let customDocumentOrientationPrefix = "sample_custom_document_orientation"
+  public static let customDocumentAspectRatioPrefix = "sample_custom_document_aspect_ratio"
 
   public static let userDetailsScreen = "sample_user_details_screen"
   public static let userDetailsHint = "sample_user_details_hint"
@@ -225,6 +268,7 @@ public enum UseSmileIDSampleTestIds {
     kycFormScreen, countryTrigger, idTypeTrigger, idNumberInput, kycContinue, tokenFloat,
     countrySheet, countrySearch, countryEmpty, countryOptionPrefix,
     idTypeSheet, idTypeSearch, idTypeEmpty, idTypeOptionPrefix,
+    documentEmpty, catalogueLoading, catalogueError, catalogueRetry, idNumberError, documentTrigger, captureAsTrigger, documentSheet, documentSearch, captureAsSheet, customDocumentSheet, customDocumentName, customDocumentBackSide, customDocumentDone, settingCaptureMode, captureModeSheet, settingGalleryUpload, documentOptionPrefix, captureAsOptionPrefix, captureModeOptionPrefix, customDocumentOrientationPrefix, customDocumentAspectRatioPrefix,
     profileAvatarButton, profileSummary,
     profilesScreen, profileRowPrefix, createProfile,
     profileConfigScreen, profileConfigFieldPrefix, profileConfigCallbackUrl, profileConfigSave,

@@ -33,6 +33,14 @@ struct UseSmileIDSampleShell: View {
           router.open(route)
         case .sheet(let sheet, let owner):
           router.open(owner)
+          // Refused, as its trigger would be: a second-level list needs a country, Capture as a document.
+          switch sheet {
+          case .idTypePicker where app.idDetails.country == nil: return
+          case .documentPicker where app.idDetails.country == nil: return
+          case .captureAs where app.idDetails.document == nil: return
+          case .customDocument: app.idDetails.captureAs = .custom
+          default: break
+          }
           router.sheet = sheet
         }
       }
@@ -56,6 +64,14 @@ struct UseSmileIDSampleShell: View {
       .modifier(UseSmileIDSampleLoupeAccess())
   }
 
+  /// The family of the form a picker layers over; a KYC form unless a document product's is on top.
+  private var formFamily: UseSmileIDSampleCatalogueFamily {
+    if case .idDetailsForm(let productId) = router.path(router.selectedTab).last {
+      return UseSmileIDSampleProduct(rawValue: productId)?.catalogueFamily ?? .kyc
+    }
+    return .kyc
+  }
+
   /// Whether the switch sheet was opened from the details form, whose typing a new profile should start from.
   private var isOverUserDetailsForm: Bool {
     if case .consentDetailsForm = router.path(router.selectedTab).last {
@@ -69,21 +85,56 @@ struct UseSmileIDSampleShell: View {
     switch sheet {
     case .countryPicker:
       CountryPickerSheet(
+        catalogue: app.catalogue.countries(formFamily),
         selected: app.idDetails.country,
         query: $app.countryQuery,
         onSelect: { app.selectCountry($0)
           router.sheet = nil },
+        onRetry: { app.catalogue.retry() },
         onClose: { router.sheet = nil }
       )
     case .idTypePicker:
       IdTypePickerSheet(
         country: app.idDetails.country,
+        catalogue: app.catalogue.idTypes(app.idDetails.country?.code ?? ""),
         selected: app.idDetails.idType,
         query: $app.idTypeQuery,
         onSelect: { app.idDetails.idType = $0
           router.sheet = nil },
+        onRetry: { app.catalogue.retry() },
         onClose: { router.sheet = nil }
       )
+    case .documentPicker:
+      DocumentPickerSheet(
+        country: app.idDetails.country,
+        catalogue: app.catalogue.documents(app.idDetails.country?.code ?? ""),
+        selected: app.idDetails.document,
+        query: $app.documentQuery,
+        onSelect: { app.idDetails.document = $0
+          router.sheet = nil },
+        onRetry: { app.catalogue.retry() },
+        onClose: { router.sheet = nil }
+      )
+    case .captureAs:
+      CaptureAsSheet(selected: app.idDetails.captureAs) { choice in
+        if choice == .custom {
+          router.sheet = .customDocument
+        } else {
+          app.idDetails.captureAs = choice
+          router.sheet = nil
+        }
+      }
+    case .customDocument:
+      CustomDocumentSheet(initial: app.idDetails.custom) { custom in
+        app.idDetails.custom = custom
+        app.idDetails.captureAs = .custom
+        router.sheet = nil
+      }
+    case .captureMode:
+      CaptureModeSheet(selected: app.settings.captureMode) { mode in
+        app.setCaptureMode(mode)
+        router.sheet = nil
+      }
     case .profileSwitch:
       ProfileSwitchSheet(
         profiles: app.profiles.all,

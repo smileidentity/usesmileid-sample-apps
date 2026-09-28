@@ -29,7 +29,11 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
     let complete = snapshot(
       .biometricKyc,
       userDetails: complete,
-      idDetails: UseSmileIDSampleIdDetails(country: .kenya, idType: .nationalId, idNumber: "1234567")
+      idDetails: UseSmileIDSampleIdDetails(
+        country: UseSmileIDSampleCountry(code: "KE", name: "Kenya"),
+        idType: UseSmileIDSampleKycIdType(id: "NATIONAL_ID", type: "NATIONAL_ID", label: "National ID", regex: "^[0-9]{1,9}$"),
+        idNumber: "1234567"
+      )
     )
     XCTAssertEqual(useSmileIDSamplePreflight(complete), .ready)
   }
@@ -87,7 +91,11 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
       let filled = snapshot(
         product,
         userDetails: complete,
-        idDetails: UseSmileIDSampleIdDetails(country: .kenya, idType: .nationalId, idNumber: "1234567")
+        idDetails: UseSmileIDSampleIdDetails(
+          country: UseSmileIDSampleCountry(code: "KE", name: "Kenya"),
+          idType: UseSmileIDSampleKycIdType(id: "NATIONAL_ID", type: "NATIONAL_ID", label: "National ID", regex: "^[0-9]{1,9}$"),
+          idNumber: "1234567"
+        )
       )
       XCTAssertEqual(useSmileIDSamplePreflight(filled), .ready, product.id)
     }

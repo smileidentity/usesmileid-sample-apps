@@ -122,7 +122,7 @@ final class UseSmileIDSampleLaunchArgumentUITests: XCTestCase {
   }
 
   private func launch(_ arguments: [String]) {
-    app.launchArguments = useSmileIDSampleSettingsSeed + arguments
+    app.launchArguments = useSmileIDSampleLaunchSeed + arguments
     app.launch()
     XCTAssertTrue(element("sample_nav_settings").waitForExistence(timeout: 10))
   }

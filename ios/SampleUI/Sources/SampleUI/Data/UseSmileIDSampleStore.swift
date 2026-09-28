@@ -55,7 +55,11 @@ public final class UseSmileIDSampleStore {
       darkMode: settingsStorage.flag(.darkMode) ?? defaults.darkMode,
       consentStep: settingsStorage.flag(.consentStep) ?? defaults.consentStep,
       instructionsStep: settingsStorage.flag(.instructionsStep) ?? defaults.instructionsStep,
-      previewStep: settingsStorage.flag(.previewStep) ?? defaults.previewStep
+      previewStep: settingsStorage.flag(.previewStep) ?? defaults.previewStep,
+      galleryUpload: settingsStorage.flag(.galleryUpload) ?? defaults.galleryUpload,
+      captureMode: settingsStorage.data(Self.captureModeKey)
+        .flatMap { String(data: $0, encoding: .utf8) }
+        .flatMap(UseSmileIDSampleCaptureMode.init(rawValue:)) ?? defaults.captureMode
     ).normalised()
   }
 
@@ -71,6 +75,14 @@ public final class UseSmileIDSampleStore {
     settings = updated
     return updated
   }
+
+  /// Stored by its id, so a renamed case still reads the device's choice.
+  public func setCaptureMode(_ mode: UseSmileIDSampleCaptureMode) {
+    settingsStorage.setData(Self.captureModeKey, Data(mode.rawValue.utf8))
+    settings.captureMode = mode
+  }
+
+  static let captureModeKey = "capture_mode"
 
   /// In the Keychain, since the record holds people's details; missing or unreadable is no profiles.
   public var profiles: UseSmileIDSampleProfiles {
@@ -192,6 +204,7 @@ public extension UseSmileIDSampleSetting {
     case .consentStep: "consent_step"
     case .instructionsStep: "instructions_step"
     case .previewStep: "preview_step"
+    case .galleryUpload: "gallery_upload"
     }
   }
 }

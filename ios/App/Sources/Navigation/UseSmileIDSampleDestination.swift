@@ -22,13 +22,15 @@ struct UseSmileIDSampleDestination: View {
           result: app.flowResult.snapshot
         ),
         onProduct: { product in
-          app.fillFormForRun()
+          app.fillFormForRun(product)
           router.open(app.firstStep(for: product))
         },
         onProfile: { router.sheet = .profileSwitch },
         // Pushed, not opened: linking pops back to where the scan started.
         onScan: { router.pushOnce(.scanToken) }
       )
+      // Back on the grid means the run's form is gone, so a list still arriving for it is cancelled.
+      .onAppear { app.catalogue.stop() }
     case .verifications:
       UseSmileIDSampleVerificationsHost()
     case .consentDetailsForm(let productId):
@@ -55,18 +57,27 @@ struct UseSmileIDSampleDestination: View {
         }
       )
       .navigationBarHidden(true)
-      .onAppear { app.fillFormOnEntry() }
+      .onAppear {
+        app.fillFormOnEntry()
+        // A deep link to this form skips the product tap, so the lists start here if nothing has.
+        if Self.product(productId)?.catalogueFamily != nil {
+          app.catalogue.ensure(environment: app.environment, locale: app.catalogueLocale)
+        }
+      }
     case .idDetailsForm(let productId):
       KycIdFormScreen(
-        state: .init(productLabel: Self.product(productId)?.label ?? productId, details: app.idDetails),
+        state: idFormState(productId),
         onCountryTap: { router.sheet = .countryPicker },
         onIdTypeTap: { router.sheet = .idTypePicker },
+        onDocumentTap: { router.sheet = .documentPicker },
+        onCaptureAsTap: { router.sheet = .captureAs },
         onIdNumberChange: { app.idDetails.idNumber = $0 },
         onBack: { router.pop() },
         onContinue: { Self.product(productId).map { router.pushOnce(app.sdkFlow($0)) } },
         onToken: { router.pushOnce(.scanToken) }
       )
       .navigationBarHidden(true)
+      .onAppear { app.catalogue.ensure(environment: app.environment, locale: app.catalogueLocale) }
     case .verificationDetails(let jobId):
       UseSmileIDSampleVerificationDetailsHost(jobId: jobId)
         .navigationBarHidden(true)
@@ -101,6 +112,7 @@ struct UseSmileIDSampleDestination: View {
         onSettingChange: { setting, enabled in app.change(setting, to: enabled) },
         onProfile: { router.open(.profiles) },
         onNavRow: { row in open(row) },
+        onCaptureMode: { router.sheet = .captureMode },
         // No launch argument reveals it: every flow reaches the drawer by deep link.
         onOpenScenarioDrawer: UseSmileIDSampleAppState.isDebugBuild ? { router.sheet = .scenarioDrawer } : nil,
         // There is no auth to leave; the session is the local state a partner would expect gone.
@@ -144,6 +156,22 @@ struct UseSmileIDSampleDestination: View {
         app.deleteProfile(id) }
     )
     .navigationBarHidden(true)
+  }
+
+  /// The form's state, with the chosen country's list deciding the second trigger's placeholder.
+  private func idFormState(_ productId: String) -> UseSmileIDSampleKycIdFormState {
+    let family = Self.product(productId)?.catalogueFamily ?? .kyc
+    let loading: Bool = switch (app.idDetails.country?.code, family) {
+    case (nil, _): false
+    case (let code?, .kyc): app.catalogue.idTypes(code).isLoading
+    case (let code?, .document): app.catalogue.documents(code).isLoading
+    }
+    return .init(
+      productLabel: Self.product(productId)?.label ?? productId,
+      family: family,
+      details: app.idDetails,
+      countryListLoading: loading
+    )
   }
 
   private static func product(_ id: String) -> UseSmileIDSampleProduct? {

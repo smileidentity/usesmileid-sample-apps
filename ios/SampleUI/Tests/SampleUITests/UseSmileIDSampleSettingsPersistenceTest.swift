@@ -68,10 +68,17 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
         darkMode: true,
         consentStep: false,
         instructionsStep: false,
-        previewStep: false
+        previewStep: false,
+        galleryUpload: true
       )
     )
     XCTAssertEqual(Self.keys.count, UseSmileIDSampleSetting.allCases.count, "a row was added with no key here")
+  }
+
+  func testCaptureModeSurvivesARoundTripAndAnAbsentValueIsTheDefault() {
+    XCTAssertEqual(makeStore().settings.captureMode, .autoWithFallback)
+    makeStore().setCaptureMode(.manual)
+    XCTAssertEqual(makeStore().settings.captureMode, .manual)
   }
 
   func testTheKeysAreTheAndroidStoresOwn() {
@@ -128,6 +135,7 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
   }
 
   private static let keys = [
-    "enhanced_smart_selfie", "agent_mode", "dark_mode", "consent_step", "instructions_step", "preview_step"
+    "enhanced_smart_selfie", "agent_mode", "dark_mode", "consent_step", "instructions_step", "preview_step",
+    "gallery_upload"
   ]
 }

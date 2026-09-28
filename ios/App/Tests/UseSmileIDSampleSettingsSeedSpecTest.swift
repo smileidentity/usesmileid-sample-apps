@@ -26,7 +26,7 @@ final class UseSmileIDSampleSettingsSeedSpecTest: XCTestCase {
       guard body.contains("launchArguments") else { continue }
       launching.append(file.lastPathComponent)
       XCTAssertTrue(
-        body.contains("useSmileIDSampleSettingsSeed"),
+        body.contains("useSmileIDSampleSettingsSeed") || body.contains("useSmileIDSampleLaunchSeed"),
         "\(file.lastPathComponent) launches the app without seeding the switches, so it inherits them"
       )
     }

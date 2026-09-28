@@ -15,6 +15,8 @@ struct FlowLaunchSnapshot: Equatable {
   let consentStep: Bool
   let instructionsStep: Bool
   let previewStep: Bool
+  let captureMode: UseSmileIDSampleCaptureMode
+  let galleryUpload: Bool
   let userId: String
   let partnerId: String
   let partnerName: String
@@ -38,6 +40,8 @@ struct FlowLaunchSnapshot: Equatable {
     consentStep: Bool = true,
     instructionsStep: Bool = true,
     previewStep: Bool = true,
+    captureMode: UseSmileIDSampleCaptureMode = .autoWithFallback,
+    galleryUpload: Bool = false,
     userId: String = "",
     partnerId: String = "",
     partnerName: String = "",
@@ -57,6 +61,8 @@ struct FlowLaunchSnapshot: Equatable {
     self.consentStep = consentStep
     self.instructionsStep = instructionsStep
     self.previewStep = previewStep
+    self.captureMode = captureMode
+    self.galleryUpload = galleryUpload
     self.userId = userId
     self.partnerId = partnerId
     self.partnerName = partnerName
@@ -94,6 +100,8 @@ func buildSnapshot(
     consentStep: app.settings.consentStep,
     instructionsStep: app.settings.instructionsStep,
     previewStep: app.settings.previewStep,
+    captureMode: app.settings.captureMode,
+    galleryUpload: app.settings.galleryUpload,
     userId: userId,
     partnerId: app.profiles.partnerId,
     partnerName: app.profiles.partnerName,

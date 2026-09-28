@@ -63,10 +63,10 @@ final class UseSmileIDSampleAppStateProfilesTest: XCTestCase {
 
   func testANewRunNeverCarriesTheLastRunsIdDetails() {
     let app = appState()
-    app.selectCountry(.kenya)
+    app.selectCountry(UseSmileIDSampleCountry(code: "KE", name: "Kenya"))
     app.idDetails.idNumber = "12345678"
 
-    app.fillFormForRun()
+    app.fillFormForRun(.smartSelfieEnrollment)
 
     XCTAssertEqual(app.idDetails, UseSmileIDSampleIdDetails())
   }
@@ -78,7 +78,7 @@ final class UseSmileIDSampleAppStateProfilesTest: XCTestCase {
       UseSmileIDSampleProfile(id: "p-2", organisation: "Kazi", defaults: amina)
     ]))
     let app = appState()
-    app.fillFormForRun()
+    app.fillFormForRun(.smartSelfieEnrollment)
 
     app.saveProfile("p-2")
     app.fillFormOnEntry()

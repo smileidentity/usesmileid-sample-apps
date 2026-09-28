@@ -101,6 +101,10 @@ public struct UseSmileIDSampleColors: Equatable, Sendable {
   public let navBar: Color
   /// One outline for every card and row. A PAIR, because `color.border` is near-white in both schemes.
   public let cardStroke: Color
+  /// A loading row's resting fill, `skeleton.bg`.
+  public let skeleton: Color
+  /// What a loading row pulses towards. A PAIR: `skeleton.highlight` is near-white in dark too. See the `skeletonDarkHighlight` delta.
+  public let skeletonHighlight: Color
   public let border: Color
   public let overlayScrim: Color
   public let textTitle: Color
@@ -163,6 +167,8 @@ public extension UseSmileIDSampleColors {
     foreground: smileOffBlackLight,
     navBar: smileNavBarLight,
     cardStroke: smileCardStrokeLight,
+    skeleton: SmileColorLight.skeletonBg,
+    skeletonHighlight: SmileColorLight.skeletonHighlight,
     border: SmileColorLight.colorBorder,
     overlayScrim: SmileColorLight.colorOverlayScrim,
     textTitle: SmileColorLight.colorTextTitle,
@@ -258,6 +264,8 @@ public extension UseSmileIDSampleColors {
     foreground: smileOffBlackDark,
     navBar: smileNavBarDark,
     cardStroke: smileCardStrokeDark,
+    skeleton: SmileColorDark.skeletonBg,
+    skeletonHighlight: SmileColorDark.colorSurfaceAlt,
     border: SmileColorDark.colorBorder,
     overlayScrim: SmileColorDark.colorOverlayScrim,
     textTitle: SmileColorDark.colorTextTitle,
