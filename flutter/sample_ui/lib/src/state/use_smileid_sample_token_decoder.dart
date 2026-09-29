@@ -56,7 +56,8 @@ class UseSmileIDSampleTokenBindings {
     UseSmileIDSampleProduct.biometricKyc =>
       _present(country) && _present(idType) && _present(idNumberReference),
     UseSmileIDSampleProduct.documentVerification ||
-    UseSmileIDSampleProduct.enhancedDocumentVerification =>
+    UseSmileIDSampleProduct.enhancedDocumentVerification ||
+    UseSmileIDSampleProduct.residencyDocumentVerification =>
       _present(country) && _present(idType),
     UseSmileIDSampleProduct.smartSelfieEnrollment ||
     UseSmileIDSampleProduct.smartSelfieAuth => true,

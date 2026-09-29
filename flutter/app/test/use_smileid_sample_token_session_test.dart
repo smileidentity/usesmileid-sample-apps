@@ -90,7 +90,8 @@ void main() {
                   UseSmileIDSampleProduct.biometricKyc ||
                   UseSmileIDSampleProduct.enhancedKyc => id.value[2] != null,
                   UseSmileIDSampleProduct.documentVerification ||
-                  UseSmileIDSampleProduct.enhancedDocumentVerification =>
+                  UseSmileIDSampleProduct.enhancedDocumentVerification ||
+                  UseSmileIDSampleProduct.residencyDocumentVerification =>
                     id.value[1] != null,
                   _ => true,
                 };

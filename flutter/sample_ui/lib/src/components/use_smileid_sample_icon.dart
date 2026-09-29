@@ -6,7 +6,7 @@ import '../tokens/smile_icons.dart';
 import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
 
-/// The design set's icons, tinted at the call site so the vendored file keeps its own colour.
+/// The design set's icons, tinted at the call site, or drawn in a two-tone mark's own colours when [tint] is null.
 class UseSmileIDSampleIcon extends StatelessWidget {
   /// [asset] comes from [SmileIcons], which is generated, so a renamed icon fails to compile.
   const UseSmileIDSampleIcon({
@@ -19,8 +19,8 @@ class UseSmileIDSampleIcon extends StatelessWidget {
   /// The vendored asset path.
   final String asset;
 
-  /// The colour to draw it in.
-  final Color tint;
+  /// The colour to draw it in; null keeps the vendored file's own colours.
+  final Color? tint;
 
   /// The square it is drawn into.
   final double size;
@@ -30,7 +30,7 @@ class UseSmileIDSampleIcon extends StatelessWidget {
     asset,
     width: size,
     height: size,
-    colorFilter: ColorFilter.mode(tint, BlendMode.srcIn),
+    colorFilter: tint == null ? null : ColorFilter.mode(tint!, BlendMode.srcIn),
     // Decorative: every call site pairs it with its own label.
     excludeFromSemantics: true,
   );
@@ -45,6 +45,8 @@ String productIcon(UseSmileIDSampleProduct product) => switch (product) {
     SmileIcons.documentVerification,
   UseSmileIDSampleProduct.enhancedDocumentVerification =>
     SmileIcons.documentVerification,
+  UseSmileIDSampleProduct.residencyDocumentVerification =>
+    SmileIcons.residencyDocumentVerification,
   UseSmileIDSampleProduct.biometricKyc => SmileIcons.biometricKyc,
   UseSmileIDSampleProduct.enhancedKyc => SmileIcons.enhancedKyc,
 };

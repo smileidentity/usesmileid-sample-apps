@@ -125,14 +125,62 @@ void main() {
       );
     }
   });
+
+  test(
+    'residency is a passport with a mandatory visa, whatever the form or settings hold',
+    () {
+      final DocumentCaptureConfiguration document = _documentConfig(
+        const UseSmileIDSampleIdDetails(
+          country: UseSmileIDSampleCountry('NG', 'Nigeria'),
+          captureAs: UseSmileIDSampleCaptureAs.genericDocument,
+        ),
+        product: UseSmileIDSampleProduct.residencyDocumentVerification,
+        allowSkipBack: true,
+      );
+      expect(document.documentType, DocumentType.passport);
+      expect(document.captureBothSides, isFalse);
+      expect(document.allowSkipBack, isFalse);
+    },
+  );
+
+  test(
+    'residency sends the passport, whatever document is left in the form',
+    () {
+      final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
+      useSmileIDSampleApplying(
+        builder,
+        _snapshot(
+          const UseSmileIDSampleIdDetails(
+            country: UseSmileIDSampleCountry('NG', 'Nigeria'),
+            document: UseSmileIDSampleDocument(
+              code: 'IDENTITY_CARD',
+              name: 'National ID',
+              hasBack: true,
+              format: 1,
+            ),
+          ),
+          product: UseSmileIDSampleProduct.residencyDocumentVerification,
+        ),
+      );
+      expect(builder.residencyDocumentVerificationParams?.country, 'NG');
+      expect(builder.residencyDocumentVerificationParams?.idType, 'PASSPORT');
+      expect(builder.documentVerificationParams, isNull);
+    },
+  );
 }
 
 /// The document step the builder is handed for [details].
 DocumentCaptureConfiguration _documentConfig(
-  UseSmileIDSampleIdDetails details,
-) {
+  UseSmileIDSampleIdDetails details, {
+  UseSmileIDSampleProduct product =
+      UseSmileIDSampleProduct.documentVerification,
+  bool allowSkipBack = false,
+}) {
   final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
-  useSmileIDSampleApplying(builder, _snapshot(details));
+  useSmileIDSampleApplying(
+    builder,
+    _snapshot(details, product: product, allowSkipBack: allowSkipBack),
+  );
   // The SDK says to inspect this, then marks it internal.
   // ignore: invalid_use_of_internal_member
   final dynamic result = builder.build();
@@ -192,13 +240,15 @@ String? _submittedIdType(UseSmileIDSampleIdDetails details) {
 
 UseSmileIDSampleFlowLaunchSnapshot _snapshot(
   UseSmileIDSampleIdDetails details, {
+  UseSmileIDSampleProduct product =
+      UseSmileIDSampleProduct.documentVerification,
   UseSmileIDSampleCaptureMode captureMode =
       UseSmileIDSampleCaptureMode.autoWithFallback,
   bool galleryUpload = false,
   bool captureBothSides = true,
   bool allowSkipBack = false,
 }) => UseSmileIDSampleFlowLaunchSnapshot(
-  product: UseSmileIDSampleProduct.documentVerification,
+  product: product,
   route: UseSmileIDSampleFlowRoute.fullscreen,
   userDetails: const UseSmileIDSampleUserDetails(
     firstName: 'Ada',

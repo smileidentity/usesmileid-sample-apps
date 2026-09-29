@@ -286,6 +286,7 @@ void main() {
       for (final UseSmileIDSampleProduct product in <UseSmileIDSampleProduct>[
         UseSmileIDSampleProduct.documentVerification,
         UseSmileIDSampleProduct.enhancedDocumentVerification,
+        UseSmileIDSampleProduct.residencyDocumentVerification,
       ]) {
         expect(bound.bindsIdDetails(product), isTrue);
         expect(

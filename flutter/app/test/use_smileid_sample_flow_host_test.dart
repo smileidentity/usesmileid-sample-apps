@@ -100,11 +100,12 @@ void main() {
     });
 
     test(
-      'both document products capture the document first unless selfie first is on',
+      'every document product captures the document first unless selfie first is on',
       () {
         for (final UseSmileIDSampleProduct product in <UseSmileIDSampleProduct>[
           UseSmileIDSampleProduct.documentVerification,
           UseSmileIDSampleProduct.enhancedDocumentVerification,
+          UseSmileIDSampleProduct.residencyDocumentVerification,
         ]) {
           List<UseSmileIDSampleFlowJourneyStep> steps({
             required bool selfieFirst,

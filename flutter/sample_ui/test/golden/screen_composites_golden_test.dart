@@ -114,7 +114,7 @@ Widget _card(UseSmileIDSampleProduct product) => UseSmileIDSampleProductCard(
   hue: productHue(product),
   onTap: () {},
   // The sizes the screen actually passes, so the component baseline is not a fixture nobody draws.
-  icon: (Color tint) =>
+  icon: (Color? tint) =>
       UseSmileIDSampleIcon(asset: productIcon(product), tint: tint),
   ghost: (Color tint) => UseSmileIDSampleIcon(
     asset: productIcon(product),

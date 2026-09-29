@@ -100,6 +100,7 @@ class UseSmileIDSampleKycFormScreen extends StatelessWidget {
                       UseSmileIDSampleCatalogueFamily.kyc => _kycFields(),
                       UseSmileIDSampleCatalogueFamily.document =>
                         _documentFields(),
+                      UseSmileIDSampleCatalogueFamily.passport => <Widget>[],
                     },
                     const SizedBox(height: SmileDimens.spacingXl),
                   ],

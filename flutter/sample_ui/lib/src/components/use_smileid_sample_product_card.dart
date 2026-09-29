@@ -40,8 +40,8 @@ class UseSmileIDSampleProductCard extends StatelessWidget {
   /// Whether the product can be started.
   final bool enabled;
 
-  /// The mark in the white tile, handed the hue's card-icon tint.
-  final Widget Function(Color tint)? icon;
+  /// The mark in the white tile, handed the hue's card-icon tint, null for a mark drawn in its own colours.
+  final Widget Function(Color? tint)? icon;
 
   /// The watermark, handed the ink that contrasts with the gradient's first stop.
   final Widget Function(Color tint)? ghost;
@@ -113,7 +113,9 @@ class UseSmileIDSampleProductCard extends StatelessWidget {
                             borderRadius: UseSmileIDSampleShapes.tile,
                           ),
                           child: icon == null
-                              ? UseSmileIDSampleGlyphs.productMark(hue.cardIcon)
+                              ? UseSmileIDSampleGlyphs.productMark(
+                                  hue.cardIcon ?? hue.icon,
+                                )
                               : icon!(hue.cardIcon),
                         ),
                         const SizedBox(height: SmileDimens.spacingLg),
