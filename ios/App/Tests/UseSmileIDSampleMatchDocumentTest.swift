@@ -43,7 +43,7 @@ final class UseSmileIDSampleMatchDocumentTest: XCTestCase {
       mlAnalyzerRegistry: registry,
       networkClient: UseSmileIDNetworkClient()
     )
-    return state.errors.map { $0.useSmileIDSampleReason }
+    return state.errors.map(\.useSmileIDSampleReason)
   }
 
   private func snapshot(_ product: UseSmileIDSampleProduct, _ details: UseSmileIDSampleIdDetails) -> FlowLaunchSnapshot {
