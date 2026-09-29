@@ -11,7 +11,7 @@ final class UseSmileIDSampleIdNumberHintSpecTest: XCTestCase {
 
   func testTheFileHasCasesInsideAndOutsideTheSubset() throws {
     let all = try cases()
-    XCTAssertGreaterThan(all.filter { $0.hint != nil }.count, 20)
+    XCTAssertGreaterThan(all.count { $0.hint != nil }, 20)
     XCTAssertTrue(all.contains { $0.hint == nil })
   }
 

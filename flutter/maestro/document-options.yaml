@@ -144,11 +144,12 @@ appId: ${APP_ID}
     selected: true
 - tapOn:
     id: "sample_capture_mode_option_manual"
-# The sheet hands back to Settings, where the row sits below the fold.
+# The sheet hands back to Settings, where the row sits below the fold; centred, clear of the nav bar.
 - scrollUntilVisible:
     element:
       id: "sample_setting_capture_mode"
     direction: DOWN
+    centerElement: true
 # One node: the row merges its title and value into a single label.
 - assertVisible:
     id: "sample_setting_capture_mode"
