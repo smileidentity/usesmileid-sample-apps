@@ -328,7 +328,10 @@ void main() {
           continueEnabled(tester, UseSmileIDSampleTestIds.kycContinue),
           isTrue,
         );
-        expect(find.text('Generic document: Document'), findsOne);
+        expect(
+          find.text('Generic document · landscape · front and back'),
+          findsOne,
+        );
       },
     );
 
@@ -361,11 +364,14 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(
-          forms().idDetails.captureAs,
+          forms().idDetails.captureAsOverride,
           UseSmileIDSampleCaptureAs.genericDocument,
         );
         expect(forms().idDetails.genericDocument.displayName, 'Work permit');
-        expect(find.text('Generic document: Work permit'), findsOne);
+        expect(
+          find.text('Work permit · landscape · front and back · chosen'),
+          findsOne,
+        );
       },
     );
   });

@@ -210,8 +210,10 @@ abstract final class UseSmileIDSampleCatalogueRules {
   /// The documents [country] offers, standalone sub-types as their own rows.
   static List<UseSmileIDSampleDocument> documents(
     List<UseSmileIDSampleApiCountryDocuments> all,
-    String country,
-  ) {
+    String country, {
+    UseSmileIDSampleProduct product =
+        UseSmileIDSampleProduct.documentVerification,
+  }) {
     final UseSmileIDSampleApiCountryDocuments? entry = all
         .where(
           (UseSmileIDSampleApiCountryDocuments it) =>
@@ -238,7 +240,11 @@ abstract final class UseSmileIDSampleCatalogueRules {
                 format: sub.format,
               ),
         ],
-    ];
+    ]..removeWhere(
+      (UseSmileIDSampleDocument it) =>
+          product == UseSmileIDSampleProduct.enhancedDocumentVerification &&
+          it.subType == useSmileIDSampleGreenBookSubType,
+    );
   }
 
   /// The countries [family] offers, named from `supported_documents`.

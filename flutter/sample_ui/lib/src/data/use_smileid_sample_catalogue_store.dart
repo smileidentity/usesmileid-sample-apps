@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import '../model/use_smileid_sample_environment.dart';
+import '../model/use_smileid_sample_product.dart';
 import '../state/use_smileid_sample_catalogue.dart';
 import '../state/use_smileid_sample_id_details.dart';
 import 'use_smileid_sample_catalogue_source.dart';
@@ -139,14 +140,22 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
       const UseSmileIDSampleCatalogueLoading<UseSmileIDSampleKycIdType>(),
   };
 
-  /// The documents [country] offers.
+  /// The documents [country] offers on [product].
   UseSmileIDSampleCatalogue<UseSmileIDSampleDocument> documents(
-    String country,
-  ) => switch (_documents) {
+    String country, {
+    UseSmileIDSampleProduct product =
+        UseSmileIDSampleProduct.documentVerification,
+  }) => switch (_documents) {
     UseSmileIDSampleCatalogueReady(
       items: final List<UseSmileIDSampleApiCountryDocuments> items,
     ) =>
-      _ready(UseSmileIDSampleCatalogueRules.documents(items, country)),
+      _ready(
+        UseSmileIDSampleCatalogueRules.documents(
+          items,
+          country,
+          product: product,
+        ),
+      ),
     UseSmileIDSampleCatalogueFailed(:final String reason) =>
       UseSmileIDSampleCatalogueFailed<UseSmileIDSampleDocument>(reason),
     UseSmileIDSampleCatalogueEmpty() =>

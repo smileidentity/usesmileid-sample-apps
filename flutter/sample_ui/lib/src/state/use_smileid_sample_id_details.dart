@@ -127,6 +127,12 @@ enum UseSmileIDSampleCaptureAs {
 
   /// What the row and the trigger say.
   final String label;
+
+  /// The sheet's first row, which clears the override so the document decides.
+  static const String matchDocumentId = 'matchDocument';
+
+  /// The Match row's name and the trigger's placeholder.
+  static const String matchDocumentLabel = 'Match document';
 }
 
 /// A generic document's capture orientation.
@@ -227,7 +233,7 @@ class UseSmileIDSampleIdDetails {
     this.country,
     this.idType,
     this.document,
-    this.captureAs = UseSmileIDSampleCaptureAs.genericDocument,
+    this.captureAsOverride,
     this.genericDocument = const UseSmileIDSampleGenericDocument(),
     this.idNumber = '',
   });
@@ -241,8 +247,8 @@ class UseSmileIDSampleIdDetails {
   /// The chosen document, which a country change clears.
   final UseSmileIDSampleDocument? document;
 
-  /// How the SDK photographs the document.
-  final UseSmileIDSampleCaptureAs captureAs;
+  /// Null is Match document: the row decides, per [useSmileIDSampleResolvedCaptureAs].
+  final UseSmileIDSampleCaptureAs? captureAsOverride;
 
   /// What "Capture as: Generic document" builds.
   final UseSmileIDSampleGenericDocument genericDocument;
@@ -260,27 +266,51 @@ class UseSmileIDSampleIdDetails {
           UseSmileIDSampleIdNumberHint.accepts(idType!.regex, idNumber),
   };
 
-  /// A copy with [country] chosen, which CLEARS the type and document and keeps the typed number.
+  /// What the SDK will be handed for this form.
+  UseSmileIDSampleResolvedCaptureAs get resolvedCaptureAs =>
+      useSmileIDSampleResolvedCaptureAs(
+        document,
+        captureAsOverride,
+        genericDocument,
+      );
+
+  /// A copy with [country] chosen, which CLEARS the type, document and override and keeps the typed number.
   UseSmileIDSampleIdDetails withCountry(UseSmileIDSampleCountry country) =>
       UseSmileIDSampleIdDetails(
         country: country,
-        captureAs: captureAs,
         genericDocument: genericDocument,
         idNumber: idNumber,
       );
+
+  /// A copy with [document] chosen; a different one drops the override, which described one pairing.
+  UseSmileIDSampleIdDetails withDocument(UseSmileIDSampleDocument document) =>
+      withCaptureAsOverride(
+        document.id == this.document?.id ? captureAsOverride : null,
+      ).copyWith(document: document);
+
+  /// A copy with the override replaced; null is Match document.
+  UseSmileIDSampleIdDetails withCaptureAsOverride(
+    UseSmileIDSampleCaptureAs? override,
+  ) => UseSmileIDSampleIdDetails(
+    country: country,
+    idType: idType,
+    document: document,
+    captureAsOverride: override,
+    genericDocument: genericDocument,
+    idNumber: idNumber,
+  );
 
   /// A copy with the given fields replaced.
   UseSmileIDSampleIdDetails copyWith({
     UseSmileIDSampleKycIdType? idType,
     UseSmileIDSampleDocument? document,
-    UseSmileIDSampleCaptureAs? captureAs,
     UseSmileIDSampleGenericDocument? genericDocument,
     String? idNumber,
   }) => UseSmileIDSampleIdDetails(
     country: country,
     idType: idType ?? this.idType,
     document: document ?? this.document,
-    captureAs: captureAs ?? this.captureAs,
+    captureAsOverride: captureAsOverride,
     genericDocument: genericDocument ?? this.genericDocument,
     idNumber: idNumber ?? this.idNumber,
   );
@@ -291,7 +321,7 @@ class UseSmileIDSampleIdDetails {
       other.country == country &&
       other.idType == idType &&
       other.document == document &&
-      other.captureAs == captureAs &&
+      other.captureAsOverride == captureAsOverride &&
       other.genericDocument == genericDocument &&
       other.idNumber == idNumber;
 
@@ -300,8 +330,105 @@ class UseSmileIDSampleIdDetails {
     country,
     idType,
     document,
-    captureAs,
+    captureAsOverride,
     genericDocument,
     idNumber,
+  );
+}
+
+/// The type "Capture as" resolves to: a preset, or a GenericDocument built from [genericDocument].
+class UseSmileIDSampleResolvedCaptureAs {
+  /// A resolution; [matched] says whether the document decided it.
+  const UseSmileIDSampleResolvedCaptureAs({
+    required this.captureAs,
+    required this.genericDocument,
+    required this.matched,
+  });
+
+  /// The preset, or [UseSmileIDSampleCaptureAs.genericDocument].
+  final UseSmileIDSampleCaptureAs captureAs;
+
+  /// What a GenericDocument is built from.
+  final UseSmileIDSampleGenericDocument genericDocument;
+
+  /// Whether the document decided it, rather than an override.
+  final bool matched;
+
+  /// Whether the resolved type declares a back side.
+  bool get hasBackSide => switch (captureAs) {
+    UseSmileIDSampleCaptureAs.genericDocument => genericDocument.hasBackSide,
+    UseSmileIDSampleCaptureAs.greenBook => false,
+    UseSmileIDSampleCaptureAs.passport => true,
+  };
+
+  /// The flag the document step is handed: the Settings switch, except that a passport is captured front only.
+  bool captureBothSides(bool setting) =>
+      setting && captureAs != UseSmileIDSampleCaptureAs.passport;
+
+  /// The trigger text from `spec/catalogue-rules.json` captureAs.
+  String triggerText(bool setting) {
+    final String sides = captureBothSides(setting) && hasBackSide
+        ? 'front and back'
+        : 'front only';
+    final String orientation = genericDocument.orientation.label.toLowerCase();
+    if (captureAs != UseSmileIDSampleCaptureAs.genericDocument) {
+      return '${captureAs.label} · ${matched ? 'matches document' : 'chosen'}';
+    }
+    return matched
+        ? '${UseSmileIDSampleCaptureAs.genericDocument.label} · $orientation · $sides'
+        : '${genericDocument.displayName} · $orientation · $sides · chosen';
+  }
+
+  /// The sheet's Match row, naming what the document resolves to.
+  String get matchRowLabel =>
+      '${UseSmileIDSampleCaptureAs.matchDocumentLabel} (${captureAs.label})';
+
+  @override
+  bool operator ==(Object other) =>
+      other is UseSmileIDSampleResolvedCaptureAs &&
+      other.captureAs == captureAs &&
+      other.genericDocument == genericDocument &&
+      other.matched == matched;
+
+  @override
+  int get hashCode => Object.hash(captureAs, genericDocument, matched);
+}
+
+/// The only sub-type the API lists, and the one document the SDK refuses on Enhanced Document Verification.
+const String useSmileIDSampleGreenBookSubType = 'green_book';
+
+/// The one place the match table lives: keyed on sub-type and code, never format, with the row's has_back for the rest.
+UseSmileIDSampleResolvedCaptureAs useSmileIDSampleResolvedCaptureAs(
+  UseSmileIDSampleDocument? document,
+  UseSmileIDSampleCaptureAs? override,
+  UseSmileIDSampleGenericDocument genericDocument,
+) {
+  if (override != null) {
+    return UseSmileIDSampleResolvedCaptureAs(
+      captureAs: override,
+      genericDocument: genericDocument,
+      matched: false,
+    );
+  }
+  if (document?.subType == useSmileIDSampleGreenBookSubType) {
+    return const UseSmileIDSampleResolvedCaptureAs(
+      captureAs: UseSmileIDSampleCaptureAs.greenBook,
+      genericDocument: UseSmileIDSampleGenericDocument(),
+      matched: true,
+    );
+  }
+  if (document?.code == 'PASSPORT') {
+    return const UseSmileIDSampleResolvedCaptureAs(
+      captureAs: UseSmileIDSampleCaptureAs.passport,
+      genericDocument: UseSmileIDSampleGenericDocument(),
+      matched: true,
+    );
+  }
+  return UseSmileIDSampleResolvedCaptureAs(
+    captureAs: UseSmileIDSampleCaptureAs.genericDocument,
+    genericDocument: UseSmileIDSampleGenericDocument(
+      hasBackSide: document?.hasBack ?? true,
+    ),
+    matched: true,
   );
 }

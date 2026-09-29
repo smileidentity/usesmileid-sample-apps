@@ -12,26 +12,38 @@ import '../state/use_smileid_sample_settings.dart';
 import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
 
-/// How the SDK photographs the document; choosing Generic document hands over to the generic-document sheet.
+/// How the SDK photographs the document: Match document first, then the overrides; Generic document hands over to its sheet.
 class UseSmileIDSampleCaptureAsSheet extends StatelessWidget {
   /// [onSelect] both chooses and dismisses.
   const UseSmileIDSampleCaptureAsSheet({
     required this.selected,
+    required this.matched,
     required this.onSelect,
     super.key,
   });
 
-  /// The option already chosen.
-  final UseSmileIDSampleCaptureAs selected;
+  /// The override already chosen; null is Match document.
+  final UseSmileIDSampleCaptureAs? selected;
 
-  /// Chooses one.
-  final ValueChanged<UseSmileIDSampleCaptureAs> onSelect;
+  /// What Match document resolves to for the chosen row, which its row names.
+  final UseSmileIDSampleResolvedCaptureAs matched;
+
+  /// Chooses one; null is Match document.
+  final ValueChanged<UseSmileIDSampleCaptureAs?> onSelect;
 
   @override
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     mainAxisSize: MainAxisSize.min,
     children: <Widget>[
+      UseSmileIDSampleOptionRow(
+        label: matched.matchRowLabel,
+        selected: selected == null,
+        onTap: () => onSelect(null),
+        testId: UseSmileIDSampleTestIds.captureAsOption(
+          UseSmileIDSampleCaptureAs.matchDocumentId,
+        ),
+      ),
       for (final UseSmileIDSampleCaptureAs option
           in UseSmileIDSampleCaptureAs.values)
         UseSmileIDSampleOptionRow(

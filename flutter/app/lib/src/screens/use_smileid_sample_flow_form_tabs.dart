@@ -228,6 +228,9 @@ class _UseSmileIDSampleKycFormTabState
                   UseSmileIDSampleCatalogueFamily.document =>
                     _catalogue.documents(country).isLoading,
                 },
+            captureBothSides: ref
+                .watch(useSmileIDSampleSettingsProvider)
+                .captureBothSides,
             onBack: back,
             onPickCountry: _pickCountry,
             onPickIdType: _pickIdType,
@@ -308,7 +311,12 @@ class _UseSmileIDSampleKycFormTabState
     (BuildContext sheetContext, UseSmileIDSampleIdDetails details) =>
         UseSmileIDSampleDocumentPickerSheet(
           country: details.country,
-          catalogue: _catalogue.documents(details.country?.code ?? ''),
+          catalogue: _catalogue.documents(
+            details.country?.code ?? '',
+            product:
+                _productFor(widget.productId) ??
+                UseSmileIDSampleProduct.documentVerification,
+          ),
           selected: details.document,
           onRetry: _catalogue.retry,
           onSelect: (UseSmileIDSampleDocument document) {
@@ -322,26 +330,36 @@ class _UseSmileIDSampleKycFormTabState
 
   Future<void> _pickCaptureAs() async {
     UseSmileIDSampleCaptureAs? chosen;
+    bool picked = false;
+    final UseSmileIDSampleIdDetails details = ref
+        .read(useSmileIDSampleFormsProvider)
+        .idDetails;
     await showUseSmileIDSampleSheet<void>(
       context: context,
       title: 'Capture as',
       testId: UseSmileIDSampleTestIds.captureAsSheet,
       builder: (BuildContext sheetContext) => UseSmileIDSampleCaptureAsSheet(
-        selected: ref.read(useSmileIDSampleFormsProvider).idDetails.captureAs,
-        onSelect: (UseSmileIDSampleCaptureAs option) {
+        selected: details.captureAsOverride,
+        matched: useSmileIDSampleResolvedCaptureAs(
+          details.document,
+          null,
+          details.genericDocument,
+        ),
+        onSelect: (UseSmileIDSampleCaptureAs? option) {
           chosen = option;
+          picked = true;
           Navigator.of(sheetContext).pop();
         },
       ),
     );
-    if (!mounted || chosen == null) {
+    if (!mounted || !picked) {
       return;
     }
     // Generic document hands over to its own sheet, which is what keeps it; the others are kept at once.
     if (chosen == UseSmileIDSampleCaptureAs.genericDocument) {
       await _buildGenericDocument();
     } else {
-      ref.read(useSmileIDSampleFormsProvider.notifier).setCaptureAs(chosen!);
+      ref.read(useSmileIDSampleFormsProvider.notifier).setCaptureAs(chosen);
     }
   }
 

@@ -61,6 +61,9 @@ void main() {
           UseSmileIDSampleCatalogueRules.documents(
             all,
             c['country']! as String,
+            product: UseSmileIDSampleProduct.values.byName(
+              c['product'] as String? ?? 'documentVerification',
+            ),
           );
       expect(
         <Map<String, Object?>>[
@@ -111,4 +114,130 @@ void main() {
       );
     }
   });
+
+  final Map<String, Object?> captureAs =
+      rules['captureAs']! as Map<String, Object?>;
+
+  test('capture as cases', () {
+    for (final Map<String, Object?> c in cases('captureAs')) {
+      final String name = c['name']! as String;
+      final Map<String, Object?> expected =
+          c['expected']! as Map<String, Object?>;
+      final bool setting = c['captureBothSides'] as bool? ?? true;
+      final UseSmileIDSampleDocument document = _document(c['document']);
+      final Map<String, Object?>? sheet =
+          c['genericDocument'] as Map<String, Object?>?;
+      final UseSmileIDSampleResolvedCaptureAs resolved =
+          useSmileIDSampleResolvedCaptureAs(
+            document,
+            _captureAs(c['captureAs']! as String),
+            sheet == null
+                ? const UseSmileIDSampleGenericDocument()
+                : UseSmileIDSampleGenericDocument(
+                    displayName: sheet['displayName']! as String,
+                    hasBackSide: sheet['hasBackSide']! as bool,
+                    orientation: UseSmileIDSampleDocumentOrientation.values
+                        .byName(sheet['orientation']! as String),
+                    aspectRatio: UseSmileIDSampleAspectRatio.values.byName(
+                      sheet['aspectRatio']! as String,
+                    ),
+                  ),
+          );
+      final bool generic =
+          resolved.captureAs == UseSmileIDSampleCaptureAs.genericDocument;
+      expect(
+        generic ? 'generic' : resolved.captureAs.id,
+        expected['documentType'],
+        reason: name,
+      );
+      if (generic) {
+        expect(
+          resolved.genericDocument.displayName,
+          expected['displayName'],
+          reason: name,
+        );
+        expect(
+          resolved.genericDocument.hasBackSide,
+          expected['hasBackSide'],
+          reason: name,
+        );
+        expect(
+          resolved.genericDocument.orientation.id,
+          expected['orientation'],
+          reason: name,
+        );
+      }
+      expect(resolved.matched, expected['matched'], reason: name);
+      expect(
+        resolved.captureBothSides(setting),
+        expected['captureBothSides'],
+        reason: name,
+      );
+      expect(
+        resolved.triggerText(setting),
+        expected['triggerText'],
+        reason: name,
+      );
+      expect(
+        useSmileIDSampleResolvedCaptureAs(
+          document,
+          null,
+          const UseSmileIDSampleGenericDocument(),
+        ).matchRowLabel,
+        expected['matchRowLabel'],
+        reason: name,
+      );
+    }
+  });
+
+  test('capture as reset cases', () {
+    for (final Map<String, Object?> c in objects(
+      (captureAs['resets']! as Map<String, Object?>)['cases'],
+    )) {
+      UseSmileIDSampleIdDetails details = const UseSmileIDSampleIdDetails()
+          .withCountry(const UseSmileIDSampleCountry('ZA', 'South Africa'))
+          .withDocument(_document(c['document']))
+          .withCaptureAsOverride(_captureAs(c['captureAs']! as String));
+      final Map<String, Object?> change = c['change']! as Map<String, Object?>;
+      if (change['document'] case final Object next) {
+        details = details.withDocument(_document(next));
+      }
+      if (change['country'] case final Map<String, Object?> country) {
+        details = details.withCountry(
+          UseSmileIDSampleCountry(
+            country['code']! as String,
+            country['name']! as String,
+          ),
+        );
+      }
+      expect(
+        details.captureAsOverride,
+        _captureAs(c['expected']! as String),
+        reason: c['name']! as String,
+      );
+    }
+  });
+
+  test('the trigger placeholder is the spec\'s', () {
+    expect(
+      captureAs['triggerPlaceholder'],
+      UseSmileIDSampleCaptureAs.matchDocumentLabel,
+    );
+  });
+}
+
+UseSmileIDSampleCaptureAs? _captureAs(String id) => UseSmileIDSampleCaptureAs
+    .values
+    .where((UseSmileIDSampleCaptureAs it) => it.id == id)
+    .firstOrNull;
+
+UseSmileIDSampleDocument _document(Object? raw) {
+  final Map<String, Object?> row = raw! as Map<String, Object?>;
+  return UseSmileIDSampleDocument(
+    code: row['code']! as String,
+    subType: row['subType'] as String?,
+    name: row['name']! as String,
+    hasBack: row['hasBack']! as bool,
+    format: row['format']! as int,
+  );
 }

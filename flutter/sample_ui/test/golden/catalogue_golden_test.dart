@@ -142,6 +142,22 @@ void main() {
     );
   });
 
+  /// South Africa on Enhanced Document Verification, which leaves out the Green Book the SDK refuses there.
+  testWidgets('document picker enhanced', (WidgetTester tester) async {
+    await goldens(
+      tester,
+      'sheet_document_picker_enhanced',
+      () => _document(
+        UseSmileIDSampleCatalogueReady<UseSmileIDSampleDocument>(
+          CatalogueFixtures.documents(
+            'ZA',
+            product: UseSmileIDSampleProduct.enhancedDocumentVerification,
+          ),
+        ),
+      ),
+    );
+  });
+
   testWidgets('document picker empty', (WidgetTester tester) async {
     await goldens(
       tester,
@@ -152,13 +168,21 @@ void main() {
     );
   });
 
+  /// Match document checked on a passport row, so its label names the preset it resolves to.
   testWidgets('capture as', (WidgetTester tester) async {
     await goldens(
       tester,
       'sheet_capture_as',
       () => UseSmileIDSampleCaptureAsSheet(
-        selected: UseSmileIDSampleCaptureAs.genericDocument,
-        onSelect: (UseSmileIDSampleCaptureAs _) {},
+        selected: null,
+        matched: useSmileIDSampleResolvedCaptureAs(
+          CatalogueFixtures.documents(
+            'KE',
+          ).firstWhere((UseSmileIDSampleDocument it) => it.code == 'PASSPORT'),
+          null,
+          const UseSmileIDSampleGenericDocument(),
+        ),
+        onSelect: (UseSmileIDSampleCaptureAs? _) {},
       ),
     );
   });
