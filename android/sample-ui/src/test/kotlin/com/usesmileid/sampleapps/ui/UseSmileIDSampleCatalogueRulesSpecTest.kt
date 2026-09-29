@@ -1,11 +1,20 @@
 package com.usesmileid.sampleapps.ui
 
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.TokenJson
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleAspectRatio
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureAs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueData
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueFamily
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueJson
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueRules
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCountry
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocument
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocumentOrientation
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleForms
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleGenericDocument
 import com.usesmileid.sampleapps.ui.state.parseTokenJson
+import com.usesmileid.sampleapps.ui.state.resolvedCaptureAs
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -34,7 +43,10 @@ class UseSmileIDSampleCatalogueRulesSpecTest {
         val input = requireNotNull(
             UseSmileIDSampleCatalogueJson.documents("{\"valid_documents\":${encode(case.members.getValue("input"))}}"),
         )
-        val actual = UseSmileIDSampleCatalogueRules.documents(input, case.text("country"))
+        val product = (case.members["product"] as? TokenJson.Str)?.value
+            ?.let { id -> UseSmileIDSampleProduct.entries.first { it.id == id } }
+            ?: UseSmileIDSampleProduct.DocumentVerification
+        val actual = UseSmileIDSampleCatalogueRules.documents(input, case.text("country"), product)
             .map { listOf(it.id, it.code, it.subType, it.name, it.hasBack, it.format) }
         val expected = case.list("expected").map {
             listOf(
@@ -59,6 +71,67 @@ class UseSmileIDSampleCatalogueRulesSpecTest {
     }
 
     @Test
+    fun capture_as_cases() = rules.cases("captureAs").forEach { case ->
+        val name = case.text("name")
+        val expected = case.members.getValue("expected") as TokenJson.Obj
+        val setting = (case.members["captureBothSides"] as? TokenJson.Bool)?.value ?: true
+        val resolved = resolvedCaptureAs(
+            documentOf(case.members.getValue("document") as TokenJson.Obj),
+            captureAsOf(case.text("captureAs")),
+            (case.members["genericDocument"] as? TokenJson.Obj)?.let(::genericDocumentOf) ?: UseSmileIDSampleGenericDocument(),
+        )
+        val type = when (resolved.captureAs) {
+            UseSmileIDSampleCaptureAs.GenericDocument -> "generic"
+            else -> resolved.captureAs.id
+        }
+        assertEquals(name, expected.text("documentType"), type)
+        if (type == "generic") {
+            assertEquals(name, expected.text("displayName"), resolved.genericDocument.displayName)
+            assertEquals(name, (expected.members.getValue("hasBackSide") as TokenJson.Bool).value, resolved.genericDocument.hasBackSide)
+            assertEquals(name, expected.text("orientation"), resolved.genericDocument.orientation.id)
+        }
+        assertEquals(name, (expected.members.getValue("matched") as TokenJson.Bool).value, resolved.matched)
+        assertEquals(name, (expected.members.getValue("captureBothSides") as TokenJson.Bool).value, resolved.captureBothSides(setting))
+        assertEquals(name, expected.text("triggerText"), resolved.triggerText(setting))
+        assertEquals(name, expected.text("matchRowLabel"), resolvedCaptureAs(documentOf(case.members.getValue("document") as TokenJson.Obj), null, UseSmileIDSampleGenericDocument()).matchRowLabel)
+    }
+
+    @Test
+    fun capture_as_reset_cases() = (rules.section("captureAs").members.getValue("resets") as TokenJson.Obj).cases().forEach { case ->
+        val forms = UseSmileIDSampleForms()
+        forms.setCountry(UseSmileIDSampleCountry("ZA", "South Africa"))
+        forms.setDocument(documentOf(case.members.getValue("document") as TokenJson.Obj))
+        forms.setCaptureAs(captureAsOf(case.text("captureAs")))
+        val change = case.members.getValue("change") as TokenJson.Obj
+        (change.members["document"] as? TokenJson.Obj)?.let { forms.setDocument(documentOf(it)) }
+        (change.members["country"] as? TokenJson.Obj)?.let { forms.setCountry(UseSmileIDSampleCountry(it.text("code"), it.text("name"))) }
+        assertEquals(case.text("name"), captureAsOf(case.text("expected")), forms.idDetails.captureAsOverride)
+    }
+
+    @Test
+    fun the_trigger_placeholder_is_the_specs() {
+        assertEquals(rules.section("captureAs").text("triggerPlaceholder"), UseSmileIDSampleCaptureAs.MATCH_DOCUMENT_LABEL)
+    }
+
+    private fun captureAsOf(id: String): UseSmileIDSampleCaptureAs? =
+        if (id == UseSmileIDSampleCaptureAs.MATCH_DOCUMENT_ID) null else UseSmileIDSampleCaptureAs.entries.first { it.id == id }
+
+    private fun documentOf(row: TokenJson.Obj) = UseSmileIDSampleDocument(
+        code = row.text("code"),
+        subType = (row.members["subType"] as? TokenJson.Str)?.value,
+        name = row.text("name"),
+        hasBack = (row.members.getValue("hasBack") as TokenJson.Bool).value,
+        format = (row.members.getValue("format") as TokenJson.Num).literal.toInt(),
+    )
+
+    private fun genericDocumentOf(sheet: TokenJson.Obj) = UseSmileIDSampleGenericDocument(
+        displayName = sheet.text("displayName"),
+        hasBackSide = (sheet.members.getValue("hasBackSide") as TokenJson.Bool).value,
+        orientation = UseSmileIDSampleDocumentOrientation.entries.first { it.id == sheet.text("orientation") },
+        aspectRatio = UseSmileIDSampleAspectRatio.entries.first { it.id == sheet.text("aspectRatio") },
+    )
+
+    @Test
     fun every_section_has_cases() {
         listOf("idTypes", "documents", "countries", "captureAs").forEach {
             assertTrue("$it has no cases", rules.cases(it).isNotEmpty())
@@ -73,7 +146,9 @@ class UseSmileIDSampleCatalogueRulesSpecTest {
 
 internal fun TokenJson.Obj.section(key: String) = members.getValue(key) as TokenJson.Obj
 
-internal fun TokenJson.Obj.cases(section: String) = (section(section).members.getValue("cases") as TokenJson.Arr).items.map { it as TokenJson.Obj }
+internal fun TokenJson.Obj.cases(section: String) = section(section).cases()
+
+internal fun TokenJson.Obj.cases() = (members.getValue("cases") as TokenJson.Arr).items.map { it as TokenJson.Obj }
 
 internal fun TokenJson.Obj.text(key: String) = (members.getValue(key) as TokenJson.Str).value
 

@@ -52,25 +52,28 @@ class UseSmileIDSampleForms(
         idDetails = UseSmileIDSampleIdDetails()
     }
 
-    /** Choosing a country clears the ID type and document, which may not apply to it, and keeps the typed number. */
+    /** Choosing a country clears the ID type, document and "Capture as" override, which may not apply to it, and keeps the typed number. */
     fun setCountry(country: UseSmileIDSampleCountry) {
-        idDetails = idDetails.copy(country = country, idType = null, document = null)
+        idDetails = idDetails.copy(country = country, idType = null, document = null, captureAsOverride = null)
     }
 
     fun setIdType(idType: UseSmileIDSampleKycIdType) {
         idDetails = idDetails.copy(idType = idType)
     }
 
+    /** A different document drops the override, which described one pairing. */
     fun setDocument(document: UseSmileIDSampleDocument) {
-        idDetails = idDetails.copy(document = document)
+        val keep = document.id == idDetails.document?.id
+        idDetails = idDetails.copy(document = document, captureAsOverride = idDetails.captureAsOverride.takeIf { keep })
     }
 
-    fun setCaptureAs(captureAs: UseSmileIDSampleCaptureAs) {
-        idDetails = idDetails.copy(captureAs = captureAs)
+    /** Null is Match document. */
+    fun setCaptureAs(captureAs: UseSmileIDSampleCaptureAs?) {
+        idDetails = idDetails.copy(captureAsOverride = captureAs)
     }
 
     fun setGenericDocument(genericDocument: UseSmileIDSampleGenericDocument) {
-        idDetails = idDetails.copy(genericDocument = genericDocument, captureAs = UseSmileIDSampleCaptureAs.GenericDocument)
+        idDetails = idDetails.copy(genericDocument = genericDocument, captureAsOverride = UseSmileIDSampleCaptureAs.GenericDocument)
     }
 
     fun setIdNumber(value: String) {
@@ -101,7 +104,7 @@ class UseSmileIDSampleForms(
                     id.document?.let { d ->
                         listOf(d.code, d.subType.orEmpty(), d.name, d.hasBack.toString(), d.format.toString()).joinToString(FIELD)
                     }.orEmpty(),
-                    id.captureAs.name,
+                    id.captureAsOverride?.name.orEmpty(),
                     with(id.genericDocument) { listOf(displayName, hasBackSide.toString(), orientation.name, aspectRatio.name).joinToString(FIELD) },
                 )
             },
@@ -127,8 +130,7 @@ class UseSmileIDSampleForms(
                         document = parts(10).takeIf { it.size == 5 }?.let { (code, subType, name, hasBack, format) ->
                             UseSmileIDSampleDocument(code, subType.ifEmpty { null }, name, hasBack == "true", format.toIntOrNull() ?: 1)
                         },
-                        captureAs = UseSmileIDSampleCaptureAs.entries.firstOrNull { it.name == at(11) }
-                            ?: UseSmileIDSampleCaptureAs.GenericDocument,
+                        captureAsOverride = UseSmileIDSampleCaptureAs.entries.firstOrNull { it.name == at(11) },
                         genericDocument = parts(12).takeIf { it.size == 4 }?.let { (name, back, orientation, ratio) ->
                             UseSmileIDSampleGenericDocument(
                                 displayName = name,

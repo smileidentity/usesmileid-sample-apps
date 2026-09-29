@@ -92,7 +92,12 @@ object UseSmileIDSampleCatalogueRules {
             }
     }
 
-    fun documents(all: List<UseSmileIDSampleApiCountryDocuments>, country: String): List<UseSmileIDSampleDocument> =
+    /** [product] leaves out a row the SDK refuses on it: the Green Book on Enhanced Document Verification. */
+    fun documents(
+        all: List<UseSmileIDSampleApiCountryDocuments>,
+        country: String,
+        product: UseSmileIDSampleProduct = UseSmileIDSampleProduct.DocumentVerification,
+    ): List<UseSmileIDSampleDocument> =
         all.firstOrNull { it.country.code == country }?.documents.orEmpty()
             .filter { it.code.isNotEmpty() }
             .flatMap { document ->
@@ -101,6 +106,7 @@ object UseSmileIDSampleCatalogueRules {
                         UseSmileIDSampleDocument(document.code, it.id, it.name, it.hasBack, it.format)
                     }
             }
+            .filterNot { product == UseSmileIDSampleProduct.EnhancedDocumentVerification && it.subType == GREEN_BOOK_SUB_TYPE }
 
     fun countries(data: UseSmileIDSampleCatalogueData, family: UseSmileIDSampleCatalogueFamily): List<UseSmileIDSampleCountry> {
         val named = data.documents.map { it.country }

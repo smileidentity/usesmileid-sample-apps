@@ -253,11 +253,11 @@ class SdkFlowPreflightTest {
     @Test
     fun `every document setting passes preflight`() {
         listOf(UseSmileIDSampleProduct.DocumentVerification, UseSmileIDSampleProduct.EnhancedDocumentVerification).forEach { product ->
-            UseSmileIDSampleCaptureAs.entries.forEach { captureAs ->
+            (UseSmileIDSampleCaptureAs.entries + null).forEach { captureAs ->
                 listOf(true, false).forEach { flag ->
                     val base = snapshotFor(product)
                     val snapshot = base.copy(
-                        idDetails = base.idDetails.copy(captureAs = captureAs),
+                        idDetails = base.idDetails.copy(captureAsOverride = captureAs),
                         captureBothSides = flag,
                         allowSkipBack = !flag,
                         selfieFirst = flag,

@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.state
 
+import androidx.compose.runtime.saveable.SaverScope
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -81,5 +82,17 @@ class UseSmileIDSampleFormsTest {
 
         assertEquals(UseSmileIDSampleIdDetails(), forms.idDetails)
         assertEquals(ada, forms.userDetails)
+    }
+
+    @Test
+    fun the_capture_as_override_survives_the_saver_and_an_unknown_value_restores_as_match() {
+        val scope = SaverScope { true }
+        val chosen = UseSmileIDSampleForms().apply { setCaptureAs(UseSmileIDSampleCaptureAs.Passport) }
+        val saved = with(UseSmileIDSampleForms.Saver) { scope.save(chosen) } as List<*>
+        assertEquals(UseSmileIDSampleCaptureAs.Passport, UseSmileIDSampleForms.Saver.restore(saved)?.idDetails?.captureAsOverride)
+        val renamed = saved.map { value -> if (value == UseSmileIDSampleCaptureAs.Passport.name) "Retired" else value }
+        assertEquals(null, UseSmileIDSampleForms.Saver.restore(renamed)?.idDetails?.captureAsOverride)
+        val match = with(UseSmileIDSampleForms.Saver) { scope.save(UseSmileIDSampleForms()) } as List<*>
+        assertEquals(null, UseSmileIDSampleForms.Saver.restore(match)?.idDetails?.captureAsOverride)
     }
 }

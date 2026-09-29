@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleApiCountryDocuments
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleApiIdType
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogue
@@ -92,9 +93,12 @@ class UseSmileIDSampleCatalogueStore(
             else -> types.withoutItems()
         }
 
-    fun documents(country: String): UseSmileIDSampleCatalogue<UseSmileIDSampleDocument> =
+    fun documents(
+        country: String,
+        product: UseSmileIDSampleProduct = UseSmileIDSampleProduct.DocumentVerification,
+    ): UseSmileIDSampleCatalogue<UseSmileIDSampleDocument> =
         when (val docs = documents) {
-            is UseSmileIDSampleCatalogue.Ready -> ready(UseSmileIDSampleCatalogueRules.documents(docs.items, country))
+            is UseSmileIDSampleCatalogue.Ready -> ready(UseSmileIDSampleCatalogueRules.documents(docs.items, country, product))
             else -> docs.withoutItems()
         }
 
