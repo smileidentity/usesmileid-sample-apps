@@ -156,6 +156,17 @@
             "needsIdDetails": true
           },
           {
+            "id": "residencyDocumentVerification",
+            "label": "Residency Document Verification",
+            "cardTitle": "Residency Doc.",
+            "cardFamily": "Verification",
+            "jobType": "ResidencyDocumentVerification",
+            "capture": true,
+            "needsUserDetails": true,
+            "needsIdDetails": true,
+            "note": "A passport data page, then the visa page the SDK always captures after it, and a selfie, in one job. The ID form asks only for the passport's issuing country: the SDK requires idType PASSPORT and DocumentType.Passport, so the document is never chosen."
+          },
+          {
             "id": "biometricKyc",
             "label": "Biometric KYC",
             "cardTitle": "Biometric",

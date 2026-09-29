@@ -8,8 +8,11 @@ File names match the ids `spec/` already uses: a product's icon is its product i
 
 The two document products share `document_verification.svg`: the design tells them apart by the
 card's hue, which is already what tints the icon, so there is no second file to keep in sync.
-Enhanced KYC has no icon yet and falls back to the shared product mark; see
-`spec/components.json` → `ProductCard`.
+
+`residency_document_verification.svg` is the one two-tone mark: the design draws its frame and globe
+in two colours on the card's tile. Every generator keeps a mark's own colours when its drawn paths
+use more than one, and that product's hue has no `cardIcon`, so its tile draws the mark untinted.
+Its ghost is tinted like every other card's, and single-colour marks are unchanged.
 
 `material-symbols/` holds the Material Symbols Outlined stand-ins for the glyphs the design supplies
 nowhere. Check the design node's exported assets before adding one, and commit the export here the

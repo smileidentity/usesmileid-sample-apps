@@ -809,7 +809,7 @@
     ]
   },
   "countries": {
-    "rule": "The KYC products offer every country with at least one listed ID type; the document products every country with at least one listed document. Names come from supported_documents, which carries them; a KYC country it does not name is shown by its code. Countries keep supported_documents' order (alphabetical by English name), and a KYC-only country follows them in its supported_id_types order.",
+    "rule": "The KYC products offer every country with at least one listed ID type; the document products every country with at least one listed document; Residency Document Verification, the passport family, every country whose listed documents include a PASSPORT, since the SDK accepts no other document for it. Names come from supported_documents, which carries them; a KYC country it does not name is shown by its code. Countries keep supported_documents' order (alphabetical by English name), and a KYC-only country follows them in its supported_id_types order.",
     "cases": [
       {
         "name": "the fixture, KYC family",
@@ -833,6 +833,29 @@
       {
         "name": "the fixture, document family",
         "family": "document",
+        "input": "catalogue-fixture.json",
+        "expected": [
+          {
+            "code": "GH",
+            "name": "Ghana"
+          },
+          {
+            "code": "KE",
+            "name": "Kenya"
+          },
+          {
+            "code": "NG",
+            "name": "Nigeria"
+          },
+          {
+            "code": "ZA",
+            "name": "South Africa"
+          }
+        ]
+      },
+      {
+        "name": "the fixture, passport family",
+        "family": "passport",
         "input": "catalogue-fixture.json",
         "expected": [
           {
@@ -947,6 +970,61 @@
                     "format": 1,
                     "has_back": true,
                     "name": "Others"
+                  }
+                ]
+              },
+              {
+                "country": {
+                  "code": "KE",
+                  "continent": "AFRICA",
+                  "name": "Kenya"
+                },
+                "id_types": [
+                  {
+                    "code": "PASSPORT",
+                    "example": [
+                      "Passports"
+                    ],
+                    "format": 3,
+                    "has_back": false,
+                    "name": "Passport"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "expected": [
+          {
+            "code": "KE",
+            "name": "Kenya"
+          }
+        ]
+      },
+      {
+        "name": "a document country without a PASSPORT row is not offered to the passport family (synthetic)",
+        "family": "passport",
+        "input": {
+          "supported_id_types": {
+            "id_types": []
+          },
+          "supported_documents": {
+            "valid_documents": [
+              {
+                "country": {
+                  "code": "XX",
+                  "continent": "AFRICA",
+                  "name": "Test"
+                },
+                "id_types": [
+                  {
+                    "code": "IDENTITY_CARD",
+                    "example": [
+                      "National ID"
+                    ],
+                    "format": 1,
+                    "has_back": true,
+                    "name": "National ID"
                   }
                 ]
               },
