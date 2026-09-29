@@ -33,12 +33,22 @@ final class UseSmileIDSampleDocumentOptionsUITests: XCTestCase {
     XCTAssertFalse(element("sample_document_option_").exists)
     element("sample_document_option_IDENTITY_CARD_green_book").tap()
 
+    // Untouched, Capture as matches the document: the Green Book row, then a passport row.
+    XCTAssertTrue(element("sample_capture_as_trigger").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("sample_capture_as_trigger").label.contains("Green Book preset · matches document"))
+    element("sample_document_trigger").tap()
+    XCTAssertTrue(element("sample_document_option_PASSPORT").waitForExistence(timeout: 10))
+    element("sample_document_option_PASSPORT").tap()
+    XCTAssertTrue(element("sample_capture_as_trigger").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("sample_capture_as_trigger").label.contains("Passport preset · matches document"))
+
+    // Match document first and selected, then the three overrides.
     element("sample_capture_as_trigger").tap()
     XCTAssertTrue(element("sample_capture_as_sheet").waitForExistence(timeout: 10))
-    for option in ["genericDocument", "greenBook", "passport"] {
+    for option in ["matchDocument", "genericDocument", "greenBook", "passport"] {
       XCTAssertTrue(element("sample_capture_as_option_\(option)").exists, option)
     }
-    XCTAssertTrue(element("sample_capture_as_option_genericDocument").isSelected)
+    XCTAssertTrue(element("sample_capture_as_option_matchDocument").isSelected)
 
     // Generic document opens its own sheet, and what it builds is named on the trigger.
     element("sample_capture_as_option_genericDocument").tap()
@@ -48,7 +58,7 @@ final class UseSmileIDSampleDocumentOptionsUITests: XCTestCase {
     element("sample_generic_document_aspect_ratio_booklet").tap()
     element("sample_generic_document_done").tap()
     XCTAssertTrue(element("sample_capture_as_trigger").waitForExistence(timeout: 10))
-    XCTAssertTrue(element("sample_capture_as_trigger").label.contains("Booklet"))
+    XCTAssertTrue(element("sample_capture_as_trigger").label.contains("Booklet · portrait · front and back · chosen"))
 
     element("sample_kyc_continue").tap()
     XCTAssertTrue(element("si_consent_screen").waitForExistence(timeout: 20), "the SDK did not mount")
