@@ -39,6 +39,9 @@ func useSmileIDSamplePreflight(_ snapshot: FlowLaunchSnapshot) -> FlowPreflight 
   if let enhancedDocumentVerification = params.enhancedDocumentVerification {
     payloadChecks.append(validator.validateEnhancedDocumentVerificationParams(enhancedDocumentVerification))
   }
+  if let residencyDocumentVerification = params.residencyDocumentVerification {
+    payloadChecks.append(validator.validateResidencyDocumentVerificationParams(residencyDocumentVerification))
+  }
   let payloadIssues = payloadChecks.flatMap(\.errors)
   if !payloadIssues.isEmpty {
     return .needsDetails(issues: payloadIssues.map(\.useSmileIDSampleReason))
@@ -61,7 +64,8 @@ private func useSmileIDSampleConfiguration(_ snapshot: FlowLaunchSnapshot, param
     enhancedKYCParams: params.enhancedKyc,
     biometricKYCParams: params.biometricKyc,
     documentVerificationParams: params.documentVerification,
-    enhancedDocumentVerificationParams: params.enhancedDocumentVerification
+    enhancedDocumentVerificationParams: params.enhancedDocumentVerification,
+    residencyDocumentVerificationParams: params.residencyDocumentVerification
   )
 }
 

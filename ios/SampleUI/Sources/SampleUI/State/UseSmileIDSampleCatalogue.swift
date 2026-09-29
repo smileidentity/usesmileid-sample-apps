@@ -1,8 +1,8 @@
 import Foundation
 
-/// Which list a product's form reads: the KYC products name an ID type, the document products a document.
+/// Which list a product's form reads: the KYC products name an ID type, the document products a document, residency a passport's country.
 public enum UseSmileIDSampleCatalogueFamily: Sendable {
-  case kyc, document
+  case kyc, document, passport
 }
 
 public extension UseSmileIDSampleProduct {
@@ -11,6 +11,7 @@ public extension UseSmileIDSampleProduct {
     switch self {
     case .biometricKyc, .enhancedKyc: .kyc
     case .documentVerification, .enhancedDocumentVerification: .document
+    case .residencyDocumentVerification: .passport
     default: nil
     }
   }
@@ -90,6 +91,9 @@ public struct UseSmileIDSampleCatalogueData: Equatable, Sendable {
 
 /// The pure rules from `spec/catalogue-rules.json`, run on whatever the server returns.
 public enum UseSmileIDSampleCatalogueRules {
+  /// The one document code Residency Document Verification accepts, which the SDK enforces too.
+  public static let passport = "PASSPORT"
+
   /// What the SDK fills in plus the two names the user-details form collects; anything else drops a type.
   public static let allowedRequiredFields: Set<String> = [
     "country", "first_name", "id_number", "id_type", "last_name", "partner_id", "partner_params", "timestamp"
@@ -130,6 +134,8 @@ public enum UseSmileIDSampleCatalogueRules {
     switch family {
     case .document:
       return named.filter { !documents(data.documents, country: $0.code).isEmpty }
+    case .passport:
+      return named.filter { country in documents(data.documents, country: country.code).contains { $0.code == passport } }
     case .kyc:
       var listed: [String] = []
       for type in data.idTypes where !listed.contains(type.country) && !idTypes(data.idTypes, country: type.country).isEmpty {

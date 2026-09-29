@@ -22,6 +22,7 @@ func useSmileIDSampleApply(
   builder.enhancedKYCParams = params.enhancedKyc
   builder.documentVerificationParams = params.documentVerification
   builder.enhancedDocumentVerificationParams = params.enhancedDocumentVerification
+  builder.residencyDocumentVerificationParams = params.residencyDocumentVerification
   builder.screens { screens in
     replay(useSmileIDSampleFlowSteps(snapshot), into: screens)
   }
@@ -100,12 +101,13 @@ func useSmileIDSampleUserDetails(_ snapshot: FlowLaunchSnapshot) -> UserDetails?
   )
 }
 
-/// The four ID payloads, of which a product carries at most one, so the gate validates what the run passes.
+/// The five ID payloads, of which a product carries at most one, so the gate validates what the run passes.
 struct FlowIdParams {
   var biometricKyc: BiometricKYCParams?
   var enhancedKyc: EnhancedKYCParams?
   var documentVerification: DocumentVerificationParams?
   var enhancedDocumentVerification: EnhancedDocumentVerificationParams?
+  var residencyDocumentVerification: ResidencyDocumentVerificationParams?
 }
 
 @MainActor
@@ -118,6 +120,7 @@ func useSmileIDSampleIdParams(_ snapshot: FlowLaunchSnapshot) -> FlowIdParams {
   let chosen: String? = switch snapshot.product.catalogueFamily {
   case .kyc: details.idType?.type
   case .document: details.document?.code
+  case .passport: UseSmileIDSampleCatalogueRules.passport
   case nil: nil
   }
   let idType = bound?.idType ?? chosen ?? ""
@@ -137,6 +140,12 @@ func useSmileIDSampleIdParams(_ snapshot: FlowLaunchSnapshot) -> FlowIdParams {
     )
   case .enhancedDocumentVerification:
     params.enhancedDocumentVerification = EnhancedDocumentVerificationParams(country: country, idType: idType)
+  // The SDK accepts no other type, and the server reads a token's own claim over this one.
+  case .residencyDocumentVerification:
+    params.residencyDocumentVerification = ResidencyDocumentVerificationParams(
+      country: country,
+      idType: UseSmileIDSampleCatalogueRules.passport
+    )
   case .smartSelfieEnrollment, .smartSelfieAuth:
     break
   }
@@ -259,7 +268,7 @@ func useSmileIDSampleJourneySteps(_ snapshot: FlowLaunchSnapshot) -> [FlowJourne
     steps.append(.instructions)
   }
   switch snapshot.product {
-  case .documentVerification, .enhancedDocumentVerification:
+  case .documentVerification, .enhancedDocumentVerification, .residencyDocumentVerification:
     let document = capture(.documentCapture, snapshot.previewStep)
     let selfie = capture(.selfieCapture, snapshot.previewStep)
     steps += snapshot.selfieFirst ? selfie + document : document + selfie
@@ -277,13 +286,16 @@ private func capture(_ step: FlowJourneyStep, _ preview: Bool) -> [FlowJourneySt
 
 /// Everything the document capture step is handed; the server is told the document's code either way.
 func useSmileIDSampleDocumentCapture(_ snapshot: FlowLaunchSnapshot) -> DocumentCaptureConfig {
-  DocumentCaptureConfig(
-    documentType: useSmileIDSampleDocumentType(snapshot.idDetails),
+  // Residency is a passport and then the visa page the SDK always captures, and it rejects a skippable back.
+  let residency = snapshot.product == .residencyDocumentVerification
+  let passport = residency || snapshot.idDetails.captureAs == .passport
+  return DocumentCaptureConfig(
+    documentType: residency ? .passport : useSmileIDSampleDocumentType(snapshot.idDetails),
     captureMode: snapshot.captureMode.sdk,
     allowGalleryUpload: snapshot.galleryUpload,
     // The SDK's passport preset declares a back side; the sample captures a passport front only.
-    captureBothSides: snapshot.captureBothSides && snapshot.idDetails.captureAs != .passport,
-    allowSkipBack: snapshot.allowSkipBack
+    captureBothSides: snapshot.captureBothSides && !passport,
+    allowSkipBack: snapshot.allowSkipBack && !residency
   )
 }
 
@@ -322,13 +334,14 @@ extension UseSmileIDSampleProduct {
     case .smartSelfieAuth: .smartSelfieAuthentication
     case .documentVerification: .documentVerification
     case .enhancedDocumentVerification: .enhancedDocumentVerification
+    case .residencyDocumentVerification: .residencyDocumentVerification
     case .biometricKyc: .biometricKyc
     case .enhancedKyc: .enhancedKyc
     }
   }
 
   var needsDocumentCapture: Bool {
-    self == .documentVerification || self == .enhancedDocumentVerification
+    self == .documentVerification || self == .enhancedDocumentVerification || self == .residencyDocumentVerification
   }
 }
 

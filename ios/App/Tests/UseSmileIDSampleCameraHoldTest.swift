@@ -9,6 +9,7 @@ final class UseSmileIDSampleCameraHoldTest: XCTestCase {
     XCTAssertEqual(UseSmileIDSampleProduct.biometricKyc.holdLens, .front)
     XCTAssertEqual(UseSmileIDSampleProduct.documentVerification.holdLens, .back)
     XCTAssertEqual(UseSmileIDSampleProduct.enhancedDocumentVerification.holdLens, .back)
+    XCTAssertEqual(UseSmileIDSampleProduct.residencyDocumentVerification.holdLens, .back)
     XCTAssertEqual(UseSmileIDSampleProduct.enhancedKyc.holdLens, .back)
   }
 

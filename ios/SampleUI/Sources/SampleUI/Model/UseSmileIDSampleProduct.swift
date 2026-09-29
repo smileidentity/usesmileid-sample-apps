@@ -19,6 +19,7 @@ public enum UseSmileIDSampleProduct: String, CaseIterable, Sendable {
   case smartSelfieAuth
   case documentVerification
   case enhancedDocumentVerification
+  case residencyDocumentVerification
   case biometricKyc
   case enhancedKyc
 
@@ -33,6 +34,7 @@ public enum UseSmileIDSampleProduct: String, CaseIterable, Sendable {
     case .smartSelfieAuth: "SmartSelfie Authentication"
     case .documentVerification: "Document Verification"
     case .enhancedDocumentVerification: "Enhanced Document Verification"
+    case .residencyDocumentVerification: "Residency Document Verification"
     case .biometricKyc: "Biometric KYC"
     case .enhancedKyc: "Enhanced KYC"
     }
@@ -45,6 +47,7 @@ public enum UseSmileIDSampleProduct: String, CaseIterable, Sendable {
     case .smartSelfieAuth: "Auth"
     case .documentVerification: "Document"
     case .enhancedDocumentVerification: "Enhanced Doc."
+    case .residencyDocumentVerification: "Residency Doc."
     case .biometricKyc: "Biometric"
     case .enhancedKyc: "Enhanced"
     }
@@ -53,7 +56,7 @@ public enum UseSmileIDSampleProduct: String, CaseIterable, Sendable {
   public var cardFamily: String {
     switch self {
     case .smartSelfieEnrollment, .smartSelfieAuth: UseSmileIDSampleMarks.smartSelfie
-    case .documentVerification, .enhancedDocumentVerification: "Verification"
+    case .documentVerification, .enhancedDocumentVerification, .residencyDocumentVerification: "Verification"
     case .biometricKyc, .enhancedKyc: "KYC"
     }
   }
@@ -83,6 +86,7 @@ public enum UseSmileIDSampleProduct: String, CaseIterable, Sendable {
     case .smartSelfieEnrollment: SmileIcons.smartSelfieEnrollment
     case .smartSelfieAuth: SmileIcons.smartSelfieAuth
     case .documentVerification, .enhancedDocumentVerification: SmileIcons.documentVerification
+    case .residencyDocumentVerification: SmileIcons.residencyDocumentVerification
     case .biometricKyc: SmileIcons.biometricKyc
     case .enhancedKyc: SmileIcons.enhancedKyc
     }

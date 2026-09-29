@@ -8,6 +8,7 @@ SmartSelfie™ Enrollment
 SmartSelfie™ Authentication
 Document Verification
 Enhanced Document Verification
+Residency Document Verification
 Biometric KYC
 Enhanced KYC
 

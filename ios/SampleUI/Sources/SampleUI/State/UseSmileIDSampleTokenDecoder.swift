@@ -55,7 +55,7 @@ public struct UseSmileIDSampleTokenBindings: Equatable, Sendable, CustomStringCo
     switch product {
     case .enhancedKyc, .biometricKyc:
       !country.isBlankOrNil && !idType.isBlankOrNil && !idNumberReference.isBlankOrNil
-    case .documentVerification, .enhancedDocumentVerification:
+    case .documentVerification, .enhancedDocumentVerification, .residencyDocumentVerification:
       !country.isBlankOrNil && !idType.isBlankOrNil
     case .smartSelfieEnrollment, .smartSelfieAuth:
       true

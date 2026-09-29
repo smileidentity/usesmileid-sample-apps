@@ -1,12 +1,12 @@
 import SwiftUI
 
-/// One generated mark, drawn at `size` and tinted by the caller; decorative by default, the enclosing control carrying the label.
+/// One generated mark, drawn at `size` and tinted by the caller, or in a two-tone mark's own colours when `tint` is nil; decorative, the enclosing control carrying the label.
 public struct UseSmileIDSampleIcon: View {
   private let icon: SmileIcon
-  private let tint: Color
+  private let tint: Color?
   private let size: CGFloat
 
-  public init(_ icon: SmileIcon, tint: Color, size: CGFloat = SmileSpacing.sizeIconMd) {
+  public init(_ icon: SmileIcon, tint: Color?, size: CGFloat = SmileSpacing.sizeIconMd) {
     self.icon = icon
     self.tint = tint
     self.size = size
@@ -16,12 +16,13 @@ public struct UseSmileIDSampleIcon: View {
     ZStack {
       ForEach(Array(icon.parts.enumerated()), id: \.offset) { _, part in
         let shape = SmileIconShape(icon: icon, part: part)
+        let paint = tint ?? part.color ?? .primary
         switch part.stroke {
         case .fill:
-          shape.fill(tint).opacity(part.opacity)
+          shape.fill(paint).opacity(part.opacity)
         case .stroke(let width, let round):
           shape.stroke(
-            tint,
+            paint,
             style: StrokeStyle(
               // Scaled with the mark, or a 17pt icon drawn at 40 keeps a hairline stroke.
               lineWidth: width * scale,

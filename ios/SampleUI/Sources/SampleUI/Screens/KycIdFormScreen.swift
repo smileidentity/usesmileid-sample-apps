@@ -74,6 +74,8 @@ public struct KycIdFormScreen: View {
             documentTrigger
             UseSmileIDSampleSectionLabel("CAPTURE AS")
             captureAsTrigger
+          case .passport:
+            EmptyView()
           }
         }
         .padding(.horizontal, SmileSpacing.spacingMd)
