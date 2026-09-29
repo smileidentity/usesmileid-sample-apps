@@ -20,6 +20,7 @@ import com.usesmileid.sampleapps.ui.state.keep
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureAs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueFamily
 import com.usesmileid.sampleapps.ui.state.catalogueFamily
+import com.usesmileid.sampleapps.ui.state.resolvedCaptureAs
 import com.usesmileid.sampleapps.ui.screens.CaptureAsSheet as CaptureAsContent
 import com.usesmileid.sampleapps.ui.screens.CountryPickerSheet as CountryPickerContent
 import com.usesmileid.sampleapps.ui.screens.GenericDocumentSheet as GenericDocumentContent
@@ -82,7 +83,8 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
 @Composable
 fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
-    val family = productOf(productId)?.catalogueFamily ?: UseSmileIDSampleCatalogueFamily.Kyc
+    val product = productOf(productId)
+    val family = product?.catalogueFamily ?: UseSmileIDSampleCatalogueFamily.Kyc
     var pickingCountry by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.CountryPicker)
     var pickingIdType by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.IdTypePicker)
     var pickingDocument by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.DocumentPicker)
@@ -90,6 +92,7 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     var buildingGenericDocument by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.GenericDocument)
     // A deep link lands here without the product tap that fetches ahead, so the form starts it if nothing has.
     LaunchedEffect(app.environment, app.catalogueLocale) { app.catalogue.ensure(app.environment, app.catalogueLocale) }
+    LaunchedEffect(product) { product?.let(app.forms::keepDocumentListedOn) }
     val details = app.forms.idDetails
     val countryCode = details.country?.code
     // A link can ask for a second-level sheet before its trigger could open; refused, not held until later.
@@ -101,14 +104,15 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
         if (details.document == null) pickingCaptureAs = false
     }
     KycIdFormContent(
-        productLabel = productOf(productId)?.label ?: productId,
+        productLabel = product?.label ?: productId,
         family = family,
         details = details,
         countryList = when {
             countryCode == null -> app.catalogue.countries(family)
             family == UseSmileIDSampleCatalogueFamily.Kyc -> app.catalogue.idTypes(countryCode)
-            else -> app.catalogue.documents(countryCode)
+            else -> app.catalogue.documents(countryCode, product ?: UseSmileIDSampleProduct.DocumentVerification)
         },
+        captureBothSides = app.settings.captureBothSides,
         onCountryClick = { pickingCountry = true },
         onIdTypeClick = { pickingIdType = true },
         onDocumentClick = { pickingDocument = true },
@@ -120,10 +124,13 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     )
     if (pickingCountry) CountryPickerSheet(family, onDismissRequest = { pickingCountry = false })
     if (pickingIdType && countryCode != null) IdTypePickerSheet(countryCode, onDismissRequest = { pickingIdType = false })
-    if (pickingDocument && countryCode != null) DocumentPickerSheet(countryCode, onDismissRequest = { pickingDocument = false })
+    if (pickingDocument && countryCode != null) {
+        DocumentPickerSheet(countryCode, product ?: UseSmileIDSampleProduct.DocumentVerification, onDismissRequest = { pickingDocument = false })
+    }
     if (pickingCaptureAs && details.document != null) {
         CaptureAsContent(
-            selected = details.captureAs,
+            selected = details.captureAsOverride,
+            matched = resolvedCaptureAs(details.document, override = null, details.genericDocument),
             onSelect = { choice ->
                 pickingCaptureAs = false
                 if (choice == UseSmileIDSampleCaptureAs.GenericDocument) buildingGenericDocument = true else app.forms.setCaptureAs(choice)
@@ -175,12 +182,12 @@ private fun IdTypePickerSheet(countryCode: String, onDismissRequest: () -> Unit)
 
 /** A layer the ID-details form owns; it is not a destination (`docs/architecture.md` §4). */
 @Composable
-private fun DocumentPickerSheet(countryCode: String, onDismissRequest: () -> Unit) {
+private fun DocumentPickerSheet(countryCode: String, product: UseSmileIDSampleProduct, onDismissRequest: () -> Unit) {
     val app = LocalUseSmileIDSampleAppState.current
     var query by rememberSaveable { mutableStateOf("") }
     DocumentPickerContent(
         country = app.forms.idDetails.country,
-        catalogue = app.catalogue.documents(countryCode),
+        catalogue = app.catalogue.documents(countryCode, product),
         selected = app.forms.idDetails.document,
         query = query,
         onQueryChange = { query = it },

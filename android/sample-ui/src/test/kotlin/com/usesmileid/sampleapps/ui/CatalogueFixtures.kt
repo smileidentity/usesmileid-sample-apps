@@ -2,6 +2,7 @@ package com.usesmileid.sampleapps.ui
 
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleFixtureCatalogueSource
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment.Sandbox
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueData
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueFamily
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueJson
@@ -33,6 +34,8 @@ internal object CatalogueFixtures {
 
     fun idTypes(country: String): List<UseSmileIDSampleKycIdType> = UseSmileIDSampleCatalogueRules.idTypes(data.idTypes, country)
 
-    fun documents(country: String): List<UseSmileIDSampleDocument> =
-        UseSmileIDSampleCatalogueRules.documents(data.documents, country)
+    fun documents(
+        country: String,
+        product: UseSmileIDSampleProduct = UseSmileIDSampleProduct.DocumentVerification,
+    ): List<UseSmileIDSampleDocument> = UseSmileIDSampleCatalogueRules.documents(data.documents, country, product)
 }

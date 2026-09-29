@@ -24,11 +24,9 @@ struct UseSmileIDSampleCatalogueApi: UseSmileIDSampleCatalogueSource {
   }
 
   func supportedDocuments(environment: UseSmileIDSampleEnvironment, locale: String) async throws -> Data {
-    // The picker lists African countries only; the API's continent filter is how it asks for them.
-    try await get(environment, "v3/services/supported_documents", [
-      URLQueryItem(name: "continent", value: "AFRICA"),
-      URLQueryItem(name: "locale", value: locale)
-    ])
+    try await get(
+      environment, "v3/services/supported_documents", [URLQueryItem(name: "locale", value: locale)]
+    )
   }
 
   private func get(_ environment: UseSmileIDSampleEnvironment, _ path: String, _ query: [URLQueryItem]) async throws -> Data {

@@ -11,7 +11,7 @@ interface UseSmileIDSampleCatalogueSource {
     /** `GET /v3/services/supported_id_types`, every country. */
     suspend fun supportedIdTypes(environment: UseSmileIDSampleEnvironment): String
 
-    /** `GET /v3/services/supported_documents?continent=AFRICA&locale=…`. */
+    /** `GET /v3/services/supported_documents?locale=…`. */
     suspend fun supportedDocuments(environment: UseSmileIDSampleEnvironment, locale: String): String
 }
 

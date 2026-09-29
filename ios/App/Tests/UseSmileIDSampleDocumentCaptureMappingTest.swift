@@ -9,12 +9,19 @@ final class UseSmileIDSampleDocumentCaptureMappingTest: XCTestCase {
   func testEveryCaseMapsAsTheSpecSays() throws {
     let section = try XCTUnwrap(try UseSmileIDSampleSpec.object("catalogue-rules.json")["captureAs"] as? [String: Any])
     let cases = try XCTUnwrap(section["cases"] as? [[String: Any]])
-    XCTAssertGreaterThanOrEqual(cases.count, 6)
+    XCTAssertGreaterThanOrEqual(cases.count, 12)
     for item in cases {
       let name = item["name"] as? String ?? ""
       let details = try details(item)
       let expected = try XCTUnwrap(item["expected"] as? [String: Any])
       let type = useSmileIDSampleDocumentType(details)
+      let config = useSmileIDSampleDocumentCapture(FlowLaunchSnapshot(
+        product: .documentVerification,
+        route: .fullscreen,
+        idDetails: details,
+        captureBothSides: item["captureBothSides"] as? Bool ?? true
+      ))
+      XCTAssertEqual(config.captureBothSides, expected["captureBothSides"] as? Bool, name)
       switch expected["documentType"] as? String {
       case "passport": XCTAssertEqual(type, .passport, name)
       case "greenBook": XCTAssertEqual(type, .southAfricaGreenBook, name)
@@ -63,15 +70,17 @@ final class UseSmileIDSampleDocumentCaptureMappingTest: XCTestCase {
     XCTAssertFalse(defaults.allowSkipBack)
   }
 
-  func testAPassportIsCapturedFrontOnlyWhateverTheSetting() {
-    func captureBothSides(_ captureAs: UseSmileIDSampleCaptureAs) -> Bool {
+  func testAPassportIsCapturedFrontOnlyWhetherMatchedOrChosen() {
+    let passport = UseSmileIDSampleDocument(code: "PASSPORT", name: "Passport", hasBack: false, format: 3)
+    func captureBothSides(_ override: UseSmileIDSampleCaptureAs?, document: UseSmileIDSampleDocument? = passport) -> Bool {
       useSmileIDSampleDocumentCapture(FlowLaunchSnapshot(
         product: .documentVerification,
         route: .fullscreen,
-        idDetails: UseSmileIDSampleIdDetails(captureAs: captureAs)
+        idDetails: UseSmileIDSampleIdDetails(document: document, captureAsOverride: override)
       )).captureBothSides
     }
-    XCTAssertFalse(captureBothSides(.passport))
+    XCTAssertFalse(captureBothSides(nil))
+    XCTAssertFalse(captureBothSides(.passport, document: nil))
     for captureAs in UseSmileIDSampleCaptureAs.allCases where captureAs != .passport {
       XCTAssertTrue(captureBothSides(captureAs), "\(captureAs)")
     }
@@ -99,7 +108,7 @@ final class UseSmileIDSampleDocumentCaptureMappingTest: XCTestCase {
 
   private func details(_ item: [String: Any]) throws -> UseSmileIDSampleIdDetails {
     let document = try XCTUnwrap(item["document"] as? [String: Any])
-    var details = try UseSmileIDSampleIdDetails(
+    var details = UseSmileIDSampleIdDetails(
       country: UseSmileIDSampleCountry(code: "ZA", name: "South Africa"),
       document: UseSmileIDSampleDocument(
         code: document["code"] as? String ?? "",
@@ -108,7 +117,7 @@ final class UseSmileIDSampleDocumentCaptureMappingTest: XCTestCase {
         hasBack: document["hasBack"] as? Bool ?? true,
         format: document["format"] as? Int ?? 1
       ),
-      captureAs: XCTUnwrap(UseSmileIDSampleCaptureAs(rawValue: item["captureAs"] as? String ?? ""))
+      captureAsOverride: UseSmileIDSampleCaptureAs(rawValue: item["captureAs"] as? String ?? "")
     )
     if let genericDocument = item["genericDocument"] as? [String: Any] {
       details.genericDocument = UseSmileIDSampleGenericDocument(

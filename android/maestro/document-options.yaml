@@ -60,14 +60,32 @@ appId: ${APP_ID}
     childOf:
       id: "sample_document_trigger"
 
-# Three choices, each the SDK's own type; Generic document is the default.
+# Untouched, Capture as matches the document: the Green Book row is the SDK's Green Book preset.
+- assertVisible:
+    text: ".*Green Book preset · matches document.*"
+    childOf:
+      id: "sample_capture_as_trigger"
+
+# A passport row matches the Passport preset.
+- tapOn:
+    id: "sample_document_trigger"
+- tapOn:
+    id: "sample_document_option_PASSPORT"
+- assertVisible:
+    text: ".*Passport preset · matches document.*"
+    childOf:
+      id: "sample_capture_as_trigger"
+
+# Match document first and checked, then the three overrides, each the SDK's own type.
 - tapOn:
     id: "sample_capture_as_trigger"
 - assertVisible:
     id: "sample_capture_as_sheet"
 - assertVisible:
-    id: "sample_capture_as_option_genericDocument"
+    id: "sample_capture_as_option_matchDocument"
     checked: true
+- assertVisible:
+    id: "sample_capture_as_option_genericDocument"
 - assertVisible:
     id: "sample_capture_as_option_greenBook"
 - assertVisible:
@@ -91,11 +109,11 @@ appId: ${APP_ID}
     id: "sample_generic_document_done"
 # The trigger's text is a child node, so the id and the text cannot sit in one selector.
 - assertVisible:
-    text: ".*Booklet.*"
+    text: ".*Booklet.*chosen.*"
     childOf:
       id: "sample_capture_as_trigger"
 
-# The Green Book preset, which the SDK's instructions name.
+# The Green Book preset chosen on the passport row, which the SDK's instructions name.
 - tapOn:
     id: "sample_capture_as_trigger"
 - tapOn:

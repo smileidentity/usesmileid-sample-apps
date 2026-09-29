@@ -1,4 +1,9 @@
-import { CaptureAsSheet, UseSmileIDSampleCaptureAs, useSmileIDSampleFormsStore } from '@smileid/sample-ui';
+import {
+  CaptureAsSheet,
+  UseSmileIDSampleCaptureAs,
+  smileIDSampleResolvedCaptureAs,
+  useSmileIDSampleFormsStore,
+} from '@smileid/sample-ui';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { useSmileIDSampleBack } from '../../../../src/use-smile-id-sample-back';
@@ -8,7 +13,8 @@ export default function CaptureAs() {
   const { productId } = useLocalSearchParams<{ productId: string }>();
   const back = useSmileIDSampleBack(`/flow/${productId}/id-details`);
   const document = useSmileIDSampleFormsStore((state) => state.idDetails.document);
-  const selected = useSmileIDSampleFormsStore((state) => state.idDetails.captureAs);
+  const selected = useSmileIDSampleFormsStore((state) => state.idDetails.captureAsOverride);
+  const genericDocument = useSmileIDSampleFormsStore((state) => state.idDetails.genericDocument);
   const setCaptureAs = useSmileIDSampleFormsStore((state) => state.setCaptureAs);
 
   // Its trigger could not open it yet, so neither may a link.
@@ -17,6 +23,7 @@ export default function CaptureAs() {
   return (
     <CaptureAsSheet
       selected={selected}
+      matched={smileIDSampleResolvedCaptureAs(document, null, genericDocument)}
       onSelect={(captureAs) => {
         // Generic document hands over to its own sheet, which is what keeps it; the others are kept at once.
         if (captureAs === UseSmileIDSampleCaptureAs.GenericDocument) {

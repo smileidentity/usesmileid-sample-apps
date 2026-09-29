@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.usesmileid.sampleapps.ui.CatalogueFixtures
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.screens.CaptureAsSheet
 import com.usesmileid.sampleapps.ui.screens.CaptureModeSheet
 import com.usesmileid.sampleapps.ui.screens.CountryPickerSheet
 import com.usesmileid.sampleapps.ui.screens.GenericDocumentSheet
 import com.usesmileid.sampleapps.ui.screens.DocumentPickerSheet
 import com.usesmileid.sampleapps.ui.screens.IdTypePickerSheet
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureAs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureMode
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogue
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueFamily
@@ -20,6 +20,7 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCountry
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleGenericDocument
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocument
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleKycIdType
+import com.usesmileid.sampleapps.ui.state.resolvedCaptureAs
 import org.junit.Before
 import org.junit.Test
 import org.robolectric.RuntimeEnvironment
@@ -76,6 +77,12 @@ class CatalogueGoldenTest : GoldenTest() {
         Document(UseSmileIDSampleCatalogue.Ready(CatalogueFixtures.documents("ZA")))
     }
 
+    /** South Africa on Enhanced Document Verification, which leaves out the Green Book the SDK refuses there. */
+    @Test
+    fun document_picker_enhanced() = goldens("sheet_document_picker_enhanced", fullWindow = true) {
+        Document(UseSmileIDSampleCatalogue.Ready(CatalogueFixtures.documents("ZA", UseSmileIDSampleProduct.EnhancedDocumentVerification)))
+    }
+
     /** Only names are translated under ar-EG, and the app does not flip its own layout, so the rows stay left-to-right. */
     @Test
     fun document_picker_arabic_names() = goldens("sheet_document_picker_ar", fullWindow = true) {
@@ -97,9 +104,16 @@ class CatalogueGoldenTest : GoldenTest() {
         Document(UseSmileIDSampleCatalogue.Empty)
     }
 
+    /** Match document checked on a passport row, so its label names the preset it resolves to. */
     @Test
     fun capture_as_sheet() = goldens("sheet_capture_as", fullWindow = true) {
-        CaptureAsSheet(selected = UseSmileIDSampleCaptureAs.GenericDocument, onSelect = {}, onDismissRequest = {})
+        val passport = CatalogueFixtures.documents("KE").first { it.code == "PASSPORT" }
+        CaptureAsSheet(
+            selected = null,
+            matched = resolvedCaptureAs(passport, override = null, UseSmileIDSampleGenericDocument()),
+            onSelect = {},
+            onDismissRequest = {},
+        )
     }
 
     @Test

@@ -46,6 +46,13 @@ abstract final class CatalogueFixtures {
       UseSmileIDSampleCatalogueRules.idTypes(data.idTypes, country);
 
   /// The documents [country] offers.
-  static List<UseSmileIDSampleDocument> documents(String country) =>
-      UseSmileIDSampleCatalogueRules.documents(data.documents, country);
+  static List<UseSmileIDSampleDocument> documents(
+    String country, {
+    UseSmileIDSampleProduct product =
+        UseSmileIDSampleProduct.documentVerification,
+  }) => UseSmileIDSampleCatalogueRules.documents(
+    data.documents,
+    country,
+    product: product,
+  );
 }

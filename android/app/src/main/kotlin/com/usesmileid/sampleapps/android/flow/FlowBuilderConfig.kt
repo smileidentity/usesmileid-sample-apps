@@ -24,6 +24,7 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureAs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueFamily
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureMode
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocumentOrientation
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleGenericDocument
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
 import com.usesmileid.sampleapps.ui.state.bindsRequiredUserDetails
 import com.usesmileid.sampleapps.ui.state.catalogueFamily
@@ -239,29 +240,30 @@ internal data class DocumentOptions(
 
 internal fun documentOptionsFor(snapshot: FlowLaunchSnapshot): DocumentOptions = DocumentOptions(
     documentType = documentTypeFor(snapshot.idDetails),
-    // The SDK's passport preset declares a back side; the sample captures a passport front only.
-    captureBothSides = snapshot.captureBothSides && snapshot.idDetails.captureAs != UseSmileIDSampleCaptureAs.Passport,
+    captureBothSides = snapshot.idDetails.resolvedCaptureAs.captureBothSides(snapshot.captureBothSides),
     allowSkipBack = snapshot.allowSkipBack,
     captureMode = snapshot.captureMode.toSdk(),
     allowGalleryUpload = snapshot.galleryUpload,
 )
 
-/** The "Capture as" mapping from `spec/catalogue-rules.json` captureAs: the SDK's own type, nothing read from the API. */
-internal fun documentTypeFor(details: UseSmileIDSampleIdDetails): DocumentType = when (details.captureAs) {
-    UseSmileIDSampleCaptureAs.GreenBook -> DocumentType.SouthAfricaGreenBook
-    UseSmileIDSampleCaptureAs.Passport -> DocumentType.Passport
-    UseSmileIDSampleCaptureAs.GenericDocument -> with(details.genericDocument) {
-        DocumentType.GenericDocument(
-            displayName = displayName,
-            hasBackSide = hasBackSide,
-            orientation = when (orientation) {
-                UseSmileIDSampleDocumentOrientation.Landscape -> DocumentOrientation.Landscape
-                UseSmileIDSampleDocumentOrientation.Portrait -> DocumentOrientation.Portrait
-            },
-            knownAspectRatio = aspectRatio.ratio,
-        )
+/** The SDK type for what "Capture as" resolves to (`spec/catalogue-rules.json` captureAs). */
+internal fun documentTypeFor(details: UseSmileIDSampleIdDetails): DocumentType = with(details.resolvedCaptureAs) {
+    when (captureAs) {
+        UseSmileIDSampleCaptureAs.GreenBook -> DocumentType.SouthAfricaGreenBook
+        UseSmileIDSampleCaptureAs.Passport -> DocumentType.Passport
+        UseSmileIDSampleCaptureAs.GenericDocument -> genericDocument.toSdk()
     }
 }
+
+private fun UseSmileIDSampleGenericDocument.toSdk(): DocumentType = DocumentType.GenericDocument(
+    displayName = displayName,
+    hasBackSide = hasBackSide,
+    orientation = when (orientation) {
+        UseSmileIDSampleDocumentOrientation.Landscape -> DocumentOrientation.Landscape
+        UseSmileIDSampleDocumentOrientation.Portrait -> DocumentOrientation.Portrait
+    },
+    knownAspectRatio = aspectRatio.ratio,
+)
 
 internal fun UseSmileIDSampleCaptureMode.toSdk(): DocumentCaptureMode = when (this) {
     UseSmileIDSampleCaptureMode.Auto -> DocumentCaptureMode.AutoCapture

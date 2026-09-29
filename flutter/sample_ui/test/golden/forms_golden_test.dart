@@ -154,6 +154,87 @@ void main() {
     );
   });
 
+  testWidgets('document form passport matched', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_document_form_passport_matched',
+      () => _kycForm(
+        details: _documentForm(
+          (UseSmileIDSampleDocument it) => it.code == 'PASSPORT',
+        ),
+        family: UseSmileIDSampleCatalogueFamily.document,
+        title: 'Document Verification',
+      ),
+    );
+  });
+
+  testWidgets('document form two-sided matched', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_document_form_two_sided_matched',
+      () => _kycForm(
+        details: _documentForm(
+          (UseSmileIDSampleDocument it) => it.code == 'IDENTITY_CARD',
+        ),
+        family: UseSmileIDSampleCatalogueFamily.document,
+        title: 'Document Verification',
+      ),
+    );
+  });
+
+  testWidgets('document form one-sided matched', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_document_form_one_sided_matched',
+      () => _kycForm(
+        details: _documentForm(
+          (UseSmileIDSampleDocument it) => it.code == 'ALIEN_CARD',
+        ),
+        family: UseSmileIDSampleCatalogueFamily.document,
+        title: 'Document Verification',
+      ),
+    );
+  });
+
+  testWidgets('document form preset chosen', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_document_form_preset_chosen',
+      () => _kycForm(
+        details: _documentForm(
+          (UseSmileIDSampleDocument it) => it.code == 'IDENTITY_CARD',
+        ).withCaptureAsOverride(UseSmileIDSampleCaptureAs.passport),
+        family: UseSmileIDSampleCatalogueFamily.document,
+        title: 'Document Verification',
+      ),
+    );
+  });
+
+  testWidgets('document form generic chosen', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_document_form_generic_chosen',
+      () => _kycForm(
+        details:
+            _documentForm(
+                  (UseSmileIDSampleDocument it) => it.code == 'PASSPORT',
+                )
+                .copyWith(
+                  genericDocument: const UseSmileIDSampleGenericDocument(
+                    displayName: 'Booklet',
+                    orientation: UseSmileIDSampleDocumentOrientation.portrait,
+                    aspectRatio: UseSmileIDSampleAspectRatio.booklet,
+                  ),
+                )
+                .withCaptureAsOverride(
+                  UseSmileIDSampleCaptureAs.genericDocument,
+                ),
+        family: UseSmileIDSampleCatalogueFamily.document,
+        title: 'Document Verification',
+      ),
+    );
+  });
+
   testWidgets('document form survives max text scale', (
     WidgetTester tester,
   ) async {
@@ -271,6 +352,7 @@ Widget _kycForm({
   family: family,
   details: details,
   countryListLoading: loading,
+  captureBothSides: true,
   onBack: () {},
   onPickCountry: () {},
   onPickIdType: () {},
@@ -305,7 +387,15 @@ final UseSmileIDSampleIdDetails _selected = UseSmileIDSampleIdDetails(
   idNumber: '12345678',
 );
 
-/// The Green Book: a standalone sub-type row, captured as the API describes it.
+/// A Kenyan fixture row, with "Capture as" untouched.
+UseSmileIDSampleIdDetails _documentForm(
+  bool Function(UseSmileIDSampleDocument) row,
+) => UseSmileIDSampleIdDetails(
+  country: CatalogueFixtures.kenya,
+  document: CatalogueFixtures.documents('KE').firstWhere(row),
+);
+
+/// The Green Book: a standalone sub-type row, which Match document captures as the Green Book preset.
 final UseSmileIDSampleIdDetails _documentSelected = UseSmileIDSampleIdDetails(
   country: CatalogueFixtures.southAfrica,
   document: CatalogueFixtures.documents(

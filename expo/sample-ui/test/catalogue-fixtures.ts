@@ -36,4 +36,5 @@ export const fixtureCountries = (family: UseSmileIDSampleCatalogueFamily) =>
 
 export const fixtureIdTypes = (country: string) => smileIDSampleCatalogueIdTypes(catalogueData.idTypes, country);
 
-export const fixtureDocuments = (country: string) => smileIDSampleCatalogueDocuments(catalogueData.documents, country);
+export const fixtureDocuments = (country: string, productId?: string) =>
+  smileIDSampleCatalogueDocuments(catalogueData.documents, country, productId);

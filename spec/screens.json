@@ -421,7 +421,7 @@
         "sample_catalogue_error",
         "sample_catalogue_retry"
       ],
-      "note": "Lists the countries the product's family can use, from two calls fetched ahead when the product is tapped and once per run of the form: GET /v3/services/supported_id_types (no country) and GET /v3/services/supported_documents?continent=AFRICA. The KYC products offer every country with a listed ID type, the document products every country with a listed document; names come from supported_documents for both (spec/catalogue-rules.json countries). The KYC list is ready only when both calls are, and Retry asks both again."
+      "note": "Lists the countries the product's family can use, from two calls fetched ahead when the product is tapped and once per run of the form: GET /v3/services/supported_id_types (no country) and GET /v3/services/supported_documents (every country, as the KYC call). The KYC products offer every country with a listed ID type, the document products every country with a listed document; names come from supported_documents for both (spec/catalogue-rules.json countries). The KYC list is ready only when both calls are, and Retry asks both again."
     },
     {
       "id": "idTypePickerSheet",
@@ -475,7 +475,7 @@
         {
           "state": "default",
           "design": "in-repo",
-          "note": "The ID-type picker's layout, listing the country's supported_documents. A sub-type with display_standalone (today only South Africa's Green Book) is its own row right after its parent, and submits the parent's code. The API's 'Others' row, whose code is empty, is left out."
+          "note": "The ID-type picker's layout, listing the country's supported_documents. A sub-type with display_standalone (today only South Africa's Green Book) is its own row right after its parent, and submits the parent's code. On Enhanced Document Verification the Green Book row is left out, because the SDK refuses that document on that product. The API's 'Others' row, whose code is empty, is left out."
         },
         {
           "state": "loading",
@@ -519,7 +519,7 @@
         {
           "state": "default",
           "design": "in-repo",
-          "note": "Three rows, each the SDK's own type and nothing inferred from the API: Generic document (the default, the SDK's GenericDocument defaults), Green Book preset, Passport preset. Choosing Generic document opens genericDocumentSheet."
+          "note": "Four rows: Match document first (the default, naming what the chosen row resolves to, per spec/catalogue-rules.json captureAs), then three overrides that are each the SDK's own type: Generic document, Green Book preset, Passport preset. Choosing Generic document opens genericDocumentSheet."
         }
       ],
       "components": [

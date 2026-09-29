@@ -4,7 +4,7 @@ import type { UseSmileIDSampleEnvironment } from '../model/use-smile-id-sample-r
 export type UseSmileIDSampleCatalogueSource = {
   /// `GET /v3/services/supported_id_types`, every country.
   supportedIdTypes: (environment: UseSmileIDSampleEnvironment) => Promise<string>;
-  /// `GET /v3/services/supported_documents?continent=AFRICA&locale=…`.
+  /// `GET /v3/services/supported_documents?locale=…`.
   supportedDocuments: (environment: UseSmileIDSampleEnvironment, locale: string) => Promise<string>;
 };
 

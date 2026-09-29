@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.setValue
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 
 /** What the two pre-flow forms hold. Saveable, because anything typed must survive the system killing the app behind the camera. */
 class UseSmileIDSampleForms(
@@ -52,25 +53,36 @@ class UseSmileIDSampleForms(
         idDetails = UseSmileIDSampleIdDetails()
     }
 
-    /** Choosing a country clears the ID type and document, which may not apply to it, and keeps the typed number. */
+    /** A different country clears the ID type, document and "Capture as" override, which may not apply to it; the typed number stays. */
     fun setCountry(country: UseSmileIDSampleCountry) {
-        idDetails = idDetails.copy(country = country, idType = null, document = null)
+        if (country == idDetails.country) return
+        idDetails = idDetails.copy(country = country, idType = null, document = null, captureAsOverride = null)
     }
 
     fun setIdType(idType: UseSmileIDSampleKycIdType) {
         idDetails = idDetails.copy(idType = idType)
     }
 
+    /** A different document drops the override, which described one pairing. */
     fun setDocument(document: UseSmileIDSampleDocument) {
-        idDetails = idDetails.copy(document = document)
+        val keep = document.id == idDetails.document?.id
+        idDetails = idDetails.copy(document = document, captureAsOverride = idDetails.captureAsOverride.takeIf { keep })
     }
 
-    fun setCaptureAs(captureAs: UseSmileIDSampleCaptureAs) {
-        idDetails = idDetails.copy(captureAs = captureAs)
+    /** A link can open [product]'s form holding a row it does not list; the row and its override go. */
+    fun keepDocumentListedOn(product: UseSmileIDSampleProduct) {
+        if (idDetails.document?.isListedOn(product) == false) {
+            idDetails = idDetails.copy(document = null, captureAsOverride = null)
+        }
+    }
+
+    /** Null is Match document. */
+    fun setCaptureAs(captureAs: UseSmileIDSampleCaptureAs?) {
+        idDetails = idDetails.copy(captureAsOverride = captureAs)
     }
 
     fun setGenericDocument(genericDocument: UseSmileIDSampleGenericDocument) {
-        idDetails = idDetails.copy(genericDocument = genericDocument, captureAs = UseSmileIDSampleCaptureAs.GenericDocument)
+        idDetails = idDetails.copy(genericDocument = genericDocument, captureAsOverride = UseSmileIDSampleCaptureAs.GenericDocument)
     }
 
     fun setIdNumber(value: String) {
@@ -101,7 +113,7 @@ class UseSmileIDSampleForms(
                     id.document?.let { d ->
                         listOf(d.code, d.subType.orEmpty(), d.name, d.hasBack.toString(), d.format.toString()).joinToString(FIELD)
                     }.orEmpty(),
-                    id.captureAs.name,
+                    id.captureAsOverride?.name.orEmpty(),
                     with(id.genericDocument) { listOf(displayName, hasBackSide.toString(), orientation.name, aspectRatio.name).joinToString(FIELD) },
                 )
             },
@@ -127,8 +139,7 @@ class UseSmileIDSampleForms(
                         document = parts(10).takeIf { it.size == 5 }?.let { (code, subType, name, hasBack, format) ->
                             UseSmileIDSampleDocument(code, subType.ifEmpty { null }, name, hasBack == "true", format.toIntOrNull() ?: 1)
                         },
-                        captureAs = UseSmileIDSampleCaptureAs.entries.firstOrNull { it.name == at(11) }
-                            ?: UseSmileIDSampleCaptureAs.GenericDocument,
+                        captureAsOverride = UseSmileIDSampleCaptureAs.entries.firstOrNull { it.name == at(11) },
                         genericDocument = parts(12).takeIf { it.size == 4 }?.let { (name, back, orientation, ratio) ->
                             UseSmileIDSampleGenericDocument(
                                 displayName = name,

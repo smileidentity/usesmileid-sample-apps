@@ -452,7 +452,7 @@
     ]
   },
   "documents": {
-    "rule": "Every document in the country's supported_documents is listed in API order, except one whose code is empty (the API's 'Others'). A sub-type with display_standalone true becomes its own row right after its parent: its id is <code>_<sub-type id>, its name, has_back and format are its own, and it submits the parent's code. A sub-type without display_standalone is not listed.",
+    "rule": "Every document in the country's supported_documents is listed in API order, except one whose code is empty (the API's 'Others'). A sub-type with display_standalone true becomes its own row right after its parent: its id is <code>_<sub-type id>, its name, has_back and format are its own, and it submits the parent's code. A sub-type without display_standalone is not listed. On enhancedDocumentVerification a green_book row is not listed, because the SDK refuses that document on that product; a case without product is documentVerification.",
     "cases": [
       {
         "name": "Others is left out, the rest keep API order",
@@ -805,6 +805,154 @@
             "format": 1
           }
         ]
+      },
+      {
+        "name": "Green Book not listed on Enhanced Document Verification",
+        "country": "ZA",
+        "product": "enhancedDocumentVerification",
+        "input": [
+          {
+            "country": {
+              "code": "ZA",
+              "continent": "AFRICA",
+              "name": "South Africa"
+            },
+            "id_types": [
+              {
+                "code": "DRIVERS_LICENSE",
+                "example": [
+                  "Driving License"
+                ],
+                "format": 1,
+                "has_back": true,
+                "name": "Driver's License"
+              },
+              {
+                "code": "IDENTITY_CARD",
+                "example": [
+                  "Consular IDs",
+                  "Diplomat IDs",
+                  "National IDs"
+                ],
+                "format": 1,
+                "has_back": true,
+                "name": "Identity Card",
+                "sub_types": [
+                  {
+                    "display_standalone": true,
+                    "example": [
+                      "Green Book"
+                    ],
+                    "format": 7,
+                    "has_back": false,
+                    "id": "green_book",
+                    "name": "Green Book"
+                  }
+                ]
+              },
+              {
+                "code": "PASSPORT",
+                "example": [
+                  "Passports"
+                ],
+                "format": 3,
+                "has_back": false,
+                "name": "Passport"
+              },
+              {
+                "code": "RESIDENT_ID",
+                "example": [
+                  "Residency cards",
+                  "Residency permits",
+                  "Temporary Asylum Visa"
+                ],
+                "format": 1,
+                "has_back": false,
+                "name": "Resident ID"
+              },
+              {
+                "code": "SEAMANS_ID",
+                "example": [
+                  "Seaman Book",
+                  "Seaman Id"
+                ],
+                "format": 3,
+                "has_back": true,
+                "name": "Seaman's ID"
+              },
+              {
+                "code": "TRAVEL_DOC",
+                "example": [
+                  "Border crossing documents",
+                  "Refugee document",
+                  "Visas"
+                ],
+                "format": 1,
+                "has_back": false,
+                "name": "Travel Document"
+              },
+              {
+                "code": "",
+                "example": [
+                  "My document is not listed"
+                ],
+                "format": 1,
+                "has_back": true,
+                "name": "Others"
+              }
+            ]
+          }
+        ],
+        "expected": [
+          {
+            "id": "DRIVERS_LICENSE",
+            "code": "DRIVERS_LICENSE",
+            "subType": null,
+            "name": "Driver's License",
+            "hasBack": true,
+            "format": 1
+          },
+          {
+            "id": "IDENTITY_CARD",
+            "code": "IDENTITY_CARD",
+            "subType": null,
+            "name": "Identity Card",
+            "hasBack": true,
+            "format": 1
+          },
+          {
+            "id": "PASSPORT",
+            "code": "PASSPORT",
+            "subType": null,
+            "name": "Passport",
+            "hasBack": false,
+            "format": 3
+          },
+          {
+            "id": "RESIDENT_ID",
+            "code": "RESIDENT_ID",
+            "subType": null,
+            "name": "Resident ID",
+            "hasBack": false,
+            "format": 1
+          },
+          {
+            "id": "SEAMANS_ID",
+            "code": "SEAMANS_ID",
+            "subType": null,
+            "name": "Seaman's ID",
+            "hasBack": true,
+            "format": 3
+          },
+          {
+            "id": "TRAVEL_DOC",
+            "code": "TRAVEL_DOC",
+            "subType": null,
+            "name": "Travel Document",
+            "hasBack": false,
+            "format": 1
+          }
+        ]
       }
     ]
   },
@@ -981,11 +1129,12 @@
     ]
   },
   "captureAs": {
-    "rule": "How a 'Capture as' choice becomes DocumentCaptureConfig.documentType: each choice is the SDK's own type, and nothing is inferred from the API's format or has_back. The server always receives the document's code as idType; 'Capture as' changes only how the photo is taken. Whether a back is captured is the Settings switch, captureBothSides, which the SDK ANDs with the type's hasBackSide, except that the Passport preset is captured front only: the SDK's passport type declares a back side.",
+    "rule": "How the form's 'Capture as' becomes DocumentCaptureConfig.documentType. The default is matchDocument (no override): it keys on the row's code and sub-type and never reads format, so sub-type green_book is the Green Book preset, code PASSPORT the Passport preset, and anything else a GenericDocument whose hasBackSide is the row's has_back, with the SDK's defaults for the rest. The three presets are overrides that apply whatever the document; genericDocument builds from the generic-document sheet. The server always receives the row's code as idType. captureBothSides is the Settings switch, except false for a resolved Passport, and the SDK ANDs it with the type's hasBackSide. The trigger names the result: a matched preset reads '<preset> · matches document', a matched GenericDocument 'Generic document · <orientation> · <sides>', a chosen preset '<preset> · chosen', and a chosen GenericDocument '<displayName> · <orientation> · <sides> · chosen', where <sides> is 'front and back' when both captureBothSides and hasBackSide are true and 'front only' otherwise. The sheet's first row reads 'Match document (<preset or Generic document>)'.",
+    "triggerPlaceholder": "Match document",
     "cases": [
       {
-        "name": "Generic document, untouched, is the SDK's GenericDocument defaults",
-        "captureAs": "genericDocument",
+        "name": "Match: a two-sided identity card is a GenericDocument with a back",
+        "captureAs": "matchDocument",
         "document": {
           "code": "IDENTITY_CARD",
           "name": "Identity Card",
@@ -997,12 +1146,55 @@
           "displayName": "Document",
           "hasBackSide": true,
           "orientation": "landscape",
-          "idType": "IDENTITY_CARD"
+          "idType": "IDENTITY_CARD",
+          "matched": true,
+          "captureBothSides": true,
+          "triggerText": "Generic document · landscape · front and back",
+          "matchRowLabel": "Match document (Generic document)"
         }
       },
       {
-        "name": "Nothing is inferred from the API: a Green Book row under Generic document stays generic, submitting the parent code",
-        "captureAs": "genericDocument",
+        "name": "Match: a one-sided card (KE ALIEN_CARD) is a GenericDocument without a back",
+        "captureAs": "matchDocument",
+        "document": {
+          "code": "ALIEN_CARD",
+          "name": "Alien ID",
+          "hasBack": false,
+          "format": 1
+        },
+        "expected": {
+          "documentType": "generic",
+          "displayName": "Document",
+          "hasBackSide": false,
+          "orientation": "landscape",
+          "idType": "ALIEN_CARD",
+          "matched": true,
+          "captureBothSides": true,
+          "triggerText": "Generic document · landscape · front only",
+          "matchRowLabel": "Match document (Generic document)"
+        }
+      },
+      {
+        "name": "Match: a passport is the Passport preset, captured front only",
+        "captureAs": "matchDocument",
+        "document": {
+          "code": "PASSPORT",
+          "name": "Passport",
+          "hasBack": false,
+          "format": 3
+        },
+        "expected": {
+          "documentType": "passport",
+          "idType": "PASSPORT",
+          "matched": true,
+          "captureBothSides": false,
+          "triggerText": "Passport preset · matches document",
+          "matchRowLabel": "Match document (Passport preset)"
+        }
+      },
+      {
+        "name": "Match: the Green Book is the Green Book preset on Document Verification, submitting the parent code",
+        "captureAs": "matchDocument",
         "document": {
           "code": "IDENTITY_CARD",
           "subType": "green_book",
@@ -1011,20 +1203,21 @@
           "format": 7
         },
         "expected": {
-          "documentType": "generic",
-          "displayName": "Document",
-          "hasBackSide": true,
-          "orientation": "landscape",
-          "idType": "IDENTITY_CARD"
+          "documentType": "greenBook",
+          "idType": "IDENTITY_CARD",
+          "matched": true,
+          "captureBothSides": true,
+          "triggerText": "Green Book preset · matches document",
+          "matchRowLabel": "Match document (Green Book preset)"
         }
       },
       {
-        "name": "Nothing is inferred from the API: a passport row under Generic document stays generic",
-        "captureAs": "genericDocument",
+        "name": "Match: a seaman's book is a GenericDocument, because format is never read",
+        "captureAs": "matchDocument",
         "document": {
-          "code": "PASSPORT",
-          "name": "Passport",
-          "hasBack": false,
+          "code": "SEAMANS_ID",
+          "name": "Seaman's ID",
+          "hasBack": true,
           "format": 3
         },
         "expected": {
@@ -1032,11 +1225,59 @@
           "displayName": "Document",
           "hasBackSide": true,
           "orientation": "landscape",
-          "idType": "PASSPORT"
+          "idType": "SEAMANS_ID",
+          "matched": true,
+          "captureBothSides": true,
+          "triggerText": "Generic document · landscape · front and back",
+          "matchRowLabel": "Match document (Generic document)"
         }
       },
       {
-        "name": "Passport preset, whatever the document",
+        "name": "Match: an unknown sub-type is a GenericDocument that takes its row's has_back",
+        "captureAs": "matchDocument",
+        "document": {
+          "code": "IDENTITY_CARD",
+          "subType": "future_card",
+          "name": "Future Card",
+          "hasBack": false,
+          "format": 1
+        },
+        "expected": {
+          "documentType": "generic",
+          "displayName": "Document",
+          "hasBackSide": false,
+          "orientation": "landscape",
+          "idType": "IDENTITY_CARD",
+          "matched": true,
+          "captureBothSides": true,
+          "triggerText": "Generic document · landscape · front only",
+          "matchRowLabel": "Match document (Generic document)"
+        }
+      },
+      {
+        "name": "Match: the Settings switch off makes a two-sided card front only",
+        "captureAs": "matchDocument",
+        "captureBothSides": false,
+        "document": {
+          "code": "IDENTITY_CARD",
+          "name": "Identity Card",
+          "hasBack": true,
+          "format": 1
+        },
+        "expected": {
+          "documentType": "generic",
+          "displayName": "Document",
+          "hasBackSide": true,
+          "orientation": "landscape",
+          "idType": "IDENTITY_CARD",
+          "matched": true,
+          "captureBothSides": false,
+          "triggerText": "Generic document · landscape · front only",
+          "matchRowLabel": "Match document (Generic document)"
+        }
+      },
+      {
+        "name": "Passport preset, whatever the document, captured front only",
         "captureAs": "passport",
         "document": {
           "code": "IDENTITY_CARD",
@@ -1046,7 +1287,11 @@
         },
         "expected": {
           "documentType": "passport",
-          "idType": "IDENTITY_CARD"
+          "idType": "IDENTITY_CARD",
+          "matched": false,
+          "captureBothSides": false,
+          "triggerText": "Passport preset · chosen",
+          "matchRowLabel": "Match document (Generic document)"
         }
       },
       {
@@ -1060,7 +1305,32 @@
         },
         "expected": {
           "documentType": "greenBook",
-          "idType": "PASSPORT"
+          "idType": "PASSPORT",
+          "matched": false,
+          "captureBothSides": true,
+          "triggerText": "Green Book preset · chosen",
+          "matchRowLabel": "Match document (Passport preset)"
+        }
+      },
+      {
+        "name": "Generic document on a passport row stays generic, and captures two sides",
+        "captureAs": "genericDocument",
+        "document": {
+          "code": "PASSPORT",
+          "name": "Passport",
+          "hasBack": false,
+          "format": 3
+        },
+        "expected": {
+          "documentType": "generic",
+          "displayName": "Document",
+          "hasBackSide": true,
+          "orientation": "landscape",
+          "idType": "PASSPORT",
+          "matched": false,
+          "captureBothSides": true,
+          "triggerText": "Document · landscape · front and back · chosen",
+          "matchRowLabel": "Match document (Passport preset)"
         }
       },
       {
@@ -1084,16 +1354,125 @@
           "hasBackSide": true,
           "orientation": "portrait",
           "knownAspectRatio": 0.748,
-          "idType": "PASSPORT"
+          "idType": "PASSPORT",
+          "matched": false,
+          "captureBothSides": true,
+          "triggerText": "Booklet · portrait · front and back · chosen",
+          "matchRowLabel": "Match document (Passport preset)"
+        }
+      },
+      {
+        "name": "A one-sided Generic document from the sheet is front only",
+        "captureAs": "genericDocument",
+        "document": {
+          "code": "IDENTITY_CARD",
+          "name": "Identity Card",
+          "hasBack": true,
+          "format": 1
+        },
+        "genericDocument": {
+          "displayName": "Card",
+          "hasBackSide": false,
+          "orientation": "landscape",
+          "aspectRatio": "card"
+        },
+        "expected": {
+          "documentType": "generic",
+          "displayName": "Card",
+          "hasBackSide": false,
+          "orientation": "landscape",
+          "knownAspectRatio": 1.586,
+          "idType": "IDENTITY_CARD",
+          "matched": false,
+          "captureBothSides": true,
+          "triggerText": "Card · landscape · front only · chosen",
+          "matchRowLabel": "Match document (Generic document)"
         }
       }
     ],
+    "resets": {
+      "rule": "Choosing a different document or a different country clears the override back to matchDocument: an override describes one pairing.",
+      "cases": [
+        {
+          "name": "Choosing another document resets an override to Match",
+          "captureAs": "passport",
+          "document": {
+            "code": "IDENTITY_CARD",
+            "name": "Identity Card",
+            "hasBack": true,
+            "format": 1
+          },
+          "change": {
+            "document": {
+              "code": "ALIEN_CARD",
+              "name": "Alien ID",
+              "hasBack": false,
+              "format": 1
+            }
+          },
+          "expected": "matchDocument"
+        },
+        {
+          "name": "Choosing a country resets an override to Match",
+          "captureAs": "greenBook",
+          "document": {
+            "code": "IDENTITY_CARD",
+            "name": "Identity Card",
+            "hasBack": true,
+            "format": 1
+          },
+          "change": {
+            "country": {
+              "code": "KE",
+              "name": "Kenya"
+            }
+          },
+          "expected": "matchDocument"
+        },
+        {
+          "name": "Choosing the same document again keeps the override",
+          "captureAs": "passport",
+          "document": {
+            "code": "IDENTITY_CARD",
+            "name": "Identity Card",
+            "hasBack": true,
+            "format": 1
+          },
+          "change": {
+            "document": {
+              "code": "IDENTITY_CARD",
+              "name": "Identity Card",
+              "hasBack": true,
+              "format": 1
+            }
+          },
+          "expected": "passport"
+        },
+        {
+          "name": "Choosing the same country again keeps the document and the override",
+          "captureAs": "passport",
+          "document": {
+            "code": "IDENTITY_CARD",
+            "name": "Identity Card",
+            "hasBack": true,
+            "format": 1
+          },
+          "change": {
+            "country": {
+              "code": "ZA",
+              "name": "South Africa"
+            }
+          },
+          "expected": "passport"
+        }
+      ]
+    },
     "aspectRatios": {
       "off": null,
       "card": 1.586,
       "passport": 1.309,
       "booklet": 0.748
     },
-    "note": "`preset` means the SDK preset's own hasBackSide, whatever the API says, because a preset exists to be tried as the SDK defines it."
+    "note": "A case without captureBothSides has the Settings switch on. `matched` is false for every override."
   }
 }

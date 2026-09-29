@@ -125,7 +125,7 @@ partner's app would get them. A type added on the server appears on the next run
 a type removed disappears. Nothing is bundled, and nothing is cached on disk.
 
 **Two calls, in the shell.** `GET /v3/services/supported_id_types` (every country) and
-`GET /v3/services/supported_documents?continent=AFRICA&locale=…` are both unauthenticated, so no token is
+`GET /v3/services/supported_documents?locale=…` are both unauthenticated, so no token is
 sent. `sample-ui` defines the seam, `UseSmileIDSampleCatalogueSource`, which returns the raw response
 bodies. Each shell implements it with the HTTP client it already uses for status refresh, so the network
 stays out of the shared UI and no dependency is added. The KYC country picker needs names that only
@@ -158,7 +158,8 @@ SDK cannot submit the job anyway.
   accepted and then ends Blocked. A type repeated for one country is numbered `_2`, `_3` in API order.
 - **Documents.** The API's "Others" row has an empty code and is left out. A sub-type marked
   `display_standalone`, such as South Africa's Green Book, is its own row after its parent, and submits
-  the parent's code.
+  the parent's code. On Enhanced Document Verification the Green Book row is left out, because the SDK
+  refuses that document on that product.
 - **Countries.** The document products offer every country with a listed document. The KYC products offer
   every country with a listed ID type, named from `supported_documents`; one it does not name is shown by
   its code, after the named ones.
@@ -168,18 +169,40 @@ death needs no catalogue to resolve them. Profiles do not store ID details.
 
 **Capture as.** The document products show a DOCUMENT trigger in place of the ID type, and a CAPTURE AS
 trigger under it. "Capture as" changes only how the SDK photographs the document. The server always
-receives the document's code as `idType`, which is why the override can exist without sending a wrong
+receives the document's code as `idType`, which is why an override can exist without sending a wrong
 type.
 
 | Choice | `documentType` |
 |---|---|
-| Generic document (the default) | A `GenericDocument`, with the SDK's defaults until the sheet changes its display name, back side, orientation, or aspect ratio (off, 1.586, 1.309 or 0.748) |
+| Match document (the default) | What the chosen row resolves to, per the table below |
+| Generic document | A `GenericDocument`, with the SDK's defaults until the sheet changes its display name, back side, orientation, or aspect ratio (off, 1.586, 1.309 or 0.748) |
 | Green Book preset | `SouthAfricaGreenBook` |
 | Passport preset | `Passport` |
 
-Each choice is the SDK's own type, and nothing is read from the API's `format` or `has_back`: a flow sees
-exactly the type that was picked, so a scenario can pair any document with any shape, including a pair
-the SDK refuses, such as the Green Book on Enhanced Document Verification.
+Match document keys on the row's code and sub-type, and takes `has_back` for everything else:
+
+| Document row | Resolves to |
+|---|---|
+| sub-type `green_book` | Green Book preset |
+| code `PASSPORT` | Passport preset |
+| anything else | `GenericDocument` with `hasBackSide` from the row's `has_back`, and the SDK's defaults for the rest |
+
+The facts behind the table, from the whole `supported_documents` catalogue:
+
+- `green_book` is the only sub-type the API lists, and `PASSPORT` is the same code in every country.
+- `format` is never read. Its values are undocumented and collide: `SEAMANS_ID` is `format 3`, as a
+  passport is, so a format-keyed match would give seaman's books the Passport preset.
+- 394 of the 1,350 rows are one-sided and not passports, and a `GenericDocument` with the SDK's default
+  back side would ask each for a back. That is why `has_back` is read.
+- An unknown code falls back to a `GenericDocument`, which always captures.
+
+The three presets stay selectable as overrides, so a scenario can still pair any document with any shape,
+including a pair the SDK refuses, such as the Green Book preset on Enhanced Document Verification.
+Choosing a different document or country resets the override to Match document. The trigger names the
+type the SDK will get and whether it was matched or chosen, such as "Passport preset · matches document"
+or "Booklet · portrait · front and back · chosen". "Front and back" is what the SDK will do: the Settings
+switch ANDed with the type's back side, and a passport is always captured front only.
+`spec/catalogue-rules.json` → `captureAs` holds the cases and the exact strings.
 
 **The ID-number hint.** The API gives a regex, never an example, so the hint is computed from the regex:
 the first alternative, a class as the first of `A`, `0`, `a` that it accepts, and each part repeated to
