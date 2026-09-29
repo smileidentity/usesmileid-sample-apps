@@ -47,7 +47,7 @@
     },
     {
       "artifact": "androidx.annotation:annotation-jvm",
-      "version": "1.10.0",
+      "version": "1.11.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -58,7 +58,7 @@
     },
     {
       "artifact": "androidx.annotation:annotation",
-      "version": "1.10.0",
+      "version": "1.11.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -2065,7 +2065,7 @@
     },
     {
       "artifact": "io.sentry:sentry-android-timber",
-      "version": "8.55.0",
+      "version": "8.58.0",
       "licenses": [
         {
           "id": "MIT",
@@ -2076,7 +2076,7 @@
     },
     {
       "artifact": "io.sentry:sentry",
-      "version": "8.55.0",
+      "version": "8.58.0",
       "licenses": [
         {
           "id": "MIT",
@@ -2109,7 +2109,7 @@
     },
     {
       "artifact": "org.bouncycastle:bcprov-jdk18on",
-      "version": "1.85.2",
+      "version": "1.86",
       "licenses": [
         {
           "id": "Bouncy Castle Licence",

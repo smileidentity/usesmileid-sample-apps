@@ -53,6 +53,10 @@ dependencies {
     // signature, so every consumer needs the SDK on its compile classpath to assign those fields.
     api(platform(libs.usesmileid.bom))
     api(libs.usesmileid)
+    constraints {
+        // The SDK's bridge, held to the same snapshot build as the SDK (see libs.versions.toml).
+        api(libs.usesmileid.bridge)
+    }
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)
