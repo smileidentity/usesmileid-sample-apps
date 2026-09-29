@@ -190,7 +190,12 @@ void _journeyFor(
             document.documentType = useSmileIDSampleDocumentTypeFor(
               snapshot.idDetails,
             );
-            document.captureBothSides = snapshot.captureBothSides;
+            // The SDK's passport preset declares a back side; the sample
+            // captures a passport front only.
+            document.captureBothSides =
+                snapshot.captureBothSides &&
+                snapshot.idDetails.captureAs !=
+                    UseSmileIDSampleCaptureAs.passport;
             document.allowSkipBack = snapshot.allowSkipBack;
             document.captureMode = snapshot.captureMode.sdk;
             document.allowGalleryUpload = snapshot.galleryUpload;

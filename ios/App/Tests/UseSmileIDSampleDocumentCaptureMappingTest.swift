@@ -63,6 +63,20 @@ final class UseSmileIDSampleDocumentCaptureMappingTest: XCTestCase {
     XCTAssertFalse(defaults.allowSkipBack)
   }
 
+  func testAPassportIsCapturedFrontOnlyWhateverTheSetting() {
+    func captureBothSides(_ captureAs: UseSmileIDSampleCaptureAs) -> Bool {
+      useSmileIDSampleDocumentCapture(FlowLaunchSnapshot(
+        product: .documentVerification,
+        route: .fullscreen,
+        idDetails: UseSmileIDSampleIdDetails(captureAs: captureAs)
+      )).captureBothSides
+    }
+    XCTAssertFalse(captureBothSides(.passport))
+    for captureAs in UseSmileIDSampleCaptureAs.allCases where captureAs != .passport {
+      XCTAssertTrue(captureBothSides(captureAs), "\(captureAs)")
+    }
+  }
+
   func testADocumentJobSendsTheDocumentEvenWithAnIdTypeLeftInTheForm() {
     let details = UseSmileIDSampleIdDetails(
       country: UseSmileIDSampleCountry(code: "KE", name: "Kenya"),

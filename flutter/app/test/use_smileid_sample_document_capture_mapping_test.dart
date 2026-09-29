@@ -102,6 +102,51 @@ void main() {
       expect(document.allowSkipBack, isTrue);
     }
   });
+
+  test('a passport is captured front only, whatever the setting', () {
+    for (final UseSmileIDSampleCaptureAs captureAs
+        in UseSmileIDSampleCaptureAs.values) {
+      final DocumentCaptureConfiguration document = _documentConfig(
+        UseSmileIDSampleIdDetails(
+          country: const UseSmileIDSampleCountry('KE', 'Kenya'),
+          document: const UseSmileIDSampleDocument(
+            code: 'PASSPORT',
+            name: 'Passport',
+            hasBack: false,
+            format: 3,
+          ),
+          captureAs: captureAs,
+        ),
+      );
+      expect(
+        document.captureBothSides,
+        captureAs != UseSmileIDSampleCaptureAs.passport,
+        reason: captureAs.id,
+      );
+    }
+  });
+}
+
+/// The document step the builder is handed for [details].
+DocumentCaptureConfiguration _documentConfig(
+  UseSmileIDSampleIdDetails details,
+) {
+  final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
+  useSmileIDSampleApplying(builder, _snapshot(details));
+  // The SDK says to inspect this, then marks it internal.
+  // ignore: invalid_use_of_internal_member
+  final dynamic result = builder.build();
+  // The result's type is unexported, hence the dynamic read.
+  final List<Object?> screens =
+      // ignore: avoid_dynamic_calls
+      result.configuration.screens as List<Object?>;
+  return screens
+      .whereType<CaptureScreenConfiguration>()
+      .firstWhere(
+        (CaptureScreenConfiguration it) =>
+            it.captureType == CaptureType.document,
+      )
+      .documentConfig!;
 }
 
 UseSmileIDSampleIdDetails _detailsOf(Map<String, Object?> spec) {

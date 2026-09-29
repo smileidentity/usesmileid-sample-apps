@@ -239,7 +239,8 @@ internal data class DocumentOptions(
 
 internal fun documentOptionsFor(snapshot: FlowLaunchSnapshot): DocumentOptions = DocumentOptions(
     documentType = documentTypeFor(snapshot.idDetails),
-    captureBothSides = snapshot.captureBothSides,
+    // The SDK's passport preset declares a back side; the sample captures a passport front only.
+    captureBothSides = snapshot.captureBothSides && snapshot.idDetails.captureAs != UseSmileIDSampleCaptureAs.Passport,
     allowSkipBack = snapshot.allowSkipBack,
     captureMode = snapshot.captureMode.toSdk(),
     allowGalleryUpload = snapshot.galleryUpload,

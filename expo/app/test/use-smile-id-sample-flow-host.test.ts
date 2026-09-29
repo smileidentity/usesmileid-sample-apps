@@ -8,6 +8,7 @@ import { UseSmileIDFlowBuilder } from '@smileid/usesmileid';
 
 import {
   smileIDSampleApplying,
+  smileIDSampleCapturesBothSides,
   smileIDSampleJourneyStepsFor,
   type UseSmileIDSampleFlowJourneyStep,
 } from '../src/flow/use-smile-id-sample-flow-builder-config';
@@ -180,6 +181,21 @@ describe('what the SDK is handed', () => {
           const refused = id === 'enhancedDocumentVerification' && captureAs === UseSmileIDSampleCaptureAs.GreenBook;
           expect([id, captureAs, flag, result.kind]).toEqual([id, captureAs, flag, refused ? 'invalid' : 'success']);
         }
+      }
+    }
+  });
+
+  it('a passport is captured front only, whatever the setting', () => {
+    for (const captureAs of Object.values(UseSmileIDSampleCaptureAs)) {
+      for (const setting of [true, false]) {
+        const captured = smileIDSampleCapturesBothSides(
+          snapshot({ idDetails: { ...smileIDSampleIdDetailsDefaults, captureAs }, captureBothSides: setting }),
+        );
+        expect([captureAs, setting, captured]).toEqual([
+          captureAs,
+          setting,
+          setting && captureAs !== UseSmileIDSampleCaptureAs.Passport,
+        ]);
       }
     }
   });

@@ -138,6 +138,15 @@ class DocumentCaptureMappingTest {
     }
 
     @Test
+    fun a_passport_is_captured_front_only_whatever_the_setting() {
+        val passport = documentOptionsFor(snapshotOf(UseSmileIDSampleIdDetails(captureAs = UseSmileIDSampleCaptureAs.Passport)))
+        assertEquals(false, passport.captureBothSides)
+        for (captureAs in UseSmileIDSampleCaptureAs.entries.filter { it != UseSmileIDSampleCaptureAs.Passport }) {
+            assertTrue(captureAs.id, documentOptionsFor(snapshotOf(UseSmileIDSampleIdDetails(captureAs = captureAs))).captureBothSides)
+        }
+    }
+
+    @Test
     fun a_document_job_sends_the_document_even_with_an_id_type_left_in_the_form() {
         val details = UseSmileIDSampleIdDetails(
             country = UseSmileIDSampleCountry("KE", "Kenya"),

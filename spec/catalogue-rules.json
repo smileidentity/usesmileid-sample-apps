@@ -981,7 +981,7 @@
     ]
   },
   "captureAs": {
-    "rule": "How a 'Capture as' choice becomes DocumentCaptureConfig.documentType: each choice is the SDK's own type, and nothing is inferred from the API's format or has_back. The server always receives the document's code as idType; 'Capture as' changes only how the photo is taken. Whether a back is captured is the Settings switch, captureBothSides, which the SDK ANDs with the type's hasBackSide.",
+    "rule": "How a 'Capture as' choice becomes DocumentCaptureConfig.documentType: each choice is the SDK's own type, and nothing is inferred from the API's format or has_back. The server always receives the document's code as idType; 'Capture as' changes only how the photo is taken. Whether a back is captured is the Settings switch, captureBothSides, which the SDK ANDs with the type's hasBackSide, except that the Passport preset is captured front only: the SDK's passport type declares a back side.",
     "cases": [
       {
         "name": "Generic document, untouched, is the SDK's GenericDocument defaults",

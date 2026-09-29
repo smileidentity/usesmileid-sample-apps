@@ -172,7 +172,7 @@ const journeyFor = (screens: ScreensBuilder, snapshot: UseSmileIDSampleFlowLaunc
           capture.captureType = CaptureType.document;
           capture.document((document: DocumentCaptureConfigBuilder) => {
             document.documentType = smileIDSampleDocumentTypeFor(snapshot.idDetails);
-            document.captureBothSides = snapshot.captureBothSides;
+            document.captureBothSides = smileIDSampleCapturesBothSides(snapshot);
             document.allowSkipBack = snapshot.allowSkipBack;
             document.captureMode = smileIDSampleCaptureModeFor(snapshot.captureMode);
             document.allowGalleryUpload = snapshot.galleryUpload;
@@ -297,6 +297,10 @@ export const smileIDSampleCaptureModeFor = (mode: UseSmileIDSampleCaptureMode): 
       return DocumentCaptureMode.AutoCaptureWithManualFallback();
   }
 };
+
+/** The Settings switch, except that the SDK's passport preset declares a back side and the sample captures a passport front only. */
+export const smileIDSampleCapturesBothSides = (snapshot: UseSmileIDSampleFlowLaunchSnapshot): boolean =>
+  snapshot.captureBothSides && snapshot.idDetails.captureAs !== UseSmileIDSampleCaptureAs.Passport;
 
 // The same host the Settings privacy row opens.
 const privacyPolicyUrl = 'https://smile.id/privacy-policy';
