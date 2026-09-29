@@ -45,6 +45,7 @@ PRODUCTS = [
     "SmartSelfie\u2122 Authentication",
     "Document Verification",
     "Enhanced Document Verification",
+    "Residency Document Verification",
     "Biometric KYC",
     "Enhanced KYC",
 ]

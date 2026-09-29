@@ -14,7 +14,8 @@ The Android and iOS apps are on Google Play and the App Store as **Smile ID**.
 ## What each app shows
 
 - **Every v12 product**: SmartSelfie™ Enrollment and Authentication, Biometric KYC, Document
-  Verification, Enhanced Document Verification and Enhanced KYC, each composed with the flow builder.
+  Verification, Enhanced Document Verification, Residency Document Verification and Enhanced KYC,
+  each composed with the flow builder.
 - **Token sessions**: link the app to a real account by scanning or pasting a v3 token, with no API key
   in the app. When the token already carries the user's details and consent, the app skips those steps.
 - **Verifications**: every submitted job, stored on the device, with its status refreshed from
