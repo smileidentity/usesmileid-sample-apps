@@ -86,6 +86,7 @@ const Set<String> _gridOpenWords = <String>{
   'Registration',
   'Document',
   'Enhanced',
+  'Residency',
   'Biometric',
   'Verification',
   'SmartSelfie™',
