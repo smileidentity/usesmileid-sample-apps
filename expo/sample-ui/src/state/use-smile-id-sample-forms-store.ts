@@ -70,9 +70,13 @@ export const useSmileIDSampleFormsStore = create<State & Actions>((set) => ({
       idDetails: smileIDSampleIdDetailsDefaults,
     }),
 
-  /// Choosing a country clears the ID type, document and "Capture as" override, which may not apply to it, and keeps the typed number.
+  /// A different country clears the ID type, document and "Capture as" override, which may not apply to it; the typed number stays.
   setCountry: (country) =>
-    set((state) => ({ idDetails: { ...state.idDetails, country, idType: null, document: null, captureAsOverride: null } })),
+    set((state) =>
+      state.idDetails.country?.code === country.code && state.idDetails.country.name === country.name
+        ? state
+        : { idDetails: { ...state.idDetails, country, idType: null, document: null, captureAsOverride: null } },
+    ),
 
   setIdType: (idType) => set((state) => ({ idDetails: { ...state.idDetails, idType } })),
 

@@ -275,13 +275,15 @@ class UseSmileIDSampleIdDetails {
         genericDocument,
       );
 
-  /// A copy with [country] chosen, which CLEARS the type, document and override and keeps the typed number.
+  /// A copy with [country] chosen; a different one CLEARS the type, document and override, and the typed number stays.
   UseSmileIDSampleIdDetails withCountry(UseSmileIDSampleCountry country) =>
-      UseSmileIDSampleIdDetails(
-        country: country,
-        genericDocument: genericDocument,
-        idNumber: idNumber,
-      );
+      country == this.country
+      ? this
+      : UseSmileIDSampleIdDetails(
+          country: country,
+          genericDocument: genericDocument,
+          idNumber: idNumber,
+        );
 
   /// A copy with [document] chosen; a different one drops the override, which described one pairing.
   UseSmileIDSampleIdDetails withDocument(UseSmileIDSampleDocument document) =>

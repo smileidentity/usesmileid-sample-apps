@@ -77,7 +77,7 @@ class UseSmileIDSampleFormsNotifier extends Notifier<UseSmileIDSampleForms> {
         idDetails: const UseSmileIDSampleIdDetails(),
       );
 
-  /// Chooses a country, which clears the ID type, document and "Capture as" override and keeps the typed number.
+  /// Chooses a country; a different one clears the ID type, document and "Capture as" override, and the typed number stays.
   void setCountry(UseSmileIDSampleCountry country) =>
       state = state.copyWith(idDetails: state.idDetails.withCountry(country));
 

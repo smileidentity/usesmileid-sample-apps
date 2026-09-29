@@ -1447,6 +1447,23 @@
             }
           },
           "expected": "passport"
+        },
+        {
+          "name": "Choosing the same country again keeps the document and the override",
+          "captureAs": "passport",
+          "document": {
+            "code": "IDENTITY_CARD",
+            "name": "Identity Card",
+            "hasBack": true,
+            "format": 1
+          },
+          "change": {
+            "country": {
+              "code": "ZA",
+              "name": "South Africa"
+            }
+          },
+          "expected": "passport"
         }
       ]
     },

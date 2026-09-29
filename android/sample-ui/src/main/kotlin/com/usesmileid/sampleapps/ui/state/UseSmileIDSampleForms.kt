@@ -53,8 +53,9 @@ class UseSmileIDSampleForms(
         idDetails = UseSmileIDSampleIdDetails()
     }
 
-    /** Choosing a country clears the ID type, document and "Capture as" override, which may not apply to it, and keeps the typed number. */
+    /** A different country clears the ID type, document and "Capture as" override, which may not apply to it; the typed number stays. */
     fun setCountry(country: UseSmileIDSampleCountry) {
+        if (country == idDetails.country) return
         idDetails = idDetails.copy(country = country, idType = null, document = null, captureAsOverride = null)
     }
 
