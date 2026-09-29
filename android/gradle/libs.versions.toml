@@ -35,7 +35,6 @@ usesmileid-bom = { module = "com.usesmileid:usesmileid-bom", version.ref = "uses
 usesmileid = { module = "com.usesmileid:usesmileid", version.ref = "usesmileid" }
 usesmileid-mlkit-face = { module = "com.usesmileid:mlkit-face", version.ref = "usesmileid-ml" }
 usesmileid-mlkit-document = { module = "com.usesmileid:mlkit-document", version.ref = "usesmileid-ml" }
-usesmileid-bridge = { module = "com.usesmileid:bridge", version.ref = "usesmileid" }
 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-browser = { module = "androidx.browser:browser", version.ref = "androidx-browser" }
