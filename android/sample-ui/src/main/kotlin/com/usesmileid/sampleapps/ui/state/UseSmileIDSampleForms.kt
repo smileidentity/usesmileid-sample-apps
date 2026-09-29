@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.setValue
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 
 /** What the two pre-flow forms hold. Saveable, because anything typed must survive the system killing the app behind the camera. */
 class UseSmileIDSampleForms(
@@ -65,6 +66,13 @@ class UseSmileIDSampleForms(
     fun setDocument(document: UseSmileIDSampleDocument) {
         val keep = document.id == idDetails.document?.id
         idDetails = idDetails.copy(document = document, captureAsOverride = idDetails.captureAsOverride.takeIf { keep })
+    }
+
+    /** A link can open [product]'s form holding a row it does not list; the row and its override go. */
+    fun keepDocumentListedOn(product: UseSmileIDSampleProduct) {
+        if (idDetails.document?.isListedOn(product) == false) {
+            idDetails = idDetails.copy(document = null, captureAsOverride = null)
+        }
     }
 
     /** Null is Match document. */

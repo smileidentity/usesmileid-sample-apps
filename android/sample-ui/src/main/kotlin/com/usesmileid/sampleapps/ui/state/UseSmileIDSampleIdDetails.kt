@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.ui.state
 
 import androidx.compose.runtime.Immutable
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 
 /** A country from the Smile ID API; the flag is derived from the ISO code, so no table is needed. */
 @Immutable
@@ -154,5 +155,9 @@ fun resolvedCaptureAs(
 
 /** The only sub-type the API lists, and the one document the SDK refuses on Enhanced Document Verification. */
 const val GREEN_BOOK_SUB_TYPE = "green_book"
+
+/** Whether [product] lists this row: the SDK refuses the Green Book on Enhanced Document Verification. */
+fun UseSmileIDSampleDocument.isListedOn(product: UseSmileIDSampleProduct): Boolean =
+    !(product == UseSmileIDSampleProduct.EnhancedDocumentVerification && subType == GREEN_BOOK_SUB_TYPE)
 
 private const val PASSPORT_CODE = "PASSPORT"

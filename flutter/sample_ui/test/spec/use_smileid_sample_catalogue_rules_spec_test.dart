@@ -218,6 +218,31 @@ void main() {
     }
   });
 
+  test('a row the product does not list is dropped with its override', () {
+    const UseSmileIDSampleDocument greenBook = UseSmileIDSampleDocument(
+      code: 'IDENTITY_CARD',
+      subType: 'green_book',
+      name: 'Green Book',
+      hasBack: false,
+      format: 7,
+    );
+    const UseSmileIDSampleIdDetails details = UseSmileIDSampleIdDetails(
+      document: greenBook,
+      captureAsOverride: UseSmileIDSampleCaptureAs.passport,
+    );
+    expect(
+      details
+          .withDocumentListedOn(UseSmileIDSampleProduct.documentVerification)
+          .document,
+      greenBook,
+    );
+    final UseSmileIDSampleIdDetails dropped = details.withDocumentListedOn(
+      UseSmileIDSampleProduct.enhancedDocumentVerification,
+    );
+    expect(dropped.document, isNull);
+    expect(dropped.captureAsOverride, isNull);
+  });
+
   test('the trigger placeholder is the spec\'s', () {
     expect(
       captureAs['triggerPlaceholder'],

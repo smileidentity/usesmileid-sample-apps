@@ -48,6 +48,14 @@ public struct UseSmileIDSampleIdDetails: Equatable, Sendable {
     self.document = document
   }
 
+  /// A link can open `product`'s form holding a row it does not list; the row and its override go.
+  public mutating func keepDocumentListed(on product: UseSmileIDSampleProduct) {
+    if document?.isListed(on: product) == false {
+      document = nil
+      captureAsOverride = nil
+    }
+  }
+
   /// Whether Continue can enable for `family`: every field it shows is set, and the number fits its type.
   public func isComplete(_ family: UseSmileIDSampleCatalogueFamily) -> Bool {
     switch family {
@@ -111,6 +119,11 @@ public struct UseSmileIDSampleDocument: Hashable, Sendable {
 
   public var id: String {
     subType.map { "\(code)_\($0)" } ?? code
+  }
+
+  /// Whether `product` lists this row: the SDK refuses the Green Book on Enhanced Document Verification.
+  public func isListed(on product: UseSmileIDSampleProduct) -> Bool {
+    !(product == .enhancedDocumentVerification && subType == useSmileIDSampleGreenBookSubType)
   }
 }
 

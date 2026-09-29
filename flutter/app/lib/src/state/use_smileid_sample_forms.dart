@@ -90,6 +90,10 @@ class UseSmileIDSampleFormsNotifier extends Notifier<UseSmileIDSampleForms> {
   void setDocument(UseSmileIDSampleDocument document) =>
       state = state.copyWith(idDetails: state.idDetails.withDocument(document));
 
+  /// Drops a row [product] does not list, with its override; a link can open the form holding one.
+  void keepDocumentListedOn(UseSmileIDSampleProduct product) => state = state
+      .copyWith(idDetails: state.idDetails.withDocumentListedOn(product));
+
   /// Chooses how the SDK photographs the document; null is Match document.
   void setCaptureAs(UseSmileIDSampleCaptureAs? captureAs) => state = state
       .copyWith(idDetails: state.idDetails.withCaptureAsOverride(captureAs));

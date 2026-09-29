@@ -29,6 +29,7 @@ export default function IdDetailsForm() {
   const details = useSmileIDSampleFormsStore((state) => state.idDetails);
   const setIdNumber = useSmileIDSampleFormsStore((state) => state.setIdNumber);
   const captureBothSides = useSmileIDSampleSettingsStore((state) => state.settings.captureBothSides);
+  const keepDocumentListedOn = useSmileIDSampleFormsStore((state) => state.keepDocumentListedOn);
   const store = smileIDSampleCatalogueStore(useLaunchArgs().catalogue);
   const catalogue = store();
 
@@ -43,6 +44,11 @@ export default function IdDetailsForm() {
       );
     return () => store.getState().stop();
   }, [store]);
+
+  // A link can open this form holding a row the product does not list.
+  useEffect(() => {
+    if (productId !== undefined) keepDocumentListedOn(productId);
+  }, [productId, keepDocumentListedOn]);
 
   const country = details.country?.code;
   const countryList =

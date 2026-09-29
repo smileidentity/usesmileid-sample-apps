@@ -133,4 +133,14 @@ final class UseSmileIDSampleCatalogueRulesSpecTest: XCTestCase {
       aspectRatio: UseSmileIDSampleAspectRatio(rawValue: sheet["aspectRatio"] as? String ?? "") ?? .off
     )
   }
+
+  func testARowTheProductDoesNotListIsDroppedWithItsOverride() {
+    let greenBook = UseSmileIDSampleDocument(code: "IDENTITY_CARD", subType: "green_book", name: "Green Book", hasBack: false, format: 7)
+    var details = UseSmileIDSampleIdDetails(document: greenBook, captureAsOverride: .passport)
+    details.keepDocumentListed(on: .documentVerification)
+    XCTAssertEqual(details.document, greenBook)
+    details.keepDocumentListed(on: .enhancedDocumentVerification)
+    XCTAssertNil(details.document)
+    XCTAssertNil(details.captureAsOverride)
+  }
 }

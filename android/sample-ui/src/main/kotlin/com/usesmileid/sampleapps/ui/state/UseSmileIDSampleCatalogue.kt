@@ -106,7 +106,7 @@ object UseSmileIDSampleCatalogueRules {
                         UseSmileIDSampleDocument(document.code, it.id, it.name, it.hasBack, it.format)
                     }
             }
-            .filterNot { product == UseSmileIDSampleProduct.EnhancedDocumentVerification && it.subType == GREEN_BOOK_SUB_TYPE }
+            .filter { it.isListedOn(product) }
 
     fun countries(data: UseSmileIDSampleCatalogueData, family: UseSmileIDSampleCatalogueFamily): List<UseSmileIDSampleCountry> {
         val named = data.documents.map { it.country }

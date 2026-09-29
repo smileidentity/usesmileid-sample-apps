@@ -240,11 +240,7 @@ abstract final class UseSmileIDSampleCatalogueRules {
                 format: sub.format,
               ),
         ],
-    ]..removeWhere(
-      (UseSmileIDSampleDocument it) =>
-          product == UseSmileIDSampleProduct.enhancedDocumentVerification &&
-          it.subType == useSmileIDSampleGreenBookSubType,
-    );
+    ]..retainWhere((UseSmileIDSampleDocument it) => it.isListedOn(product));
   }
 
   /// The countries [family] offers, named from `supported_documents`.

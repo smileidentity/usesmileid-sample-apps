@@ -150,6 +150,12 @@ class _UseSmileIDSampleKycFormTabState
       }
       // A deep link lands here without the product tap that fetches ahead, so the form starts it.
       _ensureCatalogue();
+      final UseSmileIDSampleProduct? product = _productFor(widget.productId);
+      if (product != null) {
+        ref
+            .read(useSmileIDSampleFormsProvider.notifier)
+            .keepDocumentListedOn(product);
+      }
       final UseSmileIDSamplePicker? asked = widget.openSheet;
       if (asked != null) {
         _openFromLink(asked);

@@ -134,6 +134,10 @@ export type UseSmileIDSampleResolvedCaptureAs = {
 /// The only sub-type the API lists, and the one document the SDK refuses on Enhanced Document Verification.
 export const smileIDSampleGreenBookSubType = 'green_book';
 
+/// Whether `productId` lists the row: the SDK refuses the Green Book on Enhanced Document Verification.
+export const smileIDSampleDocumentListedOn = (document: UseSmileIDSampleDocument, productId: string): boolean =>
+  !(productId === 'enhancedDocumentVerification' && document.subType === smileIDSampleGreenBookSubType);
+
 /// The one place the match table lives: keyed on sub-type and code, never format, with the row's has_back for the rest.
 export const smileIDSampleResolvedCaptureAs = (
   document: UseSmileIDSampleDocument | null,

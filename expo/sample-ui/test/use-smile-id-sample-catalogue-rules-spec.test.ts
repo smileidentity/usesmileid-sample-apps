@@ -150,6 +150,17 @@ describe('catalogue rules', () => {
     expect(useSmileIDSampleFormsStore.getState().idDetails.captureAsOverride).toBe(override(c.expected));
   });
 
+  it('drops a row the product does not list, with its override', () => {
+    const greenBook: UseSmileIDSampleDocument = { code: 'IDENTITY_CARD', subType: 'green_book', name: 'Green Book', hasBack: false, format: 7 };
+    const forms = useSmileIDSampleFormsStore.getState();
+    useSmileIDSampleFormsStore.setState({ idDetails: { ...smileIDSampleIdDetailsDefaults, document: greenBook, captureAsOverride: 'passport' } });
+    forms.keepDocumentListedOn('documentVerification');
+    expect(useSmileIDSampleFormsStore.getState().idDetails.document).toEqual(greenBook);
+    forms.keepDocumentListedOn('enhancedDocumentVerification');
+    expect(useSmileIDSampleFormsStore.getState().idDetails.document).toBeNull();
+    expect(useSmileIDSampleFormsStore.getState().idDetails.captureAsOverride).toBeNull();
+  });
+
   it("uses the spec's trigger placeholder", () => {
     expect(smileIDSampleMatchDocumentLabel).toBe(rules.captureAs.triggerPlaceholder);
   });

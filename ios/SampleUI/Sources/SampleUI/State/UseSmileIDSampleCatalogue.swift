@@ -125,7 +125,7 @@ public enum UseSmileIDSampleCatalogueRules {
             UseSmileIDSampleDocument(code: document.code, subType: $0.id, name: $0.name, hasBack: $0.hasBack, format: $0.format)
           }
       }
-      .filter { !(product == .enhancedDocumentVerification && $0.subType == useSmileIDSampleGreenBookSubType) }
+      .filter { $0.isListed(on: product) }
   }
 
   public static func countries(

@@ -1,3 +1,4 @@
+import '../model/use_smileid_sample_product.dart';
 import 'use_smileid_sample_catalogue.dart';
 import 'use_smileid_sample_id_number_hint.dart';
 
@@ -288,6 +289,18 @@ class UseSmileIDSampleIdDetails {
         document.id == this.document?.id ? captureAsOverride : null,
       ).copyWith(document: document);
 
+  /// A copy without a row [product] does not list, and without its override; a link can open a form holding one.
+  UseSmileIDSampleIdDetails withDocumentListedOn(
+    UseSmileIDSampleProduct product,
+  ) => document?.isListedOn(product) ?? true
+      ? this
+      : UseSmileIDSampleIdDetails(
+          country: country,
+          idType: idType,
+          genericDocument: genericDocument,
+          idNumber: idNumber,
+        );
+
   /// A copy with the override replaced; null is Match document.
   UseSmileIDSampleIdDetails withCaptureAsOverride(
     UseSmileIDSampleCaptureAs? override,
@@ -396,6 +409,14 @@ class UseSmileIDSampleResolvedCaptureAs {
 
 /// The only sub-type the API lists, and the one document the SDK refuses on Enhanced Document Verification.
 const String useSmileIDSampleGreenBookSubType = 'green_book';
+
+/// Whether a product lists a row: the SDK refuses the Green Book on Enhanced Document Verification.
+extension UseSmileIDSampleDocumentListing on UseSmileIDSampleDocument {
+  /// Whether [product] lists this row.
+  bool isListedOn(UseSmileIDSampleProduct product) =>
+      !(product == UseSmileIDSampleProduct.enhancedDocumentVerification &&
+          subType == useSmileIDSampleGreenBookSubType);
+}
 
 /// The one place the match table lives: keyed on sub-type and code, never format, with the row's has_back for the rest.
 UseSmileIDSampleResolvedCaptureAs useSmileIDSampleResolvedCaptureAs(

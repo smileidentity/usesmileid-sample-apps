@@ -92,6 +92,7 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     var buildingGenericDocument by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.GenericDocument)
     // A deep link lands here without the product tap that fetches ahead, so the form starts it if nothing has.
     LaunchedEffect(app.environment, app.catalogueLocale) { app.catalogue.ensure(app.environment, app.catalogueLocale) }
+    LaunchedEffect(product) { product?.let(app.forms::keepDocumentListedOn) }
     val details = app.forms.idDetails
     val countryCode = details.country?.code
     // A link can ask for a second-level sheet before its trigger could open; refused, not held until later.

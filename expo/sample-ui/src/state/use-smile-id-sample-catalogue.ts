@@ -4,7 +4,7 @@ import type {
   UseSmileIDSampleDocument,
   UseSmileIDSampleKycIdType,
 } from './use-smile-id-sample-id-details';
-import { smileIDSampleGreenBookSubType } from './use-smile-id-sample-id-details';
+import { smileIDSampleDocumentListedOn } from './use-smile-id-sample-id-details';
 import type { UseSmileIDSampleProduct } from '../model/use-smile-id-sample-product';
 
 /// The family `product`'s form reads, or null for the products that ask for no ID details.
@@ -132,7 +132,7 @@ export const smileIDSampleCatalogueDocuments = (
       });
     }
   }
-  return out.filter((it) => !(productId === 'enhancedDocumentVerification' && it.subType === smileIDSampleGreenBookSubType));
+  return out.filter((it) => smileIDSampleDocumentListedOn(it, productId));
 };
 
 /// The countries `family` offers, named from `supported_documents`; a KYC country it does not name shows by code, after.

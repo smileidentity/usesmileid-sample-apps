@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 import {
   smileIDSampleDocumentId,
+  smileIDSampleDocumentListedOn,
   smileIDSampleIdDetailsDefaults,
   type UseSmileIDSampleCountry,
   type UseSmileIDSampleGenericDocument,
@@ -37,6 +38,8 @@ type Actions = {
   setCountry: (country: UseSmileIDSampleCountry) => void;
   setIdType: (idType: UseSmileIDSampleKycIdType) => void;
   setDocument: (document: UseSmileIDSampleDocument) => void;
+  /// A link can open `productId`'s form holding a row it does not list; the row and its override go.
+  keepDocumentListedOn: (productId: string) => void;
   /// Null is Match document.
   setCaptureAs: (captureAs: UseSmileIDSampleCaptureAs | null) => void;
   /// Keeps what the generic-document sheet built, which also selects Generic document.
@@ -79,6 +82,13 @@ export const useSmileIDSampleFormsStore = create<State & Actions>((set) => ({
       const same = state.idDetails.document !== null && smileIDSampleDocumentId(state.idDetails.document) === smileIDSampleDocumentId(document);
       return { idDetails: { ...state.idDetails, document, captureAsOverride: same ? state.idDetails.captureAsOverride : null } };
     }),
+
+  keepDocumentListedOn: (productId) =>
+    set((state) =>
+      state.idDetails.document === null || smileIDSampleDocumentListedOn(state.idDetails.document, productId)
+        ? state
+        : { idDetails: { ...state.idDetails, document: null, captureAsOverride: null } },
+    ),
 
   setCaptureAs: (captureAs) => set((state) => ({ idDetails: { ...state.idDetails, captureAsOverride: captureAs } })),
 
