@@ -7,6 +7,7 @@ import {
   smileIDSampleProductFrom,
   useSmileIDSampleFormsStore,
   useSmileIDSampleSessionStore,
+  useSmileIDSampleSettingsStore,
 } from '@smileid/sample-ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect } from 'react';
@@ -27,6 +28,7 @@ export default function IdDetailsForm() {
   const family = (product === null ? null : smileIDSampleCatalogueFamily(product)) ?? 'kyc';
   const details = useSmileIDSampleFormsStore((state) => state.idDetails);
   const setIdNumber = useSmileIDSampleFormsStore((state) => state.setIdNumber);
+  const captureBothSides = useSmileIDSampleSettingsStore((state) => state.settings.captureBothSides);
   const store = smileIDSampleCatalogueStore(useLaunchArgs().catalogue);
   const catalogue = store();
 
@@ -48,7 +50,7 @@ export default function IdDetailsForm() {
       ? null
       : family === 'kyc'
         ? smileIDSampleCatalogueIdTypesOf(catalogue, country)
-        : smileIDSampleCatalogueDocumentsOf(catalogue, country);
+        : smileIDSampleCatalogueDocumentsOf(catalogue, country, productId);
 
   return (
     <KycIdFormScreen
@@ -57,6 +59,7 @@ export default function IdDetailsForm() {
         family,
         details,
         countryListLoading: countryList?.kind === 'loading',
+        captureBothSides,
       }}
       onCountryPress={() => router.push(`/flow/${productId}/id-details/country`)}
       onIdTypePress={() => router.push(`/flow/${productId}/id-details/id-type`)}

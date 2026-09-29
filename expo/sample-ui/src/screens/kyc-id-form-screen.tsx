@@ -12,12 +12,14 @@ import {
 import { UseSmileIDSampleTextInput } from '../components/use-smile-id-sample-text-input';
 import { UseSmileIDSampleTopAppBar } from '../components/use-smile-id-sample-top-app-bar';
 import {
+  smileIDSampleCaptureAsTriggerText,
   smileIDSampleFlag,
+  smileIDSampleIdDetailsCaptureAs,
   smileIDSampleIdDetailsComplete,
   type UseSmileIDSampleCatalogueFamily,
   type UseSmileIDSampleIdDetails,
 } from '../state/use-smile-id-sample-id-details';
-import { UseSmileIDSampleCaptureAs, smileIDSampleCaptureAsOptions } from '../model/use-smile-id-sample-capture-as';
+import { smileIDSampleMatchDocumentLabel } from '../model/use-smile-id-sample-capture-as';
 import {
   smileIDSampleIdNumberError,
   smileIDSampleIdNumberPlaceholder,
@@ -35,6 +37,8 @@ export type UseSmileIDSampleKycIdFormState = {
   readonly details: UseSmileIDSampleIdDetails;
   /// Whether the chosen country's list is still arriving, which the second trigger says.
   readonly countryListLoading: boolean;
+  /// The Settings switch, which the CAPTURE AS trigger folds into "front and back" or "front only".
+  readonly captureBothSides: boolean;
 };
 
 type Props = {
@@ -69,12 +73,12 @@ export const KycIdFormScreen = ({
 }: Props) => {
   const theme = useSmileIDSampleTheme();
   const insets = useSafeAreaInsets();
-  const { country, idType, document, captureAs, genericDocument, idNumber } = state.details;
+  const { country, idType, document, idNumber } = state.details;
   const numberError = smileIDSampleIdNumberError(idType, idNumber);
   const captureAsLabel =
-    captureAs === UseSmileIDSampleCaptureAs.GenericDocument
-      ? `Generic document: ${genericDocument.displayName}`
-      : (smileIDSampleCaptureAsOptions.find((option) => option.id === captureAs)?.label ?? 'Generic document');
+    document === null
+      ? null
+      : smileIDSampleCaptureAsTriggerText(smileIDSampleIdDetailsCaptureAs(state.details), state.captureBothSides);
 
   return (
     <View
@@ -139,7 +143,7 @@ export const KycIdFormScreen = ({
               <UseSmileIDSampleSectionLabel text="CAPTURE AS" />
               <UseSmileIDSampleSelectTrigger
                 value={captureAsLabel}
-                placeholder="Automatic"
+                placeholder={smileIDSampleMatchDocumentLabel}
                 onPress={onCaptureAsPress}
                 enabled={document !== null}
                 testID={UseSmileIDSampleTestIds.CAPTURE_AS_TRIGGER}

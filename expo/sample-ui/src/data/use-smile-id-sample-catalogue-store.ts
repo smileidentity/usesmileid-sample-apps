@@ -154,11 +154,12 @@ export const smileIDSampleCatalogueIdTypesOf = (
     ? settled(smileIDSampleCatalogueIdTypes(state.idTypes.items, country))
     : notReady(state.idTypes);
 
-/// The documents `country` offers.
+/// The documents `country` offers on `productId`.
 export const smileIDSampleCatalogueDocumentsOf = (
   state: State,
   country: string,
+  productId?: string,
 ): UseSmileIDSampleCatalogue<UseSmileIDSampleDocument> =>
   state.documents.kind === 'ready'
-    ? settled(smileIDSampleCatalogueDocuments(state.documents.items, country))
+    ? settled(smileIDSampleCatalogueDocuments(state.documents.items, country, productId))
     : notReady(state.documents);

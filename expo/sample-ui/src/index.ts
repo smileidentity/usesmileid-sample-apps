@@ -228,7 +228,14 @@ export {
 } from './state/use-smile-id-sample-user-details-requirement';
 export {
   smileIDSampleAspectRatios,
+  smileIDSampleCaptureAsTriggerText,
+  smileIDSampleCaptureBothSides,
   smileIDSampleGenericDocumentDefaults,
+  smileIDSampleGreenBookSubType,
+  smileIDSampleIdDetailsCaptureAs,
+  smileIDSampleMatchRowLabel,
+  smileIDSampleResolvedCaptureAs,
+  smileIDSampleResolvedHasBackSide,
   smileIDSampleDocumentId,
   smileIDSampleFlag,
   smileIDSampleIdDetailsComplete,
@@ -243,8 +250,15 @@ export {
   type UseSmileIDSampleDocumentOrientation,
   type UseSmileIDSampleIdDetails,
   type UseSmileIDSampleKycIdType,
+  type UseSmileIDSampleResolvedCaptureAs,
 } from './state/use-smile-id-sample-id-details';
-export { UseSmileIDSampleCaptureAs, smileIDSampleCaptureAsOptions } from './model/use-smile-id-sample-capture-as';
+export {
+  UseSmileIDSampleCaptureAs,
+  smileIDSampleCaptureAsLabel,
+  smileIDSampleCaptureAsOptions,
+  smileIDSampleMatchDocumentId,
+  smileIDSampleMatchDocumentLabel,
+} from './model/use-smile-id-sample-capture-as';
 export {
   smileIDSampleAllowedRequiredFields,
   smileIDSampleCatalogueCountries,

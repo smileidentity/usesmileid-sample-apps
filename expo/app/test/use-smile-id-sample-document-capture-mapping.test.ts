@@ -15,12 +15,15 @@ import {
 
 import {
   smileIDSampleCaptureModeFor,
+  smileIDSampleCapturesBothSides,
   smileIDSampleDocumentTypeFor,
 } from '../src/flow/use-smile-id-sample-flow-builder-config';
+import type { UseSmileIDSampleFlowLaunchSnapshot } from '../src/flow/use-smile-id-sample-flow-launch-snapshot';
 
 type Case = {
   name: string;
-  captureAs: UseSmileIDSampleCaptureAs;
+  captureAs: UseSmileIDSampleCaptureAs | 'matchDocument';
+  captureBothSides?: boolean;
   document: { code: string; subType?: string; name: string; hasBack: boolean; format: number };
   genericDocument?: {
     displayName: string;
@@ -34,6 +37,7 @@ type Case = {
     hasBackSide?: boolean;
     orientation?: string;
     knownAspectRatio?: number;
+    captureBothSides: boolean;
   };
 };
 
@@ -47,7 +51,7 @@ const detailsOf = (c: Case): UseSmileIDSampleIdDetails => ({
   ...smileIDSampleIdDetailsDefaults,
   country: { code: 'ZA', name: 'South Africa' },
   document: { ...c.document, subType: c.document.subType ?? null },
-  captureAs: c.captureAs,
+  captureAsOverride: c.captureAs === 'matchDocument' ? null : c.captureAs,
   genericDocument: c.genericDocument ?? smileIDSampleGenericDocumentDefaults,
 });
 
@@ -64,10 +68,15 @@ describe('capture as', () => {
       if (c.expected.orientation) expect(type.orientation.toLowerCase()).toBe(c.expected.orientation);
       if (c.expected.knownAspectRatio !== undefined) expect(type.knownAspectRatio).toBeCloseTo(c.expected.knownAspectRatio);
     }
+    const flag = smileIDSampleCapturesBothSides({
+      idDetails: detailsOf(c),
+      captureBothSides: c.captureBothSides ?? true,
+    } as UseSmileIDSampleFlowLaunchSnapshot);
+    expect(flag).toBe(c.expected.captureBothSides);
   });
 
   it('has the spec\'s cases and aspect ratios', () => {
-    expect(captureAs.cases.length).toBeGreaterThanOrEqual(6);
+    expect(captureAs.cases.length).toBeGreaterThanOrEqual(12);
     for (const ratio of smileIDSampleAspectRatios) expect(ratio.ratio).toBe(captureAs.aspectRatios[ratio.id] ?? null);
   });
 
