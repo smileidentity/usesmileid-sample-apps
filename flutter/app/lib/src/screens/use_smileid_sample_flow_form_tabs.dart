@@ -149,12 +149,7 @@ class _UseSmileIDSampleKycFormTabState
         return;
       }
       // A deep link lands here without the product tap that fetches ahead, so the form starts it.
-      _catalogue.ensure(
-        useSmileIDSampleCatalogueEnvironment(
-          ref.read(useSmileIDSampleSessionProvider).live,
-        ),
-        useSmileIDSampleCatalogueLocale(),
-      );
+      _ensureCatalogue();
       final UseSmileIDSamplePicker? asked = widget.openSheet;
       if (asked != null) {
         _openFromLink(asked);
@@ -168,6 +163,14 @@ class _UseSmileIDSampleKycFormTabState
     scheduleMicrotask(_catalogue.stop);
     super.dispose();
   }
+
+  /// Also on every picker: a sheet link's form stacks above this one and stops the run on its way out.
+  void _ensureCatalogue() => _catalogue.ensure(
+    useSmileIDSampleCatalogueEnvironment(
+      ref.read(useSmileIDSampleSessionProvider).live,
+    ),
+    useSmileIDSampleCatalogueLocale(),
+  );
 
   /// A link can ask for a second-level sheet before its trigger could open; refused, not held until later.
   void _openFromLink(UseSmileIDSamplePicker asked) {
@@ -252,19 +255,22 @@ class _UseSmileIDSampleKycFormTabState
       UseSmileIDSampleIdDetails details,
     )
     body,
-  ) => showUseSmileIDSampleSheet<void>(
-    context: context,
-    testId: testId,
-    builder: (BuildContext sheetContext) => ListenableBuilder(
-      listenable: _catalogue,
-      builder: (BuildContext _, Widget? _) => Consumer(
-        builder: (BuildContext _, WidgetRef ref, Widget? _) => body(
-          sheetContext,
-          ref.watch(useSmileIDSampleFormsProvider).idDetails,
+  ) {
+    _ensureCatalogue();
+    return showUseSmileIDSampleSheet<void>(
+      context: context,
+      testId: testId,
+      builder: (BuildContext sheetContext) => ListenableBuilder(
+        listenable: _catalogue,
+        builder: (BuildContext _, Widget? _) => Consumer(
+          builder: (BuildContext _, WidgetRef ref, Widget? _) => body(
+            sheetContext,
+            ref.watch(useSmileIDSampleFormsProvider).idDetails,
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 
   Future<void> _pickCountry() => _catalogueSheet(
     UseSmileIDSampleTestIds.countrySheet,

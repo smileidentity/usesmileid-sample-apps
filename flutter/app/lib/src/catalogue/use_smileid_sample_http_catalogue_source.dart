@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -7,9 +8,14 @@ import 'package:sample_ui/sample_ui.dart';
 /// The two unauthenticated catalogue endpoints over `dart:io`; no token is sent, both are the same for every partner.
 class UseSmileIDSampleHttpCatalogueSource
     implements UseSmileIDSampleCatalogueSource {
-  /// [client] is injectable for tests; the store owns the timeout.
-  UseSmileIDSampleHttpCatalogueSource({HttpClient? client})
-    : _client = client ?? HttpClient();
+  /// [client] is injectable for tests; [timeout] matches the store's, so a request it gives up on is torn down.
+  UseSmileIDSampleHttpCatalogueSource({
+    HttpClient? client,
+    this.timeout = const Duration(seconds: 10),
+  }) : _client = (client ?? HttpClient())..connectionTimeout = timeout;
+
+  /// How long one request may take before it is aborted.
+  final Duration timeout;
 
   final HttpClient _client;
 
@@ -35,6 +41,15 @@ class UseSmileIDSampleHttpCatalogueSource
 
   Future<String> _get(Uri uri) async {
     final HttpClientRequest request = await _client.getUrl(uri);
+    try {
+      return await _read(uri, request).timeout(timeout);
+    } on TimeoutException {
+      request.abort();
+      rethrow;
+    }
+  }
+
+  Future<String> _read(Uri uri, HttpClientRequest request) async {
     final HttpClientResponse response = await request.close();
     final String body = await response.transform(utf8.decoder).join();
     if (response.statusCode < 200 || response.statusCode > 299) {

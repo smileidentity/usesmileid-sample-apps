@@ -16,10 +16,19 @@ import fixture from '../../assets/catalogue-fixture.json';
 // The picker lists African countries only; the API's continent filter is how it asks for them.
 const CONTINENT = 'AFRICA';
 
+// The store's own timeout, so a request it gives up on is torn down rather than left open.
+const REQUEST_TIMEOUT_MS = 10_000;
+
 const bodyOf = async (url: string): Promise<string> => {
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  return response.text();
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.text();
+  } finally {
+    clearTimeout(timer);
+  }
 };
 
 /// The two unauthenticated catalogue endpoints; no token is sent, both are the same for every partner.

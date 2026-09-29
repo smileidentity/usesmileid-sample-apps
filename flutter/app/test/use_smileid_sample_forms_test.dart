@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_forms.dart';
@@ -456,6 +457,35 @@ void main() {
       expect(byId(UseSmileIDSampleTestIds.kycFormScreen), findsOne);
       expect(byId(UseSmileIDSampleTestIds.countrySheet), findsOne);
     });
+
+    testWidgets(
+      'the form under a picker link still loads its lists once the link is gone',
+      (WidgetTester tester) async {
+        await pumpAt(
+          tester,
+          UseSmileIDSampleRoutes.countryPicker('biometricKyc'),
+        );
+        final GoRouter router = GoRouter.of(
+          tester.element(byId(UseSmileIDSampleTestIds.kycFormScreen).first),
+        );
+        while (byId(
+              UseSmileIDSampleTestIds.countrySheet,
+            ).evaluate().isNotEmpty ||
+            router.state.uri.path.endsWith('/country')) {
+          Navigator.of(
+            tester.element(byId(UseSmileIDSampleTestIds.kycFormScreen).last),
+            rootNavigator: byId(
+              UseSmileIDSampleTestIds.countrySheet,
+            ).evaluate().isNotEmpty,
+          ).pop();
+          await tester.pumpAndSettle();
+        }
+
+        await tester.tap(byId(UseSmileIDSampleTestIds.countryTrigger));
+        await tester.pumpAndSettle();
+        expect(find.text('Ghana'), findsOne);
+      },
+    );
   });
 }
 
