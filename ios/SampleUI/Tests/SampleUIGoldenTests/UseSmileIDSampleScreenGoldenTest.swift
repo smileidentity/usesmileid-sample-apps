@@ -254,7 +254,9 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
 
   /// South Africa on Enhanced Document Verification, which leaves out the Green Book the SDK refuses there.
   func testDocumentPickerEnhanced() {
-    goldens("document_picker_enhanced") { documentPicker(.ready(Self.southAfricanDocuments.filter { $0.subType == nil })) }
+    goldens("document_picker_enhanced") {
+      documentPicker(.ready(Self.southAfricanDocuments.filter { $0.isListed(on: .enhancedDocumentVerification) }))
+    }
   }
 
   func testDocumentPickerLoading() {
