@@ -10,7 +10,8 @@
     "GH GHANA_CARD": "a regex with groups and alternation",
     "GH PHONE_NUMBER": "needs a field the form cannot collect, so it is not listed",
     "NG NATIONAL_ID": "needs dob, so it is not listed",
-    "ET": "a country whose only type is not listed, so ET is not offered for KYC"
+    "ET": "a country whose only type is not listed, so ET is not offered for KYC",
+    "ZA SEAMANS_ID": "a booklet sharing the passport's format 3, which must still be a GenericDocument: format is never read"
   },
   "supported_id_types": {
     "id_types": [
@@ -238,6 +239,16 @@
             "format": 3,
             "has_back": false,
             "name": "Passport"
+          },
+          {
+            "code": "SEAMANS_ID",
+            "example": [
+              "Seaman Book",
+              "Seaman Id"
+            ],
+            "format": 3,
+            "has_back": true,
+            "name": "Seaman's ID"
           },
           {
             "code": "",

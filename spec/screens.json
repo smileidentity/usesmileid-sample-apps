@@ -475,7 +475,7 @@
         {
           "state": "default",
           "design": "in-repo",
-          "note": "The ID-type picker's layout, listing the country's supported_documents. A sub-type with display_standalone (today only South Africa's Green Book) is its own row right after its parent, and submits the parent's code. The API's 'Others' row, whose code is empty, is left out."
+          "note": "The ID-type picker's layout, listing the country's supported_documents. A sub-type with display_standalone (today only South Africa's Green Book) is its own row right after its parent, and submits the parent's code. On Enhanced Document Verification the Green Book row is left out, because the SDK refuses that document on that product. The API's 'Others' row, whose code is empty, is left out."
         },
         {
           "state": "loading",
@@ -519,7 +519,7 @@
         {
           "state": "default",
           "design": "in-repo",
-          "note": "Three rows, each the SDK's own type and nothing inferred from the API: Generic document (the default, the SDK's GenericDocument defaults), Green Book preset, Passport preset. Choosing Generic document opens genericDocumentSheet."
+          "note": "Four rows: Match document first (the default, naming what the chosen row resolves to, per spec/catalogue-rules.json captureAs), then three overrides that are each the SDK's own type: Generic document, Green Book preset, Passport preset. Choosing Generic document opens genericDocumentSheet."
         }
       ],
       "components": [
