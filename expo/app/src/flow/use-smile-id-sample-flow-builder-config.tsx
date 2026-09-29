@@ -2,7 +2,9 @@ import {
   UseSmileIDSampleCaptureAs,
   UseSmileIDSampleCaptureMode,
   smileIDSampleAspectRatios,
+  smileIDSampleCaptureBothSides,
   smileIDSampleCatalogueFamily,
+  smileIDSampleIdDetailsCaptureAs,
   smileIDSamplePassport,
   type UseSmileIDSampleIdDetails,
   UseSmileIDSampleIcon,
@@ -283,10 +285,11 @@ const jobTypeFor = (productId: string): JobType => {
   }
 };
 
-/// The "Capture as" mapping from `spec/catalogue-rules.json`: the SDK's own type, nothing read from the API.
+/// The SDK type for what "Capture as" resolves to (`spec/catalogue-rules.json` captureAs).
 export const smileIDSampleDocumentTypeFor = (details: UseSmileIDSampleIdDetails): DocumentType => {
-  const { genericDocument } = details;
-  switch (details.captureAs) {
+  const resolved = smileIDSampleIdDetailsCaptureAs(details);
+  const { genericDocument } = resolved;
+  switch (resolved.captureAs) {
     case UseSmileIDSampleCaptureAs.GreenBook:
       return DocumentType.SouthAfricaGreenBook;
     case UseSmileIDSampleCaptureAs.Passport:
@@ -315,10 +318,10 @@ export const smileIDSampleCaptureModeFor = (mode: UseSmileIDSampleCaptureMode): 
   }
 };
 
-/** The Settings switch, except that residency always captures both sides and the sample captures any other passport front only. */
+/** The Settings switch, except that residency always captures both sides and a resolved passport is otherwise captured front only. */
 export const smileIDSampleCapturesBothSides = (snapshot: UseSmileIDSampleFlowLaunchSnapshot): boolean =>
   snapshot.product.id === 'residencyDocumentVerification' ||
-  (snapshot.captureBothSides && snapshot.idDetails.captureAs !== UseSmileIDSampleCaptureAs.Passport);
+  smileIDSampleCaptureBothSides(smileIDSampleIdDetailsCaptureAs(snapshot.idDetails), snapshot.captureBothSides);
 
 // The same host the Settings privacy row opens.
 const privacyPolicyUrl = 'https://smile.id/privacy-policy';

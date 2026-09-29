@@ -22,7 +22,7 @@ export default function DocumentPicker() {
   return (
     <DocumentPickerSheet
       country={country}
-      catalogue={smileIDSampleCatalogueDocumentsOf(catalogue, country.code)}
+      catalogue={smileIDSampleCatalogueDocumentsOf(catalogue, country.code, productId)}
       selected={selected}
       query={query}
       onQueryChange={setQuery}

@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.ui.state
 
 import androidx.compose.runtime.Immutable
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 
 /** A country from the Smile ID API; the flag is derived from the ISO code, so no table is needed. */
 @Immutable
@@ -44,6 +45,13 @@ enum class UseSmileIDSampleCaptureAs(val id: String, val label: String) {
     GenericDocument("genericDocument", "Generic document"),
     GreenBook("greenBook", "Green Book preset"),
     Passport("passport", "Passport preset"),
+    ;
+
+    companion object {
+        /** The sheet's first row, which clears the override so the document decides. */
+        const val MATCH_DOCUMENT_ID = "matchDocument"
+        const val MATCH_DOCUMENT_LABEL = "Match document"
+    }
 }
 
 enum class UseSmileIDSampleDocumentOrientation(val id: String, val label: String) {
@@ -74,10 +82,15 @@ data class UseSmileIDSampleIdDetails(
     val country: UseSmileIDSampleCountry? = null,
     val idType: UseSmileIDSampleKycIdType? = null,
     val document: UseSmileIDSampleDocument? = null,
-    val captureAs: UseSmileIDSampleCaptureAs = UseSmileIDSampleCaptureAs.GenericDocument,
+    /** Null is Match document: the row decides, per [resolvedCaptureAs]. */
+    val captureAsOverride: UseSmileIDSampleCaptureAs? = null,
     val genericDocument: UseSmileIDSampleGenericDocument = UseSmileIDSampleGenericDocument(),
     val idNumber: String = "",
 ) {
+    /** What the SDK will be handed for this form. */
+    val resolvedCaptureAs: UseSmileIDSampleResolvedCaptureAs
+        get() = resolvedCaptureAs(document, captureAsOverride, genericDocument)
+
     /** Whether Continue can enable for [family]: every field it shows is set, and the number fits its type. */
     fun isComplete(family: UseSmileIDSampleCatalogueFamily): Boolean = when (family) {
         UseSmileIDSampleCatalogueFamily.Document -> country != null && document != null
@@ -88,3 +101,64 @@ data class UseSmileIDSampleIdDetails(
         }
     }
 }
+
+/** The type "Capture as" resolves to: a preset, or a GenericDocument built from [genericDocument]. */
+@Immutable
+data class UseSmileIDSampleResolvedCaptureAs(
+    val captureAs: UseSmileIDSampleCaptureAs,
+    val genericDocument: UseSmileIDSampleGenericDocument,
+    /** Whether the document decided it, rather than an override. */
+    val matched: Boolean,
+) {
+    val hasBackSide: Boolean
+        get() = when (captureAs) {
+            UseSmileIDSampleCaptureAs.GenericDocument -> genericDocument.hasBackSide
+            UseSmileIDSampleCaptureAs.GreenBook -> false
+            UseSmileIDSampleCaptureAs.Passport -> true
+        }
+
+    /** The flag the document step is handed: the Settings switch, except that a passport is captured front only. */
+    fun captureBothSides(setting: Boolean): Boolean = setting && captureAs != UseSmileIDSampleCaptureAs.Passport
+
+    /** The trigger text from `spec/catalogue-rules.json` captureAs. */
+    fun triggerText(setting: Boolean): String {
+        val sides = if (captureBothSides(setting) && hasBackSide) "front and back" else "front only"
+        val orientation = genericDocument.orientation.label.lowercase()
+        return when {
+            captureAs != UseSmileIDSampleCaptureAs.GenericDocument -> "${captureAs.label} · ${if (matched) "matches document" else "chosen"}"
+            matched -> "${UseSmileIDSampleCaptureAs.GenericDocument.label} · $orientation · $sides"
+            else -> "${genericDocument.displayName} · $orientation · $sides · chosen"
+        }
+    }
+
+    /** The sheet's Match row, naming what the document resolves to. */
+    val matchRowLabel: String
+        get() = "${UseSmileIDSampleCaptureAs.MATCH_DOCUMENT_LABEL} (${captureAs.label})"
+}
+
+/** The one place the match table lives: keyed on sub-type and code, never format, with the row's has_back for the rest. */
+fun resolvedCaptureAs(
+    document: UseSmileIDSampleDocument?,
+    override: UseSmileIDSampleCaptureAs?,
+    genericDocument: UseSmileIDSampleGenericDocument,
+): UseSmileIDSampleResolvedCaptureAs = when {
+    override != null -> UseSmileIDSampleResolvedCaptureAs(override, genericDocument, matched = false)
+    document?.subType == GREEN_BOOK_SUB_TYPE ->
+        UseSmileIDSampleResolvedCaptureAs(UseSmileIDSampleCaptureAs.GreenBook, UseSmileIDSampleGenericDocument(), matched = true)
+    document?.code == PASSPORT_CODE ->
+        UseSmileIDSampleResolvedCaptureAs(UseSmileIDSampleCaptureAs.Passport, UseSmileIDSampleGenericDocument(), matched = true)
+    else -> UseSmileIDSampleResolvedCaptureAs(
+        UseSmileIDSampleCaptureAs.GenericDocument,
+        UseSmileIDSampleGenericDocument(hasBackSide = document?.hasBack ?: true),
+        matched = true,
+    )
+}
+
+/** The only sub-type the API lists, and the one document the SDK refuses on Enhanced Document Verification. */
+const val GREEN_BOOK_SUB_TYPE = "green_book"
+
+/** Whether [product] lists this row: the SDK refuses the Green Book on Enhanced Document Verification. */
+fun UseSmileIDSampleDocument.isListedOn(product: UseSmileIDSampleProduct): Boolean =
+    !(product == UseSmileIDSampleProduct.EnhancedDocumentVerification && subType == GREEN_BOOK_SUB_TYPE)
+
+private const val PASSPORT_CODE = "PASSPORT"

@@ -434,10 +434,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
 
   /// A country change drops the ID type and document, which may not apply to it, and keeps the typed number.
   func selectCountry(_ country: UseSmileIDSampleCountry) {
-    guard country != idDetails.country else { return }
-    idDetails.country = country
-    idDetails.idType = nil
-    idDetails.document = nil
+    idDetails.choose(country: country)
   }
 
   /// What the token leaves the form to collect, read through the gate's own rule so a skipped form cannot redirect back.

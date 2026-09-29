@@ -6,12 +6,16 @@ import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleBottomSheet
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleOptionRow
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureAs
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleResolvedCaptureAs
 
-/** How the SDK photographs the document; choosing Generic document hands over to the generic-document sheet. */
+/** How the SDK photographs the document: Match document first, then the overrides; Generic document hands over to its sheet. */
 @Composable
 fun CaptureAsSheet(
-    selected: UseSmileIDSampleCaptureAs,
-    onSelect: (UseSmileIDSampleCaptureAs) -> Unit,
+    /** Null is Match document. */
+    selected: UseSmileIDSampleCaptureAs?,
+    /** What Match document resolves to for the chosen row, which its row names. */
+    matched: UseSmileIDSampleResolvedCaptureAs,
+    onSelect: (UseSmileIDSampleCaptureAs?) -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -21,6 +25,12 @@ fun CaptureAsSheet(
         title = "Capture as",
         testId = UseSmileIDSampleTestIds.CAPTURE_AS_SHEET,
     ) {
+        UseSmileIDSampleOptionRow(
+            label = matched.matchRowLabel,
+            selected = selected == null,
+            onClick = { onSelect(null) },
+            testId = UseSmileIDSampleTestIds.captureAsOption(UseSmileIDSampleCaptureAs.MATCH_DOCUMENT_ID),
+        )
         UseSmileIDSampleCaptureAs.entries.forEach { option ->
             UseSmileIDSampleOptionRow(
                 label = option.label,

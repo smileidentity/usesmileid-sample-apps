@@ -5,7 +5,8 @@ public struct UseSmileIDSampleIdDetails: Equatable, Sendable {
   public var country: UseSmileIDSampleCountry?
   public var idType: UseSmileIDSampleKycIdType?
   public var document: UseSmileIDSampleDocument?
-  public var captureAs: UseSmileIDSampleCaptureAs
+  /// Nil is Match document: the row decides, per `useSmileIDSampleResolvedCaptureAs`.
+  public var captureAsOverride: UseSmileIDSampleCaptureAs?
   public var genericDocument: UseSmileIDSampleGenericDocument
   public var idNumber: String
 
@@ -13,16 +14,46 @@ public struct UseSmileIDSampleIdDetails: Equatable, Sendable {
     country: UseSmileIDSampleCountry? = nil,
     idType: UseSmileIDSampleKycIdType? = nil,
     document: UseSmileIDSampleDocument? = nil,
-    captureAs: UseSmileIDSampleCaptureAs = .genericDocument,
+    captureAsOverride: UseSmileIDSampleCaptureAs? = nil,
     genericDocument: UseSmileIDSampleGenericDocument = UseSmileIDSampleGenericDocument(),
     idNumber: String = ""
   ) {
     self.country = country
     self.idType = idType
     self.document = document
-    self.captureAs = captureAs
+    self.captureAsOverride = captureAsOverride
     self.genericDocument = genericDocument
     self.idNumber = idNumber
+  }
+
+  /// What the SDK will be handed for this form.
+  public var resolvedCaptureAs: UseSmileIDSampleResolvedCaptureAs {
+    useSmileIDSampleResolvedCaptureAs(document: document, override: captureAsOverride, genericDocument: genericDocument)
+  }
+
+  /// A different country clears the ID type, document and override, which may not apply to it; the typed number stays.
+  public mutating func choose(country: UseSmileIDSampleCountry) {
+    guard country != self.country else { return }
+    self.country = country
+    idType = nil
+    document = nil
+    captureAsOverride = nil
+  }
+
+  /// A different document drops the override, which described one pairing.
+  public mutating func choose(document: UseSmileIDSampleDocument) {
+    if document.id != self.document?.id {
+      captureAsOverride = nil
+    }
+    self.document = document
+  }
+
+  /// A link can open `product`'s form holding a row it does not list; the row and its override go.
+  public mutating func keepDocumentListed(on product: UseSmileIDSampleProduct) {
+    if document?.isListed(on: product) == false {
+      document = nil
+      captureAsOverride = nil
+    }
   }
 
   /// Whether Continue can enable for `family`: every field it shows is set, and the number fits its type.
@@ -91,11 +122,20 @@ public struct UseSmileIDSampleDocument: Hashable, Sendable {
   public var id: String {
     subType.map { "\(code)_\($0)" } ?? code
   }
+
+  /// Whether `product` lists this row: the SDK refuses the Green Book on Enhanced Document Verification.
+  public func isListed(on product: UseSmileIDSampleProduct) -> Bool {
+    !(product == .enhancedDocumentVerification && subType == useSmileIDSampleGreenBookSubType)
+  }
 }
 
 /// How the SDK photographs the chosen document, each the SDK's own type; never what the server receives.
 public enum UseSmileIDSampleCaptureAs: String, CaseIterable, Sendable {
   case genericDocument, greenBook, passport
+
+  /// The sheet's first row, which clears the override so the document decides.
+  public static let matchDocumentId = "matchDocument"
+  public static let matchDocumentLabel = "Match document"
 
   public var label: String {
     switch self {
@@ -156,6 +196,69 @@ public struct UseSmileIDSampleGenericDocument: Equatable, Sendable {
     self.aspectRatio = aspectRatio
   }
 }
+
+/// The type "Capture as" resolves to: a preset, or a GenericDocument built from `genericDocument`.
+public struct UseSmileIDSampleResolvedCaptureAs: Equatable, Sendable {
+  public let captureAs: UseSmileIDSampleCaptureAs
+  public let genericDocument: UseSmileIDSampleGenericDocument
+  /// Whether the document decided it, rather than an override.
+  public let matched: Bool
+
+  public var hasBackSide: Bool {
+    switch captureAs {
+    case .genericDocument: genericDocument.hasBackSide
+    case .greenBook: false
+    case .passport: true
+    }
+  }
+
+  /// The flag the document step is handed: the Settings switch, except that a passport is captured front only.
+  public func captureBothSides(_ setting: Bool) -> Bool {
+    setting && captureAs != .passport
+  }
+
+  /// The trigger text from `spec/catalogue-rules.json` captureAs.
+  public func triggerText(_ setting: Bool) -> String {
+    let sides = captureBothSides(setting) && hasBackSide ? "front and back" : "front only"
+    let orientation = genericDocument.orientation.label.lowercased()
+    if captureAs != .genericDocument {
+      return "\(captureAs.label) · \(matched ? "matches document" : "chosen")"
+    }
+    return matched
+      ? "\(UseSmileIDSampleCaptureAs.genericDocument.label) · \(orientation) · \(sides)"
+      : "\(genericDocument.displayName) · \(orientation) · \(sides) · chosen"
+  }
+
+  /// The sheet's Match row, naming what the document resolves to.
+  public var matchRowLabel: String {
+    "\(UseSmileIDSampleCaptureAs.matchDocumentLabel) (\(captureAs.label))"
+  }
+}
+
+/// The one place the match table lives: keyed on sub-type and code, never format, with the row's has_back for the rest.
+public func useSmileIDSampleResolvedCaptureAs(
+  document: UseSmileIDSampleDocument?,
+  override: UseSmileIDSampleCaptureAs?,
+  genericDocument: UseSmileIDSampleGenericDocument
+) -> UseSmileIDSampleResolvedCaptureAs {
+  if let override {
+    return UseSmileIDSampleResolvedCaptureAs(captureAs: override, genericDocument: genericDocument, matched: false)
+  }
+  if document?.subType == useSmileIDSampleGreenBookSubType {
+    return UseSmileIDSampleResolvedCaptureAs(captureAs: .greenBook, genericDocument: UseSmileIDSampleGenericDocument(), matched: true)
+  }
+  if document?.code == "PASSPORT" {
+    return UseSmileIDSampleResolvedCaptureAs(captureAs: .passport, genericDocument: UseSmileIDSampleGenericDocument(), matched: true)
+  }
+  return UseSmileIDSampleResolvedCaptureAs(
+    captureAs: .genericDocument,
+    genericDocument: UseSmileIDSampleGenericDocument(hasBackSide: document?.hasBack ?? true),
+    matched: true
+  )
+}
+
+/// The only sub-type the API lists, and the one document the SDK refuses on Enhanced Document Verification.
+public let useSmileIDSampleGreenBookSubType = "green_book"
 
 extension String {
   /// An empty query matches everything: `localizedCaseInsensitiveContains("")` is false where Kotlin's is true.

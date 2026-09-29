@@ -6,7 +6,23 @@ import {
   smileIDSampleDecodeDocuments,
   smileIDSampleDecodeIdTypes,
 } from '../src/state/use-smile-id-sample-catalogue';
-import type { UseSmileIDSampleCatalogueFamily } from '../src/state/use-smile-id-sample-id-details';
+import {
+  smileIDSampleCaptureAsTriggerText,
+  smileIDSampleCaptureBothSides,
+  smileIDSampleGenericDocumentDefaults,
+  smileIDSampleIdDetailsDefaults,
+  smileIDSampleMatchRowLabel,
+  smileIDSampleResolvedCaptureAs,
+  type UseSmileIDSampleCatalogueFamily,
+  type UseSmileIDSampleDocument,
+  type UseSmileIDSampleGenericDocument,
+} from '../src/state/use-smile-id-sample-id-details';
+import {
+  smileIDSampleMatchDocumentId,
+  smileIDSampleMatchDocumentLabel,
+  type UseSmileIDSampleCaptureAs,
+} from '../src/model/use-smile-id-sample-capture-as';
+import { useSmileIDSampleFormsStore } from '../src/state/use-smile-id-sample-forms-store';
 import { catalogueData } from './catalogue-fixtures';
 import { spec } from './spec-file';
 
@@ -15,6 +31,7 @@ type Section = {
     name: string;
     country?: string;
     family?: string;
+    product?: string;
     input: unknown;
     expected: unknown;
   }[];
@@ -23,7 +40,42 @@ type Rules = {
   idTypes: Section & { allowedRequiredFields: string[] };
   documents: Section;
   countries: Section;
+  captureAs: {
+    triggerPlaceholder: string;
+    cases: CaptureAsCase[];
+    resets: { cases: ResetCase[] };
+  };
 };
+
+type Row = Omit<UseSmileIDSampleDocument, 'subType'> & { subType?: string };
+type CaptureAsCase = {
+  name: string;
+  captureAs: string;
+  captureBothSides?: boolean;
+  document: Row;
+  genericDocument?: UseSmileIDSampleGenericDocument;
+  expected: {
+    documentType: string;
+    displayName?: string;
+    hasBackSide?: boolean;
+    orientation?: string;
+    matched: boolean;
+    captureBothSides: boolean;
+    triggerText: string;
+    matchRowLabel: string;
+  };
+};
+type ResetCase = {
+  name: string;
+  captureAs: string;
+  document: Row;
+  change: { document?: Row; country?: { code: string; name: string } };
+  expected: string;
+};
+
+const row = (it: Row): UseSmileIDSampleDocument => ({ ...it, subType: it.subType ?? null });
+const override = (id: string): UseSmileIDSampleCaptureAs | null =>
+  id === smileIDSampleMatchDocumentId ? null : (id as UseSmileIDSampleCaptureAs);
 
 const rules = spec<Rules>('catalogue-rules.json');
 
@@ -43,7 +95,7 @@ describe('catalogue rules', () => {
   it.each(rules.documents.cases.map((c) => [c.name, c] as const))('documents: %s', (_, c) => {
     const all = smileIDSampleDecodeDocuments(JSON.stringify({ valid_documents: c.input }))!;
     expect(
-      smileIDSampleCatalogueDocuments(all, c.country!).map((it) => ({
+      smileIDSampleCatalogueDocuments(all, c.country!, c.product).map((it) => ({
         id: it.subType === null ? it.code : `${it.code}_${it.subType}`,
         code: it.code,
         subType: it.subType,
@@ -64,5 +116,52 @@ describe('catalogue rules', () => {
             documents: smileIDSampleDecodeDocuments(JSON.stringify(input.supported_documents))!,
           };
     expect(smileIDSampleCatalogueCountries(data, c.family as UseSmileIDSampleCatalogueFamily)).toEqual(c.expected);
+  });
+
+  it.each(rules.captureAs.cases.map((c) => [c.name, c] as const))('capture as: %s', (_, c) => {
+    const setting = c.captureBothSides ?? true;
+    const resolved = smileIDSampleResolvedCaptureAs(
+      row(c.document),
+      override(c.captureAs),
+      c.genericDocument ?? smileIDSampleGenericDocumentDefaults,
+    );
+    expect(resolved.captureAs === 'genericDocument' ? 'generic' : resolved.captureAs).toBe(c.expected.documentType);
+    if (resolved.captureAs === 'genericDocument') {
+      expect(resolved.genericDocument.displayName).toBe(c.expected.displayName);
+      expect(resolved.genericDocument.hasBackSide).toBe(c.expected.hasBackSide);
+      expect(resolved.genericDocument.orientation).toBe(c.expected.orientation);
+    }
+    expect(resolved.matched).toBe(c.expected.matched);
+    expect(smileIDSampleCaptureBothSides(resolved, setting)).toBe(c.expected.captureBothSides);
+    expect(smileIDSampleCaptureAsTriggerText(resolved, setting)).toBe(c.expected.triggerText);
+    expect(
+      smileIDSampleMatchRowLabel(smileIDSampleResolvedCaptureAs(row(c.document), null, smileIDSampleGenericDocumentDefaults)),
+    ).toBe(c.expected.matchRowLabel);
+  });
+
+  it.each(rules.captureAs.resets.cases.map((c) => [c.name, c] as const))('capture as resets: %s', (_, c) => {
+    const forms = useSmileIDSampleFormsStore.getState();
+    useSmileIDSampleFormsStore.setState({ idDetails: smileIDSampleIdDetailsDefaults });
+    forms.setCountry({ code: 'ZA', name: 'South Africa' });
+    forms.setDocument(row(c.document));
+    forms.setCaptureAs(override(c.captureAs));
+    if (c.change.document) forms.setDocument(row(c.change.document));
+    if (c.change.country) forms.setCountry(c.change.country);
+    expect(useSmileIDSampleFormsStore.getState().idDetails.captureAsOverride).toBe(override(c.expected));
+  });
+
+  it('drops a row the product does not list, with its override', () => {
+    const greenBook: UseSmileIDSampleDocument = { code: 'IDENTITY_CARD', subType: 'green_book', name: 'Green Book', hasBack: false, format: 7 };
+    const forms = useSmileIDSampleFormsStore.getState();
+    useSmileIDSampleFormsStore.setState({ idDetails: { ...smileIDSampleIdDetailsDefaults, document: greenBook, captureAsOverride: 'passport' } });
+    forms.keepDocumentListedOn('documentVerification');
+    expect(useSmileIDSampleFormsStore.getState().idDetails.document).toEqual(greenBook);
+    forms.keepDocumentListedOn('enhancedDocumentVerification');
+    expect(useSmileIDSampleFormsStore.getState().idDetails.document).toBeNull();
+    expect(useSmileIDSampleFormsStore.getState().idDetails.captureAsOverride).toBeNull();
+  });
+
+  it("uses the spec's trigger placeholder", () => {
+    expect(smileIDSampleMatchDocumentLabel).toBe(rules.captureAs.triggerPlaceholder);
   });
 });

@@ -204,13 +204,11 @@ void _journeyFor(
             document.documentType = residency
                 ? DocumentType.passport
                 : useSmileIDSampleDocumentTypeFor(snapshot.idDetails);
-            // The SDK's passport preset declares a back side; the sample
-            // captures a passport front only.
             document.captureBothSides =
                 residency ||
-                (snapshot.captureBothSides &&
-                    snapshot.idDetails.captureAs !=
-                        UseSmileIDSampleCaptureAs.passport);
+                snapshot.idDetails.resolvedCaptureAs.captureBothSides(
+                  snapshot.captureBothSides,
+                );
             document.allowSkipBack = snapshot.allowSkipBack && !residency;
             document.captureMode = snapshot.captureMode.sdk;
             document.allowGalleryUpload = snapshot.galleryUpload;
@@ -303,25 +301,29 @@ void _documentCapture(
   }
 }
 
-/// The "Capture as" mapping from `spec/catalogue-rules.json`: the SDK's own type, nothing read from the API.
+/// The SDK type for what "Capture as" resolves to (`spec/catalogue-rules.json` captureAs).
 @visibleForTesting
 DocumentType useSmileIDSampleDocumentTypeFor(
   UseSmileIDSampleIdDetails details,
-) => switch (details.captureAs) {
-  UseSmileIDSampleCaptureAs.greenBook => DocumentType.southAfricaGreenBook,
-  UseSmileIDSampleCaptureAs.passport => DocumentType.passport,
-  UseSmileIDSampleCaptureAs.genericDocument => GenericDocument(
-    displayName: details.genericDocument.displayName,
-    hasBackSide: details.genericDocument.hasBackSide,
-    orientation: switch (details.genericDocument.orientation) {
-      UseSmileIDSampleDocumentOrientation.landscape =>
-        DocumentOrientation.landscape,
-      UseSmileIDSampleDocumentOrientation.portrait =>
-        DocumentOrientation.portrait,
-    },
-    knownAspectRatio: details.genericDocument.aspectRatio.ratio,
-  ),
-};
+) {
+  final UseSmileIDSampleResolvedCaptureAs resolved = details.resolvedCaptureAs;
+  final UseSmileIDSampleGenericDocument generic = resolved.genericDocument;
+  return switch (resolved.captureAs) {
+    UseSmileIDSampleCaptureAs.greenBook => DocumentType.southAfricaGreenBook,
+    UseSmileIDSampleCaptureAs.passport => DocumentType.passport,
+    UseSmileIDSampleCaptureAs.genericDocument => GenericDocument(
+      displayName: generic.displayName,
+      hasBackSide: generic.hasBackSide,
+      orientation: switch (generic.orientation) {
+        UseSmileIDSampleDocumentOrientation.landscape =>
+          DocumentOrientation.landscape,
+        UseSmileIDSampleDocumentOrientation.portrait =>
+          DocumentOrientation.portrait,
+      },
+      knownAspectRatio: generic.aspectRatio.ratio,
+    ),
+  };
+}
 
 extension on UseSmileIDSampleCaptureMode {
   DocumentCaptureMode get sdk => switch (this) {

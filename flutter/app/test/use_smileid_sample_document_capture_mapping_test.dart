@@ -16,7 +16,7 @@ void main() {
 
   test('every case maps as the spec says', () {
     final List<Object?> cases = captureAs['cases']! as List<Object?>;
-    expect(cases.length, greaterThanOrEqualTo(6));
+    expect(cases.length, greaterThanOrEqualTo(12));
     for (final Object? raw in cases) {
       final Map<String, Object?> spec = raw! as Map<String, Object?>;
       final String name = spec['name']! as String;
@@ -41,6 +41,14 @@ void main() {
           }
       }
       expect(_submittedIdType(details), expected['idType'], reason: name);
+      expect(
+        _documentConfig(
+          details,
+          captureBothSides: spec['captureBothSides'] as bool? ?? true,
+        ).captureBothSides,
+        expected['captureBothSides'],
+        reason: name,
+      );
     }
   });
 
@@ -103,9 +111,12 @@ void main() {
     }
   });
 
-  test('a passport is captured front only, whatever the setting', () {
-    for (final UseSmileIDSampleCaptureAs captureAs
-        in UseSmileIDSampleCaptureAs.values) {
+  test('a passport is captured front only, whether matched or chosen', () {
+    for (final UseSmileIDSampleCaptureAs? captureAs
+        in <UseSmileIDSampleCaptureAs?>[
+          null,
+          ...UseSmileIDSampleCaptureAs.values,
+        ]) {
       final DocumentCaptureConfiguration document = _documentConfig(
         UseSmileIDSampleIdDetails(
           country: const UseSmileIDSampleCountry('KE', 'Kenya'),
@@ -115,13 +126,13 @@ void main() {
             hasBack: false,
             format: 3,
           ),
-          captureAs: captureAs,
+          captureAsOverride: captureAs,
         ),
       );
       expect(
         document.captureBothSides,
-        captureAs != UseSmileIDSampleCaptureAs.passport,
-        reason: captureAs.id,
+        captureAs != null && captureAs != UseSmileIDSampleCaptureAs.passport,
+        reason: captureAs?.id ?? UseSmileIDSampleCaptureAs.matchDocumentId,
       );
     }
   });
@@ -129,27 +140,25 @@ void main() {
   test(
     'residency captures both sides of a passport, whatever the form or settings hold',
     () {
-      for (final UseSmileIDSampleCaptureAs captureAs
-          in <UseSmileIDSampleCaptureAs>[
-            UseSmileIDSampleCaptureAs.genericDocument,
-            UseSmileIDSampleCaptureAs.passport,
+      for (final UseSmileIDSampleCaptureAs? captureAs
+          in <UseSmileIDSampleCaptureAs?>[
+            null,
+            ...UseSmileIDSampleCaptureAs.values,
           ]) {
+        final String reason =
+            captureAs?.id ?? UseSmileIDSampleCaptureAs.matchDocumentId;
         final DocumentCaptureConfiguration document = _documentConfig(
           UseSmileIDSampleIdDetails(
             country: const UseSmileIDSampleCountry('NG', 'Nigeria'),
-            captureAs: captureAs,
+            captureAsOverride: captureAs,
           ),
           product: UseSmileIDSampleProduct.residencyDocumentVerification,
           captureBothSides: false,
           allowSkipBack: true,
         );
-        expect(
-          document.documentType,
-          DocumentType.passport,
-          reason: captureAs.id,
-        );
-        expect(document.captureBothSides, isTrue, reason: captureAs.id);
-        expect(document.allowSkipBack, isFalse, reason: captureAs.id);
+        expect(document.documentType, DocumentType.passport, reason: reason);
+        expect(document.captureBothSides, isTrue, reason: reason);
+        expect(document.allowSkipBack, isFalse, reason: reason);
       }
     },
   );
@@ -228,9 +237,9 @@ UseSmileIDSampleIdDetails _detailsOf(Map<String, Object?> spec) {
       hasBack: document['hasBack']! as bool,
       format: document['format']! as int,
     ),
-    captureAs: UseSmileIDSampleCaptureAs.values.firstWhere(
-      (UseSmileIDSampleCaptureAs it) => it.id == spec['captureAs'],
-    ),
+    captureAsOverride: UseSmileIDSampleCaptureAs.values
+        .where((UseSmileIDSampleCaptureAs it) => it.id == spec['captureAs'])
+        .firstOrNull,
     genericDocument: genericDocument == null
         ? const UseSmileIDSampleGenericDocument()
         : UseSmileIDSampleGenericDocument(

@@ -7,7 +7,7 @@ abstract interface class UseSmileIDSampleCatalogueSource {
   /// `GET /v3/services/supported_id_types`, every country.
   Future<String> supportedIdTypes(UseSmileIDSampleEnvironment environment);
 
-  /// `GET /v3/services/supported_documents?continent=AFRICA&locale=…`.
+  /// `GET /v3/services/supported_documents?locale=…`.
   Future<String> supportedDocuments(
     UseSmileIDSampleEnvironment environment,
     String locale,

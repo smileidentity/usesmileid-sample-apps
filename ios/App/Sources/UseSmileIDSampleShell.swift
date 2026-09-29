@@ -79,6 +79,16 @@ struct UseSmileIDSampleShell: View {
     return false
   }
 
+  /// The product whose ID form the sheets sit on, so the document list can leave out what the SDK refuses on it.
+  private var idFormProduct: UseSmileIDSampleProduct {
+    for route in router.path(router.selectedTab).reversed() {
+      if case .idDetailsForm(let productId) = route, let product = UseSmileIDSampleProduct(rawValue: productId) {
+        return product
+      }
+    }
+    return .documentVerification
+  }
+
   @ViewBuilder
   private func sheetContent(_ sheet: Sheet) -> some View {
     switch sheet {
@@ -106,27 +116,34 @@ struct UseSmileIDSampleShell: View {
     case .documentPicker:
       DocumentPickerSheet(
         country: app.idDetails.country,
-        catalogue: app.catalogue.documents(app.idDetails.country?.code ?? ""),
+        catalogue: app.catalogue.documents(app.idDetails.country?.code ?? "", product: idFormProduct),
         selected: app.idDetails.document,
         query: $app.documentQuery,
-        onSelect: { app.idDetails.document = $0
+        onSelect: { app.idDetails.choose(document: $0)
           router.sheet = nil },
         onRetry: { app.catalogue.retry() },
         onClose: { router.sheet = nil }
       )
     case .captureAs:
-      CaptureAsSheet(selected: app.idDetails.captureAs) { choice in
+      CaptureAsSheet(
+        selected: app.idDetails.captureAsOverride,
+        matched: useSmileIDSampleResolvedCaptureAs(
+          document: app.idDetails.document,
+          override: nil,
+          genericDocument: app.idDetails.genericDocument
+        )
+      ) { choice in
         if choice == .genericDocument {
           router.sheet = .genericDocument
         } else {
-          app.idDetails.captureAs = choice
+          app.idDetails.captureAsOverride = choice
           router.sheet = nil
         }
       }
     case .genericDocument:
       GenericDocumentSheet(initial: app.idDetails.genericDocument) { genericDocument in
         app.idDetails.genericDocument = genericDocument
-        app.idDetails.captureAs = .genericDocument
+        app.idDetails.captureAsOverride = .genericDocument
         router.sheet = nil
       }
     case .captureMode:

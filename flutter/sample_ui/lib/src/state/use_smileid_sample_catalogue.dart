@@ -218,8 +218,10 @@ abstract final class UseSmileIDSampleCatalogueRules {
   /// The documents [country] offers, standalone sub-types as their own rows.
   static List<UseSmileIDSampleDocument> documents(
     List<UseSmileIDSampleApiCountryDocuments> all,
-    String country,
-  ) {
+    String country, {
+    UseSmileIDSampleProduct product =
+        UseSmileIDSampleProduct.documentVerification,
+  }) {
     final UseSmileIDSampleApiCountryDocuments? entry = all
         .where(
           (UseSmileIDSampleApiCountryDocuments it) =>
@@ -246,7 +248,7 @@ abstract final class UseSmileIDSampleCatalogueRules {
                 format: sub.format,
               ),
         ],
-    ];
+    ]..retainWhere((UseSmileIDSampleDocument it) => it.isListedOn(product));
   }
 
   /// The countries [family] offers, named from `supported_documents`.

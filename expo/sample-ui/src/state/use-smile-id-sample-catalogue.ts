@@ -4,6 +4,7 @@ import type {
   UseSmileIDSampleDocument,
   UseSmileIDSampleKycIdType,
 } from './use-smile-id-sample-id-details';
+import { smileIDSampleDocumentListedOn } from './use-smile-id-sample-id-details';
 import type { UseSmileIDSampleProduct } from '../model/use-smile-id-sample-product';
 
 /// The one document code Residency Document Verification accepts, which the SDK enforces too.
@@ -108,9 +109,11 @@ export const smileIDSampleCatalogueIdTypes = (
 };
 
 /// The documents `country` offers, standalone sub-types as their own rows after their parent.
+/// `productId` leaves out a row the SDK refuses on it: the Green Book on Enhanced Document Verification.
 export const smileIDSampleCatalogueDocuments = (
   all: readonly UseSmileIDSampleApiCountryDocuments[],
   country: string,
+  productId: string = 'documentVerification',
 ): UseSmileIDSampleDocument[] => {
   const entry = all.find((it) => it.country.code === country);
   const out: UseSmileIDSampleDocument[] = [];
@@ -134,7 +137,7 @@ export const smileIDSampleCatalogueDocuments = (
       });
     }
   }
-  return out;
+  return out.filter((it) => smileIDSampleDocumentListedOn(it, productId));
 };
 
 /// The countries `family` offers, named from `supported_documents`; a KYC country it does not name shows by code, after.

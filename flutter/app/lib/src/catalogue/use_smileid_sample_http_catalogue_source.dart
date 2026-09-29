@@ -19,9 +19,6 @@ class UseSmileIDSampleHttpCatalogueSource
 
   final HttpClient _client;
 
-  // The picker lists African countries only; the API's continent filter is how it asks for them.
-  static const String _continent = 'AFRICA';
-
   @override
   Future<String> supportedIdTypes(UseSmileIDSampleEnvironment environment) =>
       _get(Uri.parse('${environment.baseUrl}v3/services/supported_id_types'));
@@ -31,12 +28,9 @@ class UseSmileIDSampleHttpCatalogueSource
     UseSmileIDSampleEnvironment environment,
     String locale,
   ) => _get(
-    Uri.parse('${environment.baseUrl}v3/services/supported_documents').replace(
-      queryParameters: <String, String>{
-        'continent': _continent,
-        'locale': locale,
-      },
-    ),
+    Uri.parse(
+      '${environment.baseUrl}v3/services/supported_documents',
+    ).replace(queryParameters: <String, String>{'locale': locale}),
   );
 
   Future<String> _get(Uri uri) async {

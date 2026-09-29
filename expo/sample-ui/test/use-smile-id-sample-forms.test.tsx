@@ -8,6 +8,7 @@ import {
   smileIDSampleIdDetailsComplete,
   smileIDSampleIdDetailsDefaults,
   smileIDSampleOptionMatches,
+  smileIDSampleResolvedCaptureAs,
   type UseSmileIDSampleCountry,
   type UseSmileIDSampleDocument,
   type UseSmileIDSampleIdDetails,
@@ -43,6 +44,7 @@ const noop = () => {};
 
 const NATIONAL_ID = fixtureIdTypes('KE').find((type) => type.type === 'NATIONAL_ID')!;
 const GREEN_BOOK = fixtureDocuments('ZA').find((document) => document.subType === 'green_book')!;
+const kenyanRow = (code: string) => fixtureDocuments('KE').find((document) => document.code === code)!;
 const RWANDA: UseSmileIDSampleCountry = { code: 'RW', name: 'Rwanda' };
 const ARABIC_DOCUMENTS: UseSmileIDSampleDocument[] = [
   { code: 'ALIEN_CARD', subType: null, name: 'بطاقة الأجانب', hasBack: false, format: 1 },
@@ -115,6 +117,7 @@ const kycForm = (
       family: 'kyc',
       details: smileIDSampleIdDetailsDefaults,
       countryListLoading: false,
+      captureBothSides: true,
     }}
     onCountryPress={noop}
     onIdTypePress={noop}
@@ -181,8 +184,21 @@ const kycState = (details: UseSmileIDSampleIdDetails, countryListLoading = false
     family: 'kyc' as const,
     details,
     countryListLoading,
+    captureBothSides: true,
   },
 });
+
+/// A Kenyan fixture row on Document Verification, with "Capture as" untouched unless the details say otherwise.
+const documentForm = (details: Partial<UseSmileIDSampleIdDetails>) =>
+  kycForm({
+    state: {
+      productLabel: 'Document Verification',
+      family: 'document',
+      details: { ...smileIDSampleIdDetailsDefaults, country: KENYA, ...details },
+      countryListLoading: false,
+      captureBothSides: true,
+    },
+  });
 
 const cases: { screen: string; states: Record<string, Case> }[] = [
   {
@@ -242,7 +258,23 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
                 document: GREEN_BOOK,
               },
               countryListLoading: false,
+              captureBothSides: true,
             },
+          }),
+      },
+      documentPassportMatched: { element: () => documentForm({ document: kenyanRow('PASSPORT') }) },
+      documentTwoSidedMatched: { element: () => documentForm({ document: kenyanRow('IDENTITY_CARD') }) },
+      documentOneSidedMatched: { element: () => documentForm({ document: kenyanRow('ALIEN_CARD') }) },
+      documentPresetChosen: {
+        element: () =>
+          documentForm({ document: kenyanRow('IDENTITY_CARD'), captureAsOverride: UseSmileIDSampleCaptureAs.Passport }),
+      },
+      documentGenericChosen: {
+        element: () =>
+          documentForm({
+            document: kenyanRow('PASSPORT'),
+            captureAsOverride: UseSmileIDSampleCaptureAs.GenericDocument,
+            genericDocument: { displayName: 'Booklet', hasBackSide: true, orientation: 'portrait', aspectRatio: 'booklet' },
           }),
       },
     },
@@ -278,6 +310,8 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
       },
       error: { element: () => document(failed) },
       empty: { element: () => document(empty) },
+      // South Africa on Enhanced Document Verification, which leaves out the Green Book the SDK refuses there.
+      enhanced: { element: () => document(ready(fixtureDocuments('ZA', 'enhancedDocumentVerification'))) },
     },
   },
   {
@@ -285,7 +319,12 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
     states: {
       default: {
         element: () => (
-          <CaptureAsSheet selected={UseSmileIDSampleCaptureAs.GenericDocument} onSelect={noop} onDismiss={noop} />
+          <CaptureAsSheet
+            selected={null}
+            matched={smileIDSampleResolvedCaptureAs(kenyanRow('PASSPORT'), null, smileIDSampleGenericDocumentDefaults)}
+            onSelect={noop}
+            onDismiss={noop}
+          />
         ),
       },
     },
@@ -324,7 +363,7 @@ describe.each(cases)('$screen', ({ states }) => {
 describe('forms coverage', () => {
   it('records both schemes for every state', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(52);
+    expect(total * schemes.length).toBe(64);
   });
 });
 
@@ -363,7 +402,7 @@ describe('choosing a country', () => {
       ...smileIDSampleGenericDocumentDefaults,
       displayName: 'Booklet',
     });
-    expect(useSmileIDSampleFormsStore.getState().idDetails.captureAs).toBe(UseSmileIDSampleCaptureAs.GenericDocument);
+    expect(useSmileIDSampleFormsStore.getState().idDetails.captureAsOverride).toBe(UseSmileIDSampleCaptureAs.GenericDocument);
     expect(useSmileIDSampleFormsStore.getState().idDetails.genericDocument.displayName).toBe('Booklet');
   });
 });

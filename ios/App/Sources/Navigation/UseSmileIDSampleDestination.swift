@@ -77,7 +77,10 @@ struct UseSmileIDSampleDestination: View {
         onToken: { router.pushOnce(.scanToken) }
       )
       .navigationBarHidden(true)
-      .onAppear { app.catalogue.ensure(environment: app.environment, locale: app.catalogueLocale) }
+      .onAppear {
+        app.catalogue.ensure(environment: app.environment, locale: app.catalogueLocale)
+        Self.product(productId).map { app.idDetails.keepDocumentListed(on: $0) }
+      }
     case .verificationDetails(let jobId):
       UseSmileIDSampleVerificationDetailsHost(jobId: jobId)
         .navigationBarHidden(true)
@@ -171,7 +174,8 @@ struct UseSmileIDSampleDestination: View {
       productLabel: Self.product(productId)?.label ?? productId,
       family: family,
       details: app.idDetails,
-      countryListLoading: loading
+      countryListLoading: loading,
+      captureBothSides: app.settings.captureBothSides
     )
   }
 

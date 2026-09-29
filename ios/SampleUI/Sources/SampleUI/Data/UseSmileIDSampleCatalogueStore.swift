@@ -79,9 +79,12 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
     }
   }
 
-  public func documents(_ country: String) -> UseSmileIDSampleCatalogue<UseSmileIDSampleDocument> {
+  public func documents(
+    _ country: String,
+    product: UseSmileIDSampleProduct = .documentVerification
+  ) -> UseSmileIDSampleCatalogue<UseSmileIDSampleDocument> {
     switch documents {
-    case .ready(let items): Self.ready(UseSmileIDSampleCatalogueRules.documents(items, country: country))
+    case .ready(let items): Self.ready(UseSmileIDSampleCatalogueRules.documents(items, country: country, product: product))
     case .failed(let reason): .failed(reason)
     case .empty: .empty
     case .loading: .loading
@@ -118,7 +121,7 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
     }
   }
 
-  /// Races the fetch against the timeout; decoded off the main actor, since the whole continent is about 45 KB.
+  /// Races the fetch against the timeout; decoded off the main actor, since the whole catalogue is about 200 KB.
   private func load<Item: Sendable>(
     _ fetch: @escaping @Sendable () async throws -> [Item]?
   ) async -> UseSmileIDSampleCatalogue<Item> {

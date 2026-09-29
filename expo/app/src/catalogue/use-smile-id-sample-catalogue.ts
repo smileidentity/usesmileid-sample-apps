@@ -13,9 +13,6 @@ import {
 // A copy of spec/catalogue-fixture.json: Metro cannot reach spec/, and verify.sh fails if the copy drifts.
 import fixture from '../../assets/catalogue-fixture.json';
 
-// The picker lists African countries only; the API's continent filter is how it asks for them.
-const CONTINENT = 'AFRICA';
-
 // The store's own timeout, so a request it gives up on is torn down rather than left open.
 const REQUEST_TIMEOUT_MS = 10_000;
 
@@ -37,7 +34,7 @@ const smileIDSampleHttpCatalogueSource: UseSmileIDSampleCatalogueSource = {
     bodyOf(`${smileIDSampleEnvironmentBaseUrl(environment)}v3/services/supported_id_types`),
   supportedDocuments: (environment, locale) =>
     bodyOf(
-      `${smileIDSampleEnvironmentBaseUrl(environment)}v3/services/supported_documents?continent=${CONTINENT}&locale=${encodeURIComponent(locale)}`,
+      `${smileIDSampleEnvironmentBaseUrl(environment)}v3/services/supported_documents?locale=${encodeURIComponent(locale)}`,
     ),
 };
 

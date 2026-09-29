@@ -252,6 +252,13 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("document_picker_ar") { documentPicker(.ready(Self.arabicDocuments)) }
   }
 
+  /// South Africa on Enhanced Document Verification, which leaves out the Green Book the SDK refuses there.
+  func testDocumentPickerEnhanced() {
+    goldens("document_picker_enhanced") {
+      documentPicker(.ready(Self.southAfricanDocuments.filter { $0.isListed(on: .enhancedDocumentVerification) }))
+    }
+  }
+
   func testDocumentPickerLoading() {
     goldens("document_picker_loading") { documentPicker(.loading).environment(\.useSmileIDSampleSkeletonDelay, 0) }
   }
@@ -284,14 +291,49 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("document_form_selected") { kycForm(Self.documentSelected, family: .document) }
   }
 
+  func testDocumentFormPassportMatched() {
+    goldens("document_form_passport_matched") { kycForm(Self.documentForm(Self.kenyanDocuments[2]), family: .document) }
+  }
+
+  func testDocumentFormTwoSidedMatched() {
+    goldens("document_form_two_sided_matched") { kycForm(Self.documentForm(Self.kenyanDocuments[1]), family: .document) }
+  }
+
+  func testDocumentFormOneSidedMatched() {
+    goldens("document_form_one_sided_matched") { kycForm(Self.documentForm(Self.kenyanDocuments[0]), family: .document) }
+  }
+
+  func testDocumentFormPresetChosen() {
+    goldens("document_form_preset_chosen") {
+      kycForm(Self.documentForm(Self.kenyanDocuments[1], override: .passport), family: .document)
+    }
+  }
+
+  func testDocumentFormGenericChosen() {
+    var details = Self.documentForm(Self.kenyanDocuments[2], override: .genericDocument)
+    details.genericDocument = UseSmileIDSampleGenericDocument(displayName: "Booklet", orientation: .portrait, aspectRatio: .booklet)
+    return goldens("document_form_generic_chosen") { kycForm(details, family: .document) }
+  }
+
   func testDocumentFormSurvivesMaxDynamicType() {
     assertSurvivesMaxDynamicType(growsWithContentSize: false) {
       kycForm(Self.documentSelected, family: .document, height: 1400)
     }
   }
 
+  /// Match document checked on a passport row, so its label names the preset it resolves to.
   func testCaptureAsSheet() {
-    goldens("capture_as_sheet") { CaptureAsSheet(selected: .genericDocument, onSelect: { _ in }).frame(height: 700) }
+    goldens("capture_as_sheet") {
+      CaptureAsSheet(
+        selected: nil,
+        matched: useSmileIDSampleResolvedCaptureAs(
+          document: Self.southAfricanDocuments[2],
+          override: nil,
+          genericDocument: UseSmileIDSampleGenericDocument()
+        ),
+        onSelect: { _ in }
+      ).frame(height: 700)
+    }
   }
 
   func testGenericDocumentSheet() {
@@ -397,6 +439,11 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     UseSmileIDSampleDocument(code: "IDENTITY_CARD", subType: "green_book", name: "Green Book", hasBack: false, format: 7),
     UseSmileIDSampleDocument(code: "PASSPORT", name: "Passport", hasBack: false, format: 3)
   ]
+  private static let kenyanDocuments = [
+    UseSmileIDSampleDocument(code: "ALIEN_CARD", name: "Alien ID", hasBack: false, format: 1),
+    UseSmileIDSampleDocument(code: "IDENTITY_CARD", name: "Identity Card", hasBack: true, format: 1),
+    UseSmileIDSampleDocument(code: "PASSPORT", name: "Passport", hasBack: false, format: 3)
+  ]
   /// Names as the API returns them under ar-EG, codes unchanged (sandbox, 2026-09-28).
   private static let arabicDocuments = [
     UseSmileIDSampleDocument(code: "ALIEN_CARD", name: "بطاقة الأجانب", hasBack: false, format: 1),
@@ -409,7 +456,15 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   /// Letters where Kenya's National ID takes only digits, so the field explains the format.
   private static let invalidId = UseSmileIDSampleIdDetails(country: kenya, idType: nationalId, idNumber: "AO12345678")
 
-  /// The Green Book: a standalone sub-type row, captured as the API describes it.
+  /// A Kenyan row, with "Capture as" untouched unless `override` says otherwise.
+  private static func documentForm(
+    _ document: UseSmileIDSampleDocument,
+    override: UseSmileIDSampleCaptureAs? = nil
+  ) -> UseSmileIDSampleIdDetails {
+    UseSmileIDSampleIdDetails(country: kenya, document: document, captureAsOverride: override)
+  }
+
+  /// The Green Book: a standalone sub-type row, which Match document captures as the Green Book preset.
   private static let documentSelected = UseSmileIDSampleIdDetails(
     country: UseSmileIDSampleCountry(code: "ZA", name: "South Africa"),
     document: southAfricanDocuments[1]

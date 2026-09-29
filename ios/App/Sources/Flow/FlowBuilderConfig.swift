@@ -27,19 +27,7 @@ func useSmileIDSampleApply(
     replay(useSmileIDSampleFlowSteps(snapshot), into: screens)
   }
   if snapshot.product.capture {
-    // Two call sites: `AnalyzersBuilder` declares only `buildBlock`, so an `if` inside will not compile.
-    builder.ml { ml in
-      if snapshot.product.needsDocumentCapture {
-        ml.analyzers {
-          selfieAnalyzer()
-          documentAnalyzer()
-        }
-      } else {
-        ml.analyzers {
-          selfieAnalyzer()
-        }
-      }
-    }
+    builder.ml { useSmileIDSampleAnalyzers($0, snapshot.product) }
   }
   builder.network { network in
     network.config { config in
@@ -230,6 +218,20 @@ private func replay(_ steps: [FlowStep], into screens: ScreensBuilder) {
   }
 }
 
+/// The analyzers a product's capture steps need; two call sites, because `AnalyzersBuilder` declares only `buildBlock`.
+func useSmileIDSampleAnalyzers(_ ml: UseSmileIDMLConfiguration, _ product: UseSmileIDSampleProduct) {
+  if product.needsDocumentCapture {
+    ml.analyzers {
+      selfieAnalyzer()
+      documentAnalyzer()
+    }
+  } else {
+    ml.analyzers {
+      selfieAnalyzer()
+    }
+  }
+}
+
 private func selfieAnalyzer() -> CaptureTypeConfiguration {
   forCaptureType(.selfie) { analyzers in
     analyzers.addAnalyzer(FaceDetectorAnalyzer.Factory())
@@ -288,26 +290,25 @@ private func capture(_ step: FlowJourneyStep, _ preview: Bool) -> [FlowJourneySt
 func useSmileIDSampleDocumentCapture(_ snapshot: FlowLaunchSnapshot) -> DocumentCaptureConfig {
   // Residency is both sides, the passport's data page and then its visa, and it rejects a skippable second side.
   let residency = snapshot.product == .residencyDocumentVerification
-  let passport = snapshot.idDetails.captureAs == .passport
   return DocumentCaptureConfig(
     documentType: residency ? .passport : useSmileIDSampleDocumentType(snapshot.idDetails),
     captureMode: snapshot.captureMode.sdk,
     allowGalleryUpload: snapshot.galleryUpload,
-    // The SDK's passport preset declares a back side; the sample captures a passport front only.
-    captureBothSides: residency || (snapshot.captureBothSides && !passport),
+    captureBothSides: residency || snapshot.idDetails.resolvedCaptureAs.captureBothSides(snapshot.captureBothSides),
     allowSkipBack: snapshot.allowSkipBack && !residency
   )
 }
 
-/// The "Capture as" mapping from `spec/catalogue-rules.json` captureAs: the SDK's own type, nothing read from the API.
+/// The SDK type for what "Capture as" resolves to (`spec/catalogue-rules.json` captureAs).
 func useSmileIDSampleDocumentType(_ details: UseSmileIDSampleIdDetails) -> DocumentType {
-  switch details.captureAs {
+  let resolved = details.resolvedCaptureAs
+  switch resolved.captureAs {
   case .greenBook:
     return .southAfricaGreenBook
   case .passport:
     return .passport
   case .genericDocument:
-    let genericDocument = details.genericDocument
+    let genericDocument = resolved.genericDocument
     return .genericDocument(
       displayName: genericDocument.displayName,
       hasBackSide: genericDocument.hasBackSide,

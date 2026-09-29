@@ -237,7 +237,7 @@
       },
       {
         "id": "sample_capture_as_trigger",
-        "description": "'Capture as' select trigger under the document trigger: how the SDK photographs the document. Never changes the document code the server receives."
+        "description": "'Capture as' select trigger under the document trigger: the type the SDK will capture the document as, and whether it matches the document or was chosen. Never changes the document code the server receives."
       },
       {
         "id": "sample_kyc_continue",
@@ -289,7 +289,7 @@
       },
       {
         "id": "sample_capture_as_option",
-        "description": "One 'Capture as' row; suffixed genericDocument (the default), greenBook or passport."
+        "description": "One 'Capture as' row; suffixed matchDocument (the default), genericDocument, greenBook or passport."
       },
       {
         "id": "sample_generic_document_sheet",

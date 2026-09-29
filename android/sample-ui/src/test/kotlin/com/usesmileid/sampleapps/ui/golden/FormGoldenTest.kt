@@ -17,8 +17,13 @@ import com.usesmileid.sampleapps.ui.screens.IdTypePickerSheet
 import com.usesmileid.sampleapps.ui.screens.KycIdFormScreen
 import com.usesmileid.sampleapps.ui.screens.UserDetailsScreen
 import com.usesmileid.sampleapps.ui.CatalogueFixtures
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleAspectRatio
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureAs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogue
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueFamily
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocument
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocumentOrientation
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleGenericDocument
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenBindings
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
@@ -101,6 +106,40 @@ class FormGoldenTest : GoldenTest() {
     }
 
     @Test
+    fun document_form_passport_matched() = goldens("screen_document_form_passport_matched") {
+        KycForm(documentForm("KE") { it.code == "PASSPORT" }, family = UseSmileIDSampleCatalogueFamily.Document, productLabel = "Document Verification")
+    }
+
+    @Test
+    fun document_form_two_sided_matched() = goldens("screen_document_form_two_sided_matched") {
+        KycForm(documentForm("KE") { it.code == "IDENTITY_CARD" }, family = UseSmileIDSampleCatalogueFamily.Document, productLabel = "Document Verification")
+    }
+
+    @Test
+    fun document_form_one_sided_matched() = goldens("screen_document_form_one_sided_matched") {
+        KycForm(documentForm("KE") { it.code == "ALIEN_CARD" }, family = UseSmileIDSampleCatalogueFamily.Document, productLabel = "Document Verification")
+    }
+
+    @Test
+    fun document_form_preset_chosen() = goldens("screen_document_form_preset_chosen") {
+        val details = documentForm("KE") { it.code == "IDENTITY_CARD" }.copy(captureAsOverride = UseSmileIDSampleCaptureAs.Passport)
+        KycForm(details, family = UseSmileIDSampleCatalogueFamily.Document, productLabel = "Document Verification")
+    }
+
+    @Test
+    fun document_form_generic_chosen() = goldens("screen_document_form_generic_chosen") {
+        val details = documentForm("KE") { it.code == "PASSPORT" }.copy(
+            captureAsOverride = UseSmileIDSampleCaptureAs.GenericDocument,
+            genericDocument = UseSmileIDSampleGenericDocument(
+                displayName = "Booklet",
+                orientation = UseSmileIDSampleDocumentOrientation.Portrait,
+                aspectRatio = UseSmileIDSampleAspectRatio.Booklet,
+            ),
+        )
+        KycForm(details, family = UseSmileIDSampleCatalogueFamily.Document, productLabel = "Document Verification")
+    }
+
+    @Test
     fun document_form_max_font_scale() = assertSurvivesMaxFontScale {
         KycForm(DOCUMENT_SELECTED, family = UseSmileIDSampleCatalogueFamily.Document, productLabel = "Document Verification")
     }
@@ -169,7 +208,13 @@ class FormGoldenTest : GoldenTest() {
         /** Letters where Kenya's National ID takes only digits, so the field explains the format. */
         val INVALID_NUMBER = SELECTED.copy(idNumber = "AO12345678")
 
-        /** The Green Book: a standalone sub-type row, captured as the API describes it. */
+        /** A fixture country's row, with "Capture as" untouched. */
+        fun documentForm(country: String, row: (UseSmileIDSampleDocument) -> Boolean) = UseSmileIDSampleIdDetails(
+            country = if (country == "KE") CatalogueFixtures.kenya else CatalogueFixtures.southAfrica,
+            document = CatalogueFixtures.documents(country).first(row),
+        )
+
+        /** The Green Book: a standalone sub-type row, which Match document captures as the Green Book preset. */
         val DOCUMENT_SELECTED = UseSmileIDSampleIdDetails(
             country = CatalogueFixtures.southAfrica,
             document = CatalogueFixtures.documents("ZA").first { it.subType == "green_book" },
@@ -226,6 +271,7 @@ class FormGoldenTest : GoldenTest() {
         family = family,
         details = details,
         countryList = countryList,
+        captureBothSides = true,
         onCountryClick = {},
         onIdTypeClick = {},
         onDocumentClick = {},

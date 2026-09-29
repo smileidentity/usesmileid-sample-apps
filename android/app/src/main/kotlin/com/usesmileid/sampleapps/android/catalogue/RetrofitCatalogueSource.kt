@@ -16,10 +16,7 @@ interface UseSmileIDSampleCatalogueApi {
     suspend fun supportedIdTypes(): Response<ResponseBody>
 
     @GET("v3/services/supported_documents")
-    suspend fun supportedDocuments(
-        @Query("continent") continent: String,
-        @Query("locale") locale: String,
-    ): Response<ResponseBody>
+    suspend fun supportedDocuments(@Query("locale") locale: String): Response<ResponseBody>
 
     companion object {
         /** One per environment, built once, as the status API is. */
@@ -45,7 +42,7 @@ class RetrofitCatalogueSource : UseSmileIDSampleCatalogueSource {
         UseSmileIDSampleCatalogueApi.of(environment).supportedIdTypes().bodyOrThrow()
 
     override suspend fun supportedDocuments(environment: UseSmileIDSampleEnvironment, locale: String): String =
-        UseSmileIDSampleCatalogueApi.of(environment).supportedDocuments(CONTINENT, locale).bodyOrThrow()
+        UseSmileIDSampleCatalogueApi.of(environment).supportedDocuments(locale).bodyOrThrow()
 
     private fun Response<ResponseBody>.bodyOrThrow(): String {
         val body = body()
@@ -54,10 +51,5 @@ class RetrofitCatalogueSource : UseSmileIDSampleCatalogueSource {
             throw IOException("HTTP ${code()}")
         }
         return body.use { it.string() }
-    }
-
-    private companion object {
-        // The picker lists African countries only; the API's continent filter is how it asks for them.
-        const val CONTINENT = "AFRICA"
     }
 }

@@ -41,6 +41,8 @@ fun KycIdFormScreen(
     details: UseSmileIDSampleIdDetails,
     /** The chosen country's list, which decides the second trigger's placeholder while it is still arriving. */
     countryList: UseSmileIDSampleCatalogue<*>,
+    /** The Settings switch, which the CAPTURE AS trigger folds into "front and back" or "front only". */
+    captureBothSides: Boolean,
     onCountryClick: () -> Unit,
     onIdTypeClick: () -> Unit,
     onDocumentClick: () -> Unit,
@@ -80,7 +82,7 @@ fun KycIdFormScreen(
                 )
                 when (family) {
                     UseSmileIDSampleCatalogueFamily.Kyc -> KycFields(details, countryList, onIdTypeClick, onIdNumberChange)
-                    UseSmileIDSampleCatalogueFamily.Document -> DocumentFields(details, countryList, onDocumentClick, onCaptureAsClick)
+                    UseSmileIDSampleCatalogueFamily.Document -> DocumentFields(details, countryList, captureBothSides, onDocumentClick, onCaptureAsClick)
                     UseSmileIDSampleCatalogueFamily.Passport -> Unit
                 }
             }
@@ -139,6 +141,7 @@ private fun KycFields(
 private fun DocumentFields(
     details: UseSmileIDSampleIdDetails,
     countryList: UseSmileIDSampleCatalogue<*>,
+    captureBothSides: Boolean,
     onDocumentClick: () -> Unit,
     onCaptureAsClick: () -> Unit,
 ) {
@@ -153,11 +156,8 @@ private fun DocumentFields(
     )
     UseSmileIDSampleSectionLabel(text = "CAPTURE AS")
     UseSmileIDSampleSelectTrigger(
-        value = when (details.captureAs) {
-            UseSmileIDSampleCaptureAs.GenericDocument -> "Generic document: ${details.genericDocument.displayName}"
-            else -> details.captureAs.label
-        },
-        placeholder = UseSmileIDSampleCaptureAs.GenericDocument.label,
+        value = details.document?.let { details.resolvedCaptureAs.triggerText(captureBothSides) },
+        placeholder = UseSmileIDSampleCaptureAs.MATCH_DOCUMENT_LABEL,
         onClick = onCaptureAsClick,
         enabled = details.document != null,
         testId = UseSmileIDSampleTestIds.CAPTURE_AS_TRIGGER,

@@ -1,5 +1,10 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import {
   UseSmileIDSampleCaptureAs,
+  smileIDSampleCatalogueDocuments,
+  smileIDSampleDecodeDocuments,
   smileIDSampleIdDetailsDefaults,
   smileIDSampleProducts,
   type UseSmileIDSampleProduct,
@@ -162,7 +167,7 @@ describe('what the SDK is handed', () => {
 
   it('every document setting builds, except the Green Book the SDK refuses on Enhanced Document Verification', () => {
     for (const id of ['documentVerification', 'enhancedDocumentVerification']) {
-      for (const captureAs of Object.values(UseSmileIDSampleCaptureAs)) {
+      for (const captureAs of [null, ...Object.values(UseSmileIDSampleCaptureAs)]) {
         for (const flag of [true, false]) {
           const result = built(
             snapshot({
@@ -171,7 +176,7 @@ describe('what the SDK is handed', () => {
                 ...smileIDSampleIdDetailsDefaults,
                 country: { code: 'ZA', name: 'South Africa' },
                 document: { code: 'IDENTITY_CARD', subType: null, name: 'Identity Card', hasBack: true, format: 1 },
-                captureAs,
+                captureAsOverride: captureAs,
               },
               captureBothSides: flag,
               allowSkipBack: !flag,
@@ -193,7 +198,7 @@ describe('what the SDK is handed', () => {
           ...smileIDSampleIdDetailsDefaults,
           country: { code: 'NG', name: 'Nigeria' },
           document: { code: 'IDENTITY_CARD', subType: null, name: 'National ID', hasBack: true, format: 1 },
-          captureAs: UseSmileIDSampleCaptureAs.GenericDocument,
+          captureAsOverride: UseSmileIDSampleCaptureAs.GenericDocument,
         },
         captureBothSides: false,
         allowSkipBack: true,
@@ -213,7 +218,7 @@ describe('what the SDK is handed', () => {
     for (const captureAs of Object.values(UseSmileIDSampleCaptureAs)) {
       for (const setting of [true, false]) {
         const captured = smileIDSampleCapturesBothSides(
-          snapshot({ idDetails: { ...smileIDSampleIdDetailsDefaults, captureAs }, captureBothSides: setting }),
+          snapshot({ idDetails: { ...smileIDSampleIdDetailsDefaults, captureAsOverride: captureAs }, captureBothSides: setting }),
         );
         expect([captureAs, setting, captured]).toEqual([
           captureAs,
@@ -257,5 +262,32 @@ describe('the ID parameters', () => {
       idDetails: { ...smileIDSampleIdDetailsDefaults, country: kenya, idType: nationalId, idNumber: ' 12345678 ' },
     });
     expect(built(value).biometricKYCParams?.idNumber).toBe('12345678');
+  });
+});
+
+/// Match document on every fixture row of both document products, through the SDK's `build()` and its job-type rules.
+describe('Match document', () => {
+  const fixture = JSON.parse(readFileSync(join(__dirname, '..', 'assets', 'catalogue-fixture.json'), 'utf8')) as {
+    supported_documents: unknown;
+  };
+  const documents = smileIDSampleDecodeDocuments(JSON.stringify(fixture.supported_documents))!;
+
+  it('never builds a pair the SDK refuses', () => {
+    let checked = 0;
+    for (const id of ['documentVerification', 'enhancedDocumentVerification']) {
+      for (const listed of documents) {
+        for (const document of smileIDSampleCatalogueDocuments(documents, listed.country.code, id)) {
+          const result = built(
+            snapshot({
+              product: productFor(id),
+              idDetails: { ...smileIDSampleIdDetailsDefaults, country: listed.country, document },
+            }),
+          ).build();
+          expect([id, document.code, document.subType, result.kind]).toEqual([id, document.code, document.subType, 'success']);
+          checked++;
+        }
+      }
+    }
+    expect(checked).toBeGreaterThan(0);
   });
 });

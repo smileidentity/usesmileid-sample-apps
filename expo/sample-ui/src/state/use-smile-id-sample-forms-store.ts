@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 
 import {
+  smileIDSampleDocumentId,
+  smileIDSampleDocumentListedOn,
   smileIDSampleIdDetailsDefaults,
   type UseSmileIDSampleCountry,
   type UseSmileIDSampleGenericDocument,
@@ -36,7 +38,10 @@ type Actions = {
   setCountry: (country: UseSmileIDSampleCountry) => void;
   setIdType: (idType: UseSmileIDSampleKycIdType) => void;
   setDocument: (document: UseSmileIDSampleDocument) => void;
-  setCaptureAs: (captureAs: UseSmileIDSampleCaptureAs) => void;
+  /// A link can open `productId`'s form holding a row it does not list; the row and its override go.
+  keepDocumentListedOn: (productId: string) => void;
+  /// Null is Match document.
+  setCaptureAs: (captureAs: UseSmileIDSampleCaptureAs | null) => void;
   /// Keeps what the generic-document sheet built, which also selects Generic document.
   setGenericDocument: (genericDocument: UseSmileIDSampleGenericDocument) => void;
   setIdNumber: (value: string) => void;
@@ -65,18 +70,36 @@ export const useSmileIDSampleFormsStore = create<State & Actions>((set) => ({
       idDetails: smileIDSampleIdDetailsDefaults,
     }),
 
-  /// Choosing a country clears the ID type and document, which may not apply to it, and keeps the typed number.
+  /// A different country clears the ID type, document and "Capture as" override, which may not apply to it; the typed number stays.
   setCountry: (country) =>
-    set((state) => ({ idDetails: { ...state.idDetails, country, idType: null, document: null } })),
+    set((state) =>
+      state.idDetails.country?.code === country.code && state.idDetails.country.name === country.name
+        ? state
+        : { idDetails: { ...state.idDetails, country, idType: null, document: null, captureAsOverride: null } },
+    ),
 
   setIdType: (idType) => set((state) => ({ idDetails: { ...state.idDetails, idType } })),
 
-  setDocument: (document) => set((state) => ({ idDetails: { ...state.idDetails, document } })),
+  /// A different document drops the override, which described one pairing.
+  setDocument: (document) =>
+    set((state) => {
+      const same = state.idDetails.document !== null && smileIDSampleDocumentId(state.idDetails.document) === smileIDSampleDocumentId(document);
+      return { idDetails: { ...state.idDetails, document, captureAsOverride: same ? state.idDetails.captureAsOverride : null } };
+    }),
 
-  setCaptureAs: (captureAs) => set((state) => ({ idDetails: { ...state.idDetails, captureAs } })),
+  keepDocumentListedOn: (productId) =>
+    set((state) =>
+      state.idDetails.document === null || smileIDSampleDocumentListedOn(state.idDetails.document, productId)
+        ? state
+        : { idDetails: { ...state.idDetails, document: null, captureAsOverride: null } },
+    ),
+
+  setCaptureAs: (captureAs) => set((state) => ({ idDetails: { ...state.idDetails, captureAsOverride: captureAs } })),
 
   setGenericDocument: (genericDocument) =>
-    set((state) => ({ idDetails: { ...state.idDetails, genericDocument, captureAs: UseSmileIDSampleCaptureAs.GenericDocument } })),
+    set((state) => ({
+      idDetails: { ...state.idDetails, genericDocument, captureAsOverride: UseSmileIDSampleCaptureAs.GenericDocument },
+    })),
 
   setIdNumber: (value) => set((state) => ({ idDetails: { ...state.idDetails, idNumber: value } })),
 

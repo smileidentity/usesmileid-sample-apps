@@ -77,7 +77,7 @@ class UseSmileIDSampleFormsNotifier extends Notifier<UseSmileIDSampleForms> {
         idDetails: const UseSmileIDSampleIdDetails(),
       );
 
-  /// Chooses a country, which clears the ID type and document and keeps the typed number.
+  /// Chooses a country; a different one clears the ID type, document and "Capture as" override, and the typed number stays.
   void setCountry(UseSmileIDSampleCountry country) =>
       state = state.copyWith(idDetails: state.idDetails.withCountry(country));
 
@@ -86,22 +86,24 @@ class UseSmileIDSampleFormsNotifier extends Notifier<UseSmileIDSampleForms> {
     idDetails: state.idDetails.copyWith(idType: idType),
   );
 
-  /// Chooses a document.
-  void setDocument(UseSmileIDSampleDocument document) => state = state.copyWith(
-    idDetails: state.idDetails.copyWith(document: document),
-  );
+  /// Chooses a document; a different one drops the "Capture as" override.
+  void setDocument(UseSmileIDSampleDocument document) =>
+      state = state.copyWith(idDetails: state.idDetails.withDocument(document));
 
-  /// Chooses how the SDK photographs the document.
-  void setCaptureAs(UseSmileIDSampleCaptureAs captureAs) => state = state
-      .copyWith(idDetails: state.idDetails.copyWith(captureAs: captureAs));
+  /// Drops a row [product] does not list, with its override; a link can open the form holding one.
+  void keepDocumentListedOn(UseSmileIDSampleProduct product) => state = state
+      .copyWith(idDetails: state.idDetails.withDocumentListedOn(product));
+
+  /// Chooses how the SDK photographs the document; null is Match document.
+  void setCaptureAs(UseSmileIDSampleCaptureAs? captureAs) => state = state
+      .copyWith(idDetails: state.idDetails.withCaptureAsOverride(captureAs));
 
   /// Keeps what the generic-document sheet built, which also selects Generic document.
   void setGenericDocument(UseSmileIDSampleGenericDocument genericDocument) =>
       state = state.copyWith(
-        idDetails: state.idDetails.copyWith(
-          genericDocument: genericDocument,
-          captureAs: UseSmileIDSampleCaptureAs.genericDocument,
-        ),
+        idDetails: state.idDetails
+            .copyWith(genericDocument: genericDocument)
+            .withCaptureAsOverride(UseSmileIDSampleCaptureAs.genericDocument),
       );
 
   /// Types the ID number.
