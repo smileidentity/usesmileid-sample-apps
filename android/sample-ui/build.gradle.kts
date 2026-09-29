@@ -53,6 +53,17 @@ dependencies {
     // signature, so every consumer needs the SDK on its compile classpath to assign those fields.
     api(platform(libs.usesmileid.bom))
     api(libs.usesmileid)
+    // The SDK's bridge, held strictly to the SDK's snapshot build (see libs.versions.toml), so a
+    // POM that names the moving 12.1.1-SNAPSHOT fails the build rather than resolving another
+    // build. Looked up by name: an SDK repo that builds this module substitutes its own projects
+    // and has no such version in its catalog, so it skips the constraint.
+    project.the<VersionCatalogsExtension>().named("libs").findVersion("usesmileid").ifPresent { sdk ->
+        constraints {
+            api("com.usesmileid:bridge") {
+                version { strictly(sdk.requiredVersion) }
+            }
+        }
+    }
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)
