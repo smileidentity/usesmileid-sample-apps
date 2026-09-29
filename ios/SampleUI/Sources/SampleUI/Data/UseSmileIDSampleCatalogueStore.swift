@@ -79,9 +79,12 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
     }
   }
 
-  public func documents(_ country: String) -> UseSmileIDSampleCatalogue<UseSmileIDSampleDocument> {
+  public func documents(
+    _ country: String,
+    product: UseSmileIDSampleProduct = .documentVerification
+  ) -> UseSmileIDSampleCatalogue<UseSmileIDSampleDocument> {
     switch documents {
-    case .ready(let items): Self.ready(UseSmileIDSampleCatalogueRules.documents(items, country: country))
+    case .ready(let items): Self.ready(UseSmileIDSampleCatalogueRules.documents(items, country: country, product: product))
     case .failed(let reason): .failed(reason)
     case .empty: .empty
     case .loading: .loading

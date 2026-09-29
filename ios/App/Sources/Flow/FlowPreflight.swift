@@ -52,7 +52,7 @@ func useSmileIDSamplePreflight(_ snapshot: FlowLaunchSnapshot) -> FlowPreflight 
 
 /// The run's own screens and payloads; building the default client once per entry is the cost of the only public shape.
 @MainActor
-private func useSmileIDSampleConfiguration(_ snapshot: FlowLaunchSnapshot, params: FlowIdParams) -> FlowConfiguration {
+func useSmileIDSampleConfiguration(_ snapshot: FlowLaunchSnapshot, params: FlowIdParams) -> FlowConfiguration {
   FlowConfiguration(
     screens: useSmileIDSampleFlowSteps(snapshot),
     jobType: snapshot.product.jobType,

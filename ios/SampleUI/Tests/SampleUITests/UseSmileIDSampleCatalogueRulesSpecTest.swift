@@ -34,7 +34,8 @@ final class UseSmileIDSampleCatalogueRulesSpecTest: XCTestCase {
   func testDocumentCases() throws {
     for item in try cases("documents") {
       let input = try XCTUnwrap(try UseSmileIDSampleCatalogueJson.documents(body("valid_documents", item["input"] as Any)))
-      let actual = UseSmileIDSampleCatalogueRules.documents(input, country: item["country"] as? String ?? "")
+      let product = (item["product"] as? String).flatMap(UseSmileIDSampleProduct.init(rawValue:)) ?? .documentVerification
+      let actual = UseSmileIDSampleCatalogueRules.documents(input, country: item["country"] as? String ?? "", product: product)
       let expected = (item["expected"] as? [[String: Any]] ?? []).map {
         UseSmileIDSampleDocument(
           code: $0["code"] as? String ?? "",
@@ -64,5 +65,72 @@ final class UseSmileIDSampleCatalogueRulesSpecTest: XCTestCase {
       let expected = (item["expected"] as? [[String: String]] ?? []).map { [$0["code"] ?? "", $0["name"] ?? ""] }
       XCTAssertEqual(actual, expected, item["name"] as? String ?? "")
     }
+  }
+
+  func testCaptureAsCases() throws {
+    for item in try cases("captureAs") {
+      let name = item["name"] as? String ?? ""
+      let expected = try XCTUnwrap(item["expected"] as? [String: Any])
+      let setting = item["captureBothSides"] as? Bool ?? true
+      let document = try document(XCTUnwrap(item["document"] as? [String: Any]))
+      let resolved = useSmileIDSampleResolvedCaptureAs(
+        document: document,
+        override: UseSmileIDSampleCaptureAs(rawValue: item["captureAs"] as? String ?? ""),
+        genericDocument: (item["genericDocument"] as? [String: Any]).map(genericDocument) ?? UseSmileIDSampleGenericDocument()
+      )
+      XCTAssertEqual(resolved.captureAs == .genericDocument ? "generic" : resolved.captureAs.rawValue, expected["documentType"] as? String, name)
+      if resolved.captureAs == .genericDocument {
+        XCTAssertEqual(resolved.genericDocument.displayName, expected["displayName"] as? String, name)
+        XCTAssertEqual(resolved.genericDocument.hasBackSide, expected["hasBackSide"] as? Bool, name)
+        XCTAssertEqual(resolved.genericDocument.orientation.rawValue, expected["orientation"] as? String, name)
+      }
+      XCTAssertEqual(resolved.matched, expected["matched"] as? Bool, name)
+      XCTAssertEqual(resolved.captureBothSides(setting), expected["captureBothSides"] as? Bool, name)
+      XCTAssertEqual(resolved.triggerText(setting), expected["triggerText"] as? String, name)
+      let match = useSmileIDSampleResolvedCaptureAs(document: document, override: nil, genericDocument: UseSmileIDSampleGenericDocument())
+      XCTAssertEqual(match.matchRowLabel, expected["matchRowLabel"] as? String, name)
+    }
+  }
+
+  func testCaptureAsResetCases() throws {
+    let resets = try XCTUnwrap(try section("captureAs")["resets"] as? [String: Any])
+    for item in try XCTUnwrap(resets["cases"] as? [[String: Any]]) {
+      var details = UseSmileIDSampleIdDetails()
+      details.choose(country: UseSmileIDSampleCountry(code: "ZA", name: "South Africa"))
+      try details.choose(document: document(XCTUnwrap(item["document"] as? [String: Any])))
+      details.captureAsOverride = UseSmileIDSampleCaptureAs(rawValue: item["captureAs"] as? String ?? "")
+      let change = try XCTUnwrap(item["change"] as? [String: Any])
+      if let next = change["document"] as? [String: Any] {
+        details.choose(document: document(next))
+      }
+      if let country = change["country"] as? [String: String] {
+        details.choose(country: UseSmileIDSampleCountry(code: country["code"] ?? "", name: country["name"] ?? ""))
+      }
+      XCTAssertEqual(details.captureAsOverride, UseSmileIDSampleCaptureAs(rawValue: item["expected"] as? String ?? ""), item["name"] as? String ?? "")
+    }
+  }
+
+  func testTheTriggerPlaceholderIsTheSpecs() throws {
+    XCTAssertEqual(try section("captureAs")["triggerPlaceholder"] as? String, UseSmileIDSampleCaptureAs.matchDocumentLabel)
+    XCTAssertNil(UseSmileIDSampleCaptureAs(rawValue: UseSmileIDSampleCaptureAs.matchDocumentId))
+  }
+
+  private func document(_ row: [String: Any]) -> UseSmileIDSampleDocument {
+    UseSmileIDSampleDocument(
+      code: row["code"] as? String ?? "",
+      subType: row["subType"] as? String,
+      name: row["name"] as? String ?? "",
+      hasBack: row["hasBack"] as? Bool ?? true,
+      format: row["format"] as? Int ?? 0
+    )
+  }
+
+  private func genericDocument(_ sheet: [String: Any]) -> UseSmileIDSampleGenericDocument {
+    UseSmileIDSampleGenericDocument(
+      displayName: sheet["displayName"] as? String ?? "",
+      hasBackSide: sheet["hasBackSide"] as? Bool ?? true,
+      orientation: UseSmileIDSampleDocumentOrientation(rawValue: sheet["orientation"] as? String ?? "") ?? .landscape,
+      aspectRatio: UseSmileIDSampleAspectRatio(rawValue: sheet["aspectRatio"] as? String ?? "") ?? .off
+    )
   }
 }

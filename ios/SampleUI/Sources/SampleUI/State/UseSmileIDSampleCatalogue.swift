@@ -111,7 +111,12 @@ public enum UseSmileIDSampleCatalogueRules {
       }
   }
 
-  public static func documents(_ all: [UseSmileIDSampleApiCountryDocuments], country: String) -> [UseSmileIDSampleDocument] {
+  /// `product` leaves out a row the SDK refuses on it: the Green Book on Enhanced Document Verification.
+  public static func documents(
+    _ all: [UseSmileIDSampleApiCountryDocuments],
+    country: String,
+    product: UseSmileIDSampleProduct = .documentVerification
+  ) -> [UseSmileIDSampleDocument] {
     (all.first { $0.country.code == country }?.documents ?? [])
       .filter { !$0.code.isEmpty }
       .flatMap { document in
@@ -120,6 +125,7 @@ public enum UseSmileIDSampleCatalogueRules {
             UseSmileIDSampleDocument(code: document.code, subType: $0.id, name: $0.name, hasBack: $0.hasBack, format: $0.format)
           }
       }
+      .filter { !(product == .enhancedDocumentVerification && $0.subType == useSmileIDSampleGreenBookSubType) }
   }
 
   public static func countries(
