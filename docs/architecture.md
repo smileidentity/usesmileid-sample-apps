@@ -168,9 +168,10 @@ SDK cannot submit the job anyway.
 death needs no catalogue to resolve them. Profiles do not store ID details.
 
 **Residency.** Residency Document Verification asks for the country alone. The SDK accepts only
-`PASSPORT` as its `idType` and only its `Passport` type on the capture screen, then captures the visa page
-after the passport and rejects a skippable back, so the form has no document to choose. The sample sends
-`PASSPORT` and `Passport` whatever the form or the DOCUMENT CAPTURE settings hold.
+`PASSPORT` as its `idType` and only its `Passport` type on the capture screen, and it rejects a skippable
+second side, so the form has no document to choose. The capture is both sides: the passport's data page,
+then its visa page. The sample sends `PASSPORT`, `Passport` and `captureBothSides` whatever the form or
+the DOCUMENT CAPTURE settings hold.
 
 **Capture as.** The document products show a DOCUMENT trigger in place of the ID type, and a CAPTURE AS
 trigger under it. "Capture as" changes only how the SDK photographs the document. The server always
