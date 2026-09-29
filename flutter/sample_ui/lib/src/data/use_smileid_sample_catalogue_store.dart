@@ -204,7 +204,7 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
     List<T>? Function(String) decode,
   ) async {
     try {
-      // Decoded off the UI isolate: the whole continent is about 45 KB, which a sheet would feel.
+      // Decoded off the UI isolate: the whole catalogue is about 200 KB, which a sheet would feel.
       final String body = await fetch().timeout(timeout);
       final List<T>? items = await _decode(decode, body);
       return items == null

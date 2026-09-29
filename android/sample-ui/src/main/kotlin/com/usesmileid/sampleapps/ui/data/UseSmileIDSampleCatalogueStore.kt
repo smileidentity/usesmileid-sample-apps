@@ -119,7 +119,7 @@ class UseSmileIDSampleCatalogueStore(
     }
 
     private suspend fun <T> load(fetch: suspend () -> List<T>?): UseSmileIDSampleCatalogue<T> = try {
-        // Decoded off the main thread: the whole continent is about 45 KB, which a sheet would feel.
+        // Decoded off the main thread: the whole catalogue is about 200 KB, which a sheet would feel.
         val items = withTimeout(timeout) { withContext(decoder) { fetch() } }
         if (items == null) UseSmileIDSampleCatalogue.Failed("Unreadable response") else UseSmileIDSampleCatalogue.Ready(items)
     } catch (timedOut: TimeoutCancellationException) {

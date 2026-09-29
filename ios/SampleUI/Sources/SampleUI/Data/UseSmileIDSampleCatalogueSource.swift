@@ -5,7 +5,7 @@ public protocol UseSmileIDSampleCatalogueSource: Sendable {
   /// `GET /v3/services/supported_id_types`, every country.
   func supportedIdTypes(environment: UseSmileIDSampleEnvironment) async throws -> Data
 
-  /// `GET /v3/services/supported_documents?continent=AFRICA&locale=…`.
+  /// `GET /v3/services/supported_documents?locale=…`.
   func supportedDocuments(environment: UseSmileIDSampleEnvironment, locale: String) async throws -> Data
 }
 

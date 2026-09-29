@@ -125,7 +125,7 @@ partner's app would get them. A type added on the server appears on the next run
 a type removed disappears. Nothing is bundled, and nothing is cached on disk.
 
 **Two calls, in the shell.** `GET /v3/services/supported_id_types` (every country) and
-`GET /v3/services/supported_documents?continent=AFRICA&locale=…` are both unauthenticated, so no token is
+`GET /v3/services/supported_documents?locale=…` are both unauthenticated, so no token is
 sent. `sample-ui` defines the seam, `UseSmileIDSampleCatalogueSource`, which returns the raw response
 bodies. Each shell implements it with the HTTP client it already uses for status refresh, so the network
 stays out of the shared UI and no dependency is added. The KYC country picker needs names that only

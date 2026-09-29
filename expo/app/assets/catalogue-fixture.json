@@ -1,5 +1,5 @@
 {
-  "description": "The lists a device flow sees under the `catalogue=fixture` launch argument, in the API's own response shape so one decoder reads both. A UI test input, not a copy of the API: about a dozen rows, each here for a case the form has to handle, and it changes only when the form gains a case — never because the API did. Live runs read GET /v3/services/supported_id_types and GET /v3/services/supported_documents?continent=AFRICA instead.",
+  "description": "The lists a device flow sees under the `catalogue=fixture` launch argument, in the API's own response shape so one decoder reads both. A UI test input, not a copy of the API: about a dozen rows, each here for a case the form has to handle, and it changes only when the form gains a case — never because the API did. Live runs read GET /v3/services/supported_id_types and GET /v3/services/supported_documents instead, every country in both.",
   "cases": {
     "KE IDENTITY_CARD": "a two-sided card",
     "KE PASSPORT": "a passport (format 3), one-sided",

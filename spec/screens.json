@@ -421,7 +421,7 @@
         "sample_catalogue_error",
         "sample_catalogue_retry"
       ],
-      "note": "Lists the countries the product's family can use, from two calls fetched ahead when the product is tapped and once per run of the form: GET /v3/services/supported_id_types (no country) and GET /v3/services/supported_documents?continent=AFRICA. The KYC products offer every country with a listed ID type, the document products every country with a listed document; names come from supported_documents for both (spec/catalogue-rules.json countries). The KYC list is ready only when both calls are, and Retry asks both again."
+      "note": "Lists the countries the product's family can use, from two calls fetched ahead when the product is tapped and once per run of the form: GET /v3/services/supported_id_types (no country) and GET /v3/services/supported_documents (every country, as the KYC call). The KYC products offer every country with a listed ID type, the document products every country with a listed document; names come from supported_documents for both (spec/catalogue-rules.json countries). The KYC list is ready only when both calls are, and Retry asks both again."
     },
     {
       "id": "idTypePickerSheet",

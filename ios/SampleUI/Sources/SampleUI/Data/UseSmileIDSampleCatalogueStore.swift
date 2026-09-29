@@ -118,7 +118,7 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
     }
   }
 
-  /// Races the fetch against the timeout; decoded off the main actor, since the whole continent is about 45 KB.
+  /// Races the fetch against the timeout; decoded off the main actor, since the whole catalogue is about 200 KB.
   private func load<Item: Sendable>(
     _ fetch: @escaping @Sendable () async throws -> [Item]?
   ) async -> UseSmileIDSampleCatalogue<Item> {
