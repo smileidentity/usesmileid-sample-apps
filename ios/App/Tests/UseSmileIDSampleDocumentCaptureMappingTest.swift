@@ -77,17 +77,19 @@ final class UseSmileIDSampleDocumentCaptureMappingTest: XCTestCase {
     }
   }
 
-  func testResidencyIsAPassportWithAMandatoryVisaWhateverTheFormOrSettingsHold() {
-    let config = useSmileIDSampleDocumentCapture(FlowLaunchSnapshot(
-      product: .residencyDocumentVerification,
-      route: .fullscreen,
-      idDetails: UseSmileIDSampleIdDetails(captureAs: .genericDocument),
-      captureBothSides: true,
-      allowSkipBack: true
-    ))
-    XCTAssertEqual(config.documentType, .passport)
-    XCTAssertFalse(config.captureBothSides)
-    XCTAssertFalse(config.allowSkipBack)
+  func testResidencyCapturesBothSidesOfAPassportWhateverTheFormOrSettingsHold() {
+    for captureAs in [UseSmileIDSampleCaptureAs.genericDocument, .passport] {
+      let config = useSmileIDSampleDocumentCapture(FlowLaunchSnapshot(
+        product: .residencyDocumentVerification,
+        route: .fullscreen,
+        idDetails: UseSmileIDSampleIdDetails(captureAs: captureAs),
+        captureBothSides: false,
+        allowSkipBack: true
+      ))
+      XCTAssertEqual(config.documentType, .passport, "\(captureAs)")
+      XCTAssertTrue(config.captureBothSides, "\(captureAs)")
+      XCTAssertFalse(config.allowSkipBack, "\(captureAs)")
+    }
   }
 
   func testResidencySendsThePassportWhateverDocumentIsLeftInTheForm() {

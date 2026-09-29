@@ -196,8 +196,8 @@ void _journeyFor(
         screens.capture((CaptureConfigBuilder capture) {
           capture.captureType = CaptureType.document;
           capture.document((DocumentCaptureConfigBuilder document) {
-            // Residency is a passport and then the visa page the SDK always
-            // captures, and it rejects a skippable back.
+            // Residency is both sides, the passport's data page and then its
+            // visa, and it rejects a skippable second side.
             final bool residency =
                 snapshot.product ==
                 UseSmileIDSampleProduct.residencyDocumentVerification;
@@ -207,10 +207,10 @@ void _journeyFor(
             // The SDK's passport preset declares a back side; the sample
             // captures a passport front only.
             document.captureBothSides =
-                snapshot.captureBothSides &&
-                !residency &&
-                snapshot.idDetails.captureAs !=
-                    UseSmileIDSampleCaptureAs.passport;
+                residency ||
+                (snapshot.captureBothSides &&
+                    snapshot.idDetails.captureAs !=
+                        UseSmileIDSampleCaptureAs.passport);
             document.allowSkipBack = snapshot.allowSkipBack && !residency;
             document.captureMode = snapshot.captureMode.sdk;
             document.allowGalleryUpload = snapshot.galleryUpload;

@@ -127,19 +127,30 @@ void main() {
   });
 
   test(
-    'residency is a passport with a mandatory visa, whatever the form or settings hold',
+    'residency captures both sides of a passport, whatever the form or settings hold',
     () {
-      final DocumentCaptureConfiguration document = _documentConfig(
-        const UseSmileIDSampleIdDetails(
-          country: UseSmileIDSampleCountry('NG', 'Nigeria'),
-          captureAs: UseSmileIDSampleCaptureAs.genericDocument,
-        ),
-        product: UseSmileIDSampleProduct.residencyDocumentVerification,
-        allowSkipBack: true,
-      );
-      expect(document.documentType, DocumentType.passport);
-      expect(document.captureBothSides, isFalse);
-      expect(document.allowSkipBack, isFalse);
+      for (final UseSmileIDSampleCaptureAs captureAs
+          in <UseSmileIDSampleCaptureAs>[
+            UseSmileIDSampleCaptureAs.genericDocument,
+            UseSmileIDSampleCaptureAs.passport,
+          ]) {
+        final DocumentCaptureConfiguration document = _documentConfig(
+          UseSmileIDSampleIdDetails(
+            country: const UseSmileIDSampleCountry('NG', 'Nigeria'),
+            captureAs: captureAs,
+          ),
+          product: UseSmileIDSampleProduct.residencyDocumentVerification,
+          captureBothSides: false,
+          allowSkipBack: true,
+        );
+        expect(
+          document.documentType,
+          DocumentType.passport,
+          reason: captureAs.id,
+        );
+        expect(document.captureBothSides, isTrue, reason: captureAs.id);
+        expect(document.allowSkipBack, isFalse, reason: captureAs.id);
+      }
     },
   );
 
@@ -174,12 +185,18 @@ DocumentCaptureConfiguration _documentConfig(
   UseSmileIDSampleIdDetails details, {
   UseSmileIDSampleProduct product =
       UseSmileIDSampleProduct.documentVerification,
+  bool captureBothSides = true,
   bool allowSkipBack = false,
 }) {
   final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
   useSmileIDSampleApplying(
     builder,
-    _snapshot(details, product: product, allowSkipBack: allowSkipBack),
+    _snapshot(
+      details,
+      product: product,
+      captureBothSides: captureBothSides,
+      allowSkipBack: allowSkipBack,
+    ),
   );
   // The SDK says to inspect this, then marks it internal.
   // ignore: invalid_use_of_internal_member

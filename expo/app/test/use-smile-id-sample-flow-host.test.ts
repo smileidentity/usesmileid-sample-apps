@@ -185,7 +185,7 @@ describe('what the SDK is handed', () => {
     }
   });
 
-  it('residency builds as a passport with a mandatory visa, whatever the form or settings hold', () => {
+  it('residency builds as both sides of a passport, whatever the form or settings hold', () => {
     const builder = built(
       snapshot({
         product: productFor('residencyDocumentVerification'),
@@ -195,10 +195,15 @@ describe('what the SDK is handed', () => {
           document: { code: 'IDENTITY_CARD', subType: null, name: 'National ID', hasBack: true, format: 1 },
           captureAs: UseSmileIDSampleCaptureAs.GenericDocument,
         },
-        captureBothSides: true,
+        captureBothSides: false,
         allowSkipBack: true,
       }),
     );
+    expect(
+      smileIDSampleCapturesBothSides(
+        snapshot({ product: productFor('residencyDocumentVerification'), captureBothSides: false }),
+      ),
+    ).toBe(true);
     expect(builder.residencyDocumentVerificationParams).toEqual({ country: 'NG', idType: 'PASSPORT' });
     expect(builder.documentVerificationParams).toBeUndefined();
     expect(builder.build().kind).toBe('success');

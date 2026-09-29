@@ -250,13 +250,13 @@ internal data class DocumentOptions(
 )
 
 internal fun documentOptionsFor(snapshot: FlowLaunchSnapshot): DocumentOptions {
-    // Residency is a passport and then the visa page the SDK always captures, and it rejects a skippable back.
+    // Residency is both sides, the passport's data page and then its visa, and it rejects a skippable second side.
     val residency = snapshot.product == UseSmileIDSampleProduct.ResidencyDocumentVerification
-    val passport = residency || snapshot.idDetails.captureAs == UseSmileIDSampleCaptureAs.Passport
+    val passport = snapshot.idDetails.captureAs == UseSmileIDSampleCaptureAs.Passport
     return DocumentOptions(
         documentType = if (residency) DocumentType.Passport else documentTypeFor(snapshot.idDetails),
         // The SDK's passport preset declares a back side; the sample captures a passport front only.
-        captureBothSides = snapshot.captureBothSides && !passport,
+        captureBothSides = residency || (snapshot.captureBothSides && !passport),
         allowSkipBack = snapshot.allowSkipBack && !residency,
         captureMode = snapshot.captureMode.toSdk(),
         allowGalleryUpload = snapshot.galleryUpload,

@@ -286,15 +286,15 @@ private func capture(_ step: FlowJourneyStep, _ preview: Bool) -> [FlowJourneySt
 
 /// Everything the document capture step is handed; the server is told the document's code either way.
 func useSmileIDSampleDocumentCapture(_ snapshot: FlowLaunchSnapshot) -> DocumentCaptureConfig {
-  // Residency is a passport and then the visa page the SDK always captures, and it rejects a skippable back.
+  // Residency is both sides, the passport's data page and then its visa, and it rejects a skippable second side.
   let residency = snapshot.product == .residencyDocumentVerification
-  let passport = residency || snapshot.idDetails.captureAs == .passport
+  let passport = snapshot.idDetails.captureAs == .passport
   return DocumentCaptureConfig(
     documentType: residency ? .passport : useSmileIDSampleDocumentType(snapshot.idDetails),
     captureMode: snapshot.captureMode.sdk,
     allowGalleryUpload: snapshot.galleryUpload,
     // The SDK's passport preset declares a back side; the sample captures a passport front only.
-    captureBothSides: snapshot.captureBothSides && !passport,
+    captureBothSides: residency || (snapshot.captureBothSides && !passport),
     allowSkipBack: snapshot.allowSkipBack && !residency
   )
 }

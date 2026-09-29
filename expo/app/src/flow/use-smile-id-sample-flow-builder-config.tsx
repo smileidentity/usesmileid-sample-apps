@@ -178,7 +178,7 @@ const journeyFor = (screens: ScreensBuilder, snapshot: UseSmileIDSampleFlowLaunc
         screens.capture((capture: CaptureConfigBuilder) => {
           capture.captureType = CaptureType.document;
           capture.document((document: DocumentCaptureConfigBuilder) => {
-            // Residency is a passport and then the visa page the SDK always captures, and it rejects a skippable back.
+            // Residency is both sides, the passport's data page and then its visa, and it rejects a skippable second side.
             const residency = snapshot.product.id === 'residencyDocumentVerification';
             document.documentType = residency ? DocumentType.Passport : smileIDSampleDocumentTypeFor(snapshot.idDetails);
             document.captureBothSides = smileIDSampleCapturesBothSides(snapshot);
@@ -315,11 +315,10 @@ export const smileIDSampleCaptureModeFor = (mode: UseSmileIDSampleCaptureMode): 
   }
 };
 
-/** The Settings switch, except that the SDK's passport preset declares a back side and the sample captures a passport front only. */
+/** The Settings switch, except that residency always captures both sides and the sample captures any other passport front only. */
 export const smileIDSampleCapturesBothSides = (snapshot: UseSmileIDSampleFlowLaunchSnapshot): boolean =>
-  snapshot.captureBothSides &&
-  snapshot.product.id !== 'residencyDocumentVerification' &&
-  snapshot.idDetails.captureAs !== UseSmileIDSampleCaptureAs.Passport;
+  snapshot.product.id === 'residencyDocumentVerification' ||
+  (snapshot.captureBothSides && snapshot.idDetails.captureAs !== UseSmileIDSampleCaptureAs.Passport);
 
 // The same host the Settings privacy row opens.
 const privacyPolicyUrl = 'https://smile.id/privacy-policy';

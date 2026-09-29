@@ -147,15 +147,16 @@ class DocumentCaptureMappingTest {
     }
 
     @Test
-    fun residency_is_a_passport_with_a_mandatory_visa_whatever_the_form_or_settings_hold() {
-        val generic = UseSmileIDSampleIdDetails(captureAs = UseSmileIDSampleCaptureAs.GenericDocument)
-        val options = documentOptionsFor(
-            snapshotOf(generic, product = UseSmileIDSampleProduct.ResidencyDocumentVerification)
-                .copy(captureBothSides = true, allowSkipBack = true),
-        )
-        assertEquals(DocumentType.Passport, options.documentType)
-        assertEquals(false, options.captureBothSides)
-        assertEquals(false, options.allowSkipBack)
+    fun residency_captures_both_sides_of_a_passport_whatever_the_form_or_settings_hold() {
+        listOf(UseSmileIDSampleCaptureAs.GenericDocument, UseSmileIDSampleCaptureAs.Passport).forEach { captureAs ->
+            val options = documentOptionsFor(
+                snapshotOf(UseSmileIDSampleIdDetails(captureAs = captureAs), product = UseSmileIDSampleProduct.ResidencyDocumentVerification)
+                    .copy(captureBothSides = false, allowSkipBack = true),
+            )
+            assertEquals(captureAs.id, DocumentType.Passport, options.documentType)
+            assertTrue(captureAs.id, options.captureBothSides)
+            assertEquals(captureAs.id, false, options.allowSkipBack)
+        }
     }
 
     @Test
