@@ -165,6 +165,7 @@ struct UseSmileIDSampleDestination: View {
     case (nil, _): false
     case (let code?, .kyc): app.catalogue.idTypes(code).isLoading
     case (let code?, .document): app.catalogue.documents(code).isLoading
+    case (_?, .passport): false
     }
     return .init(
       productLabel: Self.product(productId)?.label ?? productId,
