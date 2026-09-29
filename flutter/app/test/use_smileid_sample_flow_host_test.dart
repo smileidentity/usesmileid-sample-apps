@@ -258,6 +258,29 @@ void main() {
       }
     });
 
+    test('a passport is captured front only', () {
+      expect(
+        useSmileIDSampleCapturesBothSides(UseSmileIDSampleIdType.passport),
+        isFalse,
+      );
+    });
+
+    test(
+      'every other document, and none chosen, is captured on both sides',
+      () {
+        for (final UseSmileIDSampleIdType idType
+            in UseSmileIDSampleIdType.values) {
+          if (idType == UseSmileIDSampleIdType.passport) continue;
+          expect(
+            useSmileIDSampleCapturesBothSides(idType),
+            isTrue,
+            reason: idType.name,
+          );
+        }
+        expect(useSmileIDSampleCapturesBothSides(null), isTrue);
+      },
+    );
+
     test(
       'an unselected document type stays absent rather than becoming a rejected empty string',
       () {

@@ -75,7 +75,30 @@ final class UseSmileIDSampleFlowJourneyTest: XCTestCase {
     XCTAssertEqual(selfie.first?.enableEnhancedLiveness, false)
   }
 
+  func testAPassportIsCapturedFrontOnly() {
+    for product in [UseSmileIDSampleProduct.documentVerification, .enhancedDocumentVerification] {
+      XCTAssertEqual(documentCapture(product, idType: .passport)?.captureBothSides, false, "\(product)")
+    }
+  }
+
+  func testEveryOtherDocumentAndNoneChosenIsCapturedOnBothSides() {
+    for idType in UseSmileIDSampleIdType.allCases where idType != .passport {
+      XCTAssertEqual(documentCapture(.documentVerification, idType: idType)?.captureBothSides, true, "\(idType)")
+    }
+    XCTAssertEqual(documentCapture(.documentVerification, idType: nil)?.captureBothSides, true)
+  }
+
   // MARK: - Fixtures
+
+  private func documentCapture(
+    _ product: UseSmileIDSampleProduct,
+    idType: UseSmileIDSampleIdType?
+  ) -> DocumentCaptureConfig? {
+    useSmileIDSampleFlowSteps(snapshot(product, idType: idType)).lazy.compactMap { step -> DocumentCaptureConfig? in
+      guard case .capture(let capture) = step else { return nil }
+      return capture.document
+    }.first
+  }
 
   private var consentBindings: UseSmileIDSampleTokenBindings {
     UseSmileIDSampleTokenBindings(consent: UseSmileIDSampleTokenConsent(granted: true))
@@ -101,11 +124,13 @@ final class UseSmileIDSampleFlowJourneyTest: XCTestCase {
     previewStep: Bool = true,
     agentMode: Bool = false,
     enhancedLiveness: Bool = true,
+    idType: UseSmileIDSampleIdType? = nil,
     session: UseSmileIDSampleTokenSession? = nil
   ) -> FlowLaunchSnapshot {
     FlowLaunchSnapshot(
       product: product,
       route: .fullscreen,
+      idDetails: UseSmileIDSampleIdDetails(idType: idType),
       scenario: scenario,
       allowAgentMode: agentMode,
       enableEnhancedLiveness: enhancedLiveness,

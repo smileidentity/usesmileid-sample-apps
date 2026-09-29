@@ -201,7 +201,9 @@ void _journeyFor(
           capture.captureType = CaptureType.document;
           capture.document((DocumentCaptureConfigBuilder document) {
             document.documentType = _documentTypeFor(snapshot.idDetails.idType);
-            document.captureBothSides = true;
+            document.captureBothSides = useSmileIDSampleCapturesBothSides(
+              snapshot.idDetails.idType,
+            );
             document.allowSkipBack = true;
           });
         });
@@ -312,6 +314,10 @@ DocumentType _documentTypeFor(UseSmileIDSampleIdType? idType) =>
         displayName: other.label,
       ),
     };
+
+/// The SDK's passport preset declares a back side; the sample captures a passport front only.
+bool useSmileIDSampleCapturesBothSides(UseSmileIDSampleIdType? idType) =>
+    idType != UseSmileIDSampleIdType.passport;
 
 /// The SDK's own job type for each product.
 extension on UseSmileIDSampleProduct {

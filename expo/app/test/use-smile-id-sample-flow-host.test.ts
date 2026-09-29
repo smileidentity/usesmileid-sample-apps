@@ -1,8 +1,9 @@
-import { smileIDSampleProducts, type UseSmileIDSampleProduct } from '@smileid/sample-ui';
+import { smileIDSampleIdTypes, smileIDSampleProducts, type UseSmileIDSampleProduct } from '@smileid/sample-ui';
 import { UseSmileIDFlowBuilder } from '@smileid/usesmileid';
 
 import {
   smileIDSampleApplying,
+  smileIDSampleCapturesBothSides,
   smileIDSampleJourneyStepsFor,
   type UseSmileIDSampleFlowJourneyStep,
 } from '../src/flow/use-smile-id-sample-flow-builder-config';
@@ -156,6 +157,16 @@ describe('what the SDK is handed', () => {
 
       expect(result.kind).toBe('success');
     }
+  });
+
+  it('a passport is captured front only', () => {
+    expect(smileIDSampleCapturesBothSides('PASSPORT')).toBe(false);
+  });
+
+  it('every other document, and none chosen, is captured on both sides', () => {
+    const others = smileIDSampleIdTypes.filter((type) => type.id !== 'PASSPORT').map((type) => type.id);
+    expect(others.filter((id) => !smileIDSampleCapturesBothSides(id))).toEqual([]);
+    expect(smileIDSampleCapturesBothSides(undefined)).toBe(true);
   });
 
   // The regression check for the import that took the whole JS bundle down on Android.

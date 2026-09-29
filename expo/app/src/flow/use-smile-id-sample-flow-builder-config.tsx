@@ -172,7 +172,7 @@ const journeyFor = (screens: ScreensBuilder, snapshot: UseSmileIDSampleFlowLaunc
           capture.captureType = CaptureType.document;
           capture.document((document: DocumentCaptureConfigBuilder) => {
             document.documentType = documentTypeFor(snapshot.idDetails.idType?.id);
-            document.captureBothSides = true;
+            document.captureBothSides = smileIDSampleCapturesBothSides(snapshot.idDetails.idType?.id);
             document.allowSkipBack = true;
           });
         });
@@ -262,6 +262,10 @@ const jobTypeFor = (productId: string): JobType => {
 
 const documentTypeFor = (idTypeId: string | undefined): DocumentType =>
   idTypeId === 'PASSPORT' ? DocumentType.Passport : DocumentType.GenericDocument();
+
+/** The SDK's passport preset declares a back side; the sample captures a passport front only. */
+export const smileIDSampleCapturesBothSides = (idTypeId: string | undefined): boolean =>
+  idTypeId !== 'PASSPORT';
 
 // The same host the Settings privacy row opens.
 const privacyPolicyUrl = 'https://smile.id/privacy-policy';

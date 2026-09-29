@@ -164,7 +164,8 @@ func useSmileIDSampleFlowSteps(_ snapshot: FlowLaunchSnapshot) -> [FlowStep] {
         captureType: .document,
         document: DocumentCaptureConfig(
           documentType: snapshot.idDetails.idType.documentType,
-          captureBothSides: true,
+          // The SDK's passport preset declares a back side; the sample captures a passport front only.
+          captureBothSides: snapshot.idDetails.idType != .passport,
           allowSkipBack: true
         )
       ))
