@@ -1391,7 +1391,7 @@
       }
     ],
     "resets": {
-      "rule": "Choosing a different document, or any country, clears the override back to matchDocument: an override describes one pairing.",
+      "rule": "Choosing a different document or a different country clears the override back to matchDocument: an override describes one pairing.",
       "cases": [
         {
           "name": "Choosing another document resets an override to Match",
