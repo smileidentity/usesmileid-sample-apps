@@ -256,13 +256,13 @@ describe('the product card', () => {
     expect(light).not.toEqual(dark);
   });
 
-  it('leaves exactly two of the six hues fully opaque, and those are the ones that must match', () => {
+  it('leaves exactly three of the seven hues fully opaque, and those are the ones that must match', () => {
     // A light/dark diff bigger than a stroke is correct on the four that composite against the page.
     const opaque = smileIDSampleProducts
       .map((product) => ({ id: product.id, hue: smileIDSampleProductHue(product) }))
       .filter(({ hue }) => hue.fromAlpha === 1 && hue.toAlpha === 1)
       .map(({ id }) => id);
-    expect(opaque).toEqual(['smartSelfieAuth', 'biometricKyc']);
+    expect(opaque).toEqual(['smartSelfieAuth', 'residencyDocumentVerification', 'biometricKyc']);
   });
 
   it('adapts the go pill rather than fixing it, which would leave it invisible on the darkest card', async () => {

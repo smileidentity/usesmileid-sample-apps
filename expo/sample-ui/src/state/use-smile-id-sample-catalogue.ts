@@ -6,6 +6,9 @@ import type {
 } from './use-smile-id-sample-id-details';
 import type { UseSmileIDSampleProduct } from '../model/use-smile-id-sample-product';
 
+/// The one document code Residency Document Verification accepts, which the SDK enforces too.
+export const smileIDSamplePassport = 'PASSPORT';
+
 /// The family `product`'s form reads, or null for the products that ask for no ID details.
 export const smileIDSampleCatalogueFamily = (
   product: UseSmileIDSampleProduct,
@@ -17,6 +20,8 @@ export const smileIDSampleCatalogueFamily = (
     case 'documentVerification':
     case 'enhancedDocumentVerification':
       return 'document';
+    case 'residencyDocumentVerification':
+      return 'passport';
     default:
       return null;
   }
@@ -140,6 +145,11 @@ export const smileIDSampleCatalogueCountries = (
   const named = data.documents.map((entry) => entry.country);
   if (family === 'document') {
     return named.filter((it) => smileIDSampleCatalogueDocuments(data.documents, it.code).length > 0);
+  }
+  if (family === 'passport') {
+    return named.filter((it) =>
+      smileIDSampleCatalogueDocuments(data.documents, it.code).some((document) => document.code === smileIDSamplePassport),
+    );
   }
   const listed: string[] = [];
   for (const type of data.idTypes) {

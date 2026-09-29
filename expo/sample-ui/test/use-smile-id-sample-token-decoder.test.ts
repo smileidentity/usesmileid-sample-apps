@@ -195,9 +195,9 @@ describe('the token decoder', () => {
     }
   });
 
-  it('needs country and ID type for both document products, and no ID number', () => {
+  it('needs country and ID type for every document product, and no ID number', () => {
     const bound: UseSmileIDSampleTokenBindings = { country: 'KE', idType: 'NATIONAL_ID' };
-    for (const id of ['documentVerification', 'enhancedDocumentVerification']) {
+    for (const id of ['documentVerification', 'enhancedDocumentVerification', 'residencyDocumentVerification']) {
       expect(smileIDSampleBindsIdDetails(bound, product(id))).toBe(true);
       expect(smileIDSampleBindsIdDetails({ ...bound, idType: null }, product(id))).toBe(false);
       expect(smileIDSampleBindsIdDetails({ ...bound, country: null }, product(id))).toBe(false);

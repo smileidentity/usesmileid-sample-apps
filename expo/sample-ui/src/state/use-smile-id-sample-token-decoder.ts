@@ -62,6 +62,7 @@ export const smileIDSampleBindsIdDetails = (
       return nonBlank(bindings?.country) && nonBlank(bindings?.idType) && nonBlank(bindings?.idNumberReference);
     case 'documentVerification':
     case 'enhancedDocumentVerification':
+    case 'residencyDocumentVerification':
       return nonBlank(bindings?.country) && nonBlank(bindings?.idType);
     default:
       return true;

@@ -125,7 +125,7 @@ export const KycIdFormScreen = ({
                 errorTestID={UseSmileIDSampleTestIds.ID_NUMBER_ERROR}
               />
             </>
-          ) : (
+          ) : state.family === 'document' ? (
             <>
               <UseSmileIDSampleSectionLabel text="DOCUMENT" />
               <UseSmileIDSampleSelectTrigger
@@ -146,7 +146,7 @@ export const KycIdFormScreen = ({
                 leading={(tint) => <UseSmileIDSampleIcon name="preview" tint={tint} />}
               />
             </>
-          )}
+          ) : null}
         </ScrollView>
         <UseSmileIDSampleFloatingTokenButton
           onPress={onTokenPress}

@@ -196,7 +196,7 @@ describe('settings', () => {
 });
 
 describe('products', () => {
-  it('draws a card for every one of the six products, each with its own id', async () => {
+  it('draws a card for every one of the seven products, each with its own id', async () => {
     const rendered = await renderInTheme(
       <ProductsScreen
         state={{ initials: 'KA' }}
@@ -211,6 +211,7 @@ describe('products', () => {
       'smartSelfieAuth',
       'documentVerification',
       'enhancedDocumentVerification',
+      'residencyDocumentVerification',
       'biometricKyc',
       'enhancedKyc',
     ]) {

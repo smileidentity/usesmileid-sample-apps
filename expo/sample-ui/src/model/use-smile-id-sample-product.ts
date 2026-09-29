@@ -60,6 +60,15 @@ export const smileIDSampleProducts: readonly UseSmileIDSampleProduct[] = [
     needsIdDetails: true,
   },
   {
+    id: 'residencyDocumentVerification',
+    label: 'Residency Document Verification',
+    cardTitle: 'Residency Doc.',
+    cardFamily: 'Verification',
+    section: 'Verifications',
+    capture: true,
+    needsIdDetails: true,
+  },
+  {
     id: 'biometricKyc',
     label: 'Biometric KYC',
     cardTitle: 'Biometric',
@@ -94,6 +103,8 @@ export const smileIDSampleProductIcon = (product: UseSmileIDSampleProduct): Smil
     case 'documentVerification':
     case 'enhancedDocumentVerification':
       return 'documentVerification';
+    case 'residencyDocumentVerification':
+      return 'residencyDocumentVerification';
     case 'biometricKyc':
       return 'biometricKyc';
     default:

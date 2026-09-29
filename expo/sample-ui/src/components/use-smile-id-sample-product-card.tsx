@@ -27,7 +27,8 @@ type Props = {
   hue: SmileProductHue;
   enabled?: boolean;
   testID?: string;
-  icon?: (tint: string) => ReactNode;
+  /// Handed the hue's card-icon tint, null for a mark drawn in its own colours.
+  icon?: (tint: string | null) => ReactNode;
   ghost?: (tint: string) => ReactNode;
   style?: StyleProp<ViewStyle>;
 };
@@ -96,7 +97,7 @@ export const UseSmileIDSampleProductCard = ({
             { width: theme.dimens.space[40], height: theme.dimens.space[40], borderRadius: theme.shapes.tile, backgroundColor: tile },
           ]}
         >
-          {icon ? icon(hue.cardIcon) : <UseSmileIDSampleIcon name="productMark" tint={hue.cardIcon} />}
+          {icon ? icon(hue.cardIcon) : <UseSmileIDSampleIcon name="productMark" tint={hue.cardIcon ?? hue.icon} />}
         </View>
         <View style={styles.footer}>
           <CardLabel title={title} family={family} color={content} />
