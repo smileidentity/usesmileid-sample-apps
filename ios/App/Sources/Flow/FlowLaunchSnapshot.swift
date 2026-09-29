@@ -15,8 +15,11 @@ struct FlowLaunchSnapshot: Equatable {
   let consentStep: Bool
   let instructionsStep: Bool
   let previewStep: Bool
-  let customContinue: Bool
-  let customCancel: Bool
+  let captureMode: UseSmileIDSampleCaptureMode
+  let galleryUpload: Bool
+  let captureBothSides: Bool
+  let allowSkipBack: Bool
+  let selfieFirst: Bool
   let userId: String
   let partnerId: String
   let partnerName: String
@@ -40,8 +43,11 @@ struct FlowLaunchSnapshot: Equatable {
     consentStep: Bool = true,
     instructionsStep: Bool = true,
     previewStep: Bool = true,
-    customContinue: Bool = false,
-    customCancel: Bool = false,
+    captureMode: UseSmileIDSampleCaptureMode = .autoWithFallback,
+    galleryUpload: Bool = false,
+    captureBothSides: Bool = true,
+    allowSkipBack: Bool = false,
+    selfieFirst: Bool = false,
     userId: String = "",
     partnerId: String = "",
     partnerName: String = "",
@@ -61,8 +67,11 @@ struct FlowLaunchSnapshot: Equatable {
     self.consentStep = consentStep
     self.instructionsStep = instructionsStep
     self.previewStep = previewStep
-    self.customContinue = customContinue
-    self.customCancel = customCancel
+    self.captureMode = captureMode
+    self.galleryUpload = galleryUpload
+    self.captureBothSides = captureBothSides
+    self.allowSkipBack = allowSkipBack
+    self.selfieFirst = selfieFirst
     self.userId = userId
     self.partnerId = partnerId
     self.partnerName = partnerName
@@ -100,8 +109,11 @@ func buildSnapshot(
     consentStep: app.settings.consentStep,
     instructionsStep: app.settings.instructionsStep,
     previewStep: app.settings.previewStep,
-    customContinue: app.settings.customContinue,
-    customCancel: app.settings.customCancel,
+    captureMode: app.settings.captureMode,
+    galleryUpload: app.settings.galleryUpload,
+    captureBothSides: app.settings.captureBothSides,
+    allowSkipBack: app.settings.allowSkipBack,
+    selfieFirst: app.settings.selfieFirst,
     userId: userId,
     partnerId: app.profiles.partnerId,
     partnerName: app.profiles.partnerName,

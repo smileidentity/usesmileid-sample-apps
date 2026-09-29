@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureMode
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesCodec
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesRecord
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSetting
@@ -55,11 +56,16 @@ class UseSmileIDSampleStore(
         store.edit { prefs ->
             val current = settingsIn(prefs)
             val updated = current.withSetting(setting, enabled)
-            // Only what moved: writing all six would freeze today's defaults onto the device.
+            // Only what moved: writing every row would freeze today's defaults onto the device.
             UseSmileIDSampleSetting.entries
                 .filter { updated[it] != current[it] }
                 .forEach { prefs[it.key()] = updated[it] }
         }
+    }
+
+    /** Stored by id, so a renamed constant still reads the device's choice. */
+    suspend fun setCaptureMode(mode: UseSmileIDSampleCaptureMode) {
+        store.edit { prefs -> prefs[CAPTURE_MODE] = mode.id }
     }
 
     /** Re-seals a token an earlier build stored in plain text, so an upgrade leaves no credential readable on disk. */
@@ -110,8 +116,12 @@ class UseSmileIDSampleStore(
             consentStep = prefs[CONSENT_STEP] ?: defaults.consentStep,
             instructionsStep = prefs[INSTRUCTIONS_STEP] ?: defaults.instructionsStep,
             previewStep = prefs[PREVIEW_STEP] ?: defaults.previewStep,
-            customContinue = prefs[CUSTOM_CONTINUE] ?: defaults.customContinue,
-            customCancel = prefs[CUSTOM_CANCEL] ?: defaults.customCancel,
+            galleryUpload = prefs[GALLERY_UPLOAD] ?: defaults.galleryUpload,
+            captureBothSides = prefs[CAPTURE_BOTH_SIDES] ?: defaults.captureBothSides,
+            allowSkipBack = prefs[ALLOW_SKIP_BACK] ?: defaults.allowSkipBack,
+            selfieFirst = prefs[SELFIE_FIRST] ?: defaults.selfieFirst,
+            captureMode = UseSmileIDSampleCaptureMode.entries.firstOrNull { it.id == prefs[CAPTURE_MODE] }
+                ?: defaults.captureMode,
         ).normalised()
     }
 
@@ -122,8 +132,10 @@ class UseSmileIDSampleStore(
         UseSmileIDSampleSetting.ConsentStep -> CONSENT_STEP
         UseSmileIDSampleSetting.InstructionsStep -> INSTRUCTIONS_STEP
         UseSmileIDSampleSetting.PreviewStep -> PREVIEW_STEP
-        UseSmileIDSampleSetting.CustomContinue -> CUSTOM_CONTINUE
-        UseSmileIDSampleSetting.CustomCancel -> CUSTOM_CANCEL
+        UseSmileIDSampleSetting.GalleryUpload -> GALLERY_UPLOAD
+        UseSmileIDSampleSetting.CaptureBothSides -> CAPTURE_BOTH_SIDES
+        UseSmileIDSampleSetting.AllowSkipBack -> ALLOW_SKIP_BACK
+        UseSmileIDSampleSetting.SelfieFirst -> SELFIE_FIRST
     }
 
     private companion object {
@@ -134,8 +146,11 @@ class UseSmileIDSampleStore(
         val CONSENT_STEP = booleanPreferencesKey("consent_step")
         val INSTRUCTIONS_STEP = booleanPreferencesKey("instructions_step")
         val PREVIEW_STEP = booleanPreferencesKey("preview_step")
-        val CUSTOM_CONTINUE = booleanPreferencesKey("custom_continue")
-        val CUSTOM_CANCEL = booleanPreferencesKey("custom_cancel")
+        val GALLERY_UPLOAD = booleanPreferencesKey("gallery_upload")
+        val CAPTURE_BOTH_SIDES = booleanPreferencesKey("capture_both_sides")
+        val ALLOW_SKIP_BACK = booleanPreferencesKey("allow_skip_back")
+        val SELFIE_FIRST = booleanPreferencesKey("selfie_first")
+        val CAPTURE_MODE = stringPreferencesKey("capture_mode")
         val SESSION_TOKEN = stringPreferencesKey("token_session_token")
         val ENDED_SESSION_ID = stringPreferencesKey("ended_session_id")
         val ENDED_SESSION_AT = longPreferencesKey("ended_session_at")

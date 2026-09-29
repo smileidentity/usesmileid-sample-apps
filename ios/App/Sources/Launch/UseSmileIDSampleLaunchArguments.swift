@@ -31,6 +31,8 @@ struct UseSmileIDSampleLaunchArguments: Equatable {
   var holdCamera: UseSmileIDSampleHoldCamera?
   /// Seconds a transient notice stays — see `spec/launch-args.json`. Automation only.
   var noticeWindow: Int?
+  /// Where the ID form's lists come from — see `spec/launch-args.json`.
+  var catalogue: UseSmileIDSampleCatalogueMode = .live
 
   static let scenarioName = "scenario"
   static let themeName = "theme"
@@ -42,10 +44,11 @@ struct UseSmileIDSampleLaunchArguments: Equatable {
   static let appLocaleName = "appLocale"
   static let holdCameraName = "holdCamera"
   static let noticeWindowName = "noticeWindow"
+  static let catalogueName = "catalogue"
 
   static let names = [
     scenarioName, themeName, routeName, autostartName, seedJobsName, seedProfilesName, probesName, appLocaleName,
-    holdCameraName, noticeWindowName
+    holdCameraName, noticeWindowName, catalogueName
   ]
 
   static let holdCameraKeep = "keep"
@@ -71,6 +74,7 @@ struct UseSmileIDSampleLaunchArguments: Equatable {
     appLocale = Self.string(raw, Self.appLocaleName)
     holdCamera = Self.holdCamera(raw)
     noticeWindow = Self.noticeWindow(raw)
+    catalogue = Self.string(raw, Self.catalogueName).flatMap { UseSmileIDSampleCatalogueMode(rawValue: $0) } ?? defaults.catalogue
   }
 
   /// The tag as a locale the environment can carry, or nil when it names no known language.
@@ -114,4 +118,9 @@ struct UseSmileIDSampleLaunchArguments: Equatable {
     guard let millis = Int(value), millis > 0 else { return nil }
     return .millis(millis)
   }
+}
+
+/// The `catalogue` argument's values: the live API, the spec fixture, or a source that always fails.
+enum UseSmileIDSampleCatalogueMode: String, CaseIterable {
+  case live, fixture, unreachable
 }

@@ -12,8 +12,6 @@ import com.usesmileid.sampleapps.ui.components.ChevronRightGlyph
 import com.usesmileid.sampleapps.ui.components.ProductMarkGlyph
 import com.usesmileid.sampleapps.ui.components.FlashGlyph
 import com.usesmileid.sampleapps.ui.components.TrashGlyph
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleCustomCancelButton
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleCustomContinueButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDataFieldRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDateGroupHeader
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDestructiveRow
@@ -38,12 +36,6 @@ import org.junit.Test
 
 /** `BottomSheet` is absent on purpose: `ModalBottomSheet` renders into its own window, so it is verified on a device. */
 class CompositeGoldenTest : GoldenTest() {
-
-    @Test
-    fun custom_buttons() = goldens("custom_buttons") { CustomButtons() }
-
-    @Test
-    fun custom_buttons_survive_max_font_scale() = assertSurvivesMaxFontScale { CustomButtons() }
 
     @Test
     fun top_app_bar() = goldens("top_app_bar") { TopAppBars() }
@@ -330,14 +322,4 @@ private fun SelectionCheckboxes() = FlowRow(
 private fun SelectionBars() = Column(verticalArrangement = stack) {
     UseSmileIDSampleSelectionBar(selectedCount = 0, onRemove = {})
     UseSmileIDSampleSelectionBar(selectedCount = 2, onRemove = {})
-}
-
-@Composable
-private fun CustomButtons() {
-    Column(verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs)) {
-        UseSmileIDSampleCustomContinueButton(onClick = {})
-        UseSmileIDSampleCustomContinueButton(onClick = {}, enabled = false)
-        UseSmileIDSampleCustomCancelButton(onClick = {})
-        UseSmileIDSampleCustomCancelButton(onClick = {}, enabled = false)
-    }
 }

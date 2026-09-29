@@ -1,9 +1,5 @@
 import { Text, View } from 'react-native';
 
-import {
-  UseSmileIDSampleCustomCancelButton,
-  UseSmileIDSampleCustomContinueButton,
-} from '../src/components/use-smile-id-sample-custom-button';
 import { UseSmileIDSampleDataFieldRow } from '../src/components/use-smile-id-sample-data-field-row';
 import { UseSmileIDSampleDateGroupHeader } from '../src/components/use-smile-id-sample-date-group-header';
 import { UseSmileIDSampleEmptyState } from '../src/components/use-smile-id-sample-empty-state';
@@ -455,15 +451,6 @@ const cases: { component: string; states: Record<string, Case> }[] = [
       },
     },
   },
-  {
-    component: 'CustomButton',
-    states: {
-      continueEnabled: { element: () => <UseSmileIDSampleCustomContinueButton onPress={noop} /> },
-      continueDisabled: { element: () => <UseSmileIDSampleCustomContinueButton onPress={noop} enabled={false} /> },
-      cancelEnabled: { element: () => <UseSmileIDSampleCustomCancelButton onPress={noop} /> },
-      cancelDisabled: { element: () => <UseSmileIDSampleCustomCancelButton onPress={noop} enabled={false} /> },
-    },
-  },
 ];
 
 describe.each(cases)('$component', ({ states }) => {
@@ -493,13 +480,12 @@ describe('composite coverage', () => {
       'SelectionBar',
       'EmptyState',
       'ResultCard',
-      'CustomButton',
     ]);
   });
 
   it('records both schemes for every state', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(98);
+    expect(total * schemes.length).toBe(90);
   });
 
   it('uses one fixture set, so a pair of platforms can be read against each other', () => {

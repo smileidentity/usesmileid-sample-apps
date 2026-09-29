@@ -5,47 +5,48 @@ import androidx.compose.ui.Modifier
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleFullHeightBottomSheet
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleOptionRow
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSearchField
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogue
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCountry
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdType
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleKycIdType
 
 /** The ID-type picker. Its list depends on the country, which is why the trigger opening it is disabled without one. */
 @Composable
 fun IdTypePickerSheet(
     country: UseSmileIDSampleCountry?,
-    selected: UseSmileIDSampleIdType?,
+    catalogue: UseSmileIDSampleCatalogue<UseSmileIDSampleKycIdType>,
+    selected: UseSmileIDSampleKycIdType?,
     query: String,
     onQueryChange: (String) -> Unit,
-    onSelect: (UseSmileIDSampleIdType) -> Unit,
+    onSelect: (UseSmileIDSampleKycIdType) -> Unit,
+    onRetry: () -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val matches = UseSmileIDSampleIdType.of(country).filter { it.label.contains(query, ignoreCase = true) }
     UseSmileIDSampleFullHeightBottomSheet(
         title = "ID type",
         onDismissRequest = onDismissRequest,
         modifier = modifier,
         testId = UseSmileIDSampleTestIds.ID_TYPE_SHEET,
     ) {
-        UseSmileIDSampleSearchField(
+        CataloguePicker(
+            catalogue = catalogue,
+            what = "ID types",
             query = query,
             onQueryChange = onQueryChange,
-            placeholder = "Search ID type",
-            testId = UseSmileIDSampleTestIds.ID_TYPE_SEARCH,
-        )
-        PickerList(
-            empty = matches.isEmpty(),
-            emptyLabel = if (query.isBlank()) "No ID type for this country" else "No ID type matches \u201c$query\u201d",
+            searchPlaceholder = "Search ID type",
+            searchTestId = UseSmileIDSampleTestIds.ID_TYPE_SEARCH,
+            label = { it.label },
             emptyTestId = UseSmileIDSampleTestIds.ID_TYPE_EMPTY,
-        ) {
-            matches.forEach { idType ->
-                UseSmileIDSampleOptionRow(
-                    label = idType.label,
-                    selected = idType == selected,
-                    onClick = { onSelect(idType) },
-                    testId = UseSmileIDSampleTestIds.idTypeOption(idType.id),
-                )
-            }
+            emptyLabel = "No ID type matches “$query”",
+            nothingToList = "No ID types for ${country?.name ?: "this country"}" to "Choose another country",
+            onRetry = onRetry,
+        ) { idType ->
+            UseSmileIDSampleOptionRow(
+                label = idType.label,
+                selected = idType.id == selected?.id,
+                onClick = { onSelect(idType) },
+                testId = UseSmileIDSampleTestIds.idTypeOption(idType.id),
+            )
         }
     }
 }

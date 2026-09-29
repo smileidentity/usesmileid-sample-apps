@@ -72,6 +72,21 @@ class FlowJourneyStepsTest {
     }
 
     @Test
+    fun `both document products capture the document first unless selfie first is on`() {
+        listOf(
+            UseSmileIDSampleProduct.DocumentVerification,
+            UseSmileIDSampleProduct.EnhancedDocumentVerification,
+        ).forEach { product ->
+            val captures = { selfieFirst: Boolean ->
+                journeyStepsFor(snapshot(product).copy(selfieFirst = selfieFirst))
+                    .filter { it == FlowJourneyStep.SelfieCapture || it == FlowJourneyStep.DocumentCapture }
+            }
+            assertEquals("$product", listOf(FlowJourneyStep.DocumentCapture, FlowJourneyStep.SelfieCapture), captures(false))
+            assertEquals("$product", listOf(FlowJourneyStep.SelfieCapture, FlowJourneyStep.DocumentCapture), captures(true))
+        }
+    }
+
+    @Test
     fun `a preview always follows the capture it belongs to`() {
         UseSmileIDSampleProduct.entries.filter { it.capture }.forEach { product ->
             val steps = journeyStepsFor(snapshot(product))

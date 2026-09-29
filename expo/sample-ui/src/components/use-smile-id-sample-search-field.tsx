@@ -9,6 +9,8 @@ type Props = {
   query: string;
   onQueryChange: (query: string) => void;
   placeholder?: string;
+  /// Off while a list is still loading: there is nothing to filter yet.
+  enabled?: boolean;
   testID?: string;
   style?: StyleProp<ViewStyle>;
 };
@@ -18,6 +20,7 @@ export const UseSmileIDSampleSearchField = ({
   query,
   onQueryChange,
   placeholder = '',
+  enabled = true,
   testID,
   style,
 }: Props) => {
@@ -47,6 +50,7 @@ export const UseSmileIDSampleSearchField = ({
         testID={testID}
         value={query}
         onChangeText={onQueryChange}
+        editable={enabled}
         placeholder={placeholder}
         placeholderTextColor={theme.colors.search.placeholder}
         selectionColor={theme.colors.search.borderFocus}

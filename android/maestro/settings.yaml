@@ -337,6 +337,88 @@ appId: ${APP_ID}
           id: "sample_scenario_drawer"
       - back
 
+# --- document capture: every row persists, and the sheet shows the one chosen ----------------------
+- stopApp
+- launchApp:
+    arguments:
+      probes: true
+- runFlow: subflows/warm-start.yaml
+- tapOn:
+    id: "sample_nav_settings"
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_gallery_upload"
+    centerElement: true
+- assertVisible: "Automatic with manual fallback"
+- assertVisible:
+    id: "sample_setting_gallery_upload"
+    checked: false
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_selfie_first"
+    centerElement: true
+- assertVisible:
+    id: "sample_setting_capture_both_sides"
+    checked: true
+- assertVisible:
+    id: "sample_setting_allow_skip_back"
+    checked: false
+- assertVisible:
+    id: "sample_setting_selfie_first"
+    checked: false
+- tapOn:
+    id: "sample_setting_capture_both_sides"
+- tapOn:
+    id: "sample_setting_allow_skip_back"
+- tapOn:
+    id: "sample_setting_selfie_first"
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_gallery_upload"
+    direction: UP
+    centerElement: true
+- tapOn:
+    id: "sample_setting_capture_mode"
+- assertVisible:
+    id: "sample_capture_mode_sheet"
+- assertVisible:
+    id: "sample_capture_mode_option_autoWithFallback"
+    checked: true
+- tapOn:
+    id: "sample_capture_mode_option_manual"
+- assertNotVisible:
+    id: "sample_capture_mode_sheet"
+- tapOn:
+    id: "sample_setting_gallery_upload"
+- stopApp
+- launchApp:
+    arguments:
+      probes: true
+- runFlow: subflows/warm-start.yaml
+- tapOn:
+    id: "sample_nav_settings"
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_gallery_upload"
+    centerElement: true
+- assertVisible: "Manual"
+- assertVisible:
+    id: "sample_setting_gallery_upload"
+    checked: true
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_selfie_first"
+    centerElement: true
+- assertVisible:
+    id: "sample_setting_capture_both_sides"
+    checked: false
+- assertVisible:
+    id: "sample_setting_allow_skip_back"
+    checked: true
+- assertVisible:
+    id: "sample_setting_selfie_first"
+    checked: true
+
 # --- leave the suite as it was found -------------------------------------------------------------
 - stopApp
 - launchApp:

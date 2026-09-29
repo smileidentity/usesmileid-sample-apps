@@ -32,6 +32,7 @@ const settings = (
     onSettingChange={noop}
     onProfilePress={noop}
     onNavRowPress={noop}
+    onCaptureModePress={noop}
     onSignOut={noop}
     {...overrides}
   />
@@ -60,15 +61,6 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
                 agentMode: true,
                 enhancedSmartSelfie: false,
               },
-            },
-          }),
-      },
-      customButtonsOn: {
-        element: () =>
-          settings({
-            state: {
-              ...settingsState,
-              settings: { ...smileIDSampleSettingsDefaults, customContinue: true, customCancel: true },
             },
           }),
       },
@@ -151,12 +143,12 @@ describe.each(cases)('$screen', ({ states }) => {
 describe('screen coverage', () => {
   it('records both schemes for every state spec/screens.json lists for these four', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(26);
+    expect(total * schemes.length).toBe(24);
   });
 });
 
 describe('settings', () => {
-  it('attaches the id every one of the six switches is driven by', async () => {
+  it('attaches the id every switch is driven by', async () => {
     const rendered = await renderInTheme(settings(), false);
     for (const id of [
       UseSmileIDSampleTestIds.SETTING_ENHANCED_SMART_SELFIE,
@@ -165,6 +157,10 @@ describe('settings', () => {
       UseSmileIDSampleTestIds.SETTING_CONSENT_STEP,
       UseSmileIDSampleTestIds.SETTING_INSTRUCTIONS_STEP,
       UseSmileIDSampleTestIds.SETTING_PREVIEW_STEP,
+      UseSmileIDSampleTestIds.SETTING_GALLERY_UPLOAD,
+      UseSmileIDSampleTestIds.SETTING_CAPTURE_BOTH_SIDES,
+      UseSmileIDSampleTestIds.SETTING_ALLOW_SKIP_BACK,
+      UseSmileIDSampleTestIds.SETTING_SELFIE_FIRST,
     ]) {
       expect(rendered.queryByTestId(id)).not.toBeNull();
     }

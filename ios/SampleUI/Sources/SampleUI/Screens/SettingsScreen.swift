@@ -97,6 +97,7 @@ public struct SettingsScreen: View {
   private let onSettingChange: (UseSmileIDSampleSetting, Bool) -> Void
   private let onProfile: () -> Void
   private let onNavRow: (UseSmileIDSampleNavRow) -> Void
+  private let onCaptureMode: () -> Void
   /// `nil` hides the DEBUG section: `sample-ui` may not read a host's build configuration.
   private let onOpenScenarioDrawer: (() -> Void)?
   private let onSignOut: () -> Void
@@ -109,6 +110,7 @@ public struct SettingsScreen: View {
     onSettingChange: @escaping (UseSmileIDSampleSetting, Bool) -> Void,
     onProfile: @escaping () -> Void,
     onNavRow: @escaping (UseSmileIDSampleNavRow) -> Void,
+    onCaptureMode: @escaping () -> Void = {},
     onOpenScenarioDrawer: (() -> Void)? = nil,
     onSignOut: @escaping () -> Void
   ) {
@@ -116,6 +118,7 @@ public struct SettingsScreen: View {
     self.onSettingChange = onSettingChange
     self.onProfile = onProfile
     self.onNavRow = onNavRow
+    self.onCaptureMode = onCaptureMode
     self.onOpenScenarioDrawer = onOpenScenarioDrawer
     self.onSignOut = onSignOut
   }
@@ -131,7 +134,7 @@ public struct SettingsScreen: View {
         captureSection
         appearanceSection
         sdkScreensSection
-        customButtonsSection
+        documentCaptureSection
         debugSection
         navSection("ABOUT", rows: aboutRows)
         navSection("LEGAL", rows: legalRows)
@@ -242,23 +245,50 @@ public struct SettingsScreen: View {
     }
   }
 
-  /// The design draws no such section, so this placement is ours, like DEBUG's.
-  private var customButtonsSection: some View {
-    UseSmileIDSampleSectionSurface(label: "CUSTOM BUTTONS — REPLACE THE SDK'S BUTTONS") {
+  /// The design draws no such section either; it sits with the other capture choices.
+  private var documentCaptureSection: some View {
+    UseSmileIDSampleSectionSurface(label: "DOCUMENT CAPTURE") {
+      UseSmileIDSampleSettingRow(
+        title: "Capture mode",
+        supportingText: state.settings.captureMode.label,
+        testId: UseSmileIDSampleTestIds.settingCaptureMode,
+        onTap: onCaptureMode
+      ) {
+        UseSmileIDSampleIcon(SmileIcons.documentVerification, tint: colors.textTitle, size: SmileSpacing.sizeIconMd)
+      } trailing: {
+        UseSmileIDSampleSettingRowChevron()
+      }
+      UseSmileIDSampleRowDivider()
       switchRow(
-        title: "Custom continue",
-        icon: SmileIcons.customContinue,
-        supporting: "Replaces the SDK's continue buttons",
-        setting: .customContinue,
-        testId: UseSmileIDSampleTestIds.settingCustomContinue
+        title: "Gallery upload",
+        icon: SmileIcons.preview,
+        supporting: "The system picker needs no permission",
+        setting: .galleryUpload,
+        testId: UseSmileIDSampleTestIds.settingGalleryUpload
       )
       UseSmileIDSampleRowDivider()
       switchRow(
-        title: "Custom cancel",
-        icon: SmileIcons.arrowBack,
-        supporting: "Replaces the SDK's cancel buttons",
-        setting: .customCancel,
-        testId: UseSmileIDSampleTestIds.settingCustomCancel
+        title: "Capture the back side",
+        icon: SmileIcons.documentVerification,
+        supporting: "Only for a document type that has one",
+        setting: .captureBothSides,
+        testId: UseSmileIDSampleTestIds.settingCaptureBothSides
+      )
+      UseSmileIDSampleRowDivider()
+      switchRow(
+        title: "Skip the back",
+        icon: SmileIcons.instructions,
+        supporting: "A Skip button on the back-side capture",
+        setting: .allowSkipBack,
+        testId: UseSmileIDSampleTestIds.settingAllowSkipBack
+      )
+      UseSmileIDSampleRowDivider()
+      switchRow(
+        title: "Selfie first",
+        icon: SmileIcons.smile,
+        supporting: "The selfie before the document",
+        setting: .selfieFirst,
+        testId: UseSmileIDSampleTestIds.settingSelfieFirst
       )
     }
   }

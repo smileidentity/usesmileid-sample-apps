@@ -64,6 +64,20 @@
       "notes": "The third-party notices, shipped in the binary rather than linked: Apache-2.0 §4 asks the notice to travel with the distribution, so every platform renders its own generated licenses.json instead of opening a URL. Reachable by deep link like every other route, which is also how a device flow gets to it without scrolling Settings."
     },
     {
+      "id": "captureMode",
+      "screen": "captureModeSheet",
+      "path": "/settings/capture-mode",
+      "presentation": "modalSheet",
+      "args": [],
+      "platform": {
+        "android": "SettingsScreenDestination + UseSmileIDSampleSheet.CaptureMode",
+        "ios": "Sheet.captureMode",
+        "flutter": "/settings/capture-mode",
+        "expo": "app/(settings)/settings/capture-mode.tsx"
+      },
+      "notes": "Layers over Settings, the only screen that owns the row that opens it."
+    },
+    {
       "id": "verificationDetails",
       "screen": "verificationDetails",
       "path": "/verifications/:jobId",
@@ -187,6 +201,66 @@
         "expo": "app/flow/[productId]/id-details/id-type.tsx"
       },
       "notes": "Unreachable until a country is selected — the trigger is disabled, so the route must also reject entry without one."
+    },
+    {
+      "id": "documentPicker",
+      "screen": "documentPickerSheet",
+      "path": "/flow/:productId/id-details/document",
+      "presentation": "fullSheet",
+      "args": [
+        {
+          "name": "productId",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "platform": {
+        "android": "IdDetailsFormScreenDestination + UseSmileIDSampleSheet.DocumentPicker",
+        "ios": "Sheet.documentPicker",
+        "flutter": "/flow/:productId/id-details/document",
+        "expo": "app/flow/[productId]/id-details/document.tsx"
+      },
+      "notes": "The document products' counterpart of idTypePicker, and unreachable until a country is selected in the same way."
+    },
+    {
+      "id": "captureAs",
+      "screen": "captureAsSheet",
+      "path": "/flow/:productId/id-details/capture-as",
+      "presentation": "modalSheet",
+      "args": [
+        {
+          "name": "productId",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "platform": {
+        "android": "IdDetailsFormScreenDestination + UseSmileIDSampleSheet.CaptureAs",
+        "ios": "Sheet.captureAs",
+        "flutter": "/flow/:productId/id-details/capture-as",
+        "expo": "app/flow/[productId]/id-details/capture-as.tsx"
+      },
+      "notes": "Unreachable until a document is selected, which is when its trigger enables."
+    },
+    {
+      "id": "genericDocument",
+      "screen": "genericDocumentSheet",
+      "path": "/flow/:productId/id-details/generic-document",
+      "presentation": "modalSheet",
+      "args": [
+        {
+          "name": "productId",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "platform": {
+        "android": "IdDetailsFormScreenDestination + UseSmileIDSampleSheet.GenericDocument",
+        "ios": "Sheet.genericDocument",
+        "flutter": "/flow/:productId/id-details/generic-document",
+        "expo": "app/flow/[productId]/id-details/generic-document.tsx"
+      },
+      "notes": "Opened by choosing Generic document in captureAs. Nothing is kept until Done, so dismissing it, or a link straight here that is dismissed, leaves the form's choice as it was."
     },
     {
       "id": "profileSwitch",

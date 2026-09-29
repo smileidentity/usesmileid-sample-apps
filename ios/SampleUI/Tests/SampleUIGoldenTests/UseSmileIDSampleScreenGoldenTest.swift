@@ -54,13 +54,6 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     }
   }
 
-  /// Both custom buttons on, so the section's switches are recorded ON.
-  func testSettingsCustomButtons() {
-    goldens("settings_custom_buttons") {
-      settings(UseSmileIDSampleSettings(customContinue: true, customCancel: true))
-    }
-  }
-
   /// A second seeded profile active: the PROFILE row is the only thing the frame changes.
   func testSettingsAltProfile() {
     goldens("settings_alt_profile") {
@@ -218,21 +211,122 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   }
 
   func testIdTypePicker() {
-    goldens("idtype_picker") { idTypePicker(country: .kenya) }
+    goldens("idtype_picker") { idTypePicker(country: Self.kenya) }
   }
 
   /// The trigger is disabled without a country, but a deep link can still open the sheet.
-  func testIdTypePickerWithoutACountry() {
-    goldens("idtype_picker_no_country") { idTypePicker(country: nil) }
+  func testIdTypePickerEmpty() {
+    goldens("idtype_picker_empty") {
+      idTypePicker(country: UseSmileIDSampleCountry(code: "RW", name: "Rwanda"), catalogue: .empty)
+    }
+  }
+
+  func testIdTypePickerLoading() {
+    goldens("idtype_picker_loading") { idTypePicker(country: Self.kenya, catalogue: .loading).environment(\.useSmileIDSampleSkeletonDelay, 0) }
+  }
+
+  func testIdTypePickerError() {
+    goldens("idtype_picker_error") { idTypePicker(country: Self.kenya, catalogue: .failed("offline")) }
+  }
+
+  func testCountryPickerLoading() {
+    goldens("country_picker_loading") { countryPicker(query: "", catalogue: .loading).environment(\.useSmileIDSampleSkeletonDelay, 0) }
+  }
+
+  func testCountryPickerError() {
+    goldens("country_picker_error") { countryPicker(query: "", catalogue: .failed("offline")) }
+  }
+
+  func testCountryPickerErrorSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) {
+      countryPicker(query: "", catalogue: .failed("offline"), height: 1400)
+    }
+  }
+
+  func testDocumentPicker() {
+    goldens("document_picker") { documentPicker(.ready(Self.southAfricanDocuments)) }
+  }
+
+  /// Only names are translated under ar-EG, and the app does not flip its own layout, so the rows stay left-to-right.
+  func testDocumentPickerArabicNames() {
+    goldens("document_picker_ar") { documentPicker(.ready(Self.arabicDocuments)) }
+  }
+
+  func testDocumentPickerLoading() {
+    goldens("document_picker_loading") { documentPicker(.loading).environment(\.useSmileIDSampleSkeletonDelay, 0) }
+  }
+
+  func testDocumentPickerError() {
+    goldens("document_picker_error") { documentPicker(.failed("offline")) }
+  }
+
+  func testDocumentPickerEmpty() {
+    goldens("document_picker_empty") { documentPicker(.empty) }
+  }
+
+  func testKycFormIdNumberInvalid() {
+    goldens("kyc_form_id_number_invalid") { kycForm(Self.invalidId) }
+  }
+
+  func testKycFormIdNumberInvalidSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) { kycForm(Self.invalidId, height: 1400) }
+  }
+
+  func testKycFormLoading() {
+    goldens("kyc_form_loading") { kycForm(UseSmileIDSampleIdDetails(country: Self.kenya), loading: true) }
+  }
+
+  func testKycFormCatalogueError() {
+    goldens("kyc_form_catalogue_error") { kycForm(UseSmileIDSampleIdDetails(country: Self.kenya)) }
+  }
+
+  func testDocumentFormSelected() {
+    goldens("document_form_selected") { kycForm(Self.documentSelected, family: .document) }
+  }
+
+  func testDocumentFormSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) {
+      kycForm(Self.documentSelected, family: .document, height: 1400)
+    }
+  }
+
+  func testCaptureAsSheet() {
+    goldens("capture_as_sheet") { CaptureAsSheet(selected: .genericDocument, onSelect: { _ in }).frame(height: 700) }
+  }
+
+  func testGenericDocumentSheet() {
+    goldens("generic_document_sheet") {
+      GenericDocumentSheet(initial: UseSmileIDSampleGenericDocument(), onDone: { _ in }).frame(height: 900)
+    }
+  }
+
+  func testGenericDocumentSheetSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) {
+      GenericDocumentSheet(initial: UseSmileIDSampleGenericDocument(), onDone: { _ in }).frame(height: 1800)
+    }
+  }
+
+  func testCaptureModeSheet() {
+    goldens("capture_mode_sheet") { CaptureModeSheet(selected: .autoWithFallback, onSelect: { _ in }).frame(height: 700) }
   }
 
   func testCountryPickerSurvivesMaxDynamicType() {
     assertSurvivesMaxDynamicType(growsWithContentSize: false) { countryPicker(query: "", height: 1400) }
   }
 
-  private func kycForm(_ details: UseSmileIDSampleIdDetails, height: CGFloat = 700) -> some View {
+  private func kycForm(
+    _ details: UseSmileIDSampleIdDetails,
+    family: UseSmileIDSampleCatalogueFamily = .kyc,
+    loading: Bool = false,
+    height: CGFloat = 700
+  ) -> some View {
     KycIdFormScreen(
-      state: .init(productLabel: "Biometric KYC", details: details),
+      state: .init(
+        productLabel: family == .kyc ? "Biometric KYC" : "Document Verification",
+        family: family,
+        details: details,
+        countryListLoading: loading
+      ),
       onCountryTap: {},
       onIdTypeTap: {},
       onIdNumberChange: { _ in },
@@ -243,20 +337,82 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     .frame(height: height)
   }
 
-  private func countryPicker(query: String, height: CGFloat = 700) -> some View {
-    CountryPickerSheet(selected: nil, query: .constant(query), onSelect: { _ in }, onClose: {})
-      .frame(height: height)
+  private func countryPicker(
+    query: String,
+    catalogue: UseSmileIDSampleCatalogue<UseSmileIDSampleCountry> = .ready(countries),
+    height: CGFloat = 700
+  ) -> some View {
+    CountryPickerSheet(
+      catalogue: catalogue,
+      selected: nil,
+      query: .constant(query),
+      onSelect: { _ in },
+      onRetry: {},
+      onClose: {}
+    )
+    .frame(height: height)
   }
 
-  private func idTypePicker(country: UseSmileIDSampleCountry?, height: CGFloat = 700) -> some View {
-    IdTypePickerSheet(country: country, selected: nil, query: .constant(""), onSelect: { _ in }, onClose: {})
-      .frame(height: height)
+  private func idTypePicker(
+    country: UseSmileIDSampleCountry?,
+    catalogue: UseSmileIDSampleCatalogue<UseSmileIDSampleKycIdType> = .ready([nationalId, passport]),
+    height: CGFloat = 700
+  ) -> some View {
+    IdTypePickerSheet(
+      country: country,
+      catalogue: catalogue,
+      selected: nil,
+      query: .constant(""),
+      onSelect: { _ in },
+      onRetry: {},
+      onClose: {}
+    )
+    .frame(height: height)
   }
 
-  private static let selectedId = UseSmileIDSampleIdDetails(
-    country: .kenya,
-    idType: .nationalId,
-    idNumber: "AO12345678"
+  private func documentPicker(_ catalogue: UseSmileIDSampleCatalogue<UseSmileIDSampleDocument>, height: CGFloat = 700) -> some View {
+    DocumentPickerSheet(
+      country: UseSmileIDSampleCountry(code: "ZA", name: "South Africa"),
+      catalogue: catalogue,
+      selected: nil,
+      query: .constant(""),
+      onSelect: { _ in },
+      onRetry: {},
+      onClose: {}
+    )
+    .frame(height: height)
+  }
+
+  /// The rows spec/catalogue-fixture.json yields, spelled out: this target does not read spec/.
+  private static let kenya = UseSmileIDSampleCountry(code: "KE", name: "Kenya")
+  private static let countries = [
+    UseSmileIDSampleCountry(code: "GH", name: "Ghana"), kenya, UseSmileIDSampleCountry(code: "NG", name: "Nigeria")
+  ]
+  private static let nationalId = UseSmileIDSampleKycIdType(
+    id: "NATIONAL_ID", type: "NATIONAL_ID", label: "National ID", regex: "^[0-9]{1,9}$"
+  )
+  private static let passport = UseSmileIDSampleKycIdType(id: "PASSPORT", type: "PASSPORT", label: "Passport", regex: "^[A-Z0-9]{7,9}$")
+  private static let southAfricanDocuments = [
+    UseSmileIDSampleDocument(code: "IDENTITY_CARD", name: "Identity Card", hasBack: true, format: 1),
+    UseSmileIDSampleDocument(code: "IDENTITY_CARD", subType: "green_book", name: "Green Book", hasBack: false, format: 7),
+    UseSmileIDSampleDocument(code: "PASSPORT", name: "Passport", hasBack: false, format: 3)
+  ]
+  /// Names as the API returns them under ar-EG, codes unchanged (sandbox, 2026-09-28).
+  private static let arabicDocuments = [
+    UseSmileIDSampleDocument(code: "ALIEN_CARD", name: "بطاقة الأجانب", hasBack: false, format: 1),
+    UseSmileIDSampleDocument(code: "IDENTITY_CARD", name: "بطاقة الهوية", hasBack: true, format: 1),
+    UseSmileIDSampleDocument(code: "PASSPORT", name: "جواز السفر", hasBack: false, format: 3)
+  ]
+
+  private static let selectedId = UseSmileIDSampleIdDetails(country: kenya, idType: nationalId, idNumber: "12345678")
+
+  /// Letters where Kenya's National ID takes only digits, so the field explains the format.
+  private static let invalidId = UseSmileIDSampleIdDetails(country: kenya, idType: nationalId, idNumber: "AO12345678")
+
+  /// The Green Book: a standalone sub-type row, captured as the API describes it.
+  private static let documentSelected = UseSmileIDSampleIdDetails(
+    country: UseSmileIDSampleCountry(code: "ZA", name: "South Africa"),
+    document: southAfricanDocuments[1]
   )
 
   /// The card sits under the details, so the four states need the room the design frame did not.

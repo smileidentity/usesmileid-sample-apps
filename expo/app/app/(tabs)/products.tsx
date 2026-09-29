@@ -1,5 +1,6 @@
 import {
   ProductsScreen,
+  smileIDSampleCatalogueFamily,
   smileIDSampleResultSelecting,
   useSmileIDSampleResultStore,
   avatarColorForProfile,
@@ -17,6 +18,11 @@ import { useRouter } from 'expo-router';
 
 import { smileIDSampleFirstStepFor } from '../../src/flow/use-smile-id-sample-flow-journey';
 import { smileIDSampleLiveBindingsNow } from '../../src/flow/use-smile-id-sample-token-binding-rules';
+import {
+  smileIDSampleCatalogueEnvironment,
+  smileIDSampleCatalogueLocale,
+  smileIDSampleCatalogueStore,
+} from '../../src/catalogue/use-smile-id-sample-catalogue';
 import { useLaunchArgs } from '../../src/use-smile-id-sample-launch';
 import { useSmileIDSampleListInset } from '../../src/use-smile-id-sample-list-inset';
 
@@ -26,7 +32,7 @@ export default function Products() {
   const index = useSmileIDSampleActiveProfileIndex();
   const startRun = useSmileIDSampleFormsStore((state) => state.startRun);
   const bottomInset = useSmileIDSampleListInset();
-  const { scenario, theme } = useLaunchArgs();
+  const { scenario, theme, catalogue } = useLaunchArgs();
   const result = useSmileIDSampleResultStore((state) => state.result);
   const live = useSmileIDSampleSessionStore((state) => smileIDSampleLiveSession(state, state.nowMillis));
   const nowMillis = useSmileIDSampleSessionStore((state) => state.nowMillis);
@@ -44,6 +50,12 @@ export default function Products() {
       }}
       onProductPress={(product) => {
         startRun(profile);
+        // Fetched ahead, so the list is usually there by the time the picker opens.
+        if (smileIDSampleCatalogueFamily(product) !== null) {
+          smileIDSampleCatalogueStore(catalogue)
+            .getState()
+            .begin(smileIDSampleCatalogueEnvironment(live), smileIDSampleCatalogueLocale());
+        }
         router.push(smileIDSampleFirstStepFor(product, smileIDSampleLiveBindingsNow(scenario)));
       }}
       onProfilePress={() => router.push('/profiles/switch')}

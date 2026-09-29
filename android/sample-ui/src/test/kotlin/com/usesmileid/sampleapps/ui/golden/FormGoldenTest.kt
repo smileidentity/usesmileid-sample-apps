@@ -16,9 +16,10 @@ import com.usesmileid.sampleapps.ui.screens.CountryPickerSheet
 import com.usesmileid.sampleapps.ui.screens.IdTypePickerSheet
 import com.usesmileid.sampleapps.ui.screens.KycIdFormScreen
 import com.usesmileid.sampleapps.ui.screens.UserDetailsScreen
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCountry
+import com.usesmileid.sampleapps.ui.CatalogueFixtures
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogue
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueFamily
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdType
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenBindings
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetailsRequirement
@@ -77,14 +78,44 @@ class FormGoldenTest : GoldenTest() {
     fun kyc_form_max_font_scale() = assertSurvivesMaxFontScale { KycForm(SELECTED) }
 
     @Test
+    fun kyc_form_id_number_invalid() = goldens("screen_kyc_form_id_number_invalid") { KycForm(INVALID_NUMBER) }
+
+    @Test
+    fun kyc_form_id_number_invalid_max_font_scale() = assertSurvivesMaxFontScale { KycForm(INVALID_NUMBER) }
+
+    /** The country's list is still arriving: the trigger stays enabled and says so. */
+    @Test
+    fun kyc_form_loading() = goldens("screen_kyc_form_loading") {
+        KycForm(COUNTRY_ONLY, countryList = UseSmileIDSampleCatalogue.Loading)
+    }
+
+    /** The list failed: the trigger goes back to its prompt, so the form never looks stuck. */
+    @Test
+    fun kyc_form_catalogue_error() = goldens("screen_kyc_form_catalogue_error") {
+        KycForm(COUNTRY_ONLY, countryList = UseSmileIDSampleCatalogue.Failed("offline"))
+    }
+
+    @Test
+    fun document_form_selected() = goldens("screen_document_form_selected") {
+        KycForm(DOCUMENT_SELECTED, family = UseSmileIDSampleCatalogueFamily.Document, productLabel = "Document Verification")
+    }
+
+    @Test
+    fun document_form_max_font_scale() = assertSurvivesMaxFontScale {
+        KycForm(DOCUMENT_SELECTED, family = UseSmileIDSampleCatalogueFamily.Document, productLabel = "Document Verification")
+    }
+
+    @Test
     fun country_picker_sheet() = goldens("sheet_country_picker", fullWindow = true) {
         Box(modifier = Modifier.fillMaxSize()) {
             KycForm(UseSmileIDSampleIdDetails())
             CountryPickerSheet(
+                catalogue = UseSmileIDSampleCatalogue.Ready(CatalogueFixtures.countries(UseSmileIDSampleCatalogueFamily.Kyc)),
                 selected = null,
                 query = "",
                 onQueryChange = {},
                 onSelect = {},
+                onRetry = {},
                 onDismissRequest = {},
             )
         }
@@ -95,11 +126,13 @@ class FormGoldenTest : GoldenTest() {
         Box(modifier = Modifier.fillMaxSize()) {
             KycForm(COUNTRY_ONLY)
             IdTypePickerSheet(
-                country = UseSmileIDSampleCountry.Kenya,
+                country = CatalogueFixtures.kenya,
+                catalogue = UseSmileIDSampleCatalogue.Ready(CatalogueFixtures.idTypes("KE")),
                 selected = null,
                 query = "",
                 onQueryChange = {},
                 onSelect = {},
+                onRetry = {},
                 onDismissRequest = {},
             )
         }
@@ -116,7 +149,7 @@ class FormGoldenTest : GoldenTest() {
         val PARTIAL = UseSmileIDSampleUserDetails(firstName = "Kwame")
 
         /** A country chosen and nothing else, which is the only state that unlocks the ID-type trigger. */
-        val COUNTRY_ONLY = UseSmileIDSampleIdDetails(country = UseSmileIDSampleCountry.Kenya)
+        val COUNTRY_ONLY = UseSmileIDSampleIdDetails(country = CatalogueFixtures.kenya)
 
         val COMPLETE = UseSmileIDSampleUserDetails(
             firstName = "Kwame",
@@ -128,9 +161,18 @@ class FormGoldenTest : GoldenTest() {
         val TOKEN_SUPPLIED_NAMES = UseSmileIDSampleTokenBindings(givenNames = true, lastName = true)
             .userDetailsRequirement()
         val SELECTED = UseSmileIDSampleIdDetails(
-            country = UseSmileIDSampleCountry.Kenya,
-            idType = UseSmileIDSampleIdType.NationalId,
-            idNumber = "AO12345678",
+            country = CatalogueFixtures.kenya,
+            idType = CatalogueFixtures.idTypes("KE").first { it.type == "NATIONAL_ID" },
+            idNumber = "12345678",
+        )
+
+        /** Letters where Kenya's National ID takes only digits, so the field explains the format. */
+        val INVALID_NUMBER = SELECTED.copy(idNumber = "AO12345678")
+
+        /** The Green Book: a standalone sub-type row, captured as the API describes it. */
+        val DOCUMENT_SELECTED = UseSmileIDSampleIdDetails(
+            country = CatalogueFixtures.southAfrica,
+            document = CatalogueFixtures.documents("ZA").first { it.subType == "green_book" },
         )
     }
 
@@ -174,11 +216,20 @@ class FormGoldenTest : GoldenTest() {
     }
 
     @Composable
-    private fun KycForm(details: UseSmileIDSampleIdDetails) = KycIdFormScreen(
-        productLabel = "Biometric KYC",
+    private fun KycForm(
+        details: UseSmileIDSampleIdDetails,
+        family: UseSmileIDSampleCatalogueFamily = UseSmileIDSampleCatalogueFamily.Kyc,
+        productLabel: String = "Biometric KYC",
+        countryList: UseSmileIDSampleCatalogue<*> = UseSmileIDSampleCatalogue.Ready(emptyList<Unit>()),
+    ) = KycIdFormScreen(
+        productLabel = productLabel,
+        family = family,
         details = details,
+        countryList = countryList,
         onCountryClick = {},
         onIdTypeClick = {},
+        onDocumentClick = {},
+        onCaptureAsClick = {},
         onIdNumberChange = {},
         onBack = {},
         onContinue = {},

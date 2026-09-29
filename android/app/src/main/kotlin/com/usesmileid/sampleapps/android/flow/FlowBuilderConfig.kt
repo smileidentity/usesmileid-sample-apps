@@ -16,12 +16,17 @@ import com.usesmileid.presentation.flow.config.EnhancedKYCParams
 import com.usesmileid.presentation.flow.dsl.ScreensBuilder
 import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.sampleapps.android.BuildConfig
-import com.usesmileid.sampleapps.ui.components.useSmileIDSampleCustomCancelSlot
-import com.usesmileid.sampleapps.ui.components.useSmileIDSampleCustomContinueSlot
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdType
+import com.usesmileid.presentation.flow.config.DocumentCaptureMode
+import com.usesmileid.presentation.flow.config.DocumentOrientation
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureAs
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueFamily
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureMode
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocumentOrientation
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
 import com.usesmileid.sampleapps.ui.state.bindsRequiredUserDetails
+import com.usesmileid.sampleapps.ui.state.catalogueFamily
 import com.usesmileid.sampleapps.ui.theme.override
 import java.net.URL
 import com.usesmileid.sampleapps.ui.R as SampleUiR
@@ -58,6 +63,8 @@ fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshe
         }
     }
     network {
+        // Debug builds only: logs the three document-capture keys of the submission metadata, nothing else.
+        wireProbe()?.let { probe -> interceptors { +probe } }
         config {
             jobType = snapshot.product.jobType
             val scanned = snapshot.liveSession
@@ -113,9 +120,15 @@ private fun UseSmileIDFlowBuilder.applyIdParams(snapshot: FlowLaunchSnapshot) {
     // Per field, the token beats the form — the server overwrites these from its claims regardless.
     val bound = snapshot.liveSession?.bindings
     val country = bound?.country ?: details.country?.code.orEmpty()
-    val idType = bound?.idType ?: details.idType?.id.orEmpty()
-    // The SDK asks only that this be non-blank, and the server substitutes the same claim anyway.
-    val idNumber = bound?.idNumberReference ?: details.idNumber
+    // By family, so a field left over from another product's form is never sent.
+    val chosen = when (snapshot.product.catalogueFamily) {
+        UseSmileIDSampleCatalogueFamily.Kyc -> details.idType?.type
+        UseSmileIDSampleCatalogueFamily.Document -> details.document?.code
+        null -> null
+    }
+    val idType = bound?.idType ?: chosen.orEmpty()
+    // Trimmed, as the form checked it.
+    val idNumber = bound?.idNumberReference ?: details.idNumber.trim()
     when (snapshot.product) {
         UseSmileIDSampleProduct.BiometricKyc -> biometricKYCParams = BiometricKYCParams(
             idType = idType,
@@ -130,7 +143,7 @@ private fun UseSmileIDFlowBuilder.applyIdParams(snapshot: FlowLaunchSnapshot) {
         // Nullable here: an unbound, unselected type stays absent rather than becoming a rejected "".
         UseSmileIDSampleProduct.DocumentVerification -> documentVerificationParams = DocumentVerificationParams(
             country = country,
-            idType = bound?.idType ?: details.idType?.id,
+            idType = bound?.idType ?: chosen,
         )
         UseSmileIDSampleProduct.EnhancedDocumentVerification -> enhancedDocumentVerificationParams =
             EnhancedDocumentVerificationParams(
@@ -149,12 +162,8 @@ private fun ScreensBuilder.journeyFor(snapshot: FlowLaunchSnapshot) {
                 // Omitting it fails build() while validate() still reports Valid.
                 partnerIcon = SampleUiR.drawable.sample_ic_product_mark
                 partnerPrivacyPolicyUrl = PRIVACY_POLICY_URL
-                if (snapshot.customContinue) allowButton = useSmileIDSampleCustomContinueSlot
-                if (snapshot.customCancel) denyButton = useSmileIDSampleCustomCancelSlot
             }
-            FlowJourneyStep.Instructions -> instructions {
-                if (snapshot.customContinue) continueButton = useSmileIDSampleCustomContinueSlot
-            }
+            FlowJourneyStep.Instructions -> instructions { }
             FlowJourneyStep.SelfieCapture -> capture {
                 captureType = CaptureType.SELFIE
                 selfie {
@@ -165,17 +174,16 @@ private fun ScreensBuilder.journeyFor(snapshot: FlowLaunchSnapshot) {
             FlowJourneyStep.DocumentCapture -> capture {
                 captureType = CaptureType.DOCUMENT
                 document {
-                    documentType = snapshot.idDetails.idType.toDocumentType()
-                    captureBothSides = snapshot.idDetails.idType.capturesBothSides
-                    allowSkipBack = true
+                    val options = documentOptionsFor(snapshot)
+                    documentType = options.documentType
+                    captureBothSides = options.captureBothSides
+                    allowSkipBack = options.allowSkipBack
+                    captureMode = options.captureMode
+                    allowGalleryUpload = options.allowGalleryUpload
                 }
             }
             FlowJourneyStep.Preview -> preview { }
-            // Retry is neither continue nor cancel, so it stays the SDK's (spec/components.json).
-            FlowJourneyStep.Processing -> processing {
-                if (snapshot.customContinue) continueButton = useSmileIDSampleCustomContinueSlot
-                if (snapshot.customCancel) exitButton = useSmileIDSampleCustomCancelSlot
-            }
+            FlowJourneyStep.Processing -> processing { }
         }
     }
 }
@@ -196,14 +204,14 @@ internal fun journeyStepsFor(snapshot: FlowLaunchSnapshot): List<FlowJourneyStep
     }
     if (snapshot.instructionsStep) add(FlowJourneyStep.Instructions)
     when (snapshot.product) {
-        UseSmileIDSampleProduct.DocumentVerification -> {
-            documentCapture(snapshot.previewStep)
-            selfieCapture(snapshot.previewStep)
-        }
-        UseSmileIDSampleProduct.EnhancedDocumentVerification -> {
-            selfieCapture(snapshot.previewStep)
-            documentCapture(snapshot.previewStep)
-        }
+        UseSmileIDSampleProduct.DocumentVerification, UseSmileIDSampleProduct.EnhancedDocumentVerification ->
+            if (snapshot.selfieFirst) {
+                selfieCapture(snapshot.previewStep)
+                documentCapture(snapshot.previewStep)
+            } else {
+                documentCapture(snapshot.previewStep)
+                selfieCapture(snapshot.previewStep)
+            }
         else -> selfieCapture(snapshot.previewStep)
     }
     add(FlowJourneyStep.Processing)
@@ -220,15 +228,46 @@ private fun MutableList<FlowJourneyStep>.documentCapture(preview: Boolean) {
     if (preview) add(FlowJourneyStep.Preview)
 }
 
-private fun UseSmileIDSampleIdType?.toDocumentType(): DocumentType = when (this) {
-    UseSmileIDSampleIdType.Passport -> DocumentType.Passport
-    null -> DocumentType.GenericDocument()
-    else -> DocumentType.GenericDocument(displayName = label)
+/** Everything the document capture step is handed, read from the snapshot so it can be tested without the SDK's builder. */
+internal data class DocumentOptions(
+    val documentType: DocumentType,
+    val captureBothSides: Boolean,
+    val allowSkipBack: Boolean,
+    val captureMode: DocumentCaptureMode,
+    val allowGalleryUpload: Boolean,
+)
+
+internal fun documentOptionsFor(snapshot: FlowLaunchSnapshot): DocumentOptions = DocumentOptions(
+    documentType = documentTypeFor(snapshot.idDetails),
+    // The SDK's passport preset declares a back side; the sample captures a passport front only.
+    captureBothSides = snapshot.captureBothSides && snapshot.idDetails.captureAs != UseSmileIDSampleCaptureAs.Passport,
+    allowSkipBack = snapshot.allowSkipBack,
+    captureMode = snapshot.captureMode.toSdk(),
+    allowGalleryUpload = snapshot.galleryUpload,
+)
+
+/** The "Capture as" mapping from `spec/catalogue-rules.json` captureAs: the SDK's own type, nothing read from the API. */
+internal fun documentTypeFor(details: UseSmileIDSampleIdDetails): DocumentType = when (details.captureAs) {
+    UseSmileIDSampleCaptureAs.GreenBook -> DocumentType.SouthAfricaGreenBook
+    UseSmileIDSampleCaptureAs.Passport -> DocumentType.Passport
+    UseSmileIDSampleCaptureAs.GenericDocument -> with(details.genericDocument) {
+        DocumentType.GenericDocument(
+            displayName = displayName,
+            hasBackSide = hasBackSide,
+            orientation = when (orientation) {
+                UseSmileIDSampleDocumentOrientation.Landscape -> DocumentOrientation.Landscape
+                UseSmileIDSampleDocumentOrientation.Portrait -> DocumentOrientation.Portrait
+            },
+            knownAspectRatio = aspectRatio.ratio,
+        )
+    }
 }
 
-/** The SDK's passport preset declares a back side; the sample captures a passport front only. */
-internal val UseSmileIDSampleIdType?.capturesBothSides: Boolean
-    get() = this != UseSmileIDSampleIdType.Passport
+internal fun UseSmileIDSampleCaptureMode.toSdk(): DocumentCaptureMode = when (this) {
+    UseSmileIDSampleCaptureMode.Auto -> DocumentCaptureMode.AutoCapture
+    UseSmileIDSampleCaptureMode.Manual -> DocumentCaptureMode.ManualCapture
+    UseSmileIDSampleCaptureMode.AutoWithFallback -> DocumentCaptureMode.AutoCaptureWithManualFallback()
+}
 
 private val UseSmileIDSampleProduct.jobType: JobType
     get() = when (this) {

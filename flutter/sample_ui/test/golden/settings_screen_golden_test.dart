@@ -75,22 +75,6 @@ void main() {
     );
   });
 
-  /// Both custom buttons on, so the section's switches are recorded ON.
-  testWidgets('settings custom buttons', (WidgetTester tester) async {
-    await goldens(
-      tester,
-      'screen_settings_custom_buttons',
-      () => _settings(
-        settings: const UseSmileIDSampleSettings(
-          customContinue: true,
-          customCancel: true,
-        ),
-      ),
-      hostHeight: goldenScreenHeight,
-      fillsHost: true,
-    );
-  });
-
   /// The consent row's overridden line, which only a consent-binding token produces.
   testWidgets('settings consent bound by token', (WidgetTester tester) async {
     await goldens(
@@ -120,6 +104,7 @@ Widget _settings({
   ),
   onSettingChanged: _ignoreSetting,
   onProfileTap: () {},
+  onCaptureModeTap: () {},
   onNavRowTap: _ignoreRow,
   onSignOut: () {},
   // The DEBUG section is shown so the baseline records it; the host hides it on release.

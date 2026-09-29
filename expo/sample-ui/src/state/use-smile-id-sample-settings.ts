@@ -1,3 +1,4 @@
+import { UseSmileIDSampleCaptureMode } from '../model/use-smile-id-sample-capture-mode';
 import { UseSmileIDSampleSetting } from '../model/use-smile-id-sample-setting';
 
 /// The Settings state. Three of these decide whether a step is composed into the flow at all.
@@ -9,10 +10,16 @@ export type UseSmileIDSampleSettings = {
   readonly consentStep: boolean;
   readonly instructionsStep: boolean;
   readonly previewStep: boolean;
-  /// The SDK's continue buttons (consent allow, instructions, processing continue) become "Custom continue".
-  readonly customContinue: boolean;
-  /// The SDK's cancel buttons (consent deny, processing exit) become "Custom cancel".
-  readonly customCancel: boolean;
+  /// DocumentCaptureConfig.allowGalleryUpload; off, as the SDK defaults it.
+  readonly galleryUpload: boolean;
+  /// DocumentCaptureConfig.captureBothSides; on, as the SDK defaults it.
+  readonly captureBothSides: boolean;
+  /// DocumentCaptureConfig.allowSkipBack; off, as the SDK defaults it.
+  readonly allowSkipBack: boolean;
+  /// The document products capture the selfie before the document.
+  readonly selfieFirst: boolean;
+  /// A typed field rather than one of the switches: three values, not two.
+  readonly captureMode: UseSmileIDSampleCaptureMode;
 };
 
 export const smileIDSampleSettingsDefaults: UseSmileIDSampleSettings = {
@@ -22,8 +29,11 @@ export const smileIDSampleSettingsDefaults: UseSmileIDSampleSettings = {
   consentStep: true,
   instructionsStep: true,
   previewStep: true,
-  customContinue: false,
-  customCancel: false,
+  galleryUpload: false,
+  captureBothSides: true,
+  allowSkipBack: false,
+  selfieFirst: false,
+  captureMode: UseSmileIDSampleCaptureMode.AutoWithFallback,
 };
 
 /// Drops enhanced liveness where a stored state carries both, so the SDK is never handed the pair it refuses.

@@ -5,7 +5,7 @@ appId: ${APP_ID}
 - runFlow:
     file: subflows/cold-start.yaml
     env:
-      LINK: "usesmileid-sample-flutter://?noticeWindow=60"
+      LINK: "usesmileid-sample-flutter://?noticeWindow=60&catalogue=fixture"
       LANDS_ON: "sample_products_screen"
 - runFlow: subflows/sign-out.yaml
 
@@ -48,7 +48,7 @@ appId: ${APP_ID}
 - runFlow:
     file: subflows/cold-start.yaml
     env:
-      LINK: "usesmileid-sample-flutter://?noticeWindow=60"
+      LINK: "usesmileid-sample-flutter://?noticeWindow=60&catalogue=fixture"
       LANDS_ON: "sample_products_screen"
 # The first tap after a cold start: see README.md "Traps". Nothing below walks back, so a retried push is harmless.
 - tapOn:

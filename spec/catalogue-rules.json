@@ -1,0 +1,1099 @@
+{
+  "description": "Test cases for the pure functions that turn an API response into the form's rows, asserted by all four platforms. Taken once from the 2026-09-28 sandbox responses plus a few synthetic rows for cases the data has no example of; they test the rules, so they change only when a rule does.",
+  "idTypes": {
+    "allowedRequiredFields": [
+      "country",
+      "first_name",
+      "id_number",
+      "id_type",
+      "last_name",
+      "partner_id",
+      "partner_params",
+      "timestamp"
+    ],
+    "rule": "An ID type is listed only when every entry in its required_fields is one the form can supply: the fields the SDK fills in, plus first_name and last_name from the user-details form. Rows keep API order. A row's id is its `type`; a `type` already used earlier in the same country gets _2, _3 in API order.",
+    "cases": [
+      {
+        "name": "every required field is supplied",
+        "country": "KE",
+        "input": [
+          {
+            "country": "KE",
+            "label": "National ID",
+            "regex": "^[0-9]{1,9}$",
+            "required_fields": [
+              "country",
+              "id_number",
+              "id_type",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "NATIONAL_ID"
+          },
+          {
+            "country": "KE",
+            "label": "Phone Number",
+            "regex": "^(\\+?254|0)?\\d{9}$",
+            "required_fields": [
+              "country",
+              "id_number",
+              "id_type",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "PHONE_NUMBER"
+          }
+        ],
+        "expected": [
+          {
+            "id": "NATIONAL_ID",
+            "type": "NATIONAL_ID",
+            "label": "National ID"
+          },
+          {
+            "id": "PHONE_NUMBER",
+            "type": "PHONE_NUMBER",
+            "label": "Phone Number"
+          }
+        ]
+      },
+      {
+        "name": "dob, citizenship and session_id drop a type; first_name and last_name do not",
+        "country": "NG",
+        "input": [
+          {
+            "country": "NG",
+            "label": "Bank Verification Number",
+            "regex": "^[0-9]{11}$",
+            "required_fields": [
+              "country",
+              "id_number",
+              "id_type",
+              "partner_id",
+              "partner_params",
+              "session_id",
+              "timestamp"
+            ],
+            "type": "BVN_MFA"
+          },
+          {
+            "country": "NG",
+            "label": "National ID",
+            "regex": "^[0-9]{10}$",
+            "required_fields": [
+              "country",
+              "dob",
+              "first_name",
+              "id_number",
+              "id_type",
+              "last_name",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "NATIONAL_ID"
+          },
+          {
+            "country": "NG",
+            "label": "National ID",
+            "regex": "^[0-9]{11}$",
+            "required_fields": [
+              "country",
+              "id_number",
+              "id_type",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "NIN"
+          },
+          {
+            "country": "NG",
+            "label": "Passport",
+            "regex": "^[A-Za-z]{1}( )?[0-9]{8}$",
+            "required_fields": [
+              "country",
+              "dob",
+              "first_name",
+              "id_number",
+              "id_type",
+              "last_name",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "PASSPORT"
+          },
+          {
+            "country": "NG",
+            "label": "Phone Number",
+            "regex": "^(234|0)\\d{10}$",
+            "required_fields": [
+              "country",
+              "first_name",
+              "id_number",
+              "id_type",
+              "last_name",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "PHONE_NUMBER"
+          }
+        ],
+        "expected": [
+          {
+            "id": "NIN",
+            "type": "NIN",
+            "label": "National ID"
+          },
+          {
+            "id": "PHONE_NUMBER",
+            "type": "PHONE_NUMBER",
+            "label": "Phone Number"
+          }
+        ]
+      },
+      {
+        "name": "operator drops every one of Ghana's three PHONE_NUMBER rows",
+        "country": "GH",
+        "input": [
+          {
+            "country": "GH",
+            "label": "Phone Number",
+            "regex": "^(\\+?233(24|25|54|55|59)|0(24|25|54|55|59))\\d{7}$",
+            "required_fields": [
+              "country",
+              "id_number",
+              "id_type",
+              "operator",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "PHONE_NUMBER"
+          },
+          {
+            "country": "GH",
+            "label": "Phone Number",
+            "regex": "^(\\+?233(20|50)|0(20|50))\\d{7}$",
+            "required_fields": [
+              "country",
+              "id_number",
+              "id_type",
+              "operator",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "PHONE_NUMBER"
+          },
+          {
+            "country": "GH",
+            "label": "Phone Number",
+            "regex": "^(\\+?233(26|27|56)|0(26|27|56))\\d{7}$",
+            "required_fields": [
+              "country",
+              "id_number",
+              "id_type",
+              "operator",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "PHONE_NUMBER"
+          },
+          {
+            "country": "GH",
+            "label": "GHANA CARD",
+            "regex": "^[A-Za-z]{3}(-\\d{9}-\\d|\\d{9}\\d)$",
+            "required_fields": [
+              "country",
+              "id_number",
+              "id_type",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "GHANA_CARD"
+          }
+        ],
+        "expected": [
+          {
+            "id": "GHANA_CARD",
+            "type": "GHANA_CARD",
+            "label": "GHANA CARD"
+          }
+        ]
+      },
+      {
+        "name": "bank_code drops every Zambian BANK_ACCOUNT row",
+        "country": "ZM",
+        "input": [
+          {
+            "bank_code": "543",
+            "country": "ZM",
+            "label": "Bank Account",
+            "regex": "^[0-9]{7,16}$",
+            "required_fields": [
+              "bank_code",
+              "country",
+              "id_number",
+              "id_type",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "BANK_ACCOUNT"
+          },
+          {
+            "bank_code": "absa",
+            "country": "ZM",
+            "label": "Bank Account",
+            "regex": "^[0-9]{7,16}$",
+            "required_fields": [
+              "bank_code",
+              "country",
+              "id_number",
+              "id_type",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "BANK_ACCOUNT"
+          },
+          {
+            "bank_code": "accessbank",
+            "country": "ZM",
+            "label": "Bank Account",
+            "regex": "^[0-9]{7,13}$",
+            "required_fields": [
+              "bank_code",
+              "country",
+              "id_number",
+              "id_type",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "BANK_ACCOUNT"
+          },
+          {
+            "country": "ZM",
+            "label": "Tpin Tax Id",
+            "regex": "^[0-9]{10}$",
+            "required_fields": [
+              "country",
+              "id_number",
+              "id_type",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "TPIN"
+          }
+        ],
+        "expected": [
+          {
+            "id": "TPIN",
+            "type": "TPIN",
+            "label": "Tpin Tax Id"
+          }
+        ]
+      },
+      {
+        "name": "an unknown required field drops the type, so a new one needs no app change to stay safe",
+        "country": "ET",
+        "input": [
+          {
+            "country": "ET",
+            "label": "National ID",
+            "regex": "^[A-Za-z0-9_-]{1,64}$",
+            "required_fields": [
+              "country",
+              "id_type",
+              "openid_state",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "NATIONAL_ID"
+          }
+        ],
+        "expected": []
+      },
+      {
+        "name": "a repeated type that survives gets _2 (synthetic: no repeat survives today)",
+        "country": "XX",
+        "input": [
+          {
+            "country": "XX",
+            "label": "Phone Number",
+            "regex": "^0\\d{9}$",
+            "required_fields": [
+              "country",
+              "id_number",
+              "id_type",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "PHONE_NUMBER"
+          },
+          {
+            "country": "XX",
+            "label": "National ID",
+            "regex": "^[0-9]{8}$",
+            "required_fields": [
+              "country",
+              "id_number",
+              "id_type",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "NATIONAL_ID"
+          },
+          {
+            "country": "XX",
+            "label": "Phone Number",
+            "regex": "^1\\d{9}$",
+            "required_fields": [
+              "country",
+              "id_number",
+              "id_type",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "PHONE_NUMBER"
+          },
+          {
+            "country": "XX",
+            "label": "Phone Number",
+            "regex": "^2\\d{9}$",
+            "required_fields": [
+              "country",
+              "id_number",
+              "id_type",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "PHONE_NUMBER"
+          }
+        ],
+        "expected": [
+          {
+            "id": "PHONE_NUMBER",
+            "type": "PHONE_NUMBER",
+            "label": "Phone Number"
+          },
+          {
+            "id": "NATIONAL_ID",
+            "type": "NATIONAL_ID",
+            "label": "National ID"
+          },
+          {
+            "id": "PHONE_NUMBER_2",
+            "type": "PHONE_NUMBER",
+            "label": "Phone Number"
+          },
+          {
+            "id": "PHONE_NUMBER_3",
+            "type": "PHONE_NUMBER",
+            "label": "Phone Number"
+          }
+        ]
+      },
+      {
+        "name": "only the named country is read",
+        "country": "KE",
+        "input": [
+          {
+            "country": "KE",
+            "label": "National ID No Photo",
+            "regex": "^[0-9]{1,9}$",
+            "required_fields": [
+              "country",
+              "id_number",
+              "id_type",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "NATIONAL_ID_NO_PHOTO"
+          },
+          {
+            "country": "UG",
+            "label": "National ID No Photo",
+            "regex": "^[A-Za-z0-9]{14}$",
+            "required_fields": [
+              "country",
+              "id_number",
+              "id_type",
+              "partner_id",
+              "partner_params",
+              "timestamp"
+            ],
+            "type": "NATIONAL_ID_NO_PHOTO"
+          }
+        ],
+        "expected": [
+          {
+            "id": "NATIONAL_ID_NO_PHOTO",
+            "type": "NATIONAL_ID_NO_PHOTO",
+            "label": "National ID No Photo"
+          }
+        ]
+      }
+    ]
+  },
+  "documents": {
+    "rule": "Every document in the country's supported_documents is listed in API order, except one whose code is empty (the API's 'Others'). A sub-type with display_standalone true becomes its own row right after its parent: its id is <code>_<sub-type id>, its name, has_back and format are its own, and it submits the parent's code. A sub-type without display_standalone is not listed.",
+    "cases": [
+      {
+        "name": "Others is left out, the rest keep API order",
+        "country": "KE",
+        "input": [
+          {
+            "country": {
+              "code": "KE",
+              "continent": "AFRICA",
+              "name": "Kenya"
+            },
+            "id_types": [
+              {
+                "code": "ALIEN_CARD",
+                "example": [
+                  "Alien Identity Card"
+                ],
+                "format": 1,
+                "has_back": false,
+                "name": "Alien ID"
+              },
+              {
+                "code": "DRIVERS_LICENSE",
+                "example": [
+                  "Driving License"
+                ],
+                "format": 1,
+                "has_back": true,
+                "name": "Driver's License"
+              },
+              {
+                "code": "IDENTITY_CARD",
+                "example": [
+                  "Consular IDs",
+                  "Diplomat IDs",
+                  "National IDs"
+                ],
+                "format": 1,
+                "has_back": true,
+                "name": "Identity Card"
+              },
+              {
+                "code": "PASSPORT",
+                "example": [
+                  "Passports"
+                ],
+                "format": 3,
+                "has_back": false,
+                "name": "Passport"
+              },
+              {
+                "code": "RESIDENT_ID",
+                "example": [
+                  "Residency cards",
+                  "Residency permits"
+                ],
+                "format": 1,
+                "has_back": true,
+                "name": "Resident ID"
+              },
+              {
+                "code": "TRAVEL_DOC",
+                "example": [
+                  "Border crossing documents",
+                  "Refugee document",
+                  "Visas"
+                ],
+                "format": 1,
+                "has_back": false,
+                "name": "Travel Document"
+              },
+              {
+                "code": "UNIFORMED_SERVICES_CARD",
+                "example": [
+                  "Military",
+                  "Other Armed Forces Id"
+                ],
+                "format": 1,
+                "has_back": true,
+                "name": "Uniformed Services Card"
+              },
+              {
+                "code": "",
+                "example": [
+                  "My document is not listed"
+                ],
+                "format": 1,
+                "has_back": true,
+                "name": "Others"
+              }
+            ]
+          }
+        ],
+        "expected": [
+          {
+            "id": "ALIEN_CARD",
+            "code": "ALIEN_CARD",
+            "subType": null,
+            "name": "Alien ID",
+            "hasBack": false,
+            "format": 1
+          },
+          {
+            "id": "DRIVERS_LICENSE",
+            "code": "DRIVERS_LICENSE",
+            "subType": null,
+            "name": "Driver's License",
+            "hasBack": true,
+            "format": 1
+          },
+          {
+            "id": "IDENTITY_CARD",
+            "code": "IDENTITY_CARD",
+            "subType": null,
+            "name": "Identity Card",
+            "hasBack": true,
+            "format": 1
+          },
+          {
+            "id": "PASSPORT",
+            "code": "PASSPORT",
+            "subType": null,
+            "name": "Passport",
+            "hasBack": false,
+            "format": 3
+          },
+          {
+            "id": "RESIDENT_ID",
+            "code": "RESIDENT_ID",
+            "subType": null,
+            "name": "Resident ID",
+            "hasBack": true,
+            "format": 1
+          },
+          {
+            "id": "TRAVEL_DOC",
+            "code": "TRAVEL_DOC",
+            "subType": null,
+            "name": "Travel Document",
+            "hasBack": false,
+            "format": 1
+          },
+          {
+            "id": "UNIFORMED_SERVICES_CARD",
+            "code": "UNIFORMED_SERVICES_CARD",
+            "subType": null,
+            "name": "Uniformed Services Card",
+            "hasBack": true,
+            "format": 1
+          }
+        ]
+      },
+      {
+        "name": "the Green Book is its own row after its parent and submits IDENTITY_CARD",
+        "country": "ZA",
+        "input": [
+          {
+            "country": {
+              "code": "ZA",
+              "continent": "AFRICA",
+              "name": "South Africa"
+            },
+            "id_types": [
+              {
+                "code": "DRIVERS_LICENSE",
+                "example": [
+                  "Driving License"
+                ],
+                "format": 1,
+                "has_back": true,
+                "name": "Driver's License"
+              },
+              {
+                "code": "IDENTITY_CARD",
+                "example": [
+                  "Consular IDs",
+                  "Diplomat IDs",
+                  "National IDs"
+                ],
+                "format": 1,
+                "has_back": true,
+                "name": "Identity Card",
+                "sub_types": [
+                  {
+                    "display_standalone": true,
+                    "example": [
+                      "Green Book"
+                    ],
+                    "format": 7,
+                    "has_back": false,
+                    "id": "green_book",
+                    "name": "Green Book"
+                  }
+                ]
+              },
+              {
+                "code": "PASSPORT",
+                "example": [
+                  "Passports"
+                ],
+                "format": 3,
+                "has_back": false,
+                "name": "Passport"
+              },
+              {
+                "code": "RESIDENT_ID",
+                "example": [
+                  "Residency cards",
+                  "Residency permits",
+                  "Temporary Asylum Visa"
+                ],
+                "format": 1,
+                "has_back": false,
+                "name": "Resident ID"
+              },
+              {
+                "code": "SEAMANS_ID",
+                "example": [
+                  "Seaman Book",
+                  "Seaman Id"
+                ],
+                "format": 3,
+                "has_back": true,
+                "name": "Seaman's ID"
+              },
+              {
+                "code": "TRAVEL_DOC",
+                "example": [
+                  "Border crossing documents",
+                  "Refugee document",
+                  "Visas"
+                ],
+                "format": 1,
+                "has_back": false,
+                "name": "Travel Document"
+              },
+              {
+                "code": "",
+                "example": [
+                  "My document is not listed"
+                ],
+                "format": 1,
+                "has_back": true,
+                "name": "Others"
+              }
+            ]
+          }
+        ],
+        "expected": [
+          {
+            "id": "DRIVERS_LICENSE",
+            "code": "DRIVERS_LICENSE",
+            "subType": null,
+            "name": "Driver's License",
+            "hasBack": true,
+            "format": 1
+          },
+          {
+            "id": "IDENTITY_CARD",
+            "code": "IDENTITY_CARD",
+            "subType": null,
+            "name": "Identity Card",
+            "hasBack": true,
+            "format": 1
+          },
+          {
+            "id": "IDENTITY_CARD_green_book",
+            "code": "IDENTITY_CARD",
+            "subType": "green_book",
+            "name": "Green Book",
+            "hasBack": false,
+            "format": 7
+          },
+          {
+            "id": "PASSPORT",
+            "code": "PASSPORT",
+            "subType": null,
+            "name": "Passport",
+            "hasBack": false,
+            "format": 3
+          },
+          {
+            "id": "RESIDENT_ID",
+            "code": "RESIDENT_ID",
+            "subType": null,
+            "name": "Resident ID",
+            "hasBack": false,
+            "format": 1
+          },
+          {
+            "id": "SEAMANS_ID",
+            "code": "SEAMANS_ID",
+            "subType": null,
+            "name": "Seaman's ID",
+            "hasBack": true,
+            "format": 3
+          },
+          {
+            "id": "TRAVEL_DOC",
+            "code": "TRAVEL_DOC",
+            "subType": null,
+            "name": "Travel Document",
+            "hasBack": false,
+            "format": 1
+          }
+        ]
+      },
+      {
+        "name": "a sub-type without display_standalone is not listed (synthetic)",
+        "country": "XX",
+        "input": [
+          {
+            "country": {
+              "code": "XX",
+              "continent": "AFRICA",
+              "name": "Test"
+            },
+            "id_types": [
+              {
+                "code": "IDENTITY_CARD",
+                "example": [
+                  "National IDs"
+                ],
+                "format": 1,
+                "has_back": true,
+                "name": "Identity Card",
+                "sub_types": [
+                  {
+                    "display_standalone": false,
+                    "example": [
+                      "Old card"
+                    ],
+                    "format": 1,
+                    "has_back": true,
+                    "id": "old_card",
+                    "name": "Old card"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "expected": [
+          {
+            "id": "IDENTITY_CARD",
+            "code": "IDENTITY_CARD",
+            "subType": null,
+            "name": "Identity Card",
+            "hasBack": true,
+            "format": 1
+          }
+        ]
+      }
+    ]
+  },
+  "countries": {
+    "rule": "The KYC products offer every country with at least one listed ID type; the document products every country with at least one listed document. Names come from supported_documents, which carries them; a KYC country it does not name is shown by its code. Countries keep supported_documents' order (alphabetical by English name), and a KYC-only country follows them in its supported_id_types order.",
+    "cases": [
+      {
+        "name": "the fixture, KYC family",
+        "family": "kyc",
+        "input": "catalogue-fixture.json",
+        "expected": [
+          {
+            "code": "GH",
+            "name": "Ghana"
+          },
+          {
+            "code": "KE",
+            "name": "Kenya"
+          },
+          {
+            "code": "NG",
+            "name": "Nigeria"
+          }
+        ]
+      },
+      {
+        "name": "the fixture, document family",
+        "family": "document",
+        "input": "catalogue-fixture.json",
+        "expected": [
+          {
+            "code": "GH",
+            "name": "Ghana"
+          },
+          {
+            "code": "KE",
+            "name": "Kenya"
+          },
+          {
+            "code": "NG",
+            "name": "Nigeria"
+          },
+          {
+            "code": "ZA",
+            "name": "South Africa"
+          }
+        ]
+      },
+      {
+        "name": "a KYC country supported_documents does not name is shown by its code, after the named ones (synthetic)",
+        "family": "kyc",
+        "input": {
+          "supported_id_types": {
+            "id_types": [
+              {
+                "country": "XX",
+                "label": "National ID",
+                "regex": "^[0-9]{8}$",
+                "required_fields": [
+                  "country",
+                  "id_number",
+                  "id_type",
+                  "partner_id",
+                  "partner_params",
+                  "timestamp"
+                ],
+                "type": "NATIONAL_ID"
+              },
+              {
+                "country": "KE",
+                "label": "National ID",
+                "regex": "^[0-9]{1,9}$",
+                "required_fields": [
+                  "country",
+                  "id_number",
+                  "id_type",
+                  "partner_id",
+                  "partner_params",
+                  "timestamp"
+                ],
+                "type": "NATIONAL_ID"
+              }
+            ]
+          },
+          "supported_documents": {
+            "valid_documents": [
+              {
+                "country": {
+                  "code": "KE",
+                  "continent": "AFRICA",
+                  "name": "Kenya"
+                },
+                "id_types": [
+                  {
+                    "code": "PASSPORT",
+                    "example": [
+                      "Passports"
+                    ],
+                    "format": 3,
+                    "has_back": false,
+                    "name": "Passport"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "expected": [
+          {
+            "code": "KE",
+            "name": "Kenya"
+          },
+          {
+            "code": "XX",
+            "name": "XX"
+          }
+        ]
+      },
+      {
+        "name": "a document country whose only row is Others is not offered (synthetic)",
+        "family": "document",
+        "input": {
+          "supported_id_types": {
+            "id_types": []
+          },
+          "supported_documents": {
+            "valid_documents": [
+              {
+                "country": {
+                  "code": "XX",
+                  "continent": "AFRICA",
+                  "name": "Test"
+                },
+                "id_types": [
+                  {
+                    "code": "",
+                    "example": [
+                      "My document is not listed"
+                    ],
+                    "format": 1,
+                    "has_back": true,
+                    "name": "Others"
+                  }
+                ]
+              },
+              {
+                "country": {
+                  "code": "KE",
+                  "continent": "AFRICA",
+                  "name": "Kenya"
+                },
+                "id_types": [
+                  {
+                    "code": "PASSPORT",
+                    "example": [
+                      "Passports"
+                    ],
+                    "format": 3,
+                    "has_back": false,
+                    "name": "Passport"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "expected": [
+          {
+            "code": "KE",
+            "name": "Kenya"
+          }
+        ]
+      }
+    ]
+  },
+  "captureAs": {
+    "rule": "How a 'Capture as' choice becomes DocumentCaptureConfig.documentType: each choice is the SDK's own type, and nothing is inferred from the API's format or has_back. The server always receives the document's code as idType; 'Capture as' changes only how the photo is taken. Whether a back is captured is the Settings switch, captureBothSides, which the SDK ANDs with the type's hasBackSide, except that the Passport preset is captured front only: the SDK's passport type declares a back side.",
+    "cases": [
+      {
+        "name": "Generic document, untouched, is the SDK's GenericDocument defaults",
+        "captureAs": "genericDocument",
+        "document": {
+          "code": "IDENTITY_CARD",
+          "name": "Identity Card",
+          "hasBack": true,
+          "format": 1
+        },
+        "expected": {
+          "documentType": "generic",
+          "displayName": "Document",
+          "hasBackSide": true,
+          "orientation": "landscape",
+          "idType": "IDENTITY_CARD"
+        }
+      },
+      {
+        "name": "Nothing is inferred from the API: a Green Book row under Generic document stays generic, submitting the parent code",
+        "captureAs": "genericDocument",
+        "document": {
+          "code": "IDENTITY_CARD",
+          "subType": "green_book",
+          "name": "Green Book",
+          "hasBack": false,
+          "format": 7
+        },
+        "expected": {
+          "documentType": "generic",
+          "displayName": "Document",
+          "hasBackSide": true,
+          "orientation": "landscape",
+          "idType": "IDENTITY_CARD"
+        }
+      },
+      {
+        "name": "Nothing is inferred from the API: a passport row under Generic document stays generic",
+        "captureAs": "genericDocument",
+        "document": {
+          "code": "PASSPORT",
+          "name": "Passport",
+          "hasBack": false,
+          "format": 3
+        },
+        "expected": {
+          "documentType": "generic",
+          "displayName": "Document",
+          "hasBackSide": true,
+          "orientation": "landscape",
+          "idType": "PASSPORT"
+        }
+      },
+      {
+        "name": "Passport preset, whatever the document",
+        "captureAs": "passport",
+        "document": {
+          "code": "IDENTITY_CARD",
+          "name": "Identity Card",
+          "hasBack": true,
+          "format": 1
+        },
+        "expected": {
+          "documentType": "passport",
+          "idType": "IDENTITY_CARD"
+        }
+      },
+      {
+        "name": "Green Book preset, whatever the document",
+        "captureAs": "greenBook",
+        "document": {
+          "code": "PASSPORT",
+          "name": "Passport",
+          "hasBack": false,
+          "format": 3
+        },
+        "expected": {
+          "documentType": "greenBook",
+          "idType": "PASSPORT"
+        }
+      },
+      {
+        "name": "Generic document builds a GenericDocument from the sheet",
+        "captureAs": "genericDocument",
+        "document": {
+          "code": "PASSPORT",
+          "name": "Passport",
+          "hasBack": false,
+          "format": 3
+        },
+        "genericDocument": {
+          "displayName": "Booklet",
+          "hasBackSide": true,
+          "orientation": "portrait",
+          "aspectRatio": "booklet"
+        },
+        "expected": {
+          "documentType": "generic",
+          "displayName": "Booklet",
+          "hasBackSide": true,
+          "orientation": "portrait",
+          "knownAspectRatio": 0.748,
+          "idType": "PASSPORT"
+        }
+      }
+    ],
+    "aspectRatios": {
+      "off": null,
+      "card": 1.586,
+      "passport": 1.309,
+      "booklet": 0.748
+    },
+    "note": "`preset` means the SDK preset's own hasBackSide, whatever the API says, because a preset exists to be tried as the SDK defines it."
+  }
+}

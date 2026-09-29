@@ -52,7 +52,7 @@ useSmileIDSampleStoredSettingsProvider = Provider<UseSmileIDSampleSettings>(
   (Ref ref) => const UseSmileIDSampleSettings(),
 );
 
-/// The six switches, and the only writer of them.
+/// The switches and the capture mode, and the only writer of them.
 final NotifierProvider<
   UseSmileIDSampleSettingsNotifier,
   UseSmileIDSampleSettings
@@ -80,6 +80,18 @@ class UseSmileIDSampleSettingsNotifier
           .setSetting(setting, enabled);
     } on Object {
       // The platform store can refuse a write.
+      state = previous;
+    }
+  }
+
+  /// Chooses the document capture mode.
+  Future<void> setCaptureMode(UseSmileIDSampleCaptureMode mode) async {
+    final UseSmileIDSampleSettings previous = state;
+    try {
+      state = await ref
+          .read(useSmileIDSampleSettingsRepositoryProvider)
+          .setCaptureMode(mode);
+    } on Object {
       state = previous;
     }
   }

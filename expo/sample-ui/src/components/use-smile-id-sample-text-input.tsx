@@ -30,6 +30,8 @@ type Props = {
   masked?: boolean;
   textAlign?: TextStyle['textAlign'];
   testID?: string;
+  /// The error line's own id, so a flow can assert the message without reading the field.
+  errorTestID?: string;
   /// Tags the whole field rather than the input, as Compose does.
   testIDOnField?: boolean;
   leading?: (tint: string) => ReactNode;
@@ -50,6 +52,7 @@ export const UseSmileIDSampleTextInput = ({
   masked = false,
   textAlign,
   testID,
+  errorTestID,
   testIDOnField = false,
   leading,
   trailing,
@@ -112,6 +115,7 @@ export const UseSmileIDSampleTextInput = ({
       </View>
       {isError && errorMessage ? (
         <Text
+          testID={errorTestID}
           style={[
             theme.type.textStyleCaption,
             {

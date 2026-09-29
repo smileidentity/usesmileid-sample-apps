@@ -21,22 +21,14 @@ final class UseSmileIDSampleSettingsTest: XCTestCase {
     XCTAssertFalse(settings.agentMode)
   }
 
-  func testTheOtherSixSettingsDoNotDisturbTheCapturePair() {
+  func testTheOtherFourSettingsDoNotDisturbTheCapturePair() {
     let base = UseSmileIDSampleSettings(enhancedSmartSelfie: true)
-    let others: [UseSmileIDSampleSetting] = [
-      .darkMode, .consentStep, .instructionsStep, .previewStep, .customContinue, .customCancel
-    ]
-    for setting in others {
-      let changed = base.with(setting, !base[setting])
+    for setting in [UseSmileIDSampleSetting.darkMode, .consentStep, .instructionsStep, .previewStep] {
+      let changed = base.with(setting, false)
       XCTAssertTrue(changed.enhancedSmartSelfie, "\(setting) disturbed the capture pair")
       XCTAssertFalse(changed.agentMode, "\(setting) disturbed the capture pair")
-      XCTAssertEqual(changed[setting], !base[setting])
+      XCTAssertFalse(changed[setting])
     }
-  }
-
-  func testTheCustomButtonsShipOffSoAFreshInstallShowsTheSdksOwn() {
-    XCTAssertFalse(UseSmileIDSampleSettings().customContinue)
-    XCTAssertFalse(UseSmileIDSampleSettings().customCancel)
   }
 
   func testNormalisedRepairsAStoredStateCarryingBoth() {
@@ -62,12 +54,14 @@ final class UseSmileIDSampleSettingsTest: XCTestCase {
       consentStep: false,
       instructionsStep: true,
       previewStep: false,
-      customContinue: true,
-      customCancel: false
+      galleryUpload: true,
+      captureBothSides: false,
+      allowSkipBack: true,
+      selfieFirst: true
     )
     XCTAssertEqual(
       UseSmileIDSampleSetting.allCases.map { settings[$0] },
-      [false, true, true, false, true, false, true, false]
+      [false, true, true, false, true, false, true, false, true, true]
     )
   }
 }

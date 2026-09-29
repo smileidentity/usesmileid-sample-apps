@@ -116,6 +116,10 @@ data class UseSmileIDSampleColors(
 
     /** One outline for every card and row. A PAIR, because `color.border` is the same near-white in both schemes. See the `cardStroke` delta. */
     val cardStroke: Color,
+    /** A loading row's resting fill, `skeleton.bg`. */
+    val skeleton: Color,
+    /** What a loading row pulses towards; a pair because dark `skeleton.highlight` is near-white (`skeletonDarkHighlight`). */
+    val skeletonHighlight: Color,
     val border: Color,
     val overlayScrim: Color,
     val textTitle: Color,
@@ -157,6 +161,8 @@ internal val lightColors = UseSmileIDSampleColors(
     foreground = smileOffBlackLight,
     navBar = smileNavBarLight,
     cardStroke = smileCardStrokeLight,
+    skeleton = SmileColorLight.skeletonBg,
+    skeletonHighlight = SmileColorLight.skeletonHighlight,
     border = SmileColorLight.colorBorder,
     overlayScrim = SmileColorLight.colorOverlayScrim,
     textTitle = SmileColorLight.colorTextTitle,
@@ -254,6 +260,8 @@ internal val darkColors = UseSmileIDSampleColors(
     // Recessed below the page, per node 5447:1701 — the pill is the darker of the two in dark mode.
     navBar = smileNavBarDark,
     cardStroke = smileCardStrokeDark,
+    skeleton = SmileColorDark.skeletonBg,
+    skeletonHighlight = SmileColorDark.colorSurfaceAlt,
     border = SmileColorDark.colorBorder,
     overlayScrim = SmileColorDark.colorOverlayScrim,
     textTitle = SmileColorDark.colorTextTitle,

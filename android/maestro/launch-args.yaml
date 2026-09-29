@@ -244,3 +244,50 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_result_active_scenario"
     text: "offlineRetry"
+
+# `catalogue=unreachable` fails every list at once: the sheet shows the error, and Retry fails again.
+- stopApp
+- openLink: "usesmileid-sample-android://flow/biometricKyc/id-details/country?catalogue=unreachable"
+- assertVisible:
+    id: "sample_country_sheet"
+- assertVisible:
+    id: "sample_catalogue_error"
+- tapOn:
+    id: "sample_catalogue_retry"
+- assertVisible:
+    id: "sample_catalogue_error"
+- back
+- assertVisible:
+    id: "sample_kyc_form_screen"
+- assertVisible:
+    id: "sample_idtype_trigger"
+    enabled: false
+
+# Fixture lists: Kenya's National ID takes digits only, so letters show the format error and hold Continue.
+- stopApp
+- openLink: "usesmileid-sample-android://flow/biometricKyc/id-details/country?catalogue=fixture"
+- tapOn:
+    id: "sample_country_option_KE"
+- tapOn:
+    id: "sample_idtype_trigger"
+- tapOn:
+    id: "sample_idtype_option_NATIONAL_ID"
+- tapOn:
+    id: "sample_idnumber_input"
+- inputText: "AO123"
+- hideKeyboard
+- assertVisible:
+    id: "sample_idnumber_error"
+- assertVisible:
+    id: "sample_kyc_continue"
+    enabled: false
+- tapOn:
+    id: "sample_idnumber_input"
+- eraseText
+- inputText: "12345678"
+- hideKeyboard
+- assertNotVisible:
+    id: "sample_idnumber_error"
+- assertVisible:
+    id: "sample_kyc_continue"
+    enabled: true

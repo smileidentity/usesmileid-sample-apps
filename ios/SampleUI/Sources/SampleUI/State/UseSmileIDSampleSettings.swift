@@ -1,6 +1,20 @@
-/// Which settings row a toggle belongs to, so the screen reports changes without eight callbacks.
+/// Which settings row a toggle belongs to, so the screen reports changes without a callback per row.
 public enum UseSmileIDSampleSetting: String, CaseIterable, Sendable {
-  case enhancedSmartSelfie, agentMode, darkMode, consentStep, instructionsStep, previewStep, customContinue, customCancel
+  case enhancedSmartSelfie, agentMode, darkMode, consentStep, instructionsStep, previewStep
+  case galleryUpload, captureBothSides, allowSkipBack, selfieFirst
+}
+
+/// DocumentCaptureConfig.captureMode, in `spec/test-ids.json`'s vocabulary.
+public enum UseSmileIDSampleCaptureMode: String, CaseIterable, Sendable {
+  case auto, manual, autoWithFallback
+
+  public var label: String {
+    switch self {
+    case .auto: "Automatic"
+    case .manual: "Manual"
+    case .autoWithFallback: "Automatic with manual fallback"
+    }
+  }
 }
 
 /// The Settings state. Three of these decide whether a step is composed into the flow at all.
@@ -13,10 +27,16 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
   public var consentStep: Bool
   public var instructionsStep: Bool
   public var previewStep: Bool
-  /// The SDK's continue buttons (consent allow, instructions, processing continue) become "Custom continue".
-  public var customContinue: Bool
-  /// The SDK's cancel buttons (consent deny, processing exit) become "Custom cancel".
-  public var customCancel: Bool
+  /// DocumentCaptureConfig.allowGalleryUpload; off, as the SDK defaults it.
+  public var galleryUpload: Bool
+  /// DocumentCaptureConfig.captureBothSides; on, as the SDK defaults it.
+  public var captureBothSides: Bool
+  /// DocumentCaptureConfig.allowSkipBack; off, as the SDK defaults it.
+  public var allowSkipBack: Bool
+  /// The document products capture the selfie before the document.
+  public var selfieFirst: Bool
+  /// A typed field rather than one of the switches: three values, not two.
+  public var captureMode: UseSmileIDSampleCaptureMode
 
   public init(
     enhancedSmartSelfie: Bool = true,
@@ -25,8 +45,11 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     consentStep: Bool = true,
     instructionsStep: Bool = true,
     previewStep: Bool = true,
-    customContinue: Bool = false,
-    customCancel: Bool = false
+    galleryUpload: Bool = false,
+    captureBothSides: Bool = true,
+    allowSkipBack: Bool = false,
+    selfieFirst: Bool = false,
+    captureMode: UseSmileIDSampleCaptureMode = .autoWithFallback
   ) {
     self.enhancedSmartSelfie = enhancedSmartSelfie
     self.agentMode = agentMode
@@ -34,8 +57,11 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     self.consentStep = consentStep
     self.instructionsStep = instructionsStep
     self.previewStep = previewStep
-    self.customContinue = customContinue
-    self.customCancel = customCancel
+    self.galleryUpload = galleryUpload
+    self.captureBothSides = captureBothSides
+    self.allowSkipBack = allowSkipBack
+    self.selfieFirst = selfieFirst
+    self.captureMode = captureMode
   }
 
   public subscript(setting: UseSmileIDSampleSetting) -> Bool {
@@ -46,8 +72,10 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     case .consentStep: consentStep
     case .instructionsStep: instructionsStep
     case .previewStep: previewStep
-    case .customContinue: customContinue
-    case .customCancel: customCancel
+    case .galleryUpload: galleryUpload
+    case .captureBothSides: captureBothSides
+    case .allowSkipBack: allowSkipBack
+    case .selfieFirst: selfieFirst
     }
   }
 
@@ -70,8 +98,10 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     case .consentStep: copy.consentStep = enabled
     case .instructionsStep: copy.instructionsStep = enabled
     case .previewStep: copy.previewStep = enabled
-    case .customContinue: copy.customContinue = enabled
-    case .customCancel: copy.customCancel = enabled
+    case .galleryUpload: copy.galleryUpload = enabled
+    case .captureBothSides: copy.captureBothSides = enabled
+    case .allowSkipBack: copy.allowSkipBack = enabled
+    case .selfieFirst: copy.selfieFirst = enabled
     }
     return copy
   }

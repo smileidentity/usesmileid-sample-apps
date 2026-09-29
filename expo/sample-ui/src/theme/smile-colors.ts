@@ -102,6 +102,10 @@ export type SmileColors = {
   readonly surface2: string;
   /// The cool-grey fill behind a leading tile and a tonal app-bar control, never the warm surface-alt.
   readonly surfaceTile: string;
+  /// A loading row's resting fill, `skeleton.bg`.
+  readonly skeleton: string;
+  /// What a loading row pulses towards; a pair because dark `skeleton.highlight` is near-white (`skeletonDarkHighlight`).
+  readonly skeletonHighlight: string;
 };
 
 /// Soft status tints, which no design-system `badge.*` pair carries, and the same in both schemes.
@@ -185,6 +189,7 @@ type SmileColorSource = {
     readonly 'title-text': string;
     readonly 'body-text': string;
   };
+  readonly skeleton: { readonly bg: string; readonly highlight: string };
 };
 
 const group = (
@@ -193,6 +198,7 @@ const group = (
   navBar: string,
   cardStroke: string,
   surfaceTile: string,
+  skeletonHighlight: string,
 ): SmileColors => ({
   primary: source.color.primary,
   onPrimary: source.color['on-primary'],
@@ -266,6 +272,8 @@ const group = (
   borderStrong: smileBorderStrong,
   surface2: smileSurface2,
   surfaceTile,
+  skeleton: source.skeleton.bg,
+  skeletonHighlight,
 });
 
 export const smileLightColors: SmileColors = group(
@@ -274,6 +282,7 @@ export const smileLightColors: SmileColors = group(
   smileNavBarLight,
   smileCardStrokeLight,
   smileSurface2,
+  lightColors.skeleton.highlight,
 );
 
 export const smileDarkColors: SmileColors = group(
@@ -283,4 +292,5 @@ export const smileDarkColors: SmileColors = group(
   smileCardStrokeDark,
   // surface-2 is a light cool grey with no dark counterpart, so dark takes the muted surface.
   darkColors.color['surface-muted'],
+  darkColors.color['surface-alt'],
 );

@@ -3,22 +3,28 @@ import SwiftUI
 /// The ID-type picker. Its list depends on the country, which is why the trigger needs one first.
 public struct IdTypePickerSheet: View {
   private let country: UseSmileIDSampleCountry?
-  private let selected: UseSmileIDSampleIdType?
+  private let catalogue: UseSmileIDSampleCatalogue<UseSmileIDSampleKycIdType>
+  private let selected: UseSmileIDSampleKycIdType?
   @Binding private var query: String
-  private let onSelect: (UseSmileIDSampleIdType) -> Void
+  private let onSelect: (UseSmileIDSampleKycIdType) -> Void
+  private let onRetry: () -> Void
   private let onClose: () -> Void
 
   public init(
     country: UseSmileIDSampleCountry?,
-    selected: UseSmileIDSampleIdType?,
+    catalogue: UseSmileIDSampleCatalogue<UseSmileIDSampleKycIdType>,
+    selected: UseSmileIDSampleKycIdType?,
     query: Binding<String>,
-    onSelect: @escaping (UseSmileIDSampleIdType) -> Void,
+    onSelect: @escaping (UseSmileIDSampleKycIdType) -> Void,
+    onRetry: @escaping () -> Void,
     onClose: @escaping () -> Void
   ) {
     self.country = country
+    self.catalogue = catalogue
     self.selected = selected
     _query = query
     self.onSelect = onSelect
+    self.onRetry = onRetry
     self.onClose = onClose
   }
 
@@ -28,33 +34,25 @@ public struct IdTypePickerSheet: View {
       testId: UseSmileIDSampleTestIds.idTypeSheet,
       onClose: onClose
     ) {
-      UseSmileIDSampleSearchField(
+      UseSmileIDSampleCataloguePicker(
+        catalogue: catalogue,
+        what: "ID types",
         query: $query,
-        placeholder: "Search ID type",
-        testId: UseSmileIDSampleTestIds.idTypeSearch
-      )
-      UseSmileIDSamplePickerList(
-        isEmpty: matches.isEmpty,
-        emptyLabel: emptyLabel,
-        emptyTestId: UseSmileIDSampleTestIds.idTypeEmpty
-      ) {
-        ForEach(matches, id: \.self) { idType in
-          UseSmileIDSampleOptionRow(
-            label: idType.label,
-            selected: idType == selected,
-            testId: UseSmileIDSampleTestIds.idTypeOption(idType.id),
-            onTap: { onSelect(idType) }
-          )
-        }
+        searchPlaceholder: "Search ID type",
+        searchTestId: UseSmileIDSampleTestIds.idTypeSearch,
+        label: \.label,
+        emptyTestId: UseSmileIDSampleTestIds.idTypeEmpty,
+        emptyLabel: "No ID type matches \u{201C}\(query)\u{201D}",
+        nothingToList: ("No ID types for \(country?.name ?? "this country")", "Choose another country"),
+        onRetry: onRetry
+      ) { idType in
+        UseSmileIDSampleOptionRow(
+          label: idType.label,
+          selected: idType.id == selected?.id,
+          testId: UseSmileIDSampleTestIds.idTypeOption(idType.id),
+          onTap: { onSelect(idType) }
+        )
       }
     }
-  }
-
-  private var matches: [UseSmileIDSampleIdType] {
-    UseSmileIDSampleIdType.of(country, matching: query)
-  }
-
-  private var emptyLabel: String {
-    query.isBlank ? "No ID type for this country" : "No ID type matches \u{201C}\(query)\u{201D}"
   }
 }

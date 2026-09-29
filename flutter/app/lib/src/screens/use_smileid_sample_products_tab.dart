@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
+import '../catalogue/use_smileid_sample_catalogue_providers.dart';
 import '../flow/use_smileid_sample_token_binding_rules.dart';
 import '../state/use_smileid_sample_flow_result_provider.dart';
 import '../state/use_smileid_sample_forms.dart';
@@ -108,6 +109,15 @@ class _UseSmileIDSampleProductsTabState
         ref
             .read(useSmileIDSampleFormsProvider.notifier)
             .startRun(profiles.active);
+        // Fetched ahead, so the list is usually there by the time the picker opens.
+        if (useSmileIDSampleCatalogueFamily(product) != null) {
+          ref
+              .read(useSmileIDSampleCatalogueStoreProvider)
+              .begin(
+                useSmileIDSampleCatalogueEnvironment(live),
+                useSmileIDSampleCatalogueLocale(),
+              );
+        }
         context.push(
           UseSmileIDSampleJourney.firstStepFor(
             product,

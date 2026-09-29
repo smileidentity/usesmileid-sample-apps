@@ -10,6 +10,8 @@ import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_launc
 import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_preflight.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 
+import 'support/use_smileid_sample_catalogue_fixture.dart';
+
 /// The flow host: what it hands the SDK, what it refuses to hand over, and where the wizard stacks.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +29,7 @@ void main() {
     bool consentStep = true,
     bool instructionsStep = true,
     bool previewStep = true,
+    bool selfieFirst = false,
   }) => UseSmileIDSampleFlowLaunchSnapshot(
     product: product,
     route: UseSmileIDSampleFlowRoute.fullscreen,
@@ -40,6 +43,7 @@ void main() {
     consentStep: consentStep,
     instructionsStep: instructionsStep,
     previewStep: previewStep,
+    selfieFirst: selfieFirst,
     userId: 'user_1',
     partnerId: 'profile-1',
     partnerName: 'Kobo Bank',
@@ -95,39 +99,37 @@ void main() {
       );
     });
 
-    // The two document products differ only in which capture leads, which is the design's order.
-    test('the document products put their captures in opposite orders', () {
-      expect(
-        useSmileIDSampleJourneyStepsFor(
-          snapshotFor(
-            UseSmileIDSampleProduct.documentVerification,
-            previewStep: false,
-            instructionsStep: false,
-            consentStep: false,
-          ),
-        ),
-        <UseSmileIDSampleFlowJourneyStep>[
-          UseSmileIDSampleFlowJourneyStep.documentCapture,
-          UseSmileIDSampleFlowJourneyStep.selfieCapture,
-          UseSmileIDSampleFlowJourneyStep.processing,
-        ],
-      );
-      expect(
-        useSmileIDSampleJourneyStepsFor(
-          snapshotFor(
-            UseSmileIDSampleProduct.enhancedDocumentVerification,
-            previewStep: false,
-            instructionsStep: false,
-            consentStep: false,
-          ),
-        ),
-        <UseSmileIDSampleFlowJourneyStep>[
-          UseSmileIDSampleFlowJourneyStep.selfieCapture,
-          UseSmileIDSampleFlowJourneyStep.documentCapture,
-          UseSmileIDSampleFlowJourneyStep.processing,
-        ],
-      );
-    });
+    test(
+      'both document products capture the document first unless selfie first is on',
+      () {
+        for (final UseSmileIDSampleProduct product in <UseSmileIDSampleProduct>[
+          UseSmileIDSampleProduct.documentVerification,
+          UseSmileIDSampleProduct.enhancedDocumentVerification,
+        ]) {
+          List<UseSmileIDSampleFlowJourneyStep> steps({
+            required bool selfieFirst,
+          }) => useSmileIDSampleJourneyStepsFor(
+            snapshotFor(
+              product,
+              previewStep: false,
+              instructionsStep: false,
+              consentStep: false,
+              selfieFirst: selfieFirst,
+            ),
+          );
+          expect(steps(selfieFirst: false), <UseSmileIDSampleFlowJourneyStep>[
+            UseSmileIDSampleFlowJourneyStep.documentCapture,
+            UseSmileIDSampleFlowJourneyStep.selfieCapture,
+            UseSmileIDSampleFlowJourneyStep.processing,
+          ], reason: product.id);
+          expect(steps(selfieFirst: true), <UseSmileIDSampleFlowJourneyStep>[
+            UseSmileIDSampleFlowJourneyStep.selfieCapture,
+            UseSmileIDSampleFlowJourneyStep.documentCapture,
+            UseSmileIDSampleFlowJourneyStep.processing,
+          ], reason: product.id);
+        }
+      },
+    );
   });
 
   group('the gate', () {
@@ -185,8 +187,8 @@ void main() {
           snapshotFor(
             UseSmileIDSampleProduct.biometricKyc,
             idDetails: const UseSmileIDSampleIdDetails(
-              country: UseSmileIDSampleCountry.ke,
-              idType: UseSmileIDSampleIdType.nationalId,
+              country: kenya,
+              idType: kenyaNationalId,
               idNumber: '11111111',
             ),
           ),
@@ -202,6 +204,42 @@ void main() {
       useSmileIDSampleApplying(builder, s);
       return builder;
     }
+
+    test(
+      'a document job sends the document, even with an ID type left in the form',
+      () {
+        final UseSmileIDFlowBuilder builder = builderFor(
+          snapshotFor(
+            UseSmileIDSampleProduct.documentVerification,
+            idDetails: const UseSmileIDSampleIdDetails(
+              country: kenya,
+              idType: kenyaNationalId,
+              document: UseSmileIDSampleDocument(
+                code: 'PASSPORT',
+                name: 'Passport',
+                hasBack: false,
+                format: 3,
+              ),
+            ),
+          ),
+        );
+        expect(builder.documentVerificationParams?.idType, 'PASSPORT');
+      },
+    );
+
+    test('a KYC job sends the number trimmed, as the form checked it', () {
+      final UseSmileIDFlowBuilder builder = builderFor(
+        snapshotFor(
+          UseSmileIDSampleProduct.biometricKyc,
+          idDetails: const UseSmileIDSampleIdDetails(
+            country: kenya,
+            idType: kenyaNationalId,
+            idNumber: ' 12345678 ',
+          ),
+        ),
+      );
+      expect(builder.biometricKYCParams?.idNumber, '12345678');
+    });
 
     test(
       'the user details the form collected, with an absent field left absent',
@@ -239,9 +277,16 @@ void main() {
             builderFor(
                   snapshotFor(
                     product,
+                    // Both families filled, so each product finds the field it submits.
                     idDetails: const UseSmileIDSampleIdDetails(
-                      country: UseSmileIDSampleCountry.ke,
-                      idType: UseSmileIDSampleIdType.nationalId,
+                      country: kenya,
+                      idType: kenyaNationalId,
+                      document: UseSmileIDSampleDocument(
+                        code: 'PASSPORT',
+                        name: 'Passport',
+                        hasBack: false,
+                        format: 3,
+                      ),
                       idNumber: '11111111',
                     ),
                   ),
@@ -257,29 +302,6 @@ void main() {
         );
       }
     });
-
-    test('a passport is captured front only', () {
-      expect(
-        useSmileIDSampleCapturesBothSides(UseSmileIDSampleIdType.passport),
-        isFalse,
-      );
-    });
-
-    test(
-      'every other document, and none chosen, is captured on both sides',
-      () {
-        for (final UseSmileIDSampleIdType idType
-            in UseSmileIDSampleIdType.values) {
-          if (idType == UseSmileIDSampleIdType.passport) continue;
-          expect(
-            useSmileIDSampleCapturesBothSides(idType),
-            isTrue,
-            reason: idType.name,
-          );
-        }
-        expect(useSmileIDSampleCapturesBothSides(null), isTrue);
-      },
-    );
 
     test(
       'an unselected document type stays absent rather than becoming a rejected empty string',

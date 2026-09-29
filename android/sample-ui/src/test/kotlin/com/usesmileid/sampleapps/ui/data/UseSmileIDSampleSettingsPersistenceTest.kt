@@ -57,7 +57,7 @@ class UseSmileIDSampleSettingsPersistenceTest {
 
         val written = prefs.data.first()
         assertEquals(false, written[CONSENT_STEP])
-        // Writing all six would freeze today's defaults onto the device.
+        // Writing every row would freeze today's defaults onto the device.
         assertNull(written[PREVIEW_STEP])
         assertNull(written[AGENT_MODE])
     }
@@ -70,16 +70,19 @@ class UseSmileIDSampleSettingsPersistenceTest {
     }
 
     @Test
-    fun `the custom button rows persist under their own keys, and read back`() = runTest {
-        store.setSetting(UseSmileIDSampleSetting.CustomContinue, true)
-        store.setSetting(UseSmileIDSampleSetting.CustomCancel, true)
+    fun `the document switches are stored under the keys the four apps share`() = runTest {
+        store.setSetting(UseSmileIDSampleSetting.CaptureBothSides, false)
+        store.setSetting(UseSmileIDSampleSetting.AllowSkipBack, true)
+        store.setSetting(UseSmileIDSampleSetting.SelfieFirst, true)
 
         val written = prefs.data.first()
-        assertEquals(true, written[CUSTOM_CONTINUE])
-        assertEquals(true, written[CUSTOM_CANCEL])
+        assertEquals(false, written[booleanPreferencesKey("capture_both_sides")])
+        assertEquals(true, written[booleanPreferencesKey("allow_skip_back")])
+        assertEquals(true, written[booleanPreferencesKey("selfie_first")])
         val settings = store.settings.first()
-        assertTrue(settings.customContinue)
-        assertTrue(settings.customCancel)
+        assertFalse(settings.captureBothSides)
+        assertTrue(settings.allowSkipBack)
+        assertTrue(settings.selfieFirst)
     }
 
     /** Preferences predate the mutex, so a stored pair has to be corrected on read. */
@@ -100,7 +103,5 @@ class UseSmileIDSampleSettingsPersistenceTest {
         val AGENT_MODE = booleanPreferencesKey("agent_mode")
         val CONSENT_STEP = booleanPreferencesKey("consent_step")
         val PREVIEW_STEP = booleanPreferencesKey("preview_step")
-        val CUSTOM_CONTINUE = booleanPreferencesKey("custom_continue")
-        val CUSTOM_CANCEL = booleanPreferencesKey("custom_cancel")
     }
 }

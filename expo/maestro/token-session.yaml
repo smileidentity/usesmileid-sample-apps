@@ -6,7 +6,7 @@ appId: ${APP_ID}
 # Only clearing the app's data removes the stored session.
 - clearState
 - stopApp
-- openLink: "usesmileid-sample-expo://?noticeWindow=60"
+- openLink: "usesmileid-sample-expo://?noticeWindow=60&catalogue=fixture"
 - runFlow: subflows/warm-start.yaml
 
 - tapOn:
@@ -112,7 +112,7 @@ appId: ${APP_ID}
     timeout: 10000
 
 - stopApp
-- openLink: "usesmileid-sample-expo:///flow/enhancedKyc/run"
+- openLink: "usesmileid-sample-expo:///flow/enhancedKyc/run?catalogue=fixture"
 - extendedWaitUntil:
     visible:
       id: "sample_scan_token_screen"

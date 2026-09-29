@@ -51,8 +51,8 @@ abstract final class UseSmileIDSampleFlowTokens {
     final List<String> fields = <String>[
       if (bindings.userDetails) ...<String>[
         for (final String field in _vaultedFields) '"$field":"vault_$field"',
-        '"country":"${UseSmileIDSampleCountry.ke.code}"',
-        '"id_type":"${UseSmileIDSampleIdType.nationalId.id}"',
+        '"country":"$useSmileIDSampleBoundCountry"',
+        '"id_type":"$useSmileIDSampleBoundIdType"',
       ],
       if (bindings.consent) _consentClaim(issuedAtSeconds),
     ];
@@ -85,3 +85,9 @@ abstract final class UseSmileIDSampleFlowTokens {
     'id_number',
   ];
 }
+
+/// What a simulated binding names: Kenya's National ID, a type the form offers.
+const String useSmileIDSampleBoundCountry = 'KE';
+
+/// The bound ID type, as the API names it.
+const String useSmileIDSampleBoundIdType = 'NATIONAL_ID';

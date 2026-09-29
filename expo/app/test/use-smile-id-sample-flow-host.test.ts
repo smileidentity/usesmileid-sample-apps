@@ -1,4 +1,9 @@
-import { smileIDSampleIdTypes, smileIDSampleProducts, type UseSmileIDSampleProduct } from '@smileid/sample-ui';
+import {
+  UseSmileIDSampleCaptureAs,
+  smileIDSampleIdDetailsDefaults,
+  smileIDSampleProducts,
+  type UseSmileIDSampleProduct,
+} from '@smileid/sample-ui';
 import { UseSmileIDFlowBuilder } from '@smileid/usesmileid';
 
 import {
@@ -28,7 +33,7 @@ const snapshot = (
     email: 'ada.okafor@example.com',
     phone: '',
   },
-  idDetails: { country: null, idType: null, idNumber: '' },
+  idDetails: smileIDSampleIdDetailsDefaults,
   scenario: 'normal',
   theme: 'brandDefault',
   sandbox: true,
@@ -37,8 +42,11 @@ const snapshot = (
   consentStep: true,
   instructionsStep: true,
   previewStep: true,
-  customContinue: false,
-  customCancel: false,
+  captureMode: 'autoWithFallback',
+  galleryUpload: false,
+  captureBothSides: true,
+  allowSkipBack: false,
+  selfieFirst: false,
   userId: 'user_1',
   partnerId: 'p-1',
   partnerName: 'Kobo Bank',
@@ -80,26 +88,16 @@ describe('the journey the switches compose', () => {
     ).toEqual<UseSmileIDSampleFlowJourneyStep[]>(['consent', 'processing']);
   });
 
-  it('puts the document products captures in opposite orders', () => {
+  it('captures the document first for both document products unless selfie first is on', () => {
     const plain = { consentStep: false, instructionsStep: false, previewStep: false };
-    expect(
-      smileIDSampleJourneyStepsFor(
-        snapshot({ product: productFor('documentVerification'), ...plain }),
-      ),
-    ).toEqual<UseSmileIDSampleFlowJourneyStep[]>([
-      'documentCapture',
-      'selfieCapture',
-      'processing',
-    ]);
-    expect(
-      smileIDSampleJourneyStepsFor(
-        snapshot({ product: productFor('enhancedDocumentVerification'), ...plain }),
-      ),
-    ).toEqual<UseSmileIDSampleFlowJourneyStep[]>([
-      'selfieCapture',
-      'documentCapture',
-      'processing',
-    ]);
+    for (const id of ['documentVerification', 'enhancedDocumentVerification']) {
+      expect(smileIDSampleJourneyStepsFor(snapshot({ product: productFor(id), ...plain }))).toEqual<
+        UseSmileIDSampleFlowJourneyStep[]
+      >(['documentCapture', 'selfieCapture', 'processing']);
+      expect(
+        smileIDSampleJourneyStepsFor(snapshot({ product: productFor(id), ...plain, selfieFirst: true })),
+      ).toEqual<UseSmileIDSampleFlowJourneyStep[]>(['selfieCapture', 'documentCapture', 'processing']);
+    }
   });
 });
 
@@ -148,8 +146,11 @@ describe('what the SDK is handed', () => {
         snapshot({
           product,
           idDetails: {
-            country: { code: 'KE', label: 'Kenya', flag: '🇰🇪' },
-            idType: { id: 'NATIONAL_ID', label: 'National ID', countries: ['KE'] },
+            ...smileIDSampleIdDetailsDefaults,
+            country: { code: 'KE', name: 'Kenya' },
+            idType: { id: 'NATIONAL_ID', type: 'NATIONAL_ID', label: 'National ID', regex: '^[0-9]{1,9}$' },
+            // Both families filled, so each product finds the field it submits.
+            document: { code: 'PASSPORT', subType: null, name: 'Passport', hasBack: false, format: 3 },
             idNumber: '11111111',
           },
         }),
@@ -159,14 +160,44 @@ describe('what the SDK is handed', () => {
     }
   });
 
-  it('a passport is captured front only', () => {
-    expect(smileIDSampleCapturesBothSides('PASSPORT')).toBe(false);
+  it('every document setting builds, except the Green Book the SDK refuses on Enhanced Document Verification', () => {
+    for (const id of ['documentVerification', 'enhancedDocumentVerification']) {
+      for (const captureAs of Object.values(UseSmileIDSampleCaptureAs)) {
+        for (const flag of [true, false]) {
+          const result = built(
+            snapshot({
+              product: productFor(id),
+              idDetails: {
+                ...smileIDSampleIdDetailsDefaults,
+                country: { code: 'ZA', name: 'South Africa' },
+                document: { code: 'IDENTITY_CARD', subType: null, name: 'Identity Card', hasBack: true, format: 1 },
+                captureAs,
+              },
+              captureBothSides: flag,
+              allowSkipBack: !flag,
+              selfieFirst: flag,
+            }),
+          ).build();
+          const refused = id === 'enhancedDocumentVerification' && captureAs === UseSmileIDSampleCaptureAs.GreenBook;
+          expect([id, captureAs, flag, result.kind]).toEqual([id, captureAs, flag, refused ? 'invalid' : 'success']);
+        }
+      }
+    }
   });
 
-  it('every other document, and none chosen, is captured on both sides', () => {
-    const others = smileIDSampleIdTypes.filter((type) => type.id !== 'PASSPORT').map((type) => type.id);
-    expect(others.filter((id) => !smileIDSampleCapturesBothSides(id))).toEqual([]);
-    expect(smileIDSampleCapturesBothSides(undefined)).toBe(true);
+  it('a passport is captured front only, whatever the setting', () => {
+    for (const captureAs of Object.values(UseSmileIDSampleCaptureAs)) {
+      for (const setting of [true, false]) {
+        const captured = smileIDSampleCapturesBothSides(
+          snapshot({ idDetails: { ...smileIDSampleIdDetailsDefaults, captureAs }, captureBothSides: setting }),
+        );
+        expect([captureAs, setting, captured]).toEqual([
+          captureAs,
+          setting,
+          setting && captureAs !== UseSmileIDSampleCaptureAs.Passport,
+        ]);
+      }
+    }
   });
 
   // The regression check for the import that took the whole JS bundle down on Android.
@@ -176,5 +207,31 @@ describe('what the SDK is handed', () => {
       expect(vision).toBeDefined();
     });
     expect(() => built(snapshot())).not.toThrow();
+  });
+});
+
+describe('the ID parameters', () => {
+  const kenya = { code: 'KE', name: 'Kenya' };
+  const nationalId = { id: 'NATIONAL_ID', type: 'NATIONAL_ID', label: 'National ID', regex: '^[0-9]{1,9}$' };
+
+  it('sends a document job the document, even with an ID type left in the form', () => {
+    const value = snapshot({
+      product: productFor('documentVerification'),
+      idDetails: {
+        ...smileIDSampleIdDetailsDefaults,
+        country: kenya,
+        idType: nationalId,
+        document: { code: 'PASSPORT', subType: null, name: 'Passport', hasBack: false, format: 3 },
+      },
+    });
+    expect(built(value).documentVerificationParams?.idType).toBe('PASSPORT');
+  });
+
+  it('sends a KYC job the number trimmed, as the form checked it', () => {
+    const value = snapshot({
+      product: productFor('biometricKyc'),
+      idDetails: { ...smileIDSampleIdDetailsDefaults, country: kenya, idType: nationalId, idNumber: ' 12345678 ' },
+    });
+    expect(built(value).biometricKYCParams?.idNumber).toBe('12345678');
   });
 });

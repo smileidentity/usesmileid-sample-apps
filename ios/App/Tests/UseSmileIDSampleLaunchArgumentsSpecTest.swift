@@ -37,9 +37,17 @@ final class UseSmileIDSampleLaunchArgumentsSpecTest: XCTestCase {
       UseSmileIDSampleLaunchArguments.probesName: String(defaults.probes),
       UseSmileIDSampleLaunchArguments.appLocaleName: defaults.appLocale,
       UseSmileIDSampleLaunchArguments.holdCameraName: defaults.holdCamera?.description,
-      UseSmileIDSampleLaunchArguments.noticeWindowName: defaults.noticeWindow.map(String.init)
+      UseSmileIDSampleLaunchArguments.noticeWindowName: defaults.noticeWindow.map(String.init),
+      UseSmileIDSampleLaunchArguments.catalogueName: defaults.catalogue.rawValue
     ]
     XCTAssertEqual(Dictionary(uniqueKeysWithValues: specArgs), declared)
+  }
+
+  func testCatalogueTakesTheThreeSpecValuesAndFallsBackToLive() {
+    for mode in UseSmileIDSampleCatalogueMode.allCases {
+      XCTAssertEqual(UseSmileIDSampleLaunchArguments(raw: ["catalogue": mode.rawValue]).catalogue, mode)
+    }
+    XCTAssertEqual(UseSmileIDSampleLaunchArguments(raw: ["catalogue": "offline"]).catalogue, .live)
   }
 
   func testAnEmptyLaunchIsTheDeclaredDefaults() {

@@ -106,7 +106,11 @@ final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
     .newProfile: .profiles,
     .scenarioDrawer: .settings,
     .countryPicker: .idDetailsForm(productId: "sample-productId"),
-    .idTypePicker: .idDetailsForm(productId: "sample-productId")
+    .idTypePicker: .idDetailsForm(productId: "sample-productId"),
+    .documentPicker: .idDetailsForm(productId: "sample-productId"),
+    .captureAs: .idDetailsForm(productId: "sample-productId"),
+    .genericDocument: .idDetailsForm(productId: "sample-productId"),
+    .captureMode: .settings
   ]
 
   private func binding(for route: Route) -> String {

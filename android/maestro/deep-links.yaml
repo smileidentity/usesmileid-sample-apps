@@ -38,19 +38,34 @@ appId: ${APP_ID}
 - assertVisible: "Biometric KYC"
 
 - stopApp
-- openLink: "usesmileid-sample-android://flow/biometricKyc/id-details"
+- openLink: "usesmileid-sample-android://flow/biometricKyc/id-details?catalogue=fixture"
 - assertVisible:
     id: "sample_kyc_form_screen"
 
 - stopApp
-- openLink: "usesmileid-sample-android://flow/biometricKyc/id-details/country"
+- openLink: "usesmileid-sample-android://flow/biometricKyc/id-details/country?catalogue=fixture"
 - assertVisible:
     id: "sample_country_sheet"
 
+# Fixture lists, so no link depends on the network; a second-level sheet needs a country first, as its trigger does.
 - stopApp
-- openLink: "usesmileid-sample-android://flow/biometricKyc/id-details/id-type"
+- openLink: "usesmileid-sample-android://flow/biometricKyc/id-details/id-type?catalogue=fixture"
 - assertVisible:
+    id: "sample_kyc_form_screen"
+- assertNotVisible:
     id: "sample_idtype_sheet"
+
+- stopApp
+- openLink: "usesmileid-sample-android://flow/documentVerification/id-details/document?catalogue=fixture"
+- assertVisible:
+    id: "sample_document_trigger"
+- assertNotVisible:
+    id: "sample_document_sheet"
+
+- stopApp
+- openLink: "usesmileid-sample-android://settings/capture-mode"
+- assertVisible:
+    id: "sample_capture_mode_sheet"
 
 # A cold link arrives with empty stores, so the SDK's pre-flight redirects to that product's
 # consent form and never reaches the SDK (§7.3).

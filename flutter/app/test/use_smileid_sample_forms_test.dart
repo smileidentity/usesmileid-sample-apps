@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_forms.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
+
+import 'support/use_smileid_sample_catalogue_fixture.dart';
 
 /// The two pre-flow forms, their two picker sheets, and the order a product tap starts.
 void main() {
@@ -17,6 +21,7 @@ void main() {
   Future<void> pumpAt(WidgetTester tester, String location) async {
     await tester.pumpWidget(
       ProviderScope(
+        overrides: <Override>[useSmileIDSampleFixtureCatalogueOverride()],
         child: MaterialApp.router(
           theme: UseSmileIDSampleTheme.light(),
           routerConfig: useSmileIDSampleRouter(initialLocation: location),
@@ -169,8 +174,8 @@ void main() {
       useSmileIDSampleFormsProvider.notifier,
     );
     notifier
-      ..setCountry(UseSmileIDSampleCountry.ke)
-      ..setIdType(UseSmileIDSampleIdType.nationalId)
+      ..setCountry(kenya)
+      ..setIdType(kenyaNationalId)
       ..setIdNumber('12345678');
 
     notifier.startRun(null);
@@ -213,13 +218,13 @@ void main() {
 
       await _selectOption(tester, 'Ghana');
 
-      expect(forms().idDetails.country, UseSmileIDSampleCountry.gh);
+      expect(forms().idDetails.country?.code, 'GH');
       await tester.tap(byId(UseSmileIDSampleTestIds.idTypeTrigger));
       await tester.pumpAndSettle();
 
-      // Ghana issues a Voter ID but no licence, which is the point of the per-country table.
-      expect(find.text('Voter ID'), findsOne);
-      expect(find.text("Driver's licence"), findsNothing);
+      // The phone number type needs an operator the form cannot collect, so the rules drop it.
+      expect(find.text('GHANA CARD'), findsOne);
+      expect(find.text('Phone Number'), findsNothing);
     });
 
     // The types the old country offered may not apply to the new one.
@@ -232,8 +237,8 @@ void main() {
       await _selectOption(tester, 'Kenya');
       await tester.tap(byId(UseSmileIDSampleTestIds.idTypeTrigger));
       await tester.pumpAndSettle();
-      await _selectOption(tester, "Driver's licence");
-      expect(forms().idDetails.idType, UseSmileIDSampleIdType.driversLicense);
+      await _selectOption(tester, 'Passport');
+      expect(forms().idDetails.idType?.type, 'PASSPORT');
 
       await tester.tap(byId(UseSmileIDSampleTestIds.countryTrigger));
       await tester.pumpAndSettle();
@@ -271,6 +276,98 @@ void main() {
         isTrue,
       );
     });
+
+    testWidgets(
+      'a number outside the type\'s format says so and holds Continue',
+      (WidgetTester tester) async {
+        await openForm(tester);
+        await tester.tap(byId(UseSmileIDSampleTestIds.countryTrigger));
+        await tester.pumpAndSettle();
+        await _selectOption(tester, 'Kenya');
+        await tester.tap(byId(UseSmileIDSampleTestIds.idTypeTrigger));
+        await tester.pumpAndSettle();
+        await _selectOption(tester, 'National ID');
+        expect(find.text('e.g. 000000000'), findsOne);
+
+        await tester.enterText(
+          byId(UseSmileIDSampleTestIds.idNumberInput),
+          'AB',
+        );
+        await tester.pumpAndSettle();
+
+        expect(byId(UseSmileIDSampleTestIds.idNumberError), findsOne);
+        expect(
+          continueEnabled(tester, UseSmileIDSampleTestIds.kycContinue),
+          isFalse,
+        );
+      },
+    );
+
+    testWidgets(
+      'a document product asks for a document and how to capture it',
+      (WidgetTester tester) async {
+        await pumpAt(
+          tester,
+          UseSmileIDSampleRoutes.idDetailsForm('documentVerification'),
+        );
+        expect(byId(UseSmileIDSampleTestIds.idTypeTrigger), findsNothing);
+        expect(byId(UseSmileIDSampleTestIds.idNumberInput), findsNothing);
+
+        await tester.tap(byId(UseSmileIDSampleTestIds.countryTrigger));
+        await tester.pumpAndSettle();
+        await _selectOption(tester, 'Kenya');
+        await tester.tap(byId(UseSmileIDSampleTestIds.documentTrigger));
+        await tester.pumpAndSettle();
+
+        // "Others" has no code, so the rules drop it.
+        expect(find.text('Others'), findsNothing);
+        await _selectOption(tester, 'Identity Card');
+
+        expect(forms().idDetails.document?.code, 'IDENTITY_CARD');
+        expect(
+          continueEnabled(tester, UseSmileIDSampleTestIds.kycContinue),
+          isTrue,
+        );
+        expect(find.text('Generic document: Document'), findsOne);
+      },
+    );
+
+    testWidgets(
+      'choosing Generic document hands over to the generic-document sheet',
+      (WidgetTester tester) async {
+        await pumpAt(
+          tester,
+          UseSmileIDSampleRoutes.idDetailsForm('documentVerification'),
+        );
+        await tester.tap(byId(UseSmileIDSampleTestIds.countryTrigger));
+        await tester.pumpAndSettle();
+        await _selectOption(tester, 'Kenya');
+        await tester.tap(byId(UseSmileIDSampleTestIds.documentTrigger));
+        await tester.pumpAndSettle();
+        await _selectOption(tester, 'Passport');
+        await tester.tap(byId(UseSmileIDSampleTestIds.captureAsTrigger));
+        await tester.pumpAndSettle();
+        await tester.tap(
+          byId(UseSmileIDSampleTestIds.captureAsOption('genericDocument')),
+        );
+        await tester.pumpAndSettle();
+
+        expect(byId(UseSmileIDSampleTestIds.genericDocumentSheet), findsOne);
+        await tester.enterText(
+          byId(UseSmileIDSampleTestIds.genericDocumentName),
+          'Work permit',
+        );
+        await tester.tap(byId(UseSmileIDSampleTestIds.genericDocumentDone));
+        await tester.pumpAndSettle();
+
+        expect(
+          forms().idDetails.captureAs,
+          UseSmileIDSampleCaptureAs.genericDocument,
+        );
+        expect(forms().idDetails.genericDocument.displayName, 'Work permit');
+        expect(find.text('Generic document: Work permit'), findsOne);
+      },
+    );
   });
 
   group('the pickers', () {
@@ -311,14 +408,40 @@ void main() {
       expect(find.text('No country matches “Atlantis”'), findsOne);
     });
 
-    // A deep link can reach the ID-type picker with no country, which the twin allows too.
-    testWidgets('the ID type picker with no country says there are none', (
+    // Its trigger could not open it yet, so neither may a link.
+    testWidgets('an ID type link with no country is refused', (
       WidgetTester tester,
     ) async {
       await pumpAt(tester, UseSmileIDSampleRoutes.idTypePicker('biometricKyc'));
 
-      expect(byId(UseSmileIDSampleTestIds.idTypeSheet), findsOne);
-      expect(find.text('No ID type for this country'), findsOne);
+      expect(byId(UseSmileIDSampleTestIds.kycFormScreen), findsOne);
+      expect(byId(UseSmileIDSampleTestIds.idTypeSheet), findsNothing);
+    });
+
+    testWidgets('a generic-document link keeps nothing until Done', (
+      WidgetTester tester,
+    ) async {
+      await pumpAt(
+        tester,
+        UseSmileIDSampleRoutes.genericDocument('documentVerification'),
+      );
+
+      expect(byId(UseSmileIDSampleTestIds.genericDocumentSheet), findsOne);
+      await tester.tap(
+        byId(UseSmileIDSampleTestIds.genericDocumentOrientation('portrait')),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        forms().idDetails.genericDocument.orientation,
+        UseSmileIDSampleDocumentOrientation.landscape,
+      );
+
+      await tester.tap(byId(UseSmileIDSampleTestIds.genericDocumentDone));
+      await tester.pumpAndSettle();
+      expect(
+        forms().idDetails.genericDocument.orientation,
+        UseSmileIDSampleDocumentOrientation.portrait,
+      );
     });
 
     // R12: the picker path is a layer over the form, so the form is behind the scrim rather than
@@ -334,6 +457,35 @@ void main() {
       expect(byId(UseSmileIDSampleTestIds.kycFormScreen), findsOne);
       expect(byId(UseSmileIDSampleTestIds.countrySheet), findsOne);
     });
+
+    testWidgets(
+      'the form under a picker link still loads its lists once the link is gone',
+      (WidgetTester tester) async {
+        await pumpAt(
+          tester,
+          UseSmileIDSampleRoutes.countryPicker('biometricKyc'),
+        );
+        final GoRouter router = GoRouter.of(
+          tester.element(byId(UseSmileIDSampleTestIds.kycFormScreen).first),
+        );
+        while (byId(
+              UseSmileIDSampleTestIds.countrySheet,
+            ).evaluate().isNotEmpty ||
+            router.state.uri.path.endsWith('/country')) {
+          Navigator.of(
+            tester.element(byId(UseSmileIDSampleTestIds.kycFormScreen).last),
+            rootNavigator: byId(
+              UseSmileIDSampleTestIds.countrySheet,
+            ).evaluate().isNotEmpty,
+          ).pop();
+          await tester.pumpAndSettle();
+        }
+
+        await tester.tap(byId(UseSmileIDSampleTestIds.countryTrigger));
+        await tester.pumpAndSettle();
+        expect(find.text('Ghana'), findsOne);
+      },
+    );
   });
 }
 

@@ -29,13 +29,18 @@ enum UseSmileIDSampleSheetLinks {
     UseSmileIDSampleDeepLinks.newProfile:
       UseSmileIDSampleSheetLink(sheet: .newProfile, ownerUri: UseSmileIDSampleDeepLinks.profiles),
     UseSmileIDSampleDeepLinks.scenarioDrawer:
-      UseSmileIDSampleSheetLink(sheet: .scenarioDrawer, ownerUri: UseSmileIDSampleDeepLinks.settings)
+      UseSmileIDSampleSheetLink(sheet: .scenarioDrawer, ownerUri: UseSmileIDSampleDeepLinks.settings),
+    UseSmileIDSampleDeepLinks.captureMode:
+      UseSmileIDSampleSheetLink(sheet: .captureMode, ownerUri: UseSmileIDSampleDeepLinks.settings)
   ]
 
   /// The pickers hang off the form's own path, so their owner is the link minus its last segment.
   private static let pickers: [String: Sheet] = [
     lastSegment(UseSmileIDSampleDeepLinks.countryPicker): .countryPicker,
-    lastSegment(UseSmileIDSampleDeepLinks.idTypePicker): .idTypePicker
+    lastSegment(UseSmileIDSampleDeepLinks.idTypePicker): .idTypePicker,
+    lastSegment(UseSmileIDSampleDeepLinks.documentPicker): .documentPicker,
+    lastSegment(UseSmileIDSampleDeepLinks.captureAs): .captureAs,
+    lastSegment(UseSmileIDSampleDeepLinks.genericDocument): .genericDocument
   ]
 
   /// Built from the constant so a renamed path cannot leave this behind.

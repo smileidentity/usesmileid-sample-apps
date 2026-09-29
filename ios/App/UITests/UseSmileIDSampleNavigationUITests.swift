@@ -9,7 +9,7 @@ final class UseSmileIDSampleNavigationUITests: XCTestCase {
     continueAfterFailure = false
     app = XCUIApplication()
     // Seeded because the suite asserts on the design's three profiles; the notice window is widened because its offer is consumed on dismissal.
-    app.launchArguments = useSmileIDSampleSettingsSeed + ["-seedProfiles", "true", "-noticeWindow", "60"]
+    app.launchArguments = useSmileIDSampleLaunchSeed + ["-seedProfiles", "true", "-noticeWindow", "60"]
     app.launch()
     clearAnySession()
   }

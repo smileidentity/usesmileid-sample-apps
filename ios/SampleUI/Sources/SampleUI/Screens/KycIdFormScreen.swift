@@ -1,20 +1,32 @@
 import SwiftUI
 
-public struct UseSmileIDSampleKycIdFormState: Equatable {
+public struct UseSmileIDSampleKycIdFormState {
   public var productLabel: String
+  public var family: UseSmileIDSampleCatalogueFamily
   public var details: UseSmileIDSampleIdDetails
+  /// Whether the chosen country's list is still arriving, which is what the second trigger's placeholder says.
+  public var countryListLoading: Bool
 
-  public init(productLabel: String, details: UseSmileIDSampleIdDetails = UseSmileIDSampleIdDetails()) {
+  public init(
+    productLabel: String,
+    family: UseSmileIDSampleCatalogueFamily = .kyc,
+    details: UseSmileIDSampleIdDetails = UseSmileIDSampleIdDetails(),
+    countryListLoading: Bool = false
+  ) {
     self.productLabel = productLabel
+    self.family = family
     self.details = details
+    self.countryListLoading = countryListLoading
   }
 }
 
-/// The ID-details form. ID type is disabled until a country is chosen, because the types depend on it.
+/// The ID-details form: an ID type and number for KYC, a document and how to capture it otherwise.
 public struct KycIdFormScreen: View {
   private let state: UseSmileIDSampleKycIdFormState
   private let onCountryTap: () -> Void
   private let onIdTypeTap: () -> Void
+  private let onDocumentTap: () -> Void
+  private let onCaptureAsTap: () -> Void
   private let onIdNumberChange: (String) -> Void
   private let onBack: () -> Void
   private let onContinue: () -> Void
@@ -26,6 +38,8 @@ public struct KycIdFormScreen: View {
     state: UseSmileIDSampleKycIdFormState,
     onCountryTap: @escaping () -> Void,
     onIdTypeTap: @escaping () -> Void,
+    onDocumentTap: @escaping () -> Void = {},
+    onCaptureAsTap: @escaping () -> Void = {},
     onIdNumberChange: @escaping (String) -> Void,
     onBack: @escaping () -> Void,
     onContinue: @escaping () -> Void,
@@ -34,6 +48,8 @@ public struct KycIdFormScreen: View {
     self.state = state
     self.onCountryTap = onCountryTap
     self.onIdTypeTap = onIdTypeTap
+    self.onDocumentTap = onDocumentTap
+    self.onCaptureAsTap = onCaptureAsTap
     self.onIdNumberChange = onIdNumberChange
     self.onBack = onBack
     self.onContinue = onContinue
@@ -47,10 +63,18 @@ public struct KycIdFormScreen: View {
         VStack(alignment: .leading, spacing: SmileSpacing.spacingSm) {
           UseSmileIDSampleSectionLabel("COUNTRY")
           countryTrigger
-          UseSmileIDSampleSectionLabel("ID TYPE")
-          idTypeTrigger
-          UseSmileIDSampleSectionLabel("ID NUMBER")
-          idNumberInput
+          switch state.family {
+          case .kyc:
+            UseSmileIDSampleSectionLabel("ID TYPE")
+            idTypeTrigger
+            UseSmileIDSampleSectionLabel("ID NUMBER")
+            idNumberInput
+          case .document:
+            UseSmileIDSampleSectionLabel("DOCUMENT")
+            documentTrigger
+            UseSmileIDSampleSectionLabel("CAPTURE AS")
+            captureAsTrigger
+          }
         }
         .padding(.horizontal, SmileSpacing.spacingMd)
       }
@@ -62,7 +86,7 @@ public struct KycIdFormScreen: View {
       }
       UseSmileIDSampleButton(
         text: "Continue",
-        enabled: state.details.isComplete,
+        enabled: state.details.isComplete(state.family),
         testId: UseSmileIDSampleTestIds.kycContinue,
         action: onContinue
       )
@@ -74,7 +98,7 @@ public struct KycIdFormScreen: View {
   /// The design leads with the chosen country's flag, falling back to a globe.
   private var countryTrigger: some View {
     UseSmileIDSampleSelectTrigger(
-      value: state.details.country?.label,
+      value: state.details.country?.name,
       placeholder: "Select country",
       testId: UseSmileIDSampleTestIds.countryTrigger,
       onTap: onCountryTap
@@ -86,7 +110,7 @@ public struct KycIdFormScreen: View {
   private var idTypeTrigger: some View {
     UseSmileIDSampleSelectTrigger(
       value: state.details.idType?.label,
-      placeholder: state.details.country == nil ? "Choose a country first" : "Select ID type",
+      placeholder: secondPlaceholder(loading: "Loading ID types\u{2026}", ready: "Select ID type"),
       enabled: state.details.country != nil,
       testId: UseSmileIDSampleTestIds.idTypeTrigger,
       onTap: onIdTypeTap
@@ -97,14 +121,53 @@ public struct KycIdFormScreen: View {
   }
 
   private var idNumberInput: some View {
-    UseSmileIDSampleTextInput(
+    let error = UseSmileIDSampleIdNumberHint.error(state.details.idType, state.details.idNumber)
+    return UseSmileIDSampleTextInput(
       value: Binding(get: { state.details.idNumber }, set: onIdNumberChange),
-      placeholder: "Enter ID number",
-      testId: UseSmileIDSampleTestIds.idNumberInput
+      placeholder: UseSmileIDSampleIdNumberHint.placeholder(state.details.idType),
+      enabled: state.details.idType != nil,
+      isError: error != nil,
+      errorMessage: error,
+      testId: UseSmileIDSampleTestIds.idNumberInput,
+      errorTestId: UseSmileIDSampleTestIds.idNumberError
     )
     // An ID number is upper-case everywhere it is printed.
     .textInputAutocapitalization(.characters)
     // An alphanumeric ID is exactly what autocorrect rewrites into a word.
     .autocorrectionDisabled()
+  }
+
+  private var documentTrigger: some View {
+    UseSmileIDSampleSelectTrigger(
+      value: state.details.document?.name,
+      placeholder: secondPlaceholder(loading: "Loading documents\u{2026}", ready: "Select document"),
+      enabled: state.details.country != nil,
+      testId: UseSmileIDSampleTestIds.documentTrigger,
+      onTap: onDocumentTap
+    ) { tint in
+      UseSmileIDSampleIcon(SmileIcons.documentVerification, tint: tint, size: SmileSpacing.sizeIconMd)
+    }
+  }
+
+  private var captureAsTrigger: some View {
+    UseSmileIDSampleSelectTrigger(
+      value: state.details.captureAs == .genericDocument
+        ? "Generic document: \(state.details.genericDocument.displayName)"
+        : state.details.captureAs.label,
+      placeholder: UseSmileIDSampleCaptureAs.genericDocument.label,
+      enabled: state.details.document != nil,
+      testId: UseSmileIDSampleTestIds.captureAsTrigger,
+      onTap: onCaptureAsTap
+    ) { tint in
+      UseSmileIDSampleIcon(SmileIcons.preview, tint: tint, size: SmileSpacing.sizeIconMd)
+    }
+  }
+
+  /// Enabled while loading, with a muted "Loading…" in place of the prompt, so the form never looks stuck.
+  private func secondPlaceholder(loading: String, ready: String) -> String {
+    if state.details.country == nil {
+      return "Choose a country first"
+    }
+    return state.countryListLoading ? loading : ready
   }
 }

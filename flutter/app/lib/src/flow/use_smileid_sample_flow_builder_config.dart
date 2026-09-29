@@ -120,8 +120,17 @@ void _applyIdParams(
   // The server overwrites these from the token's claims regardless.
   final UseSmileIDSampleTokenBindings? bound = snapshot.liveSession?.bindings;
   final String country = bound?.country ?? details.country?.code ?? '';
-  final String idType = bound?.idType ?? details.idType?.id ?? '';
-  final String idNumber = bound?.idNumberReference ?? details.idNumber;
+  // By family, so a field left over from another product's form is never sent.
+  final String? chosen = switch (useSmileIDSampleCatalogueFamily(
+    snapshot.product,
+  )) {
+    UseSmileIDSampleCatalogueFamily.kyc => details.idType?.type,
+    UseSmileIDSampleCatalogueFamily.document => details.document?.code,
+    null => null,
+  };
+  final String idType = bound?.idType ?? chosen ?? '';
+  // Trimmed, as the form checked it.
+  final String idNumber = bound?.idNumberReference ?? details.idNumber.trim();
   switch (snapshot.product) {
     case UseSmileIDSampleProduct.biometricKyc:
       builder.biometricKYCParams = BiometricKYCParams(
@@ -139,7 +148,7 @@ void _applyIdParams(
     case UseSmileIDSampleProduct.documentVerification:
       builder.documentVerificationParams = DocumentVerificationParams(
         country: country,
-        idType: bound?.idType ?? details.idType?.id,
+        idType: bound?.idType ?? chosen,
       );
     case UseSmileIDSampleProduct.enhancedDocumentVerification:
       builder.enhancedDocumentVerificationParams =
@@ -163,31 +172,9 @@ void _journeyFor(
           // Omitting it fails build() while validate() still reports Valid, so no gate catches it.
           consent.partnerIcon = const _UseSmileIDSamplePartnerMark();
           consent.partnerPrivacyPolicyUrl = _privacyPolicyUrl;
-          // The slot's scope type is not exported in 12.1.1, so each slot is a closure it is inferred for.
-          if (snapshot.customContinue) {
-            consent.allowButton = (scope) =>
-                UseSmileIDSampleCustomContinueButton(
-                  onPressed: scope.onClick,
-                  enabled: scope.enabled,
-                );
-          }
-          if (snapshot.customCancel) {
-            consent.denyButton = (scope) => UseSmileIDSampleCustomCancelButton(
-              onPressed: scope.onClick,
-              enabled: scope.enabled,
-            );
-          }
         });
       case UseSmileIDSampleFlowJourneyStep.instructions:
-        screens.instructions((InstructionsConfigBuilder instructions) {
-          if (snapshot.customContinue) {
-            instructions.continueButton = (scope) =>
-                UseSmileIDSampleCustomContinueButton(
-                  onPressed: scope.onClick,
-                  enabled: scope.enabled,
-                );
-          }
-        });
+        screens.instructions();
       case UseSmileIDSampleFlowJourneyStep.selfieCapture:
         screens.capture((CaptureConfigBuilder capture) {
           capture.captureType = CaptureType.selfie;
@@ -200,33 +187,24 @@ void _journeyFor(
         screens.capture((CaptureConfigBuilder capture) {
           capture.captureType = CaptureType.document;
           capture.document((DocumentCaptureConfigBuilder document) {
-            document.documentType = _documentTypeFor(snapshot.idDetails.idType);
-            document.captureBothSides = useSmileIDSampleCapturesBothSides(
-              snapshot.idDetails.idType,
+            document.documentType = useSmileIDSampleDocumentTypeFor(
+              snapshot.idDetails,
             );
-            document.allowSkipBack = true;
+            // The SDK's passport preset declares a back side; the sample
+            // captures a passport front only.
+            document.captureBothSides =
+                snapshot.captureBothSides &&
+                snapshot.idDetails.captureAs !=
+                    UseSmileIDSampleCaptureAs.passport;
+            document.allowSkipBack = snapshot.allowSkipBack;
+            document.captureMode = snapshot.captureMode.sdk;
+            document.allowGalleryUpload = snapshot.galleryUpload;
           });
         });
       case UseSmileIDSampleFlowJourneyStep.preview:
         screens.preview();
-      // Retry is neither continue nor cancel, so it stays the SDK's (spec/components.json).
       case UseSmileIDSampleFlowJourneyStep.processing:
-        screens.processing((ProcessingConfigBuilder processing) {
-          if (snapshot.customContinue) {
-            processing.continueButton = (scope) =>
-                UseSmileIDSampleCustomContinueButton(
-                  onPressed: scope.onClick,
-                  enabled: scope.enabled,
-                );
-          }
-          if (snapshot.customCancel) {
-            processing.exitButton = (scope) =>
-                UseSmileIDSampleCustomCancelButton(
-                  onPressed: scope.onClick,
-                  enabled: scope.enabled,
-                );
-          }
-        });
+        screens.processing();
     }
   }
 }
@@ -274,11 +252,14 @@ List<UseSmileIDSampleFlowJourneyStep> useSmileIDSampleJourneyStepsFor(
   }
   switch (snapshot.product) {
     case UseSmileIDSampleProduct.documentVerification:
-      _documentCapture(steps, snapshot.previewStep);
-      _selfieCapture(steps, snapshot.previewStep);
     case UseSmileIDSampleProduct.enhancedDocumentVerification:
-      _selfieCapture(steps, snapshot.previewStep);
-      _documentCapture(steps, snapshot.previewStep);
+      if (snapshot.selfieFirst) {
+        _selfieCapture(steps, snapshot.previewStep);
+        _documentCapture(steps, snapshot.previewStep);
+      } else {
+        _documentCapture(steps, snapshot.previewStep);
+        _selfieCapture(steps, snapshot.previewStep);
+      }
     case UseSmileIDSampleProduct.smartSelfieEnrollment:
     case UseSmileIDSampleProduct.smartSelfieAuth:
     case UseSmileIDSampleProduct.biometricKyc:
@@ -306,18 +287,34 @@ void _documentCapture(
   }
 }
 
-DocumentType _documentTypeFor(UseSmileIDSampleIdType? idType) =>
-    switch (idType) {
-      UseSmileIDSampleIdType.passport => DocumentType.passport,
-      null => const GenericDocument(),
-      final UseSmileIDSampleIdType other => GenericDocument(
-        displayName: other.label,
-      ),
-    };
+/// The "Capture as" mapping from `spec/catalogue-rules.json`: the SDK's own type, nothing read from the API.
+@visibleForTesting
+DocumentType useSmileIDSampleDocumentTypeFor(
+  UseSmileIDSampleIdDetails details,
+) => switch (details.captureAs) {
+  UseSmileIDSampleCaptureAs.greenBook => DocumentType.southAfricaGreenBook,
+  UseSmileIDSampleCaptureAs.passport => DocumentType.passport,
+  UseSmileIDSampleCaptureAs.genericDocument => GenericDocument(
+    displayName: details.genericDocument.displayName,
+    hasBackSide: details.genericDocument.hasBackSide,
+    orientation: switch (details.genericDocument.orientation) {
+      UseSmileIDSampleDocumentOrientation.landscape =>
+        DocumentOrientation.landscape,
+      UseSmileIDSampleDocumentOrientation.portrait =>
+        DocumentOrientation.portrait,
+    },
+    knownAspectRatio: details.genericDocument.aspectRatio.ratio,
+  ),
+};
 
-/// The SDK's passport preset declares a back side; the sample captures a passport front only.
-bool useSmileIDSampleCapturesBothSides(UseSmileIDSampleIdType? idType) =>
-    idType != UseSmileIDSampleIdType.passport;
+extension on UseSmileIDSampleCaptureMode {
+  DocumentCaptureMode get sdk => switch (this) {
+    UseSmileIDSampleCaptureMode.auto => const AutoCapture(),
+    UseSmileIDSampleCaptureMode.manual => const ManualCapture(),
+    UseSmileIDSampleCaptureMode.autoWithFallback =>
+      const AutoCaptureWithManualFallback(),
+  };
+}
 
 /// The SDK's own job type for each product.
 extension on UseSmileIDSampleProduct {

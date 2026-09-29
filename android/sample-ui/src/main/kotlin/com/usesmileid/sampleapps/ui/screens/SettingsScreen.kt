@@ -77,6 +77,7 @@ fun SettingsScreen(
     onSettingChange: (UseSmileIDSampleSetting, Boolean) -> Unit,
     onProfileClick: () -> Unit,
     onNavRowClick: (UseSmileIDSampleNavRow) -> Unit,
+    onCaptureModeClick: () -> Unit,
     /** Null hides the DEBUG section: `sample-ui` may not read a host's BuildConfig. */
     onOpenScenarioDrawer: (() -> Unit)?,
     onSignOut: () -> Unit,
@@ -193,25 +194,54 @@ fun SettingsScreen(
             )
         }
 
-        // The design draws no such section, so this placement is ours, like DEBUG's.
-        section(CUSTOM_BUTTONS_SECTION) {
+        // The design draws no such section either; it sits with the other capture choices.
+        section(DOCUMENT_CAPTURE_SECTION) {
+            UseSmileIDSampleSettingRow(
+                title = "Capture mode",
+                supportingText = state.settings.captureMode.label,
+                onClick = onCaptureModeClick,
+                leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_document_verification, tint = tint) },
+                trailing = { UseSmileIDSampleSettingRowChevron() },
+                testId = UseSmileIDSampleTestIds.SETTING_CAPTURE_MODE,
+            )
+            UseSmileIDSampleSettingRowDivider()
             SwitchRow(
-                title = "Custom continue",
-                icon = R.drawable.sample_ic_custom_continue,
-                supportingText = "Replaces the SDK's continue buttons",
-                checked = state.settings.customContinue,
-                setting = UseSmileIDSampleSetting.CustomContinue,
-                testId = UseSmileIDSampleTestIds.SETTING_CUSTOM_CONTINUE,
+                title = "Gallery upload",
+                icon = R.drawable.sample_ic_setting_preview,
+                supportingText = "The system picker needs no permission",
+                checked = state.settings.galleryUpload,
+                setting = UseSmileIDSampleSetting.GalleryUpload,
+                testId = UseSmileIDSampleTestIds.SETTING_GALLERY_UPLOAD,
                 onSettingChange = onSettingChange,
             )
             UseSmileIDSampleSettingRowDivider()
             SwitchRow(
-                title = "Custom cancel",
-                icon = R.drawable.sample_ic_arrow_back,
-                supportingText = "Replaces the SDK's cancel buttons",
-                checked = state.settings.customCancel,
-                setting = UseSmileIDSampleSetting.CustomCancel,
-                testId = UseSmileIDSampleTestIds.SETTING_CUSTOM_CANCEL,
+                title = "Capture the back side",
+                icon = R.drawable.sample_ic_document_verification,
+                supportingText = "Only for a document type that has one",
+                checked = state.settings.captureBothSides,
+                setting = UseSmileIDSampleSetting.CaptureBothSides,
+                testId = UseSmileIDSampleTestIds.SETTING_CAPTURE_BOTH_SIDES,
+                onSettingChange = onSettingChange,
+            )
+            UseSmileIDSampleSettingRowDivider()
+            SwitchRow(
+                title = "Skip the back",
+                icon = R.drawable.sample_ic_setting_instructions,
+                supportingText = "A Skip button on the back-side capture",
+                checked = state.settings.allowSkipBack,
+                setting = UseSmileIDSampleSetting.AllowSkipBack,
+                testId = UseSmileIDSampleTestIds.SETTING_ALLOW_SKIP_BACK,
+                onSettingChange = onSettingChange,
+            )
+            UseSmileIDSampleSettingRowDivider()
+            SwitchRow(
+                title = "Selfie first",
+                icon = R.drawable.sample_ic_setting_smile,
+                supportingText = "The selfie before the document",
+                checked = state.settings.selfieFirst,
+                setting = UseSmileIDSampleSetting.SelfieFirst,
+                testId = UseSmileIDSampleTestIds.SETTING_SELFIE_FIRST,
                 onSettingChange = onSettingChange,
             )
         }
@@ -331,8 +361,8 @@ private fun NavRow(row: UseSmileIDSampleNavRow, onClick: (UseSmileIDSampleNavRow
     )
 }
 
-/** The custom-buttons section's label, which the design does not draw. */
-internal const val CUSTOM_BUTTONS_SECTION = "CUSTOM BUTTONS — REPLACE THE SDK'S BUTTONS"
+/** The document-capture section's label, which the design does not draw. */
+internal const val DOCUMENT_CAPTURE_SECTION = "DOCUMENT CAPTURE"
 
 // The design marks the trademark here and nowhere else on this screen (node 5206:2898).
 private const val ENHANCED_SMART_SELFIE_TITLE = "Enhanced SmartSelfie\u2122"

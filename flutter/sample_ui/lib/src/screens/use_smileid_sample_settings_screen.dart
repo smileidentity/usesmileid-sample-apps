@@ -114,7 +114,7 @@ class UseSmileIDSampleSettingsState {
     this.hasProfile = true,
   });
 
-  /// The six switches.
+  /// The switches and the capture mode.
   final UseSmileIDSampleSettings settings;
 
   /// The active profile's organisation.
@@ -146,6 +146,7 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
     required this.onProfileTap,
     required this.onNavRowTap,
     required this.onSignOut,
+    required this.onCaptureModeTap,
     this.onOpenScenarioDrawer,
     this.bottomInset = 0,
     super.key,
@@ -166,6 +167,9 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
 
   /// Signs out.
   final VoidCallback onSignOut;
+
+  /// Opens the capture-mode sheet.
+  final VoidCallback onCaptureModeTap;
 
   /// Opens the scenario drawer; null hides the DEBUG section entirely.
   final VoidCallback? onOpenScenarioDrawer;
@@ -276,22 +280,48 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
               ),
             ],
           ),
-          // The design draws no such section, so this placement is ours, like DEBUG's.
+          // The design draws no such section either; it sits with the other capture choices.
           _Section(
-            label: "CUSTOM BUTTONS — REPLACE THE SDK'S BUTTONS",
+            label: 'DOCUMENT CAPTURE',
             children: <Widget>[
-              _switchRow(
-                title: 'Custom continue',
-                icon: SmileIcons.customContinue,
-                supportingText: "Replaces the SDK's continue buttons",
-                setting: UseSmileIDSampleSetting.customContinue,
+              UseSmileIDSampleSettingRow(
+                title: 'Capture mode',
+                supportingText: state.settings.captureMode.label,
+                onTap: onCaptureModeTap,
+                leading: (Color tint) => UseSmileIDSampleIcon(
+                  asset: SmileIcons.documentVerification,
+                  tint: tint,
+                ),
+                trailing: const UseSmileIDSampleSettingRowChevron(),
+                testId: UseSmileIDSampleTestIds.settingCaptureMode,
               ),
               const UseSmileIDSampleSettingRowDivider(),
               _switchRow(
-                title: 'Custom cancel',
-                icon: SmileIcons.arrowBack,
-                supportingText: "Replaces the SDK's cancel buttons",
-                setting: UseSmileIDSampleSetting.customCancel,
+                title: 'Gallery upload',
+                icon: SmileIcons.preview,
+                supportingText: 'The system picker needs no permission',
+                setting: UseSmileIDSampleSetting.galleryUpload,
+              ),
+              const UseSmileIDSampleSettingRowDivider(),
+              _switchRow(
+                title: 'Capture the back side',
+                icon: SmileIcons.documentVerification,
+                supportingText: 'Only for a document type that has one',
+                setting: UseSmileIDSampleSetting.captureBothSides,
+              ),
+              const UseSmileIDSampleSettingRowDivider(),
+              _switchRow(
+                title: 'Skip the back',
+                icon: SmileIcons.instructions,
+                supportingText: 'A Skip button on the back-side capture',
+                setting: UseSmileIDSampleSetting.allowSkipBack,
+              ),
+              const UseSmileIDSampleSettingRowDivider(),
+              _switchRow(
+                title: 'Selfie first',
+                icon: SmileIcons.smile,
+                supportingText: 'The selfie before the document',
+                setting: UseSmileIDSampleSetting.selfieFirst,
               ),
             ],
           ),

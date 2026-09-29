@@ -1197,6 +1197,7 @@ exports[`SearchField dark empty 1`] = `
     </RNSVGGroup>
   </RNSVGSvgView>
   <TextInput
+    editable={true}
     onBlur={[Function]}
     onChangeText={[Function]}
     onFocus={[Function]}
@@ -1334,6 +1335,7 @@ exports[`SearchField dark filled 1`] = `
     </RNSVGGroup>
   </RNSVGSvgView>
   <TextInput
+    editable={true}
     onBlur={[Function]}
     onChangeText={[Function]}
     onFocus={[Function]}
@@ -1471,6 +1473,7 @@ exports[`SearchField dark focused 1`] = `
     </RNSVGGroup>
   </RNSVGSvgView>
   <TextInput
+    editable={true}
     onBlur={[Function]}
     onChangeText={[Function]}
     onFocus={[Function]}
@@ -1609,6 +1612,7 @@ exports[`SearchField light empty 1`] = `
     </RNSVGGroup>
   </RNSVGSvgView>
   <TextInput
+    editable={true}
     onBlur={[Function]}
     onChangeText={[Function]}
     onFocus={[Function]}
@@ -1746,6 +1750,7 @@ exports[`SearchField light filled 1`] = `
     </RNSVGGroup>
   </RNSVGSvgView>
   <TextInput
+    editable={true}
     onBlur={[Function]}
     onChangeText={[Function]}
     onFocus={[Function]}
@@ -1883,6 +1888,7 @@ exports[`SearchField light focused 1`] = `
     </RNSVGGroup>
   </RNSVGSvgView>
   <TextInput
+    editable={true}
     onBlur={[Function]}
     onChangeText={[Function]}
     onFocus={[Function]}

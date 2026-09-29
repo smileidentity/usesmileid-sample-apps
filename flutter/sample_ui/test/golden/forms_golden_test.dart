@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 
+import '../support/catalogue_fixtures.dart';
 import 'golden_harness.dart';
 
-/// The two pre-flow forms and their two pickers, light and dark.
+/// The two pre-flow forms and their pickers' ready states, light and dark.
 void main() {
   setUpAll(loadSampleFonts);
 
@@ -97,13 +98,74 @@ void main() {
     await _screenGoldens(
       tester,
       'screen_kyc_form_complete',
+      () => _kycForm(details: _selected),
+    );
+  });
+
+  testWidgets('id details with a number outside the format', (
+    WidgetTester tester,
+  ) async {
+    await _screenGoldens(
+      tester,
+      'screen_kyc_form_id_number_invalid',
+      () => _kycForm(details: _selected.copyWith(idNumber: 'AO12345678')),
+    );
+  });
+
+  testWidgets(
+    'id details with a number outside the format survives max text scale',
+    (WidgetTester tester) async {
+      await assertSurvivesMaxTextScale(
+        tester,
+        _kycForm(details: _selected.copyWith(idNumber: 'AO12345678')),
+        ownsScrolling: true,
+        hostHeight: goldenScreenHeight * 2,
+      );
+    },
+  );
+
+  /// The country's list is still arriving: the trigger stays enabled and says so.
+  testWidgets('id details while the list loads', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_kyc_form_loading',
+      () => _kycForm(details: _countryOnly, loading: true),
+    );
+  });
+
+  /// The list failed: the trigger goes back to its prompt, so the form never looks stuck.
+  testWidgets('id details after the list failed', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_kyc_form_catalogue_error',
+      () => _kycForm(details: _countryOnly),
+    );
+  });
+
+  testWidgets('document form selected', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_document_form_selected',
       () => _kycForm(
-        details: const UseSmileIDSampleIdDetails(
-          country: UseSmileIDSampleCountry.ke,
-          idType: UseSmileIDSampleIdType.nationalId,
-          idNumber: 'A1234567',
-        ),
+        details: _documentSelected,
+        family: UseSmileIDSampleCatalogueFamily.document,
+        title: 'Document Verification',
       ),
+    );
+  });
+
+  testWidgets('document form survives max text scale', (
+    WidgetTester tester,
+  ) async {
+    await assertSurvivesMaxTextScale(
+      tester,
+      _kycForm(
+        details: _documentSelected,
+        family: UseSmileIDSampleCatalogueFamily.document,
+        title: 'Document Verification',
+      ),
+      ownsScrolling: true,
+      hostHeight: goldenScreenHeight * 2,
     );
   });
 
@@ -112,21 +174,12 @@ void main() {
       tester,
       'sheet_country_picker',
       () => UseSmileIDSampleCountryPickerSheet(
-        selected: UseSmileIDSampleCountry.ke,
-        onSelect: _ignoreCountry,
-      ),
-    );
-  });
-
-  /// No country chosen, which a deep link can reach and which has its own words.
-  testWidgets('id type picker with no country', (WidgetTester tester) async {
-    await _sheetGoldens(
-      tester,
-      'sheet_idtype_picker_empty',
-      () => UseSmileIDSampleIdTypePickerSheet(
-        country: null,
-        selected: null,
-        onSelect: _ignoreIdType,
+        catalogue: UseSmileIDSampleCatalogueReady<UseSmileIDSampleCountry>(
+          CatalogueFixtures.countries(UseSmileIDSampleCatalogueFamily.kyc),
+        ),
+        selected: CatalogueFixtures.kenya,
+        onSelect: (UseSmileIDSampleCountry _) {},
+        onRetry: () {},
       ),
     );
   });
@@ -136,9 +189,13 @@ void main() {
       tester,
       'sheet_idtype_picker',
       () => UseSmileIDSampleIdTypePickerSheet(
-        country: UseSmileIDSampleCountry.ng,
-        selected: UseSmileIDSampleIdType.passport,
-        onSelect: _ignoreIdType,
+        country: CatalogueFixtures.kenya,
+        catalogue: UseSmileIDSampleCatalogueReady<UseSmileIDSampleKycIdType>(
+          CatalogueFixtures.idTypes('KE'),
+        ),
+        selected: null,
+        onSelect: (UseSmileIDSampleKycIdType _) {},
+        onRetry: () {},
       ),
     );
   });
@@ -206,12 +263,19 @@ Widget _userDetails({
 
 Widget _kycForm({
   UseSmileIDSampleIdDetails details = const UseSmileIDSampleIdDetails(),
+  UseSmileIDSampleCatalogueFamily family = UseSmileIDSampleCatalogueFamily.kyc,
+  String title = 'Biometric KYC',
+  bool loading = false,
 }) => UseSmileIDSampleKycFormScreen(
-  title: 'Biometric KYC',
+  title: title,
+  family: family,
   details: details,
+  countryListLoading: loading,
   onBack: () {},
   onPickCountry: () {},
   onPickIdType: () {},
+  onPickDocument: () {},
+  onPickCaptureAs: () {},
   onIdNumberChanged: _ignoreText,
   onContinue: () {},
 );
@@ -228,6 +292,23 @@ void _ignoreText(String value) {}
 
 void _ignoreFlag(bool on) {}
 
-void _ignoreCountry(UseSmileIDSampleCountry country) {}
+/// A country chosen and nothing else, which is the only state that unlocks the second trigger.
+const UseSmileIDSampleIdDetails _countryOnly = UseSmileIDSampleIdDetails(
+  country: CatalogueFixtures.kenya,
+);
 
-void _ignoreIdType(UseSmileIDSampleIdType idType) {}
+final UseSmileIDSampleIdDetails _selected = UseSmileIDSampleIdDetails(
+  country: CatalogueFixtures.kenya,
+  idType: CatalogueFixtures.idTypes(
+    'KE',
+  ).firstWhere((UseSmileIDSampleKycIdType it) => it.type == 'NATIONAL_ID'),
+  idNumber: '12345678',
+);
+
+/// The Green Book: a standalone sub-type row, captured as the API describes it.
+final UseSmileIDSampleIdDetails _documentSelected = UseSmileIDSampleIdDetails(
+  country: CatalogueFixtures.southAfrica,
+  document: CatalogueFixtures.documents(
+    'ZA',
+  ).firstWhere((UseSmileIDSampleDocument it) => it.subType == 'green_book'),
+);

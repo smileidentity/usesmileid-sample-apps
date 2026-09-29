@@ -20,6 +20,7 @@ import {
   smileIDSampleLegalRows,
   type UseSmileIDSampleNavRow,
 } from '../model/use-smile-id-sample-nav-row';
+import { smileIDSampleCaptureModeLabel } from '../model/use-smile-id-sample-capture-mode';
 import { UseSmileIDSampleSetting } from '../model/use-smile-id-sample-setting';
 import type { SmileIconName } from '../smile-icons';
 import { smileProfileHues } from '../smile-product-hues';
@@ -131,6 +132,8 @@ type Props = {
   onSettingChange: (setting: UseSmileIDSampleSetting, enabled: boolean) => void;
   onProfilePress: () => void;
   onNavRowPress: (row: UseSmileIDSampleNavRow) => void;
+  /// Opens the capture-mode sheet.
+  onCaptureModePress: () => void;
   /// Absent hides the DEBUG section: this package may not read a host's build type.
   onOpenScenarioDrawer?: (() => void) | undefined;
   onSignOut: () => void;
@@ -145,6 +148,7 @@ export const SettingsScreen = ({
   onSettingChange,
   onProfilePress,
   onNavRowPress,
+  onCaptureModePress,
   onOpenScenarioDrawer,
   onSignOut,
   bottomInset = 0,
@@ -266,25 +270,54 @@ export const SettingsScreen = ({
         />
       </Section>
 
-      {/* The design draws no such section, so this placement is ours, like DEBUG's. */}
-      <Section label="CUSTOM BUTTONS — REPLACE THE SDK'S BUTTONS">
+      {/* The design draws no such section either; it sits with the other capture choices. */}
+      <Section label="DOCUMENT CAPTURE">
+        <UseSmileIDSampleSettingRow
+          title="Capture mode"
+          supportingText={smileIDSampleCaptureModeLabel(settings.captureMode)}
+          onPress={onCaptureModePress}
+          leading={(tint) => <UseSmileIDSampleIcon name="documentVerification" tint={tint} />}
+          trailing={<UseSmileIDSampleSettingRowChevron />}
+          testID={UseSmileIDSampleTestIds.SETTING_CAPTURE_MODE}
+        />
+        <UseSmileIDSampleRowDivider />
         <SwitchRow
-          title="Custom continue"
-          supportingText="Replaces the SDK's continue buttons"
-          icon="customContinue"
-          setting={UseSmileIDSampleSetting.CustomContinue}
-          checked={settings.customContinue}
-          testID={UseSmileIDSampleTestIds.SETTING_CUSTOM_CONTINUE}
+          title="Gallery upload"
+          supportingText="The system picker needs no permission"
+          icon="preview"
+          setting={UseSmileIDSampleSetting.GalleryUpload}
+          checked={settings.galleryUpload}
+          testID={UseSmileIDSampleTestIds.SETTING_GALLERY_UPLOAD}
           onSettingChange={onSettingChange}
         />
         <UseSmileIDSampleRowDivider />
         <SwitchRow
-          title="Custom cancel"
-          supportingText="Replaces the SDK's cancel buttons"
-          icon="arrowBack"
-          setting={UseSmileIDSampleSetting.CustomCancel}
-          checked={settings.customCancel}
-          testID={UseSmileIDSampleTestIds.SETTING_CUSTOM_CANCEL}
+          title="Capture the back side"
+          supportingText="Only for a document type that has one"
+          icon="documentVerification"
+          setting={UseSmileIDSampleSetting.CaptureBothSides}
+          checked={settings.captureBothSides}
+          testID={UseSmileIDSampleTestIds.SETTING_CAPTURE_BOTH_SIDES}
+          onSettingChange={onSettingChange}
+        />
+        <UseSmileIDSampleRowDivider />
+        <SwitchRow
+          title="Skip the back"
+          supportingText="A Skip button on the back-side capture"
+          icon="instructions"
+          setting={UseSmileIDSampleSetting.AllowSkipBack}
+          checked={settings.allowSkipBack}
+          testID={UseSmileIDSampleTestIds.SETTING_ALLOW_SKIP_BACK}
+          onSettingChange={onSettingChange}
+        />
+        <UseSmileIDSampleRowDivider />
+        <SwitchRow
+          title="Selfie first"
+          supportingText="The selfie before the document"
+          icon="smile"
+          setting={UseSmileIDSampleSetting.SelfieFirst}
+          checked={settings.selfieFirst}
+          testID={UseSmileIDSampleTestIds.SETTING_SELFIE_FIRST}
           onSettingChange={onSettingChange}
         />
       </Section>

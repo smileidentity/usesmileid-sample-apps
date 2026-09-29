@@ -10,6 +10,7 @@ public struct UseSmileIDSampleTextInput<Leading: View, Trailing: View>: View {
   private let keyboardType: UIKeyboardType
   private let masked: Bool
   private let testId: String?
+  private let errorTestId: String?
   private let leading: Leading
   private let trailing: Trailing
 
@@ -28,6 +29,8 @@ public struct UseSmileIDSampleTextInput<Leading: View, Trailing: View>: View {
     // Masks the value and marks the field a password, keeping a credential out of screenshots and hierarchy dumps.
     masked: Bool = false,
     testId: String? = nil,
+    // The error line's own id, so a flow can assert the message rather than the border.
+    errorTestId: String? = nil,
     @ViewBuilder leading: () -> Leading = { EmptyView() },
     @ViewBuilder trailing: () -> Trailing = { EmptyView() }
   ) {
@@ -39,6 +42,7 @@ public struct UseSmileIDSampleTextInput<Leading: View, Trailing: View>: View {
     self.keyboardType = keyboardType
     self.masked = masked
     self.testId = testId
+    self.errorTestId = errorTestId
     self.leading = leading()
     self.trailing = trailing()
   }
@@ -71,6 +75,7 @@ public struct UseSmileIDSampleTextInput<Leading: View, Trailing: View>: View {
         UseSmileIDSampleText(errorMessage, style: UseSmileIDSampleTheme.type.textStyleCaption)
           .foregroundColor(colors.input.borderError)
           .padding(.leading, SmileSpacing.spacingMd)
+          .useSmileIDSampleTestId(errorTestId)
       }
     }
   }

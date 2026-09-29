@@ -9,17 +9,16 @@ internal fun Intent?.useSmileIDSampleLaunchArgs(): UseSmileIDSampleLaunchArgs {
     val intent = this ?: return UseSmileIDSampleLaunchArgs()
     val extras = intent.extras
     val raw = UseSmileIDSampleLaunchArgs.names.associateWith { name -> extras?.rawValue(name) }
-    return UseSmileIDSampleLaunchArgs.from(raw + intent.probesFromLink())
+    return UseSmileIDSampleLaunchArgs.from(raw + intent.argsFromLink())
 }
 
-/**
- * `probes` alone is also read off the launching URI: a deep link carries no extras, and half the flows
- * that assert on the card arrive that way. Only this one — letting a link seed the others contradicts R9.
- */
-private fun Intent.probesFromLink(): Map<String, Any?> {
-    val value = data?.takeIf { it.isHierarchical }?.getQueryParameter(UseSmileIDSampleLaunchArgs.PROBES)
-    return if (value == null) emptyMap() else mapOf(UseSmileIDSampleLaunchArgs.PROBES to value)
+/** Only `probes` and `catalogue` are read off a link, which carries no extras; the rest stay launch-only. */
+private fun Intent.argsFromLink(): Map<String, Any?> {
+    val link = data?.takeIf { it.isHierarchical } ?: return emptyMap()
+    return LINK_ARGS.mapNotNull { name -> link.getQueryParameter(name)?.let { name to it } }.toMap()
 }
+
+private val LINK_ARGS = listOf(UseSmileIDSampleLaunchArgs.PROBES, UseSmileIDSampleLaunchArgs.CATALOGUE)
 
 /** `am start` picks the extra's type per flag, so the value is read without asserting one. */
 @Suppress("DEPRECATION")

@@ -20,6 +20,7 @@ class UseSmileIDSampleTextInput extends StatefulWidget {
     this.textCapitalization = TextCapitalization.none,
     this.masked = false,
     this.testId,
+    this.errorTestId,
     this.leading,
     this.trailing,
     super.key,
@@ -58,6 +59,9 @@ class UseSmileIDSampleTextInput extends StatefulWidget {
 
   /// The leading glyph, tinted by the placeholder colour the field passes it.
   final Widget Function(Color tint)? leading;
+
+  /// The error line's own id, so a flow can assert the message rather than the border.
+  final String? errorTestId;
 
   /// An action inside the field's border, which is where the design draws the scan sheet's Paste.
   final Widget Function(Color tint)? trailing;
@@ -167,10 +171,13 @@ class _UseSmileIDSampleTextInputState extends State<UseSmileIDSampleTextInput> {
               left: SmileDimens.spacingMd,
               top: SmileDimens.space4,
             ),
-            child: Text(
-              widget.errorMessage!,
-              style: UseSmileIDSampleType.textStyleCaption.copyWith(
-                color: colors.input.borderError,
+            child: Semantics(
+              identifier: widget.errorTestId,
+              child: Text(
+                widget.errorMessage!,
+                style: UseSmileIDSampleType.textStyleCaption.copyWith(
+                  color: colors.input.borderError,
+                ),
               ),
             ),
           ),

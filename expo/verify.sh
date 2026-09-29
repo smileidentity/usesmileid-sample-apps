@@ -74,6 +74,10 @@ if runs checks; then
   # Generated from design/icons/, which lives in this repo rather than the design system, so this
   # needs no secret and always runs. A hand-edited path fails here.
   python3 "$REPO_ROOT/scripts/generate_expo_icons.py" --check
+
+  echo "==> catalogue fixture is current"
+  # Metro cannot reach spec/, so the app ships a copy that must match it byte for byte.
+  python3 "$REPO_ROOT/scripts/sync_catalogue_fixture.py" --check
 fi
 
 if runs checks; then

@@ -1,11 +1,11 @@
 package com.usesmileid.sampleapps.android
 
+import com.usesmileid.sampleapps.android.flow.BOUND_COUNTRY
+import com.usesmileid.sampleapps.android.flow.BOUND_ID_TYPE
 import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleFlowTokens
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleSimulatedBindings
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleSimulatedSpan
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCountry
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdType
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenBindings
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenDecoder
 import com.usesmileid.sampleapps.ui.state.bindsRequiredUserDetails
@@ -73,8 +73,8 @@ class UseSmileIDSampleFlowTokensTest {
     fun `a details binding covers what the SDK relaxes, plus the two plaintext fields`() {
         val bindings = bindingsOf(UseSmileIDSampleSimulatedBindings(userDetails = true))
         assertTrue(bindings.bindsRequiredUserDetails)
-        assertEquals(UseSmileIDSampleCountry.Kenya.code, bindings.country)
-        assertEquals(UseSmileIDSampleIdType.NationalId.id, bindings.idType)
+        assertEquals(BOUND_COUNTRY, bindings.country)
+        assertEquals(BOUND_ID_TYPE, bindings.idType)
         assertNull("details alone bind no consent", bindings.consent)
     }
 

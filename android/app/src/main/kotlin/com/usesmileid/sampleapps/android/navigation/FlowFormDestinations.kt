@@ -17,7 +17,13 @@ import androidx.compose.runtime.LaunchedEffect
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.keep
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureAs
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueFamily
+import com.usesmileid.sampleapps.ui.state.catalogueFamily
+import com.usesmileid.sampleapps.ui.screens.CaptureAsSheet as CaptureAsContent
 import com.usesmileid.sampleapps.ui.screens.CountryPickerSheet as CountryPickerContent
+import com.usesmileid.sampleapps.ui.screens.GenericDocumentSheet as GenericDocumentContent
+import com.usesmileid.sampleapps.ui.screens.DocumentPickerSheet as DocumentPickerContent
 import com.usesmileid.sampleapps.ui.screens.IdTypePickerSheet as IdTypePickerContent
 import com.usesmileid.sampleapps.ui.screens.KycIdFormScreen as KycIdFormContent
 import com.usesmileid.sampleapps.ui.screens.UserDetailsScreen as UserDetailsContent
@@ -36,6 +42,10 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
     LaunchedEffect(Unit) {
         if (!filled) app.profiles.active?.let(app.forms::fillFrom)
         filled = true
+    }
+    // A deep link to this form skips the product tap, so the lists start here if nothing has started them.
+    LaunchedEffect(app.environment, app.catalogueLocale) {
+        if (product?.catalogueFamily != null) app.catalogue.ensure(app.environment, app.catalogueLocale)
     }
     val profile = app.profiles.active
     UserDetailsContent(
@@ -72,47 +82,110 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
 @Composable
 fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
+    val family = productOf(productId)?.catalogueFamily ?: UseSmileIDSampleCatalogueFamily.Kyc
     var pickingCountry by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.CountryPicker)
     var pickingIdType by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.IdTypePicker)
+    var pickingDocument by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.DocumentPicker)
+    var pickingCaptureAs by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.CaptureAs)
+    var buildingGenericDocument by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.GenericDocument)
+    // A deep link lands here without the product tap that fetches ahead, so the form starts it if nothing has.
+    LaunchedEffect(app.environment, app.catalogueLocale) { app.catalogue.ensure(app.environment, app.catalogueLocale) }
+    val details = app.forms.idDetails
+    val countryCode = details.country?.code
+    // A link can ask for a second-level sheet before its trigger could open; refused, not held until later.
+    LaunchedEffect(pickingIdType, pickingDocument, pickingCaptureAs, countryCode, details.document) {
+        if (countryCode == null) {
+            pickingIdType = false
+            pickingDocument = false
+        }
+        if (details.document == null) pickingCaptureAs = false
+    }
     KycIdFormContent(
         productLabel = productOf(productId)?.label ?: productId,
-        details = app.forms.idDetails,
+        family = family,
+        details = details,
+        countryList = when {
+            countryCode == null -> app.catalogue.countries(family)
+            family == UseSmileIDSampleCatalogueFamily.Kyc -> app.catalogue.idTypes(countryCode)
+            else -> app.catalogue.documents(countryCode)
+        },
         onCountryClick = { pickingCountry = true },
         onIdTypeClick = { pickingIdType = true },
+        onDocumentClick = { pickingDocument = true },
+        onCaptureAsClick = { pickingCaptureAs = true },
         onIdNumberChange = app.forms::setIdNumber,
         onBack = { navigator.navigateUp() },
         onContinue = { navigator.navigate(app.sdkFlow(productId)) { launchSingleTop = true } },
         onTokenClick = { navigator.navigate(ScanTokenScreenDestination) },
     )
-    if (pickingCountry) CountryPickerSheet(onDismissRequest = { pickingCountry = false })
-    if (pickingIdType) IdTypePickerSheet(onDismissRequest = { pickingIdType = false })
+    if (pickingCountry) CountryPickerSheet(family, onDismissRequest = { pickingCountry = false })
+    if (pickingIdType && countryCode != null) IdTypePickerSheet(countryCode, onDismissRequest = { pickingIdType = false })
+    if (pickingDocument && countryCode != null) DocumentPickerSheet(countryCode, onDismissRequest = { pickingDocument = false })
+    if (pickingCaptureAs && details.document != null) {
+        CaptureAsContent(
+            selected = details.captureAs,
+            onSelect = { choice ->
+                pickingCaptureAs = false
+                if (choice == UseSmileIDSampleCaptureAs.GenericDocument) buildingGenericDocument = true else app.forms.setCaptureAs(choice)
+            },
+            onDismissRequest = { pickingCaptureAs = false },
+        )
+    }
+    if (buildingGenericDocument) {
+        GenericDocumentContent(
+            initial = details.genericDocument,
+            onDone = { app.forms.setGenericDocument(it); buildingGenericDocument = false },
+            onDismissRequest = { buildingGenericDocument = false },
+        )
+    }
 }
 
-/** A layer the ID-details form owns; it is not a destination (R12). */
+/** A layer the ID-details form owns; it is not a destination (`docs/architecture.md` §4). */
 @Composable
-private fun CountryPickerSheet(onDismissRequest: () -> Unit) {
+private fun CountryPickerSheet(family: UseSmileIDSampleCatalogueFamily, onDismissRequest: () -> Unit) {
     val app = LocalUseSmileIDSampleAppState.current
     var query by rememberSaveable { mutableStateOf("") }
     CountryPickerContent(
+        catalogue = app.catalogue.countries(family),
         selected = app.forms.idDetails.country,
         query = query,
         onQueryChange = { query = it },
         onSelect = { app.forms.setCountry(it); onDismissRequest() },
+        onRetry = app.catalogue::retry,
         onDismissRequest = onDismissRequest,
     )
 }
 
-/** A layer the ID-details form owns; it is not a destination (R12). */
+/** A layer the ID-details form owns; it is not a destination (`docs/architecture.md` §4). */
 @Composable
-private fun IdTypePickerSheet(onDismissRequest: () -> Unit) {
+private fun IdTypePickerSheet(countryCode: String, onDismissRequest: () -> Unit) {
     val app = LocalUseSmileIDSampleAppState.current
     var query by rememberSaveable { mutableStateOf("") }
     IdTypePickerContent(
         country = app.forms.idDetails.country,
+        catalogue = app.catalogue.idTypes(countryCode),
         selected = app.forms.idDetails.idType,
         query = query,
         onQueryChange = { query = it },
         onSelect = { app.forms.setIdType(it); onDismissRequest() },
+        onRetry = app.catalogue::retry,
+        onDismissRequest = onDismissRequest,
+    )
+}
+
+/** A layer the ID-details form owns; it is not a destination (`docs/architecture.md` §4). */
+@Composable
+private fun DocumentPickerSheet(countryCode: String, onDismissRequest: () -> Unit) {
+    val app = LocalUseSmileIDSampleAppState.current
+    var query by rememberSaveable { mutableStateOf("") }
+    DocumentPickerContent(
+        country = app.forms.idDetails.country,
+        catalogue = app.catalogue.documents(countryCode),
+        selected = app.forms.idDetails.document,
+        query = query,
+        onQueryChange = { query = it },
+        onSelect = { app.forms.setDocument(it); onDismissRequest() },
+        onRetry = app.catalogue::retry,
         onDismissRequest = onDismissRequest,
     )
 }

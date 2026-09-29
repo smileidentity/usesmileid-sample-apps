@@ -63,3 +63,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  # A copy of spec/catalogue-fixture.json for `catalogue=fixture`; verify.sh fails if it drifts.
+  assets:
+    - assets/catalogue-fixture.json

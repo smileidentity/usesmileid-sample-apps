@@ -41,6 +41,33 @@ final class UseSmileIDSampleHoldCameraMillis
   int get hashCode => value.hashCode;
 }
 
+/// Where the ID form's lists come from.
+enum UseSmileIDSampleCatalogueMode {
+  /// The Smile ID API, on every run of the form.
+  live('live'),
+
+  /// `spec/catalogue-fixture.json`, with no network.
+  fixture('fixture'),
+
+  /// Every list fails at once, which is how a flow reaches the error state.
+  unreachable('unreachable');
+
+  const UseSmileIDSampleCatalogueMode(this.id);
+
+  /// The argument's value.
+  final String id;
+
+  /// The mode with this id, or null.
+  static UseSmileIDSampleCatalogueMode? byId(String? id) {
+    for (final UseSmileIDSampleCatalogueMode mode in values) {
+      if (mode.id == id) {
+        return mode;
+      }
+    }
+    return null;
+  }
+}
+
 /// The canonical arguments from `spec/launch-args.json`; reading the cold-start link is the shell's job.
 @immutable
 class UseSmileIDSampleLaunchArgs {
@@ -56,6 +83,7 @@ class UseSmileIDSampleLaunchArgs {
     this.appLocale,
     this.holdCamera,
     this.noticeWindow,
+    this.catalogue = UseSmileIDSampleCatalogueMode.live,
   });
 
   /// The flow scenario.
@@ -88,6 +116,9 @@ class UseSmileIDSampleLaunchArgs {
   /// Seconds a transient notice stays before dismissing itself.
   final int? noticeWindow;
 
+  /// Where the ID form's lists come from.
+  final UseSmileIDSampleCatalogueMode catalogue;
+
   /// The `scenario` argument's canonical name.
   static const String scenarioArg = 'scenario';
 
@@ -118,10 +149,13 @@ class UseSmileIDSampleLaunchArgs {
   /// The `noticeWindow` argument's canonical name.
   static const String noticeWindowArg = 'noticeWindow';
 
+  /// The `catalogue` argument's canonical name.
+  static const String catalogueArg = 'catalogue';
+
   /// The value `holdCamera` takes to hold for the whole run.
   static const String holdCameraKeep = 'keep';
 
-  /// The ten names in the spec's own order, which the spec test compares against.
+  /// The eleven names in the spec's own order, which the spec test compares against.
   static const List<String> names = <String>[
     scenarioArg,
     themeArg,
@@ -133,6 +167,7 @@ class UseSmileIDSampleLaunchArgs {
     appLocaleArg,
     holdCameraArg,
     noticeWindowArg,
+    catalogueArg,
   ];
 
   /// An unrecognised value falls back to its default, which is safe only because the card reports it.
@@ -155,6 +190,9 @@ class UseSmileIDSampleLaunchArgs {
       appLocale: _string(raw, appLocaleArg),
       holdCamera: _holdCamera(raw),
       noticeWindow: _noticeWindow(raw),
+      catalogue:
+          UseSmileIDSampleCatalogueMode.byId(_string(raw, catalogueArg)) ??
+          defaults.catalogue,
     );
   }
 
@@ -213,7 +251,8 @@ class UseSmileIDSampleLaunchArgs {
       other.probes == probes &&
       other.appLocale == appLocale &&
       other.holdCamera == holdCamera &&
-      other.noticeWindow == noticeWindow;
+      other.noticeWindow == noticeWindow &&
+      other.catalogue == catalogue;
 
   @override
   int get hashCode => Object.hash(
@@ -227,5 +266,6 @@ class UseSmileIDSampleLaunchArgs {
     appLocale,
     holdCamera,
     noticeWindow,
+    catalogue,
   );
 }

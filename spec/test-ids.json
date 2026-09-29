@@ -99,7 +99,23 @@
       },
       {
         "id": "sample_idtype_empty",
-        "description": "ID-type list is empty — either the country has no types, or the search matched none of them; the text says which."
+        "description": "ID-type list is empty — either the country has no types the form can satisfy (see spec/catalogue-rules.json), or the search matched none of them; the text says which. No Retry: asking again cannot change the answer."
+      },
+      {
+        "id": "sample_document_empty",
+        "description": "Document list is empty — either the country has no documents, or the search matched none of them; the text says which. No Retry, for the same reason as sample_idtype_empty."
+      },
+      {
+        "id": "sample_catalogue_loading",
+        "description": "The skeleton rows in a country, ID-type or document sheet whose list has not arrived. One accessibility element announcing what is loading; the rows inside are hidden from the tree. Appears only after 300 ms and stays at least 400 ms, so a flow waits for the list, never for this."
+      },
+      {
+        "id": "sample_catalogue_error",
+        "description": "A country, ID-type or document sheet whose list failed to load or passed the 10-second timeout. Driven on purpose by the `catalogue=unreachable` launch argument."
+      },
+      {
+        "id": "sample_catalogue_retry",
+        "description": "The Retry action inside sample_catalogue_error. Fetches the same list again, under the same skeleton timing."
       },
       {
         "id": "sample_job_row",
@@ -209,7 +225,19 @@
       },
       {
         "id": "sample_idnumber_input",
-        "description": "ID number input."
+        "description": "ID number input. Biometric KYC and Enhanced KYC only: the document products submit no number, so they do not show it."
+      },
+      {
+        "id": "sample_idnumber_error",
+        "description": "The line under sample_idnumber_input when a non-empty number does not match the chosen type's regex. Repeats the example the hint shows."
+      },
+      {
+        "id": "sample_document_trigger",
+        "description": "Document select trigger, in place of sample_idtype_trigger on Document Verification and Enhanced Document Verification. Disabled until a country is chosen."
+      },
+      {
+        "id": "sample_capture_as_trigger",
+        "description": "'Capture as' select trigger under the document trigger: how the SDK photographs the document. Never changes the document code the server receives."
       },
       {
         "id": "sample_kyc_continue",
@@ -241,7 +269,51 @@
       },
       {
         "id": "sample_idtype_option",
-        "description": "One ID type row; suffixed with the type id."
+        "description": "One ID type row; suffixed with the API's `type` value exactly, e.g. sample_idtype_option_NATIONAL_ID. A `type` that repeats within a country gets _2, _3 in API order (sample_idtype_option_PHONE_NUMBER_2); spec/catalogue-rules.json holds the cases."
+      },
+      {
+        "id": "sample_document_sheet",
+        "description": "Document picker sheet root."
+      },
+      {
+        "id": "sample_document_search",
+        "description": "Document search field."
+      },
+      {
+        "id": "sample_document_option",
+        "description": "One document row; suffixed with the API's `code`, and with _<subType> on a standalone sub-type row, e.g. sample_document_option_IDENTITY_CARD_green_book. The API's `Others` row, whose code is empty, is not listed."
+      },
+      {
+        "id": "sample_capture_as_sheet",
+        "description": "'Capture as' option sheet root."
+      },
+      {
+        "id": "sample_capture_as_option",
+        "description": "One 'Capture as' row; suffixed genericDocument (the default), greenBook or passport."
+      },
+      {
+        "id": "sample_generic_document_sheet",
+        "description": "The sheet that builds a generic document shape, opened by choosing 'Generic document'."
+      },
+      {
+        "id": "sample_generic_document_name",
+        "description": "Generic document display name."
+      },
+      {
+        "id": "sample_generic_document_back_side",
+        "description": "Generic document back-side switch → GenericDocument hasBackSide."
+      },
+      {
+        "id": "sample_generic_document_orientation",
+        "description": "Generic document orientation, a row of FilterChips; each chip is suffixed landscape or portrait, e.g. sample_generic_document_orientation_portrait."
+      },
+      {
+        "id": "sample_generic_document_aspect_ratio",
+        "description": "Generic document aspect ratio → GenericDocument knownAspectRatio, a row of FilterChips; each chip is suffixed off, card (1.586), passport (1.309) or booklet (0.748)."
+      },
+      {
+        "id": "sample_generic_document_done",
+        "description": "Closes the generic document sheet and keeps what it built."
       }
     ],
     "settings": [
@@ -278,20 +350,32 @@
         "description": "Preview screen switch → include/omit preview()."
       },
       {
-        "id": "sample_setting_custom_continue",
-        "description": "Custom continue switch → the SDK's continue slots (consent allowButton, instructions continueButton, processing continueButton) render sample_custom_continue instead of the SDK's own button. OFF by default."
+        "id": "sample_setting_capture_mode",
+        "description": "Capture mode row, a select trigger showing the current mode → DocumentCaptureConfig.captureMode. Opens sample_capture_mode_sheet."
       },
       {
-        "id": "sample_setting_custom_cancel",
-        "description": "Custom cancel switch → the SDK's cancel slots (consent denyButton, processing exitButton) render sample_custom_cancel instead of the SDK's own button. OFF by default."
+        "id": "sample_capture_mode_sheet",
+        "description": "Capture mode option sheet root."
       },
       {
-        "id": "sample_custom_continue",
-        "description": "The sample's own button, labelled 'Custom continue', drawn by the SDK inside a continue slot while sample_setting_custom_continue is ON. Tapping it calls the slot's onClick; it is disabled while the slot is."
+        "id": "sample_capture_mode_option",
+        "description": "One capture mode row; suffixed auto, manual or autoWithFallback (the default, with the SDK's 10 seconds)."
       },
       {
-        "id": "sample_custom_cancel",
-        "description": "The sample's own button, labelled 'Custom cancel', drawn by the SDK inside a cancel slot while sample_setting_custom_cancel is ON. Tapping it calls the slot's onClick."
+        "id": "sample_setting_gallery_upload",
+        "description": "Gallery upload switch → DocumentCaptureConfig.allowGalleryUpload. OFF by default, the SDK's default."
+      },
+      {
+        "id": "sample_setting_capture_both_sides",
+        "description": "Capture the back side switch → DocumentCaptureConfig.captureBothSides. ON by default, the SDK's default."
+      },
+      {
+        "id": "sample_setting_allow_skip_back",
+        "description": "Skip the back switch → DocumentCaptureConfig.allowSkipBack. OFF by default, the SDK's default."
+      },
+      {
+        "id": "sample_setting_selfie_first",
+        "description": "Selfie first switch: the document products capture the selfie before the document. OFF by default."
       },
       {
         "id": "sample_setting_nav",

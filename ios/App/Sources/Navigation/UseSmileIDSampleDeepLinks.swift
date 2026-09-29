@@ -11,6 +11,9 @@ enum UseSmileIDSampleDeepLinks {
   static let idDetailsForm = "\(scheme)://flow/{productId}/id-details"
   static let countryPicker = "\(scheme)://flow/{productId}/id-details/country"
   static let idTypePicker = "\(scheme)://flow/{productId}/id-details/id-type"
+  static let documentPicker = "\(scheme)://flow/{productId}/id-details/document"
+  static let captureAs = "\(scheme)://flow/{productId}/id-details/capture-as"
+  static let genericDocument = "\(scheme)://flow/{productId}/id-details/generic-document"
   static let sdkFlow = "\(scheme)://flow/{productId}/run?route={route}"
 
   static let profiles = "\(scheme)://profiles"
@@ -19,6 +22,7 @@ enum UseSmileIDSampleDeepLinks {
   static let profileConfig = "\(scheme)://profiles/{profileId}"
 
   static let licenses = "\(scheme)://settings/licenses"
+  static let captureMode = "\(scheme)://settings/capture-mode"
 
   static let scanToken = "\(scheme)://token/scan"
   static let scenarioDrawer = "\(scheme)://debug/scenarios"

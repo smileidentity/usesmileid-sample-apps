@@ -36,7 +36,7 @@ public final class UseSmileIDSampleStore {
   private let settingsStorage: UseSmileIDSampleSettingsStorage
   private let profilesStorage: UseSmileIDSampleRecordStorage
 
-  /// The six switches, read once at construction: a value passed at launch outranks the written one for the life of the process, so re-reading would answer a write with the launch's value.
+  /// The switches, read once: a launch-passed value outranks the written one for the whole process.
   public private(set) var settings: UseSmileIDSampleSettings
 
   public init(
@@ -56,8 +56,13 @@ public final class UseSmileIDSampleStore {
       consentStep: settingsStorage.flag(.consentStep) ?? defaults.consentStep,
       instructionsStep: settingsStorage.flag(.instructionsStep) ?? defaults.instructionsStep,
       previewStep: settingsStorage.flag(.previewStep) ?? defaults.previewStep,
-      customContinue: settingsStorage.flag(.customContinue) ?? defaults.customContinue,
-      customCancel: settingsStorage.flag(.customCancel) ?? defaults.customCancel
+      galleryUpload: settingsStorage.flag(.galleryUpload) ?? defaults.galleryUpload,
+      captureBothSides: settingsStorage.flag(.captureBothSides) ?? defaults.captureBothSides,
+      allowSkipBack: settingsStorage.flag(.allowSkipBack) ?? defaults.allowSkipBack,
+      selfieFirst: settingsStorage.flag(.selfieFirst) ?? defaults.selfieFirst,
+      captureMode: settingsStorage.data(Self.captureModeKey)
+        .flatMap { String(data: $0, encoding: .utf8) }
+        .flatMap(UseSmileIDSampleCaptureMode.init(rawValue:)) ?? defaults.captureMode
     ).normalised()
   }
 
@@ -73,6 +78,14 @@ public final class UseSmileIDSampleStore {
     settings = updated
     return updated
   }
+
+  /// Stored by its id, so a renamed case still reads the device's choice.
+  public func setCaptureMode(_ mode: UseSmileIDSampleCaptureMode) {
+    settingsStorage.setData(Self.captureModeKey, Data(mode.rawValue.utf8))
+    settings.captureMode = mode
+  }
+
+  static let captureModeKey = "capture_mode"
 
   /// In the Keychain, since the record holds people's details; missing or unreadable is no profiles.
   public var profiles: UseSmileIDSampleProfiles {
@@ -194,13 +207,15 @@ public extension UseSmileIDSampleSetting {
     case .consentStep: "consent_step"
     case .instructionsStep: "instructions_step"
     case .previewStep: "preview_step"
-    case .customContinue: "custom_continue"
-    case .customCancel: "custom_cancel"
+    case .galleryUpload: "gallery_upload"
+    case .captureBothSides: "capture_both_sides"
+    case .allowSkipBack: "allow_skip_back"
+    case .selfieFirst: "selfie_first"
     }
   }
 }
 
-/// Where the eight switches live: `UserDefaults` in an app, memory in a test. Read per row, since an absent row is today's default rather than `false`.
+/// Where the switches live, `UserDefaults` in an app and memory in a test; an absent row reads as its default.
 public protocol UseSmileIDSampleSettingsStorage: AnyObject {
   func flag(_ key: String) -> Bool?
   func setFlag(_ key: String, _ value: Bool)

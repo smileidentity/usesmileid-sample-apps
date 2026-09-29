@@ -2,6 +2,7 @@ package com.usesmileid.sampleapps.android.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import com.ramcosta.composedestinations.annotation.Destination
@@ -10,6 +11,7 @@ import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDe
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
+import com.usesmileid.sampleapps.ui.state.catalogueFamily
 import com.usesmileid.sampleapps.android.flow.firstStepFor
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleProductsState
@@ -24,6 +26,8 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     val chrome = LocalUseSmileIDSampleChrome.current
     var switchingProfile by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.ProfileSwitch)
+    // Back on the grid means the run's form is gone, so a list still arriving for it is cancelled.
+    LaunchedEffect(Unit) { app.catalogue.stop() }
     ProductsContent(
         contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
         state = UseSmileIDSampleProductsState(
@@ -39,6 +43,8 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
         ),
         onProductClick = {
             app.forms.startRun(app.profiles.active)
+            // Fetched ahead: the user-details form sits between, so the lists are usually there before the ID form.
+            if (it.catalogueFamily != null) app.catalogue.begin(app.environment, app.catalogueLocale)
             navigator.navigate(app.firstStepFor(it))
         },
         onProfileClick = { switchingProfile = true },

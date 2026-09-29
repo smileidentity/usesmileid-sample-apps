@@ -1,6 +1,6 @@
 import '../state/use_smileid_sample_settings.dart';
 
-/// Where the six switches are kept, so the screen never knows what is doing the keeping.
+/// Where the settings are kept, so the screen never knows what is doing the keeping.
 abstract interface class UseSmileIDSampleSettingsRepository {
   /// The stored settings, or the plain defaults on a first launch.
   Future<UseSmileIDSampleSettings> read();
@@ -9,6 +9,11 @@ abstract interface class UseSmileIDSampleSettingsRepository {
   Future<UseSmileIDSampleSettings> setSetting(
     UseSmileIDSampleSetting setting,
     bool enabled,
+  );
+
+  /// Stores the capture mode and returns what was stored.
+  Future<UseSmileIDSampleSettings> setCaptureMode(
+    UseSmileIDSampleCaptureMode mode,
   );
 }
 
@@ -33,11 +38,20 @@ abstract final class UseSmileIDSampleSettingsKeys {
   /// Whether the flow includes the SDK's preview step.
   static const String previewStep = 'preview_step';
 
-  /// Whether the SDK's continue buttons are the sample's.
-  static const String customContinue = 'custom_continue';
+  /// Whether the SDK offers the gallery on document capture.
+  static const String galleryUpload = 'gallery_upload';
 
-  /// Whether the SDK's cancel buttons are the sample's.
-  static const String customCancel = 'custom_cancel';
+  /// Whether the SDK captures a back, for a document type that has one.
+  static const String captureBothSides = 'capture_both_sides';
+
+  /// Whether the back-side capture offers Skip.
+  static const String allowSkipBack = 'allow_skip_back';
+
+  /// Whether the document products capture the selfie first.
+  static const String selfieFirst = 'selfie_first';
+
+  /// The capture mode, stored by its id.
+  static const String captureMode = 'capture_mode';
 
   /// The key one switch is stored under.
   static String of(UseSmileIDSampleSetting setting) => switch (setting) {
@@ -47,8 +61,10 @@ abstract final class UseSmileIDSampleSettingsKeys {
     UseSmileIDSampleSetting.consentStep => consentStep,
     UseSmileIDSampleSetting.instructionsStep => instructionsStep,
     UseSmileIDSampleSetting.previewStep => previewStep,
-    UseSmileIDSampleSetting.customContinue => customContinue,
-    UseSmileIDSampleSetting.customCancel => customCancel,
+    UseSmileIDSampleSetting.galleryUpload => galleryUpload,
+    UseSmileIDSampleSetting.captureBothSides => captureBothSides,
+    UseSmileIDSampleSetting.allowSkipBack => allowSkipBack,
+    UseSmileIDSampleSetting.selfieFirst => selfieFirst,
   };
 }
 
@@ -70,4 +86,9 @@ class UseSmileIDSampleMemorySettingsRepository
     UseSmileIDSampleSetting setting,
     bool enabled,
   ) async => _settings = _settings.withSetting(setting, enabled);
+
+  @override
+  Future<UseSmileIDSampleSettings> setCaptureMode(
+    UseSmileIDSampleCaptureMode mode,
+  ) async => _settings = _settings.withCaptureMode(mode);
 }

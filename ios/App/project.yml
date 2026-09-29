@@ -26,7 +26,13 @@ targets:
   UseSmileIDSample:
     type: application
     platform: iOS
-    sources: [Sources, Assets.xcassets, PrivacyInfo.xcprivacy]
+    sources:
+      - Sources
+      - Assets.xcassets
+      - PrivacyInfo.xcprivacy
+      # The `catalogue=fixture` lists, bundled on every configuration: the device suite runs release too.
+      - path: ../../spec/catalogue-fixture.json
+        buildPhase: resources
     dependencies:
       - package: SampleUI
         product: SampleUI

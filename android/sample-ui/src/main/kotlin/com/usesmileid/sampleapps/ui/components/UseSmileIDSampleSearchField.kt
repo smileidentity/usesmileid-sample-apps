@@ -37,6 +37,8 @@ fun UseSmileIDSampleSearchField(
     modifier: Modifier = Modifier,
     placeholder: String = "",
     testId: String? = null,
+    /** Off while a list is still loading: there is nothing to filter yet. */
+    enabled: Boolean = true,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
@@ -72,6 +74,7 @@ fun UseSmileIDSampleSearchField(
                 value = query,
                 onValueChange = onQueryChange,
                 singleLine = true,
+                enabled = enabled,
                 interactionSource = interactionSource,
                 textStyle = UseSmileIDSampleTheme.type.searchFont.copy(color = colors.search.text),
                 cursorBrush = SolidColor(colors.search.borderFocus),

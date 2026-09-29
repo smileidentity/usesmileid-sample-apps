@@ -3,9 +3,12 @@ import { create } from 'zustand';
 import {
   smileIDSampleIdDetailsDefaults,
   type UseSmileIDSampleCountry,
+  type UseSmileIDSampleGenericDocument,
+  type UseSmileIDSampleDocument,
   type UseSmileIDSampleIdDetails,
-  type UseSmileIDSampleIdType,
+  type UseSmileIDSampleKycIdType,
 } from './use-smile-id-sample-id-details';
+import { UseSmileIDSampleCaptureAs } from '../model/use-smile-id-sample-capture-as';
 import {
   smileIDSampleUserDetailsDefaults,
   type UseSmileIDSampleProfile,
@@ -31,7 +34,11 @@ type Actions = {
   /// A product tap: fills from the active profile, and never carries the last run's ID details into this one.
   startRun: (profile: UseSmileIDSampleProfile | null) => void;
   setCountry: (country: UseSmileIDSampleCountry) => void;
-  setIdType: (idType: UseSmileIDSampleIdType) => void;
+  setIdType: (idType: UseSmileIDSampleKycIdType) => void;
+  setDocument: (document: UseSmileIDSampleDocument) => void;
+  setCaptureAs: (captureAs: UseSmileIDSampleCaptureAs) => void;
+  /// Keeps what the generic-document sheet built, which also selects Generic document.
+  setGenericDocument: (genericDocument: UseSmileIDSampleGenericDocument) => void;
   setIdNumber: (value: string) => void;
   clear: () => void;
 };
@@ -58,11 +65,18 @@ export const useSmileIDSampleFormsStore = create<State & Actions>((set) => ({
       idDetails: smileIDSampleIdDetailsDefaults,
     }),
 
-  /// Choosing a country clears the ID type, because the types it offered may not apply to the new one.
+  /// Choosing a country clears the ID type and document, which may not apply to it, and keeps the typed number.
   setCountry: (country) =>
-    set((state) => ({ idDetails: { ...state.idDetails, country, idType: null } })),
+    set((state) => ({ idDetails: { ...state.idDetails, country, idType: null, document: null } })),
 
   setIdType: (idType) => set((state) => ({ idDetails: { ...state.idDetails, idType } })),
+
+  setDocument: (document) => set((state) => ({ idDetails: { ...state.idDetails, document } })),
+
+  setCaptureAs: (captureAs) => set((state) => ({ idDetails: { ...state.idDetails, captureAs } })),
+
+  setGenericDocument: (genericDocument) =>
+    set((state) => ({ idDetails: { ...state.idDetails, genericDocument, captureAs: UseSmileIDSampleCaptureAs.GenericDocument } })),
 
   setIdNumber: (value) => set((state) => ({ idDetails: { ...state.idDetails, idNumber: value } })),
 

@@ -1,14 +1,6 @@
 export { UseSmileIDSampleAvatar, avatarColorForProfile } from './components/use-smile-id-sample-avatar';
 export { smileIDSampleConfirm } from './components/use-smile-id-sample-confirmation';
 export { UseSmileIDSampleButton } from './components/use-smile-id-sample-button';
-export {
-  CUSTOM_CANCEL_LABEL,
-  CUSTOM_CONTINUE_LABEL,
-  UseSmileIDSampleCustomCancelButton,
-  UseSmileIDSampleCustomContinueButton,
-  useSmileIDSampleCustomCancelSlot,
-  useSmileIDSampleCustomContinueSlot,
-} from './components/use-smile-id-sample-custom-button';
 export { UseSmileIDSampleSearchField } from './components/use-smile-id-sample-search-field';
 export { UseSmileIDSampleSectionLabel } from './components/use-smile-id-sample-section-label';
 export { UseSmileIDSampleStatusBadge } from './components/use-smile-id-sample-status-badge';
@@ -65,6 +57,7 @@ export {
   smileIDSampleLaunchArgsFrom,
   smileIDSampleLaunchArgsFromUrl,
   type UseSmileIDSampleHoldCamera,
+  type UseSmileIDSampleCatalogueMode,
   type UseSmileIDSampleLaunchArgs,
 } from './state/use-smile-id-sample-launch-args';
 export {
@@ -167,6 +160,11 @@ export {
   smileIDSampleSettingsWith,
   type UseSmileIDSampleSettings,
 } from './state/use-smile-id-sample-settings';
+export {
+  UseSmileIDSampleCaptureMode,
+  smileIDSampleCaptureModeLabel,
+  smileIDSampleCaptureModes,
+} from './model/use-smile-id-sample-capture-mode';
 export { useSmileIDSampleSettingsStore } from './state/use-smile-id-sample-settings-store';
 
 export { LicensesScreen, type UseSmileIDSampleLicence } from './screens/licenses-screen';
@@ -229,21 +227,66 @@ export {
   type UseSmileIDSampleUserDetailsRequirement,
 } from './state/use-smile-id-sample-user-details-requirement';
 export {
-  smileIDSampleCountries,
-  smileIDSampleCountryFrom,
+  smileIDSampleAspectRatios,
+  smileIDSampleGenericDocumentDefaults,
+  smileIDSampleDocumentId,
+  smileIDSampleFlag,
   smileIDSampleIdDetailsComplete,
   smileIDSampleIdDetailsDefaults,
-  smileIDSampleIdTypeFrom,
-  smileIDSampleIdTypes,
-  smileIDSampleIdTypesFor,
   smileIDSampleOptionMatches,
+  smileIDSampleOrientations,
+  type UseSmileIDSampleAspectRatio,
+  type UseSmileIDSampleCatalogueFamily,
   type UseSmileIDSampleCountry,
+  type UseSmileIDSampleGenericDocument,
+  type UseSmileIDSampleDocument,
+  type UseSmileIDSampleDocumentOrientation,
   type UseSmileIDSampleIdDetails,
-  type UseSmileIDSampleIdType,
+  type UseSmileIDSampleKycIdType,
 } from './state/use-smile-id-sample-id-details';
+export { UseSmileIDSampleCaptureAs, smileIDSampleCaptureAsOptions } from './model/use-smile-id-sample-capture-as';
+export {
+  smileIDSampleAllowedRequiredFields,
+  smileIDSampleCatalogueCountries,
+  smileIDSampleCatalogueDocuments,
+  smileIDSampleCatalogueFamily,
+  smileIDSampleCatalogueIdTypes,
+  smileIDSampleDecodeDocuments,
+  smileIDSampleDecodeIdTypes,
+  type UseSmileIDSampleApiCountryDocuments,
+  type UseSmileIDSampleApiIdType,
+  type UseSmileIDSampleCatalogue,
+  type UseSmileIDSampleCatalogueData,
+} from './state/use-smile-id-sample-catalogue';
+export {
+  smileIDSampleCompiled,
+  smileIDSampleIdNumberAccepts,
+  smileIDSampleIdNumberError,
+  smileIDSampleIdNumberExample,
+  smileIDSampleIdNumberPlaceholder,
+} from './state/use-smile-id-sample-id-number-hint';
+export {
+  smileIDSampleFixtureCatalogueSource,
+  smileIDSampleUnreachableCatalogueSource,
+  type UseSmileIDSampleCatalogueSource,
+} from './data/use-smile-id-sample-catalogue-source';
+export {
+  createSmileIDSampleCatalogueStore,
+  smileIDSampleCatalogueCountriesOf,
+  smileIDSampleCatalogueDocumentsOf,
+  smileIDSampleCatalogueIdTypesOf,
+  type UseSmileIDSampleCatalogueStore,
+} from './data/use-smile-id-sample-catalogue-store';
 export { useSmileIDSampleFormsStore } from './state/use-smile-id-sample-forms-store';
 
 export { UseSmileIDSamplePickerList } from './components/use-smile-id-sample-picker-list';
+export { UseSmileIDSampleCataloguePicker } from './components/use-smile-id-sample-catalogue-picker';
+export {
+  SKELETON_DELAY_MS,
+  SKELETON_MINIMUM_MS,
+  UseSmileIDSampleSkeletonRows,
+  useSmileIDSampleSkeletonGate,
+} from './components/use-smile-id-sample-skeleton';
 export {
   SMILE_ID_SAMPLE_NOTICE_WINDOW_MS,
   UseSmileIDSampleNoticeWindowProvider,
@@ -260,6 +303,10 @@ export {
 export { KycIdFormScreen, type UseSmileIDSampleKycIdFormState } from './screens/kyc-id-form-screen';
 export { CountryPickerSheet } from './screens/country-picker-sheet';
 export { IdTypePickerSheet } from './screens/id-type-picker-sheet';
+export { DocumentPickerSheet } from './screens/document-picker-sheet';
+export { CaptureAsSheet } from './screens/capture-as-sheet';
+export { CaptureModeSheet } from './screens/capture-mode-sheet';
+export { GenericDocumentSheet } from './screens/generic-document-sheet';
 export { ProfilesScreen, type UseSmileIDSampleProfilesState } from './screens/profiles-screen';
 export {
   ProfileConfigScreen,

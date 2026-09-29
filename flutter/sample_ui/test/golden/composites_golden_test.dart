@@ -12,16 +12,6 @@ void main() {
     await goldens(tester, 'icons', _icons);
   });
 
-  testWidgets('custom buttons', (WidgetTester tester) async {
-    await goldens(tester, 'custom_buttons', _customButtons);
-  });
-
-  testWidgets('custom buttons survive max text scale', (
-    WidgetTester tester,
-  ) async {
-    await assertSurvivesMaxTextScale(tester, _customButtons());
-  });
-
   testWidgets('top app bar', (WidgetTester tester) async {
     await goldens(tester, 'top_app_bar', _topAppBars);
   });
@@ -172,13 +162,6 @@ Widget _stack(List<Widget> children, {double gap = SmileDimens.spacingXs}) =>
     );
 
 /// Every mark in the shared record, so a re-export that changes one is visible rather than implied.
-Widget _customButtons() => _stack(<Widget>[
-  UseSmileIDSampleCustomContinueButton(onPressed: () {}),
-  UseSmileIDSampleCustomContinueButton(onPressed: () {}, enabled: false),
-  UseSmileIDSampleCustomCancelButton(onPressed: () {}),
-  UseSmileIDSampleCustomCancelButton(onPressed: () {}, enabled: false),
-]);
-
 Widget _icons() => Builder(
   builder: (BuildContext context) => Wrap(
     spacing: SmileDimens.spacingSm,

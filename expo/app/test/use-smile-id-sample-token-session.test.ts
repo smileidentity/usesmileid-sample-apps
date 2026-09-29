@@ -1,4 +1,5 @@
 import {
+  smileIDSampleIdDetailsDefaults,
   smileIDSampleBase64UrlEncode,
   smileIDSampleProducts,
   smileIDSampleSimulatedSpans,
@@ -44,8 +45,11 @@ const snapshot = (overrides: Partial<UseSmileIDSampleFlowLaunchSnapshot> = {}): 
   route: 'fullscreen',
   userDetails: { firstName: 'Ada', lastName: 'Okafor', email: 'ada.okafor@example.com', phone: '' },
   idDetails: {
-    country: { code: 'KE', label: 'Kenya', flag: '🇰🇪' },
-    idType: { id: 'NATIONAL_ID', label: 'National ID', countries: ['KE'] },
+    ...smileIDSampleIdDetailsDefaults,
+    country: { code: 'KE', name: 'Kenya' },
+    idType: { id: 'NATIONAL_ID', type: 'NATIONAL_ID', label: 'National ID', regex: '^[0-9]{1,9}$' },
+    // Both families filled, so each product finds the field it submits.
+    document: { code: 'PASSPORT', subType: null, name: 'Passport', hasBack: false, format: 3 },
     idNumber: '11111111',
   },
   scenario: 'normal',
@@ -56,8 +60,11 @@ const snapshot = (overrides: Partial<UseSmileIDSampleFlowLaunchSnapshot> = {}): 
   consentStep: true,
   instructionsStep: true,
   previewStep: true,
-  customContinue: false,
-  customCancel: false,
+  captureMode: 'autoWithFallback',
+  galleryUpload: false,
+  captureBothSides: true,
+  allowSkipBack: false,
+  selfieFirst: false,
   userId: 'user_1',
   partnerId: 'p-1',
   partnerName: 'Kobo Bank',
@@ -169,7 +176,7 @@ describe('what the SDK is handed under a session', () => {
 
   it('takes the ID parameters from the token first, the ID number as its reference', () => {
     const session = minted({ userDetails: true });
-    const value = snapshot({ session, idDetails: { country: null, idType: null, idNumber: '' } });
+    const value = snapshot({ session, idDetails: smileIDSampleIdDetailsDefaults });
     expect(built(value).enhancedKYCParams).toEqual({ country: 'KE', idType: 'NATIONAL_ID', idNumber: 'vault_id_number' });
   });
 
@@ -204,7 +211,7 @@ describe('the gate under a session', () => {
     const value = snapshot({
       session: minted({ userDetails: true }),
       userDetails: { firstName: '', lastName: '', email: '', phone: '' },
-      idDetails: { country: null, idType: null, idNumber: '' },
+      idDetails: smileIDSampleIdDetailsDefaults,
     });
     expect(smileIDSamplePreflight(value).kind).toBe('ready');
   });

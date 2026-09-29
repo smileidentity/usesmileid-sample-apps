@@ -7,6 +7,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureMode
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
@@ -20,14 +21,17 @@ data class FlowLaunchSnapshot(
     val scenario: UseSmileIDSampleScenario,
     val theme: UseSmileIDSampleThemeScenario,
     val sandbox: Boolean,
-    /** The seven fields, not the settings object: the snapshot is read once at entry (R2). */
+    /** The settings as fields, not the settings object: the snapshot is read once at entry. */
     val allowAgentMode: Boolean,
     val enableEnhancedLiveness: Boolean,
     val consentStep: Boolean,
     val instructionsStep: Boolean,
     val previewStep: Boolean,
-    val customContinue: Boolean = false,
-    val customCancel: Boolean = false,
+    val captureMode: UseSmileIDSampleCaptureMode = UseSmileIDSampleCaptureMode.AutoWithFallback,
+    val galleryUpload: Boolean = false,
+    val captureBothSides: Boolean = true,
+    val allowSkipBack: Boolean = false,
+    val selfieFirst: Boolean = false,
     val userId: String,
     val partnerId: String,
     val partnerName: String,
@@ -66,8 +70,11 @@ fun buildSnapshot(
         consentStep = app.settings.consentStep,
         instructionsStep = app.settings.instructionsStep,
         previewStep = app.settings.previewStep,
-        customContinue = app.settings.customContinue,
-        customCancel = app.settings.customCancel,
+        captureMode = app.settings.captureMode,
+        galleryUpload = app.settings.galleryUpload,
+        captureBothSides = app.settings.captureBothSides,
+        allowSkipBack = app.settings.allowSkipBack,
+        selfieFirst = app.settings.selfieFirst,
         userId = userId,
         partnerId = app.profiles.partnerId,
         partnerName = app.profiles.partnerName,

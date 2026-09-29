@@ -7,7 +7,7 @@ appId: ${APP_ID}
 - runFlow:
     file: subflows/cold-start.yaml
     env:
-      LINK: "usesmileid-sample-flutter://"
+      LINK: "usesmileid-sample-flutter://?catalogue=fixture"
       LANDS_ON: "sample_products_screen"
 
 - tapOn:

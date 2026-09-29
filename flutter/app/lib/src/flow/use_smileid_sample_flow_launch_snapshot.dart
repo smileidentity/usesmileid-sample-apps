@@ -6,7 +6,7 @@ import 'use_smileid_sample_token_binding_rules.dart';
 /// Read once at flow entry; never re-read while the flow runs.
 @immutable
 class UseSmileIDSampleFlowLaunchSnapshot {
-  /// Takes the five settings rather than the settings object, because the read happens once.
+  /// Takes the settings one by one rather than the settings object, because the read happens once.
   const UseSmileIDSampleFlowLaunchSnapshot({
     required this.product,
     required this.route,
@@ -20,12 +20,15 @@ class UseSmileIDSampleFlowLaunchSnapshot {
     required this.consentStep,
     required this.instructionsStep,
     required this.previewStep,
-    this.customContinue = false,
-    this.customCancel = false,
     required this.userId,
     required this.partnerId,
     required this.partnerName,
     required this.callbackUrl,
+    this.captureMode = UseSmileIDSampleCaptureMode.autoWithFallback,
+    this.galleryUpload = false,
+    this.captureBothSides = true,
+    this.allowSkipBack = false,
+    this.selfieFirst = false,
     this.session,
     this.sessionExpired = false,
   });
@@ -66,11 +69,20 @@ class UseSmileIDSampleFlowLaunchSnapshot {
   /// Whether a preview follows each capture.
   final bool previewStep;
 
-  /// Whether the SDK's continue slots take the sample's "Custom continue" button.
-  final bool customContinue;
+  /// How the document capture shutter behaves.
+  final UseSmileIDSampleCaptureMode captureMode;
 
-  /// Whether the SDK's cancel slots take the sample's "Custom cancel" button.
-  final bool customCancel;
+  /// Whether document capture offers the gallery.
+  final bool galleryUpload;
+
+  /// Whether document capture takes a back, for a document type that has one.
+  final bool captureBothSides;
+
+  /// Whether the back-side capture offers Skip.
+  final bool allowSkipBack;
+
+  /// Whether the document products capture the selfie first.
+  final bool selfieFirst;
 
   /// The id this run submits under.
   final String userId;

@@ -179,7 +179,8 @@
         },
         {
           "state": "refreshing",
-          "node": "5206-2608"
+          "node": "5206-2608",
+          "note": "Not built on any platform: jobs are stored on the device and no endpoint lists a partner's jobs. See the spec-debt table in spec/README.md."
         }
       ],
       "components": [
@@ -257,7 +258,7 @@
         "POST-SUBMISSION: the app lands here in the processing state once a job is submitted (observed 202 Accepted straight after the ID form's Continue)"
       ],
       "additions": [
-        "CORRECTED 2026-09-08: pull-to-refresh, not the 'Check status' button that once stood in for it — Android replaced the button when GET /v3/status landed, and the stale entry named an id (sample_details_check_status) that is in no test-ids file. The gesture is present in every state, not only processing: an outcome that cannot succeed says why (no live scanned session, or a row never submitted under one, which is every fixture-token run) rather than doing nothing. A row still processing is also refreshed automatically on entry, since that is the only status that can change, and that refresh is silent unless something changed. The LIST's own pull is a different thing and is still deferred 8.1)."
+        "CORRECTED 2026-09-08: pull-to-refresh, not the 'Check status' button that once stood in for it — Android replaced the button when GET /v3/status landed, and the stale entry named an id (sample_details_check_status) that is in no test-ids file. The gesture is present in every state, not only processing: an outcome that cannot succeed says why (no live scanned session, or a row never submitted under one, which is every fixture-token run) rather than doing nothing. A row still processing is also refreshed automatically on entry, since that is the only status that can change, and that refresh is silent unless something changed. The LIST's own pull is not built: see the spec-debt table in spec/README.md."
       ],
       "note": "The details screen doubles as the result screen, which is why the result card belongs here rather than needing a new home. NO NAV BAR: it is a pushed screen, even though its route lives in the verifications graph. You leave it by going back, not by switching tab. The RESULT CARD and its callback counters are hidden on a release build unless the `probes` launch argument asks for them, and always shown in debug (2026-08-25): the affordance still ships on the release classpath, minified and shrunk, because that is where consumption defects surface — compiling it out with a debug-only source set would also make the argument impossible. The rest of the screen is unchanged either way, so a partner sees the design's screen and automation sees the card."
     },
@@ -340,6 +341,21 @@
         {
           "state": "selected",
           "node": "5206-2816"
+        },
+        {
+          "state": "documentSelected",
+          "design": "in-repo",
+          "note": "The document products: COUNTRY, DOCUMENT and CAPTURE AS, with no ID number. Built from the same SelectTrigger as the ID-type row; docs/architecture.md describes it."
+        },
+        {
+          "state": "idNumberInvalid",
+          "design": "in-repo",
+          "note": "A non-empty number that does not match the chosen type's regex: sample_idnumber_error under the field, repeating the example. Continue stays disabled."
+        },
+        {
+          "state": "catalogueError",
+          "design": "in-repo",
+          "note": "A list failed to load. The trigger's placeholder goes back to 'Select ID type' (or 'Select document') so the form never looks stuck; the sheet it opens shows the error with Retry."
         }
       ],
       "components": [
@@ -355,10 +371,13 @@
         "sample_country_trigger",
         "sample_idtype_trigger",
         "sample_idnumber_input",
+        "sample_idnumber_error",
+        "sample_document_trigger",
+        "sample_capture_as_trigger",
         "sample_kyc_continue"
       ],
-      "appliesTo": "every product needing details — documentVerification, enhancedDocumentVerification, biometricKyc and enhancedKyc — with the same three fields (Country, ID type, ID number)",
-      "fieldDependency": "ID TYPE is disabled until COUNTRY is selected; Continue enables only once country, ID type and ID number are all set.",
+      "appliesTo": "every product needing details, with fields per product. biometricKyc and enhancedKyc: Country, ID type and ID number, read from GET /v3/services/supported_id_types. documentVerification and enhancedDocumentVerification: Country, Document and Capture as, read from GET /v3/services/supported_documents; they submit no ID number, so the field is not shown.",
+      "fieldDependency": "ID TYPE (or DOCUMENT) is disabled until COUNTRY is selected, and the ID NUMBER field until an ID type is; while a country's list is still loading the trigger stays ENABLED and reads 'Loading ID types…' (or 'Loading documents…'). Changing country clears the ID type or document and keeps the typed number, checked again against the next type. Continue enables once every field the product shows is set and the number matches the type's regex; a regex the platform cannot compile checks nothing. Continue never waits on the network.",
       "flowPosition": "After the Consent Details Form, still BEFORE the SDK flow."
     },
     {
@@ -371,6 +390,21 @@
         {
           "state": "default",
           "node": "5206-2835"
+        },
+        {
+          "state": "loading",
+          "design": "in-repo",
+          "note": "Six OptionRow skeletons (sample_catalogue_loading) after 300 ms, kept at least 400 ms; the SearchField is disabled until rows arrive. docs/architecture.md describes it."
+        },
+        {
+          "state": "error",
+          "design": "in-repo",
+          "note": "EmptyState with supporting text and Retry (sample_catalogue_error, sample_catalogue_retry): 'Couldn't load countries', 'Check your connection, then try again'."
+        },
+        {
+          "state": "empty",
+          "design": "in-repo",
+          "note": "EmptyState, no Retry: the country has nothing the form can use, or the search matched nothing; the text says which."
         }
       ],
       "components": [
@@ -381,8 +415,13 @@
       "testIds": [
         "sample_country_sheet",
         "sample_country_search",
-        "sample_country_option"
-      ]
+        "sample_country_option",
+        "sample_country_empty",
+        "sample_catalogue_loading",
+        "sample_catalogue_error",
+        "sample_catalogue_retry"
+      ],
+      "note": "Lists the countries the product's family can use, from two calls fetched ahead when the product is tapped and once per run of the form: GET /v3/services/supported_id_types (no country) and GET /v3/services/supported_documents?continent=AFRICA. The KYC products offer every country with a listed ID type, the document products every country with a listed document; names come from supported_documents for both (spec/catalogue-rules.json countries). The KYC list is ready only when both calls are, and Retry asks both again."
     },
     {
       "id": "idTypePickerSheet",
@@ -394,6 +433,21 @@
         {
           "state": "default",
           "node": "5206-2877"
+        },
+        {
+          "state": "loading",
+          "design": "in-repo",
+          "note": "Six OptionRow skeletons (sample_catalogue_loading) after 300 ms, kept at least 400 ms; the SearchField is disabled until rows arrive. docs/architecture.md describes it."
+        },
+        {
+          "state": "error",
+          "design": "in-repo",
+          "note": "EmptyState with supporting text and Retry (sample_catalogue_error, sample_catalogue_retry): 'Couldn't load ID types', 'Check your connection, then try again'."
+        },
+        {
+          "state": "empty",
+          "design": "in-repo",
+          "note": "EmptyState, no Retry: the country has nothing the form can use, or the search matched nothing; the text says which."
         }
       ],
       "components": [
@@ -404,7 +458,107 @@
       "testIds": [
         "sample_idtype_sheet",
         "sample_idtype_search",
-        "sample_idtype_option"
+        "sample_idtype_option",
+        "sample_idtype_empty",
+        "sample_catalogue_loading",
+        "sample_catalogue_error",
+        "sample_catalogue_retry"
+      ]
+    },
+    {
+      "id": "documentPickerSheet",
+      "title": "Document picker",
+      "owner": "sample",
+      "board": "05",
+      "route": "fullSheet",
+      "states": [
+        {
+          "state": "default",
+          "design": "in-repo",
+          "note": "The ID-type picker's layout, listing the country's supported_documents. A sub-type with display_standalone (today only South Africa's Green Book) is its own row right after its parent, and submits the parent's code. The API's 'Others' row, whose code is empty, is left out."
+        },
+        {
+          "state": "loading",
+          "design": "in-repo",
+          "note": "Six OptionRow skeletons (sample_catalogue_loading) after 300 ms, kept at least 400 ms; the SearchField is disabled until rows arrive. docs/architecture.md describes it."
+        },
+        {
+          "state": "error",
+          "design": "in-repo",
+          "note": "EmptyState with supporting text and Retry (sample_catalogue_error, sample_catalogue_retry): 'Couldn't load documents', 'Check your connection, then try again'."
+        },
+        {
+          "state": "empty",
+          "design": "in-repo",
+          "note": "EmptyState, no Retry: the country has nothing the form can use, or the search matched nothing; the text says which."
+        }
+      ],
+      "components": [
+        "BottomSheet",
+        "SearchField",
+        "OptionRow",
+        "EmptyState"
+      ],
+      "testIds": [
+        "sample_document_sheet",
+        "sample_document_search",
+        "sample_document_option",
+        "sample_document_empty",
+        "sample_catalogue_loading",
+        "sample_catalogue_error",
+        "sample_catalogue_retry"
+      ]
+    },
+    {
+      "id": "captureAsSheet",
+      "title": "Capture as",
+      "owner": "sample",
+      "board": "05",
+      "route": "sheet",
+      "states": [
+        {
+          "state": "default",
+          "design": "in-repo",
+          "note": "Three rows, each the SDK's own type and nothing inferred from the API: Generic document (the default, the SDK's GenericDocument defaults), Green Book preset, Passport preset. Choosing Generic document opens genericDocumentSheet."
+        }
+      ],
+      "components": [
+        "BottomSheet",
+        "OptionRow"
+      ],
+      "testIds": [
+        "sample_capture_as_sheet",
+        "sample_capture_as_option"
+      ]
+    },
+    {
+      "id": "genericDocumentSheet",
+      "title": "Generic document",
+      "owner": "sample",
+      "board": "05",
+      "route": "sheet",
+      "states": [
+        {
+          "state": "default",
+          "design": "in-repo",
+          "note": "Builds a GenericDocument: display name, back side, orientation (landscape or portrait) and aspect ratio (off, 1.586 card, 1.309 passport, 0.748 booklet)."
+        }
+      ],
+      "components": [
+        "BottomSheet",
+        "TextInput",
+        "SettingRow",
+        "Switch",
+        "FilterChip",
+        "Button"
+      ],
+      "testIds": [
+        "sample_generic_document_sheet",
+        "sample_generic_document_name",
+        "sample_generic_document_back_side",
+        "sample_generic_document_orientation",
+        "sample_generic_document_aspect_ratio",
+        "sample_generic_document_done"
       ]
     },
     {
@@ -432,7 +586,7 @@
         "CAPTURE (two rows: Enhanced SmartSelfie™, Agent mode — mutually exclusive)",
         "APPEARANCE",
         "SDK SCREENS — SHOW OR SKIP FLOW STEPS",
-    "CUSTOM BUTTONS — REPLACE THE SDK'S BUTTONS (two rows: Custom continue, Custom cancel; placed by the sample, the design draws no such section)",
+        "DOCUMENT CAPTURE (five rows: Capture mode, Gallery upload, Capture the back side, Skip the back, Selfie first; placed by the sample, the design draws no such section)",
         "ABOUT",
         "LEGAL",
         "sign out",
@@ -454,8 +608,11 @@
         "sample_setting_consent_step",
         "sample_setting_instructions_step",
         "sample_setting_preview_step",
-    "sample_setting_custom_continue",
-    "sample_setting_custom_cancel",
+        "sample_setting_capture_mode",
+        "sample_setting_gallery_upload",
+        "sample_setting_capture_both_sides",
+        "sample_setting_allow_skip_back",
+        "sample_setting_selfie_first",
         "sample_sign_out",
         "sample_sign_out_confirm"
       ],
@@ -472,6 +629,28 @@
       },
       "linkPresentation": "Per row, and split on what the destination can render (measured 2026-08-25). ABOUT — Documentation and Support open IN-APP: Custom Tabs on Android (androidx.browser), SFSafariViewController on iOS, url_launcher inAppBrowserView on Flutter, expo-web-browser on React Native. A WebView is deliberately NOT the pattern on any platform: the page would lose the user's session, autofill and password manager, and this is code partners copy. LEGAL — Terms of Service and Privacy Policy EJECT to the system browser, because both pages serve their document as an embedded PDF (a Webflow CDN asset, hash in the filename) and a mobile browser renders an embedded PDF as a stub with an Open button rather than the document; framing that inside the app makes the app look like it failed. The canonical page URLs stay as they are — linking the CDN asset directly would show the document but hard-codes a path that changes on every re-upload, and the same canonical URL is what the SDK consent screen uses. The in-app toolbar takes a colour PER SCHEME from the design tokens (primary in light, surface in dark); one shared colour left a white bar on a white page. Android warms the browser while Settings is open but does NOT pre-fetch: speculatively downloading a 649 KB docs page on a partner's mobile data is the wrong trade.",
       "note": "The PROFILE row opens the profiles LIST, not the active profile's own page — configuring any profile and creating one are both reached from there. Its avatar takes the ACTIVE profile's hue from design-tokens.json profileHues, indexed by list position, so the summary, the list and the products header never draw the same profile in three colours. The ENVIRONMENT section was removed on 2026-08-24: it was never in the design, and it existed only because the sandbox launch argument was an override rather than a source. Both are gone — the token's api_url decides the environment, and a run reports it on sample_result_environment. The three SDK-step switches include or omit their screen (see components.json settingsToSdkMapping), and the CONSENT row carries one overridden supporting line: when the linked token binds consent it reads 'The token grants consent, so the screen is skipped', because a switch reading ON while the token has taken the decision away is a lie the screen tells. The switch stays live — it still decides the next run made without a bound token. The DEBUG section holding the Scenarios row renders on debug builds only (see drawerPresentation): the screen takes it as a nullable slot the host fills, because sample-ui runs under eight identities and may not read a host's BuildConfig. Sign out asks first (Decision 2026-09-25): it ends the session and deletes every profile on the device. With no profile, the PROFILE row reads 'No profile yet' and 'Tap to create one'."
+    },
+    {
+      "id": "captureModeSheet",
+      "title": "Capture mode",
+      "owner": "sample",
+      "board": "06",
+      "route": "sheet",
+      "states": [
+        {
+          "state": "default",
+          "design": "in-repo",
+          "note": "Three rows: Automatic, Manual, and Automatic with manual fallback (the default, with the SDK's 10 seconds). No duration control."
+        }
+      ],
+      "components": [
+        "BottomSheet",
+        "OptionRow"
+      ],
+      "testIds": [
+        "sample_capture_mode_sheet",
+        "sample_capture_mode_option"
+      ]
     },
     {
       "id": "profiles",

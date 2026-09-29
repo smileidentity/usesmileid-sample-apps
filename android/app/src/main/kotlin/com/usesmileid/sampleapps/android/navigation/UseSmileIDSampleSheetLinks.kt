@@ -14,7 +14,7 @@ import androidx.navigation.NavHostController
 
 /**
  * A sheet is a LAYER over the screen that owns it, never a destination that replaces it (see
- * `docs/architecture.md` §4), because a destination leaves the scrim covering a grey void. The five
+ * `docs/architecture.md` §4), because a destination leaves the scrim covering a grey void. The nine
  * sheet paths in `spec/routes.json` stay deep-linkable: each resolves to its owner's own link plus a
  * request the owner picks up.
  */
@@ -24,6 +24,10 @@ internal enum class UseSmileIDSampleSheet {
     ScenarioDrawer,
     CountryPicker,
     IdTypePicker,
+    DocumentPicker,
+    CaptureAs,
+    GenericDocument,
+    CaptureMode,
 }
 
 internal data class UseSmileIDSampleSheetLink(val sheet: UseSmileIDSampleSheet, val ownerUri: String)
@@ -49,12 +53,17 @@ internal object UseSmileIDSampleSheetLinks {
             UseSmileIDSampleSheetLink(UseSmileIDSampleSheet.NewProfile, UseSmileIDSampleDeepLinks.PROFILES),
         UseSmileIDSampleDeepLinks.SCENARIO_DRAWER to
             UseSmileIDSampleSheetLink(UseSmileIDSampleSheet.ScenarioDrawer, UseSmileIDSampleDeepLinks.SETTINGS),
+        UseSmileIDSampleDeepLinks.CAPTURE_MODE to
+            UseSmileIDSampleSheetLink(UseSmileIDSampleSheet.CaptureMode, UseSmileIDSampleDeepLinks.SETTINGS),
     )
 
     /** The pickers hang off the form's own path, so their owner is the link minus its last segment. */
     private val PICKERS = mapOf(
         UseSmileIDSampleDeepLinks.COUNTRY_PICKER.substringAfterLast('/') to UseSmileIDSampleSheet.CountryPicker,
         UseSmileIDSampleDeepLinks.ID_TYPE_PICKER.substringAfterLast('/') to UseSmileIDSampleSheet.IdTypePicker,
+        UseSmileIDSampleDeepLinks.DOCUMENT_PICKER.substringAfterLast('/') to UseSmileIDSampleSheet.DocumentPicker,
+        UseSmileIDSampleDeepLinks.CAPTURE_AS.substringAfterLast('/') to UseSmileIDSampleSheet.CaptureAs,
+        UseSmileIDSampleDeepLinks.GENERIC_DOCUMENT.substringAfterLast('/') to UseSmileIDSampleSheet.GenericDocument,
     )
 
     /** Built from the constant so a renamed path cannot leave this behind. */

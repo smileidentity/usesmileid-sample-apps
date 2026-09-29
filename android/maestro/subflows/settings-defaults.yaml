@@ -63,31 +63,67 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_setting_preview_step"
     checked: true
-# The custom-button rows sit below the first screen, so they are scrolled to before they are read.
+# The document-capture rows sit below the first screen too, each at the SDK's default; selfie first off.
 - scrollUntilVisible:
     element:
-      id: "sample_setting_custom_cancel"
+      id: "sample_setting_gallery_upload"
+    centerElement: true
+- runFlow:
+    when:
+      notVisible: "Automatic with manual fallback"
+    commands:
+      - tapOn:
+          id: "sample_setting_capture_mode"
+      - tapOn:
+          id: "sample_capture_mode_option_autoWithFallback"
 - runFlow:
     when:
       visible:
-        id: "sample_setting_custom_continue"
+        id: "sample_setting_gallery_upload"
         checked: true
     commands:
       - tapOn:
-          id: "sample_setting_custom_continue"
-- runFlow:
-    when:
-      visible:
-        id: "sample_setting_custom_cancel"
-        checked: true
-    commands:
-      - tapOn:
-          id: "sample_setting_custom_cancel"
+          id: "sample_setting_gallery_upload"
+- assertVisible: "Automatic with manual fallback"
 - assertVisible:
-    id: "sample_setting_custom_continue"
+    id: "sample_setting_gallery_upload"
+    checked: false
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_selfie_first"
+    centerElement: true
+- runFlow:
+    when:
+      visible:
+        id: "sample_setting_capture_both_sides"
+        checked: false
+    commands:
+      - tapOn:
+          id: "sample_setting_capture_both_sides"
+- runFlow:
+    when:
+      visible:
+        id: "sample_setting_allow_skip_back"
+        checked: true
+    commands:
+      - tapOn:
+          id: "sample_setting_allow_skip_back"
+- runFlow:
+    when:
+      visible:
+        id: "sample_setting_selfie_first"
+        checked: true
+    commands:
+      - tapOn:
+          id: "sample_setting_selfie_first"
+- assertVisible:
+    id: "sample_setting_capture_both_sides"
+    checked: true
+- assertVisible:
+    id: "sample_setting_allow_skip_back"
     checked: false
 - assertVisible:
-    id: "sample_setting_custom_cancel"
+    id: "sample_setting_selfie_first"
     checked: false
 # Back to the top, where the flows that follow expect the list.
 - scrollUntilVisible:

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../use_smileid_sample_test_ids.dart';
 
-/// Which settings row a toggle belongs to, so a caller can name one without naming eight fields.
+/// Which settings row a toggle belongs to, so a caller can name one without naming every field.
 enum UseSmileIDSampleSetting {
   /// ON is the head-turn challenge, and it fights agent mode.
   enhancedSmartSelfie(UseSmileIDSampleTestIds.settingEnhancedSmartSelfie),
@@ -22,16 +22,42 @@ enum UseSmileIDSampleSetting {
   /// Includes or omits `preview()`.
   previewStep(UseSmileIDSampleTestIds.settingPreviewStep),
 
-  /// Hands the SDK's continue slots the sample's "Custom continue" button.
-  customContinue(UseSmileIDSampleTestIds.settingCustomContinue),
+  /// DocumentCaptureConfig.allowGalleryUpload; off, as the SDK defaults it.
+  galleryUpload(UseSmileIDSampleTestIds.settingGalleryUpload),
 
-  /// Hands the SDK's cancel slots the sample's "Custom cancel" button.
-  customCancel(UseSmileIDSampleTestIds.settingCustomCancel);
+  /// DocumentCaptureConfig.captureBothSides; on, as the SDK defaults it.
+  captureBothSides(UseSmileIDSampleTestIds.settingCaptureBothSides),
+
+  /// DocumentCaptureConfig.allowSkipBack; off, as the SDK defaults it.
+  allowSkipBack(UseSmileIDSampleTestIds.settingAllowSkipBack),
+
+  /// The document products capture the selfie before the document.
+  selfieFirst(UseSmileIDSampleTestIds.settingSelfieFirst);
 
   const UseSmileIDSampleSetting(this.testId);
 
   /// The `sample_*` id the row carries, which is spec data rather than the screen's choice.
   final String testId;
+}
+
+/// DocumentCaptureConfig.captureMode, in `spec/test-ids.json`'s vocabulary.
+enum UseSmileIDSampleCaptureMode {
+  /// Captures when the document is held steady.
+  auto('auto', 'Automatic'),
+
+  /// The shutter shows at once.
+  manual('manual', 'Manual'),
+
+  /// Automatic, with the shutter after the SDK's 10 seconds.
+  autoWithFallback('autoWithFallback', 'Automatic with manual fallback');
+
+  const UseSmileIDSampleCaptureMode(this.id, this.label);
+
+  /// The id that suffixes this row's test id and is what the store keeps.
+  final String id;
+
+  /// What the row and the Settings line say.
+  final String label;
 }
 
 /// The Settings state. Three of these decide whether a step is composed into the SDK flow at all.
@@ -45,8 +71,11 @@ class UseSmileIDSampleSettings {
     this.consentStep = true,
     this.instructionsStep = true,
     this.previewStep = true,
-    this.customContinue = false,
-    this.customCancel = false,
+    this.galleryUpload = false,
+    this.captureBothSides = true,
+    this.allowSkipBack = false,
+    this.selfieFirst = false,
+    this.captureMode = UseSmileIDSampleCaptureMode.autoWithFallback,
   });
 
   /// The head-turn challenge.
@@ -67,13 +96,22 @@ class UseSmileIDSampleSettings {
   /// Whether the flow includes the SDK's preview step.
   final bool previewStep;
 
-  /// Whether the SDK's continue buttons (consent allow, instructions, processing continue) are the sample's.
-  final bool customContinue;
+  /// Whether the SDK offers the gallery on document capture.
+  final bool galleryUpload;
 
-  /// Whether the SDK's cancel buttons (consent deny, processing exit) are the sample's.
-  final bool customCancel;
+  /// Whether the SDK captures a back, for a document type that has one.
+  final bool captureBothSides;
 
-  /// Reads one row, so a caller can diff two states without naming eight fields.
+  /// Whether the back-side capture offers Skip.
+  final bool allowSkipBack;
+
+  /// Whether the document products capture the selfie first.
+  final bool selfieFirst;
+
+  /// A typed field rather than one of the switches: three values, not two.
+  final UseSmileIDSampleCaptureMode captureMode;
+
+  /// Reads one row, so a caller can diff two states without naming every field.
   bool operator [](UseSmileIDSampleSetting setting) => switch (setting) {
     UseSmileIDSampleSetting.enhancedSmartSelfie => enhancedSmartSelfie,
     UseSmileIDSampleSetting.agentMode => agentMode,
@@ -81,8 +119,10 @@ class UseSmileIDSampleSettings {
     UseSmileIDSampleSetting.consentStep => consentStep,
     UseSmileIDSampleSetting.instructionsStep => instructionsStep,
     UseSmileIDSampleSetting.previewStep => previewStep,
-    UseSmileIDSampleSetting.customContinue => customContinue,
-    UseSmileIDSampleSetting.customCancel => customCancel,
+    UseSmileIDSampleSetting.galleryUpload => galleryUpload,
+    UseSmileIDSampleSetting.captureBothSides => captureBothSides,
+    UseSmileIDSampleSetting.allowSkipBack => allowSkipBack,
+    UseSmileIDSampleSetting.selfieFirst => selfieFirst,
   };
 
   /// Drops enhanced liveness where a stored state carries both, so the SDK is never handed the pair.
@@ -110,9 +150,18 @@ class UseSmileIDSampleSettings {
       instructionsStep: enabled,
     ),
     UseSmileIDSampleSetting.previewStep => _copy(previewStep: enabled),
-    UseSmileIDSampleSetting.customContinue => _copy(customContinue: enabled),
-    UseSmileIDSampleSetting.customCancel => _copy(customCancel: enabled),
+    UseSmileIDSampleSetting.galleryUpload => _copy(galleryUpload: enabled),
+    UseSmileIDSampleSetting.captureBothSides => _copy(
+      captureBothSides: enabled,
+    ),
+    UseSmileIDSampleSetting.allowSkipBack => _copy(allowSkipBack: enabled),
+    UseSmileIDSampleSetting.selfieFirst => _copy(selfieFirst: enabled),
   };
+
+  /// A copy with [captureMode] chosen.
+  UseSmileIDSampleSettings withCaptureMode(
+    UseSmileIDSampleCaptureMode captureMode,
+  ) => _copy(captureMode: captureMode);
 
   UseSmileIDSampleSettings _copy({
     bool? enhancedSmartSelfie,
@@ -121,8 +170,11 @@ class UseSmileIDSampleSettings {
     bool? consentStep,
     bool? instructionsStep,
     bool? previewStep,
-    bool? customContinue,
-    bool? customCancel,
+    bool? galleryUpload,
+    bool? captureBothSides,
+    bool? allowSkipBack,
+    bool? selfieFirst,
+    UseSmileIDSampleCaptureMode? captureMode,
   }) => UseSmileIDSampleSettings(
     enhancedSmartSelfie: enhancedSmartSelfie ?? this.enhancedSmartSelfie,
     agentMode: agentMode ?? this.agentMode,
@@ -130,8 +182,11 @@ class UseSmileIDSampleSettings {
     consentStep: consentStep ?? this.consentStep,
     instructionsStep: instructionsStep ?? this.instructionsStep,
     previewStep: previewStep ?? this.previewStep,
-    customContinue: customContinue ?? this.customContinue,
-    customCancel: customCancel ?? this.customCancel,
+    galleryUpload: galleryUpload ?? this.galleryUpload,
+    captureBothSides: captureBothSides ?? this.captureBothSides,
+    allowSkipBack: allowSkipBack ?? this.allowSkipBack,
+    selfieFirst: selfieFirst ?? this.selfieFirst,
+    captureMode: captureMode ?? this.captureMode,
   );
 
   @override
@@ -143,8 +198,11 @@ class UseSmileIDSampleSettings {
       other.consentStep == consentStep &&
       other.instructionsStep == instructionsStep &&
       other.previewStep == previewStep &&
-      other.customContinue == customContinue &&
-      other.customCancel == customCancel;
+      other.galleryUpload == galleryUpload &&
+      other.captureBothSides == captureBothSides &&
+      other.allowSkipBack == allowSkipBack &&
+      other.selfieFirst == selfieFirst &&
+      other.captureMode == captureMode;
 
   @override
   int get hashCode => Object.hash(
@@ -154,7 +212,10 @@ class UseSmileIDSampleSettings {
     consentStep,
     instructionsStep,
     previewStep,
-    customContinue,
-    customCancel,
+    galleryUpload,
+    captureBothSides,
+    allowSkipBack,
+    selfieFirst,
+    captureMode,
   );
 }

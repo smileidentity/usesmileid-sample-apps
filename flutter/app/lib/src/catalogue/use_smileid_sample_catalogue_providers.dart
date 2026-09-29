@@ -1,0 +1,34 @@
+import 'dart:ui';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sample_ui/sample_ui.dart';
+
+import '../state/use_smileid_sample_providers.dart';
+import '../state/use_smileid_sample_session_providers.dart'
+    show useSmileIDSampleUseSandbox;
+import 'use_smileid_sample_http_catalogue_source.dart';
+
+/// The ID form's lists for the current run; the `catalogue` launch argument picks where they come from.
+final Provider<UseSmileIDSampleCatalogueStore>
+useSmileIDSampleCatalogueStoreProvider =
+    Provider<UseSmileIDSampleCatalogueStore>((Ref ref) {
+      final UseSmileIDSampleCatalogueStore store =
+          UseSmileIDSampleCatalogueStore(
+            useSmileIDSampleCatalogueSource(
+              ref.watch(useSmileIDSampleLaunchArgsProvider).catalogue,
+            ),
+          );
+      ref.onDispose(store.dispose);
+      return store;
+    });
+
+/// Where the catalogue asks: the session's environment, as status refresh chooses it.
+UseSmileIDSampleEnvironment useSmileIDSampleCatalogueEnvironment(
+  UseSmileIDSampleTokenSession? live,
+) => useSmileIDSampleUseSandbox(live)
+    ? UseSmileIDSampleEnvironment.sandbox
+    : UseSmileIDSampleEnvironment.production;
+
+/// The API translates document and country names; an unsupported locale comes back in English.
+String useSmileIDSampleCatalogueLocale() =>
+    PlatformDispatcher.instance.locale.toLanguageTag();

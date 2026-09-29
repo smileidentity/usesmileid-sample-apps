@@ -307,3 +307,34 @@ dependencies {
     // The launch-intent parser needs a real Intent and Uri, which is the only reason this is here.
     testImplementation(libs.robolectric)
 }
+
+/** Bundles spec/catalogue-fixture.json, which the `catalogue=fixture` launch argument reads on every build type. */
+abstract class CatalogueFixtureAsset : DefaultTask() {
+
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val fixture: RegularFileProperty
+
+    @get:OutputDirectory
+    abstract val assets: DirectoryProperty
+
+    @TaskAction
+    fun copy() {
+        val out = assets.get().asFile
+        out.deleteRecursively()
+        out.mkdirs()
+        fixture.get().asFile.copyTo(out.resolve("catalogue-fixture.json"))
+    }
+}
+
+// Release included: the device suite runs on the minified variant too, and it passes the argument.
+val catalogueFixtureAsset = tasks.register<CatalogueFixtureAsset>("catalogueFixtureAsset") {
+    fixture.set(layout.projectDirectory.file("../../spec/catalogue-fixture.json"))
+    assets.set(layout.buildDirectory.dir("generated/catalogue/assets"))
+}
+
+androidComponents {
+    onVariants { variant ->
+        variant.sources.assets?.addGeneratedSourceDirectory(catalogueFixtureAsset, CatalogueFixtureAsset::assets)
+    }
+}

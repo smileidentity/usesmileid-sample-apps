@@ -5,15 +5,18 @@ public struct UseSmileIDSampleSearchField: View {
   @Binding private var query: String
   private let placeholder: String
   private let testId: String?
+  private let enabled: Bool
 
   @FocusState private var focused: Bool
   @ScaledMetric(relativeTo: .body) private var minHeight: CGFloat = SmileSpacing.sizeControlMd
   @Environment(\.useSmileIDSampleColors) private var colors
 
-  public init(query: Binding<String>, placeholder: String = "", testId: String? = nil) {
+  /// `enabled` is off while a list is still loading: there is nothing to filter yet.
+  public init(query: Binding<String>, placeholder: String = "", testId: String? = nil, enabled: Bool = true) {
     _query = query
     self.placeholder = placeholder
     self.testId = testId
+    self.enabled = enabled
   }
 
   public var body: some View {
@@ -31,6 +34,7 @@ public struct UseSmileIDSampleSearchField: View {
           .foregroundColor(colors.search.text)
           .accentColor(colors.search.borderFocus)
           .focused($focused)
+          .disabled(!enabled)
           .useSmileIDSampleTestId(testId)
       }
       .frame(maxWidth: .infinity, alignment: .leading)

@@ -23,7 +23,7 @@ func useSmileIDSampleApply(
   builder.documentVerificationParams = params.documentVerification
   builder.enhancedDocumentVerificationParams = params.enhancedDocumentVerification
   builder.screens { screens in
-    replay(useSmileIDSampleFlowSteps(snapshot), into: screens, buttons: snapshot)
+    replay(useSmileIDSampleFlowSteps(snapshot), into: screens)
   }
   if snapshot.product.capture {
     // Two call sites: `AnalyzersBuilder` declares only `buildBlock`, so an `if` inside will not compile.
@@ -114,9 +114,15 @@ func useSmileIDSampleIdParams(_ snapshot: FlowLaunchSnapshot) -> FlowIdParams {
   // Per field, the token beats the form; the server overwrites these from its claims anyway.
   let bound = snapshot.liveSession?.bindings
   let country = bound?.country ?? details.country?.code ?? ""
-  let idType = bound?.idType ?? details.idType?.id ?? ""
-  // The SDK asks only that this be non-blank.
-  let idNumber = bound?.idNumberReference ?? details.idNumber
+  // By family, so a field left over from another product's form is never sent.
+  let chosen: String? = switch snapshot.product.catalogueFamily {
+  case .kyc: details.idType?.type
+  case .document: details.document?.code
+  case nil: nil
+  }
+  let idType = bound?.idType ?? chosen ?? ""
+  // Trimmed, as the form checked it.
+  let idNumber = bound?.idNumberReference ?? details.idNumber.trimmingCharacters(in: .whitespacesAndNewlines)
   var params = FlowIdParams()
   switch snapshot.product {
   case .biometricKyc:
@@ -127,7 +133,7 @@ func useSmileIDSampleIdParams(_ snapshot: FlowLaunchSnapshot) -> FlowIdParams {
   case .documentVerification:
     params.documentVerification = DocumentVerificationParams(
       country: country,
-      idType: bound?.idType ?? details.idType?.id
+      idType: bound?.idType ?? chosen
     )
   case .enhancedDocumentVerification:
     params.enhancedDocumentVerification = EnhancedDocumentVerificationParams(country: country, idType: idType)
@@ -162,12 +168,7 @@ func useSmileIDSampleFlowSteps(_ snapshot: FlowLaunchSnapshot) -> [FlowStep] {
     case .documentCapture:
       .capture(CaptureScreenConfiguration(
         captureType: .document,
-        document: DocumentCaptureConfig(
-          documentType: snapshot.idDetails.idType.documentType,
-          // The SDK's passport preset declares a back side; the sample captures a passport front only.
-          captureBothSides: snapshot.idDetails.idType != .passport,
-          allowSkipBack: true
-        )
+        document: useSmileIDSampleDocumentCapture(snapshot)
       ))
     case .preview:
       .preview(PreviewScreenConfiguration())
@@ -177,9 +178,9 @@ func useSmileIDSampleFlowSteps(_ snapshot: FlowLaunchSnapshot) -> [FlowStep] {
   }
 }
 
-/// The only way to hand the screens over: `UseSmileIDBuilder` takes no `FlowConfiguration`, and a step's button slots are not readable from it, so they come from `buttons`.
+/// The only way to hand the screens over: `UseSmileIDBuilder` takes no `FlowConfiguration`.
 @MainActor
-private func replay(_ steps: [FlowStep], into screens: ScreensBuilder, buttons: FlowLaunchSnapshot) {
+private func replay(_ steps: [FlowStep], into screens: ScreensBuilder) {
   for step in steps {
     switch step {
     case .consent(let config):
@@ -187,19 +188,9 @@ private func replay(_ steps: [FlowStep], into screens: ScreensBuilder, buttons: 
         consent.partnerName = config.partnerName
         consent.partnerIcon = config.partnerIcon
         consent.partnerPrivacyPolicyUrl = config.partnerPrivacyPolicyUrl
-        if buttons.customContinue {
-          consent.allowButton(useSmileIDSampleCustomContinueSlot)
-        }
-        if buttons.customCancel {
-          consent.denyButton(useSmileIDSampleCustomCancelSlot)
-        }
       }
     case .instructions:
-      screens.instructions { instructions in
-        if buttons.customContinue {
-          instructions.continueButton(useSmileIDSampleCustomContinueSlot)
-        }
-      }
+      screens.instructions { _ in }
     case .capture(let config):
       screens.capture { capture in
         capture.captureType = config.captureType
@@ -214,21 +205,15 @@ private func replay(_ steps: [FlowStep], into screens: ScreensBuilder, buttons: 
             target.documentType = document.documentType
             target.captureBothSides = document.captureBothSides
             target.allowSkipBack = document.allowSkipBack
+            target.captureMode = document.captureMode
+            target.allowGalleryUpload = document.allowGalleryUpload
           }
         }
       }
     case .preview:
       screens.preview { _ in }
-    // Retry is neither continue nor cancel, so it stays the SDK's (spec/components.json).
     case .processing:
-      screens.processing { processing in
-        if buttons.customContinue {
-          processing.continueButton(useSmileIDSampleCustomContinueSlot)
-        }
-        if buttons.customCancel {
-          processing.exitButton(useSmileIDSampleCustomCancelSlot)
-        }
-      }
+      screens.processing { _ in }
     // Dropping one silently would run a journey the host cannot see.
     @unknown default:
       assertionFailure("unhandled SDK screen type \(step.type)")
@@ -274,10 +259,10 @@ func useSmileIDSampleJourneySteps(_ snapshot: FlowLaunchSnapshot) -> [FlowJourne
     steps.append(.instructions)
   }
   switch snapshot.product {
-  case .documentVerification:
-    steps += capture(.documentCapture, snapshot.previewStep) + capture(.selfieCapture, snapshot.previewStep)
-  case .enhancedDocumentVerification:
-    steps += capture(.selfieCapture, snapshot.previewStep) + capture(.documentCapture, snapshot.previewStep)
+  case .documentVerification, .enhancedDocumentVerification:
+    let document = capture(.documentCapture, snapshot.previewStep)
+    let selfie = capture(.selfieCapture, snapshot.previewStep)
+    steps += snapshot.selfieFirst ? selfie + document : document + selfie
   default:
     steps += capture(.selfieCapture, snapshot.previewStep)
   }
@@ -290,12 +275,42 @@ private func capture(_ step: FlowJourneyStep, _ preview: Bool) -> [FlowJourneySt
   preview ? [step, .preview] : [step]
 }
 
-extension UseSmileIDSampleIdType? {
-  var documentType: DocumentType {
+/// Everything the document capture step is handed; the server is told the document's code either way.
+func useSmileIDSampleDocumentCapture(_ snapshot: FlowLaunchSnapshot) -> DocumentCaptureConfig {
+  DocumentCaptureConfig(
+    documentType: useSmileIDSampleDocumentType(snapshot.idDetails),
+    captureMode: snapshot.captureMode.sdk,
+    allowGalleryUpload: snapshot.galleryUpload,
+    // The SDK's passport preset declares a back side; the sample captures a passport front only.
+    captureBothSides: snapshot.captureBothSides && snapshot.idDetails.captureAs != .passport,
+    allowSkipBack: snapshot.allowSkipBack
+  )
+}
+
+/// The "Capture as" mapping from `spec/catalogue-rules.json` captureAs: the SDK's own type, nothing read from the API.
+func useSmileIDSampleDocumentType(_ details: UseSmileIDSampleIdDetails) -> DocumentType {
+  switch details.captureAs {
+  case .greenBook:
+    return .southAfricaGreenBook
+  case .passport:
+    return .passport
+  case .genericDocument:
+    let genericDocument = details.genericDocument
+    return .genericDocument(
+      displayName: genericDocument.displayName,
+      hasBackSide: genericDocument.hasBackSide,
+      orientation: genericDocument.orientation == .portrait ? .portrait : .landscape,
+      knownAspectRatio: genericDocument.aspectRatio.ratio
+    )
+  }
+}
+
+extension UseSmileIDSampleCaptureMode {
+  var sdk: DocumentCaptureMode {
     switch self {
-    case .passport: .passport
-    case .none: .genericDocument()
-    case .some(let type): .genericDocument(displayName: type.label)
+    case .auto: .autoCapture
+    case .manual: .manualCapture
+    case .autoWithFallback: .autoCaptureWithManualFallback()
     }
   }
 }

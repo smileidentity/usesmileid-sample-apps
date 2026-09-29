@@ -25,7 +25,8 @@ class UseSmileIDSampleFilterChip extends StatelessWidget {
   final String label;
 
   /// How many rows the filter matches.
-  final int count;
+  /// Null for a chip that picks a value rather than filtering a list, which has nothing to count.
+  final int? count;
 
   /// Whether this chip is the active filter.
   final bool selected;
@@ -96,17 +97,21 @@ class UseSmileIDSampleFilterChip extends StatelessWidget {
                   color: content,
                 ),
               ),
-              const SizedBox(width: SmileDimens.spacingXxs),
-              Semantics(
-                identifier: countTestId,
-                child: Text(
-                  '$count',
-                  style: useSmileIDSampleLabelStyle(
-                    UseSmileIDSampleType.textStyleOverline,
-                    // The design file's muted grey, deliberately not filter-chip.value's blue.
-                  ).copyWith(color: selected ? colors.onPrimary : colors.textMuted),
+              if (count != null) const SizedBox(width: SmileDimens.spacingXxs),
+              if (count != null)
+                Semantics(
+                  identifier: countTestId,
+                  child: Text(
+                    '$count',
+                    style:
+                        useSmileIDSampleLabelStyle(
+                          UseSmileIDSampleType.textStyleOverline,
+                          // The design file's muted grey, deliberately not filter-chip.value's blue.
+                        ).copyWith(
+                          color: selected ? colors.onPrimary : colors.textMuted,
+                        ),
+                  ),
                 ),
-              ),
             ],
           ),
         ),

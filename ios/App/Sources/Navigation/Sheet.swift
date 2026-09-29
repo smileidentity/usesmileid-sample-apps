@@ -5,6 +5,10 @@ enum Sheet: String, Identifiable, Hashable {
   case scenarioDrawer
   case countryPicker
   case idTypePicker
+  case documentPicker
+  case captureAs
+  case genericDocument
+  case captureMode
 
   var id: String {
     rawValue

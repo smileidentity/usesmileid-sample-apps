@@ -59,7 +59,7 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
       store.setSetting(setting, !UseSmileIDSampleSettings()[setting])
     }
 
-    // Read back through a second store, all eight at once: two rows sharing a key pass row by row and fail here.
+    // Read back through a second store, every row at once: two rows sharing a key pass row by row and fail here.
     XCTAssertEqual(
       makeStore().settings,
       UseSmileIDSampleSettings(
@@ -69,11 +69,19 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
         consentStep: false,
         instructionsStep: false,
         previewStep: false,
-        customContinue: true,
-        customCancel: true
+        galleryUpload: true,
+        captureBothSides: false,
+        allowSkipBack: true,
+        selfieFirst: true
       )
     )
     XCTAssertEqual(Self.keys.count, UseSmileIDSampleSetting.allCases.count, "a row was added with no key here")
+  }
+
+  func testCaptureModeSurvivesARoundTripAndAnAbsentValueIsTheDefault() {
+    XCTAssertEqual(makeStore().settings.captureMode, .autoWithFallback)
+    makeStore().setCaptureMode(.manual)
+    XCTAssertEqual(makeStore().settings.captureMode, .manual)
   }
 
   func testTheKeysAreTheAndroidStoresOwn() {
@@ -131,6 +139,6 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
 
   private static let keys = [
     "enhanced_smart_selfie", "agent_mode", "dark_mode", "consent_step", "instructions_step", "preview_step",
-    "custom_continue", "custom_cancel"
+    "gallery_upload", "capture_both_sides", "allow_skip_back", "selfie_first"
   ]
 }

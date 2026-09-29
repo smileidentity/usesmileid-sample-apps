@@ -100,6 +100,7 @@ class StoreArtTest {
             onSettingChange = { _, _ -> },
             onProfileClick = {},
             onNavRowClick = {},
+            onCaptureModeClick = {},
             onOpenScenarioDrawer = null,
             onSignOut = {},
         )

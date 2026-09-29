@@ -110,7 +110,7 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
     app.buttons["sample_user_details_continue"].tap()
     XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20))
 
-    relaunch(arguments: useSmileIDSampleSettingsSeed)
+    relaunch(arguments: useSmileIDSampleLaunchSeed)
     XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
     element("sample_product_card_smartSelfieEnrollment").tap()
     XCTAssertTrue(element("sample_user_details_screen").waitForExistence(timeout: 10))
@@ -123,7 +123,7 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
   // MARK: - Harness
 
   private func launch(arguments: [String] = []) {
-    app.launchArguments = useSmileIDSampleSettingsSeed + arguments
+    app.launchArguments = useSmileIDSampleLaunchSeed + arguments
     app.launch()
   }
 

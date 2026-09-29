@@ -2,69 +2,38 @@
 import XCTest
 
 final class UseSmileIDSampleIdDetailsTest: XCTestCase {
-  func testAllThreeFieldsAreNeeded() {
-    XCTAssertFalse(UseSmileIDSampleIdDetails().isComplete)
-    XCTAssertFalse(UseSmileIDSampleIdDetails(country: .kenya, idNumber: "A012345678").isComplete)
-    XCTAssertFalse(UseSmileIDSampleIdDetails(country: .kenya, idType: .nationalId).isComplete)
-    XCTAssertFalse(
-      UseSmileIDSampleIdDetails(country: .kenya, idType: .nationalId, idNumber: "   ").isComplete
-    )
-    XCTAssertTrue(
-      UseSmileIDSampleIdDetails(country: .kenya, idType: .nationalId, idNumber: "A012345678").isComplete
-    )
+  private let kenya = UseSmileIDSampleCountry(code: "KE", name: "Kenya")
+  private let nationalId = UseSmileIDSampleKycIdType(id: "NATIONAL_ID", type: "NATIONAL_ID", label: "National ID", regex: "^[0-9]{1,9}$")
+
+  func testKycNeedsACountryATypeAndANumberThatFitsIt() {
+    XCTAssertFalse(UseSmileIDSampleIdDetails().isComplete(.kyc))
+    XCTAssertFalse(UseSmileIDSampleIdDetails(country: kenya, idNumber: "12345678").isComplete(.kyc))
+    XCTAssertFalse(UseSmileIDSampleIdDetails(country: kenya, idType: nationalId).isComplete(.kyc))
+    XCTAssertFalse(UseSmileIDSampleIdDetails(country: kenya, idType: nationalId, idNumber: "   ").isComplete(.kyc))
+    XCTAssertFalse(UseSmileIDSampleIdDetails(country: kenya, idType: nationalId, idNumber: "AO12345678").isComplete(.kyc))
+    XCTAssertTrue(UseSmileIDSampleIdDetails(country: kenya, idType: nationalId, idNumber: " 12345678 ").isComplete(.kyc))
   }
 
-  func testNoCountryOffersNoIdType() {
-    XCTAssertTrue(UseSmileIDSampleIdType.of(nil).isEmpty)
+  func testTheDocumentProductsNeedNoNumber() {
+    let passport = UseSmileIDSampleDocument(code: "PASSPORT", name: "Passport", hasBack: false, format: 3)
+    XCTAssertFalse(UseSmileIDSampleIdDetails(country: kenya).isComplete(.document))
+    XCTAssertTrue(UseSmileIDSampleIdDetails(country: kenya, document: passport).isComplete(.document))
   }
 
-  func testTheIdTypeListIsCountrySpecific() {
-    XCTAssertEqual(
-      UseSmileIDSampleIdType.of(.nigeria),
-      [.nationalId, .passport, .driversLicense, .voterId]
-    )
-    XCTAssertEqual(UseSmileIDSampleIdType.of(.kenya), [.nationalId, .passport, .driversLicense])
-    XCTAssertEqual(UseSmileIDSampleIdType.of(.ghana), [.nationalId, .passport, .voterId])
-    XCTAssertEqual(UseSmileIDSampleIdType.of(.uganda), [.nationalId, .passport])
+  func testTheFlagComesFromTheCodeAlone() {
+    XCTAssertEqual(kenya.flag, "\u{1F1F0}\u{1F1EA}")
+    XCTAssertEqual(UseSmileIDSampleCountry(code: "ZA", name: "South Africa").flag, "\u{1F1FF}\u{1F1E6}")
+    XCTAssertEqual(UseSmileIDSampleCountry(code: "", name: "Nowhere").flag, "\u{1F30D}")
   }
 
-  /// Both halves cross a wire, so a rename is an API change, not a refactor.
-  func testTheCodesAndIdsAreTheWireValues() {
-    XCTAssertEqual(
-      UseSmileIDSampleCountry.allCases.map(\.code),
-      ["NG", "KE", "GH", "ZA", "UG", "TZ", "RW"]
-    )
-    XCTAssertEqual(
-      UseSmileIDSampleIdType.allCases.map(\.id),
-      ["NATIONAL_ID", "PASSPORT", "DRIVERS_LICENSE", "VOTER_ID"]
-    )
+  func testASubTypeRowIsNamedAfterItsParent() {
+    let greenBook = UseSmileIDSampleDocument(code: "IDENTITY_CARD", subType: "green_book", name: "Green Book", hasBack: false, format: 7)
+    XCTAssertEqual(greenBook.id, "IDENTITY_CARD_green_book")
   }
 
   func testAnEmptyQueryMatchesEverything() {
-    XCTAssertEqual(UseSmileIDSampleCountry.matching("").count, UseSmileIDSampleCountry.allCases.count)
-    XCTAssertEqual(UseSmileIDSampleCountry.matching("   ").count, UseSmileIDSampleCountry.allCases.count)
-    XCTAssertEqual(
-      UseSmileIDSampleIdType.of(.ghana, matching: ""),
-      UseSmileIDSampleIdType.of(.ghana)
-    )
-  }
-
-  func testTheSearchIsCaseInsensitiveAndSubstring() {
-    XCTAssertEqual(UseSmileIDSampleCountry.matching("ken"), [.kenya])
-    XCTAssertEqual(UseSmileIDSampleCountry.matching("AFRICA"), [.southAfrica])
-    XCTAssertTrue(UseSmileIDSampleCountry.matching("Atlantis").isEmpty)
-    XCTAssertEqual(UseSmileIDSampleIdType.of(.nigeria, matching: "pass"), [.passport])
-  }
-
-  func testTheSearchStaysInsideTheCountry() {
-    XCTAssertTrue(UseSmileIDSampleIdType.of(.uganda, matching: "voter").isEmpty)
-    XCTAssertTrue(UseSmileIDSampleIdType.of(nil, matching: "").isEmpty)
-  }
-
-  func testEveryCountryHasAFlag() {
-    for country in UseSmileIDSampleCountry.allCases {
-      XCTAssertFalse(country.flag.isEmpty, country.code)
-      XCTAssertFalse(country.label.isEmpty, country.code)
-    }
+    XCTAssertTrue("Kenya".matches(""))
+    XCTAssertTrue("Kenya".matches(" ken "))
+    XCTAssertFalse("Kenya".matches("uganda"))
   }
 }

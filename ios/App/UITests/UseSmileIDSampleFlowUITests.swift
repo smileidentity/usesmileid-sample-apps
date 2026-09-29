@@ -134,7 +134,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     // A plain launch first, to clear a session a previous test left; the argument's own launch lands where the pill is gone.
     launch()
     app.terminate()
-    app.launchArguments = useSmileIDSampleSettingsSeed + ["-autostart", "smartSelfieEnrollment"]
+    app.launchArguments = useSmileIDSampleLaunchSeed + ["-autostart", "smartSelfieEnrollment"]
     app.launch()
     XCTAssertTrue(
       element("sample_user_details_screen").waitForExistence(timeout: 10),
@@ -257,7 +257,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
       "needs a token already scanned onto the device; nothing here mints one"
     )
     // Not `launch()`: it signs out the session this needs, and the teardown is told to keep it.
-    app.launchArguments = useSmileIDSampleSettingsSeed
+    app.launchArguments = useSmileIDSampleLaunchSeed
     app.launch()
     atATabRoot()
     // `atATabRoot` reaches any tab root; the session card is on Products alone.
@@ -291,8 +291,8 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
       element("sample_country_option_KE").tap()
       element("sample_idtype_trigger").tap()
       XCTAssertTrue(element("sample_idtype_sheet").waitForExistence(timeout: 10))
-      element("sample_idtype_option_nationalId").tap()
-      type("sample_idnumber_input", "AO12345678")
+      element("sample_idtype_option_NATIONAL_ID").tap()
+      type("sample_idnumber_input", "12345678")
       app.buttons["sample_kyc_continue"].tap()
     }
 
@@ -336,7 +336,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
   }
 
   private func launch(arguments: [String] = []) {
-    app.launchArguments = useSmileIDSampleSettingsSeed + arguments
+    app.launchArguments = useSmileIDSampleLaunchSeed + arguments
     app.launch()
     atATabRoot()
     guard element("sample_session_card").exists || element("sample_session_ended_banner").exists else { return }

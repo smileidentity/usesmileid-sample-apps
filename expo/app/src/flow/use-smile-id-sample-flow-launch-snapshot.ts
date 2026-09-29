@@ -1,4 +1,5 @@
 import type {
+  UseSmileIDSampleCaptureMode,
   UseSmileIDSampleFlowRoute,
   UseSmileIDSampleIdDetails,
   UseSmileIDSampleProduct,
@@ -19,14 +20,17 @@ export type UseSmileIDSampleFlowLaunchSnapshot = {
   readonly theme: string;
   /// Whether the run submits to sandbox; no session is sandbox.
   readonly sandbox: boolean;
-  /// The seven settings, not the settings object: the read happens once.
+  /// The settings one by one, not the settings object: the read happens once.
   readonly allowAgentMode: boolean;
   readonly enableEnhancedLiveness: boolean;
   readonly consentStep: boolean;
   readonly instructionsStep: boolean;
   readonly previewStep: boolean;
-  readonly customContinue: boolean;
-  readonly customCancel: boolean;
+  readonly captureMode: UseSmileIDSampleCaptureMode;
+  readonly galleryUpload: boolean;
+  readonly captureBothSides: boolean;
+  readonly allowSkipBack: boolean;
+  readonly selfieFirst: boolean;
   /// The id this run submits under; only authentication sends it.
   readonly userId: string;
   readonly partnerId: string;

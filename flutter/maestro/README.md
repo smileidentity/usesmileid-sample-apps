@@ -15,7 +15,7 @@ and the AOT snapshot for all four ABIs is wasted minutes when only one of them i
 
 ## What this lane is for
 
-Six flows, not a port of the Android suite — that one was measured at 36–53 minutes returning
+Eight flows, not a port of the Android suite — that one was measured at 36–53 minutes returning
 nothing across four runs. These cover what a **hostless** Flutter test structurally cannot reach:
 
 - **`licenses.yaml`** — `LicenseRegistry` is empty under `flutter test` by design, so no widget test
@@ -31,6 +31,9 @@ nothing across four runs. These cover what a **hostless** Flutter test structura
 - **`token-session.yaml`** — the scanner owns a camera and a secure store, neither of which a widget
   test has: a simulated scan, the countdown at 15m and 8h, bound details skipping both forms, the
   expiry redirect stating its reason, and a relink resuming the run it interrupted.
+- **`document-options.yaml`** — the document form against `catalogue=fixture`: the Green Book as its
+  own row, "Capture as" and the generic-document sheet through SDK mount, the `unreachable` error and Retry, and
+  the capture-mode sheet in Settings. A widget test has no route from a real product tap to the SDK.
 
 ## Traps
 

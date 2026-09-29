@@ -25,15 +25,19 @@ final class UseSmileIDSampleFlowJourneyTest: XCTestCase {
     )
   }
 
-  func testTheDocumentProductsCaptureInOppositeOrders() {
-    XCTAssertEqual(
-      useSmileIDSampleJourneySteps(snapshot(.documentVerification)),
-      [.consent, .instructions, .documentCapture, .preview, .selfieCapture, .preview, .processing]
-    )
-    XCTAssertEqual(
-      useSmileIDSampleJourneySteps(snapshot(.enhancedDocumentVerification)),
-      [.consent, .instructions, .selfieCapture, .preview, .documentCapture, .preview, .processing]
-    )
+  func testBothDocumentProductsCaptureTheDocumentFirstUnlessSelfieFirstIsOn() {
+    for product in [UseSmileIDSampleProduct.documentVerification, .enhancedDocumentVerification] {
+      XCTAssertEqual(
+        useSmileIDSampleJourneySteps(snapshot(product)),
+        [.consent, .instructions, .documentCapture, .preview, .selfieCapture, .preview, .processing],
+        "\(product)"
+      )
+      XCTAssertEqual(
+        useSmileIDSampleJourneySteps(snapshot(product, selfieFirst: true)),
+        [.consent, .instructions, .selfieCapture, .preview, .documentCapture, .preview, .processing],
+        "\(product)"
+      )
+    }
   }
 
   func testAConsentBindingDropsTheConsentScreenEvenWithTheSwitchOn() {
@@ -75,30 +79,7 @@ final class UseSmileIDSampleFlowJourneyTest: XCTestCase {
     XCTAssertEqual(selfie.first?.enableEnhancedLiveness, false)
   }
 
-  func testAPassportIsCapturedFrontOnly() {
-    for product in [UseSmileIDSampleProduct.documentVerification, .enhancedDocumentVerification] {
-      XCTAssertEqual(documentCapture(product, idType: .passport)?.captureBothSides, false, "\(product)")
-    }
-  }
-
-  func testEveryOtherDocumentAndNoneChosenIsCapturedOnBothSides() {
-    for idType in UseSmileIDSampleIdType.allCases where idType != .passport {
-      XCTAssertEqual(documentCapture(.documentVerification, idType: idType)?.captureBothSides, true, "\(idType)")
-    }
-    XCTAssertEqual(documentCapture(.documentVerification, idType: nil)?.captureBothSides, true)
-  }
-
   // MARK: - Fixtures
-
-  private func documentCapture(
-    _ product: UseSmileIDSampleProduct,
-    idType: UseSmileIDSampleIdType?
-  ) -> DocumentCaptureConfig? {
-    useSmileIDSampleFlowSteps(snapshot(product, idType: idType)).lazy.compactMap { step -> DocumentCaptureConfig? in
-      guard case .capture(let capture) = step else { return nil }
-      return capture.document
-    }.first
-  }
 
   private var consentBindings: UseSmileIDSampleTokenBindings {
     UseSmileIDSampleTokenBindings(consent: UseSmileIDSampleTokenConsent(granted: true))
@@ -124,19 +105,19 @@ final class UseSmileIDSampleFlowJourneyTest: XCTestCase {
     previewStep: Bool = true,
     agentMode: Bool = false,
     enhancedLiveness: Bool = true,
-    idType: UseSmileIDSampleIdType? = nil,
+    selfieFirst: Bool = false,
     session: UseSmileIDSampleTokenSession? = nil
   ) -> FlowLaunchSnapshot {
     FlowLaunchSnapshot(
       product: product,
       route: .fullscreen,
-      idDetails: UseSmileIDSampleIdDetails(idType: idType),
       scenario: scenario,
       allowAgentMode: agentMode,
       enableEnhancedLiveness: enhancedLiveness,
       consentStep: consentStep,
       instructionsStep: instructionsStep,
       previewStep: previewStep,
+      selfieFirst: selfieFirst,
       partnerId: "0000",
       partnerName: "UpTech Finance",
       session: session

@@ -14,7 +14,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// Read once at launch; `appLocale` reaches the shell's own formatting, not the SDK's strings.
   let launchArguments: UseSmileIDSampleLaunchArguments
 
-  /// Seeded from the store at launch and written back through it, so the six switches survive the process deaths the camera causes.
+  /// Seeded from the store and written back through it, so the settings survive the process deaths the camera causes.
   @Published private(set) var settings: UseSmileIDSampleSettings
 
   /// The profiles the app can act as; every change is stored unless the launch seeded fixtures.
@@ -61,6 +61,11 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// The pickers' search text, cleared on open so a sheet never reopens filtered.
   @Published var countryQuery = ""
   @Published var idTypeQuery = ""
+  @Published var documentQuery = ""
+
+  /// The ID form's lists for the current run; the `catalogue` launch argument picks where they come from.
+  let catalogue: UseSmileIDSampleCatalogueStore
+  private var catalogueChanges: AnyCancellable?
 
   /// Both halves from one read, per the store's contract.
   @Published private(set) var sessionRecord: UseSmileIDSampleSessionRecord
@@ -92,6 +97,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     self.store = store
     self.jobStore = jobStore
     self.launchArguments = launchArguments
+    catalogue = UseSmileIDSampleCatalogueStore(source: Self.catalogueSource(launchArguments.catalogue))
     settings = store.settings
     profiles = UseSmileIDSampleProfiles.forLaunch(seedProfiles: launchArguments.seedProfiles, stored: store.profiles)
     flowResult = UseSmileIDSampleFlowResult(
@@ -100,6 +106,8 @@ final class UseSmileIDSampleAppState: ObservableObject {
       route: launchArguments.route
     )
     sessionRecord = store.session
+    // The screens read the lists through this object, so its changes are this object's changes.
+    catalogueChanges = catalogue.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }
     tick()
     readJobs()
     // Seeded after the subscription, so the rows arrive as an emission rather than needing a reload.
@@ -262,10 +270,42 @@ final class UseSmileIDSampleAppState: ObservableObject {
     userDetails = field.write(userDetails, value)
   }
 
+  func setCaptureMode(_ mode: UseSmileIDSampleCaptureMode) {
+    store.setCaptureMode(mode)
+    settings = store.settings
+  }
+
+  /// Where the catalogue asks: the session's environment, as status refresh chooses it.
+  var environment: UseSmileIDSampleEnvironment {
+    useSandbox ? .sandbox : .production
+  }
+
+  /// The API translates document and country names; an unsupported locale comes back in en-GB.
+  var catalogueLocale: String {
+    (launchArguments.locale ?? Locale.current).identifier.replacingOccurrences(of: "_", with: "-")
+  }
+
+  /// `fixture` reads the copy of spec/catalogue-fixture.json the build bundles, so no flow touches the network.
+  private static func catalogueSource(_ mode: UseSmileIDSampleCatalogueMode) -> UseSmileIDSampleCatalogueSource {
+    switch mode {
+    case .live:
+      return UseSmileIDSampleCatalogueApi()
+    case .unreachable:
+      return UseSmileIDSampleUnreachableCatalogueSource()
+    case .fixture:
+      let fixture = Bundle.main.url(forResource: "catalogue-fixture", withExtension: "json")
+        .flatMap { try? Data(contentsOf: $0) }
+        .flatMap { try? UseSmileIDSampleFixtureCatalogueSource(fixture: $0) }
+      // A build without the bundled file fails every list, loudly, rather than falling back to the network.
+      return fixture.map { $0 as UseSmileIDSampleCatalogueSource } ?? UseSmileIDSampleUnreachableCatalogueSource()
+    }
+  }
+
   /// Everything a sheet types into, dropped when it closes so no sheet reopens mid-entry.
   func clearSheetState() {
     countryQuery = ""
     idTypeQuery = ""
+    documentQuery = ""
     newProfile = UseSmileIDSampleNewProfile()
     newProfileActivates = false
   }
@@ -353,10 +393,13 @@ final class UseSmileIDSampleAppState: ObservableObject {
     fillForm(from: profiles.active)
   }
 
-  /// A product tap: fills from the active profile and clears the last run's ID details.
-  func fillFormForRun() {
+  /// A product tap: fills from the active profile, clears the last run's ID details, and fetches the lists ahead.
+  func fillFormForRun(_ product: UseSmileIDSampleProduct) {
     fillFromActive()
     idDetails = UseSmileIDSampleIdDetails()
+    if product.catalogueFamily != nil {
+      catalogue.begin(environment: environment, locale: catalogueLocale)
+    }
   }
 
   /// The form's entry: fills it for a cold link, which skips the product tap.
@@ -389,11 +432,12 @@ final class UseSmileIDSampleAppState: ObservableObject {
     profiles.keep(userDetails, organisation: organisationDraft, requirement: userDetailsRequirement)
   }
 
-  /// The types are country-specific, so a country change drops the ID type with it.
+  /// A country change drops the ID type and document, which may not apply to it, and keeps the typed number.
   func selectCountry(_ country: UseSmileIDSampleCountry) {
     guard country != idDetails.country else { return }
     idDetails.country = country
     idDetails.idType = nil
+    idDetails.document = nil
   }
 
   /// What the token leaves the form to collect, read through the gate's own rule so a skipped form cannot redirect back.

@@ -48,14 +48,33 @@ class UseSmileIDSamplePreferencesSettingsRepository
         UseSmileIDSampleSettingsKeys.previewStep,
         defaults.previewStep,
       ),
-      customContinue: stored(
-        UseSmileIDSampleSettingsKeys.customContinue,
-        defaults.customContinue,
+      galleryUpload: stored(
+        UseSmileIDSampleSettingsKeys.galleryUpload,
+        defaults.galleryUpload,
       ),
-      customCancel: stored(
-        UseSmileIDSampleSettingsKeys.customCancel,
-        defaults.customCancel,
+      captureBothSides: stored(
+        UseSmileIDSampleSettingsKeys.captureBothSides,
+        defaults.captureBothSides,
       ),
+      allowSkipBack: stored(
+        UseSmileIDSampleSettingsKeys.allowSkipBack,
+        defaults.allowSkipBack,
+      ),
+      selfieFirst: stored(
+        UseSmileIDSampleSettingsKeys.selfieFirst,
+        defaults.selfieFirst,
+      ),
+      captureMode:
+          UseSmileIDSampleCaptureMode.values
+              .where(
+                (UseSmileIDSampleCaptureMode mode) =>
+                    mode.id ==
+                    _preferences.getString(
+                      UseSmileIDSampleSettingsKeys.captureMode,
+                    ),
+              )
+              .firstOrNull ??
+          defaults.captureMode,
     ).normalised();
   }
 
@@ -85,6 +104,26 @@ class UseSmileIDSamplePreferencesSettingsRepository
           }
           done.complete(updated);
           // Never rethrown into the chain: one failed write must not stop every later one.
+        })
+        .catchError((Object error, StackTrace stack) {
+          if (!done.isCompleted) done.completeError(error, stack);
+        });
+    return done.future;
+  }
+
+  @override
+  Future<UseSmileIDSampleSettings> setCaptureMode(
+    UseSmileIDSampleCaptureMode mode,
+  ) {
+    final Completer<UseSmileIDSampleSettings> done =
+        Completer<UseSmileIDSampleSettings>();
+    _writes = _writes
+        .then((_) async {
+          await _preferences.setString(
+            UseSmileIDSampleSettingsKeys.captureMode,
+            mode.id,
+          );
+          done.complete(await read());
         })
         .catchError((Object error, StackTrace stack) {
           if (!done.isCompleted) done.completeError(error, stack);

@@ -1,12 +1,16 @@
 import {
+  UseSmileIDSampleCaptureAs,
+  UseSmileIDSampleCaptureMode,
+  smileIDSampleAspectRatios,
+  smileIDSampleCatalogueFamily,
+  type UseSmileIDSampleIdDetails,
   UseSmileIDSampleIcon,
   smileIDSampleThemeOverride,
-  useSmileIDSampleCustomCancelSlot,
-  useSmileIDSampleCustomContinueSlot,
   useSmileIDSampleTheme,
 } from '@smileid/sample-ui';
 import {
   CaptureType,
+  DocumentCaptureMode,
   DocumentType,
   JobType,
   LogLevel,
@@ -15,8 +19,6 @@ import {
   type ConfigBuilder,
   type ConsentConfigBuilder,
   type DocumentCaptureConfigBuilder,
-  type InstructionsConfigBuilder,
-  type ProcessingConfigBuilder,
   type ScreensBuilder,
   type SelfieCaptureConfigBuilder,
   type ThemeConfigBuilder,
@@ -134,9 +136,11 @@ export const smileIDSampleJourneyStepsFor = (
   const document: UseSmileIDSampleFlowJourneyStep[] = snapshot.previewStep
     ? ['documentCapture', 'preview']
     : ['documentCapture'];
-  if (snapshot.product.id === 'documentVerification') steps.push(...document, ...selfie);
-  else if (snapshot.product.id === 'enhancedDocumentVerification') steps.push(...selfie, ...document);
-  else steps.push(...selfie);
+  const documentProduct =
+    snapshot.product.id === 'documentVerification' || snapshot.product.id === 'enhancedDocumentVerification';
+  if (!documentProduct) steps.push(...selfie);
+  else if (snapshot.selfieFirst) steps.push(...selfie, ...document);
+  else steps.push(...document, ...selfie);
   return [...steps, 'processing'];
 };
 
@@ -149,14 +153,10 @@ const journeyFor = (screens: ScreensBuilder, snapshot: UseSmileIDSampleFlowLaunc
           // Omitting it fails the build while validate() still reports valid, so no gate catches it.
           consent.partnerIcon = <PartnerMark />;
           consent.partnerPrivacyPolicyUrl = privacyPolicyUrl;
-          if (snapshot.customContinue) consent.allowButton = useSmileIDSampleCustomContinueSlot;
-          if (snapshot.customCancel) consent.denyButton = useSmileIDSampleCustomCancelSlot;
         });
         break;
       case 'instructions':
-        screens.instructions((instructions: InstructionsConfigBuilder) => {
-          if (snapshot.customContinue) instructions.continueButton = useSmileIDSampleCustomContinueSlot;
-        });
+        screens.instructions();
         break;
       case 'selfieCapture':
         screens.capture((capture: CaptureConfigBuilder) => {
@@ -171,21 +171,19 @@ const journeyFor = (screens: ScreensBuilder, snapshot: UseSmileIDSampleFlowLaunc
         screens.capture((capture: CaptureConfigBuilder) => {
           capture.captureType = CaptureType.document;
           capture.document((document: DocumentCaptureConfigBuilder) => {
-            document.documentType = documentTypeFor(snapshot.idDetails.idType?.id);
-            document.captureBothSides = smileIDSampleCapturesBothSides(snapshot.idDetails.idType?.id);
-            document.allowSkipBack = true;
+            document.documentType = smileIDSampleDocumentTypeFor(snapshot.idDetails);
+            document.captureBothSides = smileIDSampleCapturesBothSides(snapshot);
+            document.allowSkipBack = snapshot.allowSkipBack;
+            document.captureMode = smileIDSampleCaptureModeFor(snapshot.captureMode);
+            document.allowGalleryUpload = snapshot.galleryUpload;
           });
         });
         break;
       case 'preview':
         screens.preview();
         break;
-      // Retry is neither continue nor cancel, so it stays the SDK's (spec/components.json).
       case 'processing':
-        screens.processing((processing: ProcessingConfigBuilder) => {
-          if (snapshot.customContinue) processing.continueButton = useSmileIDSampleCustomContinueSlot;
-          if (snapshot.customCancel) processing.exitButton = useSmileIDSampleCustomCancelSlot;
-        });
+        screens.processing();
         break;
     }
   }
@@ -198,9 +196,17 @@ const applyIdParams = (
   // The token beats the form: the server overwrites these from its claims.
   const bound = smileIDSampleSnapshotSession(snapshot)?.bindings;
   const country = bound?.country ?? snapshot.idDetails.country?.code ?? '';
-  const idType = bound?.idType ?? snapshot.idDetails.idType?.id ?? '';
-  // The SDK asks only for non-blank, and the server substitutes the claim.
-  const idNumber = bound?.idNumberReference ?? snapshot.idDetails.idNumber;
+  // By family, so a field left over from another product's form is never sent.
+  const family = smileIDSampleCatalogueFamily(snapshot.product);
+  const chosen =
+    family === 'kyc'
+      ? (snapshot.idDetails.idType?.type ?? null)
+      : family === 'document'
+        ? (snapshot.idDetails.document?.code ?? null)
+        : null;
+  const idType = bound?.idType ?? chosen ?? '';
+  // Trimmed, as the form checked it.
+  const idNumber = bound?.idNumberReference ?? snapshot.idDetails.idNumber.trim();
   switch (snapshot.product.id) {
     case 'biometricKyc':
       // Capture still runs either way; false is the plain path a sample demonstrates.
@@ -213,7 +219,7 @@ const applyIdParams = (
     case 'documentVerification':
       builder.documentVerificationParams = {
         country,
-        ...(bound?.idType == null && snapshot.idDetails.idType === null ? {} : { idType }),
+        ...(bound?.idType == null && chosen === null ? {} : { idType }),
       };
       break;
     case 'enhancedDocumentVerification':
@@ -260,12 +266,41 @@ const jobTypeFor = (productId: string): JobType => {
   }
 };
 
-const documentTypeFor = (idTypeId: string | undefined): DocumentType =>
-  idTypeId === 'PASSPORT' ? DocumentType.Passport : DocumentType.GenericDocument();
+/// The "Capture as" mapping from `spec/catalogue-rules.json`: the SDK's own type, nothing read from the API.
+export const smileIDSampleDocumentTypeFor = (details: UseSmileIDSampleIdDetails): DocumentType => {
+  const { genericDocument } = details;
+  switch (details.captureAs) {
+    case UseSmileIDSampleCaptureAs.GreenBook:
+      return DocumentType.SouthAfricaGreenBook;
+    case UseSmileIDSampleCaptureAs.Passport:
+      return DocumentType.Passport;
+    case UseSmileIDSampleCaptureAs.GenericDocument: {
+      const ratio = smileIDSampleAspectRatios.find((it) => it.id === genericDocument.aspectRatio)?.ratio ?? null;
+      return DocumentType.GenericDocument({
+        displayName: genericDocument.displayName,
+        hasBackSide: genericDocument.hasBackSide,
+        orientation: genericDocument.orientation === 'portrait' ? 'Portrait' : 'Landscape',
+        ...(ratio === null ? {} : { knownAspectRatio: ratio }),
+      });
+    }
+  }
+};
 
-/** The SDK's passport preset declares a back side; the sample captures a passport front only. */
-export const smileIDSampleCapturesBothSides = (idTypeId: string | undefined): boolean =>
-  idTypeId !== 'PASSPORT';
+/// The three capture modes onto the SDK's; the fallback keeps its 10 seconds.
+export const smileIDSampleCaptureModeFor = (mode: UseSmileIDSampleCaptureMode): DocumentCaptureMode => {
+  switch (mode) {
+    case UseSmileIDSampleCaptureMode.Auto:
+      return DocumentCaptureMode.AutoCapture;
+    case UseSmileIDSampleCaptureMode.Manual:
+      return DocumentCaptureMode.ManualCapture;
+    default:
+      return DocumentCaptureMode.AutoCaptureWithManualFallback();
+  }
+};
+
+/** The Settings switch, except that the SDK's passport preset declares a back side and the sample captures a passport front only. */
+export const smileIDSampleCapturesBothSides = (snapshot: UseSmileIDSampleFlowLaunchSnapshot): boolean =>
+  snapshot.captureBothSides && snapshot.idDetails.captureAs !== UseSmileIDSampleCaptureAs.Passport;
 
 // The same host the Settings privacy row opens.
 const privacyPolicyUrl = 'https://smile.id/privacy-policy';

@@ -29,11 +29,6 @@ public enum UseSmileIDSampleTestIds {
   public static let settingConsentStep = "sample_setting_consent_step"
   public static let settingInstructionsStep = "sample_setting_instructions_step"
   public static let settingPreviewStep = "sample_setting_preview_step"
-  public static let settingCustomContinue = "sample_setting_custom_continue"
-  public static let settingCustomCancel = "sample_setting_custom_cancel"
-  /// The sample's own buttons, drawn by the SDK inside its button slots.
-  public static let customContinue = "sample_custom_continue"
-  public static let customCancel = "sample_custom_cancel"
 
   /// Per-item ids the screens build; the spec lists the prefixes rather than every value.
   public static func productCard(_ product: String) -> String {
@@ -62,6 +57,27 @@ public enum UseSmileIDSampleTestIds {
 
   public static func idTypeOption(_ id: String) -> String {
     "\(idTypeOptionPrefix)_\(id)"
+  }
+
+  /// Suffixed with the code, and `_<subType>` on a standalone sub-type row.
+  public static func documentOption(_ id: String) -> String {
+    "\(documentOptionPrefix)_\(id)"
+  }
+
+  public static func captureAsOption(_ id: String) -> String {
+    "\(captureAsOptionPrefix)_\(id)"
+  }
+
+  public static func captureModeOption(_ id: String) -> String {
+    "\(captureModeOptionPrefix)_\(id)"
+  }
+
+  public static func genericDocumentOrientation(_ id: String) -> String {
+    "\(genericDocumentOrientationPrefix)_\(id)"
+  }
+
+  public static func genericDocumentAspectRatio(_ id: String) -> String {
+    "\(genericDocumentAspectRatioPrefix)_\(id)"
   }
 
   public static func profileRow(_ profileId: String) -> String {
@@ -143,6 +159,31 @@ public enum UseSmileIDSampleTestIds {
   public static let idTypeSheet = "sample_idtype_sheet"
   public static let idTypeSearch = "sample_idtype_search"
   public static let idTypeEmpty = "sample_idtype_empty"
+  public static let documentEmpty = "sample_document_empty"
+  public static let catalogueLoading = "sample_catalogue_loading"
+  public static let catalogueError = "sample_catalogue_error"
+  public static let catalogueRetry = "sample_catalogue_retry"
+  public static let idNumberError = "sample_idnumber_error"
+  public static let documentTrigger = "sample_document_trigger"
+  public static let captureAsTrigger = "sample_capture_as_trigger"
+  public static let documentSheet = "sample_document_sheet"
+  public static let documentSearch = "sample_document_search"
+  public static let captureAsSheet = "sample_capture_as_sheet"
+  public static let genericDocumentSheet = "sample_generic_document_sheet"
+  public static let genericDocumentName = "sample_generic_document_name"
+  public static let genericDocumentBackSide = "sample_generic_document_back_side"
+  public static let genericDocumentDone = "sample_generic_document_done"
+  public static let settingCaptureMode = "sample_setting_capture_mode"
+  public static let captureModeSheet = "sample_capture_mode_sheet"
+  public static let settingGalleryUpload = "sample_setting_gallery_upload"
+  public static let settingCaptureBothSides = "sample_setting_capture_both_sides"
+  public static let settingAllowSkipBack = "sample_setting_allow_skip_back"
+  public static let settingSelfieFirst = "sample_setting_selfie_first"
+  public static let documentOptionPrefix = "sample_document_option"
+  public static let captureAsOptionPrefix = "sample_capture_as_option"
+  public static let captureModeOptionPrefix = "sample_capture_mode_option"
+  public static let genericDocumentOrientationPrefix = "sample_generic_document_orientation"
+  public static let genericDocumentAspectRatioPrefix = "sample_generic_document_aspect_ratio"
 
   public static let userDetailsScreen = "sample_user_details_screen"
   public static let userDetailsHint = "sample_user_details_hint"
@@ -230,6 +271,7 @@ public enum UseSmileIDSampleTestIds {
     kycFormScreen, countryTrigger, idTypeTrigger, idNumberInput, kycContinue, tokenFloat,
     countrySheet, countrySearch, countryEmpty, countryOptionPrefix,
     idTypeSheet, idTypeSearch, idTypeEmpty, idTypeOptionPrefix,
+    documentEmpty, catalogueLoading, catalogueError, catalogueRetry, idNumberError, documentTrigger, captureAsTrigger, documentSheet, documentSearch, captureAsSheet, genericDocumentSheet, genericDocumentName, genericDocumentBackSide, genericDocumentDone, settingCaptureMode, captureModeSheet, settingGalleryUpload, settingCaptureBothSides, settingAllowSkipBack, settingSelfieFirst, documentOptionPrefix, captureAsOptionPrefix, captureModeOptionPrefix, genericDocumentOrientationPrefix, genericDocumentAspectRatioPrefix,
     profileAvatarButton, profileSummary,
     profilesScreen, profileRowPrefix, createProfile,
     profileConfigScreen, profileConfigFieldPrefix, profileConfigCallbackUrl, profileConfigSave,
@@ -244,8 +286,7 @@ public enum UseSmileIDSampleTestIds {
     resultJobId, resultUserId, resultJobStatus, resultResultCount, resultRefreshCount,
     resultLastError, resultSdkVersion,
     settingEnhancedSmartSelfie, settingAgentMode, settingDarkMode,
-    settingConsentStep, settingInstructionsStep, settingPreviewStep, settingCustomContinue, settingCustomCancel,
-    customContinue, customCancel,
+    settingConsentStep, settingInstructionsStep, settingPreviewStep,
     jobRowPrefix, jobRowStatus, filterChipPrefix, filterCountPrefix, verificationsEmpty,
     selectToggle, selectionBar, selectionCheckboxPrefix, selectionCount, selectionRemove
   ]

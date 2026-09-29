@@ -11,6 +11,11 @@ const HOLD_CAMERA_KEEP = 'keep';
 /// How long the host holds the camera before handing off, so the SDK meets a contended device.
 export type UseSmileIDSampleHoldCamera = { kind: 'keep' } | { kind: 'millis'; value: number };
 
+/// Where the ID form's lists come from: the API every run, spec/catalogue-fixture.json, or a failure at once.
+export type UseSmileIDSampleCatalogueMode = 'live' | 'fixture' | 'unreachable';
+
+const CATALOGUE_MODES: readonly UseSmileIDSampleCatalogueMode[] = ['live', 'fixture', 'unreachable'];
+
 /// The canonical arguments from `spec/launch-args.json`; reading the cold-start URL is the shell's job.
 export type UseSmileIDSampleLaunchArgs = {
   readonly scenario: string;
@@ -27,9 +32,10 @@ export type UseSmileIDSampleLaunchArgs = {
   readonly holdCamera: UseSmileIDSampleHoldCamera | null;
   /// Seconds a transient notice stays — see `spec/launch-args.json`. Automation only.
   readonly noticeWindow: number | null;
+  readonly catalogue: UseSmileIDSampleCatalogueMode;
 };
 
-/// The ten argument names, which the spec test compares against `spec/launch-args.json`.
+/// The eleven argument names, which the spec test compares against `spec/launch-args.json`.
 export const UseSmileIDSampleLaunchArgNames = [
   'scenario',
   'theme',
@@ -41,6 +47,7 @@ export const UseSmileIDSampleLaunchArgNames = [
   'appLocale',
   'holdCamera',
   'noticeWindow',
+  'catalogue',
 ] as const;
 
 export const smileIDSampleLaunchArgDefaults: UseSmileIDSampleLaunchArgs = {
@@ -54,6 +61,7 @@ export const smileIDSampleLaunchArgDefaults: UseSmileIDSampleLaunchArgs = {
   appLocale: null,
   holdCamera: null,
   noticeWindow: null,
+  catalogue: 'live',
 };
 
 type RawArgs = Readonly<Record<string, string | boolean | null | undefined>>;
@@ -106,6 +114,7 @@ export const smileIDSampleLaunchArgsFrom = (raw: RawArgs): UseSmileIDSampleLaunc
     appLocale: text(raw, 'appLocale'),
     holdCamera: holdCamera(raw),
     noticeWindow: noticeWindow(raw),
+    catalogue: CATALOGUE_MODES.find((mode) => mode === text(raw, 'catalogue')) ?? defaults.catalogue,
   };
 };
 

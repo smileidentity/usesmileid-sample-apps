@@ -85,18 +85,6 @@ abstract final class UseSmileIDSampleTestIds {
   /// The Preview screen switch, which includes or omits preview().
   static const String settingPreviewStep = 'sample_setting_preview_step';
 
-  /// The Custom continue switch, which hands the SDK's continue slots the sample's button.
-  static const String settingCustomContinue = 'sample_setting_custom_continue';
-
-  /// The Custom cancel switch, which hands the SDK's cancel slots the sample's button.
-  static const String settingCustomCancel = 'sample_setting_custom_cancel';
-
-  /// The sample's own continue button, drawn by the SDK inside a continue slot.
-  static const String customContinue = 'sample_custom_continue';
-
-  /// The sample's own cancel button, drawn by the SDK inside a cancel slot.
-  static const String customCancel = 'sample_custom_cancel';
-
   /// One ABOUT or LEGAL navigation row; suffixed with the row id.
   static const String settingNav = 'sample_setting_nav';
 
@@ -309,6 +297,88 @@ abstract final class UseSmileIDSampleTestIds {
   /// What the ID type picker shows with no country, and with no match.
   static const String idTypeEmpty = 'sample_idtype_empty';
 
+  /// The line under an ID number that does not fit its type.
+  static const String idNumberError = 'sample_idnumber_error';
+
+  /// The document select trigger, for the document products.
+  static const String documentTrigger = 'sample_document_trigger';
+
+  /// The capture-as select trigger, disabled until a document is chosen.
+  static const String captureAsTrigger = 'sample_capture_as_trigger';
+
+  /// The document picker sheet.
+  static const String documentSheet = 'sample_document_sheet';
+
+  /// Its search field.
+  static const String documentSearch = 'sample_document_search';
+
+  /// Suffixed with the code, and `_<subType>` on a standalone sub-type row.
+  static String documentOption(String documentId) =>
+      'sample_document_option_$documentId';
+
+  /// What the document picker shows with nothing to list, and with no match.
+  static const String documentEmpty = 'sample_document_empty';
+
+  /// The skeleton rows a picker shows while its list is still arriving.
+  static const String catalogueLoading = 'sample_catalogue_loading';
+
+  /// What a picker shows when its list failed to arrive.
+  static const String catalogueError = 'sample_catalogue_error';
+
+  /// That state's Retry.
+  static const String catalogueRetry = 'sample_catalogue_retry';
+
+  /// The capture-as sheet.
+  static const String captureAsSheet = 'sample_capture_as_sheet';
+
+  /// One capture-as row, suffixed with its id.
+  static String captureAsOption(String optionId) =>
+      'sample_capture_as_option_$optionId';
+
+  /// The generic-document sheet.
+  static const String genericDocumentSheet = 'sample_generic_document_sheet';
+
+  /// Its display-name field.
+  static const String genericDocumentName = 'sample_generic_document_name';
+
+  /// Its back-side switch.
+  static const String genericDocumentBackSide =
+      'sample_generic_document_back_side';
+
+  /// One orientation chip, suffixed with its id.
+  static String genericDocumentOrientation(String orientationId) =>
+      'sample_generic_document_orientation_$orientationId';
+
+  /// One aspect-ratio chip, suffixed with its id.
+  static String genericDocumentAspectRatio(String ratioId) =>
+      'sample_generic_document_aspect_ratio_$ratioId';
+
+  /// Its Done, the only way the draft is kept.
+  static const String genericDocumentDone = 'sample_generic_document_done';
+
+  /// The Settings row that opens the capture-mode sheet.
+  static const String settingCaptureMode = 'sample_setting_capture_mode';
+
+  /// The capture-mode sheet.
+  static const String captureModeSheet = 'sample_capture_mode_sheet';
+
+  /// One capture-mode row, suffixed with its id.
+  static String captureModeOption(String modeId) =>
+      'sample_capture_mode_option_$modeId';
+
+  /// The gallery-upload switch.
+  static const String settingGalleryUpload = 'sample_setting_gallery_upload';
+
+  /// The Capture the back side switch.
+  static const String settingCaptureBothSides =
+      'sample_setting_capture_both_sides';
+
+  /// The Skip the back switch.
+  static const String settingAllowSkipBack = 'sample_setting_allow_skip_back';
+
+  /// The Selfie first switch.
+  static const String settingSelfieFirst = 'sample_setting_selfie_first';
+
   /// The scenario drawer, a debug affordance the design does not cover.
   static const String scenarioDrawer = 'sample_scenario_drawer';
 
@@ -369,10 +439,6 @@ abstract final class UseSmileIDSampleTestIds {
     settingConsentStep,
     settingInstructionsStep,
     settingPreviewStep,
-    settingCustomContinue,
-    settingCustomCancel,
-    customContinue,
-    customCancel,
     settingNav,
     signOut,
     signOutConfirm,
@@ -433,6 +499,26 @@ abstract final class UseSmileIDSampleTestIds {
     idTypeSheet,
     idTypeSearch,
     idTypeEmpty,
+    idNumberError,
+    documentTrigger,
+    captureAsTrigger,
+    documentSheet,
+    documentSearch,
+    documentEmpty,
+    catalogueLoading,
+    catalogueError,
+    catalogueRetry,
+    captureAsSheet,
+    genericDocumentSheet,
+    genericDocumentName,
+    genericDocumentBackSide,
+    genericDocumentDone,
+    settingCaptureMode,
+    captureModeSheet,
+    settingGalleryUpload,
+    settingCaptureBothSides,
+    settingAllowSkipBack,
+    settingSelfieFirst,
     scenarioDrawer,
     scenarioDrawerButton,
     licensesScreen,

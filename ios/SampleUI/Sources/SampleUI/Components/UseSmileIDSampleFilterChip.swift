@@ -3,7 +3,7 @@ import SwiftUI
 /// A status filter with its live count, which is its own node because a delete is asserted on it.
 public struct UseSmileIDSampleFilterChip: View {
   private let label: String
-  private let count: Int
+  private let count: Int?
   private let selected: Bool
   private let testId: String?
   private let countTestId: String?
@@ -14,7 +14,8 @@ public struct UseSmileIDSampleFilterChip: View {
 
   public init(
     label: String,
-    count: Int,
+    // Nil for a chip that picks a value rather than filtering a list, which has nothing to count.
+    count: Int?,
     selected: Bool,
     testId: String? = nil,
     countTestId: String? = nil,
@@ -33,13 +34,15 @@ public struct UseSmileIDSampleFilterChip: View {
       HStack(spacing: SmileSpacing.spacingXxs) {
         UseSmileIDSampleText(label, style: chipStyle)
           .foregroundColor(selected ? colors.onPrimary : colors.filterChip.label)
-        UseSmileIDSampleText(
-          "\(count)",
-          style: UseSmileIDSampleTheme.type.textStyleOverline.with(size: smileLabelSize, tracking: smileLabelTracking)
-        )
-        // The design file's muted grey, deliberately not filter-chip.value's blue.
-        .foregroundColor(selected ? colors.onPrimary : colors.textMuted)
-        .useSmileIDSampleTestId(countTestId)
+        if let count {
+          UseSmileIDSampleText(
+            "\(count)",
+            style: UseSmileIDSampleTheme.type.textStyleOverline.with(size: smileLabelSize, tracking: smileLabelTracking)
+          )
+          // The design file's muted grey, deliberately not filter-chip.value's blue.
+          .foregroundColor(selected ? colors.onPrimary : colors.textMuted)
+          .useSmileIDSampleTestId(countTestId)
+        }
       }
       .padding(.horizontal, SmileSpacing.spacingSm)
       .padding(.vertical, SmileSpacing.spacingXs)

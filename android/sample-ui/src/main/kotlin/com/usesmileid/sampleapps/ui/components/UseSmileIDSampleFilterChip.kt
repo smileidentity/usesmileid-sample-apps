@@ -26,7 +26,8 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 @Composable
 fun UseSmileIDSampleFilterChip(
     label: String,
-    count: Int,
+    /** Null for a chip that picks a value rather than filtering a list, which has nothing to count. */
+    count: Int?,
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -58,7 +59,7 @@ fun UseSmileIDSampleFilterChip(
                 ),
                 color = if (selected) colors.onPrimary else colors.filterChip.label,
             )
-            Text(
+            if (count != null) Text(
                 text = count.toString(),
                 style = UseSmileIDSampleTheme.type.textStyleOverline.copy(
                     fontSize = smileLabelSize,

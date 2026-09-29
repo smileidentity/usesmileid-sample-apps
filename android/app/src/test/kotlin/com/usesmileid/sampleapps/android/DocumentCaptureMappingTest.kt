@@ -1,0 +1,203 @@
+package com.usesmileid.sampleapps.android
+
+import com.usesmileid.presentation.flow.config.DocumentCaptureMode
+import com.usesmileid.presentation.flow.config.DocumentOrientation
+import com.usesmileid.presentation.flow.config.DocumentType
+import com.usesmileid.presentation.flow.config.DocumentVerificationParams
+import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
+import com.usesmileid.sampleapps.android.flow.FlowLaunchSnapshot
+import com.usesmileid.sampleapps.android.flow.applying
+import com.usesmileid.sampleapps.android.flow.documentTypeFor
+import com.usesmileid.sampleapps.android.flow.documentOptionsFor
+import com.usesmileid.sampleapps.android.flow.toSdk
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleAspectRatio
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureAs
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureMode
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCountry
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleGenericDocument
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocument
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocumentOrientation
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleKycIdType
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.boolean
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.float
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Test
+import java.io.File
+
+/** spec/catalogue-rules.json captureAs: what "Capture as" hands the SDK, and that the server always gets the code. */
+class DocumentCaptureMappingTest {
+
+    private val cases = Json.parseToJsonElement(
+        File(requireNotNull(System.getProperty("sampleapps.spec.dir")), "catalogue-rules.json").readText(),
+    ).jsonObject.getValue("captureAs").jsonObject.getValue("cases").jsonArray.map { it.jsonObject }
+
+    @Test
+    fun every_case_maps_as_the_spec_says() {
+        assertTrue(cases.size >= 6)
+        cases.forEach { case ->
+            val name = case.getValue("name").jsonPrimitive.content
+            val details = detailsOf(case)
+            val expected = case.getValue("expected").jsonObject
+            val type = documentTypeFor(details)
+            when (expected.getValue("documentType").jsonPrimitive.content) {
+                "passport" -> assertEquals(name, DocumentType.Passport, type)
+                "greenBook" -> assertEquals(name, DocumentType.SouthAfricaGreenBook, type)
+                else -> {
+                    val generic = type as DocumentType.GenericDocument
+                    assertEquals(name, expected.getValue("displayName").jsonPrimitive.content, generic.displayName)
+                    assertEquals(name, expected.getValue("hasBackSide").jsonPrimitive.boolean, generic.hasBackSide)
+                    expected["orientation"]?.let {
+                        assertEquals(name, it.jsonPrimitive.content, generic.orientation.name.lowercase())
+                    }
+                    expected["knownAspectRatio"]?.let {
+                        assertEquals(name, it.jsonPrimitive.float, requireNotNull(generic.knownAspectRatio), 0.0001f)
+                    }
+                }
+            }
+            assertEquals(name, expected.getValue("idType").jsonPrimitive.content, submittedIdType(details))
+        }
+    }
+
+    @Test
+    fun the_aspect_ratios_are_the_specs() {
+        val ratios = Json.parseToJsonElement(
+            File(requireNotNull(System.getProperty("sampleapps.spec.dir")), "catalogue-rules.json").readText(),
+        ).jsonObject.getValue("captureAs").jsonObject.getValue("aspectRatios").jsonObject
+        UseSmileIDSampleAspectRatio.entries.forEach {
+            assertEquals(ratios.getValue(it.id).jsonPrimitive.contentOrNull?.toFloat(), it.ratio)
+        }
+    }
+
+    @Test
+    fun capture_mode_reaches_the_sdk_as_its_three_values() {
+        assertEquals(DocumentCaptureMode.AutoCapture, UseSmileIDSampleCaptureMode.Auto.toSdk())
+        assertEquals(DocumentCaptureMode.ManualCapture, UseSmileIDSampleCaptureMode.Manual.toSdk())
+        assertEquals(DocumentCaptureMode.AutoCaptureWithManualFallback(), UseSmileIDSampleCaptureMode.AutoWithFallback.toSdk())
+    }
+
+    @Test
+    fun a_portrait_generic_document_keeps_its_orientation() {
+        val genericDocument = UseSmileIDSampleGenericDocument(orientation = UseSmileIDSampleDocumentOrientation.Portrait)
+        val type = documentTypeFor(UseSmileIDSampleIdDetails(captureAs = UseSmileIDSampleCaptureAs.GenericDocument, genericDocument = genericDocument))
+            as DocumentType.GenericDocument
+        assertEquals(DocumentOrientation.Portrait, type.orientation)
+    }
+
+    private fun detailsOf(case: JsonObject): UseSmileIDSampleIdDetails {
+        val document = case.getValue("document").jsonObject
+        val genericDocument = case["genericDocument"]?.jsonObject
+        return UseSmileIDSampleIdDetails(
+            country = UseSmileIDSampleCountry("ZA", "South Africa"),
+            document = UseSmileIDSampleDocument(
+                code = document.getValue("code").jsonPrimitive.content,
+                subType = document["subType"]?.jsonPrimitive?.contentOrNull,
+                name = document.getValue("name").jsonPrimitive.content,
+                hasBack = document.getValue("hasBack").jsonPrimitive.boolean,
+                format = document.getValue("format").jsonPrimitive.int,
+            ),
+            captureAs = UseSmileIDSampleCaptureAs.entries.first { it.id == case.getValue("captureAs").jsonPrimitive.content },
+            genericDocument = genericDocument?.let {
+                UseSmileIDSampleGenericDocument(
+                    displayName = it.getValue("displayName").jsonPrimitive.content,
+                    hasBackSide = it.getValue("hasBackSide").jsonPrimitive.boolean,
+                    orientation = UseSmileIDSampleDocumentOrientation.entries.first { o -> o.id == it.getValue("orientation").jsonPrimitive.content },
+                    aspectRatio = UseSmileIDSampleAspectRatio.entries.first { r -> r.id == it.getValue("aspectRatio").jsonPrimitive.content },
+                )
+            } ?: UseSmileIDSampleGenericDocument(),
+        )
+    }
+
+    @Test
+    fun the_document_settings_reach_the_document_step() {
+        val options = documentOptionsFor(
+            snapshotOf(UseSmileIDSampleIdDetails(), captureMode = UseSmileIDSampleCaptureMode.Manual, galleryUpload = true)
+                .copy(captureBothSides = false, allowSkipBack = true),
+        )
+        assertEquals(DocumentCaptureMode.ManualCapture, options.captureMode)
+        assertTrue(options.allowGalleryUpload)
+        assertEquals(false, options.captureBothSides)
+        assertTrue(options.allowSkipBack)
+        val defaults = documentOptionsFor(snapshotOf(UseSmileIDSampleIdDetails()))
+        assertEquals(false, defaults.allowGalleryUpload)
+        assertTrue(defaults.captureBothSides)
+        assertEquals(false, defaults.allowSkipBack)
+    }
+
+    @Test
+    fun a_passport_is_captured_front_only_whatever_the_setting() {
+        val passport = documentOptionsFor(snapshotOf(UseSmileIDSampleIdDetails(captureAs = UseSmileIDSampleCaptureAs.Passport)))
+        assertEquals(false, passport.captureBothSides)
+        for (captureAs in UseSmileIDSampleCaptureAs.entries.filter { it != UseSmileIDSampleCaptureAs.Passport }) {
+            assertTrue(captureAs.id, documentOptionsFor(snapshotOf(UseSmileIDSampleIdDetails(captureAs = captureAs))).captureBothSides)
+        }
+    }
+
+    @Test
+    fun a_document_job_sends_the_document_even_with_an_id_type_left_in_the_form() {
+        val details = UseSmileIDSampleIdDetails(
+            country = UseSmileIDSampleCountry("KE", "Kenya"),
+            idType = UseSmileIDSampleKycIdType("NATIONAL_ID", "NATIONAL_ID", "National ID", "^[0-9]{1,9}$"),
+            document = UseSmileIDSampleDocument(code = "PASSPORT", name = "Passport", hasBack = false, format = 3),
+        )
+        assertEquals("PASSPORT", submittedIdType(details))
+    }
+
+    @Test
+    fun a_kyc_job_sends_the_number_trimmed_as_the_form_checked_it() {
+        val details = UseSmileIDSampleIdDetails(
+            country = UseSmileIDSampleCountry("KE", "Kenya"),
+            idType = UseSmileIDSampleKycIdType("NATIONAL_ID", "NATIONAL_ID", "National ID", "^[0-9]{1,9}$"),
+            idNumber = " 12345678 ",
+        )
+        val params = UseSmileIDFlowBuilder().apply {
+            applying(snapshotOf(details, product = UseSmileIDSampleProduct.BiometricKyc))
+        }.biometricKYCParams
+        assertEquals("12345678", params?.idNumber)
+    }
+
+    /** What the builder puts in DocumentVerificationParams, whatever "Capture as" chose. */
+    private fun submittedIdType(details: UseSmileIDSampleIdDetails): String? {
+        val params: DocumentVerificationParams? = UseSmileIDFlowBuilder().apply { applying(snapshotOf(details)) }.documentVerificationParams
+        return params?.idType
+    }
+
+    private fun snapshotOf(
+        details: UseSmileIDSampleIdDetails,
+        product: UseSmileIDSampleProduct = UseSmileIDSampleProduct.DocumentVerification,
+        captureMode: UseSmileIDSampleCaptureMode = UseSmileIDSampleCaptureMode.AutoWithFallback,
+        galleryUpload: Boolean = false,
+    ) = FlowLaunchSnapshot(
+        product = product,
+        route = UseSmileIDSampleFlowRoute.Fullscreen,
+        userDetails = UseSmileIDSampleUserDetails(firstName = "Ada", lastName = "Okafor", email = "ada@example.com"),
+        idDetails = details,
+        scenario = UseSmileIDSampleScenario.Normal,
+        theme = UseSmileIDSampleThemeScenario.BrandDefault,
+        sandbox = true,
+        allowAgentMode = false,
+        enableEnhancedLiveness = true,
+        consentStep = true,
+        instructionsStep = true,
+        previewStep = true,
+        userId = "user",
+        partnerId = "p-1",
+        partnerName = "Test",
+        callbackUrl = "",
+        captureMode = captureMode,
+        galleryUpload = galleryUpload,
+    )
+}

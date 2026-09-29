@@ -1,0 +1,175 @@
+# The document form's list, Capture as and generic-document sheet on fixture lists, through SDK mount (docs/testing.md §4).
+# APP_ID must be passed — see shell-navigation.yaml for why it has no default.
+appId: ${APP_ID}
+---
+- stopApp
+- launchApp:
+    arguments:
+      probes: true
+      catalogue: fixture
+- runFlow: subflows/warm-start.yaml
+
+- tapOn:
+    id: "sample_product_card_documentVerification"
+- assertVisible:
+    id: "sample_user_details_screen"
+- tapOn:
+    id: "sample_user_details_field_firstName"
+- eraseText
+- inputText: "Ada"
+- tapOn:
+    id: "sample_user_details_field_lastName"
+- eraseText
+- inputText: "Okafor"
+- tapOn:
+    id: "sample_user_details_field_email"
+- eraseText
+- inputText: "ada.okafor@example.com"
+- hideKeyboard
+- runFlow: subflows/keep-nothing.yaml
+- tapOn:
+    id: "sample_user_details_continue"
+
+# The document products ask for a document and how to capture it, never an ID number.
+- assertVisible:
+    id: "sample_document_trigger"
+    enabled: false
+- assertNotVisible:
+    id: "sample_idnumber_input"
+- tapOn:
+    id: "sample_country_trigger"
+- assertVisible:
+    id: "sample_country_sheet"
+- tapOn:
+    id: "sample_country_option_ZA"
+
+# The Green Book is its own row after its parent; the API's 'Others', whose code is empty, is not listed.
+- tapOn:
+    id: "sample_document_trigger"
+- assertVisible:
+    id: "sample_document_option_IDENTITY_CARD"
+- assertVisible:
+    id: "sample_document_option_IDENTITY_CARD_green_book"
+- assertNotVisible:
+    id: "sample_document_option_"
+- tapOn:
+    id: "sample_document_option_IDENTITY_CARD_green_book"
+# The trigger's text is a child node, so the id and the text cannot sit in one selector.
+- assertVisible:
+    text: ".*Green Book.*"
+    childOf:
+      id: "sample_document_trigger"
+
+# Three choices, each the SDK's own type; Generic document is the default.
+- tapOn:
+    id: "sample_capture_as_trigger"
+- assertVisible:
+    id: "sample_capture_as_sheet"
+- assertVisible:
+    id: "sample_capture_as_option_genericDocument"
+    checked: true
+- assertVisible:
+    id: "sample_capture_as_option_greenBook"
+- assertVisible:
+    id: "sample_capture_as_option_passport"
+
+# Generic document opens its own sheet, and what it builds is named on the trigger.
+- tapOn:
+    id: "sample_capture_as_option_genericDocument"
+- assertVisible:
+    id: "sample_generic_document_sheet"
+- tapOn:
+    id: "sample_generic_document_name"
+- eraseText
+- inputText: "Booklet"
+- hideKeyboard
+- tapOn:
+    id: "sample_generic_document_orientation_portrait"
+- tapOn:
+    id: "sample_generic_document_aspect_ratio_booklet"
+- tapOn:
+    id: "sample_generic_document_done"
+# The trigger's text is a child node, so the id and the text cannot sit in one selector.
+- assertVisible:
+    text: ".*Booklet.*"
+    childOf:
+      id: "sample_capture_as_trigger"
+
+# The Green Book preset, which the SDK's instructions name.
+- tapOn:
+    id: "sample_capture_as_trigger"
+- tapOn:
+    id: "sample_capture_as_option_greenBook"
+- tapOn:
+    id: "sample_kyc_continue"
+- assertVisible:
+    id: "si_consent_screen"
+- tapOn: "Allow"
+- waitForAnimationToEnd:
+    timeout: 5000
+- runFlow:
+    when:
+      visible:
+        id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+    commands:
+      - tapOn:
+          id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+- assertVisible:
+    id: "si_instructions_screen"
+- assertVisible:
+    id: "si_instructions_title"
+    text: ".*Green Book.*"
+- runFlow: subflows/leave-sdk-flow.yaml
+
+# --- capture mode → when the shutter shows ---------------------------------------------------------
+# The shutter has no id, only its label "Capture document"; the mode persists, so the section restores the default.
+- openLink: "usesmileid-sample-android://settings/capture-mode?catalogue=fixture"
+- tapOn:
+    id: "sample_capture_mode_option_manual"
+# Centred on the row below it: a scroll asking for the capture-mode row itself at 100% never settles.
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_gallery_upload"
+    centerElement: true
+- assertVisible:
+    text: "Manual"
+    childOf:
+      id: "sample_setting_capture_mode"
+- runFlow: subflows/document-to-capture.yaml
+# Manual: the shutter is there at once.
+- extendedWaitUntil:
+    visible: "Capture document"
+    timeout: 3000
+- runFlow: subflows/leave-sdk-flow.yaml
+
+- openLink: "usesmileid-sample-android://settings/capture-mode?catalogue=fixture"
+- tapOn:
+    id: "sample_capture_mode_option_autoWithFallback"
+- runFlow: subflows/document-to-capture.yaml
+# The default: automatic, with the shutter as a fallback after the SDK's 10 seconds.
+- assertNotVisible: "Capture document"
+- extendedWaitUntil:
+    visible: "Capture document"
+    timeout: 15000
+- runFlow: subflows/leave-sdk-flow.yaml
+
+- openLink: "usesmileid-sample-android://settings/capture-mode?catalogue=fixture"
+- tapOn:
+    id: "sample_capture_mode_option_auto"
+- runFlow: subflows/document-to-capture.yaml
+# Auto only, read as the capture opens: a scan that times out shows the shutter in every mode, sooner in the dark.
+- assertNotVisible: "Capture document"
+- runFlow: subflows/leave-sdk-flow.yaml
+
+- openLink: "usesmileid-sample-android://settings/capture-mode?catalogue=fixture"
+- tapOn:
+    id: "sample_capture_mode_option_autoWithFallback"
+# Centred on the row below it: a scroll asking for the capture-mode row itself at 100% never settles.
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_gallery_upload"
+    centerElement: true
+- assertVisible:
+    text: "Automatic with manual fallback"
+    childOf:
+      id: "sample_setting_capture_mode"

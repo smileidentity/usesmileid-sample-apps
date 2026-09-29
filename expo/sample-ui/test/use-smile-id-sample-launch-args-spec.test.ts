@@ -94,4 +94,11 @@ describe('the cold-start URL', () => {
       smileIDSampleLaunchArgDefaults,
     );
   });
+
+  it('takes catalogue as live, fixture or unreachable, and falls back to live', () => {
+    const mode = (value: string) => smileIDSampleLaunchArgsFrom({ catalogue: value }).catalogue;
+    expect(mode('fixture')).toBe('fixture');
+    expect(mode('unreachable')).toBe('unreachable');
+    expect(mode('offline')).toBe('live');
+  });
 });

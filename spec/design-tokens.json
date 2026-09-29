@@ -589,6 +589,30 @@
       "recommendation": "Ask design for a nav-bar role, or for the products page fill to be reconciled with the other two tabs. Generated from here meanwhile, exactly as borderStrong is, so no component references color.grey.800.",
       "guardedBy": "UseSmileIDSampleContrastTest asserts the pill stays distinguishable from the page in BOTH schemes.",
       "status": "OPEN 2026-08-26 — generated stopgap in place"
+    },
+    {
+      "id": "skeletonDarkHighlight",
+      "severity": "the skeleton rows in three sheets, dark mode",
+      "designSystem": {
+        "skeleton.bg dark": "#1a1c23",
+        "skeleton.highlight dark": "#eaecf0",
+        "color.surface-muted dark": "#1a1c23"
+      },
+      "finding": "skeleton.highlight resolves through color.border (see darkBorder), so in dark mode it is the same near-white #EAECF0 as in light, and a pulse towards it would flash near-white on a #272A35 sheet. The obvious semantic stand-in does not work either: color.surface-muted is #1A1C23 in dark, the same as skeleton.bg, so a pulse between the two would not move at all.",
+      "workaround": "UseSmileIDSampleColors declares a skeletonHighlight PAIR, as it does surfaceTile: light from skeleton.highlight, dark from color.surface-alt (#2D3748), which is lighter than skeleton.bg and darker than the sheet. No new value and no primitive.",
+      "recommendation": "Fixed by darkBorder's one-line semantic fix, since skeleton.highlight inherits it. Delete the pair once color.border resolves per mode.",
+      "status": "OPEN 2026-09-28 — local pair in place"
+    },
+    {
+      "id": "motionMissingOnComposeAndSwiftUI",
+      "severity": "emitter asymmetry — the skeleton pulse's timing",
+      "designSystem": {
+        "skeletonDuration": "350ms"
+      },
+      "finding": "The Dart and TypeScript outputs carry the design system's durations (SmileMotion on Flutter, `skeleton.duration` on Expo); the Compose and SwiftUI outputs carry none, so Android and iOS have no token for the skeleton pulse's 350 ms.",
+      "workaround": "scripts/sync_design_tokens.py generates SmileMotion for Kotlin and Swift from the same tokens.flat.json, as it already generates the Compose type styles, so the value stays generated and --check still catches staleness.",
+      "recommendation": "Ask upstream to emit durations from the Compose and SwiftUI emitters. Delete the generated files when it does.",
+      "status": "OPEN 2026-09-28 — generated stopgap in place"
     }
   ],
   "perPlatform": {
