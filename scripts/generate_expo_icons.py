@@ -57,6 +57,8 @@ export type SmileIconPart = {
   readonly d: string;
   readonly paint: SmileIconPaint;
   readonly opacity: number;
+  /// The part's own colour, set only on a two-tone mark; an untinted draw uses it.
+  readonly colour?: string;
 };
 
 /// One mark in its own coordinate space, which the renderer maps onto the size a caller asks for.
@@ -79,6 +81,36 @@ def camel(name: str) -> str:
     return head + "".join(part[:1].upper() + part[1:] for part in rest)
 
 
+HEX = re.compile(r"#[0-9a-fA-F]{6}")
+
+
+def drawn_colours(root) -> set[str]:
+    """The stroke and fill colours of the paths a mark draws; `<defs>` holds only clip frames."""
+    found: set[str] = set()
+
+    def walk(element) -> None:
+        tag = element.tag.rsplit("}", 1)[-1]
+        if tag in ("defs", "clipPath"):
+            return
+        if tag == "path":
+            for key in ("stroke", "fill"):
+                value = element.attrib.get(key)
+                if value and value != "none":
+                    found.add(value.upper())
+        for child in element:
+            walk(child)
+
+    walk(root)
+    return found
+
+
+def ts_colour(value: str, name: str) -> str:
+    """A two-tone mark's colour, lower-cased as the token modules spell one."""
+    if not HEX.fullmatch(value):
+        raise IconError(f"{name} draws in {value!r}; a mark kept in its own colours needs #RRGGBB")
+    return value.lower()
+
+
 def parse_svg(text: str, name: str) -> dict:
     """Walked as XML, not matched with a regex: opacity is inherited from an enclosing <g>, and a
     pattern that only sees one element at a time cannot know it is inside one."""
@@ -93,6 +125,7 @@ def parse_svg(text: str, name: str) -> dict:
         raise IconError(f"{name} has a zero-sized viewBox")
 
     parts: list[dict] = []
+    own = len(drawn_colours(root)) > 1
 
     def walk(element, opacity: float) -> None:
         tag = element.tag.rsplit("}", 1)[-1]
@@ -111,7 +144,11 @@ def parse_svg(text: str, name: str) -> dict:
                 }
             else:
                 paint = {"kind": "fill"}
-            parts.append({"d": element.attrib["d"].strip(), "paint": paint, "opacity": opacity})
+            part = {"d": element.attrib["d"].strip(), "paint": paint, "opacity": opacity}
+            if own:
+                colour = stroke_colour if paint["kind"] == "stroke" else element.attrib.get("fill", "#000000")
+                part["colour"] = ts_colour(colour, name)
+            parts.append(part)
 
         for child in element:
             walk(child, opacity)
@@ -143,9 +180,10 @@ def emit_icon(name: str, icon: dict) -> str:
     lines.append("    parts: [")
     for part in icon["parts"]:
         # json.dumps so a path containing a quote or a backslash cannot break the emitted module.
+        colour = ", colour: '%s'" % part["colour"] if "colour" in part else ""
         lines.append(
-            "      { d: %s, paint: %s, opacity: %s },"
-            % (json.dumps(part["d"]), emit_paint(part["paint"]), number(part["opacity"]))
+            "      { d: %s, paint: %s, opacity: %s%s },"
+            % (json.dumps(part["d"]), emit_paint(part["paint"]), number(part["opacity"]), colour)
         )
     lines += ["    ],", "  },"]
     return "\n".join(lines)

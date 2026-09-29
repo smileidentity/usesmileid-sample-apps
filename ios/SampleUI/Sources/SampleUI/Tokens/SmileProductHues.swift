@@ -6,11 +6,11 @@
 
 import SwiftUI
 
-/// One product's colouring. `cardIcon` tints the card's glyph; `icon` and `tile` are the list row's pair.
+/// One product's colouring. `cardIcon` tints the card's glyph, nil when it draws its own colours; `icon` and `tile` are the list row's pair.
 public struct SmileProductHue: Equatable, Sendable {
   public let from: Color
   public let to: Color
-  public let cardIcon: Color
+  public let cardIcon: Color?
   public let icon: Color
   public let tile: Color
   /// Stop positions as fractions. `stopEnd` may exceed 1: the design runs it past the card's edge.
@@ -71,6 +71,17 @@ public let smileProductHues: [String: SmileProductHue] = [
     stopEnd: 1.2978,
     fromAlpha: 1.0,
     toAlpha: 0.79
+  ),
+  "residencyDocumentVerification": SmileProductHue(
+    from: Color(hex: 0xbfd2ff),
+    to: Color(hex: 0x04713a),
+    cardIcon: nil,
+    icon: Color(hex: 0x04713a),
+    tile: Color(hex: 0xe5edff),
+    stopStart: 0.66627,
+    stopEnd: 1.2978,
+    fromAlpha: 1.0,
+    toAlpha: 1.0
   ),
   "biometricKyc": SmileProductHue(
     from: Color(hex: 0x151f72),

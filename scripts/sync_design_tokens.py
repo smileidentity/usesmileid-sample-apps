@@ -258,11 +258,11 @@ SWIFT_HUES_HEADER = """// Smile ID product hues — GENERATED. Do not edit by ha
 
 import SwiftUI
 
-/// One product's colouring. `cardIcon` tints the card's glyph; `icon` and `tile` are the list row's pair.
+/// One product's colouring. `cardIcon` tints the card's glyph, nil when it draws its own colours; `icon` and `tile` are the list row's pair.
 public struct SmileProductHue: Equatable, Sendable {
     public let from: Color
     public let to: Color
-    public let cardIcon: Color
+    public let cardIcon: Color?
     public let icon: Color
     public let tile: Color
     /// Stop positions as fractions. `stopEnd` may exceed 1: the design runs it past the card's edge.
@@ -292,7 +292,7 @@ DART_HUES_HEADER = """// Smile ID product hues — GENERATED. Do not edit by han
 
 import 'package:flutter/material.dart';
 
-/// One product's colouring. `cardIcon` tints the card's glyph; `icon` and `tile` are the list row's pair.
+/// One product's colouring. `cardIcon` tints the card's glyph, null when it draws its own colours; `icon` and `tile` are the list row's pair.
 @immutable
 class SmileProductHue {
   const SmileProductHue({
@@ -309,7 +309,7 @@ class SmileProductHue {
 
   final Color from;
   final Color to;
-  final Color cardIcon;
+  final Color? cardIcon;
   final Color icon;
   final Color tile;
 
@@ -661,7 +661,7 @@ def emit_kotlin_product_hues(hues: dict) -> str:
     if not hues:
         raise TokenError("spec/design-tokens.json carries no productHues.hues entries")
     lines = [
-        "/** One product's colouring. `cardIcon` tints the card's glyph; `icon` and `tile` are the list row's pair, which the products frame does not govern. */",
+        "/** One product's colouring. `cardIcon` tints the card's glyph, Unspecified when it draws its own colours; `icon` and `tile` are the list row's pair, which the products frame does not govern. */",
         "data class SmileProductHue(",
         "    val from: Color,",
         "    val to: Color,",
@@ -686,7 +686,7 @@ def emit_kotlin_product_hues(hues: dict) -> str:
             f'    "{product}" to SmileProductHue(',
             f"        from = {kotlin_color(hue['from'])},",
             f"        to = {kotlin_color(hue['to'])},",
-            f"        cardIcon = {kotlin_color(hue['cardIcon'])},",
+            f"        cardIcon = {'Color.Unspecified' if hue['cardIcon'] is None else kotlin_color(hue['cardIcon'])},",
             f"        icon = {kotlin_color(hue['icon'])},",
             f"        tile = {kotlin_color(hue['tile'])},",
         ]
@@ -992,7 +992,7 @@ def emit_dart_product_hues(hues: dict) -> str:
             f"  '{product}': SmileProductHue(",
             f"    from: {dart_hue_color(hue['from'])},",
             f"    to: {dart_hue_color(hue['to'])},",
-            f"    cardIcon: {dart_hue_color(hue['cardIcon'])},",
+            f"    cardIcon: {'null' if hue['cardIcon'] is None else dart_hue_color(hue['cardIcon'])},",
             f"    icon: {dart_hue_color(hue['icon'])},",
             f"    tile: {dart_hue_color(hue['tile'])},",
         ]
@@ -1273,7 +1273,7 @@ def emit_swift_product_hues(hues: dict) -> str:
             f'    "{product}": SmileProductHue(',
             f"        from: {swift_color(hue['from'])},",
             f"        to: {swift_color(hue['to'])},",
-            f"        cardIcon: {swift_color(hue['cardIcon'])},",
+            f"        cardIcon: {'nil' if hue['cardIcon'] is None else swift_color(hue['cardIcon'])},",
             f"        icon: {swift_color(hue['icon'])},",
             f"        tile: {swift_color(hue['tile'])},",
         ]
@@ -1500,11 +1500,11 @@ def emit_ts_product_hues(hues: dict) -> str:
     if not hues:
         raise TokenError("spec/design-tokens.json carries no productHues.hues entries")
     lines = [
-        "/** One product's colouring. `cardIcon` tints the card's glyph; `icon` and `tile` are the list row's pair. */",
+        "/** One product's colouring. `cardIcon` tints the card's glyph, null when it draws its own colours; `icon` and `tile` are the list row's pair. */",
         "export type SmileProductHue = {",
         "  readonly from: string;",
         "  readonly to: string;",
-        "  readonly cardIcon: string;",
+        "  readonly cardIcon: string | null;",
         "  readonly icon: string;",
         "  readonly tile: string;",
         "  /** Stop positions as fractions. `stopEnd` may exceed 1: the design runs it past the card's edge. */",
@@ -1523,7 +1523,7 @@ def emit_ts_product_hues(hues: dict) -> str:
             raise TokenError(f"product hue {product!r} is missing {sorted(missing)}")
         lines.append(f"  {product}: {{")
         for role in ("from", "to", "cardIcon", "icon", "tile"):
-            lines.append(f"    {role}: {ts_color(hue[role])},")
+            lines.append(f"    {role}: {'null' if role == 'cardIcon' and hue[role] is None else ts_color(hue[role])},")
         for role in ("stopStart", "stopEnd", "fromAlpha", "toAlpha"):
             if hue.get(role) is None:
                 raise TokenError(f"product hue {product!r} is missing {role}")

@@ -11,7 +11,7 @@
 
 import 'package:flutter/material.dart';
 
-/// One product's colouring. `cardIcon` tints the card's glyph; `icon` and `tile` are the list row's pair.
+/// One product's colouring. `cardIcon` tints the card's glyph, null when it draws its own colours; `icon` and `tile` are the list row's pair.
 @immutable
 class SmileProductHue {
   const SmileProductHue({
@@ -28,7 +28,7 @@ class SmileProductHue {
 
   final Color from;
   final Color to;
-  final Color cardIcon;
+  final Color? cardIcon;
   final Color icon;
   final Color tile;
 
@@ -93,6 +93,17 @@ const Map<String, SmileProductHue> smileProductHues = <String, SmileProductHue>{
     stopEnd: 1.2978,
     fromAlpha: 1.0,
     toAlpha: 0.79,
+  ),
+  'residencyDocumentVerification': SmileProductHue(
+    from: Color(0xFFBFD2FF),
+    to: Color(0xFF04713A),
+    cardIcon: null,
+    icon: Color(0xFF04713A),
+    tile: Color(0xFFE5EDFF),
+    stopStart: 0.66627,
+    stopEnd: 1.2978,
+    fromAlpha: 1.0,
+    toAlpha: 1.0,
   ),
   'biometricKyc': SmileProductHue(
     from: Color(0xFF151F72),

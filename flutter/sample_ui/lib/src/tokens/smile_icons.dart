@@ -1,7 +1,7 @@
 // Smile ID icon set — GENERATED. Do not edit by hand.
 //
 // Regenerate with: scripts/generate_flutter_icons.py
-// Source: design/icons/, vendored byte for byte; every call site tints through a colour filter.
+// Source: design/icons/, vendored byte for byte; a call site tints unless it draws a two-tone mark.
 //
 // TWO families, deliberately not interchangeable — see spec/components.json → conventions.
 
@@ -31,6 +31,8 @@ abstract final class SmileIcons {
   static const String preview = '$_base/preview.svg';
   static const String privacy = '$_base/privacy.svg';
   static const String products = '$_base/products.svg';
+  static const String residencyDocumentVerification =
+      '$_base/residency_document_verification.svg';
   static const String scanGlyph = '$_base/scan_glyph.svg';
   static const String settings = '$_base/settings.svg';
   static const String smartSelfieAuth = '$_base/smart_selfie_auth.svg';
@@ -72,6 +74,7 @@ abstract final class SmileIcons {
     preview,
     privacy,
     products,
+    residencyDocumentVerification,
     scanGlyph,
     settings,
     smartSelfieAuth,

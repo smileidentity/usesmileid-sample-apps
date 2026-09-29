@@ -4,8 +4,8 @@
 Flutter renders the design's SVGs directly, so this copies them BYTE FOR BYTE rather than
 converting: the Android and iOS generators convert because a VectorDrawable and a SwiftUI
 shape are different formats, and every conversion is a chance to drift. A byte copy cannot.
-The source colour in each file is irrelevant — every call site tints through a colour filter,
-exactly as the Compose twin tints its drawables.
+Call sites tint through a colour filter, exactly as the Compose twin tints its drawables, so a
+file's colour matters only for the two-tone mark a tile draws untinted (design/icons/README.md).
 
 The Dart side is generated too, so a missing or renamed icon is a compile error rather than a
 blank square at runtime, which is what `R.drawable.*` gives the Compose twin for free.
@@ -37,7 +37,7 @@ DART_OUT = f"{FLUTTER_UI}/lib/src/tokens/smile_icons.dart"
 HEADER = """// Smile ID icon set — GENERATED. Do not edit by hand.
 //
 // Regenerate with: scripts/generate_flutter_icons.py
-// Source: design/icons/, vendored byte for byte; every call site tints through a colour filter.
+// Source: design/icons/, vendored byte for byte; a call site tints unless it draws a two-tone mark.
 //
 // TWO families, deliberately not interchangeable — see spec/components.json → conventions.
 
