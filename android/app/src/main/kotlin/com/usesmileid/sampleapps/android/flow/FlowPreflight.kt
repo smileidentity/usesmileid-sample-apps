@@ -20,6 +20,7 @@ fun preflight(snapshot: FlowLaunchSnapshot): FlowPreflight {
         builder.enhancedKYCParams?.let { add(builder.validateEnhancedKYCParams(it)) }
         builder.documentVerificationParams?.let { add(builder.validateDocumentVerificationParams(it)) }
         builder.enhancedDocumentVerificationParams?.let { add(builder.validateEnhancedDocumentVerificationParams(it)) }
+        builder.residencyDocumentVerificationParams?.let { add(builder.validateResidencyDocumentVerificationParams(it)) }
     }
     val payloadIssues = payloadChecks.filterIsInstance<ValidationState.Invalid>().flatMap { it.issues }
     if (payloadIssues.isNotEmpty()) return FlowPreflight.NeedsDetails(payloadIssues)

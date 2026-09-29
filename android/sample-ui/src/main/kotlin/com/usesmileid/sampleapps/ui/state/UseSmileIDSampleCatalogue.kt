@@ -3,8 +3,8 @@ package com.usesmileid.sampleapps.ui.state
 import androidx.compose.runtime.Immutable
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 
-/** Which list a product's form reads: the KYC products name an ID type, the document products a document. */
-enum class UseSmileIDSampleCatalogueFamily { Kyc, Document }
+/** Which list a product's form reads: the KYC products name an ID type, the document products a document, residency a passport's country. */
+enum class UseSmileIDSampleCatalogueFamily { Kyc, Document, Passport }
 
 /** Null for the products that ask for no ID details. */
 val UseSmileIDSampleProduct.catalogueFamily: UseSmileIDSampleCatalogueFamily?
@@ -12,6 +12,7 @@ val UseSmileIDSampleProduct.catalogueFamily: UseSmileIDSampleCatalogueFamily?
         UseSmileIDSampleProduct.BiometricKyc, UseSmileIDSampleProduct.EnhancedKyc -> UseSmileIDSampleCatalogueFamily.Kyc
         UseSmileIDSampleProduct.DocumentVerification, UseSmileIDSampleProduct.EnhancedDocumentVerification ->
             UseSmileIDSampleCatalogueFamily.Document
+        UseSmileIDSampleProduct.ResidencyDocumentVerification -> UseSmileIDSampleCatalogueFamily.Passport
         else -> null
     }
 
@@ -72,6 +73,9 @@ data class UseSmileIDSampleCatalogueData(
 /** The pure rules from `spec/catalogue-rules.json`, run on whatever the server returns. */
 object UseSmileIDSampleCatalogueRules {
 
+    /** The one document code Residency Document Verification accepts, which the SDK enforces too. */
+    const val PASSPORT = "PASSPORT"
+
     /** What the SDK fills in plus the two names the user-details form collects; anything else drops a type. */
     val allowedRequiredFields = setOf(
         "country", "first_name", "id_number", "id_type", "last_name", "partner_id", "partner_params", "timestamp",
@@ -106,6 +110,9 @@ object UseSmileIDSampleCatalogueRules {
         val named = data.documents.map { it.country }
         return when (family) {
             UseSmileIDSampleCatalogueFamily.Document -> named.filter { documents(data.documents, it.code).isNotEmpty() }
+            UseSmileIDSampleCatalogueFamily.Passport -> named.filter { country ->
+                documents(data.documents, country.code).any { it.code == PASSPORT }
+            }
             UseSmileIDSampleCatalogueFamily.Kyc -> {
                 val listed = data.idTypes.map { it.country }.distinct().filter { idTypes(data.idTypes, it).isNotEmpty() }
                 named.filter { it.code in listed } +

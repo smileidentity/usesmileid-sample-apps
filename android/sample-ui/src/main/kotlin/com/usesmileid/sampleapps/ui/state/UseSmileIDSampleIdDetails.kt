@@ -81,6 +81,7 @@ data class UseSmileIDSampleIdDetails(
     /** Whether Continue can enable for [family]: every field it shows is set, and the number fits its type. */
     fun isComplete(family: UseSmileIDSampleCatalogueFamily): Boolean = when (family) {
         UseSmileIDSampleCatalogueFamily.Document -> country != null && document != null
+        UseSmileIDSampleCatalogueFamily.Passport -> country != null
         UseSmileIDSampleCatalogueFamily.Kyc -> {
             val type = idType
             country != null && type != null && UseSmileIDSampleIdNumberHint.accepts(type.regex, idNumber)

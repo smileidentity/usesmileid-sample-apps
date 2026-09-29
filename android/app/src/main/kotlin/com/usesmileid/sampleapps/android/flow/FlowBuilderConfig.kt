@@ -13,6 +13,7 @@ import com.usesmileid.presentation.flow.config.DocumentType
 import com.usesmileid.presentation.flow.config.DocumentVerificationParams
 import com.usesmileid.presentation.flow.config.EnhancedDocumentVerificationParams
 import com.usesmileid.presentation.flow.config.EnhancedKYCParams
+import com.usesmileid.presentation.flow.config.ResidencyDocumentVerificationParams
 import com.usesmileid.presentation.flow.dsl.ScreensBuilder
 import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.sampleapps.android.BuildConfig
@@ -22,6 +23,7 @@ import com.usesmileid.presentation.flow.config.DocumentCaptureMode
 import com.usesmileid.presentation.flow.config.DocumentOrientation
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureAs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueFamily
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueRules
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureMode
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocumentOrientation
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
@@ -124,6 +126,7 @@ private fun UseSmileIDFlowBuilder.applyIdParams(snapshot: FlowLaunchSnapshot) {
     val chosen = when (snapshot.product.catalogueFamily) {
         UseSmileIDSampleCatalogueFamily.Kyc -> details.idType?.type
         UseSmileIDSampleCatalogueFamily.Document -> details.document?.code
+        UseSmileIDSampleCatalogueFamily.Passport -> UseSmileIDSampleCatalogueRules.PASSPORT
         null -> null
     }
     val idType = bound?.idType ?: chosen.orEmpty()
@@ -149,6 +152,12 @@ private fun UseSmileIDFlowBuilder.applyIdParams(snapshot: FlowLaunchSnapshot) {
             EnhancedDocumentVerificationParams(
                 country = country,
                 idType = idType,
+            )
+        // The SDK accepts no other type, and the server reads a token's own claim over this one.
+        UseSmileIDSampleProduct.ResidencyDocumentVerification -> residencyDocumentVerificationParams =
+            ResidencyDocumentVerificationParams(
+                country = country,
+                idType = UseSmileIDSampleCatalogueRules.PASSPORT,
             )
         else -> Unit
     }
@@ -204,7 +213,10 @@ internal fun journeyStepsFor(snapshot: FlowLaunchSnapshot): List<FlowJourneyStep
     }
     if (snapshot.instructionsStep) add(FlowJourneyStep.Instructions)
     when (snapshot.product) {
-        UseSmileIDSampleProduct.DocumentVerification, UseSmileIDSampleProduct.EnhancedDocumentVerification ->
+        UseSmileIDSampleProduct.DocumentVerification,
+        UseSmileIDSampleProduct.EnhancedDocumentVerification,
+        UseSmileIDSampleProduct.ResidencyDocumentVerification,
+        ->
             if (snapshot.selfieFirst) {
                 selfieCapture(snapshot.previewStep)
                 documentCapture(snapshot.previewStep)
@@ -237,14 +249,19 @@ internal data class DocumentOptions(
     val allowGalleryUpload: Boolean,
 )
 
-internal fun documentOptionsFor(snapshot: FlowLaunchSnapshot): DocumentOptions = DocumentOptions(
-    documentType = documentTypeFor(snapshot.idDetails),
-    // The SDK's passport preset declares a back side; the sample captures a passport front only.
-    captureBothSides = snapshot.captureBothSides && snapshot.idDetails.captureAs != UseSmileIDSampleCaptureAs.Passport,
-    allowSkipBack = snapshot.allowSkipBack,
-    captureMode = snapshot.captureMode.toSdk(),
-    allowGalleryUpload = snapshot.galleryUpload,
-)
+internal fun documentOptionsFor(snapshot: FlowLaunchSnapshot): DocumentOptions {
+    // Residency is a passport and then the visa page the SDK always captures, and it rejects a skippable back.
+    val residency = snapshot.product == UseSmileIDSampleProduct.ResidencyDocumentVerification
+    val passport = residency || snapshot.idDetails.captureAs == UseSmileIDSampleCaptureAs.Passport
+    return DocumentOptions(
+        documentType = if (residency) DocumentType.Passport else documentTypeFor(snapshot.idDetails),
+        // The SDK's passport preset declares a back side; the sample captures a passport front only.
+        captureBothSides = snapshot.captureBothSides && !passport,
+        allowSkipBack = snapshot.allowSkipBack && !residency,
+        captureMode = snapshot.captureMode.toSdk(),
+        allowGalleryUpload = snapshot.galleryUpload,
+    )
+}
 
 /** The "Capture as" mapping from `spec/catalogue-rules.json` captureAs: the SDK's own type, nothing read from the API. */
 internal fun documentTypeFor(details: UseSmileIDSampleIdDetails): DocumentType = when (details.captureAs) {
@@ -275,13 +292,15 @@ private val UseSmileIDSampleProduct.jobType: JobType
         UseSmileIDSampleProduct.SmartSelfieAuth -> JobType.SmartSelfieAuthentication
         UseSmileIDSampleProduct.DocumentVerification -> JobType.DocumentVerification
         UseSmileIDSampleProduct.EnhancedDocumentVerification -> JobType.EnhancedDocumentVerification
+        UseSmileIDSampleProduct.ResidencyDocumentVerification -> JobType.ResidencyDocumentVerification
         UseSmileIDSampleProduct.BiometricKyc -> JobType.BiometricKyc
         UseSmileIDSampleProduct.EnhancedKyc -> JobType.EnhancedKyc
     }
 
 private val UseSmileIDSampleProduct.needsDocumentCapture: Boolean
     get() = this == UseSmileIDSampleProduct.DocumentVerification ||
-        this == UseSmileIDSampleProduct.EnhancedDocumentVerification
+        this == UseSmileIDSampleProduct.EnhancedDocumentVerification ||
+        this == UseSmileIDSampleProduct.ResidencyDocumentVerification
 
 // The same host the Settings privacy row opens.
 private val PRIVACY_POLICY_URL = URL("https://smile.id/privacy-policy")

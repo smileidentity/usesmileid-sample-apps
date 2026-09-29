@@ -48,6 +48,14 @@ enum class UseSmileIDSampleProduct(
         UseSmileIDSampleProductSection.Verifications,
         needsIdDetails = true,
     ),
+    ResidencyDocumentVerification(
+        "residencyDocumentVerification",
+        "Residency Document Verification",
+        "Residency Doc.",
+        "Verification",
+        UseSmileIDSampleProductSection.Verifications,
+        needsIdDetails = true,
+    ),
     BiometricKyc(
         "biometricKyc",
         "Biometric KYC",

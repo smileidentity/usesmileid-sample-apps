@@ -63,6 +63,7 @@ class FlowJourneyStepsTest {
         listOf(
             UseSmileIDSampleProduct.DocumentVerification,
             UseSmileIDSampleProduct.EnhancedDocumentVerification,
+            UseSmileIDSampleProduct.ResidencyDocumentVerification,
         ).forEach { product ->
             val on = journeyStepsFor(snapshot(product))
             assertEquals("$product should preview both captures", 2, on.count { it == FlowJourneyStep.Preview })
@@ -72,10 +73,11 @@ class FlowJourneyStepsTest {
     }
 
     @Test
-    fun `both document products capture the document first unless selfie first is on`() {
+    fun `every document product captures the document first unless selfie first is on`() {
         listOf(
             UseSmileIDSampleProduct.DocumentVerification,
             UseSmileIDSampleProduct.EnhancedDocumentVerification,
+            UseSmileIDSampleProduct.ResidencyDocumentVerification,
         ).forEach { product ->
             val captures = { selfieFirst: Boolean ->
                 journeyStepsFor(snapshot(product).copy(selfieFirst = selfieFirst))

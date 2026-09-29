@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import com.smileid.designsystem.SmileDimens
@@ -15,7 +16,7 @@ import com.smileid.designsystem.smileProductHues
 import com.usesmileid.sampleapps.ui.R
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 
-/** The design set's icons, named after the ids in `spec/`. */
+/** The design set's icons, named after the ids in `spec/`; an Unspecified [tint] draws a two-tone mark in its own colours. */
 @Composable
 fun UseSmileIDSampleIcon(
     @DrawableRes id: Int,
@@ -27,7 +28,7 @@ fun UseSmileIDSampleIcon(
     // Decorative: every caller pairs it with its own label.
     contentDescription = null,
     modifier = modifier.size(size),
-    colorFilter = ColorFilter.tint(tint),
+    colorFilter = if (tint.isSpecified) ColorFilter.tint(tint) else null,
 )
 
 @Composable
@@ -68,6 +69,7 @@ val UseSmileIDSampleProduct.iconRes: Int?
         UseSmileIDSampleProduct.DocumentVerification -> R.drawable.sample_ic_document_verification
         // One mark for both document products, told apart by the card's hue — design/icons/README.md.
         UseSmileIDSampleProduct.EnhancedDocumentVerification -> R.drawable.sample_ic_document_verification
+        UseSmileIDSampleProduct.ResidencyDocumentVerification -> R.drawable.sample_ic_residency_document_verification
         UseSmileIDSampleProduct.BiometricKyc -> R.drawable.sample_ic_biometric_kyc
         UseSmileIDSampleProduct.EnhancedKyc -> R.drawable.sample_ic_enhanced_kyc
     }

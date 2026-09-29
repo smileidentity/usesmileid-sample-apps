@@ -204,6 +204,7 @@ class UseSmileIDSampleTokenDecoderTest {
         listOf(
             UseSmileIDSampleProduct.DocumentVerification,
             UseSmileIDSampleProduct.EnhancedDocumentVerification,
+            UseSmileIDSampleProduct.ResidencyDocumentVerification,
         ).forEach { product ->
             assertTrue(bound.bindsIdDetails(product))
             // Document Verification's own validator accepts a null idType, but the form is where the
