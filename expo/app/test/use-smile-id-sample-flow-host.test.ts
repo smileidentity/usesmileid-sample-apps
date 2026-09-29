@@ -159,7 +159,6 @@ describe('what the SDK is handed', () => {
     }
   });
 
-  // The regression check for the import that took the whole JS bundle down on Android.
   it('a passport is captured front only', () => {
     expect(smileIDSampleCapturesBothSides('PASSPORT')).toBe(false);
   });
@@ -170,6 +169,7 @@ describe('what the SDK is handed', () => {
     expect(smileIDSampleCapturesBothSides(undefined)).toBe(true);
   });
 
+  // The regression check for the import that took the whole JS bundle down on Android.
   it('requires only the platform whose analyzer it asks for', () => {
     jest.isolateModules(() => {
       const vision = jest.requireMock('@smileid/usesmileid_vision_face');
