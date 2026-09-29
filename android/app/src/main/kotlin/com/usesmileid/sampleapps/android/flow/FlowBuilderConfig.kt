@@ -166,7 +166,7 @@ private fun ScreensBuilder.journeyFor(snapshot: FlowLaunchSnapshot) {
                 captureType = CaptureType.DOCUMENT
                 document {
                     documentType = snapshot.idDetails.idType.toDocumentType()
-                    captureBothSides = true
+                    captureBothSides = snapshot.idDetails.idType.capturesBothSides
                     allowSkipBack = true
                 }
             }
@@ -225,6 +225,10 @@ private fun UseSmileIDSampleIdType?.toDocumentType(): DocumentType = when (this)
     null -> DocumentType.GenericDocument()
     else -> DocumentType.GenericDocument(displayName = label)
 }
+
+/** The SDK's passport preset declares a back side; the sample captures a passport front only. */
+internal val UseSmileIDSampleIdType?.capturesBothSides: Boolean
+    get() = this != UseSmileIDSampleIdType.Passport
 
 private val UseSmileIDSampleProduct.jobType: JobType
     get() = when (this) {

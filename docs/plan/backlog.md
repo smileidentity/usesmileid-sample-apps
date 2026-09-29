@@ -129,7 +129,7 @@ no reference host shows.
 | Field | Default | Sample today |
 |---|---|---|
 | `documentType` | `null` | derived from the ID type, never chosen |
-| `captureBothSides` | `true` | hard-coded `true` |
+| `captureBothSides` | `true` | `true`, except `false` for a passport |
 | `allowSkipBack` | `false` | `true` |
 | `captureMode` | `AutoCaptureWithManualFallback(10s)` | never set |
 | `allowGalleryUpload` | `false` | never set |
