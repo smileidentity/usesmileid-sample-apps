@@ -109,7 +109,7 @@ document is the checked row of the Capture as sheet, that the Green Book row and
 "… preset · matches document" on the trigger, and that the Green Book preset, chosen explicitly, is what
 the SDK's instructions then name. Which document shapes the SDK refuses is proven by unit tests instead:
 Match document on every fixture row of both document products goes through the SDK's job-type rules on
-iOS, Flutter and Expo. The Android release pinned here keeps those rules out of its public API, so
+iOS, Flutter and Expo. The Android SDK pinned here ships those rules minified, outside its public API, so
 Android asserts the sample's own rule: Match never resolves to the Green Book on Enhanced Document
 Verification.
 

@@ -22,8 +22,8 @@ import org.junit.Test
 import java.io.File
 
 /**
- * Match document on every fixture row of both document products. The pinned SDK release keeps its job-type rules
- * out of public API, so the refusal is asserted as the sample's rule: the Green Book never reaches Enhanced
+ * Match document on every fixture row of both document products. The pinned SDK ships its job-type rules minified,
+ * outside public API, so the refusal is asserted as the sample's rule: the Green Book never reaches Enhanced
  * Document Verification.
  */
 class MatchDocumentTest {
