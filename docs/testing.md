@@ -104,6 +104,15 @@ UI gains a case, never because the API changed. Android and iOS bundle it straig
 asset list and Metro cannot reach outside their app, so each ships a copy, and
 `scripts/sync_catalogue_fixture.py --check` fails `verify.sh` if a copy drifts.
 
+**Capture as matches the document by default.** Each platform's document-options flow asserts that Match
+document is the checked row of the Capture as sheet, that the Green Book row and a passport row each read
+"… preset · matches document" on the trigger, and that the Green Book preset, chosen explicitly, is what
+the SDK's instructions then name. Which document shapes the SDK refuses is proven by unit tests instead:
+Match document on every fixture row of both document products goes through the SDK's job-type rules on
+iOS, Flutter and Expo. The Android release pinned here keeps those rules out of its public API, so
+Android asserts the sample's own rule: Match never resolves to the Green Book on Enhanced Document
+Verification.
+
 **What the capture options send is checked by hand.** The public flows stop at the capture screen, so
 they never see a submission. On an Android debug build a probe on the SDK's public interceptor hook logs
 `auto_capture_enabled`, `capture_both_sides`, `allow_skip_back` and `allow_gallery_upload` from the submission metadata,
