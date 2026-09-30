@@ -7,9 +7,12 @@ import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import '../flow/use_smileid_sample_flow_tokens.dart';
+import '../flow/use_smileid_sample_token_binding_rules.dart';
 import '../scan/use_smileid_sample_qr_scanner.dart';
 import '../state/use_smileid_sample_session_providers.dart';
+import '../use_smileid_sample_journey.dart';
 import '../use_smileid_sample_routes.dart';
+import 'use_smileid_sample_settings_tab.dart';
 
 /// The token-scanning route.
 class UseSmileIDSampleScanTokenTab extends ConsumerStatefulWidget {
@@ -26,10 +29,20 @@ class _UseSmileIDSampleScanTokenTabState
   /// The run this visit was sent to resume.
   late final UseSmileIDSampleRunIntent? _resuming;
 
+  /// Whether the session had ended when this visit began, which decides the caption.
+  late final bool _arrivedEnded;
+
+  /// False until the push lands, so a second tap on the nav bar's Token button cannot land on Simulate.
+  bool _settled = false;
+
   @override
   void initState() {
     super.initState();
     _resuming = ref.read(useSmileIDSampleInterruptedRunProvider);
+    _arrivedEnded = useSmileIDSampleSessionEnded(
+      ref.read(useSmileIDSampleSessionProvider),
+      ref.read(useSmileIDSampleWallClockProvider)(),
+    );
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => ref
           .read(useSmileIDSampleInterruptedRunProvider.notifier)
@@ -64,7 +77,52 @@ class _UseSmileIDSampleScanTokenTabState
     if (!mounted) {
       return;
     }
+    final UseSmileIDSampleProduct? product = UseSmileIDSampleProduct.values
+        .where((UseSmileIDSampleProduct it) => it.id == resuming.productId)
+        .firstOrNull;
+    if (resuming.resumeAt == UseSmileIDSampleResumePoint.firstStep &&
+        product != null) {
+      unawaited(
+        router.pushReplacement(
+          UseSmileIDSampleJourney.firstStepFor(
+            product,
+            useSmileIDSampleLiveBindings(ref),
+          ),
+        ),
+      );
+      return;
+    }
     router.go(UseSmileIDSampleRoutes.sdkFlow(resuming.productId));
+  }
+
+  /// The route's own enter animation, watched once for its end.
+  Animation<double>? _entering;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_settled || _entering != null) {
+      return;
+    }
+    final Animation<double>? animation = ModalRoute.of(context)?.animation;
+    if (animation == null || animation.isCompleted) {
+      _settled = true;
+      return;
+    }
+    _entering = animation..addStatusListener(_onRouteAnimation);
+  }
+
+  void _onRouteAnimation(AnimationStatus status) {
+    if (status.isCompleted && mounted) {
+      _entering?.removeStatusListener(_onRouteAnimation);
+      setState(() => _settled = true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _entering?.removeStatusListener(_onRouteAnimation);
+    super.dispose();
   }
 
   void _simulate(
@@ -105,7 +163,17 @@ class _UseSmileIDSampleScanTokenTabState
           child: UseSmileIDSampleScanTokenScreen(
             reason: _resuming == null
                 ? null
-                : UseSmileIDSampleScanReason.sessionEnded,
+                : _arrivedEnded
+                ? UseSmileIDSampleScanReason.sessionEnded
+                : UseSmileIDSampleScanReason.sessionNeeded,
+            acceptsTaps: _settled,
+            // External, not in-app: the Portal sign-in lives in the browser.
+            onOpenPortal: () => unawaited(
+              useSmileIDSampleOpenLink(
+                UseSmileIDSampleScanTokenScreen.portalUrl,
+                inApp: false,
+              ),
+            ),
             onBack: _back,
             onLink: (UseSmileIDSampleTokenSession session) =>
                 unawaited(_link(session)),

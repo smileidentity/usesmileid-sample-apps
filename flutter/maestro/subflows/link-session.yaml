@@ -1,0 +1,22 @@
+# Links a fifteen-minute simulated session unless one is live: every run needs a token before its first step.
+appId: ${APP_ID}
+---
+- runFlow:
+    when:
+      notVisible:
+        id: "sample_session_card"
+    commands:
+      - tapOn:
+          id: "sample_nav_token"
+          retryTapIfNoChange: true
+      - runFlow: grant-camera.yaml
+      - extendedWaitUntil:
+          visible:
+            id: "sample_scan_token_screen"
+          timeout: 30000
+      - tapOn:
+          id: "sample_token_simulate"
+      - extendedWaitUntil:
+          visible:
+            id: "sample_session_card"
+          timeout: 30000

@@ -12,6 +12,7 @@ import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_forms.dar
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_app.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
+import 'support/use_smileid_sample_test_session.dart';
 
 /// Status-bar contrast in both presentations, whatever the device's brightness.
 void main() {
@@ -46,6 +47,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          ...useSmileIDSampleLinkedSessionOverrides(),
           useSmileIDSampleSettingsRepositoryProvider.overrideWithValue(
             settings,
           ),

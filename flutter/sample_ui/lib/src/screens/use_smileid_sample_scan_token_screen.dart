@@ -29,7 +29,10 @@ typedef UseSmileIDSampleViewfinder =
 /// Why the scanner opened.
 enum UseSmileIDSampleScanReason {
   /// The expiry gate sent a run here.
-  sessionEnded('Token session ended. Scan to continue where you left off.');
+  sessionEnded('Token session ended. Scan to continue where you left off.'),
+
+  /// A product tap with no live session sent a run here.
+  sessionNeeded('Scan a token to start this verification.');
 
   const UseSmileIDSampleScanReason(this.caption);
 
@@ -50,8 +53,15 @@ class UseSmileIDSampleScanTokenScreen extends StatefulWidget {
     this.onTorchToggle,
     this.viewfinder,
     this.nowMillis,
+    this.onOpenPortal,
+    this.acceptsTaps = true,
     super.key,
   });
+
+  /// Where a real token comes from.
+  static final Uri portalUrl = Uri.parse(
+    'https://portal.usesmileid.com/security-settings',
+  );
 
   /// Leaves without linking.
   final VoidCallback onBack;
@@ -84,6 +94,12 @@ class UseSmileIDSampleScanTokenScreen extends StatefulWidget {
 
   /// A fixed clock for a golden.
   final int Function()? nowMillis;
+
+  /// Opens [portalUrl]; the host owns the browser.
+  final VoidCallback? onOpenPortal;
+
+  /// False while the screen is still arriving, so a second tap on whatever opened it cannot land on the sheet.
+  final bool acceptsTaps;
 
   @override
   State<UseSmileIDSampleScanTokenScreen> createState() =>
@@ -227,7 +243,11 @@ class _UseSmileIDSampleScanTokenScreenState
                 _rejection = null;
               }),
               onPaste: _paste,
-              onLink: () => _judge(_token, fromField: true),
+              onLink: () {
+                if (widget.acceptsTaps) {
+                  _judge(_token, fromField: true);
+                }
+              },
               onExpandToggle: () => setState(() => _expanded = !_expanded),
               onSpanSelect: (UseSmileIDSampleSimulatedSpan span) =>
                   setState(() => _span = span),
@@ -235,8 +255,11 @@ class _UseSmileIDSampleScanTokenScreenState
                   setState(() => _environment = environment),
               onBindingsChanged: (UseSmileIDSampleSimulatedBindings bindings) =>
                   setState(() => _bindings = bindings),
-              onSimulate: () =>
-                  widget.onSimulate(_span, _bindings, _environment),
+              onSimulate: () {
+                if (widget.acceptsTaps) {
+                  widget.onSimulate(_span, _bindings, _environment);
+                }
+              },
             ),
           ],
         ),
@@ -266,6 +289,8 @@ class _UseSmileIDSampleScanTokenScreenState
             ),
             const SizedBox(height: SmileDimens.spacingSm),
             _copy(caption, _captionStyle, colors.textMuted),
+            const SizedBox(height: SmileDimens.spacingSm),
+            _portalLine(_captionStyle, colors.textMuted, colors),
           ],
         ),
       ),
@@ -325,6 +350,12 @@ class _UseSmileIDSampleScanTokenScreenState
                   _captionStyle.copyWith(shadows: overCamera),
                   colors.textInverse,
                 ),
+                const SizedBox(height: SmileDimens.spacingSm),
+                _portalLine(
+                  _captionStyle.copyWith(shadows: overCamera),
+                  colors.textInverse,
+                  colors,
+                ),
               ] else
                 UseSmileIDSampleScanStatus(
                   state: _scan,
@@ -339,6 +370,40 @@ class _UseSmileIDSampleScanTokenScreenState
       ],
     );
   }
+
+  /// A phrase rather than a URL, which breaks mid-word on the narrowest phone at the largest type.
+  Widget _portalLine(
+    TextStyle style,
+    Color color,
+    UseSmileIDSampleColors colors,
+  ) => Semantics(
+    identifier: UseSmileIDSampleTestIds.tokenPortalLink,
+    link: true,
+    child: GestureDetector(
+      onTap: widget.onOpenPortal,
+      child: SizedBox(
+        width: double.infinity,
+        child: Text.rich(
+          TextSpan(
+            children: <InlineSpan>[
+              const TextSpan(text: 'Get a v3 token from the '),
+              TextSpan(
+                text: 'Smile ID Portal',
+                style: TextStyle(
+                  color: colors.textLink,
+                  decoration: TextDecoration.underline,
+                  decorationColor: colors.textLink,
+                ),
+              ),
+              const TextSpan(text: ', under Security settings.'),
+            ],
+          ),
+          textAlign: TextAlign.center,
+          style: style.copyWith(color: color),
+        ),
+      ),
+    ),
+  );
 
   Widget _copy(String text, TextStyle style, Color color) => SizedBox(
     width: double.infinity,

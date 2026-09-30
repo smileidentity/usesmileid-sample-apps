@@ -10,10 +10,32 @@ appId: ${APP_ID}
       LINK: "usesmileid-sample-flutter://?catalogue=fixture"
       LANDS_ON: "sample_products_screen"
 
+# No session: a product tap opens the scanner, and the scan resumes at the product's first step.
 - tapOn:
-    id: "sample_nav_token"
+    id: "sample_product_card_smartSelfieEnrollment"
     retryTapIfNoChange: true
 - runFlow: subflows/grant-camera.yaml
+- extendedWaitUntil:
+    visible:
+      id: "sample_scan_token_screen"
+    timeout: 30000
+- assertVisible: ".*Scan a token to start this verification.*"
+- assertVisible:
+    id: "sample_token_portal_link"
+- tapOn:
+    id: "sample_token_simulate"
+- extendedWaitUntil:
+    visible:
+      id: "sample_user_details_screen"
+    timeout: 30000
+- back
+- extendedWaitUntil:
+    visible:
+      id: "sample_products_screen"
+    timeout: 30000
+
+- tapOn:
+    id: "sample_nav_token"
 - extendedWaitUntil:
     visible:
       id: "sample_scan_token_screen"
@@ -89,8 +111,29 @@ appId: ${APP_ID}
     visible:
       id: "sample_session_ended_banner"
     timeout: 30000
+# An ended session sends the product tap to the scanner, before any form.
 - tapOn:
     id: "sample_product_card_smartSelfieEnrollment"
+- extendedWaitUntil:
+    visible:
+      id: "sample_scan_token_screen"
+    timeout: 30000
+- assertVisible: ".*Token session ended.*"
+
+- tapOn:
+    id: "sample_token_manual_entry"
+- inputText: "not-a-jwt"
+- hideKeyboard
+- assertVisible:
+    id: "sample_scan_token_screen"
+- tapOn: "Link token"
+- assertVisible: ".*three dot-separated base64url segments.*"
+
+# A relink resumes the run at its first step, then the form reaches the SDK.
+- tapOn: "SIMULATED SCAN"
+- tapOn: "8h"
+- tapOn:
+    id: "sample_token_simulate"
 - extendedWaitUntil:
     visible:
       id: "sample_user_details_screen"
@@ -114,25 +157,6 @@ appId: ${APP_ID}
 - runFlow: subflows/keep-nothing.yaml
 - tapOn:
     id: "sample_user_details_continue"
-- extendedWaitUntil:
-    visible:
-      id: "sample_scan_token_screen"
-    timeout: 30000
-- assertVisible: ".*Token session ended.*"
-
-- tapOn:
-    id: "sample_token_manual_entry"
-- inputText: "not-a-jwt"
-- hideKeyboard
-- assertVisible:
-    id: "sample_scan_token_screen"
-- tapOn: "Link token"
-- assertVisible: ".*three dot-separated base64url segments.*"
-
-- tapOn: "SIMULATED SCAN"
-- tapOn: "8h"
-- tapOn:
-    id: "sample_token_simulate"
 - extendedWaitUntil:
     visible: "Deny"
     timeout: 30000

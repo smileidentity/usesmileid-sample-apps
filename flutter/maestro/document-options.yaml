@@ -8,6 +8,7 @@ appId: ${APP_ID}
     env:
       LINK: "usesmileid-sample-flutter://?probes=true&catalogue=fixture"
       LANDS_ON: "sample_products_screen"
+- runFlow: subflows/link-session.yaml
 
 - tapOn:
     id: "sample_product_card_documentVerification"

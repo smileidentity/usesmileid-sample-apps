@@ -9,6 +9,7 @@ import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_forms.dar
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 
 import 'support/use_smileid_sample_catalogue_fixture.dart';
+import 'support/use_smileid_sample_test_session.dart';
 
 /// The two pre-flow forms, their two picker sheets, and the order a product tap starts.
 void main() {
@@ -21,7 +22,10 @@ void main() {
   Future<void> pumpAt(WidgetTester tester, String location) async {
     await tester.pumpWidget(
       ProviderScope(
-        overrides: <Override>[useSmileIDSampleFixtureCatalogueOverride()],
+        overrides: <Override>[
+          useSmileIDSampleFixtureCatalogueOverride(),
+          ...useSmileIDSampleLinkedSessionOverrides(),
+        ],
         child: MaterialApp.router(
           theme: UseSmileIDSampleTheme.light(),
           routerConfig: useSmileIDSampleRouter(initialLocation: location),

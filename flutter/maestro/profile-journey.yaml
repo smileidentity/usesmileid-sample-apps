@@ -8,6 +8,7 @@ appId: ${APP_ID}
       LINK: "usesmileid-sample-flutter://?noticeWindow=60&catalogue=fixture"
       LANDS_ON: "sample_products_screen"
 - runFlow: subflows/sign-out.yaml
+- runFlow: subflows/link-session.yaml
 
 - tapOn:
     id: "sample_product_card_smartSelfieEnrollment"
@@ -125,6 +126,7 @@ appId: ${APP_ID}
 - back
 
 - runFlow: subflows/sign-out.yaml
+- runFlow: subflows/link-session.yaml
 - tapOn:
     id: "sample_product_card_smartSelfieEnrollment"
 - assertVisible:
