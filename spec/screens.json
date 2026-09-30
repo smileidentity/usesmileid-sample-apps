@@ -3,8 +3,6 @@
   "designVersion": "2026-08-12",
   "designFile": {
     "name": "Product Enhancements",
-    "fileKey": "CT3oeBfk8uuyvRmGkRJ71D",
-    "url": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements",
     "boards": {
       "01": {
         "node": "5206-2304",
@@ -49,7 +47,6 @@
     }
   },
   "description": "Canonical screens, each with its design states. 39 board frames collapse to 14 screens: most frames are STATES of one screen, and modelling them that way is what keeps four implementations aligned. `owner` decides who builds it — `sample` means this repo's sample-ui; `sdk` means the SDK renders it inside its own flow and we must not rebuild it.",
-  "urlTemplate": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id={node}",
   "screens": [
     {
       "id": "products",
@@ -107,7 +104,6 @@
         "sample_session_countdown",
         "sample_session_ended_banner"
       ],
-      "canonicalLayoutUrl": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5447-1701",
       "ruling": "DECIDED 2026-08-13: build the EXPRESSIVE GRID (5206-4037). SUPERSEDED 2026-08-24 by 'use Figma as truth' — the canonical layout is now 5447-1701, with 5487-1351 its light twin. The 2026-08-13 ruling is kept rather than deleted because it is why the app was built on 5206-4037 at all. DECIDED 2026-08-24: the header no longer renders the environment chip — node 5447:1705 keeps the profile-env instance in the frame with hidden=true. The component and its sample_env_chip id survive in components.json and test-ids.json; the environment is a property of the session token now, and the result card is what publishes it. The `production` screen state goes with it: no production state is reachable from the app.",
       "designAsks": [
         "normalise the card glyph boxes in Figma: five export at 21x21 and Biometric at 13.44x12.95 inside the same 40dp tile (Android already ships all six at 21x21, so this is a design-file task)",
@@ -117,7 +113,6 @@
         "re-read the Verifications board's job rows: three products' card tints moved and the row's icon/tile pair still describes the old colour (see productHues.rowPairStale)"
       ],
       "canonicalLayoutLight": "5487-1351",
-      "canonicalLayoutLightUrl": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5487-1351",
       "designVersion": "2026-08-25",
       "frameOmitsTheAvatar": "Neither frame draws the header avatar button and the app KEEPS it (plan §7.5): its absence is a drawing omission, not a removal, and without it the screen has no profile switch at all. sample_profile_avatar_button keeps its target and profiles.yaml keeps working. Recorded here so the next conformance pass does not report it as an extra.",
       "pageBackgroundOpenQuestion": "OPEN 2026-08-25. Both frames paint the PAGE with `Card BG` and the nav pill with `Main BG` — the opposite of what those two variables are named for, and the opposite of what the app ships (page color.background, pill color.surface). The separation is the same one step either way, just inverted. The pill cannot move on its own: with the page left as it is, pill and page become the same colour and the bar loses its edge on every tab. Moving the page instead repaints Verifications and Settings, which this frame does not draw. Needs a product decision; until then the app keeps its current mapping and the visual refresh ships without the pill-fill change. See",
@@ -885,7 +880,6 @@
       "id": "smileToCaptureMapping",
       "question": "Settings CAPTURE has two rows: 'Smile to capture / Passive capture — smile detection' and 'Agent mode'. Agent mode is SelfieCaptureConfig.allowAgentMode. What does 'Smile to capture' set? enableEnhancedLiveness inverted, or something else?",
       "blocks": "the CAPTURE section and any flow it configures",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2898",
       "recommendation": "Get an SDK answer rather than inferring; the two switches must not silently set the same field.",
       "status": "DECIDED 2026-08-13 — RESOLVED: ON → enableEnhancedLiveness = false. SUPERSEDED 2026-08-25: node 5206:2898 renames the row to 'Enhanced SmartSelfie™ / Face capture uses head-turns' and draws it ON, so the mapping is direct rather than inverted and the default capture behaviour is the head-turn challenge. The question is answered and closed; the current mapping lives in components.json settingsToSdkMapping and the renamed id in test-ids.json."
     },
@@ -893,7 +887,6 @@
       "id": "softBadgeVariant",
       "question": "The design uses soft tinted status pills for all four statuses; the design system's badge tokens are saturated. Add soft variants to the design system, or change the design?",
       "blocks": "StatusBadge",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2410",
       "recommendation": "Add soft variants to the system — the design applies them consistently across all four roles, so this is a system gap rather than a one-off.",
       "status": "DECIDED 2026-08-13 — RESOLVED: keep the design's soft pills; add soft variants to the design system."
     },
@@ -901,28 +894,24 @@
       "id": "docvIdFormVariant",
       "question": "The ID-details form is only drawn for Biometric KYC (country / ID type / ID number). What does it look like for Document Verification and Enhanced Document Verification — country plus document type, no ID number?",
       "blocks": "kycIdForm for the document products and Enhanced KYC",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2797",
       "status": "DECIDED 2026-08-13 — RESOLVED: one identical form for every product needing details — Country, ID type, ID number — including both document products and Enhanced KYC. Simplest to build and test."
     },
     {
       "id": "profileAndProductHues",
       "question": "Product cards and profile avatars both use per-item colours (5 product hues, 3 profile hues observed). Which decorative token does each product and each profile get?",
       "blocks": "ProductCard and Avatar rendering identically across four platforms",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-4037",
       "status": "DECIDED 2026-08-13 — DECIDED: the designer supplies the mapping list once; stored in design-tokens.json. Still awaiting the list."
     },
     {
       "id": "labelCopy",
       "question": "The products list shows 'SmartSelfie Authentication' in some frames and 'SmartSelfie Auth' in others (the grid uses 'SmartSelfie Auth'). Which string ships?",
       "blocks": "product labels and their derived test ids",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-4037",
       "status": "DECIDED 2026-08-13 — RESOLVED: 'SmartSelfie Authentication' everywhere, matching the SDK's job-type name. Note it wraps to two lines on the grid card."
     },
     {
       "id": "switchProfileTrigger",
       "question": "Which element on the products screen opens the Switch profile sheet — the environment chip, or something else? The recording shows the sheet but not the trigger.",
       "blocks": "products screen wiring",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2348",
       "status": "DECIDED 2026-08-13 — RESOLVED: add a header AVATAR BUTTON next to the environment chip; it opens the sheet. The chip becomes display-only. Small design addition needed."
     },
     {
