@@ -79,6 +79,9 @@ struct UseSmileIDSampleDestination: View {
         app.ensureCatalogue(Self.product(productId))
         Self.product(productId).map { app.idDetails.keepDocumentListed(on: $0) }
       }
+      .onChange(of: app.session?.id) { _ in
+        app.ensureCatalogue(Self.product(productId))
+      }
     case .verificationDetails(let jobId):
       UseSmileIDSampleVerificationDetailsHost(jobId: jobId)
         .navigationBarHidden(true)
