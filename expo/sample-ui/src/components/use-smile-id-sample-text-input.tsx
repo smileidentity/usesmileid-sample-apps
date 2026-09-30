@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react';
+import { smileIDSampleAutofill } from './use-smile-id-sample-key-value-edit-row';
 import {
   StyleSheet,
   Text,
@@ -101,6 +102,7 @@ export const UseSmileIDSampleTextInput = ({
           secureTextEntry={masked}
           autoCorrect={masked ? false : (autoCorrect ?? true)}
           autoCapitalize={autoCapitalize}
+          importantForAutofill={smileIDSampleAutofill(keyboardType)}
           keyboardType={keyboardType}
           selectionColor={theme.colors.input.borderFocus}
           onFocus={() => setFocused(true)}

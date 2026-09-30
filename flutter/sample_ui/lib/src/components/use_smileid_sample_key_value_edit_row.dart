@@ -124,6 +124,9 @@ class _UseSmileIDSampleKeyValueEditRowState
                       ),
                       autocorrect:
                           widget.keyboardType != TextInputType.emailAddress,
+                      autofillHints: useSmileIDSampleAutofillHints(
+                        widget.keyboardType,
+                      ),
                       maxLines: 1,
                       textAlign: TextAlign.end,
                       cursorColor: colors.primary,
@@ -177,3 +180,10 @@ extension UseSmileIDSampleUserFieldKeyboard on UseSmileIDSampleUserField {
     UseSmileIDSampleUserField.phone => TextInputType.phone,
   };
 }
+
+/// None for an email or phone: their keyboards read as a sign-in form, and Android then offers to save a password.
+Iterable<String>? useSmileIDSampleAutofillHints(TextInputType? keyboardType) =>
+    keyboardType == TextInputType.emailAddress ||
+        keyboardType == TextInputType.phone
+    ? null
+    : const <String>[];

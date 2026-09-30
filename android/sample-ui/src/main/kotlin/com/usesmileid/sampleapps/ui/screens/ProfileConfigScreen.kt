@@ -32,6 +32,7 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleContactRules
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserField
+import androidx.compose.ui.platform.LocalAutofillManager
 
 /** A profile's name and user-details defaults, which is what seeds the Consent Details Form for its jobs. */
 @Composable
@@ -56,6 +57,7 @@ fun ProfileConfigScreen(
     /** Null hides the row, for a host that offers no delete. */
     onDelete: (() -> Unit)? = null,
 ) {
+    val autofill = LocalAutofillManager.current
     var confirmingDelete by rememberSaveable { mutableStateOf(false) }
     Column(
         modifier = modifier
@@ -130,7 +132,10 @@ fun ProfileConfigScreen(
         }
         UseSmileIDSampleButton(
             text = if (isActive) "Save changes" else "Use this profile",
-            onClick = onSave,
+            onClick = {
+                autofill?.cancel()
+                onSave()
+            },
             enabled = (changed || !isActive) && defaults.contactProblem == null,
             modifier = Modifier.padding(SmileDimens.spacingMd),
             testId = UseSmileIDSampleTestIds.PROFILE_CONFIG_SAVE,

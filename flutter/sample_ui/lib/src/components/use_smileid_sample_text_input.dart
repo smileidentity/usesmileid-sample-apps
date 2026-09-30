@@ -198,6 +198,7 @@ class _UseSmileIDSampleTextInputState extends State<UseSmileIDSampleTextInput> {
           !widget.masked && widget.keyboardType != TextInputType.emailAddress,
       enableSuggestions: !widget.masked,
       textCapitalization: useSmileIDSampleCapitalization(widget.keyboardType),
+      autofillHints: useSmileIDSampleAutofillHints(widget.keyboardType),
       keyboardType: widget.masked
           ? TextInputType.visiblePassword
           : widget.keyboardType,

@@ -71,6 +71,7 @@ export const UseSmileIDSampleKeyValueEditRow = ({
         keyboardType={keyboardType}
         autoCapitalize={autoCapitalize}
         autoCorrect={autoCorrect}
+        importantForAutofill={smileIDSampleAutofill(keyboardType)}
         selectionColor={theme.colors.primary}
         style={[
           // iOS RN measures a field at its full line height where UITextField uses the font's, a point taller per row.
@@ -94,3 +95,7 @@ const styles = StyleSheet.create({
   // A Compose text field trims only the top of its line, so the bottom half-leading stays.
   keepBottomLeading: { marginBottom: 0 },
 });
+
+/// Off for an email or phone: their keyboards read as a sign-in form, and Android then offers to save a password.
+export const smileIDSampleAutofill = (keyboardType: KeyboardTypeOptions | undefined): 'no' | undefined =>
+  keyboardType === 'email-address' || keyboardType === 'phone-pad' ? 'no' : undefined;

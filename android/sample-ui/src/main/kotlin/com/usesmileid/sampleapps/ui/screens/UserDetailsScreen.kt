@@ -41,6 +41,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleContactRules
+import androidx.compose.ui.platform.LocalAutofillManager
 
 /** The Consent Details Form, shown for every product. Sample-owned and ahead of the flow, which is why it needs no SDK change. */
 @Composable
@@ -63,6 +64,7 @@ fun UserDetailsScreen(
     organisation: String = "",
     onOrganisationChange: (String) -> Unit = {},
 ) {
+    val autofill = LocalAutofillManager.current
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -177,7 +179,10 @@ fun UserDetailsScreen(
         }
         UseSmileIDSampleButton(
             text = "Continue",
-            onClick = onContinue,
+            onClick = {
+                autofill?.cancel()
+                onContinue()
+            },
             enabled = details.satisfies(requirement),
             modifier = Modifier.padding(SmileDimens.spacingMd),
             testId = UseSmileIDSampleTestIds.USER_DETAILS_CONTINUE,

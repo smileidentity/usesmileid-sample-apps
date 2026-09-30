@@ -11,6 +11,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTextInput
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleContactRules
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserField
+import androidx.compose.ui.platform.LocalAutofillManager
 
 /** A profile name, then the four user details that will live under it. Create needs the name and both required names. */
 @Composable
@@ -29,6 +30,7 @@ fun NewProfileSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val autofill = LocalAutofillManager.current
     val emailProblem = UseSmileIDSampleContactRules.problem(UseSmileIDSampleUserField.Email, email)
     val phoneProblem = UseSmileIDSampleContactRules.problem(UseSmileIDSampleUserField.Phone, phone)
     UseSmileIDSampleBottomSheet(
@@ -83,7 +85,11 @@ fun NewProfileSheet(
         )
         UseSmileIDSampleButton(
             text = "Create profile",
-            onClick = onSave,
+            onClick = {
+                // Email and phone keyboards read as a sign-in form, so without this Android offers to save a password.
+                autofill?.cancel()
+                onSave()
+            },
             enabled = name.isNotBlank() && firstName.isNotBlank() && lastName.isNotBlank() &&
                 emailProblem == null && phoneProblem == null,
             testId = UseSmileIDSampleTestIds.NEW_PROFILE_SAVE,
