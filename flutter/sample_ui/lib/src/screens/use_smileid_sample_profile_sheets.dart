@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import '../components/use_smileid_sample_avatar.dart';
 import '../components/use_smileid_sample_button.dart';
 import '../components/use_smileid_sample_glyphs.dart';
+import '../components/use_smileid_sample_key_value_edit_row.dart';
 import '../components/use_smileid_sample_profile_row.dart';
 import '../components/use_smileid_sample_section_label.dart';
 import '../components/use_smileid_sample_text_input.dart';
+import '../state/use_smileid_sample_contact_rules.dart';
 import '../state/use_smileid_sample_profiles.dart';
 import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
@@ -113,11 +115,12 @@ class _UseSmileIDSampleNewProfileSheetState
   late String _name = widget.initialName;
   late UseSmileIDSampleUserDetails _details = widget.initialDetails;
 
-  /// Email and phone never gate it, which is the whole of the sheet's validation.
+  /// The name and both required names, and no contact the server would refuse.
   bool get _canCreate =>
       _name.trim().isNotEmpty &&
       _details.firstName.trim().isNotEmpty &&
-      _details.lastName.trim().isNotEmpty;
+      _details.lastName.trim().isNotEmpty &&
+      _details.contactProblem == null;
 
   @override
   Widget build(BuildContext context) {
@@ -150,6 +153,17 @@ class _UseSmileIDSampleNewProfileSheetState
             onChanged: (String value) =>
                 setState(() => _details = field.apply(_details, value)),
             placeholder: field.label,
+            keyboardType: field.keyboardType,
+            isError:
+                UseSmileIDSampleContactRules.problem(
+                  field,
+                  field.valueOf(_details),
+                ) !=
+                null,
+            errorMessage: UseSmileIDSampleContactRules.problem(
+              field,
+              field.valueOf(_details),
+            ),
             testId: _sheetTestIds[field]!,
           ),
           const SizedBox(height: SmileDimens.spacingSm),

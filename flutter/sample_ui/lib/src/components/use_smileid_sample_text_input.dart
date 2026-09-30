@@ -4,6 +4,7 @@ import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
+import 'use_smileid_sample_key_value_edit_row.dart';
 
 /// A single-line field on the input tokens, decorated by hand so no Material chrome competes with
 /// the design's border, and error outranks focus so tapping back in does not hide the message.
@@ -193,8 +194,10 @@ class _UseSmileIDSampleTextInputState extends State<UseSmileIDSampleTextInput> {
       enabled: widget.enabled,
       onChanged: widget.onChanged,
       obscureText: widget.masked,
-      autocorrect: !widget.masked,
+      autocorrect:
+          !widget.masked && widget.keyboardType != TextInputType.emailAddress,
       enableSuggestions: !widget.masked,
+      textCapitalization: useSmileIDSampleCapitalization(widget.keyboardType),
       keyboardType: widget.masked
           ? TextInputType.visiblePassword
           : widget.keyboardType,
