@@ -136,17 +136,76 @@ void main() {
       );
     }
   });
+
+  test(
+    'residency captures both sides of a passport, whatever the form or settings hold',
+    () {
+      for (final UseSmileIDSampleCaptureAs? captureAs
+          in <UseSmileIDSampleCaptureAs?>[
+            null,
+            ...UseSmileIDSampleCaptureAs.values,
+          ]) {
+        final String reason =
+            captureAs?.id ?? UseSmileIDSampleCaptureAs.matchDocumentId;
+        final DocumentCaptureConfiguration document = _documentConfig(
+          UseSmileIDSampleIdDetails(
+            country: const UseSmileIDSampleCountry('NG', 'Nigeria'),
+            captureAsOverride: captureAs,
+          ),
+          product: UseSmileIDSampleProduct.residencyDocumentVerification,
+          captureBothSides: false,
+          allowSkipBack: true,
+        );
+        expect(document.documentType, DocumentType.passport, reason: reason);
+        expect(document.captureBothSides, isTrue, reason: reason);
+        expect(document.allowSkipBack, isFalse, reason: reason);
+      }
+    },
+  );
+
+  test(
+    'residency sends the passport, whatever document is left in the form',
+    () {
+      final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
+      useSmileIDSampleApplying(
+        builder,
+        _snapshot(
+          const UseSmileIDSampleIdDetails(
+            country: UseSmileIDSampleCountry('NG', 'Nigeria'),
+            document: UseSmileIDSampleDocument(
+              code: 'IDENTITY_CARD',
+              name: 'National ID',
+              hasBack: true,
+              format: 1,
+            ),
+          ),
+          product: UseSmileIDSampleProduct.residencyDocumentVerification,
+        ),
+      );
+      expect(builder.residencyDocumentVerificationParams?.country, 'NG');
+      expect(builder.residencyDocumentVerificationParams?.idType, 'PASSPORT');
+      expect(builder.documentVerificationParams, isNull);
+    },
+  );
 }
 
 /// The document step the builder is handed for [details].
 DocumentCaptureConfiguration _documentConfig(
   UseSmileIDSampleIdDetails details, {
+  UseSmileIDSampleProduct product =
+      UseSmileIDSampleProduct.documentVerification,
   bool captureBothSides = true,
+  bool allowSkipBack = false,
 }) {
   final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
   useSmileIDSampleApplying(
     builder,
-    _snapshot(details, captureBothSides: captureBothSides),
+    _snapshot(
+      details,
+      product: product,
+      captureBothSides: captureBothSides,
+      allowSkipBack: allowSkipBack,
+    ),
   );
   // The SDK says to inspect this, then marks it internal.
   // ignore: invalid_use_of_internal_member
@@ -207,13 +266,15 @@ String? _submittedIdType(UseSmileIDSampleIdDetails details) {
 
 UseSmileIDSampleFlowLaunchSnapshot _snapshot(
   UseSmileIDSampleIdDetails details, {
+  UseSmileIDSampleProduct product =
+      UseSmileIDSampleProduct.documentVerification,
   UseSmileIDSampleCaptureMode captureMode =
       UseSmileIDSampleCaptureMode.autoWithFallback,
   bool galleryUpload = false,
   bool captureBothSides = true,
   bool allowSkipBack = false,
 }) => UseSmileIDSampleFlowLaunchSnapshot(
-  product: UseSmileIDSampleProduct.documentVerification,
+  product: product,
   route: UseSmileIDSampleFlowRoute.fullscreen,
   userDetails: const UseSmileIDSampleUserDetails(
     firstName: 'Ada',

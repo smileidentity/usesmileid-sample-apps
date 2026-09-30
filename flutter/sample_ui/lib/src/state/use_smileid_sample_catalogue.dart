@@ -3,13 +3,16 @@ import 'dart:convert';
 import '../model/use_smileid_sample_product.dart';
 import 'use_smileid_sample_id_details.dart';
 
-/// Which list a product's form reads: the KYC products name an ID type, the document products a document.
+/// Which list a product's form reads: the KYC products name an ID type, the document products a document, residency a passport's country.
 enum UseSmileIDSampleCatalogueFamily {
   /// Biometric KYC and Enhanced KYC.
   kyc,
 
   /// Document Verification and Enhanced Document Verification.
   document,
+
+  /// Residency Document Verification, whose document is always a passport.
+  passport,
 }
 
 /// The family [product]'s form reads, or null for the products that ask for no ID details.
@@ -21,6 +24,8 @@ UseSmileIDSampleCatalogueFamily? useSmileIDSampleCatalogueFamily(
   UseSmileIDSampleProduct.documentVerification ||
   UseSmileIDSampleProduct.enhancedDocumentVerification =>
     UseSmileIDSampleCatalogueFamily.document,
+  UseSmileIDSampleProduct.residencyDocumentVerification =>
+    UseSmileIDSampleCatalogueFamily.passport,
   _ => null,
 };
 
@@ -173,6 +178,9 @@ class UseSmileIDSampleCatalogueData {
 
 /// The pure rules from `spec/catalogue-rules.json`, run on whatever the server returns.
 abstract final class UseSmileIDSampleCatalogueRules {
+  /// The one document code Residency Document Verification accepts, which the SDK enforces too.
+  static const String passport = 'PASSPORT';
+
   /// What the SDK fills in plus the two names the user-details form collects; anything else drops a type.
   static const Set<String> allowedRequiredFields = <String>{
     'country',
@@ -258,6 +266,16 @@ abstract final class UseSmileIDSampleCatalogueRules {
             .where(
               (UseSmileIDSampleCountry it) =>
                   documents(data.documents, it.code).isNotEmpty,
+            )
+            .toList();
+      case UseSmileIDSampleCatalogueFamily.passport:
+        return named
+            .where(
+              (UseSmileIDSampleCountry it) =>
+                  documents(data.documents, it.code).any(
+                    (UseSmileIDSampleDocument document) =>
+                        document.code == passport,
+                  ),
             )
             .toList();
       case UseSmileIDSampleCatalogueFamily.kyc:

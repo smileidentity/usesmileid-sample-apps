@@ -33,7 +33,7 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueFamily
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdNumberHint
 
-/** The ID-details form: an ID type and number for KYC, a document and how to capture it otherwise. */
+/** The ID-details form: an ID type and number for KYC, a document and how to capture it for the document products, the country alone for residency. */
 @Composable
 fun KycIdFormScreen(
     productLabel: String,
@@ -83,6 +83,7 @@ fun KycIdFormScreen(
                 when (family) {
                     UseSmileIDSampleCatalogueFamily.Kyc -> KycFields(details, countryList, onIdTypeClick, onIdNumberChange)
                     UseSmileIDSampleCatalogueFamily.Document -> DocumentFields(details, countryList, captureBothSides, onDocumentClick, onCaptureAsClick)
+                    UseSmileIDSampleCatalogueFamily.Passport -> Unit
                 }
             }
             UseSmileIDSampleFloatingTokenButton(

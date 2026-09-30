@@ -50,7 +50,7 @@ class UseSmileIDSampleContrastTest {
      * shipped near-black ink on its own fill in dark.
      *
      * Held to [DESIGN_INK_FLOOR], not AA. The label is white on every card by design decision
-     * 2026-08-26, so on the three light fills it sits below AA and no ink choice here can lift it —
+     * 2026-08-26, so on the light fills it sits below AA and no ink choice here can lift it —
      * the fix belongs in the fill. This guards against getting WORSE; see the `cardInkContrast` delta.
      */
     @Test
@@ -130,8 +130,8 @@ class UseSmileIDSampleContrastTest {
         /** Not the same colour. Light's bar is near-white on near-white and rides on its shadow. */
         const val DISTINCT = 1.02
 
-        /** Not WCAG either: the design's own worst case, the amber Registration card at 1.76:1. */
-        const val DESIGN_INK_FLOOR = 1.75
+        /** Not WCAG either: the design's own worst case, the pale blue Residency card at 1.51:1. */
+        const val DESIGN_INK_FLOOR = 1.5
 
         /** Seen but not shouted. The ceiling, not the floor, is the point — see the `cardStroke` delta. */
         const val STROKE_FLOOR = 1.10

@@ -26,10 +26,6 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
-        // The SDK's snapshots, for a test build against its main branch: only Smile ID's own artifacts.
-        maven("https://central.sonatype.com/repository/maven-snapshots/") {
-            content { includeGroup("com.usesmileid") }
-        }
     }
 }
 

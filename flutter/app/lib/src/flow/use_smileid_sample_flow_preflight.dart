@@ -71,6 +71,9 @@ UseSmileIDSampleFlowPreflight useSmileIDSamplePreflight(
     if (builder.enhancedDocumentVerificationParams
         case final EnhancedDocumentVerificationParams params)
       builder.validateEnhancedDocumentVerificationParams(params),
+    if (builder.residencyDocumentVerificationParams
+        case final ResidencyDocumentVerificationParams params)
+      builder.validateResidencyDocumentVerificationParams(params),
   ];
   final List<UseSmileIDValidationException> payloadIssues =
       <UseSmileIDValidationException>[

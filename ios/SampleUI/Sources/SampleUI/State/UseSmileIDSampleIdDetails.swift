@@ -61,6 +61,8 @@ public struct UseSmileIDSampleIdDetails: Equatable, Sendable {
     switch family {
     case .document:
       return country != nil && document != nil
+    case .passport:
+      return country != nil
     case .kyc:
       guard country != nil, let idType else { return false }
       return UseSmileIDSampleIdNumberHint.accepts(idType.regex, idNumber)

@@ -93,9 +93,9 @@ describe('the journey the switches compose', () => {
     ).toEqual<UseSmileIDSampleFlowJourneyStep[]>(['consent', 'processing']);
   });
 
-  it('captures the document first for both document products unless selfie first is on', () => {
+  it('captures the document first for every document product unless selfie first is on', () => {
     const plain = { consentStep: false, instructionsStep: false, previewStep: false };
-    for (const id of ['documentVerification', 'enhancedDocumentVerification']) {
+    for (const id of ['documentVerification', 'enhancedDocumentVerification', 'residencyDocumentVerification']) {
       expect(smileIDSampleJourneyStepsFor(snapshot({ product: productFor(id), ...plain }))).toEqual<
         UseSmileIDSampleFlowJourneyStep[]
       >(['documentCapture', 'selfieCapture', 'processing']);
@@ -188,6 +188,30 @@ describe('what the SDK is handed', () => {
         }
       }
     }
+  });
+
+  it('residency builds as both sides of a passport, whatever the form or settings hold', () => {
+    const builder = built(
+      snapshot({
+        product: productFor('residencyDocumentVerification'),
+        idDetails: {
+          ...smileIDSampleIdDetailsDefaults,
+          country: { code: 'NG', name: 'Nigeria' },
+          document: { code: 'IDENTITY_CARD', subType: null, name: 'National ID', hasBack: true, format: 1 },
+          captureAsOverride: UseSmileIDSampleCaptureAs.GenericDocument,
+        },
+        captureBothSides: false,
+        allowSkipBack: true,
+      }),
+    );
+    expect(
+      smileIDSampleCapturesBothSides(
+        snapshot({ product: productFor('residencyDocumentVerification'), captureBothSides: false }),
+      ),
+    ).toBe(true);
+    expect(builder.residencyDocumentVerificationParams).toEqual({ country: 'NG', idType: 'PASSPORT' });
+    expect(builder.documentVerificationParams).toBeUndefined();
+    expect(builder.build().kind).toBe('success');
   });
 
   it('a passport is captured front only, whatever the setting', () => {

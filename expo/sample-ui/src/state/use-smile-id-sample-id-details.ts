@@ -84,8 +84,8 @@ export const smileIDSampleGenericDocumentDefaults: UseSmileIDSampleGenericDocume
   aspectRatio: 'off',
 };
 
-/// Which list a product's form reads: the KYC products name an ID type, the document products a document.
-export type UseSmileIDSampleCatalogueFamily = 'kyc' | 'document';
+/// Which list a product's form reads: the KYC products name an ID type, the document products a document, residency a passport's country.
+export type UseSmileIDSampleCatalogueFamily = 'kyc' | 'document' | 'passport';
 
 /// What the ID-details form has collected, holding whole rows so a flow rebuilt from it needs no catalogue.
 export type UseSmileIDSampleIdDetails = {
@@ -112,12 +112,20 @@ export const smileIDSampleIdDetailsDefaults: UseSmileIDSampleIdDetails = {
 export const smileIDSampleIdDetailsComplete = (
   details: UseSmileIDSampleIdDetails,
   family: UseSmileIDSampleCatalogueFamily,
-): boolean =>
-  family === 'document'
-    ? details.country !== null && details.document !== null
-    : details.country !== null &&
-      details.idType !== null &&
-      smileIDSampleIdNumberAccepts(details.idType.regex, details.idNumber);
+): boolean => {
+  switch (family) {
+    case 'document':
+      return details.country !== null && details.document !== null;
+    case 'passport':
+      return details.country !== null;
+    case 'kyc':
+      return (
+        details.country !== null &&
+        details.idType !== null &&
+        smileIDSampleIdNumberAccepts(details.idType.regex, details.idNumber)
+      );
+  }
+};
 
 /// Matches on the label, which is what the search field shows, case-folded so a lowercase query still hits.
 export const smileIDSampleOptionMatches = (label: string, query: string): boolean =>

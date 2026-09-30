@@ -265,6 +265,7 @@ export {
   smileIDSampleCatalogueDocuments,
   smileIDSampleCatalogueFamily,
   smileIDSampleCatalogueIdTypes,
+  smileIDSamplePassport,
   smileIDSampleDecodeDocuments,
   smileIDSampleDecodeIdTypes,
   type UseSmileIDSampleApiCountryDocuments,

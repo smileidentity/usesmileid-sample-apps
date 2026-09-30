@@ -86,6 +86,33 @@ final class UseSmileIDSampleDocumentCaptureMappingTest: XCTestCase {
     }
   }
 
+  func testResidencyCapturesBothSidesOfAPassportWhateverTheFormOrSettingsHold() {
+    for captureAs in [nil] + UseSmileIDSampleCaptureAs.allCases.map(Optional.some) {
+      let reason = captureAs?.rawValue ?? UseSmileIDSampleCaptureAs.matchDocumentId
+      let config = useSmileIDSampleDocumentCapture(FlowLaunchSnapshot(
+        product: .residencyDocumentVerification,
+        route: .fullscreen,
+        idDetails: UseSmileIDSampleIdDetails(captureAsOverride: captureAs),
+        captureBothSides: false,
+        allowSkipBack: true
+      ))
+      XCTAssertEqual(config.documentType, .passport, reason)
+      XCTAssertTrue(config.captureBothSides, reason)
+      XCTAssertFalse(config.allowSkipBack, reason)
+    }
+  }
+
+  func testResidencySendsThePassportWhateverDocumentIsLeftInTheForm() {
+    let details = UseSmileIDSampleIdDetails(
+      country: UseSmileIDSampleCountry(code: "NG", name: "Nigeria"),
+      document: UseSmileIDSampleDocument(code: "IDENTITY_CARD", name: "National ID", hasBack: true, format: 1)
+    )
+    let params = useSmileIDSampleIdParams(FlowLaunchSnapshot(product: .residencyDocumentVerification, route: .fullscreen, idDetails: details))
+    XCTAssertEqual(params.residencyDocumentVerification?.country, "NG")
+    XCTAssertEqual(params.residencyDocumentVerification?.idType, "PASSPORT")
+    XCTAssertNil(params.documentVerification)
+  }
+
   func testADocumentJobSendsTheDocumentEvenWithAnIdTypeLeftInTheForm() {
     let details = UseSmileIDSampleIdDetails(
       country: UseSmileIDSampleCountry(code: "KE", name: "Kenya"),

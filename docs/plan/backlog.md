@@ -41,9 +41,9 @@ The Flutter SDK now publishes the same screen ids as the other SDKs (smileidenti
 `si_consent_screen`, `si_instructions_screen`, `si_capture_screen`, `si_document_back_instructions_screen`,
 `si_camera_error_screen`, `si_preview_screen`, `si_document_preview_screen` and `si_processing_screen`.
 
-The Flutter app still pins `usesmileid` 12.1.1 in `flutter/app/pubspec.yaml`, which publishes only
-`si_preview_screen` and `si_processing_screen`. So the Flutter device flows match the consent screen by
-its text:
+The Flutter app pinned `usesmileid` 12.1.1 until 12.2.0, which carries #224, so this is now unblocked.
+12.1.1 published only `si_preview_screen` and `si_processing_screen`, so the Flutter device flows still
+match the consent screen by its text:
 
 - `flutter/maestro/sdk-flow.yaml`: the header comment and the consent step
 - `flutter/maestro/profile-journey.yaml:38`

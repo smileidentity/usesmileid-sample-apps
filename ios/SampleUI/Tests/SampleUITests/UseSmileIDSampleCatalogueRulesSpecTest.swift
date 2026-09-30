@@ -60,7 +60,11 @@ final class UseSmileIDSampleCatalogueRulesSpecTest: XCTestCase {
       } else {
         try await UseSmileIDSampleCatalogueFixtures.data()
       }
-      let family: UseSmileIDSampleCatalogueFamily = item["family"] as? String == "kyc" ? .kyc : .document
+      let family: UseSmileIDSampleCatalogueFamily = switch item["family"] as? String {
+      case "kyc": .kyc
+      case "passport": .passport
+      default: .document
+      }
       let actual = UseSmileIDSampleCatalogueRules.countries(data, family: family).map { [$0.code, $0.name] }
       let expected = (item["expected"] as? [[String: String]] ?? []).map { [$0["code"] ?? "", $0["name"] ?? ""] }
       XCTAssertEqual(actual, expected, item["name"] as? String ?? "")

@@ -25,8 +25,8 @@ final class UseSmileIDSampleFlowJourneyTest: XCTestCase {
     )
   }
 
-  func testBothDocumentProductsCaptureTheDocumentFirstUnlessSelfieFirstIsOn() {
-    for product in [UseSmileIDSampleProduct.documentVerification, .enhancedDocumentVerification] {
+  func testEveryDocumentProductCapturesTheDocumentFirstUnlessSelfieFirstIsOn() {
+    for product in [UseSmileIDSampleProduct.documentVerification, .enhancedDocumentVerification, .residencyDocumentVerification] {
       XCTAssertEqual(
         useSmileIDSampleJourneySteps(snapshot(product)),
         [.consent, .instructions, .documentCapture, .preview, .selfieCapture, .preview, .processing],

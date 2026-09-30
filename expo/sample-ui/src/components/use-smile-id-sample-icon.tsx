@@ -5,7 +5,8 @@ import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
 type Props = {
   name: SmileIconName;
-  tint: string;
+  /// Null draws a two-tone mark in its own colours.
+  tint: string | null;
   size?: number;
 };
 
@@ -20,25 +21,27 @@ export const UseSmileIDSampleIcon = ({ name, tint, size }: Props) => {
       width={box}
       height={box}
       viewBox={`${icon.minX} ${icon.minY} ${icon.width} ${icon.height}`}
-      // The record's own colours are the designer's working values; the caller owns the tint.
       fill="none"
     >
-      {icon.parts.map((part, index) => (
+      {icon.parts.map((part, index) => {
+        const paint = tint ?? part.colour ?? theme.colors.textTitle;
+        return (
         <Path
           key={index}
           d={part.d}
           opacity={part.opacity}
           {...(part.paint.kind === 'fill'
-            ? { fill: tint }
+            ? { fill: paint }
             : {
-                stroke: tint,
+                stroke: paint,
                 strokeWidth: part.paint.width,
                 strokeLinecap: part.paint.round ? ('round' as const) : ('butt' as const),
                 strokeLinejoin: part.paint.round ? ('round' as const) : ('miter' as const),
                 fill: 'none',
               })}
         />
-      ))}
+        );
+      })}
     </Svg>
   );
 };

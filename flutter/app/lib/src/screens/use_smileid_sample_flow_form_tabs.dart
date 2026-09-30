@@ -233,6 +233,7 @@ class _UseSmileIDSampleKycFormTabState
                     _catalogue.idTypes(country).isLoading,
                   UseSmileIDSampleCatalogueFamily.document =>
                     _catalogue.documents(country).isLoading,
+                  UseSmileIDSampleCatalogueFamily.passport => false,
                 },
             captureBothSides: ref
                 .watch(useSmileIDSampleSettingsProvider)

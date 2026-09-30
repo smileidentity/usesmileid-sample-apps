@@ -246,7 +246,7 @@ class _Grid extends StatelessWidget {
           hue: productHue(product),
           onTap: () => onProductTap(product),
           testId: UseSmileIDSampleTestIds.productCard(product.id),
-          icon: (Color tint) => UseSmileIDSampleIcon(asset: asset, tint: tint),
+          icon: (Color? tint) => UseSmileIDSampleIcon(asset: asset, tint: tint),
           ghost: (Color tint) =>
               UseSmileIDSampleIcon(asset: asset, tint: tint, size: _ghostSize),
         );

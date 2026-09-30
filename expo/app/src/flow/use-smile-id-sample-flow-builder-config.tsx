@@ -5,6 +5,7 @@ import {
   smileIDSampleCaptureBothSides,
   smileIDSampleCatalogueFamily,
   smileIDSampleIdDetailsCaptureAs,
+  smileIDSamplePassport,
   type UseSmileIDSampleIdDetails,
   UseSmileIDSampleIcon,
   smileIDSampleThemeOverride,
@@ -121,6 +122,13 @@ export const smileIDSampleApplying = (
   }
 };
 
+/// The products that capture a document as well as a selfie.
+const DOCUMENT_PRODUCTS: readonly string[] = [
+  'documentVerification',
+  'enhancedDocumentVerification',
+  'residencyDocumentVerification',
+];
+
 /// The journey, as the three step switches and the token's bindings decide it.
 export const smileIDSampleJourneyStepsFor = (
   snapshot: UseSmileIDSampleFlowLaunchSnapshot,
@@ -138,8 +146,7 @@ export const smileIDSampleJourneyStepsFor = (
   const document: UseSmileIDSampleFlowJourneyStep[] = snapshot.previewStep
     ? ['documentCapture', 'preview']
     : ['documentCapture'];
-  const documentProduct =
-    snapshot.product.id === 'documentVerification' || snapshot.product.id === 'enhancedDocumentVerification';
+  const documentProduct = DOCUMENT_PRODUCTS.includes(snapshot.product.id);
   if (!documentProduct) steps.push(...selfie);
   else if (snapshot.selfieFirst) steps.push(...selfie, ...document);
   else steps.push(...document, ...selfie);
@@ -173,9 +180,11 @@ const journeyFor = (screens: ScreensBuilder, snapshot: UseSmileIDSampleFlowLaunc
         screens.capture((capture: CaptureConfigBuilder) => {
           capture.captureType = CaptureType.document;
           capture.document((document: DocumentCaptureConfigBuilder) => {
-            document.documentType = smileIDSampleDocumentTypeFor(snapshot.idDetails);
+            // Residency is both sides, the passport's data page and then its visa, and it rejects a skippable second side.
+            const residency = snapshot.product.id === 'residencyDocumentVerification';
+            document.documentType = residency ? DocumentType.Passport : smileIDSampleDocumentTypeFor(snapshot.idDetails);
             document.captureBothSides = smileIDSampleCapturesBothSides(snapshot);
-            document.allowSkipBack = snapshot.allowSkipBack;
+            document.allowSkipBack = snapshot.allowSkipBack && !residency;
             document.captureMode = smileIDSampleCaptureModeFor(snapshot.captureMode);
             document.allowGalleryUpload = snapshot.galleryUpload;
           });
@@ -205,7 +214,9 @@ const applyIdParams = (
       ? (snapshot.idDetails.idType?.type ?? null)
       : family === 'document'
         ? (snapshot.idDetails.document?.code ?? null)
-        : null;
+        : family === 'passport'
+          ? smileIDSamplePassport
+          : null;
   const idType = bound?.idType ?? chosen ?? '';
   // Trimmed, as the form checked it.
   const idNumber = bound?.idNumberReference ?? snapshot.idDetails.idNumber.trim();
@@ -226,6 +237,10 @@ const applyIdParams = (
       break;
     case 'enhancedDocumentVerification':
       builder.enhancedDocumentVerificationParams = { country, idType };
+      break;
+    // The SDK accepts no other type, and the server reads a token's own claim over this one.
+    case 'residencyDocumentVerification':
+      builder.residencyDocumentVerificationParams = { country, idType: smileIDSamplePassport };
       break;
     default:
       break;
@@ -261,6 +276,8 @@ const jobTypeFor = (productId: string): JobType => {
       return JobType.documentVerification;
     case 'enhancedDocumentVerification':
       return JobType.enhancedDocumentVerification;
+    case 'residencyDocumentVerification':
+      return JobType.residencyDocumentVerification;
     case 'biometricKyc':
       return JobType.biometricKyc;
     default:
@@ -301,8 +318,9 @@ export const smileIDSampleCaptureModeFor = (mode: UseSmileIDSampleCaptureMode): 
   }
 };
 
-/// The Settings switch, except that a resolved passport is captured front only.
+/** The Settings switch, except that residency always captures both sides and a resolved passport is otherwise captured front only. */
 export const smileIDSampleCapturesBothSides = (snapshot: UseSmileIDSampleFlowLaunchSnapshot): boolean =>
+  snapshot.product.id === 'residencyDocumentVerification' ||
   smileIDSampleCaptureBothSides(smileIDSampleIdDetailsCaptureAs(snapshot.idDetails), snapshot.captureBothSides);
 
 // The same host the Settings privacy row opens.

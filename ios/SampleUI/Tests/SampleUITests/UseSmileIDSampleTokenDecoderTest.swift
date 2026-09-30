@@ -150,9 +150,9 @@ final class UseSmileIDSampleTokenDecoderTest: XCTestCase {
     }
   }
 
-  func testBothDocumentProductsNeedCountryAndIdTypeAndNeitherNeedsAnIdNumber() {
+  func testEveryDocumentProductNeedsCountryAndIdTypeAndNoneNeedsAnIdNumber() {
     let bound = UseSmileIDSampleTokenBindings(country: "KE", idType: "NATIONAL_ID")
-    for product in [UseSmileIDSampleProduct.documentVerification, .enhancedDocumentVerification] {
+    for product in [UseSmileIDSampleProduct.documentVerification, .enhancedDocumentVerification, .residencyDocumentVerification] {
       XCTAssertTrue(bound.bindsIdDetails(product))
       // Document Verification's validator accepts a nil ID type, but the form is where the type is chosen.
       XCTAssertFalse(bound.removing(\.idType).bindsIdDetails(product))

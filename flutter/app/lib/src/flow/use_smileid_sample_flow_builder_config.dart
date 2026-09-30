@@ -126,6 +126,8 @@ void _applyIdParams(
   )) {
     UseSmileIDSampleCatalogueFamily.kyc => details.idType?.type,
     UseSmileIDSampleCatalogueFamily.document => details.document?.code,
+    UseSmileIDSampleCatalogueFamily.passport =>
+      UseSmileIDSampleCatalogueRules.passport,
     null => null,
   };
   final String idType = bound?.idType ?? chosen ?? '';
@@ -153,6 +155,13 @@ void _applyIdParams(
     case UseSmileIDSampleProduct.enhancedDocumentVerification:
       builder.enhancedDocumentVerificationParams =
           EnhancedDocumentVerificationParams(country: country, idType: idType);
+    // The SDK accepts no other type, and the server reads a token's own claim over this one.
+    case UseSmileIDSampleProduct.residencyDocumentVerification:
+      builder.residencyDocumentVerificationParams =
+          ResidencyDocumentVerificationParams(
+            country: country,
+            idType: UseSmileIDSampleCatalogueRules.passport,
+          );
     case UseSmileIDSampleProduct.smartSelfieEnrollment:
     case UseSmileIDSampleProduct.smartSelfieAuth:
       break;
@@ -187,12 +196,20 @@ void _journeyFor(
         screens.capture((CaptureConfigBuilder capture) {
           capture.captureType = CaptureType.document;
           capture.document((DocumentCaptureConfigBuilder document) {
-            document.documentType = useSmileIDSampleDocumentTypeFor(
-              snapshot.idDetails,
-            );
-            document.captureBothSides = snapshot.idDetails.resolvedCaptureAs
-                .captureBothSides(snapshot.captureBothSides);
-            document.allowSkipBack = snapshot.allowSkipBack;
+            // Residency is both sides, the passport's data page and then its
+            // visa, and it rejects a skippable second side.
+            final bool residency =
+                snapshot.product ==
+                UseSmileIDSampleProduct.residencyDocumentVerification;
+            document.documentType = residency
+                ? DocumentType.passport
+                : useSmileIDSampleDocumentTypeFor(snapshot.idDetails);
+            document.captureBothSides =
+                residency ||
+                snapshot.idDetails.resolvedCaptureAs.captureBothSides(
+                  snapshot.captureBothSides,
+                );
+            document.allowSkipBack = snapshot.allowSkipBack && !residency;
             document.captureMode = snapshot.captureMode.sdk;
             document.allowGalleryUpload = snapshot.galleryUpload;
           });
@@ -249,6 +266,7 @@ List<UseSmileIDSampleFlowJourneyStep> useSmileIDSampleJourneyStepsFor(
   switch (snapshot.product) {
     case UseSmileIDSampleProduct.documentVerification:
     case UseSmileIDSampleProduct.enhancedDocumentVerification:
+    case UseSmileIDSampleProduct.residencyDocumentVerification:
       if (snapshot.selfieFirst) {
         _selfieCapture(steps, snapshot.previewStep);
         _documentCapture(steps, snapshot.previewStep);
@@ -327,13 +345,16 @@ extension on UseSmileIDSampleProduct {
       JobType.documentVerification,
     UseSmileIDSampleProduct.enhancedDocumentVerification =>
       JobType.enhancedDocumentVerification,
+    UseSmileIDSampleProduct.residencyDocumentVerification =>
+      JobType.residencyDocumentVerification,
     UseSmileIDSampleProduct.biometricKyc => JobType.biometricKyc,
     UseSmileIDSampleProduct.enhancedKyc => JobType.enhancedKyc,
   };
 
   bool get needsDocumentCapture =>
       this == UseSmileIDSampleProduct.documentVerification ||
-      this == UseSmileIDSampleProduct.enhancedDocumentVerification;
+      this == UseSmileIDSampleProduct.enhancedDocumentVerification ||
+      this == UseSmileIDSampleProduct.residencyDocumentVerification;
 }
 
 /// The partner mark the consent screen draws, resolving its colour where the SDK mounts it.

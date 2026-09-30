@@ -43,6 +43,7 @@ RENAMED = {
 HEADER = "<!-- GENERATED from {source} by scripts/generate_android_icons.py. Do not edit by hand. -->"
 NUMBER = re.compile(r"-?\d*\.?\d+(?:e[+-]?\d+)?")
 BASE = "#FF000000"  # Tinted at the use site; the format needs an opaque colour and nothing reads it.
+HEX = re.compile(r"#[0-9a-fA-F]{6}")
 
 
 class IconError(Exception):
@@ -57,6 +58,35 @@ def fmt(value: float) -> str:
     return f"{value:g}"
 
 
+def drawn_colours(root) -> set[str]:
+    """The stroke and fill colours of the paths a mark draws; `<defs>` holds only clip frames."""
+    found: set[str] = set()
+
+    def walk(element) -> None:
+        tag = element.tag.rsplit("}", 1)[-1]
+        if tag in ("defs", "clipPath"):
+            return
+        if tag == "path":
+            for key in ("stroke", "fill"):
+                value = element.attrib.get(key)
+                if value and value != "none":
+                    found.add(value.upper())
+        for child in element:
+            walk(child)
+
+    walk(root)
+    return found
+
+
+def paint(value: str, own: bool, name: str) -> str:
+    """BASE for a tinted mark; a two-tone mark keeps each path's own colour, drawn untinted."""
+    if not own:
+        return BASE
+    if not HEX.fullmatch(value):
+        raise IconError(f"{name} draws in {value!r}; a mark kept in its own colours needs #RRGGBB")
+    return "#FF" + value[1:].upper()
+
+
 def parse(text: str, name: str) -> str:
     root = ElementTree.fromstring(text)
     if "viewBox" not in root.attrib:
@@ -69,6 +99,7 @@ def parse(text: str, name: str) -> str:
         raise IconError(f"{name} has a zero-sized viewBox")
 
     paths: list[str] = []
+    own = len(drawn_colours(root)) > 1
 
     def walk(element, opacity: float) -> None:
         tag = element.tag.rsplit("}", 1)[-1]
@@ -82,7 +113,7 @@ def parse(text: str, name: str) -> str:
             stroke = element.attrib.get("stroke")
             attrs = [f'android:pathData="{data}"']
             if stroke and stroke != "none":
-                attrs.append(f'android:strokeColor="{BASE}"')
+                attrs.append(f'android:strokeColor="{paint(stroke, own, name)}"')
                 attrs.append(f'android:strokeWidth="{fmt(float(element.attrib.get("stroke-width", 1)))}"')
                 cap = element.attrib.get("stroke-linecap")
                 join = element.attrib.get("stroke-linejoin")
@@ -92,13 +123,13 @@ def parse(text: str, name: str) -> str:
                     attrs.append(f'android:strokeLineJoin="{join}"')
                 fill = element.attrib.get("fill", "none")
                 if fill and fill != "none":
-                    attrs.append(f'android:fillColor="{BASE}"')
+                    attrs.append(f'android:fillColor="{paint(fill, own, name)}"')
                 if opacity < 1:
                     attrs.append(f'android:strokeAlpha="{opacity:g}"')
                     if fill and fill != "none":
                         attrs.append(f'android:fillAlpha="{opacity:g}"')
             else:
-                attrs.append(f'android:fillColor="{BASE}"')
+                attrs.append(f'android:fillColor="{paint(element.attrib.get("fill", "#000000"), own, name)}"')
                 if element.attrib.get("fill-rule") == "evenodd":
                     attrs.append('android:fillType="evenOdd"')
                 if opacity < 1:

@@ -162,10 +162,17 @@ SDK cannot submit the job anyway.
   refuses that document on that product.
 - **Countries.** The document products offer every country with a listed document. The KYC products offer
   every country with a listed ID type, named from `supported_documents`; one it does not name is shown by
-  its code, after the named ones.
+  its code, after the named ones. Residency Document Verification offers every country that lists a
+  `PASSPORT`, the passport's issuing country.
 
 **What the form holds.** The ID details keep whole rows rather than codes, so a flow rebuilt after process
 death needs no catalogue to resolve them. Profiles do not store ID details.
+
+**Residency.** Residency Document Verification asks for the country alone. The SDK accepts only
+`PASSPORT` as its `idType` and only its `Passport` type on the capture screen, and it rejects a skippable
+second side, so the form has no document to choose. The capture is both sides: the passport's data page,
+then its visa page. The sample sends `PASSPORT`, `Passport` and `captureBothSides` whatever the form or
+the DOCUMENT CAPTURE settings hold.
 
 **Capture as.** The document products show a DOCUMENT trigger in place of the ID type, and a CAPTURE AS
 trigger under it. "Capture as" changes only how the SDK photographs the document. The server always
@@ -216,7 +223,7 @@ regex under that platform's engine.
 switch, defaulting to automatic with the SDK's 10-second manual fallback. The rest are switches, each at
 the SDK's default: gallery upload off, capture the back side on (`captureBothSides`, which the SDK ANDs
 with the type's own back side), and skip the back off (`allowSkipBack`). Selfie first, off by default,
-orders the two captures: both document products run document then selfie unless it is on.
+orders the two captures: every document product runs document then selfie unless it is on.
 
 **Loading.** The lists have no design frames, so this is the design of record, built from components the
 app already has. The form never waits: while a country's list is still arriving, its second trigger stays

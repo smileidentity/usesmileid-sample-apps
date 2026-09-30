@@ -4,11 +4,11 @@
 // A stopgap: the source is spec/design-tokens.json → deltas, not the design system. Everything the
 // design system carries no role for lives here; delete each value once upstream carries its role.
 
-/** One product's colouring. `cardIcon` tints the card's glyph; `icon` and `tile` are the list row's pair. */
+/** One product's colouring. `cardIcon` tints the card's glyph, null when it draws its own colours; `icon` and `tile` are the list row's pair. */
 export type SmileProductHue = {
   readonly from: string;
   readonly to: string;
-  readonly cardIcon: string;
+  readonly cardIcon: string | null;
   readonly icon: string;
   readonly tile: string;
   /** Stop positions as fractions. `stopEnd` may exceed 1: the design runs it past the card's edge. */
@@ -63,6 +63,17 @@ export const smileProductHues: Readonly<Record<string, SmileProductHue>> = {
     stopEnd: 1.2978,
     fromAlpha: 1.0,
     toAlpha: 0.79,
+  },
+  residencyDocumentVerification: {
+    from: '#bfd2ff',
+    to: '#04713a',
+    cardIcon: null,
+    icon: '#04713a',
+    tile: '#e5edff',
+    stopStart: 0.66627,
+    stopEnd: 1.2978,
+    fromAlpha: 1.0,
+    toAlpha: 1.0,
   },
   biometricKyc: {
     from: '#151f72',

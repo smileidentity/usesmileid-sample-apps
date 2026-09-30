@@ -48,6 +48,10 @@ export const smileIDSamplePreflight = (
     checks.push(
       builder.validateEnhancedDocumentVerificationParams(builder.enhancedDocumentVerificationParams),
     );
+  if (builder.residencyDocumentVerificationParams !== undefined)
+    checks.push(
+      builder.validateResidencyDocumentVerificationParams(builder.residencyDocumentVerificationParams),
+    );
 
   const payloadIssues = checks.flatMap((state) => (state.valid ? [] : state.issues));
   if (payloadIssues.length > 0) return { kind: 'needsDetails', issues: payloadIssues };

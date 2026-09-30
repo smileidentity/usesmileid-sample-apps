@@ -54,6 +54,16 @@ enum UseSmileIDSampleProduct {
     needsIdDetails: true,
   ),
 
+  /// Residency Document Verification: a passport, then the visa page the SDK captures after it.
+  residencyDocumentVerification(
+    id: 'residencyDocumentVerification',
+    label: 'Residency Document Verification',
+    cardTitle: 'Residency Doc.',
+    cardFamily: 'Verification',
+    section: UseSmileIDSampleProductSection.verifications,
+    needsIdDetails: true,
+  ),
+
   /// Biometric KYC.
   biometricKyc(
     id: 'biometricKyc',

@@ -252,7 +252,11 @@ class SdkFlowPreflightTest {
     // The SDK refuses the Green Book on Enhanced Document Verification inside `screens { }`, which validate() cannot see.
     @Test
     fun `every document setting passes preflight`() {
-        listOf(UseSmileIDSampleProduct.DocumentVerification, UseSmileIDSampleProduct.EnhancedDocumentVerification).forEach { product ->
+        listOf(
+            UseSmileIDSampleProduct.DocumentVerification,
+            UseSmileIDSampleProduct.EnhancedDocumentVerification,
+            UseSmileIDSampleProduct.ResidencyDocumentVerification,
+        ).forEach { product ->
             (UseSmileIDSampleCaptureAs.entries + null).forEach { captureAs ->
                 listOf(true, false).forEach { flag ->
                     val base = snapshotFor(product)

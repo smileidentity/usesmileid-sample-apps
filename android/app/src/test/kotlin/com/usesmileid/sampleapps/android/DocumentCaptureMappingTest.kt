@@ -154,6 +154,34 @@ class DocumentCaptureMappingTest {
     }
 
     @Test
+    fun residency_captures_both_sides_of_a_passport_whatever_the_form_or_settings_hold() {
+        (listOf(null) + UseSmileIDSampleCaptureAs.entries).forEach { captureAs ->
+            val reason = captureAs?.id ?: UseSmileIDSampleCaptureAs.MATCH_DOCUMENT_ID
+            val options = documentOptionsFor(
+                snapshotOf(UseSmileIDSampleIdDetails(captureAsOverride = captureAs), product = UseSmileIDSampleProduct.ResidencyDocumentVerification)
+                    .copy(captureBothSides = false, allowSkipBack = true),
+            )
+            assertEquals(reason, DocumentType.Passport, options.documentType)
+            assertTrue(reason, options.captureBothSides)
+            assertEquals(reason, false, options.allowSkipBack)
+        }
+    }
+
+    @Test
+    fun residency_sends_the_passport_whatever_document_is_left_in_the_form() {
+        val details = UseSmileIDSampleIdDetails(
+            country = UseSmileIDSampleCountry("NG", "Nigeria"),
+            document = UseSmileIDSampleDocument(code = "IDENTITY_CARD", name = "National ID", hasBack = true, format = 1),
+        )
+        val builder = UseSmileIDFlowBuilder().apply {
+            applying(snapshotOf(details, product = UseSmileIDSampleProduct.ResidencyDocumentVerification))
+        }
+        assertEquals("NG", builder.residencyDocumentVerificationParams?.country)
+        assertEquals("PASSPORT", builder.residencyDocumentVerificationParams?.idType)
+        assertEquals(null, builder.documentVerificationParams)
+    }
+
+    @Test
     fun a_document_job_sends_the_document_even_with_an_id_type_left_in_the_form() {
         val details = UseSmileIDSampleIdDetails(
             country = UseSmileIDSampleCountry("KE", "Kenya"),

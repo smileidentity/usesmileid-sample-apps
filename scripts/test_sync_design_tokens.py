@@ -286,6 +286,18 @@ class TestProductHues(unittest.TestCase):
         with self.assertRaises(gen.TokenError):
             gen.emit_kotlin_product_hues({"biometricKyc": {"from": "#151F72", "to": "#2B3A9E"}})
 
+    def test_a_null_card_icon_leaves_the_glyph_its_own_colours_on_every_platform(self):
+        hues = {"residencyDocumentVerification": {**self.HUE, "cardIcon": None}}
+        self.assertIn("cardIcon = Color.Unspecified,", gen.emit_kotlin_product_hues(hues))
+        self.assertIn("cardIcon: null,", gen.emit_dart_product_hues(hues))
+        self.assertIn("cardIcon: nil,", gen.emit_swift_product_hues(hues))
+        self.assertIn("cardIcon: null,", gen.emit_ts_product_hues(hues))
+
+    def test_an_absent_card_icon_still_fails_rather_than_reading_as_null(self):
+        hue = {role: value for role, value in self.HUE.items() if role != "cardIcon"}
+        with self.assertRaises(gen.TokenError):
+            gen.emit_kotlin_product_hues({"residencyDocumentVerification": hue})
+
     def test_soft_badge_fills_emit_every_feedback_role(self):
         out = gen.emit_kotlin_soft_badge_fills(gen.read_soft_badge_fills())
         for role in ("success", "info", "warning", "error"):
@@ -377,6 +389,7 @@ class TestProductHues(unittest.TestCase):
                 "smartSelfieAuth",
                 "documentVerification",
                 "enhancedDocumentVerification",
+                "residencyDocumentVerification",
                 "biometricKyc",
                 "enhancedKyc",
             ],

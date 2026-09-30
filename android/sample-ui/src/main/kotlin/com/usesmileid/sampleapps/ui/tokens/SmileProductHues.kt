@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/** One product's colouring. `cardIcon` tints the card's glyph; `icon` and `tile` are the list row's pair, which the products frame does not govern. */
+/** One product's colouring. `cardIcon` tints the card's glyph, Unspecified when it draws its own colours; `icon` and `tile` are the list row's pair, which the products frame does not govern. */
 data class SmileProductHue(
     val from: Color,
     val to: Color,
@@ -69,6 +69,17 @@ val smileProductHues: Map<String, SmileProductHue> = mapOf(
         stopEnd = 1.2978f,
         fromAlpha = 1.0f,
         toAlpha = 0.79f,
+    ),
+    "residencyDocumentVerification" to SmileProductHue(
+        from = Color(0xFFBFD2FF),
+        to = Color(0xFF04713A),
+        cardIcon = Color.Unspecified,
+        icon = Color(0xFF04713A),
+        tile = Color(0xFFE5EDFF),
+        stopStart = 0.66627f,
+        stopEnd = 1.2978f,
+        fromAlpha = 1.0f,
+        toAlpha = 1.0f,
     ),
     "biometricKyc" to SmileProductHue(
         from = Color(0xFF151F72),

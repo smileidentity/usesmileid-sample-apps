@@ -67,10 +67,24 @@ public struct SmileIconPart: Equatable, Sendable {
   public let stroke: SmileIconStroke
   /// Inherited down the SVG tree — the scan glyph draws its whole group at 0.45.
   public let opacity: CGFloat
+  /// The part's own colour, set only on a two-tone mark; an untinted draw uses it.
+  public let color: Color?
   public let build: @Sendable (inout Path) -> Void
 
+  public init(
+    stroke: SmileIconStroke,
+    opacity: CGFloat,
+    color: Color? = nil,
+    build: @escaping @Sendable (inout Path) -> Void
+  ) {
+    self.stroke = stroke
+    self.opacity = opacity
+    self.color = color
+    self.build = build
+  }
+
   public static func == (lhs: SmileIconPart, rhs: SmileIconPart) -> Bool {
-    lhs.stroke == rhs.stroke && lhs.opacity == rhs.opacity
+    lhs.stroke == rhs.stroke && lhs.opacity == rhs.opacity && lhs.color == rhs.color
   }
 }
 '''
@@ -185,6 +199,36 @@ def emit_path(data: str) -> list[str]:
     return lines
 
 
+HEX = re.compile(r"#[0-9a-fA-F]{6}")
+
+
+def drawn_colours(root) -> set[str]:
+    """The stroke and fill colours of the paths a mark draws; `<defs>` holds only clip frames."""
+    found: set[str] = set()
+
+    def walk(element) -> None:
+        tag = element.tag.rsplit("}", 1)[-1]
+        if tag in ("defs", "clipPath"):
+            return
+        if tag == "path":
+            for key in ("stroke", "fill"):
+                value = element.attrib.get(key)
+                if value and value != "none":
+                    found.add(value.upper())
+        for child in element:
+            walk(child)
+
+    walk(root)
+    return found
+
+
+def swift_colour(value: str, name: str) -> str:
+    """A two-tone mark's `#RRGGBB` as the vendored `Color(hex:)`, as the token files spell one."""
+    if not HEX.fullmatch(value):
+        raise IconError(f"{name} draws in {value!r}; a mark kept in its own colours needs #RRGGBB")
+    return f"Color(hex: 0x{value[1:].upper()})"
+
+
 def parse_svg(text: str, name: str) -> dict:
     """Walked as XML, not matched with a regex: opacity is inherited from an enclosing <g>, and a
     pattern that only sees one element at a time cannot know it is inside one."""
@@ -198,7 +242,8 @@ def parse_svg(text: str, name: str) -> dict:
     if width <= 0 or height <= 0:
         raise IconError(f"{name} has a zero-sized viewBox")
 
-    parts: list[tuple[str, float, list[str]]] = []
+    parts: list[tuple[str, float, str | None, list[str]]] = []
+    own = len(drawn_colours(root)) > 1
 
     def walk(element, opacity: float) -> None:
         tag = element.tag.rsplit("}", 1)[-1]
@@ -213,9 +258,12 @@ def parse_svg(text: str, name: str) -> dict:
                 stroke_width = float(element.attrib.get("stroke-width", 1))
                 round_cap = element.attrib.get("stroke-linecap") == "round"
                 stroke = f"stroke(width: {stroke_width:g}, round: {str(round_cap).lower()})"
+                paint = stroke_colour
             else:
                 stroke = "fill"
-            parts.append((stroke, opacity, emit_path(element.attrib["d"])))
+                paint = element.attrib.get("fill", "#000000")
+            colour = swift_colour(paint, name) if own else None
+            parts.append((stroke, opacity, colour, emit_path(element.attrib["d"])))
 
         for child in element:
             walk(child, opacity)
@@ -235,8 +283,9 @@ def emit_icon(name: str, icon: dict) -> str:
         f"    minY: {icon['minY']:g},",
         "    parts: [",
     ]
-    for stroke, opacity, body in icon["parts"]:
-        lines.append(f"      SmileIconPart(stroke: .{stroke}, opacity: {opacity:g}) {{ path in")
+    for stroke, opacity, colour, body in icon["parts"]:
+        tone = f", color: {colour}" if colour else ""
+        lines.append(f"      SmileIconPart(stroke: .{stroke}, opacity: {opacity:g}{tone}) {{ path in")
         lines += [f"  {line}" for line in body]
         lines.append("      },")
     lines += ["    ]", "  )"]

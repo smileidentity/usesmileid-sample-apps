@@ -27,10 +27,24 @@ public struct SmileIconPart: Equatable, Sendable {
   public let stroke: SmileIconStroke
   /// Inherited down the SVG tree — the scan glyph draws its whole group at 0.45.
   public let opacity: CGFloat
+  /// The part's own colour, set only on a two-tone mark; an untinted draw uses it.
+  public let color: Color?
   public let build: @Sendable (inout Path) -> Void
 
+  public init(
+    stroke: SmileIconStroke,
+    opacity: CGFloat,
+    color: Color? = nil,
+    build: @escaping @Sendable (inout Path) -> Void
+  ) {
+    self.stroke = stroke
+    self.opacity = opacity
+    self.color = color
+    self.build = build
+  }
+
   public static func == (lhs: SmileIconPart, rhs: SmileIconPart) -> Bool {
-    lhs.stroke == rhs.stroke && lhs.opacity == rhs.opacity
+    lhs.stroke == rhs.stroke && lhs.opacity == rhs.opacity && lhs.color == rhs.color
   }
 }
 
@@ -704,6 +718,97 @@ public enum SmileIcons {
         path.addCurve(to: CGPoint(x: 3.13756, y: 17.8624), control1: CGPoint(x: 3.91087, y: 18.375), control2: CGPoint(x: 3.46575, y: 18.1906))
         path.addCurve(to: CGPoint(x: 2.625, y: 16.625), control1: CGPoint(x: 2.80937, y: 17.5342), control2: CGPoint(x: 2.625, y: 17.0891))
         path.addLine(to: CGPoint(x: 2.625, y: 8.75))
+        path.closeSubpath()
+      }
+    ]
+  )
+
+  public static let residencyDocumentVerification = SmileIcon(
+    width: 21,
+    height: 21,
+    minX: 0,
+    minY: 0,
+    parts: [
+      SmileIconPart(stroke: .stroke(width: 1.5, round: false), opacity: 1, color: Color(hex: 0x4ad18d)) { path in
+        path.move(to: CGPoint(x: 15.75, y: 2.625))
+        path.addLine(to: CGPoint(x: 5.25, y: 2.625))
+        path.addCurve(to: CGPoint(x: 3.5, y: 4.375), control1: CGPoint(x: 4.2835, y: 2.625), control2: CGPoint(x: 3.5, y: 3.4085))
+        path.addLine(to: CGPoint(x: 3.5, y: 16.625))
+        path.addCurve(to: CGPoint(x: 5.25, y: 18.375), control1: CGPoint(x: 3.5, y: 17.5915), control2: CGPoint(x: 4.2835, y: 18.375))
+        path.addLine(to: CGPoint(x: 15.75, y: 18.375))
+        path.addCurve(to: CGPoint(x: 17.5, y: 16.625), control1: CGPoint(x: 16.7165, y: 18.375), control2: CGPoint(x: 17.5, y: 17.5915))
+        path.addLine(to: CGPoint(x: 17.5, y: 4.375))
+        path.addCurve(to: CGPoint(x: 15.75, y: 2.625), control1: CGPoint(x: 17.5, y: 3.4085), control2: CGPoint(x: 16.7165, y: 2.625))
+        path.closeSubpath()
+      },
+      SmileIconPart(stroke: .fill, opacity: 1, color: Color(hex: 0xff9b00)) { path in
+        path.move(to: CGPoint(x: 12.8772, y: 15.187))
+        path.addCurve(to: CGPoint(x: 13.0738, y: 15.27), control1: CGPoint(x: 12.9511, y: 15.187), control2: CGPoint(x: 13.0221, y: 15.2169))
+        path.addCurve(to: CGPoint(x: 13.1543, y: 15.4696), control1: CGPoint(x: 13.1255, y: 15.3231), control2: CGPoint(x: 13.1551, y: 15.3949))
+        path.addCurve(to: CGPoint(x: 12.8772, y: 15.75), control1: CGPoint(x: 13.1536, y: 15.6244), control2: CGPoint(x: 13.0302, y: 15.7493))
+        path.addLine(to: CGPoint(x: 8.47443, y: 15.75))
+        path.addCurve(to: CGPoint(x: 8.1951, y: 15.4696), control1: CGPoint(x: 8.32073, y: 15.7508), control2: CGPoint(x: 8.19584, y: 15.6252))
+        path.addCurve(to: CGPoint(x: 8.27713, y: 15.2692), control1: CGPoint(x: 8.1951, y: 15.3941), control2: CGPoint(x: 8.22466, y: 15.3223))
+        path.addCurve(to: CGPoint(x: 8.47443, y: 15.187), control1: CGPoint(x: 8.3296, y: 15.2162), control2: CGPoint(x: 8.40054, y: 15.1862))
+        path.addLine(to: CGPoint(x: 12.8772, y: 15.187))
+        path.closeSubpath()
+        path.move(to: CGPoint(x: 12.8772, y: 13.2541))
+        path.addCurve(to: CGPoint(x: 13.1543, y: 13.5345), control1: CGPoint(x: 13.0302, y: 13.2548), control2: CGPoint(x: 13.1536, y: 13.3804))
+        path.addCurve(to: CGPoint(x: 13.0738, y: 13.7341), control1: CGPoint(x: 13.1551, y: 13.6092), control2: CGPoint(x: 13.1255, y: 13.681))
+        path.addCurve(to: CGPoint(x: 12.8772, y: 13.8171), control1: CGPoint(x: 13.0221, y: 13.7872), control2: CGPoint(x: 12.9511, y: 13.8171))
+        path.addLine(to: CGPoint(x: 8.47443, y: 13.8171))
+        path.addCurve(to: CGPoint(x: 8.27713, y: 13.7349), control1: CGPoint(x: 8.40055, y: 13.8179), control2: CGPoint(x: 8.32959, y: 13.7879))
+        path.addCurve(to: CGPoint(x: 8.1951, y: 13.5345), control1: CGPoint(x: 8.22468, y: 13.6818), control2: CGPoint(x: 8.19512, y: 13.61))
+        path.addCurve(to: CGPoint(x: 8.47443, y: 13.2541), control1: CGPoint(x: 8.19584, y: 13.3789), control2: CGPoint(x: 8.32073, y: 13.2541))
+        path.addLine(to: CGPoint(x: 12.8772, y: 13.2541))
+        path.closeSubpath()
+        path.move(to: CGPoint(x: 10.6758, y: 4.55005))
+        path.addCurve(to: CGPoint(x: 14.35, y: 8.26562), control1: CGPoint(x: 12.7021, y: 4.5501), control2: CGPoint(x: 14.35, y: 6.21685))
+        path.addCurve(to: CGPoint(x: 10.6758, y: 11.9804), control1: CGPoint(x: 14.35, y: 10.3144), control2: CGPoint(x: 12.7021, y: 11.9804))
+        path.addCurve(to: CGPoint(x: 7, y: 8.26562), control1: CGPoint(x: 8.65026, y: 11.9804), control2: CGPoint(x: 7, y: 10.3144))
+        path.addCurve(to: CGPoint(x: 10.6758, y: 4.55005), control1: CGPoint(x: 7.00001, y: 6.21682), control2: CGPoint(x: 8.64956, y: 4.55005))
+        path.closeSubpath()
+        path.move(to: CGPoint(x: 9.65217, y: 8.54846))
+        path.addCurve(to: CGPoint(x: 10.0106, y: 10.5928), control1: CGPoint(x: 9.67804, y: 9.35381), control2: CGPoint(x: 9.814, y: 10.0761))
+        path.addCurve(to: CGPoint(x: 10.3719, y: 11.2411), control1: CGPoint(x: 10.12, y: 10.8814), control2: CGPoint(x: 10.2493, y: 11.105))
+        path.addCurve(to: CGPoint(x: 10.6756, y: 11.4198), control1: CGPoint(x: 10.4939, y: 11.3772), control2: CGPoint(x: 10.5929, y: 11.4198))
+        path.addCurve(to: CGPoint(x: 10.9779, y: 11.2411), control1: CGPoint(x: 10.7584, y: 11.4198), control2: CGPoint(x: 10.856, y: 11.3772))
+        path.addCurve(to: CGPoint(x: 11.3392, y: 10.5928), control1: CGPoint(x: 11.1006, y: 11.105), control2: CGPoint(x: 11.2299, y: 10.8814))
+        path.addCurve(to: CGPoint(x: 11.6976, y: 8.54846), control1: CGPoint(x: 11.5358, y: 10.0761), control2: CGPoint(x: 11.6718, y: 9.3545))
+        path.addLine(to: CGPoint(x: 9.65217, y: 8.54846))
+        path.closeSubpath()
+        path.move(to: CGPoint(x: 7.56901, y: 8.54846))
+        path.addCurve(to: CGPoint(x: 9.70907, y: 11.2665), control1: CGPoint(x: 7.68045, y: 9.82629), control2: CGPoint(x: 8.54298, y: 10.8837))
+        path.addCurve(to: CGPoint(x: 9.49107, y: 10.7969), control1: CGPoint(x: 9.6278, y: 11.126), control2: CGPoint(x: 9.5561, y: 10.9689))
+        path.addCurve(to: CGPoint(x: 9.09499, y: 8.54846), control1: CGPoint(x: 9.26273, y: 10.195), control2: CGPoint(x: 9.12086, y: 9.41357))
+        path.addLine(to: CGPoint(x: 7.56901, y: 8.54846))
+        path.closeSubpath()
+        path.move(to: CGPoint(x: 12.2543, y: 8.54771))
+        path.addCurve(to: CGPoint(x: 11.8582, y: 10.796), control1: CGPoint(x: 12.2284, y: 9.4135), control2: CGPoint(x: 12.0865, y: 10.1949))
+        path.addCurve(to: CGPoint(x: 11.6395, y: 11.2663), control1: CGPoint(x: 11.7932, y: 10.968), control2: CGPoint(x: 11.7207, y: 11.125))
+        path.addCurve(to: CGPoint(x: 13.781, y: 8.54846), control1: CGPoint(x: 12.8062, y: 10.8843), control2: CGPoint(x: 13.6694, y: 9.82707))
+        path.addLine(to: CGPoint(x: 12.2543, y: 8.54771))
+        path.closeSubpath()
+        path.move(to: CGPoint(x: 9.70778, y: 5.26808))
+        path.addCurve(to: CGPoint(x: 7.56901, y: 7.98522), control1: CGPoint(x: 8.54195, y: 5.65035), control2: CGPoint(x: 7.67984, y: 6.70681))
+        path.addLine(to: CGPoint(x: 9.09499, y: 7.98522))
+        path.addCurve(to: CGPoint(x: 9.49126, y: 5.73673), control1: CGPoint(x: 9.12013, y: 7.11935), control2: CGPoint(x: 9.26219, y: 6.33866))
+        path.addCurve(to: CGPoint(x: 9.70778, y: 5.26808), control1: CGPoint(x: 9.55613, y: 5.56591), control2: CGPoint(x: 9.62746, y: 5.40914))
+        path.closeSubpath()
+        path.move(to: CGPoint(x: 10.6758, y: 5.11311))
+        path.addCurve(to: CGPoint(x: 10.3721, y: 5.29182), control1: CGPoint(x: 10.5931, y: 5.11311), control2: CGPoint(x: 10.4948, y: 5.15574))
+        path.addCurve(to: CGPoint(x: 10.0108, y: 5.93787), control1: CGPoint(x: 10.2494, y: 5.4279), control2: CGPoint(x: 10.1201, y: 5.64926))
+        path.addCurve(to: CGPoint(x: 9.65236, y: 7.98447), control1: CGPoint(x: 9.8142, y: 6.45449), control2: CGPoint(x: 9.67822, y: 7.17765))
+        path.addLine(to: CGPoint(x: 11.6978, y: 7.98447))
+        path.addCurve(to: CGPoint(x: 11.3394, y: 5.93787), control1: CGPoint(x: 11.672, y: 7.17848), control2: CGPoint(x: 11.536, y: 6.45531))
+        path.addCurve(to: CGPoint(x: 10.9781, y: 5.29182), control1: CGPoint(x: 11.2301, y: 5.64926), control2: CGPoint(x: 11.1007, y: 5.42791))
+        path.addCurve(to: CGPoint(x: 10.6758, y: 5.11311), control1: CGPoint(x: 10.8554, y: 5.15578), control2: CGPoint(x: 10.7586, y: 5.11314))
+        path.closeSubpath()
+        path.move(to: CGPoint(x: 11.6404, y: 5.26639))
+        path.addCurve(to: CGPoint(x: 11.8587, y: 5.73598), control1: CGPoint(x: 11.7215, y: 5.40752), control2: CGPoint(x: 11.7938, y: 5.56503))
+        path.addCurve(to: CGPoint(x: 12.2548, y: 7.98447), control1: CGPoint(x: 12.0878, y: 6.33789), control2: CGPoint(x: 12.2297, y: 7.11858))
+        path.addLine(to: CGPoint(x: 13.7808, y: 7.98447))
+        path.addCurve(to: CGPoint(x: 11.6404, y: 5.26639), control1: CGPoint(x: 13.67, y: 6.70519), control2: CGPoint(x: 12.8071, y: 5.64856))
         path.closeSubpath()
       }
     ]

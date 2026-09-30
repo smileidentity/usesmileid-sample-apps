@@ -66,8 +66,10 @@ val UseSmileIDSampleTokenBindings.bindsRequiredUserDetails: Boolean
 fun UseSmileIDSampleTokenBindings.bindsIdDetails(product: UseSmileIDSampleProduct): Boolean = when (product) {
     UseSmileIDSampleProduct.EnhancedKyc, UseSmileIDSampleProduct.BiometricKyc ->
         !country.isNullOrBlank() && !idType.isNullOrBlank() && !idNumberReference.isNullOrBlank()
-    UseSmileIDSampleProduct.DocumentVerification, UseSmileIDSampleProduct.EnhancedDocumentVerification ->
-        !country.isNullOrBlank() && !idType.isNullOrBlank()
+    UseSmileIDSampleProduct.DocumentVerification,
+    UseSmileIDSampleProduct.EnhancedDocumentVerification,
+    UseSmileIDSampleProduct.ResidencyDocumentVerification,
+    -> !country.isNullOrBlank() && !idType.isNullOrBlank()
     else -> true
 }
 

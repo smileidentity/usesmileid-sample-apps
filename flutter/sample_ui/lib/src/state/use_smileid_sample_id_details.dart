@@ -261,6 +261,7 @@ class UseSmileIDSampleIdDetails {
   bool isComplete(UseSmileIDSampleCatalogueFamily family) => switch (family) {
     UseSmileIDSampleCatalogueFamily.document =>
       country != null && document != null,
+    UseSmileIDSampleCatalogueFamily.passport => country != null,
     UseSmileIDSampleCatalogueFamily.kyc =>
       country != null &&
           idType != null &&

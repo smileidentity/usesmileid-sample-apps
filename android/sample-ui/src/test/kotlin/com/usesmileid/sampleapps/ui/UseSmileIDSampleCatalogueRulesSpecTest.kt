@@ -63,6 +63,7 @@ class UseSmileIDSampleCatalogueRulesSpecTest {
         val data = if (input is TokenJson.Str) CatalogueFixtures.data else decode(input as TokenJson.Obj)
         val family = when (case.text("family")) {
             "kyc" -> UseSmileIDSampleCatalogueFamily.Kyc
+            "passport" -> UseSmileIDSampleCatalogueFamily.Passport
             else -> UseSmileIDSampleCatalogueFamily.Document
         }
         val actual = UseSmileIDSampleCatalogueRules.countries(data, family).map { it.code to it.name }
