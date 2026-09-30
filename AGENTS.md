@@ -250,6 +250,11 @@ does:
 - internal test playbooks, red-team notes, or unfixed vulnerability detail
 - real user data, PII, or captured images from any device run
 
+Test tokens are built at run time from their JSON parts, never committed as `eyJ…` literals, and
+placeholder credentials look like placeholders (`placeholder-value`), never a vendor's key format
+such as `sk_live_…`. A synthetic value in a real credential's shape still trips the secret scanner,
+and a team that learns to dismiss its alerts misses the one that is real.
+
 Sandbox credentials reach CI as repository secrets, never as tree contents. Because forked PRs get
 no secrets, lanes that need them run on schedule, on release dispatch, or manually — never on
 `pull_request` from a fork.
