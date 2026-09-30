@@ -9,8 +9,9 @@ appId: ${APP_ID}
 - openLink: "usesmileid-sample-expo://?noticeWindow=60&catalogue=fixture"
 - runFlow: subflows/warm-start.yaml
 
+# No session: a product tap opens the scanner, and the scan resumes at the product's first step.
 - tapOn:
-    id: "sample_nav_token"
+    id: "sample_product_card_smartSelfieEnrollment"
 # The host's own camera prompt comes before the SDK's.
 - runFlow:
     when:
@@ -19,6 +20,25 @@ appId: ${APP_ID}
     commands:
       - tapOn:
           id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+- assertVisible:
+    id: "sample_scan_token_screen"
+- assertVisible: "Scan a token to start this verification."
+- assertVisible:
+    id: "sample_token_portal_link"
+- tapOn:
+    id: "sample_token_simulate"
+- extendedWaitUntil:
+    visible:
+      id: "sample_user_details_screen"
+    timeout: 10000
+- back
+- extendedWaitUntil:
+    visible:
+      id: "sample_products_screen"
+    timeout: 10000
+
+- tapOn:
+    id: "sample_nav_token"
 - assertVisible:
     id: "sample_scan_token_screen"
 - tapOn:

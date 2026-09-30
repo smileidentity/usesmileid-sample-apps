@@ -16,10 +16,14 @@ export type UseSmileIDSampleSessionStorage = {
   write: (value: string | null) => Promise<void>;
 };
 
-/// A run the expiry gate sent to the scanner.
+/// Where a relinked run picks up: its first step (sent from a product tap), or straight back into the SDK.
+export type UseSmileIDSampleResumePoint = 'firstStep' | 'flow';
+
+/// A run a gate sent to the scanner.
 export type UseSmileIDSampleRunIntent = {
   readonly productId: string;
   readonly route: UseSmileIDSampleFlowRoute;
+  readonly resumeAt: UseSmileIDSampleResumePoint;
 };
 
 /// The persisted record, one item so token and marker never come from different writes.
@@ -36,7 +40,7 @@ type State = {
   readonly loaded: boolean;
   /// Ticks once a second while a session is live.
   readonly nowMillis: number;
-  /// The expiry gate's hand-off to the scanner, never a route argument.
+  /// A gate's hand-off to the scanner, never a route argument.
   readonly pendingRun: UseSmileIDSampleRunIntent | null;
 };
 

@@ -32,7 +32,8 @@ export default function Products() {
   const index = useSmileIDSampleActiveProfileIndex();
   const startRun = useSmileIDSampleFormsStore((state) => state.startRun);
   const bottomInset = useSmileIDSampleListInset();
-  const { scenario, theme, catalogue } = useLaunchArgs();
+  const { scenario, theme, catalogue, route } = useLaunchArgs();
+  const sendRun = useSmileIDSampleSessionStore((state) => state.sendRun);
   const result = useSmileIDSampleResultStore((state) => state.result);
   const live = useSmileIDSampleSessionStore((state) => smileIDSampleLiveSession(state, state.nowMillis));
   const nowMillis = useSmileIDSampleSessionStore((state) => state.nowMillis);
@@ -50,6 +51,11 @@ export default function Products() {
       }}
       onProductPress={(product) => {
         startRun(profile);
+        if (smileIDSampleLiveSession(useSmileIDSampleSessionStore.getState(), Date.now()) === null) {
+          sendRun({ productId: product.id, route, resumeAt: 'firstStep' });
+          router.push('/token/scan');
+          return;
+        }
         // Fetched ahead, so the list is usually there by the time the picker opens.
         if (smileIDSampleCatalogueFamily(product) !== null) {
           smileIDSampleCatalogueStore(catalogue)

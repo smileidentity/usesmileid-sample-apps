@@ -1,5 +1,8 @@
 import {
   ScanTokenScreen,
+  SMILE_ID_PORTAL_URL,
+  smileIDSampleProducts,
+  smileIDSampleSessionExpired,
   smileIDSampleSessionHasExpired,
   smileIDSampleTokenSession,
   useSmileIDSampleSessionStore,
@@ -9,10 +12,14 @@ import {
 } from '@smileid/sample-ui';
 import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
-import { useRouter } from 'expo-router';
+import { useNavigation, useRouter } from 'expo-router';
+import { Linking } from 'react-native';
 import { createContext, use, useEffect, useRef, useState } from 'react';
 
+import { smileIDSampleFirstStepFor } from '../../src/flow/use-smile-id-sample-flow-journey';
 import { smileIDSampleSimulatedToken } from '../../src/flow/use-smile-id-sample-flow-tokens';
+import { smileIDSampleLiveBindingsNow } from '../../src/flow/use-smile-id-sample-token-binding-rules';
+import { useLaunchArgs } from '../../src/use-smile-id-sample-launch';
 import { UseSmileIDSampleQrScanner } from '../../src/scan/use-smile-id-sample-qr-scanner';
 import { useSmileIDSampleBack } from '../../src/use-smile-id-sample-back';
 
@@ -43,7 +50,25 @@ export default function ScanToken() {
   const [resuming] = useState(() => useSmileIDSampleSessionStore.getState().pendingRun);
   // Resumes only on a different session than the one that sent us here.
   const [arrivedWith] = useState(() => useSmileIDSampleSessionStore.getState().live?.id ?? null);
+  const [arrivedEnded] = useState(() => {
+    const state = useSmileIDSampleSessionStore.getState();
+    return smileIDSampleSessionExpired(state, Date.now());
+  });
   const resumeHandled = useRef(false);
+  const { scenario } = useLaunchArgs();
+  const navigation = useNavigation();
+  // False until the push lands, so a second tap on the nav bar's Token button cannot land on Simulate.
+  const [settled, setSettled] = useState(false);
+
+  useEffect(() => {
+    // The native stack's event, which the navigator expo-router hands back does not declare.
+    const stack = navigation as unknown as {
+      addListener: (type: 'transitionEnd', listener: (event: { data?: { closing?: boolean } }) => void) => () => void;
+    };
+    return stack.addListener('transitionEnd', (event) => {
+      if (event.data?.closing !== true) setSettled(true);
+    });
+  }, [navigation]);
 
   useEffect(() => {
     clearRun();
@@ -53,9 +78,17 @@ export default function ScanToken() {
     if (resuming === null || resumeHandled.current || current === null || current.id === arrivedWith) return;
     resumeHandled.current = true;
     // An expired relink cannot start the run, so leave rather than freeze.
-    if (smileIDSampleSessionHasExpired(current, Date.now())) back();
-    else router.replace(`/flow/${resuming.productId}/run`);
-  }, [resuming, current, arrivedWith, back, router]);
+    if (smileIDSampleSessionHasExpired(current, Date.now())) {
+      back();
+      return;
+    }
+    const product = smileIDSampleProducts.find((candidate) => candidate.id === resuming.productId);
+    if (resuming.resumeAt === 'firstStep' && product !== undefined) {
+      router.replace(smileIDSampleFirstStepFor(product, smileIDSampleLiveBindingsNow(scenario)));
+    } else {
+      router.replace(`/flow/${resuming.productId}/run`);
+    }
+  }, [resuming, current, arrivedWith, back, router, scenario]);
 
   const onLink = (session: UseSmileIDSampleTokenSession) => {
     link(session).catch(() => undefined);
@@ -65,7 +98,7 @@ export default function ScanToken() {
   return (
     <TorchContext value={torchOn}>
       <ScanTokenScreen
-        reason={resuming === null ? null : 'sessionEnded'}
+        reason={resuming === null ? null : arrivedEnded ? 'sessionEnded' : 'sessionNeeded'}
         onBack={back}
         onLink={onLink}
         onPaste={() => Clipboard.getStringAsync()}
@@ -79,6 +112,11 @@ export default function ScanToken() {
         onTorchToggle={() => setTorchOn((on) => !on)}
         Viewfinder={Viewfinder}
         onFeedback={feedback}
+        acceptsTaps={settled}
+        // External, not in-app: the Portal sign-in lives in the browser.
+        onOpenPortal={() => {
+          Linking.openURL(SMILE_ID_PORTAL_URL).catch(() => undefined);
+        }}
       />
     </TorchContext>
   );

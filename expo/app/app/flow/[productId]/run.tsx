@@ -116,7 +116,7 @@ export default function SdkFlowRun() {
   // Declared, not replaced from an effect: on a cold link that took the whole app off screen.
   if (snapshot === null) return <Redirect href="/products" />;
   if (preflight?.kind === 'needsSession') {
-    return <SendToScanner intent={{ productId: snapshot.product.id, route: snapshot.route }} />;
+    return <SendToScanner intent={{ productId: snapshot.product.id, route: snapshot.route, resumeAt: 'flow' }} />;
   }
   if (preflight?.kind === 'needsDetails') {
     return <Redirect href={`/flow/${productId}/details`} />;
