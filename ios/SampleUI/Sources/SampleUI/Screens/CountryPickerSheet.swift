@@ -105,10 +105,10 @@ struct UseSmileIDSampleCataloguePicker<Item: Hashable & Sendable, Row: View>: Vi
       // The first 300 ms draw nothing, so a fast answer never flashes a skeleton.
       case .loading:
         EmptyView()
-      case .failed:
+      case .failed(_, let advice):
         UseSmileIDSampleEmptyState(
           text: "Couldn't load \(what)",
-          supportingText: "Check your connection, then try again",
+          supportingText: advice,
           testId: UseSmileIDSampleTestIds.catalogueError,
           onRetry: onRetry,
           retryTestId: UseSmileIDSampleTestIds.catalogueRetry

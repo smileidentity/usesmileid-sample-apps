@@ -94,7 +94,7 @@ struct UseSmileIDSampleShell: View {
     switch sheet {
     case .countryPicker:
       CountryPickerSheet(
-        catalogue: app.catalogue.countries(formFamily),
+        catalogue: app.catalogue.countries(formFamily, product: idFormProduct),
         selected: app.idDetails.country,
         query: $app.countryQuery,
         onSelect: { app.selectCountry($0)

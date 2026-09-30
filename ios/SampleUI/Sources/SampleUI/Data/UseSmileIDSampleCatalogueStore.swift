@@ -8,15 +8,26 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
     let locale: String
   }
 
+  private struct EnabledKey: Equatable {
+    let sessionId: String?
+    let environment: UseSmileIDSampleEnvironment
+    let locale: String
+  }
+
   private let source: UseSmileIDSampleCatalogueSource
   /// Nanoseconds rather than `Duration`, which needs iOS 16.
   private let timeout: UInt64
   private var run: Run?
   private var idTypesTask: Task<Void, Never>?
   private var documentsTask: Task<Void, Never>?
+  private var enabledKey: EnabledKey?
+  private var enabledToken = ""
+  private var enabledTask: Task<Void, Never>?
 
   @Published public private(set) var idTypes: UseSmileIDSampleCatalogue<UseSmileIDSampleApiIdType> = .loading
   @Published public private(set) var documents: UseSmileIDSampleCatalogue<UseSmileIDSampleApiCountryDocuments> = .loading
+  /// The partner's Enhanced Document Verification list, kept per session: only a relink or a locale change asks again.
+  @Published public private(set) var enabled: UseSmileIDSampleCatalogue<UseSmileIDSampleApiEnabledCountry> = .loading
 
   public init(source: UseSmileIDSampleCatalogueSource, timeoutNanoseconds: UInt64 = 10000000000) {
     self.source = source
@@ -38,8 +49,22 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
     }
   }
 
+  /// Enhanced Document Verification: fetches `session`'s list unless it is already here or on its way.
+  public func ensureEnabled(environment: UseSmileIDSampleEnvironment, locale: String, session: UseSmileIDSampleTokenSession?) {
+    let key = EnabledKey(sessionId: session?.id, environment: environment, locale: locale)
+    if key == enabledKey, enabled.isReady || enabledTask != nil {
+      return
+    }
+    enabledKey = key
+    enabledToken = session?.token ?? ""
+    fetchEnabled()
+  }
+
   /// Asks again for whichever list failed, under the same timing as the first attempt.
   public func retry() {
+    if enabled.isFailed {
+      fetchEnabled()
+    }
     guard run != nil else { return }
     if idTypes.isFailed {
       fetchIdTypes()
@@ -49,20 +74,33 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
     }
   }
 
-  /// Leaving the form: anything in flight is cancelled and the next run starts clean.
+  /// Leaving the form: anything in flight is cancelled and the next run starts clean, bar a session's arrived list.
   public func stop() {
     idTypesTask?.cancel()
     documentsTask?.cancel()
     run = nil
     idTypes = .loading
     documents = .loading
+    if !enabled.isReady {
+      enabledTask?.cancel()
+      enabledTask = nil
+      enabledKey = nil
+      enabled = .loading
+    }
   }
 
-  public func countries(_ family: UseSmileIDSampleCatalogueFamily) -> UseSmileIDSampleCatalogue<UseSmileIDSampleCountry> {
+  /// `product` Enhanced Document Verification offers only the countries its partner enabled.
+  public func countries(
+    _ family: UseSmileIDSampleCatalogueFamily,
+    product: UseSmileIDSampleProduct? = nil
+  ) -> UseSmileIDSampleCatalogue<UseSmileIDSampleCountry> {
+    if product == .enhancedDocumentVerification {
+      return withEnabled { UseSmileIDSampleCatalogueRules.enabledCountries($0, enabled: $1) }
+    }
     let types: UseSmileIDSampleCatalogue<UseSmileIDSampleApiIdType> = family == .kyc ? idTypes : .ready([])
     switch (documents, types) {
-    case (.failed(let reason), _), (_, .failed(let reason)):
-      return .failed(reason)
+    case (.failed(let reason, let advice), _), (_, .failed(let reason, let advice)):
+      return .failed(reason, advice: advice)
     case (.ready(let docs), .ready(let ids)):
       return Self.ready(UseSmileIDSampleCatalogueRules.countries(.init(idTypes: ids, documents: docs), family: family))
     default:
@@ -73,7 +111,7 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
   public func idTypes(_ country: String) -> UseSmileIDSampleCatalogue<UseSmileIDSampleKycIdType> {
     switch idTypes {
     case .ready(let items): Self.ready(UseSmileIDSampleCatalogueRules.idTypes(items, country: country))
-    case .failed(let reason): .failed(reason)
+    case .failed(let reason, let advice): .failed(reason, advice: advice)
     case .empty: .empty
     case .loading: .loading
     }
@@ -83,11 +121,46 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
     _ country: String,
     product: UseSmileIDSampleProduct = .documentVerification
   ) -> UseSmileIDSampleCatalogue<UseSmileIDSampleDocument> {
+    if product == .enhancedDocumentVerification {
+      return withEnabled { UseSmileIDSampleCatalogueRules.enabledDocuments($0, enabled: $1, country: country) }
+    }
     switch documents {
-    case .ready(let items): Self.ready(UseSmileIDSampleCatalogueRules.documents(items, country: country, product: product))
-    case .failed(let reason): .failed(reason)
-    case .empty: .empty
-    case .loading: .loading
+    case .ready(let items): return Self.ready(UseSmileIDSampleCatalogueRules.documents(items, country: country, product: product))
+    case .failed(let reason, let advice): return .failed(reason, advice: advice)
+    case .empty: return .empty
+    case .loading: return .loading
+    }
+  }
+
+  private func withEnabled<Item>(
+    _ rows: ([UseSmileIDSampleApiCountryDocuments], [UseSmileIDSampleApiEnabledCountry]) -> [Item]
+  ) -> UseSmileIDSampleCatalogue<Item> {
+    switch (enabled, documents) {
+    case (.failed(let reason, let advice), _), (_, .failed(let reason, let advice)):
+      .failed(reason, advice: advice)
+    case (.ready(let allowed), .ready(let docs)):
+      Self.ready(rows(docs, allowed))
+    default:
+      .loading
+    }
+  }
+
+  private func fetchEnabled() {
+    guard let key = enabledKey else { return }
+    enabledTask?.cancel()
+    enabled = .loading
+    let source = source
+    let token = enabledToken
+    enabledTask = Task {
+      let result = await load {
+        try await UseSmileIDSampleCatalogueJson.enabledCountries(
+          source.servicesConfig(environment: key.environment, token: token, locale: key.locale)
+        )
+      }
+      if !Task.isCancelled {
+        enabled = result
+        enabledTask = nil
+      }
     }
   }
 
@@ -139,6 +212,8 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
       return items.map(UseSmileIDSampleCatalogue.ready) ?? .failed("Unreadable response")
     } catch UseSmileIDSampleCatalogueError.timedOut {
       return .failed("Timed out")
+    } catch UseSmileIDSampleCatalogueError.http(let status) {
+      return .failed("HTTP \(status)", advice: UseSmileIDSampleCatalogueRules.advice(status: status))
     } catch {
       return .failed(error.localizedDescription)
     }

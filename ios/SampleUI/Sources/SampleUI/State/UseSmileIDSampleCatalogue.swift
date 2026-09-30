@@ -22,10 +22,18 @@ public enum UseSmileIDSampleCatalogue<Item: Sendable>: Sendable {
   case loading
   case ready([Item])
   case empty
-  case failed(String)
+  /// `advice` is the error state's supporting line, per `spec/catalogue-rules.json` failures.
+  case failed(String, advice: String = UseSmileIDSampleCatalogueRules.defaultAdvice)
 
   public var isLoading: Bool {
     if case .loading = self {
+      return true
+    }
+    return false
+  }
+
+  public var isReady: Bool {
+    if case .ready = self {
       return true
     }
     return false
@@ -76,6 +84,17 @@ public struct UseSmileIDSampleApiSubType: Equatable, Sendable {
   public let hasBack: Bool
   public let format: Int
   public let displayStandalone: Bool
+}
+
+/// A country of `products.enhanced_document_verification` in `GET /v3/services/config`, with the ID types the partner enabled.
+public struct UseSmileIDSampleApiEnabledCountry: Equatable, Sendable {
+  public let code: String
+  public let documents: [UseSmileIDSampleApiEnabledDocument]
+}
+
+public struct UseSmileIDSampleApiEnabledDocument: Equatable, Sendable {
+  public let code: String
+  public let label: String
 }
 
 /// Both responses a run of the form reads; fetched together because the KYC countries need names from the second.
@@ -132,6 +151,43 @@ public enum UseSmileIDSampleCatalogueRules {
       .filter { $0.isListed(on: product) }
   }
 
+  /// Enhanced Document Verification's rows: the partner's enabled codes, each drawn from `supported_documents` when it lists it.
+  public static func enabledDocuments(
+    _ all: [UseSmileIDSampleApiCountryDocuments],
+    enabled: [UseSmileIDSampleApiEnabledCountry],
+    country: String
+  ) -> [UseSmileIDSampleDocument] {
+    let rows = documents(all, country: country, product: .enhancedDocumentVerification)
+    let listed = Set((all.first { $0.country.code == country }?.documents ?? []).map(\.code))
+    return (enabled.first { $0.code == country }?.documents ?? []).flatMap { entry in
+      listed.contains(entry.code)
+        ? rows.filter { $0.code == entry.code }
+        : [UseSmileIDSampleDocument(code: entry.code, name: entry.label, hasBack: true, format: 1)]
+    }
+  }
+
+  /// Enhanced Document Verification's countries, named from `supported_documents`, the rest by code.
+  public static func enabledCountries(
+    _ all: [UseSmileIDSampleApiCountryDocuments],
+    enabled: [UseSmileIDSampleApiEnabledCountry]
+  ) -> [UseSmileIDSampleCountry] {
+    let offered = Set(enabled.map(\.code).filter { !enabledDocuments(all, enabled: enabled, country: $0).isEmpty })
+    let named = all.map(\.country).filter { offered.contains($0.code) }
+    return named + offered.filter { code in !named.contains { $0.code == code } }.sorted()
+      .map { UseSmileIDSampleCountry(code: $0, name: $0) }
+  }
+
+  /// The error state's supporting line for an HTTP `status`, or nil when there was no answer.
+  public static func advice(status: Int?) -> String {
+    switch status {
+    case 401: "The server refused this session's token. Link a new session, then try again"
+    case 403: "Access denied: production may not be enabled for this partner, or this network is not allowed"
+    default: defaultAdvice
+    }
+  }
+
+  public static let defaultAdvice = "Check your connection, then try again"
+
   public static func countries(
     _ data: UseSmileIDSampleCatalogueData,
     family: UseSmileIDSampleCatalogueFamily
@@ -183,6 +239,25 @@ public enum UseSmileIDSampleCatalogueJson {
       )
     }
   }
+
+  /// `products.enhanced_document_verification` of `GET /v3/services/config`: country code to enabled ID types.
+  public static func enabledCountries(_ body: Data) -> [UseSmileIDSampleApiEnabledCountry]? {
+    guard let root = try? JSONSerialization.jsonObject(with: body) as? [String: Any],
+          let products = root["products"] as? [String: Any] else { return nil }
+    let byCountry = products[enhancedDocumentVerification] as? [String: Any] ?? [:]
+    return byCountry.map { code, entries in
+      UseSmileIDSampleApiEnabledCountry(
+        code: code,
+        documents: (entries as? [[String: Any]] ?? []).compactMap { entry in
+          guard let key = entry["key_name"] as? String, let label = entry["label"] as? String else { return nil }
+          return UseSmileIDSampleApiEnabledDocument(code: key, label: label)
+        }
+      )
+    }
+  }
+
+  /// The product key the configuration call asks for and reads back.
+  public static let enhancedDocumentVerification = "enhanced_document_verification"
 
   private static func document(_ item: [String: Any]) -> UseSmileIDSampleApiDocument? {
     guard let code = item["code"] as? String, let name = item["name"] as? String else { return nil }

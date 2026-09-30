@@ -1,7 +1,7 @@
 import Foundation
 import SampleUI
 
-/// The two unauthenticated catalogue endpoints; `URLSession` stays in the shell and no token is ever sent.
+/// The two unauthenticated catalogue endpoints and the partner's own configuration under its token; `URLSession` stays in the shell.
 struct UseSmileIDSampleCatalogueApi: UseSmileIDSampleCatalogueSource {
   private let session: URLSession
 
@@ -29,14 +29,34 @@ struct UseSmileIDSampleCatalogueApi: UseSmileIDSampleCatalogueSource {
     )
   }
 
-  private func get(_ environment: UseSmileIDSampleEnvironment, _ path: String, _ query: [URLQueryItem]) async throws -> Data {
+  func servicesConfig(environment: UseSmileIDSampleEnvironment, token: String, locale: String) async throws -> Data {
+    try await get(
+      environment,
+      "v3/services/config",
+      [
+        URLQueryItem(name: "product", value: UseSmileIDSampleCatalogueJson.enhancedDocumentVerification),
+        URLQueryItem(name: "locale", value: locale)
+      ],
+      token: token
+    )
+  }
+
+  private func get(
+    _ environment: UseSmileIDSampleEnvironment,
+    _ path: String,
+    _ query: [URLQueryItem],
+    token: String? = nil
+  ) async throws -> Data {
     guard var components = URLComponents(string: environment.baseUrl + path) else { throw URLError(.badURL) }
     components.queryItems = query.isEmpty ? nil : query
     guard let url = components.url else { throw URLError(.badURL) }
-    let (data, response) = try await session.data(from: url)
-    guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
-      throw URLError(.badServerResponse)
+    var request = URLRequest(url: url)
+    if let token {
+      request.setValue(token, forHTTPHeaderField: "SmileID-Token")
     }
+    let (data, response) = try await session.data(for: request)
+    guard let http = response as? HTTPURLResponse else { throw URLError(.badServerResponse) }
+    guard (200..<300).contains(http.statusCode) else { throw UseSmileIDSampleCatalogueError.http(http.statusCode) }
     return data
   }
 }

@@ -60,9 +60,7 @@ struct UseSmileIDSampleDestination: View {
       .onAppear {
         app.fillFormOnEntry()
         // A deep link to this form skips the product tap, so the lists start here if nothing has.
-        if Self.product(productId)?.catalogueFamily != nil {
-          app.catalogue.ensure(environment: app.environment, locale: app.catalogueLocale)
-        }
+        app.ensureCatalogue(Self.product(productId))
       }
     case .idDetailsForm(let productId):
       KycIdFormScreen(
@@ -78,7 +76,7 @@ struct UseSmileIDSampleDestination: View {
       )
       .navigationBarHidden(true)
       .onAppear {
-        app.catalogue.ensure(environment: app.environment, locale: app.catalogueLocale)
+        app.ensureCatalogue(Self.product(productId))
         Self.product(productId).map { app.idDetails.keepDocumentListed(on: $0) }
       }
     case .verificationDetails(let jobId):
@@ -167,7 +165,7 @@ struct UseSmileIDSampleDestination: View {
     let loading: Bool = switch (app.idDetails.country?.code, family) {
     case (nil, _): false
     case (let code?, .kyc): app.catalogue.idTypes(code).isLoading
-    case (let code?, .document): app.catalogue.documents(code).isLoading
+    case (let code?, .document): app.catalogue.documents(code, product: Self.product(productId) ?? .documentVerification).isLoading
     case (_?, .passport): false
     }
     return .init(
