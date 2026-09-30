@@ -122,6 +122,7 @@ export const UseSmileIDSampleTestIds = {
   PROFILE_CONFIG_FIELD: 'sample_profile_config_field',
   PROFILE_CONFIG_CALLBACK_URL: 'sample_profile_config_callback_url',
   PROFILE_CONFIG_SAVE: 'sample_profile_config_save',
+  PROFILE_CONFIG_CONTACT_ERROR: 'sample_profile_config_contact_error',
   PROFILE_CONFIG_NAME: 'sample_profile_config_name',
   PROFILE_CONFIG_DELETE: 'sample_profile_config_delete',
   PROFILE_DELETE_CONFIRM: 'sample_profile_delete_confirm',

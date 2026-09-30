@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { UseSmileIDSampleButton } from '../components/use-smile-id-sample-button';
@@ -16,12 +16,17 @@ import {
   smileIDSampleUserFieldRead,
   smileIDSampleUserFields,
   type UseSmileIDSampleUserField,
+  smileIDSampleUserFieldKeyboard,
 } from '../model/use-smile-id-sample-user-fields';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 import {
   UseSmileIDSampleSuffixedTestIds,
   UseSmileIDSampleTestIds,
 } from '../use-smile-id-sample-test-ids';
+import {
+  smileIDSampleContactProblem,
+  smileIDSampleDetailsContactProblem,
+} from '../state/use-smile-id-sample-contact-rules';
 
 /// The design's gap between the header, the label, the card and the CTA — not the 8 used inside a card.
 const SECTION_GAP = 14;
@@ -64,6 +69,7 @@ export const ProfileConfigScreen = ({
   onDelete,
 }: Props) => {
   const theme = useSmileIDSampleTheme();
+  const contactProblem = smileIDSampleDetailsContactProblem(state.defaults);
   const insets = useSafeAreaInsets();
 
   return (
@@ -101,11 +107,21 @@ export const ProfileConfigScreen = ({
                 onValueChange={(value) => onFieldChange(field.id, value)}
                 placeholder={field.placeholder}
                 required={field.required}
+                {...smileIDSampleUserFieldKeyboard(field.id)}
+                isError={smileIDSampleContactProblem(field.id, smileIDSampleUserFieldRead(field.id, state.defaults)) !== null}
                 testID={UseSmileIDSampleSuffixedTestIds.profileConfigField(field.id)}
               />
             </View>
           ))}
         </UseSmileIDSampleSectionSurface>
+        {contactProblem === null ? null : (
+          <Text
+            testID={UseSmileIDSampleTestIds.PROFILE_CONFIG_CONTACT_ERROR}
+            style={[theme.type.textStyleCaption, { color: theme.colors.input.borderError }]}
+          >
+            {contactProblem}
+          </Text>
+        )}
         {/* Its own section, not a row in the card above: a webhook URL is not a user detail. */}
         <UseSmileIDSampleSectionLabel text="CALLBACK URL" />
         <UseSmileIDSampleSectionSurface>
@@ -137,7 +153,7 @@ export const ProfileConfigScreen = ({
       <UseSmileIDSampleButton
         text={state.isActive ? 'Save changes' : 'Use this profile'}
         onPress={onSave}
-        enabled={(state.changed ?? false) || !state.isActive}
+        enabled={((state.changed ?? false) || !state.isActive) && contactProblem === null}
         testID={UseSmileIDSampleTestIds.PROFILE_CONFIG_SAVE}
         style={{
           marginBottom: insets.bottom + theme.dimens.spacing.md,

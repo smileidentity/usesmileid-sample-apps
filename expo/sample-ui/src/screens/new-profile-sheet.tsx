@@ -3,9 +3,17 @@ import { UseSmileIDSampleButton } from '../components/use-smile-id-sample-button
 import { UseSmileIDSampleIcon } from '../components/use-smile-id-sample-icon';
 import { UseSmileIDSampleSectionLabel } from '../components/use-smile-id-sample-section-label';
 import { UseSmileIDSampleTextInput } from '../components/use-smile-id-sample-text-input';
-import { smileIDSampleUserFieldSpec, UseSmileIDSampleUserField } from '../model/use-smile-id-sample-user-fields';
+import {
+  smileIDSampleUserFieldKeyboard,
+  smileIDSampleUserFieldSpec,
+  UseSmileIDSampleUserField,
+} from '../model/use-smile-id-sample-user-fields';
 import type { SmileIconName } from '../smile-icons';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import {
+  smileIDSampleContactProblem,
+  smileIDSampleDetailsContactProblem,
+} from '../state/use-smile-id-sample-contact-rules';
 
 /// What the sheet has collected. Its own state, because a dismissed sheet must start empty next time.
 export type UseSmileIDSampleNewProfileDraft = {
@@ -28,7 +36,8 @@ export const smileIDSampleNewProfileDraftEmpty: UseSmileIDSampleNewProfileDraft 
 export const smileIDSampleNewProfileComplete = (draft: UseSmileIDSampleNewProfileDraft): boolean =>
   draft.name.trim().length > 0 &&
   draft.firstName.trim().length > 0 &&
-  draft.lastName.trim().length > 0;
+  draft.lastName.trim().length > 0 &&
+  smileIDSampleDetailsContactProblem(draft) === null;
 
 type Field = {
   readonly key: keyof UseSmileIDSampleNewProfileDraft;
@@ -81,12 +90,17 @@ type Props = {
 
 /// A profile name, then the four user details that will live under it.
 export const NewProfileSheet = ({ draft, onDraftChange, onSave, onDismiss }: Props) => {
+  const problemOf = (spec: Field): string | null =>
+    spec.key === 'email' || spec.key === 'phone' ? smileIDSampleContactProblem(spec.key, draft[spec.key]) : null;
   const field = (spec: Field) => (
     <UseSmileIDSampleTextInput
       key={spec.key}
       value={draft[spec.key]}
       onValueChange={(value) => onDraftChange({ ...draft, [spec.key]: value })}
       placeholder={spec.placeholder}
+      {...(spec.key === 'name' ? {} : smileIDSampleUserFieldKeyboard(spec.key))}
+      isError={problemOf(spec) !== null}
+      errorMessage={problemOf(spec)}
       testID={spec.testID}
       leading={(tint) => <UseSmileIDSampleIcon name={spec.icon} tint={tint} />}
     />

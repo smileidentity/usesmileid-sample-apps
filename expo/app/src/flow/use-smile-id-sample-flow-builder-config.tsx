@@ -10,6 +10,7 @@ import {
   UseSmileIDSampleIcon,
   smileIDSampleThemeOverride,
   useSmileIDSampleTheme,
+  smileIDSampleContactSubmitted,
 } from '@smileid/sample-ui';
 import {
   CaptureType,
@@ -58,11 +59,13 @@ export const smileIDSampleApplying = (
   const scanned = smileIDSampleSnapshotSession(snapshot);
   // Omitted, never blanked: a blank silences the SDK's per-field errors.
   if (smileIDSampleFlowPlan(scanned?.bindings, snapshot.product).passUserDetails) {
+    const email = smileIDSampleContactSubmitted('email', snapshot.userDetails.email);
+    const phoneNumber = smileIDSampleContactSubmitted('phone', snapshot.userDetails.phone);
     builder.userDetails = {
       givenNames: snapshot.userDetails.firstName,
       lastName: snapshot.userDetails.lastName,
-      ...(snapshot.userDetails.email.length > 0 ? { email: snapshot.userDetails.email } : {}),
-      ...(snapshot.userDetails.phone.length > 0 ? { phoneNumber: snapshot.userDetails.phone } : {}),
+      ...(email.length > 0 ? { email } : {}),
+      ...(phoneNumber.length > 0 ? { phoneNumber } : {}),
     };
   }
   if (snapshot.product.id === 'smartSelfieAuth') builder.userId = snapshot.userId;

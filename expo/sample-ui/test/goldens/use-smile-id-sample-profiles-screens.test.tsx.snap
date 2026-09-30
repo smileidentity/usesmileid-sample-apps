@@ -392,8 +392,10 @@ exports[`newProfileSheet dark empty 1`] = `
                       </RNSVGSvgView>
                     </View>
                     <TextInput
-                      autoCorrect={true}
+                      autoCapitalize="words"
+                      autoCorrect={false}
                       editable={true}
+                      keyboardType="default"
                       onBlur={[Function]}
                       onChangeText={[Function]}
                       onFocus={[Function]}
@@ -543,8 +545,10 @@ exports[`newProfileSheet dark empty 1`] = `
                       </RNSVGSvgView>
                     </View>
                     <TextInput
-                      autoCorrect={true}
+                      autoCapitalize="words"
+                      autoCorrect={false}
                       editable={true}
+                      keyboardType="default"
                       onBlur={[Function]}
                       onChangeText={[Function]}
                       onFocus={[Function]}
@@ -694,8 +698,10 @@ exports[`newProfileSheet dark empty 1`] = `
                       </RNSVGSvgView>
                     </View>
                     <TextInput
-                      autoCorrect={true}
+                      autoCapitalize="none"
+                      autoCorrect={false}
                       editable={true}
+                      keyboardType="email-address"
                       onBlur={[Function]}
                       onChangeText={[Function]}
                       onFocus={[Function]}
@@ -845,8 +851,10 @@ exports[`newProfileSheet dark empty 1`] = `
                       </RNSVGSvgView>
                     </View>
                     <TextInput
-                      autoCorrect={true}
+                      autoCapitalize="none"
+                      autoCorrect={false}
                       editable={true}
+                      keyboardType="phone-pad"
                       onBlur={[Function]}
                       onChangeText={[Function]}
                       onFocus={[Function]}
@@ -1364,8 +1372,10 @@ exports[`newProfileSheet dark filled 1`] = `
                       </RNSVGSvgView>
                     </View>
                     <TextInput
-                      autoCorrect={true}
+                      autoCapitalize="words"
+                      autoCorrect={false}
                       editable={true}
+                      keyboardType="default"
                       onBlur={[Function]}
                       onChangeText={[Function]}
                       onFocus={[Function]}
@@ -1515,8 +1525,10 @@ exports[`newProfileSheet dark filled 1`] = `
                       </RNSVGSvgView>
                     </View>
                     <TextInput
-                      autoCorrect={true}
+                      autoCapitalize="words"
+                      autoCorrect={false}
                       editable={true}
+                      keyboardType="default"
                       onBlur={[Function]}
                       onChangeText={[Function]}
                       onFocus={[Function]}
@@ -1666,8 +1678,10 @@ exports[`newProfileSheet dark filled 1`] = `
                       </RNSVGSvgView>
                     </View>
                     <TextInput
-                      autoCorrect={true}
+                      autoCapitalize="none"
+                      autoCorrect={false}
                       editable={true}
+                      keyboardType="email-address"
                       onBlur={[Function]}
                       onChangeText={[Function]}
                       onFocus={[Function]}
@@ -1817,8 +1831,10 @@ exports[`newProfileSheet dark filled 1`] = `
                       </RNSVGSvgView>
                     </View>
                     <TextInput
-                      autoCorrect={true}
+                      autoCapitalize="none"
+                      autoCorrect={false}
                       editable={true}
+                      keyboardType="phone-pad"
                       onBlur={[Function]}
                       onChangeText={[Function]}
                       onFocus={[Function]}
@@ -2336,8 +2352,10 @@ exports[`newProfileSheet light empty 1`] = `
                       </RNSVGSvgView>
                     </View>
                     <TextInput
-                      autoCorrect={true}
+                      autoCapitalize="words"
+                      autoCorrect={false}
                       editable={true}
+                      keyboardType="default"
                       onBlur={[Function]}
                       onChangeText={[Function]}
                       onFocus={[Function]}
@@ -2487,8 +2505,10 @@ exports[`newProfileSheet light empty 1`] = `
                       </RNSVGSvgView>
                     </View>
                     <TextInput
-                      autoCorrect={true}
+                      autoCapitalize="words"
+                      autoCorrect={false}
                       editable={true}
+                      keyboardType="default"
                       onBlur={[Function]}
                       onChangeText={[Function]}
                       onFocus={[Function]}
@@ -2638,8 +2658,10 @@ exports[`newProfileSheet light empty 1`] = `
                       </RNSVGSvgView>
                     </View>
                     <TextInput
-                      autoCorrect={true}
+                      autoCapitalize="none"
+                      autoCorrect={false}
                       editable={true}
+                      keyboardType="email-address"
                       onBlur={[Function]}
                       onChangeText={[Function]}
                       onFocus={[Function]}
@@ -2789,8 +2811,10 @@ exports[`newProfileSheet light empty 1`] = `
                       </RNSVGSvgView>
                     </View>
                     <TextInput
-                      autoCorrect={true}
+                      autoCapitalize="none"
+                      autoCorrect={false}
                       editable={true}
+                      keyboardType="phone-pad"
                       onBlur={[Function]}
                       onChangeText={[Function]}
                       onFocus={[Function]}
@@ -3308,8 +3332,10 @@ exports[`newProfileSheet light filled 1`] = `
                       </RNSVGSvgView>
                     </View>
                     <TextInput
-                      autoCorrect={true}
+                      autoCapitalize="words"
+                      autoCorrect={false}
                       editable={true}
+                      keyboardType="default"
                       onBlur={[Function]}
                       onChangeText={[Function]}
                       onFocus={[Function]}
@@ -3459,8 +3485,10 @@ exports[`newProfileSheet light filled 1`] = `
                       </RNSVGSvgView>
                     </View>
                     <TextInput
-                      autoCorrect={true}
+                      autoCapitalize="words"
+                      autoCorrect={false}
                       editable={true}
+                      keyboardType="default"
                       onBlur={[Function]}
                       onChangeText={[Function]}
                       onFocus={[Function]}
@@ -3610,8 +3638,10 @@ exports[`newProfileSheet light filled 1`] = `
                       </RNSVGSvgView>
                     </View>
                     <TextInput
-                      autoCorrect={true}
+                      autoCapitalize="none"
+                      autoCorrect={false}
                       editable={true}
+                      keyboardType="email-address"
                       onBlur={[Function]}
                       onChangeText={[Function]}
                       onFocus={[Function]}
@@ -3761,8 +3791,10 @@ exports[`newProfileSheet light filled 1`] = `
                       </RNSVGSvgView>
                     </View>
                     <TextInput
-                      autoCorrect={true}
+                      autoCapitalize="none"
+                      autoCorrect={false}
                       editable={true}
+                      keyboardType="phone-pad"
                       onBlur={[Function]}
                       onChangeText={[Function]}
                       onFocus={[Function]}
@@ -4307,7 +4339,10 @@ exports[`profileConfig dark activeProfile 1`] = `
                   First name *
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add first name"
                   placeholderTextColor="#848282"
@@ -4386,7 +4421,10 @@ exports[`profileConfig dark activeProfile 1`] = `
                   Last name *
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add last name"
                   placeholderTextColor="#848282"
@@ -4465,7 +4503,10 @@ exports[`profileConfig dark activeProfile 1`] = `
                   Email (optional)
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="email-address"
                   onChangeText={[Function]}
                   placeholder="name@company.com"
                   placeholderTextColor="#848282"
@@ -4544,7 +4585,10 @@ exports[`profileConfig dark activeProfile 1`] = `
                   Phone (optional)
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="phone-pad"
                   onChangeText={[Function]}
                   placeholder="+254 700 000 000"
                   placeholderTextColor="#848282"
@@ -5214,7 +5258,10 @@ exports[`profileConfig dark newlyCreated 1`] = `
                   First name *
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add first name"
                   placeholderTextColor="#848282"
@@ -5293,7 +5340,10 @@ exports[`profileConfig dark newlyCreated 1`] = `
                   Last name *
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add last name"
                   placeholderTextColor="#848282"
@@ -5372,7 +5422,10 @@ exports[`profileConfig dark newlyCreated 1`] = `
                   Email (optional)
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="email-address"
                   onChangeText={[Function]}
                   placeholder="name@company.com"
                   placeholderTextColor="#848282"
@@ -5451,7 +5504,10 @@ exports[`profileConfig dark newlyCreated 1`] = `
                   Phone (optional)
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="phone-pad"
                   onChangeText={[Function]}
                   placeholder="+254 700 000 000"
                   placeholderTextColor="#848282"
@@ -6121,7 +6177,10 @@ exports[`profileConfig dark otherProfile 1`] = `
                   First name *
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add first name"
                   placeholderTextColor="#848282"
@@ -6200,7 +6259,10 @@ exports[`profileConfig dark otherProfile 1`] = `
                   Last name *
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add last name"
                   placeholderTextColor="#848282"
@@ -6279,7 +6341,10 @@ exports[`profileConfig dark otherProfile 1`] = `
                   Email (optional)
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="email-address"
                   onChangeText={[Function]}
                   placeholder="name@company.com"
                   placeholderTextColor="#848282"
@@ -6358,7 +6423,10 @@ exports[`profileConfig dark otherProfile 1`] = `
                   Phone (optional)
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="phone-pad"
                   onChangeText={[Function]}
                   placeholder="+254 700 000 000"
                   placeholderTextColor="#848282"
@@ -7028,7 +7096,10 @@ exports[`profileConfig light activeProfile 1`] = `
                   First name *
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add first name"
                   placeholderTextColor="#848282"
@@ -7107,7 +7178,10 @@ exports[`profileConfig light activeProfile 1`] = `
                   Last name *
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add last name"
                   placeholderTextColor="#848282"
@@ -7186,7 +7260,10 @@ exports[`profileConfig light activeProfile 1`] = `
                   Email (optional)
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="email-address"
                   onChangeText={[Function]}
                   placeholder="name@company.com"
                   placeholderTextColor="#848282"
@@ -7265,7 +7342,10 @@ exports[`profileConfig light activeProfile 1`] = `
                   Phone (optional)
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="phone-pad"
                   onChangeText={[Function]}
                   placeholder="+254 700 000 000"
                   placeholderTextColor="#848282"
@@ -7935,7 +8015,10 @@ exports[`profileConfig light newlyCreated 1`] = `
                   First name *
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add first name"
                   placeholderTextColor="#848282"
@@ -8014,7 +8097,10 @@ exports[`profileConfig light newlyCreated 1`] = `
                   Last name *
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add last name"
                   placeholderTextColor="#848282"
@@ -8093,7 +8179,10 @@ exports[`profileConfig light newlyCreated 1`] = `
                   Email (optional)
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="email-address"
                   onChangeText={[Function]}
                   placeholder="name@company.com"
                   placeholderTextColor="#848282"
@@ -8172,7 +8261,10 @@ exports[`profileConfig light newlyCreated 1`] = `
                   Phone (optional)
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="phone-pad"
                   onChangeText={[Function]}
                   placeholder="+254 700 000 000"
                   placeholderTextColor="#848282"
@@ -8842,7 +8934,10 @@ exports[`profileConfig light otherProfile 1`] = `
                   First name *
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add first name"
                   placeholderTextColor="#848282"
@@ -8921,7 +9016,10 @@ exports[`profileConfig light otherProfile 1`] = `
                   Last name *
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add last name"
                   placeholderTextColor="#848282"
@@ -9000,7 +9098,10 @@ exports[`profileConfig light otherProfile 1`] = `
                   Email (optional)
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="email-address"
                   onChangeText={[Function]}
                   placeholder="name@company.com"
                   placeholderTextColor="#848282"
@@ -9079,7 +9180,10 @@ exports[`profileConfig light otherProfile 1`] = `
                   Phone (optional)
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="phone-pad"
                   onChangeText={[Function]}
                   placeholder="+254 700 000 000"
                   placeholderTextColor="#848282"
