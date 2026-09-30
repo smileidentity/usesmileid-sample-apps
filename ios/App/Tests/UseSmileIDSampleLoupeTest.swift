@@ -248,13 +248,13 @@ final class UseSmileIDSampleLoupeTest: XCTestCase {
   func testTheTokenAndItsSiblingsAreMaskedWhateverTheHeaderCase() {
     let masked = LoupeRedaction.headers([
       "smileid-token": "session-token-value",
-      "SmileID-Api-Key": "0123456789abcdef",
+      "SmileID-Api-Key": "placeholder-api-key",
       "smileid-request-mac": "deadbeefcafe",
       "Authorization": "Bearer placeholder-value"
     ])
 
     XCTAssertEqual(masked["smileid-token"], "sessi*****")
-    XCTAssertEqual(masked["SmileID-Api-Key"], "01234*****")
+    XCTAssertEqual(masked["SmileID-Api-Key"], "place*****")
     XCTAssertEqual(masked["smileid-request-mac"], "deadb*****")
     XCTAssertEqual(masked["Authorization"], "Beare*****")
   }
