@@ -42,6 +42,7 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
             result = app.flowResult.snapshot,
         ),
         onProductClick = {
+            if (!app.sessionLoaded) return@ProductsContent
             app.forms.startRun(app.profiles.active)
             val entry = app.entryFor(it)
             // Fetched ahead: the user-details form sits between, so the lists are usually there before the ID form.

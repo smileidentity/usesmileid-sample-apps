@@ -7,10 +7,8 @@ import {
   smileIDSampleDecodeDocuments,
   smileIDSampleIdDetailsDefaults,
   smileIDSampleProducts,
-  smileIDSampleSimulatedSpans,
   smileIDSampleTokenSession,
   type UseSmileIDSampleProduct,
-  type UseSmileIDSampleTokenSession,
 } from '@smileid/sample-ui';
 import { UseSmileIDFlowBuilder } from '@smileid/usesmileid';
 
@@ -30,6 +28,16 @@ jest.mock('@smileid/usesmileid_vision_face', () => ({ useSmileIDVisionFace: { ke
 
 const productFor = (id: string): UseSmileIDSampleProduct =>
   smileIDSampleProducts.find((product) => product.id === id)!;
+
+/// Every run needs a session before it reaches the SDK.
+const liveSession = smileIDSampleTokenSession(
+  smileIDSampleSimulatedToken({
+    span: { id: 'fifteenMinutes', label: '15m', spanMillis: 900_000, ended: false },
+    bindings: { consent: false, userDetails: false },
+    environment: 'sandbox',
+    nowMillis: Date.now(),
+  }),
+)!;
 
 const snapshot = (
   overrides: Partial<UseSmileIDSampleFlowLaunchSnapshot> = {},
@@ -60,7 +68,7 @@ const snapshot = (
   partnerId: 'p-1',
   partnerName: 'Kobo Bank',
   callbackUrl: '',
-  session: null,
+  session: liveSession,
   sessionExpired: false,
   ...overrides,
 });
@@ -110,36 +118,26 @@ describe('the journey the switches compose', () => {
   });
 });
 
-const live = (): UseSmileIDSampleTokenSession =>
-  smileIDSampleTokenSession(
-    smileIDSampleSimulatedToken({
-      span: smileIDSampleSimulatedSpans.find((span) => span.id === 'fifteenMinutes')!,
-      bindings: { consent: false, userDetails: false },
-      environment: 'sandbox',
-      nowMillis: Date.now(),
-    }),
-  )!;
-
 describe('the gate', () => {
   it('passes a complete selfie enrollment', () => {
-    expect(smileIDSamplePreflight(snapshot({ session: live() })).kind).toBe('ready');
+    expect(smileIDSamplePreflight(snapshot()).kind).toBe('ready');
   });
 
-  it('sends a run with no session to the scanner', () => {
-    expect(smileIDSamplePreflight(snapshot()).kind).toBe('needsSession');
+  it('sends a run with no session to the scanner rather than the SDK', () => {
+    expect(smileIDSamplePreflight(snapshot({ session: null })).kind).toBe('needsSession');
   });
 
   // The SDK requires a contact field even though the form labels both optional.
   it('sends an empty form back to the form rather than to the SDK', () => {
     const outcome = smileIDSamplePreflight(
-      snapshot({ session: live(), userDetails: { firstName: '', lastName: '', email: '', phone: '' } }),
+      snapshot({ userDetails: { firstName: '', lastName: '', email: '', phone: '' } }),
     );
     expect(outcome.kind).toBe('needsDetails');
   });
 
   it('names the fields an empty form left for the form to fix', () => {
     const outcome = smileIDSamplePreflight(
-      snapshot({ session: live(), userDetails: { firstName: '', lastName: '', email: '', phone: '' } }),
+      snapshot({ userDetails: { firstName: '', lastName: '', email: '', phone: '' } }),
     );
     const reported =
       outcome.kind === 'ready' || outcome.kind === 'needsSession' ? '' : outcome.issues.map((issue) => issue.message).join('; ');

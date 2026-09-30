@@ -50,7 +50,8 @@ class UseSmileIDSampleAppState(
     val storeScope: CoroutineScope,
     private val settingsState: State<UseSmileIDSampleSettings>,
     /** One value, so the live session and the ended marker can never come from different writes. */
-    private val sessionState: State<UseSmileIDSampleSessionRecord>,
+    /** Null until the store's first read, so a cold link into a run cannot mistake a stored session for none. */
+    private val sessionState: State<UseSmileIDSampleSessionRecord?>,
     /** Null until Room's first emission, so "not loaded yet" is not read as "no verifications". */
     private val jobsState: State<List<UseSmileIDSampleJob>?>,
     val jobStore: UseSmileIDSampleJobStore,
@@ -70,13 +71,16 @@ class UseSmileIDSampleAppState(
     private val now: State<Long>,
 ) {
     val settings: UseSmileIDSampleSettings get() = settingsState.value
-    val session: UseSmileIDSampleTokenSession? get() = sessionState.value.live
+    val session: UseSmileIDSampleTokenSession? get() = sessionState.value?.live
+
+    /** Whether the stored session has been read; nothing may decide the run needs a token before it has. */
+    val sessionLoaded: Boolean get() = sessionState.value != null
     val jobs: List<UseSmileIDSampleJob>? get() = jobsState.value
 
     val nowMillis: Long get() = now.value
 
     /** The session that ran out, once its token has been deleted. Carries no credential. */
-    val endedSession: UseSmileIDSampleEndedSession? get() = sessionState.value.ended
+    val endedSession: UseSmileIDSampleEndedSession? get() = sessionState.value?.ended
 
     /** True from the deadline on. Reads the marker too, since the token is deleted at expiry. */
     val sessionExpired: Boolean
@@ -112,7 +116,7 @@ fun rememberUseSmileIDSampleAppState(
     val context = LocalContext.current
     val store = remember(context) { UseSmileIDSampleStore(context) }
     val settingsState = store.settings.collectAsStateWithLifecycle(initialValue = UseSmileIDSampleSettings())
-    val sessionState = store.session.collectAsStateWithLifecycle(initialValue = UseSmileIDSampleSessionRecord())
+    val sessionState = store.session.collectAsStateWithLifecycle<UseSmileIDSampleSessionRecord?>(initialValue = null)
     val now = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val jobStore = remember(context) { UseSmileIDSampleJobStore.of(context, RetrofitJobStatusSource()) }
     val jobsState = jobStore.jobs.collectAsStateWithLifecycle<List<UseSmileIDSampleJob>?>(initialValue = null)
@@ -139,8 +143,8 @@ fun rememberUseSmileIDSampleAppState(
     }
 
     // Stops at the deadline: the session object does not change on expiry, so the key alone never ends this.
-    LaunchedEffect(sessionState.value.live) {
-        val live = sessionState.value.live ?: return@LaunchedEffect
+    LaunchedEffect(sessionState.value?.live) {
+        val live = sessionState.value?.live ?: return@LaunchedEffect
         while (!live.hasExpired(now.longValue)) {
             now.longValue = System.currentTimeMillis()
             delay(TICK_MILLIS)
