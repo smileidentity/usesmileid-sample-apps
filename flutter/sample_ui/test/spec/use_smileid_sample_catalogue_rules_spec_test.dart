@@ -26,6 +26,9 @@ void main() {
       'idTypes',
       'documents',
       'countries',
+      'enabledDocuments',
+      'enabledCountries',
+      'failures',
       'captureAs',
     ]) {
       expect(cases(section), isNotEmpty, reason: section);
@@ -111,6 +114,90 @@ void main() {
         ],
         c['expected'],
         reason: c['name']! as String,
+      );
+    }
+  });
+
+  (
+    List<UseSmileIDSampleApiCountryDocuments>,
+    List<UseSmileIDSampleApiEnabledCountry>,
+  )
+  enabledInput(Map<String, Object?> c) {
+    final Object? input = c['input'];
+    if (input == 'catalogue-fixture.json') {
+      return (CatalogueFixtures.data.documents, CatalogueFixtures.enabled);
+    }
+    final Map<String, Object?> both = input! as Map<String, Object?>;
+    return (
+      UseSmileIDSampleCatalogueJson.documents(
+        jsonEncode(both['supported_documents']),
+      )!,
+      UseSmileIDSampleCatalogueJson.enabledCountries(
+        jsonEncode(both['services_config']),
+      )!,
+    );
+  }
+
+  test('enabled document cases', () {
+    for (final Map<String, Object?> c in cases('enabledDocuments')) {
+      final (
+        List<UseSmileIDSampleApiCountryDocuments> all,
+        List<UseSmileIDSampleApiEnabledCountry> enabled,
+      ) = enabledInput(
+        c,
+      );
+      expect(
+        <Map<String, Object?>>[
+          for (final UseSmileIDSampleDocument it
+              in UseSmileIDSampleCatalogueRules.enabledDocuments(
+                all,
+                enabled,
+                c['country']! as String,
+              ))
+            <String, Object?>{
+              'id': it.id,
+              'code': it.code,
+              'subType': it.subType,
+              'name': it.name,
+              'hasBack': it.hasBack,
+              'format': it.format,
+            },
+        ],
+        c['expected'],
+        reason: c['name']! as String,
+      );
+    }
+  });
+
+  test('enabled country cases', () {
+    for (final Map<String, Object?> c in cases('enabledCountries')) {
+      final (
+        List<UseSmileIDSampleApiCountryDocuments> all,
+        List<UseSmileIDSampleApiEnabledCountry> enabled,
+      ) = enabledInput(
+        c,
+      );
+      expect(
+        <Map<String, String>>[
+          for (final UseSmileIDSampleCountry it
+              in UseSmileIDSampleCatalogueRules.enabledCountries(all, enabled))
+            <String, String>{'code': it.code, 'name': it.name},
+        ],
+        c['expected'],
+        reason: c['name']! as String,
+      );
+    }
+  });
+
+  test('failure cases', () {
+    final Map<String, Object?> failures =
+        rules['failures']! as Map<String, Object?>;
+    expect(UseSmileIDSampleCatalogueRules.defaultAdvice, failures['default']);
+    for (final Map<String, Object?> c in cases('failures')) {
+      expect(
+        UseSmileIDSampleCatalogueRules.advice(c['status'] as int?),
+        c['supportingText'],
+        reason: '${c['status']}',
       );
     }
   });

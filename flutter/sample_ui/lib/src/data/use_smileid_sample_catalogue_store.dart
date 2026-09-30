@@ -6,6 +6,7 @@ import '../model/use_smileid_sample_environment.dart';
 import '../model/use_smileid_sample_product.dart';
 import '../state/use_smileid_sample_catalogue.dart';
 import '../state/use_smileid_sample_id_details.dart';
+import '../state/use_smileid_sample_token_session.dart';
 import 'use_smileid_sample_catalogue_source.dart';
 
 /// The ID form's lists for one run: fetched ahead, held in memory only, cancelled on leaving.
@@ -26,6 +27,18 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
   (UseSmileIDSampleEnvironment, String)? _run;
   int _generation = 0;
   bool _disposed = false;
+  (String?, UseSmileIDSampleEnvironment, String)? _enabledKey;
+  String _enabledToken = '';
+  int _enabledGeneration = 0;
+  bool _enabledInFlight = false;
+  UseSmileIDSampleCatalogue<UseSmileIDSampleApiEnabledCountry> _enabled =
+      const UseSmileIDSampleCatalogueLoading<
+        UseSmileIDSampleApiEnabledCountry
+      >();
+
+  /// The partner's Enhanced Document Verification list, kept per session: only a relink or a locale change asks again.
+  UseSmileIDSampleCatalogue<UseSmileIDSampleApiEnabledCountry> get enabled =>
+      _enabled;
 
   UseSmileIDSampleCatalogue<UseSmileIDSampleApiIdType> _idTypes =
       const UseSmileIDSampleCatalogueLoading<UseSmileIDSampleApiIdType>();
@@ -53,8 +66,31 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
     }
   }
 
+  /// Enhanced Document Verification: fetches [session]'s list unless it is already here or on its way.
+  void ensureEnabled(
+    UseSmileIDSampleEnvironment environment,
+    String locale,
+    UseSmileIDSampleTokenSession? session,
+  ) {
+    final (String?, UseSmileIDSampleEnvironment, String) key = (
+      session?.id,
+      environment,
+      locale,
+    );
+    if (key == _enabledKey &&
+        (_enabled is UseSmileIDSampleCatalogueReady || _enabledInFlight)) {
+      return;
+    }
+    _enabledKey = key;
+    _enabledToken = session?.token ?? '';
+    _fetchEnabled();
+  }
+
   /// Asks again for whichever list failed, under the same timing as the first attempt.
   void retry() {
+    if (_enabled is UseSmileIDSampleCatalogueFailed) {
+      _fetchEnabled();
+    }
     if (_run == null) {
       return;
     }
@@ -66,7 +102,7 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
     }
   }
 
-  /// Leaving the form: anything in flight is dropped and the next run starts clean.
+  /// Leaving the form: anything in flight is dropped and the next run starts clean, bar a session's arrived list.
   void stop() {
     // The form stops it after its own teardown, which can follow the owner's dispose.
     if (_disposed) {
@@ -80,6 +116,15 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
         const UseSmileIDSampleCatalogueLoading<
           UseSmileIDSampleApiCountryDocuments
         >();
+    if (_enabled is! UseSmileIDSampleCatalogueReady) {
+      _enabledGeneration++;
+      _enabledInFlight = false;
+      _enabledKey = null;
+      _enabled =
+          const UseSmileIDSampleCatalogueLoading<
+            UseSmileIDSampleApiEnabledCountry
+          >();
+    }
     notifyListeners();
   }
 
@@ -87,13 +132,18 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
   void dispose() {
     _disposed = true;
     _generation++;
+    _enabledGeneration++;
     super.dispose();
   }
 
-  /// The countries [family] offers.
+  /// The countries [family] offers; Enhanced Document Verification only those its partner enabled.
   UseSmileIDSampleCatalogue<UseSmileIDSampleCountry> countries(
-    UseSmileIDSampleCatalogueFamily family,
-  ) {
+    UseSmileIDSampleCatalogueFamily family, {
+    UseSmileIDSampleProduct? product,
+  }) {
+    if (product == UseSmileIDSampleProduct.enhancedDocumentVerification) {
+      return _withEnabled(UseSmileIDSampleCatalogueRules.enabledCountries);
+    }
     final UseSmileIDSampleCatalogue<UseSmileIDSampleApiIdType> types =
         family == UseSmileIDSampleCatalogueFamily.kyc
         ? _idTypes
@@ -101,11 +151,23 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
             <UseSmileIDSampleApiIdType>[],
           );
     return switch ((_documents, types)) {
-      (UseSmileIDSampleCatalogueFailed(:final String reason), _) ||
+      (
+        UseSmileIDSampleCatalogueFailed(
+          :final String reason,
+          :final String advice,
+        ),
+        _,
+      ) ||
       (
         _,
-        UseSmileIDSampleCatalogueFailed(:final String reason),
-      ) => UseSmileIDSampleCatalogueFailed<UseSmileIDSampleCountry>(reason),
+        UseSmileIDSampleCatalogueFailed(
+          :final String reason,
+          :final String advice,
+        ),
+      ) => UseSmileIDSampleCatalogueFailed<UseSmileIDSampleCountry>(
+        reason,
+        advice: advice,
+      ),
       (
         UseSmileIDSampleCatalogueReady(
           items: final List<UseSmileIDSampleApiCountryDocuments> docs,
@@ -132,8 +194,14 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
       items: final List<UseSmileIDSampleApiIdType> items,
     ) =>
       _ready(UseSmileIDSampleCatalogueRules.idTypes(items, country)),
-    UseSmileIDSampleCatalogueFailed(:final String reason) =>
-      UseSmileIDSampleCatalogueFailed<UseSmileIDSampleKycIdType>(reason),
+    UseSmileIDSampleCatalogueFailed(
+      :final String reason,
+      :final String advice,
+    ) =>
+      UseSmileIDSampleCatalogueFailed<UseSmileIDSampleKycIdType>(
+        reason,
+        advice: advice,
+      ),
     UseSmileIDSampleCatalogueEmpty() =>
       const UseSmileIDSampleCatalogueEmpty<UseSmileIDSampleKycIdType>(),
     UseSmileIDSampleCatalogueLoading() =>
@@ -145,24 +213,101 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
     String country, {
     UseSmileIDSampleProduct product =
         UseSmileIDSampleProduct.documentVerification,
-  }) => switch (_documents) {
-    UseSmileIDSampleCatalogueReady(
-      items: final List<UseSmileIDSampleApiCountryDocuments> items,
-    ) =>
-      _ready(
-        UseSmileIDSampleCatalogueRules.documents(
-          items,
-          country,
-          product: product,
-        ),
+  }) => product == UseSmileIDSampleProduct.enhancedDocumentVerification
+      ? _withEnabled(
+          (
+            List<UseSmileIDSampleApiCountryDocuments> all,
+            List<UseSmileIDSampleApiEnabledCountry> enabled,
+          ) => UseSmileIDSampleCatalogueRules.enabledDocuments(
+            all,
+            enabled,
+            country,
+          ),
+        )
+      : switch (_documents) {
+          UseSmileIDSampleCatalogueReady(
+            items: final List<UseSmileIDSampleApiCountryDocuments> items,
+          ) =>
+            _ready(
+              UseSmileIDSampleCatalogueRules.documents(
+                items,
+                country,
+                product: product,
+              ),
+            ),
+          UseSmileIDSampleCatalogueFailed(
+            :final String reason,
+            :final String advice,
+          ) =>
+            UseSmileIDSampleCatalogueFailed<UseSmileIDSampleDocument>(
+              reason,
+              advice: advice,
+            ),
+          UseSmileIDSampleCatalogueEmpty() =>
+            const UseSmileIDSampleCatalogueEmpty<UseSmileIDSampleDocument>(),
+          UseSmileIDSampleCatalogueLoading() =>
+            const UseSmileIDSampleCatalogueLoading<UseSmileIDSampleDocument>(),
+        };
+
+  UseSmileIDSampleCatalogue<T> _withEnabled<T>(
+    List<T> Function(
+      List<UseSmileIDSampleApiCountryDocuments>,
+      List<UseSmileIDSampleApiEnabledCountry>,
+    )
+    rows,
+  ) => switch ((_enabled, _documents)) {
+    (
+      UseSmileIDSampleCatalogueFailed(
+        :final String reason,
+        :final String advice,
       ),
-    UseSmileIDSampleCatalogueFailed(:final String reason) =>
-      UseSmileIDSampleCatalogueFailed<UseSmileIDSampleDocument>(reason),
-    UseSmileIDSampleCatalogueEmpty() =>
-      const UseSmileIDSampleCatalogueEmpty<UseSmileIDSampleDocument>(),
-    UseSmileIDSampleCatalogueLoading() =>
-      const UseSmileIDSampleCatalogueLoading<UseSmileIDSampleDocument>(),
+      _,
+    ) ||
+    (
+      _,
+      UseSmileIDSampleCatalogueFailed(
+        :final String reason,
+        :final String advice,
+      ),
+    ) => UseSmileIDSampleCatalogueFailed<T>(reason, advice: advice),
+    (
+      UseSmileIDSampleCatalogueReady(
+        items: final List<UseSmileIDSampleApiEnabledCountry> allowed,
+      ),
+      UseSmileIDSampleCatalogueReady(
+        items: final List<UseSmileIDSampleApiCountryDocuments> docs,
+      ),
+    ) =>
+      _ready(rows(docs, allowed)),
+    _ => UseSmileIDSampleCatalogueLoading<T>(),
   };
+
+  void _fetchEnabled() {
+    final (String?, UseSmileIDSampleEnvironment, String)? key = _enabledKey;
+    if (key == null) {
+      return;
+    }
+    final String token = _enabledToken;
+    _enabled =
+        const UseSmileIDSampleCatalogueLoading<
+          UseSmileIDSampleApiEnabledCountry
+        >();
+    _enabledInFlight = true;
+    notifyListeners();
+    final int generation = ++_enabledGeneration;
+    _load(
+      () => _source.servicesConfig(key.$2, token, key.$3),
+      UseSmileIDSampleCatalogueJson.enabledCountries,
+    ).then((
+      UseSmileIDSampleCatalogue<UseSmileIDSampleApiEnabledCountry> result,
+    ) {
+      if (generation == _enabledGeneration) {
+        _enabled = result;
+        _enabledInFlight = false;
+        notifyListeners();
+      }
+    });
+  }
 
   void _fetchIdTypes() {
     final (UseSmileIDSampleEnvironment, String)? run = _run;
@@ -221,6 +366,11 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
           : UseSmileIDSampleCatalogueReady<T>(items);
     } on TimeoutException {
       return UseSmileIDSampleCatalogueFailed<T>('Timed out after $timeout');
+    } on UseSmileIDSampleCatalogueHttpException catch (refused) {
+      return UseSmileIDSampleCatalogueFailed<T>(
+        '$refused',
+        advice: UseSmileIDSampleCatalogueRules.advice(refused.status),
+      );
     } on Object catch (error) {
       return UseSmileIDSampleCatalogueFailed<T>('$error');
     }

@@ -32,8 +32,8 @@ nothing across four runs. These cover what a **hostless** Flutter test structura
   test has: a simulated scan, the countdown at 15m and 8h, bound details skipping both forms, the
   expiry redirect stating its reason, and a relink resuming the run it interrupted.
 - **`document-options.yaml`** — the document form against `catalogue=fixture`: the Green Book as its
-  own row, "Capture as" and the generic-document sheet through SDK mount, the `unreachable` error and Retry, and
-  the capture-mode sheet in Settings. A widget test has no route from a real product tap to the SDK.
+  own row, "Capture as" and the generic-document sheet through SDK mount, the `unreachable` error and Retry,
+  Enhanced Document Verification's partner list, and the capture-mode sheet in Settings. A widget test has no route from a real product tap to the SDK.
 
 ## Traps
 

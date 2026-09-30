@@ -113,12 +113,12 @@ class _UseSmileIDSampleProductsTabState
         // Fetched ahead, so the list is usually there by the time the picker opens.
         if (entry != UseSmileIDSampleRoutes.scanToken &&
             useSmileIDSampleCatalogueFamily(product) != null) {
-          ref
-              .read(useSmileIDSampleCatalogueStoreProvider)
-              .begin(
+          final UseSmileIDSampleCatalogueStore store =
+              ref.read(useSmileIDSampleCatalogueStoreProvider)..begin(
                 useSmileIDSampleCatalogueEnvironment(live),
                 useSmileIDSampleCatalogueLocale(),
               );
+          useSmileIDSampleEnsureEnabled(store, product, live);
         }
         context.push(entry);
       },

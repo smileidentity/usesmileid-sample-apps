@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:sample_ui/sample_ui.dart';
 
-/// The two unauthenticated catalogue endpoints over `dart:io`; no token is sent, both are the same for every partner.
+/// The two unauthenticated catalogue endpoints over `dart:io`, and the partner's own configuration under its token.
 class UseSmileIDSampleHttpCatalogueSource
     implements UseSmileIDSampleCatalogueSource {
   /// [client] is injectable for tests; [timeout] matches the store's, so a request it gives up on is torn down.
@@ -33,8 +33,26 @@ class UseSmileIDSampleHttpCatalogueSource
     ).replace(queryParameters: <String, String>{'locale': locale}),
   );
 
-  Future<String> _get(Uri uri) async {
+  @override
+  Future<String> servicesConfig(
+    UseSmileIDSampleEnvironment environment,
+    String token,
+    String locale,
+  ) => _get(
+    Uri.parse('${environment.baseUrl}v3/services/config').replace(
+      queryParameters: <String, String>{
+        'product': UseSmileIDSampleCatalogueJson.enhancedDocumentVerification,
+        'locale': locale,
+      },
+    ),
+    token: token,
+  );
+
+  Future<String> _get(Uri uri, {String? token}) async {
     final HttpClientRequest request = await _client.getUrl(uri);
+    if (token != null) {
+      request.headers.set('SmileID-Token', token);
+    }
     try {
       return await _read(uri, request).timeout(timeout);
     } on TimeoutException {
@@ -47,7 +65,7 @@ class UseSmileIDSampleHttpCatalogueSource
     final HttpClientResponse response = await request.close();
     final String body = await response.transform(utf8.decoder).join();
     if (response.statusCode < 200 || response.statusCode > 299) {
-      throw HttpException('HTTP ${response.statusCode}', uri: uri);
+      throw UseSmileIDSampleCatalogueHttpException(response.statusCode);
     }
     return body;
   }
@@ -91,13 +109,27 @@ class UseSmileIDSampleAssetCatalogueSource
     (UseSmileIDSampleFixtureCatalogueSource it) =>
         it.supportedDocuments(environment, locale),
   );
+
+  @override
+  Future<String> servicesConfig(
+    UseSmileIDSampleEnvironment environment,
+    String token,
+    String locale,
+  ) => _source.then(
+    (UseSmileIDSampleFixtureCatalogueSource it) =>
+        it.servicesConfig(environment, token, locale),
+  );
 }
 
 /// The source the `catalogue` launch argument names.
 UseSmileIDSampleCatalogueSource useSmileIDSampleCatalogueSource(
   UseSmileIDSampleCatalogueMode mode,
 ) => switch (mode) {
-  UseSmileIDSampleCatalogueMode.live => UseSmileIDSampleHttpCatalogueSource(),
+  UseSmileIDSampleCatalogueMode.live =>
+    UseSmileIDSampleSessionAwareCatalogueSource(
+      UseSmileIDSampleHttpCatalogueSource(),
+      UseSmileIDSampleAssetCatalogueSource(),
+    ),
   UseSmileIDSampleCatalogueMode.fixture =>
     UseSmileIDSampleAssetCatalogueSource(),
   UseSmileIDSampleCatalogueMode.unreachable =>

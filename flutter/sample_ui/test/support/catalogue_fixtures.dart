@@ -24,6 +24,12 @@ abstract final class CatalogueFixtures {
         )!,
       );
 
+  /// The partner configuration's Enhanced Document Verification list, decoded as the store decodes it.
+  static final List<UseSmileIDSampleApiEnabledCountry> enabled =
+      UseSmileIDSampleCatalogueJson.enabledCountries(
+        jsonEncode(_root['services_config']),
+      )!;
+
   /// Kenya, as the fixture names it.
   static const UseSmileIDSampleCountry kenya = UseSmileIDSampleCountry(
     'KE',

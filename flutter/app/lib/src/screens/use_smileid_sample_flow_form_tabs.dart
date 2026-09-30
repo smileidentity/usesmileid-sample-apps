@@ -170,13 +170,21 @@ class _UseSmileIDSampleKycFormTabState
     super.dispose();
   }
 
-  /// Also on every picker: a sheet link's form stacks above this one and stops the run on its way out.
-  void _ensureCatalogue() => _catalogue.ensure(
-    useSmileIDSampleCatalogueEnvironment(
-      ref.read(useSmileIDSampleSessionProvider).live,
-    ),
-    useSmileIDSampleCatalogueLocale(),
-  );
+  /// Also on every picker: a sheet link's form stacks above this one and stops the run, and the token button relinks.
+  void _ensureCatalogue() {
+    final UseSmileIDSampleTokenSession? live = ref
+        .read(useSmileIDSampleSessionProvider)
+        .live;
+    _catalogue.ensure(
+      useSmileIDSampleCatalogueEnvironment(live),
+      useSmileIDSampleCatalogueLocale(),
+    );
+    useSmileIDSampleEnsureEnabled(
+      _catalogue,
+      _productFor(widget.productId),
+      live,
+    );
+  }
 
   /// A link can ask for a second-level sheet before its trigger could open; refused, not held until later.
   void _openFromLink(UseSmileIDSamplePicker asked) {
@@ -232,7 +240,14 @@ class _UseSmileIDSampleKycFormTabState
                   UseSmileIDSampleCatalogueFamily.kyc =>
                     _catalogue.idTypes(country).isLoading,
                   UseSmileIDSampleCatalogueFamily.document =>
-                    _catalogue.documents(country).isLoading,
+                    _catalogue
+                        .documents(
+                          country,
+                          product:
+                              product ??
+                              UseSmileIDSampleProduct.documentVerification,
+                        )
+                        .isLoading,
                   UseSmileIDSampleCatalogueFamily.passport => false,
                 },
             captureBothSides: ref
@@ -286,7 +301,10 @@ class _UseSmileIDSampleKycFormTabState
     UseSmileIDSampleTestIds.countrySheet,
     (BuildContext sheetContext, UseSmileIDSampleIdDetails details) =>
         UseSmileIDSampleCountryPickerSheet(
-          catalogue: _catalogue.countries(_family),
+          catalogue: _catalogue.countries(
+            _family,
+            product: _productFor(widget.productId),
+          ),
           selected: details.country,
           onRetry: _catalogue.retry,
           onSelect: (UseSmileIDSampleCountry country) {

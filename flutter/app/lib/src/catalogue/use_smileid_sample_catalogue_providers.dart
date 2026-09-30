@@ -29,6 +29,21 @@ UseSmileIDSampleEnvironment useSmileIDSampleCatalogueEnvironment(
     ? UseSmileIDSampleEnvironment.sandbox
     : UseSmileIDSampleEnvironment.production;
 
+/// Enhanced Document Verification's own list, which [live]'s token decides; any other product has none.
+void useSmileIDSampleEnsureEnabled(
+  UseSmileIDSampleCatalogueStore store,
+  UseSmileIDSampleProduct? product,
+  UseSmileIDSampleTokenSession? live,
+) {
+  if (product == UseSmileIDSampleProduct.enhancedDocumentVerification) {
+    store.ensureEnabled(
+      useSmileIDSampleCatalogueEnvironment(live),
+      useSmileIDSampleCatalogueLocale(),
+      live,
+    );
+  }
+}
+
 /// The API translates document and country names; an unsupported locale comes back in English.
 String useSmileIDSampleCatalogueLocale() =>
     PlatformDispatcher.instance.locale.toLanguageTag();
