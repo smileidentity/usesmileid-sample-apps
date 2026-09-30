@@ -53,7 +53,8 @@ final class UseSmileIDSampleMatchDocumentTest: XCTestCase {
       userDetails: UseSmileIDSampleUserDetails(firstName: "Ada", lastName: "Okafor", email: "ada@example.com"),
       idDetails: details,
       partnerId: "p-1",
-      partnerName: "Test"
+      partnerName: "Test",
+      session: useSmileIDSampleTestSession
     )
   }
 

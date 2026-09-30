@@ -397,7 +397,8 @@ final class UseSmileIDSampleAppState: ObservableObject {
   func fillFormForRun(_ product: UseSmileIDSampleProduct) {
     fillFromActive()
     idDetails = UseSmileIDSampleIdDetails()
-    if product.catalogueFamily != nil {
+    // Only under a live session: otherwise the scanner comes first, and the token it links decides the environment.
+    if product.catalogueFamily != nil, sessionActive {
       catalogue.begin(environment: environment, locale: catalogueLocale)
     }
   }

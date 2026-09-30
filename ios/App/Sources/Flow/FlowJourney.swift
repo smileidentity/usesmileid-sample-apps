@@ -1,6 +1,16 @@
+import Foundation
 import SampleUI
 
 extension UseSmileIDSampleAppState {
+  /// A product tap: the scanner first when no live session backs the run, since every run submits under a token.
+  func entry(for product: UseSmileIDSampleProduct) -> Route {
+    guard let session, !session.hasExpired(at: Date()) else {
+      interruptedRun = UseSmileIDSampleRunIntent(productId: product.id, route: launchArguments.route, resumeAt: .firstStep)
+      return .scanToken
+    }
+    return firstStep(for: product)
+  }
+
   /// A form is skipped only when the token already carries all of it.
   func firstStep(for product: UseSmileIDSampleProduct) -> Route {
     tokenBindsUserDetails

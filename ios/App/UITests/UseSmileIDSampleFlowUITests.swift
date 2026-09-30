@@ -112,21 +112,37 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     XCTAssertTrue(element("si_consent_screen").waitForNonExistence(timeout: 5), "an empty payload reached the SDK")
   }
 
+  func testAProductTapWithNoSessionOpensTheScannerAndResumesAtTheForm() {
+    launch(linking: false)
+    element("sample_product_card_smartSelfieEnrollment").tap()
+
+    XCTAssertTrue(element("sample_scan_token_screen").waitForExistence(timeout: 10), "the run started without a token")
+    XCTAssertTrue(
+      app.staticTexts["Scan a token to start this verification."].exists,
+      "the scanner did not say why it opened"
+    )
+    XCTAssertTrue(element("sample_token_portal_link").exists, "the scanner does not say where a real token comes from")
+
+    element("sample_token_simulate").tap()
+    XCTAssertTrue(element("sample_user_details_screen").waitForExistence(timeout: 10), "the run did not resume at its first step")
+    XCTAssertTrue(element("sample_scan_token_screen").waitForNonExistence(timeout: 5), "the scanner is still stacked")
+  }
+
   func testAnEndedSessionSendsTheRunToTheScannerAndRelinkingResumesTheRun() {
     launch()
     linkAnExpiredSession()
-    startEnrollment()
+    element("sample_product_card_smartSelfieEnrollment").tap()
 
-    XCTAssertTrue(element("sample_scan_token_screen").waitForExistence(timeout: 10), "the run reached the SDK anyway")
+    XCTAssertTrue(element("sample_scan_token_screen").waitForExistence(timeout: 10), "the run reached the forms anyway")
     XCTAssertTrue(
       app.staticTexts["Token session ended. Scan to continue where you left off."].exists,
       "the scanner did not say why it opened"
     )
 
-    // Relinking a live token re-enters the run the gate interrupted.
+    // Relinking a live token re-enters the run the gate interrupted, at its first step.
     app.buttons["15m"].tap()
     element("sample_token_simulate").tap()
-    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20), "the run did not resume")
+    XCTAssertTrue(element("sample_user_details_screen").waitForExistence(timeout: 10), "the run did not resume")
     XCTAssertTrue(element("sample_scan_token_screen").waitForNonExistence(timeout: 5), "the scanner is still stacked")
   }
 
@@ -213,6 +229,13 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     }
     toggle.tap()
     XCTAssertEqual(toggle.value as? String, "0", "the save switch did not turn off")
+  }
+
+  private func linkASession() {
+    open("token/scan")
+    XCTAssertTrue(element("sample_token_simulate").waitForExistence(timeout: 10))
+    element("sample_token_simulate").tap()
+    XCTAssertTrue(element("sample_session_card").waitForExistence(timeout: 10))
   }
 
   private func linkASessionThatBindsConsent() {
@@ -335,14 +358,19 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     }
   }
 
-  private func launch(arguments: [String] = []) {
+  /// Signs out whatever a previous test left, then links a plain session unless told not to: every run needs one.
+  private func launch(arguments: [String] = [], linking: Bool = true) {
     app.launchArguments = useSmileIDSampleLaunchSeed + arguments
     app.launch()
     atATabRoot()
-    guard element("sample_session_card").exists || element("sample_session_ended_banner").exists else { return }
-    signOut()
-    element("sample_nav_products").tap()
-    XCTAssertTrue(element("sample_session_card").waitForNonExistence(timeout: 5))
+    if element("sample_session_card").exists || element("sample_session_ended_banner").exists {
+      signOut()
+      element("sample_nav_products").tap()
+      XCTAssertTrue(element("sample_session_card").waitForNonExistence(timeout: 5))
+    }
+    if linking {
+      linkASession()
+    }
   }
 
   /// The scene restores the last test's stack, and a pushed one covers the pill the cleanups need; healed, not assumed.

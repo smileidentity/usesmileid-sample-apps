@@ -13,12 +13,15 @@ struct UseSmileIDSampleScanTokenHost: View {
   /// So the resume waits for a *different* session.
   @State private var arrivedWith: String?
   @State private var resumeHandled = false
+  @State private var arrivedEnded = false
+  /// False until the push lands, so a second tap on the nav pill's Token button cannot land on Simulate.
+  @State private var settled = false
 
   var body: some View {
     ScanTokenScreen(
       entry: $app.scanEntry,
       // The redirect's message belongs to the screen it arrives at.
-      reason: resuming == nil ? nil : .sessionEnded,
+      reason: resuming == nil ? nil : (arrivedEnded ? .sessionEnded : .sessionNeeded),
       torchOn: torchOn,
       onBack: { router.pop() },
       onLink: link,
@@ -32,8 +35,10 @@ struct UseSmileIDSampleScanTokenHost: View {
       // Read behind the tap and never earlier: iOS 16+ prompts on a read the person did not initiate.
       onPaste: { UIPasteboard.general.string },
       onTorchToggle: { torchOn.toggle() },
-      viewfinder: viewfinder
+      viewfinder: viewfinder,
+      acceptsTaps: settled
     )
+    .background(UseSmileIDSampleTransitionEnd { settled = true })
     .onAppear(perform: claim)
     // Not `sessionActive`, whose clock read would fire once a second.
     .onChange(of: app.session?.id) { _ in resume() }
@@ -51,6 +56,7 @@ struct UseSmileIDSampleScanTokenHost: View {
   private func claim() {
     guard resuming == nil else { return }
     arrivedWith = app.session?.id
+    arrivedEnded = app.sessionExpired
     resuming = app.interruptedRun
     app.interruptedRun = nil
   }
@@ -74,6 +80,10 @@ struct UseSmileIDSampleScanTokenHost: View {
       return
     }
     // Opened, not pushed: the path is assigned, so two quick links cannot stack two runs.
-    router.open(.sdkFlow(productId: resuming.productId, presentation: resuming.route))
+    if resuming.resumeAt == .firstStep, let product = UseSmileIDSampleProduct.allCases.first(where: { $0.id == resuming.productId }) {
+      router.open(app.firstStep(for: product))
+    } else {
+      router.open(.sdkFlow(productId: resuming.productId, presentation: resuming.route))
+    }
   }
 }
