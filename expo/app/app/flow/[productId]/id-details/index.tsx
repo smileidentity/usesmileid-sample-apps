@@ -16,6 +16,7 @@ import {
   smileIDSampleCatalogueEnvironment,
   smileIDSampleCatalogueLocale,
   smileIDSampleCatalogueStore,
+  smileIDSampleEnsureEnabled,
 } from '../../../../src/catalogue/use-smile-id-sample-catalogue';
 import { useSmileIDSampleBack } from '../../../../src/use-smile-id-sample-back';
 import { useLaunchArgs } from '../../../../src/use-smile-id-sample-launch';
@@ -44,6 +45,14 @@ export default function IdDetailsForm() {
       );
     return () => store.getState().stop();
   }, [store]);
+
+  const liveSessionId = useSmileIDSampleSessionStore(
+    (state) => smileIDSampleLiveSession(state, state.nowMillis)?.id ?? null,
+  );
+  useEffect(() => {
+    const sessions = useSmileIDSampleSessionStore.getState();
+    smileIDSampleEnsureEnabled(store, productId, smileIDSampleLiveSession(sessions, sessions.nowMillis));
+  }, [store, productId, liveSessionId]);
 
   // A link can open this form holding a row the product does not list.
   useEffect(() => {

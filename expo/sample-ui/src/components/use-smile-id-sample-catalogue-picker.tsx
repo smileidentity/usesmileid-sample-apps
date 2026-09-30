@@ -4,7 +4,7 @@ import { UseSmileIDSampleEmptyState } from './use-smile-id-sample-empty-state';
 import { UseSmileIDSamplePickerList } from './use-smile-id-sample-picker-list';
 import { UseSmileIDSampleSearchField } from './use-smile-id-sample-search-field';
 import { useSmileIDSampleSkeletonGate, UseSmileIDSampleSkeletonRows } from './use-smile-id-sample-skeleton';
-import type { UseSmileIDSampleCatalogue } from '../state/use-smile-id-sample-catalogue';
+import { smileIDSampleCatalogueDefaultAdvice, type UseSmileIDSampleCatalogue } from '../state/use-smile-id-sample-catalogue';
 import { smileIDSampleOptionMatches } from '../state/use-smile-id-sample-id-details';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
 
@@ -76,7 +76,7 @@ export const UseSmileIDSampleCataloguePicker = <T,>({
           {search}
           <UseSmileIDSampleEmptyState
             text={`Couldn't load ${what}`}
-            supportingText="Check your connection, then try again"
+            supportingText={catalogue.advice ?? smileIDSampleCatalogueDefaultAdvice}
             testID={UseSmileIDSampleTestIds.CATALOGUE_ERROR}
             onRetry={onRetry}
             retryTestID={UseSmileIDSampleTestIds.CATALOGUE_RETRY}

@@ -1,6 +1,6 @@
 appId: ${APP_ID}
 ---
-# The document form on fixture lists, then the list failing; entered by link and never typed into (./README.md "Traps").
+# The document form on fixture lists, then the list failing, then Enhanced Document Verification's partner list; entered by link and never typed into (./README.md "Traps").
 
 - clearState
 - stopApp
@@ -111,6 +111,39 @@ appId: ${APP_ID}
     visible:
       id: "sample_catalogue_error"
     timeout: 10000
+
+# --- Enhanced Document Verification lists only the partner's enabled documents ---------------------
+# The fixture's configuration enables Kenya's Identity Card and Passport and Nigeria's Passport, nothing else.
+- stopApp
+- openLink: "usesmileid-sample-expo:///flow/enhancedDocumentVerification/id-details?catalogue=fixture"
+- extendedWaitUntil:
+    visible:
+      id: "sample_kyc_form_screen"
+    timeout: 60000
+- tapOn:
+    id: "sample_country_trigger"
+- extendedWaitUntil:
+    visible:
+      id: "sample_country_option_KE"
+    timeout: 10000
+- assertVisible:
+    id: "sample_country_option_NG"
+- assertNotVisible:
+    id: "sample_country_option_ZA"
+- assertNotVisible:
+    id: "sample_country_option_GH"
+- tapOn:
+    id: "sample_country_option_KE"
+- tapOn:
+    id: "sample_document_trigger"
+- extendedWaitUntil:
+    visible:
+      id: "sample_document_option_IDENTITY_CARD"
+    timeout: 10000
+- assertVisible:
+    id: "sample_document_option_PASSPORT"
+- assertNotVisible:
+    id: "sample_document_option_ALIEN_CARD"
 
 # --- the Settings side ------------------------------------------------------------------------------
 - stopApp

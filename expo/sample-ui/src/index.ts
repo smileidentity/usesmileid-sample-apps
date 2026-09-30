@@ -273,9 +273,16 @@ export {
   smileIDSampleCatalogueFamily,
   smileIDSampleCatalogueIdTypes,
   smileIDSamplePassport,
+  smileIDSampleCatalogueAdvice,
+  smileIDSampleCatalogueDefaultAdvice,
+  smileIDSampleCatalogueEnabledCountries,
+  smileIDSampleCatalogueEnabledDocuments,
   smileIDSampleDecodeDocuments,
+  smileIDSampleDecodeEnabledCountries,
   smileIDSampleDecodeIdTypes,
+  smileIDSampleEnhancedDocumentVerificationKey,
   type UseSmileIDSampleApiCountryDocuments,
+  type UseSmileIDSampleApiEnabledCountry,
   type UseSmileIDSampleApiIdType,
   type UseSmileIDSampleCatalogue,
   type UseSmileIDSampleCatalogueData,
@@ -289,7 +296,9 @@ export {
 } from './state/use-smile-id-sample-id-number-hint';
 export {
   smileIDSampleFixtureCatalogueSource,
+  smileIDSampleSessionAwareCatalogueSource,
   smileIDSampleUnreachableCatalogueSource,
+  UseSmileIDSampleCatalogueHttpError,
   type UseSmileIDSampleCatalogueSource,
 } from './data/use-smile-id-sample-catalogue-source';
 export {
