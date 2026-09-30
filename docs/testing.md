@@ -98,8 +98,12 @@ which mints a synthetic token. No flow needs a real token.
 
 **The ID form's lists come from a fixture.** Every flow passes the `catalogue=fixture` launch argument,
 so the lists come from `spec/catalogue-fixture.json` and no flow goes red because of the network or an
-API release. `catalogue=unreachable` fails every list at once, which is how a flow reaches the error
-state and its Retry. The fixture holds about a dozen rows chosen for the UI's cases; it changes when the
+API release. The fixture carries a partner configuration too, which Enhanced Document Verification reads
+under `catalogue=fixture` and on any simulated session, because the server refuses an unsigned token.
+It enables fewer countries than the catalogue offers, so each document-options flow can assert that
+Enhanced Document Verification leaves out a country that Document Verification offers.
+`catalogue=unreachable` fails every list at once, which is how a flow reaches the error state and its
+Retry. The fixture holds about a dozen rows chosen for the UI's cases; it changes when the
 UI gains a case, never because the API changed. Android and iOS bundle it straight from `spec/`. Flutter's
 asset list and Metro cannot reach outside their app, so each ships a copy, and
 `scripts/sync_catalogue_fixture.py --check` fails `verify.sh` if a copy drifts.

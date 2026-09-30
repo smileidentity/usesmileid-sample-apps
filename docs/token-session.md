@@ -30,7 +30,8 @@ the nav bar's Token button. Then:
 - **Simulate** a scan with a fixture token. It is marked as simulated, and no real partner exists behind it.
 
 A real token comes from the Smile ID Portal, under Security settings. The sheet links there and opens
-it in the browser, where the Portal sign-in already lives.
+it in the browser, where the Portal sign-in already lives. The link is a phrase, not a printed URL,
+because a URL breaks mid-word on a narrow phone at the largest text size.
 
 The app decodes the token and refuses it if the segments, `iat`/`exp` or `api_url` do not read. The
 refusal names the claim that failed, never a value.
@@ -47,6 +48,10 @@ refusal names the claim that failed, never a value.
 
 So **nothing can be prefilled from a token.** A form shows a bound field as *Provided by token*, not
 as a value.
+
+The token also says **who the partner is**, which is how Enhanced Document Verification's form lists only
+the documents that partner has enabled (`GET /v3/services/config`, see
+[`docs/architecture.md`](architecture.md) §7). A simulated session reads that list from the fixture.
 
 ## 3. What the token lets the app skip
 
@@ -132,6 +137,8 @@ no camera of its own.
 - [ ] A token binding both names but no contact still asks for a contact.
 - [ ] A product tap with no live session opens the scanner, and a scan resumes at that product's first step.
 - [ ] An expired session sends the next run to the scanner, and a fresh scan resumes it.
+- [ ] Enhanced Document Verification lists only the partner's enabled countries, and a refused token
+      says so on the form.
 - [ ] Nothing in logs, the result card or the view hierarchy contains the token.
 
 ## Common issues
