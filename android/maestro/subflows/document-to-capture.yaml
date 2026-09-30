@@ -2,6 +2,7 @@
 # Portrait on purpose: a landscape capture leaves a phone lying flat in landscape.
 appId: ${APP_ID}
 ---
+- runFlow: link-session.yaml
 - tapOn:
     id: "sample_nav_products"
 - scrollUntilVisible:
