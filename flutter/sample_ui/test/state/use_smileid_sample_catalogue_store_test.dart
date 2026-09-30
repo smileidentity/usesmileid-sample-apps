@@ -35,26 +35,6 @@ void main() {
     String Function(T) id,
   ) => (list as UseSmileIDSampleCatalogueReady<T>).items.map(id).toList();
 
-  testWidgets('no session asks nothing and names the refusal', (
-    WidgetTester tester,
-  ) async {
-    final _CountingSource source = _CountingSource();
-    final UseSmileIDSampleCatalogueStore store = storeOver(source)
-      ..ensureEnabled(sandbox, 'en-GB', null);
-    addTearDown(store.dispose);
-    await tester.pump();
-
-    expect(source.configCalls, 0);
-    expect(
-      (store.enabled
-              as UseSmileIDSampleCatalogueFailed<
-                UseSmileIDSampleApiEnabledCountry
-              >)
-          .advice,
-      UseSmileIDSampleCatalogueRules.advice(401),
-    );
-  });
-
   testWidgets(
     'enhanced document verification offers only what the partner enabled',
     (WidgetTester tester) async {

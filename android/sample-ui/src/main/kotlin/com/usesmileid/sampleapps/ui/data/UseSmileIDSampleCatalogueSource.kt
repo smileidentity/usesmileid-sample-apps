@@ -27,8 +27,10 @@ class UseSmileIDSampleSessionAwareCatalogueSource(
     private val live: UseSmileIDSampleCatalogueSource,
     private val fixture: UseSmileIDSampleCatalogueSource,
 ) : UseSmileIDSampleCatalogueSource by live {
-    override suspend fun servicesConfig(environment: UseSmileIDSampleEnvironment, token: String, locale: String): String =
-        (if (UseSmileIDSampleTokenDecoder.isUnsigned(token)) fixture else live).servicesConfig(environment, token, locale)
+    override suspend fun servicesConfig(environment: UseSmileIDSampleEnvironment, token: String, locale: String): String {
+        if (token.isEmpty()) throw UseSmileIDSampleCatalogueHttpException(401)
+        return (if (UseSmileIDSampleTokenDecoder.isUnsigned(token)) fixture else live).servicesConfig(environment, token, locale)
+    }
 }
 
 /** `catalogue=fixture`: the bodies from `spec/catalogue-fixture.json`, with no network. */

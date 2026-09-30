@@ -166,16 +166,8 @@ export const createSmileIDSampleCatalogueStore = (
           enabledKey.environment === key.environment &&
           enabledKey.locale === key.locale;
         if (same && (get().enabled.kind === 'ready' || enabledInFlight)) return;
-        if (session === null || session === undefined) {
-          enabledGeneration++;
-          enabledInFlight = false;
-          enabledKey = null;
-          enabledToken = '';
-          set({ enabled: { kind: 'failed', reason: 'No session', advice: smileIDSampleCatalogueAdvice(401) } });
-          return;
-        }
         enabledKey = key;
-        enabledToken = session.token;
+        enabledToken = session?.token ?? '';
         fetchEnabled();
       },
       retry: () => {

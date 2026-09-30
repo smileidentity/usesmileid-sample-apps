@@ -32,6 +32,19 @@ void main() {
     );
   });
 
+  test('an empty token is refused without asking the server', () {
+    expect(
+      source.servicesConfig(sandbox, '', 'en-GB'),
+      throwsA(
+        isA<UseSmileIDSampleCatalogueHttpException>().having(
+          (UseSmileIDSampleCatalogueHttpException e) => e.status,
+          'status',
+          401,
+        ),
+      ),
+    );
+  });
+
   test('a signed token asks the server', () {
     expect(
       source.servicesConfig(

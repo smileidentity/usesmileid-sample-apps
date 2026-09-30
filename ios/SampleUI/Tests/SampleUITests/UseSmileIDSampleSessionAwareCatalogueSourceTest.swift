@@ -23,6 +23,16 @@ final class UseSmileIDSampleSessionAwareCatalogueSourceTest: XCTestCase {
     XCTAssertEqual(answered, expected)
   }
 
+  func testAnEmptyTokenIsRefusedWithoutAskingTheServer() async throws {
+    let (source, _) = try source()
+    do {
+      _ = try await source.servicesConfig(environment: .sandbox, token: "", locale: "en-GB")
+      XCTFail("an empty token must not be answered")
+    } catch UseSmileIDSampleCatalogueError.http(let status) {
+      XCTAssertEqual(status, 401)
+    }
+  }
+
   func testASignedTokenAsksTheServer() async throws {
     let (source, _) = try source()
     do {

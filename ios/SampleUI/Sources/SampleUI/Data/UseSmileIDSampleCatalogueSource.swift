@@ -31,6 +31,9 @@ public struct UseSmileIDSampleSessionAwareCatalogueSource: UseSmileIDSampleCatal
   }
 
   public func servicesConfig(environment: UseSmileIDSampleEnvironment, token: String, locale: String) async throws -> Data {
+    if token.isEmpty {
+      throw UseSmileIDSampleCatalogueError.http(401)
+    }
     let source = UseSmileIDSampleTokenDecoder.isUnsigned(token) ? fixture : live
     return try await source.servicesConfig(environment: environment, token: token, locale: locale)
   }

@@ -81,21 +81,8 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
         (_enabled is UseSmileIDSampleCatalogueReady || _enabledInFlight)) {
       return;
     }
-    if (session == null) {
-      _enabledGeneration++;
-      _enabledInFlight = false;
-      _enabledKey = null;
-      _enabledToken = '';
-      _enabled =
-          UseSmileIDSampleCatalogueFailed<UseSmileIDSampleApiEnabledCountry>(
-            'No session',
-            advice: UseSmileIDSampleCatalogueRules.advice(401),
-          );
-      notifyListeners();
-      return;
-    }
     _enabledKey = key;
-    _enabledToken = session.token;
+    _enabledToken = session?.token ?? '';
     _fetchEnabled();
   }
 

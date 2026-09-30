@@ -58,8 +58,13 @@ class UseSmileIDSampleSessionAwareCatalogueSource
     UseSmileIDSampleEnvironment environment,
     String token,
     String locale,
-  ) => (UseSmileIDSampleTokenDecoder.isUnsigned(token) ? _fixture : _live)
-      .servicesConfig(environment, token, locale);
+  ) async {
+    if (token.isEmpty) {
+      throw const UseSmileIDSampleCatalogueHttpException(401);
+    }
+    return (UseSmileIDSampleTokenDecoder.isUnsigned(token) ? _fixture : _live)
+        .servicesConfig(environment, token, locale);
+  }
 }
 
 /// `catalogue=fixture`: the bodies from `spec/catalogue-fixture.json`, with no network.

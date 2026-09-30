@@ -25,8 +25,10 @@ export const smileIDSampleSessionAwareCatalogueSource = (
 ): UseSmileIDSampleCatalogueSource => ({
   supportedIdTypes: live.supportedIdTypes,
   supportedDocuments: live.supportedDocuments,
-  servicesConfig: (environment, token, locale) =>
-    (smileIDSampleTokenIsUnsigned(token) ? fixture : live).servicesConfig(environment, token, locale),
+  servicesConfig: async (environment, token, locale) => {
+    if (token === '') throw new UseSmileIDSampleCatalogueHttpError(401);
+    return (smileIDSampleTokenIsUnsigned(token) ? fixture : live).servicesConfig(environment, token, locale);
+  },
 });
 
 /// `catalogue=fixture`: the bodies from `spec/catalogue-fixture.json`, with no network.

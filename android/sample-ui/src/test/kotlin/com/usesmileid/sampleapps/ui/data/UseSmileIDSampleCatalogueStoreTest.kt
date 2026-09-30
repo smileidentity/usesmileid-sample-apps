@@ -92,17 +92,6 @@ class UseSmileIDSampleCatalogueStoreTest {
     }
 
     @Test
-    fun no_session_asks_nothing_and_names_the_refusal() = runTest {
-        val source = FakeSource()
-        val store = store(source)
-        store.ensureEnabled(UseSmileIDSampleEnvironment.Sandbox, "en-GB", null)
-        advanceUntilIdle()
-        assertEquals(0, source.configCalls)
-        val failed = store.enabled as UseSmileIDSampleCatalogue.Failed
-        assertEquals(UseSmileIDSampleCatalogueRules.advice(401), failed.advice)
-    }
-
-    @Test
     fun the_partners_list_is_kept_per_session_and_a_relink_asks_again() = runTest {
         val source = FakeSource()
         val store = store(source)

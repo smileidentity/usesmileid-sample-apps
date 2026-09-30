@@ -94,16 +94,6 @@ describe('the catalogue store', () => {
     expect(kenya.kind === 'ready' && kenya.items.map((it) => it.code)).toEqual(['IDENTITY_CARD', 'PASSPORT']);
   });
 
-  it('asks nothing without a session, and names the refusal', async () => {
-    const { source, calls } = counting();
-    const store = createSmileIDSampleCatalogueStore(source);
-    store.getState().ensureEnabled('sandbox', 'en-GB', null);
-    await settle();
-    expect(calls.config).toBe(0);
-    const failed = store.getState().enabled;
-    expect(failed.kind === 'failed' && failed.advice).toBe(smileIDSampleCatalogueAdvice(401));
-  });
-
   it("keeps the partner's list per session, and asks again on a relink", async () => {
     const { source, calls } = counting();
     const store = createSmileIDSampleCatalogueStore(source);
@@ -238,6 +228,10 @@ describe('the session-aware source', () => {
     await expect(source.servicesConfig('sandbox', unsigned, 'en-GB')).resolves.toBe(
       await fixture.servicesConfig('sandbox', unsigned, 'en-GB'),
     );
+  });
+
+  it('refuses an empty token without asking the server', async () => {
+    await expect(source.servicesConfig('sandbox', '', 'en-GB')).rejects.toMatchObject({ status: 401 });
   });
 
   it('asks the server for a signed token', async () => {

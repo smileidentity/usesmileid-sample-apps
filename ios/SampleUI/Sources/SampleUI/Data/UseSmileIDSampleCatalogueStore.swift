@@ -55,16 +55,8 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
     if key == enabledKey, enabled.isReady || enabledTask != nil {
       return
     }
-    guard let session else {
-      enabledTask?.cancel()
-      enabledTask = nil
-      enabledKey = nil
-      enabledToken = ""
-      enabled = .failed("No session", advice: UseSmileIDSampleCatalogueRules.advice(status: 401))
-      return
-    }
     enabledKey = key
-    enabledToken = session.token
+    enabledToken = session?.token ?? ""
     fetchEnabled()
   }
 

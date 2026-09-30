@@ -25,6 +25,12 @@ class UseSmileIDSampleSessionAwareCatalogueSourceTest {
         )
     }
 
+    @Test
+    fun an_empty_token_is_refused_without_asking_the_server() = runTest {
+        val refused = runCatching { source.servicesConfig(UseSmileIDSampleEnvironment.Sandbox, "", "en-GB") }.exceptionOrNull()
+        assertEquals(401, (refused as UseSmileIDSampleCatalogueHttpException).status)
+    }
+
     @Test(expected = IOException::class)
     fun a_signed_token_asks_the_server() = runTest {
         source.servicesConfig(UseSmileIDSampleEnvironment.Sandbox, token("""{"alg":"HS256","typ":"JWT"}"""), "en-GB")
