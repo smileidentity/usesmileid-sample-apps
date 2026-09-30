@@ -147,16 +147,17 @@ public struct UserDetailsScreen: View {
       placeholder: supplied ? "Provided by token" : field.placeholder,
       enabled: !supplied,
       keyboardType: field.keyboardType,
+      isError: UseSmileIDSampleContactRules.problem(field, field.read(state.details)) != nil,
       testId: UseSmileIDSampleTestIds.userDetailsField(field.id)
     )
   }
 
   private var hint: some View {
     UseSmileIDSampleText(
-      state.isSatisfied ? "Tap any field to edit." : state.requirement.prompt,
+      state.details.contactProblem ?? (state.isSatisfied ? "Tap any field to edit." : state.requirement.prompt),
       style: UseSmileIDSampleTheme.type.textStyleCaption
     )
-    .foregroundColor(colors.textMuted)
+    .foregroundColor(state.details.contactProblem == nil ? colors.textMuted : colors.input.borderError)
     .useSmileIDSampleTestId(UseSmileIDSampleTestIds.userDetailsHint)
   }
 

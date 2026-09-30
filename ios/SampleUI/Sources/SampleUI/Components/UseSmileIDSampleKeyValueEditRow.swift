@@ -8,6 +8,7 @@ public struct UseSmileIDSampleKeyValueEditRow: View {
   private let required: Bool
   private let enabled: Bool
   private let keyboardType: UIKeyboardType
+  private let isError: Bool
   private let testId: String?
 
   @ScaledMetric(relativeTo: .body) private var minHeight: CGFloat = SmileSpacing.sizeControlMd
@@ -22,6 +23,7 @@ public struct UseSmileIDSampleKeyValueEditRow: View {
     required: Bool = false,
     enabled: Bool = true,
     keyboardType: UIKeyboardType = .default,
+    isError: Bool = false,
     testId: String? = nil
   ) {
     self.label = label
@@ -30,6 +32,7 @@ public struct UseSmileIDSampleKeyValueEditRow: View {
     self.required = required
     self.enabled = enabled
     self.keyboardType = keyboardType
+    self.isError = isError
     self.testId = testId
   }
 
@@ -75,8 +78,10 @@ public struct UseSmileIDSampleKeyValueEditRow: View {
         TextField("", text: $value)
           .multilineTextAlignment(stacked ? .leading : .trailing)
           .font(UseSmileIDSampleFonts.font(rowStyle, scale: scale))
-          .foregroundColor(enabled ? colors.textTitle : colors.textMuted)
+          .foregroundColor(!enabled ? colors.textMuted : isError ? colors.input.borderError : colors.textTitle)
           .keyboardType(keyboardType)
+          .autocorrectionDisabled(keyboardType == .emailAddress)
+          .textInputAutocapitalization(keyboardType == .emailAddress ? .never : nil)
           .accentColor(colors.primary)
           .disabled(!enabled)
           .useSmileIDSampleTestId(testId)

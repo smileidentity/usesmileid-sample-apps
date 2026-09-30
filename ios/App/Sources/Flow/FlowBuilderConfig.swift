@@ -84,8 +84,8 @@ func useSmileIDSampleUserDetails(_ snapshot: FlowLaunchSnapshot) -> UserDetails?
   return UserDetails(
     givenNames: snapshot.userDetails.firstName,
     lastName: snapshot.userDetails.lastName,
-    email: snapshot.userDetails.email.isEmpty ? nil : snapshot.userDetails.email,
-    phoneNumber: snapshot.userDetails.phone.isEmpty ? nil : snapshot.userDetails.phone
+    email: snapshot.userDetails.submittedEmail,
+    phoneNumber: snapshot.userDetails.submittedPhone
   )
 }
 

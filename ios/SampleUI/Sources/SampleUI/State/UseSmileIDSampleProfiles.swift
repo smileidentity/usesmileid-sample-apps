@@ -305,9 +305,9 @@ public struct UseSmileIDSampleNewProfile: Equatable, Sendable {
     self.phone = phone
   }
 
-  /// The design's own rule: Create needs the profile name and both required names.
+  /// The design's own rule, Create needs the profile name and both required names, and no contact the server would refuse.
   public var canCreate: Bool {
-    !name.isBlank && !firstName.isBlank && !lastName.isBlank
+    !name.isBlank && !firstName.isBlank && !lastName.isBlank && defaults.contactProblem == nil
   }
 
   public var defaults: UseSmileIDSampleUserDetails {
