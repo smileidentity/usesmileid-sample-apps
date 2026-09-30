@@ -1,5 +1,5 @@
 {
-  "description": "The lists a device flow sees under the `catalogue=fixture` launch argument, in the API's own response shape so one decoder reads both. A UI test input, not a copy of the API: about a dozen rows, each here for a case the form has to handle, and it changes only when the form gains a case — never because the API did. Live runs read GET /v3/services/supported_id_types and GET /v3/services/supported_documents instead, every country in both.",
+  "description": "The lists a device flow sees under the `catalogue=fixture` launch argument, in the API's own response shape so one decoder reads both. A UI test input, not a copy of the API: about a dozen rows, each here for a case the form has to handle, and it changes only when the form gains a case — never because the API did. Live runs read GET /v3/services/supported_id_types and GET /v3/services/supported_documents instead, every country in both, and GET /v3/services/config for the partner's own Enhanced Document Verification list; `services_config` is what a simulated session reads in its place, since the server refuses its unsigned token.",
   "cases": {
     "KE IDENTITY_CARD": "a two-sided card",
     "KE PASSPORT": "a passport (format 3), one-sided",
@@ -11,7 +11,8 @@
     "GH PHONE_NUMBER": "needs a field the form cannot collect, so it is not listed",
     "NG NATIONAL_ID": "needs dob, so it is not listed",
     "ET": "a country whose only type is not listed, so ET is not offered for KYC",
-    "ZA SEAMANS_ID": "a booklet sharing the passport's format 3, which must still be a GenericDocument: format is never read"
+    "ZA SEAMANS_ID": "a booklet sharing the passport's format 3, which must still be a GenericDocument: format is never read",
+    "services_config KE, NG": "the partner's Enhanced Document Verification list: two of Kenya's three documents and Nigeria's passport, so Ghana and South Africa, which the other document products offer, are not offered on it"
   },
   "supported_id_types": {
     "id_types": [
@@ -262,5 +263,149 @@
         ]
       }
     ]
+  },
+  "services_config": {
+    "consentRequired": {},
+    "fields_to_collect": {},
+    "idSelection": {
+      "basic_kyc": {},
+      "biometric_kyc": {},
+      "doc_verification": {},
+      "enhanced_document_verification": {
+        "KE": [
+          "IDENTITY_CARD",
+          "PASSPORT"
+        ],
+        "NG": [
+          "PASSPORT"
+        ]
+      },
+      "enhanced_kyc": {}
+    },
+    "products": {
+      "basic_kyc": {},
+      "biometric_kyc": {},
+      "doc_verification": {},
+      "enhanced_document_verification": {
+        "KE": [
+          {
+            "fields": [
+              {
+                "field_type": "text",
+                "key_name": "given_names",
+                "label": "Given names",
+                "placeholder_text": "Enter your given names",
+                "required": true
+              },
+              {
+                "field_type": "text",
+                "key_name": "last_name",
+                "label": "Last name",
+                "placeholder_text": "Enter your last name",
+                "required": true
+              },
+              {
+                "field_type": "email",
+                "key_name": "email",
+                "label": "Email address",
+                "one_of_group": "contact",
+                "placeholder_text": "Enter your email address",
+                "required": false
+              },
+              {
+                "field_type": "phone",
+                "key_name": "phone_number",
+                "label": "Phone number",
+                "one_of_group": "contact",
+                "placeholder_text": "Enter your phone number",
+                "regex": "^\\+[1-9]\\d{6,14}$",
+                "required": false
+              }
+            ],
+            "key_name": "IDENTITY_CARD",
+            "label": "Identity Card"
+          },
+          {
+            "fields": [
+              {
+                "field_type": "text",
+                "key_name": "given_names",
+                "label": "Given names",
+                "placeholder_text": "Enter your given names",
+                "required": true
+              },
+              {
+                "field_type": "text",
+                "key_name": "last_name",
+                "label": "Last name",
+                "placeholder_text": "Enter your last name",
+                "required": true
+              },
+              {
+                "field_type": "email",
+                "key_name": "email",
+                "label": "Email address",
+                "one_of_group": "contact",
+                "placeholder_text": "Enter your email address",
+                "required": false
+              },
+              {
+                "field_type": "phone",
+                "key_name": "phone_number",
+                "label": "Phone number",
+                "one_of_group": "contact",
+                "placeholder_text": "Enter your phone number",
+                "regex": "^\\+[1-9]\\d{6,14}$",
+                "required": false
+              }
+            ],
+            "key_name": "PASSPORT",
+            "label": "Passport"
+          }
+        ],
+        "NG": [
+          {
+            "fields": [
+              {
+                "field_type": "text",
+                "key_name": "given_names",
+                "label": "Given names",
+                "placeholder_text": "Enter your given names",
+                "required": true
+              },
+              {
+                "field_type": "text",
+                "key_name": "last_name",
+                "label": "Last name",
+                "placeholder_text": "Enter your last name",
+                "required": true
+              },
+              {
+                "field_type": "email",
+                "key_name": "email",
+                "label": "Email address",
+                "one_of_group": "contact",
+                "placeholder_text": "Enter your email address",
+                "required": false
+              },
+              {
+                "field_type": "phone",
+                "key_name": "phone_number",
+                "label": "Phone number",
+                "one_of_group": "contact",
+                "placeholder_text": "Enter your phone number",
+                "regex": "^\\+[1-9]\\d{6,14}$",
+                "required": false
+              }
+            ],
+            "key_name": "PASSPORT",
+            "label": "Passport"
+          }
+        ]
+      },
+      "enhanced_kyc": {}
+    },
+    "token_provided_fields": [],
+    "token_provided_values": {}
   }
 }

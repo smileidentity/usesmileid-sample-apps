@@ -957,7 +957,7 @@
     ]
   },
   "countries": {
-    "rule": "The KYC products offer every country with at least one listed ID type; the document products every country with at least one listed document; Residency Document Verification, the passport family, every country whose listed documents include a PASSPORT, since the SDK accepts no other document for it. Names come from supported_documents, which carries them; a KYC country it does not name is shown by its code. Countries keep supported_documents' order (alphabetical by English name), and a KYC-only country follows them in its supported_id_types order.",
+    "rule": "The KYC products offer every country with at least one listed ID type; Document Verification every country with at least one listed document (Enhanced Document Verification follows enabledCountries); Residency Document Verification, the passport family, every country whose listed documents include a PASSPORT, since the SDK accepts no other document for it. Names come from supported_documents, which carries them; a KYC country it does not name is shown by its code. Countries keep supported_documents' order (alphabetical by English name), and a KYC-only country follows them in its supported_id_types order.",
     "cases": [
       {
         "name": "the fixture, KYC family",
@@ -1203,6 +1203,330 @@
             "name": "Kenya"
           }
         ]
+      }
+    ]
+  },
+  "enabledDocuments": {
+    "rule": "Enhanced Document Verification lists the documents the partner has enabled: the ID types of products.enhanced_document_verification[country] in GET /v3/services/config, in that order. Each takes its rows from supported_documents' document with the same code, under the documents rule for enhancedDocumentVerification, because only supported_documents carries has_back and the sub-types that Capture as reads. An enabled code supported_documents does not list is one row of the configuration's own: id and code its key_name, name its label, has_back true and format 1, which Capture as matches to a GenericDocument that always captures.",
+    "cases": [
+      {
+        "name": "the fixture, Kenya: the enabled two in the configuration's order, not the Alien ID",
+        "country": "KE",
+        "input": "catalogue-fixture.json",
+        "expected": [
+          {
+            "id": "IDENTITY_CARD",
+            "code": "IDENTITY_CARD",
+            "subType": null,
+            "name": "Identity Card",
+            "hasBack": true,
+            "format": 1
+          },
+          {
+            "id": "PASSPORT",
+            "code": "PASSPORT",
+            "subType": null,
+            "name": "Passport",
+            "hasBack": false,
+            "format": 3
+          }
+        ]
+      },
+      {
+        "name": "the fixture, Ghana: offered by the other document products, not enabled here",
+        "country": "GH",
+        "input": "catalogue-fixture.json",
+        "expected": []
+      },
+      {
+        "name": "the configuration's order wins over supported_documents' (synthetic)",
+        "country": "KE",
+        "input": {
+          "supported_documents": {
+            "valid_documents": [
+              {
+                "country": {
+                  "code": "KE",
+                  "continent": "AFRICA",
+                  "name": "Kenya"
+                },
+                "id_types": [
+                  {
+                    "code": "IDENTITY_CARD",
+                    "format": 1,
+                    "has_back": true,
+                    "name": "Identity Card"
+                  },
+                  {
+                    "code": "PASSPORT",
+                    "format": 3,
+                    "has_back": false,
+                    "name": "Passport"
+                  }
+                ]
+              }
+            ]
+          },
+          "services_config": {
+            "products": {
+              "enhanced_document_verification": {
+                "KE": [
+                  {
+                    "key_name": "PASSPORT",
+                    "label": "Passport",
+                    "fields": []
+                  },
+                  {
+                    "key_name": "IDENTITY_CARD",
+                    "label": "Identity Card",
+                    "fields": []
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "expected": [
+          {
+            "id": "PASSPORT",
+            "code": "PASSPORT",
+            "subType": null,
+            "name": "Passport",
+            "hasBack": false,
+            "format": 3
+          },
+          {
+            "id": "IDENTITY_CARD",
+            "code": "IDENTITY_CARD",
+            "subType": null,
+            "name": "Identity Card",
+            "hasBack": true,
+            "format": 1
+          }
+        ]
+      },
+      {
+        "name": "the Green Book stays out, and a code supported_documents does not list is the configuration's own row (synthetic)",
+        "country": "ZA",
+        "input": {
+          "supported_documents": {
+            "valid_documents": [
+              {
+                "country": {
+                  "code": "ZA",
+                  "continent": "AFRICA",
+                  "name": "South Africa"
+                },
+                "id_types": [
+                  {
+                    "code": "IDENTITY_CARD",
+                    "format": 1,
+                    "has_back": true,
+                    "name": "Identity Card",
+                    "sub_types": [
+                      {
+                        "display_standalone": true,
+                        "format": 7,
+                        "has_back": false,
+                        "id": "green_book",
+                        "name": "Green Book"
+                      }
+                    ]
+                  },
+                  {
+                    "code": "PASSPORT",
+                    "format": 3,
+                    "has_back": false,
+                    "name": "Passport"
+                  }
+                ]
+              }
+            ]
+          },
+          "services_config": {
+            "products": {
+              "enhanced_document_verification": {
+                "ZA": [
+                  {
+                    "key_name": "IDENTITY_CARD",
+                    "label": "Identity Card",
+                    "fields": []
+                  },
+                  {
+                    "key_name": "MILITARY_ID",
+                    "label": "Military ID",
+                    "fields": []
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "expected": [
+          {
+            "id": "IDENTITY_CARD",
+            "code": "IDENTITY_CARD",
+            "subType": null,
+            "name": "Identity Card",
+            "hasBack": true,
+            "format": 1
+          },
+          {
+            "id": "MILITARY_ID",
+            "code": "MILITARY_ID",
+            "subType": null,
+            "name": "Military ID",
+            "hasBack": true,
+            "format": 1
+          }
+        ]
+      }
+    ]
+  },
+  "enabledCountries": {
+    "rule": "Enhanced Document Verification offers every country of products.enhanced_document_verification with at least one enabled document. Names come from supported_documents, in its order; a country it does not name is shown by its code, after the named ones and sorted by code, because a JSON object's key order does not survive every platform's decoder.",
+    "cases": [
+      {
+        "name": "the fixture: Kenya and Nigeria, not Ghana or South Africa",
+        "input": "catalogue-fixture.json",
+        "expected": [
+          {
+            "code": "KE",
+            "name": "Kenya"
+          },
+          {
+            "code": "NG",
+            "name": "Nigeria"
+          }
+        ]
+      },
+      {
+        "name": "unnamed countries follow by code, and a country with no documents is left out (synthetic)",
+        "input": {
+          "supported_documents": {
+            "valid_documents": [
+              {
+                "country": {
+                  "code": "KE",
+                  "continent": "AFRICA",
+                  "name": "Kenya"
+                },
+                "id_types": [
+                  {
+                    "code": "IDENTITY_CARD",
+                    "format": 1,
+                    "has_back": true,
+                    "name": "Identity Card"
+                  },
+                  {
+                    "code": "PASSPORT",
+                    "format": 3,
+                    "has_back": false,
+                    "name": "Passport"
+                  }
+                ]
+              }
+            ]
+          },
+          "services_config": {
+            "products": {
+              "enhanced_document_verification": {
+                "XY": [
+                  {
+                    "key_name": "PASSPORT",
+                    "label": "Passport",
+                    "fields": []
+                  }
+                ],
+                "KE": [
+                  {
+                    "key_name": "PASSPORT",
+                    "label": "Passport",
+                    "fields": []
+                  }
+                ],
+                "GH": [],
+                "XA": [
+                  {
+                    "key_name": "IDENTITY_CARD",
+                    "label": "Identity Card",
+                    "fields": []
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "expected": [
+          {
+            "code": "KE",
+            "name": "Kenya"
+          },
+          {
+            "code": "XA",
+            "name": "XA"
+          },
+          {
+            "code": "XY",
+            "name": "XY"
+          }
+        ]
+      },
+      {
+        "name": "a partner with Enhanced Document Verification off gets no countries (synthetic)",
+        "input": {
+          "supported_documents": {
+            "valid_documents": [
+              {
+                "country": {
+                  "code": "KE",
+                  "continent": "AFRICA",
+                  "name": "Kenya"
+                },
+                "id_types": [
+                  {
+                    "code": "IDENTITY_CARD",
+                    "format": 1,
+                    "has_back": true,
+                    "name": "Identity Card"
+                  },
+                  {
+                    "code": "PASSPORT",
+                    "format": 3,
+                    "has_back": false,
+                    "name": "Passport"
+                  }
+                ]
+              }
+            ]
+          },
+          "services_config": {
+            "products": {}
+          }
+        },
+        "expected": []
+      }
+    ]
+  },
+  "failures": {
+    "rule": "A list that fails shows the picker's error state with Retry, never an empty list. The supporting line names the reason when the status does: 401 is the configuration call refusing the session's token, 403 the partner not being allowed there. Any other status, a timeout or no network gets the default line. status null is a failure with no HTTP answer.",
+    "default": "Check your connection, then try again",
+    "cases": [
+      {
+        "status": 401,
+        "supportingText": "The server refused this session's token. Link a new session, then try again"
+      },
+      {
+        "status": 403,
+        "supportingText": "Access denied: production may not be enabled for this partner, or this network is not allowed"
+      },
+      {
+        "status": 500,
+        "supportingText": "Check your connection, then try again"
+      },
+      {
+        "status": null,
+        "supportingText": "Check your connection, then try again"
       }
     ]
   },
