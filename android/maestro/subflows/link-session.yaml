@@ -1,6 +1,11 @@
 # Links a fifteen-minute simulated session unless one is live: every run needs a token before its first step.
 appId: ${APP_ID}
 ---
+# The session card lives on Products, so the check starts there whichever tab called this.
+- tapOn:
+    id: "sample_nav_products"
+- assertVisible:
+    id: "sample_products_screen"
 - runFlow:
     when:
       notVisible:
