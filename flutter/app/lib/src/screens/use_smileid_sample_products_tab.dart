@@ -109,25 +109,10 @@ class _UseSmileIDSampleProductsTabState
         ref
             .read(useSmileIDSampleFormsProvider.notifier)
             .startRun(profiles.active);
-        final UseSmileIDSampleTokenSession? linked = ref
-            .read(useSmileIDSampleSessionProvider)
-            .live;
-        if (linked == null ||
-            linked.hasExpired(ref.read(useSmileIDSampleWallClockProvider)())) {
-          ref
-              .read(useSmileIDSampleInterruptedRunProvider.notifier)
-              .send(
-                UseSmileIDSampleRunIntent(
-                  productId: product.id,
-                  route: ref.read(useSmileIDSampleLaunchArgsProvider).route,
-                  resumeAt: UseSmileIDSampleResumePoint.firstStep,
-                ),
-              );
-          context.push(UseSmileIDSampleRoutes.scanToken);
-          return;
-        }
+        final String entry = useSmileIDSampleEntryFor(ref, product);
         // Fetched ahead, so the list is usually there by the time the picker opens.
-        if (useSmileIDSampleCatalogueFamily(product) != null) {
+        if (entry != UseSmileIDSampleRoutes.scanToken &&
+            useSmileIDSampleCatalogueFamily(product) != null) {
           ref
               .read(useSmileIDSampleCatalogueStoreProvider)
               .begin(
@@ -135,12 +120,7 @@ class _UseSmileIDSampleProductsTabState
                 useSmileIDSampleCatalogueLocale(),
               );
         }
-        context.push(
-          UseSmileIDSampleJourney.firstStepFor(
-            product,
-            useSmileIDSampleLiveBindings(ref),
-          ),
-        );
+        context.push(entry);
       },
       onProfileTap: _switchProfile,
       onScanTap: () => context.push(UseSmileIDSampleRoutes.scanToken),
