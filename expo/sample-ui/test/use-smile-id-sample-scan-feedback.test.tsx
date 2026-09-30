@@ -1,6 +1,7 @@
-import { act } from '@testing-library/react-native';
+import { act, fireEvent } from '@testing-library/react-native';
 
 import { ScanTokenScreen, type UseSmileIDSampleViewfinderProps } from '../src/screens/scan-token-screen';
+import { UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
 import { renderInTheme } from './render-in-theme';
 
 const base64Url = (text: string) => Buffer.from(text, 'utf8').toString('base64url');
@@ -36,5 +37,27 @@ describe('a scanned code', () => {
       deliver!(candidate);
     });
     expect(feedback).toEqual(expected);
+  });
+});
+
+describe('the scan sheet', () => {
+  it.each([
+    ['ignores a tap on Simulate while the screen is still arriving', false, 0],
+    ['simulates on a tap once the screen has settled', true, 1],
+  ])('%s', async (_name, acceptsTaps, expected) => {
+    let simulated = 0;
+    const screen = await renderInTheme(
+      <ScanTokenScreen
+        onBack={() => undefined}
+        onLink={() => undefined}
+        onSimulate={() => {
+          simulated += 1;
+        }}
+        acceptsTaps={acceptsTaps}
+      />,
+      false,
+    );
+    await fireEvent.press(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_SIMULATE));
+    expect(simulated).toBe(expected);
   });
 });

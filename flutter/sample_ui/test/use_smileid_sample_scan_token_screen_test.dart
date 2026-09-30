@@ -28,4 +28,35 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.text('The clipboard holds no text to paste.'), findsOne);
   });
+
+  for (final bool accepts in <bool>[false, true]) {
+    testWidgets(
+      accepts
+          ? 'a settled screen simulates on a tap'
+          : 'a screen still arriving ignores a tap on Simulate',
+      (WidgetTester tester) async {
+        int simulated = 0;
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: UseSmileIDSampleTheme.light(),
+            home: Scaffold(
+              body: UseSmileIDSampleScanTokenScreen(
+                onBack: () {},
+                onLink: (_) {},
+                onSimulate: (_, _, _) => simulated++,
+                onPaste: () async => null,
+                acceptsTaps: accepts,
+              ),
+            ),
+          ),
+        );
+        await tester.tap(
+          find.bySemanticsIdentifier(UseSmileIDSampleTestIds.tokenSimulate),
+        );
+        await tester.pump();
+
+        expect(simulated, accepts ? 1 : 0);
+      },
+    );
+  }
 }
