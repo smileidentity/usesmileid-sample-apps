@@ -30,6 +30,12 @@ class UseSmileIDSampleRunIntent {
   /// Where the run picks up once a session is linked.
   final UseSmileIDSampleResumePoint resumeAt;
 
+  /// Straight back into the SDK only on the partner the run was started for; any other goes back through its first step.
+  bool resumesInFlow({String? runPartnerId, String? linkedPartnerId}) =>
+      resumeAt == UseSmileIDSampleResumePoint.flow &&
+      runPartnerId != null &&
+      runPartnerId == linkedPartnerId;
+
   @override
   bool operator ==(Object other) =>
       other is UseSmileIDSampleRunIntent &&

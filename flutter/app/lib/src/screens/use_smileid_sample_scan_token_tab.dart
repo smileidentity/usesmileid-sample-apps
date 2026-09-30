@@ -67,6 +67,11 @@ class _UseSmileIDSampleScanTokenTabState
     await ref.read(useSmileIDSampleSessionProvider.notifier).link(session);
     final UseSmileIDSampleRunIntent? resuming = _resuming;
     // An expired relink cannot start the run.
+    if (resuming == null) {
+      ref
+          .read(useSmileIDSampleRunPartnerProvider.notifier)
+          .record(session.partnerId);
+    }
     if (resuming == null ||
         session.hasExpired(DateTime.now().millisecondsSinceEpoch)) {
       if (mounted) {
@@ -80,8 +85,14 @@ class _UseSmileIDSampleScanTokenTabState
     final UseSmileIDSampleProduct? product = UseSmileIDSampleProduct.values
         .where((UseSmileIDSampleProduct it) => it.id == resuming.productId)
         .firstOrNull;
-    if (resuming.resumeAt == UseSmileIDSampleResumePoint.firstStep &&
-        product != null) {
+    final bool intoFlow = resuming.resumesInFlow(
+      runPartnerId: ref.read(useSmileIDSampleRunPartnerProvider),
+      linkedPartnerId: session.partnerId,
+    );
+    ref
+        .read(useSmileIDSampleRunPartnerProvider.notifier)
+        .record(session.partnerId);
+    if (!intoFlow && product != null) {
       unawaited(
         router.pushReplacement(
           UseSmileIDSampleJourney.firstStepFor(

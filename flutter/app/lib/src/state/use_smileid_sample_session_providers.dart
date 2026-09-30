@@ -184,6 +184,22 @@ class UseSmileIDSampleInterruptedRunNotifier
   }
 }
 
+/// The partner whose token the run in progress was started on; null when unknown, as after a cold link.
+final NotifierProvider<UseSmileIDSampleRunPartnerNotifier, String?>
+useSmileIDSampleRunPartnerProvider =
+    NotifierProvider<UseSmileIDSampleRunPartnerNotifier, String?>(
+      UseSmileIDSampleRunPartnerNotifier.new,
+    );
+
+/// Holds the run's partner.
+class UseSmileIDSampleRunPartnerNotifier extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  /// Records [partnerId] as the run's.
+  void record(String? partnerId) => state = partnerId;
+}
+
 /// Where a status refresh asks.
 final Provider<UseSmileIDSampleJobStatusSource>
 useSmileIDSampleJobStatusSourceProvider =

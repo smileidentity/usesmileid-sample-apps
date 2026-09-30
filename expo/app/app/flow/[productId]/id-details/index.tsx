@@ -1,6 +1,8 @@
 import {
   KycIdFormScreen,
+  smileIDSampleCatalogueCountriesOf,
   smileIDSampleCatalogueDocumentsOf,
+  smileIDSampleSettledItems,
   smileIDSampleCatalogueFamily,
   smileIDSampleCatalogueIdTypesOf,
   smileIDSampleLiveSession,
@@ -58,6 +60,20 @@ export default function IdDetailsForm() {
   useEffect(() => {
     if (productId !== undefined) keepDocumentListedOn(productId);
   }, [productId, keepDocumentListedOn]);
+
+  const keepOnlyEnabled = useSmileIDSampleFormsStore((state) => state.keepOnlyEnabled);
+  const enabledCountries =
+    productId === 'enhancedDocumentVerification'
+      ? smileIDSampleSettledItems(smileIDSampleCatalogueCountriesOf(catalogue, family, productId))
+      : null;
+  const pickedCountry = details.country?.code;
+  const enabledDocuments =
+    productId === 'enhancedDocumentVerification' && pickedCountry !== undefined
+      ? smileIDSampleSettledItems(smileIDSampleCatalogueDocumentsOf(catalogue, pickedCountry, productId))
+      : null;
+  useEffect(() => {
+    if (productId === 'enhancedDocumentVerification') keepOnlyEnabled(enabledCountries, enabledDocuments);
+  }, [productId, enabledCountries, enabledDocuments, keepOnlyEnabled]);
 
   const country = details.country?.code;
   const countryList =

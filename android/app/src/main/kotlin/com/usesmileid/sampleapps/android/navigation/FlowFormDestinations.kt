@@ -28,6 +28,7 @@ import com.usesmileid.sampleapps.ui.screens.DocumentPickerSheet as DocumentPicke
 import com.usesmileid.sampleapps.ui.screens.IdTypePickerSheet as IdTypePickerContent
 import com.usesmileid.sampleapps.ui.screens.KycIdFormScreen as KycIdFormContent
 import com.usesmileid.sampleapps.ui.screens.UserDetailsScreen as UserDetailsContent
+import com.usesmileid.sampleapps.ui.state.settledItems
 
 /** The pre-flow wizard's routes. Function names are load-bearing: KSP names each generated `…Destination` after the function. */
 
@@ -93,6 +94,11 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     LaunchedEffect(product) { product?.let(app.forms::keepDocumentListedOn) }
     val details = app.forms.idDetails
     val countryCode = details.country?.code
+    if (product == UseSmileIDSampleProduct.EnhancedDocumentVerification) {
+        val enabledCountries = app.catalogue.countries(family, product).settledItems
+        val enabledDocuments = countryCode?.let { app.catalogue.documents(it, product).settledItems }
+        LaunchedEffect(enabledCountries, enabledDocuments) { app.forms.keepOnlyEnabled(enabledCountries, enabledDocuments) }
+    }
     // A link can ask for a second-level sheet before its trigger could open; refused, not held until later.
     LaunchedEffect(pickingIdType, pickingDocument, pickingCaptureAs, countryCode, details.document) {
         if (countryCode == null) {

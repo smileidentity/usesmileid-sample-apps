@@ -117,4 +117,36 @@ class UseSmileIDSampleFormsTest {
         assertEquals(null, forms.idDetails.document)
         assertEquals(null, forms.idDetails.captureAsOverride)
     }
+
+    private val kenya = UseSmileIDSampleCountry("KE", "Kenya")
+    private val passport = UseSmileIDSampleDocument(code = "PASSPORT", name = "Passport", hasBack = false, format = 3)
+
+    private fun picked() = UseSmileIDSampleForms().apply {
+        setCountry(kenya)
+        setDocument(passport)
+    }
+
+    @Test
+    fun a_relinked_partner_that_lacks_the_country_drops_every_pick() {
+        val forms = picked()
+        forms.keepOnlyEnabled(listOf(UseSmileIDSampleCountry("NG", "Nigeria")), null)
+        assertEquals(null, forms.idDetails.country)
+        assertEquals(null, forms.idDetails.document)
+    }
+
+    @Test
+    fun a_relinked_partner_that_lacks_only_the_document_keeps_the_country() {
+        val forms = picked()
+        forms.keepOnlyEnabled(listOf(kenya), listOf(UseSmileIDSampleDocument(code = "NATIONAL_ID", name = "National ID", hasBack = true, format = 1)))
+        assertEquals(kenya, forms.idDetails.country)
+        assertEquals(null, forms.idDetails.document)
+    }
+
+    @Test
+    fun a_list_still_loading_keeps_the_picks() {
+        val forms = picked()
+        forms.keepOnlyEnabled(null, null)
+        assertEquals(kenya, forms.idDetails.country)
+        assertEquals(passport, forms.idDetails.document)
+    }
 }

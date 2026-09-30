@@ -2,7 +2,9 @@ package com.usesmileid.sampleapps.ui.state
 
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class UseSmileIDSampleRunIntentTest {
@@ -59,5 +61,15 @@ class UseSmileIDSampleRunIntentTest {
         assertNull("a product with no presentation is not a run", UseSmileIDSampleRunIntent.of(listOf("biometricKyc")))
         assertNull("an unknown presentation is not a run", UseSmileIDSampleRunIntent.of(listOf("biometricKyc", "carousel")))
         assertNull("a blank product is not a run", UseSmileIDSampleRunIntent.of(listOf("", "shell")))
+    }
+
+    @Test
+    fun only_the_same_partner_resumes_straight_into_the_sdk() {
+        val expired = UseSmileIDSampleRunIntent("enhancedDocumentVerification", UseSmileIDSampleFlowRoute.Shell)
+        assertTrue(expired.resumesInFlow(runPartnerId = "p-1", linkedPartnerId = "p-1"))
+        assertFalse("another partner may not enable what was picked", expired.resumesInFlow("p-1", "p-2"))
+        assertFalse("an unknown run partner is treated as another", expired.resumesInFlow(null, "p-1"))
+        val tapped = expired.copy(resumeAt = UseSmileIDSampleResumePoint.FirstStep)
+        assertFalse("a product tap always starts at its first step", tapped.resumesInFlow("p-1", "p-1"))
     }
 }

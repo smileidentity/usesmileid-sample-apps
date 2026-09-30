@@ -23,7 +23,7 @@ import com.usesmileid.sampleapps.android.flow.firstStepFor
 import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleQrScanner
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleScanReason
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleResumePoint
+import com.usesmileid.sampleapps.ui.state.resumesInFlow
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleRunIntent
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenDecoder
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
@@ -56,7 +56,10 @@ fun ScanTokenScreen(navigator: DestinationsNavigator) {
         // On the app-level scope, so leaving this screen cannot cancel the write half-done.
         app.storeScope.launch { app.store.linkTokenSession(session) }
         // A resumed run leaves on the effect below instead.
-        if (resuming == null) navigator.navigateUp()
+        if (resuming == null) {
+            app.interruptedRun.runPartnerId = session.partnerId
+            navigator.navigateUp()
+        }
     }
 
     // Waits for the write to reach app state: re-entering against the expired session would bounce
@@ -72,7 +75,9 @@ fun ScanTokenScreen(navigator: DestinationsNavigator) {
             navigator.navigateUp()
         } else {
             val product = UseSmileIDSampleProduct.entries.firstOrNull { it.id == resuming.productId }
-            val next = if (resuming.resumeAt == UseSmileIDSampleResumePoint.FirstStep && product != null) {
+            val intoFlow = resuming.resumesInFlow(app.interruptedRun.runPartnerId, linked.partnerId)
+            app.interruptedRun.runPartnerId = linked.partnerId
+            val next = if (!intoFlow && product != null) {
                 app.firstStepFor(product)
             } else {
                 SdkFlowScreenDestination(productId = resuming.productId, route = resuming.route)

@@ -18,7 +18,9 @@ export const smileIDSampleEntryFor = (
   scenario: string,
 ): Href => {
   const store = useSmileIDSampleSessionStore.getState();
-  if (smileIDSampleLiveSession(store, Date.now()) === null) {
+  const live = smileIDSampleLiveSession(store, Date.now());
+  store.recordRunPartner(live?.partnerId ?? null);
+  if (live === null) {
     store.sendRun({ productId: product.id, route, resumeAt: 'firstStep' });
     return '/token/scan';
   }

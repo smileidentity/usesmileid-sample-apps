@@ -186,6 +186,30 @@ class _UseSmileIDSampleKycFormTabState
     );
   }
 
+  /// After the frame, since a notifier cannot change while this builds; nothing is scheduled when every pick is still enabled.
+  void _keepOnlyEnabled(
+    UseSmileIDSampleIdDetails details,
+    UseSmileIDSampleProduct product,
+  ) {
+    final List<UseSmileIDSampleCountry>? countries = _catalogue
+        .countries(_family, product: product)
+        .settledItems;
+    final String? code = details.country?.code;
+    final List<UseSmileIDSampleDocument>? documents = code == null
+        ? null
+        : _catalogue.documents(code, product: product).settledItems;
+    if (identical(details.withEnabledOnly(countries, documents), details)) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref
+            .read(useSmileIDSampleFormsProvider.notifier)
+            .keepOnlyEnabled(countries, documents);
+      }
+    });
+  }
+
   /// A link can ask for a second-level sheet before its trigger could open; refused, not held until later.
   void _openFromLink(UseSmileIDSamplePicker asked) {
     final UseSmileIDSampleIdDetails details = ref
@@ -230,6 +254,9 @@ class _UseSmileIDSampleKycFormTabState
         listenable: _catalogue,
         builder: (BuildContext context, Widget? _) {
           final String? country = details.country?.code;
+          if (product == UseSmileIDSampleProduct.enhancedDocumentVerification) {
+            _keepOnlyEnabled(details, product!);
+          }
           return UseSmileIDSampleKycFormScreen(
             title: product?.label ?? widget.productId,
             family: _family,

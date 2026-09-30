@@ -36,4 +36,44 @@ final class UseSmileIDSampleIdDetailsTest: XCTestCase {
     XCTAssertTrue("Kenya".matches(" ken "))
     XCTAssertFalse("Kenya".matches("uganda"))
   }
+
+  private var picked: UseSmileIDSampleIdDetails {
+    var details = UseSmileIDSampleIdDetails()
+    details.choose(country: UseSmileIDSampleCountry(code: "KE", name: "Kenya"))
+    details.choose(document: UseSmileIDSampleDocument(code: "PASSPORT", name: "Passport", hasBack: false, format: 3))
+    return details
+  }
+
+  func testARelinkedPartnerThatLacksTheCountryDropsEveryPick() {
+    var details = picked
+    details.keepOnlyEnabled(countries: [UseSmileIDSampleCountry(code: "NG", name: "Nigeria")], documents: nil)
+    XCTAssertNil(details.country)
+    XCTAssertNil(details.document)
+  }
+
+  func testARelinkedPartnerThatLacksOnlyTheDocumentKeepsTheCountry() {
+    var details = picked
+    details.keepOnlyEnabled(
+      countries: [UseSmileIDSampleCountry(code: "KE", name: "Kenya")],
+      documents: [UseSmileIDSampleDocument(code: "NATIONAL_ID", name: "National ID", hasBack: true, format: 1)]
+    )
+    XCTAssertEqual(details.country?.code, "KE")
+    XCTAssertNil(details.document)
+  }
+
+  func testAListStillLoadingKeepsThePicks() {
+    var details = picked
+    details.keepOnlyEnabled(countries: nil, documents: nil)
+    XCTAssertEqual(details.country?.code, "KE")
+    XCTAssertEqual(details.document?.code, "PASSPORT")
+  }
+
+  func testOnlyTheSamePartnerResumesStraightIntoTheSdk() {
+    let expired = UseSmileIDSampleRunIntent(productId: "enhancedDocumentVerification", route: .shell)
+    XCTAssertTrue(expired.resumesInFlow(runPartnerId: "p-1", linkedPartnerId: "p-1"))
+    XCTAssertFalse(expired.resumesInFlow(runPartnerId: "p-1", linkedPartnerId: "p-2"))
+    XCTAssertFalse(expired.resumesInFlow(runPartnerId: nil, linkedPartnerId: "p-1"))
+    let tapped = UseSmileIDSampleRunIntent(productId: "enhancedDocumentVerification", route: .shell, resumeAt: .firstStep)
+    XCTAssertFalse(tapped.resumesInFlow(runPartnerId: "p-1", linkedPartnerId: "p-1"))
+  }
 }

@@ -202,3 +202,23 @@ export const smileIDSampleCaptureAsTriggerText = (resolved: UseSmileIDSampleReso
 /// The sheet's Match row, naming what the document resolves to.
 export const smileIDSampleMatchRowLabel = (resolved: UseSmileIDSampleResolvedCaptureAs): string =>
   `${smileIDSampleMatchDocumentLabel} (${smileIDSampleCaptureAsLabel(resolved.captureAs)})`;
+
+/// Drops picks a relinked partner's lists lack; a list still loading (null) keeps them, and an unchanged pick returns `details` itself.
+export const smileIDSampleIdDetailsWithEnabledOnly = (
+  details: UseSmileIDSampleIdDetails,
+  countries: readonly UseSmileIDSampleCountry[] | null,
+  documents: readonly UseSmileIDSampleDocument[] | null,
+): UseSmileIDSampleIdDetails => {
+  const { country, document } = details;
+  if (country === null) return details;
+  if (countries !== null && !countries.some((it) => it.code === country.code)) {
+    return { ...details, country: null, idType: null, document: null, captureAsOverride: null };
+  }
+  if (document !== null && documents !== null) {
+    const id = smileIDSampleDocumentId(document);
+    if (!documents.some((it) => smileIDSampleDocumentId(it) === id)) {
+      return { ...details, document: null, captureAsOverride: null };
+    }
+  }
+  return details;
+};

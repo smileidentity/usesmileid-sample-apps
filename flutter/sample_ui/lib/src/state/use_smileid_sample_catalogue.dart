@@ -35,6 +35,13 @@ sealed class UseSmileIDSampleCatalogue<T> {
 
   /// Whether the list is still arriving.
   bool get isLoading => this is UseSmileIDSampleCatalogueLoading<T>;
+
+  /// The rows once the list has settled, an empty list for Empty; null while it loads or after it fails.
+  List<T>? get settledItems => switch (this) {
+    UseSmileIDSampleCatalogueReady<T>(:final List<T> items) => items,
+    UseSmileIDSampleCatalogueEmpty<T>() => <T>[],
+    _ => null,
+  };
 }
 
 /// Still arriving.

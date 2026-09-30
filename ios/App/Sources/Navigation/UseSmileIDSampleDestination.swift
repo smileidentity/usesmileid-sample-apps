@@ -23,7 +23,9 @@ struct UseSmileIDSampleDestination: View {
         ),
         onProduct: { product in
           app.fillFormForRun(product)
-          router.open(app.entry(for: product))
+          let entry = app.entry(for: product)
+          app.runPartnerId = entry == .scanToken ? nil : app.session?.partnerId
+          router.open(entry)
         },
         onProfile: { router.sheet = .profileSwitch },
         // Pushed, not opened: linking pops back to where the scan started.
@@ -78,9 +80,13 @@ struct UseSmileIDSampleDestination: View {
       .onAppear {
         app.ensureCatalogue(Self.product(productId))
         Self.product(productId).map { app.idDetails.keepDocumentListed(on: $0) }
+        keepOnlyEnabled(productId)
       }
       .onChange(of: app.session?.id) { _ in
         app.ensureCatalogue(Self.product(productId))
+      }
+      .onChange(of: enabledKey(productId)) { _ in
+        keepOnlyEnabled(productId)
       }
     case .verificationDetails(let jobId):
       UseSmileIDSampleVerificationDetailsHost(jobId: jobId)
@@ -178,6 +184,25 @@ struct UseSmileIDSampleDestination: View {
       countryListLoading: loading,
       captureBothSides: app.settings.captureBothSides
     )
+  }
+
+  /// Enhanced Document Verification's settled lists; nil for any other product or a list not yet settled.
+  private func enabledLists(_ productId: String) -> (countries: [UseSmileIDSampleCountry]?, documents: [UseSmileIDSampleDocument]?)? {
+    guard Self.product(productId) == .enhancedDocumentVerification else { return nil }
+    let countries = app.catalogue.countries(.document, product: .enhancedDocumentVerification).settledItems
+    let documents = app.idDetails.country.flatMap { app.catalogue.documents($0.code, product: .enhancedDocumentVerification).settledItems }
+    return (countries, documents)
+  }
+
+  /// The settled lists as a value that changes when either list does.
+  private func enabledKey(_ productId: String) -> String {
+    guard let lists = enabledLists(productId) else { return "" }
+    return [lists.countries?.map(\.code), lists.documents?.map(\.id)].map { $0?.joined(separator: ",") ?? "-" }.joined(separator: "|")
+  }
+
+  private func keepOnlyEnabled(_ productId: String) {
+    guard let lists = enabledLists(productId) else { return }
+    app.idDetails.keepOnlyEnabled(countries: lists.countries, documents: lists.documents)
   }
 
   private static func product(_ id: String) -> UseSmileIDSampleProduct? {

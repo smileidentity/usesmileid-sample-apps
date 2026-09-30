@@ -45,6 +45,7 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
             if (!app.sessionLoaded) return@ProductsContent
             app.forms.startRun(app.profiles.active)
             val entry = app.entryFor(it)
+            app.interruptedRun.runPartnerId = app.session?.partnerId.takeIf { entry != ScanTokenScreenDestination }
             // Fetched ahead: the user-details form sits between, so the lists are usually there before the ID form.
             if (entry != ScanTokenScreenDestination && it.catalogueFamily != null) {
                 app.catalogue.begin(app.environment, app.catalogueLocale)

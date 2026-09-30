@@ -18,3 +18,10 @@ public struct UseSmileIDSampleRunIntent: Equatable, Sendable {
     self.resumeAt = resumeAt
   }
 }
+
+public extension UseSmileIDSampleRunIntent {
+  /// Straight back into the SDK only on the partner the run was started for; any other goes back through its first step.
+  func resumesInFlow(runPartnerId: String?, linkedPartnerId: String?) -> Bool {
+    resumeAt == .flow && runPartnerId != nil && runPartnerId == linkedPartnerId
+  }
+}

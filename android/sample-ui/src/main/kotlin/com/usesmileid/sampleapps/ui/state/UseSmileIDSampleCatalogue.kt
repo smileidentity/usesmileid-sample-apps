@@ -17,6 +17,14 @@ val UseSmileIDSampleProduct.catalogueFamily: UseSmileIDSampleCatalogueFamily?
     }
 
 /** One picker's list: still arriving, arrived, arrived with nothing the form can use, or failed. */
+/** The rows once the list has settled, an empty list for Empty; null while it loads or after it fails. */
+val <T> UseSmileIDSampleCatalogue<T>.settledItems: List<T>?
+    get() = when (this) {
+        is UseSmileIDSampleCatalogue.Ready -> items
+        UseSmileIDSampleCatalogue.Empty -> emptyList()
+        else -> null
+    }
+
 @Immutable
 sealed interface UseSmileIDSampleCatalogue<out T> {
     data object Loading : UseSmileIDSampleCatalogue<Nothing>

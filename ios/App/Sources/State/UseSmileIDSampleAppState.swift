@@ -78,6 +78,8 @@ final class UseSmileIDSampleAppState: ObservableObject {
 
   /// The expiry gate's hand-off, claimed by the scanner on arrival so leaving elsewhere drops it.
   @Published var interruptedRun: UseSmileIDSampleRunIntent?
+  /// The partner whose token the run in progress was started on; nil when unknown, as after a cold link.
+  var runPartnerId: String?
 
   /// The run the card reports: seeded from the launch, then the drawer's; see the type for what survives what.
   @Published var flowResult: UseSmileIDSampleFlowResult

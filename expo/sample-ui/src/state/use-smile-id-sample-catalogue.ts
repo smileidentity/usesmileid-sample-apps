@@ -36,6 +36,10 @@ export type UseSmileIDSampleCatalogue<T> =
   /// `advice` is the error state's supporting line when the failure names one, per `spec/catalogue-rules.json` failures.
   | { readonly kind: 'failed'; readonly reason: string; readonly advice?: string };
 
+/// The rows once the list has settled, an empty list for `empty`; null while it loads or after it fails.
+export const smileIDSampleSettledItems = <T>(catalogue: UseSmileIDSampleCatalogue<T>): readonly T[] | null =>
+  catalogue.kind === 'ready' ? catalogue.items : catalogue.kind === 'empty' ? [] : null;
+
 /// A country of `products.enhanced_document_verification` in `GET /v3/services/config`, with the ID types the partner enabled.
 export type UseSmileIDSampleApiEnabledCountry = {
   readonly code: string;

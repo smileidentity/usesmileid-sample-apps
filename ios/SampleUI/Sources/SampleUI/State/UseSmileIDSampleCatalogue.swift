@@ -32,6 +32,15 @@ public enum UseSmileIDSampleCatalogue<Item: Sendable>: Sendable {
     return false
   }
 
+  /// The rows once the list has settled, an empty list for `.empty`; nil while it loads or after it fails.
+  public var settledItems: [Item]? {
+    switch self {
+    case .ready(let items): items
+    case .empty: []
+    case .loading, .failed: nil
+    }
+  }
+
   public var isReady: Bool {
     if case .ready = self {
       return true

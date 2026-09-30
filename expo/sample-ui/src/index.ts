@@ -258,6 +258,7 @@ export {
   type UseSmileIDSampleIdDetails,
   type UseSmileIDSampleKycIdType,
   type UseSmileIDSampleResolvedCaptureAs,
+  smileIDSampleIdDetailsWithEnabledOnly,
 } from './state/use-smile-id-sample-id-details';
 export {
   UseSmileIDSampleCaptureAs,
@@ -286,6 +287,7 @@ export {
   type UseSmileIDSampleApiIdType,
   type UseSmileIDSampleCatalogue,
   type UseSmileIDSampleCatalogueData,
+  smileIDSampleSettledItems,
 } from './state/use-smile-id-sample-catalogue';
 export {
   smileIDSampleCompiled,
@@ -414,4 +416,5 @@ export {
   type UseSmileIDSampleResumePoint,
   type UseSmileIDSampleRunIntent,
   type UseSmileIDSampleSessionStorage,
+  smileIDSampleResumesInFlow,
 } from './state/use-smile-id-sample-session-store';

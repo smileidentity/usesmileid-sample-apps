@@ -90,9 +90,13 @@ the processing screen, which looks abrupt and is correct: there is nothing left 
   before any form. A fresh scan resumes at the product's first step, worked out again from the new
   token's bindings.
 - **It runs again before the SDK.** A session that runs out while someone fills the forms sends the run
-  to the scanner, and a fresh scan goes straight back into the SDK. No run reaches the builder without a
+  to the scanner. A fresh scan for the same partner goes straight back into the SDK; any other partner, or
+  one the app cannot tell (a simulated token names none), goes back through the product's first step,
+  because the new partner may not enable what was picked. No run reaches the builder without a
   session: only the refresh scenarios (`expiredToken`, `badRefresh`) submit the fixture token, because a
   scanned token has no refresh journey.
+- **A pick the new partner does not enable is dropped.** When Enhanced Document Verification's list
+  arrives for a relinked session, the ID form clears a chosen country or document the list leaves out.
 - **The scan sheet ignores taps until it has finished arriving.** Simulate sits where the nav bar's Token
   button was, so a double tap on Token would otherwise link a session nobody chose.
 - **Refreshing a stored job matches the partner, not the session.** A status read works with any

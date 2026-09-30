@@ -66,6 +66,7 @@ struct UseSmileIDSampleScanTokenHost: View {
     app.linkSession(session)
     // A resumed run leaves on the change below, once the write has reached the app state.
     if resuming == nil {
+      app.runPartnerId = session.partnerId
       router.pop()
     }
   }
@@ -80,7 +81,9 @@ struct UseSmileIDSampleScanTokenHost: View {
       return
     }
     // Opened, not pushed: the path is assigned, so two quick links cannot stack two runs.
-    if resuming.resumeAt == .firstStep, let product = UseSmileIDSampleProduct.allCases.first(where: { $0.id == resuming.productId }) {
+    let intoFlow = resuming.resumesInFlow(runPartnerId: app.runPartnerId, linkedPartnerId: linked.partnerId)
+    app.runPartnerId = linked.partnerId
+    if !intoFlow, let product = UseSmileIDSampleProduct.allCases.first(where: { $0.id == resuming.productId }) {
       router.open(app.firstStep(for: product))
     } else {
       router.open(.sdkFlow(productId: resuming.productId, presentation: resuming.route))

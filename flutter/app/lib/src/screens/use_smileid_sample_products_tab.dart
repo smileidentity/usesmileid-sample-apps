@@ -110,6 +110,13 @@ class _UseSmileIDSampleProductsTabState
             .read(useSmileIDSampleFormsProvider.notifier)
             .startRun(profiles.active);
         final String entry = useSmileIDSampleEntryFor(ref, product);
+        ref
+            .read(useSmileIDSampleRunPartnerProvider.notifier)
+            .record(
+              entry == UseSmileIDSampleRoutes.scanToken
+                  ? null
+                  : live?.partnerId,
+            );
         // Fetched ahead, so the list is usually there by the time the picker opens.
         if (entry != UseSmileIDSampleRoutes.scanToken &&
             useSmileIDSampleCatalogueFamily(product) != null) {
