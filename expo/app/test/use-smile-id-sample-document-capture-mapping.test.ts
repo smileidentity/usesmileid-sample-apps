@@ -7,6 +7,7 @@ import {
   smileIDSampleAspectRatios,
   smileIDSampleGenericDocumentDefaults,
   smileIDSampleIdDetailsDefaults,
+  smileIDSampleProducts,
   type UseSmileIDSampleAspectRatio,
   type UseSmileIDSampleCaptureAs,
   type UseSmileIDSampleDocumentOrientation,
@@ -69,6 +70,8 @@ describe('capture as', () => {
       if (c.expected.knownAspectRatio !== undefined) expect(type.knownAspectRatio).toBeCloseTo(c.expected.knownAspectRatio);
     }
     const flag = smileIDSampleCapturesBothSides({
+      // The spec's cases are Document Verification's; residency always captures both sides.
+      product: smileIDSampleProducts.find((product) => product.id === 'documentVerification')!,
       idDetails: detailsOf(c),
       captureBothSides: c.captureBothSides ?? true,
     } as UseSmileIDSampleFlowLaunchSnapshot);
