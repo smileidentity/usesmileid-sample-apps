@@ -46,7 +46,6 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
             val entry = app.entryFor(it)
             // Fetched ahead: the user-details form sits between, so the lists are usually there before the ID form.
             if (entry != ScanTokenScreenDestination && it.catalogueFamily != null) app.catalogue.begin(app.environment, app.catalogueLocale)
-            // Single top: a double tap with no session would otherwise stack two scanners.
             navigator.navigate(entry) { launchSingleTop = true }
         },
         onProfileClick = { switchingProfile = true },

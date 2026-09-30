@@ -167,7 +167,6 @@ class _UseSmileIDSampleScanTokenTabState
                 ? UseSmileIDSampleScanReason.sessionEnded
                 : UseSmileIDSampleScanReason.sessionNeeded,
             acceptsTaps: _settled,
-            // External, not in-app: the Portal sign-in lives in the browser.
             onOpenPortal: () => unawaited(
               useSmileIDSampleOpenLink(
                 UseSmileIDSampleScanTokenScreen.portalUrl,

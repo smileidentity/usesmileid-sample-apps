@@ -60,7 +60,7 @@ export default function ScanToken() {
   const resumeHandled = useRef(false);
   const { scenario } = useLaunchArgs();
   const navigation = useNavigation();
-  // False until the push lands, so a second tap on the nav bar's Token button cannot land on Simulate.
+  /// False until the push lands, so a second tap on the nav bar's Token button cannot land on Simulate.
   const [settled, setSettled] = useState(false);
 
   useEffect(() => {
@@ -124,7 +124,6 @@ export default function ScanToken() {
         Viewfinder={Viewfinder}
         onFeedback={feedback}
         acceptsTaps={settled}
-        // External, not in-app: the Portal sign-in lives in the browser.
         onOpenPortal={() => {
           Linking.openURL(SMILE_ID_PORTAL_URL).catch(() => undefined);
         }}

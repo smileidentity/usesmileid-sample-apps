@@ -36,7 +36,6 @@ const mockRedirects: string[] = [];
 const mockRouter = { back: jest.fn(), replace: jest.fn(), push: jest.fn(), canGoBack: () => true };
 jest.mock('expo-router', () => ({
   useRouter: () => mockRouter,
-  // The push has already landed, so the scan sheet takes taps from the first render.
   useNavigation: () => ({
     addListener: (_type: string, listener: (event: { data: { closing: boolean } }) => void) => {
       listener({ data: { closing: false } });

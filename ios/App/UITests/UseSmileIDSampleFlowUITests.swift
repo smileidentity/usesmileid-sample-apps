@@ -139,7 +139,6 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
       "the scanner did not say why it opened"
     )
 
-    // Relinking a live token re-enters the run the gate interrupted, at its first step.
     app.buttons["15m"].tap()
     element("sample_token_simulate").tap()
     XCTAssertTrue(element("sample_user_details_screen").waitForExistence(timeout: 10), "the run did not resume")
