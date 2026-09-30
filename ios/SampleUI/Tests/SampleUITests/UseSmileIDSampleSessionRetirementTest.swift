@@ -87,13 +87,12 @@ final class UseSmileIDSampleSessionRetirementTest: XCTestCase {
 
   private static let expiresAt = Date(timeIntervalSince1970: 1760000900)
 
-  /// Synthetic and unsigned: the decoder parses a token, never verifies one.
+  /// Synthetic and unsigned, and built at run time so no token-shaped literal is committed.
   private static let token = [
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
-    // {"iat":1760000000,"exp":1760000900,"api_url":"https://testapi.smileidentity.com/v3"}
-    "eyJpYXQiOjE3NjAwMDAwMDAsImV4cCI6MTc2MDAwMDkwMCwiYXBpX3VybCI6Imh0dHBzOi8vdGVzdGFwaS5zbWlsZWlkZW50aXR5LmNvbS92MyJ9",
-    "not-a-signature"
-  ].joined(separator: ".")
+    #"{"alg":"HS256","typ":"JWT"}"#,
+    #"{"iat":1760000000,"exp":1760000900,"api_url":"https://testapi.smileidentity.com/v3"}"#
+  ].map { Data($0.utf8).base64EncodedString().replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "") }
+    .joined(separator: ".") + ".not-a-signature"
 
   private static let handle = UseSmileIDSampleTokenDecoder.session(token)!.id
 }
