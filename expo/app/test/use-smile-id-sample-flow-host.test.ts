@@ -7,7 +7,10 @@ import {
   smileIDSampleDecodeDocuments,
   smileIDSampleIdDetailsDefaults,
   smileIDSampleProducts,
+  smileIDSampleSimulatedSpans,
+  smileIDSampleTokenSession,
   type UseSmileIDSampleProduct,
+  type UseSmileIDSampleTokenSession,
 } from '@smileid/sample-ui';
 import { UseSmileIDFlowBuilder } from '@smileid/usesmileid';
 
@@ -19,6 +22,7 @@ import {
 } from '../src/flow/use-smile-id-sample-flow-builder-config';
 import type { UseSmileIDSampleFlowLaunchSnapshot } from '../src/flow/use-smile-id-sample-flow-launch-snapshot';
 import { smileIDSamplePreflight } from '../src/flow/use-smile-id-sample-flow-preflight';
+import { smileIDSampleSimulatedToken } from '../src/flow/use-smile-id-sample-flow-tokens';
 
 // Mocked, not avoided: the host requiring exactly one provider is the thing under test.
 jest.mock('@smileid/usesmileid_mlkit_face', () => ({ useSmileIDMlkitFace: { key: 'mlkit' } }));
@@ -106,22 +110,36 @@ describe('the journey the switches compose', () => {
   });
 });
 
+const live = (): UseSmileIDSampleTokenSession =>
+  smileIDSampleTokenSession(
+    smileIDSampleSimulatedToken({
+      span: smileIDSampleSimulatedSpans.find((span) => span.id === 'fifteenMinutes')!,
+      bindings: { consent: false, userDetails: false },
+      environment: 'sandbox',
+      nowMillis: Date.now(),
+    }),
+  )!;
+
 describe('the gate', () => {
   it('passes a complete selfie enrollment', () => {
-    expect(smileIDSamplePreflight(snapshot()).kind).toBe('ready');
+    expect(smileIDSamplePreflight(snapshot({ session: live() })).kind).toBe('ready');
+  });
+
+  it('sends a run with no session to the scanner', () => {
+    expect(smileIDSamplePreflight(snapshot()).kind).toBe('needsSession');
   });
 
   // The SDK requires a contact field even though the form labels both optional.
   it('sends an empty form back to the form rather than to the SDK', () => {
     const outcome = smileIDSamplePreflight(
-      snapshot({ userDetails: { firstName: '', lastName: '', email: '', phone: '' } }),
+      snapshot({ session: live(), userDetails: { firstName: '', lastName: '', email: '', phone: '' } }),
     );
     expect(outcome.kind).toBe('needsDetails');
   });
 
   it('names the fields an empty form left for the form to fix', () => {
     const outcome = smileIDSamplePreflight(
-      snapshot({ userDetails: { firstName: '', lastName: '', email: '', phone: '' } }),
+      snapshot({ session: live(), userDetails: { firstName: '', lastName: '', email: '', phone: '' } }),
     );
     const reported =
       outcome.kind === 'ready' || outcome.kind === 'needsSession' ? '' : outcome.issues.map((issue) => issue.message).join('; ');
