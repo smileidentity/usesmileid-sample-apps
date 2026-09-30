@@ -133,6 +133,12 @@ object UseSmileIDSampleTokenDecoder {
     fun session(token: String): UseSmileIDSampleTokenSession? =
         (decode(token) as? UseSmileIDSampleTokenDecode.Decoded)?.session
 
+    /** Whether the header's `alg` is `none`, as every simulated scan's is; the server refuses such a token. */
+    fun isUnsigned(token: String): Boolean {
+        val header = base64Url(token.trim().substringBefore(".")) ?: return false
+        return (parseTokenJson(header) as? TokenJson.Obj)?.string("alg").equals("none", ignoreCase = true)
+    }
+
     /** A display handle, never a prefix of the credential: the token's own `jti`, else a digest of it. */
     private fun handle(token: String, jti: String?): String =
         jti?.takeIf { it.isNotBlank() } ?: digest(token)

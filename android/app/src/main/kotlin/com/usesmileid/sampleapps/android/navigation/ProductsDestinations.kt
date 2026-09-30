@@ -45,7 +45,10 @@ fun ProductsScreen(navigator: DestinationsNavigator) {
             app.forms.startRun(app.profiles.active)
             val entry = app.entryFor(it)
             // Fetched ahead: the user-details form sits between, so the lists are usually there before the ID form.
-            if (entry != ScanTokenScreenDestination && it.catalogueFamily != null) app.catalogue.begin(app.environment, app.catalogueLocale)
+            if (entry != ScanTokenScreenDestination && it.catalogueFamily != null) {
+                app.catalogue.begin(app.environment, app.catalogueLocale)
+                app.ensureCatalogue(it)
+            }
             navigator.navigate(entry) { launchSingleTop = true }
         },
         onProfileClick = { switchingProfile = true },

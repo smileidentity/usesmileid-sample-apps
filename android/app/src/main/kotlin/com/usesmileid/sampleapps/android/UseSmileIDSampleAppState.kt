@@ -16,12 +16,14 @@ import com.usesmileid.sampleapps.android.status.RetrofitJobStatusSource
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleCatalogueSource
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleCatalogueStore
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleFixtureCatalogueSource
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleSessionAwareCatalogueSource
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleUnreachableCatalogueSource
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueMode
 import java.util.Locale
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleFlowResult
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleForms
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleInterruptedRun
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleJobStore
@@ -32,6 +34,7 @@ import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStore
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleEndedSession
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleSessionRecord
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
+import com.usesmileid.sampleapps.ui.state.catalogueFamily
 import androidx.compose.runtime.staticCompositionLocalOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -90,6 +93,15 @@ class UseSmileIDSampleAppState(
 
     /** The API translates document and country names; an unsupported locale comes back in en-GB. */
     val catalogueLocale: String get() = Locale.getDefault().toLanguageTag()
+
+    /** Starts [product]'s lists if nothing has; Enhanced Document Verification's also needs the session's own list. */
+    fun ensureCatalogue(product: UseSmileIDSampleProduct?) {
+        if (product?.catalogueFamily == null) return
+        catalogue.ensure(environment, catalogueLocale)
+        if (product == UseSmileIDSampleProduct.EnhancedDocumentVerification) {
+            catalogue.ensureEnabled(environment, catalogueLocale, session)
+        }
+    }
 }
 
 /** Ticks once a second while a session is live. The deadline is absolute, so a restored session needs no recomputing. */
@@ -165,12 +177,14 @@ private const val TICK_MILLIS = 1000L
 /** `fixture` reads the copy of spec/catalogue-fixture.json the build bundles, so no flow touches the network. */
 private fun catalogueSource(context: Context, mode: UseSmileIDSampleCatalogueMode): UseSmileIDSampleCatalogueSource =
     when (mode) {
-        UseSmileIDSampleCatalogueMode.Live -> RetrofitCatalogueSource()
+        UseSmileIDSampleCatalogueMode.Live -> UseSmileIDSampleSessionAwareCatalogueSource(RetrofitCatalogueSource(), fixtureSource(context))
         UseSmileIDSampleCatalogueMode.Unreachable -> UseSmileIDSampleUnreachableCatalogueSource
-        UseSmileIDSampleCatalogueMode.Fixture -> UseSmileIDSampleFixtureCatalogueSource(
-            context.assets.open(CATALOGUE_FIXTURE_ASSET).bufferedReader().use { it.readText() },
-        )
+        UseSmileIDSampleCatalogueMode.Fixture -> fixtureSource(context)
     }
+
+private fun fixtureSource(context: Context) = UseSmileIDSampleFixtureCatalogueSource(
+    context.assets.open(CATALOGUE_FIXTURE_ASSET).bufferedReader().use { it.readText() },
+)
 
 private const val CATALOGUE_FIXTURE_ASSET = "catalogue-fixture.json"
 

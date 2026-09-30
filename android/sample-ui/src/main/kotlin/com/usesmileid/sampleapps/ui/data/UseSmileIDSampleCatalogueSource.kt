@@ -2,10 +2,11 @@ package com.usesmileid.sampleapps.ui.data
 
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.state.TokenJson
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenDecoder
 import com.usesmileid.sampleapps.ui.state.parseTokenJson
 import java.io.IOException
 
-/** The ID form's two lists as raw bodies, so the network stays in the shell and one decoder reads live and fixture. */
+/** The ID form's lists as raw bodies, so the network stays in the shell and one decoder reads live and fixture. */
 interface UseSmileIDSampleCatalogueSource {
 
     /** `GET /v3/services/supported_id_types`, every country. */
@@ -13,18 +14,36 @@ interface UseSmileIDSampleCatalogueSource {
 
     /** `GET /v3/services/supported_documents?locale=…`. */
     suspend fun supportedDocuments(environment: UseSmileIDSampleEnvironment, locale: String): String
+
+    /** `GET /v3/services/config?product=enhanced_document_verification&locale=…`, under the session's [token]. */
+    suspend fun servicesConfig(environment: UseSmileIDSampleEnvironment, token: String, locale: String): String
 }
 
-/** `catalogue=fixture`: the two bodies from `spec/catalogue-fixture.json`, with no network. */
+/** A response that is not a 2xx, so the store can name a 401 or 403 in the error state. */
+class UseSmileIDSampleCatalogueHttpException(val status: Int) : IOException("HTTP $status")
+
+/** A live source that answers a simulated session's configuration from the fixture: the server refuses an unsigned token. */
+class UseSmileIDSampleSessionAwareCatalogueSource(
+    private val live: UseSmileIDSampleCatalogueSource,
+    private val fixture: UseSmileIDSampleCatalogueSource,
+) : UseSmileIDSampleCatalogueSource by live {
+    override suspend fun servicesConfig(environment: UseSmileIDSampleEnvironment, token: String, locale: String): String =
+        (if (UseSmileIDSampleTokenDecoder.isUnsigned(token)) fixture else live).servicesConfig(environment, token, locale)
+}
+
+/** `catalogue=fixture`: the bodies from `spec/catalogue-fixture.json`, with no network. */
 class UseSmileIDSampleFixtureCatalogueSource(fixtureJson: String) : UseSmileIDSampleCatalogueSource {
     private val root = parseTokenJson(fixtureJson) as? TokenJson.Obj
         ?: throw IllegalArgumentException("catalogue fixture is not a JSON object")
     private val idTypes = root.body("supported_id_types")
     private val documents = root.body("supported_documents")
+    private val config = root.body("services_config")
 
     override suspend fun supportedIdTypes(environment: UseSmileIDSampleEnvironment): String = idTypes
 
     override suspend fun supportedDocuments(environment: UseSmileIDSampleEnvironment, locale: String): String = documents
+
+    override suspend fun servicesConfig(environment: UseSmileIDSampleEnvironment, token: String, locale: String): String = config
 
     private fun TokenJson.Obj.body(key: String): String =
         (members[key] as? TokenJson.Obj)?.let(::encode)
@@ -37,6 +56,9 @@ object UseSmileIDSampleUnreachableCatalogueSource : UseSmileIDSampleCatalogueSou
         throw IOException("catalogue=unreachable")
 
     override suspend fun supportedDocuments(environment: UseSmileIDSampleEnvironment, locale: String): String =
+        throw IOException("catalogue=unreachable")
+
+    override suspend fun servicesConfig(environment: UseSmileIDSampleEnvironment, token: String, locale: String): String =
         throw IOException("catalogue=unreachable")
 }
 
