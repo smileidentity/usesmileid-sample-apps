@@ -14,6 +14,14 @@ Expo's Settings screen shows the scenario-drawer button only when a shell passes
 the Expo shell as the other three apps do, then drop the three excused ids from
 `use-smile-id-sample-test-id-usage.test.ts`.
 
+### Enhanced Document Verification keeps a pick the new session does not enable
+
+Relinking from the ID form's token button fetches the new partner's document list, but a country or
+document already chosen under the previous session stays chosen even when the new list leaves it out, so
+Continue still submits it and the server refuses the job after the capture. When the partner's list
+arrives, drop a chosen country or document it does not name, as the form already drops the Green Book on
+this product, on all four platforms.
+
 ## Tests and structural checks
 
 ### Words that cannot fit the narrowest phone at the largest type
