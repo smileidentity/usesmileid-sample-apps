@@ -406,7 +406,7 @@ abstract final class UseSmileIDSampleCatalogueRules {
   }
 }
 
-/// Reads the two response bodies; readers ignore unknown keys, as status refresh does. Null when malformed.
+/// Reads the catalogue response bodies; readers ignore unknown keys, as status refresh does. Null when malformed.
 abstract final class UseSmileIDSampleCatalogueJson {
   /// Decodes a `supported_id_types` body.
   static List<UseSmileIDSampleApiIdType>? idTypes(String body) {

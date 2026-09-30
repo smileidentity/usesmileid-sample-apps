@@ -76,6 +76,16 @@ final class UseSmileIDSampleCatalogueStoreTest: XCTestCase {
     )
   }
 
+  func testNoSessionAsksNothingAndNamesTheRefusal() async throws {
+    let source = try FakeSource()
+    let store = UseSmileIDSampleCatalogueStore(source: source)
+    store.ensureEnabled(environment: .sandbox, locale: "en-GB", session: nil)
+    let calls = await source.configCalls
+    XCTAssertEqual(calls, 0)
+    guard case .failed(_, let advice) = store.enabled else { return XCTFail("no session did not fail") }
+    XCTAssertEqual(advice, UseSmileIDSampleCatalogueRules.advice(status: 401))
+  }
+
   func testEnhancedDocumentVerificationOffersOnlyWhatThePartnerEnabled() async throws {
     let source = try FakeSource()
     let store = UseSmileIDSampleCatalogueStore(source: source)

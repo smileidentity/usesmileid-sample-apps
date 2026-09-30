@@ -218,7 +218,7 @@ public enum UseSmileIDSampleCatalogueRules {
   }
 }
 
-/// Reads the two response bodies; readers ignore unknown keys, as status refresh does. Nil when malformed.
+/// Reads the catalogue response bodies; readers ignore unknown keys, as status refresh does. Nil when malformed.
 public enum UseSmileIDSampleCatalogueJson {
   public static func idTypes(_ body: Data) -> [UseSmileIDSampleApiIdType]? {
     guard let root = try? JSONSerialization.jsonObject(with: body) as? [String: Any],

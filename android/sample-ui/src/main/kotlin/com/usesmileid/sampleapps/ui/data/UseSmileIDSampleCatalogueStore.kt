@@ -75,8 +75,15 @@ class UseSmileIDSampleCatalogueStore(
     fun ensureEnabled(environment: UseSmileIDSampleEnvironment, locale: String, session: UseSmileIDSampleTokenSession?) {
         val key = EnabledKey(session?.id, environment, locale)
         if (key == enabledKey && (enabled is UseSmileIDSampleCatalogue.Ready || enabledJob?.isActive == true)) return
+        if (session == null) {
+            enabledJob?.cancel()
+            enabledKey = null
+            enabledToken = ""
+            enabled = UseSmileIDSampleCatalogue.Failed("No session", UseSmileIDSampleCatalogueRules.advice(401))
+            return
+        }
         enabledKey = key
-        enabledToken = session?.token.orEmpty()
+        enabledToken = session.token
         fetchEnabled()
     }
 
@@ -98,6 +105,7 @@ class UseSmileIDSampleCatalogueStore(
         if (enabled !is UseSmileIDSampleCatalogue.Ready) {
             enabledJob?.cancel()
             enabledKey = null
+            enabledToken = ""
             enabled = UseSmileIDSampleCatalogue.Loading
         }
     }

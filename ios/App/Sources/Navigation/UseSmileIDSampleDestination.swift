@@ -85,7 +85,7 @@ struct UseSmileIDSampleDestination: View {
       .onChange(of: app.session?.id) { _ in
         app.ensureCatalogue(Self.product(productId))
       }
-      .onChange(of: enabledKey(productId)) { _ in
+      .onChange(of: enabledLists(productId)) { _ in
         keepOnlyEnabled(productId)
       }
     case .verificationDetails(let jobId):
@@ -187,22 +187,21 @@ struct UseSmileIDSampleDestination: View {
   }
 
   /// Enhanced Document Verification's settled lists; nil for any other product or a list not yet settled.
-  private func enabledLists(_ productId: String) -> (countries: [UseSmileIDSampleCountry]?, documents: [UseSmileIDSampleDocument]?)? {
+  private func enabledLists(_ productId: String) -> EnabledLists? {
     guard Self.product(productId) == .enhancedDocumentVerification else { return nil }
     let countries = app.catalogue.countries(.document, product: .enhancedDocumentVerification).settledItems
     let documents = app.idDetails.country.flatMap { app.catalogue.documents($0.code, product: .enhancedDocumentVerification).settledItems }
-    return (countries, documents)
-  }
-
-  /// The settled lists as a value that changes when either list does.
-  private func enabledKey(_ productId: String) -> String {
-    guard let lists = enabledLists(productId) else { return "" }
-    return [lists.countries?.map(\.code), lists.documents?.map(\.id)].map { $0?.joined(separator: ",") ?? "-" }.joined(separator: "|")
+    return EnabledLists(countries: countries, documents: documents)
   }
 
   private func keepOnlyEnabled(_ productId: String) {
     guard let lists = enabledLists(productId) else { return }
     app.idDetails.keepOnlyEnabled(countries: lists.countries, documents: lists.documents)
+  }
+
+  private struct EnabledLists: Equatable {
+    let countries: [UseSmileIDSampleCountry]?
+    let documents: [UseSmileIDSampleDocument]?
   }
 
   private static func product(_ id: String) -> UseSmileIDSampleProduct? {

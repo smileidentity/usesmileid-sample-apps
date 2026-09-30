@@ -185,7 +185,7 @@ object UseSmileIDSampleCatalogueRules {
     }
 }
 
-/** Reads the two response bodies; readers ignore unknown keys, as status refresh does. Null when malformed. */
+/** Reads the catalogue response bodies; readers ignore unknown keys, as status refresh does. Null when malformed. */
 object UseSmileIDSampleCatalogueJson {
 
     fun idTypes(body: String): List<UseSmileIDSampleApiIdType>? {

@@ -187,27 +187,37 @@ class _UseSmileIDSampleKycFormTabState
   }
 
   /// After the frame, since a notifier cannot change while this builds; nothing is scheduled when every pick is still enabled.
-  void _keepOnlyEnabled(
-    UseSmileIDSampleIdDetails details,
-    UseSmileIDSampleProduct product,
-  ) {
-    final List<UseSmileIDSampleCountry>? countries = _catalogue
-        .countries(_family, product: product)
-        .settledItems;
-    final String? code = details.country?.code;
-    final List<UseSmileIDSampleDocument>? documents = code == null
-        ? null
-        : _catalogue.documents(code, product: product).settledItems;
-    if (identical(details.withEnabledOnly(countries, documents), details)) {
+  void _keepOnlyEnabled(UseSmileIDSampleIdDetails details) {
+    final (List<UseSmileIDSampleCountry>?, List<UseSmileIDSampleDocument>?)
+    lists = _enabledLists(details);
+    if (identical(details.withEnabledOnly(lists.$1, lists.$2), details)) {
       return;
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        ref
-            .read(useSmileIDSampleFormsProvider.notifier)
-            .keepOnlyEnabled(countries, documents);
+      if (!mounted) {
+        return;
       }
+      // Read again: the first frame's callback may have just reset a previous session's list.
+      final UseSmileIDSampleFormsNotifier forms = ref.read(
+        useSmileIDSampleFormsProvider.notifier,
+      );
+      final (List<UseSmileIDSampleCountry>?, List<UseSmileIDSampleDocument>?)
+      fresh = _enabledLists(ref.read(useSmileIDSampleFormsProvider).idDetails);
+      forms.keepOnlyEnabled(fresh.$1, fresh.$2);
     });
+  }
+
+  (List<UseSmileIDSampleCountry>?, List<UseSmileIDSampleDocument>?)
+  _enabledLists(UseSmileIDSampleIdDetails details) {
+    const UseSmileIDSampleProduct product =
+        UseSmileIDSampleProduct.enhancedDocumentVerification;
+    final String? code = details.country?.code;
+    return (
+      _catalogue.countries(_family, product: product).settledItems,
+      code == null
+          ? null
+          : _catalogue.documents(code, product: product).settledItems,
+    );
   }
 
   /// A link can ask for a second-level sheet before its trigger could open; refused, not held until later.
@@ -244,6 +254,12 @@ class _UseSmileIDSampleKycFormTabState
     final UseSmileIDSampleFormsNotifier edits = ref.read(
       useSmileIDSampleFormsProvider.notifier,
     );
+    ref.listen<String?>(
+      useSmileIDSampleSessionProvider.select(
+        (UseSmileIDSampleSessionRecord s) => s.live?.id,
+      ),
+      (String? _, String? _) => _ensureCatalogue(),
+    );
     void back() => useSmileIDSampleBack(
       context,
       UseSmileIDSampleRoutes.consentDetailsForm(widget.productId),
@@ -255,7 +271,7 @@ class _UseSmileIDSampleKycFormTabState
         builder: (BuildContext context, Widget? _) {
           final String? country = details.country?.code;
           if (product == UseSmileIDSampleProduct.enhancedDocumentVerification) {
-            _keepOnlyEnabled(details, product!);
+            _keepOnlyEnabled(details);
           }
           return UseSmileIDSampleKycFormScreen(
             title: product?.label ?? widget.productId,

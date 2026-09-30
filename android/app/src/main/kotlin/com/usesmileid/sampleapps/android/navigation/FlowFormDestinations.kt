@@ -46,7 +46,7 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
         filled = true
     }
     // A deep link to this form skips the product tap, so the lists start here if nothing has started them.
-    LaunchedEffect(app.environment, app.catalogueLocale, app.session?.id) { product?.let(app::ensureCatalogue) }
+    LaunchedEffect(app.environment, app.catalogueLocale, app.session?.id) { app.ensureCatalogue(product) }
     val profile = app.profiles.active
     UserDetailsContent(
         productLabel = product?.label ?: productId,
@@ -94,10 +94,17 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     LaunchedEffect(product) { product?.let(app.forms::keepDocumentListedOn) }
     val details = app.forms.idDetails
     val countryCode = details.country?.code
+    val countries = app.catalogue.countries(family, product)
     if (product == UseSmileIDSampleProduct.EnhancedDocumentVerification) {
-        val enabledCountries = app.catalogue.countries(family, product).settledItems
         val enabledDocuments = countryCode?.let { app.catalogue.documents(it, product).settledItems }
-        LaunchedEffect(enabledCountries, enabledDocuments) { app.forms.keepOnlyEnabled(enabledCountries, enabledDocuments) }
+        LaunchedEffect(countries.settledItems, enabledDocuments) {
+            // Read again: the ensure effect above may have just reset a previous session's list.
+            val code = app.forms.idDetails.country?.code
+            app.forms.keepOnlyEnabled(
+                app.catalogue.countries(family, product).settledItems,
+                code?.let { app.catalogue.documents(it, product).settledItems },
+            )
+        }
     }
     // A link can ask for a second-level sheet before its trigger could open; refused, not held until later.
     LaunchedEffect(pickingIdType, pickingDocument, pickingCaptureAs, countryCode, details.document) {
@@ -112,7 +119,7 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
         family = family,
         details = details,
         countryList = when {
-            countryCode == null -> app.catalogue.countries(family, product)
+            countryCode == null -> countries
             family == UseSmileIDSampleCatalogueFamily.Kyc -> app.catalogue.idTypes(countryCode)
             else -> app.catalogue.documents(countryCode, product ?: UseSmileIDSampleProduct.DocumentVerification)
         },
