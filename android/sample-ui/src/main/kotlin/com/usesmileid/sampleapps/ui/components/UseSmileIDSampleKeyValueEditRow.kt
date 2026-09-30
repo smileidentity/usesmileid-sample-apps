@@ -31,6 +31,7 @@ fun UseSmileIDSampleKeyValueEditRow(
     required: Boolean = false,
     enabled: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    isError: Boolean = false,
     testId: String? = null,
 ) {
     val colors = UseSmileIDSampleTheme.colors
@@ -59,7 +60,11 @@ fun UseSmileIDSampleKeyValueEditRow(
             textStyle = UseSmileIDSampleTheme.type.textStyleSubtitle.copy(
                 fontSize = ROW_TEXT_SIZE,
                 // Muted when disabled, so a row that cannot be edited does not look editable.
-                color = if (enabled) colors.textTitle else colors.textMuted,
+                color = when {
+                    !enabled -> colors.textMuted
+                    isError -> colors.input.borderError
+                    else -> colors.textTitle
+                },
             ),
             cursorBrush = SolidColor(colors.primary),
             modifier = Modifier.tagged(testId),

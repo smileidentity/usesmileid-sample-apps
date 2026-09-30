@@ -37,6 +37,10 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetailsRequirement
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserField
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleContactRules
 
 /** The Consent Details Form, shown for every product. Sample-owned and ahead of the flow, which is why it needs no SDK change. */
 @Composable
@@ -111,16 +115,23 @@ fun UserDetailsScreen(
                             placeholder = if (supplied) "Provided by token" else field.placeholder,
                             required = false,
                             enabled = !supplied,
+                            keyboardOptions = field.keyboardOptions,
+                            isError = UseSmileIDSampleContactRules.problem(field, field.read(details)) != null,
                             testId = UseSmileIDSampleTestIds.userDetailsField(field.id),
                         )
                     }
                 }
             }
             item {
+                val problem = details.contactProblem
                 Text(
-                    text = if (details.satisfies(requirement)) "Tap any field to edit." else requirement.prompt,
+                    text = when {
+                        problem != null -> problem
+                        details.satisfies(requirement) -> "Tap any field to edit."
+                        else -> requirement.prompt
+                    },
                     style = UseSmileIDSampleTheme.type.textStyleCaption,
-                    color = UseSmileIDSampleTheme.colors.textMuted,
+                    color = if (problem != null) UseSmileIDSampleTheme.colors.input.borderError else UseSmileIDSampleTheme.colors.textMuted,
                     modifier = Modifier
                         .testTag(UseSmileIDSampleTestIds.USER_DETAILS_HINT)
                         .padding(horizontal = SmileDimens.spacingMd),
@@ -178,3 +189,13 @@ private val REMEMBER_TEXT_SIZE = 13.5.sp
 
 /** The organisation row's id suffix, beside the four user fields'. */
 internal const val ORGANISATION_FIELD_ID = "organisation"
+
+/** The keyboard each field wants: names capitalised, the email keyboard for email, the dial pad for phone. */
+internal val UseSmileIDSampleUserField.keyboardOptions: KeyboardOptions
+    get() = when (this) {
+        UseSmileIDSampleUserField.FirstName, UseSmileIDSampleUserField.LastName ->
+            KeyboardOptions(capitalization = KeyboardCapitalization.Words, keyboardType = KeyboardType.Text)
+        UseSmileIDSampleUserField.Email ->
+            KeyboardOptions(keyboardType = KeyboardType.Email, autoCorrectEnabled = false)
+        UseSmileIDSampleUserField.Phone -> KeyboardOptions(keyboardType = KeyboardType.Phone)
+    }
