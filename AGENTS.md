@@ -250,6 +250,11 @@ does:
 - internal test playbooks, red-team notes, or unfixed vulnerability detail
 - real user data, PII, or captured images from any device run
 
+Test tokens are built at run time from their JSON parts, never committed as `eyJ…` literals, and
+placeholder credentials look like placeholders (`placeholder-value`), never a vendor's key format
+such as `sk_live_…`. A synthetic value in a real credential's shape still trips the secret scanner,
+and a team that learns to dismiss its alerts misses the one that is real.
+
 Sandbox credentials reach CI as repository secrets, never as tree contents. Because forked PRs get
 no secrets, lanes that need them run on schedule, on release dispatch, or manually — never on
 `pull_request` from a fork.
@@ -266,6 +271,17 @@ Because every commit is public, each PR holds to these:
 - [ ] every credential in CI is sandbox-scoped or held in the `release` environment, and no workflow
       exposes a secret to a fork PR
 - [ ] bundled third-party assets are listed in `NOTICE` and `spec/bundled-assets.json` with their licence
+- [ ] `gitleaks git --log-opts="origin/main..HEAD" --redact` is clean before you push; a finding is
+      fixed at the source, never allow-listed unreviewed
+- [ ] no local machine detail: absolute paths, usernames, device serials, UDIDs or simulator ids
+- [ ] no run output in a commit or a PR: logcat, `.xcresult` bundles, Maestro debug folders, or a
+      screenshot or recording from a run on a real token. CI artifacts are public too, so workflows
+      upload output from simulated-token runs only
+- [ ] nothing a token or user detail passes through writes it out: logs, crash reports, analytics,
+      error messages or test ids; release builds log no traffic at all
+- [ ] PR text and screenshots show no real person, token, partner id or device name
+- [ ] a link or file key for a design, document or dashboard is public once committed, so commit one
+      only when that file is itself shared for public viewing
 
 ## Definition of Done
 

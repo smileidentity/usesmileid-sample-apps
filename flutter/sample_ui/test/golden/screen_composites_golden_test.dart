@@ -222,7 +222,7 @@ Widget _scanSheets() => _stack(<Widget>[
   ),
   UseSmileIDSampleScanSheet(
     state: const UseSmileIDSampleScanSheetState(
-      token: 'eyJhbGciOi',
+      token: 'token-1234',
       rejection: 'That token is not a session',
     ),
     onTokenChanged: _ignore,

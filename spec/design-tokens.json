@@ -671,7 +671,7 @@
   ],
   "additions": {
     "comment": "Requests to the design system, not local overrides. Empty is the goal. Every entry below is a value the products and verifications work needed and the token source does not carry, so it ships as a generated stopgap recorded in `deltas` — and every one of them is a value the iOS, Flutter and React Native ports will each vendor separately until design resolves it. `deltas` stays the implementation record; this is the ask.",
-    "readAgainst": "Products, light 5487:1351 and dark 5447:1701, read 2026-08-25/26. Verifications, node 5206-2410, read 2026-08-26. File CT3oeBfk8uuyvRmGkRJ71D.",
+    "readAgainst": "Products, light 5487:1351 and dark 5447:1701, read 2026-08-25/26. Verifications, node 5206-2410, read 2026-08-26.",
     "candidates": [
       {
         "id": "cardInkContrast",
