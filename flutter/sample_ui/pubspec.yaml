@@ -16,7 +16,7 @@ dependencies:
   # The SDK by its published coordinates, exactly as a partner names it; an SDK repo substitutes its
   # own project here, which is what makes this package its public-API gate. Exact, not a caret:
   # a consumption test that cannot say which version it consumed has lost the point.
-  usesmileid: 12.1.1
+  usesmileid: 12.2.0
 
   # The design's own icons are SVG, vendored byte for byte from design/icons/ rather than converted.
   # Already in the graph transitively through the SDK; declared because this package imports it.

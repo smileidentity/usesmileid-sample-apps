@@ -1064,66 +1064,66 @@ packages:
     dependency: "direct main"
     description:
       name: usesmileid
-      sha256: "22cf38340c1ccc74ddc477301c53ee9bc48882ce918849620faf4aec4d827487"
+      sha256: "6519677912d759e994d858ef79cb4fda95aaa61b69972785e0a39b7d7a438744"
       url: "https://pub.dev"
     source: hosted
-    version: "12.1.1"
+    version: "12.2.0"
   usesmileid_bridge:
     dependency: transitive
     description:
       name: usesmileid_bridge
-      sha256: ca1253bab2ff6c3e9a8024cce9820efe4f22034fc46f6afe22ce38f000c175f9
+      sha256: fee104d21949f80c1c74e9fd0bc1ce7697fcfad36de6e233e6f449295090e42b
       url: "https://pub.dev"
     source: hosted
-    version: "12.1.1"
+    version: "12.2.0"
   usesmileid_kamera:
     dependency: transitive
     description:
       name: usesmileid_kamera
-      sha256: b002678b9af7380d094e3d4f7dbf097550b3b3c3a400528da303aca8a6fe54b2
+      sha256: a1c0d06cc387032a173d76060fb0bfb3e44b34f86b63b8657c86649d55d7d76f
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.6"
+    version: "1.1.0"
   usesmileid_mlkit_document:
     dependency: "direct main"
     description:
       name: usesmileid_mlkit_document
-      sha256: "5bcb6d7c3b63ec0144520eda6edbe1e43a98f04f83c10e2b6bb7412ebaaba022"
+      sha256: "355e138c28db01323bd62844a7d517b10fb49b0b9fe8656b6e433122b57752b8"
       url: "https://pub.dev"
     source: hosted
-    version: "12.1.1"
+    version: "12.2.0"
   usesmileid_mlkit_face:
     dependency: "direct main"
     description:
       name: usesmileid_mlkit_face
-      sha256: eac192015088a31923e7c2564b19e6552849f74ae5a1d1f6e37dcee0720d2bb9
+      sha256: "63def4e1c6010fd0f0508657bd71b60d294f73a16a22e0bbfb20dd73adce5f9a"
       url: "https://pub.dev"
     source: hosted
-    version: "12.1.1"
+    version: "12.2.0"
   usesmileid_platform_interface:
     dependency: transitive
     description:
       name: usesmileid_platform_interface
-      sha256: f0af10550ac1602cf888a12e11092f25acd81bece7440f290172778706892729
+      sha256: "691d1766dced75b74a1142ef9af9c0c16c83ae0344a4fbd0643b26b18d5b4858"
       url: "https://pub.dev"
     source: hosted
-    version: "12.1.1"
+    version: "12.2.0"
   usesmileid_vision_document:
     dependency: "direct main"
     description:
       name: usesmileid_vision_document
-      sha256: "416988f2f7b83c928e0998d8060fc2b442892e5d0e50f5dff2d49f1d0df48050"
+      sha256: bef55b721fc443fa1169e9f5aa7165bd0ab5aedb8a8c6dca2e18f6026ccb504b
       url: "https://pub.dev"
     source: hosted
-    version: "12.1.1"
+    version: "12.2.0"
   usesmileid_vision_face:
     dependency: "direct main"
     description:
       name: usesmileid_vision_face
-      sha256: "9e3fcca2a8b59ebc2c896b80a8065da22f8054bd4e9e4bb39bc18176a12a2efb"
+      sha256: "8531be7c4775a1e5c271f6af264a73472e54e538940a5bc049d89a5de696279f"
       url: "https://pub.dev"
     source: hosted
-    version: "12.1.1"
+    version: "12.2.0"
   uuid:
     dependency: transitive
     description:

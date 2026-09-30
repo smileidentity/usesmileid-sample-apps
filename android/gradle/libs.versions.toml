@@ -1,8 +1,5 @@
 [versions]
-# The SDK snapshot main published at 0c33cc9c, pinned by each module's unique build: the
-# 12.1.1-SNAPSHOT coordinate itself moves with every push to the SDK repo, pull requests included.
-usesmileid = "12.1.1-20260929.102831-156"
-usesmileid-ml = "12.1.1-20260929.102831-155"
+usesmileid = "12.2.0"
 
 android-gradle-plugin = "9.3.1"
 kotlin = "2.4.20"
@@ -32,9 +29,9 @@ roborazzi = "1.75.0"
 
 [libraries]
 usesmileid-bom = { module = "com.usesmileid:usesmileid-bom", version.ref = "usesmileid" }
-usesmileid = { module = "com.usesmileid:usesmileid", version.ref = "usesmileid" }
-usesmileid-mlkit-face = { module = "com.usesmileid:mlkit-face", version.ref = "usesmileid-ml" }
-usesmileid-mlkit-document = { module = "com.usesmileid:mlkit-document", version.ref = "usesmileid-ml" }
+usesmileid = { module = "com.usesmileid:usesmileid" }
+usesmileid-mlkit-face = { module = "com.usesmileid:mlkit-face" }
+usesmileid-mlkit-document = { module = "com.usesmileid:mlkit-document" }
 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-browser = { module = "androidx.browser:browser", version.ref = "androidx-browser" }
