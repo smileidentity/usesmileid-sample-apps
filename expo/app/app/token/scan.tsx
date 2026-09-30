@@ -23,6 +23,9 @@ import { useLaunchArgs } from '../../src/use-smile-id-sample-launch';
 import { UseSmileIDSampleQrScanner } from '../../src/scan/use-smile-id-sample-qr-scanner';
 import { useSmileIDSampleBack } from '../../src/use-smile-id-sample-back';
 
+/// Longer than the native stack's push, so the guard covers only the arrival window.
+const SETTLE_FALLBACK_MILLIS = 600;
+
 /// Read by the viewfinder, so toggling the flash does not remount the camera.
 const TorchContext = createContext(false);
 
@@ -65,9 +68,17 @@ export default function ScanToken() {
     const stack = navigation as unknown as {
       addListener: (type: 'transitionEnd', listener: (event: { data?: { closing?: boolean } }) => void) => () => void;
     };
-    return stack.addListener('transitionEnd', (event) => {
-      if (event.data?.closing !== true) setSettled(true);
+    // A cold link or an unanimated push emits no transitionEnd, and one may fire before this subscribes.
+    const fallback = setTimeout(() => setSettled(true), SETTLE_FALLBACK_MILLIS);
+    const unsubscribe = stack.addListener('transitionEnd', (event) => {
+      if (event.data?.closing === true) return;
+      clearTimeout(fallback);
+      setSettled(true);
     });
+    return () => {
+      clearTimeout(fallback);
+      unsubscribe();
+    };
   }, [navigation]);
 
   useEffect(() => {
