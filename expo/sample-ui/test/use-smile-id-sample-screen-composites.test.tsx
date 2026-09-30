@@ -80,7 +80,7 @@ const cases: { component: string; states: Record<string, Case> }[] = [
             title="Enhanced"
             family="KYC"
             onPress={noop}
-            hue={smileIDSampleProductHue(smileIDSampleProducts[5]!)}
+            hue={smileIDSampleProductHue(smileIDSampleProducts.find((product) => product.id === 'enhancedKyc')!)}
             enabled={false}
           />
         ),
