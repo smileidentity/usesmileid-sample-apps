@@ -12,6 +12,7 @@ appId: ${APP_ID}
       probes: true
       seedJobs: true
 - runFlow: subflows/warm-start.yaml
+- runFlow: subflows/link-session.yaml
 
 # The SDK's consent screen appearing is what a packaging failure fails on, conclusively.
 - tapOn:

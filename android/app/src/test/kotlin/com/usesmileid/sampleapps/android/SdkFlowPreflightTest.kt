@@ -96,9 +96,9 @@ class SdkFlowPreflightTest {
     }
 
     @Test
-    fun `a run with no session at all still reaches the SDK on the fixture path`() {
+    fun `a run with no session at all goes to the scanner rather than the SDK`() {
         assertEquals(
-            FlowPreflight.Ready,
+            FlowPreflight.NeedsSession,
             preflight(snapshotFor(UseSmileIDSampleProduct.SmartSelfieEnrollment).copy(session = null)),
         )
     }
@@ -322,6 +322,7 @@ class SdkFlowPreflightTest {
         partnerId = "p-1",
         partnerName = "UpTech Finance",
         callbackUrl = "",
+        session = testSession(NOW_MILLIS),
     )
 
     private companion object {

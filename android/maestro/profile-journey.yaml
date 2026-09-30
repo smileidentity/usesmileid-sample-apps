@@ -5,6 +5,7 @@ appId: ${APP_ID}
 - launchApp
 - runFlow: subflows/warm-start.yaml
 - runFlow: subflows/sign-out.yaml
+- runFlow: subflows/link-session.yaml
 
 - tapOn:
     id: "sample_product_card_smartSelfieEnrollment"
@@ -112,6 +113,7 @@ appId: ${APP_ID}
 - back
 
 - runFlow: subflows/sign-out.yaml
+- runFlow: subflows/link-session.yaml
 - tapOn:
     id: "sample_product_card_smartSelfieEnrollment"
 - assertVisible: "No profile yet"

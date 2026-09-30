@@ -8,6 +8,7 @@ appId: ${APP_ID}
       probes: true
       catalogue: fixture
 - runFlow: subflows/warm-start.yaml
+- runFlow: subflows/link-session.yaml
 
 - tapOn:
     id: "sample_product_card_documentVerification"
