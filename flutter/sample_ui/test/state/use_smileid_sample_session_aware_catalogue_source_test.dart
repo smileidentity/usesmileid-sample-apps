@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 
@@ -15,9 +17,15 @@ void main() {
   const UseSmileIDSampleEnvironment sandbox =
       UseSmileIDSampleEnvironment.sandbox;
 
+  String token(String header) => <String>[header, '{}', 'not-a-signature']
+      .map(
+        (String part) =>
+            base64Url.encode(utf8.encode(part)).replaceAll('=', ''),
+      )
+      .join('.');
+
   test('an unsigned token reads the fixture', () async {
-    const String unsigned =
-        'eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.e30.c2lnbmF0dXJl';
+    final String unsigned = token('{"alg":"none","typ":"JWT"}');
     expect(
       await source.servicesConfig(sandbox, unsigned, 'en-GB'),
       await fixture.servicesConfig(sandbox, unsigned, 'en-GB'),
@@ -28,7 +36,7 @@ void main() {
     expect(
       source.servicesConfig(
         sandbox,
-        'eyJhbGciOiJIUzI1NiJ9.e30.c2lnbmF0dXJl',
+        token('{"alg":"HS256","typ":"JWT"}'),
         'en-GB',
       ),
       throwsStateError,

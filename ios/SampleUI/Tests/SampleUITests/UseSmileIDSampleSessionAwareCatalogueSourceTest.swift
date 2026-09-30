@@ -8,9 +8,16 @@ final class UseSmileIDSampleSessionAwareCatalogueSourceTest: XCTestCase {
     return (UseSmileIDSampleSessionAwareCatalogueSource(live: UseSmileIDSampleUnreachableCatalogueSource(), fixture: fixture), fixture)
   }
 
+  private func token(_ header: String) -> String {
+    [header, "{}", "not-a-signature"].map { part in
+      Data(part.utf8).base64EncodedString()
+        .replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
+    }.joined(separator: ".")
+  }
+
   func testASimulatedSessionsUnsignedTokenReadsTheFixture() async throws {
     let (source, fixture) = try source()
-    let unsigned = "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.e30.c2lnbmF0dXJl"
+    let unsigned = token(#"{"alg":"none","typ":"JWT"}"#)
     let answered = try await source.servicesConfig(environment: .sandbox, token: unsigned, locale: "en-GB")
     let expected = try await fixture.servicesConfig(environment: .sandbox, token: unsigned, locale: "en-GB")
     XCTAssertEqual(answered, expected)
@@ -19,7 +26,7 @@ final class UseSmileIDSampleSessionAwareCatalogueSourceTest: XCTestCase {
   func testASignedTokenAsksTheServer() async throws {
     let (source, _) = try source()
     do {
-      _ = try await source.servicesConfig(environment: .sandbox, token: "eyJhbGciOiJIUzI1NiJ9.e30.c2lnbmF0dXJl", locale: "en-GB")
+      _ = try await source.servicesConfig(environment: .sandbox, token: token(#"{"alg":"HS256","typ":"JWT"}"#), locale: "en-GB")
       XCTFail("a signed token must reach the live source")
     } catch {}
   }

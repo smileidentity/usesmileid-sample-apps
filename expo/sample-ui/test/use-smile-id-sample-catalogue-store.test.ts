@@ -215,19 +215,22 @@ describe('the catalogue store', () => {
   });
 });
 
+const token = (header: string) =>
+  [header, '{}', 'not-a-signature'].map((part) => Buffer.from(part, 'utf8').toString('base64url')).join('.');
+
 /// A simulated session's unsigned token reads the fixture; a signed one asks the server.
 describe('the session-aware source', () => {
   const fixture = smileIDSampleFixtureCatalogueSource(catalogueFixture);
   const source = smileIDSampleSessionAwareCatalogueSource(smileIDSampleUnreachableCatalogueSource, fixture);
 
   it('reads the fixture for an unsigned token', async () => {
-    const unsigned = 'eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.e30.c2lnbmF0dXJl';
+    const unsigned = token('{"alg":"none","typ":"JWT"}');
     await expect(source.servicesConfig('sandbox', unsigned, 'en-GB')).resolves.toBe(
       await fixture.servicesConfig('sandbox', unsigned, 'en-GB'),
     );
   });
 
   it('asks the server for a signed token', async () => {
-    await expect(source.servicesConfig('sandbox', 'eyJhbGciOiJIUzI1NiJ9.e30.c2lnbmF0dXJl', 'en-GB')).rejects.toThrow();
+    await expect(source.servicesConfig('sandbox', token('{"alg":"HS256","typ":"JWT"}'), 'en-GB')).rejects.toThrow();
   });
 });
