@@ -397,7 +397,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
   func fillFormForRun(_ product: UseSmileIDSampleProduct) {
     fillFromActive()
     idDetails = UseSmileIDSampleIdDetails()
-    if product.catalogueFamily != nil {
+    if product.catalogueFamily != nil, sessionActive {
       catalogue.begin(environment: environment, locale: catalogueLocale)
     }
   }

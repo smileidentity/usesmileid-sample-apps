@@ -36,6 +36,9 @@ abstract final class UseSmileIDSampleTestIds {
   /// Simulate a successful scan, which makes token flows testable with no QR source.
   static const String tokenSimulate = 'sample_token_simulate';
 
+  /// The caption line naming where a real token comes from.
+  static const String tokenPortalLink = 'sample_token_portal_link';
+
   /// The scan token screen root.
   static const String scanTokenScreen = 'sample_scan_token_screen';
 
@@ -428,6 +431,7 @@ abstract final class UseSmileIDSampleTestIds {
     tokenManualEntry,
     tokenPaste,
     tokenSimulate,
+    tokenPortalLink,
     scanTokenScreen,
     productsScreen,
     profileAvatarButton,

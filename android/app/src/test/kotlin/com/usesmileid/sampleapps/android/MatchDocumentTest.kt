@@ -74,5 +74,6 @@ class MatchDocumentTest {
         partnerId = "p-1",
         partnerName = "Test",
         callbackUrl = "",
+        session = testSession(),
     )
 }

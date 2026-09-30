@@ -247,14 +247,14 @@ final class UseSmileIDSampleLoupeTest: XCTestCase {
 
   func testTheTokenAndItsSiblingsAreMaskedWhateverTheHeaderCase() {
     let masked = LoupeRedaction.headers([
-      "smileid-token": "eyJhbGciOiJIUzI1NiJ9.payload",
-      "SmileID-Api-Key": "0123456789abcdef",
+      "smileid-token": "session-token-value",
+      "SmileID-Api-Key": "placeholder-api-key",
       "smileid-request-mac": "deadbeefcafe",
-      "Authorization": "Bearer sk_live_abcdefgh"
+      "Authorization": "Bearer placeholder-value"
     ])
 
-    XCTAssertEqual(masked["smileid-token"], "eyJhb*****")
-    XCTAssertEqual(masked["SmileID-Api-Key"], "01234*****")
+    XCTAssertEqual(masked["smileid-token"], "sessi*****")
+    XCTAssertEqual(masked["SmileID-Api-Key"], "place*****")
     XCTAssertEqual(masked["smileid-request-mac"], "deadb*****")
     XCTAssertEqual(masked["Authorization"], "Beare*****")
   }
@@ -275,13 +275,13 @@ final class UseSmileIDSampleLoupeTest: XCTestCase {
   /// The auth response carries the token in its body, so headers alone would leave it in clear on
   /// the one call that mints it.
   func testATokenInAJsonBodyIsMaskedAtAnyDepth() throws {
-    let body = Data(#"{"data":{"token":"eyJhbGciOiJIUzI1NiJ9","expires":"2026"},"ok":true}"#.utf8)
+    let body = Data(#"{"data":{"token":"session-token-value","expires":"2026"},"ok":true}"#.utf8)
 
     let masked = try XCTUnwrap(LoupeRedaction.body(body))
     let text = try XCTUnwrap(String(data: masked, encoding: .utf8))
 
-    XCTAssertTrue(text.contains("eyJhb*****"), text)
-    XCTAssertFalse(text.contains("eyJhbGciOiJIUzI1NiJ9"), text)
+    XCTAssertTrue(text.contains("sessi*****"), text)
+    XCTAssertFalse(text.contains("session-token-value"), text)
     XCTAssertTrue(text.contains("2026"), "everything else must survive")
   }
 

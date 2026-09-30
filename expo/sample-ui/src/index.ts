@@ -337,6 +337,7 @@ export { ProfileSwitchSheet } from './screens/profile-switch-sheet';
 
 export {
   ScanTokenScreen,
+  SMILE_ID_PORTAL_URL,
   type UseSmileIDSampleScanFeedback,
   type UseSmileIDSampleViewfinderProps,
 } from './screens/scan-token-screen';
@@ -394,6 +395,7 @@ export {
   smileIDSampleSessionExpired,
   useSmileIDSampleSessionClock,
   useSmileIDSampleSessionStore,
+  type UseSmileIDSampleResumePoint,
   type UseSmileIDSampleRunIntent,
   type UseSmileIDSampleSessionStorage,
 } from './state/use-smile-id-sample-session-store';

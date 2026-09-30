@@ -9,6 +9,7 @@ export type UseSmileIDSampleScanState =
 /// Why the scanner opened, worded once for every host.
 export const UseSmileIDSampleScanReason = {
   sessionEnded: 'Token session ended. Scan to continue where you left off.',
+  sessionNeeded: 'Scan a token to start this verification.',
 } as const;
 
 export type UseSmileIDSampleScanReason = keyof typeof UseSmileIDSampleScanReason;

@@ -21,11 +21,16 @@ what it reads, what it skips, and why.
 
 ## 1. Link a session
 
-Open the scan sheet from the products screen, then:
+Every run needs a session. Tap a product with none linked and the scan sheet opens first, saying why;
+once a session links, the run picks up at that product's first step. You can also open the sheet from
+the nav bar's Token button. Then:
 
 - **Scan** a QR code that encodes the raw JWT. The QR holds the token itself, not a URL or JSON.
 - **Paste** or type the token.
 - **Simulate** a scan with a fixture token. It is marked as simulated, and no real partner exists behind it.
+
+A real token comes from the Smile ID Portal, under Security settings. The sheet links there and opens
+it in the browser, where the Portal sign-in already lives.
 
 The app decodes the token and refuses it if the segments, `iat`/`exp` or `api_url` do not read. The
 refusal names the claim that failed, never a value.
@@ -74,10 +79,17 @@ where the document type is chosen.
 With everything bound, a product tap goes straight into the SDK. For Enhanced KYC that means landing on
 the processing screen, which looks abrupt and is correct: there is nothing left to ask.
 
-## 4. Expiry
+## 4. The gate and expiry
 
-- **The gate runs before every flow.** An expired session sends the run to the scanner rather than to a
-  form, and says why. A fresh scan resumes the run it interrupted.
+- **The gate runs at the product tap.** No live session, or an expired one, sends the run to the scanner
+  before any form. A fresh scan resumes at the product's first step, worked out again from the new
+  token's bindings.
+- **It runs again before the SDK.** A session that runs out while someone fills the forms sends the run
+  to the scanner, and a fresh scan goes straight back into the SDK. No run reaches the builder without a
+  session: only the refresh scenarios (`expiredToken`, `badRefresh`) submit the fixture token, because a
+  scanned token has no refresh journey.
+- **The scan sheet ignores taps until it has finished arriving.** Simulate sits where the nav bar's Token
+  button was, so a double tap on Token would otherwise link a session nobody chose.
 - **Refreshing a stored job matches the partner, not the session.** A status read works with any
   session token of the same environment, and fails across environments with a 401. So a new session for
   the same partner can still refresh the jobs an expired one created.
@@ -118,6 +130,7 @@ no camera of its own.
 - [ ] A token with no `api_url`, or an unknown host, is refused with a message naming the claim.
 - [ ] A fully bound token takes a product tap straight into the SDK, with no host forms.
 - [ ] A token binding both names but no contact still asks for a contact.
+- [ ] A product tap with no live session opens the scanner, and a scan resumes at that product's first step.
 - [ ] An expired session sends the next run to the scanner, and a fresh scan resumes it.
 - [ ] Nothing in logs, the result card or the view hierarchy contains the token.
 
@@ -129,6 +142,7 @@ no camera of its own.
 | The app asks for a name the token already bound | The form ignored the bindings | Subtract the bindings from the SDK's rule, and pass `null` for bound fields | SDK 12.0.x |
 | Continue is enabled, then the SDK refuses the build for a missing contact | The form's rule was "first and last name", not the SDK's "both names plus one contact" | Use the SDK's rule | SDK 12.0.x |
 | A run returns to the product list with no explanation | The token carries part of the consent object | Report the SDK's message naming the missing consent fields | SDK 12.0.x |
+| A run starts, then fails at submission | No session was linked, and the builder fell back to an unsigned fixture token | Gate every product tap on a live session | SDK 12.1.x |
 | Jobs from an expired session can no longer be refreshed | The refresh guard matched on the session, not the partner | Match on `partner_id`, and scope by environment | SDK 12.0.x |
 
 ## Next step

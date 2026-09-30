@@ -220,6 +220,7 @@ public enum UseSmileIDSampleTestIds {
   public static let tokenManualEntry = "sample_token_manual_entry"
   public static let tokenPaste = "sample_token_paste"
   public static let tokenSimulate = "sample_token_simulate"
+  public static let tokenPortalLink = "sample_token_portal_link"
   public static let tokenEnvironmentPrefix = "sample_token_environment"
 
   /// The drawer's own root; its opener is a separate id, matching every other sheet and opener.
@@ -280,7 +281,7 @@ public enum UseSmileIDSampleTestIds {
     newProfileEmail, newProfilePhone, newProfileSave,
     sessionCard, sessionCountdown, sessionEndedBanner,
     licensesScreen, licensesEmpty, licenseRowPrefix, licenseTextPrefix, licenseLinkPrefix,
-    scanTokenScreen, tokenManualEntry, tokenPaste, tokenSimulate, tokenEnvironmentPrefix,
+    scanTokenScreen, tokenManualEntry, tokenPaste, tokenSimulate, tokenPortalLink, tokenEnvironmentPrefix,
     scenarioDrawerButton, scenarioDrawer, scenarioItemPrefix, themeItemPrefix, signOut, signOutConfirm, versionLabel,
     resultCard, resultActiveScenario, resultActiveTheme, resultRoute, resultEnvironment,
     resultJobId, resultUserId, resultJobStatus, resultResultCount, resultRefreshCount,

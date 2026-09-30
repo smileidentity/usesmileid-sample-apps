@@ -105,6 +105,7 @@ object UseSmileIDSampleTestIds {
     const val TOKEN_MANUAL_ENTRY = "sample_token_manual_entry"
     const val TOKEN_PASTE = "sample_token_paste"
     const val TOKEN_SIMULATE = "sample_token_simulate"
+    const val TOKEN_PORTAL_LINK = "sample_token_portal_link"
 
     const val RESULT_CARD = "sample_result_card"
     const val RESULT_ACTIVE_SCENARIO = "sample_result_active_scenario"
@@ -179,6 +180,7 @@ object UseSmileIDSampleTestIds {
         TOKEN_MANUAL_ENTRY,
         TOKEN_PASTE,
         TOKEN_SIMULATE,
+        TOKEN_PORTAL_LINK,
         SCENARIO_DRAWER_BUTTON,
         PROFILE_SUMMARY,
         SETTING_ENHANCED_SMART_SELFIE,

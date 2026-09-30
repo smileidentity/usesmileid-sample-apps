@@ -18,14 +18,33 @@ appId: ${APP_ID}
       seedJobs: true
 - runFlow: subflows/warm-start.yaml
 
-# A 15m simulated scan: the countdown is the decoded span, which a hard-coded five minutes could not
-# produce. The duration and the bindings are chosen on the sheet, so the mint is not a fixed fixture.
+# No session: a product tap opens the scanner, and the scan resumes at the product's first step.
+- runFlow: subflows/sign-out.yaml
 - tapOn:
-    id: "sample_nav_token"
+    id: "sample_product_card_smartSelfieEnrollment"
 # The host owns a camera now, so the FIRST permission prompt in this app is ours, not the SDK's —
 # two requesters in one app, which is what §7.1 wanted this sample to demonstrate. Answered before any
 # assertion, because the dialog covers the screen it is asking on behalf of.
 - runFlow: subflows/grant-camera.yaml
+- assertVisible:
+    id: "sample_scan_token_screen"
+- assertVisible: ".*Scan a token to start this verification.*"
+- assertVisible:
+    id: "sample_token_portal_link"
+- tapOn:
+    id: "sample_token_simulate"
+- extendedWaitUntil:
+    visible:
+      id: "sample_user_details_screen"
+    timeout: 10000
+- back
+- assertVisible:
+    id: "sample_products_screen"
+
+# A 15m simulated scan: the countdown is the decoded span, which a hard-coded five minutes could not
+# produce. The duration and the bindings are chosen on the sheet, so the mint is not a fixed fixture.
+- tapOn:
+    id: "sample_nav_token"
 - assertVisible:
     id: "sample_scan_token_screen"
 - tapOn:
@@ -155,8 +174,7 @@ appId: ${APP_ID}
     id: "si_instructions_screen"
 - runFlow: subflows/leave-sdk-flow.yaml
 
-# An expired session is the one outcome no form can fix, so the gate routes to the scanner rather
-# than to the SDK — even with the details the previous run left filled in.
+# An expired session sends the product tap to the scanner, before any form.
 - tapOn:
     id: "sample_nav_token"
 - tapOn: "SIMULATED SCAN"
@@ -170,14 +188,9 @@ appId: ${APP_ID}
 - tapOn:
     id: "sample_product_card_smartSelfieEnrollment"
 - assertVisible:
-    id: "sample_user_details_screen"
-- runFlow: subflows/keep-nothing.yaml
-- tapOn:
-    id: "sample_user_details_continue"
-- assertVisible:
     id: "sample_scan_token_screen"
 - assertNotVisible:
-    id: "si_instructions_screen"
+    id: "sample_user_details_screen"
 # The redirect has to say why it moved you, asserted on the shipped sentence.
 - assertVisible: ".*Token session ended.*"
 
@@ -198,15 +211,9 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_session_ended_banner"
 
-# Relinking resumes the interrupted run rather than stranding the person on the product list. Also
-# leaves the live session the block below relies on.
+# Relinking resumes at the first step, and leaves the live session the block below relies on.
 - tapOn:
     id: "sample_product_card_smartSelfieEnrollment"
-- assertVisible:
-    id: "sample_user_details_screen"
-- runFlow: subflows/keep-nothing.yaml
-- tapOn:
-    id: "sample_user_details_continue"
 - assertVisible:
     id: "sample_scan_token_screen"
 - assertVisible: ".*Token session ended.*"
@@ -214,17 +221,20 @@ appId: ${APP_ID}
 - tapOn: "8h"
 - tapOn:
     id: "sample_token_simulate"
-# Consent, not instructions: this span binds nothing, so the run takes sdk-flow.yaml's no-token
-# journey. Waited on, because the resume holds until the linked session reaches app state.
+# Waited on, because the resume holds until the linked session reaches app state.
+- extendedWaitUntil:
+    visible:
+      id: "sample_user_details_screen"
+    timeout: 10000
+- runFlow: subflows/keep-nothing.yaml
+- tapOn:
+    id: "sample_user_details_continue"
+# Consent, not instructions: this span binds nothing, so the run takes sdk-flow.yaml's no-token journey.
 - extendedWaitUntil:
     visible:
       id: "si_consent_screen"
     timeout: 20000
-- assertNotVisible:
-    id: "sample_scan_token_screen"
-- back
-- assertVisible:
-    id: "sample_products_screen"
+- runFlow: subflows/leave-sdk-flow.yaml
 # A live span is what makes this flow safe to leave behind: it persists across stopApp by design
 # (R6), `pm clear` is unusable on ColorOS, and an expired one would send the next flow to the scanner.
 - assertVisible:

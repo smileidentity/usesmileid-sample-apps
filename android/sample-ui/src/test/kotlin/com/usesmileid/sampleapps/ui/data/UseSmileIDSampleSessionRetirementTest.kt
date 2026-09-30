@@ -11,6 +11,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenBindings
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import java.io.File
+import java.util.Base64
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -152,12 +153,10 @@ class UseSmileIDSampleSessionRetirementTest {
         const val EXPIRES_AT = 1_760_000_900_000L
         val SESSION_TOKEN = stringPreferencesKey("token_session_token")
 
-        /** Synthetic and unsigned: the decoder parses a token, never verifies one. */
+        /** Synthetic and unsigned, and built at run time so no token-shaped literal is committed. */
         val TOKEN = listOf(
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
-            // {"iat":1760000000,"exp":1760000900,"api_url":"https://testapi.smileidentity.com/v3"}
-            "eyJpYXQiOjE3NjAwMDAwMDAsImV4cCI6MTc2MDAwMDkwMCwiYXBpX3VybCI6Imh0dHBzOi8vdGVzdGFwaS5zbWlsZWlkZW50aXR5LmNvbS92MyJ9",
-            "not-a-signature",
-        ).joinToString(".")
+            """{"alg":"HS256","typ":"JWT"}""",
+            """{"iat":1760000000,"exp":1760000900,"api_url":"https://testapi.smileidentity.com/v3"}""",
+        ).joinToString(".") { Base64.getUrlEncoder().withoutPadding().encodeToString(it.toByteArray()) } + ".not-a-signature"
     }
 }

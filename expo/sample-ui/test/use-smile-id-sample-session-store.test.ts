@@ -102,8 +102,8 @@ describe('the session store', () => {
   });
 
   it('holds the interrupted run until the scanner drops it', () => {
-    useSmileIDSampleSessionStore.getState().sendRun({ productId: 'enhancedKyc', route: 'shell' });
-    expect(useSmileIDSampleSessionStore.getState().pendingRun).toEqual({ productId: 'enhancedKyc', route: 'shell' });
+    useSmileIDSampleSessionStore.getState().sendRun({ productId: 'enhancedKyc', route: 'shell', resumeAt: 'flow' });
+    expect(useSmileIDSampleSessionStore.getState().pendingRun).toEqual({ productId: 'enhancedKyc', route: 'shell', resumeAt: 'flow' });
     useSmileIDSampleSessionStore.getState().clearRun();
     expect(useSmileIDSampleSessionStore.getState().pendingRun).toBeNull();
   });

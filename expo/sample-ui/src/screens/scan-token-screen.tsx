@@ -1,5 +1,5 @@
 import { useEffect, useEffectEvent, useState, type ComponentType } from 'react';
-import { ScrollView, StyleSheet, Text, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 
 import { UseSmileIDSampleIcon } from '../components/use-smile-id-sample-icon';
 import { UseSmileIDSampleScanGlyph } from '../components/use-smile-id-sample-scan-glyph';
@@ -32,6 +32,8 @@ import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
 const SCAN_TITLE = 'Point at a Smile token QR';
 const SCAN_CAPTION = 'Line up the code inside the frame to link this device to a verification session.';
 const SCAN_BODY_SIZE = 12.5;
+/// Where a real token comes from.
+export const SMILE_ID_PORTAL_URL = 'https://portal.usesmileid.com/security-settings';
 /// Long enough to read "Session linked".
 const LINKED_DWELL_MILLIS = 900;
 /// The design's reticle opacity at rest.
@@ -66,6 +68,10 @@ type Props = {
   /// The host's camera preview; absent keeps the glyph.
   Viewfinder?: ComponentType<UseSmileIDSampleViewfinderProps>;
   onFeedback?: (feedback: UseSmileIDSampleScanFeedback) => void;
+  /// Opens `SMILE_ID_PORTAL_URL`; the host owns the browser.
+  onOpenPortal?: () => void;
+  /// False while the screen is still arriving, so a second tap on whatever opened it cannot land on the sheet.
+  acceptsTaps?: boolean;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -80,6 +86,8 @@ export const ScanTokenScreen = ({
   onTorchToggle,
   Viewfinder,
   onFeedback,
+  onOpenPortal,
+  acceptsTaps = true,
   style,
 }: Props) => {
   const theme = useSmileIDSampleTheme();
@@ -168,6 +176,7 @@ export const ScanTokenScreen = ({
             <UseSmileIDSampleScanGlyph />
             <Text style={[titleStyle, styles.copy, { color: theme.colors.textTitle }]}>{SCAN_TITLE}</Text>
             <Text style={[captionStyle, styles.copy, { color: theme.colors.textMuted }]}>{caption}</Text>
+            <PortalLine style={[captionStyle, styles.copy, { color: theme.colors.textMuted }]} onPress={onOpenPortal} />
           </ScrollView>
         ) : (
           <>
@@ -190,6 +199,7 @@ export const ScanTokenScreen = ({
                 <>
                   <Text style={[titleStyle, styles.copy, overCamera]}>{SCAN_TITLE}</Text>
                   <Text style={[captionStyle, styles.copy, overCamera]}>{caption}</Text>
+                  <PortalLine style={[captionStyle, styles.copy, overCamera]} onPress={onOpenPortal} />
                 </>
               ) : (
                 <UseSmileIDSampleScanStatus
@@ -222,14 +232,37 @@ export const ScanTokenScreen = ({
                   );
               }
         }
-        onLink={() => judge(sheet.token, true)}
+        onLink={() => {
+          if (acceptsTaps) judge(sheet.token, true);
+        }}
         onExpandToggle={() => setSheet((current) => ({ ...current, expanded: !current.expanded }))}
         onSpanSelect={(span) => setSheet((current) => ({ ...current, span }))}
         onEnvironmentSelect={(environment) => setSheet((current) => ({ ...current, environment }))}
         onBindingsChange={(bindings) => setSheet((current) => ({ ...current, bindings }))}
-        onSimulate={() => onSimulate(sheet.span, sheet.bindings, sheet.environment)}
+        onSimulate={() => {
+          if (acceptsTaps) onSimulate(sheet.span, sheet.bindings, sheet.environment);
+        }}
       />
     </View>
+  );
+};
+
+/// A phrase rather than a URL, which breaks mid-word on the narrowest phone at the largest type.
+const PortalLine = ({ style, onPress }: { style: StyleProp<TextStyle>; onPress?: () => void }) => {
+  const theme = useSmileIDSampleTheme();
+  return (
+    <Pressable
+      testID={UseSmileIDSampleTestIds.TOKEN_PORTAL_LINK}
+      accessibilityRole="link"
+      onPress={onPress}
+      style={styles.portal}
+    >
+      <Text style={style}>
+        Get a v3 token from the{' '}
+        <Text style={{ color: theme.colors.textLink, textDecorationLine: 'underline' }}>Smile ID Portal</Text>, under
+        Security settings.
+      </Text>
+    </Pressable>
   );
 };
 
@@ -240,4 +273,5 @@ const styles = StyleSheet.create({
   overlay: { alignItems: 'center', flex: 1, justifyContent: 'center' },
   // Width-bound, or centred copy wraps past both edges.
   copy: { textAlign: 'center', width: '100%' },
+  portal: { width: '100%' },
 });

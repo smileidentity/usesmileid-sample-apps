@@ -131,6 +131,7 @@ export const UseSmileIDSampleTestIds = {
   TOKEN_PASTE: 'sample_token_paste',
   TOKEN_ENVIRONMENT: 'sample_token_environment',
   TOKEN_SIMULATE: 'sample_token_simulate',
+  TOKEN_PORTAL_LINK: 'sample_token_portal_link',
   // resultCard
   RESULT_CARD: 'sample_result_card',
   RESULT_ACTIVE_SCENARIO: 'sample_result_active_scenario',

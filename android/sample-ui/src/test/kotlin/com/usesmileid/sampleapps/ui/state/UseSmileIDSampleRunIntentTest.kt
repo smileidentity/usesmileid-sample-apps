@@ -43,6 +43,17 @@ class UseSmileIDSampleRunIntentTest {
     }
 
     @Test
+    fun `a run sent from a product tap resumes at its first step after a rotation`() {
+        val intent = UseSmileIDSampleRunIntent("enhancedDocumentVerification", UseSmileIDSampleFlowRoute.Shell, UseSmileIDSampleResumePoint.FirstStep)
+        assertEquals(intent, UseSmileIDSampleRunIntent.of(intent.saved()))
+    }
+
+    @Test
+    fun `a run saved before resume points existed goes back into the SDK`() {
+        assertEquals(UseSmileIDSampleResumePoint.Flow, UseSmileIDSampleRunIntent.of(listOf("biometricKyc", "shell"))?.resumeAt)
+    }
+
+    @Test
     fun `nothing saved restores as nothing rather than as a half-built run`() {
         assertNull(UseSmileIDSampleRunIntent.of(emptyList()))
         assertNull("a product with no presentation is not a run", UseSmileIDSampleRunIntent.of(listOf("biometricKyc")))

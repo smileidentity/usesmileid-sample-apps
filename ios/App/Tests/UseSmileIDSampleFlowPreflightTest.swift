@@ -10,6 +10,10 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
     XCTAssertEqual(useSmileIDSamplePreflight(blank), .needsSession)
   }
 
+  func testARunWithNoSessionAtAllAsksForAToken() {
+    XCTAssertEqual(useSmileIDSamplePreflight(snapshot(.smartSelfieEnrollment, userDetails: complete, session: nil)), .needsSession)
+  }
+
   func testCompleteDetailsPassTheGate() {
     XCTAssertEqual(useSmileIDSamplePreflight(snapshot(.smartSelfieEnrollment, userDetails: complete)), .ready)
   }
@@ -131,7 +135,7 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
     agentMode: Bool = false,
     enhancedLiveness: Bool = false,
     consentStep: Bool = true,
-    session: UseSmileIDSampleTokenSession? = nil,
+    session: UseSmileIDSampleTokenSession? = useSmileIDSampleTestSession,
     sessionExpired: Bool = false
   ) -> FlowLaunchSnapshot {
     FlowLaunchSnapshot(

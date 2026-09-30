@@ -26,8 +26,8 @@ export type UseSmileIDSampleFlowPreflight =
 export const smileIDSamplePreflight = (
   snapshot: UseSmileIDSampleFlowLaunchSnapshot,
 ): UseSmileIDSampleFlowPreflight => {
-  // Ahead of the payloads: no form fixes a lapsed session.
-  if (snapshot.sessionExpired) return { kind: 'needsSession' };
+  // Ahead of the payloads: no form fixes a missing or lapsed session.
+  if (snapshot.sessionExpired || snapshot.session === null) return { kind: 'needsSession' };
   const builder = new UseSmileIDFlowBuilder();
   smileIDSampleApplying(builder, snapshot);
   const requirement = smileIDSampleRequirementFrom(smileIDSampleSnapshotSession(snapshot)?.bindings);

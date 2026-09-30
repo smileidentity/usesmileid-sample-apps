@@ -7,6 +7,7 @@ import {
   smileIDSampleDecodeDocuments,
   smileIDSampleIdDetailsDefaults,
   smileIDSampleProducts,
+  smileIDSampleTokenSession,
   type UseSmileIDSampleProduct,
 } from '@smileid/sample-ui';
 import { UseSmileIDFlowBuilder } from '@smileid/usesmileid';
@@ -19,6 +20,7 @@ import {
 } from '../src/flow/use-smile-id-sample-flow-builder-config';
 import type { UseSmileIDSampleFlowLaunchSnapshot } from '../src/flow/use-smile-id-sample-flow-launch-snapshot';
 import { smileIDSamplePreflight } from '../src/flow/use-smile-id-sample-flow-preflight';
+import { smileIDSampleSimulatedToken } from '../src/flow/use-smile-id-sample-flow-tokens';
 
 // Mocked, not avoided: the host requiring exactly one provider is the thing under test.
 jest.mock('@smileid/usesmileid_mlkit_face', () => ({ useSmileIDMlkitFace: { key: 'mlkit' } }));
@@ -26,6 +28,16 @@ jest.mock('@smileid/usesmileid_vision_face', () => ({ useSmileIDVisionFace: { ke
 
 const productFor = (id: string): UseSmileIDSampleProduct =>
   smileIDSampleProducts.find((product) => product.id === id)!;
+
+/// Every run needs a session before it reaches the SDK.
+const liveSession = smileIDSampleTokenSession(
+  smileIDSampleSimulatedToken({
+    span: { id: 'fifteenMinutes', label: '15m', spanMillis: 900_000, ended: false },
+    bindings: { consent: false, userDetails: false },
+    environment: 'sandbox',
+    nowMillis: Date.now(),
+  }),
+)!;
 
 const snapshot = (
   overrides: Partial<UseSmileIDSampleFlowLaunchSnapshot> = {},
@@ -56,7 +68,7 @@ const snapshot = (
   partnerId: 'p-1',
   partnerName: 'Kobo Bank',
   callbackUrl: '',
-  session: null,
+  session: liveSession,
   sessionExpired: false,
   ...overrides,
 });
@@ -109,6 +121,10 @@ describe('the journey the switches compose', () => {
 describe('the gate', () => {
   it('passes a complete selfie enrollment', () => {
     expect(smileIDSamplePreflight(snapshot()).kind).toBe('ready');
+  });
+
+  it('sends a run with no session to the scanner rather than the SDK', () => {
+    expect(smileIDSamplePreflight(snapshot({ session: null })).kind).toBe('needsSession');
   });
 
   // The SDK requires a contact field even though the form labels both optional.

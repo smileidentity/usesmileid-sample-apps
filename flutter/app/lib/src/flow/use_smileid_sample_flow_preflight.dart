@@ -44,8 +44,8 @@ class UseSmileIDSampleFlowMisconfigured extends UseSmileIDSampleFlowPreflight {
 UseSmileIDSampleFlowPreflight useSmileIDSamplePreflight(
   UseSmileIDSampleFlowLaunchSnapshot snapshot,
 ) {
-  // Ahead of the payloads: no form fixes an ended session.
-  if (snapshot.sessionExpired) {
+  // Ahead of the payloads: no form fixes a missing or ended session.
+  if (snapshot.sessionExpired || snapshot.session == null) {
     return const UseSmileIDSampleFlowNeedsSession();
   }
   final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();

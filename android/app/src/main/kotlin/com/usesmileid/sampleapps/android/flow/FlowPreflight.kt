@@ -7,8 +7,8 @@ import com.usesmileid.sampleapps.ui.state.userDetailsRequirement
 
 /** §7.3's entry gate: the SDK's non-throwing pre-flight plus its per-payload validators. */
 fun preflight(snapshot: FlowLaunchSnapshot): FlowPreflight {
-    // Ahead of the payloads, because no form fixes a session that has run out (TOK-A5).
-    if (snapshot.sessionExpired) return FlowPreflight.NeedsSession
+    // Ahead of the payloads, because no form fixes a missing or run-out session (TOK-A5).
+    if (snapshot.sessionExpired || snapshot.session == null) return FlowPreflight.NeedsSession
     val builder = UseSmileIDFlowBuilder().apply { applying(snapshot) }
     // A form can fix what the user typed but not how the host built the flow, and §7.3 redirects only the first.
     val requirement = snapshot.liveSession?.bindings.userDetailsRequirement()

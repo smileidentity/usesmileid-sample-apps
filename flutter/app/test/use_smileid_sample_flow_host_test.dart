@@ -11,6 +11,7 @@ import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_prefl
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 
 import 'support/use_smileid_sample_catalogue_fixture.dart';
+import 'support/use_smileid_sample_test_session.dart';
 
 /// The flow host: what it hands the SDK, what it refuses to hand over, and where the wizard stacks.
 void main() {
@@ -48,6 +49,7 @@ void main() {
     partnerId: 'profile-1',
     partnerName: 'Kobo Bank',
     callbackUrl: '',
+    session: useSmileIDSampleTestSession(),
   );
 
   group('the journey the switches compose', () {
@@ -322,6 +324,7 @@ void main() {
       final GoRouter router = useSmileIDSampleRouter();
       await tester.pumpWidget(
         ProviderScope(
+          overrides: useSmileIDSampleLinkedSessionOverrides(),
           child: MaterialApp.router(
             theme: UseSmileIDSampleTheme.light(),
             routerConfig: router,

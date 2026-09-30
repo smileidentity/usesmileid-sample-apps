@@ -32859,6 +32859,80 @@ exports[`scanToken dark default 1`] = `
         >
           Line up the code inside the frame to link this device to a verification session.
         </Text>
+        <View
+          accessibilityRole="link"
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            {
+              "width": "100%",
+            }
+          }
+          testID="sample_token_portal_link"
+        >
+          <Text
+            style={
+              [
+                {
+                  "fontFamily": "DMSans-Medium",
+                  "fontSize": 12.5,
+                  "letterSpacing": 0,
+                  "lineHeight": 16,
+                  "marginBottom": -0,
+                  "marginTop": -0,
+                },
+                {
+                  "textAlign": "center",
+                  "width": "100%",
+                },
+                {
+                  "color": "#848282",
+                },
+              ]
+            }
+          >
+            Get a v3 token from the
+             
+            <Text
+              style={
+                {
+                  "color": "#4d88ff",
+                  "textDecorationLine": "underline",
+                }
+              }
+            >
+              Smile ID Portal
+            </Text>
+            , under Security settings.
+          </Text>
+        </View>
       </View>
     </RCTScrollView>
   </View>
@@ -33833,6 +33907,80 @@ exports[`scanToken dark redirected 1`] = `
         >
           Token session ended. Scan to continue where you left off.
         </Text>
+        <View
+          accessibilityRole="link"
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            {
+              "width": "100%",
+            }
+          }
+          testID="sample_token_portal_link"
+        >
+          <Text
+            style={
+              [
+                {
+                  "fontFamily": "DMSans-Medium",
+                  "fontSize": 12.5,
+                  "letterSpacing": 0,
+                  "lineHeight": 16,
+                  "marginBottom": -0,
+                  "marginTop": -0,
+                },
+                {
+                  "textAlign": "center",
+                  "width": "100%",
+                },
+                {
+                  "color": "#848282",
+                },
+              ]
+            }
+          >
+            Get a v3 token from the
+             
+            <Text
+              style={
+                {
+                  "color": "#4d88ff",
+                  "textDecorationLine": "underline",
+                }
+              }
+            >
+              Smile ID Portal
+            </Text>
+            , under Security settings.
+          </Text>
+        </View>
       </View>
     </RCTScrollView>
   </View>
@@ -34807,6 +34955,80 @@ exports[`scanToken light default 1`] = `
         >
           Line up the code inside the frame to link this device to a verification session.
         </Text>
+        <View
+          accessibilityRole="link"
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            {
+              "width": "100%",
+            }
+          }
+          testID="sample_token_portal_link"
+        >
+          <Text
+            style={
+              [
+                {
+                  "fontFamily": "DMSans-Medium",
+                  "fontSize": 12.5,
+                  "letterSpacing": 0,
+                  "lineHeight": 16,
+                  "marginBottom": -0,
+                  "marginTop": -0,
+                },
+                {
+                  "textAlign": "center",
+                  "width": "100%",
+                },
+                {
+                  "color": "#848282",
+                },
+              ]
+            }
+          >
+            Get a v3 token from the
+             
+            <Text
+              style={
+                {
+                  "color": "#151f72",
+                  "textDecorationLine": "underline",
+                }
+              }
+            >
+              Smile ID Portal
+            </Text>
+            , under Security settings.
+          </Text>
+        </View>
       </View>
     </RCTScrollView>
   </View>
@@ -35781,6 +36003,80 @@ exports[`scanToken light redirected 1`] = `
         >
           Token session ended. Scan to continue where you left off.
         </Text>
+        <View
+          accessibilityRole="link"
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            {
+              "width": "100%",
+            }
+          }
+          testID="sample_token_portal_link"
+        >
+          <Text
+            style={
+              [
+                {
+                  "fontFamily": "DMSans-Medium",
+                  "fontSize": 12.5,
+                  "letterSpacing": 0,
+                  "lineHeight": 16,
+                  "marginBottom": -0,
+                  "marginTop": -0,
+                },
+                {
+                  "textAlign": "center",
+                  "width": "100%",
+                },
+                {
+                  "color": "#848282",
+                },
+              ]
+            }
+          >
+            Get a v3 token from the
+             
+            <Text
+              style={
+                {
+                  "color": "#151f72",
+                  "textDecorationLine": "underline",
+                }
+              }
+            >
+              Smile ID Portal
+            </Text>
+            , under Security settings.
+          </Text>
+        </View>
       </View>
     </RCTScrollView>
   </View>

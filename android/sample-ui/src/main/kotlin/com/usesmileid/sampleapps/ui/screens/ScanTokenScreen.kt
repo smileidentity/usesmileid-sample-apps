@@ -27,7 +27,13 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
@@ -62,6 +68,7 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
  * @param viewfinder the host's camera preview, given the same candidate handler the sheet uses so a
  *   scanned code, a pasted one and a typed one are all judged by one decode. Absent — in a golden, or
  *   in an SDK repo's development sample that does not carry a camera — the screen keeps the glyph.
+ * @param acceptsTaps false while the screen is still arriving, so a second tap on whatever opened it cannot land on the sheet.
  */
 @Composable
 fun ScanTokenScreen(
@@ -74,6 +81,7 @@ fun ScanTokenScreen(
     torchOn: Boolean = false,
     onTorchToggle: () -> Unit = {},
     viewfinder: (@Composable (Modifier, enabled: Boolean, onCandidate: (String) -> Unit) -> Unit)? = null,
+    acceptsTaps: Boolean = true,
 ) {
     // Saveable, because a token the user typed must survive recreation like every other typed value (R6).
     var token by rememberSaveable { mutableStateOf("") }
@@ -161,6 +169,7 @@ fun ScanTokenScreen(
                     Box(contentAlignment = Alignment.Center) { UseSmileIDSampleScanGlyph() }
                     ScanCopy(text = SCAN_TITLE, style = titleStyle, color = titleColor)
                     ScanCopy(text = caption, style = captionStyle, color = captionColor)
+                    PortalLine(style = captionStyle, color = captionColor)
                 }
             } else {
                 viewfinder(Modifier.matchParentSize(), scan is UseSmileIDSampleScanState.Searching) {
@@ -185,6 +194,7 @@ fun ScanTokenScreen(
                     if (searching) {
                         ScanCopy(text = SCAN_TITLE, style = titleStyle.overCamera(), color = UseSmileIDSampleTheme.colors.textInverse)
                         ScanCopy(text = caption, style = captionStyle.overCamera(), color = UseSmileIDSampleTheme.colors.textInverse)
+                        PortalLine(style = captionStyle.overCamera(), color = UseSmileIDSampleTheme.colors.textInverse)
                     } else {
                         UseSmileIDSampleScanStatus(
                             state = scan,
@@ -220,7 +230,7 @@ fun ScanTokenScreen(
                     rejection = null
                 }
             },
-            onLink = { judge(token, true) },
+            onLink = { if (acceptsTaps) judge(token, true) },
             onExpandToggle = { mintExpanded = !mintExpanded },
             onSpanSelect = { span = it },
             onEnvironmentSelect = { environment = it },
@@ -229,7 +239,7 @@ fun ScanTokenScreen(
                 bindsDetails = it.userDetails
             },
             onSimulate = {
-                onSimulate(
+                if (acceptsTaps) onSimulate(
                     span,
                     UseSmileIDSampleSimulatedBindings(consent = bindsConsent, userDetails = bindsDetails),
                     environment,
@@ -237,6 +247,26 @@ fun ScanTokenScreen(
             },
         )
     }
+}
+
+/** Where a real token comes from, as a phrase: a raw URL breaks mid-word on the narrowest phone at the largest type. */
+@Composable
+private fun PortalLine(style: TextStyle, color: Color) {
+    val linkStyle = TextLinkStyles(
+        SpanStyle(color = UseSmileIDSampleTheme.colors.textLink, textDecoration = TextDecoration.Underline),
+    )
+    val text = buildAnnotatedString {
+        append("Get a v3 token from the ")
+        withLink(LinkAnnotation.Url(PORTAL_URL, linkStyle)) { append("Smile ID Portal") }
+        append(", under Security settings.")
+    }
+    Text(
+        text = text,
+        style = style,
+        color = color,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth().testTag(UseSmileIDSampleTestIds.TOKEN_PORTAL_LINK),
+    )
 }
 
 @Composable
@@ -272,11 +302,13 @@ private fun UseSmileIDSampleScanState.reticleTint(): Color = when (this) {
 /** Why the scanner opened. The copy lives here so the golden pins the sentence the app ships. */
 enum class UseSmileIDSampleScanReason(val caption: String) {
     SessionEnded("Token session ended. Scan to continue where you left off."),
+    SessionNeeded("Scan a token to start this verification."),
 }
 
 private const val SCAN_TITLE = "Point at a Smile token QR"
 private const val SCAN_CAPTION =
     "Line up the code inside the frame to link this device to a verification session."
+private const val PORTAL_URL = "https://portal.usesmileid.com/security-settings"
 private val SCAN_BODY_SIZE = 12.5.sp
 
 /** Long enough to read "Session linked" and its handle, short enough not to feel like a wait. */

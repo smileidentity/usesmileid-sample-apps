@@ -30,6 +30,33 @@ abstract final class UseSmileIDSampleJourney {
       UseSmileIDSampleRoutes.sdkFlow(product.id);
 }
 
+/// A product tap: the scanner first when no live session backs the run, since every run submits under a token.
+String useSmileIDSampleEntryFor(
+  WidgetRef ref,
+  UseSmileIDSampleProduct product,
+) {
+  final UseSmileIDSampleTokenSession? linked = ref
+      .read(useSmileIDSampleSessionProvider)
+      .live;
+  if (linked == null ||
+      linked.hasExpired(ref.read(useSmileIDSampleWallClockProvider)())) {
+    ref
+        .read(useSmileIDSampleInterruptedRunProvider.notifier)
+        .send(
+          UseSmileIDSampleRunIntent(
+            productId: product.id,
+            route: ref.read(useSmileIDSampleLaunchArgsProvider).route,
+            resumeAt: UseSmileIDSampleResumePoint.firstStep,
+          ),
+        );
+    return UseSmileIDSampleRoutes.scanToken;
+  }
+  return UseSmileIDSampleJourney.firstStepFor(
+    product,
+    useSmileIDSampleLiveBindings(ref),
+  );
+}
+
 /// The live token's bindings, read once at the tap.
 UseSmileIDSampleTokenBindings? useSmileIDSampleLiveBindings(WidgetRef ref) =>
     useSmileIDSampleLiveSession(

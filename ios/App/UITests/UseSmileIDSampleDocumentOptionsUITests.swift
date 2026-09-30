@@ -76,7 +76,7 @@ final class UseSmileIDSampleDocumentOptionsUITests: XCTestCase {
   func testTheIdNumberIsCheckedAgainstItsType() {
     launch()
     XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
-    element("sample_product_card_biometricKyc").tap()
+    app.useSmileIDSampleStartProduct("biometricKyc")
     continuePastDetails()
     element("sample_country_trigger").tap()
     XCTAssertTrue(element("sample_country_option_KE").waitForExistence(timeout: 10))
@@ -96,7 +96,7 @@ final class UseSmileIDSampleDocumentOptionsUITests: XCTestCase {
 
   private func openDocumentForm() {
     XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
-    element("sample_product_card_documentVerification").tap()
+    app.useSmileIDSampleStartProduct("documentVerification")
     continuePastDetails()
     XCTAssertTrue(element("sample_kyc_form_screen").waitForExistence(timeout: 10))
   }

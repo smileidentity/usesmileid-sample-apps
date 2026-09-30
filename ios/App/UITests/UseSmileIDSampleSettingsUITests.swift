@@ -88,7 +88,7 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
     signOut()
 
     XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10), "sign-out did not land on products")
-    element("sample_product_card_smartSelfieEnrollment").tap()
+    app.useSmileIDSampleStartProduct("smartSelfieEnrollment")
     XCTAssertTrue(element("sample_user_details_screen").waitForExistence(timeout: 10))
     XCTAssertFalse(
       app.buttons["sample_user_details_continue"].isEnabled,
@@ -99,7 +99,7 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
   func testAFirstRunKeepsItsDetailsAsAProfileTheNextRunFillsFrom() {
     launch()
     signOut()
-    element("sample_product_card_smartSelfieEnrollment").tap()
+    app.useSmileIDSampleStartProduct("smartSelfieEnrollment")
     XCTAssertTrue(element("sample_user_details_screen").waitForExistence(timeout: 10))
     XCTAssertTrue(app.staticTexts["No profile yet"].exists)
     type("sample_user_details_field_organisation", "Kobo")
@@ -112,7 +112,7 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
 
     relaunch(arguments: useSmileIDSampleLaunchSeed)
     XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
-    element("sample_product_card_smartSelfieEnrollment").tap()
+    app.useSmileIDSampleStartProduct("smartSelfieEnrollment")
     XCTAssertTrue(element("sample_user_details_screen").waitForExistence(timeout: 10))
     XCTAssertTrue(app.staticTexts["Kobo"].waitForExistence(timeout: 5), "the stored profile did not name the form")
     XCTAssertEqual(app.textFields["sample_user_details_field_firstName"].value as? String, "Kwame")
@@ -142,7 +142,7 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
 
   private func fillTheDetailsForm() {
     XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
-    element("sample_product_card_smartSelfieEnrollment").tap()
+    app.useSmileIDSampleStartProduct("smartSelfieEnrollment")
     XCTAssertTrue(element("sample_user_details_screen").waitForExistence(timeout: 10))
     type("sample_user_details_field_firstName", "Kwame")
     type("sample_user_details_field_lastName", "Asante")

@@ -42,7 +42,6 @@
       ],
       "notes": "CORRECTED 2026-08-12: the background colour varies PER PROFILE rather than being one avatar.bg. Needs a documented profile→hue rule so all four platforms colour the same profile identically (same gap as the product→hue mapping). CORRECTED 2026-08-17: a ROUNDED SQUARE at radius 12, not a circle (node 5206:2904). RESOLVED 2026-08-18: the profile→hue rule is settled — design-tokens.json profileHues lists the four fills the design draws and every platform indexes it by the profile's POSITION in the list, cycling beyond four. Hashing the initials is wrong: it gives a different colour per platform and per profile name. One default for the whole app, so the settings summary, the products header, the profiles list and the switch sheet cannot disagree about one profile.",
       "colouring": "per-profile hue (observed navy / green / amber across the three profiles), white initials",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2348",
       "decision": "DECIDED 2026-08-13: a header avatar BUTTON is added next to the environment chip on products, and it is what opens the profile-switch sheet. Small design addition. Per-profile hues come from the designer's list."
     },
     {
@@ -181,7 +180,6 @@
       ],
       "notes": "CORRECTED 2026-08-12 from the prototype recording, RESOLVED 2026-08-17 against nodes 5206:2429–2433. The design uses soft tinted pills, not the design system's saturated badge fills, and the four exact pairs now live in design-tokens.json → softBadgeFills.fills, generated per platform. Do not reach for the current badge.* tokens. Vocabulary maps to roles: Clear→success, Attention→warning, Blocked→error, Processing→info. TWO THINGS A PORT GETS WRONG: the label is Title case, NOT upper-cased (the same 11/700 label style IS upper-cased for date and section headers, which is how Android came to upper-case this too); and the pill takes radius.control, not radius.chip.",
       "fillTreatment": "SOFT — a pale tinted fill with a dark same-hue label, for ALL FOUR statuses (pale green Clear, pale amber Attention, pale red Blocked, pale blue Processing).",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2410",
       "decision": "DECIDED 2026-08-13: ship the design's SOFT tinted pills for all four statuses. Implemented by adding soft variants to the design system (never by hardcoding the Figma hexes), so it stays token-driven."
     },
     {
@@ -263,8 +261,7 @@
         "kycIdForm",
         "scanToken"
       ],
-      "notes": "CORRECTED 2026-08-12: on flow screens the back control is a DARK-FILLED CIRCULAR button; trailing actions are light circular buttons (delete on verification details) except Scan token, whose trailing control is a dark circular TORCH/FLASH toggle. 40 targets. Platform-native back gesture regardless of the visual.",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-3668"
+      "notes": "CORRECTED 2026-08-12: on flow screens the back control is a DARK-FILLED CIRCULAR button; trailing actions are light circular buttons (delete on verification details) except Scan token, whose trailing control is a dark circular TORCH/FLASH toggle. 40 targets. Platform-native back gesture regardless of the visual."
     },
     {
       "name": "DataFieldRow",
@@ -361,7 +358,6 @@
         "VersionLabel — the footer line beneath the last section",
         "RememberDetailsRow — switch variant used on userDetails"
       ],
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2898",
       "decision": "SUPERSEDED 2026-08-25 by node 5206:2898 (re-read 2026-08-24). The 2026-08-13 decision read: 'Smile to capture' ON means enhanced liveness OFF. That frame renames the row to 'Enhanced SmartSelfie™ / Face capture uses head-turns' and draws it ON, so the polarity is now DIRECT — ON means enableEnhancedLiveness = true — and the app's default capture behaviour is the head-turn challenge rather than passive smile capture. See settingsToSdkMapping for the field and test-ids.json for the renamed id."
     },
     {
@@ -538,8 +534,7 @@
         "title (product name, truncates)",
         "secondary line: truncated job id + HH:MM:SS",
         "trailing StatusBadge"
-      ],
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2410"
+      ]
     },
     {
       "name": "FilterChip",
@@ -630,7 +625,6 @@
         "verifications"
       ],
       "shape": "circle (radio-style)",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2441",
       "notes": "CORRECTED 2026-08-12: circular, not a rounded square."
     },
     {
@@ -709,7 +703,6 @@
       ],
       "notes": "CORRECTED 2026-08-12: looks like an input, behaves like a button, and has a disabled state — the ID-type trigger stays greyed until a country is chosen. Each trigger carries a leading icon. CORRECTED 2026-08-17 against node 5206:2797. Leads with an EMOJI before the label — the chosen country's flag, or a globe as placeholder — then the label at 15/600, then a DOWN chevron at 12 (the list chevron points right). An actionable trigger is outlined in PRIMARY at 1.5; a disabled one takes the button-disabled pair, not surface-muted with muted text, which does not read as disabled. A leading slot must take a MINIMUM size, not a fixed one: an emoji grows with font scale and clips in a fixed box.",
       "dependency": "ID TYPE is DISABLED until a country is selected.",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-2797",
       "loading": "While its list is still arriving the trigger stays ENABLED and shows 'Loading ID types…' (or 'Loading documents…') in the muted placeholder style, with no spinner: it is a control, not a status. Tapping it opens the sheet at once."
     },
     {
@@ -906,8 +899,7 @@
       "usedBy": [
         "products"
       ],
-      "notes": "CORRECTED 2026-08-12: a NEUTRAL grey card ('TOKEN SESSION ENDED' / 'Scan a token to relink' + a Scan text action), not a warning-accented banner. It replaces SessionCard in the expired state.",
-      "designRef": "https://www.figma.com/design/CT3oeBfk8uuyvRmGkRJ71D/Product-Enhancements?node-id=5206-3752"
+      "notes": "CORRECTED 2026-08-12: a NEUTRAL grey card ('TOKEN SESSION ENDED' / 'Scan a token to relink' + a Scan text action), not a warning-accented banner. It replaces SessionCard in the expired state."
     },
     {
       "name": "FloatingTokenButton",

@@ -8,6 +8,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.currentStateAsState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.annotation.parameters.DeepLink
@@ -16,8 +19,11 @@ import com.ramcosta.composedestinations.generated.destinations.SdkFlowScreenDest
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleFlowTokens
+import com.usesmileid.sampleapps.android.flow.firstStepFor
 import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleQrScanner
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleScanReason
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleResumePoint
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleRunIntent
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenDecoder
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
@@ -40,6 +46,9 @@ fun ScanTokenScreen(navigator: DestinationsNavigator) {
 
     // The resume waits for a different session, separating the token that sent us here from the new one.
     val arrivedWith = rememberSaveable { app.session?.id.orEmpty() }
+    val arrivedEnded = rememberSaveable { app.sessionExpired }
+    // RESUMED only once the enter transition ends, so a second tap on the nav bar's Token button cannot land on Simulate.
+    val settled by LocalLifecycleOwner.current.lifecycle.currentStateAsState()
     var resumeHandled by rememberSaveable { mutableStateOf(false) }
 
     // One path for both entry routes — typed, pasted or simulated, a session is linked the same way.
@@ -62,7 +71,13 @@ fun ScanTokenScreen(navigator: DestinationsNavigator) {
             // rather than freeze on a screen saying "linked".
             navigator.navigateUp()
         } else {
-            navigator.navigate(SdkFlowScreenDestination(productId = resuming.productId, route = resuming.route)) {
+            val product = UseSmileIDSampleProduct.entries.firstOrNull { it.id == resuming.productId }
+            val next = if (resuming.resumeAt == UseSmileIDSampleResumePoint.FirstStep && product != null) {
+                app.firstStepFor(product)
+            } else {
+                SdkFlowScreenDestination(productId = resuming.productId, route = resuming.route)
+            }
+            navigator.navigate(next) {
                 popUpTo(ScanTokenScreenDestination) { inclusive = true }
                 // Two quick taps mint two tokens; without this the second navigate stacks a duplicate run.
                 launchSingleTop = true
@@ -71,7 +86,11 @@ fun ScanTokenScreen(navigator: DestinationsNavigator) {
     }
     ScanTokenContent(
         // Why this screen opened, per R10: the redirect's message belongs to the screen it arrives at.
-        reason = UseSmileIDSampleScanReason.SessionEnded.takeIf { resuming != null },
+        reason = when {
+            resuming == null -> null
+            arrivedEnded -> UseSmileIDSampleScanReason.SessionEnded
+            else -> UseSmileIDSampleScanReason.SessionNeeded
+        },
         onBack = { navigator.navigateUp() },
         onLink = link,
         onPaste = { clipboard.getText()?.text },
@@ -98,5 +117,6 @@ fun ScanTokenScreen(navigator: DestinationsNavigator) {
                 modifier = modifier,
             )
         },
+        acceptsTaps = settled.isAtLeast(Lifecycle.State.RESUMED),
     )
 }

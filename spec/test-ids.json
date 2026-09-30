@@ -504,6 +504,10 @@
       {
         "id": "sample_token_simulate",
         "description": "Simulate a successful scan — makes token flows testable with no QR source."
+      },
+      {
+        "id": "sample_token_portal_link",
+        "description": "The caption line naming where a real token comes from; its \"Smile ID Portal\" phrase opens the portal's security settings."
       }
     ],
     "resultCard": [

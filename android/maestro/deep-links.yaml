@@ -9,6 +9,7 @@ appId: ${APP_ID}
       probes: true
       seedJobs: true
 - runFlow: subflows/warm-start.yaml
+- runFlow: subflows/link-session.yaml
 
 - stopApp
 - openLink: "usesmileid-sample-android://products"

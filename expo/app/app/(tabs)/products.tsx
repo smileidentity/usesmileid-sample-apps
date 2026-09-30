@@ -16,8 +16,7 @@ import {
 } from '@smileid/sample-ui';
 import { useRouter } from 'expo-router';
 
-import { smileIDSampleFirstStepFor } from '../../src/flow/use-smile-id-sample-flow-journey';
-import { smileIDSampleLiveBindingsNow } from '../../src/flow/use-smile-id-sample-token-binding-rules';
+import { smileIDSampleEntryFor } from '../../src/flow/use-smile-id-sample-flow-journey';
 import {
   smileIDSampleCatalogueEnvironment,
   smileIDSampleCatalogueLocale,
@@ -32,7 +31,7 @@ export default function Products() {
   const index = useSmileIDSampleActiveProfileIndex();
   const startRun = useSmileIDSampleFormsStore((state) => state.startRun);
   const bottomInset = useSmileIDSampleListInset();
-  const { scenario, theme, catalogue } = useLaunchArgs();
+  const { scenario, theme, catalogue, route } = useLaunchArgs();
   const result = useSmileIDSampleResultStore((state) => state.result);
   const live = useSmileIDSampleSessionStore((state) => smileIDSampleLiveSession(state, state.nowMillis));
   const nowMillis = useSmileIDSampleSessionStore((state) => state.nowMillis);
@@ -50,13 +49,14 @@ export default function Products() {
       }}
       onProductPress={(product) => {
         startRun(profile);
+        const entry = smileIDSampleEntryFor(product, route, scenario);
         // Fetched ahead, so the list is usually there by the time the picker opens.
-        if (smileIDSampleCatalogueFamily(product) !== null) {
+        if (entry !== '/token/scan' && smileIDSampleCatalogueFamily(product) !== null) {
           smileIDSampleCatalogueStore(catalogue)
             .getState()
             .begin(smileIDSampleCatalogueEnvironment(live), smileIDSampleCatalogueLocale());
         }
-        router.push(smileIDSampleFirstStepFor(product, smileIDSampleLiveBindingsNow(scenario)));
+        router.push(entry);
       }}
       onProfilePress={() => router.push('/profiles/switch')}
       onScanPress={() => router.push('/token/scan')}

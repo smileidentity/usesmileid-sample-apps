@@ -23,7 +23,7 @@ struct UseSmileIDSampleDestination: View {
         ),
         onProduct: { product in
           app.fillFormForRun(product)
-          router.open(app.firstStep(for: product))
+          router.open(app.entry(for: product))
         },
         onProfile: { router.sheet = .profileSwitch },
         // Pushed, not opened: linking pops back to where the scan started.

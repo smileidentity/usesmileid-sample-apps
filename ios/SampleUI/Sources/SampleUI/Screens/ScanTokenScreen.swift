@@ -3,10 +3,12 @@ import SwiftUI
 /// Why the scanner opened; typed and worded here so the goldens pin it and the eight hosts cannot differ.
 public enum UseSmileIDSampleScanReason: Equatable, Sendable {
   case sessionEnded
+  case sessionNeeded
 
   public var caption: String {
     switch self {
     case .sessionEnded: "Token session ended. Scan to continue where you left off."
+    case .sessionNeeded: "Scan a token to start this verification."
     }
   }
 }
@@ -25,6 +27,7 @@ public struct ScanTokenScreen: View {
   private let onPaste: () -> String?
   private let onTorchToggle: () -> Void
   private let viewfinder: UseSmileIDSampleViewfinder?
+  private let acceptsTaps: Bool
 
   @State private var scan: UseSmileIDSampleScanState = .searching
   /// Held apart from the display state: the credential has no business in something a pill renders.
@@ -40,7 +43,8 @@ public struct ScanTokenScreen: View {
     onSimulate: @escaping (UseSmileIDSampleSimulatedSpan, UseSmileIDSampleSimulatedBindings, UseSmileIDSampleEnvironment) -> Void,
     onPaste: @escaping () -> String?,
     onTorchToggle: @escaping () -> Void = {},
-    viewfinder: UseSmileIDSampleViewfinder? = nil
+    viewfinder: UseSmileIDSampleViewfinder? = nil,
+    acceptsTaps: Bool = true
   ) {
     _entry = entry
     self.reason = reason
@@ -51,6 +55,7 @@ public struct ScanTokenScreen: View {
     self.onPaste = onPaste
     self.onTorchToggle = onTorchToggle
     self.viewfinder = viewfinder
+    self.acceptsTaps = acceptsTaps
   }
 
   public var body: some View {
@@ -82,8 +87,16 @@ public struct ScanTokenScreen: View {
       UseSmileIDSampleScanSheet(
         state: $entry,
         onPaste: paste,
-        onLink: { judge(entry.token, fromField: true) },
-        onSimulate: { onSimulate(entry.span, entry.bindings, entry.environment) }
+        onLink: {
+          if acceptsTaps {
+            judge(entry.token, fromField: true)
+          }
+        },
+        onSimulate: {
+          if acceptsTaps {
+            onSimulate(entry.span, entry.bindings, entry.environment)
+          }
+        }
       )
     }
     .background(colors.background)
@@ -138,6 +151,21 @@ public struct ScanTokenScreen: View {
       .shadow(color: shadow ? colors.textTitle : .clear, radius: shadow ? Self.copyShadowBlur : 0)
       .multilineTextAlignment(.center)
       .frame(maxWidth: .infinity)
+    UseSmileIDSampleText(Self.portalLine, style: UseSmileIDSampleTheme.type.textStyleCaption.with(size: 12.5))
+      .foregroundColor(color ?? colors.textMuted)
+      .tint(colors.textLink)
+      .shadow(color: shadow ? colors.textTitle : .clear, radius: shadow ? Self.copyShadowBlur : 0)
+      .multilineTextAlignment(.center)
+      .frame(maxWidth: .infinity)
+      .useSmileIDSampleTestId(UseSmileIDSampleTestIds.tokenPortalLink)
+  }
+
+  /// Where a real token comes from, as a phrase: a raw URL breaks mid-word on the narrowest phone at the largest type.
+  private static var portalLine: AttributedString {
+    var link = AttributedString("Smile ID Portal")
+    link.link = URL(string: "https://portal.usesmileid.com/security-settings")
+    link.underlineStyle = .single
+    return AttributedString("Get a v3 token from the ") + link + AttributedString(", under Security settings.")
   }
 
   /// The reticle answers with colour before anyone reads the words.

@@ -1,11 +1,29 @@
 import {
+  smileIDSampleLiveSession,
   smileIDSampleRequirementSatisfied,
+  useSmileIDSampleSessionStore,
+  type UseSmileIDSampleFlowRoute,
   type UseSmileIDSampleProduct,
   type UseSmileIDSampleTokenBindings,
 } from '@smileid/sample-ui';
 import type { Href } from 'expo-router';
 
 import { smileIDSampleFlowPlan } from './use-smile-id-sample-flow-plan';
+import { smileIDSampleLiveBindingsNow } from './use-smile-id-sample-token-binding-rules';
+
+/// A product tap: the scanner first when no live session backs the run, since every run submits under a token.
+export const smileIDSampleEntryFor = (
+  product: UseSmileIDSampleProduct,
+  route: UseSmileIDSampleFlowRoute,
+  scenario: string,
+): Href => {
+  const store = useSmileIDSampleSessionStore.getState();
+  if (smileIDSampleLiveSession(store, Date.now()) === null) {
+    store.sendRun({ productId: product.id, route, resumeAt: 'firstStep' });
+    return '/token/scan';
+  }
+  return smileIDSampleFirstStepFor(product, smileIDSampleLiveBindingsNow(scenario));
+};
 
 /// What follows user details, shared with that form's Continue.
 export const smileIDSampleStepAfterUserDetails = (

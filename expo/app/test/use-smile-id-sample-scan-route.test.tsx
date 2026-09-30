@@ -36,6 +36,12 @@ const mockRedirects: string[] = [];
 const mockRouter = { back: jest.fn(), replace: jest.fn(), push: jest.fn(), canGoBack: () => true };
 jest.mock('expo-router', () => ({
   useRouter: () => mockRouter,
+  useNavigation: () => ({
+    addListener: (_type: string, listener: (event: { data: { closing: boolean } }) => void) => {
+      listener({ data: { closing: false } });
+      return () => undefined;
+    },
+  }),
   useIsFocused: () => true,
   useLocalSearchParams: () => ({ productId: 'enhancedKyc' }),
   Redirect: function Redirect({ href }: { href: string }) {
@@ -88,7 +94,7 @@ describe('the expiry gate', () => {
     });
     await inTheme(<SdkFlowRun />);
     expect(mockRedirects).toEqual(['/token/scan']);
-    expect(useSmileIDSampleSessionStore.getState().pendingRun).toEqual({ productId: 'enhancedKyc', route: 'fullscreen' });
+    expect(useSmileIDSampleSessionStore.getState().pendingRun).toEqual({ productId: 'enhancedKyc', route: 'fullscreen', resumeAt: 'flow' });
   });
 
   it('takes its snapshot from the launch arguments the cold link carried', async () => {
@@ -100,7 +106,7 @@ describe('the expiry gate', () => {
       await useSmileIDSampleSessionStore.getState().retire(ended);
     });
     await inTheme(<SdkFlowRun />);
-    expect(useSmileIDSampleSessionStore.getState().pendingRun).toEqual({ productId: 'enhancedKyc', route: 'shell' });
+    expect(useSmileIDSampleSessionStore.getState().pendingRun).toEqual({ productId: 'enhancedKyc', route: 'shell', resumeAt: 'flow' });
   });
 
   it('reads the clock at entry, so a session that lapsed since the last tick is sent to the scanner', async () => {
@@ -113,7 +119,7 @@ describe('the expiry gate', () => {
     expect(mockRedirects).toEqual(['/token/scan']);
   });
 
-  it('decides whether to skip the form from the clock at the tap, not the last tick', async () => {
+  it('reads the clock at the tap, so a session that lapsed since the last tick opens the scanner', async () => {
     const session = shortSession(300);
     await act(async () => {
       await useSmileIDSampleSessionStore.getState().link(session);
@@ -121,25 +127,39 @@ describe('the expiry gate', () => {
     const screen = await inTheme(<Products />);
     await lapse(session);
     await fireEvent.press(screen.getByTestId('sample_product_card_biometricKyc'));
-    expect(mockRouter.push).toHaveBeenCalledWith('/flow/biometricKyc/details');
+    expect(mockRouter.push).toHaveBeenCalledWith('/token/scan');
+    expect(useSmileIDSampleSessionStore.getState().pendingRun).toEqual({
+      productId: 'biometricKyc',
+      route: 'fullscreen',
+      resumeAt: 'firstStep',
+    });
   });
 
-  it('lets a run with no session at all through to the SDK on the fixture path', async () => {
+  it('sends a run with no session at all to the scanner rather than the SDK', async () => {
     await inTheme(<SdkFlowRun />);
-    expect(mockRedirects).not.toContain('/token/scan');
+    expect(mockRedirects).toEqual(['/token/scan']);
   });
 });
 
 describe('the scanner', () => {
   it('says why it opened, drops the run from app state, and resumes it once a fresh session links', async () => {
-    useSmileIDSampleSessionStore.getState().sendRun({ productId: 'enhancedKyc', route: 'fullscreen' });
+    useSmileIDSampleSessionStore.getState().sendRun({ productId: 'enhancedKyc', route: 'fullscreen', resumeAt: 'flow' });
     const screen = await inTheme(<ScanToken />);
-    expect(screen.queryByText('Token session ended. Scan to continue where you left off.')).not.toBeNull();
+    expect(screen.queryByText('Scan a token to start this verification.')).not.toBeNull();
     expect(useSmileIDSampleSessionStore.getState().pendingRun).toBeNull();
 
     await fireEvent.press(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_SIMULATE));
     await waitFor(() => expect(mockRouter.replace).toHaveBeenCalledWith('/flow/enhancedKyc/run'));
     expect(mockRouter.back).not.toHaveBeenCalled();
+  });
+
+  it('resumes a run sent from a product tap at its first step', async () => {
+    useSmileIDSampleSessionStore
+      .getState()
+      .sendRun({ productId: 'smartSelfieEnrollment', route: 'fullscreen', resumeAt: 'firstStep' });
+    const screen = await inTheme(<ScanToken />);
+    await fireEvent.press(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_SIMULATE));
+    await waitFor(() => expect(mockRouter.replace).toHaveBeenCalledWith('/flow/smartSelfieEnrollment/details'));
   });
 
   it('opened deliberately, says nothing about an ended session and returns once linked', async () => {

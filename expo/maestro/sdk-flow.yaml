@@ -15,6 +15,11 @@ appId: ${APP_ID}
 # assertion below needs the slate cleared rather than merely a fresh launch.
 - clearState
 - stopApp
+# Every run needs a token, and the stored one outlives `stopApp`.
+- openLink: "usesmileid-sample-expo://?noticeWindow=60&catalogue=fixture"
+- runFlow: subflows/warm-start.yaml
+- runFlow: subflows/link-session.yaml
+- stopApp
 # A cold link straight at the flow: the route resolves, the host reads its snapshot, and the gate
 # refuses an empty form rather than handing the SDK a payload its own validators reject.
 - openLink: "usesmileid-sample-expo:///flow/smartSelfieEnrollment/run?catalogue=fixture"
