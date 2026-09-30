@@ -2,7 +2,13 @@
 *.jks
 *.keystore
 *.p12
+*.p8
+*.pem
 *.mobileprovision
+keystore.properties
+google-services.json
+GoogleService-Info.plist
+*.xcresult/
 .env
 .env.*
 secrets.*
