@@ -472,6 +472,10 @@
         "description": "The config page's one action. On the active profile it reads \"Save changes\" and is enabled once something changed; on any other it reads \"Use this profile\", saving any edits and making it active."
       },
       {
+        "id": "sample_profile_config_contact_error",
+        "description": "Shown under the user details while the email or phone would fail the job (spec/contact-rules.json); the config page's action stays disabled until it goes."
+      },
+      {
         "id": "sample_profile_config_name",
         "description": "The profile's organisation, which the SDK's consent screen names as the partner. Optional: blank names the app itself, never the person being verified."
       },
