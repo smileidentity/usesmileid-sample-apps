@@ -113,6 +113,13 @@ export const smileIDSampleDecodeToken = (token: string): UseSmileIDSampleTokenDe
   return { kind: 'decoded', session };
 };
 
+/// Whether the header's `alg` is `none`, as every simulated scan's is; the server refuses such a token.
+export const smileIDSampleTokenIsUnsigned = (token: string): boolean => {
+  const bytes = smileIDSampleBase64UrlBytes(token.trim().split('.')[0] ?? '');
+  const alg = bytes === null ? undefined : parseObject(smileIDSampleUtf8Text(bytes))?.alg;
+  return typeof alg === 'string' && alg.toLowerCase() === 'none';
+};
+
 /// The session a token describes, or null.
 export const smileIDSampleTokenSession = (token: string): UseSmileIDSampleTokenSession | null => {
   const decoded = smileIDSampleDecodeToken(token);

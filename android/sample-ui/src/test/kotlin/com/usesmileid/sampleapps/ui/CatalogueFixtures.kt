@@ -3,6 +3,7 @@ package com.usesmileid.sampleapps.ui
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleFixtureCatalogueSource
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment.Sandbox
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleApiEnabledCountry
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueData
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueFamily
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueJson
@@ -24,6 +25,11 @@ internal object CatalogueFixtures {
                 documents = requireNotNull(UseSmileIDSampleCatalogueJson.documents(source.supportedDocuments(Sandbox, "en-GB"))),
             )
         }
+    }
+
+    val enabled: List<UseSmileIDSampleApiEnabledCountry> by lazy {
+        val source = UseSmileIDSampleFixtureCatalogueSource(json)
+        runBlocking { requireNotNull(UseSmileIDSampleCatalogueJson.enabledCountries(source.servicesConfig(Sandbox, "", "en-GB"))) }
     }
 
     val kenya = UseSmileIDSampleCountry("KE", "Kenya")

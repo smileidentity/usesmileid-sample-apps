@@ -8,6 +8,13 @@ enum UseSmileIDSampleCatalogueFixtures {
     try! Data(contentsOf: UseSmileIDSampleSpecFiles.directory.appendingPathComponent("catalogue-fixture.json"))
   }
 
+  static func enabled() async throws -> [UseSmileIDSampleApiEnabledCountry] {
+    let source = try UseSmileIDSampleFixtureCatalogueSource(fixture: json)
+    return try await UseSmileIDSampleCatalogueJson.enabledCountries(
+      source.servicesConfig(environment: .sandbox, token: "", locale: "en-GB")
+    ) ?? []
+  }
+
   static func data() async throws -> UseSmileIDSampleCatalogueData {
     let source = try UseSmileIDSampleFixtureCatalogueSource(fixture: json)
     return try await UseSmileIDSampleCatalogueData(

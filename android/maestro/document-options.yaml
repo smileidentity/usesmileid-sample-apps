@@ -1,4 +1,4 @@
-# The document form's list, Capture as and generic-document sheet on fixture lists, through SDK mount (docs/testing.md §4).
+# The document form's list, Capture as, generic-document sheet and Enhanced Document Verification's partner list on fixture lists, through SDK mount (docs/testing.md §4).
 # APP_ID must be passed — see shell-navigation.yaml for why it has no default.
 appId: ${APP_ID}
 ---
@@ -192,3 +192,29 @@ appId: ${APP_ID}
     text: "Automatic with manual fallback"
     childOf:
       id: "sample_setting_capture_mode"
+
+# --- Enhanced Document Verification lists only the partner's enabled documents ---------------------
+# The fixture's configuration enables Kenya's Identity Card and Passport and Nigeria's Passport, nothing else.
+- stopApp
+- openLink: "usesmileid-sample-android://flow/enhancedDocumentVerification/id-details/country?catalogue=fixture"
+- assertVisible:
+    id: "sample_country_sheet"
+- assertVisible:
+    id: "sample_country_option_KE"
+- assertVisible:
+    id: "sample_country_option_NG"
+- assertNotVisible:
+    id: "sample_country_option_ZA"
+- assertNotVisible:
+    id: "sample_country_option_GH"
+- tapOn:
+    id: "sample_country_option_KE"
+- tapOn:
+    id: "sample_document_trigger"
+- assertVisible:
+    id: "sample_document_option_IDENTITY_CARD"
+- assertVisible:
+    id: "sample_document_option_PASSPORT"
+- assertNotVisible:
+    id: "sample_document_option_ALIEN_CARD"
+- back

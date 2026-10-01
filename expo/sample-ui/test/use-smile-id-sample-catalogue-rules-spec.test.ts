@@ -1,9 +1,14 @@
 import {
   smileIDSampleAllowedRequiredFields,
+  smileIDSampleCatalogueAdvice,
   smileIDSampleCatalogueCountries,
+  smileIDSampleCatalogueDefaultAdvice,
   smileIDSampleCatalogueDocuments,
+  smileIDSampleCatalogueEnabledCountries,
+  smileIDSampleCatalogueEnabledDocuments,
   smileIDSampleCatalogueIdTypes,
   smileIDSampleDecodeDocuments,
+  smileIDSampleDecodeEnabledCountries,
   smileIDSampleDecodeIdTypes,
 } from '../src/state/use-smile-id-sample-catalogue';
 import {
@@ -23,7 +28,7 @@ import {
   type UseSmileIDSampleCaptureAs,
 } from '../src/model/use-smile-id-sample-capture-as';
 import { useSmileIDSampleFormsStore } from '../src/state/use-smile-id-sample-forms-store';
-import { catalogueData } from './catalogue-fixtures';
+import { catalogueData, catalogueFixture } from './catalogue-fixtures';
 import { spec } from './spec-file';
 
 type Section = {
@@ -40,6 +45,9 @@ type Rules = {
   idTypes: Section & { allowedRequiredFields: string[] };
   documents: Section;
   countries: Section;
+  enabledDocuments: Section;
+  enabledCountries: Section;
+  failures: { default: string; cases: { status: number | null; supportingText: string }[] };
   captureAs: {
     triggerPlaceholder: string;
     cases: CaptureAsCase[];
@@ -116,6 +124,43 @@ describe('catalogue rules', () => {
             documents: smileIDSampleDecodeDocuments(JSON.stringify(input.supported_documents))!,
           };
     expect(smileIDSampleCatalogueCountries(data, c.family as UseSmileIDSampleCatalogueFamily)).toEqual(c.expected);
+  });
+
+  const enabledInput = (input: unknown) => {
+    const both =
+      typeof input === 'string'
+        ? catalogueFixture
+        : (input as { supported_documents: unknown; services_config: unknown });
+    return {
+      all: smileIDSampleDecodeDocuments(JSON.stringify(both.supported_documents))!,
+      enabled: smileIDSampleDecodeEnabledCountries(JSON.stringify(both.services_config))!,
+    };
+  };
+
+  it.each(rules.enabledDocuments.cases.map((c) => [c.name, c] as const))('enabled documents: %s', (_, c) => {
+    const { all, enabled } = enabledInput(c.input);
+    expect(
+      smileIDSampleCatalogueEnabledDocuments(all, enabled, c.country!).map((it) => ({
+        id: it.subType === null ? it.code : `${it.code}_${it.subType}`,
+        code: it.code,
+        subType: it.subType,
+        name: it.name,
+        hasBack: it.hasBack,
+        format: it.format,
+      })),
+    ).toEqual(c.expected);
+  });
+
+  it.each(rules.enabledCountries.cases.map((c) => [c.name, c] as const))('enabled countries: %s', (_, c) => {
+    const { all, enabled } = enabledInput(c.input);
+    expect(smileIDSampleCatalogueEnabledCountries(all, enabled)).toEqual(c.expected);
+  });
+
+  it('names the failures the spec names', () => {
+    expect(smileIDSampleCatalogueDefaultAdvice).toBe(rules.failures.default);
+    for (const c of rules.failures.cases) {
+      expect(smileIDSampleCatalogueAdvice(c.status)).toBe(c.supportingText);
+    }
   });
 
   it.each(rules.captureAs.cases.map((c) => [c.name, c] as const))('capture as: %s', (_, c) => {

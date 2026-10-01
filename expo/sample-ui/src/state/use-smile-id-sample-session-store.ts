@@ -42,6 +42,8 @@ type State = {
   readonly nowMillis: number;
   /// A gate's hand-off to the scanner, never a route argument.
   readonly pendingRun: UseSmileIDSampleRunIntent | null;
+  /// The partner whose token the run in progress was started on; null when unknown, as after a cold link.
+  readonly runPartnerId: string | null;
 };
 
 type Actions = {
@@ -55,6 +57,7 @@ type Actions = {
   clear: () => Promise<void>;
   tick: (nowMillis: number) => void;
   sendRun: (intent: UseSmileIDSampleRunIntent) => void;
+  recordRunPartner: (partnerId: string | null) => void;
   clearRun: () => void;
   reset: () => void;
 };
@@ -106,6 +109,7 @@ export const useSmileIDSampleSessionStore = create<State & Actions>((set, get) =
   loaded: false,
   nowMillis: Date.now(),
   pendingRun: null,
+  runPartnerId: null,
 
   load: async (next) => {
     storage = next;
@@ -138,11 +142,12 @@ export const useSmileIDSampleSessionStore = create<State & Actions>((set, get) =
   tick: (nowMillis) => set({ nowMillis }),
   sendRun: (intent) => set({ pendingRun: intent }),
   clearRun: () => set({ pendingRun: null }),
+  recordRunPartner: (partnerId) => set({ runPartnerId: partnerId }),
 
   reset: () => {
     storage = memoryStorage();
     writes = Promise.resolve();
-    set({ live: null, ended: null, loaded: false, nowMillis: Date.now(), pendingRun: null });
+    set({ live: null, ended: null, loaded: false, nowMillis: Date.now(), pendingRun: null, runPartnerId: null });
   },
 }));
 
@@ -181,3 +186,10 @@ export const useSmileIDSampleSessionClock = (): void => {
 };
 
 const TICK_MILLIS = 1000;
+
+/// Straight back into the SDK only on the partner the run was started for; any other goes back through its first step.
+export const smileIDSampleResumesInFlow = (
+  intent: UseSmileIDSampleRunIntent,
+  runPartnerId: string | null,
+  linkedPartnerId: string | null,
+): boolean => intent.resumeAt === 'flow' && runPartnerId !== null && runPartnerId === linkedPartnerId;

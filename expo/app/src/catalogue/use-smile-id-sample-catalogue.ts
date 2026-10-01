@@ -1,8 +1,11 @@
 import {
   createSmileIDSampleCatalogueStore,
+  smileIDSampleEnhancedDocumentVerificationKey,
   smileIDSampleEnvironmentBaseUrl,
   smileIDSampleFixtureCatalogueSource,
+  smileIDSampleSessionAwareCatalogueSource,
   smileIDSampleUnreachableCatalogueSource,
+  UseSmileIDSampleCatalogueHttpError,
   type UseSmileIDSampleCatalogueMode,
   type UseSmileIDSampleCatalogueSource,
   type UseSmileIDSampleCatalogueStore,
@@ -16,19 +19,22 @@ import fixture from '../../assets/catalogue-fixture.json';
 // The store's own timeout, so a request it gives up on is torn down rather than left open.
 const REQUEST_TIMEOUT_MS = 10_000;
 
-const bodyOf = async (url: string): Promise<string> => {
+const bodyOf = async (url: string, token?: string): Promise<string> => {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   try {
-    const response = await fetch(url, { signal: controller.signal });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: token === undefined ? undefined : { 'SmileID-Token': token },
+    });
+    if (!response.ok) throw new UseSmileIDSampleCatalogueHttpError(response.status);
     return await response.text();
   } finally {
     clearTimeout(timer);
   }
 };
 
-/// The two unauthenticated catalogue endpoints; no token is sent, both are the same for every partner.
+/// The two unauthenticated catalogue endpoints, and the partner's own configuration under its token.
 const smileIDSampleHttpCatalogueSource: UseSmileIDSampleCatalogueSource = {
   supportedIdTypes: (environment) =>
     bodyOf(`${smileIDSampleEnvironmentBaseUrl(environment)}v3/services/supported_id_types`),
@@ -36,12 +42,20 @@ const smileIDSampleHttpCatalogueSource: UseSmileIDSampleCatalogueSource = {
     bodyOf(
       `${smileIDSampleEnvironmentBaseUrl(environment)}v3/services/supported_documents?locale=${encodeURIComponent(locale)}`,
     ),
+  servicesConfig: (environment, token, locale) =>
+    bodyOf(
+      `${smileIDSampleEnvironmentBaseUrl(environment)}v3/services/config?product=${smileIDSampleEnhancedDocumentVerificationKey}&locale=${encodeURIComponent(locale)}`,
+      token,
+    ),
 };
 
 const sourceFor = (mode: UseSmileIDSampleCatalogueMode): UseSmileIDSampleCatalogueSource => {
   switch (mode) {
     case 'live':
-      return smileIDSampleHttpCatalogueSource;
+      return smileIDSampleSessionAwareCatalogueSource(
+        smileIDSampleHttpCatalogueSource,
+        smileIDSampleFixtureCatalogueSource(fixture),
+      );
     case 'fixture':
       return smileIDSampleFixtureCatalogueSource(fixture);
     case 'unreachable':
@@ -68,3 +82,13 @@ export const smileIDSampleCatalogueEnvironment = (
 
 /// The API translates document and country names; an unsupported locale comes back in English.
 export const smileIDSampleCatalogueLocale = (): string => Intl.DateTimeFormat().resolvedOptions().locale;
+
+/// Enhanced Document Verification's own list, which `live`'s token decides; any other product has none.
+export const smileIDSampleEnsureEnabled = (
+  store: UseSmileIDSampleCatalogueStore,
+  productId: string | undefined,
+  live: UseSmileIDSampleTokenSession | null,
+): void => {
+  if (productId !== 'enhancedDocumentVerification') return;
+  store.getState().ensureEnabled(smileIDSampleCatalogueEnvironment(live), smileIDSampleCatalogueLocale(), live);
+};

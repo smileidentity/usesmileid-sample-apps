@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleApiCountryDocuments
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleApiEnabledCountry
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleApiIdType
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogue
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueData
@@ -15,6 +16,7 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueRules
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCountry
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocument
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleKycIdType
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -36,15 +38,24 @@ class UseSmileIDSampleCatalogueStore(
 ) {
     private data class Run(val environment: UseSmileIDSampleEnvironment, val locale: String)
 
+    private data class EnabledKey(val sessionId: String?, val environment: UseSmileIDSampleEnvironment, val locale: String)
+
     private var run: Run? = null
     private var idTypesJob: Job? = null
     private var documentsJob: Job? = null
+    private var enabledKey: EnabledKey? = null
+    private var enabledToken: String = ""
+    private var enabledJob: Job? = null
 
     var idTypes: UseSmileIDSampleCatalogue<UseSmileIDSampleApiIdType> by mutableStateOf(UseSmileIDSampleCatalogue.Loading)
         private set
 
     var documents: UseSmileIDSampleCatalogue<UseSmileIDSampleApiCountryDocuments> by
         mutableStateOf(UseSmileIDSampleCatalogue.Loading)
+        private set
+
+    /** The partner's Enhanced Document Verification list, kept per session: only a relink or a locale change asks again. */
+    var enabled: UseSmileIDSampleCatalogue<UseSmileIDSampleApiEnabledCountry> by mutableStateOf(UseSmileIDSampleCatalogue.Loading)
         private set
 
     /** A product tap: a new run always asks the server again, so a list changed on the server shows up. */
@@ -60,23 +71,46 @@ class UseSmileIDSampleCatalogueStore(
         if (run != Run(environment, locale)) begin(environment, locale)
     }
 
+    /** Enhanced Document Verification: fetches [session]'s list unless it is already here or on its way. */
+    fun ensureEnabled(environment: UseSmileIDSampleEnvironment, locale: String, session: UseSmileIDSampleTokenSession?) {
+        val key = EnabledKey(session?.id, environment, locale)
+        if (key == enabledKey && (enabled is UseSmileIDSampleCatalogue.Ready || enabledJob?.isActive == true)) return
+        enabledKey = key
+        enabledToken = session?.token.orEmpty()
+        fetchEnabled()
+    }
+
     /** Asks again for whichever list failed, under the same timing as the first attempt. */
     fun retry() {
+        if (enabled is UseSmileIDSampleCatalogue.Failed) fetchEnabled()
         if (run == null) return
         if (idTypes is UseSmileIDSampleCatalogue.Failed) fetchIdTypes()
         if (documents is UseSmileIDSampleCatalogue.Failed) fetchDocuments()
     }
 
-    /** Leaving the form: anything in flight is cancelled and the next run starts clean. */
+    /** Leaving the form: anything in flight is cancelled and the next run starts clean, bar a session's arrived list. */
     fun stop() {
         idTypesJob?.cancel()
         documentsJob?.cancel()
         run = null
         idTypes = UseSmileIDSampleCatalogue.Loading
         documents = UseSmileIDSampleCatalogue.Loading
+        if (enabled !is UseSmileIDSampleCatalogue.Ready) {
+            enabledJob?.cancel()
+            enabledKey = null
+            enabledToken = ""
+            enabled = UseSmileIDSampleCatalogue.Loading
+        }
     }
 
-    fun countries(family: UseSmileIDSampleCatalogueFamily): UseSmileIDSampleCatalogue<UseSmileIDSampleCountry> {
+    /** [product] Enhanced Document Verification offers only the countries its partner enabled. */
+    fun countries(
+        family: UseSmileIDSampleCatalogueFamily,
+        product: UseSmileIDSampleProduct? = null,
+    ): UseSmileIDSampleCatalogue<UseSmileIDSampleCountry> {
+        if (product == UseSmileIDSampleProduct.EnhancedDocumentVerification) {
+            return withEnabled { docs, enabled -> UseSmileIDSampleCatalogueRules.enabledCountries(docs, enabled) }
+        }
         val docs = documents
         val types = if (family == UseSmileIDSampleCatalogueFamily.Kyc) idTypes else UseSmileIDSampleCatalogue.Ready(emptyList())
         return when {
@@ -97,10 +131,42 @@ class UseSmileIDSampleCatalogueStore(
         country: String,
         product: UseSmileIDSampleProduct = UseSmileIDSampleProduct.DocumentVerification,
     ): UseSmileIDSampleCatalogue<UseSmileIDSampleDocument> =
+        if (product == UseSmileIDSampleProduct.EnhancedDocumentVerification) {
+            withEnabled { docs, enabled -> UseSmileIDSampleCatalogueRules.enabledDocuments(docs, enabled, country) }
+        } else {
+            plainDocuments(country, product)
+        }
+
+    private fun plainDocuments(country: String, product: UseSmileIDSampleProduct): UseSmileIDSampleCatalogue<UseSmileIDSampleDocument> =
         when (val docs = documents) {
             is UseSmileIDSampleCatalogue.Ready -> ready(UseSmileIDSampleCatalogueRules.documents(docs.items, country, product))
             else -> docs.withoutItems()
         }
+
+    private fun <T> withEnabled(
+        rows: (List<UseSmileIDSampleApiCountryDocuments>, List<UseSmileIDSampleApiEnabledCountry>) -> List<T>,
+    ): UseSmileIDSampleCatalogue<T> {
+        val docs = documents
+        val allowed = enabled
+        return when {
+            allowed is UseSmileIDSampleCatalogue.Failed -> allowed
+            docs is UseSmileIDSampleCatalogue.Failed -> docs
+            docs is UseSmileIDSampleCatalogue.Ready && allowed is UseSmileIDSampleCatalogue.Ready -> ready(rows(docs.items, allowed.items))
+            else -> UseSmileIDSampleCatalogue.Loading
+        }
+    }
+
+    private fun fetchEnabled() {
+        val key = enabledKey ?: return
+        val token = enabledToken
+        enabledJob?.cancel()
+        enabled = UseSmileIDSampleCatalogue.Loading
+        enabledJob = scope.launch {
+            enabled = load {
+                UseSmileIDSampleCatalogueJson.enabledCountries(source.servicesConfig(key.environment, token, key.locale))
+            }
+        }
+    }
 
     private fun fetchIdTypes() {
         val current = run ?: return
@@ -130,6 +196,8 @@ class UseSmileIDSampleCatalogueStore(
         UseSmileIDSampleCatalogue.Failed("Timed out after $timeout")
     } catch (cancelled: CancellationException) {
         throw cancelled
+    } catch (refused: UseSmileIDSampleCatalogueHttpException) {
+        UseSmileIDSampleCatalogue.Failed(refused.message.orEmpty(), UseSmileIDSampleCatalogueRules.advice(refused.status))
     } catch (@Suppress("TooGenericExceptionCaught") failure: Exception) {
         UseSmileIDSampleCatalogue.Failed(failure.message ?: failure::class.java.simpleName)
     }

@@ -78,6 +78,8 @@ final class UseSmileIDSampleAppState: ObservableObject {
 
   /// The expiry gate's hand-off, claimed by the scanner on arrival so leaving elsewhere drops it.
   @Published var interruptedRun: UseSmileIDSampleRunIntent?
+  /// The partner whose token the run in progress was started on; nil when unknown, as after a cold link.
+  var runPartnerId: String?
 
   /// The run the card reports: seeded from the launch, then the drawer's; see the type for what survives what.
   @Published var flowResult: UseSmileIDSampleFlowResult
@@ -289,15 +291,28 @@ final class UseSmileIDSampleAppState: ObservableObject {
   private static func catalogueSource(_ mode: UseSmileIDSampleCatalogueMode) -> UseSmileIDSampleCatalogueSource {
     switch mode {
     case .live:
-      return UseSmileIDSampleCatalogueApi()
+      UseSmileIDSampleSessionAwareCatalogueSource(live: UseSmileIDSampleCatalogueApi(), fixture: fixtureSource())
     case .unreachable:
-      return UseSmileIDSampleUnreachableCatalogueSource()
+      UseSmileIDSampleUnreachableCatalogueSource()
     case .fixture:
-      let fixture = Bundle.main.url(forResource: "catalogue-fixture", withExtension: "json")
-        .flatMap { try? Data(contentsOf: $0) }
-        .flatMap { try? UseSmileIDSampleFixtureCatalogueSource(fixture: $0) }
-      // A build without the bundled file fails every list, loudly, rather than falling back to the network.
-      return fixture.map { $0 as UseSmileIDSampleCatalogueSource } ?? UseSmileIDSampleUnreachableCatalogueSource()
+      fixtureSource()
+    }
+  }
+
+  /// A build without the bundled file fails every list, loudly, rather than falling back to the network.
+  private static func fixtureSource() -> UseSmileIDSampleCatalogueSource {
+    let fixture = Bundle.main.url(forResource: "catalogue-fixture", withExtension: "json")
+      .flatMap { try? Data(contentsOf: $0) }
+      .flatMap { try? UseSmileIDSampleFixtureCatalogueSource(fixture: $0) }
+    return fixture.map { $0 as UseSmileIDSampleCatalogueSource } ?? UseSmileIDSampleUnreachableCatalogueSource()
+  }
+
+  /// Starts `product`'s lists if nothing has; Enhanced Document Verification's also needs the session's own list.
+  func ensureCatalogue(_ product: UseSmileIDSampleProduct?) {
+    guard let product, product.catalogueFamily != nil else { return }
+    catalogue.ensure(environment: environment, locale: catalogueLocale)
+    if product == .enhancedDocumentVerification {
+      catalogue.ensureEnabled(environment: environment, locale: catalogueLocale, session: session)
     }
   }
 
@@ -399,6 +414,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     idDetails = UseSmileIDSampleIdDetails()
     if product.catalogueFamily != nil, sessionActive {
       catalogue.begin(environment: environment, locale: catalogueLocale)
+      ensureCatalogue(product)
     }
   }
 

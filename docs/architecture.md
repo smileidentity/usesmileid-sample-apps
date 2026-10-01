@@ -124,10 +124,10 @@ The countries, ID types and documents on the ID form come from the Smile ID API 
 partner's app would get them. A type added on the server appears on the next run with no app update, and
 a type removed disappears. Nothing is bundled, and nothing is cached on disk.
 
-**Two calls, in the shell.** `GET /v3/services/supported_id_types` (every country) and
-`GET /v3/services/supported_documents?locale=…` are both unauthenticated, so no token is
-sent. `sample-ui` defines the seam, `UseSmileIDSampleCatalogueSource`, which returns the raw response
-bodies. Each shell implements it with the HTTP client it already uses for status refresh, so the network
+**Two calls, in the shell, and a third for one product.** `GET /v3/services/supported_id_types` (every
+country) and `GET /v3/services/supported_documents?locale=…` are both unauthenticated, so no token is
+sent. Enhanced Document Verification also asks `GET /v3/services/config` (see below). `sample-ui` defines
+the seam, `UseSmileIDSampleCatalogueSource`, which returns the raw response bodies. Each shell implements it with the HTTP client it already uses for status refresh, so the network
 stays out of the shared UI and no dependency is added. The KYC country picker needs names that only
 `supported_documents` carries, which is why both lists are fetched together rather than per country.
 
@@ -148,7 +148,36 @@ reaches it. Leaving the form drops anything in flight, and the next run asks aga
 takes longer than 10 seconds, is an error state with Retry, never a fallback list: without the network the
 SDK cannot submit the job anyway.
 
-**The rules are data.** Three pure functions run on whatever the server returns, and
+**Enhanced Document Verification lists the partner's own documents.** The catalogue is the same for
+every partner, so it offers countries and documents a partner has not enabled, and a job for one of them
+is refused after the capture. For this product the form also asks
+`GET /v3/services/config?product=enhanced_document_verification&locale=…`, with the session's token in the
+`SmileID-Token` header, and lists only what `products.enhanced_document_verification` names for each
+country. A token that binds a country or ID type narrows that answer on the server.
+
+- **The configuration decides what is listed; `supported_documents` still describes it.** A configuration
+  entry carries a code and a label, but not `has_back`, the sub-types or a country's name, and Capture as
+  needs the first two to photograph the document correctly. So each enabled code takes its rows from the
+  `supported_documents` document with the same code, and the configuration only decides which ones
+  appear, in its order. An enabled code the catalogue does not list still shows, under its configuration
+  label, as a two-sided `GenericDocument`. A country the catalogue does not name shows by its code.
+- **Once per session.** The answer belongs to the partner, not the run, so it is kept until the session
+  changes. Linking another session, including from the form's own token button, asks again. So does a
+  change of locale, because the labels are translated. The two catalogue calls still run on every run.
+- **A simulated session reads the fixture.** Simulate mints an unsigned token, and the server refuses it
+  with a 401. In `live` mode, a token whose header says `alg: none` gets the configuration from
+  `spec/catalogue-fixture.json` instead. The catalogue calls still go to the network. A scanned token always
+  asks the server.
+- **A refusal names its reason.** A 401 (the token was refused) and a 403 (the partner is not allowed
+  there, for example production is not enabled, or the network is not allowed) each put their own line
+  under the error state's Retry. Any other failure keeps the default line. The error state never becomes
+  an empty list. `spec/catalogue-rules.json` → `failures` holds the exact lines.
+- **No per-ID-type field rules yet.** For this product, each entry's `fields` lists the two names and the
+  two contacts. The phone rule matches `spec/contact-rules.json`, which every form already applies. At
+  least one contact is already the SDK's user-details rule. There is no ID number field to check, because
+  the product submits none.
+
+**The rules are data.** Five pure functions run on whatever the server returns, and
 `spec/catalogue-rules.json` holds their cases so all four apps check the same ones:
 
 - **ID types.** A KYC type is listed only when the form can supply every entry in its `required_fields`:
@@ -160,7 +189,9 @@ SDK cannot submit the job anyway.
   `display_standalone`, such as South Africa's Green Book, is its own row after its parent, and submits
   the parent's code. On Enhanced Document Verification the Green Book row is left out, because the SDK
   refuses that document on that product.
-- **Countries.** The document products offer every country with a listed document. The KYC products offer
+- **Enabled documents and countries.** Enhanced Document Verification's rows and countries, as described
+  above.
+- **Countries.** Document Verification offers every country with a listed document. The KYC products offer
   every country with a listed ID type, named from `supported_documents`; one it does not name is shown by
   its code, after the named ones. Residency Document Verification offers every country that lists a
   `PASSPORT`, the passport's issuing country.

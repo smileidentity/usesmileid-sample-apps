@@ -17,6 +17,135 @@ void main() {
     decode: useSmileIDSampleDecodeInline,
   );
 
+  UseSmileIDSampleTokenSession session(String id) =>
+      UseSmileIDSampleTokenSession(
+        id: id,
+        token: 'token-$id',
+        issuedAtMillis: 0,
+        expiresAtMillis: 1,
+        bindings: const UseSmileIDSampleTokenBindings(),
+        environment: sandbox,
+      );
+
+  const UseSmileIDSampleProduct edv =
+      UseSmileIDSampleProduct.enhancedDocumentVerification;
+
+  List<String> codes<T>(
+    UseSmileIDSampleCatalogue<T> list,
+    String Function(T) id,
+  ) => (list as UseSmileIDSampleCatalogueReady<T>).items.map(id).toList();
+
+  testWidgets(
+    'enhanced document verification offers only what the partner enabled',
+    (WidgetTester tester) async {
+      final _CountingSource source = _CountingSource();
+      final UseSmileIDSampleCatalogueStore store = storeOver(source)
+        ..begin(sandbox, 'en-GB')
+        ..ensureEnabled(sandbox, 'en-GB', session('a'));
+      addTearDown(store.dispose);
+      await tester.pump();
+
+      expect(source.lastToken, 'token-a');
+      expect(
+        codes(
+          store.countries(
+            UseSmileIDSampleCatalogueFamily.document,
+            product: edv,
+          ),
+          (UseSmileIDSampleCountry it) => it.code,
+        ),
+        <String>['KE', 'NG'],
+      );
+      expect(
+        codes(
+          store.countries(UseSmileIDSampleCatalogueFamily.document),
+          (UseSmileIDSampleCountry it) => it.code,
+        ),
+        <String>['GH', 'KE', 'NG', 'ZA'],
+      );
+      expect(
+        codes(
+          store.documents('KE', product: edv),
+          (UseSmileIDSampleDocument it) => it.id,
+        ),
+        <String>['IDENTITY_CARD', 'PASSPORT'],
+      );
+    },
+  );
+
+  testWidgets(
+    'the partner\'s list is kept per session, and a relink asks again',
+    (WidgetTester tester) async {
+      final _CountingSource source = _CountingSource();
+      final UseSmileIDSampleCatalogueStore store = storeOver(source)
+        ..ensureEnabled(sandbox, 'en-GB', session('a'));
+      addTearDown(store.dispose);
+      await tester.pump();
+      store
+        ..stop()
+        ..begin(sandbox, 'en-GB')
+        ..ensureEnabled(sandbox, 'en-GB', session('a'));
+      await tester.pump();
+
+      expect(source.configCalls, 1);
+
+      store.ensureEnabled(sandbox, 'en-GB', session('b'));
+      await tester.pump();
+
+      expect(source.configCalls, 2);
+      expect(source.lastToken, 'token-b');
+    },
+  );
+
+  testWidgets('a refused token names the reason, and retry asks again', (
+    WidgetTester tester,
+  ) async {
+    for (final int status in <int>[401, 403]) {
+      final _CountingSource source = _CountingSource()..refusing = status;
+      final UseSmileIDSampleCatalogueStore store = storeOver(source)
+        ..begin(sandbox, 'en-GB')
+        ..ensureEnabled(sandbox, 'en-GB', session('a'));
+      addTearDown(store.dispose);
+      await tester.pump();
+
+      final UseSmileIDSampleCatalogue<UseSmileIDSampleCountry> failed = store
+          .countries(UseSmileIDSampleCatalogueFamily.document, product: edv);
+      expect(
+        (failed as UseSmileIDSampleCatalogueFailed<UseSmileIDSampleCountry>)
+            .advice,
+        UseSmileIDSampleCatalogueRules.advice(status),
+      );
+
+      source.refusing = null;
+      store.retry();
+      await tester.pump();
+
+      expect(
+        store.countries(UseSmileIDSampleCatalogueFamily.document, product: edv),
+        isA<UseSmileIDSampleCatalogueReady<UseSmileIDSampleCountry>>(),
+      );
+    }
+  });
+
+  testWidgets('no network on the partner\'s list is the default error', (
+    WidgetTester tester,
+  ) async {
+    final _CountingSource source = _CountingSource()..offline = true;
+    final UseSmileIDSampleCatalogueStore store = storeOver(source)
+      ..ensureEnabled(sandbox, 'en-GB', session('a'));
+    addTearDown(store.dispose);
+    await tester.pump();
+
+    expect(
+      (store.enabled
+              as UseSmileIDSampleCatalogueFailed<
+                UseSmileIDSampleApiEnabledCountry
+              >)
+          .advice,
+      UseSmileIDSampleCatalogueRules.defaultAdvice,
+    );
+  });
+
   testWidgets('a product tap fetches both lists, and the rules apply', (
     WidgetTester tester,
   ) async {
@@ -172,6 +301,10 @@ class _CountingSource implements UseSmileIDSampleCatalogueSource {
   final bool hang;
   int idTypeCalls = 0;
   int documentCalls = 0;
+  int configCalls = 0;
+  String? lastToken;
+  int? refusing;
+  bool offline = false;
   final List<String> locales = <String>[];
 
   void release() => _released.complete();
@@ -200,5 +333,25 @@ class _CountingSource implements UseSmileIDSampleCatalogueSource {
     documentCalls++;
     locales.add(locale);
     return _answer(() => _fixture.supportedDocuments(environment, locale));
+  }
+
+  @override
+  Future<String> servicesConfig(
+    UseSmileIDSampleEnvironment environment,
+    String token,
+    String locale,
+  ) {
+    configCalls++;
+    lastToken = token;
+    final int? status = refusing;
+    if (status != null) {
+      return Future<String>.error(
+        UseSmileIDSampleCatalogueHttpException(status),
+      );
+    }
+    if (offline) {
+      return Future<String>.error(StateError('offline'));
+    }
+    return _answer(() => _fixture.servicesConfig(environment, token, locale));
   }
 }

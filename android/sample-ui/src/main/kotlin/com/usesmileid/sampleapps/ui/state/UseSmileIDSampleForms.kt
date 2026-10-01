@@ -69,6 +69,19 @@ class UseSmileIDSampleForms(
         idDetails = idDetails.copy(document = document, captureAsOverride = idDetails.captureAsOverride.takeIf { keep })
     }
 
+    /** A relinked partner may not enable what was picked for the last one, so a pick its lists lack is dropped; a list still loading keeps it. */
+    fun keepOnlyEnabled(countries: List<UseSmileIDSampleCountry>?, documents: List<UseSmileIDSampleDocument>?) {
+        val country = idDetails.country ?: return
+        if (countries != null && countries.none { it.code == country.code }) {
+            idDetails = idDetails.copy(country = null, idType = null, document = null, captureAsOverride = null)
+            return
+        }
+        val document = idDetails.document ?: return
+        if (documents != null && documents.none { it.id == document.id }) {
+            idDetails = idDetails.copy(document = null, captureAsOverride = null)
+        }
+    }
+
     /** A link can open [product]'s form holding a row it does not list; the row and its override go. */
     fun keepDocumentListedOn(product: UseSmileIDSampleProduct) {
         if (idDetails.document?.isListedOn(product) == false) {

@@ -23,7 +23,9 @@ struct UseSmileIDSampleDestination: View {
         ),
         onProduct: { product in
           app.fillFormForRun(product)
-          router.open(app.entry(for: product))
+          let entry = app.entry(for: product)
+          app.runPartnerId = entry == .scanToken ? nil : app.session?.partnerId
+          router.open(entry)
         },
         onProfile: { router.sheet = .profileSwitch },
         // Pushed, not opened: linking pops back to where the scan started.
@@ -60,9 +62,7 @@ struct UseSmileIDSampleDestination: View {
       .onAppear {
         app.fillFormOnEntry()
         // A deep link to this form skips the product tap, so the lists start here if nothing has.
-        if Self.product(productId)?.catalogueFamily != nil {
-          app.catalogue.ensure(environment: app.environment, locale: app.catalogueLocale)
-        }
+        app.ensureCatalogue(Self.product(productId))
       }
     case .idDetailsForm(let productId):
       KycIdFormScreen(
@@ -78,8 +78,15 @@ struct UseSmileIDSampleDestination: View {
       )
       .navigationBarHidden(true)
       .onAppear {
-        app.catalogue.ensure(environment: app.environment, locale: app.catalogueLocale)
+        app.ensureCatalogue(Self.product(productId))
         Self.product(productId).map { app.idDetails.keepDocumentListed(on: $0) }
+        keepOnlyEnabled(productId)
+      }
+      .onChange(of: app.session?.id) { _ in
+        app.ensureCatalogue(Self.product(productId))
+      }
+      .onChange(of: enabledLists(productId)) { _ in
+        keepOnlyEnabled(productId)
       }
     case .verificationDetails(let jobId):
       UseSmileIDSampleVerificationDetailsHost(jobId: jobId)
@@ -167,7 +174,7 @@ struct UseSmileIDSampleDestination: View {
     let loading: Bool = switch (app.idDetails.country?.code, family) {
     case (nil, _): false
     case (let code?, .kyc): app.catalogue.idTypes(code).isLoading
-    case (let code?, .document): app.catalogue.documents(code).isLoading
+    case (let code?, .document): app.catalogue.documents(code, product: Self.product(productId) ?? .documentVerification).isLoading
     case (_?, .passport): false
     }
     return .init(
@@ -177,6 +184,24 @@ struct UseSmileIDSampleDestination: View {
       countryListLoading: loading,
       captureBothSides: app.settings.captureBothSides
     )
+  }
+
+  /// Enhanced Document Verification's settled lists; nil for any other product or a list not yet settled.
+  private func enabledLists(_ productId: String) -> EnabledLists? {
+    guard Self.product(productId) == .enhancedDocumentVerification else { return nil }
+    let countries = app.catalogue.countries(.document, product: .enhancedDocumentVerification).settledItems
+    let documents = app.idDetails.country.flatMap { app.catalogue.documents($0.code, product: .enhancedDocumentVerification).settledItems }
+    return EnabledLists(countries: countries, documents: documents)
+  }
+
+  private func keepOnlyEnabled(_ productId: String) {
+    guard let lists = enabledLists(productId) else { return }
+    app.idDetails.keepOnlyEnabled(countries: lists.countries, documents: lists.documents)
+  }
+
+  private struct EnabledLists: Equatable {
+    let countries: [UseSmileIDSampleCountry]?
+    let documents: [UseSmileIDSampleDocument]?
   }
 
   private static func product(_ id: String) -> UseSmileIDSampleProduct? {

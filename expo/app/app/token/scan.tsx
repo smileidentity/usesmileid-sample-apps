@@ -2,6 +2,7 @@ import {
   ScanTokenScreen,
   SMILE_ID_PORTAL_URL,
   smileIDSampleProducts,
+  smileIDSampleResumesInFlow,
   smileIDSampleSessionExpired,
   smileIDSampleSessionHasExpired,
   smileIDSampleTokenSession,
@@ -94,7 +95,10 @@ export default function ScanToken() {
       return;
     }
     const product = smileIDSampleProducts.find((candidate) => candidate.id === resuming.productId);
-    if (resuming.resumeAt === 'firstStep' && product !== undefined) {
+    const store = useSmileIDSampleSessionStore.getState();
+    const intoFlow = smileIDSampleResumesInFlow(resuming, store.runPartnerId, current.partnerId);
+    store.recordRunPartner(current.partnerId);
+    if (!intoFlow && product !== undefined) {
       router.replace(smileIDSampleFirstStepFor(product, smileIDSampleLiveBindingsNow(scenario)));
     } else {
       router.replace(`/flow/${resuming.productId}/run`);
@@ -103,7 +107,10 @@ export default function ScanToken() {
 
   const onLink = (session: UseSmileIDSampleTokenSession) => {
     link(session).catch(() => undefined);
-    if (resuming === null) back();
+    if (resuming === null) {
+      useSmileIDSampleSessionStore.getState().recordRunPartner(session.partnerId);
+      back();
+    }
   };
 
   return (

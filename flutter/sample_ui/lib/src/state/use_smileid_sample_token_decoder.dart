@@ -241,6 +241,15 @@ abstract final class UseSmileIDSampleTokenDecoder {
     UseSmileIDSampleTokenRejected() => null,
   };
 
+  /// Whether the header's `alg` is `none`, as every simulated scan's is; the server refuses such a token.
+  static bool isUnsigned(String token) {
+    final String? header = _decodeSegment(token.trim().split('.').first);
+    final Object? parsed = header == null ? null : _parse(header);
+    return parsed is Map<String, Object?> &&
+        parsed['alg'] is String &&
+        (parsed['alg']! as String).toLowerCase() == 'none';
+  }
+
   /// The token's `jti`, else a digest; never a prefix.
   static String _handle(String token, String? jti) =>
       jti != null && jti.trim().isNotEmpty

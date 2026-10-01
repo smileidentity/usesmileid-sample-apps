@@ -48,6 +48,22 @@ public struct UseSmileIDSampleIdDetails: Equatable, Sendable {
     self.document = document
   }
 
+  /// A relinked partner may not enable what was picked for the last one, so a pick its lists lack is dropped; a list still loading keeps it.
+  public mutating func keepOnlyEnabled(countries: [UseSmileIDSampleCountry]?, documents: [UseSmileIDSampleDocument]?) {
+    guard let country else { return }
+    if let countries, !countries.contains(where: { $0.code == country.code }) {
+      self.country = nil
+      idType = nil
+      document = nil
+      captureAsOverride = nil
+      return
+    }
+    if let document, let documents, !documents.contains(where: { $0.id == document.id }) {
+      self.document = nil
+      captureAsOverride = nil
+    }
+  }
+
   /// A link can open `product`'s form holding a row it does not list; the row and its override go.
   public mutating func keepDocumentListed(on product: UseSmileIDSampleProduct) {
     if document?.isListed(on: product) == false {

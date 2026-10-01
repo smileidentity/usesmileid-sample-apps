@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 import {
   smileIDSampleDocumentId,
+  smileIDSampleIdDetailsWithEnabledOnly,
   smileIDSampleDocumentListedOn,
   smileIDSampleIdDetailsDefaults,
   type UseSmileIDSampleCountry,
@@ -40,6 +41,11 @@ type Actions = {
   setDocument: (document: UseSmileIDSampleDocument) => void;
   /// A link can open `productId`'s form holding a row it does not list; the row and its override go.
   keepDocumentListedOn: (productId: string) => void;
+  /// Drops picks a relinked partner's lists lack; nothing changes while a list loads.
+  keepOnlyEnabled: (
+    countries: readonly UseSmileIDSampleCountry[] | null,
+    documents: readonly UseSmileIDSampleDocument[] | null,
+  ) => void;
   /// Null is Match document.
   setCaptureAs: (captureAs: UseSmileIDSampleCaptureAs | null) => void;
   /// Keeps what the generic-document sheet built, which also selects Generic document.
@@ -93,6 +99,12 @@ export const useSmileIDSampleFormsStore = create<State & Actions>((set) => ({
         ? state
         : { idDetails: { ...state.idDetails, document: null, captureAsOverride: null } },
     ),
+
+  keepOnlyEnabled: (countries, documents) =>
+    set((state) => {
+      const kept = smileIDSampleIdDetailsWithEnabledOnly(state.idDetails, countries, documents);
+      return kept === state.idDetails ? state : { idDetails: kept };
+    }),
 
   setCaptureAs: (captureAs) => set((state) => ({ idDetails: { ...state.idDetails, captureAsOverride: captureAs } })),
 

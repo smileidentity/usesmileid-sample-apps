@@ -41,6 +41,9 @@ class UseSmileIDSampleInterruptedRun {
     var pending: UseSmileIDSampleRunIntent? = null
         private set
 
+    /** The partner whose token the run in progress was started on; null when unknown, as after a cold link. */
+    var runPartnerId: String? = null
+
     fun send(intent: UseSmileIDSampleRunIntent) {
         pending = intent
     }
@@ -50,3 +53,7 @@ class UseSmileIDSampleInterruptedRun {
         pending = null
     }
 }
+
+/** Straight back into the SDK only on the partner the run was started for; any other goes back through its first step. */
+fun UseSmileIDSampleRunIntent.resumesInFlow(runPartnerId: String?, linkedPartnerId: String?): Boolean =
+    resumeAt == UseSmileIDSampleResumePoint.Flow && runPartnerId != null && runPartnerId == linkedPartnerId

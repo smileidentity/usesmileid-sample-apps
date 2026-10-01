@@ -21,6 +21,7 @@ import {
   smileIDSampleCatalogueEnvironment,
   smileIDSampleCatalogueLocale,
   smileIDSampleCatalogueStore,
+  smileIDSampleEnsureEnabled,
 } from '../../src/catalogue/use-smile-id-sample-catalogue';
 import { useLaunchArgs } from '../../src/use-smile-id-sample-launch';
 import { useSmileIDSampleListInset } from '../../src/use-smile-id-sample-list-inset';
@@ -52,9 +53,9 @@ export default function Products() {
         const entry = smileIDSampleEntryFor(product, route, scenario);
         // Fetched ahead, so the list is usually there by the time the picker opens.
         if (entry !== '/token/scan' && smileIDSampleCatalogueFamily(product) !== null) {
-          smileIDSampleCatalogueStore(catalogue)
-            .getState()
-            .begin(smileIDSampleCatalogueEnvironment(live), smileIDSampleCatalogueLocale());
+          const store = smileIDSampleCatalogueStore(catalogue);
+          store.getState().begin(smileIDSampleCatalogueEnvironment(live), smileIDSampleCatalogueLocale());
+          smileIDSampleEnsureEnabled(store, product.id, live);
         }
         router.push(entry);
       }}

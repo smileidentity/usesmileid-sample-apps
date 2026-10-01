@@ -170,13 +170,55 @@ class _UseSmileIDSampleKycFormTabState
     super.dispose();
   }
 
-  /// Also on every picker: a sheet link's form stacks above this one and stops the run on its way out.
-  void _ensureCatalogue() => _catalogue.ensure(
-    useSmileIDSampleCatalogueEnvironment(
-      ref.read(useSmileIDSampleSessionProvider).live,
-    ),
-    useSmileIDSampleCatalogueLocale(),
-  );
+  /// Also on every picker: a sheet link's form stacks above this one and stops the run, and the token button relinks.
+  void _ensureCatalogue() {
+    final UseSmileIDSampleTokenSession? live = ref
+        .read(useSmileIDSampleSessionProvider)
+        .live;
+    _catalogue.ensure(
+      useSmileIDSampleCatalogueEnvironment(live),
+      useSmileIDSampleCatalogueLocale(),
+    );
+    useSmileIDSampleEnsureEnabled(
+      _catalogue,
+      _productFor(widget.productId),
+      live,
+    );
+  }
+
+  /// After the frame, since a notifier cannot change while this builds; nothing is scheduled when every pick is still enabled.
+  void _keepOnlyEnabled(UseSmileIDSampleIdDetails details) {
+    final (List<UseSmileIDSampleCountry>?, List<UseSmileIDSampleDocument>?)
+    lists = _enabledLists(details);
+    if (identical(details.withEnabledOnly(lists.$1, lists.$2), details)) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      // Read again: the first frame's callback may have just reset a previous session's list.
+      final UseSmileIDSampleFormsNotifier forms = ref.read(
+        useSmileIDSampleFormsProvider.notifier,
+      );
+      final (List<UseSmileIDSampleCountry>?, List<UseSmileIDSampleDocument>?)
+      fresh = _enabledLists(ref.read(useSmileIDSampleFormsProvider).idDetails);
+      forms.keepOnlyEnabled(fresh.$1, fresh.$2);
+    });
+  }
+
+  (List<UseSmileIDSampleCountry>?, List<UseSmileIDSampleDocument>?)
+  _enabledLists(UseSmileIDSampleIdDetails details) {
+    const UseSmileIDSampleProduct product =
+        UseSmileIDSampleProduct.enhancedDocumentVerification;
+    final String? code = details.country?.code;
+    return (
+      _catalogue.countries(_family, product: product).settledItems,
+      code == null
+          ? null
+          : _catalogue.documents(code, product: product).settledItems,
+    );
+  }
 
   /// A link can ask for a second-level sheet before its trigger could open; refused, not held until later.
   void _openFromLink(UseSmileIDSamplePicker asked) {
@@ -212,6 +254,12 @@ class _UseSmileIDSampleKycFormTabState
     final UseSmileIDSampleFormsNotifier edits = ref.read(
       useSmileIDSampleFormsProvider.notifier,
     );
+    ref.listen<String?>(
+      useSmileIDSampleSessionProvider.select(
+        (UseSmileIDSampleSessionRecord s) => s.live?.id,
+      ),
+      (String? _, String? _) => _ensureCatalogue(),
+    );
     void back() => useSmileIDSampleBack(
       context,
       UseSmileIDSampleRoutes.consentDetailsForm(widget.productId),
@@ -222,6 +270,9 @@ class _UseSmileIDSampleKycFormTabState
         listenable: _catalogue,
         builder: (BuildContext context, Widget? _) {
           final String? country = details.country?.code;
+          if (product == UseSmileIDSampleProduct.enhancedDocumentVerification) {
+            _keepOnlyEnabled(details);
+          }
           return UseSmileIDSampleKycFormScreen(
             title: product?.label ?? widget.productId,
             family: _family,
@@ -232,7 +283,14 @@ class _UseSmileIDSampleKycFormTabState
                   UseSmileIDSampleCatalogueFamily.kyc =>
                     _catalogue.idTypes(country).isLoading,
                   UseSmileIDSampleCatalogueFamily.document =>
-                    _catalogue.documents(country).isLoading,
+                    _catalogue
+                        .documents(
+                          country,
+                          product:
+                              product ??
+                              UseSmileIDSampleProduct.documentVerification,
+                        )
+                        .isLoading,
                   UseSmileIDSampleCatalogueFamily.passport => false,
                 },
             captureBothSides: ref
@@ -286,7 +344,10 @@ class _UseSmileIDSampleKycFormTabState
     UseSmileIDSampleTestIds.countrySheet,
     (BuildContext sheetContext, UseSmileIDSampleIdDetails details) =>
         UseSmileIDSampleCountryPickerSheet(
-          catalogue: _catalogue.countries(_family),
+          catalogue: _catalogue.countries(
+            _family,
+            product: _productFor(widget.productId),
+          ),
           selected: details.country,
           onRetry: _catalogue.retry,
           onSelect: (UseSmileIDSampleCountry country) {

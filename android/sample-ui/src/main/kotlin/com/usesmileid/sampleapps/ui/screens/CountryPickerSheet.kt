@@ -96,7 +96,7 @@ internal fun <T> CataloguePicker(
         loading -> Unit
         catalogue is UseSmileIDSampleCatalogue.Failed -> UseSmileIDSampleEmptyState(
             text = "Couldn't load $what",
-            supportingText = "Check your connection, then try again",
+            supportingText = catalogue.advice,
             testId = UseSmileIDSampleTestIds.CATALOGUE_ERROR,
             onRetry = onRetry,
             retryTestId = UseSmileIDSampleTestIds.CATALOGUE_RETRY,

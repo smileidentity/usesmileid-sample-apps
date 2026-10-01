@@ -17,7 +17,7 @@ import type {
 /// spec/catalogue-fixture.json, as the fixture source hands it over.
 export const catalogueFixture = JSON.parse(
   readFileSync(join(__dirname, '..', '..', '..', 'spec', 'catalogue-fixture.json'), 'utf8'),
-) as { supported_id_types: unknown; supported_documents: unknown };
+) as { supported_id_types: unknown; supported_documents: unknown; services_config: unknown };
 
 /// Both responses, read through the decoder the store runs.
 export const catalogueData: UseSmileIDSampleCatalogueData = {

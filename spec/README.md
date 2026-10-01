@@ -31,8 +31,8 @@ Rules:
 | `design-tokens.json` | The design-system source, per-platform consumption, and the verified deltas between the design file and the token source | **filled 2026-08-12** |
 | `bundled-assets.json` | Third-party assets bundled in the tree (the DM Sans font, the Material Symbols icons), which every licences screen lists alongside the registry dependencies | settled |
 | `store-art.json` | The made-up organisation, initials and session the store screenshots show, read by the Android and iOS store-art tests | settled |
-| `catalogue-fixture.json` | The country, ID-type and document lists a device flow sees under `catalogue=fixture`, in the API's response shape. A UI test input of about a dozen rows, not a copy of the API | added 2026-09-28 |
-| `catalogue-rules.json` | Test cases for turning an API response into the form's rows: which ID types the form can satisfy, repeated types, sub-types, the countries each product offers, and how "Capture as" becomes `DocumentCaptureConfig` | added 2026-09-28 |
+| `catalogue-fixture.json` | The country, ID-type and document lists a device flow sees under `catalogue=fixture` or on a simulated session, in the API's response shape, including the partner configuration Enhanced Document Verification reads. A UI test input of about a dozen rows, not a copy of the API | added 2026-09-28 |
+| `catalogue-rules.json` | Test cases for turning an API response into the form's rows: which ID types the form can satisfy, repeated types, sub-types, the countries each product offers, the partner's enabled documents, the error line, and how "Capture as" becomes `DocumentCaptureConfig` | added 2026-09-28 |
 | `id-number-hints.json` | Test cases for the ID-number hint computed from a type's regex, and the regexes every platform's engine must compile | added 2026-09-28 |
 | `contact-rules.json` | The email and phone checks the forms run before Continue, mirroring the v3 API's schema, and the value each submits | added 2026-09-30 |
 

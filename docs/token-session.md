@@ -30,7 +30,8 @@ the nav bar's Token button. Then:
 - **Simulate** a scan with a fixture token. It is marked as simulated, and no real partner exists behind it.
 
 A real token comes from the Smile ID Portal, under Security settings. The sheet links there and opens
-it in the browser, where the Portal sign-in already lives.
+it in the browser, where the Portal sign-in already lives. The link is a phrase, not a printed URL,
+because a URL breaks mid-word on a narrow phone at the largest text size.
 
 The app decodes the token and refuses it if the segments, `iat`/`exp` or `api_url` do not read. The
 refusal names the claim that failed, never a value.
@@ -47,6 +48,10 @@ refusal names the claim that failed, never a value.
 
 So **nothing can be prefilled from a token.** A form shows a bound field as *Provided by token*, not
 as a value.
+
+The token also says **who the partner is**, which is how Enhanced Document Verification's form lists only
+the documents that partner has enabled (`GET /v3/services/config`, see
+[`docs/architecture.md`](architecture.md) §7). A simulated session reads that list from the fixture.
 
 ## 3. What the token lets the app skip
 
@@ -85,9 +90,13 @@ the processing screen, which looks abrupt and is correct: there is nothing left 
   before any form. A fresh scan resumes at the product's first step, worked out again from the new
   token's bindings.
 - **It runs again before the SDK.** A session that runs out while someone fills the forms sends the run
-  to the scanner, and a fresh scan goes straight back into the SDK. No run reaches the builder without a
+  to the scanner. A fresh scan for the same partner goes straight back into the SDK; any other partner, or
+  one the app cannot tell (a simulated token names none), goes back through the product's first step,
+  because the new partner may not enable what was picked. No run reaches the builder without a
   session: only the refresh scenarios (`expiredToken`, `badRefresh`) submit the fixture token, because a
   scanned token has no refresh journey.
+- **A pick the new partner does not enable is dropped.** When Enhanced Document Verification's list
+  arrives for a relinked session, the ID form clears a chosen country or document the list leaves out.
 - **The scan sheet ignores taps until it has finished arriving.** Simulate sits where the nav bar's Token
   button was, so a double tap on Token would otherwise link a session nobody chose.
 - **Refreshing a stored job matches the partner, not the session.** A status read works with any
@@ -132,6 +141,8 @@ no camera of its own.
 - [ ] A token binding both names but no contact still asks for a contact.
 - [ ] A product tap with no live session opens the scanner, and a scan resumes at that product's first step.
 - [ ] An expired session sends the next run to the scanner, and a fresh scan resumes it.
+- [ ] Enhanced Document Verification lists only the partner's enabled countries, and a refused token
+      says so on the form.
 - [ ] Nothing in logs, the result card or the view hierarchy contains the token.
 
 ## Common issues

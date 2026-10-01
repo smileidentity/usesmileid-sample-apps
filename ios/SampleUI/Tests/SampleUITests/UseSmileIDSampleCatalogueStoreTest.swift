@@ -11,14 +11,29 @@ final class UseSmileIDSampleCatalogueStoreTest: XCTestCase {
     var failing = false
     var hanging = false
     var lastEnvironment: UseSmileIDSampleEnvironment?
+    var configCalls = 0
+    var lastToken: String?
+    var refusing: Int?
 
     init() throws {
       fixture = try UseSmileIDSampleFixtureCatalogueSource(fixture: UseSmileIDSampleCatalogueFixtures.json)
     }
 
-    func set(failing: Bool = false, hanging: Bool = false) {
+    func set(failing: Bool = false, hanging: Bool = false, refusing: Int? = nil) {
       self.failing = failing
       self.hanging = hanging
+      self.refusing = refusing
+    }
+
+    func servicesConfig(environment: UseSmileIDSampleEnvironment, token: String, locale: String) async throws -> Data {
+      configCalls += 1
+      lastToken = token
+      if let refusing {
+        throw UseSmileIDSampleCatalogueError.http(refusing)
+      }
+      return try await answer(environment) {
+        try await self.fixture.servicesConfig(environment: environment, token: token, locale: locale)
+      }
     }
 
     func supportedIdTypes(environment: UseSmileIDSampleEnvironment) async throws -> Data {
@@ -48,6 +63,86 @@ final class UseSmileIDSampleCatalogueStoreTest: XCTestCase {
     while !condition(), Date() < deadline {
       try? await Task.sleep(nanoseconds: 10000000)
     }
+  }
+
+  private func session(_ id: String) -> UseSmileIDSampleTokenSession {
+    UseSmileIDSampleTokenSession(
+      id: id,
+      token: "token-\(id)",
+      issuedAt: Date(timeIntervalSince1970: 0),
+      expiresAt: Date(timeIntervalSince1970: 1),
+      bindings: UseSmileIDSampleTokenBindings(),
+      environment: .sandbox
+    )
+  }
+
+  func testEnhancedDocumentVerificationOffersOnlyWhatThePartnerEnabled() async throws {
+    let source = try FakeSource()
+    let store = UseSmileIDSampleCatalogueStore(source: source)
+    store.begin(environment: .sandbox, locale: "en-GB")
+    store.ensureEnabled(environment: .sandbox, locale: "en-GB", session: session("a"))
+    await eventually(!store.countries(.document, product: .enhancedDocumentVerification).isLoading)
+    let token = await source.lastToken
+    XCTAssertEqual(token, "token-a")
+    guard case .ready(let enabled) = store.countries(.document, product: .enhancedDocumentVerification) else {
+      return XCTFail("the partner's countries did not load")
+    }
+    XCTAssertEqual(enabled.map(\.code), ["KE", "NG"])
+    guard case .ready(let all) = store.countries(.document) else { return XCTFail("countries did not load") }
+    XCTAssertEqual(all.map(\.code), ["GH", "KE", "NG", "ZA"])
+    guard case .ready(let kenya) = store.documents("KE", product: .enhancedDocumentVerification) else {
+      return XCTFail("Kenya's documents did not load")
+    }
+    XCTAssertEqual(kenya.map(\.id), ["IDENTITY_CARD", "PASSPORT"])
+  }
+
+  func testThePartnersListIsKeptPerSessionAndARelinkAsksAgain() async throws {
+    let source = try FakeSource()
+    let store = UseSmileIDSampleCatalogueStore(source: source)
+    store.ensureEnabled(environment: .sandbox, locale: "en-GB", session: session("a"))
+    await eventually(store.enabled.isReady)
+    store.stop()
+    store.begin(environment: .sandbox, locale: "en-GB")
+    store.ensureEnabled(environment: .sandbox, locale: "en-GB", session: session("a"))
+    var calls = await source.configCalls
+    XCTAssertEqual(calls, 1, "a new run on the same session must not ask again")
+    store.ensureEnabled(environment: .sandbox, locale: "en-GB", session: session("b"))
+    await eventually(store.enabled.isReady)
+    calls = await source.configCalls
+    let token = await source.lastToken
+    XCTAssertEqual(calls, 2)
+    XCTAssertEqual(token, "token-b")
+  }
+
+  func testARefusedTokenNamesTheReasonAndRetryAsksAgain() async throws {
+    for status in [401, 403] {
+      let source = try FakeSource()
+      await source.set(refusing: status)
+      let store = UseSmileIDSampleCatalogueStore(source: source)
+      store.begin(environment: .production, locale: "en-GB")
+      store.ensureEnabled(environment: .production, locale: "en-GB", session: session("a"))
+      await eventually(store.countries(.document, product: .enhancedDocumentVerification).isFailed)
+      guard case .failed(_, let advice) = store.countries(.document, product: .enhancedDocumentVerification) else {
+        return XCTFail("\(status) did not fail")
+      }
+      XCTAssertEqual(advice, UseSmileIDSampleCatalogueRules.advice(status: status))
+      await source.set()
+      store.retry()
+      await eventually(store.enabled.isReady)
+      guard case .ready = store.countries(.document, product: .enhancedDocumentVerification) else {
+        return XCTFail("retry did not load")
+      }
+    }
+  }
+
+  func testNoNetworkOnThePartnersListIsTheDefaultError() async throws {
+    let source = try FakeSource()
+    await source.set(failing: true)
+    let store = UseSmileIDSampleCatalogueStore(source: source)
+    store.ensureEnabled(environment: .sandbox, locale: "en-GB", session: session("a"))
+    await eventually(store.enabled.isFailed)
+    guard case .failed(_, let advice) = store.enabled else { return XCTFail("offline did not fail") }
+    XCTAssertEqual(advice, UseSmileIDSampleCatalogueRules.defaultAdvice)
   }
 
   func testAProductTapFetchesBothListsAhead() async throws {

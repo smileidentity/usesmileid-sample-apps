@@ -1,6 +1,8 @@
 import {
   KycIdFormScreen,
+  smileIDSampleCatalogueCountriesOf,
   smileIDSampleCatalogueDocumentsOf,
+  smileIDSampleSettledItems,
   smileIDSampleCatalogueFamily,
   smileIDSampleCatalogueIdTypesOf,
   smileIDSampleLiveSession,
@@ -8,17 +10,31 @@ import {
   useSmileIDSampleFormsStore,
   useSmileIDSampleSessionStore,
   useSmileIDSampleSettingsStore,
+  type UseSmileIDSampleCatalogueFamily,
 } from '@smileid/sample-ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import {
   smileIDSampleCatalogueEnvironment,
   smileIDSampleCatalogueLocale,
   smileIDSampleCatalogueStore,
+  smileIDSampleEnsureEnabled,
 } from '../../../../src/catalogue/use-smile-id-sample-catalogue';
 import { useSmileIDSampleBack } from '../../../../src/use-smile-id-sample-back';
 import { useLaunchArgs } from '../../../../src/use-smile-id-sample-launch';
+
+const enabledListsOf = (
+  catalogue: Parameters<typeof smileIDSampleCatalogueCountriesOf>[0],
+  family: UseSmileIDSampleCatalogueFamily,
+  country: string | undefined,
+) => ({
+  countries: smileIDSampleSettledItems(smileIDSampleCatalogueCountriesOf(catalogue, family, 'enhancedDocumentVerification')),
+  documents:
+    country === undefined
+      ? null
+      : smileIDSampleSettledItems(smileIDSampleCatalogueDocumentsOf(catalogue, country, 'enhancedDocumentVerification')),
+});
 
 export default function IdDetailsForm() {
   const router = useRouter();
@@ -45,10 +61,31 @@ export default function IdDetailsForm() {
     return () => store.getState().stop();
   }, [store]);
 
+  const liveSessionId = useSmileIDSampleSessionStore(
+    (state) => smileIDSampleLiveSession(state, state.nowMillis)?.id ?? null,
+  );
+  useEffect(() => {
+    const sessions = useSmileIDSampleSessionStore.getState();
+    smileIDSampleEnsureEnabled(store, productId, smileIDSampleLiveSession(sessions, sessions.nowMillis));
+  }, [store, productId, liveSessionId]);
+
   // A link can open this form holding a row the product does not list.
   useEffect(() => {
     if (productId !== undefined) keepDocumentListedOn(productId);
   }, [productId, keepDocumentListedOn]);
+
+  const keepOnlyEnabled = useSmileIDSampleFormsStore((state) => state.keepOnlyEnabled);
+  const pickedCountry = details.country?.code;
+  const enabledLists = useMemo(
+    () => (productId === 'enhancedDocumentVerification' ? enabledListsOf(catalogue, family, pickedCountry) : null),
+    [catalogue, family, productId, pickedCountry],
+  );
+  useEffect(() => {
+    if (enabledLists === null) return;
+    // Read again: the effect above may have just reset a previous session's list.
+    const fresh = enabledListsOf(store.getState(), family, useSmileIDSampleFormsStore.getState().idDetails.country?.code);
+    keepOnlyEnabled(fresh.countries, fresh.documents);
+  }, [enabledLists, store, family, keepOnlyEnabled]);
 
   const country = details.country?.code;
   const countryList =

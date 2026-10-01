@@ -72,6 +72,44 @@ class UseSmileIDSampleCatalogueRulesSpecTest {
     }
 
     @Test
+    fun enabled_document_cases() = rules.cases("enabledDocuments").forEach { case ->
+        val (documents, enabled) = enabledInput(case)
+        val actual = UseSmileIDSampleCatalogueRules.enabledDocuments(documents, enabled, case.text("country"))
+            .map { listOf(it.id, it.code, it.subType, it.name, it.hasBack, it.format) }
+        val expected = case.list("expected").map {
+            listOf(
+                it.text("id"), it.text("code"), (it.members["subType"] as? TokenJson.Str)?.value, it.text("name"),
+                (it.members["hasBack"] as TokenJson.Bool).value, (it.members["format"] as TokenJson.Num).literal.toInt(),
+            )
+        }
+        assertEquals(case.text("name"), expected, actual)
+    }
+
+    @Test
+    fun enabled_country_cases() = rules.cases("enabledCountries").forEach { case ->
+        val (documents, enabled) = enabledInput(case)
+        val actual = UseSmileIDSampleCatalogueRules.enabledCountries(documents, enabled).map { it.code to it.name }
+        assertEquals(case.text("name"), case.list("expected").map { it.text("code") to it.text("name") }, actual)
+    }
+
+    @Test
+    fun failure_cases() {
+        val section = rules.section("failures")
+        assertEquals(section.text("default"), UseSmileIDSampleCatalogueRules.DEFAULT_ADVICE)
+        section.cases().forEach { case ->
+            val status = (case.members["status"] as? TokenJson.Num)?.literal?.toInt()
+            assertEquals("$status", case.text("supportingText"), UseSmileIDSampleCatalogueRules.advice(status))
+        }
+    }
+
+    private fun enabledInput(case: TokenJson.Obj) = when (val input = case.members.getValue("input")) {
+        is TokenJson.Str -> CatalogueFixtures.data.documents to CatalogueFixtures.enabled
+        else -> requireNotNull(
+            UseSmileIDSampleCatalogueJson.documents(encode((input as TokenJson.Obj).members.getValue("supported_documents"))),
+        ) to requireNotNull(UseSmileIDSampleCatalogueJson.enabledCountries(encode(input.members.getValue("services_config"))))
+    }
+
+    @Test
     fun capture_as_cases() = rules.cases("captureAs").forEach { case ->
         val name = case.text("name")
         val expected = case.members.getValue("expected") as TokenJson.Obj
@@ -134,7 +172,7 @@ class UseSmileIDSampleCatalogueRulesSpecTest {
 
     @Test
     fun every_section_has_cases() {
-        listOf("idTypes", "documents", "countries", "captureAs").forEach {
+        listOf("idTypes", "documents", "countries", "enabledDocuments", "enabledCountries", "failures", "captureAs").forEach {
             assertTrue("$it has no cases", rules.cases(it).isNotEmpty())
         }
     }

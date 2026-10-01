@@ -304,6 +304,38 @@ class UseSmileIDSampleIdDetails {
           idNumber: idNumber,
         );
 
+  /// A copy without picks a relinked partner's lists lack; a list still loading (null) keeps them, and so does an unchanged pick.
+  UseSmileIDSampleIdDetails withEnabledOnly(
+    List<UseSmileIDSampleCountry>? countries,
+    List<UseSmileIDSampleDocument>? documents,
+  ) {
+    final UseSmileIDSampleCountry? picked = country;
+    if (picked == null) {
+      return this;
+    }
+    if (countries != null &&
+        !countries.any(
+          (UseSmileIDSampleCountry it) => it.code == picked.code,
+        )) {
+      return UseSmileIDSampleIdDetails(
+        genericDocument: genericDocument,
+        idNumber: idNumber,
+      );
+    }
+    final UseSmileIDSampleDocument? row = document;
+    if (row != null &&
+        documents != null &&
+        !documents.any((UseSmileIDSampleDocument it) => it.id == row.id)) {
+      return UseSmileIDSampleIdDetails(
+        country: country,
+        idType: idType,
+        genericDocument: genericDocument,
+        idNumber: idNumber,
+      );
+    }
+    return this;
+  }
+
   /// A copy with the override replaced; null is Match document.
   UseSmileIDSampleIdDetails withCaptureAsOverride(
     UseSmileIDSampleCaptureAs? override,

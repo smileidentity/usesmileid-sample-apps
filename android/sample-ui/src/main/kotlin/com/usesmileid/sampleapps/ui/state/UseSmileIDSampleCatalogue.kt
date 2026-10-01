@@ -17,6 +17,14 @@ val UseSmileIDSampleProduct.catalogueFamily: UseSmileIDSampleCatalogueFamily?
     }
 
 /** One picker's list: still arriving, arrived, arrived with nothing the form can use, or failed. */
+/** The rows once the list has settled, an empty list for Empty; null while it loads or after it fails. */
+val <T> UseSmileIDSampleCatalogue<T>.settledItems: List<T>?
+    get() = when (this) {
+        is UseSmileIDSampleCatalogue.Ready -> items
+        UseSmileIDSampleCatalogue.Empty -> emptyList()
+        else -> null
+    }
+
 @Immutable
 sealed interface UseSmileIDSampleCatalogue<out T> {
     data object Loading : UseSmileIDSampleCatalogue<Nothing>
@@ -25,7 +33,11 @@ sealed interface UseSmileIDSampleCatalogue<out T> {
 
     data object Empty : UseSmileIDSampleCatalogue<Nothing>
 
-    data class Failed(val reason: String) : UseSmileIDSampleCatalogue<Nothing>
+    /** [advice] is the error state's supporting line, per `spec/catalogue-rules.json` failures. */
+    data class Failed(
+        val reason: String,
+        val advice: String = UseSmileIDSampleCatalogueRules.DEFAULT_ADVICE,
+    ) : UseSmileIDSampleCatalogue<Nothing>
 }
 
 /** An ID type as `supported_id_types` returns it. */
@@ -62,6 +74,13 @@ data class UseSmileIDSampleApiSubType(
     val format: Int,
     val displayStandalone: Boolean,
 )
+
+/** A country of `products.enhanced_document_verification` in `GET /v3/services/config`, with the ID types the partner enabled. */
+@Immutable
+data class UseSmileIDSampleApiEnabledCountry(val code: String, val documents: List<UseSmileIDSampleApiEnabledDocument>)
+
+@Immutable
+data class UseSmileIDSampleApiEnabledDocument(val code: String, val label: String)
 
 /** Both responses a run of the form reads; fetched together because the KYC countries need names from the second. */
 @Immutable
@@ -112,6 +131,44 @@ object UseSmileIDSampleCatalogueRules {
             }
             .filter { it.isListedOn(product) }
 
+    /** Enhanced Document Verification's rows: the partner's enabled codes, each drawn from `supported_documents` when it lists it. */
+    fun enabledDocuments(
+        all: List<UseSmileIDSampleApiCountryDocuments>,
+        enabled: List<UseSmileIDSampleApiEnabledCountry>,
+        country: String,
+    ): List<UseSmileIDSampleDocument> {
+        val rows = documents(all, country, UseSmileIDSampleProduct.EnhancedDocumentVerification)
+        val listed = all.firstOrNull { it.country.code == country }?.documents.orEmpty().map { it.code }.toSet()
+        return enabled.firstOrNull { it.code == country }?.documents.orEmpty().flatMap { entry ->
+            if (entry.code in listed) {
+                rows.filter { it.code == entry.code }
+            } else {
+                listOf(UseSmileIDSampleDocument(entry.code, null, entry.label, hasBack = true, format = 1))
+            }
+        }
+    }
+
+    /** Enhanced Document Verification's countries, named from `supported_documents`, the rest by code. */
+    fun enabledCountries(
+        all: List<UseSmileIDSampleApiCountryDocuments>,
+        enabled: List<UseSmileIDSampleApiEnabledCountry>,
+    ): List<UseSmileIDSampleCountry> {
+        val offered = enabled.map { it.code }.filter { enabledDocuments(all, enabled, it).isNotEmpty() }.toSet()
+        val named = all.map { it.country }.filter { it.code in offered }
+        return named + offered.filter { code -> named.none { it.code == code } }.sorted().map { UseSmileIDSampleCountry(it, it) }
+    }
+
+    /** The error state's supporting line for an HTTP [status], or null when there was no answer. */
+    fun advice(status: Int?): String = when (status) {
+        HTTP_UNAUTHORIZED -> "The server refused this session's token. Link a new session, then try again"
+        HTTP_FORBIDDEN -> "Access denied: production may not be enabled for this partner, or this network is not allowed"
+        else -> DEFAULT_ADVICE
+    }
+
+    const val DEFAULT_ADVICE = "Check your connection, then try again"
+    private const val HTTP_UNAUTHORIZED = 401
+    private const val HTTP_FORBIDDEN = 403
+
     fun countries(data: UseSmileIDSampleCatalogueData, family: UseSmileIDSampleCatalogueFamily): List<UseSmileIDSampleCountry> {
         val named = data.documents.map { it.country }
         return when (family) {
@@ -128,7 +185,7 @@ object UseSmileIDSampleCatalogueRules {
     }
 }
 
-/** Reads the two response bodies; readers ignore unknown keys, as status refresh does. Null when malformed. */
+/** Reads the catalogue response bodies; readers ignore unknown keys, as status refresh does. Null when malformed. */
 object UseSmileIDSampleCatalogueJson {
 
     fun idTypes(body: String): List<UseSmileIDSampleApiIdType>? {
@@ -162,6 +219,28 @@ object UseSmileIDSampleCatalogueJson {
             )
         }
     }
+
+    /** `products.enhanced_document_verification` of `GET /v3/services/config`: country code to enabled ID types. */
+    fun enabledCountries(body: String): List<UseSmileIDSampleApiEnabledCountry>? {
+        val root = parseTokenJson(body) as? TokenJson.Obj ?: return null
+        val products = root.obj("products") ?: return null
+        val byCountry = products.obj(ENHANCED_DOCUMENT_VERIFICATION) ?: return emptyList()
+        return byCountry.members.map { (code, entries) ->
+            UseSmileIDSampleApiEnabledCountry(
+                code = code,
+                documents = (entries as? TokenJson.Arr)?.items.orEmpty().mapNotNull { item ->
+                    val o = item as? TokenJson.Obj ?: return@mapNotNull null
+                    UseSmileIDSampleApiEnabledDocument(
+                        code = o.string("key_name") ?: return@mapNotNull null,
+                        label = o.string("label") ?: return@mapNotNull null,
+                    )
+                },
+            )
+        }
+    }
+
+    /** The product key the configuration call asks for and reads back. */
+    const val ENHANCED_DOCUMENT_VERIFICATION = "enhanced_document_verification"
 
     private fun document(item: TokenJson): UseSmileIDSampleApiDocument? {
         val o = item as? TokenJson.Obj ?: return null

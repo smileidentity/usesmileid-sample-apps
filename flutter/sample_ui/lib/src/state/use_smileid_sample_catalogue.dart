@@ -35,6 +35,13 @@ sealed class UseSmileIDSampleCatalogue<T> {
 
   /// Whether the list is still arriving.
   bool get isLoading => this is UseSmileIDSampleCatalogueLoading<T>;
+
+  /// The rows once the list has settled, an empty list for Empty; null while it loads or after it fails.
+  List<T>? get settledItems => switch (this) {
+    UseSmileIDSampleCatalogueReady<T>(:final List<T> items) => items,
+    UseSmileIDSampleCatalogueEmpty<T>() => <T>[],
+    _ => null,
+  };
 }
 
 /// Still arriving.
@@ -64,11 +71,17 @@ final class UseSmileIDSampleCatalogueEmpty<T>
 /// Failed or timed out.
 final class UseSmileIDSampleCatalogueFailed<T>
     extends UseSmileIDSampleCatalogue<T> {
-  /// [reason] is for the log, never the screen.
-  const UseSmileIDSampleCatalogueFailed(this.reason);
+  /// [reason] is for the log, never the screen; [advice] is the error state's supporting line.
+  const UseSmileIDSampleCatalogueFailed(
+    this.reason, {
+    this.advice = UseSmileIDSampleCatalogueRules.defaultAdvice,
+  });
 
   /// Why it failed.
   final String reason;
+
+  /// What the error state tells the user, per `spec/catalogue-rules.json` failures.
+  final String advice;
 }
 
 /// An ID type as `supported_id_types` returns it.
@@ -164,6 +177,30 @@ class UseSmileIDSampleApiSubType {
   final bool displayStandalone;
 }
 
+/// A country of `products.enhanced_document_verification` in `GET /v3/services/config`, with the ID types the partner enabled.
+class UseSmileIDSampleApiEnabledCountry {
+  /// Every field the rules read.
+  const UseSmileIDSampleApiEnabledCountry(this.code, this.documents);
+
+  /// The ISO code the configuration keys it by.
+  final String code;
+
+  /// Its enabled ID types, in the configuration's order.
+  final List<UseSmileIDSampleApiEnabledDocument> documents;
+}
+
+/// One enabled ID type: the code to submit and its label.
+class UseSmileIDSampleApiEnabledDocument {
+  /// Every field the rules read.
+  const UseSmileIDSampleApiEnabledDocument(this.code, this.label);
+
+  /// The configuration's `key_name`.
+  final String code;
+
+  /// The configuration's `label`.
+  final String label;
+}
+
 /// Both responses a run of the form reads; fetched together because the KYC countries need names from the second.
 class UseSmileIDSampleCatalogueData {
   /// Both lists as decoded.
@@ -251,6 +288,77 @@ abstract final class UseSmileIDSampleCatalogueRules {
     ]..retainWhere((UseSmileIDSampleDocument it) => it.isListedOn(product));
   }
 
+  /// Enhanced Document Verification's rows: the partner's enabled codes, each drawn from `supported_documents` when it lists it.
+  static List<UseSmileIDSampleDocument> enabledDocuments(
+    List<UseSmileIDSampleApiCountryDocuments> all,
+    List<UseSmileIDSampleApiEnabledCountry> enabled,
+    String country,
+  ) {
+    final List<UseSmileIDSampleDocument> rows = documents(
+      all,
+      country,
+      product: UseSmileIDSampleProduct.enhancedDocumentVerification,
+    );
+    final Set<String> listed = <String>{
+      for (final UseSmileIDSampleApiCountryDocuments entry in all)
+        if (entry.country.code == country)
+          for (final UseSmileIDSampleApiDocument document in entry.documents)
+            document.code,
+    };
+    final UseSmileIDSampleApiEnabledCountry? entry = enabled
+        .where((UseSmileIDSampleApiEnabledCountry it) => it.code == country)
+        .firstOrNull;
+    return <UseSmileIDSampleDocument>[
+      for (final UseSmileIDSampleApiEnabledDocument document
+          in entry?.documents ?? const <UseSmileIDSampleApiEnabledDocument>[])
+        if (listed.contains(document.code))
+          ...rows.where(
+            (UseSmileIDSampleDocument it) => it.code == document.code,
+          )
+        else
+          UseSmileIDSampleDocument(
+            code: document.code,
+            name: document.label,
+            hasBack: true,
+            format: 1,
+          ),
+    ];
+  }
+
+  /// Enhanced Document Verification's countries, named from `supported_documents`, the rest by code.
+  static List<UseSmileIDSampleCountry> enabledCountries(
+    List<UseSmileIDSampleApiCountryDocuments> all,
+    List<UseSmileIDSampleApiEnabledCountry> enabled,
+  ) {
+    final Set<String> offered = <String>{
+      for (final UseSmileIDSampleApiEnabledCountry country in enabled)
+        if (enabledDocuments(all, enabled, country.code).isNotEmpty)
+          country.code,
+    };
+    final List<UseSmileIDSampleCountry> named = <UseSmileIDSampleCountry>[
+      for (final UseSmileIDSampleApiCountryDocuments entry in all)
+        if (offered.contains(entry.country.code)) entry.country,
+    ];
+    return <UseSmileIDSampleCountry>[
+      ...named,
+      for (final String code in offered.toList()..sort())
+        if (!named.any((UseSmileIDSampleCountry it) => it.code == code))
+          UseSmileIDSampleCountry(code, code),
+    ];
+  }
+
+  /// The error state's supporting line for an HTTP [status], or null when there was no answer.
+  static String advice(int? status) => switch (status) {
+    401 =>
+      "The server refused this session's token. Link a new session, then try again",
+    403 =>
+      'Access denied: production may not be enabled for this partner, or this network is not allowed',
+    _ => defaultAdvice,
+  };
+
+  /// The line for every failure the status does not name.
+  static const String defaultAdvice = 'Check your connection, then try again';
+
   /// The countries [family] offers, named from `supported_documents`.
   static List<UseSmileIDSampleCountry> countries(
     UseSmileIDSampleCatalogueData data,
@@ -298,7 +406,7 @@ abstract final class UseSmileIDSampleCatalogueRules {
   }
 }
 
-/// Reads the two response bodies; readers ignore unknown keys, as status refresh does. Null when malformed.
+/// Reads the catalogue response bodies; readers ignore unknown keys, as status refresh does. Null when malformed.
 abstract final class UseSmileIDSampleCatalogueJson {
   /// Decodes a `supported_id_types` body.
   static List<UseSmileIDSampleApiIdType>? idTypes(String body) {
@@ -356,6 +464,44 @@ abstract final class UseSmileIDSampleCatalogueJson {
           ),
     ];
   }
+
+  /// Decodes `products.enhanced_document_verification` of a `GET /v3/services/config` body.
+  static List<UseSmileIDSampleApiEnabledCountry>? enabledCountries(
+    String body,
+  ) {
+    final Object? root = _decode(body);
+    if (root is! Map<String, Object?> ||
+        root['products'] is! Map<String, Object?>) {
+      return null;
+    }
+    final Object? byCountry =
+        (root['products']!
+            as Map<String, Object?>)[enhancedDocumentVerification];
+    if (byCountry is! Map<String, Object?>) {
+      return <UseSmileIDSampleApiEnabledCountry>[];
+    }
+    return <UseSmileIDSampleApiEnabledCountry>[
+      for (final MapEntry<String, Object?> country in byCountry.entries)
+        UseSmileIDSampleApiEnabledCountry(
+          country.key,
+          <UseSmileIDSampleApiEnabledDocument>[
+            if (country.value is List<Object?>)
+              for (final Object? entry in country.value! as List<Object?>)
+                if (entry is Map<String, Object?> &&
+                    entry['key_name'] is String &&
+                    entry['label'] is String)
+                  UseSmileIDSampleApiEnabledDocument(
+                    entry['key_name']! as String,
+                    entry['label']! as String,
+                  ),
+          ],
+        ),
+    ];
+  }
+
+  /// The product key the configuration call asks for and reads back.
+  static const String enhancedDocumentVerification =
+      'enhanced_document_verification';
 
   static UseSmileIDSampleApiDocument? _document(Object? item) {
     if (item is! Map<String, Object?> ||

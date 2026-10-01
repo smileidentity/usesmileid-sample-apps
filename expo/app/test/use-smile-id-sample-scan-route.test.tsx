@@ -142,14 +142,14 @@ describe('the expiry gate', () => {
 });
 
 describe('the scanner', () => {
-  it('says why it opened, drops the run from app state, and resumes it once a fresh session links', async () => {
+  it('says why it opened, drops the run from app state, and resumes a run of unknown partner at its first step', async () => {
     useSmileIDSampleSessionStore.getState().sendRun({ productId: 'enhancedKyc', route: 'fullscreen', resumeAt: 'flow' });
     const screen = await inTheme(<ScanToken />);
     expect(screen.queryByText('Scan a token to start this verification.')).not.toBeNull();
     expect(useSmileIDSampleSessionStore.getState().pendingRun).toBeNull();
 
     await fireEvent.press(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_SIMULATE));
-    await waitFor(() => expect(mockRouter.replace).toHaveBeenCalledWith('/flow/enhancedKyc/run'));
+    await waitFor(() => expect(mockRouter.replace).toHaveBeenCalledWith('/flow/enhancedKyc/details'));
     expect(mockRouter.back).not.toHaveBeenCalled();
   });
 

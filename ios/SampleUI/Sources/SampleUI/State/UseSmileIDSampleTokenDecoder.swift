@@ -162,6 +162,14 @@ public enum UseSmileIDSampleTokenDecoder {
     decode(token).session
   }
 
+  /// Whether the header's `alg` is `none`, as every simulated scan's is; the server refuses such a token.
+  public static func isUnsigned(_ token: String) -> Bool {
+    let header = token.trimmingCharacters(in: .whitespacesAndNewlines).split(separator: ".", omittingEmptySubsequences: false)
+      .first.map(String.init) ?? ""
+    guard let json = base64Url(header), case .obj(let members)? = parseTokenJson(json) else { return false }
+    return members.string("alg")?.lowercased() == "none"
+  }
+
   /// A display handle, never a prefix of the credential: the token's own `jti`, else a digest of it.
   private static func handle(_ token: String, jti: String?) -> String {
     if let jti, !jti.isBlank {

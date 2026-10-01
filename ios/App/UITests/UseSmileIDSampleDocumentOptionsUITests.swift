@@ -73,6 +73,21 @@ final class UseSmileIDSampleDocumentOptionsUITests: XCTestCase {
     XCTAssertTrue(element("sample_catalogue_error").waitForExistence(timeout: 10), "retrying an unreachable list still fails")
   }
 
+  func testEnhancedDocumentVerificationListsOnlyThePartnersDocuments() {
+    launch()
+    openDocumentForm(product: "enhancedDocumentVerification")
+    element("sample_country_trigger").tap()
+    XCTAssertTrue(element("sample_country_option_KE").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("sample_country_option_NG").exists)
+    XCTAssertFalse(element("sample_country_option_ZA").exists)
+    XCTAssertFalse(element("sample_country_option_GH").exists)
+    element("sample_country_option_KE").tap()
+    element("sample_document_trigger").tap()
+    XCTAssertTrue(element("sample_document_option_IDENTITY_CARD").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("sample_document_option_PASSPORT").exists)
+    XCTAssertFalse(element("sample_document_option_ALIEN_CARD").exists)
+  }
+
   func testTheIdNumberIsCheckedAgainstItsType() {
     launch()
     XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
@@ -94,9 +109,9 @@ final class UseSmileIDSampleDocumentOptionsUITests: XCTestCase {
 
   // MARK: - Journeys
 
-  private func openDocumentForm() {
+  private func openDocumentForm(product: String = "documentVerification") {
     XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
-    app.useSmileIDSampleStartProduct("documentVerification")
+    app.useSmileIDSampleStartProduct(product)
     continuePastDetails()
     XCTAssertTrue(element("sample_kyc_form_screen").waitForExistence(timeout: 10))
   }

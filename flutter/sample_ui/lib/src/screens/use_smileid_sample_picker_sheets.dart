@@ -274,11 +274,11 @@ class _UseSmileIDSampleCataloguePickerState<T>
       // The first 300 ms draw nothing, so a fast answer never flashes a skeleton.
       case UseSmileIDSampleCatalogueLoading<T>():
         return const <Widget>[];
-      case UseSmileIDSampleCatalogueFailed<T>():
+      case UseSmileIDSampleCatalogueFailed<T>(:final String advice):
         return <Widget>[
           UseSmileIDSampleEmptyState(
             text: "Couldn't load ${widget.what}",
-            supportingText: 'Check your connection, then try again',
+            supportingText: advice,
             testId: UseSmileIDSampleTestIds.catalogueError,
             onRetry: widget.onRetry,
             retryTestId: UseSmileIDSampleTestIds.catalogueRetry,

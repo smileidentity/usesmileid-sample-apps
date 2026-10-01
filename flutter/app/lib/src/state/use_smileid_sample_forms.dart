@@ -94,6 +94,20 @@ class UseSmileIDSampleFormsNotifier extends Notifier<UseSmileIDSampleForms> {
   void keepDocumentListedOn(UseSmileIDSampleProduct product) => state = state
       .copyWith(idDetails: state.idDetails.withDocumentListedOn(product));
 
+  /// Drops picks a relinked partner's lists lack; nothing changes while a list loads.
+  void keepOnlyEnabled(
+    List<UseSmileIDSampleCountry>? countries,
+    List<UseSmileIDSampleDocument>? documents,
+  ) {
+    final UseSmileIDSampleIdDetails kept = state.idDetails.withEnabledOnly(
+      countries,
+      documents,
+    );
+    if (!identical(kept, state.idDetails)) {
+      state = state.copyWith(idDetails: kept);
+    }
+  }
+
   /// Chooses how the SDK photographs the document; null is Match document.
   void setCaptureAs(UseSmileIDSampleCaptureAs? captureAs) => state = state
       .copyWith(idDetails: state.idDetails.withCaptureAsOverride(captureAs));

@@ -71,6 +71,54 @@ final class UseSmileIDSampleCatalogueRulesSpecTest: XCTestCase {
     }
   }
 
+  private func enabledInput(
+    _ item: [String: Any]
+  ) async throws -> ([UseSmileIDSampleApiCountryDocuments], [UseSmileIDSampleApiEnabledCountry]) {
+    guard let input = item["input"] as? [String: Any] else {
+      return try await (UseSmileIDSampleCatalogueFixtures.data().documents, UseSmileIDSampleCatalogueFixtures.enabled())
+    }
+    return try (
+      XCTUnwrap(UseSmileIDSampleCatalogueJson.documents(JSONSerialization.data(withJSONObject: input["supported_documents"] as Any))),
+      XCTUnwrap(UseSmileIDSampleCatalogueJson.enabledCountries(JSONSerialization.data(withJSONObject: input["services_config"] as Any)))
+    )
+  }
+
+  func testEnabledDocumentCases() async throws {
+    for item in try cases("enabledDocuments") {
+      let (documents, enabled) = try await enabledInput(item)
+      let actual = UseSmileIDSampleCatalogueRules.enabledDocuments(documents, enabled: enabled, country: item["country"] as? String ?? "")
+      let expected = (item["expected"] as? [[String: Any]] ?? []).map {
+        UseSmileIDSampleDocument(
+          code: $0["code"] as? String ?? "",
+          subType: $0["subType"] as? String,
+          name: $0["name"] as? String ?? "",
+          hasBack: $0["hasBack"] as? Bool ?? true,
+          format: $0["format"] as? Int ?? 0
+        )
+      }
+      XCTAssertEqual(actual, expected, item["name"] as? String ?? "")
+      XCTAssertEqual(actual.map(\.id), (item["expected"] as? [[String: Any]] ?? []).compactMap { $0["id"] as? String })
+    }
+  }
+
+  func testEnabledCountryCases() async throws {
+    for item in try cases("enabledCountries") {
+      let (documents, enabled) = try await enabledInput(item)
+      let actual = UseSmileIDSampleCatalogueRules.enabledCountries(documents, enabled: enabled).map { [$0.code, $0.name] }
+      let expected = (item["expected"] as? [[String: String]] ?? []).map { [$0["code"] ?? "", $0["name"] ?? ""] }
+      XCTAssertEqual(actual, expected, item["name"] as? String ?? "")
+    }
+  }
+
+  func testFailureCases() throws {
+    let failures = try section("failures")
+    XCTAssertEqual(failures["default"] as? String, UseSmileIDSampleCatalogueRules.defaultAdvice)
+    for item in try cases("failures") {
+      let status = item["status"] as? Int
+      XCTAssertEqual(UseSmileIDSampleCatalogueRules.advice(status: status), item["supportingText"] as? String, "\(String(describing: status))")
+    }
+  }
+
   func testCaptureAsCases() throws {
     for item in try cases("captureAs") {
       let name = item["name"] as? String ?? ""

@@ -25,7 +25,7 @@ export default function CountryPicker() {
 
   return (
     <CountryPickerSheet
-      catalogue={smileIDSampleCatalogueCountriesOf(catalogue, family)}
+      catalogue={smileIDSampleCatalogueCountriesOf(catalogue, family, productId)}
       selected={selected}
       query={query}
       onQueryChange={setQuery}

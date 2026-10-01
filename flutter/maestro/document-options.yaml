@@ -1,6 +1,6 @@
 appId: ${APP_ID}
 ---
-# The document form's list, Capture as and generic-document sheet on fixture lists, through SDK mount (consent by text: sdk-flow.yaml).
+# The document form's list, Capture as, generic-document sheet and Enhanced Document Verification's partner list on fixture lists, through SDK mount (consent by text: sdk-flow.yaml).
 
 - clearState
 - runFlow:
@@ -151,6 +151,38 @@ appId: ${APP_ID}
     visible:
       id: "sample_catalogue_error"
     timeout: 10000
+
+# --- Enhanced Document Verification lists only the partner's enabled documents ---------------------
+# The fixture's configuration enables Kenya's Identity Card and Passport and Nigeria's Passport, nothing else.
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://flow/enhancedDocumentVerification/id-details?catalogue=fixture"
+      LANDS_ON: "sample_kyc_form_screen"
+- tapOn:
+    id: "sample_country_trigger"
+- extendedWaitUntil:
+    visible:
+      id: "sample_country_option_KE"
+    timeout: 10000
+- assertVisible:
+    id: "sample_country_option_NG"
+- assertNotVisible:
+    id: "sample_country_option_ZA"
+- assertNotVisible:
+    id: "sample_country_option_GH"
+- tapOn:
+    id: "sample_country_option_KE"
+- tapOn:
+    id: "sample_document_trigger"
+- extendedWaitUntil:
+    visible:
+      id: "sample_document_option_IDENTITY_CARD"
+    timeout: 10000
+- assertVisible:
+    id: "sample_document_option_PASSPORT"
+- assertNotVisible:
+    id: "sample_document_option_ALIEN_CARD"
 
 # --- the Settings side ------------------------------------------------------------------------------
 - runFlow:

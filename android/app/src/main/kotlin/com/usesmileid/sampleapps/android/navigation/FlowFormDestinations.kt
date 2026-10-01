@@ -28,6 +28,7 @@ import com.usesmileid.sampleapps.ui.screens.DocumentPickerSheet as DocumentPicke
 import com.usesmileid.sampleapps.ui.screens.IdTypePickerSheet as IdTypePickerContent
 import com.usesmileid.sampleapps.ui.screens.KycIdFormScreen as KycIdFormContent
 import com.usesmileid.sampleapps.ui.screens.UserDetailsScreen as UserDetailsContent
+import com.usesmileid.sampleapps.ui.state.settledItems
 
 /** The pre-flow wizard's routes. Function names are load-bearing: KSP names each generated `…Destination` after the function. */
 
@@ -45,9 +46,7 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
         filled = true
     }
     // A deep link to this form skips the product tap, so the lists start here if nothing has started them.
-    LaunchedEffect(app.environment, app.catalogueLocale) {
-        if (product?.catalogueFamily != null) app.catalogue.ensure(app.environment, app.catalogueLocale)
-    }
+    LaunchedEffect(app.environment, app.catalogueLocale, app.session?.id) { app.ensureCatalogue(product) }
     val profile = app.profiles.active
     UserDetailsContent(
         productLabel = product?.label ?: productId,
@@ -91,10 +90,22 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
     var pickingCaptureAs by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.CaptureAs)
     var buildingGenericDocument by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.GenericDocument)
     // A deep link lands here without the product tap that fetches ahead, so the form starts it if nothing has.
-    LaunchedEffect(app.environment, app.catalogueLocale) { app.catalogue.ensure(app.environment, app.catalogueLocale) }
+    LaunchedEffect(app.environment, app.catalogueLocale, app.session?.id) { app.ensureCatalogue(product) }
     LaunchedEffect(product) { product?.let(app.forms::keepDocumentListedOn) }
     val details = app.forms.idDetails
     val countryCode = details.country?.code
+    val countries = app.catalogue.countries(family, product)
+    if (product == UseSmileIDSampleProduct.EnhancedDocumentVerification) {
+        val enabledDocuments = countryCode?.let { app.catalogue.documents(it, product).settledItems }
+        LaunchedEffect(countries.settledItems, enabledDocuments) {
+            // Read again: the ensure effect above may have just reset a previous session's list.
+            val code = app.forms.idDetails.country?.code
+            app.forms.keepOnlyEnabled(
+                app.catalogue.countries(family, product).settledItems,
+                code?.let { app.catalogue.documents(it, product).settledItems },
+            )
+        }
+    }
     // A link can ask for a second-level sheet before its trigger could open; refused, not held until later.
     LaunchedEffect(pickingIdType, pickingDocument, pickingCaptureAs, countryCode, details.document) {
         if (countryCode == null) {
@@ -108,7 +119,7 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
         family = family,
         details = details,
         countryList = when {
-            countryCode == null -> app.catalogue.countries(family)
+            countryCode == null -> countries
             family == UseSmileIDSampleCatalogueFamily.Kyc -> app.catalogue.idTypes(countryCode)
             else -> app.catalogue.documents(countryCode, product ?: UseSmileIDSampleProduct.DocumentVerification)
         },
@@ -122,7 +133,7 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
         onContinue = { navigator.navigate(app.sdkFlow(productId)) { launchSingleTop = true } },
         onTokenClick = { navigator.navigate(ScanTokenScreenDestination) },
     )
-    if (pickingCountry) CountryPickerSheet(family, onDismissRequest = { pickingCountry = false })
+    if (pickingCountry) CountryPickerSheet(family, product, onDismissRequest = { pickingCountry = false })
     if (pickingIdType && countryCode != null) IdTypePickerSheet(countryCode, onDismissRequest = { pickingIdType = false })
     if (pickingDocument && countryCode != null) {
         DocumentPickerSheet(countryCode, product ?: UseSmileIDSampleProduct.DocumentVerification, onDismissRequest = { pickingDocument = false })
@@ -149,11 +160,15 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
 
 /** A layer the ID-details form owns; it is not a destination (`docs/architecture.md` §4). */
 @Composable
-private fun CountryPickerSheet(family: UseSmileIDSampleCatalogueFamily, onDismissRequest: () -> Unit) {
+private fun CountryPickerSheet(
+    family: UseSmileIDSampleCatalogueFamily,
+    product: UseSmileIDSampleProduct?,
+    onDismissRequest: () -> Unit,
+) {
     val app = LocalUseSmileIDSampleAppState.current
     var query by rememberSaveable { mutableStateOf("") }
     CountryPickerContent(
-        catalogue = app.catalogue.countries(family),
+        catalogue = app.catalogue.countries(family, product),
         selected = app.forms.idDetails.country,
         query = query,
         onQueryChange = { query = it },

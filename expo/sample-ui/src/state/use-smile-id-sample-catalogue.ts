@@ -33,7 +33,41 @@ export type UseSmileIDSampleCatalogue<T> =
   | { readonly kind: 'loading' }
   | { readonly kind: 'ready'; readonly items: readonly T[] }
   | { readonly kind: 'empty' }
-  | { readonly kind: 'failed'; readonly reason: string };
+  /// `advice` is the error state's supporting line when the failure names one, per `spec/catalogue-rules.json` failures.
+  | { readonly kind: 'failed'; readonly reason: string; readonly advice?: string };
+
+/// The rows once the list has settled, an empty list for `empty`; null while it loads or after it fails.
+export const smileIDSampleSettledItems = <T>(catalogue: UseSmileIDSampleCatalogue<T>): readonly T[] | null =>
+  catalogue.kind === 'ready' ? catalogue.items : catalogue.kind === 'empty' ? [] : null;
+
+/// A country of `products.enhanced_document_verification` in `GET /v3/services/config`, with the ID types the partner enabled.
+export type UseSmileIDSampleApiEnabledCountry = {
+  readonly code: string;
+  readonly documents: readonly UseSmileIDSampleApiEnabledDocument[];
+};
+
+type UseSmileIDSampleApiEnabledDocument = {
+  readonly code: string;
+  readonly label: string;
+};
+
+/// The product key the configuration call asks for and reads back.
+export const smileIDSampleEnhancedDocumentVerificationKey = 'enhanced_document_verification';
+
+/// The line for every failure the status does not name.
+export const smileIDSampleCatalogueDefaultAdvice = 'Check your connection, then try again';
+
+/// The error state's supporting line for an HTTP `status`, or null when there was no answer.
+export const smileIDSampleCatalogueAdvice = (status: number | null): string => {
+  switch (status) {
+    case 401:
+      return "The server refused this session's token. Link a new session, then try again";
+    case 403:
+      return 'Access denied: production may not be enabled for this partner, or this network is not allowed';
+    default:
+      return smileIDSampleCatalogueDefaultAdvice;
+  }
+};
 
 /// An ID type as `supported_id_types` returns it.
 export type UseSmileIDSampleApiIdType = {
@@ -166,6 +200,39 @@ export const smileIDSampleCatalogueCountries = (
   ];
 };
 
+/// Enhanced Document Verification's rows: the partner's enabled codes, each drawn from `supported_documents` when it lists it.
+export const smileIDSampleCatalogueEnabledDocuments = (
+  all: readonly UseSmileIDSampleApiCountryDocuments[],
+  enabled: readonly UseSmileIDSampleApiEnabledCountry[],
+  country: string,
+): UseSmileIDSampleDocument[] => {
+  const rows = smileIDSampleCatalogueDocuments(all, country, 'enhancedDocumentVerification');
+  const listed = new Set((all.find((it) => it.country.code === country)?.documents ?? []).map((it) => it.code));
+  return (enabled.find((it) => it.code === country)?.documents ?? []).flatMap((entry) =>
+    listed.has(entry.code)
+      ? rows.filter((it) => it.code === entry.code)
+      : [{ code: entry.code, subType: null, name: entry.label, hasBack: true, format: 1 }],
+  );
+};
+
+/// Enhanced Document Verification's countries, named from `supported_documents`, the rest by code.
+export const smileIDSampleCatalogueEnabledCountries = (
+  all: readonly UseSmileIDSampleApiCountryDocuments[],
+  enabled: readonly UseSmileIDSampleApiEnabledCountry[],
+): UseSmileIDSampleCountry[] => {
+  const offered = new Set(
+    enabled.map((it) => it.code).filter((code) => smileIDSampleCatalogueEnabledDocuments(all, enabled, code).length > 0),
+  );
+  const named = all.map((entry) => entry.country).filter((it) => offered.has(it.code));
+  return [
+    ...named,
+    ...[...offered]
+      .filter((code) => !named.some((it) => it.code === code))
+      .sort()
+      .map((code) => ({ code, name: code })),
+  ];
+};
+
 const record = (value: unknown): Record<string, unknown> | null =>
   typeof value === 'object' && value !== null && !Array.isArray(value) ? (value as Record<string, unknown>) : null;
 
@@ -250,4 +317,20 @@ export const smileIDSampleDecodeDocuments = (body: string): UseSmileIDSampleApiC
     });
   }
   return out;
+};
+
+/// Decodes `products.enhanced_document_verification` of a `GET /v3/services/config` body; null when malformed.
+export const smileIDSampleDecodeEnabledCountries = (body: string): UseSmileIDSampleApiEnabledCountry[] | null => {
+  const products = record(record(parse(body))?.products);
+  if (products === null) return null;
+  const byCountry = record(products[smileIDSampleEnhancedDocumentVerificationKey]) ?? {};
+  return Object.entries(byCountry).map(([code, entries]) => ({
+    code,
+    documents: (Array.isArray(entries) ? entries : []).flatMap((raw: unknown) => {
+      const entry = record(raw);
+      return entry !== null && typeof entry.key_name === 'string' && typeof entry.label === 'string'
+        ? [{ code: entry.key_name, label: entry.label }]
+        : [];
+    }),
+  }));
 };
