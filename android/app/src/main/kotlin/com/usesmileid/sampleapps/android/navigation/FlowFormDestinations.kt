@@ -71,8 +71,6 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
         ProfileSwitchSheet(
             onDismissRequest = { switchingProfile = false },
             onPicked = app.forms::fillFrom,
-            draft = app.forms.userDetails,
-            draftOrganisation = app.forms.organisation,
         )
     }
 }

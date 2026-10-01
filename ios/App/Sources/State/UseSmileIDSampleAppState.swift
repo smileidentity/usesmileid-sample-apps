@@ -388,18 +388,10 @@ final class UseSmileIDSampleAppState: ObservableObject {
     }
   }
 
-  /// The switch sheet's "New profile": active once made, prefilled from the form it was opened over.
-  func beginProfileFromSwitch(overForm: Bool) {
+  /// The switch sheet's "New profile": active once made, and empty, since it is someone new.
+  func beginProfileFromSwitch() {
     newProfileActivates = true
-    if overForm {
-      newProfile = UseSmileIDSampleNewProfile(
-        name: organisationDraft,
-        firstName: userDetails.firstName,
-        lastName: userDetails.lastName,
-        email: userDetails.email,
-        phone: userDetails.phone
-      )
-    }
+    newProfile = UseSmileIDSampleNewProfile()
   }
 
   /// Picking a profile makes it the run's: the form refills from it, dropping what was typed for another.

@@ -94,8 +94,7 @@ class _UseSmileIDSampleUserDetailsTabState
         },
         profile: profiles.active,
         profileIndex: profiles.activeIndex,
-        onProfileTap: () =>
-            showUseSmileIDSampleProfileSwitch(context, ref, overForm: true),
+        onProfileTap: () => showUseSmileIDSampleProfileSwitch(context, ref),
         saveToProfile: forms.saveToProfile,
         onSaveToProfileChanged: edits.setSaveToProfile,
         organisation: forms.organisation,

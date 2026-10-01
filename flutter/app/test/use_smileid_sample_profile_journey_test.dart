@@ -141,7 +141,7 @@ void main() {
   });
 
   testWidgets(
-    '"New profile" from the form starts from the typing and runs as it',
+    '"New profile" from the form starts empty and runs as the new profile',
     (WidgetTester tester) async {
       await pumpAt(
         tester,
@@ -156,10 +156,29 @@ void main() {
       await tester.tap(byId(UseSmileIDSampleTestIds.profileSwitchNew));
       await tester.pumpAndSettle();
 
-      expect(find.text('Njeri'), findsWidgets);
+      expect(
+        tester
+            .widget<EditableText>(
+              find.descendant(
+                of: byId(UseSmileIDSampleTestIds.newProfileFirstName),
+                matching: find.byType(EditableText),
+              ),
+            )
+            .controller
+            .text,
+        isEmpty,
+      );
       await tester.enterText(
         byId(UseSmileIDSampleTestIds.newProfileName),
         'Karibu Pay',
+      );
+      await tester.enterText(
+        byId(UseSmileIDSampleTestIds.newProfileFirstName),
+        'Achieng',
+      );
+      await tester.enterText(
+        byId(UseSmileIDSampleTestIds.newProfileLastName),
+        'Otieno',
       );
       await tester.pumpAndSettle();
       await tester.tap(byId(UseSmileIDSampleTestIds.newProfileSave));
@@ -169,7 +188,8 @@ void main() {
         useSmileIDSampleProfilesProvider,
       );
       expect(profiles.active?.organisation, 'Karibu Pay');
-      expect(profiles.active?.defaults.lastName, 'Wanjiku');
+      expect(profiles.active?.defaults.lastName, 'Otieno');
+      expect(profiles.active?.defaults.firstName, 'Achieng');
     },
   );
 

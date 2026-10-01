@@ -8,9 +8,8 @@ import '../state/use_smileid_sample_providers.dart';
 /// The switch sheet over Products or the form; a pick refills the form, and "New profile" is active at once.
 Future<void> showUseSmileIDSampleProfileSwitch(
   BuildContext context,
-  WidgetRef ref, {
-  bool overForm = false,
-}) async {
+  WidgetRef ref,
+) async {
   bool creating = false;
   await showUseSmileIDSampleSheet<void>(
     context: context,
@@ -39,15 +38,10 @@ Future<void> showUseSmileIDSampleProfileSwitch(
   if (!creating || !context.mounted) {
     return;
   }
-  final UseSmileIDSampleForms forms = ref.read(useSmileIDSampleFormsProvider);
   await showUseSmileIDSampleSheet<void>(
     context: context,
     testId: UseSmileIDSampleTestIds.newProfileSheet,
     builder: (BuildContext sheetContext) => UseSmileIDSampleNewProfileSheet(
-      initialName: overForm ? forms.organisation : '',
-      initialDetails: overForm
-          ? forms.userDetails
-          : const UseSmileIDSampleUserDetails(),
       onCreate: (String organisation, UseSmileIDSampleUserDetails details) {
         final UseSmileIDSampleProfile created = ref
             .read(useSmileIDSampleProfilesProvider.notifier)
