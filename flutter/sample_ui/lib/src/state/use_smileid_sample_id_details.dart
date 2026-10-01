@@ -409,13 +409,12 @@ class UseSmileIDSampleResolvedCaptureAs {
     UseSmileIDSampleCaptureAs.passport => true,
   };
 
-  /// The flag the document step is handed: the Settings switch, except that a passport is captured front only.
-  bool captureBothSides(bool setting) =>
-      setting && captureAs != UseSmileIDSampleCaptureAs.passport;
+  /// The SDK's captureBothSides default, which the app leaves unset: false for a passport.
+  bool get captureBothSides => captureAs != UseSmileIDSampleCaptureAs.passport;
 
   /// The trigger text from `spec/catalogue-rules.json` captureAs.
-  String triggerText(bool setting) {
-    final String sides = captureBothSides(setting) && hasBackSide
+  String triggerText() {
+    final String sides = captureBothSides && hasBackSide
         ? 'front and back'
         : 'front only';
     final String orientation = genericDocument.orientation.label.toLowerCase();

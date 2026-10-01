@@ -57,7 +57,6 @@ public final class UseSmileIDSampleStore {
       instructionsStep: settingsStorage.flag(.instructionsStep) ?? defaults.instructionsStep,
       previewStep: settingsStorage.flag(.previewStep) ?? defaults.previewStep,
       galleryUpload: settingsStorage.flag(.galleryUpload) ?? defaults.galleryUpload,
-      captureBothSides: settingsStorage.flag(.captureBothSides) ?? defaults.captureBothSides,
       allowSkipBack: settingsStorage.flag(.allowSkipBack) ?? defaults.allowSkipBack,
       selfieFirst: settingsStorage.flag(.selfieFirst) ?? defaults.selfieFirst,
       captureMode: settingsStorage.data(Self.captureModeKey)
@@ -208,7 +207,6 @@ public extension UseSmileIDSampleSetting {
     case .instructionsStep: "instructions_step"
     case .previewStep: "preview_step"
     case .galleryUpload: "gallery_upload"
-    case .captureBothSides: "capture_both_sides"
     case .allowSkipBack: "allow_skip_back"
     case .selfieFirst: "selfie_first"
     }

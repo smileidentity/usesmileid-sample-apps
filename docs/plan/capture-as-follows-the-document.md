@@ -140,6 +140,10 @@ SDK's `main` already defaults `captureBothSides` to `false` for a Passport; when
 default is pinned on all four apps, the sample should leave the flag unset while the switch is on, so it
 demonstrates the SDK's behaviour instead of re-deriving it.
 
+Done with 12.2.0, which carries that default on all four SDKs, and taken one step further: the back-side
+switch is gone. Capture as already matches the document and `has_back` already describes it, so the
+sample never sets `captureBothSides` and the SDK decides from the type.
+
 **D7. The apps read the whole catalogue** (already landed, recorded here for the reason).
 `supported_documents` is fetched without `continent`, as `supported_id_types` always was and as the
 previous major version's samples did: the SDK supports every country the API lists, and a partner

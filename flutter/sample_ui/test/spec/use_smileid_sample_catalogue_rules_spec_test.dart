@@ -210,7 +210,6 @@ void main() {
       final String name = c['name']! as String;
       final Map<String, Object?> expected =
           c['expected']! as Map<String, Object?>;
-      final bool setting = c['captureBothSides'] as bool? ?? true;
       final UseSmileIDSampleDocument document = _document(c['document']);
       final Map<String, Object?>? sheet =
           c['genericDocument'] as Map<String, Object?>?;
@@ -256,15 +255,11 @@ void main() {
       }
       expect(resolved.matched, expected['matched'], reason: name);
       expect(
-        resolved.captureBothSides(setting),
+        resolved.captureBothSides,
         expected['captureBothSides'],
         reason: name,
       );
-      expect(
-        resolved.triggerText(setting),
-        expected['triggerText'],
-        reason: name,
-      );
+      expect(resolved.triggerText(), expected['triggerText'], reason: name);
       expect(
         useSmileIDSampleResolvedCaptureAs(
           document,

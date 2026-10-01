@@ -17,7 +17,6 @@ struct FlowLaunchSnapshot: Equatable {
   let previewStep: Bool
   let captureMode: UseSmileIDSampleCaptureMode
   let galleryUpload: Bool
-  let captureBothSides: Bool
   let allowSkipBack: Bool
   let selfieFirst: Bool
   let userId: String
@@ -45,7 +44,6 @@ struct FlowLaunchSnapshot: Equatable {
     previewStep: Bool = true,
     captureMode: UseSmileIDSampleCaptureMode = .autoWithFallback,
     galleryUpload: Bool = false,
-    captureBothSides: Bool = true,
     allowSkipBack: Bool = false,
     selfieFirst: Bool = false,
     userId: String = "",
@@ -69,7 +67,6 @@ struct FlowLaunchSnapshot: Equatable {
     self.previewStep = previewStep
     self.captureMode = captureMode
     self.galleryUpload = galleryUpload
-    self.captureBothSides = captureBothSides
     self.allowSkipBack = allowSkipBack
     self.selfieFirst = selfieFirst
     self.userId = userId
@@ -111,7 +108,6 @@ func buildSnapshot(
     previewStep: app.settings.previewStep,
     captureMode: app.settings.captureMode,
     galleryUpload: app.settings.galleryUpload,
-    captureBothSides: app.settings.captureBothSides,
     allowSkipBack: app.settings.allowSkipBack,
     selfieFirst: app.settings.selfieFirst,
     userId: userId,

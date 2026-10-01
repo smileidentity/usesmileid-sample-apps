@@ -113,7 +113,6 @@ class UseSmileIDSampleCatalogueRulesSpecTest {
     fun capture_as_cases() = rules.cases("captureAs").forEach { case ->
         val name = case.text("name")
         val expected = case.members.getValue("expected") as TokenJson.Obj
-        val setting = (case.members["captureBothSides"] as? TokenJson.Bool)?.value ?: true
         val resolved = resolvedCaptureAs(
             documentOf(case.members.getValue("document") as TokenJson.Obj),
             captureAsOf(case.text("captureAs")),
@@ -130,8 +129,8 @@ class UseSmileIDSampleCatalogueRulesSpecTest {
             assertEquals(name, expected.text("orientation"), resolved.genericDocument.orientation.id)
         }
         assertEquals(name, (expected.members.getValue("matched") as TokenJson.Bool).value, resolved.matched)
-        assertEquals(name, (expected.members.getValue("captureBothSides") as TokenJson.Bool).value, resolved.captureBothSides(setting))
-        assertEquals(name, expected.text("triggerText"), resolved.triggerText(setting))
+        assertEquals(name, (expected.members.getValue("captureBothSides") as TokenJson.Bool).value, resolved.captureBothSides)
+        assertEquals(name, expected.text("triggerText"), resolved.triggerText())
         assertEquals(name, expected.text("matchRowLabel"), resolvedCaptureAs(documentOf(case.members.getValue("document") as TokenJson.Obj), null, UseSmileIDSampleGenericDocument()).matchRowLabel)
     }
 

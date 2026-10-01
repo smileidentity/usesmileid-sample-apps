@@ -292,9 +292,6 @@ class _UseSmileIDSampleKycFormTabState
                         .isLoading,
                   UseSmileIDSampleCatalogueFamily.passport => false,
                 },
-            captureBothSides: ref
-                .watch(useSmileIDSampleSettingsProvider)
-                .captureBothSides,
             onBack: back,
             onPickCountry: _pickCountry,
             onPickIdType: _pickIdType,

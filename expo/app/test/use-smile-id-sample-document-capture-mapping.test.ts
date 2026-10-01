@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { DocumentCaptureMode, DocumentType } from '@smileid/usesmileid';
+import { DocumentCaptureConfigBuilder, DocumentCaptureMode, DocumentType } from '@smileid/usesmileid';
 import {
   UseSmileIDSampleCaptureMode,
   smileIDSampleAspectRatios,
@@ -15,8 +15,8 @@ import {
 } from '@smileid/sample-ui';
 
 import {
+  smileIDSampleApplyDocumentOptions,
   smileIDSampleCaptureModeFor,
-  smileIDSampleCapturesBothSides,
   smileIDSampleDocumentTypeFor,
 } from '../src/flow/use-smile-id-sample-flow-builder-config';
 import type { UseSmileIDSampleFlowLaunchSnapshot } from '../src/flow/use-smile-id-sample-flow-launch-snapshot';
@@ -24,7 +24,6 @@ import type { UseSmileIDSampleFlowLaunchSnapshot } from '../src/flow/use-smile-i
 type Case = {
   name: string;
   captureAs: UseSmileIDSampleCaptureAs | 'matchDocument';
-  captureBothSides?: boolean;
   document: { code: string; subType?: string; name: string; hasBack: boolean; format: number };
   genericDocument?: {
     displayName: string;
@@ -69,17 +68,20 @@ describe('capture as', () => {
       if (c.expected.orientation) expect(type.orientation.toLowerCase()).toBe(c.expected.orientation);
       if (c.expected.knownAspectRatio !== undefined) expect(type.knownAspectRatio).toBeCloseTo(c.expected.knownAspectRatio);
     }
-    const flag = smileIDSampleCapturesBothSides({
-      // The spec's cases are Document Verification's; residency always captures both sides.
+    // The SDK's builder resolves the flag the app leaves unset, so its own per-type default is under test.
+    const document = new DocumentCaptureConfigBuilder();
+    smileIDSampleApplyDocumentOptions(document, {
       product: smileIDSampleProducts.find((product) => product.id === 'documentVerification')!,
       idDetails: detailsOf(c),
-      captureBothSides: c.captureBothSides ?? true,
+      allowSkipBack: false,
+      captureMode: UseSmileIDSampleCaptureMode.AutoWithFallback,
+      galleryUpload: false,
     } as UseSmileIDSampleFlowLaunchSnapshot);
-    expect(flag).toBe(c.expected.captureBothSides);
+    expect(document.captureBothSides).toBe(c.expected.captureBothSides);
   });
 
   it('has the spec\'s cases and aspect ratios', () => {
-    expect(captureAs.cases.length).toBeGreaterThanOrEqual(12);
+    expect(captureAs.cases.length).toBeGreaterThanOrEqual(11);
     for (const ratio of smileIDSampleAspectRatios) expect(ratio.ratio).toBe(captureAs.aspectRatios[ratio.id] ?? null);
   });
 

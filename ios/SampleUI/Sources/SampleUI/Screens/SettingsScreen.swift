@@ -268,14 +268,6 @@ public struct SettingsScreen: View {
       )
       UseSmileIDSampleRowDivider()
       switchRow(
-        title: "Capture the back side",
-        icon: SmileIcons.documentVerification,
-        supporting: "Only for a document type that has one",
-        setting: .captureBothSides,
-        testId: UseSmileIDSampleTestIds.settingCaptureBothSides
-      )
-      UseSmileIDSampleRowDivider()
-      switchRow(
         title: "Skip the back",
         icon: SmileIcons.instructions,
         supporting: "A Skip button on the back-side capture",

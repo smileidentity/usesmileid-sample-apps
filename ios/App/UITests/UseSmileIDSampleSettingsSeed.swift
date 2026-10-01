@@ -10,7 +10,6 @@ let useSmileIDSampleSettingsSeed = [
   "-instructions_step", "true",
   "-preview_step", "true",
   "-gallery_upload", "false",
-  "-capture_both_sides", "true",
   "-allow_skip_back", "false",
   "-selfie_first", "false"
 ]

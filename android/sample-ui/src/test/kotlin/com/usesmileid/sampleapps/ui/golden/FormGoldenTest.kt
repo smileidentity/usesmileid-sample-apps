@@ -271,7 +271,6 @@ class FormGoldenTest : GoldenTest() {
         family = family,
         details = details,
         countryList = countryList,
-        captureBothSides = true,
         onCountryClick = {},
         onIdTypeClick = {},
         onDocumentClick = {},

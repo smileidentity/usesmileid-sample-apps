@@ -30,7 +30,6 @@ object UseSmileIDSampleTestIds {
     const val SETTING_CAPTURE_MODE = "sample_setting_capture_mode"
     const val CAPTURE_MODE_SHEET = "sample_capture_mode_sheet"
     const val SETTING_GALLERY_UPLOAD = "sample_setting_gallery_upload"
-    const val SETTING_CAPTURE_BOTH_SIDES = "sample_setting_capture_both_sides"
     const val SETTING_ALLOW_SKIP_BACK = "sample_setting_allow_skip_back"
     const val SETTING_SELFIE_FIRST = "sample_setting_selfie_first"
     const val VERIFICATION_DETAILS_SCREEN = "sample_verification_details_screen"
@@ -149,7 +148,6 @@ object UseSmileIDSampleTestIds {
         SETTING_CAPTURE_MODE,
         CAPTURE_MODE_SHEET,
         SETTING_GALLERY_UPLOAD,
-        SETTING_CAPTURE_BOTH_SIDES,
         SETTING_ALLOW_SKIP_BACK,
         SETTING_SELFIE_FIRST,
         VERIFICATION_DETAILS_SCREEN,

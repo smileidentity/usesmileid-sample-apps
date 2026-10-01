@@ -117,12 +117,13 @@ data class UseSmileIDSampleResolvedCaptureAs(
             UseSmileIDSampleCaptureAs.Passport -> true
         }
 
-    /** The flag the document step is handed: the Settings switch, except that a passport is captured front only. */
-    fun captureBothSides(setting: Boolean): Boolean = setting && captureAs != UseSmileIDSampleCaptureAs.Passport
+    /** The SDK's captureBothSides default, which the app leaves unset: false for a passport. */
+    val captureBothSides: Boolean
+        get() = captureAs != UseSmileIDSampleCaptureAs.Passport
 
     /** The trigger text from `spec/catalogue-rules.json` captureAs. */
-    fun triggerText(setting: Boolean): String {
-        val sides = if (captureBothSides(setting) && hasBackSide) "front and back" else "front only"
+    fun triggerText(): String {
+        val sides = if (captureBothSides && hasBackSide) "front and back" else "front only"
         val orientation = genericDocument.orientation.label.lowercase()
         return when {
             captureAs != UseSmileIDSampleCaptureAs.GenericDocument -> "${captureAs.label} · ${if (matched) "matches document" else "chosen"}"

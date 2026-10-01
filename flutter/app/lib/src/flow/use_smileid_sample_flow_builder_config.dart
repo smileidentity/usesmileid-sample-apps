@@ -174,7 +174,6 @@ void _journeyFor(
       case UseSmileIDSampleFlowJourneyStep.consent:
         screens.consent((ConsentConfigBuilder consent) {
           consent.partnerName = snapshot.partnerName;
-          // Omitting it fails build() while validate() still reports Valid, so no gate catches it.
           consent.partnerIcon = const _UseSmileIDSamplePartnerMark();
           consent.partnerPrivacyPolicyUrl = _privacyPolicyUrl;
         });
@@ -192,19 +191,13 @@ void _journeyFor(
         screens.capture((CaptureConfigBuilder capture) {
           capture.captureType = CaptureType.document;
           capture.document((DocumentCaptureConfigBuilder document) {
-            // Residency is both sides, the passport's data page and then its
-            // visa, and it rejects a skippable second side.
+            // The SDK refuses a skip on residency's visa page.
             final bool residency =
                 snapshot.product ==
                 UseSmileIDSampleProduct.residencyDocumentVerification;
             document.documentType = residency
                 ? DocumentType.passport
                 : useSmileIDSampleDocumentTypeFor(snapshot.idDetails);
-            document.captureBothSides =
-                residency ||
-                snapshot.idDetails.resolvedCaptureAs.captureBothSides(
-                  snapshot.captureBothSides,
-                );
             document.allowSkipBack = snapshot.allowSkipBack && !residency;
             document.captureMode = snapshot.captureMode.sdk;
             document.allowGalleryUpload = snapshot.galleryUpload;

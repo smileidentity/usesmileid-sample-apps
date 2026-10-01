@@ -117,7 +117,6 @@ class UseSmileIDSampleStore(
             instructionsStep = prefs[INSTRUCTIONS_STEP] ?: defaults.instructionsStep,
             previewStep = prefs[PREVIEW_STEP] ?: defaults.previewStep,
             galleryUpload = prefs[GALLERY_UPLOAD] ?: defaults.galleryUpload,
-            captureBothSides = prefs[CAPTURE_BOTH_SIDES] ?: defaults.captureBothSides,
             allowSkipBack = prefs[ALLOW_SKIP_BACK] ?: defaults.allowSkipBack,
             selfieFirst = prefs[SELFIE_FIRST] ?: defaults.selfieFirst,
             captureMode = UseSmileIDSampleCaptureMode.entries.firstOrNull { it.id == prefs[CAPTURE_MODE] }
@@ -133,7 +132,6 @@ class UseSmileIDSampleStore(
         UseSmileIDSampleSetting.InstructionsStep -> INSTRUCTIONS_STEP
         UseSmileIDSampleSetting.PreviewStep -> PREVIEW_STEP
         UseSmileIDSampleSetting.GalleryUpload -> GALLERY_UPLOAD
-        UseSmileIDSampleSetting.CaptureBothSides -> CAPTURE_BOTH_SIDES
         UseSmileIDSampleSetting.AllowSkipBack -> ALLOW_SKIP_BACK
         UseSmileIDSampleSetting.SelfieFirst -> SELFIE_FIRST
     }
@@ -147,7 +145,6 @@ class UseSmileIDSampleStore(
         val INSTRUCTIONS_STEP = booleanPreferencesKey("instructions_step")
         val PREVIEW_STEP = booleanPreferencesKey("preview_step")
         val GALLERY_UPLOAD = booleanPreferencesKey("gallery_upload")
-        val CAPTURE_BOTH_SIDES = booleanPreferencesKey("capture_both_sides")
         val ALLOW_SKIP_BACK = booleanPreferencesKey("allow_skip_back")
         val SELFIE_FIRST = booleanPreferencesKey("selfie_first")
         val CAPTURE_MODE = stringPreferencesKey("capture_mode")

@@ -25,9 +25,6 @@ enum UseSmileIDSampleSetting {
   /// DocumentCaptureConfig.allowGalleryUpload; off, as the SDK defaults it.
   galleryUpload(UseSmileIDSampleTestIds.settingGalleryUpload),
 
-  /// DocumentCaptureConfig.captureBothSides; on, as the SDK defaults it.
-  captureBothSides(UseSmileIDSampleTestIds.settingCaptureBothSides),
-
   /// DocumentCaptureConfig.allowSkipBack; off, as the SDK defaults it.
   allowSkipBack(UseSmileIDSampleTestIds.settingAllowSkipBack),
 
@@ -72,7 +69,6 @@ class UseSmileIDSampleSettings {
     this.instructionsStep = true,
     this.previewStep = true,
     this.galleryUpload = false,
-    this.captureBothSides = true,
     this.allowSkipBack = false,
     this.selfieFirst = false,
     this.captureMode = UseSmileIDSampleCaptureMode.autoWithFallback,
@@ -99,9 +95,6 @@ class UseSmileIDSampleSettings {
   /// Whether the SDK offers the gallery on document capture.
   final bool galleryUpload;
 
-  /// Whether the SDK captures a back, for a document type that has one.
-  final bool captureBothSides;
-
   /// Whether the back-side capture offers Skip.
   final bool allowSkipBack;
 
@@ -120,7 +113,6 @@ class UseSmileIDSampleSettings {
     UseSmileIDSampleSetting.instructionsStep => instructionsStep,
     UseSmileIDSampleSetting.previewStep => previewStep,
     UseSmileIDSampleSetting.galleryUpload => galleryUpload,
-    UseSmileIDSampleSetting.captureBothSides => captureBothSides,
     UseSmileIDSampleSetting.allowSkipBack => allowSkipBack,
     UseSmileIDSampleSetting.selfieFirst => selfieFirst,
   };
@@ -151,9 +143,6 @@ class UseSmileIDSampleSettings {
     ),
     UseSmileIDSampleSetting.previewStep => _copy(previewStep: enabled),
     UseSmileIDSampleSetting.galleryUpload => _copy(galleryUpload: enabled),
-    UseSmileIDSampleSetting.captureBothSides => _copy(
-      captureBothSides: enabled,
-    ),
     UseSmileIDSampleSetting.allowSkipBack => _copy(allowSkipBack: enabled),
     UseSmileIDSampleSetting.selfieFirst => _copy(selfieFirst: enabled),
   };
@@ -171,7 +160,6 @@ class UseSmileIDSampleSettings {
     bool? instructionsStep,
     bool? previewStep,
     bool? galleryUpload,
-    bool? captureBothSides,
     bool? allowSkipBack,
     bool? selfieFirst,
     UseSmileIDSampleCaptureMode? captureMode,
@@ -183,7 +171,6 @@ class UseSmileIDSampleSettings {
     instructionsStep: instructionsStep ?? this.instructionsStep,
     previewStep: previewStep ?? this.previewStep,
     galleryUpload: galleryUpload ?? this.galleryUpload,
-    captureBothSides: captureBothSides ?? this.captureBothSides,
     allowSkipBack: allowSkipBack ?? this.allowSkipBack,
     selfieFirst: selfieFirst ?? this.selfieFirst,
     captureMode: captureMode ?? this.captureMode,
@@ -199,7 +186,6 @@ class UseSmileIDSampleSettings {
       other.instructionsStep == instructionsStep &&
       other.previewStep == previewStep &&
       other.galleryUpload == galleryUpload &&
-      other.captureBothSides == captureBothSides &&
       other.allowSkipBack == allowSkipBack &&
       other.selfieFirst == selfieFirst &&
       other.captureMode == captureMode;
@@ -213,7 +199,6 @@ class UseSmileIDSampleSettings {
     instructionsStep,
     previewStep,
     galleryUpload,
-    captureBothSides,
     allowSkipBack,
     selfieFirst,
     captureMode,

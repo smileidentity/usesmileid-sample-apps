@@ -199,8 +199,8 @@ private func replay(_ steps: [FlowStep], into screens: ScreensBuilder) {
         }
         if let document = config.document {
           capture.document { target in
+            // captureBothSides stays unset: the builder defaults it per type, where this struct's default is always true.
             target.documentType = document.documentType
-            target.captureBothSides = document.captureBothSides
             target.allowSkipBack = document.allowSkipBack
             target.captureMode = document.captureMode
             target.allowGalleryUpload = document.allowGalleryUpload
@@ -288,13 +288,12 @@ private func capture(_ step: FlowJourneyStep, _ preview: Bool) -> [FlowJourneySt
 
 /// Everything the document capture step is handed; the server is told the document's code either way.
 func useSmileIDSampleDocumentCapture(_ snapshot: FlowLaunchSnapshot) -> DocumentCaptureConfig {
-  // Residency is both sides, the passport's data page and then its visa, and it rejects a skippable second side.
+  // The SDK refuses a skip on residency's visa page.
   let residency = snapshot.product == .residencyDocumentVerification
   return DocumentCaptureConfig(
     documentType: residency ? .passport : useSmileIDSampleDocumentType(snapshot.idDetails),
     captureMode: snapshot.captureMode.sdk,
     allowGalleryUpload: snapshot.galleryUpload,
-    captureBothSides: residency || snapshot.idDetails.resolvedCaptureAs.captureBothSides(snapshot.captureBothSides),
     allowSkipBack: snapshot.allowSkipBack && !residency
   )
 }

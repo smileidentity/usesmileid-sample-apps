@@ -352,7 +352,6 @@ Widget _kycForm({
   family: family,
   details: details,
   countryListLoading: loading,
-  captureBothSides: true,
   onBack: () {},
   onPickCountry: () {},
   onPickIdType: () {},

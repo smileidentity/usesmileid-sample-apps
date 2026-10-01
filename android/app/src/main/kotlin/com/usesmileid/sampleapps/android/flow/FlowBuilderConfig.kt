@@ -14,6 +14,7 @@ import com.usesmileid.presentation.flow.config.DocumentVerificationParams
 import com.usesmileid.presentation.flow.config.EnhancedDocumentVerificationParams
 import com.usesmileid.presentation.flow.config.EnhancedKYCParams
 import com.usesmileid.presentation.flow.config.ResidencyDocumentVerificationParams
+import com.usesmileid.presentation.flow.dsl.DocumentCaptureConfigBuilder
 import com.usesmileid.presentation.flow.dsl.ScreensBuilder
 import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.sampleapps.android.BuildConfig
@@ -169,7 +170,6 @@ private fun ScreensBuilder.journeyFor(snapshot: FlowLaunchSnapshot) {
         when (step) {
             FlowJourneyStep.Consent -> consent {
                 partnerName = snapshot.partnerName
-                // Omitting it fails build() while validate() still reports Valid.
                 partnerIcon = SampleUiR.drawable.sample_ic_product_mark
                 partnerPrivacyPolicyUrl = PRIVACY_POLICY_URL
             }
@@ -183,14 +183,7 @@ private fun ScreensBuilder.journeyFor(snapshot: FlowLaunchSnapshot) {
             }
             FlowJourneyStep.DocumentCapture -> capture {
                 captureType = CaptureType.DOCUMENT
-                document {
-                    val options = documentOptionsFor(snapshot)
-                    documentType = options.documentType
-                    captureBothSides = options.captureBothSides
-                    allowSkipBack = options.allowSkipBack
-                    captureMode = options.captureMode
-                    allowGalleryUpload = options.allowGalleryUpload
-                }
+                document { applyDocumentOptions(documentOptionsFor(snapshot)) }
             }
             FlowJourneyStep.Preview -> preview { }
             FlowJourneyStep.Processing -> processing { }
@@ -244,18 +237,24 @@ private fun MutableList<FlowJourneyStep>.documentCapture(preview: Boolean) {
 /** Everything the document capture step is handed, read from the snapshot so it can be tested without the SDK's builder. */
 internal data class DocumentOptions(
     val documentType: DocumentType,
-    val captureBothSides: Boolean,
     val allowSkipBack: Boolean,
     val captureMode: DocumentCaptureMode,
     val allowGalleryUpload: Boolean,
 )
 
+/** Hands the options to the SDK's builder, leaving captureBothSides to the SDK's per-type default. */
+internal fun DocumentCaptureConfigBuilder.applyDocumentOptions(options: DocumentOptions) {
+    documentType = options.documentType
+    allowSkipBack = options.allowSkipBack
+    captureMode = options.captureMode
+    allowGalleryUpload = options.allowGalleryUpload
+}
+
 internal fun documentOptionsFor(snapshot: FlowLaunchSnapshot): DocumentOptions {
-    // Residency is both sides, the passport's data page and then its visa, and it rejects a skippable second side.
+    // The SDK refuses a skip on residency's visa page.
     val residency = snapshot.product == UseSmileIDSampleProduct.ResidencyDocumentVerification
     return DocumentOptions(
         documentType = if (residency) DocumentType.Passport else documentTypeFor(snapshot.idDetails),
-        captureBothSides = residency || snapshot.idDetails.resolvedCaptureAs.captureBothSides(snapshot.captureBothSides),
         allowSkipBack = snapshot.allowSkipBack && !residency,
         captureMode = snapshot.captureMode.toSdk(),
         allowGalleryUpload = snapshot.galleryUpload,

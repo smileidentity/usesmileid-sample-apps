@@ -216,16 +216,6 @@ fun SettingsScreen(
             )
             UseSmileIDSampleSettingRowDivider()
             SwitchRow(
-                title = "Capture the back side",
-                icon = R.drawable.sample_ic_document_verification,
-                supportingText = "Only for a document type that has one",
-                checked = state.settings.captureBothSides,
-                setting = UseSmileIDSampleSetting.CaptureBothSides,
-                testId = UseSmileIDSampleTestIds.SETTING_CAPTURE_BOTH_SIDES,
-                onSettingChange = onSettingChange,
-            )
-            UseSmileIDSampleSettingRowDivider()
-            SwitchRow(
                 title = "Skip the back",
                 icon = R.drawable.sample_ic_setting_instructions,
                 supportingText = "A Skip button on the back-side capture",

@@ -262,7 +262,6 @@ class SdkFlowPreflightTest {
                     val base = snapshotFor(product)
                     val snapshot = base.copy(
                         idDetails = base.idDetails.copy(captureAsOverride = captureAs),
-                        captureBothSides = flag,
                         allowSkipBack = !flag,
                         selfieFirst = flag,
                     )

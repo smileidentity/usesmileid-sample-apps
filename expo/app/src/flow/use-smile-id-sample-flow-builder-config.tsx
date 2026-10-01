@@ -2,7 +2,6 @@ import {
   UseSmileIDSampleCaptureAs,
   UseSmileIDSampleCaptureMode,
   smileIDSampleAspectRatios,
-  smileIDSampleCaptureBothSides,
   smileIDSampleCatalogueFamily,
   smileIDSampleIdDetailsCaptureAs,
   smileIDSamplePassport,
@@ -162,7 +161,6 @@ const journeyFor = (screens: ScreensBuilder, snapshot: UseSmileIDSampleFlowLaunc
       case 'consent':
         screens.consent((consent: ConsentConfigBuilder) => {
           consent.partnerName = snapshot.partnerName;
-          // Omitting it fails the build while validate() still reports valid, so no gate catches it.
           consent.partnerIcon = <PartnerMark />;
           consent.partnerPrivacyPolicyUrl = privacyPolicyUrl;
         });
@@ -182,15 +180,7 @@ const journeyFor = (screens: ScreensBuilder, snapshot: UseSmileIDSampleFlowLaunc
       case 'documentCapture':
         screens.capture((capture: CaptureConfigBuilder) => {
           capture.captureType = CaptureType.document;
-          capture.document((document: DocumentCaptureConfigBuilder) => {
-            // Residency is both sides, the passport's data page and then its visa, and it rejects a skippable second side.
-            const residency = snapshot.product.id === 'residencyDocumentVerification';
-            document.documentType = residency ? DocumentType.Passport : smileIDSampleDocumentTypeFor(snapshot.idDetails);
-            document.captureBothSides = smileIDSampleCapturesBothSides(snapshot);
-            document.allowSkipBack = snapshot.allowSkipBack && !residency;
-            document.captureMode = smileIDSampleCaptureModeFor(snapshot.captureMode);
-            document.allowGalleryUpload = snapshot.galleryUpload;
-          });
+          capture.document((document: DocumentCaptureConfigBuilder) => smileIDSampleApplyDocumentOptions(document, snapshot));
         });
         break;
       case 'preview':
@@ -321,10 +311,18 @@ export const smileIDSampleCaptureModeFor = (mode: UseSmileIDSampleCaptureMode): 
   }
 };
 
-/** The Settings switch, except that residency always captures both sides and a resolved passport is otherwise captured front only. */
-export const smileIDSampleCapturesBothSides = (snapshot: UseSmileIDSampleFlowLaunchSnapshot): boolean =>
-  snapshot.product.id === 'residencyDocumentVerification' ||
-  smileIDSampleCaptureBothSides(smileIDSampleIdDetailsCaptureAs(snapshot.idDetails), snapshot.captureBothSides);
+/** The document step's options; captureBothSides stays unset, so the SDK's per-type default applies. */
+export const smileIDSampleApplyDocumentOptions = (
+  document: DocumentCaptureConfigBuilder,
+  snapshot: UseSmileIDSampleFlowLaunchSnapshot,
+): void => {
+  // The SDK refuses a skip on residency's visa page.
+  const residency = snapshot.product.id === 'residencyDocumentVerification';
+  document.documentType = residency ? DocumentType.Passport : smileIDSampleDocumentTypeFor(snapshot.idDetails);
+  document.allowSkipBack = snapshot.allowSkipBack && !residency;
+  document.captureMode = smileIDSampleCaptureModeFor(snapshot.captureMode);
+  document.allowGalleryUpload = snapshot.galleryUpload;
+};
 
 // The same host the Settings privacy row opens.
 const privacyPolicyUrl = 'https://smile.id/privacy-policy';

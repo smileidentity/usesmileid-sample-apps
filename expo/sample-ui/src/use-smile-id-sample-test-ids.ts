@@ -49,7 +49,6 @@ export const UseSmileIDSampleTestIds = {
   CAPTURE_MODE_SHEET: 'sample_capture_mode_sheet',
   CAPTURE_MODE_OPTION: 'sample_capture_mode_option',
   SETTING_GALLERY_UPLOAD: 'sample_setting_gallery_upload',
-  SETTING_CAPTURE_BOTH_SIDES: 'sample_setting_capture_both_sides',
   SETTING_ALLOW_SKIP_BACK: 'sample_setting_allow_skip_back',
   SETTING_SELFIE_FIRST: 'sample_setting_selfie_first',
   JOB_ROW: 'sample_job_row',

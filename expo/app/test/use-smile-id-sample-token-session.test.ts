@@ -62,7 +62,6 @@ const snapshot = (overrides: Partial<UseSmileIDSampleFlowLaunchSnapshot> = {}): 
   previewStep: true,
   captureMode: 'autoWithFallback',
   galleryUpload: false,
-  captureBothSides: true,
   allowSkipBack: false,
   selfieFirst: false,
   userId: 'user_1',

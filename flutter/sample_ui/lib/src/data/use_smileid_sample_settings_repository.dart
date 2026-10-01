@@ -41,9 +41,6 @@ abstract final class UseSmileIDSampleSettingsKeys {
   /// Whether the SDK offers the gallery on document capture.
   static const String galleryUpload = 'gallery_upload';
 
-  /// Whether the SDK captures a back, for a document type that has one.
-  static const String captureBothSides = 'capture_both_sides';
-
   /// Whether the back-side capture offers Skip.
   static const String allowSkipBack = 'allow_skip_back';
 
@@ -62,7 +59,6 @@ abstract final class UseSmileIDSampleSettingsKeys {
     UseSmileIDSampleSetting.instructionsStep => instructionsStep,
     UseSmileIDSampleSetting.previewStep => previewStep,
     UseSmileIDSampleSetting.galleryUpload => galleryUpload,
-    UseSmileIDSampleSetting.captureBothSides => captureBothSides,
     UseSmileIDSampleSetting.allowSkipBack => allowSkipBack,
     UseSmileIDSampleSetting.selfieFirst => selfieFirst,
   };

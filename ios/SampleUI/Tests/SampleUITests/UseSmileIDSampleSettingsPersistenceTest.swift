@@ -70,7 +70,6 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
         instructionsStep: false,
         previewStep: false,
         galleryUpload: true,
-        captureBothSides: false,
         allowSkipBack: true,
         selfieFirst: true
       )
@@ -139,6 +138,6 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
 
   private static let keys = [
     "enhanced_smart_selfie", "agent_mode", "dark_mode", "consent_step", "instructions_step", "preview_step",
-    "gallery_upload", "capture_both_sides", "allow_skip_back", "selfie_first"
+    "gallery_upload", "allow_skip_back", "selfie_first"
   ]
 }

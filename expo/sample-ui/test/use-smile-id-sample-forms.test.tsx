@@ -117,7 +117,6 @@ const kycForm = (
       family: 'kyc',
       details: smileIDSampleIdDetailsDefaults,
       countryListLoading: false,
-      captureBothSides: true,
     }}
     onCountryPress={noop}
     onIdTypePress={noop}
@@ -184,7 +183,6 @@ const kycState = (details: UseSmileIDSampleIdDetails, countryListLoading = false
     family: 'kyc' as const,
     details,
     countryListLoading,
-    captureBothSides: true,
   },
 });
 
@@ -196,7 +194,6 @@ const documentForm = (details: Partial<UseSmileIDSampleIdDetails>) =>
       family: 'document',
       details: { ...smileIDSampleIdDetailsDefaults, country: KENYA, ...details },
       countryListLoading: false,
-      captureBothSides: true,
     },
   });
 
@@ -258,7 +255,6 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
                 document: GREEN_BOOK,
               },
               countryListLoading: false,
-              captureBothSides: true,
             },
           }),
       },

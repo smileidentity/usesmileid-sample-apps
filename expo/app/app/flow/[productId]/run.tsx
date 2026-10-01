@@ -80,7 +80,6 @@ export default function SdkFlowRun() {
       previewStep: settings.previewStep,
       captureMode: settings.captureMode,
       galleryUpload: settings.galleryUpload,
-      captureBothSides: settings.captureBothSides,
       allowSkipBack: settings.allowSkipBack,
       selfieFirst: settings.selfieFirst,
       userId: runUserId,
