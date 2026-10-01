@@ -141,7 +141,7 @@
         "sample_profile_row",
         "sample_profile_switch_new"
       ],
-      "note": "Its last row, 'New profile', is not in the design: the profile it creates becomes active at once, because whoever opened the sheet was choosing who to run as. Opened from the details form, the new-profile sheet starts from what was typed. Picking a profile refills the form from it."
+      "note": "Its last row, 'New profile', is not in the design: the profile it creates becomes active at once, because whoever opened the sheet was choosing who to run as. The new-profile sheet always starts empty, even over the details form: it is for someone new, and the form's own save switch keeps what was typed. Picking a profile refills the form from it."
     },
     {
       "id": "verifications",

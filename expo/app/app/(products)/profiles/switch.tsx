@@ -1,5 +1,5 @@
 import { ProfileSwitchSheet, useSmileIDSampleFormsStore, useSmileIDSampleProfileStore } from '@smileid/sample-ui';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 
 import { useSmileIDSampleBack } from '../../../src/use-smile-id-sample-back';
 
@@ -7,7 +7,6 @@ import { useSmileIDSampleBack } from '../../../src/use-smile-id-sample-back';
 export default function ProfileSwitch() {
   const back = useSmileIDSampleBack('/products');
   const router = useRouter();
-  const { fromForm } = useLocalSearchParams<{ fromForm?: string }>();
   const fillFrom = useSmileIDSampleFormsStore((state) => state.fillFrom);
   const profiles = useSmileIDSampleProfileStore((state) => state.items);
   const activeId = useSmileIDSampleProfileStore((state) => state.activeId);
@@ -22,7 +21,7 @@ export default function ProfileSwitch() {
         fillFrom(profile);
         back();
       }}
-      onCreate={() => router.replace(`/profiles/new?activate=1${fromForm === '1' ? '&fromForm=1' : ''}`)}
+      onCreate={() => router.replace('/profiles/new?activate=1')}
       onDismiss={() => back()}
     />
   );

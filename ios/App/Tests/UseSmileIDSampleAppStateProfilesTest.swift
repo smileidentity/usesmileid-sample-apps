@@ -52,6 +52,17 @@ final class UseSmileIDSampleAppStateProfilesTest: XCTestCase {
     XCTAssertEqual(app.userDetails.email, "typed@kobo.example", "coming back to the form refilled over the typing")
   }
 
+  func testANewProfileFromTheSwitchStartsEmptyOverATypedForm() {
+    let app = appState()
+    app.setUserField(.firstName, to: "Ada")
+    app.setUserField(.email, to: "ada@kobo.example")
+    app.organisationDraft = "Kobo"
+
+    app.beginProfileFromSwitch()
+
+    XCTAssertEqual(app.newProfile, UseSmileIDSampleNewProfile(), "the new profile started from the form's details")
+  }
+
   func testSigningOutOfASeededLaunchStillDeletesTheStoredProfiles() {
     store.setProfiles(UseSmileIDSampleProfiles([UseSmileIDSampleProfile(id: "p-1", organisation: "Kobo")]))
     let app = appState(seedProfiles: true)

@@ -56,7 +56,7 @@ export default function ConsentDetailsForm() {
       onFieldChange={setUserField}
       onSaveToProfileChange={setSaveToProfile}
       onOrganisationChange={setOrganisation}
-      onProfilePress={() => router.push('/profiles/switch?fromForm=1')}
+      onProfilePress={() => router.push('/profiles/switch')}
       onBack={() => back()}
       onContinue={() => {
         if (saveToProfile) keep(details, organisation, requirement);

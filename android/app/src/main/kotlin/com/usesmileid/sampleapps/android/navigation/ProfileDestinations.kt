@@ -37,9 +37,6 @@ internal fun ProfileSwitchSheet(
     onDismissRequest: () -> Unit,
     /** The profile now active, picked or just created, so a form showing its details can refill. */
     onPicked: (UseSmileIDSampleProfile) -> Unit = {},
-    /** What a form had typed, so a profile created from it is not typed twice. */
-    draft: UseSmileIDSampleUserDetails = UseSmileIDSampleUserDetails(),
-    draftOrganisation: String = "",
 ) {
     val app = LocalUseSmileIDSampleAppState.current
     var creating by rememberSaveable { mutableStateOf(false) }
@@ -49,8 +46,6 @@ internal fun ProfileSwitchSheet(
             onDismissRequest = onDismissRequest,
             activate = true,
             onCreated = onPicked,
-            draft = draft,
-            draftOrganisation = draftOrganisation,
         )
     } else {
         ProfileSwitchContent(
@@ -156,16 +151,14 @@ internal fun NewProfileSheet(
     onDismissRequest: () -> Unit,
     activate: Boolean = false,
     onCreated: (UseSmileIDSampleProfile) -> Unit = {},
-    draft: UseSmileIDSampleUserDetails = UseSmileIDSampleUserDetails(),
-    draftOrganisation: String = "",
 ) {
     val app = LocalUseSmileIDSampleAppState.current
-    var name by rememberSaveable { mutableStateOf(draftOrganisation) }
+    var name by rememberSaveable { mutableStateOf("") }
     if (!app.profiles.loaded) return
-    var firstName by rememberSaveable { mutableStateOf(draft.firstName) }
-    var lastName by rememberSaveable { mutableStateOf(draft.lastName) }
-    var email by rememberSaveable { mutableStateOf(draft.email) }
-    var phone by rememberSaveable { mutableStateOf(draft.phone) }
+    var firstName by rememberSaveable { mutableStateOf("") }
+    var lastName by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
+    var phone by rememberSaveable { mutableStateOf("") }
     NewProfileContent(
         name = name,
         firstName = firstName,

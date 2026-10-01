@@ -14,12 +14,8 @@ export default function NewProfile() {
   const back = useSmileIDSampleBack('/profiles');
   const add = useSmileIDSampleProfileStore((state) => state.add);
   const fillFrom = useSmileIDSampleFormsStore((state) => state.fillFrom);
-  const { activate, fromForm } = useLocalSearchParams<{ activate?: string; fromForm?: string }>();
-  const [draft, setDraft] = useState<UseSmileIDSampleNewProfileDraft>(() => {
-    if (fromForm !== '1') return smileIDSampleNewProfileDraftEmpty;
-    const forms = useSmileIDSampleFormsStore.getState();
-    return { name: forms.organisation, ...forms.userDetails };
-  });
+  const { activate } = useLocalSearchParams<{ activate?: string }>();
+  const [draft, setDraft] = useState<UseSmileIDSampleNewProfileDraft>(smileIDSampleNewProfileDraftEmpty);
 
   return (
     <NewProfileSheet

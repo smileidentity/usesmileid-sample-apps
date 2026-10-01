@@ -71,14 +71,6 @@ struct UseSmileIDSampleShell: View {
     return .kyc
   }
 
-  /// Whether the switch sheet was opened from the details form, whose typing a new profile should start from.
-  private var isOverUserDetailsForm: Bool {
-    if case .consentDetailsForm = router.path(router.selectedTab).last {
-      return true
-    }
-    return false
-  }
-
   /// The product whose ID form the sheets sit on, so the document list can leave out what the SDK refuses on it.
   private var idFormProduct: UseSmileIDSampleProduct {
     for route in router.path(router.selectedTab).reversed() {
@@ -158,7 +150,7 @@ struct UseSmileIDSampleShell: View {
         onSelect: { app.switchProfile(to: $0.id)
           router.sheet = nil },
         onCreate: {
-          app.beginProfileFromSwitch(overForm: isOverUserDetailsForm)
+          app.beginProfileFromSwitch()
           router.sheet = .newProfile
         }
       )

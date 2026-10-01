@@ -88,22 +88,11 @@ class UseSmileIDSampleProfileSwitchSheet extends StatelessWidget {
 /// The five fields a new profile needs, of which three gate the confirm.
 class UseSmileIDSampleNewProfileSheet extends StatefulWidget {
   /// [onCreate] receives the organisation and the details; the owner closes the sheet.
-  const UseSmileIDSampleNewProfileSheet({
-    required this.onCreate,
-    this.initialName = '',
-    this.initialDetails = const UseSmileIDSampleUserDetails(),
-    super.key,
-  });
+  const UseSmileIDSampleNewProfileSheet({required this.onCreate, super.key});
 
   /// Creates the profile.
   final void Function(String organisation, UseSmileIDSampleUserDetails details)
   onCreate;
-
-  /// What a form had typed, so a profile created from it is not typed twice.
-  final String initialName;
-
-  /// The form's typed details, for the same reason.
-  final UseSmileIDSampleUserDetails initialDetails;
 
   @override
   State<UseSmileIDSampleNewProfileSheet> createState() =>
@@ -112,8 +101,8 @@ class UseSmileIDSampleNewProfileSheet extends StatefulWidget {
 
 class _UseSmileIDSampleNewProfileSheetState
     extends State<UseSmileIDSampleNewProfileSheet> {
-  late String _name = widget.initialName;
-  late UseSmileIDSampleUserDetails _details = widget.initialDetails;
+  String _name = '';
+  UseSmileIDSampleUserDetails _details = const UseSmileIDSampleUserDetails();
 
   /// The name and both required names, and no contact the server would refuse.
   bool get _canCreate =>
