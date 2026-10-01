@@ -63,16 +63,14 @@ appId: ${APP_ID}
 - tapOn:
     id: "sample_new_profile_name"
 - inputText: "Kazi"
-- assertVisible:
+- assertNotVisible:
     id: "sample_new_profile_first_name"
     text: "Ada"
 - tapOn:
     id: "sample_new_profile_first_name"
-- eraseText
 - inputText: "Amina"
 - tapOn:
     id: "sample_new_profile_last_name"
-- eraseText
 - inputText: "Diallo"
 - hideKeyboard
 - tapOn:
