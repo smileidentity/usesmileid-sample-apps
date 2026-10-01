@@ -13,6 +13,7 @@ on:
       - 'ios/App/PrivacyInfo.xcprivacy'
       - 'ios/verify.sh'
       - '.github/workflows/release-check.yml'
+      - 'scripts/app_size.py'
 
 concurrency:
   group: release-check-${{ github.ref }}
@@ -43,10 +44,7 @@ jobs:
         run: ./gradlew bundleRelease
 
       - name: Report the delivered size
-        working-directory: android
-        run: |
-          AAB=app/build/outputs/bundle/release/app-release.aab
-          ls -l "$AAB" | awk '{printf "bundle: %.1f MB\n", $5/1048576}'
+        run: python3 scripts/app_size.py android android/app/build/outputs/bundle/release/app-release.aab | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Store art is present and store-legal
         run: |
