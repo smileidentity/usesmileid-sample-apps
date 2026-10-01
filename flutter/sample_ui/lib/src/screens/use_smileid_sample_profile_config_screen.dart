@@ -6,9 +6,11 @@ import '../components/use_smileid_sample_key_value_edit_row.dart';
 import '../components/use_smileid_sample_section_label.dart';
 import '../components/use_smileid_sample_setting_row.dart';
 import '../components/use_smileid_sample_top_app_bar.dart';
+import '../state/use_smileid_sample_contact_rules.dart';
 import '../state/use_smileid_sample_profiles.dart';
 import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
+import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_test_ids.dart';
@@ -151,6 +153,17 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
                                 UseSmileIDSampleUserField.values[i].placeholder,
                             required:
                                 UseSmileIDSampleUserField.values[i].isRequired,
+                            keyboardType: UseSmileIDSampleUserField
+                                .values[i]
+                                .keyboardType,
+                            isError:
+                                UseSmileIDSampleContactRules.problem(
+                                  UseSmileIDSampleUserField.values[i],
+                                  UseSmileIDSampleUserField.values[i].valueOf(
+                                    details,
+                                  ),
+                                ) !=
+                                null,
                             testId: UseSmileIDSampleTestIds.profileConfigField(
                               UseSmileIDSampleUserField.values[i].id,
                             ),
@@ -160,6 +173,20 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (details.contactProblem
+                    case final String problem) ...<Widget>[
+                  const SizedBox(height: SmileDimens.spacingXs),
+                  Semantics(
+                    identifier:
+                        UseSmileIDSampleTestIds.profileConfigContactError,
+                    child: Text(
+                      problem,
+                      style: UseSmileIDSampleType.textStyleCaption.copyWith(
+                        color: colors.input.borderError,
+                      ),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: SmileDimens.spacingSm),
                 // Its own section, not a row in the card above: a webhook URL is not a user detail.
                 const UseSmileIDSampleSectionLabel(text: 'CALLBACK URL'),
@@ -216,7 +243,7 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
             child: UseSmileIDSampleButton(
               text: isActive ? 'Save changes' : 'Use this profile',
               onPressed: onSave,
-              enabled: changed || !isActive,
+              enabled: (changed || !isActive) && details.contactProblem == null,
               testId: UseSmileIDSampleTestIds.profileConfigSave,
             ),
           ),

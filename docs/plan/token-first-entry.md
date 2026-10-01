@@ -1,7 +1,7 @@
 # A token before every run
 
 **Status:** in progress. Three pull requests, in order: the entry gate (§3), the profile inputs (§4), then
-the partner's own product configuration (§5). This file is deleted by the last of them.
+the partner's own product configuration (§5). §3 and §4 are done; this file is deleted by the last of them.
 
 ## 1. The problem
 
@@ -49,8 +49,10 @@ the partner's own product configuration (§5). This file is deleted by the last 
 
 - Email and phone fields in the new-profile sheet and the user-details form set the platform's email and
   phone keyboards.
-- An email must be `local@domain.tld` shaped before Continue enables; the field says why.
-- Phone gets a basic shape check (`+`, then 7 to 15 digits). The per-country pattern arrives in §5.
+- `spec/contact-rules.json` holds the check, mirroring the v3 API's schema: an email must be a well-formed
+  address, and a phone number must be E.164 once spaces, hyphens, dots and brackets are stripped. The
+  stripped number is what the builder submits, because the server refuses `+254 700 000 000` as typed.
+- The user-details form, the new-profile sheet and the profile page disable their action and say why.
 
 ## 5. Pull request 3: the partner's product configuration
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../state/use_smileid_sample_profiles.dart';
 import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
@@ -16,6 +17,7 @@ class UseSmileIDSampleKeyValueEditRow extends StatefulWidget {
     this.required = false,
     this.enabled = true,
     this.keyboardType,
+    this.isError = false,
     this.testId,
     super.key,
   });
@@ -40,6 +42,9 @@ class UseSmileIDSampleKeyValueEditRow extends StatefulWidget {
 
   /// The keyboard to raise.
   final TextInputType? keyboardType;
+
+  /// Draws the value in the error colour, for one the server would refuse.
+  final bool isError;
 
   /// The `sample_*` id the screen supplies.
   final String? testId;
@@ -114,14 +119,24 @@ class _UseSmileIDSampleKeyValueEditRowState
                       enabled: widget.enabled,
                       onChanged: widget.onChanged,
                       keyboardType: widget.keyboardType,
+                      textCapitalization: useSmileIDSampleCapitalization(
+                        widget.keyboardType,
+                      ),
+                      autocorrect:
+                          widget.keyboardType != TextInputType.emailAddress,
+                      autofillHints: useSmileIDSampleAutofillHints(
+                        widget.keyboardType,
+                      ),
                       maxLines: 1,
                       textAlign: TextAlign.end,
                       cursorColor: colors.primary,
                       // Muted when disabled, so a row that cannot be edited does not look editable.
                       style: rowStyle.copyWith(
-                        color: widget.enabled
-                            ? colors.textTitle
-                            : colors.textMuted,
+                        color: !widget.enabled
+                            ? colors.textMuted
+                            : widget.isError
+                            ? colors.input.borderError
+                            : colors.textTitle,
                       ),
                       decoration: InputDecoration.collapsed(
                         hintText: widget.placeholder,
@@ -147,3 +162,28 @@ const double _rowTextSize = 13.5;
 /// The design's own padding; no scale token carries 15 or 14.
 const double _rowPaddingX = 15;
 const double _rowPaddingY = 14;
+
+/// Names start each word with a capital; an address or a number is left as typed.
+TextCapitalization useSmileIDSampleCapitalization(
+  TextInputType? keyboardType,
+) => keyboardType == TextInputType.name
+    ? TextCapitalization.words
+    : TextCapitalization.none;
+
+/// The keyboard each field wants: a name keyboard for names, the email keyboard, the dial pad for phone.
+extension UseSmileIDSampleUserFieldKeyboard on UseSmileIDSampleUserField {
+  /// The field's keyboard.
+  TextInputType get keyboardType => switch (this) {
+    UseSmileIDSampleUserField.firstName ||
+    UseSmileIDSampleUserField.lastName => TextInputType.name,
+    UseSmileIDSampleUserField.email => TextInputType.emailAddress,
+    UseSmileIDSampleUserField.phone => TextInputType.phone,
+  };
+}
+
+/// None for an email or phone: their keyboards read as a sign-in form, and Android then offers to save a password.
+Iterable<String>? useSmileIDSampleAutofillHints(TextInputType? keyboardType) =>
+    keyboardType == TextInputType.emailAddress ||
+        keyboardType == TextInputType.phone
+    ? null
+    : const <String>[];

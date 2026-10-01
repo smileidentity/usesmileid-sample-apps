@@ -84,6 +84,7 @@ object UseSmileIDSampleTestIds {
     const val NEW_PROFILE_SAVE = "sample_new_profile_save"
     const val PROFILE_CONFIG_CALLBACK_URL = "sample_profile_config_callback_url"
     const val PROFILE_CONFIG_SAVE = "sample_profile_config_save"
+    const val PROFILE_CONFIG_CONTACT_ERROR = "sample_profile_config_contact_error"
     const val PROFILE_CONFIG_NAME = "sample_profile_config_name"
     const val PROFILE_CONFIG_DELETE = "sample_profile_config_delete"
     const val PROFILE_DELETE_CONFIRM = "sample_profile_delete_confirm"
@@ -215,6 +216,7 @@ object UseSmileIDSampleTestIds {
         NEW_PROFILE_SAVE,
         PROFILE_CONFIG_CALLBACK_URL,
         PROFILE_CONFIG_SAVE,
+        PROFILE_CONFIG_CONTACT_ERROR,
         PROFILE_CONFIG_NAME,
         PROFILE_CONFIG_DELETE,
         PROFILE_DELETE_CONFIRM,

@@ -1,3 +1,5 @@
+import type { KeyboardTypeOptions, TextInputProps } from 'react-native';
+
 import type { UseSmileIDSampleUserDetails } from '../state/use-smile-id-sample-profiles';
 
 /// Which user-details row changed, so a form reports one callback rather than four.
@@ -55,3 +57,20 @@ export const smileIDSampleUserFieldWrite = (
 /// The design's own rule: "First and last name are required."
 export const smileIDSampleUserDetailsComplete = (details: UseSmileIDSampleUserDetails): boolean =>
   details.firstName.trim().length > 0 && details.lastName.trim().length > 0;
+
+/// The keyboard each field wants: names capitalised, the email keyboard uncorrected, the dial pad for phone.
+export const smileIDSampleUserFieldKeyboard = (
+  field: UseSmileIDSampleUserField,
+): {
+  readonly keyboardType: KeyboardTypeOptions;
+  readonly autoCapitalize: TextInputProps['autoCapitalize'];
+  readonly autoCorrect: boolean;
+} => {
+  if (field === UseSmileIDSampleUserField.Email) {
+    return { keyboardType: 'email-address', autoCapitalize: 'none', autoCorrect: false };
+  }
+  if (field === UseSmileIDSampleUserField.Phone) {
+    return { keyboardType: 'phone-pad', autoCapitalize: 'none', autoCorrect: false };
+  }
+  return { keyboardType: 'default', autoCapitalize: 'words', autoCorrect: false };
+};

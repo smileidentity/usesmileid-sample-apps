@@ -45096,7 +45096,10 @@ exports[`userDetails dark complete 1`] = `
                   First name
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add first name"
                   placeholderTextColor="#848282"
@@ -45175,7 +45178,10 @@ exports[`userDetails dark complete 1`] = `
                   Last name
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add last name"
                   placeholderTextColor="#848282"
@@ -45254,7 +45260,11 @@ exports[`userDetails dark complete 1`] = `
                   Email
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  importantForAutofill="no"
+                  keyboardType="email-address"
                   onChangeText={[Function]}
                   placeholder="name@company.com"
                   placeholderTextColor="#848282"
@@ -45333,7 +45343,11 @@ exports[`userDetails dark complete 1`] = `
                   Phone
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  importantForAutofill="no"
+                  keyboardType="phone-pad"
                   onChangeText={[Function]}
                   placeholder="+254 700 000 000"
                   placeholderTextColor="#848282"
@@ -46151,7 +46165,10 @@ exports[`userDetails dark empty 1`] = `
                   First name
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add first name"
                   placeholderTextColor="#848282"
@@ -46230,7 +46247,10 @@ exports[`userDetails dark empty 1`] = `
                   Last name
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add last name"
                   placeholderTextColor="#848282"
@@ -46309,7 +46329,11 @@ exports[`userDetails dark empty 1`] = `
                   Email
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  importantForAutofill="no"
+                  keyboardType="email-address"
                   onChangeText={[Function]}
                   placeholder="name@company.com"
                   placeholderTextColor="#848282"
@@ -46388,7 +46412,11 @@ exports[`userDetails dark empty 1`] = `
                   Phone
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  importantForAutofill="no"
+                  keyboardType="phone-pad"
                   onChangeText={[Function]}
                   placeholder="+254 700 000 000"
                   placeholderTextColor="#848282"
@@ -47129,7 +47157,10 @@ exports[`userDetails dark tokenSuppliedNames 1`] = `
                   First name
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={false}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Provided by token"
                   placeholderTextColor="#848282"
@@ -47208,7 +47239,10 @@ exports[`userDetails dark tokenSuppliedNames 1`] = `
                   Last name
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={false}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Provided by token"
                   placeholderTextColor="#848282"
@@ -47287,7 +47321,11 @@ exports[`userDetails dark tokenSuppliedNames 1`] = `
                   Email
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  importantForAutofill="no"
+                  keyboardType="email-address"
                   onChangeText={[Function]}
                   placeholder="name@company.com"
                   placeholderTextColor="#848282"
@@ -47366,7 +47404,11 @@ exports[`userDetails dark tokenSuppliedNames 1`] = `
                   Phone
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  importantForAutofill="no"
+                  keyboardType="phone-pad"
                   onChangeText={[Function]}
                   placeholder="+254 700 000 000"
                   placeholderTextColor="#848282"
@@ -48107,7 +48149,10 @@ exports[`userDetails light complete 1`] = `
                   First name
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add first name"
                   placeholderTextColor="#848282"
@@ -48186,7 +48231,10 @@ exports[`userDetails light complete 1`] = `
                   Last name
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add last name"
                   placeholderTextColor="#848282"
@@ -48265,7 +48313,11 @@ exports[`userDetails light complete 1`] = `
                   Email
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  importantForAutofill="no"
+                  keyboardType="email-address"
                   onChangeText={[Function]}
                   placeholder="name@company.com"
                   placeholderTextColor="#848282"
@@ -48344,7 +48396,11 @@ exports[`userDetails light complete 1`] = `
                   Phone
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  importantForAutofill="no"
+                  keyboardType="phone-pad"
                   onChangeText={[Function]}
                   placeholder="+254 700 000 000"
                   placeholderTextColor="#848282"
@@ -49162,7 +49218,10 @@ exports[`userDetails light empty 1`] = `
                   First name
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add first name"
                   placeholderTextColor="#848282"
@@ -49241,7 +49300,10 @@ exports[`userDetails light empty 1`] = `
                   Last name
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={true}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Add last name"
                   placeholderTextColor="#848282"
@@ -49320,7 +49382,11 @@ exports[`userDetails light empty 1`] = `
                   Email
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  importantForAutofill="no"
+                  keyboardType="email-address"
                   onChangeText={[Function]}
                   placeholder="name@company.com"
                   placeholderTextColor="#848282"
@@ -49399,7 +49465,11 @@ exports[`userDetails light empty 1`] = `
                   Phone
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  importantForAutofill="no"
+                  keyboardType="phone-pad"
                   onChangeText={[Function]}
                   placeholder="+254 700 000 000"
                   placeholderTextColor="#848282"
@@ -50140,7 +50210,10 @@ exports[`userDetails light tokenSuppliedNames 1`] = `
                   First name
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={false}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Provided by token"
                   placeholderTextColor="#848282"
@@ -50219,7 +50292,10 @@ exports[`userDetails light tokenSuppliedNames 1`] = `
                   Last name
                 </Text>
                 <TextInput
+                  autoCapitalize="words"
+                  autoCorrect={false}
                   editable={false}
+                  keyboardType="default"
                   onChangeText={[Function]}
                   placeholder="Provided by token"
                   placeholderTextColor="#848282"
@@ -50298,7 +50374,11 @@ exports[`userDetails light tokenSuppliedNames 1`] = `
                   Email
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  importantForAutofill="no"
+                  keyboardType="email-address"
                   onChangeText={[Function]}
                   placeholder="name@company.com"
                   placeholderTextColor="#848282"
@@ -50377,7 +50457,11 @@ exports[`userDetails light tokenSuppliedNames 1`] = `
                   Phone
                 </Text>
                 <TextInput
+                  autoCapitalize="none"
+                  autoCorrect={false}
                   editable={true}
+                  importantForAutofill="no"
+                  keyboardType="phone-pad"
                   onChangeText={[Function]}
                   placeholder="+254 700 000 000"
                   placeholderTextColor="#848282"

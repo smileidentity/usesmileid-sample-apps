@@ -227,6 +227,13 @@ export {
   type UseSmileIDSampleUserDetailsRequirement,
 } from './state/use-smile-id-sample-user-details-requirement';
 export {
+  smileIDSampleContactProblem,
+  smileIDSampleContactSubmitted,
+  smileIDSampleDetailsContactProblem,
+  SMILE_ID_SAMPLE_EMAIL_ERROR,
+  SMILE_ID_SAMPLE_PHONE_ERROR,
+} from './state/use-smile-id-sample-contact-rules';
+export {
   smileIDSampleAspectRatios,
   smileIDSampleCaptureAsTriggerText,
   smileIDSampleCaptureBothSides,

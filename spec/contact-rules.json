@@ -1,0 +1,34 @@
+{
+  "description": "How the user-details form and the new-profile sheet check an email or a phone number before Continue or Create profile enables. Both mirror the v3 API's request schema (email: a well-formed address; phone_number: E.164), so a value the form accepts is one the server accepts. A blank value is never an error: each contact is optional on its own, and the one-of rule is the requirement's business, not this check's. Each platform asserts every case: that `valid` matches, and that a valid value submits as `submits`.",
+  "email": {
+    "trim": true,
+    "regex": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$",
+    "error": "Enter an email like name@company.com."
+  },
+  "phone": {
+    "trim": true,
+    "strip": "[\\s().-]",
+    "regex": "^\\+[1-9][0-9]{6,14}$",
+    "error": "Enter the number with its country code, like +254 700 000 000."
+  },
+  "submission": "The trimmed email, and the phone number with `strip` removed, which is the form the server's E.164 pattern accepts.",
+  "cases": [
+    { "field": "email", "value": "", "valid": true, "submits": "" },
+    { "field": "email", "value": "ada@example.com", "valid": true, "submits": "ada@example.com" },
+    { "field": "email", "value": "  ada.okafor@uptech.co.ke ", "valid": true, "submits": "ada.okafor@uptech.co.ke" },
+    { "field": "email", "value": "ada", "valid": false },
+    { "field": "email", "value": "ada@example", "valid": false },
+    { "field": "email", "value": "ada@example.c", "valid": false },
+    { "field": "email", "value": "ada okafor@example.com", "valid": false },
+    { "field": "email", "value": "ada@@example.com", "valid": false },
+    { "field": "phone", "value": "", "valid": true, "submits": "" },
+    { "field": "phone", "value": "+254700000000", "valid": true, "submits": "+254700000000" },
+    { "field": "phone", "value": "+254 700 000 000", "valid": true, "submits": "+254700000000" },
+    { "field": "phone", "value": "+1 (415) 555-0100", "valid": true, "submits": "+14155550100" },
+    { "field": "phone", "value": "0700000000", "valid": false },
+    { "field": "phone", "value": "+0254700000", "valid": false },
+    { "field": "phone", "value": "+25470", "valid": false },
+    { "field": "phone", "value": "+2547000000000000", "valid": false },
+    { "field": "phone", "value": "+254 7OO 000 000", "valid": false }
+  ]
+}

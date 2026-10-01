@@ -1,3 +1,4 @@
+import 'use_smileid_sample_contact_rules.dart';
 import 'use_smileid_sample_profiles.dart';
 import 'use_smileid_sample_token_decoder.dart';
 
@@ -40,13 +41,14 @@ class UseSmileIDSampleUserDetailsRequirement {
   @override
   int get hashCode => Object.hash(firstName, lastName, contact);
 
-  /// Whether [details] satisfies what is still outstanding.
+  /// Whether [details] satisfies what is still outstanding, in a form the server accepts.
   bool isSatisfiedBy(UseSmileIDSampleUserDetails details) =>
       (!firstName || details.firstName.trim().isNotEmpty) &&
       (!lastName || details.lastName.trim().isNotEmpty) &&
       (!contact ||
           details.email.trim().isNotEmpty ||
-          details.phone.trim().isNotEmpty);
+          details.phone.trim().isNotEmpty) &&
+      details.contactProblem == null;
 
   /// The row's label, which gains "(optional)" only once a token has covered contact.
   String labelFor(UseSmileIDSampleUserField field) =>

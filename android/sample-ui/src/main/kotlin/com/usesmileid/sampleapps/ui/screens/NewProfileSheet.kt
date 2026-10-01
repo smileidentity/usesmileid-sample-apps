@@ -9,6 +9,9 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTextInput
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleContactRules
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserField
+import androidx.compose.ui.platform.LocalAutofillManager
 
 /** A profile name, then the four user details that will live under it. Create needs the name and both required names. */
 @Composable
@@ -27,6 +30,9 @@ fun NewProfileSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val autofill = LocalAutofillManager.current
+    val emailProblem = UseSmileIDSampleContactRules.problem(UseSmileIDSampleUserField.Email, email)
+    val phoneProblem = UseSmileIDSampleContactRules.problem(UseSmileIDSampleUserField.Phone, phone)
     UseSmileIDSampleBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = modifier,
@@ -45,6 +51,7 @@ fun NewProfileSheet(
             value = firstName,
             onValueChange = onFirstNameChange,
             placeholder = "First name",
+            keyboardOptions = UseSmileIDSampleUserField.FirstName.keyboardOptions,
             testId = UseSmileIDSampleTestIds.NEW_PROFILE_FIRST_NAME,
             leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_field_person, tint = tint) },
         )
@@ -52,6 +59,7 @@ fun NewProfileSheet(
             value = lastName,
             onValueChange = onLastNameChange,
             placeholder = "Last name",
+            keyboardOptions = UseSmileIDSampleUserField.LastName.keyboardOptions,
             testId = UseSmileIDSampleTestIds.NEW_PROFILE_LAST_NAME,
             leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_field_person, tint = tint) },
         )
@@ -59,6 +67,9 @@ fun NewProfileSheet(
             value = email,
             onValueChange = onEmailChange,
             placeholder = "Email (optional)",
+            keyboardOptions = UseSmileIDSampleUserField.Email.keyboardOptions,
+            isError = emailProblem != null,
+            errorMessage = emailProblem,
             testId = UseSmileIDSampleTestIds.NEW_PROFILE_EMAIL,
             leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_field_email, tint = tint) },
         )
@@ -66,13 +77,21 @@ fun NewProfileSheet(
             value = phone,
             onValueChange = onPhoneChange,
             placeholder = "Phone (optional)",
+            keyboardOptions = UseSmileIDSampleUserField.Phone.keyboardOptions,
+            isError = phoneProblem != null,
+            errorMessage = phoneProblem,
             testId = UseSmileIDSampleTestIds.NEW_PROFILE_PHONE,
             leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_field_phone, tint = tint) },
         )
         UseSmileIDSampleButton(
             text = "Create profile",
-            onClick = onSave,
-            enabled = name.isNotBlank() && firstName.isNotBlank() && lastName.isNotBlank(),
+            onClick = {
+                // Email and phone keyboards read as a sign-in form, so without this Android offers to save a password.
+                autofill?.cancel()
+                onSave()
+            },
+            enabled = name.isNotBlank() && firstName.isNotBlank() && lastName.isNotBlank() &&
+                emailProblem == null && phoneProblem == null,
             testId = UseSmileIDSampleTestIds.NEW_PROFILE_SAVE,
         )
     }

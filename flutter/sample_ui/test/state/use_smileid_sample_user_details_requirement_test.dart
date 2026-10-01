@@ -47,7 +47,7 @@ void main() {
       );
       expect(
         requirement.isSatisfiedBy(
-          const UseSmileIDSampleUserDetails(phone: '1'),
+          const UseSmileIDSampleUserDetails(phone: '+254700000000'),
         ),
         isTrue,
       );

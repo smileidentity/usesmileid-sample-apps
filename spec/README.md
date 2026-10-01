@@ -34,6 +34,7 @@ Rules:
 | `catalogue-fixture.json` | The country, ID-type and document lists a device flow sees under `catalogue=fixture`, in the API's response shape. A UI test input of about a dozen rows, not a copy of the API | added 2026-09-28 |
 | `catalogue-rules.json` | Test cases for turning an API response into the form's rows: which ID types the form can satisfy, repeated types, sub-types, the countries each product offers, and how "Capture as" becomes `DocumentCaptureConfig` | added 2026-09-28 |
 | `id-number-hints.json` | Test cases for the ID-number hint computed from a type's regex, and the regexes every platform's engine must compile | added 2026-09-28 |
+| `contact-rules.json` | The email and phone checks the forms run before Continue, mirroring the v3 API's schema, and the value each submits | added 2026-09-30 |
 
 ## `screens.json` entry shape
 

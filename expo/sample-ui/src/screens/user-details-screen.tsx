@@ -32,6 +32,7 @@ import {
   smileIDSampleUserFieldRead,
   smileIDSampleUserFields,
   type UseSmileIDSampleUserField,
+  smileIDSampleUserFieldKeyboard,
 } from '../model/use-smile-id-sample-user-fields';
 import { smileCardStrokeWidth } from '../smile-product-hues';
 import { insetForBorder } from '../theme/smile-compose-layout';
@@ -41,6 +42,10 @@ import {
   UseSmileIDSampleSuffixedTestIds,
   UseSmileIDSampleTestIds,
 } from '../use-smile-id-sample-test-ids';
+import {
+  smileIDSampleContactProblem,
+  smileIDSampleDetailsContactProblem,
+} from '../state/use-smile-id-sample-contact-rules';
 
 /// The switch line sits between the type scale's steps — spec/screens.json → userDetails.
 const REMEMBER_TEXT_SIZE = 13.5;
@@ -93,6 +98,7 @@ export const UserDetailsScreen = ({
   const insets = useSafeAreaInsets();
   const requirement = state.requirement ?? smileIDSampleRequirementDefaults;
   const satisfied = smileIDSampleDetailsSatisfy(state.details, requirement);
+  const contactProblem = smileIDSampleDetailsContactProblem(state.details);
   const { profile } = state;
   const offersSave =
     satisfied &&
@@ -152,6 +158,8 @@ export const UserDetailsScreen = ({
                   placeholder={supplied ? PROVIDED_BY_TOKEN : field.placeholder}
                   required={false}
                   enabled={!supplied}
+                  {...smileIDSampleUserFieldKeyboard(field.id)}
+                  isError={smileIDSampleContactProblem(field.id, smileIDSampleUserFieldRead(field.id, state.details)) !== null}
                   testID={UseSmileIDSampleSuffixedTestIds.userDetailsField(field.id)}
                 />
               </View>
@@ -162,10 +170,13 @@ export const UserDetailsScreen = ({
           testID={UseSmileIDSampleTestIds.USER_DETAILS_HINT}
           style={[
             theme.type.textStyleCaption,
-            { color: theme.colors.textMuted, paddingHorizontal: theme.dimens.spacing.md },
+            {
+              color: contactProblem === null ? theme.colors.textMuted : theme.colors.input.borderError,
+              paddingHorizontal: theme.dimens.spacing.md,
+            },
           ]}
         >
-          {satisfied ? 'Tap any field to edit.' : smileIDSampleRequirementPrompt(requirement)}
+          {contactProblem ?? (satisfied ? 'Tap any field to edit.' : smileIDSampleRequirementPrompt(requirement))}
         </Text>
         {offersSave ? (
           <View

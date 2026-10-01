@@ -26,12 +26,8 @@ void useSmileIDSampleApplying(
       ? UserDetails(
           givenNames: snapshot.userDetails.firstName,
           lastName: snapshot.userDetails.lastName,
-          email: snapshot.userDetails.email.isEmpty
-              ? null
-              : snapshot.userDetails.email,
-          phoneNumber: snapshot.userDetails.phone.isEmpty
-              ? null
-              : snapshot.userDetails.phone,
+          email: snapshot.userDetails.submittedEmail,
+          phoneNumber: snapshot.userDetails.submittedPhone,
         )
       : null;
   if (snapshot.product == UseSmileIDSampleProduct.smartSelfieAuth) {

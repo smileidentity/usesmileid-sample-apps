@@ -713,7 +713,8 @@
         "sample_profile_config_callback_url",
         "sample_profile_config_delete",
         "sample_profile_delete_confirm",
-        "sample_profile_config_save"
+        "sample_profile_config_save",
+        "sample_profile_config_contact_error"
       ]
     },
     {

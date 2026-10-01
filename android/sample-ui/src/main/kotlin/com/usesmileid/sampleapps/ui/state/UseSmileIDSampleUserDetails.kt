@@ -17,11 +17,25 @@ data class UseSmileIDSampleUserDetails(
     /** The design's own rule: "First and last name are required." */
     val isComplete: Boolean get() = firstName.isNotBlank() && lastName.isNotBlank()
 
-    /** Whether the form has collected what [requirement] still asks of it. */
+    /** Whether the form has collected what [requirement] still asks of it, in a form the server accepts. */
     fun satisfies(requirement: UseSmileIDSampleUserDetailsRequirement): Boolean =
         (!requirement.firstName || firstName.isNotBlank()) &&
             (!requirement.lastName || lastName.isNotBlank()) &&
-            (!requirement.contact || email.isNotBlank() || phone.isNotBlank())
+            (!requirement.contact || email.isNotBlank() || phone.isNotBlank()) &&
+            contactProblem == null
+
+    /** Why the email or phone would fail the job, email first; null when both would pass. */
+    val contactProblem: String?
+        get() = UseSmileIDSampleContactRules.problem(UseSmileIDSampleUserField.Email, email)
+            ?: UseSmileIDSampleContactRules.problem(UseSmileIDSampleUserField.Phone, phone)
+
+    /** The email as the server wants it, or null when blank. */
+    val submittedEmail: String?
+        get() = UseSmileIDSampleContactRules.submitted(UseSmileIDSampleUserField.Email, email).ifEmpty { null }
+
+    /** The phone number as the server wants it, or null when blank. */
+    val submittedPhone: String?
+        get() = UseSmileIDSampleContactRules.submitted(UseSmileIDSampleUserField.Phone, phone).ifEmpty { null }
 
     companion object {
         val Saver: Saver<MutableState<UseSmileIDSampleUserDetails>, Any> = listSaver(
@@ -109,5 +123,32 @@ enum class UseSmileIDSampleUserField(val id: String, val label: String, val plac
         LastName -> details.copy(lastName = value)
         Email -> details.copy(email = value)
         Phone -> details.copy(phone = value)
+    }
+}
+
+/** The email and phone checks from `spec/contact-rules.json`, which mirror the v3 API's own request schema. */
+object UseSmileIDSampleContactRules {
+    const val EMAIL_ERROR = "Enter an email like name@company.com."
+    const val PHONE_ERROR = "Enter the number with its country code, like +254 700 000 000."
+
+    private val email = Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$")
+    private val phoneSeparators = Regex("[\\s().-]")
+    private val phone = Regex("^\\+[1-9][0-9]{6,14}$")
+
+    /** [value] as it is submitted: trimmed, and a phone number without its separators. */
+    fun submitted(field: UseSmileIDSampleUserField, value: String): String = when (field) {
+        UseSmileIDSampleUserField.Phone -> value.trim().replace(phoneSeparators, "")
+        else -> value.trim()
+    }
+
+    /** Why [value] would fail the job as [field], or null when it would pass; blank always passes. */
+    fun problem(field: UseSmileIDSampleUserField, value: String): String? {
+        val submitted = submitted(field, value)
+        if (submitted.isEmpty()) return null
+        return when (field) {
+            UseSmileIDSampleUserField.Email -> EMAIL_ERROR.takeUnless { email.matches(submitted) }
+            UseSmileIDSampleUserField.Phone -> PHONE_ERROR.takeUnless { phone.matches(submitted) }
+            else -> null
+        }
     }
 }

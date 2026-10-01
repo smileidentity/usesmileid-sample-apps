@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react';
+import { smileIDSampleAutofill } from './use-smile-id-sample-key-value-edit-row';
 import {
   StyleSheet,
   Text,
@@ -27,6 +28,7 @@ type Props = {
   keyboardType?: KeyboardTypeOptions;
   /// An ID number is entered uppercase, which is a keyboard hint rather than a transform.
   autoCapitalize?: TextInputProps['autoCapitalize'];
+  autoCorrect?: boolean;
   masked?: boolean;
   textAlign?: TextStyle['textAlign'];
   testID?: string;
@@ -49,6 +51,7 @@ export const UseSmileIDSampleTextInput = ({
   errorMessage,
   keyboardType,
   autoCapitalize,
+  autoCorrect,
   masked = false,
   textAlign,
   testID,
@@ -97,8 +100,9 @@ export const UseSmileIDSampleTextInput = ({
           placeholder={placeholder}
           placeholderTextColor={theme.colors.input.placeholder}
           secureTextEntry={masked}
-          autoCorrect={!masked}
+          autoCorrect={masked ? false : (autoCorrect ?? true)}
           autoCapitalize={autoCapitalize}
+          importantForAutofill={smileIDSampleAutofill(keyboardType)}
           keyboardType={keyboardType}
           selectionColor={theme.colors.input.borderFocus}
           onFocus={() => setFocused(true)}

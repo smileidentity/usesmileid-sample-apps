@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, Text, TextInput, View, type KeyboardTypeOptions, type StyleProp, type ViewStyle } from 'react-native';
+import { Platform, StyleSheet, Text, TextInput, View, type KeyboardTypeOptions, type StyleProp, type ViewStyle, type TextInputProps } from 'react-native';
 
 import { atFontLine, atSize } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
@@ -16,6 +16,10 @@ type Props = {
   required?: boolean;
   enabled?: boolean;
   keyboardType?: KeyboardTypeOptions;
+  autoCapitalize?: TextInputProps['autoCapitalize'];
+  autoCorrect?: boolean;
+  /// Draws the value in the error colour, for one the server would refuse.
+  isError?: boolean;
   testID?: string;
   style?: StyleProp<ViewStyle>;
 };
@@ -29,6 +33,9 @@ export const UseSmileIDSampleKeyValueEditRow = ({
   required = false,
   enabled = true,
   keyboardType,
+  autoCapitalize,
+  autoCorrect,
+  isError = false,
   testID,
   style,
 }: Props) => {
@@ -62,6 +69,9 @@ export const UseSmileIDSampleKeyValueEditRow = ({
         placeholder={placeholder}
         placeholderTextColor={theme.colors.textMuted}
         keyboardType={keyboardType}
+        autoCapitalize={autoCapitalize}
+        autoCorrect={autoCorrect}
+        importantForAutofill={smileIDSampleAutofill(keyboardType)}
         selectionColor={theme.colors.primary}
         style={[
           // iOS RN measures a field at its full line height where UITextField uses the font's, a point taller per row.
@@ -69,7 +79,9 @@ export const UseSmileIDSampleKeyValueEditRow = ({
             ? atFontLine(atSize(theme.type.textStyleSubtitle, ROW_TEXT_SIZE))
             : [atSize(theme.type.textStyleSubtitle, ROW_TEXT_SIZE), styles.keepBottomLeading],
           styles.field,
-          { color: enabled ? theme.colors.textTitle : theme.colors.textMuted },
+          {
+            color: !enabled ? theme.colors.textMuted : isError ? theme.colors.input.borderError : theme.colors.textTitle,
+          },
         ]}
       />
     </View>
@@ -83,3 +95,7 @@ const styles = StyleSheet.create({
   // A Compose text field trims only the top of its line, so the bottom half-leading stays.
   keepBottomLeading: { marginBottom: 0 },
 });
+
+/// Off for an email or phone: their keyboards read as a sign-in form, and Android then offers to save a password.
+export const smileIDSampleAutofill = (keyboardType: KeyboardTypeOptions | undefined): 'no' | undefined =>
+  keyboardType === 'email-address' || keyboardType === 'phone-pad' ? 'no' : undefined;

@@ -43,8 +43,8 @@ fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshe
         UserDetails(
             givenNames = snapshot.userDetails.firstName,
             lastName = snapshot.userDetails.lastName,
-            email = snapshot.userDetails.email.takeIf { it.isNotBlank() },
-            phoneNumber = snapshot.userDetails.phone.takeIf { it.isNotBlank() },
+            email = snapshot.userDetails.submittedEmail,
+            phoneNumber = snapshot.userDetails.submittedPhone,
         )
     }
     if (snapshot.product == UseSmileIDSampleProduct.SmartSelfieAuth) userId = snapshot.userId

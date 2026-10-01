@@ -98,9 +98,9 @@ public struct UseSmileIDSampleTextInput<Leading: View, Trailing: View>: View {
         .font(UseSmileIDSampleFonts.font(UseSmileIDSampleTheme.type.inputFont))
         .foregroundColor(enabled ? colors.input.text : colors.textMuted)
         .keyboardType(masked ? .default : keyboardType)
-        .autocorrectionDisabled(masked)
-        // A capitalised first character silently corrupts a credential the user typed correctly.
-        .textInputAutocapitalization(masked ? .never : nil)
+        .autocorrectionDisabled(masked || keyboardType == .emailAddress)
+        // A capitalised first character silently corrupts a credential or an address the user typed correctly.
+        .textInputAutocapitalization(masked || keyboardType == .emailAddress ? .never : nil)
         .accentColor(colors.input.borderFocus)
         .focused($focused)
         .disabled(!enabled)

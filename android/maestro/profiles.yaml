@@ -44,6 +44,22 @@ appId: ${APP_ID}
 - tapOn:
     id: "sample_new_profile_last_name"
 - inputText: "Wanjiku"
+# A contact the server would refuse keeps Create disabled and says why (spec/contact-rules.json).
+- tapOn:
+    id: "sample_new_profile_email"
+- inputText: "njeri"
+- assertVisible: "Enter an email like name@company.com."
+- assertVisible:
+    id: "sample_new_profile_save"
+    enabled: false
+- inputText: "@karibu.example"
+- tapOn:
+    id: "sample_new_profile_phone"
+- inputText: "0700"
+- assertVisible: "Enter the number with its country code, like +254 700 000 000."
+- eraseText
+- inputText: "+254 700 000 000"
+- assertNotVisible: "Enter the number with its country code, like +254 700 000 000."
 - hideKeyboard
 - tapOn:
     id: "sample_new_profile_save"
